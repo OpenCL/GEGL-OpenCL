@@ -11,7 +11,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
 "eywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2012-09-10 08:50+0000\n"
-"PO-Revision-Date: 2012-09-11 11:41+0100\n"
+"PO-Revision-Date: 2012-09-11 17:20+0100\n"
 "Last-Translator: Bruce Cowan <bruce@bcowan.me.uk>\n"
 "Language-Team: British English <en@li.org>\n"
 "Language: en_GB\n"
@@ -234,8 +234,8 @@ msgid ""
 "the color difference from the center pixel."
 msgstr ""
 "An edge preserving blur filter that can be used for noise reduction. It is a "
-"gaussian blur where the contribution of neighbourhood pixels are weighted by "
-"the color difference from the center pixel."
+"gaussian blur where the contribution of neighbourhood pixels are weighted "
+"by the colour difference from the centre pixel."
 
 #: ../operations/common/box-blur.c:24 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
@@ -328,8 +328,8 @@ msgid ""
 "Neighborhood taken into account, this is the radius in pixels taken into "
 "account when deciding which colors map to which gray values"
 msgstr ""
-"Neighborhood taken into account, this is the radius in pixels taken into "
-"account when deciding which colors map to which grey values"
+"Neighbourhood taken into account, this is the radius in pixels taken into "
+"account when deciding which colours map to which grey values"
 
 #: ../operations/common/c2g.c:29 ../operations/common/stress.c:29
 msgid "Samples"
@@ -337,7 +337,7 @@ msgstr "Samples"
 
 #: ../operations/common/c2g.c:30 ../operations/common/stress.c:30
 msgid "Number of samples to do per iteration looking for the range of colors"
-msgstr "Number of samples to do per iteration looking for the range of colors"
+msgstr "Number of samples to do per iteration looking for the range of colours"
 
 #: ../operations/common/c2g.c:31 ../operations/common/fractal-explorer.c:42
 #: ../operations/common/matting-global.c:25 ../operations/common/stress.c:31
@@ -434,7 +434,7 @@ msgstr "Vertical offset (from origin) for start of grid"
 #: ../operations/workshop/linear-gradient.c:28
 #: ../operations/workshop/radial-gradient.c:28
 msgid "Color"
-msgstr "Color"
+msgstr "Colour"
 
 #: ../operations/common/checkerboard.c:34
 msgid "One of the cell colors (defaults to 'black')"
@@ -499,7 +499,7 @@ msgid ""
 "Reduces the number of bits per channel (colors and alpha), with optional "
 "dithering"
 msgstr ""
-"Reduces the number of bits per channel (colors and alpha), with optional "
+"Reduces the number of bits per channel (colours and alpha), with optional "
 "dithering"
 
 #: ../operations/common/color-temperature.c:27
@@ -1284,19 +1284,19 @@ msgstr "Y offset of the result of mirroring"
 
 #: ../operations/common/mirrors.c:40
 msgid "Center X"
-msgstr "Center X"
+msgstr "Centre X"
 
 #: ../operations/common/mirrors.c:40
 msgid "X axis ratio for the center of mirroring"
-msgstr "X axis ratio for the center of mirroring"
+msgstr "X axis ratio for the centre of mirroring"
 
 #: ../operations/common/mirrors.c:42
 msgid "Center Y"
-msgstr "Center Y"
+msgstr "Centre Y"
 
 #: ../operations/common/mirrors.c:42
 msgid "Y axis ratio for the center of mirroring"
-msgstr "Y axis ratio for the center of mirroring"
+msgstr "Y axis ratio for the centre of mirroring"
 
 #: ../operations/common/mirrors.c:44
 msgid "Trim X"
@@ -1464,7 +1464,7 @@ msgstr "Completely randomize a fraction of pixels"
 
 #: ../operations/common/noise-pick.c:192
 msgid "Randomly interchange some pixels with neighbors"
-msgstr "Randomly interchange some pixels with neighbors"
+msgstr "Randomly interchange some pixels with neighbours"
 
 #: ../operations/common/noise-reduction.c:26 ../operations/common/wind.c:30
 #: ../operations/workshop/warp.c:35
@@ -1485,7 +1485,7 @@ msgstr "Independent RGB"
 
 #: ../operations/common/noise-rgb.c:164
 msgid "Distort colors by random amounts."
-msgstr "Distort colors by random amounts."
+msgstr "Distort colours by random amounts."
 
 #: ../operations/common/noise-slur.c:178
 msgid "Randomly slide some pixels downward (similar to melting)"
@@ -1587,7 +1587,7 @@ msgstr "Height of blocks in pixels"
 
 #: ../operations/common/pixelize.c:338
 msgid "Simplify image into an array of solid-colored squares"
-msgstr "Simplify image into an array of solid-colored squares"
+msgstr "Simplify image into an array of solid-coloured squares"
 
 #: ../operations/common/polar-coordinates.c:34
 #: ../operations/common/polar-coordinates.c:35
@@ -1980,11 +1980,11 @@ msgstr ""
 
 #: ../operations/common/vignette.c:32
 msgid "Horizontal center of vignetting"
-msgstr "Horizontal center of vignetting"
+msgstr "Horizontal centre of vignetting"
 
 #: ../operations/common/vignette.c:33
 msgid "Vertical center of vignetting"
-msgstr "Vertical center of vignetting"
+msgstr "Vertical centre of vignetting"
 
 #: ../operations/common/vignette.c:34
 msgid "Rotation"
@@ -2006,11 +2006,11 @@ msgstr ""
 
 #: ../operations/common/waves.c:27
 msgid "X coordinate of the center of the waves"
-msgstr "X coordinate of the center of the waves"
+msgstr "X coordinate of the centre of the waves"
 
 #: ../operations/common/waves.c:30
 msgid "Coordinate y of the center of the waves"
-msgstr "Coordinate y of the center of the waves"
+msgstr "Coordinate y of the centre of the waves"
 
 #: ../operations/common/waves.c:44
 msgid "Clamp deformation"
@@ -2125,7 +2125,7 @@ msgstr "Unable to create output colour profile for '%s'"
 #: ../operations/external/jp2-load.c:92
 #, c-format
 msgid "Unable to convert image to sRGB color space when processing '%s'"
-msgstr "Unable to convert image to sRGB color space when processing '%s'"
+msgstr "Unable to convert image to sRGB colour space when processing '%s'"
 
 #: ../operations/external/jp2-load.c:100
 #, c-format
@@ -2470,7 +2470,7 @@ msgstr "Approximate height of text in pixels."
 
 #: ../operations/external/text.c:32
 msgid "Color for the text (defaults to 'white')"
-msgstr "Color for the text (defaults to 'white')"
+msgstr "Colour for the text (defaults to 'white')"
 
 #: ../operations/external/text.c:33
 msgid "Wrap width"
@@ -2490,7 +2490,7 @@ msgstr "Justification"
 
 #: ../operations/external/text.c:37
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
-msgstr "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
+msgstr "Alignment for multi-line text (0=Left, 1=Centre, 2=Right)"
 
 #: ../operations/external/text.c:39
 msgid "Rendered width in pixels. (read only)"
@@ -3310,7 +3310,7 @@ msgid ""
 "colors are sorted by luminance."
 msgstr ""
 "Sets the target pixel to the colour corresponding to a given percentile when "
-"colors are sorted by luminance."
+"colours are sorted by luminance."
 
 #: ../operations/workshop/ditto.c:112
 msgid "Test op to do a 1:1 map of input to output, while sampling"
@@ -3479,7 +3479,7 @@ msgstr "Model red a:"
 #: ../operations/workshop/external/lens-correct.c:71
 #: ../operations/workshop/external/lens-correct.c:73
 msgid "Correction parameters for each color channel"
-msgstr "Correction parameters for each color channel"
+msgstr "Correction parameters for each colour channel"
 
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Model red b:"
