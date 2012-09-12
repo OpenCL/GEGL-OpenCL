@@ -1238,7 +1238,7 @@ gegl_tile_storage_new_cached (gint tile_width, gint tile_height,
       if (item->babl_fmt == babl_fmt &&
           item->tile_width == tile_width &&
           item->tile_height == tile_height &&
-          item->ram == item->ram)
+          item->ram == use_ram)
        {
          storage = item->storage;
          storage_cache = g_slist_remove (storage_cache, item);
