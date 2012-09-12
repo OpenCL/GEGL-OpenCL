@@ -41,9 +41,8 @@ gegl_chant_int    (depth, _("Depth"), 1, 65536, 3,
                    _("Depth value"))
 gegl_chant_double (bailout, _("Bailout"), 0.0, G_MAXDOUBLE, G_MAXDOUBLE,
                    _("Bailout length"))
-gegl_chant_string (background, _("Background"), "wrap",
-                   _("Optional parameter to override automatic selection of wrap background. "
-                     "Choices are wrap, black, white and transparent."))
+gegl_chant_enum   (abyss_policy, _("Abyss policy"), GeglAbyssPolicy, gegl_abyss_policy,
+                   GEGL_ABYSS_LOOP, _("How to deal with pixels outside of the input buffer"))
 
 #else
 
@@ -52,14 +51,6 @@ gegl_chant_string (background, _("Background"), "wrap",
 
 #include "gegl-chant.h"
 #include <math.h>
-
-typedef enum
-{
-  BACKGROUND_TYPE_WRAP,
-  BACKGROUND_TYPE_TRANSPARENT,
-  BACKGROUND_TYPE_BLACK,
-  BACKGROUND_TYPE_WHITE
-} BackgroundType;
 
 typedef enum
 {
@@ -113,7 +104,6 @@ fractaltrace (GeglBuffer          *input,
               GeglChantO          *o,
               gint                 y,
               FractalType          fractal_type,
-              BackgroundType       background_type,
               const Babl          *format)
 {
   GeglMatrix2  scale;        /* a matrix indicating scaling factors around the
@@ -141,89 +131,38 @@ fractaltrace (GeglBuffer          *input,
         {
         case FRACTAL_TYPE_JULIA:
 #define gegl_unmap(u,v,ud,vd) {\
-       gdouble rx, ry;\
-       cx = o->X1 + ((u) - picture->x) * scale_x; \
-       cy = o->Y1 + ((v) - picture->y) * scale_y; \
-       julia (cx, cy, o->JX, o->JY, &rx, &ry, o->depth, bailout2);\
-       ud = (rx - o->X1) / scale_x + picture->x;\
-       vd = (ry - o->Y1) / scale_y + picture->y;\
-      }
-      gegl_sampler_compute_scale (scale, x, y);
-      gegl_unmap(x,y,px,py);
+            gdouble rx, ry;                       \
+            cx = o->X1 + ((u) - picture->x) * scale_x;  \
+            cy = o->Y1 + ((v) - picture->y) * scale_y;              \
+            julia (cx, cy, o->JX, o->JY, &rx, &ry, o->depth, bailout2); \
+            ud = (rx - o->X1) / scale_x + picture->x;                   \
+            vd = (ry - o->Y1) / scale_y + picture->y;                   \
+          }
+        gegl_sampler_compute_scale (scale, x, y);
+        gegl_unmap(x,y,px,py);
 #undef gegl_unmap
-          break;
+        break;
 
         case FRACTAL_TYPE_MANDELBROT:
-#define gegl_unmap(u,v,ud,vd) {\
-           gdouble rx, ry;\
-           cx = o->X1 + ((u) - picture->x) * scale_x; \
-           cy = o->Y1 + ((v) - picture->y) * scale_y; \
-           julia (cx, cy, cx, cy, &rx, &ry, o->depth, bailout2);\
-           ud = (rx - o->X1) / scale_x + picture->x;\
-           vd = (ry - o->Y1) / scale_y + picture->y;\
-         }
-      gegl_sampler_compute_scale (scale, x, y);
-      gegl_unmap(x,y,px,py);
+#define gegl_unmap(u,v,ud,vd) {                 \
+            gdouble rx, ry;                                         \
+            cx = o->X1 + ((u) - picture->x) * scale_x;              \
+            cy = o->Y1 + ((v) - picture->y) * scale_y;              \
+            julia (cx, cy, cx, cy, &rx, &ry, o->depth, bailout2);   \
+            ud = (rx - o->X1) / scale_x + picture->x;               \
+            vd = (ry - o->Y1) / scale_y + picture->y;               \
+          }
+        gegl_sampler_compute_scale (scale, x, y);
+        gegl_unmap(x,y,px,py);
 #undef gegl_unmap
-          break;
+        break;
 
         default:
           g_error (_("Unsupported fractal type"));
         }
 
-      if (0 <= px && px < picture->width && 0 <= py && py < picture->height)
-        {
-          gegl_buffer_sample (input, px, py, &scale, dest, format,
-                              GEGL_SAMPLER_LOHALO, GEGL_ABYSS_NONE);
-        }
-      else
-        {
-          switch (background_type)
-            {
-            case BACKGROUND_TYPE_WRAP:
-              px = fmod (px, picture->width);
-              py = fmod (py, picture->height);
-
-              if (px < 0.0)
-                px += picture->width;
-              if (py < 0.0)
-                py += picture->height;
-
-              /* Check for NaN */
-              if (isnan (px))
-                {
-                  if (signbit (px))
-                    px = 0.0;
-                  else
-                    px = picture->width - 1.0;
-                }
-
-              if (isnan (py))
-                {
-                  if (signbit (py))
-                    py = 0.0;
-                  else
-                    py = picture->height - 1.0;
-                }
-
-              gegl_buffer_sample (input, px, py, &scale, dest, format,
-                                  GEGL_SAMPLER_LOHALO, GEGL_ABYSS_NONE);
-              break;
-
-            case BACKGROUND_TYPE_TRANSPARENT:
-              dest[0] = dest[1] = dest[2] = dest[3] = 0.0;
-              break;
-
-            case BACKGROUND_TYPE_BLACK:
-              dest[0] = dest[1] = dest[2] = 0.0;
-              dest[3] = 1.0;
-              break;
-
-            case BACKGROUND_TYPE_WHITE:
-              dest[0] = dest[1] = dest[2] = dest[3] = 1.0;
-              break;
-            }
-        }
+      gegl_buffer_sample (input, px, py, &scale, dest, format,
+                          GEGL_SAMPLER_LOHALO, o->abyss_policy);
 
       for (i = 0; i < 4; i++)
         dst_buf[offset++] = dest[i];
@@ -241,7 +180,6 @@ process (GeglOperation       *operation,
   GeglRectangle  boundary;
   const Babl    *format;
   FractalType    fractal_type;
-  BackgroundType background_type;
   gfloat        *dst_buf;
   gint           y;
 
@@ -254,22 +192,11 @@ process (GeglOperation       *operation,
   else if (!strcmp(o->fractal, "julia"))
     fractal_type = FRACTAL_TYPE_JULIA;
 
-  background_type = BACKGROUND_TYPE_WRAP;
-  if (!strcmp (o->background, "wrap"))
-    background_type = BACKGROUND_TYPE_WRAP;
-  else if (!strcmp (o->background, "transparent"))
-    background_type = BACKGROUND_TYPE_TRANSPARENT;
-  else if (!strcmp (o->background, "black"))
-    background_type = BACKGROUND_TYPE_BLACK;
-  else if (!strcmp (o->background, "white"))
-    background_type = BACKGROUND_TYPE_WHITE;
-
   format = babl_format ("RGBA float");
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
   for (y = result->y; y < result->y + result->height; y++)
-    fractaltrace (input, &boundary, dst_buf, result, o, y,
-                  fractal_type, background_type, format);
+    fractaltrace (input, &boundary, dst_buf, result, o, y, fractal_type, format);
 
   gegl_buffer_set (output, result, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
