@@ -9,9 +9,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-08-31 08:10+0000\n"
-"PO-Revision-Date: 2012-09-10 00:54+0100\n"
-"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
+"POT-Creation-Date: 2012-09-12 18:00+0000\n"
+"PO-Revision-Date: 2012-09-14 21:54+0100\n"
+"Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -350,7 +350,11 @@ msgid "Number of iterations, a higher number of iterations provides less noisy r
 msgstr "Število ponavljanj, višje število ponavljanj ponuja manj šuma v rezultatih ob višjem strošku izračuna"
 
 #: ../operations/common/c2g.c:493
-msgid "Color to grayscale conversion, uses envelopes formed from spatial  color differences to perform color-feature preserving grayscale  spatial contrast enhancement"
+#| msgid ""
+#| "Color to grayscale conversion, uses envelopes formed from spatial  color "
+#| "differences to perform color-feature preserving grayscale  spatial "
+#| "contrast enhancement"
+msgid "Color to grayscale conversion, uses envelopes formed from spatial color differences to perform color-feature preserving grayscale spatial contrast enhancement"
 msgstr "Pretvorba iz sivinske v barvno, uporablja ovojnice iz barvno prostorskih razlik, da izvede izboljšavo sivinsko prostorskega kontrasta z ohranjanjem lastnosti barv"
 
 #: ../operations/common/cartoon.c:25
@@ -1144,8 +1148,11 @@ msgid "Path of file to load."
 msgstr "Pot datoteke, ki jo želite naložiti."
 
 #: ../operations/common/load.c:180
-msgid "Multipurpose file loader, that uses other native handlers, and fallback conversion using image magick's convert."
-msgstr "Večnamenski nalagalnik datotek, ki uporablja druge domorodne ročice in povratno pretvorbo s funkcijo pretvarjanja programa magick."
+#| msgid ""
+#| "Multipurpose file loader, that uses other native handlers, and fallback "
+#| "conversion using image magick's convert."
+msgid "Multipurpose file loader, that uses other native handlers, and fallback conversion using Image Magick's convert."
+msgstr "Večnamenski nalagalnik datotek, ki uporablja druge domorodne ročice in povratno pretvorbo s funkcijo pretvarjanja programa Magick."
 
 #: ../operations/common/magick-load.c:136
 msgid "Image Magick wrapper using the png op."
@@ -1373,7 +1380,6 @@ msgstr "Linearna zabrisanost gibanja"
 
 #: ../operations/common/noise-cielch.c:25
 #: ../operations/common/noise-hsv.c:27
-#| msgid "Hardness"
 msgid "Holdness"
 msgstr "Strnjenost"
 
@@ -1438,7 +1444,8 @@ msgstr "Naključnost (%)"
 #: ../operations/common/noise-hurl.c:32
 #: ../operations/common/noise-pick.c:32
 #: ../operations/common/noise-slur.c:35
-msgid "Radomization"
+#| msgid "Radomization"
+msgid "Randomization"
 msgstr "Naključnost"
 
 #: ../operations/common/noise-hurl.c:34
@@ -1477,7 +1484,7 @@ msgstr "Neodvisni RGB"
 msgid "Distort colors by random amounts."
 msgstr "Popači barve z naključnimi vrednostmi."
 
-#: ../operations/common/noise-slur.c:181
+#: ../operations/common/noise-slur.c:178
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr "Naključno porini nekaj slikovnih točk navzdol (podobno taljenju)"
 
@@ -1680,16 +1687,18 @@ msgid "Chromatic Adaptation"
 msgstr "Kromatična priredba"
 
 #: ../operations/common/reinhard05.c:32
-msgid "Adapation to colour variation across the image"
-msgstr "Prirejanje barvni variaciji po celi sliki"
+#| msgid "Adapation to colour variation across the image"
+msgid "Adaptation to color variation across the image"
+msgstr "Prilagajanje barvni variaciji po celi sliki"
 
 #: ../operations/common/reinhard05.c:33
 msgid "Light Adaptation"
 msgstr "Svetlobna priredba"
 
 #: ../operations/common/reinhard05.c:35
-msgid "Adapation to light variation across the image"
-msgstr "Prirejanje svetlobni variaciji po celi sliki"
+#| msgid "Adapation to light variation across the image"
+msgid "Adaptation to light variation across the image"
+msgstr "Prilagajanje svetlobni variaciji po celi sliki"
 
 #: ../operations/common/reinhard05.c:274
 msgid "Adapt an image, which may have a high dynamic range, for presentation using a low dynamic range. This is an efficient global operator derived from simple physiological observations, producing luminance within the range 0.0-1.0"
@@ -3515,18 +3524,18 @@ msgid "Bailout length"
 msgstr "Dolžina umika"
 
 #: ../operations/workshop/fractal-trace.c:44
-msgid "Background"
-msgstr "Ozadje"
+msgid "Abyss policy"
+msgstr "Politika ponora"
 
 #: ../operations/workshop/fractal-trace.c:45
-msgid "Optional parameter to override automatic selection of wrap background. Choices are wrap, black, white and transparent."
-msgstr "Neobvezni parameter, ki preglasi samodejni izbor ozadja ovijanja. Izbrati je mogoče med wrap (ovij), black (črna), white (bela) in transparent (prosojna)."
+msgid "How to deal with pixels outside of the input buffer"
+msgstr "Kako ravnati s slik. točkami zunaj vstopnega medpomnilnika"
 
-#: ../operations/workshop/fractal-trace.c:171
+#: ../operations/workshop/fractal-trace.c:161
 msgid "Unsupported fractal type"
 msgstr "Nepodprta vrsta fraktala"
 
-#: ../operations/workshop/fractal-trace.c:321
+#: ../operations/workshop/fractal-trace.c:248
 msgid "Performs fractal trace on the image"
 msgstr "Izvede fraktalsko sledenje na sliki"
 
