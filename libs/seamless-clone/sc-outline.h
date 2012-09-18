@@ -1,6 +1,6 @@
 /* This file is an image processing operation for GEGL
  *
- * find-outline.h
+ * sc-outline.h
  * Copyright (C) 2011 Barak Itkin <lightningismyname@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __SEAMLESS_CLONE_FIND_OUTLINE_H__
-#define __SEAMLESS_CLONE_FIND_OUTLINE_H__
+#ifndef __GEGL_SC_OUTLINE_H__
+#define __GEGL_SC_OUTLINE_H__
 
 #include <gegl.h>
 

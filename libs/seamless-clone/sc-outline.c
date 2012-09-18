@@ -1,6 +1,6 @@
 /* This file is an image processing operation for GEGL
  *
- * find-outline.c
+ * sc-outline.c
  * Copyright (C) 2011 Barak Itkin <lightningismyname@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
@@ -40,10 +40,7 @@
  */
 
 #include <gegl.h>
-
-#include "seamless-clone.h"
-#include <poly2tri-c/p2t/poly2tri.h>
-#include <poly2tri-c/refine/refine.h>
+#include "sc-outline.h"
 
 static inline void
 sc_point_copy_to (const ScPoint *src,
@@ -290,7 +287,7 @@ sc_point_cmp (const ScPoint **pt1,
  * Since our scan of the image is by rows (increasing X) and going from
  * top to bottom, this will exactly match the sorting of the array,
  * allowing to check whether a pixel is in the outline in constant
- * time!
+ * (amortized) time!
  */
 gboolean
 sc_outline_check_if_single (const GeglRectangle *search_area,

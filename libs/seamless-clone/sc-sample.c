@@ -23,12 +23,11 @@
  * inner point of the mesh will be defined.
  */
 
-#include <gegl.h>
-#include <stdio.h> /* TODO: get rid of this debugging way! */
-
-#include <poly2tri-c/p2t/poly2tri.h>
+#include <glib.h>
 #include <poly2tri-c/refine/refine.h>
-#include "seamless-clone.h"
+
+#include "sc-outline.h"
+#include "sc-sample.h"
 
 #define g_ptr_array_index_cyclic(array,index_) g_ptr_array_index(array,(index_)%((array)->len))
 
@@ -221,70 +220,3 @@ sc_mesh_sampling_free (ScMeshSampling *self)
   g_hash_table_destroy (real);
 }
 
-/**
- * sc_make_fine_mesh:
- * @outline: An ScOutline object describing the PSLG of the mesh
- * @mesh_bounds: A rectangle in which the bounds of the mesh should be
- *               stored
- */
-P2trMesh*
-sc_make_fine_mesh (ScOutline     *outline,
-                   GeglRectangle *mesh_bounds,
-                   int            max_refine_steps)
-{
-  GPtrArray *realOutline = (GPtrArray*) outline;
-  gint i, N = realOutline->len;
-  gint min_x = G_MAXINT, max_x = -G_MAXINT, min_y = G_MAXINT, max_y = -G_MAXINT;
-
-  /* An array of P2tPoint*, holding the outline points */
-  GPtrArray *mesh_points = g_ptr_array_new ();
-
-  P2tCDT *rough_cdt;
-  P2trCDT *fine_cdt;
-  P2trMesh *result;
-  P2trRefiner *refiner;
-
-  for (i = 0; i < N; i++)
-    {
-      ScPoint *pt = (ScPoint*) g_ptr_array_index (realOutline, i);
-      gdouble realX = pt->x + SC_DIRECTION_XOFFSET (pt->outside_normal, 0.25);
-      gdouble realY = pt->y + SC_DIRECTION_YOFFSET (pt->outside_normal, 0.25);
-
-      min_x = MIN (realX, min_x);
-      min_y = MIN (realY, min_y);
-      max_x = MAX (realX, max_x);
-      max_y = MAX (realY, max_y);
-
-      /* No one should care if the points are given in reverse order,
-       * and prepending to the GList is more efficient */
-      g_ptr_array_add (mesh_points, p2t_point_new_dd (realX, realY));
-    }
-
-  mesh_bounds->x = min_x;
-  mesh_bounds->y = min_y;
-  mesh_bounds->width = max_x + 1 - min_x;
-  mesh_bounds->height = max_y + 1 - min_y;
-
-  rough_cdt = p2t_cdt_new (mesh_points);
-  p2t_cdt_triangulate (rough_cdt);
-  fine_cdt = p2tr_cdt_new (rough_cdt);
-  /* We no longer need the rough CDT */
-  p2t_cdt_free (rough_cdt);
-
-  refiner = p2tr_refiner_new (G_PI / 6, p2tr_refiner_false_too_big, fine_cdt);
-  p2tr_refiner_refine (refiner, max_refine_steps, NULL);
-  p2tr_refiner_free (refiner);
-
-  p2tr_mesh_ref (result = fine_cdt->mesh);
-
-  p2tr_cdt_free_full (fine_cdt, FALSE);
-
-  for (i = 0; i < N; i++)
-    {
-      p2t_point_free ((P2tPoint*) g_ptr_array_index (mesh_points, i));
-    }
-
-  g_ptr_array_free (mesh_points, TRUE);
-
-  return result;
-}
