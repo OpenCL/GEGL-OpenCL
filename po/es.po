@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-09-12 09:16+0000\n"
-"PO-Revision-Date: 2012-09-12 12:54+0200\n"
+"POT-Creation-Date: 2012-09-12 18:00+0000\n"
+"PO-Revision-Date: 2012-09-18 16:32+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -1712,7 +1712,6 @@ msgid "Chromatic Adaptation"
 msgstr "Adaptación cromática"
 
 #: ../operations/common/reinhard05.c:32
-#| msgid "Adapation to color variation across the image"
 msgid "Adaptation to color variation across the image"
 msgstr "Adaptación a la variación del color a través de la imagen"
 
@@ -1721,7 +1720,6 @@ msgid "Light Adaptation"
 msgstr "Adaptación a la luz"
 
 #: ../operations/common/reinhard05.c:35
-#| msgid "Adapation to light variation across the image"
 msgid "Adaptation to light variation across the image"
 msgstr "Adaptación a la variación de luz a través de la imagen"
 
@@ -3735,22 +3733,18 @@ msgid "Bailout length"
 msgstr "Longitud del rescate"
 
 #: ../operations/workshop/fractal-trace.c:44
-msgid "Background"
-msgstr "Fondo"
+msgid "Abyss policy"
+msgstr "Política del abismo"
 
 #: ../operations/workshop/fractal-trace.c:45
-msgid ""
-"Optional parameter to override automatic selection of wrap background. "
-"Choices are wrap, black, white and transparent."
-msgstr ""
-"Parámetro opcional para sobreescribir la selección automática del ajuste del "
-"plano de fondo. Se puede elegir entre ajustar, negro, blanco y transparente."
+msgid "How to deal with pixels outside of the input buffer"
+msgstr "Como trabajar con píxeles fuera del búfer de entrada"
 
-#: ../operations/workshop/fractal-trace.c:171
+#: ../operations/workshop/fractal-trace.c:161
 msgid "Unsupported fractal type"
 msgstr "Tipo de fractal no soportado"
 
-#: ../operations/workshop/fractal-trace.c:321
+#: ../operations/workshop/fractal-trace.c:248
 msgid "Performs fractal trace on the image"
 msgstr "Efectúa una traza fractal sobre la imagen"
 
@@ -3996,6 +3990,17 @@ msgstr ""
 #: ../operations/workshop/whirl-pinch.c:258
 msgid "Applies whirling and pinching on the image"
 msgstr "Aplica un arremolinado y pellizcado a la imagen"
+
+#~ msgid "Background"
+#~ msgstr "Fondo"
+
+#~ msgid ""
+#~ "Optional parameter to override automatic selection of wrap background. "
+#~ "Choices are wrap, black, white and transparent."
+#~ msgstr ""
+#~ "Parámetro opcional para sobreescribir la selección automática del ajuste "
+#~ "del plano de fondo. Se puede elegir entre ajustar, negro, blanco y "
+#~ "transparente."
 
 #~ msgid "Global colour saturation factor"
 #~ msgstr "Factor global de saturación de color"
