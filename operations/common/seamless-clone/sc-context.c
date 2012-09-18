@@ -17,26 +17,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "seamless-clone-common.h"
-#include "make-mesh.h"
+#include <gegl.h>
 #include <gegl-utils.h>
+#include <poly2tri-c/refine/refine.h>
+#include <poly2tri-c/render/mesh-render.h>
 
-static ScOutline*  sc_context_create_outline (GeglBuffer          *input,
-                                              const GeglRectangle *roi,
-                                              gdouble              threshold,
-                                              ScCreationError     *error)
+#include "sc-context.h"
+#include "sc-context-private.h"
+#include "sc-common.h"
+#include "sc-sample.h"
 
-static P2trMesh*   sc_make_fine_mesh         (ScOutline           *outline,
-                                              GeglRectangle       *mesh_bounds,
-                                              int                  max_refine_steps);
+static ScOutline*  sc_context_create_outline             (GeglBuffer          *input,
+                                                          const GeglRectangle *roi,
+                                                          gdouble              threshold,
+                                                          ScCreationError     *error);
 
-static GeglBuffer* sc_compute_uvt_cache      (P2trMesh            *mesh,
-                                              const GeglRectangle *area);
+static P2trMesh*   sc_make_fine_mesh                     (ScOutline           *outline,
+                                                          GeglRectangle       *mesh_bounds,
+                                                          int                  max_refine_steps);
 
+static gboolean    sc_context_render_cache_pt2col_update (ScContext           *context);
 
-static gboolean sc_context_render_cache_pt2col_update (ScContext *context);
+static gboolean    sc_context_sample_point               (ScRenderInfo        *info,
+                                                          ScSampleList        *sl,
+                                                          P2trPoint           *point,
+                                                          ScColor             *dest);
 
-static void     sc_context_render_cache_pt2col_free   (ScContext *context);
+static void        sc_context_render_cache_pt2col_free   (ScContext           *context);
+
+static GeglBuffer* sc_compute_uvt_cache                  (P2trMesh            *mesh,
+                                                          const GeglRectangle *area);
+
+static void        sc_point_to_color_func                (P2trPoint           *point,
+                                                          gfloat              *dest,
+                                                          gpointer             pt2col_p);
+
+static void        sc_context_render_cache_free          (ScContext           *context);
 
 ScContext*
 sc_context_new (GeglBuffer          *input,
@@ -60,7 +76,7 @@ sc_context_new (GeglBuffer          *input,
   self->mesh         = sc_make_fine_mesh (self->outline,
                                           &self->mesh_bounds,
                                           5 * outline_length);
-  self->samplig      = sc_mesh_sampling_compute (self->outline,
+  self->sampling     = sc_mesh_sampling_compute (self->outline,
                                                  self->mesh);
   self->cache_uvt    = FALSE;
   self->uvt          = NULL;
@@ -69,7 +85,7 @@ sc_context_new (GeglBuffer          *input,
   return self;
 }
 
-static ScContext*
+static ScOutline*
 sc_context_create_outline (GeglBuffer          *input,
                            const GeglRectangle *roi,
                            gdouble              threshold,
@@ -95,7 +111,7 @@ sc_context_create_outline (GeglBuffer          *input,
       *error = SC_CREATION_ERROR_TOO_SMALL;
     }
   else if (ignored_islands ||
-           ! sc_outline_check_if_single (extents, fg, result->outline))
+           ! sc_outline_check_if_single (roi, input, outline))
     {
       *error = SC_CREATION_ERROR_HOLED_OR_SPLIT;
     }
@@ -192,7 +208,7 @@ sc_context_prepare_render (ScContext    *context,
     return FALSE;
 
   if (context->cache_uvt && context->uvt == NULL)
-    context->uvt = sc_compute_uvt_cache (context->mesh, info->fg_rect);
+    context->uvt = sc_compute_uvt_cache (context->mesh, &info->fg_rect);
 
   context->render_cache->is_valid = TRUE;
 
@@ -247,9 +263,9 @@ sc_context_render_cache_pt2col_update (ScContext *context)
     {
       /* See if we have a pt2col entry for this point? */
       if (! g_hash_table_lookup_extended (pt2col, pt, NULL,
-                                          &color_current))
+                                          (gpointer*) &color_current))
         {
-          color_current = g_slice_new (ScColor);
+          color_current = sc_color_new ();
           g_hash_table_insert (pt2col,
                                p2tr_point_ref (pt),
                                color_current);
@@ -264,8 +280,11 @@ sc_context_render_cache_pt2col_update (ScContext *context)
        * after allocating/reffing but before inserting, we would have a
        * memory leak!
        */
-      if (! sc_context_sample_point (sl, info, pt, color_current))
-        return FALSE;
+      if (! sc_context_sample_point (context->render_cache->info, sl,
+                                     pt, color_current))
+        {
+          return FALSE;
+        }
     }
 
   /* Now, lets see if there were any additional points in the mapping, that
@@ -281,7 +300,7 @@ sc_context_render_cache_pt2col_update (ScContext *context)
           /* See if we have a sampling entry for this point? */
           if (! g_hash_table_lookup_extended (context->sampling, pt, NULL, NULL))
             {
-              g_slice_free (ScColor, color_current);
+              sc_color_free (color_current);
               g_hash_table_iter_remove (&iter);
               p2tr_point_unref (pt);
             }
@@ -348,32 +367,40 @@ sc_context_sample_point (ScRenderInfo *info,
 
 #undef sc_rect_contains
 
-      gegl_buffer_sample (cci->fg,
+      gegl_buffer_sample (info->fg,
                           pt->x, pt->y,
                           NULL, fg_c, format,
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
       /* Sample the BG with the offset */
-      gegl_buffer_sample (cci->bg,
+      gegl_buffer_sample (info->bg,
                           pt->x + info->xoff, pt->y + info->yoff,
-                          NULL, input_c, format,
+                          NULL, bg_c, format,
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
-#define sc_color_expr(I)  dest_c[I] += weight * (input_c[I] - aux_c[I]) 
+#define sc_color_expr(I)  dest_c[I] += weight * (bg_c[I] - fg_c[I]) 
       sc_color_process();
 #undef  sc_color_expr
       weightT += weight;
     }
 
+  if (weightT == 0)
+    return FALSE;
+
 #define sc_color_expr(I)  dest[I] = dest_c[I] / weightT
   sc_color_process();
 #undef  sc_color_expr
   dest[SC_COLOR_ALPHA_INDEX] = 1;
+  return TRUE;
 }
 
 static void
 sc_context_render_cache_pt2col_free (ScContext *context)
 {
+  GHashTableIter iter;
+  ScColor       *color_current = NULL;
+  P2trPoint     *pt            = NULL;
+
   if (context->render_cache->pt2col == NULL)
     return;
 
@@ -382,14 +409,14 @@ sc_context_render_cache_pt2col_free (ScContext *context)
                                 (gpointer*) &pt,
                                 (gpointer*) &color_current))
     {
-      g_slice_free (ScColor, color_current);
+      sc_color_free (color_current);
       g_hash_table_iter_remove (&iter);
       p2tr_point_unref (pt);
     }
 
   g_hash_table_destroy (context->render_cache->pt2col);
 
-  context->pt2col = NULL;
+  context->render_cache->pt2col = NULL;
 }
 
 static GeglBuffer*
@@ -437,7 +464,7 @@ sc_context_set_uvt_cache (ScContext *context,
     }
 }
 
-void
+gboolean
 sc_context_render (ScContext           *context,
                    const GeglRectangle *part_rect,
                    GeglBuffer          *part)
@@ -513,8 +540,8 @@ sc_context_render (ScContext           *context,
   out_index = 0;
   
   gegl_rectangle_set (&to_render_fg,
-      to_render.x - fg_xoff, to_render.y - fg_yoff,
-      to_render.width,       to_render.height);
+      to_render.x - xoff, to_render.y - yoff,
+      to_render.width,    to_render.height);
 
   if (context->uvt)
     {
@@ -600,7 +627,7 @@ sc_point_to_color_func (P2trPoint *point,
                         gpointer   pt2col_p)
 {
   GHashTable *pt2col  = (GHashTable*) pt2col_p;
-  gfloat     *col_cpy = g_hash_table_lookup (cci->pt2col, point);
+  ScColor    *col_cpy = g_hash_table_lookup (pt2col, point);
   guint       i;
 
   g_assert (col_cpy != NULL);
@@ -621,7 +648,7 @@ sc_context_render_cache_free (ScContext *context)
 }
 
 void
-sc_context_free (ScCotnext *context)
+sc_context_free (ScContext *context)
 {
   if (context->render_cache)
     sc_context_render_cache_free (context);

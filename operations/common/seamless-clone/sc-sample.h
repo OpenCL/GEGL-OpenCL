@@ -21,7 +21,7 @@
 #define __GEGL_SC_SAMPLE_H__
 
 #include <glib.h>
-#include <poly2tri/refine/refine.h>
+#include <poly2tri-c/refine/refine.h>
 
 #include "sc-outline.h"
 

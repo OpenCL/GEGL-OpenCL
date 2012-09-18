@@ -91,7 +91,7 @@ void       sc_context_set_uvt_cache  (ScContext           *context,
  * cloning composition. This call must be preceeded by a call to
  * the prepare function.
  */
-void       sc_context_render         (ScContext           *context,
+gboolean   sc_context_render         (ScContext           *context,
                                       const GeglRectangle *part_rect,
                                       GeglBuffer          *part);
 

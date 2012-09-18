@@ -4,12 +4,17 @@ AM_LDFLAGS += $(op_libs) $(P2TC_LIBS)
 AM_CFLAGS  += $(op_cflags) $(P2TC_CFLAGS)
 
 sc_common_files =		\
- 	make-mesh.c		\
-	make-mesh.h		\
-	find-outline.c		\
-	find-outline.h		\
-	seamless-clone-common.c	\
-	seamless-clone-common.h
+	sc-common.h		\
+	sc-context.c		\
+	sc-context.h		\
+	sc-context-private.h	\
+	sc-outline.c		\
+	sc-outline.h		\
+	sc-sample.c		\
+	sc-sample.h
+
+noinst_LTLIBRARIES = libsc.la
+libsc_la_SOURCES = $(sc_common_files)
 
 seamless_clone_la_SOURCES = seamless-clone.c $(sc_common_files)
 seamless_clone_render_la_SOURCES = seamless-clone-render.c $(sc_common_files)

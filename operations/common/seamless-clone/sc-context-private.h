@@ -20,6 +20,13 @@
 #ifndef __GEGL_SC_CONTEXT_PRIVATE_H__
 #define __GEGL_SC_CONTEXT_PRIVATE_H__
 
+#include <gegl.h>
+#include <poly2tri-c/refine/refine.h>
+
+#include "sc-outline.h"
+#include "sc-context.h"
+#include "sc-sample.h"
+
 typedef struct
 {
   GHashTable     *pt2col;
@@ -27,7 +34,7 @@ typedef struct
   gboolean        is_valid;
 } ScRenderCache;
 
-struct ScContext_
+struct _ScContext
 {
   ScOutline      *outline;
   GeglRectangle   mesh_bounds;
