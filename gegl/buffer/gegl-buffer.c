@@ -562,25 +562,25 @@ gegl_buffer_constructor (GType                  type,
        */
       if (buffer->backend)
         {
-          void             *storage;
+          void *storage;
 
           storage = gegl_tile_storage_new (buffer->backend);
 
           source = g_object_new (GEGL_TYPE_BUFFER, "source", storage, NULL);
-
           g_object_unref (storage);
 
           gegl_tile_handler_set_source ((GeglTileHandler*)(buffer), source);
           g_object_unref (source);
 
           g_signal_connect (storage, "changed",
-                            G_CALLBACK(gegl_buffer_storage_changed), buffer);
+                            G_CALLBACK (gegl_buffer_storage_changed),
+                            buffer);
 
           g_assert (source);
           backend = gegl_buffer_backend (GEGL_BUFFER (source));
           g_assert (backend);
-	        g_assert (backend == buffer->backend);
-	      }
+          g_assert (backend == buffer->backend);
+        }
       else if (buffer->path && g_str_equal (buffer->path, "RAM"))
         {
           source = GEGL_TILE_SOURCE (gegl_buffer_new_from_format (buffer->format,
@@ -611,9 +611,12 @@ gegl_buffer_constructor (GType                  type,
                                   "format", buffer->format?buffer->format:babl_format ("RGBA float"),
                                   "path", buffer->path,
                                   NULL);
+
           storage = gegl_tile_storage_new (backend);
+          g_object_unref (backend);
 
           source = g_object_new (GEGL_TYPE_BUFFER, "source", storage, NULL);
+          g_object_unref (storage);
 
           /* after construction,. x and y should be set to reflect
            * the top level behavior exhibited by this buffer object.
@@ -622,7 +625,8 @@ gegl_buffer_constructor (GType                  type,
           g_object_unref (source);
 
           g_signal_connect (storage, "changed",
-                            G_CALLBACK(gegl_buffer_storage_changed), buffer);
+                            G_CALLBACK (gegl_buffer_storage_changed),
+                            buffer);
 
           g_assert (source);
           backend = gegl_buffer_backend (GEGL_BUFFER (source));
@@ -1267,6 +1271,7 @@ gegl_tile_storage_new_cached (gint tile_width, gint tile_height,
                                   "format", babl_fmt,
                                   NULL);
           storage = gegl_tile_storage_new (backend);
+          g_object_unref (backend);
         }
       else
         {
@@ -1296,6 +1301,7 @@ gegl_tile_storage_new_cached (gint tile_width, gint tile_height,
                                   "path", path,
                                   NULL);
           storage = gegl_tile_storage_new (backend);
+          g_object_unref (backend);
           g_free (path);
         }
       item->storage = storage;
