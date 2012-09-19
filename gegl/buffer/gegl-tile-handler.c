@@ -49,11 +49,9 @@ gegl_tile_handler_dispose (GObject *object)
 {
   GeglTileHandler *handler = GEGL_TILE_HANDLER (object);
 
-  if (handler->source != NULL)
+  if (handler->source)
     {
-      if (!(GEGL_IS_TILE_STORAGE (handler->source) &&
-	    gegl_tile_storage_cached_release ((void*)handler->source)))
-        g_object_unref (handler->source);
+      g_object_unref (handler->source);
       handler->source = NULL;
     }
 
