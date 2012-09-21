@@ -908,7 +908,12 @@ gegl_tile_backend_file_finalize (GObject *object)
   GeglTileBackendFile *self = (GeglTileBackendFile *) object;
 
   if (self->index)
-    g_hash_table_unref (self->index);
+    {
+      if (g_hash_table_size (self->index) > 0)
+        g_warning ("leaking all entries in GeglTileBackendFile->index");
+
+      g_hash_table_unref (self->index);
+    }
 
   if (self->exist)
     {
@@ -935,6 +940,9 @@ gegl_tile_backend_file_finalize (GObject *object)
 
   if (self->file)
     g_object_unref (self->file);
+
+  if (self->cond)
+    g_cond_free (self->cond);
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
