@@ -157,7 +157,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
       "name",       "gegl:noise-CIE_lch",
       "categories", "noise",
-      "description", _("Randomize lightness/chroma/hue independently"),
+      "description", _("Randomize lightness, chroma and hue independently"),
       NULL);
 }
 

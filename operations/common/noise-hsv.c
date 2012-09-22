@@ -161,7 +161,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
       "name",       "gegl:noise-hsv",
       "categories", "noise",
-      "description", _("Randomize hue/saturation/value independently"),
+      "description", _("Randomize hue, saturation and value independently"),
       NULL);
 }
 
