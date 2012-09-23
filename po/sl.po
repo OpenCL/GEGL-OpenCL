@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-09-12 18:00+0000\n"
-"PO-Revision-Date: 2012-09-14 21:54+0100\n"
+"POT-Creation-Date: 2012-09-22 23:20+0000\n"
+"PO-Revision-Date: 2012-09-23 10:02+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
@@ -350,10 +350,6 @@ msgid "Number of iterations, a higher number of iterations provides less noisy r
 msgstr "Število ponavljanj, višje število ponavljanj ponuja manj šuma v rezultatih ob višjem strošku izračuna"
 
 #: ../operations/common/c2g.c:493
-#| msgid ""
-#| "Color to grayscale conversion, uses envelopes formed from spatial  color "
-#| "differences to perform color-feature preserving grayscale  spatial "
-#| "contrast enhancement"
 msgid "Color to grayscale conversion, uses envelopes formed from spatial color differences to perform color-feature preserving grayscale spatial contrast enhancement"
 msgstr "Pretvorba iz sivinske v barvno, uporablja ovojnice iz barvno prostorskih razlik, da izvede izboljšavo sivinsko prostorskega kontrasta z ohranjanjem lastnosti barv"
 
@@ -1148,9 +1144,6 @@ msgid "Path of file to load."
 msgstr "Pot datoteke, ki jo želite naložiti."
 
 #: ../operations/common/load.c:180
-#| msgid ""
-#| "Multipurpose file loader, that uses other native handlers, and fallback "
-#| "conversion using image magick's convert."
 msgid "Multipurpose file loader, that uses other native handlers, and fallback conversion using Image Magick's convert."
 msgstr "Večnamenski nalagalnik datotek, ki uporablja druge domorodne ročice in povratno pretvorbo s funkcijo pretvarjanja programa Magick."
 
@@ -1398,8 +1391,9 @@ msgid "Hue"
 msgstr "Obarvanost"
 
 #: ../operations/common/noise-cielch.c:160
-msgid "Randomize lightness/chroma/hue independently"
-msgstr "Neodvisna naključnost svetlosti/krome/obarvanosti"
+#| msgid "Randomize lightness/chroma/hue independently"
+msgid "Randomize lightness, chroma and hue independently"
+msgstr "Neodvisna naključnost svetlosti, krome in obarvanosti"
 
 #: ../operations/common/noise-hsv.c:33
 #: ../operations/common/weighted-blend.c:25
@@ -1412,8 +1406,9 @@ msgid "Value"
 msgstr "Vrednost"
 
 #: ../operations/common/noise-hsv.c:164
-msgid "Randomize hue/saturation/value independently"
-msgstr "Neodvisna naključnost obarvanosti/nasičenosti/vrednosti"
+#| msgid "Randomize hue/saturation/value independently"
+msgid "Randomize hue, saturation and value independently"
+msgstr "Neodvisna naključnost obarvanosti, nasičenosti in vrednosti"
 
 #: ../operations/common/noise-hurl.c:30
 #: ../operations/common/noise-pick.c:30
@@ -1444,7 +1439,6 @@ msgstr "Naključnost (%)"
 #: ../operations/common/noise-hurl.c:32
 #: ../operations/common/noise-pick.c:32
 #: ../operations/common/noise-slur.c:35
-#| msgid "Radomization"
 msgid "Randomization"
 msgstr "Naključnost"
 
@@ -1687,7 +1681,6 @@ msgid "Chromatic Adaptation"
 msgstr "Kromatična priredba"
 
 #: ../operations/common/reinhard05.c:32
-#| msgid "Adapation to colour variation across the image"
 msgid "Adaptation to color variation across the image"
 msgstr "Prilagajanje barvni variaciji po celi sliki"
 
@@ -1696,7 +1689,6 @@ msgid "Light Adaptation"
 msgstr "Svetlobna priredba"
 
 #: ../operations/common/reinhard05.c:35
-#| msgid "Adapation to light variation across the image"
 msgid "Adaptation to light variation across the image"
 msgstr "Prilagajanje svetlobni variaciji po celi sliki"
 
