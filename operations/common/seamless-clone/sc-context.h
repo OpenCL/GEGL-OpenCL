@@ -64,6 +64,12 @@ ScContext* sc_context_new            (GeglBuffer          *input,
                                       gdouble              threshold,
                                       ScCreationError     *error);
 
+gboolean   sc_context_update         (ScContext           *self,
+                                      GeglBuffer          *input,
+                                      const GeglRectangle *roi,
+                                      gdouble              threshold,
+                                      ScCreationError     *error);
+
 /**
  * Do the necessary caching so that rendering can happen. This function
  * is not thread-safe, and must be called before each call to the
@@ -73,8 +79,8 @@ ScContext* sc_context_new            (GeglBuffer          *input,
  * BEHAVIOUR IS THAT THE FOREGROUND DOES NOT OVERLAP ENOUGH THE
  * BACKGROUND!
  */
-gboolean       sc_context_prepare_render (ScContext       *context,
-                                          ScRenderInfo    *info);
+gboolean   sc_context_prepare_render (ScContext           *context,
+                                      ScRenderInfo        *info);
 
 /**
  * Specifies whether the triangle containing each pixel, along with the
@@ -92,6 +98,7 @@ void       sc_context_set_uvt_cache  (ScContext           *context,
  * the prepare function.
  */
 gboolean   sc_context_render         (ScContext           *context,
+                                      ScRenderInfo        *info,
                                       const GeglRectangle *part_rect,
                                       GeglBuffer          *part);
 

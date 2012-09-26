@@ -30,7 +30,6 @@
 typedef struct
 {
   GHashTable     *pt2col;
-  ScRenderInfo   *info;
   gboolean        is_valid;
 } ScRenderCache;
 

@@ -358,6 +358,31 @@ sc_outline_length (ScOutline *self)
   return ((GPtrArray*) self)->len;
 }
 
+gboolean
+sc_outline_equals (ScOutline *a,
+                   ScOutline *b)
+{
+  if (a == b) /* Includes the case were both are NULL */
+    return TRUE;
+  else if ((a == NULL) != (b == NULL))
+    return FALSE;
+  else if (sc_outline_length (a) != sc_outline_length (b))
+    return FALSE;
+  else
+    {
+      guint n = sc_outline_length (a);
+      guint i;
+      for (i = 0; i < n; i++)
+        {
+          const ScPoint *pA = (ScPoint*) g_ptr_array_index (a, i);
+          const ScPoint *pB = (ScPoint*) g_ptr_array_index (b, i);
+          if (sc_point_cmp (&pA, &pB) != 0)
+            return FALSE;
+        }
+      return TRUE;
+    }
+}
+
 void
 sc_outline_free (ScOutline *self)
 {

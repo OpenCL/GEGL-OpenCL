@@ -114,8 +114,11 @@ gboolean   sc_outline_check_if_single (const GeglRectangle *search_area,
                                        GeglBuffer          *buffer,
                                        ScOutline           *existing);
 
-guint      sc_outline_length          (ScOutline *self);
+guint      sc_outline_length          (ScOutline           *self);
 
-void       sc_outline_free            (ScOutline *self);
+gboolean   sc_outline_equals          (ScOutline           *a,
+                                       ScOutline           *b);
+
+void       sc_outline_free            (ScOutline           *self);
 
 #endif

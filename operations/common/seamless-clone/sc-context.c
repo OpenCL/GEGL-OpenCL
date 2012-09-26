@@ -36,7 +36,11 @@ static P2trMesh*   sc_make_fine_mesh                     (ScOutline           *o
                                                           GeglRectangle       *mesh_bounds,
                                                           int                  max_refine_steps);
 
-static gboolean    sc_context_render_cache_pt2col_update (ScContext           *context);
+static void        sc_context_update_from_outline        (ScContext           *self,
+                                                          ScOutline           *outline);
+
+static gboolean    sc_context_render_cache_pt2col_update (ScContext           *context,
+                                                          ScRenderInfo        *info);
 
 static gboolean    sc_context_sample_point               (ScRenderInfo        *info,
                                                           ScSampleList        *sl,
@@ -61,7 +65,6 @@ sc_context_new (GeglBuffer          *input,
                 ScCreationError     *error)
 {
   ScOutline *outline;
-  guint      outline_length;
   ScContext *self;
 
   outline = sc_context_create_outline (input, roi, threshold, error);
@@ -69,20 +72,43 @@ sc_context_new (GeglBuffer          *input,
   if (outline == NULL)
     return NULL;
 
-  self           = g_slice_new (ScContext);
-  outline_length = sc_outline_length (outline);
-
-  self->outline      = outline;
-  self->mesh         = sc_make_fine_mesh (self->outline,
-                                          &self->mesh_bounds,
-                                          5 * outline_length);
-  self->sampling     = sc_mesh_sampling_compute (self->outline,
-                                                 self->mesh);
+  self               = g_slice_new (ScContext);
+  self->outline      = NULL;
+  self->mesh         = NULL;
+  self->sampling     = NULL;
   self->cache_uvt    = FALSE;
   self->uvt          = NULL;
   self->render_cache = NULL;
 
+  sc_context_update_from_outline (self, outline);
+
   return self;
+}
+
+gboolean
+sc_context_update (ScContext           *self,
+                   GeglBuffer          *input,
+                   const GeglRectangle *roi,
+                   gdouble              threshold,
+                   ScCreationError     *error)
+{
+  ScOutline *outline = sc_context_create_outline (input, roi,
+                                                  threshold, error);
+
+  if (outline == NULL)
+    {
+      return FALSE;
+    }
+  else if (sc_outline_equals (outline, self->outline))
+    {
+      sc_outline_free (outline);
+      return TRUE;
+    }
+  else
+    {
+      sc_context_update_from_outline (self, outline);
+      return TRUE;
+    }
 }
 
 static ScOutline*
@@ -124,6 +150,56 @@ sc_context_create_outline (GeglBuffer          *input,
 
   return outline;
 }
+
+
+static void
+sc_context_update_from_outline (ScContext *self,
+                                ScOutline *outline)
+{
+  guint outline_length;
+
+  if (outline == self->outline)
+    return;
+
+  if (self->render_cache != NULL)
+    {
+      sc_context_render_cache_free (self);
+    }
+
+  if (self->uvt != NULL)
+    {
+      g_object_unref (self->uvt);
+      self->uvt = NULL;
+    }
+
+  if (self->sampling != NULL)
+    {
+      sc_mesh_sampling_free (self->sampling);
+      self->sampling = NULL;
+    }
+
+  if (self->mesh != NULL)
+    {
+      p2tr_mesh_unref (self->mesh);
+      self->mesh = NULL;
+    }
+
+  if (self->outline != NULL)
+    {
+      sc_outline_free (self->outline);
+      self->outline = NULL;
+    }
+
+  outline_length = sc_outline_length (outline);
+
+  self->outline  = outline;
+  self->mesh     = sc_make_fine_mesh (self->outline,
+                                      &self->mesh_bounds,
+                                      5 * outline_length);
+  self->sampling = sc_mesh_sampling_compute (self->outline,
+                                             self->mesh);
+}
+
 
 /**
  * sc_make_fine_mesh:
@@ -202,9 +278,7 @@ sc_context_prepare_render (ScContext    *context,
 
   context->render_cache->is_valid = FALSE;
 
-  context->render_cache->info = info;
-
-  if (! sc_context_render_cache_pt2col_update (context))
+  if (! sc_context_render_cache_pt2col_update (context, info))
     return FALSE;
 
   if (context->cache_uvt && context->uvt == NULL)
@@ -224,7 +298,8 @@ sc_context_prepare_render (ScContext    *context,
  * RENDERING PROCESS!
  */
 static gboolean
-sc_context_render_cache_pt2col_update (ScContext *context)
+sc_context_render_cache_pt2col_update (ScContext    *context,
+                                       ScRenderInfo *info)
 {
   GHashTableIter iter;
 
@@ -280,8 +355,7 @@ sc_context_render_cache_pt2col_update (ScContext *context)
        * after allocating/reffing but before inserting, we would have a
        * memory leak!
        */
-      if (! sc_context_sample_point (context->render_cache->info, sl,
-                                     pt, color_current))
+      if (! sc_context_sample_point (info, sl, pt, color_current))
         {
           return FALSE;
         }
@@ -454,7 +528,7 @@ sc_compute_uvt_cache (P2trMesh            *mesh,
 
 void
 sc_context_set_uvt_cache (ScContext *context,
-                          gboolean   enabled)
+                          gboolean  enabled)
 {
   context->cache_uvt = enabled;
   if (! enabled && context->uvt != NULL)
@@ -466,6 +540,7 @@ sc_context_set_uvt_cache (ScContext *context,
 
 gboolean
 sc_context_render (ScContext           *context,
+                   ScRenderInfo        *info,
                    const GeglRectangle *part_rect,
                    GeglBuffer          *part)
 {
@@ -499,7 +574,7 @@ sc_context_render (ScContext           *context,
       return TRUE;
     }
 
-  if (! gegl_rectangle_contains (&context->render_cache->info->fg_rect,
+  if (! gegl_rectangle_contains (&info->fg_rect,
                                  &context->mesh_bounds))
     {
       g_warning ("The mesh from the preprocessing is not inside the "
@@ -507,8 +582,8 @@ sc_context_render (ScContext           *context,
       return FALSE;
     }
 
-  xoff = context->render_cache->info->xoff;
-  yoff = context->render_cache->info->yoff;
+  xoff = info->xoff;
+  yoff = info->yoff;
 
   /* The real rectangle of the foreground that we should render is
    * defined by the bounds of the mesh plus the given offset */
@@ -559,7 +634,7 @@ sc_context_render (ScContext           *context,
     }
 
   fg_index  = gegl_buffer_iterator_add (iter,
-                                        context->render_cache->info->fg,
+                                        info->fg,
                                         &to_render_fg,
                                         0,
                                         format,
