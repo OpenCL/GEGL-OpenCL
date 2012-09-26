@@ -37,18 +37,15 @@ gegl_chant_string (error_msg, _("Error message"), NULL, _("An error message in c
 #include <glib/gi18n-lib.h>
 #include "gegl-chant.h"
 
-#include <stdio.h> /* TODO: get rid of this debugging way! */
-
-#include <poly2tri-c/p2t/poly2tri.h>
-#include <poly2tri-c/refine/refine.h>
-#include <poly2tri-c/render/mesh-render.h>
-#include "seamless-clone-common.h"
+#include "sc-context.h"
+#include "sc-common.h"
 
 typedef struct SCProps_
 {
-  GMutex *mutex;
-  GeglBuffer *aux;
-  ScCache *preprocess;
+  GMutex     mutex;
+  gboolean   first_processing;
+  gboolean   is_valid;
+  ScContext *context;
 } SCProps;
 
 static GeglRectangle
@@ -74,18 +71,23 @@ get_required_for_output (GeglOperation       *operation,
   return result;
 }
 
+/* The prepare function is called at least once before every processing.
+ * So, this is the right place to mark a flag to indicate the first
+ * processing so that the context object will be updated
+ */
 static void
 prepare (GeglOperation *operation)
 {
-  const Babl *format = babl_format ("R'G'B'A float");
+  const Babl *format = babl_format (SC_COLOR_BABL_NAME);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   if (o->chant_data == NULL)
     {
       SCProps *props = g_slice_new (SCProps);
-      props->mutex = g_mutex_new ();
-      props->aux = NULL;
-      props->preprocess = NULL;
+      g_mutex_init (&props->mutex);
+      props->first_processing = TRUE;
+      props->is_valid = FALSE;
+      props->context = NULL;
       o->chant_data = props;
     }
   gegl_operation_set_format (operation, "input",  format);
@@ -100,10 +102,10 @@ static void finalize (GObject *object)
   if (o->chant_data)
     {
       SCProps *props = (SCProps*) o->chant_data;
-      g_mutex_free (props->mutex);
-      props->aux = NULL;
-      if (props->preprocess)
-        sc_cache_free (props->preprocess);
+      g_mutex_clear (&props->mutex);
+      if (props->context)
+        sc_context_free (props->context);
+      g_slice_free (SCProps, props);
       o->chant_data = NULL;
     }
   G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
@@ -120,41 +122,64 @@ process (GeglOperation       *operation,
   gboolean  return_val;
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   SCProps *props;
+  ScCreationError error;
+  ScRenderInfo info;
 
   g_assert (o->chant_data != NULL);
 
-  props = (SCProps*) o->chant_data;
-  g_mutex_lock (props->mutex);
-  if (props->aux != aux)
-    {
-      if (props->preprocess)
-        sc_cache_free (props->preprocess);
+  info.bg = input;
+  info.bg_rect = *gegl_operation_source_get_bounding_box (operation, "input");
+  info.fg = aux;
+  info.fg_rect = *gegl_operation_source_get_bounding_box (operation, "aux");
+  info.xoff = o->xoff;
+  info.yoff = o->yoff;
+  info.render_bg = FALSE;
 
-      props->aux = aux;
-      props->preprocess = sc_generate_cache (aux, gegl_operation_source_get_bounding_box (operation, "aux"), o -> max_refine_steps);
-      switch (props->preprocess->error)
+  props = (SCProps*) o->chant_data;
+
+  g_mutex_lock (&props->mutex);
+  if (props->first_processing)
+    {
+      if (props->context == NULL)
+        props->context = sc_context_new (aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
+      else
+        sc_context_update (props->context, aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
+
+      switch (error)
         {
-          case SC_ERROR_NONE:
+          case SC_CREATION_ERROR_NONE:
             o->error_msg = NULL;
+            props->is_valid = TRUE;
             break;
-          case SC_ERROR_NO_PASTE:
-            o->error_msg = _("The paste does not contain opaque parts");
+          case SC_CREATION_ERROR_EMPTY:
+            o->error_msg = _("The foreground does not contain opaque parts");
             break;
-          case SC_ERROR_SMALL_PASTE:
-            o->error_msg = _("The paste is too small to use");
+          case SC_CREATION_ERROR_TOO_SMALL:
+            o->error_msg = _("The foreground is too small to use");
             break;
-          case SC_ERROR_HOLED_OR_SPLIT_PASTE:
-            o->error_msg = _("The paste contains holes and/or several unconnected parts");
+          case SC_CREATION_ERROR_HOLED_OR_SPLIT:
+            o->error_msg = _("The foreground contains holes and/or several unconnected parts");
             break;
           default:
-            g_warning ("Unknown preprocessing status %d", props->preprocess->error);
+            g_warning ("Unknown preprocessing status %d", error);
             break;
         }
-    }
-  g_mutex_unlock (props->mutex);
 
-  if (props->preprocess->error == SC_ERROR_NONE)
-    return sc_render_seamless (input, aux, o->xoff, o->yoff, output, result, props->preprocess);
+      if (props->is_valid)
+        {
+          if (! sc_context_prepare_render (props->context, &info))
+            {
+              o->error_msg = _("The opaque parts of the foreground are not above the background!");
+              props->is_valid = FALSE;
+            }
+        }
+
+      props->first_processing = FALSE;
+    }
+  g_mutex_unlock (&props->mutex);
+
+  if (props->is_valid)
+    return sc_context_render (props->context, &info, result, output);
   else
     return FALSE;
   return  return_val;

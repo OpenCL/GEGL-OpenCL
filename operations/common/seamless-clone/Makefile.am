@@ -17,10 +17,8 @@ noinst_LTLIBRARIES = libsc.la
 libsc_la_SOURCES = $(sc_common_files)
 
 seamless_clone_la_SOURCES = seamless-clone.c $(sc_common_files)
-seamless_clone_render_la_SOURCES = seamless-clone-render.c $(sc_common_files)
-seamless_clone_prepare_la_SOURCES = seamless-clone-prepare.c $(sc_common_files)
 seamless_clone_compose_la_SOURCES = seamless-clone-compose.c
 
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 
-op_LTLIBRARIES = seamless-clone.la seamless-clone-render.la seamless-clone-prepare.la seamless-clone-compose.la
+op_LTLIBRARIES = seamless-clone.la seamless-clone-compose.la
