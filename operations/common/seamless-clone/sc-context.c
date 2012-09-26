@@ -121,6 +121,8 @@ sc_context_create_outline (GeglBuffer          *input,
   ScOutline *outline = sc_outline_find (roi, input, &ignored_islands);
   guint      length  = sc_outline_length (outline);
 
+  *error = SC_CREATION_ERROR_NONE;
+
   if (length == 0)
     {
       if (ignored_islands)
@@ -145,7 +147,6 @@ sc_context_create_outline (GeglBuffer          *input,
   if (*error != SC_CREATION_ERROR_NONE)
     {
       sc_outline_free (outline);
-      outline = NULL;
     }
 
   return outline;
@@ -274,7 +275,11 @@ sc_context_prepare_render (ScContext    *context,
                            ScRenderInfo *info)
 {
   if (context->render_cache == NULL)
-    context->render_cache = g_slice_new (ScRenderCache);
+    {
+      context->render_cache = g_slice_new (ScRenderCache);
+      context->render_cache->pt2col = NULL;
+      context->render_cache->is_valid = FALSE;
+    }
 
   context->render_cache->is_valid = FALSE;
 
