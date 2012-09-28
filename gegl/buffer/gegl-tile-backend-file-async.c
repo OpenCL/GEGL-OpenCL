@@ -194,8 +194,8 @@ gegl_tile_backend_file_push_queue (GeglFileBackendThreadParams *params)
         params->entry->block_link = g_queue_peek_tail_link (&queue);
     }
 
-  if (length == 0) /* wake up the writer thread */
-    g_cond_signal (queue_cond);
+  /* wake up the writer thread */
+  g_cond_signal (queue_cond);
 
   g_mutex_unlock (mutex);
 }
