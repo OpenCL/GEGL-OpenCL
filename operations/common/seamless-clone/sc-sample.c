@@ -31,7 +31,7 @@
 
 #define g_ptr_array_index_cyclic(array,index_) g_ptr_array_index(array,(index_)%((array)->len))
 
-#define basePointCount 16
+#define SC_SAMPLE_BASE_POINT_COUNT 16
 
 /* This won't add the point in the second index, to allow avoiding
  * insertion of a points twice from two adjacent segments. The caller
@@ -60,7 +60,7 @@ sc_compute_sample_list_part (ScOutline     *outline,
 
   gint d = index2 - index1;
 
-  gdouble edist = real->len / (basePointCount * pow (2.5, k));
+  gdouble edist = real->len / (SC_SAMPLE_BASE_POINT_COUNT * pow (2.5, k));
   gdouble eang = 0.75 * pow (0.8, k);
   gboolean needsMore = !(norm1 > edist && norm2 > edist && angle < eang);
 
@@ -156,18 +156,28 @@ sc_sample_list_compute (ScOutline     *outline,
 {
   ScSampleList *sl = g_slice_new (ScSampleList);
   GPtrArray *real = (GPtrArray*) outline;
-  gdouble div = real->len / ((gdouble) basePointCount);
-  gint i, index1, index2;
-  
+  gint i;
+
   sl->points = g_ptr_array_new ();
   sl->weights = g_array_new (FALSE, TRUE, sizeof (gdouble));
 
-  for (i = 0; i < basePointCount; i++)
+  if (real->len <= SC_SAMPLE_BASE_POINT_COUNT)
     {
-      index1 = (gint) (i * div);
-      index2 = (gint) ((i + 1) * div);
-      
-      sc_compute_sample_list_part (outline, index1, index2, Px, Py, sl, 0);
+      for (i = 0; i < real->len; i++)
+        g_ptr_array_add (sl->points, g_ptr_array_index (real, i));
+    }
+  else
+    {
+      gdouble div = real->len / ((gdouble) SC_SAMPLE_BASE_POINT_COUNT);
+      gint index1, index2;
+
+      for (i = 0; i < SC_SAMPLE_BASE_POINT_COUNT; i++)
+        {
+          index1 = (gint) (i * div);
+          index2 = (gint) ((i + 1) * div);
+
+          sc_compute_sample_list_part (outline, index1, index2, Px, Py, sl, 0);
+        }
     }
 
   sc_compute_sample_list_weights (Px, Py, sl);
