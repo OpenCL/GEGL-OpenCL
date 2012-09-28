@@ -80,16 +80,19 @@ prepare (GeglOperation *operation)
 {
   const Babl *format = babl_format (SC_COLOR_BABL_NAME);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  SCProps *props;
 
-  if (o->chant_data == NULL)
+  if ((props = (SCProps*) o->chant_data) == NULL)
     {
-      SCProps *props = g_slice_new (SCProps);
+      props = g_slice_new (SCProps);
       g_mutex_init (&props->mutex);
       props->first_processing = TRUE;
       props->is_valid = FALSE;
       props->context = NULL;
       o->chant_data = props;
     }
+  props->first_processing = TRUE;
+  props->is_valid = FALSE;
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "aux",    format);
   gegl_operation_set_format (operation, "output", format);
@@ -141,7 +144,10 @@ process (GeglOperation       *operation,
   if (props->first_processing)
     {
       if (props->context == NULL)
-        props->context = sc_context_new (aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
+        {
+          props->context = sc_context_new (aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
+          sc_context_set_uvt_cache (props->context, TRUE);
+        }
       else
         sc_context_update (props->context, aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
 
