@@ -435,11 +435,8 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
 
   if (self->free_list)
     {
-      /* XXX: losing precision ?
-       * the free list seems to operate with fixed size datums and
-       * only keep track of offsets.
-       */
-      gint offset = GPOINTER_TO_INT (self->free_list->data);
+      guint64 offset = *(guint64*)self->free_list->data;
+
       entry->tile->offset = offset;
       self->free_list = g_slist_remove (self->free_list, self->free_list->data);
 
@@ -479,8 +476,8 @@ static void
 gegl_tile_backend_file_file_entry_destroy (GeglTileBackendFile  *self,
                                            GeglFileBackendEntry *entry)
 {
-  /* XXX: EEEk, throwing away bits */
-  guint offset = entry->tile->offset;
+  guint64 *offset = g_new (guint64, 1);
+  *offset = entry->tile->offset;
 
   if (entry->tile_link || entry->block_link)
     {
@@ -506,8 +503,7 @@ gegl_tile_backend_file_file_entry_destroy (GeglTileBackendFile  *self,
       g_mutex_unlock (mutex);
     }
 
-  self->free_list = g_slist_prepend (self->free_list,
-                                     GUINT_TO_POINTER (offset));
+  self->free_list = g_slist_prepend (self->free_list, offset);
   g_hash_table_remove (self->index, entry);
 
   gegl_tile_backend_file_dbg_dealloc (gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self)));
@@ -903,6 +899,20 @@ gegl_tile_backend_file_get_property (GObject    *object,
 }
 
 static void
+gegl_tile_backend_file_free_free_list (GeglTileBackendFile *self)
+{
+  GSList *iter = self->free_list;
+
+  for (; iter; iter = iter->next)
+    {
+      g_free (iter->data);
+      g_slist_free (iter);
+    }
+
+  self->free_list = NULL;
+}
+
+static void
 gegl_tile_backend_file_finalize (GObject *object)
 {
   GeglTileBackendFile *self = (GeglTileBackendFile *) object;
@@ -940,6 +950,9 @@ gegl_tile_backend_file_finalize (GObject *object)
           self->o = -1;
         }
     }
+
+  if (self->free_list)
+    gegl_tile_backend_file_free_free_list (self);
 
   if (self->path)
     g_free (self->path);
@@ -1086,8 +1099,7 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
       g_hash_table_insert (self->index, new, new);
     }
   g_list_free (self->tiles);
-  g_slist_free (self->free_list);
-  self->free_list      = NULL;
+  gegl_tile_backend_file_free_free_list (self);
   self->next_pre_alloc = max; /* if bigger than own? */
   self->total          = max;
   self->tiles          = NULL;
