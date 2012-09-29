@@ -123,7 +123,7 @@ sc_context_create_outline (GeglBuffer          *input,
                            ScCreationError     *error)
 {
   gboolean   ignored_islands = FALSE;
-  ScOutline *outline = sc_outline_find (roi, input, &ignored_islands);
+  ScOutline *outline = sc_outline_find (roi, input, threshold, &ignored_islands);
   guint      length  = sc_outline_length (outline);
 
   *error = SC_CREATION_ERROR_NONE;
@@ -144,7 +144,7 @@ sc_context_create_outline (GeglBuffer          *input,
       *error = SC_CREATION_ERROR_TOO_SMALL;
     }
   else if (ignored_islands ||
-           ! sc_outline_check_if_single (roi, input, outline))
+           ! sc_outline_check_if_single (roi, input, threshold, outline))
     {
       *error = SC_CREATION_ERROR_HOLED_OR_SPLIT;
     }
@@ -425,18 +425,12 @@ sc_context_sample_color_difference (ScRenderInfo *info,
    * location in background coordinates is the following:
    * (pt->x + info->x, pt->y + info->y).
    */
-#define sc_rect_contains(rect,x0,y0) \
-     (((x0) >= (rect).x) && ((x0) < (rect).x + (rect).width)  \
-   && ((y0) >= (rect).y) && ((y0) < (rect).y + (rect).height))
-
-  if (! sc_rect_contains (info->bg_rect,
-                          x + info->xoff,
-                          y + info->yoff))
+  if (! sc_point_in_rectangle (x + info->xoff,
+                               y + info->yoff,
+                               &info->bg_rect))
     {
       return FALSE;
     }
-
-#undef sc_rect_contains
 
   gegl_buffer_sample (info->fg,
                       x, y,

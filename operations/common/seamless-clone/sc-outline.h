@@ -39,19 +39,20 @@
  * </pre>
  */
 typedef enum {
-  SC_DIRECTION_N  = 0,
-  SC_DIRECTION_NE = 1,
-  SC_DIRECTION_E  = 2,
-  SC_DIRECTION_SE = 3,
-  SC_DIRECTION_S  = 4,
-  SC_DIRECTION_SW = 5,
-  SC_DIRECTION_W  = 6,
-  SC_DIRECTION_NW = 7
+  SC_DIRECTION_N     = 0,
+  SC_DIRECTION_NE    = 1,
+  SC_DIRECTION_E     = 2,
+  SC_DIRECTION_SE    = 3,
+  SC_DIRECTION_S     = 4,
+  SC_DIRECTION_SW    = 5,
+  SC_DIRECTION_W     = 6,
+  SC_DIRECTION_NW    = 7,
+  SC_DIRECTION_COUNT = 8
 } ScDirection;
 
-#define SC_DIRECTION_CW(d)       (((d)+1)%8)
-#define SC_DIRECTION_CCW(d)      (((d)+7)%8)
-#define SC_DIRECTION_OPPOSITE(d) (((d)+4)%8)
+#define SC_DIRECTION_CW(d)       (((d) + 1) % 8)
+#define SC_DIRECTION_CCW(d)      (((d) + 7) % 8)
+#define SC_DIRECTION_OPPOSITE(d) (((d) + 4) % 8)
 
 #define SC_DIRECTION_IS_NORTH(d) (       \
   ((d) == SC_DIRECTION_N)  ||            \
@@ -108,10 +109,12 @@ typedef GPtrArray ScOutline;
 
 ScOutline* sc_outline_find            (const GeglRectangle *rect,
                                        GeglBuffer          *pixels,
+                                       gdouble              threshold,
                                        gboolean            *ignored_islands);
 
 gboolean   sc_outline_check_if_single (const GeglRectangle *search_area,
                                        GeglBuffer          *buffer,
+                                       gdouble              threshold,
                                        ScOutline           *existing);
 
 guint      sc_outline_length          (ScOutline           *self);

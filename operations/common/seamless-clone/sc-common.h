@@ -77,4 +77,11 @@ typedef struct {
   gboolean       render_bg;
 } ScRenderInfo;
 
+#define sc_point_in_rectangle(px, py, rect) \
+  (   ((px) >= (rect)->x)                   \
+   && ((py) >= (rect)->y)                   \
+   && ((px) < (rect)->x + (rect)->width)    \
+   && ((py) < (rect)->y + (rect)->height)   \
+  )
+
 #endif

@@ -22,7 +22,7 @@
  *
  * Terminology:
  *
- *   Opaque  - A pixel with alpha of at least 0.5
+ *   Opaque  - A pixel with alpha of at least a given threshold
  *   Island  - An opaque pixel with 8 non-opaque neighbors
  *   Edge    - An opaque pixel with at least 1 (out of 8) non-opaque
  *             neighbors
@@ -41,6 +41,7 @@
 
 #include <gegl.h>
 #include "sc-outline.h"
+#include "sc-common.h"
 
 static inline void
 sc_point_copy_to (const ScPoint *src,
@@ -77,36 +78,21 @@ sc_point_eq (const ScPoint *pt1,
 }
 
 static inline gboolean
-in_range (gint val,
-          gint min,
-          gint max)
-{
-  return (min <= val) && (val <= max);
-}
-
-static inline gboolean
-in_rectangle (const GeglRectangle *rect,
-              const ScPoint       *pt)
-{
-  return in_range (pt->x, rect->x, rect->x + rect->width - 1)
-    && in_range (pt->y, rect->y, rect->y + rect->height - 1);
-}
-
-static inline gboolean
 is_opaque (const GeglRectangle *search_area,
            GeglBuffer          *buffer,
            const Babl          *format,
+           gdouble              threshold,
            const ScPoint       *pt)
 {
-  gfloat col[4] = {0, 0, 0, 0};
+  ScColor col[SC_COLORA_CHANNEL_COUNT];
 
-  if (! in_rectangle (search_area, pt))
+  if (! sc_point_in_rectangle (pt->x, pt->y, search_area))
     return FALSE;
 
   gegl_buffer_sample (buffer, pt->x, pt->y, NULL, col, format,
       GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
-  return col[3] >= 0.5f;
+  return col[SC_COLOR_ALPHA_INDEX] >= threshold;
 }
 
 /* This function assumes the pixel is opaque! */
@@ -114,13 +100,14 @@ static inline gboolean
 is_opaque_island (const GeglRectangle *search_area,
                   GeglBuffer          *buffer,
                   const Babl          *format,
+                  gdouble              threshold,
                   const ScPoint       *pt)
 {
   gint i;
   ScPoint temp;
 
   for (i = 0; i < 8; ++i)
-    if (is_opaque (search_area, buffer, format, sc_point_move (pt, i, &temp)))
+    if (is_opaque (search_area, buffer, format, threshold, sc_point_move (pt, i, &temp)))
       return FALSE;
 
   return TRUE;
@@ -132,16 +119,17 @@ static inline gboolean
 is_valid_edge (const GeglRectangle *search_area,
                GeglBuffer          *buffer,
                const Babl          *format,
+               gdouble              threshold,
                const ScPoint       *pt)
 {
   gint i;
   ScPoint temp;
 
-  if (! is_opaque (search_area, buffer, format, pt))
+  if (! is_opaque (search_area, buffer, format, threshold, pt))
     return FALSE;
 
-  for (i = 0; i < 8; ++i)
-    if (is_opaque (search_area, buffer, format, sc_point_move (pt, i, &temp)))
+  for (i = 0; i < SC_DIRECTION_COUNT; ++i)
+    if (is_opaque (search_area, buffer, format, threshold, sc_point_move (pt, i, &temp)))
       return FALSE;
 
   return TRUE;
@@ -166,6 +154,7 @@ static inline ScDirection
 walk_cw (const GeglRectangle *search_area,
          GeglBuffer          *buffer,
          const Babl          *format,
+         gdouble              threshold,
          const ScPoint       *cur_pt,
          ScDirection          dir_from_prev,
          ScPoint             *next_pt)
@@ -175,7 +164,7 @@ walk_cw (const GeglRectangle *search_area,
 
   sc_point_move (cur_pt, dir_to_next, next_pt);
 
-  while (! is_opaque (search_area, buffer, format, next_pt))
+  while (! is_opaque (search_area, buffer, format, threshold, next_pt))
     {
       dir_to_next = SC_DIRECTION_CW (dir_to_next);
       sc_point_move (cur_pt, dir_to_next, next_pt);
@@ -194,6 +183,7 @@ walk_cw (const GeglRectangle *search_area,
 ScOutline*
 sc_outline_find (const GeglRectangle *search_area,
                  GeglBuffer          *buffer,
+                 gdouble              threshold,
                  gboolean            *ignored_islands)
 {
   const Babl *format = babl_format("RGBA float");
@@ -209,9 +199,9 @@ sc_outline_find (const GeglRectangle *search_area,
   for (current.y = search_area->y; current.y < row_max; ++current.y)
     {
       for (current.x = search_area->x; current.x < col_max; ++current.x)
-        if (is_opaque (search_area, buffer, format, &current))
+        if (is_opaque (search_area, buffer, format, threshold, &current))
           {
-            if (is_opaque_island (search_area, buffer, format, &current))
+            if (is_opaque_island (search_area, buffer, format, threshold, &current))
               {
                 if (ignored_islands)
                   *ignored_islands = TRUE;
@@ -232,16 +222,16 @@ sc_outline_find (const GeglRectangle *search_area,
       current.outside_normal = SC_DIRECTION_N;
       g_ptr_array_add (result, first = sc_point_copy (&current));
 
-      to_next = walk_cw (search_area, buffer, format, &current,
-          SC_DIRECTION_E, &next);
+      to_next = walk_cw (search_area, buffer, format, threshold,
+          &current, SC_DIRECTION_E, &next);
 
       while (! sc_point_eq (&next, first))
         {
           next.outside_normal = SC_DIRECTION_CW(SC_DIRECTION_CW(to_next));
           g_ptr_array_add (result, sc_point_copy (&next));
           sc_point_copy_to (&next, &current);
-          to_next = walk_cw (search_area, buffer, format, &current,
-              to_next, &next);
+          to_next = walk_cw (search_area, buffer, format, threshold,
+                             &current, to_next, &next);
         }
     }
 
@@ -292,6 +282,7 @@ sc_point_cmp (const ScPoint **pt1,
 gboolean
 sc_outline_check_if_single (const GeglRectangle *search_area,
                             GeglBuffer          *buffer,
+                            gdouble              threshold,
                             ScOutline           *existing)
 {
   const Babl *format = babl_format("RGBA float");
@@ -319,7 +310,7 @@ sc_outline_check_if_single (const GeglRectangle *search_area,
         {
           gboolean hit, opaque;
 
-          opaque = is_opaque (search_area, buffer, format, &current);
+          opaque = is_opaque (search_area, buffer, format, threshold, &current);
           hit = sc_point_eq (&current, sorted_p);
 
           if (hit && ! inside)
@@ -331,7 +322,7 @@ sc_outline_check_if_single (const GeglRectangle *search_area,
             }
 
           if (inside != opaque
-              && ! (opaque && is_opaque_island (search_area, buffer, format, &current)))
+              && ! (opaque && is_opaque_island (search_area, buffer, format, threshold, &current)))
             {
               not_single = FALSE;
               break;
