@@ -26,6 +26,8 @@
 #include "sc-outline.h"
 
 typedef struct {
+  /** Should the point behind this list be sampled directly?        */
+  gboolean   direct_sample;
   /** An array of ScPoint* (pointers) of the points to sample       */
   GPtrArray *points;
   /** An array of weights to assign to the samples from the points  */
@@ -45,6 +47,7 @@ ScSampleList*   sc_sample_list_compute   (ScOutline      *outline,
                                           gdouble         x,
                                           gdouble         y);
 
+ScSampleList*   sc_sample_list_direct    (void);
 /**
  * Free an ScSampleList object created by sc_sample_list_compute
  */

@@ -42,6 +42,11 @@ static void        sc_context_update_from_outline        (ScContext           *s
 static gboolean    sc_context_render_cache_pt2col_update (ScContext           *context,
                                                           ScRenderInfo        *info);
 
+static gboolean    sc_context_sample_color_difference     (ScRenderInfo       *info,
+                                                          gdouble              x,
+                                                          gdouble              y,
+                                                          ScColor             *dest);
+
 static gboolean    sc_context_sample_point               (ScRenderInfo        *info,
                                                           ScSampleList        *sl,
                                                           P2trPoint           *point,
@@ -390,6 +395,68 @@ sc_context_render_cache_pt2col_update (ScContext    *context,
 }
 
 /**
+ * Compute the color difference between the foreground and background
+ * at a given point. This function returns FALSE if the difference can
+ * not be computed since the background buffer does not contain the
+ * point. Otherwise, the function returns TRUE.
+ * THIS FUNCTION USES SC_COLORA_CHANNEL_COUNT CHANNELS! (WITH ALPHA!)
+ */
+static gboolean
+sc_context_sample_color_difference (ScRenderInfo *info,
+                                    gdouble       x,
+                                    gdouble       y,
+                                    ScColor      *dest)
+{
+  const Babl   *format  = babl_format (SC_COLOR_BABL_NAME);
+
+  ScColor fg_c[SC_COLORA_CHANNEL_COUNT];
+  ScColor bg_c[SC_COLORA_CHANNEL_COUNT];
+
+  /* If the outline point is outside the background, then we can't
+   * compute a propper difference there. So, don't add it to the
+   * sampling.
+   *
+   * The outline point obviously must lie inside the foreground, so
+   * we don't have anything to worry about here.
+   *
+   * The only thing we should notice, is to use the right
+   * coordinates: The original outline point is on (pt->x,pt->y) in
+   * terms of mesh coordinates. But, since we are translating, its
+   * location in background coordinates is the following:
+   * (pt->x + info->x, pt->y + info->y).
+   */
+#define sc_rect_contains(rect,x0,y0) \
+     (((x0) >= (rect).x) && ((x0) < (rect).x + (rect).width)  \
+   && ((y0) >= (rect).y) && ((y0) < (rect).y + (rect).height))
+
+  if (! sc_rect_contains (info->bg_rect,
+                          x + info->xoff,
+                          y + info->yoff))
+    {
+      return FALSE;
+    }
+
+#undef sc_rect_contains
+
+  gegl_buffer_sample (info->fg,
+                      x, y,
+                      NULL, fg_c, format,
+                      GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
+
+  /* Sample the BG with the offset */
+  gegl_buffer_sample (info->bg,
+                      x + info->xoff, y + info->yoff,
+                      NULL, bg_c, format,
+                      GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
+
+#define sc_color_expr(I)  dest[I] = (bg_c[I] - fg_c[I])
+  sc_color_process();
+#undef  sc_color_expr
+  dest[SC_COLOR_ALPHA_INDEX] = 1;
+  return TRUE;
+}
+
+/**
  * Compute the color assigned to a given point in the color difference
  * mesh. If the color can not be computed since all the sample points
  * assigned to this mesh point are outside the background, this function
@@ -402,75 +469,48 @@ sc_context_sample_point (ScRenderInfo *info,
                          ScSampleList *sl,
                          P2trPoint    *point,
                          ScColor      *dest)
-{ 
-  gint          i;
-  gdouble       weightT = 0;
-  guint         N       = sl->points->len;
-
-  const Babl   *format  = babl_format (SC_COLOR_BABL_NAME);
-
-  gfloat fg_c[SC_COLORA_CHANNEL_COUNT];
-  gfloat bg_c[SC_COLORA_CHANNEL_COUNT];
-
-  /* We don't need an alpha for this one */
-  gfloat dest_c[SC_COLOR_CHANNEL_COUNT]  = { 0 };
-
-  for (i = 0; i < N; i++)
+{
+  /* If this is a direct sample, we can easily finish */
+  if (sl->direct_sample)
     {
-      ScPoint *pt = g_ptr_array_index (sl->points, i);
-      gdouble weight = g_array_index (sl->weights, gdouble, i);
+      return sc_context_sample_color_difference (info, point->c.x, point->c.y, dest);
+    }
+  else
+    {
+      gdouble weightT = 0;
+      /* Don't be tempted to initialize earlier - sl->points may be NULL if
+       * this is a direct sample list! */
+      guint N = sl->points->len;
 
-      /* If the outline point is outside the background, then we can't
-       * compute a propper difference there. So, don't add it to the
-       * sampling.
-       *
-       * The outline point obviously must lie inside the foreground, so
-       * we don't have anything to worry about here.
-       *
-       * The only thing we should notice, is to use the right
-       * coordinates: The original outline point is on (pt->x,pt->y) in
-       * terms of mesh coordinates. But, since we are translating, its
-       * location in background coordinates is the following:
-       * (pt->x + info->x, pt->y + info->y).
-       */
-#define sc_rect_contains(rect,x0,y0) \
-     (((x0) >= (rect).x) && ((x0) < (rect).x + (rect).width)  \
-   && ((y0) >= (rect).y) && ((y0) < (rect).y + (rect).height))
+      gint i;
+      /* We need an alpha for this one */
+      ScColor dest_c[SC_COLORA_CHANNEL_COUNT]  = { 0 };
 
-      if (! sc_rect_contains (info->bg_rect,
-                              pt->x + info->xoff,
-                              pt->y + info->yoff))
+      for (i = 0; i < N; i++)
         {
-          continue;
+          ScPoint *pt = g_ptr_array_index (sl->points, i);
+          gdouble weight = g_array_index (sl->weights, gdouble, i);
+          ScColor raw_color[SC_COLORA_CHANNEL_COUNT];
+
+          if (! sc_context_sample_color_difference (info, pt->x, pt->y, raw_color))
+            continue;
+
+#define sc_color_expr(I)  dest_c[I] += weight * raw_color[I]
+          sc_color_process();
+#undef  sc_color_expr
+          weightT += weight;
         }
 
-#undef sc_rect_contains
-
-      gegl_buffer_sample (info->fg,
-                          pt->x, pt->y,
-                          NULL, fg_c, format,
-                          GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-
-      /* Sample the BG with the offset */
-      gegl_buffer_sample (info->bg,
-                          pt->x + info->xoff, pt->y + info->yoff,
-                          NULL, bg_c, format,
-                          GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-
-#define sc_color_expr(I)  dest_c[I] += weight * (bg_c[I] - fg_c[I]) 
-      sc_color_process();
-#undef  sc_color_expr
-      weightT += weight;
-    }
-
-  if (weightT == 0)
-    return FALSE;
+      if (weightT == 0)
+        return FALSE;
 
 #define sc_color_expr(I)  dest[I] = dest_c[I] / weightT
-  sc_color_process();
+      sc_color_process();
 #undef  sc_color_expr
-  dest[SC_COLOR_ALPHA_INDEX] = 1;
-  return TRUE;
+      dest[SC_COLOR_ALPHA_INDEX] = 1;
+
+      return TRUE;
+    }
 }
 
 static void
@@ -618,7 +658,7 @@ sc_context_render (ScContext           *context,
                                         GEGL_BUFFER_WRITE,
                                         GEGL_ABYSS_NONE);
   out_index = 0;
-  
+
   gegl_rectangle_set (&to_render_fg,
       to_render.x - xoff, to_render.y - yoff,
       to_render.width,    to_render.height);
@@ -652,7 +692,7 @@ sc_context_render (ScContext           *context,
       float           *out_raw, *fg_raw;
       P2trUVT         *uvt_raw;
       int              x, y;
-      
+
       imcfg.min_x = iter->roi[fg_index].x;
       imcfg.min_y = iter->roi[fg_index].y;
       imcfg.step_x = imcfg.step_y = 1;
@@ -697,7 +737,7 @@ sc_context_render (ScContext           *context,
             }
         }
     }
-  
+
   return TRUE;
 }
 
@@ -741,6 +781,6 @@ sc_context_free (ScContext *context)
   sc_outline_free (context->outline);
 
   g_slice_free (ScContext, context);
-  
+ 
 }
 

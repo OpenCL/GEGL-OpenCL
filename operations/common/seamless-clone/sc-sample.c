@@ -109,7 +109,12 @@ sc_compute_sample_list_weights (gdouble        Px,
 
       norms[i] = norm1;
 
-      /* Did the point match one of the outline points? */
+      /* Did the point match one of the outline points? If so, convert
+       * the sample list to be made only of that outline point.
+       * This shouldn't happen since we give a direct sample list to
+       * boundry points, but this is a backup and also in case that due
+       * to small distances the norm came out zero
+       */
       if (norm1 == 0)
         {
           gdouble temp = 1;
@@ -158,6 +163,7 @@ sc_sample_list_compute (ScOutline     *outline,
   GPtrArray *real = (GPtrArray*) outline;
   gint i;
 
+  sl->direct_sample = FALSE;
   sl->points = g_ptr_array_new ();
   sl->weights = g_array_new (FALSE, TRUE, sizeof (gdouble));
 
@@ -168,13 +174,10 @@ sc_sample_list_compute (ScOutline     *outline,
     }
   else
     {
-      gdouble div = real->len / ((gdouble) SC_SAMPLE_BASE_POINT_COUNT);
-      gint index1, index2;
-
       for (i = 0; i < SC_SAMPLE_BASE_POINT_COUNT; i++)
         {
-          index1 = (gint) (i * div);
-          index2 = (gint) ((i + 1) * div);
+          gint index1 = i * real->len / SC_SAMPLE_BASE_POINT_COUNT;
+          gint index2 = (i + 1) * real->len / SC_SAMPLE_BASE_POINT_COUNT;
 
           sc_compute_sample_list_part (outline, index1, index2, Px, Py, sl, 0);
         }
@@ -185,11 +188,30 @@ sc_sample_list_compute (ScOutline     *outline,
   return sl;
 }
 
+ScSampleList*
+sc_sample_list_direct (void)
+{
+  ScSampleList *sl = g_slice_new (ScSampleList);
+  sl->direct_sample = TRUE;
+  sl->points = NULL;
+  sl->weights = NULL;
+  sl->total_weight = 0;
+  return sl;
+}
+
 void
 sc_sample_list_free (ScSampleList *self)
 {
-  g_ptr_array_free (self->points, TRUE);
-  g_array_free (self->weights, TRUE);
+  if (! self->direct_sample)
+    {
+      g_ptr_array_free (self->points, TRUE);
+      g_array_free (self->weights, TRUE);
+    }
+  else
+    {
+      g_assert (self->points == NULL);
+      g_assert (self->weights == NULL);
+    }
   g_slice_free (ScSampleList, self);
 }
 
@@ -204,7 +226,11 @@ sc_mesh_sampling_compute (ScOutline *outline,
   p2tr_hash_set_iter_init (&iter, mesh->points);
   while (p2tr_hash_set_iter_next (&iter, (gpointer*) &pt))
     {
-      ScSampleList *sl = sc_sample_list_compute (outline, pt->c.x, pt->c.y);
+      ScSampleList *sl;
+      if (p2tr_point_is_fully_in_domain (pt))
+        sl = sc_sample_list_compute (outline, pt->c.x, pt->c.y);
+      else
+        sl = sc_sample_list_direct ();
       g_hash_table_insert (pt2sample, pt, sl);
     }
 
