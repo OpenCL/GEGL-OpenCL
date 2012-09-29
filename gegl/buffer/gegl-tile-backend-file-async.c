@@ -475,9 +475,9 @@ gegl_tile_backend_file_file_entry_new (GeglTileBackendFile *self)
   return entry;
 }
 
-static inline void
-gegl_tile_backend_file_file_entry_destroy (GeglFileBackendEntry *entry,
-                                           GeglTileBackendFile  *self)
+static void
+gegl_tile_backend_file_file_entry_destroy (GeglTileBackendFile  *self,
+                                           GeglFileBackendEntry *entry)
 {
   /* XXX: EEEk, throwing away bits */
   guint offset = entry->tile->offset;
@@ -748,7 +748,7 @@ gegl_tile_backend_file_void_tile (GeglTileSource *self,
 
   if (entry != NULL)
     {
-      gegl_tile_backend_file_file_entry_destroy (entry, tile_backend_file);
+      gegl_tile_backend_file_file_entry_destroy (tile_backend_file, entry);
     }
 
   return NULL;
@@ -909,8 +909,17 @@ gegl_tile_backend_file_finalize (GObject *object)
 
   if (self->index)
     {
-      if (g_hash_table_size (self->index) > 0)
-        g_warning ("leaking all entries in GeglTileBackendFile->index");
+      GList *tiles = g_hash_table_get_keys (self->index);
+
+      if (tiles != NULL)
+        {
+          GList *iter;
+
+          for (iter = tiles; iter; iter = iter->next)
+            gegl_tile_backend_file_file_entry_destroy (self, iter->data);
+        }
+
+      g_list_free (tiles);
 
       g_hash_table_unref (self->index);
     }
