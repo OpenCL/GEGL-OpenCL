@@ -904,10 +904,9 @@ gegl_tile_backend_file_free_free_list (GeglTileBackendFile *self)
   GSList *iter = self->free_list;
 
   for (; iter; iter = iter->next)
-    {
-      g_free (iter->data);
-      g_slist_free (iter);
-    }
+    g_free (iter->data);
+
+  g_slist_free (self->free_list);
 
   self->free_list = NULL;
 }
