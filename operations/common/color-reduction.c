@@ -327,7 +327,7 @@ process_random (GeglBuffer *input,
   {
     guint x;
 
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("RGBA u16"), line_buf,
+    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
                      GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
     for (x = 0; x < result->width; x++)
