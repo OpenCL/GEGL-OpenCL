@@ -84,7 +84,6 @@ ppm_load_read_header(FILE       *fp,
     /* Get Width and Height */
     img->width  = strtol (header,&ptr,0);
     img->height = atoi (ptr);
-    img->numsamples = img->width * img->height * CHANNEL_COUNT;
 
     fgets (header,MAX_CHARS_IN_ROW,fp);
     maxval = strtol (header,&ptr,0);
@@ -108,6 +107,16 @@ ppm_load_read_header(FILE       *fp,
     default:
       g_warning ("%s: Programmer stupidity error", G_STRLOC);
     }
+
+    /* Later on, img->numsamples is multiplied with img->bpc to allocate
+     * memory. Ensure it doesn't overflow. */
+    if (!img->width || !img->height ||
+        G_MAXSIZE / img->width / img->height / CHANNEL_COUNT < img->bpc)
+      {
+        g_warning ("Illegal width/height: %ld/%ld", img->width, img->height);
+        return FALSE;
+      }
+    img->numsamples = img->width * img->height * CHANNEL_COUNT;
 
     return TRUE;
 }
@@ -229,11 +238,23 @@ process (GeglOperation       *operation,
   if (!ppm_load_read_header (fp, &img))
     goto out;
 
+  /* Allocating Array Size */
+
+  /* Should use g_try_malloc(), but this causes crashes elsewhere because the
+   * error signalled by returning FALSE isn't properly acted upon. Therefore
+   * g_malloc() is used here which aborts if the requested memory size can't be
+   * allocated causing a controlled crash. */
+  img.data = (guchar*) g_malloc (img.numsamples * img.bpc);
+
+  /* No-op without g_try_malloc(), see above. */
+  if (! img.data)
+    {
+      g_warning ("Couldn't allocate %" G_GSIZE_FORMAT " bytes, giving up.", ((gsize)img.numsamples * img.bpc));
+      goto out;
+    }
+
   rect.height = img.height;
   rect.width = img.width;
-
-  /* Allocating Array Size */
-  img.data = (guchar*) g_malloc (img.numsamples * img.bpc);
 
   switch (img.bpc)
     {
