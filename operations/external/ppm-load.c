@@ -62,7 +62,7 @@ ppm_load_read_header(FILE       *fp,
     gchar  header[MAX_CHARS_IN_ROW];
     gint   maxval;
 
-    /* Check the PPM file Type P2 or P5 */
+    /* Check the PPM file Type P3 or P6 */
     fgets (header,MAX_CHARS_IN_ROW,fp);
 
     if (header[0] != ASCII_P ||
