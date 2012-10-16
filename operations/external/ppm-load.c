@@ -36,6 +36,7 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 typedef enum {
   PIXMAP_ASCII  = 51,
@@ -44,8 +45,8 @@ typedef enum {
 
 typedef struct {
 	map_type   type;
-	gint       width;
-	gint       height;
+	glong      width;
+	glong      height;
         gsize      numsamples; /* width * height * channels */
         gsize      bpc;        /* bytes per channel */
 	guchar    *data;
@@ -82,11 +83,33 @@ ppm_load_read_header(FILE       *fp,
       }
 
     /* Get Width and Height */
-    img->width  = strtol (header,&ptr,0);
-    img->height = atoi (ptr);
+    errno = 0;
+    img->width  = strtol (header,&ptr,10);
+    if (errno)
+      {
+        g_warning ("Error reading width: %s", strerror(errno));
+        return FALSE;
+      }
+    else if (img->width < 0)
+      {
+        g_warning ("Error: width is negative");
+        return FALSE;
+      }
+
+    img->height = strtol (ptr,&ptr,10);
+    if (errno)
+      {
+        g_warning ("Error reading height: %s", strerror(errno));
+        return FALSE;
+      }
+    else if (img->width < 0)
+      {
+        g_warning ("Error: height is negative");
+        return FALSE;
+      }
 
     fgets (header,MAX_CHARS_IN_ROW,fp);
-    maxval = strtol (header,&ptr,0);
+    maxval = strtol (header,&ptr,10);
 
     if ((maxval != 255) && (maxval != 65535))
       {
