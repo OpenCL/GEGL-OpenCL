@@ -14,16 +14,21 @@ independent journals.
 * Sharing and manipulation of a GEGL graph between multiple programs
 
 == Operations ==
-- Add node. int parent_node_id
-- Remove node. int node_id
+- Add node. int parent_node_id, int new_node_id
+- Remove node. int node_id, int previous_parent_node_id
 
-- Connect pad. int sink_node_id, char *input_pad_name, int source_node_id, char *output_pad_name
-- Disconnect pad. int node_id, char *pad_name
+- Link pads. int sink_node_id, char *input_pad_name, int source_node_id, char *output_pad_name
+- Unlink pads. int sink_node_id, char *input_pad_name, int source_node_id, char *output_pad_name
 
-- Change property. int node_id, char *key, char *value (using property-type specific serialization serialized)
-- Change operation. int node_id, char *new_operation_name
+- Change property. int node_id, char *key, char *value, char *previous_value
+- Change operation. int node_id, char *new_operation_name, char *previous_operation_name
 
-Node references:
+Each operation is stored such that the inverse operation can be created
+from the stored information alone. This avoids the need to rewind and replay
+parts of the journal when undoing.
+Property values are stored using property-type specific serialization.
+
+Node references/identifiers:
 - GEGL to maintain an (graph) unique identifier for each node: Add an integer identifier to node when added to the graph.
 - The identifier must be be maintained when changing operations.
 - This identifier should be hidden from applications: could be done by making the property read-only in public interface.
@@ -32,12 +37,12 @@ Node references:
 The operations are grouped in transactions. Applications can decide the start and end of a transaction.
 If no transaction is explicitly opened, an implicit transaction for the duration of the operation is created.
 
-After a add node operation, one or mor change property and change operation operations must follow.
+After a add node operation, one or more change property and change operation operations must follow.
 
 Transaction operation:
-- Recall state. int block_no
+- Recall state. int block_no, int previous_transaction_block_no
   The block_no must be for a transaction start
-  Sets the graph state back to that of a previous transaction
+  Sets the graph state back to that of the given transaction
 
 == File format ==
 Append only file format consisting of a series of entries.
@@ -65,7 +70,7 @@ Transaction start:
 ? maybe a transaction size in blocks (can be used to quickly traverse forward)
 
 Transaction end:
-Contains a pointer to the to start of transaction, as an integer of the transaction start entry.
+Contains a pointer to the start of transaction, as an integer of the transaction start entry.
 If the pointer ever points to a non-transaction start entry, the journal is inconsistent.
 
 Operation entries:
@@ -84,7 +89,7 @@ Each entry (see above list) has a format depending on its type.
 	---------------------
 	| set property      |
 	---------------------
-	| connect pad       |
+	| link pads         |
 	---------------------
 	| transaction end   |
 	---------------------
@@ -98,35 +103,50 @@ Each entry (see above list) has a format depending on its type.
 == Public API ==
 
 void gegl_graph_transaction_start(GeglGraph *graph, const char *description);
+ Start a graph journal transaction.
+ Any graph change after this and before transaction_end will be recorded
+ as part of the transaction.
  @graph: top-level node in a GEGL graph
  @description a human readable description of the change. UTF-8 encoded
 
 void gegl_graph_transaction_end(GeglGraph *graph);
+ End the current graph journal transaction.
  @graph: top-level node in a GEGL graph
 
 int gegl_graph_transaction_previous(GeglGraph *graph, int block_no);
+ Return the block number of the transaction before the specified transaction. Does not change graph state.
  @graph: top-level node in a GEGL graph
  @block_no <= 0 means end of journal. Only block numbers for transaction start entries are valid
  @return -1 on invalid block_no, else the block number of the previous transaction
 
 int gegl_graph_transaction_recall(GeglGraph *graph, int block_no);
+ Recall a previous state of the graph.
  @graph: top-level node in a GEGL graph
  @block_no <= 0 means end of journal. Only block numbers for transaction start entries are valid
- @return -1 on invalid block_no, 
+ @return -1 on invalid block_no, else the block number of the new transaction.
 
 char *gegl_graph_transaction_get_description(GeglGraph *graph, int block_no);
+ Return the human readable description for a given transaction.
  @graph: top-level node in a GEGL graph
  @block_no Only block numbers for transaction start entries are valid
  @return NULL on invalid block_no, else the human readable description passed to transaction_start
 
 == Implementation notes ==
-
 The implementation could be based on the GeglBuffer file format implementation.
 It is suggested to keep the implementations separate, to risk avoid introducing
 regressions in exist code and because it is possible that GeglBuffer will be
 moved to a separate library at some point.
 
+Before writing a transaction into the log, the transaction should be compacted
+such that no superficial operations are stored. For example if a property
+was first changed from 1.0 to 2.0 and then to 3.0, only one operation should
+be recorded.
+
 == Ideas ==
+* Allow to peek at other versions of the graph in the journal?
+
+* Add API for compacting the journal (to avoid it growing without bounds).
+
 * Add a non-blocking version of transactions.
 Note: not guaranteed to succeed. Applications must gracefully handle the transaction being rejected.
 
