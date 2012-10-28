@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2008 Hans Petter Jansson <hpj@copyleft.no>
+ *           2012 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
@@ -25,18 +26,19 @@
 gegl_chant_register_enum (gegl_dither_strategy)
   enum_value (GEGL_DITHER_NONE,   "None")
   enum_value (GEGL_DITHER_RANDOM, "Random")
+  enum_value (GEGL_DITHER_RESILIENT, "Resilient")
   enum_value (GEGL_DITHER_RANDOM_COVARIANT, "Random Covariant")
   enum_value (GEGL_DITHER_BAYER,  "Bayer")
   enum_value (GEGL_DITHER_FLOYD_STEINBERG, "Floyd-Steinberg")
 gegl_chant_register_enum_end (GeglDitherStrategy)
 
-gegl_chant_int (red_bits,   _("Red bits"),   1, 16, 16, _("Number of bits for red channel"))
-gegl_chant_int (green_bits, _("Green bits"), 1, 16, 16, _("Number of bits for green channel"))
-gegl_chant_int (blue_bits,  _("Blue bits"),  1, 16, 16, _("Number of bits for blue channel"))
-gegl_chant_int (alpha_bits, _("Alpha bits"), 1, 16, 16, _("Number of bits for alpha channel"))
+gegl_chant_int (red_bits,   _("Red bits"),   1, 16, 8, _("Number of bits for red channel"))
+gegl_chant_int (green_bits, _("Green bits"), 1, 16, 8, _("Number of bits for green channel"))
+gegl_chant_int (blue_bits,  _("Blue bits"),  1, 16, 8, _("Number of bits for blue channel"))
+gegl_chant_int (alpha_bits, _("Alpha bits"), 1, 16, 8, _("Number of bits for alpha channel"))
 
 gegl_chant_enum (dither_strategy, _("Dithering Strategy"), GeglDitherStrategy,
-                 gegl_dither_strategy, GEGL_DITHER_NONE, _("The dithering strategy to use"))
+                 gegl_dither_strategy, GEGL_DITHER_RESILIENT, _("The dithering strategy to use"))
 
 #else
 
@@ -357,6 +359,59 @@ process_random (GeglBuffer *input,
 }
 
 static void
+process_resilient (GeglBuffer *input,
+                   GeglBuffer *output,
+                   const GeglRectangle *result,
+                   guint *channel_bits)
+{
+  GeglRectangle        line_rect;
+  guint16             *line_buf;
+  guint                channel_mask [4];
+  guint                y;
+
+  line_rect.x = result->x;
+  line_rect.y = result->y;
+  line_rect.width = result->width;
+  line_rect.height = 1;
+
+  line_buf = g_new (guint16, line_rect.width * 4);
+
+  generate_channel_masks (channel_bits, channel_mask);
+
+  for (y = 0; y < result->height; y++)
+  {
+    guint x;
+
+    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
+                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
+    for (x = 0; x < result->width; x++)
+    {
+      guint16 *pixel = &line_buf [x * 4];
+      guint    ch;
+
+      for (ch = 0; ch < 4; ch++)
+      {
+        gdouble value;
+        gdouble value_clamped;
+        gdouble quantized;
+
+        value         = pixel [ch] + (1.4-(pixel[ch]/65535.0)) *(g_random_int_range (-65536, 65536) / (1 << channel_bits [ch]));
+        value_clamped = CLAMP (value, 0.0, 65535.0);
+        quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
+
+        pixel [ch] = (guint16) quantized;
+      }
+    }
+
+    gegl_buffer_set (output, &line_rect, 0, babl_format ("R'G'B'A u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+    line_rect.y++;
+  }
+
+  g_free (line_buf);
+}
+
+static void
 process_no_dither (GeglBuffer *input,
                    GeglBuffer *output,
                    const GeglRectangle *result,
@@ -438,6 +493,9 @@ process (GeglOperation       *operation,
         break;
       case GEGL_DITHER_RANDOM:
         process_random (input, output, result, channel_bits);
+        break;
+      case GEGL_DITHER_RESILIENT:
+        process_resilient (input, output, result, channel_bits);
         break;
       case GEGL_DITHER_RANDOM_COVARIANT:
         process_random_covariant (input, output, result,
