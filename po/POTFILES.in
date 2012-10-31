@@ -1,7 +1,6 @@
 [encoding: UTF-8]
-
-bin/gegl-options.c
 bin/gegl.c
+bin/gegl-options.c
 gegl/gegl-init.c
 gegl/module/geglmodule.c
 operations/common/bilateral-filter.c
@@ -12,10 +11,10 @@ operations/common/buffer-source.c
 operations/common/c2g.c
 operations/common/cartoon.c
 operations/common/checkerboard.c
+operations/common/color.c
 operations/common/color-reduction.c
 operations/common/color-temperature.c
 operations/common/color-to-alpha.c
-operations/common/color.c
 operations/common/contrast-curve.c
 operations/common/difference-of-gaussians.c
 operations/common/display.c
@@ -47,6 +46,7 @@ operations/common/mblur.c
 operations/common/mirrors.c
 operations/common/mono-mixer.c
 operations/common/motion-blur.c
+operations/common/noise.c
 operations/common/noise-cielch.c
 operations/common/noise-hsv.c
 operations/common/noise-hurl.c
@@ -54,7 +54,6 @@ operations/common/noise-pick.c
 operations/common/noise-reduction.c
 operations/common/noise-rgb.c
 operations/common/noise-slur.c
-operations/common/noise.c
 operations/common/oilify.c
 operations/common/opacity.c
 operations/common/open-buffer.c
@@ -79,6 +78,7 @@ operations/common/svg-luminancetoalpha.c
 operations/common/svg-matrix.c
 operations/common/svg-saturate.c
 operations/common/threshold.c
+operations/common/tile.c
 operations/common/unsharp-mask.c
 operations/common/value-invert.c
 operations/common/vignette.c
@@ -118,10 +118,10 @@ operations/generated/darken.c
 operations/generated/difference.c
 operations/generated/divide.c
 operations/generated/dst-atop.c
+operations/generated/dst.c
 operations/generated/dst-in.c
 operations/generated/dst-out.c
 operations/generated/dst-over.c
-operations/generated/dst.c
 operations/generated/exclusion.c
 operations/generated/gamma.c
 operations/generated/hard-light.c
@@ -132,21 +132,21 @@ operations/generated/plus.c
 operations/generated/screen.c
 operations/generated/soft-light.c
 operations/generated/src-atop.c
+operations/generated/src.c
 operations/generated/src-in.c
 operations/generated/src-out.c
 operations/generated/src-over.c
-operations/generated/src.c
 operations/generated/subtract.c
 operations/generated/svg-multiply.c
 operations/generated/xor.c
 operations/transform/reflect.c
 operations/transform/rotate.c
+operations/transform/scale.c
 operations/transform/scale-ratio.c
 operations/transform/scale-size.c
-operations/transform/scale.c
 operations/transform/shear.c
-operations/transform/transform-core.c
 operations/transform/transform.c
+operations/transform/transform-core.c
 operations/transform/translate.c
 operations/workshop/box-max.c
 operations/workshop/box-min.c
