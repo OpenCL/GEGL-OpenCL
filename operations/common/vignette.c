@@ -21,7 +21,7 @@
 
 
 #ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_int    (shape,    _("Shape"),  0, 2, 0, _("Shape to use: 0=circle 1=diamond 2=square"))
+gegl_chant_int    (shape,    _("Shape"),  0, 2, 0, _("Shape to use: 0=circle 1=square 2=diamond"))
 gegl_chant_color (color,     _("Color"), "black", _("Defaults to 'black', you can use transparency here to erase portions of an image"))
 gegl_chant_double (radius,   _("Radius"),  0.0, 3.0, 1.5, _("How far out vignetting goes as portion of half image diagonal"))
 gegl_chant_double (softness,  _("Softness"),  0.0, 1.0, 0.8, _("Softness"))
