@@ -396,7 +396,9 @@ process_resilient (GeglBuffer *input,
         gdouble value_clamped;
         gdouble quantized;
 
-        value         = pixel [ch] + (1.4-(pixel[ch]/65535.0)) *(g_random_int_range (-65536, 65536) / (1 << channel_bits [ch]));
+        value         = pixel [ch] + 
+      (1.0/(((pixel[ch]+6*65535)/65535.0))/8 + 1.1) *(g_random_int_range (-65536, 65536) / (1 << channel_bits [ch]));
+
         value_clamped = CLAMP (value, 0.0, 65535.0);
         quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
 
