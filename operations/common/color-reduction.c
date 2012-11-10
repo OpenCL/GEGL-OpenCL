@@ -76,6 +76,31 @@ quantize_value (guint value, guint n_bits, guint mask)
   return value;
 }
 
+static gint
+fast_random_int (void)
+{
+  #define PRIME1 2713
+  #define PRIME2 1913
+  static gboolean inited = 0;
+  static int rand1[PRIME1];
+  static int rand2[PRIME2];
+  static int r1, r2;
+  int ret;
+  if (G_UNLIKELY (!inited))
+    {
+       for (r1 = 0; r1 < PRIME1; r1++)
+         rand1[r1] = g_random_int ();
+       for (r2 = 0; r2 < PRIME2; r2++)
+         rand2[r2] = g_random_int ();
+       inited = TRUE;
+    }
+  ret = ((rand1[(r1++) % PRIME1] + rand2[(r2++) % PRIME2]));
+  ret &= ((1 << 17)-1);
+  ret -= 65536;
+  return ret;
+}
+
+
 static void
 process_floyd_steinberg (GeglBuffer *input,
                          GeglBuffer *output,
@@ -282,7 +307,7 @@ process_random_covariant (GeglBuffer *input,
     {
       guint16 *pixel = &line_buf [x * 4];
       guint    ch;
-      gint     r = g_random_int_range (-65536, 65536);
+      gint     r = fast_random_int ();
 
       for (ch = 0; ch < 4; ch++)
       {
@@ -343,7 +368,7 @@ process_random (GeglBuffer *input,
         gdouble value_clamped;
         gdouble quantized;
 
-        value         = pixel [ch] + (g_random_int_range (-65536, 65536) / (1 << channel_bits [ch]));
+        value         = pixel [ch] + (fast_random_int () / (1 << channel_bits [ch]));
         value_clamped = CLAMP (value, 0.0, 65535.0);
         quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
 
@@ -397,7 +422,7 @@ process_resilient (GeglBuffer *input,
         gdouble quantized;
 
         value         = pixel [ch] + 
-      (1.0/(((pixel[ch]+6*65535)/65535.0))/8 + 1.1) *(g_random_int_range (-65536, 65536) / (1 << channel_bits [ch]));
+        (1.0/(((pixel[ch]+6*65535)/65535.0))/8 + 1.2) *(fast_random_int () / (1 << channel_bits [ch]));
 
         value_clamped = CLAMP (value, 0.0, 65535.0);
         quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
