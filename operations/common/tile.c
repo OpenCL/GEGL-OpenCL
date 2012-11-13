@@ -72,19 +72,15 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  if (input)
-    {
-      gfloat *buf = g_new (gfloat, result->width * result->height * 4);
+  gfloat *buf = g_new (gfloat, result->width * result->height * 4);
 
-      gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_LOOP);
+  gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_LOOP);
 
-      gegl_buffer_set (output, result, 0.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
 
-      g_free (buf);
+  g_free (buf);
 
-      return TRUE;
-    }
-  return FALSE;
+  return TRUE;
 }
 
 static void
@@ -92,6 +88,22 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
+  gchar                    *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:crop'>"
+    "  <params>"
+    "    <param name='width'>200.0</param>"
+    "    <param name='height'>200.0</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:tile'>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-aux.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
   operation_class  = GEGL_OPERATION_CLASS (klass);
   filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
@@ -107,6 +119,7 @@ gegl_chant_class_init (GeglChantClass *klass)
                                  "categories", "misc",
                                  "description",
                                  _("Infinitely repeats the input image."),
+                                 "reference-composition", composition,
                                  NULL);
 }
 #endif
