@@ -32,12 +32,13 @@ enum
   PROP_LAST
 };
 
-static void    gegl_sampler_nearest_get (GeglSampler    *self,
-                                         gdouble         x,
-                                         gdouble         y,
-                                         GeglMatrix2    *scale,
-                                         void           *output,
-                                         GeglAbyssPolicy repeat_mode);
+static void
+gegl_sampler_nearest_get (GeglSampler    *self,
+                          gdouble         x,
+                          gdouble         y,
+                          GeglMatrix2    *scale,
+                          void           *output,
+                          GeglAbyssPolicy repeat_mode);
 
 G_DEFINE_TYPE (GeglSamplerNearest, gegl_sampler_nearest, GEGL_TYPE_SAMPLER)
 
@@ -46,29 +47,32 @@ gegl_sampler_nearest_class_init (GeglSamplerNearestClass *klass)
 {
   GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
 
-  sampler_class->get     = gegl_sampler_nearest_get;
-
+  sampler_class->get = gegl_sampler_nearest_get;
 }
 
 static void
 gegl_sampler_nearest_init (GeglSamplerNearest *self)
 {
-   GEGL_SAMPLER (self)->context_rect[0].x = 0;
-   GEGL_SAMPLER (self)->context_rect[0].y = 0;
-   GEGL_SAMPLER (self)->context_rect[0].width = 1;
-   GEGL_SAMPLER (self)->context_rect[0].height = 1;
-   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RGBA float");
+  GEGL_SAMPLER (self)->context_rect[0].x = 0;
+  GEGL_SAMPLER (self)->context_rect[0].y = 0;
+  GEGL_SAMPLER (self)->context_rect[0].width = 1;
+  GEGL_SAMPLER (self)->context_rect[0].height = 1;
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RGBA float");
 }
 
 void
-gegl_sampler_nearest_get (GeglSampler    *self,
-                          gdouble         x,
-                          gdouble         y,
-                          GeglMatrix2    *scale,
-                          void           *output,
-                          GeglAbyssPolicy repeat_mode)
+gegl_sampler_nearest_get (GeglSampler     *self,
+                          gdouble          x,
+                          gdouble          y,
+                          GeglMatrix2     *scale,
+                          void            *output,
+                          GeglAbyssPolicy  repeat_mode)
 {
-  gfloat             *sampler_bptr;
-  sampler_bptr = gegl_sampler_get_from_buffer (self, (gint)x, (gint)y, repeat_mode);
+  gfloat *sampler_bptr;
+
+  sampler_bptr = gegl_sampler_get_from_buffer (self,
+                                               GEGL_FAST_PSEUDO_FLOOR (x),
+                                               GEGL_FAST_PSEUDO_FLOOR (y),
+                                               repeat_mode);
   babl_process (self->fish, sampler_bptr, output, 1);
 }
