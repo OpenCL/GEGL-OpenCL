@@ -691,14 +691,9 @@ transform_affine (GeglBuffer  *dest,
       inverse_jacobian.coeff[1][0] = inverse.coeff[1][0];
       inverse_jacobian.coeff[1][1] = inverse.coeff[1][1];
 
-      u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1] * roi->y + inverse.coeff[0][2];
-      v_start = inverse.coeff[1][0] * roi->x + inverse.coeff[1][1] * roi->y + inverse.coeff[1][2];
-      w_start = inverse.coeff[2][0] * roi->x + inverse.coeff[2][1] * roi->y + inverse.coeff[2][2];
-
-      /* correct rounding on e.g. negative scaling (is this sound?) */
-      if (inverse.coeff [0][0] < 0.)  u_start -= .001;
-      if (inverse.coeff [1][1] < 0.)  v_start -= .001;
-      if (inverse.coeff [2][2] < 0.)  w_start -= .001;
+      u_start = inverse.coeff[0][0] * (roi->x + 0.5) + inverse.coeff[0][1] * (roi->y + 0.5) + inverse.coeff[0][2];
+      v_start = inverse.coeff[1][0] * (roi->x + 0.5) + inverse.coeff[1][1] * (roi->y + 0.5) + inverse.coeff[1][2];
+      w_start = inverse.coeff[2][0] * (roi->x + 0.5) + inverse.coeff[2][1] * (roi->y + 0.5) + inverse.coeff[2][2];
 
       for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
