@@ -36,18 +36,18 @@ enum
   PROP_LAST
 };
 
-static void      gegl_sampler_cubic_finalize (GObject      *gobject);
-static void      gegl_sampler_cubic_get (GeglSampler     *sampler,
-                                         gdouble          x,
-                                         gdouble          y,
+static void gegl_sampler_cubic_finalize (GObject         *gobject);
+static void gegl_sampler_cubic_get      (GeglSampler     *sampler,
+                                         gdouble          absolute_x,
+                                         gdouble          absolute_y,
                                          GeglMatrix2     *scale,
                                          void            *output,
                                          GeglAbyssPolicy  repeat_mode);
-static void      get_property           (GObject         *gobject,
+static void get_property                (GObject         *gobject,
                                          guint            prop_id,
                                          GValue          *value,
                                          GParamSpec      *pspec);
-static void      set_property           (GObject         *gobject,
+static void set_property                (GObject         *gobject,
                                          guint            prop_id,
                                          const GValue    *value,
                                          GParamSpec      *pspec);
@@ -70,31 +70,30 @@ gegl_sampler_cubic_class_init (GeglSamplerCubicClass *klass)
 
   sampler_class->get     = gegl_sampler_cubic_get;
 
-  g_object_class_install_property (object_class, PROP_B,
-                                   g_param_spec_double ("b",
-                                                        "B",
-                                                        "B-spline parameter",
-                                                        0.0,
-                                                        1.0,
-                                                        1.0,
-                                                        G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+  g_object_class_install_property ( object_class, PROP_B,
+    g_param_spec_double ("b",
+                         "B",
+                         "B-spline parameter",
+                         0.0,
+                         1.0,
+                         1.0,
+                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 
-  g_object_class_install_property (object_class, PROP_C,
-                                   g_param_spec_double ("c",
-                                                        "C",
-                                                        "C-spline parameter",
-                                                        0.0,
-                                                        1.0,
-                                                        0.0,
-                                                        G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+  g_object_class_install_property ( object_class, PROP_C,
+    g_param_spec_double ("c",
+                         "C",
+                         "C-spline parameter",
+                         0.0,
+                         1.0,
+                         0.0,
+                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 
-  g_object_class_install_property (object_class, PROP_TYPE,
-                                   g_param_spec_string ("type",
-                                                        "type",
-                                                        "B-spline type (cubic | catmullrom | formula) 2c+b=1",
-                                                        "cubic",
-                                                        G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-
+  g_object_class_install_property ( object_class, PROP_TYPE,
+    g_param_spec_string ("type",
+                         "type",
+                         "B-spline type (cubic | catmullrom | formula) 2c+b=1",
+                         "cubic",
+                         G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }
 
 static void
@@ -112,70 +111,70 @@ gegl_sampler_cubic_init (GeglSamplerCubic *self)
  GEGL_SAMPLER (self)->context_rect[0].width = 4;
  GEGL_SAMPLER (self)->context_rect[0].height = 4;
  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+
  self->b=1.0;
  self->c=0.0;
  self->type = g_strdup("cubic");
  if (strcmp (self->type, "cubic"))
-    {
-      /* cubic B-spline */
-      self->b = 0.0;
-      self->c = 0.5;
-    }
-  else if (strcmp (self->type, "catmullrom"))
-    {
-      /* Catmull-Rom spline */
-      self->b = 1.0;
-      self->c = 0.0;
-    }
-  else if (strcmp (self->type, "formula"))
-    {
-      self->c = (1.0 - self->b) / 2.0;
-    }
+   {
+     /* cubic B-spline */
+     self->b = 0.0;
+     self->c = 0.5;
+   }
+ else if (strcmp (self->type, "catmullrom"))
+   {
+     /* Catmull-Rom spline */
+     self->b = 1.0;
+     self->c = 0.0;
+   }
+ else if (strcmp (self->type, "formula"))
+   {
+     self->c = 0.5 * (1.0 - self->b);
+   }
 }
 
 void
-gegl_sampler_cubic_get (GeglSampler     *self,
-                        gdouble          x,
-                        gdouble          y,
-                        GeglMatrix2     *scale,
-                        void            *output,
-                        GeglAbyssPolicy  repeat_mode)
+gegl_sampler_cubic_get (      GeglSampler     *self,
+                        const gdouble          absolute_x,
+                        const gdouble          absolute_y,
+                              GeglMatrix2     *scale,
+                              void            *output,
+                              GeglAbyssPolicy  repeat_mode)
 {
   GeglSamplerCubic *cubic = (GeglSamplerCubic*)(self);
-  GeglRectangle     context_rect;
   const gint        offsets[16]={-4-64*4, 4, 4, 4,
                                 (64-3)*4, 4, 4, 4,
                                 (64-3)*4, 4, 4, 4,
                                 (64-3)*4, 4, 4, 4};
   gfloat           *sampler_bptr;
   gfloat            factor;
+  gfloat            x,y;
 
-  gfloat             newval[4] = {0.0, 0.0, 0.0, 0.0};
+  gfloat            newval[4] = {0.0, 0.0, 0.0, 0.0};
 
-  gint              u,v;
-  gint              dx,dy;
-  gint              i;
+  gint              ix,iy;
+  gint              i,j;
+  gint              k=0;
 
-  context_rect = self->context_rect[0];
-  dx = (gint) floor (x);
-  dy = (gint) floor (y);
-  sampler_bptr = gegl_sampler_get_ptr (self, dx, dy, repeat_mode);
+  ix = (gint) GEGL_FAST_PSEUDO_FLOOR (absolute_x - (gdouble) 0.5);
+  iy = (gint) GEGL_FAST_PSEUDO_FLOOR (absolute_y - (gdouble) 0.5);
+  sampler_bptr = gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
 
-     {
-       for (v=dy+context_rect.y, i=0; v < dy+context_rect.y+context_rect.height ; v++)
-         for (u=dx+context_rect.x ; u < dx+context_rect.x+context_rect.width  ; u++, i++)
-           {
-             /*sampler_bptr = gegl_sampler_get_from_buffer (self, u, v);*/
-             sampler_bptr += offsets[i];
-             factor = cubicKernel (y - v, cubic->b, cubic->c) *
-                      cubicKernel (x - u, cubic->b, cubic->c);
+  x = absolute_x - ( ix + (gdouble) 0.5 );
+  y = absolute_y - ( iy + (gdouble) 0.5 );
 
-            newval[0] += factor * sampler_bptr[0];
-            newval[1] += factor * sampler_bptr[1];
-            newval[2] += factor * sampler_bptr[2];
-            newval[3] += factor * sampler_bptr[3];
-           }
-     }
+  for (j=-1; j<3; j++)
+    for (i=-1; i<3; i++)
+      {
+	sampler_bptr += offsets[k++];
+	factor = cubicKernel (y - j, cubic->b, cubic->c) *
+	         cubicKernel (x - i, cubic->b, cubic->c);
+
+	newval[0] += factor * sampler_bptr[0];
+	newval[1] += factor * sampler_bptr[1];
+	newval[2] += factor * sampler_bptr[2];
+	newval[3] += factor * sampler_bptr[3];
+      }
 
   babl_process (self->fish, newval, output, 1);
 }
@@ -232,27 +231,22 @@ static inline gfloat
 cubicKernel (gfloat x,
              gfloat b,
              gfloat c)
- {
-  gfloat weight, x2, x3;
-  gfloat ax = x;
-  if (ax < 0.0)
-    ax *= -1.0;
+{
+  gfloat weight;
+  gfloat x2 = x*x;
+  gfloat ax = ( x<(gfloat) 0. ? -x : x );
 
-  if (ax > 2) return 0;
+  if (x2 > (gfloat) 4.) return 0;
 
-  x3 = ax * ax * ax;
-  x2 = ax * ax;
-
-  if (ax < 1)
-    weight = (12 - 9 * b - 6 * c) * x3 +
-             (-18 + 12 * b + 6 * c) * x2 +
-             (6 - 2 * b);
+  if (x2 < (gfloat) 1.)
+    weight = ( (gfloat) (12 - 9 * b - 6 * c) * ax +
+             (gfloat) (-18 + 12 * b + 6 * c) ) * x2 +
+             (gfloat) (6 - 2 * b);
   else
-    weight = (-b - 6 * c) * x3 +
-             (6 * b + 30 * c) * x2 +
-             (-12 * b - 48 * c) * ax +
-             (8 * b + 24 * c);
+    weight = ( (gfloat) (-b - 6 * c) * ax +
+             (gfloat) (6 * b + 30 * c) ) * x2 +
+             (gfloat) (-12 * b - 48 * c) * ax +
+             (gfloat) (8 * b + 24 * c);
 
-  return weight / 6.0;
+  return weight * ((gfloat) (1.0/6.0));
 }
-
