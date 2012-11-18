@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see
  * <http://www.gnu.org/licenses/>.
  *
+ * 2012 (c) Nicolas Robidoux
  * 2009-2011 (c) Nicolas Robidoux, Adam Turcotte, Chantal Racette,
  * Anthony Thyssen, John Cupitt and Øyvind Kolås.
  */
@@ -56,7 +57,8 @@
  * Jacobian adaptive resampling was developed by N. Robidoux and
  * A. Turcotte of the Department of Mathematics and Computer Science
  * of Laurentian University in the course of A. Turcotte's Masters in
- * Computational Sciences.
+ * Computational Sciences. Later development was done while
+ * N. Robidoux was an independent consultant.
  *
  * Nohalo with LBB finishing scheme was developed by N. Robidoux and
  * C. Racette of the Department of Mathematics and Computer Science of
@@ -97,9 +99,28 @@
  * E. Daoust's image resampling programming was funded by GSoC 2010
  * funding awarded to GIMP.
  *
- * N. Robidoux thanks Ralf Meyer, Geert Jordaens, Craig DeForest and
- * Sven Neumann for useful comments.
+ * N. Robidoux thanks his co-authors, Ralf Meyer, Geert Jordaens,
+ * Craig DeForest, Massimo Valentini, Sven Neumann, Mitch Natterer for
+ * useful comments.
  */
+
+/*
+ * General convention:
+ *
+ * Looking at the image as a (linear algebra) matrix, the index j has
+ * to do with the x-coordinate, that is, horizontal position, and the
+ * index i has to do with the y-coordinate (which runs from top to
+ * bottom), that is, the vertical position.
+ *
+ * However, in order to match the GIMP convention that states that
+ * pixel indices match the position of the top left corner of the
+ * corresponding pixel, so that the center of pixel (i,j) is located
+ * at (i+1/2,j+1/2), pixel center positions do NOT match their index.
+ * Earlier versions of this code did not follow this convention: They
+ * assumed that the location of the center of a pixel matched its
+ * index.
+ */
+
 
 #include "config.h"
 #include <glib-object.h>
@@ -176,28 +197,6 @@
 
 
 /*
- * FAST_PSEUDO_FLOOR is a floor replacement which has been found to be
- * faster. It returns the floor of its argument unless the argument is
- * a negative integer, in which case it returns one less than the
- * floor. For example:
- *
- * FAST_PSEUDO_FLOOR(0.5) = 0
- *
- * FAST_PSEUDO_FLOOR(0.) = 0
- *
- * FAST_PSEUDO_FLOOR(-.5) = -1
- *
- * as expected, but
- *
- * FAST_PSEUDO_FLOOR(-1.) = -2
- *
- * The discontinuities of FAST_PSEUDO_FLOOR are on the right of
- * negative numbers instead of on the left as is the case for floor.
- */
-#define LOHALO_FAST_PSEUDO_FLOOR(x) ( (gint)(x) - ( (x) < 0. ) )
-
-
-/*
  * Special case of of Knuth's floored division, that is:
  *
  * FLOORED_DIVISION(a,b) (((a) - ((a)<0 ? (b)-1 : 0)) / (b))
@@ -211,15 +210,6 @@
  * FLOORED_DIVISION_BY_2(a) ( (a)>>1 )
  */
 #define LOHALO_FLOORED_DIVISION_BY_2(a) ( (a)>>1 )
-
-
-/*
- * General convention:
- * Looking at the image as a (linear algebra) matrix, the index j has
- * to do with the x-coordinate, that is, horizontal position, and the
- * index i has to do with the y-coordinate (which runs from top to
- * bottom), that is, the vertical position.
- */
 
 
 /*
@@ -277,20 +267,18 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  *
  * 5x5 is the smallest "level 0" context_rect that works with the
  * LBB-Nohalo component of the sampler. Because 5 = 1+2*2,
- * LOHALO_OFFSET should consequently be >= 2.
- */
-/*
- * Speed VS quality trade-off:
+ * LOHALO_OFFSET should be >= 2.
+ *
+ * Speed/quality trade-off:
  *
  * Downsampling quality will decrease around ratio 1/(LOHALO_OFFSET +
- * .5); in addition, the smaller LOHALO_OFFSET, the more noticeable
+ * .5). In addition, the smaller LOHALO_OFFSET, the more noticeable
  * the artifacts. To maintain maximum quality for the widest
  * downsampling range possible, a somewhat large LOHALO_OFFSET should
- * ideally be used. However, the larger the offset, the slower Lohalo
- * will run when no significant downsampling is done, because the
- * width and height of context_rect is (2*LOHALO_OFFSET+1), and
- * consequently there will be less data "tile" reuse when
- * LOHALO_OFFSET is large.
+ * be used. However, the larger the offset, the slower Lohalo will run
+ * when no significant downsampling is done, because the width and
+ * height of context_rect is (2*LOHALO_OFFSET+1), and consequently
+ * there will be less data "tile" reuse with large LOHALO_OFFSET.
  */
 /*
  * IMPORTANT: LOHALO_OFFSET SHOULD BE AN INTEGER >= 2.
@@ -1288,12 +1276,12 @@ level_1_ewa_update (const gint              j,
 
 
 static void
-gegl_sampler_lohalo_get (      GeglSampler* restrict self,
-                         const gdouble               absolute_x,
-                         const gdouble               absolute_y,
-                               GeglMatrix2          *scale,
-                               void*        restrict output,
-                               GeglAbyssPolicy       repeat_mode)
+gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
+                         const gdouble                   absolute_x,
+                         const gdouble                   absolute_y,
+                               GeglMatrix2              *scale,
+                               void*           restrict  output,
+                               GeglAbyssPolicy           repeat_mode)
 {
   /*
    * Needed constants related to the input pixel value pointer
@@ -1307,10 +1295,12 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
   /*
    * The consequence of the following choice of anchor pixel location
    * is that the sampling location is at most at a box distance of .5
-   * from the anchor pixel location.
+   * from the anchor pixel location. That is: This computes the index
+   * of the closest pixel center (one of the closest when there are
+   * ties) within the GIMP convention.
    */
-  const gint ix_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_x + (gdouble) 0.5);
-  const gint iy_0 = LOHALO_FAST_PSEUDO_FLOOR (absolute_y + (gdouble) 0.5);
+  const gint ix_0 = GEGL_FAST_PSEUDO_FLOOR (absolute_x);
+  const gint iy_0 = GEGL_FAST_PSEUDO_FLOOR (absolute_y);
 
   /*
    * This is the pointer we use to pull pixel from "base" mipmap level
@@ -1321,10 +1311,12 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
   /*
    * (x_0,y_0) is the relative position of the sampling location
-   * w.r.t. the anchor pixel:
+   * w.r.t. the anchor pixel. The "+1/2"s are because the center of
+   * the pixel with index (0,0) is located at (1/2,1/2) within the
+   * GIMP convention.
    */
-  const gfloat x_0 = absolute_x - ix_0;
-  const gfloat y_0 = absolute_y - iy_0;
+  const gfloat x_0 = absolute_x - ( ix_0 + (gdouble) 0.5 );
+  const gfloat y_0 = absolute_y - ( iy_0 + (gdouble) 0.5 );
 
   const gint sign_of_x_0 = 2 * ( x_0 >= (gfloat) 0. ) - 1;
   const gint sign_of_y_0 = 2 * ( y_0 >= (gfloat) 0. ) - 1;
@@ -2263,12 +2255,19 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                  * Get pointer to mipmap level 1 data:
                  */
                 const gfloat* restrict input_bptr_1 =
-                 (gfloat*) gegl_sampler_get_from_mipmap (self, ix_1, iy_1, 1, repeat_mode);
+                  (gfloat*) gegl_sampler_get_from_mipmap (self,
+                                                          ix_1,
+                                                          iy_1,
+                                                          1,
+                                                          repeat_mode);
 
                 /*
                  * Position of the sampling location in the coordinate
                  * system defined by the mipmap "pixel locations"
-                 * relative to the level 1 anchor pixel location:
+                 * relative to the level 1 anchor pixel location. The
+                 * "-1/2"s are because the center of a level 0 pixel
+                 * is at a box distance of 1/2 from the center of the
+                 * closest level 1 pixel.
                  */
                 const gfloat x_1 =
                   x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
@@ -2297,7 +2296,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                       (gint)
                       (
                         ceilf
-                          ( ( x_1 - bounding_box_half_width  ) * (gfloat) 0.5 )
+                          (
+                            (float)
+                            ( ( x_1 - bounding_box_half_width  )
+                              * (gfloat) 0.5 )
+                          )
                       )
                       ,
                       -LOHALO_OFFSET_1
@@ -2308,7 +2311,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                       (gint)
                       (
                         floorf
-                          ( ( x_1 + bounding_box_half_width  ) * (gfloat) 0.5 )
+                          (
+                            (float)
+                            ( ( x_1 + bounding_box_half_width  )
+                              * (gfloat) 0.5 )
+                          )
                       )
                       ,
                       LOHALO_OFFSET_1
@@ -2319,7 +2326,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                       (gint)
                       (
                         ceilf
-                          ( ( y_1 - bounding_box_half_height ) * (gfloat) 0.5 )
+                          (
+                            (float)
+                            ( ( y_1 - bounding_box_half_height )
+                              * (gfloat) 0.5 )
+                          )
                       )
                       ,
                       -LOHALO_OFFSET_1
@@ -2330,7 +2341,11 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
                       (gint)
                       (
                         floorf
-                          ( ( y_1 + bounding_box_half_height ) * (gfloat) 0.5 )
+                          (
+                            (float)
+                            ( ( y_1 + bounding_box_half_height )
+                              * (gfloat) 0.5 )
+                          )
                       )
                       ,
                       LOHALO_OFFSET_1
@@ -2338,7 +2353,8 @@ gegl_sampler_lohalo_get (      GeglSampler* restrict self,
 
                 /*
                  * Update using mipmap level 1 values.
-                 *
+                 */
+                /*
                  * Possible future improvement: When the ellipse is
                  * slanted, one could avoid many pixel value loads and
                  * operations with Anthony Thyssen's formulas for the
