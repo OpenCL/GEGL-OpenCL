@@ -16,36 +16,6 @@
  *
  */
 
-
-/*
- * FAST_PSEUDO_FLOOR is a floor and floorf replacement which has been
- * found to be faster on several linux boxes than the library
- * version. It returns the floor of its argument unless the argument
- * is a negative integer, in which case it returns one less than the
- * floor. For example:
- *
- * FAST_PSEUDO_FLOOR(0.5) = 0
- *
- * FAST_PSEUDO_FLOOR(0.f) = 0
- *
- * FAST_PSEUDO_FLOOR(-.5) = -1
- *
- * as expected, but
- *
- * FAST_PSEUDO_FLOOR(-1.f) = -2
- *
- * The locations of the discontinuities of FAST_PSEUDO_FLOOR are the
- * same as floor and floorf; it is just that at negative integers the
- * function is discontinuous on the right instead of the left.
- */
-#define FAST_PSEUDO_FLOOR(x) ( (int)(x) - ( (x) < 0. ) )
-/*
- * Alternative (if conditional move is fast and correctly identified
- * by the compiler):
- *
- * #define FAST_PSEUDO_FLOOR(x) ( (x)>=0 ? (int)(x) : (int)(x)-1 )
- */
-
 #include "config.h"
 #include <glib-object.h>
 #include <glib/gstdio.h>
@@ -90,39 +60,38 @@ gegl_sampler_linear_init (GeglSamplerLinear *self)
 }
 
 static void
-gegl_sampler_linear_get (GeglSampler* restrict self,
-                         const gdouble         absolute_x,
-                         const gdouble         absolute_y,
-                         GeglMatrix2          *scale,
-                         void*        restrict output,
-                         GeglAbyssPolicy       repeat_mode)
+gegl_sampler_linear_get (      GeglSampler*    restrict  self,
+                         const gdouble                   absolute_x,
+                         const gdouble                   absolute_y,
+                               GeglMatrix2              *scale,
+                               void*           restrict  output,
+                               GeglAbyssPolicy           repeat_mode)
 {
   const gint pixels_per_buffer_row = 64;
   const gint channels = 4;
 
   /*
-   * floor's surrogate FAST_PSEUDO_FLOOR is used to make
-   * sure that the transition through 0 is smooth. If it is known that
-   * negative absolute_x and absolute_y will never be used, plain
-   * cast---that is, const gint ix = absolute_x---is recommended
-   * instead.
+   * The "-1/2"s are there because we want the index of the pixel to
+   * the left and top of the location, and with GIMP's convention the
+   * top left of the top left pixel is located at (1/2,1/2).
    */
-  const gint ix = FAST_PSEUDO_FLOOR (absolute_x);
-  const gint iy = FAST_PSEUDO_FLOOR (absolute_y);
+  const gint ix = GEGL_FAST_PSEUDO_FLOOR (absolute_x - (gdouble) 0.5 );
+  const gint iy = GEGL_FAST_PSEUDO_FLOOR (absolute_y - (gdouble) 0.5 );
 
   /*
    * x is the x-coordinate of the sampling point relative to the
-   * position of the top left pixel center. Similarly for y. Range of
-   * values: [0,1].
+   * position of the center of the top left pixel. Similarly for
+   * y. Range of values: [0,1]. The "+1/2"s match the "-1/2"s above.
    */
-  const gfloat x = absolute_x - ix;
-  const gfloat y = absolute_y - iy;
+  const gfloat x = absolute_x - ( ix + (gdouble) 0.5 );
+  const gfloat y = absolute_y - ( iy + (gdouble) 0.5 );
 
   /*
    * Point the data tile pointer to the first channel of the top_left
    * pixel value:
    */
-  const gfloat* restrict in_bptr = gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
+  const gfloat* restrict in_bptr =
+    gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
 
   /*
    * First bilinear weight:
@@ -167,7 +136,7 @@ gegl_sampler_linear_get (GeglSampler* restrict self,
   /*
    * Last bilinear weight:
    */
-  const gfloat w_times_z = 1.f - ( x + w_times_y );
+  const gfloat w_times_z = (gfloat) 1. - ( x + w_times_y );
 
   gfloat newval[4];
 
