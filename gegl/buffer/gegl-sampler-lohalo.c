@@ -1310,13 +1310,22 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
     (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0, repeat_mode);
 
   /*
-   * (x_0,y_0) is the relative position of the sampling location
-   * w.r.t. the anchor pixel. The "+1/2"s are because the center of
-   * the pixel with index (0,0) is located at (1/2,1/2) within the
-   * GIMP convention.
+   * First, we convert from the absolute position in the coordinate
+   * system with origin at the top left corner of the pixel with index
+   * (0,0) (the "GIMP convention" a.k.a. "corner-based"), to the
+   * position in the coordinate system with origin at the center of
+   * the pixel with index (0,0) (the "index" convention
+   * a.k.a. "center-based").
    */
-  const gfloat x_0 = absolute_x - ( ix_0 + (gdouble) 0.5 );
-  const gfloat y_0 = absolute_y - ( iy_0 + (gdouble) 0.5 );
+  const gdouble iabsolute_x = absolute_x - (gdouble) 0.5;
+  const gdouble iabsolute_y = absolute_y - (gdouble) 0.5;
+
+  /*
+   * (x_0,y_0) is the relative position of the sampling location
+   * w.r.t. the anchor pixel.
+   */
+  const gfloat x_0 = iabsolute_x - ix_0;
+  const gfloat y_0 = iabsolute_y - iy_0;
 
   const gint sign_of_x_0 = 2 * ( x_0 >= (gfloat) 0. ) - 1;
   const gint sign_of_y_0 = 2 * ( y_0 >= (gfloat) 0. ) - 1;
