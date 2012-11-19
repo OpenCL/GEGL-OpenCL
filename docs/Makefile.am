@@ -14,7 +14,7 @@ sync-txt:
 	txts=ASC_DOC=`for a in *.txt;do echo -n ' '$$a|sed s/txt/html/;done;echo ''`;\
 	  txts=$$txts" #ASC_DOC_HOTPATCH";\
 		cat Makefile.am | sed "s/ASC\_DOC.*ASC_DOC_HOTPATCH/$$txts/" > /tmp/mktmp; cp /tmp/mktmp Makefile.am;
-ASC_DOC= abyss_policy.html development.html editor.html index.html journal.html todo.html #ASC_DOC_HOTPATCH
+ASC_DOC= abyss_policy.html contribute.html development.html editor.html index.html journal.html todo.html #ASC_DOC_HOTPATCH
 
 
 HTML_FILES = \
