@@ -519,6 +519,7 @@ file.puts "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"ht
     </head>
     <body>"
 
+    if false
 file.puts "<div id='toc'>
       <div class='print'>
          <h3>Contents</h3>
@@ -534,6 +535,8 @@ file.puts "<div id='toc'>
       file.puts "<li><a href='\##{element.name.gsub(' ','_')}'>#{element.menu_entry}</a></li>"
     }
     file.puts "</ul></div>\n"
+    end
+
    
     file.puts "<div class='paper'><div class='content'>" 
     elements.each {|element| 

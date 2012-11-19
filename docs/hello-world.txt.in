@@ -5,9 +5,10 @@ mandelbrot fractal. compile it with:
 
  $ gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world
 
-This example and others can be found in the examples subdir of the GEGL distribution.
+This example and others can be found in the
+link:http://git.gnome.org/browse/gegl/tree/examples/[examples subdir of the GEGL
+distribution].
 
 ---------------------------
 sys::[cat @top_srcdir@/examples/hello-world.c]
 ---------------------------
-

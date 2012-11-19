@@ -261,7 +261,7 @@ static void category_index (gpointer key,
     {
       GeglOperationClass *klass = iter->data;
       const char *categories = gegl_operation_class_get_key (klass, "categories");
-      if (strstr (categories, "hidden"))
+      if (categories && strstr (categories, "hidden"))
         continue;
       g_print ("%s<a href='#op_%s'>%s</a>\n", comma?"":"", klass->name, klass->name);
       comma = TRUE;
@@ -345,6 +345,7 @@ main (gint    argc,
 
   g_print ("%s", html_top);
 
+#if 0
   g_print ("<div id='toc'>\n<ul>\n");
   g_print ("<li><a href='index.html'>GEGL</a></li><li>&nbsp;</li>\n");
   g_print ("<li><a href='index.html#Documentation'>Documentation</a></li>\n");
@@ -359,9 +360,10 @@ main (gint    argc,
 
       /*border: 0.1em dashed rgb(210,210,210);
        */
-  category_menu_index("All", operations, NULL);
+  //category_menu_index("All", operations, NULL);
 
   g_print ("</ul>\n</div>\n");
+#endif
 
     g_print ("<h1>GEGL operation reference</h1>");
     g_print ("<p>Image processing operations are shared objects (plug-ins) loaded when GEGL initializes. "
@@ -369,7 +371,7 @@ main (gint    argc,
               "<a name='Categories'><h2>Categories</h2></a><p>A plug-in can "
              "belong in multiple categories. Below is indexes broken down into the various available categories.</p>");
 
-  /*category_index ("All", operations, NULL);*/
+  category_index ("All", operations, NULL);
   /* create menus for each of the categories */
 
   g_hash_table_foreach (categories, category_index, NULL);
@@ -393,11 +395,16 @@ main (gint    argc,
           char *image = operation_to_path (name);
 
           if (g_file_test (image, G_FILE_TEST_EXISTS))
-            g_print ("<tr>\n <td colspan='1'>&nbsp;</td>\n  <td colspan='4'><img src='%s' /></td>\n</tr>\n", image);
+            g_print ("<tr>\n <td colspan='1'>&nbsp;</td>\n  <td colspan='4'><img style='float:right;padding-left:1.5em;' src='%s' />", image);
+          else
+            g_print ("<tr>\n <td colspan='1'>&nbsp;</td>\n");
+          if (description)
+            g_print ("%s\n", description);
+          g_print ("</td></tr>\n");
 
           g_free (image);
         }
-
+      else
       if (description)
         g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_description' colspan='4'>%s</td>\n</tr>\n", description);
 

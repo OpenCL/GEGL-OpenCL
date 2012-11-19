@@ -7,30 +7,53 @@ GEGL
 
 image::images/GEGL.png[GEGL]
 
-link:operations.html[operations reference]
-link:api.html[public API reference] 
 
 *GEGL* (Generic Graphics Library) is a graph based image processing framework.
 
-With GEGL you chain together image processing operations represented by nodes
+With GEGL you chain together link:operations.html[image processing operations] represented by nodes
 into a graph. GEGL provides such operations for loading and storing images,
 adjusting colors, filtering in different ways, transforming and compositing images.
 
-GEGL's programmer/user interface is a Directed Acyclic Graph of nodes. The DAG
-expresses a processing chain of operations. A DAG, or any node in it, expresses
-a composited and processed image.
+link:operations.html[Operations reference gallery]::
+  A page showcasing all the various gegl image processing operations.
+link:features.html[GEGL Feature list]::
+  The "feature list", a techinical specification of what GEGL can do.
+link:glossary.html[GEGL glossary]::
+  A cheat sheet of terms used in GEGL.
+link:hello-world.html[hello world]::
+  A small C example program source showing how the native C GEGL API can be used.
 
-News
-~~~~
-This website was built at the time of the previous GEGL tarball release and
-is a snapshot of a corresponding documentation build. For information about
-what might change on the way to the next release follow the following news
-sources:
+link:api.html[public API reference]::
+  The public graph construction and manipulation API for doing image
+  processing.
+link:api.html#GeglBuffer[GeglBuffer API reference]::
+  GEGL contains a powerful raster buffer abstraction powered by
+  link:http://gegl.org/babl/[babl].
 
-http://git.gnome.org/cgit/gegl/log/[Change log]::
+link:operations-api.html[Extending GEGL with operations/plug-ins]::
+  The API to create new image processing atoms for combination in the graph.
+link:build.html[Getting sources, and building]::
+  Links and information about various ways of getting a build environment for
+  GEGL.
+link:images/inheritance.png[GEGL inheritance tree]::
+  Generated class inheritance graph generated from runtime introspection.
+link:bugzilla.html[bugzilla]::
+  GEGL uses bugzilla for tracking issues, both bugs and desired new features.
+link:copyright.html[Copyright]::
+  Who made GEGL and under what conditions you can use it.
+link:development.html[Further pointers for development]::
+  Miscealanny notes about possible ways of building and developing with GEGL.
+
+
+If you read this on the gegl.org website you are reading the snapshot of the
+documentation generated for gegl at that point. For further information here
+are some pointers to follow:
+
+http://git.gnome.org/browse/gegl/[GEGL source] and http://git.gnome.org/browse/babl/[babl source]::
+  http://git.gnome.org/cgit/gegl/log/[commit log]::
   For day to day fixes, contributions and changes.
 http://git.gnome.org/cgit/gegl/tree/NEWS[NEWS]::
-  The NEWS file for a list of major new features (also contains older NEWS).
+  The NEWS file for a list across history of GEGL.
 http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugzilla]::
  for known and tracked issues with GEGL and perhaps see the
 http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes[mail]::

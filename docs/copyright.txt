@@ -14,5 +14,5 @@ http://www.ohloh.net/projects/4349/analyses/latest[over time] the following
 lists are are ordered chronologically according to when they are mentioned in
 the ChangeLog.
 
-include::@top_srcdir@/AUTHORS[]
+include::../AUTHORS[]
 

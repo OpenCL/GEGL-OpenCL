@@ -1,7 +1,5 @@
 Source overview
-~~~~~~~~~~~~~~~
-GEGL dirs
-^^^^^^^^^
+---------------
 
 Directories marked with ⊙ use GNU make extensions to include any .c file
 dropped into the directory in the build.

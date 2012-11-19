@@ -4,8 +4,10 @@ An API to extend the functionality of GEGL with new image processing primitive,
 file loaders, export formats or similar.
 
 Each GEGL operation is defined in a .c file that gets turned into a single
-shared object that is loaded. Each operation is a subclass of one of the
-provided base classes:
+shared object that is loaded.  Take a look at
+link:brightness-contrast.c.html[the brightness contrast operation] for a point
+operation well sprinkled with comments as a starting point.  Each operation is
+a subclass of one of the provided base classes:
 
 link:gegl-operation.h.html[GeglOperation]::
     The base operation class, which all the other base classes are derived
@@ -63,6 +65,3 @@ link:gegl-operation-meta.h.html[GeglOperationMeta]::
 To create your own operations you should start by looking for one that does
 approximatly what you already need. Copy it to a new .c source file, and
 replace the occurences of the filename (operation name in the source.)
-
-Take a look at link:brightness-contrast.c.html[the brightness contrast
-operation] for a point operation well sprinkled with comments as a starting point.

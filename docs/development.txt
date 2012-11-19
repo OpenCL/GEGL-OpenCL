@@ -7,6 +7,7 @@ image::images/GEGL.png[GEGL]
 This document describes some handy things to know when developing the gegl internals.
 Parts of it is copy-paste of emails on the gegl developer list.
 
+
 == Setting up
 
 === Ubuntu 8.10

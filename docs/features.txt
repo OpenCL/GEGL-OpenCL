@@ -1,5 +1,5 @@
-Functionality Overview
-----------------------
+GEGL Feature List
+-----------------
 
   - Floating point handling and processing and output of larger 8bit, 16bit
     integer and 32bit floating point per component buffers larger than RAM.

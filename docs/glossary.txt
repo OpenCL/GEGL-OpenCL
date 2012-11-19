@@ -1,5 +1,6 @@
-Glossary
-~~~~~~~~
+GEGL Glossary
+-------------
+
 connection::
     A link/pipe routing image flow between operations within the graph goes
     from an output pad to an input pad, in graph glossary this might also be

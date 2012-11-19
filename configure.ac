@@ -1103,6 +1103,8 @@ operations/workshop/generated/Makefile
 tools/Makefile
 docs/Makefile
 docs/index.txt
+docs/hello-world.txt
+docs/copyright.txt
 examples/Makefile
 examples/data/Makefile
 tests/Makefile
