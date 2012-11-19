@@ -32,12 +32,12 @@ enum
   PROP_LAST
 };
 
-static void gegl_sampler_linear_get (GeglSampler* restrict self,
-                                     const gdouble         x,
-                                     const gdouble         y,
-                                     GeglMatrix2          *scale,
-                                     void*        restrict output,
-                                     GeglAbyssPolicy       repeat_mode);
+static void gegl_sampler_linear_get (      GeglSampler* restrict  self,
+                                     const gdouble                absolute_x,
+                                     const gdouble                absolute_y,
+                                           GeglMatrix2           *scale,
+                                           void*        restrict  output,
+                                           GeglAbyssPolicy        repeat_mode);
 
 G_DEFINE_TYPE (GeglSamplerLinear, gegl_sampler_linear, GEGL_TYPE_SAMPLER)
 
@@ -70,21 +70,29 @@ gegl_sampler_linear_get (      GeglSampler*    restrict  self,
   const gint pixels_per_buffer_row = 64;
   const gint channels = 4;
 
+
   /*
    * The "-1/2"s are there because we want the index of the pixel to
    * the left and top of the location, and with GIMP's convention the
-   * top left of the top left pixel is located at (1/2,1/2).
+   * top left of the top left pixel is located at
+   * (1/2,1/2). Basically, we are converting from a coordinate system
+   * in which the origin is at the top left pixel of the pixel with
+   * index (0,0), to a coordinate system in which the origin is at the
+   * center of the same pixel.
    */
-  const gint ix = GEGL_FAST_PSEUDO_FLOOR (absolute_x - (gdouble) 0.5 );
-  const gint iy = GEGL_FAST_PSEUDO_FLOOR (absolute_y - (gdouble) 0.5 );
+  const gdouble iabsolute_x = absolute_x - (gdouble) 0.5;
+  const gdouble iabsolute_y = absolute_y - (gdouble) 0.5;
+
+  const gint ix = GEGL_FAST_PSEUDO_FLOOR (iabsolute_x);
+  const gint iy = GEGL_FAST_PSEUDO_FLOOR (iabsolute_y);
 
   /*
    * x is the x-coordinate of the sampling point relative to the
    * position of the center of the top left pixel. Similarly for
-   * y. Range of values: [0,1]. The "+1/2"s match the "-1/2"s above.
+   * y. Range of values: [0,1].
    */
-  const gfloat x = absolute_x - ( ix + (gdouble) 0.5 );
-  const gfloat y = absolute_y - ( iy + (gdouble) 0.5 );
+  const gfloat x = iabsolute_x - ix;
+  const gfloat y = iabsolute_y - iy;
 
   /*
    * Point the data tile pointer to the first channel of the top_left
