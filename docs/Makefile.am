@@ -9,6 +9,14 @@ gtkdochtmldir = $(datadir)/gtk-doc/html/gegl
 gtkdocimgdir = $(datadir)/gtk-doc/html/gegl/images
 gtkdocexampledir = $(datadir)/gtk-doc/html/gegl/images/examples
 
+# run the sync-txt target after adding a text file
+sync-txt:
+	txts=ASC_DOC=`for a in *.txt;do echo -n ' '$$a|sed s/txt/html/;done;echo ''`;\
+	  txts=$$txts" #ASC_DOC_HOTPATCH";\
+		cat Makefile.am | sed "s/ASC\_DOC.*ASC_DOC_HOTPATCH/$$txts/" > /tmp/mktmp; cp /tmp/mktmp Makefile.am;
+ASC_DOC= abyss_policy.html development.html editor.html index.html journal.html todo.html #ASC_DOC_HOTPATCH
+
+
 HTML_FILES = \
 	operations.html		\
 	class-hierarchy.html
@@ -50,8 +58,10 @@ HTML_FILES += $(ENSCRIPT_FILES)
 GTKDOC_FILES += $(ENSCRIPT_FILES)
 endif
 
+BUILT_EXTRA_DIST = class-hierarchy.html operations.html $(ASC_DOC)
+
 if HAVE_ASCIIDOC
-HTML_FILES += index.html development.html
+HTML_FILES += $(ASC_DOC)
 endif
 
 EXTRA_DIST = \
@@ -77,7 +87,6 @@ dist_gtkdocimg_DATA = \
 	images/standard-aux.png
 dist_gtkdocexample_DATA = $(EXAMPLE_FILES)
 
-BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html development.html
 
 CLEANFILES = README $(HTML_FILES) index.txt
 DISTCLEANFILES = index.txt
@@ -167,28 +176,21 @@ if HAVE_ENSCRIPT
 	$(ENSCRIPT) -E --color --language=html -p$@ $<
 endif
 
-api.html: $(top_srcdir)/gegl/gegl.h\
-          $(top_builddir)/gegl/gegl-version.h\
-          $(top_srcdir)/gegl/buffer/gegl-buffer.h\
-	  $(top_srcdir)/gegl/buffer/gegl-buffer-iterator.h\
-          $(top_srcdir)/gegl/gegl-utils.h\
-          $(top_srcdir)/gegl/property-types/gegl-color.h\
-          $(top_srcdir)/gegl/gegl-matrix.h\
-          $(top_srcdir)/gegl/property-types/gegl-path.h\
-          $(top_srcdir)/gegl/property-types/gegl-curve.h\
+API_DOC_FILES = \
+	$(top_srcdir)/gegl/gegl.h			\
+	$(top_builddir)/gegl/gegl-version.h		\
+	$(top_srcdir)/gegl/buffer/gegl-buffer.h	\
+	$(top_srcdir)/gegl/buffer/gegl-buffer-iterator.h\
+    $(top_srcdir)/gegl/gegl-utils.h \
+    $(top_srcdir)/gegl/property-types/gegl-color.h\
+    $(top_srcdir)/gegl/gegl-matrix.h \
+    $(top_srcdir)/gegl/property-types/gegl-path.h\
+    $(top_srcdir)/gegl/property-types/gegl-curve.h
+
+api.html: $(API_DOC_FILES) \
 	  $(top_srcdir)/tools/create-reference.rb
 if HAVE_RUBY
-	$(top_srcdir)/tools/create-reference.rb 	\
-	    $(top_srcdir)/gegl/gegl.h			\
-	    $(top_builddir)/gegl/gegl-version.h		\
-	    $(top_srcdir)/gegl/buffer/gegl-buffer.h	\
-	    $(top_srcdir)/gegl/buffer/gegl-buffer-iterator.h\
-            $(top_srcdir)/gegl/gegl-utils.h \
-            $(top_srcdir)/gegl/property-types/gegl-color.h\
-            $(top_srcdir)/gegl/gegl-matrix.h \
-            $(top_srcdir)/gegl/property-types/gegl-path.h\
-            $(top_srcdir)/gegl/property-types/gegl-curve.h\
-	    $@
+		$(top_srcdir)/tools/create-reference.rb $(API_DOC_FILES) $@
 endif
 
 images/inheritance.png: Makefile

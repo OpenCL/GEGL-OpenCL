@@ -4,7 +4,7 @@ Isaac Wagner
 isaacbw@src.gnome.org
 
 DESIRED FEATURES
-================
+----------------
 
 *Resizable image preview thumbnails on nodes
 *Text annotations
@@ -22,13 +22,13 @@ DESIRED FEATURES
 *Can "shade" nodes which reduces their size to just displaying the node title
 
 LIBRARIES
-=========
+---------
 
 GTK+
 Cairo
 
 DESIGN NOTES
-============
+------------
 
 Node editing and rendering code will be modular and reusable within other node manipulation applications
 
