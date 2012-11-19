@@ -1,5 +1,5 @@
 Copyright
-~~~~~~~~~
+---------
 GEGL is free software; you can redistribute it and/or modify it under the terms
 of the link:LGPL[GNU Lesser General Public License] and link:GPL[GNU General
 Public License] as published by the Free Software Foundation; either version 3
@@ -8,7 +8,7 @@ licensed under LGPL while the sample commandline application and GUI binary
 gegl is licensed under GPL.
 
 Contributors
-~~~~~~~~~~~~
+------------
 Many people have contributed to GEGL
 http://www.ohloh.net/projects/4349/analyses/latest[over time] the following
 lists are are ordered chronologically according to when they are mentioned in

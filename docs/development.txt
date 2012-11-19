@@ -200,34 +200,8 @@ All documentation resources are placed in /doc and the generation is controlled 
 
 === asciidoc
 
-This example will show how this howto was added.
-
-- Add in `Makefile.am` a new target named `documentation-howto.html` in
-the existing list of html files to generate:
-
-  if HAVE_ASCIIDOC
-  	HTML_FILES += index.html documentation-howto.html
-  endif
-
-- Add in `Makefile.am` the target:
-
- documentation-howto.html: documentation-howto.txt
- if HAVE_ASCIIDOC
- 	@echo "HTML: $@"
- 	cp $< $@
- 	$(ASCIIDOC) --unsafe  -o $@ -a stylesdir=`pwd` -a toc -a theme=gegl -a quirks! $<
- else
- 	@echo "*** asciidoc must be available in order to make dist"
- 	@false
- endif
-
-- Create a new `documentation-howto.txt` file with this content:
-
- == Documentation howto
-
- This document describes how to document GEGL using it's build system.
-
-- Type `make` and the `documentation-howto.txt` will be converted into `documentation-howto.html`
+Add .txt files to the docs dir, and type $ make sync-txt # this will cause the
+text file to be added to the html pages to generate.
 
 === enscript
 
