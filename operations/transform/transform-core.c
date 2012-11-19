@@ -19,6 +19,7 @@
  *           2010 Debarshi Ray
  *           2011 Mikael Magnusson
  *           2011 Massimo Valentini
+ *           2011 Adam Turcotte
  *           2012 Kevin Cozens
  *           2012 Nicolas Robidoux
  */
@@ -182,7 +183,8 @@ op_transform_class_init (OpTransformClass *klass)
   gobject_class->get_property         = gegl_transform_get_property;
   gobject_class->finalize             = gegl_transform_finalize;
 
-  op_class->get_invalidated_by_change = gegl_transform_get_invalidated_by_change;
+  op_class->get_invalidated_by_change =
+    gegl_transform_get_invalidated_by_change;
   op_class->get_bounding_box          = gegl_transform_get_bounding_box;
   op_class->get_required_for_output   = gegl_transform_get_required_for_output;
   op_class->detect                    = gegl_transform_detect;
@@ -500,8 +502,9 @@ gegl_transform_detect (GeglOperation *operation,
                        gint           x,
                        gint           y)
 {
-  OpTransform    *transform      = OP_TRANSFORM (operation);
-  GeglNode    *source_node = gegl_operation_get_source_node (operation, "input");
+  OpTransform *transform = OP_TRANSFORM (operation);
+  GeglNode    *source_node =
+    gegl_operation_get_source_node (operation, "input");
   GeglMatrix3  inverse;
   gdouble      need_points [2];
   gint         i;
@@ -644,24 +647,25 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
 
 static void
 transform_affine (GeglBuffer  *dest,
-                     GeglBuffer  *src,
-                     GeglMatrix3 *matrix,
-                     GeglSampler *sampler,
-                     gint         level)
+                  GeglBuffer  *src,
+                  GeglMatrix3 *matrix,
+                  GeglSampler *sampler,
+                  gint         level)
 {
-  GeglBufferIterator *i;
+  GeglBufferIterator  *i;
   const GeglRectangle *dest_extent;
-  gint                  x, y;
-  gfloat * restrict     dest_buf,
-                       *dest_ptr;
-  GeglMatrix3           inverse;
-  GeglMatrix2           inverse_jacobian;
-  gdouble               u_start,
-                        v_start,
-                        w_start,
-                        u_float,
-                        v_float,
-                        w_float;
+  gint                 x,
+                       y;
+  gfloat * restrict    dest_buf,
+                      *dest_ptr;
+  GeglMatrix3          inverse;
+  GeglMatrix2          inverse_jacobian;
+  gdouble              u_start,
+                       v_start,
+                       w_start,
+                       u_float,
+                       v_float,
+                       w_float;
 
   const Babl           *format;
 
@@ -677,7 +681,12 @@ transform_affine (GeglBuffer  *dest,
   dest_extent = gegl_buffer_get_extent (dest);
 
 
-  i = gegl_buffer_iterator_new (dest, dest_extent, level, format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+  i = gegl_buffer_iterator_new (dest,
+                                dest_extent,
+                                level,
+                                format,
+                                GEGL_BUFFER_WRITE,
+                                GEGL_ABYSS_NONE);
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
@@ -685,15 +694,22 @@ transform_affine (GeglBuffer  *dest,
 
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
+
       /* set inverse_jacobian for samplers that support it */
       inverse_jacobian.coeff[0][0] = inverse.coeff[0][0];
       inverse_jacobian.coeff[0][1] = inverse.coeff[0][1];
       inverse_jacobian.coeff[1][0] = inverse.coeff[1][0];
       inverse_jacobian.coeff[1][1] = inverse.coeff[1][1];
 
-      u_start = inverse.coeff[0][0] * (roi->x + 0.5) + inverse.coeff[0][1] * (roi->y + 0.5) + inverse.coeff[0][2];
-      v_start = inverse.coeff[1][0] * (roi->x + 0.5) + inverse.coeff[1][1] * (roi->y + 0.5) + inverse.coeff[1][2];
-      w_start = inverse.coeff[2][0] * (roi->x + 0.5) + inverse.coeff[2][1] * (roi->y + 0.5) + inverse.coeff[2][2];
+      u_start = inverse.coeff[0][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff[0][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff[0][2];
+      v_start = inverse.coeff[1][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff[1][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff[1][2];
+      w_start = inverse.coeff[2][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff[2][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff[2][2];
 
       for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
@@ -703,7 +719,12 @@ transform_affine (GeglBuffer  *dest,
 
           for (x = roi->width; x--;)
             {
-              gegl_sampler_get (sampler, u_float/w_float, v_float/w_float, &inverse_jacobian, dest_ptr, GEGL_ABYSS_NONE);
+              gegl_sampler_get (sampler,
+                                u_float/w_float,
+                                v_float/w_float,
+                                &inverse_jacobian,
+                                dest_ptr,
+                                GEGL_ABYSS_NONE);
               dest_ptr+=4;
               u_float += inverse.coeff [0][0];
               v_float += inverse.coeff [1][0];
@@ -724,18 +745,19 @@ transform_generic (GeglBuffer  *dest,
                    GeglSampler *sampler,
                    gint         level)
 {
-  GeglBufferIterator *i;
+  GeglBufferIterator  *i;
   const GeglRectangle *dest_extent;
-  gint                  x, y;
-  gfloat * restrict     dest_buf,
-                       *dest_ptr;
-  GeglMatrix3           inverse;
-  gdouble               u_start,
-                        v_start,
-                        w_start,
-                        u_float,
-                        v_float,
-                        w_float;
+  gint                 x,
+                       y;
+  gfloat * restrict    dest_buf,
+                      *dest_ptr;
+  GeglMatrix3          inverse;
+  gdouble              u_start,
+                       v_start,
+                       w_start,
+                       u_float,
+                       v_float,
+                       w_float;
 
   const Babl           *format;
 
@@ -751,7 +773,12 @@ transform_generic (GeglBuffer  *dest,
   dest_extent = gegl_buffer_get_extent (dest);
 
 
-  i = gegl_buffer_iterator_new (dest, dest_extent, level, format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+  i = gegl_buffer_iterator_new (dest,
+                                dest_extent,
+                                level,
+                                format,
+                                GEGL_BUFFER_WRITE,
+                                GEGL_ABYSS_NONE);
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
@@ -760,14 +787,15 @@ transform_generic (GeglBuffer  *dest,
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
 
-      u_start = inverse.coeff[0][0] * roi->x + inverse.coeff[0][1] * roi->y + inverse.coeff[0][2];
-      v_start = inverse.coeff[1][0] * roi->x + inverse.coeff[1][1] * roi->y + inverse.coeff[1][2];
-      w_start = inverse.coeff[2][0] * roi->x + inverse.coeff[2][1] * roi->y + inverse.coeff[2][2];
-
-      /* correct rounding on e.g. negative scaling (is this sound?) */
-      if (inverse.coeff [0][0] < 0.)  u_start -= .001;
-      if (inverse.coeff [1][1] < 0.)  v_start -= .001;
-      if (inverse.coeff [2][2] < 0.)  w_start -= .001;
+      u_start = inverse.coeff[0][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff[0][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff[0][2];
+      v_start = inverse.coeff[1][0] * (roi->x + (gdouble) 0.5)  +
+                inverse.coeff[1][1] * (roi->y + (gdouble) 0.5)  +
+                inverse.coeff[1][2];
+      w_start = inverse.coeff[2][0] * (roi->x + (gdouble) 0.5)  +
+                inverse.coeff[2][1] * (roi->y + (gdouble) 0.5)  +
+                inverse.coeff[2][2];
 
       for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
@@ -782,12 +810,21 @@ transform_generic (GeglBuffer  *dest,
               gdouble u = u_float * w_recip;
               gdouble v = v_float * w_recip;
 
-              inverse_jacobian.coeff[0][0] = (inverse.coeff[0][0] - inverse.coeff[2][0] * u) * w_recip;
-              inverse_jacobian.coeff[0][1] = (inverse.coeff[0][1] - inverse.coeff[2][1] * u) * w_recip;
-              inverse_jacobian.coeff[1][0] = (inverse.coeff[1][0] - inverse.coeff[2][0] * v) * w_recip;
-              inverse_jacobian.coeff[1][1] = (inverse.coeff[1][1] - inverse.coeff[2][1] * v) * w_recip;
+              inverse_jacobian.coeff[0][0] =
+                (inverse.coeff[0][0] - inverse.coeff[2][0] * u) * w_recip;
+              inverse_jacobian.coeff[0][1] =
+                (inverse.coeff[0][1] - inverse.coeff[2][1] * u) * w_recip;
+              inverse_jacobian.coeff[1][0] =
+                (inverse.coeff[1][0] - inverse.coeff[2][0] * v) * w_recip;
+              inverse_jacobian.coeff[1][1] =
+                (inverse.coeff[1][1] - inverse.coeff[2][1] * v) * w_recip;
 
-              gegl_sampler_get (sampler, u, v, &inverse_jacobian, dest_ptr, GEGL_ABYSS_NONE);
+              gegl_sampler_get (sampler,
+                                u,
+                                v,
+                                &inverse_jacobian,
+                                dest_ptr,
+                                GEGL_ABYSS_NONE);
               dest_ptr+=4;
 
               u_float += inverse.coeff [0][0];
@@ -858,13 +895,19 @@ gegl_transform_fast_reflect_x (GeglBuffer              *dest,
                                const GeglRectangle     *src_rect,
                                gint                     level)
 {
-  const Babl              *format = gegl_buffer_get_format (src);
-  const gint               px_size = babl_format_get_bytes_per_pixel (format),
-                           rowstride = src_rect->width * px_size;
-  gint                     i;
-  guchar                  *buf = (guchar *) g_malloc (src_rect->height * rowstride);
+  const Babl *format = gegl_buffer_get_format (src);
+  const gint  px_size = babl_format_get_bytes_per_pixel (format),
+              rowstride = src_rect->width * px_size;
+  gint        i;
+  guchar     *buf = (guchar *) g_malloc (src_rect->height * rowstride);
 
-  gegl_buffer_get (src,  src_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (src,
+                   src_rect,
+                   1.0,
+                   format,
+                   buf,
+                   GEGL_AUTO_ROWSTRIDE,
+                   GEGL_ABYSS_NONE);
 
   for (i = 0; i < src_rect->height / 2; i++)
     {
@@ -895,19 +938,25 @@ gegl_transform_fast_reflect_y (GeglBuffer              *dest,
                                const GeglRectangle     *src_rect,
                                gint                     level)
 {
-  const Babl              *format = gegl_buffer_get_format (src);
-  const gint               px_size = babl_format_get_bytes_per_pixel (format),
-                           rowstride = src_rect->width * px_size;
-  gint                     i;
-  guchar                  *buf = (guchar *) g_malloc (src_rect->height * rowstride);
+  const Babl *format = gegl_buffer_get_format (src);
+  const gint  px_size = babl_format_get_bytes_per_pixel (format),
+              rowstride = src_rect->width * px_size;
+  gint        i;
+  guchar     *buf = (guchar *) g_malloc (src_rect->height * rowstride);
 
-  gegl_buffer_get (src, src_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (src,
+                   src_rect,
+                   1.0,
+                   format,
+                   buf,
+                   GEGL_AUTO_ROWSTRIDE,
+                   GEGL_ABYSS_NONE);
 
   for (i = 0; i < src_rect->height; i++)
     {
-      gint      src_offset = i * rowstride,
-                dest_offset = src_offset + rowstride,
-                j;
+      gint src_offset = i * rowstride,
+           dest_offset = src_offset + rowstride,
+           j;
 
       for (j = 0; j < src_rect->width / 2; j++)
         {
@@ -941,10 +990,10 @@ gegl_transform_process (GeglOperation        *operation,
                         const GeglRectangle  *result,
                         gint                  level)
 {
-  GeglBuffer          *input;
-  GeglBuffer          *output;
-  GeglMatrix3          matrix;
-  OpTransform         *transform = (OpTransform *) operation;
+  GeglBuffer  *input;
+  GeglBuffer  *output;
+  GeglMatrix3  matrix;
+  OpTransform *transform = (OpTransform *) operation;
 
   gegl_transform_create_composite_matrix (transform, &matrix);
 
@@ -1000,7 +1049,9 @@ gegl_transform_process (GeglOperation        *operation,
 
       output = gegl_operation_context_get_target (context, "output");
 
-      src_rect = gegl_operation_get_required_for_output (operation, "output", result);
+      src_rect = gegl_operation_get_required_for_output (operation,
+                                                         "output",
+                                                         result);
       src_rect.y += 1;
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
@@ -1010,7 +1061,11 @@ gegl_transform_process (GeglOperation        *operation,
       src_rect.width -= context_rect.width;
       src_rect.height -= context_rect.height;
 
-      gegl_transform_fast_reflect_x (output, input, result, &src_rect, context->level);
+      gegl_transform_fast_reflect_x (output,
+                                     input,
+                                     result,
+                                     &src_rect,
+                                     context->level);
       g_object_unref (sampler);
 
       if (input != NULL)
@@ -1031,7 +1086,9 @@ gegl_transform_process (GeglOperation        *operation,
 
       output = gegl_operation_context_get_target (context, "output");
 
-      src_rect = gegl_operation_get_required_for_output (operation, "output", result);
+      src_rect = gegl_operation_get_required_for_output (operation,
+                                                         "output",
+                                                         result);
       src_rect.x += 1;
 
       sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
@@ -1041,7 +1098,11 @@ gegl_transform_process (GeglOperation        *operation,
       src_rect.width -= context_rect.width;
       src_rect.height -= context_rect.height;
 
-      gegl_transform_fast_reflect_y (output, input, result, &src_rect, context->level);
+      gegl_transform_fast_reflect_y (output,
+                                     input,
+                                     result,
+                                     &src_rect,
+                                     context->level);
       g_object_unref (sampler);
 
       if (input != NULL)
@@ -1075,4 +1136,3 @@ gegl_transform_process (GeglOperation        *operation,
 
   return TRUE;
 }
-
