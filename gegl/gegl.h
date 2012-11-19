@@ -396,7 +396,7 @@ void          gegl_node_get_valist       (GeglNode      *node,
  */
 
 /**
- * gegl_node_blit:
+ * gegl_node_blit: (skip)
  * @node: a #GeglNode
  * @scale: the scale to render at 1.0 is default, other values changes the
  * width/height of the sampled region.

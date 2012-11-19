@@ -45,7 +45,7 @@ typedef struct GeglBufferIterator
 
 
 /**
- * gegl_buffer_iterator_new:
+ * gegl_buffer_iterator_new: (skip)
  * @buffer: a #GeglBuffer
  * @roi: the rectangle to iterate over
  * @level: the level at which we are iterating, the roi will indicate the
@@ -73,7 +73,7 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
 
 
 /**
- * gegl_buffer_iterator_add:
+ * gegl_buffer_iterator_add: (skip)
  * @iterator: a #GeglBufferIterator
  * @buffer: a #GeglBuffer
  * @roi: the rectangle to iterate over
@@ -123,8 +123,6 @@ void                 gegl_buffer_iterator_stop  (GeglBufferIterator *iterator);
  */
 gboolean             gegl_buffer_iterator_next (GeglBufferIterator *iterator);
 
-/**
- */
 
 #ifdef EXAMPLE
 

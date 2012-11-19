@@ -48,7 +48,7 @@ typedef struct _GeglSampler  GeglSampler;
 GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
 
 /**
- * gegl_buffer_new:
+ * gegl_buffer_new: (skip)
  * @extent: the geometry of the buffer (origin, width and height) a
  * GeglRectangle.
  * @format: the Babl pixel format to be used, create one with babl_format("RGBA
@@ -238,7 +238,7 @@ gboolean          gegl_buffer_set_abyss      (GeglBuffer          *buffer,
 #endif
 
 /**
- * gegl_buffer_get:
+ * gegl_buffer_get: (skip)
  * @buffer: the buffer to retrieve data from.
  * @rect: the coordinates we want to retrieve data from, and width/height of
  * destination buffer, if NULL equal to the extent of the buffer. The
@@ -336,7 +336,7 @@ const Babl *    gegl_buffer_get_format        (GeglBuffer           *buffer);
 
 
 /**
- * gegl_buffer_set_format:
+ * gegl_buffer_set_format: (skip)
  * @buffer: a #GeglBuffer
  * @format: the new babl format, must have same bpp as original format.
  *
@@ -395,7 +395,7 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
 
 
 /**
- * gegl_buffer_sample:
+ * gegl_buffer_sample: (skip)
  * @buffer: the GeglBuffer to sample from
  * @x: x coordinate to sample in buffer coordinates
  * @y: y coordinate to sample in buffer coordinates
@@ -450,7 +450,7 @@ void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
 GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
 
 /**
- * gegl_buffer_sampler_new:
+ * gegl_buffer_sampler_new: (skip)
  * @buffer: buffer to create a new sampler for
  * @format: format we want data back in
  * @sampler_type: the sampler type to use,
@@ -495,7 +495,7 @@ void              gegl_sampler_get            (GeglSampler    *sampler,
 const GeglRectangle * gegl_sampler_get_context_rect (GeglSampler *sampler);
 
 /**
- * gegl_buffer_linear_new:
+ * gegl_buffer_linear_new: (skip)
  * @extent: dimensions of buffer.
  * @format: desired pixel format.
  *
@@ -509,7 +509,7 @@ GeglBuffer *  gegl_buffer_linear_new          (const GeglRectangle *extent,
                                                const Babl          *format);
 
 /**
- * gegl_buffer_linear_new_from_data:
+ * gegl_buffer_linear_new_from_data: (skip)
  * @data: a pointer to a linear buffer in memory.
  * @format: the format of the data in memory
  * @extent: the dimensions (and upper left coordinates) of linear buffer.
@@ -534,7 +534,7 @@ GeglBuffer * gegl_buffer_linear_new_from_data (const gpointer       data,
                                                gpointer             destroy_fn_data);
 
 /**
- * gegl_buffer_linear_open:
+ * gegl_buffer_linear_open: (skip)
  * @buffer: a #GeglBuffer.
  * @extent: region to open, pass NULL for entire buffer.
  * @rowstride: return location for rowstride.
