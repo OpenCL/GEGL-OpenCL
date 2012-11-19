@@ -77,7 +77,7 @@ dist_gtkdocimg_DATA = \
 	images/standard-aux.png
 dist_gtkdocexample_DATA = $(EXAMPLE_FILES)
 
-BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
+BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html development.html
 
 CLEANFILES = README $(HTML_FILES) index.txt
 DISTCLEANFILES = index.txt
