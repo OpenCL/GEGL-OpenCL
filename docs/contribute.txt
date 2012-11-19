@@ -1,0 +1,58 @@
+How to contribute to GEGL
+-------------------------
+
+This isn't really a roadmap, it is more of a list of signs pointing in the
+right direction.
+
+There are various tracks that can be followed to improve the future of GEGL in
+GIMP, many of these things, at least on the GEGL side are covered by bugs in
+bugzilla, properly git formatted patches adressing these issues are most
+welcome contributions. Doing things on this list would help speed up the
+arrival of the next and more powerful generation of GIMP.
+
+Allow GEGL to run untrusted ops out-of process - ensuring that badly behaved
+    ops will not bring GIMP/GEGL down.
+-Implement previews working on mipmap levels, allowing GEGL to do a preview at 12.5%, 25% or 50% of actual size - rendering the full size view in the background or on demand.
+
+Allow GEGL to connect any property of ops as inputs/outputs in the graph, the infrastructure to do so
+        is mostly already in place, but not properly exposed. For some uses, in particular for exposing more
+        powerful meta-ops this would be very nice.
+
+Improve the gparamspec vocabulary used to describe properties of of ops,
+providing more semantics for better auto-created user interfaces.
+
+Port GIMP plug-ins to GEGL ops
+------------------------------
+
+Writing GEGL ops is simpler than writing GIMP plug-ins, plug-ins can support
+higher bit depth in the future. Floating point code is easier to write, less
+code is needed. You can get auto generated UI.
+Writing more GIMP legacy plug-ins only increases the future porting
+work-load/leaves the new plug-in outdated, so please write new code as GEGL
+plug-ins. Even after a couple of gsocs, there is still unported such.
+
+GIMP currently has many file loaders/savers that would be good to have in GEGL.
+
+Improve GEGL documentation
+--------------------------
+the GEGL website is generated as part of the
+GEGL build, patches to the documentation that fully integrates the changes
+also with the website are welcome. Documentation for the structure of
+GEGL and its internal architecture is also welcome.
+
+
+Use GEGL in other places than GIMP
+
+Commandline tools for doing batch processing, UIs for compositing or
+image manipulation, video effects rendering and more are all things that are
+possible to implement with GEGL, that would end up sharing their available
+ops among each other.
+
+to provide incentive for yourself and others to work on the above
+points. GEGL is designed to be a generically usable API and does not cater
+especially for GIMP.
+
+The pluggable GeglBuffers of GEGL permit other tiled buffer systems
+(krita, mypaint?, a future blender?, a plug-in for GIMP 1.x, OpenStreetMap
+?) to efficiently reuse GEGL operations as plug-ins without unneccesary
+buffer copying.
