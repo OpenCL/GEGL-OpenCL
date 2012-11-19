@@ -66,7 +66,7 @@ EXTRA_DIST = \
 	images/gegl.ico			\
 	images/standard-input.png \
 	images/standard-aux.png \
-	index-static.txt.in
+	index.txt.in
 
 EXAMPLE_FILES = $(wildcard images/examples/*.png)
 EXTRA_DIST += $(EXAMPLE_FILES)
@@ -79,8 +79,8 @@ dist_gtkdocexample_DATA = $(EXAMPLE_FILES)
 
 BUILT_EXTRA_DIST = index.html class-hierarchy.html operations.html
 
-CLEANFILES = README $(HTML_FILES) index-static.txt
-DISTCLEANFILES = index-static.txt
+CLEANFILES = README $(HTML_FILES) index.txt
+DISTCLEANFILES = index.txt
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 exclusion_pattern = "load|buffer-source|pixbuf|nop|clone|convert-format|introspect|layer|image-compare|load|open-buffer|svg-load|exr-load|jpg-load|png-load|magick-load|box-blur|stretch-contrast|remap|matting-global|exp-combine|dropshadow|kuwahara|box-percentile|disc-percentile|snn-percentile|line-profile|buffer-cache|warp|mandelbrot|hstack"
@@ -199,22 +199,13 @@ if HAVE_DOT
 endif
 endif
 
-index.html: index-static.txt		\
+%.html: %.txt		\
 	$(top_srcdir)/AUTHORS		\
 	gegl.css			\
 	$(top_srcdir)/NEWS		\
 	$(top_srcdir)/examples/hello-world.c \
 	$(top_builddir)/bin/gegl$(EXEEXT)	\
 	Makefile.am
-if HAVE_ASCIIDOC
-	@echo "HTML: $@"
-	$(ASCIIDOC) --unsafe  -o $@ -a stylesheet=`pwd`/gegl.css -a toc -a quirks! $<
-else
-	@echo "*** asciidoc must be available in order to make dist"
-	@false
-endif
-
-development.html: $(top_srcdir)/docs/development.txt
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
 	$(ASCIIDOC) --unsafe  -o $@ -a stylesheet=`pwd`/gegl.css -a toc -a quirks! $<

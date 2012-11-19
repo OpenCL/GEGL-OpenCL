@@ -1102,7 +1102,7 @@ operations/workshop/external/Makefile
 operations/workshop/generated/Makefile
 tools/Makefile
 docs/Makefile
-docs/index-static.txt
+docs/index.txt
 examples/Makefile
 examples/data/Makefile
 tests/Makefile
