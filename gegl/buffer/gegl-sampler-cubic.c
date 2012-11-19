@@ -36,24 +36,24 @@ enum
   PROP_LAST
 };
 
-static void gegl_sampler_cubic_finalize (GObject         *gobject);
-static void gegl_sampler_cubic_get      (GeglSampler     *sampler,
-                                         gdouble          absolute_x,
-                                         gdouble          absolute_y,
-                                         GeglMatrix2     *scale,
-                                         void            *output,
-                                         GeglAbyssPolicy  repeat_mode);
-static void get_property                (GObject         *gobject,
-                                         guint            prop_id,
-                                         GValue          *value,
-                                         GParamSpec      *pspec);
-static void set_property                (GObject         *gobject,
-                                         guint            prop_id,
-                                         const GValue    *value,
-                                         GParamSpec      *pspec);
-static inline gfloat cubicKernel        (gfloat           x,
-                                         gfloat           b,
-                                         gfloat           c);
+static void gegl_sampler_cubic_finalize (      GObject         *gobject);
+static void gegl_sampler_cubic_get      (      GeglSampler     *sampler,
+                                         const gdouble          absolute_x,
+                                         const gdouble          absolute_y,
+                                               GeglMatrix2     *scale,
+                                               void            *output,
+                                               GeglAbyssPolicy  repeat_mode);
+static void get_property                (      GObject         *gobject,
+                                               guint            prop_id,
+                                               GValue          *value,
+                                               GParamSpec      *pspec);
+static void set_property                (      GObject         *gobject,
+                                               guint            prop_id,
+                                         const GValue          *value,
+                                               GParamSpec      *pspec);
+static inline gfloat cubicKernel        (      gfloat           x,
+                                               gfloat           b,
+                                               gfloat           c);
 
 
 G_DEFINE_TYPE (GeglSamplerCubic, gegl_sampler_cubic, GEGL_TYPE_SAMPLER)
@@ -106,31 +106,31 @@ gegl_sampler_cubic_finalize (GObject *object)
 static void
 gegl_sampler_cubic_init (GeglSamplerCubic *self)
 {
- GEGL_SAMPLER (self)->context_rect[0].x = -1;
- GEGL_SAMPLER (self)->context_rect[0].y = -1;
- GEGL_SAMPLER (self)->context_rect[0].width = 4;
- GEGL_SAMPLER (self)->context_rect[0].height = 4;
- GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+  GEGL_SAMPLER (self)->context_rect[0].x = -1;
+  GEGL_SAMPLER (self)->context_rect[0].y = -1;
+  GEGL_SAMPLER (self)->context_rect[0].width = 4;
+  GEGL_SAMPLER (self)->context_rect[0].height = 4;
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 
- self->b=1.0;
- self->c=0.0;
- self->type = g_strdup("cubic");
- if (strcmp (self->type, "cubic"))
-   {
-     /* cubic B-spline */
-     self->b = 0.0;
-     self->c = 0.5;
-   }
- else if (strcmp (self->type, "catmullrom"))
-   {
-     /* Catmull-Rom spline */
-     self->b = 1.0;
-     self->c = 0.0;
-   }
- else if (strcmp (self->type, "formula"))
-   {
-     self->c = 0.5 * (1.0 - self->b);
-   }
+  self->b=1.0;
+  self->c=0.0;
+  self->type = g_strdup("cubic");
+  if (strcmp (self->type, "cubic"))
+    {
+      /* cubic B-spline */
+      self->b = 0.0;
+      self->c = 0.5;
+    }
+  else if (strcmp (self->type, "catmullrom"))
+    {
+      /* Catmull-Rom spline */
+      self->b = 1.0;
+      self->c = 0.0;
+    }
+  else if (strcmp (self->type, "formula"))
+    {
+      self->c = 0.5 * (1.0 - self->b);
+    }
 }
 
 void
@@ -148,20 +148,36 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
                                 (64-3)*4, 4, 4, 4};
   gfloat           *sampler_bptr;
   gfloat            factor;
-  gfloat            x,y;
 
   gfloat            newval[4] = {0.0, 0.0, 0.0, 0.0};
 
-  gint              ix,iy;
   gint              i,j;
   gint              k=0;
 
-  ix = (gint) GEGL_FAST_PSEUDO_FLOOR (absolute_x - (gdouble) 0.5);
-  iy = (gint) GEGL_FAST_PSEUDO_FLOOR (absolute_y - (gdouble) 0.5);
+  /*
+   * The "-1/2"s are there because we want the index of the pixel to
+   * the left and top of the location, and with GIMP's convention the
+   * top left of the top left pixel is located at
+   * (1/2,1/2). Basically, we are converting from a coordinate system
+   * in which the origin is at the top left pixel of the pixel with
+   * index (0,0), to a coordinate system in which the origin is at the
+   * center of the same pixel.
+   */
+  const gdouble iabsolute_x = absolute_x - (gdouble) 0.5;
+  const gdouble iabsolute_y = absolute_y - (gdouble) 0.5;
+
+  const gint ix = GEGL_FAST_PSEUDO_FLOOR (iabsolute_x);
+  const gint iy = GEGL_FAST_PSEUDO_FLOOR (iabsolute_y);
+
   sampler_bptr = gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
 
-  x = absolute_x - ( ix + (gdouble) 0.5 );
-  y = absolute_y - ( iy + (gdouble) 0.5 );
+  /*
+   * x is the x-coordinate of the sampling point relative to the
+   * position of the center of the top left pixel. Similarly for
+   * y. Range of values: [0,1].
+   */
+  const gfloat x = iabsolute_x - ix;
+  const gfloat y = iabsolute_y - iy;
 
   for (j=-1; j<3; j++)
     for (i=-1; i<3; i++)

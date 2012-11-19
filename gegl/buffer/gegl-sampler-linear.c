@@ -70,7 +70,6 @@ gegl_sampler_linear_get (      GeglSampler*    restrict  self,
   const gint pixels_per_buffer_row = 64;
   const gint channels = 4;
 
-
   /*
    * The "-1/2"s are there because we want the index of the pixel to
    * the left and top of the location, and with GIMP's convention the
@@ -87,19 +86,19 @@ gegl_sampler_linear_get (      GeglSampler*    restrict  self,
   const gint iy = GEGL_FAST_PSEUDO_FLOOR (iabsolute_y);
 
   /*
+   * Point the data tile pointer to the first channel of the top_left
+   * pixel value:
+   */
+  const gfloat* restrict in_bptr =
+    gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
+
+  /*
    * x is the x-coordinate of the sampling point relative to the
    * position of the center of the top left pixel. Similarly for
    * y. Range of values: [0,1].
    */
   const gfloat x = iabsolute_x - ix;
   const gfloat y = iabsolute_y - iy;
-
-  /*
-   * Point the data tile pointer to the first channel of the top_left
-   * pixel value:
-   */
-  const gfloat* restrict in_bptr =
-    gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
 
   /*
    * First bilinear weight:
