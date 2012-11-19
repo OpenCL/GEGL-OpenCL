@@ -1,4 +1,4 @@
-GEGL-@GEGL_VERSION@
+GEGL-0.2.1
 ===========
 
 [[gegl]]

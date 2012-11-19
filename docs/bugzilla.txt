@@ -1,0 +1,14 @@
+Bugzilla
+~~~~~~~~
+The GEGL project uses http://bugzilla.gnome.org/[GNOME Bugzilla], a
+bug-tracking system that allows us to coordinate bug reports. Bugzilla is also
+used for enhancement requests and the preferred way to submit patches for GEGL
+is to open a bug report and attach the patch to it. Bugzilla is also the
+closest you will find to a roadmap for GEGL.
+
+Below is a list of links to get you started with Bugzilla:
+
+  - http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED[List of Open Bugs]
+  - http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=UNCONFIRMED&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_severity=blocker&bug_severity=critical&bug_severity=major&bug_severity=normal&bug_severity=minor&bug_severity=trivial[List of Open Bugs] (excluding enhancement requests)
+  - http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO&bug_severity=enhancement[List of Enhancement Proposals]
+  - http://bugzilla.gnome.org/reports/weekly-bug-summary.cgi[Bugzilla Weekly Summary]

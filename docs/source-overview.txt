@@ -1,0 +1,63 @@
+Source overview
+~~~~~~~~~~~~~~~
+GEGL dirs
+^^^^^^^^^
+
+Directories marked with ⊙ use GNU make extensions to include any .c file
+dropped into the directory in the build.
+
+ gegl-dist-root
+  │
+  │
+  ├──gegl               core source of GEGL, library init/deinit,
+  │   │
+  │   ├──buffer         contains the implementation of GeglBuffer
+  │   │                  - sparse (tiled)
+  │   │                  - recursivly subbuffer extendable
+  │   │                  - clipping rectangle (defaults to bounds when making
+  │   │                    subbuffers)
+  │   │                  - storage in any babl supported pixel format
+  │   │                  - read/write rectangular region as linear buffer for
+  │   │                    any babl supported pixel format.
+  │   ├──graph          graph storage and manipulation code.
+  │   ├──module         The code to load plug-ins located in a colon seperated
+  │   │                 list of paths from the environment variable GEGL_PATH
+  │   ├──operation      The GeglOperation base class, and subclasses that act
+  │   │                 as baseclasses for implementeting different types of
+  │   │                 operation plug-ins.
+  │   ├──process        The code controlling data processing.
+  │   └──property-types specialized classes/paramspecs for GeglOperation
+  │                     properties.
+  │
+  ├──examples ⊙        hello-world and other example uses of the GEGL API.
+  │
+  ├──tests             various tests used to maintain stability when developing
+  │                    GEGL.
+  │
+  ├──operations        Runtime loaded plug-ins for image processing operations.
+  │   │
+  │   ├──core ⊙        Basic operations tightly coupled with GEGL.
+  │   ├──transform     Transforming operations (rotate/scale/translate)
+  │   ├──generated ⊙   Operations generated from scripts (currently
+  │   ├──external      Operations with external dependencies.
+  │   ├──common ⊙      Other operations.
+  │   └──workshop ⊙    Works in progress, (you must pass --enable-workshop
+  │       │            when configurig to build these by default, you can enter
+  │       │            the directory manually and type make && sudo make install
+  │       │            as well.
+  │       │
+  │       ├──external  operations in the workshop with external dependencies.
+  │       └──generated generated operations that are in the workshop.
+  │
+  │
+  ├──docs              The GEGL website (this documentation), built for your
+  │                    the corresponding sourcetree with correct documentation
+  │                    etc.
+  │
+  ├──bin               gegl binary, for processing XML compositions to png files.
+  │
+  ├──bindings          bindings for using GEGL from other programming languages
+  │                    not included in the tarball distribution but exist in
+  │                    the git repository.
+  │
+  └──tools             some small utilities to help the build.

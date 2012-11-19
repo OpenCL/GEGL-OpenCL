@@ -1,0 +1,31 @@
+Glossary
+~~~~~~~~
+connection::
+    A link/pipe routing image flow between operations within the graph goes
+    from an output pad to an input pad, in graph glossary this might also be
+    referred to as an edge.
+DAG::
+    Directed Acyclic Graph, see graph.
+graph::
+    A composition of nodes, the graph is a DAG.
+node::
+    The nodes are connected in the graph. A node has an associated operation or
+    can be constructed graph.
+operation::
+    The processing primitive of GEGL, is where the actual image processing
+    takes place. Operations are plug-ins and provide the actual functionality
+    of GEGL
+pad::
+    The part of a node that exchanges image content. The place where image
+    "pipes" are used to connect the various operations in the composition.
+input pad::
+  consumes image data, might also be seen as an image parameter to the
+  operation.
+output pad::
+  a place where data can be requested, multiple input pads can reference
+  the same output pad.
+sampler::
+    A resampling strategy used for transformations and warps.
+property::
+    Properties are what controls the behavior of operations. Through the use of
+    GParamSpecs properties they are self documenting via introspection.

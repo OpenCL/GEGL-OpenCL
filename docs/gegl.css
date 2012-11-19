@@ -196,15 +196,15 @@
 
         div#toc {
           background-color: #333;
-          position: absolute;
-          position: fixed;
+          /*position: absolute;
+          position: fixed;*/
           width: 12em;
           top: 0;
           right: 0;
           z-index: 2;
           height: 100%;
           overflow: auto;
-          float: left;
+          float: right;
           padding-top: 0.5em;
         }
         div#toc ul {

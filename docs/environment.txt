@@ -1,0 +1,37 @@
+Environment
+~~~~~~~~~~~
+Some environment variables can be set to alter how GEGL runs, all of these
+options are also available as properties on a singleton GObject returned from
+gegl_config ().
+
+GEGL_QUALITY::
+    A value between 0.0 and 1.0 indicating a trade-off between quality and
+    speed. Defaults to 1.0 (max quality).
+BABL_TOLERANCE::
+    The amount of error that babl tolerates, set it to for instance 0.1 to use
+    some conversions that trade some quality for speed.
+GEGL_CHUNK_SIZE::
+    The number of pixels processed simulatnously.
+GEGL_TILE_SIZE::
+    The tile size used internally by GEGL, defaults to 128x64
+GEGL_SWAP::
+    The directory where temporary swap files are written, if not specified GEGL
+    will not swap to disk. Be aware that swapping to disk is still experimental
+    and GEGL is currently not removing the per process swap files.
+GEGL_CACHE_SIZE::
+    The size of the tile cache used by GeglBuffer specified in megabytes.
+GEGL_DEBUG::
+    set it to "all" to enable all debugging, more specific domains for
+    debugging information are also available.
+BABL_STATS::
+    When set babl will write a html file (/tmp/babl-stats.html) containing a
+    matrix of used conversions, as well as all existing conversions and which
+    optimized paths are followed.
+GEGL_DEBUG_BUFS::
+    Display tile/buffer leakage statistics.
+GEGL_DEBUG_RECTS::
+    Show the results of have/need rect negotiations.
+GEGL_DEBUG_TIME::
+    Print a performance instrumentation breakdown of GEGL and it's operations.
+GEGL_USE_OPENCL:
+    Enable use of OpenCL processing.

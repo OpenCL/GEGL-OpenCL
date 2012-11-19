@@ -1,0 +1,13 @@
+Hello world
+^^^^^^^^^^^
+The following is a small sample GEGL application that animates a zoom on a
+mandelbrot fractal. compile it with:
+
+ $ gcc hello-world.c `pkg-config --libs --cflags gegl` -o hello-world
+
+This example and others can be found in the examples subdir of the GEGL distribution.
+
+---------------------------
+sys::[cat @top_srcdir@/examples/hello-world.c]
+---------------------------
+

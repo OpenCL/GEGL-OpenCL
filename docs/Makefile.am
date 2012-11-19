@@ -14,7 +14,7 @@ sync-txt:
 	txts=ASC_DOC=`for a in *.txt;do echo -n ' '$$a|sed s/txt/html/;done;echo ''`;\
 	  txts=$$txts" #ASC_DOC_HOTPATCH";\
 		cat Makefile.am | sed "s/ASC\_DOC.*ASC_DOC_HOTPATCH/$$txts/" > /tmp/mktmp; cp /tmp/mktmp Makefile.am;
-ASC_DOC= abyss_policy.html contribute.html development.html editor.html index.html journal.html todo.html #ASC_DOC_HOTPATCH
+ASC_DOC= abyss_policy.html bugzilla.html build.html commandline.html contribute.html copyright.html development.html editor.html environment.html features.html glossary.html hello-world.html journal.html operation-api.html source-overview.html todo.html #ASC_DOC_HOTPATCH
 
 
 HTML_FILES = \
@@ -201,7 +201,7 @@ if HAVE_DOT
 endif
 endif
 
-%.html: %.txt		\
+%.html: %.txt		$<\
 	$(top_srcdir)/AUTHORS		\
 	gegl.css			\
 	$(top_srcdir)/NEWS		\
@@ -210,7 +210,7 @@ endif
 	Makefile.am
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
-	$(ASCIIDOC) --unsafe  -o $@ -a stylesheet=`pwd`/gegl.css -a toc -a quirks! $<
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesheet=`pwd`/gegl.css -a quirks! $<
 else
 	@echo "*** asciidoc must be available in order to make dist"
 	@false

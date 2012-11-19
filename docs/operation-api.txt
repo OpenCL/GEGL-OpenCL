@@ -1,0 +1,68 @@
+GEGL Operation API
+------------------
+An API to extend the functionality of GEGL with new image processing primitive,
+file loaders, export formats or similar.
+
+Each GEGL operation is defined in a .c file that gets turned into a single
+shared object that is loaded. Each operation is a subclass of one of the
+provided base classes:
+
+link:gegl-operation.h.html[GeglOperation]::
+    The base operation class, which all the other base classes are derived
+    from, deriving from this is often quite a bit of work and is encouraged
+    only when your operation doesn't fit into any of the other categories
+link:gegl-operation-filter.h.html[GeglOperationFilter]::
+    The filter base class sets up GeglBuffers for input and output pads
+
+link:gegl-operation-point-filter.h.html[GeglOperationPointFilter]::
+    The point-filter base class is for filters where an output pixel only
+    depends on the color and alpha values of the corresponding input pixel.
+    This allows you to do the processing on linear buffers, in the future
+    versions of GEGL operations implemented using the point-filter will get
+    speed increases due to more intelligent processing possible in the point
+    filter class
+
+link:gegl-operation-area-filter.h.html[GeglOperationAreaFilter]::
+    The AreaFilter base class allows defining operations where the output data
+    depends on a neighbourhood with an input window that extends beyond the
+    output window, the information about needed extra pixels in different
+    directions should be set up in the prepare callback for the operation.
+
+link:gegl-operation-composer.h.html[GeglOperationComposer]::
+    Composer operations are operations that take two inputs named 'input' and
+    'aux' and write their output to the output pad 'output'
+
+link:gegl-operation-point-composer.h.html[GeglOperationPointComposer]::
+    A baseclass for composer functions where the output pixels' values depends
+    only on the values of the single corresponding input and aux pixels.
+
+link:gegl-operation-source.h.html[GeglOperationSource]::
+    Operations used as render sources or file loaders, the process method
+    receives a GeglBuffer to write it's output into
+
+link:gegl-operation-point-render.h.html[GeglOperationPointRender]::
+    The point-render base class is a specialized source operation, where the
+    render is done in small piece to lower the need to do copies. It's dedicated
+    to operation which may be rendered in pieces, like pattern generation.
+
+link:gegl-operation-sink.h.html[GeglOperationSink]::
+    An operation that consumes a GeglBuffer, used for filewriters, display (for
+    the sdl display node)
+
+link:gegl-operation-temporal.h.html[GeglOperationTemporal]::
+    Base class for operations that want access to previous frames in a video
+    sequence, it contains API to configure the amounts of frames to store as
+    well as getting a GeglBuffer pointing to any of the previously stored
+    frames.
+
+link:gegl-operation-meta.h.html[GeglOperationMeta]::
+    Used for GEGL operations that are implemented as a sub-graph, at the moment
+    these are defined as C files but should in the future be possible to
+    declare as XML instead.
+
+To create your own operations you should start by looking for one that does
+approximatly what you already need. Copy it to a new .c source file, and
+replace the occurences of the filename (operation name in the source.)
+
+Take a look at link:brightness-contrast.c.html[the brightness contrast
+operation] for a point operation well sprinkled with comments as a starting point.
