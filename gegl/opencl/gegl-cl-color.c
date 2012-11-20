@@ -269,7 +269,7 @@ gegl_cl_color_supported (const Babl *in_format,
   if (in_format == out_format)
     return GEGL_CL_COLOR_EQUAL;
 
-  if (choose_kernel (in_format, out_format) >= 0)
+  if (kernels_color && choose_kernel (in_format, out_format) >= 0)
     return GEGL_CL_COLOR_CONVERT;
 
   return GEGL_CL_COLOR_NOT_SUPPORTED;
