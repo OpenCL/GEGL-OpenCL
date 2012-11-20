@@ -30,16 +30,17 @@ static const char* kernel_color_source =
 " */                                                                                      \n"
 "#define BABL_ALPHA_THRESHOLD 0.0f                                                        \n"
 "                                                                                         \n"
+/* babl reference file: babl/base/util.h */
 "float linear_to_gamma_2_2 (float value)                                                  \n"
 "{                                                                                        \n"
-"  if (value > 0.0030402477f)                                                             \n"
+"  if (value > 0.003130804954f)                                                           \n"
 "    return 1.055f * native_powr (value, (1.0f/2.4f)) - 0.055f;                           \n"
 "  return 12.92f * value;                                                                 \n"
 "}                                                                                        \n"
 "                                                                                         \n"
 "float gamma_2_2_to_linear (float value)                                                  \n"
 "{                                                                                        \n"
-"  if (value > 0.03928f)                                                                  \n"
+"  if (value > 0.04045f)                                                                  \n"
 "    return native_powr ((value + 0.055f) / 1.055f, 2.4f);                                \n"
 "  return value / 12.92f;                                                                 \n"
 "}                                                                                        \n"
@@ -367,10 +368,25 @@ static const char* kernel_color_source =
 
 /* -- YA float -- */
 
+/* babl reference file: babl/base/rgb-constants.h */
+#if 0
+#define CONTEMPORARY_MONITOR
+#endif
+
+#ifdef CONTEMPORARY_MONITOR
 "  /* source: http://www.poynton.com/ColorFAQ.html */                                     \n"
 "  #define RGB_LUMINANCE_RED    (0.212671f)                                               \n"
 "  #define RGB_LUMINANCE_GREEN  (0.715160f)                                               \n"
 "  #define RGB_LUMINANCE_BLUE   (0.072169f)                                               \n"
+#else
+  /* this is not correct, but the constants are kept around */
+"  #define RGB_LUMA_RED         (0.299)                                                   \n"
+"  #define RGB_LUMA_GREEN       (0.587)                                                   \n"
+"  #define RGB_LUMA_BLUE        (0.114)                                                   \n"
+"  #define RGB_LUMINANCE_RED    RGB_LUMA_RED                                              \n"
+"  #define RGB_LUMINANCE_GREEN  RGB_LUMA_GREEN                                            \n"
+"  #define RGB_LUMINANCE_BLUE   RGB_LUMA_BLUE                                             \n"
+#endif
 
 /* RGBA float -> YA float */
 "__kernel void rgbaf_to_yaf (__global const float4 * in,                                  \n"
