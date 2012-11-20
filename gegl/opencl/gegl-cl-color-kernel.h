@@ -186,7 +186,7 @@ static const char* kernel_color_source =
 "                   linear_to_gamma_2_2(tmp_v.y),                                         \n"
 "                   linear_to_gamma_2_2(tmp_v.z),                                         \n"
 "                   tmp_v.w);                                                             \n"
-"  vstore3 (convert_uchar3_sat_rte(255.0f * out_v.xyz * out_v.w), gid, out);              \n"
+"  vstore3 (convert_uchar3_sat_rte(255.0f * out_v.xyz), gid, out);                        \n"
 "}                                                                                        \n"
 
 /* -- R'G'B'A float -- */
@@ -349,7 +349,7 @@ static const char* kernel_color_source =
 "{                                                                                        \n"
 "  int gid = get_global_id(0);                                                            \n"
 "  float4 in_v  = in[gid];                                                                \n"
-"  uchar3 out_v = convert_uchar3_sat_rte(255.0f * in_v.w * in_v.xyz);                     \n"
+"  uchar3 out_v = convert_uchar3_sat_rte(255.0f * in_v.xyz);                              \n"
 "  vstore3 (out_v, gid, out);                                                             \n"
 "}                                                                                        \n"
 
@@ -521,7 +521,7 @@ static const char* kernel_color_source =
 "                   linear_to_gamma_2_2(tmp_v.y),                                         \n"
 "                   linear_to_gamma_2_2(tmp_v.z),                                         \n"
 "                   tmp_v.w);                                                             \n"
-"  vstore3 (convert_uchar3_sat_rte(255.0f * out_v.xyz * out_v.w), gid, out);              \n"
+"  vstore3 (convert_uchar3_sat_rte(255.0f * out_v.xyz), gid, out);                        \n"
 "}                                                                                        \n"
 
 
@@ -569,7 +569,7 @@ static const char* kernel_color_source =
 "                   linear_to_gamma_2_2(in_v.y),                                          \n"
 "                   linear_to_gamma_2_2(in_v.z),                                          \n"
 "                   in_v.w);                                                              \n"
-"  out_v = convert_uchar3_sat_rte(255.0f * tmp_v.w * tmp_v.xyz);                          \n"
+"  out_v = convert_uchar3_sat_rte(255.0f * tmp_v.xyz);                                    \n"
 "  vstore3 (out_v, gid, out);                                                             \n"
 "}                                                                                        \n"
 
