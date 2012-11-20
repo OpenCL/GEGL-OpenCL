@@ -18,7 +18,7 @@
  *           2009 Martin Nordholts
  *           2010 Debarshi Ray
  *           2011 Mikael Magnusson
- *           2011 Massimo Valentini
+ *           2011-12 Massimo Valentini
  *           2011 Adam Turcotte
  *           2012 Kevin Cozens
  *           2012 Nicolas Robidoux
@@ -686,7 +686,7 @@ transform_affine (GeglBuffer  *dest,
                                 level,
                                 format,
                                 GEGL_BUFFER_WRITE,
-                                GEGL_ABYSS_NONE);
+                                GEGL_ABYSS_CLAMP);
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
@@ -724,7 +724,7 @@ transform_affine (GeglBuffer  *dest,
                                 v_float/w_float,
                                 &inverse_jacobian,
                                 dest_ptr,
-                                GEGL_ABYSS_NONE);
+                                GEGL_ABYSS_CLAMP);
               dest_ptr+=4;
               u_float += inverse.coeff [0][0];
               v_float += inverse.coeff [1][0];
@@ -778,7 +778,7 @@ transform_generic (GeglBuffer  *dest,
                                 level,
                                 format,
                                 GEGL_BUFFER_WRITE,
-                                GEGL_ABYSS_NONE);
+                                GEGL_ABYSS_CLAMP);
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
@@ -824,7 +824,7 @@ transform_generic (GeglBuffer  *dest,
                                 v,
                                 &inverse_jacobian,
                                 dest_ptr,
-                                GEGL_ABYSS_NONE);
+                                GEGL_ABYSS_CLAMP);
               dest_ptr+=4;
 
               u_float += inverse.coeff [0][0];
