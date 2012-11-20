@@ -183,8 +183,7 @@ static const char* kernel_source =
 "  int gid = get_global_id(0);                                  \n"
 "  float4 in_v  = in[gid];                                      \n"
 "  float4 out_v;                                                \n"
-"  out_v.xyz = in_v.xyz * (float3) (coeff1, coeff2, coeff3);    \n"
-"  out_v.w   = in_v.w;                                          \n"
+"  out_v = in_v * (float4) (coeff1, coeff2, coeff3, 1.0f);      \n"
 "  out[gid]  =  out_v;                                          \n"
 "}                                                              \n";
 
