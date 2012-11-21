@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2006 Dominik Ernst
+ *           2012 Nicolas Robidoux
  *
  * Reflect an image about a line, whose direction is specified by the
  * vector that is defined by the x and y properties.
