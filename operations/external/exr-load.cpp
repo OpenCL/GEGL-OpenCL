@@ -408,30 +408,39 @@ insert_channels (FrameBuffer  &fb,
                  gint          format_flags,
                  gint          bpp)
 {
-  gint alpha_offset = 12;
+  gint alpha_offset;
   PixelType tp;
+  // bytes per channel - is there a babl mechanism to obtain that from format_flags?
+  gint bpc = 4;
 
   if (format_flags & COLOR_U32)
     tp = UINT;
+  else if (format_flags & COLOR_FP16)
+    {
+      tp = HALF;
+      bpc = 2;
+    }
   else
     tp = FLOAT;
 
+  alpha_offset = bpc*3;
+
   if (format_flags & COLOR_RGB)
     {
-      fb.insert ("R", Slice (tp, base,    bpp, 0, 1,1, 0.0));
-      fb.insert ("G", Slice (tp, base+4,  bpp, 0, 1,1, 0.0));
-      fb.insert ("B", Slice (tp, base+8,  bpp, 0, 1,1, 0.0));
+      fb.insert ("R", Slice (tp, base,          bpp, 0, 1,1, 0.0));
+      fb.insert ("G", Slice (tp, base+bpc,      bpp, 0, 1,1, 0.0));
+      fb.insert ("B", Slice (tp, base+bpc*2,    bpp, 0, 1,1, 0.0));
     }
   else if (format_flags & COLOR_C)
     {
-      fb.insert ("Y",  Slice (tp, base,   bpp,   0, 1,1, 0.5));
-      fb.insert ("RY", Slice (tp, base+4, bpp*2, 0, 2,2, 0.0));
-      fb.insert ("BY", Slice (tp, base+8, bpp*2, 0, 2,2, 0.0));
+      fb.insert ("Y",  Slice (tp, base,         bpp,   0, 1,1, 0.5));
+      fb.insert ("RY", Slice (tp, base+bpc,     bpp*2, 0, 2,2, 0.0));
+      fb.insert ("BY", Slice (tp, base+bpc*2,   bpp*2, 0, 2,2, 0.0));
     }
   else if (format_flags & COLOR_Y)
     {
       fb.insert ("Y",  Slice (tp, base, bpp, 0, 1,1, 0.5));
-      alpha_offset = 4;
+      alpha_offset = bpc;
     }
 
   if (format_flags & COLOR_ALPHA)
@@ -584,6 +593,9 @@ query_exr (const gchar *path,
             strcat (format_string, " u32");
             break;
           case HALF:
+	    format_flags |= COLOR_FP16;
+            strcat (format_string, " half");
+            break;
           case FLOAT:
           default:
             format_flags |= COLOR_FP32;
