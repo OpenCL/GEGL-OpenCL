@@ -169,8 +169,6 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
   const gint ix = GEGL_FAST_PSEUDO_FLOOR (iabsolute_x);
   const gint iy = GEGL_FAST_PSEUDO_FLOOR (iabsolute_y);
 
-  sampler_bptr = gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
-
   /*
    * x is the x-coordinate of the sampling point relative to the
    * position of the center of the top left pixel. Similarly for
@@ -178,6 +176,8 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
    */
   const gfloat x = iabsolute_x - ix;
   const gfloat y = iabsolute_y - iy;
+
+  sampler_bptr = gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
 
   for (j=-1; j<3; j++)
     for (i=-1; i<3; i++)
