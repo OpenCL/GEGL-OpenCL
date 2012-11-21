@@ -44,15 +44,17 @@ create_matrix (OpTransform *op,
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
   const gdouble ux = chant->x;
   const gdouble uy = chant->y;
-  /*
-   * There probably should be an assertion or check that dot != 0.
-   */
-  const gdouble dot = uy*uy + ux*ux;
-  const gdouble two_over_dot = (gdouble) 2 / dot;
 
-  matrix->coeff [0][0] = ux*ux*two_over_dot - (gdouble) 1;
-  matrix->coeff [1][1] = uy*uy*two_over_dot - (gdouble) 1;
-  matrix->coeff [0][1] = matrix->coeff [1][0] = ux*uy*two_over_dot;
+  /*
+   * There probably should be an assertion or check+fix that
+   * length_squared != 0.
+   */
+  const gdouble length_squared = ux*ux + uy*uy;
+  const gdouble two_over_length_squared = (gdouble) 2 / length_squared;
+
+  matrix->coeff [0][0] = ux*ux * two_over_length_squared - (gdouble) 1;
+  matrix->coeff [1][1] = uy*uy * two_over_length_squared - (gdouble) 1;
+  matrix->coeff [0][1] = matrix->coeff [1][0] = ux*uy * two_over_length_squared;
 }
 
 #endif
