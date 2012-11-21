@@ -36,27 +36,22 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
 #define GEGL_CHANT_SELF "reflect.c"
 #include "chant.h"
 
-#include <math.h>
-
 static void
 create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
   GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
-  gdouble ux = 0, uy = 0;
-  gdouble l;
+  const gdouble ux = chant->x;
+  const gdouble uy = chant->y;
+  /*
+   * There probably should be an assertion or check that dot != 0.
+   */
+  const gdouble dot = uy*uy + ux*ux;
+  const gdouble two_over_dot = (gdouble) 2 / dot;
 
-  ux = chant->x;
-  uy = chant->y;
-
-  l = sqrt(uy*uy + ux*ux);
-  ux /= l;
-  uy /= l;
-
-  matrix->coeff [0][0] = 2*ux*ux - 1;
-  matrix->coeff [1][1] = 2*uy*uy - 1;
-  matrix->coeff [0][1] = matrix->coeff [1][0] = 2*ux*uy;
+  matrix->coeff [0][0] = ux*ux*two_over_dot - (gdouble) 1;
+  matrix->coeff [1][1] = uy*uy*two_over_dot - (gdouble) 1;
+  matrix->coeff [0][1] = matrix->coeff [1][0] = ux*uy*two_over_dot;
 }
-
 
 #endif
