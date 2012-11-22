@@ -17,7 +17,7 @@ gegl_lt_ccld_v_0 = @echo "  CCLD   " $@;
 all-local: $(plugins)
 
 %.la: %.c $(GEGLHEADERS)
-	$(gegl_lt_cc_v) $(LIBTOOL) --quiet --tag=CC --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
+	$(gegl_lt_cc_v) $(LIBTOOL) --quiet --tag=CC --mode=compile $(CC) $(DEFS) -I. -I$(srcdir) -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $<
 	$(gegl_lt_ccld_v) $(LIBTOOL) --quiet --tag=CC --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) -o $@ -rpath $(ext_dir) $@.lo $(LIBS) $(MATH_LIB)
 
 

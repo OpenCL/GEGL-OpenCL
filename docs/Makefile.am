@@ -210,7 +210,7 @@ endif
 	Makefile.am
 if HAVE_ASCIIDOC
 	@echo "HTML: $@"
-	$(ASCIIDOC) --unsafe  -o $@ -a stylesheet=`pwd`/gegl.css -a quirks! $<
+	$(ASCIIDOC) --unsafe  -o $@ -a stylesheet=$(srcdir)/gegl.css -a quirks! $<
 else
 	@echo "*** asciidoc must be available in order to make dist"
 	@false
