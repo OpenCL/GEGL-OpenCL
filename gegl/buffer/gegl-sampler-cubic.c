@@ -163,11 +163,11 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
    * index (0,0), to a coordinate system in which the origin is at the
    * center of the same pixel.
    */
-  const gdouble iabsolute_x = absolute_x - (gdouble) 0.5;
-  const gdouble iabsolute_y = absolute_y - (gdouble) 0.5;
+  const double iabsolute_x = (double) absolute_x - 0.5;
+  const double iabsolute_y = (double) absolute_y - 0.5;
 
-  const gint ix = GEGL_FAST_PSEUDO_FLOOR (iabsolute_x);
-  const gint iy = GEGL_FAST_PSEUDO_FLOOR (iabsolute_y);
+  const gint ix = floor (iabsolute_x);
+  const gint iy = floor (iabsolute_y);
 
   /*
    * x is the x-coordinate of the sampling point relative to the

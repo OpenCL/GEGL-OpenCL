@@ -17,6 +17,7 @@
 
 #include "config.h"
 #include <string.h>
+#include <math.h>
 
 #include <glib-object.h>
 
@@ -71,8 +72,8 @@ gegl_sampler_nearest_get (GeglSampler     *self,
   gfloat *sampler_bptr;
 
   sampler_bptr = gegl_sampler_get_from_buffer (self,
-                                               GEGL_FAST_PSEUDO_FLOOR (x),
-                                               GEGL_FAST_PSEUDO_FLOOR (y),
+                                               (gdouble) floor ((double) x),
+                                               (gdouble) floor ((double) y),
                                                repeat_mode);
   babl_process (self->fish, sampler_bptr, output, 1);
 }

@@ -209,27 +209,6 @@ gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
                     (divisor) - 1 - ((-((dividend) + 1)) % (divisor)) : \
                     (dividend) % (divisor))
 
-/*
- * FAST_PSEUDO_FLOOR is a floor replacement which has been found to be
- * faster. It returns the floor of its argument unless the argument is
- * a negative integer, in which case it returns one less than the
- * floor. For example:
- *
- * FAST_PSEUDO_FLOOR(0.5) = 0
- *
- * FAST_PSEUDO_FLOOR(0.) = 0
- *
- * FAST_PSEUDO_FLOOR(-.5) = -1
- *
- * as expected, but
- *
- * FAST_PSEUDO_FLOOR(-1.) = -2
- *
- * The discontinuities of FAST_PSEUDO_FLOOR are on the right of
- * negative numbers instead of on the left as is the case for floor.
- */
-#define GEGL_FAST_PSEUDO_FLOOR(x) ( (gint) (x) - (gint) ( (gdouble) (x) < 0. ) )
-
 #define gegl_tile_offset(coordinate, stride) GEGL_REMAINDER((coordinate), (stride))
 
 /* helper function to compute tile indices and offsets for coordinates

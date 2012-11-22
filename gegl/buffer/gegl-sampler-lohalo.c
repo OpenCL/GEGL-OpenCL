@@ -838,9 +838,8 @@ lbb (const gfloat c00,
    *  (ix-1,iy+2)  (ix,iy+2)    (ix+1,iy+2)  (ix+2,iy+2)
    *  = qua_one    = qua_two    = qua_thr    = qua_fou
    *
-   * where ix is the (pseudo-)floor of the requested left-to-right
-   * location ("X"), and iy is the floor of the requested up-to-down
-   * location.
+   * where ix is the floor of the requested left-to-right location
+   * ("X"), and iy is the floor of the requested up-to-down location.
    */
 
   /*
@@ -1299,8 +1298,8 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
    * of the closest pixel center (one of the closest when there are
    * ties) within the GIMP convention.
    */
-  const gint ix_0 = GEGL_FAST_PSEUDO_FLOOR (absolute_x);
-  const gint iy_0 = GEGL_FAST_PSEUDO_FLOOR (absolute_y);
+  const gint ix_0 = floor ((double) absolute_x);
+  const gint iy_0 = floor ((double) absolute_y);
 
   /*
    * This is the pointer we use to pull pixel from "base" mipmap level

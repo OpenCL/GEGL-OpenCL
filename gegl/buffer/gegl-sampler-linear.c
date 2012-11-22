@@ -17,6 +17,8 @@
  */
 
 #include "config.h"
+#include <math.h>
+
 #include <glib-object.h>
 #include <glib/gstdio.h>
 #include <glib/gprintf.h>
@@ -79,11 +81,11 @@ gegl_sampler_linear_get (      GeglSampler*    restrict  self,
    * index (0,0), to a coordinate system in which the origin is at the
    * center of the same pixel.
    */
-  const gdouble iabsolute_x = absolute_x - (gdouble) 0.5;
-  const gdouble iabsolute_y = absolute_y - (gdouble) 0.5;
+  const double iabsolute_x = (double) absolute_x - 0.5;
+  const double iabsolute_y = (double) absolute_y - 0.5;
 
-  const gint ix = GEGL_FAST_PSEUDO_FLOOR (iabsolute_x);
-  const gint iy = GEGL_FAST_PSEUDO_FLOOR (iabsolute_y);
+  const gint ix = floor (iabsolute_x);
+  const gint iy = floor (iabsolute_y);
 
   /*
    * Point the data tile pointer to the first channel of the top_left
