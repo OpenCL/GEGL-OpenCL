@@ -494,8 +494,8 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 
   for (i = 0; i < 8; i += 2)
     gegl_matrix3_transform_point (&matrix,
-				  have_points + i,
-				  have_points + i + 1);
+                                  have_points + i,
+                                  have_points + i + 1);
 
   gegl_transform_bounding_box (have_points, 4, &have_rect);
 
@@ -527,8 +527,8 @@ gegl_transform_detect (GeglOperation *operation,
   gegl_matrix3_invert (&inverse);
 
   gegl_matrix3_transform_point (&inverse,
-				need_points,
-				need_points + 1);
+                                need_points,
+                                need_points + 1);
 
   return gegl_operation_detect (source_node->operation,
                                 need_points[0], need_points[1]);
@@ -578,7 +578,7 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
   for (i = 0; i < 8; i += 2)
     gegl_matrix3_transform_point (&inverse,
                                   need_points + i,
-				  need_points + i + 1);
+                                  need_points + i + 1);
   gegl_transform_bounding_box (need_points, 4, &need_rect);
 
   need_rect.x      += context_rect.x;
@@ -646,8 +646,8 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
 
   for (i = 0; i < 8; i += 2)
     gegl_matrix3_transform_point (&matrix,
-				  affected_points + i,
-				  affected_points + i + 1);
+                                  affected_points + i,
+                                  affected_points + i + 1);
 
   gegl_transform_bounding_box (affected_points, 4, &affected_rect);
 

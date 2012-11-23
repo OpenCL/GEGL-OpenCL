@@ -81,8 +81,8 @@ gegl_sampler_nearest_get (GeglSampler     *self,
    */
   sampler_bptr =
     gegl_sampler_get_from_buffer (self,
-				  (gint) floor ((double) absolute_x),
-				  (gint) floor ((double) absolute_y),
-				  repeat_mode);
+                                  (gint) floor ((double) absolute_x),
+                                  (gint) floor ((double) absolute_y),
+                                  repeat_mode);
   babl_process (self->fish, sampler_bptr, output, 1);
 }

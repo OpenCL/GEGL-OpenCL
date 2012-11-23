@@ -205,14 +205,14 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
   for (j=-1; j<3; j++)
     for (i=-1; i<3; i++)
       {
-	sampler_bptr += offsets[k++];
-	factor = cubicKernel (y - j, cubic->b, cubic->c) *
-	         cubicKernel (x - i, cubic->b, cubic->c);
+        sampler_bptr += offsets[k++];
+        factor = cubicKernel (y - j, cubic->b, cubic->c) *
+                 cubicKernel (x - i, cubic->b, cubic->c);
 
-	newval[0] += factor * sampler_bptr[0];
-	newval[1] += factor * sampler_bptr[1];
-	newval[2] += factor * sampler_bptr[2];
-	newval[3] += factor * sampler_bptr[3];
+        newval[0] += factor * sampler_bptr[0];
+        newval[1] += factor * sampler_bptr[1];
+        newval[2] += factor * sampler_bptr[2];
+        newval[3] += factor * sampler_bptr[3];
       }
 
   babl_process (self->fish, newval, output, 1);
@@ -283,11 +283,11 @@ cubicKernel (gfloat x,
 
   if (x2 <= (gfloat) 1.)
     weight = ( (gfloat) ((12-9*b-6*c)/6) * ax +
-	       (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
+               (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
              (gfloat) ((6 - 2 * b)/6);
   else
     weight = ( (gfloat) ((-b-6*c)/6) * ax +
-	       (gfloat) ((6*b+30*c)/6) ) * x2 +
+               (gfloat) ((6*b+30*c)/6) ) * x2 +
              (gfloat) ((-12*b-48*c)/6) * ax +
              (gfloat) ((8*b+24*c)/6);
 
