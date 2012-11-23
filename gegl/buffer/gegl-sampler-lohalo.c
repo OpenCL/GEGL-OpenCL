@@ -278,7 +278,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * be used. However, the larger the offset, the slower Lohalo will run
  * when no significant downsampling is done, because the width and
  * height of context_rect is (2*LOHALO_OFFSET+1), and consequently
- * there will be less data "tile" reuse with large LOHALO_OFFSET.
+ * there is less data "tile" reuse with large LOHALO_OFFSET.
  */
 /*
  * IMPORTANT: LOHALO_OFFSET SHOULD BE AN INTEGER >= 2.

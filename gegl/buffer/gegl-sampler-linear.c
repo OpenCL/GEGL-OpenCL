@@ -13,7 +13,6 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see
  * <http://www.gnu.org/licenses/>.
- *
  */
 
 #include "config.h"
@@ -51,13 +50,22 @@ gegl_sampler_linear_class_init (GeglSamplerLinearClass *klass)
   sampler_class->get = gegl_sampler_linear_get;
 }
 
+/*
+ * In principle, x=y=0 and width=height=2 are enough. The following
+ * values are chosen so as to make the context_rect symmetrical
+ * w.r.t. the anchor point. This is so that enough elbow room is added
+ * with transformations that reflect the context rect. If the
+ * context_rect is not symmetrical, the transformation may turn right
+ * into left, and if the context_rect does not stretch far enough on
+ * the left, pixel lookups will fail.
+ */
 static void
 gegl_sampler_linear_init (GeglSamplerLinear *self)
 {
-  GEGL_SAMPLER (self)->context_rect[0].x = 0;
-  GEGL_SAMPLER (self)->context_rect[0].y = 0;
-  GEGL_SAMPLER (self)->context_rect[0].width = 2;
-  GEGL_SAMPLER (self)->context_rect[0].height = 2;
+  GEGL_SAMPLER (self)->context_rect[0].x = -1;
+  GEGL_SAMPLER (self)->context_rect[0].y = -1;
+  GEGL_SAMPLER (self)->context_rect[0].width = 3;
+  GEGL_SAMPLER (self)->context_rect[0].height = 3;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 

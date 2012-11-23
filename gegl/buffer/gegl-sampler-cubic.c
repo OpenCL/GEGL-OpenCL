@@ -12,6 +12,8 @@
  *
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
+ *
+ * 2012 (c) Nicolas Robidoux based on earlier code
  */
 
 #include "config.h"
@@ -106,10 +108,19 @@ gegl_sampler_cubic_finalize (GObject *object)
 static void
 gegl_sampler_cubic_init (GeglSamplerCubic *self)
 {
-  GEGL_SAMPLER (self)->context_rect[0].x = -1;
-  GEGL_SAMPLER (self)->context_rect[0].y = -1;
-  GEGL_SAMPLER (self)->context_rect[0].width = 4;
-  GEGL_SAMPLER (self)->context_rect[0].height = 4;
+  /*
+   * In principle, x=y=-1 and width=height=4 are enough. The following
+   * values are chosen so as to make the context_rect symmetrical
+   * w.r.t. the anchor point. This is so that enough elbow room is
+   * added with transformations that reflect the context rect. If the
+   * context_rect is not symmetrical, the transformation may turn
+   * right into left, and if the context_rect does not stretch far
+   * enough on the left, pixel lookups will fail.
+   */
+  GEGL_SAMPLER (self)->context_rect[0].x = -2;
+  GEGL_SAMPLER (self)->context_rect[0].y = -2;
+  GEGL_SAMPLER (self)->context_rect[0].width = 5;
+  GEGL_SAMPLER (self)->context_rect[0].height = 5;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 
   self->b=1.0;
@@ -117,18 +128,30 @@ gegl_sampler_cubic_init (GeglSamplerCubic *self)
   self->type = g_strdup("cubic");
   if (strcmp (self->type, "cubic"))
     {
+      /*
+       * The following values are actually not the correct ones for
+       * cubic B-spline smoothing. The correct values are b=1 and c=0.
+       */
       /* cubic B-spline */
       self->b = 0.0;
       self->c = 0.5;
     }
   else if (strcmp (self->type, "catmullrom"))
     {
+      /*
+       * The following values are actually not the correct ones for
+       * Catmull-Rom. The correct values are b=0 and c=0.5.
+       */
       /* Catmull-Rom spline */
       self->b = 1.0;
       self->c = 0.0;
     }
   else if (strcmp (self->type, "formula"))
     {
+      /*
+       * This ensures that the spline is a Keys spline. The c of
+       * BC-splines is the alpha of Keys.
+       */
       self->c = 0.5 * (1.0 - self->b);
     }
 }
@@ -243,6 +266,10 @@ set_property (GObject      *object,
     }
 }
 
+/*
+ * Should b and c actually be gdoubles?
+ */
+
 static inline gfloat
 cubicKernel (gfloat x,
              gfloat b,
@@ -252,17 +279,17 @@ cubicKernel (gfloat x,
   gfloat x2 = x*x;
   gfloat ax = ( x<(gfloat) 0. ? -x : x );
 
-  if (x2 > (gfloat) 4.) return 0;
+  if (x2 > (gfloat) 4.) return (gfloat) 0;
 
-  if (x2 < (gfloat) 1.)
-    weight = ( (gfloat) (12 - 9 * b - 6 * c) * ax +
-             (gfloat) (-18 + 12 * b + 6 * c) ) * x2 +
-             (gfloat) (6 - 2 * b);
+  if (x2 <= (gfloat) 1.)
+    weight = ( (gfloat) ((12-9*b-6*c)/6) * ax +
+	       (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
+             (gfloat) ((6 - 2 * b)/6);
   else
-    weight = ( (gfloat) (-b - 6 * c) * ax +
-             (gfloat) (6 * b + 30 * c) ) * x2 +
-             (gfloat) (-12 * b - 48 * c) * ax +
-             (gfloat) (8 * b + 24 * c);
+    weight = ( (gfloat) ((-b-6*c)/6) * ax +
+	       (gfloat) ((6*b+30*c)/6) ) * x2 +
+             (gfloat) ((-12*b-48*c)/6) * ax +
+             (gfloat) ((8*b+24*c)/6);
 
-  return weight * ((gfloat) (1.0/6.0));
+  return weight;
 }
