@@ -74,8 +74,10 @@ gegl_sampler_nearest_get (GeglSampler     *self,
   /*
    * The reason why floor of the absolute position gives the nearest
    * pixel (with ties resolved toward -infinity) is that the absolute
-   * position is corner based (origin at the top left corner of the
-   * pixel labeled (0,0).
+   * position is corner-based (origin at the top left corner of the
+   * pixel labeled (0,0)) so that the center of the top left pixel is
+   * located at (.5,.5) (instead of (0,0) as it would be if absolute
+   * positions were center-based).
    */
   sampler_bptr =
     gegl_sampler_get_from_buffer (self,

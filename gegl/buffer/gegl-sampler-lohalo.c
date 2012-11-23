@@ -1299,10 +1299,10 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
    * ties) within the GIMP convention.
    *
    * The reason why floor gives the index of the closest pixel center
-   * is that absolute positions are corner-based, meaning that the
-   * absolute position of the center of the pixel indexed (0,0) is
-   * (.5,.5) instead of (0,0), as it would be if absolute positions
-   * were center-based.
+   * (with ties resolved toward -infinity) is that absolute positions
+   * are corner-based, meaning that the absolute position of the
+   * center of the pixel indexed (0,0) is (.5,.5) instead of (0,0), as
+   * it would be if absolute positions were center-based.
    */
   const gint ix_0 = floor ((double) absolute_x);
   const gint iy_0 = floor ((double) absolute_y);
