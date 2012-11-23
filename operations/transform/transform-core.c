@@ -512,7 +512,6 @@ gegl_transform_detect (GeglOperation *operation,
     gegl_operation_get_source_node (operation, "input");
   GeglMatrix3  inverse;
   gdouble      need_points [2];
-  gint         i;
 
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&inverse))
