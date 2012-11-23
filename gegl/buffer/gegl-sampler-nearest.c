@@ -35,8 +35,8 @@ enum
 
 static void
 gegl_sampler_nearest_get (GeglSampler    *self,
-                          gdouble         x,
-                          gdouble         y,
+                          gdouble         absolute_x,
+                          gdouble         absolute_y,
                           GeglMatrix2    *scale,
                           void           *output,
                           GeglAbyssPolicy repeat_mode);
@@ -63,17 +63,24 @@ gegl_sampler_nearest_init (GeglSamplerNearest *self)
 
 void
 gegl_sampler_nearest_get (GeglSampler     *self,
-                          gdouble          x,
-                          gdouble          y,
+                          gdouble          absolute_x,
+                          gdouble          absolute_y,
                           GeglMatrix2     *scale,
                           void            *output,
                           GeglAbyssPolicy  repeat_mode)
 {
   gfloat *sampler_bptr;
 
-  sampler_bptr = gegl_sampler_get_from_buffer (self,
-                                               (gint) floor ((double) x),
-                                               (gint) floor ((double) y),
-                                               repeat_mode);
+  /*
+   * The reason why floor of the absolute position gives the nearest
+   * pixel (with ties resolved toward -infinity) is that the absolute
+   * position is corner based (origin at the top left corner of the
+   * pixel labeled (0,0).
+   */
+  sampler_bptr =
+    gegl_sampler_get_from_buffer (self,
+				  (gint) floor ((double) absolute_x),
+				  (gint) floor ((double) absolute_y),
+				  repeat_mode);
   babl_process (self->fish, sampler_bptr, output, 1);
 }
