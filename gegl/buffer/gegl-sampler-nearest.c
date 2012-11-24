@@ -51,13 +51,18 @@ gegl_sampler_nearest_class_init (GeglSamplerNearestClass *klass)
   sampler_class->get = gegl_sampler_nearest_get;
 }
 
+/*
+ * It would seem that x=y=0 and width=height=1 should be enough, but
+ * apparently safety w.r.t. round off or something else makes things
+ * work better with width=height=3 and centering.
+ */
 static void
 gegl_sampler_nearest_init (GeglSamplerNearest *self)
 {
-  GEGL_SAMPLER (self)->context_rect[0].x = 0;
-  GEGL_SAMPLER (self)->context_rect[0].y = 0;
-  GEGL_SAMPLER (self)->context_rect[0].width = 1;
-  GEGL_SAMPLER (self)->context_rect[0].height = 1;
+  GEGL_SAMPLER (self)->context_rect[0].x = -1;
+  GEGL_SAMPLER (self)->context_rect[0].y = -1;
+  GEGL_SAMPLER (self)->context_rect[0].width = 3;
+  GEGL_SAMPLER (self)->context_rect[0].height = 3;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RGBA float");
 }
 

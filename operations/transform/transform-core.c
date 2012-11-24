@@ -465,7 +465,7 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 {
   OpTransform   *transform  = OP_TRANSFORM (op);
   GeglMatrix3    matrix;
-  GeglRectangle  in_rect = {0,0,0,0},
+  GeglRectangle  in_rect = {0,0,1,1},
                  have_rect;
   gdouble        have_points [8];
   gint           i;
@@ -475,10 +475,6 @@ gegl_transform_get_bounding_box (GeglOperation *op)
    * "contained" instead of "container".
    */
 
-  /*
-   * See the comment below RE: no need for enlargement by context_rect
-   */
-#if 0
   GeglRectangle  context_rect;
   GeglSampler   *sampler;
 
@@ -486,7 +482,6 @@ gegl_transform_get_bounding_box (GeglOperation *op)
       gegl_sampler_type_from_string (transform->filter));
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
-#endif
 
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
@@ -508,9 +503,8 @@ gegl_transform_get_bounding_box (GeglOperation *op)
    * Assuming that have_points is supposed to give a rectangle that
    * has to do with the area within the output image for which we have
    * output data, there would appear to be no need to enlarge it by
-   * context_rect.
+   * context_rect. And yet it's done.
    */
-#if 0
   if (!gegl_transform_matrix3_allow_fast_translate (&matrix))
     {
       in_rect.x      += context_rect.x;
@@ -520,16 +514,15 @@ gegl_transform_get_bounding_box (GeglOperation *op)
        * height-1, but the absense of "-1" may match "in_rect =
        * {*,*,0,0}" above.
        */
-      in_rect.width  += context_rect.width;
-      in_rect.height += context_rect.height;
+      in_rect.width  += (context_rect.width  - (gint) 1);
+      in_rect.height += (context_rect.height - (gint) 1);
     }
-#endif
 
   /*
    * Convert indices to absolute positions.
    */
-  have_points [0] = in_rect.x - (gdouble) 0.5;
-  have_points [1] = in_rect.y - (gdouble) 0.5;
+  have_points [0] = in_rect.x + (gdouble) 0.5;
+  have_points [1] = in_rect.y + (gdouble) 0.5;
 
   /*
    * Note that the horizontal distance between the first and last
@@ -571,8 +564,8 @@ gegl_transform_detect (GeglOperation *operation,
       return gegl_operation_detect (source_node->operation, x, y);
     }
 
-  need_points [0] = x - (gdouble) 0.5;
-  need_points [1] = y - (gdouble) 0.5;
+  need_points [0] = x + (gdouble) 0.5;
+  need_points [1] = y + (gdouble) 0.5;
 
   gegl_transform_create_matrix (transform, &inverse);
   gegl_matrix3_invert (&inverse);
@@ -614,8 +607,8 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
       return requested_rect;
     }
 
-  need_points [0] = requested_rect.x - (gdouble) 0.5;
-  need_points [1] = requested_rect.y - (gdouble) 0.5;
+  need_points [0] = requested_rect.x + (gdouble) 0.5;
+  need_points [1] = requested_rect.y + (gdouble) 0.5;
 
   need_points [2] = need_points [0] + (requested_rect.width  - (gint) 1);
   need_points [3] = need_points [1];
@@ -684,8 +677,8 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
   region.width  += context_rect.width;
   region.height += context_rect.height;
 
-  affected_points [0] = region.x - (gdouble) 0.5;
-  affected_points [1] = region.y - (gdouble) 0.5;
+  affected_points [0] = region.x + (gdouble) 0.5;
+  affected_points [1] = region.y + (gdouble) 0.5;
 
   affected_points [2] = affected_points [0] + (region.width  - (gint) 1);
   affected_points [3] = affected_points [1];
