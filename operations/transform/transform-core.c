@@ -505,6 +505,7 @@ gegl_transform_get_bounding_box (GeglOperation *op)
    * output data, there would appear to be no need to enlarge it by
    * context_rect. And yet it's done.
    */
+#if 0
   if (!gegl_transform_matrix3_allow_fast_translate (&matrix))
     {
       in_rect.x      += context_rect.x;
@@ -517,6 +518,7 @@ gegl_transform_get_bounding_box (GeglOperation *op)
       in_rect.width  += (context_rect.width  - (gint) 1);
       in_rect.height += (context_rect.height - (gint) 1);
     }
+#endif
 
   /*
    * Convert indices to absolute positions.
@@ -627,8 +629,8 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
 
   need_rect.x      += context_rect.x;
   need_rect.y      += context_rect.y;
-  need_rect.width  += context_rect.width;
-  need_rect.height += context_rect.height;
+  need_rect.width  += context_rect.width  - (gint) 1;
+  need_rect.height += context_rect.height - (gint) 1;
 
   return need_rect;
 }
@@ -672,10 +674,12 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
       return region;
     }
 
+#if 0
   region.x      += context_rect.x;
   region.y      += context_rect.y;
   region.width  += context_rect.width;
   region.height += context_rect.height;
+#endif
 
   affected_points [0] = region.x + (gdouble) 0.5;
   affected_points [1] = region.y + (gdouble) 0.5;
