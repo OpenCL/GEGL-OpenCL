@@ -478,10 +478,6 @@ gegl_operation_get_format (GeglOperation *self,
 
   pad = gegl_node_get_pad (self->node, pad_name);
 
-  if (pad == NULL || pad->format == NULL)
-    {
-      g_warning ("%s: returns NULL", G_STRFUNC);
-    }
   g_return_val_if_fail (pad != NULL, NULL);
 
   return pad->format;
