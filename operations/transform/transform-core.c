@@ -614,17 +614,17 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
       return requested_rect;
     }
 
-  need_points [0] = requested_rect.x;
-  need_points [1] = requested_rect.y;
+  need_points [0] = requested_rect.x - (gdouble) 0.5;
+  need_points [1] = requested_rect.y - (gdouble) 0.5;
 
-  need_points [2] = requested_rect.x + requested_rect.width ;
-  need_points [3] = requested_rect.y;
+  need_points [2] = need_points [0] + (requested_rect.width  - (gint) 1);
+  need_points [3] = need_points [1];
 
-  need_points [4] = requested_rect.x + requested_rect.width ;
-  need_points [5] = requested_rect.y + requested_rect.height ;
+  need_points [4] = need_points [2];
+  need_points [5] = need_points [3] + (requested_rect.height - (gint) 1);
 
-  need_points [6] = requested_rect.x;
-  need_points [7] = requested_rect.y + requested_rect.height ;
+  need_points [6] = need_points [0];
+  need_points [7] = need_points [5];
 
   for (i = 0; i < 8; i += 2)
     gegl_matrix3_transform_point (&inverse,
@@ -648,16 +648,20 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
   OpTransform       *transform = OP_TRANSFORM (op);
   GeglMatrix3        matrix;
   GeglRectangle      affected_rect;
+#if 0
   GeglRectangle      context_rect;
   GeglSampler       *sampler;
+#endif
   gdouble            affected_points [8];
   gint               i;
   GeglRectangle      region = *input_region;
 
+#if 0
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (transform->filter));
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
+#endif
 
   gegl_transform_create_matrix (transform, &matrix);
 
@@ -678,22 +682,24 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
       return region;
     }
 
+#if 0
   region.x      += context_rect.x;
   region.y      += context_rect.y;
   region.width  += context_rect.width;
   region.height += context_rect.height;
+#endif
 
-  affected_points [0] = region.x;
-  affected_points [1] = region.y;
+  affected_points [0] = region.x - (gdouble) 0.5;
+  affected_points [1] = region.y - (gdouble) 0.5;
 
-  affected_points [2] = region.x + region.width ;
-  affected_points [3] = region.y;
+  affected_points [2] = affected_points [0] + (region.width  - (gint) 1);
+  affected_points [3] = affected_points [1];
 
-  affected_points [4] = region.x + region.width ;
-  affected_points [5] = region.y + region.height ;
+  affected_points [4] = affected_points [2];
+  affected_points [5] = affected_points [3] + (region.height - (gint) 1);
 
-  affected_points [6] = region.x;
-  affected_points [7] = region.y + region.height ;
+  affected_points [6] = affected_points [0];
+  affected_points [7] = affected_points [5];
 
   for (i = 0; i < 8; i += 2)
     gegl_matrix3_transform_point (&matrix,
