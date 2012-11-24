@@ -493,6 +493,7 @@ gegl_transform_get_bounding_box (GeglOperation *op)
       /*
        * Is in_rect = {0,0,0,0} (the empty rectangle with no point in
        * it, since width=height=0) used to communicate something?
+       * Otherwise, I'd initialize to {0,0,1,1} and put "-1"s below.
        */
       return in_rect;
     }
