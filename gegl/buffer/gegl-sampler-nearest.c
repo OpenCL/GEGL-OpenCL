@@ -25,7 +25,6 @@
 #include "gegl-buffer-private.h"
 #include "gegl-sampler-nearest.h"
 
-
 enum
 {
   PROP_0,
