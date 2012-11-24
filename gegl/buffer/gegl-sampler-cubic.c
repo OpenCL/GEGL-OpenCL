@@ -280,7 +280,7 @@ cubicKernel (const gfloat  x,
 	     (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
            (gfloat) ((6-2*b)/6);
   
-  if (x2 <= (gfloat) 4.)  
+  if (x2 < (gfloat) 4.)  
     return ( (gfloat) ((-b-6*c)/6) * ax +
 	     (gfloat) ((6*b+30*c)/6) ) * x2 +
            (gfloat) ((-12*b-48*c)/6) * ax +
