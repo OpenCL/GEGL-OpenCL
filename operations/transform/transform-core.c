@@ -571,8 +571,8 @@ gegl_transform_detect (GeglOperation *operation,
       return gegl_operation_detect (source_node->operation, x, y);
     }
 
-  need_points [0] = x;
-  need_points [1] = y;
+  need_points [0] = x - (gdouble) 0.5;
+  need_points [1] = y - (gdouble) 0.5;
 
   gegl_transform_create_matrix (transform, &inverse);
   gegl_matrix3_invert (&inverse);
