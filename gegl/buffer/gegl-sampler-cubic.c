@@ -272,21 +272,19 @@ cubicKernel (const gfloat  x,
              const gdouble b,
              const gdouble c)
 {
-  gfloat weight;
   const gfloat x2 = x*x;
   const gfloat ax = ( x<(gfloat) 0. ? -x : x );
 
-  if (x2 > (gfloat) 4.) return (gfloat) 0.;
-
   if (x2 <= (gfloat) 1.)
-    weight = ( (gfloat) ((12-9*b-6*c)/6) * ax +
-               (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
-             (gfloat) ((6-2*b)/6);
-  else
-    weight = ( (gfloat) ((-b-6*c)/6) * ax +
-               (gfloat) ((6*b+30*c)/6) ) * x2 +
-             (gfloat) ((-12*b-48*c)/6) * ax +
-             (gfloat) ((8*b+24*c)/6);
+    return ( (gfloat) ((12-9*b-6*c)/6) * ax +
+	     (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
+           (gfloat) ((6-2*b)/6);
+  
+  if (x2 <= (gfloat) 4.)  
+    return ( (gfloat) ((-b-6*c)/6) * ax +
+	     (gfloat) ((6*b+30*c)/6) ) * x2 +
+           (gfloat) ((-12*b-48*c)/6) * ax +
+           (gfloat) ((8*b+24*c)/6);
 
-  return weight;
+  return (gfloat) 0.;
 }
