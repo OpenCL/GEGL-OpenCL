@@ -504,7 +504,7 @@ gegl_transform_get_bounding_box (GeglOperation *op)
       in_rect.y      += context_rect.y;
       /*
        * It would seem that one should actually add width-1 and
-       * height-1, but the absense of "-1" seem to match "in_rect =
+       * height-1, but the absense of "-1" seems to match "in_rect =
        * {*,*,0,0}" above.
        */
       in_rect.width  += context_rect.width;
