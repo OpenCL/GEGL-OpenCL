@@ -473,6 +473,10 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   GeglRectangle  context_rect;
   GeglSampler   *sampler;
 
+  /*
+   * Shouldn't the computed bounding box be smaller? Some sort of
+   * "contained" instead of "container".
+   */
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (transform->filter));
   context_rect = *gegl_sampler_get_context_rect (sampler);
