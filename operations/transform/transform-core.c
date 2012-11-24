@@ -465,6 +465,12 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 {
   OpTransform   *transform  = OP_TRANSFORM (op);
   GeglMatrix3    matrix;
+  /*
+   * This was changed from the earlier {0,0,0,0}. However, in_rect is
+   * enlarged by one less than the width and height of context_rect
+   * when it was enlarged by the full number in earlier versions of
+   * this code.
+   */
   GeglRectangle  in_rect = {0,0,1,1},
                  have_rect;
   gdouble        have_points [8];
@@ -494,7 +500,6 @@ gegl_transform_get_bounding_box (GeglOperation *op)
       /*
        * Is in_rect = {0,0,0,0} (the empty rectangle with no point in
        * it, since width=height=0) used to communicate something?
-       * Otherwise, I'd initialize to {0,0,1,1} and put "-1"s below.
        */
       return in_rect;
     }
