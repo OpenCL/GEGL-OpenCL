@@ -389,6 +389,10 @@ gegl_transform_bounding_box (const gdouble       *points,
 
   output->x = (gint) floor ((double) min_x - 0.5);
   output->y = (gint) floor ((double) min_y - 0.5);
+  /*
+   * Width and height are numbers of pixels. So, they are one more
+   * than the distance between the first and last indices.
+   */
   output->width  = (gint) ceil ((double) max_x + 0.5) - output->x;
   output->height = (gint) ceil ((double) max_y + 0.5) - output->y;
 }
