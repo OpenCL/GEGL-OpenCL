@@ -53,9 +53,9 @@ static void set_property                (      GObject         *gobject,
                                                guint            prop_id,
                                          const GValue          *value,
                                                GParamSpec      *pspec);
-static inline gfloat cubicKernel        (      gfloat           x,
-                                               gfloat           b,
-                                               gfloat           c);
+static inline gfloat cubicKernel        (const gfloat           x,
+                                         const gdouble          b,
+                                         const gdouble          c);
 
 
 G_DEFINE_TYPE (GeglSamplerCubic, gegl_sampler_cubic, GEGL_TYPE_SAMPLER)
@@ -206,6 +206,7 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
     for (i=-1; i<3; i++)
       {
         sampler_bptr += offsets[k++];
+
         factor = cubicKernel (y - j, cubic->b, cubic->c) *
                  cubicKernel (x - i, cubic->b, cubic->c);
 
@@ -266,25 +267,21 @@ set_property (GObject      *object,
     }
 }
 
-/*
- * Should b and c actually be gdoubles?
- */
-
 static inline gfloat
-cubicKernel (gfloat x,
-             gfloat b,
-             gfloat c)
+cubicKernel (const gfloat  x,
+             const gdouble b,
+             const gdouble c)
 {
   gfloat weight;
-  gfloat x2 = x*x;
-  gfloat ax = ( x<(gfloat) 0. ? -x : x );
+  const gfloat x2 = x*x;
+  const gfloat ax = ( x<(gfloat) 0. ? -x : x );
 
-  if (x2 > (gfloat) 4.) return (gfloat) 0;
+  if (x2 > (gfloat) 4.) return (gfloat) 0.;
 
   if (x2 <= (gfloat) 1.)
     weight = ( (gfloat) ((12-9*b-6*c)/6) * ax +
                (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
-             (gfloat) ((6 - 2 * b)/6);
+             (gfloat) ((6-2*b)/6);
   else
     weight = ( (gfloat) ((-b-6*c)/6) * ax +
                (gfloat) ((6*b+30*c)/6) ) * x2 +
