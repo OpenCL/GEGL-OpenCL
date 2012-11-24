@@ -442,7 +442,7 @@ gegl_transform_is_composite_node (OpTransform *transform)
 }
 
 static void
-gegl_transform_get_source_matrix (OpTransform    *transform,
+gegl_transform_get_source_matrix (OpTransform *transform,
                                   GeglMatrix3 *output)
 {
   GSList        *connections;
