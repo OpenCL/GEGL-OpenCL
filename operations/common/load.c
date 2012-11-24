@@ -144,6 +144,16 @@ prepare (GeglOperation *operation)
           self->cached_path = g_strdup (o->path);
         }
     }
+
+  {
+    /* forward the set BablFormat of the image loader on the meta-op itself,
+     * making potential cache buffers be created with the proper format, there
+     * might be cleaner ways of achieving this.
+     */
+    GeglOperation *op;
+    g_object_get (self->load, "gegl-operation", &op, NULL);
+    gegl_operation_set_format (operation, "output", gegl_operation_get_format (op, "output"));
+  }
 }
 
 static void
