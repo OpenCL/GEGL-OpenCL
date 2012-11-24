@@ -37,7 +37,7 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
                           const gdouble                   absolute_x,
                           const gdouble                   absolute_y,
                                 GeglMatrix2              *scale,
-                                void*           restrict *output,
+                                void*           restrict  output,
                                 GeglAbyssPolicy           repeat_mode);
 
 G_DEFINE_TYPE (GeglSamplerNearest, gegl_sampler_nearest, GEGL_TYPE_SAMPLER)
@@ -70,11 +70,9 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
                           const gdouble                   absolute_x,
                           const gdouble                   absolute_y,
                                 GeglMatrix2              *scale,
-                                void*           restrict *output,
-                                GeglAbyssPolicy           repeat_mode);
+                                void*           restrict  output,
+                                GeglAbyssPolicy           repeat_mode)
 {
-  gfloat *sampler_bptr;
-
   /*
    * The reason why floor of the absolute position gives the nearest
    * pixel (with ties resolved toward -infinity) is that the absolute
@@ -84,7 +82,7 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
    * positions were center-based).
    */
   const gint channels = 4;
-  gfloat newval[4];
+  gfloat newval[channels];
   const gfloat* restrict in_bptr =
     gegl_sampler_get_ptr (self,
                           (gint) floor ((double) absolute_x),
