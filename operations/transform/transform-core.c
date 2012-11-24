@@ -648,20 +648,17 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
   OpTransform       *transform = OP_TRANSFORM (op);
   GeglMatrix3        matrix;
   GeglRectangle      affected_rect;
-#if 0
   GeglRectangle      context_rect;
   GeglSampler       *sampler;
-#endif
+
   gdouble            affected_points [8];
   gint               i;
   GeglRectangle      region = *input_region;
 
-#if 0
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (transform->filter));
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
-#endif
 
   gegl_transform_create_matrix (transform, &matrix);
 
@@ -682,12 +679,10 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
       return region;
     }
 
-#if 0
   region.x      += context_rect.x;
   region.y      += context_rect.y;
   region.width  += context_rect.width;
   region.height += context_rect.height;
-#endif
 
   affected_points [0] = region.x - (gdouble) 0.5;
   affected_points [1] = region.y - (gdouble) 0.5;
