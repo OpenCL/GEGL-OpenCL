@@ -486,6 +486,10 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&matrix))
     {
+      /*
+       * Is in_rect = {0,0,0,0} (the empty rectangle with no point in
+       * it, since width=height=0) used to communicate something?
+       */
       return in_rect;
     }
 
@@ -493,21 +497,33 @@ gegl_transform_get_bounding_box (GeglOperation *op)
     {
       in_rect.x      += context_rect.x;
       in_rect.y      += context_rect.y;
+      /*
+       * It would seem that one should actually add width-1 and
+       * height-1, but the absense of "-1" seem to match "in_rect =
+       * {*,*,0,0}" above.
+       */
       in_rect.width  += context_rect.width;
       in_rect.height += context_rect.height;
     }
 
-  have_points [0] = in_rect.x;
-  have_points [1] = in_rect.y;
+  /*
+   * Convert indices to absolute positions.
+   */
+  have_points [0] = in_rect.x - (gdouble) 0.5;
+  have_points [1] = in_rect.y - (gdouble) 0.5;
 
-  have_points [2] = in_rect.x + in_rect.width ;
-  have_points [3] = in_rect.y;
+  /*
+   * Note that the horizontal distance between the first and last
+   * pixel is one less than the width.
+   */
+  have_points [2] = have_points [0] + (in_rect.width  - (gint) 1);
+  have_points [3] = have_points [1];
 
-  have_points [4] = in_rect.x + in_rect.width ;
-  have_points [5] = in_rect.y + in_rect.height ;
+  have_points [4] = have_points [2];
+  have_points [5] = have_points [3] + (in_rect.height - (gint) 1);
 
-  have_points [6] = in_rect.x;
-  have_points [7] = in_rect.y + in_rect.height ;
+  have_points [6] = have_points [0];
+  have_points [7] = have_points [5];
 
   for (i = 0; i < 8; i += 2)
     gegl_matrix3_transform_point (&matrix,
