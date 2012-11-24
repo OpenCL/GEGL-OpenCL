@@ -59,8 +59,8 @@ static void          gegl_transform_set_property                 (      GObject 
                                                                         guint                 prop_id,
                                                                   const GValue               *value,
                                                                         GParamSpec           *pspec);
-static void          gegl_transform_bounding_box                 (      gdouble              *points,
-                                                                        gint                  num_points,
+static void          gegl_transform_bounding_box                 (const gdouble              *points,
+                                                                  const gint                  num_points,
                                                                         GeglRectangle        *output);
 static gboolean      gegl_transform_is_intermediate_node         (      OpTransform          *transform);
 static gboolean      gegl_transform_is_composite_node            (      OpTransform          *transform);
@@ -340,10 +340,23 @@ gegl_transform_create_composite_matrix (OpTransform    *transform,
 }
 
 static void
-gegl_transform_bounding_box (gdouble       *points,
-                             gint           num_points,
-                             GeglRectangle *output)
+gegl_transform_bounding_box (const gdouble       *points,
+                             const gint           num_points,
+                                   GeglRectangle *output)
 {
+  /*
+   * This code now does something different than it did before.
+   */
+  /*
+   * Take the points defined by consecutive pairs of gdoubles as
+   * absolute positions, that is, positions in the coordinate system
+   * with origin at the center of the pixel with index (0,0).
+   *
+   * Compute from these the smallest rectangle of pixel indices such
+   * that the absolute positions of the four corners contains all the
+   * given points. Because indices don't correspond to positions
+   * (anymore), shifts of .5 are needed.
+   */
   gint    i,
           num_coords;
   gdouble min_x,
@@ -374,10 +387,10 @@ gegl_transform_bounding_box (gdouble       *points,
       i++;
     }
 
-  output->x = (gint) floor ((double) min_x);
-  output->y = (gint) floor ((double) min_y);
-  output->width  = (gint) ceil ((double) max_x) - output->x;
-  output->height = (gint) ceil ((double) max_y) - output->y;
+  output->x = (gint) floor ((double) min_x - 0.5);
+  output->y = (gint) floor ((double) min_y - 0.5);
+  output->width  = (gint) ceil ((double) max_x - 0.5) - output->x + (gint) 1;
+  output->height = (gint) ceil ((double) max_y - 0.5) - output->y + (gint) 1;
 }
 
 static gboolean
