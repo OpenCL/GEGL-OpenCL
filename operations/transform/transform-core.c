@@ -470,17 +470,23 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   gdouble        have_points [8];
   gint           i;
 
-  GeglRectangle  context_rect;
-  GeglSampler   *sampler;
-
   /*
    * Shouldn't the computed bounding box be smaller? Some sort of
    * "contained" instead of "container".
    */
+
+  /*
+   * See the comment below RE: no need for enlargement by context_rect
+   */
+#if 0
+  GeglRectangle  context_rect;
+  GeglSampler   *sampler;
+
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (transform->filter));
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
+#endif
 
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
@@ -498,18 +504,26 @@ gegl_transform_get_bounding_box (GeglOperation *op)
       return in_rect;
     }
 
+  /*
+   * Assuming that have_points is supposed to give a rectangle that
+   * has to do with the area within the output image for which we have
+   * output data, there would appear to be no need to enlarge it by
+   * context_rect.
+   */
+#if 0
   if (!gegl_transform_matrix3_allow_fast_translate (&matrix))
     {
       in_rect.x      += context_rect.x;
       in_rect.y      += context_rect.y;
       /*
        * It would seem that one should actually add width-1 and
-       * height-1, but the absense of "-1" seems to match "in_rect =
+       * height-1, but the absense of "-1" may match "in_rect =
        * {*,*,0,0}" above.
        */
       in_rect.width  += context_rect.width;
       in_rect.height += context_rect.height;
     }
+#endif
 
   /*
    * Convert indices to absolute positions.
