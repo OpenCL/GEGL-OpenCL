@@ -62,7 +62,7 @@ gegl_sampler_nearest_init (GeglSamplerNearest *self)
   GEGL_SAMPLER (self)->context_rect[0].y = -1;
   GEGL_SAMPLER (self)->context_rect[0].width = 3;
   GEGL_SAMPLER (self)->context_rect[0].height = 3;
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RGBA float");
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
 void
@@ -83,10 +83,16 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
    * located at (.5,.5) (instead of (0,0) as it would be if absolute
    * positions were center-based).
    */
-  sampler_bptr =
-    gegl_sampler_get_from_buffer (self,
-                                  (gint) floor ((double) absolute_x),
-                                  (gint) floor ((double) absolute_y),
-                                  repeat_mode);
-  babl_process (self->fish, sampler_bptr, output, 1);
+  const gint channels = 4;
+  gfloat newval[4];
+  const gfloat* restrict in_bptr =
+    gegl_sampler_get_ptr (self,
+                          (gint) floor ((double) absolute_x),
+                          (gint) floor ((double) absolute_y),
+                          repeat_mode);
+  newval[0] = *in_bptr++;
+  newval[1] = *in_bptr++;
+  newval[2] = *in_bptr++;
+  newval[3] = *in_bptr;
+  babl_process (self->fish, newval, output, 1);
 }
