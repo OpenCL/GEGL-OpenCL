@@ -33,12 +33,12 @@ enum
 };
 
 static void
-gegl_sampler_nearest_get (GeglSampler    *self,
-                          gdouble         absolute_x,
-                          gdouble         absolute_y,
-                          GeglMatrix2    *scale,
-                          void           *output,
-                          GeglAbyssPolicy repeat_mode);
+gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
+                          const gdouble                   absolute_x,
+                          const gdouble                   absolute_y,
+                                GeglMatrix2              *scale,
+                                void*           restrict *output,
+                                GeglAbyssPolicy           repeat_mode);
 
 G_DEFINE_TYPE (GeglSamplerNearest, gegl_sampler_nearest, GEGL_TYPE_SAMPLER)
 
@@ -66,12 +66,12 @@ gegl_sampler_nearest_init (GeglSamplerNearest *self)
 }
 
 void
-gegl_sampler_nearest_get (GeglSampler     *self,
-                          gdouble          absolute_x,
-                          gdouble          absolute_y,
-                          GeglMatrix2     *scale,
-                          void            *output,
-                          GeglAbyssPolicy  repeat_mode)
+gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
+                          const gdouble                   absolute_x,
+                          const gdouble                   absolute_y,
+                                GeglMatrix2              *scale,
+                                void*           restrict *output,
+                                GeglAbyssPolicy           repeat_mode);
 {
   gfloat *sampler_bptr;
 
