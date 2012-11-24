@@ -357,6 +357,11 @@ gegl_transform_bounding_box (const gdouble       *points,
    * given points. Because indices don't correspond to positions
    * (anymore), shifts of .5 are needed.
    */
+  /*
+   * Maybe it would be better to use (gint) cast instead of floor, to
+   * restore overall "left-right" symmetry. This needs to be through
+   * through (in connection with transformations that "flip" things).
+   */
   gint    i,
           num_coords;
   gdouble min_x,
@@ -463,18 +468,18 @@ gegl_transform_get_source_matrix (OpTransform *transform,
 static GeglRectangle
 gegl_transform_get_bounding_box (GeglOperation *op)
 {
-  OpTransform   *transform  = OP_TRANSFORM (op);
-  GeglMatrix3    matrix;
+  OpTransform *transform = OP_TRANSFORM (op);
+  GeglMatrix3  matrix;
   /*
    * This was changed from the earlier {0,0,0,0}. However, in_rect is
    * enlarged by one less than the width and height of context_rect
    * when it was enlarged by the full number in earlier versions of
    * this code.
    */
-  GeglRectangle  in_rect = {0,0,1,1},
-                 have_rect;
-  gdouble        have_points [8];
-  gint           i;
+  GeglRectangle in_rect = {0,0,1,1},
+                have_rect;
+  gdouble       have_points [8];
+  gint          i;
 
   /*
    * Shouldn't the computed bounding box be smaller? Some sort of
