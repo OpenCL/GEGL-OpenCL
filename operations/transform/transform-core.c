@@ -712,10 +712,8 @@ transform_affine (GeglBuffer  *dest,
   GeglMatrix2          inverse_jacobian;
   gdouble              u_start,
                        v_start,
-                       w_start,
                        u_float,
-                       v_float,
-                       w_float;
+                       v_float;
 
   const Babl           *format;
 
@@ -734,7 +732,7 @@ transform_affine (GeglBuffer  *dest,
    */
   /*
    * It is assumed that the affine transformation has been normalized,
-   * so that inverse.coeff[0][2] = inverse.coeff[1][2] = 0 and
+   * so that inverse.coeff[2][0] = inverse.coeff[2][1] = 0 and
    * inverse.coeff[2][2] = 1 (roughly within
    * GEGL_TRANSFORM_CORE_EPSILON).
    */
@@ -748,6 +746,7 @@ transform_affine (GeglBuffer  *dest,
                                 format,
                                 GEGL_BUFFER_WRITE,
                                 GEGL_ABYSS_CLAMP);
+
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
@@ -756,7 +755,10 @@ transform_affine (GeglBuffer  *dest,
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
 
-      /* set inverse_jacobian for samplers that support it */
+      /*
+       * Set the inverse_jacobian matrix (a.k.a. scale) for samplers
+       * that support it.
+       */
       inverse_jacobian.coeff[0][0] = inverse.coeff[0][0];
       inverse_jacobian.coeff[0][1] = inverse.coeff[0][1];
       inverse_jacobian.coeff[1][0] = inverse.coeff[1][0];
@@ -768,33 +770,27 @@ transform_affine (GeglBuffer  *dest,
       v_start = inverse.coeff[1][0] * (roi->x + (gdouble) 0.5) +
                 inverse.coeff[1][1] * (roi->y + (gdouble) 0.5) +
                 inverse.coeff[1][2];
-      w_start = inverse.coeff[2][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff[2][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff[2][2];
 
       for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
           u_float = u_start;
           v_float = v_start;
-          w_float = w_start;
 
           for (x = roi->width; x--;)
             {
               gegl_sampler_get (sampler,
-                                u_float/w_float,
-                                v_float/w_float,
+                                u_float,
+                                v_float,
                                 &inverse_jacobian,
                                 dest_ptr,
                                 GEGL_ABYSS_CLAMP);
               dest_ptr+=4;
               u_float += inverse.coeff [0][0];
               v_float += inverse.coeff [1][0];
-              w_float += inverse.coeff [2][0];
             }
 
           u_start += inverse.coeff [0][1];
           v_start += inverse.coeff [1][1];
-          w_start += inverse.coeff [2][1];
         }
     }
 }
@@ -915,8 +911,8 @@ transform_generic (GeglBuffer  *dest,
 static inline gboolean is_zero (const gdouble f)
 {
   return (((gdouble) f)*((gdouble) f)
-	  <=
-	  GEGL_TRANSFORM_CORE_EPSILON*GEGL_TRANSFORM_CORE_EPSILON);
+          <=
+          GEGL_TRANSFORM_CORE_EPSILON*GEGL_TRANSFORM_CORE_EPSILON);
 }
 
 static inline gboolean is_one (const gdouble f)
@@ -939,9 +935,9 @@ gegl_transform_matrix3_allow_fast_translate (GeglMatrix3 *matrix)
    * integer translation. If not, exit.
    */
   if (! is_zero((gdouble) (matrix->coeff[0][2] -
-			   round((double) matrix->coeff[0][2]))) ||
+                           round((double) matrix->coeff[0][2]))) ||
       ! is_zero((gdouble) (matrix->coeff[1][2] -
-			   round((double) matrix->coeff[1][2]))))
+                           round((double) matrix->coeff[1][2]))))
     return FALSE;
 
   /*
@@ -987,13 +983,13 @@ gegl_transform_process (GeglOperation        *operation,
       input  = gegl_operation_context_get_source (context, "input");
 
       output =
-	g_object_new (GEGL_TYPE_BUFFER,
-		      "source",      input,
-		      "shift-x",     -(gint) round((double) matrix.coeff[0][2]),
-		      "shift-y",     -(gint) round((double) matrix.coeff[1][2]),
-		      "abyss-width", -1, /* turn off abyss (relying on
-					    abyss of source) */
-		      NULL);
+        g_object_new (GEGL_TYPE_BUFFER,
+                      "source",      input,
+                      "shift-x",     -(gint) round((double) matrix.coeff[0][2]),
+                      "shift-y",     -(gint) round((double) matrix.coeff[1][2]),
+                      "abyss-width", -1, /* turn off abyss (relying on
+                                            abyss of source) */
+                      NULL);
 
       if (gegl_object_get_has_forked (input))
         gegl_object_set_has_forked (output);
