@@ -84,9 +84,6 @@ static GeglNode     *gegl_transform_detect                       (      GeglOper
 
 static gboolean      gegl_matrix3_is_affine                      (      GeglMatrix3          *matrix);
 static gboolean      gegl_transform_matrix3_allow_fast_translate (      GeglMatrix3          *matrix);
-static gboolean      gegl_transform_matrix3_allow_fast_reflect_x (      GeglMatrix3          *matrix);
-static gboolean      gegl_transform_matrix3_allow_fast_reflect_y (      GeglMatrix3          *matrix);
-
 
 /* ************************* */
 
@@ -460,6 +457,12 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 {
   OpTransform *transform = OP_TRANSFORM (op);
   GeglMatrix3  matrix;
+
+  /*
+   * Shouldn't the computed bounding box be smaller? Some sort of
+   * "contained" instead of "container".
+   */
+
   /*
    * Was set to {0,0,0,0} in earlier code. Note however in_rect is
    * enlarged by one less than the width and height of context_rect
@@ -474,11 +477,6 @@ gegl_transform_get_bounding_box (GeglOperation *op)
                 have_rect;
   gdouble       have_points [8];
   gint          i;
-
-  /*
-   * Shouldn't the computed bounding box be smaller? Some sort of
-   * "contained" instead of "container".
-   */
 
   GeglRectangle  context_rect;
   GeglSampler   *sampler;
@@ -495,8 +493,7 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 
   /*
    * Is in_rect = {0,0,0,0} (the empty rectangle with no point in it,
-   * since width=height=0) used to communicate something?  In any
-   * case, it is changed above to {0,0,1,1}.
+   * since width=height=0) used to communicate something?
    */
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&matrix))
@@ -517,8 +514,8 @@ gegl_transform_get_bounding_box (GeglOperation *op)
        * height-1, but the absense of "-1" may match "in_rect =
        * {*,*,0,0}" above.
        */
-      in_rect.width  += (context_rect.width  - (gint) 1);
-      in_rect.height += (context_rect.height - (gint) 1);
+      in_rect.width  += context_rect.width;
+      in_rect.height += context_rect.height;
     }
 
   /*
@@ -533,11 +530,11 @@ gegl_transform_get_bounding_box (GeglOperation *op)
    * subtract (gint) 1 in the computation of have_points [2] and
    * have_points [5].
    */
-  have_points [2] = have_points [0] + in_rect.width;
+  have_points [2] = have_points [0] + ( in_rect.width  - (gint) 1);
   have_points [3] = have_points [1];
 
   have_points [4] = have_points [2];
-  have_points [5] = have_points [3] + in_rect.height;
+  have_points [5] = have_points [3] + ( in_rect.height - (gint) 1);
 
   have_points [6] = have_points [0];
   have_points [7] = have_points [5];
@@ -937,126 +934,6 @@ gegl_transform_matrix3_allow_fast_translate (GeglMatrix3 *matrix)
 }
 
 static gboolean
-gegl_transform_matrix3_allow_fast_reflect_x (GeglMatrix3 *matrix)
-{
-  GeglMatrix3 copy;
-
-  if (! GEGL_FLOAT_EQUAL (matrix->coeff[1][1], -1.0))
-    return FALSE;
-  gegl_matrix3_copy_into (&copy, matrix);
-  copy.coeff[1][1] = 1.;
-  return gegl_transform_matrix3_allow_fast_translate (&copy);
-}
-
-static gboolean
-gegl_transform_matrix3_allow_fast_reflect_y (GeglMatrix3 *matrix)
-{
-  GeglMatrix3 copy;
-
-  if (! GEGL_FLOAT_EQUAL (matrix->coeff[0][0], -1.0))
-    return FALSE;
-  gegl_matrix3_copy_into (&copy, matrix);
-  copy.coeff[0][0] = 1.;
-  return gegl_transform_matrix3_allow_fast_translate (&copy);
-}
-
-static void
-gegl_transform_fast_reflect_x (GeglBuffer              *dest,
-                               GeglBuffer              *src,
-                               const GeglRectangle     *dest_rect,
-                               const GeglRectangle     *src_rect,
-                               gint                     level)
-{
-  const Babl *format = gegl_buffer_get_format (src);
-  const gint  px_size = babl_format_get_bytes_per_pixel (format),
-              rowstride = src_rect->width * px_size;
-  gint        i;
-  guchar     *buf = (guchar *) g_malloc (src_rect->height * rowstride);
-
-  gegl_buffer_get (src,
-                   src_rect,
-                   1.0,
-                   format,
-                   buf,
-                   GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_NONE);
-
-  for (i = 0; i < src_rect->height / 2; i++)
-    {
-      gint      dest_offset = (src_rect->height - i - 1) * rowstride,
-                src_offset = i * rowstride,
-                j;
-
-      for (j = 0; j < rowstride; j++)
-        {
-          const guchar      tmp = buf[src_offset];
-
-          buf[src_offset] = buf[dest_offset];
-          buf[dest_offset] = tmp;
-
-          dest_offset++;
-          src_offset++;
-        }
-    }
-
-  gegl_buffer_set (dest, dest_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (buf);
-}
-
-static void
-gegl_transform_fast_reflect_y (GeglBuffer              *dest,
-                               GeglBuffer              *src,
-                               const GeglRectangle     *dest_rect,
-                               const GeglRectangle     *src_rect,
-                               gint                     level)
-{
-  const Babl *format = gegl_buffer_get_format (src);
-  const gint  px_size = babl_format_get_bytes_per_pixel (format),
-              rowstride = src_rect->width * px_size;
-  gint        i;
-  guchar     *buf = (guchar *) g_malloc (src_rect->height * rowstride);
-
-  gegl_buffer_get (src,
-                   src_rect,
-                   1.0,
-                   format,
-                   buf,
-                   GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_NONE);
-
-  for (i = 0; i < src_rect->height; i++)
-    {
-      gint src_offset = i * rowstride,
-           dest_offset = src_offset + rowstride,
-           j;
-
-      for (j = 0; j < src_rect->width / 2; j++)
-        {
-          gint k;
-
-          dest_offset -= px_size;
-
-          for (k = 0; k < px_size; k++)
-            {
-              const guchar      tmp = buf[src_offset];
-
-              buf[src_offset] = buf[dest_offset];
-              buf[dest_offset] = tmp;
-
-              dest_offset++;
-              src_offset++;
-            }
-
-          dest_offset -= px_size;
-        }
-    }
-
-  gegl_buffer_set (dest, dest_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (buf);
-}
-
-
-static gboolean
 gegl_transform_process (GeglOperation        *operation,
                         GeglOperationContext *context,
                         const gchar          *output_prop,
@@ -1103,80 +980,6 @@ gegl_transform_process (GeglOperation        *operation,
         gegl_object_set_has_forked (output);
 
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
-
-      if (input != NULL)
-        g_object_unref (input);
-    }
-  else if (gegl_transform_matrix3_allow_fast_reflect_x (&matrix))
-    {
-      GeglRectangle      src_rect;
-      GeglSampler       *sampler;
-      GeglRectangle      context_rect;
-
-      input  = gegl_operation_context_get_source (context, "input");
-      if (!input)
-        {
-          g_warning ("transform received NULL input");
-          return FALSE;
-        }
-
-      output = gegl_operation_context_get_target (context, "output");
-
-      src_rect = gegl_operation_get_required_for_output (operation,
-                                                         "output",
-                                                         result);
-      src_rect.y += 1;
-
-      sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
-          gegl_sampler_type_from_string (transform->filter));
-      context_rect = *gegl_sampler_get_context_rect (sampler);
-
-      src_rect.width -= context_rect.width;
-      src_rect.height -= context_rect.height;
-
-      gegl_transform_fast_reflect_x (output,
-                                     input,
-                                     result,
-                                     &src_rect,
-                                     context->level);
-      g_object_unref (sampler);
-
-      if (input != NULL)
-        g_object_unref (input);
-    }
-  else if (gegl_transform_matrix3_allow_fast_reflect_y (&matrix))
-    {
-      GeglRectangle      src_rect;
-      GeglSampler       *sampler;
-      GeglRectangle      context_rect;
-
-      input  = gegl_operation_context_get_source (context, "input");
-      if (!input)
-        {
-          g_warning ("transform received NULL input");
-          return FALSE;
-        }
-
-      output = gegl_operation_context_get_target (context, "output");
-
-      src_rect = gegl_operation_get_required_for_output (operation,
-                                                         "output",
-                                                         result);
-      src_rect.x += 1;
-
-      sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
-          gegl_sampler_type_from_string (transform->filter));
-      context_rect = *gegl_sampler_get_context_rect (sampler);
-
-      src_rect.width -= context_rect.width;
-      src_rect.height -= context_rect.height;
-
-      gegl_transform_fast_reflect_y (output,
-                                     input,
-                                     result,
-                                     &src_rect,
-                                     context->level);
-      g_object_unref (sampler);
 
       if (input != NULL)
         g_object_unref (input);
