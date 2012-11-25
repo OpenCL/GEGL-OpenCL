@@ -730,7 +730,13 @@ transform_affine (GeglBuffer  *dest,
    */
   /*
    * Nicolas Robidoux and Massimo Valentini are of the opinion that
-   * fast paths should only be used if necessary.
+   * fast paths should only be used if absolutely necessary.
+   */
+  /*
+   * It is assumed that the affine transformation has been normalized,
+   * so that inverse.coeff[0][2] = inverse.coeff[1][2] = 0 and
+   * inverse.coeff[2][2] = 1 (roughly within
+   * GEGL_TRANSFORM_CORE_EPSILON).
    */
 
   g_object_get (dest, "pixels", &dest_pixels, NULL);
