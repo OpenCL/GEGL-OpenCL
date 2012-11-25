@@ -465,6 +465,10 @@ gegl_transform_get_bounding_box (GeglOperation *op)
    * enlarged by one less than the width and height of context_rect
    * when it was enlarged by the full number in earlier versions of
    * this code. Should it be {0,0,1,1} instead?
+   *
+   * Nicolas suspects that the reason things are one less than
+   * expected is partly that this, in a sense, is an "inner" bounding
+   * box.
    */
   GeglRectangle in_rect = {0,0,0,0},
                 have_rect;
@@ -525,13 +529,15 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 
   /*
    * Note that the horizontal distance between the first and last
-   * pixel is one less than the width.
+   * pixel is one less than the width. So, I would be enclined to
+   * subtract (gint) 1 in the computation of have_points [2] and
+   * have_points [5].
    */
-  have_points [2] = have_points [0] + (in_rect.width  - (gint) 1);
+  have_points [2] = have_points [0] + in_rect.width;
   have_points [3] = have_points [1];
 
   have_points [4] = have_points [2];
-  have_points [5] = have_points [3] + (in_rect.height - (gint) 1);
+  have_points [5] = have_points [3] + in_rect.height;
 
   have_points [6] = have_points [0];
   have_points [7] = have_points [5];
