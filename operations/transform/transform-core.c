@@ -901,20 +901,21 @@ transform_generic (GeglBuffer  *dest,
 }
 
 /*
- * Purposely a double.
+ * Use to determine if transform matrix coefficients are close enough
+ * to integers.
  */
-#define GEGL_TRANSFORM_CORE_EPSILON (0.0000001)
+#define GEGL_TRANSFORM_CORE_EPSILON ((gdouble) 0.0000001)
 
-static inline gboolean is_zero (float f)
+static inline gboolean is_zero (const gdouble f)
 {
-  return (((double) f)*((double) f)
+  return (((gdouble) f)*((gdouble) f)
 	  <=
 	  GEGL_TRANSFORM_CORE_EPSILON*GEGL_TRANSFORM_CORE_EPSILON);
 }
 
-static inline gboolean is_one (float f)
+static inline gboolean is_one (const gdouble f)
 {
-  return is_zero(f-1.0);
+  return is_zero(f-(gdouble) 1.0);
 }
 
 static gboolean gegl_matrix3_is_affine (GeglMatrix3 *matrix)
@@ -927,9 +928,19 @@ static gboolean gegl_matrix3_is_affine (GeglMatrix3 *matrix)
 static gboolean
 gegl_transform_matrix3_allow_fast_translate (GeglMatrix3 *matrix)
 {
-  if (! GEGL_FLOAT_EQUAL (matrix->coeff[0][2], (gint) matrix->coeff[0][2]) ||
-      ! GEGL_FLOAT_EQUAL (matrix->coeff[1][2], (gint) matrix->coeff[1][2]))
+  /*
+   * Assuming that it is a translation matrix, check if it is an
+   * integer translation. If not, exit.
+   */
+  if (! is_zero((gdouble) (matrix->coeff[0][2] -
+			   round((double) matrix->coeff[0][2]))) ||
+      ! is_zero((gdouble) (matrix->coeff[1][2] -
+			   round((double) matrix->coeff[1][2]))))
     return FALSE;
+
+  /*
+   * Check if it a translation matrix.
+   */
   return gegl_matrix3_is_translate (matrix);
 }
 
