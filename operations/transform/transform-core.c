@@ -975,17 +975,19 @@ gegl_transform_process (GeglOperation        *operation,
            (gegl_matrix3_is_translate (&matrix) &&
             ! strcmp (transform->filter, "nearest")))
     {
-      /* doing a buffer shifting trick, (enhanced nop) */
+      /*
+       * Buffer shifting trick (enhanced nop).
+       */
       input  = gegl_operation_context_get_source (context, "input");
 
-      output = g_object_new (GEGL_TYPE_BUFFER,
-                             "source",    input,
-                             "shift-x",   (int)-matrix.coeff[0][2],
-                             "shift-y",   (int)-matrix.coeff[1][2],
-                             "abyss-width", -1,  /* turn of abyss
-                                                    (relying on abyss
-                                                    of source) */
-                         NULL);
+      output =
+	g_object_new (GEGL_TYPE_BUFFER,
+		      "source",      input,
+		      "shift-x",     -(gint) round((double) matrix.coeff[0][2]),
+		      "shift-y",     -(gint) round((double) matrix.coeff[1][2]),
+		      "abyss-width", -1, /* turn off abyss (relying on
+					    abyss of source) */
+		      NULL);
 
       if (gegl_object_get_has_forked (input))
         gegl_object_set_has_forked (output);
