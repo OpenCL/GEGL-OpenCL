@@ -34,8 +34,6 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
 #define GEGL_CHANT_SELF "translate.c"
 #include "chant.h"
 
-#include <math.h>
-
 static void
 create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)

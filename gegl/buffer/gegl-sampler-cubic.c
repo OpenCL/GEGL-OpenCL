@@ -13,7 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * 2012 (c) Nicolas Robidoux based on earlier code
+ * Copyright 2012 Nicolas Robidoux based on earlier code
+ *           2012 Massimo Valentini
  */
 
 #include "config.h"
@@ -276,11 +277,11 @@ cubicKernel (const gfloat  x,
   const gfloat ax = ( x<(gfloat) 0. ? -x : x );
 
   if (x2 <= (gfloat) 1.) return ( (gfloat) ((12-9*b-6*c)/6) * ax +
-				  (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
-			        (gfloat) ((6-2*b)/6);
-  
+                                  (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
+                                (gfloat) ((6-2*b)/6);
+
   if (x2 < (gfloat) 4.) return ( (gfloat) ((-b-6*c)/6) * ax +
-				 (gfloat) ((6*b+30*c)/6) ) * x2 +
+                                 (gfloat) ((6*b+30*c)/6) ) * x2 +
                                (gfloat) ((-12*b-48*c)/6) * ax +
                                (gfloat) ((8*b+24*c)/6);
 

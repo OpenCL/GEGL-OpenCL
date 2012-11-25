@@ -16,7 +16,6 @@
  */
 
 #include "config.h"
-#include <string.h>
 #include <math.h>
 
 #include <glib-object.h>
@@ -26,7 +25,6 @@
 #include "gegl-buffer-private.h"
 #include "gegl-sampler-nearest.h"
 
-
 enum
 {
   PROP_0,
@@ -34,12 +32,12 @@ enum
 };
 
 static void
-gegl_sampler_nearest_get (GeglSampler    *self,
-                          gdouble         absolute_x,
-                          gdouble         absolute_y,
-                          GeglMatrix2    *scale,
-                          void           *output,
-                          GeglAbyssPolicy repeat_mode);
+gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
+                          const gdouble                   absolute_x,
+                          const gdouble                   absolute_y,
+                                GeglMatrix2              *scale,
+                                void*           restrict  output,
+                                GeglAbyssPolicy           repeat_mode);
 
 G_DEFINE_TYPE (GeglSamplerNearest, gegl_sampler_nearest, GEGL_TYPE_SAMPLER)
 
@@ -51,26 +49,29 @@ gegl_sampler_nearest_class_init (GeglSamplerNearestClass *klass)
   sampler_class->get = gegl_sampler_nearest_get;
 }
 
+/*
+ * It would seem that x=y=0 and width=height=1 should be enough, but
+ * apparently safety w.r.t. round off or something else makes things
+ * work better with width=height=3 and centering.
+ */
 static void
 gegl_sampler_nearest_init (GeglSamplerNearest *self)
 {
-  GEGL_SAMPLER (self)->context_rect[0].x = 0;
-  GEGL_SAMPLER (self)->context_rect[0].y = 0;
-  GEGL_SAMPLER (self)->context_rect[0].width = 1;
-  GEGL_SAMPLER (self)->context_rect[0].height = 1;
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RGBA float");
+  GEGL_SAMPLER (self)->context_rect[0].x = -1;
+  GEGL_SAMPLER (self)->context_rect[0].y = -1;
+  GEGL_SAMPLER (self)->context_rect[0].width = 3;
+  GEGL_SAMPLER (self)->context_rect[0].height = 3;
+  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
 void
-gegl_sampler_nearest_get (GeglSampler     *self,
-                          gdouble          absolute_x,
-                          gdouble          absolute_y,
-                          GeglMatrix2     *scale,
-                          void            *output,
-                          GeglAbyssPolicy  repeat_mode)
+gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
+                          const gdouble                   absolute_x,
+                          const gdouble                   absolute_y,
+                                GeglMatrix2              *scale,
+                                void*           restrict  output,
+                                GeglAbyssPolicy           repeat_mode)
 {
-  gfloat *sampler_bptr;
-
   /*
    * The reason why floor of the absolute position gives the nearest
    * pixel (with ties resolved toward -infinity) is that the absolute
@@ -79,10 +80,16 @@ gegl_sampler_nearest_get (GeglSampler     *self,
    * located at (.5,.5) (instead of (0,0) as it would be if absolute
    * positions were center-based).
    */
-  sampler_bptr =
-    gegl_sampler_get_from_buffer (self,
-                                  (gint) floor ((double) absolute_x),
-                                  (gint) floor ((double) absolute_y),
-                                  repeat_mode);
-  babl_process (self->fish, sampler_bptr, output, 1);
+  const gint channels = 4;
+  gfloat newval[channels];
+  const gfloat* restrict in_bptr =
+    gegl_sampler_get_ptr (self,
+                          (gint) floor ((double) absolute_x),
+                          (gint) floor ((double) absolute_y),
+                          repeat_mode);
+  newval[0] = *in_bptr++;
+  newval[1] = *in_bptr++;
+  newval[2] = *in_bptr++;
+  newval[3] = *in_bptr;
+  babl_process (self->fish, newval, output, 1);
 }
