@@ -87,17 +87,6 @@ static gboolean      gegl_transform_matrix3_allow_fast_translate (      GeglMatr
 static gboolean      gegl_transform_matrix3_allow_fast_reflect_x (      GeglMatrix3          *matrix);
 static gboolean      gegl_transform_matrix3_allow_fast_reflect_y (      GeglMatrix3          *matrix);
 
-static void          gegl_transform_fast_reflect_x               (      GeglBuffer           *dest,
-                                                                        GeglBuffer           *src,
-                                                                  const GeglRectangle        *dest_rect,
-                                                                  const GeglRectangle        *src_rect,
-                                                                        gint                  level);
-static void          gegl_transform_fast_reflect_y               (      GeglBuffer           *dest,
-                                                                        GeglBuffer           *src,
-                                                                  const GeglRectangle         *dest_rect,
-                                                                  const GeglRectangle         *src_rect,
-                                                                        gint                  level);
-
 
 /* ************************* */
 
@@ -359,8 +348,9 @@ gegl_transform_bounding_box (const gdouble       *points,
    */
   /*
    * Maybe it would be better to use (gint) cast instead of floor, to
-   * restore overall "left-right" symmetry. This needs to be through
-   * through (in connection with transformations that "flip" things).
+   * restore overall "left-right" symmetry, at least to some
+   * extent. This needs to be through through (in connection with
+   * transformations that "flip" things).
    */
   gint    i,
           num_coords;
@@ -471,12 +461,12 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   OpTransform *transform = OP_TRANSFORM (op);
   GeglMatrix3  matrix;
   /*
-   * This was changed from the earlier {0,0,0,0}. However, in_rect is
+   * Was set to {0,0,0,0} in earlier code. Note however in_rect is
    * enlarged by one less than the width and height of context_rect
    * when it was enlarged by the full number in earlier versions of
-   * this code.
+   * this code. Should it be {0,0,1,1} instead?
    */
-  GeglRectangle in_rect = {0,0,1,1},
+  GeglRectangle in_rect = {0,0,0,0},
                 have_rect;
   gdouble       have_points [8];
   gint          i;
@@ -499,16 +489,14 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 
   gegl_transform_create_composite_matrix (transform, &matrix);
 
+  /*
+   * Is in_rect = {0,0,0,0} (the empty rectangle with no point in it,
+   * since width=height=0) used to communicate something?  In any
+   * case, it is changed above to {0,0,1,1}.
+   */
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&matrix))
-    {
-      /*
-       * Is in_rect = {0,0,0,0} (the empty rectangle with no point in
-       * it, since width=height=0) used to communicate something?
-       * In any case, it is changed above to {0,0,1,1}.
-       */
-      return in_rect;
-    }
+    return in_rect;
 
   /*
    * Assuming that have_points is supposed to give a rectangle that
@@ -571,9 +559,7 @@ gegl_transform_detect (GeglOperation *operation,
 
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&inverse))
-    {
-      return gegl_operation_detect (source_node->operation, x, y);
-    }
+    return gegl_operation_detect (source_node->operation, x, y);
 
   need_points [0] = x + (gdouble) 0.5;
   need_points [1] = y + (gdouble) 0.5;
@@ -614,9 +600,7 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
 
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&inverse))
-    {
-      return requested_rect;
-    }
+    return requested_rect;
 
   need_points [0] = requested_rect.x + (gdouble) 0.5;
   need_points [1] = requested_rect.y + (gdouble) 0.5;
@@ -679,9 +663,7 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
 
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&matrix))
-    {
-      return region;
-    }
+    return region;
 
   region.x      += context_rect.x;
   region.y      += context_rect.y;
@@ -738,13 +720,18 @@ transform_affine (GeglBuffer  *dest,
 
   format = babl_format ("RaGaBaA float");
 
-  /* XXX: fast paths as existing in files in the same dir as transform.c
-   *      should probably be hooked in here, and bailing out before using
-   *      the generic code.
+  /*
+   * XXX: fast paths as existing in files in the same dir as
+   *      transform.c should probably be hooked in here, and bailing
+   *      out before using the generic code.
    */
+  /*
+   * Nicolas Robidoux and Massimo Valentini are of the opinion that
+   * fast paths should only be used if necessary.
+   */
+
   g_object_get (dest, "pixels", &dest_pixels, NULL);
   dest_extent = gegl_buffer_get_extent (dest);
-
 
   i = gegl_buffer_iterator_new (dest,
                                 dest_extent,
@@ -830,10 +817,16 @@ transform_generic (GeglBuffer  *dest,
 
   format = babl_format ("RaGaBaA float");
 
-  /* XXX: fast paths as existing in files in the same dir as transform.c
-   *      should probably be hooked in here, and bailing out before using
-   *      the generic code.
+  /*
+   * XXX: fast paths as existing in files in the same dir as
+   *      transform.c should probably be hooked in here, and bailing
+   *      out before using the generic code.
    */
+  /*
+   * Nicolas Robidoux and Massimo Valentini are of the opinion that
+   * fast paths should only be used if necessary.
+   */
+
   g_object_get (dest, "pixels", &dest_pixels, NULL);
   dest_extent = gegl_buffer_get_extent (dest);
 
@@ -904,13 +897,21 @@ transform_generic (GeglBuffer  *dest,
     }
 }
 
+/*
+ * Purposely a double.
+ */
+#define GEGL_TRANSFORM_CORE_EPSILON (0.0000001)
+
 static inline gboolean is_zero (float f)
 {
-  return f >= -0.0000001 && f <= 0.00000001;
+  return (((double) f)*((double) f)
+	  <=
+	  GEGL_TRANSFORM_CORE_EPSILON*GEGL_TRANSFORM_CORE_EPSILON);
 }
+
 static inline gboolean is_one (float f)
 {
-  return f >= 1.0-0.0000001 && f <= 1.00000001;
+  return is_zero(f-1.0);
 }
 
 static gboolean gegl_matrix3_is_affine (GeglMatrix3 *matrix)
@@ -1047,6 +1048,7 @@ gegl_transform_fast_reflect_y (GeglBuffer              *dest,
   gegl_buffer_set (dest, dest_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
   g_free (buf);
 }
+
 
 static gboolean
 gegl_transform_process (GeglOperation        *operation,
