@@ -58,8 +58,6 @@ HTML_FILES += $(ENSCRIPT_FILES)
 GTKDOC_FILES += $(ENSCRIPT_FILES)
 endif
 
-BUILT_EXTRA_DIST = class-hierarchy.html operations.html $(ASC_DOC)
-
 if HAVE_ASCIIDOC
 HTML_FILES += $(ASC_DOC)
 endif
@@ -78,7 +76,10 @@ EXTRA_DIST = \
 	images/standard-aux.png \
 	index.txt.in
 
-EXAMPLE_FILES = $(wildcard images/examples/*.png)
+BUILT_EXTRA_DIST = class-hierarchy.html operations.html $(ASC_DOC)
+EXTRA_DIST += $(BUILT_EXTRA_DIST)
+
+EXAMPLE_FILES = $(wildcard $(srcdir)/images/examples/*.png)
 EXTRA_DIST += $(EXAMPLE_FILES)
 
 dist_gtkdochtml_DATA = $(GTKDOC_FILES)
