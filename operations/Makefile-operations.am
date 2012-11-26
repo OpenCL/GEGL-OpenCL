@@ -3,9 +3,10 @@ include $(top_srcdir)/operations/Makefile-common.am
 LIBS            = $(op_libs)
 
 CFILES          = $(wildcard $(srcdir)/*.c)
+HFILES          = $(wildcard $(srcdir)/*.h)
 plugins         = $(subst $(srcdir)/,,$(CFILES:.c=.la))
 INSTALLED_ITEMS = $(subst $(srcdir)/,$(ext_dir)/,$(CFILES:.c=$(SHREXT)))
-EXTRA_DIST      = $(wildcard *.c) $(wildcard *.h)
+EXTRA_DIST      = $(CFILES) $(HFILES)
 
 gegl_lt_cc_v = $(gegl_lt_cc_v_$(V))
 gegl_lt_cc_v_ = $(gegl_lt_cc_v_$(AM_DEFAULT_VERBOSITY))
