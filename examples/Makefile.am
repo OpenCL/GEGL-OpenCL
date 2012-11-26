@@ -3,7 +3,7 @@
 SUBDIRS = data
 CFILES = $(wildcard $(srcdir)/*.c)
 bins   = $(subst $(srcdir)/,,$(CFILES:.c=))
-EXTRA_DIST = $(wildcard *.c) $(wildcard util/*.[ch])
+EXTRA_DIST = $(wildcard $(srcdir)/*.c) $(wildcard $(srcdir)/util/*.[ch])
 
 gegl_lt_cc_v = $(gegl_lt_cc_v_$(V))
 gegl_lt_cc_v_ = $(gegl_lt_cc_v_$(AM_DEFAULT_VERBOSITY))

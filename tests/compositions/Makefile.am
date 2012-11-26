@@ -10,7 +10,7 @@
 
 SUBDIRS=data
 
-EXTRA_DIST=$(wildcard *.xml) $(wildcard reference/*)
+EXTRA_DIST=$(wildcard $(srcdir)/*.xml) $(wildcard $(srcdir)/reference/*)
 
 # Env vars to make binaries use builddir stuff
 builddir_gegl_env = GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations
@@ -27,7 +27,7 @@ builddir_img_cmp = $(builddir_gegl_env) $(img_cmp_bin)
 testprefix = run-
 testsuffix = .sh
 
-# List of tests. The .sh suffix allows us to use $(wildcard *.xml) in
+# List of tests. The .sh suffix allows us to use $(wildcard $(srcdir)/*.xml) in
 # EXTRA_DISTS
 TESTS = \
   run-clones.xml.sh                    \

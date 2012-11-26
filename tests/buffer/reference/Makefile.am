@@ -1,1 +1,1 @@
-EXTRA_DIST = $(wildcard *.buf)
+EXTRA_DIST = $(wildcard $(srcdir)/*.buf)

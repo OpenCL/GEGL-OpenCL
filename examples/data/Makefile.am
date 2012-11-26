@@ -1,1 +1,1 @@
-EXTRA_DIST=$(wildcard *.png) $(wildcard *.jpg)
+EXTRA_DIST=$(wildcard $(srcdir)/*.png) $(wildcard $(srcdir)/*.jpg)
