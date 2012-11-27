@@ -745,7 +745,7 @@ transform_affine (GeglBuffer  *dest,
                                 level,
                                 format,
                                 GEGL_BUFFER_WRITE,
-                                GEGL_ABYSS_CLAMP);
+                                GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (i))
     {
@@ -783,7 +783,7 @@ transform_affine (GeglBuffer  *dest,
                                 v_float,
                                 &inverse_jacobian,
                                 dest_ptr,
-                                GEGL_ABYSS_CLAMP);
+                                GEGL_ABYSS_NONE);
               dest_ptr+=4;
               u_float += inverse.coeff [0][0];
               v_float += inverse.coeff [1][0];
@@ -841,7 +841,7 @@ transform_generic (GeglBuffer  *dest,
                                 level,
                                 format,
                                 GEGL_BUFFER_WRITE,
-                                GEGL_ABYSS_CLAMP);
+                                GEGL_ABYSS_NONE);
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
@@ -887,7 +887,7 @@ transform_generic (GeglBuffer  *dest,
                                 v,
                                 &inverse_jacobian,
                                 dest_ptr,
-                                GEGL_ABYSS_CLAMP);
+                                GEGL_ABYSS_NONE);
               dest_ptr+=4;
 
               u_float += inverse.coeff [0][0];
