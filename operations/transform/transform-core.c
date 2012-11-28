@@ -331,17 +331,13 @@ gegl_transform_bounding_box (const gdouble       *points,
                                    GeglRectangle *output)
 {
   /*
-   * This code now does something different than it did before.
-   */
-  /*
    * Take the points defined by consecutive pairs of gdoubles as
    * absolute positions, that is, positions in the coordinate system
    * with origin at the center of the pixel with index (0,0).
    *
    * Compute from these the smallest rectangle of pixel indices such
-   * that the absolute positions of the four corners contains all the
-   * given points. Because indices don't correspond to positions
-   * (anymore), shifts of .5 are needed.
+   * that the absolute positions of the four outer corners of the four
+   * outer pixels contains all the given points.
    */
   /*
    * Maybe it would be better to use (gint) cast instead of floor, to
@@ -379,14 +375,10 @@ gegl_transform_bounding_box (const gdouble       *points,
       i++;
     }
 
-  output->x = (gint) floor ((double) min_x - 0.5);
-  output->y = (gint) floor ((double) min_y - 0.5);
-  /*
-   * Width and height are numbers of pixels. So, they are one more
-   * than the distance between the first and last indices.
-   */
-  output->width  = (gint) ceil ((double) max_x + 0.5) - output->x;
-  output->height = (gint) ceil ((double) max_y + 0.5) - output->y;
+  output->x = (gint) floor ((double) min_x);
+  output->y = (gint) floor ((double) min_y);
+  output->width  = (gint) ceil ((double) max_x) - output->x;
+  output->height = (gint) ceil ((double) max_y) - output->y;
 }
 
 static gboolean
@@ -458,21 +450,6 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   OpTransform *transform = OP_TRANSFORM (op);
   GeglMatrix3  matrix;
 
-  /*
-   * Shouldn't the computed bounding box be smaller? Some sort of
-   * "contained" instead of "container".
-   */
-
-  /*
-   * Was set to {0,0,0,0} in earlier code. Note however in_rect is
-   * enlarged by one less than the width and height of context_rect
-   * when it was enlarged by the full number in earlier versions of
-   * this code. Should it be {0,0,1,1} instead?
-   *
-   * Nicolas suspects that the reason things are one less than
-   * expected is partly that this, in a sense, is an "inner" bounding
-   * box.
-   */
   GeglRectangle in_rect = {0,0,0,0},
                 have_rect;
   gdouble       have_points [8];
@@ -492,49 +469,32 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   gegl_transform_create_composite_matrix (transform, &matrix);
 
   /*
-   * Is in_rect = {0,0,0,0} (the empty rectangle with no point in it,
-   * since width=height=0) used to communicate something?
+   * Is in_rect = {0,0,0,0} (an empty rectangle since width=height=0)
+   * used to communicate something?
    */
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&matrix))
     return in_rect;
 
-  /*
-   * Assuming that have_points is supposed to give a rectangle that
-   * has to do with the area within the output image for which we have
-   * output data, there would appear to be no need to enlarge it by
-   * context_rect. And yet it's done.
-   */
   if (!gegl_transform_matrix3_allow_fast_translate (&matrix))
     {
       in_rect.x      += context_rect.x;
       in_rect.y      += context_rect.y;
-      /*
-       * It would seem that one should actually add width-1 and
-       * height-1, but the absense of "-1" may match "in_rect =
-       * {*,*,0,0}" above.
-       */
-      in_rect.width  += context_rect.width;
-      in_rect.height += context_rect.height;
+      in_rect.width  += context_rect.width  - (gint) 1;
+      in_rect.height += context_rect.height - (gint) 1;
     }
 
   /*
    * Convert indices to absolute positions.
    */
-  have_points [0] = in_rect.x + (gdouble) 0.5;
-  have_points [1] = in_rect.y + (gdouble) 0.5;
+  have_points [0] = in_rect.x;
+  have_points [1] = in_rect.y;
 
-  /*
-   * Note that the horizontal distance between the first and last
-   * pixel is one less than the width. So, I would be enclined to
-   * subtract (gint) 1 in the computation of have_points [2] and
-   * have_points [5].
-   */
-  have_points [2] = have_points [0] + ( in_rect.width  - (gint) 1);
+  have_points [2] = have_points [0] + in_rect.width;
   have_points [3] = have_points [1];
 
   have_points [4] = have_points [2];
-  have_points [5] = have_points [3] + ( in_rect.height - (gint) 1);
+  have_points [5] = have_points [3] + in_rect.height;
 
   have_points [6] = have_points [0];
   have_points [7] = have_points [5];
@@ -564,8 +524,14 @@ gegl_transform_detect (GeglOperation *operation,
       gegl_matrix3_is_identity (&inverse))
     return gegl_operation_detect (source_node->operation, x, y);
 
-  need_points [0] = x + (gdouble) 0.5;
-  need_points [1] = y + (gdouble) 0.5;
+  /*
+   * The center of the pixel with index (x,y) is at (x+.5,y+.5). No
+   * idea why the absolute coordinate of the top left corner is used,
+   * or why the four corners of the one pixel are not used (to define
+   * the area of the pixel).
+   */
+  need_points [0] = x;
+  need_points [1] = y;
 
   gegl_transform_create_matrix (transform, &inverse);
   gegl_matrix3_invert (&inverse);
@@ -605,14 +571,14 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
       gegl_matrix3_is_identity (&inverse))
     return requested_rect;
 
-  need_points [0] = requested_rect.x + (gdouble) 0.5;
-  need_points [1] = requested_rect.y + (gdouble) 0.5;
+  need_points [0] = requested_rect.x;
+  need_points [1] = requested_rect.y;
 
-  need_points [2] = need_points [0] + (requested_rect.width  - (gint) 1);
+  need_points [2] = need_points [0] + requested_rect.width;
   need_points [3] = need_points [1];
 
   need_points [4] = need_points [2];
-  need_points [5] = need_points [3] + (requested_rect.height - (gint) 1);
+  need_points [5] = need_points [3] + requested_rect.height;
 
   need_points [6] = need_points [0];
   need_points [7] = need_points [5];
@@ -623,6 +589,11 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
                                   need_points + i + 1);
   gegl_transform_bounding_box (need_points, 4, &need_rect);
 
+  /*
+   * One of the pixels of the width (resp. height) has to be already
+   * in the rectangle; It does not need to be counted twice, hence the
+   * "- (gint) 1"s.
+   */
   need_rect.x      += context_rect.x;
   need_rect.y      += context_rect.y;
   need_rect.width  += context_rect.width  - (gint) 1;
@@ -673,14 +644,14 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
   region.width  += context_rect.width;
   region.height += context_rect.height;
 
-  affected_points [0] = region.x + (gdouble) 0.5;
-  affected_points [1] = region.y + (gdouble) 0.5;
+  affected_points [0] = region.x;
+  affected_points [1] = region.y;
 
-  affected_points [2] = affected_points [0] + (region.width  - (gint) 1);
+  affected_points [2] = affected_points [0] + region.width;
   affected_points [3] = affected_points [1];
 
   affected_points [4] = affected_points [2];
-  affected_points [5] = affected_points [3] + (region.height - (gint) 1);
+  affected_points [5] = affected_points [3] + region.height;
 
   affected_points [6] = affected_points [0];
   affected_points [7] = affected_points [5];
