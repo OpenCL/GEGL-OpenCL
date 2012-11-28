@@ -468,18 +468,23 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 
   gegl_transform_create_composite_matrix (transform, &matrix);
 
-  /*
-   * Is in_rect = {0,0,0,0} (an empty rectangle since width=height=0)
-   * used to communicate something?
-   */
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&matrix))
-    return in_rect;
+    {
+      /*
+       * Is in_rect = {0,0,0,0} (an empty rectangle since
+       * width=height=0) used to communicate something?
+       */
+      return in_rect;
+    }
 
   if (!gegl_transform_matrix3_allow_fast_translate (&matrix))
     {
       in_rect.x      += context_rect.x;
       in_rect.y      += context_rect.y;
+      /*
+       * Does "- (gint) 1" interact badly with {*,*,0,0}?
+       */
       in_rect.width  += context_rect.width  - (gint) 1;
       in_rect.height += context_rect.height - (gint) 1;
     }
@@ -589,13 +594,13 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
                                   need_points + i + 1);
   gegl_transform_bounding_box (need_points, 4, &need_rect);
 
-  /*
-   * One of the pixels of the width (resp. height) has to be already
-   * in the rectangle; It does not need to be counted twice, hence the
-   * "- (gint) 1"s.
-   */
   need_rect.x      += context_rect.x;
   need_rect.y      += context_rect.y;
+  /*
+   * One of the pixels of the width (resp. height) has to be
+   * already in the rectangle; It does not need to be counted
+   * twice, hence the "- (gint) 1"s.
+   */
   need_rect.width  += context_rect.width  - (gint) 1;
   need_rect.height += context_rect.height - (gint) 1;
 
@@ -641,8 +646,8 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
 
   region.x      += context_rect.x;
   region.y      += context_rect.y;
-  region.width  += context_rect.width;
-  region.height += context_rect.height;
+  region.width  += context_rect.width  - (gint) 1;
+  region.height += context_rect.height - (gint) 1;
 
   affected_points [0] = region.x;
   affected_points [1] = region.y;
@@ -982,13 +987,9 @@ gegl_transform_process (GeglOperation        *operation,
           gegl_sampler_type_from_string (transform->filter));
 
       if (gegl_matrix3_is_affine (&matrix))
-        {
-          transform_affine  (output, input, &matrix, sampler, context->level);
-        }
+	transform_affine  (output, input, &matrix, sampler, context->level);
       else
-        {
-          transform_generic (output, input, &matrix, sampler, context->level);
-        }
+	transform_generic (output, input, &matrix, sampler, context->level);
 
       g_object_unref (sampler);
 
