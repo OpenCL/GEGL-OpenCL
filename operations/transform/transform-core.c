@@ -298,8 +298,8 @@ gegl_transform_set_property (GObject      *object,
 }
 
 static void
-gegl_transform_create_matrix (OpTransform  *transform,
-                              GeglMatrix3  *matrix)
+gegl_transform_create_matrix (OpTransform *transform,
+                              GeglMatrix3 *matrix)
 {
   gegl_matrix3_identity (matrix);
 
