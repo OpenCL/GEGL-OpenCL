@@ -50,45 +50,45 @@ enum
   PROP_LANCZOS_WIDTH
 };
 
-static void          gegl_transform_finalize                     (      GObject              *object);
-static void          gegl_transform_get_property                 (      GObject              *object,
-                                                                        guint                 prop_id,
-                                                                        GValue               *value,
-                                                                        GParamSpec           *pspec);
-static void          gegl_transform_set_property                 (      GObject              *object,
-                                                                        guint                 prop_id,
-                                                                  const GValue               *value,
-                                                                        GParamSpec           *pspec);
-static void          gegl_transform_bounding_box                 (const gdouble              *points,
-                                                                  const gint                  num_points,
-                                                                        GeglRectangle        *output);
-static gboolean      gegl_transform_is_intermediate_node         (      OpTransform          *transform);
-static gboolean      gegl_transform_is_composite_node            (      OpTransform          *transform);
-static void          gegl_transform_get_source_matrix            (      OpTransform          *transform,
-                                                                        GeglMatrix3          *output);
-static GeglRectangle gegl_transform_get_bounding_box             (      GeglOperation        *op);
-static GeglRectangle gegl_transform_get_invalidated_by_change    (      GeglOperation        *operation,
-                                                                  const gchar                *input_pad,
-                                                                  const GeglRectangle        *input_region);
-static GeglRectangle gegl_transform_get_required_for_output      (      GeglOperation        *self,
-                                                                  const gchar                *input_pad,
-                                                                  const GeglRectangle        *region);
-static gboolean      gegl_transform_process                      (      GeglOperation        *operation,
-                                                                        GeglOperationContext *context,
-                                                                  const gchar                *output_prop,
-                                                                  const GeglRectangle        *result,
-                                                                        gint                  level);
-static GeglNode     *gegl_transform_detect                       (      GeglOperation        *operation,
-                                                                        gint                  x,
-                                                                        gint                  y);
+static void          gegl_transform_finalize                     (GObject              *object);
+static void          gegl_transform_get_property                 (GObject              *object,
+                                                                  guint                 prop_id,
+                                                                  GValue               *value,
+                                                                  GParamSpec           *pspec);
+static void          gegl_transform_set_property                 (GObject              *object,
+                                                                  guint                 prop_id,
+                                                                  const GValue         *value,
+                                                                  GParamSpec           *pspec);
+static void          gegl_transform_bounding_box                 (const gdouble        *points,
+                                                                  const gint            num_points,
+                                                                  GeglRectangle        *output);
+static gboolean      gegl_transform_is_intermediate_node         (OpTransform          *transform);
+static gboolean      gegl_transform_is_composite_node            (OpTransform          *transform);
+static void          gegl_transform_get_source_matrix            (OpTransform          *transform,
+                                                                  GeglMatrix3          *output);
+static GeglRectangle gegl_transform_get_bounding_box             (GeglOperation        *op);
+static GeglRectangle gegl_transform_get_invalidated_by_change    (GeglOperation        *operation,
+                                                                  const gchar          *input_pad,
+                                                                  const GeglRectangle  *input_region);
+static GeglRectangle gegl_transform_get_required_for_output      (GeglOperation        *self,
+                                                                  const gchar          *input_pad,
+                                                                  const GeglRectangle  *region);
+static gboolean      gegl_transform_process                      (GeglOperation        *operation,
+                                                                  GeglOperationContext *context,
+                                                                  const gchar          *output_prop,
+                                                                  const GeglRectangle  *result,
+                                                                  gint                  level);
+static GeglNode     *gegl_transform_detect                       (GeglOperation        *operation,
+                                                                  gint                  x,
+                                                                  gint                  y);
 
-static gboolean      gegl_matrix3_is_affine                      (      GeglMatrix3          *matrix);
-static gboolean      gegl_transform_matrix3_allow_fast_translate (      GeglMatrix3          *matrix);
+static gboolean      gegl_matrix3_is_affine                      (GeglMatrix3          *matrix);
+static gboolean      gegl_transform_matrix3_allow_fast_translate (GeglMatrix3          *matrix);
 
 /* ************************* */
 
-static void         op_transform_init                            (      OpTransform          *self);
-static void         op_transform_class_init                      (      OpTransformClass     *klass);
+static void         op_transform_init                            (OpTransform          *self);
+static void         op_transform_class_init                      (OpTransformClass     *klass);
 static gpointer     op_transform_parent_class = NULL;
 
 static void
@@ -308,7 +308,7 @@ gegl_transform_create_matrix (OpTransform  *transform,
 }
 
 static void
-gegl_transform_create_composite_matrix (OpTransform    *transform,
+gegl_transform_create_composite_matrix (OpTransform *transform,
                                         GeglMatrix3 *matrix)
 {
   gegl_transform_create_matrix (transform, matrix);
@@ -326,9 +326,9 @@ gegl_transform_create_composite_matrix (OpTransform    *transform,
 }
 
 static void
-gegl_transform_bounding_box (const gdouble       *points,
-                             const gint           num_points,
-                                   GeglRectangle *output)
+gegl_transform_bounding_box (const gdouble *points,
+                             const gint     num_points,
+                             GeglRectangle *output)
 {
   /*
    * Take the points defined by consecutive pairs of gdoubles as
