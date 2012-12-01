@@ -72,7 +72,6 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
    */
   if (node->cache)
     gegl_buffer_set_extent (GEGL_BUFFER (node->cache), &node->have_rect);
-  node->valid_have_rect = TRUE;
 
   GEGL_NOTE (GEGL_DEBUG_PROCESS,
              "For \"%s\" have_rect = %d,%d %d×%d",
