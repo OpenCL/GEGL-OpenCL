@@ -1147,6 +1147,7 @@ AC_CONFIG_FILES(
 gegl-gegl_api_version.pc:gegl.pc.in
 gegl/gegl-gegl_api_version.deps:gegl/gegl.deps.in
 gegl/Gegl-gegl_api_version.metadata:gegl/Gegl.metadata.in
+operations/common/seamless-clone/gegl-sc-gegl_api_version.pc:operations/common/seamless-clone/gegl-sc.pc.in
 )
 
 AC_OUTPUT
