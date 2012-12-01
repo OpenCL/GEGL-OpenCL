@@ -1768,10 +1768,6 @@ gegl_node_get_bounding_box (GeglNode *root)
   g_object_unref (root);
   g_free (id);
 
-  if (root->cache)
-    gegl_buffer_set_extent (GEGL_BUFFER (root->cache), &root->have_rect);
-
-  root->valid_have_rect = TRUE;
   return root->have_rect;
 }
 

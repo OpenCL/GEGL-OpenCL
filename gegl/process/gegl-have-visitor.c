@@ -66,6 +66,13 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
   operation = node->operation;
   g_mutex_lock (node->mutex);
   node->have_rect = gegl_operation_get_bounding_box (operation);
+  /*
+   * Setting cache dimensions here helps in case of node
+   *  invalidation that reduce the bounding box of the operation
+   */
+  if (node->cache)
+    gegl_buffer_set_extent (GEGL_BUFFER (node->cache), &node->have_rect);
+  node->valid_have_rect = TRUE;
 
   GEGL_NOTE (GEGL_DEBUG_PROCESS,
              "For \"%s\" have_rect = %d,%d %d×%d",
