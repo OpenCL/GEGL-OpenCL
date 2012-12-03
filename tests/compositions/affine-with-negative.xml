@@ -1,13 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!--
-  Checks for broken symmetry with negative scaling factors:
+  Enlarging and reflecting a flat color image (using negative scaling factors)
+  should return a flat color image (when cropped enough to remove boundary
+  artifacts)
 
-  Enlarging and reflecting a flat color image should return a flat color image
-  (when cropped enough to remove boundary artifacts)
+  pngcrush the result: 1024x1024 size
 
   Older versions of GEGL (before November 2012) failed this test
-
-  Make sure to pngcrush the result when putting in reference: 1024x1024 size
 
   Authors: Massimo Valentini 2012
            Nicolas Robidoux  2012
