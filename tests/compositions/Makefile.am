@@ -30,12 +30,13 @@ testsuffix = .sh
 # List of tests. The .sh suffix allows us to use $(wildcard $(srcdir)/*.xml) in
 # EXTRA_DISTS
 TESTS = \
+  run-affine-with-negative.xml.sh      \
   run-clones.xml.sh                    \
   run-composite-transform.xml.sh       \
   run-edge-laplace-broken.xml.sh       \
   run-edge-sobel.xml.sh                \
   run-fattal02.xml.sh                  \
-  run-gamma.xml.sh              \
+  run-gamma.xml.sh                     \
   run-hdr-color.xml.sh                 \
   run-mantiuk06.xml.sh                 \
   run-pixelize.xml.sh                  \

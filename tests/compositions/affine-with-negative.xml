@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+  Checks for broken symmetry with negative scaling factors:
+
+  Enlarging and reflecting a flat color image should return a flat color image
+  (when cropped enough to remove boundary artifacts)
+
+  Older versions of GEGL (before November 2012) failed this test
+
+  Make sure to pngcrush the result when putting in reference: 1024x1024 size
+
+  Authors: Massimo Valentini 2012
+           Nicolas Robidoux  2012
+-->
+<gegl> 
+  <node operation='gegl:crop'>
+    <params>
+      <param name='x'>-512</param>
+      <param name='y'>-512</param>
+      <param name='width'>1024</param>
+      <param name='height'>1024</param>
+    </params>
+  </node>
+  <node operation='gegl:scale'>
+    <params>
+      <param name='filter'>'linear'</param>
+      <param name='x'>-4</param>
+      <param name='y'>-4</param>
+    </params>
+  </node>
+  <node operation='gegl:crop'>
+    <params>
+      <param name='x'>-260</param>
+      <param name='y'>-260</param>
+      <param name='width'>520</param>
+      <param name='height'>520</param>
+    </params>
+  </node>
+  <node operation='gegl:color'>
+    <params>
+      <param name='value'>#777</param>
+    </params>
+  </node>
+</gegl>
