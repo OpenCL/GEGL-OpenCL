@@ -803,14 +803,9 @@ transform_generic (GeglBuffer  *dest,
    *      transform.c should probably be hooked in here, and bailing
    *      out before using the generic code.
    */
-  /*
-   * Nicolas Robidoux and Massimo Valentini are of the opinion that
-   * fast paths should only be used if necessary.
-   */
 
   g_object_get (dest, "pixels", &dest_pixels, NULL);
   dest_extent = gegl_buffer_get_extent (dest);
-
 
   i = gegl_buffer_iterator_new (dest,
                                 dest_extent,
@@ -818,6 +813,7 @@ transform_generic (GeglBuffer  *dest,
                                 format,
                                 GEGL_BUFFER_WRITE,
                                 GEGL_ABYSS_NONE);
+
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
