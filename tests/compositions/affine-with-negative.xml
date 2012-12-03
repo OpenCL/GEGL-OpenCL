@@ -12,7 +12,7 @@
   Authors: Massimo Valentini 2012
            Nicolas Robidoux  2012
 -->
-<gegl> 
+<gegl>
   <node operation='gegl:crop'>
     <params>
       <param name='x'>-512</param>
