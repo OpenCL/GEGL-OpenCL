@@ -79,7 +79,6 @@ process (GeglOperation       *operation,
   gfloat *out_pixel, *in_pixel;
   gint n_pixels = result->width * result->height;
   gint width  = result->width;
-  gint height = result->height;
   GeglRectangle src_rect;
   GRand    *gr;
   gint k, b, i;

@@ -102,8 +102,8 @@ static void
 gegl_save_attach (GeglOperation *operation)
 {
   GeglChant   *self = GEGL_CHANT (operation);
-  const gchar *nodename;
-  gchar       *childname;
+  /* const gchar *nodename; */
+  /* gchar       *childname; */
 
   g_assert (!self->input);
   g_assert (!self->save);
