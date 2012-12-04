@@ -250,11 +250,11 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
        * assuming that it is more likely that further access is to the
        * right or down of our currently requested
        * position. Consequently, we move the top left corner of the
-       * context_rect by about one fourth of the maximal distance we
-       * can (one fourth of one half = one eight). Given that the
+       * context_rect by about one half of the maximal distance we
+       * can (one half of one half = one fourth). Given that the
        * maximum width and height of the fetch_rectangle is 64, so
-       * that half of it is 32, one fourth of the elbow room is at
-       * most 8. If context_rect is large, the corner is not moved
+       * that half of it is 32, one half of the elbow room is at
+       * most 16. If context_rect is large, the corner is not moved
        * much if at all, as should be.
        */
       fetch_rectangle.x =
@@ -423,11 +423,11 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
        * assuming that it is more likely that further access is to the
        * right or down of our currently requested
        * position. Consequently, we move the top left corner of the
-       * context_rect by about one fourth of the maximal distance we
-       * can (one fourth of one half = one eight). Given that the
+       * context_rect by about one half of the maximal distance we
+       * can (one half of one half = one fourth). Given that the
        * maximum width and height of the fetch_rectangle is 64, so
-       * that half of it is 32, one fourth of the elbow room is at
-       * most 8. If context_rect is large, the corner is not moved
+       * that half of it is 32, one half of the elbow room is at
+       * most 16. If context_rect is large, the corner is not moved
        * much if at all, as should be.
        */
       fetch_rectangle.x =
