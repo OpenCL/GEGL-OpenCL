@@ -695,6 +695,9 @@ transform_affine (GeglBuffer  *dest,
 
   gint                  dest_pixels;
 
+  gint                  flip_x = 0,
+                        flip_y = 0;
+
   format = babl_format ("RaGaBaA float");
 
   /*
@@ -726,6 +729,7 @@ transform_affine (GeglBuffer  *dest,
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
+
       dest_buf           = (gfloat *)i->data[0];
 
       gegl_matrix3_copy_into (&inverse, matrix);
@@ -733,7 +737,10 @@ transform_affine (GeglBuffer  *dest,
 
       /*
        * Set the inverse_jacobian matrix (a.k.a. scale) for samplers
-       * that support it.
+       * that support it. The inverse jacobian will be "flipped" if
+       * the direction in which the ROI is filled is flipped. This is
+       * not necessary for the samplers, but it makes the following
+       * code shorter.
        */
       inverse_jacobian.coeff[0][0] = inverse.coeff[0][0];
       inverse_jacobian.coeff[0][1] = inverse.coeff[0][1];
@@ -747,7 +754,51 @@ transform_affine (GeglBuffer  *dest,
                 inverse.coeff[1][1] * (roi->y + (gdouble) 0.5) +
                 inverse.coeff[1][2];
 
-      for (dest_ptr = dest_buf, y = roi->height; y--;)
+      if (inverse_jacobian.coeff[0][0] < inverse_jacobian.coeff[1][0])
+        {
+          /*
+           * "Flip", that is, put the "horizontal start" at the end
+           * instead of at the beginning of a scan line:
+           */
+          u_start += (roi->width - (gint) 1) * inverse.coeff[0][0];
+          v_start += (roi->width - (gint) 1) * inverse.coeff[1][0];
+          /*
+           * Flip the horizontal scan component of the inverse jacobian:
+           */
+          inverse_jacobian.coeff[0][0] = -inverse_jacobian.coeff[0][0];
+          inverse_jacobian.coeff[1][0] = -inverse_jacobian.coeff[1][0];
+          /*
+           * Set the flag so we know in which horizontal order we'll be
+           * traversing the ROI with.
+           */
+          flip_x = (gint) 1;
+        }
+
+      if (inverse_jacobian.coeff[0][1] < inverse_jacobian.coeff[1][1])
+        {
+          /*
+           * "Flip", that is, put the "vertical start" at the last
+           * instead of at the first scan line:
+           */
+          u_start += (roi->height - (gint) 1) * inverse.coeff[0][1];
+          v_start += (roi->height - (gint) 1) * inverse.coeff[1][1] ;
+          /*
+           * Flip the vertical scan component of the inverse jacobian:
+           */
+          inverse_jacobian.coeff[0][1] = -inverse_jacobian.coeff[0][1];
+          inverse_jacobian.coeff[1][1] = -inverse_jacobian.coeff[1][1];
+          /*
+           * Set the flag so we know in which vertical order we'll be
+           * traversing the ROI with.
+           */
+          flip_y = (gint) 1;
+        }
+
+      dest_ptr = dest_buf +
+                 (gint) 4 * (roi->width  - (gint) 1) * flip_x +
+                 (gint) 4 * (roi->height - (gint) 1) * roi->width * flip_y;
+
+      for (y = roi->height; y--;)
         {
           u_float = u_start;
           v_float = v_start;
@@ -760,13 +811,17 @@ transform_affine (GeglBuffer  *dest,
                                 &inverse_jacobian,
                                 dest_ptr,
                                 GEGL_ABYSS_NONE);
-              dest_ptr+=4;
-              u_float += inverse.coeff [0][0];
-              v_float += inverse.coeff [1][0];
+
+              dest_ptr += (gint) 4 - (gint) 8 * flip_x;
+
+              u_float += inverse_jacobian.coeff[0][0];
+              v_float += inverse_jacobian.coeff[1][0];
             }
 
-          u_start += inverse.coeff [0][1];
-          v_start += inverse.coeff [1][1];
+          dest_ptr += (gint) 8 * roi->width * (flip_x - flip_y);
+
+          u_start += inverse_jacobian.coeff[0][1];
+          v_start += inverse_jacobian.coeff[1][1];
         }
     }
 }
@@ -798,12 +853,6 @@ transform_generic (GeglBuffer  *dest,
 
   format = babl_format ("RaGaBaA float");
 
-  /*
-   * XXX: fast paths as existing in files in the same dir as
-   *      transform.c should probably be hooked in here, and bailing
-   *      out before using the generic code.
-   */
-
   g_object_get (dest, "pixels", &dest_pixels, NULL);
   dest_extent = gegl_buffer_get_extent (dest);
 
@@ -817,6 +866,7 @@ transform_generic (GeglBuffer  *dest,
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
+
       dest_buf           = (gfloat *)i->data[0];
 
       gegl_matrix3_copy_into (&inverse, matrix);
