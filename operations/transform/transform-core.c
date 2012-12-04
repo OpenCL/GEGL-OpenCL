@@ -754,7 +754,8 @@ transform_affine (GeglBuffer  *dest,
                 inverse.coeff[1][1] * (roi->y + (gdouble) 0.5) +
                 inverse.coeff[1][2];
 
-      if (inverse_jacobian.coeff[0][0] < inverse_jacobian.coeff[1][0])
+      if (inverse_jacobian.coeff[0][0] + inverse_jacobian.coeff[1][0] <
+	  (gdouble) 0.0)
         {
           /*
            * "Flip", that is, put the "horizontal start" at the end
@@ -774,7 +775,8 @@ transform_affine (GeglBuffer  *dest,
           flip_x = (gint) 1;
         }
 
-      if (inverse_jacobian.coeff[0][1] < inverse_jacobian.coeff[1][1])
+      if (inverse_jacobian.coeff[0][1] + inverse_jacobian.coeff[1][1] <
+	  (gdouble) 0.0)
         {
           /*
            * "Flip", that is, put the "vertical start" at the last
