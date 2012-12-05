@@ -377,8 +377,12 @@ gegl_transform_bounding_box (const gdouble *points,
 
   output->x = (gint) floor ((double) min_x);
   output->y = (gint) floor ((double) min_y);
-  output->width  = (gint) ceil ((double) max_x) - output->x;
-  output->height = (gint) ceil ((double) max_y) - output->y;
+  /*
+   * floor + 1 is used instead of ceil to get the correct number of
+   * pixels when min and max are integers.
+   */
+  output->width  = (gint) floor ((double) max_x) + (gint) 1 - output->x;
+  output->height = (gint) floor ((double) max_y) + (gint) 1 - output->y;
 }
 
 static gboolean
