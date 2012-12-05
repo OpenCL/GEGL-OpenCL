@@ -379,7 +379,20 @@ gegl_transform_bounding_box (const gdouble *points,
   output->y = (gint) floor ((double) min_y);
   /*
    * floor + 1 is used instead of ceil to get the correct number of
-   * pixels when min and max are integers.
+   * pixels when min and max are integers. This is consistent with the
+   * convention that the boundary between two pixel areas is "owned"
+   * by the one to the right/bottom. Note that this convention breaks
+   * left-right symmetry. Breaking left-right (resp. up/down) symmetry
+   * somehow is unavoidable if one imposes translational symmetry,
+   * which appears to be the most sane thing to do. (This is why there
+   * are so many rounding modes.)
+   *
+   * If you don't care about being consistent, replace floor + 1 by
+   * ceil, and be warned that if min_x=max_x=integer, this gives a
+   * width of 0. This latter method has the advantage of fixing things
+   * so that one does not add one extra pixel just to include pixel
+   * area boundary points. That is, it keeps things
+   * "tighter". Harmlessly? Don't know.
    */
   output->width  = (gint) floor ((double) max_x) + (gint) 1 - output->x;
   output->height = (gint) floor ((double) max_y) + (gint) 1 - output->y;
@@ -462,6 +475,16 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   GeglRectangle  context_rect;
   GeglSampler   *sampler;
 
+  /*
+   * IMPORTANT: transform_get_bounding_box now works differently than
+   * it uses to. It now gets the bounding box of the pixel centers
+   * that correspond to the involved indices. This is consistent with
+   * the current behavior of transform_detect and
+   * transform_bounding_box, and appears to Nicolas Robidoux to be the
+   * sanest behavior. Note: Don't forget that the boundary between two
+   * pixel areas is "owned" by the pixel to the right/bottom.
+   */
+
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (transform->filter));
   context_rect = *gegl_sampler_get_context_rect (sampler);
@@ -496,14 +519,14 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   /*
    * Convert indices to absolute positions.
    */
-  have_points [0] = in_rect.x;
-  have_points [1] = in_rect.y;
+  have_points [0] = in_rect.x + (gdouble) 0.5;
+  have_points [1] = in_rect.y + (gdouble) 0.5;
 
-  have_points [2] = have_points [0] + in_rect.width;
+  have_points [2] = have_points [0] + (in_rect.width - (gint) 1);
   have_points [3] = have_points [1];
 
   have_points [4] = have_points [2];
-  have_points [5] = have_points [3] + in_rect.height;
+  have_points [5] = have_points [3] + (in_rect.height - (gint) 1);
 
   have_points [6] = have_points [0];
   have_points [7] = have_points [5];
