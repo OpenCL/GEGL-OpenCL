@@ -551,8 +551,8 @@ gegl_transform_detect (GeglOperation *operation,
    * the index of the nearest pixel is given by floor.
    */
   return gegl_operation_detect (source_node->operation,
-                                (gint) floor ((gdouble) need_points [0]),
-				(gint) floor ((gdouble) need_points [1]));
+                                (gint) floor ((double) need_points [0]),
+				(gint) floor ((double) need_points [1]));
 }
 
 static GeglRectangle
