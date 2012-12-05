@@ -519,6 +519,10 @@ gegl_transform_detect (GeglOperation *operation,
                        gint           x,
                        gint           y)
 {
+  /*
+   * detect figures out which pixel in the input closely corresponds
+   * to the pixel with index (x,y) in the output.
+   */
   OpTransform *transform = OP_TRANSFORM (operation);
   GeglNode    *source_node =
     gegl_operation_get_source_node (operation, "input");
@@ -529,24 +533,26 @@ gegl_transform_detect (GeglOperation *operation,
       gegl_matrix3_is_identity (&inverse))
     return gegl_operation_detect (source_node->operation, x, y);
 
-  /*
-   * The center of the pixel with index (x,y) is at (x+.5,y+.5). No
-   * idea why the absolute coordinate of the top left corner is used,
-   * or why the four corners of the one pixel are not used (to define
-   * the area of the pixel).
-   */
-  need_points [0] = x;
-  need_points [1] = y;
-
   gegl_transform_create_matrix (transform, &inverse);
   gegl_matrix3_invert (&inverse);
+
+  /*
+   * The center of the pixel with index [x][y] is at (x+.5,y+.5).
+   */
+  need_points [0] = x + (gdouble) 0.5;
+  need_points [1] = y + (gdouble) 0.5;
 
   gegl_matrix3_transform_point (&inverse,
                                 need_points,
                                 need_points + 1);
 
+  /*
+   * With the "origin at top left corner of pixel [0][0]" convention,
+   * the index of the nearest pixel is given by floor.
+   */
   return gegl_operation_detect (source_node->operation,
-                                need_points[0], need_points[1]);
+                                (gint) floor ((gdouble) need_points [0]),
+				(gint) floor ((gdouble) need_points [1]));
 }
 
 static GeglRectangle
@@ -742,32 +748,32 @@ transform_affine (GeglBuffer  *dest,
        * not necessary for the samplers, but it makes the following
        * code shorter.
        */
-      inverse_jacobian.coeff[0][0] = inverse.coeff[0][0];
-      inverse_jacobian.coeff[0][1] = inverse.coeff[0][1];
-      inverse_jacobian.coeff[1][0] = inverse.coeff[1][0];
-      inverse_jacobian.coeff[1][1] = inverse.coeff[1][1];
+      inverse_jacobian.coeff [0][0] = inverse.coeff [0][0];
+      inverse_jacobian.coeff [0][1] = inverse.coeff [0][1];
+      inverse_jacobian.coeff [1][0] = inverse.coeff [1][0];
+      inverse_jacobian.coeff [1][1] = inverse.coeff [1][1];
 
-      u_start = inverse.coeff[0][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff[0][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff[0][2];
-      v_start = inverse.coeff[1][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff[1][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff[1][2];
+      u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff [0][2];
+      v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff [1][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff [1][2];
 
-      if (inverse_jacobian.coeff[0][0] + inverse_jacobian.coeff[1][0] <
+      if (inverse_jacobian.coeff [0][0] + inverse_jacobian.coeff [1][0] <
 	  (gdouble) 0.0)
         {
           /*
            * "Flip", that is, put the "horizontal start" at the end
            * instead of at the beginning of a scan line:
            */
-          u_start += (roi->width - (gint) 1) * inverse.coeff[0][0];
-          v_start += (roi->width - (gint) 1) * inverse.coeff[1][0];
+          u_start += (roi->width - (gint) 1) * inverse.coeff [0][0];
+          v_start += (roi->width - (gint) 1) * inverse.coeff [1][0];
           /*
            * Flip the horizontal scan component of the inverse jacobian:
            */
-          inverse_jacobian.coeff[0][0] = -inverse_jacobian.coeff[0][0];
-          inverse_jacobian.coeff[1][0] = -inverse_jacobian.coeff[1][0];
+          inverse_jacobian.coeff [0][0] = -inverse_jacobian.coeff [0][0];
+          inverse_jacobian.coeff [1][0] = -inverse_jacobian.coeff [1][0];
           /*
            * Set the flag so we know in which horizontal order we'll be
            * traversing the ROI with.
@@ -775,20 +781,20 @@ transform_affine (GeglBuffer  *dest,
           flip_x = (gint) 1;
         }
 
-      if (inverse_jacobian.coeff[0][1] + inverse_jacobian.coeff[1][1] <
+      if (inverse_jacobian.coeff [0][1] + inverse_jacobian.coeff [1][1] <
 	  (gdouble) 0.0)
         {
           /*
            * "Flip", that is, put the "vertical start" at the last
            * instead of at the first scan line:
            */
-          u_start += (roi->height - (gint) 1) * inverse.coeff[0][1];
-          v_start += (roi->height - (gint) 1) * inverse.coeff[1][1] ;
+          u_start += (roi->height - (gint) 1) * inverse.coeff [0][1];
+          v_start += (roi->height - (gint) 1) * inverse.coeff [1][1] ;
           /*
            * Flip the vertical scan component of the inverse jacobian:
            */
-          inverse_jacobian.coeff[0][1] = -inverse_jacobian.coeff[0][1];
-          inverse_jacobian.coeff[1][1] = -inverse_jacobian.coeff[1][1];
+          inverse_jacobian.coeff [0][1] = -inverse_jacobian.coeff [0][1];
+          inverse_jacobian.coeff [1][1] = -inverse_jacobian.coeff [1][1];
           /*
            * Set the flag so we know in which vertical order we'll be
            * traversing the ROI with.
@@ -816,14 +822,14 @@ transform_affine (GeglBuffer  *dest,
 
               dest_ptr += (gint) 4 - (gint) 8 * flip_x;
 
-              u_float += inverse_jacobian.coeff[0][0];
-              v_float += inverse_jacobian.coeff[1][0];
+              u_float += inverse_jacobian.coeff [0][0];
+              v_float += inverse_jacobian.coeff [1][0];
             }
 
           dest_ptr += (gint) 8 * roi->width * (flip_x - flip_y);
 
-          u_start += inverse_jacobian.coeff[0][1];
-          v_start += inverse_jacobian.coeff[1][1];
+          u_start += inverse_jacobian.coeff [0][1];
+          v_start += inverse_jacobian.coeff [1][1];
         }
     }
 }
@@ -874,15 +880,15 @@ transform_generic (GeglBuffer  *dest,
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
 
-      u_start = inverse.coeff[0][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff[0][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff[0][2];
-      v_start = inverse.coeff[1][0] * (roi->x + (gdouble) 0.5)  +
-                inverse.coeff[1][1] * (roi->y + (gdouble) 0.5)  +
-                inverse.coeff[1][2];
-      w_start = inverse.coeff[2][0] * (roi->x + (gdouble) 0.5)  +
-                inverse.coeff[2][1] * (roi->y + (gdouble) 0.5)  +
-                inverse.coeff[2][2];
+      u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff [0][2];
+      v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5)  +
+                inverse.coeff [1][1] * (roi->y + (gdouble) 0.5)  +
+                inverse.coeff [1][2];
+      w_start = inverse.coeff [2][0] * (roi->x + (gdouble) 0.5)  +
+                inverse.coeff [2][1] * (roi->y + (gdouble) 0.5)  +
+                inverse.coeff [2][2];
 
       for (dest_ptr = dest_buf, y = roi->height; y--;)
         {
@@ -897,14 +903,14 @@ transform_generic (GeglBuffer  *dest,
               gdouble u = u_float * w_recip;
               gdouble v = v_float * w_recip;
 
-              inverse_jacobian.coeff[0][0] =
-                (inverse.coeff[0][0] - inverse.coeff[2][0] * u) * w_recip;
-              inverse_jacobian.coeff[0][1] =
-                (inverse.coeff[0][1] - inverse.coeff[2][1] * u) * w_recip;
-              inverse_jacobian.coeff[1][0] =
-                (inverse.coeff[1][0] - inverse.coeff[2][0] * v) * w_recip;
-              inverse_jacobian.coeff[1][1] =
-                (inverse.coeff[1][1] - inverse.coeff[2][1] * v) * w_recip;
+              inverse_jacobian.coeff [0][0] =
+                (inverse.coeff [0][0] - inverse.coeff [2][0] * u) * w_recip;
+              inverse_jacobian.coeff [0][1] =
+                (inverse.coeff [0][1] - inverse.coeff [2][1] * u) * w_recip;
+              inverse_jacobian.coeff [1][0] =
+                (inverse.coeff [1][0] - inverse.coeff [2][0] * v) * w_recip;
+              inverse_jacobian.coeff [1][1] =
+                (inverse.coeff [1][1] - inverse.coeff [2][1] * v) * w_recip;
 
               gegl_sampler_get (sampler,
                                 u,
@@ -946,9 +952,9 @@ static inline gboolean is_one (const gdouble f)
 
 static gboolean gegl_matrix3_is_affine (GeglMatrix3 *matrix)
 {
-  return is_zero (matrix->coeff[2][0]) &&
-         is_zero (matrix->coeff[2][1]) &&
-         is_one  (matrix->coeff[2][2]);
+  return is_zero (matrix->coeff [2][0]) &&
+         is_zero (matrix->coeff [2][1]) &&
+         is_one  (matrix->coeff [2][2]);
 }
 
 static gboolean
@@ -958,10 +964,10 @@ gegl_transform_matrix3_allow_fast_translate (GeglMatrix3 *matrix)
    * Assuming that it is a translation matrix, check if it is an
    * integer translation. If not, exit.
    */
-  if (! is_zero((gdouble) (matrix->coeff[0][2] -
-                           round((double) matrix->coeff[0][2]))) ||
-      ! is_zero((gdouble) (matrix->coeff[1][2] -
-                           round((double) matrix->coeff[1][2]))))
+  if (! is_zero((gdouble) (matrix->coeff [0][2] -
+                           round ((double) matrix->coeff [0][2]))) ||
+      ! is_zero((gdouble) (matrix->coeff [1][2] -
+                           round ((double) matrix->coeff [1][2]))))
     return FALSE;
 
   /*
@@ -1008,11 +1014,11 @@ gegl_transform_process (GeglOperation        *operation,
 
       output =
         g_object_new (GEGL_TYPE_BUFFER,
-                      "source",      input,
-                      "shift-x",     -(gint) round((double) matrix.coeff[0][2]),
-                      "shift-y",     -(gint) round((double) matrix.coeff[1][2]),
-                      "abyss-width", -1, /* turn off abyss (relying on
-                                            abyss of source) */
+                      "source", input,
+                      "shift-x", -(gint) round((double) matrix.coeff [0][2]),
+                      "shift-y", -(gint) round((double) matrix.coeff [1][2]),
+                      "abyss-width", -1, /* turn off abyss (using
+                                            source abyss) */
                       NULL);
 
       if (gegl_object_get_has_forked (input))
