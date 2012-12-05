@@ -225,8 +225,6 @@ gegl_cl_init (GError **error)
         GModule *module;
       #endif
 
-      babl_init();
-
       #ifdef G_OS_WIN32
         module = LoadLibrary ("OpenCL.dll");
       #else
