@@ -522,7 +522,7 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   have_points [0] = in_rect.x + (gdouble) 0.5;
   have_points [1] = in_rect.y + (gdouble) 0.5;
 
-  have_points [2] = have_points [0] + (in_rect.width - (gint) 1);
+  have_points [2] = have_points [0] + (in_rect.width  - (gint) 1);
   have_points [3] = have_points [1];
 
   have_points [4] = have_points [2];
@@ -609,14 +609,17 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
       gegl_matrix3_is_identity (&inverse))
     return requested_rect;
 
-  need_points [0] = requested_rect.x;
-  need_points [1] = requested_rect.y;
+  /*
+   * Convert indices to absolute positions:
+   */
+  need_points [0] = requested_rect.x + (gdouble) 0.5;
+  need_points [1] = requested_rect.y + (gdouble) 0.5;
 
-  need_points [2] = need_points [0] + requested_rect.width;
+  need_points [2] = need_points [0] + (requested_rect.width  - (gint) 1);
   need_points [3] = need_points [1];
 
   need_points [4] = need_points [2];
-  need_points [5] = need_points [3] + requested_rect.height;
+  need_points [5] = need_points [3] + (requested_rect.height - (gint) 1);
 
   need_points [6] = need_points [0];
   need_points [7] = need_points [5];
@@ -625,10 +628,11 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
     gegl_matrix3_transform_point (&inverse,
                                   need_points + i,
                                   need_points + i + 1);
+
   gegl_transform_bounding_box (need_points, 4, &need_rect);
 
-  need_rect.x      += context_rect.x;
-  need_rect.y      += context_rect.y;
+  need_rect.x += context_rect.x;
+  need_rect.y += context_rect.y;
   /*
    * One of the pixels of the width (resp. height) has to be
    * already in the rectangle; It does not need to be counted
@@ -682,14 +686,17 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
   region.width  += context_rect.width  - (gint) 1;
   region.height += context_rect.height - (gint) 1;
 
-  affected_points [0] = region.x;
-  affected_points [1] = region.y;
+  /*
+   * Convert indices to absolute positions:
+   */
+  affected_points [0] = region.x + (gdouble) 0.5;
+  affected_points [1] = region.y + (gdouble) 0.5;
 
-  affected_points [2] = affected_points [0] + region.width;
+  affected_points [2] = affected_points [0] + ( region.width  - (gint) 1);
   affected_points [3] = affected_points [1];
 
   affected_points [4] = affected_points [2];
-  affected_points [5] = affected_points [3] + region.height;
+  affected_points [5] = affected_points [3] + ( region.height - (gint) 1);
 
   affected_points [6] = affected_points [0];
   affected_points [7] = affected_points [5];
