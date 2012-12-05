@@ -333,7 +333,7 @@ gegl_transform_bounding_box (const gdouble *points,
   /*
    * Take the points defined by consecutive pairs of gdoubles as
    * absolute positions, that is, positions in the coordinate system
-   * with origin at the center of the pixel with index (0,0).
+   * with origin at the center of the pixel with index [0][0].
    *
    * Compute from these the smallest rectangle of pixel indices such
    * that the absolute positions of the four outer corners of the four
@@ -521,7 +521,7 @@ gegl_transform_detect (GeglOperation *operation,
 {
   /*
    * detect figures out which pixel in the input closely corresponds
-   * to the pixel with index (x,y) in the output.
+   * to the pixel with index [x][y] in the output.
    */
   OpTransform *transform = OP_TRANSFORM (operation);
   GeglNode    *source_node =
