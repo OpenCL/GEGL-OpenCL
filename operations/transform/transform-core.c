@@ -342,7 +342,7 @@ gegl_transform_bounding_box (const gdouble *points,
   /*
    * Maybe it would be better to use (gint) cast instead of floor, to
    * restore overall "left-right" symmetry, at least to some
-   * extent. This needs to be through through (in connection with
+   * extent. This needs to be tought through (in connection with
    * transformations that "flip" things).
    */
   gint    i,
@@ -480,8 +480,8 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 
   if (!gegl_transform_matrix3_allow_fast_translate (&matrix))
     {
-      in_rect.x      += context_rect.x;
-      in_rect.y      += context_rect.y;
+      in_rect.x += context_rect.x;
+      in_rect.y += context_rect.y;
       /*
        * Does "- (gint) 1" interact badly with {*,*,0,0}?
        */
