@@ -263,7 +263,7 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
       fetch_rectangle.x =
         x + sampler->context_rect[0].x -
         ( maximum_width_and_height - sampler->context_rect[0].width  ) / 8;
-      fetch_rectangle.y = 
+      fetch_rectangle.y =
         y + sampler->context_rect[0].y -
         ( maximum_width_and_height - sampler->context_rect[0].height ) / 8;
 
@@ -433,7 +433,7 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
         ( maximum_width_and_height - sampler->context_rect[level].width  ) / 8;
       fetch_rectangle.y =
         y + sampler->context_rect[level].y -
-	( maximum_width_and_height - sampler->context_rect[level].height ) / 8;
+        ( maximum_width_and_height - sampler->context_rect[level].height ) / 8;
 
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
