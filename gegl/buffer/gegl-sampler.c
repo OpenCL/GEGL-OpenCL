@@ -15,7 +15,7 @@
  * <http://www.gnu.org/licenses/>.
  *
  * 2007 © Øyvind Kolås
- * 2009 © Nicolas Robidoux
+ * 2009,2012 © Nicolas Robidoux
  * 2011 © Adam Turcotte
  */
 #include "config.h"
@@ -245,24 +245,30 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
       GeglRectangle fetch_rectangle;
 
       /*
-       * Override the fetch rectangle needed by the sampler, hoping
-       * that the extra pixels are useful for subsequent requests,
-       * assuming that it is more likely that further access is to the
-       * right or down of our currently requested
+       * Override the fetch rectangle needed by the sampler in order
+       * to prevent constant buffer creation, adding some elbow room
+       * at the top and left so that buffers are not constantly
+       * re-created when things are "slanted the wrong way", taking
+       * into account that it is more likely that further access is to
+       * the right or down of our currently requested
        * position. Consequently, we move the top left corner of the
-       * context_rect by about one half of the maximal distance we
-       * can (one half of one half = one fourth). Given that the
+       * context_rect by about one eight of the maximal distance we
+       * can (one eight of one half = one sixteenth), leaving an elbow
+       * room of about seven eight of what it could be. Given that the
        * maximum width and height of the fetch_rectangle is 64, so
-       * that half of it is 32, one half of the elbow room is at
-       * most 16. If context_rect is large, the corner is not moved
-       * much if at all, as should be.
+       * that half of it is 32, one eight of the elbow room is at most
+       * 4.
+       *
+       * More top and left elbow room used to be given: "/ 8" was used
+       * instead of "/ 16".
        */
+
       fetch_rectangle.x =
-        x + sampler->context_rect[0].x
-        - ( maximum_width_and_height - sampler->context_rect[0].width  ) / 4;
-      fetch_rectangle.y =
-        y + sampler->context_rect[0].y
-        - ( maximum_width_and_height - sampler->context_rect[0].height ) / 4;
+        x + sampler->context_rect[0].x -
+        ( maximum_width_and_height - sampler->context_rect[0].width  ) / 16;
+      fetch_rectangle.y = 
+        y + sampler->context_rect[0].y -
+        ( maximum_width_and_height - sampler->context_rect[0].height ) / 16;
 
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
@@ -338,9 +344,9 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
       GeglRectangle fetch_rectangle;
 
       fetch_rectangle.x =
-        x - ( maximum_width_and_height - sampler->context_rect[0].width  ) / 4;
+        x - ( maximum_width_and_height - sampler->context_rect[0].width  ) / 16;
       fetch_rectangle.y =
-        y - ( maximum_width_and_height - sampler->context_rect[0].height ) / 4;
+        y - ( maximum_width_and_height - sampler->context_rect[0].height ) / 16;
 
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
@@ -425,25 +431,12 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
        */
       GeglRectangle fetch_rectangle;
 
-      /*
-       * Override the fetch rectangle needed by the sampler, hoping
-       * that the extra pixels are useful for subsequent requests,
-       * assuming that it is more likely that further access is to the
-       * right or down of our currently requested
-       * position. Consequently, we move the top left corner of the
-       * context_rect by about one half of the maximal distance we
-       * can (one half of one half = one fourth). Given that the
-       * maximum width and height of the fetch_rectangle is 64, so
-       * that half of it is 32, one half of the elbow room is at
-       * most 16. If context_rect is large, the corner is not moved
-       * much if at all, as should be.
-       */
       fetch_rectangle.x =
-        x + sampler->context_rect[level].x
-        - ( maximum_width_and_height - sampler->context_rect[level].width  ) / 4;
+        x + sampler->context_rect[level].x -
+        ( maximum_width_and_height - sampler->context_rect[level].width  ) / 16;
       fetch_rectangle.y =
-        y + sampler->context_rect[level].y
-        - ( maximum_width_and_height - sampler->context_rect[level].height ) / 4;
+        y + sampler->context_rect[level].y -
+	( maximum_width_and_height - sampler->context_rect[level].height ) / 16;
 
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
