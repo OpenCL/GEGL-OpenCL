@@ -226,17 +226,17 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
   g_assert (sampler->context_rect[0].width  <= maximum_width_and_height);
   g_assert (sampler->context_rect[0].height <= maximum_width_and_height);
 
-  if (( sampler->sampler_buffer[0] == NULL )
+  if ((sampler->sampler_buffer[0] == NULL)
       ||
-      ( x + sampler->context_rect[0].x < sampler->sampler_rectangle[0].x )
+      (x + sampler->context_rect[0].x < sampler->sampler_rectangle[0].x)
       ||
-      ( y + sampler->context_rect[0].y < sampler->sampler_rectangle[0].y )
+      (y + sampler->context_rect[0].y < sampler->sampler_rectangle[0].y)
       ||
-      ( x + sampler->context_rect[0].x + sampler->context_rect[0].width
-        > sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width )
+      (x + sampler->context_rect[0].x + sampler->context_rect[0].width >
+       sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width)
       ||
-      ( y + sampler->context_rect[0].y + sampler->context_rect[0].height
-        > sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height ))
+      (y + sampler->context_rect[0].y + sampler->context_rect[0].height >
+       sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height))
     {
       /*
        * fetch_rectangle will become the value of
@@ -319,15 +319,17 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
   g_assert (sampler->context_rect[0].width  <= maximum_width_and_height);
   g_assert (sampler->context_rect[0].height <= maximum_width_and_height);
 
-  if (( sampler->sampler_buffer[0] == NULL )
+  if ((sampler->sampler_buffer[0] == NULL)
       ||
-      ( x < sampler->sampler_rectangle[0].x )
+      (x < sampler->sampler_rectangle[0].x)
       ||
-      ( y < sampler->sampler_rectangle[0].y )
+      (y < sampler->sampler_rectangle[0].y)
       ||
-      ( x >= sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width )
+      (x >=
+       sampler->sampler_rectangle[0].x + sampler->sampler_rectangle[0].width)
       ||
-      ( y >= sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height ))
+      (y >=
+       sampler->sampler_rectangle[0].y + sampler->sampler_rectangle[0].height))
     {
       /*
        * fetch_rectangle will become the value of
@@ -399,17 +401,22 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
   g_assert (sampler->context_rect[level].height <= maximum_width_and_height);
   g_assert (level >= 0 && level < GEGL_SAMPLER_MIPMAP_LEVELS);
 
-  if (( sampler->sampler_buffer[level] == NULL )
+  if ((sampler->sampler_buffer[level] == NULL)
       ||
-      ( x + sampler->context_rect[level].x < sampler->sampler_rectangle[level].x )
+      (x + sampler->context_rect[level].x <
+       sampler->sampler_rectangle[level].x)
       ||
-      ( y + sampler->context_rect[level].y < sampler->sampler_rectangle[level].y )
+      (y + sampler->context_rect[level].y <
+       sampler->sampler_rectangle[level].y)
       ||
-      ( x + sampler->context_rect[level].x + sampler->context_rect[level].width
-        > sampler->sampler_rectangle[level].x + sampler->sampler_rectangle[level].width )
+      (x + sampler->context_rect[level].x + sampler->context_rect[level].width >
+       sampler->sampler_rectangle[level].x +
+       sampler->sampler_rectangle[level].width)
       ||
-      ( y + sampler->context_rect[level].y + sampler->context_rect[level].height
-        > sampler->sampler_rectangle[level].y + sampler->sampler_rectangle[level].height ))
+      (y + sampler->context_rect[level].y +
+       sampler->context_rect[level].height >
+       sampler->sampler_rectangle[level].y +
+       sampler->sampler_rectangle[level].height))
     {
       /*
        * fetch_rectangle will become the value of
