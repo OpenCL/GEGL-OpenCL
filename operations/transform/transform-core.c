@@ -203,7 +203,7 @@ op_transform_class_init (OpTransformClass *klass)
                                    g_param_spec_string (
                                      "filter",
                                      _("Filter"),
-                                     _("Filter type (nearest, linear, cubic, lohalo)"),
+                              _("Filter type (nearest, linear, cubic, lohalo)"),
                                      "linear",
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_HARD_EDGES,
@@ -331,6 +331,8 @@ gegl_transform_bounding_box (const gdouble *points,
                              GeglRectangle *output)
 {
   /*
+   * This function has changed behavior.
+   *
    * Take the points defined by consecutive pairs of gdoubles as
    * absolute positions, that is, positions in the coordinate system
    * with origin at the center of the pixel with index [0][0].
@@ -338,13 +340,13 @@ gegl_transform_bounding_box (const gdouble *points,
    * Compute from these the smallest rectangle of pixel indices such
    * that the absolute positions of the four outer corners of the four
    * outer pixels contains all the given points.
+   *
+   * If the points are pixel centers (which are shifted by 0.5
+   * w.r.t. their pixel indices), the returned GEGLRectangle is the
+   * exactly the one that would be obtained by min-ing and max-ing the
+   * corresponding indices.
    */
-  /*
-   * Maybe it would be better to use (gint) cast instead of floor, to
-   * restore overall "left-right" symmetry, at least to some
-   * extent. This needs to be tought through (in connection with
-   * transformations that "flip" things).
-   */
+
   gint    i,
           num_coords;
   gdouble min_x,
@@ -384,15 +386,15 @@ gegl_transform_bounding_box (const gdouble *points,
    * by the one to the right/bottom. Note that this convention breaks
    * left-right symmetry. Breaking left-right (resp. up/down) symmetry
    * somehow is unavoidable if one imposes translational symmetry,
-   * which appears to be the most sane thing to do. (This is why there
-   * are so many rounding modes.)
+   * which appears to be a sane thing to do. (This is why there are so
+   * many rounding modes.)
    *
    * If you don't care about being consistent, replace floor + 1 by
    * ceil, and be warned that if min_x=max_x=integer, this gives a
-   * width of 0. This latter method has the advantage of fixing things
-   * so that one does not add one extra pixel just to include pixel
-   * area boundary points. That is, it keeps things
-   * "tighter". Harmlessly? Don't know.
+   * width of 0. The "ceil" approach method has the advantage of
+   * fixing things so that one does not add one extra pixel just to
+   * include pixel area right or bottom boundary points. In other
+   * words, it keeps things "tighter". Harmlessly? Don't know.
    */
   output->width  = (gint) floor ((double) max_x) + (gint) 1 - output->x;
   output->height = (gint) floor ((double) max_y) + (gint) 1 - output->y;
@@ -476,13 +478,18 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   GeglSampler   *sampler;
 
   /*
-   * IMPORTANT: transform_get_bounding_box now works differently than
-   * it uses to. It now gets the bounding box of the pixel centers
-   * that correspond to the involved indices. This is consistent with
-   * the current behavior of transform_detect and
-   * transform_bounding_box, and appears to Nicolas Robidoux to be the
-   * sanest behavior. Note: Don't forget that the boundary between two
-   * pixel areas is "owned" by the pixel to the right/bottom.
+   * transform_get_bounding_box has changed behavior.
+   *
+   * It now gets the bounding box of the forward mapped input pixel
+   * centers that correspond to the involved indices, where "bounding"
+   * is defined by output pixel areas. This is consistent with the
+   * current behavior of transform_detect and transform_bounding_box,
+   * and appears to Nicolas Robidoux to be the sanest behavior, in
+   * part because it is less sensitive to rounding issues. The output
+   * space indices of the bounding output pixels is returned.
+   *
+   * Note: Don't forget that the boundary between two pixel areas is
+   * "owned" by the pixel to the right/bottom.
    */
 
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
@@ -522,6 +529,11 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   have_points [0] = in_rect.x + (gdouble) 0.5;
   have_points [1] = in_rect.y + (gdouble) 0.5;
 
+  /*
+   * The distance between the first and last of a sequence of points
+   * with 1 between them is one less than the number of points, hence
+   * the "-1".
+   */
   have_points [2] = have_points [0] + (in_rect.width  - (gint) 1);
   have_points [3] = have_points [1];
 
@@ -546,15 +558,19 @@ gegl_transform_detect (GeglOperation *operation,
                        gint           x,
                        gint           y)
 {
-  /*
-   * detect figures out which pixel in the input closely corresponds
-   * to the pixel with index [x][y] in the output.
-   */
   OpTransform *transform = OP_TRANSFORM (operation);
   GeglNode    *source_node =
     gegl_operation_get_source_node (operation, "input");
   GeglMatrix3  inverse;
   gdouble      need_points [2];
+
+  /*
+   * This function has changed behavior.
+   *
+   * transform_detect figures out which pixel in the input most
+   * closely corresponds to the pixel with index [x][y] in the output.
+   * Ties are resolved toward the right and bottom.
+   */
 
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&inverse))
@@ -579,7 +595,7 @@ gegl_transform_detect (GeglOperation *operation,
    */
   return gegl_operation_detect (source_node->operation,
                                 (gint) floor ((double) need_points [0]),
-				(gint) floor ((double) need_points [1]));
+                                (gint) floor ((double) need_points [1]));
 }
 
 static GeglRectangle
@@ -595,6 +611,10 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
   GeglSampler   *sampler;
   gdouble        need_points [8];
   gint           i;
+
+  /*
+   * This function has changed behavior.
+   */
 
   requested_rect = *region;
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
@@ -681,8 +701,12 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
       gegl_matrix3_is_identity (&matrix))
     return region;
 
-  region.x      += context_rect.x;
-  region.y      += context_rect.y;
+  region.x += context_rect.x;
+  region.y += context_rect.y;
+  /*
+   * One of the context_rect's pixels must already be in the region
+   * (in both directions), hence the "-1".
+   */
   region.width  += context_rect.width  - (gint) 1;
   region.height += context_rect.height - (gint) 1;
 
@@ -778,9 +802,11 @@ transform_affine (GeglBuffer  *dest,
       /*
        * Set the inverse_jacobian matrix (a.k.a. scale) for samplers
        * that support it. The inverse jacobian will be "flipped" if
-       * the direction in which the ROI is filled is flipped. This is
-       * not necessary for the samplers, but it makes the following
-       * code shorter.
+       * the direction in which the ROI is filled is flipped. Flipping
+       * the inverse jacobian is not necessary for the samplers' sake,
+       * but it makes the following code shorter. "Sane" use of the
+       * inverse jacobian by a sampler only cares for its effect on
+       * sets, irrespective of orientation issues.
        */
       inverse_jacobian.coeff [0][0] = inverse.coeff [0][0];
       inverse_jacobian.coeff [0][1] = inverse.coeff [0][1];
@@ -795,7 +821,7 @@ transform_affine (GeglBuffer  *dest,
                 inverse.coeff [1][2];
 
       if (inverse_jacobian.coeff [0][0] + inverse_jacobian.coeff [1][0] <
-	  (gdouble) 0.0)
+          (gdouble) 0.0)
         {
           /*
            * "Flip", that is, put the "horizontal start" at the end
@@ -816,7 +842,7 @@ transform_affine (GeglBuffer  *dest,
         }
 
       if (inverse_jacobian.coeff [0][1] + inverse_jacobian.coeff [1][1] <
-	  (gdouble) 0.0)
+          (gdouble) 0.0)
         {
           /*
            * "Flip", that is, put the "vertical start" at the last
@@ -889,9 +915,9 @@ transform_generic (GeglBuffer  *dest,
                        v_float,
                        w_float;
 
-  const Babl           *format;
+  const Babl          *format;
 
-  gint                  dest_pixels;
+  gint                 dest_pixels;
 
   format = babl_format ("RaGaBaA float");
 
@@ -997,6 +1023,9 @@ gegl_transform_matrix3_allow_fast_translate (GeglMatrix3 *matrix)
   /*
    * Assuming that it is a translation matrix, check if it is an
    * integer translation. If not, exit.
+   *
+   * This test is first because it is cheaper than checking if it's a
+   * translation matrix.
    */
   if (! is_zero((gdouble) (matrix->coeff [0][2] -
                            round ((double) matrix->coeff [0][2]))) ||
@@ -1042,7 +1071,13 @@ gegl_transform_process (GeglOperation        *operation,
             ! strcmp (transform->filter, "nearest")))
     {
       /*
-       * Buffer shifting trick (enhanced nop).
+       * Buffer shifting trick (enhanced nop). Do it if it is a
+       * translation by an integer vector with arbitrary samplers, and
+       * with arbitrary translations if the sampler is nearest
+       * neighbor.
+       *
+       * TODO: Should not be taken by non-interpolatory samplers (the
+       * current cubic, for example).
        */
       input  = gegl_operation_context_get_source (context, "input");
 
@@ -1051,7 +1086,7 @@ gegl_transform_process (GeglOperation        *operation,
                       "source", input,
                       "shift-x", -(gint) round((double) matrix.coeff [0][2]),
                       "shift-y", -(gint) round((double) matrix.coeff [1][2]),
-                      "abyss-width", -1, /* turn off abyss (using
+                      "abyss-width", -1, /* Turn off abyss (use the
                                             source abyss) */
                       NULL);
 
@@ -1065,7 +1100,9 @@ gegl_transform_process (GeglOperation        *operation,
     }
   else
     {
-      /* for all other cases, do a proper resampling */
+      /*
+       * For all other cases, do a proper resampling
+       */
       GeglSampler *sampler;
 
       input  = gegl_operation_context_get_source (context, "input");
