@@ -409,7 +409,8 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
       (y + sampler->context_rect[level].y <
        sampler->sampler_rectangle[level].y)
       ||
-      (x + sampler->context_rect[level].x + sampler->context_rect[level].width >
+      (x + sampler->context_rect[level].x +
+       sampler->context_rect[level].width >
        sampler->sampler_rectangle[level].x +
        sampler->sampler_rectangle[level].width)
       ||
