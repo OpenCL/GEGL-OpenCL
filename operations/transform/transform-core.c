@@ -387,6 +387,11 @@ gegl_transform_bounding_box (const gdouble *points,
   /*
    * Warning: width may be 0 when min_x=max_x=integer. Same with
    * height.
+   *
+   * If you decide to enforce the "boundary between two pixels is
+   * owned by the right/bottom one" policy, replace ceil by floor +
+   * (gint) 1. This often enlarges result by one pixel at the right
+   * and bottom.
    */
   output->width  = (gint) ceil ((double) max_x) - output->x;
   output->height = (gint) ceil ((double) max_y) - output->y;
