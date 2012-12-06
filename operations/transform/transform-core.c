@@ -345,6 +345,11 @@ gegl_transform_bounding_box (const gdouble *points,
    * w.r.t. their pixel indices), the returned GEGLRectangle is the
    * exactly the one that would be obtained by min-ing and max-ing the
    * corresponding indices.
+   *
+   * This function purposely deviates from the "boundary between two
+   * pixel areas is owned by the right/bottom one" convention. This
+   * may require adding a bit of elbow room in the results when used
+   * to give enough data to computations.
    */
 
   gint    i,
@@ -380,24 +385,11 @@ gegl_transform_bounding_box (const gdouble *points,
   output->x = (gint) floor ((double) min_x);
   output->y = (gint) floor ((double) min_y);
   /*
-   * floor + 1 is used instead of ceil to get the correct number of
-   * pixels when min and max are integers. This is consistent with the
-   * convention that the boundary between two pixel areas is "owned"
-   * by the one to the right/bottom. Note that this convention breaks
-   * left-right symmetry. Breaking left-right (resp. up/down) symmetry
-   * somehow is unavoidable if one imposes translational symmetry,
-   * which appears to be a sane thing to do. (This is why there are so
-   * many rounding modes.)
-   *
-   * If you don't care about being consistent, replace floor + 1 by
-   * ceil, and be warned that if min_x=max_x=integer, this gives a
-   * width of 0. The "ceil" approach method has the advantage of
-   * fixing things so that one does not add one extra pixel just to
-   * include pixel area right or bottom boundary points. In other
-   * words, it keeps things "tighter". Harmlessly? Don't know.
+   * Warning: width may be 0 when min_x=max_x=integer. Same with
+   * height.
    */
-  output->width  = (gint) floor ((double) max_x) + (gint) 1 - output->x;
-  output->height = (gint) floor ((double) max_y) + (gint) 1 - output->y;
+  output->width  = (gint) ceil ((double) max_x) - output->x;
+  output->height = (gint) ceil ((double) max_y) - output->y;
 }
 
 static gboolean
@@ -474,28 +466,25 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   gdouble       have_points [8];
   gint          i;
 
-  GeglRectangle  context_rect;
-  GeglSampler   *sampler;
-
   /*
    * transform_get_bounding_box has changed behavior.
    *
-   * It now gets the bounding box of the forward mapped input pixel
-   * centers that correspond to the involved indices, where "bounding"
-   * is defined by output pixel areas. This is consistent with the
-   * current behavior of transform_detect and transform_bounding_box,
-   * and appears to Nicolas Robidoux to be the sanest behavior, in
-   * part because it is less sensitive to rounding issues. The output
-   * space indices of the bounding output pixels is returned.
+   * It now gets the bounding box of the forward mapped outer input
+   * pixel corners that correspond to the involved indices, where
+   * "bounding" is defined by output pixel areas. The output space
+   * indices of the bounding output pixels is returned.
    *
    * Note: Don't forget that the boundary between two pixel areas is
    * "owned" by the pixel to the right/bottom.
    */
 
-  sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
-      gegl_sampler_type_from_string (transform->filter));
-  context_rect = *gegl_sampler_get_context_rect (sampler);
-  g_object_unref (sampler);
+#if 0
+  /*
+   * See comments below RE: why this is "commented" out.
+   */
+  GeglRectangle  context_rect;
+  GeglSampler   *sampler;
+#endif
 
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
@@ -512,6 +501,23 @@ gegl_transform_get_bounding_box (GeglOperation *op)
       return in_rect;
     }
 
+#if 0
+  /*
+   * Commenting out the following (and the corresponding declarations
+   * above) is a major change.
+   *
+   * Motivation: transform_get_bounding_box propagates the in_rect
+   * "forward" into the output. There is no reason why the output
+   * should be enlarged by a sampler's context_rect: What the output
+   * "region" is, and what's needed to produce it, are two separate
+   * issues. It's not because a sampler needs lots of extra data that
+   * the output should be enlarged too.
+   */
+  sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
+      gegl_sampler_type_from_string (transform->filter));
+  context_rect = *gegl_sampler_get_context_rect (sampler);
+  g_object_unref (sampler);
+
   if (!gegl_transform_matrix3_allow_fast_translate (&matrix))
     {
       in_rect.x += context_rect.x;
@@ -522,23 +528,24 @@ gegl_transform_get_bounding_box (GeglOperation *op)
       in_rect.width  += context_rect.width  - (gint) 1;
       in_rect.height += context_rect.height - (gint) 1;
     }
+#endif
 
   /*
-   * Convert indices to absolute positions.
+   * Convert indices to absolute positions of the left and top outer
+   * pixel corners.
    */
-  have_points [0] = in_rect.x + (gdouble) 0.5;
-  have_points [1] = in_rect.y + (gdouble) 0.5;
+  have_points [0] = in_rect.x;
+  have_points [1] = in_rect.y;
 
   /*
-   * The distance between the first and last of a sequence of points
-   * with 1 between them is one less than the number of points, hence
-   * the "-1".
+   * When there are n pixels, their outer corners are distant by n (1
+   * more than the distance between the outer pixel centers).
    */
-  have_points [2] = have_points [0] + (in_rect.width  - (gint) 1);
+  have_points [2] = have_points [0] + in_rect.width;
   have_points [3] = have_points [1];
 
   have_points [4] = have_points [2];
-  have_points [5] = have_points [3] + (in_rect.height - (gint) 1);
+  have_points [5] = have_points [3] + in_rect.height;
 
   have_points [6] = have_points [0];
   have_points [7] = have_points [5];
@@ -669,15 +676,38 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
                                           const gchar         *input_pad,
                                           const GeglRectangle *input_region)
 {
-  OpTransform       *transform = OP_TRANSFORM (op);
-  GeglMatrix3        matrix;
-  GeglRectangle      affected_rect;
-  GeglRectangle      context_rect;
-  GeglSampler       *sampler;
+  OpTransform   *transform = OP_TRANSFORM (op);
+  GeglMatrix3    matrix;
+  GeglRectangle  affected_rect;
 
-  gdouble            affected_points [8];
-  gint               i;
-  GeglRectangle      region = *input_region;
+  GeglRectangle  context_rect;
+  GeglSampler   *sampler;
+
+  gdouble        affected_points [8];
+  gint           i;
+  GeglRectangle  region = *input_region;
+
+  /*
+   * Why does transform_get_bounding_box NOT propagate the region
+   * enlarged by context_rect but transform_get_invalidated_by_change
+   * does propaged the enlarged region? Reason:
+   * transform_get_bounding_box appears (to Nicolas) to compute the
+   * image of the ROI under the transformation: nothing to do with the
+   * context_rect. On the other hand,
+   * transform_get_invalidated_by_change has to do with knowing which
+   * pixel indices are affected by changes in the input. Since,
+   * effectively, any output pixel that maps back to something within
+   * the region enlarged by the context_rect will be affected, we can
+   * invert this correspondence and what it says is that we should
+   * forward propagate the input region fattened by the context_rect.
+   *
+   * This also explains why we compute the bounding box based on pixel
+   * centers, no outer corners.
+   */
+  /*
+   * TODO: Should the result be given extra elbow room all around to
+   * allow for round off error (for "safety")?
+   */
 
   sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
       gegl_sampler_type_from_string (transform->filter));
@@ -701,6 +731,9 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
       gegl_matrix3_is_identity (&matrix))
     return region;
 
+  /*
+   * Fatten (dilate) the input region by the context_rect.
+   */
   region.x += context_rect.x;
   region.y += context_rect.y;
   /*
