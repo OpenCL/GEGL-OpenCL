@@ -494,17 +494,15 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
 
+  if (gegl_rectangle_is_empty (&in_rect) ||
+      gegl_rectangle_is_infinite_plane (&in_rect))
+    return in_rect;
+
   gegl_transform_create_composite_matrix (transform, &matrix);
 
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&matrix))
-    {
-      /*
-       * Is in_rect = {0,0,0,0} (an empty rectangle since
-       * width=height=0) used to communicate something?
-       */
-      return in_rect;
-    }
+    return in_rect;
 
 #if 0
   /*
