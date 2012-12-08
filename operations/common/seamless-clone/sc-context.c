@@ -27,57 +27,57 @@
 #include "sc-common.h"
 #include "sc-sample.h"
 
-static ScOutline*  sc_context_create_outline             (GeglBuffer          *input,
-                                                          const GeglRectangle *roi,
-                                                          gdouble              threshold,
-                                                          ScCreationError     *error);
+static GeglScOutline*  gegl_sc_context_create_outline             (GeglBuffer          *input,
+                                                                   const GeglRectangle *roi,
+                                                                   gdouble              threshold,
+                                                                   GeglScCreationError *error);
 
-static P2trMesh*   sc_make_fine_mesh                     (ScOutline           *outline,
-                                                          GeglRectangle       *mesh_bounds,
-                                                          int                  max_refine_steps);
+static P2trMesh*       gegl_sc_make_fine_mesh                     (GeglScOutline       *outline,
+                                                                   GeglRectangle       *mesh_bounds,
+                                                                   int                  max_refine_steps);
 
-static void        sc_context_update_from_outline        (ScContext           *self,
-                                                          ScOutline           *outline);
+static void            gegl_sc_context_update_from_outline        (GeglScContext       *self,
+                                                                   GeglScOutline       *outline);
 
-static gboolean    sc_context_render_cache_pt2col_update (ScContext           *context,
-                                                          ScRenderInfo        *info);
+static gboolean        gegl_sc_context_render_cache_pt2col_update (GeglScContext       *context,
+                                                                   GeglScRenderInfo    *info);
 
-static gboolean    sc_context_sample_color_difference     (ScRenderInfo       *info,
-                                                          gdouble              x,
-                                                          gdouble              y,
-                                                          ScColor             *dest);
+static gboolean        gegl_sc_context_sample_color_difference    (GeglScRenderInfo    *info,
+                                                                   gdouble              x,
+                                                                   gdouble              y,
+                                                                   GeglScColor         *dest);
 
-static gboolean    sc_context_sample_point               (ScRenderInfo        *info,
-                                                          ScSampleList        *sl,
-                                                          P2trPoint           *point,
-                                                          ScColor             *dest);
+static gboolean        gegl_sc_context_sample_point               (GeglScRenderInfo    *info,
+                                                                   GeglScSampleList    *sl,
+                                                                   P2trPoint           *point,
+                                                                   GeglScColor         *dest);
 
-static void        sc_context_render_cache_pt2col_free   (ScContext           *context);
+static void            gegl_sc_context_render_cache_pt2col_free   (GeglScContext       *context);
 
-static GeglBuffer* sc_compute_uvt_cache                  (P2trMesh            *mesh,
-                                                          const GeglRectangle *area);
+static GeglBuffer*     gegl_sc_compute_uvt_cache                  (P2trMesh            *mesh,
+                                                                   const GeglRectangle *area);
 
-static void        sc_point_to_color_func                (P2trPoint           *point,
-                                                          gfloat              *dest,
-                                                          gpointer             pt2col_p);
+static void            gegl_sc_point_to_color_func                (P2trPoint           *point,
+                                                                   gfloat              *dest,
+                                                                   gpointer             pt2col_p);
 
-static void        sc_context_render_cache_free          (ScContext           *context);
+static void            gegl_sc_context_render_cache_free          (GeglScContext       *context);
 
-ScContext*
-sc_context_new (GeglBuffer          *input,
-                const GeglRectangle *roi,
-                gdouble              threshold,
-                ScCreationError     *error)
+GeglScContext*
+gegl_sc_context_new (GeglBuffer          *input,
+                     const GeglRectangle *roi,
+                     gdouble              threshold,
+                     GeglScCreationError *error)
 {
-  ScOutline *outline;
-  ScContext *self;
+  GeglScContext *self;
 
-  outline = sc_context_create_outline (input, roi, threshold, error);
+  GeglScOutline *outline
+      = gegl_sc_context_create_outline (input, roi, threshold, error);
 
   if (outline == NULL)
     return NULL;
 
-  self               = g_slice_new (ScContext);
+  self               = g_slice_new (GeglScContext);
   self->outline      = NULL;
   self->mesh         = NULL;
   self->sampling     = NULL;
@@ -85,55 +85,56 @@ sc_context_new (GeglBuffer          *input,
   self->uvt          = NULL;
   self->render_cache = NULL;
 
-  sc_context_update_from_outline (self, outline);
+  gegl_sc_context_update_from_outline (self, outline);
 
   return self;
 }
 
 gboolean
-sc_context_update (ScContext           *self,
-                   GeglBuffer          *input,
-                   const GeglRectangle *roi,
-                   gdouble              threshold,
-                   ScCreationError     *error)
+gegl_sc_context_update (GeglScContext       *self,
+                        GeglBuffer          *input,
+                        const GeglRectangle *roi,
+                        gdouble              threshold,
+                        GeglScCreationError *error)
 {
-  ScOutline *outline = sc_context_create_outline (input, roi,
-                                                  threshold, error);
+  GeglScOutline *outline
+      = gegl_sc_context_create_outline (input, roi, threshold, error);
 
   if (outline == NULL)
     {
       return FALSE;
     }
-  else if (sc_outline_equals (outline, self->outline))
+  else if (gegl_sc_outline_equals (outline, self->outline))
     {
-      sc_outline_free (outline);
+      gegl_sc_outline_free (outline);
       return TRUE;
     }
   else
     {
-      sc_context_update_from_outline (self, outline);
+      gegl_sc_context_update_from_outline (self, outline);
       return TRUE;
     }
 }
 
-static ScOutline*
-sc_context_create_outline (GeglBuffer          *input,
-                           const GeglRectangle *roi,
-                           gdouble              threshold,
-                           ScCreationError     *error)
+static GeglScOutline*
+gegl_sc_context_create_outline (GeglBuffer          *input,
+                                const GeglRectangle *roi,
+                                gdouble              threshold,
+                                GeglScCreationError *error)
 {
-  gboolean   ignored_islands = FALSE;
-  ScOutline *outline = sc_outline_find (roi, input, threshold, &ignored_islands);
-  guint      length  = sc_outline_length (outline);
+  gboolean       ignored_islands = FALSE;
+  GeglScOutline *outline
+      = gegl_sc_outline_find (roi, input, threshold, &ignored_islands);
+  guint          length  = gegl_sc_outline_length (outline);
 
-  *error = SC_CREATION_ERROR_NONE;
+  *error = GEGL_SC_CREATION_ERROR_NONE;
 
   if (length == 0)
     {
       if (ignored_islands)
-        *error = SC_CREATION_ERROR_TOO_SMALL;
+        *error = GEGL_SC_CREATION_ERROR_TOO_SMALL;
       else
-        *error = SC_CREATION_ERROR_EMPTY;
+        *error = GEGL_SC_CREATION_ERROR_EMPTY;
     }
   /* In order to create a triangular mesh, we need at least 3 vertices.
    * Also, if we don't have 3 vertices then the area is so small that it
@@ -141,17 +142,18 @@ sc_context_create_outline (GeglBuffer          *input,
    */
   else if (length < 3)
     {
-      *error = SC_CREATION_ERROR_TOO_SMALL;
+      *error = GEGL_SC_CREATION_ERROR_TOO_SMALL;
     }
   else if (ignored_islands ||
-           ! sc_outline_check_if_single (roi, input, threshold, outline))
+           ! gegl_sc_outline_check_if_single (roi, input,
+                                              threshold, outline))
     {
-      *error = SC_CREATION_ERROR_HOLED_OR_SPLIT;
+      *error = GEGL_SC_CREATION_ERROR_HOLED_OR_SPLIT;
     }
 
-  if (*error != SC_CREATION_ERROR_NONE)
+  if (*error != GEGL_SC_CREATION_ERROR_NONE)
     {
-      sc_outline_free (outline);
+      gegl_sc_outline_free (outline);
     }
 
   return outline;
@@ -159,8 +161,8 @@ sc_context_create_outline (GeglBuffer          *input,
 
 
 static void
-sc_context_update_from_outline (ScContext *self,
-                                ScOutline *outline)
+gegl_sc_context_update_from_outline (GeglScContext *self,
+                                     GeglScOutline *outline)
 {
   guint outline_length;
 
@@ -169,7 +171,7 @@ sc_context_update_from_outline (ScContext *self,
 
   if (self->render_cache != NULL)
     {
-      sc_context_render_cache_free (self);
+      gegl_sc_context_render_cache_free (self);
     }
 
   if (self->uvt != NULL)
@@ -180,7 +182,7 @@ sc_context_update_from_outline (ScContext *self,
 
   if (self->sampling != NULL)
     {
-      sc_mesh_sampling_free (self->sampling);
+      gegl_sc_mesh_sampling_free (self->sampling);
       self->sampling = NULL;
     }
 
@@ -192,31 +194,31 @@ sc_context_update_from_outline (ScContext *self,
 
   if (self->outline != NULL)
     {
-      sc_outline_free (self->outline);
+      gegl_sc_outline_free (self->outline);
       self->outline = NULL;
     }
 
-  outline_length = sc_outline_length (outline);
+  outline_length = gegl_sc_outline_length (outline);
 
   self->outline  = outline;
-  self->mesh     = sc_make_fine_mesh (self->outline,
-                                      &self->mesh_bounds,
-                                      5 * outline_length);
-  self->sampling = sc_mesh_sampling_compute (self->outline,
-                                             self->mesh);
+  self->mesh     = gegl_sc_make_fine_mesh (self->outline,
+                                           &self->mesh_bounds,
+                                           5 * outline_length);
+  self->sampling = gegl_sc_mesh_sampling_compute (self->outline,
+                                                  self->mesh);
 }
 
 
 /**
- * sc_make_fine_mesh:
- * @outline: An ScOutline object describing the PSLG of the mesh
+ * gegl_sc_make_fine_mesh:
+ * @outline: An GeglScOutline object describing the PSLG of the mesh
  * @mesh_bounds: A rectangle in which the bounds of the mesh should be
  *               stored
  */
 static P2trMesh*
-sc_make_fine_mesh (ScOutline     *outline,
-                   GeglRectangle *mesh_bounds,
-                   int            max_refine_steps)
+gegl_sc_make_fine_mesh (GeglScOutline     *outline,
+                        GeglRectangle *mesh_bounds,
+                        int            max_refine_steps)
 {
   GPtrArray *realOutline = (GPtrArray*) outline;
   gint i, N = realOutline->len;
@@ -232,9 +234,9 @@ sc_make_fine_mesh (ScOutline     *outline,
 
   for (i = 0; i < N; i++)
     {
-      ScPoint *pt = (ScPoint*) g_ptr_array_index (realOutline, i);
-      gdouble realX = pt->x + SC_DIRECTION_XOFFSET (pt->outside_normal, 0.25);
-      gdouble realY = pt->y + SC_DIRECTION_YOFFSET (pt->outside_normal, 0.25);
+      GeglScPoint *pt = (GeglScPoint*) g_ptr_array_index (realOutline, i);
+      gdouble realX = pt->x + GEGL_SC_DIRECTION_XOFFSET (pt->outside_normal, 0.25);
+      gdouble realY = pt->y + GEGL_SC_DIRECTION_YOFFSET (pt->outside_normal, 0.25);
 
       min_x = MIN (realX, min_x);
       min_y = MIN (realY, min_y);
@@ -276,23 +278,23 @@ sc_make_fine_mesh (ScOutline     *outline,
 }
 
 gboolean
-sc_context_prepare_render (ScContext    *context,
-                           ScRenderInfo *info)
+gegl_sc_context_prepare_render (GeglScContext    *context,
+                                GeglScRenderInfo *info)
 {
   if (context->render_cache == NULL)
     {
-      context->render_cache = g_slice_new (ScRenderCache);
+      context->render_cache = g_slice_new (GeglScRenderCache);
       context->render_cache->pt2col = NULL;
       context->render_cache->is_valid = FALSE;
     }
 
   context->render_cache->is_valid = FALSE;
 
-  if (! sc_context_render_cache_pt2col_update (context, info))
+  if (! gegl_sc_context_render_cache_pt2col_update (context, info))
     return FALSE;
 
   if (context->cache_uvt && context->uvt == NULL)
-    context->uvt = sc_compute_uvt_cache (context->mesh, &info->fg_rect);
+    context->uvt = gegl_sc_compute_uvt_cache (context->mesh, &info->fg_rect);
 
   context->render_cache->is_valid = TRUE;
 
@@ -302,21 +304,21 @@ sc_context_prepare_render (ScContext    *context,
 /**
  * Compute the color assigned to all the points in the color difference
  * mesh. If the color can not be computed for one or more points (due to
- * any of the reasons documented in sc_context_sample_point), this
+ * any of the reasons documented in gegl_sc_context_sample_point), this
  * function will return FALSE - meaning a failure.
  * IT IS THE CALLERS RESPONSIBILITY TO DETECT SUCH A STATE AND STOP THE
  * RENDERING PROCESS!
  */
 static gboolean
-sc_context_render_cache_pt2col_update (ScContext    *context,
-                                       ScRenderInfo *info)
+gegl_sc_context_render_cache_pt2col_update (GeglScContext    *context,
+                                            GeglScRenderInfo *info)
 {
   GHashTableIter iter;
 
-  ScColor      *color_current = NULL;
-  P2trPoint    *pt            = NULL;
-  ScSampleList *sl            = NULL;
-  GHashTable   *pt2col;
+  GeglScColor      *color_current = NULL;
+  P2trPoint        *pt            = NULL;
+  GeglScSampleList *sl            = NULL;
+  GHashTable       *pt2col;
 
   /* If this is the first time we compute the colors, we need to
    * allocate the color map */
@@ -350,7 +352,7 @@ sc_context_render_cache_pt2col_update (ScContext    *context,
       if (! g_hash_table_lookup_extended (pt2col, pt, NULL,
                                           (gpointer*) &color_current))
         {
-          color_current = sc_color_new ();
+          color_current = gegl_sc_color_new ();
           g_hash_table_insert (pt2col,
                                p2tr_point_ref (pt),
                                color_current);
@@ -365,7 +367,7 @@ sc_context_render_cache_pt2col_update (ScContext    *context,
        * after allocating/reffing but before inserting, we would have a
        * memory leak!
        */
-      if (! sc_context_sample_point (info, sl, pt, color_current))
+      if (! gegl_sc_context_sample_point (info, sl, pt, color_current))
         {
           return FALSE;
         }
@@ -384,7 +386,7 @@ sc_context_render_cache_pt2col_update (ScContext    *context,
           /* See if we have a sampling entry for this point? */
           if (! g_hash_table_lookup_extended (context->sampling, pt, NULL, NULL))
             {
-              sc_color_free (color_current);
+              gegl_sc_color_free (color_current);
               g_hash_table_iter_remove (&iter);
               p2tr_point_unref (pt);
             }
@@ -399,18 +401,18 @@ sc_context_render_cache_pt2col_update (ScContext    *context,
  * at a given point. This function returns FALSE if the difference can
  * not be computed since the background buffer does not contain the
  * point. Otherwise, the function returns TRUE.
- * THIS FUNCTION USES SC_COLORA_CHANNEL_COUNT CHANNELS! (WITH ALPHA!)
+ * THIS FUNCTION USES GEGL_SC_COLORA_CHANNEL_COUNT CHANNELS! (WITH ALPHA!)
  */
 static gboolean
-sc_context_sample_color_difference (ScRenderInfo *info,
-                                    gdouble       x,
-                                    gdouble       y,
-                                    ScColor      *dest)
+gegl_sc_context_sample_color_difference (GeglScRenderInfo *info,
+                                         gdouble           x,
+                                         gdouble           y,
+                                         GeglScColor      *dest)
 {
-  const Babl   *format  = babl_format (SC_COLOR_BABL_NAME);
+  const Babl   *format  = babl_format (GEGL_SC_COLOR_BABL_NAME);
 
-  ScColor fg_c[SC_COLORA_CHANNEL_COUNT];
-  ScColor bg_c[SC_COLORA_CHANNEL_COUNT];
+  GeglScColor fg_c[GEGL_SC_COLORA_CHANNEL_COUNT];
+  GeglScColor bg_c[GEGL_SC_COLORA_CHANNEL_COUNT];
 
   /* If the outline point is outside the background, then we can't
    * compute a propper difference there. So, don't add it to the
@@ -425,9 +427,9 @@ sc_context_sample_color_difference (ScRenderInfo *info,
    * location in background coordinates is the following:
    * (pt->x + info->x, pt->y + info->y).
    */
-  if (! sc_point_in_rectangle (x + info->xoff,
-                               y + info->yoff,
-                               &info->bg_rect))
+  if (! gegl_sc_point_in_rectangle (x + info->xoff,
+                                    y + info->yoff,
+                                    &info->bg_rect))
     {
       return FALSE;
     }
@@ -443,10 +445,10 @@ sc_context_sample_color_difference (ScRenderInfo *info,
                       NULL, bg_c, format,
                       GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
-#define sc_color_expr(I)  dest[I] = (bg_c[I] - fg_c[I])
-  sc_color_process();
-#undef  sc_color_expr
-  dest[SC_COLOR_ALPHA_INDEX] = 1;
+#define gegl_sc_color_expr(I)  dest[I] = (bg_c[I] - fg_c[I])
+  gegl_sc_color_process();
+#undef  gegl_sc_color_expr
+  dest[GEGL_SC_COLOR_ALPHA_INDEX] = 1;
   return TRUE;
 }
 
@@ -459,15 +461,15 @@ sc_context_sample_color_difference (ScRenderInfo *info,
  * RENDERING PROCESS!
  */
 static gboolean
-sc_context_sample_point (ScRenderInfo *info,
-                         ScSampleList *sl,
-                         P2trPoint    *point,
-                         ScColor      *dest)
+gegl_sc_context_sample_point (GeglScRenderInfo *info,
+                              GeglScSampleList *sl,
+                              P2trPoint        *point,
+                              GeglScColor      *dest)
 {
   /* If this is a direct sample, we can easily finish */
   if (sl->direct_sample)
     {
-      return sc_context_sample_color_difference (info, point->c.x, point->c.y, dest);
+      return gegl_sc_context_sample_color_difference (info, point->c.x, point->c.y, dest);
     }
   else
     {
@@ -478,41 +480,41 @@ sc_context_sample_point (ScRenderInfo *info,
 
       gint i;
       /* We need an alpha for this one */
-      ScColor dest_c[SC_COLORA_CHANNEL_COUNT]  = { 0 };
+      GeglScColor dest_c[GEGL_SC_COLORA_CHANNEL_COUNT]  = { 0 };
 
       for (i = 0; i < N; i++)
         {
-          ScPoint *pt = g_ptr_array_index (sl->points, i);
+          GeglScPoint *pt = g_ptr_array_index (sl->points, i);
           gdouble weight = g_array_index (sl->weights, gdouble, i);
-          ScColor raw_color[SC_COLORA_CHANNEL_COUNT];
+          GeglScColor raw_color[GEGL_SC_COLORA_CHANNEL_COUNT];
 
-          if (! sc_context_sample_color_difference (info, pt->x, pt->y, raw_color))
+          if (! gegl_sc_context_sample_color_difference (info, pt->x, pt->y, raw_color))
             continue;
 
-#define sc_color_expr(I)  dest_c[I] += weight * raw_color[I]
-          sc_color_process();
-#undef  sc_color_expr
+#define gegl_sc_color_expr(I)  dest_c[I] += weight * raw_color[I]
+          gegl_sc_color_process();
+#undef  gegl_sc_color_expr
           weightT += weight;
         }
 
       if (weightT == 0)
         return FALSE;
 
-#define sc_color_expr(I)  dest[I] = dest_c[I] / weightT
-      sc_color_process();
-#undef  sc_color_expr
-      dest[SC_COLOR_ALPHA_INDEX] = 1;
+#define gegl_sc_color_expr(I)  dest[I] = dest_c[I] / weightT
+      gegl_sc_color_process();
+#undef  gegl_sc_color_expr
+      dest[GEGL_SC_COLOR_ALPHA_INDEX] = 1;
 
       return TRUE;
     }
 }
 
 static void
-sc_context_render_cache_pt2col_free (ScContext *context)
+gegl_sc_context_render_cache_pt2col_free (GeglScContext *context)
 {
-  GHashTableIter iter;
-  ScColor       *color_current = NULL;
-  P2trPoint     *pt            = NULL;
+  GHashTableIter  iter;
+  GeglScColor    *color_current = NULL;
+  P2trPoint      *pt            = NULL;
 
   if (context->render_cache->pt2col == NULL)
     return;
@@ -522,7 +524,7 @@ sc_context_render_cache_pt2col_free (ScContext *context)
                                 (gpointer*) &pt,
                                 (gpointer*) &color_current))
     {
-      sc_color_free (color_current);
+      gegl_sc_color_free (color_current);
       g_hash_table_iter_remove (&iter);
       p2tr_point_unref (pt);
     }
@@ -533,20 +535,20 @@ sc_context_render_cache_pt2col_free (ScContext *context)
 }
 
 static GeglBuffer*
-sc_compute_uvt_cache (P2trMesh            *mesh,
-                      const GeglRectangle *area)
+gegl_sc_compute_uvt_cache (P2trMesh            *mesh,
+                           const GeglRectangle *area)
 {
   GeglBuffer         *uvt;
   GeglBufferIterator *iter;
   P2trImageConfig     config;
 
-  uvt = gegl_buffer_new (area, SC_BABL_UVT_FORMAT);
+  uvt = gegl_buffer_new (area, GEGL_SC_BABL_UVT_FORMAT);
 
-  iter = gegl_buffer_iterator_new (uvt, area, 0, SC_BABL_UVT_FORMAT,
+  iter = gegl_buffer_iterator_new (uvt, area, 0, GEGL_SC_BABL_UVT_FORMAT,
                                    GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
   config.step_x = config.step_y = 1;
-  config.cpp = SC_COLOR_CHANNEL_COUNT; /* Not that it will be used, but it won't harm */
+  config.cpp = GEGL_SC_COLOR_CHANNEL_COUNT; /* Not that it will be used, but it won't harm */
 
   while (gegl_buffer_iterator_next (iter))
     {
@@ -566,8 +568,8 @@ sc_compute_uvt_cache (P2trMesh            *mesh,
 }
 
 void
-sc_context_set_uvt_cache (ScContext *context,
-                          gboolean  enabled)
+gegl_sc_context_set_uvt_cache (GeglScContext *context,
+                               gboolean  enabled)
 {
   context->cache_uvt = enabled;
   if (! enabled && context->uvt != NULL)
@@ -578,10 +580,10 @@ sc_context_set_uvt_cache (ScContext *context,
 }
 
 gboolean
-sc_context_render (ScContext           *context,
-                   ScRenderInfo        *info,
-                   const GeglRectangle *part_rect,
-                   GeglBuffer          *part)
+gegl_sc_context_render (GeglScContext       *context,
+                        GeglScRenderInfo    *info,
+                        const GeglRectangle *part_rect,
+                        GeglBuffer          *part)
 {
   /** The area filled by the FG buf after the offset */
   GeglRectangle fg_rect;
@@ -594,7 +596,7 @@ sc_context_render (ScContext           *context,
   gint out_index, uvt_index, fg_index;
   gint xoff, yoff;
 
-  const Babl *format = babl_format (SC_COLOR_BABL_NAME);
+  const Babl *format = babl_format (GEGL_SC_COLOR_BABL_NAME);
 
   if (context->render_cache == NULL)
     {
@@ -663,7 +665,7 @@ sc_context_render (ScContext           *context,
                                             context->uvt,
                                             &to_render_fg,
                                             0,
-                                            SC_BABL_UVT_FORMAT,
+                                            GEGL_SC_BABL_UVT_FORMAT,
                                             GEGL_BUFFER_READ,
                                             GEGL_ABYSS_NONE);
     }
@@ -693,8 +695,8 @@ sc_context_render (ScContext           *context,
       imcfg.x_samples = iter->roi[fg_index].width;
       imcfg.y_samples = iter->roi[fg_index].height;
       /* This is without the alpha! */
-      imcfg.cpp = SC_COLOR_CHANNEL_COUNT;
-      /* WARNING: This must be synched with SC_COLOR_BABL_NAME!!! */
+      imcfg.cpp = GEGL_SC_COLOR_CHANNEL_COUNT;
+      /* WARNING: This must be synched with GEGL_SC_COLOR_BABL_NAME!!! */
       imcfg.alpha_last = TRUE;
 
       out_raw = (gfloat*)iter->data[out_index];
@@ -707,7 +709,7 @@ sc_context_render (ScContext           *context,
           p2tr_mesh_render_from_cache_f (uvt_raw,
                                          out_raw, iter->length,
                                          &imcfg,
-                                         sc_point_to_color_func,
+                                         gegl_sc_point_to_color_func,
                                          context->render_cache->pt2col);
         }
       else
@@ -715,7 +717,7 @@ sc_context_render (ScContext           *context,
           p2tr_mesh_render_f (context->mesh,
                               out_raw,
                               &imcfg,
-                              sc_point_to_color_func,
+                              gegl_sc_point_to_color_func,
                               context->render_cache->pt2col);
         }
 
@@ -723,11 +725,11 @@ sc_context_render (ScContext           *context,
         {
           for (x = 0; x < imcfg.x_samples; x++)
             {
-#define sc_color_expr(I)  out_raw[I] += fg_raw[I]
-              sc_color_process();
-#undef  sc_color_expr
-              out_raw += SC_COLORA_CHANNEL_COUNT;
-              fg_raw += SC_COLORA_CHANNEL_COUNT;
+#define gegl_sc_color_expr(I)  out_raw[I] += fg_raw[I]
+              gegl_sc_color_process();
+#undef  gegl_sc_color_expr
+              out_raw += GEGL_SC_COLORA_CHANNEL_COUNT;
+              fg_raw += GEGL_SC_COLORA_CHANNEL_COUNT;
             }
         }
     }
@@ -736,45 +738,45 @@ sc_context_render (ScContext           *context,
 }
 
 static void
-sc_point_to_color_func (P2trPoint *point,
-                        gfloat    *dest,
-                        gpointer   pt2col_p)
+gegl_sc_point_to_color_func (P2trPoint *point,
+                             gfloat    *dest,
+                             gpointer   pt2col_p)
 {
-  GHashTable *pt2col  = (GHashTable*) pt2col_p;
-  ScColor    *col_cpy = g_hash_table_lookup (pt2col, point);
-  guint       i;
+  GHashTable  *pt2col  = (GHashTable*) pt2col_p;
+  GeglScColor *col_cpy = g_hash_table_lookup (pt2col, point);
+  guint        i;
 
   g_assert (col_cpy != NULL);
 
-  for (i = 0; i < SC_COLORA_CHANNEL_COUNT; ++i)
+  for (i = 0; i < GEGL_SC_COLORA_CHANNEL_COUNT; ++i)
     dest[i] = col_cpy[i];
 }
 
 static void
-sc_context_render_cache_free (ScContext *context)
+gegl_sc_context_render_cache_free (GeglScContext *context)
 {
   if (context->render_cache == NULL)
     return;
 
-  sc_context_render_cache_pt2col_free (context);
-  g_slice_free (ScRenderCache, context->render_cache);
+  gegl_sc_context_render_cache_pt2col_free (context);
+  g_slice_free (GeglScRenderCache, context->render_cache);
   context->render_cache = NULL;
 }
 
 void
-sc_context_free (ScContext *context)
+gegl_sc_context_free (GeglScContext *context)
 {
   if (context->render_cache)
-    sc_context_render_cache_free (context);
+    gegl_sc_context_render_cache_free (context);
 
   if (context->uvt != NULL)
     g_object_unref (context->uvt);
 
-  sc_mesh_sampling_free (context->sampling);
+  gegl_sc_mesh_sampling_free (context->sampling);
   p2tr_mesh_unref (context->mesh);
-  sc_outline_free (context->outline);
+  gegl_sc_outline_free (context->outline);
 
-  g_slice_free (ScContext, context);
+  g_slice_free (GeglScContext, context);
  
 }
 

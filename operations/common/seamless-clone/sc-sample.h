@@ -28,40 +28,40 @@
 typedef struct {
   /** Should the point behind this list be sampled directly?        */
   gboolean   direct_sample;
-  /** An array of ScPoint* (pointers) of the points to sample       */
+  /** An array of GeglScPoint* (pointers) of the points to sample       */
   GPtrArray *points;
   /** An array of weights to assign to the samples from the points  */
   GArray    *weights;
   /** The total weight of the samples, used to normalize the result */
   gdouble    total_weight;
-} ScSampleList;
+} GeglScSampleList;
 
-typedef GHashTable ScMeshSampling;
+typedef GHashTable GeglScMeshSampling;
 
 /**
  * Compute the list of points that should be sampled in order to
  * compute the color assigned to the given point in the color
  * difference mesh.
  */
-ScSampleList*   sc_sample_list_compute   (ScOutline      *outline,
-                                          gdouble         x,
-                                          gdouble         y);
+GeglScSampleList*   gegl_sc_sample_list_compute   (GeglScOutline     *outline,
+                                                   gdouble            x,
+                                                   gdouble            y);
 
-ScSampleList*   sc_sample_list_direct    (void);
+GeglScSampleList*   gegl_sc_sample_list_direct    (void);
 /**
- * Free an ScSampleList object created by sc_sample_list_compute
+ * Free an GeglScSampleList object created by gegl_sc_sample_list_compute
  */
-void            sc_sample_list_free      (ScSampleList   *self);
+void                gegl_sc_sample_list_free      (GeglScSampleList   *self);
 
 /**
  * Compute the sample lists for all the points in a given mesh
  */
-ScMeshSampling* sc_mesh_sampling_compute (ScOutline      *outline,
-                                          P2trMesh       *mesh);
+GeglScMeshSampling* gegl_sc_mesh_sampling_compute (GeglScOutline      *outline,
+                                                   P2trMesh           *mesh);
 
 /**
- * Free an ScMeshSampling object created by sc_mesh_sampling_compute
+ * Free an GeglScMeshSampling object created by gegl_sc_mesh_sampling_compute
  */
-void            sc_mesh_sampling_free    (ScMeshSampling *self);
+void                gegl_sc_mesh_sampling_free    (GeglScMeshSampling *self);
 
 #endif

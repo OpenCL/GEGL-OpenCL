@@ -42,10 +42,10 @@ gegl_chant_string (error_msg, _("Error message"), NULL, _("An error message in c
 
 typedef struct SCProps_
 {
-  GMutex     mutex;
-  gboolean   first_processing;
-  gboolean   is_valid;
-  ScContext *context;
+  GMutex         mutex;
+  gboolean       first_processing;
+  gboolean       is_valid;
+  GeglScContext *context;
 } SCProps;
 
 static GeglRectangle
@@ -78,7 +78,7 @@ get_required_for_output (GeglOperation       *operation,
 static void
 prepare (GeglOperation *operation)
 {
-  const Babl *format = babl_format (SC_COLOR_BABL_NAME);
+  const Babl *format = babl_format (GEGL_SC_COLOR_BABL_NAME);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   SCProps *props;
 
@@ -107,7 +107,7 @@ static void finalize (GObject *object)
       SCProps *props = (SCProps*) o->chant_data;
       g_mutex_clear (&props->mutex);
       if (props->context)
-        sc_context_free (props->context);
+        gegl_sc_context_free (props->context);
       g_slice_free (SCProps, props);
       o->chant_data = NULL;
     }
@@ -125,8 +125,8 @@ process (GeglOperation       *operation,
   gboolean  return_val;
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   SCProps *props;
-  ScCreationError error;
-  ScRenderInfo info;
+  GeglScCreationError error;
+  GeglScRenderInfo info;
 
   g_assert (o->chant_data != NULL);
 
@@ -145,25 +145,25 @@ process (GeglOperation       *operation,
     {
       if (props->context == NULL)
         {
-          props->context = sc_context_new (aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
-          sc_context_set_uvt_cache (props->context, TRUE);
+          props->context = gegl_sc_context_new (aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
+          gegl_sc_context_set_uvt_cache (props->context, TRUE);
         }
       else
-        sc_context_update (props->context, aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
+        gegl_sc_context_update (props->context, aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
 
       switch (error)
         {
-          case SC_CREATION_ERROR_NONE:
+          case GEGL_SC_CREATION_ERROR_NONE:
             o->error_msg = NULL;
             props->is_valid = TRUE;
             break;
-          case SC_CREATION_ERROR_EMPTY:
+          case GEGL_SC_CREATION_ERROR_EMPTY:
             o->error_msg = _("The foreground does not contain opaque parts");
             break;
-          case SC_CREATION_ERROR_TOO_SMALL:
+          case GEGL_SC_CREATION_ERROR_TOO_SMALL:
             o->error_msg = _("The foreground is too small to use");
             break;
-          case SC_CREATION_ERROR_HOLED_OR_SPLIT:
+          case GEGL_SC_CREATION_ERROR_HOLED_OR_SPLIT:
             o->error_msg = _("The foreground contains holes and/or several unconnected parts");
             break;
           default:
@@ -173,7 +173,7 @@ process (GeglOperation       *operation,
 
       if (props->is_valid)
         {
-          if (! sc_context_prepare_render (props->context, &info))
+          if (! gegl_sc_context_prepare_render (props->context, &info))
             {
               o->error_msg = _("The opaque parts of the foreground are not above the background!");
               props->is_valid = FALSE;
@@ -185,7 +185,7 @@ process (GeglOperation       *operation,
   g_mutex_unlock (&props->mutex);
 
   if (props->is_valid)
-    return sc_context_render (props->context, &info, result, output);
+    return gegl_sc_context_render (props->context, &info, result, output);
   else
     return FALSE;
   return  return_val;

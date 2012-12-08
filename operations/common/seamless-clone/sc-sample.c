@@ -31,25 +31,25 @@
 
 #define g_ptr_array_index_cyclic(array,index_) g_ptr_array_index(array,(index_)%((array)->len))
 
-#define SC_SAMPLE_BASE_POINT_COUNT 16
+#define GEGL_SC_SAMPLE_BASE_POINT_COUNT 16
 
 /* This won't add the point in the second index, to allow avoiding
  * insertion of a points twice from two adjacent segments. The caller
  * must do that
  */
 static void
-sc_compute_sample_list_part (ScOutline     *outline,
-                             gint           index1,
-                             gint           index2,
-                             gdouble        Px,
-                             gdouble        Py,
-                             ScSampleList  *sl,
-                             gint           k)
+gegl_sc_compute_sample_list_part (GeglScOutline    *outline,
+                                  gint              index1,
+                                  gint              index2,
+                                  gdouble           Px,
+                                  gdouble           Py,
+                                  GeglScSampleList *sl,
+                                  gint              k)
 {
   GPtrArray *real = (GPtrArray*) outline;
   
-  ScPoint *pt1 = g_ptr_array_index_cyclic (real, index1);
-  ScPoint *pt2 = g_ptr_array_index_cyclic (real, index2);
+  GeglScPoint *pt1 = g_ptr_array_index_cyclic (real, index1);
+  GeglScPoint *pt2 = g_ptr_array_index_cyclic (real, index2);
 
   /* Compute the angle pt1-x-pt2 */
   gdouble dx1 = Px - pt1->x, dy1 = Py - pt1->y;
@@ -60,7 +60,7 @@ sc_compute_sample_list_part (ScOutline     *outline,
 
   gint d = index2 - index1;
 
-  gdouble edist = real->len / (SC_SAMPLE_BASE_POINT_COUNT * pow (2.5, k));
+  gdouble edist = real->len / (GEGL_SC_SAMPLE_BASE_POINT_COUNT * pow (2.5, k));
   gdouble eang = 0.75 * pow (0.8, k);
   gboolean needsMore = !(norm1 > edist && norm2 > edist && angle < eang);
 
@@ -75,16 +75,16 @@ sc_compute_sample_list_part (ScOutline     *outline,
   else
     {
       gint index12 = (index1 + index2) / 2;
-      sc_compute_sample_list_part (outline, index1, index12, Px, Py, sl, k + 1);
-      sc_compute_sample_list_part (outline, index12, index2, Px, Py, sl, k + 1);
+      gegl_sc_compute_sample_list_part (outline, index1, index12, Px, Py, sl, k + 1);
+      gegl_sc_compute_sample_list_part (outline, index12, index2, Px, Py, sl, k + 1);
       return;
     }
 }
 
 static void
-sc_compute_sample_list_weights (gdouble        Px,
-                                gdouble        Py,
-                                ScSampleList  *sl)
+gegl_sc_compute_sample_list_weights (gdouble           Px,
+                                     gdouble           Py,
+                                     GeglScSampleList *sl)
 {
   gint N = sl->points->len;
   gdouble *tan_as_half = g_new (gdouble, N);
@@ -98,8 +98,8 @@ sc_compute_sample_list_weights (gdouble        Px,
 
   for (i = 0; i < N; i++)
     {
-      ScPoint *pt1 = g_ptr_array_index_cyclic (sl->points, i);
-      ScPoint *pt2 = g_ptr_array_index_cyclic (sl->points, i + 1);
+      GeglScPoint *pt1 = g_ptr_array_index_cyclic (sl->points, i);
+      GeglScPoint *pt2 = g_ptr_array_index_cyclic (sl->points, i + 1);
 
       gdouble dx1 = Px - pt1->x, dy1 = Py - pt1->y;
       gdouble dx2 = Px - pt2->x, dy2 = Py - pt2->y;
@@ -154,12 +154,12 @@ sc_compute_sample_list_weights (gdouble        Px,
     }
 }
 
-ScSampleList*
-sc_sample_list_compute (ScOutline     *outline,
-                        gdouble        Px,
-                        gdouble        Py)
+GeglScSampleList*
+gegl_sc_sample_list_compute (GeglScOutline *outline,
+                             gdouble        Px,
+                             gdouble        Py)
 {
-  ScSampleList *sl = g_slice_new (ScSampleList);
+  GeglScSampleList *sl = g_slice_new (GeglScSampleList);
   GPtrArray *real = (GPtrArray*) outline;
   gint i;
 
@@ -167,31 +167,31 @@ sc_sample_list_compute (ScOutline     *outline,
   sl->points = g_ptr_array_new ();
   sl->weights = g_array_new (FALSE, TRUE, sizeof (gdouble));
 
-  if (real->len <= SC_SAMPLE_BASE_POINT_COUNT)
+  if (real->len <= GEGL_SC_SAMPLE_BASE_POINT_COUNT)
     {
       for (i = 0; i < real->len; i++)
         g_ptr_array_add (sl->points, g_ptr_array_index (real, i));
     }
   else
     {
-      for (i = 0; i < SC_SAMPLE_BASE_POINT_COUNT; i++)
+      for (i = 0; i < GEGL_SC_SAMPLE_BASE_POINT_COUNT; i++)
         {
-          gint index1 = i * real->len / SC_SAMPLE_BASE_POINT_COUNT;
-          gint index2 = (i + 1) * real->len / SC_SAMPLE_BASE_POINT_COUNT;
+          gint index1 = i * real->len / GEGL_SC_SAMPLE_BASE_POINT_COUNT;
+          gint index2 = (i + 1) * real->len / GEGL_SC_SAMPLE_BASE_POINT_COUNT;
 
-          sc_compute_sample_list_part (outline, index1, index2, Px, Py, sl, 0);
+          gegl_sc_compute_sample_list_part (outline, index1, index2, Px, Py, sl, 0);
         }
     }
 
-  sc_compute_sample_list_weights (Px, Py, sl);
+  gegl_sc_compute_sample_list_weights (Px, Py, sl);
 
   return sl;
 }
 
-ScSampleList*
-sc_sample_list_direct (void)
+GeglScSampleList*
+gegl_sc_sample_list_direct (void)
 {
-  ScSampleList *sl = g_slice_new (ScSampleList);
+  GeglScSampleList *sl = g_slice_new (GeglScSampleList);
   sl->direct_sample = TRUE;
   sl->points = NULL;
   sl->weights = NULL;
@@ -200,7 +200,7 @@ sc_sample_list_direct (void)
 }
 
 void
-sc_sample_list_free (ScSampleList *self)
+gegl_sc_sample_list_free (GeglScSampleList *self)
 {
   if (! self->direct_sample)
     {
@@ -212,12 +212,12 @@ sc_sample_list_free (ScSampleList *self)
       g_assert (self->points == NULL);
       g_assert (self->weights == NULL);
     }
-  g_slice_free (ScSampleList, self);
+  g_slice_free (GeglScSampleList, self);
 }
 
-ScMeshSampling*
-sc_mesh_sampling_compute (ScOutline *outline,
-                          P2trMesh  *mesh)
+GeglScMeshSampling*
+gegl_sc_mesh_sampling_compute (GeglScOutline *outline,
+                               P2trMesh  *mesh)
 {
   GHashTable *pt2sample = g_hash_table_new (g_direct_hash, g_direct_equal);
   P2trPoint  *pt = NULL;
@@ -226,11 +226,11 @@ sc_mesh_sampling_compute (ScOutline *outline,
   p2tr_hash_set_iter_init (&iter, mesh->points);
   while (p2tr_hash_set_iter_next (&iter, (gpointer*) &pt))
     {
-      ScSampleList *sl;
+      GeglScSampleList *sl;
       if (p2tr_point_is_fully_in_domain (pt))
-        sl = sc_sample_list_compute (outline, pt->c.x, pt->c.y);
+        sl = gegl_sc_sample_list_compute (outline, pt->c.x, pt->c.y);
       else
-        sl = sc_sample_list_direct ();
+        sl = gegl_sc_sample_list_direct ();
       g_hash_table_insert (pt2sample, pt, sl);
     }
 
@@ -238,21 +238,21 @@ sc_mesh_sampling_compute (ScOutline *outline,
 }
 
 static void
-sc_mesh_sampling_entry_free_hfunc (gpointer point,
-                                   gpointer sampling_list,
-                                   gpointer unused)
+gegl_sc_mesh_sampling_entry_free_hfunc (gpointer point,
+                                        gpointer sampling_list,
+                                        gpointer unused)
 {
   /* Unref the point returned from triangulation_get_points */
   p2tr_point_unref ((P2trPoint*)point);
   /* Free the sampling list */
-  sc_sample_list_free ((ScSampleList*)sampling_list);
+  gegl_sc_sample_list_free ((GeglScSampleList*)sampling_list);
 }
 
 void
-sc_mesh_sampling_free (ScMeshSampling *self)
+gegl_sc_mesh_sampling_free (GeglScMeshSampling *self)
 {
   GHashTable     *real = (GHashTable*) self;
-  g_hash_table_foreach (real, sc_mesh_sampling_entry_free_hfunc, NULL);
+  g_hash_table_foreach (real, gegl_sc_mesh_sampling_entry_free_hfunc, NULL);
   g_hash_table_destroy (real);
 }
 

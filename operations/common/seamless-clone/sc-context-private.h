@@ -29,25 +29,25 @@
 
 typedef struct
 {
-  GHashTable     *pt2col;
-  gboolean        is_valid;
-} ScRenderCache;
+  GHashTable         *pt2col;
+  gboolean            is_valid;
+} GeglScRenderCache;
 
-struct _ScContext
+struct _GeglScContext
 {
-  ScOutline      *outline;
-  GeglRectangle   mesh_bounds;
-  P2trMesh       *mesh;
+  GeglScOutline      *outline;
+  GeglRectangle       mesh_bounds;
+  P2trMesh           *mesh;
 
-  ScMeshSampling *sampling;
+  GeglScMeshSampling *sampling;
 
-  gboolean        cache_uvt;
-  GeglBuffer     *uvt;
+  gboolean            cache_uvt;
+  GeglBuffer         *uvt;
 
-  ScRenderCache  *render_cache;
+  GeglScRenderCache  *render_cache;
 };
 
-#define SC_BABL_UVT_TYPE   (babl_type_new ("uvt", "bits", sizeof (P2trUVT) * 8, NULL))
-#define SC_BABL_UVT_FORMAT (babl_format_n (SC_BABL_UVT_TYPE, 1))
+#define GEGL_SC_BABL_UVT_TYPE   (babl_type_new ("uvt", "bits", sizeof (P2trUVT) * 8, NULL))
+#define GEGL_SC_BABL_UVT_FORMAT (babl_format_n (GEGL_SC_BABL_UVT_TYPE, 1))
 
 #endif

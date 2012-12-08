@@ -44,35 +44,35 @@
 #include "sc-common.h"
 
 static inline void
-sc_point_copy_to (const ScPoint *src,
-                  ScPoint       *dst)
+gegl_sc_point_copy_to (const GeglScPoint *src,
+                       GeglScPoint       *dst)
 {
   dst->x              = src->x;
   dst->y              = src->y;
   dst->outside_normal = src->outside_normal;
 }
 
-static inline ScPoint*
-sc_point_copy (const ScPoint *src)
+static inline GeglScPoint*
+gegl_sc_point_copy (const GeglScPoint *src)
 {
-  ScPoint *self = g_slice_new (ScPoint);
-  sc_point_copy_to (src, self);
+  GeglScPoint *self = g_slice_new (GeglScPoint);
+  gegl_sc_point_copy_to (src, self);
   return self;
 }
 
-static inline ScPoint*
-sc_point_move (const ScPoint *src,
-               ScDirection    t,
-               ScPoint       *dst)
+static inline GeglScPoint*
+gegl_sc_point_move (const GeglScPoint *src,
+                    GeglScDirection    t,
+                    GeglScPoint       *dst)
 {
-  dst->x = src->x + SC_DIRECTION_XOFFSET (t, 1);
-  dst->y = src->y + SC_DIRECTION_YOFFSET (t, 1);
+  dst->x = src->x + GEGL_SC_DIRECTION_XOFFSET (t, 1);
+  dst->y = src->y + GEGL_SC_DIRECTION_YOFFSET (t, 1);
   return dst;
 }
 
 static inline gboolean
-sc_point_eq (const ScPoint *pt1,
-             const ScPoint *pt2)
+gegl_sc_point_eq (const GeglScPoint *pt1,
+                  const GeglScPoint *pt2)
 {
   return pt1->x == pt2->x && pt1->y == pt2->y;
 }
@@ -82,17 +82,17 @@ is_opaque (const GeglRectangle *search_area,
            GeglBuffer          *buffer,
            const Babl          *format,
            gdouble              threshold,
-           const ScPoint       *pt)
+           const GeglScPoint   *pt)
 {
-  ScColor col[SC_COLORA_CHANNEL_COUNT];
+  GeglScColor col[GEGL_SC_COLORA_CHANNEL_COUNT];
 
-  if (! sc_point_in_rectangle (pt->x, pt->y, search_area))
+  if (! gegl_sc_point_in_rectangle (pt->x, pt->y, search_area))
     return FALSE;
 
   gegl_buffer_sample (buffer, pt->x, pt->y, NULL, col, format,
       GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
-  return col[SC_COLOR_ALPHA_INDEX] >= threshold;
+  return col[GEGL_SC_COLOR_ALPHA_INDEX] >= threshold;
 }
 
 /* This function assumes the pixel is opaque! */
@@ -101,13 +101,13 @@ is_opaque_island (const GeglRectangle *search_area,
                   GeglBuffer          *buffer,
                   const Babl          *format,
                   gdouble              threshold,
-                  const ScPoint       *pt)
+                  const GeglScPoint   *pt)
 {
   gint i;
-  ScPoint temp;
+  GeglScPoint temp;
 
   for (i = 0; i < 8; ++i)
-    if (is_opaque (search_area, buffer, format, threshold, sc_point_move (pt, i, &temp)))
+    if (is_opaque (search_area, buffer, format, threshold, gegl_sc_point_move (pt, i, &temp)))
       return FALSE;
 
   return TRUE;
@@ -120,16 +120,16 @@ is_valid_edge (const GeglRectangle *search_area,
                GeglBuffer          *buffer,
                const Babl          *format,
                gdouble              threshold,
-               const ScPoint       *pt)
+               const GeglScPoint   *pt)
 {
   gint i;
-  ScPoint temp;
+  GeglScPoint temp;
 
   if (! is_opaque (search_area, buffer, format, threshold, pt))
     return FALSE;
 
-  for (i = 0; i < SC_DIRECTION_COUNT; ++i)
-    if (is_opaque (search_area, buffer, format, threshold, sc_point_move (pt, i, &temp)))
+  for (i = 0; i < GEGL_SC_DIRECTION_COUNT; ++i)
+    if (is_opaque (search_area, buffer, format, threshold, gegl_sc_point_move (pt, i, &temp)))
       return FALSE;
 
   return TRUE;
@@ -150,24 +150,24 @@ is_valid_edge (const GeglRectangle *search_area,
  *   untill you find an opaque pixel. That pixel must then be the next
  *   edge pixel (when going in clock-wise direction)!
  */
-static inline ScDirection
+static inline GeglScDirection
 walk_cw (const GeglRectangle *search_area,
          GeglBuffer          *buffer,
          const Babl          *format,
          gdouble              threshold,
-         const ScPoint       *cur_pt,
-         ScDirection          dir_from_prev,
-         ScPoint             *next_pt)
+         const GeglScPoint   *cur_pt,
+         GeglScDirection      dir_from_prev,
+         GeglScPoint         *next_pt)
 {
-  ScDirection dir_to_prev = SC_DIRECTION_OPPOSITE (dir_from_prev);
-  ScDirection dir_to_next = SC_DIRECTION_CW (dir_to_prev);
+  GeglScDirection dir_to_prev = GEGL_SC_DIRECTION_OPPOSITE (dir_from_prev);
+  GeglScDirection dir_to_next = GEGL_SC_DIRECTION_CW (dir_to_prev);
 
-  sc_point_move (cur_pt, dir_to_next, next_pt);
+  gegl_sc_point_move (cur_pt, dir_to_next, next_pt);
 
   while (! is_opaque (search_area, buffer, format, threshold, next_pt))
     {
-      dir_to_next = SC_DIRECTION_CW (dir_to_next);
-      sc_point_move (cur_pt, dir_to_next, next_pt);
+      dir_to_next = GEGL_SC_DIRECTION_CW (dir_to_next);
+      gegl_sc_point_move (cur_pt, dir_to_next, next_pt);
     }
 
   return dir_to_next;
@@ -180,18 +180,18 @@ walk_cw (const GeglRectangle *search_area,
  * the finds and returns the outline in which this edge pixel takes
  * a part.
  */
-ScOutline*
-sc_outline_find (const GeglRectangle *search_area,
-                 GeglBuffer          *buffer,
-                 gdouble              threshold,
-                 gboolean            *ignored_islands)
+GeglScOutline*
+gegl_sc_outline_find (const GeglRectangle *search_area,
+                      GeglBuffer          *buffer,
+                      gdouble              threshold,
+                      gboolean            *ignored_islands)
 {
   const Babl *format = babl_format("RGBA float");
-  ScOutline *result = g_ptr_array_new ();
+  GeglScOutline *result = g_ptr_array_new ();
 
   gboolean found = FALSE;
-  ScPoint current, next, *first;
-  ScDirection to_next;
+  GeglScPoint current, next, *first;
+  GeglScDirection to_next;
 
   gint row_max = search_area->x + search_area->width;
   gint col_max = search_area->y + search_area->height;
@@ -219,17 +219,17 @@ sc_outline_find (const GeglRectangle *search_area,
 
   if (found)
     {
-      current.outside_normal = SC_DIRECTION_N;
-      g_ptr_array_add (result, first = sc_point_copy (&current));
+      current.outside_normal = GEGL_SC_DIRECTION_N;
+      g_ptr_array_add (result, first = gegl_sc_point_copy (&current));
 
       to_next = walk_cw (search_area, buffer, format, threshold,
-          &current, SC_DIRECTION_E, &next);
+          &current, GEGL_SC_DIRECTION_E, &next);
 
-      while (! sc_point_eq (&next, first))
+      while (! gegl_sc_point_eq (&next, first))
         {
-          next.outside_normal = SC_DIRECTION_CW(SC_DIRECTION_CW(to_next));
-          g_ptr_array_add (result, sc_point_copy (&next));
-          sc_point_copy_to (&next, &current);
+          next.outside_normal = GEGL_SC_DIRECTION_CW (GEGL_SC_DIRECTION_CW (to_next));
+          g_ptr_array_add (result, gegl_sc_point_copy (&next));
+          gegl_sc_point_copy_to (&next, &current);
           to_next = walk_cw (search_area, buffer, format, threshold,
                              &current, to_next, &next);
         }
@@ -243,8 +243,8 @@ sc_outline_find (const GeglRectangle *search_area,
  * increasing X values
  */
 static gint
-sc_point_cmp (const ScPoint **pt1,
-              const ScPoint **pt2)
+gegl_sc_point_cmp (const GeglScPoint **pt1,
+                   const GeglScPoint **pt2)
 {
   if ((*pt1)->y < (*pt2)->y)
     return -1;
@@ -280,16 +280,16 @@ sc_point_cmp (const ScPoint **pt1,
  * (amortized) time!
  */
 gboolean
-sc_outline_check_if_single (const GeglRectangle *search_area,
-                            GeglBuffer          *buffer,
-                            gdouble              threshold,
-                            ScOutline           *existing)
+gegl_sc_outline_check_if_single (const GeglRectangle *search_area,
+                                 GeglBuffer          *buffer,
+                                 gdouble              threshold,
+                                 GeglScOutline       *existing)
 {
   const Babl *format = babl_format("RGBA float");
   GPtrArray *sorted_points = g_ptr_array_sized_new (existing->len);
   gboolean not_single = FALSE;
 
-  ScPoint current, *sorted_p;
+  GeglScPoint current, *sorted_p;
   guint s_index;
 
   gint row_max = search_area->x + search_area->width;
@@ -297,10 +297,10 @@ sc_outline_check_if_single (const GeglRectangle *search_area,
 
   for (s_index = 0; s_index < existing->len; ++s_index)
     g_ptr_array_add (sorted_points, g_ptr_array_index (existing, s_index));
-  g_ptr_array_sort (sorted_points, (GCompareFunc) sc_point_cmp);
+  g_ptr_array_sort (sorted_points, (GCompareFunc) gegl_sc_point_cmp);
 
   s_index = 0;
-  sorted_p = (ScPoint*) g_ptr_array_index (sorted_points, s_index);
+  sorted_p = (GeglScPoint*) g_ptr_array_index (sorted_points, s_index);
 
   for (current.y = search_area->y; current.y < row_max; ++current.y)
     {
@@ -311,12 +311,12 @@ sc_outline_check_if_single (const GeglRectangle *search_area,
           gboolean hit, opaque;
 
           opaque = is_opaque (search_area, buffer, format, threshold, &current);
-          hit = sc_point_eq (&current, sorted_p);
+          hit = gegl_sc_point_eq (&current, sorted_p);
 
           if (hit && ! inside)
             {
               inside = TRUE;
-              sorted_p = (ScPoint*) g_ptr_array_index (sorted_points, ++s_index);
+              sorted_p = (GeglScPoint*) g_ptr_array_index (sorted_points, ++s_index);
               /* Prevent "leaving" the area in the next if statement */
               hit = FALSE;
             }
@@ -331,7 +331,7 @@ sc_outline_check_if_single (const GeglRectangle *search_area,
           if (hit && inside)
             {
               inside = FALSE;
-              sorted_p = (ScPoint*) g_ptr_array_index (sorted_points, ++s_index);
+              sorted_p = (GeglScPoint*) g_ptr_array_index (sorted_points, ++s_index);
             }
         }
 
@@ -344,30 +344,30 @@ sc_outline_check_if_single (const GeglRectangle *search_area,
 }
 
 guint
-sc_outline_length (ScOutline *self)
+gegl_sc_outline_length (GeglScOutline *self)
 {
   return ((GPtrArray*) self)->len;
 }
 
 gboolean
-sc_outline_equals (ScOutline *a,
-                   ScOutline *b)
+gegl_sc_outline_equals (GeglScOutline *a,
+                        GeglScOutline *b)
 {
   if (a == b) /* Includes the case were both are NULL */
     return TRUE;
   else if ((a == NULL) != (b == NULL))
     return FALSE;
-  else if (sc_outline_length (a) != sc_outline_length (b))
+  else if (gegl_sc_outline_length (a) != gegl_sc_outline_length (b))
     return FALSE;
   else
     {
-      guint n = sc_outline_length (a);
+      guint n = gegl_sc_outline_length (a);
       guint i;
       for (i = 0; i < n; i++)
         {
-          const ScPoint *pA = (ScPoint*) g_ptr_array_index (a, i);
-          const ScPoint *pB = (ScPoint*) g_ptr_array_index (b, i);
-          if (sc_point_cmp (&pA, &pB) != 0)
+          const GeglScPoint *pA = (GeglScPoint*) g_ptr_array_index (a, i);
+          const GeglScPoint *pB = (GeglScPoint*) g_ptr_array_index (b, i);
+          if (gegl_sc_point_cmp (&pA, &pB) != 0)
             return FALSE;
         }
       return TRUE;
@@ -375,11 +375,11 @@ sc_outline_equals (ScOutline *a,
 }
 
 void
-sc_outline_free (ScOutline *self)
+gegl_sc_outline_free (GeglScOutline *self)
 {
   GPtrArray *real = (GPtrArray*) self;
   gint i;
   for (i = 0; i < real->len; i++)
-    g_slice_free (ScPoint, g_ptr_array_index (self, i));
+    g_slice_free (GeglScPoint, g_ptr_array_index (self, i));
   g_ptr_array_free (real, TRUE);
 }

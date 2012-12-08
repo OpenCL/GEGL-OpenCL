@@ -30,7 +30,7 @@
  * An opaque type representing the context for a seamless cloning
  * operation
  */
-typedef struct _ScContext ScContext;
+typedef struct _GeglScContext GeglScContext;
 
 /**
  * Errors generated during the creation of a seamless cloning context
@@ -39,36 +39,36 @@ typedef enum {
   /**
    * No error
    */
-  SC_CREATION_ERROR_NONE = 0,
+  GEGL_SC_CREATION_ERROR_NONE = 0,
   /**
    * The input doesn't contain an opaque area
    */
-  SC_CREATION_ERROR_EMPTY,
+  GEGL_SC_CREATION_ERROR_EMPTY,
   /**
    *The opaque area of the input is too small
    */
-  SC_CREATION_ERROR_TOO_SMALL,
+  GEGL_SC_CREATION_ERROR_TOO_SMALL,
   /**
    * The opaque area of the input either contains holes or is split
    * to several disconnected areas
    */
-  SC_CREATION_ERROR_HOLED_OR_SPLIT
-} ScCreationError;
+  GEGL_SC_CREATION_ERROR_HOLED_OR_SPLIT
+} GeglScCreationError;
 
 /**
  * Create a new seamless cloning context where the alpha of the
  * given input buffer will be used to determine its outline.
  */
-ScContext* sc_context_new            (GeglBuffer          *input,
-                                      const GeglRectangle *roi,
-                                      gdouble              threshold,
-                                      ScCreationError     *error);
+GeglScContext*  gegl_sc_context_new            (GeglBuffer          *input,
+                                                const GeglRectangle *roi,
+                                                gdouble              threshold,
+                                                GeglScCreationError *error);
 
-gboolean   sc_context_update         (ScContext           *self,
-                                      GeglBuffer          *input,
-                                      const GeglRectangle *roi,
-                                      gdouble              threshold,
-                                      ScCreationError     *error);
+gboolean        gegl_sc_context_update         (GeglScContext       *self,
+                                                GeglBuffer          *input,
+                                                const GeglRectangle *roi,
+                                                gdouble              threshold,
+                                                GeglScCreationError *error);
 
 /**
  * Do the necessary caching so that rendering can happen. This function
@@ -79,8 +79,8 @@ gboolean   sc_context_update         (ScContext           *self,
  * BEHAVIOUR IS THAT THE FOREGROUND DOES NOT OVERLAP ENOUGH THE
  * BACKGROUND!
  */
-gboolean   sc_context_prepare_render (ScContext           *context,
-                                      ScRenderInfo        *info);
+gboolean        gegl_sc_context_prepare_render (GeglScContext       *context,
+                                                GeglScRenderInfo    *info);
 
 /**
  * Specifies whether the triangle containing each pixel, along with the
@@ -89,19 +89,19 @@ gboolean   sc_context_prepare_render (ScContext           *context,
  * render the result faster.
  * This function takes effect from the next call to prepare_render.
  */
-void       sc_context_set_uvt_cache  (ScContext           *context,
-                                      gboolean             enabled);
+void            gegl_sc_context_set_uvt_cache  (GeglScContext       *context,
+                                                gboolean             enabled);
 
 /**
  * Call this function to render the specified area of the seamless
  * cloning composition. This call must be preceeded by a call to
  * the prepare function.
  */
-gboolean   sc_context_render         (ScContext           *context,
-                                      ScRenderInfo        *info,
-                                      const GeglRectangle *part_rect,
-                                      GeglBuffer          *part);
+gboolean        gegl_sc_context_render         (GeglScContext       *context,
+                                                GeglScRenderInfo    *info,
+                                                const GeglRectangle *part_rect,
+                                                GeglBuffer          *part);
 
-void       sc_context_free           (ScContext           *context);
+void            gegl_sc_context_free           (GeglScContext       *context);
 
 #endif

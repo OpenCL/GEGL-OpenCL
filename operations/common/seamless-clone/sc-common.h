@@ -29,39 +29,39 @@
  * ALPHA CHANNEL IS ALWAYS LAST. DO NOT CHANGE THIS WITHOUT UPDATING
  * THE REST OF THE CODE!
  */
-#define SC_COLOR_BABL_NAME     "R'G'B'A float"
+#define GEGL_SC_COLOR_BABL_NAME     "R'G'B'A float"
 
 /**
  * The type used for individual color channels. Note that this should
  * never be used directly - you must get a pointer to this type using
  * the allocation macros below!
  */
-typedef gfloat ScColor;
+typedef gfloat GeglScColor;
 
 /**
  * The amount of channels per color
  */
-#define SC_COLORA_CHANNEL_COUNT 4
-#define SC_COLOR_CHANNEL_COUNT  ((SC_COLORA_CHANNEL_COUNT) - 1)
+#define GEGL_SC_COLORA_CHANNEL_COUNT 4
+#define GEGL_SC_COLOR_CHANNEL_COUNT  ((GEGL_SC_COLORA_CHANNEL_COUNT) - 1)
 
-#define sc_color_new()     (g_new (ScColor, SC_COLORA_CHANNEL_COUNT))
-#define sc_color_free(mem) (g_free (mem))
+#define gegl_sc_color_new()     (g_new (GeglScColor, GEGL_SC_COLORA_CHANNEL_COUNT))
+#define gegl_sc_color_free(mem) (g_free (mem))
 /**
  * The index of the alpha channel in the color
  */
-#define SC_COLOR_ALPHA_INDEX   SC_COLOR_CHANNEL_COUNT
+#define GEGL_SC_COLOR_ALPHA_INDEX   GEGL_SC_COLOR_CHANNEL_COUNT
 
 /**
  * Apply a macro once for each non-alpha color channel, with the
  * channel index as an input
  */
-#define sc_color_process()  \
-G_STMT_START                \
-  {                         \
-    sc_color_expr(0);       \
-    sc_color_expr(1);       \
-    sc_color_expr(2);       \
-  }                         \
+#define gegl_sc_color_process()  \
+G_STMT_START                     \
+  {                              \
+    gegl_sc_color_expr(0);       \
+    gegl_sc_color_expr(1);       \
+    gegl_sc_color_expr(2);       \
+  }                              \
 G_STMT_END
 
 typedef struct {
@@ -75,9 +75,9 @@ typedef struct {
   gint           yoff;
 
   gboolean       render_bg;
-} ScRenderInfo;
+} GeglScRenderInfo;
 
-#define sc_point_in_rectangle(px, py, rect) \
+#define gegl_sc_point_in_rectangle(px, py, rect) \
   (   ((px) >= (rect)->x)                   \
    && ((py) >= (rect)->y)                   \
    && ((px) < (rect)->x + (rect)->width)    \
