@@ -955,25 +955,18 @@ transform_affine (GeglBuffer  *dest,
                 inverse.coeff [1][1] * (roi->y + (gdouble) 0.5) +
                 inverse.coeff [1][2];
 
-      if (flip_x)
-	{
-	  /*
-	   * "Flip", that is, put the "horizontal start" at the end
-	   * instead of at the beginning of a scan line:
-	   */
-	  u_start += (roi->width - (gint) 1) * inverse.coeff [0][0];
-	  v_start += (roi->width - (gint) 1) * inverse.coeff [1][0];
-	}
+      /*
+       * If flip_x is "true", "flip", that is, put the "horizontal
+       * start" at the end instead of at the beginning of a scan line:
+       */
+      u_start += flip_x * ((roi->width - (gint) 1) * inverse.coeff [0][0]);
+      v_start += flip_x * ((roi->width - (gint) 1) * inverse.coeff [1][0]);
 
-      if (flip_y)
-	{
-          /*
-           * "Flip", that is, put the "vertical start" at the last
-           * instead of at the first scan line:
-           */
-          u_start += (roi->height - (gint) 1) * inverse.coeff [0][1];
-          v_start += (roi->height - (gint) 1) * inverse.coeff [1][1];
-	}
+      /*
+       * Same with flip_y:
+       */
+      u_start += flip_y * ((roi->height - (gint) 1) * inverse.coeff [0][1]);
+      v_start += flip_y * ((roi->height - (gint) 1) * inverse.coeff [1][1]);
 
       dest_ptr = dest_buf +
                  (gint) 4 * (roi->width  - (gint) 1) * flip_x +
