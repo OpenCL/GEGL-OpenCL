@@ -903,6 +903,13 @@ transform_affine (GeglBuffer  *dest,
 
       dest_buf = (gfloat *)i->data[0];
 
+      u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff [0][2];
+      v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff [1][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff [1][2];
+
       /*
        * Set the inverse_jacobian matrix (a.k.a. scale) for samplers
        * that support it. The inverse jacobian will be "flipped" if
@@ -925,15 +932,7 @@ transform_affine (GeglBuffer  *dest,
       inverse_jacobian.coeff [1][0] = inverse.coeff [1][0];
       inverse_jacobian.coeff [1][1] = inverse.coeff [1][1];
 
-      u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff [0][2];
-      v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff [1][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff [1][2];
-
-      if (inverse_jacobian.coeff [0][0] + inverse_jacobian.coeff [1][0] <
-          (gdouble) 0.0)
+      if (inverse.coeff [0][0] + inverse.coeff [1][0] < (gdouble) 0.0)
         {
           /*
            * "Flip", that is, put the "horizontal start" at the end
@@ -944,8 +943,8 @@ transform_affine (GeglBuffer  *dest,
           /*
            * Flip the horizontal scan component of the inverse jacobian:
            */
-          inverse_jacobian.coeff [0][0] = -inverse_jacobian.coeff [0][0];
-          inverse_jacobian.coeff [1][0] = -inverse_jacobian.coeff [1][0];
+          inverse_jacobian.coeff [0][0] = -inverse.coeff [0][0];
+          inverse_jacobian.coeff [1][0] = -inverse.coeff [1][0];
           /*
            * Set the flag so we know in which horizontal order we'll be
            * traversing the ROI with.
@@ -953,8 +952,7 @@ transform_affine (GeglBuffer  *dest,
           flip_x = (gint) 1;
         }
 
-      if (inverse_jacobian.coeff [0][1] + inverse_jacobian.coeff [1][1] <
-          (gdouble) 0.0)
+      if (inverse.coeff [0][1] + inverse.coeff [1][1] < (gdouble) 0.0)
         {
           /*
            * "Flip", that is, put the "vertical start" at the last
@@ -965,8 +963,8 @@ transform_affine (GeglBuffer  *dest,
           /*
            * Flip the vertical scan component of the inverse jacobian:
            */
-          inverse_jacobian.coeff [0][1] = -inverse_jacobian.coeff [0][1];
-          inverse_jacobian.coeff [1][1] = -inverse_jacobian.coeff [1][1];
+          inverse_jacobian.coeff [0][1] = -inverse.coeff [0][1];
+          inverse_jacobian.coeff [1][1] = -inverse.coeff [1][1];
           /*
            * Set the flag so we know in which vertical order we'll be
            * traversing the ROI with.
