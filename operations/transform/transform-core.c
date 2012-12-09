@@ -789,7 +789,9 @@ transform_affine (GeglBuffer  *dest,
   gdouble              u_start,
                        v_start,
                        u_float,
-                       v_float;
+                       v_float,
+                       base_u,
+                       base_v;
 
   const Babl          *format;
 
@@ -942,35 +944,32 @@ transform_affine (GeglBuffer  *dest,
       flip_y = (gint) 1;
     }
 
+  /*
+   * Hoist most of what can be out of the while loop:
+   */
+  base_u   = inverse.coeff [0][0] * ((gdouble) 0.5 - flip_x) +
+             inverse.coeff [0][1] * ((gdouble) 0.5 - flip_y) +
+             inverse.coeff [0][2];
+  base_v   = inverse.coeff [1][0] * ((gdouble) 0.5 - flip_x) +
+             inverse.coeff [1][1] * ((gdouble) 0.5 - flip_y) +
+             inverse.coeff [1][2];
+
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
 
       dest_buf = (gfloat *)i->data[0];
 
-      u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff [0][2];
-      v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff [1][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff [1][2];
-
-      /*
-       * If flip_x is "true", "flip", that is, put the "horizontal
-       * start" at the end instead of at the beginning of a scan line:
-       */
-      u_start += flip_x * ((roi->width - (gint) 1) * inverse.coeff [0][0]);
-      v_start += flip_x * ((roi->width - (gint) 1) * inverse.coeff [1][0]);
-
-      /*
-       * Same with flip_y:
-       */
-      u_start += flip_y * ((roi->height - (gint) 1) * inverse.coeff [0][1]);
-      v_start += flip_y * ((roi->height - (gint) 1) * inverse.coeff [1][1]);
+      u_start = base_u +
+	        inverse.coeff [0][0] * ( roi->x + flip_x * roi->width  ) +
+	        inverse.coeff [0][1] * ( roi->y + flip_y * roi->height );
+      v_start = base_v +
+        	inverse.coeff [1][0] * ( roi->x + flip_x * roi->width  ) +
+        	inverse.coeff [1][1] * ( roi->y + flip_y * roi->height );
 
       dest_ptr = dest_buf +
-                 (gint) 4 * (roi->width  - (gint) 1) * flip_x +
-                 (gint) 4 * (roi->height - (gint) 1) * roi->width * flip_y;
+                 (gint) 4 * flip_x * (roi->width  - (gint) 1) +
+                 (gint) 4 * flip_y * (roi->height - (gint) 1) * roi->width;
 
       for (y = roi->height; y--;)
         {
@@ -992,7 +991,7 @@ transform_affine (GeglBuffer  *dest,
               v_float += inverse_jacobian.coeff [1][0];
             }
 
-          dest_ptr += (gint) 8 * roi->width * (flip_x - flip_y);
+          dest_ptr += (gint) 8 * (flip_x - flip_y) * roi->width;
 
           u_start += inverse_jacobian.coeff [0][1];
           v_start += inverse_jacobian.coeff [1][1];
