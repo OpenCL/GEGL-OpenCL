@@ -897,6 +897,51 @@ transform_affine (GeglBuffer  *dest,
   gegl_matrix3_copy_into (&inverse, matrix);
   gegl_matrix3_invert (&inverse);
 
+  inverse_jacobian.coeff [0][0] = inverse.coeff [0][0];
+  inverse_jacobian.coeff [0][1] = inverse.coeff [0][1];
+  inverse_jacobian.coeff [1][0] = inverse.coeff [1][0];
+  inverse_jacobian.coeff [1][1] = inverse.coeff [1][1];
+
+  /*
+   * Set the inverse_jacobian matrix (a.k.a. scale) for samplers that
+   * support it. The inverse jacobian will be "flipped" if the
+   * direction in which the ROI is filled is flipped. Flipping the
+   * inverse jacobian is not necessary for the samplers' sake, but it
+   * makes the following code shorter. Anyway, "sane" use of the
+   * inverse jacobian by a sampler only cares for its effect on sets:
+   * only the image of a centered square with sides aligned with the
+   * coordinate axes, or a centered disc, matters, irrespective of
+   * orientation ("left-hand" VS "right-hand") issues.
+   */
+
+  if (inverse.coeff [0][0] + inverse.coeff [1][0] < (gdouble) 0.0)
+    {
+      /*
+       * Flip the horizontal scan component of the inverse jacobian:
+       */
+      inverse_jacobian.coeff [0][0] = -inverse.coeff [0][0];
+      inverse_jacobian.coeff [1][0] = -inverse.coeff [1][0];
+      /*
+       * Set the flag so we know in which horizontal order we'll be
+       * traversing the ROI with.
+       */
+      flip_x = (gint) 1;
+    }
+
+  if (inverse.coeff [0][1] + inverse.coeff [1][1] < (gdouble) 0.0)
+    {
+      /*
+       * Flip the vertical scan component of the inverse jacobian:
+       */
+      inverse_jacobian.coeff [0][1] = -inverse.coeff [0][1];
+      inverse_jacobian.coeff [1][1] = -inverse.coeff [1][1];
+      /*
+       * Set the flag so we know in which vertical order we'll be
+       * traversing the ROI with.
+       */
+      flip_y = (gint) 1;
+    }
+
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
@@ -910,67 +955,25 @@ transform_affine (GeglBuffer  *dest,
                 inverse.coeff [1][1] * (roi->y + (gdouble) 0.5) +
                 inverse.coeff [1][2];
 
-      /*
-       * Set the inverse_jacobian matrix (a.k.a. scale) for samplers
-       * that support it. The inverse jacobian will be "flipped" if
-       * the direction in which the ROI is filled is flipped. Flipping
-       * the inverse jacobian is not necessary for the samplers' sake,
-       * but it makes the following code shorter. Anyway, "sane" use
-       * of the inverse jacobian by a sampler only cares for its
-       * effect on sets: only the image of a centered square with
-       * sides aligned with the coordinate axes, or a centered disc,
-       * matters, irrespective of orientation ("left-hand" VS
-       * "right-hand") issues.
-       */
-      /*
-       * For reasons that are mysterious (to Nicolas), hoisting the
-       * following setting of inverse_jacobian values out of the while
-       * loop changes the results of doing affine transformations.
-       */
-      inverse_jacobian.coeff [0][0] = inverse.coeff [0][0];
-      inverse_jacobian.coeff [0][1] = inverse.coeff [0][1];
-      inverse_jacobian.coeff [1][0] = inverse.coeff [1][0];
-      inverse_jacobian.coeff [1][1] = inverse.coeff [1][1];
+      if (flip_x)
+	{
+	  /*
+	   * "Flip", that is, put the "horizontal start" at the end
+	   * instead of at the beginning of a scan line:
+	   */
+	  u_start += (roi->width - (gint) 1) * inverse.coeff [0][0];
+	  v_start += (roi->width - (gint) 1) * inverse.coeff [1][0];
+	}
 
-      if (inverse.coeff [0][0] + inverse.coeff [1][0] < (gdouble) 0.0)
-        {
-          /*
-           * "Flip", that is, put the "horizontal start" at the end
-           * instead of at the beginning of a scan line:
-           */
-          u_start += (roi->width - (gint) 1) * inverse.coeff [0][0];
-          v_start += (roi->width - (gint) 1) * inverse.coeff [1][0];
-          /*
-           * Flip the horizontal scan component of the inverse jacobian:
-           */
-          inverse_jacobian.coeff [0][0] = -inverse.coeff [0][0];
-          inverse_jacobian.coeff [1][0] = -inverse.coeff [1][0];
-          /*
-           * Set the flag so we know in which horizontal order we'll be
-           * traversing the ROI with.
-           */
-          flip_x = (gint) 1;
-        }
-
-      if (inverse.coeff [0][1] + inverse.coeff [1][1] < (gdouble) 0.0)
-        {
+      if (flip_y)
+	{
           /*
            * "Flip", that is, put the "vertical start" at the last
            * instead of at the first scan line:
            */
           u_start += (roi->height - (gint) 1) * inverse.coeff [0][1];
-          v_start += (roi->height - (gint) 1) * inverse.coeff [1][1] ;
-          /*
-           * Flip the vertical scan component of the inverse jacobian:
-           */
-          inverse_jacobian.coeff [0][1] = -inverse.coeff [0][1];
-          inverse_jacobian.coeff [1][1] = -inverse.coeff [1][1];
-          /*
-           * Set the flag so we know in which vertical order we'll be
-           * traversing the ROI with.
-           */
-          flip_y = (gint) 1;
-        }
+          v_start += (roi->height - (gint) 1) * inverse.coeff [1][1];
+	}
 
       dest_ptr = dest_buf +
                  (gint) 4 * (roi->width  - (gint) 1) * flip_x +
