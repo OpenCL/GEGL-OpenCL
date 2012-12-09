@@ -792,15 +792,10 @@ transform_affine (GeglBuffer  *dest,
                        v_float,
                        base_u,
                        base_v;
-
-  const Babl          *format;
-
-  gint                 dest_pixels;
-
-  gint                 flip_x = 0,
+  const Babl          *format = babl_format ("RaGaBaA float");
+  gint                 dest_pixels,
+                       flip_x = 0,
                        flip_y = 0;
-
-  format = babl_format ("RaGaBaA float");
 
   /*
    * XXX: fast paths as existing in files in the same dir as
@@ -1019,12 +1014,8 @@ transform_generic (GeglBuffer  *dest,
                        u_float,
                        v_float,
                        w_float;
-
-  const Babl          *format;
-
+  const Babl          *format = babl_format ("RaGaBaA float");
   gint                 dest_pixels;
-
-  format = babl_format ("RaGaBaA float");
 
   g_object_get (dest, "pixels", &dest_pixels, NULL);
   dest_extent = gegl_buffer_get_extent (dest);
