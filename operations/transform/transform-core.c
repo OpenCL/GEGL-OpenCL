@@ -947,12 +947,12 @@ transform_affine (GeglBuffer  *dest,
   /*
    * Hoist most of what can be out of the while loop:
    */
-  base_u   = inverse.coeff [0][0] * ((gdouble) 0.5 - flip_x) +
-             inverse.coeff [0][1] * ((gdouble) 0.5 - flip_y) +
-             inverse.coeff [0][2];
-  base_v   = inverse.coeff [1][0] * ((gdouble) 0.5 - flip_x) +
-             inverse.coeff [1][1] * ((gdouble) 0.5 - flip_y) +
-             inverse.coeff [1][2];
+  base_u = inverse.coeff [0][0] * ((gdouble) 0.5 - flip_x) +
+           inverse.coeff [0][1] * ((gdouble) 0.5 - flip_y) +
+           inverse.coeff [0][2];
+  base_v = inverse.coeff [1][0] * ((gdouble) 0.5 - flip_x) +
+           inverse.coeff [1][1] * ((gdouble) 0.5 - flip_y) +
+           inverse.coeff [1][2];
 
   while (gegl_buffer_iterator_next (i))
     {
@@ -961,11 +961,11 @@ transform_affine (GeglBuffer  *dest,
       dest_buf = (gfloat *)i->data[0];
 
       u_start = base_u +
-	        inverse.coeff [0][0] * ( roi->x + flip_x * roi->width  ) +
-	        inverse.coeff [0][1] * ( roi->y + flip_y * roi->height );
+                inverse.coeff [0][0] * ( roi->x + flip_x * roi->width  ) +
+                inverse.coeff [0][1] * ( roi->y + flip_y * roi->height );
       v_start = base_v +
-        	inverse.coeff [1][0] * ( roi->x + flip_x * roi->width  ) +
-        	inverse.coeff [1][1] * ( roi->y + flip_y * roi->height );
+                inverse.coeff [1][0] * ( roi->x + flip_x * roi->width  ) +
+                inverse.coeff [1][1] * ( roi->y + flip_y * roi->height );
 
       dest_ptr = dest_buf +
                  (gint) 4 * flip_x * (roi->width  - (gint) 1) +
