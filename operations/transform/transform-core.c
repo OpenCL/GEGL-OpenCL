@@ -894,14 +894,14 @@ transform_affine (GeglBuffer  *dest,
    * Jacobian matrix alone.
    */
 
+  gegl_matrix3_copy_into (&inverse, matrix);
+  gegl_matrix3_invert (&inverse);
+
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
 
       dest_buf = (gfloat *)i->data[0];
-
-      gegl_matrix3_copy_into (&inverse, matrix);
-      gegl_matrix3_invert (&inverse);
 
       /*
        * Set the inverse_jacobian matrix (a.k.a. scale) for samplers
@@ -914,6 +914,11 @@ transform_affine (GeglBuffer  *dest,
        * sides aligned with the coordinate axes, or a centered disc,
        * matters, irrespective of orientation ("left-hand" VS
        * "right-hand") issues.
+       */
+      /*
+       * For reasons that are mysterious (to Nicolas), hoisting the
+       * following setting of inverse_jacobian values out of the while
+       * loop changes the results of doing affine transformations.
        */
       inverse_jacobian.coeff [0][0] = inverse.coeff [0][0];
       inverse_jacobian.coeff [0][1] = inverse.coeff [0][1];
