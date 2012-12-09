@@ -463,10 +463,10 @@ gegl_transform_get_source_matrix (OpTransform *transform,
 static GeglRectangle
 gegl_transform_get_bounding_box (GeglOperation *op)
 {
-  OpTransform *transform = OP_TRANSFORM (op);
-  GeglMatrix3  matrix;
+  OpTransform  *transform = OP_TRANSFORM (op);
+  GeglMatrix3   matrix;
 
-  GeglRectangle in_rect = {0,0,0,0},
+  GeglRectangle in_rect   = {0,0,0,0},
                 have_rect;
   gdouble       have_points [8];
   gint          i;
@@ -791,12 +791,12 @@ transform_affine (GeglBuffer  *dest,
                        u_float,
                        v_float;
 
-  const Babl           *format;
+  const Babl          *format;
 
-  gint                  dest_pixels;
+  gint                 dest_pixels;
 
-  gint                  flip_x = 0,
-                        flip_y = 0;
+  gint                 flip_x = 0,
+                       flip_y = 0;
 
   format = babl_format ("RaGaBaA float");
 
@@ -830,7 +830,7 @@ transform_affine (GeglBuffer  *dest,
     {
       GeglRectangle *roi = &i->roi[0];
 
-      dest_buf           = (gfloat *)i->data[0];
+      dest_buf = (gfloat *)i->data[0];
 
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
@@ -971,7 +971,7 @@ transform_generic (GeglBuffer  *dest,
     {
       GeglRectangle *roi = &i->roi[0];
 
-      dest_buf           = (gfloat *)i->data[0];
+      dest_buf = (gfloat *)i->data[0];
 
       gegl_matrix3_copy_into (&inverse, matrix);
       gegl_matrix3_invert (&inverse);
