@@ -1129,7 +1129,7 @@ gegl_transform_matrix3_allow_fast_translate (GeglMatrix3 *matrix)
     return FALSE;
 
   /*
-   * Get rid of coefficients that are noise on top of the translation.
+   * Check if it is a translation matrix.
    */
   return gegl_matrix3_is_translate (matrix);
 }
