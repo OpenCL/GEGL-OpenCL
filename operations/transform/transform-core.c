@@ -933,8 +933,7 @@ transform_affine (GeglBuffer  *dest,
       inverse_jacobian.coeff [0][1] = -inverse.coeff [0][1];
       inverse_jacobian.coeff [1][1] = -inverse.coeff [1][1];
       /*
-       * Set the flag so we know in which vertical order we'll be
-       * traversing the ROI with.
+       * Set the flag.
        */
       flip_y = (gint) 1;
     }
