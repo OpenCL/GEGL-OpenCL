@@ -178,7 +178,7 @@ gegl_config_set_property (GObject      *gobject,
         config->use_opencl = g_value_get_boolean (value);
 
         if (config->use_opencl)
-          gegl_cl_init (NULL);
+          config->use_opencl = gegl_cl_init (NULL);
 
         break;
       case PROP_QUEUE_LIMIT:

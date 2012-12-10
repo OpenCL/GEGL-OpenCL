@@ -751,9 +751,6 @@ gegl_processor_work (GeglProcessor *processor,
 
   if (gegl_config()->use_opencl)
     {
-      /* Initialize OpenCL if wanted and possible */
-      gegl_cl_init (NULL);
-
       if (gegl_cl_is_accelerated ()
           && processor->chunk_size != GEGL_CL_CHUNK_SIZE)
         {
