@@ -1088,8 +1088,8 @@ transform_generic (GeglBuffer  *dest,
 }
 
 /*
- * Use to determine if transform matrix coefficients are close enough
- * to integers.
+ * Use to determine if key transform matrix coefficients are close
+ * enough to zero or integers.
  */
 #define GEGL_TRANSFORM_CORE_EPSILON ((gdouble) 0.0000001)
 
@@ -1102,14 +1102,14 @@ static inline gboolean is_zero (const gdouble f)
 
 static inline gboolean is_one (const gdouble f)
 {
-  return is_zero(f-(gdouble) 1.0);
+  return (is_zero (f-(gdouble) 1.0));
 }
 
 static gboolean gegl_matrix3_is_affine (GeglMatrix3 *matrix)
 {
-  return is_zero (matrix->coeff [2][0]) &&
-         is_zero (matrix->coeff [2][1]) &&
-         is_one  (matrix->coeff [2][2]);
+  return (is_zero (matrix->coeff [2][0]) &&
+	  is_zero (matrix->coeff [2][1]) &&
+	  is_one  (matrix->coeff [2][2]));
 }
 
 static gboolean
