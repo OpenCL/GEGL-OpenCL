@@ -1129,7 +1129,7 @@ gegl_transform_matrix3_allow_fast_translate (GeglMatrix3 *matrix)
     return FALSE;
 
   /*
-   * Check if it a translation matrix.
+   * Get rid of coefficients that are noise on top of the translation.
    */
   return gegl_matrix3_is_translate (matrix);
 }
@@ -1175,7 +1175,6 @@ gegl_transform_process (GeglOperation        *operation,
        * current cubic, for example).
        */
       input  = gegl_operation_context_get_source (context, "input");
-
       output =
         g_object_new (GEGL_TYPE_BUFFER,
                       "source", input,
