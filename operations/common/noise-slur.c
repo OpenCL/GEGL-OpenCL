@@ -47,19 +47,19 @@ gegl_chant_int (repeat, _("Repeat"),   1, 100, 1, _("Repeat"))
 #include <math.h>
 #include <stdlib.h>
 
+
 static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area;
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   op_area->left   =
-    op_area->right  =
-    op_area->top    =
-    op_area->bottom = 1;
+  op_area->right  =
+  op_area->top    =
+  op_area->bottom = 1;
 
   gegl_operation_set_format (operation, "input" , babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-
 }
 
 static gboolean
@@ -80,11 +80,8 @@ process (GeglOperation       *operation,
   gint n_pixels = result->width * result->height;
   gint width  = result->width;
   GeglRectangle src_rect;
-  GRand    *gr;
   gint k, b, i;
   gint total_pixels;
-
-  gr = g_rand_new_with_seed (o->seed);
 
   tmp = gegl_buffer_new(result, babl_format ("RGBA float"));
 
@@ -103,6 +100,7 @@ process (GeglOperation       *operation,
 
   for (i = 0; i < o->repeat; i++)
   {
+    int x, y;
     n_pixels = result->width * result->height;
 
     gegl_buffer_get (tmp, &src_rect, 1.0, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
@@ -110,41 +108,50 @@ process (GeglOperation       *operation,
     in_pixel  = src_buf + (src_rect.width + 1) * 4;
     out_pixel = dst_buf;
 
+    x = result->x;
+    y = result->y;
+
     while (n_pixels--)
       {
-        if (g_rand_double_range (gr, 0.0, 100.0) <= o->pct_random)
-        {
-          k = g_rand_int_range (gr, 0, 10);
-
-          for (b = 0; b < 4; b++)
+        if (gegl_random_double_range (o->seed, x,y,0,i*2,0.0, 100.0) <= o->pct_random)
           {
-            switch (k )
+            k = gegl_random_int_range (o->seed, x,y,0,i*2+1,0, 10);
+
+            for (b = 0; b < 4; b++)
             {
-              case 0:
-                out_pixel[b] = in_pixel[b - src_rect.width*4 - 4];
-                break;
-              case 9:
+              switch (k )
+              {
+                case 0:
+                  out_pixel[b] = in_pixel[b - src_rect.width*4 - 4];
+                  break;
+                case 9:
                   out_pixel[b] = in_pixel[b - src_rect.width*4 + 4];
-                break;
-              default:
+                  break;
+                default:
                   out_pixel[b] = in_pixel[b - src_rect.width*4];
-                break;
+                  break;
+              }
             }
           }
-        }
-        else
-        {
-          for (b = 0; b < 4; b++)
+          else
           {
-            out_pixel[b] = in_pixel[b];
+            for (b = 0; b < 4; b++)
+            {
+              out_pixel[b] = in_pixel[b];
+            }
           }
-        }
 
-        if (n_pixels % width == 0)
-          in_pixel += 12;
-        else
-          in_pixel  += 4;
-        out_pixel += 4;
+          if (n_pixels % width == 0)
+            in_pixel += 12;
+          else
+            in_pixel  += 4;
+          out_pixel += 4;
+          x++;
+          if (x>=result->x + result->width)
+            {
+              x=result->x;
+              y++;
+            }
       }
 
     gegl_buffer_set (tmp, result, 0, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);

@@ -900,6 +900,12 @@ GeglNode *gegl_node (const gchar *op_type,
  */
 GeglNode *gegl_graph (GeglNode *node);
 
+
+double gegl_random_double_range (int seed, int x, int y, int z, int n, double min, double max);
+gint64 gegl_random_int_range    (int seed, int x, int y, int z, int n, int min, int max);
+gint64 gegl_random_int          (int seed, int x, int y, int z, int n);
+double gegl_random_double       (int seed, int x, int y, int z, int n);
+
 #define GEGL_ALIGNED __restrict__ __attribute__((__aligned__ (16)))
 
 G_END_DECLS
