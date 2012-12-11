@@ -17,6 +17,7 @@
  */
 
 #include <glib.h>
+#include <gegl.h>
 
 /* a set of reasonably large primes to choose from for array sizes
  */
@@ -47,18 +48,17 @@ static long primes[]={
 #define XPRIME     103423 
 #define ZPRIME     101359
 #define NPRIME     101111
-#define MAX_TABLES 4
+#define MAX_TABLES 3
 
 typedef struct GeglRandomSet
 {
-  int     last_use;
   int     seed;
   int     tables;
   gint64 *table[MAX_TABLES];
   long    prime[MAX_TABLES];
 } GeglRandomSet;
 
-#define make_index(x,y,n)   ((x) * XPRIME + (z) * ZPRIME + (n) * NPRIME)
+#define make_index(x,y,n)   ((x) * XPRIME + (z) * ZPRIME * XPRIME + (n) * NPRIME * ZPRIME * XPRIME)
 
 static GeglRandomSet *gegl_random_set_new (int seed)
 {
@@ -72,14 +72,14 @@ static GeglRandomSet *gegl_random_set_new (int seed)
   for (i = 0; i < set->tables; i++)
     {
       int j;
-      set->prime[i] = primes[g_rand_int_range (gr, 0, N_PRIMES-1)];
+      set->prime[i] = primes[g_rand_int_range (gr, 0, N_PRIMES-2)];
       /*
        * it might be possible to share a set of random data between sets
        * and rejuggle the prime sizes chosen and keep an additional offset
        * for feeding randomness.
        *
        */
-      set->table[i] = g_malloc0 (sizeof (guint64) * set->prime[i]); 
+      set->table[i] = g_malloc0 (sizeof (gint64) * set->prime[i]); 
       for (j = 0; j < set->prime[i]; j++)
         set->table[i][j] = (((gint64)g_rand_int (gr)) << 32) + g_rand_int(gr);
     }
@@ -97,7 +97,18 @@ static void gegl_random_set_free (GeglRandomSet *set)
 
 /* a better cache with more entries would be nice ;) */
 static GeglRandomSet *cached = NULL;
-static long cachetime = 0;
+static GList         *cache  = NULL;
+
+static void trim_cache_to_length (int length)
+{
+  while (g_list_length (cache) > length)
+    {
+      GeglRandomSet *last = g_list_last (cache)->data;
+      cache = g_list_remove (cache, last);
+      gegl_random_set_free (last);
+    }
+}
+
 static inline GeglRandomSet *gegl_random_get_set_for_seed (int seed)
 {
   if (cached && cached->seed == seed)
@@ -106,11 +117,26 @@ static inline GeglRandomSet *gegl_random_get_set_for_seed (int seed)
     }
   else
     {
+      GList *l;
       if (cached)
-        gegl_random_set_free (cached);
+        {
+          cache = g_list_prepend (cache, cached);
+          cached = NULL;
+          trim_cache_to_length (10);
+        }
+
+      for (l = cache; l; l=l->next)
+        {
+          GeglRandomSet *s = l->data;
+          if (s->seed == seed)
+            {
+              cached = s;
+              cache = g_list_remove (cache, cached);
+              return cached;
+            }
+        }
       cached = gegl_random_set_new (seed);
     }
-  cached->last_use = cachetime++;
   return cached;
 }
 
@@ -121,11 +147,11 @@ gegl_random_int (int seed, int x, int y, int z, int n)
   /* XXX: z is unhandled, it should average like a mipmap - or even
    * use mipmap versions of random set
    */
-  long idx = make_index(x,y,n);
+  unsigned long idx = make_index(x,y,n);
   gint64 ret = 0;
   int i;
   for (i = 0; i < set->tables; i++)
-    ret ^= set->table[i][idx % set->prime[i]];
+    ret ^= set->table[i][idx % (set->prime[i])];
   return ret;
 }
 
