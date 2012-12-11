@@ -36,6 +36,8 @@ gegl_chant_double (blue, _("Blue"),   0.0, 1.0, 0.20, _("Blue"))
 
 gegl_chant_double (alpha, _("Alpha"),   0.0, 1.0, 0.00, _("Alpha"))
 
+gegl_chant_seed (seed, _("Seed"), _("Random seed"))
+
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
@@ -55,16 +57,16 @@ gegl_chant_double (alpha, _("Alpha"),   0.0, 1.0, 0.00, _("Alpha"))
  * K+M, ACM Trans Math Software 3 (1977) 257-260.
 */
 static gdouble
-gauss (GRand *gr)
+gauss (int seed, int *i, int xx, int yy)
 {
   gdouble u, v, x;
 
   do
   {
-    v = g_rand_double (gr);
+    v = gegl_random_double (seed, xx, yy, 0, (*i)++);
 
     do
-      u = g_rand_double (gr);
+      u = gegl_random_double (seed, xx, yy, 0, (*i)++);
     while (u == 0);
 
     /* Const 1.715... = sqrt(8/e) */
@@ -92,15 +94,14 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o  = GEGL_CHANT_PROPERTIES (operation);
 
-  GRand    *noise_gr;
   gdouble  noise_coeff = 0.0;
+  int      rint = 0;
   gint     b, i;
+  gint     x, y;
   gdouble  noise[4];
   gfloat   tmp;
   gfloat   * GEGL_ALIGNED in_pixel;
   gfloat   * GEGL_ALIGNED out_pixel;
-
-  noise_gr = g_rand_new ();
 
   in_pixel   = in_buf;
   out_pixel  = out_buf;
@@ -110,12 +111,15 @@ process (GeglOperation       *operation,
   noise[2] = o->blue;
   noise[3] = o->alpha;
 
+  x = roi->x;
+  y = roi->y;
+
   for (i=0; i<n_pixels; i++)
   {
     for (b = 0; b < 4; b++)
     {
       if (b == 0 || o->independent || b == 3 )
-         noise_coeff = noise[b] * gauss (noise_gr) * 0.5;
+         noise_coeff = noise[b] * gauss (o->seed, &rint, x, y) * 0.5;
 
       if (noise[b] > 0.0)
       {
@@ -139,9 +143,13 @@ process (GeglOperation       *operation,
     in_pixel  += 4;
     out_pixel += 4;
 
+    x++;
+    if (x >= roi->x + roi->width)
+      {
+        x = roi->x;
+        y++;
+      }
   }
-
-  g_rand_free (noise_gr);
 
   return TRUE;
 }
