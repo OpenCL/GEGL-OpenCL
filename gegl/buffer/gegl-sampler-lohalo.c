@@ -1986,7 +1986,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
        * ImageMagick (now fixed, thanks to Cristy).
        */
       const gdouble sqrt_discriminant =
-	sqrt (((double) discriminant > 0.) ? (double) discriminant : 0.);
+	sqrt ((double) discriminant > 0. ? (double) discriminant : 0.);
 
       /*
        * Initially, we only compute the squares of the singular
