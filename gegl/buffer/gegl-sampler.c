@@ -65,6 +65,9 @@ static void set_property (GObject      *gobject,
 static void set_buffer (GeglSampler  *self,
                         GeglBuffer   *buffer);
 
+GType
+gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type);
+
 G_DEFINE_TYPE (GeglSampler, gegl_sampler, G_TYPE_OBJECT)
 
 static void
@@ -258,14 +261,17 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
        * maximum width and height of the fetch_rectangle is 64, so
        * that half of it is 32, one fourth of the elbow room is at most
        * 8.
+       *
+       * Note: numerator is non-negative, so "/ 8" can be replaced by
+       * ">> 3"
        */
 
       fetch_rectangle.x =
         x + sampler->context_rect[0].x -
-        ( maximum_width_and_height - sampler->context_rect[0].width  ) / 8;
+        ((maximum_width_and_height - sampler->context_rect[0].width ) >> 3);
       fetch_rectangle.y =
         y + sampler->context_rect[0].y -
-        ( maximum_width_and_height - sampler->context_rect[0].height ) / 8;
+        ((maximum_width_and_height - sampler->context_rect[0].height) >> 3);
 
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
@@ -341,9 +347,9 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
       GeglRectangle fetch_rectangle;
 
       fetch_rectangle.x =
-        x - ( maximum_width_and_height - sampler->context_rect[0].width  ) / 8;
+        x - ((maximum_width_and_height - sampler->context_rect[0].width ) >> 3);
       fetch_rectangle.y =
-        y - ( maximum_width_and_height - sampler->context_rect[0].height ) / 8;
+        y - ((maximum_width_and_height - sampler->context_rect[0].height) >> 3);
 
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
@@ -430,10 +436,10 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
 
       fetch_rectangle.x =
         x + sampler->context_rect[level].x -
-        ( maximum_width_and_height - sampler->context_rect[level].width  ) / 8;
+        ((maximum_width_and_height - sampler->context_rect[level].width ) >> 3);
       fetch_rectangle.y =
         y + sampler->context_rect[level].y -
-        ( maximum_width_and_height - sampler->context_rect[level].height ) / 8;
+        ((maximum_width_and_height - sampler->context_rect[level].height) >> 3);
 
       fetch_rectangle.width  = maximum_width_and_height;
       fetch_rectangle.height = maximum_width_and_height;
@@ -549,8 +555,6 @@ gegl_sampler_type_from_string (const gchar *string)
 }
 
 GType
-gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type);
-GType
 gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
 {
   switch (sampler_type)
@@ -569,12 +573,12 @@ gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
 }
 
 GeglSampler *
-gegl_buffer_sampler_new (GeglBuffer       *buffer,
-                         const Babl       *format,
-                         GeglSamplerType   sampler_type)
+gegl_buffer_sampler_new (GeglBuffer      *buffer,
+                         const Babl      *format,
+                         GeglSamplerType  sampler_type)
 {
-  GeglSampler          *sampler;
-  GType                 desired_type;
+  GeglSampler *sampler;
+  GType        desired_type;
   if (format == NULL)
     format = babl_format ("RaGaBaA float");
   desired_type = gegl_sampler_gtype_from_enum (sampler_type);
