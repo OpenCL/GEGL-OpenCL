@@ -1975,18 +1975,18 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
       const gdouble n12 = a * c + b * d;
       const gdouble n21 = n12;
       const gdouble n22 = cc + dd;
-      const gdouble det = a * d - b * c;
-      const gdouble twice_det = det + det;
-      const gdouble frobenius_squared = n11 + n22;
-      const gdouble discriminant =
+      const double det = a * d - b * c;
+      const double twice_det = det + det;
+      const double frobenius_squared = n11 + n22;
+      const double discriminant =
         ( frobenius_squared + twice_det ) * ( frobenius_squared - twice_det );
       /*
        * In exact arithmetic, the discriminant cannot be negative. In
        * floating point, it can, leading a non-deterministic bug in
        * ImageMagick (now fixed, thanks to Cristy).
        */
-      const gdouble sqrt_discriminant =
-	sqrt ((double) discriminant > 0. ? (double) discriminant : 0.);
+      const double sqrt_discriminant =
+	sqrt (discriminant > 0. ? discriminant : 0.);
 
       /*
        * Initially, we only compute the squares of the singular
@@ -2021,8 +2021,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
            * matrix. Its reciprocal is the largest singular value of
            * the Jacobian matrix itself.
            */
-          const gdouble s2s2 =
-            (gdouble) 0.5 * ( frobenius_squared - sqrt_discriminant );
+          const gdouble s2s2 = 0.5 * ( frobenius_squared - sqrt_discriminant );
 
           const gdouble s1s1minusn11 = s1s1 - n11;
           const gdouble s1s1minusn22 = s1s1 - n22;
