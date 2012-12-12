@@ -1037,6 +1037,8 @@ transform_generic (GeglBuffer  *dest,
 
       dest_buf = (gfloat *)i->data[0];
 
+      dest_ptr = dest_buf;
+
       /*
        * This code uses a variant of the (novel?) method of ensuring
        * that scanlines stay, as much as possible, within an input
@@ -1046,9 +1048,8 @@ transform_generic (GeglBuffer  *dest,
        * is not as foolproof because perspective transformations
        * change the orientation of scanlines, and consequently what's
        * good at the bottom may not be best at the top. On the other
-       * hand, the ROIs are generally small, so the "what's good for
-       * the gander is not good for the goose" is unlikely to happen
-       * very often.
+       * hand, the ROIs are generally small, so it's likely that
+       * what's good for the goose is good for the gander.
        */
       /*
        * Find out if we should flip things in the vertical
@@ -1062,10 +1063,8 @@ transform_generic (GeglBuffer  *dest,
        * Compute the positions of the pre-images of the top left and
        * bottom left pixels of the ROI.
        */
-      dest_ptr = dest_buf;
-
       u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
-	        inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
                 inverse.coeff [0][2];
       v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5)  +
                 inverse.coeff [1][1] * (roi->y + (gdouble) 0.5)  +
@@ -1073,25 +1072,24 @@ transform_generic (GeglBuffer  *dest,
       w_start = inverse.coeff [2][0] * (roi->x + (gdouble) 0.5)  +
                 inverse.coeff [2][1] * (roi->y + (gdouble) 0.5)  +
                 inverse.coeff [2][2];
-
       u_float = u_start + inverse.coeff [0][1] * (roi->height - (gint) 1);
       v_float = v_start + inverse.coeff [1][1] * (roi->height - (gint) 1);
       w_float = w_start + inverse.coeff [2][1] * (roi->height - (gint) 1);
-  
+
       if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
-	{
-	  /*
-	   * Set the "change of direction":
-	   */
-	  flip_y = (gint) -1;
-	  /*
-	   * Move the start to the previously last scanline.
-	   */
+        {
+          /*
+           * Set the "change of direction" sign.
+           */
+          flip_y = (gint) -1;
+          /*
+           * Move the start to the previously last scanline.
+           */
           dest_ptr += (gint) 4 * (roi->height - (gint) 1) * roi->width;
-	  u_start = u_float;
-	  v_start = v_float;
-	  w_start = w_float;
-	}       
+          u_start = u_float;
+          v_start = v_float;
+          w_start = w_float;
+        }
 
       /*
        * Repeat in the horizontal direction, using the first scanline
@@ -1102,17 +1100,17 @@ transform_generic (GeglBuffer  *dest,
       w_float = w_start + inverse.coeff [2][0] * (roi->width  - (gint) 1);
 
       if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
-	{
-	  flip_x = (gint) -1;
-	  /*
-	   * Move the start to the previously last pixel of the
-	   * scanline.
-	   */
+        {
+          flip_x = (gint) -1;
+          /*
+           * Move the start to the previously last pixel of the
+           * scanline.
+           */
           dest_ptr += (gint) 4 * (roi->width  - (gint) 1);
-	  u_start = u_float;
-	  v_start = v_float;
-	  w_start = w_float;
-	}
+          u_start = u_float;
+          v_start = v_float;
+          w_start = w_float;
+        }
 
       for (y = roi->height; y--;)
         {
@@ -1181,8 +1179,8 @@ static inline gboolean is_one (const gdouble f)
 static gboolean gegl_matrix3_is_affine (GeglMatrix3 *matrix)
 {
   return (is_zero (matrix->coeff [2][0]) &&
-	  is_zero (matrix->coeff [2][1]) &&
-	  is_one  (matrix->coeff [2][2]));
+          is_zero (matrix->coeff [2][1]) &&
+          is_one  (matrix->coeff [2][2]));
 }
 
 static gboolean
