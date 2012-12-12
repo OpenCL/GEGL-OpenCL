@@ -1062,6 +1062,8 @@ transform_generic (GeglBuffer  *dest,
        * Compute the positions of the pre-images of the top left and
        * bottom left pixels of the ROI.
        */
+      dest_ptr = dest_buf;
+
       u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
 	        inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
                 inverse.coeff [0][2];
@@ -1085,11 +1087,12 @@ transform_generic (GeglBuffer  *dest,
 	  /*
 	   * Move the start to the previously last scanline.
 	   */
+          dest_ptr += (gint) 4 * (roi->height - (gint) 1) * roi->width;
 	  u_start = u_float;
 	  v_start = v_float;
 	  w_start = w_float;
-	}
-  
+	}       
+
       /*
        * Repeat in the horizontal direction, using the first scanline
        * selected by the vertical flip.
@@ -1105,12 +1108,13 @@ transform_generic (GeglBuffer  *dest,
 	   * Move the start to the previously last pixel of the
 	   * scanline.
 	   */
+          dest_ptr += (gint) 4 * (roi->width  - (gint) 1);
 	  u_start = u_float;
 	  v_start = v_float;
 	  w_start = w_float;
 	}
 
-      for (dest_ptr = dest_buf, y = roi->height; y--;)
+      for (y = roi->height; y--;)
         {
           u_float = u_start;
           v_float = v_start;
@@ -1119,6 +1123,7 @@ transform_generic (GeglBuffer  *dest,
           for (x = roi->width; x--;)
             {
               GeglMatrix2 inverse_jacobian;
+
               gdouble w_recip = 1.0 / w_float;
               gdouble u = u_float * w_recip;
               gdouble v = v_float * w_recip;
@@ -1139,12 +1144,14 @@ transform_generic (GeglBuffer  *dest,
                                 dest_ptr,
                                 GEGL_ABYSS_NONE);
 
-              dest_ptr += 4;
+              dest_ptr += flip_x * (gint) 4;
 
               u_float += flip_x * inverse.coeff [0][0];
               v_float += flip_x * inverse.coeff [1][0];
               w_float += flip_x * inverse.coeff [2][0];
             }
+
+          dest_ptr += (gint) 4 * (flip_y - flip_x) * roi->width;
 
           u_start += flip_y * inverse.coeff [0][1];
           v_start += flip_y * inverse.coeff [1][1];
