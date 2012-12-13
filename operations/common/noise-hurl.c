@@ -23,26 +23,26 @@
  */
 
 #include "config.h"
+
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_seed (seed, _("Seed"), _("Random seed"))
+gegl_chant_seed   (seed, _("Seed"), _("Random seed"))
 
-gegl_chant_double (pct_random, _("Randomization (%)"),   0.0, 100.0, 3.0, _("Randomization"))
+gegl_chant_double (pct_random, _("Randomization (%)"),
+                   0.0, 100.0, 50.0, _("Randomization"))
 
-gegl_chant_int (repeat, _("Repeat"),   1, 100, 1, _("Repeat"))
+gegl_chant_int    (repeat, _("Repeat"),
+                   1, 100, 1, _("Repeat"))
 
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "noise-hurl.c"
+#define GEGL_CHANT_C_FILE "noise-hurl.c"
 
 #include "gegl-chant.h"
-#include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
 
 static void
 prepare (GeglOperation *operation)
@@ -60,61 +60,66 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglChantO *o  = GEGL_CHANT_PROPERTIES (operation);
+  gfloat     *GEGL_ALIGNED in_pixel;
+  gfloat     *GEGL_ALIGNED out_pixel;
+  gfloat     *out_pix;
+  gint        i, cnt;
 
-  gint i, cnt;
+  in_pixel  = in_buf;
+  out_pixel = out_buf;
+  out_pix   = out_pixel;
 
-  GRand    *gr;
-
-  gfloat   * GEGL_ALIGNED in_pixel;
-  gfloat   * GEGL_ALIGNED out_pixel;
-
-  gfloat red, green, blue, alpha;
-  gfloat *out_pix;
-
-  in_pixel      = in_buf;
-  out_pixel     = out_buf;
-
-
-  gr = g_rand_new_with_seed (o->seed);
-
-  out_pix = out_pixel;
-
-  for (i = 0; i < n_pixels*4; i++)
-  {
-    *out_pix = *in_pixel;
-    out_pix += 1;
-    in_pixel += 1;
-  }
-
-
-  for (cnt = 1; cnt <= o->repeat; cnt++)
-  {
-    out_pix = out_pixel;
-
-    for (i = 0; i < n_pixels; i++)
+  for (i = 0; i < n_pixels * 4; i++)
     {
-      red   = out_pix[0];
-      green = out_pix[1];
-      blue  = out_pix[2];
-      alpha = out_pix[3];
-
-      if (g_rand_double_range (gr, 0.0, 100.0) <= o->pct_random)
-      {
-        red   = g_rand_double_range (gr, 0.0, 1.0);
-        green = g_rand_double_range (gr, 0.0, 1.0);
-        blue  = g_rand_double_range (gr, 0.0, 1.0);
-      }
-
-      out_pix[0] = red;
-      out_pix[1] = green;
-      out_pix[2] = blue;
-      out_pix[3] = alpha;
-
-      out_pix += 4;
+      *out_pix = *in_pixel;
+      out_pix += 1;
+      in_pixel += 1;
     }
- }
-  return TRUE;
 
+  for (cnt = 0; cnt < o->repeat; cnt++)
+    {
+      gint x, y, n;
+
+      x = roi->x;
+      y = roi->y;
+      n = 0;
+
+      out_pix = out_pixel;
+
+      for (i = 0; i < n_pixels; i++)
+        {
+          gfloat red, green, blue, alpha;
+
+          red   = out_pix[0];
+          green = out_pix[1];
+          blue  = out_pix[2];
+          alpha = out_pix[3];
+
+          if (gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
+              o->pct_random)
+            {
+              red   = gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 1.0);
+              green = gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 1.0);
+              blue  = gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 1.0);
+            }
+
+          out_pix[0] = red;
+          out_pix[1] = green;
+          out_pix[2] = blue;
+          out_pix[3] = alpha;
+
+          out_pix += 4;
+
+          x++;
+          if (x >= roi->x + roi->width)
+            {
+              x = roi->x;
+              y++;
+            }
+        }
+    }
+
+  return TRUE;
 }
 
 static void
