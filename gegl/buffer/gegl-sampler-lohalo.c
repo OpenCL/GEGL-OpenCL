@@ -87,9 +87,10 @@
  * A. Turcotte's image resampling research on reduced halo methods and
  * jacobian adaptive methods funded in part by an OGS (Ontario
  * Graduate Scholarship) and an NSERC Alexander Graham Bell Canada
- * Graduate Scholarhip awarded to him and by GSoC (Google Summer of
- * Code) 2010 funding awarded to GIMP (Gnu Image Manipulation
- * Program).
+ * Graduate Scholarhip awarded to him, by GSoC (Google Summer of Code)
+ * 2010 funding awarded to GIMP (Gnu Image Manipulation Program), and
+ * by Laurentian University research funding provided by N. Robidoux
+ * and Ralf Meyer.
  *
  * C. Racette's image resampling research and programming funded in
  * part by a NSERC Discovery Grant awarded to Julien Dompierre
@@ -99,9 +100,9 @@
  * E. Daoust's image resampling programming was funded by GSoC 2010
  * funding awarded to GIMP.
  *
- * N. Robidoux thanks his co-authors, Ralf Meyer, Geert Jordaens,
- * Craig DeForest, Massimo Valentini, Sven Neumann, Mitch Natterer for
- * useful comments.
+ * N. Robidoux thanks his co-authors, and Ralf Meyer, Geert Jordaens,
+ * Craig DeForest, Massimo Valentini, Sven Neumann and Mitch Natterer
+ * for useful comments.
  */
 
 /*
@@ -213,21 +214,37 @@
 
 
 /*
- * Convenience macro:
+ * Convenience macros:
  */
-#define LOHALO_CALL_LEVEL_1_EWA_UPDATE(j,i) level_1_ewa_update ((j),           \
-                                                                (i),           \
-                                                                c_major_x,     \
-                                                                c_major_y,     \
-                                                                c_minor_x,     \
-                                                                c_minor_y,     \
-                                                                x_1,           \
-                                                                y_1,           \
-                                                                channels,      \
-                                                                row_skip,      \
-                                                                input_bptr_1,  \
-                                                                &total_weight, \
-                                                                ewa_newval)
+#define LOHALO_CALL_LEVEL1_EWA_UPDATE(j,i) mipmap_ewa_update (1,             \
+                                                              (j),           \
+                                                              (i),           \
+                                                              c_major_x,     \
+                                                              c_major_y,     \
+                                                              c_minor_x,     \
+                                                              c_minor_y,     \
+                                                              x_1,           \
+                                                              y_1,           \
+                                                              channels,      \
+                                                              row_skip,      \
+                                                              input_bptr_1,  \
+                                                              &total_weight, \
+                                                              ewa_newval)
+
+#define LOHALO_CALL_LEVEL2_EWA_UPDATE(j,i) mipmap_ewa_update (2,             \
+                                                              (j),           \
+                                                              (i),           \
+                                                              c_major_x,     \
+                                                              c_major_y,     \
+                                                              c_minor_x,     \
+                                                              c_minor_y,     \
+                                                              x_2,           \
+                                                              y_2,           \
+                                                              channels,      \
+                                                              row_skip,      \
+                                                              input_bptr_2,  \
+                                                              &total_weight, \
+                                                              ewa_newval)
 
 
 /*
@@ -244,12 +261,12 @@ enum
 };
 
 
-static void gegl_sampler_lohalo_get (      GeglSampler* restrict self,
-                                     const gdouble               absolute_x,
-                                     const gdouble               absolute_y,
-                                           GeglMatrix2          *scale,
-                                           void*        restrict output,
-                                           GeglAbyssPolicy       repeat_mode);
+static void gegl_sampler_lohalo_get (      GeglSampler* restrict  self,
+                                     const gdouble                absolute_x,
+                                     const gdouble                absolute_y,
+                                           GeglMatrix2           *scale,
+                                           void*        restrict  output,
+                                           GeglAbyssPolicy        repeat_mode);
 
 G_DEFINE_TYPE (GeglSamplerLohalo, gegl_sampler_lohalo, GEGL_TYPE_SAMPLER)
 
@@ -267,7 +284,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  *
  * 5x5 is the smallest "level 0" context_rect that works with the
  * LBB-Nohalo component of the sampler. Because 5 = 1+2*2,
- * LOHALO_OFFSET should be >= 2.
+ * LOHALO_OFFSET must be >= 2.
  *
  * Speed/quality trade-off:
  *
@@ -296,8 +313,10 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * mipmap level's offset should almost never smaller than half the
  * previous level's offset.
  */
-#define LOHALO_OFFSET_1 (23)
+#define LOHALO_OFFSET_1 (13)
 #define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
+#define LOHALO_OFFSET_2 (13)
+#define LOHALO_SIZE_2 ( 1 + 2 * LOHALO_OFFSET_2 )
 
 /*
  * Lohalo always uses some mipmap level 0 values, but not always
@@ -314,6 +333,10 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   GEGL_SAMPLER (self)->context_rect[1].y = -LOHALO_OFFSET_1;
   GEGL_SAMPLER (self)->context_rect[1].width  = LOHALO_SIZE_1;
   GEGL_SAMPLER (self)->context_rect[1].height = LOHALO_SIZE_1;
+  GEGL_SAMPLER (self)->context_rect[2].x = -LOHALO_OFFSET_2;
+  GEGL_SAMPLER (self)->context_rect[2].y = -LOHALO_OFFSET_2;
+  GEGL_SAMPLER (self)->context_rect[2].width  = LOHALO_SIZE_2;
+  GEGL_SAMPLER (self)->context_rect[2].height = LOHALO_SIZE_2;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
@@ -1194,11 +1217,13 @@ teepee (const gfloat c_major_x,
 {
   const gfloat q1 = s * c_major_x + t * c_major_y;
   const gfloat q2 = s * c_minor_x + t * c_minor_y;
-  const gfloat r2 = q1 * q1 + q2 * q2;
+
+  const float r2 = q1 * q1 + q2 * q2;
+
   const gfloat weight =
-    r2 < (gfloat) 1.
+    r2 < (float) 1.
     ?
-    (gfloat) ( (gfloat) 1. - sqrtf( (float) r2 ) )
+    (gfloat) ( (float) 1. - sqrtf( r2 ) )
     :
     (gfloat) 0.;
 
@@ -1239,40 +1264,43 @@ ewa_update (const gint              j,
 
 
 static inline void
-level_1_ewa_update (const gint              j,
-                    const gint              i,
-                    const gfloat            c_major_x,
-                    const gfloat            c_major_y,
-                    const gfloat            c_minor_x,
-                    const gfloat            c_minor_y,
-                    const gfloat            x_1,
-                    const gfloat            y_1,
-                    const gint              channels,
-                    const gint              row_skip,
-                    const gfloat*  restrict input_bptr_1,
-                          gdouble* restrict total_weight,
-                          gfloat*  restrict ewa_newval)
+mipmap_ewa_update (const gint              level,
+                   const gint              j,
+                   const gint              i,
+                   const gfloat            c_major_x,
+                   const gfloat            c_major_y,
+                   const gfloat            c_minor_x,
+                   const gfloat            c_minor_y,
+                   const gfloat            x,
+                   const gfloat            y,
+                   const gint              channels,
+                   const gint              row_skip,
+                   const gfloat*  restrict input_bptr,
+                         gdouble* restrict total_weight,
+                         gfloat*  restrict ewa_newval)
 {
   const gint skip = j * channels + i * row_skip;
 
   /*
-   * The factor of 4.0 is because level 1 mipmap values are averages
-   * of four level 0 pixel values.
+   * The factor of 2^(level+1) is because level mipmap values are
+   * averages of that many level 0 pixel values, and the factor in the
+   * index is because the absolute positions are correspondingly
+   * "stretched".
    */
-  const gfloat weight = (gfloat) 4.0 * teepee (c_major_x,
-                                               c_major_y,
-                                               c_minor_x,
-                                               c_minor_y,
-                                               x_1 - (gfloat) (2*j),
-                                               y_1 - (gfloat) (2*i));
+  const gfloat weight = (gfloat) ( 2 << (level+1) ) *
+                        teepee (c_major_x,
+                                c_major_y,
+                                c_minor_x,
+                                c_minor_y,
+                                x - (gfloat) ( (gint) ( 2 << level ) * j),
+                                y - (gfloat) ( (gint) ( 2 << level ) * i));
 
   *total_weight += weight;
-  ewa_newval[0] += weight * input_bptr_1[ skip     ];
-  ewa_newval[1] += weight * input_bptr_1[ skip + 1 ];
-  ewa_newval[2] += weight * input_bptr_1[ skip + 2 ];
-  ewa_newval[3] += weight * input_bptr_1[ skip + 3 ];
+  ewa_newval[0] += weight * input_bptr[ skip     ];
+  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
+  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
+  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 }
-
 
 static void
 gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
@@ -1527,7 +1555,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
     const gfloat c11dxdy =
       xm1over2_times_ym1over2 * xp1over2sq_times_yp1over2sq;
 
-    newval[0] = lbb ( c00,
+    newval[0] = lbb (c00,
                      c10,
                      c01,
                      c11,
@@ -1599,7 +1627,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         &qua_two_1,
                         &qua_thr_1,
                         &qua_fou_1);
-    newval[1] = lbb ( c00,
+    newval[1] = lbb (c00,
                      c10,
                      c01,
                      c11,
@@ -1671,7 +1699,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         &qua_two_2,
                         &qua_thr_2,
                         &qua_fou_2);
-    newval[2] = lbb ( c00,
+    newval[2] = lbb (c00,
                      c10,
                      c01,
                      c11,
@@ -1743,7 +1771,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         &qua_two_3,
                         &qua_thr_3,
                         &qua_fou_3);
-    newval[3] = lbb ( c00,
+    newval[3] = lbb (c00,
                      c10,
                      c01,
                      c11,
@@ -1986,7 +2014,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
        * ImageMagick (now fixed, thanks to Cristy).
        */
       const double sqrt_discriminant =
-	sqrt (discriminant > 0. ? discriminant : 0.);
+        sqrt (discriminant > 0. ? discriminant : 0.);
 
       /*
        * Initially, we only compute the squares of the singular
@@ -2109,16 +2137,17 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
           ewa_newval[3] = (gfloat) 0.0;
 
           /*
-           * NICOLAS: Given that we now use larger level 1
-           * context_rect, it makes sense to restrict the EWA
-           * computation to the bounding box even at level 1. With
-           * small context_rect, this is a waste.
-           */
-
-          /*
            * Grab the pixel values located within the context_rect of
            * "pure" LBB-Nohalo.  Farther ones will be accessed through
            * higher mipmap levels.
+           */
+          /*
+           * TODO: Given that we now use a somewhat large level 0
+           * context_rect, it makes sense to restrict the EWA
+           * computation to the bounding box even at level 0. With
+           * small context_rect, this is a waste. But right now, when
+           * barely downsmapling, there are lots of multiplications by
+           * zero weights.
            */
           {
             gint i = -LOHALO_OFFSET;
@@ -2152,9 +2181,9 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
              * determine the alignment of the level 1 mipmap level
              * w.r.t. the current level 0.
              *
-             * We use a 5x5 context_rect at level 0; consequently, we
-             * can access pixels which are 2 away from the anchor
-             * pixel location in box distance.
+             * At level 0, we can access pixels which are
+             * LOHALO_OFFSET away from the anchor pixel location in
+             * box distance.
              */
             /*
              * Determine whether the anchor level_0 pixel locations
@@ -2165,27 +2194,27 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
             /*
              * Find the closest locations, on all four sides, of level
              * 1 pixels which involve data not found in the level 0
-             * 5x5.
+             * LOHALO_SIZExLOHALO_SIZE.
              */
-            const gfloat closest_left =
+            const gfloat closest_left_1 =
               odd_ix_0
               ?
               (gfloat) ( -( LOHALO_OFFSET + 1.5 ) )
               :
               (gfloat) ( -( LOHALO_OFFSET + 0.5 ) );
-            const gfloat closest_rite =
+            const gfloat closest_rite_1 =
               odd_ix_0
               ?
               (gfloat) (  ( LOHALO_OFFSET + 0.5 ) )
               :
               (gfloat) (  ( LOHALO_OFFSET + 1.5 ) );
-            const gfloat closest_top  =
+            const gfloat closest_top_1  =
               odd_iy_0
               ?
               (gfloat) ( -( LOHALO_OFFSET + 1.5 ) )
               :
               (gfloat) ( -( LOHALO_OFFSET + 0.5 ) );
-            const gfloat closest_bot  =
+            const gfloat closest_bot_1  =
               odd_iy_0
               ?
               (gfloat) (  ( LOHALO_OFFSET + 0.5 ) )
@@ -2243,13 +2272,13 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
             const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
 
             if (
-                ( x_0 - fudged_bounding_box_half_width  < closest_left )
+                ( x_0 - fudged_bounding_box_half_width  < closest_left_1 )
                 ||
-                ( x_0 + fudged_bounding_box_half_width  > closest_rite )
+                ( x_0 + fudged_bounding_box_half_width  > closest_rite_1 )
                 ||
-                ( y_0 - fudged_bounding_box_half_height <  closest_top )
+                ( y_0 - fudged_bounding_box_half_height <  closest_top_1 )
                 ||
-                ( y_0 + fudged_bounding_box_half_height >  closest_bot )
+                ( y_0 + fudged_bounding_box_half_height >  closest_bot_1 )
                 )
               {
                 /*
@@ -2300,16 +2329,16 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * The "in" indices are the closest relative mipmap 1
                  * indices of needed mipmap values:
                  */
-                const gint in_left =  -LOHALO_OFFSET       + odd_ix_0;
-                const gint in_rite = ( LOHALO_OFFSET - 1 ) + odd_ix_0;
-                const gint in_top  =  -LOHALO_OFFSET       + odd_iy_0;
-                const gint in_bot  = ( LOHALO_OFFSET - 1 ) + odd_iy_0;
+                const gint in_left_1 =  -LOHALO_OFFSET       + odd_ix_0;
+                const gint in_rite_1 = ( LOHALO_OFFSET - 1 ) + odd_ix_0;
+                const gint in_top_1  =  -LOHALO_OFFSET       + odd_iy_0;
+                const gint in_bot_1  = ( LOHALO_OFFSET - 1 ) + odd_iy_0;
 
                 /*
                  * The "out" indices are the farthest relative mipmap
                  * 1 indices we use at this level:
                  */
-                const gint out_left =
+                const gint out_left_1 =
                   LOHALO_MAX
                     (
                       (gint)
@@ -2324,7 +2353,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                       ,
                       -LOHALO_OFFSET_1
                     );
-                const gint out_rite =
+                const gint out_rite_1 =
                   LOHALO_MIN
                     (
                       (gint)
@@ -2339,7 +2368,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                       ,
                       LOHALO_OFFSET_1
                     );
-                const gint out_top =
+                const gint out_top_1 =
                   LOHALO_MAX
                     (
                       (gint)
@@ -2354,7 +2383,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                       ,
                       -LOHALO_OFFSET_1
                     );
-                const gint out_bot =
+                const gint out_bot_1 =
                   LOHALO_MIN
                     (
                       (gint)
@@ -2373,56 +2402,289 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                 /*
                  * Update using mipmap level 1 values.
                  */
-                /*
-                 * Possible future improvement: When the ellipse is
-                 * slanted, one could avoid many pixel value loads and
-                 * operations with Anthony Thyssen's formulas for the
-                 * ellipse bounding parallelogram with horizontal top
-                 * and bottom. When both the magnification factors are
-                 * the same, or when there is no rotation, using these
-                 * formulas makes no difference. Reference:
-                 * ImageMagick resample.c.
-                 */
+		/*
+		 * Possible future improvement: When the ellipse is
+		 * slanted, one could avoid many pixel value loads and
+		 * operations with Anthony Thyssen's formulas for the
+		 * ellipse bounding parallelogram with horizontal top
+		 * and bottom. When both the magnification factors are
+		 * the same, or when there is no rotation, using these
+		 * formulas makes no difference. Reference:
+		 * ImageMagick resample.c. (This probably is not worth
+		 * it.)
+		 */
                 {
                   gint i;
-                  for ( i = out_top; i <= in_top; i++ )
+                  for ( i = out_top_1; i <= in_top_1; i++ )
                     {
-                      gint j = out_left;
+                      gint j = out_left_1;
                       do
                         {
-                          LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-                        } while ( ++j <= out_rite );
+                          LOHALO_CALL_LEVEL1_EWA_UPDATE( j, i );
+                        } while ( ++j <= out_rite_1 );
                     }
                 }
                 {
-                  gint i = in_top + 1;
+                  gint i = in_top_1 + (gint) 1;
                   do
                     {
                       {
                         gint j;
-                        for ( j = out_left; j <= in_left; j++ )
+                        for ( j = out_left_1; j <= in_left_1; j++ )
                           {
-                            LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+                            LOHALO_CALL_LEVEL1_EWA_UPDATE( j, i );
                           }
                       }
                       {
                         gint j;
-                        for ( j = in_rite; j <= out_rite; j++ )
+                        for ( j = in_rite_1; j <= out_rite_1; j++ )
                           {
-                            LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
+                            LOHALO_CALL_LEVEL1_EWA_UPDATE( j, i );
                           }
                       }
-                    } while ( ++i < in_bot );
+                    } while ( ++i < in_bot_1 );
                 }
                 {
                   gint i;
-                  for ( i = in_bot; i <= out_bot; i++ )
+                  for ( i = in_bot_1; i <= out_bot_1; i++ )
                     {
-                      gint j = out_left;
+                      gint j = out_left_1;
                       do
                       {
-                        LOHALO_CALL_LEVEL_1_EWA_UPDATE( j, i );
-                      } while ( ++j <= out_rite );
+                        LOHALO_CALL_LEVEL1_EWA_UPDATE( j, i );
+                      } while ( ++j <= out_rite_1 );
+                    }
+                }
+
+                {
+                  /*
+                   * In order to know whether we use even higher
+                   * mipmap level values, we need to check whether
+                   * there is a level 2 mipmap location within the
+                   * ellipse. So, we need to determine the alignment
+                   * of the level 2 mipmap level w.r.t. the current
+                   * level 1.
+                   *
+                   * We use a LOHALO_SIZE_1xLOHALO_SIZE_1 context_rect
+                   * at level 1; consequently, we can access pixels
+                   * which are LOHALO_OFFSET_1 away from the level 1
+                   * anchor pixel location in box distance.
+                   */
+                  /*
+                   * Determine whether the anchor level_1 pixel
+                   * locations are odd (VS even):
+                   */
+                  const gint odd_ix_1 = ix_1 % 2;
+                  const gint odd_iy_1 = iy_1 % 2;
+                  /*
+                   * Find the closest locations, on all four sides, of
+                   * level 2 pixels which involve data not found in the
+                   * level 1 LOHALO_SIZE_1xLOHALO_SIZE_1.
+                   */
+                  const gfloat closest_left_2 =
+                    odd_ix_1
+                    ?
+                    (gfloat) ( -( LOHALO_OFFSET_1 + 1.5 ) )
+                    :
+                    (gfloat) ( -( LOHALO_OFFSET_1 + 0.5 ) );
+                  const gfloat closest_rite_2 =
+                    odd_ix_1
+                    ?
+                    (gfloat) (  ( LOHALO_OFFSET_1 + 0.5 ) )
+                    :
+                    (gfloat) (  ( LOHALO_OFFSET_1 + 1.5 ) );
+                  const gfloat closest_top_2  =
+                    odd_iy_1
+                    ?
+                    (gfloat) ( -( LOHALO_OFFSET_1 + 1.5 ) )
+                    :
+                    (gfloat) ( -( LOHALO_OFFSET_1 + 0.5 ) );
+                  const gfloat closest_bot_2  =
+                    odd_iy_1
+                    ?
+                    (gfloat) (  ( LOHALO_OFFSET_1 + 0.5 ) )
+                    :
+                    (gfloat) (  ( LOHALO_OFFSET_1 + 1.5 ) );
+
+                  if (
+                       ( x_1 - fudged_bounding_box_half_width  <
+                         closest_left_2 )
+                       ||
+                       ( x_1 + fudged_bounding_box_half_width  >
+                         closest_rite_2 )
+                       ||
+                       ( y_1 - fudged_bounding_box_half_height <
+                         closest_top_2 )
+                       ||
+                       ( y_1 + fudged_bounding_box_half_height >
+                         closest_bot_2 )
+                      )
+                    {
+                      /*
+                       * We most likely need even higher mipmap
+                       * level(s) because the bounding box of the
+                       * ellipse covers mipmap pixel locations which
+                       * involve data not "covered" by the
+                       * LOHALO_SIZE_1 level 1 context_rect. (The
+                       * ellipse may still fail to involve mipmap
+                       * level 2 values--in which case all mipmap
+                       * pixel values will get 0 coefficients--but we
+                       * used a quick and dirty bounding box test
+                       * which lets through false positives.)
+                       */
+
+                      /*
+                       * Nearest mipmap anchor pixel location:
+                       */
+                      const gint ix_2 = LOHALO_FLOORED_DIVISION_BY_2(ix_1);
+                      const gint iy_2 = LOHALO_FLOORED_DIVISION_BY_2(iy_1);
+
+                      /*
+                       * Get pointer to mipmap level 2 data:
+                       */
+                      const gfloat* restrict input_bptr_2 =
+                        (gfloat*) gegl_sampler_get_from_mipmap (self,
+                                                                ix_2,
+                                                                iy_2,
+                                                                1,
+                                                                repeat_mode);
+
+                      /*
+                       * Position of the sampling location in the
+                       * coordinate system defined by the mipmap
+                       * "pixel locations" relative to the level 1
+                       * anchor pixel location. The "-1"s are because
+                       * the center of a level 1 pixel is at a box
+                       * distance of 1 from the center of the closest
+                       * level 2 pixel.
+                       */
+                      const gfloat x_2 =
+                        x_1 + (gfloat) ( 2 * ( ix_1 - 2 * ix_2 ) - 1 );
+                      const gfloat y_2 =
+                        y_1 + (gfloat) ( 2 * ( iy_1 - 2 * iy_2 ) - 1 );
+
+                      /*
+                       * Key index ranges:
+                       */
+                      /*
+                       * The "in" indices are the closest relative
+                       * mipmap 2 indices of needed mipmap values:
+                       */
+                      const gint in_left_2 =  -LOHALO_OFFSET_1       + odd_ix_1;
+                      const gint in_rite_2 = ( LOHALO_OFFSET_1 - 1 ) + odd_ix_1;
+                      const gint in_top_2  =  -LOHALO_OFFSET_1       + odd_iy_1;
+                      const gint in_bot_2  = ( LOHALO_OFFSET_1 - 1 ) + odd_iy_1;
+
+                      /*
+                       * The "out" indices are the farthest relative
+                       * mipmap 1 indices we use at this level:
+                       */
+                      const gint out_left_2 =
+                        LOHALO_MAX
+                          (
+                            (gint)
+                            (
+                              ceilf
+                              (
+                                (float)
+                                ( ( x_2 - bounding_box_half_width  )
+                                  * (gfloat) 0.5 )
+                              )
+                            )
+                            ,
+                            -LOHALO_OFFSET_2
+                           );
+                      const gint out_rite_2 =
+                        LOHALO_MIN
+                          (
+                            (gint)
+                            (
+                              floorf
+                                (
+                                  (float)
+                                  ( ( x_2 + bounding_box_half_width  )
+                                    * (gfloat) 0.5 )
+                                )
+                            )
+                            ,
+                            LOHALO_OFFSET_2
+                          );
+                      const gint out_top_2 =
+                        LOHALO_MAX
+                        (
+                          (gint)
+                          (
+                            ceilf
+                              (
+                                (float)
+                                ( ( y_2 - bounding_box_half_height )
+                                  * (gfloat) 0.5 )
+                              )
+                          )
+                          ,
+                          -LOHALO_OFFSET_2
+                        );
+                      const gint out_bot_2 =
+                        LOHALO_MIN
+                          (
+                            (gint)
+                            (
+                              floorf
+                                (
+                                  (float)
+                                  ( ( y_2 + bounding_box_half_height )
+                                    * (gfloat) 0.5 )
+                                )
+                            )
+                            ,
+                            LOHALO_OFFSET_2
+                          );
+
+                      /*
+                       * Update using mipmap level 1 values.
+                       */
+                      {
+                        gint i;
+                        for ( i = out_top_2; i <= in_top_2; i++ )
+                          {
+                            gint j = out_left_2;
+                            do
+                              {
+                                LOHALO_CALL_LEVEL2_EWA_UPDATE( j, i );
+                              } while ( ++j <= out_rite_2 );
+                          }
+                      }
+                      {
+                        gint i = in_top_2 + (gint) 1;
+                        do
+                          {
+                            {
+                              gint j;
+                              for ( j = out_left_2; j <= in_left_2; j++ )
+                                {
+                                  LOHALO_CALL_LEVEL2_EWA_UPDATE( j, i );
+                                }
+                            }
+                            {
+                              gint j;
+                              for ( j = in_rite_2; j <= out_rite_2; j++ )
+                                {
+                                  LOHALO_CALL_LEVEL2_EWA_UPDATE( j, i );
+                                }
+                            }
+                          } while ( ++i < in_bot_2 );
+                      }
+                      {
+                        gint i;
+                        for ( i = in_bot_2; i <= out_bot_2; i++ )
+                          {
+                            gint j = out_left_2;
+                            do
+                              {
+                                LOHALO_CALL_LEVEL2_EWA_UPDATE( j, i );
+                              } while ( ++j <= out_rite_2 );
+                          }
+                      }
                     }
                 }
               }
