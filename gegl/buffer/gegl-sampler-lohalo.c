@@ -2271,15 +2271,13 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
              */
             const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
 
-            if (
-                ( x_0 - fudged_bounding_box_half_width  < closest_left_1 )
+            if (( x_0 - fudged_bounding_box_half_width  < closest_left_1 )
                 ||
                 ( x_0 + fudged_bounding_box_half_width  > closest_rite_1 )
                 ||
                 ( y_0 - fudged_bounding_box_half_height <  closest_top_1 )
                 ||
-                ( y_0 + fudged_bounding_box_half_height >  closest_bot_1 )
-                )
+                ( y_0 + fudged_bounding_box_half_height >  closest_bot_1 ))
               {
                 /*
                  * We most likely need higher mipmap level(s) because
@@ -2402,17 +2400,17 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                 /*
                  * Update using mipmap level 1 values.
                  */
-		/*
-		 * Possible future improvement: When the ellipse is
-		 * slanted, one could avoid many pixel value loads and
-		 * operations with Anthony Thyssen's formulas for the
-		 * ellipse bounding parallelogram with horizontal top
-		 * and bottom. When both the magnification factors are
-		 * the same, or when there is no rotation, using these
-		 * formulas makes no difference. Reference:
-		 * ImageMagick resample.c. (This probably is not worth
-		 * it.)
-		 */
+                /*
+                 * Possible future improvement: When the ellipse is
+                 * slanted, one could avoid many pixel value loads and
+                 * operations with Anthony Thyssen's formulas for the
+                 * ellipse bounding parallelogram with horizontal top
+                 * and bottom. When both the magnification factors are
+                 * the same, or when there is no rotation, using these
+                 * formulas makes no difference. Reference:
+                 * ImageMagick resample.c. (This probably is not worth
+                 * it.)
+                 */
                 {
                   gint i;
                   for ( i = out_top_1; i <= in_top_1; i++ )
@@ -2506,19 +2504,13 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                     :
                     (gfloat) (  ( LOHALO_OFFSET_1 + 1.5 ) );
 
-                  if (
-                       ( x_1 - fudged_bounding_box_half_width  <
-                         closest_left_2 )
-                       ||
-                       ( x_1 + fudged_bounding_box_half_width  >
-                         closest_rite_2 )
-                       ||
-                       ( y_1 - fudged_bounding_box_half_height <
-                         closest_top_2 )
-                       ||
-                       ( y_1 + fudged_bounding_box_half_height >
-                         closest_bot_2 )
-                      )
+                  if (( x_1 - fudged_bounding_box_half_width  < closest_left_2 )
+                      ||
+                      ( x_1 + fudged_bounding_box_half_width  > closest_rite_2 )
+                      ||
+                      ( y_1 - fudged_bounding_box_half_height < closest_top_2 )
+                      ||
+                      ( y_1 + fudged_bounding_box_half_height > closest_bot_2 ))
                     {
                       /*
                        * We most likely need even higher mipmap
