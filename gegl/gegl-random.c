@@ -42,10 +42,8 @@ static long primes[]={
  101963,101977,101987,101999,102001,102013,102019,102023
 };
 
-#define N_PRIMES  (sizeof(primes)/sizeof(primes[0]))
-
 /* these primes should not exist in the above set */
-#define XPRIME     103423 
+#define XPRIME     103423
 #define ZPRIME     101359
 #define NPRIME     101111
 #define MAX_TABLES 3
@@ -58,40 +56,52 @@ typedef struct GeglRandomSet
   long    prime[MAX_TABLES];
 } GeglRandomSet;
 
-#define make_index(x,y,n)   ((x) * XPRIME + (z) * ZPRIME * XPRIME + (n) * NPRIME * ZPRIME * XPRIME)
+#define make_index(x,y,n) ((x) * XPRIME + \
+                           (y) * ZPRIME * XPRIME + \
+                           (n) * NPRIME * ZPRIME * XPRIME)
 
-static GeglRandomSet *gegl_random_set_new (int seed)
+static GeglRandomSet *
+gegl_random_set_new (int seed)
 {
-  GRand    *gr;
-  int i;
   GeglRandomSet *set = g_malloc0 (sizeof (GeglRandomSet));
+  GRand *gr;
+  int i;
+
   set->seed = seed;
   set->tables = MAX_TABLES;
 
   gr = g_rand_new_with_seed (set->seed);
+
   for (i = 0; i < set->tables; i++)
     {
       int j;
-      set->prime[i] = primes[g_rand_int_range (gr, 0, N_PRIMES-2)];
-      /*
-       * it might be possible to share a set of random data between sets
+
+      set->prime[i] = primes[g_rand_int_range (gr, 0, G_N_ELEMENTS (primes) - 2)];
+
+      /* it might be possible to share a set of random data between sets
        * and rejuggle the prime sizes chosen and keep an additional offset
        * for feeding randomness.
        *
        */
-      set->table[i] = g_malloc0 (sizeof (gint64) * set->prime[i]); 
+      set->table[i] = g_malloc0 (sizeof (gint64) * set->prime[i]);
+
       for (j = 0; j < set->prime[i]; j++)
-        set->table[i][j] = (((gint64)g_rand_int (gr)) << 32) + g_rand_int(gr);
+        set->table[i][j] = (((gint64) g_rand_int (gr)) << 32) + g_rand_int (gr);
     }
+
   g_rand_free (gr);
+
   return set;
 }
 
-static void gegl_random_set_free (GeglRandomSet *set)
+static void
+gegl_random_set_free (GeglRandomSet *set)
 {
   int i;
+
   for (i = 0; i < set->tables; i++)
     g_free (set->table[i]);
+
   g_free (set);
 }
 
@@ -99,17 +109,20 @@ static void gegl_random_set_free (GeglRandomSet *set)
 static GeglRandomSet *cached = NULL;
 static GList         *cache  = NULL;
 
-static void trim_cache_to_length (int length)
+static void
+trim_cache_to_length (int length)
 {
   while (g_list_length (cache) > length)
     {
       GeglRandomSet *last = g_list_last (cache)->data;
+
       cache = g_list_remove (cache, last);
       gegl_random_set_free (last);
     }
 }
 
-static inline GeglRandomSet *gegl_random_get_set_for_seed (int seed)
+static inline GeglRandomSet *
+gegl_random_get_set_for_seed (int seed)
 {
   if (cached && cached->seed == seed)
     {
@@ -118,6 +131,7 @@ static inline GeglRandomSet *gegl_random_get_set_for_seed (int seed)
   else
     {
       GList *l;
+
       if (cached)
         {
           cache = g_list_prepend (cache, cached);
@@ -128,37 +142,54 @@ static inline GeglRandomSet *gegl_random_get_set_for_seed (int seed)
       for (l = cache; l; l=l->next)
         {
           GeglRandomSet *s = l->data;
+
           if (s->seed == seed)
             {
               cached = s;
               cache = g_list_remove (cache, cached);
+
               return cached;
             }
         }
+
       cached = gegl_random_set_new (seed);
     }
+
   return cached;
 }
 
 gint64
-gegl_random_int (int seed, int x, int y, int z, int n)
+gegl_random_int (int seed,
+                 int x,
+                 int y,
+                 int z,
+                 int n)
 {
   GeglRandomSet *set = gegl_random_get_set_for_seed (seed);
   /* XXX: z is unhandled, it should average like a mipmap - or even
    * use mipmap versions of random set
    */
-  unsigned long idx = make_index(x,y,n);
+  unsigned long idx = make_index (x, y, n);
   gint64 ret = 0;
   int i;
+
   for (i = 0; i < set->tables; i++)
     ret ^= set->table[i][idx % (set->prime[i])];
+
   return ret;
 }
 
 gint64
-gegl_random_int_range (int seed, int x, int y, int z, int n, int min, int max)
+gegl_random_int_range (int seed,
+                       int x,
+                       int y,
+                       int z,
+                       int n,
+                       int min,
+                       int max)
 {
   gint64 ret = gegl_random_int (seed, x, y, z, n);
+
   return (ret % (max-min)) + min;
 }
 
@@ -166,13 +197,23 @@ gegl_random_int_range (int seed, int x, int y, int z, int n, int min, int max)
 #define G_RAND_DOUBLE_TRANSFORM 2.3283064365386962890625e-10
 
 double
-gegl_random_double (int seed, int x, int y, int z, int n)
+gegl_random_double (int seed,
+                    int x,
+                    int y,
+                    int z,
+                    int n)
 {
-  return (gegl_random_int (seed,x,y,z,n) & 0xffffffff) * G_RAND_DOUBLE_TRANSFORM;
+  return (gegl_random_int (seed, x, y, z, n) & 0xffffffff) * G_RAND_DOUBLE_TRANSFORM;
 }
 
 double
-gegl_random_double_range (int seed, int x, int y, int z, int n, double min, double max)
+gegl_random_double_range (int seed,
+                          int x,
+                          int y,
+                          int z,
+                          int n,
+                          double min,
+                          double max)
 {
-  return gegl_random_double (seed, x, y, z, n) * (max-min) + min;
+  return gegl_random_double (seed, x, y, z, n) * (max - min) + min;
 }
