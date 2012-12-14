@@ -307,10 +307,11 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * .5). In addition, the smaller LOHALO_OFFSET, the more noticeable
  * the artifacts. To maintain maximum quality for the widest
  * downsampling range possible, a somewhat large LOHALO_OFFSET should
- * be used. However, the larger the offset, the slower Lohalo will run
- * when no significant downsampling is done, because the width and
- * height of context_rect is (2*LOHALO_OFFSET+1), and consequently
- * there is less data "tile" reuse with large LOHALO_OFFSET.
+ * be used. However, the larger the "level 0" offset, the slower
+ * Lohalo will run when no significant downsampling is done, because
+ * the width and height of context_rect is (2*LOHALO_OFFSET+1), and
+ * consequently there is less data "tile" reuse with large
+ * LOHALO_OFFSET.
  */
 /*
  * IMPORTANT: LOHALO_OFFSET SHOULD BE AN INTEGER >= 2.
@@ -328,17 +329,13 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * mipmap level's offset should almost never smaller than half the
  * previous level's offset.
  *
- * They are maxed out: It appears that there is little overall speed
- * benefit to keeping them small.
+ * They are all maxed out: It appears that there is little overall
+ * speed benefit to keeping them small. For this reason, only one
+ * value is used, instead of different ones for each higher MIPMAP
+ * LEVEL.
  */
-#define LOHALO_OFFSET_1 (31)
-#define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
-
-#define LOHALO_OFFSET_2 (31)
-#define LOHALO_SIZE_2 ( 1 + 2 * LOHALO_OFFSET_2 )
-
-#define LOHALO_OFFSET_3 (31)
-#define LOHALO_SIZE_3 ( 1 + 2 * LOHALO_OFFSET_3 )
+#define LOHALO_OFFSET_MIPMAP (31)
+#define LOHALO_SIZE_MIPMAP ( 1 + 2 * LOHALO_OFFSET_MIPMAP )
 
 /*
  * Lohalo always uses some mipmap level 0 values, but not always
@@ -352,20 +349,10 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   GEGL_SAMPLER (self)->context_rect[0].width  = LOHALO_SIZE;
   GEGL_SAMPLER (self)->context_rect[0].height = LOHALO_SIZE;
 
-  GEGL_SAMPLER (self)->context_rect[1].x = -LOHALO_OFFSET_1;
-  GEGL_SAMPLER (self)->context_rect[1].y = -LOHALO_OFFSET_1;
-  GEGL_SAMPLER (self)->context_rect[1].width  = LOHALO_SIZE_1;
-  GEGL_SAMPLER (self)->context_rect[1].height = LOHALO_SIZE_1;
-
-  GEGL_SAMPLER (self)->context_rect[2].x = -LOHALO_OFFSET_2;
-  GEGL_SAMPLER (self)->context_rect[2].y = -LOHALO_OFFSET_2;
-  GEGL_SAMPLER (self)->context_rect[2].width  = LOHALO_SIZE_2;
-  GEGL_SAMPLER (self)->context_rect[2].height = LOHALO_SIZE_2;
-
-  GEGL_SAMPLER (self)->context_rect[3].x = -LOHALO_OFFSET_3;
-  GEGL_SAMPLER (self)->context_rect[3].y = -LOHALO_OFFSET_3;
-  GEGL_SAMPLER (self)->context_rect[3].width  = LOHALO_SIZE_3;
-  GEGL_SAMPLER (self)->context_rect[3].height = LOHALO_SIZE_3;
+  GEGL_SAMPLER (self)->context_rect[1].x = -LOHALO_OFFSET_MIPMAP;
+  GEGL_SAMPLER (self)->context_rect[1].y = -LOHALO_OFFSET_MIPMAP;
+  GEGL_SAMPLER (self)->context_rect[1].width  = LOHALO_SIZE_MIPMAP;
+  GEGL_SAMPLER (self)->context_rect[1].height = LOHALO_SIZE_MIPMAP;
 
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
@@ -1312,18 +1299,18 @@ mipmap_ewa_update (const gint              level,
   const gint skip = j * channels + i * row_skip;
 
   /*
-   * The factor of 2^(level+1) is because level mipmap values are
-   * averages of that many level 0 pixel values, and the factor in the
-   * index is because the absolute positions are correspondingly
-   * "stretched".
+   * The factor of "2^(level+1)" = "2 << level" is because level
+   * mipmap values are averages of that many level 0 pixel values, and
+   * the "1 << level" factor in the index is because the absolute
+   * positions are correspondingly "stretched".
    */
-  const gfloat weight = (gfloat) ( 2 << (level+1) ) *
+  const gfloat weight = (gfloat) ( 2 << level ) *
                         teepee (c_major_x,
                                 c_major_y,
                                 c_minor_x,
                                 c_minor_y,
-                                x - (gfloat) ( (gint) ( 2 << level ) * j),
-                                y - (gfloat) ( (gint) ( 2 << level ) * i));
+                                x - (gfloat) ( (gint) ( 1 << level ) * j),
+                                y - (gfloat) ( (gint) ( 1 << level ) * i));
 
   *total_weight += weight;
   ewa_newval[0] += weight * input_bptr[ skip     ];
@@ -2379,7 +2366,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                           )
                       )
                       ,
-                      -LOHALO_OFFSET_1
+                      -LOHALO_OFFSET_MIPMAP
                     );
                 const gint out_rite_1 =
                   LOHALO_MIN
@@ -2394,7 +2381,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                           )
                       )
                       ,
-                      LOHALO_OFFSET_1
+                      LOHALO_OFFSET_MIPMAP
                     );
                 const gint out_top_1 =
                   LOHALO_MAX
@@ -2409,7 +2396,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                           )
                       )
                       ,
-                      -LOHALO_OFFSET_1
+                      -LOHALO_OFFSET_MIPMAP
                     );
                 const gint out_bot_1 =
                   LOHALO_MIN
@@ -2424,7 +2411,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                           )
                       )
                       ,
-                      LOHALO_OFFSET_1
+                      LOHALO_OFFSET_MIPMAP
                     );
 
                 /*
@@ -2493,9 +2480,9 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                    * of the level 2 mipmap level w.r.t. the current
                    * level 1.
                    *
-                   * We use a LOHALO_SIZE_1xLOHALO_SIZE_1 context_rect
+                   * We use a LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP context_rect
                    * at level 1; consequently, we can access pixels
-                   * which are LOHALO_OFFSET_1 away from the level 1
+                   * which are LOHALO_OFFSET_MIPMAP away from the level 1
                    * anchor pixel location in box distance.
                    */
                   /*
@@ -2507,32 +2494,32 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                   /*
                    * Find the closest locations, on all four sides, of
                    * level 2 pixels which involve data not found in the
-                   * level 1 LOHALO_SIZE_1xLOHALO_SIZE_1.
+                   * level 1 LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP.
                    */
                   const gfloat closest_left_2 =
                     odd_ix_1
                     ?
-                    (gfloat) ( -( LOHALO_OFFSET_1 + 1.5 ) )
+                    (gfloat) ( -( LOHALO_OFFSET_MIPMAP + 1.5 ) )
                     :
-                    (gfloat) ( -( LOHALO_OFFSET_1 + 0.5 ) );
+                    (gfloat) ( -( LOHALO_OFFSET_MIPMAP + 0.5 ) );
                   const gfloat closest_rite_2 =
                     odd_ix_1
                     ?
-                    (gfloat) (  ( LOHALO_OFFSET_1 + 0.5 ) )
+                    (gfloat) (  ( LOHALO_OFFSET_MIPMAP + 0.5 ) )
                     :
-                    (gfloat) (  ( LOHALO_OFFSET_1 + 1.5 ) );
+                    (gfloat) (  ( LOHALO_OFFSET_MIPMAP + 1.5 ) );
                   const gfloat closest_top_2  =
                     odd_iy_1
                     ?
-                    (gfloat) ( -( LOHALO_OFFSET_1 + 1.5 ) )
+                    (gfloat) ( -( LOHALO_OFFSET_MIPMAP + 1.5 ) )
                     :
-                    (gfloat) ( -( LOHALO_OFFSET_1 + 0.5 ) );
+                    (gfloat) ( -( LOHALO_OFFSET_MIPMAP + 0.5 ) );
                   const gfloat closest_bot_2  =
                     odd_iy_1
                     ?
-                    (gfloat) (  ( LOHALO_OFFSET_1 + 0.5 ) )
+                    (gfloat) (  ( LOHALO_OFFSET_MIPMAP + 0.5 ) )
                     :
-                    (gfloat) (  ( LOHALO_OFFSET_1 + 1.5 ) );
+                    (gfloat) (  ( LOHALO_OFFSET_MIPMAP + 1.5 ) );
 
                   if (( x_1 - fudged_bounding_box_half_width  < closest_left_2 )
                       ||
@@ -2547,7 +2534,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                        * level(s) because the bounding box of the
                        * ellipse covers mipmap pixel locations which
                        * involve data not "covered" by the
-                       * LOHALO_SIZE_1 level 1 context_rect. (The
+                       * LOHALO_SIZE_MIPMAP level 1 context_rect. (The
                        * ellipse may still fail to involve mipmap
                        * level 2 values--in which case all mipmap
                        * pixel values will get 0 coefficients--but we
@@ -2592,10 +2579,10 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                        * The "in" indices are the closest relative
                        * mipmap 2 indices of needed mipmap values:
                        */
-                      const gint in_left_2 =  -LOHALO_OFFSET_1       + odd_ix_1;
-                      const gint in_rite_2 = ( LOHALO_OFFSET_1 - 1 ) + odd_ix_1;
-                      const gint in_top_2  =  -LOHALO_OFFSET_1       + odd_iy_1;
-                      const gint in_bot_2  = ( LOHALO_OFFSET_1 - 1 ) + odd_iy_1;
+                      const gint in_left_2 =  -LOHALO_OFFSET_MIPMAP       + odd_ix_1;
+                      const gint in_rite_2 = ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_ix_1;
+                      const gint in_top_2  =  -LOHALO_OFFSET_MIPMAP       + odd_iy_1;
+                      const gint in_bot_2  = ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_iy_1;
 
                       /*
                        * The "out" indices are the farthest relative
@@ -2614,7 +2601,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               )
                             )
                             ,
-                            -LOHALO_OFFSET_2
+                            -LOHALO_OFFSET_MIPMAP
                            );
                       const gint out_rite_2 =
                         LOHALO_MIN
@@ -2629,7 +2616,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                 )
                             )
                             ,
-                            LOHALO_OFFSET_2
+                            LOHALO_OFFSET_MIPMAP
                           );
                       const gint out_top_2 =
                         LOHALO_MAX
@@ -2644,7 +2631,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               )
                           )
                           ,
-                          -LOHALO_OFFSET_2
+                          -LOHALO_OFFSET_MIPMAP
                         );
                       const gint out_bot_2 =
                         LOHALO_MIN
@@ -2659,7 +2646,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                 )
                             )
                             ,
-                            LOHALO_OFFSET_2
+                            LOHALO_OFFSET_MIPMAP
                           );
 
                       /*
@@ -2716,27 +2703,27 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         const gfloat closest_left_3 =
                           odd_ix_2
                           ?
-                          (gfloat) ( -( LOHALO_OFFSET_2 + 1.5 ) )
+                          (gfloat) ( -( LOHALO_OFFSET_MIPMAP + 1.5 ) )
                           :
-                          (gfloat) ( -( LOHALO_OFFSET_2 + 0.5 ) );
+                          (gfloat) ( -( LOHALO_OFFSET_MIPMAP + 0.5 ) );
                         const gfloat closest_rite_3 =
                           odd_ix_2
                           ?
-                          (gfloat) (  ( LOHALO_OFFSET_2 + 0.5 ) )
+                          (gfloat) (  ( LOHALO_OFFSET_MIPMAP + 0.5 ) )
                           :
-                          (gfloat) (  ( LOHALO_OFFSET_2 + 1.5 ) );
+                          (gfloat) (  ( LOHALO_OFFSET_MIPMAP + 1.5 ) );
                         const gfloat closest_top_3  =
                           odd_iy_2
                           ?
-                          (gfloat) ( -( LOHALO_OFFSET_2 + 1.5 ) )
+                          (gfloat) ( -( LOHALO_OFFSET_MIPMAP + 1.5 ) )
                           :
-                          (gfloat) ( -( LOHALO_OFFSET_2 + 0.5 ) );
+                          (gfloat) ( -( LOHALO_OFFSET_MIPMAP + 0.5 ) );
                         const gfloat closest_bot_3  =
                           odd_iy_2
                           ?
-                          (gfloat) (  ( LOHALO_OFFSET_2 + 0.5 ) )
+                          (gfloat) (  ( LOHALO_OFFSET_MIPMAP + 0.5 ) )
                           :
-                          (gfloat) (  ( LOHALO_OFFSET_2 + 1.5 ) );
+                          (gfloat) (  ( LOHALO_OFFSET_MIPMAP + 1.5 ) );
 
                         if (( x_2 - fudged_bounding_box_half_width  <
                               closest_left_3 )
@@ -2764,13 +2751,13 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               x_2 + (gfloat) ( 2 * ( ix_2 - 2 * ix_3 ) - 1 );
                             const gfloat y_3 =
                               y_2 + (gfloat) ( 2 * ( iy_2 - 2 * iy_3 ) - 1 );
-                            const gint in_left_3 =  -LOHALO_OFFSET_2       +
+                            const gint in_left_3 =  -LOHALO_OFFSET_MIPMAP       +
                                                 odd_ix_2;
-                            const gint in_rite_3 = ( LOHALO_OFFSET_2 - 1 ) +
+                            const gint in_rite_3 = ( LOHALO_OFFSET_MIPMAP - 1 ) +
                                                odd_ix_2;
-                            const gint in_top_3  =  -LOHALO_OFFSET_2       +
+                            const gint in_top_3  =  -LOHALO_OFFSET_MIPMAP       +
                                                 odd_iy_2;
-                            const gint in_bot_3  = ( LOHALO_OFFSET_2 - 1 ) +
+                            const gint in_bot_3  = ( LOHALO_OFFSET_MIPMAP - 1 ) +
                                                    odd_iy_2;
                             const gint out_left_3 =
                               LOHALO_MAX
@@ -2785,7 +2772,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                     )
                                   )
                                   ,
-                                  -LOHALO_OFFSET_3
+                                  -LOHALO_OFFSET_MIPMAP
                                  );
                             const gint out_rite_3 =
                               LOHALO_MIN
@@ -2800,7 +2787,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                       )
                                   )
                                   ,
-                                  LOHALO_OFFSET_3
+                                  LOHALO_OFFSET_MIPMAP
                                 );
                             const gint out_top_3 =
                               LOHALO_MAX
@@ -2815,7 +2802,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                     )
                                 )
                                 ,
-                                -LOHALO_OFFSET_3
+                                -LOHALO_OFFSET_MIPMAP
                               );
                             const gint out_bot_3 =
                               LOHALO_MIN
@@ -2830,7 +2817,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                       )
                                   )
                                   ,
-                                  LOHALO_OFFSET_3
+                                  LOHALO_OFFSET_MIPMAP
                                 );
                             {
                               gint i;
