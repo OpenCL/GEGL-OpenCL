@@ -246,6 +246,21 @@
                                                               &total_weight, \
                                                               ewa_newval)
 
+#define LOHALO_CALL_LEVEL3_EWA_UPDATE(j,i) mipmap_ewa_update (3,             \
+                                                              (j),           \
+                                                              (i),           \
+                                                              c_major_x,     \
+                                                              c_major_y,     \
+                                                              c_minor_x,     \
+                                                              c_minor_y,     \
+                                                              x_3,           \
+                                                              y_3,           \
+                                                              channels,      \
+                                                              row_skip,      \
+                                                              input_bptr_3,  \
+                                                              &total_weight, \
+                                                              ewa_newval)
+
 
 /*
  * Wiggle room added to "Are we done yet?" checks.
@@ -312,11 +327,18 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * that the do whiles word properly. Almost certainly, the higher
  * mipmap level's offset should almost never smaller than half the
  * previous level's offset.
+ *
+ * They are maxed out: It appears that there is little overall speed
+ * benefit to keeping them small.
  */
 #define LOHALO_OFFSET_1 (31)
 #define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
+
 #define LOHALO_OFFSET_2 (31)
 #define LOHALO_SIZE_2 ( 1 + 2 * LOHALO_OFFSET_2 )
+
+#define LOHALO_OFFSET_3 (31)
+#define LOHALO_SIZE_3 ( 1 + 2 * LOHALO_OFFSET_3 )
 
 /*
  * Lohalo always uses some mipmap level 0 values, but not always
@@ -329,14 +351,22 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   GEGL_SAMPLER (self)->context_rect[0].y = -LOHALO_OFFSET;
   GEGL_SAMPLER (self)->context_rect[0].width  = LOHALO_SIZE;
   GEGL_SAMPLER (self)->context_rect[0].height = LOHALO_SIZE;
+
   GEGL_SAMPLER (self)->context_rect[1].x = -LOHALO_OFFSET_1;
   GEGL_SAMPLER (self)->context_rect[1].y = -LOHALO_OFFSET_1;
   GEGL_SAMPLER (self)->context_rect[1].width  = LOHALO_SIZE_1;
   GEGL_SAMPLER (self)->context_rect[1].height = LOHALO_SIZE_1;
+
   GEGL_SAMPLER (self)->context_rect[2].x = -LOHALO_OFFSET_2;
   GEGL_SAMPLER (self)->context_rect[2].y = -LOHALO_OFFSET_2;
   GEGL_SAMPLER (self)->context_rect[2].width  = LOHALO_SIZE_2;
   GEGL_SAMPLER (self)->context_rect[2].height = LOHALO_SIZE_2;
+
+  GEGL_SAMPLER (self)->context_rect[2].x = -LOHALO_OFFSET_3;
+  GEGL_SAMPLER (self)->context_rect[2].y = -LOHALO_OFFSET_3;
+  GEGL_SAMPLER (self)->context_rect[2].width  = LOHALO_SIZE_3;
+  GEGL_SAMPLER (self)->context_rect[2].height = LOHALO_SIZE_3;
+
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
@@ -2677,10 +2707,178 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               } while ( ++j <= out_rite_2 );
                           }
                       }
-                    }
-                }
-              }
-
+		      {
+			/*
+		         * Third mipmap level.
+			 */
+			const gint odd_ix_2 = ix_2 % 2;
+                        const gint odd_iy_2 = iy_2 % 2;
+                        const gfloat closest_left_3 =
+                          odd_ix_2
+                          ?
+                          (gfloat) ( -( LOHALO_OFFSET_2 + 1.5 ) )
+                          :
+                          (gfloat) ( -( LOHALO_OFFSET_2 + 0.5 ) );
+                        const gfloat closest_rite_3 =
+                          odd_ix_2
+                          ?
+                          (gfloat) (  ( LOHALO_OFFSET_2 + 0.5 ) )
+                          :
+                          (gfloat) (  ( LOHALO_OFFSET_2 + 1.5 ) );
+                        const gfloat closest_top_3  =
+                          odd_iy_2
+                          ?
+                          (gfloat) ( -( LOHALO_OFFSET_2 + 1.5 ) )
+                          :
+                          (gfloat) ( -( LOHALO_OFFSET_2 + 0.5 ) );
+                        const gfloat closest_bot_3  =
+                          odd_iy_2
+                          ?
+                          (gfloat) (  ( LOHALO_OFFSET_2 + 0.5 ) )
+                          :
+                          (gfloat) (  ( LOHALO_OFFSET_2 + 1.5 ) );
+      
+                        if (( x_2 - fudged_bounding_box_half_width  <
+			      closest_left_3 )
+                            ||
+                            ( x_2 + fudged_bounding_box_half_width  >
+			      closest_rite_3 )
+                            ||
+                            ( y_2 - fudged_bounding_box_half_height <
+			      closest_top_3 )
+                            ||
+                            ( y_2 + fudged_bounding_box_half_height >
+			      closest_bot_3 ))
+                          {
+                            const gint ix_3 =
+			      LOHALO_FLOORED_DIVISION_BY_2(ix_2);
+                            const gint iy_3 =
+			      LOHALO_FLOORED_DIVISION_BY_2(iy_2);
+                            const gfloat* restrict input_bptr_3 =
+                              (gfloat*) gegl_sampler_get_from_mipmap (self,
+                                                                      ix_3,
+                                                                      iy_3,
+                                                                      1,
+                                                                   repeat_mode);
+                            const gfloat x_3 =
+                              x_2 + (gfloat) ( 2 * ( ix_2 - 2 * ix_3 ) - 1 );
+                            const gfloat y_3 =
+                              y_2 + (gfloat) ( 2 * ( iy_2 - 2 * iy_3 ) - 1 );
+                            const gint in_left_3 =  -LOHALO_OFFSET_2       +
+    			                        odd_ix_2;
+                            const gint in_rite_3 = ( LOHALO_OFFSET_2 - 1 ) +
+    			                       odd_ix_2;
+                            const gint in_top_3  =  -LOHALO_OFFSET_2       +
+    			                        odd_iy_2;
+                            const gint in_bot_3  = ( LOHALO_OFFSET_2 - 1 ) +
+                                                   odd_iy_2;
+                            const gint out_left_3 =
+                              LOHALO_MAX
+                                (
+                                  (gint)
+                                  (
+                                    ceilf
+                                    (
+                                      (float)
+                                      ( ( x_3 - bounding_box_half_width  )
+                                        * (gfloat) 0.5 )
+                                    )
+                                  )
+                                  ,
+                                  -LOHALO_OFFSET_3
+                                 );
+                            const gint out_rite_3 =
+                              LOHALO_MIN
+                                (
+                                  (gint)
+                                  (
+                                    floorf
+                                      (
+                                        (float)
+                                        ( ( x_3 + bounding_box_half_width  )
+                                          * (gfloat) 0.5 )
+                                      )
+                                  )
+                                  ,
+                                  LOHALO_OFFSET_3
+                                );
+                            const gint out_top_3 =
+                              LOHALO_MAX
+                              (
+                                (gint)
+                                (
+                                  ceilf
+                                    (
+                                      (float)
+                                      ( ( y_3 - bounding_box_half_height )
+                                        * (gfloat) 0.5 )
+                                    )
+                                )
+                                ,
+                                -LOHALO_OFFSET_3
+                              );
+                            const gint out_bot_3 =
+                              LOHALO_MIN
+                                (
+                                  (gint)
+                                  (
+                                    floorf
+                                      (
+                                        (float)
+                                        ( ( y_3 + bounding_box_half_height )
+                                          * (gfloat) 0.5 )
+                                      )
+                                  )
+                                  ,
+                                  LOHALO_OFFSET_3
+                                );
+                            {
+                              gint i;
+                              for ( i = out_top_3; i <= in_top_3; i++ )
+                                {
+                                  gint j = out_left_3;
+                                  do
+                                    {
+                                      LOHALO_CALL_LEVEL3_EWA_UPDATE( j, i );
+                                    } while ( ++j <= out_rite_3 );
+                                }
+                            }
+                            {
+                              gint i = in_top_3 + (gint) 1;
+                              do
+                                {
+                                  {
+                                    gint j;
+                                    for ( j = out_left_3; j <= in_left_3; j++ )
+                                      {
+                                        LOHALO_CALL_LEVEL3_EWA_UPDATE( j, i );
+                                      }
+                                  }
+                                  {
+                                    gint j;
+                                    for ( j = in_rite_3; j <= out_rite_3; j++ )
+                                      {
+                                        LOHALO_CALL_LEVEL3_EWA_UPDATE( j, i );
+                                      }
+                                  }
+                                } while ( ++i < in_bot_3 );
+                            }
+                            {
+                              gint i;
+                              for ( i = in_bot_3; i <= out_bot_3; i++ )
+                                {
+                                  gint j = out_left_3;
+                                  do
+                                    {
+                                      LOHALO_CALL_LEVEL3_EWA_UPDATE( j, i );
+                                    } while ( ++j <= out_rite_3 );
+                                }
+                            }
+			  }
+		      }
+		    }
+		}
+	      }
             {
               /*
                * Blend the LBB-Nohalo and EWA results:
