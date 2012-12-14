@@ -31,7 +31,7 @@ G_BEGIN_DECLS
 #define GEGL_IS_SAMPLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SAMPLER))
 #define GEGL_IS_SAMPLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SAMPLER))
 #define GEGL_SAMPLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SAMPLER, GeglSamplerClass))
-#define GEGL_SAMPLER_MIPMAP_LEVELS   3
+#define GEGL_SAMPLER_MIPMAP_LEVELS   4
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
 

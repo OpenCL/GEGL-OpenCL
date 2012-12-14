@@ -331,7 +331,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * They are maxed out: It appears that there is little overall speed
  * benefit to keeping them small.
  */
-#define LOHALO_OFFSET_1 (31)
+#define LOHALO_OFFSET_1 (14)
 #define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
 
 #define LOHALO_OFFSET_2 (31)
@@ -362,10 +362,10 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   GEGL_SAMPLER (self)->context_rect[2].width  = LOHALO_SIZE_2;
   GEGL_SAMPLER (self)->context_rect[2].height = LOHALO_SIZE_2;
 
-  GEGL_SAMPLER (self)->context_rect[2].x = -LOHALO_OFFSET_3;
-  GEGL_SAMPLER (self)->context_rect[2].y = -LOHALO_OFFSET_3;
-  GEGL_SAMPLER (self)->context_rect[2].width  = LOHALO_SIZE_3;
-  GEGL_SAMPLER (self)->context_rect[2].height = LOHALO_SIZE_3;
+  GEGL_SAMPLER (self)->context_rect[3].x = -LOHALO_OFFSET_3;
+  GEGL_SAMPLER (self)->context_rect[3].y = -LOHALO_OFFSET_3;
+  GEGL_SAMPLER (self)->context_rect[3].width  = LOHALO_SIZE_3;
+  GEGL_SAMPLER (self)->context_rect[3].height = LOHALO_SIZE_3;
 
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
