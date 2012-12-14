@@ -216,20 +216,20 @@
 /*
  * Convenience macros:
  */
-#define LOHALO_MIPMAP_EWA_UPDATE(_level_)      \
-  mipmap_ewa_update (_level_,                  \
-                     j,                        \
-                     i,                        \
-                     c_major_x,                \
-                     c_major_y,                \
-                     c_minor_x,                \
-                     c_minor_y,                \
-                     x_##_level_,              \
-                     y_##_level_,              \
-                     channels,                 \
-                     row_skip,                 \
-                     input_bptr_##_level_,     \
-                     &total_weight,            \
+#define LOHALO_MIPMAP_EWA_UPDATE(_level_)  \
+  mipmap_ewa_update (_level_,              \
+                     j,                    \
+                     i,                    \
+                     c_major_x,            \
+                     c_major_y,            \
+                     c_minor_x,            \
+                     c_minor_y,            \
+                     x_##_level_,          \
+                     y_##_level_,          \
+                     channels,             \
+                     row_skip,             \
+                     input_bptr_##_level_, \
+                     &total_weight,        \
                      ewa_newval)
 
 /*
