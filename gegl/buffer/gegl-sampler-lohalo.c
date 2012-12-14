@@ -331,7 +331,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * They are maxed out: It appears that there is little overall speed
  * benefit to keeping them small.
  */
-#define LOHALO_OFFSET_1 (14)
+#define LOHALO_OFFSET_1 (31)
 #define LOHALO_SIZE_1 ( 1 + 2 * LOHALO_OFFSET_1 )
 
 #define LOHALO_OFFSET_2 (31)
@@ -2707,11 +2707,11 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               } while ( ++j <= out_rite_2 );
                           }
                       }
-		      {
-			/*
-		         * Third mipmap level.
-			 */
-			const gint odd_ix_2 = ix_2 % 2;
+                      {
+                        /*
+                         * Third mipmap level.
+                         */
+                        const gint odd_ix_2 = ix_2 % 2;
                         const gint odd_iy_2 = iy_2 % 2;
                         const gfloat closest_left_3 =
                           odd_ix_2
@@ -2737,23 +2737,23 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                           (gfloat) (  ( LOHALO_OFFSET_2 + 0.5 ) )
                           :
                           (gfloat) (  ( LOHALO_OFFSET_2 + 1.5 ) );
-      
+
                         if (( x_2 - fudged_bounding_box_half_width  <
-			      closest_left_3 )
+                              closest_left_3 )
                             ||
                             ( x_2 + fudged_bounding_box_half_width  >
-			      closest_rite_3 )
+                              closest_rite_3 )
                             ||
                             ( y_2 - fudged_bounding_box_half_height <
-			      closest_top_3 )
+                              closest_top_3 )
                             ||
                             ( y_2 + fudged_bounding_box_half_height >
-			      closest_bot_3 ))
+                              closest_bot_3 ))
                           {
                             const gint ix_3 =
-			      LOHALO_FLOORED_DIVISION_BY_2(ix_2);
+                              LOHALO_FLOORED_DIVISION_BY_2(ix_2);
                             const gint iy_3 =
-			      LOHALO_FLOORED_DIVISION_BY_2(iy_2);
+                              LOHALO_FLOORED_DIVISION_BY_2(iy_2);
                             const gfloat* restrict input_bptr_3 =
                               (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                                       ix_3,
@@ -2765,11 +2765,11 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                             const gfloat y_3 =
                               y_2 + (gfloat) ( 2 * ( iy_2 - 2 * iy_3 ) - 1 );
                             const gint in_left_3 =  -LOHALO_OFFSET_2       +
-    			                        odd_ix_2;
+                                                odd_ix_2;
                             const gint in_rite_3 = ( LOHALO_OFFSET_2 - 1 ) +
-    			                       odd_ix_2;
+                                               odd_ix_2;
                             const gint in_top_3  =  -LOHALO_OFFSET_2       +
-    			                        odd_iy_2;
+                                                odd_iy_2;
                             const gint in_bot_3  = ( LOHALO_OFFSET_2 - 1 ) +
                                                    odd_iy_2;
                             const gint out_left_3 =
@@ -2874,11 +2874,11 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                     } while ( ++j <= out_rite_3 );
                                 }
                             }
-			  }
-		      }
-		    }
-		}
-	      }
+                          }
+                      }
+                    }
+                }
+              }
             {
               /*
                * Blend the LBB-Nohalo and EWA results:
