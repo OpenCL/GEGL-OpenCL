@@ -218,6 +218,7 @@
  * integers (like "1", "2" etc) because it it literally replaced (note
  * the "##_level").
  */
+
 #define LOHALO_FIND_CLOSEST_LOCATIONS(_previous_level_,_level_) \
   const gfloat closest_left_##_level_ =                         \
     odd_ix_##_previous_level_                                   \
@@ -243,6 +244,18 @@
     (gfloat) (  ( LOHALO_OFFSET_##_previous_level_ + 0.5 ) )    \
     :                                                           \
     (gfloat) (  ( LOHALO_OFFSET_##_previous_level_ + 1.5 ) );
+
+
+#define LOHALO_FIND_CLOSEST_INDICES(_previous_level_,_level_)             \
+  const gint in_left_##_level_ =                                          \
+    -LOHALO_OFFSET_##_previous_level_        + odd_ix_##_previous_level_; \
+  const gint in_rite_##_level_ =                                          \
+    ( LOHALO_OFFSET_##_previous_level_ - 1 ) + odd_ix_##_previous_level_; \
+  const gint in_top_##_level_  =                                          \
+    -LOHALO_OFFSET_##_previous_level_        + odd_iy_##_previous_level_; \
+  const gint in_bot_##_level_  =                                          \
+    ( LOHALO_OFFSET_##_previous_level_ - 1 ) + odd_iy_##_previous_level_;
+
 
 #define LOHALO_FIND_FARTHEST_INDICES(_level_)                            \
   const gint out_left_##_level_ =                                        \
@@ -281,6 +294,7 @@
       ,                                                                  \
       LOHALO_OFFSET_MIPMAP                                               \
     );
+
 
 #define LOHALO_MIPMAP_EWA_UPDATE(_level_)                             \
   {                                                                   \
@@ -325,6 +339,7 @@
           } while ( ++j <= out_rite_##_level_ );                      \
       }                                                               \
   }
+
 
 #define LOHALO_MIPMAP_PIXEL_UPDATE(_level_)  \
   mipmap_ewa_update (_level_,                \
@@ -2414,11 +2429,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * The "in" indices are the closest relative mipmap 1
                  * indices of needed mipmap values:
                  */
-                const gint in_left_1 =  -LOHALO_OFFSET_0       + odd_ix_0;
-                const gint in_rite_1 = ( LOHALO_OFFSET_0 - 1 ) + odd_ix_0;
-                const gint in_top_1  =  -LOHALO_OFFSET_0       + odd_iy_0;
-                const gint in_bot_1  = ( LOHALO_OFFSET_0 - 1 ) + odd_iy_0;
-
+		LOHALO_FIND_CLOSEST_INDICES(0,1)
                 /*
                  * The "out" indices are the farthest relative mipmap
                  * 1 indices we use at this level:
@@ -2429,8 +2440,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * Update using mipmap level 1 values.
                  */
                 LOHALO_MIPMAP_EWA_UPDATE(1)
-
-                {
+		{
                   /*
                    * In order to know whether we use even higher
                    * mipmap level values, we need to check whether
@@ -2444,7 +2454,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                    * access pixels which are LOHALO_OFFSET_MIPMAP away
                    * from the level 1 anchor pixel location in box
                    * distance.
-                   */
+		   */
                   /*
                    * Determine whether the anchor level_1 pixel
                    * locations are odd (VS even):
@@ -2478,7 +2488,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                        * pixel values will get 0 coefficients--but we
                        * used a quick and dirty bounding box test
                        * which lets through false positives.)
-                       */
+		       */
 
                       /*
                        * Nearest mipmap anchor pixel location:
@@ -2504,12 +2514,12 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                        * the center of a level 1 pixel is at a box
                        * distance of 1 from the center of the closest
                        * level 2 pixel.
-                       */
+		       */
                       const gfloat x_2 =
                         x_1 + (gfloat) ( 2 * ( ix_1 - 2 * ix_2 ) - 1 );
                       const gfloat y_2 =
                         y_1 + (gfloat) ( 2 * ( iy_1 - 2 * iy_2 ) - 1 );
-
+  
                       /*
                        * Key index ranges:
                        */
@@ -2517,15 +2527,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                        * The "in" indices are the closest relative
                        * mipmap 2 indices of needed mipmap values:
                        */
-                      const gint in_left_2 =
-                        -LOHALO_OFFSET_MIPMAP        + odd_ix_1;
-                      const gint in_rite_2 =
-                        ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_ix_1;
-                      const gint in_top_2  =
-                        -LOHALO_OFFSET_MIPMAP        + odd_iy_1;
-                      const gint in_bot_2  =
-                        ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_iy_1;
-
+		      LOHALO_FIND_CLOSEST_INDICES(1,2)
                       /*
                        * The "out" indices are the farthest relative
                        * mipmap 1 indices we use at this level:
@@ -2570,14 +2572,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               x_2 + (gfloat) ( 2 * ( ix_2 - 2 * ix_3 ) - 1 );
                             const gfloat y_3 =
                               y_2 + (gfloat) ( 2 * ( iy_2 - 2 * iy_3 ) - 1 );
-                            const gint in_left_3 =
-                              -LOHALO_OFFSET_MIPMAP        + odd_ix_2;
-                            const gint in_rite_3 =
-                              ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_ix_2;
-                            const gint in_top_3  =
-                              -LOHALO_OFFSET_MIPMAP        + odd_iy_2;
-                            const gint in_bot_3  =
-                              ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_iy_2;
+			    LOHALO_FIND_CLOSEST_INDICES(2,3)
                             LOHALO_FIND_FARTHEST_INDICES(3)
                             LOHALO_MIPMAP_EWA_UPDATE(3)
                           }
