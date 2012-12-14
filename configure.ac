@@ -1055,7 +1055,7 @@ AC_ARG_WITH(libv4l, [  --without-libv4l        build without V4L support])
 
 have_v4l="no"
 if test "x$with_libv4l" != "xno"; then
-  AC_CHECK_HEADER(linux/videodev.h, have_v4l="yes")
+  AC_CHECK_HEADER(linux/videodev2.h, have_v4l="yes")
 fi
 
 AM_CONDITIONAL(HAVE_V4L, test "$have_v4l" = "yes")
