@@ -177,13 +177,13 @@
 /*     (gfloat) 0.                                \ */
 /*   )                                              */
 
-#define LOHALO_MINMOD(a,b,a_times_a,a_times_b) \
-  (                                            \
-    (a_times_b) >= (gfloat) 0.                 \
-    ?                                          \
-    ( (a_times_a) <= (a_times_b) ? (a) : (b) ) \
-    :                                          \
-    (gfloat) 0.                                \
+#define LOHALO_MINMOD(_a_,_b_,_a_times_a_,_a_times_b_) \
+  (                                                    \
+    (_a_times_b_) >= (gfloat) 0.                       \
+    ?                                                  \
+    ( (_a_times_a_) <= (_a_times_b_) ? (_a_) : (_b_) ) \
+    :                                                  \
+    (gfloat) 0.                                        \
   )
 
 
@@ -191,10 +191,10 @@
  * Macros set up so the likely winner in in the first argument
  * (forward branch likely etc):
  */
-#define LOHALO_MIN(x,y) ( (x) <= (y) ? (x) : (y) )
-#define LOHALO_MAX(x,y) ( (x) >= (y) ? (x) : (y) )
-#define LOHALO_ABS(x)   ( (x) >= (gfloat) 0. ? (x) : -(x) )
-#define LOHALO_SIGN(x)  ( (x) >= (gfloat) 0. ? (gfloat) 1. : (gfloat) -1. )
+#define LOHALO_MIN(_x_,_y_) ( (_x_) <= (_y_) ? (_x_) : (_y_) )
+#define LOHALO_MAX(_x_,_y_) ( (_x_) >= (_y_) ? (_x_) : (_y_) )
+#define LOHALO_ABS(_x_)   ( (_x_) >= (gfloat) 0. ? (_x_) : -(_x_) )
+#define LOHALO_SIGN(_x_)  ( (_x_) >= (gfloat) 0. ? (gfloat) 1. : (gfloat) -1. )
 
 
 /*
@@ -210,57 +210,27 @@
  *
  * FLOORED_DIVISION_BY_2(a) ( (a)>>1 )
  */
-#define LOHALO_FLOORED_DIVISION_BY_2(a) ( (a)>>1 )
+#define LOHALO_FLOORED_DIVISION_BY_2(_a_) ( (_a_)>>1 )
 
 
 /*
  * Convenience macros:
  */
-#define LOHALO_CALL_LEVEL1_EWA_UPDATE(j,i) mipmap_ewa_update (1,             \
-                                                              (j),           \
-                                                              (i),           \
-                                                              c_major_x,     \
-                                                              c_major_y,     \
-                                                              c_minor_x,     \
-                                                              c_minor_y,     \
-                                                              x_1,           \
-                                                              y_1,           \
-                                                              channels,      \
-                                                              row_skip,      \
-                                                              input_bptr_1,  \
-                                                              &total_weight, \
-                                                              ewa_newval)
-
-#define LOHALO_CALL_LEVEL2_EWA_UPDATE(j,i) mipmap_ewa_update (2,             \
-                                                              (j),           \
-                                                              (i),           \
-                                                              c_major_x,     \
-                                                              c_major_y,     \
-                                                              c_minor_x,     \
-                                                              c_minor_y,     \
-                                                              x_2,           \
-                                                              y_2,           \
-                                                              channels,      \
-                                                              row_skip,      \
-                                                              input_bptr_2,  \
-                                                              &total_weight, \
-                                                              ewa_newval)
-
-#define LOHALO_CALL_LEVEL3_EWA_UPDATE(j,i) mipmap_ewa_update (3,             \
-                                                              (j),           \
-                                                              (i),           \
-                                                              c_major_x,     \
-                                                              c_major_y,     \
-                                                              c_minor_x,     \
-                                                              c_minor_y,     \
-                                                              x_3,           \
-                                                              y_3,           \
-                                                              channels,      \
-                                                              row_skip,      \
-                                                              input_bptr_3,  \
-                                                              &total_weight, \
-                                                              ewa_newval)
-
+#define LOHALO_MIPMAP_EWA_UPDATE(_level_)      \
+  mipmap_ewa_update ((_level_),		       \
+		     j, 	 	       \
+		     i, 	 	       \
+		     c_major_x,		       \
+		     c_major_y,		       \
+		     c_minor_x,		       \
+		     c_minor_y,		       \
+		     x_##_level_,	       \
+		     y_##_level_,	       \
+		     channels,                 \
+		     row_skip,                 \
+		     input_bptr_##_level_,     \
+		     &total_weight,	       \
+		     ewa_newval)
 
 /*
  * Wiggle room added to "Are we done yet?" checks.
@@ -2435,7 +2405,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                       gint j = out_left_1;
                       do
                         {
-                          LOHALO_CALL_LEVEL1_EWA_UPDATE( j, i );
+                          LOHALO_MIPMAP_EWA_UPDATE( 1 );
                         } while ( ++j <= out_rite_1 );
                     }
                 }
@@ -2447,14 +2417,14 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         gint j;
                         for ( j = out_left_1; j <= in_left_1; j++ )
                           {
-                            LOHALO_CALL_LEVEL1_EWA_UPDATE( j, i );
+                            LOHALO_MIPMAP_EWA_UPDATE( 1 );
                           }
                       }
                       {
                         gint j;
                         for ( j = in_rite_1; j <= out_rite_1; j++ )
                           {
-                            LOHALO_CALL_LEVEL1_EWA_UPDATE( j, i );
+                            LOHALO_MIPMAP_EWA_UPDATE( 1 );
                           }
                       }
                     } while ( ++i < in_bot_1 );
@@ -2466,7 +2436,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                       gint j = out_left_1;
                       do
                       {
-                        LOHALO_CALL_LEVEL1_EWA_UPDATE( j, i );
+                        LOHALO_MIPMAP_EWA_UPDATE( 1 );
                       } while ( ++j <= out_rite_1 );
                     }
                 }
@@ -2659,7 +2629,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                             gint j = out_left_2;
                             do
                               {
-                                LOHALO_CALL_LEVEL2_EWA_UPDATE( j, i );
+                                LOHALO_MIPMAP_EWA_UPDATE( 2 );
                               } while ( ++j <= out_rite_2 );
                           }
                       }
@@ -2671,14 +2641,14 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               gint j;
                               for ( j = out_left_2; j <= in_left_2; j++ )
                                 {
-                                  LOHALO_CALL_LEVEL2_EWA_UPDATE( j, i );
+                                  LOHALO_MIPMAP_EWA_UPDATE( 2 );
                                 }
                             }
                             {
                               gint j;
                               for ( j = in_rite_2; j <= out_rite_2; j++ )
                                 {
-                                  LOHALO_CALL_LEVEL2_EWA_UPDATE( j, i );
+                                  LOHALO_MIPMAP_EWA_UPDATE( 2 );
                                 }
                             }
                           } while ( ++i < in_bot_2 );
@@ -2690,7 +2660,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                             gint j = out_left_2;
                             do
                               {
-                                LOHALO_CALL_LEVEL2_EWA_UPDATE( j, i );
+                                LOHALO_MIPMAP_EWA_UPDATE( 2 );
                               } while ( ++j <= out_rite_2 );
                           }
                       }
@@ -2826,7 +2796,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                   gint j = out_left_3;
                                   do
                                     {
-                                      LOHALO_CALL_LEVEL3_EWA_UPDATE( j, i );
+                                      LOHALO_MIPMAP_EWA_UPDATE( 3 );
                                     } while ( ++j <= out_rite_3 );
                                 }
                             }
@@ -2838,14 +2808,14 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                     gint j;
                                     for ( j = out_left_3; j <= in_left_3; j++ )
                                       {
-                                        LOHALO_CALL_LEVEL3_EWA_UPDATE( j, i );
+                                        LOHALO_MIPMAP_EWA_UPDATE( 3 );
                                       }
                                   }
                                   {
                                     gint j;
                                     for ( j = in_rite_3; j <= out_rite_3; j++ )
                                       {
-                                        LOHALO_CALL_LEVEL3_EWA_UPDATE( j, i );
+                                        LOHALO_MIPMAP_EWA_UPDATE( 3 );
                                       }
                                   }
                                 } while ( ++i < in_bot_3 );
@@ -2857,7 +2827,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                   gint j = out_left_3;
                                   do
                                     {
-                                      LOHALO_CALL_LEVEL3_EWA_UPDATE( j, i );
+                                      LOHALO_MIPMAP_EWA_UPDATE( 3 );
                                     } while ( ++j <= out_rite_3 );
                                 }
                             }
