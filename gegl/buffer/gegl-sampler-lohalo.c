@@ -325,25 +325,20 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * the alignment at the sampling location. I (Nicolas) have not taken
  * the time to find the exact inequality that must be respected so
  * that the do whiles word properly. Almost certainly, the higher
- * mipmap level's offset should almost never smaller than half the
+ * mipmap level's offset should almost never be smaller than half the
  * previous level's offset.
- *
- * They are all maxed out: It appears that there is little overall
- * speed benefit to keeping them small. For this reason, only one
- * value is used, instead of different ones for each higher MIPMAP
- * LEVEL.
  */
-#define LOHALO_OFFSET_MIPMAP (31)
+#define LOHALO_OFFSET_MIPMAP (14)
 #define LOHALO_SIZE_MIPMAP ( 1 + 2 * LOHALO_OFFSET_MIPMAP )
 
 #define LOHALO_OFFSET_1 LOHALO_OFFSET_MIPMAP
-#define LOHALO_SIZE_1 LOHALO_SIZE_MIPMAP
+#define LOHALO_SIZE_1   LOHALO_SIZE_MIPMAP
 
 #define LOHALO_OFFSET_2 LOHALO_OFFSET_MIPMAP
-#define LOHALO_SIZE_2 LOHALO_SIZE_MIPMAP
+#define LOHALO_SIZE_2   LOHALO_SIZE_MIPMAP
 
 #define LOHALO_OFFSET_3 LOHALO_OFFSET_MIPMAP
-#define LOHALO_SIZE_3 LOHALO_SIZE_MIPMAP
+#define LOHALO_SIZE_3   LOHALO_SIZE_MIPMAP
 
 /*
  * Lohalo always uses some mipmap level 0 values, but not always
@@ -352,15 +347,25 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
-  GEGL_SAMPLER (self)->context_rect[0].x = -LOHALO_OFFSET_0;
-  GEGL_SAMPLER (self)->context_rect[0].y = -LOHALO_OFFSET_0;
+  GEGL_SAMPLER (self)->context_rect[0].x   = -LOHALO_OFFSET_0;
+  GEGL_SAMPLER (self)->context_rect[0].y   = -LOHALO_OFFSET_0;
   GEGL_SAMPLER (self)->context_rect[0].width  = LOHALO_SIZE_0;
   GEGL_SAMPLER (self)->context_rect[0].height = LOHALO_SIZE_0;
 
-  GEGL_SAMPLER (self)->context_rect[1].x = -LOHALO_OFFSET_MIPMAP;
-  GEGL_SAMPLER (self)->context_rect[1].y = -LOHALO_OFFSET_MIPMAP;
-  GEGL_SAMPLER (self)->context_rect[1].width  = LOHALO_SIZE_MIPMAP;
-  GEGL_SAMPLER (self)->context_rect[1].height = LOHALO_SIZE_MIPMAP;
+  GEGL_SAMPLER (self)->context_rect[1].x   = -LOHALO_OFFSET_1;
+  GEGL_SAMPLER (self)->context_rect[1].y   = -LOHALO_OFFSET_1;
+  GEGL_SAMPLER (self)->context_rect[1].width  = LOHALO_SIZE_1;
+  GEGL_SAMPLER (self)->context_rect[1].height = LOHALO_SIZE_1;
+
+  GEGL_SAMPLER (self)->context_rect[2].x   = -LOHALO_OFFSET_2;
+  GEGL_SAMPLER (self)->context_rect[2].y   = -LOHALO_OFFSET_2;
+  GEGL_SAMPLER (self)->context_rect[2].width  = LOHALO_SIZE_2;
+  GEGL_SAMPLER (self)->context_rect[2].height = LOHALO_SIZE_2;
+
+  GEGL_SAMPLER (self)->context_rect[3].x   = -LOHALO_OFFSET_3;
+  GEGL_SAMPLER (self)->context_rect[3].y   = -LOHALO_OFFSET_3;
+  GEGL_SAMPLER (self)->context_rect[3].width  = LOHALO_SIZE_3;
+  GEGL_SAMPLER (self)->context_rect[3].height = LOHALO_SIZE_3;
 
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
@@ -2221,7 +2226,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
              * 1 pixels which involve data not found in the level 0
              * LOHALO_SIZE_0xLOHALO_SIZE_0.
              */
-	    LOHALO_FIND_CLOSEST_LOCATIONS(0,1)
+            LOHALO_FIND_CLOSEST_LOCATIONS(0,1)
 
             /*
              * Remainder of the ellipse geometry computation:
@@ -2316,7 +2321,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * "-1/2"s are because the center of a level 0 pixel
                  * is at a box distance of 1/2 from the center of the
                  * closest level 1 pixel.
-                 */
+p                 */
                 const gfloat x_1 =
                   x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
                 const gfloat y_1 =
@@ -2470,7 +2475,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                    * level 2 pixels which involve data not found in the
                    * level 1 LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP.
                    */
-		  LOHALO_FIND_CLOSEST_LOCATIONS(1,2)
+                  LOHALO_FIND_CLOSEST_LOCATIONS(1,2)
 
                   if (( x_1 - fudged_bounding_box_half_width  < closest_left_2 )
                       ||
@@ -2651,7 +2656,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                          */
                         const gint odd_ix_2 = ix_2 % 2;
                         const gint odd_iy_2 = iy_2 % 2;
-			LOHALO_FIND_CLOSEST_LOCATIONS(2,3)
+                        LOHALO_FIND_CLOSEST_LOCATIONS(2,3)
 
                         if (( x_2 - fudged_bounding_box_half_width  <
                               closest_left_3 )
