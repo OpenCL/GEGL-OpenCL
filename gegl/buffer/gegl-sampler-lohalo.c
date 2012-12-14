@@ -2568,7 +2568,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                                 ix_2,
                                                                 iy_2,
-                                                                1,
+                                                                2,
                                                                 repeat_mode);
 
                       /*
@@ -2758,7 +2758,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                                       ix_3,
                                                                       iy_3,
-                                                                      1,
+                                                                      3,
                                                                    repeat_mode);
                             const gfloat x_3 =
                               x_2 + (gfloat) ( 2 * ( ix_2 - 2 * ix_3 ) - 1 );
