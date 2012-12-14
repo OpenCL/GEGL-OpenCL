@@ -218,22 +218,6 @@
  * integers (like "1", "2" etc) because it it literally replaced (note
  * the "##_level").
  */
-#define LOHALO_MIPMAP_EWA_UPDATE(_level_)  \
-  mipmap_ewa_update (_level_,              \
-                     j,                    \
-                     i,                    \
-                     c_major_x,            \
-                     c_major_y,            \
-                     c_minor_x,            \
-                     c_minor_y,            \
-                     x_##_level_,          \
-                     y_##_level_,          \
-                     channels,             \
-                     row_skip,             \
-                     input_bptr_##_level_, \
-                     &total_weight,        \
-                     ewa_newval)
-
 #define LOHALO_FIND_CLOSEST_LOCATIONS(_previous_level_,_level_) \
   const gfloat closest_left_##_level_ =                         \
     odd_ix_##_previous_level_                                   \
@@ -260,6 +244,103 @@
     :                                                           \
     (gfloat) (  ( LOHALO_OFFSET_##_previous_level_ + 1.5 ) );
 
+#define LOHALO_FIND_FARTHEST_INDICES(_level_)                            \
+  const gint out_left_##_level_ =                                        \
+    LOHALO_MAX                                                           \
+    (                                                                    \
+      (gint) ceilf  (                                                    \
+        (float)                                                          \
+          ( ( x_##_level_ - bounding_box_half_width  ) * (gfloat) 0.5 )) \
+      ,                                                                  \
+      -LOHALO_OFFSET_MIPMAP                                              \
+    );                                                                   \
+  const gint out_rite_##_level_ =                                        \
+    LOHALO_MIN                                                           \
+    (                                                                    \
+      (gint) floorf (                                                    \
+        (float)                                                          \
+          ( ( x_##_level_ + bounding_box_half_width  ) * (gfloat) 0.5 )) \
+      ,                                                                  \
+      LOHALO_OFFSET_MIPMAP                                               \
+    );                                                                   \
+  const gint out_top_##_level_ =                                         \
+    LOHALO_MAX                                                           \
+    (                                                                    \
+      (gint) ceilf  (                                                    \
+        (float)                                                          \
+          ( ( y_##_level_ - bounding_box_half_height ) * (gfloat) 0.5 )) \
+      ,                                                                  \
+      -LOHALO_OFFSET_MIPMAP                                              \
+    );                                                                   \
+  const gint out_bot_##_level_ =                                         \
+    LOHALO_MIN                                                           \
+    (                                                                    \
+      (gint) floorf (                                                    \
+        (float)                                                          \
+          ( ( y_##_level_ + bounding_box_half_height ) * (gfloat) 0.5 )) \
+      ,                                                                  \
+      LOHALO_OFFSET_MIPMAP                                               \
+    );
+
+#define LOHALO_MIPMAP_EWA_UPDATE(_level_)                             \
+  {                                                                   \
+    gint i;                                                           \
+    for ( i = out_top_##_level_; i <= in_top_##_level_; i++ )         \
+      {                                                               \
+        gint j = out_left_##_level_;                                  \
+        do                                                            \
+          {                                                           \
+            LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                      \
+          } while ( ++j <= out_rite_##_level_ );                      \
+      }                                                               \
+  }                                                                   \
+  {                                                                   \
+    gint i = in_top_##_level_ + (gint) 1;                             \
+    do                                                                \
+      {                                                               \
+        {                                                             \
+          gint j;                                                     \
+          for ( j = out_left_##_level_; j <= in_left_##_level_; j++ ) \
+            {                                                         \
+              LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                    \
+            }                                                         \
+        }                                                             \
+        {                                                             \
+          gint j;                                                     \
+          for ( j = in_rite_##_level_; j <= out_rite_##_level_; j++ ) \
+            {                                                         \
+              LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                    \
+            }                                                         \
+        }                                                             \
+      } while ( ++i < in_bot_##_level_ );                             \
+  }                                                                   \
+  {                                                                   \
+    gint i;                                                           \
+    for ( i = in_bot_##_level_; i <= out_bot_##_level_; i++ )         \
+      {                                                               \
+        gint j = out_left_##_level_;                                  \
+        do                                                            \
+          {                                                           \
+            LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                      \
+          } while ( ++j <= out_rite_##_level_ );                      \
+      }                                                               \
+  }
+
+#define LOHALO_MIPMAP_PIXEL_UPDATE(_level_)  \
+  mipmap_ewa_update (_level_,                \
+                     j,                      \
+                     i,                      \
+                     c_major_x,              \
+                     c_major_y,              \
+                     c_minor_x,              \
+                     c_minor_y,              \
+                     x_##_level_,            \
+                     y_##_level_,            \
+                     channels,               \
+                     row_skip,               \
+                     input_bptr_##_level_,   \
+                     &total_weight,          \
+                     ewa_newval)
 
 /*
  * Wiggle room added to "Are we done yet?" checks.
@@ -302,15 +383,15 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  *
  * Speed/quality trade-off:
  *
- * Downsampling quality will decrease around ratio 1/(LOHALO_OFFSET_0 +
- * .5). In addition, the smaller LOHALO_OFFSET_0, the more noticeable
- * the artifacts. To maintain maximum quality for the widest
- * downsampling range possible, a somewhat large LOHALO_OFFSET_0 should
- * be used. However, the larger the "level 0" offset, the slower
- * Lohalo will run when no significant downsampling is done, because
- * the width and height of context_rect is (2*LOHALO_OFFSET_0+1), and
- * consequently there is less data "tile" reuse with large
- * LOHALO_OFFSET_0.
+ * Downsampling quality will decrease around ratio 1/(LOHALO_OFFSET_0
+ * + .5). In addition, the smaller LOHALO_OFFSET_0, the more
+ * noticeable the artifacts. To maintain maximum quality for the
+ * widest downsampling range possible, a somewhat large
+ * LOHALO_OFFSET_0 should be used. However, the larger the "level 0"
+ * offset, the slower Lohalo will run when no significant downsampling
+ * is done, because the width and height of context_rect is
+ * (2*LOHALO_OFFSET_0+1), and consequently there is less data "tile"
+ * reuse with large LOHALO_OFFSET_0.
  */
 /*
  * IMPORTANT: LOHALO_OFFSET_0 SHOULD BE AN INTEGER >= 2.
@@ -2290,12 +2371,11 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * We most likely need higher mipmap level(s) because
                  * the bounding box of the ellipse covers mipmap pixel
                  * locations which involve data not "covered" by the
-                 * 5x5 level 0 context_rect. (The ellipse may still
-                 * fail to involve mipmap level 1 values--in which
-                 * case all mipmap pixel values will get 0
-                 * coefficients--but we used a quick and dirty
-                 * bounding box test which lets through false
-                 * positives.)
+                 * level 0 context_rect. (The ellipse may still fail
+                 * to involve mipmap level 1 values--in which case all
+                 * mipmap pixel values will get 0 coefficients--but we
+                 * used a quick and dirty bounding box test which lets
+                 * through false positives.)
                  */
 
                 /*
@@ -2321,7 +2401,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * "-1/2"s are because the center of a level 0 pixel
                  * is at a box distance of 1/2 from the center of the
                  * closest level 1 pixel.
-p                 */
+                 */
                 const gfloat x_1 =
                   x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
                 const gfloat y_1 =
@@ -2343,112 +2423,12 @@ p                 */
                  * The "out" indices are the farthest relative mipmap
                  * 1 indices we use at this level:
                  */
-                const gint out_left_1 =
-                  LOHALO_MAX
-                    (
-                      (gint)
-                      (
-                        ceilf
-                          (
-                            (float)
-                            ( ( x_1 - bounding_box_half_width  )
-                              * (gfloat) 0.5 )
-                          )
-                      )
-                      ,
-                      -LOHALO_OFFSET_MIPMAP
-                    );
-                const gint out_rite_1 =
-                  LOHALO_MIN
-                    (
-                      (gint)
-                      (
-                        floorf
-                          (
-                            (float)
-                            ( ( x_1 + bounding_box_half_width  )
-                              * (gfloat) 0.5 )
-                          )
-                      )
-                      ,
-                      LOHALO_OFFSET_MIPMAP
-                    );
-                const gint out_top_1 =
-                  LOHALO_MAX
-                    (
-                      (gint)
-                      (
-                        ceilf
-                          (
-                            (float)
-                            ( ( y_1 - bounding_box_half_height )
-                              * (gfloat) 0.5 )
-                          )
-                      )
-                      ,
-                      -LOHALO_OFFSET_MIPMAP
-                    );
-                const gint out_bot_1 =
-                  LOHALO_MIN
-                    (
-                      (gint)
-                      (
-                        floorf
-                          (
-                            (float)
-                            ( ( y_1 + bounding_box_half_height )
-                              * (gfloat) 0.5 )
-                          )
-                      )
-                      ,
-                      LOHALO_OFFSET_MIPMAP
-                    );
+                LOHALO_FIND_FARTHEST_INDICES(1)
 
                 /*
                  * Update using mipmap level 1 values.
                  */
-                {
-                  gint i;
-                  for ( i = out_top_1; i <= in_top_1; i++ )
-                    {
-                      gint j = out_left_1;
-                      do
-                        {
-                          LOHALO_MIPMAP_EWA_UPDATE( 1 );
-                        } while ( ++j <= out_rite_1 );
-                    }
-                }
-                {
-                  gint i = in_top_1 + (gint) 1;
-                  do
-                    {
-                      {
-                        gint j;
-                        for ( j = out_left_1; j <= in_left_1; j++ )
-                          {
-                            LOHALO_MIPMAP_EWA_UPDATE( 1 );
-                          }
-                      }
-                      {
-                        gint j;
-                        for ( j = in_rite_1; j <= out_rite_1; j++ )
-                          {
-                            LOHALO_MIPMAP_EWA_UPDATE( 1 );
-                          }
-                      }
-                    } while ( ++i < in_bot_1 );
-                }
-                {
-                  gint i;
-                  for ( i = in_bot_1; i <= out_bot_1; i++ )
-                    {
-                      gint j = out_left_1;
-                      do
-                      {
-                        LOHALO_MIPMAP_EWA_UPDATE( 1 );
-                      } while ( ++j <= out_rite_1 );
-                    }
-                }
+                LOHALO_MIPMAP_EWA_UPDATE(1)
 
                 {
                   /*
@@ -2459,10 +2439,11 @@ p                 */
                    * of the level 2 mipmap level w.r.t. the current
                    * level 1.
                    *
-                   * We use a LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP context_rect
-                   * at level 1; consequently, we can access pixels
-                   * which are LOHALO_OFFSET_MIPMAP away from the level 1
-                   * anchor pixel location in box distance.
+                   * We use a LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP
+                   * context_rect at level 1; consequently, we can
+                   * access pixels which are LOHALO_OFFSET_MIPMAP away
+                   * from the level 1 anchor pixel location in box
+                   * distance.
                    */
                   /*
                    * Determine whether the anchor level_1 pixel
@@ -2472,8 +2453,9 @@ p                 */
                   const gint odd_iy_1 = iy_1 % 2;
                   /*
                    * Find the closest locations, on all four sides, of
-                   * level 2 pixels which involve data not found in the
-                   * level 1 LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP.
+                   * level 2 pixels which involve data not found in
+                   * the level 1
+                   * LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP.
                    */
                   LOHALO_FIND_CLOSEST_LOCATIONS(1,2)
 
@@ -2535,121 +2517,25 @@ p                 */
                        * The "in" indices are the closest relative
                        * mipmap 2 indices of needed mipmap values:
                        */
-                      const gint in_left_2 =  -LOHALO_OFFSET_MIPMAP       + odd_ix_1;
-                      const gint in_rite_2 = ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_ix_1;
-                      const gint in_top_2  =  -LOHALO_OFFSET_MIPMAP       + odd_iy_1;
-                      const gint in_bot_2  = ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_iy_1;
+                      const gint in_left_2 =
+                        -LOHALO_OFFSET_MIPMAP        + odd_ix_1;
+                      const gint in_rite_2 =
+                        ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_ix_1;
+                      const gint in_top_2  =
+                        -LOHALO_OFFSET_MIPMAP        + odd_iy_1;
+                      const gint in_bot_2  =
+                        ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_iy_1;
 
                       /*
                        * The "out" indices are the farthest relative
                        * mipmap 1 indices we use at this level:
                        */
-                      const gint out_left_2 =
-                        LOHALO_MAX
-                          (
-                            (gint)
-                            (
-                              ceilf
-                              (
-                                (float)
-                                ( ( x_2 - bounding_box_half_width  )
-                                  * (gfloat) 0.5 )
-                              )
-                            )
-                            ,
-                            -LOHALO_OFFSET_MIPMAP
-                           );
-                      const gint out_rite_2 =
-                        LOHALO_MIN
-                          (
-                            (gint)
-                            (
-                              floorf
-                                (
-                                  (float)
-                                  ( ( x_2 + bounding_box_half_width  )
-                                    * (gfloat) 0.5 )
-                                )
-                            )
-                            ,
-                            LOHALO_OFFSET_MIPMAP
-                          );
-                      const gint out_top_2 =
-                        LOHALO_MAX
-                        (
-                          (gint)
-                          (
-                            ceilf
-                              (
-                                (float)
-                                ( ( y_2 - bounding_box_half_height )
-                                  * (gfloat) 0.5 )
-                              )
-                          )
-                          ,
-                          -LOHALO_OFFSET_MIPMAP
-                        );
-                      const gint out_bot_2 =
-                        LOHALO_MIN
-                          (
-                            (gint)
-                            (
-                              floorf
-                                (
-                                  (float)
-                                  ( ( y_2 + bounding_box_half_height )
-                                    * (gfloat) 0.5 )
-                                )
-                            )
-                            ,
-                            LOHALO_OFFSET_MIPMAP
-                          );
+                      LOHALO_FIND_FARTHEST_INDICES(2)
 
                       /*
-                       * Update using mipmap level 1 values.
+                       * Update using mipmap level 2 values.
                        */
-                      {
-                        gint i;
-                        for ( i = out_top_2; i <= in_top_2; i++ )
-                          {
-                            gint j = out_left_2;
-                            do
-                              {
-                                LOHALO_MIPMAP_EWA_UPDATE( 2 );
-                              } while ( ++j <= out_rite_2 );
-                          }
-                      }
-                      {
-                        gint i = in_top_2 + (gint) 1;
-                        do
-                          {
-                            {
-                              gint j;
-                              for ( j = out_left_2; j <= in_left_2; j++ )
-                                {
-                                  LOHALO_MIPMAP_EWA_UPDATE( 2 );
-                                }
-                            }
-                            {
-                              gint j;
-                              for ( j = in_rite_2; j <= out_rite_2; j++ )
-                                {
-                                  LOHALO_MIPMAP_EWA_UPDATE( 2 );
-                                }
-                            }
-                          } while ( ++i < in_bot_2 );
-                      }
-                      {
-                        gint i;
-                        for ( i = in_bot_2; i <= out_bot_2; i++ )
-                          {
-                            gint j = out_left_2;
-                            do
-                              {
-                                LOHALO_MIPMAP_EWA_UPDATE( 2 );
-                              } while ( ++j <= out_rite_2 );
-                          }
-                      }
+                      LOHALO_MIPMAP_EWA_UPDATE(2)
                       {
                         /*
                          * Third mipmap level.
@@ -2684,116 +2570,16 @@ p                 */
                               x_2 + (gfloat) ( 2 * ( ix_2 - 2 * ix_3 ) - 1 );
                             const gfloat y_3 =
                               y_2 + (gfloat) ( 2 * ( iy_2 - 2 * iy_3 ) - 1 );
-                            const gint in_left_3 =  -LOHALO_OFFSET_MIPMAP       +
-                                                odd_ix_2;
-                            const gint in_rite_3 = ( LOHALO_OFFSET_MIPMAP - 1 ) +
-                                               odd_ix_2;
-                            const gint in_top_3  =  -LOHALO_OFFSET_MIPMAP       +
-                                                odd_iy_2;
-                            const gint in_bot_3  = ( LOHALO_OFFSET_MIPMAP - 1 ) +
-                                                   odd_iy_2;
-                            const gint out_left_3 =
-                              LOHALO_MAX
-                                (
-                                  (gint)
-                                  (
-                                    ceilf
-                                    (
-                                      (float)
-                                      ( ( x_3 - bounding_box_half_width  )
-                                        * (gfloat) 0.5 )
-                                    )
-                                  )
-                                  ,
-                                  -LOHALO_OFFSET_MIPMAP
-                                 );
-                            const gint out_rite_3 =
-                              LOHALO_MIN
-                                (
-                                  (gint)
-                                  (
-                                    floorf
-                                      (
-                                        (float)
-                                        ( ( x_3 + bounding_box_half_width  )
-                                          * (gfloat) 0.5 )
-                                      )
-                                  )
-                                  ,
-                                  LOHALO_OFFSET_MIPMAP
-                                );
-                            const gint out_top_3 =
-                              LOHALO_MAX
-                              (
-                                (gint)
-                                (
-                                  ceilf
-                                    (
-                                      (float)
-                                      ( ( y_3 - bounding_box_half_height )
-                                        * (gfloat) 0.5 )
-                                    )
-                                )
-                                ,
-                                -LOHALO_OFFSET_MIPMAP
-                              );
-                            const gint out_bot_3 =
-                              LOHALO_MIN
-                                (
-                                  (gint)
-                                  (
-                                    floorf
-                                      (
-                                        (float)
-                                        ( ( y_3 + bounding_box_half_height )
-                                          * (gfloat) 0.5 )
-                                      )
-                                  )
-                                  ,
-                                  LOHALO_OFFSET_MIPMAP
-                                );
-                            {
-                              gint i;
-                              for ( i = out_top_3; i <= in_top_3; i++ )
-                                {
-                                  gint j = out_left_3;
-                                  do
-                                    {
-                                      LOHALO_MIPMAP_EWA_UPDATE( 3 );
-                                    } while ( ++j <= out_rite_3 );
-                                }
-                            }
-                            {
-                              gint i = in_top_3 + (gint) 1;
-                              do
-                                {
-                                  {
-                                    gint j;
-                                    for ( j = out_left_3; j <= in_left_3; j++ )
-                                      {
-                                        LOHALO_MIPMAP_EWA_UPDATE( 3 );
-                                      }
-                                  }
-                                  {
-                                    gint j;
-                                    for ( j = in_rite_3; j <= out_rite_3; j++ )
-                                      {
-                                        LOHALO_MIPMAP_EWA_UPDATE( 3 );
-                                      }
-                                  }
-                                } while ( ++i < in_bot_3 );
-                            }
-                            {
-                              gint i;
-                              for ( i = in_bot_3; i <= out_bot_3; i++ )
-                                {
-                                  gint j = out_left_3;
-                                  do
-                                    {
-                                      LOHALO_MIPMAP_EWA_UPDATE( 3 );
-                                    } while ( ++j <= out_rite_3 );
-                                }
-                            }
+                            const gint in_left_3 =
+                              -LOHALO_OFFSET_MIPMAP        + odd_ix_2;
+                            const gint in_rite_3 =
+                              ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_ix_2;
+                            const gint in_top_3  =
+                              -LOHALO_OFFSET_MIPMAP        + odd_iy_2;
+                            const gint in_bot_3  =
+                              ( LOHALO_OFFSET_MIPMAP - 1 ) + odd_iy_2;
+                            LOHALO_FIND_FARTHEST_INDICES(3)
+                            LOHALO_MIPMAP_EWA_UPDATE(3)
                           }
                       }
                     }
