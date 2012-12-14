@@ -1055,7 +1055,17 @@ AC_ARG_WITH(libv4l, [  --without-libv4l        build without V4L support])
 
 have_v4l="no"
 if test "x$with_libv4l" != "xno"; then
-  AC_CHECK_HEADER(linux/videodev2.h, have_v4l="yes")
+  AC_CHECK_HEADER(linux/videodev2.h,
+    [have_v4l="yes"],
+    [have_v4l="no (kernel header not found)"])
+  else
+    have_v4l="no  (disabled with --without-libv4l)"
+fi
+
+if test "x$have_v4l" = "xyes"; then
+  PKG_CHECK_MODULES(V4l, libv4l2,
+    [have_v4l="yes"],
+    [have_v4l="no   (v4l library not found)"])
 fi
 
 AM_CONDITIONAL(HAVE_V4L, test "$have_v4l" = "yes")

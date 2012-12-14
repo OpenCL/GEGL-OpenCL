@@ -51,7 +51,6 @@ struct _v4ldevice
 	struct video_buffer buffer;
 	struct video_mmap mmap;
 	struct video_mbuf mbuf;
-	// struct video_unit unit;
 	unsigned char *map;
 	pthread_mutex_t mutex;
 	int frame;
