@@ -61,14 +61,19 @@ gegl_sampler_linear_class_init (GeglSamplerLinearClass *klass)
  * context_rect is not symmetrical, the transformation may turn right
  * into left, and if the context_rect does not stretch far enough on
  * the left, pixel lookups will fail.
+ *
+ * Additional extra elbow room is added all around. It could be set to
+ * 0 if it is found that round off error never sends things "too far
+ * away". Nicolas would be very surprised if more than 1 is necessary.
  */
+#define LINEAR_EXTRA_ELBOW_ROOM 1
 static void
 gegl_sampler_linear_init (GeglSamplerLinear *self)
 {
-  GEGL_SAMPLER (self)->context_rect[0].x = -1-1;
-  GEGL_SAMPLER (self)->context_rect[0].y = -1-1;
-  GEGL_SAMPLER (self)->context_rect[0].width = 3+2;
-  GEGL_SAMPLER (self)->context_rect[0].height = 3+2;
+  GEGL_SAMPLER (self)->context_rect[0].x      = -1 -   LINEAR_EXTRA_ELBOW_ROOM;
+  GEGL_SAMPLER (self)->context_rect[0].y      = -1 -   LINEAR_EXTRA_ELBOW_ROOM;
+  GEGL_SAMPLER (self)->context_rect[0].width  =  3 + 2*LINEAR_EXTRA_ELBOW_ROOM;
+  GEGL_SAMPLER (self)->context_rect[0].height =  3 + 2*LINEAR_EXTRA_ELBOW_ROOM;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
