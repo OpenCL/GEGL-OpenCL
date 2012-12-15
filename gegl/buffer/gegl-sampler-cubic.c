@@ -166,26 +166,27 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
                               GeglAbyssPolicy  repeat_mode)
 {
   GeglSamplerCubic *cubic = (GeglSamplerCubic*)(self);
-  const gint        offsets[16]={-4-64*4, 4, 4, 4,
-                                (64-3)*4, 4, 4, 4,
-                                (64-3)*4, 4, 4, 4,
-                                (64-3)*4, 4, 4, 4};
+  const gint        offsets[16] =
+                      {-4-GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT   *4, 4, 4, 4,
+                         (GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4,
+                         (GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4,
+                         (GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4};
   gfloat           *sampler_bptr;
   gfloat            factor;
-
   gfloat            newval[4] = {0.0, 0.0, 0.0, 0.0};
-
   gint              i,j;
   gint              k=0;
 
   /*
-   * The "-1/2"s are there because we want the index of the pixel to
-   * the left and top of the location, and with GIMP's convention the
-   * top left of the top left pixel is located at
-   * (1/2,1/2). Basically, we are converting from a coordinate system
-   * in which the origin is at the top left pixel of the pixel with
-   * index (0,0), to a coordinate system in which the origin is at the
-   * center of the same pixel.
+   * The "-1/2"s are there because we want the index of the pixel
+   * center to the left and top of the location, and with GIMP's
+   * convention the top left of the top left pixel is located at
+   * (0,0), and its center is at (1/2,1/2), so that anything less than
+   * 1/2 needs to go negative. Another way to look at this is that we
+   * are converting from a coordinate system in which the origin is at
+   * the top left corner of the pixel with index (0,0), to a
+   * coordinate system in which the origin is at the center of the
+   * same pixel.
    */
   const double iabsolute_x = (double) absolute_x - 0.5;
   const double iabsolute_y = (double) absolute_y - 0.5;

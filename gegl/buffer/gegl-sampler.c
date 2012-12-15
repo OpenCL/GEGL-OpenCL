@@ -225,7 +225,8 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
    * can be be requested in the horizontal or vertical directions (64
    * in GEGL).
    */
-  const gint maximum_width_and_height = 64;
+  const gint maximum_width_and_height =
+    GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT;
   g_assert (sampler->context_rect[0].width  <= maximum_width_and_height);
   g_assert (sampler->context_rect[0].height <= maximum_width_and_height);
 
@@ -257,12 +258,13 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
        * position. Consequently, we move the top left corner of the
        * context_rect by about one fourth of the maximal distance we
        * can (one fourth of one half = one eight), leaving an elbow
-       * room of about seven eight of what it could be. Given that the
-       * maximum width and height of the fetch_rectangle is 64, so
-       * that half of it is 32, one fourth of the elbow room is at most
-       * 8.
+       * room of about seven eight of what it could be.
+       *
+       * If the maximum width and height of the fetch_rectangle is 64,
+       * so that half of it is 32, one fourth of the elbow room is at
+       * most 8. If the fetch_rectangle is larger than that, a smaller
+       * elbow room may be preferable.
        */
-
       fetch_rectangle.x =
         x + sampler->context_rect[0].x -
         (maximum_width_and_height - sampler->context_rect[0].width ) / (gint) 8;
@@ -321,7 +323,8 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
    * can be be requested in the horizontal or vertical directions (64
    * in GEGL).
    */
-  const gint maximum_width_and_height = 64;
+  const gint maximum_width_and_height =
+    GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT;
   g_assert (sampler->context_rect[0].width  <= maximum_width_and_height);
   g_assert (sampler->context_rect[0].height <= maximum_width_and_height);
 
@@ -402,7 +405,8 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
    * can be be requested in the horizontal or vertical directions (64
    * in GEGL).
    */
-  const gint maximum_width_and_height = 64;
+  const gint maximum_width_and_height =
+    GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT;
   g_assert (sampler->context_rect[level].width  <= maximum_width_and_height);
   g_assert (sampler->context_rect[level].height <= maximum_width_and_height);
   g_assert (level >= 0 && level < GEGL_SAMPLER_MIPMAP_LEVELS);

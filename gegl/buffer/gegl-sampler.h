@@ -31,7 +31,17 @@ G_BEGIN_DECLS
 #define GEGL_IS_SAMPLER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_SAMPLER))
 #define GEGL_IS_SAMPLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_SAMPLER))
 #define GEGL_SAMPLER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_SAMPLER, GeglSamplerClass))
+
+/*
+ * This should be set to the largest number of mipmap levels (counted
+ * starting at 0 = no box filtering) actually used by any sampler.
+ */
 #define GEGL_SAMPLER_MIPMAP_LEVELS   4
+/*
+ * The way the samplers use mipmap levels, square buffers are
+ * preferable to rectangular ones.
+ */
+#define GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT 64
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
 

@@ -66,7 +66,8 @@ gegl_sampler_linear_class_init (GeglSamplerLinearClass *klass)
  * 0 if it is found that round off error never sends things "too far
  * away". Nicolas would be very surprised if more than 1 is necessary.
  */
-#define LINEAR_EXTRA_ELBOW_ROOM 1
+#define LINEAR_EXTRA_ELBOW_ROOM 2
+
 static void
 gegl_sampler_linear_init (GeglSamplerLinear *self)
 {
@@ -85,7 +86,7 @@ gegl_sampler_linear_get (      GeglSampler*    restrict  self,
                                void*           restrict  output,
                                GeglAbyssPolicy           repeat_mode)
 {
-  const gint pixels_per_buffer_row = 64;
+  const gint pixels_per_buffer_row = GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT;
   const gint channels = 4;
 
   /*
@@ -107,8 +108,13 @@ gegl_sampler_linear_get (      GeglSampler*    restrict  self,
    * Point the data tile pointer to the first channel of the top_left
    * pixel value:
    */
-  const gfloat* restrict in_bptr =
-    gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
+  const gfloat* restrict in_bptr = gegl_sampler_get_from_mipmap (self,
+								 ix,
+								 iy,
+								 0,
+								 repeat_mode);
+  /* const gfloat* restrict in_bptr = */
+  /*   gegl_sampler_get_ptr (self, ix, iy, repeat_mode); */
 
   /*
    * x is the x-coordinate of the sampling point relative to the
