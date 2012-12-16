@@ -75,8 +75,15 @@ gegl_random_set_new (int seed)
   for (i = 0; i < set->tables; i++)
     {
       int j;
-
-      set->prime[i] = primes[g_rand_int_range (gr, 0, G_N_ELEMENTS (primes) - 2)];
+      int found = 0;
+      do
+        {
+          found = 0;
+          set->prime[i] = primes[g_rand_int_range (gr, 0, G_N_ELEMENTS (primes) - 2)];
+          for (j = 0; j < i; j++)
+            if (set->prime[j] == set->prime[i])
+              found = 1;
+        } while (found);
 
       /* it might be possible to share a set of random data between sets
        * and rejuggle the prime sizes chosen and keep an additional offset
