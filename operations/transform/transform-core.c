@@ -393,10 +393,10 @@ gegl_transform_bounding_box (const gdouble *points,
    * (gint) 1. This often enlarges result by one pixel at the right
    * and bottom.
    */
-  output->width  = (gint) floor ((double) max_x) + ((gint) 1 - output->x);
-  output->height = (gint) floor ((double) max_y) + ((gint) 1 - output->y);
-  /* output->width  = (gint) ceil ((double) max_x) - output->x; */
-  /* output->height = (gint) ceil ((double) max_y) - output->y; */
+  /* output->width  = (gint) floor ((double) max_x) + ((gint) 1 - output->x); */
+  /* output->height = (gint) floor ((double) max_y) + ((gint) 1 - output->y); */
+  output->width  = (gint) ceil ((double) max_x) - output->x;
+  output->height = (gint) ceil ((double) max_y) - output->y;
 }
 
 static gboolean
