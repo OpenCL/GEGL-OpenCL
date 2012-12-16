@@ -17,6 +17,7 @@
  * Copyright 1996 Torsten Martinsen
  * Copyright 2000 Tim Copperfield <timecop@japan.co.jp>
  * Copyright 2012 Maxime Nicco <maxime.nicco@gmail.com>
+ * Copyright 2012 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
@@ -25,17 +26,11 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_boolean (correlated, _("Correlated noise"), FALSE, _("Correlated noise"))
-
 gegl_chant_boolean (independent, _("Independent RGB"), TRUE, _("Independent RGB"))
-
 gegl_chant_double (red, _("Red"),   0.0, 1.0, 0.20, _("Red"))
-
 gegl_chant_double (green, _("Green"),   0.0, 1.0, 0.20, _("Green"))
-
 gegl_chant_double (blue, _("Blue"),   0.0, 1.0, 0.20, _("Blue"))
-
 gegl_chant_double (alpha, _("Alpha"),   0.0, 1.0, 0.00, _("Alpha"))
-
 gegl_chant_seed (seed, _("Seed"), _("Random seed"))
 
 #else
