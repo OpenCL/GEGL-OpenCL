@@ -466,8 +466,8 @@ static GeglRectangle
 gegl_transform_get_bounding_box (GeglOperation *op)
 {
   OpTransform  *transform = OP_TRANSFORM (op);
-  GeglMatrix3   matrix;
-
+  GeglMatrix3   matrix,
+                inverse;
   GeglRectangle in_rect   = {0,0,0,0},
                 have_rect;
   gdouble       have_points [8];
@@ -562,6 +562,29 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 
   gegl_transform_bounding_box (have_points, 4, &have_rect);
 
+  gegl_transform_create_composite_matrix (transform, &inverse);
+  gegl_matrix3_invert (&inverse);
+
+  /*
+   * If there are vanishing or negative denominators within the area
+   * of the have_rect, return a null rectangle.
+   */
+  if ( (inverse.coeff [2][0] * have_rect.x +
+	inverse.coeff [2][1] * have_rect.y +
+	inverse.coeff [2][2] <= (gdouble) 1.e-7) ||
+       (inverse.coeff [2][0] * (have_rect.x + have_rect.width) +
+	inverse.coeff [2][1] * have_rect.y +
+	inverse.coeff [2][2] <= (gdouble) 1.e-7) ||
+       (inverse.coeff [2][0] * have_rect.x +
+	inverse.coeff [2][1] * (have_rect.y + have_rect.height) +
+	inverse.coeff [2][2] <= (gdouble) 1.e-7) ||
+       (inverse.coeff [2][0] * (have_rect.x + have_rect.width) +
+	inverse.coeff [2][1] * (have_rect.y + have_rect.height) +
+	inverse.coeff [2][2] <= (gdouble) 1.e-7) )
+    {
+      return (GeglRectangle) {0,0,0,0};
+    }
+
   return have_rect;
 }
 
@@ -619,7 +642,6 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
   GeglMatrix3    inverse;
   GeglRectangle  requested_rect,
                  need_rect;
-  /*                 trivial_rect = {0,0,1,1}; */
   GeglRectangle  context_rect;
   GeglSampler   *sampler;
   gdouble        need_points [8];
@@ -644,32 +666,6 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
       gegl_matrix3_is_identity (&inverse))
     return requested_rect;
 
-  /* /\* */
-  /*  * First, determine if there are vanishing or negative denominators */
-  /*  * anywhere within the four outer corners of the corner pixels. If */
-  /*  * these locations are "safe", the whole thing is safe. If unsafe, a */
-  /*  * trivial context_rect is used, because the whole thing will be */
-  /*  * filled with transparent black. */
-  /*  *\/ */
-  /* if ( (inverse.coeff [2][0] *  requested_rect.x + */
-  /* 	inverse.coeff [2][1] *  requested_rect.y + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 0.) || */
-  /*      (inverse.coeff [2][0] * (requested_rect.x + requested_rect.width ) + */
-  /* 	inverse.coeff [2][1] *  requested_rect.y + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 0.) || */
-  /*      (inverse.coeff [2][0] *  requested_rect.x + */
-  /* 	inverse.coeff [2][1] * (requested_rect.y + requested_rect.height) + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 0.) || */
-  /*      (inverse.coeff [2][0] * (requested_rect.x + requested_rect.width ) + */
-  /* 	inverse.coeff [2][1] * (requested_rect.y + requested_rect.height) + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 0.) ) */
-  /*   { */
-  /*     return trivial_rect; */
-  /*   } */
-
-  /* /\* */
-  /*  * No vanishing or negative denominators, so proceed. */
-  /*  *\/ */
   /*
    * Convert indices to absolute positions:
    */
@@ -1080,16 +1076,16 @@ transform_generic (GeglBuffer  *dest,
        */
       if ( (inverse.coeff [2][0] * roi->x +
 	    inverse.coeff [2][1] * roi->y +
-	    inverse.coeff [2][2] <= (gdouble) 0.1) ||
+	    inverse.coeff [2][2] <= (gdouble) 1.e-6) ||
 	   (inverse.coeff [2][0] * (roi->x + roi->width) +
 	    inverse.coeff [2][1] * roi->y +
-	    inverse.coeff [2][2] <= (gdouble) 0.1) ||
+	    inverse.coeff [2][2] <= (gdouble) 1.e-6) ||
 	   (inverse.coeff [2][0] * roi->x +
 	    inverse.coeff [2][1] * (roi->y + roi->height) +
-	    inverse.coeff [2][2] <= (gdouble) 0.1) ||
+	    inverse.coeff [2][2] <= (gdouble) 1.e-6) ||
 	   (inverse.coeff [2][0] * (roi->x + roi->width) +
 	    inverse.coeff [2][1] * (roi->y + roi->height) +
-	    inverse.coeff [2][2] <= (gdouble) 0.1) )
+	    inverse.coeff [2][2] <= (gdouble) 1.e-6) )
 	{
 	  memset (dest_buf, '\0', sizeof(dest_buf));
 	  return;
