@@ -16,6 +16,25 @@
  * Copyright 2012 Øyvind Kolås
  */
 
+/* This file provides random access - reproducable random numbers in three
+ * dimensions. Well suited for predictable consistent output from image
+ * processing operations; done in a way that should also work on GPUs/with
+ * vector processing. The n dimension is to be used for successive random
+ * numbers needed for each pixel, the z argument is currently unused but
+ * it is there in the API to provide for mip-map behavior later.
+ *
+ * The way it works is by xoring three lookup tables that are iterated
+ * cyclically, each LUT has a prime number as a size, thus the combination
+ * of the three values xored will have a period of prime1 * prime2 * prime3,
+ * with the primes used this yields roughly 3TB of random data from ~300kb
+ * of lookup data. The LUTs are being initialized from a random seed.
+ *
+ * It might * be possible to change this so that the random source data is reused
+ * across seeds - and only the sizes of the arrays are manipulated - thus
+ * removing most of the initialization overhead when setting a new seed.
+ */
+
+
 #include <glib.h>
 #include <gegl.h>
 
@@ -31,7 +50,7 @@ static long primes[]={
 
 /* these primes should not exist in the above set */
 #define XPRIME     103423
-#define ZPRIME     101359
+#define YPRIME     101359
 #define NPRIME     101111
 #define MAX_TABLES 3
 
@@ -44,8 +63,8 @@ typedef struct GeglRandomSet
 } GeglRandomSet;
 
 #define make_index(x,y,n) ((x) * XPRIME + \
-                           (y) * ZPRIME * XPRIME + \
-                           (n) * NPRIME * ZPRIME * XPRIME)
+                           (y) * YPRIME * XPRIME + \
+                           (n) * NPRIME * YPRIME * XPRIME)
 
 static GeglRandomSet *
 gegl_random_set_new (int seed)
@@ -72,11 +91,6 @@ gegl_random_set_new (int seed)
               found = 1;
         } while (found);
 
-      /* it might be possible to share a set of random data between sets
-       * and rejuggle the prime sizes chosen and keep an additional offset
-       * for feeding randomness.
-       *
-       */
       set->table[i] = g_malloc0 (sizeof (gint64) * set->prime[i]);
 
       for (j = 0; j < set->prime[i]; j++)
