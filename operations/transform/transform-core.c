@@ -1012,9 +1012,12 @@ transform_generic (GeglBuffer  *dest,
   gdouble              u_start,
                        v_start,
                        w_start,
+                       cw_start,
                        u_float,
                        v_float,
-                       w_float;
+                       w_float,
+                       cw_float;
+
   const Babl          *format = babl_format ("RaGaBaA float");
   gint                 dest_pixels,
                        flip_x = 1,
@@ -1071,14 +1074,26 @@ transform_generic (GeglBuffer  *dest,
       v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5)  +
                 inverse.coeff [1][1] * (roi->y + (gdouble) 0.5)  +
                 inverse.coeff [1][2];
+
       w_start = inverse.coeff [2][0] * (roi->x + (gdouble) 0.5)  +
                 inverse.coeff [2][1] * (roi->y + (gdouble) 0.5)  +
                 inverse.coeff [2][2];
+
+      /*
+       * Attempt at making degenerate cases be handled somewhat
+       * gracefully: Set a floor, above 0, for w.
+       */
+#define PERSPECTIVE_TRANSFORM_EPSILON ((gdouble) 1.e-7)
+#define CLAMP_PERSPECTIVE_TRANSFORM(w) \
+  ( (w) > PERSPECTIVE_TRANSFORM_EPSILON ? (w) : PERSPECTIVE_TRANSFORM_EPSILON )
+
+      cw_start = CLAMP_PERSPECTIVE_TRANSFORM( w_start );
       u_float = u_start + inverse.coeff [0][1] * (roi->height - (gint) 1);
       v_float = v_start + inverse.coeff [1][1] * (roi->height - (gint) 1);
       w_float = w_start + inverse.coeff [2][1] * (roi->height - (gint) 1);
+      cw_float = CLAMP_PERSPECTIVE_TRANSFORM( w_float );
 
-      if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
+      if ((u_float + v_float)/cw_float < (u_start + v_start)/cw_start)
         {
           /*
            * Set the "change of direction" sign.
@@ -1091,6 +1106,7 @@ transform_generic (GeglBuffer  *dest,
           u_start = u_float;
           v_start = v_float;
           w_start = w_float;
+	  cw_start = cw_float;
         }
 
       /*
@@ -1100,8 +1116,9 @@ transform_generic (GeglBuffer  *dest,
       u_float = u_start + inverse.coeff [0][0] * (roi->width  - (gint) 1);
       v_float = v_start + inverse.coeff [1][0] * (roi->width  - (gint) 1);
       w_float = w_start + inverse.coeff [2][0] * (roi->width  - (gint) 1);
+      cw_float = CLAMP_PERSPECTIVE_TRANSFORM( w_float );
 
-      if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
+      if ((u_float + v_float)/cw_float < (u_start + v_start)/cw_start)
         {
           flip_x = (gint) -1;
           /*
@@ -1112,6 +1129,7 @@ transform_generic (GeglBuffer  *dest,
           u_start = u_float;
           v_start = v_float;
           w_start = w_float;
+	  cw_start = cw_float;
         }
 
       for (y = roi->height; y--;)
@@ -1119,12 +1137,13 @@ transform_generic (GeglBuffer  *dest,
           u_float = u_start;
           v_float = v_start;
           w_float = w_start;
+	  cw_float = cw_start;
 
           for (x = roi->width; x--;)
             {
               GeglMatrix2 inverse_jacobian;
 
-              gdouble w_recip = 1.0 / w_float;
+              gdouble w_recip = (gdouble) 1.0 / cw_float;
               gdouble u = u_float * w_recip;
               gdouble v = v_float * w_recip;
 
@@ -1149,6 +1168,7 @@ transform_generic (GeglBuffer  *dest,
               u_float += flip_x * inverse.coeff [0][0];
               v_float += flip_x * inverse.coeff [1][0];
               w_float += flip_x * inverse.coeff [2][0];
+	      cw_float = CLAMP_PERSPECTIVE_TRANSFORM( w_float );
             }
 
           dest_ptr += (gint) 4 * (flip_y - flip_x) * roi->width;
@@ -1156,6 +1176,7 @@ transform_generic (GeglBuffer  *dest,
           u_start += flip_y * inverse.coeff [0][1];
           v_start += flip_y * inverse.coeff [1][1];
           w_start += flip_y * inverse.coeff [2][1];
+	  cw_start = CLAMP_PERSPECTIVE_TRANSFORM( w_start );
         }
     }
 }
