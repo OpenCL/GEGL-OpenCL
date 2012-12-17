@@ -619,6 +619,7 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
   GeglMatrix3    inverse;
   GeglRectangle  requested_rect,
                  need_rect;
+  /*                 trivial_rect = {0,0,1,1}; */
   GeglRectangle  context_rect;
   GeglSampler   *sampler;
   gdouble        need_points [8];
@@ -629,8 +630,10 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
    */
 
   requested_rect = *region;
-  sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
-      gegl_sampler_type_from_string (transform->filter));
+  sampler =
+    gegl_buffer_sampler_new (NULL,
+			     babl_format("RaGaBaA float"),
+			     gegl_sampler_type_from_string (transform->filter));
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
 
@@ -641,6 +644,32 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
       gegl_matrix3_is_identity (&inverse))
     return requested_rect;
 
+  /* /\* */
+  /*  * First, determine if there are vanishing or negative denominators */
+  /*  * anywhere within the four outer corners of the corner pixels. If */
+  /*  * these locations are "safe", the whole thing is safe. If unsafe, a */
+  /*  * trivial context_rect is used, because the whole thing will be */
+  /*  * filled with transparent black. */
+  /*  *\/ */
+  /* if ( (inverse.coeff [2][0] *  requested_rect.x + */
+  /* 	inverse.coeff [2][1] *  requested_rect.y + */
+  /* 	inverse.coeff [2][2] <= (gdouble) 0.) || */
+  /*      (inverse.coeff [2][0] * (requested_rect.x + requested_rect.width ) + */
+  /* 	inverse.coeff [2][1] *  requested_rect.y + */
+  /* 	inverse.coeff [2][2] <= (gdouble) 0.) || */
+  /*      (inverse.coeff [2][0] *  requested_rect.x + */
+  /* 	inverse.coeff [2][1] * (requested_rect.y + requested_rect.height) + */
+  /* 	inverse.coeff [2][2] <= (gdouble) 0.) || */
+  /*      (inverse.coeff [2][0] * (requested_rect.x + requested_rect.width ) + */
+  /* 	inverse.coeff [2][1] * (requested_rect.y + requested_rect.height) + */
+  /* 	inverse.coeff [2][2] <= (gdouble) 0.) ) */
+  /*   { */
+  /*     return trivial_rect; */
+  /*   } */
+
+  /* /\* */
+  /*  * No vanishing or negative denominators, so proceed. */
+  /*  *\/ */
   /*
    * Convert indices to absolute positions:
    */
@@ -1006,8 +1035,8 @@ transform_generic (GeglBuffer  *dest,
   const GeglRectangle *dest_extent;
   gint                 x,
                        y;
-  gfloat * restrict    dest_buf,
-                      *dest_ptr;
+  gfloat * restrict    dest_buf;
+
   GeglMatrix3          inverse;
   gdouble              u_start,
                        v_start,
@@ -1038,32 +1067,35 @@ transform_generic (GeglBuffer  *dest,
     {
       GeglRectangle *roi = &i->roi[0];
 
+      gfloat *dest_ptr;
+
       dest_buf = (gfloat *)i->data[0];
 
-      dest_ptr = dest_buf;
-
       /*
-       * First, determine if there are vanishing denominators anywhere
-       * within the four corners of the corner pixels. If the four
-       * corners themselves are "safe", the whole thing is safe. If
-       * unsafe, fill the whole thing with transparent black.
+       * First, determine if there are vanishing or negative
+       * denominators anywhere within the four outer corners of the
+       * corner pixels. If these locations themselves are "safe", the
+       * whole thing is safe. If unsafe, fill the whole thing with
+       * transparent black.
        */
       if ( (inverse.coeff [2][0] * roi->x +
 	    inverse.coeff [2][1] * roi->y +
-	    inverse.coeff [2][2] <= (gdouble) 0.) ||
+	    inverse.coeff [2][2] <= (gdouble) 0.1) ||
 	   (inverse.coeff [2][0] * (roi->x + roi->width) +
 	    inverse.coeff [2][1] * roi->y +
-	    inverse.coeff [2][2] <= (gdouble) 0.) ||
+	    inverse.coeff [2][2] <= (gdouble) 0.1) ||
 	   (inverse.coeff [2][0] * roi->x +
 	    inverse.coeff [2][1] * (roi->y + roi->height) +
-	    inverse.coeff [2][2] <= (gdouble) 0.) ||
+	    inverse.coeff [2][2] <= (gdouble) 0.1) ||
 	   (inverse.coeff [2][0] * (roi->x + roi->width) +
 	    inverse.coeff [2][1] * (roi->y + roi->height) +
-	    inverse.coeff [2][2] <= (gdouble) 0.) )
+	    inverse.coeff [2][2] <= (gdouble) 0.1) )
 	{
-	  memset (dest_buf, 0x00, (gint) 4 * roi->width * roi->height);
+	  memset (dest_buf, '\0', sizeof(dest_buf));
 	  return;
 	}
+
+      dest_ptr = dest_buf;
 
       /*
        * This code uses a variant of the (novel?) method of ensuring
@@ -1300,8 +1332,10 @@ gegl_transform_process (GeglOperation        *operation,
       input  = gegl_operation_context_get_source (context, "input");
       output = gegl_operation_context_get_target (context, "output");
 
-      sampler = gegl_buffer_sampler_new (input, babl_format("RaGaBaA float"),
-          gegl_sampler_type_from_string (transform->filter));
+      sampler =
+	gegl_buffer_sampler_new (input,
+				 babl_format("RaGaBaA float"),
+			     gegl_sampler_type_from_string (transform->filter));
 
       if (gegl_matrix3_is_affine (&matrix))
         transform_affine  (output, input, &matrix, sampler, context->level);
