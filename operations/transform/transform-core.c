@@ -571,16 +571,16 @@ gegl_transform_get_bounding_box (GeglOperation *op)
    */
   if ( (inverse.coeff [2][0] * have_rect.x +
 	inverse.coeff [2][1] * have_rect.y +
-	inverse.coeff [2][2] <= (gdouble) 1.e-7) ||
+	inverse.coeff [2][2] <= (gdouble) 1.e-4) ||
        (inverse.coeff [2][0] * (have_rect.x + have_rect.width) +
 	inverse.coeff [2][1] * have_rect.y +
-	inverse.coeff [2][2] <= (gdouble) 1.e-7) ||
+	inverse.coeff [2][2] <= (gdouble) 1.e-4) ||
        (inverse.coeff [2][0] * have_rect.x +
 	inverse.coeff [2][1] * (have_rect.y + have_rect.height) +
-	inverse.coeff [2][2] <= (gdouble) 1.e-7) ||
+	inverse.coeff [2][2] <= (gdouble) 1.e-4) ||
        (inverse.coeff [2][0] * (have_rect.x + have_rect.width) +
 	inverse.coeff [2][1] * (have_rect.y + have_rect.height) +
-	inverse.coeff [2][2] <= (gdouble) 1.e-7) )
+	inverse.coeff [2][2] <= (gdouble) 1.e-4) )
     {
       return (GeglRectangle) {0,0,0,0};
     }
@@ -1076,16 +1076,16 @@ transform_generic (GeglBuffer  *dest,
        */
       if ( (inverse.coeff [2][0] * roi->x +
 	    inverse.coeff [2][1] * roi->y +
-	    inverse.coeff [2][2] <= (gdouble) 1.e-6) ||
+	    inverse.coeff [2][2] <= (gdouble) 1.e-2) ||
 	   (inverse.coeff [2][0] * (roi->x + roi->width) +
 	    inverse.coeff [2][1] * roi->y +
-	    inverse.coeff [2][2] <= (gdouble) 1.e-6) ||
+	    inverse.coeff [2][2] <= (gdouble) 1.e-2) ||
 	   (inverse.coeff [2][0] * roi->x +
 	    inverse.coeff [2][1] * (roi->y + roi->height) +
-	    inverse.coeff [2][2] <= (gdouble) 1.e-6) ||
+	    inverse.coeff [2][2] <= (gdouble) 1.e-2) ||
 	   (inverse.coeff [2][0] * (roi->x + roi->width) +
 	    inverse.coeff [2][1] * (roi->y + roi->height) +
-	    inverse.coeff [2][2] <= (gdouble) 1.e-6) )
+	    inverse.coeff [2][2] <= (gdouble) 1.e-2) )
 	{
 	  memset (dest_buf, '\0', sizeof(dest_buf));
 	  return;
