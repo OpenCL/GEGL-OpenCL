@@ -1074,15 +1074,14 @@ transform_generic (GeglBuffer  *dest,
       v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5)  +
                 inverse.coeff [1][1] * (roi->y + (gdouble) 0.5)  +
                 inverse.coeff [1][2];
-
       w_start = inverse.coeff [2][0] * (roi->x + (gdouble) 0.5)  +
                 inverse.coeff [2][1] * (roi->y + (gdouble) 0.5)  +
                 inverse.coeff [2][2];
 
-      /*
-       * Attempt at making degenerate cases be handled somewhat
-       * gracefully: Set a floor, above 0, for w.
-       */
+/*
+ * Attempt at making near degenerate cases be handled somewhat
+ * gracefully: Set a floor, above 0, for w.
+ */
 #define PERSPECTIVE_TRANSFORM_EPSILON ((gdouble) 1.e-6)
 #define CLAMP_PERSPECTIVE_TRANSFORM(w) \
   ( (w) > PERSPECTIVE_TRANSFORM_EPSILON ? (w) : PERSPECTIVE_TRANSFORM_EPSILON )
