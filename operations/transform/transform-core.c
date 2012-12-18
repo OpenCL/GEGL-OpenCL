@@ -1111,11 +1111,9 @@ transform_generic (GeglBuffer  *dest,
                    GeglSampler *sampler,
                    gint         level)
 {
+  const Babl          *format = babl_format ("RaGaBaA float");
   GeglBufferIterator  *i;
   const GeglRectangle *dest_extent;
-  gint                 x,
-                       y;
-
   GeglMatrix3          inverse;
   gdouble              u_start,
                        v_start,
@@ -1123,26 +1121,34 @@ transform_generic (GeglBuffer  *dest,
                        u_float,
                        v_float,
                        w_float;
-
-  const Babl          *format = babl_format ("RaGaBaA float");
-  gint                 dest_pixels,
-                       flip_x = 1,
-                       flip_y = 1;
+  gint                 x,
+                       y,
+                       dest_pixels,
+                       flip_x,
+                       flip_y;
 
   g_object_get (dest, "pixels", &dest_pixels, NULL);
   dest_extent = gegl_buffer_get_extent (dest);
 
+  gegl_matrix3_copy_into (&inverse, matrix);
+  gegl_matrix3_invert (&inverse);
+
   /*
-   * We determine whether tile access should be "flipped".
+   * Determine whether tile access should be "flipped". First, in the
+   * y direction.
+   *
+   * Until we reach the iterator, we use u_start etc to compute
+   * information needed to set flags. These values will be
+   * "discarded".
    */
   u_start = inverse.coeff [0][0] * ((*dest_extent).x + (gdouble) 0.5) +
             inverse.coeff [0][1] * ((*dest_extent).y + (gdouble) 0.5) +
             inverse.coeff [0][2];
-  v_start = inverse.coeff [1][0] * ((*dest_extent).x + (gdouble) 0.5)  +
-            inverse.coeff [1][1] * ((*dest_extent).y + (gdouble) 0.5)  +
+  v_start = inverse.coeff [1][0] * ((*dest_extent).x + (gdouble) 0.5) +
+            inverse.coeff [1][1] * ((*dest_extent).y + (gdouble) 0.5) +
             inverse.coeff [1][2];
-  w_start = inverse.coeff [2][0] * ((*dest_extent).x + (gdouble) 0.5)  +
-            inverse.coeff [2][1] * ((*dest_extent).y + (gdouble) 0.5)  +
+  w_start = inverse.coeff [2][0] * ((*dest_extent).x + (gdouble) 0.5) +
+            inverse.coeff [2][1] * ((*dest_extent).y + (gdouble) 0.5) +
             inverse.coeff [2][2];
 
   u_float = u_start + inverse.coeff [0][1] * ((*dest_extent).height - (gint) 1);
@@ -1152,36 +1158,39 @@ transform_generic (GeglBuffer  *dest,
   if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
     {
       /*
+       * Move to the start of the last "scanline".
+       */
+      u_start = u_float;
+      v_start = v_float;
+      w_start = w_float;
+      /*
        * Set the "change of direction" sign.
        */
       flip_y = (gint) -1;
-      u_start = u_float;
-      v_start = v_float;
-      w_start = w_float;
     }
+  else
+    {
+      flip_y = (gint) 1;
+    }
+  
+  /*
+   * Now in the horizontal direction. Done second because this is the
+   * most important one, and consequently we want to use the likely
+   * "initial scanline" to at least get that one about right.
+   */
+  u_float = u_start + inverse.coeff [0][0] * ((*dest_extent).width - (gint) 1);
+  v_float = v_start + inverse.coeff [1][0] * ((*dest_extent).width - (gint) 1);
+  w_float = w_start + inverse.coeff [2][0] * ((*dest_extent).width - (gint) 1);
+
+  flip_x = ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
+           ?
+           (gint) -1
+           :
+           (gint) 1;
 
   /*
-   * Repeat in the horizontal direction.
+   * Construct an output tile iterator.
    */
-  u_float = u_start + inverse.coeff [0][0] * ((*dest_extent).width  - (gint) 1);
-  v_float = v_start + inverse.coeff [1][0] * ((*dest_extent).width  - (gint) 1);
-  w_float = w_start + inverse.coeff [2][0] * ((*dest_extent).width  - (gint) 1);
-
-  if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
-    {
-      flip_x = (gint) -1;
-      /*
-       * Move the start to the previously last pixel of the
-       * scanline.
-       */
-      u_start = u_float;
-      v_start = v_float;
-      w_start = w_float;
-    }
-
-  gegl_matrix3_copy_into (&inverse, matrix);
-  gegl_matrix3_invert (&inverse);
-
   i = gegl_buffer_iterator_new (dest,
                                 dest_extent,
                                 level,
@@ -1189,25 +1198,13 @@ transform_generic (GeglBuffer  *dest,
                                 GEGL_BUFFER_WRITE,
                                 GEGL_ABYSS_NONE);
 
+  /*
+   * Fill the output tiles.
+   */
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
-
       gfloat * restrict dest_buf = (gfloat *)i->data[0];
-
-      /* /\* */
-      /*  * First, determine if there are vanishing or negative */
-      /*  * denominators anywhere within the four outer corners of the */
-      /*  * corner pixels. If these locations themselves are "safe", the */
-      /*  * whole thing is safe. If unsafe, fill the whole thing with */
-      /*  * transparent black. */
-      /*  *\/ */
-      /* if (file13) */
-      /* 	{ */
-      /* 	  memset (dest_buf, '\0', sizeof(dest_buf)); */
-      /* 	} */
-      /* else */
-      /* 	{ */
       gfloat * restrict dest_ptr = dest_buf;
 
       /*
