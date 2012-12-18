@@ -573,29 +573,6 @@ gegl_transform_get_bounding_box (GeglOperation *op)
 
   gegl_transform_bounding_box (have_points, 4, &have_rect);
 
-  /* /\* */
-  /*  * If there are vanishing or negative denominators within the area */
-  /*  * of the have_rect, return a null rectangle. */
-  /*  *\/ */
-  /* gegl_transform_create_composite_matrix (transform, &inverse); */
-  /* gegl_matrix3_invert (&inverse); */
-
-  /* if ( (inverse.coeff [2][0] * have_rect.x + */
-  /* 	inverse.coeff [2][1] * have_rect.y + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 1.e-2) || */
-  /*      (inverse.coeff [2][0] * (have_rect.x + have_rect.width) + */
-  /* 	inverse.coeff [2][1] * have_rect.y + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 1.e-2) || */
-  /*      (inverse.coeff [2][0] * have_rect.x + */
-  /* 	inverse.coeff [2][1] * (have_rect.y + have_rect.height) + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 1.e-2) || */
-  /*      (inverse.coeff [2][0] * (have_rect.x + have_rect.width) + */
-  /* 	inverse.coeff [2][1] * (have_rect.y + have_rect.height) + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 1.e-2) ) */
-  /*   { */
-  /*     return (GeglRectangle) {0,0,0,0}; */
-  /*   } */
-
   return have_rect;
 }
 
@@ -691,22 +668,6 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
 
   need_points [6] = need_points [0];
   need_points [7] = need_points [5];
-
-  /* if ( (inverse.coeff [2][0] *  requested_rect.x + */
-  /* 	inverse.coeff [2][1] *  requested_rect.y + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 1.e-2) || */
-  /*      (inverse.coeff [2][0] * (requested_rect.x + requested_rect.width) + */
-  /* 	inverse.coeff [2][1] *  requested_rect.y + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 1.e-2) || */
-  /*      (inverse.coeff [2][0] *  requested_rect.x + */
-  /* 	inverse.coeff [2][1] * (requested_rect.y + requested_rect.height) + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 1.e-2) || */
-  /*      (inverse.coeff [2][0] * (requested_rect.x + requested_rect.width) + */
-  /* 	inverse.coeff [2][1] * (requested_rect.y + requested_rect.height) + */
-  /* 	inverse.coeff [2][2] <= (gdouble) 1.e-2) ) */
-  /*   { */
-  /*     return (GeglRectangle) {0,0,0,0}; */
-  /*   } */
 
   for (i = 0; i < 8; i += 2)
     gegl_matrix3_transform_point (&inverse,
@@ -1047,6 +1008,7 @@ transform_affine (GeglBuffer  *dest,
     }
 }
 
+#if 0
 static void
 transform_generic (GeglBuffer  *dest,
                    GeglBuffer  *src,
@@ -1140,8 +1102,8 @@ transform_generic (GeglBuffer  *dest,
         }
     }
 }
+#endif
 
-#if 0
 static void
 transform_generic (GeglBuffer  *dest,
                    GeglBuffer  *src,
@@ -1153,7 +1115,6 @@ transform_generic (GeglBuffer  *dest,
   const GeglRectangle *dest_extent;
   gint                 x,
                        y;
-  gfloat * restrict    dest_buf;
 
   GeglMatrix3          inverse;
   gdouble              u_start,
@@ -1165,7 +1126,6 @@ transform_generic (GeglBuffer  *dest,
 
   const Babl          *format = babl_format ("RaGaBaA float");
   gint                 dest_pixels,
-                       file13 = 1,
                        flip_x = 1,
                        flip_y = 1;
 
@@ -1173,29 +1133,54 @@ transform_generic (GeglBuffer  *dest,
   dest_extent = gegl_buffer_get_extent (dest);
 
   /*
-   * First, determine if there are vanishing or negative denominators
-   * anywhere within the four outer corners of the corner pixels. If
-   * these locations themselves are "safe", the whole thing is
-   * safe. If unsafe, fill the whole thing with transparent black.
+   * We determine whether tile access should be "flipped".
    */
+  u_start = inverse.coeff [0][0] * ((*dest_extent).x + (gdouble) 0.5) +
+            inverse.coeff [0][1] * ((*dest_extent).y + (gdouble) 0.5) +
+            inverse.coeff [0][2];
+  v_start = inverse.coeff [1][0] * ((*dest_extent).x + (gdouble) 0.5)  +
+            inverse.coeff [1][1] * ((*dest_extent).y + (gdouble) 0.5)  +
+            inverse.coeff [1][2];
+  w_start = inverse.coeff [2][0] * ((*dest_extent).x + (gdouble) 0.5)  +
+            inverse.coeff [2][1] * ((*dest_extent).y + (gdouble) 0.5)  +
+            inverse.coeff [2][2];
+
+  u_float = u_start + inverse.coeff [0][1] * ((*dest_extent).height - (gint) 1);
+  v_float = v_start + inverse.coeff [1][1] * ((*dest_extent).height - (gint) 1);
+  w_float = w_start + inverse.coeff [2][1] * ((*dest_extent).height - (gint) 1);
+	  
+  if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
+    {
+      /*
+       * Set the "change of direction" sign.
+       */
+      flip_y = (gint) -1;
+      u_start = u_float;
+      v_start = v_float;
+      w_start = w_float;
+    }
+
+  /*
+   * Repeat in the horizontal direction.
+   */
+  u_float = u_start + inverse.coeff [0][0] * ((*dest_extent).width  - (gint) 1);
+  v_float = v_start + inverse.coeff [1][0] * ((*dest_extent).width  - (gint) 1);
+  w_float = w_start + inverse.coeff [2][0] * ((*dest_extent).width  - (gint) 1);
+
+  if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
+    {
+      flip_x = (gint) -1;
+      /*
+       * Move the start to the previously last pixel of the
+       * scanline.
+       */
+      u_start = u_float;
+      v_start = v_float;
+      w_start = w_float;
+    }
+
   gegl_matrix3_copy_into (&inverse, matrix);
   gegl_matrix3_invert (&inverse);
-
-  if ( (inverse.coeff [2][0] * (*dest_extent).x +
-	inverse.coeff [2][1] * (*dest_extent).y +
-	inverse.coeff [2][2] < (gdouble) 0.9) ||
-       (inverse.coeff [2][0] * ((*dest_extent).x + (*dest_extent).width) +
-	inverse.coeff [2][1] * (*dest_extent).y +
-	inverse.coeff [2][2] < (gdouble) 0.9) ||
-       (inverse.coeff [2][0] * (*dest_extent).x +
-	inverse.coeff [2][1] * ((*dest_extent).y + (*dest_extent).height) +
-	inverse.coeff [2][2] < (gdouble) 0.9) ||
-       (inverse.coeff [2][0] * ((*dest_extent).x + (*dest_extent).width) +
-	inverse.coeff [2][1] * ((*dest_extent).y + (*dest_extent).height) +
-	inverse.coeff [2][2] < (gdouble) 0.9) )
-    {
-      file13 = (gint) 1;
-    }
 
   i = gegl_buffer_iterator_new (dest,
                                 dest_extent,
@@ -1208,145 +1193,129 @@ transform_generic (GeglBuffer  *dest,
     {
       GeglRectangle *roi = &i->roi[0];
 
-      dest_buf = (gfloat *)i->data[0];
+      gfloat * restrict dest_buf = (gfloat *)i->data[0];
+
+      /* /\* */
+      /*  * First, determine if there are vanishing or negative */
+      /*  * denominators anywhere within the four outer corners of the */
+      /*  * corner pixels. If these locations themselves are "safe", the */
+      /*  * whole thing is safe. If unsafe, fill the whole thing with */
+      /*  * transparent black. */
+      /*  *\/ */
+      /* if (file13) */
+      /* 	{ */
+      /* 	  memset (dest_buf, '\0', sizeof(dest_buf)); */
+      /* 	} */
+      /* else */
+      /* 	{ */
+      gfloat * restrict dest_ptr = dest_buf;
 
       /*
-       * First, determine if there are vanishing or negative
-       * denominators anywhere within the four outer corners of the
-       * corner pixels. If these locations themselves are "safe", the
-       * whole thing is safe. If unsafe, fill the whole thing with
-       * transparent black.
+       * This code uses a variant of the (novel?) method of ensuring
+       * that scanlines stay, as much as possible, within an input
+       * "tile", given that these square "tiles" are biased so that
+       * there is more elbow room at the bottom and right than at the
+       * top and left, explained in the transform_affine function. It
+       * is not as foolproof because perspective transformations
+       * change the orientation of scanlines, and consequently what's
+       * good at the bottom may not be best at the top. On the other
+       * hand, the ROIs are generally small, so it's likely that
+       * what's good for the goose is good for the gander.
        */
-      if (file13)
+      /*
+       * Find out if we should flip things in the vertical
+       * direction. Flipping in the horizontal direction at the end
+       * ensures that the very first filled scanline will be done in
+       * the optimal order, even though the last one may not be. So,
+       * "fixing" the horizontal direction last can be seen as a form
+       * of greediness.
+       */
+      /*
+       * Compute the positions of the pre-images of the top left and
+       * bottom left pixels of the ROI.
+       */
+      u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
+                inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
+                inverse.coeff [0][2];
+      v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5)  +
+                inverse.coeff [1][1] * (roi->y + (gdouble) 0.5)  +
+                inverse.coeff [1][2];
+      w_start = inverse.coeff [2][0] * (roi->x + (gdouble) 0.5)  +
+                inverse.coeff [2][1] * (roi->y + (gdouble) 0.5)  +
+                inverse.coeff [2][2];
+
+      u_float = u_start + inverse.coeff [0][1] * (roi->height - (gint) 1);
+      v_float = v_start + inverse.coeff [1][1] * (roi->height - (gint) 1);
+      w_float = w_start + inverse.coeff [2][1] * (roi->height - (gint) 1);
+	  
+      if (flip_y - (gint) 1)
 	{
-	  memset (dest_buf, '\0', sizeof(dest_buf));
+	  /*
+	   * Move the start to the previously last scanline.
+	   */
+	  dest_ptr += (gint) 4 * (roi->height - (gint) 1) * roi->width;
+	  u_start = u_float;
+	  v_start = v_float;
+	  w_start = w_float;
 	}
-      else
+
+      u_float = u_start + inverse.coeff [0][0] * (roi->width  - (gint) 1);
+      v_float = v_start + inverse.coeff [1][0] * (roi->width  - (gint) 1);
+      w_float = w_start + inverse.coeff [2][0] * (roi->width  - (gint) 1);
+
+      if (flip_x - (gint) 1)
 	{
-	  gfloat * restrict dest_ptr = dest_buf;
-
-	  /*
-	   * This code uses a variant of the (novel?) method of
-	   * ensuring that scanlines stay, as much as possible, within
-	   * an input "tile", given that these square "tiles" are
-	   * biased so that there is more elbow room at the bottom and
-	   * right than at the top and left, explained in the
-	   * transform_affine function. It is not as foolproof because
-	   * perspective transformations change the orientation of
-	   * scanlines, and consequently what's good at the bottom may
-	   * not be best at the top. On the other hand, the ROIs are
-	   * generally small, so it's likely that what's good for the
-	   * goose is good for the gander.
-	   */
-	  /*
-	   * Find out if we should flip things in the vertical
-	   * direction. Flipping in the horizontal direction at the
-	   * end ensures that the very first filled scanline will be
-	   * done in the optimal order, even though the last one may
-	   * not be. So, "fixing" the horizontal direction last can be
-	   * seen as a form of greediness.
-	   */
-	  /*
-	   * Compute the positions of the pre-images of the top left and
-	   * bottom left pixels of the ROI.
-	   */
-	  u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
-	            inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
-                    inverse.coeff [0][2];
-	  v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5)  +
-                    inverse.coeff [1][1] * (roi->y + (gdouble) 0.5)  +
-                    inverse.coeff [1][2];
-	  w_start = inverse.coeff [2][0] * (roi->x + (gdouble) 0.5)  +
-	            inverse.coeff [2][1] * (roi->y + (gdouble) 0.5)  +
-	            inverse.coeff [2][2];
-
-	  u_float = u_start + inverse.coeff [0][1] * (roi->height - (gint) 1);
-	  v_float = v_start + inverse.coeff [1][1] * (roi->height - (gint) 1);
-	  w_float = w_start + inverse.coeff [2][1] * (roi->height - (gint) 1);
-
-	  if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
+	  dest_ptr += (gint) 4 * (roi->width  - (gint) 1);
+	  u_start = u_float;
+	  v_start = v_float;
+	  w_start = w_float;
+	}
+	  
+      for (y = roi->height; y--;)
+	{
+	  u_float = u_start;
+	  v_float = v_start;
+	  w_float = w_start;
+	  
+	  for (x = roi->width; x--;)
 	    {
-	      /*
-	       * Set the "change of direction" sign.
-	       */
-	      flip_y = (gint) -1;
-	      /*
-	       * Move the start to the previously last scanline.
-	       */
-	      dest_ptr += (gint) 4 * (roi->height - (gint) 1) * roi->width;
-	      u_start = u_float;
-	      v_start = v_float;
-	      w_start = w_float;
-	    }
+	      GeglMatrix2 inverse_jacobian;
+	      
+	      gdouble w_recip = (gdouble) 1.0 / w_float;
+	      gdouble u = u_float * w_recip;
+	      gdouble v = v_float * w_recip;
+	      
+	      inverse_jacobian.coeff [0][0] =
+		(inverse.coeff [0][0] - inverse.coeff [2][0] * u) * w_recip;
+	      inverse_jacobian.coeff [0][1] =
+		(inverse.coeff [0][1] - inverse.coeff [2][1] * u) * w_recip;
+	      inverse_jacobian.coeff [1][0] =
+		(inverse.coeff [1][0] - inverse.coeff [2][0] * v) * w_recip;
+	      inverse_jacobian.coeff [1][1] =
+		(inverse.coeff [1][1] - inverse.coeff [2][1] * v) * w_recip;
+	      
+	      gegl_sampler_get (sampler,
+				u,
+				v,
+				&inverse_jacobian,
+				dest_ptr,
+				GEGL_ABYSS_NONE);
 
-	  /*
-	   * Repeat in the horizontal direction, using the first
-	   * scanline selected by the vertical flip.
-	   */
-	  u_float = u_start + inverse.coeff [0][0] * (roi->width  - (gint) 1);
-	  v_float = v_start + inverse.coeff [1][0] * (roi->width  - (gint) 1);
-	  w_float = w_start + inverse.coeff [2][0] * (roi->width  - (gint) 1);
-
-	  if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
-	    {
-	      flip_x = (gint) -1;
-	      /*
-	       * Move the start to the previously last pixel of the
-	       * scanline.
-	       */
-	      dest_ptr += (gint) 4 * (roi->width  - (gint) 1);
-	      u_start = u_float;
-	      v_start = v_float;
-	      w_start = w_float;
+	      dest_ptr += flip_x * (gint) 4;
+		  
+	      u_float += flip_x * inverse.coeff [0][0];
+	      v_float += flip_x * inverse.coeff [1][0];
+	      w_float += flip_x * inverse.coeff [2][0];
 	    }
 	  
-	  for (y = roi->height; y--;)
-	    {
-	      u_float = u_start;
-	      v_float = v_start;
-	      w_float = w_start;
+	  dest_ptr += (gint) 4 * (flip_y - flip_x) * roi->width;
 	      
-	      for (x = roi->width; x--;)
-		{
-		  GeglMatrix2 inverse_jacobian;
-
-		  gdouble w_recip = (gdouble) 1.0 / w_float;
-		  gdouble u = u_float * w_recip;
-		  gdouble v = v_float * w_recip;
-		  
-		  inverse_jacobian.coeff [0][0] =
-		    (inverse.coeff [0][0] - inverse.coeff [2][0] * u) * w_recip;
-		  inverse_jacobian.coeff [0][1] =
-		    (inverse.coeff [0][1] - inverse.coeff [2][1] * u) * w_recip;
-		  inverse_jacobian.coeff [1][0] =
-		    (inverse.coeff [1][0] - inverse.coeff [2][0] * v) * w_recip;
-		  inverse_jacobian.coeff [1][1] =
-		    (inverse.coeff [1][1] - inverse.coeff [2][1] * v) * w_recip;
-		  
-		  gegl_sampler_get (sampler,
-				    u,
-				    v,
-				    &inverse_jacobian,
-				    dest_ptr,
-				    GEGL_ABYSS_NONE);
-
-		  dest_ptr += flip_x * (gint) 4;
-		  
-		  u_float += flip_x * inverse.coeff [0][0];
-		  v_float += flip_x * inverse.coeff [1][0];
-		  w_float += flip_x * inverse.coeff [2][0];
-		}
-
-	      dest_ptr += (gint) 4 * (flip_y - flip_x) * roi->width;
-	      
-	      u_start += flip_y * inverse.coeff [0][1];
-	      v_start += flip_y * inverse.coeff [1][1];
-	      w_start += flip_y * inverse.coeff [2][1];
-	    }
-        }
+	  u_start += flip_y * inverse.coeff [0][1];
+	  v_start += flip_y * inverse.coeff [1][1];
+	  w_start += flip_y * inverse.coeff [2][1];
+	}
     }
 }
-#endif
 
 /*
  * Use to determine if key transform matrix coefficients are close
