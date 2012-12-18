@@ -1221,9 +1221,9 @@ transform_generic (GeglBuffer  *dest,
       GeglRectangle *roi = &i->roi[0];
       gfloat * restrict dest_buf = (gfloat *)i->data[0];
       gfloat * restrict dest_ptr =
-	dest_buf +
-	(gint) 4 * ( bflip_x * (roi->width  - (gint) 1) +
-		     bflip_y * (roi->height - (gint) 1) * roi->width );
+        dest_buf +
+        (gint) 4 * ( bflip_x * (roi->width  - (gint) 1) +
+                     bflip_y * (roi->height - (gint) 1) * roi->width );
 
       u_start =
         inverse.coeff [0][0] * ( roi->x + bflip_x * (roi->width  - (gint) 1) +
@@ -1274,17 +1274,15 @@ transform_generic (GeglBuffer  *dest,
                                 dest_ptr,
                                 GEGL_ABYSS_NONE);
 
-              u_float += flip_x * inverse.coeff [0][0];
-              v_float += flip_x * inverse.coeff [1][0];
-              w_float += flip_x * inverse.coeff [2][0];
-
+              u_float  += flip_x * inverse.coeff [0][0];
+              v_float  += flip_x * inverse.coeff [1][0];
+              w_float  += flip_x * inverse.coeff [2][0];
               dest_ptr += flip_x * (gint) 4;
             }
 
-          u_start += flip_y * inverse.coeff [0][1];
-          v_start += flip_y * inverse.coeff [1][1];
-          w_start += flip_y * inverse.coeff [2][1];
-
+          u_start  += flip_y * inverse.coeff [0][1];
+          v_start  += flip_y * inverse.coeff [1][1];
+          w_start  += flip_y * inverse.coeff [2][1];
           dest_ptr += (gint) 4 * (flip_y - flip_x) * roi->width;
         }
     }
