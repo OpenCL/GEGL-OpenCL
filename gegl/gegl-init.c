@@ -132,6 +132,7 @@ gegl_swap_dir (void)
           g_free (name);
 #endif
 
+          g_free (swapdir);
           swapdir = NULL;
         }
     }
@@ -577,7 +578,7 @@ gegl_post_parse_hook (GOptionContext *context,
   gegl_instrument ("gegl", "gegl_init", gegl_ticks () - global_time);
 
   if (g_getenv ("GEGL_SWAP"))
-    g_object_set (config, "swap", g_getenv ("GEGL_SWAP"), NULL);
+    g_object_set (config, "swap", gegl_swap_dir (), NULL);
   if (g_getenv ("GEGL_QUALITY"))
     {
       const gchar *quality = g_getenv ("GEGL_QUALITY");
