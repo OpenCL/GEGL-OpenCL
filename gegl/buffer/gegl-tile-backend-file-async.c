@@ -954,7 +954,10 @@ gegl_tile_backend_file_finalize (GObject *object)
     gegl_tile_backend_file_free_free_list (self);
 
   if (self->path)
-    g_free (self->path);
+    {
+      gegl_tile_backend_unlink_swap (self->path);
+      g_free (self->path);
+    }
 
   if (self->monitor)
     g_object_unref (self->monitor);

@@ -109,7 +109,13 @@ gegl_swap_dir (void)
           if (g_str_equal (g_getenv ("GEGL_SWAP"), "RAM"))
             swapdir = NULL;
           else
-            swapdir = g_strdup (g_getenv ("GEGL_SWAP"));
+            {
+              swapdir = g_strstrip (g_strdup (g_getenv ("GEGL_SWAP")));
+
+              /* Remove any trailing separator, unless the path is only made of a leading separator. */
+              while (strlen (swapdir) > strlen (G_DIR_SEPARATOR_S) && g_str_has_suffix (swapdir, G_DIR_SEPARATOR_S))
+                swapdir[strlen (swapdir) - strlen (G_DIR_SEPARATOR_S)] = '\0';
+            }
         }
       else
         {

@@ -21,11 +21,13 @@
 
 #include <babl/babl.h>
 #include <glib-object.h>
+#include <glib/gstdio.h>
 
 #include "gegl-buffer-types.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile-source.h"
 #include "gegl-tile-backend.h"
+#include "gegl-config.h"
 
 G_DEFINE_TYPE (GeglTileBackend, gegl_tile_backend, GEGL_TYPE_TILE_SOURCE)
 
@@ -206,4 +208,17 @@ GeglTileSource *
 gegl_tile_backend_peek_storage (GeglTileBackend *backend)
 {
   return backend->priv->storage;
+}
+
+void
+gegl_tile_backend_unlink_swap (gchar *path)
+{
+  gchar *dirname = g_path_get_dirname (path);
+
+  /* Ensure we delete only files in our known swap directory for safety. */
+  if (g_file_test (path, G_FILE_TEST_EXISTS) &&
+      g_strcmp0 (dirname, gegl_config()->swap) == 0)
+    g_unlink (path);
+
+  g_free (dirname);
 }

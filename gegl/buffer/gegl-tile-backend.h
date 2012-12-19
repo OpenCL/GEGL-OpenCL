@@ -66,6 +66,18 @@ GeglRectangle gegl_tile_backend_get_extent (GeglTileBackend *tile_backend);
 
 GType gegl_tile_backend_get_type (void) G_GNUC_CONST;
 
+/**
+ * gegl_tile_backend_unlink_swap:
+ * @path: the path where the gegl tile backend has swapped.
+ *
+ * Delete a swap file from disk. This must be used by tile backends which may
+ * swap to disk under certain circonstances.
+ *
+ * For safety, this function will check that the swap file is in the swap
+ * directory before deletion but it won't perform any other check.
+ */
+void gegl_tile_backend_unlink_swap (gchar *path);
+
 G_END_DECLS
 
 #endif
