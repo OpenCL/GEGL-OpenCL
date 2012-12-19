@@ -797,20 +797,14 @@ transform_affine (GeglBuffer  *dest,
   const GeglRectangle *dest_extent;
   gint                 x,
                        y;
-  gfloat * restrict    dest_buf,
-                      *dest_ptr;
   GeglMatrix3          inverse;
   GeglMatrix2          inverse_jacobian;
-  gdouble              u_start,
-                       v_start,
-                       u_float,
-                       v_float,
-                       base_u,
+  gdouble              base_u,
                        base_v;
-  const Babl          *format = babl_format ("RaGaBaA float");
   gint                 dest_pixels,
                        flip_x = 0,
                        flip_y = 0;
+  const Babl          *format = babl_format ("RaGaBaA float");
 
   /*
    * XXX: fast paths as existing in files in the same dir as
@@ -966,24 +960,26 @@ transform_affine (GeglBuffer  *dest,
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi = &i->roi[0];
+      gfloat * restrict dest_buf = (gfloat *)i->data[0];
 
-      dest_buf = (gfloat *)i->data[0];
+      gfloat * restrict dest_ptr =
+        dest_buf +
+        (gint) 4 * ( flip_x * (roi->width  - (gint) 1) +
+                     flip_y * (roi->height - (gint) 1) * roi->width );
 
-      u_start = base_u +
-                inverse.coeff [0][0] * ( roi->x + flip_x * roi->width  ) +
-                inverse.coeff [0][1] * ( roi->y + flip_y * roi->height );
-      v_start = base_v +
-                inverse.coeff [1][0] * ( roi->x + flip_x * roi->width  ) +
-                inverse.coeff [1][1] * ( roi->y + flip_y * roi->height );
-
-      dest_ptr = dest_buf +
-                 (gint) 4 * flip_x * (roi->width  - (gint) 1) +
-                 (gint) 4 * flip_y * (roi->height - (gint) 1) * roi->width;
+      gdouble u_start =
+        base_u +
+        inverse.coeff [0][0] * ( roi->x + flip_x * roi->width  ) +
+        inverse.coeff [0][1] * ( roi->y + flip_y * roi->height );
+      gdouble v_start =
+        base_v +
+        inverse.coeff [1][0] * ( roi->x + flip_x * roi->width  ) +
+        inverse.coeff [1][1] * ( roi->y + flip_y * roi->height );
 
       for (y = roi->height; y--;)
         {
-          u_float = u_start;
-          v_float = v_start;
+          gdouble u_float = u_start;
+          gdouble v_float = v_start;
 
           for (x = roi->width; x--;)
             {
@@ -993,7 +989,6 @@ transform_affine (GeglBuffer  *dest,
                                 &inverse_jacobian,
                                 dest_ptr,
                                 GEGL_ABYSS_NONE);
-
               dest_ptr += (gint) 4 - (gint) 8 * flip_x;
 
               u_float += inverse_jacobian.coeff [0][0];
@@ -1007,102 +1002,6 @@ transform_affine (GeglBuffer  *dest,
         }
     }
 }
-
-#if 0
-static void
-transform_generic (GeglBuffer  *dest,
-                   GeglBuffer  *src,
-                   GeglMatrix3 *matrix,
-                   GeglSampler *sampler,
-                   gint         level)
-{
-  GeglBufferIterator  *i;
-  const GeglRectangle *dest_extent;
-  gint                 x,
-                       y;
-  gfloat * restrict    dest_buf,
-                      *dest_ptr;
-  GeglMatrix3          inverse;
-  gdouble              u_start,
-                       v_start,
-                       w_start,
-                       u_float,
-                       v_float,
-                       w_float;
-  const Babl          *format = babl_format ("RaGaBaA float");
-  gint                 dest_pixels;
-
-  g_object_get (dest, "pixels", &dest_pixels, NULL);
-  dest_extent = gegl_buffer_get_extent (dest);
-
-  i = gegl_buffer_iterator_new (dest,
-                                dest_extent,
-                                level,
-                                format,
-                                GEGL_BUFFER_WRITE,
-                                GEGL_ABYSS_NONE);
-
-  while (gegl_buffer_iterator_next (i))
-    {
-      GeglRectangle *roi = &i->roi[0];
-
-      dest_buf = (gfloat *)i->data[0];
-
-      gegl_matrix3_copy_into (&inverse, matrix);
-      gegl_matrix3_invert (&inverse);
-
-      u_start = inverse.coeff [0][0] * (roi->x + (gdouble) 0.5) +
-                inverse.coeff [0][1] * (roi->y + (gdouble) 0.5) +
-                inverse.coeff [0][2];
-      v_start = inverse.coeff [1][0] * (roi->x + (gdouble) 0.5)  +
-                inverse.coeff [1][1] * (roi->y + (gdouble) 0.5)  +
-                inverse.coeff [1][2];
-      w_start = inverse.coeff [2][0] * (roi->x + (gdouble) 0.5)  +
-                inverse.coeff [2][1] * (roi->y + (gdouble) 0.5)  +
-                inverse.coeff [2][2];
-
-      for (dest_ptr = dest_buf, y = roi->height; y--;)
-        {
-          u_float = u_start;
-          v_float = v_start;
-          w_float = w_start;
-
-          for (x = roi->width; x--;)
-            {
-              GeglMatrix2 inverse_jacobian;
-              gdouble w_recip = 1.0 / w_float;
-              gdouble u = u_float * w_recip;
-              gdouble v = v_float * w_recip;
-
-              inverse_jacobian.coeff [0][0] =
-                (inverse.coeff [0][0] - inverse.coeff [2][0] * u) * w_recip;
-              inverse_jacobian.coeff [0][1] =
-                (inverse.coeff [0][1] - inverse.coeff [2][1] * u) * w_recip;
-              inverse_jacobian.coeff [1][0] =
-                (inverse.coeff [1][0] - inverse.coeff [2][0] * v) * w_recip;
-              inverse_jacobian.coeff [1][1] =
-                (inverse.coeff [1][1] - inverse.coeff [2][1] * v) * w_recip;
-
-              gegl_sampler_get (sampler,
-                                u,
-                                v,
-                                &inverse_jacobian,
-                                dest_ptr,
-                                GEGL_ABYSS_NONE);
-              dest_ptr+=4;
-
-              u_float += inverse.coeff [0][0];
-              v_float += inverse.coeff [1][0];
-              w_float += inverse.coeff [2][0];
-            }
-
-          u_start += inverse.coeff [0][1];
-          v_start += inverse.coeff [1][1];
-          w_start += inverse.coeff [2][1];
-        }
-    }
-}
-#endif
 
 static void
 transform_generic (GeglBuffer  *dest,

@@ -411,7 +411,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 /*
  * IMPORTANT: LOHALO_OFFSET_0 SHOULD BE AN INTEGER >= 2.
  */
-#define LOHALO_OFFSET_0 (14)
+#define LOHALO_OFFSET_0 (16)
 #define LOHALO_SIZE_0 ( 1 + 2 * LOHALO_OFFSET_0 )
 
 /*
@@ -424,7 +424,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * mipmap level's offset should almost never be smaller than half the
  * previous level's offset.
  */
-#define LOHALO_OFFSET_MIPMAP (14)
+#define LOHALO_OFFSET_MIPMAP (16)
 #define LOHALO_SIZE_MIPMAP ( 1 + 2 * LOHALO_OFFSET_MIPMAP )
 
 #define LOHALO_OFFSET_1 LOHALO_OFFSET_MIPMAP
@@ -2250,6 +2250,78 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
           const gfloat c_minor_y = minor_unit_y / minor_mag;
 
           /*
+           * Remainder of the ellipse geometry computation:
+           */
+          /*
+           * Major and minor axis direction vectors:
+           */
+          const gdouble major_x = major_mag * major_unit_x;
+          const gdouble major_y = major_mag * major_unit_y;
+          const gdouble minor_x = minor_mag * minor_unit_x;
+          const gdouble minor_y = minor_mag * minor_unit_y;
+
+          /*
+           * Ellipse coefficients:
+           */
+          const gdouble ellipse_a =
+            major_y * major_y + minor_y * minor_y;
+          const gdouble folded_ellipse_b =
+            major_x * major_y + minor_x * minor_y;
+          const gdouble ellipse_c =
+            major_x * major_x + minor_x * minor_x;
+          const gdouble ellipse_f = major_mag * minor_mag;
+
+          /*
+           * Bounding box of the ellipse:
+           */
+          const gdouble bounding_box_factor =
+            ellipse_f * ellipse_f /
+            ( ellipse_c * ellipse_a - folded_ellipse_b * folded_ellipse_b );
+          const gfloat bounding_box_half_width =
+            sqrtf( (gfloat) (ellipse_c * bounding_box_factor) );
+          const gfloat bounding_box_half_height =
+            sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
+
+          /*
+           * Relative weight of the contribution of LBB-Nohalo:
+           */
+          const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
+
+          /*
+           * Grab the pixel values located within the level 0
+           * context_rect.  Farther ones will be accessed through
+           * higher mipmap levels.
+           */
+          const gint out_left_0 =
+            LOHALO_MAX
+            (
+              (gint) ceil  ( (double) ( x_0 - bounding_box_half_width  ) )
+              ,
+              -LOHALO_OFFSET_0
+            );
+          const gint out_rite_0 =
+            LOHALO_MIN
+            (
+              (gint) floorf ( (double) ( x_0 + bounding_box_half_width  ) )
+              ,
+              LOHALO_OFFSET_0
+            );
+          const gint out_top_0 =
+            LOHALO_MAX
+            (
+              (gint) ceilf  ( (double) ( y_0 - bounding_box_half_height ) )
+              ,
+              -LOHALO_OFFSET_0
+            );
+          const gint out_bot_0 =
+            LOHALO_MIN
+            (
+              (gint) floorf ( (double) ( y_0 + bounding_box_half_height ) )
+              ,
+              LOHALO_OFFSET_0
+            );
+
+          /*
            * Accumulator for the EWA weights:
            */
           gdouble total_weight = (gdouble) 0.0;
@@ -2257,29 +2329,16 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
            * Storage for the EWA contribution:
            */
           gfloat ewa_newval[channels];
-          ewa_newval[0] = (gfloat) 0.0;
-          ewa_newval[1] = (gfloat) 0.0;
-          ewa_newval[2] = (gfloat) 0.0;
-          ewa_newval[3] = (gfloat) 0.0;
+          ewa_newval[0] = (gfloat) 0;
+          ewa_newval[1] = (gfloat) 0;
+          ewa_newval[2] = (gfloat) 0;
+          ewa_newval[3] = (gfloat) 0;
 
-          /*
-           * Grab the pixel values located within the context_rect of
-           * "pure" LBB-Nohalo.  Farther ones will be accessed through
-           * higher mipmap levels.
-           */
-          /*
-           * TODO: Given that we now use a somewhat large level 0
-           * context_rect, it makes sense to restrict the EWA
-           * computation to the bounding box even at level 0. With
-           * small context_rect, this is a waste. But right now, when
-           * barely downsmapling, there are lots of multiplications by
-           * zero weights.
-           */
           {
-            gint i = -LOHALO_OFFSET_0;
+            gint i = out_top_0;
             do
               {
-                gint j = -LOHALO_OFFSET_0;
+                gint j = out_left_0;
                 do
                   {
                     ewa_update (j,
@@ -2295,8 +2354,8 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                 input_bptr,
                                 &total_weight,
                                 ewa_newval);
-                  } while ( ++j <= LOHALO_OFFSET_0 );
-              } while ( ++i <= LOHALO_OFFSET_0 );
+                  } while ( ++j <= out_rite_0 );
+              } while ( ++i <= out_bot_0 );
           }
 
           {
@@ -2307,7 +2366,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
              * determine the alignment of the level 1 mipmap level
              * w.r.t. the current level 0.
              *
-             * At level 0, we can access pixels which are
+             * At level 0, we can access pixels which are at most
              * LOHALO_OFFSET_0 away from the anchor pixel location in
              * box distance.
              */
@@ -2318,47 +2377,11 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
             const gint odd_ix_0 = ix_0 % 2;
             const gint odd_iy_0 = iy_0 % 2;
             /*
-             * Find the closest locations, on all four sides, of level
-             * 1 pixels which involve data not found in the level 0
+             * Find the closest locations, on all four sides, of level 1
+             * pixels which involve data not found in the level 0
              * LOHALO_SIZE_0xLOHALO_SIZE_0.
              */
             LOHALO_FIND_CLOSEST_LOCATIONS(0,1)
-
-            /*
-             * Remainder of the ellipse geometry computation:
-             */
-            /*
-             * Major and minor axis direction vectors:
-             */
-            const gdouble major_x = major_mag * major_unit_x;
-            const gdouble major_y = major_mag * major_unit_y;
-            const gdouble minor_x = minor_mag * minor_unit_x;
-            const gdouble minor_y = minor_mag * minor_unit_y;
-
-            /*
-             * Ellipse coefficients:
-             */
-            const gdouble ellipse_a =
-              major_y * major_y + minor_y * minor_y;
-            const gdouble folded_ellipse_b =
-              major_x * major_y + minor_x * minor_y;
-            const gdouble ellipse_c =
-              major_x * major_x + minor_x * minor_x;
-            const gdouble ellipse_f = major_mag * minor_mag;
-
-            /*
-             * Bounding box of the ellipse:
-             */
-            const gdouble bounding_box_factor =
-              ellipse_f * ellipse_f
-              /
-              (
-               ellipse_c * ellipse_a - folded_ellipse_b * folded_ellipse_b
-               );
-            const gfloat bounding_box_half_width =
-              sqrtf( (gfloat) (ellipse_c * bounding_box_factor) );
-            const gfloat bounding_box_half_height =
-              sqrtf( (gfloat) (ellipse_a * bounding_box_factor) );
             /*
              * Bounding box shrunk a smidgen given that a location
              * very close to the edge of the bounding box will get a
@@ -2368,11 +2391,6 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
               bounding_box_half_width  - LOHALO_FUDGEF;
             const gfloat fudged_bounding_box_half_height =
               bounding_box_half_height - LOHALO_FUDGEF;
-
-            /*
-             * Relative weight of the contribution of LBB-Nohalo:
-             */
-            const gfloat theta = (gfloat) ( (gdouble) 1. / ellipse_f );
 
             if (( x_0 - fudged_bounding_box_half_width  < closest_left_1 )
                 ||
@@ -2429,7 +2447,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * The "in" indices are the closest relative mipmap 1
                  * indices of needed mipmap values:
                  */
-		LOHALO_FIND_CLOSEST_INDICES(0,1)
+                LOHALO_FIND_CLOSEST_INDICES(0,1)
                 /*
                  * The "out" indices are the farthest relative mipmap
                  * 1 indices we use at this level:
@@ -2440,7 +2458,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * Update using mipmap level 1 values.
                  */
                 LOHALO_MIPMAP_EWA_UPDATE(1)
-		{
+                {
                   /*
                    * In order to know whether we use even higher
                    * mipmap level values, we need to check whether
@@ -2454,7 +2472,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                    * access pixels which are LOHALO_OFFSET_MIPMAP away
                    * from the level 1 anchor pixel location in box
                    * distance.
-		   */
+                   */
                   /*
                    * Determine whether the anchor level_1 pixel
                    * locations are odd (VS even):
@@ -2488,7 +2506,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                        * pixel values will get 0 coefficients--but we
                        * used a quick and dirty bounding box test
                        * which lets through false positives.)
-		       */
+                       */
 
                       /*
                        * Nearest mipmap anchor pixel location:
@@ -2514,12 +2532,12 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                        * the center of a level 1 pixel is at a box
                        * distance of 1 from the center of the closest
                        * level 2 pixel.
-		       */
+                       */
                       const gfloat x_2 =
                         x_1 + (gfloat) ( 2 * ( ix_1 - 2 * ix_2 ) - 1 );
                       const gfloat y_2 =
                         y_1 + (gfloat) ( 2 * ( iy_1 - 2 * iy_2 ) - 1 );
-  
+
                       /*
                        * Key index ranges:
                        */
@@ -2527,7 +2545,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                        * The "in" indices are the closest relative
                        * mipmap 2 indices of needed mipmap values:
                        */
-		      LOHALO_FIND_CLOSEST_INDICES(1,2)
+                      LOHALO_FIND_CLOSEST_INDICES(1,2)
                       /*
                        * The "out" indices are the farthest relative
                        * mipmap 1 indices we use at this level:
@@ -2572,7 +2590,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                               x_2 + (gfloat) ( 2 * ( ix_2 - 2 * ix_3 ) - 1 );
                             const gfloat y_3 =
                               y_2 + (gfloat) ( 2 * ( iy_2 - 2 * iy_3 ) - 1 );
-			    LOHALO_FIND_CLOSEST_INDICES(2,3)
+                            LOHALO_FIND_CLOSEST_INDICES(2,3)
                             LOHALO_FIND_FARTHEST_INDICES(3)
                             LOHALO_MIPMAP_EWA_UPDATE(3)
                           }
