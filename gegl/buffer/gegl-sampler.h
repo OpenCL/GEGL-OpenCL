@@ -41,7 +41,7 @@ G_BEGIN_DECLS
  * The way the samplers use mipmap levels, square buffers are
  * preferable to rectangular ones.
  */
-#define GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT 256
+#define GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT 64
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
 
