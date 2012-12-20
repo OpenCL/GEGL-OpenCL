@@ -839,27 +839,26 @@ transform_affine (GeglBuffer  *dest,
    *
    * Explanation:
    *
-   * GEGL uses square buffer tiles in "output space", which this
-   * function fills with data. Pulling a scanline (within such a
-   * square tile) back to input space (with the inverse
+   * GEGL uses wider than tall rectangular buffer tiles in "output
+   * space", which this function fills with data. Pulling a scanline
+   * (within such a square tile) back to input space (with the inverse
    * transformation) with an arbitrary affine transformation may make
    * the scanline go from right to left in input space even though it
    * goes form left to right in input space. Similarly, a scanline
    * which is below the first one in output space may be above in
-   * input space. Unfortunately, input buffer tiles (which are square)
-   * are allocated with a bias: less elbow room around the
-   * context_rect (square of data needed by the sampler) is put at the
-   * left and top than at the right and bottom. (Such asymetrical
-   * elbow room is beneficial when resizing, for example, since input
-   * space is then traversed from left to right and top to bottom,
-   * which means that the left and top elbow room is not used in this
-   * situation.) When the affine transformation "flips" things,
-   * however, the elbow room is "on the wrong side", and for this
-   * reason such transformations run much much slower because many
-   * more input buffer tiles get created. One way to make things
-   * better is to traverse the output buffer tile in an appropriate
-   * chosen "reverse order" so that the "short" elbow room is "behind"
-   * instead of "ahead".
+   * input space. Unfortunately, input buffer tiles are allocated with
+   * a bias: less elbow room around the context_rect (square of data
+   * needed by the sampler) is put at the left and top than at the
+   * right and bottom. (Such asymetrical elbow room is beneficial when
+   * resizing, for example, since input space is then traversed from
+   * left to right and top to bottom, which means that the left and
+   * top elbow room is not used in this situation.) When the affine
+   * transformation "flips" things, however, the elbow room is "on the
+   * wrong side", and for this reason such transformations run much
+   * much slower because many more input buffer tiles get created. One
+   * way to make things better is to traverse the output buffer tile
+   * in an appropriate chosen "reverse order" so that the "short"
+   * elbow room is "behind" instead of "ahead".
    *
    * Things are actually a bit more complicated than that. Here is a
    * terse description of what's actually done, without a full
@@ -872,13 +871,13 @@ transform_affine (GeglBuffer  *dest,
    * input tile? Because the input tile is square and most of the
    * extra elbow room is at the bottom and right, the "best" direction
    * is going down the diagonal of the square, approximately from top
-   * left to bottom right.
+   * left to bottom right of the tile.
    *
    * Of course, we do not have control over the actual line traced by
    * the output scanline in input space. But what the above tells us
    * is that if the inner product of the pulled back "scanline vector"
-   * with the vector (1,1) (which corresponds to going diagonally from
-   * top-left to bottom-right in images) is negative, we are going
+   * with the vector (2,1) (which corresponds to going diagonally from
+   * top-left to bottom-right in the tile) is negative, we are going
    * opposite to "best". This can be rectified by filling the output
    * scanline in reverse order: from right to left in output space.
    *
@@ -887,7 +886,7 @@ transform_affine (GeglBuffer  *dest,
    * likely to "stick out". Repeating the same argument used for a
    * single scanline, we see that the sign of the inner product of the
    * inverse image of the vector that points straight down in output
-   * space with the input space vector (1,1) tells us whether we
+   * space with the input space vector (2,1) tells us whether we
    * should fill the output tile from the top down or from the bottom
    * up.
    *
@@ -919,8 +918,14 @@ transform_affine (GeglBuffer  *dest,
    * coordinate axes, or a centered disc, matters, irrespective of
    * orientation ("left-hand" VS "right-hand") issues.
    */
+  /*
+   * The criterion for flipping is based on tiles that are twice as
+   * wide as high. This is where the "(gdouble) 2. *" comes from:
+   * inner product with the vector (2,1).
+   */
 
-  if (inverse.coeff [0][0] + inverse.coeff [1][0] < (gdouble) 0.0)
+  if ((gdouble) 2. * inverse.coeff [0][0] + inverse.coeff [1][0] <
+      (gdouble) 0.)
     {
       /*
        * Flip the horizontal scan component of the inverse jacobian:
@@ -934,7 +939,8 @@ transform_affine (GeglBuffer  *dest,
       flip_x = (gint) 1;
     }
 
-  if (inverse.coeff [0][1] + inverse.coeff [1][1] < (gdouble) 0.0)
+  if ((gdouble) 2. * inverse.coeff [0][1] + inverse.coeff [1][1] <
+      (gdouble) 0.)
     {
       /*
        * Flip the vertical scan component of the inverse jacobian:
@@ -1037,9 +1043,9 @@ transform_generic (GeglBuffer  *dest,
   /*
    * This code uses a variant of the (novel?) method of ensuring that
    * scanlines stay, as much as possible, within an input "tile",
-   * given that these square "tiles" are biased so that there is more
-   * elbow room at the bottom and right than at the top and left,
-   * explained in the transform_affine function. It is not as
+   * given that these wider than tall "tiles" are biased so that there
+   * is more elbow room at the bottom and right than at the top and
+   * left, explained in the transform_affine function. It is not as
    * foolproof because perspective transformations change the
    * orientation of scanlines, and consequently what's good at the
    * bottom may not be best at the top.
@@ -1066,7 +1072,8 @@ transform_generic (GeglBuffer  *dest,
   v_float = v_start + inverse.coeff [1][1] * ((*dest_extent).height - (gint) 1);
   w_float = w_start + inverse.coeff [2][1] * ((*dest_extent).height - (gint) 1);
 
-  if ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
+  if (((gdouble) 2. * u_float + v_float)/w_float <
+      ((gdouble) 2. * u_start + v_start)/w_start)
     {
       /*
        * Move to the start of the last "scanline".
@@ -1095,7 +1102,8 @@ transform_generic (GeglBuffer  *dest,
   v_float = v_start + inverse.coeff [1][0] * ((*dest_extent).width - (gint) 1);
   w_float = w_start + inverse.coeff [2][0] * ((*dest_extent).width - (gint) 1);
 
-  bflip_x = ((u_float + v_float)/w_float < (u_start + v_start)/w_start)
+  bflip_x = (((gdouble) 2. * u_float + v_float)/w_float <
+	     ((gdouble) 2. * u_start + v_start)/w_start)
             ?
             (gint) 1
             :

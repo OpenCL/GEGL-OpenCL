@@ -167,10 +167,10 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
 {
   GeglSamplerCubic *cubic = (GeglSamplerCubic*)(self);
   const gint        offsets[16] =
-                      {-4-GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT   *4, 4, 4, 4,
-                         (GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4,
-                         (GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4,
-                         (GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4};
+                      {-4-2*GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT   *4, 4, 4, 4,
+                         (2*GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4,
+                         (2*GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4,
+                         (2*GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4};
   gfloat           *sampler_bptr;
   gfloat            factor;
   gfloat            newval[4] = {0.0, 0.0, 0.0, 0.0};

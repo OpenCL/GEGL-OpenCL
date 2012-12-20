@@ -411,7 +411,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 /*
  * IMPORTANT: LOHALO_OFFSET_0 SHOULD BE AN INTEGER >= 2.
  */
-#define LOHALO_OFFSET_0 (8)
+#define LOHALO_OFFSET_0 (7)
 #define LOHALO_SIZE_0 ( 1 + 2 * LOHALO_OFFSET_0 )
 
 /*
@@ -424,7 +424,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * mipmap level's offset should almost never be smaller than half the
  * previous level's offset.
  */
-#define LOHALO_OFFSET_MIPMAP (8)
+#define LOHALO_OFFSET_MIPMAP (7)
 #define LOHALO_SIZE_MIPMAP ( 1 + 2 * LOHALO_OFFSET_MIPMAP )
 
 #define LOHALO_OFFSET_1 LOHALO_OFFSET_MIPMAP
@@ -1442,7 +1442,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
    * corresponds to fetch_rectangle.width in gegl_sampler_get_ptr.
    */
   const gint channels  = 4;
-  const gint pixels_per_row = GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT;
+  const gint pixels_per_row = (gint) 2 * GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT;
   const gint row_skip = channels * pixels_per_row;
 
   /*
