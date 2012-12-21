@@ -165,17 +165,19 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
                               void            *output,
                               GeglAbyssPolicy  repeat_mode)
 {
-  GeglSamplerCubic *cubic = (GeglSamplerCubic*)(self);
-  const gint        offsets[16] =
-                      {-4-2*GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT   *4, 4, 4, 4,
-                         (2*GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4,
-                         (2*GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4,
-                         (2*GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT-3)*4, 4, 4, 4};
+  GeglSamplerCubic *cubic       = (GeglSamplerCubic*)(self);
+  const gint        offsets[16] = {
+                                    -4-GEGL_SAMPLER_MAXIMUM_WIDTH   *4, 4, 4, 4,
+                                      (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4,
+                                      (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4,
+                                      (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4
+                                  };
   gfloat           *sampler_bptr;
   gfloat            factor;
-  gfloat            newval[4] = {0.0, 0.0, 0.0, 0.0};
-  gint              i,j;
-  gint              k=0;
+  gfloat            newval[4]   = {0, 0, 0, 0};
+  gint              i,
+                    j,
+                    k           = 0;
 
   /*
    * The "-1/2"s are there because we want the index of the pixel
@@ -279,12 +281,12 @@ cubicKernel (const gfloat  x,
 
   if (x2 <= (gfloat) 1.) return ( (gfloat) ((12-9*b-6*c)/6) * ax +
                                   (gfloat) ((-18+12*b+6*c)/6) ) * x2 +
-                                (gfloat) ((6-2*b)/6);
+                                  (gfloat) ((6-2*b)/6);
 
   if (x2 < (gfloat) 4.) return ( (gfloat) ((-b-6*c)/6) * ax +
                                  (gfloat) ((6*b+30*c)/6) ) * x2 +
-                               (gfloat) ((-12*b-48*c)/6) * ax +
-                               (gfloat) ((8*b+24*c)/6);
+                                 (gfloat) ((-12*b-48*c)/6) * ax +
+                                 (gfloat) ((8*b+24*c)/6);
 
   return (gfloat) 0.;
 }

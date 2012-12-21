@@ -86,7 +86,7 @@ gegl_sampler_linear_get (      GeglSampler*    restrict  self,
                                void*           restrict  output,
                                GeglAbyssPolicy           repeat_mode)
 {
-  const gint pixels_per_buffer_row = (gint) 2 * GEGL_SAMPLER_MAXIMUM_WIDTH_AND_HEIGHT;
+  const gint pixels_per_buffer_row = GEGL_SAMPLER_MAXIMUM_WIDTH;
   const gint channels = 4;
 
   /*
