@@ -345,12 +345,6 @@
                      &total_weight,          \
                      ewa_newval)
 
-/*
- * Wiggle room added to "Are we done yet?" checks.
- */
-#define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
-#define LOHALO_FUDGEF ( (gfloat)  1.e-6 )
-
 enum
 {
   PROP_0,
@@ -2138,13 +2132,9 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
        * If s1 <= 1, the forward transformation is not downsampling in
        * any direction, and consequently we do not need the
        * downsampling scheme at all.
-       *
-       * A fudge factor is added to checking whether s1 > 1 to account
-       * for round off error and the fact that if s1 is just above 1
-       * the teepee weight is going to be negligible.
        */
 
-      if (twice_s1s1 > (gdouble) 2. + LOHALO_FUDGE)
+      if (twice_s1s1 > (gdouble) 2.)
         {
           /*
            * The result (most likely) has a nonzero teepee component.
@@ -2360,23 +2350,14 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
              * LOHALO_SIZE_0xLOHALO_SIZE_0.
              */
             LOHALO_FIND_CLOSEST_LOCATIONS(0,1)
-            /*
-             * Bounding box shrunk a smidgen given that a location
-             * very close to the edge of the bounding box will get a
-             * negligible weight:
-             */
-            const gfloat fudged_bounding_box_half_width =
-              bounding_box_half_width  - LOHALO_FUDGEF;
-            const gfloat fudged_bounding_box_half_height =
-              bounding_box_half_height - LOHALO_FUDGEF;
 
-            if (( x_0 - fudged_bounding_box_half_width  < closest_left_1 )
+            if (( x_0 - bounding_box_half_width  < closest_left_1 )
                 ||
-                ( x_0 + fudged_bounding_box_half_width  > closest_rite_1 )
+                ( x_0 + bounding_box_half_width  > closest_rite_1 )
                 ||
-                ( y_0 - fudged_bounding_box_half_height <  closest_top_1 )
+                ( y_0 - bounding_box_half_height <  closest_top_1 )
                 ||
-                ( y_0 + fudged_bounding_box_half_height >  closest_bot_1 ))
+                ( y_0 + bounding_box_half_height >  closest_bot_1 ))
               {
                 /*
                  * We most likely need higher mipmap level(s) because
@@ -2465,13 +2446,13 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                    */
                   LOHALO_FIND_CLOSEST_LOCATIONS(1,2)
 
-                  if (( x_1 - fudged_bounding_box_half_width  < closest_left_2 )
+                  if (( x_1 - bounding_box_half_width  < closest_left_2 )
                       ||
-                      ( x_1 + fudged_bounding_box_half_width  > closest_rite_2 )
+                      ( x_1 + bounding_box_half_width  > closest_rite_2 )
                       ||
-                      ( y_1 - fudged_bounding_box_half_height < closest_top_2 )
+                      ( y_1 - bounding_box_half_height < closest_top_2 )
                       ||
-                      ( y_1 + fudged_bounding_box_half_height > closest_bot_2 ))
+                      ( y_1 + bounding_box_half_height > closest_bot_2 ))
                     {
                       /*
                        * We most likely need even higher mipmap
@@ -2542,16 +2523,16 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         const gint odd_iy_2 = iy_2 % 2;
                         LOHALO_FIND_CLOSEST_LOCATIONS(2,3)
 
-                        if (( x_2 - fudged_bounding_box_half_width  <
+                        if (( x_2 - bounding_box_half_width  <
                               closest_left_3 )
                             ||
-                            ( x_2 + fudged_bounding_box_half_width  >
+                            ( x_2 + bounding_box_half_width  >
                               closest_rite_3 )
                             ||
-                            ( y_2 - fudged_bounding_box_half_height <
+                            ( y_2 - bounding_box_half_height <
                               closest_top_3 )
                             ||
-                            ( y_2 + fudged_bounding_box_half_height >
+                            ( y_2 + bounding_box_half_height >
                               closest_bot_3 ))
                           {
                             const gint ix_3 =
