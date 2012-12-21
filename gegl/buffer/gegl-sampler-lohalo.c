@@ -1441,9 +1441,9 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
    * provided by gegl_sampler_get_ptr (self, ix, iy). pixels_per_row
    * corresponds to fetch_rectangle.width in gegl_sampler_get_ptr.
    */
-  const gint channels  = 4;
+  const gint channels       = 4;
   const gint pixels_per_row = GEGL_SAMPLER_MAXIMUM_WIDTH;
-  const gint row_skip = channels * pixels_per_row;
+  const gint row_skip       = channels * pixels_per_row;
 
   /*
    * The consequence of the following choice of anchor pixel location
