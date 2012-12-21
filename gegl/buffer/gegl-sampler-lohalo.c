@@ -122,7 +122,6 @@
  * index.
  */
 
-
 #include "config.h"
 #include <glib-object.h>
 #include <math.h>
@@ -132,7 +131,6 @@
 #include "gegl-buffer-private.h"
 
 #include "gegl-sampler-lohalo.h"
-
 
 /*
  * LOHALO_MINMOD is an implementation of the minmod function which
@@ -186,7 +184,6 @@
     (gfloat) 0.                                        \
   )
 
-
 /*
  * Macros set up so the likely winner in in the first argument
  * (forward branch likely etc):
@@ -195,7 +192,6 @@
 #define LOHALO_MAX(_x_,_y_) ( (_x_) >= (_y_) ? (_x_) : (_y_) )
 #define LOHALO_ABS(_x_)   ( (_x_) >= (gfloat) 0. ? (_x_) : -(_x_) )
 #define LOHALO_SIGN(_x_)  ( (_x_) >= (gfloat) 0. ? (gfloat) 1. : (gfloat) -1. )
-
 
 /*
  * Special case of of Knuth's floored division, that is:
@@ -211,7 +207,6 @@
  * FLOORED_DIVISION_BY_2(a) ( (a)>>1 )
  */
 #define LOHALO_FLOORED_DIVISION_BY_2(_a_) ( (_a_)>>1 )
-
 
 /*
  * Convenience macros. _level_ and _previous_level_ must be a plain
@@ -245,7 +240,6 @@
     :                                                           \
     (gfloat) (  ( LOHALO_OFFSET_##_previous_level_ + 1.5 ) );
 
-
 #define LOHALO_FIND_CLOSEST_INDICES(_previous_level_,_level_)             \
   const gint in_left_##_level_ =                                          \
     -LOHALO_OFFSET_##_previous_level_        + odd_ix_##_previous_level_; \
@@ -255,7 +249,6 @@
     -LOHALO_OFFSET_##_previous_level_        + odd_iy_##_previous_level_; \
   const gint in_bot_##_level_  =                                          \
     ( LOHALO_OFFSET_##_previous_level_ - 1 ) + odd_iy_##_previous_level_;
-
 
 #define LOHALO_FIND_FARTHEST_INDICES(_level_)                            \
   const gint out_left_##_level_ =                                        \
@@ -295,51 +288,46 @@
       LOHALO_OFFSET_MIPMAP                                               \
     );
 
-
-#define LOHALO_MIPMAP_EWA_UPDATE(_level_)                             \
-  {                                                                   \
-    gint i;                                                           \
-    for ( i = out_top_##_level_; i <= in_top_##_level_; i++ )         \
-      {                                                               \
-        gint j = out_left_##_level_;                                  \
-        do                                                            \
-          {                                                           \
-            LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                      \
-          } while ( ++j <= out_rite_##_level_ );                      \
-      }                                                               \
-  }                                                                   \
-  {                                                                   \
-    gint i = in_top_##_level_ + (gint) 1;                             \
-    do                                                                \
-      {                                                               \
-        {                                                             \
-          gint j;                                                     \
-          for ( j = out_left_##_level_; j <= in_left_##_level_; j++ ) \
-            {                                                         \
-              LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                    \
-            }                                                         \
-        }                                                             \
-        {                                                             \
-          gint j;                                                     \
-          for ( j = in_rite_##_level_; j <= out_rite_##_level_; j++ ) \
-            {                                                         \
-              LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                    \
-            }                                                         \
-        }                                                             \
-      } while ( ++i < in_bot_##_level_ );                             \
-  }                                                                   \
-  {                                                                   \
-    gint i;                                                           \
-    for ( i = in_bot_##_level_; i <= out_bot_##_level_; i++ )         \
-      {                                                               \
-        gint j = out_left_##_level_;                                  \
-        do                                                            \
-          {                                                           \
-            LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                      \
-          } while ( ++j <= out_rite_##_level_ );                      \
-      }                                                               \
+#define LOHALO_MIPMAP_EWA_UPDATE(_level_)                           \
+  {                                                                 \
+    gint i;                                                         \
+    for ( i = out_top_##_level_; i <= in_top_##_level_; i++ )       \
+      {                                                             \
+        gint j = out_left_##_level_;                                \
+        do {							    \
+          LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                      \
+        } while ( ++j <= out_rite_##_level_ );                      \
+      }                                                             \
+  }                                                                 \
+  {                                                                 \
+    gint i = in_top_##_level_ + (gint) 1;                           \
+    do {                                                            \
+      {                                                             \
+        gint j;                                                     \
+        for ( j = out_left_##_level_; j <= in_left_##_level_; j++ ) \
+          {                                                         \
+            LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                    \
+          }                                                         \
+      }                                                             \
+      {                                                             \
+        gint j;                                                     \
+        for ( j = in_rite_##_level_; j <= out_rite_##_level_; j++ ) \
+          {                                                         \
+            LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                    \
+          }                                                         \
+      }                                                             \
+    } while ( ++i < in_bot_##_level_ );                             \
+  }                                                                 \
+  {                                                                 \
+    gint i;                                                         \
+    for ( i = in_bot_##_level_; i <= out_bot_##_level_; i++ )       \
+      {                                                             \
+        gint j = out_left_##_level_;                                \
+        do {                                                        \
+          LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                      \
+        } while ( ++j <= out_rite_##_level_ );                      \
+      }                                                             \
   }
-
 
 #define LOHALO_MIPMAP_PIXEL_UPDATE(_level_)  \
   mipmap_ewa_update (_level_,                \
@@ -363,13 +351,11 @@
 #define LOHALO_FUDGE  ( (gdouble) 1.e-6 )
 #define LOHALO_FUDGEF ( (gfloat)  1.e-6 )
 
-
 enum
 {
   PROP_0,
   PROP_LAST
 };
-
 
 static void gegl_sampler_lohalo_get (      GeglSampler* restrict  self,
                                      const gdouble                absolute_x,
@@ -386,7 +372,6 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
   GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
   sampler_class->get = gegl_sampler_lohalo_get;
 }
-
 
 /*
  * Because things are kept centered, the stencil width/height is 1 +
@@ -465,7 +450,6 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
-
 
 static void inline
 nohalo_subdivision (const gfloat           uno_two,
@@ -856,7 +840,6 @@ nohalo_subdivision (const gfloat           uno_two,
   *qua_thr_1 = newval_qua_thr;
   *qua_fou_1 =        qua_fou;
 }
-
 
 static inline gfloat
 lbb (const gfloat c00,
@@ -1332,7 +1315,6 @@ lbb (const gfloat c00,
   return newval;
 }
 
-
 static inline gfloat
 teepee (const gfloat c_major_x,
         const gfloat c_major_y,
@@ -1355,7 +1337,6 @@ teepee (const gfloat c_major_x,
 
   return weight;
 }
-
 
 static inline void
 ewa_update (const gint              j,
@@ -1387,7 +1368,6 @@ ewa_update (const gint              j,
   ewa_newval[2] += weight * input_bptr[ skip + 2 ];
   ewa_newval[3] += weight * input_bptr[ skip + 3 ];
 }
-
 
 static inline void
 mipmap_ewa_update (const gint              level,
@@ -2295,7 +2275,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
           const gint out_left_0 =
             LOHALO_MAX
             (
-              (gint) ceil  ( (double) ( x_0 - bounding_box_half_width  ) )
+              (gint) ceilf  ( (double) ( x_0 - bounding_box_half_width  ) )
               ,
               -LOHALO_OFFSET_0
             );
@@ -2336,26 +2316,24 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
 
           {
             gint i = out_top_0;
-            do
-              {
-                gint j = out_left_0;
-                do
-                  {
-                    ewa_update (j,
-                                i,
-                                c_major_x,
-                                c_major_y,
-                                c_minor_x,
-                                c_minor_y,
-                                x_0,
-                                y_0,
-                                channels,
-                                row_skip,
-                                input_bptr,
-                                &total_weight,
-                                ewa_newval);
-                  } while ( ++j <= out_rite_0 );
-              } while ( ++i <= out_bot_0 );
+            do {
+              gint j = out_left_0;
+              do {
+                ewa_update (j,
+                            i,
+                            c_major_x,
+                            c_major_y,
+                            c_minor_x,
+                            c_minor_y,
+                            x_0,
+                            y_0,
+                            channels,
+                            row_skip,
+                            input_bptr,
+                            &total_weight,
+                            ewa_newval);
+	      } while ( ++j <= out_rite_0 );
+	    } while ( ++i <= out_bot_0 );
           }
 
           {
