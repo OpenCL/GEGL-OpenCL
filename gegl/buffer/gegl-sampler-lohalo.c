@@ -2485,10 +2485,8 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                       ( y_2 - bounding_box_half_height < closest_top_3  ) ||
                       ( y_2 + bounding_box_half_height > closest_bot_3  ))
                     {
-                    const gint ix_3 =
-                      LOHALO_FLOORED_DIVISION_BY_2(ix_2);
-                    const gint iy_3 =
-                      LOHALO_FLOORED_DIVISION_BY_2(iy_2);
+                    const gint ix_3 = LOHALO_FLOORED_DIVISION_BY_2(ix_2);
+                    const gint iy_3 = LOHALO_FLOORED_DIVISION_BY_2(iy_2);
                     const gfloat* restrict input_bptr_3 =
                       (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                               ix_3,
@@ -2515,10 +2513,8 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         ( y_3 - bounding_box_half_height < closest_top_4  ) ||
                         ( y_3 + bounding_box_half_height > closest_bot_4  ))
                       {
-                      const gint ix_4 =
-                        LOHALO_FLOORED_DIVISION_BY_2(ix_3);
-                      const gint iy_4 =
-                        LOHALO_FLOORED_DIVISION_BY_2(iy_3);
+                      const gint ix_4 = LOHALO_FLOORED_DIVISION_BY_2(ix_3);
+                      const gint iy_4 = LOHALO_FLOORED_DIVISION_BY_2(iy_3);
                       const gfloat* restrict input_bptr_4 =
                         (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                                 ix_4,
@@ -2545,10 +2541,8 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                           ( y_4 - bounding_box_half_height < closest_top_5  ) ||
                           ( y_4 + bounding_box_half_height > closest_bot_5  ))
                         {
-                        const gint ix_5 =
-                          LOHALO_FLOORED_DIVISION_BY_2(ix_4);
-                        const gint iy_5 =
-                          LOHALO_FLOORED_DIVISION_BY_2(iy_4);
+                        const gint ix_5 = LOHALO_FLOORED_DIVISION_BY_2(ix_4);
+                        const gint iy_5 = LOHALO_FLOORED_DIVISION_BY_2(iy_4);
                         const gfloat* restrict input_bptr_5 =
                           (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                                   ix_5,
@@ -2575,9 +2569,9 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                             ( x_5 + bounding_box_half_width
                               > closest_rite_6 ) ||
                             ( y_5 - bounding_box_half_height
-                              < closest_top_6  ) ||
+			      < closest_top_6  ) ||
                             ( y_5 + bounding_box_half_height
-                              > closest_bot_6  ))
+			      > closest_bot_6  ))
                           {
                           const gint ix_6 = LOHALO_FLOORED_DIVISION_BY_2(ix_5);
                           const gint iy_6 = LOHALO_FLOORED_DIVISION_BY_2(iy_5);
@@ -2598,7 +2592,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                           {
                           /*
                            * Seventh mipmap level (eight if counted
-                           * from zero = straight up).
+                           * from zero = "straight up").
                            */
                           const gint odd_ix_6 = ix_6 % 2;
                           const gint odd_iy_6 = iy_6 % 2;
@@ -2613,7 +2607,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                 > closest_bot_7  ))
                             {
                             const gint ix_7 =
-                              LOHALO_FLOORED_DIVISION_BY_2(ix_6);
+			      LOHALO_FLOORED_DIVISION_BY_2(ix_6);
                             const gint iy_7 =
                               LOHALO_FLOORED_DIVISION_BY_2(iy_6);
                             const gfloat* restrict input_bptr_7 = (gfloat*)
