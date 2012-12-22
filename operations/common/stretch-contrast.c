@@ -70,9 +70,17 @@ static void prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation        *operation,
+get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
+{
+  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
+  return result;
+}
+
+static GeglRectangle
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *roi)
 {
   GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
   return result;
@@ -141,6 +149,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
   operation_class->prepare = prepare;
   operation_class->get_required_for_output = get_required_for_output;
+  operation_class->get_cached_region = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:stretch-contrast",
