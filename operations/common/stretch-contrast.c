@@ -91,6 +91,12 @@ process (GeglOperation       *operation,
   buffer_get_min_max (input, &min, &max);
   diff = max - min;
 
+  /* Avoid a divide by zero error if the image is a solid color */
+  if (diff == 0.0){
+    gegl_buffer_copy (input, NULL, output, NULL);
+    return TRUE;
+  }
+
   gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("RGBA float"),
                                  GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
