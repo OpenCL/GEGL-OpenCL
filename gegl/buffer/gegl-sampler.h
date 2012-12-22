@@ -36,7 +36,7 @@ G_BEGIN_DECLS
  * This should be set to the largest number of mipmap levels (counted
  * starting at 0 = no box filtering) actually used by any sampler.
  */
-#define GEGL_SAMPLER_MIPMAP_LEVELS (4)
+#define GEGL_SAMPLER_MIPMAP_LEVELS (8)
 /*
  * Best thing to do seems to use rectangular buffer tiles that are
  * twice as wide as they are tall.

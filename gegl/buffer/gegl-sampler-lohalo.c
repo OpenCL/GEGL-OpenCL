@@ -294,7 +294,7 @@
     for ( i = out_top_##_level_; i <= in_top_##_level_; i++ )       \
       {                                                             \
         gint j = out_left_##_level_;                                \
-        do {							    \
+        do {                                                        \
           LOHALO_MIPMAP_PIXEL_UPDATE(_level_);                      \
         } while ( ++j <= out_rite_##_level_ );                      \
       }                                                             \
@@ -391,7 +391,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * IMPORTANT: LOHALO_OFFSET_0 SHOULD BE AN INTEGER >= 2.
  */
 #define LOHALO_OFFSET_0 (4)
-#define LOHALO_SIZE_0 ( 1 + 2 * LOHALO_OFFSET_0 )
+#define LOHALO_SIZE_0 (1+2*LOHALO_OFFSET_0)
 
 /*
  * The higher mipmap context_rects must be set so that there is at
@@ -404,7 +404,7 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
  * previous level's offset.
  */
 #define LOHALO_OFFSET_MIPMAP (4)
-#define LOHALO_SIZE_MIPMAP ( 1 + 2 * LOHALO_OFFSET_MIPMAP )
+#define LOHALO_SIZE_MIPMAP (1+2*LOHALO_OFFSET_MIPMAP)
 
 #define LOHALO_OFFSET_1 LOHALO_OFFSET_MIPMAP
 #define LOHALO_SIZE_1   LOHALO_SIZE_MIPMAP
@@ -414,6 +414,18 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 
 #define LOHALO_OFFSET_3 LOHALO_OFFSET_MIPMAP
 #define LOHALO_SIZE_3   LOHALO_SIZE_MIPMAP
+
+#define LOHALO_OFFSET_4 LOHALO_OFFSET_MIPMAP
+#define LOHALO_SIZE_4   LOHALO_SIZE_MIPMAP
+
+#define LOHALO_OFFSET_5 LOHALO_OFFSET_MIPMAP
+#define LOHALO_SIZE_5   LOHALO_SIZE_MIPMAP
+
+#define LOHALO_OFFSET_6 LOHALO_OFFSET_MIPMAP
+#define LOHALO_SIZE_6   LOHALO_SIZE_MIPMAP
+
+#define LOHALO_OFFSET_7 ((GEGL_SAMPLER_MAXIMUM_HEIGHT-1)/2)
+#define LOHALO_SIZE_7   (1+2*LOHALO_SIZE_6)
 
 /*
  * Lohalo always uses some mipmap level 0 values, but not always
@@ -441,6 +453,26 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   GEGL_SAMPLER (self)->context_rect[3].y   = -LOHALO_OFFSET_3;
   GEGL_SAMPLER (self)->context_rect[3].width  = LOHALO_SIZE_3;
   GEGL_SAMPLER (self)->context_rect[3].height = LOHALO_SIZE_3;
+
+  GEGL_SAMPLER (self)->context_rect[4].x   = -LOHALO_OFFSET_4;
+  GEGL_SAMPLER (self)->context_rect[4].y   = -LOHALO_OFFSET_4;
+  GEGL_SAMPLER (self)->context_rect[4].width  = LOHALO_SIZE_4;
+  GEGL_SAMPLER (self)->context_rect[4].height = LOHALO_SIZE_4;
+
+  GEGL_SAMPLER (self)->context_rect[5].x   = -LOHALO_OFFSET_5;
+  GEGL_SAMPLER (self)->context_rect[5].y   = -LOHALO_OFFSET_5;
+  GEGL_SAMPLER (self)->context_rect[5].width  = LOHALO_SIZE_5;
+  GEGL_SAMPLER (self)->context_rect[5].height = LOHALO_SIZE_5;
+
+  GEGL_SAMPLER (self)->context_rect[6].x   = -LOHALO_OFFSET_6;
+  GEGL_SAMPLER (self)->context_rect[6].y   = -LOHALO_OFFSET_6;
+  GEGL_SAMPLER (self)->context_rect[6].width  = LOHALO_SIZE_6;
+  GEGL_SAMPLER (self)->context_rect[6].height = LOHALO_SIZE_6;
+
+  GEGL_SAMPLER (self)->context_rect[7].x   = -LOHALO_OFFSET_7;
+  GEGL_SAMPLER (self)->context_rect[7].y   = -LOHALO_OFFSET_7;
+  GEGL_SAMPLER (self)->context_rect[7].width  = LOHALO_SIZE_7;
+  GEGL_SAMPLER (self)->context_rect[7].height = LOHALO_SIZE_7;
 
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
@@ -2322,8 +2354,8 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                             input_bptr,
                             &total_weight,
                             ewa_newval);
-	      } while ( ++j <= out_rite_0 );
-	    } while ( ++i <= out_bot_0 );
+              } while ( ++j <= out_rite_0 );
+            } while ( ++i <= out_bot_0 );
           }
 
           {
@@ -2351,13 +2383,10 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
              */
             LOHALO_FIND_CLOSEST_LOCATIONS(0,1)
 
-            if (( x_0 - bounding_box_half_width  < closest_left_1 )
-                ||
-                ( x_0 + bounding_box_half_width  > closest_rite_1 )
-                ||
-                ( y_0 - bounding_box_half_height <  closest_top_1 )
-                ||
-                ( y_0 + bounding_box_half_height >  closest_bot_1 ))
+            if (( x_0 - bounding_box_half_width  < closest_left_1 ) ||
+                ( x_0 + bounding_box_half_width  > closest_rite_1 ) ||
+                ( y_0 - bounding_box_half_height < closest_top_1  ) ||
+                ( y_0 + bounding_box_half_height > closest_bot_1  ))
               {
                 /*
                  * We most likely need higher mipmap level(s) because
@@ -2369,13 +2398,11 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  * used a quick and dirty bounding box test which lets
                  * through false positives.)
                  */
-
                 /*
                  * Nearest mipmap anchor pixel location:
                  */
                 const gint ix_1 = LOHALO_FLOORED_DIVISION_BY_2(ix_0);
                 const gint iy_1 = LOHALO_FLOORED_DIVISION_BY_2(iy_0);
-
                 /*
                  * Get pointer to mipmap level 1 data:
                  */
@@ -2383,9 +2410,8 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                   (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                           ix_1,
                                                           iy_1,
-                                                          1,
+                                                          (gint) 1,
                                                           repeat_mode);
-
                 /*
                  * Position of the sampling location in the coordinate
                  * system defined by the mipmap "pixel locations"
@@ -2398,7 +2424,6 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                   x_0 + (gfloat) ( ix_0 - 2 * ix_1 ) - (gfloat) 0.5;
                 const gfloat y_1 =
                   y_0 + (gfloat) ( iy_0 - 2 * iy_1 ) - (gfloat) 0.5;
-
                 /*
                  * Key index ranges:
                  */
@@ -2408,155 +2433,213 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                  */
                 LOHALO_FIND_CLOSEST_INDICES(0,1)
                 /*
-                 * The "out" indices are the farthest relative mipmap
-                 * 1 indices we use at this level:
+                 * The "out" indices are the farthest relative mipmap 1
+                 * indices we use at this level:
                  */
                 LOHALO_FIND_FARTHEST_INDICES(1)
-
                 /*
                  * Update using mipmap level 1 values.
                  */
                 LOHALO_MIPMAP_EWA_UPDATE(1)
+
                 {
-                  /*
-                   * In order to know whether we use even higher
-                   * mipmap level values, we need to check whether
-                   * there is a level 2 mipmap location within the
-                   * ellipse. So, we need to determine the alignment
-                   * of the level 2 mipmap level w.r.t. the current
-                   * level 1.
-                   *
-                   * We use a LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP
-                   * context_rect at level 1; consequently, we can
-                   * access pixels which are LOHALO_OFFSET_MIPMAP away
-                   * from the level 1 anchor pixel location in box
-                   * distance.
-                   */
-                  /*
-                   * Determine whether the anchor level_1 pixel
-                   * locations are odd (VS even):
-                   */
-                  const gint odd_ix_1 = ix_1 % 2;
-                  const gint odd_iy_1 = iy_1 % 2;
-                  /*
-                   * Find the closest locations, on all four sides, of
-                   * level 2 pixels which involve data not found in
-                   * the level 1
-                   * LOHALO_SIZE_MIPMAPxLOHALO_SIZE_MIPMAP.
-                   */
-                  LOHALO_FIND_CLOSEST_LOCATIONS(1,2)
+		/*
+		 * Second mipmap level.
+		 */
+                const gint odd_ix_1 = ix_1 % 2;
+		const gint odd_iy_1 = iy_1 % 2;
+		LOHALO_FIND_CLOSEST_LOCATIONS(1,2)
+                if (( x_1 - bounding_box_half_width  < closest_left_2 ) ||
+		    ( x_1 + bounding_box_half_width  > closest_rite_2 ) ||
+		    ( y_1 - bounding_box_half_height < closest_top_2  ) ||
+		    ( y_1 + bounding_box_half_height > closest_bot_2  ))
+		  {
+                  const gint ix_2 = LOHALO_FLOORED_DIVISION_BY_2(ix_1);
+                  const gint iy_2 = LOHALO_FLOORED_DIVISION_BY_2(iy_1);
+                  const gfloat* restrict input_bptr_2 =
+		    (gfloat*) gegl_sampler_get_from_mipmap (self,
+							    ix_2,
+							    iy_2,
+							    (gint) 2,
+							    repeat_mode);
+		  const gfloat x_2 =
+		    x_1 + (gfloat) ( 2 * ( ix_1 - 2 * ix_2 ) - 1 );
+		  const gfloat y_2 =
+		    y_1 + (gfloat) ( 2 * ( iy_1 - 2 * iy_2 ) - 1 );
+		  LOHALO_FIND_CLOSEST_INDICES(1,2)
+                  LOHALO_FIND_FARTHEST_INDICES(2)
+                  LOHALO_MIPMAP_EWA_UPDATE(2)
+		      
+		  {
+		  /*
+		   * Third mipmap level.
+		   */
+		  const gint odd_ix_2 = ix_2 % 2;
+		  const gint odd_iy_2 = iy_2 % 2;
+		  LOHALO_FIND_CLOSEST_LOCATIONS(2,3)
+		  if (( x_2 - bounding_box_half_width  < closest_left_3 ) ||
+		      ( x_2 + bounding_box_half_width  > closest_rite_3 ) ||
+		      ( y_2 - bounding_box_half_height < closest_top_3  ) ||
+		      ( y_2 + bounding_box_half_height > closest_bot_3  ))
+		    {
+		    const gint ix_3 =
+		      LOHALO_FLOORED_DIVISION_BY_2(ix_2);
+		    const gint iy_3 =
+		      LOHALO_FLOORED_DIVISION_BY_2(iy_2);
+		    const gfloat* restrict input_bptr_3 =
+		      (gfloat*) gegl_sampler_get_from_mipmap (self,
+							      ix_3,
+							      iy_3,
+							      (gint) 3,
+							      repeat_mode);
+		    const gfloat x_3 =
+		      x_2 + (gfloat) ( 2 * ( ix_2 - 2 * ix_3 ) - 1 );
+		    const gfloat y_3 =
+		      y_2 + (gfloat) ( 2 * ( iy_2 - 2 * iy_3 ) - 1 );
+		    LOHALO_FIND_CLOSEST_INDICES(2,3)
+                    LOHALO_FIND_FARTHEST_INDICES(3)
+                    LOHALO_MIPMAP_EWA_UPDATE(3)
 
-                  if (( x_1 - bounding_box_half_width  < closest_left_2 )
-                      ||
-                      ( x_1 + bounding_box_half_width  > closest_rite_2 )
-                      ||
-                      ( y_1 - bounding_box_half_height < closest_top_2 )
-                      ||
-                      ( y_1 + bounding_box_half_height > closest_bot_2 ))
-                    {
-                      /*
-                       * We most likely need even higher mipmap
-                       * level(s) because the bounding box of the
-                       * ellipse covers mipmap pixel locations which
-                       * involve data not "covered" by the
-                       * LOHALO_SIZE_MIPMAP level 1 context_rect. (The
-                       * ellipse may still fail to involve mipmap
-                       * level 2 values--in which case all mipmap
-                       * pixel values will get 0 coefficients--but we
-                       * used a quick and dirty bounding box test
-                       * which lets through false positives.)
-                       */
+		    {  
+		    /*
+		     * Fourth mipmap level.
+		     */
+		    const gint odd_ix_3 = ix_3 % 2;
+		    const gint odd_iy_3 = iy_3 % 2;
+		    LOHALO_FIND_CLOSEST_LOCATIONS(3,4)
+		    if (( x_3 - bounding_box_half_width  < closest_left_4 ) ||
+			( x_3 + bounding_box_half_width  > closest_rite_4 ) ||
+			( y_3 - bounding_box_half_height < closest_top_4  ) ||
+			( y_3 + bounding_box_half_height > closest_bot_4  ))
+		      {
+		      const gint ix_4 =
+			LOHALO_FLOORED_DIVISION_BY_2(ix_3);
+		      const gint iy_4 =
+			LOHALO_FLOORED_DIVISION_BY_2(iy_3);
+		      const gfloat* restrict input_bptr_4 =
+			(gfloat*) gegl_sampler_get_from_mipmap (self,
+								ix_4,
+								iy_4,
+								(gint) 4,
+								repeat_mode);
+		      const gfloat x_4 =
+			x_3 + (gfloat) ( 2 * ( ix_3 - 2 * ix_4 ) - 1 );
+		      const gfloat y_4 =
+			y_3 + (gfloat) ( 2 * ( iy_3 - 2 * iy_4 ) - 1 );
+		      LOHALO_FIND_CLOSEST_INDICES(3,4)
+		      LOHALO_FIND_FARTHEST_INDICES(4)
+		      LOHALO_MIPMAP_EWA_UPDATE(4)
 
-                      /*
-                       * Nearest mipmap anchor pixel location:
-                       */
-                      const gint ix_2 = LOHALO_FLOORED_DIVISION_BY_2(ix_1);
-                      const gint iy_2 = LOHALO_FLOORED_DIVISION_BY_2(iy_1);
+		      {
+		      /*
+		       * Fifth mipmap level.
+		       */
+		      const gint odd_ix_4 = ix_4 % 2;
+		      const gint odd_iy_4 = iy_4 % 2;
+		      LOHALO_FIND_CLOSEST_LOCATIONS(4,5)
+		      if (( x_4 - bounding_box_half_width  < closest_left_5 ) ||
+			  ( x_4 + bounding_box_half_width  > closest_rite_5 ) ||
+			  ( y_4 - bounding_box_half_height < closest_top_5  ) ||
+			  ( y_4 + bounding_box_half_height > closest_bot_5  ))
+			{
+			const gint ix_5 =
+			  LOHALO_FLOORED_DIVISION_BY_2(ix_4);
+			const gint iy_5 =
+			  LOHALO_FLOORED_DIVISION_BY_2(iy_4);
+			const gfloat* restrict input_bptr_5 =
+			  (gfloat*) gegl_sampler_get_from_mipmap (self,
+								  ix_5,
+								  iy_5,
+								  (gint) 5,
+								  repeat_mode);
+			const gfloat x_5 =
+			  x_4 + (gfloat) ( 2 * ( ix_4 - 2 * ix_5 ) - 1 );
+			const gfloat y_5 =
+			  y_4 + (gfloat) ( 2 * ( iy_4 - 2 * iy_5 ) - 1 );
+			LOHALO_FIND_CLOSEST_INDICES(4,5)
+			LOHALO_FIND_FARTHEST_INDICES(5)
+			LOHALO_MIPMAP_EWA_UPDATE(5)
 
-                      /*
-                       * Get pointer to mipmap level 2 data:
-                       */
-                      const gfloat* restrict input_bptr_2 =
-                        (gfloat*) gegl_sampler_get_from_mipmap (self,
-                                                                ix_2,
-                                                                iy_2,
-                                                                2,
-                                                                repeat_mode);
+			{
+			/*
+			 * Sixth mipmap level.
+			 */
+			const gint odd_ix_5 = ix_5 % 2;
+			const gint odd_iy_5 = iy_5 % 2;
+			LOHALO_FIND_CLOSEST_LOCATIONS(5,6)
+			if (( x_5 - bounding_box_half_width
+			      < closest_left_6 ) ||
+			    ( x_5 + bounding_box_half_width
+			      > closest_rite_6 ) ||
+			    ( y_5 - bounding_box_half_height
+			      < closest_top_6  ) ||
+			    ( y_5 + bounding_box_half_height
+			      > closest_bot_6  ))
+			  {
+			  const gint ix_6 = LOHALO_FLOORED_DIVISION_BY_2(ix_5);
+			  const gint iy_6 = LOHALO_FLOORED_DIVISION_BY_2(iy_5);
+			  const gfloat* restrict input_bptr_6 = (gfloat*)
+			    gegl_sampler_get_from_mipmap (self,
+							  ix_6,
+							  iy_6,
+							  (gint) 6,
+							  repeat_mode);
+			  const gfloat x_6 =
+			    x_5 + (gfloat) ( 2 * ( ix_5 - 2 * ix_6 ) - 1 );
+			  const gfloat y_6 =
+			    y_5 + (gfloat) ( 2 * ( iy_5 - 2 * iy_6 ) - 1 );
+			  LOHALO_FIND_CLOSEST_INDICES(5,6)
+			  LOHALO_FIND_FARTHEST_INDICES(6)
+			  LOHALO_MIPMAP_EWA_UPDATE(6)
 
-                      /*
-                       * Position of the sampling location in the
-                       * coordinate system defined by the mipmap
-                       * "pixel locations" relative to the level 1
-                       * anchor pixel location. The "-1"s are because
-                       * the center of a level 1 pixel is at a box
-                       * distance of 1 from the center of the closest
-                       * level 2 pixel.
-                       */
-                      const gfloat x_2 =
-                        x_1 + (gfloat) ( 2 * ( ix_1 - 2 * ix_2 ) - 1 );
-                      const gfloat y_2 =
-                        y_1 + (gfloat) ( 2 * ( iy_1 - 2 * iy_2 ) - 1 );
+			  {
+			  /*
+			   * Seventh mipmap level (eight if counted
+			   * from zero = straight up).
+			   */
+			  const gint odd_ix_6 = ix_6 % 2;
+			  const gint odd_iy_6 = iy_6 % 2;
+			  LOHALO_FIND_CLOSEST_LOCATIONS(6,7)
+			  if (( x_6 - bounding_box_half_width
+				< closest_left_7 ) ||
+			      ( x_6 + bounding_box_half_width
+				> closest_rite_7 ) ||
+			      ( y_6 - bounding_box_half_height
+				< closest_top_7  ) ||
+			      ( y_6 + bounding_box_half_height
+				> closest_bot_7  ))
+			    {
+                            const gint ix_7 =
+			      LOHALO_FLOORED_DIVISION_BY_2(ix_6);
+			    const gint iy_7 =
+			      LOHALO_FLOORED_DIVISION_BY_2(iy_6);
+			    const gfloat* restrict input_bptr_7 = (gfloat*)
+			      gegl_sampler_get_from_mipmap (self,
+							    ix_7,
+							    iy_7,
+							    (gint) 7,
+							    repeat_mode);
+			    const gfloat x_7 =
+			      x_6 + (gfloat) ( 2 * ( ix_6 - 2 * ix_7 ) - 1 );
+			    const gfloat y_7 =
+			      y_6 + (gfloat) ( 2 * ( iy_6 - 2 * iy_7 ) - 1 );
+			    LOHALO_FIND_CLOSEST_INDICES(6,7)
+			    LOHALO_FIND_FARTHEST_INDICES(7)
+                            LOHALO_MIPMAP_EWA_UPDATE(7)
+			    }
+			  }
+			  }
+			}
+			}
+		      }
+		      }
+		    }
+		    }
+		  }
+		  }
+		}
+	      }
 
-                      /*
-                       * Key index ranges:
-                       */
-                      /*
-                       * The "in" indices are the closest relative
-                       * mipmap 2 indices of needed mipmap values:
-                       */
-                      LOHALO_FIND_CLOSEST_INDICES(1,2)
-                      /*
-                       * The "out" indices are the farthest relative
-                       * mipmap 1 indices we use at this level:
-                       */
-                      LOHALO_FIND_FARTHEST_INDICES(2)
-
-                      /*
-                       * Update using mipmap level 2 values.
-                       */
-                      LOHALO_MIPMAP_EWA_UPDATE(2)
-                      {
-                        /*
-                         * Third mipmap level.
-                         */
-                        const gint odd_ix_2 = ix_2 % 2;
-                        const gint odd_iy_2 = iy_2 % 2;
-                        LOHALO_FIND_CLOSEST_LOCATIONS(2,3)
-
-                        if (( x_2 - bounding_box_half_width  <
-                              closest_left_3 )
-                            ||
-                            ( x_2 + bounding_box_half_width  >
-                              closest_rite_3 )
-                            ||
-                            ( y_2 - bounding_box_half_height <
-                              closest_top_3 )
-                            ||
-                            ( y_2 + bounding_box_half_height >
-                              closest_bot_3 ))
-                          {
-                            const gint ix_3 =
-                              LOHALO_FLOORED_DIVISION_BY_2(ix_2);
-                            const gint iy_3 =
-                              LOHALO_FLOORED_DIVISION_BY_2(iy_2);
-                            const gfloat* restrict input_bptr_3 =
-                              (gfloat*) gegl_sampler_get_from_mipmap (self,
-                                                                      ix_3,
-                                                                      iy_3,
-                                                                      3,
-                                                                   repeat_mode);
-                            const gfloat x_3 =
-                              x_2 + (gfloat) ( 2 * ( ix_2 - 2 * ix_3 ) - 1 );
-                            const gfloat y_3 =
-                              y_2 + (gfloat) ( 2 * ( iy_2 - 2 * iy_3 ) - 1 );
-                            LOHALO_FIND_CLOSEST_INDICES(2,3)
-                            LOHALO_FIND_FARTHEST_INDICES(3)
-                            LOHALO_MIPMAP_EWA_UPDATE(3)
-                          }
-                      }
-                    }
-                }
-              }
             {
               /*
                * Blend the LBB-Nohalo and EWA results:
