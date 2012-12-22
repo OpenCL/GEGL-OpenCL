@@ -2569,9 +2569,9 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                             ( x_5 + bounding_box_half_width
                               > closest_rite_6 ) ||
                             ( y_5 - bounding_box_half_height
-			      < closest_top_6  ) ||
+                              < closest_top_6  ) ||
                             ( y_5 + bounding_box_half_height
-			      > closest_bot_6  ))
+                              > closest_bot_6  ))
                           {
                           const gint ix_6 = LOHALO_FLOORED_DIVISION_BY_2(ix_5);
                           const gint iy_6 = LOHALO_FLOORED_DIVISION_BY_2(iy_5);
@@ -2607,7 +2607,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                                 > closest_bot_7  ))
                             {
                             const gint ix_7 =
-			      LOHALO_FLOORED_DIVISION_BY_2(ix_6);
+                              LOHALO_FLOORED_DIVISION_BY_2(ix_6);
                             const gint iy_7 =
                               LOHALO_FLOORED_DIVISION_BY_2(iy_6);
                             const gfloat* restrict input_bptr_7 = (gfloat*)
