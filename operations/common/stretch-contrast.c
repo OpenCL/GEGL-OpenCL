@@ -29,53 +29,34 @@
 
 #include "gegl-chant.h"
 
-static gboolean
-inner_process (gdouble  min,
-               gdouble  max,
-               gfloat  *buf,
-               gint     n_pixels,
-               gint     level)
-{
-  gint o;
-
-  for (o=0; o<n_pixels; o++)
-    {
-      buf[0] = (buf[0] - min) / (max-min);
-      buf[1] = (buf[1] - min) / (max-min);
-      buf[2] = (buf[2] - min) / (max-min);
-      /* FIXME: really stretch the alpha channel?? */
-      buf[3] = (buf[3] - min) / (max-min);
-
-      buf += 4;
-    }
-  return TRUE;
-}
-
 static void
 buffer_get_min_max (GeglBuffer *buffer,
                     gdouble    *min,
                     gdouble    *max)
 {
-  gfloat tmin = 9000000.0;
-  gfloat tmax =-9000000.0;
+  gfloat tmin =  G_MAXFLOAT;
+  gfloat tmax = -G_MAXFLOAT;
 
-  gfloat *buf = g_new0 (gfloat, 4 * gegl_buffer_get_pixel_count (buffer));
-  gint i;
-  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-  for (i=0;i< gegl_buffer_get_pixel_count (buffer);i++)
+  GeglBufferIterator *gi;
+  gi = gegl_buffer_iterator_new (buffer, NULL, 0, babl_format ("RGB float"),
+                                 GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+
+  while (gegl_buffer_iterator_next (gi))
     {
-      gint component;
-      for (component=0; component<3; component++)
-        {
-          gfloat val = buf[i*4+component];
+      gfloat *buf = gi->data[0];
 
-          if (val<tmin)
-            tmin=val;
-          if (val>tmax)
-            tmax=val;
+      gint i;
+      for (i = 0; i < gi->length * 3; i++)
+        {
+          gfloat val = buf [i];
+
+          if (val < tmin)
+            tmin = val;
+          if (val > tmax)
+            tmax = val;
         }
     }
-  g_free (buf);
+
   if (min)
     *min = tmin;
   if (max)
@@ -104,35 +85,36 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  gdouble  min, max;
+  gdouble  min, max, diff;
+  GeglBufferIterator *gi;
 
   buffer_get_min_max (input, &min, &max);
-  {
-    gint row;
-    gfloat *buf;
-    gint chunk_size=128;
-    gint consumed=0;
+  diff = max - min;
 
-    buf = g_new0 (gfloat, 4 * result->width  * chunk_size);
+  gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("RGBA float"),
+                                 GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-    for (row = 0; row < result->height; row = consumed)
-      {
-        gint chunk = consumed+chunk_size<result->height?chunk_size:result->height-consumed;
-        GeglRectangle line;
+  gegl_buffer_iterator_add (gi, output, result, 0, babl_format ("RGBA float"),
+                            GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
-        line.x = result->x;
-        line.y = result->y + row;
-        line.width = result->width;
-        line.height = chunk;
+  while (gegl_buffer_iterator_next (gi))
+    {
+      gfloat *in  = gi->data[0];
+      gfloat *out = gi->data[1];
 
-        gegl_buffer_get (input, &line, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-        inner_process (min, max, buf, result->width  * chunk, level);
-        gegl_buffer_set (output, &line, 0, babl_format ("RGBA float"), buf,
-                         GEGL_AUTO_ROWSTRIDE);
-        consumed+=chunk;
-      }
-    g_free (buf);
-  }
+      gint o;
+      for (o = 0; o < gi->length; o++)
+        {
+          out[0] = (in[0] - min) / diff;
+          out[1] = (in[1] - min) / diff;
+          out[2] = (in[2] - min) / diff;
+          /* FIXME: really stretch the alpha channel?? */
+          out[3] = (in[3] - min) / diff;
+
+          in  += 4;
+          out += 4;
+        }
+    }
 
   return TRUE;
 }
