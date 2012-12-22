@@ -108,8 +108,7 @@ process (GeglOperation       *operation,
           out[0] = (in[0] - min) / diff;
           out[1] = (in[1] - min) / diff;
           out[2] = (in[2] - min) / diff;
-          /* FIXME: really stretch the alpha channel?? */
-          out[3] = (in[3] - min) / diff;
+          out[3] = in[3];
 
           in  += 4;
           out += 4;
