@@ -424,12 +424,8 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 #define LOHALO_OFFSET_6 LOHALO_OFFSET_MIPMAP
 #define LOHALO_SIZE_6   LOHALO_SIZE_MIPMAP
 
-/*
- * We don't go all out to allow for rounding error in positioning
- * computation.
- */
-#define LOHALO_OFFSET_7 (GEGL_SAMPLER_MAXIMUM_HEIGHT/2-2)
-#define LOHALO_SIZE_7   (1+2*LOHALO_SIZE_6)
+#define LOHALO_OFFSET_7 (GEGL_SAMPLER_MAXIMUM_HEIGHT/2-1)
+#define LOHALO_SIZE_7   (GEGL_SAMPLER_MAXIMUM_HEIGHT)
 
 /*
  * Lohalo always uses some mipmap level 0 values, but not always
