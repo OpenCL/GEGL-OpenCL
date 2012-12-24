@@ -42,7 +42,7 @@ G_BEGIN_DECLS
  * twice as wide as they are tall.
  */
 #define GEGL_SAMPLER_MAXIMUM_HEIGHT (32)
-#define GEGL_SAMPLER_MAXIMUM_WIDTH (2*GEGL_SAMPLER_MAXIMUM_HEIGHT)
+#define GEGL_SAMPLER_MAXIMUM_WIDTH (GEGL_SAMPLER_MAXIMUM_HEIGHT)
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
 
