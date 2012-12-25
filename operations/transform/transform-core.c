@@ -1057,7 +1057,6 @@ transform_generic (GeglBuffer  *dest,
         (gint) 1
         :
         (gint) 0;
-      const gint flip_y = (gint) 1 - (gint) 2 * bflip_y;
 
       /*
        * Now determine whether to flip in the horizontal
@@ -1082,16 +1081,18 @@ transform_generic (GeglBuffer  *dest,
         (gint) 1
         :
         (gint) 0;
-      const gint flip_x = (gint) 1 - (gint) 2 * bflip_x;
-
-      gdouble u_start = bflip_x ? u_float_x : u_start_x;
-      gdouble v_start = bflip_x ? v_float_x : v_start_x;
-      gdouble w_start = bflip_x ? w_float_x : w_start_x;
 
       gfloat * restrict dest_ptr =
         (gfloat *)i->data[0] +
         (gint) 4 * ( bflip_x * (roi->width  - (gint) 1) +
                      bflip_y * (roi->height - (gint) 1) * roi->width );
+
+      gdouble u_start = bflip_x ? u_float_x : u_start_x;
+      gdouble v_start = bflip_x ? v_float_x : v_start_x;
+      gdouble w_start = bflip_x ? w_float_x : w_start_x;
+
+      const gint flip_x = (gint) 1 - (gint) 2 * bflip_x;
+      const gint flip_y = (gint) 1 - (gint) 2 * bflip_y;
 
       /*
        * Assumes that height and width are > 0.
