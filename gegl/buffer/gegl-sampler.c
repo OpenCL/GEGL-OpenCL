@@ -273,10 +273,10 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
       fetch_rectangle.height = maximum_height;
       fetch_rectangle.x =
         x + sampler->context_rect[0].x -
-        (maximum_width  - sampler->context_rect[0].width ) / (gint) 8;
+        (maximum_width  - sampler->context_rect[0].width ) / (gint) 3;
       fetch_rectangle.y =
         y + sampler->context_rect[0].y -
-        (maximum_height - sampler->context_rect[0].height) / (gint) 8;
+        (maximum_height - sampler->context_rect[0].height) / (gint) 3;
 
       gegl_buffer_get (sampler->buffer,
                        &fetch_rectangle,
@@ -346,9 +346,9 @@ gegl_sampler_get_from_buffer (GeglSampler *const sampler,
       fetch_rectangle.width  = maximum_width;
       fetch_rectangle.height = maximum_height;
       fetch_rectangle.x = x -
-        (maximum_width  - sampler->context_rect[0].width ) / (gint) 8;
+        (maximum_width  - sampler->context_rect[0].width ) / (gint) 3;
       fetch_rectangle.y = y -
-        (maximum_height - sampler->context_rect[0].height) / (gint) 8;
+        (maximum_height - sampler->context_rect[0].height) / (gint) 3;
 
       gegl_buffer_get (sampler->buffer,
                        &fetch_rectangle,
@@ -427,10 +427,10 @@ gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
       fetch_rectangle.height = maximum_height;
       fetch_rectangle.x =
         x + sampler->context_rect[level].x -
-        (maximum_width  - sampler->context_rect[level].width ) / (gint) 8;
+        (maximum_width  - sampler->context_rect[level].width ) / (gint) 3;
       fetch_rectangle.y =
         y + sampler->context_rect[level].y -
-        (maximum_height - sampler->context_rect[level].height) / (gint) 8;
+        (maximum_height - sampler->context_rect[level].height) / (gint) 3;
 
       gegl_buffer_get (sampler->buffer,
                        &fetch_rectangle,
