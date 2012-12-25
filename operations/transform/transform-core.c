@@ -934,9 +934,8 @@ transform_affine (GeglBuffer  *dest,
     while (gegl_buffer_iterator_next (i))
       {
         GeglRectangle *roi = &i->roi[0];
-        gfloat * restrict dest_buf = (gfloat *)i->data[0];
         gfloat * restrict dest_ptr =
-          dest_buf +
+          (gfloat *)i->data[0] +
           (gint) 4 * ( flip_x * (roi->width  - (gint) 1) +
                        flip_y * (roi->height - (gint) 1) * roi->width );
 
@@ -1012,7 +1011,6 @@ transform_generic (GeglBuffer  *dest,
   while (gegl_buffer_iterator_next (i))
     {
       GeglRectangle *roi         = &i->roi[0];
-      gfloat * restrict dest_buf = (gfloat *)i->data[0];
       /*
        * This code uses a variant of the (novel?) method of ensuring
        * that scanlines stay, as much as possible, within an input
@@ -1091,7 +1089,7 @@ transform_generic (GeglBuffer  *dest,
       gdouble w_start = bflip_x ? w_float_x : w_start_x;
 
       gfloat * restrict dest_ptr =
-        dest_buf +
+        (gfloat *)i->data[0] +
         (gint) 4 * ( bflip_x * (roi->width  - (gint) 1) +
                      bflip_y * (roi->height - (gint) 1) * roi->width );
 
