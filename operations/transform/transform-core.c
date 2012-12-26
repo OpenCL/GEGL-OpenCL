@@ -127,28 +127,6 @@ op_transform_get_type (void)
   return g_define_type_id;
 }
 
-#if 0
-static void
-op_affine_sampler_init (OpTransform *self)
-{
-  GType                 desired_type;
-  GeglInterpolation     interpolation;
-
-  interpolation = gegl_buffer_interpolation_from_string (self->filter);
-  desired_type = gegl_sampler_type_from_interpolation (interpolation);
-
-  if (self->sampler != NULL &&
-      !G_TYPE_CHECK_INSTANCE_TYPE (self->sampler, desired_type))
-    {
-      self->sampler->buffer=NULL;
-      g_object_unref(self->sampler);
-      self->sampler = NULL;
-    }
-
-  self->sampler = op_affine_sampler (self);
-}
-#endif
-
 static void
 gegl_transform_prepare (GeglOperation *operation)
 {
@@ -211,7 +189,7 @@ op_transform_class_init (OpTransformClass *klass)
                                      FALSE,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   /*
-   * Lanczos is gone. This is lint.
+   * Lanczos is gone. What follows is lint.
    */
   g_object_class_install_property (gobject_class, PROP_LANCZOS_WIDTH,
                                    g_param_spec_int (
@@ -331,8 +309,6 @@ gegl_transform_bounding_box (const gdouble *points,
                              GeglRectangle *output)
 {
   /*
-   * This function has changed behavior.
-   *
    * Take the points defined by consecutive pairs of gdoubles as
    * absolute positions, that is, positions in the coordinate system
    * with origin at the center of the pixel with index [0][0].
@@ -473,24 +449,14 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   gint          i;
 
   /*
-   * transform_get_bounding_box has changed behavior.
-   *
-   * It now gets the bounding box of the forward mapped outer input
-   * pixel corners that correspond to the involved indices, where
-   * "bounding" is defined by output pixel areas. The output space
-   * indices of the bounding output pixels is returned.
+   * Gets the bounding box of the forward mapped outer input pixel
+   * corners that correspond to the involved indices, where "bounding"
+   * is defined by output pixel areas. The output space indices of the
+   * bounding output pixels is returned.
    *
    * Note: Don't forget that the boundary between two pixel areas is
    * "owned" by the pixel to the right/bottom.
    */
-
-#if 0
-  /*
-   * See comments below RE: why this is "commented" out.
-   */
-  GeglRectangle  context_rect;
-  GeglSampler   *sampler;
-#endif
 
   if (gegl_operation_source_get_bounding_box (op, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (op, "input");
@@ -504,43 +470,6 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&matrix))
     return in_rect;
-
-#if 0
-  /*
-   * Commenting out the following (and the corresponding declarations
-   * above) is a major change.
-   *
-   * Motivation: transform_get_bounding_box propagates the in_rect
-   * "forward" into the output. There is no reason why the output
-   * should be enlarged by a sampler's context_rect: What the output
-   * "region" is, and what's needed to produce it, are two separate
-   * issues. It's not because a sampler needs lots of extra data that
-   * the output should be enlarged too.
-   */
-  sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
-      gegl_sampler_type_from_string (transform->filter));
-  context_rect = *gegl_sampler_get_context_rect (sampler);
-  g_object_unref (sampler);
-
-  if (!gegl_transform_matrix3_allow_fast_translate (&matrix))
-    {
-      in_rect.x += context_rect.x;
-      in_rect.y += context_rect.y;
-      /*
-       * Does "- (gint) 1" interact badly with {*,*,0,0}?
-       */
-      in_rect.width  += context_rect.width  - (gint) 1 > (gint) 0
-                        ?
-                        context_rect.width  - (gint) 1
-                        :
-                        (gint) 0;
-      in_rect.height += context_rect.height - (gint) 1 > (gint) 0
-                        ?
-                        context_rect.height - (gint) 1
-                        :
-                        (gint) 0;
-    }
-#endif
 
   /*
    * Convert indices to absolute positions of the left and top outer
@@ -584,8 +513,6 @@ gegl_transform_detect (GeglOperation *operation,
   gdouble      need_points [2];
 
   /*
-   * This function has changed behavior.
-   *
    * transform_detect figures out which pixel in the input most
    * closely corresponds to the pixel with index [x][y] in the output.
    * Ties are resolved toward the right and bottom.
@@ -630,10 +557,6 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
   GeglSampler   *sampler;
   gdouble        need_points [8];
   gint           i;
-
-  /*
-   * This function has changed behavior.
-   */
 
   requested_rect = *region;
   sampler =
@@ -1059,10 +982,10 @@ transform_generic (GeglBuffer  *dest,
         (gint) 0;
 
       /*
-       * Now determine whether to flip in the horizontal
-       * direction. Done last because this is the most important one,
-       * and consequently we want to use the likely "initial scanline"
-       * to at least get that one about right.
+       * Determine whether to flip in the horizontal direction. Done
+       * last because this is the most important one, and consequently
+       * we want to use the likely "initial scanline" to at least get
+       * that one about right.
        */
       const gdouble u_start_x = bflip_y ? u_float_y : u_start_y;
       const gdouble v_start_x = bflip_y ? v_float_y : v_start_y;

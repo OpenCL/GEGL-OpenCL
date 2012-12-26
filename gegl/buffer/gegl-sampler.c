@@ -258,16 +258,17 @@ gegl_sampler_get_ptr (GeglSampler *const sampler,
        * into account that it is more likely that further access is to
        * the right or down of our currently requested
        * position. Consequently, we move the top left corner of the
-       * context_rect, leaving an elbow room there which is typically
-       * just a bit more in the vertical direction than in the
-       * horizontal direction, which is desirable because the buffers'
-       * scanlines are longer than they are tall, which means they are
-       * more likely to escape the buffer than the beginning of the
-       * next scanline.
+       * context_rect, which has the effect of leaving elbow room there.
        *
        * Note that transform-core now works hard to have scanlines go
-       * left to right in input space, and then tries to have further
-       * scanlines below instead of above.
+       * toward the interior of the buffer.
+       *
+       * For operations like resize and left-right and top-bottom
+       * reflections, there is no reason to add elbow room. This means
+       * that the following code will need to have a dual personality
+       * sooner or later. Eliminating the elbow room for such
+       * operations (and making tiles elongated rectangles) gives a
+       * big speedup.
        */
       fetch_rectangle.width  = maximum_width;
       fetch_rectangle.height = maximum_height;
