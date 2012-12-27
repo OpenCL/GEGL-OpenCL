@@ -1413,12 +1413,12 @@ mipmap_ewa_update (const gint              level,
   const gint skip = j * channels + i * row_skip;
 
   /*
-   * The factor of "2^(2*level)" = "2 << (2*level)" is because level
+   * The factor of "2^(2*level)" = "4 << level" is because level
    * mipmap values are averages of that many level 0 pixel values, and
    * the "1 << level" factor in the index is because the absolute
    * positions are correspondingly "stretched".
    */
-  const gfloat weight = (gfloat) ( 2 << (2*level) ) *
+  const gfloat weight = (gfloat) ( 4 << level ) *
                         teepee (c_major_x,
                                 c_major_y,
                                 c_minor_x,
