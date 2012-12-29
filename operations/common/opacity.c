@@ -30,10 +30,35 @@ gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 1.0,
 #define GEGL_CHANT_C_FILE       "opacity.c"
 
 #include "gegl-chant.h"
+#include "graph/gegl-node.h"
 
+#include <stdio.h>
 
 static void prepare (GeglOperation *self)
 {
+  GeglNode *src_node = gegl_operation_get_source_node (self, "input");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
+
+  if (src_node)
+    {
+      GeglOperation *op = src_node->operation;
+      if (op)
+        {
+          const Babl *fmt = gegl_operation_get_format (op, "output"); /* XXX: could
+                                                         be a different pad */
+
+          if (fmt == babl_format ("RGBA float"))
+            {
+              /* ugly way of communicating that we want the RGBA version */
+              o->chant_data = (void*)0xabc;
+              gegl_operation_set_format (self, "input", babl_format ("RGBA float"));
+              gegl_operation_set_format (self, "output", babl_format ("RGBA float"));
+              gegl_operation_set_format (self, "aux", babl_format ("Y float"));
+              return;
+            }
+        }
+    }
+  o->chant_data = NULL;
   gegl_operation_set_format (self, "input", babl_format ("RaGaBaA float"));
   gegl_operation_set_format (self, "output", babl_format ("RaGaBaA float"));
   gegl_operation_set_format (self, "aux", babl_format ("Y float"));
@@ -53,39 +78,80 @@ process (GeglOperation       *op,
   gfloat *aux = aux_buf;
   gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
 
-  if (aux == NULL)
+  if (GEGL_CHANT_PROPERTIES (op)->chant_data) /* RGBA version indicator */
     {
-      g_assert (value != 1.0); /* buffer should have been passed through */
+    if (aux == NULL)
+      {
+        g_assert (value != 1.0); /* buffer should have been passed through */
+        while (samples--)
+          {
+            gint j;
+            for (j=0; j<3; j++)
+              out[j] = in[j];
+            out[3] = in[3] * value;
+            in  += 4;
+            out += 4;
+          }
+      }
+    else if (value == 1.0)
       while (samples--)
         {
           gint j;
           for (j=0; j<4; j++)
-            out[j] = in[j] * value;
+            out[j] = in[j] * (*aux);
           in  += 4;
           out += 4;
+          aux += 1;
+        }
+    else
+      while (samples--)
+        {
+          gfloat v = (*aux) * value;
+          gint j;
+          for (j=0; j<3; j++)
+            out[j] = in[j];
+          out[3] = in[3] * v;
+          in  += 4;
+          out += 4;
+          aux += 1;
         }
     }
-  else if (value == 1.0)
-    while (samples--)
-      {
-        gint j;
-        for (j=0; j<4; j++)
-          out[j] = in[j] * (*aux);
-        in  += 4;
-        out += 4;
-        aux += 1;
-      }
   else
-    while (samples--)
+    {
+    if (aux == NULL)
       {
-        gfloat v = (*aux) * value;
-        gint j;
-        for (j=0; j<4; j++)
-          out[j] = in[j] * v;
-        in  += 4;
-        out += 4;
-        aux += 1;
+        g_assert (value != 1.0); /* buffer should have been passed through */
+        while (samples--)
+          {
+            gint j;
+            for (j=0; j<4; j++)
+              out[j] = in[j] * value;
+            in  += 4;
+            out += 4;
+          }
       }
+    else if (value == 1.0)
+      while (samples--)
+        {
+          gint j;
+          for (j=0; j<4; j++)
+            out[j] = in[j] * (*aux);
+          in  += 4;
+          out += 4;
+          aux += 1;
+        }
+    else
+      while (samples--)
+        {
+          gfloat v = (*aux) * value;
+          gint j;
+          for (j=0; j<4; j++)
+            out[j] = in[j] * v;
+          in  += 4;
+          out += 4;
+          aux += 1;
+        }
+    }
   return TRUE;
 }
 
