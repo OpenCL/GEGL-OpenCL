@@ -720,3 +720,19 @@ gegl_operation_get_key (const gchar *operation_name,
   g_type_class_unref (klass);
   return ret;
 }
+
+const Babl *
+gegl_operation_get_source_format (GeglOperation *operation,
+                                  const gchar   *padname)
+{
+  GeglNode *src_node = gegl_operation_get_source_node (operation, padname);
+
+  if (src_node)
+    {
+      GeglOperation *op = src_node->operation;
+      if (op)
+        return gegl_operation_get_format (op, "output");
+            /* XXX: could be a different pad than "output" */
+    }
+  return NULL;
+}

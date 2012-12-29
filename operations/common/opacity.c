@@ -30,33 +30,23 @@ gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 1.0,
 #define GEGL_CHANT_C_FILE       "opacity.c"
 
 #include "gegl-chant.h"
-#include "graph/gegl-node.h"
 
 #include <stdio.h>
 
+
 static void prepare (GeglOperation *self)
 {
-  GeglNode *src_node = gegl_operation_get_source_node (self, "input");
+  const Babl *fmt = gegl_operation_get_source_format (self, "input");
   GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
 
-  if (src_node)
+  if (fmt == babl_format ("RGBA float"))
     {
-      GeglOperation *op = src_node->operation;
-      if (op)
-        {
-          const Babl *fmt = gegl_operation_get_format (op, "output"); /* XXX: could
-                                                         be a different pad */
-
-          if (fmt == babl_format ("RGBA float"))
-            {
-              /* ugly way of communicating that we want the RGBA version */
-              o->chant_data = (void*)0xabc;
-              gegl_operation_set_format (self, "input", babl_format ("RGBA float"));
-              gegl_operation_set_format (self, "output", babl_format ("RGBA float"));
-              gegl_operation_set_format (self, "aux", babl_format ("Y float"));
-              return;
-            }
-        }
+      gegl_operation_set_format (self, "input", babl_format ("RGBA float"));
+      gegl_operation_set_format (self, "output", babl_format ("RGBA float"));
+      gegl_operation_set_format (self, "aux", babl_format ("Y float"));
+      /* ugly way of communicating that we want the RGBA version */
+      o->chant_data = (void*)0xabc;
+      return;
     }
   o->chant_data = NULL;
   gegl_operation_set_format (self, "input", babl_format ("RaGaBaA float"));

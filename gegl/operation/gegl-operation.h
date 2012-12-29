@@ -211,8 +211,14 @@ const Babl *    gegl_operation_get_format    (GeglOperation *operation,
 const gchar *   gegl_operation_get_name      (GeglOperation *operation);
 
 
+/* checks the incoming Babl format on a given pad, can be used in the prepare
+ * stage to make format dependent decisions
+ */
+const Babl  * gegl_operation_get_source_format (GeglOperation *operation,
+                                                const gchar   *padname);
+
 /* retrieves the node providing data to a named input pad */
-GeglNode      * gegl_operation_get_source_node (GeglOperation *operation,
+GeglNode    * gegl_operation_get_source_node   (GeglOperation *operation,
                                                 const gchar   *pad_name);
 
 GParamSpec ** gegl_operation_list_properties   (const gchar *operation_type,
