@@ -41,7 +41,7 @@ G_BEGIN_DECLS
  * Best thing to do seems to use rectangular buffer tiles that are
  * twice as wide as they are tall.
  */
-#define GEGL_SAMPLER_MAXIMUM_HEIGHT (32)
+#define GEGL_SAMPLER_MAXIMUM_HEIGHT (64)
 #define GEGL_SAMPLER_MAXIMUM_WIDTH (GEGL_SAMPLER_MAXIMUM_HEIGHT)
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
