@@ -55,59 +55,18 @@ static void prepare (GeglOperation *self)
 }
 
 static gboolean
-process (GeglOperation       *op,
-         void                *in_buf,
-         void                *aux_buf,
-         void                *out_buf,
-         glong                samples,
-         const GeglRectangle *roi,
-         gint                 level)
+process_RaGaBaAfloat (GeglOperation       *op,
+                      void                *in_buf,
+                      void                *aux_buf,
+                      void                *out_buf,
+                      glong                samples,
+                      const GeglRectangle *roi,
+                      gint                 level)
 {
   gfloat *in = in_buf;
   gfloat *out = out_buf;
   gfloat *aux = aux_buf;
   gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
-
-  if (GEGL_CHANT_PROPERTIES (op)->chant_data) /* RGBA version indicator */
-    {
-    if (aux == NULL)
-      {
-        g_assert (value != 1.0); /* buffer should have been passed through */
-        while (samples--)
-          {
-            gint j;
-            for (j=0; j<3; j++)
-              out[j] = in[j];
-            out[3] = in[3] * value;
-            in  += 4;
-            out += 4;
-          }
-      }
-    else if (value == 1.0)
-      while (samples--)
-        {
-          gint j;
-          for (j=0; j<4; j++)
-            out[j] = in[j] * (*aux);
-          in  += 4;
-          out += 4;
-          aux += 1;
-        }
-    else
-      while (samples--)
-        {
-          gfloat v = (*aux) * value;
-          gint j;
-          for (j=0; j<3; j++)
-            out[j] = in[j];
-          out[3] = in[3] * v;
-          in  += 4;
-          out += 4;
-          aux += 1;
-        }
-    }
-  else
-    {
     if (aux == NULL)
       {
         g_assert (value != 1.0); /* buffer should have been passed through */
@@ -141,7 +100,73 @@ process (GeglOperation       *op,
           out += 4;
           aux += 1;
         }
+}
+
+
+static gboolean
+process_RGBAfloat (GeglOperation       *op,
+                   void                *in_buf,
+                   void                *aux_buf,
+                   void                *out_buf,
+                   glong                samples,
+                   const GeglRectangle *roi,
+                   gint                 level)
+{
+  gfloat *in = in_buf;
+  gfloat *out = out_buf;
+  gfloat *aux = aux_buf;
+  gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
+
+  if (aux == NULL)
+    {
+      g_assert (value != 1.0); /* buffer should have been passed through */
+      while (samples--)
+        {
+          gint j;
+          for (j=0; j<3; j++)
+            out[j] = in[j];
+          out[3] = in[3] * value;
+          in  += 4;
+          out += 4;
+        }
     }
+  else if (value == 1.0)
+    while (samples--)
+      {
+        gint j;
+        for (j=0; j<4; j++)
+          out[j] = in[j] * (*aux);
+        in  += 4;
+        out += 4;
+        aux += 1;
+      }
+  else
+    while (samples--)
+      {
+        gfloat v = (*aux) * value;
+        gint j;
+        for (j=0; j<3; j++)
+          out[j] = in[j];
+        out[3] = in[3] * v;
+        in  += 4;
+        out += 4;
+        aux += 1;
+      }
+}
+
+static gboolean
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *aux_buf,
+         void                *out_buf,
+         glong                samples,
+         const GeglRectangle *roi,
+         gint                 level)
+{
+  if (GEGL_CHANT_PROPERTIES (op)->chant_data != NULL)
+    process_RGBAfloat (op, in_buf, aux_buf, out_buf, samples, roi, level);
+  else
+    process_RaGaBaAfloat (op, in_buf, aux_buf, out_buf, samples, roi, level);
   return TRUE;
 }
 
