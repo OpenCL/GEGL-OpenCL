@@ -63,6 +63,5 @@ gboolean gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean 
 GeglBufferClIterator *gegl_buffer_cl_iterator_new (GeglBuffer          *buffer,
                                                    const GeglRectangle *roi,
                                                    const Babl          *format,
-                                                   guint                flags,
-                                                   GeglAbyssPolicy      abyss_policy);
+                                                   guint                flags);
 #endif

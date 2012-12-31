@@ -204,7 +204,7 @@ cl_process (GeglOperation       *operation,
   gfloat  offset_y = (gfloat)(o->length * sin(theta));
   gint num_steps = (gint)ceil(o->length) + 1;
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
                 gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format,  GEGL_CL_BUFFER_READ,
                                                            op_area->left, op_area->right, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
   while (gegl_buffer_cl_iterator_next (i, &err))

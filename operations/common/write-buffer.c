@@ -59,7 +59,7 @@ process (GeglOperation       *operation,
           cl_int cl_err = 0;
           gint j;
 
-          GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, output->soft_format, GEGL_CL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+          GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, output->soft_format, GEGL_CL_BUFFER_WRITE);
                         gint read = gegl_buffer_cl_iterator_add (i, input, result, output->soft_format, GEGL_CL_BUFFER_READ,  GEGL_ABYSS_NONE);
 
           gegl_cl_color_babl (output->soft_format, &size);

@@ -602,13 +602,12 @@ GeglBufferClIterator *
 gegl_buffer_cl_iterator_new (GeglBuffer          *buffer,
                              const GeglRectangle *roi,
                              const Babl          *format,
-                             guint                flags,
-                             GeglAbyssPolicy      abyss_policy)
+                             guint                flags)
 {
   GeglBufferClIterator *i = (gpointer)g_slice_new0 (GeglBufferClIterators);
   /* Because the iterator is nulled above, we can forgo explicitly setting
    * i->is_finished to FALSE. */
-  gegl_buffer_cl_iterator_add (i, buffer, roi, format, flags, abyss_policy);
+  gegl_buffer_cl_iterator_add (i, buffer, roi, format, flags, GEGL_ABYSS_NONE);
   return i;
 }
 
