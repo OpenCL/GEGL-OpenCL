@@ -178,7 +178,7 @@ op_transform_class_init (OpTransformClass *klass)
                                    g_param_spec_string (
                                      "filter",
                                      _("Filter"),
-                              _("Filter type (nearest, linear, cubic, lohalo)"),
+                      _("Filter type (nearest, linear, cubic, nohalo, lohalo)"),
                                      "linear",
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
   g_object_class_install_property (gobject_class, PROP_HARD_EDGES,

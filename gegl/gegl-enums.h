@@ -35,6 +35,7 @@ typedef enum {
   GEGL_SAMPLER_NEAREST = 0,   /*< desc="nearest"      >*/
   GEGL_SAMPLER_LINEAR,        /*< desc="linear"       >*/
   GEGL_SAMPLER_CUBIC,         /*< desc="cubic"        >*/
+  GEGL_SAMPLER_NOHALO,        /*< desc="nohalo"       >*/
   GEGL_SAMPLER_LOHALO         /*< desc="lohalo"       >*/
 } GeglSamplerType;
 GType gegl_sampler_type_get_type   (void) G_GNUC_CONST;

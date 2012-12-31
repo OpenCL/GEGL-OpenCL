@@ -30,6 +30,7 @@ libbuffer_la_SOURCES = \
     gegl-sampler-cubic.c	\
     gegl-sampler-linear.c	\
     gegl-sampler-nearest.c	\
+    gegl-sampler-nohalo.c       \
     gegl-sampler-lohalo.c       \
     gegl-region-generic.c	\
     gegl-tile.c			\
@@ -59,6 +60,7 @@ libbuffer_la_SOURCES = \
     gegl-sampler-cubic.h	\
     gegl-sampler-linear.h	\
     gegl-sampler-nearest.h	\
+    gegl-sampler-nohalo.h       \
     gegl-sampler-lohalo.h       \
     gegl-region.h		\
     gegl-region-generic.h	\

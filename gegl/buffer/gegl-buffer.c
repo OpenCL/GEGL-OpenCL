@@ -56,6 +56,7 @@
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
+#include "gegl-sampler-nohalo.h"
 #include "gegl-sampler-lohalo.h"
 #include "gegl-types-internal.h"
 #include "gegl-utils.h"
@@ -745,7 +746,7 @@ gegl_buffer_constructor (GType                  type,
       /* Don't have the abyss track the extent if the intersection is
        * not the entire extent. Otherwise, setting the extent identical
        * to itself could suddenly make the abyss bigger. */
-      if (buffer->abyss_tracks_extent && 
+      if (buffer->abyss_tracks_extent &&
           (buffer->extent.x      != self.x ||
            buffer->extent.y      != self.y ||
            buffer->extent.width  != self.width ||

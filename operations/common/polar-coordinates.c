@@ -344,7 +344,7 @@ process (GeglOperation       *operation,
 
         if (inside)
           gegl_buffer_sample (input, px, py, &scale, dest, format,
-                              GEGL_SAMPLER_LOHALO, GEGL_ABYSS_NONE);
+                              GEGL_SAMPLER_NOHALO, GEGL_ABYSS_NONE);
         else
           for (i=0; i<4; i++)
             dest[i] = 0.0;

@@ -33,6 +33,7 @@
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
+#include "gegl-sampler-nohalo.h"
 #include "gegl-sampler-lohalo.h"
 
 enum
@@ -524,6 +525,9 @@ gegl_sampler_type_from_string (const gchar *string)
   if (g_str_equal (string, "cubic")   || g_str_equal (string, "bicubic"))
     return GEGL_SAMPLER_CUBIC;
 
+  if (g_str_equal (string, "nohalo"))
+    return GEGL_SAMPLER_NOHALO;
+
   if (g_str_equal (string, "lohalo"))
     return GEGL_SAMPLER_LOHALO;
 
@@ -541,6 +545,8 @@ gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
         return GEGL_TYPE_SAMPLER_LINEAR;
       case GEGL_SAMPLER_CUBIC:
         return GEGL_TYPE_SAMPLER_CUBIC;
+      case GEGL_SAMPLER_NOHALO:
+        return GEGL_TYPE_SAMPLER_NOHALO;
       case GEGL_SAMPLER_LOHALO:
         return GEGL_TYPE_SAMPLER_LOHALO;
       default:

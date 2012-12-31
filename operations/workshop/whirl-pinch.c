@@ -141,7 +141,7 @@ apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
   scale_x = 1.0;
   scale_y = roi->width / (gdouble) roi->height;
   sampler = gegl_buffer_sampler_new (src, babl_format ("RaGaBaA float"),
-                                     GEGL_SAMPLER_LOHALO);
+                                     GEGL_SAMPLER_NOHALO);
 
   for (row = 0; row < roi->height; row++) {
     for (col = 0; col < roi->width; col++) {

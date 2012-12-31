@@ -35,6 +35,7 @@
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"
+#include "gegl-sampler-nohalo.h"
 #include "gegl-sampler-lohalo.h"
 #include "gegl-buffer-index.h"
 #include "gegl-tile-backend.h"

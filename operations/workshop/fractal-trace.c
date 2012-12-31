@@ -89,7 +89,7 @@ julia (gdouble  x,
       xx  = tmp;
 
       if ((x2 + y2) > bailout2)
-	break;
+        break;
     }
 
   *u = xx;
@@ -130,10 +130,10 @@ fractaltrace (GeglBuffer          *input,
       switch (fractal_type)
         {
         case FRACTAL_TYPE_JULIA:
-#define gegl_unmap(u,v,ud,vd) {\
-            gdouble rx, ry;                       \
-            cx = o->X1 + ((u) - picture->x) * scale_x;  \
-            cy = o->Y1 + ((v) - picture->y) * scale_y;              \
+#define gegl_unmap(u,v,ud,vd) {                                         \
+            gdouble rx, ry;                                             \
+            cx = o->X1 + ((u) - picture->x) * scale_x;                  \
+            cy = o->Y1 + ((v) - picture->y) * scale_y;                  \
             julia (cx, cy, o->JX, o->JY, &rx, &ry, o->depth, bailout2); \
             ud = (rx - o->X1) / scale_x + picture->x;                   \
             vd = (ry - o->Y1) / scale_y + picture->y;                   \
@@ -144,7 +144,7 @@ fractaltrace (GeglBuffer          *input,
         break;
 
         case FRACTAL_TYPE_MANDELBROT:
-#define gegl_unmap(u,v,ud,vd) {                 \
+#define gegl_unmap(u,v,ud,vd) {                                     \
             gdouble rx, ry;                                         \
             cx = o->X1 + ((u) - picture->x) * scale_x;              \
             cy = o->Y1 + ((v) - picture->y) * scale_y;              \
@@ -162,7 +162,7 @@ fractaltrace (GeglBuffer          *input,
         }
 
       gegl_buffer_sample (input, px, py, &scale, dest, format,
-                          GEGL_SAMPLER_LOHALO, o->abyss_policy);
+                          GEGL_SAMPLER_NOHALO, o->abyss_policy);
 
       for (i = 0; i < 4; i++)
         dst_buf[offset++] = dest[i];
@@ -176,7 +176,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO	*o;
+  GeglChantO    *o;
   GeglRectangle  boundary;
   const Babl    *format;
   FractalType    fractal_type;
