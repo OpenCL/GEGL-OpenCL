@@ -196,7 +196,12 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
                 GeglClRunData *cl_data = operation_class->cl_data;
 
                 cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[read][j]);
-                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (aux)? (void*)&i->tex[foo][j] : NULL);
+
+                if (aux)
+                  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[foo][j]);
+                else
+                  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, 0, 0);
+
                 cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[0][j]);
 
                 gegl_operation_cl_set_kernel_args (operation, cl_data->kernel[0], &p, &cl_err);
