@@ -127,23 +127,12 @@
 
 #include "gegl-sampler-lohalo.h"
 
-#define LOHALO_MINMOD(_a_,_b_,_a_times_a_,_a_times_b_) \
-  (                                                    \
-    (_a_times_b_) >= (gfloat) 0.                       \
-    ?                                                  \
-    ( (_a_times_a_) <= (_a_times_b_) ? (_a_) : (_b_) ) \
-    :                                                  \
-    (gfloat) 0.                                        \
-  )
-
 /*
  * Macros set up so the likely winner in in the first argument
  * (forward branch likely etc):
  */
 #define LOHALO_MIN(_x_,_y_) ( (_x_) <= (_y_) ? (_x_) : (_y_) )
 #define LOHALO_MAX(_x_,_y_) ( (_x_) >= (_y_) ? (_x_) : (_y_) )
-#define LOHALO_ABS(_x_)  ( (_x_) >= (gfloat) 0. ? (_x_) : -(_x_) )
-#define LOHALO_SIGN(_x_) ( (_x_) >= (gfloat) 0. ? (gfloat) 1. : (gfloat) -1. )
 
 /*
  * Special case of Knuth's floored division, that is:
