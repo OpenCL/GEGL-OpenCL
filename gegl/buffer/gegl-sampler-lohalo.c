@@ -832,24 +832,27 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
 	      two * inverse_sigmoidal (input_ptr[ qua_two_shift + 2 ]) +
 	      thr * inverse_sigmoidal (input_ptr[ qua_thr_shift + 2 ]) +
 	      fou * inverse_sigmoidal (input_ptr[ qua_fou_shift + 2 ]) ) );
-  newval[3] =
-    extended_sigmoidal (
-      uno * ( one * inverse_sigmoidal (input_ptr[ uno_one_shift + 3 ]) +
-	      two * inverse_sigmoidal (input_ptr[ uno_two_shift + 3 ]) +
-	      thr * inverse_sigmoidal (input_ptr[ uno_thr_shift + 3 ]) +
-	      fou * inverse_sigmoidal (input_ptr[ uno_fou_shift + 3 ]) ) +
-      dos * ( one * inverse_sigmoidal (input_ptr[ dos_one_shift + 3 ]) +
-	      two * inverse_sigmoidal (input_ptr[ dos_two_shift + 3 ]) +
-	      thr * inverse_sigmoidal (input_ptr[ dos_thr_shift + 3 ]) +
-	      fou * inverse_sigmoidal (input_ptr[ dos_fou_shift + 3 ]) ) +
-      tre * ( one * inverse_sigmoidal (input_ptr[ tre_one_shift + 3 ]) +
-	      two * inverse_sigmoidal (input_ptr[ tre_two_shift + 3 ]) +
-	      thr * inverse_sigmoidal (input_ptr[ tre_thr_shift + 3 ]) +
-	      fou * inverse_sigmoidal (input_ptr[ tre_fou_shift + 3 ]) ) +
-      qua * ( one * inverse_sigmoidal (input_ptr[ qua_one_shift + 3 ]) +
-	      two * inverse_sigmoidal (input_ptr[ qua_two_shift + 3 ]) +
-	      thr * inverse_sigmoidal (input_ptr[ qua_thr_shift + 3 ]) +
-	      fou * inverse_sigmoidal (input_ptr[ qua_fou_shift + 3 ]) ) );
+  /*
+   * Nicolas is not sure, but it appears that it is a bad idea to
+   * sigmoidize the transparency channel (in RaGaBaA, at least). So
+   * don't.
+   */
+  newval[3] = uno * ( one * input_ptr[ uno_one_shift + 3 ] +
+		      two * input_ptr[ uno_two_shift + 3 ] +
+		      thr * input_ptr[ uno_thr_shift + 3 ] +
+		      fou * input_ptr[ uno_fou_shift + 3 ] ) +
+              dos * ( one * input_ptr[ dos_one_shift + 3 ] +
+		      two * input_ptr[ dos_two_shift + 3 ] +
+		      thr * input_ptr[ dos_thr_shift + 3 ] +
+		      fou * input_ptr[ dos_fou_shift + 3 ] ) +
+              tre * ( one * input_ptr[ tre_one_shift + 3 ] +
+		      two * input_ptr[ tre_two_shift + 3 ] +
+		      thr * input_ptr[ tre_thr_shift + 3 ] +
+		      fou * input_ptr[ tre_fou_shift + 3 ] ) +
+              qua * ( one * input_ptr[ qua_one_shift + 3 ] +
+		      two * input_ptr[ qua_two_shift + 3 ] +
+		      thr * input_ptr[ qua_thr_shift + 3 ] +
+		      fou * input_ptr[ qua_fou_shift + 3 ] );
   
   {
     /*
