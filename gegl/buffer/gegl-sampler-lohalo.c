@@ -309,17 +309,14 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 }
 
 /*
- * Because things are kept centered, the stencil width/height is 1 +
- * twice the (size of) the offset.
- *
  * The Mitchell-Netravali cubic filter uses 4 pixels in each
  * direction. Because we anchor ourselves at the closest pixel, we
  * need 2 pixels on both sides, because we don't know ahead of time
  * which way things will be reflected. So, we need the size to be at
  * least 5x5. 4x4 would be enough if we did not perform reflections in
  * order to keep things as centered as possible between mipmap
- * levels. In any case, as the code runs, LOHALO_OFFSET_0 must be >=
- * 2.
+ * levels. In any case, LOHALO_OFFSET_0 must be >= 2 the way things
+ * are implemented.
  *
  * Speed/quality trade-off:
  *
@@ -451,12 +448,19 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 static inline double
 sigmoidal (const double p)
 {
+  /*
+   * Only used to compute compile-time constants, so efficiency is
+   * irrelevant.
+   */
   return tanh (0.5*LOHALO_CONTRAST*(p-0.5));
 }
 
 static inline float
 sigmoidalf (const float p)
 {
+  /*
+   * Cheaper runtime version.
+   */
   return tanhf ((gfloat) (0.5*LOHALO_CONTRAST) * p +
                 (gfloat) (-0.25*LOHALO_CONTRAST));
 }
@@ -474,13 +478,16 @@ extended_sigmoidal (const gfloat q)
 
   const gfloat slope_times_q = (gfloat) slope * q;
 
-  if (q >= (gfloat) 1.)
-    return slope_times_q + (gfloat) (1. - slope);
-
   if (q <= (gfloat) 0.)
     return slope_times_q;
 
-  return (gfloat) (0.5/sig1) * sigmoidalf ((float) q) + (gfloat) 0.5;
+  if (q >= (gfloat) 1.)
+    return slope_times_q + (gfloat) (1. - slope);
+
+  {
+    const gfloat p = (float) (0.5/sig1) * sigmoidalf ((float) q) + (float) 0.5;
+    return p;
+  }
 }
 
 static inline gfloat
@@ -496,15 +503,17 @@ inverse_sigmoidal (const gfloat p)
 
   const gfloat p_over_slope = p * (gfloat) one_over_slope;
 
-  if (p >= (gfloat) 1.)
-    return p_over_slope + (gfloat) (1.-one_over_slope);
-
   if (p <= (gfloat) 0.)
     return p_over_slope;
 
+  if (p >= (gfloat) 1.)
+    return p_over_slope + (gfloat) (1.-one_over_slope);
+
   {
     const float ssq = (gfloat) (2.*sig1) * p + (gfloat) sig0;
-    return (gfloat) (2./LOHALO_CONTRAST) * (gfloat) atanhf (ssq) + (gfloat) 0.5;
+    const gfloat q =
+      (float) (2./LOHALO_CONTRAST) * atanhf (ssq) + (float) 0.5;
+    return q;
   }
 }
 
@@ -518,9 +527,10 @@ robidoux (const gfloat c_major_x,
 {
   /*
    * This function computes -398/(7+72sqrt(2)) times the Robidoux
-   * cubic. The factor is to remove one flop; it is harmless because
-   * the final results is normalized by the sum of the weights, which
-   * means nonzero multiplicative factors have no impact.
+   * cubic. The factor of -398/(7+72sqrt(2)) is to remove one
+   * flop. This scaling is harmless because the final results is
+   * normalized by the sum of the weights, which means nonzero overall
+   * multiplicative factors have no impact.
    *
    * The Robidoux cubic is the Keys cubic defined, as a BC-spline, by
    *
@@ -539,11 +549,6 @@ robidoux (const gfloat c_major_x,
    * boundary does not "bleed" into neighbouring original pixel
    * locations when used, as an EWA filter kernel, to resample without
    * downsampling.
-   *
-   * An internal panel of web designers at a private company preferred
-   * EWA Robidoux over Mitchell-Netravali and a number of alternatives
-   * for reducing images and producing thumbnails in 8-bit sRGB
-   * (without going through linear light).
    */
   const gfloat q1 = s * c_major_x + t * c_major_y;
   const gfloat q2 = s * c_minor_x + t * c_minor_y;
@@ -1565,7 +1570,8 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
 
           {
             /*
-             * Blend the Mitchell-Netravali and EWA Robidoux results:
+             * Blend the sigmoidized Mitchell-Netravali and EWA
+             * Robidoux results:
              */
             const gfloat beta =
               (gfloat) ( ( (gdouble) 1.0 - theta ) / total_weight );
