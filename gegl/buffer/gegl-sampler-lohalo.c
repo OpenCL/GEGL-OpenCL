@@ -270,20 +270,20 @@
       }                                                             \
   }
 
-#define LOHALO_MIPMAP_PIXEL_UPDATE(_level_)  \
-  mipmap_ewa_update (_level_,                \
-                     j,                      \
-                     i,                      \
-                     c_major_x,              \
-                     c_major_y,              \
-                     c_minor_x,              \
-                     c_minor_y,              \
-                     x_##_level_,            \
-                     y_##_level_,            \
-                     channels,               \
-                     row_skip,               \
-                     input_bptr_##_level_,   \
-                     &total_weight,          \
+#define LOHALO_MIPMAP_PIXEL_UPDATE(_level_) \
+  mipmap_ewa_update (_level_,               \
+                     j,                     \
+                     i,                     \
+                     c_major_x,             \
+                     c_major_y,             \
+                     c_minor_x,             \
+                     c_minor_y,             \
+                     x_##_level_,           \
+                     y_##_level_,           \
+                     channels,              \
+                     row_skip,              \
+                     input_ptr_##_level_,   \
+                     &total_weight,         \
                      ewa_newval)
 
 enum
@@ -423,6 +423,91 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 
+/*
+ * This value of the sigmoidal contrast (determined approximately
+ * using ImageMagick) was obtained as follows: Enlarge one white pixel
+ * on a black background with tensor Mitchell-Netravali. The following
+ * value of contrast is such that the result has exactly the right
+ * mass. (This also works with a single black pixel on a white
+ * background.)
+ *
+ * As sigmoidization goes, this contrast value is rather mild. I
+ * (N. Robidoux, the creator of sigmoidization) am not totally sure
+ * how to best to determine sigmoidization values. Actually, I'm not
+ * totally sure the tanh sigmoidal is the best possible curve
+ * either. But this combination seems to work pretty well.
+ *
+ * Probably should be recomputed directly using GEGL (making sure
+ * abyss issues and the like don't bite). And I'm not totally sure
+ * it's the greatest thing with sudden transparency.
+ *
+ * Note: If you decide to turn is off without changing the code, don't
+ * set it to 0: There is a removable singularity which I've not
+ * removed. Setting the contrast to .0000001 basically turns it off
+ * (but the flops are still done).
+ */
+#define LOHALO_CONTRAST (3.38589)
+
+static inline double
+sigmoidal (const double p)
+{
+  return tanh (0.5*LOHALO_CONTRAST*(p-0.5));
+}
+
+static inline float
+sigmoidalf (const float p)
+{
+  return tanhf ((gfloat) (0.5*LOHALO_CONTRAST) * p +
+		(gfloat) (-0.25*LOHALO_CONTRAST));
+}
+
+static inline gfloat
+extended_sigmoidal (const gfloat q)
+{
+  /*
+   * This function extends the standard sigmoidal with straight lines
+   * at p=0 and p=1, in such a way that there is no value or slope
+   * discontinuity.
+   */
+  const gdouble sig1  = sigmoidal (1.);
+  const gdouble slope = ( 1./sig1 - sig1 ) * 0.25 * LOHALO_CONTRAST;
+
+  const gfloat slope_times_q = (gfloat) slope * q;
+
+  if (q >= (gfloat) 1.)
+    return slope_times_q + (gfloat) (1. - slope);
+
+  if (q <= (gfloat) 0.)
+    return slope_times_q;
+
+  return (gfloat) (0.5/sig1) * sigmoidalf ((float) q) + (gfloat) 0.5;
+}
+
+static inline gfloat
+inverse_sigmoidal (const gfloat p)
+{
+  /*
+   * This function is the inverse of extended_sigmoidal above.
+   */
+  const gdouble sig1  = sigmoidal (1.);
+  const gdouble sig0  = -sig1;
+  const gdouble slope = ( 1./sig1 + sig0 ) * 0.25 * LOHALO_CONTRAST;
+  const gdouble one_over_slope = 1./slope;
+
+  const gfloat p_over_slope = p * (gfloat) one_over_slope;
+
+  if (p >= (gfloat) 1.)
+    return p_over_slope + (gfloat) (1.-one_over_slope);
+
+  if (p <= (gfloat) 0.)
+    return p_over_slope;
+
+  {
+    const float ssq = (gfloat) (2.*sig1) * p + (gfloat) sig0;
+    return (gfloat) (2./LOHALO_CONTRAST) * (gfloat) atanhf (ssq) + (gfloat) 0.5;
+  }
+}
+
 static inline gfloat
 robidoux (const gfloat c_major_x,
           const gfloat c_major_y,
@@ -501,7 +586,7 @@ ewa_update (const gint              j,
             const gfloat            y_0,
             const gint              channels,
             const gint              row_skip,
-            const gfloat*  restrict input_bptr,
+            const gfloat*  restrict input_ptr,
                   gdouble* restrict total_weight,
                   gfloat*  restrict ewa_newval)
 {
@@ -515,10 +600,10 @@ ewa_update (const gint              j,
                                   y_0 - (gfloat) i);
 
   *total_weight += weight;
-  ewa_newval[0] += weight * input_bptr[ skip     ];
-  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+  ewa_newval[0] += weight * input_ptr[ skip     ];
+  ewa_newval[1] += weight * input_ptr[ skip + 1 ];
+  ewa_newval[2] += weight * input_ptr[ skip + 2 ];
+  ewa_newval[3] += weight * input_ptr[ skip + 3 ];
 }
 
 static inline void
@@ -533,7 +618,7 @@ mipmap_ewa_update (const gint              level,
                    const gfloat            y,
                    const gint              channels,
                    const gint              row_skip,
-                   const gfloat*  restrict input_bptr,
+                   const gfloat*  restrict input_ptr,
                          gdouble* restrict total_weight,
                          gfloat*  restrict ewa_newval)
 {
@@ -554,10 +639,10 @@ mipmap_ewa_update (const gint              level,
   const gint skip = j * channels + i * row_skip;
 
   *total_weight += weight;
-  ewa_newval[0] += weight * input_bptr[ skip     ];
-  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+  ewa_newval[0] += weight * input_ptr[ skip     ];
+  ewa_newval[1] += weight * input_ptr[ skip + 1 ];
+  ewa_newval[2] += weight * input_ptr[ skip + 2 ];
+  ewa_newval[3] += weight * input_ptr[ skip + 3 ];
 }
 
 static void
@@ -610,7 +695,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
    * This is the pointer we use to pull pixel from "base" mipmap level
    * (level "0"), the one with scale=1.0.
    */
-  const gfloat* restrict input_bptr =
+  const gfloat* restrict input_ptr =
     (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0, repeat_mode);
 
   /*
@@ -693,71 +778,79 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
    * channel:
    */
   gfloat newval[channels];
-  newval[0] = uno * ( one * input_bptr[ uno_one_shift ] +
-                      two * input_bptr[ uno_two_shift ] +
-                      thr * input_bptr[ uno_thr_shift ] +
-                      fou * input_bptr[ uno_fou_shift ] ) +
-              dos * ( one * input_bptr[ dos_one_shift ] +
-                      two * input_bptr[ dos_two_shift ] +
-                      thr * input_bptr[ dos_thr_shift ] +
-                      fou * input_bptr[ dos_fou_shift ] ) +
-              tre * ( one * input_bptr[ tre_one_shift ] +
-                      two * input_bptr[ tre_two_shift ] +
-                      thr * input_bptr[ tre_thr_shift ] +
-                      fou * input_bptr[ tre_fou_shift ] ) +
-              qua * ( one * input_bptr[ qua_one_shift ] +
-                      two * input_bptr[ qua_two_shift ] +
-                      thr * input_bptr[ qua_thr_shift ] +
-                      fou * input_bptr[ qua_fou_shift ] );
-  newval[1] = uno * ( one * input_bptr[ uno_one_shift + 1 ] +
-                      two * input_bptr[ uno_two_shift + 1 ] +
-                      thr * input_bptr[ uno_thr_shift + 1 ] +
-                      fou * input_bptr[ uno_fou_shift + 1 ] ) +
-              dos * ( one * input_bptr[ dos_one_shift + 1 ] +
-                      two * input_bptr[ dos_two_shift + 1 ] +
-                      thr * input_bptr[ dos_thr_shift + 1 ] +
-                      fou * input_bptr[ dos_fou_shift + 1 ] ) +
-              tre * ( one * input_bptr[ tre_one_shift + 1 ] +
-                      two * input_bptr[ tre_two_shift + 1 ] +
-                      thr * input_bptr[ tre_thr_shift + 1 ] +
-                      fou * input_bptr[ tre_fou_shift + 1 ] ) +
-              qua * ( one * input_bptr[ qua_one_shift + 1 ] +
-                      two * input_bptr[ qua_two_shift + 1 ] +
-                      thr * input_bptr[ qua_thr_shift + 1 ] +
-                      fou * input_bptr[ qua_fou_shift + 1 ] );
-  newval[2] = uno * ( one * input_bptr[ uno_one_shift + 2 ] +
-                      two * input_bptr[ uno_two_shift + 2 ] +
-                      thr * input_bptr[ uno_thr_shift + 2 ] +
-                      fou * input_bptr[ uno_fou_shift + 2 ] ) +
-              dos * ( one * input_bptr[ dos_one_shift + 2 ] +
-                      two * input_bptr[ dos_two_shift + 2 ] +
-                      thr * input_bptr[ dos_thr_shift + 2 ] +
-                      fou * input_bptr[ dos_fou_shift + 2 ] ) +
-              tre * ( one * input_bptr[ tre_one_shift + 2 ] +
-                      two * input_bptr[ tre_two_shift + 2 ] +
-                      thr * input_bptr[ tre_thr_shift + 2 ] +
-                      fou * input_bptr[ tre_fou_shift + 2 ] ) +
-              qua * ( one * input_bptr[ qua_one_shift + 2 ] +
-                      two * input_bptr[ qua_two_shift + 2 ] +
-                      thr * input_bptr[ qua_thr_shift + 2 ] +
-                      fou * input_bptr[ qua_fou_shift + 2 ] );
-  newval[3] = uno * ( one * input_bptr[ uno_one_shift + 3 ] +
-                      two * input_bptr[ uno_two_shift + 3 ] +
-                      thr * input_bptr[ uno_thr_shift + 3 ] +
-                      fou * input_bptr[ uno_fou_shift + 3 ] ) +
-              dos * ( one * input_bptr[ dos_one_shift + 3 ] +
-                      two * input_bptr[ dos_two_shift + 3 ] +
-                      thr * input_bptr[ dos_thr_shift + 3 ] +
-                      fou * input_bptr[ dos_fou_shift + 3 ] ) +
-              tre * ( one * input_bptr[ tre_one_shift + 3 ] +
-                      two * input_bptr[ tre_two_shift + 3 ] +
-                      thr * input_bptr[ tre_thr_shift + 3 ] +
-                      fou * input_bptr[ tre_fou_shift + 3 ] ) +
-              qua * ( one * input_bptr[ qua_one_shift + 3 ] +
-                      two * input_bptr[ qua_two_shift + 3 ] +
-                      thr * input_bptr[ qua_thr_shift + 3 ] +
-                      fou * input_bptr[ qua_fou_shift + 3 ] );
-
+  newval[0] =
+    extended_sigmoidal (
+      uno * ( one * inverse_sigmoidal (input_ptr[ uno_one_shift ]) +
+	      two * inverse_sigmoidal (input_ptr[ uno_two_shift ]) +
+	      thr * inverse_sigmoidal (input_ptr[ uno_thr_shift ]) +
+	      fou * inverse_sigmoidal (input_ptr[ uno_fou_shift ]) ) +
+      dos * ( one * inverse_sigmoidal (input_ptr[ dos_one_shift ]) +
+	      two * inverse_sigmoidal (input_ptr[ dos_two_shift ]) +
+	      thr * inverse_sigmoidal (input_ptr[ dos_thr_shift ]) +
+	      fou * inverse_sigmoidal (input_ptr[ dos_fou_shift ]) ) +
+      tre * ( one * inverse_sigmoidal (input_ptr[ tre_one_shift ]) +
+	      two * inverse_sigmoidal (input_ptr[ tre_two_shift ]) +
+	      thr * inverse_sigmoidal (input_ptr[ tre_thr_shift ]) +
+	      fou * inverse_sigmoidal (input_ptr[ tre_fou_shift ]) ) +
+      qua * ( one * inverse_sigmoidal (input_ptr[ qua_one_shift ]) +
+	      two * inverse_sigmoidal (input_ptr[ qua_two_shift ]) +
+	      thr * inverse_sigmoidal (input_ptr[ qua_thr_shift ]) +
+	      fou * inverse_sigmoidal (input_ptr[ qua_fou_shift ]) ) );
+  newval[1] =
+    extended_sigmoidal (
+      uno * ( one * inverse_sigmoidal (input_ptr[ uno_one_shift + 1 ]) +
+	      two * inverse_sigmoidal (input_ptr[ uno_two_shift + 1 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ uno_thr_shift + 1 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ uno_fou_shift + 1 ]) ) +
+      dos * ( one * inverse_sigmoidal (input_ptr[ dos_one_shift + 1 ]) +
+	      two * inverse_sigmoidal (input_ptr[ dos_two_shift + 1 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ dos_thr_shift + 1 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ dos_fou_shift + 1 ]) ) +
+      tre * ( one * inverse_sigmoidal (input_ptr[ tre_one_shift + 1 ]) +
+	      two * inverse_sigmoidal (input_ptr[ tre_two_shift + 1 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ tre_thr_shift + 1 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ tre_fou_shift + 1 ]) ) +
+      qua * ( one * inverse_sigmoidal (input_ptr[ qua_one_shift + 1 ]) +
+	      two * inverse_sigmoidal (input_ptr[ qua_two_shift + 1 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ qua_thr_shift + 1 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ qua_fou_shift + 1 ]) ) );
+  newval[2] =
+    extended_sigmoidal (
+      uno * ( one * inverse_sigmoidal (input_ptr[ uno_one_shift + 2 ]) +
+	      two * inverse_sigmoidal (input_ptr[ uno_two_shift + 2 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ uno_thr_shift + 2 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ uno_fou_shift + 2 ]) ) +
+      dos * ( one * inverse_sigmoidal (input_ptr[ dos_one_shift + 2 ]) +
+	      two * inverse_sigmoidal (input_ptr[ dos_two_shift + 2 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ dos_thr_shift + 2 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ dos_fou_shift + 2 ]) ) +
+      tre * ( one * inverse_sigmoidal (input_ptr[ tre_one_shift + 2 ]) +
+	      two * inverse_sigmoidal (input_ptr[ tre_two_shift + 2 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ tre_thr_shift + 2 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ tre_fou_shift + 2 ]) ) +
+      qua * ( one * inverse_sigmoidal (input_ptr[ qua_one_shift + 2 ]) +
+	      two * inverse_sigmoidal (input_ptr[ qua_two_shift + 2 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ qua_thr_shift + 2 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ qua_fou_shift + 2 ]) ) );
+  newval[3] =
+    extended_sigmoidal (
+      uno * ( one * inverse_sigmoidal (input_ptr[ uno_one_shift + 3 ]) +
+	      two * inverse_sigmoidal (input_ptr[ uno_two_shift + 3 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ uno_thr_shift + 3 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ uno_fou_shift + 3 ]) ) +
+      dos * ( one * inverse_sigmoidal (input_ptr[ dos_one_shift + 3 ]) +
+	      two * inverse_sigmoidal (input_ptr[ dos_two_shift + 3 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ dos_thr_shift + 3 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ dos_fou_shift + 3 ]) ) +
+      tre * ( one * inverse_sigmoidal (input_ptr[ tre_one_shift + 3 ]) +
+	      two * inverse_sigmoidal (input_ptr[ tre_two_shift + 3 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ tre_thr_shift + 3 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ tre_fou_shift + 3 ]) ) +
+      qua * ( one * inverse_sigmoidal (input_ptr[ qua_one_shift + 3 ]) +
+	      two * inverse_sigmoidal (input_ptr[ qua_two_shift + 3 ]) +
+	      thr * inverse_sigmoidal (input_ptr[ qua_thr_shift + 3 ]) +
+	      fou * inverse_sigmoidal (input_ptr[ qua_fou_shift + 3 ]) ) );
+  
   {
     /*
      * Determine whether Mitchell-Netravali needs to be blended with
@@ -1185,7 +1278,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                           y_0,
                           channels,
                           row_skip,
-                          input_bptr,
+                          input_ptr,
                           &total_weight,
                           ewa_newval);
             } while ( ++j <= out_rite_0 );
@@ -1240,7 +1333,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
               /*
                * Get pointer to mipmap level 1 data:
                */
-              const gfloat* restrict input_bptr_1 =
+              const gfloat* restrict input_ptr_1 =
                 (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                         ix_1,
                                                         iy_1,
@@ -1290,7 +1383,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                 {
                 const gint ix_2 = LOHALO_FLOORED_DIVISION_BY_2(ix_1);
                 const gint iy_2 = LOHALO_FLOORED_DIVISION_BY_2(iy_1);
-                const gfloat* restrict input_bptr_2 =
+                const gfloat* restrict input_ptr_2 =
                   (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                           ix_2,
                                                           iy_2,
@@ -1318,7 +1411,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                   {
                   const gint ix_3 = LOHALO_FLOORED_DIVISION_BY_2(ix_2);
                   const gint iy_3 = LOHALO_FLOORED_DIVISION_BY_2(iy_2);
-                  const gfloat* restrict input_bptr_3 =
+                  const gfloat* restrict input_ptr_3 =
                     (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                             ix_3,
                                                             iy_3,
@@ -1346,7 +1439,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                     {
                     const gint ix_4 = LOHALO_FLOORED_DIVISION_BY_2(ix_3);
                     const gint iy_4 = LOHALO_FLOORED_DIVISION_BY_2(iy_3);
-                    const gfloat* restrict input_bptr_4 =
+                    const gfloat* restrict input_ptr_4 =
                       (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                               ix_4,
                                                               iy_4,
@@ -1374,7 +1467,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                       {
                       const gint ix_5 = LOHALO_FLOORED_DIVISION_BY_2(ix_4);
                       const gint iy_5 = LOHALO_FLOORED_DIVISION_BY_2(iy_4);
-                      const gfloat* restrict input_bptr_5 =
+                      const gfloat* restrict input_ptr_5 =
                         (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                                 ix_5,
                                                                 iy_5,
@@ -1406,7 +1499,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                         {
                         const gint ix_6 = LOHALO_FLOORED_DIVISION_BY_2(ix_5);
                         const gint iy_6 = LOHALO_FLOORED_DIVISION_BY_2(iy_5);
-                        const gfloat* restrict input_bptr_6 = (gfloat*)
+                        const gfloat* restrict input_ptr_6 = (gfloat*)
                           gegl_sampler_get_from_mipmap (self,
                                                         ix_6,
                                                         iy_6,
@@ -1441,7 +1534,7 @@ gegl_sampler_lohalo_get (      GeglSampler*    restrict  self,
                             LOHALO_FLOORED_DIVISION_BY_2(ix_6);
                           const gint iy_7 =
                             LOHALO_FLOORED_DIVISION_BY_2(iy_6);
-                          const gfloat* restrict input_bptr_7 = (gfloat*)
+                          const gfloat* restrict input_ptr_7 = (gfloat*)
                             gegl_sampler_get_from_mipmap (self,
                                                           ix_7,
                                                           iy_7,

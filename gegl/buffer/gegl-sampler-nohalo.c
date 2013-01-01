@@ -349,20 +349,20 @@
       }                                                             \
   }
 
-#define NOHALO_MIPMAP_PIXEL_UPDATE(_level_)  \
-  mipmap_ewa_update (_level_,                \
-                     j,                      \
-                     i,                      \
-                     c_major_x,              \
-                     c_major_y,              \
-                     c_minor_x,              \
-                     c_minor_y,              \
-                     x_##_level_,            \
-                     y_##_level_,            \
-                     channels,               \
-                     row_skip,               \
-                     input_bptr_##_level_,   \
-                     &total_weight,          \
+#define NOHALO_MIPMAP_PIXEL_UPDATE(_level_) \
+  mipmap_ewa_update (_level_,               \
+                     j,                     \
+                     i,                     \
+                     c_major_x,             \
+                     c_major_y,             \
+                     c_minor_x,             \
+                     c_minor_y,             \
+                     x_##_level_,           \
+                     y_##_level_,           \
+                     channels,              \
+                     row_skip,              \
+                     input_ptr_##_level_,   \
+                     &total_weight,         \
                      ewa_newval)
 
 enum
@@ -410,7 +410,7 @@ gegl_sampler_nohalo_class_init (GeglSamplerNohaloClass *klass)
 /*
  * IMPORTANT: NOHALO_OFFSET_0 SHOULD BE AN INTEGER >= 2.
  */
-#define NOHALO_OFFSET_0 (12)
+#define NOHALO_OFFSET_0 (11)
 #define NOHALO_SIZE_0 (1+2*NOHALO_OFFSET_0)
 
 /*
@@ -423,7 +423,7 @@ gegl_sampler_nohalo_class_init (GeglSamplerNohaloClass *klass)
  * mipmap level's offset should almost never be smaller than half the
  * previous level's offset.
  */
-#define NOHALO_OFFSET_MIPMAP (12)
+#define NOHALO_OFFSET_MIPMAP (11)
 #define NOHALO_SIZE_MIPMAP (1+2*NOHALO_OFFSET_MIPMAP)
 
 #define NOHALO_OFFSET_1 NOHALO_OFFSET_MIPMAP
@@ -1394,7 +1394,7 @@ ewa_update (const gint              j,
             const gfloat            y_0,
             const gint              channels,
             const gint              row_skip,
-            const gfloat*  restrict input_bptr,
+            const gfloat*  restrict input_ptr,
                   gdouble* restrict total_weight,
                   gfloat*  restrict ewa_newval)
 {
@@ -1408,10 +1408,10 @@ ewa_update (const gint              j,
                                 y_0 - (gfloat) i);
 
   *total_weight += weight;
-  ewa_newval[0] += weight * input_bptr[ skip     ];
-  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+  ewa_newval[0] += weight * input_ptr[ skip     ];
+  ewa_newval[1] += weight * input_ptr[ skip + 1 ];
+  ewa_newval[2] += weight * input_ptr[ skip + 2 ];
+  ewa_newval[3] += weight * input_ptr[ skip + 3 ];
 }
 
 static inline void
@@ -1426,7 +1426,7 @@ mipmap_ewa_update (const gint              level,
                    const gfloat            y,
                    const gint              channels,
                    const gint              row_skip,
-                   const gfloat*  restrict input_bptr,
+                   const gfloat*  restrict input_ptr,
                          gdouble* restrict total_weight,
                          gfloat*  restrict ewa_newval)
 {
@@ -1447,10 +1447,10 @@ mipmap_ewa_update (const gint              level,
                                 y - (gfloat) ( (gint) ( 1 << level ) * i));
 
   *total_weight += weight;
-  ewa_newval[0] += weight * input_bptr[ skip     ];
-  ewa_newval[1] += weight * input_bptr[ skip + 1 ];
-  ewa_newval[2] += weight * input_bptr[ skip + 2 ];
-  ewa_newval[3] += weight * input_bptr[ skip + 3 ];
+  ewa_newval[0] += weight * input_ptr[ skip     ];
+  ewa_newval[1] += weight * input_ptr[ skip + 1 ];
+  ewa_newval[2] += weight * input_ptr[ skip + 2 ];
+  ewa_newval[3] += weight * input_ptr[ skip + 3 ];
 }
 
 static void
@@ -1490,7 +1490,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
    * This is the pointer we use to pull pixel from "base" mipmap level
    * (level "0"), the one with scale=1.0.
    */
-  const gfloat* restrict input_bptr =
+  const gfloat* restrict input_ptr =
     (gfloat*) gegl_sampler_get_ptr (self, ix_0, iy_0, repeat_mode);
 
   /*
@@ -1583,27 +1583,27 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
   /*
    * First channel:
    */
-  nohalo_subdivision (input_bptr[ uno_two_shift ],
-                      input_bptr[ uno_thr_shift ],
-                      input_bptr[ uno_fou_shift ],
-                      input_bptr[ dos_one_shift ],
-                      input_bptr[ dos_two_shift ],
-                      input_bptr[ dos_thr_shift ],
-                      input_bptr[ dos_fou_shift ],
-                      input_bptr[ dos_fiv_shift ],
-                      input_bptr[ tre_one_shift ],
-                      input_bptr[ tre_two_shift ],
-                      input_bptr[ tre_thr_shift ],
-                      input_bptr[ tre_fou_shift ],
-                      input_bptr[ tre_fiv_shift ],
-                      input_bptr[ qua_one_shift ],
-                      input_bptr[ qua_two_shift ],
-                      input_bptr[ qua_thr_shift ],
-                      input_bptr[ qua_fou_shift ],
-                      input_bptr[ qua_fiv_shift ],
-                      input_bptr[ cin_two_shift ],
-                      input_bptr[ cin_thr_shift ],
-                      input_bptr[ cin_fou_shift ],
+  nohalo_subdivision (input_ptr[ uno_two_shift ],
+                      input_ptr[ uno_thr_shift ],
+                      input_ptr[ uno_fou_shift ],
+                      input_ptr[ dos_one_shift ],
+                      input_ptr[ dos_two_shift ],
+                      input_ptr[ dos_thr_shift ],
+                      input_ptr[ dos_fou_shift ],
+                      input_ptr[ dos_fiv_shift ],
+                      input_ptr[ tre_one_shift ],
+                      input_ptr[ tre_two_shift ],
+                      input_ptr[ tre_thr_shift ],
+                      input_ptr[ tre_fou_shift ],
+                      input_ptr[ tre_fiv_shift ],
+                      input_ptr[ qua_one_shift ],
+                      input_ptr[ qua_two_shift ],
+                      input_ptr[ qua_thr_shift ],
+                      input_ptr[ qua_fou_shift ],
+                      input_ptr[ qua_fiv_shift ],
+                      input_ptr[ cin_two_shift ],
+                      input_ptr[ cin_thr_shift ],
+                      input_ptr[ cin_fou_shift ],
                       &uno_one_0,
                       &uno_two_0,
                       &uno_thr_0,
@@ -1741,27 +1741,27 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
     /*
      * Second channel:
      */
-    nohalo_subdivision (input_bptr[ uno_two_shift + 1 ],
-                        input_bptr[ uno_thr_shift + 1 ],
-                        input_bptr[ uno_fou_shift + 1 ],
-                        input_bptr[ dos_one_shift + 1 ],
-                        input_bptr[ dos_two_shift + 1 ],
-                        input_bptr[ dos_thr_shift + 1 ],
-                        input_bptr[ dos_fou_shift + 1 ],
-                        input_bptr[ dos_fiv_shift + 1 ],
-                        input_bptr[ tre_one_shift + 1 ],
-                        input_bptr[ tre_two_shift + 1 ],
-                        input_bptr[ tre_thr_shift + 1 ],
-                        input_bptr[ tre_fou_shift + 1 ],
-                        input_bptr[ tre_fiv_shift + 1 ],
-                        input_bptr[ qua_one_shift + 1 ],
-                        input_bptr[ qua_two_shift + 1 ],
-                        input_bptr[ qua_thr_shift + 1 ],
-                        input_bptr[ qua_fou_shift + 1 ],
-                        input_bptr[ qua_fiv_shift + 1 ],
-                        input_bptr[ cin_two_shift + 1 ],
-                        input_bptr[ cin_thr_shift + 1 ],
-                        input_bptr[ cin_fou_shift + 1 ],
+    nohalo_subdivision (input_ptr[ uno_two_shift + 1 ],
+                        input_ptr[ uno_thr_shift + 1 ],
+                        input_ptr[ uno_fou_shift + 1 ],
+                        input_ptr[ dos_one_shift + 1 ],
+                        input_ptr[ dos_two_shift + 1 ],
+                        input_ptr[ dos_thr_shift + 1 ],
+                        input_ptr[ dos_fou_shift + 1 ],
+                        input_ptr[ dos_fiv_shift + 1 ],
+                        input_ptr[ tre_one_shift + 1 ],
+                        input_ptr[ tre_two_shift + 1 ],
+                        input_ptr[ tre_thr_shift + 1 ],
+                        input_ptr[ tre_fou_shift + 1 ],
+                        input_ptr[ tre_fiv_shift + 1 ],
+                        input_ptr[ qua_one_shift + 1 ],
+                        input_ptr[ qua_two_shift + 1 ],
+                        input_ptr[ qua_thr_shift + 1 ],
+                        input_ptr[ qua_fou_shift + 1 ],
+                        input_ptr[ qua_fiv_shift + 1 ],
+                        input_ptr[ cin_two_shift + 1 ],
+                        input_ptr[ cin_thr_shift + 1 ],
+                        input_ptr[ cin_fou_shift + 1 ],
                         &uno_one_1,
                         &uno_two_1,
                         &uno_thr_1,
@@ -1813,27 +1813,27 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
     /*
      * Third channel:
      */
-    nohalo_subdivision (input_bptr[ uno_two_shift + 2 ],
-                        input_bptr[ uno_thr_shift + 2 ],
-                        input_bptr[ uno_fou_shift + 2 ],
-                        input_bptr[ dos_one_shift + 2 ],
-                        input_bptr[ dos_two_shift + 2 ],
-                        input_bptr[ dos_thr_shift + 2 ],
-                        input_bptr[ dos_fou_shift + 2 ],
-                        input_bptr[ dos_fiv_shift + 2 ],
-                        input_bptr[ tre_one_shift + 2 ],
-                        input_bptr[ tre_two_shift + 2 ],
-                        input_bptr[ tre_thr_shift + 2 ],
-                        input_bptr[ tre_fou_shift + 2 ],
-                        input_bptr[ tre_fiv_shift + 2 ],
-                        input_bptr[ qua_one_shift + 2 ],
-                        input_bptr[ qua_two_shift + 2 ],
-                        input_bptr[ qua_thr_shift + 2 ],
-                        input_bptr[ qua_fou_shift + 2 ],
-                        input_bptr[ qua_fiv_shift + 2 ],
-                        input_bptr[ cin_two_shift + 2 ],
-                        input_bptr[ cin_thr_shift + 2 ],
-                        input_bptr[ cin_fou_shift + 2 ],
+    nohalo_subdivision (input_ptr[ uno_two_shift + 2 ],
+                        input_ptr[ uno_thr_shift + 2 ],
+                        input_ptr[ uno_fou_shift + 2 ],
+                        input_ptr[ dos_one_shift + 2 ],
+                        input_ptr[ dos_two_shift + 2 ],
+                        input_ptr[ dos_thr_shift + 2 ],
+                        input_ptr[ dos_fou_shift + 2 ],
+                        input_ptr[ dos_fiv_shift + 2 ],
+                        input_ptr[ tre_one_shift + 2 ],
+                        input_ptr[ tre_two_shift + 2 ],
+                        input_ptr[ tre_thr_shift + 2 ],
+                        input_ptr[ tre_fou_shift + 2 ],
+                        input_ptr[ tre_fiv_shift + 2 ],
+                        input_ptr[ qua_one_shift + 2 ],
+                        input_ptr[ qua_two_shift + 2 ],
+                        input_ptr[ qua_thr_shift + 2 ],
+                        input_ptr[ qua_fou_shift + 2 ],
+                        input_ptr[ qua_fiv_shift + 2 ],
+                        input_ptr[ cin_two_shift + 2 ],
+                        input_ptr[ cin_thr_shift + 2 ],
+                        input_ptr[ cin_fou_shift + 2 ],
                         &uno_one_2,
                         &uno_two_2,
                         &uno_thr_2,
@@ -1885,27 +1885,27 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
     /*
      * Fourth channel:
      */
-    nohalo_subdivision (input_bptr[ uno_two_shift + 3 ],
-                        input_bptr[ uno_thr_shift + 3 ],
-                        input_bptr[ uno_fou_shift + 3 ],
-                        input_bptr[ dos_one_shift + 3 ],
-                        input_bptr[ dos_two_shift + 3 ],
-                        input_bptr[ dos_thr_shift + 3 ],
-                        input_bptr[ dos_fou_shift + 3 ],
-                        input_bptr[ dos_fiv_shift + 3 ],
-                        input_bptr[ tre_one_shift + 3 ],
-                        input_bptr[ tre_two_shift + 3 ],
-                        input_bptr[ tre_thr_shift + 3 ],
-                        input_bptr[ tre_fou_shift + 3 ],
-                        input_bptr[ tre_fiv_shift + 3 ],
-                        input_bptr[ qua_one_shift + 3 ],
-                        input_bptr[ qua_two_shift + 3 ],
-                        input_bptr[ qua_thr_shift + 3 ],
-                        input_bptr[ qua_fou_shift + 3 ],
-                        input_bptr[ qua_fiv_shift + 3 ],
-                        input_bptr[ cin_two_shift + 3 ],
-                        input_bptr[ cin_thr_shift + 3 ],
-                        input_bptr[ cin_fou_shift + 3 ],
+    nohalo_subdivision (input_ptr[ uno_two_shift + 3 ],
+                        input_ptr[ uno_thr_shift + 3 ],
+                        input_ptr[ uno_fou_shift + 3 ],
+                        input_ptr[ dos_one_shift + 3 ],
+                        input_ptr[ dos_two_shift + 3 ],
+                        input_ptr[ dos_thr_shift + 3 ],
+                        input_ptr[ dos_fou_shift + 3 ],
+                        input_ptr[ dos_fiv_shift + 3 ],
+                        input_ptr[ tre_one_shift + 3 ],
+                        input_ptr[ tre_two_shift + 3 ],
+                        input_ptr[ tre_thr_shift + 3 ],
+                        input_ptr[ tre_fou_shift + 3 ],
+                        input_ptr[ tre_fiv_shift + 3 ],
+                        input_ptr[ qua_one_shift + 3 ],
+                        input_ptr[ qua_two_shift + 3 ],
+                        input_ptr[ qua_thr_shift + 3 ],
+                        input_ptr[ qua_fou_shift + 3 ],
+                        input_ptr[ qua_fiv_shift + 3 ],
+                        input_ptr[ cin_two_shift + 3 ],
+                        input_ptr[ cin_thr_shift + 3 ],
+                        input_ptr[ cin_fou_shift + 3 ],
                         &uno_one_3,
                         &uno_two_3,
                         &uno_thr_3,
@@ -2370,7 +2370,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
                             y_0,
                             channels,
                             row_skip,
-                            input_bptr,
+                            input_ptr,
                             &total_weight,
                             ewa_newval);
               } while ( ++j <= out_rite_0 );
@@ -2425,7 +2425,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
                 /*
                  * Get pointer to mipmap level 1 data:
                  */
-                const gfloat* restrict input_bptr_1 =
+                const gfloat* restrict input_ptr_1 =
                   (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                           ix_1,
                                                           iy_1,
@@ -2475,7 +2475,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
                   {
                   const gint ix_2 = NOHALO_FLOORED_DIVISION_BY_2(ix_1);
                   const gint iy_2 = NOHALO_FLOORED_DIVISION_BY_2(iy_1);
-                  const gfloat* restrict input_bptr_2 =
+                  const gfloat* restrict input_ptr_2 =
                     (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                             ix_2,
                                                             iy_2,
@@ -2503,7 +2503,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
                     {
                     const gint ix_3 = NOHALO_FLOORED_DIVISION_BY_2(ix_2);
                     const gint iy_3 = NOHALO_FLOORED_DIVISION_BY_2(iy_2);
-                    const gfloat* restrict input_bptr_3 =
+                    const gfloat* restrict input_ptr_3 =
                       (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                               ix_3,
                                                               iy_3,
@@ -2531,7 +2531,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
                       {
                       const gint ix_4 = NOHALO_FLOORED_DIVISION_BY_2(ix_3);
                       const gint iy_4 = NOHALO_FLOORED_DIVISION_BY_2(iy_3);
-                      const gfloat* restrict input_bptr_4 =
+                      const gfloat* restrict input_ptr_4 =
                         (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                                 ix_4,
                                                                 iy_4,
@@ -2559,7 +2559,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
                         {
                         const gint ix_5 = NOHALO_FLOORED_DIVISION_BY_2(ix_4);
                         const gint iy_5 = NOHALO_FLOORED_DIVISION_BY_2(iy_4);
-                        const gfloat* restrict input_bptr_5 =
+                        const gfloat* restrict input_ptr_5 =
                           (gfloat*) gegl_sampler_get_from_mipmap (self,
                                                                   ix_5,
                                                                   iy_5,
@@ -2591,7 +2591,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
                           {
                           const gint ix_6 = NOHALO_FLOORED_DIVISION_BY_2(ix_5);
                           const gint iy_6 = NOHALO_FLOORED_DIVISION_BY_2(iy_5);
-                          const gfloat* restrict input_bptr_6 = (gfloat*)
+                          const gfloat* restrict input_ptr_6 = (gfloat*)
                             gegl_sampler_get_from_mipmap (self,
                                                           ix_6,
                                                           iy_6,
@@ -2626,7 +2626,7 @@ gegl_sampler_nohalo_get (      GeglSampler*    restrict  self,
                               NOHALO_FLOORED_DIVISION_BY_2(ix_6);
                             const gint iy_7 =
                               NOHALO_FLOORED_DIVISION_BY_2(iy_6);
-                            const gfloat* restrict input_bptr_7 = (gfloat*)
+                            const gfloat* restrict input_ptr_7 = (gfloat*)
                               gegl_sampler_get_from_mipmap (self,
                                                             ix_7,
                                                             iy_7,
