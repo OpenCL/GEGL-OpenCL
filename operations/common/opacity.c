@@ -34,27 +34,45 @@ gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 1.0,
 #include <stdio.h>
 
 
-static void prepare (GeglOperation *self)
+static void
+prepare (GeglOperation *self)
 {
   const Babl *fmt = gegl_operation_get_source_format (self, "input");
   GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
 
-  if (fmt == babl_format ("RGBA float"))
+  if (fmt)
     {
-      gegl_operation_set_format (self, "input", babl_format ("RGBA float"));
-      gegl_operation_set_format (self, "output", babl_format ("RGBA float"));
-      gegl_operation_set_format (self, "aux", babl_format ("Y float"));
-      /* ugly way of communicating that we want the RGBA version */
-      o->chant_data = (void*)0xabc;
-      return;
+      const Babl *model = babl_format_get_model (fmt);
+
+      if (model == babl_model ("RaGaBaA") ||
+          model == babl_model ("R'aG'aB'aA") ||
+          model == babl_model ("YaA") ||
+          model == babl_model ("Y'aA"))
+        {
+          o->chant_data = NULL;
+
+          gegl_operation_set_format (self, "input",
+                                     babl_format ("RaGaBaA float"));
+          gegl_operation_set_format (self, "output",
+                                     babl_format ("RaGaBaA float"));
+          gegl_operation_set_format (self, "aux",
+                                     babl_format ("Y float"));
+
+          return;
+        }
     }
-  o->chant_data = NULL;
-  gegl_operation_set_format (self, "input", babl_format ("RaGaBaA float"));
-  gegl_operation_set_format (self, "output", babl_format ("RaGaBaA float"));
+
+  /* ugly way of communicating that we want the RGBA version */
+  o->chant_data = (void*)0xabc;
+
+  gegl_operation_set_format (self, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (self, "output", babl_format ("RGBA float"));
   gegl_operation_set_format (self, "aux", babl_format ("Y float"));
+
+  return;
 }
 
-static gboolean
+static void
 process_RaGaBaAfloat (GeglOperation       *op,
                       void                *in_buf,
                       void                *aux_buf,
@@ -67,43 +85,43 @@ process_RaGaBaAfloat (GeglOperation       *op,
   gfloat *out = out_buf;
   gfloat *aux = aux_buf;
   gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
-    if (aux == NULL)
+
+  if (aux == NULL)
+    {
+      g_assert (value != 1.0); /* buffer should have been passed through */
+      while (samples--)
+        {
+          gint j;
+          for (j=0; j<4; j++)
+            out[j] = in[j] * value;
+          in  += 4;
+          out += 4;
+        }
+    }
+  else if (value == 1.0)
+    while (samples--)
       {
-        g_assert (value != 1.0); /* buffer should have been passed through */
-        while (samples--)
-          {
-            gint j;
-            for (j=0; j<4; j++)
-              out[j] = in[j] * value;
-            in  += 4;
-            out += 4;
-          }
+        gint j;
+        for (j=0; j<4; j++)
+          out[j] = in[j] * (*aux);
+        in  += 4;
+        out += 4;
+        aux += 1;
       }
-    else if (value == 1.0)
-      while (samples--)
-        {
-          gint j;
-          for (j=0; j<4; j++)
-            out[j] = in[j] * (*aux);
-          in  += 4;
-          out += 4;
-          aux += 1;
-        }
-    else
-      while (samples--)
-        {
-          gfloat v = (*aux) * value;
-          gint j;
-          for (j=0; j<4; j++)
-            out[j] = in[j] * v;
-          in  += 4;
-          out += 4;
-          aux += 1;
-        }
+  else
+    while (samples--)
+      {
+        gfloat v = (*aux) * value;
+        gint j;
+        for (j=0; j<4; j++)
+          out[j] = in[j] * v;
+        in  += 4;
+        out += 4;
+        aux += 1;
+      }
 }
 
-
-static gboolean
+static void
 process_RGBAfloat (GeglOperation       *op,
                    void                *in_buf,
                    void                *aux_buf,
@@ -134,8 +152,9 @@ process_RGBAfloat (GeglOperation       *op,
     while (samples--)
       {
         gint j;
-        for (j=0; j<4; j++)
-          out[j] = in[j] * (*aux);
+        for (j=0; j<3; j++)
+          out[j] = in[j];
+        out[3] = in[3] * (*aux);
         in  += 4;
         out += 4;
         aux += 1;
@@ -167,6 +186,7 @@ process (GeglOperation       *op,
     process_RGBAfloat (op, in_buf, aux_buf, out_buf, samples, roi, level);
   else
     process_RaGaBaAfloat (op, in_buf, aux_buf, out_buf, samples, roi, level);
+
   return TRUE;
 }
 
