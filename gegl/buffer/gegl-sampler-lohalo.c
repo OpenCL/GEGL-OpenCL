@@ -24,7 +24,7 @@
  *
  * The Lohalo ("Low Halo") sampler is a Jacobian-adaptive blend of
  * sigmoidized tensor filtering with the Mitchell-Netravali Keys cubic
- * filter used as an upsampler (thus is unscaled), with
+ * filter used as an upsampler (and consequently unscaled), with
  * non-sigmoidized (plain linear light) EWA (Elliptical Weighted
  * Averaging) filtering with the Robidoux Keys cubic, which is used
  * whenever some downsampling occurs and consequently is appropriately
@@ -47,7 +47,7 @@
  *
  * This code owes a lot to R&D performed for ImageMagick by
  * N. Robidoux and Anthony Thyssen, and student research performed by
- * A. Turcotte and C. Racette.
+ * Adam Turcotte and Chantal Racette.
  *
  * Sigmoidization was invented by N. Robidoux as a method of
  * minimizing the over and undershoots that arise out of filtering

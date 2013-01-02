@@ -41,13 +41,13 @@
  * themselves: It is done to accommodate GEGL's preferred pixel data
  * management system.
  *
- * TODO: The teepee filter probably should be replaced by filtering
- * with the triangle (bilinear, Mexican hat function) filter, using
- * clamped parallelograms instead of clamped ellipses (which I believe
- * has never been done, even though it's a fairly obvious thing to
- * do). It has better antialiasing, and is not much blurrier, although
- * the slight added blur is probably a good thing when downsampling
- * just a little bit.
+ * TODO: The teepee downsampling filter probably should be replaced by
+ * filtering with the triangle (a.k.a. bilinear, Mexican hat function)
+ * downsampling filter, using clamped parallelograms instead of
+ * clamped ellipses (which I believe has never been done, even though
+ * it's a fairly obvious thing to do). It has better antialiasing, and
+ * is not much blurrier, although the slight added blur is probably a
+ * good thing when downsampling just a little bit.
  */
 
 /*
@@ -153,9 +153,9 @@
 #include "gegl-sampler-nohalo.h"
 
 /*
- * NOHALO_MINMOD is an implementation of the minmod function which
- * only needs two "conditional moves."
- * NOHALO_MINMOD(a,b,a_times_a,a_times_b) "returns"
+ * NOHALO_MINMOD is a novel implementation of the minmod function
+ * which only needs two "conditional moves." It was probably invented
+ * by N. Robidoux.  NOHALO_MINMOD(a,b,a_times_a,a_times_b) "returns"
  * minmod(a,b). The macro parameter ("input") a_times_a is assumed to
  * contain the square of a; a_times_b, the product of a and b.
  *
