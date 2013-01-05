@@ -60,6 +60,12 @@
  *   K.  CPU, SMP and GPU implementations of Nohalo level 1, a fast
  *   co-convex antialiasing image resampler.  In Proceedings of
  *   C3S2E. 2009, 185-195.
+ *
+ * and
+ *
+ *   Racette, C. Numerical Analysis of Diagonal-Preserving,
+ *   Ripple-Minimizing and Low-Pass Image Resampling Methods. CoRR.
+ *   2012. http://arxiv.org/abs/1204.4734.
  */
 
 /*
