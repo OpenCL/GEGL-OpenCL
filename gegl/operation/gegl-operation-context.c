@@ -76,7 +76,8 @@ gegl_operation_context_set_property (GeglOperationContext *context,
 
   g_return_if_fail (context != NULL);
 
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), property_name);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (context->operation),
+                                        property_name);
 
   if (!pspec)
     {
@@ -87,7 +88,8 @@ gegl_operation_context_set_property (GeglOperationContext *context,
     }
 
   /* if the value already exists in the context it will be reused */
-  storage = gegl_operation_context_add_value (context, property_name, G_PARAM_SPEC_VALUE_TYPE(pspec));
+  storage = gegl_operation_context_add_value (context, property_name,
+                                              G_PARAM_SPEC_VALUE_TYPE (pspec));
   /* storage needs to have the correct type */
   g_value_copy (value, storage);
 }
@@ -100,7 +102,8 @@ gegl_operation_context_get_property (GeglOperationContext *context,
   GParamSpec *pspec;
   GValue     *storage;
 
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), property_name);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (context->operation),
+                                        property_name);
 
   if (!pspec)
     {
@@ -170,7 +173,7 @@ gegl_operation_context_get_value (GeglOperationContext *self,
 
 void
 gegl_operation_context_remove_property (GeglOperationContext *self,
-                                        const gchar     *property_name)
+                                        const gchar          *property_name)
 {
   Property *property = NULL;
 
@@ -259,7 +262,8 @@ gegl_operation_context_take_object (GeglOperationContext *context,
    *        output object/value set?
    */
 
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), padname);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (context->operation),
+                                        padname);
 
   if (pspec)
     {
@@ -288,7 +292,8 @@ gegl_operation_context_get_object (GeglOperationContext *context,
   GParamSpec    *pspec;
   GValue         value = { 0, };
 
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (G_OBJECT (context->operation)), padname);
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (context->operation),
+                                        padname);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
   gegl_operation_context_get_property (context, padname, &value);
   /* FIXME: handle other things than gobjects as well? */
@@ -396,7 +401,8 @@ gegl_operation_context_get_target (GeglOperationContext *context,
   return output;
 }
 
-gint            gegl_operation_context_get_level (GeglOperationContext *ctxt)
+gint
+gegl_operation_context_get_level (GeglOperationContext *ctxt)
 {
   return ctxt->level;
 }

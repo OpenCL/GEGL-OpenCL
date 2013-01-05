@@ -95,7 +95,7 @@ gegl_operation_class_init (GeglOperationClass *klass)
 }
 
 static void
-gegl_operation_base_init  (GeglOperationClass *klass)
+gegl_operation_base_init (GeglOperationClass *klass)
 {
   /* XXX: leaked for now, should replace G_DEFINE_TYPE with the expanded one */
   klass->keys = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
@@ -333,7 +333,7 @@ gegl_operation_get_source_node (GeglOperation *operation,
 }
 
 GeglRectangle *
-gegl_operation_source_get_bounding_box (GeglOperation  *operation,
+gegl_operation_source_get_bounding_box (GeglOperation *operation,
                                         const gchar   *input_pad_name)
 {
   GeglNode *node = gegl_operation_get_source_node (operation, input_pad_name);
