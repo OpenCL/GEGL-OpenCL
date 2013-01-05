@@ -410,7 +410,7 @@ gegl_sampler_nohalo_class_init (GeglSamplerNohaloClass *klass)
 /*
  * IMPORTANT: NOHALO_OFFSET_0 SHOULD BE AN INTEGER >= 2.
  */
-#define NOHALO_OFFSET_0 (11)
+#define NOHALO_OFFSET_0 (13)
 #define NOHALO_SIZE_0 (1+2*NOHALO_OFFSET_0)
 
 /*
@@ -423,7 +423,7 @@ gegl_sampler_nohalo_class_init (GeglSamplerNohaloClass *klass)
  * mipmap level's offset should almost never be smaller than half the
  * previous level's offset.
  */
-#define NOHALO_OFFSET_MIPMAP (11)
+#define NOHALO_OFFSET_MIPMAP (13)
 #define NOHALO_SIZE_MIPMAP (1+2*NOHALO_OFFSET_MIPMAP)
 
 #define NOHALO_OFFSET_1 NOHALO_OFFSET_MIPMAP
