@@ -397,10 +397,10 @@ gegl_sampler_nohalo_class_init (GeglSamplerNohaloClass *klass)
  *
  * Speed/quality trade-off:
  *
- * Downsampling quality will decrease around ratio 1/(NOHALO_OFFSET_0
- * + .5). In addition, the smaller NOHALO_OFFSET_0, the more
- * noticeable the artifacts. To maintain maximum quality for the
- * widest downsampling range possible, a somewhat large
+ * Downsampling quality will decrease around ratio
+ * 1/(NOHALO_OFFSET_0+0.5). In addition, the smaller NOHALO_OFFSET_0,
+ * the more noticeable the artifacts. To maintain maximum quality for
+ * the widest downsampling range possible, a somewhat large
  * NOHALO_OFFSET_0 should be used. However, the larger the "level 0"
  * offset, the slower Nohalo will run when no significant downsampling
  * is done, because the width and height of context_rect is
