@@ -284,10 +284,22 @@ static void get_property (GObject    *object,
 }
 
 static void
+for_each_free (RamEntry           *key,
+               RamEntry           *entry,
+               GeglTileBackendRam *ram)
+{
+  gint tile_size = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (ram));
+  g_free (entry->offset);
+  dbg_dealloc (tile_size);
+  g_slice_free (RamEntry, entry);
+}
+
+static void
 finalize (GObject *object)
 {
-  GeglTileBackendRam *self = (GeglTileBackendRam *) object;
+  GeglTileBackendRam *self = GEGL_TILE_BACKEND (object);
 
+  g_hash_table_foreach (self->entries, (GHFunc)for_each_free, self);
   g_hash_table_unref (self->entries);
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
