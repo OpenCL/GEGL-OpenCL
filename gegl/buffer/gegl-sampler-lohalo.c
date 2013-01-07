@@ -78,7 +78,7 @@
  *
  * A. Turcotte's image resampling research on Jacobian adaptive
  * methods funded in part by an OGS (Ontario Graduate Scholarship) and
- * an NSERC Alexander Graham Bell Canada Graduate Scholarhip awarded
+ * an NSERC Alexander Graham Bell Canada Graduate Scholarship awarded
  * to him, by GSoC (Google Summer of Code) 2010 funding awarded to
  * GIMP (Gnu Image Manipulation Program), and by Laurentian University
  * research funding provided by N. Robidoux and Ralf Meyer.
