@@ -459,6 +459,13 @@ gegl_get_version (int *major,
     *micro = GEGL_MICRO_VERSION;
 }
 
+void
+gegl_load_module_directory (const gchar *path)
+{
+  g_return_if_fail (g_file_test (path, G_FILE_TEST_IS_DIR));
+
+  gegl_module_db_load (module_db, path);
+}
 
 static gboolean
 gegl_post_parse_hook (GOptionContext *context,

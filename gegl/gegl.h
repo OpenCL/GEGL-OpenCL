@@ -830,6 +830,13 @@ gboolean       gegl_processor_work          (GeglProcessor *processor,
  */
 GeglConfig      * gegl_config (void);
 
+/**
+ * gegl_load_module_directory:
+ * @path: the directory to load modules from
+ *
+ * Load all gegl modules found in the given directory.
+ */
+void gegl_load_module_directory (const gchar *path);
 
 
 void        gegl_apply_op  (GeglBuffer    *buffer,

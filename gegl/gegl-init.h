@@ -72,6 +72,7 @@ void           gegl_get_version          (int *major,
                                           int *minor,
                                           int *micro);
 
+void           gegl_load_module_directory (const gchar *path);
 
 G_END_DECLS
 
