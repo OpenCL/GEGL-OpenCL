@@ -297,7 +297,7 @@ for_each_free (RamEntry           *key,
 static void
 finalize (GObject *object)
 {
-  GeglTileBackendRam *self = GEGL_TILE_BACKEND (object);
+  GeglTileBackendRam *self = GEGL_TILE_BACKEND_RAM (object);
 
   g_hash_table_foreach (self->entries, (GHFunc)for_each_free, self);
   g_hash_table_unref (self->entries);
