@@ -12,7 +12,8 @@ open(OUTPUT_FILE, ">${path}.h");
 
 ($name,$dir,$ext) = fileparse($path,'\..*');
 
-$name =~ s/[^a-zA-Z0-9]*//g;
+$name =~ s/-/_/g;
+$name =~ s/:/_/g;
 
 print OUTPUT_FILE "static const char* ${name}_cl_source =\n";
 

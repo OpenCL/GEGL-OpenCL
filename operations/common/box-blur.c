@@ -180,52 +180,7 @@ static void prepare (GeglOperation *operation)
 #include "opencl/gegl-cl.h"
 #include "buffer/gegl-buffer-cl-iterator.h"
 
-static const char* kernel_source =
-"__kernel void kernel_blur_hor (__global const float4     *in,                                      \n"
-"                               __global       float4     *aux,                                     \n"
-"                               int width, int radius)                                              \n"
-"{                                                                                                  \n"
-"  const int in_index = get_global_id(0) * (width + 2 * radius)                                     \n"
-"                       + (radius + get_global_id (1));                                             \n"
-"                                                                                                   \n"
-"  const int aux_index = get_global_id(0) * width + get_global_id (1);                              \n"
-"  int i;                                                                                           \n"
-"  float4 mean;                                                                                     \n"
-"                                                                                                   \n"
-"  mean = (float4)(0.0f);                                                                           \n"
-"                                                                                                   \n"
-"  if (get_global_id(1) < width)                                                                    \n"
-"    {                                                                                              \n"
-"      for (i=-radius; i <= radius; i++)                                                            \n"
-"        {                                                                                          \n"
-"          mean += in[in_index + i];                                                                \n"
-"        }                                                                                          \n"
-"      aux[aux_index] = mean / (2 * radius + 1);                                                    \n"
-"    }                                                                                              \n"
-"}                                                                                                  \n"
-
-"__kernel void kernel_blur_ver (__global const float4     *aux,                                     \n"
-"                               __global       float4     *out,                                     \n"
-"                               int width, int radius)                                              \n"
-"{                                                                                                  \n"
-"                                                                                                   \n"
-"  const int out_index = get_global_id(0) * width + get_global_id (1);                              \n"
-"  int i;                                                                                           \n"
-"  float4 mean;                                                                                     \n"
-"                                                                                                   \n"
-"  mean = (float4)(0.0f);                                                                           \n"
-"  int aux_index = get_global_id(0) * width + get_global_id (1);                                    \n"
-"                                                                                                   \n"
-"  if(get_global_id(1) < width)                                                                     \n"
-"    {                                                                                              \n"
-"      for (i=-radius; i <= radius; i++)                                                            \n"
-"        {                                                                                          \n"
-"          mean += aux[aux_index];                                                                  \n"
-"          aux_index += width;                                                                      \n"
-"        }                                                                                          \n"
-"      out[out_index] = mean / (2 * radius + 1);                                                    \n"
-"    }                                                                                              \n"
-"}                                                                                                  \n";
+#include "opencl/box-blur.cl.h"
 
 static GeglClRunData *cl_data = NULL;
 
@@ -244,7 +199,7 @@ cl_box_blur (cl_mem                in_tex,
   if (!cl_data)
     {
       const char *kernel_name[] = {"kernel_blur_hor", "kernel_blur_ver", NULL};
-      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+      cl_data = gegl_cl_compile_and_build (box_blur_cl_source, kernel_name);
     }
 
   if (!cl_data) return 1;

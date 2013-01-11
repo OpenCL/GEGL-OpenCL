@@ -418,59 +418,7 @@ static void prepare (GeglOperation *operation)
 #include "opencl/gegl-cl.h"
 #include "buffer/gegl-buffer-cl-iterator.h"
 
-static const char* kernel_source =
-"float4 fir_get_mean_component_1D_CL(const global float4 *buf,     \n"
-"                                    int offset,                   \n"
-"                                    const int delta_offset,       \n"
-"                                    constant float *cmatrix,      \n"
-"                                    const int matrix_length)      \n"
-"{                                                                 \n"
-"    float4 acc = 0.0f;                                            \n"
-"    int i;                                                        \n"
-"                                                                  \n"
-"    for(i=0; i<matrix_length; i++)                                \n"
-"      {                                                           \n"
-"        acc    += buf[offset] * cmatrix[i];                       \n"
-"        offset += delta_offset;                                   \n"
-"      }                                                           \n"
-"    return acc;                                                   \n"
-"}                                                                 \n"
-"                                                                  \n"
-"__kernel void fir_ver_blur_CL(const global float4 *src_buf,       \n"
-"                              const int src_width,                \n"
-"                              global float4 *dst_buf,             \n"
-"                              constant float *cmatrix,            \n"
-"                              const int matrix_length,            \n"
-"                              const int yoff)                     \n"
-"{                                                                 \n"
-"    int gidx = get_global_id(0);                                  \n"
-"    int gidy = get_global_id(1);                                  \n"
-"    int gid  = gidx + gidy * get_global_size(0);                  \n"
-"                                                                  \n"
-"    int radius = matrix_length / 2;                               \n"
-"    int src_offset = gidx + (gidy - radius + yoff) * src_width;   \n"
-"                                                                  \n"
-"    dst_buf[gid] = fir_get_mean_component_1D_CL(                  \n"
-"        src_buf, src_offset, src_width, cmatrix, matrix_length);  \n"
-"}                                                                 \n"
-"                                                                  \n"
-"__kernel void fir_hor_blur_CL(const global float4 *src_buf,       \n"
-"                              const int src_width,                \n"
-"                              global float4 *dst_buf,             \n"
-"                              constant float *cmatrix,            \n"
-"                              const int matrix_length,            \n"
-"                              const int yoff)                     \n"
-"{                                                                 \n"
-"    int gidx = get_global_id(0);                                  \n"
-"    int gidy = get_global_id(1);                                  \n"
-"    int gid  = gidx + gidy * get_global_size(0);                  \n"
-"                                                                  \n"
-"    int radius = matrix_length / 2;                               \n"
-"    int src_offset = gidy * src_width + (gidx - radius + yoff);   \n"
-"                                                                  \n"
-"    dst_buf[gid] = fir_get_mean_component_1D_CL(                  \n"
-"        src_buf, src_offset, 1, cmatrix, matrix_length);          \n"
-"}                                                                 \n";
+#include "opencl/gaussian-blur.cl.h"
 
 static GeglClRunData *cl_data = NULL;
 
@@ -497,8 +445,8 @@ cl_gaussian_blur (cl_mem                in_tex,
 
   if (!cl_data)
     {
-      const char *kernel_name[] = {"fir_ver_blur_CL", "fir_hor_blur_CL", NULL};
-      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+      const char *kernel_name[] = {"fir_ver_blur", "fir_hor_blur", NULL};
+      cl_data = gegl_cl_compile_and_build (gaussian_blur_cl_source, kernel_name);
     }
   if (!cl_data) return 1;
 

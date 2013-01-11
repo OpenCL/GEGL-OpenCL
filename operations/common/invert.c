@@ -56,17 +56,7 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-static const char* kernel_source =
-"__kernel void gegl_invert (__global const float4     *in,      \n"
-"                           __global       float4     *out)     \n"
-"{                                                              \n"
-"  int gid = get_global_id(0);                                  \n"
-"  float4 in_v  = in[gid];                                      \n"
-"  float4 out_v;                                                \n"
-"  out_v.xyz = (1.0f - in_v.xyz);                               \n"
-"  out_v.w   =  in_v.w;                                         \n"
-"  out[gid]  =  out_v;                                          \n"
-"}                                                              \n";
+#include "opencl/invert.cl.h"
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -85,7 +75,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "description",
        _("Inverts the components (except alpha), the result is the "
          "corresponding \"negative\" image."),
-    "cl-source"  , kernel_source,
+    "cl-source"  , invert_cl_source,
     NULL);
 }
 

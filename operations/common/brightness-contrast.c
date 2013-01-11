@@ -145,7 +145,7 @@ gegl_chant_class_init (GeglChantClass *klass)
       "name",       "gegl:brightness-contrast",
       "categories", "color",
       "description", _("Changes the light level and contrast."),
-      "cl-source"  , brightnesscontrast_cl_source,
+      "cl-source"  , brightness_contrast_cl_source,
       "reference-composition", composition,
       NULL);
 }

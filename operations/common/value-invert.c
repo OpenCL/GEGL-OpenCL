@@ -129,36 +129,7 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-static const char* kernel_source =
-"__kernel void gegl_value_invert (__global const float4     *in,    \n"
-"                                 __global       float4     *out)   \n"
-"{                                                                  \n"
-"  int gid = get_global_id(0);                                      \n"
-"  float4 in_v  = in[gid];                                          \n"
-"  float4 out_v;                                                    \n"
-"                                                                   \n"
-"  float value = fmax (in_v.x, fmax (in_v.y, in_v.z));              \n"
-"  float minv  = fmin (in_v.x, fmin (in_v.y, in_v.z));              \n"
-"  float delta = value - minv;                                      \n"
-"                                                                   \n"
-"  if (value == 0.0f || delta == 0.0f)                              \n"
-"    {                                                              \n"
-"      out_v = (float4) ((1.0f - value),                            \n"
-"                        (1.0f - value),                            \n"
-"                        (1.0f - value),                            \n"
-"                        in_v.w);                                   \n"
-"    }                                                              \n"
-"  else                                                             \n"
-"    {                                                              \n"
-"      out_v = (float4) ((1.0f - value) * in_v.x / value,           \n"
-"                        (1.0f - value) * in_v.y / value,           \n"
-"                        (1.0f - value) * in_v.z / value,           \n"
-"                        in_v.w);                                   \n"
-"    }                                                              \n"
-"                                                                   \n"
-"  out_v.w   =  in_v.w;                                             \n"
-"  out[gid]  =  out_v;                                              \n"
-"}                                                                  \n";
+#include "opencl/value-invert.cl.h"
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -178,7 +149,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "description",
         _("Inverts just the value component, the result is the corresponding "
           "`inverted' image."),
-    "cl-source"  , kernel_source,
+    "cl-source"  , value_invert_cl_source,
     NULL);
 }
 
