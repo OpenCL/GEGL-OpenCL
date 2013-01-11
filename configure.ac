@@ -1119,6 +1119,7 @@ tests/xml/Makefile
 tests/xml/data/Makefile
 po/Makefile.in
 gegl-uninstalled.pc
+opencl/Makefile
 ])
 
 # Files with versions in their names

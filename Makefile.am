@@ -11,7 +11,8 @@ SUBDIRS=\
 	tools \
 	examples \
 	tests \
-	po
+	po \
+ 	opencl
 
 if ENABLE_DOCS
 SUBDIRS+= docs
