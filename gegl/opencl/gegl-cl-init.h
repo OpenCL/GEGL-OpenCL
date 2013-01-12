@@ -27,6 +27,8 @@ gboolean          gegl_cl_init (GError **error);
 
 gboolean          gegl_cl_is_accelerated (void);
 
+void              gegl_cl_disable (void);
+
 cl_platform_id    gegl_cl_get_platform (void);
 
 cl_device_id      gegl_cl_get_device (void);

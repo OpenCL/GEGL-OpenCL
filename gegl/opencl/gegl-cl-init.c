@@ -138,6 +138,12 @@ gegl_cl_is_accelerated (void)
   return cl_state.is_accelerated && gegl_config()->use_opencl;
 }
 
+void
+gegl_cl_disable (void)
+{
+  cl_state.is_accelerated = FALSE;
+}
+
 cl_platform_id
 gegl_cl_get_platform (void)
 {

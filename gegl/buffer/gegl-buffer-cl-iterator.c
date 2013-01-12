@@ -34,6 +34,8 @@
 #include "gegl-tile-storage.h"
 #include "gegl-utils.h"
 
+#include "opencl/gegl-cl.h"
+
 #define CL_ERROR {GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
 
 typedef struct GeglBufferClIterators
@@ -593,6 +595,10 @@ error:
         i->tex_buf[no][j] = NULL;
         i->tex_op [no][j] = NULL;
       }
+
+  /* something pretty bad happened, so it's better to just disable opencl at all for next operations */
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: Disabling OpenCL!");
+  gegl_cl_disable();
 
   *err = TRUE;
   return FALSE;
