@@ -63,6 +63,7 @@ prepare (GeglOperation *self)
     }
 
   /* ugly way of communicating that we want the RGBA version */
+  /* because of that, we can't use the common opencl api for point ops */
   o->chant_data = (void*)0xabc;
 
   gegl_operation_set_format (self, "input", babl_format ("RGBA float"));
@@ -190,19 +191,52 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-static const char* kernel_source =
-"__kernel void gegl_opacity (__global const float4     *in,     \n"
-"                            __global const float      *aux,    \n"
-"                            __global       float4     *out,    \n"
-"                            float value)                       \n"
-"{                                                              \n"
-"  int gid = get_global_id(0);                                  \n"
-"  float4 in_v  = in [gid];                                     \n"
-"  float  aux_v = (aux)? aux[gid] : 1.0f;                       \n"
-"  float4 out_v;                                                \n"
-"  out_v = in_v * aux_v * value;                                \n"
-"  out[gid]  =  out_v;                                          \n"
-"}                                                              \n";
+#include "opencl/gegl-cl.h"
+
+#include "opencl/opacity.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+static gboolean
+cl_process (GeglOperation       *op,
+            cl_mem               in_tex,
+            cl_mem               aux_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            gint                 level)
+{
+  cl_int cl_err = 0;
+  int kernel;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"gegl_opacity_RaGaBaA_float", "gegl_opacity_RGBA_float", NULL};
+      cl_data = gegl_cl_compile_and_build (opacity_cl_source, kernel_name);
+    }
+
+  if (!cl_data) return FALSE;
+
+  kernel = (GEGL_CHANT_PROPERTIES (op)->chant_data != NULL);
+
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&in_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem), (void*)&aux_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_mem), (void*)&out_tex);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                        cl_data->kernel[kernel], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  return TRUE;
+
+error:
+  return FALSE;
+}
 
 /* Fast path when opacity is a no-op
  */
@@ -229,7 +263,7 @@ static gboolean operation_process (GeglOperation        *operation,
   /* chain up, which will create the needed buffers for our actual
    * process function
    */
-  return operation_class->process (operation, context, output_prop, result, 
+  return operation_class->process (operation, context, output_prop, result,
                                   gegl_operation_context_get_level (context));
 }
 
@@ -246,6 +280,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->process = operation_process;
   point_composer_class->process = process;
+  point_composer_class->cl_process = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:opacity",
@@ -253,7 +288,6 @@ gegl_chant_class_init (GeglChantClass *klass)
     "description",
           _("Weights the opacity of the input both the value of the aux"
             " input and the global value property."),
-    "cl-source"  , kernel_source,
     NULL);
 }
 

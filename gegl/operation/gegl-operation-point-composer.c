@@ -186,10 +186,10 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
           {
             if (point_composer_class->cl_process)
               {
-                cl_err = point_composer_class->cl_process(operation, i->tex[read][j],
-                                                          (aux)? i->tex[foo][j] : NULL,
-                                                          i->tex[0][j], i->size[0][j], &i->roi[0][j], level);
-                CL_CHECK;
+                err = point_composer_class->cl_process(operation, i->tex[read][j],
+                                                       (aux)? i->tex[foo][j] : NULL,
+                                                       i->tex[0][j], i->size[0][j], &i->roi[0][j], level);
+                if (err) return FALSE;
               }
             else if (operation_class->cl_data)
               {

@@ -113,9 +113,9 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
           {
             if (point_filter_class->cl_process)
               {
-                cl_err = point_filter_class->cl_process(operation, i->tex[read][j], i->tex[0][j],
-                                                        i->size[0][j], &i->roi[0][j], level);
-                CL_CHECK;
+                err = point_filter_class->cl_process(operation, i->tex[read][j], i->tex[0][j],
+                                                     i->size[0][j], &i->roi[0][j], level);
+                if (err) return FALSE;
               }
             else if (operation_class->cl_data)
               {
