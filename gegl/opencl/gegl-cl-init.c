@@ -302,6 +302,7 @@ gegl_cl_init (GError **error)
       err = gegl_clGetDeviceIDs (cl_state.platform, CL_DEVICE_TYPE_DEFAULT, 1, &cl_state.device, NULL);
       if(err != CL_SUCCESS)
         {
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", gegl_cl_errstring(err));
           GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create device");
           return FALSE;
         }

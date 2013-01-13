@@ -26,10 +26,10 @@
 
 #include "gegl.h"
 #include "gegl/gegl-debug.h"
+#include "gegl-cl.h"
 #include "gegl-cl-color.h"
-#include "gegl-cl-init.h"
 
-#include "gegl-cl-color-kernel.h"
+#include "opencl/colors.cl.h"
 
 static GeglClRunData *kernels_color = NULL;
 
@@ -145,7 +145,7 @@ gegl_cl_color_compile_kernels(void)
   format[9] = babl_format ("R'G'B'A u8");
   format[10] = babl_format ("R'G'B' u8");
 
-  kernels_color = gegl_cl_compile_and_build (kernel_color_source, kernel_name);
+  kernels_color = gegl_cl_compile_and_build (colors_cl_source, kernel_name);
 }
 
 
@@ -275,8 +275,6 @@ gegl_cl_color_supported (const Babl *in_format,
   return GEGL_CL_COLOR_NOT_SUPPORTED;
 }
 
-#define CL_ERROR {GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(errcode)); return FALSE;}
-
 gboolean
 gegl_cl_color_conv (cl_mem         in_tex,
                     cl_mem         out_tex,
@@ -284,7 +282,7 @@ gegl_cl_color_conv (cl_mem         in_tex,
                     const Babl    *in_format,
                     const Babl    *out_format)
 {
-  int errcode;
+  cl_int cl_err;
 
   if (gegl_cl_color_supported (in_format, out_format) == GEGL_CL_COLOR_NOT_SUPPORTED)
     return FALSE;
@@ -295,35 +293,36 @@ gegl_cl_color_conv (cl_mem         in_tex,
       gegl_cl_color_babl (in_format, &s);
 
       /* just copy in_tex to out_tex */
-      errcode = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue(),
-                                          in_tex, out_tex, 0, 0, size * s,
-                                          0, NULL, NULL);
-      if (errcode != CL_SUCCESS) CL_ERROR
+      cl_err = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue(),
+                                         in_tex, out_tex, 0, 0, size * s,
+                                         0, NULL, NULL);
+      CL_CHECK;
 
-      errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-      if (errcode != CL_SUCCESS) CL_ERROR
+      cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+      CL_CHECK;
     }
   else
     {
       gint k = choose_kernel (in_format, out_format);
 
-      errcode = gegl_clSetKernelArg(kernels_color->kernel[k], 0, sizeof(cl_mem), (void*)&in_tex);
-      if (errcode != CL_SUCCESS) CL_ERROR
+      cl_err = gegl_clSetKernelArg(kernels_color->kernel[k], 0, sizeof(cl_mem), (void*)&in_tex);
+      CL_CHECK;
 
-      errcode = gegl_clSetKernelArg(kernels_color->kernel[k], 1, sizeof(cl_mem), (void*)&out_tex);
-      if (errcode != CL_SUCCESS) CL_ERROR
+      cl_err = gegl_clSetKernelArg(kernels_color->kernel[k], 1, sizeof(cl_mem), (void*)&out_tex);
+      CL_CHECK;
 
-      errcode = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                            kernels_color->kernel[k], 1,
-                                            NULL, &size, NULL,
-                                            0, NULL, NULL);
-      if (errcode != CL_SUCCESS) CL_ERROR
+      cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                           kernels_color->kernel[k], 1,
+                                           NULL, &size, NULL,
+                                           0, NULL, NULL);
+      CL_CHECK;
 
-      errcode = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-      if (errcode != CL_SUCCESS) CL_ERROR
+      cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
+      CL_CHECK;
     }
 
+  return FALSE;
+
+error:
   return TRUE;
 }
-
-#undef CL_ERROR

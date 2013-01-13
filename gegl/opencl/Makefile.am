@@ -32,7 +32,6 @@ libcl_sources = \
 	gegl-cl-types.h \
 	gegl-cl-init.c \
 	gegl-cl-init.h \
-	gegl-cl-color-kernel.h \
 	gegl-cl-color.c \
 	gegl-cl-color.h
 

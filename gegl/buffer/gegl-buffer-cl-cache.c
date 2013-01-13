@@ -126,8 +126,6 @@ gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
   g_static_mutex_unlock (&cache_mutex);
 }
 
-#define CL_ERROR {GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
-
 gboolean
 gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
                              const GeglRectangle  *roi)
@@ -171,7 +169,7 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
   if (need_cl)
     {
       cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
-      if (cl_err != CL_SUCCESS) CL_ERROR;
+      CL_CHECK;
 
       g_static_mutex_lock (&cache_mutex);
 
@@ -262,5 +260,3 @@ gegl_buffer_cl_cache_invalidate (GeglBuffer          *buffer,
 #endif
 
 }
-
-#undef CL_ERROR
