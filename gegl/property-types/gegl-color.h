@@ -68,10 +68,10 @@ GeglColor *  gegl_color_new                    (const gchar *string);
 /**
  * gegl_color_get_rgba:
  * @color: a #GeglColor
- * @red: red return location.
- * @green: green return location.
- * @blue: blue return location.
- * @alpha: alpha return location.
+ * @red: (out): red return location.
+ * @green: (out): green return location.
+ * @blue: (out): blue return location.
+ * @alpha: (out): alpha return location.
  *
  * Retrieves the current set color as linear light non premultipled RGBA data,
  * any of the return pointers can be omitted.
