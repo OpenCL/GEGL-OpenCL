@@ -1623,6 +1623,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                           gint                 rowstride,
                           GeglAbyssPolicy      repeat_mode)
 {
+  g_return_if_fail (scale > 0.0);
 
   if (format == NULL)
     format = buffer->soft_format;
