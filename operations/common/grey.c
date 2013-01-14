@@ -62,7 +62,7 @@ process (GeglOperation       *op,
 
 #include "opencl/gegl-cl.h"
 
-static cl_int
+static gboolean
 cl_process (GeglOperation       *op,
             cl_mem               in_tex,
             cl_mem               out_tex,
@@ -76,10 +76,12 @@ cl_process (GeglOperation       *op,
                                     in_tex , out_tex , 0 , 0 ,
                                     global_worksize * sizeof (cl_float2),
                                     0, NULL, NULL);
+  CL_CHECK;
 
-  if (CL_SUCCESS != cl_err) return cl_err;
+  return FALSE;
 
-  return cl_err;
+error:
+  return TRUE;
 }
 
 

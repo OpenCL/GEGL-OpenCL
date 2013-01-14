@@ -82,73 +82,11 @@ static float scale_to_aspect (float scale)
 
 #include "opencl/gegl-cl.h"
 
-static const char* kernel_source =
-"__kernel void vignette_cl (__global const float4 *in,           \n"
-"                           __global       float4 *out,          \n"
-"                                          float4 color,         \n"
-"                                          float  scale,         \n"
-"                                          float  cost,          \n"
-"                                          float  sint,          \n"
-"                                          int    roi_x,         \n"
-"                                          int    roi_y,         \n"
-"                                          int    midx,          \n"
-"                                          int    midy,          \n"
-"                                          int    o_shape,       \n"
-"                                          float  gamma,         \n"
-"                                          float  length,        \n"
-"                                          float  radius0,       \n"
-"                                          float  rdiff)         \n"
-"{                                                               \n"
-"  int gidx = get_global_id(0);                                  \n"
-"  int gidy = get_global_id(1);                                  \n"
-"  int gid = gidx + gidy * get_global_size(0);                   \n"
-"  float strength = 0.0f;                                        \n"
-"  float u,v,costy,sinty;                                        \n"
-"  int x,y;                                                      \n"
-"  x = gidx + roi_x;                                             \n"
-"  y = gidy + roi_y;                                             \n"
-"  sinty = sint * (y-midy) - midx;                               \n"
-"  costy = cost * (y-midy) + midy;                               \n"
-"                                                                \n"
-"  u = cost * (x-midx) - sinty;                                  \n"
-"  v = sint * (x-midx) + costy;                                  \n"
-"                                                                \n"
-"  if (length == 0.0f)                                           \n"
-"    strength = 0.0f;                                            \n"
-"  else                                                          \n"
-"    {                                                           \n"
-"      switch (o_shape)                                          \n"
-"        {                                                       \n"
-"          case 0:                                               \n"
-"          strength = hypot ((u-midx) / scale, v-midy);          \n"
-"          break;                                                \n"
-"                                                                \n"
-"          case 1:                                               \n"
-"          strength = fmax (fabs(u-midx)/scale, fabs(v-midy));   \n"
-"          break;                                                \n"
-"                                                                \n"
-"          case 2:                                               \n"
-"          strength = fabs (u-midx) / scale + fabs(v-midy);      \n"
-"          break;                                                \n"
-"        }                                                       \n"
-"      strength /= length;                                       \n"
-"      strength = (strength-radius0) / rdiff;                    \n"
-"    }                                                           \n"
-"                                                                \n"
-"  if (strength < 0.0f) strength = 0.0f;                         \n"
-"  if (strength > 1.0f) strength = 1.0f;                         \n"
-"                                                                \n"
-"  if (gamma > 0.9999f && gamma < 2.0001f)                       \n"
-"    strength *= strength;                                       \n"
-"  else if (gamma != 1.0f)                                       \n"
-"    strength = pow(strength, gamma);                            \n"
-"                                                                \n"
-"  out[gid] = in[gid]*(1.0f-strength) + color * strength;        \n"
-"}                                                               \n";
+#include "opencl/vignette.cl.h"
 
 static GeglClRunData * cl_data = NULL;
 
-static cl_int
+static gboolean
 cl_process (GeglOperation       *operation,
             cl_mem               in_tex,
             cl_mem               out_tex,
@@ -200,9 +138,9 @@ cl_process (GeglOperation       *operation,
   if (!cl_data)
     {
       const char *kernel_name[] = {"vignette_cl",NULL};
-      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+      cl_data = gegl_cl_compile_and_build (vignette_cl_source, kernel_name);
     }
-  if (!cl_data) return 1;
+  if (!cl_data) return TRUE;
 
   {
   const size_t gbl_size[2] = {roi->width, roi->height};
@@ -217,31 +155,48 @@ cl_process (GeglOperation       *operation,
   f_color.s[2] = color[2];
   f_color.s[3] = color[3];
 
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0,  sizeof(cl_mem),   (void*)&in_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1,  sizeof(cl_mem),   (void*)&out_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2,  sizeof(cl_float4),(void*)&f_color);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3,  sizeof(cl_float), (void*)&scale);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4,  sizeof(cl_float), (void*)&cost);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 5,  sizeof(cl_float), (void*)&sint);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 6,  sizeof(cl_int),   (void*)&roi_x);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 7,  sizeof(cl_int),   (void*)&roi_y);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 8,  sizeof(cl_int),   (void*)&midx);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 9,  sizeof(cl_int),   (void*)&midy);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 10, sizeof(cl_int),   (void*)&shape);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 11, sizeof(cl_float), (void*)&gamma);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 12, sizeof(cl_float), (void*)&length);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 13, sizeof(cl_float), (void*)&radius0);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 14, sizeof(cl_float), (void*)&rdiff);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0,  sizeof(cl_mem),   (void*)&in_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1,  sizeof(cl_mem),   (void*)&out_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2,  sizeof(cl_float4),(void*)&f_color);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3,  sizeof(cl_float), (void*)&scale);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4,  sizeof(cl_float), (void*)&cost);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 5,  sizeof(cl_float), (void*)&sint);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 6,  sizeof(cl_int),   (void*)&roi_x);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 7,  sizeof(cl_int),   (void*)&roi_y);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 8,  sizeof(cl_int),   (void*)&midx);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 9,  sizeof(cl_int),   (void*)&midy);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 10, sizeof(cl_int),   (void*)&shape);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 11, sizeof(cl_float), (void*)&gamma);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 12, sizeof(cl_float), (void*)&length);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 13, sizeof(cl_float), (void*)&radius0);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 14, sizeof(cl_float), (void*)&rdiff);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                        cl_data->kernel[0], 2,
                                        NULL, gbl_size, NULL,
                                        0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
   }
 
-  return  CL_SUCCESS;
+  return  FALSE;
+
+error:
+  return TRUE;
 }
 
 static gboolean

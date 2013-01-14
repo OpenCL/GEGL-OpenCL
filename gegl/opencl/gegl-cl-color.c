@@ -297,9 +297,6 @@ gegl_cl_color_conv (cl_mem         in_tex,
                                          in_tex, out_tex, 0, 0, size * s,
                                          0, NULL, NULL);
       CL_CHECK;
-
-      cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-      CL_CHECK;
     }
   else
     {
@@ -315,9 +312,6 @@ gegl_cl_color_conv (cl_mem         in_tex,
                                            kernels_color->kernel[k], 1,
                                            NULL, &size, NULL,
                                            0, NULL, NULL);
-      CL_CHECK;
-
-      cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
       CL_CHECK;
     }
 

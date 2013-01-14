@@ -214,8 +214,7 @@ cl_process (GeglOperation       *op,
       const char *kernel_name[] = {"gegl_opacity_RaGaBaA_float", "gegl_opacity_RGBA_float", NULL};
       cl_data = gegl_cl_compile_and_build (opacity_cl_source, kernel_name);
     }
-
-  if (!cl_data) return FALSE;
+  if (!cl_data) return TRUE;
 
   kernel = (GEGL_CHANT_PROPERTIES (op)->chant_data != NULL);
 
@@ -232,10 +231,10 @@ cl_process (GeglOperation       *op,
                                         0, NULL, NULL);
   CL_CHECK;
 
-  return TRUE;
+  return FALSE;
 
 error:
-  return FALSE;
+  return TRUE;
 }
 
 /* Fast path when opacity is a no-op
@@ -281,6 +280,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = operation_process;
   point_composer_class->process = process;
   point_composer_class->cl_process = cl_process;
+
+  operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:opacity",

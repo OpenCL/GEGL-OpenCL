@@ -58,7 +58,7 @@ struct _GeglOperationPointComposerClass
                         const GeglRectangle *roi,     /* rectangular region in output buffer */
                         gint                 level);
 
-  cl_int   (* cl_process) (GeglOperation       *self,
+  gboolean (* cl_process) (GeglOperation       *self,
                            cl_mem               in_tex,
                            cl_mem               aux_tex,
                            cl_mem               out_tex,

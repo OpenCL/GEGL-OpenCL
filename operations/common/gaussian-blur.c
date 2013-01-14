@@ -422,7 +422,7 @@ static void prepare (GeglOperation *operation)
 
 static GeglClRunData *cl_data = NULL;
 
-static cl_int
+static gboolean
 cl_gaussian_blur (cl_mem                in_tex,
                   cl_mem                out_tex,
                   cl_mem                aux_tex,
@@ -448,72 +448,88 @@ cl_gaussian_blur (cl_mem                in_tex,
       const char *kernel_name[] = {"fir_ver_blur", "fir_hor_blur", NULL};
       cl_data = gegl_cl_compile_and_build (gaussian_blur_cl_source, kernel_name);
     }
-  if (!cl_data) return 1;
+  if (!cl_data) return TRUE;
 
   cl_matrix_x = gegl_clCreateBuffer(gegl_cl_get_context(),
                                     CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
                                     matrix_length_x * sizeof(cl_float), NULL, &cl_err);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueWriteBuffer(gegl_cl_get_command_queue(), cl_matrix_x,
                                      CL_TRUE, 0, matrix_length_x * sizeof(cl_float), dmatrix_x,
                                      0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
 
   cl_matrix_y = gegl_clCreateBuffer(gegl_cl_get_context(),
                                     CL_MEM_ALLOC_HOST_PTR | CL_MEM_READ_ONLY,
                                     matrix_length_y * sizeof(cl_float), NULL, &cl_err);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueWriteBuffer(gegl_cl_get_command_queue(), cl_matrix_y,
                                      CL_TRUE, 0, matrix_length_y * sizeof(cl_float), dmatrix_y,
                                      0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
 
   {
   global_ws[0] = aux_rect->width;
   global_ws[1] = aux_rect->height;
 
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem), (void*)&in_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_int), (void*)&src_rect->width);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_mem), (void*)&aux_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 3, sizeof(cl_mem), (void*)&cl_matrix_x);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 4, sizeof(cl_int), (void*)&matrix_length_x);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 5, sizeof(cl_int), (void*)&xoff);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem), (void*)&in_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_int), (void*)&src_rect->width);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_mem), (void*)&aux_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 3, sizeof(cl_mem), (void*)&cl_matrix_x);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 4, sizeof(cl_int), (void*)&matrix_length_x);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 5, sizeof(cl_int), (void*)&xoff);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                        cl_data->kernel[1], 2,
                                        NULL, global_ws, NULL,
                                        0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
   }
 
   {
   global_ws[0] = roi->width;
   global_ws[1] = roi->height;
 
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&aux_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_int), (void*)&aux_rect->width);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_mem), (void*)&out_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_mem), (void*)&cl_matrix_y);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int), (void*)&matrix_length_y);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int), (void*)&yoff);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&aux_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_int), (void*)&aux_rect->width);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_mem), (void*)&out_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_mem), (void*)&cl_matrix_y);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int), (void*)&matrix_length_y);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int), (void*)&yoff);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                        cl_data->kernel[0], 2,
                                        NULL, global_ws, NULL,
                                        0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
   }
 
-  gegl_clFinish(gegl_cl_get_command_queue ());
+  cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
+  CL_CHECK;
 
-  gegl_clReleaseMemObject(cl_matrix_x);
-  gegl_clReleaseMemObject(cl_matrix_y);
+  cl_err = gegl_clReleaseMemObject(cl_matrix_x);
+  CL_CHECK;
+  cl_err = gegl_clReleaseMemObject(cl_matrix_y);
+  CL_CHECK;
 
-  return CL_SUCCESS;
+  return FALSE;
+
+error:
+  return TRUE;
 }
 
 static gboolean
@@ -560,22 +576,22 @@ cl_process (GeglOperation       *operation,
       if (err) return FALSE;
       for (j=0; j < i->n; j++)
         {
-           cl_err = cl_gaussian_blur(i->tex[read][j],
-                                     i->tex[0][j],
-                                     i->tex[aux][j],
-                                     i->size[0][j],
-                                     &i->roi[0][j],
-                                     &i->roi[read][j],
-                                     &i->roi[aux][j],
-                                     fmatrix_x,
-                                     cmatrix_len_x,
-                                     op_area->left,
-                                     fmatrix_y,
-                                     cmatrix_len_y,
-                                     op_area->top);
-          if (cl_err != CL_SUCCESS)
+           err = cl_gaussian_blur(i->tex[read][j],
+                                  i->tex[0][j],
+                                  i->tex[aux][j],
+                                  i->size[0][j],
+                                  &i->roi[0][j],
+                                  &i->roi[read][j],
+                                  &i->roi[aux][j],
+                                  fmatrix_x,
+                                  cmatrix_len_x,
+                                  op_area->left,
+                                  fmatrix_y,
+                                  cmatrix_len_y,
+                                  op_area->top);
+          if (err)
             {
-              g_warning("[OpenCL] Error in gegl:gaussian-blur: %s", gegl_cl_errstring(cl_err));
+              g_warning("[OpenCL] Error in gegl:gaussian-blur");
               return FALSE;
             }
         }

@@ -152,88 +152,11 @@ static void prepare (GeglOperation *operation)
 #include "opencl/gegl-cl.h"
 #include "buffer/gegl-buffer-cl-iterator.h"
 
-static const char* kernel_source =
-"#define NEIGHBOURS 8                                                              \n"
-"#define AXES       (NEIGHBOURS/2)                                                 \n"
-"                                                                                  \n"
-"#define POW2(a) ((a)*(a))                                                         \n"
-"                                                                                  \n"
-"#define GEN_METRIC(before, center, after) POW2((center) * 2 - (before) - (after)) \n"
-"                                                                                  \n"
-"#define BAIL_CONDITION(new,original) ((new) < (original))                         \n"
-"                                                                                  \n"
-"#define SYMMETRY(a)  (NEIGHBOURS - (a) - 1)                                       \n"
-"                                                                                  \n"
-"#define O(u,v) (((u)+((v) * (src_stride))))                                       \n"
-"                                                                                  \n"
-"__kernel void noise_reduction_cl (__global       float4 *src_buf,                 \n"
-"                                  int src_stride,                                 \n"
-"                                  __global       float4 *dst_buf,                 \n"
-"                                  int dst_stride)                                 \n"
-"{                                                                                 \n"
-"    int gidx = get_global_id(0);                                                  \n"
-"    int gidy = get_global_id(1);                                                  \n"
-"                                                                                  \n"
-"    __global float4 *center_pix = src_buf + (gidy + 1) * src_stride + gidx + 1;   \n"
-"    int dst_offset = dst_stride * gidy + gidx;                                    \n"
-"                                                                                  \n"
-"    int offsets[NEIGHBOURS] = {                                                   \n"
-"        O(-1, -1), O( 0, -1), O( 1, -1),                                          \n"
-"        O(-1,  0),            O( 1,  0),                                          \n"
-"        O(-1,  1), O( 0,  1), O( 1,  1)                                           \n"
-"    };                                                                            \n"
-"                                                                                  \n"
-"    float4 sum;                                                                   \n"
-"    int4   count;                                                                 \n"
-"    float4 cur;                                                                   \n"
-"    float4 metric_reference[AXES];                                                \n"
-"                                                                                  \n"
-"    for (int axis = 0; axis < AXES; axis++)                                       \n"
-"      {                                                                           \n"
-"        float4 before_pix = *(center_pix + offsets[axis]);                        \n"
-"        float4 after_pix  = *(center_pix + offsets[SYMMETRY(axis)]);              \n"
-"        metric_reference[axis] = GEN_METRIC (before_pix, *center_pix, after_pix); \n"
-"      }                                                                           \n"
-"                                                                                  \n"
-"    cur = sum = *center_pix;                                                      \n"
-"    count = 1;                                                                    \n"
-"                                                                                  \n"
-"    for (int direction = 0; direction < NEIGHBOURS; direction++)                  \n"
-"      {                                                                           \n"
-"        float4 pix   = *(center_pix + offsets[direction]);                        \n"
-"        float4 value = (pix + cur) * (0.5f);                                      \n"
-"        int    axis;                                                              \n"
-"        int4   mask = {1, 1, 1, 0};                                               \n"
-"                                                                                  \n"
-"        for (axis = 0; axis < AXES; axis++)                                       \n"
-"          {                                                                       \n"
-"            float4 before_pix = *(center_pix + offsets[axis]);                    \n"
-"            float4 after_pix  = *(center_pix + offsets[SYMMETRY(axis)]);          \n"
-"                                                                                  \n"
-"            float4 metric_new = GEN_METRIC (before_pix,                           \n"
-"                                            value,                                \n"
-"                                            after_pix);                           \n"
-"            mask = BAIL_CONDITION (metric_new, metric_reference[axis]) & mask;    \n"
-"          }                                                                       \n"
-"        sum   += mask >0 ? value : 0;                                             \n"
-"        count += mask >0 ? 1     : 0;                                             \n"
-"      }                                                                           \n"
-"    dst_buf[dst_offset]   = (sum/convert_float4(count));                          \n"
-"    dst_buf[dst_offset].w = cur.w;                                                \n"
-"}                                                                                 \n"
-"__kernel void transfer(__global float4 * in,                                      \n"
-"              int               in_width,                                         \n"
-"              __global float4 * out)                                              \n"
-"{                                                                                 \n"
-"    int gidx = get_global_id(0);                                                  \n"
-"    int gidy = get_global_id(1);                                                  \n"
-"    int width = get_global_size(0);                                               \n"
-"    out[gidy * width + gidx] = in[gidy * in_width + gidx];                        \n"
-"}                                                                                 \n";
+#include "opencl/noise-reduction.cl.h"
 
 static GeglClRunData *cl_data = NULL;
 
-static cl_int
+static gboolean
 cl_noise_reduction (cl_mem                in_tex,
                     cl_mem                aux_tex,
                     cl_mem                out_tex,
@@ -255,24 +178,21 @@ cl_noise_reduction (cl_mem                in_tex,
   if (!cl_data)
     {
       const char *kernel_name[] ={"noise_reduction_cl","transfer", NULL};
-      cl_data = gegl_cl_compile_and_build(kernel_source, kernel_name);
+      cl_data = gegl_cl_compile_and_build(noise_reduction_cl_source, kernel_name);
     }
-  if (!cl_data)  return 0;
+  if (!cl_data)  return TRUE;
 
   temp_tex = gegl_clCreateBuffer (gegl_cl_get_context(),
                                   CL_MEM_READ_WRITE,
                                   src_roi->width * src_roi->height * stride,
                                   NULL, &cl_err);
-  if (cl_err != CL_SUCCESS) return cl_err;
-
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueCopyBuffer(gegl_cl_get_command_queue(),
                                     in_tex , temp_tex , 0 , 0 ,
                                     src_roi->width * src_roi->height * stride,
                                     0, NULL, NULL);
-
-  cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-  if (CL_SUCCESS != cl_err) return cl_err;
+  CL_CHECK;
 
   tmptex = temp_tex;
   for (i = 0;i<iterations;i++)
@@ -286,37 +206,46 @@ cl_noise_reduction (cl_mem                in_tex,
       gbl_size_tmp[0] = roi->width  + 2 * (iterations - 1 -i);
       gbl_size_tmp[1] = roi->height + 2 * (iterations - 1 -i);
 
-      cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&temp_tex);
-      cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_int), (void*)&n_src_stride);
-      cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_mem), (void*)&aux_tex);
-      cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_int), (void*)&n_src_stride);
-      if (cl_err != CL_SUCCESS) return cl_err;
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&temp_tex);
+      CL_CHECK;
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_int), (void*)&n_src_stride);
+      CL_CHECK;
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_mem), (void*)&aux_tex);
+      CL_CHECK;
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_int), (void*)&n_src_stride);
+      CL_CHECK;
 
       cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue(), cl_data->kernel[0],
                                            2, NULL, gbl_size_tmp, NULL,
                                            0, NULL, NULL);
-      cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-      if (CL_SUCCESS != cl_err) return cl_err;
+      CL_CHECK;
     }
 
   gbl_size_tmp[0] = roi->width ;
   gbl_size_tmp[1] = roi->height;
 
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem), (void*)&aux_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_int), (void*)&n_src_stride);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_mem), (void*)&out_tex);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem), (void*)&aux_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_int), (void*)&n_src_stride);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_mem), (void*)&out_tex);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue(), cl_data->kernel[1],
                                        2, NULL, gbl_size_tmp, NULL,
                                        0, NULL, NULL);
+  CL_CHECK;
 
   cl_err = gegl_clFinish(gegl_cl_get_command_queue());
-  if (CL_SUCCESS != cl_err) return cl_err;
+  CL_CHECK;
 
-  if (tmptex) gegl_clReleaseMemObject (tmptex);
+  if (tmptex) cl_err = gegl_clReleaseMemObject (tmptex);
+  CL_CHECK;
 
-  return cl_err;
+  return FALSE;
+
+error:
+  return TRUE;
 }
 
 static gboolean
@@ -329,7 +258,6 @@ cl_process (GeglOperation       *operation,
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
   gint j;
-  cl_int cl_err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
@@ -345,16 +273,16 @@ cl_process (GeglOperation       *operation,
     if (err) return FALSE;
     for (j=0; j < i->n; j++)
       {
-        cl_err = cl_noise_reduction(i->tex[read][j],
-                                    i->tex[aux][j],
-                                    i->tex[0][j],
-                                    i->size[0][j],
-                                    &i->roi[read][j],
-                                    &i->roi[0][j],
-                                    o->iterations);
-        if (cl_err != CL_SUCCESS)
+        err = cl_noise_reduction(i->tex[read][j],
+                                 i->tex[aux][j],
+                                 i->tex[0][j],
+                                 i->size[0][j],
+                                 &i->roi[read][j],
+                                 &i->roi[0][j],
+                                 o->iterations);
+        if (err)
         {
-          g_warning("[OpenCL] Error in gegl:noise-reduction: %s", gegl_cl_errstring(cl_err));
+          g_warning("[OpenCL] Error in gegl:noise-reduction");
           return FALSE;
         }
       }

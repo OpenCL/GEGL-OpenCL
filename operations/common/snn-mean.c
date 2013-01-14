@@ -222,127 +222,11 @@ snn_mean (GeglBuffer          *src,
 #include "opencl/gegl-cl.h"
 #include "buffer/gegl-buffer-cl-iterator.h"
 
-static const char* kernel_source =
-"float colordiff (float4 pixA,                                         \n"
-"                 float4 pixB)                                         \n"
-"{                                                                     \n"
-"    float4 pix = pixA-pixB;                                           \n"
-"    pix *= pix;                                                       \n"
-"    return pix.x+pix.y+pix.z;                                         \n"
-"}                                                                     \n"
-"                                                                      \n"
-"__kernel void snn_mean_CL (__global const   float4 *src_buf,          \n"
-"                                            int src_width,            \n"
-"                                            int src_height,           \n"
-"                           __global         float4 *dst_buf,          \n"
-"                                            int radius,               \n"
-"                                            int pairs)                \n"
-"{                                                                     \n"
-"    int gidx   =get_global_id(0);                                     \n"
-"    int gidy   =get_global_id(1);                                     \n"
-"    int offset =gidy * get_global_size(0) + gidx;                     \n"
-"                                                                      \n"
-"    __global const float4 *center_pix=                                \n"
-"        src_buf + ((radius+gidx) + (gidy+radius)* src_width);         \n"
-"    float4 accumulated=0;                                             \n"
-"                                                                      \n"
-"    int count=0;                                                      \n"
-"    if(pairs==2)                                                      \n"
-"    {                                                                 \n"
-"        for(int i=-radius;i<0;i++)                                    \n"
-"        {                                                             \n"
-"            for(int j=-radius;j<0;j++)                                \n"
-"            {                                                         \n"
-"                __global const float4 *selected_pix = center_pix;     \n"
-"                float  best_diff = 1000.0f;                           \n"
-"                                                                      \n"
-"                    int xs[4]={                                       \n"
-"                        gidx+j+radius, gidx-j+radius,                 \n"
-"                        gidx-j+radius, gidx+j+radius                  \n"
-"                    };                                                \n"
-"                    int ys[4]={                                       \n"
-"                        gidy+i+radius, gidy-i+radius,                 \n"
-"                        gidy+i+radius, gidy-i+radius};                \n"
-"                                                                      \n"
-"                    for (int k=0;k<4;k++)                             \n"
-"                    {                                                 \n"
-"                        if (xs[k] >= 0 && xs[k] < src_width &&        \n"
-"                            ys[k] >= 0 && ys[k] < src_height)         \n"
-"                        {                                             \n"
-"                            __global const float4 *tpix =             \n"
-"                                src_buf + (xs[k] + ys[k] * src_width);\n"
-"                            float diff=colordiff(*tpix, *center_pix); \n"
-"                            if (diff < best_diff)                     \n"
-"                            {                                         \n"
-"                                best_diff = diff;                     \n"
-"                                selected_pix = tpix;                  \n"
-"                            }                                         \n"
-"                        }                                             \n"
-"                    }                                                 \n"
-"                                                                      \n"
-"                accumulated += *selected_pix;                         \n"
-"                                                                      \n"
-"                ++count;                                              \n"
-"                if (i==0 && j==0)                                     \n"
-"                    break;                                            \n"
-"            }                                                         \n"
-"        }                                                             \n"
-"        dst_buf[offset] = accumulated/count;                          \n"
-"        return;                                                       \n"
-"    }                                                                 \n"
-"    else if(pairs==1)                                                 \n"
-"    {                                                                 \n"
-"        for(int i=-radius;i<=0;i++)                                   \n"
-"        {                                                             \n"
-"            for(int j=-radius;j<=radius;j++)                          \n"
-"            {                                                         \n"
-"                __global const float4 *selected_pix = center_pix;     \n"
-"                float  best_diff = 1000.0f;                           \n"
-"                                                                      \n"
-"                /* skip computations for the center pixel */          \n"
-"                if (i != 0 && j != 0)                                 \n"
-"                {                                                     \n"
-"                    int xs[4]={                                       \n"
-"                        gidx+i+radius, gidx-i+radius,                 \n"
-"                        gidx-i+radius, gidx+i+radius                  \n"
-"                    };                                                \n"
-"                    int ys[4]={                                       \n"
-"                        gidy+j+radius, gidy-j+radius,                 \n"
-"                        gidy+j+radius, gidy-j+radius                  \n"
-"                    };                                                \n"
-"                                                                      \n"
-"                    for (i=0;i<2;i++)                                 \n"
-"                    {                                                 \n"
-"                        if (xs[i] >= 0 && xs[i] < src_width &&        \n"
-"                            ys[i] >= 0 && ys[i] < src_height)         \n"
-"                        {                                             \n"
-"                            __global const float4 *tpix =             \n"
-"                                src_buf + (xs[i] + ys[i] * src_width);\n"
-"                            float diff=colordiff (*tpix, *center_pix);\n"
-"                            if (diff < best_diff)                     \n"
-"                            {                                         \n"
-"                                best_diff = diff;                     \n"
-"                                selected_pix = tpix;                  \n"
-"                            }                                         \n"
-"                        }                                             \n"
-"                    }                                                 \n"
-"                }                                                     \n"
-"                accumulated += *selected_pix;                         \n"
-"                ++count;                                              \n"
-"                if (i==0 && j==0)                                     \n"
-"                    break;                                            \n"
-"            }                                                         \n"
-"        }                                                             \n"
-"        dst_buf[offset] = accumulated/count;                          \n"
-"        return;                                                       \n"
-"    }                                                                 \n"
-"    return;                                                           \n"
-"}                                                                     \n";
-
+#include "opencl/snn-mean.cl.h"
 
 static GeglClRunData *cl_data = NULL;
 
-static cl_int
+static gboolean
 cl_snn_mean (cl_mem                in_tex,
              cl_mem                out_tex,
              const GeglRectangle  *src_rect,
@@ -355,31 +239,38 @@ cl_snn_mean (cl_mem                in_tex,
 
   if (!cl_data)
     {
-      const char *kernel_name[] = {"snn_mean_CL", NULL};
-      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+      const char *kernel_name[] = {"snn_mean", NULL};
+      cl_data = gegl_cl_compile_and_build (snn_mean_cl_source, kernel_name);
     }
-
-  if (!cl_data) return 1;
+  if (!cl_data) return TRUE;
 
 
   global_ws[0] = roi->width;
   global_ws[1] = roi->height;
 
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_int),   (void*)&src_rect->width);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_int),   (void*)&src_rect->height);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_mem),   (void*)&out_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int),   (void*)&radius);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int),   (void*)&pairs);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_int),   (void*)&src_rect->width);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_int),   (void*)&src_rect->height);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_mem),   (void*)&out_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int),   (void*)&radius);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int),   (void*)&pairs);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                         cl_data->kernel[0], 2,
                                         NULL, global_ws, NULL,
                                         0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
 
-  return cl_err;
+  return FALSE;
+
+error:
+  return TRUE;
 }
 
 static gboolean
@@ -392,7 +283,6 @@ cl_process (GeglOperation       *operation,
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
   gint j;
-  cl_int cl_err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
@@ -404,10 +294,10 @@ cl_process (GeglOperation       *operation,
       if (err) return FALSE;
       for (j=0; j < i->n; j++)
         {
-          cl_err = cl_snn_mean(i->tex[read][j], i->tex[0][j], &i->roi[read][j], &i->roi[0][j], ceil(o->radius), o->pairs);
-          if (cl_err != CL_SUCCESS)
+          err = cl_snn_mean(i->tex[read][j], i->tex[0][j], &i->roi[read][j], &i->roi[0][j], ceil(o->radius), o->pairs);
+          if (err)
             {
-              g_warning("[OpenCL] Error in gegl:snn-mean: %s", gegl_cl_errstring(cl_err));
+              g_warning("[OpenCL] Error in gegl:snn-mean");
               return FALSE;
             }
         }

@@ -87,25 +87,12 @@ process (GeglOperation       *op,
 
 #include "opencl/gegl-cl.h"
 
-static const char* kernel_source =
-"__kernel void kernel_levels(__global const float4     *in,      \n"
-"                            __global       float4     *out,     \n"
-"                            float in_offset,                    \n"
-"                            float out_offset,                   \n"
-"                            float scale)                        \n"
-"{                                                               \n"
-"  int gid = get_global_id(0);                                   \n"
-"  float4 in_v  = in[gid];                                       \n"
-"  float4 out_v;                                                 \n"
-"  out_v.xyz = (in_v.xyz - in_offset) * scale + out_offset;      \n"
-"  out_v.w   =  in_v.w;                                          \n"
-"  out[gid]  =  out_v;                                           \n"
-"}                                                               \n";
+#include "opencl/levels.cl.h"
 
 static GeglClRunData *cl_data = NULL;
 
 /* OpenCL processing function */
-static cl_int
+static gboolean
 cl_process (GeglOperation       *op,
             cl_mem               in_tex,
             cl_mem               out_tex,
@@ -140,24 +127,31 @@ cl_process (GeglOperation       *op,
   if (!cl_data)
     {
       const char *kernel_name[] = {"kernel_levels", NULL};
-      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+      cl_data = gegl_cl_compile_and_build (levels_cl_source, kernel_name);
     }
-  if (!cl_data) return 1;
+  if (!cl_data) return TRUE;
 
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&in_offset);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&out_offset);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float), (void*)&scale);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&in_offset);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&out_offset);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float), (void*)&scale);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                         cl_data->kernel[0], 1,
                                         NULL, &global_worksize, NULL,
                                         0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
 
-  return cl_err;
+  return FALSE;
+
+error:
+  return TRUE;
 }
 
 

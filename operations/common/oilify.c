@@ -278,135 +278,11 @@ prepare (GeglOperation *operation)
 #include "opencl/gegl-cl.h"
 #include "buffer/gegl-buffer-cl-iterator.h"
 
-/* two small different kernels are better than one big */
-static const char* kernel_source =
-"#define NUM_INTENSITIES 256                                                \n"
-"kernel void kernel_oilify(global float4 *in,                               \n"
-"                             global float4 *out,                           \n"
-"                             const int mask_radius,                        \n"
-"                             const int intensities,                        \n"
-"                             const float exponent)                         \n"
-"{                                                                          \n"
-"  int gidx = get_global_id(0);                                             \n"
-"  int gidy = get_global_id(1);                                             \n"
-"  int x = gidx + mask_radius;                                              \n"
-"  int y = gidy + mask_radius;                                              \n"
-"  int dst_width = get_global_size(0);                                      \n"
-"  int src_width = dst_width + mask_radius * 2;                             \n"
-"  float4 hist[NUM_INTENSITIES];                                            \n"
-"  float4 hist_max = 1.0;                                                   \n"
-"  int i, j, intensity;                                                     \n"
-"  int radius_sq = mask_radius * mask_radius;                               \n"
-"  float4 temp_pixel;                                                       \n"
-"  for (i = 0; i < intensities; i++)                                        \n"
-"    hist[i] = 0.0;                                                         \n"
-"                                                                           \n"
-"  for (i = -mask_radius; i <= mask_radius; i++)                            \n"
-"  {                                                                        \n"
-"    for (j = -mask_radius; j <= mask_radius; j++)                          \n"
-"      {                                                                    \n"
-"        if (i*i + j*j <= radius_sq)                                        \n"
-"          {                                                                \n"
-"            temp_pixel = in[x + i + (y + j) * src_width];                  \n"
-"            hist[(int)(temp_pixel.x * (intensities - 1))].x+=1;            \n"
-"            hist[(int)(temp_pixel.y * (intensities - 1))].y+=1;            \n"
-"            hist[(int)(temp_pixel.z * (intensities - 1))].z+=1;            \n"
-"            hist[(int)(temp_pixel.w * (intensities - 1))].w+=1;            \n"
-"          }                                                                \n"
-"      }                                                                    \n"
-"  }                                                                        \n"
-"                                                                           \n"
-"  for (i = 0; i < intensities; i++) {                                      \n"
-"    if(hist_max.x < hist[i].x)                                             \n"
-"      hist_max.x = hist[i].x;                                              \n"
-"    if(hist_max.y < hist[i].y)                                             \n"
-"      hist_max.y = hist[i].y;                                              \n"
-"    if(hist_max.z < hist[i].z)                                             \n"
-"      hist_max.z = hist[i].z;                                              \n"
-"    if(hist_max.w < hist[i].w)                                             \n"
-"      hist_max.w = hist[i].w;                                              \n"
-"  }                                                                        \n"
-"  float4 div = 0.0;                                                        \n"
-"  float4 sum = 0.0;                                                        \n"
-"  float4 ratio, weight;                                                    \n"
-"  for (i = 0; i < intensities; i++)                                        \n"
-"  {                                                                        \n"
-"    ratio = hist[i] / hist_max;                                            \n"
-"    weight = pow(ratio, (float4)exponent);                                 \n"
-"    sum += weight * (float4)i;                                             \n"
-"    div += weight;                                                         \n"
-"  }                                                                        \n"
-"  out[gidx + gidy * dst_width] = sum / div / (float)(intensities - 1);     \n"
-"}                                                                          \n"
-"                                                                           \n"
-"kernel void kernel_oilify_inten(global float4 *in,                         \n"
-"                             global float4 *out,                           \n"
-"                             const int mask_radius,                        \n"
-"                             const int intensities,                        \n"
-"                             const float exponent)                         \n"
-"{                                                                          \n"
-"  int gidx = get_global_id(0);                                             \n"
-"  int gidy = get_global_id(1);                                             \n"
-"  int x = gidx + mask_radius;                                              \n"
-"  int y = gidy + mask_radius;                                              \n"
-"  int dst_width = get_global_size(0);                                      \n"
-"  int src_width = dst_width + mask_radius * 2;                             \n"
-"  float4 cumulative_rgb[NUM_INTENSITIES];                                  \n"
-"  int hist_inten[NUM_INTENSITIES], inten_max;                              \n"
-"  int i, j, intensity;                                                     \n"
-"  int radius_sq = mask_radius * mask_radius;                               \n"
-"  float4 temp_pixel;                                                       \n"
-"  for (i = 0; i < intensities; i++)                                        \n"
-"  {                                                                        \n"
-"    hist_inten[i] = 0;                                                     \n"
-"    cumulative_rgb[i] = 0.0;                                               \n"
-"  }                                                                        \n"
-"  for (i = -mask_radius; i <= mask_radius; i++)                            \n"
-"  {                                                                        \n"
-"    for (j = -mask_radius; j <= mask_radius; j++)                          \n"
-"      {                                                                    \n"
-"        if (i*i + j*j <= radius_sq)                                        \n"
-"          {                                                                \n"
-"            temp_pixel = in[x + i + (y + j) * src_width];                  \n"
-"            /*Calculate intensity on the fly, GPU does it fast*/           \n"
-"            intensity = (int)((0.299 * temp_pixel.x                        \n"
-"                      +0.587 * temp_pixel.y                                \n"
-"                      +0.114 * temp_pixel.z) * (float)(intensities-1));    \n"
-"            hist_inten[intensity] += 1;                                    \n"
-"            cumulative_rgb[intensity] += temp_pixel;                       \n"
-"          }                                                                \n"
-"      }                                                                    \n"
-"  }                                                                        \n"
-"  inten_max = 1;                                                           \n"
-"                                                                           \n"
-"  /* calculated maximums */                                                \n"
-"  for (i = 0; i < intensities; i++) {                                      \n"
-"    if(hist_inten[i] > inten_max)                                          \n"
-"      inten_max = hist_inten[i];                                           \n"
-"  }                                                                        \n"
-"  float div = 0.0;                                                         \n"
-"  float ratio, weight, mult_inten;                                         \n"
-"                                                                           \n"
-"  float4 color = 0.0;                                                      \n"
-"  for (i = 0; i < intensities; i++)                                        \n"
-"  {                                                                        \n"
-"    if (hist_inten[i] > 0)                                                 \n"
-"    {                                                                      \n"
-"      ratio = (float)(hist_inten[i]) / (float)(inten_max);                 \n"
-"      weight = pow(ratio, exponent);                                       \n"
-"      mult_inten = weight / (float)(hist_inten[i]);                        \n"
-"                                                                           \n"
-"      div += weight;                                                       \n"
-"      color += mult_inten * cumulative_rgb[i];                             \n"
-"    }                                                                      \n"
-"  }                                                                        \n"
-"  out[gidx + gidy * dst_width] = color/div;                                \n"
-"}                                                                          \n";
-
+#include "opencl/oilify.cl.h"
 
 static GeglClRunData *cl_data = NULL;
 
-static cl_int
+static gboolean
 cl_oilify (cl_mem              in_tex,
            cl_mem              out_tex,
            size_t              global_worksize,
@@ -416,12 +292,6 @@ cl_oilify (cl_mem              in_tex,
            gint                exponent,
            gboolean            use_inten)
 {
-  if (!cl_data)
-    {
-      const char *kernel_name[] = {"kernel_oilify", "kernel_oilify_inten", NULL};
-      cl_data = gegl_cl_compile_and_build(kernel_source, kernel_name);
-    }
-  if (!cl_data)  return 0;
 
   const size_t gbl_size[2] = {roi->width,roi->height};
   cl_int radius      = mask_radius;
@@ -430,21 +300,35 @@ cl_oilify (cl_mem              in_tex,
   cl_int cl_err      = 0;
   gint arg = 0;
 
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"kernel_oilify", "kernel_oilify_inten", NULL};
+      cl_data = gegl_cl_compile_and_build(oilify_cl_source, kernel_name);
+    }
+  if (!cl_data)  return TRUE;
+
   /* simple hack: select suitable kernel using boolean, 0 - no intensity mode, 1 - intensity mode */
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_mem), (void*)&in_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_mem), (void*)&out_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_int), (void*)&radius);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_int), (void*)&intensities);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_float), (void*)&exp);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_mem),   (void*)&in_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_mem),   (void*)&out_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_int),   (void*)&radius);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_int),   (void*)&intensities);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[use_inten], arg++, sizeof(cl_float), (void*)&exp);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue(),
                                        cl_data->kernel[use_inten], 2,
                                        NULL, gbl_size, NULL,
                                        0, NULL, NULL);
-  if (cl_err != CL_SUCCESS) return cl_err;
+  CL_CHECK;
 
-  return CL_SUCCESS;
+  return FALSE;
+
+error:
+  return TRUE;
 }
 
 static gboolean
@@ -457,33 +341,32 @@ cl_process (GeglOperation       *operation,
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
   gint j;
-  cl_int cl_err;
 
-  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,result, out_format, GEGL_CL_BUFFER_WRITE);
                 gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format, GEGL_CL_BUFFER_READ,
                                                            o->mask_radius, o->mask_radius, o->mask_radius, o->mask_radius, GEGL_ABYSS_NONE);
   while (gegl_buffer_cl_iterator_next (i, &err))
-  {
-    if (err) return FALSE;
-    for (j=0; j < i->n; j++)
     {
-      cl_err = cl_oilify(i->tex[read][j],
-                         i->tex[0][j],
-                         i->size[0][j],&i->roi[0][j],
-                         o->mask_radius,
-                         o->intensities,
-                         o->exponent,
-                         o->use_inten);
-      if (cl_err != CL_SUCCESS)
-      {
-        g_warning("[OpenCL] Error in gegl:oilify: %s", gegl_cl_errstring(cl_err));
-        return FALSE;
-      }
+      if (err) return FALSE;
+      for (j=0; j < i->n; j++)
+        {
+          err = cl_oilify(i->tex[read][j],
+                          i->tex[0][j],
+                          i->size[0][j],&i->roi[0][j],
+                          o->mask_radius,
+                          o->intensities,
+                          o->exponent,
+                          o->use_inten);
+          if (err)
+            {
+              g_warning("[OpenCL] Error in gegl:oilify");
+              return FALSE;
+            }
+        }
     }
-  }
+
   return TRUE;
 }
 

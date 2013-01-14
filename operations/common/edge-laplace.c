@@ -452,9 +452,6 @@ cl_edge_laplace (cl_mem                in_tex,
                                        0, NULL, NULL);
   if (cl_err != CL_SUCCESS) return cl_err;
 
-  cl_err = gegl_clEnqueueBarrier(gegl_cl_get_command_queue());
-  if (CL_SUCCESS != cl_err) return cl_err;
-
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem),   (void*)&aux_tex);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_mem),   (void*)&out_tex);
   if (cl_err != CL_SUCCESS) return cl_err;
