@@ -401,6 +401,7 @@ GOBJECT_INTROSPECTION_CHECK([0.10.0])
 ########################
 have_pygobject="no"
 PKG_CHECK_EXISTS(pygobject-2.0 >= 2.26, have_pygobject="yes")
+PKG_CHECK_EXISTS(pygobject-3.0 >= 3.2, have_pygobject="yes")
 AM_CONDITIONAL(HAVE_PYGOBJECT, test "$have_pygobject" = "yes")
 
 ########################
