@@ -2052,21 +2052,29 @@ gegl_node_computed_event (GeglCache *self,
 GeglCache *
 gegl_node_get_cache (GeglNode *node)
 {
+  GeglPad    *pad;
+  const Babl *format = NULL;
   g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
+
+  /* XXX: it should be possible to have cache for other pads than
+   * only "output" pads
+   */
+  pad = gegl_node_get_pad (node, "output");
+  if (!pad)
+    return NULL;
+
+  format = gegl_pad_get_format (pad);
+
+  if (node->cache && format &&
+      node->cache->format != format)
+  {
+    /* FIXME: Also cover output_format = NULL and cache->format != RGBA float */
+    g_object_unref(node->cache);
+    node->cache = NULL;
+  }
 
   if (!node->cache)
     {
-      GeglPad    *pad;
-      const Babl *format;
-
-      /* XXX: it should be possible to have cache for other pads than
-       * only "output" pads
-       */
-      pad = gegl_node_get_pad (node, "output");
-      if (!pad)
-        return NULL;
-
-      format = gegl_pad_get_format (pad);
       if (!format)
         {
           format = babl_format ("RGBA float");
