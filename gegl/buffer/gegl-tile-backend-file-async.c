@@ -1053,7 +1053,7 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
   for (iter = self->tiles; iter; iter=iter->next)
     {
       GeglBufferItem       *item     = iter->data;
-      GeglFileBackendEntry *new      = gegl_tile_backend_file_file_entry_create (0, 0, 0);
+      GeglFileBackendEntry *new;
       GeglFileBackendEntry *existing =
         gegl_tile_backend_file_lookup_entry (self, item->tile.x, item->tile.y, item->tile.z);
 
@@ -1094,6 +1094,7 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
               g_signal_emit_by_name (storage, "changed", &rect, NULL);
             }
         }
+      new = gegl_tile_backend_file_file_entry_create (0, 0, 0);
       new->tile = iter->data;
       g_hash_table_insert (self->index, new, new);
     }
