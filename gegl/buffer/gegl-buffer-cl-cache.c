@@ -177,10 +177,12 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
         {
           CacheEntry *entry = data;
 
-#if 0
+#if 1
           GEGL_NOTE (GEGL_DEBUG_OPENCL, "Removing from cl-cache: %p %s {%d %d %d %d}", entry->buffer, babl_get_name(entry->buffer->soft_format),
                                                                                        entry->roi.x, entry->roi.y, entry->roi.width, entry->roi.height);
 #endif
+
+          gegl_clReleaseMemObject(entry->tex);
 
           memset (entry, 0x0, sizeof (CacheEntry));
 
