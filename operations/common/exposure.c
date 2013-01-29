@@ -171,6 +171,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->cl_process = cl_process;
 
   operation_class->opencl_support = TRUE;
+  operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:exposure",
