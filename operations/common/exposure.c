@@ -13,13 +13,13 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2012 Felix Ulber <felix.ulber@gmx.de>
+ * Copyright 2012,2013 Felix Ulber <felix.ulber@gmx.de>
+ *           2013 Øyvind Kolås <pippin@gimp.org>
  */
 
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-
 
 #ifdef GEGL_CHANT_PROPERTIES
 gegl_chant_double_ui (exposure, _("Exposure"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, -10.0, 10.0, 1.0,
@@ -70,27 +70,28 @@ process (GeglOperation       *op,
   in_pixel = in_buf;
   out_pixel = out_buf;
   
-  for (i=0; i<n_pixels; i++)
-    {
-      float c[3];
-      c[0] = (in_pixel[0] * gain + offset);
-      c[1] = (in_pixel[1] * gain + offset);
-      c[2] = (in_pixel[2] * gain + offset);
-      
-      // ???
-      c[0] = fmaxf(0.0, c[0]);
-      c[1] = fmaxf(0.0, c[1]);
-      c[2] = fmaxf(0.0, c[2]);
-      
-      out_pixel[0] = powf(c[0], gamma);
-      out_pixel[1] = powf(c[1], gamma);
-      out_pixel[2] = powf(c[2], gamma);
-      
-      out_pixel[3] = in_pixel[3];
-      
-      out_pixel += 4;
-      in_pixel += 4;
-    }
+  if (gamma == 1.0)
+    for (i=0; i<n_pixels; i++)
+      {
+        out_pixel[0] = (in_pixel[0] * gain + offset);
+        out_pixel[1] = (in_pixel[1] * gain + offset);
+        out_pixel[2] = (in_pixel[2] * gain + offset);
+        out_pixel[3] = in_pixel[3];
+        
+        out_pixel += 4;
+        in_pixel  += 4;
+      }
+  else
+    for (i=0; i<n_pixels; i++)
+      {
+        out_pixel[0] = powf(in_pixel[0] * gain + offset, gamma);
+        out_pixel[1] = powf(in_pixel[1] * gain + offset, gamma);
+        out_pixel[2] = powf(in_pixel[2] * gain + offset, gamma);
+        out_pixel[3] = in_pixel[3];
+        
+        out_pixel += 4;
+        in_pixel += 4;
+      }
     
   return TRUE;
 }
@@ -98,19 +99,19 @@ process (GeglOperation       *op,
 #include "opencl/gegl-cl.h"
 
 static const char* kernel_source =
-"__kernel void kernel_exposure(__global const float4     *in,      \n"
-"                            __global       float4     *out,     \n"
-"                            float gain,                          \n"
-"                            float offset,                       \n"
-"                            float gamma)                        \n"
-"{                                                               \n"
-"  int gid = get_global_id(0);                                   \n"
-"  float4 in_v  = in[gid];                                       \n"
-"  float4 out_v;                                                 \n"
-"  out_v.xyz = pow(max((in_v.xyz * gain) + offset, 0.0), 1.0/gamma); \n"
-"  out_v.w   =  in_v.w;                                          \n"
-"  out[gid]  =  out_v;                                           \n"
-"}                                                               \n";
+"__kernel void kernel_exposure(__global const float4 *in,     \n"
+"                              __global       float4 *out,    \n"
+"                              float                  gain,   \n"
+"                              float                  offset, \n"
+"                              float                  gamma)  \n"
+"{                                                            \n"
+"  int gid = get_global_id(0);                                \n"
+"  float4 in_v  = in[gid];                                    \n"
+"  float4 out_v;                                              \n"
+"  out_v.xyz = pow((in_v.xyz * gain) + offset, 1.0/gamma);    \n"
+"  out_v.w   =  in_v.w;                                       \n"
+"  out[gid]  =  out_v;                                        \n"
+"}                                                            \n";
 
 static GeglClRunData *cl_data = NULL;
 
