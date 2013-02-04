@@ -181,7 +181,7 @@ gegl_operation_get_bounding_box (GeglOperation *self)
 }
 
 GeglRectangle
-gegl_operation_get_invalidated_by_change (GeglOperation        *self,
+gegl_operation_get_invalidated_by_change (GeglOperation       *self,
                                           const gchar         *input_pad,
                                           const GeglRectangle *input_region)
 {
