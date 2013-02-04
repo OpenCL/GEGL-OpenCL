@@ -36,6 +36,9 @@
 #define RGBE_NUM_RGBE              4
 #define RGBE_MAX_VARIABLE_LINE_LEN 24
 
+#ifndef PACKAGE_STRING /* XXX: probably a workaround for a autotools bug... */
+#define PACKAGE_STRING "GEGL"
+#endif
 
 /* Describes the colour space of the pixel components. These values must
  * index correctly into the array RGBE_FORMAT_STRINGS for correct operation.
