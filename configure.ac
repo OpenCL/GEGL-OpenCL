@@ -886,7 +886,7 @@ AC_SUBST(LUA_LIBS)
 AC_ARG_WITH(libavformat,  [  --without-libavformat   build without libavformat support])
 
 if test "x$with_libavformat" != xno; then
-  PKG_CHECK_MODULES(AVFORMAT, libavformat libavcodec,
+  PKG_CHECK_MODULES(AVFORMAT, libavformat >= 53.0.0 libavcodec >= 53.0.0,
     have_libavformat="yes",
     have_libavformat="no  (libavformat not found)")
   # verify the presence of the avformat.h header
