@@ -7,7 +7,7 @@
   </node>
   <node operation='gegl:load'>
     <params>
-      <param name='path'>data/parliament_0.jpg</param>
+      <param name='path'>data/car-stack.png</param>
     </params>
   </node>
 </gegl>
