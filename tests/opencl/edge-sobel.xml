@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:edge-sobel'>
+    <params>
+      <param name='horizontal'>1</param>
+      <param name='vertical'>1</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>../compositions/data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>

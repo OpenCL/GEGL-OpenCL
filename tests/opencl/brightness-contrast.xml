@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:brightness-contrast'>
+    <params>
+      <param name='brightness'>2.0</param>
+      <param name='contrast'>0.5</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>../compositions/data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>

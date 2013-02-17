@@ -4,4 +4,5 @@ SUBDIRS = \
 	compositions \
 	simple \
 	xml \
-	python
+	python \
+	opencl

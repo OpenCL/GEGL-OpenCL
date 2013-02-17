@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:over'>
+    <node operation='gegl:translate'>
+        <params>
+          <param name='x'>10.000000</param>
+          <param name='y'>190.000000</param>
+        </params>
+    </node>
+    <node operation='gegl:load'>
+      <params>
+        <param name='path'>../compositions/data/car-stack.png</param>
+      </params>
+    </node>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>../compositions/data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>
