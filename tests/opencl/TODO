@@ -1,0 +1,16 @@
+OpenCL conformance TODO
+=======================
+
+Some filters are still having different results with and without OpenCL, this has be investigated.
+
+Most of the wrong ones have floating-point precision or border policy problems.
+
+Filters that have to be fixed:
+
+- box-blur
+- gaussian-blur
+- motion-blur
+- noise-reduction
+- oilify
+- opacity
+- snn-mean
