@@ -1,20 +1,3 @@
-float4 fir_get_mean_component_1D(const global float4 *buf,
-                                    int offset,
-                                    const int delta_offset,
-                                    constant float *cmatrix,
-                                    const int matrix_length)
-{
-    float4 acc = 0.0f;
-    int i;
-
-    for(i=0; i<matrix_length; i++)
-      {
-        acc    += buf[offset] * cmatrix[i];
-        offset += delta_offset;
-      }
-    return acc;
-}
-
 __kernel void fir_ver_blur(const global float4 *src_buf,
                               const int src_width,
                               global float4 *dst_buf,
@@ -27,10 +10,16 @@ __kernel void fir_ver_blur(const global float4 *src_buf,
     int gid  = gidx + gidy * get_global_size(0);
 
     int radius = matrix_length / 2;
-    int src_offset = gidx + (gidy - radius + yoff) * src_width;
+    int src_offset = gidx + (gidy + yoff) * src_width;
 
-    dst_buf[gid] = fir_get_mean_component_1D(
-        src_buf, src_offset, src_width, cmatrix, matrix_length);
+    float4 v = 0.0f;
+
+    for (int i=-radius; i <= radius; i++)
+      {
+        v += src_buf[src_offset + i * src_width] * cmatrix[i+radius];
+      }
+
+    dst_buf[gid] = v;
 }
 
 __kernel void fir_hor_blur(const global float4 *src_buf,
@@ -38,15 +27,21 @@ __kernel void fir_hor_blur(const global float4 *src_buf,
                               global float4 *dst_buf,
                               constant float *cmatrix,
                               const int matrix_length,
-                              const int yoff)
+                              const int xoff)
 {
     int gidx = get_global_id(0);
     int gidy = get_global_id(1);
     int gid  = gidx + gidy * get_global_size(0);
 
     int radius = matrix_length / 2;
-    int src_offset = gidy * src_width + (gidx - radius + yoff);
+    int src_offset = gidy * src_width + (gidx + xoff);
 
-    dst_buf[gid] = fir_get_mean_component_1D(
-        src_buf, src_offset, 1, cmatrix, matrix_length);
+    float4 v = 0.0f;
+
+    for (int i=-radius; i <= radius; i++)
+      {
+        v += src_buf[src_offset + i] * cmatrix[i+radius];
+      }
+
+    dst_buf[gid] = v;
 }

@@ -219,7 +219,7 @@ cl_process (GeglOperation       *op,
 
   value = GEGL_CHANT_PROPERTIES (op)->value;
 
-  kernel = (GEGL_CHANT_PROPERTIES (op)->chant_data != NULL);
+  kernel = (GEGL_CHANT_PROPERTIES (op)->chant_data == NULL);
 
   cl_err = gegl_clSetKernelArg(cl_data->kernel[kernel], 0, sizeof(cl_mem),   (void*)&in_tex);
   CL_CHECK;
