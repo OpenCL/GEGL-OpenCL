@@ -70,7 +70,9 @@ typedef struct GeglBufferClIterators
   /* format */
   size_t op_cl_format_size      [GEGL_CL_BUFFER_MAX_ITERATORS];
 
-  GeglClColorOp conv         [GEGL_CL_BUFFER_MAX_ITERATORS];
+  GeglClColorOp conv            [GEGL_CL_BUFFER_MAX_ITERATORS];
+
+  GeglAbyssPolicy abyss_policy  [GEGL_CL_BUFFER_MAX_ITERATORS];
 
   /* total iteration */
   gint           rois;
@@ -110,6 +112,10 @@ gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
   i->rect[self]=*result;
 
   i->flags[self]=flags;
+
+  i->abyss_policy[self]=abyss_policy;
+  if(flags != GEGL_CL_BUFFER_READ && abyss_policy != GEGL_ABYSS_NONE)
+    g_error ("invalid abyss");
 
   if (flags == GEGL_CL_BUFFER_WRITE || flags == GEGL_CL_BUFFER_READ)
     {
@@ -370,7 +376,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                     CL_CHECK;
 
                     /* color conversion using BABL */
-                    gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->format[no], data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                    gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->format[no], data, GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
 
                     cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_op[no][j], data,
                                                                0, NULL, NULL);
@@ -407,7 +413,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                         CL_CHECK;
 
                         /* color conversion will be performed in the GPU later */
-                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->soft_format, data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->soft_format, data, GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
 
                         cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
                                                                0, NULL, NULL);
@@ -445,7 +451,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                         CL_CHECK;
 
                         /* color conversion will be performed in the GPU later */
-                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->soft_format, data, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                        gegl_buffer_get (i->buffer[no], &i->roi[no][j], 1.0, i->buffer[no]->soft_format, data, GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
 
                         cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no][j], data,
                                                                0, NULL, NULL);
