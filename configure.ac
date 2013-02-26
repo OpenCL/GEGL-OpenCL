@@ -1117,7 +1117,6 @@ tests/python/Makefile
 tests/simple/Makefile
 tests/xml/Makefile
 tests/xml/data/Makefile
-tests/opencl/Makefile
 po/Makefile.in
 gegl-uninstalled.pc
 opencl/Makefile
