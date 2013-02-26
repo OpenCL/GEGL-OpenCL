@@ -219,11 +219,11 @@ cl_process (GeglOperation       *op,
 
   value = GEGL_CHANT_PROPERTIES (op)->value;
 
-  kernel = (GEGL_CHANT_PROPERTIES (op)->chant_data == NULL);
+  kernel = (GEGL_CHANT_PROPERTIES (op)->chant_data == NULL)? 0 : 1;
 
   cl_err = gegl_clSetKernelArg(cl_data->kernel[kernel], 0, sizeof(cl_mem),   (void*)&in_tex);
   CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[kernel], 1, sizeof(cl_mem),   (void*)&aux_tex);
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[kernel], 1, sizeof(cl_mem),   (aux_tex)? (void*)&aux_tex : NULL);
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[kernel], 2, sizeof(cl_mem),   (void*)&out_tex);
   CL_CHECK;
