@@ -147,7 +147,7 @@ snn_mean (GeglBuffer          *src,
         {
           gint u,v;
 
-          gfloat  accumulated[4]={0,};
+          gfloat  accumulated[4]={0.0f, 0.0f, 0.0f, 0.0f};
           gint    count=0;
 
           /* iterate through the upper left quater of pixels */
