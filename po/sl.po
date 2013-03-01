@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2012-12-31 19:23+0000\n"
-"PO-Revision-Date: 2013-01-18 00:52+0100\n"
+"POT-Creation-Date: 2013-01-31 15:28+0000\n"
+"PO-Revision-Date: 2013-02-27 20:57+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
@@ -152,39 +152,39 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:206
+#: ../gegl/gegl-init.c:212
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "Toleranca napake babl-a, vrednost med 0,2 in 0,000000001"
 
-#: ../gegl/gegl-init.c:211
+#: ../gegl/gegl-init.c:217
 msgid "Where GEGL stores its swap"
 msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
-#: ../gegl/gegl-init.c:216
+#: ../gegl/gegl-init.c:222
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Koliko pomnilnika (približno) uporabiti za predpomnenje podob"
 
-#: ../gegl/gegl-init.c:221
+#: ../gegl/gegl-init.c:227
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Privzeta velikost tlakovcev za GeglBuffer"
 
-#: ../gegl/gegl-init.c:226
+#: ../gegl/gegl-init.c:232
 msgid "The count of pixels to compute simultaneously"
 msgstr "Število slikovnih točk, ki naj se izračunajo hkrati"
 
-#: ../gegl/gegl-init.c:231
+#: ../gegl/gegl-init.c:237
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr "Kakovost izrisovanja, vrednost med 0,0 (hitro) in 1,0 (referenčna kakovost)"
 
-#: ../gegl/gegl-init.c:236
+#: ../gegl/gegl-init.c:242
 msgid "The number of concurrent processing threads to use"
 msgstr "Število uporabljenih vzporednih procesnih niti."
 
-#: ../gegl/gegl-init.c:241
+#: ../gegl/gegl-init.c:247
 msgid "Use OpenCL"
 msgstr "Uporabi OpenCL"
 
-#: ../gegl/gegl-init.c:246
+#: ../gegl/gegl-init.c:252
 msgid "Maximum number of entries in the file tile backend's writer queue"
 msgstr "Največje število vnosov v pisalno vrsto ozadja za tlakovanje datotek"
 
@@ -230,11 +230,11 @@ msgstr "Ohranjevanje robov"
 msgid "Amount of edge preservation"
 msgstr "Raven ohranjanja robov"
 
-#: ../operations/common/bilateral-filter.c:315
+#: ../operations/common/bilateral-filter.c:274
 msgid "An edge preserving blur filter that can be used for noise reduction. It is a gaussian blur where the contribution of neighbourhood pixels are weighted by the color difference from the center pixel."
 msgstr "Filter zabrisanosti, ki ohranja robove in ki ga lahko uporabite za zmanjšanje šuma. Gre za Gaussovo zabrisanost, kjer je prispevek sosednjih slikovnih točk utežen z barvno razliko od središčne slikovne točke."
 
-#: ../operations/common/box-blur.c:24
+#: ../operations/common/box-blur.c:25
 #: ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
 #: ../operations/common/difference-of-gaussians.c:28
@@ -253,12 +253,12 @@ msgstr "Filter zabrisanosti, ki ohranja robove in ki ga lahko uporabite za zmanj
 msgid "Radius"
 msgstr "Radij"
 
-#: ../operations/common/box-blur.c:25
+#: ../operations/common/box-blur.c:26
 #: ../operations/common/snn-mean.c:27
 msgid "Radius of square pixel region, (width and height will be radius*2+1)"
 msgstr "Polmer območja kvadratne slikovne točke (širina in višina bosta polmer*2+1)"
 
-#: ../operations/common/box-blur.c:425
+#: ../operations/common/box-blur.c:343
 msgid "Performs an averaging of a square box of pixels"
 msgstr "Izvede poprečenje kvadratnega polja slikovnih točk"
 
@@ -285,7 +285,7 @@ msgstr "Svetlost"
 msgid "Amount to increase brightness"
 msgstr "Količina povečanja svetlosti"
 
-#: ../operations/common/brightness-contrast.c:159
+#: ../operations/common/brightness-contrast.c:147
 msgid "Changes the light level and contrast."
 msgstr "Spremeni raven svetlobe in kontrast."
 
@@ -349,7 +349,7 @@ msgstr "Ponovitve"
 msgid "Number of iterations, a higher number of iterations provides less noisy results at a computational cost"
 msgstr "Število ponavljanj, višje število ponavljanj ponuja manj šuma v rezultatih ob višjem strošku izračuna"
 
-#: ../operations/common/c2g.c:493
+#: ../operations/common/c2g.c:346
 msgid "Color to grayscale conversion, uses envelopes formed from spatial color differences to perform color-feature preserving grayscale spatial contrast enhancement"
 msgstr "Pretvorba iz sivinske v barvno, uporablja ovojnice iz barvno prostorskih razlik, da izvede izboljšavo sivinsko prostorskega kontrasta z ohranjanjem lastnosti barv"
 
@@ -524,7 +524,7 @@ msgstr "Ciljna temperatura"
 msgid "Corrected estimation of the temperature of the light source in Kelvin."
 msgstr "Popravljena ocena temperature svetlobnega vira v Kelvinih."
 
-#: ../operations/common/color-temperature.c:279
+#: ../operations/common/color-temperature.c:273
 msgid "Allows changing the color temperature of an image."
 msgstr "Omogoča spreminjanje barvne temperature slike."
 
@@ -637,7 +637,7 @@ msgstr "Navpični odmik sence"
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Ustvari učinek padle sence na vhodnem medpomnilniku"
 
-#: ../operations/common/edge-laplace.c:521
+#: ../operations/common/edge-laplace.c:518
 msgid "High-resolution edge detection"
 msgstr "Razpoznava robov visoke ločljivosti"
 
@@ -689,6 +689,39 @@ msgstr "Sigma porazdelitve uteži, ki nadzira prispevke odziva"
 #: ../operations/common/exp-combine.c:1293
 msgid "Combine multiple scene exposures into one high range buffer"
 msgstr "Združi več ekspozicij prizorov v posamičen visokoobsežni medpomnilnik."
+
+#: ../operations/common/exposure.c:25
+#| msgid "Exposure Values"
+msgid "Exposure"
+msgstr "Ekspozicija"
+
+#: ../operations/common/exposure.c:26
+#| msgid "Relative brightness of each exposure in EV"
+msgid "Relative brightness change in stops"
+msgstr "Relativna sprememba svetlosti v vrednostih zaslonke"
+
+#: ../operations/common/exposure.c:27
+#| msgid "Offset: "
+msgid "Offset"
+msgstr "Odmik"
+
+#: ../operations/common/exposure.c:28
+#| msgid "Offset angle"
+msgid "Offset value added"
+msgstr "Dodana vrednost zamika"
+
+#: ../operations/common/exposure.c:29
+#: ../operations/common/vignette.c:28
+msgid "Gamma"
+msgstr "Gama"
+
+#: ../operations/common/exposure.c:30
+msgid "Gamma correction"
+msgstr "Popravek game"
+
+#: ../operations/common/exposure.c:180
+msgid "Changes Exposure and Contrast, mainly for use with high dynamic range images."
+msgstr "Spremeni ekspozicijo in kontrast, predvsem uporabno pri slikah z visokim obsegom dinamike."
 
 #: ../operations/common/fattal02.c:33
 #: ../operations/common/noise.c:25
@@ -882,7 +915,7 @@ msgstr "Filter"
 msgid "Optional parameter to override the automatic selection of blur filter. Choices are fir, iir, auto"
 msgstr "Neobvezni parameter, ki preglasi samodejni izbor filtra zabrisanosti. Izbire so fir, iir in auto (samodejno)"
 
-#: ../operations/common/gaussian-blur.c:731
+#: ../operations/common/gaussian-blur.c:695
 msgid "Performs an averaging of neighboring pixels with the normal distribution as weighting"
 msgstr "Izvede poprečenje soležnih slikovnih točk z normalno porazdelitvijo za uteževanje"
 
@@ -926,7 +959,7 @@ msgstr "Pot ciljne datoteke za zapis GeglBuffer."
 msgid "GeglBuffer file writer."
 msgstr "Zapisovalnik datotek GeglBuffer."
 
-#: ../operations/common/grey.c:104
+#: ../operations/common/grey.c:106
 msgid "Turns the image greyscale"
 msgstr "Pretvori sliko v sivinsko"
 
@@ -1002,7 +1035,7 @@ msgstr "GeglNode za introspekcijo"
 msgid "GEGL graph visualizer."
 msgstr "Vizualizator grafikonov GEGL."
 
-#: ../operations/common/invert.c:86
+#: ../operations/common/invert.c:76
 msgid "Inverts the components (except alpha), the result is the corresponding \"negative\" image."
 msgstr "Preobrne komponente (razen alfe), rezultat je ustrezna \"negativna\" slika."
 
@@ -1129,7 +1162,7 @@ msgstr "Visoka izhodna vrednost"
 msgid "Highest luminance level in output"
 msgstr "Najvišja raven svetilnosti v izhodu"
 
-#: ../operations/common/levels.c:198
+#: ../operations/common/levels.c:192
 msgid "Remaps the intensity range of the image"
 msgstr "Preslika obseg intenzivnosti slike"
 
@@ -1346,7 +1379,7 @@ msgstr "Modra"
 msgid "Amount of blue"
 msgstr "Količina modre"
 
-#: ../operations/common/mono-mixer.c:104
+#: ../operations/common/mono-mixer.c:93
 msgid "Monochrome channel mixer"
 msgstr "Monokromatični mešalnik kanalov"
 
@@ -1367,7 +1400,7 @@ msgstr "Kot"
 msgid "Angle of blur in degrees"
 msgstr "Kot zabrisanosti v stopinjah"
 
-#: ../operations/common/motion-blur.c:349
+#: ../operations/common/motion-blur.c:286
 msgid "Linear motion blur"
 msgstr "Linearna zabrisanost gibanja"
 
@@ -1512,12 +1545,10 @@ msgid "Exponent"
 msgstr "Eksponentno"
 
 #: ../operations/common/oilify.c:33
-#| msgid "Number of iterations"
 msgid "Number of intensities"
 msgstr "Število intenzivnosti"
 
 #: ../operations/common/oilify.c:34
-#| msgid "Horizontal size"
 msgid "Histogram size"
 msgstr "Velikost histograma"
 
@@ -1529,7 +1560,7 @@ msgstr "Način intenzivnosti"
 msgid "Use pixel luminance values"
 msgstr "Uporabi vrednosti svetlosti slik. točk"
 
-#: ../operations/common/oilify.c:581
+#: ../operations/common/oilify.c:464
 msgid "Emulate an oil painting"
 msgstr "Emuliraj oljno sliko"
 
@@ -1537,7 +1568,7 @@ msgstr "Emuliraj oljno sliko"
 msgid "Global opacity value that is always used on top of the optional auxiliary input buffer."
 msgstr "Splošna raven prekrivnosti, ki je vedno uporabljan na vrhu neobveznega pomožnega vhodnega medpomnilnika."
 
-#: ../operations/common/opacity.c:234
+#: ../operations/common/opacity.c:295
 msgid "Weights the opacity of the input both the value of the aux input and the global value property."
 msgstr "Uteži prekrivnost vhoda tako z vrednostjo pomožnega vhoda kot s splošno lastnostjo vrednosti"
 
@@ -1549,7 +1580,7 @@ msgstr "GeglBuffer na disku za odpiranje"
 msgid "A source that uses an on-disk GeglBuffer."
 msgstr "Vir, ki uporablja GeglBuffer na disku."
 
-#: ../operations/common/over.c:153
+#: ../operations/common/over.c:141
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr "Operacija Porter Duff over (d = cA + cB * (1 - aA))"
 
@@ -1585,7 +1616,7 @@ msgstr "Višina bloka"
 msgid "Height of blocks in pixels"
 msgstr "Višina blokov v slikovnih točkah"
 
-#: ../operations/common/pixelize.c:338
+#: ../operations/common/pixelize.c:307
 msgid "Simplify image into an array of solid-colored squares"
 msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih kvadratov"
 
@@ -1800,7 +1831,7 @@ msgstr "Pari"
 msgid "Number of pairs; higher number preserves more acute features"
 msgstr "Število parov; višje število ohrani bolj kritične lastnosti"
 
-#: ../operations/common/snn-mean.c:436
+#: ../operations/common/snn-mean.c:326
 msgid "Noise reducing edge enhancing blur filter based  on Symmetric Nearest Neighbours"
 msgstr "Filter zabrisanosti za izboljšavo robov in zmanjševanje šuma, ki temelji na simetričnih najbližjih sosedih"
 
@@ -1824,7 +1855,7 @@ msgstr "Število ponavljanj, višje število ponavljanj ponuja manj šuma v rezu
 msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
 msgstr "Prostorsko časovna ovojnica, podobna Retinex, s stohastičnim vzorčenjem"
 
-#: ../operations/common/stretch-contrast.c:162
+#: ../operations/common/stretch-contrast.c:158
 msgid "Scales the components of the buffer to be in the 0.0-1.0 range. This improves images that make poor use of the available contrast (little contrast, very dark, or very bright images)."
 msgstr "Spremeni merilo komponent medpomnilnika, da ustrezajo obsegu 0,0-1,0. S tem se izboljšajo slike, ki slabo izkoriščajo kontrast, ki je na voljo (nizko kontrastne, zelo temne ali zelo svetle slike)."
 
@@ -1870,7 +1901,7 @@ msgstr "Prag"
 msgid "Global threshold level (used when there is no auxiliary input buffer)."
 msgstr "Splošna raven praga (uporabljena, ko ni pomožnega vhodnega medpomnilnika)."
 
-#: ../operations/common/threshold.c:123
+#: ../operations/common/threshold.c:110
 msgid "Thresholds the image to white/black based on either the global value set in the value property, or per pixel from the aux input."
 msgstr "Uporablja prag slike za belo/črno glede na nastavljeno splošno vrednost v lastnosti vrednosti ali glede na slikovno točko iz pomožnega vhoda."
 
@@ -1894,7 +1925,7 @@ msgstr "Merilo, jakost ali učinek"
 msgid "Performs an unsharp mask on the input buffer (sharpens an image by adding false mach-bands around edges)"
 msgstr "Izvede neostro masko na vhodnem medpomnilniku (izostri sliko z dodajanje lažnih Machovih trakov okoli robov)"
 
-#: ../operations/common/value-invert.c:179
+#: ../operations/common/value-invert.c:150
 msgid "Inverts just the value component, the result is the corresponding `inverted' image."
 msgstr "Preobrne le komponento vrednosti, rezultat je ustrezna `reobrnjena' slika."
 
@@ -1903,7 +1934,6 @@ msgid "Shape"
 msgstr "Lik"
 
 #: ../operations/common/vignette.c:24
-#| msgid "Shape to use: 0=circle 1=diamond 2=square"
 msgid "Shape to use: 0=circle 1=square 2=diamond"
 msgstr "Lik, ki ga želite uporabiti: 0=krog, 1=kvadrat, 2=karo"
 
@@ -1918,10 +1948,6 @@ msgstr "Kako daleč sega vinjetiranje kot del polovične diagonale slike"
 #: ../operations/common/vignette.c:27
 msgid "Softness"
 msgstr "Mehkoba"
-
-#: ../operations/common/vignette.c:28
-msgid "Gamma"
-msgstr "Gama"
 
 #: ../operations/common/vignette.c:28
 msgid "Falloff linearity"
@@ -1959,7 +1985,7 @@ msgstr "Sukanje"
 msgid "Rotation angle"
 msgstr "Kot sukanja"
 
-#: ../operations/common/vignette.c:386
+#: ../operations/common/vignette.c:341
 msgid "A vignetting op, applies a vignette to an image. Simulates the luminance fall off at edge of exposed film, and some other fuzzier border effects that can naturally occur with analoge photograpy."
 msgstr "Operacija vinjetiranja, na sliki uveljavi vinjetiranje. Simulira upad svetilnosti na robu osvetljenega filma in nekatere druge učinke nejasnega roba, ki se lahko naravno pojavijo pri analogni fotografiji."
 
@@ -2727,7 +2753,6 @@ msgid "Y coordinate of origin"
 msgstr "Koordinata Y izvora"
 
 #: ../operations/transform/transform-core.c:181
-#| msgid "Filter type (nearest, linear, lanczos, cubic, lohalo)"
 msgid "Filter type (nearest, linear, cubic, nohalo, lohalo)"
 msgstr "Vrsta filtra (najbližji, linearna, kubična, brezodsevna, nizkoodsevna)"
 
