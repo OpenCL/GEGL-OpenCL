@@ -21,7 +21,16 @@
 
 
 #ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_int    (shape,    _("Shape"),  0, 2, 0, _("Shape to use: 0=circle 1=square 2=diamond"))
+gegl_chant_register_enum (gegl_vignette_shape)
+  enum_value (GEGl_VIGNETTE_SHAPE_CIRCLE,  "Circle")
+  enum_value (GEGl_VIGNETTE_SHAPE_SQUARE,  "Square")
+  enum_value (GEGl_VIGNETTE_SHAPE_DIAMOND, "Diamond")
+gegl_chant_register_enum_end (GeglVignetteShape)
+
+gegl_chant_enum (shape, _("Shape"), GeglVignetteShape, gegl_vignette_shape,
+                 GEGl_VIGNETTE_SHAPE_CIRCLE, _("Shape of the vignette"))
+
+
 gegl_chant_color (color,     _("Color"), "black", _("Defaults to 'black', you can use transparency here to erase portions of an image"))
 gegl_chant_double (radius,   _("Radius"),  0.0, 3.0, 1.5, _("How far out vignetting goes as portion of half image diagonal"))
 gegl_chant_double (softness,  _("Softness"),  0.0, 1.0, 0.8, _("Softness"))
@@ -145,7 +154,7 @@ cl_process (GeglOperation       *operation,
   {
   const size_t gbl_size[2] = {roi->width, roi->height};
 
-  gint   shape = o->shape;
+  gint   shape = (gint) o->shape;
   gfloat gamma = o->gamma;
 
   cl_int cl_err = 0;
@@ -275,11 +284,11 @@ process (GeglOperation       *operation,
         {
           switch (o->shape)
           {
-            case 0:  /* circle */
+            case GEGl_VIGNETTE_SHAPE_CIRCLE:
               strength = hypot ((u-midx) / scale, v-midy);      break;
-            case 1: /* square */
+            case GEGl_VIGNETTE_SHAPE_SQUARE:
               strength = MAX(ABS(u-midx) / scale, ABS(v-midy)); break;
-            case 2: /* diamond */
+            case GEGl_VIGNETTE_SHAPE_DIAMOND:
               strength = ABS(u-midx) / scale + ABS(v-midy);     break;
           }
           strength /= length;
