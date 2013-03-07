@@ -4,6 +4,7 @@ bin/gegl-options.c
 gegl/gegl-init.c
 gegl/module/geglmodule.c
 operations/common/bilateral-filter.c
+operations/common/bilateral-filter-fast.c
 operations/common/box-blur.c
 operations/common/brightness-contrast.c
 operations/common/buffer-sink.c
