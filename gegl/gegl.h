@@ -943,9 +943,9 @@ gint64 gegl_random_int_range    (int seed, int x, int y, int z, int n, int min, 
  * @n: number no (each x,y coordinate provides its own sequence of
  * numbers
  *
- * Return a random integer number in range MIN_INT .. MAX_INT
+ * Return a random integer number in range 0 .. MAX_UINT
  */
-gint64 gegl_random_int          (int seed, int x, int y, int z, int n);
+guint64 gegl_random_int         (int seed, int x, int y, int z, int n);
 
 /**
  * gegl_random_double:

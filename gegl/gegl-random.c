@@ -211,7 +211,7 @@ gegl_random_get_set_for_seed (int seed)
   return cached;
 }
 
-static inline gint64
+static inline guint64
 _gegl_random_int (int seed,
                  int x,
                  int y,
@@ -232,7 +232,7 @@ _gegl_random_int (int seed,
   return ret;
 }
 
-gint64
+guint64
 gegl_random_int (int seed,
                  int x,
                  int y,
@@ -251,7 +251,7 @@ gegl_random_int_range (int seed,
                        int min,
                        int max)
 {
-  gint64 ret = _gegl_random_int (seed, x, y, z, n);
+  guint64 ret = _gegl_random_int (seed, x, y, z, n);
   return (ret % (max-min)) + min;
 }
 
