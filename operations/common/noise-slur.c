@@ -43,7 +43,7 @@ gegl_chant_int    (repeat, _("Repeat"),
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "noise-slur.c"
+#define GEGL_CHANT_C_FILE "noise-slur.c"
 
 #include "gegl-chant.h"
 
@@ -73,12 +73,13 @@ process (GeglOperation       *operation,
   GeglBuffer              *tmp;
   gfloat                  *src_buf;
   gfloat                  *dst_buf;
-  gfloat                  *out_pixel, *in_pixel;
+  gfloat                  *in_pixel;
+  gfloat                  *out_pixel;
   gint                     n_pixels = result->width * result->height;
-  gint                     width  = result->width;
+  gint                     width    = result->width;
   GeglRectangle            src_rect;
-  gint                     k, b, i;
   gint                     total_pixels;
+  gint                     i;
 
   tmp = gegl_buffer_new (result, babl_format ("RGBA float"));
 
@@ -113,23 +114,25 @@ process (GeglOperation       *operation,
 
       while (n_pixels--)
         {
+          gint b;
+
           if (gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
               o->pct_random)
             {
-              k = gegl_random_int_range (o->seed, x, y, 0, n++, 0, 10);
+              gint k = gegl_random_int_range (o->seed, x, y, 0, n++, 0, 10);
 
               for (b = 0; b < 4; b++)
                 {
                   switch (k)
                     {
                     case 0:
-                      out_pixel[b] = in_pixel[b - src_rect.width*4 - 4];
+                      out_pixel[b] = in_pixel[b - src_rect.width * 4 - 4];
                       break;
                     case 9:
-                      out_pixel[b] = in_pixel[b - src_rect.width*4 + 4];
+                      out_pixel[b] = in_pixel[b - src_rect.width * 4 + 4];
                       break;
                     default:
-                      out_pixel[b] = in_pixel[b - src_rect.width*4];
+                      out_pixel[b] = in_pixel[b - src_rect.width * 4];
                       break;
                     }
                 }
@@ -145,7 +148,8 @@ process (GeglOperation       *operation,
           if (n_pixels % width == 0)
             in_pixel += 12;
           else
-            in_pixel  += 4;
+            in_pixel += 4;
+
           out_pixel += 4;
 
           x++;
