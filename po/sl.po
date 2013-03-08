@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-01-31 15:28+0000\n"
-"PO-Revision-Date: 2013-02-27 20:57+0100\n"
+"POT-Creation-Date: 2013-03-07 21:48+0000\n"
+"PO-Revision-Date: 2013-03-07 22:56+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
@@ -214,11 +214,13 @@ msgid "Not loaded"
 msgstr "Ni naloženo"
 
 #: ../operations/common/bilateral-filter.c:27
+#: ../operations/common/bilateral-filter-fast.c:37
 #: ../operations/common/dropshadow.c:31
 msgid "Blur radius"
 msgstr "Polmer zabrisa"
 
 #: ../operations/common/bilateral-filter.c:28
+#: ../operations/common/bilateral-filter-fast.c:39
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr "Polmer območja kvadratne slikovne točke (širina in višina bosta polmer*2+1)"
 
@@ -233,6 +235,20 @@ msgstr "Raven ohranjanja robov"
 #: ../operations/common/bilateral-filter.c:274
 msgid "An edge preserving blur filter that can be used for noise reduction. It is a gaussian blur where the contribution of neighbourhood pixels are weighted by the color difference from the center pixel."
 msgstr "Filter zabrisanosti, ki ohranja robove in ki ga lahko uporabite za zmanjšanje šuma. Gre za Gaussovo zabrisanost, kjer je prispevek sosednjih slikovnih točk utežen z barvno razliko od središčne slikovne točke."
+
+#: ../operations/common/bilateral-filter-fast.c:33
+#| msgid "Softness"
+msgid "Smoothness"
+msgstr "Uglajenost"
+
+#: ../operations/common/bilateral-filter-fast.c:35
+#| msgid "Loglog smoothing"
+msgid "Level of smoothness"
+msgstr "Raven uglajenosti"
+
+#: ../operations/common/bilateral-filter-fast.c:290
+msgid "A fast approximate implementation of the bilateral filter"
+msgstr "Hitra približna izvedba dvostranskega filtra"
 
 #: ../operations/common/box-blur.c:25
 #: ../operations/common/c2g.c:27
@@ -349,7 +365,7 @@ msgstr "Ponovitve"
 msgid "Number of iterations, a higher number of iterations provides less noisy results at a computational cost"
 msgstr "Število ponavljanj, višje število ponavljanj ponuja manj šuma v rezultatih ob višjem strošku izračuna"
 
-#: ../operations/common/c2g.c:346
+#: ../operations/common/c2g.c:331
 msgid "Color to grayscale conversion, uses envelopes formed from spatial color differences to perform color-feature preserving grayscale spatial contrast enhancement"
 msgstr "Pretvorba iz sivinske v barvno, uporablja ovojnice iz barvno prostorskih razlik, da izvede izboljšavo sivinsko prostorskega kontrasta z ohranjanjem lastnosti barv"
 
@@ -915,7 +931,7 @@ msgstr "Filter"
 msgid "Optional parameter to override the automatic selection of blur filter. Choices are fir, iir, auto"
 msgstr "Neobvezni parameter, ki preglasi samodejni izbor filtra zabrisanosti. Izbire so fir, iir in auto (samodejno)"
 
-#: ../operations/common/gaussian-blur.c:695
+#: ../operations/common/gaussian-blur.c:685
 msgid "Performs an averaging of neighboring pixels with the normal distribution as weighting"
 msgstr "Izvede poprečenje soležnih slikovnih točk z normalno porazdelitvijo za uteževanje"
 
