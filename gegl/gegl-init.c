@@ -92,9 +92,11 @@ guint gegl_debug_flags = 0;
 #include "operation/gegl-operations.h"
 #include "operation/gegl-extension-handler.h"
 #include "buffer/gegl-buffer-private.h"
+#include "buffer/gegl-tile-backend-ram.h"
+#include "buffer/gegl-tile-backend-tiledir.h"
+#include "buffer/gegl-tile-backend-file.h"
 #include "gegl-config.h"
 #include "graph/gegl-node.h"
-
 
 /* if this function is made to return NULL swapping is disabled */
 const gchar *
@@ -311,11 +313,6 @@ GeglConfig *gegl_config (void)
     }
   return GEGL_CONFIG (config);
 }
-
-void gegl_tile_backend_ram_stats (void);
-void gegl_tile_backend_tiledir_stats (void);
-void gegl_tile_backend_file_stats (void);
-
 
 static void swap_clean (void)
 {
