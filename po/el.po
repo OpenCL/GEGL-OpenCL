@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
 "eywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-01-31 15:28+0000\n"
-"PO-Revision-Date: 2013-02-04 10:39+0300\n"
+"POT-Creation-Date: 2013-03-07 21:48+0000\n"
+"PO-Revision-Date: 2013-03-11 23:40+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@gnome.gr\n"
 "Language: el\n"
@@ -217,11 +217,13 @@ msgid "Not loaded"
 msgstr "Δε φορτώθηκε"
 
 #: ../operations/common/bilateral-filter.c:27
+#: ../operations/common/bilateral-filter-fast.c:37
 #: ../operations/common/dropshadow.c:31
 msgid "Blur radius"
 msgstr "Ακτίνα θόλωσης"
 
 #: ../operations/common/bilateral-filter.c:28
+#: ../operations/common/bilateral-filter-fast.c:39
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Ακτίνα της τετράγωνης περιοχής εικονοστοιχείου, (πλάτος και ύψος θα είναι "
@@ -245,6 +247,20 @@ msgstr ""
 "θορύβου. Είναι ένα φίλτρο Gauss, όπου η συμμετοχή των γειτονικών "
 "εικονοστοιχείων σταθμίζεται από τη χρωματική διαφορά από το κεντρικό "
 "εικονοστοιχείο."
+
+#: ../operations/common/bilateral-filter-fast.c:33
+#| msgid "Softness"
+msgid "Smoothness"
+msgstr "Ομαλότητα"
+
+#: ../operations/common/bilateral-filter-fast.c:35
+#| msgid "Loglog smoothing"
+msgid "Level of smoothness"
+msgstr "Επίπεδο ομαλότητας"
+
+#: ../operations/common/bilateral-filter-fast.c:290
+msgid "A fast approximate implementation of the bilateral filter"
+msgstr "Μια γρήγορη προσεγγιστική υλοποίηση του αμφίπλευρου φίλτρου"
 
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
@@ -368,7 +384,7 @@ msgstr ""
 "Αριθμός επαναλήψεων, ένας υψηλότερος αριθμός επαναλήψεων παρέχει λιγότερα "
 "θορυβώδη αποτελέσματα ανά υπολογιστικό κόστος"
 
-#: ../operations/common/c2g.c:346
+#: ../operations/common/c2g.c:331
 msgid ""
 "Color to grayscale conversion, uses envelopes formed from spatial color "
 "differences to perform color-feature preserving grayscale spatial contrast "
@@ -695,22 +711,18 @@ msgid "Combine multiple scene exposures into one high range buffer"
 msgstr "Συνδυασμός πολλαπλών εκθέσεων σκηνών σε μια μνήμη μεγάλης περιοχής"
 
 #: ../operations/common/exposure.c:25
-#| msgid "Exposure Values"
 msgid "Exposure"
 msgstr "Έκθεση"
 
 #: ../operations/common/exposure.c:26
-#| msgid "Relative brightness of each exposure in EV"
 msgid "Relative brightness change in stops"
 msgstr "Σχετική αλλαγή λαμπρότητας σε στάσεις"
 
 #: ../operations/common/exposure.c:27
-#| msgid "Offset: "
 msgid "Offset"
 msgstr "Αντιστάθμιση"
 
 #: ../operations/common/exposure.c:28
-#| msgid "Offset angle"
 msgid "Offset value added"
 msgstr "Πρόσθετη τιμή αντιστάθμισης"
 
@@ -935,7 +947,7 @@ msgstr ""
 "Προαιρετική παράμετρος για υπερίσχυση της αυτόματης επιλογής του φίλτρου "
 "θόλωσης. Οι επιλογές είναι fir, iir, auto."
 
-#: ../operations/common/gaussian-blur.c:695
+#: ../operations/common/gaussian-blur.c:685
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
