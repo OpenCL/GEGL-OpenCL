@@ -26,15 +26,57 @@
 #ifdef __GEGL_DEBUG_H__
 
 #define CL_ERROR {GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
-#define CL_CHECK {if (cl_err != CL_SUCCESS) CL_ERROR;}
 
 #else
 
 /* public header for gegl ops */
 
 #define CL_ERROR {g_warning("Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
-#define CL_CHECK {if (cl_err != CL_SUCCESS) CL_ERROR;}
 
 #endif
+
+#define CL_CHECK {if (cl_err != CL_SUCCESS) CL_ERROR;}
+
+#define GEGL_CL_ARG_START(KERNEL) \
+  { cl_kernel __mykernel=KERNEL; int __p = 0;
+
+#define GEGL_CL_ARG(TYPE, NAME) \
+  { cl_err = gegl_clSetKernelArg(__mykernel, __p++, sizeof(TYPE), (void*)& NAME); \
+    CL_CHECK; }
+
+#define GEGL_CL_ARG_END \
+  __p = -1; }
+
+#define GEGL_CL_RELEASE(obj)               \
+  { cl_err = gegl_clReleaseMemObject(obj); \
+    CL_CHECK; }
+
+#define GEGL_CL_BUFFER_ITERATE_START(I, J, ERR)      \
+  while (gegl_buffer_cl_iterator_next (I, & ERR)) \
+    {                                                \
+      if (ERR) return FALSE;                         \
+      for (J=0; J < I ->n; J++)                      \
+        {
+
+#define GEGL_CL_BUFFER_ITERATE_END(ERR)   \
+          if (ERR)                        \
+           {                              \
+             g_warning("[OpenCL] Error"); \
+             return FALSE;                \
+           }                              \
+        }                                 \
+    }
+
+
+#define GEGL_CL_BUILD(NAME, ...)                                            \
+  if (!cl_data)                                                             \
+    {                                                                       \
+      const char *kernel_name[] ={__VA_ARGS__ , NULL};                      \
+      cl_data = gegl_cl_compile_and_build(NAME ## _cl_source, kernel_name); \
+    }                                                                       \
+  if (!cl_data) return TRUE;
+
+#define GEGL_CL_STATIC \
+  static GeglClRunData *cl_data = NULL;
 
 #endif
