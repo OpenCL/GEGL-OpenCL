@@ -371,9 +371,6 @@ cl_bilateral (cl_mem                in_tex,
   CL_CHECK;
   }
 
-  cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
-  CL_CHECK;
-
   {
   local_ws[0] = 16;
   local_ws[1] = 16;
@@ -399,9 +396,6 @@ cl_bilateral (cl_mem                in_tex,
   CL_CHECK;
   }
 
-  cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
-  CL_CHECK;
-
   for(c = 0; c < 4; c++)
     {
       const size_t dst_origin[3] = {0, 0, 0};
@@ -414,9 +408,6 @@ cl_bilateral (cl_mem                in_tex,
                                                 0, NULL, NULL);
       CL_CHECK;
     }
-
-  cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
-  CL_CHECK;
 
   {
   global_ws[0] = width;
