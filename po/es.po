@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-01-31 15:28+0000\n"
-"PO-Revision-Date: 2013-02-01 10:46+0100\n"
+"POT-Creation-Date: 2013-03-07 21:48+0000\n"
+"PO-Revision-Date: 2013-03-13 17:03+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -218,11 +218,13 @@ msgid "Not loaded"
 msgstr "No cargado"
 
 #: ../operations/common/bilateral-filter.c:27
+#: ../operations/common/bilateral-filter-fast.c:37
 #: ../operations/common/dropshadow.c:31
 msgid "Blur radius"
 msgstr "Radio de desenfoque"
 
 #: ../operations/common/bilateral-filter.c:28
+#: ../operations/common/bilateral-filter-fast.c:39
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Radio de la región cuadrada de píxeles (la anchura y la altura serán radio*2"
@@ -246,6 +248,20 @@ msgstr ""
 "reducción de ruido. Es un difuminado gaussiano en que la contribución de los "
 "píxeles vecinos está ponderada por la diferencia de color respecto al píxel "
 "central."
+
+#: ../operations/common/bilateral-filter-fast.c:33
+#| msgid "Softness"
+msgid "Smoothness"
+msgstr "Suavidad"
+
+#: ../operations/common/bilateral-filter-fast.c:35
+#| msgid "Loglog smoothing"
+msgid "Level of smoothness"
+msgstr "Nivel de suavidad"
+
+#: ../operations/common/bilateral-filter-fast.c:290
+msgid "A fast approximate implementation of the bilateral filter"
+msgstr "Una aproximación rápida a la implementación del filtro bilateral"
 
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
@@ -368,7 +384,7 @@ msgstr ""
 "Número de iteraciones, un número mayor ofrece resultados con menos ruido "
 "pero mayor coste de procesado"
 
-#: ../operations/common/c2g.c:346
+#: ../operations/common/c2g.c:331
 msgid ""
 "Color to grayscale conversion, uses envelopes formed from spatial color "
 "differences to perform color-feature preserving grayscale spatial contrast "
@@ -699,22 +715,18 @@ msgid "Combine multiple scene exposures into one high range buffer"
 msgstr "Combinar varias exposiciones de escena en un búfer de alto rango"
 
 #: ../operations/common/exposure.c:25
-#| msgid "Exposure Values"
 msgid "Exposure"
 msgstr "Exposición"
 
 #: ../operations/common/exposure.c:26
-#| msgid "Relative brightness of each exposure in EV"
 msgid "Relative brightness change in stops"
 msgstr "Cambio del brillo relativo en las paradas"
 
 #: ../operations/common/exposure.c:27
-#| msgid "Offset: "
 msgid "Offset"
 msgstr "Desplazamiento"
 
 #: ../operations/common/exposure.c:28
-#| msgid "Offset angle"
 msgid "Offset value added"
 msgstr "Valor de desplazamiento añadido"
 
@@ -939,7 +951,7 @@ msgstr ""
 "Parámetro opcional para sobreescribr la selección automática del filtro de "
 "desenfoque. Las posibilidades son «fir», «iir», «auto»"
 
-#: ../operations/common/gaussian-blur.c:695
+#: ../operations/common/gaussian-blur.c:685
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
