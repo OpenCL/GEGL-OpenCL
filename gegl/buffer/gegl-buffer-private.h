@@ -26,8 +26,6 @@
 #include "gegl-buffer-iterator.h"
 #include "gegl-buffer-cl-iterator.h"
 
-// #define GEGL_USE_TILE_MUTEX
-
 #define GEGL_BUFFER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_BUFFER, GeglBufferClass))
 #define GEGL_IS_BUFFER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_BUFFER))
 #define GEGL_BUFFER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_BUFFER, GeglBufferClass))
@@ -166,11 +164,6 @@ struct _GeglTile
   gchar            lock;        /* number of times the tile is write locked
                                  * should in theory just have the values 0/1
                                  */
-
-
-#ifdef GEGL_USE_TILE_MUTEX
-  GMutex          *mutex;
-#endif
 
   /* the shared list is a doubly linked circular list */
   GeglTile        *next_shared;

@@ -81,13 +81,6 @@ void gegl_tile_unref (GeglTile *tile)
         }
     }
 
-#ifdef GEGL_USE_TILE_MUTEX
-  if (tile->mutex)
-    {
-      g_mutex_free (tile->mutex);
-      tile->mutex = NULL;
-    }
-#endif
   g_slice_free (GeglTile, tile);
 }
 
@@ -109,10 +102,6 @@ gegl_tile_new_bare (void)
   tile->destroy_notify = (void*)&free_data_directly;
   tile->destroy_notify_data = NULL;
 
-#ifdef GEGL_USE_TILE_MUTEX
-  tile->mutex = g_mutex_new ();
-#endif
-
   return tile;
 }
 
@@ -131,12 +120,7 @@ gegl_tile_dup (GeglTile *src)
   tile->next_shared              = src->next_shared;
   src->next_shared               = tile;
   tile->prev_shared              = src;
-#ifdef GEGL_USE_TILE_MUTEX
-  if (tile->next_shared != src)
-    {
-      g_mutex_lock (tile->next_shared->mutex);
-    }
-#endif
+
   if (tile->next_shared != src)
     {
       g_static_mutex_lock (&cowmutex);
@@ -148,12 +132,6 @@ gegl_tile_dup (GeglTile *src)
     {
       g_static_mutex_unlock (&cowmutex);
     }
-#ifdef GEGL_USE_TILE_MUTEX
-  if (tile->next_shared != src)
-    {
-      g_mutex_unlock (tile->next_shared->mutex);
-    }
-#endif
 
   return tile;
 }
@@ -197,31 +175,19 @@ gegl_tile_unclone (GeglTile *tile)
       g_static_mutex_unlock (&cowmutex);
     }
 }
-#if 0
-static gint total_locks   = 0;
-static gint total_unlocks = 0;
-#endif
 
 void gegl_bt (void);
 
 void
 gegl_tile_lock (GeglTile *tile)
 {
-#ifdef GEGL_USE_TILE_MUTEX
-  g_mutex_lock (tile->mutex);
-#endif
-
   if (tile->lock != 0)
     {
       g_warning ("strange tile lock count: %i", tile->lock);
       gegl_bt ();
     }
-#if 0
-  total_locks++;
-#endif
 
   tile->lock++;
-  /*fprintf (stderr, "global tile locking: %i %i\n", locks, unlocks);*/
 
   gegl_tile_unclone (tile);
 }
@@ -256,10 +222,6 @@ gegl_tile_void_pyramid (GeglTile *tile)
 void
 gegl_tile_unlock (GeglTile *tile)
 {
-#if 0
-  total_unlocks++;
-#endif
-
   if (tile->unlock_notify != NULL)
     {
       tile->unlock_notify (tile, tile->unlock_notify_data);
@@ -277,9 +239,6 @@ gegl_tile_unlock (GeglTile *tile)
     }
   if (tile->lock==0)
     tile->rev++;
-#ifdef GEGL_USE_TILE_MUTEX
-  g_mutex_unlock (tile->mutex);
-#endif
 }
 
 
