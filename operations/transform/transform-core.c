@@ -84,6 +84,8 @@ static GeglNode     *gegl_transform_detect                       (GeglOperation 
 
 static gboolean      gegl_matrix3_is_affine                      (GeglMatrix3          *matrix);
 static gboolean      gegl_transform_matrix3_allow_fast_translate (GeglMatrix3          *matrix);
+static void          gegl_transform_create_composite_matrix      (OpTransform *transform,
+                                                                  GeglMatrix3 *matrix);
 
 /* ************************* */
 
@@ -131,6 +133,19 @@ static void
 gegl_transform_prepare (GeglOperation *operation)
 {
   const Babl *format = babl_format ("RaGaBaA float");
+  GeglMatrix3  matrix;
+  OpTransform *transform = (OpTransform *) operation;
+
+  gegl_transform_create_composite_matrix (transform, &matrix);
+
+  if (gegl_transform_matrix3_allow_fast_translate (&matrix))
+    {
+      const Babl *fmt = gegl_operation_get_source_format (operation, "input");
+
+      if (fmt)
+        format = fmt;
+    }
+
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
 }

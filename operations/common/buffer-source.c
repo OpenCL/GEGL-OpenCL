@@ -60,6 +60,18 @@ static void buffer_changed (GeglBuffer          *buffer,
 }
 
 
+static void
+gegl_buffer_source_prepare (GeglOperation *operation)
+{
+  const Babl *format = NULL;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  if (o->buffer)
+    format = gegl_buffer_get_format (GEGL_BUFFER (o->buffer));
+
+  gegl_operation_set_format (operation, "output", format);
+}
+
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
@@ -165,6 +177,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class = GEGL_OPERATION_CLASS (klass);
 
+  operation_class->prepare = gegl_buffer_source_prepare;
   operation_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
 

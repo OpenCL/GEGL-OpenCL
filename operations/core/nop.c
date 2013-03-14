@@ -31,6 +31,13 @@
 
 #include "gegl-chant.h"
 
+static void
+gegl_nop_prepare (GeglOperation *self)
+{
+  const Babl *fmt = gegl_operation_get_source_format (self, "input");
+
+  gegl_operation_set_format (self, "output", fmt);
+}
 
 static gboolean
 gegl_nop_process (GeglOperation        *operation,
@@ -65,6 +72,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   operation_class->process = gegl_nop_process;
+  operation_class->prepare = gegl_nop_prepare;
 
   gegl_operation_class_set_keys (operation_class,
               "name",        "gegl:nop",
