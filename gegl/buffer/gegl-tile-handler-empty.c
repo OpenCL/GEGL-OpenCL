@@ -58,6 +58,13 @@ get_tile (GeglTileSource *gegl_tile_source,
   if (tile)
     return tile;
 
+  if (G_UNLIKELY(!empty->tile))
+    {
+      gint tile_size = gegl_tile_backend_get_tile_size (empty->backend);
+      empty->tile    = gegl_tile_new (tile_size);
+      memset (gegl_tile_get_data (empty->tile), 0x00, tile_size);
+    }
+
   return gegl_tile_handler_dup_tile (GEGL_TILE_HANDLER (empty),
                                      empty->tile, x, y, z);
 }
@@ -94,11 +101,9 @@ GeglTileHandler *
 gegl_tile_handler_empty_new (GeglTileBackend *backend)
 {
   GeglTileHandlerEmpty *empty = g_object_new (GEGL_TYPE_TILE_HANDLER_EMPTY, NULL);
-  gint tile_size = gegl_tile_backend_get_tile_size (backend);
 
   empty->backend = backend;
-  empty->tile    = gegl_tile_new (tile_size);
-  memset (gegl_tile_get_data (empty->tile), 0x00, tile_size);
+  empty->tile    = NULL;
 
   return (void*)empty;
 }
