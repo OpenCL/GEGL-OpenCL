@@ -1257,8 +1257,8 @@ gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
   g_cond_init (&queue_cond);
   g_cond_init (&max_cond);
   g_mutex_init (&mutex);
-  g_thread_create_full (gegl_tile_backend_file_writer_thread,
-                        NULL, 0, TRUE, TRUE, G_THREAD_PRIORITY_NORMAL, NULL);
+  g_thread_new ("GeglTileBackendFile async writer thread",
+                gegl_tile_backend_file_writer_thread, NULL);
 
   GEGL_BUFFER_STRUCT_CHECK_PADDING;
 
