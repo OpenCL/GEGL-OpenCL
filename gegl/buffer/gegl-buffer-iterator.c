@@ -332,14 +332,13 @@ typedef struct BufInfo {
   gpointer buf;
 } BufInfo;
 
-static GArray *buf_pool = NULL;
-
-static GStaticMutex pool_mutex = G_STATIC_MUTEX_INIT;
+static GArray *buf_pool   = NULL;
+static GMutex  pool_mutex = { 0, };
 
 static gpointer iterator_buf_pool_get (gint size)
 {
   gint i;
-  g_static_mutex_lock (&pool_mutex);
+  g_mutex_lock (&pool_mutex);
 
   if (G_UNLIKELY (!buf_pool))
     {
@@ -351,7 +350,7 @@ static gpointer iterator_buf_pool_get (gint size)
       if (info->size >= size && info->used == 0)
         {
           info->used ++;
-          g_static_mutex_unlock (&pool_mutex);
+          g_mutex_unlock (&pool_mutex);
           return info->buf;
         }
     }
@@ -360,7 +359,7 @@ static gpointer iterator_buf_pool_get (gint size)
     info.size = size;
     info.buf = gegl_malloc (size);
     g_array_append_val (buf_pool, info);
-    g_static_mutex_unlock (&pool_mutex);
+    g_mutex_unlock (&pool_mutex);
     return info.buf;
   }
 }
@@ -368,19 +367,19 @@ static gpointer iterator_buf_pool_get (gint size)
 static void iterator_buf_pool_release (gpointer buf)
 {
   gint i;
-  g_static_mutex_lock (&pool_mutex);
+  g_mutex_lock (&pool_mutex);
   for (i=0; i<buf_pool->len; i++)
     {
       BufInfo *info = &g_array_index (buf_pool, BufInfo, i);
       if (info->buf == buf)
         {
           info->used --;
-          g_static_mutex_unlock (&pool_mutex);
+          g_mutex_unlock (&pool_mutex);
           return;
         }
     }
   g_assert (0);
-  g_static_mutex_unlock (&pool_mutex);
+  g_mutex_unlock (&pool_mutex);
 }
 
 static void ensure_buf (GeglBufferIterators *i, gint no)

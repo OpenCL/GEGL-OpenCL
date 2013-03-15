@@ -78,7 +78,7 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   GeglTileHandler       *zoom = NULL;
 
   tile_storage->seen_zoom = 0;
-  tile_storage->mutex = g_mutex_new ();
+  g_mutex_init (&tile_storage->mutex);
   tile_storage->width = G_MAXINT;
   tile_storage->height = G_MAXINT;
 
@@ -167,7 +167,7 @@ gegl_tile_storage_finalize (GObject *object)
 
   if (self->path)
     g_free (self->path);
-  g_mutex_free (self->mutex);
+  g_mutex_clear (&self->mutex);
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }

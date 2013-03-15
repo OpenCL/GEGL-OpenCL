@@ -137,7 +137,7 @@ gegl_buffer_linear_open (GeglBuffer          *buffer,
     extent=&buffer->extent;
 
   /*gegl_buffer_lock (buffer);*/
-  g_mutex_lock (buffer->tile_storage->mutex);
+  g_mutex_lock (&buffer->tile_storage->mutex);
   if (extent->x     == buffer->extent.x &&
       extent->y     == buffer->extent.y &&
       extent->width == buffer->tile_width &&
@@ -248,19 +248,19 @@ gegl_buffer_linear_close (GeglBuffer *buffer,
               linear_buffers = g_list_remove (linear_buffers, info);
               g_object_set_data (G_OBJECT (buffer), "linear-buffers", linear_buffers);
 
-              g_mutex_unlock (buffer->tile_storage->mutex);
+              g_mutex_unlock (&buffer->tile_storage->mutex);
               /* XXX: potential race */
               gegl_buffer_set (buffer, &info->extent, 0, info->format, info->buf, 0);
 
               gegl_free (info->buf);
               g_free (info);
 
-              g_mutex_lock (buffer->tile_storage->mutex);
+              g_mutex_lock (&buffer->tile_storage->mutex);
               break;
             }
         }
     }
   /*gegl_buffer_unlock (buffer);*/
-  g_mutex_unlock (buffer->tile_storage->mutex);
+  g_mutex_unlock (&buffer->tile_storage->mutex);
   return;
 }

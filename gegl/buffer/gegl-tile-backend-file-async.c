@@ -127,7 +127,7 @@ struct _GeglTileBackendFile
   gint             pending_ops;
 
   /* used for waiting on writes to the file to be finished */
-  GCond           *cond;
+  GCond            cond;
 
   /* for writing */
   int              o;
@@ -155,19 +155,19 @@ static gint peak_allocs    = 0;
 static gint peak_file_size = 0;
 
 static GQueue  queue      = G_QUEUE_INIT;
-static GMutex *mutex      = NULL;
-static GCond  *queue_cond = NULL;
-static GCond  *max_cond   = NULL;
+static GMutex  mutex      = { 0, };
+static GCond   queue_cond = { 0, };
+static GCond   max_cond   = { 0, };
 static GeglFileBackendThreadParams *in_progress;
 
 
 static void
 gegl_tile_backend_file_finish_writing (GeglTileBackendFile *self)
 {
-  g_mutex_lock (mutex);
+  g_mutex_lock (&mutex);
   while (self->pending_ops != 0)
-    g_cond_wait (self->cond, mutex);
-  g_mutex_unlock (mutex);
+    g_cond_wait (&self->cond, &mutex);
+  g_mutex_unlock (&mutex);
 }
 
 static void
@@ -175,13 +175,13 @@ gegl_tile_backend_file_push_queue (GeglFileBackendThreadParams *params)
 {
   guint length;
 
-  g_mutex_lock (mutex);
+  g_mutex_lock (&mutex);
 
   length = g_queue_get_length (&queue);
 
   /* block if the queue has gotten too big */
   if (length > gegl_config ()->queue_limit)
-    g_cond_wait (max_cond, mutex);
+    g_cond_wait (&max_cond, &mutex);
 
   params->file->pending_ops += 1;
   g_queue_push_tail (&queue, params);
@@ -195,9 +195,9 @@ gegl_tile_backend_file_push_queue (GeglFileBackendThreadParams *params)
     }
 
   /* wake up the writer thread */
-  g_cond_signal (queue_cond);
+  g_cond_signal (&queue_cond);
 
-  g_mutex_unlock (mutex);
+  g_mutex_unlock (&mutex);
 }
 
 static inline void
@@ -245,10 +245,10 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
     {
       GeglFileBackendThreadParams *params;
 
-      g_mutex_lock (mutex);
+      g_mutex_lock (&mutex);
 
       while (g_queue_is_empty (&queue))
-        g_cond_wait (queue_cond, mutex);
+        g_cond_wait (&queue_cond, &mutex);
 
       params = (GeglFileBackendThreadParams *)g_queue_pop_head (&queue);
       if (params->entry)
@@ -259,7 +259,7 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
           else /* OP_WRITE_BLOCK */
             params->entry->block_link = NULL;
         }
-      g_mutex_unlock (mutex);
+      g_mutex_unlock (&mutex);
 
       switch (params->operation)
         {
@@ -277,24 +277,24 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
           break;
         }
 
-      g_mutex_lock (mutex);
+      g_mutex_lock (&mutex);
       in_progress = NULL;
 
       /* the file maybe waiting for its file operations to finish */
       params->file->pending_ops -= 1;
       if (params->file->pending_ops == 0)
-        g_cond_signal (params->file->cond);
+        g_cond_signal (&params->file->cond);
 
       /* unblock the main thread if the queue had gotten too big */
       if (g_queue_get_length (&queue) < gegl_config ()->queue_limit)
-        g_cond_signal (max_cond);
+        g_cond_signal (&max_cond);
 
       if (params->source)
         g_free (params->source);
 
       g_free (params);
 
-      g_mutex_unlock (mutex);
+      g_mutex_unlock (&mutex);
     }
 
   return NULL;
@@ -314,7 +314,7 @@ gegl_tile_backend_file_entry_read (GeglTileBackendFile  *self,
   if (entry->tile_link || in_progress)
     {
       GeglFileBackendThreadParams *queued_op = NULL;
-      g_mutex_lock (mutex);
+      g_mutex_lock (&mutex);
 
       if (entry->tile_link)
         queued_op = entry->tile_link->data;
@@ -325,14 +325,14 @@ gegl_tile_backend_file_entry_read (GeglTileBackendFile  *self,
       if (queued_op)
         {
           memcpy (dest, queued_op->source, to_be_read);
-          g_mutex_unlock (mutex);
+          g_mutex_unlock (&mutex);
 
           GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "read entry %i,%i,%i from queue", entry->tile->x, entry->tile->y, entry->tile->z);
 
           return;
         }
 
-      g_mutex_unlock (mutex);
+      g_mutex_unlock (&mutex);
     }
 
   if (self->in_offset != offset)
@@ -378,20 +378,20 @@ gegl_tile_backend_file_entry_write (GeglTileBackendFile  *self,
 
   if (entry->tile_link)
     {
-      g_mutex_lock (mutex);
+      g_mutex_lock (&mutex);
 
       if (entry->tile_link)
         {
           params = entry->tile_link->data;
           memcpy (params->source, source, length);
-          g_mutex_unlock (mutex);
+          g_mutex_unlock (&mutex);
 
           GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "overwrote queue entry %i,%i,%i at %i", entry->tile->x, entry->tile->y, entry->tile->z, (gint)entry->tile->offset);
 
           return;
         }
 
-      g_mutex_unlock (mutex);
+      g_mutex_unlock (&mutex);
     }
 
   new_source = g_malloc (length);
@@ -484,7 +484,7 @@ gegl_tile_backend_file_file_entry_destroy (GeglTileBackendFile  *self,
       gint   i;
       GList *link;
 
-      g_mutex_lock (mutex);
+      g_mutex_lock (&mutex);
 
       for (i = 0, link = entry->tile_link;
            i < 2;
@@ -500,7 +500,7 @@ gegl_tile_backend_file_file_entry_destroy (GeglTileBackendFile  *self,
             }
         }
 
-      g_mutex_unlock (mutex);
+      g_mutex_unlock (&mutex);
     }
 
   self->free_list = g_slist_prepend (self->free_list, offset);
@@ -567,14 +567,14 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile  *self,
 
       if (self->in_holding->block_link)
         {
-          g_mutex_lock (mutex);
+          g_mutex_lock (&mutex);
 
           if (self->in_holding->block_link)
             {
               params = self->in_holding->block_link->data;
               params->offset = self->offset;
               memcpy (params->source, block, length);
-              g_mutex_unlock (mutex);
+              g_mutex_unlock (&mutex);
 
               self->offset = next_allocation;
               self->in_holding = item;
@@ -586,7 +586,7 @@ gegl_tile_backend_file_write_block (GeglTileBackendFile  *self,
               return TRUE;
             }
 
-          g_mutex_unlock (mutex);
+          g_mutex_unlock (&mutex);
         }
 
       params     = g_new0 (GeglFileBackendThreadParams, 1);
@@ -965,10 +965,9 @@ gegl_tile_backend_file_finalize (GObject *object)
   if (self->file)
     g_object_unref (self->file);
 
-  if (self->cond)
-    g_cond_free (self->cond);
+  g_cond_clear (&self->cond);
 
-  (*G_OBJECT_CLASS (parent_class)->finalize)(object);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static guint
@@ -1142,7 +1141,7 @@ gegl_tile_backend_file_constructor (GType                  type,
   self->index       = g_hash_table_new (gegl_tile_backend_file_hashfunc,
                                         gegl_tile_backend_file_equalfunc);
   self->pending_ops = 0;
-  self->cond        = g_cond_new ();
+  g_cond_init (&self->cond);
 
   /* If the file already exists open it, assuming it is a GeglBuffer. */
   if (g_access (self->path, F_OK) != -1)
@@ -1255,9 +1254,9 @@ gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
   gobject_class->constructor  = gegl_tile_backend_file_constructor;
   gobject_class->finalize     = gegl_tile_backend_file_finalize;
 
-  queue_cond = g_cond_new ();
-  max_cond   = g_cond_new ();
-  mutex      = g_mutex_new ();
+  g_cond_init (&queue_cond);
+  g_cond_init (&max_cond);
+  g_mutex_init (&mutex);
   g_thread_create_full (gegl_tile_backend_file_writer_thread,
                         NULL, 0, TRUE, TRUE, G_THREAD_PRIORITY_NORMAL, NULL);
 

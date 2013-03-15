@@ -84,7 +84,7 @@ static void       gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cach
                                                       gint                  z);
 
 
-static GStaticMutex mutex                 = G_STATIC_MUTEX_INIT;
+static GMutex       mutex                 = { 0, };
 static GQueue      *cache_queue           = NULL;
 static GHashTable  *cache_ht              = NULL;
 static gint         cache_wash_percentage = 20;
@@ -142,7 +142,7 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
   if (!cache->count)
     return;
 
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   /* only throw out items belonging to this cache instance */
 
   cache->free_list = NULL;
@@ -163,7 +163,7 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
     }
   g_slist_free (cache->free_list);
   cache->free_list = NULL;
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
 }
 
 static void
@@ -198,7 +198,7 @@ gegl_tile_handler_cache_dispose (GObject *object)
 
   if (cache->count)
     {
-      g_static_mutex_lock (&mutex);
+      g_mutex_lock (&mutex);
       g_queue_foreach (cache_queue, gegl_tile_handler_cache_dispose_buffer_tiles, cache);
       for (iter = cache->free_list; iter; iter = g_slist_next (iter))
         {
@@ -215,7 +215,7 @@ gegl_tile_handler_cache_dispose (GObject *object)
         }
       g_slist_free (cache->free_list);
       cache->free_list = NULL;
-      g_static_mutex_unlock (&mutex);
+      g_mutex_unlock (&mutex);
     }
 
   if (cache->count < 0)
@@ -396,16 +396,16 @@ gegl_tile_handler_cache_get_tile (GeglTileHandlerCache *cache,
   if (cache->count == 0)
     return NULL;
 
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   result = cache_lookup (cache, x, y, z);
   if (result)
     {
       g_queue_unlink (cache_queue, &result->link);
       g_queue_push_head_link (cache_queue, &result->link);
-      g_static_mutex_unlock (&mutex);
+      g_mutex_unlock (&mutex);
       return gegl_tile_ref (result->tile);
     }
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
   return NULL;
 }
 
@@ -455,7 +455,7 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
 {
   CacheItem *item;
 
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   item = cache_lookup (cache, x, y, z);
   if (item)
     {
@@ -467,7 +467,7 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
       g_hash_table_remove (cache_ht, item);
       g_slice_free (CacheItem, item);
     }
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
 }
 
 
@@ -479,7 +479,7 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
 {
   CacheItem *item;
 
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   item = cache_lookup (cache, x, y, z);
   if (item)
     {
@@ -491,7 +491,7 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
       g_slice_free (CacheItem, item);
       cache->count --;
     }
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
 }
 
 void
@@ -515,7 +515,7 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
   // XXX : remove entry if it already exists
   gegl_tile_handler_cache_void (cache, x, y, z);
 
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   cache_total  += item->tile->size;
   g_queue_push_head_link (cache_queue, &item->link);
 
@@ -532,7 +532,7 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
 #endif
       gegl_tile_handler_cache_trim (cache);
     }
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
 }
 
 GeglTileHandler *

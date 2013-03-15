@@ -1195,7 +1195,7 @@ typedef struct TileStorageCacheItem {
   const void      *babl_fmt;
 } TileStorageCacheItem;
 
-static GStaticMutex storage_cache_mutex = G_STATIC_MUTEX_INIT;
+static GMutex  storage_cache_mutex = { 0, };
 static GSList *storage_cache = NULL;
 
 /* returns TRUE if it could be done */
@@ -1206,22 +1206,22 @@ gboolean gegl_tile_storage_cached_release (GeglTileStorage *storage)
 
   if (!item)
     return FALSE;
-  g_static_mutex_lock (&storage_cache_mutex);
+  g_mutex_lock (&storage_cache_mutex);
   storage_cache = g_slist_prepend (storage_cache, item);
-  g_static_mutex_unlock (&storage_cache_mutex);
+  g_mutex_unlock (&storage_cache_mutex);
   return TRUE;
 }
 
 void gegl_tile_storage_cache_cleanup (void);
 void gegl_tile_storage_cache_cleanup (void)
 {
-  g_static_mutex_lock (&storage_cache_mutex);
+  g_mutex_lock (&storage_cache_mutex);
   for (;storage_cache; storage_cache = g_slist_remove (storage_cache, storage_cache->data))
     {
       TileStorageCacheItem *item = storage_cache->data;
       g_object_unref (item->storage);
     }
-  g_static_mutex_unlock (&storage_cache_mutex);
+  g_mutex_unlock (&storage_cache_mutex);
 }
 
 static GeglTileStorage *
@@ -1230,7 +1230,7 @@ gegl_tile_storage_new_cached (gint tile_width, gint tile_height,
 {
   GeglTileStorage *storage = NULL;
   GSList *iter;
-  g_static_mutex_lock (&storage_cache_mutex);
+  g_mutex_lock (&storage_cache_mutex);
   for (iter = storage_cache; iter; iter = iter->next)
     {
       TileStorageCacheItem *item = iter->data;
@@ -1303,7 +1303,7 @@ gegl_tile_storage_new_cached (gint tile_width, gint tile_height,
       g_object_set_data_full (G_OBJECT (storage), "storage-cache-item", item, g_free);
     }
 
-  g_static_mutex_unlock (&storage_cache_mutex);
+  g_mutex_unlock (&storage_cache_mutex);
   return storage;
 }
 
@@ -1380,11 +1380,11 @@ gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
 {
   gboolean ret;
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
-  g_mutex_lock (buffer->tile_storage->mutex);
+  g_mutex_lock (&buffer->tile_storage->mutex);
   if (buffer->lock_count>0)
     {
       buffer->lock_count++;
-      g_mutex_unlock (buffer->tile_storage->mutex);
+      g_mutex_unlock (&buffer->tile_storage->mutex);
       return TRUE;
     }
   if (gegl_buffer_is_shared(buffer))
@@ -1393,7 +1393,7 @@ gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
     ret = TRUE;
   if (ret)
     buffer->lock_count++;
-  g_mutex_unlock (buffer->tile_storage->mutex);
+  g_mutex_unlock (&buffer->tile_storage->mutex);
   return TRUE;
 }
 
@@ -1412,7 +1412,7 @@ gboolean gegl_buffer_unlock (GeglBuffer *buffer)
 {
   gboolean ret = TRUE;
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
-  g_mutex_lock (buffer->tile_storage->mutex);
+  g_mutex_lock (&buffer->tile_storage->mutex);
   g_assert (buffer->lock_count >=0);
   buffer->lock_count--;
   g_assert (buffer->lock_count >=0);
@@ -1420,7 +1420,7 @@ gboolean gegl_buffer_unlock (GeglBuffer *buffer)
     {
       ret = gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
     }
-  g_mutex_unlock (buffer->tile_storage->mutex);
+  g_mutex_unlock (&buffer->tile_storage->mutex);
   return ret;
 }
 

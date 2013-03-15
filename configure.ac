@@ -40,7 +40,7 @@ m4_define([gimp_full_name], [Generic Graphical Library])
 m4_define([babl_required_version], [0.1.10])
 m4_define([cairo_required_version], [0.0.0])
 m4_define([gdk_pixbuf_required_version], [2.18.0])
-m4_define([glib_required_version], [2.28.0])
+m4_define([glib_required_version], [2.32.4])
 m4_define([graphviz_required_version], [0.0.0])
 m4_define([jasper_required_version], [1.900.1])
 m4_define([lensfun_required_version], [0.2.5])
@@ -489,18 +489,6 @@ m4_ifdef([IT_PROG_INTLTOOL],[IT_PROG_INTLTOOL(0.40.1),],
   AC_MSG_ERROR([*** intltool version 0.40.1 or later required]))
 
 AM_GLIB_GNU_GETTEXT
-
-#########################
-# Disable deprecated APIs
-#########################
-
-AC_MSG_CHECKING([if GLib is version 2.21.0 or newer])
-if $PKG_CONFIG --atleast-version=2.21.0 glib-2.0; then
-  have_glib_2_21=yes
-else
-  have_glib_2_21=no
-fi
-AC_MSG_RESULT($have_glib_2_21)
 
 
 ######################################

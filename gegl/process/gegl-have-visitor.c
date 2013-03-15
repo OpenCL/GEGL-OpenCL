@@ -64,7 +64,7 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
   if (!node)
     return;
   operation = node->operation;
-  g_mutex_lock (node->mutex);
+  g_mutex_lock (&node->mutex);
   node->have_rect = gegl_operation_get_bounding_box (operation);
   /*
    * Setting cache dimensions here helps in case of node
@@ -77,7 +77,7 @@ gegl_have_visitor_visit_node (GeglVisitor *self,
              "For \"%s\" have_rect = %d,%d %d×%d",
              gegl_node_get_debug_name (node),
              node->have_rect.x, node->have_rect.y, node->have_rect.width, node->have_rect.height);
-  g_mutex_unlock (node->mutex);
+  g_mutex_unlock (&node->mutex);
 
   time = gegl_ticks () - time;
   gegl_instrument ("process", gegl_node_get_operation (node), time);

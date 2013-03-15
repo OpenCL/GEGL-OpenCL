@@ -39,7 +39,7 @@
 
 #include "gegl-utils.h"
 
-static GStaticMutex cowmutex = G_STATIC_MUTEX_INIT;
+static GMutex cowmutex = { 0, };
 
 GeglTile *gegl_tile_ref (GeglTile *tile)
 {
@@ -123,14 +123,14 @@ gegl_tile_dup (GeglTile *src)
 
   if (tile->next_shared != src)
     {
-      g_static_mutex_lock (&cowmutex);
+      g_mutex_lock (&cowmutex);
     }
 
   tile->next_shared->prev_shared = tile;
 
   if (tile->next_shared != src)
     {
-      g_static_mutex_unlock (&cowmutex);
+      g_mutex_unlock (&cowmutex);
     }
 
   return tile;
@@ -164,7 +164,7 @@ gegl_tile_unclone (GeglTile *tile)
       /* the tile data is shared with other tiles,
        * create a local copy
        */
-      g_static_mutex_lock (&cowmutex);
+      g_mutex_lock (&cowmutex);
       tile->data                     = gegl_memdup (tile->data, tile->size);
       tile->destroy_notify           = (void*)&free_data_directly;
       tile->destroy_notify_data      = NULL;
@@ -172,7 +172,7 @@ gegl_tile_unclone (GeglTile *tile)
       tile->next_shared->prev_shared = tile->prev_shared;
       tile->prev_shared              = tile;
       tile->next_shared              = tile;
-      g_static_mutex_unlock (&cowmutex);
+      g_mutex_unlock (&cowmutex);
     }
 }
 

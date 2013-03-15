@@ -193,13 +193,13 @@ gegl_node_init (GeglNode *self)
 
   self->priv->contexts = g_hash_table_new (NULL, NULL);
 
-  self->pads           = NULL;
-  self->input_pads     = NULL;
-  self->output_pads    = NULL;
-  self->operation      = NULL;
-  self->is_graph       = FALSE;
-  self->cache          = NULL;
-  self->mutex          = g_mutex_new ();
+  self->pads        = NULL;
+  self->input_pads  = NULL;
+  self->output_pads = NULL;
+  self->operation   = NULL;
+  self->is_graph    = FALSE;
+  self->cache       = NULL;
+  g_mutex_init (&self->mutex);
 
 }
 
@@ -279,7 +279,7 @@ gegl_node_finalize (GObject *gobject)
       g_free (self->priv->name);
     }
   g_hash_table_destroy (self->priv->contexts);
-  g_mutex_free (self->mutex);
+  g_mutex_clear (&self->mutex);
 
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
 }
@@ -917,10 +917,10 @@ typedef struct ThreadData
   GeglBlitFlags        flags;
 } ThreadData;
 
-static GThreadPool *pool = NULL;
-static GMutex *mutex = NULL;
-static GCond  *cond = NULL;
-static gint    remaining_tasks = 0;
+static GThreadPool *pool            = NULL;
+static GMutex       mutex           = { 0, };
+static GCond        cond            = { 0, };
+static gint         remaining_tasks = 0;
 
 static void spawnrender (gpointer data,
                          gpointer foo)
@@ -939,14 +939,14 @@ static void spawnrender (gpointer data,
   if (buffer)
     g_object_unref (buffer);
 
-  g_mutex_lock (mutex);
+  g_mutex_lock (&mutex);
   remaining_tasks --;
   if (remaining_tasks == 0)
     {
       /* we were the last task, we're not busy rendering any more */
-      g_cond_signal (cond);
+      g_cond_signal (&cond);
     }
-  g_mutex_unlock (mutex);
+  g_mutex_unlock (&mutex);
 }
 
 
@@ -970,8 +970,8 @@ gegl_node_blit (GeglNode            *self,
   if (pool == NULL)
     {
       pool = g_thread_pool_new (spawnrender, NULL, threads, TRUE, NULL);
-      mutex = g_mutex_new ();
-      cond = g_cond_new ();
+      g_mutex_init (&mutex);
+      g_cond_init (&cond);
     }
 
   if (flags == GEGL_BLIT_DEFAULT)
@@ -1045,10 +1045,10 @@ gegl_node_blit (GeglNode            *self,
             g_thread_pool_push (pool, &data[i], NULL);
           spawnrender (&data[threads-1], NULL);
 
-          g_mutex_lock (mutex);
+          g_mutex_lock (&mutex);
           while (remaining_tasks!=0)
-            g_cond_wait (cond, mutex);
-          g_mutex_unlock (mutex);
+            g_cond_wait (&cond, &mutex);
+          g_mutex_unlock (&mutex);
         }
     }
 #else /* thread free version, could be removed, left behind in case it
@@ -1834,10 +1834,10 @@ gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)
 {
   GeglOperationContext *context = NULL;
-  //g_mutex_lock (self->mutex);
+  //g_mutex_lock (&self->mutex);
 
   context = g_hash_table_lookup (self->priv->contexts, context_id);
-  //g_mutex_unlock (self->mutex);
+  //g_mutex_unlock (&self->mutex);
   return context;
 }
 
@@ -1851,17 +1851,17 @@ gegl_node_remove_context (GeglNode *self,
   g_return_if_fail (context_id != NULL);
 
   context = gegl_node_get_context (self, context_id);
-  g_mutex_lock (self->mutex);
+  g_mutex_lock (&self->mutex);
   if (!context)
     {
       g_warning ("didn't find context %p for %s",
                  context_id, gegl_node_get_debug_name (self));
-      g_mutex_unlock (self->mutex);
+      g_mutex_unlock (&self->mutex);
       return;
     }
   g_hash_table_remove (self->priv->contexts, context_id);
   gegl_operation_context_destroy (context);
-  g_mutex_unlock (self->mutex);
+  g_mutex_unlock (&self->mutex);
 }
 
 /* Creates, sets up and returns a new context for the node, or just returns it
@@ -1876,21 +1876,21 @@ gegl_node_add_context (GeglNode *self,
   g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
   g_return_val_if_fail (context_id != NULL, NULL);
 
-  g_mutex_lock (self->mutex);
+  g_mutex_lock (&self->mutex);
   context = g_hash_table_lookup (self->priv->contexts, context_id);
 
   if (context)
     {
       /* silently ignore, since multiple traversals of prepare are done
        * to saturate the graph */
-      g_mutex_unlock (self->mutex);
+      g_mutex_unlock (&self->mutex);
       return context;
     }
 
   context             = gegl_operation_context_new ();
   context->operation  = self->operation;
   g_hash_table_insert (self->priv->contexts, context_id, context);
-  g_mutex_unlock (self->mutex);
+  g_mutex_unlock (&self->mutex);
   return context;
 }
 

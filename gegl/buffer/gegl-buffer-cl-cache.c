@@ -45,7 +45,7 @@ typedef struct
 
 static GList *cache_entries = NULL;
 
-static GStaticMutex cache_mutex = G_STATIC_MUTEX_INIT;
+static GMutex cache_mutex = { 0, };
 
 static gboolean
 cache_entry_find_invalid (gpointer *data)
@@ -108,7 +108,7 @@ gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
                           const GeglRectangle   *roi,
                           cl_mem                 tex)
 {
-  g_static_mutex_lock (&cache_mutex);
+  g_mutex_lock (&cache_mutex);
 
   {
   CacheEntry *e = g_slice_new (CacheEntry);
@@ -123,7 +123,7 @@ gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
   cache_entries = g_list_prepend (cache_entries, e);
   }
 
-  g_static_mutex_unlock (&cache_mutex);
+  g_mutex_unlock (&cache_mutex);
 }
 
 gboolean
@@ -171,7 +171,7 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
       cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
       CL_CHECK;
 
-      g_static_mutex_lock (&cache_mutex);
+      g_mutex_lock (&cache_mutex);
 
       while (cache_entry_find_invalid (&data))
         {
@@ -190,14 +190,14 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
           cache_entries = g_list_remove (cache_entries, data);
         }
 
-      g_static_mutex_unlock (&cache_mutex);
+      g_mutex_unlock (&cache_mutex);
     }
 
   return TRUE;
 
 error:
 
-  g_static_mutex_lock (&cache_mutex);
+  g_mutex_lock (&cache_mutex);
 
   while (cache_entry_find_invalid (&data))
     {
@@ -205,7 +205,7 @@ error:
       cache_entries = g_list_remove (cache_entries, data);
     }
 
-  g_static_mutex_unlock (&cache_mutex);
+  g_mutex_unlock (&cache_mutex);
 
   /* XXX : result is corrupted */
   return FALSE;
@@ -238,7 +238,7 @@ gegl_buffer_cl_cache_invalidate (GeglBuffer          *buffer,
         }
     }
 
-  g_static_mutex_lock (&cache_mutex);
+  g_mutex_lock (&cache_mutex);
 
   while (cache_entry_find_invalid (&data))
     {
@@ -249,7 +249,7 @@ gegl_buffer_cl_cache_invalidate (GeglBuffer          *buffer,
       cache_entries = g_list_remove (cache_entries, data);
     }
 
-  g_static_mutex_unlock (&cache_mutex);
+  g_mutex_unlock (&cache_mutex);
 
 #if 0
   g_printf ("-- ");
