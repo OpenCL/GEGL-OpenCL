@@ -455,4 +455,10 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
   return cl_data;
 }
 
+#define CL_BUILD(SOURCE, ...)                                             \
+  {                                                                       \
+    const char *kernel_name[] = {__VA_ARGS__ , NULL};                     \
+    return cl_compile_and_build(SOURCE, kernel_name);                     \
+  }                                                                       \
+
 #undef CL_SAFE_CALL

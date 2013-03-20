@@ -18,50 +18,69 @@
 
 #define GRID(x,y,z) grid[x+sw*(y + z * sh)]
 
-__kernel void bilateral_init(__global float8 *grid,
-                             int sw,
-                             int sh,
-                             int depth)
-{
-  const int gid_x = get_global_id(0);
-  const int gid_y = get_global_id(1);
+#define LOCAL_W 8
+#define LOCAL_H 8
 
-  for (int d=0; d<depth; d++)
-    {
-      GRID(gid_x,gid_y,d) = (float8)(0.0f);
-    }
-}
+/* found by trial and error on a NVidia GPU */
+#define DEPTH_CHUNK 12
 
+__attribute__((reqd_work_group_size(8, 8, 1)))
 __kernel void bilateral_downsample(__global const float4 *input,
-                                   __global       float2 *grid,
-                                   int width,
-                                   int height,
-                                   int sw,
-                                   int sh,
+                                   __global       float8 *grid,
+                                   int   width,
+                                   int   height,
+                                   int   sw,
+                                   int   sh,
+                                   int   depth,
                                    int   s_sigma,
                                    float r_sigma)
 {
   const int gid_x = get_global_id(0);
   const int gid_y = get_global_id(1);
 
-  for (int ry=0; ry < s_sigma; ry++)
-    for (int rx=0; rx < s_sigma; rx++)
-      {
-        const int x = clamp(gid_x * s_sigma - s_sigma/2 + rx, 0, width -1);
-        const int y = clamp(gid_y * s_sigma - s_sigma/2 + ry, 0, height-1);
+  __local float8 grid_chunk[DEPTH_CHUNK][LOCAL_H][LOCAL_W];
 
-        const float4 val = input[y * width + x];
+  if (gid_x > sw || gid_y > sh) return;
 
-        const int4 z = convert_int4(val * (1.0f/r_sigma) + 0.5f);
+  for (int d = 0; d < depth; d+=DEPTH_CHUNK)
+    {
+      for (int k=0; k < DEPTH_CHUNK; k++)
+        {
+          grid_chunk[k][get_local_id(1)][get_local_id(0)] = (float8)(0.0f);
+        }
 
-        grid[4*(gid_x+sw*(gid_y + z.x * sh))+0] += (float2)(val.x, 1.0f);
-        grid[4*(gid_x+sw*(gid_y + z.y * sh))+1] += (float2)(val.y, 1.0f);
-        grid[4*(gid_x+sw*(gid_y + z.z * sh))+2] += (float2)(val.z, 1.0f);
-        grid[4*(gid_x+sw*(gid_y + z.w * sh))+3] += (float2)(val.w, 1.0f);
+      barrier (CLK_LOCAL_MEM_FENCE);
 
-        barrier (CLK_GLOBAL_MEM_FENCE);
-      }
+      for (int ry=0; ry < s_sigma; ry++)
+        for (int rx=0; rx < s_sigma; rx++)
+          {
+            const int x = clamp(gid_x * s_sigma - s_sigma/2 + rx, 0, width -1);
+            const int y = clamp(gid_y * s_sigma - s_sigma/2 + ry, 0, height-1);
+
+            const float4 val = input[y * width + x];
+
+            const int4 z = convert_int4(val * (1.0f/r_sigma) + 0.5f);
+
+            // z >= d && z < d+DEPTH_CHUNK
+            int4 inbounds = (z >= d & z < d+DEPTH_CHUNK);
+
+            if (inbounds.x) grid_chunk[z.x-d][get_local_id(1)][get_local_id(0)].s01 += (float2)(val.x, 1.0f);
+            if (inbounds.y) grid_chunk[z.y-d][get_local_id(1)][get_local_id(0)].s23 += (float2)(val.y, 1.0f);
+            if (inbounds.z) grid_chunk[z.z-d][get_local_id(1)][get_local_id(0)].s45 += (float2)(val.z, 1.0f);
+            if (inbounds.w) grid_chunk[z.w-d][get_local_id(1)][get_local_id(0)].s67 += (float2)(val.w, 1.0f);
+
+            barrier (CLK_LOCAL_MEM_FENCE);
+          }
+
+      for (int s=d, e=d+min(DEPTH_CHUNK, depth-d); s < e; s++)
+        {
+          grid[gid_x+sw*(gid_y + s * sh)] = grid_chunk[s-d][get_local_id(1)][get_local_id(0)];
+        }
+    }
 }
+
+#undef LOCAL_W
+#undef LOCAL_H
 
 #define LOCAL_W 16
 #define LOCAL_H 16
@@ -76,9 +95,6 @@ __kernel void bilateral_blur(__global const float8 *grid,
                              int sh,
                              int depth)
 {
-  __local float8 img1[LOCAL_H+2][LOCAL_W+2];
-  __local float8 img2[LOCAL_H+2][LOCAL_W+2];
-
   const int gid_x = get_global_id(0);
   const int gid_y = get_global_id(1);
 
@@ -89,114 +105,82 @@ __kernel void bilateral_blur(__global const float8 *grid,
   float8 vp  = (float8)(0.0f);
   float8 v   = (float8)(0.0f);
 
-  float8 k;
-
-  int x  = clamp(gid_x, 0, sw-1);
-  int y  = clamp(gid_y, 0, sw-1);
+  __local float8 data[LOCAL_H+2][LOCAL_W+2];
 
   for (int d=0; d<depth; d++)
     {
-      int xp = max(x-1, 0);
-      int xn = min(x+1, sw-1);
+        for (int ky=get_local_id(1)-1; ky<LOCAL_H+1; ky+=get_local_size(1))
+          for (int kx=get_local_id(0)-1; kx<LOCAL_W+1; kx+=get_local_size(0))
+            {
+              int xx = clamp((int)get_group_id(0)*LOCAL_W+kx, 0, sw-1);
+              int yy = clamp((int)get_group_id(1)*LOCAL_H+ky, 0, sh-1);
 
-      int yp = max(y-1, 0);
-      int yn = min(y+1, sh-1);
+              data[ky+1][kx+1] = GRID(xx, yy, d);
+            }
 
-      int zp = max(d-1, 0);
-      int zn = min(d+1, depth-1);
-
-      /* the corners are not going to be used, don't bother to load them */
-
-      if (ly == 0) {
-        k = GRID(x, yp, d);
-        img1[0][lx+1] = k;
-        img2[0][lx+1] = k;
-      }
-
-      if (ly == LOCAL_H-1) {
-        k = GRID(x, yn, d);
-        img1[LOCAL_H+1][lx+1] = k;
-        img2[LOCAL_H+1][lx+1] = k;
-      }
-
-      if (lx == 0) {
-        k = GRID(xp, y, d);
-        img1[ly+1][0] = k;
-        img2[ly+1][0] = k;
-      }
-
-      if (lx == LOCAL_W-1) {
-        k = GRID(xn, y, d);
-        img1[ly+1][LOCAL_W+1] = k;
-        img2[ly+1][LOCAL_W+1] = k;
-      }
-
-      img1[ly+1][lx+1] = GRID(x, y, d);
-
-      barrier (CLK_LOCAL_MEM_FENCE);
+        barrier (CLK_LOCAL_MEM_FENCE);
 
       /* blur x */
 
-      img2[ly+1][lx+1] = (img1[ly+1][lx] + 2.0f * img1[ly+1][lx+1] + img1[ly+1][lx+2]) / 4.0f;
+        data[ly  ][lx+1] = (data[ly  ][lx] + 2.0f * data[ly  ][lx+1] + data[ly  ][lx+2]) / 4.0f;
+        data[ly+1][lx+1] = (data[ly+1][lx] + 2.0f * data[ly+1][lx+1] + data[ly+1][lx+2]) / 4.0f;
+        data[ly+2][lx+1] = (data[ly+2][lx] + 2.0f * data[ly+2][lx+1] + data[ly+2][lx+2]) / 4.0f;
 
-      barrier (CLK_LOCAL_MEM_FENCE);
+        barrier (CLK_LOCAL_MEM_FENCE);
 
       /* blur y */
 
-      v = (img2[ly][lx+1] + 2.0f * img2[ly+1][lx+1] + img2[ly+2][lx+1]) / 4.0f;
+      if (d==0) {
+        v = (data[ly][lx+1] + 2.0f * data[ly+1][lx+1] + data[ly+2][lx+1]) / 4.0f;
+        vpp = v;
+        vp  = v;
+      }
+      else {
+        vpp = vp;
+        vp  = v;
 
-      /* last three v values */
+        v = (data[ly][lx+1] + 2.0f * data[ly+1][lx+1] + data[ly+2][lx+1]) / 4.0f;
 
-      if (d == 0)
-        {
-          /* this is like CLAMP */
-          vpp = img1[ly+1][lx+1];
-          vp  = img1[ly+1][lx+1];
+        float8 blurred = (vpp + 2.0f * vp + v) / 4.0f;
+
+        if (gid_x < sw && gid_y < sh) {
+          blurz_r[gid_x+sw*(gid_y+sh*(d-1))] = blurred.s01;
+          blurz_g[gid_x+sw*(gid_y+sh*(d-1))] = blurred.s23;
+          blurz_b[gid_x+sw*(gid_y+sh*(d-1))] = blurred.s45;
+          blurz_a[gid_x+sw*(gid_y+sh*(d-1))] = blurred.s67;
         }
-      else
-        {
-          vpp = vp;
-          vp  = v;
-
-          float8 blurred = (vpp + 2.0f * vp + v) / 4.0f;
-
-          /* XXX: OpenCL 1.1 doesn't support writes to 3D textures */
-
-          if (gid_x < sw && gid_y < sh)
-            {
-              blurz_r[x+sw*(y+sh*(d-1))] = blurred.s01;
-              blurz_g[x+sw*(y+sh*(d-1))] = blurred.s23;
-              blurz_b[x+sw*(y+sh*(d-1))] = blurred.s45;
-              blurz_a[x+sw*(y+sh*(d-1))] = blurred.s67;
-            }
-        }
+      }
     }
-
-  /* last z */
 
   vpp = vp;
   vp  = v;
 
   float8 blurred = (vpp + 2.0f * vp + v) / 4.0f;
 
-  if (gid_x < sw && gid_y < sh)
-    {
-      blurz_r[x+sw*(y+sh*(depth-1))] = blurred.s01;
-      blurz_g[x+sw*(y+sh*(depth-1))] = blurred.s23;
-      blurz_b[x+sw*(y+sh*(depth-1))] = blurred.s45;
-      blurz_a[x+sw*(y+sh*(depth-1))] = blurred.s67;
-    }
+  if (gid_x < sw && gid_y < sh) {
+    blurz_r[gid_x+sw*(gid_y+sh*(depth-1))] = blurred.s01;
+    blurz_g[gid_x+sw*(gid_y+sh*(depth-1))] = blurred.s23;
+    blurz_b[gid_x+sw*(gid_y+sh*(depth-1))] = blurred.s45;
+    blurz_a[gid_x+sw*(gid_y+sh*(depth-1))] = blurred.s67;
+  }
 }
 
-const sampler_t sampler = CLK_NORMALIZED_COORDS_FALSE | CLK_ADDRESS_CLAMP_TO_EDGE | CLK_FILTER_LINEAR;
+#undef LOCAL_W
+#undef LOCAL_H
 
-__kernel void bilateral_interpolate(__global    const float4    *input,
-                                    __read_only       image3d_t  blurz_r,
-                                    __read_only       image3d_t  blurz_g,
-                                    __read_only       image3d_t  blurz_b,
-                                    __read_only       image3d_t  blurz_a,
-                                    __global          float4    *smoothed,
+/* I could use texture memory here, but it's not worth the cost of
+   converting blurz_[r,g,b,a] from buffers to textures */
+
+__kernel void bilateral_interpolate(__global    const float4  *input,
+                                    __global    const float2  *blurz_r,
+                                    __global    const float2  *blurz_g,
+                                    __global    const float2  *blurz_b,
+                                    __global    const float2  *blurz_a,
+                                    __global          float4  *smoothed,
                                     int   width,
+                                    int   sw,
+                                    int   sh,
+                                    int   depth,
                                     int   s_sigma,
                                     float r_sigma)
 {
@@ -209,10 +193,44 @@ __kernel void bilateral_interpolate(__global    const float4    *input,
 
   float8 val;
 
-  val.s04 = (read_imagef (blurz_r, sampler, (float4)(xf, yf, zf.x, 0.0f))).xy;
-  val.s15 = (read_imagef (blurz_g, sampler, (float4)(xf, yf, zf.y, 0.0f))).xy;
-  val.s26 = (read_imagef (blurz_b, sampler, (float4)(xf, yf, zf.z, 0.0f))).xy;
-  val.s37 = (read_imagef (blurz_a, sampler, (float4)(xf, yf, zf.w, 0.0f))).xy;
+  int  x1 = (int)xf;
+  int  y1 = (int)yf;
+  int4 z1 = convert_int4(zf);
+
+  int  x2 = min(x1+1, sw-1);
+  int  y2 = min(y1+1, sh-1);
+  int4 z2 = min(z1+1, depth-1);
+
+  float  x_alpha = xf - x1;
+  float  y_alpha = yf - y1;
+  float4 z_alpha = zf - floor(zf); /* it's weird that z1 doesn't work here */
+
+  #define BLURZ_R(x,y,z) blurz_r[x+sw*(y+z*sh)]
+  #define BLURZ_G(x,y,z) blurz_g[x+sw*(y+z*sh)]
+  #define BLURZ_B(x,y,z) blurz_b[x+sw*(y+z*sh)]
+  #define BLURZ_A(x,y,z) blurz_a[x+sw*(y+z*sh)]
+
+  /* trilinear interpolation */
+
+  val.s04 = mix(mix(mix(BLURZ_R(x1, y1, z1.x), BLURZ_R(x2, y1, z1.x), x_alpha),
+                    mix(BLURZ_R(x1, y2, z1.x), BLURZ_R(x2, y2, z1.x), x_alpha), y_alpha),
+                mix(mix(BLURZ_R(x1, y1, z2.x), BLURZ_R(x2, y1, z2.x), x_alpha),
+                    mix(BLURZ_R(x1, y2, z2.x), BLURZ_R(x2, y2, z2.x), x_alpha), y_alpha), z_alpha.x);
+
+  val.s15 = mix(mix(mix(BLURZ_G(x1, y1, z1.y), BLURZ_G(x2, y1, z1.y), x_alpha),
+                    mix(BLURZ_G(x1, y2, z1.y), BLURZ_G(x2, y2, z1.y), x_alpha), y_alpha),
+                mix(mix(BLURZ_G(x1, y1, z2.y), BLURZ_G(x2, y1, z2.y), x_alpha),
+                    mix(BLURZ_G(x1, y2, z2.y), BLURZ_G(x2, y2, z2.y), x_alpha), y_alpha), z_alpha.y);
+
+  val.s26 = mix(mix(mix(BLURZ_B(x1, y1, z1.z), BLURZ_B(x2, y1, z1.z), x_alpha),
+                    mix(BLURZ_B(x1, y2, z1.z), BLURZ_B(x2, y2, z1.z), x_alpha), y_alpha),
+                mix(mix(BLURZ_B(x1, y1, z2.z), BLURZ_B(x2, y1, z2.z), x_alpha),
+                    mix(BLURZ_B(x1, y2, z2.z), BLURZ_B(x2, y2, z2.z), x_alpha), y_alpha), z_alpha.z);
+
+  val.s37 = mix(mix(mix(BLURZ_A(x1, y1, z1.w), BLURZ_A(x2, y1, z1.w), x_alpha),
+                    mix(BLURZ_A(x1, y2, z1.w), BLURZ_A(x2, y2, z1.w), x_alpha), y_alpha),
+                mix(mix(BLURZ_A(x1, y1, z2.w), BLURZ_A(x2, y1, z2.w), x_alpha),
+                    mix(BLURZ_A(x1, y2, z2.w), BLURZ_A(x2, y2, z2.w), x_alpha), y_alpha), z_alpha.w);
 
   smoothed[y * width + x] = val.s0123/val.s4567;
 }
