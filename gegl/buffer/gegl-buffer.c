@@ -106,6 +106,12 @@ enum {
   LAST_SIGNAL
 };
 
+static GeglTileStorage *
+gegl_tile_storage_new_from_format (const void *babl_fmt,
+                                   gint tile_width,
+                                   gint tile_height,
+                                   gboolean use_ram);
+
 static GeglBuffer *gegl_buffer_new_from_format     (const void *babl_fmt,
                                                     gint        x,
                                                     gint        y,
@@ -1209,124 +1215,52 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                        NULL);
 }
 
-
-typedef struct TileStorageCacheItem {
-  GeglTileStorage *storage;
-  gboolean         ram;
-  gint             tile_width;
-  gint             tile_height;
-  const void      *babl_fmt;
-} TileStorageCacheItem;
-
-static GMutex  storage_cache_mutex = { 0, };
-static GSList *storage_cache = NULL;
-
-/* returns TRUE if it could be done */
-gboolean gegl_tile_storage_cached_release (GeglTileStorage *storage);
-gboolean gegl_tile_storage_cached_release (GeglTileStorage *storage)
-{
-  TileStorageCacheItem *item = g_object_get_data (G_OBJECT (storage), "storage-cache-item");
-
-  if (!item)
-    return FALSE;
-  g_mutex_lock (&storage_cache_mutex);
-  storage_cache = g_slist_prepend (storage_cache, item);
-  g_mutex_unlock (&storage_cache_mutex);
-  return TRUE;
-}
-
-void gegl_tile_storage_cache_cleanup (void);
-void gegl_tile_storage_cache_cleanup (void)
-{
-  g_mutex_lock (&storage_cache_mutex);
-  for (;storage_cache; storage_cache = g_slist_remove (storage_cache, storage_cache->data))
-    {
-      TileStorageCacheItem *item = storage_cache->data;
-      g_object_unref (item->storage);
-    }
-  g_mutex_unlock (&storage_cache_mutex);
-}
-
 static GeglTileStorage *
-gegl_tile_storage_new_cached (gint tile_width, gint tile_height,
-                              const void *babl_fmt, gboolean use_ram)
+gegl_tile_storage_new_from_format (const void *babl_fmt,
+                                   gint tile_width,
+                                   gint tile_height,
+                                   gboolean use_ram)
 {
   GeglTileStorage *storage = NULL;
-  GSList *iter;
-  g_mutex_lock (&storage_cache_mutex);
-  for (iter = storage_cache; iter; iter = iter->next)
+
+  if (use_ram ||
+      !gegl_config()->swap ||
+      g_str_equal (gegl_config()->swap, "RAM") ||
+      g_str_equal (gegl_config()->swap, "ram"))
     {
-      TileStorageCacheItem *item = iter->data;
-      if (item->babl_fmt == babl_fmt &&
-          item->tile_width == tile_width &&
-          item->tile_height == tile_height &&
-          item->ram == use_ram)
-       {
-         storage = item->storage;
-         storage_cache = g_slist_remove (storage_cache, item);
-         break;
-       }
+      GeglTileBackend *backend;
+      backend = g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
+                              "tile-width", tile_width,
+                              "tile-height", tile_height,
+                              "format", babl_fmt,
+                              NULL);
+      storage = gegl_tile_storage_new (backend);
+      g_object_unref (backend);
+    }
+  else
+    {
+      static gint no = 1;
+      GeglTileBackend *backend;
+
+      gchar *filename;
+      gchar *path;
+
+      filename = g_strdup_printf ("%i-%i", getpid(), no);
+      g_atomic_int_inc (&no);
+      path = g_build_filename (gegl_config()->swap, filename, NULL);
+      g_free (filename);
+
+      backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
+                              "tile-width", tile_width,
+                              "tile-height", tile_height,
+                              "format", babl_fmt,
+                              "path", path,
+                              NULL);
+      storage = gegl_tile_storage_new (backend);
+      g_object_unref (backend);
+      g_free (path);
     }
 
-  if (!storage)
-    {
-      TileStorageCacheItem *item = g_new0 (TileStorageCacheItem, 1);
-
-      item->tile_width = tile_width;
-      item->tile_height = tile_height;
-      item->babl_fmt = babl_fmt;
-
-      if (use_ram ||
-          !gegl_config()->swap ||
-          g_str_equal (gegl_config()->swap, "RAM") ||
-          g_str_equal (gegl_config()->swap, "ram"))
-        {
-          GeglTileBackend *backend;
-          item->ram = TRUE;
-          backend = g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
-                                  "tile-width", tile_width,
-                                  "tile-height", tile_height,
-                                  "format", babl_fmt,
-                                  NULL);
-          storage = gegl_tile_storage_new (backend);
-          g_object_unref (backend);
-        }
-      else
-        {
-          static gint no = 1;
-          GeglTileBackend *backend;
-
-          gchar *filename;
-          gchar *path;
-          item->ram = FALSE;
-
-#if 0
-          filename = g_strdup_printf ("GEGL-%i-%s-%i.swap",
-                                      getpid (),
-                                      babl_name ((Babl *) babl_fmt),
-                                      no++);
-#endif
-
-          filename = g_strdup_printf ("%i-%i", getpid(), no);
-          g_atomic_int_inc (&no);
-          path = g_build_filename (gegl_config()->swap, filename, NULL);
-          g_free (filename);
-
-          backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
-                                  "tile-width", tile_width,
-                                  "tile-height", tile_height,
-                                  "format", babl_fmt,
-                                  "path", path,
-                                  NULL);
-          storage = gegl_tile_storage_new (backend);
-          g_object_unref (backend);
-          g_free (path);
-        }
-      item->storage = storage;
-      g_object_set_data_full (G_OBJECT (storage), "storage-cache-item", item, g_free);
-    }
-
-  g_mutex_unlock (&storage_cache_mutex);
   return storage;
 }
 
@@ -1343,7 +1277,7 @@ gegl_buffer_new_from_format (const void *babl_fmt,
   GeglTileStorage *tile_storage;
   GeglBuffer  *buffer;
 
-  tile_storage = gegl_tile_storage_new_cached (tile_width, tile_height, babl_fmt, use_ram);
+  tile_storage = gegl_tile_storage_new_from_format (babl_fmt, tile_width, tile_height, use_ram);
 
   buffer = g_object_new (GEGL_TYPE_BUFFER,
                          "source",      tile_storage,
