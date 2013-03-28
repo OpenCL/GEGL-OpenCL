@@ -1050,6 +1050,29 @@ gegl_buffer_new_ram (const GeglRectangle *extent,
 }
 
 GeglBuffer *
+gegl_buffer_introspectable_new (const char *format_name,
+                                gint x,
+                                gint y,
+                                gint width,
+                                gint height)
+{
+  const Babl *format = NULL;
+
+  if (format_name)
+    format = babl_format (format_name);
+  if (!format)
+    format = babl_format ("RGBA float");
+
+  return g_object_new (GEGL_TYPE_BUFFER,
+                       "x", x,
+                       "y", y,
+                       "width", width,
+                       "height", height,
+                       "format", format,
+                       NULL);
+}
+
+GeglBuffer *
 gegl_buffer_new (const GeglRectangle *extent,
                  const Babl          *format)
 {

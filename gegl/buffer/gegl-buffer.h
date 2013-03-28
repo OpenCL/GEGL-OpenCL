@@ -61,7 +61,24 @@ GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
 GeglBuffer *    gegl_buffer_new               (const GeglRectangle *extent,
                                                const Babl          *format);
 
-
+/**
+ * gegl_buffer_introspectable_new:
+ * @format_name: The Babl format name for this buffer, e.g. "RGBA float"
+ * @x: x origin of the buffer's extent
+ * @y: y origin of the buffer's extent
+ * @width: width of the buffer's extent
+ * @height: height of the buffer's extent
+ *
+ * Create a new GeglBuffer with the given format and dimensions.
+ *
+ * Rename to: gegl_buffer_new
+ */
+GeglBuffer *
+gegl_buffer_introspectable_new (const char *format_name,
+                                gint x,
+                                gint y,
+                                gint width,
+                                gint height);
 
 /**
  * gegl_buffer_new_for_backend:
