@@ -1677,7 +1677,7 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
-static void
+void
 gegl_buffer_copy2 (GeglBuffer          *src,
                    const GeglRectangle *src_rect,
                    GeglBuffer          *dst,
@@ -1810,36 +1810,16 @@ gegl_buffer_copy (GeglBuffer          *src,
                 dtx = gegl_tile_indice (dst_x, tile_width);
                 dty = gegl_tile_indice (dst_y, tile_height);
 
-#if 1
                 src_tile = gegl_tile_source_get_tile ((GeglTileSource*)(src),
                                                       stx, sty, 0);
 
                 dst_tile = gegl_tile_dup (src_tile);
                 dst_tile->tile_storage = (void*)storage;
 
-                /* XXX: this call should only be neccesary as long as GIMP
-                 *      is dropping tile caches behind our back
-                 */
-                if(gegl_tile_source_set_tile ((GeglTileSource*)dst, dtx, dty, 0,
-                                           dst_tile));
                 gegl_tile_handler_cache_insert (cache, dst_tile, dtx, dty, 0);
 
                 gegl_tile_unref (src_tile);
                 gegl_tile_unref (dst_tile);
-#else
-                src_tile = gegl_tile_source_get_tile (
-                  (GeglTileSource*)(src), stx, sty, 0);
-                dst_tile = gegl_tile_source_get_tile (
-                  (GeglTileSource*)(dst), dtx, dty, 0);
-                gegl_tile_lock (dst_tile);
-                g_assert (src_tile->size == dst_tile->size);
-
-                memcpy (dst_tile->data, src_tile->data, src_tile->size);
-
-                gegl_tile_unlock (dst_tile);
-                gegl_tile_unref (dst_tile);
-                gegl_tile_unref (src_tile);
-#endif
               }
           }
 
@@ -1947,7 +1927,8 @@ gegl_buffer_clear (GeglBuffer          *dst,
       dst_rect = gegl_buffer_get_extent (dst);
     }
 
-  goto nocow; // cow for clearing is currently broken, go to nocow case
+#if 0
+  /* cow for clearing is currently broken */
   if (!g_object_get_data (G_OBJECT (dst), "is-linear"))
     {
       gint tile_width = dst->tile_width;
@@ -2034,8 +2015,8 @@ gegl_buffer_clear (GeglBuffer          *dst,
       }
     }
   else
+#endif
     {
-nocow:
       gegl_buffer_clear2 (dst, dst_rect);
     }
 }

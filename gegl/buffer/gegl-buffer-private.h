@@ -123,6 +123,11 @@ void              gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                             gint                 rowstride,
                                             GeglAbyssPolicy      repeat_mode);
 
+void              gegl_buffer_copy2        (GeglBuffer          *src,
+                                            const GeglRectangle *src_rect,
+                                            GeglBuffer          *dst,
+                                            const GeglRectangle *dst_rect);
+
 GeglBuffer *
 gegl_buffer_new_ram (const GeglRectangle *extent,
                      const Babl          *format);
