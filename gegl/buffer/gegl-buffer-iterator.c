@@ -141,7 +141,7 @@ static void gegl_buffer_tile_iterator_init (GeglBufferTileIterator *i,
   i->max_size = i->buffer->tile_storage->tile_width *
                 i->buffer->tile_storage->tile_height;
 
-  i->same_format = format == buffer->format;
+  i->same_format = format == buffer->soft_format;
 
   /* return at the end,. we still want things initialized a bit .. */
   g_return_if_fail (roi.width != 0 && roi.height != 0);
