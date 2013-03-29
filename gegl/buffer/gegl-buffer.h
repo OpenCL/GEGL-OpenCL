@@ -23,6 +23,7 @@
 #include <babl/babl.h>
 #include <gegl-matrix.h>
 #include <gegl-enums.h>
+#include <gegl-buffer-backend.h>
 
 G_BEGIN_DECLS
 
@@ -92,7 +93,7 @@ gegl_buffer_introspectable_new (const char *format_name,
  * returns a GeglBuffer, that holds a reference to the provided backend.
  */
 GeglBuffer *   gegl_buffer_new_for_backend    (const GeglRectangle *extent,
-                                               void                *backend);
+                                               GeglTileBackend     *backend);
 
 /**
  * gegl_buffer_add_handler:

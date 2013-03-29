@@ -1045,7 +1045,7 @@ gegl_buffer_new (const GeglRectangle *extent,
 
 GeglBuffer *
 gegl_buffer_new_for_backend (const GeglRectangle *extent,
-                             void                *backend)
+                             GeglTileBackend     *backend)
 {
   GeglRectangle rect={0,0,0,0};
   const Babl *format;
