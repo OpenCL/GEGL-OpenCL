@@ -1827,8 +1827,6 @@ gegl_node_process (GeglNode *self)
 }
 #endif
 
-void babl_backtrack (void);
-
 GeglOperationContext *
 gegl_node_get_context (GeglNode *self,
                        gpointer  context_id)

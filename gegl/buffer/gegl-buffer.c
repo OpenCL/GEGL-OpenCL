@@ -510,8 +510,6 @@ gegl_buffer_tile_storage (GeglBuffer *buffer)
   return (GeglTileStorage *) tmp;
 }
 
-void babl_backtrack (void);
-
 static void gegl_buffer_storage_changed (GeglTileStorage     *storage,
                                          const GeglRectangle *rect,
                                          gpointer             userdata)
