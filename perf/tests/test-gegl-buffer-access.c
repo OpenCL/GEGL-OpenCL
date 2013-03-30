@@ -9,7 +9,6 @@ main (gint    argc,
   gchar *buf;
   gint i;
 
-  g_thread_init (NULL);
   gegl_init (NULL, NULL);
   buffer = gegl_buffer_new (&bound, babl_format ("RGBA float"));
   buf = g_malloc0 (bound.width * bound.height * 16);

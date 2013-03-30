@@ -16,7 +16,6 @@ main (gint argc,
       return -1;
     }
 
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   gegl =

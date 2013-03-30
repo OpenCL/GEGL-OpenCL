@@ -8,7 +8,6 @@ main (gint    argc,
   GeglNode   *gegl, *sink;
   gint i;
 
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   g_object_set (gegl_config (), "chunk-size", 128 * 128, NULL);

@@ -7,7 +7,6 @@ main (gint    argc,
   GeglBuffer *buffer, *buffer2;
   GeglNode   *gegl, *sink;
 
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));

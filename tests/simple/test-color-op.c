@@ -44,7 +44,6 @@ int main(int argc, char *argv[])
                                               { G_MAXINT / 2 - 1, G_MAXINT / 2 - 1, 1, 1 } };
 
   /* Init */
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
   colors[0] = gegl_color_new ("rgb(1.0, 0.0, 0.0)");
   colors[1] = gegl_color_new ("rgb(0.0, 1.0, 0.0)");

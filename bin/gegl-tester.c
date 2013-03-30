@@ -313,8 +313,6 @@ main (gint    argc,
   GError         *error = NULL;
   GOptionContext *context;
 
-  g_thread_init (NULL);
-
   context = g_option_context_new (NULL);
   g_option_context_add_main_entries (context, options, NULL);
   g_option_context_add_group (context, gegl_get_option_group ());

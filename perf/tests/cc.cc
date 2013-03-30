@@ -15,7 +15,6 @@ main (gint    argc,
   gchar *infile;
   gchar *infileB;
 
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   infile = "/home/pippin/images/movie_narrative_charts_large.png";

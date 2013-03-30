@@ -86,7 +86,6 @@ int main(int argc, char *argv[])
   g_log_set_always_fatal (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_CRITICAL);
    */
 
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   common_color = gegl_color_new ("rgb(1.0, 1.0, 1.0)");

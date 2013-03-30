@@ -86,7 +86,6 @@ main (gint    argc,
   GError      *err       = NULL;
   gchar       *path_root = NULL;
 
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 #ifdef HAVE_SPIRO
   gegl_path_spiro_init ();

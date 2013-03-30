@@ -103,7 +103,6 @@ main (int    argc,
   GeglNode *gegl, *combiner, *sink;
   gchar    *all_evs = g_strdup ("");
 
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
   check_usage (argc, argv);
 

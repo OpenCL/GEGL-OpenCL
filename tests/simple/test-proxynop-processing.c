@@ -41,7 +41,6 @@ int main(int argc, char *argv[])
   GeglColor    *color2             = NULL;
 
   /* Init */
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   color1 = gegl_color_new ("rgb(1.0, 0.0, 1.0)");

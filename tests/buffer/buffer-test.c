@@ -297,7 +297,6 @@ void rectangle (GeglBuffer *buffer,
 gint main (gint argc, gchar **argv)
 {
   gint i;
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   for (i=0; i < G_N_ELEMENTS (tests); i++)

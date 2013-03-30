@@ -13,7 +13,6 @@ main (gint    argc,
   gdouble        max_diff, avg_diff_wrong, avg_diff_total;
   gint           wrong_pixels, total_pixels;
 
-  g_thread_init (NULL);
   gegl_init (&argc, &argv);
 
   if (argc != 3)
