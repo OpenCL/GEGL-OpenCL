@@ -32,6 +32,8 @@ G_BEGIN_DECLS
 #ifndef __GEGL_BUFFER_TYPES_H__
 typedef struct _GeglBuffer   GeglBuffer;
 typedef struct _GeglSampler  GeglSampler;
+#endif
+#ifndef __GEGL_BUFFER_BACKEND_H__
 typedef struct _GeglTileBackend GeglTileBackend;
 #endif
 

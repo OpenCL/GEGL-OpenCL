@@ -23,7 +23,9 @@ G_BEGIN_DECLS
 
 typedef struct _GeglTile                  GeglTile;
 typedef struct _GeglTileSource            GeglTileSource;
+#ifndef __GEGL_BUFFER_H__
 typedef struct _GeglTileBackend           GeglTileBackend;
+#endif
 typedef struct _GeglTileHandler           GeglTileHandler;
 
 
