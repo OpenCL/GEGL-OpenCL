@@ -23,7 +23,6 @@
 #include <babl/babl.h>
 #include <gegl-matrix.h>
 #include <gegl-enums.h>
-#include <gegl-buffer-backend.h>
 
 G_BEGIN_DECLS
 
@@ -33,6 +32,7 @@ G_BEGIN_DECLS
 #ifndef __GEGL_BUFFER_TYPES_H__
 typedef struct _GeglBuffer   GeglBuffer;
 typedef struct _GeglSampler  GeglSampler;
+typedef struct _GeglTileBackend GeglTileBackend;
 #endif
 
 /***
