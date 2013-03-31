@@ -83,6 +83,9 @@ get_bounding_box (GeglOperation *operation)
   if (!in_rect)
     return result;
 
+  if (gegl_rectangle_is_infinite_plane (in_rect))
+    return *in_rect;
+
   result = *in_rect;
   if (result.width != 0 &&
       result.height != 0)
