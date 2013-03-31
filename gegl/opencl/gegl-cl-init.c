@@ -200,19 +200,25 @@ if ((gegl_##func = (t_##func) GetProcAddress(module, #func)) == NULL)           
 
 #else
 
+#ifdef __APPLE__
+#define CL_LIBRARY_NAME "/System/Library/Frameworks/OpenCL.framework/Versions/Current/OpenCL"
+#else
+#define CL_LIBRARY_NAME "libOpenCL.so"
+#endif
+
 #define CL_LOAD_FUNCTION(func)                                                    \
 if (!g_module_symbol (module, #func, (gpointer *)& gegl_##func))                  \
   {                                                                               \
-    GEGL_NOTE (GEGL_DEBUG_OPENCL, "%s: %s", "libOpenCL.so", g_module_error ());   \
+    GEGL_NOTE (GEGL_DEBUG_OPENCL, "%s: %s", CL_LIBRARY_NAME, g_module_error ());   \
     if (!g_module_close (module))                                                 \
-      g_warning ("%s: %s", "libOpenCL.so", g_module_error ());                    \
+      g_warning ("%s: %s", CL_LIBRARY_NAME, g_module_error ());                    \
     return FALSE;                                                                 \
   }                                                                               \
 if (gegl_##func == NULL)                                                          \
   {                                                                               \
     GEGL_NOTE (GEGL_DEBUG_OPENCL, "symbol gegl_##func is NULL");                  \
     if (!g_module_close (module))                                                 \
-      g_warning ("%s: %s", "libOpenCL.so", g_module_error ());                    \
+      g_warning ("%s: %s", CL_LIBRARY_NAME, g_module_error ());                    \
     return FALSE;                                                                 \
   }
 
@@ -234,7 +240,7 @@ gegl_cl_init (GError **error)
       #ifdef G_OS_WIN32
         module = LoadLibrary ("OpenCL.dll");
       #else
-        module = g_module_open ("libOpenCL.so", G_MODULE_BIND_LAZY);
+        module = g_module_open (CL_LIBRARY_NAME, G_MODULE_BIND_LAZY);
       #endif
 
       if (!module)
