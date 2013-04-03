@@ -322,10 +322,6 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
   return self;
 }
 
-/* FIXME: we are currently leaking this buf pool, it should be
- * freed when gegl is uninitialized
- */
-
 typedef struct BufInfo {
   gint     size;
   gint     used;  /* if this buffer is currently allocated */
@@ -379,6 +375,24 @@ static void iterator_buf_pool_release (gpointer buf)
         }
     }
   g_assert (0);
+  g_mutex_unlock (&pool_mutex);
+}
+
+void
+_gegl_buffer_iterator_cleanup ()
+{
+  gint i;
+  /* FIXME: is the mutex lock necessary? */
+  g_mutex_lock (&pool_mutex);
+  if (buf_pool) {
+    for (i=0; i<buf_pool->len; i++)
+      {
+        BufInfo *info = &g_array_index (buf_pool, BufInfo, i);
+        gegl_free (info->buf);
+      }
+    g_array_free (buf_pool, TRUE);
+    buf_pool = NULL;
+  }
   g_mutex_unlock (&pool_mutex);
 }
 

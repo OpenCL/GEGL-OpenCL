@@ -92,6 +92,7 @@ guint gegl_debug_flags = 0;
 #include "operation/gegl-operations.h"
 #include "operation/gegl-extension-handler.h"
 #include "buffer/gegl-buffer-private.h"
+#include "buffer/gegl-buffer-iterator-private.h"
 #include "buffer/gegl-tile-backend-ram.h"
 #include "buffer/gegl-tile-backend-tiledir.h"
 #include "buffer/gegl-tile-backend-file.h"
@@ -397,6 +398,7 @@ gegl_exit (void)
   gegl_tile_cache_destroy ();
   gegl_operation_gtype_cleanup ();
   gegl_extension_handler_cleanup ();
+  _gegl_buffer_iterator_cleanup ();
 
   if (module_db != NULL)
     {
