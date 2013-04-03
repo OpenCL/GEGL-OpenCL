@@ -28,6 +28,7 @@
 #include "gegl-types-internal.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer-iterator.h"
+#include "gegl-buffer-iterator-private.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 #include "gegl-utils.h"
@@ -379,20 +380,21 @@ static void iterator_buf_pool_release (gpointer buf)
 }
 
 void
-_gegl_buffer_iterator_cleanup ()
+_gegl_buffer_iterator_cleanup (void)
 {
   gint i;
   /* FIXME: is the mutex lock necessary? */
   g_mutex_lock (&pool_mutex);
-  if (buf_pool) {
-    for (i=0; i<buf_pool->len; i++)
-      {
-        BufInfo *info = &g_array_index (buf_pool, BufInfo, i);
-        gegl_free (info->buf);
-      }
-    g_array_free (buf_pool, TRUE);
-    buf_pool = NULL;
-  }
+  if (buf_pool)
+    {
+      for (i=0; i<buf_pool->len; i++)
+        {
+          BufInfo *info = &g_array_index (buf_pool, BufInfo, i);
+          gegl_free (info->buf);
+        }
+      g_array_free (buf_pool, TRUE);
+      buf_pool = NULL;
+    }
   g_mutex_unlock (&pool_mutex);
 }
 
