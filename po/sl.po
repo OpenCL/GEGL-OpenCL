@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-03-07 21:48+0000\n"
-"PO-Revision-Date: 2013-03-07 22:56+0100\n"
+"POT-Creation-Date: 2013-03-26 23:58+0000\n"
+"PO-Revision-Date: 2013-04-01 02:16+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
@@ -152,39 +152,39 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:212
+#: ../gegl/gegl-init.c:214
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "Toleranca napake babl-a, vrednost med 0,2 in 0,000000001"
 
-#: ../gegl/gegl-init.c:217
+#: ../gegl/gegl-init.c:219
 msgid "Where GEGL stores its swap"
 msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
-#: ../gegl/gegl-init.c:222
+#: ../gegl/gegl-init.c:224
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Koliko pomnilnika (približno) uporabiti za predpomnenje podob"
 
-#: ../gegl/gegl-init.c:227
+#: ../gegl/gegl-init.c:229
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Privzeta velikost tlakovcev za GeglBuffer"
 
-#: ../gegl/gegl-init.c:232
+#: ../gegl/gegl-init.c:234
 msgid "The count of pixels to compute simultaneously"
 msgstr "Število slikovnih točk, ki naj se izračunajo hkrati"
 
-#: ../gegl/gegl-init.c:237
+#: ../gegl/gegl-init.c:239
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr "Kakovost izrisovanja, vrednost med 0,0 (hitro) in 1,0 (referenčna kakovost)"
 
-#: ../gegl/gegl-init.c:242
+#: ../gegl/gegl-init.c:244
 msgid "The number of concurrent processing threads to use"
 msgstr "Število uporabljenih vzporednih procesnih niti."
 
-#: ../gegl/gegl-init.c:247
+#: ../gegl/gegl-init.c:249
 msgid "Use OpenCL"
 msgstr "Uporabi OpenCL"
 
-#: ../gegl/gegl-init.c:252
+#: ../gegl/gegl-init.c:254
 msgid "Maximum number of entries in the file tile backend's writer queue"
 msgstr "Največje število vnosov v pisalno vrsto ozadja za tlakovanje datotek"
 
@@ -237,16 +237,14 @@ msgid "An edge preserving blur filter that can be used for noise reduction. It i
 msgstr "Filter zabrisanosti, ki ohranja robove in ki ga lahko uporabite za zmanjšanje šuma. Gre za Gaussovo zabrisanost, kjer je prispevek sosednjih slikovnih točk utežen z barvno razliko od središčne slikovne točke."
 
 #: ../operations/common/bilateral-filter-fast.c:33
-#| msgid "Softness"
 msgid "Smoothness"
 msgstr "Uglajenost"
 
 #: ../operations/common/bilateral-filter-fast.c:35
-#| msgid "Loglog smoothing"
 msgid "Level of smoothness"
 msgstr "Raven uglajenosti"
 
-#: ../operations/common/bilateral-filter-fast.c:290
+#: ../operations/common/bilateral-filter-fast.c:474
 msgid "A fast approximate implementation of the bilateral filter"
 msgstr "Hitra približna izvedba dvostranskega filtra"
 
@@ -257,7 +255,7 @@ msgstr "Hitra približna izvedba dvostranskega filtra"
 #: ../operations/common/dropshadow.c:30
 #: ../operations/common/snn-mean.c:26
 #: ../operations/common/stress.c:27
-#: ../operations/common/vignette.c:26
+#: ../operations/common/vignette.c:35
 #: ../operations/external/matting-levin.c:28
 #: ../operations/workshop/box-max.c:25
 #: ../operations/workshop/box-min.c:25
@@ -335,7 +333,7 @@ msgstr "Vhodni medpomnilnika"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "GeglBuffer, ki naj se naloži v cevovod"
 
-#: ../operations/common/buffer-source.c:177
+#: ../operations/common/buffer-source.c:190
 msgid "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 msgstr "Izvor, ki uporablja notranje-pomnilniški GeglBuffer, za GEGL-ovo interno uporabo."
 
@@ -445,7 +443,7 @@ msgstr "Navpični odmik (od izvora) za začetek mreže."
 #: ../operations/common/color-to-alpha.c:28
 #: ../operations/common/grid.c:36
 #: ../operations/common/rectangle.c:37
-#: ../operations/common/vignette.c:25
+#: ../operations/common/vignette.c:34
 #: ../operations/external/text.c:31
 #: ../operations/external/vector-fill.c:27
 #: ../operations/external/vector-stroke.c:27
@@ -626,7 +624,7 @@ msgstr "Prekrivnost"
 #: ../operations/common/dropshadow.c:26
 #: ../operations/common/layer.c:34
 #: ../operations/common/rectangle.c:29
-#: ../operations/common/vignette.c:32
+#: ../operations/common/vignette.c:41
 #: ../operations/common/waves.c:26
 #: ../operations/core/crop.c:25
 msgid "X"
@@ -639,7 +637,7 @@ msgstr "Vodoravni odmik sence"
 #: ../operations/common/dropshadow.c:28
 #: ../operations/common/layer.c:36
 #: ../operations/common/rectangle.c:31
-#: ../operations/common/vignette.c:33
+#: ../operations/common/vignette.c:42
 #: ../operations/common/waves.c:29
 #: ../operations/core/crop.c:26
 msgid "Y"
@@ -707,27 +705,23 @@ msgid "Combine multiple scene exposures into one high range buffer"
 msgstr "Združi več ekspozicij prizorov v posamičen visokoobsežni medpomnilnik."
 
 #: ../operations/common/exposure.c:25
-#| msgid "Exposure Values"
 msgid "Exposure"
 msgstr "Ekspozicija"
 
 #: ../operations/common/exposure.c:26
-#| msgid "Relative brightness of each exposure in EV"
 msgid "Relative brightness change in stops"
 msgstr "Relativna sprememba svetlosti v vrednostih zaslonke"
 
 #: ../operations/common/exposure.c:27
-#| msgid "Offset: "
 msgid "Offset"
 msgstr "Odmik"
 
 #: ../operations/common/exposure.c:28
-#| msgid "Offset angle"
 msgid "Offset value added"
 msgstr "Dodana vrednost zamika"
 
 #: ../operations/common/exposure.c:29
-#: ../operations/common/vignette.c:28
+#: ../operations/common/vignette.c:37
 msgid "Gamma"
 msgstr "Gama"
 
@@ -922,7 +916,7 @@ msgid "Standard deviation for the vertical axis. (multiply by ~2 to get radius.)
 msgstr "Standardna deviacija za navpično os (pomnožite z ~2 za polmer)."
 
 #: ../operations/common/gaussian-blur.c:34
-#: ../operations/transform/transform-core.c:180
+#: ../operations/transform/transform-core.c:195
 #: ../operations/workshop/emboss.c:31
 msgid "Filter"
 msgstr "Filter"
@@ -1426,7 +1420,7 @@ msgstr "Odmik Z"
 
 #: ../operations/common/noise.c:31
 #: ../operations/common/noise-hurl.c:31
-#: ../operations/common/noise-pick.c:30
+#: ../operations/common/noise-pick.c:31
 #: ../operations/common/noise-rgb.c:34
 #: ../operations/common/noise-slur.c:34
 #: ../operations/common/shift.c:29
@@ -1482,7 +1476,7 @@ msgid "Randomize hue, saturation and value independently"
 msgstr "Neodvisna naključnost obarvanosti, nasičenosti in vrednosti"
 
 #: ../operations/common/noise-hurl.c:31
-#: ../operations/common/noise-pick.c:30
+#: ../operations/common/noise-pick.c:31
 #: ../operations/common/noise-rgb.c:34
 #: ../operations/common/noise-slur.c:34
 #: ../operations/common/shift.c:29
@@ -1492,20 +1486,21 @@ msgid "Random seed"
 msgstr "Naključno seme"
 
 #: ../operations/common/noise-hurl.c:33
-#: ../operations/common/noise-pick.c:32
+#: ../operations/common/noise-pick.c:33
 #: ../operations/common/noise-slur.c:36
 msgid "Randomization (%)"
 msgstr "Naključnost (%)"
 
 #: ../operations/common/noise-hurl.c:34
-#: ../operations/common/noise-pick.c:32
+#: ../operations/common/noise-pick.c:34
 #: ../operations/common/noise-slur.c:37
 msgid "Randomization"
 msgstr "Naključnost"
 
 #: ../operations/common/noise-hurl.c:36
 #: ../operations/common/noise-hurl.c:37
-#: ../operations/common/noise-pick.c:34
+#: ../operations/common/noise-pick.c:36
+#: ../operations/common/noise-pick.c:37
 #: ../operations/common/noise-slur.c:39
 #: ../operations/common/noise-slur.c:40
 msgid "Repeat"
@@ -1515,7 +1510,7 @@ msgstr "Ponovi"
 msgid "Completely randomize a fraction of pixels"
 msgstr "Povsem naključen lom slikovnih točk"
 
-#: ../operations/common/noise-pick.c:192
+#: ../operations/common/noise-pick.c:206
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "Naključno izmenjaj nekaj slikovnih točk s sosednjimi"
 
@@ -1541,7 +1536,7 @@ msgstr "Neodvisni RGB"
 msgid "Distort colors by random amounts."
 msgstr "Popači barve z naključnimi vrednostmi."
 
-#: ../operations/common/noise-slur.c:187
+#: ../operations/common/noise-slur.c:191
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr "Naključno porini nekaj slikovnih točk navzdol (podobno taljenju)"
 
@@ -1945,63 +1940,64 @@ msgstr "Izvede neostro masko na vhodnem medpomnilniku (izostri sliko z dodajanje
 msgid "Inverts just the value component, the result is the corresponding `inverted' image."
 msgstr "Preobrne le komponento vrednosti, rezultat je ustrezna `reobrnjena' slika."
 
-#: ../operations/common/vignette.c:24
+#: ../operations/common/vignette.c:30
 msgid "Shape"
 msgstr "Lik"
 
-#: ../operations/common/vignette.c:24
-msgid "Shape to use: 0=circle 1=square 2=diamond"
-msgstr "Lik, ki ga želite uporabiti: 0=krog, 1=kvadrat, 2=karo"
+#: ../operations/common/vignette.c:31
+#| msgid "Scale of the image"
+msgid "Shape of the vignette"
+msgstr "Oblika vinjete"
 
-#: ../operations/common/vignette.c:25
+#: ../operations/common/vignette.c:34
 msgid "Defaults to 'black', you can use transparency here to erase portions of an image"
 msgstr "Privzeto črna ('black'), uporabite pa lahko prosojnost, da izbrišete dele slike"
 
-#: ../operations/common/vignette.c:26
+#: ../operations/common/vignette.c:35
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr "Kako daleč sega vinjetiranje kot del polovične diagonale slike"
 
-#: ../operations/common/vignette.c:27
+#: ../operations/common/vignette.c:36
 msgid "Softness"
 msgstr "Mehkoba"
 
-#: ../operations/common/vignette.c:28
+#: ../operations/common/vignette.c:37
 msgid "Falloff linearity"
 msgstr "Linearnost upada"
 
-#: ../operations/common/vignette.c:29
+#: ../operations/common/vignette.c:38
 msgid "Proportion"
 msgstr "Razmerje"
 
-#: ../operations/common/vignette.c:29
+#: ../operations/common/vignette.c:38
 msgid "How close we are to image proportions"
 msgstr "Kako blizu smo meram slike"
 
-#: ../operations/common/vignette.c:30
+#: ../operations/common/vignette.c:39
 msgid "Squeeze"
 msgstr "Stisni"
 
-#: ../operations/common/vignette.c:30
+#: ../operations/common/vignette.c:39
 msgid "Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, this is applied after proportion is taken into account, to directly use squeeze factor as proportions, set proportion to 0.0."
 msgstr "Želeno razmerje stranic: -0,5 = 1:2, 0,0 = 1:1, 0,5 = 2:1, -1,0 = 1:nesk 1,0 = nesk:1, to se uveljavi, ko se upoštevajo mere; za neposredno rabo faktorja stiskanja kot mere, nastavite mere na 0,0."
 
-#: ../operations/common/vignette.c:32
+#: ../operations/common/vignette.c:41
 msgid "Horizontal center of vignetting"
 msgstr "Vodoravno središče vinjetiranja"
 
-#: ../operations/common/vignette.c:33
+#: ../operations/common/vignette.c:42
 msgid "Vertical center of vignetting"
 msgstr "Navpično središče vinjetiranja"
 
-#: ../operations/common/vignette.c:34
+#: ../operations/common/vignette.c:43
 msgid "Rotation"
 msgstr "Sukanje"
 
-#: ../operations/common/vignette.c:34
+#: ../operations/common/vignette.c:43
 msgid "Rotation angle"
 msgstr "Kot sukanja"
 
-#: ../operations/common/vignette.c:341
+#: ../operations/common/vignette.c:350
 msgid "A vignetting op, applies a vignette to an image. Simulates the luminance fall off at edge of exposed film, and some other fuzzier border effects that can naturally occur with analoge photograpy."
 msgstr "Operacija vinjetiranja, na sliki uveljavi vinjetiranje. Simulira upad svetilnosti na robu osvetljenega filma in nekatere druge učinke nejasnega roba, ki se lahko naravno pojavijo pri analogni fotografiji."
 
@@ -2090,7 +2086,7 @@ msgstr "Pretvori podatke v navedeno obliko"
 msgid "Crop a buffer"
 msgstr "Obreži medpomnilnik"
 
-#: ../operations/core/nop.c:72
+#: ../operations/core/nop.c:80
 msgid "No operation (can be used as a routing point)"
 msgstr "Brez operacije (lahko jo uporabite kot točko preusmeritve)"
 
@@ -2752,36 +2748,36 @@ msgstr "Niz transformacije"
 msgid "Transforms the group (used by svg)."
 msgstr "Preoblikuje skupino (uporablja svg)."
 
-#: ../operations/transform/transform-core.c:164
+#: ../operations/transform/transform-core.c:179
 msgid "Origin-x"
 msgstr "Izvor-X"
 
-#: ../operations/transform/transform-core.c:165
+#: ../operations/transform/transform-core.c:180
 msgid "X coordinate of origin"
 msgstr "Koordinata X izvora"
 
-#: ../operations/transform/transform-core.c:172
+#: ../operations/transform/transform-core.c:187
 msgid "Origin-y"
 msgstr "Izvor-Y"
 
-#: ../operations/transform/transform-core.c:173
+#: ../operations/transform/transform-core.c:188
 msgid "Y coordinate of origin"
 msgstr "Koordinata Y izvora"
 
-#: ../operations/transform/transform-core.c:181
+#: ../operations/transform/transform-core.c:196
 msgid "Filter type (nearest, linear, cubic, nohalo, lohalo)"
 msgstr "Vrsta filtra (najbližji, linearna, kubična, brezodsevna, nizkoodsevna)"
 
-#: ../operations/transform/transform-core.c:187
-#: ../operations/transform/transform-core.c:188
+#: ../operations/transform/transform-core.c:202
+#: ../operations/transform/transform-core.c:203
 msgid "Hard edges"
 msgstr "Ostri robovi"
 
-#: ../operations/transform/transform-core.c:197
+#: ../operations/transform/transform-core.c:212
 msgid "Lanczos width"
 msgstr "Širina lanczos"
 
-#: ../operations/transform/transform-core.c:198
+#: ../operations/transform/transform-core.c:213
 msgid "Width of the Lanczos function"
 msgstr "Širina funkcije lanczos"
 
