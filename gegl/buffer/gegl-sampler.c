@@ -487,7 +487,7 @@ set_property (GObject      *object,
   switch (property_id)
     {
       case PROP_BUFFER:
-        self->buffer = GEGL_BUFFER (g_value_dup_object (value));
+        gegl_sampler_set_buffer (self, GEGL_BUFFER (g_value_get_object (value)));
         break;
 
       case PROP_FORMAT:
