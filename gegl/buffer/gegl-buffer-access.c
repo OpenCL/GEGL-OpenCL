@@ -1647,8 +1647,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
        buffer->sampler_format != format
       ))
     {
-      g_object_unref (buffer->sampler);
-      buffer->sampler = NULL;
+      gegl_buffer_sample_cleanup (buffer);
     }
 
   /* look up appropriate sampler,. */
@@ -1660,6 +1659,14 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                                       NULL);
       buffer->sampler_format = format;
       gegl_sampler_prepare (buffer->sampler);
+
+      /*
+       * Hack: the sampler refs the buffer on creation. We therefore unref
+       * the buffer here so it isn't leaked. Then, before the sampler is
+       * freed in gegl_buffer_sample_cleanup, we ref the buffer again so
+       * it isn't accidentally freed by the sampler
+       */
+      g_object_unref (buffer);
     }
 
   gegl_sampler_get (buffer->sampler, x, y, scale, dest, repeat_mode);
@@ -1672,6 +1679,9 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
 
   if (buffer->sampler)
     {
+      /* Hack (see above) */
+      g_object_ref (buffer);
+
       g_object_unref (buffer->sampler);
       buffer->sampler = NULL;
     }
