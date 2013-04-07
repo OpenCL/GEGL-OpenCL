@@ -45,29 +45,32 @@ enum
   PROP_LAST
 };
 
-static void gegl_sampler_class_init (GeglSamplerClass *klass);
+static void gegl_sampler_class_init (GeglSamplerClass    *klass);
 
-static void gegl_sampler_init       (GeglSampler      *self);
+static void gegl_sampler_init       (GeglSampler         *self);
 
-static void finalize                (GObject          *gobject);
+static void finalize                (GObject             *gobject);
 
-static void dispose                 (GObject          *gobject);
+static void dispose                 (GObject             *gobject);
 
-static void get_property            (GObject          *gobject,
-                                     guint             property_id,
-                                     GValue           *value,
-                                     GParamSpec       *pspec);
+static void get_property            (GObject             *gobject,
+                                     guint                property_id,
+                                     GValue              *value,
+                                     GParamSpec          *pspec);
 
-static void set_property            (GObject          *gobject,
-                                     guint             property_id,
-                                     const GValue     *value,
-                                     GParamSpec       *pspec);
+static void set_property            (GObject             *gobject,
+                                     guint                property_id,
+                                     const GValue        *value,
+                                     GParamSpec          *pspec);
 
-static void set_buffer              (GeglSampler      *self,
-                                     GeglBuffer       *buffer);
+static void set_buffer              (GeglSampler         *self,
+                                     GeglBuffer          *buffer);
 
-GType
-gegl_sampler_gtype_from_enum        (GeglSamplerType   sampler_type);
+static void buffer_contents_changed (GeglBuffer          *buffer,
+                                     const GeglRectangle *changed_rect,
+                                     gpointer             userdata);
+
+GType gegl_sampler_gtype_from_enum  (GeglSamplerType      sampler_type);
 
 G_DEFINE_TYPE (GeglSampler, gegl_sampler, G_TYPE_OBJECT)
 
@@ -193,11 +196,10 @@ static void
 dispose (GObject *gobject)
 {
   GeglSampler *sampler = GEGL_SAMPLER (gobject);
-  if (sampler->buffer)
-    {
-      g_object_unref (sampler->buffer);
-      sampler->buffer = NULL;
-    }
+
+  /* This call handles unreffing the buffer and disconnecting signals */
+  set_buffer (sampler, NULL);
+
   G_OBJECT_CLASS (gegl_sampler_parent_class)->dispose (gobject);
 }
 
@@ -502,15 +504,28 @@ set_property (GObject      *object,
 static void
 set_buffer (GeglSampler *self, GeglBuffer *buffer)
 {
-   if (self->buffer != buffer)
-     {
-       if (GEGL_IS_BUFFER(self->buffer))
-         g_object_unref(self->buffer);
-       if (GEGL_IS_BUFFER (buffer))
-         self->buffer = gegl_buffer_dup (buffer);
-       else
-         self->buffer = NULL;
-     }
+  if (self->buffer != buffer)
+    {
+      if (GEGL_IS_BUFFER (self->buffer))
+        {
+          g_signal_handlers_disconnect_by_func (self->buffer,
+                                                G_CALLBACK (buffer_contents_changed),
+                                                self);
+          g_object_unref (self->buffer);
+        }
+
+      if (GEGL_IS_BUFFER (buffer))
+        {
+          self->buffer = g_object_ref (buffer);
+          g_signal_connect (buffer, "changed",
+                            G_CALLBACK (buffer_contents_changed),
+                            self);
+        }
+      else
+        self->buffer = NULL;
+
+      buffer_contents_changed (buffer, NULL, self);
+    }
 }
 
 GeglSamplerType
@@ -581,4 +596,23 @@ const GeglRectangle*
 gegl_sampler_get_context_rect (GeglSampler *sampler)
 {
   return &(sampler->context_rect[0]);
+}
+
+static void
+buffer_contents_changed (GeglBuffer          *buffer,
+                         const GeglRectangle *changed_rect,
+                         gpointer             userdata)
+{
+  GeglSampler *self = GEGL_SAMPLER (userdata);
+
+  /*
+   * Invalidate all mipmap levels by setting the width and height of the
+   * rectangles to zero. The x and y coordinates do not matter any more, so we
+   * can just call memset to do this.
+   * XXX: it might be faster to only invalidate rects that intersect
+   *      changed_rect
+   */
+  memset (self->sampler_rectangle, 0, sizeof (self->sampler_rectangle));
+
+  return;
 }
