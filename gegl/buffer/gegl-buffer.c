@@ -211,6 +211,22 @@ gegl_buffer_get_property (GObject    *gobject,
         g_value_set_int (value, buffer->shift_y);
         break;
 
+      case PROP_ABYSS_X:
+        g_value_set_int (value, buffer->abyss.x);
+        break;
+
+      case PROP_ABYSS_Y:
+        g_value_set_int (value, buffer->abyss.y);
+        break;
+
+      case PROP_ABYSS_WIDTH:
+        g_value_set_int (value, buffer->abyss.width);
+        break;
+
+      case PROP_ABYSS_HEIGHT:
+        g_value_set_int (value, buffer->abyss.height);
+        break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
