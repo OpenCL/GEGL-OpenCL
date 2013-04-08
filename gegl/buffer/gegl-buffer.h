@@ -483,6 +483,9 @@ GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
  *
  * Create a new sampler, when you are done with the sampler, g_object_unref
  * it.
+ *
+ * Samplers only hold weak references to buffers, so if its buffer is freed
+ * the sampler will become invalid.
  */
 GeglSampler *    gegl_buffer_sampler_new      (GeglBuffer       *buffer,
                                                const Babl       *format,
