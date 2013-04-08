@@ -63,6 +63,7 @@ get_tile (GeglTileSource *gegl_tile_source,
       gint tile_size = gegl_tile_backend_get_tile_size (empty->backend);
       empty->tile    = gegl_tile_new (tile_size);
       memset (gegl_tile_get_data (empty->tile), 0x00, tile_size);
+      empty->tile->is_zero_tile = 1;
     }
 
   return gegl_tile_handler_dup_tile (GEGL_TILE_HANDLER (empty),

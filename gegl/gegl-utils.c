@@ -18,6 +18,7 @@
 
 #include "config.h"
 
+#include <string.h>
 #include <glib-object.h>
 
 #include "gegl.h"
@@ -247,6 +248,14 @@ gpointer gegl_malloc (gsize size)
   /* store the real malloc one pointer in front of this malloc */
   *(gpointer*)(ret-sizeof(gpointer))=mem;
   return (gpointer) ret;
+}
+
+gpointer gegl_calloc (gsize size, int n_memb);
+gpointer gegl_calloc (gsize size, int n_memb)
+{
+  gchar *ret = gegl_malloc (size * n_memb);
+  memset (ret, 0, size * n_memb);
+  return ret;
 }
 
 void

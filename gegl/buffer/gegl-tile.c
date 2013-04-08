@@ -110,9 +110,10 @@ gegl_tile_dup (GeglTile *src)
 {
   GeglTile *tile = gegl_tile_new_bare ();
 
-  tile->tile_storage    = src->tile_storage;
-  tile->data       = src->data;
-  tile->size       = src->size;
+  tile->tile_storage = src->tile_storage;
+  tile->data         = src->data;
+  tile->size         = src->size;
+  tile->is_zero_tile = src->is_zero_tile;
 
   tile->destroy_notify      = src->destroy_notify;
   tile->destroy_notify_data = src->destroy_notify_data;
@@ -165,13 +166,24 @@ gegl_tile_unclone (GeglTile *tile)
        * create a local copy
        */
       g_mutex_lock (&cowmutex);
-      tile->data                     = gegl_memdup (tile->data, tile->size);
+
+      if (tile->is_zero_tile)
+        {
+          tile->data = gegl_memdup (tile->data, tile->size);
+          tile->is_zero_tile = 0;
+        }
+      else
+        {
+          tile->data                     = gegl_memdup (tile->data, tile->size);
+        }
       tile->destroy_notify           = (void*)&free_data_directly;
       tile->destroy_notify_data      = NULL;
       tile->prev_shared->next_shared = tile->next_shared;
       tile->next_shared->prev_shared = tile->prev_shared;
       tile->prev_shared              = tile;
       tile->next_shared              = tile;
+
+
       g_mutex_unlock (&cowmutex);
     }
 }

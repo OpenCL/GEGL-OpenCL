@@ -196,6 +196,7 @@ gpointer gegl_malloc                  (gsize    n_bytes);
  */
 void     gegl_free                    (gpointer mem);
 
+gpointer gegl_calloc (gsize size, int n_memb);
 
 #define GEGL_FLOAT_EPSILON            (1e-5)
 #define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))
