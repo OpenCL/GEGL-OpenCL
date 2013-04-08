@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
 "eywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-03-07 21:48+0000\n"
-"PO-Revision-Date: 2013-03-11 23:40+0300\n"
+"POT-Creation-Date: 2013-03-26 23:58+0000\n"
+"PO-Revision-Date: 2013-04-08 10:17+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@gnome.gr\n"
 "Language: el\n"
@@ -155,39 +155,39 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:212
+#: ../gegl/gegl-init.c:214
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "ανοχή σφάλματος babl, μια τιμή μεταξύ 0,2 και 0,000000001"
 
-#: ../gegl/gegl-init.c:217
+#: ../gegl/gegl-init.c:219
 msgid "Where GEGL stores its swap"
 msgstr "Πού αποθηκεύει το GEGL την εναλλακτική μνήμη"
 
-#: ../gegl/gegl-init.c:222
+#: ../gegl/gegl-init.c:224
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Πόση μνήμη για χρήση (περίπου) για επαναποθήκευση εικόνας"
 
-#: ../gegl/gegl-init.c:227
+#: ../gegl/gegl-init.c:229
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Προεπιλεγμένο μέγεθος παραθέσεων στο GeglBuffers"
 
-#: ../gegl/gegl-init.c:232
+#: ../gegl/gegl-init.c:234
 msgid "The count of pixels to compute simultaneously"
 msgstr "Ο αριθμός των εικονοστοιχείων για ταυτόχρονο υπολογισμό"
 
-#: ../gegl/gegl-init.c:237
+#: ../gegl/gegl-init.c:239
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr "Η ποιότητα απόδοσης μιας τιμής μεταξύ 0,0 (γρήγορη) και 1,0 (αναφορά)"
 
-#: ../gegl/gegl-init.c:242
+#: ../gegl/gegl-init.c:244
 msgid "The number of concurrent processing threads to use"
 msgstr "Ο αριθμός των σύγχρονων νημάτων επεξεργασίας για χρήση"
 
-#: ../gegl/gegl-init.c:247
+#: ../gegl/gegl-init.c:249
 msgid "Use OpenCL"
 msgstr "Χρήση OpenCL"
 
-#: ../gegl/gegl-init.c:252
+#: ../gegl/gegl-init.c:254
 msgid "Maximum number of entries in the file tile backend's writer queue"
 msgstr ""
 "Μέγιστος αριθμός καταχωρίσεων στην παράθεση αρχείου της ουράς συγγραφής "
@@ -249,16 +249,14 @@ msgstr ""
 "εικονοστοιχείο."
 
 #: ../operations/common/bilateral-filter-fast.c:33
-#| msgid "Softness"
 msgid "Smoothness"
 msgstr "Ομαλότητα"
 
 #: ../operations/common/bilateral-filter-fast.c:35
-#| msgid "Loglog smoothing"
 msgid "Level of smoothness"
 msgstr "Επίπεδο ομαλότητας"
 
-#: ../operations/common/bilateral-filter-fast.c:290
+#: ../operations/common/bilateral-filter-fast.c:474
 msgid "A fast approximate implementation of the bilateral filter"
 msgstr "Μια γρήγορη προσεγγιστική υλοποίηση του αμφίπλευρου φίλτρου"
 
@@ -266,7 +264,7 @@ msgstr "Μια γρήγορη προσεγγιστική υλοποίηση το
 #: ../operations/common/difference-of-gaussians.c:26
 #: ../operations/common/difference-of-gaussians.c:28
 #: ../operations/common/dropshadow.c:30 ../operations/common/snn-mean.c:26
-#: ../operations/common/stress.c:27 ../operations/common/vignette.c:26
+#: ../operations/common/stress.c:27 ../operations/common/vignette.c:35
 #: ../operations/external/matting-levin.c:28
 #: ../operations/workshop/box-max.c:25 ../operations/workshop/box-min.c:25
 #: ../operations/workshop/box-percentile.c:27
@@ -345,7 +343,7 @@ msgstr "Μνήμη εισόδου"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "Η GeglBuffer για φόρτωση στη συνεχή διοχέτευση"
 
-#: ../operations/common/buffer-source.c:177
+#: ../operations/common/buffer-source.c:190
 msgid "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 msgstr ""
 "Μια πηγή που χρησιμοποιεί μια μνήμη GeglBuffer, για εσωτερική χρήση από το "
@@ -454,7 +452,7 @@ msgstr "Κάθετη αντιστάθμιση (από το αρχικό) για 
 
 #: ../operations/common/checkerboard.c:33 ../operations/common/color.c:24
 #: ../operations/common/color-to-alpha.c:28 ../operations/common/grid.c:36
-#: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:25
+#: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:34
 #: ../operations/external/text.c:31 ../operations/external/vector-fill.c:27
 #: ../operations/external/vector-stroke.c:27
 #: ../operations/workshop/linear-gradient.c:28
@@ -637,7 +635,7 @@ msgid "Opacity"
 msgstr "Αδιαφάνεια"
 
 #: ../operations/common/dropshadow.c:26 ../operations/common/layer.c:34
-#: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:32
+#: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:41
 #: ../operations/common/waves.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "Χ"
@@ -647,7 +645,7 @@ msgid "Horizontal shadow offset"
 msgstr "Οριζόντια αντιστάθμιση σκιάς"
 
 #: ../operations/common/dropshadow.c:28 ../operations/common/layer.c:36
-#: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:33
+#: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:42
 #: ../operations/common/waves.c:29 ../operations/core/crop.c:26
 msgid "Y"
 msgstr "Υ"
@@ -726,7 +724,7 @@ msgstr "Αντιστάθμιση"
 msgid "Offset value added"
 msgstr "Πρόσθετη τιμή αντιστάθμισης"
 
-#: ../operations/common/exposure.c:29 ../operations/common/vignette.c:28
+#: ../operations/common/exposure.c:29 ../operations/common/vignette.c:37
 msgid "Gamma"
 msgstr "Γάμα"
 
@@ -934,7 +932,7 @@ msgstr ""
 "ακτίνας.)"
 
 #: ../operations/common/gaussian-blur.c:34
-#: ../operations/transform/transform-core.c:180
+#: ../operations/transform/transform-core.c:195
 #: ../operations/workshop/emboss.c:31
 msgid "Filter"
 msgstr "Φίλτρο"
@@ -1460,7 +1458,7 @@ msgid "Z offset"
 msgstr "Αντιστάθμιση Ζ"
 
 #: ../operations/common/noise.c:31 ../operations/common/noise-hurl.c:31
-#: ../operations/common/noise-pick.c:30 ../operations/common/noise-rgb.c:34
+#: ../operations/common/noise-pick.c:31 ../operations/common/noise-rgb.c:34
 #: ../operations/common/noise-slur.c:34 ../operations/common/shift.c:29
 #: ../operations/common/wind.c:33 ../operations/workshop/cubism.c:34
 #: ../operations/workshop/plasma.c:33
@@ -1507,26 +1505,26 @@ msgstr "Τιμή"
 msgid "Randomize hue, saturation and value independently"
 msgstr "Τυχαία απόχρωση, κορεσμός και τιμή ανεξάρτητα"
 
-#: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:30
+#: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:31
 #: ../operations/common/noise-rgb.c:34 ../operations/common/noise-slur.c:34
 #: ../operations/common/shift.c:29 ../operations/common/wind.c:33
 #: ../operations/workshop/cubism.c:35
 msgid "Random seed"
 msgstr "Τυχαία σπορά"
 
-#: ../operations/common/noise-hurl.c:33 ../operations/common/noise-pick.c:32
+#: ../operations/common/noise-hurl.c:33 ../operations/common/noise-pick.c:33
 #: ../operations/common/noise-slur.c:36
 msgid "Randomization (%)"
 msgstr "Τυχαιότητα (%)"
 
-#: ../operations/common/noise-hurl.c:34 ../operations/common/noise-pick.c:32
+#: ../operations/common/noise-hurl.c:34 ../operations/common/noise-pick.c:34
 #: ../operations/common/noise-slur.c:37
 msgid "Randomization"
 msgstr "Τυχαιότητα"
 
 #: ../operations/common/noise-hurl.c:36 ../operations/common/noise-hurl.c:37
-#: ../operations/common/noise-pick.c:34 ../operations/common/noise-slur.c:39
-#: ../operations/common/noise-slur.c:40
+#: ../operations/common/noise-pick.c:36 ../operations/common/noise-pick.c:37
+#: ../operations/common/noise-slur.c:39 ../operations/common/noise-slur.c:40
 msgid "Repeat"
 msgstr "Επανάληψη"
 
@@ -1534,7 +1532,7 @@ msgstr "Επανάληψη"
 msgid "Completely randomize a fraction of pixels"
 msgstr "Πλήρης τυχαία σειρά ενός κλάσματος εικονοστοιχείων"
 
-#: ../operations/common/noise-pick.c:192
+#: ../operations/common/noise-pick.c:206
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "Τυχαία ανταλλαγή μερικών εικονοστοιχείων με γειτονικά"
 
@@ -1559,7 +1557,7 @@ msgstr "Ανεξάρτητο RGB"
 msgid "Distort colors by random amounts."
 msgstr "Παραμόρφωση χρωμάτων με τυχαίες ποσότητες."
 
-#: ../operations/common/noise-slur.c:187
+#: ../operations/common/noise-slur.c:191
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr ""
 "Τυχαία μετακίνηση μερικών εικονοστοιχείων προς τα κάτω (παρόμοια με "
@@ -2008,15 +2006,16 @@ msgstr ""
 "Αντιστρέφει μόνο το συστατικό τιμής, το αποτέλεσμα είναι η αντίστοιχη "
 "`ανεστραμμένη' εικόνα."
 
-#: ../operations/common/vignette.c:24
+#: ../operations/common/vignette.c:30
 msgid "Shape"
 msgstr "Σχήμα"
 
-#: ../operations/common/vignette.c:24
-msgid "Shape to use: 0=circle 1=square 2=diamond"
-msgstr "Σχήμα για χρήση: 0=κύκλος 1=τετράγωνο 2=ρόμβος"
+#: ../operations/common/vignette.c:31
+#| msgid "Scale of the image"
+msgid "Shape of the vignette"
+msgstr "Σχήμα της βινιέτας"
 
-#: ../operations/common/vignette.c:25
+#: ../operations/common/vignette.c:34
 msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
@@ -2024,32 +2023,32 @@ msgstr ""
 "Προεπιλογή σε 'μαύρο', μπορείτε να χρησιμοποιήσετε διαφάνεια εδώ για να "
 "σβήσετε τμήματα της εικόνας"
 
-#: ../operations/common/vignette.c:26
+#: ../operations/common/vignette.c:35
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr ""
 "Πόσο μακριά εκτός βινιέτας πηγαίνει ως τμήμα της μισής διαγωνίου εικόνας"
 
-#: ../operations/common/vignette.c:27
+#: ../operations/common/vignette.c:36
 msgid "Softness"
 msgstr "Απαλότητα"
 
-#: ../operations/common/vignette.c:28
+#: ../operations/common/vignette.c:37
 msgid "Falloff linearity"
 msgstr "Μείωση γραμμικότητας"
 
-#: ../operations/common/vignette.c:29
+#: ../operations/common/vignette.c:38
 msgid "Proportion"
 msgstr "Αναλογία"
 
-#: ../operations/common/vignette.c:29
+#: ../operations/common/vignette.c:38
 msgid "How close we are to image proportions"
 msgstr "Πόσο κοντά ήμαστε στις αναλογίες εικόνας"
 
-#: ../operations/common/vignette.c:30
+#: ../operations/common/vignette.c:39
 msgid "Squeeze"
 msgstr "Συμπίεση"
 
-#: ../operations/common/vignette.c:30
+#: ../operations/common/vignette.c:39
 msgid ""
 "Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
 "inf:1, this is applied after proportion is taken into account, to directly "
@@ -2059,23 +2058,23 @@ msgstr ""
 "inf:1, αυτό εφαρμόζεται μετά τη λήψη της αναλογίας, για άμεση χρήση "
 "συντελεστή συμπίεσης ως αναλογιών, ορίστε την αναλογία σε 0,0."
 
-#: ../operations/common/vignette.c:32
+#: ../operations/common/vignette.c:41
 msgid "Horizontal center of vignetting"
 msgstr "Οριζόντιο κέντρο της βινιέτας"
 
-#: ../operations/common/vignette.c:33
+#: ../operations/common/vignette.c:42
 msgid "Vertical center of vignetting"
 msgstr "Κάθετο κέντρο της βινιέτας"
 
-#: ../operations/common/vignette.c:34
+#: ../operations/common/vignette.c:43
 msgid "Rotation"
 msgstr "Περιστροφή"
 
-#: ../operations/common/vignette.c:34
+#: ../operations/common/vignette.c:43
 msgid "Rotation angle"
 msgstr "Γωνία περιστροφής"
 
-#: ../operations/common/vignette.c:341
+#: ../operations/common/vignette.c:350
 msgid ""
 "A vignetting op, applies a vignette to an image. Simulates the luminance "
 "fall off at edge of exposed film, and some other fuzzier border effects that "
@@ -2169,7 +2168,7 @@ msgstr "Μετατροπή δεδομένων σε συγκεκριμένη μο
 msgid "Crop a buffer"
 msgstr "Περικοπή μνήμης"
 
-#: ../operations/core/nop.c:72
+#: ../operations/core/nop.c:80
 msgid "No operation (can be used as a routing point)"
 msgstr "Χωρίς λειτουργία (μπορεί να χρησιμοποιηθεί ως σημείο δρομολόγησης)"
 
@@ -2905,36 +2904,36 @@ msgstr "Μετασχηματισμός συμβολοσειράς"
 msgid "Transforms the group (used by svg)."
 msgstr "Μετασχηματίζει την ομάδα (χρησιμοποιείται από svg)."
 
-#: ../operations/transform/transform-core.c:164
+#: ../operations/transform/transform-core.c:179
 msgid "Origin-x"
 msgstr "Αρχικό-x"
 
-#: ../operations/transform/transform-core.c:165
+#: ../operations/transform/transform-core.c:180
 msgid "X coordinate of origin"
 msgstr "Συντεταγμένη X αρχικού"
 
-#: ../operations/transform/transform-core.c:172
+#: ../operations/transform/transform-core.c:187
 msgid "Origin-y"
 msgstr "Αρχικό-y"
 
-#: ../operations/transform/transform-core.c:173
+#: ../operations/transform/transform-core.c:188
 msgid "Y coordinate of origin"
 msgstr "Συντεταγμένη Y του αρχικού"
 
-#: ../operations/transform/transform-core.c:181
+#: ../operations/transform/transform-core.c:196
 msgid "Filter type (nearest, linear, cubic, nohalo, lohalo)"
 msgstr "Τύπος φίλτρου (πολύ κοντινό, γραμμικό, κυβικό, nohalo, lohalo)"
 
-#: ../operations/transform/transform-core.c:187
-#: ../operations/transform/transform-core.c:188
+#: ../operations/transform/transform-core.c:202
+#: ../operations/transform/transform-core.c:203
 msgid "Hard edges"
 msgstr "Έντονες ακμές"
 
-#: ../operations/transform/transform-core.c:197
+#: ../operations/transform/transform-core.c:212
 msgid "Lanczos width"
 msgstr "Πλάτος lanczos"
 
-#: ../operations/transform/transform-core.c:198
+#: ../operations/transform/transform-core.c:213
 msgid "Width of the Lanczos function"
 msgstr "Πλάτος της συνάρτησης Lanczos"
 
@@ -4042,6 +4041,9 @@ msgstr ""
 #: ../operations/workshop/whirl-pinch.c:258
 msgid "Applies whirling and pinching on the image"
 msgstr "Εφαρμογή στροβιλισμού και πίεσης στην εικόνα"
+
+#~ msgid "Shape to use: 0=circle 1=square 2=diamond"
+#~ msgstr "Σχήμα για χρήση: 0=κύκλος 1=τετράγωνο 2=ρόμβος"
 
 #~ msgid "Global colour saturation factor"
 #~ msgstr "Συντελεστής γενικού χρωματικού κορεσμού"
