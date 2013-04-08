@@ -60,8 +60,8 @@ GEGL_introspectable_headers =	\
 GEGL_public_HEADERS = \
 	$(GEGL_introspectable_headers) \
     gegl-plugin.h			\
-    gegl-chant.h
-
+    gegl-chant.h      \
+    gegl-cpuaccel.h
 
 GEGL_introspectable_sources = \
 	gegl-c.c			\

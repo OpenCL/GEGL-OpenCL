@@ -36,7 +36,7 @@
 
 #include <glib.h>
 
-#include "gegl-cpuaccel.h"
+#include "gegl-cpuaccel-priv.h"
 
 
 static GeglCpuAccelFlags  cpu_accel (void) G_GNUC_CONST;

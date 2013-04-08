@@ -17,32 +17,17 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __GEGL_CPU_ACCEL_H__
-#define __GEGL_CPU_ACCEL_H__
+#ifndef __GEGL_CPU_ACCEL_PRIV_H__
+#define __GEGL_CPU_ACCEL_PRIV_H__
 
 G_BEGIN_DECLS
 
+#include "gegl-cpuaccel.h"
 
-typedef enum
-{
-  GEGL_CPU_ACCEL_NONE        = 0x0,
-
-  /* x86 accelerations */
-  GEGL_CPU_ACCEL_X86_MMX     = 0x01000000,
-  GEGL_CPU_ACCEL_X86_3DNOW   = 0x40000000,
-  GEGL_CPU_ACCEL_X86_MMXEXT  = 0x20000000,
-  GEGL_CPU_ACCEL_X86_SSE     = 0x10000000,
-  GEGL_CPU_ACCEL_X86_SSE2    = 0x08000000,
-  GEGL_CPU_ACCEL_X86_SSE3    = 0x02000000,
-
-  /* powerpc accelerations */
-  GEGL_CPU_ACCEL_PPC_ALTIVEC = 0x04000000
-} GeglCpuAccelFlags;
-
-
-GeglCpuAccelFlags  gegl_cpu_accel_get_support (void);
+/* for internal use only */
+void               gegl_cpu_accel_set_use     (gboolean use);
 
 
 G_END_DECLS
 
-#endif  /* __GEGL_CPU_ACCEL_H__ */
+#endif  /* __GEGL_CPU_ACCEL_PRIV_H__ */
