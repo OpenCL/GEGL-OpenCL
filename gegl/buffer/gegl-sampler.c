@@ -511,13 +511,13 @@ set_buffer (GeglSampler *self, GeglBuffer *buffer)
           g_signal_handlers_disconnect_by_func (self->buffer,
                                                 G_CALLBACK (buffer_contents_changed),
                                                 self);
-          g_object_remove_weak_pointer (self->buffer, &self->buffer);
+          g_object_remove_weak_pointer ((GObject*) self->buffer, (void**) &self->buffer);
         }
 
       if (GEGL_IS_BUFFER (buffer))
         {
           self->buffer = buffer;
-          g_object_add_weak_pointer (self->buffer, &self->buffer);
+          g_object_add_weak_pointer ((GObject*) self->buffer, (void**) &self->buffer);
           g_signal_connect (buffer, "changed",
                             G_CALLBACK (buffer_contents_changed),
                             self);
