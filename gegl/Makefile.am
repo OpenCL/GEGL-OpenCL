@@ -96,7 +96,8 @@ GEGL_sources = \
 	$(GEGL_introspectable_sources) \
 	gegl-module.h			\
 	gegl-apply.h \
-	gegl-chant.h
+	gegl-chant.h \
+	gegl-cpuaccel-priv.h
 
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
