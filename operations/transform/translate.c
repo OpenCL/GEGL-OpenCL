@@ -22,9 +22,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                    _("Horizontal translation"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
+gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
                    _("Vertical translation"))
 
 #else
