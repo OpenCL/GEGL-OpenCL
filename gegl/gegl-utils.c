@@ -250,7 +250,6 @@ gpointer gegl_malloc (gsize size)
   return (gpointer) ret;
 }
 
-gpointer gegl_calloc (gsize size, int n_memb);
 gpointer gegl_calloc (gsize size, int n_memb)
 {
   gchar *ret = gegl_malloc (size * n_memb);
