@@ -196,6 +196,13 @@ gpointer gegl_malloc                  (gsize    n_bytes);
  */
 void     gegl_free                    (gpointer mem);
 
+/**
+ * gegl_calloc:
+ * @size: size of items to allocate
+ * @n_memb: number of members
+ *
+ * allocated 0'd memory.
+ */
 gpointer gegl_calloc (gsize size, int n_memb);
 
 #define GEGL_FLOAT_EPSILON            (1e-5)

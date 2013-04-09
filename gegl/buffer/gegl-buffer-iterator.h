@@ -124,22 +124,5 @@ void                 gegl_buffer_iterator_stop  (GeglBufferIterator *iterator);
 gboolean             gegl_buffer_iterator_next (GeglBufferIterator *iterator);
 
 
-#ifdef EXAMPLE
-
-  GeglBufferIterator *gi;
-  gi = gegl_buffer_iterator_new (buffer, roi,
-                                 babl_format("Y' float"), GEGL_BUFFER_WRITE);
-  while (gegl_buffer_iterator_next (gi))
-    {
-      gfloat *buf = gi->data[0];
-      gint    i;
-      for (i=0; i<gi->length; i++)
-        {
-          buf[i]=0.5;
-        }
-    }
-
-
-#endif
 
 #endif

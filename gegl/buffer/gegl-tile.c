@@ -169,12 +169,12 @@ gegl_tile_unclone (GeglTile *tile)
 
       if (tile->is_zero_tile)
         {
-          tile->data = gegl_memdup (tile->data, tile->size);
+          tile->data = gegl_calloc (tile->size, 1);
           tile->is_zero_tile = 0;
         }
       else
         {
-          tile->data                     = gegl_memdup (tile->data, tile->size);
+          tile->data = gegl_memdup (tile->data, tile->size);
         }
       tile->destroy_notify           = (void*)&free_data_directly;
       tile->destroy_notify_data      = NULL;
