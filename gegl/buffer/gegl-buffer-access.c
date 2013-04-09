@@ -1740,6 +1740,8 @@ gegl_buffer_copy (GeglBuffer          *src,
 
 
   if (src->soft_format == dst->soft_format &&
+      src_rect->width >= src->tile_width &&
+      src_rect->height >= src->tile_height &&
       src->tile_width == dst->tile_width  &&
       src->tile_height == dst->tile_height &&
       !g_object_get_data (G_OBJECT (dst), "is-linear") &&
