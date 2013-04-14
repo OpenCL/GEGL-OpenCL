@@ -52,7 +52,8 @@ edge_sobel (GeglBuffer          *src,
             const GeglRectangle *dst_rect,
             gboolean            horizontal,
             gboolean            vertical,
-            gboolean            keep_signal);
+            gboolean            keep_signal,
+            gboolean            has_alpha);
 
 
 
@@ -61,9 +62,16 @@ static void prepare (GeglOperation *operation)
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   //GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
 
+  const Babl *source_format = gegl_operation_get_source_format (operation, "input");
+
   area->left = area->right = area->top = area->bottom = SOBEL_RADIUS;
+
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+
+  if (source_format && !babl_format_has_alpha (source_format))
+    gegl_operation_set_format (operation, "output", babl_format ("RGB float"));
+  else
+    gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 #include "opencl/gegl-cl.h"
@@ -75,7 +83,8 @@ static const char* kernel_source =
 "                             global float4 *out,                      \n"
 "                             const int horizontal,                    \n"
 "                             const int vertical,                      \n"
-"                             const int keep_signal)                   \n"
+"                             const int keep_signal,                   \n"
+"                             const int has_alpha)                     \n"
 "{                                                                     \n"
 "    int gidx = get_global_id(0);                                      \n"
 "    int gidy = get_global_id(1);                                      \n"
@@ -129,7 +138,14 @@ static const char* kernel_source =
 "            gradient = fabs(hor_grad + ver_grad);                     \n"
 "    }                                                                 \n"
 "                                                                      \n"
-"    gradient.w = pix_mm.w;                                            \n"
+"    if (has_alpha)                                                    \n"
+"    {                                                                 \n"
+"      gradient.w = pix_mm.w;                                          \n"
+"    }                                                                 \n"
+"    else                                                              \n"
+"    {                                                                 \n"
+"      gradient.w = 1.0f;                                              \n"
+"    }                                                                 \n"
 "                                                                      \n"
 "    out[gidx + gidy * dst_width] = gradient;                          \n"
 "}                                                                     \n";
@@ -143,7 +159,8 @@ cl_edge_sobel (cl_mem              in_tex,
                const GeglRectangle *roi,
                gboolean            horizontal,
                gboolean            vertical,
-               gboolean            keep_signal)
+               gboolean            keep_signal,
+               gboolean            has_alpha)
 {
   if (!cl_data)
     {
@@ -157,6 +174,7 @@ cl_edge_sobel (cl_mem              in_tex,
   cl_int n_horizontal  = horizontal;
   cl_int n_vertical    = vertical;
   cl_int n_keep_signal = keep_signal;
+  cl_int n_has_alpha   = has_alpha;
   cl_int cl_err = 0;
 
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&in_tex);
@@ -164,6 +182,7 @@ cl_edge_sobel (cl_mem              in_tex,
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_int), (void*)&n_horizontal);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_int), (void*)&n_vertical);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int), (void*)&n_keep_signal);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int), (void*)&n_has_alpha);
   if (cl_err != CL_SUCCESS) return cl_err;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue(),
@@ -182,8 +201,9 @@ cl_process (GeglOperation       *operation,
       GeglBuffer          *output,
       const GeglRectangle *result)
 {
-  const Babl *in_format  = gegl_operation_get_format (operation, "input");
-  const Babl *out_format = gegl_operation_get_format (operation, "output");
+  const Babl *in_format  = babl_format ("RGBA float");
+  const Babl *out_format = babl_format ("RGBA float");
+  gboolean    has_alpha  = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
   gint err;
   gint j;
   cl_int cl_err;
@@ -198,7 +218,7 @@ cl_process (GeglOperation       *operation,
     if (err) return FALSE;
     for (j=0; j < i->n; j++)
     {
-      cl_err = cl_edge_sobel(i->tex[read][j], i->tex[0][j], i->size[0][j],&i->roi[0][j], o->horizontal, o->vertical, o->keep_signal);
+      cl_err = cl_edge_sobel(i->tex[read][j], i->tex[0][j], i->size[0][j],&i->roi[0][j], o->horizontal, o->vertical, o->keep_signal, has_alpha);
       if (cl_err != CL_SUCCESS)
       {
         g_warning("[OpenCL] Error in gegl:edge-sobel: %s", gegl_cl_errstring(cl_err));
@@ -218,14 +238,16 @@ process (GeglOperation       *operation,
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle compute;
+  gboolean has_alpha;
 
   compute = gegl_operation_get_required_for_output (operation, "input",result);
+  has_alpha  = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
 
   if (gegl_cl_is_accelerated ())
     if(cl_process(operation, input, output, result))
       return TRUE;
 
-  edge_sobel (input, &compute, output, result, o->horizontal, o->vertical, o->keep_signal);
+  edge_sobel (input, &compute, output, result, o->horizontal, o->vertical, o->keep_signal, has_alpha);
   return  TRUE;
 }
 
@@ -242,7 +264,8 @@ edge_sobel (GeglBuffer          *src,
             const GeglRectangle *dst_rect,
             gboolean            horizontal,
             gboolean            vertical,
-            gboolean            keep_signal)
+            gboolean            keep_signal,
+            gboolean            has_alpha)
 {
 
   gint x,y;
@@ -315,8 +338,11 @@ edge_sobel (GeglBuffer          *src,
               }
           }
 
-        //alpha
-        gradient[3] = center_pix[3];
+        if (has_alpha)
+          gradient[3] = center_pix[3];
+        else
+          gradient[3] = 1.0f;
+
 
         for (c=0; c<4;c++)
           dst_buf[offset*4+c] = gradient[c];
