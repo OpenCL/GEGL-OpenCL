@@ -93,11 +93,11 @@ color_to_alpha (const gdouble *color,
 
   for (i=0; i<3; i++)
     {
-      if (color[i] < 0.0001)
+      if (color[i] < 0.00001)
         alpha[i] = dst[i];
-      else if (dst[i] > color[i])
+      else if (dst[i] > color[i] + 0.00001)
         alpha[i] = (dst[i] - color[i]) / (1.0f - color[i]);
-      else if (dst[i] < color[i])
+      else if (dst[i] < color[i] - 0.00001)
         alpha[i] = (color[i] - dst[i]) / (color[i]);
       else
         alpha[i] = 0.0f;
@@ -119,7 +119,7 @@ color_to_alpha (const gdouble *color,
       dst[3] = alpha[2];
     }
 
-  if (dst[3] < 0.0001)
+  if (dst[3] < 0.00001)
     return;
 
   for (i=0; i<3; i++)
