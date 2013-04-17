@@ -101,27 +101,29 @@ enum
   PROP_BACKEND
 };
 
-enum {
+enum
+{
   CHANGED,
   LAST_SIGNAL
 };
 
-static char * get_next_swap_path (void);
-
-static const void *gegl_buffer_internal_get_format (GeglBuffer *buffer);
+static gchar      * get_next_swap_path              (void);
+static const Babl * gegl_buffer_internal_get_format (GeglBuffer *buffer);
 
 
 guint gegl_buffer_signals[LAST_SIGNAL] = { 0 };
 
 
-static inline gint gegl_buffer_needed_tiles (gint w,
-                                             gint stride)
+static inline gint
+gegl_buffer_needed_tiles (gint w,
+                          gint stride)
 {
   return ((w - 1) / stride) + 1;
 }
 
-static inline gint gegl_buffer_needed_width (gint w,
-                                             gint stride)
+static inline gint
+gegl_buffer_needed_width (gint w,
+                          gint stride)
 {
   return gegl_buffer_needed_tiles (w, stride) * stride;
 }
@@ -152,18 +154,20 @@ gegl_buffer_get_property (GObject    *gobject,
         break;
 
       case PROP_PATH:
-          {
-            GeglTileBackend *backend = gegl_buffer_backend (buffer);
-            if (GEGL_IS_TILE_BACKEND_FILE(backend))
-              {
-                if (buffer->path)
-                  g_free (buffer->path);
-                buffer->path = NULL;
-                g_object_get (backend, "path", &buffer->path, NULL);
-              }
-          }
-          g_value_set_string (value, buffer->path);
+        {
+          GeglTileBackend *backend = gegl_buffer_backend (buffer);
+
+          if (GEGL_IS_TILE_BACKEND_FILE (backend))
+            {
+              if (buffer->path)
+                g_free (buffer->path);
+              buffer->path = NULL;
+              g_object_get (backend, "path", &buffer->path, NULL);
+            }
+        }
+        g_value_set_string (value, buffer->path);
         break;
+
       case PROP_PIXELS:
         g_value_set_int (value, buffer->extent.width * buffer->extent.height);
         break;
@@ -179,15 +183,14 @@ gegl_buffer_get_property (GObject    *gobject,
          */
 
         {
-          const Babl *format;
+          const Babl *format = buffer->soft_format;
 
-            format = buffer->soft_format;
           if (format == NULL)
             format = buffer->format;
           if (format == NULL)
             format = gegl_buffer_internal_get_format (buffer);
 
-          g_value_set_pointer (value, (void*)format);
+          g_value_set_pointer (value, (gpointer) format);
         }
         break;
 
@@ -319,6 +322,7 @@ gegl_buffer_set_property (GObject      *gobject,
               }
           }
         break;
+
       case PROP_BACKEND:
         if (buffer->backend)
           g_object_unref (buffer->backend);
@@ -345,8 +349,9 @@ gboolean
 gegl_buffer_set_extent (GeglBuffer          *buffer,
                         const GeglRectangle *extent)
 {
-  g_return_val_if_fail(GEGL_IS_BUFFER(buffer), FALSE);
-   (*(GeglRectangle*)gegl_buffer_get_extent (buffer))=*extent;
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), FALSE);
+
+  (*(GeglRectangle*) gegl_buffer_get_extent (buffer)) = *extent;
 
   if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->priv->header))
     {
@@ -370,20 +375,22 @@ gboolean
 gegl_buffer_set_abyss (GeglBuffer          *buffer,
                        const GeglRectangle *abyss)
 {
-  g_return_val_if_fail(GEGL_IS_BUFFER(buffer), FALSE);
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), FALSE);
 
   buffer->abyss = *abyss;
 
   return TRUE;
 }
 
-void gegl_buffer_stats (void)
+void
+gegl_buffer_stats (void)
 {
   g_warning ("Buffer statistics: allocated:%i deallocated:%i balance:%i",
              allocated_buffers, de_allocated_buffers, allocated_buffers - de_allocated_buffers);
 }
 
-gint gegl_buffer_leaks (void)
+gint
+gegl_buffer_leaks (void)
 {
 #ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
   {
@@ -429,8 +436,7 @@ gegl_buffer_dispose (GObject *object)
   if (gegl_cl_is_accelerated ())
     gegl_buffer_cl_cache_invalidate (GEGL_BUFFER (object), NULL);
 
-  if (handler->source &&
-      GEGL_IS_TILE_STORAGE (handler->source))
+  if (GEGL_IS_TILE_STORAGE (handler->source))
     {
       GeglTileBackend *backend = gegl_buffer_backend (buffer);
 
@@ -484,8 +490,10 @@ gegl_buffer_backend2 (GeglBuffer *buffer)
   do
     {
       tmp = GEGL_TILE_HANDLER (tmp)->source;
-    } while (tmp &&
-             !GEGL_IS_TILE_BACKEND (tmp));
+    }
+  while (tmp &&
+         !GEGL_IS_TILE_BACKEND (tmp));
+
   if (!tmp &&
       !GEGL_IS_TILE_BACKEND (tmp))
     return NULL;
@@ -497,6 +505,7 @@ GeglTileBackend *
 gegl_buffer_backend (GeglBuffer *buffer)
 {
   GeglTileBackend *tmp;
+
   if (G_LIKELY (buffer->backend))
     return buffer->backend;
 
@@ -505,15 +514,18 @@ gegl_buffer_backend (GeglBuffer *buffer)
   if (tmp)
     buffer->backend = g_object_ref (tmp);
 
-  return (GeglTileBackend *) tmp;
+  return tmp;
 }
 
 static GeglTileStorage *
 gegl_buffer_tile_storage (GeglBuffer *buffer)
 {
-  GeglTileSource *tmp = (GeglTileSource*) (buffer);
+  GeglTileSource *tmp = (GeglTileSource*) buffer;
 
-  do tmp = ((GeglTileHandler *) (tmp))->source;
+  do
+    {
+      tmp = ((GeglTileHandler *) (tmp))->source;
+    }
   while (!GEGL_IS_TILE_STORAGE (tmp));
 
   g_assert (tmp);
@@ -521,9 +533,10 @@ gegl_buffer_tile_storage (GeglBuffer *buffer)
   return (GeglTileStorage *) tmp;
 }
 
-static void gegl_buffer_storage_changed (GeglTileStorage     *storage,
-                                         const GeglRectangle *rect,
-                                         gpointer             userdata)
+static void
+gegl_buffer_storage_changed (GeglTileStorage     *storage,
+                             const GeglRectangle *rect,
+                             gpointer             userdata)
 {
   g_signal_emit_by_name (GEGL_BUFFER (userdata), "changed", rect, NULL);
 }
@@ -568,7 +581,7 @@ gegl_buffer_constructor (GType                  type,
           if (!buffer->format)
             {
               g_warning ("Buffer constructed without format, assuming RGBA float");
-              buffer->format = babl_format("RGBA float");
+              buffer->format = babl_format ("RGBA float");
             }
 
           /* make a new backend & storage */
@@ -586,34 +599,31 @@ gegl_buffer_constructor (GType                  type,
           if (use_ram == TRUE)
             {
               backend = g_object_new (GEGL_TYPE_TILE_BACKEND_RAM,
-                                      "tile-width", buffer->tile_width,
+                                      "tile-width",  buffer->tile_width,
                                       "tile-height", buffer->tile_height,
-                                      "format", buffer->format,
+                                      "format",      buffer->format,
+                                      NULL);
+            }
+          else if (buffer->path)
+            {
+              backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
+                                      "tile-width",  buffer->tile_width,
+                                      "tile-height", buffer->tile_height,
+                                      "format",      buffer->format,
+                                      "path",        buffer->path,
                                       NULL);
             }
           else
             {
-              if (buffer->path)
-                {
-                  backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
-                                          "tile-width", buffer->tile_width,
-                                          "tile-height", buffer->tile_height,
-                                          "format", buffer->format,
-                                          "path", buffer->path,
-                                          NULL);
-                }
-              else
-                {
-                  gchar *path = get_next_swap_path();
+              gchar *path = get_next_swap_path ();
 
-                  backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
-                                          "tile-width", buffer->tile_width,
-                                          "tile-height", buffer->tile_height,
-                                          "format", buffer->format,
-                                          "path", path,
-                                          NULL);
-                  g_free (path);
-                }
+              backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
+                                      "tile-width",  buffer->tile_width,
+                                      "tile-height", buffer->tile_height,
+                                      "format",      buffer->format,
+                                      "path",        path,
+                                      NULL);
+              g_free (path);
             }
 
           buffer->backend = backend;
@@ -760,12 +770,13 @@ gegl_buffer_constructor (GType                  type,
 
 static GeglTile *
 gegl_buffer_get_tile (GeglTileSource *source,
-                      gint        x,
-                      gint        y,
-                      gint        z)
+                      gint            x,
+                      gint            y,
+                      gint            z)
 {
   GeglTileHandler *handler = (GeglTileHandler*) (source);
-  GeglTile    *tile   = NULL;
+  GeglTile        *tile   = NULL;
+
   source = handler->source;
 
   if (source)
@@ -775,7 +786,7 @@ gegl_buffer_get_tile (GeglTileSource *source,
 
   if (tile)
     {
-      GeglBuffer *buffer = (GeglBuffer*) (handler);
+      GeglBuffer *buffer = (GeglBuffer*) handler;
 
       /* storing information in tile, to enable the dispose function of the
        * tile instance to "hook" back to the storage with correct
@@ -808,6 +819,7 @@ gegl_buffer_command (GeglTileSource *source,
                      gpointer        data)
 {
   GeglTileHandler *handler = GEGL_TILE_HANDLER (source);
+
   switch (command)
     {
       case GEGL_TILE_GET:
@@ -820,8 +832,10 @@ gegl_buffer_command (GeglTileSource *source,
 static void
 gegl_buffer_class_init (GeglBufferClass *class)
 {
-  GObjectClass      *gobject_class       = G_OBJECT_CLASS (class);
-  parent_class                = g_type_class_peek_parent (class);
+  GObjectClass *gobject_class = G_OBJECT_CLASS (class);
+
+  parent_class = g_type_class_peek_parent (class);
+
   gobject_class->dispose      = gegl_buffer_dispose;
   gobject_class->finalize     = gegl_buffer_finalize;
   gobject_class->constructor  = gegl_buffer_constructor;
@@ -912,10 +926,12 @@ gegl_buffer_class_init (GeglBufferClass *class)
   g_object_class_install_property (gobject_class, PROP_PATH,
                                    g_param_spec_string ("path", "Path",
                                                         "URI to where the buffer is stored",
-                                     NULL, G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
+                                                        NULL,
+                                                        G_PARAM_READWRITE |
+                                                        G_PARAM_CONSTRUCT));
 
   gegl_buffer_signals[CHANGED] =
-        g_signal_new ("changed",
+    g_signal_new ("changed",
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
                   0,
@@ -979,6 +995,7 @@ gegl_buffer_init (GeglBuffer *buffer)
 {
   buffer->tile_width = 128;
   buffer->tile_height = 64;
+
   ((GeglTileSource*)buffer)->command = gegl_buffer_command;
 
   allocated_buffers++;
@@ -988,7 +1005,6 @@ gegl_buffer_init (GeglBuffer *buffer)
   allocated_buffers_list = g_list_prepend (allocated_buffers_list, buffer);
 #endif
 }
-
 
 
 const GeglRectangle *
@@ -1006,10 +1022,10 @@ gegl_buffer_new_ram (const GeglRectangle *extent,
 {
   GeglRectangle empty={0,0,0,0};
 
-  if (extent==NULL)
+  if (extent == NULL)
     extent = &empty;
 
-  if (format==NULL)
+  if (format == NULL)
     format = babl_format ("RGBA float");
 
   return g_object_new (GEGL_TYPE_BUFFER,
@@ -1024,15 +1040,16 @@ gegl_buffer_new_ram (const GeglRectangle *extent,
 
 GeglBuffer *
 gegl_buffer_introspectable_new (const char *format_name,
-                                gint x,
-                                gint y,
-                                gint width,
-                                gint height)
+                                gint        x,
+                                gint        y,
+                                gint        width,
+                                gint        height)
 {
   const Babl *format = NULL;
 
   if (format_name)
     format = babl_format (format_name);
+
   if (!format)
     format = babl_format ("RGBA float");
 
@@ -1051,10 +1068,10 @@ gegl_buffer_new (const GeglRectangle *extent,
 {
   GeglRectangle empty={0,0,0,0};
 
-  if (extent==NULL)
+  if (extent == NULL)
     extent = &empty;
 
-  if (format==NULL)
+  if (format == NULL)
     format = babl_format ("RGBA float");
 
   return g_object_new (GEGL_TYPE_BUFFER,
@@ -1070,11 +1087,11 @@ GeglBuffer *
 gegl_buffer_new_for_backend (const GeglRectangle *extent,
                              GeglTileBackend     *backend)
 {
-  GeglRectangle rect={0,0,0,0};
-  const Babl *format;
+  GeglRectangle rect = { 0, 0, 0, 0 };
+  const Babl   *format;
 
   /* if no extent is passed in inherit from backend */
-  if (extent==NULL)
+  if (extent == NULL)
     {
       extent = &rect;
       rect = gegl_tile_backend_get_extent (backend);
@@ -1173,6 +1190,7 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                            "height", 0,
                            NULL);
     }
+
   return g_object_new (GEGL_TYPE_BUFFER,
                        "source", buffer,
                        "x", extent->x,
@@ -1202,7 +1220,8 @@ get_next_swap_path (void)
   return path;
 }
 
-static const void *gegl_buffer_internal_get_format (GeglBuffer *buffer)
+static const Babl *
+gegl_buffer_internal_get_format (GeglBuffer *buffer)
 {
   g_assert (buffer);
   if (buffer->format != NULL)
@@ -1213,7 +1232,7 @@ static const void *gegl_buffer_internal_get_format (GeglBuffer *buffer)
 const Babl *
 gegl_buffer_get_format (GeglBuffer *buffer)
 {
-  return buffer?buffer->format:NULL;
+  return buffer ? buffer->format : NULL;
 }
 
 const Babl *
@@ -1235,17 +1254,22 @@ gegl_buffer_set_format (GeglBuffer *buffer,
   return NULL;
 }
 
-gboolean gegl_buffer_is_shared (GeglBuffer *buffer)
+gboolean
+gegl_buffer_is_shared (GeglBuffer *buffer)
 {
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
+
   return backend->priv->shared;
 }
 
-gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
+gboolean
+gegl_buffer_try_lock (GeglBuffer *buffer)
 {
   gboolean ret;
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
+
   g_mutex_lock (&buffer->tile_storage->mutex);
+
   if (buffer->lock_count>0)
     {
       buffer->lock_count++;
@@ -1258,12 +1282,15 @@ gboolean gegl_buffer_try_lock (GeglBuffer *buffer)
     ret = TRUE;
   if (ret)
     buffer->lock_count++;
+
   g_mutex_unlock (&buffer->tile_storage->mutex);
+
   return TRUE;
 }
 
 /* this locking is for synchronising shared buffers */
-gboolean gegl_buffer_lock (GeglBuffer *buffer)
+gboolean
+gegl_buffer_lock (GeglBuffer *buffer)
 {
   while (gegl_buffer_try_lock (buffer)==FALSE)
     {
@@ -1273,11 +1300,14 @@ gboolean gegl_buffer_lock (GeglBuffer *buffer)
   return TRUE;
 }
 
-gboolean gegl_buffer_unlock (GeglBuffer *buffer)
+gboolean
+gegl_buffer_unlock (GeglBuffer *buffer)
 {
   gboolean ret = TRUE;
   GeglTileBackend *backend = gegl_buffer_backend (buffer);
+
   g_mutex_lock (&buffer->tile_storage->mutex);
+
   g_assert (buffer->lock_count >=0);
   buffer->lock_count--;
   g_assert (buffer->lock_count >=0);
@@ -1285,19 +1315,22 @@ gboolean gegl_buffer_unlock (GeglBuffer *buffer)
     {
       ret = gegl_tile_backend_file_unlock (GEGL_TILE_BACKEND_FILE (backend));
     }
+
   g_mutex_unlock (&buffer->tile_storage->mutex);
+
   return ret;
 }
 
-void gegl_buffer_emit_changed_signal(GeglBuffer *buffer, const GeglRectangle *rect)
+void
+gegl_buffer_emit_changed_signal (GeglBuffer          *buffer,
+                                 const GeglRectangle *rect)
 {
   GeglRectangle copy;
 
-  if (rect == NULL) {
+  if (rect == NULL)
     copy = *gegl_buffer_get_extent (buffer);
-  } else {
+  else
     copy = *rect;
-  }
 
-  g_signal_emit(buffer, gegl_buffer_signals[CHANGED], 0, &copy, NULL);
+  g_signal_emit (buffer, gegl_buffer_signals[CHANGED], 0, &copy, NULL);
 }
