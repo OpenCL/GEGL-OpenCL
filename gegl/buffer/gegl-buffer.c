@@ -192,7 +192,7 @@ gegl_buffer_get_property (GObject    *gobject,
         break;
 
       case PROP_BACKEND:
-        g_value_set_pointer (value, buffer->backend);
+        g_value_set_object (value, buffer->backend);
         break;
 
       case PROP_X:
@@ -320,8 +320,9 @@ gegl_buffer_set_property (GObject      *gobject,
           }
         break;
       case PROP_BACKEND:
-        if (g_value_get_pointer (value))
-          buffer->backend = g_value_get_pointer (value);
+        if (buffer->backend)
+          g_object_unref (buffer->backend);
+        buffer->backend = g_value_dup_object (value);
         break;
 
       default:
@@ -449,6 +450,12 @@ gegl_buffer_dispose (GObject *object)
 
   _gegl_buffer_drop_hot_tile (buffer);
 
+  if (buffer->backend)
+    {
+      g_object_unref (buffer->backend);
+      buffer->backend = NULL;
+    }
+
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
@@ -496,7 +503,7 @@ gegl_buffer_backend (GeglBuffer *buffer)
   tmp = gegl_buffer_backend2 (buffer);
 
   if (tmp)
-    buffer->backend = tmp;
+    buffer->backend = g_object_ref (tmp);
 
   return (GeglTileBackend *) tmp;
 }
@@ -615,7 +622,6 @@ gegl_buffer_constructor (GType                  type,
       source = GEGL_TILE_SOURCE (gegl_tile_storage_new (backend));
       gegl_tile_handler_set_source ((GeglTileHandler*)(buffer), source);
       g_object_unref (source);
-      g_object_unref (backend);
     }
 
    /* Connect to the changed signal of source, this is used by some backends
@@ -886,9 +892,10 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                                          G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (gobject_class, PROP_BACKEND,
-                                   g_param_spec_pointer ("backend", "backend", "A custom tile-backend instance to use",
-                                                         G_PARAM_READWRITE |
-                                                         G_PARAM_CONSTRUCT));
+                                   g_param_spec_object ("backend", "backend", "A custom tile-backend instance to use",
+                                                        GEGL_TYPE_TILE_BACKEND,
+                                                        G_PARAM_READWRITE |
+                                                        G_PARAM_CONSTRUCT_ONLY));
 
   g_object_class_install_property (gobject_class, PROP_TILE_HEIGHT,
                                    g_param_spec_int ("tile-height", "tile-height", "height of a tile",
