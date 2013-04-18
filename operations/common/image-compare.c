@@ -69,9 +69,11 @@ process (GeglOperation       *operation,
   gdouble      diffsum      = 0.0;
   gint         wrong_pixels = 0;
   const Babl*  cielab       = babl_format ("CIE Lab float");
+  const Babl*  rgbaf        = babl_format ("RGBA float");
   const Babl*  srgb         = babl_format ("R'G'B' u8");
   gint         pixels, i;
   gfloat      *in_buf, *aux_buf, *a, *b;
+  gfloat      *in_buf_rgba, *aux_buf_rgba, *aalpha, *balpha;
   guchar      *out_buf, *out;
 
   if (aux == NULL)
@@ -79,14 +81,24 @@ process (GeglOperation       *operation,
 
   in_buf = g_malloc (result->height * result->width * babl_format_get_bytes_per_pixel (cielab));
   aux_buf = g_malloc (result->height * result->width * babl_format_get_bytes_per_pixel (cielab));
+
+  in_buf_rgba = g_malloc (result->height * result->width * babl_format_get_bytes_per_pixel (rgbaf));
+  aux_buf_rgba = g_malloc (result->height * result->width * babl_format_get_bytes_per_pixel (rgbaf));
+
   out_buf = g_malloc (result->height * result->width * babl_format_get_bytes_per_pixel (srgb));
 
   gegl_buffer_get (input, result, 1.0, cielab, in_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
   gegl_buffer_get (aux, result, 1.0, cielab, aux_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
+  gegl_buffer_get (input, result, 1.0, rgbaf, in_buf_rgba, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (aux, result, 1.0, rgbaf, aux_buf_rgba, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
   a   = in_buf;
   b   = aux_buf;
   out = out_buf;
+
+  aalpha = in_buf_rgba;
+  balpha = aux_buf_rgba;
 
   pixels = result->width * result->height;
 
@@ -95,6 +107,12 @@ process (GeglOperation       *operation,
       gdouble diff = sqrt (SQR(a[0] - b[0])+
                            SQR(a[1] - b[1])+
                            SQR(a[2] - b[2]));
+
+      gdouble alpha_diff = abs(aalpha[3] - balpha[3]) * 100.0;
+
+      if (alpha_diff > diff)
+        diff = alpha_diff;
+
       if (diff >= 0.01)
         {
           wrong_pixels++;
@@ -112,7 +130,9 @@ process (GeglOperation       *operation,
           out[2] = a[0] / 100.0 * 255;
         }
       a   += 3;
+      aalpha += 4;
       b   += 3;
+      balpha += 4;
       out += 3;
     }
 
@@ -120,12 +140,20 @@ process (GeglOperation       *operation,
   b   = aux_buf;
   out = out_buf;
 
+  aalpha = in_buf_rgba;
+  balpha = aux_buf_rgba;
+
   if (wrong_pixels)
     for (i = 0; i < pixels; i++)
       {
         gdouble diff = sqrt (SQR(a[0] - b[0])+
                              SQR(a[1] - b[1])+
                              SQR(a[2] - b[2]));
+
+        gdouble alpha_diff = abs(aalpha[3] - balpha[3]) * 100.0;
+
+        if (alpha_diff > diff)
+          diff = alpha_diff;
 
         if (diff >= 0.01)
           {
@@ -140,7 +168,9 @@ process (GeglOperation       *operation,
             out[2] = a[0] / 100.0 * 255;
           }
         a   += 3;
+        aalpha += 4;
         b   += 3;
+        balpha += 4;
         out += 3;
       }
 
@@ -149,6 +179,9 @@ process (GeglOperation       *operation,
   g_free (in_buf);
   g_free (aux_buf);
   g_free (out_buf);
+
+  g_free (in_buf_rgba);
+  g_free (aux_buf_rgba);
 
   props->wrong_pixels   = wrong_pixels;
   props->max_diff       = max_diff;
