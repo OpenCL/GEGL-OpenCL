@@ -68,8 +68,9 @@ struct _GeglBuffer
 
   gint              lock_count;
 
-  gchar            *alloc_stack_trace; /* Stack trace for allocation,
+  gpointer         *alloc_stack_trace; /* Stack trace for allocation,
                                           useful for debugging */
+  gint              alloc_stack_size;
 
   gpointer          backend;
 };

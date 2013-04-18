@@ -402,9 +402,12 @@ gegl_buffer_leaks (void)
       {
         GeglBuffer *buffer = GEGL_BUFFER (leaked_buffer->data);
 
+#ifdef HAVE_EXECINFO_H
         g_printerr ("\n"
                    "Leaked buffer allocation stack trace:\n");
-        g_printerr ("%s\n", buffer->alloc_stack_trace);
+        backtrace_symbols_fd (buffer->alloc_stack_trace, buffer->alloc_stack_size, fileno (stderr));
+        putc ('\n', stderr);
+#endif
       }
   }
   g_list_free (allocated_buffers_list);
@@ -944,41 +947,14 @@ gegl_buffer_class_init (GeglBufferClass *class)
 
 #ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
 #define MAX_N_FUNCTIONS 100
-static gchar *
-gegl_buffer_get_alloc_stack (void)
+
+static void
+gegl_buffer_set_alloc_stack (GeglBuffer *buffer)
 {
-  char  *result         = NULL;
-#ifndef HAVE_EXECINFO_H
-  result = g_strdup ("backtrace() not available for this platform\n");
-#else
-  void  *functions[MAX_N_FUNCTIONS];
-  int    n_functions    = 0;
-  char **function_names = NULL;
-  int    i              = 0;
-  int    result_size    = 0;
-
-  n_functions = backtrace (functions, MAX_N_FUNCTIONS);
-  function_names = backtrace_symbols (functions, n_functions);
-
-  for (i = 0; i < n_functions; i++)
-    {
-      result_size += strlen (function_names[i]);
-      result_size += 1; /* for '\n' */
-    }
-
-  result = g_new (gchar, result_size + 1);
-  result[0] = '\0';
-
-  for (i = 0; i < n_functions; i++)
-    {
-      strcat (result, function_names[i]);
-      strcat (result, "\n");
-    }
-
-  free (function_names);
+#ifdef HAVE_EXECINFO_H
+  buffer->alloc_stack_trace = g_new (gpointer, MAX_N_FUNCTIONS);
+  buffer->alloc_stack_size = backtrace (buffer->alloc_stack_trace, MAX_N_FUNCTIONS);
 #endif
-
-  return result;
 }
 #endif
 
@@ -986,7 +962,16 @@ void gegl_bt (void);
 void gegl_bt (void)
 {
 #ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
-  g_print ("%s\n", gegl_buffer_get_alloc_stack ());
+#ifndef HAVE_EXECINFO_H
+  g_print ("backtrace() not available for this platform\n");
+#else
+  gpointer functions[MAX_N_FUNCTIONS];
+  int      n_functions = 0;
+
+  n_functions = backtrace (functions, MAX_N_FUNCTIONS);
+  backtrace_symbols_fd (functions, n_functions, fileno (stderr));
+  putc ('\n', stderr);
+#endif
 #endif
 }
 
@@ -1001,7 +986,7 @@ gegl_buffer_init (GeglBuffer *buffer)
   allocated_buffers++;
 
 #ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
-  buffer->alloc_stack_trace = gegl_buffer_get_alloc_stack ();
+  gegl_buffer_set_alloc_stack (buffer);
   allocated_buffers_list = g_list_prepend (allocated_buffers_list, buffer);
 #endif
 }
