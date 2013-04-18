@@ -156,7 +156,7 @@ AC_MSG_CHECKING([whether to turn on debugging])
 AC_ARG_ENABLE(debug,
               [  --enable-debug          turn on  debugging (default=no)],
               if eval "test x$enable_debug = xyes"; then
-                DEBUGFLAG="-g -DGEGL_ENABLE_DEBUG -DGEGL_BUFFER_DEBUG_ALLOCATIONS"
+                DEBUGFLAG="-g -DGEGL_ENABLE_DEBUG"
               fi)
 
 if test -n "$DEBUGFLAG"; then
