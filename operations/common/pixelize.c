@@ -43,10 +43,10 @@ static void prepare (GeglOperation *operation)
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
 
+  const Babl *source_format = gegl_operation_get_source_format (operation, "input");
+
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
   o       = GEGL_CHANT_PROPERTIES (operation);
-
-  const Babl *source_format = gegl_operation_get_source_format (operation, "input");
 
   op_area->left   =
   op_area->right  = o->size_x;
