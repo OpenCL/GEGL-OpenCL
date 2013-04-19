@@ -69,8 +69,8 @@ GeglCurve  * gegl_curve_new            (gdouble      y_min,
 /**
  * gegl_curve_get_y_bounds:
  * @curve: a #GeglCurve.
- * @min_y: return location for minimal value.
- * @max_y: return location for maximal value.
+ * @min_y: (out): return location for minimal value.
+ * @max_y: (out): return location for maximal value.
  *
  * Get the bounds on the values of the curve and store the values in
  * the return locaitons provided in @min_y and @max_y.
@@ -96,8 +96,8 @@ guint        gegl_curve_add_point      (GeglCurve   *curve,
  * gegl_curve_get_point:
  * @curve: a #GeglCurve.
  * @index: the position of the value number to retrieve.
- * @x: x coordinate return location.
- * @y: y coordinate return location.
+ * @x: (out): x coordinate return location.
+ * @y: (out): y coordinate return location.
  *
  * Retrive the coordinates for an index.
  */
@@ -142,7 +142,7 @@ gdouble      gegl_curve_calc_value     (GeglCurve   *curve,
                                         gdouble      x);
 
 /**
- * gegl_curve_calc_values:
+ * gegl_curve_calc_values: (skip)
  * @curve: a #GeglCurve.
  * @x_min: the minimum value to compute for
  * @x_max: the maxmimum value to compute for
