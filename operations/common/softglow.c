@@ -200,6 +200,7 @@ process (GeglOperation       *operation,
 
   g_object_unref (sampler);
   g_object_unref (dest);
+  g_object_unref (dest_tmp);
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
   gegl_buffer_set_extent (input, whole_region);
