@@ -170,6 +170,8 @@ process (GeglOperation       *operation,
   g_slice_free1 (4 * total_pixels * sizeof (gfloat), src_buf);
   g_slice_free1 (4 * n_pixels * sizeof (gfloat), dst_buf);
 
+  g_object_unref (tmp);
+
   return TRUE;
 }
 
