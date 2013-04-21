@@ -22,10 +22,6 @@ Render a composition to a PNG file:
 
  $ gegl composition.xml -o composition.png
 
-Invoke gegl like a viewer for gegl compositions:
-
- $ gegl -ui -d 5 composition.xml
-
 Using gegl with png's passing through stdin/stdout piping.
 
  $ cat input.png | gegl -o - -x "<gegl>
