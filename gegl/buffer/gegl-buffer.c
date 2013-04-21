@@ -43,6 +43,7 @@
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
+#include "gegl-debug.h"
 #include "gegl-tile-handler.h"
 #include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
@@ -65,11 +66,10 @@
 #include "gegl-config.h"
 #include "gegl-buffer-cl-cache.h"
 
-/* #define GEGL_BUFFER_DEBUG_ALLOCATIONS */
+#ifdef GEGL_ENABLE_DEBUG
+#define DEBUG_ALLOCATIONS (gegl_debug_flags & GEGL_DEBUG_BUFFER_ALLOC)
+#endif
 
-/* #define GEGL_BUFFER_DEBUG_ALLOCATIONS to print allocation stack
- * traces for leaked GeglBuffers using GNU C libs backtrace_symbols()
- */
 #ifdef HAVE_EXECINFO_H
 #include <execinfo.h>
 #endif
@@ -335,7 +335,7 @@ gegl_buffer_set_property (GObject      *gobject,
     }
 }
 
-#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+#ifdef GEGL_ENABLE_DEBUG
 static GList *allocated_buffers_list = NULL;
 #endif
 static gint   allocated_buffers      = 0;
@@ -392,26 +392,27 @@ gegl_buffer_stats (void)
 gint
 gegl_buffer_leaks (void)
 {
-#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
-  {
-    GList *leaked_buffer = NULL;
+#ifdef GEGL_ENABLE_DEBUG
+  if (DEBUG_ALLOCATIONS)
+    {
+      GList *leaked_buffer = NULL;
 
-    for (leaked_buffer = allocated_buffers_list;
-         leaked_buffer != NULL;
-         leaked_buffer = leaked_buffer->next)
-      {
-        GeglBuffer *buffer = GEGL_BUFFER (leaked_buffer->data);
+      for (leaked_buffer = allocated_buffers_list;
+           leaked_buffer != NULL;
+           leaked_buffer = leaked_buffer->next)
+        {
+          GeglBuffer *buffer = GEGL_BUFFER (leaked_buffer->data);
 
 #ifdef HAVE_EXECINFO_H
-        g_printerr ("\n"
-                   "Leaked buffer allocation stack trace:\n");
-        backtrace_symbols_fd (buffer->alloc_stack_trace, buffer->alloc_stack_size, fileno (stderr));
-        putc ('\n', stderr);
+          g_printerr ("\n"
+                     "Leaked buffer allocation stack trace:\n");
+          backtrace_symbols_fd (buffer->alloc_stack_trace, buffer->alloc_stack_size, fileno (stderr));
+          putc ('\n', stderr);
 #endif
-      }
-  }
-  g_list_free (allocated_buffers_list);
-  allocated_buffers_list = NULL;
+        }
+      g_list_free (allocated_buffers_list);
+      allocated_buffers_list = NULL;
+    }
 #endif
 
   return allocated_buffers - de_allocated_buffers;
@@ -471,9 +472,12 @@ gegl_buffer_dispose (GObject *object)
 static void
 gegl_buffer_finalize (GObject *object)
 {
-#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
-  g_free (GEGL_BUFFER (object)->alloc_stack_trace);
-  allocated_buffers_list = g_list_remove (allocated_buffers_list, object);
+#ifdef GEGL_ENABLE_DEBUG
+  if (DEBUG_ALLOCATIONS)
+    {
+      g_free (GEGL_BUFFER (object)->alloc_stack_trace);
+      allocated_buffers_list = g_list_remove (allocated_buffers_list, object);
+    }
 #endif
 
   g_free (GEGL_BUFFER (object)->path);
@@ -945,15 +949,17 @@ gegl_buffer_class_init (GeglBufferClass *class)
 
 }
 
-#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+#ifdef GEGL_ENABLE_DEBUG
 #define MAX_N_FUNCTIONS 100
-
 static void
 gegl_buffer_set_alloc_stack (GeglBuffer *buffer)
 {
 #ifdef HAVE_EXECINFO_H
-  buffer->alloc_stack_trace = g_new (gpointer, MAX_N_FUNCTIONS);
-  buffer->alloc_stack_size = backtrace (buffer->alloc_stack_trace, MAX_N_FUNCTIONS);
+  if (DEBUG_ALLOCATIONS)
+    {
+      buffer->alloc_stack_trace = g_new (gpointer, MAX_N_FUNCTIONS);
+      buffer->alloc_stack_size = backtrace (buffer->alloc_stack_trace, MAX_N_FUNCTIONS);
+    }
 #endif
 }
 #endif
@@ -961,7 +967,7 @@ gegl_buffer_set_alloc_stack (GeglBuffer *buffer)
 void gegl_bt (void);
 void gegl_bt (void)
 {
-#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
+#ifdef GEGL_ENABLE_DEBUG
 #ifndef HAVE_EXECINFO_H
   g_print ("backtrace() not available for this platform\n");
 #else
@@ -985,9 +991,12 @@ gegl_buffer_init (GeglBuffer *buffer)
 
   allocated_buffers++;
 
-#ifdef GEGL_BUFFER_DEBUG_ALLOCATIONS
-  gegl_buffer_set_alloc_stack (buffer);
-  allocated_buffers_list = g_list_prepend (allocated_buffers_list, buffer);
+#ifdef GEGL_ENABLE_DEBUG
+  if (DEBUG_ALLOCATIONS)
+    {
+      gegl_buffer_set_alloc_stack (buffer);
+      allocated_buffers_list = g_list_prepend (allocated_buffers_list, buffer);
+    }
 #endif
 }
 

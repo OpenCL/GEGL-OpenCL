@@ -428,7 +428,14 @@ gegl_exit (void)
     }
 
   if (gegl_buffer_leaks ())
-    g_printf ("EEEEeEeek! %i GeglBuffers leaked\n", gegl_buffer_leaks ());
+    {
+      g_printf ("EEEEeEeek! %i GeglBuffers leaked\n", gegl_buffer_leaks ());
+#ifdef GEGL_ENABLE_DEBUG
+      if (!(gegl_debug_flags & GEGL_DEBUG_BUFFER_ALLOC))
+        g_printerr ("To debug GeglBuffer leaks, set the environment "
+                    "variable GEGL_DEBUG to \"buffer-alloc\"\n");
+#endif
+    }
   gegl_tile_cache_destroy ();
 
   if (gegl_swap_dir ())
