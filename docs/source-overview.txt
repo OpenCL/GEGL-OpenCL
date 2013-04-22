@@ -20,6 +20,7 @@ dropped into the directory in the build.
   │   ├──graph          graph storage and manipulation code.
   │   ├──module         The code to load plug-ins located in a colon seperated
   │   │                 list of paths from the environment variable GEGL_PATH
+  │   ├──opencl         The GEGL base class for OpenCL.
   │   ├──operation      The GeglOperation base class, and subclasses that act
   │   │                 as baseclasses for implementeting different types of
   │   │                 operation plug-ins.
@@ -31,6 +32,8 @@ dropped into the directory in the build.
   │
   ├──tests             various tests used to maintain stability when developing
   │                    GEGL.
+  │
+  ├──opencl            OpenCL implementation of plug-ins.
   │
   ├──operations        Runtime loaded plug-ins for image processing operations.
   │   │
@@ -47,6 +50,8 @@ dropped into the directory in the build.
   │       ├──external  operations in the workshop with external dependencies.
   │       └──generated generated operations that are in the workshop.
   │
+  ├──perf              The GEGL framework tests for tracking performance
+  │                    development (ruby is required).
   │
   ├──docs              The GEGL website (this documentation), built for your
   │                    the corresponding sourcetree with correct documentation
