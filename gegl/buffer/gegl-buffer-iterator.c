@@ -298,7 +298,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
   if (self==0) /* The first buffer which is always scan aligned */
     {
       i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
-      gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), i->format[self], iterator->level);
+      gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), i->format[self], level);
     }
   else
     {
@@ -310,7 +310,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
                                        i->buffer[self], i->rect[self].x, i->rect[self].y))
         {
           i->flags[self] |= GEGL_BUFFER_SCAN_COMPATIBLE;
-          gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), i->format[self], iterator->level);
+          gegl_buffer_tile_iterator_init (&i->i[self], i->buffer[self], i->rect[self], ((i->flags[self] & GEGL_BUFFER_WRITE) != 0), i->format[self], level);
         }
     }
 
@@ -594,7 +594,6 @@ gegl_buffer_iterator_new (GeglBuffer          *buffer,
   GeglBufferIterator *i = (gpointer)g_slice_new0 (GeglBufferIterators);
   /* Because the iterator is nulled above, we can forgo explicitly setting
    * i->is_finished to FALSE. */
-  i->level = level;
   gegl_buffer_iterator_add (i, buffer, roi, level, format, flags, abyss_policy);
   return i;
 }
