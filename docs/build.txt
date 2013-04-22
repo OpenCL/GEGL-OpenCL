@@ -22,10 +22,10 @@ GEGL currently builds and works on linux, win32 and OSX most probably also on
 other systems where glib and gtk+ work.
 
   - Core
-      * glib (including gobject, and gmodule) 2.16 or newer, which provides
+      * glib (including gobject, and gmodule) 2.32 or newer, which provides
         inheritance, dynamic modules, common algorithms and data structures
         for C programming.
-      * http://gegl.org/babl/[babl] 0.0.22 or newer (for pixel-format
+      * http://gegl.org/babl/[babl] 0.1.10 or newer (for pixel-format
         agnostisism).
       * libpng (png load/export ops, and image magick fallback import)
       * ruby (only if building from git)
