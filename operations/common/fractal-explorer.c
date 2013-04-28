@@ -32,7 +32,21 @@ gegl_chant_int_ui (width,  _("Width"),  1, 10000000, 400, 1, 2000, 1.5,
 gegl_chant_int_ui (height, _("Height"), 1, 10000000, 400, 1, 2000, 1.5,
                    _("Height"))
 
-gegl_chant_int (fractaltype, _("Fractal type"), 0, 8, 0, _("Type of a fractal"))
+gegl_chant_register_enum (gegl_fractal_type)
+  enum_value (GEGL_FRACTAL_TYPE_MANDELBROT, "Mandelbrot")
+  enum_value (GEGL_FRACTAL_TYPE_JULIA,      "Julia")
+  enum_value (GEGL_FRACTAL_TYPE_BARNSLEY_1, "Barnsley 1")
+  enum_value (GEGL_FRACTAL_TYPE_BARNSLEY_2, "Barnsley 2")
+  enum_value (GEGL_FRACTAL_TYPE_BARNSLEY_3, "Barnsley 3")
+  enum_value (GEGL_FRACTAL_TYPE_SPIDER,     "Spider")
+  enum_value (GEGL_FRACTAL_TYPE_MAN_O_WAR,  "Man'o'war")
+  enum_value (GEGL_FRACTAL_TYPE_LAMBDA,     "Lambda")
+  enum_value (GEGL_FRACTAL_TYPE_SIERPINSKI, "Sierpinski")
+gegl_chant_register_enum_end (GeglFractalType)
+
+gegl_chant_enum (fractaltype, _("Fractal type"),
+                 GeglFractalType, gegl_fractal_type,
+                 GEGL_FRACTAL_TYPE_MANDELBROT, _("Type of a fractal"))
 
 gegl_chant_double (xmin, _("Left"),   -3.0, 3.0, -2.0, _("Left"))
 gegl_chant_double (xmax, _("Right"),  -3.0, 3.0,  2.0, _("Right"))
@@ -51,12 +65,21 @@ gegl_chant_double (greenstretch, _("Green stretch"), 0.0, 1.0, 1.0,
 gegl_chant_double (bluestretch,  _("Blue stretch"),  0.0, 1.0, 1.0,
                    _("Blue stretching factor"))
 
-gegl_chant_int (redmode,   _("Red mode"),   0, 2, 1,
-                _("Red application mode (0:SIN; 1:COS; 2:NONE)"))
-gegl_chant_int (greenmode, _("Green mode"), 0, 2, 1,
-                _("Green application mode (0:SIN; 1:COS; 2:NONE)"))
-gegl_chant_int (bluemode,  _("Blue mode"),  0, 2, 0,
-                _("Blue application mode (0:SIN; 1:COS; 2:NONE)"))
+gegl_chant_register_enum (gegl_fractal_color_mode)
+  enum_value (GEGL_FRACTAL_COLOR_MODE_SINE,   "Sine")
+  enum_value (GEGL_FRACTAL_COLOR_MODE_COSINE, "Cosine")
+  enum_value (GEGL_FRACTAL_COLOR_MODE_NONE,   "None")
+gegl_chant_register_enum_end (GeglFractalColorMode)
+
+gegl_chant_enum (redmode, _("Red mode"),
+                 GeglFractalColorMode, gegl_fractal_color_mode,
+                 GEGL_FRACTAL_COLOR_MODE_COSINE, _("Red application mode"))
+gegl_chant_enum (greenmode, _("Green mode"),
+                 GeglFractalColorMode, gegl_fractal_color_mode,
+                 GEGL_FRACTAL_COLOR_MODE_COSINE, _("Green application mode"))
+gegl_chant_enum (bluemode, _("Blue mode"),
+                 GeglFractalColorMode, gegl_fractal_color_mode,
+                 GEGL_FRACTAL_COLOR_MODE_SINE, _("Blue application mode"))
 
 gegl_chant_boolean (redinvert,   _("Red inversion"),   FALSE,
                     _("Red inversion"))
@@ -80,27 +103,6 @@ gegl_chant_boolean (useloglog, _("Loglog smoothing"), FALSE,
 #include <math.h>
 #include <stdio.h>
 
-enum
-{
-  SINUS,
-  COSINUS,
-  NONE
-};
-
-enum
-{
-  TYPE_MANDELBROT,
-  TYPE_JULIA,
-  TYPE_BARNSLEY_1,
-  TYPE_BARNSLEY_2,
-  TYPE_BARNSLEY_3,
-  TYPE_SPIDER,
-  TYPE_MAN_O_WAR,
-  TYPE_LAMBDA,
-  TYPE_SIERPINSKI,
-  NUM_TYPES
-};
-
 typedef struct
 {
   guchar r, g, b;
@@ -117,7 +119,7 @@ explorer_render_row (GeglChantO *o,
                      clrmap      colormap,
                      guchar    **dest_row)
 {
-  gint    fractaltype;
+  GeglFractalType fractaltype;
   gint    col;
   gdouble xmin;
   gdouble ymin;
@@ -165,7 +167,7 @@ explorer_render_row (GeglChantO *o,
     {
       a = xmin + (gdouble) col * xdiff;
       b = ymin + (gdouble) row * ydiff;
-      if (fractaltype != 0)
+      if (fractaltype != GEGL_FRACTAL_TYPE_MANDELBROT)
         {
           tmpx = x = a;
           tmpy = y = b;
@@ -183,17 +185,17 @@ explorer_render_row (GeglChantO *o,
 
           switch (fractaltype)
             {
-            case TYPE_MANDELBROT:
+            case GEGL_FRACTAL_TYPE_MANDELBROT:
               xx = x * x - y * y + a;
               y = 2.0 * x * y + b;
               break;
 
-            case TYPE_JULIA:
+            case GEGL_FRACTAL_TYPE_JULIA:
               xx = x * x - y * y + cx;
               y = 2.0 * x * y + cy;
               break;
 
-            case TYPE_BARNSLEY_1:
+            case GEGL_FRACTAL_TYPE_BARNSLEY_1:
               foldxinitx = oldx * cx;
               foldyinity = oldy * cy;
               foldxinity = oldx * cy;
@@ -211,7 +213,7 @@ explorer_render_row (GeglChantO *o,
                 }
               break;
 
-            case TYPE_BARNSLEY_2:
+            case GEGL_FRACTAL_TYPE_BARNSLEY_2:
               foldxinitx = oldx * cx;
               foldyinity = oldy * cy;
               foldxinity = oldx * cy;
@@ -229,7 +231,7 @@ explorer_render_row (GeglChantO *o,
                 }
               break;
 
-            case TYPE_BARNSLEY_3:
+            case GEGL_FRACTAL_TYPE_BARNSLEY_3:
               foldxinitx  = oldx * oldx;
               foldyinity  = oldy * oldy;
               foldxinity  = oldx * oldy;
@@ -247,7 +249,7 @@ explorer_render_row (GeglChantO *o,
                 }
               break;
 
-            case TYPE_SPIDER:
+            case GEGL_FRACTAL_TYPE_SPIDER:
               /* { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 } */
               xx = x*x - y*y + tmpx + cx;
               y = 2 * oldx * oldy + tmpy +cy;
@@ -255,14 +257,14 @@ explorer_render_row (GeglChantO *o,
               tmpy = tmpy/2 + y;
               break;
 
-            case TYPE_MAN_O_WAR:
+            case GEGL_FRACTAL_TYPE_MAN_O_WAR:
               xx = x*x - y*y + tmpx + cx;
               y = 2.0 * x * y + tmpy + cy;
               tmpx = oldx;
               tmpy = oldy;
               break;
 
-            case TYPE_LAMBDA:
+            case GEGL_FRACTAL_TYPE_LAMBDA:
               tempsqrx = x * x;
               tempsqry = y * y;
               tempsqrx = oldx - tempsqrx + tempsqry;
@@ -272,7 +274,7 @@ explorer_render_row (GeglChantO *o,
               y = cx * tempsqry + cy * tempsqrx;
               break;
 
-            case TYPE_SIERPINSKI:
+            case GEGL_FRACTAL_TYPE_SIERPINSKI:
               xx = oldx + oldx;
               y = oldy + oldy;
               if (oldy > .5)
@@ -315,7 +317,8 @@ explorer_render_row (GeglChantO *o,
 }
 
 static void
-make_color_map (GeglChantO *o, clrmap colormap)
+make_color_map (GeglChantO *o,
+                clrmap      colormap)
 {
   gint     i;
   gint     r;
@@ -337,13 +340,13 @@ make_color_map (GeglChantO *o, clrmap colormap)
 
       switch (o->redmode)
         {
-        case SINUS:
+        case GEGL_FRACTAL_COLOR_MODE_SINE:
           r = (int) redstretch *(1.0 + sin((x - 1) * pi));
           break;
-        case COSINUS:
+        case GEGL_FRACTAL_COLOR_MODE_COSINE:
           r = (int) redstretch *(1.0 + cos((x - 1) * pi));
           break;
-        case NONE:
+        case GEGL_FRACTAL_COLOR_MODE_NONE:
           r = (int)(redstretch *(x));
           break;
         default:
@@ -352,13 +355,13 @@ make_color_map (GeglChantO *o, clrmap colormap)
 
       switch (o->greenmode)
         {
-        case SINUS:
+        case GEGL_FRACTAL_COLOR_MODE_SINE:
           gr = (int) greenstretch *(1.0 + sin((x - 1) * pi));
           break;
-        case COSINUS:
+        case GEGL_FRACTAL_COLOR_MODE_COSINE:
           gr = (int) greenstretch *(1.0 + cos((x - 1) * pi));
           break;
-        case NONE:
+        case GEGL_FRACTAL_COLOR_MODE_NONE:
           gr = (int)(greenstretch *(x));
           break;
         default:
@@ -367,13 +370,13 @@ make_color_map (GeglChantO *o, clrmap colormap)
 
       switch (o->bluemode)
         {
-        case SINUS:
+        case GEGL_FRACTAL_COLOR_MODE_SINE:
           bl = (int) bluestretch * (1.0 + sin ((x - 1) * pi));
           break;
-        case COSINUS:
+        case GEGL_FRACTAL_COLOR_MODE_COSINE:
           bl = (int) bluestretch * (1.0 + cos ((x - 1) * pi));
           break;
-        case NONE:
+        case GEGL_FRACTAL_COLOR_MODE_NONE:
           bl = (int) (bluestretch * x);
           break;
         default:
