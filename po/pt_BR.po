@@ -14,28 +14,28 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-03-15 21:58+0000\n"
-"PO-Revision-Date: 2013-03-17 11:05-0300\n"
-"Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
+"POT-Creation-Date: 2013-04-22 21:03+0000\n"
+"PO-Revision-Date: 2013-04-26 22:32-0300\n"
+"Last-Translator: Rafael Ferreira <rafael.f.f1@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.5\n"
 
-#: ../bin/gegl.c:147
+#: ../bin/gegl.c:146
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Não foi possível ler o arquivo: %s"
 
-#: ../bin/gegl.c:191
+#: ../bin/gegl.c:190
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Gráfico inválido, abortar.\n"
 
-#: ../bin/gegl.c:257 ../bin/gegl-options.c:124
+#: ../bin/gegl.c:256 ../bin/gegl-options.c:124
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Modo de GeglOption desconhecido: %d"
@@ -157,41 +157,41 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:214
+#: ../gegl/gegl-init.c:245
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "Tolerância de erro babls, um valor entre 0.2 e 0.000000001"
 
-#: ../gegl/gegl-init.c:219
+#: ../gegl/gegl-init.c:250
 msgid "Where GEGL stores its swap"
 msgstr "Onde o GEGL armazena suas operações de swap"
 
-#: ../gegl/gegl-init.c:224
+#: ../gegl/gegl-init.c:255
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Quantidade de memória (aproximada) disponível para cache "
 
-#: ../gegl/gegl-init.c:229
+#: ../gegl/gegl-init.c:260
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Tamanho padrão dos ladrilhos no GeglBuffers"
 
-#: ../gegl/gegl-init.c:234
+#: ../gegl/gegl-init.c:265
 msgid "The count of pixels to compute simultaneously"
 msgstr "Quantidade de pixels para computar simultaneamente"
 
-#: ../gegl/gegl-init.c:239
+#: ../gegl/gegl-init.c:270
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 "A quantidade de renderização de um valor entre 0.0 (rápido) e 1.0 "
 "(referência)"
 
-#: ../gegl/gegl-init.c:244
+#: ../gegl/gegl-init.c:275
 msgid "The number of concurrent processing threads to use"
 msgstr "Quantidade de threads de processamento simultâneos para uso"
 
-#: ../gegl/gegl-init.c:249
+#: ../gegl/gegl-init.c:280
 msgid "Use OpenCL"
 msgstr "Usar OpenCL"
 
-#: ../gegl/gegl-init.c:254
+#: ../gegl/gegl-init.c:285
 msgid "Maximum number of entries in the file tile backend's writer queue"
 msgstr ""
 "Número máximo de entradas na fila de escrita de retaguarda (backend) do "
@@ -222,7 +222,7 @@ msgstr "Não carregado"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/bilateral-filter-fast.c:37
-#: ../operations/common/dropshadow.c:31
+#: ../operations/common/dropshadow.c:32
 msgid "Blur radius"
 msgstr "Raio de desfoque"
 
@@ -257,15 +257,15 @@ msgstr "Suavidade"
 msgid "Level of smoothness"
 msgstr "Nível de suavidade"
 
-#: ../operations/common/bilateral-filter-fast.c:504
+#: ../operations/common/bilateral-filter-fast.c:474
 msgid "A fast approximate implementation of the bilateral filter"
 msgstr "Uma rápida implementação aproximada do filtro bilateral"
 
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
 #: ../operations/common/difference-of-gaussians.c:28
-#: ../operations/common/dropshadow.c:30 ../operations/common/snn-mean.c:26
-#: ../operations/common/stress.c:27 ../operations/common/vignette.c:26
+#: ../operations/common/dropshadow.c:31 ../operations/common/snn-mean.c:26
+#: ../operations/common/stress.c:27 ../operations/common/vignette.c:35
 #: ../operations/external/matting-levin.c:28
 #: ../operations/workshop/box-max.c:25 ../operations/workshop/box-min.c:25
 #: ../operations/workshop/box-percentile.c:27
@@ -449,7 +449,7 @@ msgstr "Deslocamento vertical (da origem) para o início da grade"
 
 #: ../operations/common/checkerboard.c:33 ../operations/common/color.c:24
 #: ../operations/common/color-to-alpha.c:28 ../operations/common/grid.c:36
-#: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:25
+#: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:34
 #: ../operations/external/text.c:31 ../operations/external/vector-fill.c:27
 #: ../operations/external/vector-stroke.c:27
 #: ../operations/workshop/linear-gradient.c:28
@@ -626,34 +626,35 @@ msgstr "A razão de tamanho de um ponto dentro de cada bloco"
 msgid "Simplify image into an array of solid-colored dots"
 msgstr "Simplificar imagem em uma matriz com pontos de cores sólidas"
 
-#: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:32
+#. It does make sense to sometimes have opacities > 1 (see GEGL logo for example)
+#: ../operations/common/dropshadow.c:26 ../operations/common/layer.c:32
 #: ../operations/common/layer.c:33 ../operations/common/opacity.c:24
 #: ../operations/external/vector-fill.c:30
 #: ../operations/external/vector-stroke.c:33
 msgid "Opacity"
 msgstr "Opacidade"
 
-#: ../operations/common/dropshadow.c:26 ../operations/common/layer.c:34
-#: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:32
+#: ../operations/common/dropshadow.c:27 ../operations/common/layer.c:34
+#: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:41
 #: ../operations/common/waves.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
 
-#: ../operations/common/dropshadow.c:27
+#: ../operations/common/dropshadow.c:28
 msgid "Horizontal shadow offset"
 msgstr "Offset do sombreamento horizontal"
 
-#: ../operations/common/dropshadow.c:28 ../operations/common/layer.c:36
-#: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:33
+#: ../operations/common/dropshadow.c:29 ../operations/common/layer.c:36
+#: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:42
 #: ../operations/common/waves.c:29 ../operations/core/crop.c:26
 msgid "Y"
 msgstr "Y"
 
-#: ../operations/common/dropshadow.c:29
+#: ../operations/common/dropshadow.c:30
 msgid "Vertical shadow offset"
 msgstr "Offset do sombreamento vertical"
 
-#: ../operations/common/dropshadow.c:82
+#: ../operations/common/dropshadow.c:83
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Cria um efeito dropshadow no buffer de entrada"
 
@@ -675,7 +676,7 @@ msgstr "Vertical"
 msgid "Keep Signal"
 msgstr "Manter o sinal"
 
-#: ../operations/common/edge-sobel.c:352
+#: ../operations/common/edge-sobel.c:378
 msgid "Specialized direction-dependent edge detection"
 msgstr "Detecção especializada de bordas dependentes de direção"
 
@@ -723,7 +724,7 @@ msgstr "Deslocamento"
 msgid "Offset value added"
 msgstr "Adicionado valor de deslocamento"
 
-#: ../operations/common/exposure.c:29 ../operations/common/vignette.c:28
+#: ../operations/common/exposure.c:29 ../operations/common/vignette.c:37
 msgid "Gamma"
 msgstr "Gama"
 
@@ -1041,7 +1042,7 @@ msgstr "Diferença média (total)"
 msgid "Average difference between all pixels."
 msgstr "A média de diferença entre todos pixels."
 
-#: ../operations/common/image-compare.c:177
+#: ../operations/common/image-compare.c:210
 msgid ""
 "Compares if input and aux buffers are different. Results are saved in the "
 "properties."
@@ -1528,7 +1529,7 @@ msgstr "Repetir"
 msgid "Completely randomize a fraction of pixels"
 msgstr "Aleatorizar completamente uma fração de pixels"
 
-#: ../operations/common/noise-pick.c:206
+#: ../operations/common/noise-pick.c:208
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "Trocar aleatoriamente alguns pixels com vizinhos"
 
@@ -1553,7 +1554,7 @@ msgstr "RGB independente"
 msgid "Distort colors by random amounts."
 msgstr "Cores distorcidas por amostras randômicas."
 
-#: ../operations/common/noise-slur.c:191
+#: ../operations/common/noise-slur.c:193
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr ""
 "Deslizar aleatoriamente alguns pixels para baixo (similar a derretimento)"
@@ -1648,7 +1649,7 @@ msgstr "Altura de bloco"
 msgid "Height of blocks in pixels"
 msgstr "Altura de bloco em pixels"
 
-#: ../operations/common/pixelize.c:307
+#: ../operations/common/pixelize.c:315
 msgid "Simplify image into an array of solid-colored squares"
 msgstr "Simplificar imagem em uma matriz com quadrados de cores sólidas"
 
@@ -1879,7 +1880,7 @@ msgstr ""
 msgid "Glow radius"
 msgstr "Raio de brilho"
 
-#: ../operations/common/softglow.c:224
+#: ../operations/common/softglow.c:225
 msgid "Softglow effect"
 msgstr "Efeito de brilho suave"
 
@@ -1993,15 +1994,15 @@ msgstr ""
 "Inverte só o componente de valor, o resultado é a imagem \"invertida\" "
 "correspondente."
 
-#: ../operations/common/vignette.c:24
+#: ../operations/common/vignette.c:30
 msgid "Shape"
 msgstr "Forma"
 
-#: ../operations/common/vignette.c:24
-msgid "Shape to use: 0=circle 1=square 2=diamond"
-msgstr "Formas para usar: 0=círculo 1=quadrado 2=diamante"
+#: ../operations/common/vignette.c:31
+msgid "Shape of the vignette"
+msgstr "Forma da vinheta"
 
-#: ../operations/common/vignette.c:25
+#: ../operations/common/vignette.c:34
 msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
@@ -2009,31 +2010,31 @@ msgstr ""
 "Padrão para \"preto\", você pode usar transparência aqui para apagar porções "
 "de uma imagem"
 
-#: ../operations/common/vignette.c:26
+#: ../operations/common/vignette.c:35
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr "O quão distante a vinheta vai como porção da metade da imagem diagonal"
 
-#: ../operations/common/vignette.c:27
+#: ../operations/common/vignette.c:36
 msgid "Softness"
 msgstr "Suavidade"
 
-#: ../operations/common/vignette.c:28
+#: ../operations/common/vignette.c:37
 msgid "Falloff linearity"
 msgstr "Queda de linearidade"
 
-#: ../operations/common/vignette.c:29
+#: ../operations/common/vignette.c:38
 msgid "Proportion"
 msgstr "Proporção"
 
-#: ../operations/common/vignette.c:29
+#: ../operations/common/vignette.c:38
 msgid "How close we are to image proportions"
 msgstr "Quão perto estamos das proporções da imagem"
 
-#: ../operations/common/vignette.c:30
+#: ../operations/common/vignette.c:39
 msgid "Squeeze"
 msgstr "Compressão"
 
-#: ../operations/common/vignette.c:30
+#: ../operations/common/vignette.c:39
 msgid ""
 "Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
 "inf:1, this is applied after proportion is taken into account, to directly "
@@ -2044,23 +2045,23 @@ msgstr ""
 "utilizar diretamente o fator de compressão como proporções, defina "
 "proporções para 0.0"
 
-#: ../operations/common/vignette.c:32
+#: ../operations/common/vignette.c:41
 msgid "Horizontal center of vignetting"
 msgstr "Centro horizontal da vinheta"
 
-#: ../operations/common/vignette.c:33
+#: ../operations/common/vignette.c:42
 msgid "Vertical center of vignetting"
 msgstr "Centro vertical da vinheta"
 
-#: ../operations/common/vignette.c:34
+#: ../operations/common/vignette.c:43
 msgid "Rotation"
 msgstr "Rotação"
 
-#: ../operations/common/vignette.c:34
+#: ../operations/common/vignette.c:43
 msgid "Rotation angle"
 msgstr "Ângulo de rotação"
 
-#: ../operations/common/vignette.c:341
+#: ../operations/common/vignette.c:350
 msgid ""
 "A vignetting op, applies a vignette to an image. Simulates the luminance "
 "fall off at edge of exposed film, and some other fuzzier border effects that "
@@ -4024,3 +4025,6 @@ msgstr ""
 #: ../operations/workshop/whirl-pinch.c:258
 msgid "Applies whirling and pinching on the image"
 msgstr "Aplica-se rodopiando e apertando a imagem"
+
+#~ msgid "Shape to use: 0=circle 1=square 2=diamond"
+#~ msgstr "Formas para usar: 0=círculo 1=quadrado 2=diamante"
