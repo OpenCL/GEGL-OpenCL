@@ -12,28 +12,28 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-03-26 23:58+0000\n"
-"PO-Revision-Date: 2013-03-28 17:16+0100\n"
+"POT-Creation-Date: 2013-04-28 16:59+0000\n"
+"PO-Revision-Date: 2013-04-29 14:00+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
-"Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
+"Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Gtranslator 2.91.5\n"
 
-#: ../bin/gegl.c:147
+#: ../bin/gegl.c:146
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "No se pudo leer del archivo: %s"
 
-#: ../bin/gegl.c:191
+#: ../bin/gegl.c:190
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Gráfico no válido, cancelar.\n"
 
-#: ../bin/gegl.c:257 ../bin/gegl-options.c:124
+#: ../bin/gegl.c:256 ../bin/gegl-options.c:124
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Modo de GeglOption desconocido: %d"
@@ -155,40 +155,40 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:214
+#: ../gegl/gegl-init.c:245
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "tolerancia de error de babls, un valor entre 0.2 y 0.000000001"
 
-#: ../gegl/gegl-init.c:219
+#: ../gegl/gegl-init.c:250
 msgid "Where GEGL stores its swap"
 msgstr "Dónde almacena GEGL su espacio de intercambio"
 
-#: ../gegl/gegl-init.c:224
+#: ../gegl/gegl-init.c:255
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Cuánta memoria (aproximadamente) usar para el cacheo de las imágenes"
 
-#: ../gegl/gegl-init.c:229
+#: ../gegl/gegl-init.c:260
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Tamaño predeterminado de las baldosas en GeglBuffers"
 
-#: ../gegl/gegl-init.c:234
+#: ../gegl/gegl-init.c:265
 msgid "The count of pixels to compute simultaneously"
 msgstr "Cuántos píxeles calcular simultáneamente"
 
-#: ../gegl/gegl-init.c:239
+#: ../gegl/gegl-init.c:270
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 "Calidad del renderizado; un valor entre 0.0 (rápido) y 1.0 (referencia)"
 
-#: ../gegl/gegl-init.c:244
+#: ../gegl/gegl-init.c:275
 msgid "The number of concurrent processing threads to use"
 msgstr "Número de hilos de procesado concurrente que usar"
 
-#: ../gegl/gegl-init.c:249
+#: ../gegl/gegl-init.c:280
 msgid "Use OpenCL"
 msgstr "Usar OpenCL"
 
-#: ../gegl/gegl-init.c:254
+#: ../gegl/gegl-init.c:285
 msgid "Maximum number of entries in the file tile backend's writer queue"
 msgstr ""
 "Número máximo de entradas en ella cola baldosa escritora del archivo del "
@@ -219,7 +219,7 @@ msgstr "No cargado"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/bilateral-filter-fast.c:37
-#: ../operations/common/dropshadow.c:31
+#: ../operations/common/dropshadow.c:32
 msgid "Blur radius"
 msgstr "Radio de desenfoque"
 
@@ -227,8 +227,8 @@ msgstr "Radio de desenfoque"
 #: ../operations/common/bilateral-filter-fast.c:39
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
-"Radio de la región cuadrada de píxeles (la anchura y la altura serán "
-"radio*2+1)."
+"Radio de la región cuadrada de píxeles (la anchura y la altura serán radio*2"
+"+1)."
 
 #: ../operations/common/bilateral-filter.c:29
 msgid "Edge preservation"
@@ -264,7 +264,7 @@ msgstr "Una aproximación rápida a la implementación del filtro bilateral"
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
 #: ../operations/common/difference-of-gaussians.c:28
-#: ../operations/common/dropshadow.c:30 ../operations/common/snn-mean.c:26
+#: ../operations/common/dropshadow.c:31 ../operations/common/snn-mean.c:26
 #: ../operations/common/stress.c:27 ../operations/common/vignette.c:35
 #: ../operations/external/matting-levin.c:28
 #: ../operations/workshop/box-max.c:25 ../operations/workshop/box-min.c:25
@@ -279,8 +279,8 @@ msgstr "Radio"
 #: ../operations/common/box-blur.c:26 ../operations/common/snn-mean.c:27
 msgid "Radius of square pixel region, (width and height will be radius*2+1)"
 msgstr ""
-"Radio de la región cuadrada de píxeles (la anchura y la altura serán "
-"radio*2+1)."
+"Radio de la región cuadrada de píxeles (la anchura y la altura serán radio*2"
+"+1)."
 
 #: ../operations/common/box-blur.c:343
 msgid "Performs an averaging of a square box of pixels"
@@ -368,7 +368,7 @@ msgstr ""
 "Número de muestras que tomar por cada iteración cuando se busca el rango de "
 "colores"
 
-#: ../operations/common/c2g.c:31 ../operations/common/fractal-explorer.c:42
+#: ../operations/common/c2g.c:31 ../operations/common/fractal-explorer.c:56
 #: ../operations/common/matting-global.c:25 ../operations/common/stress.c:31
 #: ../operations/workshop/mandelbrot.c:31
 msgid "Iterations"
@@ -629,34 +629,35 @@ msgstr "Proporción del tamaño de un punto dentro de cada bloque"
 msgid "Simplify image into an array of solid-colored dots"
 msgstr "Simplificar la imagen en una matriz de puntos de color liso"
 
-#: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:32
+#. It does make sense to sometimes have opacities > 1 (see GEGL logo for example)
+#: ../operations/common/dropshadow.c:26 ../operations/common/layer.c:32
 #: ../operations/common/layer.c:33 ../operations/common/opacity.c:24
 #: ../operations/external/vector-fill.c:30
 #: ../operations/external/vector-stroke.c:33
 msgid "Opacity"
 msgstr "Opacidad"
 
-#: ../operations/common/dropshadow.c:26 ../operations/common/layer.c:34
+#: ../operations/common/dropshadow.c:27 ../operations/common/layer.c:34
 #: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:41
 #: ../operations/common/waves.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
 
-#: ../operations/common/dropshadow.c:27
+#: ../operations/common/dropshadow.c:28
 msgid "Horizontal shadow offset"
 msgstr "Desplazamiento horizontal de la sombra"
 
-#: ../operations/common/dropshadow.c:28 ../operations/common/layer.c:36
+#: ../operations/common/dropshadow.c:29 ../operations/common/layer.c:36
 #: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:42
 #: ../operations/common/waves.c:29 ../operations/core/crop.c:26
 msgid "Y"
 msgstr "Y"
 
-#: ../operations/common/dropshadow.c:29
+#: ../operations/common/dropshadow.c:30
 msgid "Vertical shadow offset"
 msgstr "Desplazamiento vertical de la sombra"
 
-#: ../operations/common/dropshadow.c:82
+#: ../operations/common/dropshadow.c:83
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Crea un efecto de sombra arrojada sobre el búfer de entrada"
 
@@ -678,7 +679,7 @@ msgstr "Vertical"
 msgid "Keep Signal"
 msgstr "Mantener la señal"
 
-#: ../operations/common/edge-sobel.c:352
+#: ../operations/common/edge-sobel.c:378
 msgid "Specialized direction-dependent edge detection"
 msgstr "Detección de bordes especializada dependiente de la dirección"
 
@@ -790,126 +791,129 @@ msgstr ""
 "magnitudes de los gradientes locales de la imagen, produciendo una "
 "luminancia dentro del rango de 0.0 a 1.0"
 
-#: ../operations/common/fractal-explorer.c:35
+#: ../operations/common/fractal-explorer.c:47
 msgid "Fractal type"
 msgstr "Tipo de fractal"
 
-#: ../operations/common/fractal-explorer.c:35
+#: ../operations/common/fractal-explorer.c:49
 msgid "Type of a fractal"
 msgstr "Tipo de fractal"
 
-#: ../operations/common/fractal-explorer.c:37
+#: ../operations/common/fractal-explorer.c:51
 msgid "Left"
 msgstr "Izquierda"
 
-#: ../operations/common/fractal-explorer.c:38
+#: ../operations/common/fractal-explorer.c:52
 msgid "Right"
 msgstr "Derecha"
 
-#: ../operations/common/fractal-explorer.c:39
+#: ../operations/common/fractal-explorer.c:53
 msgid "Top"
 msgstr "Arriba"
 
-#: ../operations/common/fractal-explorer.c:40
+#: ../operations/common/fractal-explorer.c:54
 msgid "Bottom"
 msgstr "Abajo"
 
-#: ../operations/common/fractal-explorer.c:44
+#: ../operations/common/fractal-explorer.c:58
 msgid "CX"
 msgstr "CX"
 
-#: ../operations/common/fractal-explorer.c:44
+#: ../operations/common/fractal-explorer.c:58
 msgid "CX (only Julia)"
 msgstr "CX (sólo Julia)"
 
-#: ../operations/common/fractal-explorer.c:45
+#: ../operations/common/fractal-explorer.c:59
 msgid "CY"
 msgstr "CY"
 
-#: ../operations/common/fractal-explorer.c:45
+#: ../operations/common/fractal-explorer.c:59
 msgid "CY (only Julia)"
 msgstr "CY (sólo Julia)"
 
-#: ../operations/common/fractal-explorer.c:47
+#: ../operations/common/fractal-explorer.c:61
 msgid "Red stretch"
 msgstr "Ensanchamiento del rojo"
 
-#: ../operations/common/fractal-explorer.c:48
+#: ../operations/common/fractal-explorer.c:62
 msgid "Red stretching factor"
 msgstr "Factor de ensanchamiento del rojo"
 
-#: ../operations/common/fractal-explorer.c:49
+#: ../operations/common/fractal-explorer.c:63
 msgid "Green stretch"
 msgstr "Ensanchamiento del verde"
 
-#: ../operations/common/fractal-explorer.c:50
+#: ../operations/common/fractal-explorer.c:64
 msgid "Green stretching factor"
 msgstr "Factor de ensanchamiento del verde"
 
-#: ../operations/common/fractal-explorer.c:51
+#: ../operations/common/fractal-explorer.c:65
 msgid "Blue stretch"
 msgstr "Ensanchamiento del azul"
 
-#: ../operations/common/fractal-explorer.c:52
+#: ../operations/common/fractal-explorer.c:66
 msgid "Blue stretching factor"
 msgstr "Factor de ensanchamiento del azul"
 
-#: ../operations/common/fractal-explorer.c:54
+#: ../operations/common/fractal-explorer.c:74
 msgid "Red mode"
 msgstr "Modo del rojo"
 
-#: ../operations/common/fractal-explorer.c:55
-msgid "Red application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr "Modo de aplicación del rojo (0:seno; 1:coseno; 2:ninguno)"
+#: ../operations/common/fractal-explorer.c:76
+#| msgid "Red application mode (0:SIN; 1:COS; 2:NONE)"
+msgid "Red application mode"
+msgstr "Modo de aplicación del rojo"
 
-#: ../operations/common/fractal-explorer.c:56
+#: ../operations/common/fractal-explorer.c:77
 msgid "Green mode"
 msgstr "Modo del verde"
 
-#: ../operations/common/fractal-explorer.c:57
-msgid "Green application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr "Modo de aplicación del verde (0:seno; 1:coseno; 2:ninguno)"
+#: ../operations/common/fractal-explorer.c:79
+#| msgid "Green application mode (0:SIN; 1:COS; 2:NONE)"
+msgid "Green application mode"
+msgstr "Modo de aplicación del verde"
 
-#: ../operations/common/fractal-explorer.c:58
+#: ../operations/common/fractal-explorer.c:80
 msgid "Blue mode"
 msgstr "Modo del azul"
 
-#: ../operations/common/fractal-explorer.c:59
-msgid "Blue application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr "Modo de aplicación del azul (0:seno; 1:coseno; 2:ninguno)"
+#: ../operations/common/fractal-explorer.c:82
+#| msgid "Blue application mode (0:SIN; 1:COS; 2:NONE)"
+msgid "Blue application mode"
+msgstr "Modo de aplicación del azul"
 
-#: ../operations/common/fractal-explorer.c:61
-#: ../operations/common/fractal-explorer.c:62
+#: ../operations/common/fractal-explorer.c:84
+#: ../operations/common/fractal-explorer.c:85
 msgid "Red inversion"
 msgstr "Inversión del rojo"
 
-#: ../operations/common/fractal-explorer.c:63
-#: ../operations/common/fractal-explorer.c:64
+#: ../operations/common/fractal-explorer.c:86
+#: ../operations/common/fractal-explorer.c:87
 msgid "Green inversion"
 msgstr "Inversión del verde"
 
-#: ../operations/common/fractal-explorer.c:65
-#: ../operations/common/fractal-explorer.c:66
+#: ../operations/common/fractal-explorer.c:88
+#: ../operations/common/fractal-explorer.c:89
 msgid "Blue inversion"
 msgstr "Inversión del azul"
 
-#: ../operations/common/fractal-explorer.c:68
+#: ../operations/common/fractal-explorer.c:91
 msgid "Colors"
 msgstr "Colores"
 
-#: ../operations/common/fractal-explorer.c:69
+#: ../operations/common/fractal-explorer.c:92
 msgid "Number of colors"
 msgstr "Número de colores"
 
-#: ../operations/common/fractal-explorer.c:71
+#: ../operations/common/fractal-explorer.c:94
 msgid "Loglog smoothing"
 msgstr "Suavizado logarítmico-logarítmico"
 
-#: ../operations/common/fractal-explorer.c:72
+#: ../operations/common/fractal-explorer.c:95
 msgid "Use loglog smoothing"
 msgstr "Usar suavizado logarítmico-logarítmico"
 
-#: ../operations/common/fractal-explorer.c:474
+#: ../operations/common/fractal-explorer.c:477
 msgid "Fractal Explorer"
 msgstr "Explorador de fractales"
 
@@ -1049,7 +1053,7 @@ msgstr "Diferencia media (total)"
 msgid "Average difference between all pixels."
 msgstr "Diferencia media entre todos los píxeles."
 
-#: ../operations/common/image-compare.c:177
+#: ../operations/common/image-compare.c:210
 msgid ""
 "Compares if input and aux buffers are different. Results are saved in the "
 "properties."
@@ -1074,8 +1078,8 @@ msgid ""
 "Inverts the components (except alpha), the result is the corresponding "
 "\"negative\" image."
 msgstr ""
-"Invierte las componentes (excepto alfa), el resultado es la imagen "
-"«negativa» correspondiente."
+"Invierte las componentes (excepto alfa), el resultado es la imagen «negativa» "
+"correspondiente."
 
 #: ../operations/common/layer.c:30
 msgid "Operation"
@@ -1295,8 +1299,8 @@ msgid ""
 "Everything else will be treated as unknown and filled in."
 msgstr ""
 "Dados un tri-map difuso aportado por el usuario y una imagen de entrada, "
-"crear un «matte» de alfa en primer plano. Establezca blanco como primer "
-"plano y negro como fondo para el tri-map. Todo lo demás se tratará como "
+"crear un «matte» de alfa en primer plano. Establezca blanco como primer plano "
+"y negro como fondo para el tri-map. Todo lo demás se tratará como "
 "desconocido y se rellenará."
 
 #: ../operations/common/mblur.c:25
@@ -1539,7 +1543,7 @@ msgstr "Repetir"
 msgid "Completely randomize a fraction of pixels"
 msgstr "Aleatorizar completamenet una fracción de píxeles"
 
-#: ../operations/common/noise-pick.c:206
+#: ../operations/common/noise-pick.c:208
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "Intercambiar aleatoriamente algunos píxeles con sus vecinos"
 
@@ -1564,7 +1568,7 @@ msgstr "RGB independiente"
 msgid "Distort colors by random amounts."
 msgstr "Distorsionar colores una cantidad aleatoria."
 
-#: ../operations/common/noise-slur.c:191
+#: ../operations/common/noise-slur.c:193
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr ""
 "Deslizar aleatoriamente algunos píxeles hacia abajo (similar a la fusión)"
@@ -1659,7 +1663,7 @@ msgstr "Altura del bloque"
 msgid "Height of blocks in pixels"
 msgstr "Altura de los bloques en píxeles"
 
-#: ../operations/common/pixelize.c:307
+#: ../operations/common/pixelize.c:315
 msgid "Simplify image into an array of solid-colored squares"
 msgstr "Simplificar la imagen en una matriz de cuadrados de color liso"
 
@@ -1782,8 +1786,8 @@ msgstr "Adaptación a la variación de luz a través de la imagen"
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This is an efficient global operator derived from "
-"simple physiological observations, producing luminance within the range "
-"0.0-1.0"
+"simple physiological observations, producing luminance within the range 0.0-"
+"1.0"
 msgstr ""
 "Adaptar una imagen, que puede tener un rango dinámico alto, para su "
 "presentación utilizando un rango dinámico bajo. Es un operador global "
@@ -1891,7 +1895,7 @@ msgstr ""
 msgid "Glow radius"
 msgstr "Radio del resplandor"
 
-#: ../operations/common/softglow.c:224
+#: ../operations/common/softglow.c:225
 msgid "Softglow effect"
 msgstr "Efecto resplandor suave"
 
@@ -2013,7 +2017,6 @@ msgid "Shape"
 msgstr "Forma"
 
 #: ../operations/common/vignette.c:31
-#| msgid "Scale of the image"
 msgid "Shape of the vignette"
 msgstr "Forma de la viñeta"
 
@@ -2575,8 +2578,8 @@ msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
 msgstr ""
-"Establece la anchura en píxeles en la que la líneas largas se ajustan. Use "
-"-1 para no ajustar."
+"Establece la anchura en píxeles en la que la líneas largas se ajustan. Use -"
+"1 para no ajustar."
 
 #: ../operations/external/text.c:36
 msgid "Justification"
@@ -2965,8 +2968,8 @@ msgstr ""
 #: ../operations/workshop/snn-percentile.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
-"Radio de la región cuadrada de píxeles (la anchura y la altura serán "
-"radio*2+1)"
+"Radio de la región cuadrada de píxeles (la anchura y la altura serán radio*2"
+"+1)"
 
 #: ../operations/workshop/box-max.c:198
 msgid ""
@@ -3828,16 +3831,16 @@ msgid ""
 "Image blending operation 'soft-burn' (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - "
 "cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
 msgstr ""
-"Operación de mezcla de imágenes «quemado suave» (<tt>c = (cA+cB<1.0)?"
-"0.5*cB / (1.0 - cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
+"Operación de mezcla de imágenes «quemado suave» (<tt>c = (cA+cB<1.0)?0.5*cB / "
+"(1.0 - cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
 
 #: ../operations/workshop/generated/soft-dodge.c:109
 msgid ""
 "Image blending operation 'soft-dodge' (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - "
 "cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
 msgstr ""
-"Operación de mezcla de imágenes «máscara suave» (<tt>c = (cA+cB<1.0)?"
-"0.5*cA / (1.0 - cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
+"Operación de mezcla de imágenes «máscara suave» (<tt>c = (cA+cB<1.0)?0.5*cA / "
+"(1.0 - cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
 
 #: ../operations/workshop/generated/subtractive.c:109
 msgid "Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
