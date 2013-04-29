@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-03-26 23:58+0000\n"
-"PO-Revision-Date: 2013-04-01 02:16+0100\n"
+"POT-Creation-Date: 2013-04-28 16:59+0000\n"
+"PO-Revision-Date: 2013-04-29 12:25+0100\n"
 "Last-Translator: filmsi\n"
 "Language-Team: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language: \n"
@@ -22,17 +22,17 @@ msgstr ""
 "X-Poedit-Country: SLOVENIA\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
-#: ../bin/gegl.c:147
+#: ../bin/gegl.c:146
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Datoteke ni mogoče prebrati: %s"
 
-#: ../bin/gegl.c:191
+#: ../bin/gegl.c:190
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Neveljaven graf, sledi prekinitev.\n"
 
-#: ../bin/gegl.c:257
+#: ../bin/gegl.c:256
 #: ../bin/gegl-options.c:124
 #, c-format
 msgid "Unknown GeglOption mode: %d"
@@ -152,39 +152,39 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:214
+#: ../gegl/gegl-init.c:245
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "Toleranca napake babl-a, vrednost med 0,2 in 0,000000001"
 
-#: ../gegl/gegl-init.c:219
+#: ../gegl/gegl-init.c:250
 msgid "Where GEGL stores its swap"
 msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
-#: ../gegl/gegl-init.c:224
+#: ../gegl/gegl-init.c:255
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Koliko pomnilnika (približno) uporabiti za predpomnenje podob"
 
-#: ../gegl/gegl-init.c:229
+#: ../gegl/gegl-init.c:260
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Privzeta velikost tlakovcev za GeglBuffer"
 
-#: ../gegl/gegl-init.c:234
+#: ../gegl/gegl-init.c:265
 msgid "The count of pixels to compute simultaneously"
 msgstr "Število slikovnih točk, ki naj se izračunajo hkrati"
 
-#: ../gegl/gegl-init.c:239
+#: ../gegl/gegl-init.c:270
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr "Kakovost izrisovanja, vrednost med 0,0 (hitro) in 1,0 (referenčna kakovost)"
 
-#: ../gegl/gegl-init.c:244
+#: ../gegl/gegl-init.c:275
 msgid "The number of concurrent processing threads to use"
 msgstr "Število uporabljenih vzporednih procesnih niti."
 
-#: ../gegl/gegl-init.c:249
+#: ../gegl/gegl-init.c:280
 msgid "Use OpenCL"
 msgstr "Uporabi OpenCL"
 
-#: ../gegl/gegl-init.c:254
+#: ../gegl/gegl-init.c:285
 msgid "Maximum number of entries in the file tile backend's writer queue"
 msgstr "Največje število vnosov v pisalno vrsto ozadja za tlakovanje datotek"
 
@@ -215,7 +215,7 @@ msgstr "Ni naloženo"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/bilateral-filter-fast.c:37
-#: ../operations/common/dropshadow.c:31
+#: ../operations/common/dropshadow.c:32
 msgid "Blur radius"
 msgstr "Polmer zabrisa"
 
@@ -252,7 +252,7 @@ msgstr "Hitra približna izvedba dvostranskega filtra"
 #: ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
 #: ../operations/common/difference-of-gaussians.c:28
-#: ../operations/common/dropshadow.c:30
+#: ../operations/common/dropshadow.c:31
 #: ../operations/common/snn-mean.c:26
 #: ../operations/common/stress.c:27
 #: ../operations/common/vignette.c:35
@@ -352,7 +352,7 @@ msgid "Number of samples to do per iteration looking for the range of colors"
 msgstr "Število vzorcev na ponovitev pri iskanju obsega barv"
 
 #: ../operations/common/c2g.c:31
-#: ../operations/common/fractal-explorer.c:42
+#: ../operations/common/fractal-explorer.c:56
 #: ../operations/common/matting-global.c:25
 #: ../operations/common/stress.c:31
 #: ../operations/workshop/mandelbrot.c:31
@@ -612,7 +612,8 @@ msgstr "Razmerje stranic pike oz. točke v vsakem bloku"
 msgid "Simplify image into an array of solid-colored dots"
 msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih pik"
 
-#: ../operations/common/dropshadow.c:25
+#. It does make sense to sometimes have opacities > 1 (see GEGL logo for example)
+#: ../operations/common/dropshadow.c:26
 #: ../operations/common/layer.c:32
 #: ../operations/common/layer.c:33
 #: ../operations/common/opacity.c:24
@@ -621,7 +622,7 @@ msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih pik"
 msgid "Opacity"
 msgstr "Prekrivnost"
 
-#: ../operations/common/dropshadow.c:26
+#: ../operations/common/dropshadow.c:27
 #: ../operations/common/layer.c:34
 #: ../operations/common/rectangle.c:29
 #: ../operations/common/vignette.c:41
@@ -630,11 +631,11 @@ msgstr "Prekrivnost"
 msgid "X"
 msgstr "X"
 
-#: ../operations/common/dropshadow.c:27
+#: ../operations/common/dropshadow.c:28
 msgid "Horizontal shadow offset"
 msgstr "Vodoravni odmik sence"
 
-#: ../operations/common/dropshadow.c:28
+#: ../operations/common/dropshadow.c:29
 #: ../operations/common/layer.c:36
 #: ../operations/common/rectangle.c:31
 #: ../operations/common/vignette.c:42
@@ -643,11 +644,11 @@ msgstr "Vodoravni odmik sence"
 msgid "Y"
 msgstr "Y"
 
-#: ../operations/common/dropshadow.c:29
+#: ../operations/common/dropshadow.c:30
 msgid "Vertical shadow offset"
 msgstr "Navpični odmik sence"
 
-#: ../operations/common/dropshadow.c:82
+#: ../operations/common/dropshadow.c:83
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Ustvari učinek padle sence na vhodnem medpomnilniku"
 
@@ -672,7 +673,7 @@ msgstr "Navpično"
 msgid "Keep Signal"
 msgstr "Ohrani signal"
 
-#: ../operations/common/edge-sobel.c:352
+#: ../operations/common/edge-sobel.c:378
 msgid "Specialized direction-dependent edge detection"
 msgstr "Specializirana razpoznava robov v odvisnosti od smeri"
 
@@ -776,126 +777,129 @@ msgstr "Prag preliva za zniževanje izboljšave podrobnosti"
 msgid "Adapt an image, which may have a high dynamic range, for presentation using a low dynamic range. This operator attenuates the magnitudes of local image gradients, producing luminance within the range 0.0-1.0"
 msgstr "Prilagodite sliko, ki ima morda visok obseg dinamike, za predstavitev z uporabo nizkega obsega dinamike. Ta operator slabi magnitude krajevnih prelivov slike in povzroči svetilnost v območju 0,0-1,0."
 
-#: ../operations/common/fractal-explorer.c:35
+#: ../operations/common/fractal-explorer.c:47
 msgid "Fractal type"
 msgstr "Vrsta fraktala"
 
-#: ../operations/common/fractal-explorer.c:35
+#: ../operations/common/fractal-explorer.c:49
 msgid "Type of a fractal"
 msgstr "Vrsta fraktala"
 
-#: ../operations/common/fractal-explorer.c:37
+#: ../operations/common/fractal-explorer.c:51
 msgid "Left"
 msgstr "Levo"
 
-#: ../operations/common/fractal-explorer.c:38
+#: ../operations/common/fractal-explorer.c:52
 msgid "Right"
 msgstr "Desno"
 
-#: ../operations/common/fractal-explorer.c:39
+#: ../operations/common/fractal-explorer.c:53
 msgid "Top"
 msgstr "Na vrh"
 
-#: ../operations/common/fractal-explorer.c:40
+#: ../operations/common/fractal-explorer.c:54
 msgid "Bottom"
 msgstr "Na dno"
 
-#: ../operations/common/fractal-explorer.c:44
+#: ../operations/common/fractal-explorer.c:58
 msgid "CX"
 msgstr "CX"
 
-#: ../operations/common/fractal-explorer.c:44
+#: ../operations/common/fractal-explorer.c:58
 msgid "CX (only Julia)"
 msgstr "CX (samo Julia)"
 
-#: ../operations/common/fractal-explorer.c:45
+#: ../operations/common/fractal-explorer.c:59
 msgid "CY"
 msgstr "CY"
 
-#: ../operations/common/fractal-explorer.c:45
+#: ../operations/common/fractal-explorer.c:59
 msgid "CY (only Julia)"
 msgstr "CY (samo Julia)"
 
-#: ../operations/common/fractal-explorer.c:47
+#: ../operations/common/fractal-explorer.c:61
 msgid "Red stretch"
 msgstr "Razteg rdeče"
 
-#: ../operations/common/fractal-explorer.c:48
+#: ../operations/common/fractal-explorer.c:62
 msgid "Red stretching factor"
 msgstr "Faktor raztegovanja rdeče"
 
-#: ../operations/common/fractal-explorer.c:49
+#: ../operations/common/fractal-explorer.c:63
 msgid "Green stretch"
 msgstr "Razteg zelene"
 
-#: ../operations/common/fractal-explorer.c:50
+#: ../operations/common/fractal-explorer.c:64
 msgid "Green stretching factor"
 msgstr "Faktor raztegovanja zelene"
 
-#: ../operations/common/fractal-explorer.c:51
+#: ../operations/common/fractal-explorer.c:65
 msgid "Blue stretch"
 msgstr "Razteg modre"
 
-#: ../operations/common/fractal-explorer.c:52
+#: ../operations/common/fractal-explorer.c:66
 msgid "Blue stretching factor"
 msgstr "Faktor raztegovanja modre"
 
-#: ../operations/common/fractal-explorer.c:54
+#: ../operations/common/fractal-explorer.c:74
 msgid "Red mode"
 msgstr "Način rdeče"
 
-#: ../operations/common/fractal-explorer.c:55
-msgid "Red application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr "Način uporabe rdeče (0:SIN; 1:COS; 2:BREZ)"
+#: ../operations/common/fractal-explorer.c:76
+#| msgid "Red application mode (0:SIN; 1:COS; 2:NONE)"
+msgid "Red application mode"
+msgstr "Način uporabe rdeče"
 
-#: ../operations/common/fractal-explorer.c:56
+#: ../operations/common/fractal-explorer.c:77
 msgid "Green mode"
 msgstr "Način modre"
 
-#: ../operations/common/fractal-explorer.c:57
-msgid "Green application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr "Način uporabe zelene (0:SIN; 1:COS; 2:BREZ)"
+#: ../operations/common/fractal-explorer.c:79
+#| msgid "Green application mode (0:SIN; 1:COS; 2:NONE)"
+msgid "Green application mode"
+msgstr "Način uporabe zelene"
 
-#: ../operations/common/fractal-explorer.c:58
+#: ../operations/common/fractal-explorer.c:80
 msgid "Blue mode"
 msgstr "Način zelene"
 
-#: ../operations/common/fractal-explorer.c:59
-msgid "Blue application mode (0:SIN; 1:COS; 2:NONE)"
-msgstr "Način uporabe modre (0:SIN; 1:COS; 2:BREZ)"
+#: ../operations/common/fractal-explorer.c:82
+#| msgid "Blue application mode (0:SIN; 1:COS; 2:NONE)"
+msgid "Blue application mode"
+msgstr "Način uporabe modre"
 
-#: ../operations/common/fractal-explorer.c:61
-#: ../operations/common/fractal-explorer.c:62
+#: ../operations/common/fractal-explorer.c:84
+#: ../operations/common/fractal-explorer.c:85
 msgid "Red inversion"
 msgstr "Inverzija rdeče"
 
-#: ../operations/common/fractal-explorer.c:63
-#: ../operations/common/fractal-explorer.c:64
+#: ../operations/common/fractal-explorer.c:86
+#: ../operations/common/fractal-explorer.c:87
 msgid "Green inversion"
 msgstr "Inverzija zelene"
 
-#: ../operations/common/fractal-explorer.c:65
-#: ../operations/common/fractal-explorer.c:66
+#: ../operations/common/fractal-explorer.c:88
+#: ../operations/common/fractal-explorer.c:89
 msgid "Blue inversion"
 msgstr "Inverzija modre"
 
-#: ../operations/common/fractal-explorer.c:68
+#: ../operations/common/fractal-explorer.c:91
 msgid "Colors"
 msgstr "Barve"
 
-#: ../operations/common/fractal-explorer.c:69
+#: ../operations/common/fractal-explorer.c:92
 msgid "Number of colors"
 msgstr "Število barv"
 
-#: ../operations/common/fractal-explorer.c:71
+#: ../operations/common/fractal-explorer.c:94
 msgid "Loglog smoothing"
 msgstr "Prečno glajenje"
 
-#: ../operations/common/fractal-explorer.c:72
+#: ../operations/common/fractal-explorer.c:95
 msgid "Use loglog smoothing"
 msgstr "Uporabi prečno glajenje"
 
-#: ../operations/common/fractal-explorer.c:474
+#: ../operations/common/fractal-explorer.c:477
 msgid "Fractal Explorer"
 msgstr "Raziskovalec fraktalov"
 
@@ -1029,7 +1033,7 @@ msgstr "Povprečna razlika (skupaj)"
 msgid "Average difference between all pixels."
 msgstr "Povprečna razlika med vsemi slikovnimi točkami."
 
-#: ../operations/common/image-compare.c:177
+#: ../operations/common/image-compare.c:210
 msgid "Compares if input and aux buffers are different. Results are saved in the properties."
 msgstr "Primerja, če se medpomnilnika vhoda in izhoda razlikujeta. Rezultati so shranjeni v nastavitvah."
 
@@ -1510,7 +1514,7 @@ msgstr "Ponovi"
 msgid "Completely randomize a fraction of pixels"
 msgstr "Povsem naključen lom slikovnih točk"
 
-#: ../operations/common/noise-pick.c:206
+#: ../operations/common/noise-pick.c:208
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "Naključno izmenjaj nekaj slikovnih točk s sosednjimi"
 
@@ -1536,7 +1540,7 @@ msgstr "Neodvisni RGB"
 msgid "Distort colors by random amounts."
 msgstr "Popači barve z naključnimi vrednostmi."
 
-#: ../operations/common/noise-slur.c:191
+#: ../operations/common/noise-slur.c:193
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr "Naključno porini nekaj slikovnih točk navzdol (podobno taljenju)"
 
@@ -1627,7 +1631,7 @@ msgstr "Višina bloka"
 msgid "Height of blocks in pixels"
 msgstr "Višina blokov v slikovnih točkah"
 
-#: ../operations/common/pixelize.c:307
+#: ../operations/common/pixelize.c:315
 msgid "Simplify image into an array of solid-colored squares"
 msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih kvadratov"
 
@@ -1850,7 +1854,7 @@ msgstr "Filter zabrisanosti za izboljšavo robov in zmanjševanje šuma, ki teme
 msgid "Glow radius"
 msgstr "Polmer žarenja"
 
-#: ../operations/common/softglow.c:224
+#: ../operations/common/softglow.c:225
 msgid "Softglow effect"
 msgstr "Učinek mehkega žarenja"
 
@@ -1945,7 +1949,6 @@ msgid "Shape"
 msgstr "Lik"
 
 #: ../operations/common/vignette.c:31
-#| msgid "Scale of the image"
 msgid "Shape of the vignette"
 msgstr "Oblika vinjete"
 
