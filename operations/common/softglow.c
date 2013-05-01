@@ -77,11 +77,16 @@ grey_blur_buffer (GeglBuffer  *input,
 static void
 prepare (GeglOperation *operation)
 {
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
+
+  area->left = area->right = ceil (fabs (o->glow_radius)) +1;
+  area->top = area->bottom = ceil (fabs (o->glow_radius)) +1;
+
   gegl_operation_set_format (operation, "input",
-                             babl_format ("Y'CbCrA float"));
+                             babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("RGBA float"));
-
 }
 
 static gboolean
@@ -91,7 +96,8 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
 
   GeglBuffer *dest, *dest_tmp;
   GeglSampler *sampler;
@@ -107,30 +113,41 @@ process (GeglOperation       *operation,
   gdouble val;
 
   gfloat *dst_buf, *dst_tmp, *dst_convert;
-  GeglRectangle *whole_region;
+  GeglRectangle working_region, *whole_region;
   gfloat *dst_tmp_ptr, *input_ptr;
-
-  const Babl *rgba            = babl_format ("RGBA float");
-  const Babl *ycbcra          = babl_format ("Y'CbCrA float");
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
 
-  dst_buf = g_slice_alloc (result->width * result->height * 4 * sizeof(gfloat));
-  dst_tmp = g_slice_alloc (result->width * result->height * sizeof(gfloat));
-  dst_convert = g_slice_alloc (result->width * result->height * 4 * sizeof(gfloat));
-  dest_tmp = gegl_buffer_new (whole_region, babl_format ("Y' float"));
+  working_region.x      = result->x - area->left;
+  working_region.width  = result->width + area->left + area->right;
+  working_region.y      = result->y - area->top;
+  working_region.height = result->height + area->top + area->bottom;
+
+  gegl_rectangle_intersect (&working_region, &working_region, whole_region);
+
+  dst_buf = g_slice_alloc (working_region.width * working_region.height * 4 * sizeof (gfloat));
+  dst_tmp = g_slice_alloc (working_region.width * working_region.height * sizeof (gfloat));
+  dest_tmp = gegl_buffer_new (&working_region, babl_format ("Y' float"));
+  dst_convert = g_slice_alloc (result->width * result->height * 4 * sizeof (gfloat));
+
 
   gegl_buffer_get (input,
-                   result,
+                   &working_region,
                    1.0,
                    babl_format ("Y'CbCrA float"),
                    dst_buf,
                    GEGL_AUTO_ROWSTRIDE,
                    GEGL_ABYSS_NONE);
 
-  x = result->x;
-  y = result->y;
-  n_pixels = result->width * result->height;
+  gegl_buffer_get (input,
+                   result,
+                   1.0,
+                   babl_format ("RGBA float"),
+                   dst_convert,
+                   GEGL_AUTO_ROWSTRIDE,
+                   GEGL_ABYSS_NONE);
+
+  n_pixels = working_region.width * working_region.height;
   dst_tmp_ptr = dst_tmp;
   input_ptr = dst_buf;
 
@@ -146,19 +163,17 @@ process (GeglOperation       *operation,
     input_ptr   +=4;
   }
 
-  gegl_buffer_set_extent (dest_tmp, whole_region);
-  gegl_buffer_set (dest_tmp, whole_region, 0, babl_format ("Y' float"), dst_tmp, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dest_tmp, &working_region, 0, babl_format ("Y' float"), dst_tmp, GEGL_AUTO_ROWSTRIDE);
+
   grey_blur_buffer (dest_tmp, o->glow_radius, &dest);
 
   sampler = gegl_buffer_sampler_new (dest,
-                    babl_format ("Y' float"),
-                    GEGL_SAMPLER_LINEAR);
+                                     babl_format ("Y' float"),
+                                     GEGL_SAMPLER_LINEAR);
 
   x = result->x;
   y = result->y;
   n_pixels = result->width * result->height;
-
-  babl_process (babl_fish (ycbcra ,rgba), dst_buf, dst_convert, n_pixels);
 
   out_pixel = dst_convert;
 
@@ -194,16 +209,14 @@ process (GeglOperation       *operation,
                    dst_convert,
                    GEGL_AUTO_ROWSTRIDE);
 
-  g_slice_free1 (result->width * result->height * 4 * sizeof(gfloat), dst_buf);
-  g_slice_free1 (result->width * result->height * sizeof(gfloat), dst_tmp);
-  g_slice_free1 (result->width * result->height * sizeof(gfloat), dst_convert);
+  g_slice_free1 (working_region.width * working_region.height * 4 * sizeof (gfloat), dst_buf);
+  g_slice_free1 (working_region.width * working_region.height * sizeof (gfloat), dst_tmp);
+  g_slice_free1 (result->width * result->height * sizeof (gfloat), dst_convert);
 
   g_object_unref (sampler);
   g_object_unref (dest);
   g_object_unref (dest_tmp);
 
-  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-  gegl_buffer_set_extent (input, whole_region);
   return  TRUE;
 }
 
