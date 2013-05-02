@@ -41,7 +41,7 @@ gegl_chant_double (sharpness, _("Sharpness"),   0.0, 1.0, 0.85, _("Sharpness"))
 #define SIGMOIDAL_BASE   2
 #define SIGMOIDAL_RANGE  20
 
-static void
+static GeglNode*
 grey_blur_buffer (GeglBuffer  *input,
                   gdouble      glow_radius,
                   GeglBuffer **dest)
@@ -71,7 +71,7 @@ grey_blur_buffer (GeglBuffer  *input,
   gegl_node_link_many (image, blur, write, NULL);
   gegl_node_process (write);
 
-  g_object_unref (gegl);
+  return gegl;
 }
 
 static void
@@ -99,6 +99,7 @@ process (GeglOperation       *operation,
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
 
+  GeglNode   *gegl;
   GeglBuffer *dest, *dest_tmp;
   GeglSampler *sampler;
 
@@ -113,7 +114,8 @@ process (GeglOperation       *operation,
   gdouble val;
 
   gfloat *dst_buf, *dst_tmp, *dst_convert;
-  GeglRectangle working_region, *whole_region;
+  GeglRectangle  working_region;
+  GeglRectangle *whole_region;
   gfloat *dst_tmp_ptr, *input_ptr;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
@@ -125,7 +127,7 @@ process (GeglOperation       *operation,
 
   gegl_rectangle_intersect (&working_region, &working_region, whole_region);
 
-  dst_buf = g_slice_alloc (working_region.width * working_region.height * 4 * sizeof (gfloat));
+  dst_buf = g_slice_alloc (working_region.width * working_region.height * sizeof (gfloat));
   dst_tmp = g_slice_alloc (working_region.width * working_region.height * sizeof (gfloat));
   dest_tmp = gegl_buffer_new (&working_region, babl_format ("Y' float"));
   dst_convert = g_slice_alloc (result->width * result->height * 4 * sizeof (gfloat));
@@ -134,7 +136,7 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input,
                    &working_region,
                    1.0,
-                   babl_format ("Y'CbCrA float"),
+                   babl_format ("Y' float"),
                    dst_buf,
                    GEGL_AUTO_ROWSTRIDE,
                    GEGL_ABYSS_NONE);
@@ -160,12 +162,12 @@ process (GeglOperation       *operation,
     *dst_tmp_ptr = CLAMP (val, 0.0, 1.0);
 
     dst_tmp_ptr +=1;
-    input_ptr   +=4;
+    input_ptr   +=1;
   }
 
   gegl_buffer_set (dest_tmp, &working_region, 0, babl_format ("Y' float"), dst_tmp, GEGL_AUTO_ROWSTRIDE);
 
-  grey_blur_buffer (dest_tmp, o->glow_radius, &dest);
+  gegl = grey_blur_buffer (dest_tmp, o->glow_radius, &dest);
 
   sampler = gegl_buffer_sampler_new (dest,
                                      babl_format ("Y' float"),
@@ -209,13 +211,18 @@ process (GeglOperation       *operation,
                    dst_convert,
                    GEGL_AUTO_ROWSTRIDE);
 
-  g_slice_free1 (working_region.width * working_region.height * 4 * sizeof (gfloat), dst_buf);
+  g_slice_free1 (working_region.width * working_region.height * sizeof (gfloat), dst_buf);
   g_slice_free1 (working_region.width * working_region.height * sizeof (gfloat), dst_tmp);
-  g_slice_free1 (result->width * result->height * sizeof (gfloat), dst_convert);
+  g_slice_free1 (result->width * result->height * 4 * sizeof (gfloat), dst_convert);
 
   g_object_unref (sampler);
   g_object_unref (dest);
   g_object_unref (dest_tmp);
+
+  /* Don't unref it earlier. For the time being, something
+   * is wrong with sink, subbuffers or gegl-cache.c,
+   * so it is not referenced correctly */
+  g_object_unref (gegl);
 
   return  TRUE;
 }
