@@ -29,8 +29,6 @@
 #include "gegl-types-internal.h"
 #include "gegl-utils.h"
 
-#include "graph/gegl-node.h"
-
 #include "gegl-cache.h"
 #include "gegl-region.h"
 
@@ -40,8 +38,7 @@ enum
   PROP_X,
   PROP_Y,
   PROP_WIDTH,
-  PROP_HEIGHT,
-  PROP_NODE
+  PROP_HEIGHT
 };
 
 enum
@@ -129,14 +126,6 @@ gegl_cache_class_init (GeglCacheClass *klass)
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
 
-  g_object_class_install_property (gobject_class, PROP_NODE,
-                                   g_param_spec_object ("node",
-                                                        "GeglNode",
-                                                        "The GeglNode to cache results for",
-                                                        GEGL_TYPE_NODE,
-                                                        G_PARAM_WRITABLE |
-                                                        G_PARAM_CONSTRUCT_ONLY));
-
   /* overriding pspecs for properties in parent class */
   g_object_class_install_property (gobject_class, PROP_X,
                                    g_param_spec_int ("x", "x",
@@ -191,7 +180,6 @@ gegl_cache_class_init (GeglCacheClass *klass)
 static void
 gegl_cache_init (GeglCache *self)
 {
-  self->node = NULL;
   g_mutex_init (&self->mutex);
 
   /* thus providing a default value for GeglCache, that overrides the NULL
@@ -202,25 +190,7 @@ gegl_cache_init (GeglCache *self)
 static void
 dispose (GObject *gobject)
 {
-  GeglCache *self = GEGL_CACHE (gobject);
-
   while (g_idle_remove_by_data (gobject)) ;
-
-  /* Check with GEGL_IS_NODE since sometimes the node is destroyed
-   * before we get here
-   */
-  if (GEGL_IS_NODE (self->node))
-    {
-      gint handler = g_signal_handler_find (self->node, G_SIGNAL_MATCH_DATA,
-                                            g_signal_lookup ("invalidated",
-                                                             GEGL_TYPE_NODE),
-                                            0, NULL, NULL, self);
-      if (handler)
-        {
-          g_signal_handler_disconnect (self->node, handler);
-        }
-      self->node = NULL;
-    }
 
   G_OBJECT_CLASS (gegl_cache_parent_class)->dispose (gobject);
 }
@@ -237,58 +207,13 @@ finalize (GObject *gobject)
 }
 
 static void
-node_invalidated (GeglNode            *source,
-                  const GeglRectangle *rect,
-                  gpointer             data)
-{
-  GeglCache *cache = GEGL_CACHE (data);
-  GeglRectangle expanded = gegl_rectangle_expand (rect);
-
-  {
-    GeglRegion *region;
-    region = gegl_region_rectangle (&expanded);
-    gegl_region_subtract (cache->valid_region, region);
-    gegl_region_destroy (region);
-  }
-
-  g_mutex_lock (&cache->mutex);
-  g_signal_emit_by_name (cache, "invalidated", &expanded, NULL);
-  g_mutex_unlock (&cache->mutex);
-}
-
-static void
 set_property (GObject      *gobject,
               guint         property_id,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  GeglCache *self = GEGL_CACHE (gobject);
-
   switch (property_id)
     {
-      case PROP_NODE:
-        g_mutex_lock (&self->mutex);
-        if (self->node)
-          {
-            gulong handler;
-            handler = g_signal_handler_find (self->node, G_SIGNAL_MATCH_DATA,
-                                             g_signal_lookup ("invalidated",
-                                                              GEGL_TYPE_NODE),
-                                             0, NULL, NULL, self);
-            if (handler)
-              {
-                g_signal_handler_disconnect (self->node, handler);
-              }
-          }
-        /* just getting the node, the cache holds no reference on the node,
-         * it is the node that holds reference on the cache
-         */
-        self->node = GEGL_NODE (g_value_get_object (value));
-        g_signal_connect (G_OBJECT (self->node), "invalidated",
-                          G_CALLBACK (node_invalidated), self);
-        g_mutex_unlock (&self->mutex);
-        break;
-
       case PROP_X:
         g_object_set_property (gobject, "GeglBuffer::x", value);
         break;
@@ -317,15 +242,9 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  GeglCache *self = GEGL_CACHE (gobject);
-
   switch (property_id)
     {
-      case PROP_NODE:
-        g_value_set_object (value, self->node);
-        break;
-
-        /* For the rest, upchaining to the property implementation in GeglBuffer */
+      /* Upchain to the property implementation in GeglBuffer */
       case PROP_X:
         g_object_get_property (gobject, "GeglBuffer::x", value);
         break;

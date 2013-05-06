@@ -499,7 +499,7 @@ render_rectangle (GeglProcessor *processor)
               g_assert (buf);
 
               /* do the image calculations using the buffer */
-              gegl_node_blit (cache->node, 1.0, dr, cache->format, buf,
+              gegl_node_blit (processor->input, 1.0, dr, cache->format, buf,
                               GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
 
 

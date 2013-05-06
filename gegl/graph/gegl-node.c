@@ -2079,7 +2079,6 @@ gegl_node_get_cache (GeglNode *node)
         }
 
       node->cache = g_object_new (GEGL_TYPE_CACHE,
-                                  "node", node,
                                   "format", format,
                                   NULL);
 
@@ -2270,8 +2269,7 @@ graph_source_invalidated (GeglNode            *source,
              rect->x, rect->y,
              rect->width, rect->height);
 
-  g_signal_emit (destination, gegl_node_signals[INVALIDATED], 0,
-                 &dirty_rect, NULL);
+  gegl_node_invalidated (destination, &dirty_rect, FALSE);
 }
 
 
