@@ -41,12 +41,12 @@ gegl_chant_double (sharpness, _("Sharpness"),   0.0, 1.0, 0.85, _("Sharpness"))
 #define SIGMOIDAL_BASE   2
 #define SIGMOIDAL_RANGE  20
 
-static GeglNode*
+static GeglBuffer *
 grey_blur_buffer (GeglBuffer  *input,
-                  gdouble      glow_radius,
-                  GeglBuffer **dest)
+                  gdouble      glow_radius)
 {
   GeglNode *gegl, *image, *write, *blur;
+  GeglBuffer *dest;
   gdouble radius, std_dev;
 
   gegl = gegl_node_new ();
@@ -66,12 +66,14 @@ grey_blur_buffer (GeglBuffer  *input,
 
   write = gegl_node_new_child (gegl,
                 "operation", "gegl:buffer-sink",
-                "buffer", dest, NULL);
+                "buffer", &dest, NULL);
 
   gegl_node_link_many (image, blur, write, NULL);
   gegl_node_process (write);
 
-  return gegl;
+  g_object_unref (gegl);
+
+  return dest;
 }
 
 static void
@@ -99,7 +101,6 @@ process (GeglOperation       *operation,
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglNode   *gegl;
   GeglBuffer *dest, *dest_tmp;
   GeglSampler *sampler;
 
@@ -167,7 +168,7 @@ process (GeglOperation       *operation,
 
   gegl_buffer_set (dest_tmp, &working_region, 0, babl_format ("Y' float"), dst_tmp, GEGL_AUTO_ROWSTRIDE);
 
-  gegl = grey_blur_buffer (dest_tmp, o->glow_radius, &dest);
+  dest = grey_blur_buffer (dest_tmp, o->glow_radius);
 
   sampler = gegl_buffer_sampler_new (dest,
                                      babl_format ("Y' float"),
@@ -219,12 +220,7 @@ process (GeglOperation       *operation,
   g_object_unref (dest);
   g_object_unref (dest_tmp);
 
-  /* Don't unref it earlier. For the time being, something
-   * is wrong with sink, subbuffers or gegl-cache.c,
-   * so it is not referenced correctly */
-  g_object_unref (gegl);
-
-  return  TRUE;
+  return TRUE;
 }
 
 static void
