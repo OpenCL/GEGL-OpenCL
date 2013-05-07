@@ -162,20 +162,19 @@ cl_edge_sobel (cl_mem              in_tex,
                gboolean            keep_signal,
                gboolean            has_alpha)
 {
-  if (!cl_data)
-    {
-      const char *kernel_name[] = {"kernel_edgesobel", NULL};
-      cl_data = gegl_cl_compile_and_build(kernel_source, kernel_name);
-    }
-  if (!cl_data)  return 0;
-
-  {
-  const size_t gbl_size[2] = {roi->width,roi->height};
+  const size_t gbl_size[2] = {roi->width, roi->height};
   cl_int n_horizontal  = horizontal;
   cl_int n_vertical    = vertical;
   cl_int n_keep_signal = keep_signal;
   cl_int n_has_alpha   = has_alpha;
   cl_int cl_err = 0;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"kernel_edgesobel", NULL};
+      cl_data = gegl_cl_compile_and_build (kernel_source, kernel_name);
+    }
+  if (!cl_data) return 0;
 
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&in_tex);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem), (void*)&out_tex);
@@ -190,20 +189,19 @@ cl_edge_sobel (cl_mem              in_tex,
                                        NULL, gbl_size, NULL,
                                        0, NULL, NULL);
   if (cl_err != CL_SUCCESS) return cl_err;
-  }
 
   return CL_SUCCESS;
 }
 
 static gboolean
 cl_process (GeglOperation       *operation,
-      GeglBuffer          *input,
-      GeglBuffer          *output,
-      const GeglRectangle *result)
+            GeglBuffer          *input,
+            GeglBuffer          *output,
+            const GeglRectangle *result,
+            gboolean             has_alpha)
 {
   const Babl *in_format  = babl_format ("RGBA float");
   const Babl *out_format = babl_format ("RGBA float");
-  gboolean    has_alpha  = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
   gint err;
   gint j;
   cl_int cl_err;
@@ -240,15 +238,15 @@ process (GeglOperation       *operation,
   GeglRectangle compute;
   gboolean has_alpha;
 
-  compute = gegl_operation_get_required_for_output (operation, "input",result);
-  has_alpha  = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
+  compute = gegl_operation_get_required_for_output (operation, "input", result);
+  has_alpha = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
 
   if (gegl_cl_is_accelerated ())
-    if(cl_process(operation, input, output, result))
+    if (cl_process (operation, input, output, result, has_alpha))
       return TRUE;
 
   edge_sobel (input, &compute, output, result, o->horizontal, o->vertical, o->keep_signal, has_alpha);
-  return  TRUE;
+  return TRUE;
 }
 
 inline static gfloat
