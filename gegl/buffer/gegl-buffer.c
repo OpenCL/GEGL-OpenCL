@@ -1162,16 +1162,11 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
 {
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
-#if 1
   if (extent == NULL || gegl_rectangle_equal (extent, &buffer->extent))
     {
       g_object_ref (buffer);
       return buffer;
     }
-#else
-   if (extent == NULL)
-      extent = gegl_buffer_get_extent (buffer);
-#endif
 
   if (extent->width < 0 || extent->height < 0)
     {
