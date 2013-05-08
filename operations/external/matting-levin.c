@@ -105,8 +105,10 @@ static const gchar *FORMAT_AUX    = "Y'A double";
 static const gchar *FORMAT_INPUT  = "R'G'B' double";
 static const gchar *FORMAT_OUTPUT = "Y' double";
 
-static const guint AUX_VALUE = 0;
-static const guint AUX_ALPHA = 1;
+static const guint   AUX_VALUE = 0;
+static const guint   AUX_ALPHA = 1;
+static const gdouble AUX_BACKGROUND = 0.1;
+static const gdouble AUX_FOREGROUND = 0.9;
 
 
 /* Threshold below which we consider the Y channel to be undefined (or
@@ -1267,6 +1269,15 @@ matting_solve_level (gdouble             *restrict pixels,
   gint     i;
   gdouble *new_alpha    = NULL,
           *eroded_alpha = NULL;
+  gdouble value;
+
+  /* add alpha to trimap because algo is need it */
+  for (i = 0; i < region->width * region->height; ++i)
+  {
+    value = trimap[i * COMPONENTS_AUX + AUX_VALUE];
+    if (value > AUX_BACKGROUND && value < AUX_FOREGROUND)
+        trimap[i * COMPONENTS_AUX + AUX_ALPHA] = 0.0;
+  }
 
   if (region->width  < MIN_LEVEL_DIAMETER ||
       region->height < MIN_LEVEL_DIAMETER)

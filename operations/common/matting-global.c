@@ -55,23 +55,17 @@ gegl_chant_int (iterations, _("Iterations"), 1, G_MAXINT, 10,
 // Shortcut for doing things in all three channels
 #define COLOR(expr) {int c; for (c = 0; c < 3; c++) { expr; }}
 
-// Save all important memories to output image buffer to save memory
-#define FG_DISTANCE(output, index) (output[index*4+0])
-#define BG_DISTANCE(output, index) (output[index*4+1])
-#define FG_INDEX(output, index) (*((int*)(&output[index*4+2])))
-#define BG_INDEX(output, index) (*((int*)(&output[index*4+3])))
-
 /* We don't use the babl_format_get_n_components function for these values,
  * as literal constants can be used for stack allocation of array sizes. They
  * are double checked in matting_process.
  */
 #define COMPONENTS_AUX    1
 #define COMPONENTS_INPUT  3
-#define COMPONENTS_OUTPUT 4
+#define COMPONENTS_OUTPUT 1
 
 static const gchar *FORMAT_AUX    = "Y u8";
 static const gchar *FORMAT_INPUT  = "R'G'B' float";
-static const gchar *FORMAT_OUTPUT = "R'G'B'A float";
+static const gchar *FORMAT_OUTPUT = "Y float";
 
 static void
 matting_prepare (GeglOperation *operation)
@@ -97,6 +91,13 @@ matting_get_cached_region (GeglOperation * operation,
 {
   return *gegl_operation_source_get_bounding_box (operation, "input");
 }
+
+typedef struct {
+ gfloat fg_distance;
+ gfloat bg_distance;
+ gint   fg_index;
+ gint   bg_index;
+} BufferRecord;
 
 typedef float Color[3];
 
@@ -169,7 +170,7 @@ static inline float get_cost (ColorSample foreground, ColorSample background, Co
   return cost;
 }
 
-static inline void do_propagate(GArray *foreground_samples, GArray *background_samples, gfloat *input, gfloat *output, guchar *trimap, int x, int y, int w, int h) {
+static inline void do_propagate(GArray *foreground_samples, GArray *background_samples, gfloat *input, BufferRecord *buffer, guchar *trimap, int x, int y, int w, int h) {
   int index_orig = y * w + x;
   int index_new;
 
@@ -177,8 +178,8 @@ static inline void do_propagate(GArray *foreground_samples, GArray *background_s
     {
       int xdiff, ydiff;
       float best_cost = FLT_MAX;
-      float *best_fg_distance = &output[index_orig * 4 + 0];
-      float *best_bg_distance = &output[index_orig * 4 + 1];
+      float *best_fg_distance = &buffer[index_orig].fg_distance;
+      float *best_bg_distance = &buffer[index_orig].bg_distance;
 
       for (ydiff = -1; ydiff <= 1; ydiff++)
         {
@@ -195,8 +196,8 @@ static inline void do_propagate(GArray *foreground_samples, GArray *background_s
 
               if (!(trimap[index_new] == 0 || trimap[index_new] == 255))
                 {
-                  int fi = FG_INDEX(output, index_new);
-                  int bi = BG_INDEX(output, index_new);
+                  int fi = buffer[index_new].fg_index;
+                  int bi = buffer[index_new].bg_index;
 
                   ColorSample foreground = g_array_index(foreground_samples, ColorSample, fi);
                   ColorSample background = g_array_index(background_samples, ColorSample, bi);
@@ -204,8 +205,8 @@ static inline void do_propagate(GArray *foreground_samples, GArray *background_s
                   float cost = get_cost(foreground, background, &input[index_orig * 3], x, y, best_fg_distance, best_bg_distance);
                   if (cost < best_cost)
                     {
-                      FG_INDEX(output, index_orig) = fi;
-                      BG_INDEX(output, index_orig) = bi;
+                      buffer[index_orig].fg_index = fi;
+                      buffer[index_orig].bg_index = bi;
                       best_cost = cost;
                     }
                 }
@@ -214,20 +215,20 @@ static inline void do_propagate(GArray *foreground_samples, GArray *background_s
     }
 }
 
-static inline void do_random_search(GArray *foreground_samples, GArray *background_samples, gfloat *input, gfloat *output, int x, int y, int w) {
+static inline void do_random_search(GArray *foreground_samples, GArray *background_samples, gfloat *input, BufferRecord *buffer, int x, int y, int w) {
   int dist_f = foreground_samples->len;
   int dist_b = background_samples->len;
   int index = y * w + x;
 
-  int best_fi = FG_INDEX(output, index);
-  int best_bi = BG_INDEX(output, index);
+  int best_fi = buffer[index].fg_index;
+  int best_bi = buffer[index].bg_index;
 
   int start_fi = best_fi;
   int start_bi = best_bi;
 
   // Get current best result
-  float *best_fg_distance = &FG_DISTANCE(output, index);
-  float *best_bg_distance = &BG_DISTANCE(output, index);
+  float *best_fg_distance = &buffer[index].fg_distance;
+  float *best_bg_distance = &buffer[index].bg_distance;
 
   ColorSample foreground = g_array_index(foreground_samples, ColorSample, best_fi);
   ColorSample background = g_array_index(background_samples, ColorSample, best_bi);
@@ -258,8 +259,8 @@ static inline void do_random_search(GArray *foreground_samples, GArray *backgrou
       dist_b /= 2;
     }
 
-  FG_INDEX(output, index) = best_fi;
-  BG_INDEX(output, index) = best_bi;
+  buffer[index].fg_index = best_fi;
+  buffer[index].bg_index = best_bi;
 }
 
 // Compare color intensities
@@ -284,9 +285,10 @@ matting_process (GeglOperation       *operation,
 {
 
   const GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gfloat           *input   = NULL;
-  guchar           *trimap  = NULL;
-  gfloat           *output  = NULL;
+  gfloat                 *input   = NULL;
+  guchar                 *trimap  = NULL;
+  gfloat                 *output  = NULL;
+  BufferRecord           *buffer  = NULL;
 
   gboolean          success = FALSE;
   int               w, h, i, x, y, xdiff, ydiff, neighbour_mask;
@@ -310,6 +312,7 @@ matting_process (GeglOperation       *operation,
   input  = g_new (gfloat, w * h * COMPONENTS_INPUT);
   trimap = g_new (guchar, w * h * COMPONENTS_AUX);
   output = g_new0 (gfloat, w * h * COMPONENTS_OUTPUT);
+  buffer = g_new0 (BufferRecord, w * h);
 
   gegl_buffer_get (input_buf, result, 1.0, babl_format (FORMAT_INPUT), input, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
   gegl_buffer_get (  aux_buf, result, 1.0, babl_format (FORMAT_AUX),  trimap, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
@@ -348,14 +351,14 @@ matting_process (GeglOperation       *operation,
                       if (mask == 255)
                         {
                           g_array_append_val(foreground_samples, s);
-                          FG_DISTANCE(output, index) = 0;
-                          BG_DISTANCE(output, index) = FLT_MAX;
+                          buffer[index].fg_distance = 0;
+                          buffer[index].bg_distance = FLT_MAX;
                         }
                       else
                         {
                           g_array_append_val(background_samples, s);
-                          FG_DISTANCE(output, index) = 0;
-                          BG_DISTANCE(output, index) = FLT_MAX;
+                          buffer[index].fg_distance = 0;
+                          buffer[index].bg_distance = FLT_MAX;
                         }
 
                       // Go to next pixel
@@ -380,10 +383,10 @@ matting_process (GeglOperation       *operation,
               p.x = x;
               p.y = y;
               g_array_append_val(unknown_positions, p);
-              FG_DISTANCE(output, index) = FLT_MAX;
-              BG_DISTANCE(output, index) = FLT_MAX;
-              FG_INDEX(output, index) = rand() % foreground_samples->len;
-              BG_INDEX(output, index) = rand() % background_samples->len;
+              buffer[index].fg_distance = FLT_MAX;
+              buffer[index].bg_distance = FLT_MAX;
+              buffer[index].fg_index = rand() % foreground_samples->len;
+              buffer[index].bg_index = rand() % background_samples->len;
             }
         }
     }
@@ -401,13 +404,13 @@ matting_process (GeglOperation       *operation,
       for (j=0; j<unknown_positions->len; j++)
         {
           Position p = g_array_index(unknown_positions, Position, j);
-          do_random_search(foreground_samples, background_samples, input, output, p.x, p.y, w);
+          do_random_search(foreground_samples, background_samples, input, buffer, p.x, p.y, w);
         }
 
       for (j=0; j<unknown_positions->len; j++)
         {
           Position p = g_array_index(unknown_positions, Position, j);
-          do_propagate(foreground_samples, background_samples, input, output, trimap, p.x, p.y, w, h);
+          do_propagate(foreground_samples, background_samples, input, buffer, trimap, p.x, p.y, w, h);
         }
     }
 
@@ -419,29 +422,24 @@ matting_process (GeglOperation       *operation,
           int index = y * w + x;
           if (trimap[index] == 0 || trimap[index] == 255)
             {
-              // Use known values
-              output[index * 4 + 0] = input[index * 3 + 0];
-              output[index * 4 + 1] = input[index * 3 + 1];
-              output[index * 4 + 2] = input[index * 3 + 2];
 
               if (trimap[index] == 0)
                 {
-                  output[index * 4 + 3] = 0;
+                  output[index] = 0;
                 }
               else if (trimap[index] == 255)
                 {
-                  output[index * 4 + 3] = 1;
+                  output[index] = 1;
                 }
             }
           else
             {
               ColorSample background, foreground;
-              foreground = g_array_index(foreground_samples, ColorSample, FG_INDEX(output, index));
-              background = g_array_index(background_samples, ColorSample, BG_INDEX(output, index));
+              foreground = g_array_index(foreground_samples, ColorSample, buffer[index].fg_index);
+              background = g_array_index(background_samples, ColorSample, buffer[index].bg_index);
 
-              output[index * 4 + 3] = get_alpha(foreground.color, background.color, &input[index * 3]);
+              output[index] = get_alpha(foreground.color, background.color, &input[index * 3]);
 
-              COLOR(output[index * 4 + c] = foreground.color[c]);
             }
         }
     }
@@ -455,6 +453,7 @@ matting_process (GeglOperation       *operation,
   g_free (input);
   g_free (trimap);
   g_free (output);
+  g_free (buffer);
   g_array_free(foreground_samples, FALSE);
   g_array_free(background_samples, FALSE);
   g_array_free(unknown_positions, FALSE);
