@@ -22,7 +22,12 @@
 #define LOCAL_H 8
 
 /* found by trial and error on a NVidia GPU */
-#define DEPTH_CHUNK 12
+
+// optimum value
+// #define DEPTH_CHUNK 12
+
+// a little less than 16k, works on most GPUs
+#define DEPTH_CHUNK 7
 
 __attribute__((reqd_work_group_size(8, 8, 1)))
 __kernel void bilateral_downsample(__global const float4 *input,
