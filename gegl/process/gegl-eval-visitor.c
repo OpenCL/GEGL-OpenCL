@@ -84,7 +84,7 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
           if ((context->result_rect.width == 0 || context->result_rect.height == 0))
             {
               /* 0px processing, bail */
-              gegl_operation_context_take_object (context, "output", G_OBJECT (gegl_buffer_new (NULL, NULL)));
+              gegl_operation_context_take_object (context, "output", NULL);
             }
           else
             {
@@ -138,40 +138,36 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
                                           gegl_pad_get_name (source_pad),
                                           &value);
 
-          if (!g_value_get_object (&value) &&
-              !g_object_get_data (G_OBJECT (source_node), "graph"))
-            g_warning ("eval-visitor encountered a NULL buffer passed from: %s.%s-[%p]",
-                       gegl_node_get_debug_name (source_node),
-                       gegl_pad_get_name (source_pad),
-                       g_value_get_object (&value));
-
-          gegl_operation_context_set_property (context,
-                                          gegl_pad_get_name (pad),
-                                          &value);
-          /* reference counting for this source dropped to zero, freeing up */
-          if (-- gegl_node_get_context (
-                     gegl_pad_get_node (source_pad), context_id)->refs == 0 &&
-              g_value_get_object (&value))
+          if (g_value_get_object (&value))
             {
-              gegl_operation_context_remove_property (
-                 gegl_node_get_context (
-                    gegl_pad_get_node (source_pad), context_id),
-                    gegl_pad_get_name (source_pad));
-            }
+              gegl_operation_context_set_property (context,
+                                                   gegl_pad_get_name (pad),
+                                                   &value);
+              /* reference counting for this source dropped to zero, freeing up */
+              if (-- gegl_node_get_context (
+                         gegl_pad_get_node (source_pad), context_id)->refs == 0 &&
+                  g_value_get_object (&value))
+                {
+                  gegl_operation_context_remove_property (
+                     gegl_node_get_context (
+                        gegl_pad_get_node (source_pad), context_id),
+                        gegl_pad_get_name (source_pad));
+                }
 
-          g_value_unset (&value);
+              g_value_unset (&value);
 
-	  /* processing for sink operations that accepts partial consumption
-             and thus probably are being processed by the processor from the
-             this very operation.
-           */
-          if (GEGL_IS_OPERATION_SINK (operation) &&
-              !gegl_operation_sink_needs_full (operation) &&
-              context->result_rect.width > 0 && context->result_rect.height > 0)
-            {
-              GEGL_NOTE (GEGL_DEBUG_PROCESS, "Processing pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
-              gegl_operation_process (operation, context, "output",
-                &context->result_rect, context->level);
+              /* processing for sink operations that accepts partial consumption
+               * and thus probably are being processed by the processor from the
+               * this very operation.
+               */
+              if (GEGL_IS_OPERATION_SINK (operation) &&
+                  !gegl_operation_sink_needs_full (operation) &&
+                  context->result_rect.width > 0 && context->result_rect.height > 0)
+                {
+                  GEGL_NOTE (GEGL_DEBUG_PROCESS, "Processing pad '%s' on \"%s\"", gegl_pad_get_name (pad), gegl_node_get_debug_name (node));
+                  gegl_operation_process (operation, context, "output",
+                    &context->result_rect, context->level);
+                }
             }
         }
     }
