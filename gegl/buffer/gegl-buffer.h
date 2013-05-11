@@ -76,12 +76,11 @@ GeglBuffer *    gegl_buffer_new               (const GeglRectangle *extent,
  *
  * Rename to: gegl_buffer_new
  */
-GeglBuffer *
-gegl_buffer_introspectable_new (const char *format_name,
-                                gint x,
-                                gint y,
-                                gint width,
-                                gint height);
+GeglBuffer *    gegl_buffer_introspectable_new (const char *format_name,
+                                                gint        x,
+                                                gint        y,
+                                                gint        width,
+                                                gint        height);
 
 /**
  * gegl_buffer_new_for_backend:
