@@ -15,6 +15,7 @@
  *
  * Copyright 1997 Spencer Kimball
  * Copyright 2012 Maxime Nicco <maxime.nicco@gmail.com>
+ * Copyright 2013 Téo Mazars <teo.mazars@ensimag.fr>
  */
 
 #include "config.h"
@@ -42,10 +43,11 @@ gegl_chant_double (sharpness, _("Sharpness"),   0.0, 1.0, 0.85, _("Sharpness"))
 #define SIGMOIDAL_RANGE  20
 
 static GeglBuffer *
-grey_blur_buffer (GeglBuffer  *input,
-                  gdouble      glow_radius)
+grey_blur_buffer (GeglBuffer          *input,
+                  gdouble              glow_radius,
+                  const GeglRectangle *result)
 {
-  GeglNode *gegl, *image, *write, *blur;
+  GeglNode *gegl, *image, *write, *blur, *crop;
   GeglBuffer *dest;
   gdouble radius, std_dev;
 
@@ -64,11 +66,19 @@ grey_blur_buffer (GeglBuffer  *input,
                 "std_dev_y", std_dev,
                 NULL);
 
+  crop =  gegl_node_new_child (gegl,
+                "operation", "gegl:crop",
+                "x",     (gdouble) result->x,
+                "y",     (gdouble) result->y,
+                "width", (gdouble) result->width,
+                "height",(gdouble) result->height,
+                NULL);
+
   write = gegl_node_new_child (gegl,
                 "operation", "gegl:buffer-sink",
                 "buffer", &dest, NULL);
 
-  gegl_node_link_many (image, blur, write, NULL);
+  gegl_node_link_many (image, blur, crop, write, NULL);
   gegl_node_process (write);
 
   g_object_unref (gegl);
@@ -102,19 +112,15 @@ process (GeglOperation       *operation,
   GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
 
   GeglBuffer *dest, *dest_tmp;
-  GeglSampler *sampler;
 
   gint n_pixels;
-  gfloat pixel;
   gfloat *out_pixel;
-  gint x;
-  gint y;
   gint b;
 
   gfloat tmp;
   gdouble val;
 
-  gfloat *dst_buf, *dst_tmp, *dst_convert;
+  gfloat *dst_buf, *dst_tmp, *dst_convert, *dst_blur;
   GeglRectangle  working_region;
   GeglRectangle *whole_region;
   gfloat *dst_tmp_ptr, *input_ptr;
@@ -130,9 +136,10 @@ process (GeglOperation       *operation,
 
   dst_buf = g_slice_alloc (working_region.width * working_region.height * sizeof (gfloat));
   dst_tmp = g_slice_alloc (working_region.width * working_region.height * sizeof (gfloat));
-  dest_tmp = gegl_buffer_new (&working_region, babl_format ("Y' float"));
   dst_convert = g_slice_alloc (result->width * result->height * 4 * sizeof (gfloat));
+  dst_blur = g_slice_alloc (result->width * result->height * sizeof (gfloat));
 
+  dest_tmp = gegl_buffer_new (&working_region, babl_format ("Y' float"));
 
   gegl_buffer_get (input,
                    &working_region,
@@ -166,43 +173,39 @@ process (GeglOperation       *operation,
     input_ptr   +=1;
   }
 
-  gegl_buffer_set (dest_tmp, &working_region, 0, babl_format ("Y' float"), dst_tmp, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (dest_tmp,
+                   &working_region,
+                   0,
+                   babl_format ("Y' float"),
+                   dst_tmp,
+                   GEGL_AUTO_ROWSTRIDE);
 
-  dest = grey_blur_buffer (dest_tmp, o->glow_radius);
+  dest = grey_blur_buffer (dest_tmp, o->glow_radius, result);
 
-  sampler = gegl_buffer_sampler_new (dest,
-                                     babl_format ("Y' float"),
-                                     GEGL_SAMPLER_LINEAR);
+  gegl_buffer_get (dest,
+                   result,
+                   1.0,
+                   babl_format ("Y' float"),
+                   dst_blur,
+                   GEGL_AUTO_ROWSTRIDE,
+                   GEGL_ABYSS_NONE);
 
-  x = result->x;
-  y = result->y;
+
   n_pixels = result->width * result->height;
 
   out_pixel = dst_convert;
+  dst_tmp_ptr = dst_blur;
 
   while (n_pixels--)
     {
-      gegl_sampler_get (sampler,
-                        x,
-                        y,
-                        NULL,
-                        &pixel,
-                        GEGL_ABYSS_NONE);
-
       for (b = 0; b < 3; b++)
       {
-        tmp = (1.0 - out_pixel[b]) * (1.0 - pixel) ;
-        out_pixel[b] = CLAMP(1.0 - tmp, 0.0, 1.0);
+        tmp = (1.0 - out_pixel[b]) * (1.0 - *dst_tmp_ptr) ;
+        out_pixel[b] = CLAMP (1.0 - tmp, 0.0, 1.0);
       }
 
-      out_pixel += 4;
-
-      x++;
-      if (x>=result->x + result->width)
-        {
-          x=result->x;
-          y++;
-        }
+      out_pixel   += 4;
+      dst_tmp_ptr += 1;
     }
 
   gegl_buffer_set (output,
@@ -215,8 +218,8 @@ process (GeglOperation       *operation,
   g_slice_free1 (working_region.width * working_region.height * sizeof (gfloat), dst_buf);
   g_slice_free1 (working_region.width * working_region.height * sizeof (gfloat), dst_tmp);
   g_slice_free1 (result->width * result->height * 4 * sizeof (gfloat), dst_convert);
+  g_slice_free1 (result->width * result->height * sizeof (gfloat), dst_blur);
 
-  g_object_unref (sampler);
   g_object_unref (dest);
   g_object_unref (dest_tmp);
 
