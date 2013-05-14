@@ -1,5 +1,7 @@
 include $(top_srcdir)/operations/Makefile-common.am
 
+libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
+
 AM_LDFLAGS += $(P2TC_LIBS)
 AM_CFLAGS  += $(P2TC_CFLAGS)
 
@@ -9,22 +11,27 @@ AM_CFLAGS  += $(P2TC_CFLAGS)
 
 GEGL_SC_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/sc
 
-GEGL_SC_public_HEADERS =	\
-	sc-common.h		\
-	sc-context.h		\
-	sc-outline.h		\
+GEGL_SC_public_HEADERS = \
+	sc-common.h	\
+	sc-context.h	\
+	sc-outline.h	\
 	sc-sample.h
 
-GEGL_SC_SOURCES =			\
+GEGL_SC_SOURCES = \
 	$(GEGL_SC_public_HEADERS)	\
 	sc-context-private.h		\
 	sc-context.c			\
 	sc-outline.c			\
 	sc-sample.c
-	
-libgegl_sc_@GEGL_API_VERSION@_la_SOURCES = $(GEGL_SC_public_HEADERS) $(GEGL_SC_SOURCES)
+
+libgegl_sc_@GEGL_API_VERSION@_la_SOURCES = \
+	$(GEGL_SC_public_HEADERS)	\
+	$(GEGL_SC_SOURCES)
 
 lib_LTLIBRARIES = libgegl-sc-@GEGL_API_VERSION@.la
+
+libgegl_sc_@GEGL_API_VERSION@_la_LIBADD = \
+	$(libgegl)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gegl-sc-$(GEGL_API_VERSION).pc
@@ -50,4 +57,3 @@ seamless_clone_compose_la_SOURCES = seamless-clone-compose.c
 #   other definitions that we don't want...
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 op_LTLIBRARIES = seamless-clone.la seamless-clone-compose.la
-
