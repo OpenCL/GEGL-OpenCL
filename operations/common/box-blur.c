@@ -315,8 +315,8 @@ process (GeglOperation       *operation,
                            babl_format ("RaGaBaA float"));
 
   /* doing second pass in separate gegl op may be significantly faster */
-  hor_blur (input, &rect, temp, &tmprect, o->radius);
-  ver_blur (temp, &rect, output, result, o->radius);
+  hor_blur (input, &rect, temp, &tmprect, ceil (o->radius));
+  ver_blur (temp, &rect, output, result, ceil (o->radius));
 
   g_object_unref (temp);
   return  TRUE;
