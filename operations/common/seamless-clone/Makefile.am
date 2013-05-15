@@ -1,7 +1,5 @@
 include $(top_srcdir)/operations/Makefile-common.am
 
-libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
-
 AM_LDFLAGS += $(P2TC_LIBS)
 AM_CFLAGS  += $(P2TC_CFLAGS)
 
@@ -45,10 +43,11 @@ AM_CFLAGS  += $(op_cflags)
 
 # A simple seamless cloning operation
 seamless_clone_la_SOURCES = seamless-clone.c
-seamless_clone_la_LIBS = libgegl-sc-@GEGL_API_VERSION@.la
+seamless_clone_la_LIBADD = libgegl-sc-@GEGL_API_VERSION@.la
 
 # A composing operation for using the seamless cloning
 seamless_clone_compose_la_SOURCES = seamless-clone-compose.c
+seamless_clone_compose_la_LIBADD = libgegl-sc-@GEGL_API_VERSION@.la
 
 # Install both the operations in the op dir
 #
