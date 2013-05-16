@@ -1,4 +1,4 @@
-SUBDIRS = perlin seamless-clone
+SUBDIRS = perlin
 
 include $(top_srcdir)/operations/Makefile-operations.am
 

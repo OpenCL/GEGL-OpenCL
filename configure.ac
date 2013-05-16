@@ -1109,11 +1109,12 @@ libs/poly2tri-c/poly2tri-c/p2t/sweep/Makefile
 libs/poly2tri-c/poly2tri-c/p2t/common/Makefile
 libs/poly2tri-c/poly2tri-c/p2t/Makefile
 libs/poly2tri-c/poly2tri-c/refine/Makefile
+seamless-clone/Makefile
 operations/Makefile
 operations/core/Makefile
 operations/common/Makefile
 operations/common/perlin/Makefile
-operations/common/seamless-clone/Makefile
+operations/seamless-clone/Makefile
 operations/external/Makefile
 operations/generated/Makefile
 operations/transform/Makefile
@@ -1147,7 +1148,7 @@ AC_CONFIG_FILES(
 gegl-gegl_api_version.pc:gegl.pc.in
 gegl/gegl-gegl_api_version.deps:gegl/gegl.deps.in
 gegl/Gegl-gegl_api_version.metadata:gegl/Gegl.metadata.in
-operations/common/seamless-clone/gegl-sc-gegl_api_version.pc:operations/common/seamless-clone/gegl-sc.pc.in
+seamless-clone/gegl-sc-gegl_api_version.pc:seamless-clone/gegl-sc.pc.in
 )
 
 AC_OUTPUT
