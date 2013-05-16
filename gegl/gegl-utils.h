@@ -189,7 +189,7 @@ void     gegl_rectangle_dump              (const GeglRectangle *rectangle);
 gpointer gegl_malloc                  (gsize    n_bytes);
 
 /**
- * gegl_free:
+ * gegl_free: (skip)
  * @mem: the memory to free.
  *
  * Frees the memory pointed to by @mem, if @mem is NULL it will warn and abort.
@@ -197,7 +197,7 @@ gpointer gegl_malloc                  (gsize    n_bytes);
 void     gegl_free                    (gpointer mem);
 
 /**
- * gegl_calloc:
+ * gegl_calloc: (skip)
  * @size: size of items to allocate
  * @n_memb: number of members
  *
