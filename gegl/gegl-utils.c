@@ -27,7 +27,7 @@
 #include "gegl-types-internal.h"
 
 
-inline gint
+gint
 _gegl_float_epsilon_zero (float value)
 {
   return value > -GEGL_FLOAT_EPSILON && value < GEGL_FLOAT_EPSILON;

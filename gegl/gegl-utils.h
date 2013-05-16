@@ -213,7 +213,7 @@ gpointer gegl_calloc (gsize size, int n_memb);
 
 /***
  */
-inline gint _gegl_float_epsilon_zero  (float     value);
+gint        _gegl_float_epsilon_zero  (float     value);
 gint        _gegl_float_epsilon_equal (float     v1,
                                        float     v2);
 
