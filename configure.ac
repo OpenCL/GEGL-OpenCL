@@ -1022,7 +1022,7 @@ AC_SUBST(UMFPACK_LIBS)
 have_p2tc="no"
 PKG_CHECK_MODULES(P2TC, poly2tri-c >= poly2tri-c_required_version,
   have_p2tc="yes",
-  have_p2tc="yes  (installed poly2tri-c not found, using local version)")
+  have_p2tc="yes (internal)")
 
 AM_CONDITIONAL(HAVE_P2TC, test "$have_p2tc" = "yes")
 

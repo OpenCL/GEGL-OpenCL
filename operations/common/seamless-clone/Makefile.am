@@ -1,8 +1,5 @@
 include $(top_srcdir)/operations/Makefile-common.am
 
-AM_LDFLAGS += $(P2TC_LIBS)
-AM_CFLAGS  += $(P2TC_CFLAGS)
-
 ##################################################################
 # A shared library for direct access to the seamless cloning API #
 ##################################################################
@@ -26,6 +23,12 @@ libgegl_sc_@GEGL_API_VERSION@_la_SOURCES = \
 	$(GEGL_SC_public_HEADERS)	\
 	$(GEGL_SC_SOURCES)
 
+libgegl_sc_@GEGL_API_VERSION@_la_LDFLAGS = \
+	-avoid-version -export-dynamic $(no_undefined) $(P2TC_LIBS)
+
+libgegl_sc_@GEGL_API_VERSION@_la_CFLAGS = \
+  $(AM_CFLAGS) $(P2TC_CFLAGS)
+
 lib_LTLIBRARIES = libgegl-sc-@GEGL_API_VERSION@.la
 
 libgegl_sc_@GEGL_API_VERSION@_la_LIBADD = \
@@ -38,16 +41,20 @@ pkgconfig_DATA = gegl-sc-$(GEGL_API_VERSION).pc
 # Seamless cloning operations #
 ###############################
 
-AM_LDFLAGS += $(op_libs)
-AM_CFLAGS  += $(op_cflags)
+AM_LDFLAGS += $(P2TC_LDLAGS)
+AM_CFLAGS += $(P2TC_CFLAGS)
+
+LIBS = $(op_libs)
 
 # A simple seamless cloning operation
 seamless_clone_la_SOURCES = seamless-clone.c
 seamless_clone_la_LIBADD = libgegl-sc-@GEGL_API_VERSION@.la
+seamless_clone_la_DEPENDENCIES = libgegl-sc-@GEGL_API_VERSION@.la
 
 # A composing operation for using the seamless cloning
 seamless_clone_compose_la_SOURCES = seamless-clone-compose.c
 seamless_clone_compose_la_LIBADD = libgegl-sc-@GEGL_API_VERSION@.la
+seamless_clone_compose_la_DEPENDENCIES = libgegl-sc-@GEGL_API_VERSION@.la
 
 # Install both the operations in the op dir
 #

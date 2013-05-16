@@ -21,13 +21,13 @@
 gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
                 _("Maximal amount of refinement points to be used for the interpolation mesh"))
 
-gegl_chant_int (xoff, _("X offset"), -100000, +100000, 0,
+gegl_chant_int (xoff, _("X offset"), -100000, 100000, 0,
                 _("How much horizontal offset should applied to the paste"))
 
-gegl_chant_int (yoff, _("Y offset"), -100000, +100000, 0,
+gegl_chant_int (yoff, _("Y offset"), -100000, 100000, 0,
                 _("How much vertical offset should applied to the paste"))
 
-gegl_chant_string (error_msg, _("Error message"), NULL, _("An error message in case of a failure"))
+gegl_chant_string (error_msg, _("Error message"), "", _("An error message in case of a failure"))
 #else
 
 #define GEGL_CHANT_TYPE_META
