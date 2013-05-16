@@ -1032,9 +1032,8 @@ AC_SUBST(P2TC_LIBS)
 # If no poly2tri-c version is installed, we should use the local version
 # we have cached in the libs directory
 if test "x$have_p2tc" != "xyes"; then
-  AC_SUBST(P2TC_SRC_DIR, "`cd $srcdir; pwd`/libs/poly2tri-c")
-  AC_SUBST(P2TC_CFLAGS, "-I\"$P2TC_SRC_DIR\"")
-  AC_SUBST(P2TC_LIBS, "-L\"$P2TC_SRC_DIR/poly2tri-c\" -lpoly2tri-c")
+  AC_SUBST(P2TC_CFLAGS, "-I\$(top_srcdir)/libs/poly2tri-c")
+  AC_SUBST(P2TC_LIBS, "-L\$(top_builddir)/libs/poly2tri-c/poly2tri-c -lpoly2tri-c")
 fi
 
 #######################

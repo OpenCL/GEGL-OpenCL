@@ -11,11 +11,11 @@ LIBS = $(op_libs)
 
 # A simple seamless cloning operation
 seamless_clone_la_SOURCES = seamless-clone.c
-seamless_clone_la_LIBADD = $(top_srcdir)/seamless-clone/libgegl-sc-@GEGL_API_VERSION@.la
+seamless_clone_la_LIBADD = $(top_builddir)/seamless-clone/libgegl-sc-@GEGL_API_VERSION@.la
 
 # A composing operation for using the seamless cloning
 seamless_clone_compose_la_SOURCES = seamless-clone-compose.c
-seamless_clone_compose_la_LIBADD = $(top_srcdir)/seamless-clone/libgegl-sc-@GEGL_API_VERSION@.la
+seamless_clone_compose_la_LIBADD = $(top_builddir)/seamless-clone/libgegl-sc-@GEGL_API_VERSION@.la
 
 # Install both the operations in the op dir
 #
