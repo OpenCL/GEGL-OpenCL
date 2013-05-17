@@ -143,6 +143,7 @@ process (GeglOperation       *operation,
   g_mutex_lock (&props->mutex);
   if (props->first_processing)
     {
+      const gchar *error_msg = "";
       if (props->context == NULL)
         {
           props->context = gegl_sc_context_new (aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
@@ -154,17 +155,16 @@ process (GeglOperation       *operation,
       switch (error)
         {
           case GEGL_SC_CREATION_ERROR_NONE:
-            o->error_msg = "";
             props->is_valid = TRUE;
             break;
           case GEGL_SC_CREATION_ERROR_EMPTY:
-            o->error_msg = _("The foreground does not contain opaque parts");
+            error_msg = _("The foreground does not contain opaque parts");
             break;
           case GEGL_SC_CREATION_ERROR_TOO_SMALL:
-            o->error_msg = _("The foreground is too small to use");
+            error_msg = _("The foreground is too small to use");
             break;
           case GEGL_SC_CREATION_ERROR_HOLED_OR_SPLIT:
-            o->error_msg = _("The foreground contains holes and/or several unconnected parts");
+            error_msg = _("The foreground contains holes and/or several unconnected parts");
             break;
           default:
             g_warning ("Unknown preprocessing status %d", error);
@@ -175,10 +175,13 @@ process (GeglOperation       *operation,
         {
           if (! gegl_sc_context_prepare_render (props->context, &info))
             {
-              o->error_msg = _("The opaque parts of the foreground are not above the background!");
+              error_msg = _("The opaque parts of the foreground are not above the background!");
               props->is_valid = FALSE;
             }
         }
+
+      g_free (o->error_msg);
+      o->error_msg = g_strdup (error_msg);
 
       props->first_processing = FALSE;
     }
