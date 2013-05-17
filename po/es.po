@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-04-28 16:59+0000\n"
-"PO-Revision-Date: 2013-04-29 14:00+0200\n"
+"POT-Creation-Date: 2013-05-15 15:55+0000\n"
+"PO-Revision-Date: 2013-05-17 13:29+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -300,7 +300,7 @@ msgid "Range scale factor"
 msgstr "Factor de escalado del rango"
 
 #: ../operations/common/brightness-contrast.c:31
-#: ../operations/common/reinhard05.c:27 ../operations/common/softglow.c:27
+#: ../operations/common/reinhard05.c:27 ../operations/common/softglow.c:28
 msgid "Brightness"
 msgstr "Brillo"
 
@@ -434,6 +434,8 @@ msgstr "Anchura vertical de las celdillas en píxeles"
 
 #: ../operations/common/checkerboard.c:29 ../operations/common/grid.c:28
 #: ../operations/common/mirrors.c:36
+#: ../operations/common/seamless-clone/seamless-clone.c:24
+#: ../operations/common/seamless-clone/seamless-clone-compose.c:24
 msgid "X offset"
 msgstr "Desplazamiento X"
 
@@ -443,6 +445,8 @@ msgstr "Desplazamiento horizontal (desde el origen) del comienzo de la rejilla"
 
 #: ../operations/common/checkerboard.c:31 ../operations/common/grid.c:30
 #: ../operations/common/mirrors.c:38
+#: ../operations/common/seamless-clone/seamless-clone.c:27
+#: ../operations/common/seamless-clone/seamless-clone-compose.c:27
 msgid "Y offset"
 msgstr "Desplazamiento Y"
 
@@ -679,7 +683,7 @@ msgstr "Vertical"
 msgid "Keep Signal"
 msgstr "Mantener la señal"
 
-#: ../operations/common/edge-sobel.c:378
+#: ../operations/common/edge-sobel.c:376
 msgid "Specialized direction-dependent edge detection"
 msgstr "Detección de bordes especializada dependiente de la dirección"
 
@@ -860,7 +864,6 @@ msgid "Red mode"
 msgstr "Modo del rojo"
 
 #: ../operations/common/fractal-explorer.c:76
-#| msgid "Red application mode (0:SIN; 1:COS; 2:NONE)"
 msgid "Red application mode"
 msgstr "Modo de aplicación del rojo"
 
@@ -869,7 +872,6 @@ msgid "Green mode"
 msgstr "Modo del verde"
 
 #: ../operations/common/fractal-explorer.c:79
-#| msgid "Green application mode (0:SIN; 1:COS; 2:NONE)"
 msgid "Green application mode"
 msgstr "Modo de aplicación del verde"
 
@@ -878,7 +880,6 @@ msgid "Blue mode"
 msgstr "Modo del azul"
 
 #: ../operations/common/fractal-explorer.c:82
-#| msgid "Blue application mode (0:SIN; 1:COS; 2:NONE)"
 msgid "Blue application mode"
 msgstr "Modo de aplicación del azul"
 
@@ -1292,7 +1293,7 @@ msgstr ""
 msgid "Number of iterations"
 msgstr "Número de iteraciones"
 
-#: ../operations/common/matting-global.c:482
+#: ../operations/common/matting-global.c:481
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha matte. Set white as foreground, black as background for the tri-map. "
@@ -1635,7 +1636,7 @@ msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr "Operación de Porter-Duff sobre (d = cA + cB * (1 - aA))"
 
 #: ../operations/common/photocopy.c:28 ../operations/common/photocopy.c:29
-#: ../operations/common/softglow.c:29
+#: ../operations/common/softglow.c:30
 msgid "Sharpness"
 msgstr "Nitidez"
 
@@ -1854,6 +1855,55 @@ msgid "Multipurpose file saver, that uses other native handlers."
 msgstr ""
 "Guardador de archivos de varios usos, que utiliza otros manejadores nativos."
 
+#: ../operations/common/seamless-clone/seamless-clone.c:21
+#: ../operations/common/seamless-clone/seamless-clone-compose.c:21
+msgid "Refinement Steps"
+msgstr "Pasos de refinamiento"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:22
+#: ../operations/common/seamless-clone/seamless-clone-compose.c:22
+msgid ""
+"Maximal amount of refinement points to be used for the interpolation mesh"
+msgstr ""
+"Cantidad máxima de puntos de refinamiento que usar para la malla de "
+"interpolación"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:25
+#: ../operations/common/seamless-clone/seamless-clone-compose.c:25
+msgid "How much horizontal offset should applied to the paste"
+msgstr "Cuánto desplazamiento horizontal se debe aplicar a lo pegado"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:28
+#: ../operations/common/seamless-clone/seamless-clone-compose.c:28
+msgid "How much vertical offset should applied to the paste"
+msgstr "Cuánto desplazamiento vertical se debe aplicar a lo pegado"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:30
+#: ../operations/common/seamless-clone/seamless-clone-compose.c:30
+msgid "Error message"
+msgstr "Mensaje de error"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:30
+#: ../operations/common/seamless-clone/seamless-clone-compose.c:30
+msgid "An error message in case of a failure"
+msgstr "Un mensaje de error en caso de fallo"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:161
+msgid "The foreground does not contain opaque parts"
+msgstr "El primer plano no contiene partes opacas"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:164
+msgid "The foreground is too small to use"
+msgstr "El primer plano es demasiado pequeño para usarlo"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:167
+msgid "The foreground contains holes and/or several unconnected parts"
+msgstr "El primer plano contiene agujeros y/o varias partes sin conectar"
+
+#: ../operations/common/seamless-clone/seamless-clone.c:178
+msgid "The opaque parts of the foreground are not above the background!"
+msgstr "Las partes opacas del primer plano no están encima del fondo."
+
 #: ../operations/common/shift.c:26
 msgid "Shift"
 msgstr "Desplazamiento"
@@ -1891,11 +1941,11 @@ msgstr ""
 "Filtro de desenfoque que resalta los bordes y reduce el ruido, basado en los "
 "vecinos simétricos más próximos"
 
-#: ../operations/common/softglow.c:25
+#: ../operations/common/softglow.c:26
 msgid "Glow radius"
 msgstr "Radio del resplandor"
 
-#: ../operations/common/softglow.c:225
+#: ../operations/common/softglow.c:244
 msgid "Softglow effect"
 msgstr "Efecto resplandor suave"
 
@@ -2339,7 +2389,7 @@ msgstr "Niveles activos"
 msgid "Number of levels to perform solving"
 msgstr "Número de niveles para el solucionado"
 
-#: ../operations/external/matting-levin.c:1428
+#: ../operations/external/matting-levin.c:1439
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha mat. Set white as selected, black as unselected, for the tri-map."
