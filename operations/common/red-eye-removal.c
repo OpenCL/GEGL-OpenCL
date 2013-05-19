@@ -18,8 +18,8 @@
  *
  * Based on a GIMP 1.2 Perl plugin by Geoff Kuenning
  *
- * Copyright (C) 2004  Robert Merkel <robert.merkel@benambra.org>
- * Copyright (C) 2006  Andreas Røsdal <andrearo@stud.ntnu.no>
+ * Copyright (C) 2004 Robert Merkel <robert.merkel@benambra.org>
+ * Copyright (C) 2006 Andreas Røsdal <andrearo@stud.ntnu.no>
  * Copyright (C) 2011 Robert Sasu <sasu.robert@gmail.com>
  */
 
@@ -28,13 +28,14 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (threshold, _("Threshold"), 0.0, 0.8, 0.4,
-                   _("The value of the threshold"))
+gegl_chant_double (threshold, _("Threshold"),
+                   0.0, 0.8, 0.4,
+                   _("Red eye threshold"))
 
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "red-eye-removal.c"
+#define GEGL_CHANT_C_FILE "red-eye-removal.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -46,7 +47,8 @@ gegl_chant_double (threshold, _("Threshold"), 0.0, 0.8, 0.4,
 
 #define SCALE_WIDTH   100
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",
                              babl_format ("R'G'B'A float"));
@@ -70,10 +72,10 @@ red_eye_reduction (gfloat *src,
   gfloat dest;
 
   if (adjusted_red >= adjusted_green - adjusted_threshold &&
-      adjusted_red >= adjusted_blue - adjusted_threshold)
+      adjusted_red >= adjusted_blue  - adjusted_threshold)
     {
-      dest = CLAMP (((gdouble) (adjusted_green + adjusted_blue)
-                     / (2.0  * RED_FACTOR)), 0.0, 1.0);
+      dest = (gdouble) (adjusted_green + adjusted_blue) / (2.0  * RED_FACTOR);
+      dest = CLAMP (dest, 0.0, 1.0);
     }
   else
     {
@@ -82,8 +84,6 @@ red_eye_reduction (gfloat *src,
 
   src[offset] = dest;
 }
-
-
 
 static gboolean
 process (GeglOperation       *operation,
@@ -113,7 +113,6 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
-
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -129,7 +128,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories"  , "enhance",
     "name"        , "gegl:red-eye-removal",
-    "description" , _("Performs red-eye-removal on the image"),
+    "description" , _("Remove the red eye effect caused by camera flashes"),
     NULL);
 }
 

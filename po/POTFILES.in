@@ -66,12 +66,11 @@ operations/common/polar-coordinates.c
 operations/common/posterize.c
 operations/common/raw-load.c
 operations/common/rectangle.c
+operations/common/red-eye-removal.c
 operations/common/reinhard05.c
 operations/common/remap.c
 operations/common/ripple.c
 operations/common/save.c
-operations/seamless-clone/seamless-clone.c
-operations/seamless-clone/seamless-clone-compose.c
 operations/common/shift.c
 operations/common/snn-mean.c
 operations/common/softglow.c
@@ -143,6 +142,8 @@ operations/generated/src-over.c
 operations/generated/subtract.c
 operations/generated/svg-multiply.c
 operations/generated/xor.c
+operations/seamless-clone/seamless-clone.c
+operations/seamless-clone/seamless-clone-compose.c
 operations/transform/reflect.c
 operations/transform/rotate.c
 operations/transform/scale.c
@@ -184,7 +185,6 @@ operations/workshop/noise-spread.c
 operations/workshop/plasma.c
 operations/workshop/radial-gradient.c
 operations/workshop/rawbayer-load.c
-operations/workshop/red-eye-removal.c
 operations/workshop/snn-percentile.c
 operations/workshop/warp.c
 operations/workshop/whirl-pinch.c
