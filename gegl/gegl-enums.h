@@ -38,7 +38,7 @@ typedef enum {
   GEGL_SAMPLER_NOHALO,        /*< desc="nohalo"       >*/
   GEGL_SAMPLER_LOHALO         /*< desc="lohalo"       >*/
 } GeglSamplerType;
-GType gegl_sampler_type_get_type   (void) G_GNUC_CONST;
+GType gegl_sampler_type_get_type (void) G_GNUC_CONST;
 #define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type())
 
 typedef enum {
@@ -48,8 +48,8 @@ typedef enum {
   GEGL_ABYSS_BLACK,
   GEGL_ABYSS_WHITE
 } GeglAbyssPolicy;
-GType gegl_abyss_policy_get_type   (void) G_GNUC_CONST;
-#define GEGL_ABYSS_POLICY_TYPE (gegl_abyss_policy_get_type())
+GType gegl_abyss_policy_get_type (void) G_GNUC_CONST;
+#define GEGL_TYPE_ABYSS_POLICY (gegl_abyss_policy_get_type())
 
 G_END_DECLS
 
