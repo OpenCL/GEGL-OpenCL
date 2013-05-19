@@ -33,27 +33,42 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (whirl,  _("Whirl"), -G_MAXDOUBLE, G_MAXDOUBLE, 90, _("Whirl angle (degrees)"))
+gegl_chant_double_ui (whirl, _("Whirl"),
+                      -G_MAXDOUBLE, G_MAXDOUBLE, 90, -720.0, 720.0, 1.0,
+                      _("Whirl angle (degrees)"))
 
-gegl_chant_double (pinch,  _("Pinch"), -1, 1, 0, _("Pinch amount"))
+gegl_chant_double    (pinch, _("Pinch"),
+                      -1.0, 1.0, 0.0,
+                      _("Pinch amount"))
 
-gegl_chant_double (radius,  _("Radius"), 0, 2, 1, _("Radius (1.0 is the largest circle that fits in the image, and 2.0 goes all the way to the corners)"))
+gegl_chant_double    (radius, _("Radius"),
+                      0.0, 2.0, 1.0,
+                      _("Radius (1.0 is the largest circle that fits in the "
+                        "image, and 2.0 goes all the way to the corners)"))
 
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "whirl-pinch.c"
+#define GEGL_CHANT_C_FILE "whirl-pinch.c"
 
 #include "gegl-chant.h"
 #include <math.h>
 
-/* This function is a slightly modified version from the one in the original plugin */
+/* This function is a slightly modified version from the one in the
+ * original plugin
+ */
 static gboolean
-calc_undistorted_coords (gdouble  wx,      gdouble  wy,
-                         gdouble  cen_x,   gdouble  cen_y,
-                         gdouble  scale_x, gdouble  scale_y,
-                         gdouble  whirl,   gdouble  pinch,   gdouble  wpradius,
-                         gdouble *x,       gdouble *y)
+calc_undistorted_coords (gdouble  wx,
+                         gdouble  wy,
+                         gdouble  cen_x,
+                         gdouble  cen_y,
+                         gdouble  scale_x,
+                         gdouble  scale_y,
+                         gdouble  whirl,
+                         gdouble  pinch,
+                         gdouble  wpradius,
+                         gdouble *x,
+                         gdouble *y)
 {
   gdouble  dx, dy;
   gdouble  d, factor;
@@ -118,13 +133,16 @@ calc_undistorted_coords (gdouble  wx,      gdouble  wy,
 /* Apply the actual transform */
 
 static void
-apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
-                   gdouble cen_x, gdouble cen_y,
-                   const Babl    *format,
-                   GeglBuffer *src,
-                   GeglRectangle *in_boundary,
-                   GeglBuffer *dst,
-                   GeglRectangle *boundary,
+apply_whirl_pinch (gdouble              whirl,
+                   gdouble              pinch,
+                   gdouble              radius,
+                   gdouble              cen_x,
+                   gdouble              cen_y,
+                   const Babl          *format,
+                   GeglBuffer          *src,
+                   GeglRectangle       *in_boundary,
+                   GeglBuffer          *dst,
+                   GeglRectangle       *boundary,
                    const GeglRectangle *roi)
 {
   gfloat *dst_buf;
@@ -139,7 +157,7 @@ apply_whirl_pinch (gdouble whirl, gdouble pinch, gdouble radius,
   whirl = whirl * G_PI / 180;
 
   scale_x = 1.0;
-  scale_y = roi->width / (gdouble) roi->height;
+  scale_y = (gdouble) in_boundary->width / in_boundary->height;
   sampler = gegl_buffer_sampler_new (src, babl_format ("RaGaBaA float"),
                                      GEGL_SAMPLER_NOHALO);
 
@@ -181,9 +199,8 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle  result = {0,0,0,0};
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
 
-  if (!in_rect){
+  if (!in_rect)
     return result;
-  }
   else
     return *in_rect;
 }
@@ -218,9 +235,9 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
-  const Babl *format = babl_format ("RaGaBaA float");
+  GeglChantO    *o        = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle  boundary = gegl_operation_get_bounding_box (operation);
+  const Babl    *format   = babl_format ("RaGaBaA float");
 
   apply_whirl_pinch (o->whirl,
                      o->pinch,
@@ -229,9 +246,9 @@ process (GeglOperation       *operation,
                      boundary.height / 2.0,
                      format,
                      input,
-                    &boundary,
+                     &boundary,
                      output,
-                    &boundary,
+                     &boundary,
                      result);
   return TRUE;
 }
@@ -252,11 +269,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = get_required_for_output;
 
   gegl_operation_class_set_keys (operation_class,
-  "name"        , "gegl:whirl-pinch",
-  "categories"  , "distort",
-  "description" ,
-        _("Applies whirling and pinching on the image"),
-        NULL);
+      "name",        "gegl:whirl-pinch",
+      "categories",  "distort",
+      "description", _("Distort an image by whirling and pinching"),
+      NULL);
 }
 
 #endif
