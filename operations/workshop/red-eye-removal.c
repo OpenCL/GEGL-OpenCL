@@ -49,9 +49,9 @@ gegl_chant_double (threshold, _("Threshold"), 0.0, 0.8, 0.4,
 static void prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",
-                             babl_format ("RGBA float"));
+                             babl_format ("R'G'B'A float"));
   gegl_operation_set_format (operation, "output",
-                             babl_format ("RGBA float"));
+                             babl_format ("R'G'B'A float"));
 }
 
 static void
@@ -63,12 +63,11 @@ red_eye_reduction (gfloat *src,
   const gint green = 1;
   const gint blue  = 2;
 
-  gfloat dest;
-
   gfloat adjusted_red       = src[offset + red] * RED_FACTOR;
   gfloat adjusted_green     = src[offset + green] * GREEN_FACTOR;
   gfloat adjusted_blue      = src[offset + blue] * BLUE_FACTOR;
   gfloat adjusted_threshold = (threshold - 0.4) * 2;
+  gfloat dest;
 
   if (adjusted_red >= adjusted_green - adjusted_threshold &&
       adjusted_red >= adjusted_blue - adjusted_threshold)
@@ -93,20 +92,21 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
-  const Babl              *format       = babl_format ("RGBA float");
-
-  gfloat *src_buf;
-  gint    x;
+  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  const Babl *format = babl_format ("R'G'B'A float");
+  gfloat     *src_buf;
+  gint        x;
 
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  gegl_buffer_get (input, result, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (input, result, 1.0, format, src_buf,
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   for (x = 0; x < result->width * result->height; x++)
     red_eye_reduction (src_buf, 4 * x, (float) o->threshold);
 
-  gegl_buffer_set (output, result, 0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0, format, src_buf,
+                   GEGL_AUTO_ROWSTRIDE);
 
   g_free (src_buf);
 
