@@ -17,6 +17,7 @@ operations/common/color-reduction.c
 operations/common/color-temperature.c
 operations/common/color-to-alpha.c
 operations/common/contrast-curve.c
+operations/common/cubism.c
 operations/common/difference-of-gaussians.c
 operations/common/display.c
 operations/common/dot.c
@@ -159,7 +160,6 @@ operations/workshop/box-percentile.c
 operations/workshop/buffer-cache.c
 operations/workshop/color-rotate.c
 operations/workshop/convolution-matrix.c
-operations/workshop/cubism.c
 operations/workshop/deinterlace.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c

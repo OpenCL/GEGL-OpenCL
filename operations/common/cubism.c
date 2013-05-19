@@ -27,19 +27,26 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (tile_size, _("Tile size"), 0.0, 256.0, 10.0,
-                   _("Tile size"))
-gegl_chant_double (tile_saturation, _("Tile saturation"), 0.0, 10.0, 2.5,
-                   _("Tile saturation"))
-gegl_chant_int (seed, _("Seed"), 0 , G_MAXINT, 1,
-                _("Random seed"))
+gegl_chant_double (tile_size, _("Tile size"),
+                   0.0, 256.0, 10.0,
+                   _("Average diameter of each tile (in pixels)"))
+
+gegl_chant_double (tile_saturation, _("Tile saturation"),
+                   0.0, 10.0, 2.5,
+                   _("Expand tiles by this amount"))
+
+gegl_chant_color  (bg_color, _("Background Color"),
+                   "rgba(0.0, 0.0, 0.0, 0.0)",
+                   _("The tiles' background color"))
+
+gegl_chant_seed   (seed, _("Seed"),
+                   _("Random seed"))
 
 
 # else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-
-#define GEGL_CHANT_C_FILE       "cubism.c"
+#define GEGL_CHANT_C_FILE "cubism.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -54,17 +61,18 @@ gegl_chant_int (seed, _("Seed"), 0 , G_MAXINT, 1,
 
 typedef struct
 {
-  gint x,y;
+  gint x, y;
 } Vector2;
 
 typedef struct
 {
-  gint        npts;
-  Vector2     pts[MAX_POINTS];
+  gint    npts;
+  Vector2 pts[MAX_POINTS];
 } Polygon;
 
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
@@ -101,7 +109,6 @@ calc_alpha_blend (gdouble *vec,
   return CLAMP (r, 0.2, 1.0);
 }
 
-
 static void
 convert_segment (gint  x1,
                  gint  y1,
@@ -111,7 +118,7 @@ convert_segment (gint  x1,
                  gint *min,
                  gint *max)
 {
-  gint ydiff, y, tmp;
+  gint    ydiff, y, tmp;
   gdouble xinc, xstart;
 
 
@@ -177,7 +184,7 @@ static void
 polygon_rotate (Polygon *poly,
                 gdouble  theta)
 {
-  gint i;
+  gint    i;
   gdouble ct, st;
   gdouble ox, oy;
 
@@ -421,18 +428,16 @@ fill_poly_color (Polygon             *poly,
   g_free (max_scanlines);
 }
 
-
 static GeglRectangle
 get_effective_area (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle  result  = { 0, 0, 0, 0 };
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
 
-  gegl_rectangle_copy(&result, in_rect);
+  gegl_rectangle_copy (&result, in_rect);
 
   return result;
 }
-
 
 static gboolean
 process (GeglOperation       *operation,
@@ -441,17 +446,18 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
-  GeglOperationAreaFilter *op_area      = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglRectangle            boundary     = get_effective_area (operation);
+  GeglChantO              *o         = GEGL_CHANT_PROPERTIES (operation);
+  GeglOperationAreaFilter *op_area   = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglRectangle            boundary  = get_effective_area (operation);
   GeglRectangle            extended;
-  const Babl              *format       = babl_format ("RGBA float");
+  const Babl              *format    = babl_format ("RGBA float");
 
   GRand  *gr = g_rand_new_with_seed (o->seed);
   gfloat  color[4];
   gint    cols, rows, num_tiles, count;
   gint   *random_indices;
   gfloat *dst_buf;
+  gfloat *buf;
 
   Polygon poly;
   gint    i;
@@ -466,6 +472,21 @@ process (GeglOperation       *operation,
                            boundary.height);
 
   dst_buf = g_new0 (gfloat, extended.width * extended.height * 4);
+
+  gegl_color_get_pixel (o->bg_color, format, color);
+
+  i   = extended.width * extended.height;
+  buf = dst_buf;
+
+  while (i--)
+    {
+      buf[0] = color[0];
+      buf[1] = color[1];
+      buf[2] = color[2];
+      buf[3] = color[3];
+
+      buf += 4;
+    }
 
   cols = (result->width + o->tile_size - 1) / o->tile_size;
   rows = (result->height + o->tile_size - 1) / o->tile_size;
@@ -535,20 +556,20 @@ get_bounding_box (GeglOperation *operation)
   GeglRectangle  result = {0,0,0,0};
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
 
-  if (!in_rect){
+  if (!in_rect)
     return result;
-  }
 
-  gegl_rectangle_copy(&result, in_rect);
+  gegl_rectangle_copy (&result, in_rect);
 
 #ifdef TRACE
   g_warning ("< get_bounding_box result = %dx%d+%d+%d", result.width, result.height, result.x, result.y);
 #endif
+
   return result;
 }
 
-
-/* Compute the input rectangle required to compute the specified region of interest (roi).
+/* Compute the input rectangle required to compute the specified
+ * region of interest (roi).
  */
 static GeglRectangle
 get_required_for_output (GeglOperation       *operation,
@@ -573,7 +594,6 @@ get_cached_region (GeglOperation       *operation,
   return *gegl_operation_source_get_bounding_box (operation, "input");
 }
 
-
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -590,9 +610,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_cached_region       = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories", "artistic",
-    "name", "gegl:cubism",
-    "description",  _("A filter that somehow resembles a cubist painting style"),
+    "categories",  "artistic",
+    "name",        "gegl:cubism",
+    "description", _("Convert the image into randomly rotated square blobs, somehow resembling a cubist painting style"),
     NULL);
 }
 
