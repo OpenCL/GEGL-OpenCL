@@ -27,16 +27,34 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_boolean (even, _("Even/Odd"), TRUE, _("Keep even/odd fields"))
-gegl_chant_boolean (horizontal, _("Horizontal/Vertical"), TRUE,
-                    _("Choose horizontal or vertical"))
-gegl_chant_int (size, _("Block size"), 0, 100, 1,
-                _("Block size of deinterlacing rows/columns"))
+gegl_chant_register_enum (gegl_deinterlace_keep)
+  enum_value (GEGL_DEINTERLACE_KEEP_EVEN, "Keep even fields")
+  enum_value (GEGL_DEINTERLACE_KEEP_ODD,  "Keep odd fields")
+gegl_chant_register_enum_end (GeglDeinterlaceKeep)
+
+gegl_chant_register_enum (gegl_orientation)
+  enum_value (GEGL_ORIENTATION_HORIZONTAL, "Horizontal")
+  enum_value (GEGL_ORIENTATION_VERTICAL,   "Vertical")
+gegl_chant_register_enum_end (GeglOrientation)
+
+gegl_chant_enum (keep, _("Keep"),
+                 GeglDeinterlaceKeep, gegl_deinterlace_keep,
+                 GEGL_DEINTERLACE_KEEP_EVEN,
+                 _("Keep even or odd fields"))
+
+gegl_chant_enum (orientation, _("Orientation"),
+                 GeglOrientation, gegl_orientation,
+                 GEGL_ORIENTATION_HORIZONTAL,
+                 _("Deinterlace horizontally or vertically"))
+
+gegl_chant_int  (size, _("Block size"),
+                 0, 100, 1,
+                 _("Block size of deinterlacing rows/columns"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "deinterlace.c"
+#define GEGL_CHANT_C_FILE "deinterlace.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -48,7 +66,7 @@ prepare (GeglOperation *operation)
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
 
-  if (o->horizontal)
+  if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
     {
       op_area->left = op_area->right = 0;
       op_area->top = op_area->bottom = o->size + 1;
@@ -143,8 +161,14 @@ deinterlace_vertical (gfloat              *src_buf,
                       gint                 x,
                       gint                 size)
 {
-  gfloat  upper[4], lower[4], temp_buf[4];
-  gint    y, up_offset, low_offset, offset = 0, i;
+  gfloat upper[4];
+  gfloat lower[4];
+  gfloat temp_buf[4];
+  gint   y;
+  gint   up_offset;
+  gint   low_offset;
+  gint   offset = 0;
+  gint   i;
 
   for (y=result->y; y < result->y + result->height; y++)
     {
@@ -193,19 +217,18 @@ deinterlace_vertical (gfloat              *src_buf,
           gint b;
           for (b=0; b < 3; b++)
             dest[offset + b] = temp_buf[b] / alpha;
-
         }
     }
 }
 
-
 static GeglRectangle
 get_effective_area (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+  GeglRectangle  result  = { 0, 0, 0, 0 };
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
+                                                                   "input");
 
-  gegl_rectangle_copy(&result, in_rect);
+  gegl_rectangle_copy (&result, in_rect);
 
   return result;
 }
@@ -242,21 +265,27 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, &rect, 1.0, format, src_buf,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  if (o->horizontal)
+  if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
     {
       for (y = result->y; y < result->y + result->height; y++)
-        if ((o->even && (y % 2 == 0)) || (!o->even && (y % 2 != 0)))
-          deinterlace_horizontal (src_buf, dst_buf, result, &rect, &boundary,
-                                  o->even ? 0 : 1,
-                                  y, o->size);
+        if ((o->keep == GEGL_DEINTERLACE_KEEP_EVEN && (y % 2 == 0)) ||
+            (o->keep == GEGL_DEINTERLACE_KEEP_ODD  && (y % 2 != 0)))
+          {
+            deinterlace_horizontal (src_buf, dst_buf, result, &rect, &boundary,
+                                    o->keep,
+                                    y, o->size);
+          }
     }
   else
     {
       for (x = result->x; x < result->x + result->width; x++)
-        if ((o->even && (x % 2 == 0)) || (!o->even && (x % 2 != 0)))
-          deinterlace_vertical (src_buf, dst_buf, result, &rect, &boundary,
-                                o->even ? 0 : 1,
-                                x, o->size);
+        if ((o->keep == GEGL_DEINTERLACE_KEEP_EVEN && (x % 2 == 0)) ||
+            (o->keep == GEGL_DEINTERLACE_KEEP_ODD  && (x % 2 != 0)))
+          {
+            deinterlace_vertical (src_buf, dst_buf, result, &rect, &boundary,
+                                  o->keep,
+                                  x, o->size);
+          }
     }
 
   gegl_buffer_set (output, result, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
@@ -270,7 +299,7 @@ process (GeglOperation       *operation,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle  result = { 0, 0, 0, 0 };
   GeglRectangle *in_rect;
 
   in_rect = gegl_operation_source_get_bounding_box (operation, "input");
@@ -288,7 +317,6 @@ get_required_for_output (GeglOperation       *operation,
   return get_bounding_box (operation);
 }
 
-
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -298,15 +326,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process                    = process;
   operation_class->prepare                 = prepare;
   operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
+  filter_class->process                    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories"  , "enhance",
-    "name"        , "gegl:deinterlace",
-    "description" , _("Performs deinterlace on the image"),
+    "name",        "gegl:deinterlace",
+    "categories",  "enhance",
+    "description", _("Fix images where every other row or column is missing"),
     NULL);
 }
 
