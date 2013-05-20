@@ -22,20 +22,31 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (azimuth, _("Azimuth"), 0.0, 360.0, 30.0,
-                   _("The value of azimuth"))
-gegl_chant_double (elevation, _("Elevation"), 0.0, 180.0, 45.0,
-                   _("The value of elevation"))
-gegl_chant_int    (depth, _("Depth"), 1, 100, 20,
-                   _("Pixel depth"))
-gegl_chant_string (filter, _("Filter"), "emboss",
-                   _("Optional parameter to override automatic selection "
-                     "of emboss filter. Choices are emboss, blur-map"))
+gegl_chant_register_enum (gegl_emboss_type)
+  enum_value (GEGL_EMBOSS_TYPE_EMBOSS,  "Emboss")
+  enum_value (GEGL_EMBOSS_TYPE_BUMPMAP, "Bumpmap")
+gegl_chant_register_enum_end (GeglEmbossType)
+
+gegl_chant_enum   (type, _("Emboss Type"),
+                   GeglEmbossType, gegl_emboss_type, GEGL_EMBOSS_TYPE_EMBOSS,
+                   _("Emboss or Bumpmap"))
+
+gegl_chant_double (azimuth, _("Azimuth"),
+                   0.0, 360.0, 30.0,
+                   _("The light angle (degrees)"))
+
+gegl_chant_double (elevation, _("Elevation"),
+                   0.0, 180.0, 45.0,
+                   _("The elevation angle (degrees)"))
+
+gegl_chant_int    (depth, _("Depth"),
+                   1, 100, 20,
+                   _("The filter width"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE        "emboss.c"
+#define GEGL_CHANT_C_FILE "emboss.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -64,7 +75,6 @@ emboss (gfloat              *src_buf,
         gfloat              *dst_buf,
         const GeglRectangle *dst_rect,
         gint                 x,
-        gchar               *text,
         gint                 floats_per_pixel,
         gint                 alpha,
         gdouble              azimuth,
@@ -164,7 +174,7 @@ prepare (GeglOperation *operation)
 
   op_area->left = op_area->right = op_area->top = op_area->bottom = 3;
 
-  if (o->filter && !strcmp(o->filter, "blur-map"))
+  if (o->type == GEGL_EMBOSS_TYPE_BUMPMAP)
     gegl_operation_set_format (operation, "output",
                                babl_format ("RGBA float"));
   else
@@ -185,22 +195,21 @@ process (GeglOperation       *operation,
   GeglRectangle  rect;
   gfloat        *src_buf;
   gfloat        *dst_buf;
-
-  gchar         *type;
+  const Babl    *format;
   gint           alpha;
   gint           x;
   gint           floats_per_pixel;
 
   /*blur-map or emboss*/
-  if (o->filter && !strcmp (o->filter, "blur-map"))
+  if (o->type == GEGL_EMBOSS_TYPE_BUMPMAP)
     {
-      type = "RGBA float";
+      format = babl_format ("RGBA float");
       floats_per_pixel = 4;
       alpha = 1;
     }
   else
     {
-      type = "Y float";
+      format = babl_format ("Y float");
       floats_per_pixel = 1;
       alpha = 0;
     }
@@ -213,15 +222,15 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, rect.width * rect.height * floats_per_pixel);
   dst_buf = g_new0 (gfloat, rect.width * rect.height * floats_per_pixel);
 
-  gegl_buffer_get (input, &rect, 1.0, babl_format (type), src_buf,
+  gegl_buffer_get (input, &rect, 1.0, format, src_buf,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   /*do for every row*/
   for (x = 0; x < rect.height; x++)
-    emboss (src_buf, &rect, dst_buf, &rect, x, type, floats_per_pixel, alpha,
+    emboss (src_buf, &rect, dst_buf, &rect, x, floats_per_pixel, alpha,
             DEG_TO_RAD (o->azimuth), DEG_TO_RAD (o->elevation), o->depth);
 
-  gegl_buffer_set (output, &rect, 0, babl_format (type),
+  gegl_buffer_set (output, &rect, 0, format,
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (src_buf);
