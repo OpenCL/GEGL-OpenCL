@@ -34,7 +34,7 @@ gegl_chant_double (threshold, _("Threshold"),
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_TYPE_POINT_FILTER
 #define GEGL_CHANT_C_FILE "red-eye-removal.c"
 
 #include "gegl-chant.h"
@@ -44,8 +44,6 @@ gegl_chant_double (threshold, _("Threshold"),
 #define RED_FACTOR    0.5133333
 #define GREEN_FACTOR  1
 #define BLUE_FACTOR   0.1933333
-
-#define SCALE_WIDTH   100
 
 static void
 prepare (GeglOperation *operation)
@@ -57,73 +55,63 @@ prepare (GeglOperation *operation)
 }
 
 static void
-red_eye_reduction (gfloat *src,
-                   gint    offset,
+red_eye_reduction (gfloat *buf,
                    gfloat  threshold)
 {
-  const gint red   = 0;
-  const gint green = 1;
-  const gint blue  = 2;
-
-  gfloat adjusted_red       = src[offset + red] * RED_FACTOR;
-  gfloat adjusted_green     = src[offset + green] * GREEN_FACTOR;
-  gfloat adjusted_blue      = src[offset + blue] * BLUE_FACTOR;
+  gfloat adjusted_red       = buf[0] * RED_FACTOR;
+  gfloat adjusted_green     = buf[1] * GREEN_FACTOR;
+  gfloat adjusted_blue      = buf[2] * BLUE_FACTOR;
   gfloat adjusted_threshold = (threshold - 0.4) * 2;
-  gfloat dest;
+  gfloat tmp;
 
   if (adjusted_red >= adjusted_green - adjusted_threshold &&
       adjusted_red >= adjusted_blue  - adjusted_threshold)
     {
-      dest = (gdouble) (adjusted_green + adjusted_blue) / (2.0  * RED_FACTOR);
-      dest = CLAMP (dest, 0.0, 1.0);
+      tmp = (gdouble) (adjusted_green + adjusted_blue) / (2.0 * RED_FACTOR);
+      buf[0] = CLAMP (tmp, 0.0, 1.0);
     }
-  else
-    {
-      dest = src[offset + red];
-    }
-
-  src[offset] = dest;
+  /* Otherwise, leave the red channel alone */
 }
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result,
+         void                *in_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
-  const Babl *format = babl_format ("R'G'B'A float");
-  gfloat     *src_buf;
-  gint        x;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  src_buf = g_new0 (gfloat, result->width * result->height * 4);
+  gfloat *dest = out_buf;
+  glong   i;
 
-  gegl_buffer_get (input, result, 1.0, format, src_buf,
-                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  /*
+   * Initialize the dest buffer to the input buffer
+   * (we only want to change the red component)
+   */
+  memcpy (out_buf, in_buf, sizeof (gfloat) * 4 * n_pixels);
 
-  for (x = 0; x < result->width * result->height; x++)
-    red_eye_reduction (src_buf, 4 * x, (float) o->threshold);
+  for (i = n_pixels; i > 0; i--)
+    {
+      red_eye_reduction (dest, o->threshold);
+      dest += 4;
+    }
 
-  gegl_buffer_set (output, result, 0, format, src_buf,
-                   GEGL_AUTO_ROWSTRIDE);
-
-  g_free (src_buf);
-
-  return  TRUE;
+  return TRUE;
 }
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass       *operation_class;
-  GeglOperationFilterClass *filter_class;
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
 
-  operation_class = GEGL_OPERATION_CLASS (klass);
-  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  operation_class->prepare = prepare;
-  filter_class->process    = process;
+  operation_class->prepare    = prepare;
+  point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:red-eye-removal",
