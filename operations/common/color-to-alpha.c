@@ -25,19 +25,21 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_color (color, _("Color"), "white",
+gegl_chant_color (color, _("Color"),
+                  "white",
                   _("The color to render (defaults to 'white')"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "color-to-alpha.c"
+#define GEGL_CHANT_C_FILE "color-to-alpha.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <math.h>
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",
                              babl_format ("R'G'B'A double"));
@@ -163,7 +165,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *filter_class;
-  gchar                         *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+  gchar                         *composition =
+    "<?xml version='1.0' encoding='UTF-8'?>"
     "<gegl>"
     "<node operation='svg:dst-over'>"
     "  <node operation='gegl:crop'>"
@@ -192,9 +195,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:color-to-alpha",
-    "categories" , "color",
-    "description", _("Performs color-to-alpha on the image."),
+    "name",        "gegl:color-to-alpha",
+    "categories",  "color",
+    "description", _("Convert a specified color to transparency"),
     "reference-composition", composition,
     NULL);
 }

@@ -28,14 +28,16 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_seed   (seed, _("Seed"), _("Random seed"))
+gegl_chant_seed   (seed, _("Seed"),
+                   _("Random seed"))
 
 gegl_chant_double (pct_random, _("Randomization (%)"),
-                   0.0, 100.0, 50.0, _("Randomization"))
+                   0.0, 100.0, 50.0,
+                   _("Randomization"))
 
 gegl_chant_int    (repeat, _("Repeat"),
-                   1, 100, 1, _("Repeat"))
-
+                   1, 100, 1,
+                   _("Repeat"))
 
 #else
 
@@ -203,10 +205,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:noise-pick",
-      "categories", "noise",
-      "description", _("Randomly interchange some pixels with neighbors"),
-      NULL);
+    "name",       "gegl:noise-pick",
+    "categories", "noise",
+    "description", _("Randomly interchange some pixels with neighbors"),
+    NULL);
 }
 
 #endif

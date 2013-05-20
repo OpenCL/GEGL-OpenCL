@@ -24,12 +24,21 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int_ui (radius, _("Radius"), 2, 3000, 300, 2, 3000, 1.6,
-                _("Neighborhood taken into account, this is the radius in pixels taken into account when deciding which colors map to which gray values"))
-gegl_chant_int_ui (samples, _("Samples"), 1, 1000, 4, 1, 20, 1.0,
-                _("Number of samples to do per iteration looking for the range of colors"))
-gegl_chant_int_ui (iterations, _("Iterations"), 1, 1000, 10, 1, 20, 1.0,
-                _("Number of iterations, a higher number of iterations provides less noisy results at a computational cost"))
+gegl_chant_int_ui (radius, _("Radius"),
+                   2, 3000, 300, 2, 3000, 1.6,
+                   _("Neighborhood taken into account, this is the radius "
+                     "in pixels taken into account when deciding which "
+                     "colors map to which gray values"))
+
+gegl_chant_int_ui (samples, _("Samples"),
+                   1, 1000, 4, 1, 20, 1.0,
+                   _("Number of samples to do per iteration looking for "
+                     "the range of colors"))
+
+gegl_chant_int_ui (iterations, _("Iterations"),
+                   1, 1000, 10, 1, 20, 1.0,
+                   _("Number of iterations, a higher number of iterations "
+                     "provides less noisy results at a computational cost"))
 
 /*
 gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
@@ -38,7 +47,7 @@ gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "c2g.c"
+#define GEGL_CHANT_C_FILE "c2g.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -312,8 +321,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process = process;
-  operation_class->prepare  = prepare;
+  filter_class->process    = process;
+  operation_class->prepare = prepare;
 
   /* we override defined region to avoid growing the size of what is defined
    * by the filter. This also allows the tricks used to treat alpha==0 pixels
@@ -325,13 +334,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",        "gegl:c2g",
-      "categories",  "enhance",
-      "description",
-     _("Color to grayscale conversion, uses envelopes formed from spatial "
-       "color differences to perform color-feature preserving grayscale "
-       "spatial contrast enhancement"),
-     NULL);
+    "name",        "gegl:c2g",
+    "categories",  "enhance",
+    "description",
+    _("Color to grayscale conversion, uses envelopes formed from spatial "
+      "color differences to perform color-feature preserving grayscale "
+      "spatial contrast enhancement"),
+    NULL);
 }
 
 #endif

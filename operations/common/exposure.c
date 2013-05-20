@@ -17,21 +17,27 @@
  *           2013 Øyvind Kolås <pippin@gimp.org>
  */
 
-
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_double_ui (exposure, _("Exposure"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, -10.0, 10.0, 1.0,
-                   _("Relative brightness change in stops"))
-gegl_chant_double_ui (offset, _("Offset"), -0.5, 0.5, 0.0, -0.5, 0.5, 1.0,
-                   _("Offset value added"))
-gegl_chant_double_ui (gamma, _("Gamma"), 0.01, 10, 1.0, 0.01, 3.0, 1.0,
-                   _("Gamma correction"))
+
+gegl_chant_double_ui (exposure, _("Exposure"),
+                      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, -10.0, 10.0, 1.0,
+                      _("Relative brightness change in stops"))
+
+gegl_chant_double_ui (offset, _("Offset"),
+                      -0.5, 0.5, 0.0, -0.5, 0.5, 1.0,
+                      _("Offset value added"))
+
+gegl_chant_double_ui (gamma, _("Gamma"),
+                      0.01, 10, 1.0, 0.01, 3.0, 1.0,
+                      _("Gamma correction"))
+
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE         "exposure.c"
+#define GEGL_CHANT_C_FILE "exposure.c"
 
 #include "gegl-chant.h"
 
@@ -40,7 +46,8 @@ gegl_chant_double_ui (gamma, _("Gamma"), 0.01, 10, 1.0, 0.01, 3.0, 1.0,
 #define powf(a,b) ((gfloat)pow(a,b))
 #endif
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
@@ -168,16 +175,17 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  point_filter_class->process = process;
+  operation_class->opencl_support = TRUE;
+  operation_class->prepare        = prepare;
+
+  point_filter_class->process    = process;
   point_filter_class->cl_process = cl_process;
 
-  operation_class->opencl_support = TRUE;
-  operation_class->prepare = prepare;
-
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:exposure",
-    "categories" , "color",
-    "description", _("Changes Exposure and Contrast, mainly for use with high dynamic range images."),
+    "name",        "gegl:exposure",
+    "categories",  "color",
+    "description", _("Changes Exposure and Contrast, mainly for use with "
+                     "high dynamic range images"),
     NULL);
 }
 

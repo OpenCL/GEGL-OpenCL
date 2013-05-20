@@ -252,8 +252,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories" , "distort",
-    "name"       , "gegl:emboss",
+    "name",        "gegl:emboss",
+    "categories",  "distort",
     "description", _("Simulates an image created by embossing"),
     NULL);
 }

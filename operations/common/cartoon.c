@@ -22,14 +22,18 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (mask_radius, _("Mask radius"),   0.0, 50.0, 7.0, _("Mask radius"))
+gegl_chant_double (mask_radius, _("Mask radius"),
+                   0.0, 50.0, 7.0,
+                   _("Mask radius"))
 
-gegl_chant_double (pct_black, _("Percent black"),   0.0, 1.0, 0.2, _("Percent black"))
+gegl_chant_double (pct_black, _("Percent black"),
+                   0.0, 1.0, 0.2,
+                   _("Percent black"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "cartoon.c"
+#define GEGL_CHANT_C_FILE "cartoon.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -361,20 +365,19 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-
   object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  object_class->finalize = finalize;
+  object_class->finalize   = finalize;
   operation_class->prepare = prepare;
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-                "categories" , "artistic",
-                "name"       , "gegl:cartoon",
-                "description", _("Cartoon effect"),
-                NULL);
+    "categories",  "artistic",
+    "name",        "gegl:cartoon",
+    "description", _("Simulate a cartoon by enhancing edges"),
+    NULL);
 }
 
 #endif

@@ -24,13 +24,20 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (original_temperature, _("Original temperature"), LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500, _("Estimated temperature of the light source in Kelvin the image was taken with."))
-gegl_chant_double (intended_temperature, _("Intended temperature"), LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500, _("Corrected estimation of the temperature of the light source in Kelvin."))
+gegl_chant_double (original_temperature, _("Original temperature"),
+                   LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500,
+                   _("Estimated temperature of the light source in Kelvin "
+                     "the image was taken with."))
+
+gegl_chant_double (intended_temperature, _("Intended temperature"),
+                   LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500,
+                   _("Corrected estimation of the temperature of the light "
+                     "source in Kelvin."))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "color-temperature.c"
+#define GEGL_CHANT_C_FILE "color-temperature.c"
 
 #include "gegl-chant.h"
 
@@ -261,16 +268,15 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->prepare = prepare;
 
-  point_filter_class->process = process;
+  point_filter_class->process    = process;
   point_filter_class->cl_process = cl_process;
 
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:color-temperature",
-    "categories" , "color",
-    "description",
-          _("Allows changing the color temperature of an image."),
+    "name",        "gegl:color-temperature",
+    "categories",  "color",
+    "description", _("Change the color temperature of the image"),
     "reference-composition", composition,
     NULL);
 }

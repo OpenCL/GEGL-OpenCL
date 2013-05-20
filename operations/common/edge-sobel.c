@@ -22,22 +22,24 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_boolean (horizontal,  _("Horizontal"),  TRUE,
+gegl_chant_boolean (horizontal,  _("Horizontal"),
+                    TRUE,
                     _("Horizontal"))
 
-gegl_chant_boolean (vertical,  _("Vertical"),  TRUE,
+gegl_chant_boolean (vertical,  _("Vertical"),
+                    TRUE,
                     _("Vertical"))
 
-gegl_chant_boolean (keep_signal,  _("Keep Signal"),  TRUE,
+gegl_chant_boolean (keep_signal,  _("Keep Signal"),
+                    TRUE,
                     _("Keep Signal"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "edge-sobel.c"
+#define GEGL_CHANT_C_FILE "edge-sobel.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -364,16 +366,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class  = GEGL_OPERATION_CLASS (klass);
   filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process   = process;
-  operation_class->prepare = prepare;
-
+  operation_class->prepare        = prepare;
   operation_class->opencl_support = TRUE;
 
+  filter_class->process           = process;
+
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:edge-sobel",
-    "categories" , "edge-detect",
-    "description",
-          _("Specialized direction-dependent edge detection"),
+    "name",        "gegl:edge-sobel",
+    "categories",  "edge-detect",
+    "description", _("Specialized direction-dependent edge detection"),
           NULL);
 }
 

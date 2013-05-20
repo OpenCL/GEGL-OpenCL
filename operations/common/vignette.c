@@ -19,33 +19,64 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
+
 gegl_chant_register_enum (gegl_vignette_shape)
   enum_value (GEGl_VIGNETTE_SHAPE_CIRCLE,  "Circle")
   enum_value (GEGl_VIGNETTE_SHAPE_SQUARE,  "Square")
   enum_value (GEGl_VIGNETTE_SHAPE_DIAMOND, "Diamond")
 gegl_chant_register_enum_end (GeglVignetteShape)
 
-gegl_chant_enum (shape, _("Shape"), GeglVignetteShape, gegl_vignette_shape,
-                 GEGl_VIGNETTE_SHAPE_CIRCLE, _("Shape of the vignette"))
+gegl_chant_enum   (shape, _("Shape"),
+                   GeglVignetteShape, gegl_vignette_shape,
+                   GEGl_VIGNETTE_SHAPE_CIRCLE,
+                   _("Shape of the vignette"))
 
+gegl_chant_color  (color, _("Color"),
+                   "black",
+                   _("Defaults to 'black', you can use transparency here "
+                     "to erase portions of an image"))
 
-gegl_chant_color (color,     _("Color"), "black", _("Defaults to 'black', you can use transparency here to erase portions of an image"))
-gegl_chant_double (radius,   _("Radius"),  0.0, 3.0, 1.5, _("How far out vignetting goes as portion of half image diagonal"))
-gegl_chant_double (softness,  _("Softness"),  0.0, 1.0, 0.8, _("Softness"))
-gegl_chant_double (gamma,    _("Gamma"),  1.0, 20.0, 2.0, _("Falloff linearity"))
-gegl_chant_double (proportion, _("Proportion"), 0.0, 1.0, 1.0,  _("How close we are to image proportions"))
-gegl_chant_double (squeeze,   _("Squeeze"), -1.0, 1.0, 0.0,  _("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, this is applied after proportion is taken into account, to directly use squeeze factor as proportions, set proportion to 0.0."))
+gegl_chant_double (radius, _("Radius"),
+                   0.0, 3.0, 1.5,
+                   _("How far out vignetting goes as portion of half "
+                     "image diagonal"))
 
-gegl_chant_double (x,        _("X"),  -1.0, 2.0, 0.5, _("Horizontal center of vignetting"))
-gegl_chant_double (y,        _("Y"),  -1.0, 2.0, 0.5, _("Vertical center of vignetting"))
-gegl_chant_double (rotation, _("Rotation"),  0.0, 360.0, 0.0, _("Rotation angle"))
+gegl_chant_double (softness, _("Softness"),
+                   0.0, 1.0, 0.8,
+                   _("Softness"))
+
+gegl_chant_double (gamma, _("Gamma"),
+                   1.0, 20.0, 2.0,
+                   _("Falloff linearity"))
+
+gegl_chant_double (proportion, _("Proportion"),
+                   0.0, 1.0, 1.0,
+                   _("How close we are to image proportions"))
+
+gegl_chant_double (squeeze, _("Squeeze"),
+                   -1.0, 1.0, 0.0,
+                   _("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, "
+                     "-1.0 = 1:inf 1.0 = inf:1, this is applied after "
+                     "proportion is taken into account, to directly use "
+                     "squeeze factor as proportions, set proportion to 0.0."))
+
+gegl_chant_double (x, _("X"),
+                   -1.0, 2.0, 0.5,
+                   _("Horizontal center of vignetting"))
+
+gegl_chant_double (y, _("Y"),
+                   -1.0, 2.0, 0.5,
+                   _("Vertical center of vignetting"))
+
+gegl_chant_double (rotation, _("Rotation"),
+                   0.0, 360.0, 0.0,
+                   _("Rotation angle"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE               "vignette.c"
+#define GEGL_CHANT_C_FILE "vignette.c"
 
 #include "gegl-chant.h"
 
@@ -67,7 +98,8 @@ prepare (GeglOperation *operation)
  *  1.0 = infinity
  */
 
-static float aspect_to_scale (float aspect)
+static float
+aspect_to_scale (float aspect)
 {
   if (aspect == 0.0)
     return 1.0;
@@ -78,7 +110,8 @@ static float aspect_to_scale (float aspect)
 }
 
 #if 0
-static float scale_to_aspect (float scale)
+static float
+scale_to_aspect (float scale)
 {
   if (scale == 1.0)
     return 0.0;
@@ -327,27 +360,30 @@ process (GeglOperation       *operation,
 
   return  TRUE;
 }
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
 
-  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  point_filter_class->process = process;
-  point_filter_class->cl_process = cl_process;
-
-  operation_class->prepare = prepare;
-  operation_class->no_cache = TRUE;
-
+  operation_class->prepare        = prepare;
+  operation_class->no_cache       = TRUE;
   operation_class->opencl_support = TRUE;
 
+  point_filter_class->process    = process;
+  point_filter_class->cl_process = cl_process;
+
   gegl_operation_class_set_keys (operation_class,
-  "name"       , "gegl:vignette",
-  "categories" , "render",
-  "description", _("A vignetting op, applies a vignette to an image. Simulates the luminance fall off at edge of exposed film, and some other fuzzier border effects that can naturally occur with analoge photograpy."),
+    "name",        "gegl:vignette",
+    "categories",  "render",
+    "description", _("Applies a vignette to an image. Simulates the luminance "
+                     "fall off at the edge of exposed film, and some other "
+                     "fuzzier border effects that can naturally occur with "
+                     "analog photograpy"),
   NULL);
 }
 

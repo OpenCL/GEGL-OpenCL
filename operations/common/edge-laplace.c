@@ -28,7 +28,7 @@
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "edge-laplace.c"
+#define GEGL_CHANT_C_FILE "edge-laplace.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -43,12 +43,14 @@ edge_laplace (GeglBuffer          *src,
 
 #include <stdio.h>
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   //GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = LAPLACE_RADIUS;
+
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
@@ -512,10 +514,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:edge-laplace",
-    "categories"  , "edge-detect",
-    "description" ,
-          _("High-resolution edge detection"),
+    "name",        "gegl:edge-laplace",
+    "categories",  "edge-detect",
+    "description", _("High-resolution edge detection"),
     NULL);
 }
 

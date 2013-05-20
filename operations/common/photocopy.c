@@ -22,22 +22,26 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (mask_radius, _("Mask Radius"), 0.0, 50.0, 10.0,
+gegl_chant_double (mask_radius, _("Mask Radius"),
+                   0.0, 50.0, 10.0,
                    _("Mask Radius"))
 
-gegl_chant_double (sharpness, _("Sharpness"), 0.0, 1.0, 0.5,
+gegl_chant_double (sharpness, _("Sharpness"),
+                   0.0, 1.0, 0.5,
                    _("Sharpness"))
 
-gegl_chant_double (black, _("Percent Black"), 0.0, 1.0, 0.2,
+gegl_chant_double (black, _("Percent Black"),
+                   0.0, 1.0, 0.2,
                    _("Percent Black"))
 
-gegl_chant_double (white, _("Percent White"), 0.0, 1.0, 0.2,
+gegl_chant_double (white, _("Percent White"),
+                   0.0, 1.0, 0.2,
                    _("Percent White"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "photocopy.c"
+#define GEGL_CHANT_C_FILE "photocopy.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -390,9 +394,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "categories" , "artistic",
-                                 "name"       , "gegl:photocopy",
-                                 "description", _("Photocopy effect"),
-                                 NULL);
+    "name",        "gegl:photocopy",
+    "categories",  "artistic",
+    "description", _("Simulate color distortion produced by a copy machine"),
+    NULL);
 }
 #endif

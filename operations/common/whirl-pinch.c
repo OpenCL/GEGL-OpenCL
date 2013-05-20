@@ -269,10 +269,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = get_required_for_output;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",        "gegl:whirl-pinch",
-      "categories",  "distort",
-      "description", _("Distort an image by whirling and pinching"),
-      NULL);
+    "name",        "gegl:whirl-pinch",
+    "categories",  "distort",
+    "description", _("Distort an image by whirling and pinching"),
+    NULL);
 }
 
 #endif

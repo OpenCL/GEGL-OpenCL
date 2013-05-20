@@ -22,23 +22,34 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int_ui   (x,        _("Width"),  1, G_MAXINT, 16, 1, 256, 1.5,
-                  _("Horizontal width of cells pixels"))
-gegl_chant_int_ui   (y,        _("Height"), 1, G_MAXINT, 16, 1, 256, 1.5,
-                  _("Vertical width of cells in pixels"))
-gegl_chant_int_ui   (x_offset, _("X offset"), -G_MAXINT, G_MAXINT, 0, -10, 10, 1.0,
-                  _("Horizontal offset (from origin) for start of grid"))
-gegl_chant_int_ui   (y_offset, _("Y offset"), -G_MAXINT, G_MAXINT,  0, -10, 10, 1.0,
-                  _("Vertical offset (from origin) for start of grid"))
-gegl_chant_color (color1,   _("Color"), "black",
-                  _("One of the cell colors (defaults to 'black')"))
-gegl_chant_color (color2,   _("Other color"), "white",
-                  _("The other cell color (defaults to 'white')"))
+gegl_chant_int_ui   (x, _("Width"),
+                     1, G_MAXINT, 16, 1, 256, 1.5,
+                     _("Horizontal width of cells pixels"))
+
+gegl_chant_int_ui   (y, _("Height"),
+                     1, G_MAXINT, 16, 1, 256, 1.5,
+                     _("Vertical width of cells in pixels"))
+
+gegl_chant_int_ui   (x_offset, _("X offset"),
+                     -G_MAXINT, G_MAXINT, 0, -10, 10, 1.0,
+                     _("Horizontal offset (from origin) for start of grid"))
+
+gegl_chant_int_ui   (y_offset, _("Y offset"),
+                     -G_MAXINT, G_MAXINT,  0, -10, 10, 1.0,
+                     _("Vertical offset (from origin) for start of grid"))
+
+gegl_chant_color    (color1, _("Color"),
+                     "black",
+                     _("One of the cell colors (defaults to 'black')"))
+
+gegl_chant_color    (color2, _("Other color"),
+                     "white",
+                     _("The other cell color (defaults to 'white')"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE       "checkerboard.c"
+#define GEGL_CHANT_C_FILE "checkerboard.c"
 
 #include "gegl-chant.h"
 
@@ -141,9 +152,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",  "gegl:checkerboard",
-    "categories", "render",
-    "description", _("Checkerboard renderer"),
+    "name",        "gegl:checkerboard",
+    "categories",  "render",
+    "description", _("Create a checkerboard pattern"),
     NULL);
 }
 

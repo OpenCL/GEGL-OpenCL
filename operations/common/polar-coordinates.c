@@ -31,25 +31,43 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (depth, _("Circle depth in percent"), 0.0, 100.0, 100.0,
-                   _("Circle depth in percent"))
-gegl_chant_double (angle, _("Offset angle"), 0.0, 359.9, 0.0,
-                   _("Offset angle."))
-gegl_chant_boolean (bw, _("Map backwards"), FALSE, _("Start from the right instead of the left"))
-gegl_chant_boolean (top, _("Map from top"), TRUE, _("Put the top row in the middle and the bottom row on the outside"))
-gegl_chant_boolean (polar, _("To polar"), TRUE, _("Map the image to a circle"))
-gegl_chant_int (pole_x, _("X:"), 0, G_MAXINT, 0,
-                _("Origin point for the polar coordinates"))
-gegl_chant_int (pole_y, _("Y:"), 0, G_MAXINT, 0,
-                _("Origin point for the polar coordinates"))
-gegl_chant_boolean (middle, _("Choose middle"), TRUE,
-                    _("Let origin point to be the middle one"))
+gegl_chant_double  (depth, _("Circle depth in percent"),
+                    0.0, 100.0, 100.0,
+                    _("Circle depth in percent"))
 
+gegl_chant_double  (angle, _("Offset angle"),
+                    0.0, 359.9, 0.0,
+                    _("Offset angle."))
+
+gegl_chant_boolean (bw, _("Map backwards"),
+                    FALSE,
+                    _("Start from the right instead of the left"))
+
+gegl_chant_boolean (top, _("Map from top"),
+                    TRUE,
+                    _("Put the top row in the middle and the bottom row on "
+                      "the outside"))
+
+gegl_chant_boolean (polar, _("To polar"),
+                    TRUE,
+                    _("Map the image to a circle"))
+
+gegl_chant_int     (pole_x, _("X"),
+                    0, G_MAXINT, 0,
+                    _("Origin point for the polar coordinates"))
+
+gegl_chant_int     (pole_y, _("Y"),
+                    0, G_MAXINT, 0,
+                    _("Origin point for the polar coordinates"))
+
+gegl_chant_boolean (middle, _("Choose middle"),
+                    TRUE,
+                    _("Let origin point to be the middle one"))
 
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "polar-coordinates.c"
+#define GEGL_CHANT_C_FILE "polar-coordinates.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -61,7 +79,8 @@ gegl_chant_boolean (middle, _("Choose middle"), TRUE,
 #define SCALE_WIDTH     200
 #define ENTRY_WIDTH      60
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
@@ -391,15 +410,16 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
-  operation_class->prepare = prepare;
+  operation_class->prepare                 = prepare;
   operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
+  filter_class->process                    = process;
+
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:polar-coordinates",
-    "categories" , "enhance",
-    "description", _("Performs polar-coordinates on the image."),
+    "name",        "gegl:polar-coordinates",
+    "categories",  "enhance",
+    "description", _("Convert image to or from polar coordinates"),
     NULL);
 }
 

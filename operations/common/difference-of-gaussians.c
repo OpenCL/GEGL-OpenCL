@@ -19,18 +19,20 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double_ui (radius1, _("Radius 1"), 0.0, 1000.0, 1.0, 0.0, 10.0, 1.5,
+gegl_chant_double_ui (radius1, _("Radius 1"),
+                      0.0, 1000.0, 1.0, 0.0, 10.0, 1.5,
                      _("Radius"))
-gegl_chant_double_ui (radius2, _("Radius 2"), 0.0, 1000.0, 2.0, 0.0, 10.0, 1.5,
+
+gegl_chant_double_ui (radius2, _("Radius 2"),
+                      0.0, 1000.0, 2.0, 0.0, 10.0, 1.5,
                      _("Radius"))
 
 #else
 
 #define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE       "difference-of-gaussians.c"
+#define GEGL_CHANT_C_FILE "difference-of-gaussians.c"
 
 #include "gegl-chant.h"
 
@@ -92,14 +94,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass *operation_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
+
   operation_class->attach = attach;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:difference-of-gaussians",
-    "categories" , "meta:edge",
-    "description",
-        _("Does an edge detection based on the difference of two gaussian blurs."),
-        NULL);
+    "name",        "gegl:difference-of-gaussians",
+    "categories",  "meta:edge",
+    "description", _("Edge detection with control of edge thickness, based "
+                     "on the difference of two gaussian blurs"),
+    NULL);
 }
 
 #endif

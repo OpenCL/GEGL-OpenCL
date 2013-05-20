@@ -32,13 +32,25 @@ gegl_chant_register_enum (gegl_dither_strategy)
   enum_value (GEGL_DITHER_FLOYD_STEINBERG, "Floyd-Steinberg")
 gegl_chant_register_enum_end (GeglDitherStrategy)
 
-gegl_chant_int (red_bits,   _("Red bits"),   1, 16, 8, _("Number of bits for red channel"))
-gegl_chant_int (green_bits, _("Green bits"), 1, 16, 8, _("Number of bits for green channel"))
-gegl_chant_int (blue_bits,  _("Blue bits"),  1, 16, 8, _("Number of bits for blue channel"))
-gegl_chant_int (alpha_bits, _("Alpha bits"), 1, 16, 8, _("Number of bits for alpha channel"))
+gegl_chant_int  (red_bits, _("Red bits"),
+                 1, 16, 8,
+                 _("Number of bits for red channel"))
 
-gegl_chant_enum (dither_strategy, _("Dithering Strategy"), GeglDitherStrategy,
-                 gegl_dither_strategy, GEGL_DITHER_RESILIENT, _("The dithering strategy to use"))
+gegl_chant_int  (green_bits, _("Green bits"),
+                 1, 16, 8,
+                 _("Number of bits for green channel"))
+
+gegl_chant_int  (blue_bits, _("Blue bits"),
+                 1, 16, 8,
+                 _("Number of bits for blue channel"))
+
+gegl_chant_int  (alpha_bits, _("Alpha bits"),
+                 1, 16, 8,
+                 _("Number of bits for alpha channel"))
+
+gegl_chant_enum (dither_strategy, _("Dithering Strategy"),
+                 GeglDitherStrategy, gegl_dither_strategy, GEGL_DITHER_RESILIENT,
+                 _("The dithering strategy to use"))
 
 #else
 
@@ -574,12 +586,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:color-reduction",
-    "categories"  , "misc",
-    "description" ,
-            _("Reduces the number of bits per channel (colors and alpha), with optional dithering"),
+    "name",        "gegl:color-reduction",
+    "categories",  "misc",
+    "description", _("Reduce the number of colors in the image, by reducing "
+                     "the bits per channel (colors and alpha), with optional "
+                     "dithering"),
     "reference-composition", composition,
-            NULL);
+    NULL);
 }
 
 #endif

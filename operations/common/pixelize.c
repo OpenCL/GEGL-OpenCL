@@ -22,15 +22,18 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int_ui (size_x, _("Block Width"),  1, 123456, 16, 1, 2048, 1.5,
-   _("Width of blocks in pixels"))
-gegl_chant_int_ui (size_y, _("Block Height"), 1, 123456, 16, 1, 2048, 1.5,
-   _("Height of blocks in pixels"))
+gegl_chant_int_ui (size_x, _("Block Width"),
+                   1, 123456, 16, 1, 2048, 1.5,
+                   _("Width of blocks in pixels"))
+
+gegl_chant_int_ui (size_y, _("Block Height"),
+                   1, 123456, 16, 1, 2048, 1.5,
+                   _("Height of blocks in pixels"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "pixelize.c"
+#define GEGL_CHANT_C_FILE"pixelize.c"
 
 #include "gegl-chant.h"
 
@@ -38,7 +41,8 @@ gegl_chant_int_ui (size_y, _("Block Height"), 1, 123456, 16, 1, 2048, 1.5,
 #define CELL_Y(py, cell_height)  ((py) / (cell_height))
 
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
@@ -303,16 +307,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
-  operation_class->prepare = prepare;
-
+  operation_class->prepare        = prepare;
   operation_class->opencl_support = TRUE;
 
+  filter_class->process           = process;
+
   gegl_operation_class_set_keys (operation_class,
-    "categories" , "blur",
-    "name"       , "gegl:pixelize",
-    "description",
-         _("Simplify image into an array of solid-colored squares"),
+    "name",        "gegl:pixelize",
+    "categories",  "blur",
+    "description", _("Simplify image into an array of solid-colored rectangles"),
     NULL);
 }
 

@@ -25,18 +25,37 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_boolean (correlated, _("Correlated noise"), FALSE, _("Correlated noise"))
-gegl_chant_boolean (independent, _("Independent RGB"), TRUE, _("Independent RGB"))
-gegl_chant_double (red, _("Red"),   0.0, 1.0, 0.20, _("Red"))
-gegl_chant_double (green, _("Green"),   0.0, 1.0, 0.20, _("Green"))
-gegl_chant_double (blue, _("Blue"),   0.0, 1.0, 0.20, _("Blue"))
-gegl_chant_double (alpha, _("Alpha"),   0.0, 1.0, 0.00, _("Alpha"))
-gegl_chant_seed (seed, _("Seed"), _("Random seed"))
+gegl_chant_boolean (correlated, _("Correlated noise"),
+                    FALSE,
+                    _("Correlated noise"))
+
+gegl_chant_boolean (independent, _("Independent RGB"),
+                    TRUE,
+                    _("Independent RGB"))
+
+gegl_chant_double  (red, _("Red"),
+                    0.0, 1.0, 0.20,
+                    _("Red"))
+
+gegl_chant_double  (green, _("Green"),
+                    0.0, 1.0, 0.20,
+                    _("Green"))
+
+gegl_chant_double  (blue, _("Blue"),
+                    0.0, 1.0, 0.20,
+                    _("Blue"))
+
+gegl_chant_double  (alpha, _("Alpha"),
+                    0.0, 1.0, 0.00,
+                    _("Alpha"))
+
+gegl_chant_seed    (seed, _("Seed"),
+                    _("Random seed"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "noise-rgb.c"
+#define GEGL_CHANT_C_FILE "noise-rgb.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -158,14 +177,14 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  operation_class->prepare = prepare;
+  operation_class->prepare    = prepare;
   point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:noise-rgb",
-      "categories", "noise",
-      "description", _("Distort colors by random amounts."),
-      NULL);
+    "name",        "gegl:noise-rgb",
+    "categories",  "noise",
+    "description", _("Distort colors by random amounts."),
+    NULL);
 }
 
 #endif

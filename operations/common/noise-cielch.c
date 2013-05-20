@@ -22,18 +22,26 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (holdness, _("Holdness"),   1, 8, 2, _("Holdness"))
+gegl_chant_int    (holdness, _("Holdness"),
+                   1, 8, 2,
+                   _("Holdness"))
 
-gegl_chant_double (lightness_distance, _("Lightness"), 0.0, 100.0, 40.0, _("Lightness"))
+gegl_chant_double (lightness_distance, _("Lightness"),
+                   0.0, 100.0, 40.0,
+                   _("Lightness"))
 
-gegl_chant_double (chroma_distance,    _("Chroma"),    0.0, 100.0, 40.0, _("Chroma"))
+gegl_chant_double (chroma_distance, _("Chroma"),
+                   0.0, 100.0, 40.0,
+                   _("Chroma"))
 
-gegl_chant_double (hue_distance,       _("Hue"),       0.0, 180.0,  3.0, _("Hue"))
+gegl_chant_double (hue_distance, _("Hue"),
+                   0.0, 180.0,  3.0,
+                   _("Hue"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "noise-cielch.c"
+#define GEGL_CHANT_C_FILE "noise-cielch.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -86,8 +94,10 @@ randomize_value (gdouble     now,
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input" , babl_format ("CIE LCH(ab) alpha double"));
-  gegl_operation_set_format (operation, "output", babl_format ("CIE LCH(ab) alpha double"));
+  gegl_operation_set_format (operation, "input" ,
+                             babl_format ("CIE LCH(ab) alpha double"));
+  gegl_operation_set_format (operation, "output",
+                             babl_format ("CIE LCH(ab) alpha double"));
 }
 
 static gboolean
@@ -151,14 +161,14 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  operation_class->prepare = prepare;
+  operation_class->prepare    = prepare;
   point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:noise-CIE_lch",
-      "categories", "noise",
-      "description", _("Randomize lightness, chroma and hue independently"),
-      NULL);
+    "name",        "gegl:noise-CIE_lch",
+    "categories",  "noise",
+    "description", _("Randomize lightness, chroma and hue independently"),
+    NULL);
 }
 
 #endif

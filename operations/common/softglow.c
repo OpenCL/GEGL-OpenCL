@@ -23,16 +23,22 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (glow_radius, _("Glow radius"),   1.0, 50.0, 10.0, _("Glow radius"))
+gegl_chant_double (glow_radius, _("Glow radius"),
+                   1.0, 50.0, 10.0,
+                   _("Glow radius"))
 
-gegl_chant_double (brightness, _("Brightness"),   0.0, 1.0, 0.75, _("Brightness"))
+gegl_chant_double (brightness, _("Brightness"),
+                   0.0, 1.0, 0.75,
+                   _("Brightness"))
 
-gegl_chant_double (sharpness, _("Sharpness"),   0.0, 1.0, 0.85, _("Sharpness"))
+gegl_chant_double (sharpness, _("Sharpness"),
+                   0.0, 1.0, 0.85,
+                   _("Sharpness"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "softglow.c"
+#define GEGL_CHANT_C_FILE "softglow.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -239,10 +245,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-                "categories" , "artistic",
-                "name"       , "gegl:softglow",
-                "description", _("Softglow effect"),
-                NULL);
+    "name",        "gegl:softglow",
+    "categories",  "artistic",
+    "description", _("Simulate glow by making highlights intense and fuzzy"),
+    NULL);
 }
 
 #endif

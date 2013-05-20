@@ -122,13 +122,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
   operation_class->prepare = prepare;
+  filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories"  , "enhance",
-    "name"        , "gegl:red-eye-removal",
-    "description" , _("Remove the red eye effect caused by camera flashes"),
+    "name",        "gegl:red-eye-removal",
+    "categories",  "enhance",
+    "description", _("Remove the red eye effect caused by camera flashes"),
     NULL);
 }
 

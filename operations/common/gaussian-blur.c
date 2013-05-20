@@ -27,25 +27,31 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double_ui (std_dev_x, _("Size X"), 0.0, 10000.0, 4.0, 0.0, 1000.0, 1.5,
-   _("Standard deviation for the horizontal axis. (multiply by ~2 to get radius)"))
-gegl_chant_double_ui (std_dev_y, _("Size Y"), 0.0, 10000.0, 4.0, 0.0, 1000.0, 1.5,
-   _("Standard deviation for the vertical axis. (multiply by ~2 to get radius.)"))
-gegl_chant_string (filter, _("Filter"), "auto",
-   _("Optional parameter to override the automatic selection of blur filter. "
-     "Choices are fir, iir, auto"))
+gegl_chant_double_ui (std_dev_x, _("Size X"),
+                      0.0, 10000.0, 4.0, 0.0, 1000.0, 1.5,
+                      _("Standard deviation for the horizontal axis. "
+                        "(multiply by ~2 to get radius)"))
+
+gegl_chant_double_ui (std_dev_y, _("Size Y"),
+                      0.0, 10000.0, 4.0, 0.0, 1000.0, 1.5,
+                      _("Standard deviation for the vertical axis. "
+                        "(multiply by ~2 to get radius.)"))
+
+gegl_chant_string    (filter, _("Filter"),
+                      "auto",
+                      _("Optional parameter to override the automatic "
+                        "selection of blur filter. Choices are fir, iir, auto"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "gaussian-blur.c"
+#define GEGL_CHANT_C_FILE "gaussian-blur.c"
 
 #include "gegl-chant.h"
 #include <math.h>
 #include <stdio.h>
 
 #define RADIUS_SCALE   4
-
 
 static void
 iir_young_find_constants (gfloat   radius,
@@ -679,12 +685,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",       "gegl:gaussian-blur",
-    "categories", "blur",
-    "description",
-        _("Performs an averaging of neighboring pixels with the "
-          "normal distribution as weighting"),
-        NULL);
+    "name",        "gegl:gaussian-blur",
+    "categories",  "blur",
+    "description", _("Performs an averaging of neighboring pixels with the "
+                     "normal distribution as weighting"),
+    NULL);
 }
 
 #endif

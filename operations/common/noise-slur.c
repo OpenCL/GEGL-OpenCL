@@ -31,14 +31,16 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_seed   (seed, _("Seed"), _("Random seed"))
+gegl_chant_seed   (seed, _("Seed"),
+                   _("Random seed"))
 
 gegl_chant_double (pct_random, _("Randomization (%)"),
-                   0.0, 100.0, 50.0, _("Randomization"))
+                   0.0, 100.0, 50.0,
+                   _("Randomization"))
 
 gegl_chant_int    (repeat, _("Repeat"),
-                   1, 100, 1, _("Repeat"))
-
+                   1, 100, 1,
+                   _("Repeat"))
 
 #else
 
@@ -185,13 +187,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   operation_class->prepare = prepare;
-  filter_class->process = process;
+  filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:noise-slur",
-      "categories", "noise",
-      "description", _("Randomly slide some pixels downward (similar to melting)"),
-      NULL);
+    "name",        "gegl:noise-slur",
+    "categories",  "noise",
+    "description", _("Randomly slide some pixels downward (similar to melting)"),
+    NULL);
 }
 
 #endif

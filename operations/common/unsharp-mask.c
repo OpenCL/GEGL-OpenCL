@@ -21,19 +21,23 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double_ui (std_dev, _("Std. Dev."), 0.0, 500.0, 1.0, 0.0, 200.0, 1.5,
-                  _("Standard deviation (spatial scale factor)"))
-gegl_chant_double_ui (scale,  _("Scale"), 0.0, 100.0, 1.0, 0.0, 100.0, 1.5,
-                  _("Scale, strength of effect"))
+gegl_chant_double_ui (std_dev, _("Std. Dev."),
+                      0.0, 500.0, 1.0, 0.0, 200.0, 1.5,
+                      _("Standard deviation (spatial scale factor)"))
+
+gegl_chant_double_ui (scale, _("Scale"),
+                      0.0, 100.0, 1.0, 0.0, 100.0, 1.5,
+                      _("Scale, strength of effect"))
 
 #else
 
 #define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE       "unsharp-mask.c"
+#define GEGL_CHANT_C_FILE "unsharp-mask.c"
 
 #include "gegl-chant.h"
 
-static void attach (GeglOperation *operation)
+static void
+attach (GeglOperation *operation)
 {
   GeglNode *gegl, *input, *output, *add, *multiply, *subtract, *blur;
 
@@ -64,15 +68,15 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass *operation_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
+
   operation_class->attach = attach;
 
   gegl_operation_class_set_keys (operation_class,
-  "name"       , "gegl:unsharp-mask",
-  "categories" , "meta:enhance",
-  "description",
-        _("Performs an unsharp mask on the input buffer (sharpens an image by "
-          "adding false mach-bands around edges)"),
-        NULL);
+    "name",        "gegl:unsharp-mask",
+    "categories",  "meta:enhance",
+    "description", _("The most widely used method for sharpening an image, "
+                     "sharpens by adding false mach-bands around edges"),
+    NULL);
 }
 
 #endif

@@ -27,26 +27,35 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (main, _("Main:"), -100.0, 100.0, 0.0,
+gegl_chant_double (main, _("Main"),
+                   -100.0, 100.0, 0.0,
                    _("Main value of distortion"))
-gegl_chant_double (zoom, _("Zoom:"), -100.0, 100.0, 0.0,
+
+gegl_chant_double (zoom, _("Zoom"),
+                   -100.0, 100.0, 0.0,
                    _("Main value of distortion"))
-gegl_chant_double (edge, _("Edge:"), -100.0, 100.0, 0.0,
+gegl_chant_double (edge, _("Edge"),
+                   -100.0, 100.0, 0.0,
                    _("Edge value of distortion"))
-gegl_chant_double (brighten, _("Brighten:"), -100.0, 100.0, 0.0,
+
+gegl_chant_double (brighten, _("Brighten"),
+                   -100.0, 100.0, 0.0,
                    _("Brighten the image"))
-gegl_chant_double (x_shift, _("X shift:"), -100.0, 100.0, 0.0,
+
+gegl_chant_double (x_shift, _("X shift"),
+                   -100.0, 100.0, 0.0,
                    _("Shift horizontal"))
-gegl_chant_double (y_shift, _("Y shift:"), -100.0, 100.0, 0.0,
+
+gegl_chant_double (y_shift, _("Y shift"),
+                   -100.0, 100.0, 0.0,
                    _("Shift vertical"))
 
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "lens-distortion.c"
+#define GEGL_CHANT_C_FILE "lens-distortion.c"
 
 #include "gegl-chant.h"
 #include <math.h>
@@ -300,13 +309,13 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
-
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
-  gchar                    *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+  gchar                    *composition =
+    "<?xml version='1.0' encoding='UTF-8'?>"
     "<gegl>"
     "<node operation='gegl:lens-distortion'>"
     "  <params>"
@@ -327,15 +336,16 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process = process;
-  operation_class->prepare = prepare;
-  operation_class->get_bounding_box = get_bounding_box;
+  operation_class->prepare                 = prepare;
+  operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
+  filter_class->process                    = process;
+
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:lens-distortion",
-    "categories" , "blur",
-    "description", _("Copies image performing lens distortion correction."),
+    "name",        "gegl:lens-distortion",
+    "categories",  "blur",
+    "description", _("Corrects lens distortion"),
     "reference-composition", composition,
     NULL);
 }

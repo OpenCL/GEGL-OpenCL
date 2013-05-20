@@ -42,8 +42,7 @@ gegl_chant_color  (bg_color, _("Background Color"),
 gegl_chant_seed   (seed, _("Seed"),
                    _("Random seed"))
 
-
-# else
+#else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
 #define GEGL_CHANT_C_FILE "cubism.c"

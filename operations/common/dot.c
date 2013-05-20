@@ -23,15 +23,18 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int_ui (size, _("Block Width"),  1, 123456, 16, 1, 1024, 1.5,
-   _("Size of each block in pixels"))
-gegl_chant_double(ratio, _("Dot size ratio"), 0.0, 1.0, 1.0,
-                  _("Size ratio of a dot inside each block"))
+gegl_chant_int_ui (size, _("Block Width"),
+                   1, 123456, 16, 1, 1024, 1.5,
+                   _("Size of each block in pixels"))
+
+gegl_chant_double (ratio, _("Dot size ratio"),
+                   0.0, 1.0, 1.0,
+                   _("Size ratio of a dot inside each block"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "dot.c"
+#define GEGL_CHANT_C_FILE "dot.c"
 
 #include "gegl-chant.h"
 
@@ -39,7 +42,8 @@ gegl_chant_double(ratio, _("Dot size ratio"), 0.0, 1.0, 1.0,
 #define CELL_Y(py, cell_height)  ((py) / (cell_height))
 
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
@@ -185,10 +189,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories" , "render",
-    "name"       , "gegl:dot",
-    "description",
-         _("Simplify image into an array of solid-colored dots"),
+    "name",        "gegl:dot",
+    "categories",  "render",
+    "description", _("Simplify image into an array of solid-colored dots"),
     NULL);
 }
 

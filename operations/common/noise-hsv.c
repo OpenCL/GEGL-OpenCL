@@ -24,18 +24,26 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (holdness, _("Holdness"),   1, 8, 2, _("Holdness"))
+gegl_chant_int    (holdness, _("Holdness"),
+                   1, 8, 2,
+                   _("Holdness"))
 
-gegl_chant_double (hue_distance, _("Hue"),   0.0, 180.0, 3.0, _("Hue"))
+gegl_chant_double (hue_distance, _("Hue"),
+                   0.0, 180.0, 3.0,
+                   _("Hue"))
 
-gegl_chant_double (saturation_distance, _("Saturation"),   0.0, 1.0, 0.04, _("Saturation"))
+gegl_chant_double (saturation_distance, _("Saturation"),
+                   0.0, 1.0, 0.04,
+                   _("Saturation"))
 
-gegl_chant_double (value_distance, _("Value"),   0.0, 1.0, 0.04, _("Value"))
+gegl_chant_double (value_distance, _("Value"),
+                   0.0, 1.0, 0.04,
+                   _("Value"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "noise-hsv.c"
+#define GEGL_CHANT_C_FILE "noise-hsv.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -159,9 +167,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:noise-hsv",
-      "categories", "noise",
-      "description", _("Randomize hue, saturation and value independently"),
+    "name",       "gegl:noise-hsv",
+    "categories", "noise",
+    "description", _("Randomize hue, saturation and value independently"),
       NULL);
 }
 
