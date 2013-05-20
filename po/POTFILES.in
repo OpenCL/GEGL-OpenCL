@@ -24,6 +24,7 @@ operations/common/dot.c
 operations/common/dropshadow.c
 operations/common/edge-laplace.c
 operations/common/edge-sobel.c
+operations/common/emboss.c
 operations/common/exp-combine.c
 operations/common/exposure.c
 operations/common/fattal02.c
@@ -166,7 +167,6 @@ operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/disc-percentile.c
 operations/workshop/ditto.c
-operations/workshop/emboss.c
 operations/workshop/external/ff-save.c
 operations/workshop/external/gluas.c
 operations/workshop/external/lens-correct.c
