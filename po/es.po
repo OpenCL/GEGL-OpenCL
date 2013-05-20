@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-05-15 15:55+0000\n"
-"PO-Revision-Date: 2013-05-17 13:29+0200\n"
+"POT-Creation-Date: 2013-05-20 00:09+0000\n"
+"PO-Revision-Date: 2013-05-20 12:44+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -266,13 +266,13 @@ msgstr "Una aproximación rápida a la implementación del filtro bilateral"
 #: ../operations/common/difference-of-gaussians.c:28
 #: ../operations/common/dropshadow.c:31 ../operations/common/snn-mean.c:26
 #: ../operations/common/stress.c:27 ../operations/common/vignette.c:35
+#: ../operations/common/whirl-pinch.c:44
 #: ../operations/external/matting-levin.c:28
 #: ../operations/workshop/box-max.c:25 ../operations/workshop/box-min.c:25
 #: ../operations/workshop/box-percentile.c:27
 #: ../operations/workshop/disc-percentile.c:26
 #: ../operations/workshop/kuwahara.c:25
 #: ../operations/workshop/snn-percentile.c:27
-#: ../operations/workshop/whirl-pinch.c:40
 msgid "Radius"
 msgstr "Radio"
 
@@ -434,8 +434,8 @@ msgstr "Anchura vertical de las celdillas en píxeles"
 
 #: ../operations/common/checkerboard.c:29 ../operations/common/grid.c:28
 #: ../operations/common/mirrors.c:36
-#: ../operations/common/seamless-clone/seamless-clone.c:24
-#: ../operations/common/seamless-clone/seamless-clone-compose.c:24
+#: ../operations/seamless-clone/seamless-clone.c:24
+#: ../operations/seamless-clone/seamless-clone-compose.c:24
 msgid "X offset"
 msgstr "Desplazamiento X"
 
@@ -445,8 +445,8 @@ msgstr "Desplazamiento horizontal (desde el origen) del comienzo de la rejilla"
 
 #: ../operations/common/checkerboard.c:31 ../operations/common/grid.c:30
 #: ../operations/common/mirrors.c:38
-#: ../operations/common/seamless-clone/seamless-clone.c:27
-#: ../operations/common/seamless-clone/seamless-clone-compose.c:27
+#: ../operations/seamless-clone/seamless-clone.c:27
+#: ../operations/seamless-clone/seamless-clone-compose.c:27
 msgid "Y offset"
 msgstr "Desplazamiento Y"
 
@@ -590,6 +590,56 @@ msgstr "La curva de contraste."
 #: ../operations/common/contrast-curve.c:125
 msgid "Adjusts the contrast of the image according to a curve."
 msgstr "Ajusta el contraste de la imagen según una curva."
+
+#: ../operations/common/cubism.c:30
+msgid "Tile size"
+msgstr "Tamaño del mosaico"
+
+#: ../operations/common/cubism.c:32
+#| msgid "Average difference between wrong pixels."
+msgid "Average diameter of each tile (in pixels)"
+msgstr "Diámetro medio de cada baldosa (en píxeles)"
+
+#: ../operations/common/cubism.c:34
+msgid "Tile saturation"
+msgstr "Saturación del mosaico"
+
+#: ../operations/common/cubism.c:36
+msgid "Expand tiles by this amount"
+msgstr "Expandir las baldosas esta cantidad"
+
+#: ../operations/common/cubism.c:38
+#| msgid "Background"
+msgid "Background Color"
+msgstr "Color de fondo"
+
+#: ../operations/common/cubism.c:40
+msgid "The tiles' background color"
+msgstr "El color de fondo de las baldosas"
+
+#: ../operations/common/cubism.c:42 ../operations/common/noise.c:31
+#: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:31
+#: ../operations/common/noise-rgb.c:34 ../operations/common/noise-slur.c:34
+#: ../operations/common/shift.c:29 ../operations/common/wind.c:33
+#: ../operations/workshop/plasma.c:33
+msgid "Seed"
+msgstr "Semilla"
+
+#: ../operations/common/cubism.c:43 ../operations/common/noise-hurl.c:31
+#: ../operations/common/noise-pick.c:31 ../operations/common/noise-rgb.c:34
+#: ../operations/common/noise-slur.c:34 ../operations/common/shift.c:29
+#: ../operations/common/wind.c:33
+msgid "Random seed"
+msgstr "Semilla aleatoria"
+
+#: ../operations/common/cubism.c:615
+#| msgid "A filter that somehow resembles a cubist painting style"
+msgid ""
+"Convert the image into randomly rotated square blobs, somehow resembling a "
+"cubist painting style"
+msgstr ""
+"Convertir la imagen a cuadros rotados aleatoriamente, semejante a un estilo "
+"de pintura cubista"
 
 #: ../operations/common/difference-of-gaussians.c:25
 msgid "Radius 1"
@@ -942,7 +992,6 @@ msgstr ""
 
 #: ../operations/common/gaussian-blur.c:34
 #: ../operations/transform/transform-core.c:195
-#: ../operations/workshop/emboss.c:31
 msgid "Filter"
 msgstr "Filtro"
 
@@ -1469,14 +1518,6 @@ msgstr "Desenfoque de movimiento lineal"
 msgid "Z offset"
 msgstr "Desplazamiento Z"
 
-#: ../operations/common/noise.c:31 ../operations/common/noise-hurl.c:31
-#: ../operations/common/noise-pick.c:31 ../operations/common/noise-rgb.c:34
-#: ../operations/common/noise-slur.c:34 ../operations/common/shift.c:29
-#: ../operations/common/wind.c:33 ../operations/workshop/cubism.c:34
-#: ../operations/workshop/plasma.c:33
-msgid "Seed"
-msgstr "Semilla"
-
 #: ../operations/common/noise.c:33
 msgid "Iteration"
 msgstr "Iteración"
@@ -1516,13 +1557,6 @@ msgstr "Valor"
 #: ../operations/common/noise-hsv.c:164
 msgid "Randomize hue, saturation and value independently"
 msgstr "Aleatorizar los valores de tono y saturación independientemente"
-
-#: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:31
-#: ../operations/common/noise-rgb.c:34 ../operations/common/noise-slur.c:34
-#: ../operations/common/shift.c:29 ../operations/common/wind.c:33
-#: ../operations/workshop/cubism.c:35
-msgid "Random seed"
-msgstr "Semilla aleatoria"
 
 #: ../operations/common/noise-hurl.c:33 ../operations/common/noise-pick.c:33
 #: ../operations/common/noise-slur.c:36
@@ -1763,6 +1797,22 @@ msgstr "Color que renderizar"
 msgid "A rectangular source of a fixed size with a solid color"
 msgstr "Una fuente rectangular de tamaño fijo y color liso"
 
+#: ../operations/common/red-eye-removal.c:31
+#: ../operations/common/threshold.c:25 ../operations/common/wind.c:26
+#: ../operations/external/matting-levin.c:31
+#: ../operations/workshop/color-rotate.c:54
+msgid "Threshold"
+msgstr "Umbral"
+
+#: ../operations/common/red-eye-removal.c:33
+#| msgid "The value of the threshold"
+msgid "Red eye threshold"
+msgstr "Umbral de ojos rojos"
+
+#: ../operations/common/red-eye-removal.c:131
+msgid "Remove the red eye effect caused by camera flashes"
+msgstr "Quitar el efecto de ojos rojos causado por los flashes de las cámaras"
+
 #: ../operations/common/reinhard05.c:29
 msgid "Overall brightness of the image"
 msgstr "Brillo general de la imagen"
@@ -1854,55 +1904,6 @@ msgstr "Ruta del archivo que guardar."
 msgid "Multipurpose file saver, that uses other native handlers."
 msgstr ""
 "Guardador de archivos de varios usos, que utiliza otros manejadores nativos."
-
-#: ../operations/common/seamless-clone/seamless-clone.c:21
-#: ../operations/common/seamless-clone/seamless-clone-compose.c:21
-msgid "Refinement Steps"
-msgstr "Pasos de refinamiento"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:22
-#: ../operations/common/seamless-clone/seamless-clone-compose.c:22
-msgid ""
-"Maximal amount of refinement points to be used for the interpolation mesh"
-msgstr ""
-"Cantidad máxima de puntos de refinamiento que usar para la malla de "
-"interpolación"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:25
-#: ../operations/common/seamless-clone/seamless-clone-compose.c:25
-msgid "How much horizontal offset should applied to the paste"
-msgstr "Cuánto desplazamiento horizontal se debe aplicar a lo pegado"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:28
-#: ../operations/common/seamless-clone/seamless-clone-compose.c:28
-msgid "How much vertical offset should applied to the paste"
-msgstr "Cuánto desplazamiento vertical se debe aplicar a lo pegado"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:30
-#: ../operations/common/seamless-clone/seamless-clone-compose.c:30
-msgid "Error message"
-msgstr "Mensaje de error"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:30
-#: ../operations/common/seamless-clone/seamless-clone-compose.c:30
-msgid "An error message in case of a failure"
-msgstr "Un mensaje de error en caso de fallo"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:161
-msgid "The foreground does not contain opaque parts"
-msgstr "El primer plano no contiene partes opacas"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:164
-msgid "The foreground is too small to use"
-msgstr "El primer plano es demasiado pequeño para usarlo"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:167
-msgid "The foreground contains holes and/or several unconnected parts"
-msgstr "El primer plano contiene agujeros y/o varias partes sin conectar"
-
-#: ../operations/common/seamless-clone/seamless-clone.c:178
-msgid "The opaque parts of the foreground are not above the background!"
-msgstr "Las partes opacas del primer plano no están encima del fondo."
 
 #: ../operations/common/shift.c:26
 msgid "Shift"
@@ -2007,13 +2008,6 @@ msgstr "Operación svg_matrix de la matriz de colores SVG"
 #: ../operations/common/svg-saturate.c:127
 msgid "SVG color matrix operation svg_saturate"
 msgstr "Operación svg_saturate de la matriz de colores SVG"
-
-#: ../operations/common/threshold.c:25 ../operations/common/wind.c:26
-#: ../operations/external/matting-levin.c:31
-#: ../operations/workshop/color-rotate.c:54
-#: ../operations/workshop/red-eye-removal.c:31
-msgid "Threshold"
-msgstr "Umbral"
 
 #: ../operations/common/threshold.c:26
 msgid "Global threshold level (used when there is no auxiliary input buffer)."
@@ -2169,6 +2163,34 @@ msgstr "valor global usado si el auxiliar no tiene datos"
 #: ../operations/common/weighted-blend.c:124
 msgid "blend two images using alpha values as weights"
 msgstr "mezclar dos imágenes usando los valores de alfa como pesos"
+
+#: ../operations/common/whirl-pinch.c:36
+msgid "Whirl"
+msgstr "Remolino"
+
+#: ../operations/common/whirl-pinch.c:38
+msgid "Whirl angle (degrees)"
+msgstr "Ángulo de remolino (grados)"
+
+#: ../operations/common/whirl-pinch.c:40
+msgid "Pinch"
+msgstr "Aspiración"
+
+#: ../operations/common/whirl-pinch.c:42
+msgid "Pinch amount"
+msgstr "Grado de pellizcado"
+
+#: ../operations/common/whirl-pinch.c:46
+msgid ""
+"Radius (1.0 is the largest circle that fits in the image, and 2.0 goes all "
+"the way to the corners)"
+msgstr ""
+"Radio (1.0 el el círculo mayor inscrito en la imagen, y 2.0 llega "
+"completamente hasta las esquinas)"
+
+#: ../operations/common/whirl-pinch.c:274
+msgid "Distort an image by whirling and pinching"
+msgstr "Distorsionar la imagen con remolinos y aspiraciones"
 
 #: ../operations/common/wind.c:27
 msgid "Higher values restrict the effect to fewer areas of the image"
@@ -2898,6 +2920,55 @@ msgstr ""
 msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 msgstr "Operación de Porter-Duff xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
+#: ../operations/seamless-clone/seamless-clone.c:21
+#: ../operations/seamless-clone/seamless-clone-compose.c:21
+msgid "Refinement Steps"
+msgstr "Pasos de refinamiento"
+
+#: ../operations/seamless-clone/seamless-clone.c:22
+#: ../operations/seamless-clone/seamless-clone-compose.c:22
+msgid ""
+"Maximal amount of refinement points to be used for the interpolation mesh"
+msgstr ""
+"Cantidad máxima de puntos de refinamiento que usar para la malla de "
+"interpolación"
+
+#: ../operations/seamless-clone/seamless-clone.c:25
+#: ../operations/seamless-clone/seamless-clone-compose.c:25
+msgid "How much horizontal offset should applied to the paste"
+msgstr "Cuánto desplazamiento horizontal se debe aplicar a lo pegado"
+
+#: ../operations/seamless-clone/seamless-clone.c:28
+#: ../operations/seamless-clone/seamless-clone-compose.c:28
+msgid "How much vertical offset should applied to the paste"
+msgstr "Cuánto desplazamiento vertical se debe aplicar a lo pegado"
+
+#: ../operations/seamless-clone/seamless-clone.c:30
+#: ../operations/seamless-clone/seamless-clone-compose.c:30
+msgid "Error message"
+msgstr "Mensaje de error"
+
+#: ../operations/seamless-clone/seamless-clone.c:30
+#: ../operations/seamless-clone/seamless-clone-compose.c:30
+msgid "An error message in case of a failure"
+msgstr "Un mensaje de error en caso de fallo"
+
+#: ../operations/seamless-clone/seamless-clone.c:161
+msgid "The foreground does not contain opaque parts"
+msgstr "El primer plano no contiene partes opacas"
+
+#: ../operations/seamless-clone/seamless-clone.c:164
+msgid "The foreground is too small to use"
+msgstr "El primer plano es demasiado pequeño para usarlo"
+
+#: ../operations/seamless-clone/seamless-clone.c:167
+msgid "The foreground contains holes and/or several unconnected parts"
+msgstr "El primer plano contiene agujeros y/o varias partes sin conectar"
+
+#: ../operations/seamless-clone/seamless-clone.c:178
+msgid "The opaque parts of the foreground are not above the background!"
+msgstr "Las partes opacas del primer plano no están encima del fondo."
+
 #: ../operations/transform/reflect.c:30
 msgid "Direction vector's X component"
 msgstr "Componente X del vector de dirección"
@@ -3389,18 +3460,6 @@ msgstr ""
 msgid "Creates image by manually set convolution matrix"
 msgstr "Crea una imagen mediante una matriz de convolución fijada manualmente"
 
-#: ../operations/workshop/cubism.c:30 ../operations/workshop/cubism.c:31
-msgid "Tile size"
-msgstr "Tamaño del mosaico"
-
-#: ../operations/workshop/cubism.c:32 ../operations/workshop/cubism.c:33
-msgid "Tile saturation"
-msgstr "Saturación del mosaico"
-
-#: ../operations/workshop/cubism.c:595
-msgid "A filter that somehow resembles a cubist painting style"
-msgstr "Un filtro semejante a un estilo de pintura cubista"
-
 #: ../operations/workshop/deinterlace.c:30
 msgid "Even/Odd"
 msgstr "Par o impar"
@@ -3477,40 +3536,42 @@ msgstr ""
 "Operación de prueba que hace una asignación 1:1 de la entrada a la salida, "
 "durante el muestreo"
 
-#: ../operations/workshop/emboss.c:25
+#: ../operations/workshop/emboss.c:30
+msgid "Emboss Type"
+msgstr "Tipo de repujado"
+
+#: ../operations/workshop/emboss.c:32
+msgid "Emboss or Bumpmap"
+msgstr "Repujado o mapa de relieve"
+
+#: ../operations/workshop/emboss.c:34
 msgid "Azimuth"
 msgstr "Azimut"
 
-#: ../operations/workshop/emboss.c:26
-msgid "The value of azimuth"
-msgstr "El valor del azimut"
+#: ../operations/workshop/emboss.c:36
+#| msgid "Whirl angle (degrees)"
+msgid "The light angle (degrees)"
+msgstr "El ángulo de la luz (grados)"
 
-#: ../operations/workshop/emboss.c:27
+#: ../operations/workshop/emboss.c:38
 msgid "Elevation"
 msgstr "Elevación"
 
-#: ../operations/workshop/emboss.c:28
-msgid "The value of elevation"
-msgstr "El valor de la elevación"
+#: ../operations/workshop/emboss.c:40
+#| msgid "Whirl angle (degrees)"
+msgid "The elevation angle (degrees)"
+msgstr "El ángulo de elevación (grados)"
 
-#: ../operations/workshop/emboss.c:29
+#: ../operations/workshop/emboss.c:42
 #: ../operations/workshop/fractal-trace.c:40
 msgid "Depth"
 msgstr "Profundidad"
 
-#: ../operations/workshop/emboss.c:30
-msgid "Pixel depth"
-msgstr "Píxeles de profundidad"
+#: ../operations/workshop/emboss.c:44
+msgid "The filter width"
+msgstr "La anchura del filtro"
 
-#: ../operations/workshop/emboss.c:32
-msgid ""
-"Optional parameter to override automatic selection of emboss filter. Choices "
-"are emboss, blur-map"
-msgstr ""
-"Parámetro opcional para sobreescribir la selección automática del filtro de "
-"repujado. Se puede elegir entre repujado o mapa de borrosidad"
-
-#: ../operations/workshop/emboss.c:248
+#: ../operations/workshop/emboss.c:257
 msgid "Simulates an image created by embossing"
 msgstr "Simula una imagen creada mediante repujado"
 
@@ -4019,14 +4080,6 @@ msgstr ""
 "formato de archivo es .rawbayerS intercambiará los números de 16 bit "
 "devueltos (aparentemente el cargador de pnm tiene fallos)."
 
-#: ../operations/workshop/red-eye-removal.c:32
-msgid "The value of the threshold"
-msgstr "El valor del umbral"
-
-#: ../operations/workshop/red-eye-removal.c:132
-msgid "Performs red-eye-removal on the image"
-msgstr "Quita los ojos rojos de la imagen"
-
 #: ../operations/workshop/snn-percentile.c:30
 msgid "Number of pairs, higher number preserves more acute features"
 msgstr "Número de pares; un número mayor preserva detalles más precisos"
@@ -4072,39 +4125,30 @@ msgstr "Comportamiento del operador"
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Calcular un mapeado de desplazamiento relativo a partir de un trazo"
 
-#: ../operations/workshop/whirl-pinch.c:36
-msgid "Whirl"
-msgstr "Remolino"
+#~ msgid "The value of azimuth"
+#~ msgstr "El valor del azimut"
 
-#: ../operations/workshop/whirl-pinch.c:36
-msgid "Whirl angle (degrees)"
-msgstr "Ángulo de remolino (grados)"
+#~ msgid "The value of elevation"
+#~ msgstr "El valor de la elevación"
 
-#: ../operations/workshop/whirl-pinch.c:38
-msgid "Pinch"
-msgstr "Aspiración"
+#~ msgid "Pixel depth"
+#~ msgstr "Píxeles de profundidad"
 
-#: ../operations/workshop/whirl-pinch.c:38
-msgid "Pinch amount"
-msgstr "Grado de pellizcado"
+#~ msgid ""
+#~ "Optional parameter to override automatic selection of emboss filter. "
+#~ "Choices are emboss, blur-map"
+#~ msgstr ""
+#~ "Parámetro opcional para sobreescribir la selección automática del filtro "
+#~ "de repujado. Se puede elegir entre repujado o mapa de borrosidad"
 
-#: ../operations/workshop/whirl-pinch.c:40
-msgid ""
-"Radius (1.0 is the largest circle that fits in the image, and 2.0 goes all "
-"the way to the corners)"
-msgstr ""
-"Radio (1.0 el el círculo mayor inscrito en la imagen, y 2.0 llega "
-"completamente hasta las esquinas)"
+#~ msgid "Performs red-eye-removal on the image"
+#~ msgstr "Quita los ojos rojos de la imagen"
 
-#: ../operations/workshop/whirl-pinch.c:258
-msgid "Applies whirling and pinching on the image"
-msgstr "Aplica un arremolinado y pellizcado a la imagen"
+#~ msgid "Applies whirling and pinching on the image"
+#~ msgstr "Aplica un arremolinado y pellizcado a la imagen"
 
 #~ msgid "Shape to use: 0=circle 1=square 2=diamond"
 #~ msgstr "Forma que usar: 0=círculo 1=cuadrado 2=rombo"
-
-#~ msgid "Background"
-#~ msgstr "Fondo"
 
 #~ msgid ""
 #~ "Optional parameter to override automatic selection of wrap background. "
