@@ -29,7 +29,7 @@ gegl_chant_int    (holdness, _("Holdness"),
                    _("Holdness"))
 
 gegl_chant_double (hue_distance, _("Hue"),
-                   0.0, 0.5, 0.02,
+                   0.0, 180.0, 3.0,
                    _("Hue"))
 
 gegl_chant_double (saturation_distance, _("Saturation"),
@@ -129,7 +129,7 @@ process (GeglOperation       *operation,
 
     /* there is no need for scattering hue of desaturated pixels here */
     if ((o->hue_distance > 0) && (saturation > 0))
-      hue = randomize_value (hue, 0.0, 1.0, TRUE, o->hue_distance, o->holdness);
+      hue = randomize_value (hue, 0.0, 1.0, TRUE, o->hue_distance / 360.0, o->holdness);
 
     /* desaturated pixels get random hue before increasing saturation */
     if (o->saturation_distance > 0) {
