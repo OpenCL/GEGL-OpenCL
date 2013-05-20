@@ -24,23 +24,29 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_register_enum (gegl_gaussian_blur_filter)
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "Auto")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "FIR")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
+gegl_chant_register_enum_end (GeglGaussianBlurFilter)
 
 gegl_chant_double_ui (std_dev_x, _("Size X"),
                       0.0, 10000.0, 4.0, 0.0, 1000.0, 1.5,
-                      _("Standard deviation for the horizontal axis. "
+                      _("Standard deviation for the horizontal axis "
                         "(multiply by ~2 to get radius)"))
 
 gegl_chant_double_ui (std_dev_y, _("Size Y"),
                       0.0, 10000.0, 4.0, 0.0, 1000.0, 1.5,
-                      _("Standard deviation for the vertical axis. "
-                        "(multiply by ~2 to get radius.)"))
+                      _("Standard deviation for the vertical axi. "
+                        "(multiply by ~2 to get radius)"))
 
-gegl_chant_string    (filter, _("Filter"),
-                      "auto",
+gegl_chant_enum      (filter, _("Filter"),
+                      GeglGaussianBlurFilter, gegl_gaussian_blur_filter,
+                      GEGL_GAUSSIAN_BLUR_FILTER_AUTO,
                       _("Optional parameter to override the automatic "
-                        "selection of blur filter. Choices are fir, iir, auto"))
+                        "selection of blur filter"))
 
 #else
 
@@ -626,8 +632,8 @@ process (GeglOperation       *operation,
   rect.y      = result->y - op_area->top;
   rect.height = result->height + op_area->top + op_area->bottom;
 
-  force_iir = o->filter && !strcmp (o->filter, "iir");
-  force_fir = o->filter && !strcmp (o->filter, "fir");
+  force_iir = (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_IIR);
+  force_fir = (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_FIR);
 
   if (gegl_cl_is_accelerated () && !force_iir)
     if (cl_process(operation, input, output, result))
@@ -679,10 +685,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
-  operation_class->prepare = prepare;
-
+  operation_class->prepare        = prepare;
   operation_class->opencl_support = TRUE;
+
+  filter_class->process           = process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:gaussian-blur",
