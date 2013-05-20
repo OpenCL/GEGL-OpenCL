@@ -404,9 +404,9 @@ fir_ver_blur (GeglBuffer          *src,
   g_free (dst_buf);
 }
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
-#define max(A,B) ((A) > (B) ? (A) : (B))
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
 
@@ -417,14 +417,13 @@ static void prepare (GeglOperation *operation)
 
   /* XXX: these should be calculated exactly considering o->filter, but we just
    * make sure there is enough space */
-  area->left = area->right = ceil ( max (fir_radius_x, iir_radius_x));
-  area->top = area->bottom = ceil ( max (fir_radius_y, iir_radius_y));
+  area->left = area->right = ceil (MAX (fir_radius_x, iir_radius_x));
+  area->top = area->bottom = ceil (MAX (fir_radius_y, iir_radius_y));
 
   gegl_operation_set_format (operation, "input",
                              babl_format ("RaGaBaA float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("RaGaBaA float"));
-#undef max
 }
 
 #include "opencl/gegl-cl.h"
