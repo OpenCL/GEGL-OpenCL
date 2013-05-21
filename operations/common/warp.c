@@ -32,23 +32,34 @@ gegl_chant_register_enum (gegl_warp_behavior)
   enum_value (GEGL_WARP_BEHAVIOR_SMOOTH,    "Smooth warping")
 gegl_chant_register_enum_end (GeglWarpBehavior)
 
-gegl_chant_double (strength, _("Strength"), 0.0, 100.0, 50,
+gegl_chant_double (strength, _("Strength"),
+                   0.0, 100.0, 50,
                    _("Effect Strength"))
-gegl_chant_double (size, _("Size"), 1.0, 10000.0, 40.0,
+
+gegl_chant_double (size, _("Size"),
+                   1.0, 10000.0, 40.0,
                    _("Effect Size"))
-gegl_chant_double (hardness, _("Hardness"), 0.0, 1.0, 0.5,
+
+gegl_chant_double (hardness, _("Hardness"),
+                   0.0, 1.0, 0.5,
                    _("Effect Hardness"))
-gegl_chant_path (stroke, _("Stroke"), _("Effect Strength"))
-gegl_chant_enum (behavior, _("Behavior"), GeglWarpBehavior, gegl_warp_behavior,
-                 GEGL_WARP_BEHAVIOR_MOVE, _("Behavior of the op"))
+
+gegl_chant_path   (stroke, _("Stroke"),
+                   _("Effect Strength"))
+
+gegl_chant_enum   (behavior, _("Behavior"),
+                   GeglWarpBehavior, gegl_warp_behavior,
+                   GEGL_WARP_BEHAVIOR_MOVE,
+                   _("Behavior of the op"))
 
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "warp.c"
+#define GEGL_CHANT_C_FILE "warp.c"
 
 #include "gegl-plugin.h"
 #include "gegl-path.h"
+
 static void path_changed (GeglPath            *path,
                           const GeglRectangle *roi,
                           gpointer             userdata);
@@ -227,7 +238,8 @@ stamp (GeglChantO          *o,
     {
       gint pixel_count = 0;
 
-      it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+      it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format
+                                     , GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
       while (gegl_buffer_iterator_next (it))
         {
@@ -246,7 +258,8 @@ stamp (GeglChantO          *o,
       y_mean /= pixel_count;
     }
 
-  it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format, GEGL_BUFFER_READWRITE, GEGL_ABYSS_NONE);
+  it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format,
+                                 GEGL_BUFFER_READWRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (it))
     {
@@ -376,14 +389,14 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationClass         *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationFilterClass   *filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  object_class->finalize = finalize;
+  object_class->finalize   = finalize;
   operation_class->prepare = prepare;
-  filter_class->process = process;
+  filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-  "name"       , "gegl:warp",
-  "categories"  , "transform",
-  "description" , _("Compute a relative displacement mapping from a stroke"),
-  NULL);
+    "name",        "gegl:warp",
+    "categories",  "transform",
+    "description", _("Compute a relative displacement mapping from a stroke"),
+    NULL);
 }
 #endif
