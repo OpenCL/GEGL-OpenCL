@@ -87,6 +87,7 @@ operations/common/tile.c
 operations/common/unsharp-mask.c
 operations/common/value-invert.c
 operations/common/vignette.c
+operations/common/warp.c
 operations/common/waves.c
 operations/common/weighted-blend.c
 operations/common/whirl-pinch.c
@@ -187,4 +188,3 @@ operations/workshop/plasma.c
 operations/workshop/radial-gradient.c
 operations/workshop/rawbayer-load.c
 operations/workshop/snn-percentile.c
-operations/workshop/warp.c
