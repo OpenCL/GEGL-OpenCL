@@ -324,20 +324,6 @@ gegl_operation_context_get_source (GeglOperationContext *context,
   return input;
 }
 
-static GeglBuffer *emptybuf (void)
-{
-  static GeglBuffer *empty = NULL; /* we leak this single empty buffer,
-                                      avoiding having to create it weighs
-                                      up the penalty.
-                                    */
-  if (!empty)
-    {
-      GeglRectangle rect={0,0,0,0};
-      empty = gegl_buffer_new (&rect, babl_format ("RGBA float"));
-    }
-  return empty;
-}
-
 GeglBuffer *
 gegl_operation_context_get_target (GeglOperationContext *context,
                                    const gchar          *padname)
@@ -370,7 +356,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
   if (result->width == 0 ||
       result->height == 0)
     {
-      output = g_object_ref (emptybuf());
+      output = gegl_buffer_new_ram (GEGL_RECTANGLE (0, 0, 0, 0), format);
     }
   else if (node->dont_cache == FALSE &&
       ! GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
