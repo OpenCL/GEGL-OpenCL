@@ -18,13 +18,22 @@
 #ifndef GEGL_INSTRUMENT_H
 #define GEGL_INSTRUMENT_H
 
+extern gboolean gegl_instrument_enabled;
+
 /* return number of usecs since gegl was initialized */
 long gegl_ticks               (void);
 
+/* start tracking times with gegl_instrument */
+void gegl_instrument_enable   (void);
 
 /* store a timing instrumentation (parent is expected to exist,
  * and to keep it's own record of the time-slice reported) */
-void gegl_instrument          (const gchar *parent,
+#define gegl_instrument(parent, scale, usecs) \
+  { if (gegl_instrument_enabled) { \
+real_gegl_instrument (parent, scale, usecs); \
+                                 } }
+
+void real_gegl_instrument     (const gchar *parent,
                                const gchar *scale,
                                long         usecs);
 

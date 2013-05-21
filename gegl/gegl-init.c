@@ -422,7 +422,7 @@ gegl_exit (void)
   global_time = gegl_ticks () - global_time;
   gegl_instrument ("gegl", "gegl", global_time);
 
-  if (g_getenv ("GEGL_DEBUG_TIME") != NULL)
+  if (gegl_instrument_enabled)
     {
       g_printf ("\n%s", gegl_instrument_utf8 ());
     }
@@ -512,6 +512,10 @@ gegl_post_parse_hook (GOptionContext *context,
   global_time = gegl_ticks ();
   g_type_init ();
   babl_init ();
+
+  if (g_getenv ("GEGL_DEBUG_TIME") != NULL)
+    gegl_instrument_enable ();
+
   gegl_instrument ("gegl", "gegl_init", 0);
 
 #ifdef GEGL_ENABLE_DEBUG

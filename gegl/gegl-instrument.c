@@ -38,6 +38,8 @@ struct _Timing
   Timing *next;
 };
 
+gboolean gegl_instrument_enabled = FALSE;
+
 static Timing *root = NULL;
 
 static Timing *iter_next (Timing *iter)
@@ -97,9 +99,15 @@ static Timing *timing_find (Timing      *root,
 }
 
 void
-gegl_instrument (const gchar *parent_name,
-                 const gchar *name,
-                 long         usecs)
+gegl_instrument_enable (void)
+{
+  gegl_instrument_enabled = TRUE;
+}
+
+void
+real_gegl_instrument (const gchar *parent_name,
+                      const gchar *name,
+                      long         usecs)
 {
   Timing *iter;
   Timing *parent;
