@@ -34,8 +34,7 @@
 
 static GValue *
 gegl_operation_context_add_value (GeglOperationContext *self,
-                                  const gchar          *property_name,
-                                  GType                 proptype);
+                                  const gchar          *property_name);
 
 
 void
@@ -71,26 +70,14 @@ gegl_operation_context_set_property (GeglOperationContext *context,
                                      const gchar          *property_name,
                                      const GValue         *value)
 {
-  GParamSpec *pspec;
   GValue     *storage;
 
   g_return_if_fail (context != NULL);
-
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (context->operation),
-                                        property_name);
-
-  if (!pspec)
-    {
-      g_warning ("%s: node %s has no pad|property named '%s'",
-                 G_STRFUNC,
-                 GEGL_OPERATION_GET_CLASS (context->operation)->name,
-                 property_name);
-    }
+  g_return_if_fail (G_VALUE_TYPE (value) == GEGL_TYPE_BUFFER);
 
   /* if the value already exists in the context it will be reused */
-  storage = gegl_operation_context_add_value (context, property_name,
-                                              G_PARAM_SPEC_VALUE_TYPE (pspec));
-  /* storage needs to have the correct type */
+  storage = gegl_operation_context_add_value (context, property_name);
+
   g_value_copy (value, storage);
 }
 
@@ -99,19 +86,7 @@ gegl_operation_context_get_property (GeglOperationContext *context,
                                      const gchar          *property_name,
                                      GValue               *value)
 {
-  GParamSpec *pspec;
   GValue     *storage;
-
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (context->operation),
-                                        property_name);
-
-  if (!pspec)
-    {
-      g_warning ("%s: node %s has no pad|property named '%s'",
-                 G_STRFUNC,
-                 GEGL_OPERATION_GET_CLASS (context->operation)->name,
-                 property_name);
-    }
 
   storage = gegl_operation_context_get_value (context, property_name);
   if (storage != NULL)
@@ -194,8 +169,7 @@ gegl_operation_context_remove_property (GeglOperationContext *self,
 
 static GValue *
 gegl_operation_context_add_value (GeglOperationContext *self,
-                                  const gchar          *property_name,
-                                  GType                 proptype)
+                                  const gchar          *property_name)
 {
   Property *property = NULL;
   GSList   *found;
@@ -209,7 +183,6 @@ gegl_operation_context_add_value (GeglOperationContext *self,
 
   if (property)
     {
-      /* XXX: check that the existing one was of the right type */
       g_value_reset (&property->value);
       return &property->value;
     }
@@ -217,7 +190,7 @@ gegl_operation_context_add_value (GeglOperationContext *self,
   property = property_new (property_name);
 
   self->property = g_slist_prepend (self->property, property);
-  g_value_init (&property->value, proptype);
+  g_value_init (&property->value, GEGL_TYPE_BUFFER);
 
   return &property->value;
 }
@@ -245,6 +218,8 @@ gegl_operation_context_set_object (GeglOperationContext *context,
                                    const gchar          *padname,
                                    GObject              *data)
 {
+  g_return_if_fail (!data || GEGL_IS_BUFFER (data));
+
   /* Make it simple, just add an extra ref and then take the object */
   if (data)
     g_object_ref (data);
@@ -256,57 +231,34 @@ gegl_operation_context_take_object (GeglOperationContext *context,
                                     const gchar          *padname,
                                     GObject              *data)
 {
-  GParamSpec *pspec;
+  GValue *storage;
 
-  /* FIXME: check that there isn't already an existing
-   *        output object/value set?
-   */
+  g_return_if_fail (context != NULL);
+  g_return_if_fail (!data || GEGL_IS_BUFFER (data));
 
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (context->operation),
-                                        padname);
-
-  if (pspec)
-    {
-      GValue value = {0, };
-      g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
-
-      g_value_take_object (&value, data);
-      gegl_operation_context_set_property (context, padname, &value);
-
-      g_value_unset (&value);
-    }
-  else
-    {
-      g_warning ("%s: No paramspec found for pad '%s' on \"%s\"\n",
-                 G_STRFUNC,
-                 padname,
-                 gegl_operation_get_name (context->operation));
-    }
+  storage = gegl_operation_context_add_value (context, padname);
+  g_value_take_object (storage, data);
 }
 
 GObject *
 gegl_operation_context_get_object (GeglOperationContext *context,
                                    const gchar          *padname)
 {
-  GObject       *ret;
-  GParamSpec    *pspec;
-  GValue         value = { 0, };
+  GObject     *ret;
+  GValue      *value;
 
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (context->operation),
-                                        padname);
-  g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
-  gegl_operation_context_get_property (context, padname, &value);
-  /* FIXME: handle other things than gobjects as well? */
-  ret = g_value_get_object (&value);
+  value = gegl_operation_context_get_value (context, padname);
 
-  if (!ret)
-    {/*
-        g_warning ("some important data was not found on %s.%s",
-        gegl_node_get_debug_name (node), property_name);
-      */
+  if (value != NULL)
+    {
+      ret = g_value_get_object (value);
+      if (ret != NULL)
+        {
+          return ret;
+        }
     }
-  g_value_unset (&value);
-  return ret;
+
+  return NULL;
 }
 
 GeglBuffer *
