@@ -154,7 +154,8 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
     }
   else if (gegl_pad_is_input (pad))
     {
-      GeglPad *source_pad = gegl_pad_get_connected_to (pad);
+      GeglPad     *source_pad = gegl_pad_get_connected_to (pad);
+      const gchar *pad_name   = gegl_pad_get_name (pad);
 
       /* the work needed to be done on input pads is to set the
        * data from the corresponding output pad it is connected to
@@ -180,8 +181,8 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
                        g_value_get_object (&value));
 
           gegl_operation_context_set_property (context,
-                                          gegl_pad_get_name (pad),
-                                          &value);
+                                               pad_name,
+                                               &value);
           /* reference counting for this source dropped to zero, freeing up */
           if (-- gegl_node_get_context (
                      gegl_pad_get_node (source_pad), context_id)->refs == 0 &&
@@ -207,6 +208,13 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
               gegl_operation_process (operation, context, "output",
                 &context->result_rect, context->level);
             }
+        }
+      else if (!strcmp (pad_name, "input"))
+        {
+          /* Guarantee a non-null input pad for unconnected nodes */
+          gegl_operation_context_take_object (context,
+                                              pad_name,
+                                              gegl_eval_visitor_get_shared_empty (self));
         }
     }
 }
