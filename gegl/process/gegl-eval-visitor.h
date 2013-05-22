@@ -37,6 +37,8 @@ typedef struct _GeglEvalVisitorClass GeglEvalVisitorClass;
 struct _GeglEvalVisitor
 {
   GeglVisitor  parent_instance;
+
+  GeglBuffer  *shared_empty;
 };
 
 struct _GeglEvalVisitorClass

@@ -36,8 +36,11 @@
 
 
 static void gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass);
+static void gegl_eval_visitor_dispose    (GObject     *self);
 static void gegl_eval_visitor_visit_pad  (GeglVisitor *self,
                                           GeglPad     *pad);
+
+static GObject *gegl_eval_visitor_get_shared_empty  (GeglVisitor *self);
 
 
 G_DEFINE_TYPE (GeglEvalVisitor, gegl_eval_visitor, GEGL_TYPE_VISITOR)
@@ -46,16 +49,45 @@ G_DEFINE_TYPE (GeglEvalVisitor, gegl_eval_visitor, GEGL_TYPE_VISITOR)
 static void
 gegl_eval_visitor_class_init (GeglEvalVisitorClass *klass)
 {
+  GObjectClass     *gobject_class = G_OBJECT_CLASS (klass);
   GeglVisitorClass *visitor_class = GEGL_VISITOR_CLASS (klass);
 
+  gobject_class->dispose   = gegl_eval_visitor_dispose;
   visitor_class->visit_pad = gegl_eval_visitor_visit_pad;
 }
 
 static void
 gegl_eval_visitor_init (GeglEvalVisitor *self)
 {
+  self->shared_empty = NULL;
 }
 
+static void
+gegl_eval_visitor_dispose (GObject *self)
+{
+  GeglEvalVisitor *eval_self = GEGL_EVAL_VISITOR (self);
+
+  if (eval_self->shared_empty)
+    {
+      g_object_unref (eval_self->shared_empty);
+      eval_self->shared_empty = NULL;
+    }
+}
+
+static GObject *
+gegl_eval_visitor_get_shared_empty (GeglVisitor *self)
+{
+  GeglEvalVisitor *eval_self = GEGL_EVAL_VISITOR (self);
+
+  if (!eval_self->shared_empty)
+    {
+      eval_self->shared_empty =
+        gegl_buffer_new_ram (GEGL_RECTANGLE (0, 0, 0, 0), NULL);
+      gegl_object_set_has_forked (eval_self->shared_empty);
+    }
+
+  return g_object_ref (eval_self->shared_empty);;
+}
 
 /* this is the visitor that does the real computations for GEGL */
 static void
@@ -84,7 +116,9 @@ gegl_eval_visitor_visit_pad (GeglVisitor *self,
           if ((context->result_rect.width == 0 || context->result_rect.height == 0))
             {
               /* 0px processing, bail */
-              gegl_operation_context_take_object (context, "output", G_OBJECT (gegl_buffer_new (NULL, NULL)));
+              gegl_operation_context_take_object (context,
+                                                  "output",
+                                                  gegl_eval_visitor_get_shared_empty (self));
             }
           else
             {
