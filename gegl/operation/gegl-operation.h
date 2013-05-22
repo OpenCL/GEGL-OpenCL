@@ -265,9 +265,9 @@ gboolean gegl_operation_cl_set_kernel_args (GeglOperation *operation,
  * externally */
 gboolean gegl_operation_calc_need_rects      (GeglOperation       *operation,
                                               gpointer             context_id);
-void     gegl_operation_path_prop_changed    (GeglPath            *path,
-                                              GeglOperation       *operation);
-
+gboolean gegl_can_do_inplace_processing      (GeglOperation       *operation,
+                                              GeglBuffer          *input,
+                                              const GeglRectangle *result);
 G_END_DECLS
 
 /***

@@ -79,10 +79,6 @@ gegl_operation_point_composer_init (GeglOperationPointComposer *self)
 
 }
 
-gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
-                                         GeglBuffer          *input,
-                                         const GeglRectangle *result);
-
 /* we replicate the process function from GeglOperationComposer to be
  * able to bail out earlier for some common processing time pitfalls
  */

@@ -238,3 +238,19 @@ gegl_operation_calc_need_rects (GeglOperation *operation,
     }
   return TRUE;
 }
+
+gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
+                                         GeglBuffer          *input,
+                                         const GeglRectangle *result)
+{
+  if (!input ||
+      GEGL_IS_CACHE (input))
+    return FALSE;
+  if (gegl_object_get_has_forked (input))
+    return FALSE;
+
+  if (input->format == gegl_operation_get_format (operation, "output") &&
+      gegl_rectangle_contains (gegl_buffer_get_extent (input), result))
+    return TRUE;
+  return FALSE;
+}
