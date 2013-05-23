@@ -574,12 +574,6 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
   gint           i;
 
   requested_rect = *region;
-  sampler =
-    gegl_buffer_sampler_new (NULL,
-                             babl_format("RaGaBaA float"),
-                             gegl_sampler_type_from_string (transform->filter));
-  context_rect = *gegl_sampler_get_context_rect (sampler);
-  g_object_unref (sampler);
 
   gegl_transform_create_composite_matrix (transform, &inverse);
   gegl_matrix3_invert (&inverse);
@@ -587,6 +581,13 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&inverse))
     return requested_rect;
+
+  sampler =
+    gegl_buffer_sampler_new (NULL,
+                             babl_format("RaGaBaA float"),
+                             gegl_sampler_type_from_string (transform->filter));
+  context_rect = *gegl_sampler_get_context_rect (sampler);
+  g_object_unref (sampler);
 
   /*
    * Convert indices to absolute positions:
