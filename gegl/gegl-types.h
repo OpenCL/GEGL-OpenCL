@@ -50,13 +50,15 @@ typedef struct _GeglCurve  GeglCurve;
 typedef struct _GeglPath   GeglPath;
 typedef struct _GeglColor  GeglColor;
 
-typedef struct _GeglRectangle
+typedef struct _GeglRectangle GeglRectangle;
+
+struct _GeglRectangle
 {
   gint x;
   gint y;
   gint width;
   gint height;
-} GeglRectangle;
+};
 GType gegl_rectangle_get_type (void) G_GNUC_CONST;
 #define GEGL_TYPE_RECTANGLE   (gegl_rectangle_get_type())
 
