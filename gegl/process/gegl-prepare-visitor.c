@@ -76,16 +76,16 @@ gegl_prepare_visitor_visit_node (GeglVisitor *self,
     const gchar *name = gegl_node_get_name (node);
     if (name && !strcmp (name, "proxynop-output"))
       {
-        GeglGraph *graph = g_object_get_data (G_OBJECT (node), "graph");
+        GeglNode *graph = GEGL_NODE (g_object_get_data (G_OBJECT (node), "graph"));
         g_assert (graph);
-        if (GEGL_NODE (graph)->operation)
+        if (graph->operation)
           {
-            g_mutex_lock (&GEGL_NODE (graph)->mutex);
+            g_mutex_lock (&graph->mutex);
             /* issuing a prepare on the graph, FIXME: we might need to do
              * a cycle of prepares as deep as the nesting of graphs,.
              * (or find a better way to do this) */
-            gegl_operation_prepare (GEGL_NODE (graph)->operation);
-            g_mutex_unlock (&GEGL_NODE (graph)->mutex);
+            gegl_operation_prepare (graph->operation);
+            g_mutex_unlock (&graph->mutex);
           }
       }
   }

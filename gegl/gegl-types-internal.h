@@ -27,7 +27,6 @@ typedef struct _GeglDebugRectVisitor GeglDebugRectVisitor;
 typedef struct _GeglEvalManager      GeglEvalManager;
 typedef struct _GeglEvalVisitor      GeglEvalVisitor;
 typedef struct _GeglFinishVisitor    GeglFinishVisitor;
-typedef struct _GeglGraph            GeglGraph;
 typedef struct _GeglHaveVisitor      GeglHaveVisitor;
 typedef struct _GeglNeedVisitor      GeglNeedVisitor;
 typedef struct _GeglDotVisitor       GeglDotVisitor;
