@@ -22,45 +22,60 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (fractal, _("Fractal"), "fractal",
-                   _("Type of fractal to use. "
-                     "Choices are julia, mandelbrot. Default is mandelbrot."))
-gegl_chant_double (X1, _("X1"), -50.0, 50.0, -1.00,
+gegl_chant_register_enum (gegl_fractal_trace_type)
+  enum_value (GEGL_FRACTAL_TRACE_TYPE_MANDELBROT, "Mandelbrot")
+  enum_value (GEGL_FRACTAL_TRACE_TYPE_JULIA,      "Julia")
+gegl_chant_register_enum_end (GeglFractalTraceType)
+
+gegl_chant_enum   (fractal, _("Fractal type"),
+                   GeglFractalTraceType, gegl_fractal_trace_type,
+                   GEGL_FRACTAL_TRACE_TYPE_MANDELBROT, _("Type of a fractal"))
+
+gegl_chant_double (X1, _("X1"),
+                   -50.0, 50.0, -1.00,
                    _("X1 value, position"))
-gegl_chant_double (X2, _("X2"), -50.0, 50.0, 0.50,
+gegl_chant_double (X2, _("X2"),
+                   -50.0, 50.0, 0.50,
                    _("X2 value, position"))
-gegl_chant_double (Y1, _("Y1"), -50.0, 50.0, -1.00,
+
+gegl_chant_double (Y1, _("Y1"),
+                   -50.0, 50.0, -1.00,
                    _("X2 value, position"))
-gegl_chant_double (Y2, _("Y2"), -50.0, 50.0, 1.00,
+gegl_chant_double (Y2, _("Y2"),
+                   -50.0, 50.0, 1.00,
                    _("Y2 value, position"))
-gegl_chant_double (JX, _("JX"), -50.0, 50.0, 0.5,
+
+gegl_chant_double (JX, _("JX"),
+                   -50.0, 50.0, 0.5,
                    _("Julia seed X value, position"))
-gegl_chant_double (JY, _("JY"), -50.0, 50.0, 0.5,
+gegl_chant_double (JY, _("JY"),
+                   -50.0, 50.0, 0.5,
                    _("Julia seed Y value, position"))
-gegl_chant_int    (depth, _("Depth"), 1, 65536, 3,
+
+gegl_chant_int    (depth, _("Depth"),
+                   1, 65536, 3,
                    _("Depth value"))
-gegl_chant_double (bailout, _("Bailout"), 0.0, G_MAXDOUBLE, G_MAXDOUBLE,
+
+gegl_chant_double (bailout, _("Bailout"),
+                   0.0, G_MAXDOUBLE, G_MAXDOUBLE,
                    _("Bailout length"))
-gegl_chant_enum   (abyss_policy, _("Abyss policy"), GeglAbyssPolicy, gegl_abyss_policy,
-                   GEGL_ABYSS_LOOP, _("How to deal with pixels outside of the input buffer"))
+
+gegl_chant_enum   (abyss_policy, _("Abyss policy"),
+                   GeglAbyssPolicy, gegl_abyss_policy, GEGL_ABYSS_LOOP,
+                   _("How to deal with pixels outside of the input buffer"))
 
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "fractal-trace.c"
+#define GEGL_CHANT_C_FILE "fractal-trace.c"
 
 #include "gegl-chant.h"
 #include <math.h>
 
-typedef enum
+static void
+prepare (GeglOperation *operation)
 {
-  FRACTAL_TYPE_MANDELBROT,
-  FRACTAL_TYPE_JULIA
-} FractalType;
-
-static void prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
@@ -97,14 +112,14 @@ julia (gdouble  x,
 }
 
 static void
-fractaltrace (GeglBuffer          *input,
-              const GeglRectangle *picture,
-              gfloat              *dst_buf,
-              const GeglRectangle *roi,
-              GeglChantO          *o,
-              gint                 y,
-              FractalType          fractal_type,
-              const Babl          *format)
+fractaltrace (GeglBuffer            *input,
+              const GeglRectangle   *picture,
+              gfloat                *dst_buf,
+              const GeglRectangle   *roi,
+              GeglChantO            *o,
+              gint                   y,
+              GeglFractalTraceType  fractal_type,
+              const Babl           *format)
 {
   GeglMatrix2  scale;        /* a matrix indicating scaling factors around the
                                 current center pixel.
@@ -129,7 +144,7 @@ fractaltrace (GeglBuffer          *input,
 
       switch (fractal_type)
         {
-        case FRACTAL_TYPE_JULIA:
+        case GEGL_FRACTAL_TRACE_TYPE_JULIA:
 #define gegl_unmap(u,v,ud,vd) {                                         \
             gdouble rx, ry;                                             \
             cx = o->X1 + ((u) - picture->x) * scale_x;                  \
@@ -143,7 +158,7 @@ fractaltrace (GeglBuffer          *input,
 #undef gegl_unmap
         break;
 
-        case FRACTAL_TYPE_MANDELBROT:
+        case GEGL_FRACTAL_TRACE_TYPE_MANDELBROT:
 #define gegl_unmap(u,v,ud,vd) {                                     \
             gdouble rx, ry;                                         \
             cx = o->X1 + ((u) - picture->x) * scale_x;              \
@@ -176,27 +191,19 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO    *o;
+  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle  boundary;
   const Babl    *format;
-  FractalType    fractal_type;
   gfloat        *dst_buf;
   gint           y;
 
-  o = GEGL_CHANT_PROPERTIES (operation);
   boundary = gegl_operation_get_bounding_box (operation);
-
-  fractal_type = FRACTAL_TYPE_MANDELBROT;
-  if (!strcmp (o->fractal, "mandelbrot"))
-    fractal_type = FRACTAL_TYPE_MANDELBROT;
-  else if (!strcmp(o->fractal, "julia"))
-    fractal_type = FRACTAL_TYPE_JULIA;
 
   format = babl_format ("RGBA float");
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
   for (y = result->y; y < result->y + result->height; y++)
-    fractaltrace (input, &boundary, dst_buf, result, o, y, fractal_type, format);
+    fractaltrace (input, &boundary, dst_buf, result, o, y, o->fractal, format);
 
   gegl_buffer_set (output, result, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
@@ -210,7 +217,7 @@ process (GeglOperation       *operation,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle  result = { 0, 0, 0, 0 };
   GeglRectangle *in_rect;
 
   in_rect = gegl_operation_source_get_bounding_box (operation, "input");
@@ -237,15 +244,16 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process                    = process;
   operation_class->prepare                 = prepare;
   operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
+  filter_class->process                    = process;
+
   gegl_operation_class_set_keys (operation_class,
-    "categories"  , "map",
-    "name"        , "gegl:fractal-trace",
-    "description" , _("Performs fractal trace on the image"),
+    "name",        "gegl:fractal-trace",
+    "categories",  "map",
+    "description", _("Transform the image with the fractals"),
     NULL);
 }
 
