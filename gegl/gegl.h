@@ -95,7 +95,7 @@ G_BEGIN_DECLS
 void           gegl_init                 (gint          *argc,
                                           gchar       ***argv);
 /**
- * gegl_get_option_group:
+ * gegl_get_option_group: (skip)
  *
  * Returns a GOptionGroup for the commandline arguments recognized
  * by GEGL. You should add this group to your GOptionContext
@@ -541,7 +541,8 @@ GeglNode    * gegl_node_detect           (GeglNode      *node,
  * @node: the node to lookup a paramspec on
  * @property_name: the name of the property to get a paramspec for.
  *
- * Returns the GParamSpec of property or NULL if no such property exists.
+ * Return value: (transfer none): the GParamSpec of property or NULL
+ * if no such property exists.
  */
 GParamSpec  * gegl_node_find_property    (GeglNode      *node,
                                           const gchar   *property_name);
@@ -594,8 +595,8 @@ gint          gegl_node_get_consumers    (GeglNode      *node,
  * Proxies are used to route between nodes of a subgraph contained within
  * a node.
  *
- * Returns an input proxy for the named pad. If no input proxy exists with
- * this name a new one will be created.
+ * Return value: (transfer none): Returns an input proxy for the named pad.
+ * If no input proxy exists with this name a new one will be created.
  */
 GeglNode    * gegl_node_get_input_proxy  (GeglNode      *node,
                                           const gchar   *pad_name);
@@ -604,9 +605,9 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *node,
  * gegl_node_get_operation:
  * @node: a #GeglNode
  *
- * Returns the type of processing operation associated with this node, or
- * NULL if there is no op associated. The special name "GraphNode"
- * is returned if the node is the container of a subgraph.
+ * Return value: The type of processing operation associated with this
+ * node, or NULL if there is no op associated. The special name
+ * "GraphNode" is returned if the node is the container of a subgraph.
  */
 const gchar * gegl_node_get_operation    (const GeglNode *node);
 
@@ -618,8 +619,8 @@ const gchar * gegl_node_get_operation    (const GeglNode *node);
  * Proxies are used to route between nodes of a subgraph contained within
  * a node.
  *
- * Returns a output proxy for the named pad. If no output proxy exists with
- * this name a new one will be created.
+ * Return value: (transfer none):  Returns a output proxy for the named pad.
+ * If no output proxy exists with this name a new one will be created.
  */
 GeglNode    * gegl_node_get_output_proxy (GeglNode      *node,
                                           const gchar   *pad_name);
