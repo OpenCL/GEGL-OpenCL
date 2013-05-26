@@ -74,10 +74,8 @@ prepare (GeglOperation *operation)
       op_area->right  = 0;
     }
 
-  gegl_operation_set_format (operation, "input",
-                             babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output",
-                             babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GMutex mutex;
@@ -111,22 +109,17 @@ process (GeglOperation       *operation,
 
   GeglRectangle *boundary;
 
-  GRand *gr;
-
   gint array_size = 0;
   gint r;
 
   /* calculate offsets once */
   g_mutex_lock (&mutex);
   if (!o->chant_data)
-   {
+    {
       boundary = gegl_operation_source_get_bounding_box (operation, "input");
 
       if (boundary)
         {
-          gr = g_rand_new ();
-          g_rand_set_seed (gr, o->seed);
-
           offsets = g_array_new (FALSE, FALSE, sizeof (gint));
 
           if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
@@ -140,7 +133,7 @@ process (GeglOperation       *operation,
 
           for (i = 0; i < array_size; i++)
             {
-              r = g_rand_int_range (gr, -s, s);
+              r = gegl_random_int_range (o->seed, x, 0, 0, 0, s, s + 1);
               g_array_append_val (offsets, r);
             }
           o->chant_data = offsets;
@@ -148,7 +141,7 @@ process (GeglOperation       *operation,
     }
   g_mutex_unlock (&mutex);
 
-  offsets = (GArray*) o->chant_data;
+  offsets = o->chant_data;
 
   src_rect.x      = result->x - op_area->left;
   src_rect.width  = result->width + op_area->left + op_area->right;
