@@ -23,34 +23,35 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (shift, _("Shift"), 1, 200, 5,
-                   _("Maximum amount to shift"))
-
-gegl_chant_seed (seed, _("Seed"), _("Random seed"))
-
 gegl_chant_register_enum (gegl_shift_direction)
   enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "Horizontal")
-  enum_value (GEGL_SHIFT_DIRECTION_VERTICAL, "Vertical")
+  enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "Vertical")
 gegl_chant_register_enum_end (GeglShiftDirection)
 
-gegl_chant_enum (direction, _("Direction"), GeglShiftDirection, gegl_shift_direction,
-                 GEGL_SHIFT_DIRECTION_HORIZONTAL, _("Shift direction"))
+gegl_chant_int  (shift, _("Shift"),
+                 1, 200, 5,
+                 _("Maximum amount to shift"))
+
+gegl_chant_seed (seed, _("Seed"),
+                 _("Random seed"))
+
+gegl_chant_enum (direction, _("Direction"),
+                 GeglShiftDirection, gegl_shift_direction,
+                 GEGL_SHIFT_DIRECTION_HORIZONTAL,
+                 _("Shift direction"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "shift.c"
+#define GEGL_CHANT_C_FILE "shift.c"
 
 #include "gegl-chant.h"
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
-  GeglOperationAreaFilter *op_area;
-
-  op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   if (o->chant_data)
     {
@@ -79,6 +80,8 @@ prepare (GeglOperation *operation)
                              babl_format ("RGBA float"));
 }
 
+static GMutex mutex;
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -86,7 +89,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   gfloat *src_buf;
@@ -106,7 +109,6 @@ process (GeglOperation       *operation,
 
   GArray *offsets;
 
-  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
   GeglRectangle *boundary;
 
   GRand *gr;
@@ -115,7 +117,7 @@ process (GeglOperation       *operation,
   gint r;
 
   /* calculate offsets once */
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   if (!o->chant_data)
    {
       boundary = gegl_operation_source_get_bounding_box (operation, "input");
@@ -144,7 +146,8 @@ process (GeglOperation       *operation,
           o->chant_data = offsets;
         }
     }
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
+
   offsets = (GArray*) o->chant_data;
 
   src_rect.x      = result->x - op_area->left;
@@ -190,9 +193,12 @@ process (GeglOperation       *operation,
         }
     }
 
-  gegl_buffer_set (output, result, 0, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0, babl_format ("RGBA float"),
+                   dst_buf, GEGL_AUTO_ROWSTRIDE);
+
   g_slice_free1 (src_rect.width * src_rect.height * 4 * sizeof (gfloat), src_buf);
   g_slice_free1 (result->width * result->height * 4 * sizeof (gfloat), dst_buf);
+
   return  TRUE;
 }
 
@@ -226,9 +232,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories" , "distort",
-    "name"       , "gegl:shift",
-    "description", _("Shift by a random number of pixels"),
+    "name",        "gegl:shift",
+    "categories",  "distort",
+    "description", _("Shift each row or column of pixels by a random amount"),
     NULL);
 }
 
