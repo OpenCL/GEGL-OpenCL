@@ -31,7 +31,8 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
 
 #define MAX_CHARS_IN_ROW        500
 #define CHANNEL_COUNT           3
-#define ASCII_P                 80
+#define CHANNEL_COUNT_GRAY      1
+#define ASCII_P                 'P'
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -39,8 +40,10 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
 #include <errno.h>
 
 typedef enum {
-  PIXMAP_ASCII  = 51,
-  PIXMAP_RAW    = 54,
+  PIXMAP_ASCII_GRAY = '2',
+  PIXMAP_ASCII      = '3',
+  PIXMAP_RAW_GRAY   = '5',
+  PIXMAP_RAW        = '6',
 } map_type;
 
 typedef struct {
@@ -48,6 +51,7 @@ typedef struct {
 	glong      width;
 	glong      height;
         gsize      numsamples; /* width * height * channels */
+        gsize      channels; 
         gsize      bpc;        /* bytes per channel */
 	guchar    *data;
 } pnm_struct;
@@ -61,12 +65,15 @@ ppm_load_read_header(FILE       *fp,
     //gchar *retval;
     gchar  header[MAX_CHARS_IN_ROW];
     gint   maxval;
+    int    channel_count;
 
     /* Check the PPM file Type P3 or P6 */
     fgets (header,MAX_CHARS_IN_ROW,fp);
 
     if (header[0] != ASCII_P ||
-        (header[1] != PIXMAP_ASCII &&
+        (header[1] != PIXMAP_ASCII_GRAY &&
+         header[1] != PIXMAP_ASCII &&
+         header[1] != PIXMAP_RAW_GRAY &&
          header[1] != PIXMAP_RAW))
       {
         g_warning ("Image is not a portable pixmap");
@@ -74,6 +81,11 @@ ppm_load_read_header(FILE       *fp,
       }
 
     img->type = header[1];
+
+    if (img->type == PIXMAP_RAW_GRAY || img->type == PIXMAP_ASCII_GRAY)
+      channel_count = CHANNEL_COUNT_GRAY;
+    else
+      channel_count = CHANNEL_COUNT;
 
     /* Check the Comments */
     fgets (header,MAX_CHARS_IN_ROW,fp);
@@ -139,7 +151,10 @@ ppm_load_read_header(FILE       *fp,
         g_warning ("Illegal width/height: %ld/%ld", img->width, img->height);
         return FALSE;
       }
-    img->numsamples = img->width * img->height * CHANNEL_COUNT;
+
+
+    img->channels = channel_count;
+    img->numsamples = img->width * img->height * channel_count;
 
     return TRUE;
 }
@@ -150,7 +165,7 @@ ppm_load_read_image(FILE       *fp,
 {
     guint   i;
 
-    if (img->type == PIXMAP_RAW)
+    if (img->type == PIXMAP_RAW || img->type == PIXMAP_RAW_GRAY)
       {
         fread (img->data, img->bpc, img->numsamples, fp);
 
@@ -168,7 +183,7 @@ ppm_load_read_image(FILE       *fp,
       }
     else
       {
-        /* Plain PPM format */
+        /* Plain PPM or PGM format */
 
         if (img->bpc == sizeof (guchar))
           {
@@ -215,21 +230,26 @@ get_bounding_box (GeglOperation *operation)
   if (!ppm_load_read_header (fp, &img))
     goto out;
 
-  switch (img.bpc)
+  if (img.bpc == 1)
     {
-    case 1:
-      gegl_operation_set_format (operation, "output",
-                                 babl_format ("R'G'B' u8"));
-      break;
-
-    case 2:
-      gegl_operation_set_format (operation, "output",
-                                 babl_format ("R'G'B' u16"));
-      break;
-
-    default:
-      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+      if (img.channels == 3)
+        gegl_operation_set_format (operation, "output",
+                                   babl_format ("R'G'B' u8"));
+      else
+        gegl_operation_set_format (operation, "output",
+                                   babl_format ("Y' u8"));
     }
+  else if (img.bpc == 2)
+    {
+      if (img.channels == 3)
+        gegl_operation_set_format (operation, "output",
+                                   babl_format ("R'G'B' u16"));
+      else
+        gegl_operation_set_format (operation, "output",
+                                   babl_format ("Y' u16"));
+    }
+  else
+    g_warning ("%s: Programmer stupidity error", G_STRLOC);
 
   result.width = img.width;
   result.height = img.height;
@@ -279,39 +299,49 @@ process (GeglOperation       *operation,
   rect.height = img.height;
   rect.width = img.width;
 
-  switch (img.bpc)
+  if (img.bpc == 1)
     {
-    case 1:
-      gegl_buffer_get (output, &rect, 1.0, babl_format ("R'G'B' u8"), img.data,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-      break;
-
-    case 2:
-      gegl_buffer_get (output, &rect, 1.0, babl_format ("R'G'B' u16"), img.data,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-      break;
-
-    default:
-      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+      if (img.channels == 3)
+        gegl_buffer_get (output, &rect, 1.0, babl_format ("R'G'B' u8"), img.data,
+                         GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+      else
+        gegl_buffer_get (output, &rect, 1.0, babl_format ("Y' u8"), img.data,
+                         GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
     }
+  else if (img.bpc == 2)
+    {
+      if (img.channels == 3)
+        gegl_buffer_get (output, &rect, 1.0, babl_format ("R'G'B' u16"), img.data,
+                         GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+      else
+        gegl_buffer_get (output, &rect, 1.0, babl_format ("Y' u16"), img.data,
+                         GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+    }
+  else
+    g_warning ("%s: Programmer stupidity error", G_STRLOC);
 
   ppm_load_read_image (fp, &img);
 
-  switch (img.bpc)
+  if (img.bpc == 1)
     {
-    case 1:
-      gegl_buffer_set (output, &rect, 0, babl_format ("R'G'B' u8"), img.data,
-                       GEGL_AUTO_ROWSTRIDE);
-      break;
-
-    case 2:
-      gegl_buffer_set (output, &rect, 0, babl_format ("R'G'B' u16"), img.data,
-                       GEGL_AUTO_ROWSTRIDE);
-      break;
-
-    default:
-      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+      if (img.channels == 3)
+        gegl_buffer_set (output, &rect, 0, babl_format ("R'G'B' u8"), img.data,
+                         GEGL_AUTO_ROWSTRIDE);
+      else
+        gegl_buffer_set (output, &rect, 0, babl_format ("Y' u8"), img.data,
+                         GEGL_AUTO_ROWSTRIDE);
     }
+  else if (img.bpc == 2)
+    {
+      if (img.channels == 3)
+        gegl_buffer_set (output, &rect, 0, babl_format ("R'G'B' u16"), img.data,
+                         GEGL_AUTO_ROWSTRIDE);
+      else
+        gegl_buffer_set (output, &rect, 0, babl_format ("Y' u16"), img.data,
+                         GEGL_AUTO_ROWSTRIDE);
+    }
+  else
+    g_warning ("%s: Programmer stupidity error", G_STRLOC);
 
   g_free (img.data);
 
@@ -351,6 +381,8 @@ gegl_chant_class_init (GeglChantClass *klass)
     NULL);
 
   gegl_extension_handler_register (".ppm", "gegl:ppm-load");
+  gegl_extension_handler_register (".pgm", "gegl:ppm-load");
+  gegl_extension_handler_register (".pnm", "gegl:ppm-load");
 }
 
 #endif
