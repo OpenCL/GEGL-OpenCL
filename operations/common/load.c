@@ -37,7 +37,6 @@ struct _GeglChant
 
   GeglNode *output;
   GeglNode *load;
-  gchar    *cached_path;
 };
 
 typedef struct
@@ -50,16 +49,63 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 
 #include <stdio.h>
 
+static void
+do_setup (GeglOperation *operation, const gchar *new_path)
+{
+  GeglChant  *self = GEGL_CHANT (operation);
+
+  if (!new_path || 0 == strlen (new_path))
+    {
+      gegl_node_set (self->load,
+                     "operation", "gegl:text",
+                     "string",    "No path specified",
+                     NULL);
+    }
+  else
+    {
+      const gchar *extension = strrchr (new_path, '.');
+      const gchar *handler   = NULL;
+
+      if (!g_file_test (new_path, G_FILE_TEST_EXISTS))
+        {
+          gchar *name = g_filename_display_name (new_path);
+          gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
+          g_free (name);
+
+          g_warning ("load: %s", tmp);
+          gegl_node_set (self->load,
+                         "operation", "gegl:text",
+                         "size", 12.0,
+                         "string", tmp,
+                         NULL);
+          g_free (tmp);
+        }
+      else
+        {
+          if (extension)
+            handler = gegl_extension_handler_get (extension);
+          gegl_node_set (self->load,
+                         "operation", handler,
+                         NULL);
+          gegl_node_set (self->load,
+                         "path", new_path,
+                         NULL);
+        }
+    }
+}
+
 static void attach (GeglOperation *operation)
 {
-  GeglChant *self = GEGL_CHANT (operation);
+  GeglChant  *self = GEGL_CHANT (operation);
+  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
 
   self->output = gegl_node_get_output_proxy (operation->node, "output");
 
   self->load = gegl_node_new_child (operation->node,
                                     "operation", "gegl:text",
-                                    "string",    "foo",
                                     NULL);
+
+  do_setup (operation, o->path);
 
   gegl_node_link (self->load, self->output);
 }
@@ -89,85 +135,37 @@ detect (GeglOperation *operation,
 }
 
 static void
-prepare (GeglOperation *operation)
+my_set_property (GObject      *gobject,
+                 guint         property_id,
+                 const GValue *value,
+                 GParamSpec   *pspec)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglChant  *self = GEGL_CHANT (operation);
-  /* warning: this might trigger regeneration of the graph,
-   *          for now this is evaded by just ignoring additional
-   *          requests to be made into members of the graph
-   */
+  GeglOperation *operation = GEGL_OPERATION (gobject);
+  GeglChant     *self = GEGL_CHANT (operation);
+  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
 
-    if (o->path[0]==0 && self->cached_path == NULL)
-      {
-          gegl_node_set (self->load,
-                         "operation", "gegl:text",
-                         "size", 20.0,
-                         "string", "Eeeeek!",
-                         NULL);
-      }
-    else
-    {
-      if (o->path[0] &&
-          (self->cached_path == NULL || strcmp (o->path, self->cached_path)))
-        {
-          const gchar *extension = strrchr (o->path, '.');
-          const gchar *handler   = NULL;
+  const gchar *new_path = g_value_get_string (value);
 
-          if (!g_file_test (o->path, G_FILE_TEST_EXISTS))
-            {
-              gchar *name = g_filename_display_name (o->path);
-              gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
-              g_free (name);
+  if (self->load && (o->path != new_path))
+    do_setup (operation, new_path);
 
-              g_warning ("load: %s", tmp);
-              gegl_node_set (self->load,
-                             "operation", "gegl:text",
-                             "size", 12.0,
-                             "string", tmp,
-                             NULL);
-              g_free (tmp);
-            }
-          else
-            {
-              if (extension)
-                handler = gegl_extension_handler_get (extension);
-              gegl_node_set (self->load,
-                             "operation", handler,
-                             NULL);
-              gegl_node_set (self->load,
-                             "path",  o->path,
-                             NULL);
-            }
-          if (self->cached_path)
-            g_free (self->cached_path);
-          self->cached_path = g_strdup (o->path);
-        }
-    }
-
-  {
-    /* forward the set BablFormat of the image loader on the meta-op itself,
-     * making potential cache buffers be created with the proper format, there
-     * might be cleaner ways of achieving this.
-     */
-    GeglOperation *op;
-    g_object_get (self->load, "gegl-operation", &op, NULL);
-    gegl_operation_set_format (operation, "output", gegl_operation_get_format (op, "output"));
-  }
+  /* The set_property provided by the chant system does the
+   * storing and reffing/unreffing of the input properties */
+  set_property(gobject, property_id, value, pspec);
 }
 
 static void
-dispose (GObject *object)
+prepare (GeglOperation *operation)
 {
-  GeglChant *self = GEGL_CHANT (object);
+  GeglChant  *self = GEGL_CHANT (operation);
+  GeglOperation *op;
 
-  if (self->cached_path)
-    {
-      g_free (self->cached_path);
-      self->cached_path = NULL;
-    }
-
-  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+  /* forward the set BablFormat of the image loader on the meta-op itself,
+   * making potential cache buffers be created with the proper format, there
+   * might be cleaner ways of achieving this.
+   */
+  g_object_get (self->load, "gegl-operation", &op, NULL);
+  gegl_operation_set_format (operation, "output", gegl_operation_get_format (op, "output"));
 }
 
 static void
@@ -176,7 +174,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  object_class->dispose = dispose;
+  object_class->set_property = my_set_property;
 
   operation_class->attach = attach;
   operation_class->detect = detect;
