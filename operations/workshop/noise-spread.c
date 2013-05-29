@@ -26,39 +26,43 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (x_amount, _("Horizontal"), 0, 256, 5,
-   _("Horizontal spread amount"))
-gegl_chant_int (y_amount, _("Vertical"), 0, 256, 5,
-   _("Vertical spread amount"))
+gegl_chant_int (amount_x, _("Horizontal"),
+                0, 256, 5,
+                _("Horizontal spread amount"))
+
+gegl_chant_int (amount_y, _("Vertical"),
+                0, 256, 5,
+                _("Vertical spread amount"))
+
+gegl_chant_seed (seed, _("Seed"),
+                 _("Random seed"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "noise-spread.c"
+#define GEGL_CHANT_C_FILE "noise-spread.c"
 
 #include "gegl-chant.h"
 #include <math.h>
 
-static void
-calc_sample_coords (gint      src_x,
-                    gint      src_y,
-                    gint      x_amount,
-                    gint      y_amount,
-                    GRand    *gr,
-                    gdouble  *x,
-                    gdouble  *y)
+static inline void
+calc_sample_coords (gint  src_x,
+                    gint  src_y,
+                    gint  amount_x,
+                    gint  amount_y,
+                    gint  seed,
+                    gint *x,
+                    gint *y)
 {
-  gdouble        angle;
-  gint           xdist, ydist;
+  gdouble angle;
+  gint    xdist, ydist;
 
   /* get random angle, x distance, and y distance */
-  xdist = (x_amount > 0
-           ? g_rand_int_range (gr, -x_amount, x_amount)
-           : 0);
-  ydist = (y_amount > 0
-           ? g_rand_int_range (gr, -y_amount, y_amount)
-           : 0);
-  angle = g_rand_double_range (gr, -G_PI, G_PI);
+  xdist = amount_x > 0 ? gegl_random_int_range (seed, src_x, src_y, 0, 0,
+                                                -amount_x, amount_x) : 0;
+  ydist = amount_y > 0 ? gegl_random_int_range (seed, src_x, src_y, 0, 1,
+                                                -amount_y, amount_y) : 0;
+  angle = gegl_random_double_range (seed, src_x, src_y, 0, 2, -G_PI, G_PI);
 
   *x = src_x + floor (sin (angle) * xdist);
   *y = src_y + floor (cos (angle) * ydist);
@@ -66,8 +70,9 @@ calc_sample_coords (gint      src_x,
 
 /* Apply the actual transform */
 static void
-apply_spread (gint                 x_amount,
-              gint                 y_amount,
+apply_spread (gint                 amount_x,
+              gint                 amount_y,
+              gint                 seed,
               gint                 img_width,
               gint                 img_height,
               const Babl          *format,
@@ -76,61 +81,57 @@ apply_spread (gint                 x_amount,
               const GeglRectangle *roi)
 {
   gfloat *dst_buf;
-  gint x1, y1; // Noise image
-  gdouble x, y;   // Source Image
-
-  GRand    *gr = g_rand_new ();
+  gint    x1, y1;
 
   /* Get buffer in which to place dst pixels. */
   dst_buf = g_new0 (gfloat, roi->width * roi->height * 4);
 
-  for (y1 = 0; y1 < roi->height; y1++) {
-    for (x1 = 0; x1 < roi->width; x1++) {
+  for (y1 = 0; y1 < roi->height; y1++)
+    {
+      for (x1 = 0; x1 < roi->width; x1++)
+        {
+          gint x, y;
 
-      calc_sample_coords (x1, y1, x_amount, y_amount, gr, &x, &y);
-      /* Only displace the pixel if it's within the bounds of the image. */
-      if (x >= 0 && x < img_width && y >= 0 && y < img_height)
-        gegl_buffer_sample (src, x, y, NULL, &dst_buf[(y1 * roi->width + x1) * 4], format,
-                            GEGL_SAMPLER_LINEAR, GEGL_ABYSS_NONE);
-      else /* Else just copy it */
-        gegl_buffer_sample (src, x1, y1, NULL, &dst_buf[(y1 * roi->width + x1) * 4], format,
-                            GEGL_SAMPLER_LINEAR, GEGL_ABYSS_NONE);
-    } /* for */
-  } /* for */
+          calc_sample_coords (x1 + roi->x, y1 + roi->y,
+                              amount_x, amount_y, seed,
+                              &x, &y);
 
-  gegl_buffer_sample_cleanup (src);
+          /* Only displace the pixel if it's within the bounds of the image. */
+          if (x < 0 || x >= img_width ||
+              y < 0 || y >= img_height)
+            {
+              /* Else just copy it */
+              x = x1;
+              y = y1;
+            }
 
-  /* Store dst pixels. */
-  gegl_buffer_set (dst, roi, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+          gegl_buffer_get (src, GEGL_RECTANGLE (x, y, 1, 1), 1.0, format,
+                           &dst_buf[(y1 * roi->width + x1) * 4],
+                           GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+        }
+    }
 
-  gegl_buffer_flush(dst);
+  gegl_buffer_set (dst, roi, 0, format,
+                   dst_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (dst_buf);
-  g_rand_free (gr);
 }
-
-/*****************************************************************************/
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
-  GeglOperationAreaFilter *op_area;
-
-  op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   op_area->left   =
-  op_area->right  = o->x_amount;
+  op_area->right  = o->amount_x;
   op_area->top    =
-  op_area->bottom = o->y_amount;
+  op_area->bottom = o->amount_y;
 
-  gegl_operation_set_format (operation, "output",
-                             babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
-/* Perform the specified operation.
- */
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -138,21 +139,20 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
-  const Babl *format = babl_format ("RaGaBaA float");
+  GeglChantO    *o        = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle  boundary = gegl_operation_get_bounding_box (operation);
 
-  apply_spread ((o->x_amount + 1) / 2,
-                (o->y_amount + 1) / 2,
-                boundary.width - 2 * o->x_amount,
-                boundary.height - 2 * o->y_amount,
-                format,
+  apply_spread ((o->amount_x + 1) / 2,
+                (o->amount_y + 1) / 2,
+                o->seed,
+                boundary.width,
+                boundary.height,
+                babl_format ("RGBA float"),
                 input,
                 output,
                 result);
   return TRUE;
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -163,15 +163,14 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
   operation_class->prepare = prepare;
+  filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories" , "noise",
-    "name"       , "gegl:noise-spread",
-    "description", _("Noise spread filter"),
+    "name",        "gegl:noise-spread",
+    "categories",  "noise",
+    "description", _("Move pixels around randomly"),
     NULL);
 }
-
 
 #endif
