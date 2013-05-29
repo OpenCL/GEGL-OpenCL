@@ -60,6 +60,7 @@ operations/common/noise-pick.c
 operations/common/noise-reduction.c
 operations/common/noise-rgb.c
 operations/common/noise-slur.c
+operations/common/noise-spread.c
 operations/common/oilify.c
 operations/common/opacity.c
 operations/common/open-buffer.c
@@ -183,7 +184,6 @@ operations/workshop/hstack.c
 operations/workshop/kuwahara.c
 operations/workshop/linear-gradient.c
 operations/workshop/mandelbrot.c
-operations/workshop/noise-spread.c
 operations/workshop/plasma.c
 operations/workshop/radial-gradient.c
 operations/workshop/rawbayer-load.c
