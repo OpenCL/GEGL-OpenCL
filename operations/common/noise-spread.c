@@ -26,13 +26,13 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (amount_x, _("Horizontal"),
-                0, 256, 5,
-                _("Horizontal spread amount"))
+gegl_chant_int  (amount_x, _("Horizontal"),
+                 0, 256, 5,
+                 _("Horizontal spread amount"))
 
-gegl_chant_int (amount_y, _("Vertical"),
-                0, 256, 5,
-                _("Vertical spread amount"))
+gegl_chant_int  (amount_y, _("Vertical"),
+                 0, 256, 5,
+                 _("Vertical spread amount"))
 
 gegl_chant_seed (seed, _("Seed"),
                  _("Random seed"))
@@ -101,8 +101,8 @@ apply_spread (gint                 amount_x,
               y < 0 || y >= img_height)
             {
               /* Else just copy it */
-              x = x1;
-              y = y1;
+              x = x1 + roi->x;
+              y = y1 + roi->y;
             }
 
           gegl_buffer_get (src, GEGL_RECTANGLE (x, y, 1, 1), 1.0, format,
