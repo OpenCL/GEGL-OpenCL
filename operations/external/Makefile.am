@@ -125,6 +125,11 @@ ppm_load_la_LIBADD = $(op_libs)
 ppm_save_la_SOURCES = ppm-save.c
 ppm_save_la_LIBADD = $(op_libs)
 
+# No dependencies
+ops += npy-save.la
+npy_save_la_SOURCES = npy-save.c
+npy_save_la_LIBADD = $(op_libs)
+
 # Dependencies are in our source tree
 ops += rgbe-load.la rgbe-save.la
 rgbe_load_la_SOURCES = rgbe-load.c
