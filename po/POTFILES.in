@@ -105,6 +105,7 @@ operations/external/jp2-load.c
 operations/external/jpg-load.c
 operations/external/jpg-save.c
 operations/external/matting-levin.c
+operations/external/npy-save.c
 operations/external/path.c
 operations/external/pixbuf.c
 operations/external/png-load.c
