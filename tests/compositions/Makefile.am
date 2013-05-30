@@ -72,6 +72,7 @@ $(testprefix)%.xml.sh: Makefile.am $(call test_to_xml,$@) $(call test_to_ref,$@)
 	out_img=$(call test_to_out,$@)                                     ;\
 	echo "#!/bin/bash" > $@                                            ;\
 	echo "mkdir -p $(abs_builddir)/output" >> $@                       ;\
+	echo "if [ -a $$out_img ]; then rm $$out_img ; fi" >> $@           ;\
 	echo "$(builddir_gegl) $$xml_file -o $$out_img" >> $@              ;\
 	echo "$(builddir_img_cmp) $$ref_img $$out_img" >> $@  ;\
 	chmod +x $@
