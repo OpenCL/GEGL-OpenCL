@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-05-26 22:36+0000\n"
-"PO-Revision-Date: 2013-05-27 16:58+0200\n"
+"POT-Creation-Date: 2013-05-29 21:43+0000\n"
+"PO-Revision-Date: 2013-05-30 17:43+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -480,7 +480,6 @@ msgid "The other cell color (defaults to 'white')"
 msgstr "El color de la otra celda. El predeterminado es: «blanco»"
 
 #: ../operations/common/checkerboard.c:157
-#| msgid "Checkerboard renderer"
 msgid "Create a checkerboard pattern"
 msgstr "Crear un patrón de tablero de ajedrez"
 
@@ -537,9 +536,6 @@ msgid "The dithering strategy to use"
 msgstr "Qué estrategia de tramado usar"
 
 #: ../operations/common/color-reduction.c:591
-#| msgid ""
-#| "Reduces the number of bits per channel (colors and alpha), with optional "
-#| "dithering"
 msgid ""
 "Reduce the number of colors in the image, by reducing the bits per channel "
 "(colors and alpha), with optional dithering"
@@ -566,7 +562,6 @@ msgid "Corrected estimation of the temperature of the light source in Kelvin."
 msgstr "Estimación corregida de la temperatura en Kelvin de la fuente de luz."
 
 #: ../operations/common/color-temperature.c:279
-#| msgid "Allows changing the color temperature of an image."
 msgid "Change the color temperature of the image"
 msgstr "Cambiar la temperatura de color de la imagen"
 
@@ -625,15 +620,15 @@ msgstr "El color de fondo de las baldosas"
 #: ../operations/common/cubism.c:42 ../operations/common/noise.c:31
 #: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:31
 #: ../operations/common/noise-rgb.c:52 ../operations/common/noise-slur.c:34
-#: ../operations/common/shift.c:35 ../operations/common/wind.c:33
-#: ../operations/workshop/plasma.c:33
+#: ../operations/common/noise-spread.c:37 ../operations/common/shift.c:35
+#: ../operations/common/wind.c:33 ../operations/workshop/plasma.c:33
 msgid "Seed"
 msgstr "Semilla"
 
 #: ../operations/common/cubism.c:43 ../operations/common/noise-hurl.c:32
 #: ../operations/common/noise-pick.c:32 ../operations/common/noise-rgb.c:53
-#: ../operations/common/noise-slur.c:35 ../operations/common/shift.c:36
-#: ../operations/common/wind.c:33
+#: ../operations/common/noise-slur.c:35 ../operations/common/noise-spread.c:38
+#: ../operations/common/shift.c:36 ../operations/common/wind.c:33
 msgid "Random seed"
 msgstr "Semilla aleatoria"
 
@@ -650,17 +645,14 @@ msgid "Keep"
 msgstr "Mantener"
 
 #: ../operations/common/deinterlace.c:43
-#| msgid "Keep even/odd fields"
 msgid "Keep even or odd fields"
 msgstr "Mantener los campos pares o impares"
 
 #: ../operations/common/deinterlace.c:45
-#| msgid "Operation"
 msgid "Orientation"
 msgstr "Orientación"
 
 #: ../operations/common/deinterlace.c:48
-#| msgid "Choose horizontal or vertical"
 msgid "Deinterlace horizontally or vertically"
 msgstr "Desentrelazar horizontal o verticalmente"
 
@@ -685,8 +677,6 @@ msgid "Radius 2"
 msgstr "Radio 2"
 
 #: ../operations/common/difference-of-gaussians.c:103
-#| msgid ""
-#| "Does an edge detection based on the difference of two gaussian blurs."
 msgid ""
 "Edge detection with control of edge thickness, based on the difference of "
 "two gaussian blurs"
@@ -761,12 +751,12 @@ msgid "High-resolution edge detection"
 msgstr "Detección de bordes de alta resolución"
 
 #: ../operations/common/edge-sobel.c:27 ../operations/common/edge-sobel.c:29
-#: ../operations/workshop/noise-spread.c:29
+#: ../operations/common/noise-spread.c:29
 msgid "Horizontal"
 msgstr "Horizontal"
 
 #: ../operations/common/edge-sobel.c:31 ../operations/common/edge-sobel.c:33
-#: ../operations/workshop/noise-spread.c:31
+#: ../operations/common/noise-spread.c:33
 msgid "Vertical"
 msgstr "Vertical"
 
@@ -869,9 +859,6 @@ msgid "Gamma correction"
 msgstr "Corrección gamma"
 
 #: ../operations/common/exposure.c:187
-#| msgid ""
-#| "Changes Exposure and Contrast, mainly for use with high dynamic range "
-#| "images."
 msgid ""
 "Changes Exposure and Contrast, mainly for use with high dynamic range images"
 msgstr ""
@@ -1126,7 +1113,6 @@ msgid "Unsupported fractal type"
 msgstr "Tipo de fractal no soportado"
 
 #: ../operations/common/fractal-trace.c:256
-#| msgid "Transform the buffer with waves"
 msgid "Transform the image with the fractals"
 msgstr "Transformar la imagen con los fractales"
 
@@ -1135,8 +1121,6 @@ msgid "Size X"
 msgstr "Tamaño X"
 
 #: ../operations/common/gaussian-blur.c:37
-#| msgid ""
-#| "Standard deviation for the horizontal axis. (multiply by ~2 to get radius)"
 msgid ""
 "Standard deviation for the horizontal axis (multiply by ~2 to get radius)"
 msgstr ""
@@ -1148,8 +1132,6 @@ msgid "Size Y"
 msgstr "Tamaño Y"
 
 #: ../operations/common/gaussian-blur.c:42
-#| msgid ""
-#| "Standard deviation for the vertical axis. (multiply by ~2 to get radius.)"
 msgid "Standard deviation for the vertical axi. (multiply by ~2 to get radius)"
 msgstr ""
 "Desviación estándar para el eje vertical (multiplicar por 2 aprox. para "
@@ -1161,9 +1143,6 @@ msgid "Filter"
 msgstr "Filtro"
 
 #: ../operations/common/gaussian-blur.c:48
-#| msgid ""
-#| "Optional parameter to override the automatic selection of blur filter. "
-#| "Choices are fir, iir, auto"
 msgid "Optional parameter to override the automatic selection of blur filter"
 msgstr ""
 "Parámetro opcional para sobreescribr la selección automática del filtro de "
@@ -1183,10 +1162,11 @@ msgstr ""
 #: ../operations/common/open-buffer.c:25 ../operations/common/raw-load.c:27
 #: ../operations/common/save.c:25 ../operations/external/ff-load.c:25
 #: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:25
-#: ../operations/external/jpg-save.c:25 ../operations/external/png-load.c:27
-#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
-#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
-#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
+#: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
+#: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
+#: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
+#: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
+#: ../operations/external/svg-load.c:25
 #: ../operations/workshop/external/ff-save.c:30
 #: ../operations/workshop/external/gluas.c:43
 #: ../operations/workshop/rawbayer-load.c:25
@@ -1336,7 +1316,6 @@ msgid "A layer in the traditional sense"
 msgstr "Una capa en el sentido tradicional de la palabra"
 
 #: ../operations/common/lens-distortion.c:32
-#| msgid "Main:"
 msgid "Main"
 msgstr "Principal"
 
@@ -1350,7 +1329,6 @@ msgid "Zoom"
 msgstr "Ampliación"
 
 #: ../operations/common/lens-distortion.c:39
-#| msgid "Edge:"
 msgid "Edge"
 msgstr "Borde"
 
@@ -1359,7 +1337,6 @@ msgid "Edge value of distortion"
 msgstr "Valor de borde de la distorsión"
 
 #: ../operations/common/lens-distortion.c:43
-#| msgid "Brighten:"
 msgid "Brighten"
 msgstr "Aclarar"
 
@@ -1368,7 +1345,6 @@ msgid "Brighten the image"
 msgstr "Aclarar la imagen"
 
 #: ../operations/common/lens-distortion.c:47
-#| msgid "X shift:"
 msgid "X shift"
 msgstr "Desplazamiento X"
 
@@ -1377,7 +1353,6 @@ msgid "Shift horizontal"
 msgstr "Desplazamiento horizontal"
 
 #: ../operations/common/lens-distortion.c:51
-#| msgid "Y shift:"
 msgid "Y shift"
 msgstr "Desplazamiento Y"
 
@@ -1386,7 +1361,6 @@ msgid "Shift vertical"
 msgstr "Desplazamiento vertical"
 
 #: ../operations/common/lens-distortion.c:348
-#| msgid "Edge value of distortion"
 msgid "Corrects lens distortion"
 msgstr "Corrige la distorsión de la lente"
 
@@ -1784,6 +1758,18 @@ msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr ""
 "Deslizar aleatoriamente algunos píxeles hacia abajo (similar a la fusión)"
 
+#: ../operations/common/noise-spread.c:31
+msgid "Horizontal spread amount"
+msgstr "Grado de dispersión horizontal"
+
+#: ../operations/common/noise-spread.c:35
+msgid "Vertical spread amount"
+msgstr "Grado de dispersión vertical"
+
+#: ../operations/common/noise-spread.c:172
+msgid "Move pixels around randomly"
+msgstr "Mover los píxeles alrededor aleatoriamente"
+
 #: ../operations/common/oilify.c:27 ../operations/common/photocopy.c:25
 #: ../operations/common/photocopy.c:27
 msgid "Mask Radius"
@@ -1875,7 +1861,6 @@ msgid "Height of blocks in pixels"
 msgstr "Altura de los bloques en píxeles"
 
 #: ../operations/common/pixelize.c:318
-#| msgid "Simplify image into an array of solid-colored dots"
 msgid "Simplify image into an array of solid-colored rectangles"
 msgstr "Simplificar la imagen en una matriz de rectángulos de color liso"
 
@@ -1930,7 +1915,6 @@ msgid "Let origin point to be the middle one"
 msgstr "Hacer que el punto de origen sea el punto medio"
 
 #: ../operations/common/polar-coordinates.c:422
-#| msgid "Origin point for the polar coordinates"
 msgid "Convert image to or from polar coordinates"
 msgstr "Convertir la imagen a o de coordenadas polares"
 
@@ -2090,8 +2074,7 @@ msgstr "Dirección"
 msgid "Shift direction"
 msgstr "Dirección del desplazamiento"
 
-#: ../operations/common/shift.c:237
-#| msgid "Distort colors by random amounts."
+#: ../operations/common/shift.c:230
 msgid "Shift each row or column of pixels by a random amount"
 msgstr "Desplazar cara fila o columna de píxeles una cantidad aleatoria"
 
@@ -2210,9 +2193,6 @@ msgid "Scale, strength of effect"
 msgstr "Escala, fuerza del efecto"
 
 #: ../operations/common/unsharp-mask.c:77
-#| msgid ""
-#| "Performs an unsharp mask on the input buffer (sharpens an image by adding "
-#| "false mach-bands around edges)"
 msgid ""
 "The most widely used method for sharpening an image, sharpens by adding "
 "false mach-bands around edges"
@@ -2296,10 +2276,6 @@ msgid "Rotation angle"
 msgstr "Ángulo de rotación"
 
 #: ../operations/common/vignette.c:383
-#| msgid ""
-#| "A vignetting op, applies a vignette to an image. Simulates the luminance "
-#| "fall off at edge of exposed film, and some other fuzzier border effects "
-#| "that can naturally occur with analoge photograpy."
 msgid ""
 "Applies a vignette to an image. Simulates the luminance fall off at the edge "
 "of exposed film, and some other fuzzier border effects that can naturally "
@@ -2631,6 +2607,17 @@ msgstr ""
 "una máscara alfa de primer plano. Establecer blanco como seleccionado, negro "
 "como no seleccionado, para el trimap."
 
+#: ../operations/external/npy-save.c:32 ../operations/external/png-save.c:27
+#: ../operations/external/ppm-save.c:26 ../operations/external/rgbe-save.c:27
+#: ../operations/workshop/external/ff-save.c:30
+msgid "Target path and filename, use '-' for stdout."
+msgstr "Ruta y nombre del archivo objetivo, use «-» para la salida estándar."
+
+#: ../operations/external/npy-save.c:144
+#| msgid "PPM image saver (Portable pixmap saver.)"
+msgid "NPY image saver (Numerical python file saver.)"
+msgstr "Guardador de imágenes NPY (guardador de archivos numéricos Python)."
+
 #: ../operations/external/path.c:27
 msgid "Fill Color"
 msgstr "Color de relleno"
@@ -2730,12 +2717,6 @@ msgstr ""
 msgid "PNG image loader."
 msgstr "Cargador de imágenes PNG."
 
-#: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
-#: ../operations/external/rgbe-save.c:27
-#: ../operations/workshop/external/ff-save.c:30
-msgid "Target path and filename, use '-' for stdout."
-msgstr "Ruta y nombre del archivo objetivo, use «-» para la salida estándar."
-
 #: ../operations/external/png-save.c:28
 msgid "Compression"
 msgstr "Compresión"
@@ -2758,7 +2739,7 @@ msgstr ""
 "Guardador de imágenes PNG (pasa el búfer a su través, guarda como efecto "
 "colateral)."
 
-#: ../operations/external/ppm-load.c:350
+#: ../operations/external/ppm-load.c:380
 msgid "PPM image loader."
 msgstr "Cargador de imágenes PPM."
 
@@ -4063,18 +4044,6 @@ msgstr "Número máximo de iteraciones"
 msgid "Mandelbrot set renderer"
 msgstr "Renderizador del conjunto de Mandelbrot"
 
-#: ../operations/workshop/noise-spread.c:30
-msgid "Horizontal spread amount"
-msgstr "Grado de dispersión horizontal"
-
-#: ../operations/workshop/noise-spread.c:32
-msgid "Vertical spread amount"
-msgstr "Grado de dispersión vertical"
-
-#: ../operations/workshop/noise-spread.c:172
-msgid "Noise spread filter"
-msgstr "Filtro de dispersión de ruido"
-
 #: ../operations/workshop/plasma.c:34
 msgid "Random seed. Passing -1 implies that the seed is randomly chosen."
 msgstr ""
@@ -4146,6 +4115,9 @@ msgid ""
 msgstr ""
 "Filtro de percentil que resalta los bordes y reduce el ruido, basado en los "
 "vecinos simétricos más próximos"
+
+#~ msgid "Noise spread filter"
+#~ msgstr "Filtro de dispersión de ruido"
 
 #~ msgid "Cartoon effect"
 #~ msgstr "Efecto de dibujos animados"
