@@ -189,8 +189,11 @@ gegl_chant_class_init (ChantClass * klass)
 #define M_GEGL_CHANT_SET_NAME(name)   M_GEGL_CHANT_SET_NAME_EXTENDED(name)
   M_GEGL_CHANT_SET_NAME (GEGL_CHANT_NAME);
 
+  gegl_operation_class_set_key (operation_class, "categories", "transform");
+
 #ifdef GEGL_CHANT_DESCRIPTION
-  gegl_operation_class_set_key (operation_class, "description", GEGL_CHANT_DESCRIPTION);
+  gegl_operation_class_set_key (operation_class, "description",
+                                GEGL_CHANT_DESCRIPTION);
 #endif
 
 #define gegl_chant_double(name, min, max, def, blurb)  \
