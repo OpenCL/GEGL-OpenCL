@@ -33,21 +33,22 @@ enum
   PROP_LAST
 };
 
-static void       get_property (GObject    *gobject,
-                                guint       prop_id,
-                                GValue     *value,
-                                GParamSpec *pspec);
-static void       set_property (GObject      *gobject,
-                                guint         prop_id,
-                                const GValue *value,
-                                GParamSpec   *pspec);
-static void       finalize (GObject *self_object);
-static GeglNode * detect (GeglOperation *operation,
-                          gint            x,
-                          gint            y);
+static void       get_property (GObject       *gobject,
+                                guint          prop_id,
+                                GValue        *value,
+                                GParamSpec    *pspec);
+static void       set_property (GObject       *gobject,
+                                guint          prop_id,
+                                const GValue  *value,
+                                GParamSpec    *pspec);
+static void       finalize     (GObject       *self_object);
+static GeglNode * detect       (GeglOperation *operation,
+                                gint           x,
+                                gint           y);
 
 
 G_DEFINE_TYPE (GeglOperationMeta, gegl_operation_meta, GEGL_TYPE_OPERATION)
+
 
 static void
 gegl_operation_meta_class_init (GeglOperationMetaClass *klass)
@@ -65,7 +66,6 @@ gegl_operation_meta_init (GeglOperationMeta *self)
 {
   self->redirects = NULL;
 }
-
 
 static void
 get_property (GObject    *object,
@@ -98,19 +98,48 @@ typedef struct Redirect
   gchar    *internal_name;
 } Redirect;
 
-static Redirect *redirect_new (const gchar *name,
-                               GeglNode    *internal,
-                               const gchar *internal_name)
+static gchar *
+canonicalize_identifier (const gchar *identifier)
+{
+  gchar *canonicalized = NULL;
+
+  if (identifier)
+    {
+      gchar *p;
+
+      canonicalized = g_strdup (identifier);
+
+      for (p = canonicalized; *p != 0; p++)
+        {
+          gchar c = *p;
+
+          if (c != '-' &&
+              (c < '0' || c > '9') &&
+              (c < 'A' || c > 'Z') &&
+              (c < 'a' || c > 'z'))
+            *p = '-';
+        }
+    }
+
+  return canonicalized;
+}
+
+static Redirect *
+redirect_new (const gchar *name,
+              GeglNode    *internal,
+              const gchar *internal_name)
 {
   Redirect *self = g_slice_new (Redirect);
 
-  self->name          = g_strdup (name);
+  self->name          = canonicalize_identifier (name);
   self->internal      = internal;
-  self->internal_name = g_strdup (internal_name);
+  self->internal_name = canonicalize_identifier (internal_name);
+
   return self;
 }
 
-static void redirect_destroy (Redirect *self)
+static void
+redirect_destroy (Redirect *self)
 {
   if (!self)
     return;
@@ -131,8 +160,8 @@ gegl_node_copy_property_property (GObject     *source,
                                   const gchar *destination_property)
 {
   GValue      value = { 0 };
-  GParamSpec *spec  = g_object_class_find_property (
-    G_OBJECT_GET_CLASS (source), source_property);
+  GParamSpec *spec  = g_object_class_find_property (G_OBJECT_GET_CLASS (source),
+                                                    source_property);
 
   g_assert (spec);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (spec));
@@ -153,12 +182,14 @@ gegl_operation_meta_redirect (GeglOperation *operation,
   self->redirects = g_slist_prepend (self->redirects, redirect);
 
   /* set default value */
-  gegl_node_copy_property_property (G_OBJECT (operation), name, G_OBJECT (internal->operation), internal_name);
+  gegl_node_copy_property_property (G_OBJECT (operation), name,
+                                    G_OBJECT (internal->operation), internal_name);
 }
 
-void gegl_operation_meta_property_changed (GeglOperationMeta *self,
-                                           GParamSpec        *arg1,
-                                           gpointer           user_data)
+void
+gegl_operation_meta_property_changed (GeglOperationMeta *self,
+                                      GParamSpec        *arg1,
+                                      gpointer           user_data)
 {
   g_assert (GEGL_IS_OPERATION_META (self));
   if (arg1)
@@ -191,4 +222,3 @@ finalize (GObject *gobject)
 
   G_OBJECT_CLASS (gegl_operation_meta_parent_class)->finalize (gobject);
 }
-
