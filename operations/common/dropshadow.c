@@ -57,7 +57,7 @@ static void
 attach (GeglOperation *operation)
 {
   GeglNode  *gegl = operation->node;
-  GeglNode  *input, *output, *over, *translate, *opacity, *blur, *darken, *black;
+  GeglNode  *input, *output, *over, *translate, *opacity, *blur, *darken, *color;
   GeglColor *black_color = gegl_color_new ("rgb(0.0,0.0,0.0)");
 
   input     = gegl_node_get_input_proxy (gegl, "input");
