@@ -134,11 +134,21 @@ gegl_save_attach (GeglOperation *operation)
   gegl_save_set_saver (operation);
 }
 
-
 static void
-gegl_save_prepare (GeglOperation *operation)
+gegl_save_set_property (GObject      *gobject,
+                        guint         property_id,
+                        const GValue *value,
+                        GParamSpec   *pspec)
 {
-  gegl_save_set_saver (operation);
+  GeglOperation *operation = GEGL_OPERATION (gobject);
+  GeglChant     *self = GEGL_CHANT (operation);
+
+  /* The set_property provided by the chant system does the
+   * storing and reffing/unreffing of the input properties */
+  set_property(gobject, property_id, value, pspec);
+
+  if (self->save)
+    gegl_save_set_saver (operation);
 }
 
 
@@ -150,7 +160,6 @@ gegl_save_process (GeglOperation        *operation,
                    gint                  level)
 {
   GeglChant *self = GEGL_CHANT (operation);
-  gegl_save_set_saver (operation);
 
   return gegl_operation_process (self->save->operation,
                                  context,
@@ -178,12 +187,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   GeglOperationSinkClass *sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
   GeglOperationClass     *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  object_class->dispose = gegl_save_dispose;
+  object_class->dispose      = gegl_save_dispose;
+  object_class->set_property = gegl_save_set_property;
 
   operation_class->attach  = gegl_save_attach;
-  operation_class->prepare = gegl_save_prepare;
-
-  operation_class->process = gegl_operation_process;
   operation_class->process = gegl_save_process;
 
   sink_class->needs_full = TRUE;
