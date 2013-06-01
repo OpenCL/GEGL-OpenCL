@@ -80,7 +80,7 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 #include <glib/gprintf.h>
 
 static void
-prepare (GeglOperation *operation)
+do_setup (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglChant *self = GEGL_CHANT (operation);
@@ -201,6 +201,23 @@ prepare (GeglOperation *operation)
 
 }
 
+static void
+my_set_property (GObject      *gobject,
+                 guint         property_id,
+                 const GValue *value,
+                 GParamSpec   *pspec)
+{
+  GeglOperation *operation = GEGL_OPERATION (gobject);
+  GeglChant     *self      = GEGL_CHANT (operation);
+
+  /* The set_property provided by the chant system does the
+   * storing and reffing/unreffing of the input properties */
+  set_property(gobject, property_id, value, pspec);
+
+  if (self->load)
+    do_setup (operation);
+}
+
 static void attach (GeglOperation *operation)
 {
   GeglChant  *self = GEGL_CHANT (operation);
@@ -231,6 +248,8 @@ static void attach (GeglOperation *operation)
                        NULL);
   gegl_node_link_many (self->input, self->composite_op, self->output, NULL);
   gegl_node_connect_from (self->composite_op, "aux", self->translate, "output");
+
+  do_setup (operation);
 }
 
 
@@ -256,10 +275,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
 
-  object_class->finalize = finalize;
+  object_class->finalize     = finalize;
+  object_class->set_property = my_set_property;
 
   operation_class->attach = attach;
-  operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:layer",
