@@ -182,8 +182,10 @@ gegl_operation_meta_redirect (GeglOperation *operation,
   self->redirects = g_slist_prepend (self->redirects, redirect);
 
   /* set default value */
-  gegl_node_copy_property_property (G_OBJECT (operation), name,
-                                    G_OBJECT (internal->operation), internal_name);
+  gegl_node_copy_property_property (G_OBJECT (operation),
+                                    redirect->name,
+                                    G_OBJECT (internal->operation),
+                                    redirect->internal_name);
 }
 
 void
