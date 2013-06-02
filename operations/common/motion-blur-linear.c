@@ -32,7 +32,7 @@ gegl_chant_double_ui (angle,  _("Angle"),  -360, 360, 0, -180.0, 180.0, 1.0,
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "motion-blur.c"
+#define GEGL_CHANT_C_FILE       "motion-blur-linear.c"
 
 #include "gegl-chant.h"
 
@@ -58,12 +58,12 @@ prepare (GeglOperation *operation)
 #include "opencl/gegl-cl.h"
 #include "buffer/gegl-buffer-cl-iterator.h"
 
-#include "opencl/motion-blur.cl.h"
+#include "opencl/motion-blur-linear.cl.h"
 
 static GeglClRunData *cl_data = NULL;
 
 static gboolean
-cl_motion_blur (cl_mem                in_tex,
+cl_motion_blur_linear (cl_mem                in_tex,
                 cl_mem                out_tex,
                 size_t                global_worksize,
                 const GeglRectangle  *roi,
@@ -77,8 +77,8 @@ cl_motion_blur (cl_mem                in_tex,
 
   if (!cl_data)
   {
-    const char *kernel_name[] = {"motion_blur", NULL};
-    cl_data = gegl_cl_compile_and_build (motion_blur_cl_source, kernel_name);
+    const char *kernel_name[] = {"motion_blur_linear", NULL};
+    cl_data = gegl_cl_compile_and_build (motion_blur_linear_cl_source, kernel_name);
   }
   if (!cl_data) return TRUE;
 
@@ -149,10 +149,10 @@ cl_process (GeglOperation       *operation,
       if (err) return FALSE;
       for (j=0; j < i->n; j++)
         {
-          err = cl_motion_blur(i->tex[read][j], i->tex[0][j], i->size[0][j], &i->roi[0][j], &i->roi[read][j], num_steps, offset_x, offset_y);
+          err = cl_motion_blur_linear(i->tex[read][j], i->tex[0][j], i->size[0][j], &i->roi[0][j], &i->roi[read][j], num_steps, offset_x, offset_y);
           if (err)
             {
-              g_warning("[OpenCL] Error in gegl:motion-blur");
+              g_warning("[OpenCL] Error in gegl:motion-blur-linear");
               return FALSE;
             }
         }
@@ -279,9 +279,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
   operation_class->opencl_support = TRUE;
+  operation_class->compat_name = "gegl:motion-blur";
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:motion-blur",
+    "name"       , "gegl:motion-blur-linear",
     "categories" , "blur",
     "description", _("Linear motion blur"),
     NULL);

@@ -51,7 +51,7 @@ operations/common/matting-global.c
 operations/common/mblur.c
 operations/common/mirrors.c
 operations/common/mono-mixer.c
-operations/common/motion-blur.c
+operations/common/motion-blur-linear.c
 operations/common/motion-blur-zoom.c
 operations/common/noise.c
 operations/common/noise-cielch.c

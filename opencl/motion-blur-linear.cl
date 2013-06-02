@@ -20,17 +20,17 @@ float4 get_pixel_color(const __global float4 *in_buf,
     return in_buf[iy * rect_width + ix];
 }
 
-__kernel void motion_blur(const __global float4 *src_buf,
-                          int     src_width,
-                          int     src_height,
-                          int     src_x,
-                          int     src_y,
-                          __global float4 *dst_buf,
-                          int     dst_x,
-                          int     dst_y,
-                          int     num_steps,
-                          float   offset_x,
-                          float   offset_y)
+__kernel void motion_blur_linear(const __global float4 *src_buf,
+                                 int     src_width,
+                                 int     src_height,
+                                 int     src_x,
+                                 int     src_y,
+                                 __global float4 *dst_buf,
+                                 int     dst_x,
+                                 int     dst_y,
+                                 int     num_steps,
+                                 float   offset_x,
+                                 float   offset_y)
 {
     int gidx = get_global_id(0);
     int gidy = get_global_id(1);
