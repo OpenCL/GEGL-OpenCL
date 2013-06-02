@@ -61,7 +61,6 @@
 #include "gegl-sampler-lohalo.h"
 #include "gegl-types-internal.h"
 #include "gegl-utils.h"
-#include "gegl-id-pool.h"
 #include "gegl-buffer-index.h"
 #include "gegl-config.h"
 #include "gegl-buffer-cl-cache.h"
