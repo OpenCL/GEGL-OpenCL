@@ -66,6 +66,16 @@ GType        gegl_color_get_type               (void) G_GNUC_CONST;
 GeglColor *  gegl_color_new                    (const gchar *string);
 
 /**
+ * gegl_color_duplicate:
+ * @color: the color to duplicate.
+ *
+ * Creates a copy of @curve.
+ *
+ * Returns the copied #GeglColor.
+ */
+GeglColor *  gegl_color_duplicate              (GeglColor   *color);
+
+/**
  * gegl_color_get_rgba:
  * @color: a #GeglColor
  * @red: (out): red return location.

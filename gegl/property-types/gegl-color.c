@@ -258,30 +258,30 @@ gegl_color_float4 (GeglColor *self)
 }
 #endif
 
-void         gegl_color_set_pixel              (GeglColor   *color,
-                                                const Babl  *format,
-                                                const void  *pixel)
+void
+gegl_color_set_pixel (GeglColor   *color,
+                      const Babl  *format,
+                      const void  *pixel)
 {
   g_return_if_fail (GEGL_IS_COLOR (color));
   g_return_if_fail (format);
   g_return_if_fail (pixel);
 
-  babl_process (
-      babl_fish (format, babl_format ("RGBA float")),
-      pixel, color->priv->rgba_color, 1);
+  babl_process (babl_fish (format, babl_format ("RGBA float")),
+                pixel, color->priv->rgba_color, 1);
 }
 
-void         gegl_color_get_pixel              (GeglColor   *color,
-                                                const Babl  *format,
-                                                void        *pixel)
+void
+gegl_color_get_pixel (GeglColor   *color,
+                      const Babl  *format,
+                      void        *pixel)
 {
   g_return_if_fail (GEGL_IS_COLOR (color));
   g_return_if_fail (format);
   g_return_if_fail (pixel);
 
-  babl_process (
-      babl_fish (babl_format ("RGBA float"), format),
-      color->priv->rgba_color, pixel, 1);
+  babl_process (babl_fish (babl_format ("RGBA float"), format),
+                color->priv->rgba_color, pixel, 1);
 }
 
 void
@@ -443,6 +443,20 @@ gegl_color_new (const gchar *string)
   return g_object_new (GEGL_TYPE_COLOR, NULL);
 }
 
+GeglColor *
+gegl_color_duplicate (GeglColor *color)
+{
+  GeglColor *new;
+
+  g_return_val_if_fail (GEGL_IS_COLOR (color), NULL);
+
+  new = g_object_new (GEGL_TYPE_COLOR, NULL);
+
+  memcpy (new->priv, color->priv, sizeof (GeglColorPrivate));
+
+  return new;
+}
+
 /* --------------------------------------------------------------------------
  * A GParamSpec class to describe behavior of GeglColor as an object property
  * follows.
@@ -496,7 +510,7 @@ gegl_param_color_set_default (GParamSpec *param_spec,
 {
   GeglParamColor *gegl_color = GEGL_PARAM_COLOR (param_spec);
 
-  g_value_set_object (value, gegl_color->default_color);
+  g_value_take_object (value, gegl_color_duplicate (gegl_color->default_color));
 }
 
 GType
