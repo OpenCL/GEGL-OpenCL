@@ -23,33 +23,35 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
+gegl_chant_double_ui (length, _("Length"),
+                      0.0, 1000.0, 10.0, 0.0, 300.0, 1.5,
+                      _("Length of blur in pixels"))
 
-gegl_chant_double_ui (length, _("Length"), 0.0, 1000.0, 10.0, 0.0, 300.0, 1.5,
-                     _("Length of blur in pixels"))
-gegl_chant_double_ui (angle,  _("Angle"),  -360, 360, 0, -180.0, 180.0, 1.0,
-                     _("Angle of blur in degrees"))
+gegl_chant_double_ui (angle, _("Angle"),
+                      -360, 360, 0, -180.0, 180.0, 1.0,
+                      _("Angle of blur in degrees"))
 
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "motion-blur-linear.c"
+#define GEGL_CHANT_C_FILE "motion-blur-linear.c"
 
 #include "gegl-chant.h"
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglOperationAreaFilter* op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO* o = GEGL_CHANT_PROPERTIES (operation);
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
 
-  gdouble theta = o->angle * G_PI / 180.0;
-  gdouble offset_x = fabs(o->length * cos(theta));
-  gdouble offset_y = fabs(o->length * sin(theta));
+  gdouble theta    = o->angle * G_PI / 180.0;
+  gdouble offset_x = fabs (o->length * cos (theta));
+  gdouble offset_y = fabs (o->length * sin (theta));
 
   op_area->left   =
-  op_area->right  = (gint)ceil(0.5 * offset_x);
+  op_area->right  = (gint) ceil (0.5 * offset_x);
   op_area->top    =
-  op_area->bottom = (gint)ceil(0.5 * offset_y);
+  op_area->bottom = (gint) ceil (0.5 * offset_y);
 
   gegl_operation_set_format (operation, "input",  babl_format ("RaGaBaA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
@@ -64,23 +66,25 @@ static GeglClRunData *cl_data = NULL;
 
 static gboolean
 cl_motion_blur_linear (cl_mem                in_tex,
-                cl_mem                out_tex,
-                size_t                global_worksize,
-                const GeglRectangle  *roi,
-                const GeglRectangle  *src_rect,
-                gint                  num_steps,
-                gfloat                offset_x,
-                gfloat                offset_y)
+                       cl_mem                out_tex,
+                       size_t                global_worksize,
+                       const GeglRectangle  *roi,
+                       const GeglRectangle  *src_rect,
+                       gint                  num_steps,
+                       gfloat                offset_x,
+                       gfloat                offset_y)
 {
   cl_int cl_err = 0;
   size_t global_ws[2];
 
   if (!cl_data)
-  {
-    const char *kernel_name[] = {"motion_blur_linear", NULL};
-    cl_data = gegl_cl_compile_and_build (motion_blur_linear_cl_source, kernel_name);
-  }
-  if (!cl_data) return TRUE;
+    {
+      const char *kernel_name[] = {"motion_blur_linear", NULL};
+      cl_data = gegl_cl_compile_and_build (motion_blur_linear_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
 
   global_ws[0] = roi->width;
   global_ws[1] = roi->height;
@@ -108,10 +112,10 @@ cl_motion_blur_linear (cl_mem                in_tex,
   cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 10, sizeof(cl_float), (void*)&offset_y);
   CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[0], 2,
-                                       NULL, global_ws, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_ws, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
 
   return FALSE;
@@ -127,14 +131,14 @@ cl_process (GeglOperation       *operation,
             const GeglRectangle *result,
             const GeglRectangle *src_rect)
 {
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
   cl_int cl_err;
   gint j;
-
-  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
   gdouble theta = o->angle * G_PI / 180.0;
   gfloat  offset_x = (gfloat)(o->length * cos(theta));
@@ -157,21 +161,23 @@ cl_process (GeglOperation       *operation,
             }
         }
     }
+
   return TRUE;
 }
 
-static inline gfloat*
-get_pixel_color(gfloat* in_buf,
-                const GeglRectangle* rect,
-                gint x,
-                gint y)
+static inline gfloat *
+get_pixel_color (gfloat              *in_buf,
+                 const GeglRectangle *rect,
+                 gint                 x,
+                 gint                 y)
 {
   gint ix = x - rect->x;
   gint iy = y - rect->y;
-  ix = CLAMP(ix, 0, rect->width-1);
-  iy = CLAMP(iy, 0, rect->height-1);
 
-  return &in_buf[(iy*rect->width + ix) * 4];
+  ix = CLAMP (ix, 0, rect->width  - 1);
+  iy = CLAMP (iy, 0, rect->height - 1);
+
+  return &in_buf[(iy * rect->width + ix) * 4];
 }
 
 static gboolean
@@ -181,21 +187,19 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglRectangle src_rect;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglOperationAreaFilter *op_area;
-  gfloat* in_buf;
-  gfloat* out_buf;
-  gfloat* out_pixel;
-  gint x,y;
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle            src_rect;
+  gfloat                  *in_buf;
+  gfloat                  *out_buf;
+  gfloat                  *out_pixel;
+  gint                     x, y;
 
-  gdouble theta = o->angle * G_PI / 180.0;
-  gdouble offset_x = o->length * cos(theta);
-  gdouble offset_y = o->length * sin(theta);
-  gint num_steps = (gint)ceil(o->length) + 1;
-  gfloat inv_num_steps = 1.0f / num_steps;
-
-  op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  gdouble theta         = o->angle * G_PI / 180.0;
+  gdouble offset_x      = o->length * cos (theta);
+  gdouble offset_y      = o->length * sin (theta);
+  gint    num_steps     = (gint) ceil (o->length) + 1;
+  gfloat  inv_num_steps = 1.0f / num_steps;
 
   src_rect = *roi;
   src_rect.x -= op_area->left;
@@ -211,80 +215,82 @@ process (GeglOperation       *operation,
   out_buf = g_new0 (gfloat, roi->width * roi->height * 4);
   out_pixel = out_buf;
 
-  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), in_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"),
+                   in_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  for (y=0; y<roi->height; ++y)
+  for (y = 0; y < roi->height; ++y)
     {
-      for (x=0; x<roi->width; ++x)
+      for (x = 0; x < roi->width; ++x)
         {
-          gint step;
-          gint c;
-          gint px = x+roi->x;
-          gint py = y+roi->y;
+          gint   step;
+          gint   c;
+          gint   px = x+roi->x;
+          gint   py = y+roi->y;
           gfloat sum[4] = {0,0,0,0};
-          for (step=0; step<num_steps; ++step)
+
+          for (step = 0; step < num_steps; ++step)
             {
               gdouble t = num_steps == 1 ? 0.0 : step / (gdouble)(num_steps-1) - 0.5;
 
               /* get the interpolated pixel position for this step */
-              gdouble xx = px + t*offset_x;
-              gdouble yy = py + t*offset_y;
-              gint ix = (gint)floor(xx);
-              gint iy = (gint)floor(yy);
-              gdouble dx = xx - floor(xx);
-              gdouble dy = yy - floor(yy);
+              gdouble xx = px + t * offset_x;
+              gdouble yy = py + t * offset_y;
+              gint    ix = (gint) floor (xx);
+              gint    iy = (gint) floor (yy);
+              gdouble dx = xx - floor (xx);
+              gdouble dy = yy - floor (yy);
 
               /* do bilinear interpolation to get a nice smooth result */
               gfloat *pix0, *pix1, *pix2, *pix3;
-              gfloat mixy0[4];
-              gfloat mixy1[4];
+              gfloat  mixy0[4];
+              gfloat  mixy1[4];
 
-              pix0 = get_pixel_color(in_buf, &src_rect, ix, iy);
-              pix1 = get_pixel_color(in_buf, &src_rect, ix+1, iy);
-              pix2 = get_pixel_color(in_buf, &src_rect, ix, iy+1);
-              pix3 = get_pixel_color(in_buf, &src_rect, ix+1, iy+1);
-              for (c=0; c<4; ++c)
+              pix0 = get_pixel_color (in_buf, &src_rect, ix,     iy);
+              pix1 = get_pixel_color (in_buf, &src_rect, ix + 1, iy);
+              pix2 = get_pixel_color (in_buf, &src_rect, ix,     iy + 1);
+              pix3 = get_pixel_color (in_buf, &src_rect, ix + 1, iy + 1);
+
+              for (c = 0; c < 4; ++c)
                 {
-                  mixy0[c] = dy*(pix2[c] - pix0[c]) + pix0[c];
-                  mixy1[c] = dy*(pix3[c] - pix1[c]) + pix1[c];
-                  sum[c] += dx*(mixy1[c] - mixy0[c]) + mixy0[c];
+                  mixy0[c] = dy * (pix2[c] - pix0[c]) + pix0[c];
+                  mixy1[c] = dy * (pix3[c] - pix1[c]) + pix1[c];
+                  sum[c] += dx * (mixy1[c] - mixy0[c]) + mixy0[c];
                 }
             }
 
-          for (c=0; c<4; ++c)
+          for (c = 0; c < 4; ++c)
             *out_pixel++ = sum[c] * inv_num_steps;
         }
     }
 
-  gegl_buffer_set (output, roi, 0, babl_format ("RaGaBaA float"), out_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, roi, 0, babl_format ("RaGaBaA float"),
+                   out_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (in_buf);
   g_free (out_buf);
 
-
   return  TRUE;
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass            *operation_class;
-  GeglOperationFilterClass      *filter_class;
+  GeglOperationClass       *operation_class;
+  GeglOperationFilterClass *filter_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process = process;
-  operation_class->prepare = prepare;
-
+  operation_class->prepare        = prepare;
   operation_class->opencl_support = TRUE;
-  operation_class->compat_name = "gegl:motion-blur";
+  operation_class->compat_name    = "gegl:motion-blur";
+
+  filter_class->process           = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:motion-blur-linear",
-    "categories" , "blur",
-    "description", _("Linear motion blur"),
+                                 "name",        "gegl:motion-blur-linear",
+                                 "categories",  "blur",
+                                 "description", _("Linear motion blur"),
     NULL);
 }
 

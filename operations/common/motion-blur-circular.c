@@ -37,7 +37,7 @@ gegl_chant_double_ui (center_y, _("Y"),
                       -100000.0, 100000.0, 1.0,
                       _("Vertical center position"))
 
-gegl_chant_double_ui (angle, _("angle"),
+gegl_chant_double_ui (angle, _("Angle"),
                       0.0, 1.0, 0.02,
                       0.0, 1.0, 2.0,
                       _("Rotation blur angle"))
@@ -45,26 +45,25 @@ gegl_chant_double_ui (angle, _("angle"),
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "motion-blur-circular.c"
+#define GEGL_CHANT_C_FILE "motion-blur-circular.c"
 
 #include "gegl-chant.h"
 
-
-#define SQR(c)  ((c) * (c))
+#define SQR(c) ((c) * (c))
 
 #define MAX_NUM_IT      200
 #define NOMINAL_NUM_IT  100
 #define SQRT_2          1.41
 
-
 static void
 prepare (GeglOperation *operation)
 {
-  GeglOperationAreaFilter* op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO* o = GEGL_CHANT_PROPERTIES (operation);
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle           *whole_region;
+  gdouble                  angle   = o->angle * G_PI;
 
-  GeglRectangle *whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-  gdouble angle  = o->angle * G_PI;
+  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
 
   if (whole_region != NULL)
     {
@@ -92,25 +91,27 @@ prepare (GeglOperation *operation)
 }
 
 
-static inline gfloat*
-get_pixel_color (gfloat *in_buf,
+static inline gfloat *
+get_pixel_color (gfloat              *in_buf,
                  const GeglRectangle *rect,
-                 gint x,
-                 gint y)
+                 gint                 x,
+                 gint                 y)
 {
   gint ix = x - rect->x;
   gint iy = y - rect->y;
+
   ix = CLAMP (ix, 0, rect->width  - 1);
   iy = CLAMP (iy, 0, rect->height - 1);
 
   return &in_buf[(iy * rect->width + ix) * 4];
 }
 
-
 static inline gdouble
-compute_phi (gdouble xr, gdouble yr)
+compute_phi (gdouble xr,
+             gdouble yr)
 {
   gdouble phi;
+
   if (fabs (xr) > 0.00001)
     {
       phi = atan (yr / xr);
@@ -124,9 +125,9 @@ compute_phi (gdouble xr, gdouble yr)
       else
         phi = -G_PI_2;
     }
+
   return phi;
 }
-
 
 static gboolean
 process (GeglOperation       *operation,
@@ -135,17 +136,15 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o;
-  GeglOperationAreaFilter *op_area;
-  gfloat *in_buf, *out_buf, *out_pixel;
-  gint x, y;
-  GeglRectangle src_rect;
-  gdouble angle;
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  gfloat                  *in_buf, *out_buf, *out_pixel;
+  gint                     x, y;
+  GeglRectangle            src_rect;
+  GeglRectangle           *whole_region;
+  gdouble                  angle;
 
-  GeglRectangle *whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-
-  op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o = GEGL_CHANT_PROPERTIES (operation);
+  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
 
   src_rect = *roi;
   src_rect.x -= op_area->left;
@@ -157,13 +156,8 @@ process (GeglOperation       *operation,
   out_buf   = g_new0 (gfloat, roi->width * roi->height * 4);
   out_pixel = out_buf;
 
-  gegl_buffer_get (input,
-                   &src_rect,
-                   1.0,
-                   babl_format ("RaGaBaA float"),
-                   in_buf,
-                   GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_NONE);
+  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"),
+                   in_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   angle = o->angle * G_PI;
 
@@ -245,19 +239,14 @@ process (GeglOperation       *operation,
         }
     }
 
-  gegl_buffer_set (output,
-                   roi,
-                   1.0,
-                   babl_format ("RaGaBaA float"),
-                   out_buf,
-                   GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, roi, 1.0, babl_format ("RaGaBaA float"),
+                   out_buf, GEGL_AUTO_ROWSTRIDE);
 
   g_free (in_buf);
   g_free (out_buf);
 
   return  TRUE;
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -268,12 +257,12 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
   operation_class->prepare = prepare;
+  filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name"       , "gegl:motion-blur-circular",
-                                 "categories" , "blur",
+                                 "name",        "gegl:motion-blur-circular",
+                                 "categories",  "blur",
                                  "description", _("Circular motion blur"),
                                  NULL);
 }
