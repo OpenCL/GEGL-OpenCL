@@ -146,26 +146,48 @@ gegl_curve_new (gdouble y_min,
   GeglCurve        *self = GEGL_CURVE (g_object_new (GEGL_TYPE_CURVE, NULL));
   GeglCurvePrivate *priv = GEGL_CURVE_GET_PRIVATE (self);
 
-  gegl_curve_init (self);
   priv->y_min = y_min;
   priv->y_max = y_max;
 
   return self;
 }
 
-GeglCurve*
-gegl_curve_default_curve (void)
+GeglCurve *
+gegl_curve_new_default (void)
 {
-  static GeglCurve *curve = NULL;
+  GeglCurve *curve = gegl_curve_new (0.0, 1.0);
 
-  if (curve == NULL)
-    {
-      curve = gegl_curve_new (0.0, 1.0);
-      gegl_curve_add_point (curve, 0.0, 0.0);
-      gegl_curve_add_point (curve, 1.0, 1.0);
-    }
+  gegl_curve_add_point (curve, 0.0, 0.0);
+  gegl_curve_add_point (curve, 1.0, 1.0);
 
   return curve;
+}
+
+GeglCurve *
+gegl_curve_duplicate (GeglCurve *curve)
+{
+  GeglCurve *new;
+  gdouble    min_y, max_y;
+  gint       n_points;
+  gint       i;
+
+  g_return_val_if_fail (GEGL_IS_CURVE (curve), NULL);
+
+  gegl_curve_get_y_bounds (curve, &min_y, &max_y);
+
+  new = gegl_curve_new (min_y, max_y);
+
+  n_points = gegl_curve_num_points (curve);
+
+  for (i = 0; i < n_points; i++)
+    {
+      gdouble x, y;
+
+      gegl_curve_get_point (curve, i, &x, &y);
+      gegl_curve_add_point (new, x, y);
+    }
+
+  return new;
 }
 
 void
@@ -465,7 +487,7 @@ value_set_default (GParamSpec *param_spec,
 {
   GeglParamCurve *gegl_curve = GEGL_PARAM_CURVE (param_spec);
 
-  g_value_set_object (value, gegl_curve->default_curve);
+  g_value_take_object (value, gegl_curve_duplicate (gegl_curve->default_curve));
 }
 
 GType
@@ -506,7 +528,7 @@ gegl_param_spec_curve (const gchar *name,
   param_curve = g_param_spec_internal (GEGL_TYPE_PARAM_CURVE,
                                        name, nick, blurb, flags);
 
-  param_curve->default_curve = default_curve;
+  param_curve->default_curve = g_object_ref (default_curve);
 
   return G_PARAM_SPEC (param_curve);
 }

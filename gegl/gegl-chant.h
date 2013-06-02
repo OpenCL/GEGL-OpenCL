@@ -970,13 +970,15 @@ gegl_chant_class_intern_init (gpointer klass)
                                                           G_PARAM_CONSTRUCT |\
                                                           GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_curve(name, nick, blurb)                                  \
+  { GeglCurve *_gegl_chant_default_curve = gegl_curve_new_default ();        \
   g_object_class_install_property (object_class, PROP_##name,                \
                                    gegl_param_spec_curve (#name, nick, blurb,\
-                                                          gegl_curve_default_curve(),\
+                                                          _gegl_chant_default_curve,\
                                                           (GParamFlags) (    \
                                                           G_PARAM_READWRITE |\
                                                           G_PARAM_CONSTRUCT |\
-                                                          GEGL_PARAM_PAD_INPUT)));
+                                                          GEGL_PARAM_PAD_INPUT)));\
+  g_object_unref (_gegl_chant_default_curve); }
 
 #include GEGL_CHANT_C_FILE
 

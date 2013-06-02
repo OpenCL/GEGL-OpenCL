@@ -65,6 +65,26 @@ GType        gegl_curve_get_type       (void) G_GNUC_CONST;
 GeglCurve  * gegl_curve_new            (gdouble      y_min,
                                         gdouble      y_max);
 
+/**
+ * gegl_curve_new_default:
+ *
+ * Create a default #GeglCurve with an identify mapping of
+ * (0.0..1.0) -> (0.0..1.0).
+ *
+ * Returns the newly created default #GeglCurve.
+ */
+GeglCurve  * gegl_curve_new_default    (void);
+
+/**
+ * gegl_curve_duplicate:
+ * @curve: the curve to duplicate.
+ *
+ * Create a copy of @curve.
+ *
+ * Returns the copied #GeglCurve.
+ */
+GeglCurve  * gegl_curve_duplicate      (GeglCurve   *curve);
+
 
 /**
  * gegl_curve_get_y_bounds:
@@ -164,8 +184,6 @@ void         gegl_curve_calc_values    (GeglCurve   *curve,
 
 #define GEGL_TYPE_PARAM_CURVE           (gegl_param_curve_get_type ())
 #define GEGL_IS_PARAM_SPEC_CURVE(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_CURVE))
-
-GeglCurve  * gegl_curve_default_curve  (void) G_GNUC_CONST;
 
 GType        gegl_param_curve_get_type (void) G_GNUC_CONST;
 
