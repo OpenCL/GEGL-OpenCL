@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-05-29 21:43+0000\n"
-"PO-Revision-Date: 2013-05-30 17:43+0200\n"
+"POT-Creation-Date: 2013-06-02 21:39+0000\n"
+"PO-Revision-Date: 2013-06-03 11:18+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -219,7 +219,7 @@ msgstr "No cargado"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/bilateral-filter-fast.c:37
-#: ../operations/common/dropshadow.c:32
+#: ../operations/common/dropshadow.c:35
 msgid "Blur radius"
 msgstr "Radio de desenfoque"
 
@@ -264,7 +264,7 @@ msgstr "Una aproximación rápida a la implementación del filtro bilateral"
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
 #: ../operations/common/difference-of-gaussians.c:26
 #: ../operations/common/difference-of-gaussians.c:30
-#: ../operations/common/dropshadow.c:31 ../operations/common/snn-mean.c:26
+#: ../operations/common/dropshadow.c:33 ../operations/common/snn-mean.c:26
 #: ../operations/common/stress.c:27 ../operations/common/vignette.c:40
 #: ../operations/common/whirl-pinch.c:44
 #: ../operations/external/matting-levin.c:28
@@ -456,7 +456,8 @@ msgid "Vertical offset (from origin) for start of grid"
 msgstr "Desplazamiento vertical (desde el origen) del comienzo de la rejilla"
 
 #: ../operations/common/checkerboard.c:41 ../operations/common/color.c:24
-#: ../operations/common/color-to-alpha.c:28 ../operations/common/grid.c:36
+#: ../operations/common/color-to-alpha.c:28
+#: ../operations/common/dropshadow.c:37 ../operations/common/grid.c:36
 #: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:35
 #: ../operations/external/text.c:31 ../operations/external/vector-fill.c:27
 #: ../operations/external/vector-stroke.c:27
@@ -712,37 +713,48 @@ msgstr "Proporción del tamaño de un punto dentro de cada bloque"
 msgid "Simplify image into an array of solid-colored dots"
 msgstr "Simplificar la imagen en una matriz de puntos de color liso"
 
-#. It does make sense to sometimes have opacities > 1 (see GEGL logo for example)
-#: ../operations/common/dropshadow.c:26 ../operations/common/layer.c:32
-#: ../operations/common/layer.c:33 ../operations/common/opacity.c:24
-#: ../operations/external/vector-fill.c:30
-#: ../operations/external/vector-stroke.c:33
-msgid "Opacity"
-msgstr "Opacidad"
-
-#: ../operations/common/dropshadow.c:27 ../operations/common/layer.c:34
+#: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:34
+#: ../operations/common/motion-blur-circular.c:30
+#: ../operations/common/motion-blur-zoom.c:30
 #: ../operations/common/polar-coordinates.c:55
 #: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:64
 #: ../operations/common/waves.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
 
-#: ../operations/common/dropshadow.c:28
+#: ../operations/common/dropshadow.c:27
 msgid "Horizontal shadow offset"
 msgstr "Desplazamiento horizontal de la sombra"
 
 #: ../operations/common/dropshadow.c:29 ../operations/common/layer.c:36
+#: ../operations/common/motion-blur-circular.c:35
+#: ../operations/common/motion-blur-zoom.c:35
 #: ../operations/common/polar-coordinates.c:59
 #: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:68
-#: ../operations/common/waves.c:29 ../operations/core/crop.c:26
+#: ../operations/common/waves.c:30 ../operations/core/crop.c:26
 msgid "Y"
 msgstr "Y"
 
-#: ../operations/common/dropshadow.c:30
+#: ../operations/common/dropshadow.c:31
 msgid "Vertical shadow offset"
 msgstr "Desplazamiento vertical de la sombra"
 
-#: ../operations/common/dropshadow.c:83
+#: ../operations/common/dropshadow.c:39
+#| msgid "The color to render (defaults to 'black')"
+msgid "The shadow's color (defaults to 'black')"
+msgstr "El color de la sombra (el predeterminado es «negro»)"
+
+#. It does make sense to sometimes have opacities > 1 (see GEGL logo
+#. * for example)
+#.
+#: ../operations/common/dropshadow.c:44 ../operations/common/dropshadow.c:46
+#: ../operations/common/layer.c:32 ../operations/common/layer.c:33
+#: ../operations/common/opacity.c:24 ../operations/external/vector-fill.c:30
+#: ../operations/external/vector-stroke.c:33
+msgid "Opacity"
+msgstr "Opacidad"
+
+#: ../operations/common/dropshadow.c:99
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Crea un efecto de sombra arrojada sobre el búfer de entrada"
 
@@ -1445,13 +1457,13 @@ msgstr ""
 
 #: ../operations/common/map-absolute.c:22
 #: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:48
-#: ../operations/common/waves.c:41 ../operations/workshop/ditto.c:27
+#: ../operations/common/waves.c:50 ../operations/workshop/ditto.c:27
 msgid "Sampler"
 msgstr "Muestreador"
 
 #: ../operations/common/map-absolute.c:23
 #: ../operations/common/map-relative.c:27 ../operations/common/ripple.c:50
-#: ../operations/common/waves.c:42 ../operations/workshop/ditto.c:28
+#: ../operations/common/waves.c:53 ../operations/workshop/ditto.c:28
 msgid "Sampler used internally"
 msgstr "Muestreador usado internamente"
 
@@ -1638,25 +1650,64 @@ msgstr "Cantidad de azul"
 msgid "Monochrome channel mixer"
 msgstr "Mezclador de canales monocromático."
 
-#: ../operations/common/motion-blur.c:27
-msgid "Length"
-msgstr "Longitud"
+#: ../operations/common/motion-blur-circular.c:33
+#: ../operations/common/motion-blur-zoom.c:33
+#| msgid "Horizontal position"
+msgid "Horizontal center position"
+msgstr "Posición horizontal central"
 
-#: ../operations/common/motion-blur.c:28
-msgid "Length of blur in pixels"
-msgstr "Longitud del desenfoque en píxeles"
+#: ../operations/common/motion-blur-circular.c:38
+#: ../operations/common/motion-blur-zoom.c:38
+#| msgid "Vertical position"
+msgid "Vertical center position"
+msgstr "Posición vertical central"
 
-#: ../operations/common/motion-blur.c:29 ../operations/common/ripple.c:44
+#: ../operations/common/motion-blur-circular.c:40
+#: ../operations/common/motion-blur-linear.c:30
+#: ../operations/common/ripple.c:44
 msgid "Angle"
 msgstr "Ángulo"
 
-#: ../operations/common/motion-blur.c:30
+#: ../operations/common/motion-blur-circular.c:43
+#| msgid "Rotation angle"
+msgid "Rotation blur angle"
+msgstr "Ángulo de rotación de desenfoque"
+
+#: ../operations/common/motion-blur-circular.c:266
+#| msgid "Linear motion blur"
+msgid "Circular motion blur"
+msgstr "Desenfoque de movimiento circular"
+
+#: ../operations/common/motion-blur-linear.c:26
+msgid "Length"
+msgstr "Longitud"
+
+#: ../operations/common/motion-blur-linear.c:28
+msgid "Length of blur in pixels"
+msgstr "Longitud del desenfoque en píxeles"
+
+#: ../operations/common/motion-blur-linear.c:32
 msgid "Angle of blur in degrees"
 msgstr "Ángulo del desenfoque en grados"
 
-#: ../operations/common/motion-blur.c:286
+#: ../operations/common/motion-blur-linear.c:293
 msgid "Linear motion blur"
 msgstr "Desenfoque de movimiento lineal"
+
+#: ../operations/common/motion-blur-zoom.c:40
+#| msgid "Vector"
+msgid "Factor"
+msgstr "Factor"
+
+#: ../operations/common/motion-blur-zoom.c:43
+#| msgid "Blue stretching factor"
+msgid "Bluring factor"
+msgstr "Factor de desenfoque"
+
+#: ../operations/common/motion-blur-zoom.c:216
+#| msgid "Linear motion blur"
+msgid "Zoom motion blur"
+msgstr "Desenfoque de movimiento de ampliación"
 
 #: ../operations/common/noise.c:29
 msgid "Z offset"
@@ -2004,24 +2055,24 @@ msgstr ""
 "estirar los componentes de los píxeles individualmente basándose en "
 "envolventes de luminancia"
 
-#: ../operations/common/ripple.c:32 ../operations/common/waves.c:32
+#: ../operations/common/ripple.c:32 ../operations/common/waves.c:34
 msgid "Amplitude"
 msgstr "Amplitud"
 
-#: ../operations/common/ripple.c:34 ../operations/common/waves.c:33
+#: ../operations/common/ripple.c:34 ../operations/common/waves.c:36
 msgid "Amplitude of the ripple"
 msgstr "Amplitud del remolino"
 
-#: ../operations/common/ripple.c:36 ../operations/common/waves.c:35
+#: ../operations/common/ripple.c:36 ../operations/common/waves.c:38
 msgid "Period"
 msgstr "Periodo"
 
-#: ../operations/common/ripple.c:38 ../operations/common/waves.c:36
+#: ../operations/common/ripple.c:38
 msgid "Period of the ripple"
 msgstr "Período del remolino"
 
 #: ../operations/common/ripple.c:40 ../operations/common/ripple.c:42
-#: ../operations/common/waves.c:38 ../operations/common/waves.c:39
+#: ../operations/common/waves.c:42 ../operations/common/waves.c:44
 msgid "Phase shift"
 msgstr "Desfase"
 
@@ -2321,25 +2372,37 @@ msgstr "Comportamiento del operador"
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Calcular un mapeado de desplazamiento relativo a partir de un trazo"
 
-#: ../operations/common/waves.c:27
+#: ../operations/common/waves.c:28
 msgid "X coordinate of the center of the waves"
 msgstr "Coordenada X del centro de las ondas"
 
-#: ../operations/common/waves.c:30
-msgid "Coordinate y of the center of the waves"
+#: ../operations/common/waves.c:32
+#| msgid "X coordinate of the center of the waves"
+msgid "Y coordinate of the center of the waves"
 msgstr "Coordenada Y del centro de las ondas"
 
-#: ../operations/common/waves.c:44
+#: ../operations/common/waves.c:40
+#| msgid "Period of the ripple"
+msgid "Period (wavelength) of the ripple"
+msgstr "Período (longitud de onda) del remolino"
+
+#: ../operations/common/waves.c:46 ../operations/common/waves.c:48
+#| msgid "Operation"
+msgid "Aspect ratio"
+msgstr "Relación de aspecto"
+
+#: ../operations/common/waves.c:55
 msgid "Clamp deformation"
 msgstr "Restringir la deformación"
 
-#: ../operations/common/waves.c:45
+#: ../operations/common/waves.c:57
 msgid "Limit deformation in the image area."
 msgstr "Limitar la deformación al área de la imagen."
 
-#: ../operations/common/waves.c:169
-msgid "Transform the buffer with waves"
-msgstr "Transformar el búfer con ondas"
+#: ../operations/common/waves.c:187
+#| msgid "Transform the buffer with waves"
+msgid "Distort the image with waves"
+msgstr "Distorsionar la imagen con ondas"
 
 #: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
 #: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
@@ -2614,7 +2677,6 @@ msgid "Target path and filename, use '-' for stdout."
 msgstr "Ruta y nombre del archivo objetivo, use «-» para la salida estándar."
 
 #: ../operations/external/npy-save.c:144
-#| msgid "PPM image saver (Portable pixmap saver.)"
 msgid "NPY image saver (Numerical python file saver.)"
 msgstr "Guardador de imágenes NPY (guardador de archivos numéricos Python)."
 
@@ -4115,6 +4177,9 @@ msgid ""
 msgstr ""
 "Filtro de percentil que resalta los bordes y reduce el ruido, basado en los "
 "vecinos simétricos más próximos"
+
+#~ msgid "Coordinate y of the center of the waves"
+#~ msgstr "Coordenada Y del centro de las ondas"
 
 #~ msgid "Noise spread filter"
 #~ msgstr "Filtro de dispersión de ruido"
