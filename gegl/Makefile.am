@@ -57,10 +57,11 @@ GEGL_introspectable_headers =	\
     property-types/gegl-curve.h
 
 GEGL_public_HEADERS = \
-	$(GEGL_introspectable_headers) \
+	$(GEGL_introspectable_headers)	\
+    gegl-chant.h			\
+    gegl-cpuaccel.h			\
     gegl-plugin.h			\
-    gegl-chant.h      \
-    gegl-cpuaccel.h
+    buffer/gegl-tile.h
 
 GEGL_introspectable_sources = \
 	gegl-c.c			\
