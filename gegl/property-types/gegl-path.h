@@ -378,7 +378,17 @@ void                  gegl_path_freeze        (GeglPath *path);
  */
 void                  gegl_path_thaw          (GeglPath *path);
 
-/***
+/**
+ * gegl_param_spec_path:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @default_path: the default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GParamSpec instance specifying a #GeglPath property.
+ *
+ * Returns: (transfer full): a newly created parameter specification
  */
 GParamSpec         *  gegl_param_spec_path    (const gchar *name,
                                                const gchar *nick,

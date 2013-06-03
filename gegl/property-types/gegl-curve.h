@@ -81,7 +81,7 @@ GeglCurve  * gegl_curve_new_default    (void);
  *
  * Create a copy of @curve.
  *
- * Returns the copied #GeglCurve.
+ * Return value: (transfer full): A new copy of @curve.
  */
 GeglCurve  * gegl_curve_duplicate      (GeglCurve   *curve);
 
@@ -187,6 +187,18 @@ void         gegl_curve_calc_values    (GeglCurve   *curve,
 
 GType        gegl_param_curve_get_type (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_curve:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @default_curve: the default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GParamSpec instance specifying a #GeglCurve property.
+ *
+ * Returns: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_curve     (const gchar *name,
                                         const gchar *nick,
                                         const gchar *blurb,

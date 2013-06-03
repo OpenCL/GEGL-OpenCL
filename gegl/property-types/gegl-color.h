@@ -71,7 +71,7 @@ GeglColor *  gegl_color_new                    (const gchar *string);
  *
  * Creates a copy of @color.
  *
- * Returns the copied #GeglColor.
+ * Return value: (transfer full): A new copy of @color.
  */
 GeglColor *  gegl_color_duplicate              (GeglColor   *color);
 
@@ -108,7 +108,7 @@ void         gegl_color_set_rgba               (GeglColor   *color,
                                                 gdouble      blue,
                                                 gdouble      alpha);
 /**
- * gegl_color_set_pixel:
+ * gegl_color_set_pixel: (skip)
  * @color: a #GeglColor
  * @format: a babl pixel format
  * @pixel: pointer to a pixel
@@ -119,7 +119,7 @@ void         gegl_color_set_pixel              (GeglColor   *color,
                                                 const Babl  *format,
                                                 const void  *pixel);
 /**
- * gegl_color_get_pixel:
+ * gegl_color_get_pixel: (skip)
  * @color: a #GeglColor
  * @format: a babl pixel format
  * @pixel: pointer to a pixel
@@ -138,12 +138,36 @@ void         gegl_color_get_pixel              (GeglColor   *color,
 
 GType        gegl_param_color_get_type         (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_color:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @default_color: the default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GParamSpec instance specifying a #GeglColor property.
+ *
+ * Returns: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_color             (const gchar *name,
                                                 const gchar *nick,
                                                 const gchar *blurb,
                                                 GeglColor   *default_color,
                                                 GParamFlags  flags);
 
+/**
+ * gegl_param_spec_color_from_string:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @default_color_string: the default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GParamSpec instance specifying a #GeglColor property.
+ *
+ * Returns: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_color_from_string (const gchar *name,
                                                 const gchar *nick,
                                                 const gchar *blurb,
