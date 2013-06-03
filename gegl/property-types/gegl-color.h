@@ -69,7 +69,7 @@ GeglColor *  gegl_color_new                    (const gchar *string);
  * gegl_color_duplicate:
  * @color: the color to duplicate.
  *
- * Creates a copy of @curve.
+ * Creates a copy of @color.
  *
  * Returns the copied #GeglColor.
  */
