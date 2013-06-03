@@ -38,8 +38,8 @@ gegl_chant_double_ui (center_y, _("Y"),
                       _("Vertical center position"))
 
 gegl_chant_double_ui (angle, _("Angle"),
-                      0.0, 1.0, 0.02,
-                      0.0, 1.0, 2.0,
+                      0.0, 180.0, 5.0,
+                      0.0, 90.0, 2.0,
                       _("Rotation blur angle"))
 
 #else
@@ -61,7 +61,7 @@ prepare (GeglOperation *operation)
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle           *whole_region;
-  gdouble                  angle   = o->angle * G_PI;
+  gdouble                  angle   = o->angle * G_PI / 180.0;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
 
@@ -159,7 +159,7 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"),
                    in_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  angle = o->angle * G_PI;
+  angle = o->angle * G_PI / 180.0;
 
   for (y = roi->y; y < roi->height + roi->y; ++y)
     {
