@@ -41,7 +41,7 @@ gegl_chant_double (hue_distance, _("Hue"),
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "noise-cielch.c"
+#define GEGL_CHANT_C_FILE "noise-cie-lch.c"
 
 #include "gegl-chant.h"
 #include <stdio.h>
@@ -108,17 +108,14 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o  = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  gdouble    *GEGL_ALIGNED in_pixel;
+  gdouble    *GEGL_ALIGNED out_pixel;
+  gdouble     lightness, chroma, hue, alpha;
+  gint        i;
 
-  gint i;
-
-  gdouble   * GEGL_ALIGNED in_pixel;
-  gdouble   * GEGL_ALIGNED out_pixel;
-
-  gdouble    lightness, chroma, hue, alpha;
-
-  in_pixel      = in_buf;
-  out_pixel     = out_buf;
+  in_pixel  = in_buf;
+  out_pixel = out_buf;
 
   for (i = 0; i < n_pixels; i++)
   {
@@ -165,7 +162,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:noise-CIE_lch",
+    "name",        "gegl:noise-cie-lch",
     "categories",  "noise",
     "description", _("Randomize lightness, chroma and hue independently"),
     NULL);
