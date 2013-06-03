@@ -48,7 +48,6 @@ GEGL_introspectable_headers =	\
     buffer/gegl-buffer.h		\
     buffer/gegl-buffer-iterator.h	\
     buffer/gegl-buffer-backend.h	\
-    buffer/gegl-tile.h			\
     buffer/gegl-tile-backend.h		\
     buffer/gegl-tile-handler.h		\
     buffer/gegl-tile-source.h		\
