@@ -50,18 +50,46 @@ struct _GeglTileBackendClass
   gpointer            padding[4];
 };
 
+/**
+ * gegl_tile_backend_get_tile_size:
+ * @tile_backend: a #GeglTileBackend
+ *
+ * Return value: the size in bytes for a tile from this backend
+ */
 gint        gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend);
+
+/**
+ * gegl_tile_backend_get_format:
+ * @tile_backend: a #GeglTileBackend
+ *
+ * Gets pixel format of @tile_backend
+ *
+ * Return value: (transfer none): the #Babl format
+ */
 const Babl *gegl_tile_backend_get_format    (GeglTileBackend *tile_backend);
 
-/* gets a pointer to the GeglTileStorage that uses the backend */
-GeglTileSource *gegl_tile_backend_peek_storage  (GeglTileBackend *backend);
+/**
+ * gegl_tile_backend_peek_storage:
+ * @tile_backend: a #GeglTileBackend
+ *
+ * Gets a pointer to the GeglTileStorage that uses the backend
+ *
+ * Return value: (transfer none): the #GeglTileStorage
+ */
+GeglTileSource *gegl_tile_backend_peek_storage  (GeglTileBackend *tile_backend);
 
-/* specify the extent of the backend, can be used to
- * pre-prime the backend with the width/height information when
- * constructing proxy GeglBuffers to interact with other systems
+/**
+ * gegl_tile_backend_set_extent:
+ * @tile_backend: a #GeglTileBackend
+ * @rectangle: the new extent
+ *
+ * Specify the extent of the backend, can be used to pre-prime the
+ * backend with the width/height information when constructing proxy
+ * GeglBuffers to interact with other systems
  */
 void  gegl_tile_backend_set_extent    (GeglTileBackend *tile_backend,
                                        GeglRectangle   *rectangle);
+
 GeglRectangle gegl_tile_backend_get_extent (GeglTileBackend *tile_backend);
 
 GType gegl_tile_backend_get_type (void) G_GNUC_CONST;

@@ -67,10 +67,34 @@ void    gegl_tile_handler_set_source (GeglTileHandler *handler,
 
 #define gegl_tile_handler_source_command(handler,command,x,y,z,data) (gegl_tile_handler_get_source(handler)?gegl_tile_source_command(gegl_tile_handler_get_source(handler), command, x, y, z, data):NULL)
 
+/**
+ * gegl_tile_handler_create_tile: (skip)
+ * @handler: a #GeglTileHandler
+ * @x: The tile space x coordinate for the tile
+ * @y: The tile space y coordinate for the tile
+ * @z: The tile space z coordinate for the tile
+ *
+ * Create a new tile associated with this tile handler.
+ *
+ * Return value: the new tile
+ */
 GeglTile * gegl_tile_handler_create_tile (GeglTileHandler *handler,
                                           gint             x,
                                           gint             y,
                                           gint             z);
+
+/**
+ * gegl_tile_handler_dup_tile: (skip)
+ * @handler: a #GeglTileHandler
+ * @tile: the #GeglTile to copy
+ * @x: The tile space x coordinate for the tile
+ * @y: The tile space y coordinate for the tile
+ * @z: The tile space z coordinate for the tile
+ *
+ * Create a duplicate of @tile, associated with this tile handler.
+ *
+ * Return value: the new tile
+ */
 GeglTile * gegl_tile_handler_dup_tile    (GeglTileHandler *handler,
                                           GeglTile        *tile,
                                           gint             x,
