@@ -48,6 +48,7 @@ TESTS = \
   run-rgbe-save.xml.sh                 \
   run-rotate.xml.sh                    \
   run-simple-scale.xml.sh              \
+  run-softglow.xml.sh                  \
   run-transform.xml.sh
 
   #run-matting-global.xml.sh           
