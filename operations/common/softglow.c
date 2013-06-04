@@ -28,7 +28,7 @@ gegl_chant_double (glow_radius, _("Glow radius"),
                    _("Glow radius"))
 
 gegl_chant_double (brightness, _("Brightness"),
-                   0.0, 1.0, 0.75,
+                   0.0, 1.0, 0.30,
                    _("Brightness"))
 
 gegl_chant_double (sharpness, _("Sharpness"),
