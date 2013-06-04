@@ -22,7 +22,7 @@
   </node>
   <node operation='gegl:scale'>
     <params>
-      <param name='filter'>'linear'</param>
+      <param name='sampler'>linear</param>
       <param name='x'>-4</param>
       <param name='y'>-4</param>
     </params>

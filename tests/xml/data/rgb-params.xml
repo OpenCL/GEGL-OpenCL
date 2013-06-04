@@ -5,7 +5,7 @@
           <params>
             <param name='origin-x'>0</param>
             <param name='origin-y'>0</param>
-            <param name='filter'>linear</param>
+            <param name='sampler'>linear</param>
             <param name='x'>5</param>
             <param name='y'>0</param>
           </params>

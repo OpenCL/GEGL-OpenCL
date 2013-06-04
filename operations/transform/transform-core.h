@@ -20,7 +20,7 @@ struct _OpTransform
   GeglOperationFilter parent_instance;
   gdouble             origin_x;
   gdouble             origin_y;
-  gchar              *filter;
+  GeglSamplerType     sampler;
 };
 
 typedef struct _OpTransformClass OpTransformClass;

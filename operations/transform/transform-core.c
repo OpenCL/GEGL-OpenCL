@@ -44,10 +44,9 @@ enum
 {
   PROP_ORIGIN_X = 1,
   PROP_ORIGIN_Y,
-  PROP_FILTER
+  PROP_SAMPLER
 };
 
-static void          gegl_transform_finalize                     (GObject              *object);
 static void          gegl_transform_get_property                 (GObject              *object,
                                                                   guint                 prop_id,
                                                                   GValue               *value,
@@ -155,7 +154,6 @@ op_transform_class_init (OpTransformClass *klass)
 
   gobject_class->set_property         = gegl_transform_set_property;
   gobject_class->get_property         = gegl_transform_get_property;
-  gobject_class->finalize             = gegl_transform_finalize;
 
   op_class->get_invalidated_by_change =
     gegl_transform_get_invalidated_by_change;
@@ -186,20 +184,14 @@ op_transform_class_init (OpTransformClass *klass)
                                      -G_MAXDOUBLE, G_MAXDOUBLE,
                                      0.,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-  g_object_class_install_property (gobject_class, PROP_FILTER,
-                                   g_param_spec_string (
-                                     "filter",
-                                     _("Filter"),
-                      _("Filter type (nearest, linear, cubic, nohalo, lohalo)"),
-                                     "linear",
+  g_object_class_install_property (gobject_class, PROP_SAMPLER,
+                                   g_param_spec_enum (
+                                     "sampler",
+                                     _("Sampler"),
+                                     _("Sampler used internally"),
+                                     gegl_sampler_type_get_type (),
+                                     GEGL_SAMPLER_LINEAR,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
-}
-
-static void
-gegl_transform_finalize (GObject *object)
-{
-  g_free (OP_TRANSFORM (object)->filter);
-  G_OBJECT_CLASS (op_transform_parent_class)->finalize (object);
 }
 
 static void
@@ -223,8 +215,8 @@ gegl_transform_get_property (GObject    *object,
     case PROP_ORIGIN_Y:
       g_value_set_double (value, self->origin_y);
       break;
-    case PROP_FILTER:
-      g_value_set_string (value, self->filter);
+    case PROP_SAMPLER:
+      g_value_set_enum (value, self->sampler);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -248,9 +240,8 @@ gegl_transform_set_property (GObject      *object,
     case PROP_ORIGIN_Y:
       self->origin_y = g_value_get_double (value);
       break;
-    case PROP_FILTER:
-      g_free (self->filter);
-      self->filter = g_value_dup_string (value);
+    case PROP_SAMPLER:
+      self->sampler = g_value_get_enum (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -375,8 +366,7 @@ gegl_transform_is_intermediate_node (OpTransform *transform)
 
       sink = gegl_connection_get_sink_node (connections->data)->operation;
 
-      if (! IS_OP_TRANSFORM (sink) ||
-          strcmp (transform->filter, OP_TRANSFORM (sink)->filter))
+      if (! IS_OP_TRANSFORM (sink) || transform->sampler != OP_TRANSFORM (sink)->sampler)
         return FALSE;
     }
   while ((connections = g_slist_next (connections)));
@@ -398,8 +388,7 @@ gegl_transform_is_composite_node (OpTransform *transform)
 
   source = gegl_connection_get_source_node (connections->data)->operation;
 
-  return (IS_OP_TRANSFORM (source) &&
-          ! strcmp (transform->filter, OP_TRANSFORM (source)->filter));
+  return (IS_OP_TRANSFORM (source) && transform->sampler == OP_TRANSFORM (source)->sampler);
 }
 
 static void
@@ -550,10 +539,9 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
       gegl_matrix3_is_identity (&inverse))
     return requested_rect;
 
-  sampler =
-    gegl_buffer_sampler_new (NULL,
-                             babl_format("RaGaBaA float"),
-                             gegl_sampler_type_from_string (transform->filter));
+  sampler = gegl_buffer_sampler_new (NULL,
+                                     babl_format("RaGaBaA float"),
+                                     transform->sampler);
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
 
@@ -630,8 +618,9 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
    * allow for round off error (for "safety")?
    */
 
-  sampler = gegl_buffer_sampler_new (NULL, babl_format("RaGaBaA float"),
-      gegl_sampler_type_from_string (transform->filter));
+  sampler = gegl_buffer_sampler_new (NULL,
+                                     babl_format("RaGaBaA float"),
+                                     transform->sampler);
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
 
@@ -1124,7 +1113,7 @@ gegl_transform_process (GeglOperation        *operation,
     }
   else if (gegl_transform_matrix3_allow_fast_translate (&matrix) ||
            (gegl_matrix3_is_translate (&matrix) &&
-            ! strcmp (transform->filter, "nearest")))
+            transform->sampler == GEGL_SAMPLER_NEAREST))
     {
       /*
        * Buffer shifting trick (enhanced nop). Do it if it is a
@@ -1163,10 +1152,9 @@ gegl_transform_process (GeglOperation        *operation,
       input  = gegl_operation_context_get_source (context, "input");
       output = gegl_operation_context_get_target (context, "output");
 
-      sampler =
-        gegl_buffer_sampler_new (input,
-                                 babl_format("RaGaBaA float"),
-                             gegl_sampler_type_from_string (transform->filter));
+      sampler = gegl_buffer_sampler_new (input,
+                                         babl_format("RaGaBaA float"),
+                                         transform->sampler);
 
       if (gegl_matrix3_is_affine (&matrix))
         transform_affine  (output, input, &matrix, sampler, context->level);

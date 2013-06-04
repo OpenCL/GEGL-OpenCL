@@ -13,7 +13,7 @@
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
-            <param name='filter'>linear</param>
+            <param name='sampler'>linear</param>
             <param name='x'>0.500000</param>
             <param name='y'>0.500000</param>
         </params>
