@@ -96,6 +96,10 @@ void          gegl_node_blit                (GeglNode            *node,
                                              gint                 rowstride,
                                              GeglBlitFlags        flags);
 
+void          gegl_node_blit_buffer         (GeglNode            *self,
+                                             GeglBuffer          *buffer,
+                                             const GeglRectangle *roi);
+
 void          gegl_node_process             (GeglNode      *self);
 void          gegl_node_link                (GeglNode      *source,
                                              GeglNode      *sink);
@@ -131,13 +135,6 @@ GeglNode    * gegl_node_get_parent          (GeglNode      *self);
 /* functions below are internal to gegl */
 
 GType         gegl_node_get_type            (void) G_GNUC_CONST;
-
-GeglOperationContext *gegl_node_get_context      (GeglNode      *self,
-                                             gpointer       context_id);
-void             gegl_node_remove_context   (GeglNode      *self,
-                                             gpointer       context_id);
-GeglOperationContext *gegl_node_add_context      (GeglNode      *self,
-                                             gpointer       context_id);
 
 void          gegl_node_add_pad             (GeglNode      *self,
                                              GeglPad       *pad);

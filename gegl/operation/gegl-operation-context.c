@@ -195,21 +195,29 @@ gegl_operation_context_add_value (GeglOperationContext *self,
   return &property->value;
 }
 
-GeglOperationContext *gegl_operation_context_new (void)
+GeglOperationContext *
+gegl_operation_context_new (GeglOperation *operation)
 {
   GeglOperationContext *self = g_slice_new0 (GeglOperationContext);
+  self->operation = operation;
   return self;
 }
 
-void gegl_operation_context_destroy (GeglOperationContext *self)
+void
+gegl_operation_context_purge (GeglOperationContext *self)
 {
-
   while (self->property)
     {
       Property *property = self->property->data;
       self->property = g_slist_remove (self->property, property);
       property_destroy (property);
     }
+}
+
+void
+gegl_operation_context_destroy (GeglOperationContext *self)
+{
+  gegl_operation_context_purge (self);
   g_slice_free (GeglOperationContext, self);
 }
 

@@ -13,26 +13,21 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
 noinst_LTLIBRARIES = libprocess.la
 
-#libprocess_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/process
+#libprocess_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/process
 #libprocess_public_HEADERS = #
 
 libprocess_la_SOURCES = \
-	gegl-need-visitor.c		\
-	gegl-debug-rect-visitor.c	\
 	gegl-eval-manager.c		\
-	gegl-eval-visitor.c		\
-	gegl-finish-visitor.c		\
-	gegl-have-visitor.c		\
-	gegl-prepare-visitor.c		\
+	gegl-graph-traversal.c		\
+	gegl-graph-traversal-debug.c	\
+	gegl-list-visitor.c		\
 	gegl-processor.c		\
 	\
-	gegl-need-visitor.h		\
-	gegl-debug-rect-visitor.h	\
 	gegl-eval-manager.h		\
-	gegl-eval-visitor.h		\
-	gegl-finish-visitor.h		\
-	gegl-have-visitor.h		\
-	gegl-prepare-visitor.h		\
+	gegl-graph-debug.h		\
+	gegl-graph-traversal.h		\
+	gegl-graph-traversal-private.h	\
+	gegl-list-visitor.h		\
 	gegl-processor.h
 
 #libprocess_la_SOURCES = $(lib_process_sources) $(libprocess_public_HEADERS)

@@ -83,6 +83,8 @@ void            gegl_operation_context_get_property    (GeglOperationContext *se
                                                         const gchar          *name,
                                                         GValue               *value);
 
+void            gegl_operation_context_purge           (GeglOperationContext *self);
+
 /* the rest of these functions are for internal use only */
 
 void            gegl_operation_context_remove_property (GeglOperationContext *self,
@@ -96,7 +98,7 @@ void            gegl_operation_context_set_result_rect (GeglOperationContext *no
 
 gint            gegl_operation_context_get_level (GeglOperationContext *ctxt);
 
-GeglOperationContext *gegl_operation_context_new (void);
+GeglOperationContext *gegl_operation_context_new (GeglOperation *operation);
 void gegl_operation_context_destroy (GeglOperationContext *opcontext);
 
 G_END_DECLS

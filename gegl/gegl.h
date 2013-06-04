@@ -421,6 +421,18 @@ void          gegl_node_blit             (GeglNode            *node,
                                           GeglBlitFlags        flags);
 
 /**
+ * gegl_node_blit_buffer:
+ * @node: a #GeglNode
+ * @buffer: (transfer none) (allow-none): the #GeglBuffer to render to.
+ * @roi: (allow-none): the rectangle to render.
+ *
+ * Render a rectangular region from a node to the given buffer.
+ */
+void          gegl_node_blit_buffer      (GeglNode            *node,
+                                          GeglBuffer          *buffer,
+                                          const GeglRectangle *roi);
+
+/**
  * gegl_node_process:
  * @sink_node: a #GeglNode without outputs.
  *

@@ -13,7 +13,7 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
 noinst_LTLIBRARIES = libgraph.la
 
-#libgraph_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/gegl/graph
+#libgraph_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/graph
 #libgraph_public_HEADERS = #
 
 libgraph_la_SOURCES = \

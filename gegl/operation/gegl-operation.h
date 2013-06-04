@@ -263,8 +263,6 @@ gboolean gegl_operation_cl_set_kernel_args (GeglOperation *operation,
 
 /* internal utility functions used by gegl, these should not be used
  * externally */
-gboolean gegl_operation_calc_need_rects      (GeglOperation       *operation,
-                                              gpointer             context_id);
 gboolean gegl_can_do_inplace_processing      (GeglOperation       *operation,
                                               GeglBuffer          *input,
                                               const GeglRectangle *result);

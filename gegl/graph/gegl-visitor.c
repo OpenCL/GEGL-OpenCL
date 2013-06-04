@@ -40,10 +40,8 @@ struct _GeglVisitInfo
 
 enum
 {
-  PROP_0,
-  PROP_ID
+  PROP_0
 };
-
 
 static void           gegl_visitor_class_init  (GeglVisitorClass *klass);
 static void           gegl_visitor_init        (GeglVisitor      *self);
@@ -78,15 +76,6 @@ static void           visit_pad                (GeglVisitor      *self,
                                                 GeglPad          *pad);
 static void           visit_node               (GeglVisitor      *self,
                                                 GeglNode         *node);
-static void           set_property             (GObject          *gobject,
-                                                guint             prop_id,
-                                                const GValue     *value,
-                                                GParamSpec       *pspec);
-static void           get_property             (GObject          *gobject,
-                                                guint             prop_id,
-                                                GValue           *value,
-                                                GParamSpec       *pspec);
-
 
 
 G_DEFINE_TYPE (GeglVisitor, gegl_visitor, G_TYPE_OBJECT)
@@ -99,66 +88,13 @@ gegl_visitor_class_init (GeglVisitorClass *klass)
 
   gobject_class->finalize = finalize;
 
-  klass->visit_pad            = visit_pad;
-  klass->visit_node           = visit_node;
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
-
-  g_object_class_install_property (gobject_class, PROP_ID,
-                                   g_param_spec_pointer ("id",
-                                                         "evaluation-id",
-                                                         "The identifier for the evaluation context",
-                                                         G_PARAM_CONSTRUCT |
-                                                         G_PARAM_READWRITE));
+  klass->visit_pad  = visit_pad;
+  klass->visit_node = visit_node;
 }
-
-
-static void
-set_property (GObject      *gobject,
-              guint         property_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  GeglVisitor *self = GEGL_VISITOR (gobject);
-
-  switch (property_id)
-    {
-      case PROP_ID:
-        self->context_id = g_value_get_pointer (value);
-        break;
-
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
-
-static void
-get_property (GObject    *gobject,
-              guint       property_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-  GeglVisitor *self = GEGL_VISITOR (gobject);
-
-  switch (property_id)
-    {
-      case PROP_ID:
-        g_value_set_pointer (value, self->context_id);
-        break;
-
-      default:
-        G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
-        break;
-    }
-}
-
-
 
 static void
 gegl_visitor_init (GeglVisitor *self)
 {
-  self->visits_list = NULL;
   self->hash = g_hash_table_new_full (g_direct_hash, g_direct_equal,
                                       NULL,
                                       (GDestroyNotify) visit_info_destroy);
@@ -169,7 +105,6 @@ finalize (GObject *gobject)
 {
   GeglVisitor *self = GEGL_VISITOR (gobject);
 
-  g_slist_free (self->visits_list);
   g_hash_table_destroy (self->hash);
 
   G_OBJECT_CLASS (gegl_visitor_parent_class)->finalize (gobject);
@@ -185,11 +120,6 @@ lookup (GeglVisitor   *self,
 /* resets the object's data (list of visits and visitable statuses) */
 void gegl_visitor_reset (GeglVisitor   *self)
 {
-  if (self->visits_list)
-    {
-      g_slist_free (self->visits_list);
-      self->visits_list = NULL;
-    }
   g_hash_table_remove_all (self->hash);
 }
 
@@ -278,22 +208,6 @@ set_shared_count (GeglVisitor   *self,
   g_assert (visit_info);
 
   visit_info->shared_count = shared_count;
-}
-
-/**
- * gegl_visitor_get_visits_list
- * @self: a #GeglVisitor.
- *
- * Gets a list of the visitables the visitor has visited so far.
- *
- * Returns: A list of the visitables visited by this visitor.
- **/
-GSList *
-gegl_visitor_get_visits_list (GeglVisitor *self)
-{
-  g_return_val_if_fail (GEGL_IS_VISITOR (self), NULL);
-
-  return self->visits_list;
 }
 
 static void
@@ -501,7 +415,6 @@ static void
 visit_pad (GeglVisitor *self,
            GeglPad     *pad)
 {
-  self->visits_list = g_slist_prepend (self->visits_list, pad);
 }
 
 /* should be called by extending classes when their visit_node function
@@ -524,15 +437,4 @@ static void
 visit_node (GeglVisitor *self,
             GeglNode    *node)
 {
-#if 0
-#if ENABLE_MT
-  g_mutex_lock (node->mutex);
-#endif
-#endif
-  self->visits_list = g_slist_prepend (self->visits_list, node);
-#if 0
-#if ENABLE_MT
-  g_mutex_unlock (node->mutex);
-#endif
-#endif
 }

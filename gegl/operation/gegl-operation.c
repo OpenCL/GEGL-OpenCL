@@ -162,6 +162,8 @@ gegl_operation_process (GeglOperation        *operation,
       return TRUE;
     }
 
+  g_return_val_if_fail (klass->process, FALSE);
+
   return klass->process (operation, context, output_pad, result, level);
 }
 

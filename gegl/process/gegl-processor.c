@@ -34,6 +34,7 @@
 
 #include "graph/gegl-visitor.h"
 #include "graph/gegl-visitable.h"
+#include "process/gegl-list-visitor.h"
 
 #include "opencl/gegl-cl.h"
 
@@ -164,8 +165,7 @@ gegl_processor_finalize (GObject *self_object)
 
   if (processor->context)
     {
-      GeglCache *cache = gegl_node_get_cache (processor->input);
-      gegl_node_remove_context (processor->node, cache);
+      gegl_operation_context_destroy (processor->context);
     }
 
   if (processor->node)
@@ -365,8 +365,10 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 
       cache = gegl_node_get_cache (processor->input);
 
-      if (!gegl_node_get_context (processor->node, cache))
-        processor->context = gegl_node_add_context (processor->node, cache);
+      if (!processor->context)
+        {
+          processor->context = gegl_operation_context_new (processor->node->operation);
+        }
 
       g_value_init (&value, GEGL_TYPE_BUFFER);
       g_value_set_object (&value, cache);
@@ -494,9 +496,10 @@ render_rectangle (GeglProcessor *processor)
               /* create a buffer and initialise it */
               guchar *buf;
 
-              gegl_region_union_with_rect (cache->valid_region, dr);
               buf = g_malloc (dr->width * dr->height * pxsize);
               g_assert (buf);
+
+              /* FIXME: Check if the node caches naturaly, if so the buffer_set call isn't needed */
 
               /* do the image calculations using the buffer */
               gegl_node_blit (processor->input, 1.0, dr, cache->format, buf,
@@ -747,19 +750,16 @@ gegl_processor_work (GeglProcessor *processor,
                      gdouble       *progress)
 {
   gboolean   more_work = FALSE;
-  GeglCache *cache     = gegl_node_get_cache (processor->input);
 
   if (gegl_config()->use_opencl)
     {
       if (gegl_cl_is_accelerated ()
           && processor->chunk_size != GEGL_CL_CHUNK_SIZE)
         {
-          GeglVisitor *visitor = g_object_new (GEGL_TYPE_VISITOR, NULL);
-          GSList *iterator = NULL;
-          GSList *visits_list = NULL;
-          gegl_visitor_reset (visitor);
-          gegl_visitor_dfs_traverse (visitor, GEGL_VISITABLE (processor->node));
-          visits_list = gegl_visitor_get_visits_list (visitor);
+          GeglListVisitor *visitor = g_object_new (GEGL_TYPE_LIST_VISITOR, NULL);
+          GList *iterator = NULL;
+          GList *visits_list = NULL;
+          visits_list = gegl_list_visitor_get_dfs_path (visitor, GEGL_VISITABLE (processor->node));
 
           for (iterator = visits_list; iterator; iterator = iterator->next)
             {
@@ -772,6 +772,7 @@ gegl_processor_work (GeglProcessor *processor,
                 }
             }
 
+          g_list_free (visits_list);
           g_object_unref (visitor);
         }
     }
@@ -794,7 +795,7 @@ gegl_processor_work (GeglProcessor *processor,
                               processor->context,
                               "output"  /* ignored output_pad */,
                               &processor->context->result_rect, processor->context->level);
-      gegl_node_remove_context (processor->node, cache);
+      gegl_operation_context_destroy (processor->context);
       processor->context = NULL;
 
       return TRUE;

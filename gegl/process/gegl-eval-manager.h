@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2003 Calvin Williamson
+ * Copyright 2013 Daniel Sabo
  */
 
 #ifndef __GEGL_EVAL_MANAGER_H__
@@ -21,23 +22,15 @@
 
 #include "gegl-types-internal.h"
 #include "buffer/gegl-buffer-types.h"
+#include "process/gegl-graph-traversal.h"
 
 G_BEGIN_DECLS
 
 
 typedef enum
 {
-  UNINITIALIZED,
-
-  /* means we need to redo an extra prepare and have_rect
-   * traversal
-   */
-  NEED_REDO_PREPARE_AND_HAVE_RECT_TRAVERSAL,
-
-  /* means we need a prepare traversal to set up the contexts on the
-   * nodes
-   */
-  NEED_CONTEXT_SETUP_TRAVERSAL
+  INVALID,
+  READY
 } GeglEvalManagerStates;
 
 
@@ -56,19 +49,9 @@ struct _GeglEvalManager
   GObject    parent_instance;
   GeglNode  *node;
   gchar     *pad_name;
-  GeglRectangle roi;
 
-  /* whether we can fire off rendering requests straight
-   * away or we have to re-prepare etc of the graph
-   */
-  GeglEvalManagerStates state;
-
-  /* we keep these objects around, they are too expensive to throw away */
-  GeglVisitor *prepare_visitor;
-  GeglVisitor *need_visitor;
-  GeglVisitor *eval_visitor;
-  GeglVisitor *have_visitor;
-  GeglVisitor *finish_visitor;
+  GeglGraphTraversal    *traversal;
+  GeglEvalManagerStates  state;
 
 };
 
@@ -80,7 +63,11 @@ struct _GeglEvalManagerClass
 
 GType             gegl_eval_manager_get_type (void) G_GNUC_CONST;
 
-GeglBuffer *      gegl_eval_manager_apply    (GeglEvalManager *self);
+void              gegl_eval_manager_prepare  (GeglEvalManager     *self);
+GeglRectangle     gegl_eval_manager_get_bounding_box (GeglEvalManager     *self);
+
+GeglBuffer *      gegl_eval_manager_apply    (GeglEvalManager     *self,
+                                              const GeglRectangle *roi);
 GeglEvalManager * gegl_eval_manager_new      (GeglNode        *node,
                                               const gchar     *pad_name);
 

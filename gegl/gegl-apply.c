@@ -37,9 +37,6 @@
 #include "operation/gegl-operation-point-filter.h"
 
 #include "process/gegl-eval-manager.h"
-#include "process/gegl-have-visitor.h"
-#include "process/gegl-prepare-visitor.h"
-#include "process/gegl-finish-visitor.h"
 #include "process/gegl-processor.h"
 
 
