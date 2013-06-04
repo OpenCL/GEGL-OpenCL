@@ -37,10 +37,12 @@ gegl_chant_double_ui (center_y, _("Y"),
                       -100000.0, 100000.0, 1.0,
                       _("Vertical center position"))
 
+/* FIXME: With a large angle, we lose AreaFilter's flavours */
 gegl_chant_double_ui (angle, _("Angle"),
-                      0.0, 180.0, 5.0,
+                      0.0, 360.0, 5.0,
                       0.0, 90.0, 2.0,
-                      _("Rotation blur angle"))
+                      _("Rotation blur angle. "
+                        "A large angle may take some time to render"))
 
 #else
 
@@ -51,7 +53,6 @@ gegl_chant_double_ui (angle, _("Angle"),
 
 #define SQR(c) ((c) * (c))
 
-#define MAX_NUM_IT      200
 #define NOMINAL_NUM_IT  100
 #define SQRT_2          1.41
 
@@ -71,6 +72,9 @@ prepare (GeglOperation *operation)
                             fabs (o->center_x - whole_region->x - whole_region->width));
       gdouble maxr_y = MAX (fabs (o->center_y - whole_region->y),
                             fabs (o->center_y - whole_region->y - whole_region->height));
+
+      if (angle >= G_PI)
+        angle = G_PI;
 
       op_area->left = op_area->right
         = ceil (maxr_y * sin (angle / 2.0)) + 1;
@@ -182,7 +186,7 @@ process (GeglOperation       *operation,
 
           /* performance concern */
           if (n > NOMINAL_NUM_IT)
-            n = MIN (NOMINAL_NUM_IT + (gint) sqrt (n - NOMINAL_NUM_IT), MAX_NUM_IT);
+            n = NOMINAL_NUM_IT + (gint) sqrt (n - NOMINAL_NUM_IT);
 
           phi_base = compute_phi (xr, yr);
           phi_start = phi_base + angle / 2.0;
