@@ -41,6 +41,22 @@ _gegl_float_epsilon_equal (float v1, float v2)
   return diff > -GEGL_FLOAT_EPSILON && diff < GEGL_FLOAT_EPSILON;
 }
 
+GeglRectangle *
+gegl_rectangle_new (gint           x,
+                    gint           y,
+                    guint          w,
+                    guint          h)
+{
+  GeglRectangle *r = g_new (GeglRectangle, 1);
+
+  r->x      = x;
+  r->y      = y;
+  r->width  = w;
+  r->height = h;
+
+  return r;
+}
+
 void
 gegl_rectangle_set (GeglRectangle *r,
                     gint           x,

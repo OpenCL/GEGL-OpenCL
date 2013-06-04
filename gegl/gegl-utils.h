@@ -39,6 +39,20 @@ G_BEGIN_DECLS
  */
 
 /**
+ * gegl_rectangle_new:
+ * @x: upper left x coordinate
+ * @y: upper left y coordinate
+ * @width: width in pixels.
+ * @height: height in pixels.
+ *
+ * Creates a new rectangle set with the values from @x, @y, @width and @height.
+ */
+GeglRectangle *gegl_rectangle_new        (gint                 x,
+                                          gint                 y,
+                                          guint                width,
+                                          guint                height);
+
+/**
  * gegl_rectangle_set:
  * @rectangle: a #GeglRectangle
  * @x: upper left x coordinate
