@@ -123,9 +123,9 @@ void           gegl_exit                 (void);
 
 /**
  * gegl_list_operations:
- * @n_operations_p: return location for number of operations.
+ * @n_operations_p: (out caller-allocates): return location for number of operations.
  *
- * Return value: (transfer container): An alphabetically sorted array of available operation names. The
+ * Return value: (transfer container) (array length=n_operations_p): An alphabetically sorted array of available operation names. The
  * list should be freed with g_free after use.
  * ---
  * gchar **operations;
@@ -146,12 +146,12 @@ gchar        **gegl_list_operations         (guint *n_operations_p);
 /**
  * gegl_operation_list_properties:
  * @operation_type: the name of the operation type we want to query to properties of.
- * @n_properties_p: return location for number of properties.
+ * @n_properties_p: (out caller-allocates): return location for number of properties.
  *
- * Return value: (transfer container): An allocated array of #GParamSpecs describing the properties
+ * Return value: (transfer container) (array length=n_properties_p): An allocated array of #GParamSpecs describing the properties
  * of the operation available when a node has operation_type set.
  */
-GParamSpec** gegl_operation_list_properties           (const gchar   *operation_type,
+GParamSpec** gegl_operation_list_properties (const gchar   *operation_type,
                                              guint         *n_properties_p);
 
 /***
