@@ -148,7 +148,6 @@ operations/generated/src-atop.c
 operations/generated/src.c
 operations/generated/src-in.c
 operations/generated/src-out.c
-operations/generated/src-over.c
 operations/generated/subtract.c
 operations/generated/svg-multiply.c
 operations/generated/xor.c
