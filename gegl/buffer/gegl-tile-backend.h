@@ -59,7 +59,7 @@ struct _GeglTileBackendClass
 gint        gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend);
 
 /**
- * gegl_tile_backend_get_format:
+ * gegl_tile_backend_get_format: (skip)
  * @tile_backend: a #GeglTileBackend
  *
  * Gets pixel format of @tile_backend

@@ -290,7 +290,7 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
                                                GeglAbyssPolicy      repeat_mode);
 
 /**
- * gegl_buffer_set:
+ * gegl_buffer_set: (skip)
  * @buffer: the buffer to modify.
  * @rect: the coordinates we want to change the data of and the width/height of
  * the linear buffer being set, scale specifies the scaling factor applied to
@@ -342,7 +342,7 @@ void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
                                                gdouble              y_offset);
 
 /**
- * gegl_buffer_get_format:
+ * gegl_buffer_get_format: (skip)
  * @buffer: a #GeglBuffer
  *
  * Get the babl format of the buffer, this might not be the format the buffer
