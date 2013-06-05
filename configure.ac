@@ -40,6 +40,7 @@ m4_define([gimp_full_name], [Generic Graphical Library])
 m4_define([babl_required_version], [0.1.10])
 m4_define([cairo_required_version], [0.0.0])
 m4_define([gdk_pixbuf_required_version], [2.18.0])
+m4_define([introspection_required_version], [1.32.0])
 m4_define([glib_required_version], [2.32.3])
 m4_define([graphviz_required_version], [0.0.0])
 m4_define([jasper_required_version], [1.900.1])
@@ -395,7 +396,7 @@ AC_PATH_PROGS(PERL,perl5 perl perl5.005 perl5.004,perl)
 ########################
 # Check GObject Introspection
 ########################
-GOBJECT_INTROSPECTION_CHECK([0.10.0])
+GOBJECT_INTROSPECTION_CHECK(introspection_required_version)
 
 ########################
 # Check PyGObject
