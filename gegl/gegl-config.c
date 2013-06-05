@@ -37,7 +37,6 @@ enum
 {
   PROP_0,
   PROP_QUALITY,
-  PROP_CACHE_SIZE, /* deprecated */
   PROP_TILE_CACHE_SIZE,
   PROP_CHUNK_SIZE,
   PROP_SWAP,
@@ -59,10 +58,6 @@ gegl_config_get_property (GObject    *gobject,
 
   switch (property_id)
     {
-      case PROP_CACHE_SIZE:
-        g_value_set_int (value, config->tile_cache_size);
-        break;
-
       case PROP_TILE_CACHE_SIZE:
         g_value_set_uint64 (value, config->tile_cache_size);
         break;
@@ -119,9 +114,6 @@ gegl_config_set_property (GObject      *gobject,
 
   switch (property_id)
     {
-      case PROP_CACHE_SIZE:
-        config->tile_cache_size = g_value_get_int (value);
-        break;
       case PROP_TILE_CACHE_SIZE:
         config->tile_cache_size = g_value_get_uint64 (value);
         break;
@@ -224,14 +216,6 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                      0, G_MAXINT, 64,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
-
-  /* deprecated */
-  g_object_class_install_property (gobject_class, PROP_CACHE_SIZE,
-                                   g_param_spec_int ("cache-size",
-                                                     "Cache size",
-                                                     "deprecated, use tile-cache-size instead",
-                                                     0, G_MAXINT, 512 * 1024 * 1024,
-                                                     G_PARAM_READWRITE));
 
   g_object_class_install_property (gobject_class, PROP_TILE_CACHE_SIZE,
                                    g_param_spec_uint64 ("tile-cache-size",
