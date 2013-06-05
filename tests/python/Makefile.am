@@ -13,6 +13,7 @@ TESTS = \
 	test-gegl.py \
 	test-gegl-node.py \
 	test-gegl-color.py
+EXTRA_DIST = $(TESTS)
 endif # HAVE_PYGOBJECT
 endif # HAVE_INTROSPECTION
 endif # HAVE_PYTHON
