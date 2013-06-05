@@ -42,6 +42,7 @@ add_operations (GHashTable *hash,
                 GType       parent)
 {
   GType *types;
+  GType  check_type;
   guint  count;
   guint  no;
 
@@ -54,10 +55,26 @@ add_operations (GHashTable *hash,
       GeglOperationClass *operation_class = g_type_class_ref (types[no]);
       if (operation_class->name)
         {
+          check_type = (GType)g_hash_table_lookup (hash, operation_class->name);
+          if (check_type && check_type != types[no])
+            {
+              g_warning ("Adding %s shadows %s for operation %s",
+                          g_type_name (types[no]),
+                          g_type_name ((GType)check_type),
+                          operation_class->name);
+            }
           g_hash_table_insert (hash, g_strdup (operation_class->name), (gpointer) types[no]);
         }
       if (operation_class->compat_name)
         {
+          check_type = (GType)g_hash_table_lookup (hash, operation_class->name);
+          if (check_type && check_type != types[no])
+            {
+              g_warning ("Adding %s shadows %s for operation %s",
+                          g_type_name (types[no]),
+                          g_type_name ((GType)check_type),
+                          operation_class->compat_name);
+            }
           g_hash_table_insert (hash, g_strdup (operation_class->compat_name), (gpointer) types[no]);
         }
       add_operations (hash, types[no]);
