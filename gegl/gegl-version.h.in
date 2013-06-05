@@ -39,9 +39,9 @@
 
 /**
  * gegl_get_version:
- * @major: a pointer to a int where the major version number will be stored
- * @minor: ditto for the minor version number
- * @micro: ditto for the micro version number
+ * @major: (out caller-allocates): a pointer to a int where the major version number will be stored
+ * @minor: (out caller-allocates): ditto for the minor version number
+ * @micro: (out caller-allocates): ditto for the micro version number
  *
  * This function fetches the version of the GEGL library being used by
  * the running process.
