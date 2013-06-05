@@ -120,11 +120,9 @@ introspection_sources = \
 	$(GEGL_instrospectable_sources) \
 	$(GEGL_introspectable_headers)
 
-INCLUDES = $(AM_CFLAGS) $(AM_CPPFLAGS)
-
 Gegl-@GEGL_API_VERSION@.gir: libgegl-@GEGL_API_VERSION@.la Makefile
 Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_INCLUDES = GObject-2.0 GLib-2.0
-Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_CFLAGS = $(INCLUDES)
+Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_CFLAGS = $(AM_CFLAGS) $(AM_CPPFLAGS)
 Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_LIBS = libgegl-@GEGL_API_VERSION@.la
 Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_FILES = $(introspection_sources)
 INTROSPECTION_GIRS += Gegl-@GEGL_API_VERSION@.gir
