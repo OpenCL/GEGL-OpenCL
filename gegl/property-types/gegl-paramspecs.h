@@ -63,6 +63,23 @@ struct _GeglParamSpecDouble
 
 GType        gegl_param_double_get_type (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_double:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @minimum: minimum value for the property specified
+ * @maximum: maximum value for the property specified
+ * @default_value: default value for the property specified
+ * @ui_minimum: minimum value a user should be allowed to input
+ * @ui_maximum: maximum value a user should be allowed to input
+ * @ui_gamma: the gamma that should be used when adjusting the value
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecDouble instance.
+ *
+ * Return value: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_double (const gchar *name,
                                      const gchar *nick,
                                      const gchar *blurb,
@@ -94,6 +111,23 @@ struct _GeglParamSpecInt
 
 GType        gegl_param_int_get_type (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_int:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @minimum: minimum value for the property specified
+ * @maximum: maximum value for the property specified
+ * @default_value: default value for the property specified
+ * @ui_minimum: minimum value a user should be allowed to input
+ * @ui_maximum: maximum value a user should be allowed to input
+ * @ui_gamma: the gamma that should be used when adjusting the value
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecInt instance.
+ *
+ * Return value: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_int (const gchar *name,
                                   const gchar *nick,
                                   const gchar *blurb,
@@ -124,6 +158,20 @@ struct _GeglParamSpecString
 
 GType        gegl_param_string_get_type (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_string:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @no_validate: true if the string should be validated with g_utf8_validate
+ * @null_ok: true if the string can be NULL
+ * @default_value: default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecString instance.
+ *
+ * Return value: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_string     (const gchar *name,
                                          const gchar *nick,
                                          const gchar *blurb,
@@ -153,6 +201,20 @@ struct _GeglParamSpecFilePath
 
 GType        gegl_param_file_path_get_type (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_file_path:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @no_validate: true if the string should be validated with g_utf8_validate
+ * @null_ok: true if the string can be NULL
+ * @default_value: default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecFilePath instance.
+ *
+ * Return value: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_file_path (const gchar *name,
                                         const gchar *nick,
                                         const gchar *blurb,
@@ -182,11 +244,23 @@ struct _GeglParamSpecMultiline
 
 GType        gegl_param_multiline_get_type (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_multiline:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @default_value: default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecMultiline instance.
+ *
+ * Return value: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_multiline (const gchar *name,
-                                   const gchar *nick,
-                                   const gchar *blurb,
-                                   const gchar *default_value,
-                                   GParamFlags  flags);
+                                        const gchar *nick,
+                                        const gchar *blurb,
+                                        const gchar *default_value,
+                                        GParamFlags  flags);
 
 
 
@@ -210,6 +284,19 @@ struct _GeglParamSpecEnum
 
 GType        gegl_param_enum_get_type     (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_enum:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @enum_type: the enum type to get valid values from
+ * @default_value: default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecEnum instance.
+ *
+ * Return value: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_enum         (const gchar       *name,
                                            const gchar       *nick,
                                            const gchar       *blurb,
@@ -240,6 +327,17 @@ struct _GeglParamSpecSeed
 
 GType        gegl_param_seed_get_type (void) G_GNUC_CONST;
 
+/**
+ * gegl_param_spec_seed:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecSeed instance specifying an integer random seed.
+ *
+ * Returns: (transfer full): a newly created parameter specification
+ */
 GParamSpec * gegl_param_spec_seed (const gchar *name,
                                    const gchar *nick,
                                    const gchar *blurb,
