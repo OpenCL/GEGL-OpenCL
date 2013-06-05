@@ -88,7 +88,6 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
   GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
-  gint j;
   cl_int cl_err = 0;
   gboolean err;
 

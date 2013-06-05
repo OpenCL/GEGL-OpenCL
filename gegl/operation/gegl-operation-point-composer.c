@@ -151,7 +151,6 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
   GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
   GeglOperationPointComposerClass *point_composer_class = GEGL_OPERATION_POINT_COMPOSER_GET_CLASS (operation);
 
-  gint j;
   cl_int cl_err = 0;
   gboolean err;
 
