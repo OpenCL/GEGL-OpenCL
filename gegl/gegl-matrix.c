@@ -215,7 +215,7 @@ gegl_matrix3_transform_point (GeglMatrix3 *matrix,
                               gdouble     *x,
                               gdouble     *y)
 {
-  gdouble xp, yp, w, cw;
+  gdouble xp, yp, w;
   
   w = (*x * matrix->coeff [2][0] + *y * matrix->coeff [2][1] + matrix->coeff [2][2]);
 
