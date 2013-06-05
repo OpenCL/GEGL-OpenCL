@@ -340,31 +340,39 @@ cl_process (GeglOperation       *operation,
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
-  gint j;
 
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,result, out_format, GEGL_CL_BUFFER_WRITE);
-                gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format, GEGL_CL_BUFFER_READ,
-                                                           o->mask_radius, o->mask_radius, o->mask_radius, o->mask_radius, GEGL_ABYSS_CLAMP);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             o->mask_radius,
+                                             o->mask_radius,
+                                             o->mask_radius,
+                                             o->mask_radius,
+                                             GEGL_ABYSS_CLAMP);
+
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
       if (err) return FALSE;
-      for (j=0; j < i->n; j++)
-        {
-          err = cl_oilify(i->tex[read][j],
-                          i->tex[0][j],
-                          i->size[0][j],&i->roi[0][j],
-                          o->mask_radius,
-                          o->intensities,
-                          o->exponent,
-                          o->use_inten);
-          if (err)
-            {
-              g_warning("[OpenCL] Error in gegl:oilify");
-              return FALSE;
-            }
-        }
+
+      err = cl_oilify(i->tex[read],
+                      i->tex[0],
+                      i->size[0],
+                      &i->roi[0],
+                      o->mask_radius,
+                      o->intensities,
+                      o->exponent,
+                      o->use_inten);
+
+      if (err) return FALSE;
     }
 
   return TRUE;

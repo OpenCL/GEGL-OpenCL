@@ -51,20 +51,13 @@
   { cl_err = gegl_clReleaseMemObject(obj); \
     CL_CHECK; }
 
-#define GEGL_CL_BUFFER_ITERATE_START(I, J, ERR)      \
-  while (gegl_buffer_cl_iterator_next (I, & ERR)) \
+#define GEGL_CL_BUFFER_ITERATE_START(I, ERR)         \
+  while (gegl_buffer_cl_iterator_next (I, & ERR))    \
     {                                                \
       if (ERR) return FALSE;                         \
-      for (J=0; J < I ->n; J++)                      \
-        {
 
 #define GEGL_CL_BUFFER_ITERATE_END(ERR)   \
-          if (ERR)                        \
-           {                              \
-             g_warning("[OpenCL] Error"); \
-             return FALSE;                \
-           }                              \
-        }                                 \
+      if (ERR) return FALSE;              \
     }
 
 

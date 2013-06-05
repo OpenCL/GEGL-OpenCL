@@ -76,10 +76,10 @@ cl_bilateral_filter (cl_mem                in_tex,
   size_t global_ws[2];
 
   if (!cl_data)
-  {
-    const char *kernel_name[] = {"bilateral_filter", NULL};
-    cl_data = gegl_cl_compile_and_build (bilateral_filter_cl_source, kernel_name);
-  }
+    {
+      const char *kernel_name[] = {"bilateral_filter", NULL};
+      cl_data = gegl_cl_compile_and_build (bilateral_filter_cl_source, kernel_name);
+    }
   if (!cl_data) return TRUE;
 
   global_ws[0] = roi->width;
@@ -115,26 +115,38 @@ cl_process (GeglOperation       *operation,
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
-  gint j;
-  cl_int cl_err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
-                gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format, GEGL_CL_BUFFER_READ, op_area->left, op_area->right, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             op_area->left,
+                                             op_area->right,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
       if (err) return FALSE;
-      for (j=0; j < i->n; j++)
-        {
-          err = cl_bilateral_filter(i->tex[read][j], i->tex[0][j], i->size[0][j], &i->roi[0][j], ceil(o->blur_radius), o->edge_preservation);
-          if (err)
-            {
-              g_warning("[OpenCL] Error in gegl:bilateral-filter");
-              return FALSE;
-            }
-        }
+
+      err = cl_bilateral_filter(i->tex[read],
+                                i->tex[0],
+                                i->size[0],
+                                &i->roi[0],
+                                ceil(o->blur_radius),
+                                o->edge_preservation);
+
+      if (err) return FALSE;
     }
 
   return TRUE;

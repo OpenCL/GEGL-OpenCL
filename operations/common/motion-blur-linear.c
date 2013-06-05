@@ -137,29 +137,42 @@ cl_process (GeglOperation       *operation,
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
-  cl_int cl_err;
-  gint j;
 
   gdouble theta = o->angle * G_PI / 180.0;
   gfloat  offset_x = (gfloat)(o->length * cos(theta));
   gfloat  offset_y = (gfloat)(o->length * sin(theta));
   gint num_steps = (gint)ceil(o->length) + 1;
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
-                gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format,  GEGL_CL_BUFFER_READ,
-                                                           op_area->left, op_area->right, op_area->top, op_area->bottom, GEGL_ABYSS_CLAMP);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             op_area->left,
+                                             op_area->right,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
       if (err) return FALSE;
-      for (j=0; j < i->n; j++)
-        {
-          err = cl_motion_blur_linear(i->tex[read][j], i->tex[0][j], i->size[0][j], &i->roi[0][j], &i->roi[read][j], num_steps, offset_x, offset_y);
-          if (err)
-            {
-              g_warning("[OpenCL] Error in gegl:motion-blur-linear");
-              return FALSE;
-            }
-        }
+
+      err = cl_motion_blur_linear(i->tex[read],
+                                  i->tex[0],
+                                  i->size[0],
+                                  &i->roi[0],
+                                  &i->roi[read],
+                                  num_steps,
+                                  offset_x,
+                                  offset_y);
+
+      if (err) return FALSE;
     }
 
   return TRUE;

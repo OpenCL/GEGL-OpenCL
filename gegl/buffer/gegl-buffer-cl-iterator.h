@@ -22,7 +22,6 @@
 #include "gegl-buffer.h"
 #include "opencl/gegl-cl.h"
 
-#define GEGL_CL_NTEX 16
 #define GEGL_CL_BUFFER_MAX_ITERATORS 6
 
 enum
@@ -34,10 +33,9 @@ enum
 
 typedef struct GeglBufferClIterator
 {
-  gint          n;
-  size_t        size [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];  /* length of current data in pixels */
-  cl_mem        tex  [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
-  GeglRectangle roi  [GEGL_CL_BUFFER_MAX_ITERATORS][GEGL_CL_NTEX];
+  size_t        size [GEGL_CL_BUFFER_MAX_ITERATORS];  /* length of current data in pixels */
+  cl_mem        tex  [GEGL_CL_BUFFER_MAX_ITERATORS];
+  GeglRectangle roi  [GEGL_CL_BUFFER_MAX_ITERATORS];
 } GeglBufferClIterator;
 
 gint gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,

@@ -256,29 +256,53 @@ cl_process (GeglOperation       *operation,
 {
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
+
   gint err;
-  gint j;
-  cl_int cl_err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output, result, out_format, GEGL_CL_BUFFER_WRITE);
-                gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format,  GEGL_CL_BUFFER_READ, op_area->left, op_area->right, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
-                gint aux  = gegl_buffer_cl_iterator_add_2 (i, NULL, result, in_format,  GEGL_CL_BUFFER_AUX, 0, 0, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             op_area->left,
+                                             op_area->right,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
+  gint aux  = gegl_buffer_cl_iterator_add_2 (i,
+                                             NULL,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_AUX,
+                                             0,
+                                             0,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
       if (err) return FALSE;
-      for (j=0; j < i->n; j++)
-        {
-          err = cl_box_blur(i->tex[read][j], i->tex[aux][j], i->tex[0][j], i->size[0][j], &i->roi[0][j], ceil (o->radius));
-          if (err)
-            {
-              g_warning("[OpenCL] Error in gegl:box-blur");
-              return FALSE;
-            }
-        }
+
+      err = cl_box_blur(i->tex[read],
+                        i->tex[aux],
+                        i->tex[0],
+                        i->size[0],
+                        &i->roi[0],
+                        ceil (o->radius));
+
+      if (err) return FALSE;
     }
+
   return TRUE;
 }
 
@@ -297,8 +321,12 @@ process (GeglOperation       *operation,
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   if (gegl_cl_is_accelerated ())
-    if (cl_process (operation, input, output, result))
-      return TRUE;
+    {
+      if (cl_process (operation, input, output, result))
+        return TRUE;
+      else
+        gegl_cl_disable();
+    }
 
   rect = *result;
   tmprect = *result;

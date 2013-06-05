@@ -235,27 +235,52 @@ cl_process (GeglOperation       *operation,
   gboolean    has_alpha  = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
   GeglAbyssPolicy read_abyss = has_alpha ? GEGL_ABYSS_NONE : GEGL_ABYSS_BLACK;
   gint err;
-  gint j;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new   (output,   roi, out_format, GEGL_CL_BUFFER_WRITE);
-                gint read = gegl_buffer_cl_iterator_add_2 (i, input, roi, in_format,  GEGL_CL_BUFFER_READ, op_area->left, op_area->right, op_area->top, op_area->bottom, read_abyss);
-                gint aux  = gegl_buffer_cl_iterator_add_2 (i, NULL,  roi, in_format,  GEGL_CL_BUFFER_AUX,  op_area->left, op_area->right, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new   (output,
+                                                           roi,
+                                                           out_format,
+                                                           GEGL_CL_BUFFER_WRITE);
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             roi,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             op_area->left,
+                                             op_area->right,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             read_abyss);
+
+  gint aux  = gegl_buffer_cl_iterator_add_2 (i,
+                                             NULL,
+                                             roi,
+                                             in_format,
+                                             GEGL_CL_BUFFER_AUX,
+                                             op_area->left,
+                                             op_area->right,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
       if (err) return FALSE;
-      for (j=0; j < i->n; j++)
-        {
-          err = cl_pixelise(i->tex[read][j], i->tex[aux][j], i->tex[0][j],&i->roi[read][j], &i->roi[0][j], o->size_x, o->size_y);
-          if (err != CL_SUCCESS)
-            {
-              g_warning("[OpenCL] Error in gegl:pixelize");
-              return FALSE;
-            }
-        }
+
+      err = cl_pixelise(i->tex[read],
+                        i->tex[aux],
+                        i->tex[0],
+                        &i->roi[read],
+                        &i->roi[0],
+                        o->size_x,
+                        o->size_y);
+
+      if (err) return FALSE;
     }
+
   return TRUE;
 }
 

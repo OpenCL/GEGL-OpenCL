@@ -57,29 +57,51 @@ process (GeglOperation       *operation,
           size_t size;
           gboolean err;
           cl_int cl_err = 0;
-          gint j;
 
-          GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, output->soft_format, GEGL_CL_BUFFER_WRITE);
-                        gint read = gegl_buffer_cl_iterator_add (i, input, result, output->soft_format, GEGL_CL_BUFFER_READ,  GEGL_ABYSS_NONE);
+          GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                                 result,
+                                                                 output->soft_format,
+                                                                 GEGL_CL_BUFFER_WRITE);
+
+          gint read = gegl_buffer_cl_iterator_add (i,
+                                                   input,
+                                                   result,
+                                                   output->soft_format,
+                                                   GEGL_CL_BUFFER_READ,
+                                                   GEGL_ABYSS_NONE);
 
           gegl_cl_color_babl (output->soft_format, &size);
 
-          GEGL_NOTE (GEGL_DEBUG_OPENCL, "write-buffer: %p %p %s %s {%d %d %d %d}", input, output, babl_get_name(input->soft_format), babl_get_name(output->soft_format),
-                                                                                   result->x, result->y, result->width, result->height);
+          GEGL_NOTE (GEGL_DEBUG_OPENCL,
+                     "write-buffer: "
+                     "%p %p %s %s {%d %d %d %d}",
+                     input,
+                     output,
+                     babl_get_name(input->soft_format),
+                     babl_get_name(output->soft_format),
+                     result->x,
+                     result->y,
+                     result->width,
+                     result->height);
 
           while (gegl_buffer_cl_iterator_next (i, &err))
             {
               if (err) break;
-              for (j=0; j < i->n; j++)
+
+              cl_err = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue (),
+                                                 i->tex[read],
+                                                 i->tex[0],
+                                                 0,
+                                                 0,
+                                                 i->size[0] * size,
+                                                 0,
+                                                 NULL,
+                                                 NULL);
+
+              if (cl_err != CL_SUCCESS)
                 {
-                  cl_err = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue (),
-                                                     i->tex[read][j], i->tex[0][j], 0, 0, i->size[0][j] * size,
-                                                     0, NULL, NULL);
-                  if (cl_err != CL_SUCCESS)
-                    {
-                      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in gegl_buffer_copy: %s", gegl_cl_errstring(cl_err));
-                      break;
-                    }
+                  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", gegl_cl_errstring(cl_err));
+                  break;
                 }
             }
 

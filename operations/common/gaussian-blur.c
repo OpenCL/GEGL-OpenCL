@@ -543,7 +543,6 @@ cl_process (GeglOperation       *operation,
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
   gint j;
-  cl_int cl_err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
@@ -566,36 +565,52 @@ cl_process (GeglOperation       *operation,
     fmatrix_y[j] = (gfloat) cmatrix_y[j];
 
   {
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output, result, out_format, GEGL_CL_BUFFER_WRITE);
-  gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format, GEGL_CL_BUFFER_READ,
-                                             op_area->left, op_area->right, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
-  gint aux  = gegl_buffer_cl_iterator_add_2 (i, NULL, result, in_format,  GEGL_CL_BUFFER_AUX,
-                                             0, 0, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             op_area->left,
+                                             op_area->right,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
+  gint aux  = gegl_buffer_cl_iterator_add_2 (i,
+                                             NULL,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_AUX,
+                                             0,
+                                             0,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
 
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
       if (err) return FALSE;
-      for (j=0; j < i->n; j++)
-        {
-           err = cl_gaussian_blur(i->tex[read][j],
-                                  i->tex[0][j],
-                                  i->tex[aux][j],
-                                  i->size[0][j],
-                                  &i->roi[0][j],
-                                  &i->roi[read][j],
-                                  &i->roi[aux][j],
-                                  fmatrix_x,
-                                  cmatrix_len_x,
-                                  op_area->left,
-                                  fmatrix_y,
-                                  cmatrix_len_y,
-                                  op_area->top);
-          if (err)
-            {
-              g_warning("[OpenCL] Error in gegl:gaussian-blur");
-              return FALSE;
-            }
-        }
+
+      err = cl_gaussian_blur(i->tex[read],
+                             i->tex[0],
+                             i->tex[aux],
+                             i->size[0],
+                             &i->roi[0],
+                             &i->roi[read],
+                             &i->roi[aux],
+                             fmatrix_x,
+                             cmatrix_len_x,
+                             op_area->left,
+                             fmatrix_y,
+                             cmatrix_len_y,
+                             op_area->top);
+
+      if (err) return FALSE;
     }
   }
 

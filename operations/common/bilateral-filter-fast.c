@@ -430,18 +430,25 @@ bilateral_cl_process (GeglOperation       *operation,
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
-  gint j;
-  cl_int cl_err;
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output, result, out_format, GEGL_CL_BUFFER_WRITE);
-  gint read = gegl_buffer_cl_iterator_add (i, input, result, in_format, GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
 
-  GEGL_CL_BUFFER_ITERATE_START(i, j, err)
+  gint read = gegl_buffer_cl_iterator_add (i,
+                                           input,
+                                           result,
+                                           in_format,
+                                           GEGL_CL_BUFFER_READ,
+                                           GEGL_ABYSS_NONE);
+
+  GEGL_CL_BUFFER_ITERATE_START(i, err)
     {
-       err = cl_bilateral(i->tex[read][j],
-                          i->tex[0][j],
-                          &i->roi[0][j],
-                          &i->roi[read][j],
+       err = cl_bilateral(i->tex[read],
+                          i->tex[0],
+                          &i->roi[0],
+                          &i->roi[read],
                           s_sigma,
                           r_sigma);
     }

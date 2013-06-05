@@ -167,14 +167,14 @@ static GeglClRunData *cl_data = NULL;
 
 static gboolean
 cl_c2g (cl_mem                in_tex,
-    cl_mem                    out_tex,
-    size_t                    global_worksize,
-    const GeglRectangle      *src_roi,
-    const GeglRectangle      *roi,
-    gint                      radius,
-    gint                      samples,
-    gint                      iterations,
-    gdouble                   rgamma)
+        cl_mem                out_tex,
+        size_t                global_worksize,
+        const GeglRectangle  *src_roi,
+        const GeglRectangle  *roi,
+        gint                  radius,
+        gint                  samples,
+        gint                  iterations,
+        gdouble               rgamma)
 {
   cl_int cl_err = 0;
   cl_mem cl_lut_cos, cl_lut_sin, cl_radiuses;
@@ -254,36 +254,51 @@ error:
 }
 
 static gboolean
-cl_process (GeglOperation *operation,
-      GeglBuffer          *input,
-      GeglBuffer          *output,
-      const GeglRectangle *result)
+cl_process (GeglOperation       *operation,
+            GeglBuffer          *input,
+            GeglBuffer          *output,
+            const GeglRectangle *result)
 {
   const Babl *in_format  = babl_format("RGBA float");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
-  cl_int cl_err;
-  gint j;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,result, out_format, GEGL_CL_BUFFER_WRITE);
-                gint read = gegl_buffer_cl_iterator_add_2 (i, input, result, in_format, GEGL_CL_BUFFER_READ,
-                                                           op_area->left, op_area->right, op_area->top, op_area->bottom, GEGL_ABYSS_NONE);
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             op_area->left,
+                                             op_area->right,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
       if (err) return FALSE;
-      for (j=0; j < i->n; j++)
-        {
-          err = cl_c2g(i->tex[read][j], i->tex[0][j],i->size[0][j], &i->roi[read][j], &i->roi[0][j], o->radius, o->samples, o->iterations, RGAMMA);
-          if (err)
-           {
-             g_warning("[OpenCL] Error in gegl:c2g");
-             return FALSE;
-           }
-        }
+
+      err = cl_c2g(i->tex[read],
+                   i->tex[0],
+                   i->size[0],
+                   &i->roi[read],
+                   &i->roi[0],
+                   o->radius,
+                   o->samples,
+                   o->iterations,
+                   RGAMMA);
+
+      if (err) return FALSE;
     }
+
   return TRUE;
 }
 
