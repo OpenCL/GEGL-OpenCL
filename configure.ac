@@ -414,13 +414,15 @@ AC_ARG_WITH(vala, [  --without-vala          build without Vala support])
 
 have_vapigen="no"
 if test "x$with_vala" != "xno"; then
+  PKG_CHECK_EXISTS(vapigen >= 0.20.0,
+    have_vapigen="yes",
+    have_vapigen="no  (vapigen not found)")
+fi
 
+if test "x$have_vapigen" == "xyes"; then
   AC_PATH_PROG(VAPIGEN, vapigen, no)
   if test "$VAPIGEN" = "no"; then
     have_vapigen="no  (vapigen executable not found)"
-    AC_MSG_RESULT([*** Check for vapigen failed.])
-  else
-    have_vapigen="yes"
   fi
 fi
 
