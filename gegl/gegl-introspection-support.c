@@ -34,6 +34,17 @@
 #include "graph/gegl-node.h"
 #include "gegl-introspection-support.h"
 
+GeglRectangle *
+gegl_node_introspectable_get_bounding_box (GeglNode *node)
+{
+  GeglRectangle  bbox   = gegl_node_get_bounding_box (node);
+  GeglRectangle *result = g_new (GeglRectangle, 1);
+
+  *result = bbox;
+
+  return result;
+}
+
 GValue *
 gegl_node_introspectable_get_property (GeglNode    *node,
                                        const gchar *property_name)

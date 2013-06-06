@@ -29,6 +29,20 @@
 
 #include <gegl-types.h>
 
+ /**
+ * gegl_node_introspectable_get_bounding_box:
+ * @node: a #GeglNode
+ *
+ * Returns the position and dimensions of a rectangle spanning the area
+ * defined by a node.
+ *
+ * Rename to: gegl_node_get_bounding_box
+ *
+ * Return value: (transfer full): pointer a #GeglRectangle
+ */
+GeglRectangle *
+gegl_node_introspectable_get_bounding_box (GeglNode *node);
+
 /**
  * gegl_node_introspectable_get_property:
  * @node: the node to get a property from

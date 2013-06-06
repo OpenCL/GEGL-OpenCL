@@ -562,7 +562,7 @@ GParamSpec  * gegl_node_find_property    (GeglNode      *node,
 
 
 /**
- * gegl_node_get_bounding_box:
+ * gegl_node_get_bounding_box: (skip)
  * @node: a #GeglNode
  *
  * Returns the position and dimensions of a rectangle spanning the area
