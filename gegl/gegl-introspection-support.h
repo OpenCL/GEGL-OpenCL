@@ -22,6 +22,9 @@
   * C API and should not be used outside of this file.
   */
 
+#ifndef __GEGL_INTROSPECTION_SUPPORT_H__
+#define __GEGL_INTROSPECTION_SUPPORT_H__
+
 #include <glib-object.h>
 
 #include <gegl-types.h>
@@ -38,3 +41,24 @@
 
 GValue * gegl_node_introspectable_get_property (GeglNode    *node,
                                                 const gchar *property_name);
+
+/**
+ * gegl_buffer_introspectable_new:
+ * @format_name: The Babl format name for this buffer, e.g. "RGBA float"
+ * @x: x origin of the buffer's extent
+ * @y: y origin of the buffer's extent
+ * @width: width of the buffer's extent
+ * @height: height of the buffer's extent
+ *
+ * Create a new GeglBuffer with the given format and dimensions.
+ *
+ * Rename to: gegl_buffer_new
+ */
+GeglBuffer *    gegl_buffer_introspectable_new (const char *format_name,
+                                                gint        x,
+                                                gint        y,
+                                                gint        width,
+                                                gint        height);
+
+#endif /* __GEGL_INTROSPECTION_SUPPORT_H__ */
+
