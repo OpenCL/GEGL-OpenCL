@@ -11,6 +11,7 @@ noinst_PROGRAMS = \
 	test-color-op			\
 	test-gegl-rectangle		\
 	test-misc			\
+	test-node-properties		\
 	test-path			\
 	test-buffer-extract \
 	test-buffer-cast  \
