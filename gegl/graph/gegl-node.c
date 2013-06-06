@@ -1335,59 +1335,17 @@ gegl_node_get_valist (GeglNode    *self,
 
   g_return_if_fail (G_IS_OBJECT (self));
 
-  g_object_ref (self);
-
   property_name = first_property_name;
 
   while (property_name)
     {
       GValue      value = { 0, };
-      GParamSpec *pspec;
       gchar      *error;
 
-      if (!strcmp (property_name, "operation") ||
-          !strcmp (property_name, "name"))
-        {
-          pspec = g_object_class_find_property (
-            G_OBJECT_GET_CLASS (G_OBJECT (self)), property_name);
-        }
-      else
-        {
-          if (self->is_graph)
-            {
-              pspec = g_object_class_find_property (
-                G_OBJECT_GET_CLASS (G_OBJECT (
-                                      gegl_node_get_output_proxy (self, "output")->operation)), property_name);
-              if (!pspec)
-                {
-                  pspec = g_object_class_find_property (
-                    G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
-                }
-            }
-          else
-            {
-              pspec = g_object_class_find_property (
-                G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
-            }
-
-          if (!pspec)
-            {
-              g_warning ("%s:%s has no property named: '%s'",
-                         G_STRFUNC,
-                         gegl_node_get_debug_name (self), property_name);
-              break;
-            }
-          if (!(pspec->flags & G_PARAM_READABLE))
-            {
-              g_warning ("%s: property '%s' of operation class '%s' is not readable",
-                         G_STRFUNC,
-                         property_name,
-                         G_OBJECT_TYPE_NAME (self->operation));
-            }
-        }
-
-      g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
       gegl_node_get_property (self, property_name, &value);
+      if (!G_IS_VALUE (&value))
+        break;
+
       G_VALUE_LCOPY (&value, var_args, 0, &error);
       if (error)
         {
@@ -1400,7 +1358,6 @@ gegl_node_get_valist (GeglNode    *self,
 
       property_name = va_arg (var_args, gchar *);
     }
-  g_object_unref (self);
 }
 
 void
