@@ -1242,17 +1242,11 @@ gegl_node_set_valist (GeglNode    *self,
 
   g_return_if_fail (GEGL_IS_NODE (self));
 
-  g_object_ref (self);
-
   g_object_freeze_notify (G_OBJECT (self));
 
   property_name = first_property_name;
   while (property_name)
     {
-      GValue      value = { 0, };
-      GParamSpec *pspec = NULL;
-      gchar      *error = NULL;
-
       if (!strcmp (property_name, "operation"))
         {
           const gchar *op_class;
@@ -1266,64 +1260,54 @@ gegl_node_set_valist (GeglNode    *self,
           gegl_node_set_op_class (self, op_class, op_first_property, var_args);
           break;
         }
-      else if (!strcmp (property_name, "name"))
-        {
-          pspec = g_object_class_find_property (
-            G_OBJECT_GET_CLASS (G_OBJECT (self)), property_name);
-
-          g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
-          G_VALUE_COLLECT (&value, var_args, 0, &error);
-          if (error)
-            {
-              g_warning ("%s: %s", G_STRFUNC, error);
-              g_free (error);
-              g_value_unset (&value);
-              break;
-            }
-          g_object_set_property (G_OBJECT (self), property_name, &value);
-          g_value_unset (&value);
-        }
       else
         {
-          if (self->operation)
+          GValue      value  = { 0, };
+          GParamSpec *pspec  = NULL;
+          gchar      *error  = NULL;
+          GObject    *object = NULL;
+
+          pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self),
+                                                property_name);
+          if (pspec)
             {
-              pspec = g_object_class_find_property (
-                G_OBJECT_GET_CLASS (G_OBJECT (self->operation)), property_name);
+              object = G_OBJECT (self);
             }
-          if (!pspec)
+          else
             {
-              g_warning ("%s:%s has no property named: '%s'",
-                         G_STRFUNC,
-                         gegl_node_get_debug_name (self), property_name);
-              break;
-            }
-          if (!(pspec->flags & G_PARAM_WRITABLE))
-            {
-              g_warning ("%s: property (%s of operation class '%s' is not writable",
-                         G_STRFUNC,
-                         pspec->name,
-                         G_OBJECT_TYPE_NAME (self->operation));
-              break;
+              pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation),
+                                                    property_name);
+              if (pspec)
+                object = G_OBJECT (self->operation);
             }
 
-          g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
-          G_VALUE_COLLECT (&value, var_args, 0, &error);
-          if (error)
+          if (!object)
             {
-              g_warning ("%s: %s", G_STRFUNC, error);
-              g_free (error);
-              g_value_unset (&value);
+              g_warning ("%s is not a valid property of %s",
+                         property_name,
+                         gegl_node_get_debug_name (self));
               break;
             }
-          g_object_set_property (G_OBJECT (self->operation), property_name, &value);
-          g_value_unset (&value);
+          else
+            {
+              g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (pspec));
+              G_VALUE_COLLECT (&value, var_args, 0, &error);
+              if (error)
+                {
+                  g_warning ("%s: %s", G_STRFUNC, error);
+                  g_free (error);
+                  g_value_unset (&value);
+                  break;
+                }
+              g_object_set_property (object, property_name, &value);
+              g_value_unset (&value);
+            }
         }
 
       property_name = va_arg (var_args, gchar *);
     }
-  g_object_thaw_notify (G_OBJECT (self));
 
-  g_object_unref (self);
+  g_object_thaw_notify (G_OBJECT (self));
 }
 
 void
@@ -1365,24 +1349,29 @@ gegl_node_set_property (GeglNode     *self,
                         const gchar  *property_name,
                         const GValue *value)
 {
+  GParamSpec *pspec;
+
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (property_name != NULL);
   g_return_if_fail (value != NULL);
 
-  if (!strcmp (property_name, "operation") ||
-      !strcmp (property_name, "name"))
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self), property_name);
+  if (pspec)
     {
-      g_object_set_property (G_OBJECT (self),
-                             property_name, value);
+      g_object_set_property (G_OBJECT (self), property_name, value);
+      return;
     }
-  else
+
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation), property_name);
+  if (pspec)
     {
-      if (self->operation)
-        {
-          g_object_set_property (G_OBJECT (self->operation),
-                                 property_name, value);
-        }
+      g_object_set_property (G_OBJECT (self->operation), property_name, value);
+      return;
     }
+
+  g_warning ("%s is not a valid property of %s",
+             property_name,
+             gegl_node_get_debug_name (self));
 }
 
 void
