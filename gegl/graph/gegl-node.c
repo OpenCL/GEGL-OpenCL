@@ -1433,34 +1433,38 @@ gegl_node_get_property (GeglNode    *self,
                         const gchar *property_name,
                         GValue      *value)
 {
+  GParamSpec *pspec;
+
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (property_name != NULL);
   g_return_if_fail (value != NULL);
 
-  if (!strcmp (property_name, "operation") ||
-      !strcmp (property_name, "name"))
+  /* Unlinke GObject's get_property this function also
+   * accepts a zero'd GValue and will fill it with the
+   * correct type automaticaly.
+   */
+
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self), property_name);
+  if (pspec)
     {
-      g_object_get_property (G_OBJECT (self),
-                             property_name, value);
+      if (!G_IS_VALUE (value))
+        g_value_init (value, pspec->value_type);
+      g_object_get_property (G_OBJECT (self), property_name, value);
+      return;
     }
-  else
+
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation), property_name);
+  if (pspec)
     {
-      if (self->is_graph &&
-          !strcmp (property_name, "output"))
-        {
-          g_warning ("Eeek!");
-          g_object_get_property (G_OBJECT (gegl_node_get_output_proxy (self, "output")->operation),
-                                 property_name, value);
-        }
-      else
-        {
-          if (self->operation)
-            {
-              g_object_get_property (G_OBJECT (self->operation),
-                                     property_name, value);
-            }
-        }
+      if (!G_IS_VALUE (value))
+        g_value_init (value, pspec->value_type);
+      g_object_get_property (G_OBJECT (self->operation), property_name, value);
+      return;
     }
+
+  g_warning ("%s is not a valid property of %s",
+             property_name,
+             gegl_node_get_debug_name (self));
 }
 
 GParamSpec *

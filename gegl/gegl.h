@@ -693,7 +693,7 @@ GeglNode     * gegl_node_create_child    (GeglNode      *parent,
 
 
 /**
- * gegl_node_get_property:
+ * gegl_node_get_property: (skip)
  * @node: the node to get a property from
  * @property_name: the name of the property to get
  * @value: (out): pointer to a GValue where the value of the property should be stored

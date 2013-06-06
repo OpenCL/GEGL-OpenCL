@@ -39,67 +39,66 @@ LIBS = \
 GEGL_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)
 
 GEGL_introspectable_headers =	\
-    gegl.h				\
-    gegl-types.h			\
-    gegl-enums.h			\
-    gegl-utils.h			\
-    gegl-matrix.h			\
-    gegl-lookup.h			\
-    gegl-version.h			\
-    buffer/gegl-buffer.h		\
-    buffer/gegl-buffer-iterator.h	\
-    buffer/gegl-buffer-backend.h	\
-    buffer/gegl-tile-backend.h		\
-    buffer/gegl-tile-handler.h		\
-    buffer/gegl-tile-source.h		\
-    process/gegl-graph-debug.h		\
-    property-types/gegl-paramspecs.h	\
-    property-types/gegl-color.h		\
-    property-types/gegl-path.h		\
-    property-types/gegl-curve.h
+	gegl.h				\
+	gegl-types.h			\
+	gegl-enums.h			\
+	gegl-utils.h			\
+	gegl-matrix.h			\
+	gegl-lookup.h			\
+	gegl-version.h			\
+	buffer/gegl-buffer.h		\
+	buffer/gegl-buffer-iterator.h	\
+	buffer/gegl-buffer-backend.h	\
+	buffer/gegl-tile-backend.h		\
+	buffer/gegl-tile-handler.h		\
+	buffer/gegl-tile-source.h		\
+	process/gegl-graph-debug.h		\
+	property-types/gegl-paramspecs.h	\
+	property-types/gegl-color.h		\
+	property-types/gegl-path.h		\
+	property-types/gegl-curve.h
 
 GEGL_public_HEADERS = \
 	$(GEGL_introspectable_headers)	\
-    gegl-chant.h			\
-    gegl-cpuaccel.h			\
-    gegl-plugin.h			\
-    buffer/gegl-tile.h
+	gegl-chant.h			\
+	gegl-cpuaccel.h			\
+	gegl-plugin.h			\
+	buffer/gegl-tile.h
 
-GEGL_introspectable_sources = \
+GEGL_sources = \
 	gegl-c.c			\
-	gegl-apply.c  \
+	gegl-apply.c			\
 	gegl-config.c			\
 	gegl-cpuaccel.c			\
 	gegl-dot.c			\
 	gegl-dot-visitor.c		\
-	gegl-enums.c		\
+	gegl-enums.c			\
 	gegl-init.c			\
 	gegl-instrument.c		\
+	gegl-introspection-support.c	\
 	gegl-utils.c			\
 	gegl-lookup.c			\
 	gegl-xml.c			\
-	gegl-random.c \
-	gegl-matrix.c \
+	gegl-random.c			\
+	gegl-matrix.c			\
 	\
-	gegl-lookup.h			\
+	gegl-apply.h			\
+	gegl-chant.h			\
 	gegl-config.h			\
 	gegl-cpuaccel.h			\
+	gegl-cpuaccel-priv.h		\
 	gegl-debug.h			\
 	gegl-dot.h			\
 	gegl-dot-visitor.h		\
 	gegl-init.h			\
 	gegl-instrument.h		\
+	gegl-introspection-support.h	\
+	gegl-lookup.h			\
+	gegl-matrix.h			\
+	gegl-module.h			\
 	gegl-plugin.h			\
 	gegl-types-internal.h		\
-	gegl-xml.h \
-	gegl-matrix.h
-
-GEGL_sources = \
-	$(GEGL_introspectable_sources) \
-	gegl-module.h			\
-	gegl-apply.h \
-	gegl-chant.h \
-	gegl-cpuaccel-priv.h
+	gegl-xml.h
 
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
@@ -117,8 +116,8 @@ libgegl_@GEGL_API_VERSION@_la_LIBADD = \
 
 if HAVE_INTROSPECTION
 introspection_sources = \
-	$(GEGL_instrospectable_sources) \
-	$(GEGL_introspectable_headers)
+	$(GEGL_introspectable_headers) \
+	gegl-introspection-support.h
 
 Gegl-@GEGL_API_VERSION@.gir: libgegl-@GEGL_API_VERSION@.la Makefile
 Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_INCLUDES = GObject-2.0 GLib-2.0
