@@ -1365,6 +1365,30 @@ gegl_node_set_property (GeglNode     *self,
   pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation), property_name);
   if (pspec)
     {
+      if (G_IS_PARAM_SPEC_ENUM (pspec) && G_VALUE_HOLDS (value, G_TYPE_STRING))
+        {
+          GEnumClass  *enum_class   = G_PARAM_SPEC_ENUM (pspec)->enum_class;
+          const gchar *value_string = g_value_get_string (value);
+          GEnumValue  *enum_value   = NULL;
+
+          enum_value = g_enum_get_value_by_name (enum_class, value_string);
+          if (!enum_value)
+            enum_value = g_enum_get_value_by_nick (enum_class, value_string);
+
+          if (enum_value)
+            {
+              GValue value = G_VALUE_INIT;
+              g_value_init (&value, G_TYPE_FROM_CLASS (&enum_class->g_type_class));
+              g_value_set_enum (&value, enum_value->value);
+              g_object_set_property (G_OBJECT (self->operation), property_name, &value);
+              g_value_unset (&value);
+              return;
+            }
+
+          g_warning ("Could not convert %s to a valid enum value for %s",
+                     value_string,
+                     property_name);
+        }
       g_object_set_property (G_OBJECT (self->operation), property_name, value);
       return;
     }
