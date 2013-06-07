@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
 from gi.repository import Gegl
-from gi.repository import GObject
 
 if __name__ == '__main__':
   Gegl.init(0,"")
@@ -9,8 +8,7 @@ if __name__ == '__main__':
   ptn = Gegl.Node()
   
   # Disable caching on all child nodes
-  GObject.Object.set_property(ptn, "dont-cache", True)
-  
+  ptn.set_property("dont-cache", True)
   
   # Create our background buffer. A gegl:color node would
   # make more sense, we just use a buffer here as an example.
