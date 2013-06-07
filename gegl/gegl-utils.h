@@ -109,6 +109,16 @@ gboolean    gegl_rectangle_equal_coords  (const GeglRectangle *rectangle,
 gboolean    gegl_rectangle_is_empty     (const GeglRectangle *rectangle);
 
 /**
+ * gegl_rectangle_dup:
+ * @rectangle: the #GeglRectangle to duplicate
+ *
+ * Create a new copy of @rectangle.
+ *
+ * Return value: (transfer full): a #GeglRectangle
+ */
+GeglRectangle *gegl_rectangle_dup       (const GeglRectangle *rectangle);
+
+/**
  * gegl_rectangle_copy:
  * @destination: a #GeglRectangle
  * @source: a #GeglRectangle

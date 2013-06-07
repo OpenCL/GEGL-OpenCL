@@ -195,7 +195,7 @@ gegl_rectangle_is_empty (const GeglRectangle *r)
   return r->width == 0 && r->height == 0;
 }
 
-static GeglRectangle *
+GeglRectangle *
 gegl_rectangle_dup (const GeglRectangle *rectangle)
 {
   GeglRectangle *result = g_new (GeglRectangle, 1);
