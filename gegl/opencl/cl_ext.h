@@ -147,13 +147,13 @@ typedef CL_API_ENTRY cl_int (CL_API_CALL *clIcdGetPlatformIDsKHR_fn)(
     clReleaseDeviceEXT( cl_device_id /*device*/ ) CL_EXT_SUFFIX__VERSION_1_1;
 
     typedef CL_API_ENTRY cl_int
-    (CL_API_CALL *clReleaseDeviceEXT_fn)( cl_device_id /*device*/ ) CL_EXT_SUFFIX__VERSION_1_1;
+    (CL_API_CALL *clReleaseDeviceEXT_fn)( cl_device_id /*device*/ );
 
     extern CL_API_ENTRY cl_int CL_API_CALL
     clRetainDeviceEXT( cl_device_id /*device*/ ) CL_EXT_SUFFIX__VERSION_1_1;
 
     typedef CL_API_ENTRY cl_int
-    (CL_API_CALL *clRetainDeviceEXT_fn)( cl_device_id /*device*/ ) CL_EXT_SUFFIX__VERSION_1_1;
+    (CL_API_CALL *clRetainDeviceEXT_fn)( cl_device_id /*device*/ );
 
     typedef cl_ulong  cl_device_partition_property_ext;
     extern CL_API_ENTRY cl_int CL_API_CALL
@@ -168,7 +168,7 @@ typedef CL_API_ENTRY cl_int (CL_API_CALL *clIcdGetPlatformIDsKHR_fn)(
                                                 const cl_device_partition_property_ext * /* properties */,
                                                 cl_uint /*num_entries*/,
                                                 cl_device_id * /*out_devices*/,
-                                                cl_uint * /*num_devices*/ ) CL_EXT_SUFFIX__VERSION_1_1;
+                                                cl_uint * /*num_devices*/ );
 
     /* cl_device_partition_property_ext */
     #define CL_DEVICE_PARTITION_EQUALLY_EXT             0x4050
