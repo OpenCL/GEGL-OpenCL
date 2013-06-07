@@ -24,6 +24,7 @@
 #include "gegl.h"
 #include "gegl-utils.h"
 #include "gegl-debug.h"
+#include "gegl-instrument.h"
 
 #include "buffer/gegl-region.h"
 
@@ -376,6 +377,8 @@ gegl_graph_process (GeglGraphTraversal *path)
       g_return_val_if_fail (node, NULL);
       g_return_val_if_fail (operation, NULL);
       
+      GEGL_INSTRUMENT_START();
+
       if (last_context)
         gegl_operation_context_purge (last_context);
       
@@ -439,6 +442,8 @@ gegl_graph_process (GeglGraphTraversal *path)
         }
       
       last_context = context;
+
+      GEGL_INSTRUMENT_END ("process", gegl_node_get_operation (node));
     }
   
   if (last_context)

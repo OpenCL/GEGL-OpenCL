@@ -521,12 +521,13 @@ static void each_ref (gpointer value,
 GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
                                   const gchar *path_root)
 {
-  glong                time = gegl_ticks ();
   ParseData            pd   = { 0, };
   GMarkupParseContext *context;
   gboolean             success = FALSE;
 
   g_return_val_if_fail (xmldata != NULL, NULL);
+
+  GEGL_INSTRUMENT_START();
 
   pd.ids       = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
   pd.refs      = NULL;
@@ -557,8 +558,7 @@ GeglNode *gegl_node_new_from_xml (const gchar *xmldata,
   g_markup_parse_context_free (context);
   g_hash_table_destroy (pd.ids);
 
-  time = gegl_ticks () - time;
-  gegl_instrument ("gegl", "gegl_parse_xml", time);
+  GEGL_INSTRUMENT_END ("gegl", "gegl_parse_xml");
 
   return success ? GEGL_NODE (pd.gegl) : NULL;
 }

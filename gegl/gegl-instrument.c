@@ -120,7 +120,7 @@ real_gegl_instrument (const gchar *parent_name,
   parent = timing_find (root, parent_name);
   if (!parent)
     {
-      gegl_instrument (root->name, parent_name, 0);
+      real_gegl_instrument (root->name, parent_name, 0);
       parent = timing_find (root, parent_name);
     }
   g_assert (parent);

@@ -26,6 +26,16 @@ long gegl_ticks               (void);
 /* start tracking times with gegl_instrument */
 void gegl_instrument_enable   (void);
 
+#define GEGL_INSTRUMENT_START() \
+  { long _gegl_instrument_ticks = 0; \
+    if (gegl_instrument_enabled) { _gegl_instrument_ticks = gegl_ticks (); }
+
+#define GEGL_INSTRUMENT_END(parent, scale) \
+    if (gegl_instrument_enabled) { \
+      real_gegl_instrument (parent, scale, gegl_ticks () - _gegl_instrument_ticks); \
+                                 } \
+  }
+
 /* store a timing instrumentation (parent is expected to exist,
  * and to keep it's own record of the time-slice reported) */
 #define gegl_instrument(parent, scale, usecs) \

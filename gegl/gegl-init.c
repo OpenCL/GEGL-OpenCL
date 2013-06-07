@@ -385,15 +385,13 @@ static void swap_clean (void)
 void
 gegl_exit (void)
 {
-  glong timing;
-
   if (!config)
     {
       g_warning("gegl_exit() called without matching call to gegl_init()");
       return;
     }
 
-  timing = gegl_ticks ();
+  GEGL_INSTRUMENT_START()
 
   gegl_tile_cache_destroy ();
   gegl_operation_gtype_cleanup ();
@@ -408,8 +406,7 @@ gegl_exit (void)
 
   babl_exit ();
 
-  timing = gegl_ticks () - timing;
-  gegl_instrument ("gegl", "gegl_exit", timing);
+  GEGL_INSTRUMENT_END ("gegl", "gegl_exit")
 
   /* used when tracking buffer and tile leaks */
   if (g_getenv ("GEGL_DEBUG_BUFS") != NULL)
@@ -506,8 +503,6 @@ gegl_post_parse_hook (GOptionContext *context,
                       gpointer        data,
                       GError        **error)
 {
-  glong time;
-
   g_assert (global_time == 0);
   global_time = gegl_ticks ();
   g_type_init ();
@@ -562,11 +557,8 @@ gegl_post_parse_hook (GOptionContext *context,
     g_object_set (config, "queue-limit", cmd_gegl_queue_limit, NULL);
 
 
-  time = gegl_ticks ();
+  GEGL_INSTRUMENT_START();
 
-  gegl_instrument ("gegl_init", "babl_init", gegl_ticks () - time);
-
-  time = gegl_ticks ();
   if (!module_db)
     {
       const gchar *gegl_path = g_getenv ("GEGL_PATH");
@@ -617,9 +609,9 @@ gegl_post_parse_hook (GOptionContext *context,
           gegl_module_db_load (module_db, module_path);
           g_free (module_path);
         }
-
-      gegl_instrument ("gegl_init", "load modules", gegl_ticks () - time);
     }
+
+  GEGL_INSTRUMENT_END ("gegl_init", "load modules");
 
   gegl_instrument ("gegl", "gegl_init", gegl_ticks () - global_time);
 

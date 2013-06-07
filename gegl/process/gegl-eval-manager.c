@@ -124,10 +124,17 @@ gegl_eval_manager_apply (GeglEvalManager     *self,
   if (roi->width <= 0 || roi->height <= 0)
     return NULL;
 
+  GEGL_INSTRUMENT_START();
   gegl_eval_manager_prepare (self);
+  GEGL_INSTRUMENT_END ("gegl", "prepare-graph");
 
+  GEGL_INSTRUMENT_START();
   gegl_graph_prepare_request (self->traversal, roi);
+  GEGL_INSTRUMENT_END ("gegl", "prepare-request");
+
+  GEGL_INSTRUMENT_START();
   object = gegl_graph_process (self->traversal);
+  GEGL_INSTRUMENT_END ("gegl", "process");
 
   return object;
 }
