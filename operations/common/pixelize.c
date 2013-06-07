@@ -33,7 +33,7 @@ gegl_chant_int_ui (size_y, _("Block Height"),
 #else
 
 #define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE"pixelize.c"
+#define GEGL_CHANT_C_FILE "pixelize.c"
 
 #include "gegl-chant.h"
 
