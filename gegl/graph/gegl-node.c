@@ -1273,7 +1273,7 @@ gegl_node_set_valist (GeglNode    *self,
             {
               object = G_OBJECT (self);
             }
-          else
+          else if (self->operation)
             {
               pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation),
                                                     property_name);
@@ -1362,7 +1362,8 @@ gegl_node_set_property (GeglNode     *self,
       return;
     }
 
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation), property_name);
+  if (self->operation)
+    pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation), property_name);
   if (pspec)
     {
       if (G_IS_PARAM_SPEC_ENUM (pspec) && G_VALUE_HOLDS (value, G_TYPE_STRING))
@@ -1423,7 +1424,8 @@ gegl_node_get_property (GeglNode    *self,
       return;
     }
 
-  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation), property_name);
+  if (self->operation)
+    pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (self->operation), property_name);
   if (pspec)
     {
       if (!G_IS_VALUE (value))
