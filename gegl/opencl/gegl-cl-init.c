@@ -106,6 +106,11 @@ const char *gegl_cl_errstring(cl_int err) {
     , "invalid global work size"        /* -63 */
   };
 
+  static const int strings_len = sizeof(strings) / sizeof(strings[0]);
+
+  if (-err < 0 || -err >= strings_len)
+    return "unknown error";
+
   return strings[-err];
 }
 
