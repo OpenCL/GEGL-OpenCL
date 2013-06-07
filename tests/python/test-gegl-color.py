@@ -19,7 +19,6 @@
 
 import unittest
 
-import gi
 from gi.repository import Gegl
 
 class TestGeglColor(unittest.TestCase):
@@ -45,6 +44,6 @@ class TestGeglColor(unittest.TestCase):
         self.assertAlmostEqual(values[3], 1.0)
 
 if __name__ == '__main__':
-    Gegl.init(0, "");
+    Gegl.init(None);
     unittest.main()
     Gegl.exit()

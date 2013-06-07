@@ -23,8 +23,8 @@ G_BEGIN_DECLS
 
 /**
  * gegl_init:
- * @argc: a pointer to the number of command line arguments.
- * @argv: a pointer to the array of command line arguments.
+ * @argc: (inout): a pointer to the number of command line arguments.
+ * @argv: (inout) (array length=argc) (allow-none): a pointer to the array of command line arguments.
  *
  * Call this function before using any other GEGL functions. It will initialize
  * everything needed to operate GEGL and parses some standard command line
@@ -39,7 +39,7 @@ void           gegl_init              (gint    *argc,
                                        gchar ***argv);
 
 /**
- * gegl_get_option_group:
+ * gegl_get_option_group: (skip)
  *
  * Returns a #GOptionGroup for the commandline arguments recognized
  * by GEGL. You should add this group to your #GOptionContext

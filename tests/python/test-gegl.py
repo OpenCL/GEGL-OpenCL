@@ -19,14 +19,13 @@
 
 import unittest
 
-import gi
 from gi.repository import Gegl
 
 class TestGegl(unittest.TestCase):
     """Tests the Gegl global functions, initialization and configuration handling."""
 
     def test_init(self):
-        Gegl.init(0, "");
+        Gegl.init(None);
 
     def test_config_defaults(self):
         gegl_config = Gegl.config()

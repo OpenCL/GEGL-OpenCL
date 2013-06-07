@@ -19,7 +19,6 @@
 
 import unittest
 
-import gi
 from gi.repository import Gegl
 
 invert_crop_xml = """<?xml version='1.0' encoding='UTF-8'?>
@@ -44,7 +43,7 @@ class TestGeglNodes(unittest.TestCase):
 
     def test_new(self):
         graph = Gegl.Node.new()
-        self.assertEqual(type(graph), gi.repository.Gegl.Node)
+        self.assertEqual(type(graph), Gegl.Node)
 
     def test_node_properties(self):
         graph = Gegl.Node()
@@ -135,6 +134,6 @@ class TestGeglXml(unittest.TestCase):
         self.assertEqual(output, invert_crop_xml)
 
 if __name__ == '__main__':
-    Gegl.init(0, "");
+    Gegl.init(None);
     unittest.main()
     Gegl.exit()

@@ -9,8 +9,8 @@ GObject introspection."""
 # To use a typelib from a non-standard location, set the env var
 # GI_TYPELIB_PATH to the directory with your Gegl-$apiversion-.typelib
 
-import gi
 from gi.repository import Gegl
+import sys
 
 # extend GEGL binding with some utility function that makes it possible
 # to lookup a node among the children of a node giving one with a specified name.
@@ -22,7 +22,7 @@ def locate_by_type(self, opname):
 Gegl.Node.locate_by_type = locate_by_type
 
 if __name__ == '__main__':
-    Gegl.init(0,"")
+    Gegl.init(sys.argv)
     node = Gegl.Node.new()
     node = Gegl.Node.new_from_xml("""
       <gegl>

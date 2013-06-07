@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-import gi
 from gi.repository import Gegl
+import sys
 
 # extend GEGL binding with some utility function, making it possible to lookup
 # a node among the children of a node giving one with a specified name. A
@@ -21,8 +21,7 @@ Gegl.Node.locate_by_type = locate_by_type
 
 
 if __name__ == '__main__':
-
-    Gegl.init(0,"")  # < that is rather ugly
+    Gegl.init(sys.argv)
 
     node = Gegl.Node.new_from_xml("""
       <gegl>

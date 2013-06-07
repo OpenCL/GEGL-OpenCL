@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 from gi.repository import Gegl
+import sys
 
 if __name__ == '__main__':
-  Gegl.init(0,"")
+  Gegl.init(sys.argv)
   
   ptn = Gegl.Node()
   
