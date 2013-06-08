@@ -24,17 +24,17 @@ from gi.repository import Gegl
 class TestGegl(unittest.TestCase):
     """Tests the Gegl global functions, initialization and configuration handling."""
 
-    def test_init(self):
+    def test_100_init(self):
         Gegl.init(None);
 
-    def test_config_defaults(self):
+    def test_200_config_defaults(self):
         gegl_config = Gegl.config()
         # Some default that are unlikely to change
         self.assertEqual(gegl_config.props.quality, 1.0)
         self.assertEqual(gegl_config.get_property('tile-width'), 128)
         self.assertEqual(gegl_config.get_property('tile-height'), 64)
 
-    def test_exit(self):
+    def test_300_exit(self):
         Gegl.exit()
 
 if __name__ == '__main__':
