@@ -13,11 +13,21 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2013 Téo Mazars <teo.mazars@ensimag.fr>
+ * Copyright (C) 2013 Téo Mazars  <teo.mazars@ensimag.fr>
  *
  * This operation is inspired by and uses parts of blur-motion.c
- * from GIMP 2.8.4.
+ * from GIMP 2.8.4:
  *
+ * Copyright (C) 1995 Spencer Kimball and Peter Mattis
+ * Copyright (C) 1996 Torsten Martinsen       <torsten@danbbs.dk>
+ * Copyright (C) 1996 Federico Mena Quintero  <federico@nuclecu.unam.mx>
+ * Copyright (C) 1996 Heinz W. Werntges       <quartic@polloux.fciencias.unam.mx>
+ * Copyright (C) 1997 Daniel Skarda           <0rfelyus@atrey.karlin.mff.cuni.cz>
+ * Copyright (C) 2007 Joerg Gittinger         <sw@gittingerbox.de>
+ *
+ * This operation is also inspired by GEGL's blur-motion-linear.c :
+ *
+ * Copyright (C) 2006 Øyvind Kolås  <pippin@gimp.org>
  */
 
 #include "config.h"
