@@ -121,9 +121,6 @@ gegl_eval_manager_apply (GeglEvalManager     *self,
   g_return_val_if_fail (GEGL_IS_EVAL_MANAGER (self), NULL);
   g_return_val_if_fail (GEGL_IS_NODE (self->node), NULL);
 
-  if (roi->width <= 0 || roi->height <= 0)
-    return NULL;
-
   GEGL_INSTRUMENT_START();
   gegl_eval_manager_prepare (self);
   GEGL_INSTRUMENT_END ("gegl", "prepare-graph");

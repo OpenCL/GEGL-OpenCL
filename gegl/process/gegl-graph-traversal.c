@@ -451,6 +451,8 @@ gegl_graph_process (GeglGraphTraversal *path)
       GValue *value = gegl_operation_context_get_value (context, "output");
       if (value)
         result = g_value_dup_object (value);
+      else if (gegl_node_has_pad (last_context->operation->node, "output"))
+        result = g_object_ref (gegl_graph_get_shared_empty (path));
       gegl_operation_context_purge (last_context);
     }
 
