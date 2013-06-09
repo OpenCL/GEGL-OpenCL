@@ -832,8 +832,8 @@ gboolean       gegl_processor_work          (GeglProcessor *processor,
  * Returns a GeglConfig object with properties that can be manipulated to control
  * GEGLs behavior. Properties available on the object are:
  *
- * "cache-size" "quality" and "swap", the two first is an integer denoting
- * number of bytes, the secons a double value between 0 and 1 and the last
+ * "tile-cache-size" "quality" and "swap", the first is a 64-bit integer denoting
+ * number of bytes, the second a double value between 0 and 1 and the last
  * the path of the directory to swap to (or "ram" to not use diskbased swap)
  *
  * Return value: (transfer none): a #GeglConfig
