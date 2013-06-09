@@ -155,7 +155,6 @@ operations/seamless-clone/seamless-clone.c
 operations/seamless-clone/seamless-clone-compose.c
 operations/transform/reflect.c
 operations/transform/rotate.c
-operations/transform/scale.c
 operations/transform/scale-ratio.c
 operations/transform/scale-size.c
 operations/transform/shear.c

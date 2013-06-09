@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
-  <node operation='gegl:scale'>
+  <node operation='gegl:scale-ratio'>
     <params>
       <param name='x'>0.25</param>
       <param name='y'>0.25</param>

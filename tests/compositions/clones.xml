@@ -7,7 +7,7 @@
             <param name='y'>280.000000</param>
           </params>
       </node>
-      <node operation='gegl:scale'>
+      <node operation='gegl:scale-ratio'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -39,7 +39,7 @@
             <param name='value'>2.500000</param>
           </params>
       </node>
-      <node operation='gegl:scale'>
+      <node operation='gegl:scale-ratio'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -59,7 +59,7 @@
       </node>
       <node operation='gegl:invert'>
       </node>
-      <node operation='gegl:scale'>
+      <node operation='gegl:scale-ratio'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -82,7 +82,7 @@
             <param name='value'>0.500000</param>
           </params>
       </node>
-      <node operation='gegl:scale'>
+      <node operation='gegl:scale-ratio'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>
@@ -152,7 +152,7 @@
           <clone ref='clone1'/>
       </node>
       -->
-      <node operation='gegl:scale'>
+      <node operation='gegl:scale-ratio'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>

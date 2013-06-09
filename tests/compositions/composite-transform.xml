@@ -9,7 +9,7 @@
       </node>
       <!-- Used to break the composition, to render initial reference 
       <node operation='gegl:nop'/>  -->
-      <node operation='gegl:scale'>
+      <node operation='gegl:scale-ratio'>
           <params>
             <param name='origin-x'>0.000000</param>
             <param name='origin-y'>0.000000</param>

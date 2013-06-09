@@ -22,7 +22,7 @@ main (gint argc,
     gegl_graph (
     sink = gegl_node ("gegl:png-save", "path", argv[3], NULL,
     gegl_node   ("gegl:over", NULL,
-      gegl_node ("gegl:scale",
+      gegl_node ("gegl:scale-ratio",
                  "x", 0.4,
                  "y", 0.4,
                  NULL,

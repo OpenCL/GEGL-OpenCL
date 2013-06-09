@@ -236,7 +236,7 @@ static void attach (GeglOperation *operation)
                                          NULL);
 
   self->translate = gegl_node_new_child (gegl, "operation", "gegl:translate", NULL);
-  self->scale = gegl_node_new_child (gegl, "operation", "gegl:scale", NULL);
+  self->scale = gegl_node_new_child (gegl, "operation", "gegl:scale-ratio", NULL);
   self->opacity = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
 
   self->load = gegl_node_new_child (gegl,

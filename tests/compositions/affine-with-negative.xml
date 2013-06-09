@@ -20,7 +20,7 @@
       <param name='height'>1024</param>
     </params>
   </node>
-  <node operation='gegl:scale'>
+  <node operation='gegl:scale-ratio'>
     <params>
       <param name='sampler'>linear</param>
       <param name='x'>-4</param>

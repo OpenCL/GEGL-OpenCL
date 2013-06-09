@@ -11,7 +11,7 @@ public class Test {
         Node load       = graph.CreateChild("gegl:load");
         load.SetProperty("path", "../../../docs/gallery/data/car-stack.jpg");
 
-        Node scale      = graph.CreateChild("gegl:scale");
+        Node scale      = graph.CreateChild("gegl:scale-ratio");
         scale.SetProperty("x", 0.50);
         scale.SetProperty("y", 0.50);
 

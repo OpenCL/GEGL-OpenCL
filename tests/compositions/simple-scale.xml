@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
-  <node operation='gegl:scale'>
+  <node operation='gegl:scale-ratio'>
     <params>
       <param name='sampler'>cubic</param>
       <param name='x'>0.5</param>
