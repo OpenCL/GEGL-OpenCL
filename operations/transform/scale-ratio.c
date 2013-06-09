@@ -29,7 +29,8 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
 
 #else
 
-#define GEGL_CHANT_NAME scaleratio
+#define GEGL_CHANT_NAME scale_ratio
+#define GEGL_CHANT_OPERATION_NAME "gegl:scale-ratio"
 #define GEGL_CHANT_DESCRIPTION _("Scales the buffer according to a ratio.")
 #define GEGL_CHANT_SELF "scale-ratio.c"
 #include "chant.h"

@@ -29,7 +29,8 @@ gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 100.0,
 
 #else
 
-#define GEGL_CHANT_NAME scalesize
+#define GEGL_CHANT_NAME scale_size
+#define GEGL_CHANT_OPERATION_NAME "gegl:scale-size"
 #define GEGL_CHANT_DESCRIPTION _("Scales the buffer according to a size.")
 #define GEGL_CHANT_SELF "scale-size.c"
 #include "chant.h"

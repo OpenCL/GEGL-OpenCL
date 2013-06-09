@@ -18,6 +18,12 @@
 #define GEGL_CHANT_PARENT_TYPE          TYPE_OP_TRANSFORM
 #define GEGL_CHANT_PARENT_CLASS         OP_TRANSFORM_CLASS
 
+#ifndef GEGL_CHANT_OPERATION_NAME
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+#define GEGL_CHANT_OPERATION_NAME ("gegl:" TOSTRING(GEGL_CHANT_NAME))
+#endif
+
 typedef struct Generated        GeglChantOperation;
 typedef struct GeneratedClass   ChantClass;
 
@@ -185,9 +191,9 @@ gegl_chant_class_init (ChantClass * klass)
   parent_class->create_matrix = create_matrix;
 
 #define M_GEGL_CHANT_SET_NAME_EXTENDED(nam) \
-  operation_class->name=g_strdup("gegl:"#nam);
+  operation_class->name=g_strdup(nam);
 #define M_GEGL_CHANT_SET_NAME(name)   M_GEGL_CHANT_SET_NAME_EXTENDED(name)
-  M_GEGL_CHANT_SET_NAME (GEGL_CHANT_NAME);
+  M_GEGL_CHANT_SET_NAME (GEGL_CHANT_OPERATION_NAME);
 
   gegl_operation_class_set_key (operation_class, "categories", "transform");
 
