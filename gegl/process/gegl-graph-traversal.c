@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2013 Daniel Sabo
+ *           2006 Øyvind Kolås
  */
 
 #include "config.h"
