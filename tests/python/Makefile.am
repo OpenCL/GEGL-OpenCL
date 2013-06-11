@@ -12,7 +12,8 @@ if HAVE_PYGOBJECT
 TESTS = \
 	test-gegl.py \
 	test-gegl-node.py \
-	test-gegl-color.py
+	test-gegl-color.py \
+	test-gegl-buffer.py
 EXTRA_DIST = $(TESTS)
 endif # HAVE_PYGOBJECT
 endif # HAVE_INTROSPECTION
