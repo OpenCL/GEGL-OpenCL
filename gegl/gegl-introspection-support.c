@@ -79,3 +79,59 @@ gegl_buffer_introspectable_new (const char *format_name,
                        "format", format,
                        NULL);
 }
+
+guchar *
+gegl_buffer_introspectable_get (GeglBuffer          *buffer,
+                                const GeglRectangle *rect,
+                                gdouble              scale,
+                                const gchar         *format_name,
+                                GeglAbyssPolicy      repeat_mode,
+                                guint               *data_length)
+{
+  const Babl *format;
+  guint bpp;
+  guchar *result;
+
+  *data_length = 0;
+
+  if (format_name)
+    format = babl_format (format_name);
+  else
+    format = gegl_buffer_get_format (buffer);
+
+  if (rect->width <= 0 || rect->height <= 0)
+    return NULL;
+  if (scale <= 0.0)
+    return NULL;
+
+  bpp = babl_format_get_bytes_per_pixel (format);
+  *data_length = bpp * rect->width * rect->height;
+
+  result = g_malloc (*data_length);
+
+  gegl_buffer_get (buffer, rect, scale, format, result, GEGL_AUTO_ROWSTRIDE, repeat_mode);
+
+  return result;
+}
+
+void
+gegl_buffer_introspectable_set (GeglBuffer          *buffer,
+                                const GeglRectangle *rect,
+                                const gchar         *format_name,
+                                const guchar        *src,
+                                gint                 src_length)
+{
+  const Babl *format;
+  guint bpp;
+
+  format = babl_format (format_name);
+
+  if (rect->width <= 0 || rect->height <= 0)
+    return;
+
+  bpp = babl_format_get_bytes_per_pixel (format);
+
+  g_return_if_fail (src_length == bpp * rect->width * rect->height);
+
+  gegl_buffer_set (buffer, rect, 0, format, src, 0);
+}

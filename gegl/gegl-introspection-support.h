@@ -74,5 +74,49 @@ GeglBuffer *    gegl_buffer_introspectable_new (const char *format_name,
                                                 gint        width,
                                                 gint        height);
 
+/**
+ * gegl_buffer_introspectable_get:
+ * @buffer: the buffer to retrieve data from.
+ * @rect: the coordinates we want to retrieve data from.
+ * @scale: sampling scale, 1.0 = pixel for pixel 2.0 = magnify, 0.5 scale down.
+ * @format_name: (allow-none): the format to store data in, if NULL the format of the buffer is used.
+ * @repeat_mode: how requests outside the buffer extent are handled.
+ * Valid values: GEGL_ABYSS_NONE (abyss pixels are zeroed), GEGL_ABYSS_WHITE
+ * (abyss pixels are white), GEGL_ABYSS_BLACK (abyss pixels are black),
+ * GEGL_ABYSS_CLAMP (coordinates are clamped to the abyss rectangle),
+ * GEGL_ABYSS_LOOP (buffer contents are tiled if outside of the abyss rectangle).
+ * @data_length: (out): The length of the returned buffer
+ *
+ * Fetch a rectangular linear buffer of pixel data from the GeglBuffer.
+ *
+ * Rename to: gegl_buffer_get
+ *
+ * Return value: (transfer full) (array length=data_length): A copy of the requested data
+ */
+guchar *       gegl_buffer_introspectable_get (GeglBuffer          *buffer,
+                                               const GeglRectangle *rect,
+                                               gdouble              scale,
+                                               const gchar         *format_name,
+                                               GeglAbyssPolicy      repeat_mode,
+                                               guint               *data_length);
+
+
+/**
+ * gegl_buffer_introspectable_set:
+ * @buffer: the buffer to modify.
+ * @rect: the rectangle to write.
+ * @format_name: the format of the input data.
+ * @src: (transfer none) (array length=src_length): pixel data to write to @buffer.
+ * @src_length: the lenght of src in bytes
+ *
+ * Store a linear raster buffer into the GeglBuffer.
+ *
+ * Rename to: gegl_buffer_set
+ */
+void           gegl_buffer_introspectable_set (GeglBuffer          *buffer,
+                                               const GeglRectangle *rect,
+                                               const gchar         *format_name,
+                                               const guchar        *src,
+                                               gint                 src_length);
 #endif /* __GEGL_INTROSPECTION_SUPPORT_H__ */
 
