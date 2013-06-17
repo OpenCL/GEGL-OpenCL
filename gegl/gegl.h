@@ -802,7 +802,7 @@ void           gegl_processor_set_rectangle (GeglProcessor       *processor,
 /**
  * gegl_processor_work:
  * @processor: a #GeglProcessor
- * @progress: a location to store the (estimated) percentage complete.
+ * @progress: (out caller-allocates): a location to store the (estimated) percentage complete.
  *
  * Do an iteration of work for the processor.
  *
