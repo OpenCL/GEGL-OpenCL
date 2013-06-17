@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-06-05 04:14+0000\n"
-"PO-Revision-Date: 2013-06-06 10:36+0200\n"
+"POT-Creation-Date: 2013-06-14 18:47+0000\n"
+"PO-Revision-Date: 2013-06-17 17:56+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -291,7 +291,7 @@ msgstr "Efectúa el promediado de un cuadrado de píxeles"
 #. *       property name,   min,   max, default, "description of property"
 #.
 #: ../operations/common/brightness-contrast.c:29
-#: ../operations/common/mantiuk06.c:31
+#: ../operations/common/high-pass.c:26 ../operations/common/mantiuk06.c:31
 msgid "Contrast"
 msgstr "Contraste"
 
@@ -710,8 +710,8 @@ msgid "Simplify image into an array of solid-colored dots"
 msgstr "Simplificar la imagen en una matriz de puntos de color liso"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:34
-#: ../operations/common/motion-blur-circular.c:30
-#: ../operations/common/motion-blur-zoom.c:30
+#: ../operations/common/motion-blur-circular.c:41
+#: ../operations/common/motion-blur-zoom.c:40
 #: ../operations/common/polar-coordinates.c:55
 #: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:64
 #: ../operations/common/waves.c:26 ../operations/core/crop.c:25
@@ -723,8 +723,8 @@ msgid "Horizontal shadow offset"
 msgstr "Desplazamiento horizontal de la sombra"
 
 #: ../operations/common/dropshadow.c:29 ../operations/common/layer.c:36
-#: ../operations/common/motion-blur-circular.c:35
-#: ../operations/common/motion-blur-zoom.c:35
+#: ../operations/common/motion-blur-circular.c:46
+#: ../operations/common/motion-blur-zoom.c:45
 #: ../operations/common/polar-coordinates.c:59
 #: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:68
 #: ../operations/common/waves.c:30 ../operations/core/crop.c:26
@@ -939,7 +939,6 @@ msgid "Zoom in the fractal space"
 msgstr "Amplia el espacio fractal"
 
 #: ../operations/common/fractal-explorer.c:50
-#| msgid "Shift"
 msgid "Shift X"
 msgstr "Desplazamiento X"
 
@@ -948,7 +947,6 @@ msgid "X shift in the fractal space"
 msgstr "Desplazamiento X en el espacio fractal"
 
 #: ../operations/common/fractal-explorer.c:52
-#| msgid "Shift"
 msgid "Shift Y"
 msgstr "Desplazamiento Y"
 
@@ -1156,7 +1154,6 @@ msgstr ""
 "obtener el radio)"
 
 #: ../operations/common/gaussian-blur.c:45
-#: ../operations/transform/transform-core.c:192
 msgid "Filter"
 msgstr "Filtro"
 
@@ -1234,6 +1231,22 @@ msgstr "Color de las líneas de rejilla"
 #: ../operations/common/grid.c:129
 msgid "Grid renderer"
 msgstr "Renderizador de la rejilla"
+
+#: ../operations/common/high-pass.c:24 ../operations/common/unsharp-mask.c:24
+msgid "Std. Dev."
+msgstr "Desv. Est."
+
+#: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:26
+msgid "Standard deviation (spatial scale factor)"
+msgstr "Desviación estándar (factor de escala espacial)"
+
+#: ../operations/common/high-pass.c:27
+msgid "Contrast of high-pass"
+msgstr "Contraste de la pasada alta"
+
+#: ../operations/common/high-pass.c:74
+msgid "Enhances fine details."
+msgstr "Mejora los detalles pequeños."
 
 #: ../operations/common/image-compare.c:26
 msgid "Wrong pixels"
@@ -1459,13 +1472,17 @@ msgstr ""
 
 #: ../operations/common/map-absolute.c:22
 #: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:48
-#: ../operations/common/waves.c:50 ../operations/workshop/ditto.c:27
+#: ../operations/common/waves.c:50
+#: ../operations/transform/transform-core.c:190
+#: ../operations/workshop/ditto.c:27
 msgid "Sampler"
 msgstr "Muestreador"
 
 #: ../operations/common/map-absolute.c:23
 #: ../operations/common/map-relative.c:27 ../operations/common/ripple.c:50
-#: ../operations/common/waves.c:53 ../operations/workshop/ditto.c:28
+#: ../operations/common/waves.c:53
+#: ../operations/transform/transform-core.c:191
+#: ../operations/workshop/ditto.c:28
 msgid "Sampler used internally"
 msgstr "Muestreador usado internamente"
 
@@ -1652,30 +1669,30 @@ msgstr "Cantidad de azul"
 msgid "Monochrome channel mixer"
 msgstr "Mezclador de canales monocromático."
 
-#: ../operations/common/motion-blur-circular.c:33
-#: ../operations/common/motion-blur-zoom.c:33
+#: ../operations/common/motion-blur-circular.c:44
+#: ../operations/common/motion-blur-zoom.c:43
 msgid "Horizontal center position"
 msgstr "Posición horizontal central"
 
-#: ../operations/common/motion-blur-circular.c:38
-#: ../operations/common/motion-blur-zoom.c:38
+#: ../operations/common/motion-blur-circular.c:49
+#: ../operations/common/motion-blur-zoom.c:48
 msgid "Vertical center position"
 msgstr "Posición vertical central"
 
 #. FIXME: With a large angle, we lose AreaFilter's flavours
-#: ../operations/common/motion-blur-circular.c:41
+#: ../operations/common/motion-blur-circular.c:52
 #: ../operations/common/motion-blur-linear.c:30
 #: ../operations/common/ripple.c:44
 msgid "Angle"
 msgstr "Ángulo"
 
-#: ../operations/common/motion-blur-circular.c:44
+#: ../operations/common/motion-blur-circular.c:55
 msgid "Rotation blur angle. A large angle may take some time to render"
 msgstr ""
 "Ángulo de rotación del desenfoque. Un ángulo grande puede tardar algún "
 "tiempo en renderizar"
 
-#: ../operations/common/motion-blur-circular.c:270
+#: ../operations/common/motion-blur-circular.c:281
 msgid "Circular motion blur"
 msgstr "Desenfoque de movimiento circular"
 
@@ -1695,15 +1712,15 @@ msgstr "Ángulo del desenfoque en grados"
 msgid "Linear motion blur"
 msgstr "Desenfoque de movimiento lineal"
 
-#: ../operations/common/motion-blur-zoom.c:40
+#: ../operations/common/motion-blur-zoom.c:50
 msgid "Factor"
 msgstr "Factor"
 
-#: ../operations/common/motion-blur-zoom.c:43
+#: ../operations/common/motion-blur-zoom.c:53
 msgid "Bluring factor"
 msgstr "Factor de desenfoque"
 
-#: ../operations/common/motion-blur-zoom.c:216
+#: ../operations/common/motion-blur-zoom.c:226
 msgid "Zoom motion blur"
 msgstr "Desenfoque de movimiento de ampliación"
 
@@ -2228,14 +2245,6 @@ msgstr ""
 #: ../operations/common/tile.c:121
 msgid "Infinitely repeats the input image."
 msgstr "Repite infinitamente la imagen de entrada."
-
-#: ../operations/common/unsharp-mask.c:24
-msgid "Std. Dev."
-msgstr "Desv. Est."
-
-#: ../operations/common/unsharp-mask.c:26
-msgid "Standard deviation (spatial scale factor)"
-msgstr "Desviación estándar (factor de escala espacial)"
 
 #: ../operations/common/unsharp-mask.c:30
 msgid "Scale, strength of effect"
@@ -3221,19 +3230,15 @@ msgstr "Ángulo de rotación (sentido horario)"
 msgid "Rotate the buffer around the specified origin."
 msgstr "Girar el búfer alrededor del origen especificado."
 
-#: ../operations/transform/scale.c:29 ../operations/transform/scale-ratio.c:26
+#: ../operations/transform/scale-ratio.c:26
 msgid "Horizontal scale factor"
 msgstr "Factor de escalado horizontal"
 
-#: ../operations/transform/scale.c:31 ../operations/transform/scale-ratio.c:28
+#: ../operations/transform/scale-ratio.c:28
 msgid "Vertical scale factor"
 msgstr "Factor de escalado vertical"
 
-#: ../operations/transform/scale.c:36
-msgid "Scales the buffer."
-msgstr "Escala el búfer."
-
-#: ../operations/transform/scale-ratio.c:33
+#: ../operations/transform/scale-ratio.c:34
 msgid "Scales the buffer according to a ratio."
 msgstr "Escala el búfer según una proporción."
 
@@ -3245,7 +3250,7 @@ msgstr "Tamaño horizontal"
 msgid "Vertical size"
 msgstr "Tamaño vertical"
 
-#: ../operations/transform/scale-size.c:33
+#: ../operations/transform/scale-size.c:34
 msgid "Scales the buffer according to a size."
 msgstr "Escala el búfer según un tamaño."
 
@@ -3269,25 +3274,21 @@ msgstr "Cadena de transformación"
 msgid "Transforms the group (used by svg)."
 msgstr "Transforma el grupo (usado por SVG)."
 
-#: ../operations/transform/transform-core.c:176
+#: ../operations/transform/transform-core.c:174
 msgid "Origin-x"
 msgstr "Origen X"
 
-#: ../operations/transform/transform-core.c:177
+#: ../operations/transform/transform-core.c:175
 msgid "X coordinate of origin"
 msgstr "Coordenada X del origen"
 
-#: ../operations/transform/transform-core.c:184
+#: ../operations/transform/transform-core.c:182
 msgid "Origin-y"
 msgstr "Origen Y"
 
-#: ../operations/transform/transform-core.c:185
+#: ../operations/transform/transform-core.c:183
 msgid "Y coordinate of origin"
 msgstr "Coordenada Y del origen"
-
-#: ../operations/transform/transform-core.c:193
-msgid "Filter type (nearest, linear, cubic, nohalo, lohalo)"
-msgstr "Tipo de filtro (más cercano, lineal, cúbico, nohalo, lohalo)"
 
 #: ../operations/transform/translate.c:26
 msgid "Horizontal translation"
@@ -4154,6 +4155,12 @@ msgid ""
 msgstr ""
 "Filtro de percentil que resalta los bordes y reduce el ruido, basado en los "
 "vecinos simétricos más próximos"
+
+#~ msgid "Scales the buffer."
+#~ msgstr "Escala el búfer."
+
+#~ msgid "Filter type (nearest, linear, cubic, nohalo, lohalo)"
+#~ msgstr "Tipo de filtro (más cercano, lineal, cúbico, nohalo, lohalo)"
 
 #~ msgid "Left"
 #~ msgstr "Izquierda"
