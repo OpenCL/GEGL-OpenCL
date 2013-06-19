@@ -314,10 +314,9 @@ gegl_buffer_load (const gchar *path)
   {
     GeglBufferItem *header = gegl_buffer_read_header (info->i, &info->offset, NULL);
     g_assert (header);
-    /*memcpy (&(info->header), header, sizeof (GeglBufferHeader));*/
-    info->header = *(&header->header);
+    info->header = header->header;
     info->offset = info->header.next;
-    /*g_free (header);*/  /* is there a pointer to a string or something we're missing? */
+    g_free (header);
   }
 
 
