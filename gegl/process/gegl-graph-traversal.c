@@ -271,6 +271,11 @@ gegl_graph_prepare_request (GeglGraphTraversal  *path,
         }
       else
         {
+          /* Expand request if the operation has a minimum processing requirement */
+          GeglRectangle full_request = gegl_operation_get_cached_region (operation, request);
+
+          gegl_operation_context_set_need_rect (context, &full_request);
+
           /* FIXME: We could trim this down based on the cache, instead of being all or nothing */
           gegl_operation_context_set_result_rect (context, request);
 
@@ -287,7 +292,7 @@ gegl_graph_prepare_request (GeglGraphTraversal  *path,
                   GeglRectangle rect, current_need, new_need;
 
                   /* Combine this need rect with any existing request */
-                  rect = gegl_operation_get_required_for_output (operation, pad_name, request);
+                  rect = gegl_operation_get_required_for_output (operation, pad_name, &full_request);
                   current_need = *gegl_operation_context_get_need_rect (source_context);
 
                   gegl_rectangle_bounding_box (&new_need, &rect, &current_need);
