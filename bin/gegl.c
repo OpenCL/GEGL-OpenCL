@@ -111,13 +111,11 @@ main (gint    argc,
         }
       else
         {
-          gchar *tmp;
-          gchar *temp1 = g_strdup (o->file);
-          gchar *temp2 = g_path_get_dirname (temp1);
-          path_root = g_strdup (tmp = realpath (temp2, NULL));
+          gchar *tmp = g_path_get_dirname (o->file);
+          gchar *tmp2 = realpath (tmp, NULL);
+          path_root = g_strdup (tmp2);
           g_free (tmp);
-          g_free (temp1);
-          g_free (temp2);
+          free (tmp2); /* don't use g_free - realpath isn't glib */
         }
     }
 
@@ -148,27 +146,14 @@ main (gint    argc,
         }
       else
         {
-          gchar *leaked_string = g_malloc (strlen (o->file) + 5);
-          GString *acc = g_string_new ("");
+          gchar *file_basename = g_path_get_basename (o->file);
 
-          {
-            gchar *file_basename;
-            gchar *tmp;
-            tmp = g_strdup (o->file);
-            file_basename = g_path_get_basename (tmp);
+          script = g_strconcat ("<gegl><gegl:load path='",
+                                file_basename,
+                                "'/></gegl>",
+                                NULL);
 
-            g_string_append (acc, "<gegl><gegl:load path='");
-            g_string_append (acc, file_basename);
-            g_string_append (acc, "'/></gegl>");
-
-            g_free (tmp);
-          }
-
-          script = g_string_free (acc, FALSE);
-
-          leaked_string[0]='\0';
-          strcat (leaked_string, o->file);
-          strcat (leaked_string, ".xml");
+          g_free (file_basename);
         }
     }
   else
