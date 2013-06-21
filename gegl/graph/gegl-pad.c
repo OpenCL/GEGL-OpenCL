@@ -81,8 +81,17 @@ finalize (GObject *gobject)
 
   g_assert (self->connections == NULL);
 
+  if (self->param_spec)
+    {
+      g_param_spec_unref (self->param_spec);
+      self->param_spec = NULL;
+    }
+
   if (self->name)
-    g_free (self->name);
+    {
+      g_free (self->name);
+      self->name = NULL;
+    }
 
   G_OBJECT_CLASS (gegl_pad_parent_class)->finalize (gobject);
 }
@@ -101,7 +110,11 @@ gegl_pad_set_param_spec (GeglPad    *self,
 {
   g_return_if_fail (GEGL_IS_PAD (self));
 
-  self->param_spec = param_spec;
+  if (self->param_spec)
+    g_param_spec_unref (self->param_spec);
+
+  self->param_spec = g_param_spec_ref (param_spec);
+
   gegl_pad_set_name (self, g_param_spec_get_name (param_spec));
 }
 

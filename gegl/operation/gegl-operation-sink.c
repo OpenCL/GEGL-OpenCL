@@ -28,22 +28,6 @@
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
 
-
-enum
-{
-  PROP_0,
-  PROP_INPUT
-};
-
-
-static void          gegl_operation_sink_get_property            (GObject              *gobject,
-                                                                  guint                 prop_id,
-                                                                  GValue               *value,
-                                                                  GParamSpec           *pspec);
-static void          gegl_operation_sink_set_property            (GObject              *gobject,
-                                                                  guint                 prop_id,
-                                                                  const GValue         *value,
-                                                                  GParamSpec           *pspec);
 static gboolean      gegl_operation_sink_process                 (GeglOperation        *operation,
                                                                   GeglOperationContext *context,
                                                                   const gchar          *output_prop,
@@ -62,26 +46,14 @@ G_DEFINE_TYPE (GeglOperationSink, gegl_operation_sink, GEGL_TYPE_OPERATION)
 static void
 gegl_operation_sink_class_init (GeglOperationSinkClass * klass)
 {
-  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
   klass->needs_full = FALSE;
-
-  object_class->set_property = gegl_operation_sink_set_property;
-  object_class->get_property = gegl_operation_sink_get_property;
 
   operation_class->process                 = gegl_operation_sink_process;
   operation_class->attach                  = gegl_operation_sink_attach;
   operation_class->get_bounding_box        = gegl_operation_sink_get_bounding_box;
   operation_class->get_required_for_output = gegl_operation_sink_get_required_for_output;
-
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
 }
 
 static void
@@ -92,28 +64,17 @@ gegl_operation_sink_init (GeglOperationSink *self)
 static void
 gegl_operation_sink_attach (GeglOperation *self)
 {
-  GeglOperation *operation    = GEGL_OPERATION (self);
-  GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
+  GeglOperation *operation = GEGL_OPERATION (self);
+  GParamSpec    *pspec;
 
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "input"));
-}
-
-static void
-gegl_operation_sink_get_property (GObject    *object,
-                                  guint       prop_id,
-                                  GValue     *value,
-                                  GParamSpec *pspec)
-{
-}
-
-static void
-gegl_operation_sink_set_property (GObject      *object,
-                                  guint         prop_id,
-                                  const GValue *value,
-                                  GParamSpec   *pspec)
-{
+  pspec = g_param_spec_object ("input",
+                               "Input",
+                               "Input pad, for image buffer input.",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READWRITE |
+                               GEGL_PARAM_PAD_INPUT);
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
 }
 
 static gboolean

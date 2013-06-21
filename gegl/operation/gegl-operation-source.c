@@ -28,21 +28,6 @@
 #include "graph/gegl-node.h"
 #include "graph/gegl-pad.h"
 
-enum
-{
-  PROP_0,
-  PROP_OUTPUT,
-  PROP_LAST
-};
-
-static void     get_property (GObject      *gobject,
-                              guint         prop_id,
-                              GValue       *value,
-                              GParamSpec   *pspec);
-static void     set_property (GObject      *gobject,
-                              guint         prop_id,
-                              const GValue *value,
-                              GParamSpec   *pspec);
 static gboolean gegl_operation_source_process
                              (GeglOperation        *operation,
                               GeglOperationContext *context,
@@ -66,11 +51,7 @@ static GeglRectangle  get_cached_region        (GeglOperation       *operation,
 static void
 gegl_operation_source_class_init (GeglOperationSourceClass * klass)
 {
-  GObjectClass       *gobject_class   = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
-
-  gobject_class->set_property = set_property;
-  gobject_class->get_property = get_property;
 
   operation_class->process = gegl_operation_source_process;
   operation_class->attach  = attach;
@@ -78,14 +59,6 @@ gegl_operation_source_class_init (GeglOperationSourceClass * klass)
 
   operation_class->get_bounding_box  = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
-
-  g_object_class_install_property (gobject_class, PROP_OUTPUT,
-                                   g_param_spec_object ("output",
-                                                        "Output",
-                                                        "Output pad for generated image buffer.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READABLE |
-                                                        GEGL_PARAM_PAD_OUTPUT));
 }
 
 static void
@@ -96,28 +69,17 @@ gegl_operation_source_init (GeglOperationSource *self)
 static void
 attach (GeglOperation *self)
 {
-  GeglOperation *operation    = GEGL_OPERATION (self);
-  GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
+  GeglOperation *operation = GEGL_OPERATION (self);
+  GParamSpec    *pspec;
 
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "output"));
-}
-
-static void
-get_property (GObject    *object,
-              guint       prop_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-}
-
-static void
-set_property (GObject      *object,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
+  pspec = g_param_spec_object ("output",
+                               "Output",
+                               "Output pad for generated image buffer.",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READABLE |
+                               GEGL_PARAM_PAD_OUTPUT);
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
 }
 
 static gboolean

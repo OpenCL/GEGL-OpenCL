@@ -31,23 +31,6 @@
 #include "buffer/gegl-region.h"
 #include "buffer/gegl-buffer.h"
 
-enum
-{
-  PROP_0,
-  PROP_OUTPUT,
-  PROP_INPUT,
-  PROP_AUX,
-  PROP_AUX2
-};
-
-static void     get_property (GObject              *gobject,
-                              guint                 prop_id,
-                              GValue               *value,
-                              GParamSpec           *pspec);
-static void     set_property (GObject              *gobject,
-                              guint                 prop_id,
-                              const GValue         *value,
-                              GParamSpec           *pspec);
 static gboolean gegl_operation_composer3_process
                              (GeglOperation        *operation,
                               GeglOperationContext *context,
@@ -71,49 +54,13 @@ G_DEFINE_TYPE (GeglOperationComposer3, gegl_operation_composer3,
 static void
 gegl_operation_composer3_class_init (GeglOperationComposer3Class * klass)
 {
-  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
-
-  object_class->set_property = set_property;
-  object_class->get_property = get_property;
 
   operation_class->process = gegl_operation_composer3_process;
   operation_class->attach = attach;
   operation_class->detect = detect;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
-
-  g_object_class_install_property (object_class, PROP_OUTPUT,
-                                   g_param_spec_object ("output",
-                                                        "Output",
-                                                        "Output pad for generated image buffer.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READABLE |
-                                                        GEGL_PARAM_PAD_OUTPUT));
-
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-  g_object_class_install_property (object_class, PROP_AUX,
-                                   g_param_spec_object ("aux",
-                                                        "Input",
-                                                        "Auxiliary image buffer input pad.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
-
-  g_object_class_install_property (object_class, PROP_AUX2,
-                                   g_param_spec_object ("aux2",
-                                                        "Input",
-                                                        "Second auxiliary image buffer input pad.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
 }
 
 static void
@@ -124,38 +71,44 @@ gegl_operation_composer3_init (GeglOperationComposer3 *self)
 static void
 attach (GeglOperation *self)
 {
-  GeglOperation *operation    = GEGL_OPERATION (self);
-  GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
+  GeglOperation *operation = GEGL_OPERATION (self);
+  GParamSpec    *pspec;
 
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "output"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "input"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "aux"));
+  pspec = g_param_spec_object ("output",
+                               "Output",
+                               "Output pad for generated image buffer.",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READABLE |
+                               GEGL_PARAM_PAD_OUTPUT);
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
 
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "aux2"));
-}
+  pspec = g_param_spec_object ("input",
+                               "Input",
+                               "Input pad, for image buffer input.",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READWRITE |
+                               GEGL_PARAM_PAD_INPUT);
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
 
-static void
-get_property (GObject    *object,
-              guint       prop_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-}
+  pspec = g_param_spec_object ("aux",
+                               "Aux",
+                               "Auxiliary image buffer input pad.",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READWRITE |
+                               GEGL_PARAM_PAD_INPUT);
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
 
-static void
-set_property (GObject      *object,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
+  pspec = g_param_spec_object ("aux2",
+                               "Aux2",
+                               "Second auxiliary image buffer input pad.",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READWRITE |
+                               GEGL_PARAM_PAD_INPUT);
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
 }
 
 static gboolean

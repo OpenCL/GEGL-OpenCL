@@ -31,23 +31,6 @@
 #include "buffer/gegl-region.h"
 #include "buffer/gegl-buffer.h"
 
-enum
-{
-  PROP_0,
-  PROP_OUTPUT,
-  PROP_INPUT
-};
-
-static void     get_property          (GObject       *gobject,
-                                       guint          prop_id,
-                                       GValue        *value,
-                                       GParamSpec    *pspec);
-
-static void     set_property          (GObject       *gobject,
-                                       guint          prop_id,
-                                       const GValue  *value,
-                                       GParamSpec    *pspec);
-
 static gboolean gegl_operation_filter_process
                                       (GeglOperation        *operation,
                                        GeglOperationContext *context,
@@ -72,33 +55,13 @@ G_DEFINE_TYPE (GeglOperationFilter, gegl_operation_filter, GEGL_TYPE_OPERATION)
 static void
 gegl_operation_filter_class_init (GeglOperationFilterClass * klass)
 {
-  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
-
-  object_class->set_property = set_property;
-  object_class->get_property = get_property;
 
   operation_class->process                 = gegl_operation_filter_process;
   operation_class->attach                  = attach;
   operation_class->detect                  = detect;
   operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
-
-  g_object_class_install_property (object_class, PROP_OUTPUT,
-                                   g_param_spec_object ("output",
-                                                        "Output",
-                                                        "Output pad for generated image buffer.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READABLE |
-                                                        GEGL_PARAM_PAD_OUTPUT));
-
-  g_object_class_install_property (object_class, PROP_INPUT,
-                                   g_param_spec_object ("input",
-                                                        "Input",
-                                                        "Input pad, for image buffer input.",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_INPUT));
 }
 
 static void
@@ -109,15 +72,26 @@ gegl_operation_filter_init (GeglOperationFilter *self)
 static void
 attach (GeglOperation *self)
 {
-  GeglOperation *operation    = GEGL_OPERATION (self);
-  GObjectClass  *object_class = G_OBJECT_GET_CLASS (self);
+  GeglOperation *operation = GEGL_OPERATION (self);
+  GParamSpec    *pspec;
 
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "output"));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "input"));
+  pspec = g_param_spec_object ("output",
+                               "Output",
+                               "Output pad for generated image buffer.",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READABLE |
+                               GEGL_PARAM_PAD_OUTPUT);
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
+
+  pspec = g_param_spec_object ("input",
+                               "Input",
+                               "Input pad, for image buffer input.",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READWRITE |
+                               GEGL_PARAM_PAD_INPUT);
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
 }
 
 
@@ -133,50 +107,6 @@ detect (GeglOperation *operation,
   if (input_node)
     return gegl_operation_detect (input_node->operation, x, y);
   return operation->node;
-}
-
-
-void babl_backtrack (void);
-
-static void
-get_property (GObject    *object,
-              guint       prop_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-  switch (prop_id)
-    {
-      case PROP_OUTPUT:
-        g_warning ("shouldn't happen");
-        babl_backtrack ();
-        break;
-
-      case PROP_INPUT:
-        g_warning ("shouldn't happen");
-        babl_backtrack ();
-        break;
-
-      default:
-        break;
-    }
-}
-
-static void
-set_property (GObject      *object,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
-  switch (prop_id)
-    {
-      case PROP_INPUT:
-        g_warning ("shouldn't happen");
-        babl_backtrack ();
-        break;
-
-      default:
-        break;
-    }
 }
 
 static gboolean

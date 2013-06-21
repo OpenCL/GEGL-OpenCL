@@ -26,21 +26,6 @@
 #include "graph/gegl-node.h"
 #include <string.h>
 
-
-enum
-{
-  PROP_0,
-  PROP_LAST
-};
-
-static void       get_property (GObject       *gobject,
-                                guint          prop_id,
-                                GValue        *value,
-                                GParamSpec    *pspec);
-static void       set_property (GObject       *gobject,
-                                guint          prop_id,
-                                const GValue  *value,
-                                GParamSpec    *pspec);
 static void       finalize     (GObject       *self_object);
 static GeglNode * detect       (GeglOperation *operation,
                                 gint           x,
@@ -55,8 +40,6 @@ gegl_operation_meta_class_init (GeglOperationMetaClass *klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
-  object_class->set_property           = set_property;
-  object_class->get_property           = get_property;
   object_class->finalize               = finalize;
   GEGL_OPERATION_CLASS (klass)->detect = detect;
 }
@@ -65,22 +48,6 @@ static void
 gegl_operation_meta_init (GeglOperationMeta *self)
 {
   self->redirects = NULL;
-}
-
-static void
-get_property (GObject    *object,
-              guint       prop_id,
-              GValue     *value,
-              GParamSpec *pspec)
-{
-}
-
-static void
-set_property (GObject      *object,
-              guint         prop_id,
-              const GValue *value,
-              GParamSpec   *pspec)
-{
 }
 
 static GeglNode *
