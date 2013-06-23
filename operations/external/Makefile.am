@@ -118,6 +118,13 @@ matting_levin_la_LIBADD  = $(op_libs) $(UMFPACK_LIBS)
 matting_levin_la_CFLAGS  = $(AM_CFLAGS)
 endif
 
+if HAVE_LCMS
+ops += lcms-from-profile.la
+lcms_from_profile_la_SOURCES = lcms-from-profile.c
+lcms_from_profile_la_LIBADD  = $(op_libs) $(LCMS_LIBS)
+lcms_from_profile_la_CFLAGS  = $(AM_CFLAGS)
+endif
+
 # No dependencies
 ops += ppm-load.la ppm-save.la
 ppm_load_la_SOURCES = ppm-load.c

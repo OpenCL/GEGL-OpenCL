@@ -44,6 +44,7 @@ m4_define([introspection_required_version], [1.32.0])
 m4_define([glib_required_version], [2.32.3])
 m4_define([graphviz_required_version], [0.0.0])
 m4_define([jasper_required_version], [1.900.1])
+m4_define([lcms_required_version], [2.2])
 m4_define([lensfun_required_version], [0.2.5])
 m4_define([librsvg_required_version], [2.14.0])
 m4_define([lua_required_version], [5.1.0])
@@ -911,31 +912,23 @@ fi
 
 AM_CONDITIONAL(HAVE_V4L, test "$have_v4l" = "yes")
 
-
-
 ################
 # Check for lcms
 ################
- 
-#AC_ARG_WITH(liblcms, [  --without-lcms          build without CMS support])
-#
-#have_lcms="no"
-#if test x$with_liblcms != xno; then
-#  AC_CHECK_LIB(lcms, cmsCreateProofingTransform, [
-#    AC_CHECK_HEADER(lcms.h,
-#      have_lcms=yes
-#      LCMS_LIBS="-llcms", [
-#      AC_CHECK_HEADER(lcms/lcms.h,
-#      have_lcms=yes
-#        AC_DEFINE(HAVE_LCMS_LCMS_H, 1,
-#          [Define to 1 if the lcms header must be included as lcms/lcms.h])
-#        LCMS_LIBS="-llcms")])
-#  ])
-#fi
-# 
-#AM_CONDITIONAL(HAVE_LCMS, test "x$have_lcms" = "xyes")
-#AC_SUBST(LCMS_LIBS)
 
+AC_ARG_WITH(lcms, [  --without-lcms          build without lcms support])
+
+have_lcms="no (lcms support disabled)"
+if test "x$with_lcms" != xno; then
+  have_lcms=yes
+  PKG_CHECK_MODULES(LCMS, lcms2 >= lcms_required_version,
+    AC_DEFINE(HAVE_LCMS, 1, [Define to 1 if lcms is available])
+    LCMS='lcms$(EXEEXT)',
+    have_lcms="no (lcms not found or unusable)")
+fi
+
+AC_SUBST(LCMS)
+AM_CONDITIONAL(HAVE_LCMS, test "x$have_lcms" = xyes)
 
 ####################
 # Check for libspiro
