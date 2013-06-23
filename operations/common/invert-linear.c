@@ -27,8 +27,7 @@
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "invert.c"
-#define GEGLV4
+#define GEGL_CHANT_C_FILE       "invert-linear.c"
 
 #include "gegl-chant.h"
 
@@ -56,7 +55,7 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
-#include "opencl/invert.cl.h"
+#include "opencl/invert-linear.cl.h"
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
@@ -67,15 +66,16 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  point_filter_class->process = process;
+  operation_class->compat_name = "gegl:invert";
+  point_filter_class->process  = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:invert",
+    "name"       , "gegl:invert-linear",
     "categories" , "color",
     "description",
        _("Inverts the components (except alpha), the result is the "
          "corresponding \"negative\" image."),
-    "cl-source"  , invert_cl_source,
+    "cl-source"  , invert_linear_cl_source,
     NULL);
 }
 

@@ -41,7 +41,7 @@ attach (GeglOperation *operation)
   gegl = operation->node;
   input = gegl_node_get_input_proxy (gegl, "input");
   output = gegl_node_get_output_proxy (gegl, "output");
-  invert = gegl_node_new_child (gegl, "operation", "gegl:invert", NULL);
+  invert = gegl_node_new_child (gegl, "operation", "gegl:invert-linear", NULL);
   blur = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", NULL);
   opacity = gegl_node_new_child (gegl, "operation", "gegl:opacity",
                                  "value", 0.5, NULL);

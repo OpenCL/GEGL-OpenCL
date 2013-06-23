@@ -24,7 +24,7 @@ TESTS = \
   run-color-temperature.xml.sh   \
   run-edge-sobel.xml.sh          \
   run-gaussian-blur.xml.sh       \
-  run-invert.xml.sh              \
+  run-invert-linear.xml.sh       \
   run-levels.xml.sh              \
   run-mono-mixer.xml.sh          \
   run-motion-blur.xml.sh         \

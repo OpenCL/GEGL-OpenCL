@@ -39,7 +39,7 @@ operations/common/grid.c
 operations/common/high-pass.c
 operations/common/image-compare.c
 operations/common/introspect.c
-operations/common/invert.c
+operations/common/invert-linear.c
 operations/common/layer.c
 operations/common/lens-distortion.c
 operations/common/levels.c

@@ -16,7 +16,7 @@ gegl=Gegl.parse_xml(
      <gegl:gaussian-blur std_dev_y='0' name='blur'/>
      <gegl:text string='GEGL' name='text' size='60' color='rgb(0.0,0.0,0.0)'/>
    </gegl:over>
-   <gegl:invert/>
+   <gegl:invert-linear/>
    <gegl:brightness-contrast contrast='0.4' brightness='-0.3'/>
    <gegl:gaussian-blur />
    <gegl:fractal-explorer xmin='0.2' ymin='0' xmax='0.5' ymax='0.45'

@@ -23,7 +23,7 @@ from gi.repository import Gegl
 
 invert_crop_xml = """<?xml version='1.0' encoding='UTF-8'?>
 <gegl>
-  <node operation='gegl:invert'>
+  <node operation='gegl:invert-linear'>
   </node>
   <node operation='gegl:crop'>
       <params>
@@ -125,7 +125,7 @@ class TestGeglXml(unittest.TestCase):
         self.assertEqual(len(children), 2)
 
         self.assertEqual(children[0].get_operation(), "gegl:crop")
-        self.assertEqual(children[1].get_operation(), "gegl:invert")
+        self.assertEqual(children[1].get_operation(), "gegl:invert-linear")
 
     def test_load_save_roundtrip(self):
         graph = Gegl.Node.new_from_xml(invert_crop_xml, "")

@@ -55,7 +55,7 @@ test_load_multiple_nodes (void)
     const gchar * const xml = \
 "<?xml version='1.0' encoding='UTF-8'?>\n\
 <gegl>\n\
-  <node operation='gegl:invert'>\n\
+  <node operation='gegl:invert-linear'>\n\
   </node>\n\
   <node operation='gegl:crop'>\n\
       <params>\n\
@@ -84,7 +84,7 @@ test_load_multiple_nodes (void)
 
     node = GEGL_NODE(g_slist_nth_data(children, 1));
     gegl_node_get(node, "operation", &op_name, NULL);
-    g_assert_cmpstr(op_name, ==, "gegl:invert");
+    g_assert_cmpstr(op_name, ==, "gegl:invert-linear");
     g_free(op_name);
 
 	g_slist_free(children);
@@ -100,7 +100,7 @@ test_load_subgraph (void)
 "<?xml version='1.0' encoding='UTF-8'?>\n\
 <gegl>\n\
     <node>\n\
-          <node operation='gegl:invert'>\n\
+          <node operation='gegl:invert-linear'>\n\
           </node>\n\
           <node operation='gegl:crop'>\n\
               <params>\n\
@@ -147,7 +147,7 @@ test_load_subgraph (void)
 
     node = GEGL_NODE(g_slist_nth_data(subgraph_children, 1));
     gegl_node_get(node, "operation", &op_name, NULL);
-    g_assert_cmpstr(op_name, ==, "gegl:invert");
+    g_assert_cmpstr(op_name, ==, "gegl:invert-linear");
     g_free(op_name);
 
 	g_slist_free(subgraph_children);

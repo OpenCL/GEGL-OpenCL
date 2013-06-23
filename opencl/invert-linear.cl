@@ -1,5 +1,5 @@
-__kernel void gegl_invert (__global const float4     *in,
-                           __global       float4     *out)
+__kernel void gegl_invert_linear (__global const float4     *in,
+                                  __global       float4     *out)
 {
   int gid = get_global_id(0);
   float4 in_v  = in[gid];

@@ -75,7 +75,7 @@ test_save_multiple_nodes (void)
     const gchar * const expected_result = \
 "<?xml version='1.0' encoding='UTF-8'?>\n\
 <gegl>\n\
-  <node operation='gegl:invert'>\n\
+  <node operation='gegl:invert-linear'>\n\
   </node>\n\
   <node operation='gegl:crop'>\n\
       <params>\n\
@@ -95,7 +95,7 @@ test_save_multiple_nodes (void)
                               "x", 0.0, "y", 0.0,
                               "width", 0.0, "height", 0.0,
                               NULL);
-    op2 = gegl_node_new_child(graph, "operation", "gegl:invert", NULL);
+    op2 = gegl_node_new_child(graph, "operation", "gegl:invert-linear", NULL);
     gegl_node_link_many(op1, op2, NULL);
 
     xml = gegl_node_to_xml(op2, "");
@@ -114,7 +114,7 @@ test_save_toplevel_graph (void)
     const gchar * const expected_result = \
 "<?xml version='1.0' encoding='UTF-8'?>\n\
 <gegl>\n\
-  <node operation='gegl:invert'>\n\
+  <node operation='gegl:invert-linear'>\n\
   </node>\n\
   <node operation='gegl:crop'>\n\
       <params>\n\
@@ -134,7 +134,7 @@ test_save_toplevel_graph (void)
                               "x", 0.0, "y", 0.0,
                               "width", 0.0, "height", 0.0,
                               NULL);
-    op2 = gegl_node_new_child(graph, "operation", "gegl:invert", NULL);
+    op2 = gegl_node_new_child(graph, "operation", "gegl:invert-linear", NULL);
     gegl_node_link_many(op1, op2, NULL);
 
     xml = gegl_node_to_xml(graph, "");

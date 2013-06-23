@@ -57,7 +57,7 @@
             <param name='y'>100.000000</param>
           </params>
       </node>
-      <node operation='gegl:invert'>
+      <node operation='gegl:invert-linear'>
       </node>
       <node operation='gegl:scale-ratio'>
           <params>
