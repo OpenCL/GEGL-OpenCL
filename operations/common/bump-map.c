@@ -31,53 +31,64 @@
  */
 
 #include "config.h"
+
 #include <glib/gi18n-lib.h>
-#include <stdio.h>
-#include <math.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double(azimuth,_("Azimuth"),
-                  0.0,360.0,135.0,
-                  _("azimuth"))
-gegl_chant_double(elevation,_("Elevation"),
-                  0.0,360.0,45.0,
-                  _("elevation"))
-gegl_chant_double(depth,_("Depth"),
-                  0.0005,100,0.005,
-                  _("depth"))
-gegl_chant_int(xofs,_("xofs"),
-               -1000,1000,0,
-               _("xofs"))
-gegl_chant_int(yofs,_("yofs"),
-               -1000,1000,0,
-               _("yofs"))
-gegl_chant_double(waterlevel,_("waterlevel"),
-                  0.0,1.0,0.0,
-                  _("waterlevel"))
-gegl_chant_double(ambient,_("ambient"),
-                  0.0,1.0,0.0,
-                  _("ambient"))
-gegl_chant_boolean(compensate,_("Compensate"),TRUE,_("Compensate"))
-gegl_chant_boolean(invert,_("Invert"),FALSE,_("invert"))
-
 gegl_chant_register_enum (gegl_bump_map_type)
-  enum_value (GEGL_BUMP_MAP_TYPE_LINEAR,       "Linear")
-  enum_value (GEGL_BUMP_MAP_TYPE_SPHERICAL,    "Cosinus")
-  enum_value (GEGL_BUMP_MAP_TYPE_SINUSOIDAL,   "Sinusoidal")
+  enum_value (GEGL_BUMP_MAP_TYPE_LINEAR,     "Linear")
+  enum_value (GEGL_BUMP_MAP_TYPE_SPHERICAL,  "Cosinus")
+  enum_value (GEGL_BUMP_MAP_TYPE_SINUSOIDAL, "Sinusoidal")
 gegl_chant_register_enum_end (GeglBumpMapType)
 
+gegl_chant_double  (azimuth, _("Azimuth"),
+                    0.0, 360.0, 135.0,
+                    _("Azimuth"))
 
-gegl_chant_enum (type,_("Type"),GeglBumpMapType,
-                 gegl_bump_map_type, GEGL_BUMP_MAP_TYPE_LINEAR,
-                  _("type"))
-gegl_chant_boolean(tiled,_("Tiled"),FALSE, _("tiled"))
+gegl_chant_double  (elevation, _("Elevation"),
+                    0.0, 360.0, 45.0,
+                    _("Elevation"))
+
+gegl_chant_double  (depth, _("Depth"),
+                    0.0005, 100, 0.005,
+                    _("Depth"))
+
+gegl_chant_int     (xofs, _("xofs"),
+                    -1000, 1000,0,
+                    _("X offset"))
+
+gegl_chant_int     (yofs, _("yofs"),
+                    -1000, 1000,0,
+                    _("Y offset"))
+
+gegl_chant_double  (waterlevel, _("waterlevel"),
+                    0.0,1.0,0.0,
+                    _("Level that full transparency should represent"))
+
+gegl_chant_double  (ambient, _("ambient"),
+                    0.0, 1.0, 0.0,
+                    _("Ambient lighting factor"))
+
+gegl_chant_boolean (compensate, _("Compensate"),
+                    TRUE,
+                    _("Compensate for darkening"))
+
+gegl_chant_boolean (invert, _("Invert"),
+                    FALSE,
+                    _("Invert bumpmap"))
+
+gegl_chant_enum    (type, _("Type"),
+                    GeglBumpMapType, gegl_bump_map_type,
+                    GEGL_BUMP_MAP_TYPE_LINEAR,
+                    _("Type of map"))
+
+gegl_chant_boolean (tiled, _("Tiled"),
+                    FALSE,
+                    _("Tiled"))
 
 #else
 
-// Should the LUT table be a configurable property? Should it
-// be interpolated instead of by a plain lookup?
-#define LUT_TABLE_SIZE 8192
 #define GEGL_CHANT_TYPE_COMPOSER
 #define GEGL_CHANT_C_FILE "bump-map.c"
 
@@ -85,6 +96,10 @@ gegl_chant_boolean(tiled,_("Tiled"),FALSE, _("tiled"))
 #include <math.h>
 
 /***** Macros *****/
+
+// Should the LUT table be a configurable property? Should it
+// be interpolated instead of by a plain lookup?
+#define LUT_TABLE_SIZE 8192
 
 #define MOD(x, y) \
   ((x) < 0 ? ((y) - 1 - ((y) - 1 - (x)) % (y)) : (x) % (y))
@@ -106,7 +121,7 @@ bumpmap_setup_calc (GeglChantO     *o,
   const gdouble azimuth   = G_PI * o->azimuth / 180.0;
   const gdouble elevation = G_PI * o->elevation / 180.0;
 
-  double lz, nz;
+  gdouble lz, nz;
   gint i;
 
   /* Calculate the light vector */
@@ -246,11 +261,11 @@ bumpmap_row (const gfloat     *src,
 
       /* Next pixel */
       if (++xofs2 == bm_width)
-        xofs2 = 0; 
+        xofs2 = 0;
     }
 }
 
-// Map the FIFO bumpmap row according to the lookup table. 
+// Map the FIFO bumpmap row according to the lookup table.
 static void
 bumpmap_convert_row (gfloat       *row,
                      gint          width,
@@ -270,8 +285,8 @@ bumpmap_convert_row (gfloat       *row,
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "aux", babl_format ("Y float"));
+  gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "aux",    babl_format ("Y float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
@@ -283,10 +298,10 @@ process (GeglOperation       *operation,
          const GeglRectangle *rect,
          gint                 level)
 {
-  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gfloat  *src_buf, *dst_buf, *bm_row1, *bm_row2, *bm_row3, *src_row, *dest_row, *bm_tmprow;
-  const Babl *format = gegl_operation_get_format(operation,"output");
-  gint channels = babl_format_get_n_components(format);
+  const Babl *format = gegl_operation_get_format (operation, "output");
+  gint channels = babl_format_get_n_components (format);
   bumpmap_params_t params;
   gint yofs1, yofs2, yofs3;
   gint row_stride;
@@ -298,8 +313,8 @@ process (GeglOperation       *operation,
   // This should be made more sophisticated
   int has_alpha = (channels == 4) || (channels == 2);
 
-  bm_width = gegl_buffer_get_width(aux);
-  bm_height = gegl_buffer_get_height(aux);
+  bm_width = gegl_buffer_get_width (aux);
+  bm_height = gegl_buffer_get_height (aux);
 
   src_buf    = g_new0 (gfloat, rect->width * slice_thickness * channels);
   dst_buf    = g_new0 (gfloat, rect->width * slice_thickness * channels);
@@ -335,8 +350,9 @@ process (GeglOperation       *operation,
       rect_slice.x = rect->x;
       rect_slice.width = rect->width;
       rect_slice.y = rect->y+row;
-      rect_slice.height = MIN(slice_thickness, rect->height-row);
-      gegl_buffer_get (input, &rect_slice, 1.0, babl_format ("RGBA float"), src_buf,
+      rect_slice.height = MIN (slice_thickness, rect->height-row);
+      gegl_buffer_get (input, &rect_slice, 1.0,
+                       babl_format ("RGBA float"), src_buf,
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       // Get the bumpmap one row at a time. The following values are constant
@@ -344,7 +360,7 @@ process (GeglOperation       *operation,
       bm_rect.x = 0;
       bm_rect.width = bm_width;
       bm_rect.height = 1;
-      
+
       for (y = 0; y < rect_slice.height; y++)
         {
           gboolean row_in_bumpmap = (yofs2 > 0 && yofs2 < bm_height);
@@ -353,22 +369,24 @@ process (GeglOperation       *operation,
           if (row_in_bumpmap && first_time)
             {
               first_time = FALSE;
-              
+
               bm_rect.y = yofs1;
-              gegl_buffer_get (aux, &bm_rect, 1.0, babl_format ("Y float"), bm_row1,
+              gegl_buffer_get (aux, &bm_rect, 1.0,
+                               babl_format ("Y float"), bm_row1,
                                GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
               bm_rect.y = yofs2;
-              gegl_buffer_get (aux, &bm_rect, 1.0, babl_format ("Y float"), bm_row2,
+              gegl_buffer_get (aux, &bm_rect, 1.0,
+                               babl_format ("Y float"), bm_row2,
                                GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
               bm_rect.y = yofs3;
-              gegl_buffer_get (aux, &bm_rect, 1.0, babl_format ("Y float"), bm_row3,
+              gegl_buffer_get (aux, &bm_rect, 1.0,
+                               babl_format ("Y float"), bm_row3,
                                GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-              
+
               bumpmap_convert_row (bm_row1, bm_width, params.lut, o->waterlevel);
               bumpmap_convert_row (bm_row2, bm_width, params.lut, o->waterlevel);
               bumpmap_convert_row (bm_row3, bm_width, params.lut, o->waterlevel);
             }
-
 
           src_row = src_buf + y * row_stride;
           dest_row = dst_buf + y * row_stride;
@@ -409,8 +427,10 @@ process (GeglOperation       *operation,
               bumpmap_convert_row (bm_row3, bm_width, params.lut, o->waterlevel);
             }
         }
-      gegl_buffer_set (output, &rect_slice, 0, babl_format ("RGBA float"),
-                       dst_buf, GEGL_AUTO_ROWSTRIDE);
+
+      gegl_buffer_set (output, &rect_slice, 0,
+                       babl_format ("RGBA float"), dst_buf,
+                       GEGL_AUTO_ROWSTRIDE);
     }
 
   g_free (bm_row1);
@@ -426,10 +446,10 @@ process (GeglOperation       *operation,
 static GeglRectangle
 get_bounding_box (GeglOperation *self)
 {
-  GeglRectangle  result   = { 0, 0, 0, 0 };
-  GeglRectangle *in_rect  = gegl_operation_source_get_bounding_box (self, "input");
+  GeglRectangle  result  = { 0, 0, 0, 0 };
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (self, "input");
 
-  if (!in_rect)
+  if (! in_rect)
     return result;
 
   return *in_rect;
@@ -444,19 +464,20 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
 
-  operation_class->prepare                 = prepare;
-  operation_class->get_bounding_box        = get_bounding_box;
-  composer_class->process                  = process;
+  operation_class->prepare          = prepare;
+  operation_class->get_bounding_box = get_bounding_box;
+  composer_class->process           = process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:bump-map",
     "categories",  "map",
-    "description", _( "This plug-in uses the algorithm described by John "
-                      "Schlag, \"Fast Embossing Effects on Raster Image "
-                      "Data\" in Graphics GEMS IV (ISBN 0-12-336155-9). "
-                      "It takes a drawable to be applied as a bump "
-                      "map to another image and produces a nice embossing "
-                      "effect." ),
+    "description", _("This plug-in uses the algorithm described by John "
+                     "Schlag, \"Fast Embossing Effects on Raster Image "
+                     "Data\" in Graphics GEMS IV (ISBN 0-12-336155-9). "
+                     "It takes a drawable to be applied as a bump "
+                     "map to another image and produces a nice embossing "
+                     "effect."),
     NULL);
 }
+
 #endif
