@@ -9,6 +9,7 @@ operations/common/box-blur.c
 operations/common/brightness-contrast.c
 operations/common/buffer-sink.c
 operations/common/buffer-source.c
+operations/common/bump-map.c
 operations/common/c2g.c
 operations/common/cartoon.c
 operations/common/checkerboard.c
