@@ -44,7 +44,7 @@ struct _GeglConfig
   gint     tile_height;
   gint     threads;
   gboolean use_opencl;
-  gint     queue_limit;
+  gint     queue_size;
 };
 
 struct _GeglConfigClass

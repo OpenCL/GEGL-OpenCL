@@ -158,6 +158,7 @@ static GQueue  queue      = G_QUEUE_INIT;
 static GMutex  mutex      = { 0, };
 static GCond   queue_cond = { 0, };
 static GCond   max_cond   = { 0, };
+static gint    queue_size = 0;
 static GeglFileBackendThreadParams *in_progress;
 
 
@@ -173,14 +174,10 @@ gegl_tile_backend_file_finish_writing (GeglTileBackendFile *self)
 static void
 gegl_tile_backend_file_push_queue (GeglFileBackendThreadParams *params)
 {
-  guint length;
-
   g_mutex_lock (&mutex);
 
-  length = g_queue_get_length (&queue);
-
   /* block if the queue has gotten too big */
-  if (length > gegl_config ()->queue_limit)
+  while (queue_size > gegl_config ()->queue_size)
     g_cond_wait (&max_cond, &mutex);
 
   params->file->pending_ops += 1;
@@ -189,7 +186,11 @@ gegl_tile_backend_file_push_queue (GeglFileBackendThreadParams *params)
   if (params->entry)
     {
       if (params->operation == OP_WRITE)
-        params->entry->tile_link = g_queue_peek_tail_link (&queue);
+        {
+          params->entry->tile_link = g_queue_peek_tail_link (&queue);
+          queue_size += params->length + sizeof (GList) +
+            sizeof (GeglFileBackendThreadParams);
+        }
       else /* OP_WRITE_BLOCK */
         params->entry->block_link = g_queue_peek_tail_link (&queue);
     }
@@ -285,12 +286,16 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
       if (params->file->pending_ops == 0)
         g_cond_signal (&params->file->cond);
 
-      /* unblock the main thread if the queue had gotten too big */
-      if (g_queue_get_length (&queue) < gegl_config ()->queue_limit)
-        g_cond_signal (&max_cond);
+      if (params->operation == OP_WRITE)
+        {
+          queue_size -= params->length + sizeof (GList) +
+            sizeof (GeglFileBackendThreadParams);
+          g_free (params->source);
 
-      if (params->source)
-        g_free (params->source);
+          /* unblock the main thread if the queue had gotten too big */
+          if (queue_size < gegl_config ()->queue_size)
+            g_cond_signal (&max_cond);
+        }
 
       g_free (params);
 
