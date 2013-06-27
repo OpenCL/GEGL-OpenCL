@@ -40,6 +40,9 @@
 /stamp-h
 /stamp-h.in
 /stamp-h1
+/test-driver
+/tests/*/*.log
+/tests/*/*.trs
 cscope.files
 cscope.out
 /*.project
