@@ -313,6 +313,9 @@ process (GeglOperation       *operation,
   // This should be made more sophisticated
   int has_alpha = (channels == 4) || (channels == 2);
 
+  if (! aux)
+    return FALSE;
+
   bm_width = gegl_buffer_get_width (aux);
   bm_height = gegl_buffer_get_height (aux);
 
