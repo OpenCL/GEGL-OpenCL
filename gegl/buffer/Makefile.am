@@ -38,6 +38,7 @@ libbuffer_la_SOURCES = \
     gegl-tile-backend.c		\
 	gegl-tile-backend-file-async.c	\
     gegl-tile-backend-ram.c	\
+	gegl-tile-backend-swap.c \
     gegl-tile-handler.c		\
     gegl-tile-handler-private.h	\
     gegl-tile-handler-cache.c	\
@@ -69,6 +70,7 @@ libbuffer_la_SOURCES = \
     gegl-tile-storage.h		\
     gegl-tile-backend.h		\
     gegl-tile-backend-file.h	\
+	gegl-tile-backend-swap.h \
     gegl-tile-backend-tiledir.h	\
     gegl-tile-backend-ram.h	\
     gegl-tile-handler.h		\

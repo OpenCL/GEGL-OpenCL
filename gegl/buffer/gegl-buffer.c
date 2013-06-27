@@ -48,6 +48,7 @@
 #include "gegl-tile-storage.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-backend-file.h"
+#include "gegl-tile-backend-swap.h"
 #include "gegl-tile-backend-tiledir.h"
 #include "gegl-tile-backend-ram.h"
 #include "gegl-tile.h"
@@ -446,7 +447,8 @@ gegl_buffer_dispose (GObject *object)
       /* only flush non-internal backends,. */
       if (!(GEGL_IS_TILE_BACKEND_FILE (backend) ||
             GEGL_IS_TILE_BACKEND_RAM (backend) ||
-            GEGL_IS_TILE_BACKEND_TILE_DIR (backend)))
+            GEGL_IS_TILE_BACKEND_TILE_DIR (backend) ||
+            GEGL_IS_TILE_BACKEND_SWAP (backend)))
         gegl_buffer_flush (buffer);
 
       gegl_tile_source_reinit (GEGL_TILE_SOURCE (handler->source));
@@ -621,15 +623,11 @@ gegl_buffer_constructor (GType                  type,
             }
           else
             {
-              gchar *path = get_next_swap_path ();
-
-              backend = g_object_new (GEGL_TYPE_TILE_BACKEND_FILE,
+              backend = g_object_new (GEGL_TYPE_TILE_BACKEND_SWAP,
                                       "tile-width",  buffer->tile_width,
                                       "tile-height", buffer->tile_height,
                                       "format",      buffer->format,
-                                      "path",        path,
                                       NULL);
-              g_free (path);
             }
 
           buffer->backend = backend;
@@ -1241,7 +1239,7 @@ gegl_buffer_try_lock (GeglBuffer *buffer)
       return TRUE;
     }
   if (gegl_buffer_is_shared(buffer))
-    ret =gegl_tile_backend_file_try_lock (GEGL_TILE_BACKEND_FILE (backend));
+    ret = gegl_tile_backend_file_try_lock (GEGL_TILE_BACKEND_FILE (backend));
   else
     ret = TRUE;
   if (ret)
