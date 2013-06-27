@@ -834,7 +834,7 @@ gegl_tile_backend_swap_ensure_exist (void)
       GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "creating swapfile %s", path);
 
       out_fd = g_open (path, O_RDWR|O_CREAT, 0770);
-      in_fd = g_open (path, O_RDONLY);
+      in_fd = g_open (path, O_RDONLY, 0);
 
       if (out_fd == -1 || in_fd == -1)
         g_warning ("Could not open swap file '%s': %s", path, g_strerror (errno));
