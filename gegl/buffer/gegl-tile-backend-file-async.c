@@ -1032,12 +1032,12 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
    * are added here
    */
   /* reload header */
-  new_header = gegl_buffer_read_header (self->i, &offset, NULL)->header;
+  new_header = gegl_buffer_read_header (self->i, &offset)->header;
 
   while (new_header.flags & GEGL_FLAG_LOCKED)
     {
       g_usleep (50000);
-      new_header = gegl_buffer_read_header (self->i, &offset, NULL)->header;
+      new_header = gegl_buffer_read_header (self->i, &offset)->header;
     }
 
   if (new_header.rev == self->header.rev)
@@ -1053,7 +1053,7 @@ gegl_tile_backend_file_load_index (GeglTileBackendFile *self,
 
   tile_size       = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
   offset          = self->header.next;
-  self->tiles     = gegl_buffer_read_index (self->i, &offset, NULL);
+  self->tiles     = gegl_buffer_read_index (self->i, &offset);
   self->in_offset = self->out_offset = -1;
   backend         = GEGL_TILE_BACKEND (self);
 
@@ -1177,7 +1177,7 @@ gegl_tile_backend_file_constructor (GType                  type,
         }
       self->i = g_open (self->path, O_RDONLY, 0);
 
-      self->header     = gegl_buffer_read_header (self->i, &offset, NULL)->header;
+      self->header     = gegl_buffer_read_header (self->i, &offset)->header;
       self->header.rev = self->header.rev -1;
 
       /* we are overriding all of the work of the actual constructor here,
@@ -1296,7 +1296,7 @@ gegl_tile_backend_file_try_lock (GeglTileBackendFile *self)
 {
   GeglBufferHeader new_header;
 
-  new_header = gegl_buffer_read_header (self->i, NULL, NULL)->header;
+  new_header = gegl_buffer_read_header (self->i, NULL)->header;
   if (new_header.flags & GEGL_FLAG_LOCKED)
     {
       return FALSE;

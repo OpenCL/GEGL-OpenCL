@@ -94,37 +94,25 @@ load_info_destroy (LoadInfo *info)
   g_slice_free (LoadInfo, info);
 }
 
-/* Reads buffer header from the file descriptor (first argument) or
- * memory mapped file if map argument is not NULL
- */
 GeglBufferItem *
-gegl_buffer_read_header (int      i,
-                         goffset *offset,
-                         gchar   *map)
+gegl_buffer_read_header (int i,
+                         goffset      *offset)
 {
   goffset         placeholder;
   GeglBufferItem *ret;
-
   if (offset==0)
     offset = &placeholder;
 
-  if (map == NULL)
-    if(lseek(i, 0, SEEK_SET) == -1)
-      g_warning ("failed seeking to %i", 0);
+  if(lseek(i, 0, SEEK_SET) == -1)
+    g_warning ("failed seeking to %i", 0);
   *offset = 0;
 
   ret = g_malloc (sizeof (GeglBufferHeader));
-  if (map)
-    {
-      memcpy (ret, map, sizeof (GeglBufferHeader));
-      *offset += sizeof (GeglBufferHeader);
-    }
-  else
-    {
-      ssize_t sz_read = read(i, ret, sizeof(GeglBufferHeader));
-      if (sz_read != -1)
-        *offset += sz_read;
-    }
+  {
+    ssize_t sz_read = read(i, ret, sizeof(GeglBufferHeader));
+    if (sz_read != -1)
+      *offset += sz_read;
+  }
 
   GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "read header: tile-width: %i tile-height: %i next:%i  %ix%i\n",
                    ret->header.tile_width,
@@ -145,41 +133,30 @@ gegl_buffer_read_header (int      i,
 }
 
 /* reads a block of information from a geglbuffer that resides in an GInputStream,
- * if offset is NULL it is read from the current offset of the stream. If offset
+ * if offset is NULL it is read from the current offsetition of the stream. If offset
  * is passed in the offset stored at the location is used as the initial seeking
  * point and will be updated with the offset after the read is completed.
- *
- * If the map argument is not NULL then the block is memcpyd from the passed in
- * memory mapped file.
  */
-static GeglBufferItem *read_block (int      i,
-                                   goffset *offset,
-                                   gchar   *map)
+static GeglBufferItem *read_block (int           i,
+                                   goffset      *offset)
 {
-  GeglBufferBlock  block;
-  GeglBufferItem  *ret;
-  gsize            byte_read  = 0;
-  gint             own_size   = 0;
-  gsize            block_size = sizeof (GeglBufferBlock);
+  GeglBufferBlock block;
+  GeglBufferItem *ret;
+  gsize           byte_read = 0;
+  gint            own_size=0;
 
   if (*offset==0)
     return NULL;
 
-  if (offset && map == NULL)
+  if (offset)
     if(lseek(i, *offset, SEEK_SET) == -1)
       g_warning ("failed seeking to %i", (gint)*offset);
 
-  if (map)
-    {
-      memcpy (&block, map + *offset, block_size);
-      byte_read += block_size;
-    }
-  else
-    {
-      ssize_t sz_read = read (i, &block,  block_size);
-      if(sz_read != -1)
-        byte_read += sz_read;
-    }
+  {
+	ssize_t sz_read = read (i, &block,  sizeof (GeglBufferBlock));
+    if(sz_read != -1)
+      byte_read += sz_read;
+  }
   GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD, "read block: length:%i next:%i",
                           block.length, (guint)block.next);
 
@@ -207,41 +184,25 @@ static GeglBufferItem *read_block (int      i,
        * versions
        */
       ret = g_malloc (own_size);
-      memcpy (ret, &block, block_size);
-
-      if (map)
-        {
-          memcpy (((gchar*)ret) + block_size, map + *offset + byte_read,
-                  own_size - block_size);
-          byte_read += own_size - block_size;
-        }
-      else
-        {
-          ssize_t sz_read = read (i, ((gchar*)ret) + block_size,
-                                  own_size - block_size);
-          if(sz_read != -1)
-            byte_read += sz_read;
-        }
+      memcpy (ret, &block, sizeof (GeglBufferBlock));
+      {
+        ssize_t sz_read = read (i, ((gchar*)ret) + sizeof(GeglBufferBlock),
+                                own_size - sizeof(GeglBufferBlock));
+        if(sz_read != -1)
+          byte_read += sz_read;
+      }
       ret->block.length = own_size;
     }
   else if (block.length < own_size)
     {
       ret = g_malloc (own_size);
-      memcpy (ret, &block, block_size);
-
-      if (map)
-        {
-          memcpy (((gchar*)ret) + block_size, map + *offset + byte_read,
-                  block.length - block_size);
-          byte_read += block.length - block_size;
-        }
-      else
-        {
-          ssize_t sz_read = read (i, ((gchar*)ret) + block_size,
-                                  block.length - block_size);
-          if(sz_read != -1)
-            byte_read += sz_read;
-        }
+      memcpy (ret, &block, sizeof (GeglBufferBlock));
+      {
+        ssize_t sz_read = read (i, ret + sizeof(GeglBufferBlock),
+								block.length - sizeof (GeglBufferBlock));
+		if(sz_read != -1)
+		  byte_read += sz_read;
+      }
       ret->block.length = own_size;
     }
   else
@@ -254,21 +215,15 @@ static GeglBufferItem *read_block (int      i,
   return ret;
 }
 
-/* Reads buffer index from the file descriptor (first argument) or
- * memory mapped file if map argument is not NULL
- */
 GList *
-gegl_buffer_read_index (int      i,
-                        goffset *offset,
-                        gchar   *map)
+gegl_buffer_read_index (int           i,
+                        goffset      *offset)
 /* load the index */
 {
   GList          *ret = NULL;
   GeglBufferItem *item;
 
-  for (item = read_block (i, offset, map);
-       item;
-       item = read_block (i, offset, map))
+  for (item = read_block (i, offset); item; item = read_block (i, offset))
     {
       g_assert (item);
       GEGL_NOTE (GEGL_DEBUG_BUFFER_LOAD,"loaded item: %i, %i, %i offset:%i next:%i", item->tile.x,
@@ -312,7 +267,7 @@ gegl_buffer_load (const gchar *path)
     }
 
   {
-    GeglBufferItem *header = gegl_buffer_read_header (info->i, &info->offset, NULL);
+    GeglBufferItem *header = gegl_buffer_read_header (info->i, &info->offset);
     g_assert (header);
     info->header = header->header;
     info->offset = info->header.next;
@@ -339,7 +294,7 @@ gegl_buffer_load (const gchar *path)
   */
   g_assert (babl_format_get_bytes_per_pixel (info->format) == info->header.bytes_per_pixel);
 
-  info->tiles = gegl_buffer_read_index (info->i, &info->offset, NULL);
+  info->tiles = gegl_buffer_read_index (info->i, &info->offset);
 
   /* load each tile */
   {

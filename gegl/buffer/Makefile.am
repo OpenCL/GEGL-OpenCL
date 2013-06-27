@@ -36,6 +36,7 @@ libbuffer_la_SOURCES = \
     gegl-tile-source.c		\
     gegl-tile-storage.c		\
     gegl-tile-backend.c		\
+	gegl-tile-backend-file-async.c	\
     gegl-tile-backend-ram.c	\
     gegl-tile-handler.c		\
     gegl-tile-handler-private.h	\
@@ -76,11 +77,4 @@ libbuffer_la_SOURCES = \
     gegl-tile-handler-empty.h	\
     gegl-tile-handler-log.h	\
     gegl-tile-handler-zoom.h
-
-libbuffer_la_SOURCES += gegl-tile-backend-file-async.c
-#if HAVE_64_BIT 
-#libbuffer_la_SOURCES += gegl-tile-backend-file-mapped.c
-#else
-#libbuffer_la_SOURCES += gegl-tile-backend-file-async.c
-#endif
 
