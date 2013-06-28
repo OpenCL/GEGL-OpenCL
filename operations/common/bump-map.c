@@ -42,6 +42,23 @@ gegl_chant_register_enum (gegl_bump_map_type)
   enum_value (GEGL_BUMP_MAP_TYPE_SINUSOIDAL, "Sinusoidal")
 gegl_chant_register_enum_end (GeglBumpMapType)
 
+gegl_chant_enum    (type, _("Type"),
+                    GeglBumpMapType, gegl_bump_map_type,
+                    GEGL_BUMP_MAP_TYPE_LINEAR,
+                    _("Type of map"))
+
+gegl_chant_boolean (compensate, _("Compensate"),
+                    TRUE,
+                    _("Compensate for darkening"))
+
+gegl_chant_boolean (invert, _("Invert"),
+                    FALSE,
+                    _("Invert bumpmap"))
+
+gegl_chant_boolean (tiled, _("Tiled"),
+                    FALSE,
+                    _("Tiled bumpmap"))
+
 gegl_chant_double  (azimuth, _("Azimuth"),
                     0.0, 360.0, 135.0,
                     _("Azimuth"))
@@ -54,38 +71,21 @@ gegl_chant_double  (depth, _("Depth"),
                     0.0005, 100, 0.005,
                     _("Depth"))
 
-gegl_chant_int     (xofs, _("xofs"),
+gegl_chant_int     (offset_x, _("X Offset"),
                     -1000, 1000,0,
                     _("X offset"))
 
-gegl_chant_int     (yofs, _("yofs"),
+gegl_chant_int     (offset_y, _("Y Offset"),
                     -1000, 1000,0,
                     _("Y offset"))
 
-gegl_chant_double  (waterlevel, _("waterlevel"),
+gegl_chant_double  (waterlevel, _("Waterlevel"),
                     0.0,1.0,0.0,
                     _("Level that full transparency should represent"))
 
-gegl_chant_double  (ambient, _("ambient"),
+gegl_chant_double  (ambient, _("Ambient"),
                     0.0, 1.0, 0.0,
                     _("Ambient lighting factor"))
-
-gegl_chant_boolean (compensate, _("Compensate"),
-                    TRUE,
-                    _("Compensate for darkening"))
-
-gegl_chant_boolean (invert, _("Invert"),
-                    FALSE,
-                    _("Invert bumpmap"))
-
-gegl_chant_enum    (type, _("Type"),
-                    GeglBumpMapType, gegl_bump_map_type,
-                    GEGL_BUMP_MAP_TYPE_LINEAR,
-                    _("Type of map"))
-
-gegl_chant_boolean (tiled, _("Tiled"),
-                    FALSE,
-                    _("Tiled"))
 
 #else
 
@@ -131,7 +131,7 @@ bumpmap_setup_calc (GeglChantO     *o,
 
   /* Calculate constant Z component of surface normal */
   /*              (depth may be 0 if non-interactive) */
-  nz           = 6.0 / MAX(o->depth,0.001);
+  nz           = 6.0 / MAX (o->depth, 0.001);
   params->nz2  = nz * nz;
   params->nzlz = nz * lz;
 
@@ -139,7 +139,7 @@ bumpmap_setup_calc (GeglChantO     *o,
   params->background = lz;
 
   /* Calculate darkness compensation factor */
-  params->compensation = sin(elevation);
+  params->compensation = sin (elevation);
 
   /* Create look-up table for map type */
   for (i = 0; i < LUT_TABLE_SIZE; i++)
@@ -327,15 +327,15 @@ process (GeglOperation       *operation,
   /* Initialize offsets */
   if (o->tiled)
     {
-      yofs2 = MOD (o->yofs, bm_height);
+      yofs2 = MOD (o->offset_y, bm_height);
       yofs1 = MOD (yofs2 - 1, bm_height);
       yofs3 = MOD (yofs2 + 1, bm_height);
     }
   else
     {
-      yofs2 = o->yofs;
-      yofs1 = yofs2-1;
-      yofs3 = yofs2+1;
+      yofs2 = o->offset_y;
+      yofs1 = yofs2 - 1;
+      yofs3 = yofs2 + 1;
     }
 
   /* Initialize three line fifo buffers */
@@ -400,7 +400,7 @@ process (GeglOperation       *operation,
                        has_alpha,
                        bm_row1, bm_row2, bm_row3,
                        bm_width,
-                       o->xofs,
+                       o->offset_x,
                        row_in_bumpmap,
                        o,
                        &params);
