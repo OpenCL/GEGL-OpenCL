@@ -143,6 +143,8 @@ vapi_DATA = \
 	gegl-@GEGL_API_VERSION@.vapi \
 	gegl-@GEGL_API_VERSION@.deps
 
+CLEANFILES += $(vapi_DATA)
+
 endif # HAVE_VALA
 
 EXTRA_DIST = gegl-@GEGL_API_VERSION@.deps
