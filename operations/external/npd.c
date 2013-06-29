@@ -50,12 +50,6 @@ process (GeglOperation       *operation,
   GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
   const Babl *format = babl_format ("RGBA float");
 
-  NPDModel model;
-  npd_init_model(&model);
-  npd_destroy_model(&model);
-  
-  printf("\n\nDONE!\n");
-
   return  TRUE;
 }
 
@@ -74,7 +68,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories"  , "transform",
     "name"        , "gegl:npd",
-    "description" , _("Performs n-point image deformation"),
+/*    "description" , _("Performs n-point image deformation"),*/
+    "description" , "Performs n-point image deformation",
     NULL);
 }
 

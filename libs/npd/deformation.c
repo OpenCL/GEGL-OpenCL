@@ -1,0 +1,203 @@
+/*
+ * This file is part of n-point image deformation library.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Copyright (C) 2013 Marek Dvoroznak <dvoromar@gmail.com>
+ */
+
+#include "deformation.h"
+#include <math.h>
+
+#define NPD_COMPUTE_CENTROID(suffix, arg1, arg2, WEIGHTS, accessor)     \
+void                                                                    \
+npd_compute_centroid_##suffix (gint      num_of_points,                 \
+                               arg1,                                    \
+                               arg2,                                    \
+                               NPDPoint *centroid)                      \
+{                                                                       \
+  gfloat x_sum = 0, y_sum = 0, weights_sum = 0;                         \
+  gint i;                                                               \
+                                                                        \
+  /* first compute sum of all values for each coordinate */             \
+  for (i = 0; i < num_of_points; ++i)                                   \
+    {                                                                   \
+      x_sum       += (WEIGHTS) * points[i] accessor x;                  \
+      y_sum       += (WEIGHTS) * points[i] accessor y;                  \
+      weights_sum += (WEIGHTS);                                         \
+    }                                                                   \
+                                                                        \
+  /* then compute mean */                                               \
+  centroid->x = x_sum / weights_sum;                                    \
+  centroid->y = y_sum / weights_sum;                                    \
+}
+
+NPD_COMPUTE_CENTROID (of_overlapping_points,
+                      NPDPoint *points[],
+                      gfloat weights[],
+                      1,
+                      ->)
+NPD_COMPUTE_CENTROID (from_weighted_points,
+                      NPDPoint points[],
+                      gfloat weights[],
+                      weights[i],
+                      .)
+
+void
+npd_compute_ARSAP_transformation (gint     num_of_points,
+                                  NPDPoint reference_points[],
+                                  NPDPoint current_points[],
+                                  gfloat   weights[],
+                                  gboolean ARAP)
+{
+  NPDPoint pc = {0, 0}, qc = {0, 0};
+  gfloat a = 0, b = 0, mu_part = 0, mu, r1, r2, x0, y0;
+  gint i;
+
+  /* p - points of reference pose */
+  npd_compute_centroid_from_weighted_points (num_of_points,
+                                             reference_points,
+                                             weights,
+                                            &pc);
+  /* q - points of current pose */
+  npd_compute_centroid_from_weighted_points (num_of_points,
+                                             current_points,
+                                             weights,
+                                            &qc);
+
+  /* get rotation */
+  for (i = 0; i < num_of_points; ++i)
+    {
+      gfloat px_minus_pcx = reference_points[i].x - pc.x;
+      gfloat py_minus_pcy = reference_points[i].y - pc.y;
+      gfloat qx_minus_qcx =   current_points[i].x - qc.x;
+      gfloat qy_minus_qcy =   current_points[i].y - qc.y;
+
+      a += weights[i]
+              * ((px_minus_pcx)
+              *  (qx_minus_qcx)
+              +  (py_minus_pcy)
+              *  (qy_minus_qcy));
+      b += weights[i]
+              * ((px_minus_pcx)
+              *  (qy_minus_qcy)
+              -  (py_minus_pcy)
+              *  (qx_minus_qcx));
+
+      mu_part += weights[i]
+              * ((px_minus_pcx)
+              *  (px_minus_pcx)
+              +  (py_minus_pcy)
+              *  (py_minus_pcy));
+    }
+
+  mu = 1;
+  if (ARAP) mu = sqrt(a * a + b * b);
+  else      mu = mu_part;
+
+  r1 =  a / mu;
+  r2 = -b / mu;
+
+  /* get translation */
+  x0 = qc.x - ( r1 * pc.x + r2 * pc.y);
+  y0 = qc.y - (-r2 * pc.x + r1 * pc.y);
+
+  /* transform points */
+  for (i = 0; i < num_of_points; ++i)
+    {
+      if (!current_points[i].fixed)
+        {
+          current_points[i].x =  r1 * reference_points[i].x
+                  + r2 * reference_points[i].y + x0;
+          current_points[i].y = -r2 * reference_points[i].x
+                  + r1 * reference_points[i].y + y0;
+        }
+    }
+}
+
+void
+npd_compute_ARSAP_transformations (NPDHiddenModel *hidden_model)
+{
+  gint i;
+  for (i = 0; i < hidden_model->num_of_bones; ++i)
+    {
+      NPDBone *reference_bones = &hidden_model->reference_bones[i];
+      NPDBone *current_bones   = &hidden_model->current_bones[i];
+      npd_compute_ARSAP_transformation (reference_bones->num_of_points,
+                                        reference_bones->points,
+                                        current_bones->points,
+                                        current_bones->weights,
+                                        hidden_model->ARAP);
+    }
+}
+
+void
+npd_deform_model (NPDModel *model,
+                  gint      rigidity)
+{
+  gint i;
+  for (i = 0; i < rigidity; ++i)
+    {
+      npd_deform_model_once (model);
+    }
+}
+
+void
+npd_deform_model_once (NPDModel *model)
+{
+  gint i, j;
+  
+  /* updates associated overlapping points according to this control point */
+  for (i = 0; i < model->control_points->len; ++i)
+    {
+      NPDControlPoint *cp = &g_array_index (model->control_points,
+                                            NPDControlPoint,
+                                            i);
+
+      for (j = 0; j < cp->overlapping_points->num_of_points; ++j)
+        {
+          npd_set_point_coordinates (cp->overlapping_points->points[j],
+                                     &cp->point);
+        }
+    }
+
+  npd_deform_hidden_model_once (model->hidden_model);
+}
+
+void
+npd_deform_hidden_model_once (NPDHiddenModel *hidden_model)
+{
+  gint i, j;
+  npd_compute_ARSAP_transformations (hidden_model);
+
+  /* overlapping points are not overlapping after the deformation,
+     so we have to move them to their centroid */
+  for (i = 0; i < hidden_model->num_of_overlapping_points; ++i)
+    {
+      NPDOverlappingPoints *list_of_ops
+              = &hidden_model->list_of_overlapping_points[i];
+      NPDPoint centroid;
+      
+      npd_compute_centroid_of_overlapping_points (list_of_ops->num_of_points,
+                                                  list_of_ops->points,
+                                                  NULL,
+                                                 &centroid);
+
+      for (j = 0; j < list_of_ops->num_of_points; ++j)
+        {
+          list_of_ops->points[j]->x = centroid.x;
+          list_of_ops->points[j]->y = centroid.y;
+        }
+    }
+}
