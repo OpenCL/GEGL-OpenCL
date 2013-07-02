@@ -48,8 +48,8 @@ gegl_chant_double_ui (center_y, _("Y"),
                       _("Vertical center position"))
 
 gegl_chant_double_ui (factor, _("Factor"),
-                      0.0, 1.0, 0.1,
-                      0.0, 1.0, 2.0,
+                      -10.0, 1.0, 0.1,
+                      -0.5, 1.0, 2.0,
                       _("Bluring factor"))
 
 #else
@@ -77,11 +77,11 @@ prepare (GeglOperation *operation)
     {
       op_area->left = op_area->right
         = MAX (fabs (whole_region->x - o->center_x),
-               fabs (whole_region->width + whole_region->x - o->center_x)) * o->factor +1;
+               fabs (whole_region->width + whole_region->x - o->center_x)) * fabs (o->factor) +1;
 
       op_area->top = op_area->bottom
         = MAX (fabs (whole_region->y - o->center_y),
-               fabs (whole_region->height + whole_region->y - o->center_y)) * o->factor +1;
+               fabs (whole_region->height + whole_region->y - o->center_y)) * fabs (o->factor) +1;
     }
   else
     {
