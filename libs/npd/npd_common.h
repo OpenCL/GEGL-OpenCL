@@ -83,32 +83,44 @@ typedef struct
   NPDDisplay           *display;
 } NPDModel;
 
-void               npd_init_model             (NPDModel        *model);
-void               npd_destroy_hidden_model   (NPDHiddenModel  *model);
-void               npd_destroy_model          (NPDModel        *model);
+void             npd_init_model             (NPDModel        *model);
+void             npd_destroy_hidden_model   (NPDHiddenModel  *model);
+void             npd_destroy_model          (NPDModel        *model);
 
-NPDControlPoint   *npd_add_control_point      (NPDModel        *model,
-                                               NPDPoint        *coord);
-void               npd_remove_control_point   (NPDModel        *model,
-                                               NPDControlPoint *control_point);
-void               npd_remove_all_control_points
-                                              (NPDModel        *model);
-void               npd_set_control_point_weight
-                                              (NPDControlPoint *cp,
-                                               gfloat           weight);
-gboolean           npd_equal_coordinates      (NPDPoint        *p1,
-                                               NPDPoint        *p2,
-                                               gfloat           epsilon);
-NPDControlPoint   *npd_get_control_point_at   (NPDModel        *model,
-                                               NPDPoint        *coord);
-
-void               npd_create_list_of_overlapping_points
-                                              (NPDHiddenModel  *model);
-void               npd_set_overlapping_points_weight
-                                              (NPDOverlappingPoints *op,
-                                               gfloat           weight);
-
-void               npd_set_point_coordinates  (NPDPoint        *target,
-                                               NPDPoint        *source);
-
+NPDControlPoint *npd_add_control_point      (NPDModel        *model,
+                                             NPDPoint        *coord);
+void             npd_remove_control_point   (NPDModel        *model,
+                                             NPDControlPoint *control_point);
+void             npd_remove_all_control_points
+                                            (NPDModel        *model);
+void             npd_set_control_point_weight
+                                            (NPDControlPoint *cp,
+                                             gfloat           weight);
+gboolean         npd_equal_coordinates      (NPDPoint        *p1,
+                                             NPDPoint        *p2);
+gboolean         npd_equal_coordinates_epsilon
+                                            (NPDPoint        *p1,
+                                             NPDPoint        *p2,
+                                             gfloat           epsilon);
+NPDControlPoint *npd_get_control_point_at   (NPDModel        *model,
+                                             NPDPoint        *coord);
+void             npd_create_list_of_overlapping_points
+                                            (NPDHiddenModel  *model);
+void             add_point_to_suitable_cluster
+                                            (GHashTable      *coords_to_cluster,
+                                             NPDPoint        *point,
+                                             GPtrArray       *list_of_overlapping_points);
+void             npd_set_overlapping_points_weight
+                                            (NPDOverlappingPoints *op,
+                                             gfloat           weight);
+void             npd_set_point_coordinates  (NPDPoint        *target,
+                                             NPDPoint        *source);
+void             npd_print_hidden_model     (NPDHiddenModel  *hm,
+                                             gboolean         print_bones,
+                                             gboolean         print_overlapping_points);
+void             npd_print_bone             (NPDBone         *bone);
+void             npd_print_point            (NPDPoint        *point,
+                                             gboolean         print_details);
+void             npd_print_overlapping_points
+                                            (NPDOverlappingPoints *op);
 #endif	/* __NPD_COMMON_H__ */
