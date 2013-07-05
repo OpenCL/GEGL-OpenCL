@@ -109,6 +109,7 @@ operations/external/ff-load.c
 operations/external/jp2-load.c
 operations/external/jpg-load.c
 operations/external/jpg-save.c
+operations/external/lcms-from-profile.c
 operations/external/matting-levin.c
 operations/external/npy-save.c
 operations/external/path.c
