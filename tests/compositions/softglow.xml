@@ -1,5 +1,13 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
+  <node operation='gegl:crop'>
+    <params>
+      <param name='x'>0</param>
+      <param name='y'>0</param>
+      <param name='width'>512</param>
+      <param name='height'>384</param>
+    </params>
+  </node>
   <node operation='gegl:softglow'>
     <params>
       <param name='glow-radius'>10.0</param>
