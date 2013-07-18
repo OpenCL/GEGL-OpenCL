@@ -13,6 +13,10 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
+ * Original authors:
+ *
+ *      Daniel Cotting <cotting@mygale.org>
+ *      Martin Weber   <martweb@gmx.net>
  */
 
 #include "config.h"
