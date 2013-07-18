@@ -26,26 +26,46 @@ gegl_chant_register_enum (gegl_alien_map_color_representation)
   enum_value (GEGL_ALIEN_MAP_COLOR_REPRESENTATION_HSL, "HSL")
 gegl_chant_register_enum_end (GeglAlienMapColorRepresentation)
 
-gegl_chant_enum (color_represenation, _("Color represenation"), GeglAlienMapColorRepresentation,
-                 gegl_alien_map_color_representation, GEGL_ALIEN_MAP_COLOR_REPRESENTATION_RGB,
-                 _("What representation used for the transformation"))
+gegl_chant_enum    (color_represenation, _("Color represenation"),
+                    GeglAlienMapColorRepresentation,
+                    gegl_alien_map_color_representation,
+                    GEGL_ALIEN_MAP_COLOR_REPRESENTATION_RGB,
+                    _("What representation used for the transformation"))
 
-gegl_chant_double (cpn_1_frequency, _("Component 1 frequency"), 0, 20, 1, _("Component 1 frequency"))
-gegl_chant_double (cpn_2_frequency, _("Component 2 frequency"), 0, 20, 1, _("Component 2 frequency"))
-gegl_chant_double (cpn_3_frequency, _("Component 3 frequency"), 0, 20, 1, _("Component 3 frequency"))
+gegl_chant_double  (cpn_1_frequency, _("Component 1 frequency"),
+                    0, 20, 1,
+                    _("Component 1 frequency"))
+gegl_chant_double  (cpn_2_frequency, _("Component 2 frequency"),
+                    0, 20, 1,
+                    _("Component 2 frequency"))
+gegl_chant_double  (cpn_3_frequency, _("Component 3 frequency"),
+                    0, 20, 1,
+                    _("Component 3 frequency"))
 
-gegl_chant_double (cpn_1_phaseshift, _("Component 1 phase shift"), 0, 360, 0, _("Component 1 phase shift"))
-gegl_chant_double (cpn_2_phaseshift, _("Component 2 phase shift"), 0, 360, 0, _("Component 2 phase shift"))
-gegl_chant_double (cpn_3_phaseshift, _("Component 3 phase shift"), 0, 360, 0, _("Component 3 phase shift"))
+gegl_chant_double  (cpn_1_phaseshift, _("Component 1 phase shift"),
+                    0, 360, 0,
+                    _("Component 1 phase shift"))
+gegl_chant_double  (cpn_2_phaseshift, _("Component 2 phase shift"),
+                    0, 360, 0,
+                    _("Component 2 phase shift"))
+gegl_chant_double  (cpn_3_phaseshift, _("Component 3 phase shift"),
+                    0, 360, 0,
+                    _("Component 3 phase shift"))
 
-gegl_chant_boolean (cpn_1_keep, _("Keep component 1"), FALSE, _("Keep component 1"))
-gegl_chant_boolean (cpn_2_keep, _("Keep component 2"), FALSE, _("Keep component 2"))
-gegl_chant_boolean (cpn_3_keep, _("Keep component 3"), FALSE, _("Keep component 3"))
+gegl_chant_boolean (cpn_1_keep, _("Keep component 1"),
+                    FALSE,
+                    _("Keep component 1"))
+gegl_chant_boolean (cpn_2_keep, _("Keep component 2"),
+                    FALSE,
+                    _("Keep component 2"))
+gegl_chant_boolean (cpn_3_keep, _("Keep component 3"),
+                    FALSE,
+                    _("Keep component 3"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "alien-map.c"
+#define GEGL_CHANT_C_FILE "alien-map.c"
 
 #include "gegl-chant.h"
 
@@ -56,13 +76,17 @@ prepare (GeglOperation *operation)
 
   if (o->color_represenation == GEGL_ALIEN_MAP_COLOR_REPRESENTATION_RGB)
     {
-      gegl_operation_set_format (operation, "input", babl_format ("R'G'B'A float"));
-      gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
+      gegl_operation_set_format (operation, "input",
+                                 babl_format ("R'G'B'A float"));
+      gegl_operation_set_format (operation, "output",
+                                 babl_format ("R'G'B'A float"));
     }
   else
     {
-      gegl_operation_set_format (operation, "input", babl_format ("HSLA float"));
-      gegl_operation_set_format (operation, "output", babl_format ("HSLA float"));
+      gegl_operation_set_format (operation, "input",
+                                 babl_format ("HSLA float"));
+      gegl_operation_set_format (operation, "output",
+                                 babl_format ("HSLA float"));
     }
 }
 
@@ -74,13 +98,12 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-
-  gfloat *in  = in_buf;
-  gfloat *out = out_buf;
-
-  gfloat   freq[3], phaseshift[3];
-  gboolean keep[3];
+  GeglChantO *o   = GEGL_CHANT_PROPERTIES (op);
+  gfloat     *in  = in_buf;
+  gfloat     *out = out_buf;
+  gfloat      freq[3];
+  gfloat      phaseshift[3];
+  gboolean    keep[3];
 
   freq[0] = o->cpn_1_frequency * G_PI;
   freq[1] = o->cpn_2_frequency * G_PI;
@@ -122,14 +145,13 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  operation_class->prepare     = prepare;
-  point_filter_class->process  = process;
+  operation_class->prepare    = prepare;
+  point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:alien-map",
-    "categories" , "artistic",
-    "description",
-       _("Alters colors using sine transformations"),
+    "name",        "gegl:alien-map",
+    "categories",  "artistic",
+    "description", _("Alters colors using sine transformations"),
     NULL);
 }
 
