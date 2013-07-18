@@ -3,6 +3,7 @@ bin/gegl.c
 bin/gegl-options.c
 gegl/gegl-init.c
 gegl/module/geglmodule.c
+operations/common/alien-map.c
 operations/common/bilateral-filter.c
 operations/common/bilateral-filter-fast.c
 operations/common/box-blur.c
