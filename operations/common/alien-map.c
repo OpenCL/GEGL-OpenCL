@@ -25,16 +25,16 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_register_enum (gegl_alien_map_color_representation)
-  enum_value (GEGL_ALIEN_MAP_COLOR_REPRESENTATION_RGB, "RGB")
-  enum_value (GEGL_ALIEN_MAP_COLOR_REPRESENTATION_HSL, "HSL")
-gegl_chant_register_enum_end (GeglAlienMapColorRepresentation)
+gegl_chant_register_enum (gegl_alien_map_color_model)
+  enum_value (GEGL_ALIEN_MAP_COLOR_MODEL_RGB, "RGB")
+  enum_value (GEGL_ALIEN_MAP_COLOR_MODEL_HSL, "HSL")
+gegl_chant_register_enum_end (GeglAlienMapColorModel)
 
-gegl_chant_enum    (color_representation, _("Color represenation"),
-                    GeglAlienMapColorRepresentation,
-                    gegl_alien_map_color_representation,
-                    GEGL_ALIEN_MAP_COLOR_REPRESENTATION_RGB,
-                    _("What representation used for the transformation"))
+gegl_chant_enum    (color_model, _("Color model"),
+                    GeglAlienMapColorModel,
+                    gegl_alien_map_color_model,
+                    GEGL_ALIEN_MAP_COLOR_MODEL_RGB,
+                    _("What color model used for the transformation"))
 
 gegl_chant_double  (cpn_1_frequency, _("Component 1 frequency"),
                     0, 20, 1,
@@ -78,7 +78,7 @@ prepare (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (o->color_representation == GEGL_ALIEN_MAP_COLOR_REPRESENTATION_RGB)
+  if (o->color_model == GEGL_ALIEN_MAP_COLOR_MODEL_RGB)
     {
       gegl_operation_set_format (operation, "input",
                                  babl_format ("R'G'B'A float"));
