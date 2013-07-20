@@ -93,7 +93,7 @@ static long primes[]={
 
 #define RANDOM_DATA_SIZE (15083+15091+15101)
 
-static gint64   random_data[RANDOM_DATA_SIZE];
+static gint32   random_data[RANDOM_DATA_SIZE];
 static gboolean random_data_inited = FALSE;
 
 static inline void random_init (void)
@@ -105,14 +105,14 @@ static inline void random_init (void)
     GRand *gr = g_rand_new_with_seed (42);
     int i;
     for (i = 0; i < RANDOM_DATA_SIZE; i++)
-      random_data[i] = (((gint64) g_rand_int (gr)) << 32) + g_rand_int (gr);
+      random_data[i] = g_rand_int (gr);
     g_rand_free (gr);
     random_data_inited = TRUE;
   }
 }
 
 
-static inline guint64
+static inline guint32
 _gegl_random_int (int seed,
                  int x,
                  int y,
@@ -138,7 +138,7 @@ _gegl_random_int (int seed,
   return ret;
 }
 
-guint64
+guint32
 gegl_random_int (int seed,
                  int x,
                  int y,
@@ -148,7 +148,7 @@ gegl_random_int (int seed,
   return _gegl_random_int (seed, x, y, z, n);
 }
 
-gint64
+gint32
 gegl_random_int_range (int seed,
                        int x,
                        int y,
@@ -161,8 +161,7 @@ gegl_random_int_range (int seed,
   return (ret % (max-min)) + min;
 }
 
-/* transform [0..2^32] -> [0..1] */
-#define G_RAND_DOUBLE_TRANSFORM 2.3283064365386962890625e-10
+#define G_RAND_FLOAT_TRANSFORM  0.00001525902189669642175
 
 double
 gegl_random_double (int seed,
@@ -171,7 +170,17 @@ gegl_random_double (int seed,
                     int z,
                     int n)
 {
-  return (_gegl_random_int (seed, x, y, z, n) & 0xffffffff) * G_RAND_DOUBLE_TRANSFORM;
+  return gegl_random_float (seed, x, y, z, n);
+}
+
+float
+gegl_random_float (int seed,
+                   int x,
+                   int y,
+                   int z,
+                   int n)
+{
+  return (_gegl_random_int (seed, x, y, z, n) & 0xffff) * G_RAND_FLOAT_TRANSFORM;
 }
 
 double
@@ -184,4 +193,25 @@ gegl_random_double_range (int seed,
                           double max)
 {
   return gegl_random_double (seed, x, y, z, n) * (max - min) + min;
+}
+
+float
+gegl_random_float_range (int seed,
+                         int x,
+                         int y,
+                         int z,
+                         int n,
+                         float min,
+                         float max);
+
+float
+gegl_random_float_range (int seed,
+                         int x,
+                         int y,
+                         int z,
+                         int n,
+                         float min,
+                         float max)
+{
+  return gegl_random_float (seed, x, y, z, n) * (max - min) + min;
 }

@@ -999,6 +999,25 @@ GeglNode *gegl_graph (GeglNode *node);
  */
 double gegl_random_double_range (int seed, int x, int y, int z, int n, double min, double max);
 
+
+/**
+ * gegl_random_float_range:
+ * @seed: an integer seed, change for different permutation
+ * @x: x coordinate
+ * @y: y coordinate
+ * @z: z coordinate (mipmap level)
+ * @n: number no (each x,y coordinate provides its own sequence of
+ * numbers
+ * @min: minimum value
+ * @max: maxmimum value
+ *
+ * Return a random floating point number in the range specified,
+ * for the given x,y coordinates and seed provided, if multiple different
+ * numbers are needed pass in incrementing n's.
+ */
+float gegl_random_float_range (int seed, int x, int y, int z, int n, float min, float max);
+
+
 /**
  * gegl_random_int_range:
  * @seed: an integer seed, change for different permutation
@@ -1014,7 +1033,7 @@ double gegl_random_double_range (int seed, int x, int y, int z, int n, double mi
  * for the given x,y coordinates and seed provided, if multiple different
  * numbers are needed pass in incrementing n's.
  */
-gint64 gegl_random_int_range    (int seed, int x, int y, int z, int n, int min, int max);
+gint32 gegl_random_int_range    (int seed, int x, int y, int z, int n, int min, int max);
 
 /**
  * gegl_random_int:
@@ -1027,7 +1046,7 @@ gint64 gegl_random_int_range    (int seed, int x, int y, int z, int n, int min, 
  *
  * Return a random integer number in range 0 .. MAX_UINT
  */
-guint64 gegl_random_int         (int seed, int x, int y, int z, int n);
+guint32 gegl_random_int         (int seed, int x, int y, int z, int n);
 
 /**
  * gegl_random_double:
@@ -1041,6 +1060,21 @@ guint64 gegl_random_int         (int seed, int x, int y, int z, int n);
  * Return a random floating point number in range 0.0 .. 1.0.
  */
 double gegl_random_double       (int seed, int x, int y, int z, int n);
+
+
+
+/**
+ * gegl_random_float:
+ * @seed: an integer seed, change for different permutation
+ * @x: x coordinate
+ * @y: y coordinate
+ * @z: z coordinate (mipmap level)
+ * @n: number no (each x,y coordinate provides its own sequence of
+ * numbers
+ *
+ * Return a random floating point number in range 0.0 .. 1.0.
+ */
+float  gegl_random_float        (int seed, int x, int y, int z, int n);
 
 #define GEGL_ALIGNED __restrict__ __attribute__((__aligned__ (16)))
 
