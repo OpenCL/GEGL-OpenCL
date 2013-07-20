@@ -62,7 +62,7 @@ calc_sample_coords (gint  src_x,
                                                 -amount_x, amount_x) : 0;
   ydist = amount_y > 0 ? gegl_random_int_range (seed, src_x, src_y, 0, 1,
                                                 -amount_y, amount_y) : 0;
-  angle = gegl_random_double_range (seed, src_x, src_y, 0, 2, -G_PI, G_PI);
+  angle = gegl_random_float_range (seed, src_x, src_y, 0, 2, -G_PI, G_PI);
 
   *x = src_x + floor (sin (angle) * xdist);
   *y = src_y + floor (cos (angle) * ydist);

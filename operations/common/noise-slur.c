@@ -118,7 +118,7 @@ process (GeglOperation       *operation,
         {
           gint b;
 
-          if (gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
+          if (gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
               o->pct_random)
             {
               gint k = gegl_random_int_range (o->seed, x, y, 0, n++, 0, 10);

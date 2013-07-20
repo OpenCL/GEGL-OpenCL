@@ -983,24 +983,6 @@ GeglNode *gegl_node (const gchar *op_type,
 GeglNode *gegl_graph (GeglNode *node);
 
 /**
- * gegl_random_double_range:
- * @seed: an integer seed, change for different permutation
- * @x: x coordinate
- * @y: y coordinate
- * @z: z coordinate (mipmap level)
- * @n: number no (each x,y coordinate provides its own sequence of
- * numbers
- * @min: minimum value
- * @max: maxmimum value
- *
- * Return a random floating point number in the range specified,
- * for the given x,y coordinates and seed provided, if multiple different
- * numbers are needed pass in incrementing n's.
- */
-double gegl_random_double_range (int seed, int x, int y, int z, int n, double min, double max);
-
-
-/**
  * gegl_random_float_range:
  * @seed: an integer seed, change for different permutation
  * @x: x coordinate
@@ -1047,21 +1029,6 @@ gint32 gegl_random_int_range    (int seed, int x, int y, int z, int n, int min, 
  * Return a random integer number in range 0 .. MAX_UINT
  */
 guint32 gegl_random_int         (int seed, int x, int y, int z, int n);
-
-/**
- * gegl_random_double:
- * @seed: an integer seed, change for different permutation
- * @x: x coordinate
- * @y: y coordinate
- * @z: z coordinate (mipmap level)
- * @n: number no (each x,y coordinate provides its own sequence of
- * numbers
- *
- * Return a random floating point number in range 0.0 .. 1.0.
- */
-double gegl_random_double       (int seed, int x, int y, int z, int n);
-
-
 
 /**
  * gegl_random_float:

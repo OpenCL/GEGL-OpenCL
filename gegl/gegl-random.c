@@ -163,16 +163,6 @@ gegl_random_int_range (int seed,
 
 #define G_RAND_FLOAT_TRANSFORM  0.00001525902189669642175
 
-double
-gegl_random_double (int seed,
-                    int x,
-                    int y,
-                    int z,
-                    int n)
-{
-  return gegl_random_float (seed, x, y, z, n);
-}
-
 float
 gegl_random_float (int seed,
                    int x,
@@ -182,27 +172,6 @@ gegl_random_float (int seed,
 {
   return (_gegl_random_int (seed, x, y, z, n) & 0xffff) * G_RAND_FLOAT_TRANSFORM;
 }
-
-double
-gegl_random_double_range (int seed,
-                          int x,
-                          int y,
-                          int z,
-                          int n,
-                          double min,
-                          double max)
-{
-  return gegl_random_double (seed, x, y, z, n) * (max - min) + min;
-}
-
-float
-gegl_random_float_range (int seed,
-                         int x,
-                         int y,
-                         int z,
-                         int n,
-                         float min,
-                         float max);
 
 float
 gegl_random_float_range (int seed,

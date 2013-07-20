@@ -77,10 +77,10 @@ gauss (int seed, int *i, int xx, int yy)
 
   do
   {
-    v = gegl_random_double (seed, xx, yy, 0, (*i)++);
+    v = gegl_random_float (seed, xx, yy, 0, (*i)++);
 
     do
-      u = gegl_random_double (seed, xx, yy, 0, (*i)++);
+      u = gegl_random_float (seed, xx, yy, 0, (*i)++);
     while (u == 0);
 
     /* Const 1.715... = sqrt(8/e) */

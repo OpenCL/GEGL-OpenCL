@@ -97,12 +97,12 @@ process (GeglOperation       *operation,
           blue  = out_pix[2];
           alpha = out_pix[3];
 
-          if (gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
+          if (gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
               o->pct_random)
             {
-              red   = gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 1.0);
-              green = gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 1.0);
-              blue  = gegl_random_double_range (o->seed, x, y, 0, n++, 0.0, 1.0);
+              red   = gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 1.0);
+              green = gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 1.0);
+              blue  = gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 1.0);
             }
 
           out_pix[0] = red;
