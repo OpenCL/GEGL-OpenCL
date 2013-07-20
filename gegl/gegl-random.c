@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2012 Øyvind Kolås
+ * Copyright 2012, 2013 Øyvind Kolås
  */
 
 /* This file provides random access - reproducable random numbers in three
@@ -96,120 +96,21 @@ static long primes[]={
 static gint64   random_data[RANDOM_DATA_SIZE];
 static gboolean random_data_inited = FALSE;
 
-typedef struct GeglRandomSet
+static inline void random_init (void)
 {
-  int     seed;
-  int     tables;
-  gint64 *table[MAX_TABLES];
-  long    prime[MAX_TABLES];
-} GeglRandomSet;
+  if (G_LIKELY (random_data_inited))
+    return;
 
-#define make_index(x,y,n) ((x) * XPRIME + \
-                           (y) * YPRIME * XPRIME + \
-                           (n) * NPRIME * YPRIME * XPRIME)
-
-static GeglRandomSet *
-gegl_random_set_new (int seed)
-{
-  GeglRandomSet *set = g_malloc0 (sizeof (GeglRandomSet));
-  GRand *gr;
-  int i;
-
-  set->seed = seed;
-  set->tables = MAX_TABLES;
-
-  if (!random_data_inited)
-    {
-      gr = g_rand_new_with_seed (42);
-      for (i = 0; i < RANDOM_DATA_SIZE; i++)
-        random_data[i] = (((gint64) g_rand_int (gr)) << 32) + g_rand_int (gr);
-      g_rand_free (gr);
-      random_data_inited = TRUE;
-    }
-
-  gr = g_rand_new_with_seed (set->seed);
-
-  for (i = 0; i < set->tables; i++)
-    {
-      int j;
-      int found = 0;
-      do
-        {
-          found = 0;
-          set->prime[i] = primes[g_rand_int_range (gr, 0, G_N_ELEMENTS (primes) - 2)];
-          for (j = 0; j < i; j++)
-            if (set->prime[j] == set->prime[i])
-              found = 1;
-        } while (found);
-
-      set->table[i] = random_data;
-
-      for (j = 0; j < i-1; j++)
-        set->table[i]+= set->prime[j];
-    }
-
-  g_rand_free (gr);
-
-  return set;
+  {
+    GRand *gr = g_rand_new_with_seed (42);
+    int i;
+    for (i = 0; i < RANDOM_DATA_SIZE; i++)
+      random_data[i] = (((gint64) g_rand_int (gr)) << 32) + g_rand_int (gr);
+    g_rand_free (gr);
+    random_data_inited = TRUE;
+  }
 }
 
-static void
-gegl_random_set_free (GeglRandomSet *set)
-{
-  g_free (set);
-}
-
-static GeglRandomSet *cached = NULL;
-static GList         *cache  = NULL;
-
-static void
-trim_cache_to_length (int length)
-{
-  while (g_list_length (cache) > length)
-    {
-      GeglRandomSet *last = g_list_last (cache)->data;
-
-      cache = g_list_remove (cache, last);
-      gegl_random_set_free (last);
-    }
-}
-
-static inline GeglRandomSet *
-gegl_random_get_set_for_seed (int seed)
-{
-  if (cached && cached->seed == seed)
-    {
-      return cached;
-    }
-  else
-    {
-      GList *l;
-
-      if (cached)
-        {
-          cache = g_list_prepend (cache, cached);
-          cached = NULL;
-          trim_cache_to_length (10);
-        }
-
-      for (l = cache; l; l=l->next)
-        {
-          GeglRandomSet *s = l->data;
-
-          if (s->seed == seed)
-            {
-              cached = s;
-              cache = g_list_remove (cache, cached);
-
-              return cached;
-            }
-        }
-
-      cached = gegl_random_set_new (seed);
-    }
-
-  return cached;
-}
 
 static inline guint64
 _gegl_random_int (int seed,
@@ -218,16 +119,21 @@ _gegl_random_int (int seed,
                  int z,
                  int n)
 {
-  GeglRandomSet *set = gegl_random_get_set_for_seed (seed);
-  /* XXX: z is unhandled, it should average like a mipmap - or even
-   * use mipmap versions of random set
-   */
-  unsigned long idx = make_index (x, y, n);
+  unsigned long idx = x * XPRIME + 
+                      y * YPRIME * XPRIME + 
+                      n * NPRIME * YPRIME * XPRIME;
+
   gint64 ret = 0;
   int i;
+  int offset = 0;
+  long * prime = &primes[(seed * 23) % ((G_N_ELEMENTS (primes) - 1))];
+  random_init ();
 
-  for (i = 0; i < set->tables; i++)
-    ret ^= set->table[i][idx % (set->prime[i])];
+  for (i = 0; i < 3; i++) /* 3 rounds gives a reasonably high cycle for */
+    {                     /*   our synthesized larger random set. */
+      ret ^= random_data[offset + (idx % (prime[i]))];
+      offset += prime[i];
+    }
 
   return ret;
 }
