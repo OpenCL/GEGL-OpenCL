@@ -158,6 +158,12 @@ rgbe_save_la_SOURCES = rgbe-save.c
 rgbe_save_la_CFLAGS = $(AM_CFLAGS) -I $(top_srcdir)/libs
 rgbe_save_la_LIBADD = $(op_libs) $(top_builddir)/libs/rgbe/librgbe.la
 
+# Dependencies are in our source tree
+ops += npd.la
+npd_la_SOURCES = npd.c
+npd_la_CFLAGS = $(AM_CFLAGS) -I $(top_srcdir)/libs
+npd_la_LIBADD = $(op_libs) $(top_builddir)/libs/npd/libnpd.la
+
 BUILT_SOURCES = $(subst .c,.c.h,$(wildcard $(srcdir)/*.c))
 EXTRA_DIST += $(BUILT_SOURCES)
 

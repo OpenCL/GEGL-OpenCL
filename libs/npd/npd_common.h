@@ -28,29 +28,38 @@ typedef struct _NPDColor    NPDColor;
 typedef struct _NPDDisplay  NPDDisplay;
 typedef struct _NPDMatrix   NPDMatrix;
 
-typedef struct
+typedef struct _NPDPoint    NPDPoint;
+typedef struct _NPDBone     NPDBone;
+typedef struct _NPDOverlappingPoints NPDOverlappingPoints;
+
+struct _NPDPoint
 {
   gfloat                x;
   gfloat                y;
   gboolean              fixed;
   gfloat               *weight;            /* reference to weight in array
                                               of weights */
-} NPDPoint;
+  gint                  index;
+  NPDBone              *current_bone;
+  NPDBone              *reference_bone;
+  NPDPoint             *counterpart;
+  NPDOverlappingPoints *overlapping_points;
+};
 
-typedef struct
+struct _NPDBone
 {
   gint                  num_of_points;
   NPDPoint             *points;            /* array of points */
   gfloat               *weights;           /* array of weights */
-} NPDBone;
+};
 
-typedef struct
+struct _NPDOverlappingPoints
 {
   gint                  num_of_points;
   NPDPoint             *representative;    /* reference to representative
                                               of cluster */
   NPDPoint            **points;            /* array of references to points */
-} NPDOverlappingPoints;
+};
 
 typedef struct
 {

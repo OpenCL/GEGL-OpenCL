@@ -17,15 +17,13 @@
  * Copyright (C) 2013 Marek Dvoroznak <dvoromar@gmail.com>
  */
 
-#ifndef __NPD_GEGL_H__
-#define	__NPD_GEGL_H__
+#ifndef __NPD_H__
+#define	__NPD_H__
 
+#include "npd_common.h"
+#include "graphics.h"
+#include "deformation.h"
 #include "npd_math.h"
-#include <gegl-matrix.h>
 
-struct _NPDMatrix
-{
-  GeglMatrix3 matrix;
-};
+#endif	/* __NPD_H__ */
 
-#endif	/* __NPD_GEGL_H__ */

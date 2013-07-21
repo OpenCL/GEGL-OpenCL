@@ -61,6 +61,6 @@ npd_apply_transformation (NPDMatrix *T,
                           NPDPoint  *dest)
 {
   gdouble x = src->x, y = src->y;
-  gegl_matrix3_transform_point (T, &x, &y);
+  gegl_matrix3_transform_point (&T->matrix, &x, &y);
   dest->x = x; dest->y = y;
 }

@@ -236,6 +236,13 @@ npd_create_list_of_overlapping_points (NPDHiddenModel *hm)
       hm->list_of_overlapping_points[i].num_of_points = op->len;
       hm->list_of_overlapping_points[i].representative =
               hm->list_of_overlapping_points[i].points[0];
+      
+      for (j = 0; j < op->len; j++)
+        {
+          NPDPoint *p = hm->list_of_overlapping_points[i].points[j];
+          p->overlapping_points = &hm->list_of_overlapping_points[i];
+          p->counterpart->overlapping_points = &hm->list_of_overlapping_points[i];
+        }
 
       g_ptr_array_free (op, FALSE); /* we want to preserve the underlying
                                        array */

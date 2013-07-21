@@ -275,6 +275,7 @@ case "$target_or_host" in
     ;;
   x86_64-*-*)
     have_x86=yes
+    have_64_bit=yes
     AC_DEFINE(ARCH_X86, 1, [Define to 1 if you are compiling for ix86.])
     AC_DEFINE(ARCH_X86_64, 1, [Define to 1 if you are compiling for amd64.])
     ;;
@@ -284,12 +285,15 @@ case "$target_or_host" in
     ;;
   ppc64-*-* | powerpc64-*)
     have_ppc=yes
+    have_64_bit=yes
     AC_DEFINE(ARCH_PPC, 1, [Define to 1 if you are compiling for PowerPC.])
     AC_DEFINE(ARCH_PPC64, 1, [Define to 1 if you are compiling for PowerPC64.])
     ;;
   *)
     ;;
 esac
+
+AM_CONDITIONAL(HAVE_64_BIT, test "x$have_64_bit" = "xyes")  
 
 
 ####################################################
@@ -1129,6 +1133,14 @@ if test "x$have_p2tc" != "xyes"; then
   AC_SUBST(P2TC_LIBS, "-L\$(top_builddir)/libs/poly2tri-c/poly2tri-c -lpoly2tri-c")
 fi
 
+##################
+# Check for libnpd
+##################
+have_libnpd="yes (internal)"
+
+AC_SUBST(NPD_CFLAGS, "-I\$(top_srcdir)/libs/npd")
+AC_SUBST(NPD_LIBS, "-L\$(top_builddir)/libs/npd -lnpd")
+
 #######################
 # Check for other items
 #######################
@@ -1194,6 +1206,7 @@ gegl/property-types/Makefile
 gegl/opencl/Makefile
 libs/Makefile
 libs/rgbe/Makefile
+libs/npd/Makefile
 libs/poly2tri-c/Makefile
 libs/poly2tri-c/poly2tri-c/Makefile
 libs/poly2tri-c/poly2tri-c/render/Makefile
@@ -1283,4 +1296,5 @@ Optional dependencies:
   umfpack:         $have_umfpack
   webp:            $have_webp
   poly2tri-c:      $have_p2tc
+  libnpd:          $have_libnpd
 ]);
