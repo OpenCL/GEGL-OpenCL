@@ -26,8 +26,8 @@
  * The way it works is by xoring three lookup tables that are iterated
  * cyclically, each LUT has a prime number as a size, thus the combination
  * of the three values xored will have a period of prime1 * prime2 * prime3,
- * with the primes used this yields roughly 3TB of random data from ~300kb
- * of lookup data.
+ * with the primes used this yields roughly 3TB of random, non-repeating
+ * data from ~300kb of lookup data.
  *
  * The data for the LUTs is shared between different random seeds, it
  * is just the sizes of the LUTs that change, currently with 468 primes
@@ -122,20 +122,38 @@ _gegl_random_int (int seed,
   unsigned long idx = x * XPRIME + 
                       y * YPRIME * XPRIME + 
                       n * NPRIME * YPRIME * XPRIME;
-
-  gint64 ret = 0;
-  int i;
-  int offset = 0;
-  long * prime = &primes[(seed * 23) % ((G_N_ELEMENTS (primes) - 1))];
+#define ROUNDS 3
+    /* 3 rounds gives a reasonably high cycle for */
+                         /*   our synthesized larger random set. */
+  long * prime = &primes[seed % (G_N_ELEMENTS (primes) - 1 - ROUNDS)];
   random_init ();
+#define UNROLLED
 
-  for (i = 0; i < 3; i++) /* 3 rounds gives a reasonably high cycle for */
-    {                     /*   our synthesized larger random set. */
+#ifdef UNROLLED
+
+  {
+    int prime0 = prime[0],
+        prime1 = prime[1],
+        prime2 = prime[2];
+    return
+    random_data[idx % prime0] ^
+    random_data[prime0 + (idx % (prime1))] ^
+    random_data[prime0 + prime1 + (idx % (prime2))];
+  }
+#else
+  {
+    gint32 ret = 0;
+    int i;
+    int offset = 0;
+
+    for (i = 0; i < ROUNDS; i++) 
       ret ^= random_data[offset + (idx % (prime[i]))];
       offset += prime[i];
-    }
 
-  return ret;
+
+    return ret;
+  }
+#endif
 }
 
 guint32
@@ -157,7 +175,7 @@ gegl_random_int_range (int seed,
                        int min,
                        int max)
 {
-  guint64 ret = _gegl_random_int (seed, x, y, z, n);
+  guint32 ret = _gegl_random_int (seed, x, y, z, n);
   return (ret % (max-min)) + min;
 }
 
