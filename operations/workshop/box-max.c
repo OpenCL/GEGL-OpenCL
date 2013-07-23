@@ -162,6 +162,136 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
+#include "opencl/gegl-cl.h"
+#include "buffer/gegl-buffer-cl-iterator.h"
+
+#include "opencl/box-max.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+static gboolean
+cl_box_max (cl_mem                in_tex,
+            cl_mem                aux_tex,
+            cl_mem                out_tex,
+            size_t                global_worksize,
+            const GeglRectangle  *roi,
+            gint                  radius)
+{
+  cl_int cl_err = 0;
+  size_t global_ws_hor[2], global_ws_ver[2];
+  size_t local_ws_hor[2], local_ws_ver[2];
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"kernel_max_hor", "kernel_max_ver", NULL};
+      cl_data = gegl_cl_compile_and_build (box_max_cl_source, kernel_name);
+    }
+  if (!cl_data) return TRUE;
+
+  local_ws_hor[0] = 1;
+  local_ws_hor[1] = 256;
+  global_ws_hor[0] = roi->height + 2 * radius;
+  global_ws_hor[1] = ((roi->width + local_ws_hor[1] -1)/local_ws_hor[1]) * local_ws_hor[1];
+
+  local_ws_ver[0] = 1;
+  local_ws_ver[1] = 256;
+  global_ws_ver[0] = roi->height;
+  global_ws_ver[1] = ((roi->width + local_ws_ver[1] -1)/local_ws_ver[1]) * local_ws_ver[1];
+
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&aux_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_int),   (void*)&roi->width);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_int),   (void*)&radius);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_ws_hor, local_ws_hor,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem),   (void*)&aux_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_mem),   (void*)&out_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_int),   (void*)&roi->width);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 3, sizeof(cl_int),   (void*)&radius);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                        cl_data->kernel[1], 2,
+                                        NULL, global_ws_ver, local_ws_ver,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  return FALSE;
+
+error:
+  return TRUE;
+}
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            GeglBuffer          *input,
+            GeglBuffer          *output,
+            const GeglRectangle *result)
+{
+  const Babl *in_format  = gegl_operation_get_format (operation, "input");
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+
+  gint err;
+
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             op_area->left,
+                                             op_area->right,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
+  gint aux  = gegl_buffer_cl_iterator_add_2 (i,
+                                             NULL,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_AUX,
+                                             0,
+                                             0,
+                                             op_area->top,
+                                             op_area->bottom,
+                                             GEGL_ABYSS_NONE);
+
+  while (gegl_buffer_cl_iterator_next (i, &err))
+    {
+      if (err) return FALSE;
+
+      err = cl_box_max(i->tex[read],
+                       i->tex[aux],
+                       i->tex[0],
+                       i->size[0],
+                       &i->roi[0],
+                       ceil (o->radius));
+
+      if (err) return FALSE;
+    }
+
+  return TRUE;
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -171,6 +301,14 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle input_rect = gegl_operation_get_required_for_output (operation, "input", result);
+
+  if (gegl_cl_is_accelerated ())
+    {
+      if (cl_process (operation, input, output, result))
+        return TRUE;
+      else
+        gegl_cl_disable();
+    }
 
   hor_max ( input, &input_rect, output, result, o->radius);
   ver_max (output,      result, output, result, o->radius);
@@ -190,6 +328,8 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process = process;
   operation_class->prepare = prepare;
+
+  operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:box-max",
