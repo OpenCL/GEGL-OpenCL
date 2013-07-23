@@ -28,8 +28,8 @@
 #include "gegl-chant.h"
 #include <stdio.h>
 #include <math.h>
-#include "npd/npd.h"
-#include "npd/npd_gegl.h"
+#include <npd/npd.h>
+#include <npd/npd_gegl.h>
 
 struct _NPDImage
 {

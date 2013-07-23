@@ -13,4 +13,5 @@ libnpd_la_SOURCES = \
     graphics.h      \
     graphics.c      \
     npd_gegl.h      \
-    npd_gegl.c
+    npd_gegl.c      \
+    npd.h
