@@ -22,8 +22,6 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (value, _("Value"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, _("global value used if aux doesn't contain data"))
-
 #else
 
 #define GEGL_CHANT_TYPE_POINT_COMPOSER
@@ -38,6 +36,68 @@ static void prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format);
   gegl_operation_set_format (operation, "output", format);
+}
+
+#include "opencl/gegl-cl.h"
+#include "opencl/weighted-blend.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+static gboolean
+cl_process (GeglOperation       *self,
+            cl_mem               in_tex,
+            cl_mem               aux_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            gint                 level)
+{
+  gint cl_err = 0;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"cl_copy_weigthed_blend",
+                                   "cl_weighted_blend",
+                                   NULL};
+      cl_data = gegl_cl_compile_and_build (weighted_blend_cl_source,
+                                           kernel_name);
+    }
+  if (!cl_data) return TRUE;
+
+
+  if (!aux_tex)
+    {
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&in_tex);
+      CL_CHECK;
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem), (void*)&out_tex);
+      CL_CHECK;
+
+      cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                           cl_data->kernel[0], 1,
+                                           NULL, &global_worksize, NULL,
+                                           0, NULL, NULL);
+      CL_CHECK;
+    }
+  else
+    {
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem), (void*)&in_tex);
+      CL_CHECK;
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_mem), (void*)&aux_tex);
+      CL_CHECK;
+      cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_mem), (void*)&out_tex);
+      CL_CHECK;
+
+      cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                           cl_data->kernel[1], 1,
+                                           NULL, &global_worksize, NULL,
+                                           0, NULL, NULL);
+      CL_CHECK;
+    }
+
+  return FALSE;
+
+error:
+  return TRUE;
 }
 
 static gboolean
@@ -58,7 +118,6 @@ process (GeglOperation       *op,
     {
       /* there is no auxilary buffer.
        * output the input buffer.
-       * gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
        */
       for (i = 0; i < n_pixels; i++)
         {
@@ -67,6 +126,8 @@ process (GeglOperation       *op,
             {
               out[j] = in[j];
             }
+          in  += 4;
+          out += 4;
         }
     }
   else
@@ -114,8 +175,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class      = GEGL_OPERATION_CLASS (klass);
   point_composer_class = GEGL_OPERATION_POINT_COMPOSER_CLASS (klass);
 
-  point_composer_class->process = process;
-  operation_class->prepare      = prepare;
+  point_composer_class->process    = process;
+  point_composer_class->cl_process = cl_process;
+  operation_class->prepare         = prepare;
+  operation_class->opencl_support  = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:weighted-blend",
