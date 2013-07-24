@@ -54,6 +54,7 @@ m4_define([pango_required_version], [0.0.0])
 m4_define([pangocairo_required_version], [0.0.0])
 m4_define([png_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
+m4_define([webp_required_version], [0.0.0])
 m4_define([poly2tri-c_required_version], [0.0.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
@@ -1007,6 +1008,24 @@ AM_CONDITIONAL(HAVE_UMFPACK, test "x$have_umfpack" = "xyes")
 AC_SUBST(UMFPACK_CFLAGS)
 AC_SUBST(UMFPACK_LIBS)
 
+################
+# Check for webp
+################
+
+AC_ARG_WITH(webp, [  --without-webp          build without webp support])
+
+have_webp="no"
+if test "x$with_webp" != "xno"; then
+  PKG_CHECK_MODULES(WEBP, libwebp >= webp_required_version,
+    have_webp="yes",
+    have_webp="no  (webp library not found)")
+fi
+
+AM_CONDITIONAL(HAVE_WEBP, test "$have_webp" = "yes")
+
+AC_SUBST(WEBP_CFLAGS) 
+AC_SUBST(WEBP_LIBS) 
+
 ######################
 # Check for poly2tri-c
 ######################
@@ -1177,5 +1196,6 @@ Optional dependencies:
   spiro:           $spiro_ok
   EXIV:            $have_exiv2
   umfpack:         $have_umfpack
+  webp:            $have_webp
   poly2tri-c:      $have_p2tc
 ]);

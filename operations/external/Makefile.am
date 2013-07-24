@@ -125,6 +125,13 @@ lcms_from_profile_la_LIBADD  = $(op_libs) $(LCMS_LIBS)
 lcms_from_profile_la_CFLAGS  = $(AM_CFLAGS)
 endif
 
+if HAVE_WEBP
+ops += webp-load.la
+webp_load_la_SOURCES = webp-load.c
+webp_load_la_LIBADD  = $(op_libs) $(WEBP_LIBS)
+webp_load_la_CFLAGS  = $(AM_CFLAGS) $(WEBP_CFLAGS)
+endif
+
 # No dependencies
 ops += ppm-load.la ppm-save.la
 ppm_load_la_SOURCES = ppm-load.c
