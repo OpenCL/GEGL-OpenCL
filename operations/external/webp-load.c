@@ -32,7 +32,6 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
 #include "gegl-chant.h"
 #include <webp/decode.h>
 
-/*XXX: leaks on failure */
 static gboolean
 read_webp (const gchar *path, GeglBuffer *buf, GeglRectangle *bounds_out, const Babl **format_out)
 {
@@ -45,9 +44,12 @@ read_webp (const gchar *path, GeglBuffer *buf, GeglRectangle *bounds_out, const 
   GeglRectangle bounds = {0, };
 
   WebPDecoderConfig config;
-  g_return_val_if_fail (WebPInitDecoderConfig (&config), FALSE);
-
-  g_return_val_if_fail (WebPGetFeatures (data, data_size, &config.input) == VP8_STATUS_OK, FALSE);
+  if (!WebPInitDecoderConfig (&config) ||
+      WebPGetFeatures (data, data_size, &config.input) != VP8_STATUS_OK)
+    {
+      g_mapped_file_unref (map);
+      return FALSE;
+    }
 
   bounds.width  = config.input.width;
   bounds.height = config.input.height;
@@ -65,7 +67,12 @@ read_webp (const gchar *path, GeglBuffer *buf, GeglRectangle *bounds_out, const 
 
   if (buf)
     {
-      g_return_val_if_fail (WebPDecode (data, data_size, &config) == VP8_STATUS_OK, FALSE);
+      if (WebPDecode (data, data_size, &config) != VP8_STATUS_OK)
+        {
+          WebPFreeDecBuffer (&config.output);
+          g_mapped_file_unref (map);
+          return FALSE;
+        }
 
       gegl_buffer_set (buf, &bounds, 1, format, config.output.u.RGBA.rgba,
                        config.output.u.RGBA.stride);
