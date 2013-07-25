@@ -130,6 +130,11 @@ ops += webp-load.la
 webp_load_la_SOURCES = webp-load.c
 webp_load_la_LIBADD  = $(op_libs) $(WEBP_LIBS)
 webp_load_la_CFLAGS  = $(AM_CFLAGS) $(WEBP_CFLAGS)
+
+ops += webp-save.la
+webp_save_la_SOURCES = webp-save.c
+webp_save_la_LIBADD  = $(op_libs) $(WEBP_LIBS)
+webp_save_la_CFLAGS  = $(AM_CFLAGS) $(WEBP_CFLAGS)
 endif
 
 # No dependencies

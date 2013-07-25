@@ -129,6 +129,7 @@ operations/external/v4l.c
 operations/external/vector-fill.c
 operations/external/vector-stroke.c
 operations/external/webp-load.c
+operations/external/webp-save.c
 operations/generated/add.c
 operations/generated/clear.c
 operations/generated/color-burn.c
