@@ -66,6 +66,7 @@ process (GeglOperation       *operation,
   gfloat     *GEGL_ALIGNED out_pixel;
   gfloat     *out_pix;
   gint        i, cnt;
+  gint x, y, n;
 
   in_pixel  = in_buf;
   out_pixel = out_buf;
@@ -78,13 +79,12 @@ process (GeglOperation       *operation,
       in_pixel += 1;
     }
 
+  n = 0;
+
   for (cnt = 0; cnt < o->repeat; cnt++)
     {
-      gint x, y, n;
-
       x = roi->x;
       y = roi->y;
-      n = 0;
 
       out_pix = out_pixel;
 
@@ -97,13 +97,14 @@ process (GeglOperation       *operation,
           blue  = out_pix[2];
           alpha = out_pix[3];
 
-          if (gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
+          if (gegl_random_float_range (o->seed, x, y, 0, n, 0.0, 100.0) <=
               o->pct_random)
             {
-              red   = gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 1.0);
-              green = gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 1.0);
-              blue  = gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 1.0);
+              red   = gegl_random_float_range (o->seed, x, y, 0, n+1, 0.0, 1.0);
+              green = gegl_random_float_range (o->seed, x, y, 0, n+2, 0.0, 1.0);
+              blue  = gegl_random_float_range (o->seed, x, y, 0, n+3, 0.0, 1.0);
             }
+          n += 4;
 
           out_pix[0] = red;
           out_pix[1] = green;
