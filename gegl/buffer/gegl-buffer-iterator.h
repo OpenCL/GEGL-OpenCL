@@ -52,8 +52,6 @@ typedef struct GeglBufferIterator
  * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
  * @flags: whether we need reading or writing to this buffer one of GEGL_BUFFER_READ, GEGL_BUFFER_WRITE and GEGL_BUFFER_READWRITE.
  * @repeat_mode: how request outside the buffer extent are handled.
- * Valid values: GEGL_ABYSS_NONE
-
  *
  * Create a new buffer iterator, this buffer will be iterated through
  * in linear chunks, some chunks might be full tiles the coordinates, see
@@ -81,7 +79,6 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
  * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
  * @flags: whether we need reading or writing to this buffer.
  * @repeat_mode: how request outside the buffer extent are handled.
- * Valid values: GEGL_ABYSS_NONE
  *
  * Adds an additional buffer iterator that will be processed in sync with
  * the original one, if the buffer doesn't align with the other for tile access

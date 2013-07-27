@@ -72,16 +72,17 @@ typedef struct GeglBufferIterators
   GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS]; /* roi of the current data */
 
   /* the following is private: */
-  gint           iterators;
-  gint           iteration_no;
-  gboolean       is_finished;
-  GeglRectangle  rect       [GEGL_BUFFER_MAX_ITERATORS]; /* the region we iterate on. They can be different from
+  gint            iterators;
+  gint            iteration_no;
+  gboolean        is_finished;
+  GeglRectangle   rect         [GEGL_BUFFER_MAX_ITERATORS]; /* the region we iterate on. They can be different from
                                                             each other, but width and height are the same */
-  const Babl    *format     [GEGL_BUFFER_MAX_ITERATORS]; /* The format required for the data */
-  GeglBuffer    *buffer     [GEGL_BUFFER_MAX_ITERATORS]; /* currently a subbuffer of the original, need to go away */
-  guint          flags      [GEGL_BUFFER_MAX_ITERATORS];
-  gpointer       buf        [GEGL_BUFFER_MAX_ITERATORS]; /* no idea */
-  GeglBufferTileIterator   i[GEGL_BUFFER_MAX_ITERATORS];
+  const Babl     *format       [GEGL_BUFFER_MAX_ITERATORS]; /* The format required for the data */
+  GeglBuffer     *buffer       [GEGL_BUFFER_MAX_ITERATORS]; /* currently a subbuffer of the original, need to go away */
+  guint           flags        [GEGL_BUFFER_MAX_ITERATORS];
+  gpointer        buf          [GEGL_BUFFER_MAX_ITERATORS]; /* no idea */
+  GeglAbyssPolicy abyss_policy [GEGL_BUFFER_MAX_ITERATORS];
+  GeglBufferTileIterator   i   [GEGL_BUFFER_MAX_ITERATORS];
 } GeglBufferIterators;
 
 
@@ -294,6 +295,8 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iterator,
   else
     i->format[self]=buffer->soft_format;
   i->flags[self]=flags;
+
+  i->abyss_policy[self] = abyss_policy;
 
   if (self==0) /* The first buffer which is always scan aligned */
     {
@@ -543,7 +546,7 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
               if (i->flags[no] & GEGL_BUFFER_READ)
                 {
                   gegl_buffer_get_unlocked (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no],
-                                            GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                                            GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
                 }
 
               i->data[no]=i->buf[no];
@@ -564,7 +567,7 @@ gegl_buffer_iterator_next (GeglBufferIterator *iterator)
           if (i->flags[no] & GEGL_BUFFER_READ)
             {
               gegl_buffer_get_unlocked (i->buffer[no], 1.0, &(i->roi[no]), i->format[no], i->buf[no],
-                                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                                        GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
             }
           i->data[no]=i->buf[no];
 
