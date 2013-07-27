@@ -149,7 +149,7 @@ gchar        **gegl_list_operations         (guint *n_operations_p);
  * @n_properties_p: (out caller-allocates): return location for number of properties.
  *
  * Return value: (transfer container) (array length=n_properties_p): An allocated array of #GParamSpecs describing the properties
- * of the operation available when a node has operation_type set.
+ * of the operation available when a node has operation_type set. The list should be freed with g_free after use.
  */
 GParamSpec** gegl_operation_list_properties (const gchar   *operation_type,
                                              guint         *n_properties_p);
