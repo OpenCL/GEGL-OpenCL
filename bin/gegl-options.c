@@ -24,6 +24,7 @@
 #include <stdio.h>
 
 #include "gegl-options.h"
+#include <gegl.h>
 
 static GeglOptions *opts_new (void)
 {
@@ -46,6 +47,12 @@ _("usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
 "  Options:\n"
 "     -h, --help      this help information\n"
+"\n"
+"     --list-all      list all known operations\n"
+"\n"
+"     --exists        return 0 if the operation(s) exist\n"
+"\n"
+"     --properties    output the properties (name, type, description) of the operation\n"
 "\n"
 "     -i, --file      read xml from named file\n"
 "\n"
@@ -210,6 +217,94 @@ parse_args (int    argc,
             match ("--help")) {
             o->mode = GEGL_RUN_MODE_HELP;
             usage (argv[0]);
+        }
+
+        else if (match ("--list-all")) {
+            guint   n_operations;
+            gchar **operations = gegl_list_operations (&n_operations);
+            gint    i;
+
+            for (i = 0; i < n_operations; i++)
+              {
+                fprintf (stdout, "%s\n", operations[i]);
+              }
+            g_free (operations);
+
+            exit (0);
+        }
+
+        else if (match ("--exists")) {
+            guint    n_operations;
+            gchar  **operations = gegl_list_operations (&n_operations);
+            GList   *op_names = NULL;
+            gchar   *op_name;
+            gboolean all_found;
+            gint     i;
+
+            /* The option requires at least one argument. */
+            get_string (op_name);
+            while (op_name)
+              {
+                op_names = g_list_prepend (op_names, g_strdup (op_name));
+                get_string_forced (op_name);
+              }
+
+            for (i = 0; i < n_operations; i++)
+              {
+                GList *found_element;
+
+                while ((found_element =
+                        g_list_find_custom (op_names,
+                                            operations[i],
+                                            (GCompareFunc) g_strcmp0)) != NULL)
+                    op_names = g_list_delete_link (op_names, found_element);
+              }
+
+            all_found = (g_list_length (op_names) == 0);
+
+            g_free (operations);
+            g_list_free_full (op_names, g_free);
+
+            exit (all_found ? 0 : 1);
+        }
+
+        else if (match ("--properties")) {
+            guint   n_operations;
+            gchar **operations = gegl_list_operations (&n_operations);
+            gchar  *op_name;
+            gint    i;
+
+            get_string (op_name);
+
+            for (i = 0; i < n_operations; i++)
+              {
+                if (g_strcmp0 (operations[i], op_name) == 0)
+                  {
+                    guint n_properties;
+                    GParamSpec **properties;
+
+                    properties = gegl_operation_list_properties (op_name, &n_properties);
+                    for (i = 0; i < n_properties; i++)
+                      {
+                        const gchar *property_name;
+                        const gchar *property_blurb;
+
+                        property_name = g_param_spec_get_name (properties[i]);
+                        property_blurb = g_param_spec_get_blurb (properties[i]);
+
+                        fprintf (stdout, "%-30s [%s] %s\n",
+                                 property_name,
+                                 g_type_name (properties[i]->value_type),
+                                 property_blurb);
+                      }
+
+                    g_free (properties);
+                    exit (0);
+                  }
+              }
+            g_free (operations);
+
+            exit (1);
         }
 
         else if (match ("--verbose") ||
