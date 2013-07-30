@@ -191,7 +191,7 @@ gegl_chant_class_init (ChantClass * klass)
   parent_class->create_matrix = create_matrix;
 
 #define M_GEGL_CHANT_SET_NAME_EXTENDED(nam) \
-  operation_class->name=g_strdup(nam);
+  gegl_operation_class_set_key (operation_class, "name", nam);
 #define M_GEGL_CHANT_SET_NAME(name)   M_GEGL_CHANT_SET_NAME_EXTENDED(name)
   M_GEGL_CHANT_SET_NAME (GEGL_CHANT_OPERATION_NAME);
 
