@@ -252,10 +252,11 @@ static GeglRectangle get_bounding_box (GeglOperation *self)
 "
   file.write file_tail1
   file.write "
+  operation_class->get_bounding_box = get_bounding_box;
+
   gegl_operation_class_set_keys (operation_class,
   \"name\"      , \"svg:#{name}\",
   \"compat-name\", \"gegl:#{name}\",
-  \"get_bounding_box\" , get_bounding_box,
   \"categories\", \"compositors:porter-duff\",
   \"description\" ,
         _(\"Porter Duff operation #{name} (d = #{c_formula})\"),
