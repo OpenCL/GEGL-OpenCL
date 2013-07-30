@@ -660,6 +660,10 @@ gegl_operation_class_set_key (GeglOperationClass *klass,
     {
       klass->name = key_value;
     }
+  if (!strcmp (key_name, "compat-name"))
+    {
+      klass->compat_name = key_value;
+    }
 }
 
 void
