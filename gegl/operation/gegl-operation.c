@@ -647,6 +647,8 @@ gegl_operation_class_set_key (GeglOperationClass *klass,
 {
   gchar *key_value_dup;
 
+  g_return_if_fail (key_name != NULL);
+
   if (!key_value)
     {
       g_hash_table_remove (klass->keys, key_name);
