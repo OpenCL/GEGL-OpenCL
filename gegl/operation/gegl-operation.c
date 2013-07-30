@@ -645,25 +645,38 @@ gegl_operation_class_set_key (GeglOperationClass *klass,
                               const gchar        *key_name,
                               const gchar        *key_value)
 {
+  gchar *key_value_dup;
+
   if (!key_value)
     {
       g_hash_table_remove (klass->keys, key_name);
       return;
     }
-  else
-    {
-      key_value = g_strdup (key_value);
-      g_hash_table_insert (klass->keys, g_strdup (key_name),
-                           (void*)key_value);
-    }
+
+  key_value_dup = g_strdup (key_value);
+
   if (!strcmp (key_name, "name"))
     {
-      klass->name = key_value;
+      if (klass->name && strcmp (klass->name, key_value))
+        {
+          g_warning ("Cannot change name of operation class 0x%lX from \"%s\" "
+                     "to \"%s\"", (gulong) klass, klass->name, key_value);
+          g_free (key_value_dup);
+          return;
+        }
+      else
+        {
+          klass->name = key_value_dup;
+        }
     }
+
   if (!strcmp (key_name, "compat-name"))
     {
-      klass->compat_name = key_value;
+      klass->compat_name = key_value_dup;
     }
+
+  g_hash_table_insert (klass->keys, g_strdup (key_name),
+                       (void*)key_value_dup);
 }
 
 void
