@@ -158,9 +158,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = operation_process;
   operation_class->prepare = prepare;
 
-  operation_class->compat_name = "gegl:overlay";
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:overlay",
+  "compat-name" , "gegl:overlay",
   "description" ,
         _("SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"),
         NULL);

@@ -232,10 +232,9 @@ a.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->compat_name = \"gegl:#{compat_name}\";
-
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"svg:#{name}\",
+  \"compat-name\" , \"gegl:#{compat_name}\",
   \"description\" ,
         _(\"SVG blend operation #{name} (<code>d = #{formula1}</code>)\"),
         NULL);
@@ -298,9 +297,9 @@ b.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->compat_name = \"gegl:#{name}\";
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"svg:#{name}\",
+  \"compat-name\" , \"gegl:#{name}\",
   \"description\" ,
         _(\"SVG blend operation #{name} (<code>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</code>)\"),
         NULL);
@@ -428,10 +427,10 @@ d.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->compat_name = \"gegl:#{name}\";
 
   gegl_operation_class_set_keys (operation_class,
     \"name\"        , \"svg:#{name}\",
+    \"compat-name\" , \"gegl:#{name}\",
     \"description\" ,
     _(\"SVG blend operation #{name} (<code>d = #{formula1}</code>)\"),
     NULL);

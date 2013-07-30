@@ -158,9 +158,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = operation_process;
   operation_class->prepare = prepare;
 
-  operation_class->compat_name = "gegl:color-burn";
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:color-burn",
+  "compat-name" , "gegl:color-burn",
   "description" ,
         _("SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"),
         NULL);

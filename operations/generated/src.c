@@ -108,10 +108,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
 
-  operation_class->compat_name = "gegl:src";
   gegl_operation_class_set_keys (operation_class,
-    "name"      , "svg:src",
-    "categories", "compositors:porter-duff",
+    "name"       , "svg:src",
+    "compat-name", "gegl:src",
+    "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation src (d = cA)"),
         NULL);

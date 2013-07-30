@@ -155,10 +155,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = operation_process;
   operation_class->prepare = prepare;
 
-  operation_class->compat_name = "gegl:plus";
 
   gegl_operation_class_set_keys (operation_class,
     "name"        , "svg:plus",
+    "compat-name" , "gegl:plus",
     "description" ,
     _("SVG blend operation plus (<code>d = cA + cB</code>)"),
     NULL);

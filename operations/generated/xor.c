@@ -108,10 +108,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
 
-  operation_class->compat_name = "gegl:xor";
   gegl_operation_class_set_keys (operation_class,
-    "name"      , "svg:xor",
-    "categories", "compositors:porter-duff",
+    "name"       , "svg:xor",
+    "compat-name", "gegl:xor",
+    "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"),
         NULL);

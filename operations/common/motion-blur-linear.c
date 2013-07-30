@@ -296,12 +296,12 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   operation_class->prepare        = prepare;
   operation_class->opencl_support = TRUE;
-  operation_class->compat_name    = "gegl:motion-blur";
 
   filter_class->process           = process;
 
   gegl_operation_class_set_keys (operation_class,
                                  "name",        "gegl:motion-blur-linear",
+                                 "compat-name", "gegl:motion-blur",
                                  "categories",  "blur",
                                  "description", _("Linear motion blur"),
     NULL);

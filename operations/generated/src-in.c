@@ -116,9 +116,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
 
-  operation_class->compat_name = "gegl:src-in";
   gegl_operation_class_set_keys (operation_class,
   "name"      , "svg:src-in",
+  "compat-name", "gegl:src-in",
   "get_bounding_box" , get_bounding_box,
   "categories", "compositors:porter-duff",
   "description" ,

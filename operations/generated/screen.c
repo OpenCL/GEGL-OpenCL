@@ -155,10 +155,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = operation_process;
   operation_class->prepare = prepare;
 
-  operation_class->compat_name = "gegl:screen";
-
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:screen",
+  "compat-name" , "gegl:screen",
   "description" ,
         _("SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"),
         NULL);

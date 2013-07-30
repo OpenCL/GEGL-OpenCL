@@ -108,10 +108,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
 
 
-  operation_class->compat_name = "gegl:src-atop";
   gegl_operation_class_set_keys (operation_class,
-    "name"      , "svg:src-atop",
-    "categories", "compositors:porter-duff",
+    "name"       , "svg:src-atop",
+    "compat-name", "gegl:src-atop",
+    "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"),
         NULL);

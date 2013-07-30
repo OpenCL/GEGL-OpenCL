@@ -155,10 +155,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->process = operation_process;
   operation_class->prepare = prepare;
 
-  operation_class->compat_name = "gegl:exclusion";
-
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:exclusion",
+  "compat-name" , "gegl:exclusion",
   "description" ,
         _("SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"),
         NULL);

@@ -66,11 +66,11 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  operation_class->compat_name = "gegl:invert";
   point_filter_class->process  = process;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:invert-linear",
+    "compat-name", "gegl:invert",
     "categories" , "color",
     "description",
        _("Inverts the components (except alpha), the result is the "

@@ -176,10 +176,10 @@ a.each do
 "
   file.write file_tail1
   file.write "
-  operation_class->compat_name = \"gegl:#{name}\";
   gegl_operation_class_set_keys (operation_class,
-    \"name\"      , \"svg:#{name}\",
-    \"categories\", \"compositors:porter-duff\",
+    \"name\"       , \"svg:#{name}\",
+    \"compat-name\", \"gegl:#{name}\",
+    \"categories\" , \"compositors:porter-duff\",
     \"description\",
         _(\"Porter Duff operation #{name} (d = #{c_formula})\"),
         NULL);
@@ -252,9 +252,9 @@ static GeglRectangle get_bounding_box (GeglOperation *self)
 "
   file.write file_tail1
   file.write "
-  operation_class->compat_name = \"gegl:#{name}\";
   gegl_operation_class_set_keys (operation_class,
   \"name\"      , \"svg:#{name}\",
+  \"compat-name\", \"gegl:#{name}\",
   \"get_bounding_box\" , get_bounding_box,
   \"categories\", \"compositors:porter-duff\",
   \"description\" ,
