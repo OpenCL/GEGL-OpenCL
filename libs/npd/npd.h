@@ -24,6 +24,7 @@
 #include "graphics.h"
 #include "deformation.h"
 #include "npd_math.h"
+/*#include "refine.h"*/
 
 #endif	/* __NPD_H__ */
 

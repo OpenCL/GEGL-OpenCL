@@ -20,6 +20,8 @@
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
+gegl_chant_pointer (model, _("model"), _(""))
+gegl_chant_int (rigidity, _("rigidity"), 100, 20000, 0, _(""))
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
@@ -53,12 +55,23 @@ typedef struct
 void npd_create_image (NPDImage   *image,
                        GeglBuffer *gegl_buffer,
                        const Babl *format);
+void
+npd_set_pixel_color_impl (NPDImage *image,
+                          gint      x,
+                          gint      y,
+                          NPDColor *color);
+void
+npd_get_pixel_color_impl (NPDImage *image,
+                          gint      x,
+                          gint      y,
+                          NPDColor *color);
+
 
 void
-npd_set_pixel_color (NPDImage *image,
-                     gint      x,
-                     gint      y,
-                     NPDColor *color)
+npd_set_pixel_color_impl (NPDImage *image,
+                          gint      x,
+                          gint      y,
+                          NPDColor *color)
 {
   gint position = 4 * (y * image->width + x);
   gint max = 4 * image->width * image->height;
@@ -73,10 +86,10 @@ npd_set_pixel_color (NPDImage *image,
 }
 
 void
-npd_get_pixel_color (NPDImage *image,
-                     gint      x,
-                     gint      y,
-                     NPDColor *color)
+npd_get_pixel_color_impl (NPDImage *image,
+                          gint      x,
+                          gint      y,
+                          NPDColor *color)
 {
   gint position = 4 * (y * image->width + x);
   gint max = 4 * image->width * image->height;
@@ -177,47 +190,47 @@ process (GeglOperation       *operation,
   const Babl *format = babl_format ("RGBA u8");
   NPDProperties *props = o->chant_data;
   NPDModel *model = &props->model;
-  NPDControlPoint *cp;
-  NPDPoint coord, new_coord;
   guchar *output_buffer;
   
   if (props->first_run)
     {
       gint width, height;
-      NPDImage input_image;
-      NPDDisplay display;
+      NPDImage *input_image = g_new (NPDImage, 1);
+      NPDDisplay *display = g_new (NPDDisplay, 1);
+      
+      npd_init (npd_set_pixel_color_impl, npd_get_pixel_color_impl);
 
-      npd_create_image (&input_image, input, format);
-      width = input_image.width;
-      height = input_image.height;
+      npd_create_image (input_image, input, format);
+      width = input_image->width;
+      height = input_image->height;
 
       output_buffer = g_new0 (guchar, gegl_buffer_get_pixel_count (input) * 4);
-      display.image.width = width;
-      display.image.height = height;
-      display.image.buffer = output_buffer;
+      display->image.width = width;
+      display->image.height = height;
+      display->image.buffer = output_buffer;
 
-      npd_create_model_from_image(model, &input_image, 20);
+      npd_create_model_from_image (model, input_image, 20);
       npd_create_list_of_overlapping_points (model->hidden_model);
 
-      model->display = &display;
+      model->display = display;
+      
+      o->model = model;
+      NPDModel *m = o->model;
+      
+      props->first_run = FALSE;
     }
   else
     {
       output_buffer = model->display->image.buffer;
     }
 
-  coord.x = 20; coord.y = 200;
-  new_coord.x = 100; new_coord.y = 250;
-
-  cp = npd_add_control_point (model, &coord);
-  npd_set_point_coordinates (&cp->point, &new_coord);
-  
-  npd_deform_model (model, 1000);
+//  npd_deform_model (model, o->rigidity);
+  npd_deform_model (model, 2000);
   npd_draw_model (model, model->display);
-  
-  gegl_buffer_set (output, NULL, 0, format, output_buffer, GEGL_AUTO_ROWSTRIDE);
 
-  return  TRUE;
+  gegl_buffer_set (output, NULL, 0, format, output_buffer, GEGL_AUTO_ROWSTRIDE);
+  
+  return TRUE;
 }
 
 static void

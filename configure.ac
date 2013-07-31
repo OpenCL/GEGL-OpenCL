@@ -1138,8 +1138,8 @@ fi
 ##################
 have_libnpd="yes (internal)"
 
-AC_SUBST(NPD_CFLAGS, "-I\$(top_srcdir)/libs/npd")
-AC_SUBST(NPD_LIBS, "-L\$(top_builddir)/libs/npd -lnpd")
+AC_SUBST(NPD_CFLAGS, "-I\$(top_srcdir)/libs")
+AC_SUBST(NPD_LIBS, "-L\$(top_builddir)/libs/npd -lgegl-npd-\$(GEGL_API_VERSION)")
 
 #######################
 # Check for other items
@@ -1296,5 +1296,4 @@ Optional dependencies:
   umfpack:         $have_umfpack
   webp:            $have_webp
   poly2tri-c:      $have_p2tc
-  libnpd:          $have_libnpd
 ]);

@@ -8,5 +8,5 @@ Name: GEGL
 Description: Generic Graphics Library 
 Version: @GEGL_REAL_VERSION@
 Requires: @GLIB_PACKAGES@ babl
-Libs: -L${libdir} -l@PACKAGE_NAME@-@GEGL_API_VERSION@
+Libs: -L${libdir} -l@PACKAGE_NAME@-@GEGL_API_VERSION@ -l@PACKAGE_NAME@-npd-@GEGL_API_VERSION@
 Cflags: -I${includedir}/@PACKAGE_NAME@-@GEGL_API_VERSION@

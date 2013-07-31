@@ -1,17 +1,40 @@
-noinst_LTLIBRARIES = libnpd.la
+include $(top_srcdir)/operations/Makefile-common.am
 
-AM_CFLAGS = $(GLIB_CFLAGS) $(NPD_CFLAGS) -I$(top_builddir)/gegl -I$(top_srcdir)/gegl
-AM_LDFLAGS = $(GLIB_LIBS) $(NPD_LIBS)
+######################################################
+# A shared library for n-point image deformation API #
+######################################################
 
-libnpd_la_SOURCES = \
-    npd_common.h    \
-    npd_common.c    \
-    deformation.h   \
-    deformation.c   \
-    npd_math.h      \
-    npd_math.c      \
-    graphics.h      \
-    graphics.c      \
-    npd_gegl.h      \
-    npd_gegl.c      \
-    npd.h
+GEGL_NPD_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/npd
+
+GEGL_NPD_public_HEADERS = \
+	npd_common.h     \
+	deformation.h    \
+	npd_math.h       \
+	graphics.h       \
+	refine.h         \
+	npd_gegl.h       \
+	npd.h
+
+GEGL_NPD_SOURCES = \
+	$(GEGL_NPD_public_HEADERS)	\
+	npd_common.c			\
+	deformation.c			\
+	npd_math.c			\
+	graphics.c			\
+	refine.c			\
+	npd_gegl.c
+
+libgegl_npd_@GEGL_API_VERSION@_la_SOURCES = \
+	$(GEGL_NPD_public_HEADERS)	\
+	$(GEGL_NPD_SOURCES)
+
+libgegl_npd_@GEGL_API_VERSION@_la_LDFLAGS = \
+	-avoid-version -export-dynamic $(no_undefined)
+
+libgegl_npd_@GEGL_API_VERSION@_la_CFLAGS = \
+  $(AM_CFLAGS)
+
+lib_LTLIBRARIES = libgegl-npd-@GEGL_API_VERSION@.la
+
+libgegl_npd_@GEGL_API_VERSION@_la_LIBADD = \
+	$(libgegl)

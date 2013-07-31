@@ -76,11 +76,11 @@ void        npd_bilinear_color_interpolation  (NPDColor *I0,
                                                gfloat    dx,
                                                gfloat    dy,
                                                NPDColor *out);
-void        npd_get_pixel_color               (NPDImage *image,
+void      (*npd_get_pixel_color)              (NPDImage *image,
                                                gint      x,
                                                gint      y,
                                                NPDColor *color);
-void        npd_set_pixel_color               (NPDImage *image,
+void      (*npd_set_pixel_color)              (NPDImage *image,
                                                gint      x,
                                                gint      y,
                                                NPDColor *color);

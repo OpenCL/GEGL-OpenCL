@@ -128,11 +128,11 @@ npd_remove_control_point (NPDModel        *model,
   
   for (i = 0; i < model->control_points->len; i++)
     {
-      cp = &g_array_index(model->control_points, NPDControlPoint, i);
+      cp = &g_array_index (model->control_points, NPDControlPoint, i);
       
       if (cp == control_point)
         {
-          npd_set_control_point_weight(cp, 1.0);
+          npd_set_control_point_weight (cp, 1.0);
           g_array_remove_index (model->control_points, i);
           return;
         }
@@ -193,7 +193,7 @@ npd_get_control_point_at (NPDModel *model,
         }
     }
 
-  g_printf ("no control points\n");
+//  g_printf ("no control points\n");
   return NULL;
 }
 
