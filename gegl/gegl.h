@@ -1055,6 +1055,19 @@ guint32 gegl_random_int         (int seed, int x, int y, int z, int n);
  */
 float  gegl_random_float        (int seed, int x, int y, int z, int n);
 
+/**
+ * gegl_get_random_data_ptr:
+ * Return an integer pointer to and initialized random data vector.
+ */
+gint * gegl_get_random_data_ptr       (void);
+
+/**
+ * gegl_get_random_data_size:
+ * Return the size of the random data vector.
+ */
+gint gegl_get_random_data_size       (void);
+
+
 #define GEGL_ALIGNED __restrict__ __attribute__((__aligned__ (16)))
 
 G_END_DECLS

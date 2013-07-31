@@ -156,6 +156,17 @@ _gegl_random_int (int seed,
 #endif
 }
 
+gint* gegl_get_random_data_ptr(void)
+{
+  random_init();
+  return random_data;
+}
+
+gint gegl_get_random_data_size(void)
+{
+  return G_N_ELEMENTS (random_data);
+}
+
 guint32
 gegl_random_int (int seed,
                  int x,
