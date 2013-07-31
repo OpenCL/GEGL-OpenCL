@@ -7,6 +7,7 @@ SUBDIRS=\
 	libs \
 	opencl \
 	gegl \
+	libs/npd \
 	seamless-clone \
 	operations \
 	bin \
