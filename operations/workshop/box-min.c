@@ -310,8 +310,8 @@ process (GeglOperation       *operation,
         gegl_cl_disable();
     }
 
-  hor_mim ( input, &input_rect, output, result, o->radius);
-  ver_mim (output,      result, output, result, o->radius);
+  hor_min ( input, &input_rect, output, result, o->radius);
+  ver_min (output,      result, output, result, o->radius);
 
   return  TRUE;
 }
