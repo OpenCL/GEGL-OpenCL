@@ -29,4 +29,7 @@ GType      gegl_operation_gtype_from_name   (const gchar *name);
 gchar   ** gegl_list_operations             (guint *n_operations_p);
 void       gegl_operation_gtype_cleanup     (void);
 
+void       gegl_operation_class_register_name (GeglOperationClass *klass,
+                                               const gchar        *name);
+
 #endif

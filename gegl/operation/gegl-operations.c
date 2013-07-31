@@ -15,6 +15,7 @@
  *
  * Copyright 2003 Calvin Williamson
  *           2005-2008 Øyvind Kolås
+ *           2013 Michael Henning
  */
 
 #include "config.h"
@@ -33,18 +34,50 @@
 #include "buffer/gegl-region.h"
 
 
-static GHashTable *gtype_hash = NULL;
+static GHashTable *gtype_hash        = NULL;
+static GSList     *operations_list   = NULL;
+static guint       gtype_hash_serial = 0;
 G_LOCK_DEFINE_STATIC (gtype_hash);
 
+void
+gegl_operation_class_register_name (GeglOperationClass *klass,
+                                    const gchar        *name)
+{
+  GType this_type, check_type;
+  this_type = G_TYPE_FROM_CLASS (klass);
+
+  G_LOCK (gtype_hash);
+
+  /* FIXME: Maybe move initialization to gegl_init()? */
+  if (!gtype_hash)
+    {
+      gtype_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+    }
+
+  check_type = (GType) g_hash_table_lookup (gtype_hash, name);
+  if (check_type && check_type != this_type)
+    {
+      g_warning ("Adding %s shadows %s for operation %s",
+                  g_type_name (this_type),
+                  g_type_name (check_type),
+                  name);
+    }
+  g_hash_table_insert (gtype_hash, g_strdup (name), (gpointer) this_type);
+
+  if (!check_type)
+    operations_list = g_slist_insert_sorted (operations_list, (gpointer) name,
+                                             (GCompareFunc) strcmp);
+
+  G_UNLOCK (gtype_hash);
+}
 
 static void
-add_operations (GHashTable *hash,
-                GType       parent)
+add_operations (GType parent)
 {
   GType *types;
-  GType  check_type;
   guint  count;
   guint  no;
+  G_LOCK_DEFINE_STATIC (type_class_peek_and_ref);
 
   types = g_type_children (parent, &count);
   if (!types)
@@ -52,32 +85,14 @@ add_operations (GHashTable *hash,
 
   for (no = 0; no < count; no++)
     {
-      GeglOperationClass *operation_class = g_type_class_ref (types[no]);
-      if (operation_class->name)
-        {
-          check_type = (GType)g_hash_table_lookup (hash, operation_class->name);
-          if (check_type && check_type != types[no])
-            {
-              g_warning ("Adding %s shadows %s for operation %s",
-                          g_type_name (types[no]),
-                          g_type_name ((GType)check_type),
-                          operation_class->name);
-            }
-          g_hash_table_insert (hash, g_strdup (operation_class->name), (gpointer) types[no]);
-        }
-      if (operation_class->compat_name)
-        {
-          check_type = (GType)g_hash_table_lookup (hash, operation_class->name);
-          if (check_type && check_type != types[no])
-            {
-              g_warning ("Adding %s shadows %s for operation %s",
-                          g_type_name (types[no]),
-                          g_type_name ((GType)check_type),
-                          operation_class->compat_name);
-            }
-          g_hash_table_insert (hash, g_strdup (operation_class->compat_name), (gpointer) types[no]);
-        }
-      add_operations (hash, types[no]);
+      G_LOCK (type_class_peek_and_ref);
+
+      if (!g_type_class_peek (types[no]))
+        g_type_class_ref (types[no]);
+
+      G_UNLOCK (type_class_peek_and_ref);
+
+      add_operations (types[no]);
     }
   g_free (types);
 }
@@ -85,30 +100,20 @@ add_operations (GHashTable *hash,
 GType
 gegl_operation_gtype_from_name (const gchar *name)
 {
-  GType ret = 0;
-
-  /* FIXME: We only need mutual exclusion when we initialize. Maybe
-   * move initialization to gegl_init()?
-   */
-  G_LOCK (gtype_hash);
-  if (!gtype_hash)
+  /* If any new modules have been loaded, scan for GeglOperations */
+  guint latest_serial;
+  latest_serial = g_type_get_type_registration_serial ();
+  if (gtype_hash_serial != latest_serial)
     {
-      gtype_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-
-      add_operations (gtype_hash, GEGL_TYPE_OPERATION);
+      add_operations (GEGL_TYPE_OPERATION);
+      gtype_hash_serial = latest_serial;
     }
-  ret = (GType) g_hash_table_lookup (gtype_hash, name);
-  G_UNLOCK (gtype_hash);
 
-  return ret;
-}
+  /* should only happen if no operations are found */
+  if (!gtype_hash)
+    return G_TYPE_INVALID;
 
-static GSList *operations_list = NULL;
-static void addop (gpointer key,
-                   gpointer value,
-                   gpointer user_data)
-{
-  operations_list = g_slist_prepend (operations_list, key);
+  return (GType) g_hash_table_lookup (gtype_hash, name);
 }
 
 gchar **gegl_list_operations (guint *n_operations_p)
@@ -124,11 +129,13 @@ gchar **gegl_list_operations (guint *n_operations_p)
     {
       gegl_operation_gtype_from_name ("");
 
-      G_LOCK (gtype_hash);
-      g_hash_table_foreach (gtype_hash, addop, NULL);
-      G_UNLOCK (gtype_hash);
-
-      operations_list = g_slist_sort (operations_list, (GCompareFunc) strcmp);
+      /* should only happen if no operations are found */
+      if (!operations_list)
+        {
+          if (n_operations_p)
+            *n_operations_p = 0;
+          return NULL;
+        }
     }
 
   n_operations = g_slist_length (operations_list);
