@@ -191,6 +191,7 @@ process (GeglOperation       *operation,
   NPDProperties *props = o->chant_data;
   NPDModel *model = &props->model;
   guchar *output_buffer;
+  gint length = gegl_buffer_get_width (input) * gegl_buffer_get_height (input) * 4;
   
   if (props->first_run)
     {
@@ -215,18 +216,21 @@ process (GeglOperation       *operation,
       model->display = display;
       
       o->model = model;
-      NPDModel *m = o->model;
+
+      memcpy (output_buffer, input_image->buffer, length);
       
       props->first_run = FALSE;
     }
   else
     {
       output_buffer = model->display->image.buffer;
+      memset (output_buffer, 0, length);
+      
+//  npd_deform_model (model, o->rigidity);
+      npd_deform_model (model, 2000);
+      npd_draw_model (model, model->display);
     }
 
-//  npd_deform_model (model, o->rigidity);
-  npd_deform_model (model, 2000);
-  npd_draw_model (model, model->display);
 
   gegl_buffer_set (output, NULL, 0, format, output_buffer, GEGL_AUTO_ROWSTRIDE);
   
