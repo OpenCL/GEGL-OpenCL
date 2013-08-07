@@ -212,7 +212,6 @@ gegl_init (gint    *argc,
   initialized = TRUE;
 
   gegl_init_i18n ();
-  gegl_operation_gtype_init ();
 
   context = g_option_context_new (NULL);
   g_option_context_set_ignore_unknown_options (context, TRUE);

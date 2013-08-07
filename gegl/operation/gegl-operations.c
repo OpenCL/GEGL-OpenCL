@@ -48,6 +48,12 @@ gegl_operation_class_register_name (GeglOperationClass *klass,
 
   G_LOCK (gtype_hash);
 
+  /* FIXME: Maybe move initialization to gegl_init()? */
+  if (!gtype_hash)
+    {
+      gtype_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+    }
+
   check_type = (GType) g_hash_table_lookup (gtype_hash, name);
   if (check_type && check_type != this_type)
     {
@@ -103,6 +109,10 @@ gegl_operation_gtype_from_name (const gchar *name)
       gtype_hash_serial = latest_serial;
     }
 
+  /* should only happen if no operations are found */
+  if (!gtype_hash)
+    return G_TYPE_INVALID;
+
   return (GType) g_hash_table_lookup (gtype_hash, name);
 }
 
@@ -148,17 +158,6 @@ gchar **gegl_list_operations (guint *n_operations_p)
   if (n_operations_p)
     *n_operations_p = n_operations;
   return pasp;
-}
-
-void
-gegl_operation_gtype_init (void)
-{
-  G_LOCK (gtype_hash);
-
-  if (!gtype_hash)
-    gtype_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
-
-  G_UNLOCK (gtype_hash);
 }
 
 void
