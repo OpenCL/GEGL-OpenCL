@@ -80,6 +80,16 @@ npd_destroy_model (NPDModel *model)
   g_free (model->hidden_model);
 }
 
+/**
+ * Finds nearest (to specified position) overlapping points, creates a new
+ * control point at the position of overlapping points and assigns them to the
+ * control point.
+ * 
+ * @param  model
+ * @param  coord     specified position
+ * @return pointer to a newly created control point or NULL when there already
+ * is a control point at the position of nearest overlapping points
+ */
 NPDControlPoint*
 npd_add_control_point (NPDModel *model,
                        NPDPoint *coord)
@@ -88,6 +98,7 @@ npd_add_control_point (NPDModel *model,
   gfloat                min, current;
   NPDOverlappingPoints *list_of_ops;
   NPDControlPoint       cp;
+  NPDPoint             *closest_point;
 
   list_of_ops = model->hidden_model->list_of_overlapping_points;
   num_of_ops  = model->hidden_model->num_of_overlapping_points;
@@ -108,15 +119,26 @@ npd_add_control_point (NPDModel *model,
         }
     }
 
-  cp.point.weight       = list_of_ops[closest].representative->weight;
-  cp.overlapping_points = &list_of_ops[closest];
-  
-  npd_set_point_coordinates (&cp.point, list_of_ops[closest].representative);
-  g_array_append_val (model->control_points, cp);
+  closest_point = list_of_ops[closest].representative;
 
-  return &g_array_index (model->control_points,
-                         NPDControlPoint,
-                         model->control_points->len - 1);
+  /* we want to create a new control point only when there isn't any
+   * control point associated to the closest overlapping points - i.e. we
+   * don't want to have two (or more) different control points manipulating
+   * one overlapping points */
+  if (!npd_get_control_point_at (model, closest_point))
+    {
+      cp.point.weight       = closest_point->weight;
+      cp.overlapping_points = &list_of_ops[closest];
+
+      npd_set_point_coordinates (&cp.point, closest_point);
+      g_array_append_val (model->control_points, cp);
+
+      return &g_array_index (model->control_points,
+                             NPDControlPoint,
+                             model->control_points->len - 1);
+    }
+  else
+    return NULL;
 }
 
 void
