@@ -71,7 +71,6 @@ add_operations (GType parent)
   GType *types;
   guint  count;
   guint  no;
-  G_LOCK_DEFINE_STATIC (type_class_peek_and_ref);
 
   types = g_type_children (parent, &count);
   if (!types)
@@ -79,12 +78,11 @@ add_operations (GType parent)
 
   for (no = 0; no < count; no++)
     {
-      G_LOCK (type_class_peek_and_ref);
-
-      if (!g_type_class_peek (types[no]))
-        g_type_class_ref (types[no]);
-
-      G_UNLOCK (type_class_peek_and_ref);
+      /*
+       * Poke the operation so it registers its name with
+       * gegl_operation_class_register_name
+       */
+      g_type_class_unref (g_type_class_ref (types[no]));
 
       add_operations (types[no]);
     }
