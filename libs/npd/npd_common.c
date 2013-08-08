@@ -30,21 +30,22 @@ npd_init_model (NPDModel *model)
   GArray         *control_points;
   
   /* init hidden model */
-  hidden_model = g_new (NPDHiddenModel, 1);
+  hidden_model        = g_new (NPDHiddenModel, 1);
   model->hidden_model = hidden_model;
-  hidden_model->ARAP = TRUE;
-  hidden_model->num_of_bones = 0;
+  hidden_model->ASAP                      = FALSE;
+  hidden_model->MLS_weights               = FALSE;
+  hidden_model->num_of_bones              = 0;
   hidden_model->num_of_overlapping_points = 0;
 
   /* init control points */
-  control_points = g_array_new (FALSE, FALSE, sizeof (NPDControlPoint));
+  control_points        = g_array_new (FALSE, FALSE, sizeof (NPDControlPoint));
   model->control_points = control_points;
-  model->control_point_radius = 6;
-  model->control_points_visible = TRUE;
+  model->control_point_radius             = 6;
+  model->control_points_visible           = TRUE;
 
   /* init other */
-  model->mesh_visible = TRUE;
-  model->texture_visible = TRUE;
+  model->mesh_visible                     = TRUE;
+  model->texture_visible                  = TRUE;
 }
 
 void
@@ -133,6 +134,9 @@ npd_add_control_point (NPDModel *model,
       npd_set_point_coordinates (&cp.point, closest_point);
       g_array_append_val (model->control_points, cp);
 
+      if (model->hidden_model->MLS_weights)
+        npd_compute_MLS_weights (model);
+
       return &g_array_index (model->control_points,
                              NPDControlPoint,
                              model->control_points->len - 1);
@@ -147,15 +151,19 @@ npd_remove_control_point (NPDModel        *model,
 {
   gint i;
   NPDControlPoint *cp;
-  
+
   for (i = 0; i < model->control_points->len; i++)
     {
       cp = &g_array_index (model->control_points, NPDControlPoint, i);
-      
+
       if (cp == control_point)
         {
           npd_set_control_point_weight (cp, 1.0);
           g_array_remove_index (model->control_points, i);
+
+          if (model->hidden_model->MLS_weights)
+            npd_compute_MLS_weights (model);
+
           return;
         }
     }
@@ -334,6 +342,82 @@ npd_set_point_coordinates (NPDPoint *target,
   target->y = source->y;
 }
 
+/**
+ * Sets type of deformation. The function doesn't perform anything if supplied
+ * deformation type doesn't differ from currently set one.
+ *
+ * @param model
+ * @param ASAP          TRUE = ASAP deformation, FALSE = ARAP deformation
+ * @param MLS_weights   use weights from Moving Least Squares deformation method
+ */
+void
+npd_set_deformation_type (NPDModel *model,
+                          gboolean ASAP,
+                          gboolean MLS_weights)
+{
+  NPDHiddenModel *hm = model->hidden_model;
+
+  if (hm->ASAP == ASAP && hm->MLS_weights == MLS_weights) return;
+
+  if (MLS_weights)
+    npd_compute_MLS_weights (model);
+  else if (hm->MLS_weights)
+    npd_reset_weights (hm);
+
+  hm->ASAP = ASAP;
+  hm->MLS_weights = MLS_weights;
+}
+
+void
+npd_compute_MLS_weights (NPDModel *model)
+{
+  NPDHiddenModel       *hm = model->hidden_model;
+  NPDControlPoint      *cp;
+  NPDOverlappingPoints *op;
+  NPDPoint             *cp_reference, *op_reference;
+  gfloat                min, SED, MLS_weight;
+  gint                  i, j;
+
+  if (model->control_points->len == 0) return;
+
+  for (i = 0; i < hm->num_of_overlapping_points; i++)
+    {
+      op           = &hm->list_of_overlapping_points[i];
+      op_reference = op->representative->counterpart;
+      min          = INFINITY;
+
+      for (j = 0; j < model->control_points->len; j++)
+        {
+          cp = &g_array_index (model->control_points,
+                               NPDControlPoint,
+                               j);
+          cp_reference = cp->overlapping_points->representative->counterpart;
+
+          /* TODO - use geodetic distance */
+          SED = npd_SED (cp_reference,
+                         op_reference);
+          if (SED < min) min = SED;
+        }
+
+      if (npd_equal_floats (min, 0.0)) min = 0.0000001;
+      MLS_weight = 1 / min;
+      npd_set_overlapping_points_weight (op, MLS_weight);
+    }
+}
+
+void
+npd_reset_weights (NPDHiddenModel *hm)
+{
+  NPDOverlappingPoints *op;
+  gint                  i;
+
+  for (i = 0; i < hm->num_of_overlapping_points; i++)
+    {
+      op  = &hm->list_of_overlapping_points[i];
+      npd_set_overlapping_points_weight (op, 1.0);
+    }
+}
+
 void
 npd_print_hidden_model (NPDHiddenModel *hm,
                         gboolean        print_bones,
@@ -342,7 +426,8 @@ npd_print_hidden_model (NPDHiddenModel *hm,
   gint i;
   g_printf ("NPDHiddenModel:\n");
   g_printf ("number of bones: %d\n", hm->num_of_bones);
-  g_printf ("ARAP: %d\n", hm->ARAP);
+  g_printf ("ASAP: %d\n", hm->ASAP);
+  g_printf ("MLS weights: %d\n", hm->MLS_weights);
   g_printf ("number of overlapping points: %d\n", hm->num_of_overlapping_points);
   
   if (print_bones)

@@ -59,7 +59,7 @@ npd_compute_ARSAP_transformation (gint     num_of_points,
                                   NPDPoint reference_points[],
                                   NPDPoint current_points[],
                                   gfloat   weights[],
-                                  gboolean ARAP)
+                                  gboolean ASAP)
 {
   NPDPoint pc = {0, 0}, qc = {0, 0};
   gfloat a = 0, b = 0, mu_part = 0, mu, r1, r2, x0, y0;
@@ -103,8 +103,8 @@ npd_compute_ARSAP_transformation (gint     num_of_points,
     }
 
   mu = 1;
-  if (ARAP) mu = sqrt(a * a + b * b);
-  else      mu = mu_part;
+  if (ASAP) mu = mu_part;
+  else      mu = sqrt(a * a + b * b);
 
   r1 =  a / mu;
   r2 = -b / mu;
@@ -129,7 +129,8 @@ npd_compute_ARSAP_transformation (gint     num_of_points,
 void
 npd_compute_ARSAP_transformations (NPDHiddenModel *hidden_model)
 {
-  gint i;
+  gint     i;
+  
   for (i = 0; i < hidden_model->num_of_bones; ++i)
     {
       NPDBone *reference_bones = &hidden_model->reference_bones[i];
@@ -138,7 +139,7 @@ npd_compute_ARSAP_transformations (NPDHiddenModel *hidden_model)
                                         reference_bones->points,
                                         current_bones->points,
                                         current_bones->weights,
-                                        hidden_model->ARAP);
+                                        hidden_model->ASAP);
     }
 }
 

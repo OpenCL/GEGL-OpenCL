@@ -36,7 +36,7 @@ void  npd_compute_ARSAP_transformation  (gint              num_of_points,
                                          NPDPoint          reference_shape[],
                                          NPDPoint          current_shape[],
                                          gfloat            weights[],
-                                         gboolean          ARAP);
+                                         gboolean          ASAP);
 void  npd_compute_ARSAP_transformations (NPDHiddenModel   *model);
 void  npd_deform_model                  (NPDModel         *model,
                                          gint              rigidity);
