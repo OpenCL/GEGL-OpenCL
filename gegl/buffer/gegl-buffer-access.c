@@ -1683,7 +1683,6 @@ gegl_buffer_copy2 (GeglBuffer          *src,
                    GeglBuffer          *dst,
                    const GeglRectangle *dst_rect)
 {
-  const Babl *fish;
   g_return_if_fail (GEGL_IS_BUFFER (src));
   g_return_if_fail (GEGL_IS_BUFFER (dst));
 
@@ -1700,22 +1699,20 @@ gegl_buffer_copy2 (GeglBuffer          *src,
   if (src_rect->width == 0 || src_rect->height == 0)
     return;
 
-  fish = babl_fish (src->soft_format, dst->soft_format);
-
     {
       GeglRectangle dest_rect_r = *dst_rect;
       GeglBufferIterator *i;
-      gint read;
+      gint bpp = babl_format_get_bytes_per_pixel (dst->soft_format);
 
       dest_rect_r.width = src_rect->width;
       dest_rect_r.height = src_rect->height;
 
       i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format,
                                     GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
-      read = gegl_buffer_iterator_add (i, src, src_rect, 0, src->soft_format,
-                                       GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+      gegl_buffer_iterator_add (i, src, src_rect, 0, dst->soft_format,
+                                GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
       while (gegl_buffer_iterator_next (i))
-        babl_process (fish, i->data[read], i->data[0], i->length);
+        memcpy (i->data[0], i->data[1], i->length * bpp);
     }
 }
 
