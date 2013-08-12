@@ -1677,7 +1677,7 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
     }
 }
 
-void
+static void
 gegl_buffer_copy2 (GeglBuffer          *src,
                    const GeglRectangle *src_rect,
                    GeglBuffer          *dst,
