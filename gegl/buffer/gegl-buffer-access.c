@@ -1702,17 +1702,22 @@ gegl_buffer_copy2 (GeglBuffer          *src,
     {
       GeglRectangle dest_rect_r = *dst_rect;
       GeglBufferIterator *i;
-      gint bpp = babl_format_get_bytes_per_pixel (dst->soft_format);
+      gint offset_x = src_rect->x - dst_rect->x;
+      gint offset_y = src_rect->y - dst_rect->y;
 
       dest_rect_r.width = src_rect->width;
       dest_rect_r.height = src_rect->height;
 
       i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format,
                                     GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
-      gegl_buffer_iterator_add (i, src, src_rect, 0, dst->soft_format,
-                                GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
       while (gegl_buffer_iterator_next (i))
-        memcpy (i->data[0], i->data[1], i->length * bpp);
+        {
+          GeglRectangle src_rect = i->roi[0];
+          src_rect.x += offset_x;
+          src_rect.y += offset_y;
+          gegl_buffer_iterate_read_dispatch (src, &src_rect, i->data[0], 0,
+                                             dst->soft_format, 0, GEGL_ABYSS_NONE);
+        }
     }
 }
 
