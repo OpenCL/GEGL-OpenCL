@@ -210,7 +210,7 @@ void     gegl_rectangle_dump              (const GeglRectangle *rectangle);
  *
  * Returns a pointer to the allocated memory.
  */
-gpointer gegl_malloc                  (gsize    n_bytes);
+gpointer gegl_malloc                  (gsize    n_bytes) G_GNUC_MALLOC;
 
 /**
  * gegl_free: (skip)
@@ -227,7 +227,7 @@ void     gegl_free                    (gpointer mem);
  *
  * allocated 0'd memory.
  */
-gpointer gegl_calloc (gsize size, int n_memb);
+gpointer gegl_calloc (gsize size, int n_memb) G_GNUC_MALLOC;
 
 #define GEGL_FLOAT_EPSILON            (1e-5)
 #define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))
