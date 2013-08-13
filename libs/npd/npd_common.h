@@ -67,6 +67,7 @@ typedef struct
                                             * use npd_set_deformation_type function */
   gboolean              MLS_weights;       /* don't change directly!
                                             * use npd_set_deformation_type function */
+  gfloat                MLS_weights_alpha;
   NPDBone              *current_bones;     /* array of current bones */
   NPDBone              *reference_bones;   /* array of reference bones */
   NPDOverlappingPoints *list_of_overlapping_points; /* array of overlapping points */

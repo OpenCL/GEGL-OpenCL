@@ -34,6 +34,7 @@ npd_init_model (NPDModel *model)
   model->hidden_model = hidden_model;
   hidden_model->ASAP                      = FALSE;
   hidden_model->MLS_weights               = FALSE;
+  hidden_model->MLS_weights_alpha         = 1;
   hidden_model->num_of_bones              = 0;
   hidden_model->num_of_overlapping_points = 0;
 
@@ -400,7 +401,7 @@ npd_compute_MLS_weights (NPDModel *model)
         }
 
       if (npd_equal_floats (min, 0.0)) min = 0.0000001;
-      MLS_weight = 1 / min;
+      MLS_weight = 1 / pow (min, hm->MLS_weights_alpha);
       npd_set_overlapping_points_weight (op, MLS_weight);
     }
 }
