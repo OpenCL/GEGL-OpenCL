@@ -378,6 +378,9 @@ void            gegl_buffer_clear             (GeglBuffer          *buffer,
  *
  * If the babl_formats of the buffers are the same, and the tile boundaries
  * align, this will create copy-on-write tiles in the destination buffer.
+ *
+ * This function never does any scaling. When src_rect and dst_rect do not have
+ * the same width and height, the size of src_rect is used.
  */
 void            gegl_buffer_copy              (GeglBuffer          *src,
                                                const GeglRectangle *src_rect,
