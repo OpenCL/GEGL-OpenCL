@@ -29,8 +29,6 @@ other systems where glib and gtk+ work.
         agnostisism).
       * libpng (png load/export ops, and image magick fallback import)
       * ruby (only if building from git)
-  - GUI (sandbox for testing ops and the API)
-      * GTK+
   - Optional dependencies for operations.
       * SDL (display op)
       * libjpeg (jpg loader op)
