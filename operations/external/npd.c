@@ -20,8 +20,28 @@
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_pointer (model, _("model"), _(""))
-gegl_chant_int (rigidity, _("rigidity"), 100, 20000, 0, _(""))
+gegl_chant_pointer (model,       _("model"),
+                    _("Model - basic element we operate on"))
+
+gegl_chant_int     (square_size, _("square size"),
+                    5,  1000,  20,
+                    _("Size of an edge of square the mesh consists of"))
+
+gegl_chant_int     (rigidity,    _("rigidity"),
+                    1, 10000, 100,
+                    _("The number of deformation iterations"))
+
+gegl_chant_boolean (ASAP_deformation, _("ASAP deformation"),
+                    FALSE,
+                    _("ASAP deformation is performend when TRUE, ARAP deformation otherwise"))
+
+gegl_chant_boolean (MLS_weights, _("MLS weights"),
+                    FALSE,
+                    _("Use MLS weights"))
+
+gegl_chant_double  (MLS_weights_alpha, _("MLS weights alpha"),
+                    0.1, 2.0, 1.0,
+                    _("Alpha parameter of MLS weights"))
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
@@ -52,30 +72,29 @@ typedef struct
   NPDModel model;
 } NPDProperties;
 
-void npd_create_image (NPDImage   *image,
-                       GeglBuffer *gegl_buffer,
-                       const Babl *format);
-void
-npd_set_pixel_color_impl (NPDImage *image,
-                          gint      x,
-                          gint      y,
-                          NPDColor *color);
-void
-npd_get_pixel_color_impl (NPDImage *image,
-                          gint      x,
-                          gint      y,
-                          NPDColor *color);
+void npd_create_image         (NPDImage   *image,
+                               GeglBuffer *gegl_buffer,
+                               const Babl *format);
+
+void npd_set_pixel_color_impl (NPDImage *image,
+                               gint      x,
+                               gint      y,
+                               NPDColor *color);
+
+void npd_get_pixel_color_impl (NPDImage *image,
+                               gint      x,
+                               gint      y,
+                               NPDColor *color);
 
 
-void
-npd_set_pixel_color_impl (NPDImage *image,
-                          gint      x,
-                          gint      y,
-                          NPDColor *color)
+void npd_set_pixel_color_impl (NPDImage *image,
+                               gint      x,
+                               gint      y,
+                               NPDColor *color)
 {
   gint position = 4 * (y * image->width + x);
   gint max = 4 * image->width * image->height;
-  
+
   if (position > 0 && position < max)
     {
       image->buffer[position + 0] = color->r;
@@ -93,7 +112,7 @@ npd_get_pixel_color_impl (NPDImage *image,
 {
   gint position = 4 * (y * image->width + x);
   gint max = 4 * image->width * image->height;
-  
+
   if (position > 0 && position < max)
     {
       color->r = image->buffer[position + 0];
@@ -147,7 +166,8 @@ npd_create_image (NPDImage   *image,
 {
   guchar *buffer;
   buffer = g_new0 (guchar, gegl_buffer_get_pixel_count (gegl_buffer) * 4);
-  gegl_buffer_get (gegl_buffer, NULL, 1.0, format, buffer, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (gegl_buffer, NULL, 1.0, format,
+                   buffer, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   image->buffer = buffer;
   image->width = gegl_buffer_get_width (gegl_buffer);
@@ -190,47 +210,48 @@ process (GeglOperation       *operation,
   const Babl *format = babl_format ("RGBA u8");
   NPDProperties *props = o->chant_data;
   NPDModel *model = &props->model;
+  NPDHiddenModel *hm;
   guchar *output_buffer;
-  gint length = gegl_buffer_get_width (input) * gegl_buffer_get_height (input) * 4;
-  
+  gint length = gegl_buffer_get_pixel_count (input) * 4;
+
   if (props->first_run)
     {
       gint width, height;
       NPDImage *input_image = g_new (NPDImage, 1);
       NPDDisplay *display = g_new (NPDDisplay, 1);
-      
+
       npd_init (npd_set_pixel_color_impl, npd_get_pixel_color_impl);
 
       npd_create_image (input_image, input, format);
       width = input_image->width;
       height = input_image->height;
 
-      output_buffer = g_new0 (guchar, gegl_buffer_get_pixel_count (input) * 4);
+      output_buffer = g_new0 (guchar, length);
       display->image.width = width;
       display->image.height = height;
       display->image.buffer = output_buffer;
 
-      npd_create_model_from_image (model, input_image, 20);
-      npd_create_list_of_overlapping_points (model->hidden_model);
+      npd_create_model_from_image (model, input_image, o->square_size);
+      hm = model->hidden_model;
+      npd_create_list_of_overlapping_points (hm);
 
       model->display = display;
-      
+
       o->model = model;
 
       memcpy (output_buffer, input_image->buffer, length);
-      
+
       props->first_run = FALSE;
     }
   else
     {
+      npd_set_deformation_type (model, o->ASAP_deformation, o->MLS_weights);
+
       output_buffer = model->display->image.buffer;
       memset (output_buffer, 0, length);
-      
-//  npd_deform_model (model, o->rigidity);
-      npd_deform_model (model, 2000);
+      npd_deform_model (model, o->rigidity);
       npd_draw_model (model, model->display);
     }
-
 
   gegl_buffer_set (output, NULL, 0, format, output_buffer, GEGL_AUTO_ROWSTRIDE);
   
