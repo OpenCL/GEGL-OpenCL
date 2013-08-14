@@ -92,11 +92,11 @@ void npd_set_pixel_color_impl (NPDImage *image,
                                gint      y,
                                NPDColor *color)
 {
-  gint position = 4 * (y * image->width + x);
-  gint max = 4 * image->width * image->height;
-
-  if (position > 0 && position < max)
+  if (x > -1 && x < image->width &&
+      y > -1 && y < image->height)
     {
+      gint position = 4 * (y * image->width + x);
+
       image->buffer[position + 0] = color->r;
       image->buffer[position + 1] = color->g;
       image->buffer[position + 2] = color->b;
@@ -110,11 +110,11 @@ npd_get_pixel_color_impl (NPDImage *image,
                           gint      y,
                           NPDColor *color)
 {
-  gint position = 4 * (y * image->width + x);
-  gint max = 4 * image->width * image->height;
-
-  if (position > 0 && position < max)
+  if (x > -1 && x < image->width &&
+      y > -1 && y < image->height)
     {
+      gint position = 4 * (y * image->width + x);
+
       color->r = image->buffer[position + 0];
       color->g = image->buffer[position + 1];
       color->b = image->buffer[position + 2];
