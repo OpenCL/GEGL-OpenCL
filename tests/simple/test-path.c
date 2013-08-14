@@ -101,7 +101,6 @@ int main(int argc, char *argv[])
   int i=1, j=1;
   GeglPath *path = NULL;
 
-  g_type_init();
   gegl_init (&argc, &argv);
 
   distribute (0.0, NSMP ,exp_y);

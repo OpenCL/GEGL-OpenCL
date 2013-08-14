@@ -80,7 +80,6 @@ int
 main (int    argc,
       char **argv)
 {
-  g_type_init ();
   gegl_init (&argc, &argv);
   g_test_init (&argc, &argv, NULL);
 

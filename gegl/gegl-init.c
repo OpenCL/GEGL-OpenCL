@@ -505,7 +505,6 @@ gegl_post_parse_hook (GOptionContext *context,
 {
   g_assert (global_time == 0);
   global_time = gegl_ticks ();
-  g_type_init ();
   babl_init ();
 
   if (g_getenv ("GEGL_DEBUG_TIME") != NULL)
