@@ -1,5 +1,0 @@
-Basically this follows the usual way of installing things.
-
-However:
-	You have to build gegl first, before the bindings parser can pick up
-	all the data types!

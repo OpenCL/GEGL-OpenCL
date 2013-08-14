@@ -1,8 +1,0 @@
-This is the vapi for GEGL. The GEGL API coverrage is not complete due
-to API stability and maturity issues.
-
-Currently, it is not yet possible to write GEGL Operation from
-Vala. You can build a pipeline and process it.
-
-See http://live.gnome.org/Vala for more details about Vala programming
-language.

@@ -59,8 +59,4 @@ dropped into the directory in the build.
   │
   ├──bin               gegl binary, for processing XML compositions to png files.
   │
-  ├──bindings          bindings for using GEGL from other programming languages
-  │                    not included in the tarball distribution but exist in
-  │                    the git repository.
-  │
   └──tools             some small utilities to help the build.

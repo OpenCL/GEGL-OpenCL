@@ -1,5 +1,0 @@
-<?xml version="1.0"?>
-<monodoc>
-	<source provider="ecma" basefile="gegl-sharp-docs" path="classlib-gegl-sharp" />
-</monodoc>
-
