@@ -127,7 +127,7 @@ npd_get_pixel_color_impl (NPDImage *image,
 }
 
 void
-npd_draw_model (NPDModel *model,
+npd_draw_model (NPDModel   *model,
                 NPDDisplay *display)
 {
   NPDHiddenModel *hidden_model = model->hidden_model;

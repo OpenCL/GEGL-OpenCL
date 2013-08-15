@@ -29,64 +29,72 @@ struct _NPDColor {
     unsigned char a;
 };
 
-void        npd_create_model_from_image       (NPDModel *model,
-                                               NPDImage *image,
-                                               gint      square_size);
-void        npd_create_mesh_from_image        (NPDModel *model,
-                                               gint      width,
-                                               gint      height,
-                                               gint      position_x,
-                                               gint      position_y);
-void        npd_draw_model                    (NPDModel *model,
+void        npd_create_model_from_image       (NPDModel   *model,
+                                               NPDImage   *image,
+                                               gint        square_size);
+void        npd_create_mesh_from_image        (NPDModel   *model,
+                                               gint        width,
+                                               gint        height,
+                                               gint        position_x,
+                                               gint        position_y);
+void        npd_draw_model                    (NPDModel   *model,
                                                NPDDisplay *display);
 
-gboolean    npd_load_image                    (NPDImage *image,
+gboolean    npd_load_image                    (NPDImage   *image,
                                                const char *path);
-void        npd_destroy_image                 (NPDImage *image);
-void        npd_draw_image                    (NPDImage *image);
-void        npd_texture_fill_triangle         (gint      x1,
-                                               gint      y1,
-                                               gint      x2,
-                                               gint      y2,
-                                               gint      x3,
-                                               gint      y3,
-                                               NPDMatrix *A,
-                                               NPDImage *input_image,
-                                               NPDImage *output_image);
-void        npd_texture_quadrilateral         (NPDBone  *reference_bone,
-                                               NPDBone  *current_bone,
-                                               NPDImage *input_image,
-                                               NPDImage *output_image);
-void        npd_draw_texture_line             (gint       x1,
-                                               gint       x2,
-                                               gint       y,
-                                               NPDMatrix *A,
+void        npd_destroy_image                 (NPDImage   *image);
+//void        npd_draw_image                    (NPDImage *image);
+void        npd_texture_fill_triangle         (gint        x1,
+                                               gint        y1,
+                                               gint        x2,
+                                               gint        y2,
+                                               gint        x3,
+                                               gint        y3,
+                                               NPDMatrix  *A,
                                                NPDImage   *input_image,
                                                NPDImage   *output_image);
-gint        npd_bilinear_interpolation        (gint      I0,
-                                               gint      I1,
-                                               gint      I2,
-                                               gint      I3,
-                                               gfloat    dx,
-                                               gfloat    dy);
-void        npd_bilinear_color_interpolation  (NPDColor *I0,
-                                               NPDColor *I1,
-                                               NPDColor *I2,
-                                               NPDColor *I3,
-                                               gfloat    dx,
-                                               gfloat    dy,
-                                               NPDColor *out);
-void      (*npd_get_pixel_color)              (NPDImage *image,
-                                               gint      x,
-                                               gint      y,
-                                               NPDColor *color);
-void      (*npd_set_pixel_color)              (NPDImage *image,
-                                               gint      x,
-                                               gint      y,
-                                               NPDColor *color);
-gboolean    npd_compare_colors                (NPDColor *c1,
-                                               NPDColor *c2);
-gboolean    npd_is_color_transparent          (NPDColor *color);
+void        npd_texture_quadrilateral         (NPDBone    *reference_bone,
+                                               NPDBone    *current_bone,
+                                               NPDImage   *input_image,
+                                               NPDImage   *output_image);
+void        npd_draw_texture_line             (gint        x1,
+                                               gint        x2,
+                                               gint        y,
+                                               NPDMatrix  *A,
+                                               NPDImage   *input_image,
+                                               NPDImage   *output_image);
+gint        npd_bilinear_interpolation        (gint        I0,
+                                               gint        I1,
+                                               gint        I2,
+                                               gint        I3,
+                                               gfloat      dx,
+                                               gfloat      dy);
+void        npd_bilinear_color_interpolation  (NPDColor   *I0,
+                                               NPDColor   *I1,
+                                               NPDColor   *I2,
+                                               NPDColor   *I3,
+                                               gfloat      dx,
+                                               gfloat      dy,
+                                               NPDColor   *out);
+gint        npd_blend_band                    (gint        src,
+                                               gint        dst,
+                                               gfloat      src_alpha,
+                                               gfloat      dest_alpha,
+                                               gfloat      out_alpha);
+void        npd_blend_colors                  (NPDColor   *src,
+                                               NPDColor   *dst,
+                                               NPDColor   *out_color);
+void      (*npd_get_pixel_color)              (NPDImage   *image,
+                                               gint        x,
+                                               gint        y,
+                                               NPDColor   *color);
+void      (*npd_set_pixel_color)              (NPDImage   *image,
+                                               gint        x,
+                                               gint        y,
+                                               NPDColor   *color);
+gboolean    npd_compare_colors                (NPDColor   *c1,
+                                               NPDColor   *c2);
+gboolean    npd_is_color_transparent          (NPDColor   *color);
 gboolean    npd_init_display                  (NPDDisplay *display);
 void        npd_destroy_display               (NPDDisplay *display);
 

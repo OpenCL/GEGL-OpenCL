@@ -183,6 +183,33 @@ npd_bilinear_color_interpolation (NPDColor *I0,
   out->a = npd_bilinear_interpolation (I0->a, I1->a, I2->a, I3->a, dx, dy);
 }
 
+gint
+npd_blend_band (gint   src,
+                gint   dst,
+                gfloat src_alpha,
+                gfloat dst_alpha,
+                gfloat out_alpha_recip)
+{
+  return floor ((src * src_alpha +
+                 dst * dst_alpha * (1 - src_alpha)) * out_alpha_recip);
+}
+
+void
+npd_blend_colors (NPDColor *src,
+                  NPDColor *dst,
+                  NPDColor *out_color)
+{
+  gfloat src_A = src->a / 255.0,
+         dst_A = dst->a / 255.0;
+  gfloat out_alpha = src_A + dst_A * (1 - src_A);
+  gfloat out_alpha_recip = 1 / out_alpha;
+
+  out_color->r = npd_blend_band (src->r, dst->r, src_A, dst_A, out_alpha_recip);
+  out_color->g = npd_blend_band (src->g, dst->g, src_A, dst_A, out_alpha_recip);
+  out_color->b = npd_blend_band (src->b, dst->b, src_A, dst_A, out_alpha_recip);
+  out_color->a = out_alpha * 255;
+}
+
 void
 npd_texture_fill_triangle (gint x1,
                            gint y1,
@@ -333,7 +360,7 @@ npd_draw_texture_line (gint        x1,
   for (x = x1; x <= x2; x++)
     {
       NPDPoint p, q;
-      NPDColor I0, I1, I2, I3, interpolated;
+      NPDColor I0, I1, I2, I3, interpolated, dest;
 
       q.x = x; q.y = y;
       npd_apply_transformation(A, &q, &p);
@@ -349,6 +376,10 @@ npd_draw_texture_line (gint        x1,
       npd_get_pixel_color(input_image, fx, fy+1, &I2);
       npd_get_pixel_color(input_image, fx+1, fy+1, &I3);
       npd_bilinear_color_interpolation(&I0, &I1, &I2, &I3, dx, dy, &interpolated);
+
+      /* alpha blending */
+      npd_get_pixel_color (output_image, x, y, &dest);
+      npd_blend_colors (&interpolated, &dest, &interpolated);
 
       npd_set_pixel_color (output_image, x, y, &interpolated);
     }
