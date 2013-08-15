@@ -868,15 +868,19 @@ gegl_tile_backend_swap_cleanup (void)
 
       if (g_queue_get_length (queue) != 0)
         g_warning ("tile-backend-swap writer queue wasn't empty before freeing\n");
+
       g_queue_free (queue);
 
       if (g_list_length (gap_list) > 1)
         g_warning ("tile-backend-swap gap list had more than one element\n");
+
       g_slice_free (SwapGap, gap_list->data);
       g_list_free (gap_list);
 
       close (in_fd);
       close (out_fd);
+
+      in_fd = out_fd = -1;
     }
 }
 

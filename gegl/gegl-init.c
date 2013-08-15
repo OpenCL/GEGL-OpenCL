@@ -393,6 +393,7 @@ gegl_exit (void)
 
   GEGL_INSTRUMENT_START()
 
+  gegl_tile_backend_swap_cleanup ();
   gegl_tile_cache_destroy ();
   gegl_operation_gtype_cleanup ();
   gegl_extension_handler_cleanup ();
