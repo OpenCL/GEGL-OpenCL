@@ -419,11 +419,13 @@ gegl_tile_backend_swap_find_offset (gint tile_size)
   if (gap_list)
     {
       GList *link = gap_list;
-      SwapGap *gap = link->data;
 
       while (link)
         {
-          gint length = gap->end - gap->start;
+          guint64 length;
+
+          gap    = link->data;
+          length = gap->end - gap->start;
 
           if (length > tile_size)
             {
@@ -477,11 +479,11 @@ gegl_tile_backend_swap_entry_destroy (GeglTileBackendSwap *self,
 
   if (entry->link)
     {
-      GList *link = entry->link;
+      GList *link;
 
       g_mutex_lock (&mutex);
 
-      if (link)
+      if ((link = entry->link))
         {
           ThreadParams *queued_op = link->data;
           g_queue_delete_link (queue, link);
@@ -495,76 +497,79 @@ gegl_tile_backend_swap_entry_destroy (GeglTileBackendSwap *self,
   start = entry->offset;
   end = start + tile_size;
 
-  hlink = gap_list;
-  while (hlink)
-    {
-      GList *llink = hlink->prev;
-      SwapGap *lgap, *hgap;
+  if ((hlink = gap_list))
+    while (hlink)
+      {
+        GList *llink = hlink->prev;
+        SwapGap *lgap, *hgap;
 
-      if (llink)
-        lgap = llink->data;
+        if (llink)
+          lgap = llink->data;
 
-      hgap = hlink->data;
+        hgap = hlink->data;
 
-      /* attempt to merge lower, upper and this gap */
-      if (llink != NULL && lgap->end == start &&
-          hgap->start == end)
-        {
-          llink->next = hlink->next;
-          if (hlink->next)
-            hlink->next->prev = llink;
-          lgap->end = hgap->end;
+        /* attempt to merge lower, upper and this gap */
+        if (llink != NULL && lgap->end == start &&
+            hgap->start == end)
+          {
+            llink->next = hlink->next;
+            if (hlink->next)
+              hlink->next->prev = llink;
+            lgap->end = hgap->end;
 
-          g_slice_free (SwapGap, hgap);
-          hlink->next = NULL;
-          hlink->prev = NULL;
-          g_list_free (hlink);
-          break;
-        }
-      /* attempt to merge with upper gap */
-      else if (hgap->start == end)
-        {
-          hgap->start = start;
-          break;
-        }
-      /* attempt to merge with lower gap */
-      else if (llink != NULL && lgap->end == start)
-        {
-          lgap->end = end;
-          break;
-        }
-      /* create new gap */
-      else if (hgap->start > end)
-        {
-          lgap = gegl_tile_backend_swap_gap_new (start, end);
-          gap_list = g_list_insert_before (gap_list, hlink, lgap);
-          break;
-        }
+            g_slice_free (SwapGap, hgap);
+            hlink->next = NULL;
+            hlink->prev = NULL;
+            g_list_free (hlink);
+            break;
+          }
+        /* attempt to merge with upper gap */
+        else if (hgap->start == end)
+          {
+            hgap->start = start;
+            break;
+          }
+        /* attempt to merge with lower gap */
+        else if (llink != NULL && lgap->end == start)
+          {
+            lgap->end = end;
+            break;
+          }
+        /* create new gap */
+        else if (hgap->start > end)
+          {
+            lgap = gegl_tile_backend_swap_gap_new (start, end);
+            gap_list = g_list_insert_before (gap_list, hlink, lgap);
+            break;
+          }
 
-      /* if there's no more elements in the list after this */
-      else if (hlink->next == NULL)
-        {
-          /* attempt to merge with the last gap */
-          if (hgap->end == start)
-            {
-              hgap->end = end;
-            }
-          /* create a new gap in the end of the list */
-          else
-            {
-              GList *new_link;
-              hgap = gegl_tile_backend_swap_gap_new (start, end);
-              new_link = g_list_alloc ();
-              new_link->next = NULL;
-              new_link->prev = hlink;
-              new_link->data = hgap;
-              hlink->next = new_link;
-            }
-          break;
-        }
+        /* if there's no more elements in the list after this */
+        else if (hlink->next == NULL)
+          {
+            /* attempt to merge with the last gap */
+            if (hgap->end == start)
+              {
+                hgap->end = end;
+              }
+            /* create a new gap in the end of the list */
+            else
+              {
+                GList *new_link;
+                hgap = gegl_tile_backend_swap_gap_new (start, end);
+                new_link = g_list_alloc ();
+                new_link->next = NULL;
+                new_link->prev = hlink;
+                new_link->data = hgap;
+                hlink->next = new_link;
+              }
+            break;
+          }
 
-      hlink = hlink->next;
-    }
+        hlink = hlink->next;
+      }
+  else
+    gap_list = g_list_prepend (NULL,
+                               gegl_tile_backend_swap_gap_new (start, end));
 
   g_hash_table_remove (self->index, entry);
   g_slice_free (SwapEntry, entry);
@@ -871,11 +876,20 @@ gegl_tile_backend_swap_cleanup (void)
 
       g_queue_free (queue);
 
-      if (g_list_length (gap_list) > 1)
-        g_warning ("tile-backend-swap gap list had more than one element\n");
+      if (gap_list)
+        {
+          SwapGap *gap = gap_list->data;
 
-      g_slice_free (SwapGap, gap_list->data);
-      g_list_free (gap_list);
+          if (gap_list->next)
+            g_warning ("tile-backend-swap gap list had more than one element\n");
+
+          g_warn_if_fail (gap->start == 0 && gap->end == total);
+
+          g_slice_free (SwapGap, gap_list->data);
+          g_list_free (gap_list);
+        }
+      else
+        g_warn_if_fail (total == 0);
 
       close (in_fd);
       close (out_fd);
