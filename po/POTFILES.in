@@ -143,6 +143,7 @@ operations/external/jpg-load.c
 operations/external/jpg-save.c
 operations/external/lcms-from-profile.c
 operations/external/matting-levin.c
+operations/external/npd.c
 operations/external/npy-save.c
 operations/external/openraw.c
 operations/external/path.c
