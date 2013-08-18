@@ -131,6 +131,28 @@ npd_create_mesh_from_image (NPDModel *model,
   g_ptr_array_free(reference_bones, TRUE);
 }
 
+void npd_draw_mesh (NPDModel   *model,
+                    NPDDisplay *display)
+{
+  NPDHiddenModel *hm = model->hidden_model;
+  gint i, j;
+
+  for (i = 0; i < hm->num_of_bones; i++)
+    {
+      NPDBone  *bone  = &hm->current_bones[i];
+      NPDPoint *first = &bone->points[0];
+      NPDPoint *p0, *p1;
+
+      for (j = 1; j < bone->num_of_points; j++)
+        {
+          p0 = &bone->points[j - 1];
+          p1 = &bone->points[j];
+          npd_draw_line (display, p0->x, p0->y, p1->x, p1->y);
+        }
+      npd_draw_line (display, p1->x, p1->y, first->x, first->y);
+    }
+}
+
 gboolean
 npd_compare_colors (NPDColor *c1,
                     NPDColor *c2)

@@ -33,7 +33,7 @@ gegl_chant_int     (rigidity,    _("rigidity"),
 
 gegl_chant_boolean (ASAP_deformation, _("ASAP deformation"),
                     FALSE,
-                    _("ASAP deformation is performend when TRUE, ARAP deformation otherwise"))
+                    _("ASAP deformation is performed when TRUE, ARAP deformation otherwise"))
 
 gegl_chant_boolean (MLS_weights, _("MLS weights"),
                     FALSE,
@@ -42,6 +42,10 @@ gegl_chant_boolean (MLS_weights, _("MLS weights"),
 gegl_chant_double  (MLS_weights_alpha, _("MLS weights alpha"),
                     0.1, 2.0, 1.0,
                     _("Alpha parameter of MLS weights"))
+
+gegl_chant_boolean (mesh_visible, _("mesh visible"),
+                    TRUE,
+                    _("Should the mesh be visible?"))
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
@@ -52,6 +56,7 @@ gegl_chant_double  (MLS_weights_alpha, _("MLS weights alpha"),
 #include <math.h>
 #include <npd/npd.h>
 #include <npd/npd_gegl.h>
+#include <cairo.h>
 
 struct _NPDImage
 {
@@ -63,13 +68,14 @@ struct _NPDImage
 
 struct _NPDDisplay
 {
-  NPDImage image;
+  NPDImage  image;
+  cairo_t  *cr;
 };
 
 typedef struct
 {
-  gboolean first_run;
-  NPDModel model;
+  gboolean  first_run;
+  NPDModel  model;
 } NPDProperties;
 
 void npd_create_image         (NPDImage   *image,
@@ -86,6 +92,11 @@ void npd_get_pixel_color_impl (NPDImage *image,
                                gint      y,
                                NPDColor *color);
 
+void npd_draw_line_impl       (NPDDisplay *display,
+                               gfloat      x0,
+                               gfloat      y0,
+                               gfloat      x1,
+                               gfloat      y1);
 
 void npd_set_pixel_color_impl (NPDImage *image,
                                gint      x,
@@ -126,24 +137,51 @@ npd_get_pixel_color_impl (NPDImage *image,
     }
 }
 
+void npd_draw_line_impl (NPDDisplay *display,
+                         gfloat      x0,
+                         gfloat      y0,
+                         gfloat      x1,
+                         gfloat      y1)
+{
+  cairo_move_to (display->cr, x0, y0);
+  cairo_line_to (display->cr, x1, y1);
+}
+
 void
 npd_draw_model (NPDModel   *model,
                 NPDDisplay *display)
 {
-  NPDHiddenModel *hidden_model = model->hidden_model;
+  NPDHiddenModel *hm = model->hidden_model;
   NPDImage *image = model->reference_image;
   gint i;
 
   /* draw texture */
   if (model->texture_visible)
     {
-      for (i = 0; i < hidden_model->num_of_bones; i++)
+      for (i = 0; i < hm->num_of_bones; i++)
         {
-          npd_texture_quadrilateral(&hidden_model->reference_bones[i],
-                                    &hidden_model->current_bones[i],
+          npd_texture_quadrilateral(&hm->reference_bones[i],
+                                    &hm->current_bones[i],
                                      image,
                                     &display->image);
         }
+    }
+  
+  /* draw mesh */
+  if (model->mesh_visible)
+    {
+      cairo_surface_t *surface;
+
+      surface = cairo_image_surface_create_for_data (display->image.buffer,
+                                                     CAIRO_FORMAT_ARGB32,
+                                                     display->image.width,
+                                                     display->image.height,
+                                                     display->image.width * 4);
+      display->cr = cairo_create (surface);
+      cairo_set_line_width (display->cr, 1);
+      cairo_set_source_rgba (display->cr, 0, 0, 0, 1);
+      npd_draw_mesh (model, display);
+      cairo_stroke (display->cr);
     }
 }
 
@@ -190,7 +228,7 @@ prepare (GeglOperation *operation)
     {
       props = g_new (NPDProperties, 1);
       props->first_run = TRUE;
-      o->chant_data = props;
+      o->chant_data    = props;
     }
   
   gegl_operation_set_format (operation, "input",
@@ -220,7 +258,9 @@ process (GeglOperation       *operation,
       NPDImage *input_image = g_new (NPDImage, 1);
       NPDDisplay *display = g_new (NPDDisplay, 1);
 
-      npd_init (npd_set_pixel_color_impl, npd_get_pixel_color_impl);
+      npd_init (npd_set_pixel_color_impl,
+                npd_get_pixel_color_impl,
+                npd_draw_line_impl);
 
       npd_create_image (input_image, input, format);
       width = input_image->width;
@@ -236,7 +276,6 @@ process (GeglOperation       *operation,
       npd_create_list_of_overlapping_points (hm);
 
       model->display = display;
-
       o->model = model;
 
       memcpy (output_buffer, input_image->buffer, length);
@@ -246,6 +285,7 @@ process (GeglOperation       *operation,
   else
     {
       npd_set_deformation_type (model, o->ASAP_deformation, o->MLS_weights);
+      model->mesh_visible = o->mesh_visible;
 
       output_buffer = model->display->image.buffer;
       memset (output_buffer, 0, length);
@@ -273,8 +313,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories"  , "transform",
     "name"        , "gegl:npd",
-/*    "description" , _("Performs n-point image deformation"),*/
-    "description" , "Performs n-point image deformation",
+    "description" , _("Performs n-point image deformation"),
     NULL);
 }
 

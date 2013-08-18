@@ -39,6 +39,8 @@ void        npd_create_mesh_from_image        (NPDModel   *model,
                                                gint        position_y);
 void        npd_draw_model                    (NPDModel   *model,
                                                NPDDisplay *display);
+void        npd_draw_mesh                     (NPDModel   *model,
+                                               NPDDisplay *display);
 
 gboolean    npd_load_image                    (NPDImage   *image,
                                                const char *path);
@@ -63,6 +65,11 @@ void        npd_draw_texture_line             (gint        x1,
                                                NPDMatrix  *A,
                                                NPDImage   *input_image,
                                                NPDImage   *output_image);
+void      (*npd_draw_line)                    (NPDDisplay *display,
+                                               gfloat      x0,
+                                               gfloat      y0,
+                                               gfloat      x1,
+                                               gfloat      y1);
 gint        npd_bilinear_interpolation        (gint        I0,
                                                gint        I1,
                                                gint        I2,
