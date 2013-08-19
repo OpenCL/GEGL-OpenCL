@@ -102,7 +102,7 @@ grey_blur_buffer (GeglBuffer  *input,
   gegl_node_link_many (image, blur1, write1, NULL);
   gegl_node_process (write1);
 
-  gegl_node_link_many (image,blur2, write2, NULL);
+  gegl_node_link_many (image, blur2, write2, NULL);
   gegl_node_process (write2);
 
   g_object_unref (gegl);
