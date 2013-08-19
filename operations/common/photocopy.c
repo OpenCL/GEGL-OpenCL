@@ -303,7 +303,6 @@ process (GeglOperation       *operation,
   total_pixels = result->width * result->height;
   src1_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
   src2_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
-  dst_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
 
   gegl_buffer_get (dest1, result, 1.0, babl_format ("Y float"),
                    src1_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
