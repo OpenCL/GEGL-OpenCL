@@ -105,6 +105,8 @@ NPDControlPoint *npd_add_control_point          (NPDModel        *model,
                                                  NPDPoint        *coord);
 void             npd_remove_control_point       (NPDModel        *model,
                                                  NPDControlPoint *control_point);
+void             npd_remove_control_points      (NPDModel        *model,
+                                                 GList           *control_points);
 void             npd_remove_all_control_points  (NPDModel        *model);
 void             npd_set_control_point_weight   (NPDControlPoint *cp,
                                                  gfloat           weight);

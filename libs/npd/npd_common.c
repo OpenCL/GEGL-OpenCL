@@ -23,6 +23,9 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
+gint  npd_int_sort_function_descending (gconstpointer a,
+                                        gconstpointer b);
+
 void
 npd_init_model (NPDModel *model)
 {
@@ -146,6 +149,12 @@ npd_add_control_point (NPDModel *model,
     return NULL;
 }
 
+/**
+ * Beware, when you use this function on previously stored pointers to control
+ * points it needn't to work properly, because g_array_remove_index can
+ * preserve pointers but change (move) data.
+ * In this situation use npd_remove_control_points instead.
+ */
 void
 npd_remove_control_point (NPDModel        *model,
                           NPDControlPoint *control_point)
@@ -168,6 +177,53 @@ npd_remove_control_point (NPDModel        *model,
           return;
         }
     }
+}
+
+gint
+npd_int_sort_function_descending (gconstpointer a,
+                                  gconstpointer b)
+{
+  return GPOINTER_TO_INT (b) - GPOINTER_TO_INT (a);
+}
+
+void
+npd_remove_control_points (NPDModel *model,
+                           GList    *control_points)
+{
+  gint i;
+  NPDControlPoint *cp;
+  GList *indices = NULL;
+
+  /* first we find indices of control points we want to remove */
+  while (control_points != NULL)
+    {
+      for (i = 0; i < model->control_points->len; i++)
+        {
+          cp = &g_array_index (model->control_points, NPDControlPoint, i);
+          if (cp == control_points->data)
+            {
+              npd_set_control_point_weight (cp, 1.0);
+              indices = g_list_insert_sorted (indices,
+                                              GINT_TO_POINTER (i),
+                                              npd_int_sort_function_descending);
+            }
+        }
+
+      control_points = g_list_next (control_points);
+    }
+
+  /* indices are sorted in descending order, so we can simply iterate over them
+   * and remove corresponding control points one by one */
+  while (indices != NULL)
+    {
+      g_array_remove_index (model->control_points, GPOINTER_TO_INT (indices->data));
+      indices = g_list_next (indices);
+    }
+
+  if (model->hidden_model->MLS_weights)
+    npd_compute_MLS_weights (model);
+
+  g_list_free (indices);
 }
 
 void
