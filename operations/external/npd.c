@@ -163,7 +163,8 @@ npd_draw_model (NPDModel   *model,
           npd_texture_quadrilateral(&hm->reference_bones[i],
                                     &hm->current_bones[i],
                                      image,
-                                    &display->image);
+                                    &display->image,
+                                     NPD_BILINEAR_INTERPOLATION | NPD_ALPHA_BLENDING);
         }
     }
   

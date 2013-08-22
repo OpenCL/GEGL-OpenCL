@@ -22,12 +22,27 @@
 
 #include "npd_common.h"
 
+//#define NPD_RGBA_FLOAT
+
 struct _NPDColor {
-    unsigned char r;
-    unsigned char g;
-    unsigned char b;
-    unsigned char a;
+#ifdef NPD_RGBA_FLOAT
+  gfloat r;
+  gfloat g;
+  gfloat b;
+  gfloat a;
+#else
+  guint8 r;
+  guint8 g;
+  guint8 b;
+  guint8 a;
+#endif
 };
+
+typedef enum
+{
+  NPD_BILINEAR_INTERPOLATION = 1,
+  NPD_ALPHA_BLENDING         = 1 << 1
+} NPDSettings;
 
 void        npd_create_model_from_image       (NPDModel   *model,
                                                NPDImage   *image,
@@ -54,26 +69,29 @@ void        npd_texture_fill_triangle         (gint        x1,
                                                gint        y3,
                                                NPDMatrix  *A,
                                                NPDImage   *input_image,
-                                               NPDImage   *output_image);
+                                               NPDImage   *output_image,
+                                               NPDSettings settings);
 void        npd_texture_quadrilateral         (NPDBone    *reference_bone,
                                                NPDBone    *current_bone,
                                                NPDImage   *input_image,
-                                               NPDImage   *output_image);
+                                               NPDImage   *output_image,
+                                               NPDSettings settings);
 void        npd_draw_texture_line             (gint        x1,
                                                gint        x2,
                                                gint        y,
                                                NPDMatrix  *A,
                                                NPDImage   *input_image,
-                                               NPDImage   *output_image);
+                                               NPDImage   *output_image,
+                                               NPDSettings settings);
 void      (*npd_draw_line)                    (NPDDisplay *display,
                                                gfloat      x0,
                                                gfloat      y0,
                                                gfloat      x1,
                                                gfloat      y1);
-gint        npd_bilinear_interpolation        (gint        I0,
-                                               gint        I1,
-                                               gint        I2,
-                                               gint        I3,
+gfloat      npd_bilinear_interpolation        (gfloat      I0,
+                                               gfloat      I1,
+                                               gfloat      I2,
+                                               gfloat      I3,
                                                gfloat      dx,
                                                gfloat      dy);
 void        npd_bilinear_color_interpolation  (NPDColor   *I0,
@@ -83,12 +101,12 @@ void        npd_bilinear_color_interpolation  (NPDColor   *I0,
                                                gfloat      dx,
                                                gfloat      dy,
                                                NPDColor   *out);
-gint        npd_blend_band                    (gint        src,
-                                               gint        dst,
+gfloat      npd_blend_band                    (gfloat      src,
+                                               gfloat      dst,
                                                gfloat      src_alpha,
                                                gfloat      dest_alpha,
                                                gfloat      out_alpha);
-void        npd_blend_colors                  (NPDColor   *src,
+void        npd_blend_colors                 (NPDColor   *src,
                                                NPDColor   *dst,
                                                NPDColor   *out_color);
 void      (*npd_get_pixel_color)              (NPDImage   *image,

@@ -92,10 +92,11 @@ typedef struct
   NPDDisplay           *display;
 } NPDModel;
 
-#define npd_init(set_pixel, get_pixel, draw_line)\
-npd_set_pixel_color = set_pixel;\
-npd_get_pixel_color = get_pixel;\
-npd_draw_line       = draw_line
+#define npd_init(set_pixel, get_pixel,                                         \
+                 draw_line)                                                    \
+npd_set_pixel_color      = set_pixel;                                          \
+npd_get_pixel_color      = get_pixel;                                          \
+npd_draw_line            = draw_line;
 
 void             npd_init_model                 (NPDModel        *model);
 void             npd_destroy_hidden_model       (NPDHiddenModel  *model);
