@@ -435,7 +435,11 @@ npd_compute_MLS_weights (NPDModel *model)
   gfloat                min, SED, MLS_weight;
   gint                  i, j;
 
-  if (model->control_points->len == 0) return;
+  if (model->control_points->len == 0)
+    {
+      npd_reset_weights (hm);
+      return;
+    }
 
   for (i = 0; i < hm->num_of_overlapping_points; i++)
     {
