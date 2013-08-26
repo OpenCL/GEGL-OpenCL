@@ -81,7 +81,7 @@ typedef struct
 
 typedef struct
 {
-  gint                  control_point_radius;
+  gfloat                control_point_radius;
   gboolean              control_points_visible;
   gboolean              mesh_visible;
   gboolean              texture_visible;
@@ -116,6 +116,10 @@ gboolean         npd_equal_coordinates          (NPDPoint        *p1,
 gboolean         npd_equal_coordinates_epsilon  (NPDPoint        *p1,
                                                  NPDPoint        *p2,
                                                  gfloat           epsilon);
+NPDControlPoint *npd_get_control_point_with_radius_at
+                                                (NPDModel        *model,
+                                                 NPDPoint        *coord,
+                                                 gfloat           control_point_radius);
 NPDControlPoint *npd_get_control_point_at       (NPDModel        *model,
                                                  NPDPoint        *coord);
 void             npd_create_list_of_overlapping_points

@@ -263,8 +263,9 @@ npd_equal_coordinates_epsilon (NPDPoint *p1,
 }
 
 NPDControlPoint*
-npd_get_control_point_at (NPDModel *model,
-                          NPDPoint *coord)
+npd_get_control_point_with_radius_at (NPDModel        *model,
+                                      NPDPoint        *coord,
+                                      gfloat           radius)
 {
   gint i;
   for (i = 0; i < model->control_points->len; i++)
@@ -274,14 +275,22 @@ npd_get_control_point_at (NPDModel *model,
                                             i);
       if (npd_equal_coordinates_epsilon (&cp->point,
                                           coord,
-                                          model->control_point_radius))
+                                          radius))
         {
           return cp;
         }
     }
 
-//  g_printf ("no control points\n");
   return NULL;
+}
+
+NPDControlPoint*
+npd_get_control_point_at (NPDModel *model,
+                          NPDPoint *coord)
+{
+  return npd_get_control_point_with_radius_at (model,
+                                               coord,
+                                               model->control_point_radius);
 }
 
 void
