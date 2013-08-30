@@ -19,6 +19,4 @@
 #ifndef __GEGL_BUFFER_ITERATOR_PRIVATE_H__
 #define __GEGL_BUFFER_ITERATOR_PRIVATE_H__
 
-void _gegl_buffer_iterator_cleanup (void);
-
 #endif

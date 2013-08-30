@@ -1,5 +1,4 @@
 /* This file is part of GEGL.
- * ck
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -15,6 +14,7 @@
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2008 Øyvind Kolås <pippin@gimp.org>
+ *           2013 Daniel Sabo
  */
 
 #ifndef __GEGL_BUFFER_ITERATOR_H__
@@ -28,6 +28,8 @@
 #define GEGL_BUFFER_WRITE     2
 #define GEGL_BUFFER_READWRITE (GEGL_BUFFER_READ|GEGL_BUFFER_WRITE)
 
+typedef struct _GeglBufferIteratorPriv GeglBufferIteratorPriv;
+
 /***
  * GeglBufferIterator:
  *
@@ -37,11 +39,21 @@
  */
 typedef struct GeglBufferIterator
 {
-  gint          length;
-  gpointer      data[GEGL_BUFFER_MAX_ITERATORS];
-  GeglRectangle roi[GEGL_BUFFER_MAX_ITERATORS];
+  gint           length;
+  gpointer       data[GEGL_BUFFER_MAX_ITERATORS];
+  GeglRectangle  roi[GEGL_BUFFER_MAX_ITERATORS];
+  /* Private */
+  GeglBufferIteratorPriv *priv;
 } GeglBufferIterator;
 
+
+/**
+ * gegl_buffer_iterator_empty_new: (skip)
+ * Create a new buffer iterator without adding any buffers.
+ *
+ * Returns: a new buffer iterator.
+ */
+GeglBufferIterator *gegl_buffer_iterator_empty_new (void);
 
 /**
  * gegl_buffer_iterator_new: (skip)
@@ -97,7 +109,7 @@ gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
                                                 GeglAbyssPolicy      repeat_mode);
 
 /**
- * gegl_buffer_iterator_stop:
+ * gegl_buffer_iterator_stop: (skip)
  * @iterator: a GeglBufferIterator
  *
  * Cancels the current iteration, freeing up any temporary resources. The
@@ -106,7 +118,7 @@ gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
 void                 gegl_buffer_iterator_stop  (GeglBufferIterator *iterator);
 
 /**
- * gegl_buffer_iterator_next:
+ * gegl_buffer_iterator_next: (skip)
  * @iterator: a #GeglBufferIterator
  *
  * Do an iteration, this causes a new set of iterator->data[] to become

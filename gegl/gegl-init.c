@@ -397,7 +397,6 @@ gegl_exit (void)
   gegl_tile_cache_destroy ();
   gegl_operation_gtype_cleanup ();
   gegl_extension_handler_cleanup ();
-  _gegl_buffer_iterator_cleanup ();
 
   if (module_db != NULL)
     {

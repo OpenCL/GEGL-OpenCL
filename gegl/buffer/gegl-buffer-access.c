@@ -2118,3 +2118,29 @@ gegl_buffer_dup (GeglBuffer *buffer)
   return new_buffer;
 }
 
+/*
+ *  check whether iterations on two buffers starting from the given coordinates with
+ *  the same width and height would be able to run parallell.
+ */
+gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
+                                      gint        xA,
+                                      gint        yA,
+                                      GeglBuffer *bufferB,
+                                      gint        xB,
+                                      gint        yB)
+{
+  if (bufferA->tile_storage->tile_width !=
+      bufferB->tile_storage->tile_width)
+    return FALSE;
+  if (bufferA->tile_storage->tile_height !=
+      bufferB->tile_storage->tile_height)
+    return FALSE;
+  if ( (abs((bufferA->shift_x+xA) - (bufferB->shift_x+xB))
+        % bufferA->tile_storage->tile_width) != 0)
+    return FALSE;
+  if ( (abs((bufferA->shift_y+yA) - (bufferB->shift_y+yB))
+        % bufferA->tile_storage->tile_height) != 0)
+    return FALSE;
+  return TRUE;
+}
+
