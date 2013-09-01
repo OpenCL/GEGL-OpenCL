@@ -126,8 +126,10 @@ void           gegl_exit                 (void);
  * gegl_list_operations:
  * @n_operations_p: (out caller-allocates): return location for number of operations.
  *
- * Return value: (transfer container) (array length=n_operations_p): An alphabetically sorted array of available operation names. The
- * list should be freed with g_free after use.
+ * Return value: (transfer container) (array length=n_operations_p): An
+ * alphabetically sorted array of available operation names. This excludes any
+ * compat-name registered by operations. The list should be freed with g_free
+ * after use.
  * ---
  * gchar **operations;
  * guint   n_operations;
@@ -147,7 +149,8 @@ gchar        **gegl_list_operations         (guint *n_operations_p);
  * gegl_has_operation:
  * @operation_type: the name of the operation
  *
- * Return value: A boolean telling whether the operation is present or not.
+ * Return value: A boolean telling whether the operation is present or not. This
+ * also returns true for any compat-name registered by operations.
  */
 
 gboolean       gegl_has_operation           (const gchar *operation_type);

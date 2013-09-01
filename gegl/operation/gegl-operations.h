@@ -31,6 +31,7 @@ void       gegl_operation_gtype_init        (void);
 void       gegl_operation_gtype_cleanup     (void);
 
 void       gegl_operation_class_register_name (GeglOperationClass *klass,
-                                               const gchar        *name);
+                                               const gchar        *name,
+                                               const gboolean      is_compat);
 
 #endif

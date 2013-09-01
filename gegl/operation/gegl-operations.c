@@ -41,7 +41,8 @@ G_LOCK_DEFINE_STATIC (gtype_hash);
 
 void
 gegl_operation_class_register_name (GeglOperationClass *klass,
-                                    const gchar        *name)
+                                    const gchar        *name,
+                                    const gboolean      is_compat)
 {
   GType this_type, check_type;
   this_type = G_TYPE_FROM_CLASS (klass);
@@ -58,7 +59,7 @@ gegl_operation_class_register_name (GeglOperationClass *klass,
     }
   g_hash_table_insert (gtype_hash, g_strdup (name), (gpointer) this_type);
 
-  if (!check_type)
+  if (!check_type && !is_compat)
     operations_list = g_slist_insert_sorted (operations_list, (gpointer) name,
                                              (GCompareFunc) strcmp);
 

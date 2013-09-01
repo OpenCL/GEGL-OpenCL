@@ -669,14 +669,14 @@ gegl_operation_class_set_key (GeglOperationClass *klass,
       else
         {
           klass->name = key_value_dup;
-          gegl_operation_class_register_name (klass, key_value);
+          gegl_operation_class_register_name (klass, key_value, FALSE);
         }
     }
 
   if (!strcmp (key_name, "compat-name"))
     {
       klass->compat_name = key_value_dup;
-      gegl_operation_class_register_name (klass, key_value);
+      gegl_operation_class_register_name (klass, key_value, TRUE);
     }
 
   g_hash_table_insert (klass->keys, g_strdup (key_name),
