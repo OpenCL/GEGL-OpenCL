@@ -117,8 +117,9 @@ void           gegl_exit                 (void);
 /***
  * Available operations:
  * Gegl provides means to check for available processing operations that
- * can be used with nodes using #gegl_list_operations and for a specified
- * op give a list of properties with #gegl_operation_list_properties.
+ * can be used with nodes using #gegl_list_operations and #gegl_has_operation.
+ * For a specified op, you can get a list of properties with
+ * #gegl_operation_list_properties.
  */
 
 /**
@@ -142,6 +143,14 @@ void           gegl_exit                 (void);
  */
 gchar        **gegl_list_operations         (guint *n_operations_p);
 
+/**
+ * gegl_has_operation:
+ * @operation_type: the name of the operation
+ *
+ * Return value: A boolean telling whether the operation is present or not.
+ */
+
+gboolean       gegl_has_operation           (const gchar *operation_type);
 
 /**
  * gegl_operation_list_properties:

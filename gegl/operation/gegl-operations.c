@@ -104,6 +104,12 @@ gegl_operation_gtype_from_name (const gchar *name)
   return (GType) g_hash_table_lookup (gtype_hash, name);
 }
 
+gboolean
+gegl_has_operation (const gchar *operation_type)
+{
+  return gegl_operation_gtype_from_name (operation_type) != 0;
+}
+
 gchar **gegl_list_operations (guint *n_operations_p)
 {
   gchar **pasp = NULL;
