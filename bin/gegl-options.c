@@ -234,75 +234,48 @@ parse_args (int    argc,
         }
 
         else if (match ("--exists")) {
-            guint    n_operations;
-            gchar  **operations = gegl_list_operations (&n_operations);
-            GList   *op_names = NULL;
             gchar   *op_name;
-            gboolean all_found;
-            gint     i;
 
             /* The option requires at least one argument. */
             get_string (op_name);
             while (op_name)
               {
-                op_names = g_list_prepend (op_names, g_strdup (op_name));
+                if (!gegl_has_operation (op_name))
+                  exit (1);
                 get_string_forced (op_name);
               }
 
-            for (i = 0; i < n_operations; i++)
-              {
-                GList *found_element;
-
-                while ((found_element =
-                        g_list_find_custom (op_names,
-                                            operations[i],
-                                            (GCompareFunc) g_strcmp0)) != NULL)
-                    op_names = g_list_delete_link (op_names, found_element);
-              }
-
-            all_found = (g_list_length (op_names) == 0);
-
-            g_free (operations);
-            g_list_free_full (op_names, g_free);
-
-            exit (all_found ? 0 : 1);
+            exit (0);
         }
 
         else if (match ("--properties")) {
-            guint   n_operations;
-            gchar **operations = gegl_list_operations (&n_operations);
             gchar  *op_name;
-            gint    i;
-
             get_string (op_name);
 
-            for (i = 0; i < n_operations; i++)
+            if (gegl_has_operation (op_name))
               {
-                if (g_strcmp0 (operations[i], op_name) == 0)
+                gint         i;
+                guint        n_properties;
+                GParamSpec **properties;
+
+                properties = gegl_operation_list_properties (op_name, &n_properties);
+                for (i = 0; i < n_properties; i++)
                   {
-                    guint n_properties;
-                    GParamSpec **properties;
+                    const gchar *property_name;
+                    const gchar *property_blurb;
 
-                    properties = gegl_operation_list_properties (op_name, &n_properties);
-                    for (i = 0; i < n_properties; i++)
-                      {
-                        const gchar *property_name;
-                        const gchar *property_blurb;
+                    property_name = g_param_spec_get_name (properties[i]);
+                    property_blurb = g_param_spec_get_blurb (properties[i]);
 
-                        property_name = g_param_spec_get_name (properties[i]);
-                        property_blurb = g_param_spec_get_blurb (properties[i]);
-
-                        fprintf (stdout, "%-30s [%s] %s\n",
-                                 property_name,
-                                 g_type_name (properties[i]->value_type),
-                                 property_blurb);
-                      }
-
-                    g_free (properties);
-                    exit (0);
+                    fprintf (stdout, "%-30s [%s] %s\n",
+                             property_name,
+                             g_type_name (properties[i]->value_type),
+                             property_blurb);
                   }
+
+                g_free (properties);
+                exit (0);
               }
-            g_free (operations);
 
             exit (1);
         }
