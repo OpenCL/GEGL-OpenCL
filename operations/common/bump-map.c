@@ -71,12 +71,12 @@ gegl_chant_double  (depth, _("Depth"),
                     0.0005, 100, 0.005,
                     _("Depth"))
 
-gegl_chant_int     (offset_x, _("X Offset"),
-                    -1000, 1000,0,
+gegl_chant_int_ui  (offset_x, _("X Offset"),
+                    -20000, 20000,0, -1000.0, 1000.0, 1.0,
                     _("X offset"))
 
-gegl_chant_int     (offset_y, _("Y Offset"),
-                    -1000, 1000,0,
+gegl_chant_int_ui  (offset_y, _("Y Offset"),
+                    -20000, 20000,0, -1000.0, 1000.0, 1.0,
                     _("Y offset"))
 
 gegl_chant_double  (waterlevel, _("Waterlevel"),
