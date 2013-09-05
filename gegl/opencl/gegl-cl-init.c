@@ -432,8 +432,6 @@ if (errcode != CL_SUCCESS)                                          \
             #func, __LINE__, __FILE__, gegl_cl_errstring(errcode)); \
 }
 
-static const char* cl_build_options = "-I../../gegl";
-
 /* XXX: same program_source with different kernel_name[], context or device
  *      will retrieve the same key
  */
@@ -458,7 +456,7 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
       CL_SAFE_CALL( cl_data->program = gegl_clCreateProgramWithSource(gegl_cl_get_context(), 1, &program_source,
                                                                       &length, &errcode) );
 
-      errcode = gegl_clBuildProgram(cl_data->program, 0, NULL, cl_build_options, NULL, NULL);
+      errcode = gegl_clBuildProgram(cl_data->program, 0, NULL, NULL, NULL, NULL);
       if (errcode != CL_SUCCESS)
         {
           char *msg;

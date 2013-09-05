@@ -41,7 +41,7 @@
 
 /* a set of reasonably large primes to choose from for array sizes
  */
-static long primes[]={
+long gegl_random_primes[]={
 10007,10009,10037,10039,10061,10067,10069,10079,10091,10093,10099,10103,10111,
 10133,10139,10141,10151,10159,10163,10169,10177,10181,10193,10211,10223,10243,
 10247,10253,10259,10267,10271,10273,10289,10301,10303,10313,10321,10331,10333,
@@ -93,10 +93,10 @@ static long primes[]={
 
 #define RANDOM_DATA_SIZE (15083+15091+15101)
 
-static gint32   random_data[RANDOM_DATA_SIZE];
+gint32          gegl_random_data[RANDOM_DATA_SIZE];
 static gboolean random_data_inited = FALSE;
 
-static inline void random_init (void)
+inline void gegl_random_init (void)
 {
   if (G_LIKELY (random_data_inited))
     return;
@@ -105,7 +105,7 @@ static inline void random_init (void)
     GRand *gr = g_rand_new_with_seed (42);
     int i;
     for (i = 0; i < RANDOM_DATA_SIZE; i++)
-      random_data[i] = g_rand_int (gr);
+      gegl_random_data[i] = g_rand_int (gr);
     g_rand_free (gr);
     random_data_inited = TRUE;
   }
@@ -125,8 +125,9 @@ _gegl_random_int (int seed,
 #define ROUNDS 3
     /* 3 rounds gives a reasonably high cycle for */
                          /*   our synthesized larger random set. */
-  long * prime = &primes[seed % (G_N_ELEMENTS (primes) - 1 - ROUNDS)];
-  random_init ();
+  long * prime = &gegl_random_primes[seed % (G_N_ELEMENTS (gegl_random_primes)
+                                     - 1 - ROUNDS)];
+  gegl_random_init ();
 #define UNROLLED
 
 #ifdef UNROLLED
@@ -136,9 +137,9 @@ _gegl_random_int (int seed,
         prime1 = prime[1],
         prime2 = prime[2];
     return
-    random_data[idx % prime0] ^
-    random_data[prime0 + (idx % (prime1))] ^
-    random_data[prime0 + prime1 + (idx % (prime2))];
+    gegl_random_data[idx % prime0] ^
+    gegl_random_data[prime0 + (idx % (prime1))] ^
+    gegl_random_data[prime0 + prime1 + (idx % (prime2))];
   }
 #else
   {
@@ -147,24 +148,13 @@ _gegl_random_int (int seed,
     int offset = 0;
 
     for (i = 0; i < ROUNDS; i++) 
-      ret ^= random_data[offset + (idx % (prime[i]))];
+      ret ^= gegl_random_data[offset + (idx % (prime[i]))];
       offset += prime[i];
 
 
     return ret;
   }
 #endif
-}
-
-gint* gegl_get_random_data_ptr(void)
-{
-  random_init();
-  return random_data;
-}
-
-gint gegl_get_random_data_size(void)
-{
-  return G_N_ELEMENTS (random_data);
 }
 
 guint32

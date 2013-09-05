@@ -18,6 +18,7 @@ libcl_public_HEADERS = \
 	gegl-cl-init.h \
 	gegl-cl-types.h \
 	gegl-cl-color.h \
+	gegl-cl-random.h \
 	cl_d3d10.h \
 	cl_ext.h \
 	cl_gl_ext.h \
@@ -33,7 +34,9 @@ libcl_sources = \
 	gegl-cl-init.h \
 	gegl-cl-color.c \
 	gegl-cl-color.h \
-	gegl-cl-introspection-support.h
+	gegl-cl-introspection-support.h \
+	gegl-cl-random.c \
+	gegl-cl-random.h
 
 noinst_LTLIBRARIES = libcl.la
 
