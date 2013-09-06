@@ -33,6 +33,7 @@
 #include <stdio.h>
 
 #include "gegl-cl-color.h"
+#include "opencl/random.cl.h"
 
 #include "gegl/gegl-debug.h"
 #include "gegl-config.h"
@@ -445,7 +446,8 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
 
   if ((cl_data = (GeglClRunData *)g_hash_table_lookup(cl_program_hash, program_source)) == NULL)
     {
-      size_t length = strlen(program_source);
+      const size_t lengths[] = {strlen(cl_random_source), strlen(program_source)};
+      const char *sources[] = {cl_random_source , program_source};
 
       gint i;
       guint kernel_n = 0;
@@ -453,8 +455,8 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
 
       cl_data = (GeglClRunData *) g_new(GeglClRunData, 1);
 
-      CL_SAFE_CALL( cl_data->program = gegl_clCreateProgramWithSource(gegl_cl_get_context(), 1, &program_source,
-                                                                      &length, &errcode) );
+      CL_SAFE_CALL( cl_data->program = gegl_clCreateProgramWithSource(gegl_cl_get_context(), 2, sources,
+                                                                      lengths, &errcode) );
 
       errcode = gegl_clBuildProgram(cl_data->program, 0, NULL, NULL, NULL, NULL);
       if (errcode != CL_SUCCESS)

@@ -22,6 +22,7 @@
 #include "gegl-cl-types.h"
 #include "gegl-cl-init.h"
 #include "gegl-cl-color.h"
+#include "gegl-cl-random.h"
 
 cl_int gegl_cl_set_kernel_args (cl_kernel kernel, ...) G_GNUC_NULL_TERMINATED;
 

@@ -145,7 +145,7 @@ gegl_cl_random_float_range (__global const int  *cl_random_data,
                                   seed, x, y, z, n);
   return f * (max - min) + min;
 }
-
+/*
 float4
 gegl_cl_random_float4 (__global const int  *cl_random_data,
                        __global const long *cl_random_primes,
@@ -181,4 +181,4 @@ gegl_cl_random_float4_range (__global const int  *cl_random_data,
                                     seed, x, y, z, n);
   return f4 * (float4)((max - min) + min);
 }
-
+*/

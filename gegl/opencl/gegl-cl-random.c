@@ -20,11 +20,10 @@
 #include "gegl-cl-random.h"
 #include "opencl/gegl-cl.h"
 
-/*XXX: This file has to be kept in sync whit gegl-random.c*/
+/*XXX: defined in gegl-random.c*/
 #define RANDOM_DATA_SIZE (15083+15091+15101)
 #define PRIMES_SIZE 533
 
-/*declared in gegl-random.c*/
 extern gint32      *gegl_random_data;
 extern long        *gegl_random_primes;
 extern inline void gegl_random_init (void);
