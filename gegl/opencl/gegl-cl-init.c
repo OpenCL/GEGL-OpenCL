@@ -446,8 +446,8 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
 
   if ((cl_data = (GeglClRunData *)g_hash_table_lookup(cl_program_hash, program_source)) == NULL)
     {
-      const size_t lengths[] = {strlen(cl_random_source), strlen(program_source)};
-      const char *sources[] = {cl_random_source , program_source};
+      const size_t lengths[] = {strlen(random_cl_source), strlen(program_source)};
+      const char *sources[] = {random_cl_source , program_source};
 
       gint i;
       guint kernel_n = 0;
