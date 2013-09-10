@@ -107,7 +107,6 @@ enum
   LAST_SIGNAL
 };
 
-static gchar      * get_next_swap_path              (void);
 static const Babl * gegl_buffer_internal_get_format (GeglBuffer *buffer);
 
 
@@ -1160,26 +1159,6 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                        "width", extent->width,
                        "height", extent->height,
                        NULL);
-}
-
-static char *
-get_next_swap_path (void)
-{
-  static gint no = 1;
-
-  gchar *filename;
-  gchar *path;
-  gchar *swap_dir = gegl_config()->swap;
-
-  if (!swap_dir)
-    g_error("Attempted to build a file buffer with no path and no swap directory");
-
-  filename = g_strdup_printf ("%i-%i", getpid(), no);
-  g_atomic_int_inc (&no);
-  path = g_build_filename (swap_dir, filename, NULL);
-  g_free (filename);
-
-  return path;
 }
 
 static const Babl *
