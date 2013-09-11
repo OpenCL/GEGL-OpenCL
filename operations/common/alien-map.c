@@ -140,6 +140,62 @@ process (GeglOperation       *op,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+#include "opencl/alien-map.cl.h"
+
+GEGL_CL_STATIC
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            cl_mem              in,
+            cl_mem              out,
+            size_t              global_worksize,
+            const GeglRectangle *roi,
+            gint                level)
+{
+  GeglChantO *o   = GEGL_CHANT_PROPERTIES (operation);
+  cl_float3   freq;
+  cl_float3   phaseshift;
+  cl_int3     keep;
+
+  GEGL_CL_BUILD(alien_map, "cl_alien_map")
+
+  freq.s[0] = o->cpn_1_frequency * G_PI;
+  freq.s[1] = o->cpn_2_frequency * G_PI;
+  freq.s[2] = o->cpn_3_frequency * G_PI;
+
+  phaseshift.s[0] = G_PI * o->cpn_1_phaseshift / 180.0;
+  phaseshift.s[1] = G_PI * o->cpn_2_phaseshift / 180.0;
+  phaseshift.s[2] = G_PI * o->cpn_3_phaseshift / 180.0;
+
+  keep.s[0] = (cl_int)o->cpn_1_keep;
+  keep.s[1] = (cl_int)o->cpn_2_keep;
+  keep.s[2] = (cl_int)o->cpn_3_keep;
+
+  {
+  cl_int cl_err = 0;
+
+  GEGL_CL_ARG_START(cl_data->kernel[0])
+  GEGL_CL_ARG(cl_mem,    in)
+  GEGL_CL_ARG(cl_mem,    out)
+  GEGL_CL_ARG(cl_float3, freq)
+  GEGL_CL_ARG(cl_float3, phaseshift)
+  GEGL_CL_ARG(cl_int3,   keep)
+  GEGL_CL_ARG_END
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                       cl_data->kernel[0], 1,
+                                       NULL, &global_worksize, NULL,
+                                       0, NULL, NULL);
+  CL_CHECK;
+  }
+
+  return  FALSE;
+
+error:
+  return TRUE;
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -149,8 +205,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  operation_class->prepare    = prepare;
-  point_filter_class->process = process;
+  operation_class->prepare        = prepare;
+  operation_class->opencl_support = TRUE;
+  point_filter_class->process     = process;
+  point_filter_class->cl_process  = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:alien-map",
