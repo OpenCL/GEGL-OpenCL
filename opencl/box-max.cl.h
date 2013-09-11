@@ -1,4 +1,4 @@
-static const char* box_max_cl_source = 
+static const char* box_max_cl_source =
 "__kernel void kernel_max_hor (__global const float4     *in,                  \n"
 "                              __global       float4     *aux,                 \n"
 "                              int width, int radius)                          \n"

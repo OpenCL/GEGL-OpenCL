@@ -23,7 +23,7 @@ __kernel void kernel_min_hor (__global const float4     *in,
     }
 }
 
-__kernel void kernel_max_ver (__global const float4     *aux,
+__kernel void kernel_min_ver (__global const float4     *aux,
                               __global       float4     *out,
                               int width, int radius)
 {

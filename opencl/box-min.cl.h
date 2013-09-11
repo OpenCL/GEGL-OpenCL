@@ -1,4 +1,4 @@
-static const char* box_min_cl_source = 
+static const char* box_min_cl_source =
 "__kernel void kernel_min_hor (__global const float4     *in,                  \n"
 "                              __global       float4     *aux,                 \n"
 "                              int width, int radius)                          \n"

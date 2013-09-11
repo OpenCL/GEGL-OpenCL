@@ -160,6 +160,7 @@ static void prepare (GeglOperation *operation)
   area->top   =
   area->bottom = GEGL_CHANT_PROPERTIES (operation)->radius;
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
 }
 
 #include "opencl/gegl-cl.h"
@@ -303,12 +304,9 @@ process (GeglOperation       *operation,
   GeglRectangle input_rect = gegl_operation_get_required_for_output (operation, "input", result);
 
   if (gegl_cl_is_accelerated ())
-    {
-      if (cl_process (operation, input, output, result))
-        return TRUE;
-      else
-        gegl_cl_disable();
-    }
+    if (cl_process (operation, input, output, result))
+      return TRUE;
+
 
   hor_max ( input, &input_rect, output, result, o->radius);
   ver_max (output,      result, output, result, o->radius);
