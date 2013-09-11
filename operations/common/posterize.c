@@ -64,6 +64,46 @@ static gboolean process (GeglOperation       *operation,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+#include "opencl/posterize.cl.h"
+
+GEGL_CL_STATIC
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            cl_mem              in,
+            cl_mem              out,
+            size_t              global_worksize,
+            const GeglRectangle *roi,
+            gint                level)
+{
+  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  cl_float    levels = o->levels;
+
+  GEGL_CL_BUILD(posterize, "cl_posterize")
+
+  {
+  cl_int cl_err = 0;
+
+  GEGL_CL_ARG_START(cl_data->kernel[0])
+  GEGL_CL_ARG(cl_mem,   in)
+  GEGL_CL_ARG(cl_mem,   out)
+  GEGL_CL_ARG(cl_float, levels)
+  GEGL_CL_ARG_END
+
+  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                       cl_data->kernel[0], 1,
+                                       NULL, &global_worksize, NULL,
+                                       0, NULL, NULL);
+  CL_CHECK;
+  }
+
+  return  FALSE;
+
+error:
+  return TRUE;
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -73,7 +113,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  point_filter_class->process = process;
+  operation_class->opencl_support = TRUE;
+  point_filter_class->process     = process;
+  point_filter_class->cl_process  = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:posterize",
