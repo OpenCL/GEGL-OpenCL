@@ -59,6 +59,22 @@ struct _GeglTileBackendClass
 gint        gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend);
 
 /**
+ * gegl_tile_backend_get_tile_width:
+ * @tile_backend: a #GeglTileBackend
+ *
+ * Return value: the width of tile from this backend
+ */
+gint        gegl_tile_backend_get_tile_width (GeglTileBackend *tile_backend);
+
+/**
+ * gegl_tile_backend_get_tile_height:
+ * @tile_backend: a #GeglTileBackend
+ *
+ * Return value: the height of tile from this backend
+ */
+gint        gegl_tile_backend_get_tile_height (GeglTileBackend *tile_backend);
+
+/**
  * gegl_tile_backend_get_format: (skip)
  * @tile_backend: a #GeglTileBackend
  *

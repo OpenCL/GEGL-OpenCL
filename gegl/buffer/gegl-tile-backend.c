@@ -183,6 +183,17 @@ gegl_tile_backend_get_tile_size (GeglTileBackend *tile_backend)
   return tile_backend->priv->tile_size;
 }
 
+gint
+gegl_tile_backend_get_tile_width (GeglTileBackend *tile_backend)
+{
+  return tile_backend->priv->tile_width;
+}
+
+gint
+gegl_tile_backend_get_tile_height (GeglTileBackend *tile_backend)
+{
+  return tile_backend->priv->tile_height;
+}
 
 const Babl *
 gegl_tile_backend_get_format (GeglTileBackend *tile_backend)

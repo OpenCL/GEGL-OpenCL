@@ -569,16 +569,29 @@ gegl_buffer_constructor (GType                  type,
   if (source)
     {
       if (GEGL_IS_TILE_STORAGE (source))
-        buffer->format = GEGL_TILE_STORAGE (source)->format;
+        {
+          GeglTileStorage *src_storage = GEGL_TILE_STORAGE (source);
+          buffer->format      = src_storage->format;
+          buffer->tile_width  = src_storage->tile_width;
+          buffer->tile_height = src_storage->tile_height;
+        }
       else if (GEGL_IS_BUFFER (source))
-        buffer->format = GEGL_BUFFER (source)->format;
+        {
+          GeglBuffer *src_buffer = GEGL_BUFFER (source);
+          buffer->format      = src_buffer->format;
+          buffer->tile_width  = src_buffer->tile_width;
+          buffer->tile_height = src_buffer->tile_height;
+        }
     }
   else
     {
       if (buffer->backend)
         {
           backend = buffer->backend;
+
           buffer->format = gegl_tile_backend_get_format (backend);
+          buffer->tile_width = gegl_tile_backend_get_tile_width (backend);
+          buffer->tile_height = gegl_tile_backend_get_tile_height (backend);
         }
       else
         {
@@ -767,6 +780,9 @@ gegl_buffer_constructor (GType                  type,
    * format
    */
   buffer->soft_format = buffer->format;
+
+  g_assert (buffer->tile_width == buffer->tile_storage->tile_width);
+  g_assert (buffer->tile_height == buffer->tile_storage->tile_height);
 
   return object;
 }
