@@ -13,8 +13,11 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 1996 Stephen Norris
- * Copyright (C) 2011 Robert Sasu (sasu.robert@gmail.com)
+ * Copyright (C) 1996 Stephen Norris  (srn@flibble.cs.su.oz.au)
+ * Copyright (C) 1996 Eiichi Takamori (taka@ma1.seikyou.ne.jp)
+ * Copyright (C) 2000 Tim Copperfield (timecop@japan.co.jp)
+ * Copyright (C) 2011 Robert Sasu     (sasu.robert@gmail.com)
+ * Copyright (C) 2013 Téo Mazars      (teo.mazars@ensimag.fr)
  */
 
 /*
@@ -31,19 +34,24 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
-                _("Random seed. Passing -1 implies that the seed is randomly chosen."))
+                _("Random seed."
+                  "Passing -1 implies that the seed is randomly chosen."))
 gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 1.0,
                    _("The value of the turbulence"))
 
+gegl_chant_int (width, _("Width"), 0, G_MAXINT, 1024,
+                _("Width of the generated buffer"))
+gegl_chant_int (height, _("Height"), 0, G_MAXINT, 768,
+                _("Height of the generated buffer"))
+
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE        "plasma.c"
+#define GEGL_CHANT_TYPE_SOURCE
+#define GEGL_CHANT_C_FILE "plasma.c"
 
 #include "gegl-chant.h"
-#include <math.h>
 
-#define TILE_SIZE 128
+#define TILE_SIZE 512
 
 typedef struct
 {
@@ -58,21 +66,14 @@ typedef struct
 } PlasmaContext;
 
 static void
-prepare (GeglOperation *operation)
-{
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
-}
-
-static void
 average_pixel (gfloat *dst_buf,
                gfloat *src_buf1,
                gfloat *src_buf2)
 {
   gint i;
 
-  for (i = 0; i < 4; i++)
-    *dst_buf++ = (*src_buf1++ + *src_buf2++) / 2;
+  for (i = 0; i < 3; i++)
+    *dst_buf++ = (*src_buf1++ + *src_buf2++) / 2.0;
 }
 
 static void
@@ -81,8 +82,8 @@ random_rgba (GRand  *gr,
 {
   gint i;
 
-  for (i = 0; i < 4; i++)
-    dest[i] = (gfloat) g_rand_double_range (gr, 0, 1);
+  for (i = 0; i < 3; i++)
+    dest[i] = (gfloat) g_rand_double_range (gr, 0.0, 1.0);
 }
 
 static void
@@ -93,13 +94,13 @@ add_random (GRand  *gr,
   gint    i;
   gfloat  tmp;
 
-  amount /= 2;
+  amount /= 2.0;
 
   if (amount > 0)
-    for (i = 0; i < 4; i++)
+    for (i = 0; i < 3; i++)
       {
-        tmp = dest[i] + (gfloat) g_rand_double_range(gr, -amount, amount);
-        dest[i] = CLAMP (tmp, 0, 1);
+        tmp = dest[i] + (gfloat) g_rand_double_range (gr, -amount, amount);
+        dest[i] = CLAMP (tmp, 0.0, 1.0);
       }
 }
 
@@ -118,17 +119,20 @@ put_pixel (PlasmaContext *context,
       rect.width = 1;
       rect.height = 1;
 
-      gegl_buffer_set (context->output, &rect, 0, babl_format ("RGBA float"), pixel,
-                       GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (context->output, &rect, 0, babl_format ("R'G'B' float"),
+                       pixel, GEGL_AUTO_ROWSTRIDE);
       return;
     }
   else
     {
       float *ptr;
+      gint index;
 
-      ptr = context->buffer + ((y - context->buffer_y) * 4 * context->buffer_width) + ((x - context->buffer_x) * 4);
+      index = ((y - context->buffer_y) * context->buffer_width +
+               x - context->buffer_x);
 
-      *ptr++ = *pixel++;
+      ptr = context->buffer + index * 3;
+
       *ptr++ = *pixel++;
       *ptr++ = *pixel++;
       *ptr++ = *pixel++;
@@ -144,8 +148,8 @@ do_plasma (PlasmaContext *context,
            gint           plasma_depth,
            gint           recursion_depth)
 {
-  gfloat tl[4], ml[4], bl[4], mt[4], mm[4], mb[4], tr[4], mr[4], br[4];
-  gfloat tmp[4];
+  gfloat tl[3], ml[3], bl[3], mt[3], mm[3], mb[3], tr[3], mr[3], br[3];
+  gfloat tmp[3];
   gint    xm, ym;
   gfloat  ran;
 
@@ -161,7 +165,7 @@ do_plasma (PlasmaContext *context,
       rect.width = x2 - x1 + 1;
       rect.height = y2 - y1 + 1;
 
-      gegl_buffer_get (context->output, &rect, 1.0, babl_format ("RGBA float"),
+      gegl_buffer_get (context->output, &rect, 1.0, babl_format ("R'G'B' float"),
                        context->buffer, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       context->using_buffer = TRUE;
@@ -173,7 +177,7 @@ do_plasma (PlasmaContext *context,
 
       context->using_buffer = FALSE;
 
-      gegl_buffer_set (context->output, &rect, 0, babl_format ("RGBA float"),
+      gegl_buffer_set (context->output, &rect, 0, babl_format ("R'G'B' float"),
                        context->buffer, GEGL_AUTO_ROWSTRIDE);
 
       return ret;
@@ -219,13 +223,17 @@ do_plasma (PlasmaContext *context,
       if (x1 == x2 && y1 == y2)
         return FALSE;
 
-      gegl_buffer_sample (context->output, x1, y1, NULL, tl, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x1, y1, NULL, tl,
+                          babl_format ("R'G'B' float"),
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-      gegl_buffer_sample (context->output, x1, y2, NULL, bl, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x1, y2, NULL, bl,
+                          babl_format ("R'G'B' float"),
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-      gegl_buffer_sample (context->output, x2, y1, NULL, tr, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x2, y1, NULL, tr,
+                          babl_format ("R'G'B' float"),
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-      gegl_buffer_sample (context->output, x2, y2, NULL, br, babl_format ("RGBA float"),
+      gegl_buffer_sample (context->output, x2, y2, NULL, br,
+                          babl_format ("R'G'B' float"),
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
       ran = context->o->turbulence / (2.0 * recursion_depth);
@@ -289,65 +297,58 @@ do_plasma (PlasmaContext *context,
       /* Top right. */
       do_plasma (context, xm, y1, x2, ym, plasma_depth - 1, recursion_depth + 1);
       /* Bottom right. */
-      return do_plasma (context, xm, ym, x2, y2, plasma_depth - 1, recursion_depth + 1);
+      return do_plasma (context, xm, ym, x2, y2,
+                        plasma_depth - 1, recursion_depth + 1);
     }
 
   return TRUE;
 }
 
-static GeglRectangle
-plasma_get_bounding_box (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-
-  gegl_rectangle_copy (&result, in_rect);
-
-  return result;
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' float"));
 }
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglBuffer          *input,
          GeglBuffer          *output,
          const GeglRectangle *result,
          gint                 level)
 {
   PlasmaContext *context;
-  GeglRectangle boundary;
-  gint   depth;
-  gint   x, y;
+  gint           depth;
+  gint           x, y;
 
   context = g_new (PlasmaContext, 1);
   context->o = GEGL_CHANT_PROPERTIES (operation);
   context->output = output;
-  context->buffer = g_malloc (TILE_SIZE * TILE_SIZE * 4 * sizeof (float));
+  context->buffer = g_malloc (TILE_SIZE * TILE_SIZE * 3 * sizeof (gfloat));
   context->using_buffer = FALSE;
-
-  boundary = plasma_get_bounding_box (operation);
 
   /*
    * The first time only puts seed pixels (corners, center of edges,
    * center of image)
    */
-  x = boundary.x + boundary.width;
-  y = boundary.y + boundary.height;
+  x = result->x + result->width;
+  y = result->y + result->height;
 
   if (context->o->seed == -1)
     context->gr = g_rand_new ();
   else
     context->gr = g_rand_new_with_seed (context->o->seed);
 
-  do_plasma (context, boundary.x, boundary.y, x-1, y-1, -1, 0);
+  do_plasma (context, result->x, result->y, x-1, y-1, -1, 0);
 
   /*
    * Now we recurse through the images, going deeper each time
    */
   depth = 1;
-  while (!do_plasma (context, boundary.x, boundary.y, x-1, y-1, depth, 0))
+  while (!do_plasma (context, result->x, result->y, x-1, y-1, depth, 0))
     depth++;
 
   gegl_buffer_sample_cleanup (context->output);
+  g_rand_free (context->gr);
   g_free (context->buffer);
   g_free (context);
 
@@ -355,32 +356,41 @@ process (GeglOperation       *operation,
 }
 
 static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  return *GEGL_RECTANGLE (0, 0, o->width, o->height);
+}
+
+static GeglRectangle
 get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  return *gegl_operation_source_get_bounding_box (operation, "input");
+  return get_bounding_box (operation);
 }
 
 static GeglRectangle
 get_cached_region (GeglOperation       *operation,
                    const GeglRectangle *roi)
 {
-  return *gegl_operation_source_get_bounding_box (operation, "input");
+  return get_bounding_box (operation);
 }
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
-  GeglOperationFilterClass *filter_class;
+  GeglOperationSourceClass *source_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  filter_class->process                    = process;
+  source_class->process                    = process;
   operation_class->prepare                 = prepare;
   operation_class->get_required_for_output = get_required_for_output;
+  operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_cached_region       = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
