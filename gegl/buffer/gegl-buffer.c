@@ -107,9 +107,6 @@ enum
   LAST_SIGNAL
 };
 
-static const Babl * gegl_buffer_internal_get_format (GeglBuffer *buffer);
-
-
 guint gegl_buffer_signals[LAST_SIGNAL] = { 0 };
 
 
@@ -176,21 +173,7 @@ gegl_buffer_get_property (GObject    *gobject,
         break;
 
       case PROP_FORMAT:
-        /* might already be set the first time, if it was set during
-         * construction, we're caching the value in the buffer itself,
-         * since it will never change.
-         */
-
-        {
-          const Babl *format = buffer->soft_format;
-
-          if (format == NULL)
-            format = buffer->format;
-          if (format == NULL)
-            format = gegl_buffer_internal_get_format (buffer);
-
-          g_value_set_pointer (value, (gpointer) format);
-        }
+        g_value_set_pointer (value, (gpointer) gegl_buffer_get_format (buffer));
         break;
 
       case PROP_BACKEND:
@@ -1177,19 +1160,14 @@ gegl_buffer_create_sub_buffer (GeglBuffer          *buffer,
                        NULL);
 }
 
-static const Babl *
-gegl_buffer_internal_get_format (GeglBuffer *buffer)
-{
-  g_assert (buffer);
-  if (buffer->format != NULL)
-    return buffer->format;
-  return gegl_tile_backend_get_format (gegl_buffer_backend (buffer));
-}
-
 const Babl *
 gegl_buffer_get_format (GeglBuffer *buffer)
 {
-  return buffer ? buffer->format : NULL;
+  g_return_val_if_fail (buffer, NULL);
+
+  if (buffer->soft_format)
+    return buffer->soft_format;
+  return buffer->format;
 }
 
 const Babl *
