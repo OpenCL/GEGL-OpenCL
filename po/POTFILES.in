@@ -75,6 +75,7 @@ operations/common/open-buffer.c
 operations/common/over.c
 operations/common/photocopy.c
 operations/common/pixelize.c
+operations/common/plasma.c
 operations/common/polar-coordinates.c
 operations/common/posterize.c
 operations/common/raw-load.c
@@ -195,7 +196,6 @@ operations/workshop/hstack.c
 operations/workshop/kuwahara.c
 operations/workshop/linear-gradient.c
 operations/workshop/mandelbrot.c
-operations/workshop/plasma.c
 operations/workshop/radial-gradient.c
 operations/workshop/rawbayer-load.c
 operations/workshop/snn-percentile.c
