@@ -36,9 +36,13 @@
 gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
                 _("Random seed."
                   "Passing -1 implies that the seed is randomly chosen."))
-gegl_chant_double (turbulence, _("Turbulence"), 0.1, 7.0, 1.0,
+gegl_chant_double (turbulence, _("Turbulence"), 0.0, 7.0, 1.0,
                    _("The value of the turbulence"))
 
+gegl_chant_int (x, _("X"), G_MININT, G_MAXINT, 0,
+                _("X start of the generated buffer"))
+gegl_chant_int (y, _("Y"), G_MININT, G_MAXINT, 0,
+                _("Y start of the generated buffer"))
 gegl_chant_int (width, _("Width"), 0, G_MAXINT, 1024,
                 _("Width of the generated buffer"))
 gegl_chant_int (height, _("Height"), 0, G_MAXINT, 768,
@@ -360,7 +364,7 @@ get_bounding_box (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  return *GEGL_RECTANGLE (0, 0, o->width, o->height);
+  return *GEGL_RECTANGLE (o->x, o->y, o->width, o->height);
 }
 
 static GeglRectangle
