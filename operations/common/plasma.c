@@ -34,7 +34,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
-                _("Random seed."
+                _("Random seed. "
                   "Passing -1 implies that the seed is randomly chosen."))
 gegl_chant_double (turbulence, _("Turbulence"), 0.0, 7.0, 1.0,
                    _("The value of the turbulence"))
@@ -400,7 +400,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:plasma",
     "categories" , "render",
-    "description", _("Performs plasma effect on the image"),
+    "description", _("Creates an image filled with a plasma effect."),
     NULL);
 }
 
