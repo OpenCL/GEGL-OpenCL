@@ -44,32 +44,38 @@ gegl_chant_double (hue_distance, _("Hue"),
 #define GEGL_CHANT_C_FILE "noise-cie-lch.c"
 
 #include "gegl-chant.h"
+#include "gegl.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
 
-static gdouble
-randomize_value (gdouble     now,
-                 gdouble     min,
-                 gdouble     max,
-                 gboolean    wraps_around,
-                 gdouble     rand_max,
-                 gint        holdness)
+#define SEED 1913
+
+static gfloat
+randomize_value (gfloat     now,
+                 gfloat     min,
+                 gfloat     max,
+                 gboolean   wraps_around,
+                 gfloat     rand_max,
+                 gint       holdness,
+                 gint       x,
+                 gint       y,
+                 gint       n)
 {
   gint    flag, i;
-  gdouble rand_val, new_val, steps;
+  gfloat rand_val, new_val, steps;
 
   steps = max - min + 0.5;
-  rand_val = g_random_double ();
+  rand_val = gegl_random_float (SEED, x, y, 0, n++);
 
   for (i = 1; i < holdness; i++)
   {
-    double tmp = g_random_double ();
+    float tmp = gegl_random_float (SEED, x, y, 0, n++);
     if (tmp < rand_val)
       rand_val = tmp;
   }
 
-  flag = (g_random_double () < 0.5) ? -1 : 1;
+  flag = (gegl_random_float (SEED, x, y, 0, n) < 0.5) ? -1 : 1;
   new_val = now + flag * fmod (rand_max * rand_val, steps);
 
   if (new_val < min)
@@ -95,9 +101,9 @@ static void
 prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input" ,
-                             babl_format ("CIE LCH(ab) alpha double"));
+                             babl_format ("CIE LCH(ab) alpha float"));
   gegl_operation_set_format (operation, "output",
-                             babl_format ("CIE LCH(ab) alpha double"));
+                             babl_format ("CIE LCH(ab) alpha float"));
 }
 
 static gboolean
@@ -108,34 +114,50 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gdouble    *GEGL_ALIGNED in_pixel;
-  gdouble    *GEGL_ALIGNED out_pixel;
-  gdouble     lightness, chroma, hue, alpha;
-  gint        i;
+  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  gfloat       *GEGL_ALIGNED in_pixel;
+  gfloat       *GEGL_ALIGNED out_pixel;
+  GeglRectangle whole_region;
+  gfloat        lightness, chroma, hue, alpha;
+  gint          i;
+  gint          x, y;
 
   in_pixel  = in_buf;
   out_pixel = out_buf;
 
+  x = roi->x;
+  y = roi->y;
+
+  whole_region = *(gegl_operation_source_get_bounding_box (operation, "input"));
+
   for (i = 0; i < n_pixels; i++)
   {
+    /* n is independent from the roi, but from the whole image */
+    gint n = (3 * o->holdness + 4) * (x + whole_region.width * y);
+
     lightness = in_pixel[0];
     chroma    = in_pixel[1];
     hue       = in_pixel[2];
     alpha     = in_pixel[3];
 
     if ((o->hue_distance > 0) && (chroma > 0))
-      hue = randomize_value (hue, 0.0, 359.0, TRUE, o->hue_distance, o->holdness);
+      hue = randomize_value (hue, 0.0, 359.0, TRUE, o->hue_distance,
+                             o->holdness, x, y, n);
 
+    n += o->holdness + 1;
     if (o->chroma_distance > 0) {
       if (chroma == 0)
-        hue = g_random_double_range (0.0, 360.0);
-      chroma = randomize_value (chroma, 0.0, 100.0, FALSE, o->chroma_distance, o->holdness);
+        hue = gegl_random_float_range (SEED, x, y, 0, n, 0.0, 360.0);
+      chroma = randomize_value (chroma, 0.0, 100.0, FALSE, o->chroma_distance,
+                                o->holdness, x, y, n+1);
     }
 
+    n += o->holdness + 2;
     if (o->lightness_distance > 0)
-      lightness = randomize_value (lightness, 0.0, 100.0, FALSE, o->lightness_distance, o->holdness);
+      lightness = randomize_value (lightness, 0.0, 100.0, FALSE,
+                                   o->lightness_distance, o->holdness, x, y, n);
 
+    /*n += o->holdness + 1*/
     out_pixel[0] = lightness;
     out_pixel[1] = chroma;
     out_pixel[2] = hue;
@@ -144,6 +166,12 @@ process (GeglOperation       *operation,
     in_pixel  += 4;
     out_pixel += 4;
 
+    x++;
+    if (x >= roi->x + roi->width)
+      {
+        x = roi->x;
+        y++;
+      }
   }
 
   return TRUE;
