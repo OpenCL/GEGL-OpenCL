@@ -160,7 +160,7 @@ gegl_config_set_property (GObject      *gobject,
         return;
       case PROP_SWAP:
         if (config->swap)
-         g_free (config->swap);
+          g_free (config->swap);
         config->swap = g_value_dup_string (value);
         break;
       case PROP_THREADS:

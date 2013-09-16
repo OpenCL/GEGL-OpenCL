@@ -99,55 +99,7 @@ guint gegl_debug_flags = 0;
 #include "gegl-config.h"
 #include "graph/gegl-node.h"
 
-/* if this function is made to return NULL swapping is disabled */
-const gchar *
-gegl_swap_dir (void)
-{
-  static gchar *swapdir = "";
-
-  if (swapdir && swapdir[0] == '\0')
-    {
-      if (g_getenv ("GEGL_SWAP"))
-        {
-          if (g_str_equal (g_getenv ("GEGL_SWAP"), "RAM"))
-            swapdir = NULL;
-          else
-            {
-              swapdir = g_strstrip (g_strdup (g_getenv ("GEGL_SWAP")));
-
-              /* Remove any trailing separator, unless the path is only made of a leading separator. */
-              while (strlen (swapdir) > strlen (G_DIR_SEPARATOR_S) && g_str_has_suffix (swapdir, G_DIR_SEPARATOR_S))
-                swapdir[strlen (swapdir) - strlen (G_DIR_SEPARATOR_S)] = '\0';
-            }
-        }
-      else
-        {
-          swapdir = g_build_filename (g_get_user_cache_dir(),
-                                      GEGL_LIBRARY,
-                                      "swap",
-                                      NULL);
-        }
-
-      /* Fall back to "swapping to RAM" if not able to create swap dir
-       */
-      if (swapdir &&
-          ! g_file_test (swapdir, G_FILE_TEST_IS_DIR) &&
-          g_mkdir_with_parents (swapdir, S_IRUSR | S_IWUSR | S_IXUSR) != 0)
-        {
-#if 0
-          gchar *name = g_filename_display_name (swapdir);
-          g_warning ("unable to create swapdir '%s': %s",
-                     name, g_strerror (errno));
-          g_free (name);
-#endif
-
-          g_free (swapdir);
-          swapdir = NULL;
-        }
-    }
-
-  return swapdir;
-};
+static const gchar *makefile (void);
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GOptionGroup   *group,
@@ -157,12 +109,62 @@ static gboolean  gegl_post_parse_hook (GOptionContext *context,
 
 static GeglConfig   *config = NULL;
 
-
 static GeglModuleDB *module_db   = NULL;
 
 static glong         global_time = 0;
 
-static const gchar *makefile (void);
+static gboolean      swap_init_done = FALSE;
+
+static gchar        *swap_dir = NULL;
+
+static void
+gegl_init_swap_dir (void)
+{
+  gchar *swapdir = NULL;
+
+  if (config->swap)
+    {
+      if (g_ascii_strcasecmp (config->swap, "ram") == 0)
+        {
+          swapdir = NULL;
+        }
+      else
+        {
+          swapdir = g_strstrip (g_strdup (config->swap));
+
+          /* Remove any trailing separator, unless the path is only made of a leading separator. */
+          while (strlen (swapdir) > strlen (G_DIR_SEPARATOR_S) && g_str_has_suffix (swapdir, G_DIR_SEPARATOR_S))
+            swapdir[strlen (swapdir) - strlen (G_DIR_SEPARATOR_S)] = '\0';
+        }
+    }
+
+  if (swapdir &&
+      ! g_file_test (swapdir, G_FILE_TEST_IS_DIR) &&
+      g_mkdir_with_parents (swapdir, S_IRUSR | S_IWUSR | S_IXUSR) != 0)
+    {
+      g_free (swapdir);
+      swapdir = NULL;
+    }
+
+  g_object_set (config, "swap", swapdir, NULL);
+
+  swap_dir = swapdir;
+
+  swap_init_done = TRUE;
+}
+
+/* Return the swap directory, or NULL if swapping is disabled */
+const gchar *
+gegl_swap_dir (void)
+{
+  if (!swap_init_done)
+  {
+    g_critical ("swap parsing not done");
+    gegl_init_swap_dir ();
+  }
+
+  return swap_dir;
+}
 
 static void
 gegl_config_use_opencl_notify (GObject    *gobject,
@@ -301,48 +303,87 @@ gegl_get_option_group (void)
   return group;
 }
 
+static void gegl_config_set_defaults (GeglConfig *config)
+{
+  gchar *swapdir = g_build_filename (g_get_user_cache_dir(),
+                                     GEGL_LIBRARY,
+                                     "swap",
+                                     NULL);
+  g_object_set (config,
+                "swap", swapdir,
+                NULL);
+}
+
+static void gegl_config_parse_env (GeglConfig *config)
+{
+  if (g_getenv ("GEGL_QUALITY"))
+    {
+      const gchar *quality = g_getenv ("GEGL_QUALITY");
+
+      if (g_str_equal (quality, "fast"))
+        g_object_set (config, "quality", 0.0, NULL);
+      else if (g_str_equal (quality, "good"))
+        g_object_set (config, "quality", 0.5, NULL);
+      else if (g_str_equal (quality, "best"))
+        g_object_set (config, "quality", 1.0, NULL);
+      else
+        g_object_set (config, "quality", atof (quality), NULL);
+    }
+
+  if (g_getenv ("GEGL_CACHE_SIZE"))
+    config->tile_cache_size = atoll(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024;
+
+  if (g_getenv ("GEGL_CHUNK_SIZE"))
+    config->chunk_size = atoi(g_getenv("GEGL_CHUNK_SIZE"));
+
+  if (g_getenv ("GEGL_TILE_SIZE"))
+    {
+      const gchar *str = g_getenv ("GEGL_TILE_SIZE");
+      config->tile_width = atoi(str);
+      str = strchr (str, 'x');
+      if (str)
+        config->tile_height = atoi(str+1);
+    }
+
+  if (g_getenv ("GEGL_THREADS"))
+    {
+      config->threads = atoi(g_getenv("GEGL_THREADS"));
+
+      if (config->threads > GEGL_MAX_THREADS)
+        {
+          g_warning ("Tried to use %i threads max is %i",
+                     config->threads, GEGL_MAX_THREADS);
+          config->threads = GEGL_MAX_THREADS;
+        }
+    }
+
+  if (g_getenv ("GEGL_USE_OPENCL"))
+    {
+      const char *opencl_env = g_getenv ("GEGL_USE_OPENCL");
+
+      if (g_ascii_strcasecmp (opencl_env, "yes") == 0)
+        g_object_set (config, "use-opencl", TRUE, NULL);
+      else if (g_ascii_strcasecmp (opencl_env, "no") == 0)
+        g_object_set (config, "use-opencl", FALSE, NULL);
+      else
+        g_warning ("Unknown value for GEGL_USE_OPENCL: %s", opencl_env);
+    }
+
+  if (g_getenv ("GEGL_QUEUE_SIZE"))
+    config->queue_size = atoi(g_getenv ("GEGL_QUEUE_SIZE")) * 1024 * 1024;
+
+  if (g_getenv ("GEGL_SWAP"))
+    g_object_set (config, "swap", g_getenv ("GEGL_SWAP"), NULL);
+}
+
 GeglConfig *gegl_config (void)
 {
   if (!config)
     {
       config = g_object_new (GEGL_TYPE_CONFIG, NULL);
-      if (g_getenv ("GEGL_QUALITY"))
-        config->quality = atof(g_getenv("GEGL_QUALITY"));
-      if (g_getenv ("GEGL_CACHE_SIZE"))
-        config->tile_cache_size = atoll(g_getenv("GEGL_CACHE_SIZE"))* 1024*1024;
-      if (g_getenv ("GEGL_CHUNK_SIZE"))
-        config->chunk_size = atoi(g_getenv("GEGL_CHUNK_SIZE"));
-      if (g_getenv ("GEGL_TILE_SIZE"))
-        {
-          const gchar *str = g_getenv ("GEGL_TILE_SIZE");
-          config->tile_width = atoi(str);
-          str = strchr (str, 'x');
-          if (str)
-            config->tile_height = atoi(str+1);
-        }
-      if (g_getenv ("GEGL_THREADS"))
-        {
-          config->threads = atoi(g_getenv("GEGL_THREADS"));
-          if (config->threads > GEGL_MAX_THREADS)
-            {
-              g_warning ("Tried to use %i threads max is %i",
-                         config->threads, GEGL_MAX_THREADS);
-              config->threads = GEGL_MAX_THREADS;
-            }
-        }
-
-      if (g_getenv ("GEGL_USE_OPENCL") != NULL && !g_str_equal(g_getenv ("GEGL_USE_OPENCL"), "yes"))
-        config->use_opencl = FALSE;
-      else
-        config->use_opencl = TRUE;
-
-      if (g_getenv ("GEGL_QUEUE_SIZE"))
-        config->queue_size = atoi(g_getenv ("GEGL_QUEUE_SIZE")) * 1024 * 1024;
-
-      if (gegl_swap_dir())
-        config->swap = g_strdup(gegl_swap_dir ());
+      gegl_config_set_defaults (config);
     }
-  return GEGL_CONFIG (config);
+  return config;
 }
 
 static void swap_clean (void)
@@ -503,14 +544,21 @@ gegl_post_parse_hook (GOptionContext *context,
                       gpointer        data,
                       GError        **error)
 {
+  GeglConfig *config;
+
   g_assert (global_time == 0);
   global_time = gegl_ticks ();
-  babl_init ();
 
   if (g_getenv ("GEGL_DEBUG_TIME") != NULL)
     gegl_instrument_enable ();
 
   gegl_instrument ("gegl", "gegl_init", 0);
+
+  config = gegl_config ();
+
+  gegl_config_parse_env (config);
+
+  babl_init ();
 
 #ifdef GEGL_ENABLE_DEBUG
   {
@@ -526,8 +574,6 @@ gegl_post_parse_hook (GOptionContext *context,
       }
   }
 #endif /* GEGL_ENABLE_DEBUG */
-
-  config = (void*)gegl_config ();
 
   if (cmd_gegl_swap)
     g_object_set (config, "swap", cmd_gegl_swap, NULL);
@@ -547,14 +593,16 @@ gegl_post_parse_hook (GOptionContext *context,
     }
   if (cmd_gegl_threads)
     config->threads = atoi (cmd_gegl_threads);
+  /* FIXME: This comes after babl init and is useless */
   if (cmd_babl_tolerance)
     g_object_set (config, "babl-tolerance", atof(cmd_babl_tolerance), NULL);
   /* don't override the environment variable */
-  if (g_getenv ("GEGL_USE_OPENCL") == NULL && cmd_gegl_opencl)
+  if (cmd_gegl_opencl)
     g_object_set (config, "use-opencl", cmd_gegl_opencl, NULL);
   if (cmd_gegl_queue_size)
     config->queue_size = atoi (cmd_gegl_queue_size) * 1024 * 1024;
 
+  gegl_init_swap_dir ();
 
   GEGL_INSTRUMENT_START();
 
@@ -616,19 +664,6 @@ gegl_post_parse_hook (GOptionContext *context,
 
   gegl_instrument ("gegl", "gegl_init", gegl_ticks () - global_time);
 
-  if (g_getenv ("GEGL_SWAP"))
-    g_object_set (config, "swap", gegl_swap_dir (), NULL);
-  if (g_getenv ("GEGL_QUALITY"))
-    {
-      const gchar *quality = g_getenv ("GEGL_QUALITY");
-      if (g_str_equal (quality, "fast"))
-        g_object_set (config, "quality", 0.0, NULL);
-      if (g_str_equal (quality, "good"))
-        g_object_set (config, "quality", 0.5, NULL);
-      if (g_str_equal (quality, "best"))
-        g_object_set (config, "quality", 1.0, NULL);
-    }
-
   swap_clean ();
 
   g_signal_connect (G_OBJECT (config),
@@ -639,36 +674,6 @@ gegl_post_parse_hook (GOptionContext *context,
 
   return TRUE;
 }
-
-
-
-#ifdef GEGL_ENABLE_DEBUG
-#if 0
-static gboolean
-gegl_arg_debug_cb (const char *key,
-                   const char *value,
-                   gpointer    user_data)
-{
-  gegl_debug_flags |=
-    g_parse_debug_string (value,
-                          gegl_debug_keys,
-                          G_N_ELEMENTS (gegl_debug_keys));
-  return TRUE;
-}
-
-static gboolean
-gegl_arg_no_debug_cb (const char *key,
-                      const char *value,
-                      gpointer    user_data)
-{
-  gegl_debug_flags &=
-    ~g_parse_debug_string (value,
-                           gegl_debug_keys,
-                           G_N_ELEMENTS (gegl_debug_keys));
-  return TRUE;
-}
-#endif
-#endif
 
 gboolean
 gegl_get_debug_enabled (void)
