@@ -364,7 +364,7 @@ process (GeglOperation       *operation,
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
 
-  if (gegl_cl_is_accelerated ())
+  if (gegl_operation_use_opencl (operation))
     if (cl_process (operation, input, output, roi))
       return TRUE;
 

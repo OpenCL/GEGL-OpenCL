@@ -102,7 +102,8 @@ bilateral_process (GeglOperation       *operation,
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
 
-  if (gegl_cl_is_accelerated () && bilateral_cl_process (operation, input, output, result, o->s_sigma, o->r_sigma/100))
+  if (gegl_operation_use_opencl (operation))
+    if (bilateral_cl_process (operation, input, output, result, o->s_sigma, o->r_sigma/100))
       return TRUE;
 
   bilateral_filter (input, result, output, result, o->s_sigma, o->r_sigma/100);

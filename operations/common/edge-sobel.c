@@ -195,7 +195,7 @@ process (GeglOperation       *operation,
   compute = gegl_operation_get_required_for_output (operation, "input", result);
   has_alpha = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
 
-  if (gegl_cl_is_accelerated ())
+  if (gegl_operation_use_opencl (operation))
     if (cl_process (operation, input, output, result, has_alpha))
       return TRUE;
 

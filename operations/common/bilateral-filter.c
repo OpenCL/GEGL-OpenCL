@@ -162,7 +162,7 @@ process (GeglOperation       *operation,
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle compute;
 
-  if (o->blur_radius >= 1.0 && gegl_cl_is_accelerated ())
+  if (o->blur_radius >= 1.0 && gegl_operation_use_opencl (operation))
     if (cl_process (operation, input, output, result))
       return TRUE;
 

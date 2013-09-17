@@ -75,7 +75,7 @@ process (GeglOperation       *operation,
   gint    i, j;
   gfloat *buf1, *buf2, *buf3;
 
-  if (gegl_cl_is_accelerated ())
+  if (gegl_operation_use_opencl (operation))
     if (cl_process (operation, input, output, result))
       return TRUE;
 

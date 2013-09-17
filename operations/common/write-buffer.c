@@ -48,7 +48,7 @@ process (GeglOperation       *operation,
     {
       GeglBuffer *output = GEGL_BUFFER (o->buffer);
 
-      if (gegl_cl_is_accelerated ()
+      if (gegl_operation_use_opencl (operation)
           && gegl_cl_color_supported (input->soft_format, output->soft_format) == GEGL_CL_COLOR_CONVERT)
         {
           size_t size;

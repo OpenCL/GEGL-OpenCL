@@ -220,7 +220,7 @@ process (GeglOperation       *operation,
   src_rect.width += op_area->left + op_area->right;
   src_rect.height += op_area->top + op_area->bottom;
 
-  if (gegl_cl_is_accelerated ())
+  if (gegl_operation_use_opencl (operation))
     if (cl_process (operation, input, output, roi, &src_rect))
       return TRUE;
 

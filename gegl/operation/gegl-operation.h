@@ -247,6 +247,8 @@ void          gegl_operation_set_key           (const gchar *operation_type,
 const gchar * gegl_operation_get_key            (const gchar *operation_type,
                                                  const gchar *key_name);
 
+gboolean      gegl_operation_use_opencl         (const GeglOperation *operation);
+
 /* invalidate a specific rectangle, indicating the any computation depending
  * on this roi is now invalid.
  *

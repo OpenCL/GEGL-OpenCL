@@ -75,6 +75,8 @@ struct _GeglNode
   /* Whether result is cached or not, inherited by children */
   gboolean        dont_cache;
 
+  gboolean        use_opencl;
+
   GMutex          mutex;
 
   /*< private >*/

@@ -744,6 +744,13 @@ gegl_operation_get_key (const gchar *operation_name,
   return ret;
 }
 
+gboolean
+gegl_operation_use_opencl (const GeglOperation *operation)
+{
+  g_return_val_if_fail (operation->node, FALSE);
+  return operation->node->use_opencl && gegl_cl_is_accelerated ();
+}
+
 const Babl *
 gegl_operation_get_source_format (GeglOperation *operation,
                                   const gchar   *padname)

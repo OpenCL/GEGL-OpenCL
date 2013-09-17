@@ -71,7 +71,7 @@ process (GeglOperation       *operation,
   GeglBuffer          *temp_in;
   GeglRectangle        compute;
 
-  if (gegl_cl_is_accelerated ())
+  if (gegl_operation_use_opencl (operation))
     if (cl_process (operation, input, output, result))
       return TRUE;
 

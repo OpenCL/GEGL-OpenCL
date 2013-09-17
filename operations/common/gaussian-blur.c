@@ -649,7 +649,7 @@ process (GeglOperation       *operation,
   force_iir = (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_IIR);
   force_fir = (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_FIR);
 
-  if (gegl_cl_is_accelerated () && !force_iir)
+  if (gegl_operation_use_opencl (operation) && !force_iir)
     if (cl_process(operation, input, output, result))
       return TRUE;
 
