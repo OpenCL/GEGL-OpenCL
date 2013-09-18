@@ -87,6 +87,9 @@ void        p2tr_edge_free                 (P2trEdge *self);
 
 void        p2tr_edge_remove               (P2trEdge *self);
 
+void        p2tr_edge_get_diametral_circle (P2trEdge   *self,
+                                            P2trCircle *circle);
+
 P2trMesh*   p2tr_edge_get_mesh             (P2trEdge *self);
 
 gboolean    p2tr_edge_is_removed           (P2trEdge *self);

@@ -48,7 +48,7 @@ p2t_point_init (P2tPoint* THIS)
 }
 
 P2tPoint*
-p2t_point_new ()
+p2t_point_new (void)
 {
   P2tPoint* THIS = g_slice_new (P2tPoint);
   p2t_point_init (THIS);

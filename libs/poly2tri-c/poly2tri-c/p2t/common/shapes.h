@@ -98,7 +98,7 @@ void p2t_point_init (P2tPoint* THIS);
  * See #p2t_point_init. Note that when finished using the point, it must be
  * freed by a call to #p2t_point_free and can not be freed like regular memory.
  */
-P2tPoint* p2t_point_new ();
+P2tPoint* p2t_point_new (void);
 
 /**
  * p2t_point_destroy:

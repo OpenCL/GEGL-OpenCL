@@ -36,32 +36,6 @@
 #include <poly2tri-c/refine/refine.h>
 #include "mesh-render.h"
 
-/* This function implements box logic to see if a point is contained in a
- * triangles bounding box. This is very useful for cases where there are many
- * triangles to test against a single point, and most of them aren't even near
- * it.
- *
- * Instead of finding the Xmin, Xmax, Ymin, Ymax and checking if the the point
- * is outside, just check if the point is on the SAME SIDE compared to all the
- * points of the triangle.
- * See http://lightningismyname.blogspot.com/2011/08/quickboxa-quick-point-in-triangle-test.html
- */
-gboolean
-p2tr_triangle_quick_box_test (P2trTriangle *self,
-                               gdouble       Px,
-                               gdouble       Py)
-{
-  P2trPoint *A = P2TR_TRIANGLE_GET_POINT (self, 0);
-  P2trPoint *B = P2TR_TRIANGLE_GET_POINT (self, 1);
-  P2trPoint *C = P2TR_TRIANGLE_GET_POINT (self, 2);
-
-  register gboolean xPBorder = B->c.x <= Px;
-  register gboolean yPBorder = B->c.y <= Py;
-
-  return (((A->c.x <= Px) == xPBorder) && (xPBorder == (C->c.x <= Px)))
-          || (((A->c.y <= Py) == yPBorder) && (yPBorder == (C->c.y <= Py)));
-}
-
 void
 p2tr_mesh_render_cache_uvt (P2trMesh        *T,
                             P2trUVT         *dest,

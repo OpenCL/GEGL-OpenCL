@@ -100,7 +100,7 @@ typedef P2trHashSet P2trVEdgeSet;
  * be flipped to restore the Constrained Delaunay property to a
  * triangulation
 */
-P2trVEdgeSet* p2tr_vedge_set_new  ();
+P2trVEdgeSet* p2tr_vedge_set_new  (void);
 
 /**
  * Add the given edge to the flip set. THE EDGE MUST HAVE BEEN REFFED

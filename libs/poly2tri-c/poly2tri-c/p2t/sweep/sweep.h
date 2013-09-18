@@ -55,7 +55,7 @@ P2tNodePtrArray nodes_;
 };
 
 void p2t_sweep_init (P2tSweep* THIS);
-P2tSweep* p2t_sweep_new ();
+P2tSweep* p2t_sweep_new (void);
 
 /**
  * Destructor - clean up memory

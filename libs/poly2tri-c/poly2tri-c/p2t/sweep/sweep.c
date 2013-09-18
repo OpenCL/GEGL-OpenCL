@@ -48,7 +48,7 @@ p2t_sweep_init (P2tSweep* THIS)
 }
 
 P2tSweep*
-p2t_sweep_new ()
+p2t_sweep_new (void)
 {
   P2tSweep* THIS = g_new (P2tSweep, 1);
   p2t_sweep_init (THIS);

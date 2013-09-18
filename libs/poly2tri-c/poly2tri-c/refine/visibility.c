@@ -88,8 +88,8 @@
  */
 
 #include <glib.h>
-#include "bounded-line.h"
-#include "pslg.h"
+
+#include "visibility.h"
 
 
 static gboolean
@@ -381,7 +381,7 @@ TryVisibilityAroundBlock(P2trPSLG        *PSLG,
  * @ref Edges so that the line does not cross any of the lines of the
  * PSLG @ref PSLG
  */
-gboolean
+static gboolean
 IsVisibleFromEdges (P2trPSLG    *PSLG,
                    P2trVector2 *P,
                    P2trPSLG    *Edges)

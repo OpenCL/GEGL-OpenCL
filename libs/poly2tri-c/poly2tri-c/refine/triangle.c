@@ -41,7 +41,7 @@
 #include "triangle.h"
 #include "mesh.h"
 
-void
+static void
 p2tr_validate_edges_can_form_tri (P2trEdge *AB,
                                   P2trEdge *BC,
                                   P2trEdge *CA)

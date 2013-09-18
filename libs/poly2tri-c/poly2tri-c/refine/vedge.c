@@ -156,7 +156,7 @@ p2tr_vedge_try_get_and_unref (P2trVEdge  *self,
 }
 
 P2trVEdgeSet*
-p2tr_vedge_set_new ()
+p2tr_vedge_set_new (void)
 {
   return p2tr_hash_set_new (
       (GHashFunc)      p2tr_vedge_undirected_hash,
