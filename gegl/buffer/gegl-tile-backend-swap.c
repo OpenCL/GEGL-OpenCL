@@ -261,7 +261,8 @@ gegl_tile_backend_swap_writer_thread (gpointer ignored)
           gegl_tile_backend_swap_write (params);
           break;
         case OP_TRUNCATE:
-          ftruncate (out_fd, total);
+          if (ftruncate (out_fd, total) != 0)
+            g_warning ("failed to resize swap file: %s", g_strerror (errno));
           break;
         }
 

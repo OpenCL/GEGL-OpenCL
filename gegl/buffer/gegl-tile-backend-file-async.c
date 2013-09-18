@@ -271,7 +271,8 @@ gegl_tile_backend_file_writer_thread (gpointer ignored)
           gegl_tile_backend_file_write (params);
           break;
         case OP_TRUNCATE:
-          ftruncate (params->file->o, params->length);
+          if (ftruncate (params->file->o, params->length) != 0)
+            g_warning ("failed to resize file: %s", g_strerror (errno));
           break;
         case OP_SYNC:
           fsync (params->file->o);
