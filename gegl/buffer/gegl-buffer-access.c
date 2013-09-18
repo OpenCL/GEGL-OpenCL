@@ -1260,10 +1260,10 @@ gegl_buffer_set_unlocked (GeglBuffer          *buffer,
 
 void
 gegl_buffer_set_unlocked_no_notify (GeglBuffer          *buffer,
-                          const GeglRectangle *rect,
-                          const Babl          *format,
-                          const void          *src,
-                          gint                 rowstride)
+                                    const GeglRectangle *rect,
+                                    const Babl          *format,
+                                    const void          *src,
+                                    gint                 rowstride)
 {
   if (format == NULL)
     format = buffer->soft_format;
@@ -1280,9 +1280,10 @@ gegl_buffer_set_unlocked_no_notify (GeglBuffer          *buffer,
     }
   else
 #endif
-    gegl_buffer_iterate_write (buffer, rect, (void *) src, rowstride, format, 0);
 
-  if (gegl_buffer_is_shared(buffer))
+  gegl_buffer_iterate_write (buffer, rect, (void *) src, rowstride, format, 0);
+
+  if (gegl_buffer_is_shared (buffer))
     {
       gegl_buffer_flush (buffer);
     }
