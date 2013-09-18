@@ -74,13 +74,16 @@ int main(int argc, char *argv[])
   GeglRectangle  rect2        = { 1, 0, 1, 1 };
   GeglRectangle  rect3        = { 1, 1, 1, 1 };
   GeglRectangle  rect4        = { 0, 1, 1, 1 };
-  GeglColor     *common_color = NULL;
-  GeglNode      *gegl         = NULL;
-  GeglNode      *color        = NULL;
-  GeglNode      *layer        = NULL;
-  GeglNode      *text         = NULL;
-  GeglNode      *sink         = NULL;
-  GeglProcessor *processor    = NULL;
+  GeglColor     *color_white = NULL;
+  GeglColor     *color_black = NULL;
+  GeglNode      *gegl        = NULL;
+  GeglNode      *white       = NULL;
+  GeglNode      *translate   = NULL;
+  GeglNode      *over        = NULL;
+  GeglNode      *black       = NULL;
+  GeglNode      *crop        = NULL;
+  GeglNode      *sink        = NULL;
+  GeglProcessor *processor   = NULL;
 
   /* Convenient line to keep around:
   g_log_set_always_fatal (G_LOG_LEVEL_WARNING | G_LOG_LEVEL_CRITICAL);
@@ -88,23 +91,32 @@ int main(int argc, char *argv[])
 
   gegl_init (&argc, &argv);
 
-  common_color = gegl_color_new ("rgb(1.0, 1.0, 1.0)");
+  color_white = gegl_color_new ("rgb(1.0, 1.0, 1.0)");
+  color_black = gegl_color_new ("rgb(0.0, 0.0, 0.0)");
 
   gegl         = gegl_node_new ();
-  color        = gegl_node_new_child (gegl,
+  white        = gegl_node_new_child (gegl,
                                       "operation", "gegl:color",
-                                      "value", common_color,
+                                      "value", color_white,
                                       NULL);
-  layer        = gegl_node_new_child (gegl,
-                                      "operation", "gegl:layer",
-                                      "x", 0.0,
-                                      "y", 0.0,
+  translate    = gegl_node_new_child (gegl,
+                                      "operation", "gegl:translate",
+                                      "x", -50.0,
+                                      "y", -20.0,
                                       NULL);
-  text         = gegl_node_new_child (gegl,
-                                      "operation", "gegl:text",
-                                      "color", common_color,
-                                      "string", "█████████████████████████",
-                                      "size", 200.0,
+  over         = gegl_node_new_child (gegl,
+                                      "operation", "gegl:over",
+                                      NULL);
+  black        = gegl_node_new_child (gegl,
+                                      "operation", "gegl:color",
+                                      "value", color_black,
+                                      NULL);
+  crop         = gegl_node_new_child (gegl,
+                                      "operation", "gegl:crop",
+                                      "x", 10.0,
+                                      "y", 10.0,
+                                      "width", 100.0,
+                                      "height", 100.0,
                                       NULL);
   sink         = gegl_node_new_child (gegl,
                                       "operation", "gegl:buffer-sink",
@@ -113,8 +125,9 @@ int main(int argc, char *argv[])
   /* We build our graph for processing complexity, not for compositing
    * complexity
    */
-  gegl_node_link_many (color, layer, sink, NULL);
-  gegl_node_connect_to (text, "output",  layer, "aux");
+  gegl_node_link_many (black, over, sink, NULL);
+  gegl_node_link_many (white, crop, translate, NULL);
+  gegl_node_connect_to (translate, "output",  over, "aux");
 
   /* Create a processor */
   processor = gegl_node_new_processor (sink, NULL);
@@ -148,7 +161,8 @@ int main(int argc, char *argv[])
   /* Cleanup */
  abort:
   g_object_unref (processor);
-  g_object_unref (common_color);
+  g_object_unref (color_white);
+  g_object_unref (color_black);
   g_object_unref (gegl);
   gegl_exit ();
 
