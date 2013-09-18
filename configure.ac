@@ -352,7 +352,9 @@ if test "x$enable_mmx" = "xyes"; then
 
     if test "x$enable_sse" = "xyes"; then
       AS_COMPILER_FLAG([-msse], [SSE_EXTRA_CFLAGS="-msse"])
-      AS_COMPILER_FLAG([-ftree-vectorize], [SSE_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS -ftree-vectorize"])
+      if test "x$CC" != "xclang"; then
+        AS_COMPILER_FLAG([-ftree-vectorize], [SSE_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS -ftree-vectorize"])
+      fi
       AS_COMPILER_FLAG([-ffast-math], [SSE_EXTRA_CFLAGS="$SSE_EXTRA_CFLAGS -ffast-math"])
 
       AC_MSG_CHECKING(whether we can compile SSE code)
