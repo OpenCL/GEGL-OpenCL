@@ -286,6 +286,14 @@ process (GeglOperation       *operation,
   else
     {
       npd_set_deformation_type (model, o->ASAP_deformation, o->MLS_weights);
+
+      if (o->MLS_weights &&
+          model->hidden_model->MLS_weights_alpha != o->MLS_weights_alpha)
+        {
+          model->hidden_model->MLS_weights_alpha = o->MLS_weights_alpha;
+          npd_compute_MLS_weights (model);
+        }
+
       model->mesh_visible = o->mesh_visible;
 
       output_buffer = model->display->image.buffer;
