@@ -30,6 +30,29 @@
 #include <gegl-types.h>
 
  /**
+ * gegl_format:
+ * @format_name: A Babl format name, e.g. "RGBA float"
+ *
+ * Returns a value sutable to pass to the GeglBuffer constructor
+ * or any other property that expects a Babl format.
+ *
+ * Return value: (transfer full) (allow-none): the format pointer
+ */
+
+GValue *
+gegl_format (const char *format_name);
+
+ /**
+ * gegl_format_get_name:
+ * @format: A Babl pointer
+ *
+ * Return value: (transfer none) (allow-none): the format name
+ */
+
+const gchar *
+gegl_format_get_name (GValue *format);
+
+ /**
  * gegl_node_introspectable_get_bounding_box:
  * @node: a #GeglNode
  *

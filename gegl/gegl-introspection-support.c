@@ -34,6 +34,32 @@
 #include "graph/gegl-node.h"
 #include "gegl-introspection-support.h"
 
+GValue *
+gegl_format (const char *format_name)
+{
+  GValue *result = g_new0 (GValue, 1);
+
+  g_value_init (result, G_TYPE_POINTER);
+  g_value_set_pointer (result, (gpointer) babl_format (format_name));
+
+  return result;
+}
+
+const gchar *
+gegl_format_get_name (GValue *value)
+{
+  Babl *format;
+
+  if (!(G_TYPE_POINTER == G_VALUE_TYPE(value)))
+    return NULL;
+  format = g_value_get_pointer (value);
+
+  if (!format)
+    return NULL;
+
+  return babl_get_name (format);
+}
+
 GeglRectangle *
 gegl_node_introspectable_get_bounding_box (GeglNode *node)
 {
