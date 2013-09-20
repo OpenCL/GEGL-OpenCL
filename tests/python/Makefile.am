@@ -13,7 +13,8 @@ TESTS = \
 	test-gegl.py \
 	test-gegl-node.py \
 	test-gegl-color.py \
-	test-gegl-buffer.py
+	test-gegl-buffer.py \
+	test-gegl-format.py
 EXTRA_DIST = $(TESTS)
 endif # HAVE_PYGOBJECT
 endif # HAVE_INTROSPECTION
