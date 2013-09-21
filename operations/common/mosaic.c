@@ -29,23 +29,24 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double_ui (tile_size, _("Tile size"), 1.0, 1000.0, 15.0,
-                      5.0, 400, 1.0, _("Tile size"))
+                      5.0, 400, 1.0, _("Average diameter of each tile (in pixels)"))
 gegl_chant_double_ui (tile_height, _("Tile height"), 1.0, 1000.0, 4.0,
-                      1.0, 20.0, 1.0, _("Tile height"))
+                      1.0, 20.0, 1.0, _("Apparent height of each tile (in pixels)"))
 gegl_chant_double_ui (tile_spacing, _("Tile spacing"), 0.1, 1000.0, 1.0,
-                      0.5, 30.0, 1.0,  _("Tile spacing"))
+                      0.5, 30.0, 1.0,  _("Inter-tile spacing (in pixels)"))
 gegl_chant_double    (tile_neatness, _("Tile neatness"), 0.0, 1.0, 0.65,
-                      _("Tile neatness"))
+                      _("Deviation from perfectly formed tiles"))
 gegl_chant_boolean   (tile_allow_split, _("Allow splitting tiles"), TRUE,
-                      _("Allow splitting tiles"))
+                      _("Allows splitting tiles at hard edges"))
 gegl_chant_double    (light_dir,  _("Light direction"),
-                      0.0, 360.0, 135, _("Light direction"))
+                      0.0, 360.0, 135, _("Direction of light-source (in degrees)"))
 gegl_chant_double    (color_variation, _("Color variation"),
-                      0.0, 1.0, 0.2, _("Color variation"))
-gegl_chant_int       (seed, _("Random seed"), 0, G_MAXINT, 1, _("Random seed"))
-gegl_chant_boolean   (antialiasing, _("Antialiasing"), TRUE, _("Antialiasing"))
+                      0.0, 1.0, 0.2, _("Magnitude of random color variations"))
+gegl_chant_seed      (seed, _("Random seed"), _("Random seed"))
+gegl_chant_boolean   (antialiasing, _("Antialiasing"), TRUE,
+                      _("Enables smoother tile output"))
 gegl_chant_boolean   (color_averaging, _("Color averaging"), TRUE,
-                      _("Color averaging"))
+                      _("Tile color based on average of subsumed pixels"))
 
 gegl_chant_register_enum (gegl_mosaic_tile)
   enum_value (GEGL_MOSAIC_TILE_SQUARES,   "SQUARES")
@@ -54,12 +55,12 @@ gegl_chant_register_enum (gegl_mosaic_tile)
   enum_value (GEGL_MOSAIC_TILE_TRIANGLES, "TRIANGLES")
 gegl_chant_register_enum_end (GeglMosaicTile)
 
-gegl_chant_enum      (tile_type, _("Tile shape"), GeglMosaicTile,
+gegl_chant_enum      (tile_type, _("Tile geometry"), GeglMosaicTile,
                       gegl_mosaic_tile, GEGL_MOSAIC_TILE_HEXAGONS,
                       _("What shape to use for tiles"))
 
 gegl_chant_boolean   (tile_surface, _("Rough tile surface"), FALSE,
-                       _("Rough tile surface"))
+                       _("Surface characteristics"))
 
 gegl_chant_color     (bg_color, _("Joins color"), "black", _("Joins color"))
 gegl_chant_color     (fg_color, _("Light color"), "white", _("Light color"))
