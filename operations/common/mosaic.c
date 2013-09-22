@@ -60,7 +60,7 @@ gegl_chant_boolean   (tile_surface, _("Rough tile surface"), FALSE,
 gegl_chant_boolean   (tile_allow_split, _("Allow splitting tiles"), TRUE,
                       _("Allows splitting tiles at hard edges"))
 
-gegl_chant_double_ui (tile_spacing, _("Tile spacing"), 0.1, 1000.0, 1.0,
+gegl_chant_double_ui (tile_spacing, _("Tile spacing"), 0.0, 1000.0, 1.0,
                       0.5, 30.0, 1.0,  _("Inter-tile spacing (in pixels)"))
 
 gegl_chant_color     (bg_color, _("Joints color"), "black", _("Joints color"))
@@ -148,7 +148,6 @@ typedef struct
   GridDescriptor grid;
   gfloat         back[4];
   gfloat         fore[4];
-  SpecVec        vecs[MAX_POINTS];
   gint           width, height;
 } MosaicDatas;
 
@@ -208,7 +207,6 @@ static gfloat*   grid_render           (gfloat              *input_buf,
 static void      split_poly            (Polygon             *poly,
                                         gfloat              *input_buf,
                                         gfloat              *output_buf,
-                                        gfloat              *col,
                                         gdouble             *dir,
                                         gdouble              color_vary,
                                         const GeglRectangle *result,
@@ -229,14 +227,12 @@ static void      process_poly          (Polygon             *poly,
                                         gboolean             allow_split,
                                         gfloat              *input_buf,
                                         gfloat              *output_buf,
-                                        gfloat              *col,
                                         const GeglRectangle *result,
                                         GeglChantO          *o,
                                         MosaicDatas         *mdatas);
 static void      render_poly           (Polygon             *poly,
                                         gfloat              *input_buf,
                                         gfloat              *output_buf,
-                                        gfloat              *col,
                                         gdouble              vary,
                                         const GeglRectangle *result,
                                         GeglChantO          *o,
@@ -1094,7 +1090,6 @@ grid_render (gfloat              *input_buf,
              MosaicDatas         *mdatas)
 {
   gint            i, j, k, index;
-  gfloat          col[4];
   Polygon         poly;
   gfloat         *output_buf, *o_buf;
   GridDescriptor  grid;
@@ -1137,7 +1132,7 @@ grid_render (gfloat              *input_buf,
                                grid.vert[index + grid.vert_rowstride].x,
                                grid.vert[index + grid.vert_rowstride].y);
 
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
             break;
 
@@ -1162,7 +1157,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                grid.vert[index + 3].x,
                                grid.vert[index + 3].y);
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
 
             /*  The auxiliary hexagon  */
@@ -1185,7 +1180,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                grid.vert[index + grid.vert_rowstride + 1].x,
                                grid.vert[index + grid.vert_rowstride + 1].y);
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
             break;
 
@@ -1196,7 +1191,7 @@ grid_render (gfloat              *input_buf,
               polygon_add_point (&poly,
                                  grid.vert[index + k].x,
                                  grid.vert[index + k].y);
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
 
             /*  The auxiliary octagon  */
@@ -1225,7 +1220,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                grid.vert[index + 4].x,
                                grid.vert[index + 4].y);
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
 
             /*  The main square  */
@@ -1242,7 +1237,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                grid.vert[index + 3].x,
                                grid.vert[index + 3].y);
-            process_poly (&poly, FALSE, input_buf, output_buf, col,
+            process_poly (&poly, FALSE, input_buf, output_buf,
                           result, o, mdatas);
 
             /*  The auxiliary square  */
@@ -1259,7 +1254,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                grid.vert[index + grid.vert_rowstride].x,
                                grid.vert[index + grid.vert_rowstride].y);
-            process_poly (&poly, FALSE, input_buf, output_buf, col,
+            process_poly (&poly, FALSE, input_buf, output_buf,
                           result, o, mdatas);
             break;
           case TRIANGLES:
@@ -1274,7 +1269,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                 grid.vert[index + 1].x,
                                 grid.vert[index + 1].y);
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
 
             /*  lower right  */
@@ -1288,7 +1283,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                 grid.vert[index + grid.vert_multiple + 1].x,
                                 grid.vert[index + grid.vert_multiple + 1].y);
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
 
             /*  upper left  */
@@ -1302,7 +1297,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                 grid.vert[index + grid.vert_rowstride].x,
                                 grid.vert[index + grid.vert_rowstride].y);
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
 
             /*  upper right  */
@@ -1316,7 +1311,7 @@ grid_render (gfloat              *input_buf,
             polygon_add_point (&poly,
                                 grid.vert[index + grid.vert_multiple + grid.vert_rowstride].x,
                                 grid.vert[index + grid.vert_multiple + grid.vert_rowstride].y);
-            process_poly (&poly, o->tile_allow_split, input_buf, output_buf, col,
+            process_poly (&poly, o->tile_allow_split, input_buf, output_buf,
                           result, o, mdatas);
             break;
 
@@ -1330,7 +1325,6 @@ process_poly (Polygon             *poly,
               gboolean             allow_split,
               gfloat              *input_buf,
               gfloat              *output_buf,
-              gfloat              *col,
               const GeglRectangle *result,
               GeglChantO          *o,
               MosaicDatas         *mdatas)
@@ -1375,13 +1369,13 @@ process_poly (Polygon             *poly,
       (2 * distance / o->tile_size) < 0.5 && allow_split)
     {
       split_poly (poly, input_buf, output_buf,
-                  col, dir, color_vary, result, o, mdatas);
+                  dir, color_vary, result, o, mdatas);
     }
   else
     {
       /*  Otherwise, render the original polygon  */
       render_poly (poly, input_buf, output_buf,
-                   col, color_vary, result, o, mdatas);
+                   color_vary, result, o, mdatas);
     }
 }
 
@@ -1389,7 +1383,6 @@ static void
 render_poly (Polygon             *poly,
              gfloat              *input_buf,
              gfloat              *output_buf,
-             gfloat              *col,
              gdouble              vary,
              const GeglRectangle *result,
              GeglChantO          *o,
@@ -1397,6 +1390,7 @@ render_poly (Polygon             *poly,
 {
   gdouble cx = 0.0;
   gdouble cy = 0.0;
+  gfloat  col[4];
 
   polygon_find_center (poly, &cx, &cy);
 
@@ -1417,7 +1411,6 @@ static void
 split_poly (Polygon             *poly,
             gfloat              *input_buf,
             gfloat              *output_buf,
-            gfloat              *col,
             gdouble             *dir,
             gdouble              vary,
             const GeglRectangle *result,
@@ -1431,6 +1424,7 @@ split_poly (Polygon             *poly,
   gdouble magnitude;
   gdouble vec[2];
   gdouble pt[2];
+  gfloat  col[4];
 
   spacing = o->tile_spacing / (2.0 * mdatas->scale);
 
@@ -1764,6 +1758,7 @@ find_poly_color (Polygon             *poly,
           col[b] = CLAMP01 (col_sum[b]);
         }
       col_sum[NB_CPN -1] = (col_sum[NB_CPN - 1] / count);
+      col[NB_CPN -1] = CLAMP01 (col_sum[NB_CPN -1]);
     }
 
   g_free (min_scanlines);
@@ -1808,6 +1803,7 @@ fill_poly_color (Polygon             *poly,
   gint       supersample, supersample2;
   Vertex    *pts_tmp;
   const gint poly_npts = poly->npts;
+  SpecVec    vecs[MAX_POINTS];
 
   /*  Determine antialiasing  */
   if (antialiasing)
@@ -1828,7 +1824,7 @@ fill_poly_color (Polygon             *poly,
       xe = (gint) pts_tmp->x;
       ye = (gint) pts_tmp->y;
 
-      calc_spec_vec (mdatas->vecs, xs, ys, xe, ye,
+      calc_spec_vec (vecs, xs, ys, xe, ye,
                      mdatas->light_x, mdatas->light_y);
 
       for (i = 1; i < poly_npts; i++)
@@ -1839,7 +1835,7 @@ fill_poly_color (Polygon             *poly,
           xe = (gint) pts_tmp->x;
           ye = (gint) pts_tmp->y;
 
-          calc_spec_vec (mdatas->vecs+i, xs, ys, xe, ye,
+          calc_spec_vec (vecs+i, xs, ys, xe, ye,
                          mdatas->light_x, mdatas->light_y);
         }
     }
@@ -1934,7 +1930,7 @@ fill_poly_color (Polygon             *poly,
                         {
                           xx = (gdouble) j / (gdouble) supersample + min_x;
 
-                          contrib = calc_spec_contrib (mdatas->vecs, poly_npts,
+                          contrib = calc_spec_contrib (vecs, poly_npts,
                                                        xx, yy, tile_rough,
                                                        tile_height);
 
@@ -1948,7 +1944,6 @@ fill_poly_color (Polygon             *poly,
                                 pixel += (mdatas->fore[b] - col[b]) * contrib;
 
                               buf[b] = ((pixel * val) + (mdatas->back[b] * (1.0 - val)));
-
                             }
                           memcpy (output_buf + (y * result->width + x) * NB_CPN,
                                   buf, NB_CPN * sizeof (gfloat));
@@ -1989,6 +1984,7 @@ fill_poly_image (Polygon             *poly,
   gdouble   contrib;
   gdouble   xx, yy;
   gint      supersample, supersample2;
+  SpecVec   vecs[MAX_POINTS];
 
   /*  Determine antialiasing  */
   if (antialiasing)
@@ -2008,7 +2004,7 @@ fill_poly_image (Polygon             *poly,
       xe = (gint) poly->pts[i].x;
       ye = (gint) poly->pts[i].y;
 
-      calc_spec_vec (mdatas->vecs+i, xs, ys, xe, ye,
+      calc_spec_vec (vecs+i, xs, ys, xe, ye,
                      mdatas->light_x, mdatas->light_y);
     }
 
@@ -2083,7 +2079,7 @@ fill_poly_image (Polygon             *poly,
                         {
                           xx = (gdouble) j / (gdouble) supersample + min_x;
 
-                          contrib = calc_spec_contrib (mdatas->vecs,
+                          contrib = calc_spec_contrib (vecs,
                                                        poly->npts, xx, yy,
                                                        tile_rough, tile_height);
 
@@ -2094,9 +2090,9 @@ fill_poly_image (Polygon             *poly,
                           for (b = 0; b < NB_CPN; b++)
                             {
                               if (contrib < 0.0)
-                                pixel = buf[b] + (gint) ((buf[b] - mdatas->back[b]) * contrib);
+                                pixel = buf[b] + (buf[b] - mdatas->back[b]) * contrib;
                               else
-                                pixel = buf[b] + (gint) ((mdatas->fore[b] - buf[b]) * contrib);
+                                pixel = buf[b] + (mdatas->fore[b] - buf[b]) * contrib;
 
                               /* factor in per-tile intensity variation but alpha */
                               if (b < NB_CPN - 1)
