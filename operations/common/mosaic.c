@@ -2098,8 +2098,8 @@ fill_poly_image (Polygon             *poly,
                               else
                                 pixel = buf[b] + (gint) ((mdatas->fore[b] - buf[b]) * contrib);
 
-                              /*  factor in per-tile intensity variation but alpha*/
-                              if (NB_CPN < 4)
+                              /* factor in per-tile intensity variation but alpha */
+                              if (b < NB_CPN - 1)
                                 pixel += vary;
 
                               pixel = CLAMP (pixel, 0.0, 1.0);
