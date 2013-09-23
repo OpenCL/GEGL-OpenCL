@@ -63,9 +63,9 @@ gegl_chant_boolean   (tile_allow_split, _("Allow splitting tiles"), TRUE,
 gegl_chant_double_ui (tile_spacing, _("Tile spacing"), 0.0, 1000.0, 1.0,
                       0.5, 30.0, 1.0,  _("Inter-tile spacing (in pixels)"))
 
-gegl_chant_color     (bg_color, _("Joints color"), "black", _("Joints color"))
+gegl_chant_color     (joints_color, _("Joints color"), "black", _("Joints color"))
 
-gegl_chant_color     (fg_color, _("Light color"), "white", _("Light color"))
+gegl_chant_color     (light_color, _("Light color"), "white", _("Light color"))
 
 gegl_chant_double    (light_dir,  _("Light direction"),
                       0.0, 360.0, 135, _("Direction of light-source (in degrees)"))
@@ -373,13 +373,13 @@ mosaic (GeglOperation       *operation,
 
   {
     gdouble r, g, b, a;
-    gegl_color_get_rgba (o->fg_color, &r, &g, &b, &a);
+    gegl_color_get_rgba (o->light_color, &r, &g, &b, &a);
     mdatas.fore[0] = r;
     mdatas.fore[1] = g;
     mdatas.fore[2] = b;
     mdatas.fore[3] = a;
 
-    gegl_color_get_rgba (o->bg_color, &r, &g, &b, &a);
+    gegl_color_get_rgba (o->joints_color, &r, &g, &b, &a);
     mdatas.back[0] = r;
     mdatas.back[1] = g;
     mdatas.back[2] = b;
