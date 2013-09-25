@@ -42,9 +42,9 @@ static void
 prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",
-                             babl_format ("R'G'B'A double"));
+                             babl_format ("R'G'B'A float"));
   gegl_operation_set_format (operation, "output",
-                             babl_format ("R'G'B'A double"));
+                             babl_format ("R'G'B'A float"));
 }
 
 /*
@@ -81,12 +81,12 @@ prepare (GeglOperation *operation)
 */
 
 static void
-color_to_alpha (const gdouble *color,
-                const gdouble *src,
-                gdouble       *dst)
+color_to_alpha (const gfloat *color,
+                const gfloat *src,
+                gfloat       *dst)
 {
   gint i;
-  gdouble alpha[4];
+  gfloat alpha[4];
 
   for (i=0; i<4; i++)
     dst[i] = src[i];
@@ -141,12 +141,12 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
-  const Babl *format = babl_format ("R'G'B'A double");
-  gdouble      color[4];
+  const Babl *format = babl_format ("R'G'B'A float");
+  gfloat      color[4];
   gint        x;
 
-  gdouble *in_buff = in_buf;
-  gdouble *out_buff = out_buf;
+  gfloat *in_buff = in_buf;
+  gfloat *out_buff = out_buf;
 
   gegl_color_get_pixel (o->color, format, color);
 
