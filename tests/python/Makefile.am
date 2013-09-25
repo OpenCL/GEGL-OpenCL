@@ -1,5 +1,5 @@
 TESTS_ENVIRONMENT = \
-    LD_LIBRARY_PATH=$(top_builddir)/gegl/.libs \
+    LD_LIBRARY_PATH=$(top_builddir)/gegl/.libs:$(LD_LIBRARY_PATH) \
 	GI_TYPELIB_PATH=$(top_builddir)/gegl:$(GI_TYPELIB_PATH) \
 	GEGL_SWAP=RAM \
 	GEGL_PATH=$(top_builddir)/operations/
