@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:over'>
+      <node operation='gegl:rectangle'>
+          <params>
+              <param name='x'>80.000000</param>
+              <param name='y'>90.000000</param>
+              <param name='width'>130.000000</param>
+              <param name='height'>90.000000</param>
+              <param name='color'>rgb(0.2, 0.8, 0.2)</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:over'>
+      <node operation='gegl:rectangle'>
+          <params>
+              <param name='width'>128.000000</param>
+              <param name='height'>128.000000</param>
+              <param name='color'>rgb(0.0, 0.0, 0.0)</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:rectangle'>
+      <params>
+          <param name='x'>0.000000</param>
+          <param name='y'>0.000000</param>
+          <param name='width'>256.000000</param>
+          <param name='height'>256.000000</param>
+          <param name='color'>rgb(1.0, 1.0, 1.0)</param>
+      </params>
+  </node>
+</gegl>
