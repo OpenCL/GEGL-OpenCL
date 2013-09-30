@@ -11,6 +11,7 @@
   <node operation='gegl:color'>
       <params>
         <param name='value'>rgb(100.0000, 100.0000, 100.0000)</param>
+        <param name='format'></param>
       </params>
   </node>
 </gegl>

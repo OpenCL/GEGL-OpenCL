@@ -23,17 +23,27 @@
 
 gegl_chant_color (value, _("Color"), "black",
                   _("The color to render (defaults to 'black')"))
+
+gegl_chant_format (format, _("Babl Format"),
+                   _("The babl format of the output"))
+
 #else
 
 #define GEGL_CHANT_TYPE_POINT_RENDER
 #define GEGL_CHANT_C_FILE           "color.c"
 
 #include "gegl-chant.h"
+#include <gegl-utils.h>
 
 static void
 gegl_color_op_prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  if (o->format)
+    gegl_operation_set_format (operation, "output", o->format);
+  else
+    gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglRectangle
@@ -50,21 +60,15 @@ gegl_color_op_process (GeglOperation       *operation,
                        gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gfloat     *out_pixel = out_buf;
-  gfloat      color[4];
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+  gint        pixel_size = babl_format_get_bytes_per_pixel (out_format);
+  void       *out_color  = alloca(pixel_size);
 
-  gegl_color_get_pixel (o->value, babl_format ("RGBA float"), color);
+  gegl_color_get_pixel (o->value, out_format, out_color);
 
-  while (n_pixels--)
-    {
-      out_pixel[0]=color[0];
-      out_pixel[1]=color[1];
-      out_pixel[2]=color[2];
-      out_pixel[3]=color[3];
+  gegl_memset_pattern (out_buf, out_color, pixel_size, n_pixels);
 
-      out_pixel += 4;
-    }
-  return  TRUE;
+  return TRUE;
 }
 
 
