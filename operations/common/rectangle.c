@@ -61,27 +61,8 @@ typedef struct
 #include "gegl-chant.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 
-static void attach (GeglOperation *operation)
-{
-  GeglChant  *self = GEGL_CHANT (operation);
-  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
-  GeglNode *gegl;
-
-  self->self = GEGL_OPERATION (self)->node;
-  gegl = self->self;
-
-  self->output = gegl_node_get_output_proxy (gegl, "output");
-
-  self->color = gegl_node_new_child (gegl, "operation", "gegl:color",
-                                           "value", o->color,
-                                           NULL);
-  self->crop = gegl_node_new_child (gegl, "operation", "gegl:crop", NULL);
-
-  gegl_node_link_many (self->color, self->crop, self->output, NULL);
-}
-
 static void
-prepare (GeglOperation *operation)
+do_setup (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   GeglChant *self = GEGL_CHANT (operation);
@@ -117,15 +98,55 @@ prepare (GeglOperation *operation)
     }
 }
 
+static void attach (GeglOperation *operation)
+{
+  GeglChant  *self = GEGL_CHANT (operation);
+  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglNode *gegl;
+
+  self->self = GEGL_OPERATION (self)->node;
+  gegl = self->self;
+
+  self->output = gegl_node_get_output_proxy (gegl, "output");
+
+  self->color = gegl_node_new_child (gegl, "operation", "gegl:color",
+                                           "value", o->color,
+                                           NULL);
+  self->crop = gegl_node_new_child (gegl, "operation", "gegl:crop", NULL);
+
+  gegl_node_link_many (self->color, self->crop, self->output, NULL);
+
+  do_setup (operation);
+}
+
+static void
+my_set_property (GObject      *gobject,
+                 guint         property_id,
+                 const GValue *value,
+                 GParamSpec   *pspec)
+{
+  GeglOperation *operation = GEGL_OPERATION (gobject);
+  GeglChant     *self      = GEGL_CHANT (operation);
+
+  /* The set_property provided by the chant system does the
+   * storing and reffing/unreffing of the input properties */
+  set_property(gobject, property_id, value, pspec);
+
+  if (self->color)
+    do_setup (operation);
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
+  GObjectClass       *object_class;
   GeglOperationClass *operation_class;
 
+  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
 
   operation_class->attach = attach;
-  operation_class->prepare = prepare;
+  object_class->set_property = my_set_property;
 
   gegl_operation_class_set_keys (operation_class,
   "name"       , "gegl:rectangle",
