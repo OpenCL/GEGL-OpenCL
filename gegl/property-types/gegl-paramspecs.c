@@ -685,3 +685,58 @@ gegl_param_spec_seed (const gchar *name,
 
   return G_PARAM_SPEC (pspec);
 }
+
+/*
+ * GEGL_TYPE_PARAM_FORMAT
+ */
+
+static void       gegl_param_format_class_init (GParamSpecClass *klass);
+static void       gegl_param_format_init       (GParamSpec      *pspec);
+
+GType
+gegl_param_format_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      const GTypeInfo info =
+      {
+        sizeof (GParamSpecClass),
+        NULL, NULL,
+        (GClassInitFunc) gegl_param_format_class_init,
+        NULL, NULL,
+        sizeof (GeglParamSpecFormat),
+        0,
+        (GInstanceInitFunc) gegl_param_format_init
+      };
+      type = g_type_register_static (G_TYPE_PARAM_POINTER,
+                                     "GeglParamFormat", &info, 0);
+    }
+  return type;
+}
+
+static void
+gegl_param_format_class_init (GParamSpecClass *klass)
+{
+  klass->value_type = G_TYPE_POINTER;
+}
+
+static void
+gegl_param_format_init (GParamSpec *pspec)
+{
+}
+
+GParamSpec *
+gegl_param_spec_format (const gchar *name,
+                        const gchar *nick,
+                        const gchar *blurb,
+                        GParamFlags  flags)
+{
+  GeglParamSpecFormat *pspec;
+
+  pspec = g_param_spec_internal (GEGL_TYPE_PARAM_FORMAT,
+                                 name, nick, blurb, flags);
+
+  return G_PARAM_SPEC (pspec);
+}

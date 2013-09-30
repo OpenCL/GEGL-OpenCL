@@ -346,6 +346,7 @@ gegl_module_register (GTypeModule *module)
 #define gegl_chant_multiline(name, nick, def, blurb)
 #define gegl_chant_object(name,nick,  blurb)
 #define gegl_chant_pointer(name, nick, blurb)
+#define gegl_chant_format(name, nick, blurb)
 #define gegl_chant_color(name, nick, def, blurb)
 #define gegl_chant_curve(name, nick, blurb)
 #define gegl_chant_seed(name, nick, blurb)
@@ -398,6 +399,7 @@ GType enum_name ## _get_type (void)               \
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_format
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_seed
@@ -429,6 +431,7 @@ struct _GeglChantO
 #define gegl_chant_multiline(name, nick, def, blurb)                            gchar             *name;
 #define gegl_chant_object(name,nick,  blurb)                                    GObject           *name;
 #define gegl_chant_pointer(name, nick, blurb)                                   gpointer           name;
+#define gegl_chant_format(name, nick, blurb)                                    gpointer           name;
 #define gegl_chant_color(name, nick, def, blurb)                                GeglColor         *name;
 #define gegl_chant_curve(name, nick, blurb)                                     GeglCurve         *name;
 #define gegl_chant_seed(name, nick, blurb)                                      gint               name;
@@ -448,6 +451,7 @@ struct _GeglChantO
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_format
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_seed
@@ -470,6 +474,7 @@ enum
 #define gegl_chant_multiline(name, nick, def, blurb)                            PROP_##name,
 #define gegl_chant_object(name, nick, blurb)                                    PROP_##name,
 #define gegl_chant_pointer(name, nick, blurb)                                   PROP_##name,
+#define gegl_chant_format(name, nick, blurb)                                    PROP_##name,
 #define gegl_chant_color(name, nick, def, blurb)                                PROP_##name,
 #define gegl_chant_curve(name, nick, blurb)                                     PROP_##name,
 #define gegl_chant_seed(name, nick, blurb)                                      PROP_##name,
@@ -488,6 +493,7 @@ enum
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_format
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_seed
@@ -551,6 +557,10 @@ get_property (GObject      *gobject,
     case PROP_##name:                                         \
       g_value_set_pointer (value, properties->name);          \
       break;
+#define gegl_chant_format(name, nick, blurb)                 \
+    case PROP_##name:                                         \
+      g_value_set_pointer (value, properties->name);          \
+      break;
 #define gegl_chant_color(name, nick, def, blurb)              \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
@@ -581,6 +591,7 @@ get_property (GObject      *gobject,
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_format
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_seed
@@ -656,6 +667,10 @@ set_property (GObject      *gobject,
     case PROP_##name:                                                 \
       properties->name = g_value_get_pointer (value);                 \
       break;
+#define gegl_chant_format(name, nick, blurb)                          \
+    case PROP_##name:                                                 \
+      properties->name = g_value_get_pointer (value);                 \
+      break;
 #define gegl_chant_color(name, nick, def, blurb)                      \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
@@ -704,6 +719,7 @@ set_property (GObject      *gobject,
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_format
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_seed
@@ -752,6 +768,7 @@ static void gegl_chant_destroy_notify (gpointer data)
       properties->name = NULL;                      \
     }
 #define gegl_chant_pointer(name, nick, blurb)
+#define gegl_chant_format(name, nick, blurb)
 #define gegl_chant_color(name, nick, def, blurb)    \
   if (properties->name)                             \
     {                                               \
@@ -785,6 +802,7 @@ static void gegl_chant_destroy_notify (gpointer data)
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_format
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_seed
@@ -818,6 +836,7 @@ gegl_chant_constructor (GType                  type,
 #define gegl_chant_multiline(name, nick, def, blurb)
 #define gegl_chant_object(name, nick, blurb)
 #define gegl_chant_pointer(name, nick, blurb)
+#define gegl_chant_format(name, nick, blurb)
 #define gegl_chant_color(name, nick, def, blurb)              \
     if (properties->name == NULL) \
     {properties->name = gegl_color_new(def?def:"black");}
@@ -838,6 +857,7 @@ gegl_chant_constructor (GType                  type,
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_format
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_seed
@@ -946,6 +966,13 @@ gegl_chant_class_intern_init (gpointer klass)
                                                         G_PARAM_READWRITE |  \
                                                         G_PARAM_CONSTRUCT |  \
                                                         GEGL_PARAM_PAD_INPUT)));
+#define gegl_chant_format(name, nick, blurb)                                 \
+  g_object_class_install_property (object_class, PROP_##name,                \
+                                   gegl_param_spec_format (#name, nick, blurb, \
+                                                          (GParamFlags) (      \
+                                                          G_PARAM_READWRITE |  \
+                                                          G_PARAM_CONSTRUCT |  \
+                                                          GEGL_PARAM_PAD_INPUT)));
 #define gegl_chant_color(name, nick, def, blurb)                             \
   g_object_class_install_property (object_class, PROP_##name,                \
                                    gegl_param_spec_color_from_string (#name, nick, blurb,\
@@ -993,6 +1020,7 @@ gegl_chant_class_intern_init (gpointer klass)
 #undef gegl_chant_multiline
 #undef gegl_chant_object
 #undef gegl_chant_pointer
+#undef gegl_chant_format
 #undef gegl_chant_color
 #undef gegl_chant_curve
 #undef gegl_chant_seed

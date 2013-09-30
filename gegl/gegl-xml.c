@@ -211,6 +211,16 @@ set_clone_prop_as_well:
           gegl_path_parse_string (path, param_value);
           gegl_node_set (new, param_name, path, NULL);
         }
+      else if (paramspec->value_type == G_TYPE_POINTER &&
+               GEGL_IS_PARAM_SPEC_FORMAT (paramspec))
+        {
+          const Babl *format = NULL;
+
+          if (strlen (param_value))
+            format = babl_format (param_value);
+
+          gegl_node_set (new, param_name, format, NULL);
+        }
       else
         {
           g_warning ("operation desired unknown parapspec type for %s",
@@ -883,6 +893,18 @@ serialize_properties (SerializeState *ss,
               xml_param_end (ss);
 
               g_object_unref (path);
+            }
+          else if (properties[i]->value_type == G_TYPE_POINTER &&
+                   GEGL_IS_PARAM_SPEC_FORMAT (properties[i]))
+            {
+              const Babl  *format;
+              const gchar *value;
+              gegl_node_get (node, properties[i]->name, &format, NULL);
+              if (format)
+                value = babl_get_name (format);
+              else
+                value = "";
+              xml_param (ss, indent + 2, properties[i]->name, value);
             }
           else
             {

@@ -36,7 +36,7 @@ typedef struct _GeglParamSpecString GeglParamSpecString;
 typedef struct _GeglParamSpecDouble GeglParamSpecDouble;
 typedef struct _GeglParamSpecInt    GeglParamSpecInt;
 typedef struct _GeglParamSpecSeed   GeglParamSpecSeed;
-
+typedef struct _GeglParamSpecFormat GeglParamSpecFormat;
 
 
 /*
@@ -342,6 +342,37 @@ GParamSpec * gegl_param_spec_seed (const gchar *name,
                                    const gchar *nick,
                                    const gchar *blurb,
                                    GParamFlags  flags);
+
+/*
+ * GEGL_TYPE_PARAM_FORMAT
+ */
+
+#define GEGL_TYPE_PARAM_FORMAT           (gegl_param_format_get_type ())
+#define GEGL_PARAM_SPEC_FORMAT(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_FORMAT, GeglParamSpecFormat))
+#define GEGL_IS_PARAM_SPEC_FORMAT(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_FORMAT))
+
+struct _GeglParamSpecFormat
+{
+  GParamSpecPointer parent_instance;
+};
+
+GType        gegl_param_format_get_type (void) G_GNUC_CONST;
+
+/**
+ * gegl_param_spec_format:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecFormat instance specifying a Babl format.
+ *
+ * Returns: (transfer full): a newly created parameter specification
+ */
+GParamSpec * gegl_param_spec_format (const gchar *name,
+                                     const gchar *nick,
+                                     const gchar *blurb,
+                                     GParamFlags  flags);
 
 G_END_DECLS
 #endif  /*  __GEGL_PARAM_SPECS_H__  */
