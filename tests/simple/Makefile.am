@@ -16,7 +16,8 @@ noinst_PROGRAMS = \
 	test-buffer-extract \
 	test-buffer-cast  \
 	test-buffer-changes \
-	test-proxynop-processing
+	test-proxynop-processing \
+	test-format-sensing
 
 EXTRA_DIST = test-exp-combine.sh
 
