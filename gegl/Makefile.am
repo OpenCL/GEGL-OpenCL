@@ -117,7 +117,9 @@ libgegl_@GEGL_API_VERSION@_la_LIBADD = \
 if HAVE_INTROSPECTION
 introspection_sources = \
 	$(GEGL_introspectable_headers) \
-	gegl-introspection-support.h
+	gegl-introspection-support.h \
+	opencl/gegl-cl-introspection-support.h
+
 
 Gegl-@GEGL_API_VERSION@.gir: libgegl-@GEGL_API_VERSION@.la Makefile
 Gegl_@GEGL_MAJOR_VERSION@_@GEGL_MINOR_VERSION@_gir_INCLUDES = GObject-2.0 GLib-2.0
