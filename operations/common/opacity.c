@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2013 Daniel Sabo
  */
 
 #include "config.h"
@@ -33,7 +34,6 @@ gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 1.0,
 
 #include <stdio.h>
 
-
 static void
 prepare (GeglOperation *self)
 {
@@ -44,30 +44,40 @@ prepare (GeglOperation *self)
     {
       const Babl *model = babl_format_get_model (fmt);
 
-      if (model == babl_model ("RaGaBaA") ||
-          model == babl_model ("R'aG'aB'aA") ||
-          model == babl_model ("YaA") ||
+      if (model == babl_model ("R'aG'aB'aA") ||
           model == babl_model ("Y'aA"))
         {
           o->chant_data = NULL;
-
-          gegl_operation_set_format (self, "input",
-                                     babl_format ("RaGaBaA float"));
-          gegl_operation_set_format (self, "output",
-                                     babl_format ("RaGaBaA float"));
-          gegl_operation_set_format (self, "aux",
-                                     babl_format ("Y float"));
-
-          return;
+          fmt = babl_format ("R'aG'aB'aA float");
+        }
+      else if (model == babl_model ("RaGaBaA") ||
+               model == babl_model ("YaA"))
+        {
+          o->chant_data = NULL;
+          fmt = babl_format ("RaGaBaA float");
+        }
+      else if (model == babl_model ("R'G'B'A") ||
+               model == babl_model ("R'G'B'")  ||
+               model == babl_model ("Y'")      ||
+               model == babl_model ("Y'A"))
+        {
+          o->chant_data = (void*)0xabc;
+          fmt = babl_format ("R'G'B'A float");
+        }
+      else
+        {
+          o->chant_data = (void*)0xabc;
+          fmt = babl_format ("RGBA float");
         }
     }
+  else
+    {
+      o->chant_data = (void*)0xabc;
+      fmt = babl_format ("RGBA float");
+    }
 
-  /* ugly way of communicating that we want the RGBA version */
-  /* because of that, we can't use the common opencl api for point ops */
-  o->chant_data = (void*)0xabc;
-
-  gegl_operation_set_format (self, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (self, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (self, "input", fmt);
+  gegl_operation_set_format (self, "output", fmt);
   gegl_operation_set_format (self, "aux", babl_format ("Y float"));
 
   return;
