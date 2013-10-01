@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:crop'>
+      <params>
+          <param name='x'>-128.000000</param>
+          <param name='y'>-110.000000</param>
+          <param name='width'>256.000000</param>
+          <param name='height'>256.000000</param>
+      </params>
+  </node>
+  <node operation='gegl:over'>
+      <node operation='gegl:checkerboard'>
+          <params>
+              <param name='x-offset'>-2</param>
+              <param name='y-offset'>4</param>
+              <param name='color1'>rgba(0.0, 0.0, 0.0, 0.0)</param>
+              <param name='color2'>rgba(0.1, 0.1, 0.6, 0.5)</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:checkerboard'>
+      <params>
+          <param name='color1'>rgb(0.0, 0.0, 0.0)</param>
+          <param name='color2'>rgb(1.0, 1.0, 1.0)</param>
+          <param name='x'>32</param>
+          <param name='y'>32</param>
+      </params>
+  </node>
+</gegl>

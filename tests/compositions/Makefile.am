@@ -31,6 +31,7 @@ testsuffix = .sh
 # EXTRA_DISTS
 TESTS = \
   run-affine-with-negative.xml.sh      \
+  run-checkerboard.xml.sh              \
   run-clones.xml.sh                    \
   run-composite-transform.xml.sh       \
   run-edge-laplace-broken.xml.sh       \
