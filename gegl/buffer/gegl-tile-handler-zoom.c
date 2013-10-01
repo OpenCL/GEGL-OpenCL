@@ -130,6 +130,78 @@ downscale_float (gint    components,
 }
 
 static inline void
+downscale_u32 (gint    components,
+               gint    width,
+               gint    height,
+               gint    rowstride,
+               guchar *src_data,
+               guchar *dst_data)
+{
+  gint y;
+
+  if (!src_data || !dst_data)
+    return;
+  for (y = 0; y < height / 2; y++)
+    {
+      gint    x;
+      guint32 *dst = (guint32 *) (dst_data + y * rowstride);
+      guint32 *src = (guint32 *) (src_data + y * 2 * rowstride);
+
+      for (x = 0; x < width / 2; x++)
+        {
+          int i;
+          for (i = 0; i < components; i++)
+            {
+              guint64 out  = src[i];
+                      out += src[i + components];
+                      out += src[i + (width * components)];
+                      out += src[i + (width + 1) * components];
+                      out /= 4;
+
+              dst[i] = out;
+            }
+
+          dst += components;
+          src += components * 2;
+        }
+    }
+}
+
+static inline void
+downscale_u16 (gint    components,
+               gint    width,
+               gint    height,
+               gint    rowstride,
+               guchar *src_data,
+               guchar *dst_data)
+{
+  gint y;
+
+  if (!src_data || !dst_data)
+    return;
+  for (y = 0; y < height / 2; y++)
+    {
+      gint    x;
+      guint16 *dst = (guint16 *) (dst_data + y * rowstride);
+      guint16 *src = (guint16 *) (src_data + y * 2 * rowstride);
+
+      for (x = 0; x < width / 2; x++)
+        {
+          int i;
+          for (i = 0; i < components; i++)
+            dst[i] = (src[i] +
+                      src[i + components] +
+                      src[i + (width * components)] +
+                      src[i + (width + 1) * components]) /
+                     4;
+
+          dst += components;
+          src += components * 2;
+        }
+    }
+}
+
+static inline void
 downscale_u8 (gint    components,
               gint    width,
               gint    height,
@@ -171,21 +243,30 @@ static inline void set_half (GeglTile   * dst_tile,
                              gint i,
                              gint j)
 {
-  guchar *dst_data   = gegl_tile_get_data (dst_tile);
-  guchar *src_data   = gegl_tile_get_data (src_tile);
-  gint    components = babl_format_get_n_components (format);
-  gint    bpp        = babl_format_get_bytes_per_pixel (format);
+  guchar     *dst_data   = gegl_tile_get_data (dst_tile);
+  guchar     *src_data   = gegl_tile_get_data (src_tile);
+  gint        components = babl_format_get_n_components (format);
+  gint        bpp        = babl_format_get_bytes_per_pixel (format);
+  const Babl *comp_type  = babl_format_get_type (format, 0);
 
   if (i) dst_data += bpp * width / 2;
   if (j) dst_data += bpp * width * height / 2;
 
-  if (babl_format_get_type (format, 0) == babl_type ("float"))
+  if (comp_type == babl_type ("float"))
     {
       downscale_float (components, width, height, width * bpp, src_data, dst_data);
     }
-  else if (babl_format_get_type (format, 0) == babl_type ("u8"))
+  else if (comp_type == babl_type ("u8"))
     {
       downscale_u8 (components, width, height, width * bpp, src_data, dst_data);
+    }
+  else if (comp_type == babl_type ("u16"))
+    {
+      downscale_u16 (components, width, height, width * bpp, src_data, dst_data);
+    }
+  else if (comp_type == babl_type ("u32"))
+    {
+      downscale_u32 (components, width, height, width * bpp, src_data, dst_data);
     }
   else
     {
