@@ -16,6 +16,7 @@
  */
 
 /*
+ * Copyright 1997 Thorsten Schnier <thorsten@arch.usyd.edu.au>
  * Copyright 2011 Victor Oliveira <victormatheus@gmail.com>
  */
 
@@ -41,13 +42,10 @@ edge_laplace (GeglBuffer          *src,
               GeglBuffer          *dst,
               const GeglRectangle *dst_rect);
 
-#include <stdio.h>
-
 static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  //GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = LAPLACE_RADIUS;
 
@@ -132,13 +130,12 @@ edge_laplace (GeglBuffer          *src,
               const GeglRectangle *dst_rect)
 {
 
-  gint x,y;
-  gint offset;
+  gint    x, y;
+  gint    offset;
   gfloat *src_buf;
   gfloat *temp_buf;
   gfloat *dst_buf;
-
-  gint src_width = src_rect->width;
+  gint    src_width = src_rect->width;
 
   src_buf  = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
   temp_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
@@ -148,83 +145,92 @@ edge_laplace (GeglBuffer          *src,
                    babl_format ("R'G'B'A float"), src_buf, GEGL_AUTO_ROWSTRIDE,
                    GEGL_ABYSS_NONE);
 
-  for (y=0; y<dst_rect->height; y++)
-    for (x=0; x<dst_rect->width; x++)
+  for (y = 0; y < dst_rect->height; y++)
+    for (x = 0; x < dst_rect->width; x++)
       {
         gfloat *src_pix;
+        gfloat  gradient[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+        gint    c;
+        gfloat  minval, maxval;
+        gint    i = x + LAPLACE_RADIUS;
+        gint    j = y + LAPLACE_RADIUS;
 
-        gfloat gradient[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-
-        gint c;
-
-        gfloat minval, maxval;
-
-        gint i=x+LAPLACE_RADIUS, j=y+LAPLACE_RADIUS;
         offset = i + j * src_width;
         src_pix = src_buf + offset * 4;
 
-        for (c=0;c<3;c++)
+        for (c = 0; c < 3; c++)
           {
-            minmax (src_pix[c-src_width*4], src_pix[c+src_width*4],
-                    src_pix[c-4], src_pix[c+4], src_pix[c],
-                    &minval, &maxval); /* four-neighbourhood */
+            gfloat s1 = src_pix[c - src_width * 4];
+            gfloat s2 = src_pix[c + src_width * 4];
+            gfloat s3 = src_pix[c - 4];
+            gfloat s4 = src_pix[c + 4];
+            gfloat s  = src_pix[c];
+            gfloat temp_value;
 
-            gradient[c] = 0.5f * fmaxf((maxval-src_pix[c]), (src_pix[c]-minval));
+            /* four-neighbourhood */
+            minmax (s1, s2, s3, s4, s,
+                    &minval, &maxval);
 
-            gradient[c] = (src_pix[c-4-src_width*4] +
-                           src_pix[c-src_width*4] +
-                           src_pix[c+4-src_width*4] +
+            gradient[c] = 0.5f * fmaxf ((maxval - s), (s - minval));
 
-                           src_pix[c-4] -8.0f* src_pix[c] +src_pix[c+4] +
+            /* nine-neighbourhood */
+            temp_value = (src_pix[c - 4 - src_width * 4] +
+                          s1 +
+                          src_pix[c + 4 - src_width * 4] +
 
-                           src_pix[c-4+src_width*4] + src_pix[c+src_width*4] +
-                           src_pix[c+4+src_width*4]) > 0.0f?
-                          gradient[c] : -1.0f*gradient[c];
-        }
+                          s3 - 8.0f * s + s4 +
 
-        //alpha
+                          src_pix[c - 4 + src_width * 4] +
+                          s2 +
+                          src_pix[c + 4 + src_width * 4]);
+
+
+            if (temp_value < 0.0)
+              gradient[c] *= -1.0f;
+          }
+
+        /* alpha */
         gradient[3] = src_pix[3];
 
-        for (c=0; c<4;c++)
-          temp_buf[offset*4+c] = gradient[c];
+        for (c = 0; c < 4; c++)
+          temp_buf[offset * 4 + c] = gradient[c];
       }
 
-  //1-pixel edges
+  /* 1-pixel edges */
   offset = 0;
 
-  for (y=0; y<dst_rect->height; y++)
-    for (x=0; x<dst_rect->width; x++)
+  for (y = 0; y < dst_rect->height; y++)
+    for (x = 0; x < dst_rect->width; x++)
       {
-
-        gfloat value[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-
-        gint c;
-
-        gint i=x+LAPLACE_RADIUS, j=y+LAPLACE_RADIUS;
+        gfloat  value[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+        gint    c;
+        gint    i = x + LAPLACE_RADIUS;
+        gint    j = y + LAPLACE_RADIUS;
         gfloat *src_pix = temp_buf + (i + j * src_width) * 4;
 
-        for (c=0;c<3;c++)
-        {
-          gfloat current = src_pix[c];
-          current = ((current > 0.0f) &&
-                     (src_pix[c-4-src_width*4] < 0.0f ||
-                      src_pix[c+4-src_width*4] < 0.0f ||
-                      src_pix[c  -src_width*4] < 0.0f ||
-                      src_pix[c-4+src_width*4] < 0.0f ||
-                      src_pix[c+4+src_width*4] < 0.0f ||
-                      src_pix[   +src_width*4] < 0.0f ||
-                      src_pix[c-4            ] < 0.0f ||
-                      src_pix[c+4            ] < 0.0f))?
-                    current : 0.0f;
+        for (c = 0; c < 3; c++)
+          {
+            gfloat current = src_pix[c];
 
-          value[c] = current;
-        }
+            current = ((current > 0.0f) &&
+                       (src_pix[c - 4 - src_width * 4] < 0.0f ||
+                        src_pix[c + 4 - src_width * 4] < 0.0f ||
+                        src_pix[c     - src_width * 4] < 0.0f ||
+                        src_pix[c - 4 + src_width * 4] < 0.0f ||
+                        src_pix[c + 4 + src_width * 4] < 0.0f ||
+                        src_pix[      + src_width * 4] < 0.0f ||
+                        src_pix[c - 4                ] < 0.0f ||
+                        src_pix[c + 4                ] < 0.0f)) ?
+              current : 0.0f;
 
-        //alpha
+            value[c] = current;
+          }
+
+        /* alpha */
         value[3] = src_pix[3];
 
-        for (c=0; c<4;c++)
-          dst_buf[offset*4+c] = value[c];
+        for (c = 0; c < 4; c++)
+          dst_buf[offset * 4 + c] = value[c];
 
         offset++;
       }
@@ -264,31 +270,35 @@ cl_edge_laplace (cl_mem                in_tex,
   global_ws[0] = roi->width;
   global_ws[1] = roi->height;
 
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  cl_err = gegl_clSetKernelArg (cl_data->kernel[0], 0, sizeof (cl_mem),
+                                (void*) &in_tex);
   CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&aux_tex);
-  CL_CHECK;
-
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[0], 2,
-                                       NULL, global_ws, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clSetKernelArg (cl_data->kernel[0], 1, sizeof (cl_mem),
+                                (void*) &aux_tex);
   CL_CHECK;
 
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem),   (void*)&aux_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_mem),   (void*)&out_tex);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_ws, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[1], 2,
-                                       NULL, global_ws, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clSetKernelArg (cl_data->kernel[1], 0, sizeof (cl_mem),
+                                (void*) &aux_tex);
+  CL_CHECK;
+  cl_err = gegl_clSetKernelArg (cl_data->kernel[1], 1, sizeof (cl_mem),
+                                (void*) &out_tex);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[1], 2,
+                                        NULL, global_ws, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
 
   return FALSE;
 
-error:
+ error:
   return TRUE;
 }
 
@@ -335,12 +345,12 @@ cl_process (GeglOperation       *operation,
     {
       if (err) return FALSE;
 
-      err = cl_edge_laplace(i->tex[read],
-                            i->tex[aux],
-                            i->tex[0],
-                            &i->roi[read],
-                            &i->roi[0],
-                            LAPLACE_RADIUS);
+      err = cl_edge_laplace (i->tex[read],
+                             i->tex[aux],
+                             i->tex[0],
+                             &i->roi[read],
+                             &i->roi[0],
+                             LAPLACE_RADIUS);
 
       if (err) return FALSE;
     }
