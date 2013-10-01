@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-09-02 12:23+0000\n"
-"PO-Revision-Date: 2013-09-10 21:14+0100\n"
+"POT-Creation-Date: 2013-09-22 09:18+0000\n"
+"PO-Revision-Date: 2013-09-27 00:24+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: sl.libreoffice.org <users@sl.libreoffice.org>\n"
 "Language: Slovenian\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: utf-8\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: ../bin/gegl.c:144
 #, c-format
@@ -40,32 +40,6 @@ msgstr "Neznan način GeglOption: %d"
 
 #: ../bin/gegl-options.c:46
 #, c-format
-#| msgid ""
-#| "usage: %s [options] <file | -- [op [op] ..]>\n"
-#| "\n"
-#| "  Options:\n"
-#| "     -h, --help      this help information\n"
-#| "\n"
-#| "     -i, --file      read xml from named file\n"
-#| "\n"
-#| "     -x, --xml       use xml provided in next argument\n"
-#| "\n"
-#| "     --dot           output a graphviz graph description\n"
-#| "\n"
-#| "     -o, --output    output generated image to named file, type based\n"
-#| "                     on extension.\n"
-#| "\n"
-#| "     -p              increment frame counters of various elements when\n"
-#| "                     processing is done.\n"
-#| "\n"
-#| "     -X              output the XML that was read in\n"
-#| "\n"
-#| "     -v, --verbose   print diagnostics while running\n"
-#| "\n"
-#| "All parameters following -- are considered ops to be chained together\n"
-#| "into a small composition instead of using an xml file, this allows for\n"
-#| "easy testing of filters. Be aware that the default value will be used\n"
-#| "for all properties.\n"
 msgid ""
 "usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
@@ -175,7 +149,7 @@ msgstr ""
 "\tostanek:   %s\n"
 "\t\n"
 
-#: ../bin/gegl-options.c:352
+#: ../bin/gegl-options.c:325
 #, c-format
 msgid ""
 "\n"
@@ -190,41 +164,40 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:245
+#: ../gegl/gegl-init.c:247
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "Toleranca napake babl-a, vrednost med 0,2 in 0,000000001"
 
-#: ../gegl/gegl-init.c:250
+#: ../gegl/gegl-init.c:252
 msgid "Where GEGL stores its swap"
 msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
-#: ../gegl/gegl-init.c:255
+#: ../gegl/gegl-init.c:257
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Koliko pomnilnika (približno) uporabiti za predpomnenje podob"
 
-#: ../gegl/gegl-init.c:260
+#: ../gegl/gegl-init.c:262
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Privzeta velikost tlakovcev za GeglBuffer"
 
-#: ../gegl/gegl-init.c:265
+#: ../gegl/gegl-init.c:267
 msgid "The count of pixels to compute simultaneously"
 msgstr "Število slikovnih točk, ki naj se izračunajo hkrati"
 
-#: ../gegl/gegl-init.c:270
+#: ../gegl/gegl-init.c:272
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 "Kakovost izrisovanja, vrednost med 0,0 (hitro) in 1,0 (referenčna kakovost)"
 
-#: ../gegl/gegl-init.c:275
+#: ../gegl/gegl-init.c:277
 msgid "The number of concurrent processing threads to use"
 msgstr "Število uporabljenih vzporednih procesnih niti."
 
-#: ../gegl/gegl-init.c:280
+#: ../gegl/gegl-init.c:282
 msgid "Use OpenCL"
 msgstr "Uporabi OpenCL"
 
-#: ../gegl/gegl-init.c:285
-#| msgid "Maximum number of entries in the file tile backend's writer queue"
+#: ../gegl/gegl-init.c:287
 msgid "Maximum size of a file backend's writer thread queue (in MB)"
 msgstr "Največje velikost datoteke v pisalni vrsti niti ozadja (v MB)"
 
@@ -252,7 +225,6 @@ msgid "Not loaded"
 msgstr "Ni naloženo"
 
 #: ../operations/common/alien-map.c:33
-#| msgid "Color to render"
 msgid "Color model"
 msgstr "Barvni model"
 
@@ -440,7 +412,6 @@ msgid "Type"
 msgstr "Vrsta"
 
 #: ../operations/common/bump-map.c:48
-#| msgid "Type of wave"
 msgid "Type of map"
 msgstr "Vrsta preslikave"
 
@@ -461,7 +432,6 @@ msgid "Invert bumpmap"
 msgstr "Preobrni odtis za poslikavo"
 
 #: ../operations/common/bump-map.c:58
-#| msgid "Tileable"
 msgid "Tiled"
 msgstr "Tlakovano"
 
@@ -485,7 +455,6 @@ msgid "Depth"
 msgstr "Globina"
 
 #: ../operations/common/bump-map.c:74
-#| msgid "X offset"
 msgid "X Offset"
 msgstr "Odmik X"
 
@@ -497,7 +466,6 @@ msgid "X offset"
 msgstr "Odmik X"
 
 #: ../operations/common/bump-map.c:78
-#| msgid "Y offset"
 msgid "Y Offset"
 msgstr "Odmik Y"
 
@@ -509,7 +477,6 @@ msgid "Y offset"
 msgstr "Odmik Y"
 
 #: ../operations/common/bump-map.c:82
-#| msgid "Water level"
 msgid "Waterlevel"
 msgstr "Raven vode"
 
@@ -522,7 +489,6 @@ msgid "Ambient"
 msgstr "Ambientalna"
 
 #: ../operations/common/bump-map.c:88
-#| msgid "Green stretching factor"
 msgid "Ambient lighting factor"
 msgstr "Faktor ambientalne osvetlitve"
 
@@ -605,7 +571,6 @@ msgid "Red Red Gain"
 msgstr "Rdeči prirastek rdeče"
 
 #: ../operations/common/channel-mixer.c:46
-#| msgid "Number of bits for red channel"
 msgid "Set the red gain for the red channel"
 msgstr "Določa rdeči prirastek za rdeči kanal"
 
@@ -622,17 +587,14 @@ msgid "Red Blue Gain"
 msgstr "Modri prirastek rdeče"
 
 #: ../operations/common/channel-mixer.c:54
-#| msgid "Number of bits for red channel"
 msgid "Set the blue gain for the red channel"
 msgstr "Določa modri prirastek za rdeči kanal"
 
 #: ../operations/common/channel-mixer.c:56
-#| msgid "Green inversion"
 msgid "Green Red Gain"
 msgstr "Rdeči prirastek zelene"
 
 #: ../operations/common/channel-mixer.c:58
-#| msgid "Number of bits for green channel"
 msgid "Set the red gain for the green channel"
 msgstr "Določa rdeči prirastek za zeleni kanal"
 
@@ -641,17 +603,14 @@ msgid "Green Green Gain"
 msgstr "Zeleni prirastek zelene"
 
 #: ../operations/common/channel-mixer.c:62
-#| msgid "Number of bits for green channel"
 msgid "Set the green gain for the green channel"
 msgstr "Določa zeleni prirastek za zeleni kanal"
 
 #: ../operations/common/channel-mixer.c:64
-#| msgid "Green inversion"
 msgid "Green Blue Gain"
 msgstr "Modri prirastek zelene"
 
 #: ../operations/common/channel-mixer.c:66
-#| msgid "Number of bits for green channel"
 msgid "Set the blue gain for the green channel"
 msgstr "Določa modri prirastek za zeleni kanal"
 
@@ -660,7 +619,6 @@ msgid "Blue Red Gain"
 msgstr "Rdeči prirastek modre"
 
 #: ../operations/common/channel-mixer.c:70
-#| msgid "Number of bits for blue channel"
 msgid "Set the red gain for the blue channel"
 msgstr "Določa rdeči prirastek za modri kanal"
 
@@ -669,7 +627,6 @@ msgid "Blue Green Gain"
 msgstr "Zeleni prirastek modre"
 
 #: ../operations/common/channel-mixer.c:74
-#| msgid "Number of bits for blue channel"
 msgid "Set the green gain for the blue channel"
 msgstr "Določa zeleni prirastek za modri kanal"
 
@@ -678,7 +635,6 @@ msgid "Blue Blue Gain"
 msgstr "Modri prirastek modre"
 
 #: ../operations/common/channel-mixer.c:78
-#| msgid "Number of bits for blue channel"
 msgid "Set the blue gain for the blue channel"
 msgstr "Določa modri prirastek za modri kanal"
 
@@ -687,9 +643,10 @@ msgid "Alter colors by mixing RGB Channels"
 msgstr "Spremeni barve s mešanjem kanalov RGB"
 
 #: ../operations/common/checkerboard.c:25 ../operations/common/grid.c:24
-#: ../operations/common/rectangle.c:33 ../operations/core/crop.c:27
-#: ../operations/external/svg-load.c:27 ../operations/external/text.c:38
-#: ../operations/external/v4l.c:27 ../operations/external/vector-stroke.c:30
+#: ../operations/common/plasma.c:46 ../operations/common/rectangle.c:33
+#: ../operations/core/crop.c:27 ../operations/external/svg-load.c:27
+#: ../operations/external/text.c:38 ../operations/external/v4l.c:27
+#: ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:29
 msgid "Width"
 msgstr "Širina"
@@ -699,9 +656,9 @@ msgid "Horizontal width of cells pixels"
 msgstr "Vodoravni širina celic v slikovnih točkah."
 
 #: ../operations/common/checkerboard.c:29 ../operations/common/grid.c:26
-#: ../operations/common/rectangle.c:35 ../operations/core/crop.c:28
-#: ../operations/external/svg-load.c:29 ../operations/external/text.c:40
-#: ../operations/external/v4l.c:28
+#: ../operations/common/plasma.c:48 ../operations/common/rectangle.c:35
+#: ../operations/core/crop.c:28 ../operations/external/svg-load.c:29
+#: ../operations/external/text.c:40 ../operations/external/v4l.c:28
 #: ../operations/workshop/external/line-profile.c:30
 msgid "Height"
 msgstr "Višina"
@@ -856,11 +813,11 @@ msgstr "Krivulja kontrasta."
 msgid "Adjusts the contrast of the image according to a curve."
 msgstr "Prilagodi kontrast slike glede na krivuljo."
 
-#: ../operations/common/cubism.c:30
+#: ../operations/common/cubism.c:30 ../operations/common/mosaic.c:42
 msgid "Tile size"
 msgstr "Velikost tlakovcev"
 
-#: ../operations/common/cubism.c:32
+#: ../operations/common/cubism.c:32 ../operations/common/mosaic.c:43
 msgid "Average diameter of each tile (in pixels)"
 msgstr "Povprečen premer vsakega tlakovca (v slik. točkah)"
 
@@ -883,15 +840,16 @@ msgstr "Barva ozadja tlakovcev"
 #: ../operations/common/cubism.c:42 ../operations/common/noise.c:31
 #: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:31
 #: ../operations/common/noise-rgb.c:52 ../operations/common/noise-slur.c:34
-#: ../operations/common/noise-spread.c:37 ../operations/common/shift.c:35
-#: ../operations/common/wind.c:33 ../operations/workshop/plasma.c:33
+#: ../operations/common/noise-spread.c:37 ../operations/common/plasma.c:36
+#: ../operations/common/shift.c:35 ../operations/common/wind.c:33
 msgid "Seed"
 msgstr "Zasadi"
 
-#: ../operations/common/cubism.c:43 ../operations/common/noise-hurl.c:32
-#: ../operations/common/noise-pick.c:32 ../operations/common/noise-rgb.c:53
-#: ../operations/common/noise-slur.c:35 ../operations/common/noise-spread.c:38
-#: ../operations/common/shift.c:36 ../operations/common/wind.c:33
+#: ../operations/common/cubism.c:43 ../operations/common/mosaic.c:73
+#: ../operations/common/noise-hurl.c:32 ../operations/common/noise-pick.c:32
+#: ../operations/common/noise-rgb.c:53 ../operations/common/noise-slur.c:35
+#: ../operations/common/noise-spread.c:38 ../operations/common/shift.c:36
+#: ../operations/common/wind.c:33
 msgid "Random seed"
 msgstr "Naključno seme"
 
@@ -977,7 +935,7 @@ msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih pik"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:34
 #: ../operations/common/motion-blur-circular.c:41
-#: ../operations/common/motion-blur-zoom.c:40
+#: ../operations/common/motion-blur-zoom.c:40 ../operations/common/plasma.c:42
 #: ../operations/common/polar-coordinates.c:55
 #: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:64
 #: ../operations/common/waves.c:26 ../operations/core/crop.c:25
@@ -990,7 +948,7 @@ msgstr "Vodoravni odmik sence"
 
 #: ../operations/common/dropshadow.c:29 ../operations/common/layer.c:36
 #: ../operations/common/motion-blur-circular.c:46
-#: ../operations/common/motion-blur-zoom.c:45
+#: ../operations/common/motion-blur-zoom.c:45 ../operations/common/plasma.c:44
 #: ../operations/common/polar-coordinates.c:59
 #: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:68
 #: ../operations/common/waves.c:30 ../operations/core/crop.c:26
@@ -1912,6 +1870,111 @@ msgstr "Količina modre"
 msgid "Monochrome channel mixer"
 msgstr "Monokromatični mešalnik kanalov"
 
+#: ../operations/common/mosaic.c:38
+msgid "Tile geometry"
+msgstr "Geometrija tlakovcev"
+
+#: ../operations/common/mosaic.c:40
+msgid "What shape to use for tiles"
+msgstr "Kakšne oblike naj bodo tlakovci"
+
+#: ../operations/common/mosaic.c:45
+#| msgid "Line Height"
+msgid "Tile height"
+msgstr "Višina tlakovca"
+
+#: ../operations/common/mosaic.c:46
+#| msgid "Average diameter of each tile (in pixels)"
+msgid "Apparent height of each tile (in pixels)"
+msgstr "Očitna višina vsakega tlakovca (v slik. točkah)"
+
+#: ../operations/common/mosaic.c:48
+msgid "Tile neatness"
+msgstr "Ličnost tlakovcev"
+
+#: ../operations/common/mosaic.c:49
+msgid "Deviation from perfectly formed tiles"
+msgstr "Deviacija od popolno oblikovanih tlakovcev"
+
+#: ../operations/common/mosaic.c:51
+#| msgid "Tile saturation"
+msgid "Tile color variation"
+msgstr "Variacija barve tlakovcev"
+
+#: ../operations/common/mosaic.c:52
+msgid "Magnitude of random color variations"
+msgstr "Velikost naključnih variacij barv"
+
+#: ../operations/common/mosaic.c:54
+msgid "Color averaging"
+msgstr "Povprečenje barv"
+
+#: ../operations/common/mosaic.c:55
+msgid "Tile color based on average of subsumed pixels"
+msgstr "Barva tlakovca, ki temelji na povprečju podležnih slikovnih točk"
+
+#: ../operations/common/mosaic.c:57
+msgid "Rough tile surface"
+msgstr "Groba površina tlakovcev"
+
+#: ../operations/common/mosaic.c:58
+msgid "Surface characteristics"
+msgstr "Lastnosti površine"
+
+#: ../operations/common/mosaic.c:60
+msgid "Allow splitting tiles"
+msgstr "Dovoli cepitev tlakovcev"
+
+#: ../operations/common/mosaic.c:61
+msgid "Allows splitting tiles at hard edges"
+msgstr "Dovoljuje cepitev tlakovcev na ostrih robovih"
+
+#: ../operations/common/mosaic.c:63
+#| msgid "Tile size"
+msgid "Tile spacing"
+msgstr "Razmik med tlakovci"
+
+#: ../operations/common/mosaic.c:64
+msgid "Inter-tile spacing (in pixels)"
+msgstr "Razmik med tlakovci (v slik. točkah)"
+
+#: ../operations/common/mosaic.c:66
+#| msgid "Other color"
+msgid "Joints color"
+msgstr "Barva stikov"
+
+#: ../operations/common/mosaic.c:68
+#| msgid "Height of plot"
+msgid "Light color"
+msgstr "Barva svetlobe"
+
+#: ../operations/common/mosaic.c:70
+#| msgid "Shift direction"
+msgid "Light direction"
+msgstr "Smer svetlobe"
+
+#: ../operations/common/mosaic.c:71
+#| msgid "Angle of blur in degrees"
+msgid "Direction of light-source (in degrees)"
+msgstr "Smer svetlobnega vira (v stopinjah)"
+
+#: ../operations/common/mosaic.c:75
+msgid "Antialiasing"
+msgstr "Glajenje robov"
+
+#: ../operations/common/mosaic.c:76
+msgid "Enables smoother tile output"
+msgstr "Omogoča bolj gladek izhod tlakovcev"
+
+#: ../operations/common/mosaic.c:2427
+msgid ""
+"Mosaic is a filter which transforms an image into what appears to be a "
+"mosaic, composed of small primitives, each of constant color and of an "
+"approximate size."
+msgstr ""
+"Mozaik je filter, ki pretvori sliko v nekaj podobnega mozaiku, sestavljenem "
+"iz manjših gradnikov, vsak konstantne barve in približne velikosti."
+
 #: ../operations/common/motion-blur-circular.c:44
 #: ../operations/common/motion-blur-zoom.c:43
 msgid "Horizontal center position"
@@ -1963,7 +2026,6 @@ msgid "Bluring factor"
 msgstr "Faktor zabrisanosti"
 
 #: ../operations/common/motion-blur-zoom.c:226
-#| msgid "Linear motion blur"
 msgid "Zoom motion blur"
 msgstr "Transfokacija zabrisanosti gibanja"
 
@@ -2152,7 +2214,7 @@ msgstr "Odstotek črne"
 msgid "Percent White"
 msgstr "Odstotek bele"
 
-#: ../operations/common/photocopy.c:399
+#: ../operations/common/photocopy.c:398
 msgid "Simulate color distortion produced by a copy machine"
 msgstr "Simuliraj popačenje barv, kakršno ustvari kopirni stroj"
 
@@ -2171,6 +2233,40 @@ msgstr "Višina blokov v slikovnih točkah"
 #: ../operations/common/pixelize.c:343
 msgid "Simplify image into an array of solid-colored rectangles"
 msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih pravokotnikov"
+
+#: ../operations/common/plasma.c:37
+msgid "Random seed. Passing -1 implies that the seed is randomly chosen."
+msgstr "Naključno seme. Vrednost -1 implicira, da je seme izbrano naključno."
+
+#: ../operations/common/plasma.c:39
+msgid "Turbulence"
+msgstr "Turbulenca"
+
+#: ../operations/common/plasma.c:40
+msgid "The value of the turbulence"
+msgstr "Vrednost turbulence"
+
+#: ../operations/common/plasma.c:43
+msgid "X start of the generated buffer"
+msgstr "Začetek X ustvarjenega medpomnilnika"
+
+#: ../operations/common/plasma.c:45
+msgid "Y start of the generated buffer"
+msgstr "Začetek Y ustvarjenega medpomnilnika"
+
+#: ../operations/common/plasma.c:47
+#| msgid "Width for rendered image"
+msgid "Width of the generated buffer"
+msgstr "Širina ustvarjenega medpomnilnika"
+
+#: ../operations/common/plasma.c:49
+#| msgid "Height for rendered image"
+msgid "Height of the generated buffer"
+msgstr "Višina ustvarjenega medpomnilnika"
+
+#: ../operations/common/plasma.c:403
+msgid "Creates an image filled with a plasma effect."
+msgstr "Ustvari sliko, zapolnjeno z učinkom plazme."
 
 #: ../operations/common/polar-coordinates.c:34
 #: ../operations/common/polar-coordinates.c:36
@@ -2866,7 +2962,6 @@ msgstr ""
 "shranjevanje)."
 
 #: ../operations/external/lcms-from-profile.c:24
-#| msgid "Source"
 msgid "Source Profile"
 msgstr "Profil vira"
 
@@ -3263,22 +3358,18 @@ msgid "Renders a vector stroke"
 msgstr "Upodobi vektorsko potezo"
 
 #: ../operations/external/webp-load.c:142
-#| msgid "PNG image loader."
 msgid "WebP image loader."
 msgstr "Nalagalnik slik WebP"
 
 #: ../operations/external/webp-save.c:25
-#| msgid "The filter width"
 msgid "Target file path."
 msgstr "Pot ciljne datoteke."
 
 #: ../operations/external/webp-save.c:28
-#| msgid "JPEG compression quality (between 1 and 100)"
 msgid "WebP compression quality"
 msgstr "Kakovost stiskanja WebP"
 
 #: ../operations/external/webp-save.c:117
-#| msgid "PNG image loader."
 msgid "WebP image saver."
 msgstr "Shranjevalnik slik WebP."
 
@@ -4362,22 +4453,6 @@ msgstr "Največje število ponovitev"
 #: ../operations/workshop/mandelbrot.c:144
 msgid "Mandelbrot set renderer"
 msgstr "Upodobljevalnik Mandelbrotove množice"
-
-#: ../operations/workshop/plasma.c:34
-msgid "Random seed. Passing -1 implies that the seed is randomly chosen."
-msgstr "Naključno seme. Vrednost -1 implicira, da je seme izbrano naključno."
-
-#: ../operations/workshop/plasma.c:35
-msgid "Turbulence"
-msgstr "Turbulenca"
-
-#: ../operations/workshop/plasma.c:36
-msgid "The value of the turbulence"
-msgstr "Vrednost turbulence"
-
-#: ../operations/workshop/plasma.c:389
-msgid "Performs plasma effect on the image"
-msgstr "Na sliki izvede učinek plazme"
 
 #: ../operations/workshop/radial-gradient.c:24
 msgid "x1"
