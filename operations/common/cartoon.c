@@ -249,14 +249,14 @@ process (GeglOperation       *operation,
   gfloat *dst_buf;
   GeglRectangle *whole_region;
 
-  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+  static GMutex mutex = { 0, };
 
   dst_buf = g_slice_alloc (result->width * result->height * 4 * sizeof(gfloat));
 
   gegl_buffer_get (input, result, 1.0, babl_format ("Y'CbCrA float"), dst_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
 
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   if(o->chant_data == NULL)
     {
       whole_region = gegl_operation_source_get_bounding_box (operation, "input");
@@ -267,7 +267,7 @@ process (GeglOperation       *operation,
       ramps->prev_mask_radius = o->mask_radius;
       ramps->prev_pct_black   = o->pct_black;
     }
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
 
   gegl_buffer_set_extent (input, result);
   grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);

@@ -207,9 +207,9 @@ process (GeglOperation       *operation,
 
   GHashTable *bleed_table;
 
-  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+  static GMutex mutex = { 0, };
 
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   if (!o->chant_data)
     {
       GeglRectangle *whole_rect = gegl_operation_source_get_bounding_box (operation, "input");
@@ -220,7 +220,7 @@ process (GeglOperation       *operation,
       o->chant_data = bleed_table;
       gegl_buffer_linear_close (input, data);
     }
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
 
   bleed_table = (GHashTable*) o->chant_data;
 

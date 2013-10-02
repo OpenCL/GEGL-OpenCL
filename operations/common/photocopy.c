@@ -275,12 +275,12 @@ process (GeglOperation       *operation,
   gfloat* ptr1;
   gfloat* ptr2;
 
-  static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+  static GMutex mutex = { 0, };
 
   total_pixels = result->width * result->height;
   dst_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
 
-  g_static_mutex_lock (&mutex);
+  g_mutex_lock (&mutex);
   if (o->chant_data == NULL)
     {
       o->chant_data = g_slice_new (Ramps);
@@ -296,7 +296,7 @@ process (GeglOperation       *operation,
       ramps->prev_black       = o->black;
       ramps->prev_white       = o->white;
     }
-  g_static_mutex_unlock (&mutex);
+  g_mutex_unlock (&mutex);
 
   grey_blur_buffer (input, o->sharpness, o->mask_radius, &dest1, &dest2);
 

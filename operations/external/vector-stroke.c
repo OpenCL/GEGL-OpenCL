@@ -169,12 +169,12 @@ process (GeglOperation       *operation,
 
   if (need_stroke)
     {
-      GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+      static GMutex mutex = { 0, };
       cairo_t *cr;
       cairo_surface_t *surface;
       guchar *data;
 
-      g_static_mutex_lock (&mutex);
+      g_mutex_lock (&mutex);
       data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
       surface = cairo_image_surface_create_for_data (data,
                                                      CAIRO_FORMAT_ARGB32,
@@ -196,7 +196,7 @@ process (GeglOperation       *operation,
       cairo_destroy (cr);
 
       gegl_buffer_linear_close (output, data);
-      g_static_mutex_unlock (&mutex);
+      g_mutex_unlock (&mutex);
     }
   return  TRUE;
 }
