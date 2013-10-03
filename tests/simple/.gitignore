@@ -18,3 +18,4 @@
 /test-buffer-extract
 /test-buffer-changes
 /test-format-sensing
+/test-scaled-blit
