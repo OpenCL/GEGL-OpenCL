@@ -1444,6 +1444,42 @@ resample_boxfilter_T  (guchar              *dest_buf,
     }
 }
 
+/* Expand roi by scale so it uncludes all pixels needed
+ * to satisfy a gegl_buffer_get() call at level 0.
+ */
+GeglRectangle
+_gegl_get_required_for_scale (const Babl          *format,
+                              const GeglRectangle *roi,
+                              gdouble              scale)
+{
+  if (GEGL_FLOAT_EQUAL (scale, 1.0))
+    return *roi;
+  else
+    {
+      gint x1 = floor (roi->x / scale + EPSILON);
+      gint x2 = ceil ((roi->x + roi->width) / scale - EPSILON);
+      gint y1 = floor (roi->y / scale + EPSILON);
+      gint y2 = ceil ((roi->y + roi->height) / scale - EPSILON);
+
+      gint pad = (1.0 / scale > 1.0) ? ceil (1.0 / scale) : 1;
+
+      if ((babl_format_get_type (format, 0) == projectionT) ||
+          (scale < 1.0))
+        {
+          return *GEGL_RECTANGLE (x1 - pad,
+                                  y1 - pad,
+                                  x2 - x1 + 2 * pad,
+                                  y2 - y1 + 2 * pad);
+        }
+      else
+        {
+          return *GEGL_RECTANGLE (x1,
+                                  y1,
+                                  x2 - x1,
+                                  y2 - y1);
+        }
+      }
+}
 
 void
 gegl_buffer_get_unlocked (GeglBuffer          *buffer,

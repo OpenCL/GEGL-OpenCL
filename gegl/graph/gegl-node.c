@@ -925,25 +925,24 @@ gegl_node_blit (GeglNode            *self,
     {
       GeglBuffer *buffer;
 
-      buffer = gegl_node_apply_roi (self, roi);
-      if (buffer && destination_buf)
+      if (scale != 1.0)
         {
-          if (destination_buf)
-            {
-              gegl_buffer_get (buffer, roi, 1.0, format, destination_buf, rowstride, GEGL_ABYSS_NONE);
-            }
+          const GeglRectangle unscaled_roi = _gegl_get_required_for_scale (format, roi, scale);
 
-          if (scale != 1.0)
-            {
-              g_warning ("scale %f=1.0 in blit without cache", scale);
-            }
+          buffer = gegl_node_apply_roi (self, &unscaled_roi);
         }
+      else
+        {
+          buffer = gegl_node_apply_roi (self, roi);
+        }
+
+      if (buffer && destination_buf)
+        gegl_buffer_get (buffer, roi, scale, format, destination_buf, rowstride, GEGL_ABYSS_NONE);
 
       if (buffer)
         g_object_unref (buffer);
     }
-  else
-    if ((flags & GEGL_BLIT_CACHE))
+  else if (flags & GEGL_BLIT_CACHE)
     {
       GeglCache *cache = gegl_node_get_cache (self);
       if (!(flags & GEGL_BLIT_DIRTY))
