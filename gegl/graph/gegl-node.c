@@ -69,7 +69,6 @@ struct _GeglNodePrivate
   GSList          *children;  /*  used for children */
   GeglNode        *parent;
   gchar           *name;
-  GeglProcessor   *processor;
   GeglEvalManager *eval_manager;
 };
 
@@ -235,11 +234,6 @@ gegl_node_dispose (GObject *gobject)
       self->priv->eval_manager = NULL;
     }
 
-  if (self->priv->processor)
-    {
-      g_object_unref (self->priv->processor);
-      self->priv->processor = NULL;
-    }
   G_OBJECT_CLASS (gegl_node_parent_class)->dispose (gobject);
 }
 
@@ -921,7 +915,7 @@ gegl_node_blit (GeglNode            *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (roi != NULL);
 
-  if (flags == GEGL_BLIT_DEFAULT)
+  if (!flags)
     {
       GeglBuffer *buffer;
 
@@ -944,18 +938,28 @@ gegl_node_blit (GeglNode            *self,
     }
   else if (flags & GEGL_BLIT_CACHE)
     {
-      GeglCache *cache = gegl_node_get_cache (self);
+      GeglCache  *cache  = gegl_node_get_cache (self);
+      GeglBuffer *buffer = GEGL_BUFFER (cache);
+
       if (!(flags & GEGL_BLIT_DIRTY))
         {
-          if (!self->priv->processor)
-           self->priv->processor = gegl_node_new_processor (self, roi);
+          if (scale != 1.0)
+            {
+              const GeglRectangle unscaled_roi = _gegl_get_required_for_scale (format, roi, scale);
 
-          gegl_processor_set_rectangle (self->priv->processor, roi);
-          while (gegl_processor_work (self->priv->processor, NULL));
+              gegl_node_blit_buffer (self, buffer, &unscaled_roi);
+              gegl_cache_computed (cache, &unscaled_roi);
+            }
+          else
+            {
+              gegl_node_blit_buffer (self, buffer, roi);
+              gegl_cache_computed (cache, roi);
+            }
         }
+
       if (destination_buf && cache)
         {
-          gegl_buffer_get (GEGL_BUFFER (cache), roi, scale,
+          gegl_buffer_get (buffer, roi, scale,
                            format, destination_buf, rowstride,
                            GEGL_ABYSS_NONE);
         }
@@ -1572,7 +1576,6 @@ gegl_node_get_bounding_box (GeglNode *self)
 void
 gegl_node_process (GeglNode *self)
 {
-  /* XXX: should perhaps use the internal processor? */
   GeglProcessor *processor;
 
   g_return_if_fail (GEGL_IS_NODE (self));
