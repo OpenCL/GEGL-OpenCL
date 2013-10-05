@@ -47,13 +47,13 @@ typedef enum {
 } map_type;
 
 typedef struct {
-	map_type   type;
-	glong      width;
-	glong      height;
-        gsize      numsamples; /* width * height * channels */
-        gsize      channels; 
-        gsize      bpc;        /* bytes per channel */
-	guchar    *data;
+  map_type   type;
+  glong      width;
+  glong      height;
+  gsize      numsamples; /* width * height * channels */
+  gsize      channels;
+  gsize      bpc;        /* bytes per channel */
+  guchar    *data;
 } pnm_struct;
 
 static gboolean
@@ -68,9 +68,8 @@ ppm_load_read_header(FILE       *fp,
     int    channel_count;
 
     /* Check the PPM file Type P3 or P6 */
-    fgets (header,MAX_CHARS_IN_ROW,fp);
-
-    if (header[0] != ASCII_P ||
+    if (fgets (header, MAX_CHARS_IN_ROW, fp) == NULL ||
+        header[0] != ASCII_P ||
         (header[1] != PIXMAP_ASCII_GRAY &&
          header[1] != PIXMAP_ASCII &&
          header[1] != PIXMAP_RAW_GRAY &&
@@ -88,15 +87,12 @@ ppm_load_read_header(FILE       *fp,
       channel_count = CHANNEL_COUNT;
 
     /* Check the Comments */
-    fgets (header,MAX_CHARS_IN_ROW,fp);
-    while(header[0] == '#')
-      {
-        fgets (header,MAX_CHARS_IN_ROW,fp);
-      }
+    while((fgets (header, MAX_CHARS_IN_ROW, fp)) && (header[0] == '#'))
+      ;
 
     /* Get Width and Height */
     errno = 0;
-    img->width  = strtol (header,&ptr,10);
+    img->width = strtol (header, &ptr, 10);
     if (errno)
       {
         g_warning ("Error reading width: %s", strerror(errno));
@@ -108,7 +104,7 @@ ppm_load_read_header(FILE       *fp,
         return FALSE;
       }
 
-    img->height = strtol (ptr,&ptr,10);
+    img->height = strtol (ptr, &ptr, 10);
     if (errno)
       {
         g_warning ("Error reading height: %s", strerror(errno));
@@ -120,8 +116,10 @@ ppm_load_read_header(FILE       *fp,
         return FALSE;
       }
 
-    fgets (header,MAX_CHARS_IN_ROW,fp);
-    maxval = strtol (header,&ptr,10);
+    if (fgets (header, MAX_CHARS_IN_ROW, fp))
+      maxval = strtol (header, &ptr, 10);
+    else
+      maxval = 0;
 
     if ((maxval != 255) && (maxval != 65535))
       {
@@ -163,11 +161,12 @@ static void
 ppm_load_read_image(FILE       *fp,
                     pnm_struct *img)
 {
-    guint   i;
+    guint i;
 
     if (img->type == PIXMAP_RAW || img->type == PIXMAP_RAW_GRAY)
       {
-        fread (img->data, img->bpc, img->numsamples, fp);
+        if (fread (img->data, img->bpc, img->numsamples, fp) == 0)
+          return;
 
         /* Fix endianness if necessary */
         if (img->bpc > 1)
@@ -192,7 +191,8 @@ ppm_load_read_image(FILE       *fp,
             for (i = 0; i < img->numsamples; i++)
               {
                 guint sample;
-                fscanf (fp, " %u", &sample);
+                if (!fscanf (fp, " %u", &sample))
+                  sample = 0;
                 *ptr++ = sample;
               }
           }
@@ -203,7 +203,8 @@ ppm_load_read_image(FILE       *fp,
             for (i = 0; i < img->numsamples; i++)
               {
                 guint sample;
-                fscanf (fp, " %u", &sample);
+                if (!fscanf (fp, " %u", &sample))
+                  sample = 0;
                 *ptr++ = sample;
               }
           }
