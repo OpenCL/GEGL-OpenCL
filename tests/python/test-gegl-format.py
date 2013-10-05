@@ -43,6 +43,17 @@ class TestGeglFormat(unittest.TestCase):
       self.assertEqual("RGB float", Gegl.format_get_name(buf_float.get_property("format")))
       self.assertEqual("RGBA u8", Gegl.format_get_name(buf_u8.get_property("format")))
 
+    def test_color_op(self):
+      node = Gegl.Node()
+      node.set_property("operation", "gegl:color")
+
+      node.set_property("format", Gegl.format("RGBA u8"))
+      self.assertEqual(Gegl.format("RGBA u8"), node.get_property("format"))
+      self.assertEqual("RGBA u8", Gegl.format_get_name(node.get_property("format")))
+
+      node.set_property("format", Gegl.format("RGBA float"))
+      self.assertEqual(Gegl.format("RGBA float"), node.get_property("format"))
+      self.assertEqual("RGBA float", Gegl.format_get_name(node.get_property("format")))
 
 if __name__ == '__main__':
     Gegl.init(None);
