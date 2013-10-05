@@ -65,14 +65,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_FILTER)
 static const gchar *PAD_FORMAT = "R'G'B' float";
 static const gchar *EXP_PREFIX = "exposure-";
 
-enum
-{
-  PROP_OUTPUT = 1,
-  PROP_INPUT,
-  PROP_AUX
-};
-
-
 /* maximum iterations after algorithm accepts local minima */
 static const guint MAXIT = 500;
 
@@ -786,35 +778,33 @@ gegl_expcombine_is_exposure_pad (GeglPad *p)
 static void
 gegl_expcombine_attach (GeglOperation *operation)
 {
-  GObjectClass  *object_class = G_OBJECT_GET_CLASS (operation);
-  gchar padname[16];
-  guint i;
+  GParamSpec  *pspec;
+  gchar       padname[16];
+  guint       i;
 
-  g_object_class_install_property (G_OBJECT_GET_CLASS (operation),
-                                   PROP_INPUT,
-                                   g_param_spec_object ("output",
-                                                        "output",
-                                                        "Output buffer",
-                                                        GEGL_TYPE_BUFFER,
-                                                        G_PARAM_READWRITE |
-                                                        GEGL_PARAM_PAD_OUTPUT));
-  gegl_operation_create_pad (operation,
-                             g_object_class_find_property (object_class,
-                                                           "output"));
+  pspec = g_param_spec_object ("output",
+                               "output",
+                               "Output buffer",
+                               GEGL_TYPE_BUFFER,
+                               G_PARAM_READWRITE |
+                               GEGL_PARAM_PAD_OUTPUT);
+
+  gegl_operation_create_pad (operation, pspec);
+  g_param_spec_sink (pspec);
+
   for (i = 0; i <= 99; ++i)
     {
       snprintf (padname, G_N_ELEMENTS (padname), "exposure_%u", i);
-      g_object_class_install_property (G_OBJECT_GET_CLASS (operation),
-                                       PROP_INPUT,
-                                       g_param_spec_object (padname,
-                                                            padname,
-                                                            "Exposure input.",
-                                                            GEGL_TYPE_BUFFER,
-                                                            G_PARAM_READWRITE |
-                                                            GEGL_PARAM_PAD_INPUT));
-      gegl_operation_create_pad (operation,
-                                 g_object_class_find_property (object_class,
-                                                               padname));
+
+      pspec = g_param_spec_object (padname,
+                                   padname,
+                                   "Exposure input.",
+                                   GEGL_TYPE_BUFFER,
+                                   G_PARAM_READWRITE |
+                                   GEGL_PARAM_PAD_INPUT);
+
+      gegl_operation_create_pad (operation, pspec);
+      g_param_spec_sink (pspec);
     }
 }
 
@@ -825,24 +815,12 @@ gegl_expcombine_prepare (GeglOperation *operation)
 {
   GSList *inputs = gegl_node_get_input_pads (operation->node);
 
-  /* Set all the pads output formats, and ensure there is an appropriate node
-   * property for each */
+  /* Set all the pads output formats */
   for (; inputs; inputs = inputs->next)
     {
-      GeglPad     *pad     = inputs->data;
-      const gchar *padname = gegl_pad_get_name (pad);
+      GeglPad *pad = inputs->data;
 
       gegl_pad_set_format (pad, babl_format (PAD_FORMAT));
-
-      /* Create properties for all pads that don't have them, allows arbitrary
-       * numbers of pads.
-       */
-      if (g_object_class_find_property (G_OBJECT_GET_CLASS (operation),
-                                        padname))
-          continue;
-
-      g_warning ("Could not find property for pad '%s'",
-                 gegl_pad_get_name (pad));
     }
 
   gegl_operation_set_format (operation, "output", babl_format (PAD_FORMAT));
