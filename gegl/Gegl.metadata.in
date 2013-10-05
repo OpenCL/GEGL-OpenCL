@@ -1,2 +1,4 @@
 Gegl cheader_filename="gegl.h"
-module_register_type skip
+ParamSpecFormat skip
+ParamFormat skip
+param_spec_format skip
