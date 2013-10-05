@@ -275,7 +275,6 @@ case "$target_or_host" in
     ;;
   x86_64-*-*)
     have_x86=yes
-    have_64_bit=yes
     AC_DEFINE(ARCH_X86, 1, [Define to 1 if you are compiling for ix86.])
     AC_DEFINE(ARCH_X86_64, 1, [Define to 1 if you are compiling for amd64.])
     ;;
@@ -285,15 +284,12 @@ case "$target_or_host" in
     ;;
   ppc64-*-* | powerpc64-*)
     have_ppc=yes
-    have_64_bit=yes
     AC_DEFINE(ARCH_PPC, 1, [Define to 1 if you are compiling for PowerPC.])
     AC_DEFINE(ARCH_PPC64, 1, [Define to 1 if you are compiling for PowerPC64.])
     ;;
   *)
     ;;
 esac
-
-AM_CONDITIONAL(HAVE_64_BIT, test "x$have_64_bit" = "xyes")  
 
 
 ####################################################
