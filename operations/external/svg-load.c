@@ -24,9 +24,9 @@
 
 gegl_chant_file_path (path, _("File"), "",
                  _("Path to SVG file to load"))
-gegl_chant_int (width,  _("Width"),  1, G_MAXINT, 100,
+gegl_chant_int (width,  _("Width"),  -1, G_MAXINT, -1,
                 _("Width for rendered image"))
-gegl_chant_int (height, _("Height"), 1, G_MAXINT, 100,
+gegl_chant_int (height, _("Height"), -1, G_MAXINT, -1,
                 _("Height for rendered image"))
 
 #else
@@ -37,19 +37,6 @@ gegl_chant_int (height, _("Height"), 1, G_MAXINT, 100,
 #include "gegl-chant.h"
 #include <cairo.h>
 #include <librsvg/rsvg.h>
-#include <librsvg/rsvg-cairo.h>
-#include <gdk-pixbuf/gdk-pixbuf.h>
-#include <gdk-pixbuf/gdk-pixdata.h>
-
-#define SVG_DEFAULT_RESOLUTION  90.0
-#define SVG_DEFAULT_SIZE        500
-
-typedef struct
-{
-  gdouble    resolution;
-  gint       width;
-  gint       height;
-} SvgLoadVals;
 
 static void prepare (GeglOperation *operation)
 {
@@ -60,131 +47,92 @@ static gint
 gegl_buffer_import_svg (GeglBuffer  *gegl_buffer,
                         const gchar *path,
                         gint         width,
-                        gint         height,
-                        gint         dest_x,
-                        gint         dest_y,
-                        gint        *ret_width,
-                        gint        *ret_height)
+                        gint         height)
 {
-    cairo_surface_t *surface;
-    cairo_t    *cr;
-    GdkPixbuf  *pixbuf;
-    GError     *pError = NULL;
+    cairo_surface_t   *surface;
+    cairo_t           *cr;
+    GError            *error = NULL;
+    RsvgDimensionData  svg_dimentions;
+    RsvgHandle        *handle;
 
-    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, *ret_width, *ret_height);
+    handle = rsvg_handle_new_from_file (path, &error);
+
+    if (!handle)
+      return 1;
+
+    rsvg_handle_get_dimensions (handle, &svg_dimentions);
+
+    if (svg_dimentions.width == 0 || svg_dimentions.height == 0)
+      return 0;
+
+    if (width < 1)
+      width = svg_dimentions.width;
+
+    if (height < 1)
+      height = svg_dimentions.height;
+
+    surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
     cr = cairo_create (surface);
 
-/*
-FIXME: The routine 'rsvg_pixbuf_from_file_at_size' is deprecated. Set up a
-cairo matrix and use rsvg_handle_new_from_file() + rsvg_handle_render_cairo()
-instead.
-*/
-    pixbuf = rsvg_pixbuf_from_file_at_size (path,
-                                            width,
-                                            height,
-                                            &pError);
-    if (pixbuf)
-    {
-      guchar        *pixeldata;
-      GeglRectangle  rect;
+    if (width  != svg_dimentions.width ||
+        height != svg_dimentions.height)
+      {
+        cairo_scale (cr,
+                     (double)width / (double)svg_dimentions.width,
+                     (double)height / (double)svg_dimentions.height);
+      }
 
-      rect.x = dest_x;
-      rect.y = dest_y;
-      rect.width = width;
-      rect.height = height;
+    rsvg_handle_render_cairo (handle, cr);
 
-      pixeldata = gdk_pixbuf_get_pixels (pixbuf);
-      gegl_buffer_set (gegl_buffer, &rect, 0, babl_format ("R'G'B'A u8"), pixeldata, GEGL_AUTO_ROWSTRIDE);
-    }
+    cairo_surface_flush (surface);
+
+    gegl_buffer_set (gegl_buffer,
+                     GEGL_RECTANGLE (0, 0, width, height),
+                     0,
+                     babl_format ("cairo-ARGB32"),
+                     cairo_image_surface_get_data (surface),
+                     cairo_image_surface_get_stride (surface));
 
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
+    g_object_unref (handle);
 
     return 0;
-}
-
-/*  This is the callback used from load_rsvg_size().  */
-static void
-load_get_size_callback (gint     *width,
-                        gint     *height,
-                        gpointer  data)
-{
-  SvgLoadVals *vals = data;
-
-  *width  = vals->width;
-  *height = vals->height;
-
-  if (*width < 1 || *height < 1)
-    {
-      *width  = SVG_DEFAULT_SIZE;
-      *height = SVG_DEFAULT_SIZE;
-    }
-
-  /*  cancel loading  */
-  vals->resolution = 0.0;
-}
-
-static gint
-query_svg (const gchar *path,
-           gint        *width,
-           gint        *height)
-{
-  RsvgHandle       *handle;
-  RsvgDimensionData dimension_data;
-  GError           *pError = NULL;
-  SvgLoadVals       vals;
-
-  handle = rsvg_handle_new_from_file (path, &pError);
-  if (handle == NULL)
-      return FALSE;
-
-  vals.resolution = SVG_DEFAULT_RESOLUTION;
-  vals.width  = *width;
-  vals.height = *height;
-
-  rsvg_handle_set_size_callback (handle, load_get_size_callback, &vals, NULL);
-
-  rsvg_handle_get_dimensions (handle, &dimension_data);
-
-  g_object_unref (handle);
-
-  *width  = dimension_data.width;
-  *height = dimension_data.height;
-
-  return TRUE;
 }
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle result = {0,0,0,0};
-  /*GeglOperationSource *source = GEGL_OPERATION_SOURCE(operation);*/
-  gint width, height;
-  gint status;
+  GeglChantO   *o      = GEGL_CHANT_PROPERTIES (operation);
+  gint          width  = o->width;
+  gint          height = o->height;
 
-  /*if (!strcmp (o->path, "-"))
+  if (!o->path || !strlen(o->path))
+    return *GEGL_RECTANGLE(0, 0, 0, 0);
+
+  if (width < 1 || height < 1)
     {
-      process (operation);
-      width = source->output->width;
-      height = source->output->height;
-    }
-  else*/
-    {
-      width  = o->width;
-      height = o->height;
-      status = query_svg (o->path, &width, &height);
-      if (status == FALSE)
-        {
-          g_warning ("get defined region of %s failed", o->path);
-          width = 0;
-          height = 0;
-        }
+      RsvgDimensionData  svg_dimentions;
+      RsvgHandle        *handle;
+      GError            *error = NULL;
+
+      handle = rsvg_handle_new_from_file (o->path, &error);
+
+      if (!handle)
+        return *GEGL_RECTANGLE(0, 0, 0, 0);
+
+      rsvg_handle_get_dimensions (handle, &svg_dimentions);
+
+      if (width < 1)
+        width = svg_dimentions.width;
+
+      if (height < 1)
+        height = svg_dimentions.height;
+
+      rsvg_handle_get_dimensions (handle, &svg_dimentions);
     }
 
-  result.width  = width;
-  result.height  = height;
-  return result;
+  return *GEGL_RECTANGLE(0, 0, width, height);
 }
 
 static gboolean
@@ -197,18 +145,10 @@ process (GeglOperation       *operation,
   gint        result;
   gint        width, height;
 
-    width  = o->width;
-    height = o->height;
-    result = query_svg (o->path, &width, &height);
-    if (result == FALSE)
-      {
-        g_warning ("%s failed to open file %s for reading.",
-        G_OBJECT_TYPE_NAME (operation), o->path);
-        return FALSE;
-      }
+  width  = o->width;
+  height = o->height;
 
-  result = gegl_buffer_import_svg (output, o->path,
-                                   width, height, 0, 0, &width, &height);
+  result = gegl_buffer_import_svg (output, o->path, width, height);
   if (result)
     {
       g_warning ("%s failed to open file %s for reading.",
@@ -239,12 +179,8 @@ gegl_chant_class_init (GeglChantClass *klass)
     "description" , _("Load an SVG file using librsvg"),
     NULL);
 
-/*  static gboolean done=FALSE;
-    if (done)
-      return; */
   gegl_extension_handler_register (".svg", "gegl:svg-load");
   gegl_extension_handler_register (".svgz", "gegl:svg-load");
-/*  done = TRUE; */
 }
 
 #endif
