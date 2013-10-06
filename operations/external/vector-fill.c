@@ -24,7 +24,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 
-gegl_chant_color  (color,    _("Color"),  "rgba(0.0,0.0,0.0,0.6)",
+gegl_chant_color  (color,    _("Color"),  "rgba(0.0,0.0,0.0,1.0)",
                              _("Color of paint to use for filling."))
 
 gegl_chant_double (opacity,  _("Opacity"),  -2.0, 2.0, 1.0,
@@ -76,7 +76,8 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("R'aG'aB'aA float"));
+
   if (o->transform && o->transform[0] != '\0')
     {
       GeglMatrix3 matrix;
@@ -121,7 +122,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gboolean need_fill = FALSE;
-  gdouble r,g,b,a;
+  gdouble color[4] = {0, 0, 0, 0};
 
   if (input)
     {
@@ -135,10 +136,10 @@ process (GeglOperation       *operation,
 
   if (o->opacity > 0.0001 && o->color)
     {
-      gegl_color_get_rgba (o->color, &r,&g,&b,&a);
-      a *= o->opacity;
-      if (a>0.001)
-          need_fill=TRUE;
+      gegl_color_get_pixel (o->color, babl_format ("R'G'B'A double"), color);
+      color[3] *= o->opacity;
+      if (color[3] > 0.001)
+        need_fill=TRUE;
     }
 
   if (need_fill)
@@ -148,9 +149,8 @@ process (GeglOperation       *operation,
       cairo_surface_t *surface;
       guchar *data;
 
-
       g_mutex_lock (&mutex);
-      data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
+      data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("cairo-ARGB32"));
       surface = cairo_image_surface_create_for_data (data,
                                                      CAIRO_FORMAT_ARGB32,
                                                      result->width,
@@ -163,7 +163,7 @@ process (GeglOperation       *operation,
           cairo_set_fill_rule (cr, CAIRO_FILL_RULE_EVEN_ODD);
 
       gegl_path_cairo_play (o->d, cr);
-      cairo_set_source_rgba (cr, r,g,b,a);
+      cairo_set_source_rgba (cr, color[0], color[1], color[2], color[3]);
       cairo_fill (cr);
       cairo_destroy (cr);
 

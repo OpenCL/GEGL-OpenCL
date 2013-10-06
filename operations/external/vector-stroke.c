@@ -24,7 +24,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 
-gegl_chant_color  (color,    _("Color"),      "rgba(0.0,0.0,0.0,0.0)",
+gegl_chant_color  (color,    _("Color"),      "rgba(0.0,0.0,0.0,1.0)",
                              _("Color of paint to use for stroking."))
 
 gegl_chant_double (width,    _("Width"),  0.0, 200.0, 2.0,
@@ -75,7 +75,8 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("R'aG'aB'aA float"));
+
   if (o->transform && o->transform[0] != '\0')
     {
       GeglMatrix3 matrix;
@@ -148,7 +149,7 @@ process (GeglOperation       *operation,
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   gboolean need_stroke = FALSE;
-  gdouble r,g,b,a;
+  gdouble color[4] = {0, 0, 0, 0};
 
   if (input)
     {
@@ -161,9 +162,9 @@ process (GeglOperation       *operation,
 
   if (o->width > 0.1 && o->opacity > 0.0001)
     {
-      gegl_color_get_rgba (o->color, &r,&g,&b,&a);
-      a *= o->opacity;
-      if (a>0.001)
+      gegl_color_get_pixel (o->color, babl_format ("R'G'B'A double"), color);
+      color[3] *= o->opacity;
+      if (color[3] > 0.001)
           need_stroke=TRUE;
     }
 
@@ -175,7 +176,7 @@ process (GeglOperation       *operation,
       guchar *data;
 
       g_mutex_lock (&mutex);
-      data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("B'aG'aR'aA u8"));
+      data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("cairo-ARGB32"));
       surface = cairo_image_surface_create_for_data (data,
                                                      CAIRO_FORMAT_ARGB32,
                                                      result->width,
@@ -191,7 +192,7 @@ process (GeglOperation       *operation,
       cairo_set_line_join   (cr, CAIRO_LINE_JOIN_ROUND);
 
       gegl_path_cairo_play (o->d, cr);
-      cairo_set_source_rgba (cr, r,g,b,a);
+      cairo_set_source_rgba (cr, color[0], color[1], color[2], color[3]);
       cairo_stroke (cr);
       cairo_destroy (cr);
 
