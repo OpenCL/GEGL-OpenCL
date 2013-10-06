@@ -51,7 +51,9 @@ TESTS = \
   run-simple-scale.xml.sh              \
   run-softglow.xml.sh                  \
   run-transform.xml.sh                 \
-  run-rectangles.xml.sh
+  run-rectangles.xml.sh                \
+  run-pnm-raw-load.xml.sh              \
+  run-pnm-ascii-load.xml.sh
 
   #run-matting-global.xml.sh           
   #run-matting-global-big.xml.sh     

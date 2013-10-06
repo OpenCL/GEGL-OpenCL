@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:ppm-load'>
+    <params>
+      <param name='path'>data/duck-8bit-ascii.pnm</param>
+    </params>
+  </node>
+</gegl>

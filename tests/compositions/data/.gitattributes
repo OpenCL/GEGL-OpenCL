@@ -1,0 +1,2 @@
+*.pnm -text -diff
+*.ppm -text -diff
