@@ -1,6 +1,6 @@
 # Make the tests run against the build and not the installation
 TESTS_ENVIRONMENT = \
-	GEGL_PATH=$(top_builddir)/operations/
+	GEGL_PATH=$(top_builddir)/operations/ \
 	ABS_TOP_BUILDDIR=$(top_builddir) \
 	ABS_TOP_SRCDIR=$(top_srcdir)
 
