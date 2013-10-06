@@ -14,11 +14,12 @@ else
           $abs_top_srcdir/tests/compositions/data/parliament_1.jpg \
           $abs_top_srcdir/tests/compositions/data/parliament_2.jpg \
   && $abs_top_builddir/tools/img_cmp                               \
-          $abs_top_builddir/tests/simple/test-exp-combine.hdr      \
-          $abs_top_srcdir/tests/compositions/data/parliament.hdr >/dev/null
+          $abs_top_srcdir/tests/compositions/data/parliament.hdr   \
+          $abs_top_builddir/tests/simple/test-exp-combine.hdr
   failure=$?
-  [ ! $failure -eq 0 ] && echo "imp_cmp failed (we need to fix the test so it passes on many architectures), see parliament-diff.png"
-  rm -f $abs_top_builddir/tests/simple/test-exp-combine.hdr
+  if [ $failure -eq 0 ]; then
+    rm -f $abs_top_builddir/tests/simple/test-exp-combine.hdr
+  fi
 fi
 
 exit $failure
