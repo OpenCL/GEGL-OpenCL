@@ -16,6 +16,7 @@ noinst_PROGRAMS = \
 	test-buffer-extract \
 	test-buffer-cast  \
 	test-buffer-changes \
+	test-buffer-tile-voiding \
 	test-proxynop-processing \
 	test-format-sensing \
 	test-scaled-blit \
