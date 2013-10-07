@@ -66,30 +66,32 @@ process (GeglOperation        *op,
   gfloat * GEGL_ALIGNED aux = aux_buf;
   gfloat * GEGL_ALIGNED out = out_buf;
 
-  if (aux==NULL)
+  if (!aux)
     return TRUE;
-
-  for (i = 0; i < n_pixels; i++)
+  else
     {
-      gint   j;
-      gfloat aA G_GNUC_UNUSED, aB G_GNUC_UNUSED, aD G_GNUC_UNUSED;
-
-      aB = in[3];
-      aA = aux[3];
-      aD = aA;
-
-      for (j = 0; j < 3; j++)
+      for (i = 0; i < n_pixels; i++)
         {
-          gfloat cA G_GNUC_UNUSED, cB G_GNUC_UNUSED;
+          gint   j;
+          gfloat aA G_GNUC_UNUSED, aB G_GNUC_UNUSED, aD G_GNUC_UNUSED;
 
-          cB = in[j];
-          cA = aux[j];
-          out[j] = cB * aA + cA * (1.0f - aB);
+          aB = in[3];
+          aA = aux[3];
+          aD = aA;
+
+          for (j = 0; j < 3; j++)
+            {
+              gfloat cA G_GNUC_UNUSED, cB G_GNUC_UNUSED;
+
+              cB = in[j];
+              cA = aux[j];
+              out[j] = cB * aA + cA * (1.0f - aB);
+            }
+          out[3] = aD;
+          in  += 4;
+          aux += 4;
+          out += 4;
         }
-      out[3] = aD;
-      in  += 4;
-      aux += 4;
-      out += 4;
     }
   return TRUE;
 }

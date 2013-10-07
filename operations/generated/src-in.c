@@ -66,7 +66,7 @@ process (GeglOperation        *op,
   gfloat * GEGL_ALIGNED aux = aux_buf;
   gfloat * GEGL_ALIGNED out = out_buf;
 
-  if (aux==NULL)
+  if (!aux)
     return TRUE;
 
   for (i = 0; i < n_pixels; i++)

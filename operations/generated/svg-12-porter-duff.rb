@@ -34,28 +34,39 @@ copyright = '
 
 a = [
       ['clear',         '0.0f',
-                        '0.0f'],
+                        '0.0f',
+       false],
       ['src',           'cA',
-                        'aA'],
+                        'aA',
+       false],
       ['dst',           'cB',
-                        'aB'],
+                        'aB',
+       true],
 #      ['src_over',      'cA + cB * (1.0f - aA)',
-#                        'aA + aB - aA * aB'],
+#                        'aA + aB - aA * aB',
+#       false],
       ['dst_over',      'cB + cA * (1.0f - aB)',
-                        'aA + aB - aA * aB'],
+                        'aA + aB - aA * aB',
+       true],
       ['dst_in',        'cB * aA', # <- XXX: typo?
-                        'aA * aB'],
+                        'aA * aB',
+       false],
       ['src_out',       'cA * (1.0f - aB)',
-                        'aA * (1.0f - aB)'],
+                        'aA * (1.0f - aB)',
+       false],
       ['dst_out',       'cB * (1.0f - aA)',
-                        'aB * (1.0f - aA)'],
+                        'aB * (1.0f - aA)',
+       true],
       ['src_atop',      'cA * aB + cB * (1.0f - aA)',
-                        'aB'],
+                        'aB',
+       true],
 
       ['dst_atop',      'cB * aA + cA * (1.0f - aB)',
-                        'aA'],
+                        'aA',
+       false],
       ['xor',           'cA * (1.0f - aB)+ cB * (1.0f - aA)',
-                        'aA + aB - 2.0f * aA * aB'],
+                        'aA + aB - 2.0f * aA * aB',
+       true],
     ]
 
 b = [ ['src_in',        'cA * aB',  # the bounding box of this mode is the
@@ -96,9 +107,6 @@ process (GeglOperation        *op,
   gfloat * GEGL_ALIGNED in = in_buf;
   gfloat * GEGL_ALIGNED aux = aux_buf;
   gfloat * GEGL_ALIGNED out = out_buf;
-
-  if (aux==NULL)
-    return TRUE;
 '
 
 file_tail1 = '
@@ -148,28 +156,65 @@ a.each do
 #include \"gegl-chant.h\"
 "
     file.write file_head2
-    file.write "
-  for (i = 0; i < n_pixels; i++)
+
+    if item[3]
+      file.write "
+  if (!aux)
     {
-      gint   j;
-      gfloat aA G_GNUC_UNUSED, aB G_GNUC_UNUSED, aD G_GNUC_UNUSED;
-
-      aB = in[3];
-      aA = aux[3];
-      aD = #{a_formula};
-
-      for (j = 0; j < 3; j++)
+      for (i = 0; i < n_pixels; i++)
         {
-          gfloat cA G_GNUC_UNUSED, cB G_GNUC_UNUSED;
+          gint   j;
+          gfloat aA G_GNUC_UNUSED, aB G_GNUC_UNUSED, aD G_GNUC_UNUSED;
 
-          cB = in[j];
-          cA = aux[j];
-          out[j] = #{c_formula};
+          aB = in[3];
+          aA = 0.0f;
+          aD = #{a_formula};
+
+          for (j = 0; j < 3; j++)
+            {
+              gfloat cA G_GNUC_UNUSED, cB G_GNUC_UNUSED;
+
+              cB = in[j];
+              cA = 0.0f;
+              out[j] = #{c_formula};
+            }
+          out[3] = aD;
+          in  += 4;
+          out += 4;
         }
-      out[3] = aD;
-      in  += 4;
-      aux += 4;
-      out += 4;
+    }
+  else"
+    else
+      file.write "
+  if (!aux)
+    return TRUE;
+  else"
+    end
+
+    file.write "
+    {
+      for (i = 0; i < n_pixels; i++)
+        {
+          gint   j;
+          gfloat aA G_GNUC_UNUSED, aB G_GNUC_UNUSED, aD G_GNUC_UNUSED;
+
+          aB = in[3];
+          aA = aux[3];
+          aD = #{a_formula};
+
+          for (j = 0; j < 3; j++)
+            {
+              gfloat cA G_GNUC_UNUSED, cB G_GNUC_UNUSED;
+
+              cB = in[j];
+              cA = aux[j];
+              out[j] = #{c_formula};
+            }
+          out[3] = aD;
+          in  += 4;
+          aux += 4;
+          out += 4;
+        }
     }
   return TRUE;
 }
@@ -217,6 +262,9 @@ b.each do
 "
     file.write file_head2
     file.write "
+  if (!aux)
+    return TRUE;
+
   for (i = 0; i < n_pixels; i++)
     {
       gint   j;
