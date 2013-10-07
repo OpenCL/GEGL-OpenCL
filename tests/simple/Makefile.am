@@ -18,7 +18,8 @@ noinst_PROGRAMS = \
 	test-buffer-changes \
 	test-proxynop-processing \
 	test-format-sensing \
-	test-scaled-blit
+	test-scaled-blit \
+	test-svg-abyss
 
 EXTRA_DIST = test-exp-combine.sh
 
