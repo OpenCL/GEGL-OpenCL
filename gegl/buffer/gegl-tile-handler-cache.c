@@ -483,15 +483,18 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
   item = cache_lookup (cache, x, y, z);
   if (item)
     {
-      gegl_tile_void (item->tile);
       cache_total -= item->tile->size;
-      gegl_tile_unref (item->tile);
       g_queue_unlink (cache_queue, &item->link);
       g_hash_table_remove (cache_ht, item);
-      g_slice_free (CacheItem, item);
-      cache->count --;
+      cache->count--;
     }
   g_mutex_unlock (&mutex);
+
+  if (item)
+    {
+      gegl_tile_void (item->tile);
+      gegl_tile_unref (item->tile);
+    }
 }
 
 void

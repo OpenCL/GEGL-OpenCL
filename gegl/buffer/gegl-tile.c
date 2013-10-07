@@ -271,12 +271,6 @@ gegl_tile_void (GeglTile *tile)
 {
   gegl_tile_mark_as_stored (tile);
 
-  /* XXX FIXME this causes void_pyramid to do nothing, but is needed
-   * to avoid a deadlock in gegl_tile_handler_cache_void() which calls
-   * gegl_tile_void() while holding the cache mutex
-   */
-  tile->tile_storage = NULL;
-
   if (tile->z == 0)
     gegl_tile_void_pyramid (tile);
 }
