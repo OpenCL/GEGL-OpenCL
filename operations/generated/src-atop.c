@@ -18,6 +18,7 @@
  *
  *  Copyright 2006, 2007 Øyvind Kolås <pippin@gimp.org>
  *            2007 John Marshall
+ *            2013 Daniel Sabo
  *
  * SVG rendering modes; see:
  *     http://www.w3.org/TR/SVG12/rendering.html
@@ -34,7 +35,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-/* no properties */
+gegl_chant_boolean (srgb, _("sRGB"),
+                    FALSE,
+                    _("Use sRGB gamma instead of linear"))
 
 #else
 
@@ -45,7 +48,14 @@
 
 static void prepare (GeglOperation *operation)
 {
-  const Babl *format = babl_format ("RaGaBaA float");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  const Babl *format;
+
+  if (o->srgb)
+    format = babl_format ("R'aG'aB'aA float");
+  else
+    format = babl_format ("RaGaBaA float");
 
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format);
