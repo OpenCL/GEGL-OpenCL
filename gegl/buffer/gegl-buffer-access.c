@@ -1636,14 +1636,6 @@ gegl_buffer_get (GeglBuffer          *buffer,
   gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride, repeat_mode);
 }
 
-const GeglRectangle *
-gegl_buffer_get_abyss (GeglBuffer *buffer)
-{
-  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
-
-  return &buffer->abyss;
-}
-
 GType
 gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type);
 

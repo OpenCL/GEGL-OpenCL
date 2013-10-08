@@ -1004,6 +1004,14 @@ gegl_buffer_get_extent (GeglBuffer *buffer)
   return &(buffer->extent);
 }
 
+const GeglRectangle *
+gegl_buffer_get_abyss (GeglBuffer *buffer)
+{
+  g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
+
+  return &(buffer->abyss);
+}
+
 
 GeglBuffer *
 gegl_buffer_new_ram (const GeglRectangle *extent,
