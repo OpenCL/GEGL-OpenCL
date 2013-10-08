@@ -331,14 +331,16 @@ gboolean
 gegl_buffer_set_extent (GeglBuffer          *buffer,
                         const GeglRectangle *extent)
 {
+  GeglBufferHeader *header;
+
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), FALSE);
 
-  (*(GeglRectangle*) gegl_buffer_get_extent (buffer)) = *extent;
+  buffer->extent = *extent;
 
-  if ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->priv->header))
+  header = gegl_buffer_backend (buffer)->priv->header;
+
+  if (header)
     {
-      GeglBufferHeader *header =
-        ((GeglBufferHeader*)(gegl_buffer_backend (buffer)->priv->header));
       header->x = buffer->extent.x;
       header->y = buffer->extent.y;
       header->width = buffer->extent.width;
