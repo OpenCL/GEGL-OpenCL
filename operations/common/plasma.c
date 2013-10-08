@@ -33,9 +33,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_int (seed, _("Seed"), -1, G_MAXINT, -1,
-                _("Random seed. "
-                  "Passing -1 implies that the seed is randomly chosen."))
+gegl_chant_seed (seed, _("Random seed"), _("Random seed"))
+
 gegl_chant_double (turbulence, _("Turbulence"), 0.0, 7.0, 1.0,
                    _("The value of the turbulence"))
 
@@ -337,10 +336,7 @@ process (GeglOperation       *operation,
   x = result->x + result->width;
   y = result->y + result->height;
 
-  if (context->o->seed == -1)
-    context->gr = g_rand_new ();
-  else
-    context->gr = g_rand_new_with_seed (context->o->seed);
+  context->gr = g_rand_new_with_seed (context->o->seed);
 
   do_plasma (context, result->x, result->y, x-1, y-1, -1, 0);
 
