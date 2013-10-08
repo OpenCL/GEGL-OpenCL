@@ -651,8 +651,8 @@ gegl_buffer_constructor (GType                  type,
     {
       if (GEGL_IS_BUFFER (source))
         {
-          buffer->extent.x = GEGL_BUFFER (source)->extent.x;
-          buffer->extent.y = GEGL_BUFFER (source)->extent.y;
+          buffer->extent.x = GEGL_BUFFER (source)->extent.x - buffer->shift_x;
+          buffer->extent.y = GEGL_BUFFER (source)->extent.y - buffer->shift_y;
           buffer->extent.width  = GEGL_BUFFER (source)->extent.width;
           buffer->extent.height = GEGL_BUFFER (source)->extent.height;
         }
