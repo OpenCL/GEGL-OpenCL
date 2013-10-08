@@ -36,6 +36,15 @@ gegl_chant_double (height, _("Height"), -G_MAXFLOAT, G_MAXFLOAT, 10.0, _("Height
 #include "graph/gegl-node.h"
 #include <math.h>
 
+static void
+gegl_crop_prepare (GeglOperation *operation)
+{
+  const Babl *format = gegl_operation_get_source_format (operation, "input");
+
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "output", format);
+}
+
 static GeglNode *
 gegl_crop_detect (GeglOperation *operation,
                   gint           x,
@@ -183,6 +192,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
 
   operation_class->process                   = gegl_crop_process;
+  operation_class->prepare                   = gegl_crop_prepare;
   operation_class->get_bounding_box          = gegl_crop_get_bounding_box;
   operation_class->detect                    = gegl_crop_detect;
   operation_class->get_invalidated_by_change = gegl_crop_get_invalidated_by_change;
