@@ -60,6 +60,150 @@ gegl_format_get_name (GValue *value)
   return babl_get_name (format);
 }
 
+gdouble *
+gegl_color_get_components (GeglColor *color, GValue *value, gint *components_length)
+{
+  Babl *format;
+
+  if (G_TYPE_POINTER == G_VALUE_TYPE(value))
+    format = g_value_get_pointer (value);
+  else
+    {
+      *components_length = 0;
+      return NULL;
+    }
+
+  if (!color || !format)
+    {
+      *components_length = 0;
+      return NULL;
+    }
+  else
+    {
+      gint        components = babl_format_get_n_components (format);
+      gint        bpp        = babl_format_get_bytes_per_pixel (format);
+      const Babl *comp_type  = babl_format_get_type (format, 0);
+
+      gdouble *result = g_new (gdouble, components);
+      *components_length = components;
+
+      if (comp_type == babl_type ("u8"))
+        {
+          int i;
+          guint8 *pixel_buf = alloca (bpp * components);
+
+          gegl_color_get_pixel (color, format, pixel_buf);
+
+          for (i = 0; i < components; ++i)
+            result[i] = pixel_buf[i];
+        }
+      else if (comp_type == babl_type ("u16"))
+        {
+          int i;
+          guint16 *pixel_buf = alloca (bpp * components);
+
+          gegl_color_get_pixel (color, format, pixel_buf);
+
+          for (i = 0; i < components; ++i)
+            result[i] = pixel_buf[i];
+        }
+      else if (comp_type == babl_type ("u32"))
+        {
+          int i;
+          guint32 *pixel_buf = alloca (bpp * components);
+
+          gegl_color_get_pixel (color, format, pixel_buf);
+
+          for (i = 0; i < components; ++i)
+            result[i] = pixel_buf[i];
+        }
+      else if (comp_type == babl_type ("float"))
+        {
+          int i;
+          float *pixel_buf = alloca (bpp * components);
+
+          gegl_color_get_pixel (color, format, pixel_buf);
+
+          for (i = 0; i < components; ++i)
+            result[i] = pixel_buf[i];
+        }
+      else if (comp_type == babl_type ("double"))
+        {
+          gegl_color_get_pixel (color, format, result);
+        }
+      else
+        {
+          g_free (result);
+          *components_length = 0;
+        }
+
+      return result;
+    }
+}
+
+void
+gegl_color_set_components (GeglColor *color, GValue *value, gdouble *components, gint components_length)
+{
+  Babl *format;
+
+  if (!(G_TYPE_POINTER == G_VALUE_TYPE(value)))
+    return;
+  format = g_value_get_pointer (value);
+
+  if (!color || !format || components_length != babl_format_get_n_components (format))
+    return;
+  else
+    {
+      gint        bpp        = babl_format_get_bytes_per_pixel (format);
+      const Babl *comp_type  = babl_format_get_type (format, 0);
+
+      if (comp_type == babl_type ("u8"))
+        {
+          int i;
+          guint8 *pixel_buf = alloca (bpp * components_length);
+
+          for (i = 0; i < components_length; ++i)
+            pixel_buf[i] = components[i];
+
+          gegl_color_set_pixel (color, format, pixel_buf);
+        }
+      else if (comp_type == babl_type ("u16"))
+        {
+          int i;
+          guint16 *pixel_buf = alloca (bpp * components_length);
+
+          for (i = 0; i < components_length; ++i)
+            pixel_buf[i] = components[i];
+
+          gegl_color_set_pixel (color, format, pixel_buf);
+        }
+      else if (comp_type == babl_type ("u32"))
+        {
+          int i;
+          guint32 *pixel_buf = alloca (bpp * components_length);
+
+          for (i = 0; i < components_length; ++i)
+            pixel_buf[i] = components[i];
+
+          gegl_color_set_pixel (color, format, pixel_buf);
+        }
+      else if (comp_type == babl_type ("float"))
+        {
+          int i;
+          float *pixel_buf = alloca (bpp * components_length);
+
+          for (i = 0; i < components_length; ++i)
+            pixel_buf[i] = components[i];
+
+          gegl_color_set_pixel (color, format, pixel_buf);
+        }
+      else if (comp_type == babl_type ("double"))
+        {
+          gegl_color_set_pixel (color, format, components);
+        }
+    }
+}
+
 GeglRectangle *
 gegl_node_introspectable_get_bounding_box (GeglNode *node)
 {

@@ -53,6 +53,31 @@ const gchar *
 gegl_format_get_name (GValue *format);
 
  /**
+ * gegl_color_get_components:
+ * @color: (transfer none): a #GeglColor
+ * @format: A Babl pointer
+ * @components_length: (out): The length of the returned buffer
+ *
+ * Get the component values of the color in @format.
+ *
+ * Return value: (transfer full) (array length=components_length): The color components
+ */
+gdouble *
+gegl_color_get_components (GeglColor *color, GValue *format, gint *components_length);
+
+ /**
+ * gegl_color_set_components:
+ * @color: (transfer none): a #GeglColor
+ * @format: A Babl pointer
+ * @components: (transfer none) (array length=components_length): The color components.
+ * @components_length: The length of the components array
+ *
+ * Set the color using the component values as @format.
+ */
+void
+gegl_color_set_components (GeglColor *color, GValue *format, gdouble *components, gint components_length);
+
+ /**
  * gegl_node_introspectable_get_bounding_box:
  * @node: a #GeglNode
  *
