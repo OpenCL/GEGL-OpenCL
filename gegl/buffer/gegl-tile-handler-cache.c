@@ -504,6 +504,8 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
       gegl_tile_void (item->tile);
       gegl_tile_unref (item->tile);
     }
+
+  g_slice_free (CacheItem, item);
 }
 
 void
