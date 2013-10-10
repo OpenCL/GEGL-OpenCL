@@ -91,7 +91,6 @@ static void text_layout_text (GeglChant *self,
   PangoAttrList  *attrs;
   PangoAttribute *attr  = NULL;
   gchar          *string;
-  gfloat          color[4];
   gint            alignment = 0;
 
   /* Create a PangoLayout, set the font and text */
@@ -123,10 +122,11 @@ static void text_layout_text (GeglChant *self,
   attrs = pango_attr_list_new ();
   if (attrs)
   {
-    gegl_color_get_pixel (o->color, babl_format ("RGBA float"), color);
-    attr = pango_attr_foreground_new ((guint16) (color[0] * 65535),
-                                      (guint16) (color[1] * 65535),
-                                      (guint16) (color[2] * 65535));
+    guint16 color[3];
+
+    gegl_color_get_pixel (o->color, babl_format ("R'G'B' u16"), color);
+    attr = pango_attr_foreground_new (color[0], color[1], color[2]);
+
     if (attr)
       {
         attr->start_index = 0;
