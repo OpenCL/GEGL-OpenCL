@@ -132,16 +132,40 @@ AC_SUBST(LUA_REQUIRED_VERSION)
 
 dnl ==========================================================================
 
+AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE([1.11 no-define dist-bzip2 no-dist-gzip -Wno-portability])
 dnl Initialize maintainer mode
 AM_MAINTAINER_MODE([enable])
-
 
 ###############
 # Generic stuff
 ###############
 
+dnl Prefer clang on OSX, because GCC isn't updated
+
+case "$build_os" in
+  darwin10.* | darwin9.* | darwin8.*)
+    ;;
+  darwin*)
+    prefered_cc="clang"
+    prefered_cxx="clang++"
+    ;;
+  *)
+    ;;
+esac
+
+if test -z "$CC" && test -n "$prefered_cc"; then
+  AC_MSG_NOTICE([setting CC to $prefered_cc for $build_os])
+  CC=$prefered_cc
+fi
+
+if test -z "$CXX" && test -n "$prefered_cc"; then
+  AC_MSG_NOTICE([setting CXX to $prefered_cxx for $build_os])
+  CXX=$prefered_cxx
+fi
+
 dnl Checks for programs.
+
 AC_PROG_CC
 AC_PROG_CC_C99
 AC_PROG_CXX
