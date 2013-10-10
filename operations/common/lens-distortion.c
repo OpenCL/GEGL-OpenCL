@@ -53,6 +53,10 @@ gegl_chant_double (y_shift, _("Y shift"),
                    -100.0, 100.0, 0.0,
                    _("Shift vertical"))
 
+gegl_chant_color  (background, _("Background"),
+                   "white",
+                   _("Background color"))
+
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
@@ -327,7 +331,8 @@ lens_distort_func (gfloat              *src_buf,
                    LensValues          *lens,
                    gint                 xx,
                    gint                 yy,
-                   GeglBuffer          *input)
+                   GeglBuffer          *input,
+                   gfloat              *background)
 {
   gdouble sx, sy, mag;
   gdouble brighten;
@@ -354,32 +359,36 @@ lens_distort_func (gfloat              *src_buf,
         {
           gint b;
 
-          if (x >= extended->x && x< (extended->x + extended->width)
-              && y >= extended->y && y < (extended->y + extended->height))
-            {
-              gint src_off;
-              src_off = (y - extended->y) * extended->width * 4 +
-                (x - extended->x) * 4;
-
-              for (b = 0; b < 4; b++)
-                temp[b] = src_buf[src_off++];
-            }
-          else
-            {
-              gegl_buffer_sample (input, x, y, NULL, temp,
-                                  babl_format ("RGBA float"),
-                                  GEGL_SAMPLER_LINEAR,
-                                  GEGL_ABYSS_CLAMP);
-            }
-
           if (x < boundary->x || x >= (boundary->x + boundary->width) ||
               y < boundary->y || y >= (boundary->y + boundary->height))
             {
-              temp[3] = 0.0;
+              for (b = 0; b < 4; b++)
+                pixel_buffer[offset++] = background[b];
             }
+          else
+            {
 
-          for (b = 0; b < 4; b++)
-            pixel_buffer[offset++] = temp[b];
+              if (x >= extended->x && x < (extended->x + extended->width) &&
+                  y >= extended->y && y < (extended->y + extended->height))
+                {
+                  gint src_off;
+                  src_off = (y - extended->y) * extended->width * 4 +
+                    (x - extended->x) * 4;
+
+                  for (b = 0; b < 4; b++)
+                    temp[b] = src_buf[src_off++];
+                }
+              else
+                {
+                  gegl_buffer_sample (input, x, y, NULL, temp,
+                                      babl_format ("RGBA float"),
+                                      GEGL_SAMPLER_LINEAR,
+                                      GEGL_ABYSS_CLAMP);
+                }
+
+              for (b = 0; b < 4; b++)
+                pixel_buffer[offset++] = temp[b];
+            }
         }
     }
 
@@ -403,12 +412,15 @@ process (GeglOperation       *operation,
   GeglRectangle  boundary;
   gint           i, j;
   gfloat        *src_buf, *dst_buf;
+  gfloat         background[4];
 
   boundary = *gegl_operation_source_get_bounding_box (operation, "input");
   lens     =  lens_setup_calc (o, boundary);
 
   src_buf = g_new0 (gfloat, SQR (MAX_WH) * 4);
   dst_buf = g_new0 (gfloat, SQR (CHUNK_SIZE) * 4);
+
+  gegl_color_get_pixel (o->background, babl_format ("RGBA float"), background);
 
   for (j = 0; (j-1) * CHUNK_SIZE < result->height; j++)
     for (i = 0; (i-1) * CHUNK_SIZE < result->width; i++)
@@ -437,7 +449,7 @@ process (GeglOperation       *operation,
           for (x = chunked_result.x; x < chunked_result.x + chunked_result.width; x++)
             {
               lens_distort_func (src_buf, dst_buf, &area, &chunked_result, &boundary,
-                                 &lens, x, y, input);
+                                 &lens, x, y, input, background);
             }
 
         gegl_buffer_set (output, &chunked_result, 0, babl_format ("RGBA float"),
