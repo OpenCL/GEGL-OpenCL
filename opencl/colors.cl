@@ -398,24 +398,9 @@ __kernel void yu8_to_yf (__global const uchar * in,
 /* -- YA float -- */
 
 /* babl reference file: babl/base/rgb-constants.h */
-#if 0
-#define CONTEMPORARY_MONITOR
-#endif
-
-#ifdef CONTEMPORARY_MONITOR
-  /* source: http://www.poynton.com/ColorFAQ.html */
-  #define RGB_LUMINANCE_RED    (0.212671f)
-  #define RGB_LUMINANCE_GREEN  (0.715160f)
-  #define RGB_LUMINANCE_BLUE   (0.072169f)
-#else
-  /* this is not correct, but the constants are kept around */
-  #define RGB_LUMA_RED         (0.299)
-  #define RGB_LUMA_GREEN       (0.587)
-  #define RGB_LUMA_BLUE        (0.114)
-  #define RGB_LUMINANCE_RED    RGB_LUMA_RED
-  #define RGB_LUMINANCE_GREEN  RGB_LUMA_GREEN
-  #define RGB_LUMINANCE_BLUE   RGB_LUMA_BLUE
-#endif
+#define RGB_LUMINANCE_RED    (0.222491)
+#define RGB_LUMINANCE_GREEN  (0.716888)
+#define RGB_LUMINANCE_BLUE   (0.060621)
 
 /* RGBA float -> YA float */
 __kernel void rgbaf_to_yaf (__global const float4 * in,

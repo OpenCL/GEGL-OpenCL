@@ -93,17 +93,6 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
-#define RGB_LUMINANCE_RED    (0.212671)
-#define RGB_LUMINANCE_GREEN  (0.715160)
-#define RGB_LUMINANCE_BLUE   (0.072169)
-
-static inline gfloat rgb2luminance (gfloat *pix)
-{
-  return pix[0] * RGB_LUMINANCE_RED +
-         pix[1] * RGB_LUMINANCE_GREEN +
-         pix[2] * RGB_LUMINANCE_BLUE;
-}
-
 #define POW2(a)((a)*(a))
 
 static inline gfloat colordiff (gfloat *pixA,
