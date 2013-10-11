@@ -21,6 +21,8 @@
 
 G_BEGIN_DECLS
 
+#ifndef __cplusplus
+
 typedef     gfloat (* GeglLookupFunction) (gfloat   value,
                                            gpointer data);
 
@@ -100,6 +102,8 @@ gegl_lookup (GeglLookup *lookup,
 
   return lookup->table[i];
 }
+
+#endif /* __cplusplus */
 
 G_END_DECLS
 
