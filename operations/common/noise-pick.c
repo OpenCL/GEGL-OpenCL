@@ -46,18 +46,80 @@ gegl_chant_int    (repeat, _("Repeat"),
 
 #include "gegl-chant.h"
 
+
+#define CHUNK_SIZE 1024
+#define MAX_HW_EXT 1224
+#define SQR(x)     ((x)*(x))
+
 static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
 
-  op_area->left   = 1;
-  op_area->right  = 1;
-  op_area->top    = 1;
-  op_area->bottom = 1;
+  op_area->left   =
+  op_area->right  =
+  op_area->top    =
+  op_area->bottom = o->repeat;
 
   gegl_operation_set_format (operation, "input" , babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
+static void
+iterate (GeglRectangle *buffers_roi,
+         GeglRectangle *current_roi,
+         gfloat        *src,
+         gfloat        *dst,
+         gint           seed,
+         gfloat         pct_random,
+         gint           level)
+{
+  gint          rowstride;
+  gint          x, y, x_start, y_start;
+  GeglRectangle next_roi;
+
+  if (level < 1)
+    return;
+
+  rowstride = buffers_roi->width;
+
+  x_start = current_roi->x - buffers_roi->x;
+  y_start = current_roi->y - buffers_roi->y;
+
+  for(y = y_start; y < current_roi->height + y_start; y++)
+    for(x = x_start; x < current_roi->width + x_start; x++)
+      {
+        gint   index_src, index_dst, b;
+        gint   pos_x = buffers_roi->x + x;
+        gint   pos_y = buffers_roi->y + y;
+        gint   x2 = x;
+        gint   y2 = y;
+        gfloat rand;
+
+        rand = gegl_random_float_range (seed, pos_x, pos_y, 0, level, 0.0, 100.0);
+
+        if (rand <= pct_random)
+          {
+            gint k = gegl_random_int_range (seed, pos_x, pos_y, 0, level, 0, 9);
+
+            x2 += (k % 3) - 1;
+            y2 += (k / 3) - 1;
+          }
+
+        index_src = (y2 * rowstride + x2) * 4;
+        index_dst = (y  * rowstride + x)  * 4;
+
+        for (b = 0; b < 4; b++)
+          dst[index_dst + b] = src[index_src + b];
+      }
+
+  next_roi = *GEGL_RECTANGLE (current_roi->x + 1,
+                              current_roi->y + 1,
+                              current_roi->width  - 2,
+                              current_roi->height - 2);
+
+  iterate (buffers_roi, &next_roi, dst, src, seed, pct_random, level - 1);
 }
 
 static gboolean
@@ -69,125 +131,62 @@ process (GeglOperation       *operation,
 {
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglBuffer              *tmp;
-  gfloat                  *src_buf;
-  gfloat                  *dst_buf;
-  gfloat                  *in_pixel;
-  gfloat                  *out_pixel;
-  gint                     n_pixels = result->width * result->height;
-  gint                     width    = result->width;
-  GeglRectangle            src_rect;
-  gint                     total_pixels;
-  gint                     i;
+  GeglRectangle            src_rect, init_rect, chunked_result;
+  gfloat                  *buf1, *buf2, *dst_buf;
+  gint                     rowstride, start_x, start_y;
+  gint                     i, j;
 
-  tmp = gegl_buffer_new (result, babl_format ("RGBA float"));
+  buf1 = g_new (gfloat, SQR (MAX_HW_EXT) * 4);
+  buf2 = g_new (gfloat, SQR (MAX_HW_EXT) * 4);
 
-  src_rect.x      = result->x - op_area->left;
-  src_rect.width  = result->width + op_area->left + op_area->right;
-  src_rect.y      = result->y - op_area->top;
-  src_rect.height = result->height + op_area->top + op_area->bottom;
+  for (j = 0; (j-1) * CHUNK_SIZE < result->height; j++)
+    for (i = 0; (i-1) * CHUNK_SIZE < result->width; i++)
+      {
+        chunked_result = *GEGL_RECTANGLE (result->x + i * CHUNK_SIZE,
+                                          result->y + j * CHUNK_SIZE,
+                                          CHUNK_SIZE, CHUNK_SIZE);
 
-  total_pixels = src_rect.height * src_rect.width;
+        gegl_rectangle_intersect (&chunked_result, &chunked_result, result);
 
-  src_buf = g_slice_alloc (4 * total_pixels * sizeof (gfloat));
-  dst_buf = g_slice_alloc (4 * n_pixels * sizeof (gfloat));
+        if (chunked_result.width < 1  || chunked_result.height < 1)
+          continue;
 
-  gegl_buffer_copy (input, NULL, tmp, NULL);
+        src_rect.x      = chunked_result.x - op_area->left;
+        src_rect.y      = chunked_result.y - op_area->top;
+        src_rect.width  = chunked_result.width + op_area->left + op_area->right;
+        src_rect.height = chunked_result.height + op_area->top + op_area->bottom;
 
-  for (i = 0; i < o->repeat; i++)
-    {
-      gint x, y, n;
+        init_rect.x      = src_rect.x + 1;
+        init_rect.y      = src_rect.y + 1;
+        init_rect.width  = src_rect.width - 2;
+        init_rect.height = src_rect.height - 2;
 
-      x = result->x;
-      y = result->y;
-      n = 0;
+        gegl_buffer_get (input, &src_rect, 1.0,
+                         babl_format ("RGBA float"), buf1,
+                         GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
 
-      n_pixels = result->width * result->height;
+        iterate (&src_rect, &init_rect, buf1, buf2, o->seed,
+                 o->pct_random, o->repeat);
 
-      gegl_buffer_get (tmp, &src_rect, 1.0,
-                       babl_format ("RGBA float"), src_buf,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
+        rowstride = src_rect.width;
 
-      in_pixel  = src_buf + (src_rect.width + 1) * 4;
-      out_pixel = dst_buf;
+        start_x = o->repeat;
+        start_y = o->repeat;
 
-      while (n_pixels--)
-        {
-          gint b;
+        if (o->repeat % 2)
+          dst_buf = buf2;
+        else
+          dst_buf = buf1;
 
-          if (gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
-              o->pct_random)
-            {
-              gint k = gegl_random_int_range (o->seed, x, y, 0, n++, 0, 9);
+        dst_buf += (start_y * rowstride + start_x) * 4;
 
-              for (b = 0; b < 4; b++)
-                {
-                  switch (k)
-                    {
-                    case 0:
-                      out_pixel[b] = in_pixel[b - src_rect.width * 4 - 4];
-                      break;
-                    case 1:
-                      out_pixel[b] = in_pixel[b - src_rect.width * 4];
-                      break;
-                    case 2:
-                      out_pixel[b] = in_pixel[b - src_rect.width * 4 + 4];
-                      break;
-                    case 3:
-                      out_pixel[b] = in_pixel[b - 4];
-                      break;
-                    case 4:
-                      out_pixel[b] = in_pixel[b];
-                      break;
-                    case 5:
-                      out_pixel[b] = in_pixel[b + 4];
-                      break;
-                    case 6:
-                      out_pixel[b] = in_pixel[b + src_rect.width * 4 - 4];
-                      break;
-                    case 7:
-                      out_pixel[b] = in_pixel[b + src_rect.width * 4];
-                      break;
-                    case 8:
-                      out_pixel[b] = in_pixel[b + src_rect.width * 4 + 4];
-                      break;
-                    }
-                }
-            }
-          else
-            {
-              for (b = 0; b < 4; b++)
-                {
-                  out_pixel[b] = in_pixel[b];
-                }
-            }
+        gegl_buffer_set (output, &chunked_result, 1.0,
+                         babl_format ("RGBA float"), dst_buf,
+                         rowstride * 4 * sizeof (gfloat));
+      }
 
-          if (n_pixels % width == 0)
-            in_pixel += 12;
-          else
-            in_pixel += 4;
-
-          out_pixel += 4;
-
-          x++;
-          if (x >= result->x + result->width)
-            {
-              x = result->x;
-              y++;
-            }
-        }
-
-      gegl_buffer_set (tmp, result, 0,
-                       babl_format ("RGBA float"), dst_buf,
-                       GEGL_AUTO_ROWSTRIDE);
-    }
-
-  gegl_buffer_copy (tmp, NULL, output, NULL);
-
-  g_slice_free1 (4 * total_pixels * sizeof (gfloat), src_buf);
-  g_slice_free1 (4 * n_pixels * sizeof (gfloat), dst_buf);
-
-  g_object_unref (tmp);
+  g_free (buf1);
+  g_free (buf2);
 
   return TRUE;
 }
