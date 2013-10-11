@@ -17,6 +17,7 @@
  *
  * Copyright (C) 1995 Spencer Kimball and Peter Mattis
  * Copyright (C) 2001-2005 David Hodson <hodsond@acm.org>
+ * Copyright (C) 2008 Aurimas Juška <aurisj@svn.gnome.org>
  * Copyright (C) 2011 Robert Sasu <sasu.robert@gmail.com>
  * Copyright (C) 2013 Téo Mazars <teo.mazars@ensimag.fr>
  *
@@ -31,27 +32,27 @@
 
 gegl_chant_double (main, _("Main"),
                    -100.0, 100.0, 0.0,
-                   _("Main value of distortion"))
-
-gegl_chant_double (zoom, _("Zoom"),
-                   -100.0, 100.0, 0.0,
-                   _("Main value of distortion"))
+                   _("Amount of second-order distortion"))
 
 gegl_chant_double (edge, _("Edge"),
                    -100.0, 100.0, 0.0,
-                   _("Edge value of distortion"))
+                   _("Amount of fourth-order distortion"))
 
-gegl_chant_double (brighten, _("Brighten"),
+gegl_chant_double (zoom, _("Zoom"),
                    -100.0, 100.0, 0.0,
-                   _("Brighten the image"))
+                   _("Rescale overall image size"))
 
 gegl_chant_double (x_shift, _("X shift"),
                    -100.0, 100.0, 0.0,
-                   _("Shift horizontal"))
+                   _("Effect centre offset in X"))
 
 gegl_chant_double (y_shift, _("Y shift"),
                    -100.0, 100.0, 0.0,
-                   _("Shift vertical"))
+                   _("Effect centre offset in Y"))
+
+gegl_chant_double (brighten, _("Brighten"),
+                   -100.0, 100.0, 0.0,
+                   _("Adjust brightness in corners"))
 
 gegl_chant_color  (background, _("Background"),
                    "white",
@@ -497,7 +498,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:lens-distortion",
     "categories",  "blur",
-    "description", _("Corrects lens distortion"),
+    "description", _("Corrects barrel or pincushion lens distortion."),
     "reference-composition", composition,
     NULL);
 }
