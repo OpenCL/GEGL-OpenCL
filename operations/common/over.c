@@ -22,7 +22,9 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-/* no properties */
+gegl_chant_boolean (srgb, _("sRGB"),
+                    FALSE,
+                    _("Use sRGB gamma instead of linear"))
 
 #else
 
@@ -33,7 +35,14 @@
 
 static void prepare (GeglOperation *operation)
 {
-  const Babl *format = babl_format ("RaGaBaA float");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  const Babl *format;
+
+  if (o->srgb)
+    format = babl_format ("R'aG'aB'aA float");
+  else
+    format = babl_format ("RaGaBaA float");
 
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format);
@@ -71,6 +80,41 @@ process (GeglOperation       *op,
 }
 
 #include "opencl/svg-src-over.cl.h"
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            cl_mem               in_tex,
+            cl_mem               aux_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            gint                 level)
+{
+  GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
+  cl_int cl_err = 0;
+
+  /* The kernel will have been compiled by our parent class */
+  if (!operation_class->cl_data)
+    return TRUE;
+
+  cl_err = gegl_cl_set_kernel_args (operation_class->cl_data->kernel[0],
+                                    sizeof(cl_mem), &in_tex,
+                                    sizeof(cl_mem), &aux_tex,
+                                    sizeof(cl_mem), &out_tex,
+                                    NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        operation_class->cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  return FALSE;
+
+error:
+  return TRUE;
+}
 
 /* Fast paths */
 static gboolean operation_process (GeglOperation        *operation,
@@ -130,7 +174,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare = prepare;
   operation_class->process = operation_process;
 
-  point_composer_class->process = process;
+  point_composer_class->cl_process = cl_process;
+  point_composer_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "svg:src-over",
