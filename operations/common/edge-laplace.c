@@ -34,7 +34,7 @@
 #include "gegl-chant.h"
 #include <math.h>
 
-#define LAPLACE_RADIUS 1
+#define LAPLACE_RADIUS 2
 #define CHUNK_SIZE     1024
 #define SQR(x)         ((x)*(x))
 
@@ -78,9 +78,9 @@ process (GeglOperation       *operation,
     if (cl_process (operation, input, output, result))
       return TRUE;
 
-  buf1 = g_new0 (gfloat, SQR (CHUNK_SIZE + LAPLACE_RADIUS * 2) * 4);
-  buf2 = g_new0 (gfloat, SQR (CHUNK_SIZE + LAPLACE_RADIUS * 2) * 4);
-  buf3 = g_new0 (gfloat, SQR (CHUNK_SIZE) * 4);
+  buf1 = g_new (gfloat, SQR (CHUNK_SIZE + LAPLACE_RADIUS * 2) * 4);
+  buf2 = g_new (gfloat, SQR (CHUNK_SIZE + LAPLACE_RADIUS * 2) * 4);
+  buf3 = g_new (gfloat, SQR (CHUNK_SIZE) * 4);
 
   for (j = 0; (j-1) * CHUNK_SIZE < result->height; j++)
     for (i = 0; (i-1) * CHUNK_SIZE < result->width; i++)
@@ -173,17 +173,17 @@ edge_laplace (GeglBuffer          *src,
 
   gegl_buffer_get (src, src_rect, 1.0,
                    babl_format ("R'G'B'A float"), src_buf, GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_NONE);
+                   GEGL_ABYSS_CLAMP);
 
-  for (y = 0; y < dst_rect->height; y++)
-    for (x = 0; x < dst_rect->width; x++)
+  for (y = 0; y < dst_rect->height + LAPLACE_RADIUS; y++)
+    for (x = 0; x < dst_rect->width + LAPLACE_RADIUS; x++)
       {
         gfloat *src_pix;
         gfloat  gradient[4] = {0.0f, 0.0f, 0.0f, 0.0f};
         gint    c;
         gfloat  minval, maxval;
-        gint    i = x + LAPLACE_RADIUS;
-        gint    j = y + LAPLACE_RADIUS;
+        gint    i = x + LAPLACE_RADIUS - 1;
+        gint    j = y + LAPLACE_RADIUS - 1;
 
         offset = i + j * src_width;
         src_pix = src_buf + offset * 4;
