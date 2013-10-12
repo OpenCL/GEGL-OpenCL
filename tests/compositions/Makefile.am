@@ -34,7 +34,7 @@ TESTS = \
   run-checkerboard.xml.sh              \
   run-clones.xml.sh                    \
   run-composite-transform.xml.sh       \
-  run-edge-laplace-broken.xml.sh       \
+  run-edge-laplace.xml.sh              \
   run-edge-sobel.xml.sh                \
   run-fattal02.xml.sh                  \
   run-gamma.xml.sh                     \
