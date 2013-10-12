@@ -33,7 +33,8 @@ libcl_sources = \
 	gegl-cl-init.c \
 	gegl-cl-init.h \
 	gegl-cl-color.c \
-	gegl-cl-color.h
+	gegl-cl-color.h \
+	gegl-cl-introspection-support.h
 
 noinst_LTLIBRARIES = libcl.la
 
