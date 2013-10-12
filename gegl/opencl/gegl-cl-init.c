@@ -117,6 +117,7 @@ const char *gegl_cl_errstring(cl_int err) {
 typedef struct
 {
   gboolean         is_accelerated;
+  gboolean         is_loaded;
   cl_context       ctx;
   cl_platform_id   platform;
   cl_device_id     device;
@@ -134,7 +135,7 @@ typedef struct
 }
 GeglClState;
 
-static GeglClState cl_state = {FALSE, NULL, NULL, NULL, NULL, FALSE, 0, 0, 0, 0, "", "", "", ""};
+static GeglClState cl_state = { 0, };
 static GHashTable *cl_program_hash = NULL;
 
 gboolean
@@ -234,7 +235,7 @@ gegl_cl_init (GError **error)
 {
   cl_int err;
 
-  if (!cl_state.is_accelerated)
+  if (!cl_state.is_loaded)
     {
       #ifdef G_OS_WIN32
         HINSTANCE module;
@@ -373,7 +374,7 @@ gegl_cl_init (GError **error)
           return FALSE;
         }
 
-      cl_state.is_accelerated = TRUE;
+      cl_state.is_loaded = TRUE;
 
       /* XXX: this dict is being leaked */
       cl_program_hash = g_hash_table_new (g_str_hash, g_str_equal);
@@ -383,6 +384,9 @@ gegl_cl_init (GError **error)
 
       GEGL_NOTE (GEGL_DEBUG_OPENCL, "OK");
     }
+
+  if (cl_state.is_loaded)
+    cl_state.is_accelerated = TRUE;
 
   return TRUE;
 }
