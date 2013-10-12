@@ -35,12 +35,17 @@
 #include <math.h>
 
 #define LAPLACE_RADIUS 1
+#define CHUNK_SIZE     1024
+#define SQR(x)         ((x)*(x))
 
 static void
 edge_laplace (GeglBuffer          *src,
               const GeglRectangle *src_rect,
               GeglBuffer          *dst,
-              const GeglRectangle *dst_rect);
+              const GeglRectangle *dst_rect,
+              gfloat              *src_buf,
+              gfloat              *temp_buf,
+              gfloat              *dst_buf);
 
 static void
 prepare (GeglOperation *operation)
@@ -66,14 +71,43 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglRectangle compute;
+  gint    i, j;
+  gfloat *buf1, *buf2, *buf3;
 
   if (gegl_cl_is_accelerated ())
     if (cl_process (operation, input, output, result))
       return TRUE;
 
-  compute = gegl_operation_get_required_for_output (operation, "input", result);
-  edge_laplace (input, &compute, output, result);
+  buf1 = g_new0 (gfloat, SQR (CHUNK_SIZE + LAPLACE_RADIUS * 2) * 4);
+  buf2 = g_new0 (gfloat, SQR (CHUNK_SIZE + LAPLACE_RADIUS * 2) * 4);
+  buf3 = g_new0 (gfloat, SQR (CHUNK_SIZE) * 4);
+
+  for (j = 0; (j-1) * CHUNK_SIZE < result->height; j++)
+    for (i = 0; (i-1) * CHUNK_SIZE < result->width; i++)
+      {
+        GeglRectangle chunked_result;
+        GeglRectangle compute;
+
+        chunked_result = *GEGL_RECTANGLE (result->x + i * CHUNK_SIZE,
+                                          result->y + j * CHUNK_SIZE,
+                                          CHUNK_SIZE, CHUNK_SIZE);
+
+        gegl_rectangle_intersect (&chunked_result, &chunked_result, result);
+
+        if (chunked_result.width < 1  || chunked_result.height < 1)
+          continue;
+
+        compute = gegl_operation_get_required_for_output (operation,
+                                                          "input",
+                                                          &chunked_result);
+
+        edge_laplace (input, &compute, output, &chunked_result,
+                      buf1, buf2, buf3);
+      }
+
+  g_free (buf1);
+  g_free (buf2);
+  g_free (buf3);
 
   return  TRUE;
 }
@@ -127,19 +161,15 @@ static void
 edge_laplace (GeglBuffer          *src,
               const GeglRectangle *src_rect,
               GeglBuffer          *dst,
-              const GeglRectangle *dst_rect)
+              const GeglRectangle *dst_rect,
+              gfloat              *src_buf,
+              gfloat              *temp_buf,
+              gfloat              *dst_buf)
 {
 
   gint    x, y;
   gint    offset;
-  gfloat *src_buf;
-  gfloat *temp_buf;
-  gfloat *dst_buf;
   gint    src_width = src_rect->width;
-
-  src_buf  = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
-  temp_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
-  dst_buf  = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
   gegl_buffer_get (src, src_rect, 1.0,
                    babl_format ("R'G'B'A float"), src_buf, GEGL_AUTO_ROWSTRIDE,
@@ -237,9 +267,6 @@ edge_laplace (GeglBuffer          *src,
 
   gegl_buffer_set (dst, dst_rect, 0, babl_format ("R'G'B'A float"), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
-  g_free (src_buf);
-  g_free (temp_buf);
-  g_free (dst_buf);
 }
 
 #include "opencl/gegl-cl.h"
