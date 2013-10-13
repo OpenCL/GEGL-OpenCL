@@ -1,6 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
   <node operation='svg:src-over'>
+      <params>
+        <param name='srgb'>false</param>
+      </params>
       <node operation='gegl:translate'>
           <params>
             <param name='origin-x'>0</param>
