@@ -38,16 +38,17 @@ gegl_chant_int_ui (size_y, _("Block Height"),
 #include "gegl-chant.h"
 
 #define CELL_X(px, cell_width)  ((px) / (cell_width))
-#define CELL_Y(py, cell_height)  ((py) / (cell_height))
+#define CELL_Y(py, cell_height) ((py) / (cell_height))
 
+#define CHUNK_SIZE              (1024)
+#define ALLOC_THRESHOLD_SIZE    (128)
+#define SQR(x)                  ((x)*(x))
 
 static void
 prepare (GeglOperation *operation)
 {
   GeglChantO              *o;
   GeglOperationAreaFilter *op_area;
-
-  const Babl *source_format = gegl_operation_get_source_format (operation, "input");
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
   o       = GEGL_CHANT_PROPERTIES (operation);
@@ -57,88 +58,153 @@ prepare (GeglOperation *operation)
   op_area->top    =
   op_area->bottom = o->size_y;
 
-  gegl_operation_set_format (operation, "input",
-                             babl_format ("RaGaBaA float"));
-
-  if (source_format && !babl_format_has_alpha (source_format))
-    gegl_operation_set_format (operation, "output", babl_format ("RGB float"));
-  else
-    gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "input",  babl_format ("RaGaBaA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
 }
 
-static void
-calc_block_colors (gfloat* block_colors,
-                   const gfloat* input,
-                   const GeglRectangle* roi,
-                   gint size_x,
-                   gint size_y)
-{
-  gint cx0 = CELL_X(roi->x, size_x);
-  gint cy0 = CELL_Y(roi->y, size_y);
-  gint cx1 = CELL_X(roi->x + roi->width - 1, size_x);
-  gint cy1 = CELL_Y(roi->y + roi->height - 1, size_y);
-
-  gint cx;
-  gint cy;
-  gfloat weight = 1.0f / (size_x * size_y);
-  gint line_width = roi->width + 2*size_x;
-  /* loop over the blocks within the region of interest */
-  for (cy=cy0; cy<=cy1; ++cy)
-    {
-      for (cx=cx0; cx<=cx1; ++cx)
-        {
-          gint px = (cx * size_x) - roi->x + size_x;
-          gint py = (cy * size_y) - roi->y + size_y;
-
-          /* calculate the average color for this block */
-          gint j,i,c;
-          gfloat col[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-          for (j=py; j<py+size_y; ++j)
-            {
-              for (i=px; i<px+size_x; ++i)
-                {
-                  for (c=0; c<4; ++c)
-                    col[c] += input[(j*line_width + i)*4 + c];
-                }
-            }
-          for (c=0; c<4; ++c)
-            block_colors[c] = weight * col[c];
-          block_colors += 4;
-        }
-    }
-}
 
 static void
-pixelize (gfloat* buf,
-          const GeglRectangle* roi,
-          gint size_x,
-          gint size_y)
+mean_rectangle_noalloc (GeglBuffer    *input,
+                        GeglRectangle *rect,
+                        GeglColor     *color)
 {
-  gint cx0 = CELL_X(roi->x, size_x);
-  gint cy0 = CELL_Y(roi->y, size_y);
-  gint block_count_x = CELL_X(roi->x + roi->width - 1, size_x) - cx0 + 1;
-  gint block_count_y = CELL_Y(roi->y + roi->height - 1, size_y) - cy0 + 1;
-  gfloat* block_colors = g_new0 (gfloat, block_count_x * block_count_y * 4);
-  gint x;
-  gint y;
-  gint c;
+  GeglBufferIterator *gi;
+  gfloat              col[] = {0.0, 0.0, 0.0, 0.0};
+  gint                c;
 
-  /* calculate the average color of all the blocks */
-  calc_block_colors(block_colors, buf, roi, size_x, size_y);
+  gi = gegl_buffer_iterator_new (input, rect, 0, babl_format ("RaGaBaA float"),
+                                 GEGL_BUFFER_READ, GEGL_ABYSS_CLAMP);
 
-  /* set each pixel to the average color of the block it belongs to */
-  for (y=0; y<roi->height; ++y)
+  while (gegl_buffer_iterator_next (gi))
     {
-      gint cy = CELL_Y(y + roi->y, size_y) - cy0;
-      for (x=0; x<roi->width; ++x)
+      gint  k;
+      gfloat *data = (gfloat*) gi->data[0];
+
+      for (k = 0; k < gi->length; k++)
         {
-          gint cx = CELL_X(x + roi->x, size_x) - cx0;
-          for (c=0; c<4; ++c)
-            *buf++ = block_colors[(cy*block_count_x + cx)*4 + c];
+          for (c = 0; c < 4; c++)
+            col[c] += data[c];
+
+          data += 4;
         }
     }
 
-  g_free (block_colors);
+  for (c = 0; c < 4; c++)
+    col[c] /= rect->width * rect->height;
+
+  gegl_color_set_pixel (color, babl_format ("RaGaBaA float"), col);
+}
+
+static void
+mean_rectangle (gfloat        *input,
+                GeglRectangle *rect,
+                gint           rowstride,
+                gfloat        *color)
+{
+  gint c, x, y;
+
+  for (c = 0; c < 4; c++)
+    color[c] = 0;
+
+  for (y = rect->y; y < rect->y + rect->height; y++)
+    for (x = rect->x; x < rect->x + rect->width; x++)
+      for (c = 0; c < 4; c++)
+        color[c] += input [4 * (y * rowstride + x) + c];
+
+  for (c = 0; c < 4; c++)
+    color[c] /= rect->width * rect->height;
+}
+
+static void
+set_rectangle (gfloat        *output,
+               GeglRectangle *rect,
+               gint           rowstride,
+               gfloat        *color)
+{
+  gint c, x, y;
+
+  for (y = rect->y; y < rect->y + rect->height; y++)
+    for (x = rect->x; x < rect->x + rect->width; x++)
+      for (c = 0; c < 4; c++)
+        output [4 * (y * rowstride + x) + c] = color[c];
+}
+
+
+static void
+pixelize_noalloc (GeglBuffer          *input,
+                  GeglBuffer          *output,
+                  const GeglRectangle *roi,
+                  const GeglRectangle *whole_region,
+                  gint                 size_x,
+                  gint                 size_y)
+{
+  gint start_x = (roi->x / size_x) * size_x;
+  gint start_y = (roi->y / size_y) * size_y;
+  gint x, y;
+
+  GeglColor *color = gegl_color_new ("white");
+
+  for (y = start_y; y < roi->y + roi->height; y += size_y)
+    for (x = start_x; x < roi->x + roi->width; x += size_x)
+      {
+        GeglRectangle rect = {x, y, size_x, size_y};
+
+        gegl_rectangle_intersect (&rect, whole_region, &rect);
+
+        if (rect.width < 1 || rect.height < 1)
+          continue;
+
+        mean_rectangle_noalloc (input, &rect, color);
+
+        gegl_rectangle_intersect (&rect, roi, &rect);
+
+        gegl_buffer_set_color (output, &rect, color);
+      }
+
+  g_object_unref (color);
+}
+
+static void
+pixelize (gfloat              *input,
+          gfloat              *output,
+          const GeglRectangle *roi,
+          const GeglRectangle *extended_roi,
+          const GeglRectangle *whole_region,
+          gint                 size_x,
+          gint                 size_y)
+{
+  gint start_x = (roi->x / size_x) * size_x;
+  gint start_y = (roi->y / size_y) * size_y;
+  gint x, y;
+  gfloat color[4];
+
+  for (y = start_y; y < roi->y + roi->height; y += size_y)
+    for (x = start_x; x < roi->x + roi->width; x += size_x)
+      {
+        GeglRectangle rect = {x, y, size_x, size_y};
+        GeglRectangle rect2;
+
+        gegl_rectangle_intersect (&rect, whole_region, &rect);
+
+        if (rect.width < 1 || rect.height < 1)
+          continue;
+
+        rect2.x = rect.x - extended_roi->x;
+        rect2.y = rect.y - extended_roi->y;
+        rect2.width  = rect.width;
+        rect2.height = rect.height;
+
+        mean_rectangle (input, &rect2, extended_roi->width, color);
+
+        gegl_rectangle_intersect (&rect, roi, &rect);
+
+        rect2.x = rect.x - roi->x;
+        rect2.y = rect.y - roi->y;
+        rect2.width  = rect.width;
+        rect2.height = rect.height;
+
+        set_rectangle (output, &rect2, roi->width, color);
+      }
 }
 
 #include "opencl/gegl-cl.h"
@@ -232,8 +298,6 @@ cl_process (GeglOperation       *operation,
 {
   const Babl *in_format  = babl_format ("RaGaBaA float");
   const Babl *out_format = babl_format ("RaGaBaA float");
-  gboolean    has_alpha  = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
-  GeglAbyssPolicy read_abyss = has_alpha ? GEGL_ABYSS_NONE : GEGL_ABYSS_BLACK;
   gint err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
@@ -253,7 +317,7 @@ cl_process (GeglOperation       *operation,
                                              op_area->right,
                                              op_area->top,
                                              op_area->bottom,
-                                             read_abyss);
+                                             GEGL_ABYSS_CLAMP);
 
   gint aux  = gegl_buffer_cl_iterator_add_2 (i,
                                              NULL,
@@ -264,7 +328,7 @@ cl_process (GeglOperation       *operation,
                                              op_area->right,
                                              op_area->top,
                                              op_area->bottom,
-                                             GEGL_ABYSS_NONE);
+                                             GEGL_ABYSS_CLAMP);
 
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
@@ -291,33 +355,65 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglRectangle src_rect;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle            src_rect;
+  GeglRectangle           *whole_region;
+  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area;
-  gfloat* buf;
-  gboolean        has_alpha  = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
-  GeglAbyssPolicy read_abyss = has_alpha ? GEGL_ABYSS_NONE : GEGL_ABYSS_BLACK;
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  src_rect = *roi;
-  src_rect.x -= op_area->left;
-  src_rect.y -= op_area->top;
-  src_rect.width += op_area->left + op_area->right;
-  src_rect.height += op_area->top + op_area->bottom;
+
+  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
 
   if (gegl_cl_is_accelerated ())
     if (cl_process (operation, input, output, roi))
       return TRUE;
 
-  buf = g_new0 (gfloat, src_rect.width * src_rect.height * 4);
+  if (o->size_x * o->size_y < SQR (ALLOC_THRESHOLD_SIZE))
+    {
+      gfloat *input_buf  = g_new (gfloat,
+                                  (CHUNK_SIZE + o->size_x * 2) *
+                                  (CHUNK_SIZE + o->size_y * 2) * 4);
+      gfloat *output_buf = g_new (gfloat, SQR (CHUNK_SIZE) * 4);
+      gint    i, j;
 
-  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE, read_abyss);
+      for (j = 0; (j-1) * CHUNK_SIZE < roi->height; j++)
+        for (i = 0; (i-1) * CHUNK_SIZE < roi->width; i++)
+          {
+            GeglRectangle chunked_result;
 
-  pixelize(buf, roi, o->size_x, o->size_y);
+            chunked_result = *GEGL_RECTANGLE (roi->x + i * CHUNK_SIZE,
+                                              roi->y + j * CHUNK_SIZE,
+                                              CHUNK_SIZE, CHUNK_SIZE);
 
-  gegl_buffer_set (output, roi, 0, babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
+            gegl_rectangle_intersect (&chunked_result, &chunked_result, roi);
 
-  g_free (buf);
+            if (chunked_result.width < 1  || chunked_result.height < 1)
+              continue;
+
+            src_rect = chunked_result;
+            src_rect.x -= op_area->left;
+            src_rect.y -= op_area->top;
+            src_rect.width += op_area->left + op_area->right;
+            src_rect.height += op_area->top + op_area->bottom;
+
+            gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"),
+                             input_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
+
+            pixelize (input_buf, output_buf, &chunked_result, &src_rect, whole_region,
+                      o->size_x, o->size_y);
+
+            gegl_buffer_set (output, &chunked_result, 1.0, babl_format ("RaGaBaA float"),
+                             output_buf, GEGL_AUTO_ROWSTRIDE);
+          }
+
+      g_free (input_buf);
+      g_free (output_buf);
+    }
+  else
+    {
+      pixelize_noalloc (input, output, roi, whole_region,
+                        o->size_x, o->size_y);
+    }
 
   return  TRUE;
 }
