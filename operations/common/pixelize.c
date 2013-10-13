@@ -328,7 +328,7 @@ cl_process (GeglOperation       *operation,
                                              op_area->right,
                                              op_area->top,
                                              op_area->bottom,
-                                             GEGL_ABYSS_CLAMP);
+                                             GEGL_ABYSS_NONE);
 
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
