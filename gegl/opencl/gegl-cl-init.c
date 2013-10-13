@@ -397,8 +397,7 @@ gegl_cl_init (GError **error)
       /* XXX: this dict is being leaked */
       cl_program_hash = g_hash_table_new (g_str_hash, g_str_equal);
 
-      if (cl_state.is_accelerated)
-        gegl_cl_color_compile_kernels();
+      gegl_cl_color_compile_kernels();
 
       GEGL_NOTE (GEGL_DEBUG_OPENCL, "OK");
     }
