@@ -22,6 +22,10 @@ import unittest
 from gi.repository import Gegl
 
 class TestGeglColor(unittest.TestCase):
+    def assertAlmostEqualComps(self, a, b):
+        self.assertEqual(len(a), len(b))
+        for acomp, bcomp in zip(a, b):
+            self.assertAlmostEqual(acomp, bcomp)
 
     def test_new_color(self):
         Gegl.Color.new("rgba(0.6, 0.6, 0.6, 1.0)")
@@ -42,6 +46,41 @@ class TestGeglColor(unittest.TestCase):
         self.assertAlmostEqual(values[1], 0.6)
         self.assertAlmostEqual(values[2], 0.9)
         self.assertAlmostEqual(values[3], 1.0)
+
+    def test_color_get_components(self):
+        c = Gegl.Color()
+        c.set_components(Gegl.format("RGB float"), [1.0, 0.0, 0.0])
+
+        values = c.get_components(Gegl.format("RGB float"))
+        self.assertAlmostEqualComps(values, [1.0, 0.0, 0.0])
+
+        values = c.get_components(Gegl.format("RGBA double"))
+        self.assertAlmostEqualComps(values, [1.0, 0.0, 0.0, 1.0])
+
+        values = c.get_components(Gegl.format("RGBA float"))
+        self.assertAlmostEqualComps(values, [1.0, 0.0, 0.0, 1.0])
+
+        values = c.get_components(Gegl.format("RGBA u32"))
+        self.assertEqual(values, [float(0xFFFFFFFF), 0.0, 0.0, float(0xFFFFFFFF)])
+
+        values = c.get_components(Gegl.format("RGBA u16"))
+        self.assertEqual(values, [float(0xFFFF), 0.0, 0.0, float(0xFFFF)])
+
+        values = c.get_components(Gegl.format("RGBA u8"))
+        self.assertEqual(values, [float(0xFF), 0.0, 0.0, float(0xFF)])
+
+        c.set_components(Gegl.format("R'G'B' u8"), [128, 0, 128])
+
+        values = c.get_components(Gegl.format("R'G'B'A u8"))
+        self.assertEqual(values, [float(128), 0.0, float(128), float(255)])
+
+        c.set_components(Gegl.format("YA double"), [0.5, 0.5])
+
+        values = c.get_components(Gegl.format("RGBA double"))
+        self.assertAlmostEqualComps(values, [0.5, 0.5, 0.5, 0.5])
+
+        values = c.get_components(Gegl.format("RaGaBaA double"))
+        self.assertAlmostEqualComps(values, [0.25, 0.25, 0.25, 0.5])
 
 if __name__ == '__main__':
     Gegl.init(None);
