@@ -75,6 +75,7 @@ do_setup (GeglOperation *operation)
         gegl_node_set (self->color,
                        "value", o->color,
                        NULL);
+      g_object_unref (self->color);
     }
 
     {
