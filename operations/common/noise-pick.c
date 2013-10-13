@@ -15,6 +15,7 @@
  *
  * Copyright 1997 Miles O'Neal <meo@rru.com>  http://www.rru.com/~meo/
  * Copyright 2012 Maxime Nicco <maxime.nicco@gmail.com>
+ * Copyright 2013 Téo Mazars   <teo.mazars@ensimag.fr>
  */
 
 /*
@@ -56,23 +57,27 @@ prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  const Babl              *format;
 
   op_area->left   =
   op_area->right  =
   op_area->top    =
   op_area->bottom = o->repeat;
 
-  gegl_operation_set_format (operation, "input" , babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  format = gegl_operation_get_source_format (operation, "input");
+
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static void
 iterate (GeglRectangle *buffers_roi,
          GeglRectangle *current_roi,
-         gfloat        *src,
-         gfloat        *dst,
+         gchar         *src,
+         gchar         *dst,
          gint           seed,
          gfloat         pct_random,
+         gint           bpp,
          gint           level)
 {
   gint          rowstride;
@@ -90,7 +95,7 @@ iterate (GeglRectangle *buffers_roi,
   for(y = y_start; y < current_roi->height + y_start; y++)
     for(x = x_start; x < current_roi->width + x_start; x++)
       {
-        gint   index_src, index_dst, b;
+        gint   index_src, index_dst;
         gint   pos_x = buffers_roi->x + x;
         gint   pos_y = buffers_roi->y + y;
         gint   x2 = x;
@@ -107,11 +112,10 @@ iterate (GeglRectangle *buffers_roi,
             y2 += (k / 3) - 1;
           }
 
-        index_src = (y2 * rowstride + x2) * 4;
-        index_dst = (y  * rowstride + x)  * 4;
+        index_src = (y2 * rowstride + x2) * bpp;
+        index_dst = (y  * rowstride + x)  * bpp;
 
-        for (b = 0; b < 4; b++)
-          dst[index_dst + b] = src[index_src + b];
+        memcpy (dst + index_dst, src + index_src, bpp);
       }
 
   next_roi = *GEGL_RECTANGLE (current_roi->x + 1,
@@ -119,7 +123,7 @@ iterate (GeglRectangle *buffers_roi,
                               current_roi->width  - 2,
                               current_roi->height - 2);
 
-  iterate (buffers_roi, &next_roi, dst, src, seed, pct_random, level - 1);
+  iterate (buffers_roi, &next_roi, dst, src, seed, pct_random, bpp, level - 1);
 }
 
 static gboolean
@@ -132,12 +136,17 @@ process (GeglOperation       *operation,
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglRectangle            src_rect, init_rect, chunked_result;
-  gfloat                  *buf1, *buf2, *dst_buf;
+  gchar                   *buf1, *buf2, *dst_buf;
   gint                     rowstride, start_x, start_y;
   gint                     i, j;
+  const Babl              *format;
+  gint                     bpp;
 
-  buf1 = g_new (gfloat, SQR (MAX_HW_EXT) * 4);
-  buf2 = g_new (gfloat, SQR (MAX_HW_EXT) * 4);
+  format = gegl_operation_get_source_format (operation, "input");
+  bpp = babl_format_get_bytes_per_pixel (format);
+
+  buf1 = g_malloc (SQR (MAX_HW_EXT) * bpp);
+  buf2 = g_malloc (SQR (MAX_HW_EXT) * bpp);
 
   for (j = 0; (j-1) * CHUNK_SIZE < result->height; j++)
     for (i = 0; (i-1) * CHUNK_SIZE < result->width; i++)
@@ -161,12 +170,11 @@ process (GeglOperation       *operation,
         init_rect.width  = src_rect.width - 2;
         init_rect.height = src_rect.height - 2;
 
-        gegl_buffer_get (input, &src_rect, 1.0,
-                         babl_format ("RGBA float"), buf1,
+        gegl_buffer_get (input, &src_rect, 1.0, format, buf1,
                          GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
 
         iterate (&src_rect, &init_rect, buf1, buf2, o->seed,
-                 o->pct_random, o->repeat);
+                 o->pct_random, bpp, o->repeat);
 
         rowstride = src_rect.width;
 
@@ -178,11 +186,10 @@ process (GeglOperation       *operation,
         else
           dst_buf = buf1;
 
-        dst_buf += (start_y * rowstride + start_x) * 4;
+        dst_buf = (dst_buf + (start_y * rowstride + start_x) * bpp);
 
-        gegl_buffer_set (output, &chunked_result, 1.0,
-                         babl_format ("RGBA float"), dst_buf,
-                         rowstride * 4 * sizeof (gfloat));
+        gegl_buffer_set (output, &chunked_result, 1.0, format, dst_buf,
+                         rowstride * bpp);
       }
 
   g_free (buf1);
