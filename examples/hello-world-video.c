@@ -17,17 +17,21 @@ This is the graph we're going to construct:
 .-----------.
 | ff-save   |
 `-----------'
-   |
-.-------.
-| layer |
-`-------'
-   |   \
-   |    \
-   |     \
-   |      |
-   |   .------.
-   |   | text |
-   |   `------'
+    |
+.--------.
+|  crop  |
+`--------'
+    |
+.--------.
+|  over  |
+`--------'
+    |   \
+    |    \
+    |     \
+    |      |
+    |   .------.
+    |   | text |
+    |   `------'
 .------------------.
 | fractal-explorer |
 `------------------'
@@ -40,10 +44,13 @@ This is the graph we're going to construct:
                                  "path", "fractal-zoom.avi",
                                  "bitrate", 1200000.0,
                                  NULL);
-    GeglNode *layer      = gegl_node_new_child (gegl,
-                                 "operation", "gegl:layer",
-                                 "x", 2.0,
-                                 "y", 4.0,
+    GeglNode *crop       = gegl_node_new_child (gegl,
+                                 "operation", "gegl:crop",
+                                 "width", 512.0,
+                                 "height", 384.0,
+                                  NULL);
+    GeglNode *over       = gegl_node_new_child (gegl,
+                                 "operation", "gegl:over",
                                  NULL);
     GeglNode *text       = gegl_node_new_child (gegl,
                                  "operation", "gegl:text",
@@ -52,12 +59,11 @@ This is the graph we're going to construct:
                                  NULL);
     GeglNode *mandelbrot = gegl_node_new_child (gegl,
                                 "operation", "gegl:fractal-explorer",
-                                "width", 640,
-                                "height", 480,
+                                "shiftx", -256.0,
                                 NULL);
 
-    gegl_node_link_many (mandelbrot, layer, display, NULL);
-    gegl_node_connect_to (text, "output",  layer, "aux");
+    gegl_node_link_many (mandelbrot, over, crop, display, NULL);
+    gegl_node_connect_to (text, "output",  over, "aux");
    
     /* request that the save node is processed, all dependencies will
      * be processed as well
@@ -70,28 +76,18 @@ This is the graph we're going to construct:
         {
           gchar string[512];
           gdouble t = frame * 1.0/frames;
-          gdouble cx = -1.76;
-          gdouble cy = 0.0;
 
 #define INTERPOLATE(min,max) ((max)*(t)+(min)*(1.0-t))
 
-          gdouble xmin = INTERPOLATE(  cx-0.02, cx-2.5);
-          gdouble ymin = INTERPOLATE(  cy-0.02, cy-2.5);
-          gdouble xmax = INTERPOLATE(  cx+0.02, cx+2.5);
-          gdouble ymax = INTERPOLATE(  cy+0.02, cy+2.5);
+          gdouble shiftx = INTERPOLATE(-256.0, -512.0);
+          gdouble shifty = INTERPOLATE(0.0,    -256.0);
+          gdouble zoom   = INTERPOLATE(300.0,   400.0);
 
-          if (xmin<-3.0)
-            xmin=-3.0;
-          if (ymin<-3.0)
-            ymin=-3.0;
-
-          gegl_node_set (mandelbrot, "xmin", xmin,
-                                     "ymin", ymin,
-                                     "xmax", xmax,
-                                     "ymax", ymax,
+          gegl_node_set (mandelbrot, "shiftx", shiftx,
+                                     "shifty", shifty,
+                                     "zoom", zoom,
                                      NULL);
-          g_sprintf (string, "%1.3f,%1.3f %1.3f×%1.3f",
-            xmin, ymin, xmax-xmin, ymax-ymin);
+          g_sprintf (string, "x=%1.3f y=%1.3f z=%1.3f", shiftx, shifty, zoom);
           gegl_node_set (text, "string", string, NULL);
           gegl_node_process (display);
           g_print ("%3.0f%%  \r", t * 100);
