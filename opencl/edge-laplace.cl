@@ -101,8 +101,8 @@ kernel void pre_edgelaplace (global float4 *in,
             fmax((maxval - pix_mm[c]),(pix_mm[c] - minval));
         gradient[c] =
             (pix_fl[c] + pix_fm[c] + pix_fr[c] +
-             pix_bm[c]  - 8.0f * pix_mm[c]+ pix_br[c]
-             pix_ml[c] + pix_mr[c] + pix_bl[c] +) <
+             pix_bm[c] - 8.0f * pix_mm[c] + pix_br[c] +
+             pix_ml[c] + pix_mr[c] + pix_bl[c]) <
              EPSILON ? -1.0f * gradient[c] : gradient[c];
     }
     gradient[3] = pix_mm[3];
