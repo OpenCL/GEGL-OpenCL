@@ -229,6 +229,21 @@ void     gegl_free                    (gpointer mem);
  */
 gpointer gegl_calloc (gsize size, int n_memb) G_GNUC_MALLOC;
 
+/**
+ * gegl_memset_pattern: (skip)
+ * @dst_ptr: pointer to copy to
+ * @src_ptr: pointer to copy from
+ * @pattern_size: the length of @src_ptr
+ * @count: number of copies
+ *
+ * Fill @dst_ptr with @count copies of the byes in @src_ptr.
+ */
+void gegl_memset_pattern              (void *       dst_ptr,
+                                       const void * src_ptr,
+                                       gint         pattern_size,
+                                       gint         count);
+
+
 #define GEGL_FLOAT_EPSILON            (1e-5)
 #define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))
 #define GEGL_FLOAT_EQUAL(v1, v2)      (_gegl_float_epsilon_equal ((v1), (v2)))

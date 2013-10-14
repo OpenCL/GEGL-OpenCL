@@ -276,3 +276,46 @@ gegl_free (gpointer buf)
   g_assert (buf);
   g_free (*((gpointer*)buf -1));
 }
+
+#define MAKE_COPY_CASE(typesize)\
+case typesize: \
+  while (count--) \
+    { \
+      memcpy (dst, src, typesize); \
+      dst += typesize; \
+    } \
+  return;
+
+void
+gegl_memset_pattern (void * restrict       dst_ptr,
+                     const void * restrict src_ptr,
+                     gint                  pattern_size,
+                     gint                  count)
+{
+  guchar *dst = dst_ptr;
+  const guchar *src = src_ptr;
+
+  switch (pattern_size)
+  {
+    case 1: /* Y u8 */
+      memset (dst, *src, count);
+      return;
+MAKE_COPY_CASE(2) /* YA u8 */
+MAKE_COPY_CASE(3) /* RGB u8 */
+MAKE_COPY_CASE(4) /* RGBA u8 */
+MAKE_COPY_CASE(6) /* RGB u16 */
+MAKE_COPY_CASE(8) /* RGBA u16 */
+MAKE_COPY_CASE(12) /* RGB float */
+MAKE_COPY_CASE(16) /* RGBA float */
+    default:
+      while (count--)
+        {
+          memcpy (dst, src, pattern_size);
+          dst += pattern_size;
+        }
+      return;
+  }
+}
+
+#undef MAKE_COPY_CASE
+
