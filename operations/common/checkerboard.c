@@ -46,17 +46,26 @@ gegl_chant_color    (color2, _("Other color"),
                      "white",
                      _("The other cell color (defaults to 'white')"))
 
+gegl_chant_format (format, _("Babl Format"),
+                   _("The babl format of the output"))
+
 #else
 
 #define GEGL_CHANT_TYPE_POINT_RENDER
 #define GEGL_CHANT_C_FILE "checkerboard.c"
 
 #include "gegl-chant.h"
+#include <gegl-utils.h>
 
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+  if (o->format)
+    gegl_operation_set_format (operation, "output", o->format);
+  else
+    gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglRectangle
@@ -78,10 +87,11 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  const Babl *out_format = babl_format ("RGBA float");
-  gfloat     *out_pixel = out_buf;
-  gfloat      color1[4];
-  gfloat      color2[4];
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+  gint        pixel_size = babl_format_get_bytes_per_pixel (out_format);
+  guchar     *out_pixel = out_buf;
+  void       *color1 = alloca(pixel_size);
+  void       *color2 = alloca(pixel_size);
   gint        y;
   gint        x;
   const gint  x_min = roi->x - o->x_offset;
@@ -99,7 +109,7 @@ process (GeglOperation       *operation,
     {
       x = x_min;
 
-      gfloat *cur_color;
+      void *cur_color;
 
       /* Figure out which box we're in */
       gint tilex = TILE_INDEX (x, square_width);
@@ -114,15 +124,11 @@ process (GeglOperation       *operation,
           /* Figure out how long this stripe is */
           gint stripe_end = (TILE_INDEX (x, square_width) + 1) * square_width;
                stripe_end = stripe_end > x_max ? x_max : stripe_end;
+          gint count = stripe_end - x;
 
-          while (x < stripe_end)
-            {
-              *out_pixel++ = cur_color[0];
-              *out_pixel++ = cur_color[1];
-              *out_pixel++ = cur_color[2];
-              *out_pixel++ = cur_color[3];
-              x++;
-            }
+          gegl_memset_pattern (out_pixel, cur_color, pixel_size, count);
+          out_pixel += count * pixel_size;
+          x = stripe_end;
 
           if (cur_color == color1)
             cur_color = color2;
