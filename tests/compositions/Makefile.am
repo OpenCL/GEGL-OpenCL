@@ -33,6 +33,7 @@ TESTS = \
   run-affine-with-negative.xml.sh      \
   run-checkerboard.xml.sh              \
   run-clones.xml.sh                    \
+  run-colors.xml.sh                    \
   run-composite-transform.xml.sh       \
   run-edge-laplace.xml.sh              \
   run-edge-sobel.xml.sh                \

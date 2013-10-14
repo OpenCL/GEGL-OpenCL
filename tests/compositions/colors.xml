@@ -1,0 +1,504 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>256</param>
+            <param name='y'>256</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(1.0000, 1.0000, 1.0000, 0.2000)</param>
+            <param name='format'>Y float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>192</param>
+            <param name='y'>256</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.0000, 0.6000, 0.0000, 0.8000)</param>
+            <param name='format'>Y float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>128</param>
+            <param name='y'>256</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.4000, 0.0000, 0.0000, 0.6000)</param>
+            <param name='format'>Y float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>64</param>
+            <param name='y'>256</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.0000, 0.0000, 0.8000, 0.4000)</param>
+            <param name='format'>Y float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>0</param>
+            <param name='y'>256</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgb(0.0000, 0.0000, 0.0000)</param>
+            <param name='format'>Y float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>256</param>
+            <param name='y'>192</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(1.0000, 1.0000, 1.0000, 0.2000)</param>
+            <param name='format'>YA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>192</param>
+            <param name='y'>192</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.0000, 0.6000, 0.0000, 0.8000)</param>
+            <param name='format'>YA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>128</param>
+            <param name='y'>192</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.4000, 0.0000, 0.0000, 0.6000)</param>
+            <param name='format'>YA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>64</param>
+            <param name='y'>192</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.0000, 0.0000, 0.8000, 0.4000)</param>
+            <param name='format'>YA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>0</param>
+            <param name='y'>192</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgb(0.0000, 0.0000, 0.0000)</param>
+            <param name='format'>YA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>256</param>
+            <param name='y'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(1.0000, 1.0000, 1.0000, 0.2000)</param>
+            <param name='format'>R'G'B' float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>192</param>
+            <param name='y'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.0000, 0.6000, 0.0000, 0.8000)</param>
+            <param name='format'>R'G'B' float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>128</param>
+            <param name='y'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.4000, 0.0000, 0.0000, 0.6000)</param>
+            <param name='format'>R'G'B' float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>64</param>
+            <param name='y'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.0000, 0.0000, 0.8000, 0.4000)</param>
+            <param name='format'>R'G'B' float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>0</param>
+            <param name='y'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgb(0.0000, 0.0000, 0.0000)</param>
+            <param name='format'>R'G'B' float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>256</param>
+            <param name='y'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(1.0000, 1.0000, 1.0000, 0.2000)</param>
+            <param name='format'>RGBA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>192</param>
+            <param name='y'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.0000, 0.6000, 0.0000, 0.8000)</param>
+            <param name='format'>RGBA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>128</param>
+            <param name='y'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.4000, 0.0000, 0.0000, 0.6000)</param>
+            <param name='format'>RGBA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>64</param>
+            <param name='y'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgba(0.0000, 0.0000, 0.8000, 0.4000)</param>
+            <param name='format'>RGBA float</param>
+          </params>
+      </node>
+  </node>
+  <node operation='svg:src-over'>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>nearest</param>
+            <param name='x'>0</param>
+            <param name='y'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>64</param>
+            <param name='height'>64</param>
+          </params>
+      </node>
+      <node operation='gegl:color'>
+          <params>
+            <param name='value'>rgb(0.0000, 0.0000, 0.0000)</param>
+            <param name='format'>RGBA float</param>
+          </params>
+      </node>
+  </node>
+</gegl>
+
