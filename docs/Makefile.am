@@ -6,8 +6,8 @@
 #
 
 gtkdochtmldir = $(datadir)/gtk-doc/html/gegl
-gtkdocimgdir = $(datadir)/gtk-doc/html/gegl/images
-gtkdocexampledir = $(datadir)/gtk-doc/html/gegl/images/examples
+gtkdocimgdir = $(gtkdochtmldir)/images
+gtkdocexampledir = $(gtkdocimgdir)/examples
 
 # run the sync-txt target after adding a text file
 sync-txt:
