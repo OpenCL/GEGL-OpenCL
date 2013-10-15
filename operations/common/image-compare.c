@@ -87,33 +87,32 @@ process (GeglOperation       *operation,
   gint                wrong_pixels = 0;
   const Babl         *cielab       = babl_format ("CIE Lab alpha float");
   const Babl         *srgb         = babl_format ("R'G'B' u8");
-  GeglBufferIterator *gi;
-  gint                index_iter, index_iter2;
+  const Babl         *yadbl        = babl_format ("YA double");
+  GeglBuffer         *diff_buffer;
+  GeglBufferIterator *iter;
 
   if (aux == NULL)
     return TRUE;
 
-  gi = gegl_buffer_iterator_new (output, result, 0, srgb,
-                                 GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+  diff_buffer = gegl_buffer_new (result, yadbl);
 
-  index_iter = gegl_buffer_iterator_add (gi, input, result, 0, cielab,
-                                         GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+  iter = gegl_buffer_iterator_new (diff_buffer, result, 0, yadbl,
+                                   GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-  index_iter2 = gegl_buffer_iterator_add (gi, aux, result, 0, cielab,
-                                         GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+  gegl_buffer_iterator_add (iter, input, result, 0, cielab,
+                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-  while (gegl_buffer_iterator_next (gi))
+  gegl_buffer_iterator_add (iter, aux, result, 0, cielab,
+                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+
+  while (gegl_buffer_iterator_next (iter))
     {
-      guint   k;
-      guchar *data_out;
-      gfloat *data_in1;
-      gfloat *data_in2;
+      gint    i;
+      gdouble *data_out = iter->data[0];
+      gfloat  *data_in1 = iter->data[1];
+      gfloat  *data_in2 = iter->data[2];
 
-      data_out = (guchar*) gi->data[0];
-      data_in1 = (gfloat*) gi->data[index_iter];
-      data_in2 = (gfloat*) gi->data[index_iter2];
-
-      for (k = 0; k < gi->length; k++)
+      for (i = 0; i < iter->length; i++)
         {
           gdouble diff = sqrt (SQR (data_in1[0] - data_in2[0]) +
                                SQR (data_in1[1] - data_in2[1]) +
@@ -127,27 +126,68 @@ process (GeglOperation       *operation,
             {
               wrong_pixels++;
               diffsum += diff;
-
               if (diff > max_diff)
                 max_diff = diff;
-
-              data_out[0] = CLAMP ((100 - data_in1[0]) / 100.0 * 64 + 32,
-                                   0, 255);
-              data_out[1] = CLAMP (diff / max_diff * 255, 0, 255);
-              data_out[2] = 0;
+              data_out[0] = diff;
+              data_out[1] = data_in1[0];
             }
           else
             {
-              data_out[0] = CLAMP (data_in1[0] / 100.0 * 255, 0, 255);
-              data_out[1] = CLAMP (data_in1[0] / 100.0 * 255, 0, 255);
-              data_out[2] = CLAMP (data_in1[0] / 100.0 * 255, 0, 255);
+              data_out[0] = 0.0;
+              data_out[1] = data_in1[0];
             }
 
-          data_out += 3;
+          data_out += 2;
           data_in1 += 4;
           data_in2 += 4;
         }
     }
+
+  if (wrong_pixels)
+    {
+      iter  = gegl_buffer_iterator_new (output, result, 0, srgb,
+                                        GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+
+      gegl_buffer_iterator_add (iter, diff_buffer, result, 0, yadbl,
+                                GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+
+      while (gegl_buffer_iterator_next (iter))
+        {
+          gint     i;
+          guchar  *out  = iter->data[0];
+          gdouble *data = iter->data[1];
+
+          for (i = 0; i < iter->length; i++)
+            {
+              gdouble diff = data[0];
+              gdouble a = data[1];
+
+              if (diff >= 0.01)
+                {
+                  out[0] = CLAMP ((100 - a) / 100.0 * 64 + 32, 0, 255);
+                  out[1] = CLAMP (diff / max_diff * 255, 0, 255);
+                  out[2] = 0;
+                }
+              else
+                {
+                  out[0] = CLAMP (a / 100.0 * 255, 0, 255);
+                  out[1] = CLAMP (a / 100.0 * 255, 0, 255);
+                  out[2] = CLAMP (a / 100.0 * 255, 0, 255);
+                }
+
+              out  += 3;
+              data += 2;
+            }
+        }
+    }
+  else
+    {
+      GeglColor *black = gegl_color_new ("black");
+      gegl_buffer_set_color (output, NULL, black);
+      g_object_unref (black);
+    }
+
+  g_object_unref (diff_buffer);
 
   props->wrong_pixels   = wrong_pixels;
   props->max_diff       = max_diff;
