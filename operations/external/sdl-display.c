@@ -26,13 +26,6 @@ gegl_chant_string  (window_title, _(""), "window_title",
                     _("Title to be given to output window"))
 gegl_chant_string  (icon_title, _(""), "icon_title",
                     _("Icon to be used for output window"))
-
-gegl_chant_pointer (screen, "", "private")
-gegl_chant_int(w, "", 0, 1000, 0, "private")
-gegl_chant_int(h, "", 0, 1000, 0, "private")
-gegl_chant_int(width, "", 0, 1000, 0, "private")
-gegl_chant_int(height, "", 0, 1000, 0, "private")
-
 #else
 
 #define GEGL_CHANT_TYPE_SINK
@@ -40,6 +33,12 @@ gegl_chant_int(height, "", 0, 1000, 0, "private")
 
 #include "gegl-chant.h"
 #include <SDL.h>
+
+typedef struct {
+  SDL_Surface *screen;
+  gint         width;
+  gint         height;
+} SDLState;
 
 static void
 init_sdl (void)
@@ -59,8 +58,6 @@ init_sdl (void)
       SDL_EnableUNICODE (1);
     }
 }
-
-/*static int instances = 0;*/
 
 static gboolean idle (gpointer data)
 {
@@ -85,49 +82,31 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer   *source;
-  SDL_Surface **sdl_outwin = NULL;      /*op_sym (op, "sdl_outwin");*/
+  SDLState     *state = NULL;
+
+  if(!o->chant_data)
+      o->chant_data = g_new0 (SDLState, 1);
+  state = o->chant_data;
 
   init_sdl ();
+
   if (!handle)
     handle = g_timeout_add (500, idle, NULL);
 
-  if (!o->screen ||
-       o->width  != result->width ||
-       o->height != result->height)
+  if (!state->screen ||
+       state->width  != result->width ||
+       state->height != result->height)
     {
-      if (sdl_outwin)
+      state->screen = SDL_SetVideoMode (result->width, result->height, 32, SDL_SWSURFACE);
+      if (!state->screen)
         {
-          if (o->screen)
-            {
-              SDL_FreeSurface (o->screen);
-              o->screen = NULL;
-            }
-
-          o->screen = SDL_CreateRGBSurface (SDL_SWSURFACE,
-                                            result->width, result->height, 32, 0xff0000,
-                                            0x00ff00, 0x0000ff, 0x000000);
-
-          *sdl_outwin = o->screen;
-          if (!o->screen)
-            {
-              fprintf (stderr, "CreateRGBSurface failed: %s\n",
-                       SDL_GetError ());
-              return -1;
-            }
+          fprintf (stderr, "Unable to set SDL mode: %s\n",
+                   SDL_GetError ());
+          return -1;
         }
-      else
-        {
-          o->screen = SDL_SetVideoMode (result->width, result->height, 32, SDL_SWSURFACE);
-          if (!o->screen)
-            {
-              fprintf (stderr, "Unable to set SDL mode: %s\n",
-                       SDL_GetError ());
-              return -1;
-            }
-        }
-      o->width  = result->width ;
-      o->height = result->height;
+
+      state->width  = result->width ;
+      state->height = result->height;
     }
 
   /*
@@ -135,8 +114,7 @@ process (GeglOperation       *operation,
    * in B'G'R'A, perhaps babl should have been able to figure this out ito?
    *
    */
-  source = gegl_buffer_create_sub_buffer (input, result);
-  gegl_buffer_get (source,
+  gegl_buffer_get (input,
        NULL,
        1.0,
        babl_format_new (babl_model ("R'G'B'A"),
@@ -146,30 +124,44 @@ process (GeglOperation       *operation,
                         babl_component ("R'"),
                         babl_component ("A"),
                         NULL),
-       ((SDL_Surface*)o->screen)->pixels, GEGL_AUTO_ROWSTRIDE,
+       state->screen->pixels, GEGL_AUTO_ROWSTRIDE,
        GEGL_ABYSS_NONE);
-  g_object_unref (source);
 
-  if (!sdl_outwin)
-    {
-      SDL_UpdateRect (o->screen, 0, 0, 0, 0);
-      SDL_WM_SetCaption (o->window_title, o->icon_title);
-    }
+  SDL_UpdateRect (state->screen, 0, 0, 0, 0);
+  SDL_WM_SetCaption (o->window_title, o->icon_title);
 
-  o->width = result->width ;
-  o->height = result->height;
+  state->width = result->width ;
+  state->height = result->height;
 
   return  TRUE;
 }
 
 static void
+finalize (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->chant_data)
+    {
+      g_free (o->chant_data);
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+}
+
+static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
+  GObjectClass           *object_class;
   GeglOperationClass     *operation_class;
   GeglOperationSinkClass *sink_class;
 
+  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
+
+  object_class->finalize = finalize;
 
   sink_class->process = process;
   sink_class->needs_full = TRUE;
