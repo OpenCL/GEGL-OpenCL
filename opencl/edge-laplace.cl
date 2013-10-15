@@ -46,10 +46,10 @@ kernel void pre_edgelaplace (global float4 *in,
     int gidx = get_global_id(0);
     int gidy = get_global_id(1);
 
-    int src_width  = get_global_size(0) + LAPLACE_RADIUS * 2;
+    int src_width  = get_global_size(0) + LAPLACE_RADIUS;
     int src_height = get_global_size(1);
 
-    int i = gidx + LAPLACE_RADIUS, j = gidy + LAPLACE_RADIUS;
+    int i = gidx + LAPLACE_RADIUS - 1, j = gidy + LAPLACE_RADIUS - 1;
     int gid1d = i + j * src_width;
 
     float pix_fl[4] = {

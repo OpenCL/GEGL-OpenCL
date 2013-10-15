@@ -286,7 +286,8 @@ cl_edge_laplace (cl_mem                in_tex,
                  gint                  radius)
 {
   cl_int cl_err = 0;
-  size_t global_ws[2];
+  size_t global_ws_in[2];
+  size_t global_ws_aux[2];
 
   if (!cl_data)
     {
@@ -295,8 +296,11 @@ cl_edge_laplace (cl_mem                in_tex,
     }
   if (!cl_data) return TRUE;
 
-  global_ws[0] = roi->width;
-  global_ws[1] = roi->height;
+  global_ws_in[0] = roi->width  + LAPLACE_RADIUS;
+  global_ws_in[1] = roi->height + LAPLACE_RADIUS;
+
+  global_ws_aux[0] = roi->width;
+  global_ws_aux[1] = roi->height;
 
   cl_err = gegl_clSetKernelArg (cl_data->kernel[0], 0, sizeof (cl_mem),
                                 (void*) &in_tex);
@@ -307,7 +311,7 @@ cl_edge_laplace (cl_mem                in_tex,
 
   cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
                                         cl_data->kernel[0], 2,
-                                        NULL, global_ws, NULL,
+                                        NULL, global_ws_in, NULL,
                                         0, NULL, NULL);
   CL_CHECK;
 
@@ -320,7 +324,7 @@ cl_edge_laplace (cl_mem                in_tex,
 
   cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
                                         cl_data->kernel[1], 2,
-                                        NULL, global_ws, NULL,
+                                        NULL, global_ws_aux, NULL,
                                         0, NULL, NULL);
   CL_CHECK;
 
@@ -363,10 +367,10 @@ cl_process (GeglOperation       *operation,
                                              result,
                                              in_format,
                                              GEGL_CL_BUFFER_AUX,
-                                             op_area->left,
-                                             op_area->right,
-                                             op_area->top,
-                                             op_area->bottom,
+                                             op_area->left   - 1,
+                                             op_area->right  - 1,
+                                             op_area->top    - 1,
+                                             op_area->bottom - 1,
                                              GEGL_ABYSS_NONE);
 
   while (gegl_buffer_cl_iterator_next (i, &err))
