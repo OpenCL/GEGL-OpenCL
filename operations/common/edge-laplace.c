@@ -249,7 +249,7 @@ edge_laplace (GeglBuffer          *src,
                         src_pix[c     - src_width * 4] < 0.0f ||
                         src_pix[c - 4 + src_width * 4] < 0.0f ||
                         src_pix[c + 4 + src_width * 4] < 0.0f ||
-                        src_pix[      + src_width * 4] < 0.0f ||
+                        src_pix[c     + src_width * 4] < 0.0f ||
                         src_pix[c - 4                ] < 0.0f ||
                         src_pix[c + 4                ] < 0.0f)) ?
               current : 0.0f;
