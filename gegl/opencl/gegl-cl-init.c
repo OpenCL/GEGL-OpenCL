@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2012 Victor Oliveira (victormatheus@gmail.com)
+ *           2013 Daniel Sabo
  */
 
 /* OpenCL Initialization
@@ -130,6 +131,7 @@ typedef struct
 {
   gboolean         is_accelerated;
   gboolean         is_loaded;
+  gboolean         have_opengl;
   gboolean         hard_disable;
   gboolean         enable_profiling;
   cl_context       ctx;
@@ -156,6 +158,12 @@ gboolean
 gegl_cl_is_accelerated (void)
 {
   return cl_state.is_accelerated;
+}
+
+gboolean
+gegl_cl_has_gl_sharing (void)
+{
+  return cl_state.have_opengl && gegl_cl_is_accelerated ();
 }
 
 void
@@ -221,28 +229,30 @@ gegl_cl_set_profiling (gboolean enable)
   cl_state.enable_profiling = enable;
 }
 
-gboolean
-gegl_cl_has_extension (const char *extension_name)
+static gboolean
+gegl_cl_device_has_extension (cl_device_id device, const char *extension_name)
 {
-  size_t     string_len;
+  cl_int     cl_err;
+  size_t     string_len = 0;
   gchar     *device_ext_string = NULL;
   gchar    **extensions;
   gboolean   found = FALSE;
 
-  if (!gegl_cl_is_accelerated () || !extension_name)
+  if (!extension_name)
     return FALSE;
 
-  gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_EXTENSIONS,
-                        0, NULL, &string_len);
+  cl_err= gegl_clGetDeviceInfo (device, CL_DEVICE_EXTENSIONS,
+                                0, NULL, &string_len);
+  CL_CHECK_ONLY (cl_err);
 
   if (!string_len)
     return FALSE;
 
-  device_ext_string = g_malloc (string_len);
+  device_ext_string = g_malloc0 (string_len);
 
-
-  gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_EXTENSIONS,
-                        string_len, device_ext_string, NULL);
+  cl_err = gegl_clGetDeviceInfo (device, CL_DEVICE_EXTENSIONS,
+                                 string_len, device_ext_string, NULL);
+  CL_CHECK_ONLY (cl_err);
 
   extensions = g_strsplit (device_ext_string, " ", 0);
 
@@ -256,6 +266,15 @@ gegl_cl_has_extension (const char *extension_name)
   g_strfreev (extensions);
 
   return found;
+}
+
+gboolean
+gegl_cl_has_extension (const char *extension_name)
+{
+  if (!gegl_cl_is_accelerated () || !extension_name)
+    return FALSE;
+
+  return gegl_cl_device_has_extension (cl_state.device, extension_name);
 }
 
 #ifdef G_OS_WIN32
@@ -273,8 +292,10 @@ if ((gegl_##func = (t_##func) GetProcAddress(module, #func)) == NULL)           
 #else
 
 #ifdef __APPLE__
+#define GL_LIBRARY_NAME "/System/Library/Frameworks/OpenGL.framework/Versions/Current/OpenGL"
 #define CL_LIBRARY_NAME "/System/Library/Frameworks/OpenCL.framework/Versions/Current/OpenCL"
 #else
+#define GL_LIBRARY_NAME "libGL.so.1"
 #define CL_LIBRARY_NAME "libOpenCL.so"
 #endif
 
@@ -298,8 +319,278 @@ if (gegl_##func == NULL)                                                        
 
 #endif
 
+#if defined(__APPLE__)
+typedef struct _CGLContextObject *CGLContextObj;
+typedef struct CGLShareGroupRec  *CGLShareGroupObj;
+
+typedef CGLContextObj (*t_CGLGetCurrentContext) (void);
+typedef CGLShareGroupObj (*t_CGLGetShareGroup) (CGLContextObj);
+
+t_CGLGetCurrentContext gegl_CGLGetCurrentContext;
+t_CGLGetShareGroup gegl_CGLGetShareGroup;
+
+/* FIXME: Move this to cl_gl_ext.h */
+#define CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE        0x10000000
+#elif defined(G_OS_WIN32)
+/* pass */
+#else
+typedef struct _XDisplay Display;
+typedef struct __GLXcontextRec *GLXContext;
+
+
+typedef GLXContext (*t_glXGetCurrentContext) (void);
+typedef Display * (*t_glXGetCurrentDisplay) (void);
+
+t_glXGetCurrentContext gegl_glXGetCurrentContext;
+t_glXGetCurrentDisplay gegl_glXGetCurrentDisplay;
+#endif
+
+static gboolean
+gegl_cl_init_get_gl_sharing_props (cl_context_properties   gl_contex_props[64],
+                                   GError                **error)
+{
+  static gboolean gl_loaded = FALSE;
+
+  #if defined(__APPLE__)
+  CGLContextObj kCGLContext;
+  CGLShareGroupObj kCGLShareGroup;
+
+  if (!gl_loaded)
+    {
+      GModule *module = g_module_open (GL_LIBRARY_NAME, G_MODULE_BIND_LAZY);
+
+      if (!g_module_symbol (module, "CGLGetCurrentContext", (gpointer *)&gegl_CGLGetCurrentContext))
+        printf ("Failed to load CGLGetCurrentContext");
+      if (!g_module_symbol (module, "CGLGetShareGroup", (gpointer *)&gegl_CGLGetShareGroup))
+        printf ("Failed to load CGLGetShareGroup");
+
+      gl_loaded = TRUE;
+    }
+
+  kCGLContext = gegl_CGLGetCurrentContext ();
+  kCGLShareGroup = gegl_CGLGetShareGroup (kCGLContext);
+
+  gl_contex_props[0] = CL_CONTEXT_PROPERTY_USE_CGL_SHAREGROUP_APPLE;
+  gl_contex_props[1] = (cl_context_properties)kCGLShareGroup;
+  gl_contex_props[2] = 0;
+  return TRUE;
+
+  #elif defined(G_OS_WIN32)
+
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "GL sharing not supported on WIN32");
+  g_set_error (error, GEGL_OPENCL_ERROR, 0, "GL sharing not supported on WIN32");
+
+  return FALSE;
+
+  #else /* Some kind of unix */
+  GLXContext  context;
+  Display    *display;
+
+  if (!gl_loaded)
+    {
+      GModule *module = g_module_open (GL_LIBRARY_NAME, G_MODULE_BIND_LAZY);
+
+      if (!g_module_symbol (module, "glXGetCurrentContext", (gpointer *)&gegl_glXGetCurrentContext))
+        printf ("Failed to load glXGetCurrentContext");
+      if (!g_module_symbol (module, "glXGetCurrentDisplay", (gpointer *)&gegl_glXGetCurrentDisplay))
+        printf ("Failed to load glXGetCurrentDisplay");
+
+      gl_loaded = TRUE;
+    }
+
+  context = gegl_glXGetCurrentContext();
+  display = gegl_glXGetCurrentDisplay();
+  if (!context || !display)
+    {
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not get a valid OpenGL context");
+      g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not get a valid OpenGL context");
+      return FALSE;
+    }
+
+  gl_contex_props[0] = CL_GL_CONTEXT_KHR;
+  gl_contex_props[1] = (cl_context_properties)context;
+  gl_contex_props[2] = CL_GLX_DISPLAY_KHR;
+  gl_contex_props[3] = (cl_context_properties)display;
+  gl_contex_props[4] = 0;
+  return TRUE;
+
+  #endif
+}
+
+static gboolean
+gegl_cl_init_common (cl_device_type          requested_device_type,
+                     gboolean                gl_sharing,
+                     GError                **error);
+
+gboolean
+gegl_cl_init_with_opengl  (GError **error)
+{
+  return gegl_cl_init_common (CL_DEVICE_TYPE_DEFAULT, TRUE, error);
+}
+
 gboolean
 gegl_cl_init (GError **error)
+{
+  return gegl_cl_init_common (CL_DEVICE_TYPE_DEFAULT, FALSE, error);
+}
+
+static gboolean
+gegl_cl_init_load_functions (GError **error)
+{
+#ifdef G_OS_WIN32
+  HINSTANCE module = LoadLibrary ("OpenCL.dll");
+#else
+  GModule *module = g_module_open (CL_LIBRARY_NAME, G_MODULE_BIND_LAZY);
+#endif
+
+  if (!module)
+    {
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Unable to load OpenCL library");
+      g_set_error (error, GEGL_OPENCL_ERROR, 0, "Unable to load OpenCL library");
+      return FALSE;
+    }
+
+  CL_LOAD_FUNCTION (clGetPlatformIDs)
+  CL_LOAD_FUNCTION (clGetPlatformInfo)
+  CL_LOAD_FUNCTION (clGetDeviceIDs)
+  CL_LOAD_FUNCTION (clGetDeviceInfo)
+
+  CL_LOAD_FUNCTION (clCreateContext)
+  CL_LOAD_FUNCTION (clCreateContextFromType)
+  CL_LOAD_FUNCTION (clCreateCommandQueue)
+  CL_LOAD_FUNCTION (clCreateProgramWithSource)
+  CL_LOAD_FUNCTION (clBuildProgram)
+  CL_LOAD_FUNCTION (clGetProgramBuildInfo)
+
+  CL_LOAD_FUNCTION (clCreateKernel)
+  CL_LOAD_FUNCTION (clSetKernelArg)
+  CL_LOAD_FUNCTION (clGetKernelWorkGroupInfo)
+  CL_LOAD_FUNCTION (clCreateBuffer)
+  CL_LOAD_FUNCTION (clEnqueueWriteBuffer)
+  CL_LOAD_FUNCTION (clEnqueueReadBuffer)
+  CL_LOAD_FUNCTION (clEnqueueCopyBuffer)
+  CL_LOAD_FUNCTION (clEnqueueReadBufferRect)
+  CL_LOAD_FUNCTION (clEnqueueWriteBufferRect)
+  CL_LOAD_FUNCTION (clEnqueueCopyBufferRect)
+  CL_LOAD_FUNCTION (clCreateImage2D)
+  CL_LOAD_FUNCTION (clCreateImage3D)
+  CL_LOAD_FUNCTION (clEnqueueReadImage)
+  CL_LOAD_FUNCTION (clEnqueueWriteImage)
+  CL_LOAD_FUNCTION (clEnqueueCopyImage)
+  CL_LOAD_FUNCTION (clEnqueueCopyImageToBuffer)
+  CL_LOAD_FUNCTION (clEnqueueCopyBufferToImage)
+
+  CL_LOAD_FUNCTION (clEnqueueMapBuffer)
+  CL_LOAD_FUNCTION (clEnqueueMapImage)
+  CL_LOAD_FUNCTION (clEnqueueUnmapMemObject)
+
+  CL_LOAD_FUNCTION (clEnqueueNDRangeKernel)
+  CL_LOAD_FUNCTION (clEnqueueBarrier)
+  CL_LOAD_FUNCTION (clFinish)
+
+  CL_LOAD_FUNCTION (clGetEventProfilingInfo)
+
+  CL_LOAD_FUNCTION (clReleaseKernel)
+  CL_LOAD_FUNCTION (clReleaseProgram)
+  CL_LOAD_FUNCTION (clReleaseCommandQueue)
+  CL_LOAD_FUNCTION (clReleaseContext)
+  CL_LOAD_FUNCTION (clReleaseMemObject)
+
+  CL_LOAD_FUNCTION (clCreateFromGLTexture2D)
+  CL_LOAD_FUNCTION (clEnqueueAcquireGLObjects)
+  CL_LOAD_FUNCTION (clEnqueueReleaseGLObjects)
+
+  return TRUE;
+}
+
+static gboolean
+gegl_cl_init_load_device_info (cl_platform_id   platform,
+                               cl_device_id     device,
+                               cl_device_type   requested_device_type,
+                               GError         **error)
+{
+  cl_int err = CL_SUCCESS;
+
+  if (device)
+    {
+      /* Get platform from device */
+      err = gegl_clGetDeviceInfo (device, CL_DEVICE_PLATFORM, sizeof (cl_platform_id), &platform, NULL);
+      if (err != CL_SUCCESS)
+        {
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create platform");
+          g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create platform");
+          return FALSE;
+        }
+    }
+  else
+    {
+      /* Find the default device */
+      if (!platform)
+        {
+          err = gegl_clGetPlatformIDs (1, &platform, NULL);
+          if (err != CL_SUCCESS)
+            {
+              GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create platform");
+              g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create platform");
+              return FALSE;
+            }
+        }
+
+      if (!requested_device_type)
+        requested_device_type = CL_DEVICE_TYPE_DEFAULT;
+
+      err = gegl_clGetDeviceIDs (platform, requested_device_type, 1, &device, NULL);
+      if (err != CL_SUCCESS)
+        {
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create device: %s", gegl_cl_errstring (err));
+          g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create device: %s", gegl_cl_errstring (err));
+          return FALSE;
+        }
+    }
+
+  cl_state.platform = platform;
+  cl_state.device = device;
+
+  gegl_clGetPlatformInfo (platform, CL_PLATFORM_NAME,       sizeof(cl_state.platform_name),    cl_state.platform_name,    NULL);
+  gegl_clGetPlatformInfo (platform, CL_PLATFORM_VERSION,    sizeof(cl_state.platform_version), cl_state.platform_version, NULL);
+  gegl_clGetPlatformInfo (platform, CL_PLATFORM_EXTENSIONS, sizeof(cl_state.platform_ext),     cl_state.platform_ext,     NULL);
+
+  gegl_clGetDeviceInfo (device, CL_DEVICE_NAME, sizeof(cl_state.device_name), cl_state.device_name, NULL);
+
+  gegl_clGetDeviceInfo (device, CL_DEVICE_IMAGE_SUPPORT,      sizeof(cl_bool),  &cl_state.image_support,    NULL);
+  gegl_clGetDeviceInfo (device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &cl_state.max_mem_alloc,    NULL);
+  gegl_clGetDeviceInfo (device, CL_DEVICE_LOCAL_MEM_SIZE,     sizeof(cl_ulong), &cl_state.local_mem_size,   NULL);
+
+  cl_state.iter_width  = 4096;
+  cl_state.iter_height = 4096;
+
+  while (cl_state.iter_width * cl_state.iter_height * 16 > cl_state.max_mem_alloc)
+    {
+      if (cl_state.iter_height < cl_state.iter_width)
+        cl_state.iter_width  /= 2;
+      else
+        cl_state.iter_height /= 2;
+    }
+
+  cl_state.iter_width  /= 2;
+
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Platform Name: %s",       cl_state.platform_name);
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Version: %s",             cl_state.platform_version);
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Extensions: %s",          cl_state.platform_ext);
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Default Device Name: %s", cl_state.device_name);
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Max Alloc: %lu bytes",    (unsigned long)cl_state.max_mem_alloc);
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Local Mem: %lu bytes",    (unsigned long)cl_state.local_mem_size);
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Iteration size: (%lu, %lu)",
+                                (long unsigned int)cl_state.iter_width,
+                                (long unsigned int)cl_state.iter_height);
+
+  return TRUE;
+}
+
+static gboolean
+gegl_cl_init_common (cl_device_type          requested_device_type,
+                     gboolean                gl_sharing,
+                     GError                **error)
 {
   cl_int err;
 
@@ -312,119 +603,78 @@ gegl_cl_init (GError **error)
 
   if (!cl_state.is_loaded)
     {
-      #ifdef G_OS_WIN32
-        HINSTANCE module;
-      #else
-        GModule *module;
-      #endif
+      cl_command_queue_properties command_queue_flags = 0;
+      cl_context ctx = NULL;
 
-      #ifdef G_OS_WIN32
-        module = LoadLibrary ("OpenCL.dll");
-      #else
-        module = g_module_open (CL_LIBRARY_NAME, G_MODULE_BIND_LAZY);
-      #endif
+      if (!gegl_cl_init_load_functions (error))
+        return FALSE;
 
-      if (!module)
+      if (gl_sharing)
         {
-          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Unable to load OpenCL library");
-          g_set_error (error, GEGL_OPENCL_ERROR, 0, "Unable to load OpenCL library");
-          return FALSE;
+#ifdef __APPLE__
+          cl_device_id sharing_device;
+#endif
+          cl_context_properties gl_contex_props[64];
+
+          if (!gegl_cl_init_get_gl_sharing_props (gl_contex_props, error))
+            return FALSE;
+
+#ifdef __APPLE__
+          /* Create context */
+          ctx = gegl_clCreateContext (gl_contex_props, 0, 0, NULL, 0, &err);
+
+          if (err != CL_SUCCESS)
+            {
+              GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create context: %s", gegl_cl_errstring (err));
+              g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create context: %s", gegl_cl_errstring (err));
+              return FALSE;
+            }
+
+          /* Get device */
+          clGetContextInfo (ctx, CL_CONTEXT_DEVICES, sizeof(cl_device_id), &sharing_device, NULL);
+
+          if (err != CL_SUCCESS)
+            {
+              clReleaseContext (ctx);
+              GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not get context's device: %s", gegl_cl_errstring (err));
+              g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not get context's device: %s", gegl_cl_errstring (err));
+              return FALSE;
+            }
+
+          if (!gegl_cl_init_load_device_info (NULL, sharing_device, 0, error))
+            {
+              clReleaseContext (ctx);
+              return FALSE;
+            }
+#else
+          /* Get default GPU device */
+          if (!gegl_cl_init_load_device_info (NULL, NULL, CL_DEVICE_TYPE_GPU, error))
+            return FALSE;
+
+          if (!gegl_cl_device_has_extension (cl_state.device, "cl_khr_gl_sharing"))
+            {
+              GEGL_NOTE (GEGL_DEBUG_OPENCL, "Device does not support cl_khr_gl_sharing");
+              g_set_error (error, GEGL_OPENCL_ERROR, 0, "Device does not support cl_khr_gl_sharing");
+              return FALSE;
+            }
+
+          /* Create context */
+          ctx = gegl_clCreateContext (gl_contex_props, 1, &cl_state.device, NULL, NULL, &err);
+
+          if (err != CL_SUCCESS)
+            {
+              GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create context: %s", gegl_cl_errstring (err));
+              g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create context: %s", gegl_cl_errstring (err));
+              return FALSE;
+            }
+#endif
         }
-
-      CL_LOAD_FUNCTION (clGetPlatformIDs)
-      CL_LOAD_FUNCTION (clGetPlatformInfo)
-      CL_LOAD_FUNCTION (clGetDeviceIDs)
-      CL_LOAD_FUNCTION (clGetDeviceInfo)
-
-      CL_LOAD_FUNCTION (clCreateContext)
-      CL_LOAD_FUNCTION (clCreateContextFromType)
-      CL_LOAD_FUNCTION (clCreateCommandQueue)
-      CL_LOAD_FUNCTION (clCreateProgramWithSource)
-      CL_LOAD_FUNCTION (clBuildProgram)
-      CL_LOAD_FUNCTION (clGetProgramBuildInfo)
-
-      CL_LOAD_FUNCTION (clCreateKernel)
-      CL_LOAD_FUNCTION (clSetKernelArg)
-      CL_LOAD_FUNCTION (clGetKernelWorkGroupInfo)
-      CL_LOAD_FUNCTION (clCreateBuffer)
-      CL_LOAD_FUNCTION (clEnqueueWriteBuffer)
-      CL_LOAD_FUNCTION (clEnqueueReadBuffer)
-      CL_LOAD_FUNCTION (clEnqueueCopyBuffer)
-      CL_LOAD_FUNCTION (clEnqueueReadBufferRect)
-      CL_LOAD_FUNCTION (clEnqueueWriteBufferRect)
-      CL_LOAD_FUNCTION (clEnqueueCopyBufferRect)
-      CL_LOAD_FUNCTION (clCreateImage2D)
-      CL_LOAD_FUNCTION (clCreateImage3D)
-      CL_LOAD_FUNCTION (clEnqueueReadImage)
-      CL_LOAD_FUNCTION (clEnqueueWriteImage)
-      CL_LOAD_FUNCTION (clEnqueueCopyImage)
-      CL_LOAD_FUNCTION (clEnqueueCopyImageToBuffer)
-      CL_LOAD_FUNCTION (clEnqueueCopyBufferToImage)
-
-      CL_LOAD_FUNCTION (clEnqueueMapBuffer)
-      CL_LOAD_FUNCTION (clEnqueueMapImage)
-      CL_LOAD_FUNCTION (clEnqueueUnmapMemObject)
-
-      CL_LOAD_FUNCTION (clEnqueueNDRangeKernel)
-      CL_LOAD_FUNCTION (clEnqueueBarrier)
-      CL_LOAD_FUNCTION (clFinish)
-
-      CL_LOAD_FUNCTION (clGetEventProfilingInfo)
-
-      CL_LOAD_FUNCTION (clReleaseKernel)
-      CL_LOAD_FUNCTION (clReleaseProgram)
-      CL_LOAD_FUNCTION (clReleaseCommandQueue)
-      CL_LOAD_FUNCTION (clReleaseContext)
-      CL_LOAD_FUNCTION (clReleaseMemObject)
-
-      err = gegl_clGetPlatformIDs (1, &cl_state.platform, NULL);
-      if(err != CL_SUCCESS)
+      else
         {
-          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create platform");
-          g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create platform");
-          return FALSE;
+          if (!gegl_cl_init_load_device_info (NULL, NULL, requested_device_type, error))
+            return FALSE;
+          ctx = gegl_clCreateContext (NULL, 1, &cl_state.device, NULL, NULL, &err);
         }
-
-      gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_NAME,       sizeof(cl_state.platform_name),    cl_state.platform_name,    NULL);
-      gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_VERSION,    sizeof(cl_state.platform_version), cl_state.platform_version, NULL);
-      gegl_clGetPlatformInfo (cl_state.platform, CL_PLATFORM_EXTENSIONS, sizeof(cl_state.platform_ext),     cl_state.platform_ext,     NULL);
-
-      err = gegl_clGetDeviceIDs (cl_state.platform, CL_DEVICE_TYPE_DEFAULT, 1, &cl_state.device, NULL);
-      if(err != CL_SUCCESS)
-        {
-          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create device: %s", gegl_cl_errstring(err));
-          g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create device: %s", gegl_cl_errstring(err));
-          return FALSE;
-        }
-
-      gegl_clGetDeviceInfo(cl_state.device, CL_DEVICE_NAME, sizeof(cl_state.device_name), cl_state.device_name, NULL);
-
-      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_IMAGE_SUPPORT,      sizeof(cl_bool),  &cl_state.image_support,    NULL);
-      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_MAX_MEM_ALLOC_SIZE, sizeof(cl_ulong), &cl_state.max_mem_alloc,    NULL);
-      gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_LOCAL_MEM_SIZE,     sizeof(cl_ulong), &cl_state.local_mem_size,   NULL);
-
-      cl_state.iter_width  = 4096;
-      cl_state.iter_height = 4096;
-
-      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Platform Name:%s",       cl_state.platform_name);
-      GEGL_NOTE (GEGL_DEBUG_OPENCL, " Version:%s",            cl_state.platform_version);
-      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Extensions:%s",          cl_state.platform_ext);
-      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Default Device Name:%s", cl_state.device_name);
-      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Max Alloc: %lu bytes",   (unsigned long)cl_state.max_mem_alloc);
-      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Local Mem: %lu bytes",   (unsigned long)cl_state.local_mem_size);
-
-      while (cl_state.iter_width * cl_state.iter_height * 16 > cl_state.max_mem_alloc)
-        {
-          if (cl_state.iter_height < cl_state.iter_width)
-            cl_state.iter_width  /= 2;
-          else
-            cl_state.iter_height /= 2;
-        }
-      cl_state.iter_width  /= 2;
-
-      GEGL_NOTE (GEGL_DEBUG_OPENCL, "Iteration size: (%lu, %lu)",
-                                    (long unsigned int)cl_state.iter_width,
-                                    (long unsigned int)cl_state.iter_height);
 
       if (cl_state.image_support)
         {
@@ -432,40 +682,38 @@ gegl_cl_init (GError **error)
         }
       else
         {
+          if (ctx)
+            gegl_clReleaseContext (ctx);
+
           GEGL_NOTE (GEGL_DEBUG_OPENCL, "Image Support Error");
           g_set_error (error, GEGL_OPENCL_ERROR, 0, "Image Support Error");
           return FALSE;
         }
 
-      cl_state.ctx = gegl_clCreateContext(0, 1, &cl_state.device, NULL, NULL, &err);
-      if(err != CL_SUCCESS)
-        {
-          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create context");
-          g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create context");
-          return FALSE;
-        }
+      cl_state.ctx = ctx;
 
-      {
-        cl_command_queue_properties command_queue_flags = 0;
-        if (cl_state.enable_profiling)
-          command_queue_flags |= CL_QUEUE_PROFILING_ENABLE;
-        cl_state.cq = gegl_clCreateCommandQueue(cl_state.ctx, cl_state.device, command_queue_flags, &err);
-      }
+      command_queue_flags = 0;
+      if (cl_state.enable_profiling)
+        command_queue_flags |= CL_QUEUE_PROFILING_ENABLE;
 
-      if(err != CL_SUCCESS)
+      cl_state.cq = gegl_clCreateCommandQueue (cl_state.ctx, cl_state.device, command_queue_flags, &err);
+
+      if (err != CL_SUCCESS)
         {
           GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create command queue");
           g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create command queue");
           return FALSE;
         }
 
+      if (gl_sharing)
+        cl_state.have_opengl = TRUE;
       cl_state.is_accelerated = TRUE;
       cl_state.is_loaded = TRUE;
 
       /* XXX: this dict is being leaked */
       cl_program_hash = g_hash_table_new (g_str_hash, g_str_equal);
 
-      gegl_cl_color_compile_kernels();
+      gegl_cl_color_compile_kernels ();
 
       GEGL_NOTE (GEGL_DEBUG_OPENCL, "OK");
     }

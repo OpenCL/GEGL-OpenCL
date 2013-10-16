@@ -25,7 +25,11 @@ const char *      gegl_cl_errstring(cl_int err);
 
 gboolean          gegl_cl_init (GError **error);
 
+gboolean          gegl_cl_init_with_opengl (GError **error);
+
 gboolean          gegl_cl_is_accelerated (void);
+
+gboolean          gegl_cl_has_gl_sharing (void);
 
 void              gegl_cl_disable (void);
 
@@ -107,6 +111,10 @@ t_clReleaseCommandQueue gegl_clReleaseCommandQueue = NULL;
 t_clReleaseContext      gegl_clReleaseContext      = NULL;
 t_clReleaseMemObject    gegl_clReleaseMemObject    = NULL;
 
+t_clCreateFromGLTexture2D    gegl_clCreateFromGLTexture2D = NULL;
+t_clEnqueueAcquireGLObjects  gegl_clEnqueueAcquireGLObjects = NULL;
+t_clEnqueueReleaseGLObjects  gegl_clEnqueueReleaseGLObjects = NULL;
+
 #else
 
 extern t_clGetPlatformIDs  gegl_clGetPlatformIDs;
@@ -152,6 +160,10 @@ extern t_clReleaseProgram      gegl_clReleaseProgram;
 extern t_clReleaseCommandQueue gegl_clReleaseCommandQueue;
 extern t_clReleaseContext      gegl_clReleaseContext;
 extern t_clReleaseMemObject    gegl_clReleaseMemObject;
+
+extern t_clCreateFromGLTexture2D gegl_clCreateFromGLTexture2D;
+extern t_clEnqueueAcquireGLObjects gegl_clEnqueueAcquireGLObjects;
+extern t_clEnqueueReleaseGLObjects gegl_clEnqueueReleaseGLObjects;
 
 #endif
 

@@ -89,4 +89,18 @@ typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clReleaseCommandQueue    
 typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clReleaseContext         ) (cl_context);
 typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clReleaseMemObject       ) (cl_mem);
 
+typedef CL_API_ENTRY cl_mem            (CL_API_CALL *t_clCreateFromGLTexture2D   ) (cl_context, cl_mem_flags, unsigned int, int, unsigned int, cl_int *);
+typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clEnqueueAcquireGLObjects ) (   cl_command_queue command_queue,
+   cl_uint num_objects,
+   const cl_mem *mem_objects,
+   cl_uint num_events_in_wait_list,
+   const cl_event *event_wait_list,
+   cl_event *event);
+typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clEnqueueReleaseGLObjects )  (  cl_command_queue command_queue,
+   cl_uint num_objects,
+   const cl_mem *mem_objects,
+   cl_uint num_events_in_wait_list,
+   const cl_event *event_wait_list,
+   cl_event *event);
+
 #endif /* __GEGL_CL_TYPES_H__ */
