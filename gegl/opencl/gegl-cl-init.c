@@ -392,6 +392,7 @@ gegl_cl_init (GError **error)
           return FALSE;
         }
 
+      cl_state.is_accelerated = TRUE;
       cl_state.is_loaded = TRUE;
 
       /* XXX: this dict is being leaked */
