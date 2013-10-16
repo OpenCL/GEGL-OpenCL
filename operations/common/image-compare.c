@@ -118,7 +118,7 @@ process (GeglOperation       *operation,
                                SQR (data_in1[1] - data_in2[1]) +
                                SQR (data_in1[2] - data_in2[2]));
 
-          gdouble alpha_diff = abs (data_in1[3] - data_in2[3]) * 100.0;
+          gdouble alpha_diff = fabs (data_in1[3] - data_in2[3]) * 100.0;
 
           diff = MAX (diff, alpha_diff);
 
