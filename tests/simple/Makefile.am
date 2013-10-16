@@ -17,6 +17,7 @@ noinst_PROGRAMS =			\
 	test-gegl-tile			\
 	test-misc			\
 	test-node-properties		\
+	test-opencl-colors		\
 	test-path			\
 	test-proxynop-processing	\
 	test-scaled-blit		\
