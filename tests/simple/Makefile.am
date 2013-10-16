@@ -5,21 +5,21 @@ TESTS_ENVIRONMENT = \
 	ABS_TOP_SRCDIR=$(top_srcdir)
 
 # The tests
-noinst_PROGRAMS = \
+noinst_PROGRAMS =			\
+	test-buffer-cast		\
+	test-buffer-changes		\
+	test-buffer-extract		\
+	test-buffer-tile-voiding	\
 	test-change-processor-rect	\
-	test-gegl-tile			\
 	test-color-op			\
+	test-format-sensing		\
 	test-gegl-rectangle		\
+	test-gegl-tile			\
 	test-misc			\
 	test-node-properties		\
 	test-path			\
-	test-buffer-extract \
-	test-buffer-cast  \
-	test-buffer-changes \
-	test-buffer-tile-voiding \
-	test-proxynop-processing \
-	test-format-sensing \
-	test-scaled-blit \
+	test-proxynop-processing	\
+	test-scaled-blit		\
 	test-svg-abyss
 
 EXTRA_DIST = test-exp-combine.sh
