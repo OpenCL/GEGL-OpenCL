@@ -91,7 +91,7 @@ gegl_config_get_property (GObject    *gobject,
         break;
 
       case PROP_USE_OPENCL:
-        g_value_set_boolean (value, config->use_opencl);
+        g_value_set_boolean (value, gegl_cl_is_accelerated());
         break;
 
       case PROP_QUEUE_SIZE:

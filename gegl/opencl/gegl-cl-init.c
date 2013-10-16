@@ -36,7 +36,6 @@
 #include "opencl/random.cl.h"
 
 #include "gegl/gegl-debug.h"
-#include "gegl-config.h"
 
 GQuark gegl_opencl_error_quark (void);
 
@@ -155,7 +154,7 @@ static GHashTable *cl_program_hash = NULL;
 gboolean
 gegl_cl_is_accelerated (void)
 {
-  return cl_state.is_accelerated && gegl_config()->use_opencl;
+  return cl_state.is_accelerated;
 }
 
 void

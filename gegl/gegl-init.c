@@ -176,24 +176,25 @@ gegl_config_use_opencl_notify (GObject    *gobject,
                                gpointer    user_data)
 {
   GeglConfig *cfg = GEGL_CONFIG (gobject);
-  gboolean use_opencl = cfg->use_opencl;
 
-  if (use_opencl)
-  {
-    g_signal_handlers_block_by_func (gobject,
+  g_signal_handlers_block_by_func (gobject,
+                                   gegl_config_use_opencl_notify,
+                                   NULL);
+
+  if (cfg->use_opencl)
+    {
+       gegl_cl_init (NULL);
+    }
+  else
+    {
+      gegl_cl_disable ();
+    }
+
+  cfg->use_opencl = gegl_cl_is_accelerated();
+
+  g_signal_handlers_unblock_by_func (gobject,
                                      gegl_config_use_opencl_notify,
                                      NULL);
-
-    use_opencl = gegl_cl_init (NULL);
-
-    g_object_set (gobject,
-                  "use-opencl", use_opencl,
-                  NULL);
-
-    g_signal_handlers_unblock_by_func (gobject,
-                                       gegl_config_use_opencl_notify,
-                                       NULL);
-  }
 }
 
 static void
