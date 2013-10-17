@@ -24,6 +24,7 @@
 
 #define SUCCESS  0
 #define FAILURE -1
+#define SKIP     77
 
 static gboolean
 test_opencl_conversion (const char *in_format_name,
@@ -70,7 +71,11 @@ int main(int argc, char *argv[])
   gegl_init (&argc, &argv);
 
   if (!gegl_cl_is_accelerated())
-    printf ("OpenCL disabled: SKIP");
+    {
+      printf ("OpenCL disabled, skipping tests\n");
+      gegl_exit ();
+      return SKIP;
+    }
   else
     {
       RUN_TEST ("RGBA float", "RGBA float", GEGL_CL_COLOR_EQUAL)

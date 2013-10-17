@@ -6,7 +6,7 @@ abs_top_builddir=$ABS_TOP_BUILDDIR
 
 if [ ! -f $abs_top_builddir/tools/exp_combine ]; then
   echo "Skipping test-exp-combine due to lack of exp_combine executable"
-  failure=0
+  exit 77
 else
   $abs_top_builddir/tools/exp_combine                              \
           $abs_top_builddir/tests/simple/test-exp-combine.hdr      \
