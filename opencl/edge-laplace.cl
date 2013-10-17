@@ -40,54 +40,51 @@ void minmax(float x1, float x2, float x3,
         *max_result = fmax(max2, x5);
 }
 
+float4 get_pix(global float4 *in, int x, int y, int rowstride)
+{
+    int idx = x + y * rowstride;
+    return in[idx];
+}
+
 kernel void pre_edgelaplace (global float4 *in,
                              global float4 *out)
 {
     int gidx = get_global_id(0);
     int gidy = get_global_id(1);
 
-    int src_width  = get_global_size(0) + LAPLACE_RADIUS;
-    int src_height = get_global_size(1);
+    int src_width  = get_global_size(0) + 2;
+    int src_height = get_global_size(1) + 2;
 
-    int i = gidx + LAPLACE_RADIUS - 1, j = gidy + LAPLACE_RADIUS - 1;
-    int gid1d = i + j * src_width;
+    int i = gidx + 1, j = gidy + 1;
 
-    float pix_fl[4] = {
-        in[gid1d - 1 - src_width].x, in[gid1d - 1 - src_width].y,
-        in[gid1d - 1 - src_width].z, in[gid1d - 1 - src_width].w
-    };
-    float pix_fm[4] = {
-        in[gid1d     - src_width].x, in[gid1d     - src_width].y,
-        in[gid1d     - src_width].z, in[gid1d     - src_width].w
-    };
-    float pix_fr[4] = {
-        in[gid1d + 1 - src_width].x, in[gid1d + 1 - src_width].y,
-        in[gid1d + 1 - src_width].z, in[gid1d + 1 - src_width].w
-    };
-    float pix_ml[4] = {
-        in[gid1d - 1            ].x, in[gid1d - 1            ].y,
-        in[gid1d - 1            ].z, in[gid1d - 1            ].w
-    };
-    float pix_mm[4] = {
-        in[gid1d                ].x, in[gid1d                ].y,
-        in[gid1d                ].z, in[gid1d                ].w
-    };
-    float pix_mr[4] = {
-        in[gid1d + 1            ].x, in[gid1d + 1            ].y,
-        in[gid1d + 1            ].z, in[gid1d + 1            ].w
-    };
-    float pix_bl[4] = {
-        in[gid1d - 1 + src_width].x, in[gid1d - 1 + src_width].y,
-        in[gid1d - 1 + src_width].z, in[gid1d - 1 + src_width].w
-    };
-    float pix_bm[4] = {
-        in[gid1d     + src_width].x, in[gid1d     + src_width].y,
-        in[gid1d     + src_width].z, in[gid1d     + src_width].w
-    };
-    float pix_br[4] = {
-        in[gid1d + 1 + src_width].x, in[gid1d + 1 + src_width].y,
-        in[gid1d + 1 + src_width].z, in[gid1d + 1 + src_width].w
-    };
+    float4 cur_pix;
+
+    cur_pix = get_pix(in, i - 1, j - 1, src_width);
+    float pix_fl[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 0, j - 1, src_width);
+    float pix_fm[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i + 1, j - 1, src_width);
+    float pix_fr[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 1, j - 0, src_width);
+    float pix_ml[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 0, j - 0, src_width);
+    float pix_mm[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i + 1, j - 0, src_width);
+    float pix_mr[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 1, j + 1, src_width);
+    float pix_bl[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 0, j + 1, src_width);
+    float pix_bm[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i + 1, j + 1, src_width);
+    float pix_br[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
 
     int c;
     float minval, maxval;
@@ -107,7 +104,7 @@ kernel void pre_edgelaplace (global float4 *in,
     }
     gradient[3] = pix_mm[3];
 
-    out[gid1d] = (float4)
+    out[gidx + gidy * get_global_size(0)] = (float4)
         (gradient[0], gradient[1], gradient[2], gradient[3]);
 }
 
@@ -117,48 +114,39 @@ kernel void knl_edgelaplace (global float4 *in,
     int gidx = get_global_id(0);
     int gidy = get_global_id(1);
 
-    int src_width  = get_global_size(0) + LAPLACE_RADIUS * 2;
-    int src_height = get_global_size(1);
+    int src_width  = get_global_size(0) + 2;
+    int src_height = get_global_size(1) + 2;
 
-    int i = gidx + LAPLACE_RADIUS, j = gidy + LAPLACE_RADIUS;
-    int gid1d = i + j * src_width;
+    int i = gidx + 1, j = gidy + 1;
 
-    float pix_fl[4] = {
-        in[gid1d - 1 - src_width].x, in[gid1d - 1 - src_width].y,
-        in[gid1d - 1 - src_width].z, in[gid1d - 1 - src_width].w
-    };
-    float pix_fm[4] = {
-        in[gid1d     - src_width].x, in[gid1d     - src_width].y,
-        in[gid1d     - src_width].z, in[gid1d     - src_width].w
-    };
-    float pix_fr[4] = {
-        in[gid1d + 1 - src_width].x, in[gid1d + 1 - src_width].y,
-        in[gid1d + 1 - src_width].z, in[gid1d + 1 - src_width].w
-    };
-    float pix_ml[4] = {
-        in[gid1d - 1            ].x, in[gid1d - 1            ].y,
-        in[gid1d - 1            ].z, in[gid1d - 1            ].w
-    };
-    float pix_mm[4] = {
-        in[gid1d                ].x, in[gid1d                ].y,
-        in[gid1d                ].z, in[gid1d                ].w
-    };
-    float pix_mr[4] = {
-        in[gid1d + 1            ].x, in[gid1d + 1            ].y,
-        in[gid1d + 1            ].z, in[gid1d + 1            ].w
-    };
-    float pix_bl[4] = {
-        in[gid1d - 1 + src_width].x, in[gid1d - 1 + src_width].y,
-        in[gid1d - 1 + src_width].z, in[gid1d - 1 + src_width].w
-    };
-    float pix_bm[4] = {
-        in[gid1d     + src_width].x, in[gid1d     + src_width].y,
-        in[gid1d     + src_width].z, in[gid1d     + src_width].w
-    };
-    float pix_br[4] = {
-        in[gid1d + 1 + src_width].x, in[gid1d + 1 + src_width].y,
-        in[gid1d + 1 + src_width].z, in[gid1d + 1 + src_width].w
-    };
+    float4 cur_pix;
+
+    cur_pix = get_pix(in, i - 1, j - 1, src_width);
+    float pix_fl[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 0, j - 1, src_width);
+    float pix_fm[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i + 1, j - 1, src_width);
+    float pix_fr[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 1, j - 0, src_width);
+    float pix_ml[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 0, j - 0, src_width);
+    float pix_mm[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i + 1, j - 0, src_width);
+    float pix_mr[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 1, j + 1, src_width);
+    float pix_bl[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i - 0, j + 1, src_width);
+    float pix_bm[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
+
+    cur_pix = get_pix(in, i + 1, j + 1, src_width);
+    float pix_br[4] = {cur_pix.x, cur_pix.y, cur_pix.z, cur_pix.w};
 
     int c;
     float value[4];
