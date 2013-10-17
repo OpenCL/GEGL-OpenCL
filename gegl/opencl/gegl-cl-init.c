@@ -129,6 +129,7 @@ typedef struct
 {
   gboolean         is_accelerated;
   gboolean         is_loaded;
+  gboolean         hard_disable;
   cl_context       ctx;
   cl_platform_id   platform;
   cl_device_id     device;
@@ -158,6 +159,13 @@ gegl_cl_is_accelerated (void)
 void
 gegl_cl_disable (void)
 {
+  cl_state.is_accelerated = FALSE;
+}
+
+void
+gegl_cl_hard_disable (void)
+{
+  cl_state.hard_disable = TRUE;
   cl_state.is_accelerated = FALSE;
 }
 
@@ -247,6 +255,13 @@ gboolean
 gegl_cl_init (GError **error)
 {
   cl_int err;
+
+  if (cl_state.hard_disable)
+    {
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "OpenCL is disabled");
+      g_set_error (error, GEGL_OPENCL_ERROR, 0, "OpenCL is disabled");
+      return FALSE;
+    }
 
   if (!cl_state.is_loaded)
     {
