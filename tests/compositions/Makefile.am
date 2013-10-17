@@ -67,7 +67,9 @@ NO_OPENCL_TESTS = \
   #run-matting-global.xml.sh           
   #run-matting-global-big.xml.sh     
 
-TESTS  = $(foreach basetest,$(BASE_TESTS),$(basetest) $(subst $(testprefix),$(opencl_testprefix),$(basetest)))
+OPENCL_TESTS=$(shell for a in $(BASE_TESTS); do echo $$a | sed 's/run-\(.*\)/run-\1 run-opencl-\1/'; done)
+
+TESTS := $(OPENCL_TESTS)
 TESTS += $(NO_OPENCL_TESTS)
 
 # Conditional tests
@@ -93,7 +95,7 @@ $(opencl_testprefix)%.xml.sh: Makefile.am $(call opencl_test_to_xml,$@) $(call o
 	echo "mkdir -p $(abs_builddir)/output" >> $@                       ;\
 	echo "if [ -a $$out_img ]; then rm $$out_img ; fi" >> $@           ;\
 	echo "$(builddir_gegl) $$xml_file -o $$out_img" >> $@              ;\
-	echo GEGL_USE_OPENCL=no "$(builddir_img_cmp) $$ref_img $$out_img" >> $@ ;\
+	echo "GEGL_USE_OPENCL=no $(builddir_img_cmp) $$ref_img $$out_img" >> $@ ;\
 	chmod +x $@
 
 test_to_xml = $(abs_srcdir)/$(subst $(testsuffix),,$(subst $(testprefix),,$(1)))
@@ -106,8 +108,8 @@ $(testprefix)%.xml.sh: Makefile.am $(call test_to_xml,$@) $(call test_to_ref,$@)
 	echo "#!/bin/bash" > $@                                            ;\
 	echo "mkdir -p $(abs_builddir)/output" >> $@                       ;\
 	echo "if [ -a $$out_img ]; then rm $$out_img ; fi" >> $@           ;\
-	echo GEGL_USE_OPENCL=no "$(builddir_gegl) $$xml_file -o $$out_img" >> $@  ;\
-	echo GEGL_USE_OPENCL=no "$(builddir_img_cmp) $$ref_img $$out_img" >> $@   ;\
+	echo "GEGL_USE_OPENCL=no $(builddir_gegl) $$xml_file -o $$out_img" >> $@  ;\
+	echo "GEGL_USE_OPENCL=no $(builddir_img_cmp) $$ref_img $$out_img" >> $@   ;\
 	chmod +x $@
 
 clean-local:
