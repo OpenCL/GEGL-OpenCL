@@ -149,7 +149,8 @@ gegl_node_class_init (GeglNodeClass *klass)
                                    g_param_spec_boolean ("dont-cache",
                                                          "Do not cache",
                                                         "Do not cache the result of this operation, the property is inherited by children created from a node.",
-                                                        TRUE,
+                                                        FALSE,
+                                                        G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
 
 
