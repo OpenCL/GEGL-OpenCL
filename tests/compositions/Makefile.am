@@ -67,10 +67,10 @@ NO_OPENCL_TESTS = \
   #run-matting-global.xml.sh           
   #run-matting-global-big.xml.sh     
 
-OPENCL_TESTS=$(shell for a in $(BASE_TESTS); do echo $$a | sed 's/run-\(.*\)/run-\1 run-opencl-\1/'; done)
 
-TESTS := $(OPENCL_TESTS)
-TESTS += $(NO_OPENCL_TESTS)
+OPENCL_TESTS=$(subst $(testprefix),$(opencl_testprefix),$(BASE_TESTS))
+
+TESTS  = $(BASE_TESTS) $(OPENCL_TESTS) $(NO_OPENCL_TESTS)
 
 # Conditional tests
 if HAVE_JASPER
