@@ -1,8 +1,11 @@
 /.deps
 /.libs
+*.o
+*.exe
 /Makefile
 /Makefile.in
-/exp_combine*
-/img_cmp*
-/introspect*
-/operation_reference*
+/exp_combine
+/img_cmp
+/introspect
+/operation_reference
+/detect_opencl

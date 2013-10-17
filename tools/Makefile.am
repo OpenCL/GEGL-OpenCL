@@ -24,7 +24,7 @@ AM_LDFLAGS = \
 	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
 	$(DEP_LIBS) $(BABL_LIBS)
 
-noinst_PROGRAMS = introspect operation_reference img_cmp
+noinst_PROGRAMS = introspect operation_reference img_cmp detect_opencl
 
 if HAVE_EXIV2
 noinst_PROGRAMS     += exp_combine 
