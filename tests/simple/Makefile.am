@@ -15,6 +15,7 @@ noinst_PROGRAMS =			\
 	test-format-sensing		\
 	test-gegl-rectangle		\
 	test-gegl-tile			\
+	test-image-compare		\
 	test-misc			\
 	test-node-properties		\
 	test-opencl-colors		\
