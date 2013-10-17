@@ -35,28 +35,49 @@ testsuffix = .sh
 
 # List of tests. The .sh suffix allows us to use $(wildcard $(srcdir)/*.xml) in
 # EXTRA_DISTS
-BASE_TESTS = \
-  run-affine-with-negative.xml.sh      \
-  run-checkerboard.xml.sh              \
-  run-clones.xml.sh                    \
-  run-colors.xml.sh                    \
-  run-composite-transform.xml.sh       \
-  run-edge-laplace.xml.sh              \
-  run-edge-sobel.xml.sh                \
-  run-fattal02.xml.sh                  \
-  run-gamma.xml.sh                     \
-  run-hdr-color.xml.sh                 \
-  run-mantiuk06.xml.sh                 \
-  run-pixelize.xml.sh                  \
-  run-reflect.xml.sh                   \
-  run-reflect2.xml.sh                  \
-  run-reinhard05.xml.sh                \
-  run-rgb-params.xml.sh                \
-  run-rotate.xml.sh                    \
-  run-simple-scale.xml.sh              \
-  run-softglow.xml.sh                  \
-  run-transform.xml.sh                 \
-  run-rectangles.xml.sh
+TESTS = \
+  run-affine-with-negative.xml.sh        \
+  run-opencl-affine-with-negative.xml.sh \
+  run-checkerboard.xml.sh                \
+  run-opencl-checkerboard.xml.sh         \
+  run-clones.xml.sh                      \
+  run-opencl-clones.xml.sh               \
+  run-colors.xml.sh                      \
+  run-opencl-colors.xml.sh               \
+  run-composite-transform.xml.sh         \
+  run-opencl-composite-transform.xml.sh  \
+  run-edge-laplace.xml.sh                \
+  run-opencl-edge-laplace.xml.sh         \
+  run-edge-sobel.xml.sh                  \
+  run-opencl-edge-sobel.xml.sh           \
+  run-fattal02.xml.sh                    \
+  run-opencl-fattal02.xml.sh             \
+  run-gamma.xml.sh                       \
+  run-opencl-gamma.xml.sh                \
+  run-hdr-color.xml.sh                   \
+  run-opencl-hdr-color.xml.sh            \
+  run-mantiuk06.xml.sh                   \
+  run-opencl-mantiuk06.xml.sh            \
+  run-pixelize.xml.sh                    \
+  run-opencl-pixelize.xml.sh             \
+  run-reflect.xml.sh                     \
+  run-opencl-reflect.xml.sh              \
+  run-reflect2.xml.sh                    \
+  run-opencl-reflect2.xml.sh             \
+  run-reinhard05.xml.sh                  \
+  run-opencl-reinhard05.xml.sh           \
+  run-rgb-params.xml.sh                  \
+  run-opencl-rgb-params.xml.sh           \
+  run-rotate.xml.sh                      \
+  run-opencl-rotate.xml.sh               \
+  run-simple-scale.xml.sh                \
+  run-opencl-simple-scale.xml.sh         \
+  run-softglow.xml.sh                    \
+  run-opencl-softglow.xml.sh             \
+  run-transform.xml.sh                   \
+  run-opencl-transform.xml.sh            \
+  run-rectangles.xml.sh                  \
+  run-opencl-rectangles.xml.sh
 
 NO_OPENCL_TESTS = \
   run-rgbe-load.xml.sh                 \
@@ -67,10 +88,7 @@ NO_OPENCL_TESTS = \
   #run-matting-global.xml.sh           
   #run-matting-global-big.xml.sh     
 
-
-OPENCL_TESTS=$(subst $(testprefix),$(opencl_testprefix),$(BASE_TESTS))
-
-TESTS  = $(BASE_TESTS) $(OPENCL_TESTS) $(NO_OPENCL_TESTS)
+TESTS += $(NO_OPENCL_TESTS)
 
 # Conditional tests
 if HAVE_JASPER
