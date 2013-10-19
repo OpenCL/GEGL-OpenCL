@@ -27,6 +27,7 @@ libcl_public_HEADERS = \
 	opencl.h
 
 libcl_sources = \
+	gegl-cl.c \
 	gegl-cl-types.h \
 	gegl-cl-init.c \
 	gegl-cl-init.h \

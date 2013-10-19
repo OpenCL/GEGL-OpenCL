@@ -23,6 +23,8 @@
 #include "gegl-cl-init.h"
 #include "gegl-cl-color.h"
 
+cl_int gegl_cl_set_kernel_args (cl_kernel kernel, ...) G_GNUC_NULL_TERMINATED;
+
 #ifdef __GEGL_DEBUG_H__
 
 #define CL_ERROR {GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
