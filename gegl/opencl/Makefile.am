@@ -11,8 +11,6 @@ AM_CPPFLAGS = \
 
 AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
-LIBS = $(OPENCL_LIBS)
-
 libcl_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/opencl
 
 libcl_public_HEADERS = \

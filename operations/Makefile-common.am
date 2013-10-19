@@ -4,7 +4,7 @@ endif
 
 libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la $(BABL_LIBS)
 
-op_libs = $(DEP_LIBS) $(libgegl) $(OPENCL_LIBS)
+op_libs = $(DEP_LIBS) $(libgegl)
 
 GEGLHEADERS     = $(wildcard $(top_srcdir)/gegl/*.h)\
                   $(wildcard $(top_srcdir)/gegl/buffer/*.h)\
