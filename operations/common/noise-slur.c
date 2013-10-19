@@ -53,15 +53,24 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  const Babl              *format;
 
-  op_area->left   = 1;
-  op_area->right  = 1;
-  op_area->top    = 1;
-  op_area->bottom = 1;
+  op_area->left   =
+  op_area->right  =
+  op_area->top    = o->repeat;
+  op_area->bottom = 0;
 
-  gegl_operation_set_format (operation, "input" , babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  format = gegl_operation_get_source_format (operation, "input");
+
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "output", format);
 }
+
+/* We avoid unecessary calls to gegl_random
+ * by recomputing a small part ourselves.
+ * see gegl/gegl-random.c for details */
+#define RAND_UINT_TO_FLOAT(x) (((x) & 0xffff) * 0.00001525902189669642175)
 
 static gboolean
 process (GeglOperation       *operation,
@@ -70,109 +79,61 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
-  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglBuffer              *tmp;
-  gfloat                  *src_buf;
-  gfloat                  *dst_buf;
-  gfloat                  *in_pixel;
-  gfloat                  *out_pixel;
-  gint                     n_pixels = result->width * result->height;
-  gint                     width    = result->width;
-  GeglRectangle            src_rect;
-  gint                     total_pixels;
-  gint                     i;
+  GeglChantO         *o;
+  const Babl         *format;
+  gint                bpp;
+  GeglBufferIterator *gi;
 
-  tmp = gegl_buffer_new (result, babl_format ("RGBA float"));
+  o = GEGL_CHANT_PROPERTIES (operation);
 
-  src_rect.x      = result->x - op_area->left;
-  src_rect.width  = result->width + op_area->left + op_area->right;
-  src_rect.y      = result->y - op_area->top;
-  src_rect.height = result->height + op_area->top + op_area->bottom;
+  format = gegl_operation_get_source_format (operation, "input");
+  bpp = babl_format_get_bytes_per_pixel (format);
 
-  total_pixels = src_rect.height * src_rect.width;
+  gi = gegl_buffer_iterator_new (output, result, 0, format,
+                                 GEGL_BUFFER_WRITE, GEGL_ABYSS_CLAMP);
 
-  src_buf = g_slice_alloc (4 * total_pixels * sizeof (gfloat));
-  dst_buf = g_slice_alloc (4 * n_pixels * sizeof (gfloat));
-
-  gegl_buffer_copy (input, NULL, tmp, NULL);
-
-  for (i = 0; i < o->repeat; i++)
+  while (gegl_buffer_iterator_next (gi))
     {
-      gint x, y, n;
+      gchar        *data = gi->data[0];
+      GeglRectangle roi  = gi->roi[0];
+      gint          i, j;
 
-      x = result->x;
-      y = result->y;
-      n = 0;
+      for (j = roi.y; j < roi.y + roi.height ; j++)
+        for (i = roi.x; i < roi.x + roi.width ; i++)
+          {
+            gint r;
+            gint pos_x = i, pos_y = j;
 
-      n_pixels = result->width * result->height;
+            for (r = 0; r < o->repeat; r++)
+              {
+                guint  rand = gegl_random_int (o->seed, pos_x, pos_y, 0, r);
+                gfloat pct  = RAND_UINT_TO_FLOAT (rand) * 100.0;
 
-      gegl_buffer_get (tmp, &src_rect, 1.0,
-                       babl_format ("RGBA float"), src_buf,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
+                if (pct <= o->pct_random)
+                  {
+                    gint rand2 = (gint) (rand % 10);
 
-      in_pixel  = src_buf + (src_rect.width + 1) * 4;
-      out_pixel = dst_buf;
+                    pos_y--;
 
-      while (n_pixels--)
-        {
-          gint b;
+                    switch (rand2)
+                      {
+                      case 0:
+                        pos_x--;
+                        break;
+                      case 9:
+                        pos_x++;
+                        break;
+                      default:
+                        break;
+                      }
+                  }
+              }
 
-          if (gegl_random_float_range (o->seed, x, y, 0, n++, 0.0, 100.0) <=
-              o->pct_random)
-            {
-              gint k = gegl_random_int_range (o->seed, x, y, 0, n++, 0, 10);
-
-              for (b = 0; b < 4; b++)
-                {
-                  switch (k)
-                    {
-                    case 0:
-                      out_pixel[b] = in_pixel[b - src_rect.width * 4 - 4];
-                      break;
-                    case 9:
-                      out_pixel[b] = in_pixel[b - src_rect.width * 4 + 4];
-                      break;
-                    default:
-                      out_pixel[b] = in_pixel[b - src_rect.width * 4];
-                      break;
-                    }
-                }
-            }
-          else
-            {
-              for (b = 0; b < 4; b++)
-                {
-                  out_pixel[b] = in_pixel[b];
-                }
-            }
-
-          if (n_pixels % width == 0)
-            in_pixel += 12;
-          else
-            in_pixel += 4;
-
-          out_pixel += 4;
-
-          x++;
-          if (x >= result->x + result->width)
-            {
-              x = result->x;
-              y++;
-            }
-        }
-
-      gegl_buffer_set (tmp, result, 0,
-                       babl_format ("RGBA float"), dst_buf,
-                       GEGL_AUTO_ROWSTRIDE);
+            gegl_buffer_sample (input, pos_x, pos_y, NULL, data, format,
+                                GEGL_SAMPLER_NEAREST, GEGL_ABYSS_CLAMP);
+            data += bpp;
+          }
     }
-
-  gegl_buffer_copy (tmp, NULL, output, NULL);
-
-  g_slice_free1 (4 * total_pixels * sizeof (gfloat), src_buf);
-  g_slice_free1 (4 * n_pixels * sizeof (gfloat), dst_buf);
-
-  g_object_unref (tmp);
 
   return TRUE;
 }
