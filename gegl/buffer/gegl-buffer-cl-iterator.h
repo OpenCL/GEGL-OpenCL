@@ -58,6 +58,8 @@ gint gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
 
 gboolean gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err);
 
+void gegl_buffer_cl_iterator_stop (GeglBufferClIterator *iterator);
+
 GeglBufferClIterator *gegl_buffer_cl_iterator_new (GeglBuffer          *buffer,
                                                    const GeglRectangle *roi,
                                                    const Babl          *format,

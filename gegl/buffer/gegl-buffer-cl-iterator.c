@@ -593,12 +593,25 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
       dealloc_iterator(i);
     }
 
-  *err = FALSE;
+  if (err)
+    *err = FALSE;
   return !i->is_finished;
 
 error:
+  gegl_buffer_cl_iterator_stop ((GeglBufferClIterator *)i);
 
-  for (no=0; no<i->iterators;no++)
+  if (err)
+    *err = TRUE;
+  return FALSE;
+}
+
+void
+gegl_buffer_cl_iterator_stop (GeglBufferClIterator *iterator)
+{
+  GeglBufferClIterators *i = (GeglBufferClIterators *)iterator;
+  int no;
+
+  for (no = 0; no < i->iterators; no++)
     {
       if (i->tex_buf[no]) gegl_clReleaseMemObject (i->tex_buf[no]);
       if (i->tex_op [no]) gegl_clReleaseMemObject (i->tex_op [no]);
@@ -608,10 +621,7 @@ error:
       i->tex_op [no] = NULL;
     }
 
-  dealloc_iterator(i);
-
-  *err = TRUE;
-  return FALSE;
+  dealloc_iterator (i);
 }
 
 GeglBufferClIterator *
