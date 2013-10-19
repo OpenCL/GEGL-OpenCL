@@ -47,11 +47,6 @@ gegl_chant_int    (repeat, _("Repeat"),
 
 #include "gegl-chant.h"
 
-
-#define CHUNK_SIZE 1024
-#define MAX_HW_EXT 1224
-#define SQR(x)     ((x)*(x))
-
 static void
 prepare (GeglOperation *operation)
 {
@@ -70,48 +65,11 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
 }
 
-static void
-iterate (GeglRectangle *current_roi,
-         gint           src_rowstride,
-         gchar         *src,
-         gchar         *dst,
-         gint           seed,
-         gfloat         pct_random,
-         gint           bpp,
-         gint           repeat)
-{
-  gint x, y;
 
-  for(y = 0; y < current_roi->height; y++)
-    for(x = 0; x < current_roi->width; x++)
-      {
-        gint pos_x = current_roi->x + x;
-        gint pos_y = current_roi->y + y;
-        gint i;
-
-        for (i = 0; i < repeat; i++)
-          {
-            gfloat rand;
-
-            rand = gegl_random_float_range (seed, pos_x, pos_y, 0, i, 0.0, 100.0);
-
-            if (rand <= pct_random)
-              {
-                gint k = gegl_random_int_range (seed, pos_x, pos_y, 0, i, 0, 9);
-
-                pos_x += (k % 3) - 1;
-                pos_y += (k / 3) - 1;
-              }
-          }
-
-        pos_x -= current_roi->x;
-        pos_y -= current_roi->y;
-
-        memcpy (dst + (x + y * current_roi->width) * bpp,
-                src + (pos_x + pos_y * src_rowstride) * bpp,
-                bpp);
-      }
-}
+/* We avoid unecessary calls to gegl_random
+ * by recomputing a small part ourselves.
+ * see gegl/gegl-random.c for details */
+#define RAND_UINT_TO_FLOAT(x) (((x) & 0xffff) * 0.00001525902189669642175)
 
 static gboolean
 process (GeglOperation       *operation,
@@ -120,54 +78,50 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
-  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglRectangle            src_rect, chunked_result;
-  gchar                   *input_buf, *output_buf;
-  gchar                   *src_buf;
-  gint                     rowstride;
-  gint                     i, j;
-  const Babl              *format;
-  gint                     bpp;
+  GeglChantO         *o;
+  const Babl         *format;
+  gint                bpp;
+  GeglBufferIterator *gi;
+
+  o = GEGL_CHANT_PROPERTIES (operation);
 
   format = gegl_operation_get_source_format (operation, "input");
   bpp = babl_format_get_bytes_per_pixel (format);
 
-  input_buf  = g_malloc (SQR (MAX_HW_EXT) * bpp);
-  output_buf = g_malloc (SQR (CHUNK_SIZE) * bpp);
+  gi = gegl_buffer_iterator_new (output, result, 0, format,
+                                 GEGL_BUFFER_WRITE, GEGL_ABYSS_CLAMP);
 
-  for (j = 0; (j-1) * CHUNK_SIZE < result->height; j++)
-    for (i = 0; (i-1) * CHUNK_SIZE < result->width; i++)
-      {
-        chunked_result = *GEGL_RECTANGLE (result->x + i * CHUNK_SIZE,
-                                          result->y + j * CHUNK_SIZE,
-                                          CHUNK_SIZE, CHUNK_SIZE);
+  while (gegl_buffer_iterator_next (gi))
+    {
+      gchar        *data = gi->data[0];
+      GeglRectangle roi  = gi->roi[0];
+      gint          i, j;
 
-        gegl_rectangle_intersect (&chunked_result, &chunked_result, result);
+      for (j = roi.y; j < roi.y + roi.height ; j++)
+        for (i = roi.x; i < roi.x + roi.width ; i++)
+          {
+            gint r;
+            gint pos_x = i, pos_y = j;
 
-        if (chunked_result.width < 1  || chunked_result.height < 1)
-          continue;
+            for (r = 0; r < o->repeat; r++)
+              {
+                guint  rand = gegl_random_int (o->seed, pos_x, pos_y, 0, r);
+                gfloat pct  = RAND_UINT_TO_FLOAT (rand) * 100.0;
 
-        src_rect.x      = chunked_result.x - op_area->left;
-        src_rect.y      = chunked_result.y - op_area->top;
-        src_rect.width  = chunked_result.width + op_area->left + op_area->right;
-        src_rect.height = chunked_result.height + op_area->top + op_area->bottom;
+                if (pct <= o->pct_random)
+                  {
+                    gint rand2 = (gint) (rand % 9);
 
-        gegl_buffer_get (input, &src_rect, 1.0, format, input_buf,
-                         GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
+                    pos_x += (rand2 % 3) - 1;
+                    pos_y += (rand2 / 3) - 1;
+                  }
+              }
 
-        rowstride = src_rect.width;
-        src_buf = (input_buf + (o->repeat * rowstride + o->repeat) * bpp);
-
-        iterate (&chunked_result, rowstride, src_buf, output_buf,
-                 o->seed, o->pct_random, bpp, o->repeat);
-
-        gegl_buffer_set (output, &chunked_result, 1.0, format, output_buf,
-                         GEGL_AUTO_ROWSTRIDE);
-      }
-
-  g_free (input_buf);
-  g_free (output_buf);
+            gegl_buffer_sample (input, pos_x, pos_y, NULL, data, format,
+                                GEGL_SAMPLER_NEAREST, GEGL_ABYSS_CLAMP);
+            data += bpp;
+          }
+    }
 
   return TRUE;
 }
