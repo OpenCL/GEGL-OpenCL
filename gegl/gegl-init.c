@@ -59,9 +59,13 @@ static inline gboolean
 pid_is_running (gint pid)
 {
   HANDLE h;
+  DWORD exitcode = 0;
 
-  h = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
-  return (TerminateProcess(h, 0));
+  h = OpenProcess (PROCESS_QUERY_INFORMATION, FALSE, pid);
+  GetExitCodeProcess (h, &exitcode);
+  CloseHandle (h);
+
+  return exitcode == STILL_ACTIVE;
 }
 
 #else
