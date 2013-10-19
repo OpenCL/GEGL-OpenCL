@@ -35,7 +35,6 @@ npd_create_mesh_from_image (NPDModel *model,
   NPDHiddenModel *hidden_model = model->hidden_model;
   NPDImage *image = model->reference_image;
   gint i, cy, cx, y, x;
-  NPDColor transparent = { 0, 0, 0, 0 };
   NPDColor pixel_color = { 0, 0, 0, 0 };
   GPtrArray *current_bones, *reference_bones;
 
@@ -58,7 +57,7 @@ npd_create_mesh_from_image (NPDModel *model,
                 {
                   npd_get_pixel_color (image, x, y, &pixel_color);
 
-                  if (!npd_compare_colors (&pixel_color, &transparent))
+                  if (!npd_is_color_transparent (&pixel_color))
                     {
                       is_empty = FALSE;
                       goto not_empty;
@@ -466,10 +465,7 @@ npd_compare_colors (NPDColor *c1,
 gboolean
 npd_is_color_transparent (NPDColor *color)
 {
-  if (npd_equal_floats (color->r, 0.0) &&
-      npd_equal_floats (color->g, 0.0) &&
-      npd_equal_floats (color->b, 0.0) &&
-      npd_equal_floats (color->a, 0.0))
+  if (npd_equal_floats (color->a, 0.0))
     return TRUE;
 
   return FALSE;
