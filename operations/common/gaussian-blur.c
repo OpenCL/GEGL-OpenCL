@@ -462,12 +462,12 @@ cl_gaussian_blur (cl_mem                in_tex,
   if (!cl_data) return TRUE;
 
   cl_matrix_x = gegl_clCreateBuffer(gegl_cl_get_context(),
-                                    CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
+                                    CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY,
                                     matrix_length_x * sizeof(cl_float), dmatrix_x, &cl_err);
   CL_CHECK;
 
   cl_matrix_y = gegl_clCreateBuffer(gegl_cl_get_context(),
-                                    CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
+                                    CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY,
                                     matrix_length_y * sizeof(cl_float), dmatrix_y, &cl_err);
   CL_CHECK;
 
