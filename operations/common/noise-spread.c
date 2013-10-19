@@ -59,77 +59,32 @@ calc_sample_coords (gint  src_x,
 
   /* get random angle, x distance, and y distance */
   xdist = amount_x > 0 ? gegl_random_int_range (seed, src_x, src_y, 0, 0,
-                                                -amount_x, amount_x) : 0;
+                                                -amount_x, amount_x + 1) : 0;
   ydist = amount_y > 0 ? gegl_random_int_range (seed, src_x, src_y, 0, 1,
-                                                -amount_y, amount_y) : 0;
+                                                -amount_y, amount_y + 1) : 0;
   angle = gegl_random_float_range (seed, src_x, src_y, 0, 2, -G_PI, G_PI);
 
   *x = src_x + floor (sin (angle) * xdist);
   *y = src_y + floor (cos (angle) * ydist);
 }
 
-/* Apply the actual transform */
-static void
-apply_spread (gint                 amount_x,
-              gint                 amount_y,
-              gint                 seed,
-              gint                 img_width,
-              gint                 img_height,
-              const Babl          *format,
-              GeglBuffer          *src,
-              GeglBuffer          *dst,
-              const GeglRectangle *roi)
-{
-  gfloat *dst_buf;
-  gint    x1, y1;
-
-  /* Get buffer in which to place dst pixels. */
-  dst_buf = g_new0 (gfloat, roi->width * roi->height * 4);
-
-  for (y1 = 0; y1 < roi->height; y1++)
-    {
-      for (x1 = 0; x1 < roi->width; x1++)
-        {
-          gint x, y;
-
-          calc_sample_coords (x1 + roi->x, y1 + roi->y,
-                              amount_x, amount_y, seed,
-                              &x, &y);
-
-          /* Only displace the pixel if it's within the bounds of the image. */
-          if (x < 0 || x >= img_width ||
-              y < 0 || y >= img_height)
-            {
-              /* Else just copy it */
-              x = x1 + roi->x;
-              y = y1 + roi->y;
-            }
-
-          gegl_buffer_get (src, GEGL_RECTANGLE (x, y, 1, 1), 1.0, format,
-                           &dst_buf[(y1 * roi->width + x1) * 4],
-                           GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-        }
-    }
-
-  gegl_buffer_set (dst, roi, 0, format,
-                   dst_buf, GEGL_AUTO_ROWSTRIDE);
-
-  g_free (dst_buf);
-}
 
 static void
 prepare (GeglOperation *operation)
 {
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  const Babl              *format;
 
   op_area->left   =
-  op_area->right  = o->amount_x;
+  op_area->right  = (o->amount_x + 1) / 2;
   op_area->top    =
-  op_area->bottom = o->amount_y;
+  op_area->bottom = (o->amount_y + 1) / 2;
 
-  gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  format = gegl_operation_get_source_format (operation, "input");
+
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static gboolean
@@ -139,18 +94,43 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO    *o        = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle  boundary = gegl_operation_get_bounding_box (operation);
+  GeglChantO         *o;
+  const Babl         *format;
+  gint                bpp;
+  GeglBufferIterator *gi;
+  gint                amount_x;
+  gint                amount_y;
 
-  apply_spread ((o->amount_x + 1) / 2,
-                (o->amount_y + 1) / 2,
-                o->seed,
-                boundary.width,
-                boundary.height,
-                babl_format ("RGBA float"),
-                input,
-                output,
-                result);
+  o = GEGL_CHANT_PROPERTIES (operation);
+
+  amount_x = (o->amount_x + 1) / 2;
+  amount_y = (o->amount_y + 1) / 2;
+
+  format = gegl_operation_get_source_format (operation, "input");
+  bpp = babl_format_get_bytes_per_pixel (format);
+
+  gi = gegl_buffer_iterator_new (output, result, 0, format,
+                                 GEGL_BUFFER_WRITE, GEGL_ABYSS_CLAMP);
+
+  while (gegl_buffer_iterator_next (gi))
+    {
+      gchar        *data = gi->data[0];
+      GeglRectangle roi  = gi->roi[0];
+      gint          i, j;
+
+      for (j = roi.y; j < roi.y + roi.height ; j++)
+        for (i = roi.x; i < roi.x + roi.width ; i++)
+          {
+            gint x, y;
+
+            calc_sample_coords (i, j, amount_x, amount_y, o->seed, &x, &y);
+
+            gegl_buffer_sample (input, x, y, NULL, data, format,
+                                GEGL_SAMPLER_NEAREST, GEGL_ABYSS_CLAMP);
+            data += bpp;
+          }
+    }
+
   return TRUE;
 }
 
