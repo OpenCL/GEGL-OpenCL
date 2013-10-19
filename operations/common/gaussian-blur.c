@@ -459,7 +459,9 @@ cl_gaussian_blur (cl_mem                in_tex,
       const char *kernel_name[] = {"fir_ver_blur", "fir_hor_blur", NULL};
       cl_data = gegl_cl_compile_and_build (gaussian_blur_cl_source, kernel_name);
     }
-  if (!cl_data) return TRUE;
+
+  if (!cl_data)
+    return TRUE;
 
   cl_matrix_x = gegl_clCreateBuffer(gegl_cl_get_context(),
                                     CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY,
@@ -471,7 +473,6 @@ cl_gaussian_blur (cl_mem                in_tex,
                                     matrix_length_y * sizeof(cl_float), dmatrix_y, &cl_err);
   CL_CHECK;
 
-  {
   global_ws[0] = aux_rect->width;
   global_ws[1] = aux_rect->height;
 
@@ -493,9 +494,8 @@ cl_gaussian_blur (cl_mem                in_tex,
                                        NULL, global_ws, NULL,
                                        0, NULL, NULL);
   CL_CHECK;
-  }
 
-  {
+
   global_ws[0] = roi->width;
   global_ws[1] = roi->height;
 
@@ -517,7 +517,6 @@ cl_gaussian_blur (cl_mem                in_tex,
                                        NULL, global_ws, NULL,
                                        0, NULL, NULL);
   CL_CHECK;
-  }
 
   cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
   CL_CHECK;
@@ -541,7 +540,7 @@ cl_process (GeglOperation       *operation,
 {
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
-  gint err;
+  gint err = 0;
   gint j;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
@@ -592,10 +591,8 @@ cl_process (GeglOperation       *operation,
                                              op_area->bottom,
                                              GEGL_ABYSS_NONE);
 
-  while (gegl_buffer_cl_iterator_next (i, &err))
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
     {
-      if (err) return FALSE;
-
       err = cl_gaussian_blur(i->tex[read],
                              i->tex[0],
                              i->tex[aux],
@@ -610,7 +607,11 @@ cl_process (GeglOperation       *operation,
                              cmatrix_len_y,
                              op_area->top);
 
-      if (err) return FALSE;
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
     }
   }
 
@@ -619,7 +620,7 @@ cl_process (GeglOperation       *operation,
 
   g_free (cmatrix_x);
   g_free (cmatrix_y);
-  return TRUE;
+  return !err;
 }
 
 static gboolean
