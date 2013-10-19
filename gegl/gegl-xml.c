@@ -25,8 +25,6 @@
 #include <limits.h>
 
 #include "gegl.h"
-#include "gegl-types-internal.h"
-#include "graph/gegl-node.h"
 #include "property-types/gegl-paramspecs.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
@@ -111,7 +109,7 @@ set_clone_prop_as_well:
       if (!paramspec)
         {
           g_warning ("property %s not found for %s",
-                     param_name, gegl_node_get_debug_name (new));
+                     param_name, gegl_node_get_operation (new));
         }
       else if (g_type_is_a (G_PARAM_SPEC_TYPE (paramspec),
                             GEGL_TYPE_PARAM_FILE_PATH))
@@ -1123,8 +1121,9 @@ gegl_node_to_xml (GeglNode    *gegl,
   ss.clones      = g_hash_table_new (NULL, NULL);
   ss.terse       = FALSE;
 
-  if(!(gegl->is_graph || gegl->operation))
-    gegl = gegl_node_get_output_proxy(gegl, "output");
+  /* this case is probably only for empty graphs */
+  if (!gegl_node_get_operation (gegl))
+    gegl = gegl_node_get_output_proxy (gegl, "output");
 
   g_string_append (ss.buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
   g_string_append (ss.buf, "<gegl>\n");
