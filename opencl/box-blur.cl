@@ -17,7 +17,7 @@ __kernel void kernel_blur_hor (__global const float4     *in,
         {
           mean += in[in_index + i];
         }
-      aux[aux_index] = mean / (2 * radius + 1);
+      aux[aux_index] = mean / (float)(2 * radius + 1);
     }
 }
 
@@ -40,6 +40,6 @@ __kernel void kernel_blur_ver (__global const float4     *aux,
           mean += aux[aux_index];
           aux_index += width;
         }
-      out[out_index] = mean / (2 * radius + 1);
+      out[out_index] = mean / (float)(2 * radius + 1);
     }
 }

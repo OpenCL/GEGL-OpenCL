@@ -18,7 +18,7 @@ static const char* box_blur_cl_source =
 "        {                                                                     \n"
 "          mean += in[in_index + i];                                           \n"
 "        }                                                                     \n"
-"      aux[aux_index] = mean / (2 * radius + 1);                               \n"
+"      aux[aux_index] = mean / (float)(2 * radius + 1);                        \n"
 "    }                                                                         \n"
 "}                                                                             \n"
 "                                                                              \n"
@@ -41,7 +41,7 @@ static const char* box_blur_cl_source =
 "          mean += aux[aux_index];                                             \n"
 "          aux_index += width;                                                 \n"
 "        }                                                                     \n"
-"      out[out_index] = mean / (2 * radius + 1);                               \n"
+"      out[out_index] = mean / (float)(2 * radius + 1);                        \n"
 "    }                                                                         \n"
 "}                                                                             \n"
 ;
