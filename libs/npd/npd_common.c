@@ -491,6 +491,33 @@ npd_reset_weights (NPDHiddenModel *hm)
 }
 
 void
+npd_print_model (NPDModel        *model,
+                 gboolean         print_control_points)
+{
+  gint i;
+  g_printf ("NPDModel:\n");
+  g_printf ("control point radius: %f\n", model->control_point_radius);
+  g_printf ("control points visible: %d\n", model->control_points_visible);
+  g_printf ("mesh visible: %d\n", model->mesh_visible);
+  g_printf ("texture visible: %d\n", model->texture_visible);
+  g_printf ("mesh square size: %d\n", model->mesh_square_size);
+
+  npd_print_hidden_model (model->hidden_model, FALSE, FALSE);
+
+  if (print_control_points)
+    {
+      g_printf ("%d control points:\n", model->control_points->len);
+      for (i = 0; i < model->control_points->len; i++)
+        {
+          NPDControlPoint *cp = &g_array_index (model->control_points,
+                                                NPDControlPoint,
+                                                i);
+          npd_print_point (&cp->point, TRUE);
+        }
+    }
+}
+
+void
 npd_print_hidden_model (NPDHiddenModel *hm,
                         gboolean        print_bones,
                         gboolean        print_overlapping_points)
