@@ -638,18 +638,33 @@ process (GeglOperation       *operation,
   gdouble       B, b[4];
   gdouble      *cmatrix;
   gint          cmatrix_len;
-  gboolean      force_iir;
-  gboolean      force_fir;
+  gboolean      horizontal_irr;
+  gboolean      vertical_irr;
 
   rect.x      = result->x - op_area->left;
   rect.width  = result->width + op_area->left + op_area->right;
   rect.y      = result->y - op_area->top;
   rect.height = result->height + op_area->top + op_area->bottom;
 
-  force_iir = (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_IIR);
-  force_fir = (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_FIR);
 
-  if (gegl_operation_use_opencl (operation) && !force_iir)
+  if (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_IIR)
+    {
+      horizontal_irr = TRUE;
+      vertical_irr   = TRUE;
+    }
+  else if (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_FIR)
+    {
+      horizontal_irr = FALSE;
+      vertical_irr   = FALSE;
+    }
+  else /* GEGL_GAUSSIAN_BLUR_FILTER_AUTO */
+    {
+      horizontal_irr = o->std_dev_x > 1.0;
+      vertical_irr   = o->std_dev_y > 1.0;
+    }
+
+
+  if (gegl_operation_use_opencl (operation) && !(horizontal_irr | vertical_irr))
     if (cl_process(operation, input, output, result))
       return TRUE;
 
@@ -658,7 +673,7 @@ process (GeglOperation       *operation,
   temp_extend.width  = result->width;
   temp = gegl_buffer_new (&temp_extend, babl_format ("RaGaBaA float"));
 
-  if ((force_iir || o->std_dev_x > 1.0) && !force_fir)
+  if (horizontal_irr)
     {
       iir_young_find_constants (o->std_dev_x, &B, b);
       iir_young_hor_blur (input, &rect, temp, &temp_extend,  B, b);
@@ -672,7 +687,7 @@ process (GeglOperation       *operation,
     }
 
 
-  if ((force_iir || o->std_dev_y > 1.0) && !force_fir)
+  if (vertical_irr)
     {
       iir_young_find_constants (o->std_dev_y, &B, b);
       iir_young_ver_blur (temp, &temp_extend, output, result, B, b);
