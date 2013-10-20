@@ -118,7 +118,7 @@ gegl_param_int_get_type (void)
         (GInstanceInitFunc) gegl_param_int_init
       };
       type = g_type_register_static (G_TYPE_PARAM_INT,
-                                     "GeglParamint", &info, 0);
+                                     "GeglParamInt", &info, 0);
     }
   return type;
 }
