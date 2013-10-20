@@ -253,6 +253,7 @@ cl_pixelise (cl_mem                in_tex,
                                     sizeof(cl_int), (void*)&block_count_x,
                                     NULL);
   CL_CHECK;
+
   cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
                                         cl_data->kernel[0], 2,
                                         NULL, gbl_size_tmp, NULL,
@@ -268,6 +269,7 @@ cl_pixelise (cl_mem                in_tex,
                                     sizeof(cl_int), (void*)&roi->y,
                                     sizeof(cl_int), (void*)&block_count_x,
                                     NULL);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
                                         cl_data->kernel[1], 2,
