@@ -242,43 +242,34 @@ cl_pixelise (cl_mem                in_tex,
 
   if (!cl_data) return 1;
 
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof(cl_mem), (void*)&in_tex,
+                                    sizeof(cl_mem), (void*)&aux_tex,
+                                    sizeof(cl_int), (void*)&xsize,
+                                    sizeof(cl_int), (void*)&ysize,
+                                    sizeof(cl_int), (void*)&roi->x,
+                                    sizeof(cl_int), (void*)&roi->y,
+                                    sizeof(cl_int), (void*)&line_width,
+                                    sizeof(cl_int), (void*)&block_count_x,
+                                    NULL);
   CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&aux_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_int),   (void*)&xsize);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_int),   (void*)&ysize);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int),   (void*)&roi->x);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int),   (void*)&roi->y);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 6, sizeof(cl_int),   (void*)&line_width);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 7, sizeof(cl_int),   (void*)&block_count_x);
-  CL_CHECK;
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
                                         cl_data->kernel[0], 2,
                                         NULL, gbl_size_tmp, NULL,
                                         0, NULL, NULL);
   CL_CHECK;
 
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem),   (void*)&aux_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_mem),   (void*)&out_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_int),   (void*)&xsize);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 3, sizeof(cl_int),   (void*)&ysize);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 4, sizeof(cl_int),   (void*)&roi->x);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 5, sizeof(cl_int),   (void*)&roi->y);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 6, sizeof(cl_int),   (void*)&block_count_x);
-  CL_CHECK;
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[1],
+                                    sizeof(cl_mem), (void*)&aux_tex,
+                                    sizeof(cl_mem), (void*)&out_tex,
+                                    sizeof(cl_int), (void*)&xsize,
+                                    sizeof(cl_int), (void*)&ysize,
+                                    sizeof(cl_int), (void*)&roi->x,
+                                    sizeof(cl_int), (void*)&roi->y,
+                                    sizeof(cl_int), (void*)&block_count_x,
+                                    NULL);
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
                                         cl_data->kernel[1], 2,
                                         NULL, gbl_size, NULL,
                                         0, NULL, NULL);
@@ -330,10 +321,8 @@ cl_process (GeglOperation       *operation,
                                              op_area->bottom,
                                              GEGL_ABYSS_NONE);
 
-  while (gegl_buffer_cl_iterator_next (i, &err))
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
     {
-      if (err) return FALSE;
-
       err = cl_pixelise(i->tex[read],
                         i->tex[aux],
                         i->tex[0],
@@ -342,10 +331,14 @@ cl_process (GeglOperation       *operation,
                         o->size_x,
                         o->size_y);
 
-      if (err) return FALSE;
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
     }
 
-  return TRUE;
+  return !err;
 }
 
 static gboolean
