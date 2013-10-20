@@ -154,7 +154,9 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
   cl_int cl_err = 0;
   gboolean err;
 
-  gint foo = -1;
+  gint foo, read;
+
+  GeglBufferClIterator *i;
 
   /* non-texturizable format! */
   if (!gegl_cl_color_babl (in_format,  NULL) ||
@@ -167,68 +169,68 @@ gegl_operation_point_composer_cl_process (GeglOperation       *operation,
 
   GEGL_NOTE (GEGL_DEBUG_OPENCL, "GEGL_OPERATION_POINT_COMPOSER: %s", operation_class->name);
 
-  /* Process */
-  {
-    GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
-                  gint read = gegl_buffer_cl_iterator_add (i, input, result, in_format,  GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
+  i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
+  read = gegl_buffer_cl_iterator_add (i, input, result, in_format,  GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-    if (aux)
-      foo = gegl_buffer_cl_iterator_add (i, aux, result, aux_format,  GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
+  if (aux)
+    foo = gegl_buffer_cl_iterator_add (i, aux, result, aux_format,  GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-    while (gegl_buffer_cl_iterator_next (i, &err))
-      {
-        if (err) return FALSE;
+  while (gegl_buffer_cl_iterator_next (i, &err))
+    {
+      if (err) return FALSE;
 
-          {
-            if (point_composer_class->cl_process)
-              {
-                err = point_composer_class->cl_process(operation, i->tex[read],
-                                                       (aux)? i->tex[foo] : NULL,
-                                                       i->tex[0], i->size[0], &i->roi[0], level);
-                if (err)
-                  {
-                    GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", operation_class->name);
-                    return FALSE;
-                  }
-              }
-            else if (operation_class->cl_data)
-              {
-                gint p = 0;
-                GeglClRunData *cl_data = operation_class->cl_data;
+        {
+          if (point_composer_class->cl_process)
+            {
+              err = point_composer_class->cl_process(operation, i->tex[read],
+                                                     (aux)? i->tex[foo] : NULL,
+                                                     i->tex[0], i->size[0], &i->roi[0], level);
+              if (err)
+                {
+                  gegl_buffer_cl_iterator_stop (i);
+                  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", operation_class->name);
+                  return FALSE;
+                }
+            }
+          else if (operation_class->cl_data)
+            {
+              gint p = 0;
+              GeglClRunData *cl_data = operation_class->cl_data;
 
-                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[read]);
-                CL_CHECK;
+              cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[read]);
+              CL_CHECK;
 
-                if (aux)
-                  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[foo]);
-                else
-                  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), NULL);
-                CL_CHECK;
+              if (aux)
+                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[foo]);
+              else
+                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), NULL);
+              CL_CHECK;
 
-                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[0]);
-                CL_CHECK;
+              cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[0]);
+              CL_CHECK;
 
-                gegl_operation_cl_set_kernel_args (operation, cl_data->kernel[0], &p, &cl_err);
-                CL_CHECK;
+              gegl_operation_cl_set_kernel_args (operation, cl_data->kernel[0], &p, &cl_err);
+              CL_CHECK;
 
-                cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                                     cl_data->kernel[0], 1,
-                                                     NULL, &i->size[0], NULL,
-                                                     0, NULL, NULL);
-                CL_CHECK;
-              }
-            else
-              {
-                g_warning ("OpenCL support enabled, but no way to execute");
-                return FALSE;
-              }
-          }
-      }
-  }
+              cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+                                                   cl_data->kernel[0], 1,
+                                                   NULL, &i->size[0], NULL,
+                                                   0, NULL, NULL);
+              CL_CHECK;
+            }
+          else
+            {
+              gegl_buffer_cl_iterator_stop (i);
+              g_warning ("OpenCL support enabled, but no way to execute");
+              return FALSE;
+            }
+        }
+    }
 
   return TRUE;
 
 error:
+  gegl_buffer_cl_iterator_stop (i);
   GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", gegl_cl_errstring(cl_err));
   return FALSE;
 }
