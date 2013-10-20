@@ -30,39 +30,4 @@ cl_int gegl_cl_set_kernel_args (cl_kernel kernel, ...) G_GNUC_NULL_TERMINATED;
 
 #define CL_CHECK {if (cl_err != CL_SUCCESS) CL_ERROR;}
 
-#define GEGL_CL_ARG_START(KERNEL) \
-  { cl_kernel __mykernel=KERNEL; int __p = 0;
-
-#define GEGL_CL_ARG(TYPE, NAME) \
-  { cl_err = gegl_clSetKernelArg(__mykernel, __p++, sizeof(TYPE), (void*)& NAME); \
-    CL_CHECK; }
-
-#define GEGL_CL_ARG_END \
-  __p = -1; }
-
-#define GEGL_CL_RELEASE(obj)               \
-  { cl_err = gegl_clReleaseMemObject(obj); \
-    CL_CHECK; }
-
-#define GEGL_CL_BUFFER_ITERATE_START(I, ERR)         \
-  while (gegl_buffer_cl_iterator_next (I, & ERR))    \
-    {                                                \
-      if (ERR) return FALSE;                         \
-
-#define GEGL_CL_BUFFER_ITERATE_END(ERR)   \
-      if (ERR) return FALSE;              \
-    }
-
-
-#define GEGL_CL_BUILD(NAME, ...)                                            \
-  if (!cl_data)                                                             \
-    {                                                                       \
-      const char *kernel_name[] ={__VA_ARGS__ , NULL};                      \
-      cl_data = gegl_cl_compile_and_build(NAME ## _cl_source, kernel_name); \
-    }                                                                       \
-  if (!cl_data) return TRUE;
-
-#define GEGL_CL_STATIC \
-  static GeglClRunData *cl_data = NULL;
-
 #endif
