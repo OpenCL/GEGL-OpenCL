@@ -24,7 +24,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_file_path (path, _("File"), "",
-                   _("Target path and filename, use '-' for stdout."))
+                      _("Target path and filename, use '-' for stdout."))
 gegl_chant_int    (compression, _("Compression"),
                    1, 9, 1, _("PNG compression level from 1 to 9"))
 gegl_chant_int    (bitdepth, _("Bitdepth"),

@@ -18,7 +18,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string  (path, "File", "", "path of file to write to.")
+gegl_chant_file_path  (path, "File", "", "path of file to write to.")
 gegl_chant_int  (tile, "Tile", 0, 2048, 0, "tile size to use.")
 
 #else

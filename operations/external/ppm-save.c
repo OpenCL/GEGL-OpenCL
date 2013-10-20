@@ -22,8 +22,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string  (path, _("File"), "",
-                    _("Target path and filename, use '-' for stdout."))
+gegl_chant_file_path  (path, _("File"), "",
+                       _("Target path and filename, use '-' for stdout."))
 gegl_chant_boolean (rawformat, _("Raw format"), TRUE, _("Raw format"))
 gegl_chant_int     (bitdepth, _("Bitdepth"),
                     8, 16, 16,

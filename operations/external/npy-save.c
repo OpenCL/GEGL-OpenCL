@@ -28,8 +28,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string  (path, _("File"), "",
-                    _("Target path and filename, use '-' for stdout."))
+gegl_chant_file_path (path, _("File"), "",
+                      _("Target path and filename, use '-' for stdout."))
 
 #else
 

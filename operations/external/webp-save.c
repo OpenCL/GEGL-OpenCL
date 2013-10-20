@@ -22,7 +22,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, _("File"), "", _("Target file path."))
+gegl_chant_file_path (path, _("File"), "", _("Target file path."))
 
 gegl_chant_int    (quality, _("Quality"), 1, 100, 90,
                    _("WebP compression quality"))

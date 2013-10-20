@@ -22,8 +22,8 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string (path, _("File"), "",
-                   _("Target path and filename, use '-' for stdout"))
+gegl_chant_file_path (path, _("File"), "",
+                      _("Target path and filename, use '-' for stdout"))
 gegl_chant_int    (quality, _("Quality"), 1, 100, 90,
                    _("JPEG compression quality (between 1 and 100)"))
 gegl_chant_int    (smoothing, _("Smoothing"),
