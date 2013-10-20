@@ -272,7 +272,7 @@ bilateral_filter (GeglBuffer          *src,
 #include "buffer/gegl-buffer-cl-iterator.h"
 #include "opencl/bilateral-filter-fast.cl.h"
 
-GEGL_CL_STATIC;
+static GeglClRunData *cl_data = NULL;
 
 static gboolean
 cl_bilateral (cl_mem                in_tex,
@@ -299,10 +299,18 @@ cl_bilateral (cl_mem                in_tex,
   cl_mem grid = NULL;
   cl_mem blur[4] = {NULL, NULL, NULL, NULL};
 
-  GEGL_CL_BUILD(bilateral_filter_fast,
-                "bilateral_downsample",
-                "bilateral_blur",
-                "bilateral_interpolate")
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"bilateral_downsample",
+                                   "bilateral_blur",
+                                   "bilateral_interpolate",
+                                   NULL};
+      cl_data = gegl_cl_compile_and_build (bilateral_filter_fast_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return 1;
+
 
   grid = gegl_clCreateBuffer (gegl_cl_get_context (),
                               CL_MEM_READ_WRITE,
@@ -320,101 +328,102 @@ cl_bilateral (cl_mem                in_tex,
       CL_CHECK;
     }
 
-  {
   local_ws[0] = 8;
   local_ws[1] = 8;
 
   global_ws[0] = ((sw + local_ws[0] - 1)/local_ws[0])*local_ws[0];
   global_ws[1] = ((sh + local_ws[1] - 1)/local_ws[1])*local_ws[1];
 
-  GEGL_CL_ARG_START(cl_data->kernel[0])
-  GEGL_CL_ARG(cl_mem,   in_tex)
-  GEGL_CL_ARG(cl_mem,   grid)
-  GEGL_CL_ARG(cl_int,   width)
-  GEGL_CL_ARG(cl_int,   height)
-  GEGL_CL_ARG(cl_int,   sw)
-  GEGL_CL_ARG(cl_int,   sh)
-  GEGL_CL_ARG(cl_int,   depth)
-  GEGL_CL_ARG(cl_int,   s_sigma)
-  GEGL_CL_ARG(cl_float, r_sigma)
-  GEGL_CL_ARG_END
-
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[0], 2,
-                                       NULL, global_ws, local_ws,
-                                       0, NULL, NULL);
+  gegl_cl_set_kernel_args (cl_data->kernel[0],
+                           sizeof(cl_mem),   &in_tex,
+                           sizeof(cl_mem),   &grid,
+                           sizeof(cl_int),   &width,
+                           sizeof(cl_int),   &height,
+                           sizeof(cl_int),   &sw,
+                           sizeof(cl_int),   &sh,
+                           sizeof(cl_int),   &depth,
+                           sizeof(cl_int),   &s_sigma,
+                           sizeof(cl_float), &r_sigma,
+                           NULL);
   CL_CHECK;
-  }
 
-  {
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_ws, local_ws,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
   local_ws[0] = 16;
   local_ws[1] = 16;
 
   global_ws[0] = ((sw + local_ws[0] - 1)/local_ws[0])*local_ws[0];
   global_ws[1] = ((sh + local_ws[1] - 1)/local_ws[1])*local_ws[1];
 
-  GEGL_CL_ARG_START(cl_data->kernel[1])
-  GEGL_CL_ARG(cl_mem, grid)
-  GEGL_CL_ARG(cl_mem, blur[0])
-  GEGL_CL_ARG(cl_mem, blur[1])
-  GEGL_CL_ARG(cl_mem, blur[2])
-  GEGL_CL_ARG(cl_mem, blur[3])
-  GEGL_CL_ARG(cl_int, sw)
-  GEGL_CL_ARG(cl_int, sh)
-  GEGL_CL_ARG(cl_int, depth)
-  GEGL_CL_ARG_END
+  gegl_cl_set_kernel_args (cl_data->kernel[1],
+                           sizeof(cl_mem), &grid,
+                           sizeof(cl_mem), &blur[0],
+                           sizeof(cl_mem), &blur[1],
+                           sizeof(cl_mem), &blur[2],
+                           sizeof(cl_mem), &blur[3],
+                           sizeof(cl_int), &sw,
+                           sizeof(cl_int), &sh,
+                           sizeof(cl_int), &depth,
+                           NULL);
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[1], 2,
-                                       NULL, global_ws, local_ws,
-                                       0, NULL, NULL);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[1], 2,
+                                        NULL, global_ws, local_ws,
+                                        0, NULL, NULL);
   CL_CHECK;
-  }
 
-  {
   global_ws[0] = width;
   global_ws[1] = height;
 
-  GEGL_CL_ARG_START(cl_data->kernel[2])
-  GEGL_CL_ARG(cl_mem,   in_tex)
-  GEGL_CL_ARG(cl_mem,   blur[0])
-  GEGL_CL_ARG(cl_mem,   blur[1])
-  GEGL_CL_ARG(cl_mem,   blur[2])
-  GEGL_CL_ARG(cl_mem,   blur[3])
-  GEGL_CL_ARG(cl_mem,   out_tex)
-  GEGL_CL_ARG(cl_int,   width)
-  GEGL_CL_ARG(cl_int,   sw)
-  GEGL_CL_ARG(cl_int,   sh)
-  GEGL_CL_ARG(cl_int,   depth)
-  GEGL_CL_ARG(cl_int,   s_sigma)
-  GEGL_CL_ARG(cl_float, r_sigma)
-  GEGL_CL_ARG_END
+  gegl_cl_set_kernel_args (cl_data->kernel[2],
+                           sizeof(cl_mem),   &in_tex,
+                           sizeof(cl_mem),   &blur[0],
+                           sizeof(cl_mem),   &blur[1],
+                           sizeof(cl_mem),   &blur[2],
+                           sizeof(cl_mem),   &blur[3],
+                           sizeof(cl_mem),   &out_tex,
+                           sizeof(cl_int),   &width,
+                           sizeof(cl_int),   &sw,
+                           sizeof(cl_int),   &sh,
+                           sizeof(cl_int),   &depth,
+                           sizeof(cl_int),   &s_sigma,
+                           sizeof(cl_float), &r_sigma,
+                           NULL);
+  CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
                                        cl_data->kernel[2], 2,
                                        NULL, global_ws, NULL,
                                        0, NULL, NULL);
   CL_CHECK;
-  }
 
-  cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
+  cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
   CL_CHECK;
 
-  GEGL_CL_RELEASE(grid);
+  /* FIXME: These should just raise a warning instead of calling CL_CHECK */
+  cl_err = gegl_clReleaseMemObject (grid);
+  CL_CHECK;
 
   for(c = 0; c < 4; c++)
     {
-      GEGL_CL_RELEASE(blur[c]);
+      cl_err = gegl_clReleaseMemObject (blur[c]);
+      CL_CHECK;
     }
 
   return FALSE;
 
 error:
-  if (grid) GEGL_CL_RELEASE(grid);
+  if (grid)
+    gegl_clReleaseMemObject (grid);
 
-  for(c = 0; c < 4; c++)
+  for (c = 0; c < 4; c++)
     {
-      if (blur[c]) GEGL_CL_RELEASE(blur[c]);
+      if (blur[c])
+        gegl_clReleaseMemObject (blur[c]);
     }
 
   return TRUE;
@@ -430,7 +439,7 @@ bilateral_cl_process (GeglOperation       *operation,
 {
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
-  gint err;
+  gint err = 0;
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                          result,
@@ -444,18 +453,23 @@ bilateral_cl_process (GeglOperation       *operation,
                                            GEGL_CL_BUFFER_READ,
                                            GEGL_ABYSS_NONE);
 
-  GEGL_CL_BUFFER_ITERATE_START(i, err)
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
     {
-       err = cl_bilateral(i->tex[read],
-                          i->tex[0],
-                          &i->roi[0],
-                          &i->roi[read],
-                          s_sigma,
-                          r_sigma);
-    }
-  GEGL_CL_BUFFER_ITERATE_END(err)
+       err = cl_bilateral (i->tex[read],
+                           i->tex[0],
+                           &i->roi[0],
+                           &i->roi[read],
+                           s_sigma,
+                           r_sigma);
 
-  return TRUE;
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
+    }
+
+  return !err;
 }
 
 static void
