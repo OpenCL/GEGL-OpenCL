@@ -362,16 +362,13 @@ cl_process (GeglOperation       *operation,
                                              op_area->bottom,
                                              GEGL_ABYSS_CLAMP);
 
-  gint aux  = gegl_buffer_cl_iterator_add_2 (i,
-                                             NULL,
-                                             result,
-                                             in_format,
-                                             GEGL_CL_BUFFER_AUX,
-                                             op_area->left   - 1,
-                                             op_area->right  - 1,
-                                             op_area->top    - 1,
-                                             op_area->bottom - 1,
-                                             GEGL_ABYSS_NONE);
+  gint aux = gegl_buffer_cl_iterator_add_aux (i,
+                                              result,
+                                              in_format,
+                                              op_area->left   - 1,
+                                              op_area->right  - 1,
+                                              op_area->top    - 1,
+                                              op_area->bottom - 1);
 
   while (gegl_buffer_cl_iterator_next (i, &err))
     {

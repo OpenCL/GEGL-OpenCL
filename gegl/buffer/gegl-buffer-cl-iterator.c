@@ -204,12 +204,33 @@ gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
 gint
 gegl_buffer_cl_iterator_add (GeglBufferClIterator  *iterator,
                              GeglBuffer            *buffer,
-                             const GeglRectangle   *result,
+                             const GeglRectangle   *roi,
                              const Babl            *format,
                              guint                  flags,
                              GeglAbyssPolicy        abyss_policy)
 {
-  return gegl_buffer_cl_iterator_add_2 (iterator, buffer, result, format, flags, 0,0,0,0, abyss_policy);
+  return gegl_buffer_cl_iterator_add_2 (iterator,
+                                        buffer, roi,
+                                        format, flags,
+                                        0, 0, 0, 0,
+                                        abyss_policy);
+}
+
+gint
+gegl_buffer_cl_iterator_add_aux  (GeglBufferClIterator  *iterator,
+                                  const GeglRectangle   *roi,
+                                  const Babl            *format,
+                                  gint                   left,
+                                  gint                   right,
+                                  gint                   top,
+                                  gint                   bottom)
+{
+  return gegl_buffer_cl_iterator_add_2 (iterator,
+                                        NULL, roi,
+                                        format, GEGL_CL_BUFFER_AUX,
+                                        left, right,
+                                        top, bottom,
+                                        GEGL_ABYSS_NONE);
 }
 
 static void
