@@ -64,9 +64,9 @@ typedef struct GeglBufferClIterators
   const Babl    *format         [GEGL_CL_BUFFER_MAX_ITERATORS]; /* The format required for the data */
   GeglBuffer    *buffer         [GEGL_CL_BUFFER_MAX_ITERATORS];
 
-  /* buffer->soft_format */
+  /* GeglBuffer's buffer */
   size_t buf_cl_format_size     [GEGL_CL_BUFFER_MAX_ITERATORS];
-  /* format */
+  /* Iterator's format */
   size_t op_cl_format_size      [GEGL_CL_BUFFER_MAX_ITERATORS];
 
   GeglClColorOp conv            [GEGL_CL_BUFFER_MAX_ITERATORS];
@@ -117,25 +117,27 @@ gegl_buffer_cl_iterator_add_2 (GeglBufferClIterator  *iterator,
 
   if (flags == GEGL_CL_BUFFER_WRITE || flags == GEGL_CL_BUFFER_READ)
     {
+      const Babl *buffer_format = gegl_buffer_get_format (buffer);
+
       g_assert (buffer);
 
       i->buffer[self]= g_object_ref (buffer);
 
       if (format)
-        i->format[self]=format;
+        i->format[self] = format;
       else
-        i->format[self]=buffer->soft_format;
+        i->format[self] = buffer_format;
 
       if (flags == GEGL_CL_BUFFER_WRITE)
-        i->conv[self] = gegl_cl_color_supported (format, buffer->soft_format);
+        i->conv[self] = gegl_cl_color_supported (format, buffer_format);
       else
-        i->conv[self] = gegl_cl_color_supported (buffer->soft_format, format);
+        i->conv[self] = gegl_cl_color_supported (buffer_format, format);
 
-      gegl_cl_color_babl (buffer->soft_format, &i->buf_cl_format_size[self]);
-      gegl_cl_color_babl (format,              &i->op_cl_format_size [self]);
+      gegl_cl_color_babl (buffer_format, &i->buf_cl_format_size[self]);
+      gegl_cl_color_babl (format,        &i->op_cl_format_size [self]);
 
       /* alpha, non-alpha & GEGL_ABYSS_NONE */
-      if (babl_format_has_alpha(buffer->soft_format) != babl_format_has_alpha(format) &&
+      if (babl_format_has_alpha(buffer_format) != babl_format_has_alpha(format) &&
           abyss_policy == GEGL_ABYSS_NONE &&
           !gegl_rectangle_contains (gegl_buffer_get_extent (buffer), result))
         {
@@ -288,7 +290,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
               if (i->conv[no] == GEGL_CL_COLOR_CONVERT)
                   {
                     color_err = gegl_cl_color_conv (i->tex_op[no], i->tex_buf[no], i->size[no],
-                                                    i->format[no], i->buffer[no]->soft_format);
+                                                    i->format[no], gegl_buffer_get_format (i->buffer[no]));
                     if (color_err) goto error;
                   }
 
@@ -447,7 +449,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                             CL_CHECK;
 
                             /* color conversion will be performed in the GPU later */
-                            gegl_buffer_get (i->buffer[no], &i->roi[no], 1.0, i->buffer[no]->soft_format, data, GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
+                            gegl_buffer_get (i->buffer[no], &i->roi[no], 1.0, NULL, data, GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
 
                             cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no], data,
                                                                    0, NULL, NULL);
@@ -485,7 +487,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                             CL_CHECK;
 
                             /* color conversion will be performed in the GPU later */
-                            gegl_buffer_get (i->buffer[no], &i->roi[no], 1.0, i->buffer[no]->soft_format, data, GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
+                            gegl_buffer_get (i->buffer[no], &i->roi[no], 1.0, NULL, data, GEGL_AUTO_ROWSTRIDE, i->abyss_policy[no]);
 
                             cl_err = gegl_clEnqueueUnmapMemObject (gegl_cl_get_command_queue(), i->tex_buf[no], data,
                                                                    0, NULL, NULL);
@@ -502,7 +504,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
                         /* color conversion in the GPU (input) */
                         g_assert (i->tex_buf[no] && i->tex_op[no]);
                         color_err = gegl_cl_color_conv (i->tex_buf[no], i->tex_op[no], i->size[no],
-                                                        i->buffer[no]->soft_format, i->format[no]);
+                                                        gegl_buffer_get_format (i->buffer[no]), i->format[no]);
                         if (color_err) goto error;
 
                         i->tex[no] = i->tex_op[no];
