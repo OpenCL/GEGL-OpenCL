@@ -1,28 +1,10 @@
-#include $(top_srcdir)/operations/Makefile-common.am
 
 SUBDIRS = data
-CFILES = $(wildcard $(srcdir)/*.c)
-bins   = $(subst $(srcdir)/,,$(CFILES:.c=))
-EXTRA_DIST = $(wildcard $(srcdir)/*.c) $(wildcard $(srcdir)/util/*.[ch])
 
-gegl_lt_cc_v = $(gegl_lt_cc_v_$(V))
-gegl_lt_cc_v_ = $(gegl_lt_cc_v_$(AM_DEFAULT_VERBOSITY))
-gegl_lt_cc_v_0 = @echo "  CC     " $<;
-gegl_lt_ccld_v = $(gegl_lt_ccld_v_$(V))
-gegl_lt_ccld_v_ = $(gegl_lt_ccld_v_$(AM_DEFAULT_VERBOSITY))
-gegl_lt_ccld_v_0 = @echo "  CCLD   " $@;
-
-all-local: $(bins)
-
-%: %.c $(GEGLHEADERS)
-	$(gegl_lt_cc_v) $(LIBTOOL) --quiet --mode=compile $(CC) $(DEFS) -I. -I$(top_builddir) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $@.lo $< 
-	$(gegl_lt_ccld_v) $(LIBTOOL) --quiet --mode=link $(CC) $(AM_LDFLAGS) $(LDFLAGS) $(CFLAGS) -o $@ $@.lo $(LIBS)
-
-clean-local:
-	rm -f *.lo $(bins)
+EXTRA_DIST = $(wildcard $(srcdir)/*.py))
 
 AM_CPPFLAGS = \
-	-I$(top_srcdir)	\
+	-I$(top_srcdir) \
 	-I$(top_builddir)/gegl \
 	-I$(top_srcdir)/gegl \
 	-I$(top_builddir)/gegl/buffer \
@@ -38,8 +20,28 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/gegl/opencl \
 	-I$(top_srcdir)/gegl/opencl
 
-AM_CFLAGS = $(DEP_CFLAGS) $(GTK_CFLAGS) $(BABL_CFLAGS) $(PNG_CFLAGS)
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
 AM_LDFLAGS =  \
 	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
-	$(DEP_LIBS) $(GTK_LIBS) $(BABL_LIBS) $(PNG_LIBS)
+	$(BABL_LIBS) \
+	$(DEP_LIBS)
+
+bin_PROGRAMS = \
+	2geglbuffer \
+	csugar \
+	float-lookup \
+	gegl-convert \
+	gegl-slicer \
+	geglbuffer-add-image \
+	geglbuffer-clock \
+	hello-world
+
+2geglbuffer_SOURCES = 2geglbuffer.c
+csugar_SOURCES = csugar.c
+float_lookup_SOURCES = float-lookup.c
+gegl_convert_SOURCES = gegl-convert.c
+gegl_slicer_SOURCES = gegl-slicer.c
+geglbuffer_add_image_SOURCES = geglbuffer-add-image.c
+geglbuffer_clock_SOURCES = geglbuffer-clock.c
+hello_world_SOURCES = hello-world.c
