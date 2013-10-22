@@ -302,11 +302,10 @@ cl_edge_laplace (cl_mem                in_tex,
   global_ws_aux[0] = roi->width;
   global_ws_aux[1] = roi->height;
 
-  cl_err = gegl_clSetKernelArg (cl_data->kernel[0], 0, sizeof (cl_mem),
-                                (void*) &in_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg (cl_data->kernel[0], 1, sizeof (cl_mem),
-                                (void*) &aux_tex);
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof (cl_mem), &in_tex,
+                                    sizeof (cl_mem), &aux_tex,
+                                    NULL);
   CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
@@ -315,11 +314,11 @@ cl_edge_laplace (cl_mem                in_tex,
                                         0, NULL, NULL);
   CL_CHECK;
 
-  cl_err = gegl_clSetKernelArg (cl_data->kernel[1], 0, sizeof (cl_mem),
-                                (void*) &aux_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg (cl_data->kernel[1], 1, sizeof (cl_mem),
-                                (void*) &out_tex);
+
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[1],
+                                    sizeof (cl_mem), &aux_tex,
+                                    sizeof (cl_mem), &out_tex,
+                                    NULL);
   CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
@@ -342,7 +341,7 @@ cl_process (GeglOperation       *operation,
 {
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
-  gint err;
+  gint err = 0;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
@@ -370,10 +369,8 @@ cl_process (GeglOperation       *operation,
                                               op_area->top    - 1,
                                               op_area->bottom - 1);
 
-  while (gegl_buffer_cl_iterator_next (i, &err))
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
     {
-      if (err) return FALSE;
-
       err = cl_edge_laplace (i->tex[read],
                              i->tex[aux],
                              i->tex[0],
@@ -381,10 +378,14 @@ cl_process (GeglOperation       *operation,
                              &i->roi[0],
                              LAPLACE_RADIUS);
 
-      if (err) return FALSE;
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
     }
 
-  return TRUE;
+  return !err;
 }
 
 static void

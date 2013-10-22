@@ -463,67 +463,61 @@ cl_gaussian_blur (cl_mem                in_tex,
   if (!cl_data)
     return TRUE;
 
-  cl_matrix_x = gegl_clCreateBuffer(gegl_cl_get_context(),
-                                    CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY,
-                                    matrix_length_x * sizeof(cl_float), dmatrix_x, &cl_err);
+  cl_matrix_x = gegl_clCreateBuffer (gegl_cl_get_context(),
+                                     CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY,
+                                     matrix_length_x * sizeof(cl_float), dmatrix_x, &cl_err);
   CL_CHECK;
 
-  cl_matrix_y = gegl_clCreateBuffer(gegl_cl_get_context(),
-                                    CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY,
-                                    matrix_length_y * sizeof(cl_float), dmatrix_y, &cl_err);
+  cl_matrix_y = gegl_clCreateBuffer (gegl_cl_get_context(),
+                                     CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY,
+                                     matrix_length_y * sizeof(cl_float), dmatrix_y, &cl_err);
   CL_CHECK;
 
   global_ws[0] = aux_rect->width;
   global_ws[1] = aux_rect->height;
 
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem), (void*)&in_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_int), (void*)&src_rect->width);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_mem), (void*)&aux_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 3, sizeof(cl_mem), (void*)&cl_matrix_x);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 4, sizeof(cl_int), (void*)&matrix_length_x);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 5, sizeof(cl_int), (void*)&xoff);
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[1],
+                                    sizeof(cl_mem), (void*)&in_tex,
+                                    sizeof(cl_int), (void*)&src_rect->width,
+                                    sizeof(cl_mem), (void*)&aux_tex,
+                                    sizeof(cl_mem), (void*)&cl_matrix_x,
+                                    sizeof(cl_int), (void*)&matrix_length_x,
+                                    sizeof(cl_int), (void*)&xoff,
+                                    NULL);
   CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[1], 2,
-                                       NULL, global_ws, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[1], 2,
+                                        NULL, global_ws, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
 
 
   global_ws[0] = roi->width;
   global_ws[1] = roi->height;
 
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem), (void*)&aux_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_int), (void*)&aux_rect->width);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_mem), (void*)&out_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_mem), (void*)&cl_matrix_y);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int), (void*)&matrix_length_y);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int), (void*)&yoff);
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof(cl_mem), (void*)&aux_tex,
+                                    sizeof(cl_int), (void*)&aux_rect->width,
+                                    sizeof(cl_mem), (void*)&out_tex,
+                                    sizeof(cl_mem), (void*)&cl_matrix_y,
+                                    sizeof(cl_int), (void*)&matrix_length_y,
+                                    sizeof(cl_int), (void*)&yoff,
+                                    NULL);
   CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[0], 2,
-                                       NULL, global_ws, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_ws, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
 
-  cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
+  cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
   CL_CHECK;
 
-  cl_err = gegl_clReleaseMemObject(cl_matrix_x);
+  cl_err = gegl_clReleaseMemObject (cl_matrix_x);
   CL_CHECK;
-  cl_err = gegl_clReleaseMemObject(cl_matrix_y);
+  cl_err = gegl_clReleaseMemObject (cl_matrix_y);
   CL_CHECK;
 
   return FALSE;

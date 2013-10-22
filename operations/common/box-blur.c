@@ -200,7 +200,9 @@ cl_box_blur (cl_mem                in_tex,
       const char *kernel_name[] = {"kernel_blur_hor", "kernel_blur_ver", NULL};
       cl_data = gegl_cl_compile_and_build (box_blur_cl_source, kernel_name);
     }
-  if (!cl_data) return TRUE;
+
+  if (!cl_data)
+    return TRUE;
 
   local_ws_hor[0] = 1;
   local_ws_hor[1] = 256;
@@ -212,31 +214,31 @@ cl_box_blur (cl_mem                in_tex,
   global_ws_ver[0] = roi->height;
   global_ws_ver[1] = ((roi->width + local_ws_ver[1] -1)/local_ws_ver[1]) * local_ws_ver[1];
 
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&aux_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_int),   (void*)&roi->width);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_int),   (void*)&radius);
+
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof(cl_mem), (void*)&in_tex,
+                                    sizeof(cl_mem), (void*)&aux_tex,
+                                    sizeof(cl_int), (void*)&roi->width,
+                                    sizeof(cl_int), (void*)&radius,
+                                    NULL);
   CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
                                         cl_data->kernel[0], 2,
                                         NULL, global_ws_hor, local_ws_hor,
                                         0, NULL, NULL);
   CL_CHECK;
 
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 0, sizeof(cl_mem),   (void*)&aux_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 1, sizeof(cl_mem),   (void*)&out_tex);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 2, sizeof(cl_int),   (void*)&roi->width);
-  CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[1], 3, sizeof(cl_int),   (void*)&radius);
+
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[1],
+                                    sizeof(cl_mem), (void*)&aux_tex,
+                                    sizeof(cl_mem), (void*)&out_tex,
+                                    sizeof(cl_int), (void*)&roi->width,
+                                    sizeof(cl_int), (void*)&radius,
+                                    NULL);
   CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
                                         cl_data->kernel[1], 2,
                                         NULL, global_ws_ver, local_ws_ver,
                                         0, NULL, NULL);
@@ -257,7 +259,7 @@ cl_process (GeglOperation       *operation,
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
 
-  gint err;
+  gint err = 0;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
@@ -286,21 +288,23 @@ cl_process (GeglOperation       *operation,
                                               op_area->top,
                                               op_area->bottom);
 
-  while (gegl_buffer_cl_iterator_next (i, &err))
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
     {
-      if (err) return FALSE;
+      err = cl_box_blur (i->tex[read],
+                         i->tex[aux],
+                         i->tex[0],
+                         i->size[0],
+                         &i->roi[0],
+                         ceil (o->radius));
 
-      err = cl_box_blur(i->tex[read],
-                        i->tex[aux],
-                        i->tex[0],
-                        i->size[0],
-                        &i->roi[0],
-                        ceil (o->radius));
-
-      if (err) return FALSE;
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
     }
 
-  return TRUE;
+  return !err;
 }
 
 static gboolean

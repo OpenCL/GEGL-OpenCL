@@ -256,7 +256,7 @@ cl_process (GeglOperation       *operation,
 {
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
-  gint err;
+  gint err = 0;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
@@ -285,22 +285,24 @@ cl_process (GeglOperation       *operation,
                                               op_area->top,
                                               op_area->bottom);
 
-  while (gegl_buffer_cl_iterator_next (i, &err))
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
     {
-      if (err) return FALSE;
+      err = cl_noise_reduction (i->tex[read],
+                                i->tex[aux],
+                                i->tex[0],
+                                i->size[0],
+                                &i->roi[read],
+                                &i->roi[0],
+                                o->iterations);
 
-      err = cl_noise_reduction(i->tex[read],
-                               i->tex[aux],
-                               i->tex[0],
-                               i->size[0],
-                               &i->roi[read],
-                               &i->roi[0],
-                               o->iterations);
-
-      if (err) return FALSE;
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
     }
 
-  return TRUE;
+  return !err;
 }
 
 #define INPLACE 1
