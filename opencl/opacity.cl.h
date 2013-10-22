@@ -22,5 +22,4 @@ static const char* opacity_cl_source =
 "  float4 out_v = (float4)(in_v.x, in_v.y, in_v.z, in_v.w * aux_v * value);    \n"
 "  out[gid]  =  out_v;                                                         \n"
 "}                                                                             \n"
-"                                                                              \n"
 ;

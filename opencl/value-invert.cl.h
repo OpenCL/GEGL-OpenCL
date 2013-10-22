@@ -28,5 +28,4 @@ static const char* value_invert_cl_source =
 "  out_v.w   =  in_v.w;                                                        \n"
 "  out[gid]  =  out_v;                                                         \n"
 "}                                                                             \n"
-"                                                                              \n"
 ;
