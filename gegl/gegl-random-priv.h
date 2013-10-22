@@ -13,17 +13,16 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2013 Carlos Zubieta (czubieta.dev@gmail.com)
+ * Copyright 2012, 2013 Øyvind Kolås
  */
 
-#ifndef __GEGL_CL_RANDOM_H__
-#define __GEGL_CL_RANDOM_H__
+#ifndef __GEGL_RANDOM_PRIV_H__
+#define __GEGL_RANDOM_PRIV_H__
 
-#include "gegl-cl-types.h"
-/** Load the random data needed to generate random numbers in the GPU*/
-cl_mem gegl_cl_load_random_data (int *cl_err);
+#define PRIMES_SIZE       533
+#define RANDOM_DATA_SIZE (15083+15091+15101)
 
-/** Load the primes needed to generate random numbers in the GPU*/
-cl_mem gegl_cl_load_random_primes (int *cl_err);
+void
+gegl_random_init (void);
 
-#endif
+#endif /* __GEGL_RANDOM_PRIV_H__ */

@@ -38,10 +38,11 @@
 
 #include <glib.h>
 #include <gegl.h>
+#include "gegl-random-priv.h"
 
 /* a set of reasonably large primes to choose from for array sizes
  */
-long gegl_random_primes[]={
+long gegl_random_primes[PRIMES_SIZE]={
 10007,10009,10037,10039,10061,10067,10069,10079,10091,10093,10099,10103,10111,
 10133,10139,10141,10151,10159,10163,10169,10177,10181,10193,10211,10223,10243,
 10247,10253,10259,10267,10271,10273,10289,10301,10303,10313,10321,10331,10333,
@@ -90,8 +91,6 @@ long gegl_random_primes[]={
 #define YPRIME     101359
 #define NPRIME     101111
 #define MAX_TABLES 3
-
-#define RANDOM_DATA_SIZE (15083+15091+15101)
 
 gint32          gegl_random_data[RANDOM_DATA_SIZE];
 static gboolean random_data_inited = FALSE;

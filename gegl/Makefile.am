@@ -97,6 +97,7 @@ GEGL_sources = \
 	gegl-matrix.h			\
 	gegl-module.h			\
 	gegl-plugin.h			\
+	gegl-random-priv.h		\
 	gegl-types-internal.h		\
 	gegl-xml.h
 

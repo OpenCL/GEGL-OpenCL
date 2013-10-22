@@ -19,35 +19,35 @@
 #include <glib.h>
 #include "gegl-cl-random.h"
 #include "opencl/gegl-cl.h"
+#include "gegl-random-priv.h"
 
 /*XXX: defined in gegl-random.c*/
-#define RANDOM_DATA_SIZE (15083+15091+15101)
-#define PRIMES_SIZE 533
 
-extern gint32      *gegl_random_data;
-extern long        *gegl_random_primes;
-extern inline void gegl_random_init (void);
+extern gint32 *gegl_random_data;
+extern long   *gegl_random_primes;
 
-cl_mem gegl_cl_load_random_data(int *cl_err)
+cl_mem
+gegl_cl_load_random_data (gint *cl_err)
 {
-  gegl_random_init();
   cl_mem cl_random_data;
-  cl_random_data = gegl_clCreateBuffer(gegl_cl_get_context(),
-                                       CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
-                                       RANDOM_DATA_SIZE*sizeof(gint32),
-                                       (void*) &gegl_random_data,
-                                       cl_err);
+  gegl_random_init ();
+  cl_random_data = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                        CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
+                                        RANDOM_DATA_SIZE * sizeof (gint32),
+                                        (void*) &gegl_random_data,
+                                        cl_err);
   return cl_random_data;
 }
 
-cl_mem gegl_cl_load_random_primes(int *cl_err)
+cl_mem
+gegl_cl_load_random_primes (gint *cl_err)
 {
   cl_mem cl_random_primes;
-  cl_random_primes = gegl_clCreateBuffer(gegl_cl_get_context(),
-                                         CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
-                                         PRIMES_SIZE*sizeof(long),
-                                         (void*) &gegl_random_primes,
-                                         cl_err);
+  cl_random_primes = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                          CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
+                                          PRIMES_SIZE * sizeof (long),
+                                          (void*) &gegl_random_primes,
+                                          cl_err);
   return cl_random_primes;
 }
 
