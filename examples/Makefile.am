@@ -45,3 +45,11 @@ gegl_slicer_SOURCES = gegl-slicer.c
 geglbuffer_add_image_SOURCES = geglbuffer-add-image.c
 geglbuffer_clock_SOURCES = geglbuffer-clock.c
 hello_world_SOURCES = hello-world.c
+
+if HAVE_SDL
+bin_PROGRAMS += sdl-draw
+sdl_draw_SOURCES = sdl-draw.c
+sdl_draw_LDADD = $(SDL_LIBS)
+sdl_draw_CFLAGS = $(AM_CFLAGS) $(SDL_CFLAGS)
+endif
+
