@@ -778,7 +778,6 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
       gint tiledy  = buffer_y + bufy;
       gint offsety = gegl_tile_offset (tiledy, tile_height);
       gint bufx    = 0;
-      gint i;
 
       if (!(buffer_y + bufy + (tile_height) >= buffer_abyss_y &&
             buffer_y + bufy < abyss_y_total))
@@ -791,8 +790,7 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
                row < tile_height && y < height;
                row++, y++)
             {
-              for (i = 0; i < width * bpx_size; i += bpx_size)
-                memcpy (bp + i, color, bpx_size);
+              gegl_memset_pattern (bp, color, bpx_size, width);
               bp += buf_stride;
             }
         }
@@ -821,8 +819,7 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
                      row < tile_height && y < height;
                      row++, y++)
                   {
-                    for (i = 0; i < pixels * bpx_size; i += bpx_size)
-                      memcpy (bp + i, color, bpx_size);
+                    gegl_memset_pattern (bp, color, bpx_size, pixels);
                     bp += buf_stride;
                   }
               }
@@ -875,23 +872,20 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
                     else
                       {
                         /* entire row in abyss */
-                        for (i = 0; i < pixels * bpx_size; i += bpx_size)
-                          memcpy (bp + i, color, bpx_size);
+                        gegl_memset_pattern (bp, color, bpx_size, pixels);
                       }
 
                     /* left hand zeroing of abyss in tile */
                     if (lskip)
                       {
-                        for (i = 0; i < lskip * bpx_size; i += bpx_size)
-                          memcpy (bp + i, color, bpx_size);
+                        gegl_memset_pattern (bp, color, bpx_size, lskip);
                       }
 
                     /* right side zeroing of abyss in tile */
                     if (rskip)
                       {
-                        guchar *bp_ = bp + (pixels - rskip) * bpx_size;
-                        for (i = 0; i < rskip * bpx_size; i += bpx_size)
-                          memcpy (bp_ + i, color, bpx_size);
+                        guchar *bp_right = bp + (pixels - rskip) * bpx_size;
+                        gegl_memset_pattern (bp_right, color, bpx_size, rskip);
                       }
 
                     tp += tile_stride;
@@ -976,8 +970,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
           if (tiledx != buffer_x + bufx)
             { /* x was clamped. Copy a single color since x remains clamped in
                this iteration. */
-              guchar color[128];
-              gint   i;
+              guchar *color = alloca (bpx_size);
 
               /* gap between current column and left side of abyss rect */
               lskip = (buffer_abyss_x) - (buffer_x + bufx);
@@ -996,8 +989,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
                        row < tile_height && y < height;
                        row++, y++)
                     {
-                      for (i = 0; i < pixels * bpx_size; i += bpx_size)
-                        memcpy (bp + i, color, bpx_size);
+                      gegl_memset_pattern (bp, color, bpx_size, pixels);
                       bp += buf_stride;
                     }
                 }
@@ -1012,8 +1004,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
                       else
                         memcpy (color, tp, px_size);
 
-                      for (i = 0; i < pixels * bpx_size; i += bpx_size)
-                        memcpy (bp + i, color, bpx_size);
+                      gegl_memset_pattern (bp, color, bpx_size, pixels);
 
                       if (buffer_y + y >= buffer_abyss_y &&
                           buffer_y + y < abyss_y_total - 1)
