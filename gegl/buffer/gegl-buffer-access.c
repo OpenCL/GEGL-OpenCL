@@ -1209,18 +1209,24 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
       gegl_buffer_iterate_read_abyss_none (buffer, &roi_factored, &abyss_factored,
                                            buf, rowstride, format, level);
     }
-  else if (repeat_mode == GEGL_ABYSS_WHITE ||
-           repeat_mode == GEGL_ABYSS_BLACK)
+  else if (repeat_mode == GEGL_ABYSS_WHITE)
     {
-      gfloat color_a[4] = {0.0, 0.0, 0.0, 1.0};
       guchar color[128];
-      gint   i;
+      gfloat in_color[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-      if (repeat_mode == GEGL_ABYSS_WHITE)
-        for (i = 0; i < 3; i++)
-          color_a[i] = 1.0;
       babl_process (babl_fish (babl_format ("RGBA float"), format),
-                    color_a, color, 1);
+                    in_color, color, 1);
+
+      gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
+                                            buf, rowstride, format, level, color);
+    }
+  else if (repeat_mode == GEGL_ABYSS_BLACK)
+    {
+      guchar color[128];
+      gfloat  in_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
+
+      babl_process (babl_fish (babl_format ("RGBA float"), format),
+                    in_color, color, 1);
 
       gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
                                             buf, rowstride, format, level, color);
