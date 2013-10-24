@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:stretch-contrast'>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/mid_grey_dot.png</param>
+    </params>
+  </node>
+</gegl>
+

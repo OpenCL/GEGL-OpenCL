@@ -35,6 +35,7 @@ TESTS = \
   rotate.xml                      \
   simple-scale.xml                \
   softglow.xml                    \
+  stretch-contrast.xml            \
   transform.xml                   \
   rectangles.xml
 
