@@ -38,7 +38,7 @@ buffer_get_min_max (GeglBuffer *buffer,
   gfloat tmax = -G_MAXFLOAT;
 
   GeglBufferIterator *gi;
-  gi = gegl_buffer_iterator_new (buffer, NULL, 0, babl_format ("RGB float"),
+  gi = gegl_buffer_iterator_new (buffer, NULL, 0, babl_format ("R'G'B' float"),
                                  GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (gi))
@@ -65,8 +65,8 @@ buffer_get_min_max (GeglBuffer *buffer,
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "input", babl_format ("R'G'B'A float"));
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
 }
 
 static GeglRectangle
@@ -378,10 +378,10 @@ process (GeglOperation       *operation,
     return TRUE;
   }
 
-  gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("RGBA float"),
+  gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("R'G'B'A float"),
                                  GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-  gegl_buffer_iterator_add (gi, output, result, 0, babl_format ("RGBA float"),
+  gegl_buffer_iterator_add (gi, output, result, 0, babl_format ("R'G'B'A float"),
                             GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (gi))
