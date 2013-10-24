@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:weighted-blend'>
+    <node operation='gegl:crop'>
+      <params>
+	<param name='x'>0</param>
+	<param name='y'>0</param>
+	<param name='width'>200</param>
+	<param name='height'>200</param>
+      </params>
+    </node>
+    <node operation='gegl:color'>
+      <params>
+	<param name='value'>rgba(1.0, 0.0, 0.0, 0.5)</param>
+      </params>
+    </node>
+  </node>
+  <node operation='gegl:crop'>
+    <params>
+      <param name='x'>0</param>
+      <param name='y'>0</param>
+      <param name='width'>200</param>
+      <param name='height'>200</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>
+

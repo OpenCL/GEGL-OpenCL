@@ -42,6 +42,7 @@ TESTS = \
   softglow.xml                    \
   stretch-contrast.xml            \
   transform.xml                   \
+  weighted-blend.xml              \
   rectangles.xml
 
   #run-matting-global.xml.sh
