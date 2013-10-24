@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:red-eye-removal'>
+    <params>
+      <param name='threshold'>0.4</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/red-eye.png</param>
+    </params>
+  </node>
+</gegl>

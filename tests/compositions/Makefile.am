@@ -29,6 +29,7 @@ TESTS = \
   mantiuk06.xml                   \
   pixelize.xml                    \
   posterize.xml                   \
+  red-eye-removal.xml             \
   reflect.xml                     \
   reflect2.xml                    \
   reinhard05.xml                  \
