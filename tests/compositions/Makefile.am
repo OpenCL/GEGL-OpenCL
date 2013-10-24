@@ -25,6 +25,7 @@ TESTS = \
   fattal02.xml                    \
   gamma.xml                       \
   hdr-color.xml                   \
+  image-compare.xml               \
   mantiuk06.xml                   \
   pixelize.xml                    \
   reflect.xml                     \

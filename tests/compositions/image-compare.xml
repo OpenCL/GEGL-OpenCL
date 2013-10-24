@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:image-compare'>
+    <node operation='gegl:load'>
+      <params>
+	<param name='path'>data/car-stack.png</param>
+      </params>
+    </node>
+  </node>
+  <node operation='gegl:crop'>
+    <params>
+      <param name='x'>0</param>
+      <param name='y'>0</param>
+      <param name='width'>512</param>
+      <param name='height'>384</param>
+    </params>
+  </node>
+  <node operation='gegl:gaussian-blur'>
+      <param name='std_dev_y'>4.0</param>
+      <param name='std_dev_x'>4.0</param>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>
+
