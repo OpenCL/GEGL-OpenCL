@@ -118,7 +118,6 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
                 if (err)
                   {
                     GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", operation_class->name);
-                    gegl_cl_disable();
                     return FALSE;
                   }
               }
@@ -154,7 +153,6 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
 
 error:
   GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", gegl_cl_errstring(cl_err));
-  gegl_cl_disable();
   return FALSE;
 }
 
