@@ -16,6 +16,7 @@ EXTRA_DIST=$(wildcard $(srcdir)/*.xml) $(wildcard $(srcdir)/reference/*) run-com
 # EXTRA_DISTS
 TESTS = \
   affine-with-negative.xml        \
+  alien-map.xml                   \
   checkerboard.xml                \
   clones.xml                      \
   colors.xml                      \

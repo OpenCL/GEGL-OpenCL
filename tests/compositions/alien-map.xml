@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:alien-map'>
+    <params>
+      <param name='color_model'>RGB</param>
+      <param name='cpn_1_frequency'>2.0</param>
+      <param name='cpn_2_frequency'>2.0</param>
+      <param name='cpn_3_frequency'>2.0</param>
+      <param name='cpn_1_phaseshift'>1.0</param>
+      <param name='cpn_2_phaseshift'>1.0</param>
+      <param name='cpn_3_phaseshift'>1.0</param>
+      <param name='cpn_1_keep'>false</param>
+      <param name='cpn_2_keep'>false</param>
+      <param name='cpn_3_keep'>false</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>
