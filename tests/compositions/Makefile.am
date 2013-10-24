@@ -20,6 +20,7 @@ TESTS = \
   checkerboard.xml                \
   clones.xml                      \
   colors.xml                      \
+  color-to-alpha.xml              \
   composite-transform.xml         \
   edge-laplace.xml                \
   edge-sobel.xml                  \
