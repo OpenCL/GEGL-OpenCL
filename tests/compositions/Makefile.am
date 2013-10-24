@@ -22,6 +22,7 @@ TESTS = \
   colors.xml                      \
   color-to-alpha.xml              \
   composite-transform.xml         \
+  contrast-curve.xml              \
   edge-laplace.xml                \
   edge-sobel.xml                  \
   fattal02.xml                    \

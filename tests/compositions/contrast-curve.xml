@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:contrast-curve'>
+    <params>
+      <param name='sampling-points'>30</param>
+      <param name='curve'>
+	<curve ymin='0.0' ymax='1.0'>
+	  <curve-point x='0.0' y='1.0'/>
+	  <curve-point x='0.5' y='0.3'/>
+	  <curve-point x='1.0' y='0.0'/>
+	</curve>
+      </param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>
+
