@@ -46,7 +46,7 @@ cl_source = infile.read()
 cl_source = do_includes(cl_source)
 infile.close()
 
-string_var_name = sys.argv[1].replace("-", "_").replace(":", "_")
+string_var_name = os.path.basename(sys.argv[1]).replace("-", "_").replace(":", "_")
 if string_var_name.endswith(".cl"):
   string_var_name = string_var_name[:-3]
 
