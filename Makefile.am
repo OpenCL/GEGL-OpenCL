@@ -5,6 +5,7 @@ ACLOCAL_AMFLAGS = -I m4 ${ACLOCAL_FLAGS}
 # the next run of make.
 SUBDIRS=\
 	libs \
+	opencl \
 	gegl \
 	seamless-clone \
 	operations \
@@ -12,8 +13,7 @@ SUBDIRS=\
 	tools \
 	examples \
 	tests \
-	po \
- 	opencl
+	po
 
 if ENABLE_DOCS
 SUBDIRS+= docs
