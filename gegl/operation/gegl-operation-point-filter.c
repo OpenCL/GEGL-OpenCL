@@ -88,6 +88,8 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
   GeglOperationPointFilterClass *point_filter_class = GEGL_OPERATION_POINT_FILTER_GET_CLASS (operation);
 
+  GeglBufferClIterator *iter = NULL;
+
   cl_int cl_err = 0;
   gboolean err;
 
@@ -102,57 +104,59 @@ gegl_operation_point_filter_cl_process (GeglOperation       *operation,
   GEGL_NOTE (GEGL_DEBUG_OPENCL, "GEGL_OPERATION_POINT_FILTER: %s", operation_class->name);
 
   /* Process */
-  {
-    GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,   result, out_format, GEGL_CL_BUFFER_WRITE);
-                  gint read = gegl_buffer_cl_iterator_add (i, input, result, in_format,  GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
+  iter = gegl_buffer_cl_iterator_new (output, result, out_format, GEGL_CL_BUFFER_WRITE);
 
-    while (gegl_buffer_cl_iterator_next (i, &err))
-      {
-        if (err) return FALSE;
+  gegl_buffer_cl_iterator_add (iter, input, result, in_format, GEGL_CL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-          {
-            if (point_filter_class->cl_process)
-              {
-                err = point_filter_class->cl_process(operation, i->tex[read], i->tex[0],
-                                                     i->size[0], &i->roi[0], level);
-                if (err)
-                  {
-                    GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", operation_class->name);
-                    return FALSE;
-                  }
-              }
-            else if (operation_class->cl_data)
-              {
-                gint p = 0;
-                GeglClRunData *cl_data = operation_class->cl_data;
+  while (gegl_buffer_cl_iterator_next (iter, &err))
+    {
+      if (err)
+        return FALSE;
 
-                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[read]);
-                CL_CHECK;
-                cl_err = gegl_clSetKernelArg(cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&i->tex[  0 ]);
-                CL_CHECK;
+      if (point_filter_class->cl_process)
+        {
+          err = point_filter_class->cl_process (operation, iter->tex[1], iter->tex[0],
+                                                iter->size[0], &iter->roi[0], level);
+          if (err)
+            {
+              GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", operation_class->name);
+              gegl_buffer_cl_iterator_stop (iter);
+              return FALSE;
+            }
+        }
+      else if (operation_class->cl_data)
+        {
+          gint p = 0;
+          GeglClRunData *cl_data = operation_class->cl_data;
 
-                gegl_operation_cl_set_kernel_args (operation, cl_data->kernel[0], &p, &cl_err);
-                CL_CHECK;
+          cl_err = gegl_clSetKernelArg (cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&iter->tex[1]);
+          CL_CHECK;
+          cl_err = gegl_clSetKernelArg (cl_data->kernel[0], p++, sizeof(cl_mem), (void*)&iter->tex[0]);
+          CL_CHECK;
 
-                cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                                     cl_data->kernel[0], 1,
-                                                     NULL, &i->size[0], NULL,
-                                                     0, NULL, NULL);
-                CL_CHECK;
-              }
-            else
-              {
-                g_warning ("OpenCL support enabled, but no way to execute");
-                return FALSE;
-              }
-          }
-      }
-  }
+          gegl_operation_cl_set_kernel_args (operation, cl_data->kernel[0], &p, &cl_err);
+          CL_CHECK;
+
+          cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                                cl_data->kernel[0], 1,
+                                                NULL, &iter->size[0], NULL,
+                                                0, NULL, NULL);
+          CL_CHECK;
+        }
+      else
+        {
+          g_warning ("OpenCL support enabled, but no way to execute");
+          gegl_buffer_cl_iterator_stop (iter);
+          return FALSE;
+        }
+    }
 
   return TRUE;
 
 error:
-  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", gegl_cl_errstring(cl_err));
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", gegl_cl_errstring (cl_err));
+  if (iter)
+    gegl_buffer_cl_iterator_stop (iter);
   return FALSE;
 }
 
