@@ -95,7 +95,8 @@ long gegl_random_primes[PRIMES_SIZE]={
 gint32          gegl_random_data[RANDOM_DATA_SIZE];
 static gboolean random_data_inited = FALSE;
 
-inline void gegl_random_init (void)
+void
+gegl_random_init (void)
 {
   if (G_LIKELY (random_data_inited))
     return;
