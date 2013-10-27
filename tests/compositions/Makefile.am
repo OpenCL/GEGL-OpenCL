@@ -28,6 +28,7 @@ TESTS = \
   image-compare.xml               \
   mantiuk06.xml                   \
   pixelize.xml                    \
+  posterize.xml                   \
   reflect.xml                     \
   reflect2.xml                    \
   reinhard05.xml                  \
