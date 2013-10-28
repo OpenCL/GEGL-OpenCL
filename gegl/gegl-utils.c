@@ -302,7 +302,27 @@ gegl_memset_pattern (void * restrict       dst_ptr,
       return;
 MAKE_COPY_CASE(2) /* YA u8 */
 MAKE_COPY_CASE(3) /* RGB u8 */
+#ifdef ARCH_X86_64
+    case 4: /* RGBA u8 */
+      if (count >= 2)
+        {
+          guint64 pat2 = *(guint32 *)src_ptr;
+          pat2 = pat2 | pat2 << 32;
+          do {
+            memcpy (dst, &pat2, 8);
+            dst += 8;
+            count -= 2;
+          } while (count >= 2);
+        }
+      if (count)
+        {
+          memcpy (dst, src, 4);
+          dst += 4;
+        }
+      return;
+#else
 MAKE_COPY_CASE(4) /* RGBA u8 */
+#endif /* ARCH_X86_64 */
 MAKE_COPY_CASE(6) /* RGB u16 */
 MAKE_COPY_CASE(8) /* RGBA u16 */
 MAKE_COPY_CASE(12) /* RGB float */
