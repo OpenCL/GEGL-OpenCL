@@ -270,6 +270,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
   gint no;
   cl_int cl_err = 0;
   int color_err = 0;
+  gboolean is_finished;
 
   if (i->is_finished)
     g_error ("%s called on finished buffer iterator", G_STRFUNC);
@@ -387,7 +388,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
     }
 
   g_assert (i->iterators > 0);
-  i->is_finished = (i->iteration_no >= i->rois);
+  is_finished = i->is_finished = (i->iteration_no >= i->rois);
 
   /* then we iterate all */
   if (!i->is_finished)
@@ -618,7 +619,7 @@ gegl_buffer_cl_iterator_next (GeglBufferClIterator *iterator, gboolean *err)
 
   if (err)
     *err = FALSE;
-  return !i->is_finished;
+  return !is_finished;
 
 error:
   gegl_buffer_cl_iterator_stop ((GeglBufferClIterator *)i);
