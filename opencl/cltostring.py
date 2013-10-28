@@ -27,16 +27,14 @@ def do_includes (source):
   return "\n".join(result)
 
 # From http://stackoverflow.com/questions/14945095/how-to-escape-string-for-generated-c
-def escape_string(s, encoding='ascii'):
-   if isinstance(s, unicode):
-      s = s.encode(encoding)
-   result = ''
-   for c in s:
-      if not (32 <= ord(c) < 127) or c in ('\\', '"'):
-         result += '\\%03o' % ord(c)
-      else:
-         result += c
-   return result
+def escape_string(s):
+  result = ''
+  for c in s:
+    if not (32 <= ord(c) < 127) or c in ('\\', '"'):
+      result += '\\%03o' % ord(c)
+    else:
+      result += c
+  return result
 
 
 infile  = open(sys.argv[1], "r")
