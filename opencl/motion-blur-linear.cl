@@ -71,5 +71,5 @@ __kernel void motion_blur_linear(const __global float4 *src_buf,
     }
 
     dst_buf[gidy * get_global_size(0) + gidx] =
-        sum / num_steps;
+        sum / (float4)(num_steps);
 }

@@ -72,6 +72,6 @@ static const char* motion_blur_linear_cl_source =
 "    }                                                                         \n"
 "                                                                              \n"
 "    dst_buf[gidy * get_global_size(0) + gidx] =                               \n"
-"        sum / num_steps;                                                      \n"
+"        sum / (float4)(num_steps);                                            \n"
 "}                                                                             \n"
 ;
