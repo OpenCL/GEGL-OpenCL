@@ -1183,21 +1183,31 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
   GeglRectangle abyss          = buffer->abyss;
   GeglRectangle abyss_factored = abyss;
   GeglRectangle roi_factored   = *roi;
-  const gint    factor         = 1 << level;
-  const gint    x1 = buffer->shift_x + abyss.x;
-  const gint    y1 = buffer->shift_y + abyss.y;
-  const gint    x2 = buffer->shift_x + abyss.x + abyss.width;
-  const gint    y2 = buffer->shift_y + abyss.y + abyss.height;
+  if (level)
+    {
+      const gint    factor         = 1 << level;
+      const gint    x1 = buffer->shift_x + abyss.x;
+      const gint    y1 = buffer->shift_y + abyss.y;
+      const gint    x2 = buffer->shift_x + abyss.x + abyss.width;
+      const gint    y2 = buffer->shift_y + abyss.y + abyss.height;
 
-  abyss_factored.x      = (x1 + (x1 < 0 ? 1 - factor : 0)) / factor;
-  abyss_factored.y      = (y1 + (y1 < 0 ? 1 - factor : 0)) / factor;
-  abyss_factored.width  = (x2 + (x2 < 0 ? 0 : factor - 1)) / factor - abyss_factored.x;
-  abyss_factored.height = (y2 + (y2 < 0 ? 0 : factor - 1)) / factor - abyss_factored.y;
+      abyss_factored.x      = (x1 + (x1 < 0 ? 1 - factor : 0)) / factor;
+      abyss_factored.y      = (y1 + (y1 < 0 ? 1 - factor : 0)) / factor;
+      abyss_factored.width  = (x2 + (x2 < 0 ? 0 : factor - 1)) / factor - abyss_factored.x;
+      abyss_factored.height = (y2 + (y2 < 0 ? 0 : factor - 1)) / factor - abyss_factored.y;
 
-  roi_factored.x       = (buffer->shift_x + roi_factored.x) / factor;
-  roi_factored.y       = (buffer->shift_y + roi_factored.y) / factor;
-  roi_factored.width  /= factor;
-  roi_factored.height /= factor;
+      roi_factored.x       = (buffer->shift_x + roi_factored.x) / factor;
+      roi_factored.y       = (buffer->shift_y + roi_factored.y) / factor;
+      roi_factored.width  /= factor;
+      roi_factored.height /= factor;
+    }
+  else
+    {
+      roi_factored.x += buffer->shift_x;
+      roi_factored.y += buffer->shift_y;
+      abyss_factored.x += buffer->shift_x;
+      abyss_factored.y += buffer->shift_y;
+    }
 
   if (rowstride == GEGL_AUTO_ROWSTRIDE)
     rowstride = roi_factored.width * babl_format_get_bytes_per_pixel (format);
