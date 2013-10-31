@@ -3,7 +3,7 @@
 
 #define POW2(a) ((a)*(a))
 
-#define GEN_METRIC(before, center, after) POW2((center) * 2 - (before) - (after))
+#define GEN_METRIC(before, center, after) POW2((center) * (float4)(2.0f) - (before) - (after))
 
 #define BAIL_CONDITION(new,original) ((new) < (original))
 
@@ -60,7 +60,7 @@ __kernel void noise_reduction_cl (__global       float4 *src_buf,
                                             after_pix);
             mask = BAIL_CONDITION (metric_new, metric_reference[axis]) & mask;
           }
-        sum   += mask >0 ? value : 0;
+        sum   += mask >0 ? value : (float4)(0.0);
         count += mask >0 ? 1     : 0;
       }
     dst_buf[dst_offset]   = (sum/convert_float4(count));

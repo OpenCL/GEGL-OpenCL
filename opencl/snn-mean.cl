@@ -62,7 +62,7 @@ __kernel void snn_mean (__global const   float4 *src_buf,
                     break;
             }
         }
-        dst_buf[offset] = accumulated/count;
+        dst_buf[offset] = accumulated/(float4)(count);
         return;
     }
     else if(pairs==1)
@@ -108,7 +108,7 @@ __kernel void snn_mean (__global const   float4 *src_buf,
                     break;
             }
         }
-        dst_buf[offset] = accumulated/count;
+        dst_buf[offset] = accumulated / (float4)(count);
         return;
     }
     return;

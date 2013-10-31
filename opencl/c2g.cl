@@ -103,8 +103,8 @@ void compute_envelopes(const __global  float4 *src_buf,
         range_sum += range;
     }
 
-    float4 relative_brightness = relative_brightness_sum / iterations;
-    float4 range = range_sum / iterations;
+    float4 relative_brightness = relative_brightness_sum / (float4)(iterations);
+    float4 range = range_sum / (float4)(iterations);
 
     if(max_envelope)
         *max_envelope = pixel + (1.0f - relative_brightness) * range;
