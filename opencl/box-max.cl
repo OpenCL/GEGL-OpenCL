@@ -10,7 +10,7 @@ __kernel void kernel_max_hor (__global const float4     *in,
   float4 max;
   float4 in_v;
 
-  max = (float4)(FLT_MIN);
+  max = (float4)(-FLT_MAX);
 
   if (get_global_id(1) < width)
     {
@@ -34,7 +34,7 @@ __kernel void kernel_max_ver (__global const float4     *aux,
   float4 max;
   float4 aux_v;
 
-  max = (float4)(FLT_MIN);
+  max = (float4)(-FLT_MAX);
 
   if(get_global_id(1) < width)
     {
