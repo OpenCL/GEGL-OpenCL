@@ -30,6 +30,58 @@
 
 #include <math.h>
 
+void gegl_downscale_2x2 (const Babl *format,
+                         gint    src_width,
+                         gint    src_height,
+                         guchar *src_data,
+                         gint    src_rowstride,
+                         guchar *dst_data,
+                         gint    dst_rowstride)
+{
+  const gint  bpp = babl_format_get_bytes_per_pixel (format);
+  const Babl *comp_type = babl_format_get_type (format, 0);
+
+  if (comp_type == babl_type ("float"))
+    gegl_downscale_2x2_float (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
+  else if (comp_type == babl_type ("u8"))
+    gegl_downscale_2x2_u8 (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
+  else if (comp_type == babl_type ("u16"))
+    gegl_downscale_2x2_u16 (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
+  else if (comp_type == babl_type ("u32"))
+    gegl_downscale_2x2_u32 (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
+  else
+    gegl_downscale_2x2_nearest (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
+}
+
+void
+gegl_downscale_2x2_nearest (gint    bpp,
+                            gint    src_width,
+                            gint    src_height,
+                            guchar *src_data,
+                            gint    src_rowstride,
+                            guchar *dst_data,
+                            gint    dst_rowstride)
+{
+  gint y;
+
+  for (y = 0; y < src_height / 2; y++)
+    {
+      gint x;
+      guchar *src = src_data;
+      guchar *dst = dst_data;
+
+      for (x = 0; x < src_width / 2; x++)
+        {
+          memcpy (dst, src, bpp);
+          dst += bpp;
+          src += bpp * 2;
+        }
+
+      dst_data += dst_rowstride;
+      src_data += src_rowstride * 2;
+    }
+}
+
 void gegl_resample_boxfilter (guchar              *dest_buf,
                               const guchar        *source_buf,
                               const GeglRectangle *dst_rect,
@@ -162,3 +214,55 @@ gegl_resample_nearest (guchar              *dst,
 #undef BOXFILTER_FUNCNAME
 #undef BOXFILTER_TYPE
 #undef BOXFILTER_ROUND
+
+/*
+#define DOWNSCALE_FUNCNAME gegl_downscale_2x2_double
+#define DOWNSCALE_TYPE     gdouble
+#define DOWNSCALE_SUM      gdouble
+#define DOWNSCALE_DIVISOR  4.0
+#include "gegl-algorithms-2x2-downscale.inc"
+#undef DOWNSCALE_FUNCNAME
+#undef DOWNSCALE_TYPE
+#undef DOWNSCALE_SUM
+#undef DOWNSCALE_DIVISOR
+*/
+
+#define DOWNSCALE_FUNCNAME gegl_downscale_2x2_float
+#define DOWNSCALE_TYPE     gfloat
+#define DOWNSCALE_SUM      gfloat
+#define DOWNSCALE_DIVISOR  4.0f
+#include "gegl-algorithms-2x2-downscale.inc"
+#undef DOWNSCALE_FUNCNAME
+#undef DOWNSCALE_TYPE
+#undef DOWNSCALE_SUM
+#undef DOWNSCALE_DIVISOR
+
+#define DOWNSCALE_FUNCNAME gegl_downscale_2x2_u32
+#define DOWNSCALE_TYPE     guint32
+#define DOWNSCALE_SUM      guint64
+#define DOWNSCALE_DIVISOR  4
+#include "gegl-algorithms-2x2-downscale.inc"
+#undef DOWNSCALE_FUNCNAME
+#undef DOWNSCALE_TYPE
+#undef DOWNSCALE_SUM
+#undef DOWNSCALE_DIVISOR
+
+#define DOWNSCALE_FUNCNAME gegl_downscale_2x2_u16
+#define DOWNSCALE_TYPE     guint16
+#define DOWNSCALE_SUM      guint
+#define DOWNSCALE_DIVISOR  4
+#include "gegl-algorithms-2x2-downscale.inc"
+#undef DOWNSCALE_FUNCNAME
+#undef DOWNSCALE_TYPE
+#undef DOWNSCALE_SUM
+#undef DOWNSCALE_DIVISOR
+
+#define DOWNSCALE_FUNCNAME gegl_downscale_2x2_u8
+#define DOWNSCALE_TYPE     guint8
+#define DOWNSCALE_SUM      guint
+#define DOWNSCALE_DIVISOR  4
+#include "gegl-algorithms-2x2-downscale.inc"
+#undef DOWNSCALE_FUNCNAME
+#undef DOWNSCALE_TYPE
+#undef DOWNSCALE_SUM
+#undef DOWNSCALE_DIVISOR

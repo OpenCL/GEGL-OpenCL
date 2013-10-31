@@ -23,6 +23,54 @@ G_BEGIN_DECLS
 
 #define GEGL_SCALE_EPSILON 1.e-6
 
+void gegl_downscale_2x2 (const Babl *format,
+                         gint    src_width,
+                         gint    src_height,
+                         guchar *src_data,
+                         gint    src_rowstride,
+                         guchar *dst_data,
+                         gint    dst_rowstride);
+
+void gegl_downscale_2x2_float (gint    bpp,
+                               gint    src_width,
+                               gint    src_height,
+                               guchar *src_data,
+                               gint    src_rowstride,
+                               guchar *dst_data,
+                               gint    dst_rowstride);
+
+void gegl_downscale_2x2_u32 (gint    bpp,
+                             gint    src_width,
+                             gint    src_height,
+                             guchar *src_data,
+                             gint    src_rowstride,
+                             guchar *dst_data,
+                             gint    dst_rowstride);
+
+void gegl_downscale_2x2_u16 (gint    bpp,
+                             gint    src_width,
+                             gint    src_height,
+                             guchar *src_data,
+                             gint    src_rowstride,
+                             guchar *dst_data,
+                             gint    dst_rowstride);
+
+void gegl_downscale_2x2_u8 (gint    bpp,
+                            gint    src_width,
+                            gint    src_height,
+                            guchar *src_data,
+                            gint    src_rowstride,
+                            guchar *dst_data,
+                            gint    dst_rowstride);
+
+void gegl_downscale_2x2_nearest (gint    bpp,
+                                 gint    src_width,
+                                 gint    src_height,
+                                 guchar *src_data,
+                                 gint    src_rowstride,
+                                 guchar *dst_data,
+                                 gint    dst_rowstride);
+
 /* Attempt to resample with a 3x3 boxfilter, if no boxfilter is
  * available for #format fall back to nearest neighbor.
  * #scale is assumed to be between 0.5 and +inf.

@@ -115,7 +115,7 @@ GEGL_sources = \
 	gegl-types-internal.h		\
 	gegl-xml.h
 
-EXTRA_DIST = gegl-algorithms-boxfilter.inc
+EXTRA_DIST = gegl-algorithms-boxfilter.inc gegl-algorithms-2x2-downscale.inc
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
