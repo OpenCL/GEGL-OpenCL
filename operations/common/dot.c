@@ -67,7 +67,7 @@ prepare (GeglOperation *operation)
 #include "opencl/dot.cl.h"
 #include <stdio.h>
 
-GEGL_CL_STATIC
+static GeglClRunData *cl_data = NULL;
 
 static gboolean
 cl_dot (cl_mem               in,
@@ -79,7 +79,14 @@ cl_dot (cl_mem               in,
   cl_int   cl_err        = 0;
   cl_mem block_colors  = NULL;
 
-  GEGL_CL_BUILD(dot, "cl_calc_block_colors", "cl_dot")
+  if (!cl_data)
+    {
+      const char *kernel_name[] ={"cl_calc_block_colors", "cl_dot" , NULL};
+      cl_data = gegl_cl_compile_and_build(dot_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
 
   {
   cl_int   cl_size       = size;
@@ -94,64 +101,67 @@ cl_dot (cl_mem               in,
   cl_int   block_count_y = CELL_Y(roi->y + roi->height - 1, size) - cy0 + 1;
   size_t   glbl_s[2]     = {block_count_x, block_count_y};
 
-  block_colors = gegl_clCreateBuffer(gegl_cl_get_context(),
-                                     CL_MEM_READ_WRITE,
-                                     glbl_s[0] * glbl_s[1] * sizeof(cl_float4),
-                                     NULL, &cl_err);
+  block_colors = gegl_clCreateBuffer (gegl_cl_get_context(),
+                                      CL_MEM_READ_WRITE,
+                                      glbl_s[0] * glbl_s[1] * sizeof(cl_float4),
+                                      NULL, &cl_err);
   CL_CHECK;
 
-  GEGL_CL_ARG_START(cl_data->kernel[0])
-  GEGL_CL_ARG(cl_mem,   in)
-  GEGL_CL_ARG(cl_mem,   block_colors)
-  GEGL_CL_ARG(cl_int,   cx0)
-  GEGL_CL_ARG(cl_int,   cy0)
-  GEGL_CL_ARG(cl_int,   cl_size)
-  GEGL_CL_ARG(cl_float, weight)
-  GEGL_CL_ARG(cl_int,   roi_x)
-  GEGL_CL_ARG(cl_int,   roi_y)
-  GEGL_CL_ARG(cl_int,   line_width)
-  GEGL_CL_ARG_END
+  gegl_cl_set_kernel_args (cl_data->kernel[0],
+                           sizeof(cl_mem),   &in,
+                           sizeof(cl_mem),   &block_colors,
+                           sizeof(cl_int),   &cx0,
+                           sizeof(cl_int),   &cy0,
+                           sizeof(cl_int),   &cl_size,
+                           sizeof(cl_float), &weight,
+                           sizeof(cl_int),   &roi_x,
+                           sizeof(cl_int),   &roi_y,
+                           sizeof(cl_int),   &line_width,
+                           NULL);
+  CL_CHECK;
 
   /* calculate the average color of all the blocks */
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[0], 2,
-                                       NULL, glbl_s, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, glbl_s, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
 
   glbl_s[0] = roi->width;
   glbl_s[1] = roi->height;
 
-  GEGL_CL_ARG_START(cl_data->kernel[1])
-  GEGL_CL_ARG(cl_mem,   block_colors)
-  GEGL_CL_ARG(cl_mem,   out)
-  GEGL_CL_ARG(cl_int,   cx0)
-  GEGL_CL_ARG(cl_int,   cy0)
-  GEGL_CL_ARG(cl_int,   cl_size)
-  GEGL_CL_ARG(cl_float, radius2)
-  GEGL_CL_ARG(cl_int,   roi_x)
-  GEGL_CL_ARG(cl_int,   roi_y)
-  GEGL_CL_ARG(cl_int,   block_count_x)
-  GEGL_CL_ARG_END
+  gegl_cl_set_kernel_args (cl_data->kernel[1],
+                           sizeof(cl_mem),   &block_colors,
+                           sizeof(cl_mem),   &out,
+                           sizeof(cl_int),   &cx0,
+                           sizeof(cl_int),   &cy0,
+                           sizeof(cl_int),   &cl_size,
+                           sizeof(cl_float), &radius2,
+                           sizeof(cl_int),   &roi_x,
+                           sizeof(cl_int),   &roi_y,
+                           sizeof(cl_int),   &block_count_x,
+                           NULL);
+  CL_CHECK;
 
   /* set each pixel to the average color of the block it belongs to */
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[1], 2,
-                                       NULL, glbl_s, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[1], 2,
+                                        NULL, glbl_s, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
 
-  cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
+  cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
   CL_CHECK;
 
-  GEGL_CL_RELEASE(block_colors)
+  cl_err = gegl_clReleaseMemObject (block_colors);
+  CL_CHECK;
   }
 
   return FALSE;
 
 error:
-  if(block_colors)
-    GEGL_CL_RELEASE(block_colors)
+  if (block_colors)
+    gegl_clReleaseMemObject (block_colors);
   return TRUE;
 }
 
@@ -164,7 +174,7 @@ cl_process (GeglOperation       *operation,
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
 
-  gint err;
+  gint err = 0;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
@@ -185,17 +195,22 @@ cl_process (GeglOperation       *operation,
                                              op_area->bottom,
                                              GEGL_ABYSS_NONE);
 
-  GEGL_CL_BUFFER_ITERATE_START(i, err)
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
     {
-      err = cl_dot(i->tex[read],
-                   i->tex[0],
-                   &i->roi[0],
-                   o->size,
-                   o->ratio);
-    }
-  GEGL_CL_BUFFER_ITERATE_END(err)
+      err = cl_dot (i->tex[read],
+                    i->tex[0],
+                    &i->roi[0],
+                    o->size,
+                    o->ratio);
 
-  return TRUE;
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
+    }
+
+  return !err;
 }
 
 static void

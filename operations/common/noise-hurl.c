@@ -111,7 +111,7 @@ process (GeglOperation       *operation,
 #include "opencl/gegl-cl.h"
 #include "opencl/noise-hurl.cl.h"
 
-GEGL_CL_STATIC
+static GeglClRunData *cl_data = NULL;
 
 static gboolean
 cl_process (GeglOperation       *operation,
@@ -137,62 +137,73 @@ cl_process (GeglOperation       *operation,
   cl_int   offset;
   int      it;
 
-  GEGL_CL_BUILD(noise_hurl, "cl_noise_hurl")
+  if (!cl_data)
+  {
+    const char *kernel_name[] ={"cl_noise_hurl", NULL};
+    cl_data = gegl_cl_compile_and_build(noise_hurl_cl_source, kernel_name);
+  }
+
+  if (!cl_data)
+    return TRUE;
 
   {
-  cl_random_data = gegl_cl_load_random_data(&cl_err);
+  cl_random_data = gegl_cl_load_random_data (&cl_err);
   CL_CHECK;
-  cl_random_primes = gegl_cl_load_random_primes(&cl_err);
-  CL_CHECK;
-
-  cl_err = gegl_clEnqueueCopyBuffer(gegl_cl_get_command_queue(),
-                                    in , out , 0 , 0 ,
-                                    global_worksize * sizeof(cl_float4),
-                                    0, NULL, NULL);
+  cl_random_primes = gegl_cl_load_random_primes (&cl_err);
   CL_CHECK;
 
-  GEGL_CL_ARG_START(cl_data->kernel[0])
-  GEGL_CL_ARG(cl_mem,   out)
-  GEGL_CL_ARG(cl_mem,   cl_random_data)
-  GEGL_CL_ARG(cl_mem,   cl_random_primes)
-  GEGL_CL_ARG(cl_int,   x_offset)
-  GEGL_CL_ARG(cl_int,   y_offset)
-  GEGL_CL_ARG(cl_int,   roi_width)
-  GEGL_CL_ARG(cl_int,   wr_width)
-  GEGL_CL_ARG(cl_int,   seed)
-  GEGL_CL_ARG(cl_float, pct_random)
-  GEGL_CL_ARG_END
+  cl_err = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue(),
+                                     in , out , 0 , 0 ,
+                                     global_worksize * sizeof(cl_float4),
+                                     0, NULL, NULL);
+  CL_CHECK;
+
+  gegl_cl_set_kernel_args (cl_data->kernel[0],
+                           sizeof(cl_mem),   &out,
+                           sizeof(cl_mem),   &cl_random_data,
+                           sizeof(cl_mem),   &cl_random_primes,
+                           sizeof(cl_int),   &x_offset,
+                           sizeof(cl_int),   &y_offset,
+                           sizeof(cl_int),   &roi_width,
+                           sizeof(cl_int),   &wr_width,
+                           sizeof(cl_int),   &seed,
+                           sizeof(cl_float), &pct_random,
+                           NULL);
+  CL_CHECK;
 
   offset = 0;
 
   for(it = 0; it < o->repeat; ++it)
     {
-      cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 9, sizeof(cl_int),
-                                   (void*)&offset);
+      cl_err = gegl_clSetKernelArg (cl_data->kernel[0], 9, sizeof(cl_int),
+                                    (void*)&offset);
       CL_CHECK;
-      cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                         cl_data->kernel[0], 1,
-                                         NULL, &global_worksize, NULL,
-                                         0, NULL, NULL);
+      cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                            cl_data->kernel[0], 1,
+                                            NULL, &global_worksize, NULL,
+                                            0, NULL, NULL);
       CL_CHECK;
 
       offset += total_size;
     }
 
-  cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
+  cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
   CL_CHECK;
 
-  GEGL_CL_RELEASE(cl_random_data)
-  GEGL_CL_RELEASE(cl_random_primes)
+  cl_err = gegl_clReleaseMemObject (cl_random_data);
+  CL_CHECK;
+
+  cl_err = gegl_clReleaseMemObject (cl_random_primes);
+  CL_CHECK;
   }
 
   return  FALSE;
 
 error:
-  if(cl_random_data)
-    GEGL_CL_RELEASE(cl_random_data)
-  if(cl_random_primes)
-    GEGL_CL_RELEASE(cl_random_primes)
+  if (cl_random_data)
+    gegl_clReleaseMemObject (cl_random_data);
+  if (cl_random_primes)
+    gegl_clReleaseMemObject (cl_random_primes);
 
   return TRUE;
 }

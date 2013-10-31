@@ -104,7 +104,7 @@ process (GeglOperation       *operation,
 #include "opencl/gegl-cl.h"
 #include "opencl/red-eye-removal.cl.h"
 
-GEGL_CL_STATIC
+static GeglClRunData *cl_data = NULL;
 
 static gboolean
 cl_process (GeglOperation       *operation,
@@ -117,21 +117,30 @@ cl_process (GeglOperation       *operation,
   GeglChantO *o           = GEGL_CHANT_PROPERTIES (operation);
   cl_float   threshold    = o->threshold;
 
-  GEGL_CL_BUILD(red_eye_removal, "cl_red_eye_removal")
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"cl_red_eye_removal", NULL};
+      cl_data = gegl_cl_compile_and_build(red_eye_removal_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
 
   {
   cl_int cl_err = 0;
 
-  GEGL_CL_ARG_START(cl_data->kernel[0])
-  GEGL_CL_ARG(cl_mem,   in)
-  GEGL_CL_ARG(cl_mem,   out)
-  GEGL_CL_ARG(cl_float, threshold)
-  GEGL_CL_ARG_END
+  gegl_cl_set_kernel_args (cl_data->kernel[0],
+                           sizeof(cl_mem),   &in,
+                           sizeof(cl_mem),   &out,
+                           sizeof(cl_float), &threshold,
+                           NULL);
+  CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[0], 1,
-                                       NULL, &global_worksize, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
   }
 

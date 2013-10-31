@@ -143,7 +143,7 @@ process (GeglOperation       *op,
 #include "opencl/gegl-cl.h"
 #include "opencl/alien-map.cl.h"
 
-GEGL_CL_STATIC
+static GeglClRunData *cl_data = NULL;
 
 static gboolean
 cl_process (GeglOperation       *operation,
@@ -157,8 +157,17 @@ cl_process (GeglOperation       *operation,
   cl_float3   freq;
   cl_float3   phaseshift;
   cl_int3     keep;
+  cl_int      cl_err = 0;
 
-  GEGL_CL_BUILD(alien_map, "cl_alien_map")
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"cl_alien_map",
+                                   NULL};
+      cl_data = gegl_cl_compile_and_build (alien_map_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
 
   freq.s[0] = o->cpn_1_frequency * G_PI;
   freq.s[1] = o->cpn_2_frequency * G_PI;
@@ -172,23 +181,20 @@ cl_process (GeglOperation       *operation,
   keep.s[1] = (cl_int)o->cpn_2_keep;
   keep.s[2] = (cl_int)o->cpn_3_keep;
 
-  {
-  cl_int cl_err = 0;
-
-  GEGL_CL_ARG_START(cl_data->kernel[0])
-  GEGL_CL_ARG(cl_mem,    in)
-  GEGL_CL_ARG(cl_mem,    out)
-  GEGL_CL_ARG(cl_float3, freq)
-  GEGL_CL_ARG(cl_float3, phaseshift)
-  GEGL_CL_ARG(cl_int3,   keep)
-  GEGL_CL_ARG_END
-
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[0], 1,
-                                       NULL, &global_worksize, NULL,
-                                       0, NULL, NULL);
+  gegl_cl_set_kernel_args (cl_data->kernel[0],
+                           sizeof(cl_mem),    &in,
+                           sizeof(cl_mem),    &out,
+                           sizeof(cl_float3), &freq,
+                           sizeof(cl_float3), &phaseshift,
+                           sizeof(cl_int3),   &keep,
+                           NULL);
   CL_CHECK;
-  }
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
 
   return  FALSE;
 

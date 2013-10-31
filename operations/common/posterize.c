@@ -67,7 +67,7 @@ static gboolean process (GeglOperation       *operation,
 #include "opencl/gegl-cl.h"
 #include "opencl/posterize.cl.h"
 
-GEGL_CL_STATIC
+static GeglClRunData *cl_data = NULL;
 
 static gboolean
 cl_process (GeglOperation       *operation,
@@ -80,21 +80,30 @@ cl_process (GeglOperation       *operation,
   GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
   cl_float    levels = o->levels;
 
-  GEGL_CL_BUILD(posterize, "cl_posterize")
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"cl_posterize",
+                                   NULL};
+      cl_data = gegl_cl_compile_and_build (posterize_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return 1;
 
   {
   cl_int cl_err = 0;
 
-  GEGL_CL_ARG_START(cl_data->kernel[0])
-  GEGL_CL_ARG(cl_mem,   in)
-  GEGL_CL_ARG(cl_mem,   out)
-  GEGL_CL_ARG(cl_float, levels)
-  GEGL_CL_ARG_END
+  gegl_cl_set_kernel_args (cl_data->kernel[0],
+                           sizeof(cl_mem),   &in,
+                           sizeof(cl_mem),   &out,
+                           sizeof(cl_float), &levels,
+                           NULL);
+  CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                       cl_data->kernel[0], 1,
-                                       NULL, &global_worksize, NULL,
-                                       0, NULL, NULL);
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
   CL_CHECK;
   }
 
