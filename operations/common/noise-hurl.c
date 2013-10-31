@@ -62,73 +62,48 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglChantO    *o  = GEGL_CHANT_PROPERTIES (operation);
-  gfloat        *GEGL_ALIGNED in_pixel;
-  gfloat        *GEGL_ALIGNED out_pixel;
-  gfloat        *out_pix;
+  gfloat        *in_pix  = in_buf;
+  gfloat        *out_pix = out_buf;
   GeglRectangle *whole_region;
-  gint          total_size;
-  gint          i, cnt;
-  gint          offset;
-
-  in_pixel  = in_buf;
-  out_pixel = out_buf;
-  out_pix   = out_pixel;
-
-  for (i = 0; i < n_pixels * 4; i++)
-    {
-      *out_pix = *in_pixel;
-      out_pix += 1;
-      in_pixel += 1;
-    }
+  gint           total_size, cnt;
+  gint           x, y;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-  total_size   = whole_region->width*whole_region->height;
-  offset = 0;
+  total_size   = whole_region->width * whole_region->height;
 
-  for (cnt = 0; cnt < o->repeat; cnt++)
-    {
-      gint x = roi->x;
-      gint y = roi->y;
+  for (y = roi->y; y < roi->y + roi->height; y++)
+    for (x = roi->x; x < roi->x + roi->width; x++)
+      {
+        gfloat red, green, blue, alpha;
+        gint   idx = x + whole_region->width * y;
 
-      out_pix = out_pixel;
+        red   = in_pix[0];
+        green = in_pix[1];
+        blue  = in_pix[2];
+        alpha = in_pix[3];
 
-      for (i = 0; i < n_pixels; i++)
-        {
-          gfloat red, green, blue, alpha;
-          gint idx, n;
+        for (cnt = o->repeat - 1; cnt >= 0; cnt--)
+          {
+            gint n = 4 * (idx + cnt * total_size);
 
-          red   = out_pix[0];
-          green = out_pix[1];
-          blue  = out_pix[2];
-          alpha = out_pix[3];
+            if (gegl_random_float_range (o->seed, x, y, 0, n, 0.0, 100.0) <=
+                o->pct_random)
+              {
+                red   = gegl_random_float (o->seed, x, y, 0, n+1);
+                green = gegl_random_float (o->seed, x, y, 0, n+2);
+                blue  = gegl_random_float (o->seed, x, y, 0, n+3);
+                break;
+              }
+          }
 
-          idx = x + whole_region->width * y;
-          n = 4 * (idx + offset);
+        out_pix[0] = red;
+        out_pix[1] = green;
+        out_pix[2] = blue;
+        out_pix[3] = alpha;
 
-          if (gegl_random_float_range (o->seed, x, y, 0, n, 0.0, 100.0) <=
-              o->pct_random)
-            {
-              red   = gegl_random_float (o->seed, x, y, 0, n+1);
-              green = gegl_random_float (o->seed, x, y, 0, n+2);
-              blue  = gegl_random_float (o->seed, x, y, 0, n+3);
-            }
-
-          out_pix[0] = red;
-          out_pix[1] = green;
-          out_pix[2] = blue;
-          out_pix[3] = alpha;
-
-          out_pix += 4;
-
-          x++;
-          if (x >= roi->x + roi->width)
-            {
-              x = roi->x;
-              y++;
-            }
-        }
-      offset += total_size;
-    }
+        out_pix += 4;
+        in_pix  += 4;
+      }
 
   return TRUE;
 }
