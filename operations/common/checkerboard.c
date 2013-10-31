@@ -93,7 +93,6 @@ process (GeglOperation       *operation,
   void       *color1 = alloca(pixel_size);
   void       *color2 = alloca(pixel_size);
   gint        y;
-  gint        x;
   const gint  x_min = roi->x - o->x_offset;
   const gint  y_min = roi->y - o->y_offset;
   const gint  x_max = roi->x + roi->width - o->x_offset;
@@ -107,8 +106,7 @@ process (GeglOperation       *operation,
 
   for (y = y_min; y < y_max; y++)
     {
-      x = x_min;
-
+      gint  x = x_min;
       void *cur_color;
 
       /* Figure out which box we're in */
@@ -122,9 +120,11 @@ process (GeglOperation       *operation,
       while (x < x_max)
         {
           /* Figure out how long this stripe is */
+          gint count;
           gint stripe_end = (TILE_INDEX (x, square_width) + 1) * square_width;
                stripe_end = stripe_end > x_max ? x_max : stripe_end;
-          gint count = stripe_end - x;
+
+          count = stripe_end - x;
 
           gegl_memset_pattern (out_pixel, cur_color, pixel_size, count);
           out_pixel += count * pixel_size;
