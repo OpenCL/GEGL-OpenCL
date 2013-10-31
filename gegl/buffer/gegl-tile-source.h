@@ -60,8 +60,16 @@ struct _GeglTileSourceClass
 
 GType      gegl_tile_source_get_type (void) G_GNUC_CONST;
 
-#ifdef NOT_REALLY_COS_THIS_IS_MACROS
-/* The functions documented below are actually macros, all using the command vfunc */
+static inline gpointer
+gegl_tile_source_command (GeglTileSource  *source,
+                          GeglTileCommand  command,
+                          gint             x,
+                          gint             y,
+                          gint             z,
+                          gpointer         data)
+{
+  return source->command (source, command, x, y, z, data);
+}
 
 /**
  * gegl_tile_source_get_tile:
@@ -76,10 +84,16 @@ GType      gegl_tile_source_get_type (void) G_GNUC_CONST;
  *
  * Returns: the tile at x,y,z or NULL if the tile could not be provided.
  */
-GeglTile *gegl_tile_source_get_tile  (GeglTileSource *source,
-                                      gint            x,
-                                      gint            y,
-                                      gint            z);
+static inline GeglTile *
+gegl_tile_source_get_tile (GeglTileSource *source,
+                           gint            x,
+                           gint            y,
+                           gint            z)
+{
+  GeglTile *tile = gegl_tile_source_command (source, GEGL_TILE_GET,
+                                             x, y, z, NULL);
+  return tile;
+}
 
 /**
  * gegl_tile_source_set_tile:
@@ -93,11 +107,15 @@ GeglTile *gegl_tile_source_get_tile  (GeglTileSource *source,
  *
  * Returns: the TRUE if the set was successful.
  */
-gboolean  gegl_tile_source_set_tile  (GeglTileSource *source,
-                                      gint            x,
-                                      gint            y,
-                                      gint            z,
-                                      GeglTile       *tile);
+static inline gboolean
+gegl_tile_source_set_tile (GeglTileSource *source,
+                           gint            x,
+                           gint            y,
+                           gint            z,
+                           GeglTile       *tile)
+{
+  return gegl_tile_source_command (source, GEGL_TILE_SET, x, y, z, tile) != NULL;
+}
 /**
  * gegl_tile_source_is_cached:
  * @source: a GeglTileSource *
@@ -107,10 +125,14 @@ gboolean  gegl_tile_source_set_tile  (GeglTileSource *source,
  *
  * Checks if a tile is in cache and easily retrieved.
  */
-gboolean  gegl_tile_source_is_cached (GeglTileSource *source,
-                                      gint            x,
-                                      gint            y,
-                                      gint            z);
+static inline gboolean
+gegl_tile_source_is_cached (GeglTileSource *source,
+                            gint            x,
+                            gint            y,
+                            gint            z)
+{
+  return gegl_tile_source_command (source, GEGL_TILE_IS_CACHED, x, y, z, NULL) != NULL;
+}
 /**
  * gegl_tile_source_exist:
  * @source: a GeglTileSource *
@@ -121,10 +143,14 @@ gboolean  gegl_tile_source_is_cached (GeglTileSource *source,
  * Checks if a tile exists, this check would not cause the tile to be swapped
  * in.
  */
-gboolean  gegl_tile_source_exist     (GeglTileSource *source,
-                                      gint            x,
-                                      gint            y,
-                                      gint            z);
+static inline gboolean
+gegl_tile_source_exist (GeglTileSource *source,
+                        gint            x,
+                        gint            y,
+                        gint            z)
+{
+  return gegl_tile_source_command (source, GEGL_TILE_EXIST, x, y, z, NULL) != NULL;
+}
 
 /**
  * gegl_tile_source_reinit:
@@ -132,7 +158,11 @@ gboolean  gegl_tile_source_exist     (GeglTileSource *source,
  *
  * Causes all tiles in cache to be refetched.
  */
-void      gegl_tile_source_reinit    (GeglTileSource *source);
+static inline void
+gegl_tile_source_reinit (GeglTileSource *source)
+{
+  gegl_tile_source_command (source, GEGL_TILE_REINIT, 0, 0, 0, NULL);
+}
 
 /**
  * gegl_tile_source_void:
@@ -143,10 +173,15 @@ void      gegl_tile_source_reinit    (GeglTileSource *source);
  *
  * Causes all references to a tile to be removed.
  */
-void      gegl_tile_source_void      (GeglTileSource *source,
-                                      gint            x,
-                                      gint            y,
-                                      gint            z);
+static inline void
+gegl_tile_source_void (GeglTileSource *source,
+                       gint            x,
+                       gint            y,
+                       gint            z)
+{
+  gegl_tile_source_command (source, GEGL_TILE_VOID, x, y, z, NULL);
+}
+
 /*    INTERNAL API
  * gegl_tile_source_refetch:
  * @source: a GeglTileSource *
@@ -158,10 +193,14 @@ void      gegl_tile_source_void      (GeglTileSource *source,
  * a refresh of all data relating to the coordinates needs to be refetched.
  * Subsequent get calls should get new and valid data for the tile coordinates.
  */
-void      gegl_tile_source_refetch   (GeglTileSource *source,
-                                      gint            x,
-                                      gint            y,
-                                      gint            z);
+static inline void
+gegl_tile_source_refetch (GeglTileSource *source,
+                          gint            x,
+                          gint            y,
+                          gint            z)
+{
+  gegl_tile_source_command (source, GEGL_TILE_REFETCH, x, y, z, NULL);
+}
 /*   INTERNAL API
  * gegl_tile_source_idle:
  * @source: a GeglTileSource *
@@ -172,29 +211,11 @@ void      gegl_tile_source_refetch   (GeglTileSource *source,
  *
  * Returns: the TRUE if some work was done.
  */
-gboolean  gegl_tile_source_idle      (GeglTileSource *source);
-
-#endif
-
-#define gegl_tile_source_command(source,cmd,x,y,z,tile)\
-   (((GeglTileSource*)(source))->command(source,cmd,x,y,z,tile))
-
-#define gegl_tile_source_set_tile(source,x,y,z,tile) \
-   (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_SET,x,y,z,tile))
-#define gegl_tile_source_get_tile(source,x,y,z) \
-   (GeglTile*)gegl_tile_source_command(source,GEGL_TILE_GET,x,y,z,NULL)
-#define gegl_tile_source_is_cached(source,x,y,z) \
-   (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_IS_CACHED,x,y,z,NULL))
-#define gegl_tile_source_exist(source,x,y,z) \
-   (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_EXIST,x,y,z,NULL))
-#define gegl_tile_source_void(source,x,y,z) \
-   gegl_tile_source_command(source,GEGL_TILE_VOID,x,y,z,NULL)
-#define gegl_tile_source_refetch(source,x,y,z) \
-   gegl_tile_source_command(source,GEGL_TILE_REFETCH,x,y,z,NULL)
-#define gegl_tile_source_reinit(source) \
-   gegl_tile_source_command(source,GEGL_TILE_REINIT,0,0,0,NULL)
-#define gegl_tile_source_idle(source) \
-   (gboolean)GPOINTER_TO_INT(gegl_tile_source_command(source,GEGL_TILE_IDLE,0,0,0,NULL))
+static inline gboolean
+gegl_tile_source_idle (GeglTileSource *source)
+{
+  return gegl_tile_source_command (source, GEGL_TILE_IDLE, 0, 0, 0, NULL) != NULL;
+}
 
 G_END_DECLS
 
