@@ -45,6 +45,8 @@ size_t            gegl_cl_get_iter_width (void);
 
 size_t            gegl_cl_get_iter_height (void);
 
+void              gegl_cl_set_profiling (gboolean enable);
+
 typedef struct
 {
   cl_program  program;
@@ -91,6 +93,8 @@ t_clEnqueueNDRangeKernel    gegl_clEnqueueNDRangeKernel    = NULL;
 t_clEnqueueBarrier          gegl_clEnqueueBarrier          = NULL;
 t_clFinish                  gegl_clFinish                  = NULL;
 
+t_clGetEventProfilingInfo   gegl_clGetEventProfilingInfo   = NULL;
+
 t_clEnqueueMapBuffer        gegl_clEnqueueMapBuffer        = NULL;
 t_clEnqueueMapImage         gegl_clEnqueueMapImage         = NULL;
 t_clEnqueueUnmapMemObject   gegl_clEnqueueUnmapMemObject   = NULL;
@@ -134,6 +138,8 @@ extern t_clEnqueueCopyImageToBuffer gegl_clEnqueueCopyImageToBuffer;
 extern t_clEnqueueNDRangeKernel    gegl_clEnqueueNDRangeKernel;
 extern t_clEnqueueBarrier          gegl_clEnqueueBarrier;
 extern t_clFinish                  gegl_clFinish;
+
+extern t_clGetEventProfilingInfo   gegl_clGetEventProfilingInfo;
 
 extern t_clEnqueueMapBuffer        gegl_clEnqueueMapBuffer;
 extern t_clEnqueueMapImage         gegl_clEnqueueMapImage;

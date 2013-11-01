@@ -77,6 +77,7 @@ typedef CL_API_ENTRY void *            (CL_API_CALL *t_clEnqueueMapBuffer       
 typedef CL_API_ENTRY void *            (CL_API_CALL *t_clEnqueueMapImage        ) (cl_command_queue, cl_mem, cl_bool, cl_map_flags, const size_t [3], const size_t [3], size_t *, size_t *, cl_uint, const cl_event *, cl_event *, cl_int *);
 typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clEnqueueUnmapMemObject  ) (cl_command_queue, cl_mem, void *, cl_uint, const cl_event *, cl_event *);
 
+typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clGetEventProfilingInfo  ) (cl_event, cl_profiling_info, size_t, void *, size_t *);
 
 typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clEnqueueNDRangeKernel   ) (cl_command_queue, cl_kernel, cl_uint, const size_t *, const size_t *, const size_t *, cl_uint, const cl_event *, cl_event *);
 typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clEnqueueBarrier         ) (cl_command_queue);

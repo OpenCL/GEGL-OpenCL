@@ -131,6 +131,7 @@ typedef struct
   gboolean         is_accelerated;
   gboolean         is_loaded;
   gboolean         hard_disable;
+  gboolean         enable_profiling;
   cl_context       ctx;
   cl_platform_id   platform;
   cl_device_id     device;
@@ -210,6 +211,14 @@ size_t
 gegl_cl_get_iter_height (void)
 {
   return cl_state.iter_height;
+}
+
+void
+gegl_cl_set_profiling (gboolean enable)
+{
+  g_return_if_fail (!cl_state.is_loaded);
+
+  cl_state.enable_profiling = enable;
 }
 
 #ifdef G_OS_WIN32
@@ -323,6 +332,8 @@ gegl_cl_init (GError **error)
       CL_LOAD_FUNCTION (clEnqueueBarrier)
       CL_LOAD_FUNCTION (clFinish)
 
+      CL_LOAD_FUNCTION (clGetEventProfilingInfo)
+
       CL_LOAD_FUNCTION (clReleaseKernel)
       CL_LOAD_FUNCTION (clReleaseProgram)
       CL_LOAD_FUNCTION (clReleaseCommandQueue)
@@ -397,7 +408,12 @@ gegl_cl_init (GError **error)
           return FALSE;
         }
 
-      cl_state.cq  = gegl_clCreateCommandQueue(cl_state.ctx, cl_state.device, 0, &err);
+      {
+        cl_command_queue_properties command_queue_flags = 0;
+        if (cl_state.enable_profiling)
+          command_queue_flags |= CL_QUEUE_PROFILING_ENABLE;
+        cl_state.cq = gegl_clCreateCommandQueue(cl_state.ctx, cl_state.device, command_queue_flags, &err);
+      }
 
       if(err != CL_SUCCESS)
         {
