@@ -248,8 +248,6 @@ void gegl_memset_pattern              (void *       dst_ptr,
 #define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))
 #define GEGL_FLOAT_EQUAL(v1, v2)      (_gegl_float_epsilon_equal ((v1), (v2)))
 
-#define INT_MULT(a,b,t)  ((t) = (a) * (b) + 0x80, ((((t) >> 8) + (t)) >> 8))
-
 /***
  */
 gint        _gegl_float_epsilon_zero  (float     value);
