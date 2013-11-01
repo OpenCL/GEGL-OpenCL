@@ -22,7 +22,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double_ui (radius, _("Radius"), 0.0, 1000.0, 4.0, 0.0, 100.0, 1.5,
+gegl_chant_int_ui (radius, _("Radius"), 0, 1000, 4, 0, 100, 1.5,
    _("Radius of square pixel region, (width and height will be radius*2+1)"))
 
 #else
@@ -170,7 +170,7 @@ static void prepare (GeglOperation *operation)
   op_area->left   =
   op_area->right  =
   op_area->top    =
-  op_area->bottom = ceil (o->radius);
+  op_area->bottom = o->radius;
 
   gegl_operation_set_format (operation, "input",  babl_format ("RaGaBaA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
@@ -295,7 +295,7 @@ cl_process (GeglOperation       *operation,
                          i->tex[0],
                          i->size[0],
                          &i->roi[0],
-                         ceil (o->radius));
+                         o->radius);
 
       if (err)
         {
@@ -340,8 +340,8 @@ process (GeglOperation       *operation,
                            babl_format ("RaGaBaA float"));
 
   /* doing second pass in separate gegl op may be significantly faster */
-  hor_blur (input, &rect, temp, &tmprect, ceil (o->radius));
-  ver_blur (temp, &rect, output, result, ceil (o->radius));
+  hor_blur (input, &rect, temp, &tmprect, o->radius);
+  ver_blur (temp, &rect, output, result, o->radius);
 
   g_object_unref (temp);
   return  TRUE;

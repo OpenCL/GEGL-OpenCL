@@ -2,7 +2,7 @@
 <gegl>
   <node operation='gegl:box-blur'>
     <params>
-      <param name='radius'>25.0</param>
+      <param name='radius'>25</param>
     </params>
   </node>
   <node operation='gegl:load'>

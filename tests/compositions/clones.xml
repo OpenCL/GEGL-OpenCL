@@ -18,7 +18,7 @@
       </node>
       <node operation='gegl:box-blur'>
           <params>
-            <param name='radius'>5.000000</param>
+            <param name='radius'>5</param>
           </params>
       </node>
       <node operation='gegl:load' id='clone0'>
@@ -127,7 +127,7 @@
               </node>
               <node operation='gegl:box-blur'>
                   <params>
-                    <param name='radius'>4.000000</param>
+                    <param name='radius'>4</param>
                   </params>
               </node>
               <node operation='gegl:brightness-contrast'>
@@ -206,7 +206,7 @@
       </node>
       <node operation='gegl:box-blur'>
           <params>
-            <param name='radius'>15.000000</param>
+            <param name='radius'>15</param>
           </params>
       </node>
       <clone ref='clone2'/>
