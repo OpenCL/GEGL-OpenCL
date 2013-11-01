@@ -118,24 +118,6 @@ __kernel void ragabaf_to_rgbau8 (__global const float4 * in,
   out[gid] = convert_uchar4_sat_rte(255.0f * out_v);
 }
 
-/* RGBA_GAMMA_U8 -> RaGaBaA float */
-__kernel void rgba_gamma_u8_to_ragabaf (__global const uchar4 * in,
-                                        __global       float4 * out)
-{
-  int gid = get_global_id(0);
-  float4 in_v  = convert_float4(in[gid]) / 255.0f;
-  float4 tmp_v;
-  tmp_v = (float4)(gamma_2_2_to_linear(in_v.x),
-                   gamma_2_2_to_linear(in_v.y),
-                   gamma_2_2_to_linear(in_v.z),
-                   in_v.w);
-  float4 out_v;
-  out_v   = tmp_v * tmp_v.w;
-  out_v.w = tmp_v.w;
-  out[gid] = out_v;
-}
-
-
 /* RaGaBaA float -> RGBA_GAMMA_U8 */
 __kernel void ragabaf_to_rgba_gamma_u8 (__global const float4 * in,
                                         __global       uchar4 * out)
@@ -152,29 +134,6 @@ __kernel void ragabaf_to_rgba_gamma_u8 (__global const float4 * in,
                    tmp_v.w);
   out[gid] = convert_uchar4_sat_rte(255.0f * out_v);
 }
-
-/* RGB_GAMMA_U8 -> RaGaBaA float */
-__kernel void rgb_gamma_u8_to_ragabaf (__global const uchar  * in,
-                                       __global       float4 * out)
-{
-  int gid = get_global_id(0);
-#if (__OPENCL_VERSION__ != CL_VERSION_1_0)
-  float3 in_v  = convert_float3(vload3 (gid, in)) / 255.0f;
-#else
-  uchar4 i4 = (uchar4) (in[3 * gid], in[3 * gid + 1], in[3 * gid + 2], 255);
-  float4 in_v = convert_float4 (i4) / 255.0f;
-#endif
-  float4 tmp_v;
-  tmp_v = (float4)(gamma_2_2_to_linear(in_v.x),
-                   gamma_2_2_to_linear(in_v.y),
-                   gamma_2_2_to_linear(in_v.z),
-                   1.0f);
-  float4 out_v;
-  out_v   = tmp_v * tmp_v.w;
-  out_v.w = tmp_v.w;
-  out[gid] = out_v;
-}
-
 
 /* RaGaBaA float -> RGB_GAMMA_U8 */
 __kernel void ragabaf_to_rgb_gamma_u8 (__global const float4 * in,
@@ -460,29 +419,6 @@ __kernel void yaf_to_rgbau8 (__global const float2 * in,
   out[gid] = convert_uchar4_sat_rte(255.0f * out_v);
 }
 
-/* R'G'B'A u8 -> YA float */
-__kernel void rgba_gamma_u8_to_yaf (__global const uchar4 * in,
-                                    __global       float2 * out)
-{
-  int gid = get_global_id(0);
-  float4 in_v  = convert_float4(in[gid]) / 255.0f;
-  float4 tmp_v;
-  tmp_v = (float4)(gamma_2_2_to_linear(in_v.x),
-                   gamma_2_2_to_linear(in_v.y),
-                   gamma_2_2_to_linear(in_v.z),
-                   in_v.w);
-  float2 out_v;
-
-  float luminance = tmp_v.x * RGB_LUMINANCE_RED +
-                    tmp_v.y * RGB_LUMINANCE_GREEN +
-                    tmp_v.z * RGB_LUMINANCE_BLUE;
-
-  out_v.x = luminance;
-  out_v.y = tmp_v.w;
-
-  out[gid] = out_v;
-}
-
 /* YA float -> R'G'B'A u8 */
 __kernel void yaf_to_rgba_gamma_u8 (__global const float2 * in,
                                     __global       uchar4 * out)
@@ -497,34 +433,6 @@ __kernel void yaf_to_rgba_gamma_u8 (__global const float2 * in,
                    linear_to_gamma_2_2(tmp_v.z),
                    tmp_v.w);
   out[gid] = convert_uchar4_sat_rte(255.0f * out_v);
-}
-
-/* R'G'B' u8 -> YA float */
-__kernel void rgb_gamma_u8_to_yaf (__global const uchar  * in,
-                                   __global       float2 * out)
-{
-  int gid = get_global_id(0);
-#if (__OPENCL_VERSION__ != CL_VERSION_1_0)
-  float3 in_v  = convert_float3(vload3 (gid, in)) / 255.0f;
-#else
-  uchar4 u_v = (uchar4) (in[3 * gid], in[3 * gid + 1], in[3 * gid + 2], 255);
-  float4 in_v = convert_float4 (u_v) / 255.0f;
-#endif
-  float4 tmp_v;
-  tmp_v = (float4)(gamma_2_2_to_linear(in_v.x),
-                   gamma_2_2_to_linear(in_v.y),
-                   gamma_2_2_to_linear(in_v.z),
-                   1.0f);
-  float2 out_v;
-
-  float luminance = tmp_v.x * RGB_LUMINANCE_RED +
-                    tmp_v.y * RGB_LUMINANCE_GREEN +
-                    tmp_v.z * RGB_LUMINANCE_BLUE;
-
-  out_v.x = luminance;
-  out_v.y = tmp_v.w;
-
-  out[gid] = out_v;
 }
 
 /* YA float -> R'G'B' u8 */
@@ -558,20 +466,6 @@ __kernel void rgbaf_to_rgba_gamma_u8 (__global const float4 * in,
   out[gid] = convert_uchar4_sat_rte(255.0f * out_v);
 }
 
-/* r'g'b'a u8 -> rgba float */
-__kernel void rgba_gamma_u8_to_rgbaf (__global const uchar4 * in,
-                                      __global       float4 * out)
-{
-  int gid = get_global_id(0);
-  float4 in_v  = convert_float4(in[gid]) / 255.0f;
-  float4 out_v;
-  out_v = (float4)(gamma_2_2_to_linear(in_v.x),
-                   gamma_2_2_to_linear(in_v.y),
-                   gamma_2_2_to_linear(in_v.z),
-                   in_v.w);
-  out[gid] = out_v;
-}
-
 /* R'G'B' u8 */
 
 /* rgba float -> r'g'b' u8 */
@@ -595,26 +489,4 @@ __kernel void rgbaf_to_rgb_gamma_u8 (__global const float4 * in,
   out[3 * gid + 1] = out_v.y;
   out[3 * gid + 2] = out_v.z;
 #endif
-}
-
-/* r'g'b' u8 -> rgba float */
-__kernel void rgb_gamma_u8_to_rgbaf (__global const uchar  * in,
-                                     __global       float4 * out)
-{
-  int gid = get_global_id(0);
-  float4 out_v;
-#if (__OPENCL_VERSION__ != CL_VERSION_1_0)
-  uchar3 in_v;
-  float3 tmp_v;
-  in_v = vload3 (gid, in);
-  tmp_v = convert_float3(in_v) / 255.0f;
-#else
-  uchar4 in_v = (uchar4) (in[3 * gid], in[3 * gid + 1], in[3 * gid + 2], 255);
-  float4 tmp_v = convert_float4 (in_v) / 255.0f;
-#endif
-  out_v = (float4)(gamma_2_2_to_linear(tmp_v.x),
-                   gamma_2_2_to_linear(tmp_v.y),
-                   gamma_2_2_to_linear(tmp_v.z),
-                   1.0f);
-  out[gid] = out_v;
 }

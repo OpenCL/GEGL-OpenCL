@@ -30,7 +30,7 @@ typedef enum
 } GeglClColorOp;
 
 /** Compile and register OpenCL kernel for color conversion */
-void          gegl_cl_color_compile_kernels(void);
+gboolean      gegl_cl_color_compile_kernels (void);
 
 /** Return TRUE if the Babl format is supported with OpenCL.
  *  If present, returns the byte per pixel in *bytes

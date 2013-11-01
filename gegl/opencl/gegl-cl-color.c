@@ -30,6 +30,7 @@
 #include "gegl-cl-color.h"
 
 #include "opencl/colors.cl.h"
+#include "opencl/colors-8bit-lut.cl.h"
 
 #define CL_FORMAT_N 11
 
@@ -67,10 +68,47 @@ color_kernels_hash_equalfunc (gconstpointer a,
   return FALSE;
 }
 
-void
+static gboolean
+gegl_cl_color_load_conversion_set (ColorConversionInfo  *conversions,
+                                   gint                  num_conversions,
+                                   GeglClRunData       **kernels,
+                                   const gchar          *source)
+{
+  const char *kernel_names[num_conversions + 1];
+
+  for (int i = 0; i < num_conversions; ++i)
+    {
+      kernel_names[i] = conversions[i].kernel_name;
+    }
+
+  kernel_names[num_conversions] = NULL;
+
+  *kernels = gegl_cl_compile_and_build (source, kernel_names);
+
+  if (!(*kernels))
+    {
+      return FALSE;
+    }
+
+  for (int i = 0; i < num_conversions; ++i)
+    {
+      ColorConversionInfo *info = g_new (ColorConversionInfo, 1);
+
+      conversions[i].kernel = (*kernels)->kernel[i];
+      *info = conversions[i];
+
+      g_hash_table_insert (color_kernels_hash, info, info);
+    }
+
+  return TRUE;
+}
+
+gboolean
 gegl_cl_color_compile_kernels (void)
 {
   static GeglClRunData *float_kernels = NULL;
+  static GeglClRunData *lut8_kernels = NULL;
+  gboolean result = TRUE;
 
   ColorConversionInfo float_conversions[] = {
     { babl_format ("RGBA u8"), babl_format ("RGBA float"), "rgbau8_to_rgbaf", NULL },
@@ -102,49 +140,56 @@ gegl_cl_color_compile_kernels (void)
     { babl_format ("YA float"), babl_format("RGBA u8"), "yaf_to_rgbau8", NULL },
 
     { babl_format ("RGBA float"), babl_format("R'G'B'A u8"), "rgbaf_to_rgba_gamma_u8", NULL },
-    { babl_format ("R'G'B'A u8"), babl_format("RGBA float"), "rgba_gamma_u8_to_rgbaf", NULL },
-
     { babl_format ("RGBA float"), babl_format("R'G'B' u8"), "rgbaf_to_rgb_gamma_u8", NULL },
-    { babl_format ("R'G'B' u8"), babl_format("RGBA float"), "rgb_gamma_u8_to_rgbaf", NULL },
 
-    { babl_format ("R'G'B'A u8"), babl_format("RaGaBaA float"), "rgba_gamma_u8_to_ragabaf", NULL },
     { babl_format ("RaGaBaA float"), babl_format("R'G'B'A u8"), "ragabaf_to_rgba_gamma_u8", NULL },
-    { babl_format ("R'G'B' u8"), babl_format("RaGaBaA float"), "rgb_gamma_u8_to_ragabaf", NULL },
     { babl_format ("RaGaBaA float"), babl_format("R'G'B' u8"), "ragabaf_to_rgb_gamma_u8", NULL },
 
-    { babl_format ("R'G'B'A u8"), babl_format("YA float"), "rgba_gamma_u8_to_yaf", NULL },
     { babl_format ("YA float"), babl_format("R'G'B'A u8"), "yaf_to_rgba_gamma_u8", NULL },
-    { babl_format ("R'G'B' u8"), babl_format("YA float"), "rgb_gamma_u8_to_yaf", NULL },
     { babl_format ("YA float"), babl_format("R'G'B' u8"), "yaf_to_rgb_gamma_u8", NULL }
   };
 
-  const char *kernel_name[G_N_ELEMENTS (float_conversions) + 1];
+  ColorConversionInfo lut8_conversions[] = {
+    { babl_format ("R'G'B'A u8"), babl_format("RGBA float"), "rgba_gamma_u8_to_rgbaf", NULL },
+    { babl_format ("R'G'B'A u8"), babl_format("RaGaBaA float"), "rgba_gamma_u8_to_ragabaf", NULL },
+    { babl_format ("R'G'B'A u8"), babl_format("YA float"), "rgba_gamma_u8_to_yaf", NULL },
+    { babl_format ("R'G'B' u8"), babl_format("RGBA float"), "rgb_gamma_u8_to_rgbaf", NULL },
+    { babl_format ("R'G'B' u8"), babl_format("RaGaBaA float"), "rgb_gamma_u8_to_ragabaf", NULL },
+    { babl_format ("R'G'B' u8"), babl_format("YA float"), "rgb_gamma_u8_to_yaf", NULL },
+  };
 
-  for (int i = 0; i < G_N_ELEMENTS (float_conversions); ++i)
-    {
-      kernel_name[i] = float_conversions[i].kernel_name;
-    }
-
-  kernel_name[G_N_ELEMENTS (float_conversions)] = NULL;
-
-  float_kernels = gegl_cl_compile_and_build (colors_cl_source, kernel_name);
+  /* Fail if the kernels are already compiled, meaning this must have been called twice */
+  g_return_val_if_fail (!float_kernels, FALSE);
+  g_return_val_if_fail (!color_kernels_hash, FALSE);
 
   color_kernels_hash = g_hash_table_new_full (color_kernels_hash_hashfunc,
                                               color_kernels_hash_equalfunc,
                                               NULL,
                                               NULL);
 
-  for (int i = 0; i < G_N_ELEMENTS (float_conversions); ++i)
+  gegl_cl_color_load_conversion_set (float_conversions,
+                                     G_N_ELEMENTS (float_conversions),
+                                     &float_kernels,
+                                     colors_cl_source);
+
+  if (!float_kernels)
     {
-      ColorConversionInfo *info = g_new (ColorConversionInfo, 1);
-
-      float_conversions[i].kernel = float_kernels->kernel[i];
-      *info = float_conversions[i];
-
-      g_hash_table_insert (color_kernels_hash, info, info);
+      g_warning ("Failed to compile coloer conversions (float_kernels)");
+      result = FALSE;
     }
 
-  /* FIXME: This concept of supported formats it not useful */
+  gegl_cl_color_load_conversion_set (lut8_conversions,
+                                     G_N_ELEMENTS (lut8_conversions),
+                                     &lut8_kernels,
+                                     colors_8bit_lut_cl_source);
+
+  if (!lut8_kernels)
+    {
+      g_warning ("Failed to compile coloer conversions (lut8_kernels)");
+      result = FALSE;
+    }
+
+  /* FIXME: Remove this and just use the babl bbp/components */
   format[0] = babl_format ("RGBA u8");
   format[1] = babl_format ("RGBA float");
   format[2] = babl_format ("RaGaBaA float");
@@ -156,6 +201,8 @@ gegl_cl_color_compile_kernels (void)
   format[8] = babl_format ("YA float");
   format[9] = babl_format ("R'G'B'A u8");
   format[10] = babl_format ("R'G'B' u8");
+
+  return result;
 }
 
 static cl_kernel
