@@ -30,14 +30,14 @@
 #define BABL_ALPHA_THRESHOLD 0.0f
 
 /* babl reference file: babl/base/util.h */
-float linear_to_gamma_2_2 (float value)
+static float linear_to_gamma_2_2 (float value)
 {
   if (value > 0.003130804954f)
     return 1.055f * native_powr (value, (1.0f/2.4f)) - 0.055f;
   return 12.92f * value;
 }
 
-float gamma_2_2_to_linear (float value)
+static float gamma_2_2_to_linear (float value)
 {
   if (value > 0.04045f)
     return native_powr ((value + 0.055f) / 1.055f, 2.4f);
@@ -398,9 +398,9 @@ __kernel void yu8_to_yf (__global const uchar * in,
 /* -- YA float -- */
 
 /* babl reference file: babl/base/rgb-constants.h */
-#define RGB_LUMINANCE_RED    (0.222491)
-#define RGB_LUMINANCE_GREEN  (0.716888)
-#define RGB_LUMINANCE_BLUE   (0.060621)
+#define RGB_LUMINANCE_RED    (0.222491f)
+#define RGB_LUMINANCE_GREEN  (0.716888f)
+#define RGB_LUMINANCE_BLUE   (0.060621f)
 
 /* RGBA float -> YA float */
 __kernel void rgbaf_to_yaf (__global const float4 * in,
