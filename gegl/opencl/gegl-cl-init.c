@@ -221,6 +221,43 @@ gegl_cl_set_profiling (gboolean enable)
   cl_state.enable_profiling = enable;
 }
 
+gboolean
+gegl_cl_has_extension (const char *extension_name)
+{
+  size_t     string_len;
+  gchar     *device_ext_string = NULL;
+  gchar    **extensions;
+  gboolean   found = FALSE;
+
+  if (!gegl_cl_is_accelerated () || !extension_name)
+    return FALSE;
+
+  gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_EXTENSIONS,
+                        0, NULL, &string_len);
+
+  if (!string_len)
+    return FALSE;
+
+  device_ext_string = g_malloc (string_len);
+
+
+  gegl_clGetDeviceInfo (cl_state.device, CL_DEVICE_EXTENSIONS,
+                        string_len, device_ext_string, NULL);
+
+  extensions = g_strsplit (device_ext_string, " ", 0);
+
+  for (gint i = 0; extensions[i] && !found; ++i)
+    {
+      if (!strcmp (extensions[i], extension_name))
+        found = TRUE;
+    }
+
+  g_free (device_ext_string);
+  g_strfreev (extensions);
+
+  return found;
+}
+
 #ifdef G_OS_WIN32
 
 #include <windows.h>
