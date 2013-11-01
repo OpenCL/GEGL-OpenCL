@@ -31,108 +31,120 @@
 
 #include "opencl/colors.cl.h"
 
-static GeglClRunData *kernels_color = NULL;
-
 #define CL_FORMAT_N 11
 
 static const Babl *format[CL_FORMAT_N];
 
-enum
+static GHashTable  *color_kernels_hash = NULL;
+
+typedef struct
 {
-  CL_RGBAU8_TO_RGBAF          = 0,
-  CL_RGBAF_TO_RGBAU8          = 1,
+  const Babl *from_fmt;
+  const Babl *to_fmt;
+  const char *kernel_name;
+  cl_kernel   kernel;
+} ColorConversionInfo;
 
-  CL_RGBAF_TO_RAGABAF         = 2,
-  CL_RAGABAF_TO_RGBAF         = 3,
-  CL_RGBAU8_TO_RAGABAF        = 4,
-  CL_RAGABAF_TO_RGBAU8        = 5,
+static guint
+color_kernels_hash_hashfunc (gconstpointer key)
+{
+  const ColorConversionInfo *ekey = key;
+  return GPOINTER_TO_INT (ekey->from_fmt) ^ GPOINTER_TO_INT (ekey->to_fmt);
+}
 
-  CL_RGBAF_TO_RGBA_GAMMA_F    = 6,
-  CL_RGBA_GAMMA_F_TO_RGBAF    = 7,
-  CL_RGBAU8_TO_RGBA_GAMMA_F   = 8,
-  CL_RGBA_GAMMA_F_TO_RGBAU8   = 9,
+static gboolean
+color_kernels_hash_equalfunc (gconstpointer a,
+                              gconstpointer b)
+{
+  const ColorConversionInfo *ea = a;
+  const ColorConversionInfo *eb = b;
 
-  CL_RGBAF_TO_YCBCRAF         = 10,
-  CL_YCBCRAF_TO_RGBAF         = 11,
-  CL_RGBAU8_TO_YCBCRAF        = 12,
-  CL_YCBCRAF_TO_RGBAU8        = 13,
-
-  CL_RGBU8_TO_RGBAF           = 14,
-  CL_RGBAF_TO_RGBU8           = 15,
-
-  CL_YU8_TO_YF                = 16,
-
-  CL_RGBAF_TO_YAF             = 17,
-  CL_YAF_TO_RGBAF             = 18,
-  CL_RGBAU8_TO_YAF            = 19,
-  CL_YAF_TO_RGBAU8            = 20,
-
-  CL_RGBAF_TO_RGBA_GAMMA_U8   = 21,
-  CL_RGBA_GAMMA_U8_TO_RGBAF   = 22,
-
-  CL_RGBAF_TO_RGB_GAMMA_U8    = 23,
-  CL_RGB_GAMMA_U8_TO_RGBAF    = 24,
-
-  CL_RGBA_GAMMA_U8_TO_RAGABAF = 25,
-  CL_RAGABAF_TO_RGBA_GAMMA_U8 = 26,
-  CL_RGB_GAMMA_U8_TO_RAGABAF  = 27,
-  CL_RAGABAF_TO_RGB_GAMMA_U8  = 28,
-
-  CL_RGBA_GAMMA_U8_TO_YAF     = 29,
-  CL_YAF_TO_RGBA_GAMMA_U8     = 30,
-  CL_RGB_GAMMA_U8_TO_YAF      = 31,
-  CL_YAF_TO_RGB_GAMMA_U8      = 32,
-};
+  if (ea->from_fmt == eb->from_fmt &&
+      ea->to_fmt   == eb->to_fmt)
+    {
+      return TRUE;
+    }
+  return FALSE;
+}
 
 void
-gegl_cl_color_compile_kernels(void)
+gegl_cl_color_compile_kernels (void)
 {
-  const char *kernel_name[] = {"rgbau8_to_rgbaf",         /* 0  */
-                               "rgbaf_to_rgbau8",         /* 1  */
+  static GeglClRunData *float_kernels = NULL;
 
-                               "rgbaf_to_ragabaf",        /* 2  */
-                               "ragabaf_to_rgbaf",        /* 3  */
-                               "rgbau8_to_ragabaf",       /* 4  */
-                               "ragabaf_to_rgbau8",       /* 5  */
+  ColorConversionInfo float_conversions[] = {
+    { babl_format ("RGBA u8"), babl_format ("RGBA float"), "rgbau8_to_rgbaf", NULL },
+    { babl_format ("RGBA float"), babl_format ("RGBA u8"), "rgbaf_to_rgbau8", NULL },
 
-                               "rgbaf_to_rgba_gamma_f",   /* 6  */
-                               "rgba_gamma_f_to_rgbaf",   /* 7  */
-                               "rgbau8_to_rgba_gamma_f",  /* 8  */
-                               "rgba_gamma_f_to_rgbau8",  /* 9  */
+    { babl_format ("RGBA float"), babl_format("RaGaBaA float"), "rgbaf_to_ragabaf", NULL },
+    { babl_format ("RaGaBaA float"), babl_format("RGBA float"), "ragabaf_to_rgbaf", NULL },
+    { babl_format ("RGBA u8"), babl_format("RaGaBaA float"), "rgbau8_to_ragabaf", NULL },
+    { babl_format ("RaGaBaA float"), babl_format("RGBA u8"), "ragabaf_to_rgbau8", NULL },
 
-                               "rgbaf_to_ycbcraf",        /* 10 */
-                               "ycbcraf_to_rgbaf",        /* 11 */
-                               "rgbau8_to_ycbcraf",       /* 12 */
-                               "ycbcraf_to_rgbau8",       /* 13 */
+    { babl_format ("RGBA float"), babl_format("R'G'B'A float"), "rgbaf_to_rgba_gamma_f", NULL },
+    { babl_format ("R'G'B'A float"), babl_format("RGBA float"), "rgba_gamma_f_to_rgbaf", NULL },
+    { babl_format ("RGBA u8"), babl_format("R'G'B'A float"), "rgbau8_to_rgba_gamma_f", NULL },
+    { babl_format ("R'G'B'A float"), babl_format("RGBA u8"), "rgba_gamma_f_to_rgbau8", NULL },
 
-                               "rgbu8_to_rgbaf",          /* 14 */
-                               "rgbaf_to_rgbu8",          /* 15 */
+    { babl_format ("RGBA float"), babl_format("Y'CbCrA float"), "rgbaf_to_ycbcraf", NULL },
+    { babl_format ("Y'CbCrA float"), babl_format("RGBA float"), "ycbcraf_to_rgbaf", NULL },
+    { babl_format ("RGBA u8"), babl_format("Y'CbCrA float"), "rgbau8_to_ycbcraf", NULL },
+    { babl_format ("Y'CbCrA float"), babl_format("RGBA u8"), "ycbcraf_to_rgbau8", NULL },
 
-                               "yu8_to_yf",               /* 16 */
+    { babl_format ("RGB u8"), babl_format("RGBA float"), "rgbu8_to_rgbaf", NULL },
+    { babl_format ("RGBA float"), babl_format("RGB u8"), "rgbaf_to_rgbu8", NULL },
 
-                               "rgbaf_to_yaf",            /* 17 */
-                               "yaf_to_rgbaf",            /* 18 */
-                               "rgbau8_to_yaf",           /* 19 */
-                               "yaf_to_rgbau8",           /* 20 */
+    { babl_format ("Y u8"), babl_format("Y float"), "yu8_to_yf", NULL },
 
-                               "rgbaf_to_rgba_gamma_u8",  /* 21  */
-                               "rgba_gamma_u8_to_rgbaf",  /* 22  */
+    { babl_format ("RGBA float"), babl_format("YA float"), "rgbaf_to_yaf", NULL },
+    { babl_format ("YA float"), babl_format("RGBA float"), "yaf_to_rgbaf", NULL },
+    { babl_format ("RGBA u8"), babl_format("YA float"), "rgbau8_to_yaf", NULL },
+    { babl_format ("YA float"), babl_format("RGBA u8"), "yaf_to_rgbau8", NULL },
 
-                               "rgbaf_to_rgb_gamma_u8",   /* 23  */
-                               "rgb_gamma_u8_to_rgbaf",   /* 24  */
+    { babl_format ("RGBA float"), babl_format("R'G'B'A u8"), "rgbaf_to_rgba_gamma_u8", NULL },
+    { babl_format ("R'G'B'A u8"), babl_format("RGBA float"), "rgba_gamma_u8_to_rgbaf", NULL },
 
-                               "rgba_gamma_u8_to_ragabaf", /* 25 */
-                               "ragabaf_to_rgba_gamma_u8", /* 26 */
-                               "rgb_gamma_u8_to_ragabaf",  /* 27 */
-                               "ragabaf_to_rgb_gamma_u8",  /* 28 */
+    { babl_format ("RGBA float"), babl_format("R'G'B' u8"), "rgbaf_to_rgb_gamma_u8", NULL },
+    { babl_format ("R'G'B' u8"), babl_format("RGBA float"), "rgb_gamma_u8_to_rgbaf", NULL },
 
-                               "rgba_gamma_u8_to_yaf",     /* 29 */
-                               "yaf_to_rgba_gamma_u8",     /* 30 */
-                               "rgb_gamma_u8_to_yaf",      /* 31 */
-                               "yaf_to_rgb_gamma_u8",      /* 32 */
+    { babl_format ("R'G'B'A u8"), babl_format("RaGaBaA float"), "rgba_gamma_u8_to_ragabaf", NULL },
+    { babl_format ("RaGaBaA float"), babl_format("R'G'B'A u8"), "ragabaf_to_rgba_gamma_u8", NULL },
+    { babl_format ("R'G'B' u8"), babl_format("RaGaBaA float"), "rgb_gamma_u8_to_ragabaf", NULL },
+    { babl_format ("RaGaBaA float"), babl_format("R'G'B' u8"), "ragabaf_to_rgb_gamma_u8", NULL },
 
-                               NULL};
+    { babl_format ("R'G'B'A u8"), babl_format("YA float"), "rgba_gamma_u8_to_yaf", NULL },
+    { babl_format ("YA float"), babl_format("R'G'B'A u8"), "yaf_to_rgba_gamma_u8", NULL },
+    { babl_format ("R'G'B' u8"), babl_format("YA float"), "rgb_gamma_u8_to_yaf", NULL },
+    { babl_format ("YA float"), babl_format("R'G'B' u8"), "yaf_to_rgb_gamma_u8", NULL }
+  };
 
+  const char *kernel_name[G_N_ELEMENTS (float_conversions) + 1];
+
+  for (int i = 0; i < G_N_ELEMENTS (float_conversions); ++i)
+    {
+      kernel_name[i] = float_conversions[i].kernel_name;
+    }
+
+  kernel_name[G_N_ELEMENTS (float_conversions)] = NULL;
+
+  float_kernels = gegl_cl_compile_and_build (colors_cl_source, kernel_name);
+
+  color_kernels_hash = g_hash_table_new_full (color_kernels_hash_hashfunc,
+                                              color_kernels_hash_equalfunc,
+                                              NULL,
+                                              NULL);
+
+  for (int i = 0; i < G_N_ELEMENTS (float_conversions); ++i)
+    {
+      ColorConversionInfo *info = g_new (ColorConversionInfo, 1);
+
+      float_conversions[i].kernel = float_kernels->kernel[i];
+      *info = float_conversions[i];
+
+      g_hash_table_insert (color_kernels_hash, info, info);
+    }
+
+  /* FIXME: This concept of supported formats it not useful */
   format[0] = babl_format ("RGBA u8");
   format[1] = babl_format ("RGBA float");
   format[2] = babl_format ("RaGaBaA float");
@@ -144,83 +156,18 @@ gegl_cl_color_compile_kernels(void)
   format[8] = babl_format ("YA float");
   format[9] = babl_format ("R'G'B'A u8");
   format[10] = babl_format ("R'G'B' u8");
-
-  kernels_color = gegl_cl_compile_and_build (colors_cl_source, kernel_name);
 }
 
-
-
-static gint
-choose_kernel (const Babl *in_format,
-               const Babl *out_format)
+static cl_kernel
+find_color_kernel (const Babl *in_format,
+                   const Babl *out_format)
 {
-  gint kernel = -1;
-
-  if      (in_format == babl_format ("RGBA float"))
-    {
-      if      (out_format == babl_format ("RGBA u8"))          kernel = CL_RGBAF_TO_RGBAU8;
-      else if (out_format == babl_format ("RaGaBaA float"))    kernel = CL_RGBAF_TO_RAGABAF;
-      else if (out_format == babl_format ("R'G'B'A u8"))       kernel = CL_RGBAF_TO_RGBA_GAMMA_U8;
-      else if (out_format == babl_format ("R'G'B' u8"))        kernel = CL_RGBAF_TO_RGB_GAMMA_U8;
-      else if (out_format == babl_format ("R'G'B'A float"))    kernel = CL_RGBAF_TO_RGBA_GAMMA_F;
-      else if (out_format == babl_format ("Y'CbCrA float"))    kernel = CL_RGBAF_TO_YCBCRAF;
-      else if (out_format == babl_format ("RGB u8"))           kernel = CL_RGBAF_TO_RGBU8;
-      else if (out_format == babl_format ("YA float"))         kernel = CL_RGBAF_TO_YAF;
-    }
-  else if (in_format == babl_format ("RGBA u8"))
-    {
-      if      (out_format == babl_format ("RGBA float"))       kernel = CL_RGBAU8_TO_RGBAF;
-      else if (out_format == babl_format ("RaGaBaA float"))    kernel = CL_RGBAU8_TO_RAGABAF;
-      else if (out_format == babl_format ("R'G'B'A float"))    kernel = CL_RGBAU8_TO_RGBA_GAMMA_F;
-      else if (out_format == babl_format ("Y'CbCrA float"))    kernel = CL_RGBAU8_TO_YCBCRAF;
-      else if (out_format == babl_format ("YA float"))         kernel = CL_RGBAU8_TO_YAF;
-    }
-  else if (in_format == babl_format ("RaGaBaA float"))
-    {
-      if      (out_format == babl_format ("RGBA float"))       kernel = CL_RAGABAF_TO_RGBAF;
-      else if (out_format == babl_format ("RGBA u8"))          kernel = CL_RAGABAF_TO_RGBAU8;
-      else if (out_format == babl_format ("R'G'B'A u8"))       kernel = CL_RAGABAF_TO_RGBA_GAMMA_U8;
-      else if (out_format == babl_format ("R'G'B' u8"))        kernel = CL_RAGABAF_TO_RGB_GAMMA_U8;
-    }
-  else if (in_format == babl_format ("R'G'B'A float"))
-    {
-      if      (out_format == babl_format ("RGBA float"))       kernel = CL_RGBA_GAMMA_F_TO_RGBAF;
-      else if (out_format == babl_format ("RGBA u8"))          kernel = CL_RGBA_GAMMA_F_TO_RGBAU8;
-    }
-  else if (in_format == babl_format ("Y'CbCrA float"))
-    {
-      if      (out_format == babl_format ("RGBA float"))       kernel = CL_YCBCRAF_TO_RGBAF;
-      else if (out_format == babl_format ("RGBA u8"))          kernel = CL_YCBCRAF_TO_RGBAU8;
-    }
-  else if (in_format == babl_format ("RGB u8"))
-    {
-      if      (out_format == babl_format ("RGBA float"))       kernel = CL_RGBU8_TO_RGBAF;
-    }
-  else if (in_format == babl_format ("Y u8"))
-    {
-      if      (out_format == babl_format ("Y float"))          kernel = CL_YU8_TO_YF;
-    }
-  else if (in_format == babl_format ("YA float"))
-    {
-      if      (out_format == babl_format ("RGBA float"))       kernel = CL_YAF_TO_RGBAF;
-      else if (out_format == babl_format ("RGBA u8"))          kernel = CL_YAF_TO_RGBAU8;
-      else if (out_format == babl_format ("R'G'B'A u8"))       kernel = CL_YAF_TO_RGBA_GAMMA_U8;
-      else if (out_format == babl_format ("R'G'B' u8"))        kernel = CL_YAF_TO_RGB_GAMMA_U8;
-    }
-  else if (in_format == babl_format ("R'G'B'A u8"))
-    {
-      if      (out_format == babl_format ("RGBA float"))       kernel = CL_RGBA_GAMMA_U8_TO_RGBAF;
-      else if (out_format == babl_format ("RaGaBaA float"))    kernel = CL_RGBA_GAMMA_U8_TO_RAGABAF;
-      else if (out_format == babl_format ("YA float"))         kernel = CL_RGBA_GAMMA_U8_TO_YAF;
-    }
-  else if (in_format == babl_format ("R'G'B' u8"))
-    {
-      if      (out_format == babl_format ("RGBA float"))       kernel = CL_RGB_GAMMA_U8_TO_RGBAF;
-      else if (out_format == babl_format ("RaGaBaA float"))    kernel = CL_RGB_GAMMA_U8_TO_RAGABAF;
-      else if (out_format == babl_format ("YA float"))         kernel = CL_RGB_GAMMA_U8_TO_YAF;
-    }
-
-  return kernel;
+  ColorConversionInfo *info;
+  ColorConversionInfo search = { in_format, out_format, NULL, NULL };
+  info = g_hash_table_lookup (color_kernels_hash, &search);
+  if (info)
+    return info->kernel;
+  return NULL;
 }
 
 gboolean
@@ -269,7 +216,7 @@ gegl_cl_color_supported (const Babl *in_format,
   if (in_format == out_format)
     return GEGL_CL_COLOR_EQUAL;
 
-  if (kernels_color && choose_kernel (in_format, out_format) >= 0)
+  if (color_kernels_hash && find_color_kernel (in_format, out_format))
     return GEGL_CL_COLOR_CONVERT;
 
   return GEGL_CL_COLOR_NOT_SUPPORTED;
@@ -282,39 +229,36 @@ gegl_cl_color_conv (cl_mem         in_tex,
                     const Babl    *in_format,
                     const Babl    *out_format)
 {
-  cl_int cl_err;
-
-  if (gegl_cl_color_supported (in_format, out_format) == GEGL_CL_COLOR_NOT_SUPPORTED)
-    return FALSE;
+  cl_kernel kernel = NULL;
+  cl_int cl_err = 0;
 
   if (in_format == out_format)
     {
-      size_t s;
-      gegl_cl_color_babl (in_format, &s);
+      size_t s = babl_format_get_bytes_per_pixel (in_format);
 
       /* just copy in_tex to out_tex */
       cl_err = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue(),
                                          in_tex, out_tex, 0, 0, size * s,
                                          0, NULL, NULL);
       CL_CHECK;
-    }
-  else
-    {
-      gint k = choose_kernel (in_format, out_format);
-
-      cl_err = gegl_clSetKernelArg(kernels_color->kernel[k], 0, sizeof(cl_mem), (void*)&in_tex);
-      CL_CHECK;
-
-      cl_err = gegl_clSetKernelArg(kernels_color->kernel[k], 1, sizeof(cl_mem), (void*)&out_tex);
-      CL_CHECK;
-
-      cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                           kernels_color->kernel[k], 1,
-                                           NULL, &size, NULL,
-                                           0, NULL, NULL);
-      CL_CHECK;
+      return FALSE;
     }
 
+  kernel = find_color_kernel (in_format, out_format);
+  if (!kernel)
+    return FALSE;
+
+  cl_err = gegl_cl_set_kernel_args (kernel,
+                                    sizeof(cl_mem), &in_tex,
+                                    sizeof(cl_mem), &out_tex,
+                                    NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        kernel, 1,
+                                        NULL, &size, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
   return FALSE;
 
 error:
