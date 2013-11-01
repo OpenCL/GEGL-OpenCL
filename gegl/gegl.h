@@ -29,6 +29,7 @@
 #include <gegl-curve.h>
 #include <gegl-path.h>
 #include <gegl-matrix.h>
+#include <gegl-utils.h>
 #include <gegl-version.h>
 
 
