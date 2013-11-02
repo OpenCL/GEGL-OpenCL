@@ -131,13 +131,17 @@ class Context():
 def main():
   parser = argparse.ArgumentParser()
   parser.add_argument("--without-opencl",
-                      action="store_true")
-  parser.add_argument("--xml-dir")
-  parser.add_argument("--build-dir")
-  parser.add_argument("--src-dir")
+                      action="store_true",
+                      help="disable OpenCL when running tests")
+  parser.add_argument("--xml-dir",
+                      help="path to the composition xml files")
+  parser.add_argument("--build-dir",
+                      help="path to the top build directory")
+  parser.add_argument("--src-dir",
+                      help="path to the top source directory")
   parser.add_argument("FILES",
-                      nargs="*")
-# Use argparse to set --without-opencl --output-dir= --build-dir= --verbose
+                      nargs="*",
+                      help="the composition xml files to run")
 
   args = parser.parse_args()
 
@@ -154,6 +158,7 @@ def main():
   tests = args.FILES
 
   if not tests:
+    parser.print_help()
     sys.exit(0)
 
   context.prep()
