@@ -32,10 +32,6 @@
 #include "opencl/colors.cl.h"
 #include "opencl/colors-8bit-lut.cl.h"
 
-#define CL_FORMAT_N 11
-
-static const Babl *format[CL_FORMAT_N];
-
 static GHashTable  *color_kernels_hash = NULL;
 
 typedef struct
@@ -189,19 +185,6 @@ gegl_cl_color_compile_kernels (void)
       result = FALSE;
     }
 
-  /* FIXME: Remove this and just use the babl bbp/components */
-  format[0] = babl_format ("RGBA u8");
-  format[1] = babl_format ("RGBA float");
-  format[2] = babl_format ("RaGaBaA float");
-  format[3] = babl_format ("R'G'B'A float");
-  format[4] = babl_format ("Y'CbCrA float");
-  format[5] = babl_format ("RGB u8");
-  format[6] = babl_format ("Y u8");
-  format[7] = babl_format ("Y float");
-  format[8] = babl_format ("YA float");
-  format[9] = babl_format ("R'G'B'A u8");
-  format[10] = babl_format ("R'G'B' u8");
-
   return result;
 }
 
@@ -221,37 +204,8 @@ gboolean
 gegl_cl_color_babl (const Babl *buffer_format,
                     size_t     *bytes)
 {
-  int i;
-  gboolean supported_format = FALSE;
-
   if (bytes)
-    *bytes = SIZE_MAX;
-
-  for (i = 0; i < CL_FORMAT_N; i++)
-    if (format[i] == buffer_format) supported_format = TRUE;
-
-  if (!supported_format)
-    return FALSE;
-
-  if (bytes)
-    {
-      if (buffer_format == babl_format ("RGBA u8"))
-        *bytes = sizeof (cl_uchar4);
-      else if (buffer_format == babl_format ("RGB u8"))
-        *bytes = sizeof (cl_uchar3);
-      else if (buffer_format == babl_format ("Y u8"))
-        *bytes = sizeof (cl_uchar);
-      else if (buffer_format == babl_format ("Y float"))
-        *bytes = sizeof (cl_float);
-      else if (buffer_format == babl_format ("YA float"))
-        *bytes = sizeof (cl_float2);
-      else if (buffer_format == babl_format("R'G'B'A u8"))
-        *bytes = sizeof (cl_uchar4);
-      else if (buffer_format == babl_format("R'G'B' u8"))
-        *bytes = sizeof (cl_uchar3);
-      else
-        *bytes = sizeof (cl_float4);
-    }
+    *bytes = babl_format_get_bytes_per_pixel (buffer_format);
 
   return TRUE;
 }
