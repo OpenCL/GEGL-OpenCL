@@ -318,8 +318,8 @@ __kernel void rgbu8_to_rgbaf (__global const uchar  * in,
   out_v.xyz = convert_float3(in_v) / 255.0f;
   out_v.w   = 1.0f;
 #else
-  uchar4 in_v = (uchar4) (in[3 * gid], in[3 * gid + 1], in[3 * gid + 2], 255);
-  float4 out_v = convert_float4 (in_v) / 255.0f;
+  float4 in_v = (float4) (in[3 * gid], in[3 * gid + 1], in[3 * gid + 2], 255.0f);
+  float4 out_v = in_v / (float4) (255.0f);
 #endif
   out[gid]  = out_v;
 }
