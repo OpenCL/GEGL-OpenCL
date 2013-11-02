@@ -142,7 +142,17 @@ gegl_cl_color_compile_kernels (void)
     { babl_format ("RaGaBaA float"), babl_format("R'G'B' u8"), "ragabaf_to_rgb_gamma_u8", NULL },
 
     { babl_format ("YA float"), babl_format("R'G'B'A u8"), "yaf_to_rgba_gamma_u8", NULL },
-    { babl_format ("YA float"), babl_format("R'G'B' u8"), "yaf_to_rgb_gamma_u8", NULL }
+    { babl_format ("YA float"), babl_format("R'G'B' u8"), "yaf_to_rgb_gamma_u8", NULL },
+
+    { babl_format ("YA float"), babl_format ("RaGaBaA float"), "yaf_to_ragabaf", NULL },
+
+    { babl_format ("Y float"), babl_format ("RaGaBaA float"), "yf_to_ragabaf", NULL },
+
+    { babl_format ("RGBA float"), babl_format ("RGB float"), "rgbaf_to_rgbf", NULL },
+
+    /* Reuse some conversions */
+    { babl_format ("R'G'B' u8"), babl_format ("R'G'B'A float"), "rgbu8_to_rgbaf", NULL },
+    { babl_format ("R'G'B'A u8"), babl_format ("R'G'B'A float"), "rgbau8_to_rgbaf", NULL },
   };
 
   ColorConversionInfo lut8_conversions[] = {
@@ -219,6 +229,10 @@ gegl_cl_color_supported (const Babl *in_format,
 
   if (color_kernels_hash && find_color_kernel (in_format, out_format))
     return GEGL_CL_COLOR_CONVERT;
+
+  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Missing OpenCL conversion for %s -> %s",
+             babl_get_name (in_format),
+             babl_get_name (out_format));
 
   return GEGL_CL_COLOR_NOT_SUPPORTED;
 }

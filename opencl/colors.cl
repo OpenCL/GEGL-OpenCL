@@ -66,6 +66,23 @@ __kernel void rgbaf_to_rgbau8 (__global const float4 * in,
   out[gid] = convert_uchar4_sat_rte(255.0f * out_v);
 }
 
+
+/* RGBA float -> RGB float */
+__kernel void rgbaf_to_rgbf (__global const float4 * in,
+                             __global       float  * out)
+{
+  int gid = get_global_id(0);
+  float4 in_v  = in[gid];
+
+#if (__OPENCL_VERSION__ != CL_VERSION_1_0)
+  vstore3 (in_v.xyz, gid, out);
+#else
+  out[3 * gid]     = in_v.x;
+  out[3 * gid + 1] = in_v.y;
+  out[3 * gid + 2] = in_v.z;
+#endif
+}
+
 /* -- RaGaBaA float -- */
 
 /* RGBA float -> RaGaBaA float */
@@ -354,6 +371,19 @@ __kernel void yu8_to_yf (__global const uchar * in,
   out[gid] = out_v;
 }
 
+/* -- Y float -- */
+
+/* Y float -> RaGaBaA float */
+__kernel void yf_to_ragabaf (__global const float * in,
+                              __global       float4 * out)
+{
+  int gid = get_global_id(0);
+  float  y  = in[gid];
+  float4 out_v = (float4) (y, y, y, 1.0f);
+
+  out[gid] = out_v;
+}
+
 /* -- YA float -- */
 
 /* babl reference file: babl/base/rgb-constants.h */
@@ -386,6 +416,20 @@ __kernel void yaf_to_rgbaf (__global const float2 * in,
   int gid = get_global_id(0);
   float2 in_v  = in[gid];
   float4 out_v = (float4) (in_v.x, in_v.x, in_v.x, in_v.y);
+
+  out[gid] = out_v;
+}
+
+/* YA float -> RaGaBaA float */
+__kernel void yaf_to_ragabaf (__global const float2 * in,
+                              __global       float4 * out)
+{
+  int gid = get_global_id(0);
+  float2 in_v  = in[gid];
+  float4 out_v = (float4) (in_v.x * in_v.y,
+                           in_v.x * in_v.y,
+                           in_v.x * in_v.y,
+                           in_v.y);
 
   out[gid] = out_v;
 }
