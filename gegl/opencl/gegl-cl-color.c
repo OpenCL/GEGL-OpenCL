@@ -185,7 +185,7 @@ gegl_cl_color_compile_kernels (void)
 
   if (!float_kernels)
     {
-      g_warning ("Failed to compile coloer conversions (float_kernels)");
+      g_warning ("Failed to compile color conversions (float_kernels)");
       result = FALSE;
     }
 
@@ -196,7 +196,7 @@ gegl_cl_color_compile_kernels (void)
 
   if (!lut8_kernels)
     {
-      g_warning ("Failed to compile coloer conversions (lut8_kernels)");
+      g_warning ("Failed to compile color conversions (lut8_kernels)");
       result = FALSE;
     }
 
