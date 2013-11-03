@@ -191,10 +191,10 @@ cl_process (GeglOperation       *operation,
   CL_CHECK;
 
   cl_err = gegl_clReleaseMemObject (cl_random_data);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
 
   cl_err = gegl_clReleaseMemObject (cl_random_primes);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
   }
 
   return  FALSE;

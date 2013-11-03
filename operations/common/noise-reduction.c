@@ -171,7 +171,8 @@ cl_noise_reduction (cl_mem                in_tex,
   cl_int n_src_stride  = roi->width + iterations * 2;
   cl_int cl_err = 0;
 
-  cl_mem temp_tex, tmptex;
+  cl_mem temp_tex = NULL;
+  cl_mem tmptex   = NULL;
 
   gint stride = 16; /*R'G'B'A float*/
 
@@ -239,12 +240,18 @@ cl_noise_reduction (cl_mem                in_tex,
   cl_err = gegl_clFinish(gegl_cl_get_command_queue());
   CL_CHECK;
 
-  if (tmptex) cl_err = gegl_clReleaseMemObject (tmptex);
-  CL_CHECK;
+  if (tmptex)
+    {
+      cl_err = gegl_clReleaseMemObject (tmptex);
+      CL_CHECK_ONLY (cl_err);
+    }
 
   return FALSE;
 
 error:
+  if (tmptex)
+    gegl_clReleaseMemObject (tmptex);
+
   return TRUE;
 }
 

@@ -404,14 +404,13 @@ cl_bilateral (cl_mem                in_tex,
   cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
   CL_CHECK;
 
-  /* FIXME: These should just raise a warning instead of calling CL_CHECK */
   cl_err = gegl_clReleaseMemObject (grid);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
 
   for(c = 0; c < 4; c++)
     {
       cl_err = gegl_clReleaseMemObject (blur[c]);
-      CL_CHECK;
+      CL_CHECK_ONLY (cl_err);
     }
 
   return FALSE;

@@ -72,12 +72,21 @@ cl_process (GeglOperation       *self,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
   gint       num_sampling_points;
   gdouble    *xs, *ys;
-  gfloat     *ysf;
-  cl_mem     cl_curve;
+  gfloat     *ysf = NULL;
+  cl_mem     cl_curve = NULL;
   cl_ulong   cl_max_constant_size;
   cl_int     cl_err = 0;
 
   num_sampling_points = o->sampling_points;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"cl_contrast_curve",NULL};
+      cl_data = gegl_cl_compile_and_build (contrast_curve_cl_source,
+                                           kernel_name);
+    }
+  if (!cl_data)
+    return TRUE;
 
   if (num_sampling_points > 0)
     {
@@ -85,7 +94,7 @@ cl_process (GeglOperation       *self,
       ys = g_new (gdouble, num_sampling_points);
 
       gegl_curve_calc_values (o->curve, 0.0, 1.0, num_sampling_points, xs, ys);
-      g_free(xs);
+      g_free (xs);
 
       /*We need to downscale the array to pass it to the GPU*/
       ysf = g_new (gfloat, num_sampling_points);
@@ -104,15 +113,6 @@ cl_process (GeglOperation       *self,
 
       if (sizeof (cl_float) * num_sampling_points < cl_max_constant_size)
         {
-          if (!cl_data)
-            {
-              const char *kernel_name[] = {"cl_contrast_curve",NULL};
-              cl_data = gegl_cl_compile_and_build (contrast_curve_cl_source,
-                                                   kernel_name);
-            }
-          if (!cl_data)
-            return TRUE;
-
           cl_curve = gegl_clCreateBuffer (gegl_cl_get_context (),
                                           CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
                                           num_sampling_points * sizeof (cl_float),
@@ -139,8 +139,8 @@ cl_process (GeglOperation       *self,
           cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
           CL_CHECK;
 
-          cl_err= gegl_clReleaseMemObject (cl_curve);
-          CL_CHECK;
+          cl_err = gegl_clReleaseMemObject (cl_curve);
+          CL_CHECK_ONLY (cl_err);
         }
       else
         {
@@ -151,9 +151,14 @@ cl_process (GeglOperation       *self,
           return TRUE;
         }
 
-      g_free(ysf);
+      g_free (ysf);
       return FALSE;
 error:
+      if (ysf)
+        g_free (ysf);
+      if (cl_curve)
+        gegl_clReleaseMemObject (cl_curve);
+
       return TRUE;
     }
   else  /*If the curve doesn't have a lookup table is better to use CPU*/

@@ -26,8 +26,22 @@
 
 cl_int gegl_cl_set_kernel_args (cl_kernel kernel, ...) G_GNUC_NULL_TERMINATED;
 
-#define CL_ERROR {g_warning("Error in %s:%d@%s - %s\n", __FILE__, __LINE__, __func__, gegl_cl_errstring(cl_err)); goto error;}
+#define CL_ERROR \
+{                                          \
+  g_warning ("Error in %s:%d@%s - %s\n",   \
+             __FILE__, __LINE__, __func__, \
+             gegl_cl_errstring (cl_err));  \
+  goto error;                              \
+}
 
-#define CL_CHECK {if (cl_err != CL_SUCCESS) CL_ERROR;}
+#define CL_CHECK { if (cl_err != CL_SUCCESS) CL_ERROR; }
+
+#define CL_CHECK_ONLY(errcode) \
+if (errcode != CL_SUCCESS)                  \
+{                                           \
+  g_warning ("Error in %s:%d@%s - %s\n",    \
+             __FILE__, __LINE__, __func__,  \
+             gegl_cl_errstring (errcode));  \
+}
 
 #endif

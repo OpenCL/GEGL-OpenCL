@@ -177,7 +177,9 @@ cl_c2g (cl_mem                in_tex,
         gdouble               rgamma)
 {
   cl_int cl_err = 0;
-  cl_mem cl_lut_cos, cl_lut_sin, cl_radiuses;
+  cl_mem cl_lut_cos = NULL;
+  cl_mem cl_lut_sin = NULL;
+  cl_mem cl_radiuses = NULL;
   const size_t gbl_size[2] = {roi->width, roi->height};
 
   if (!cl_data)
@@ -240,16 +242,23 @@ cl_c2g (cl_mem                in_tex,
   cl_err = gegl_clFinish(gegl_cl_get_command_queue ());
   CL_CHECK;
 
-  cl_err = gegl_clReleaseMemObject(cl_radiuses);
-  CL_CHECK;
-  cl_err = gegl_clReleaseMemObject(cl_lut_cos);
-  CL_CHECK;
-  cl_err = gegl_clReleaseMemObject(cl_lut_sin);
-  CL_CHECK;
+  cl_err = gegl_clReleaseMemObject (cl_radiuses);
+  CL_CHECK_ONLY (cl_err);
+  cl_err = gegl_clReleaseMemObject (cl_lut_cos);
+  CL_CHECK_ONLY (cl_err);
+  cl_err = gegl_clReleaseMemObject (cl_lut_sin);
+  CL_CHECK_ONLY (cl_err);
 
   return FALSE;
 
 error:
+  if (cl_radiuses)
+    gegl_clReleaseMemObject (cl_radiuses);
+  if (cl_lut_cos)
+    gegl_clReleaseMemObject (cl_lut_cos);
+  if (cl_lut_sin)
+    gegl_clReleaseMemObject (cl_lut_sin);
+
   return TRUE;
 }
 

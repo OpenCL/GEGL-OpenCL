@@ -452,7 +452,8 @@ cl_gaussian_blur (cl_mem                in_tex,
 
   size_t global_ws[2];
 
-  cl_mem cl_matrix_x, cl_matrix_y;
+  cl_mem cl_matrix_x = NULL;
+  cl_mem cl_matrix_y = NULL;
 
   if (!cl_data)
     {
@@ -516,13 +517,18 @@ cl_gaussian_blur (cl_mem                in_tex,
   CL_CHECK;
 
   cl_err = gegl_clReleaseMemObject (cl_matrix_x);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
   cl_err = gegl_clReleaseMemObject (cl_matrix_y);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
 
   return FALSE;
 
 error:
+  if (cl_matrix_x)
+    gegl_clReleaseMemObject (cl_matrix_x);
+  if (cl_matrix_y)
+    gegl_clReleaseMemObject (cl_matrix_y);
+
   return TRUE;
 }
 

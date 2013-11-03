@@ -234,15 +234,14 @@ cl_buffer_get_min_max (cl_mem               in_tex,
   *min = min_max_buf[0];
   *max = min_max_buf[1];
 
-
   cl_err = gegl_clReleaseMemObject (cl_aux_min);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
 
   cl_err = gegl_clReleaseMemObject (cl_aux_max);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
 
   cl_err = gegl_clReleaseMemObject (cl_min_max);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
 
   return FALSE;
 

@@ -76,7 +76,7 @@ cl_dot (cl_mem               in,
         gint                 size,
         gfloat               ratio)
 {
-  cl_int   cl_err        = 0;
+  cl_int cl_err        = 0;
   cl_mem block_colors  = NULL;
 
   if (!cl_data)
@@ -154,7 +154,7 @@ cl_dot (cl_mem               in,
   CL_CHECK;
 
   cl_err = gegl_clReleaseMemObject (block_colors);
-  CL_CHECK;
+  CL_CHECK_ONLY (cl_err);
   }
 
   return FALSE;
