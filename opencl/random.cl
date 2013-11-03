@@ -24,6 +24,28 @@
 #define RANDOM_DATA_SIZE (15083+15091+15101)
 #define PRIME_SIZE 533u
 
+inline uint _gegl_cl_random_int  (__global const int  *cl_random_data,
+                                  __global const long *cl_random_primes,
+                                  int seed, int x, int y, int z, int n);
+
+uint gegl_cl_random_int          (__global const int  *cl_random_data,
+                                  __global const long *cl_random_primes,
+                                  int seed, int x, int y, int z, int n);
+
+int gegl_cl_random_int_range     (__global const int  *cl_random_data,
+                                  __global const long *cl_random_primes,
+                                  int seed, int x, int y, int z, int n,
+                                  int min, int max);
+
+float gegl_cl_random_float       (__global const int  *cl_random_data,
+                                  __global const long *cl_random_primes,
+                                  int seed, int x, int y, int z, int n);
+
+float gegl_cl_random_float_range (__global const int  *cl_random_data,
+                                  __global const long *cl_random_primes,
+                                  int seed, int x, int y, int z, int n,
+                                  float min, float max);
+
 inline uint
 _gegl_cl_random_int (__global const int  *cl_random_data,
                      __global const long *cl_random_primes,
@@ -79,7 +101,7 @@ gegl_cl_random_int_range (__global const int  *cl_random_data,
 }
 
 
-#define G_RAND_FLOAT_TRANSFORM  0.00001525902189669642175
+#define G_RAND_FLOAT_TRANSFORM  0.00001525902189669642175f
 
 float
 gegl_cl_random_float (__global const int  *cl_random_data,

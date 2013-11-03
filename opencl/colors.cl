@@ -29,6 +29,9 @@
  */
 #define BABL_ALPHA_THRESHOLD 0.0f
 
+float linear_to_gamma_2_2 (float value);
+float gamma_2_2_to_linear (float value);
+
 /* babl reference file: babl/base/util.h */
 float linear_to_gamma_2_2 (float value)
 {
