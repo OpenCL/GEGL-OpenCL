@@ -319,22 +319,27 @@ cl_process (GeglOperation       *operation,
                                    in_format,
                                    GEGL_CL_BUFFER_READ);
 
-  while (gegl_buffer_cl_iterator_next (i, &err))
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
     {
-      if (err) return FALSE;
+      err = cl_buffer_get_min_max (i->tex[0],
+                                   i->size[0],
+                                   &i->roi[0],
+                                   &i_min,
+                                   &i_max);
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
 
-      err = cl_buffer_get_min_max(i->tex[0],
-                                  i->size[0],
-                                  &i->roi[0],
-                                  &i_min,
-                                  &i_max);
-      if (err) return FALSE;
-
-      if(i_min < min)
+      if (i_min < min)
         min = i_min;
-      if(i_max > max)
+      if (i_max > max)
         max = i_max;
     }
+
+  if (err)
+    return FALSE;
 
   diff = max-min;
 
