@@ -30,14 +30,14 @@
 #define BABL_ALPHA_THRESHOLD 0.0f
 
 /* babl reference file: babl/base/util.h */
-static float linear_to_gamma_2_2 (float value)
+float linear_to_gamma_2_2 (float value)
 {
   if (value > 0.003130804954f)
     return 1.055f * native_powr (value, (1.0f/2.4f)) - 0.055f;
   return 12.92f * value;
 }
 
-static float gamma_2_2_to_linear (float value)
+float gamma_2_2_to_linear (float value)
 {
   if (value > 0.04045f)
     return native_powr ((value + 0.055f) / 1.055f, 2.4f);
