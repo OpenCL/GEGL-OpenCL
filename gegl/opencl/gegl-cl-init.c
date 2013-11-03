@@ -477,12 +477,11 @@ gegl_cl_init (GError **error)
 
 #undef CL_LOAD_FUNCTION
 
-#define CL_SAFE_CALL(func)                                          \
-func;                                                               \
-if (errcode != CL_SUCCESS)                                          \
-{                                                                   \
-  g_warning("OpenCL error in %s, Line %u in file %s\nError:%s",     \
-            #func, __LINE__, __FILE__, gegl_cl_errstring(errcode)); \
+#define CL_CHECK_ONLY(errcode) \
+if (errcode != CL_SUCCESS)                                     \
+{                                                              \
+  g_warning ("OpenCL error: %s:%d - %s",                       \
+             __FILE__, __LINE__, gegl_cl_errstring (errcode)); \
 }
 
 /* XXX: same program_source with different kernel_name[], context or device
@@ -496,69 +495,90 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
   if (!gegl_cl_is_accelerated ())
     return NULL;
 
-  if ((cl_data = (GeglClRunData *)g_hash_table_lookup(cl_program_hash, program_source)) == NULL)
+  cl_data = (GeglClRunData *)g_hash_table_lookup (cl_program_hash, program_source);
+
+  if (cl_data == NULL)
     {
       const size_t lengths[] = {strlen(random_cl_source), strlen(program_source)};
-      const char *sources[] = {random_cl_source , program_source};
+      const char *sources[] = {random_cl_source, program_source};
 
-      gint i;
-      guint kernel_n = 0;
+      gint    i;
+      char   *msg;
+      size_t  s = 0;
+      cl_int  build_errcode;
+      guint   kernel_n = 0;
+
       while (kernel_name[++kernel_n] != NULL);
 
-      cl_data = (GeglClRunData *) g_new(GeglClRunData, 1);
+      cl_data = (GeglClRunData *) g_new (GeglClRunData, 1);
 
-      CL_SAFE_CALL( cl_data->program = gegl_clCreateProgramWithSource(gegl_cl_get_context(), 2, sources,
-                                                                      lengths, &errcode) );
+      cl_data->program = gegl_clCreateProgramWithSource (gegl_cl_get_context (), 2, sources,
+                                                         lengths, &errcode);
+      CL_CHECK_ONLY (errcode);
 
-      errcode = gegl_clBuildProgram(cl_data->program, 0, NULL, NULL, NULL, NULL);
-      if (errcode != CL_SUCCESS)
+      build_errcode = gegl_clBuildProgram (cl_data->program, 0, NULL, NULL, NULL, NULL);
+
+      errcode = gegl_clGetProgramBuildInfo (cl_data->program,
+                                            gegl_cl_get_device (),
+                                            CL_PROGRAM_BUILD_LOG,
+                                            0, NULL, &s);
+      CL_CHECK_ONLY (errcode);
+
+      if (s)
         {
-          char *msg;
-          size_t s;
-          G_GNUC_UNUSED cl_int build_errcode = errcode;
-
-          CL_SAFE_CALL( errcode = gegl_clGetProgramBuildInfo(cl_data->program,
-                                                             gegl_cl_get_device(),
-                                                             CL_PROGRAM_BUILD_LOG,
-                                                             0, NULL, &s) );
-
           msg = g_malloc (s);
-          CL_SAFE_CALL( errcode = gegl_clGetProgramBuildInfo(cl_data->program,
-                                                             gegl_cl_get_device(),
-                                                             CL_PROGRAM_BUILD_LOG,
-                                                             s, msg, NULL) );
-          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Build Error:%s\n%s", gegl_cl_errstring(build_errcode), msg);
-          g_free (msg);
+          errcode = gegl_clGetProgramBuildInfo (cl_data->program,
+                                                gegl_cl_get_device (),
+                                                CL_PROGRAM_BUILD_LOG,
+                                                s, msg, NULL);
+          CL_CHECK_ONLY (errcode);
+        }
+      else
+        {
+          msg = strdup ("");
+        }
 
+      if (build_errcode != CL_SUCCESS)
+        {
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Build Error: %s\n%s",
+                                        gegl_cl_errstring (build_errcode),
+                                        msg);
+          g_free (msg);
           return NULL;
         }
       else
         {
-          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Compiling successful\n");
+          g_strchug (msg);
+          if (strlen (msg))
+            GEGL_NOTE (GEGL_DEBUG_OPENCL, "Compiling successful\n%s", msg);
+          else
+            GEGL_NOTE (GEGL_DEBUG_OPENCL, "Compiling successful");
+          g_free (msg);
         }
 
       cl_data->kernel = g_new (cl_kernel, kernel_n);
       cl_data->work_group_size = g_new (size_t, kernel_n);
 
-      for (i=0; i<kernel_n; i++)
+      for (i = 0; i < kernel_n; i++)
         {
-          CL_SAFE_CALL( cl_data->kernel[i] =
-                        gegl_clCreateKernel(cl_data->program, kernel_name[i], &errcode) );
+          cl_data->kernel[i] = gegl_clCreateKernel (cl_data->program,
+                                                    kernel_name[i],
+                                                    &errcode);
+          CL_CHECK_ONLY (errcode);
 
-          CL_SAFE_CALL( errcode = gegl_clGetKernelWorkGroupInfo (cl_data->kernel[i], gegl_cl_get_device(), CL_KERNEL_WORK_GROUP_SIZE,
-                                                                 sizeof(size_t), &cl_data->work_group_size[i], NULL) );
+          errcode = gegl_clGetKernelWorkGroupInfo (cl_data->kernel[i],
+                                                   gegl_cl_get_device (),
+                                                   CL_KERNEL_WORK_GROUP_SIZE,
+                                                   sizeof(size_t),
+                                                   &cl_data->work_group_size[i],
+                                                   NULL);
+          CL_CHECK_ONLY (errcode);
         }
 
-      g_hash_table_insert(cl_program_hash, g_strdup (program_source), (void*)cl_data);
+      g_hash_table_insert (cl_program_hash, g_strdup (program_source), (void*)cl_data);
     }
 
   return cl_data;
 }
 
-#define CL_BUILD(SOURCE, ...)                                             \
-  {                                                                       \
-    const char *kernel_name[] = {__VA_ARGS__ , NULL};                     \
-    return cl_compile_and_build(SOURCE, kernel_name);                     \
-  }                                                                       \
-
-#undef CL_SAFE_CALL
+#undef CL_CHECK_ONLY
