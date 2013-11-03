@@ -1,17 +1,5 @@
 SUBDIRS = data
 
-# Make the tests run against the build and not the installation
-TESTS_ENVIRONMENT = \
-	export GEGL_PATH=$(top_builddir)/operations/;\
-	export ABS_TOP_BUILDDIR=$(top_builddir); \
-	export ABS_TOP_SRCDIR=$(top_srcdir) ;
-
-LOG_COMPILER = \
-	gtester
-
-AM_LOG_FLAGS = \
-	-k --verbose
-
 # The tests
 noinst_PROGRAMS = \
 	test-save \
@@ -42,3 +30,8 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 # Common libs
 LIBS = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la	\
 	$(DEP_LIBS) $(BABL_LIBS)
+
+check-TESTS: $(TESTS)
+	$(PYTHON) $(srcdir)/../run-tests.py \
+	  --build-dir=$(top_builddir) --src-dir=$(top_srcdir) \
+	  $(TESTS)

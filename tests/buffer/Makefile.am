@@ -6,8 +6,6 @@ SUBDIRS = \
 TESTS = buffer-tests-results.sh
 buffer-tests-results.sh: buffer-tests-report
 
-TESTS_ENVIRONMENT = REFERENCE_DIR=$(top_srcdir)/tests/buffer/reference
-
 EXTRA_DIST = buffer-tests-results.sh
 
 # Always build buffer-test to catch compilation problems early
@@ -63,6 +61,12 @@ buffer-tests-report: buffer-test$(EXEEXT) $(top_srcdir)/tests/buffer/reference/*
 	@mkdir -p output > /dev/null 2>&1
 	$(builddir_gegl_env) ./buffer-test$(EXEEXT)
 	for f in $(top_srcdir)/tests/buffer/reference/*.buf; do LC_ALL=C diff --report-identical-files --context=50 $$f output/`basename $$f`; done > buffer-tests-report; true
+
+check-TESTS: $(TESTS)
+	REFERENCE_DIR=$(top_srcdir)/tests/buffer/reference \
+	$(PYTHON) $(srcdir)/../run-tests.py \
+	  --build-dir=$(top_builddir) --src-dir=$(top_srcdir) \
+	  $(TESTS)
 
 clean-local:
 	rm -rf output

@@ -1,9 +1,3 @@
-# Make the tests run against the build and not the installation
-TESTS_ENVIRONMENT = \
-	GEGL_PATH=$(top_builddir)/operations/ \
-	ABS_TOP_BUILDDIR=$(top_builddir) \
-	ABS_TOP_SRCDIR=$(top_srcdir)
-
 # The tests
 noinst_PROGRAMS =			\
 	test-buffer-cast		\
@@ -47,6 +41,11 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 # Common libs
 LIBS = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la	\
 	$(DEP_LIBS) $(BABL_LIBS)
+
+check-TESTS: $(TESTS)
+	$(PYTHON) $(srcdir)/../run-tests.py \
+	  --build-dir=$(top_builddir) --src-dir=$(top_srcdir) \
+	  $(TESTS)
 
 clean-local:
 	rm -f test-exp-combine.hdr test-exp-combine-diff.png
