@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdio.h>
 
+#include "gegl-cl.h"
 #include "gegl-cl-color.h"
 #include "opencl/random.cl.h"
 
@@ -477,13 +478,6 @@ gegl_cl_init (GError **error)
 
 #undef CL_LOAD_FUNCTION
 
-#define CL_CHECK_ONLY(errcode) \
-if (errcode != CL_SUCCESS)                                     \
-{                                                              \
-  g_warning ("OpenCL error: %s:%d - %s",                       \
-             __FILE__, __LINE__, gegl_cl_errstring (errcode)); \
-}
-
 /* XXX: same program_source with different kernel_name[], context or device
  *      will retrieve the same key
  */
@@ -580,5 +574,3 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
 
   return cl_data;
 }
-
-#undef CL_CHECK_ONLY
