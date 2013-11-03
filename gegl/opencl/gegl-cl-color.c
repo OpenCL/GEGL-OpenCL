@@ -134,6 +134,7 @@ gegl_cl_color_compile_kernels (void)
     { babl_format ("YA float"), babl_format("RGBA float"), "yaf_to_rgbaf", NULL },
     { babl_format ("RGBA u8"), babl_format("YA float"), "rgbau8_to_yaf", NULL },
     { babl_format ("YA float"), babl_format("RGBA u8"), "yaf_to_rgbau8", NULL },
+    { babl_format ("RaGaBaA float"), babl_format("YA float"), "ragabaf_to_yaf", NULL },
 
     { babl_format ("RGBA float"), babl_format("R'G'B'A u8"), "rgbaf_to_rgba_gamma_u8", NULL },
     { babl_format ("RGBA float"), babl_format("R'G'B' u8"), "rgbaf_to_rgb_gamma_u8", NULL },
@@ -150,9 +151,13 @@ gegl_cl_color_compile_kernels (void)
 
     { babl_format ("RGBA float"), babl_format ("RGB float"), "rgbaf_to_rgbf", NULL },
 
+    { babl_format ("R'G'B' float"), babl_format ("RGBA float"), "rgb_gamma_f_to_rgbaf", NULL },
+
     /* Reuse some conversions */
     { babl_format ("R'G'B' u8"), babl_format ("R'G'B'A float"), "rgbu8_to_rgbaf", NULL },
     { babl_format ("R'G'B'A u8"), babl_format ("R'G'B'A float"), "rgbau8_to_rgbaf", NULL },
+
+    { babl_format ("R'G'B' float"), babl_format ("RaGaBaA float"), "rgb_gamma_f_to_rgbaf", NULL },
   };
 
   ColorConversionInfo lut8_conversions[] = {
