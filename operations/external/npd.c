@@ -28,7 +28,7 @@ gegl_chant_int     (square_size, _("square size"),
                     _("Size of an edge of square the mesh consists of"))
 
 gegl_chant_int     (rigidity,    _("rigidity"),
-                    1, 10000, 100,
+                    0, 10000, 100,
                     _("The number of deformation iterations"))
 
 gegl_chant_boolean (ASAP_deformation, _("ASAP deformation"),
