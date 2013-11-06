@@ -23,6 +23,9 @@
 #include "glib.h"
 #include <math.h>
 #include "npd_math.h"
+#include "lattice_cut.h"
+#include <stdio.h>
+#include <string.h>
 
 void
 npd_create_mesh_from_image (NPDModel *model,
@@ -31,105 +34,186 @@ npd_create_mesh_from_image (NPDModel *model,
                             gint      position_x,
                             gint      position_y)
 {
-  gint square_size = model->mesh_square_size;
-  NPDHiddenModel *hidden_model = model->hidden_model;
+  gint      square_size = model->mesh_square_size;
   NPDImage *image = model->reference_image;
-  gint i, cy, cx, y, x;
-  NPDColor pixel_color = { 0, 0, 0, 0 };
-  GPtrArray *current_bones, *reference_bones;
+  gint      i, cy, cx, y, x, r, c, ow, oh;
+  NPDColor  pixel_color = { 0, 0, 0, 0 };
+  GArray   *squares;
+  gint     *sq2id;
+  gboolean *empty_squares;
+  GList    *tmp_ops = NULL;
+  GArray   *ops = g_array_new (FALSE, FALSE, sizeof (NPDOverlappingPoints));
+  GList   **edges;
+  NPDHiddenModel *hm = model->hidden_model;
 
-  /* create quadrilaterals above the image */
+  /* create squares above the image */
   width  = ceil ((gfloat) width  / square_size);
   height = ceil ((gfloat) height / square_size);
 
-  current_bones   = g_ptr_array_new ();
-  reference_bones = g_ptr_array_new ();
+  squares = g_array_new (FALSE, FALSE, sizeof (NPDBone));
+  empty_squares = g_new0 (gboolean, width * height);
+  sq2id = g_new0 (gint, width * height);
 
+  i = 0;
   for (cy = 0; cy < height; cy++)
+  for (cx = 0; cx < width; cx++)
     {
-      for (cx = 0; cx < width; cx++)
+      gboolean is_empty = TRUE;
+
+      for (y = cy * square_size; y < (cy + 1) * square_size; y++)
+      for (x = cx * square_size; x < (cx + 1) * square_size; x++)
         {
-          gboolean is_empty = TRUE;
-
-          for (y = cy * square_size; y < (cy + 1) * square_size; y++)
+          /* test of emptiness */
+          npd_get_pixel_color (image, x, y, &pixel_color);
+          if (!npd_is_color_transparent (&pixel_color))
             {
-              for (x = cx * square_size; x < (cx + 1) * square_size; x++)
-                {
-                  npd_get_pixel_color (image, x, y, &pixel_color);
-
-                  if (!npd_is_color_transparent (&pixel_color))
-                    {
-                      is_empty = FALSE;
-                      goto not_empty;
-                    }
-                }
+              is_empty = FALSE;
+              goto not_empty;
             }
+        }
 
-          not_empty:
-          if (!is_empty)
+#define NPD_SQ_ID cy * width + cx
+
+      not_empty:
+      if (!is_empty)
+        {
+          /* create a square */
+          NPDBone square;
+          npd_create_square (&square,
+                             position_x + cx * square_size,
+                             position_y + cy * square_size,
+                             square_size, square_size);
+          g_array_append_val (squares, square);
+          sq2id[NPD_SQ_ID] = i;
+          i++;
+        }
+      else
+        empty_squares[NPD_SQ_ID] = TRUE;
+    }
+
+  /* find empty edges */
+  edges = npd_find_edges (model->reference_image, width, height, square_size);
+
+  /* create provisional overlapping points */
+#define NPD_ADD_P(op,r,c,point)                                              \
+  if ((r) > -1 && (r) < (oh - 1) && (c) > -1 && (c) < (ow - 1) &&            \
+      edges[op] == NULL && !empty_squares[(r) * width + (c)])                \
+    {                                                                        \
+      tmp_ops = g_list_append (tmp_ops, GINT_TO_POINTER ((r) * width + (c)));\
+      tmp_ops = g_list_append (tmp_ops, GINT_TO_POINTER (point));            \
+      num++;                                                                 \
+    }
+
+  ow = width + 1; oh = height + 1;
+
+  for (r = 0; r < oh; r++)
+  for (c = 0; c < ow; c++)
+    {
+      gint index = r * ow + c, num = 0;
+      NPD_ADD_P (index, r - 1, c - 1, 2);
+      NPD_ADD_P (index, r - 1, c,     3);
+      NPD_ADD_P (index, r,     c,     0);
+      NPD_ADD_P (index, r,     c - 1, 1);
+      if (num > 0)
+        tmp_ops = g_list_insert_before (tmp_ops,
+                                        g_list_nth_prev (g_list_last (tmp_ops), 2 * num - 1),
+                                        GINT_TO_POINTER (num));
+    }
+#undef NPD_ADD_P
+
+  /* cut lattice's edges and continue with creating of provisional overlapping points */
+  tmp_ops = g_list_concat (tmp_ops, npd_cut_edges (edges, ow, oh));
+  for (i = 0; i < ow * oh; i++) g_list_free (edges[i]);
+  g_free (edges);
+
+  /* create model's bones */
+  hm->num_of_bones = squares->len;
+  hm->current_bones = (NPDBone*) (gpointer) squares->data;
+  g_array_free (squares, FALSE);
+
+  /* create model's overlapping points */
+  while (g_list_next (tmp_ops))
+    {
+      GPtrArray *ppts = g_ptr_array_new ();
+      gint count = GPOINTER_TO_INT (tmp_ops->data);
+      gint j = 0;
+
+      for (i = 0; i < count; i++)
+        {
+          gint sq, p;
+          tmp_ops = g_list_next (tmp_ops);
+          sq = GPOINTER_TO_INT (tmp_ops->data);
+          tmp_ops = g_list_next (tmp_ops);
+          p  = GPOINTER_TO_INT (tmp_ops->data);
+
+          if (!empty_squares[sq])
             {
-              NPDBone *current_bone, *reference_bone;
-              NPDPoint *current_points, *ref_points;
-              gfloat *weights;
-              gint coords[8] = {cx, cx + 1, cx + 1, cx,
-                                cy, cy,     cy + 1, cy + 1};
-
-              current_bone   = g_new (NPDBone,  1);
-              reference_bone = g_new (NPDBone,  1);
-              current_points = g_new (NPDPoint, 4);
-              ref_points     = g_new (NPDPoint, 4);
-              weights        = g_new (gfloat,   4);
-              
-              for (i = 0; i < 4; i++)
-                {
-                  weights[i] = 1.0;
-                
-                  current_points[i].x = position_x + (coords[i] * square_size);
-                  current_points[i].y = position_y + (coords[i + 4] * square_size);
-                  current_points[i].weight = &weights[i];
-                  current_points[i].fixed = FALSE;
-                  current_points[i].current_bone = current_bone;
-                  current_points[i].reference_bone = reference_bone;
-                  current_points[i].index = i;
-
-                  ref_points[i].x = current_points[i].x - position_x;
-                  ref_points[i].y = current_points[i].y - position_y;
-                  ref_points[i].weight = &weights[i];
-                  ref_points[i].fixed = current_points[i].fixed;
-                  ref_points[i].current_bone = current_bone;
-                  ref_points[i].reference_bone = reference_bone;
-                  ref_points[i].index = i;
-                  
-                  current_points[i].counterpart = &ref_points[i];
-                  ref_points[i].counterpart = &current_points[i];
-                }
-
-              current_bone->points = current_points;
-              current_bone->num_of_points = 4;
-              current_bone->weights = weights;
-              g_ptr_array_add (current_bones, current_bone);
-
-              reference_bone->points = ref_points;
-              reference_bone->num_of_points = 4;
-              reference_bone->weights = weights;
-              g_ptr_array_add (reference_bones, reference_bone);
-
-              hidden_model->num_of_bones++;
+              g_ptr_array_add (ppts, &hm->current_bones[sq2id[sq]].points[p]);
+              j++;
             }
+        }
+
+      if (j > 0)
+        {
+          NPDOverlappingPoints op;
+          op.num_of_points = j;
+          op.points = (NPDPoint**) ppts->pdata;
+          g_ptr_array_free (ppts, FALSE);
+          op.representative = op.points[0];
+          g_array_append_val (ops, op);
+        }
+      tmp_ops = g_list_next (tmp_ops);
+    }
+
+  g_list_free (tmp_ops);
+  g_free (empty_squares);
+  g_free (sq2id);
+
+  hm->num_of_overlapping_points = ops->len;
+  hm->list_of_overlapping_points = (NPDOverlappingPoints*) (gpointer) ops->data;
+  g_array_free (ops, FALSE);
+
+  /* create reference bones according to current bones */
+  hm->reference_bones = g_new (NPDBone, hm->num_of_bones);
+  for (i = 0; i < hm->num_of_bones; i++)
+    {
+      NPDBone *current_bone = &hm->current_bones[i];
+      NPDBone *reference_bone = &hm->reference_bones[i];
+      NPDPoint *current_points, *ref_points;
+      gint j, n = current_bone->num_of_points;
+
+      reference_bone->num_of_points = n;
+      reference_bone->points = g_new (NPDPoint, n);
+      memcpy (reference_bone->points, current_bone->points, n * sizeof (NPDPoint));
+      reference_bone->weights = current_bone->weights;
+
+      current_points = current_bone->points;
+      ref_points = reference_bone->points;
+
+      for (j = 0; j < n; j++)
+        {
+          current_points[j].current_bone = current_bone;
+          current_points[j].reference_bone = reference_bone;
+          ref_points[j].current_bone = current_bone;
+          ref_points[j].reference_bone = reference_bone;
+          ref_points[j].x = current_points[j].x - position_x;
+          ref_points[j].y = current_points[j].y - position_y;
+          current_points[j].counterpart = &ref_points[j];
+          ref_points[j].counterpart = &current_points[j];
         }
     }
 
-  hidden_model->current_bones = g_new (NPDBone, current_bones->len);
-  hidden_model->reference_bones = g_new (NPDBone, reference_bones->len);
-
-  for (i = 0; i < current_bones->len; i++)
+/*
+// could be useful later
+  gint j;
+  for (i = 0; i < hm->num_of_overlapping_points; i++)
+  for (j = 0; j < hm->list_of_overlapping_points[i].num_of_points; j++)
     {
-      hidden_model->current_bones[i] = *(NPDBone*) g_ptr_array_index (current_bones, i);
-      hidden_model->reference_bones[i] = *(NPDBone*) g_ptr_array_index (reference_bones, i);
+      NPDPoint *p = hm->list_of_overlapping_points[i].points[j];
+      p->overlapping_points = &hm->list_of_overlapping_points[i];
+      p->counterpart->overlapping_points = &hm->list_of_overlapping_points[i];
     }
-
-  g_ptr_array_free (current_bones, TRUE);
-  g_ptr_array_free (reference_bones, TRUE);
+*/
 }
 
 void

@@ -55,6 +55,7 @@ NPD_COMPUTE_CENTROID (from_weighted_points,
                       gfloat weights[],
                       weights[i],
                       .)
+#undef NPD_COMPUTE_CENTROID
 
 void
 npd_compute_ARSAP_transformation (gint     num_of_points,

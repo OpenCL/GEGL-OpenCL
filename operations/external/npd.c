@@ -195,7 +195,7 @@ npd_create_model_from_image (NPDModel *model,
   model->reference_image = image;
   model->mesh_square_size = square_size;
     
-  npd_create_mesh_from_image(model, image->width, image->height, 0, 0);
+  npd_create_mesh_from_image (model, image->width, image->height, 0, 0);
 }
 
 void
@@ -271,12 +271,12 @@ process (GeglOperation       *operation,
       display->image.width = width;
       display->image.height = height;
       display->image.buffer = output_buffer;
+      model->display = display;
 
       npd_create_model_from_image (model, input_image, o->square_size);
       hm = model->hidden_model;
-      npd_create_list_of_overlapping_points (hm);
+/*      npd_create_list_of_overlapping_points (hm);*/
 
-      model->display = display;
       o->model = model;
 
       memcpy (output_buffer, input_image->buffer, length);

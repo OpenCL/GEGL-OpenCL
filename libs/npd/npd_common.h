@@ -124,6 +124,11 @@ NPDControlPoint *npd_get_control_point_with_radius_at
                                                  gfloat           control_point_radius);
 NPDControlPoint *npd_get_control_point_at       (NPDModel        *model,
                                                  NPDPoint        *coord);
+void             npd_create_square              (NPDBone         *square,
+                                                 gint             x,
+                                                 gint             y,
+                                                 gint             width,
+                                                 gint             height);
 void             npd_create_list_of_overlapping_points
                                                 (NPDHiddenModel  *model);
 void             add_point_to_suitable_cluster  (GHashTable      *coords_to_cluster,

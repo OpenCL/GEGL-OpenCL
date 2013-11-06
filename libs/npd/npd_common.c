@@ -296,6 +296,32 @@ npd_get_control_point_at (NPDModel *model,
 }
 
 void
+npd_create_square (NPDBone *square,
+                   gint     x,
+                   gint     y,
+                   gint     width,
+                   gint     height)
+{
+  gint i;
+  square->num_of_points = 4;
+  square->points  = g_new (NPDPoint, 4);
+  square->weights = g_new (gfloat,   4);
+
+  square->points[0].x = x;         square->points[0].y = y;
+  square->points[1].x = x + width; square->points[1].y = y;
+  square->points[2].x = x + width; square->points[2].y = y + height;
+  square->points[3].x = x;         square->points[3].y = y + height;
+
+  for (i = 0; i < 4; i++)
+    {
+      square->weights[i] = 1.0;
+      square->points[i].weight = &square->weights[i];
+      square->points[i].fixed = FALSE;
+      square->points[i].index = i;
+    }
+}
+
+void
 npd_create_list_of_overlapping_points (NPDHiddenModel *hm)
 {
   gint        i, j, num_of_bones;

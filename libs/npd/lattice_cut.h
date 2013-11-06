@@ -19,14 +19,22 @@
  * Copyright (C) 2013 Marek Dvoroznak <dvoromar@gmail.com>
  */
 
-#ifndef __NPD_H__
-#define	__NPD_H__
+#ifndef __REFINE_H__
+#define	__REFINE_H__
 
 #include "npd_common.h"
-#include "graphics.h"
-#include "deformation.h"
-#include "npd_math.h"
-#include "lattice_cut.h"
 
-#endif	/* __NPD_H__ */
+gboolean     npd_is_edge_empty    (NPDImage *image,
+                                   gint      X1,
+                                   gint      Y1,
+                                   gint      X2,
+                                   gint      Y2);
+GList**      npd_find_edges       (NPDImage *image,
+                                   gint      count_x,
+                                   gint      count_y,
+                                   gint      square_size);
+GList*       npd_cut_edges        (GList   **edges,
+                                   gint      ow,
+                                   gint      oh);
 
+#endif	/* __REFINE_H__ */

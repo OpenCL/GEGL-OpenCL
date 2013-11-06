@@ -11,7 +11,7 @@ GEGL_NPD_public_HEADERS = \
 	deformation.h    \
 	npd_math.h       \
 	graphics.h       \
-	refine.h         \
+	lattice_cut.h    \
 	npd_gegl.h       \
 	npd.h
 
@@ -21,7 +21,7 @@ GEGL_NPD_SOURCES = \
 	deformation.c			\
 	npd_math.c			\
 	graphics.c			\
-	refine.c			\
+	lattice_cut.c			\
 	npd_gegl.c
 
 libgegl_npd_@GEGL_API_VERSION@_la_SOURCES = \
