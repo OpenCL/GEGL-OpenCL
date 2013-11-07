@@ -42,16 +42,16 @@ static void prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation        *op,
-          void                *in_buf,
-          void                *min_buf,
-          void                *max_buf,
-          void                *out_buf,
-          glong                n_pixels,
-          const GeglRectangle *roi,
-          gint                 level)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *min_buf,
+         void                *max_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi,
+         gint                 level)
 {
-  gint i;
+  gint    i;
   gfloat *in = in_buf;
   gfloat *min = min_buf;
   gfloat *max = max_buf;
@@ -59,17 +59,19 @@ process (GeglOperation        *op,
 
   for (i = 0; i < n_pixels; i++)
     {
-       gint c;
-       for (c = 0; c < 3; c++)
-         {
-           gfloat delta = max[c]-min[c];
+      gint c;
+      for (c = 0; c < 3; c++)
+        {
+          gfloat delta = max[c] - min[c];
 
-           if (delta > 0.0001 || delta < -0.0001)
-             out[c] = (in[c]-min[c]) / delta;
-           else
-             out[c] = in[c];
-           out[3] = in[3];
-         }
+          if (delta > 0.0001 || delta < -0.0001)
+            out[c] = (in[c] - min[c]) / delta;
+          else
+            out[c] = in[c];
+        }
+
+      out[3] = in[3];
+
       in  += 4;
       out += 4;
       min += 4;
