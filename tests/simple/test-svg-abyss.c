@@ -91,19 +91,20 @@ test_operation (const char *operation_name)
     gegl_node_connect_to (lower_rect, "output", test_op, "input");
     gegl_node_connect_to (upper_rect, "output", test_op, "aux");
 
-
-    int i;
-    guchar *out = output_with_abyss;
-    for (i = 0; i < out_height; i++)
     {
-      gegl_node_blit (test_op,
-                      1.0,
-                      GEGL_RECTANGLE (0, i, out_width, 1),
-                      format,
-                      out,
-                      GEGL_AUTO_ROWSTRIDE,
-                      0);
-      out += out_width * bpp;
+      int i;
+      guchar *out = output_with_abyss;
+      for (i = 0; i < out_height; i++)
+        {
+          gegl_node_blit (test_op,
+                          1.0,
+                          GEGL_RECTANGLE (0, i, out_width, 1),
+                          format,
+                          out,
+                          GEGL_AUTO_ROWSTRIDE,
+                          0);
+          out += out_width * bpp;
+        }
     }
 
     g_object_unref (ptn);
@@ -165,18 +166,20 @@ test_operation (const char *operation_name)
     gegl_node_connect_to (lower_over, "output", test_op, "input");
     gegl_node_connect_to (upper_over, "output", test_op, "aux");
 
-    int i;
-    guchar *out = output_no_abyss;
-    for (i = 0; i < out_height; i++)
     {
-      gegl_node_blit (test_op,
-                      1.0,
-                      GEGL_RECTANGLE (0, i, out_width, 1),
-                      format,
-                      out,
-                      GEGL_AUTO_ROWSTRIDE,
-                      0);
-      out += out_width * bpp;
+      int i;
+      guchar *out = output_no_abyss;
+      for (i = 0; i < out_height; i++)
+        {
+          gegl_node_blit (test_op,
+                          1.0,
+                          GEGL_RECTANGLE (0, i, out_width, 1),
+                          format,
+                          out,
+                          GEGL_AUTO_ROWSTRIDE,
+                          0);
+          out += out_width * bpp;
+        }
     }
 
     g_object_unref (ptn);

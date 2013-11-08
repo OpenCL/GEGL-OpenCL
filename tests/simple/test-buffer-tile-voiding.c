@@ -23,7 +23,7 @@
 #include <string.h>
 
 static gboolean
-test_buffer_copy ()
+test_buffer_copy (void)
 {
   gboolean result = TRUE;
 
