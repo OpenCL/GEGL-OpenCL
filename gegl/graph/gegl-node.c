@@ -1754,7 +1754,7 @@ gegl_node_get_consumers (GeglNode      *node,
         const gchar     *pad_name   = gegl_pad_get_name (pad);
         const gchar     *name       = gegl_node_get_name(node);
 
-        const gchar* proxy_name = g_strconcat("proxynop-", pad_name, NULL);
+        gchar* proxy_name = g_strconcat("proxynop-", pad_name, NULL);
         if(!strcmp(name, proxy_name))
           {
             node = g_object_get_data(G_OBJECT(node), "graph");
@@ -1763,6 +1763,7 @@ gegl_node_get_consumers (GeglNode      *node,
         else
           {
           }
+        g_free (proxy_name);
 
         if (nodes)
           (*nodes)[i] = node;
