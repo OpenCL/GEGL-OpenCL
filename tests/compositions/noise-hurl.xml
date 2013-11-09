@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:noise-hurl'>
+    <params>
+      <param name='seed'>2147483647</param>
+      <param name='pct-random'>20.0</param>
+      <param name='repeat'>2</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>
+

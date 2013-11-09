@@ -30,6 +30,7 @@ TESTS = \
   hdr-color.xml                   \
   image-compare.xml               \
   mantiuk06.xml                   \
+  noise-hurl.xml        	  \
   pixelize.xml                    \
   posterize.xml                   \
   red-eye-removal.xml             \
