@@ -51,7 +51,11 @@ class Context():
         raise RuntimeError("Could not locate required file: %s" % prog)
 
     FNULL = open(os.devnull, 'w')
-    self.opencl_available = not subprocess.call(self.detect_opencl_bin, stdout=FNULL)
+
+    test_env = os.environ.copy()
+    test_env["GEGL_SWAP"] = "RAM"
+    test_env["GEGL_PATH"] = os.path.join(self.build_dir, "operations")
+    self.opencl_available = not subprocess.call(self.detect_opencl_bin, stdout=FNULL, env=test_env)
 
     self.ref_dir = os.path.join(self.src_dir, "tests", "compositions", "reference")
     self.output_dir = os.path.join(self.build_dir, "tests", "compositions", "output")
