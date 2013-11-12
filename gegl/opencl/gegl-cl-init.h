@@ -51,6 +51,8 @@ size_t            gegl_cl_get_iter_height (void);
 
 void              gegl_cl_set_profiling (gboolean enable);
 
+void              gegl_cl_set_default_device_type (cl_device_type default_device_type);
+
 gboolean          gegl_cl_has_extension (const char *extension_name);
 
 typedef struct

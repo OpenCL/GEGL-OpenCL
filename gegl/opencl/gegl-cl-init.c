@@ -151,6 +151,7 @@ typedef struct
 }
 GeglClState;
 
+static cl_device_type gegl_cl_default_device_type = CL_DEVICE_TYPE_DEFAULT;
 static GeglClState cl_state = { 0, };
 static GHashTable *cl_program_hash = NULL;
 
@@ -227,6 +228,14 @@ gegl_cl_set_profiling (gboolean enable)
   g_return_if_fail (!cl_state.is_loaded);
 
   cl_state.enable_profiling = enable;
+}
+
+void
+gegl_cl_set_default_device_type (cl_device_type default_device_type)
+{
+  g_return_if_fail (!cl_state.is_loaded);
+
+  gegl_cl_default_device_type = default_device_type;
 }
 
 static gboolean
@@ -425,13 +434,13 @@ gegl_cl_init_common (cl_device_type          requested_device_type,
 gboolean
 gegl_cl_init_with_opengl  (GError **error)
 {
-  return gegl_cl_init_common (CL_DEVICE_TYPE_DEFAULT, TRUE, error);
+  return gegl_cl_init_common (gegl_cl_default_device_type, TRUE, error);
 }
 
 gboolean
 gegl_cl_init (GError **error)
 {
-  return gegl_cl_init_common (CL_DEVICE_TYPE_DEFAULT, FALSE, error);
+  return gegl_cl_init_common (gegl_cl_default_device_type, FALSE, error);
 }
 
 static gboolean

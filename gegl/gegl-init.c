@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2003-2007 Calvin Williamson, Øyvind Kolås
+ *           2013      Daniel Sabo
  */
 
 #include "config.h"
@@ -370,6 +371,12 @@ static void gegl_config_parse_env (GeglConfig *config)
         ;
       else if (g_ascii_strcasecmp (opencl_env, "no") == 0)
         gegl_cl_hard_disable ();
+      else if (g_ascii_strcasecmp (opencl_env, "cpu") == 0)
+        gegl_cl_set_default_device_type (CL_DEVICE_TYPE_CPU);
+      else if (g_ascii_strcasecmp (opencl_env, "gpu") == 0)
+        gegl_cl_set_default_device_type (CL_DEVICE_TYPE_GPU);
+      else if (g_ascii_strcasecmp (opencl_env, "accelerator") == 0)
+        gegl_cl_set_default_device_type (CL_DEVICE_TYPE_ACCELERATOR);
       else
         g_warning ("Unknown value for GEGL_USE_OPENCL: %s", opencl_env);
     }
