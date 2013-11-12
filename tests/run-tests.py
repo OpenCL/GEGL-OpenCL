@@ -56,10 +56,14 @@ class Context():
     test_env["GEGL_SWAP"] = "RAM"
     test_env["GEGL_PATH"] = os.path.join(self.build_dir, "operations")
 
+    # When given a script Make will give us a path relative to the build directory, but the real
+    # path should be relative to the source directory.
     if test_name.endswith(".sh"):
-      test_exe = [SHELL, "./" + test_name]
+      test_path = os.path.realpath(os.path.join(self.src_dir, os.path.relpath(test_name, self.build_dir)))
+      test_exe = [SHELL, test_path]
     elif test_name.endswith(".py"):
-      test_exe = [PYTHON, "./" + test_name]
+      test_path = os.path.realpath(os.path.join(self.src_dir, os.path.relpath(test_name, self.build_dir)))
+      test_exe = [PYTHON, test_path]
     else:
       test_exe = ["./" + test_name]
 

@@ -1,3 +1,4 @@
+EXTRA_DIST=run-tests.py
 
 SUBDIRS = \
 	buffer \
