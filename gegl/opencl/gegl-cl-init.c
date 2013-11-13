@@ -327,6 +327,16 @@ if (gegl_##func == NULL)                                                        
 
 #endif
 
+#define CL_LOAD_EXTENSION_FUNCTION(func)                                          \
+g_assert(gegl_clGetExtensionFunctionAddress);                                     \
+gegl_##func = gegl_clGetExtensionFunctionAddress(#func);                          \
+if (gegl_##func == NULL)                                                          \
+  {                                                                               \
+    GEGL_NOTE (GEGL_DEBUG_OPENCL, "symbol gegl_##func is NULL");                  \
+    g_set_error (error, GEGL_OPENCL_ERROR, 0, "symbol gegl_##func is NULL");      \
+    return FALSE;                                                                 \
+  }
+
 #if defined(__APPLE__)
 typedef struct _CGLContextObject *CGLContextObj;
 typedef struct CGLShareGroupRec  *CGLShareGroupObj;
@@ -504,9 +514,17 @@ gegl_cl_init_load_functions (GError **error)
   CL_LOAD_FUNCTION (clReleaseContext)
   CL_LOAD_FUNCTION (clReleaseMemObject)
 
-  CL_LOAD_FUNCTION (clCreateFromGLTexture2D)
-  CL_LOAD_FUNCTION (clEnqueueAcquireGLObjects)
-  CL_LOAD_FUNCTION (clEnqueueReleaseGLObjects)
+  CL_LOAD_FUNCTION (clGetExtensionFunctionAddress);
+
+  return TRUE;
+}
+
+static gboolean
+gegl_cl_gl_init_load_functions (GError **error)
+{
+  CL_LOAD_EXTENSION_FUNCTION (clCreateFromGLTexture2D)
+  CL_LOAD_EXTENSION_FUNCTION (clEnqueueAcquireGLObjects)
+  CL_LOAD_EXTENSION_FUNCTION (clEnqueueReleaseGLObjects)
 
   return TRUE;
 }
@@ -693,6 +711,10 @@ gegl_cl_init_common (cl_device_type          requested_device_type,
               g_set_error (error, GEGL_OPENCL_ERROR, 0, "Device does not support cl_khr_gl_sharing");
               return FALSE;
             }
+
+          /* Load extension functions */
+          if (!gegl_cl_gl_init_load_functions (error))
+            return FALSE;
 
           /* Create context */
           ctx = gegl_clCreateContext (gl_contex_props, 1, &cl_state.device, NULL, NULL, &err);

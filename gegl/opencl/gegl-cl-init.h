@@ -119,6 +119,8 @@ t_clReleaseCommandQueue gegl_clReleaseCommandQueue = NULL;
 t_clReleaseContext      gegl_clReleaseContext      = NULL;
 t_clReleaseMemObject    gegl_clReleaseMemObject    = NULL;
 
+t_clGetExtensionFunctionAddress gegl_clGetExtensionFunctionAddress = NULL;
+
 t_clCreateFromGLTexture2D    gegl_clCreateFromGLTexture2D = NULL;
 t_clEnqueueAcquireGLObjects  gegl_clEnqueueAcquireGLObjects = NULL;
 t_clEnqueueReleaseGLObjects  gegl_clEnqueueReleaseGLObjects = NULL;
@@ -168,6 +170,8 @@ extern t_clReleaseProgram      gegl_clReleaseProgram;
 extern t_clReleaseCommandQueue gegl_clReleaseCommandQueue;
 extern t_clReleaseContext      gegl_clReleaseContext;
 extern t_clReleaseMemObject    gegl_clReleaseMemObject;
+
+extern t_clGetExtensionFunctionAddress gegl_clGetExtensionFunctionAddress;
 
 extern t_clCreateFromGLTexture2D gegl_clCreateFromGLTexture2D;
 extern t_clEnqueueAcquireGLObjects gegl_clEnqueueAcquireGLObjects;

@@ -103,4 +103,6 @@ typedef CL_API_ENTRY cl_int            (CL_API_CALL *t_clEnqueueReleaseGLObjects
    const cl_event *event_wait_list,
    cl_event *event);
 
+typedef CL_API_ENTRY void *            (CL_API_CALL *t_clGetExtensionFunctionAddress)  (const char *);
+
 #endif /* __GEGL_CL_TYPES_H__ */
