@@ -16,7 +16,6 @@
  * 2013 Daniel Sabo
  */
 
-
 #ifndef __GEGL_ALGORITHMS_H__
 #define __GEGL_ALGORITHMS_H__
 
@@ -24,21 +23,7 @@ G_BEGIN_DECLS
 
 #define GEGL_SCALE_EPSILON 1.e-6
 
-/*
-typedef void (GeglBoxfilterFunction *) (guchar              *dest_buf,
-                                        const guchar        *source_buf,
-                                        const GeglRectangle *dst_rect,
-                                        const GeglRectangle *src_rect,
-                                        gint                 s_rowstride,
-                                        gdouble              scale,
-                                        gint                 components,
-                                        gint                 d_rowstride);
-
-GeglBoxfilterFunction *
-gegl_resample_get_boxfilter_function (const Babl *format);
-*/
-
-/* Attempt to resable with a 3x3 boxfilter, if no boxfilter is
+/* Attempt to resample with a 3x3 boxfilter, if no boxfilter is
  * available for #format fall back to nearest neighbor.
  * #scale is assumed to be between 0.5 and +inf.
  */
