@@ -533,22 +533,50 @@ gegl_cl_init_load_device_info (cl_platform_id   platform,
     }
   else
     {
-      /* Find the default device */
-      if (!platform)
-        {
-          err = gegl_clGetPlatformIDs (1, &platform, NULL);
-          if (err != CL_SUCCESS)
-            {
-              GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create platform");
-              g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create platform");
-              return FALSE;
-            }
-        }
-
       if (!requested_device_type)
         requested_device_type = CL_DEVICE_TYPE_DEFAULT;
 
-      err = gegl_clGetDeviceIDs (platform, requested_device_type, 1, &device, NULL);
+      cl_platform_id *platforms = NULL;
+      cl_uint num_platforms = 0;
+
+      err = gegl_clGetPlatformIDs (0, NULL, &num_platforms);
+      if (err != CL_SUCCESS)
+        {
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create platform");
+          g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create platform");
+          return FALSE;
+        }
+
+      if (platform)
+        {
+          platforms = g_new (cl_platform_id, 1);
+          num_platforms = 1;
+          platforms[0] = platform;
+        }
+      else
+        {
+          platforms = g_new (cl_platform_id, num_platforms);
+          err = gegl_clGetPlatformIDs (num_platforms, platforms, NULL);
+        }
+
+      if (err != CL_SUCCESS)
+        {
+          GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create platform");
+          g_set_error (error, GEGL_OPENCL_ERROR, 0, "Could not create platform");
+          g_free (platforms);
+          return FALSE;
+        }
+
+      for (int platform_idx = 0; platform_idx < num_platforms; platform_idx++)
+        {
+          platform = platforms[platform_idx];
+          err = gegl_clGetDeviceIDs (platform, requested_device_type, 1, &device, NULL);
+          if (err == CL_SUCCESS)
+            break;
+        }
+
+      g_free (platforms);
+
       if (err != CL_SUCCESS)
         {
           GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not create device: %s", gegl_cl_errstring (err));
