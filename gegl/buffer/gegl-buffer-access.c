@@ -42,6 +42,8 @@
 #include "gegl-buffer-iterator.h"
 #include "gegl-buffer-cl-cache.h"
 
+ #include "gegl-algorithms.h"
+
 #if 0
 static inline void
 gegl_buffer_pixel_set (GeglBuffer *buffer,
@@ -1301,146 +1303,6 @@ gegl_buffer_set (GeglBuffer          *buffer,
   gegl_buffer_unlock (buffer);
 }
 
-#ifdef BOXFILTER_FLOAT
-typedef float            T;
-#define double2T(a)      (a)
-#define projectionT      babl_type ("float")
-#define T_components     babl_format_get_n_components (format)
-#else
-typedef guchar           T;
-#define double2T(a)      (lrint (a))
-#define projectionT      babl_type ("u8")
-#define T_components     bpp
-#endif
-#define EPSILON 1.e-6
-
-static void
-resample_nearest (guchar              *dst,
-                  const guchar        *src,
-                  const GeglRectangle *dst_rect,
-                  const GeglRectangle *src_rect,
-                  const gint           src_stride,
-                  const gdouble        scale,
-                  const gint           bpp,
-                  const gint           dst_stride)
-{
-  int i, j;
-
-  for (i = 0; i < dst_rect->height; i++)
-    {
-      const gdouble sy = (dst_rect->y + .5 + i) / scale - src_rect->y;
-      const gint    ii = floor (sy + EPSILON);
-
-      for (j = 0; j < dst_rect->width; j++)
-        {
-          const gdouble sx = (dst_rect->x + .5 + j) / scale - src_rect->x;
-          const gint    jj = floor (sx + EPSILON);
-
-          memcpy (&dst[i * dst_stride + j * bpp],
-                  &src[ii * src_stride + jj * bpp],
-                  bpp);
-        }
-    }
-}
-
-static inline void
-box_filter (gdouble   left_weight,
-            gdouble   center_weight,
-            gdouble   right_weight,
-            gdouble   top_weight,
-            gdouble   middle_weight,
-            gdouble   bottom_weight,
-            const T **src,   /* the 9 surrounding source pixels */
-            T        *dest,
-            gint      components)
-{
-   const gdouble lt = left_weight * top_weight;
-   const gdouble lm = left_weight * middle_weight;
-   const gdouble lb = left_weight * bottom_weight;
-   const gdouble ct = center_weight * top_weight;
-   const gdouble cm = center_weight * middle_weight;
-   const gdouble cb = center_weight * bottom_weight;
-   const gdouble rt = right_weight * top_weight;
-   const gdouble rm = right_weight * middle_weight;
-   const gdouble rb = right_weight * bottom_weight;
-
-#define docomponent(i) \
-      dest[i] = double2T (src[0][i] * lt + src[3][i] * lm + src[6][i] * lb + \
-                          src[1][i] * ct + src[4][i] * cm + src[7][i] * cb + \
-                          src[2][i] * rt + src[5][i] * rm + src[8][i] * rb)
-  switch (components)
-    {
-      case 5: docomponent(4);
-      case 4: docomponent(3);
-      case 3: docomponent(2);
-      case 2: docomponent(1);
-      case 1: docomponent(0);
-    }
-#undef docomponent
-}
-
-static void
-resample_boxfilter_T  (guchar              *dest_buf,
-                       const guchar        *source_buf,
-                       const GeglRectangle *dst_rect,
-                       const GeglRectangle *src_rect,
-                       const gint           s_rowstride,
-                       const gdouble        scale,
-                       const gint           components,
-                       const gint           d_rowstride)
-{
-  gdouble  left_weight, center_weight, right_weight;
-  gdouble  top_weight, middle_weight, bottom_weight;
-  const T *src[9];
-  gint     x, y;
-
-  for (y = 0; y < dst_rect->height; y++)
-    {
-      const gdouble  sy = (dst_rect->y + y + .5) / scale - src_rect->y;
-      const gint     ii = floor (sy);
-      T             *dst = (T*)(dest_buf + y * d_rowstride);
-      const guchar  *src_base = source_buf + ii * s_rowstride;
-
-      top_weight    = MAX (0., .5 - scale * (sy - ii));
-      bottom_weight = MAX (0., .5 - scale * ((ii + 1 ) - sy));
-      middle_weight = 1. - top_weight - bottom_weight;
-
-      for (x = 0; x < dst_rect->width; x++)
-        {
-          const gdouble  sx = (dst_rect->x + x + .5) / scale - src_rect->x;
-          const gint     jj = floor (sx);
-
-          left_weight   = MAX (0., .5 - scale * (sx - jj));
-          right_weight  = MAX (0., .5 - scale * ((jj + 1) - sx));
-          center_weight = 1. - left_weight - right_weight;
-
-          src[4] = (const T*)src_base + jj * components;
-          src[1] = (const T*)(src_base - s_rowstride) + jj * components;
-          src[7] = (const T*)(src_base + s_rowstride) + jj * components;
-
-          src[2] = src[1] + components;
-          src[5] = src[4] + components;
-          src[8] = src[7] + components;
-
-          src[0] = src[1] - components;
-          src[3] = src[4] - components;
-          src[6] = src[7] - components;
-
-          box_filter (left_weight,
-                      center_weight,
-                      right_weight,
-                      top_weight,
-                      middle_weight,
-                      bottom_weight,
-                      src,   /* the 9 surrounding source pixels */
-                      dst,
-                      components);
-
-          dst += components;
-        }
-    }
-}
-
 /* Expand roi by scale so it uncludes all pixels needed
  * to satisfy a gegl_buffer_get() call at level 0.
  */
@@ -1453,15 +1315,14 @@ _gegl_get_required_for_scale (const Babl          *format,
     return *roi;
   else
     {
-      gint x1 = floor (roi->x / scale + EPSILON);
-      gint x2 = ceil ((roi->x + roi->width) / scale - EPSILON);
-      gint y1 = floor (roi->y / scale + EPSILON);
-      gint y2 = ceil ((roi->y + roi->height) / scale - EPSILON);
+      gint x1 = floor (roi->x / scale + GEGL_SCALE_EPSILON);
+      gint x2 = ceil ((roi->x + roi->width) / scale - GEGL_SCALE_EPSILON);
+      gint y1 = floor (roi->y / scale + GEGL_SCALE_EPSILON);
+      gint y2 = ceil ((roi->y + roi->height) / scale - GEGL_SCALE_EPSILON);
 
       gint pad = (1.0 / scale > 1.0) ? ceil (1.0 / scale) : 1;
 
-      if ((babl_format_get_type (format, 0) == projectionT) ||
-          (scale < 1.0))
+      if (scale < 1.0)
         {
           return *GEGL_RECTANGLE (x1 - pad,
                                   y1 - pad,
@@ -1536,10 +1397,10 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       gint          bpp         = babl_format_get_bytes_per_pixel (format);
       GeglRectangle sample_rect;
       void         *sample_buf;
-      gint          x1 = floor (rect->x / scale + EPSILON);
-      gint          x2 = ceil ((rect->x + rect->width) / scale - EPSILON);
-      gint          y1 = floor (rect->y / scale + EPSILON);
-      gint          y2 = ceil ((rect->y + rect->height) / scale - EPSILON);
+      gint          x1 = floor (rect->x / scale + GEGL_SCALE_EPSILON);
+      gint          x2 = ceil ((rect->x + rect->width) / scale - GEGL_SCALE_EPSILON);
+      gint          y1 = floor (rect->y / scale + GEGL_SCALE_EPSILON);
+      gint          y2 = ceil ((rect->y + rect->height) / scale - GEGL_SCALE_EPSILON);
       gint          factor = 1;
       gint          stride;
       gint          offset = 0;
@@ -1559,8 +1420,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       buf_height = y2 - y1;
 
       /* ensure we always have some data to sample from */
-      if (scale != 1.0 && scale < 1.99 &&
-          babl_format_get_type (format, 0) == projectionT)
+      if (scale != 1.0 && scale <= 1.99)
         {
           buf_width  += 2;
           buf_height += 2;
@@ -1584,21 +1444,21 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       if (rowstride == GEGL_AUTO_ROWSTRIDE)
         rowstride = rect->width * bpp;
 
-      if (scale <= 1.99 && babl_format_get_type (format, 0) == projectionT)
-        { /* do box-filter resampling if we're 8bit (which projections are) */
+      if (scale <= 1.99)
+        {
           sample_rect.x      = x1 - 1;
           sample_rect.y      = y1 - 1;
           sample_rect.width  = x2 - x1 + 2;
           sample_rect.height = y2 - y1 + 2;
 
-          resample_boxfilter_T  (dest_buf,
-                                 sample_buf,
-                                 rect,
-                                 &sample_rect,
-                                 buf_width * bpp,
-                                 scale,
-                                 T_components,
-                                 rowstride);
+          gegl_resample_boxfilter (dest_buf,
+                                   sample_buf,
+                                   rect,
+                                   &sample_rect,
+                                   buf_width * bpp,
+                                   scale,
+                                   format,
+                                   rowstride);
         }
       else
         {
@@ -1607,14 +1467,14 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
           sample_rect.width  = x2 - x1;
           sample_rect.height = y2 - y1;
 
-          resample_nearest (dest_buf,
-                            sample_buf,
-                            rect,
-                            &sample_rect,
-                            buf_width * bpp,
-                            scale,
-                            bpp,
-                            rowstride);
+          gegl_resample_nearest (dest_buf,
+                                 sample_buf,
+                                 rect,
+                                 &sample_rect,
+                                 buf_width * bpp,
+                                 scale,
+                                 bpp,
+                                 rowstride);
         }
       g_free (sample_buf);
     }

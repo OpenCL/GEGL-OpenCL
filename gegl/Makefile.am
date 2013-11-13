@@ -68,6 +68,7 @@ GEGL_public_HEADERS = \
 
 GEGL_sources = \
 	gegl-c.c			\
+	gegl-algorithms.c \
 	gegl-apply.c			\
 	gegl-config.c			\
 	gegl-cpuaccel.c			\
@@ -83,6 +84,7 @@ GEGL_sources = \
 	gegl-random.c			\
 	gegl-matrix.c			\
 	\
+	gegl-algorithms.h \
 	gegl-apply.h			\
 	gegl-chant.h			\
 	gegl-config.h			\
@@ -102,6 +104,7 @@ GEGL_sources = \
 	gegl-types-internal.h		\
 	gegl-xml.h
 
+EXTRA_DIST = gegl-algorithms-boxfilter.inc
 
 lib_LTLIBRARIES = libgegl-@GEGL_API_VERSION@.la
 
