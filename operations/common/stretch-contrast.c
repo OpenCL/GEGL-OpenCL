@@ -140,6 +140,10 @@ cl_buffer_get_min_max (cl_mem               in_tex,
                                  sizeof (size_t), &max_local_ws, NULL);
   CL_CHECK;
 
+  max_local_ws = MIN (max_local_ws,
+                      MIN (cl_data->work_group_size[0],
+                           cl_data->work_group_size[1]));
+
   /* Needs to be a power of two */
   local_ws = 256;
   while (local_ws > max_local_ws)
