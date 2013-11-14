@@ -24,9 +24,7 @@
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-point-composer3.h"
-#include "gegl-utils.h"
-#include "graph/gegl-node.h"
-#include "graph/gegl-pad.h"
+#include "gegl-operation-context.h"
 #include <string.h>
 
 static gboolean gegl_operation_point_composer3_process
@@ -128,7 +126,7 @@ gegl_operation_composer3_process2 (GeglOperation        *operation,
   else
     {
       g_warning ("%s received NULL input, aux, and aux2",
-                 gegl_node_get_debug_name (operation->node));
+                 gegl_node_get_operation (operation->node));
     }
 
   return success;

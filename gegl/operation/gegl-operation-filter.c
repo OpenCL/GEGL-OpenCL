@@ -24,12 +24,7 @@
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-filter.h"
-#include "gegl-utils.h"
-#include "graph/gegl-node.h"
-#include "graph/gegl-connection.h"
-#include "graph/gegl-pad.h"
-#include "buffer/gegl-region.h"
-#include "buffer/gegl-buffer.h"
+#include "gegl-operation-context.h"
 
 static gboolean gegl_operation_filter_process
                                       (GeglOperation        *operation,
@@ -105,7 +100,7 @@ detect (GeglOperation *operation,
   input_node = gegl_operation_get_source_node (operation, "input");
 
   if (input_node)
-    return gegl_operation_detect (input_node->operation, x, y);
+    return gegl_node_detect (input_node, x, y);
   return operation->node;
 }
 

@@ -25,15 +25,11 @@
 #include "gegl/gegl-debug.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-point-filter.h"
-#include "graph/gegl-pad.h"
-#include "graph/gegl-node.h"
-#include "gegl-utils.h"
+#include "gegl-operation-context.h"
 #include <string.h>
 
-#include "gegl-buffer-private.h"
-#include "gegl-tile-storage.h"
-
 #include "opencl/gegl-cl.h"
+#include "gegl-buffer-cl-iterator.h"
 
 static gboolean gegl_operation_point_filter_process
                               (GeglOperation       *operation,

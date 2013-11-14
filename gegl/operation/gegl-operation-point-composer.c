@@ -25,9 +25,7 @@
 #include "gegl/gegl-debug.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-point-composer.h"
-#include "gegl-utils.h"
-#include "graph/gegl-node.h"
-#include "graph/gegl-pad.h"
+#include "gegl-operation-context.h"
 #include <string.h>
 
 #include "gegl-buffer-private.h"
