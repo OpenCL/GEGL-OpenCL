@@ -70,7 +70,7 @@ gegl_chant_color     (light_color, _("Light color"), "white", _("Light color"))
 gegl_chant_double    (light_dir,  _("Light direction"),
                       0.0, 360.0, 135, _("Direction of light-source (in degrees)"))
 
-gegl_chant_seed      (seed, _("Random seed"), _("Random seed"))
+gegl_chant_seed      (seed, rand, _("Random seed"), _("Random seed"))
 
 gegl_chant_boolean   (antialiasing, _("Antialiasing"), TRUE,
                       _("Enables smoother tile output"))
@@ -310,12 +310,12 @@ static gboolean  polygon_extents       (Polygon             *poly,
                                         gdouble             *max_x,
                                         gdouble             *max_y);
 static void      polygon_reset         (Polygon             *poly);
-static gfloat    rand_f                (gint                 seed,
+static gfloat    rand_f                (GeglRandom          *rand,
                                         gfloat               pos_x,
                                         gfloat               pos_y,
                                         gfloat               min,
                                         gfloat               max);
-static gint      rand_i                (gint                 seed,
+static gint      rand_i                (GeglRandom          *rand,
                                         gfloat               pos_x,
                                         gfloat               pos_y,
                                         gint                 min,
@@ -331,24 +331,24 @@ static gfloat    distance              (SpecVec             *vec,
 #define SQR(v)     ((v)*(v))
 
 static gfloat
-rand_f (gint   seed,
-        gfloat pos_x,
-        gfloat pos_y,
-        gfloat min,
-        gfloat max)
+rand_f (GeglRandom *rand,
+        gfloat      pos_x,
+        gfloat      pos_y,
+        gfloat      min,
+        gfloat      max)
 {
-  return gegl_random_float_range (seed, ROUND (pos_x), ROUND (pos_y),
+  return gegl_random_float_range (rand, ROUND (pos_x), ROUND (pos_y),
                                   0, 0, min, max);
 }
 
 static gint
-rand_i (gint   seed,
-        gfloat pos_x,
-        gfloat pos_y,
-        gint   min,
-        gint   max)
+rand_i (GeglRandom *rand,
+        gfloat      pos_x,
+        gfloat      pos_y,
+        gint        min,
+        gint        max)
 {
-  return gegl_random_int_range (seed, ROUND (pos_x), ROUND (pos_y),
+  return gegl_random_int_range (rand, ROUND (pos_x), ROUND (pos_y),
                                 0, 0, min, max);
 }
 
@@ -1042,10 +1042,10 @@ grid_localize (const GeglRectangle *result,
         if (rand_localize > EPSILON)
           {
             /* Rely on global values to make gegl's tiles seamless */
-            max_x = pt->x + (gint) rand_f (o->seed,
+            max_x = pt->x + (gint) rand_f (o->rand,
                                            result->x + pt->x, result->y + pt->y,
                                            - rand_localize / 2.0, rand_localize / 2.0);
-            max_y = pt->y + (gint) rand_f (o->seed,
+            max_y = pt->y + (gint) rand_f (o->rand,
                                            result->y + pt->y, result->x + pt->x, /*sic*/
                                            - rand_localize / 2.0, rand_localize / 2.0);
           }
@@ -1357,12 +1357,12 @@ process_poly (Polygon             *poly,
   size = (mdatas->width * mdatas->height);
   frac_size = size * o->color_variation;
 
-  vary = rand_i (o->seed, result->x + cx, result->y + cy, 0, size) < frac_size;
+  vary = rand_i (o->rand, result->x + cx, result->y + cy, 0, size) < frac_size;
 
   /*  determine the variation of tile color based on tile number  */
   if (vary)
     {
-      color_vary = rand_f (o->seed, result->x + cx, result->y + cy,
+      color_vary = rand_f (o->rand, result->x + cx, result->y + cy,
                            - o->color_variation * 0.5, o->color_variation * 0.5);
     }
 

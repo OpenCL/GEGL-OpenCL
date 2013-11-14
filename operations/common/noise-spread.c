@@ -34,7 +34,7 @@ gegl_chant_int  (amount_y, _("Vertical"),
                  0, 256, 5,
                  _("Vertical spread amount"))
 
-gegl_chant_seed (seed, _("Seed"),
+gegl_chant_seed (seed, rand, _("Seed"),
                  _("Random seed"))
 
 #else
@@ -46,23 +46,23 @@ gegl_chant_seed (seed, _("Seed"),
 #include <math.h>
 
 static inline void
-calc_sample_coords (gint  src_x,
-                    gint  src_y,
-                    gint  amount_x,
-                    gint  amount_y,
-                    gint  seed,
-                    gint *x,
-                    gint *y)
+calc_sample_coords (gint        src_x,
+                    gint        src_y,
+                    gint        amount_x,
+                    gint        amount_y,
+                    GeglRandom *rand,
+                    gint       *x,
+                    gint       *y)
 {
   gdouble angle;
   gint    xdist, ydist;
 
   /* get random angle, x distance, and y distance */
-  xdist = amount_x > 0 ? gegl_random_int_range (seed, src_x, src_y, 0, 0,
+  xdist = amount_x > 0 ? gegl_random_int_range (rand, src_x, src_y, 0, 0,
                                                 -amount_x, amount_x + 1) : 0;
-  ydist = amount_y > 0 ? gegl_random_int_range (seed, src_x, src_y, 0, 1,
+  ydist = amount_y > 0 ? gegl_random_int_range (rand, src_x, src_y, 0, 1,
                                                 -amount_y, amount_y + 1) : 0;
-  angle = gegl_random_float_range (seed, src_x, src_y, 0, 2, -G_PI, G_PI);
+  angle = gegl_random_float_range (rand, src_x, src_y, 0, 2, -G_PI, G_PI);
 
   *x = src_x + floor (sin (angle) * xdist);
   *y = src_y + floor (cos (angle) * ydist);
@@ -123,7 +123,7 @@ process (GeglOperation       *operation,
           {
             gint x, y;
 
-            calc_sample_coords (i, j, amount_x, amount_y, o->seed, &x, &y);
+            calc_sample_coords (i, j, amount_x, amount_y, o->rand, &x, &y);
 
             gegl_buffer_sample (input, x, y, NULL, data, format,
                                 GEGL_SAMPLER_NEAREST, GEGL_ABYSS_CLAMP);

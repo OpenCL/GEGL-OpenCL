@@ -45,6 +45,7 @@ GEGL_introspectable_headers =	\
 	gegl-utils.h			\
 	gegl-matrix.h			\
 	gegl-lookup.h			\
+	gegl-random.h			\
 	gegl-version.h			\
 	buffer/gegl-buffer.h		\
 	buffer/gegl-buffer-iterator.h	\

@@ -28,7 +28,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_seed   (seed, _("Seed"),
+gegl_chant_seed   (seed, rand, _("Seed"),
                    _("Random seed"))
 
 gegl_chant_double (pct_random, _("Randomization (%)"),
@@ -86,12 +86,12 @@ process (GeglOperation       *operation,
           {
             gint n = 4 * (idx + cnt * total_size);
 
-            if (gegl_random_float_range (o->seed, x, y, 0, n, 0.0, 100.0) <=
+            if (gegl_random_float_range (o->rand, x, y, 0, n, 0.0, 100.0) <=
                 o->pct_random)
               {
-                red   = gegl_random_float (o->seed, x, y, 0, n+1);
-                green = gegl_random_float (o->seed, x, y, 0, n+2);
-                blue  = gegl_random_float (o->seed, x, y, 0, n+3);
+                red   = gegl_random_float (o->rand, x, y, 0, n+1);
+                green = gegl_random_float (o->rand, x, y, 0, n+2);
+                blue  = gegl_random_float (o->rand, x, y, 0, n+3);
                 break;
               }
           }
@@ -124,18 +124,19 @@ cl_process (GeglOperation       *operation,
   GeglChantO    *o          = GEGL_CHANT_PROPERTIES (operation);
   GeglRectangle *wr         = gegl_operation_source_get_bounding_box (operation,
                                                                       "input");
-  cl_int   cl_err           = 0;
-  cl_mem   cl_random_data   = NULL;
-  cl_mem   cl_random_primes = NULL;
-  cl_float pct_random       = o->pct_random;
-  cl_int   seed             = o->seed;
-  cl_int   x_offset         = roi->x;
-  cl_int   y_offset         = roi->y;
-  cl_int   roi_width        = roi->width;
-  cl_int   wr_width         = wr->width;
-  int      total_size       = wr->width*wr->height;
-  cl_int   offset;
-  int      it;
+  cl_int      cl_err           = 0;
+  cl_mem      cl_random_data   = NULL;
+  cl_float    pct_random       = o->pct_random;
+  cl_int      x_offset         = roi->x;
+  cl_int      y_offset         = roi->y;
+  cl_int      roi_width        = roi->width;
+  cl_int      wr_width         = wr->width;
+  int         total_size       = wr->width*wr->height;
+  cl_int      offset;
+  int         it;
+  cl_ushort4  rand;
+
+  gegl_cl_random_get_ushort4 (o->rand, &rand);
 
   if (!cl_data)
   {
@@ -149,8 +150,6 @@ cl_process (GeglOperation       *operation,
   {
   cl_random_data = gegl_cl_load_random_data (&cl_err);
   CL_CHECK;
-  cl_random_primes = gegl_cl_load_random_primes (&cl_err);
-  CL_CHECK;
 
   cl_err = gegl_clEnqueueCopyBuffer (gegl_cl_get_command_queue(),
                                      in , out , 0 , 0 ,
@@ -161,12 +160,11 @@ cl_process (GeglOperation       *operation,
   gegl_cl_set_kernel_args (cl_data->kernel[0],
                            sizeof(cl_mem),   &out,
                            sizeof(cl_mem),   &cl_random_data,
-                           sizeof(cl_mem),   &cl_random_primes,
                            sizeof(cl_int),   &x_offset,
                            sizeof(cl_int),   &y_offset,
                            sizeof(cl_int),   &roi_width,
                            sizeof(cl_int),   &wr_width,
-                           sizeof(cl_int),   &seed,
+                           sizeof(cl_ushort4), &rand,
                            sizeof(cl_float), &pct_random,
                            NULL);
   CL_CHECK;
@@ -175,7 +173,7 @@ cl_process (GeglOperation       *operation,
 
   for(it = 0; it < o->repeat; ++it)
     {
-      cl_err = gegl_clSetKernelArg (cl_data->kernel[0], 9, sizeof(cl_int),
+      cl_err = gegl_clSetKernelArg (cl_data->kernel[0], 8, sizeof(cl_int),
                                     (void*)&offset);
       CL_CHECK;
       cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
@@ -192,9 +190,6 @@ cl_process (GeglOperation       *operation,
 
   cl_err = gegl_clReleaseMemObject (cl_random_data);
   CL_CHECK_ONLY (cl_err);
-
-  cl_err = gegl_clReleaseMemObject (cl_random_primes);
-  CL_CHECK_ONLY (cl_err);
   }
 
   return  FALSE;
@@ -202,8 +197,6 @@ cl_process (GeglOperation       *operation,
 error:
   if (cl_random_data)
     gegl_clReleaseMemObject (cl_random_data);
-  if (cl_random_primes)
-    gegl_clReleaseMemObject (cl_random_primes);
 
   return TRUE;
 }

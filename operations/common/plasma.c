@@ -33,7 +33,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_seed (seed, _("Random seed"), _("Random seed"))
+gegl_chant_seed (seed, rand, _("Random seed"), _("Random seed"))
 
 gegl_chant_double (turbulence, _("Turbulence"), 0.0, 7.0, 1.0,
                    _("The value of the turbulence"))

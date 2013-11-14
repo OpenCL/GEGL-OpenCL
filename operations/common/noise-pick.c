@@ -29,7 +29,7 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_seed   (seed, _("Seed"),
+gegl_chant_seed   (seed, rand, _("Seed"),
                    _("Random seed"))
 
 gegl_chant_double (pct_random, _("Randomization (%)"),
@@ -105,7 +105,7 @@ process (GeglOperation       *operation,
 
             for (r = 0; r < o->repeat; r++)
               {
-                guint  rand = gegl_random_int (o->seed, pos_x, pos_y, 0, r);
+                guint  rand = gegl_random_int (o->rand, pos_x, pos_y, 0, r);
                 gfloat pct  = RAND_UINT_TO_FLOAT (rand) * 100.0;
 
                 if (pct <= o->pct_random)

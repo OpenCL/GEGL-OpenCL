@@ -77,6 +77,10 @@ GType gegl_processor_get_type  (void) G_GNUC_CONST;
 #define GEGL_PROCESSOR(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PROCESSOR, GeglProcessor))
 #define GEGL_IS_PROCESSOR(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_PROCESSOR))
 
+typedef struct _GeglRandom  GeglRandom;
+GType gegl_random_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_RANDOM    (gegl_random_get_type())
+
 G_END_DECLS
 
 #endif /* __GEGL_TYPES_H__ */

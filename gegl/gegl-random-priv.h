@@ -19,10 +19,19 @@
 #ifndef __GEGL_RANDOM_PRIV_H__
 #define __GEGL_RANDOM_PRIV_H__
 
-#define PRIMES_SIZE       533
-#define RANDOM_DATA_SIZE (15083+15091+15101)
+#define RANDOM_DATA_SIZE (15101 * 3)
+
+struct _GeglRandom
+{
+  guint16 prime0;
+  guint16 prime1;
+  guint16 prime2;
+};
+
+guint32*
+gegl_random_get_data (void);
 
 void
-gegl_random_init (void);
+gegl_random_cleanup (void);
 
 #endif /* __GEGL_RANDOM_PRIV_H__ */

@@ -16,16 +16,15 @@
  * Copyright 2013 Carlos Zubieta <czubieta.dev@gmail.com>
  */
 
-__kernel void cl_noise_hurl(__global       float4 *src,
-                            __global const int    *random_data,
-                            __global const long   *random_primes,
-                                           int     x_offset,
-                                           int     y_offset,
-                                           int     roi_width,
-                                           int     whole_region_width,
-                                           int     seed,
-                                           float   pct_random,
-                                           int     offset)
+__kernel void cl_noise_hurl(__global       float4    *src,
+                            __global const int       *random_data,
+                                           int        x_offset,
+                                           int        y_offset,
+                                           int        roi_width,
+                                           int        whole_region_width,
+                                           GeglRandom rand,
+                                           float      pct_random,
+                                           int        offset)
 {
   int gid  = get_global_id(0);
   int gidy = gid / roi_width;
@@ -37,14 +36,14 @@ __kernel void cl_noise_hurl(__global       float4 *src,
 
   float4 src_v = src[gid];
 
-  float pc          = gegl_cl_random_float_range (random_data, random_primes,
-                                                  seed, x, y, 0, n, 0, 100);
-  float red_noise   = gegl_cl_random_float (random_data, random_primes,
-                                            seed, x, y, 0, n+1);
-  float green_noise = gegl_cl_random_float (random_data, random_primes,
-                                            seed, x, y, 0, n+2);
-  float blue_noise  = gegl_cl_random_float (random_data, random_primes,
-                                            seed, x, y, 0, n+3);
+  float pc          = gegl_cl_random_float_range (random_data,
+                                                  rand, x, y, 0, n, 0, 100);
+  float red_noise   = gegl_cl_random_float (random_data,
+                                            rand, x, y, 0, n+1);
+  float green_noise = gegl_cl_random_float (random_data,
+                                            rand, x, y, 0, n+2);
+  float blue_noise  = gegl_cl_random_float (random_data,
+                                            rand, x, y, 0, n+3);
 
   if(pc <= pct_random)
     {

@@ -49,7 +49,7 @@ gegl_chant_double  (alpha, _("Alpha"),
                     0.0, 1.0, 0.00,
                     _("Alpha"))
 
-gegl_chant_seed    (seed, _("Seed"),
+gegl_chant_seed    (seed, rand, _("Seed"),
                     _("Random seed"))
 
 #else
@@ -71,16 +71,16 @@ gegl_chant_seed    (seed, _("Seed"),
  * K+M, ACM Trans Math Software 3 (1977) 257-260.
 */
 static gdouble
-gauss (int seed, int *i, int xx, int yy)
+gauss (GeglRandom *rand, int *i, int xx, int yy)
 {
   gdouble u, v, x;
 
   do
   {
-    v = gegl_random_float (seed, xx, yy, 0, (*i)++);
+    v = gegl_random_float (rand, xx, yy, 0, (*i)++);
 
     do
-      u = gegl_random_float (seed, xx, yy, 0, (*i)++);
+      u = gegl_random_float (rand, xx, yy, 0, (*i)++);
     while (u == 0);
 
     /* Const 1.715... = sqrt(8/e) */
@@ -133,7 +133,7 @@ process (GeglOperation       *operation,
     for (b = 0; b < 4; b++)
     {
       if (b == 0 || o->independent || b == 3 )
-         noise_coeff = noise[b] * gauss (o->seed, &rint, x, y) * 0.5;
+         noise_coeff = noise[b] * gauss (o->rand, &rint, x, y) * 0.5;
 
       if (noise[b] > 0.0)
       {

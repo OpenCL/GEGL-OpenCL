@@ -17,77 +17,85 @@
  */
 
 /* XXX: this file should be kept in sync with gegl-random. */
-#define XPRIME     103423
-#define YPRIME     101359
-#define NPRIME     101111
+__constant const long XPRIME = 103423;
+__constant const long YPRIME = 101359;
+__constant const long NPRIME = 101111;
 
-#define RANDOM_DATA_SIZE (15083+15091+15101)
-#define PRIME_SIZE 533u
+#define RANDOM_DATA_SIZE (15101 * 3)
 
-inline uint _gegl_cl_random_int  (__global const int  *cl_random_data,
-                                  __global const long *cl_random_primes,
-                                  int seed, int x, int y, int z, int n);
+typedef ushort4 GeglRandom;
 
-uint gegl_cl_random_int          (__global const int  *cl_random_data,
-                                  __global const long *cl_random_primes,
-                                  int seed, int x, int y, int z, int n);
+unsigned int _gegl_cl_random_int (__global const int *cl_random_data,
+                                  const GeglRandom  rand,
+                                  int x,
+                                  int y,
+                                  int z,
+                                  int n);
+
+unsigned int gegl_cl_random_int  (__global const int *cl_random_data,
+                                  const GeglRandom  rand,
+                                  int x,
+                                  int y,
+                                  int z,
+                                  int n);
 
 int gegl_cl_random_int_range     (__global const int  *cl_random_data,
-                                  __global const long *cl_random_primes,
-                                  int seed, int x, int y, int z, int n,
-                                  int min, int max);
+                                  const GeglRandom  rand,
+                                  int x,
+                                  int y,
+                                  int z,
+                                  int n,
+                                  int min,
+                                  int max);
 
 float gegl_cl_random_float       (__global const int  *cl_random_data,
-                                  __global const long *cl_random_primes,
-                                  int seed, int x, int y, int z, int n);
+                                  const GeglRandom  rand,
+                                  int x,
+                                  int y,
+                                  int z,
+                                  int n);
 
 float gegl_cl_random_float_range (__global const int  *cl_random_data,
-                                  __global const long *cl_random_primes,
-                                  int seed, int x, int y, int z, int n,
-                                  float min, float max);
+                                  const GeglRandom  rand,
+                                  int x,
+                                  int y,
+                                  int z,
+                                  int n,
+                                  float min,
+                                  float max);
 
-inline uint
+unsigned int
 _gegl_cl_random_int (__global const int  *cl_random_data,
-                     __global const long *cl_random_primes,
-                     int                 seed,
+                     const GeglRandom    rand,
                      int                 x,
                      int                 y,
                      int                 z,
                      int                 n)
 {
-  unsigned long idx = x * XPRIME + 
-                      y * YPRIME * XPRIME + 
+  unsigned long idx = x * XPRIME +
+                      y * YPRIME * XPRIME +
                       n * NPRIME * YPRIME * XPRIME;
-#define ROUNDS 3
-    /* 3 rounds gives a reasonably high cycle for */
-    /*   our synthesized larger random set. */
-  unsigned long seed_idx = seed % (PRIME_SIZE - 1 - ROUNDS);
-  int prime0 = cl_random_primes[seed_idx],
-      prime1 = cl_random_primes[seed_idx+1],
-      prime2 = cl_random_primes[seed_idx+2];
-  int r0 = cl_random_data[idx % prime0],
-      r1 = cl_random_data[prime0 + (idx % (prime1))],
-      r2 = cl_random_data[prime0 + prime1 + (idx % (prime2))];
+
+  int r0 = cl_random_data[idx % rand.x],
+      r1 = cl_random_data[rand.x + (idx % rand.y)],
+      r2 = cl_random_data[rand.x + rand.y + (idx % rand.z)];
   return r0 ^ r1 ^ r2;
 }
 
-uint
-gegl_cl_random_int (__global const int  *cl_random_data,
-                    __global const long *cl_random_primes,
-                    int                 seed,
+unsigned int
+gegl_cl_random_int (__global const int *cl_random_data,
+                    const GeglRandom    rand,
                     int                 x,
                     int                 y,
                     int                 z,
                     int                 n)
 {
-  return _gegl_cl_random_int (cl_random_data, cl_random_primes,
-                              seed, x, y, z, n);
+  return _gegl_cl_random_int (cl_random_data, rand, x, y, z, n);
 }
 
 int
 gegl_cl_random_int_range (__global const int  *cl_random_data,
-                          __global const long *cl_random_primes,
-                          int                 seed,
+                          const GeglRandom    rand,
                           int                 x,
                           int                 y,
                           int                 z,
@@ -95,8 +103,7 @@ gegl_cl_random_int_range (__global const int  *cl_random_data,
                           int                 min,
                           int                 max)
 {
-  uint ret = _gegl_cl_random_int (cl_random_data, cl_random_primes,
-                                  seed, x, y, z, n);
+  int ret = _gegl_cl_random_int (cl_random_data, rand, x, y, z, n);
   return (ret % (max-min)) + min;
 }
 
@@ -104,23 +111,20 @@ gegl_cl_random_int_range (__global const int  *cl_random_data,
 #define G_RAND_FLOAT_TRANSFORM  0.00001525902189669642175f
 
 float
-gegl_cl_random_float (__global const int  *cl_random_data,
-                      __global const long *cl_random_primes,
-                      int                 seed,
+gegl_cl_random_float (__global const int *cl_random_data,
+                      const GeglRandom    rand,
                       int                 x,
                       int                 y,
                       int                 z,
                       int                 n)
 {
-  uint u = _gegl_cl_random_int (cl_random_data, cl_random_primes,
-                                seed, x, y, z, n);
+  int u = _gegl_cl_random_int (cl_random_data, rand, x, y, z, n);
   return (u & 0xffff) * G_RAND_FLOAT_TRANSFORM;
 }
 
 float
-gegl_cl_random_float_range (__global const int  *cl_random_data,
-                            __global const long *cl_random_primes,
-                            int                 seed,
+gegl_cl_random_float_range (__global const int *cl_random_data,
+                            const GeglRandom    rand,
                             int                 x,
                             int                 y,
                             int                 z,
@@ -128,7 +132,6 @@ gegl_cl_random_float_range (__global const int  *cl_random_data,
                             float               min,
                             float               max)
 {
-  float f = gegl_cl_random_float (cl_random_data, cl_random_primes,
-                                  seed, x, y, z, n);
+  float f = gegl_cl_random_float (cl_random_data, rand, x, y, z, n);
   return f * (max - min) + min;
 }

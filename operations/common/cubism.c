@@ -39,7 +39,7 @@ gegl_chant_color  (bg_color, _("Background Color"),
                    "rgba(0.0, 0.0, 0.0, 0.0)",
                    _("The tiles' background color"))
 
-gegl_chant_seed   (seed, _("Seed"),
+gegl_chant_seed   (seed, rand, _("Seed"),
                    _("Random seed"))
 
 #else

@@ -103,6 +103,7 @@ guint gegl_debug_flags = 0;
 #include "buffer/gegl-tile-backend-file.h"
 #include "gegl-config.h"
 #include "graph/gegl-node.h"
+#include "gegl-random-priv.h"
 
 static const gchar *makefile (void);
 
@@ -450,6 +451,7 @@ gegl_exit (void)
   gegl_tile_cache_destroy ();
   gegl_operation_gtype_cleanup ();
   gegl_extension_handler_cleanup ();
+  gegl_random_cleanup ();
 
   if (module_db != NULL)
     {

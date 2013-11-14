@@ -21,33 +21,27 @@
 #include "opencl/gegl-cl.h"
 #include "gegl-random-priv.h"
 
-/*XXX: defined in gegl-random.c*/
-
-extern gint32 *gegl_random_data;
-extern long   *gegl_random_primes;
-
 cl_mem
 gegl_cl_load_random_data (gint *cl_err)
 {
-  cl_mem cl_random_data;
-  gegl_random_init ();
+  cl_mem   cl_random_data;
+  guint32 *random_data;
+
+  random_data = gegl_random_get_data ();
   cl_random_data = gegl_clCreateBuffer (gegl_cl_get_context (),
                                         CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
-                                        RANDOM_DATA_SIZE * sizeof (gint32),
-                                        (void*) &gegl_random_data,
+                                        RANDOM_DATA_SIZE * sizeof (guint32),
+                                        (void*) random_data,
                                         cl_err);
   return cl_random_data;
 }
 
-cl_mem
-gegl_cl_load_random_primes (gint *cl_err)
+void
+gegl_cl_random_get_ushort4 (const GeglRandom *in_rand,
+                                  cl_ushort4 *out_rand)
 {
-  cl_mem cl_random_primes;
-  cl_random_primes = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                          CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
-                                          PRIMES_SIZE * sizeof (long),
-                                          (void*) &gegl_random_primes,
-                                          cl_err);
-  return cl_random_primes;
+  out_rand->x = in_rand->prime0;
+  out_rand->y = in_rand->prime1;
+  out_rand->z = in_rand->prime2;
+  out_rand->w = 0;
 }
-

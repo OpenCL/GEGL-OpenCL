@@ -40,6 +40,9 @@ gegl_chant_double (value_distance, _("Value"),
                    0.0, 1.0, 0.04,
                    _("Value"))
 
+gegl_chant_seed   (seed, rand, _("Seed"),
+                   _("Random seed"))
+
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
@@ -50,33 +53,32 @@ gegl_chant_double (value_distance, _("Value"),
 #include <math.h>
 #include <stdlib.h>
 
-#define SEED 1913
-
 static gfloat
-randomize_value (gfloat     now,
-                 gfloat     min,
-                 gfloat     max,
-                 gboolean   wraps_around,
-                 gfloat     rand_max,
-                 gint       holdness,
-                 gint       x,
-                 gint       y,
-                 gint       n)
+randomize_value (gfloat      now,
+                 gfloat      min,
+                 gfloat      max,
+                 gboolean    wraps_around,
+                 gfloat      rand_max,
+                 gint        holdness,
+                 gint        x,
+                 gint        y,
+                 gint        n,
+                 GeglRandom *rand)
 {
   gint    flag, i;
   gfloat rand_val, new_val, steps;
 
   steps = max - min;
-  rand_val = gegl_random_float (SEED, x, y, 0, n++);
+  rand_val = gegl_random_float (rand, x, y, 0, n++);
 
   for (i = 1; i < holdness; i++)
   {
-    gfloat tmp = gegl_random_float (SEED, x, y, 0, n++);
+    gfloat tmp = gegl_random_float (rand, x, y, 0, n++);
     if (tmp < rand_val)
       rand_val = tmp;
   }
 
-  flag = (gegl_random_float (SEED, x, y, 0, n) < 0.5) ? -1 : 1;
+  flag = (gegl_random_float (rand, x, y, 0, n) < 0.5) ? -1 : 1;
   new_val = now + flag * fmod (rand_max * rand_val, steps);
 
   if (new_val < min)
@@ -144,22 +146,22 @@ process (GeglOperation       *operation,
     /* there is no need for scattering hue of desaturated pixels here */
     if ((o->hue_distance > 0) && (saturation > 0))
       hue = randomize_value (hue, 0.0, 1.0, TRUE, o->hue_distance / 360.0,
-                             o->holdness, x, y, n);
+                             o->holdness, x, y, n, o->rand);
 
     n += o->holdness + 1;
     /* desaturated pixels get random hue before increasing saturation */
     if (o->saturation_distance > 0) {
       if (saturation == 0)
-        hue = gegl_random_float_range (SEED, x, y, 0, n, 0.0, 1.0);
+        hue = gegl_random_float_range (o->rand, x, y, 0, n, 0.0, 1.0);
       saturation = randomize_value (saturation, 0.0, 1.0, FALSE,
                                     o->saturation_distance, o->holdness,
-                                    x, y, n+1);
+                                    x, y, n+1, o->rand);
     }
 
     n += o->holdness + 2;
     if (o->value_distance > 0)
       value = randomize_value (value, 0.0, 1.0, FALSE, o->value_distance,
-                               o->holdness, x, y, n);
+                               o->holdness, x, y, n, o->rand);
 
     out_pixel[0] = hue;
     out_pixel[1] = saturation;

@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2012, 2013 Øyvind Kolås
+ * Copyright 2013       Téo Mazars <teomazars@gmail.com>
  */
 
 /* This file provides random access - reproducable random numbers in three
@@ -24,25 +25,24 @@
  * it is there in the API to provide for mip-map behavior later.
  *
  * The way it works is by xoring three lookup tables that are iterated
- * cyclically, each LUT has a prime number as a size, thus the combination
- * of the three values xored will have a period of prime1 * prime2 * prime3,
- * with the primes used this yields roughly 3TB of random, non-repeating
- * data from ~300kb of lookup data.
+ * cyclically, each LUT has a different prime number as a size, thus
+ * the combination of the three values xored will have a period of
+ * prime1 * prime2 * prime3, with the primes used this yields more than
+ * 1TB of random, non-repeating data from ~180kb of lookup data.
  *
  * The data for the LUTs is shared between different random seeds, it
- * is just the sizes of the LUTs that change, currently with 468 primes
- * there is about 101847096 different seeds achivable (with 45 primes
- * only 83160 combinations are possible (maybe this would have been enough
- * though)
+ * is just the sizes of the LUTs that change, currently with 533 primes
+ * there is about 533 * 532 * 531 different seeds achivable.
  */
 
 #include <glib.h>
 #include <gegl.h>
+#include "gegl-random.h"
 #include "gegl-random-priv.h"
 
 /* a set of reasonably large primes to choose from for array sizes
  */
-long gegl_random_primes[PRIMES_SIZE]={
+guint16 gegl_random_primes[533]={
 10007,10009,10037,10039,10061,10067,10069,10079,10091,10093,10099,10103,10111,
 10133,10139,10141,10151,10159,10163,10169,10177,10181,10193,10211,10223,10243,
 10247,10253,10259,10267,10271,10273,10289,10301,10303,10313,10321,10331,10333,
@@ -87,119 +87,191 @@ long gegl_random_primes[PRIMES_SIZE]={
 };
 
 /* these primes should not exist in the above set */
-#define XPRIME     103423
-#define YPRIME     101359
-#define NPRIME     101111
-#define MAX_TABLES 3
+#define XPRIME 103423LL
+#define YPRIME 101359LL
+#define NPRIME 101111LL
 
-gint32          gegl_random_data[RANDOM_DATA_SIZE];
-static gboolean random_data_inited = FALSE;
+#define SQR(x) ((x)*(x))
 
-void
+static guint32  *gegl_random_data;
+static gboolean  random_data_inited = FALSE;
+
+static void
 gegl_random_init (void)
 {
-  if (G_LIKELY (random_data_inited))
+  if (random_data_inited)
     return;
+  else
+    {
+      GRand *gr = g_rand_new_with_seed (42);
+      gint   i;
 
-  {
-    GRand *gr = g_rand_new_with_seed (42);
-    int i;
-    for (i = 0; i < RANDOM_DATA_SIZE; i++)
-      gegl_random_data[i] = g_rand_int (gr);
-    g_rand_free (gr);
-    random_data_inited = TRUE;
-  }
+      /* Ensure alignment, needed with the use of CL_MEM_USE_HOST_PTR */
+      gegl_random_data = gegl_malloc (RANDOM_DATA_SIZE * sizeof (guint32));
+
+      for (i = 0; i < RANDOM_DATA_SIZE; i++)
+        gegl_random_data[i] = g_rand_int (gr);
+
+      g_rand_free (gr);
+      random_data_inited = TRUE;
+    }
 }
 
+void
+gegl_random_cleanup (void)
+{
+  if (random_data_inited)
+    {
+      gegl_free (gegl_random_data);
+      gegl_random_data = NULL;
+      random_data_inited = FALSE;
+    }
+}
+
+guint32*
+gegl_random_get_data (void)
+{
+  gegl_random_init ();
+  return gegl_random_data;
+}
+
+GeglRandom*
+gegl_random_new (void)
+{
+  guint seed = (guint) g_random_int();
+
+  return gegl_random_new_with_seed (seed);
+}
+
+GeglRandom*
+gegl_random_new_with_seed (guint32 seed)
+{
+  GeglRandom *rand = g_new (GeglRandom, 1);
+
+  gegl_random_set_seed (rand, seed);
+
+  return rand;
+}
+
+void
+gegl_random_free (GeglRandom *rand)
+{
+  g_free (rand);
+}
+
+void
+gegl_random_set_seed (GeglRandom *rand,
+                      guint32     seed)
+{
+  guint number_elem = G_N_ELEMENTS (gegl_random_primes);
+  guint id0, id1, id2;
+
+  /* XXX: Probably needs to be done at gegl-init */
+  gegl_random_init ();
+
+  /* gives roughly number_elem^3 different sets */
+  id0 =  seed % number_elem;
+  id1 = (seed / number_elem) % number_elem;
+  id2 = (seed / SQR (number_elem)) % number_elem;
+
+  /* Shuffle a bit to avoid to hit edge cases near 0 */
+  id0  = (id0 + 42)  % number_elem;
+  id1  = (id1 + 212) % number_elem;
+  id2  = (id2 + 17)  % number_elem;
+
+  /* all primes numbers must be distincts */
+  while (id0 == id1 || id0 == id2)
+    id0 = (id0 + 1) % number_elem;
+
+  while (id1 == id0 || id1 == id2)
+    id1 = (id1 + 1) % number_elem;
+
+  rand->prime0 = gegl_random_primes[id0];
+  rand->prime1 = gegl_random_primes[id1];
+  rand->prime2 = gegl_random_primes[id2];
+}
+
+GeglRandom*
+gegl_random_duplicate (GeglRandom *gegl_random)
+{
+  GeglRandom *result = g_new (GeglRandom, 1);
+
+  *result = *gegl_random;
+
+  return result;
+}
+
+GType
+gegl_random_get_type (void)
+{
+  static GType our_type = 0;
+
+  if (our_type == 0)
+    our_type = g_boxed_type_register_static (g_intern_static_string ("GeglRandom"),
+                                             (GBoxedCopyFunc) gegl_random_duplicate,
+                                             (GBoxedFreeFunc) g_free);
+  return our_type;
+}
 
 static inline guint32
-_gegl_random_int (int seed,
-                 int x,
-                 int y,
-                 int z,
-                 int n)
+_gegl_random_int (const GeglRandom *rand,
+                  gint              x,
+                  gint              y,
+                  gint              z,
+                  gint              n)
 {
-  unsigned long idx = x * XPRIME + 
-                      y * YPRIME * XPRIME + 
-                      n * NPRIME * YPRIME * XPRIME;
-#define ROUNDS 3
-    /* 3 rounds gives a reasonably high cycle for */
-                         /*   our synthesized larger random set. */
-  long * prime = &gegl_random_primes[seed % (G_N_ELEMENTS (gegl_random_primes)
-                                     - 1 - ROUNDS)];
-  gegl_random_init ();
-#define UNROLLED
-
-#ifdef UNROLLED
-
-  {
-    int prime0 = prime[0],
-        prime1 = prime[1],
-        prime2 = prime[2];
-    return
-    gegl_random_data[idx % prime0] ^
-    gegl_random_data[prime0 + (idx % (prime1))] ^
-    gegl_random_data[prime0 + prime1 + (idx % (prime2))];
-  }
-#else
-  {
-    gint32 ret = 0;
-    int i;
-    int offset = 0;
-
-    for (i = 0; i < ROUNDS; i++) 
-      ret ^= gegl_random_data[offset + (idx % (prime[i]))];
-      offset += prime[i];
-
-
-    return ret;
-  }
-#endif
+  guint64 idx = x * XPRIME +
+                y * YPRIME * XPRIME +
+                n * NPRIME * YPRIME * XPRIME;
+  return
+    gegl_random_data[idx % rand->prime0] ^
+    gegl_random_data[rand->prime0 + (idx % (rand->prime1))] ^
+    gegl_random_data[rand->prime0 + rand->prime1 + (idx % (rand->prime2))];
 }
 
 guint32
-gegl_random_int (int seed,
-                 int x,
-                 int y,
-                 int z,
-                 int n)
+gegl_random_int (const GeglRandom *rand,
+                 gint              x,
+                 gint              y,
+                 gint              z,
+                 gint              n)
 {
-  return _gegl_random_int (seed, x, y, z, n);
+  return _gegl_random_int (rand, x, y, z, n);
 }
 
 gint32
-gegl_random_int_range (int seed,
-                       int x,
-                       int y,
-                       int z,
-                       int n,
-                       int min,
-                       int max)
+gegl_random_int_range (const GeglRandom *rand,
+                       gint              x,
+                       gint              y,
+                       gint              z,
+                       gint              n,
+                       gint              min,
+                       gint              max)
 {
-  guint32 ret = _gegl_random_int (seed, x, y, z, n);
-  return (ret % (max-min)) + min;
+  guint32 ret = _gegl_random_int (rand, x, y, z, n);
+  return (ret % (max - min)) + min;
 }
 
 #define G_RAND_FLOAT_TRANSFORM  0.00001525902189669642175
 
-float
-gegl_random_float (int seed,
-                   int x,
-                   int y,
-                   int z,
-                   int n)
+gfloat
+gegl_random_float (const GeglRandom *rand,
+                   gint              x,
+                   gint              y,
+                   gint              z,
+                   gint              n)
 {
-  return (_gegl_random_int (seed, x, y, z, n) & 0xffff) * G_RAND_FLOAT_TRANSFORM;
+  return (_gegl_random_int (rand, x, y, z, n) & 0xffff) * G_RAND_FLOAT_TRANSFORM;
 }
 
-float
-gegl_random_float_range (int seed,
-                         int x,
-                         int y,
-                         int z,
-                         int n,
-                         float min,
-                         float max)
+gfloat
+gegl_random_float_range (const GeglRandom *rand,
+                         gint              x,
+                         gint              y,
+                         gint              z,
+                         gint              n,
+                         gfloat            min,
+                         gfloat            max)
 {
-  return gegl_random_float (seed, x, y, z, n) * (max - min) + min;
+  return gegl_random_float (rand, x, y, z, n) * (max - min) + min;
 }

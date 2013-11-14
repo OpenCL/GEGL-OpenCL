@@ -38,6 +38,9 @@ gegl_chant_double (hue_distance, _("Hue"),
                    0.0, 180.0,  3.0,
                    _("Hue"))
 
+gegl_chant_seed   (seed, rand, _("Seed"),
+                   _("Random seed"))
+
 #else
 
 #define GEGL_CHANT_TYPE_POINT_FILTER
@@ -49,33 +52,32 @@ gegl_chant_double (hue_distance, _("Hue"),
 #include <math.h>
 #include <stdlib.h>
 
-#define SEED 1913
-
 static gfloat
-randomize_value (gfloat     now,
-                 gfloat     min,
-                 gfloat     max,
-                 gboolean   wraps_around,
-                 gfloat     rand_max,
-                 gint       holdness,
-                 gint       x,
-                 gint       y,
-                 gint       n)
+randomize_value (gfloat      now,
+                 gfloat      min,
+                 gfloat      max,
+                 gboolean    wraps_around,
+                 gfloat      rand_max,
+                 gint        holdness,
+                 gint        x,
+                 gint        y,
+                 gint        n,
+                 GeglRandom *rand)
 {
   gint    flag, i;
   gfloat rand_val, new_val, steps;
 
   steps = max - min + 0.5;
-  rand_val = gegl_random_float (SEED, x, y, 0, n++);
+  rand_val = gegl_random_float (rand, x, y, 0, n++);
 
   for (i = 1; i < holdness; i++)
   {
-    float tmp = gegl_random_float (SEED, x, y, 0, n++);
+    float tmp = gegl_random_float (rand, x, y, 0, n++);
     if (tmp < rand_val)
       rand_val = tmp;
   }
 
-  flag = (gegl_random_float (SEED, x, y, 0, n) < 0.5) ? -1 : 1;
+  flag = (gegl_random_float (rand, x, y, 0, n) < 0.5) ? -1 : 1;
   new_val = now + flag * fmod (rand_max * rand_val, steps);
 
   if (new_val < min)
@@ -142,20 +144,21 @@ process (GeglOperation       *operation,
 
     if ((o->hue_distance > 0) && (chroma > 0))
       hue = randomize_value (hue, 0.0, 359.0, TRUE, o->hue_distance,
-                             o->holdness, x, y, n);
+                             o->holdness, x, y, n, o->rand);
 
     n += o->holdness + 1;
     if (o->chroma_distance > 0) {
       if (chroma == 0)
-        hue = gegl_random_float_range (SEED, x, y, 0, n, 0.0, 360.0);
+        hue = gegl_random_float_range (o->rand, x, y, 0, n, 0.0, 360.0);
       chroma = randomize_value (chroma, 0.0, 100.0, FALSE, o->chroma_distance,
-                                o->holdness, x, y, n+1);
+                                o->holdness, x, y, n+1, o->rand);
     }
 
     n += o->holdness + 2;
     if (o->lightness_distance > 0)
       lightness = randomize_value (lightness, 0.0, 100.0, FALSE,
-                                   o->lightness_distance, o->holdness, x, y, n);
+                                   o->lightness_distance, o->holdness,
+                                   x, y, n, o->rand);
 
     /*n += o->holdness + 1*/
     out_pixel[0] = lightness;

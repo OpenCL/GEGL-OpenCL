@@ -32,7 +32,7 @@ gegl_chant_int  (shift, _("Shift"),
                  1, 200, 5,
                  _("Maximum amount to shift"))
 
-gegl_chant_seed (seed, _("Seed"),
+gegl_chant_seed (seed, rand, _("Seed"),
                  _("Random seed"))
 
 gegl_chant_enum (direction, _("Direction"),
@@ -133,7 +133,7 @@ process (GeglOperation       *operation,
 
           for (i = 0; i < array_size; i++)
             {
-              r = gegl_random_int_range (o->seed, i, 0, 0, 0, -s, s + 1);
+              r = gegl_random_int_range (o->rand, i, 0, 0, 0, -s, s + 1);
               g_array_append_val (offsets, r);
             }
           o->chant_data = offsets;

@@ -30,7 +30,7 @@ gegl_chant_double (threshold, _("Threshold"), 0.0, 100.0, 10.0,
 gegl_chant_int (strength, _("Strength"), 1, 1000, 40,
                 _("Higher values increase the magnitude of the effect"))
 
-gegl_chant_seed (seed, _("Seed"), _("Random seed"))
+gegl_chant_seed (seed, rand, _("Seed"), _("Random seed"))
 
 #else
 
