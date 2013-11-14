@@ -416,6 +416,9 @@ gegl_graph_process (GeglGraphTraversal *path)
 
               gegl_operation_process (operation, context, "output", &context->need_rect, context->level);
               operation_result = GEGL_BUFFER (gegl_operation_context_get_object (context, "output"));
+
+              if (operation_result && operation_result == (GeglBuffer *)operation->node->cache)
+                gegl_cache_computed (operation->node->cache, &context->need_rect);
             }
         }
       else

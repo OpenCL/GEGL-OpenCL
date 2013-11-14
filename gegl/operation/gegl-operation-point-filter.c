@@ -220,8 +220,6 @@ static gboolean gegl_operation_point_filter_op_process
     }
 
   success = gegl_operation_point_filter_process (operation, input, output, roi, level);
-  if (output == GEGL_BUFFER (operation->node->cache))
-    gegl_cache_computed (operation->node->cache, roi);
 
   if (input != NULL)
     g_object_unref (input);

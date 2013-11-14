@@ -113,20 +113,11 @@ gegl_operation_composer3_process2 (GeglOperation        *operation,
       aux != NULL ||
       aux2 != NULL)
     {
-      gboolean done = FALSE;
+      if (result->width == 0 || result->height == 0)
+        success = TRUE;
+      else
+        success = klass->process (operation, input, aux, aux2, output, result, context->level);
 
-      if (result->width == 0 ||
-          result->height == 0)
-        done = TRUE;
-
-      success = done;
-      if (!done)
-        {
-          success = klass->process (operation, input, aux, aux2, output, result, context->level);
-
-          if (output == GEGL_BUFFER (operation->node->cache))
-            gegl_cache_computed (operation->node->cache, result);
-        }
       if (input)
          g_object_unref (input);
       if (aux)
