@@ -17,11 +17,6 @@
  */
 
 /* XXX: this file should be kept in sync with gegl-random. */
-__constant const long XPRIME = 103423;
-__constant const long YPRIME = 101359;
-__constant const long NPRIME = 101111;
-
-#define RANDOM_DATA_SIZE (15101 * 3)
 
 typedef ushort4 GeglRandom;
 
@@ -72,6 +67,10 @@ _gegl_cl_random_int (__global const int  *cl_random_data,
                      int                 z,
                      int                 n)
 {
+  const long XPRIME = 103423;
+  const long YPRIME = 101359;
+  const long NPRIME = 101111;
+
   unsigned long idx = x * XPRIME +
                       y * YPRIME * XPRIME +
                       n * NPRIME * YPRIME * XPRIME;
