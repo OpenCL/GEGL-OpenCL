@@ -17,21 +17,21 @@
  */
 
 
-__kernel void init_stretch (__global float *out_min,
-                            __global float *out_max)
+__kernel void init_stretch (__global float4 *out_min,
+                            __global float4 *out_max)
 {
   int gid = get_global_id (0);
 
-  out_min[gid] =  FLT_MAX;
-  out_max[gid] = -FLT_MAX;
+  out_min[gid] = (float4)( FLT_MAX);
+  out_max[gid] = (float4)(-FLT_MAX);
 }
 
 __kernel void two_stages_local_min_max_reduce (__global const float4 *in,
-                                               __global       float  *out_min,
-                                               __global       float  *out_max,
-                                               __local        float  *aux_min,
-                                               __local        float  *aux_max,
-                                                              int    n_pixels)
+                                               __global       float4 *out_min,
+                                               __global       float4 *out_max,
+                                               __local        float4 *aux_min,
+                                               __local        float4 *aux_max,
+                                                              int     n_pixels)
 {
   int    gid   = get_global_id(0);
   int    gsize = get_global_size(0);
@@ -40,20 +40,20 @@ __kernel void two_stages_local_min_max_reduce (__global const float4 *in,
   float4 min_v = (float4)( FLT_MAX);
   float4 max_v = (float4)(-FLT_MAX);
   float4 in_v;
-  float  aux0, aux1;
+  float4 aux0, aux1;
   int    it;
 
   /* Loop sequentially over chunks of input vector */
   for (it = gid; it < n_pixels; it += gsize)
     {
       in_v  =  in[it];
-      min_v =  fmin (min_v, in_v);
-      max_v =  fmax (max_v, in_v);
+      min_v =  min (min_v, in_v);
+      max_v =  max (max_v, in_v);
     }
 
   /* Perform parallel reduction */
-  aux_min[lid] = min (min (min_v.x, min_v.y), min_v.z);
-  aux_max[lid] = max (max (max_v.x, max_v.y), max_v.z);
+  aux_min[lid] = min_v;
+  aux_max[lid] = max_v;
 
   barrier (CLK_LOCAL_MEM_FENCE);
 
@@ -63,11 +63,11 @@ __kernel void two_stages_local_min_max_reduce (__global const float4 *in,
         {
           aux0         = aux_min[lid + it];
           aux1         = aux_min[lid];
-          aux_min[lid] = fmin (aux0, aux1);
+          aux_min[lid] = min (aux0, aux1);
 
           aux0         = aux_max[lid + it];
           aux1         = aux_max[lid];
-          aux_max[lid] = fmax (aux0, aux1);
+          aux_max[lid] = max (aux0, aux1);
         }
       barrier (CLK_LOCAL_MEM_FENCE);
   }
@@ -85,21 +85,21 @@ __kernel void two_stages_local_min_max_reduce (__global const float4 *in,
       int nb_wg = gsize / lsize;
       for (it = nb_wg; it < lsize; it++)
         {
-          out_min[it] =  FLT_MAX;
-          out_max[it] = -FLT_MAX;
+          out_min[it] = (float4)( FLT_MAX);
+          out_max[it] = (float4)(-FLT_MAX);
         }
     }
 }
 
-__kernel void global_min_max_reduce (__global float *in_min,
-                                     __global float *in_max,
-                                     __global float *out_min_max)
+__kernel void global_min_max_reduce (__global float4 *in_min,
+                                     __global float4 *in_max,
+                                     __global float4 *out_min_max)
 {
-  int   gid   = get_global_id(0);
-  int   lid   = get_local_id(0);
-  int   lsize = get_local_size(0);
-  float aux0, aux1;
-  int   it;
+  int    gid   = get_global_id(0);
+  int    lid   = get_local_id(0);
+  int    lsize = get_local_size(0);
+  float4 aux0, aux1;
+  int    it;
 
   /* Perform parallel reduction */
   for (it = lsize / 2; it > 0; it >>= 1)
@@ -108,11 +108,11 @@ __kernel void global_min_max_reduce (__global float *in_min,
         {
           aux0        = in_min[lid + it];
           aux1        = in_min[lid];
-          in_min[gid] = fmin (aux0, aux1);
+          in_min[gid] = min (aux0, aux1);
 
           aux0        = in_max[lid + it];
           aux1        = in_max[lid];
-          in_max[gid] = fmax (aux0, aux1);
+          in_max[gid] = max (aux0, aux1);
         }
       barrier (CLK_GLOBAL_MEM_FENCE);
   }
@@ -125,12 +125,13 @@ __kernel void global_min_max_reduce (__global float *in_min,
 
 __kernel void cl_stretch_contrast (__global const float4 *in,
                                    __global       float4 *out,
-                                                  float   min,
-                                                  float   diff)
+                                                  float4  min,
+                                                  float4  diff)
 {
   int    gid  = get_global_id(0);
   float4 in_v = in[gid];
 
-  in_v.xyz = (in_v.xyz - min) / diff;
+  in_v = (in_v - min) / diff;
+
   out[gid] = in_v;
 }

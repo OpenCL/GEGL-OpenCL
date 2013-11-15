@@ -19,8 +19,10 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_boolean (keep_colors, _("Keep colors"), TRUE,
+                    _("Impact each channel with the same amount"))
 
 #else
 
@@ -28,39 +30,60 @@
 #define GEGL_CHANT_C_FILE       "stretch-contrast.c"
 
 #include "gegl-chant.h"
+#include <math.h>
 
 static void
 buffer_get_min_max (GeglBuffer *buffer,
-                    gdouble    *min,
-                    gdouble    *max)
+                    gfloat     *min,
+                    gfloat     *max)
 {
-  gfloat tmin =  G_MAXFLOAT;
-  gfloat tmax = -G_MAXFLOAT;
-
   GeglBufferIterator *gi;
+  gint c;
   gi = gegl_buffer_iterator_new (buffer, NULL, 0, babl_format ("R'G'B' float"),
                                  GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+  for (c = 0; c < 3; c++)
+    {
+      min[c] =  G_MAXFLOAT;
+      max[c] = -G_MAXFLOAT;
+    }
 
   while (gegl_buffer_iterator_next (gi))
     {
       gfloat *buf = gi->data[0];
 
       gint i;
-      for (i = 0; i < gi->length * 3; i++)
+      for (i = 0; i < gi->length; i++)
         {
-          gfloat val = buf [i];
-
-          if (val < tmin)
-            tmin = val;
-          if (val > tmax)
-            tmax = val;
+          for (c = 0; c < 3; c++)
+            {
+              min[c] = MIN (buf [i * 3 + c], min[c]);
+              max[c] = MAX (buf [i * 3 + c], max[c]);
+            }
         }
     }
+}
 
-  if (min)
-    *min = tmin;
-  if (max)
-    *max = tmax;
+static void
+reduce_min_max_global (gfloat *min,
+                       gfloat *max)
+{
+  gfloat vmin, vmax;
+  gint   c;
+
+  vmin= min[0];
+  vmax= max[0];
+
+  for (c = 1; c < 3; c++)
+    {
+      vmin = MIN (min[c], vmin);
+      vmax = MAX (max[c], vmax);
+    }
+
+  for (c = 0; c < 3; c++)
+    {
+      min[c] = vmin;
+      max[c] = vmax;
+    }
 }
 
 static void prepare (GeglOperation *operation)
@@ -115,8 +138,8 @@ static gboolean
 cl_buffer_get_min_max (cl_mem               in_tex,
                        size_t               global_worksize,
                        const GeglRectangle *roi,
-                       gfloat              *min,
-                       gfloat              *max)
+                       gfloat              min[4],
+                       gfloat              max[4])
 {
   cl_int   cl_err      = 0;
   size_t   local_ws, max_local_ws;
@@ -126,12 +149,12 @@ cl_buffer_get_min_max (cl_mem               in_tex,
   cl_mem   cl_aux_max  = NULL;
   cl_mem   cl_min_max  = NULL;
   cl_int   n_pixels    = (cl_int)global_worksize;
-  cl_float min_max_buf[2];
+  cl_float4 min_max_buf[2];
 
   if (global_worksize < 1)
     {
-      *min = G_MAXFLOAT;
-      *max = G_MINFLOAT;
+      min[0] = min[1] = min[2] = min[3] =  G_MAXFLOAT;
+      max[0] = max[1] = max[2] = max[3] = -G_MAXFLOAT;
       return FALSE;
     }
 
@@ -155,17 +178,17 @@ cl_buffer_get_min_max (cl_mem               in_tex,
 
   cl_aux_min = gegl_clCreateBuffer (gegl_cl_get_context (),
                                     CL_MEM_READ_WRITE,
-                                    local_ws * sizeof(cl_float),
+                                    local_ws * sizeof(cl_float4),
                                     NULL, &cl_err);
   CL_CHECK;
   cl_aux_max = gegl_clCreateBuffer (gegl_cl_get_context (),
                                     CL_MEM_READ_WRITE,
-                                    local_ws * sizeof(cl_float),
+                                    local_ws * sizeof(cl_float4),
                                     NULL, &cl_err);
   CL_CHECK;
   cl_min_max = gegl_clCreateBuffer (gegl_cl_get_context (),
                                     CL_MEM_WRITE_ONLY,
-                                    2 * sizeof(cl_float),
+                                    2 * sizeof(cl_float4),
                                     NULL, &cl_err);
   CL_CHECK;
 
@@ -196,10 +219,10 @@ cl_buffer_get_min_max (cl_mem               in_tex,
                                (void*)&cl_aux_max);
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3,
-                               sizeof(cl_float) * local_ws, NULL);
+                               sizeof(cl_float4) * local_ws, NULL);
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4,
-                               sizeof(cl_float) * local_ws, NULL);
+                               sizeof(cl_float4) * local_ws, NULL);
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int),
                                (void*)&n_pixels);
@@ -231,12 +254,19 @@ cl_buffer_get_min_max (cl_mem               in_tex,
   /* Read the memory buffer, probably better to keep it in GPU memory */
   cl_err = gegl_clEnqueueReadBuffer (gegl_cl_get_command_queue (),
                                      cl_min_max, CL_TRUE, 0,
-                                     2 * sizeof (cl_float), &min_max_buf, 0,
+                                     2 * sizeof (cl_float4), &min_max_buf, 0,
                                      NULL, NULL);
   CL_CHECK;
 
-  *min = min_max_buf[0];
-  *max = min_max_buf[1];
+  min[0] = min_max_buf[0].x;
+  min[1] = min_max_buf[0].y;
+  min[2] = min_max_buf[0].z;
+  min[3] = min_max_buf[0].w;
+
+  max[0] = min_max_buf[1].x;
+  max[1] = min_max_buf[1].y;
+  max[2] = min_max_buf[1].z;
+  max[3] = min_max_buf[1].w;
 
   cl_err = gegl_clReleaseMemObject (cl_aux_min);
   CL_CHECK_ONLY (cl_err);
@@ -264,37 +294,33 @@ cl_stretch_contrast (cl_mem               in_tex,
                      cl_mem               out_tex,
                      size_t               global_worksize,
                      const GeglRectangle *roi,
-                     gfloat               min,
-                     gfloat               diff)
+                     cl_float4            min,
+                     cl_float4            diff)
 {
-  cl_int   cl_err  = 0;
-  cl_float cl_min  = min;
-  cl_float cl_diff = diff;
+  cl_int cl_err  = 0;
 
-  {
   cl_err = gegl_clSetKernelArg(cl_data->kernel[2], 0, sizeof(cl_mem),
                                (void*)&in_tex);
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[2], 1, sizeof(cl_mem),
                                (void*)&out_tex);
   CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[2], 2, sizeof(cl_float),
-                               (void*)&cl_min);
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[2], 2, sizeof(cl_float4),
+                               (void*)&min);
   CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[2], 3, sizeof(cl_float),
-                               (void*)&cl_diff);
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[2], 3, sizeof(cl_float4),
+                               (void*)&diff);
   CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
-                                         cl_data->kernel[2], 1,
-                                         NULL, &global_worksize, NULL,
-                                         0, NULL, NULL);
+                                       cl_data->kernel[2], 1,
+                                       NULL, &global_worksize, NULL,
+                                       0, NULL, NULL);
   CL_CHECK;
 
-  }
   return FALSE;
 
-error:
+ error:
   return TRUE;
 }
 
@@ -307,12 +333,16 @@ cl_process (GeglOperation       *operation,
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
 
-  gfloat min = 1.0f;
-  gfloat max = 0.0f;
-  gfloat i_min, i_max, diff;
-  cl_int err = 0;
-  gint read;
+  gfloat    min[] = {1.0f, 1.0f, 1.0f, 1.0f};
+  gfloat    max[] = {0.0f, 0.0f, 0.0f, 0.0f};
+  gfloat    i_min[4], i_max[4], diff[4];
+  cl_int    err = 0;
+  gint      read, c;
   GeglBufferClIterator *i;
+  GeglChantO           *o;
+  cl_float4 cl_min, cl_diff;
+
+  o = GEGL_CHANT_PROPERTIES (operation);
 
   if (cl_build_kernels ())
     return FALSE;
@@ -327,24 +357,50 @@ cl_process (GeglOperation       *operation,
       err = cl_buffer_get_min_max (i->tex[0],
                                    i->size[0],
                                    &i->roi[0],
-                                   &i_min,
-                                   &i_max);
+                                   i_min,
+                                   i_max);
       if (err)
         {
           gegl_buffer_cl_iterator_stop (i);
           break;
         }
 
-      if (i_min < min)
-        min = i_min;
-      if (i_max > max)
-        max = i_max;
+      for (c = 0; c < 3; c++)
+        {
+          if (i_min[c] < min[c])
+            min[c] = i_min[c];
+          if (i_max[c] > max[c])
+            max[c] = i_max[c];
+        }
     }
 
   if (err)
     return FALSE;
 
-  diff = max-min;
+  if (o->keep_colors)
+    reduce_min_max_global (min, max);
+
+  for (c = 0; c < 3; c ++)
+    {
+      diff[c] = max[c] - min[c];
+
+      /* Avoid a divide by zero error if the image is a solid color */
+      if (diff[c] < 1e-3)
+        {
+          min[c]  = 0.0;
+          diff[c] = 1.0;
+        }
+    }
+
+  cl_diff.x = diff[0];
+  cl_diff.y = diff[1];
+  cl_diff.z = diff[2];
+  cl_diff.w = 1.0;
+
+  cl_min.x = min[0];
+  cl_min.y = min[1];
+  cl_min.z = min[2];
+  cl_min.w = 0.0;
 
   i = gegl_buffer_cl_iterator_new (output,
                                    result,
@@ -368,8 +424,8 @@ cl_process (GeglOperation       *operation,
                                  i->tex[0],
                                  i->size[0],
                                  &i->roi[0],
-                                 min,
-                                 diff);
+                                 cl_min,
+                                 cl_diff);
 
       if (err)
         {
@@ -388,21 +444,33 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  gdouble  min, max, diff;
+  gfloat  min[3], max[3], diff[3];
   GeglBufferIterator *gi;
+  GeglChantO         *o;
+  gint                c;
 
   if (gegl_cl_is_accelerated ())
     if (cl_process (operation, input, output, result))
       return TRUE;
 
-  buffer_get_min_max (input, &min, &max);
-  diff = max - min;
+  o = GEGL_CHANT_PROPERTIES (operation);
 
-  /* Avoid a divide by zero error if the image is a solid color */
-  if (diff == 0.0){
-    gegl_buffer_copy (input, NULL, output, NULL);
-    return TRUE;
-  }
+  buffer_get_min_max (input, min, max);
+
+  if (o->keep_colors)
+    reduce_min_max_global (min, max);
+
+  for (c = 0; c < 3; c++)
+    {
+      diff[c] = max[c] - min[c];
+
+      /* Avoid a divide by zero error if the image is a solid color */
+      if (diff[c] < 1e-3)
+        {
+          min[c]  = 0.0;
+          diff[c] = 1.0;
+        }
+    }
 
   gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("R'G'B'A float"),
                                  GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
@@ -418,9 +486,9 @@ process (GeglOperation       *operation,
       gint o;
       for (o = 0; o < gi->length; o++)
         {
-          out[0] = (in[0] - min) / diff;
-          out[1] = (in[1] - min) / diff;
-          out[2] = (in[2] - min) / diff;
+          for (c = 0; c < 3; c++)
+            out[c] = (in[c] - min[c]) / diff[c];
+
           out[3] = in[3];
 
           in  += 4;
