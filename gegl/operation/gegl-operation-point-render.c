@@ -19,18 +19,12 @@
 
 #include "config.h"
 
-#include <string.h>
-
 #include <glib-object.h>
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-point-render.h"
-#include "graph/gegl-pad.h"
-#include "graph/gegl-node.h"
-#include "gegl-utils.h"
-#include "gegl-buffer-private.h"
-#include "gegl-tile-storage.h"
+#include "gegl-operation-context.h"
 
 static gboolean gegl_operation_point_render_process
                               (GeglOperation       *operation,
@@ -81,19 +75,18 @@ gegl_operation_point_render_process (GeglOperation       *operation,
                                      const GeglRectangle *result,
                                      gint                 level)
 {
-  GeglPad    *pad;
   const Babl *out_format;
   GeglOperationPointRenderClass *point_render_class;
 
   point_render_class = GEGL_OPERATION_POINT_RENDER_GET_CLASS (operation);
 
-  pad        = gegl_node_get_pad (operation->node, "output");
-  out_format = gegl_pad_get_format (pad);
+  out_format = gegl_operation_get_format (operation, "output");
+
   if (!out_format)
     {
-      g_warning ("%s", gegl_node_get_debug_name (operation->node));
+      g_warning ("No output format set for %s", GEGL_OPERATION_GET_CLASS (operation)->name);
+      return FALSE;
     }
-  g_assert (out_format);
 
   if ((result->width > 0) && (result->height > 0))
     {
@@ -102,5 +95,6 @@ gegl_operation_point_render_process (GeglOperation       *operation,
       while (gegl_buffer_iterator_next (i))
           point_render_class->process (operation, i->data[0], i->length, &i->roi[0], level);
     }
+
   return TRUE;
 }
