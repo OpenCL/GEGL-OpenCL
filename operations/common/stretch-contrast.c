@@ -13,6 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
+ * Copyright 1996 Federico Mena Quintero <federico@nuclecu.unam.mx>
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
