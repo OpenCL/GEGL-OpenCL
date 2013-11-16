@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:stretch-contrast-hsv'>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/boats.png</param>
+    </params>
+  </node>
+</gegl>
+
