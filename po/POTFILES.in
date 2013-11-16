@@ -90,6 +90,7 @@ operations/common/snn-mean.c
 operations/common/softglow.c
 operations/common/stress.c
 operations/common/stretch-contrast.c
+operations/common/stretch-contrast-hsv.c
 operations/common/svg-huerotate.c
 operations/common/svg-luminancetoalpha.c
 operations/common/svg-matrix.c
