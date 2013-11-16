@@ -452,6 +452,7 @@ gegl_exit (void)
   gegl_operation_gtype_cleanup ();
   gegl_extension_handler_cleanup ();
   gegl_random_cleanup ();
+  gegl_cl_cleanup ();
 
   if (module_db != NULL)
     {

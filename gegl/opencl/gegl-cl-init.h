@@ -27,6 +27,8 @@ gboolean          gegl_cl_init (GError **error);
 
 gboolean          gegl_cl_init_with_opengl (GError **error);
 
+void              gegl_cl_cleanup (void);
+
 gboolean          gegl_cl_is_accelerated (void);
 
 gboolean          gegl_cl_has_gl_sharing (void);

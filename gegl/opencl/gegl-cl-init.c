@@ -859,3 +859,12 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
 
   return cl_data;
 }
+
+void
+gegl_cl_cleanup (void)
+{
+  cl_int err;
+  err = gegl_cl_random_cleanup ();
+  if (err != CL_SUCCESS)
+    GEGL_NOTE (GEGL_DEBUG_OPENCL, "Could not free cl_random_data: %s", gegl_cl_errstring (err));
+}

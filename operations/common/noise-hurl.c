@@ -187,9 +187,6 @@ cl_process (GeglOperation       *operation,
 
   cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
   CL_CHECK;
-
-  cl_err = gegl_clReleaseMemObject (cl_random_data);
-  CL_CHECK_ONLY (cl_err);
   }
 
   return  FALSE;

@@ -24,6 +24,8 @@
 /** Load the random data needed to generate random numbers in the GPU*/
 cl_mem gegl_cl_load_random_data (int *cl_err);
 
+cl_int gegl_cl_random_cleanup (void);
+
 void
 gegl_cl_random_get_ushort4 (const GeglRandom *in_rand, cl_ushort4 *out_rand);
 

@@ -21,19 +21,39 @@
 #include "opencl/gegl-cl.h"
 #include "gegl-random-priv.h"
 
+static cl_mem cl_random_data = NULL;
+
 cl_mem
 gegl_cl_load_random_data (gint *cl_err)
 {
-  cl_mem   cl_random_data;
-  guint32 *random_data;
+  if (cl_random_data == NULL)
+    {
+      guint32 *random_data;
 
-  random_data = gegl_random_get_data ();
-  cl_random_data = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                        CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
-                                        RANDOM_DATA_SIZE * sizeof (guint32),
-                                        (void*) random_data,
-                                        cl_err);
+      random_data = gegl_random_get_data ();
+      cl_random_data = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                            CL_MEM_USE_HOST_PTR | CL_MEM_READ_ONLY,
+                                            RANDOM_DATA_SIZE * sizeof (guint32),
+                                            (void*) random_data,
+                                            cl_err);
+    }
+  else
+    {
+      *cl_err = CL_SUCCESS;
+    }
   return cl_random_data;
+}
+
+cl_int
+gegl_cl_random_cleanup (void)
+{
+  cl_int cl_err = CL_SUCCESS;
+  if (cl_random_data != NULL)
+    {
+      cl_err = gegl_clReleaseMemObject (cl_random_data);
+      cl_random_data = NULL;
+    }
+  return cl_err;
 }
 
 void
