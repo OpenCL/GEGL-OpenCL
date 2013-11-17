@@ -29,8 +29,6 @@ AM_LDFLAGS =  \
 
 bin_PROGRAMS = \
 	2geglbuffer \
-	csugar \
-	float-lookup \
 	gegl-convert \
 	gegl-slicer \
 	geglbuffer-add-image \
@@ -38,8 +36,6 @@ bin_PROGRAMS = \
 	hello-world
 
 2geglbuffer_SOURCES = 2geglbuffer.c
-csugar_SOURCES = csugar.c
-float_lookup_SOURCES = float-lookup.c
 gegl_convert_SOURCES = gegl-convert.c
 gegl_slicer_SOURCES = gegl-slicer.c
 geglbuffer_add_image_SOURCES = geglbuffer-add-image.c
