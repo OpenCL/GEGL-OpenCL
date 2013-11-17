@@ -132,17 +132,10 @@ process (GeglOperation       *operation,
 
   GeglBuffer *dest, *dest_tmp;
 
-  gint n_pixels;
-  gfloat *out_pixel;
-  gint b;
-
-  gfloat tmp;
-  gdouble val;
-
-  gfloat *dst_buf, *dst_tmp, *dst_convert, *dst_blur;
   GeglRectangle  working_region;
   GeglRectangle *whole_region;
-  gfloat *dst_tmp_ptr, *input_ptr;
+
+  GeglBufferIterator *iter;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
 
@@ -153,91 +146,67 @@ process (GeglOperation       *operation,
 
   gegl_rectangle_intersect (&working_region, &working_region, whole_region);
 
-  dst_buf = g_slice_alloc (working_region.width * working_region.height * sizeof (gfloat));
-  dst_tmp = g_slice_alloc (working_region.width * working_region.height * sizeof (gfloat));
-  dst_convert = g_slice_alloc (result->width * result->height * 4 * sizeof (gfloat));
-  dst_blur = g_slice_alloc (result->width * result->height * sizeof (gfloat));
-
   dest_tmp = gegl_buffer_new (&working_region, babl_format ("Y' float"));
 
-  gegl_buffer_get (input,
-                   &working_region,
-                   1.0,
-                   babl_format ("Y' float"),
-                   dst_buf,
-                   GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_NONE);
+  iter = gegl_buffer_iterator_new (dest_tmp, &working_region, 0, babl_format ("Y' float"),
+                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
-  gegl_buffer_get (input,
-                   result,
-                   1.0,
-                   babl_format ("RGBA float"),
-                   dst_convert,
-                   GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_NONE);
+  gegl_buffer_iterator_add (iter, input, &working_region, 0, babl_format ("Y' float"),
+                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-  n_pixels = working_region.width * working_region.height;
-  dst_tmp_ptr = dst_tmp;
-  input_ptr = dst_buf;
+  while (gegl_buffer_iterator_next (iter))
+    {
+      gint    i;
+      gfloat *data_out = iter->data[0];
+      gfloat *data_in  = iter->data[1];
 
-  while (n_pixels--)
-  {
-    /* compute sigmoidal transfer */
-    val = *input_ptr;
-    val = 1.0 / (1.0 + exp (-(SIGMOIDAL_BASE + (o->sharpness * SIGMOIDAL_RANGE)) * (val - 0.5)));
-    val = val * o->brightness;
-    *dst_tmp_ptr = CLAMP (val, 0.0, 1.0);
+      for (i = 0; i < iter->length; i++)
+        {
+          /* compute sigmoidal transfer */
+          gfloat val = *data_in;
+          val = 1.0 / (1.0 + exp (-(SIGMOIDAL_BASE + (o->sharpness * SIGMOIDAL_RANGE)) * (val - 0.5)));
+          val = val * o->brightness;
+          *data_out = CLAMP (val, 0.0, 1.0);
 
-    dst_tmp_ptr +=1;
-    input_ptr   +=1;
-  }
-
-  gegl_buffer_set (dest_tmp,
-                   &working_region,
-                   0,
-                   babl_format ("Y' float"),
-                   dst_tmp,
-                   GEGL_AUTO_ROWSTRIDE);
+          data_out +=1;
+          data_in  +=1;
+        }
+    }
 
   dest = grey_blur_buffer (dest_tmp, o->glow_radius, result);
 
-  gegl_buffer_get (dest,
-                   result,
-                   1.0,
-                   babl_format ("Y' float"),
-                   dst_blur,
-                   GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_NONE);
+  iter = gegl_buffer_iterator_new (output, result, 0, babl_format ("RGBA float"),
+                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
+  gegl_buffer_iterator_add (iter, input, result, 0, babl_format ("RGBA float"),
+                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-  n_pixels = result->width * result->height;
+  gegl_buffer_iterator_add (iter, dest, result, 0, babl_format ("Y' float"),
+                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-  out_pixel = dst_convert;
-  dst_tmp_ptr = dst_blur;
-
-  while (n_pixels--)
+  while (gegl_buffer_iterator_next (iter))
     {
-      for (b = 0; b < 3; b++)
-      {
-        tmp = (1.0 - out_pixel[b]) * (1.0 - *dst_tmp_ptr) ;
-        out_pixel[b] = CLAMP (1.0 - tmp, 0.0, 1.0);
-      }
+      gint    i;
+      gfloat *data_out  = iter->data[0];
+      gfloat *data_in   = iter->data[1];
+      gfloat *data_blur = iter->data[2];
 
-      out_pixel   += 4;
-      dst_tmp_ptr += 1;
+      for (i = 0; i < iter->length; i++)
+        {
+          gint c;
+          for (c = 0; c < 3; c++)
+            {
+              gfloat tmp = (1.0 - data_in[c]) * (1.0 - *data_blur);
+              data_out[c] = CLAMP (1.0 - tmp, 0.0, 1.0);
+            }
+
+          data_out[3] = data_in[3];
+
+          data_out += 4;
+          data_in  += 4;
+          data_blur+= 1;
+        }
     }
-
-  gegl_buffer_set (output,
-                   result,
-                   0,
-                   babl_format ("RGBA float"),
-                   dst_convert,
-                   GEGL_AUTO_ROWSTRIDE);
-
-  g_slice_free1 (working_region.width * working_region.height * sizeof (gfloat), dst_buf);
-  g_slice_free1 (working_region.width * working_region.height * sizeof (gfloat), dst_tmp);
-  g_slice_free1 (result->width * result->height * 4 * sizeof (gfloat), dst_convert);
-  g_slice_free1 (result->width * result->height * sizeof (gfloat), dst_blur);
 
   g_object_unref (dest);
   g_object_unref (dest_tmp);
