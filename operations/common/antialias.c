@@ -66,6 +66,19 @@ prepare (GeglOperation *operation)
   op_area->bottom = 1;
 }
 
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglRectangle *region;
+
+  region = gegl_operation_source_get_bounding_box (operation, "input");
+
+  if (region != NULL)
+    return *region;
+  else
+    return *GEGL_RECTANGLE (0, 0, 0, 0);
+}
+
 static int
 extrapolate9 (const int components,
               gfloat *E0, gfloat *E1, gfloat *E2,
@@ -255,8 +268,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class          = GEGL_OPERATION_CLASS (klass);
   filter_class             = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  operation_class->prepare = prepare;
-  filter_class->process    = process;
+  operation_class->prepare          = prepare;
+  operation_class->get_bounding_box = get_bounding_box;
+  filter_class->process             = process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:antialias",
