@@ -1,7 +1,7 @@
 
 SUBDIRS = data
 
-EXTRA_DIST = $(wildcard $(srcdir)/*.py))
+EXTRA_DIST = $(wildcard $(srcdir)/*.py)
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir) \
