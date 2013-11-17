@@ -7,13 +7,9 @@
 /Makefile.in
 /*.exe
 /2geglbuffer
-/csugar
-/float-lookup
 /gegl-convert
-/gegl-paint
 /gegl-slicer
 /geglbuffer-add-image
 /geglbuffer-clock
 /hello-world
-/hello-world-video
 /sdl-draw
