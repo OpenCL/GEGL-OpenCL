@@ -533,11 +533,11 @@ gegl_cl_init_load_device_info (cl_platform_id   platform,
     }
   else
     {
-      if (!requested_device_type)
-        requested_device_type = CL_DEVICE_TYPE_DEFAULT;
-
       cl_platform_id *platforms = NULL;
       cl_uint num_platforms = 0;
+
+      if (!requested_device_type)
+        requested_device_type = CL_DEVICE_TYPE_DEFAULT;
 
       err = gegl_clGetPlatformIDs (0, NULL, &num_platforms);
       if (err != CL_SUCCESS)
