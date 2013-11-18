@@ -1961,13 +1961,13 @@ gegl_buffer_set_color (GeglBuffer          *dst,
                        GeglColor           *color)
 {
   GeglBufferIterator *i;
-  gchar               buf[128];
-  gint                pxsize;
+  gchar               pixel[128];
+  gint                bpp;
 
   g_return_if_fail (GEGL_IS_BUFFER (dst));
   g_return_if_fail (color);
 
-  gegl_color_get_pixel (color, dst->soft_format, buf);
+  gegl_color_get_pixel (color, dst->soft_format, pixel);
 
   if (!dst_rect)
     {
@@ -1977,7 +1977,7 @@ gegl_buffer_set_color (GeglBuffer          *dst,
       dst_rect->height == 0)
     return;
 
-  pxsize = babl_format_get_bytes_per_pixel (dst->soft_format);
+  bpp = babl_format_get_bytes_per_pixel (dst->soft_format);
 
   /* FIXME: this can be even further optimized by special casing it so
    * that fully filled tiles are shared.
@@ -1986,9 +1986,7 @@ gegl_buffer_set_color (GeglBuffer          *dst,
                                 GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
   while (gegl_buffer_iterator_next (i))
     {
-      int j;
-      for (j = 0; j < i->length; j++)
-        memcpy (((guchar*)(i->data[0])) + pxsize * j, buf, pxsize);
+      gegl_memset_pattern (i->data[0], pixel, bpp, i->length);
     }
 }
 
