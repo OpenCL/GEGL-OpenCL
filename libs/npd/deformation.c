@@ -22,40 +22,50 @@
 #include "deformation.h"
 #include <math.h>
 
-#define NPD_COMPUTE_CENTROID(suffix, arg1, arg2, WEIGHTS, accessor)     \
-void                                                                    \
-npd_compute_centroid_##suffix (gint      num_of_points,                 \
-                               arg1,                                    \
-                               arg2,                                    \
-                               NPDPoint *centroid)                      \
-{                                                                       \
-  gfloat x_sum = 0, y_sum = 0, weights_sum = 0;                         \
-  gint i;                                                               \
-                                                                        \
-  /* first compute sum of all values for each coordinate */             \
-  for (i = 0; i < num_of_points; ++i)                                   \
-    {                                                                   \
-      x_sum       += (WEIGHTS) * points[i] accessor x;                  \
-      y_sum       += (WEIGHTS) * points[i] accessor y;                  \
-      weights_sum += (WEIGHTS);                                         \
-    }                                                                   \
-                                                                        \
-  /* then compute mean */                                               \
-  centroid->x = x_sum / weights_sum;                                    \
-  centroid->y = y_sum / weights_sum;                                    \
+void
+npd_compute_centroid_of_overlapping_points (gint      num_of_points,
+                                            NPDPoint *points[],
+                                            gfloat    weights[],
+                                            NPDPoint *centroid)
+{
+  gfloat x_sum = 0, y_sum = 0, weights_sum;
+  gint i;
+
+  /* first compute sum of all values for each coordinate */
+  for (i = 0; i < num_of_points; ++i)
+    {
+      x_sum += points[i]->x;
+      y_sum += points[i]->y;
+    }
+
+  weights_sum = num_of_points; /* All weights are 1 */
+
+  /* then compute mean */
+  centroid->x = x_sum / weights_sum;
+  centroid->y = y_sum / weights_sum;
 }
 
-NPD_COMPUTE_CENTROID (of_overlapping_points,
-                      NPDPoint *points[],
-                      gfloat weights[],
-                      1,
-                      ->)
-NPD_COMPUTE_CENTROID (from_weighted_points,
-                      NPDPoint points[],
-                      gfloat weights[],
-                      weights[i],
-                      .)
-#undef NPD_COMPUTE_CENTROID
+void
+npd_compute_centroid_from_weighted_points (gint      num_of_points,
+                                           NPDPoint  points[],
+                                           gfloat    weights[],
+                                           NPDPoint *centroid)
+{
+  gfloat x_sum = 0, y_sum = 0, weights_sum = 0;
+  gint i;
+
+  /* first compute sum of all values for each coordinate */
+  for (i = 0; i < num_of_points; ++i)
+    {
+      x_sum       += weights[i] * points[i].x;
+      y_sum       += weights[i] * points[i].y;
+      weights_sum += weights[i];
+    }
+
+  /* then compute mean */
+  centroid->x = x_sum / weights_sum;
+  centroid->y = y_sum / weights_sum;
+}
 
 void
 npd_compute_ARSAP_transformation (gint     num_of_points,
@@ -133,7 +143,7 @@ void
 npd_compute_ARSAP_transformations (NPDHiddenModel *hidden_model)
 {
   gint     i;
-  
+
   for (i = 0; i < hidden_model->num_of_bones; ++i)
     {
       NPDBone *reference_bones = &hidden_model->reference_bones[i];
@@ -161,7 +171,7 @@ void
 npd_deform_model_once (NPDModel *model)
 {
   gint i, j;
-  
+
   /* updates associated overlapping points according to this control point */
   for (i = 0; i < model->control_points->len; ++i)
     {
@@ -192,7 +202,7 @@ npd_deform_hidden_model_once (NPDHiddenModel *hidden_model)
       NPDOverlappingPoints *list_of_ops
               = &hidden_model->list_of_overlapping_points[i];
       NPDPoint centroid;
-      
+
       npd_compute_centroid_of_overlapping_points (list_of_ops->num_of_points,
                                                   list_of_ops->points,
                                                   NULL,
