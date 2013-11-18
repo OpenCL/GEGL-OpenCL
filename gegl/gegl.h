@@ -978,7 +978,7 @@ void        gegl_render_op_valist (GeglBuffer   *source_buffer,
  */
 GeglNode *gegl_node (const gchar *op_type,
                      const gchar *first_property_name,
-                     ...);
+                     ...) G_GNUC_DEPRECATED;
 
 
 /**
@@ -994,7 +994,7 @@ GeglNode *gegl_node (const gchar *op_type,
  *
  * Return value: (transfer full):a GeglNode graph.
  */
-GeglNode *gegl_graph (GeglNode *node);
+GeglNode *gegl_graph (GeglNode *node) G_GNUC_DEPRECATED;
 
 
 #define GEGL_ALIGNED __restrict__ __attribute__((__aligned__ (16)))
