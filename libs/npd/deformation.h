@@ -24,25 +24,7 @@
 
 #include "npd_common.h"
 
-void  npd_compute_centroid_from_weighted_points
-                                        (gint              num_of_points,
-                                         NPDPoint          points[],
-                                         gfloat            weights[],
-                                         NPDPoint         *centroid);
-void  npd_compute_centroid_of_overlapping_points
-                                        (gint              num_of_points,
-                                         NPDPoint         *points[],
-                                         gfloat            weights[],
-                                         NPDPoint         *centroid);
-void  npd_compute_ARSAP_transformation  (gint              num_of_points,
-                                         NPDPoint          reference_shape[],
-                                         NPDPoint          current_shape[],
-                                         gfloat            weights[],
-                                         gboolean          ASAP);
-void  npd_compute_ARSAP_transformations (NPDHiddenModel   *model);
 void  npd_deform_model                  (NPDModel         *model,
                                          gint              rigidity);
-void  npd_deform_model_once             (NPDModel         *model);
-void  npd_deform_hidden_model_once      (NPDHiddenModel   *hidden_model);
 
 #endif	/* __NPD_DEFORMATION_H__ */

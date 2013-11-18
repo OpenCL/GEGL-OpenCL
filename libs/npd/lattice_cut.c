@@ -28,7 +28,7 @@
 #define NPD_SWAP_INTS(i,j) { gint tmp = i; i = j; j = tmp; }
 
 /* only works for straight lines */
-gboolean
+static gboolean
 npd_is_edge_empty (NPDImage *image,
                    gint      X1,
                    gint      Y1,

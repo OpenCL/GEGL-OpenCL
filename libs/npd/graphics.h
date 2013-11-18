@@ -59,10 +59,8 @@ void        npd_draw_model                    (NPDModel   *model,
 void        npd_draw_mesh                     (NPDModel   *model,
                                                NPDDisplay *display);
 
-gboolean    npd_load_image                    (NPDImage   *image,
-                                               const char *path);
 void        npd_destroy_image                 (NPDImage   *image);
-//void        npd_draw_image                    (NPDImage *image);
+
 void        npd_texture_fill_triangle         (gint        x1,
                                                gint        y1,
                                                gint        x2,

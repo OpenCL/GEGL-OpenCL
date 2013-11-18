@@ -22,7 +22,7 @@
 #include "deformation.h"
 #include <math.h>
 
-void
+static void
 npd_compute_centroid_of_overlapping_points (gint      num_of_points,
                                             NPDPoint *points[],
                                             gfloat    weights[],
@@ -45,7 +45,7 @@ npd_compute_centroid_of_overlapping_points (gint      num_of_points,
   centroid->y = y_sum / weights_sum;
 }
 
-void
+static void
 npd_compute_centroid_from_weighted_points (gint      num_of_points,
                                            NPDPoint  points[],
                                            gfloat    weights[],
@@ -67,7 +67,7 @@ npd_compute_centroid_from_weighted_points (gint      num_of_points,
   centroid->y = y_sum / weights_sum;
 }
 
-void
+static void
 npd_compute_ARSAP_transformation (gint     num_of_points,
                                   NPDPoint reference_points[],
                                   NPDPoint current_points[],
@@ -139,7 +139,7 @@ npd_compute_ARSAP_transformation (gint     num_of_points,
     }
 }
 
-void
+static void
 npd_compute_ARSAP_transformations (NPDHiddenModel *hidden_model)
 {
   gint     i;
@@ -156,40 +156,7 @@ npd_compute_ARSAP_transformations (NPDHiddenModel *hidden_model)
     }
 }
 
-void
-npd_deform_model (NPDModel *model,
-                  gint      rigidity)
-{
-  gint i;
-  for (i = 0; i < rigidity; ++i)
-    {
-      npd_deform_model_once (model);
-    }
-}
-
-void
-npd_deform_model_once (NPDModel *model)
-{
-  gint i, j;
-
-  /* updates associated overlapping points according to this control point */
-  for (i = 0; i < model->control_points->len; ++i)
-    {
-      NPDControlPoint *cp = &g_array_index (model->control_points,
-                                            NPDControlPoint,
-                                            i);
-
-      for (j = 0; j < cp->overlapping_points->num_of_points; ++j)
-        {
-          npd_set_point_coordinates (cp->overlapping_points->points[j],
-                                     &cp->point);
-        }
-    }
-
-  npd_deform_hidden_model_once (model->hidden_model);
-}
-
-void
+static void
 npd_deform_hidden_model_once (NPDHiddenModel *hidden_model)
 {
   gint i, j;
@@ -213,5 +180,38 @@ npd_deform_hidden_model_once (NPDHiddenModel *hidden_model)
           list_of_ops->points[j]->x = centroid.x;
           list_of_ops->points[j]->y = centroid.y;
         }
+    }
+}
+
+static void
+npd_deform_model_once (NPDModel *model)
+{
+  gint i, j;
+
+  /* updates associated overlapping points according to this control point */
+  for (i = 0; i < model->control_points->len; ++i)
+    {
+      NPDControlPoint *cp = &g_array_index (model->control_points,
+                                            NPDControlPoint,
+                                            i);
+
+      for (j = 0; j < cp->overlapping_points->num_of_points; ++j)
+        {
+          npd_set_point_coordinates (cp->overlapping_points->points[j],
+                                     &cp->point);
+        }
+    }
+
+  npd_deform_hidden_model_once (model->hidden_model);
+}
+
+void
+npd_deform_model (NPDModel *model,
+                  gint      rigidity)
+{
+  gint i;
+  for (i = 0; i < rigidity; ++i)
+    {
+      npd_deform_model_once (model);
     }
 }

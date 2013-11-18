@@ -19,22 +19,18 @@
  * Copyright (C) 2013 Marek Dvoroznak <dvoromar@gmail.com>
  */
 
-#ifndef __REFINE_H__
-#define	__REFINE_H__
+#ifndef __LATTICE_CUT_H__
+#define __LATTICE_CUT_H__
 
 #include "npd_common.h"
 
-gboolean     npd_is_edge_empty    (NPDImage *image,
-                                   gint      X1,
-                                   gint      Y1,
-                                   gint      X2,
-                                   gint      Y2);
 GList**      npd_find_edges       (NPDImage *image,
                                    gint      count_x,
                                    gint      count_y,
                                    gint      square_size);
+
 GList*       npd_cut_edges        (GList   **edges,
                                    gint      ow,
                                    gint      oh);
 
-#endif	/* __REFINE_H__ */
+#endif /* __LATTICE_CUT_H__ */
