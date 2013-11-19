@@ -192,9 +192,6 @@ cl_process (GeglOperation       *operation,
   return  FALSE;
 
 error:
-  if (cl_random_data)
-    gegl_clReleaseMemObject (cl_random_data);
-
   return TRUE;
 }
 
