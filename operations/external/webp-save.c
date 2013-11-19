@@ -55,7 +55,6 @@ process (GeglOperation       *operation,
   const GeglRectangle *bounds = gegl_buffer_get_extent (input);
 
   FILE* file;
-  gboolean alpha;
   int status;
 
   WebPConfig config;
@@ -63,8 +62,6 @@ process (GeglOperation       *operation,
 
   if (!WebPConfigPreset (&config, WEBP_PRESET_DEFAULT, o->quality))
     return FALSE;
-
-  alpha = babl_format_has_alpha (gegl_buffer_get_format (input));
 
   if (!WebPValidateConfig (&config))
     return FALSE;
