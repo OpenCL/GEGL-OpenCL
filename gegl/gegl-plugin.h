@@ -84,35 +84,6 @@ void            gegl_extension_handler_register_saver
 const gchar   * gegl_extension_handler_get         (const gchar         *extension);
 const gchar   * gegl_extension_handler_get_saver   (const gchar         *extension);
 
-
-/* code template utility, updates the jacobian matrix using
- * a user defined mapping function for displacement, example
- * with an identity transform (note that for the identity
- * transform this is massive computational overhead that can
- * be skipped by passing NULL to the sampler.
- *
- * #define gegl_unmap(x,y,dx,dy) { dx=x; dy=y; }
- *
- * gegl_sampler_compute_scale (scale, x, y);
- * gegl_unmap(x,y,sample_x,sample_y);
- * gegl_buffer_sample (buffer, sample_x, sample_y, scale, dest, format,
- *                     GEGL_SAMPLER_LOHALO);
- *
- * #undef gegl_unmap      // IMPORTANT undefine map macro
- */
-#define gegl_sampler_compute_scale(matrix, x, y) \
-{                                       \
-  float ax, ay, bx, by;                 \
-  gegl_unmap(x + 0.5, y, ax, ay);       \
-  gegl_unmap(x - 0.5, y, bx, by);       \
-  matrix.coeff[0][0] = ax - bx;         \
-  matrix.coeff[1][0] = ay - by;         \
-  gegl_unmap(x, y + 0.5, ax, ay);       \
-  gegl_unmap(x, y - 0.5, bx, by);       \
-  matrix.coeff[0][1] = ax - bx;         \
-  matrix.coeff[1][1] = ay - by;         \
-}
-
 #include <operation/gegl-operation.h>
 #include <operation/gegl-operation-filter.h>
 #include <operation/gegl-operation-area-filter.h>
