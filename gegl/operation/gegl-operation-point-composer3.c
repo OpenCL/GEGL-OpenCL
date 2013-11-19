@@ -114,7 +114,7 @@ gegl_operation_composer3_process2 (GeglOperation        *operation,
       if (result->width == 0 || result->height == 0)
         success = TRUE;
       else
-        success = klass->process (operation, input, aux, aux2, output, result, context->level);
+        success = klass->process (operation, input, aux, aux2, output, result, level);
 
       if (input)
          g_object_unref (input);
