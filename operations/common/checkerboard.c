@@ -76,7 +76,7 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static const char* checkerboard_cl_source =
-"static inline int tile_index (int coordinate, int stride)   \n"
+"inline int tile_index (int coordinate, int stride)          \n"
 "{                                                           \n"
 "  if (coordinate >= 0)                                      \n"
 "    return coordinate / stride;                             \n"
@@ -312,11 +312,9 @@ gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationSourceClass      *source_class;
-  GeglOperationPointRenderClass *point_render_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class = GEGL_OPERATION_SOURCE_CLASS (klass);
-  point_render_class = GEGL_OPERATION_POINT_RENDER_CLASS (klass);
 
   source_class->process = operation_source_process;
   operation_class->get_bounding_box = get_bounding_box;
