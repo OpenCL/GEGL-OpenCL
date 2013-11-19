@@ -25,8 +25,7 @@
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-sink.h"
-#include "graph/gegl-node.h"
-#include "graph/gegl-pad.h"
+#include "gegl-operation-context.h"
 
 static gboolean      gegl_operation_sink_process                 (GeglOperation        *operation,
                                                                   GeglOperationContext *context,

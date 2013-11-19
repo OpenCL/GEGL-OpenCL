@@ -20,7 +20,6 @@
 #ifndef __GEGL_APPLY_H__
 #define __GEGL_APPLY_H__
 
-#include "operation/gegl-operation-context.h"
 #include <gegl/buffer/gegl-buffer.h>
 
 G_BEGIN_DECLS

@@ -20,7 +20,6 @@
 #ifndef __GEGL_NODE_H__
 #define __GEGL_NODE_H__
 
-#include "operation/gegl-operation-context.h"
 #include <gegl/buffer/gegl-buffer.h>
 #include <gegl/buffer/gegl-cache.h>
 

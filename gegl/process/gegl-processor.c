@@ -25,6 +25,7 @@
 #include "buffer/gegl-region.h"
 #include "graph/gegl-node.h"
 
+#include "operation/gegl-operation-context.h"
 #include "operation/gegl-operation-sink.h"
 
 #include "gegl-config.h"
