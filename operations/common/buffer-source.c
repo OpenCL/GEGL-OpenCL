@@ -141,7 +141,7 @@ process (GeglOperation        *operation,
       /* mark that this buffer should not be used for in-place
        * processing.
        */
-      gegl_object_set_has_forked (o->buffer);
+      gegl_object_set_has_forked (G_OBJECT (o->buffer));
     }
   return TRUE;
 }

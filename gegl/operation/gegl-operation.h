@@ -269,6 +269,25 @@ gboolean gegl_operation_cl_set_kernel_args (GeglOperation *operation,
 gboolean gegl_can_do_inplace_processing      (GeglOperation       *operation,
                                               GeglBuffer          *input,
                                               const GeglRectangle *result);
+
+/**
+ * gegl_object_set_has_forked: (skip)
+ * @object: Object to mark
+ *
+ * Mark an object as "forked", indicating that it should not be modified
+ * in place by gegl operations. This should only be used inside of the
+ * process method of a GeglOperation subclass.
+ */
+void     gegl_object_set_has_forked       (GObject *object);
+
+/**
+ * gegl_object_get_has_forked: (skip)
+ * @object: Object to check
+ *
+ * Returns TRUE if the object has been marked as "forked".
+ */
+gboolean  gegl_object_get_has_forked      (GObject *object);
+
 G_END_DECLS
 
 /***

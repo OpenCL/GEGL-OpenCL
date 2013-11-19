@@ -347,7 +347,7 @@ gegl_graph_get_shared_empty (GeglGraphTraversal *path)
     {
       path->shared_empty = gegl_buffer_new_ram (GEGL_RECTANGLE (0, 0, 0, 0),
                                                 babl_format ("RGBA float"));
-      gegl_object_set_has_forked (path->shared_empty);
+      gegl_object_set_has_forked (G_OBJECT (path->shared_empty));
     }
   return path->shared_empty;
 }
@@ -439,7 +439,7 @@ gegl_graph_process (GeglGraphTraversal *path)
                      g_list_length (targets));
           
           if (g_list_length (targets) > 1)
-            gegl_object_set_has_forked (operation_result);
+            gegl_object_set_has_forked (G_OBJECT (operation_result));
 
           for (targets_iter = targets; targets_iter; targets_iter = g_list_next (targets_iter))
             {

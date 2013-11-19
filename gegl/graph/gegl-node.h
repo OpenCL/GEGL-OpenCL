@@ -223,13 +223,6 @@ void
 gegl_node_emit_computed (GeglNode *node,
                          const GeglRectangle *rect);
 
-/* macros used to set flags on objects passed in the graph */
-
-#define gegl_object_set_has_forked(object) \
-      g_object_set_data(G_OBJECT(object), "gegl has-forked", (void*)0xf)
-#define gegl_object_get_has_forked(object) \
-      (g_object_get_data(G_OBJECT(object), "gegl has-forked")!=NULL)
-
 #define GEGL_MAX_THREADS 16
 
 G_END_DECLS

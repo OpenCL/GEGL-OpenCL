@@ -1134,8 +1134,8 @@ gegl_transform_process (GeglOperation        *operation,
                                             source abyss) */
                       NULL);
 
-      if (gegl_object_get_has_forked (input))
-        gegl_object_set_has_forked (output);
+      if (gegl_object_get_has_forked (G_OBJECT (input)))
+        gegl_object_set_has_forked (G_OBJECT (output));
 
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
 

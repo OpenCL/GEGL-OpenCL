@@ -185,11 +185,24 @@ gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
   if (!input ||
       GEGL_IS_CACHE (input))
     return FALSE;
-  if (gegl_object_get_has_forked (input))
+  if (gegl_object_get_has_forked (G_OBJECT (input)))
     return FALSE;
 
   if (input->format == gegl_operation_get_format (operation, "output") &&
       gegl_rectangle_contains (gegl_buffer_get_extent (input), result))
     return TRUE;
   return FALSE;
+}
+
+void
+gegl_object_set_has_forked (GObject *object)
+{
+  g_object_set_data (object, "gegl has-forked", (void*)0xf);
+}
+
+
+gboolean
+gegl_object_get_has_forked (GObject *object)
+{
+  return g_object_get_data(object, "gegl has-forked") != NULL;
 }
