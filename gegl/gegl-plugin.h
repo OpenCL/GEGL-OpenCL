@@ -26,7 +26,9 @@
 
 #include <string.h>
 #include <glib-object.h>
+#include <gmodule.h>
 #include <gegl.h>
+#include <gegl-paramspecs.h>
 
 G_BEGIN_DECLS
 
@@ -36,12 +38,6 @@ typedef struct _GeglOperationContext GeglOperationContext;
 typedef struct _GeglPad              GeglPad;
 typedef struct _GeglConnection       GeglConnection;
 
-#include <gegl-matrix.h>
-#include <gegl-utils.h>
-#include <gegl-buffer.h>
-#include <gegl-paramspecs.h>
-#include <gmodule.h>
-
 typedef struct _GeglModule     GeglModule;
 typedef struct _GeglModuleInfo GeglModuleInfo;
 typedef struct _GeglModuleDB   GeglModuleDB;
@@ -50,8 +46,6 @@ typedef struct _GeglModuleDB   GeglModuleDB;
  * Writing GEGL operations
  *
  */
-
-/*#include <geglmodule.h>*/
 
 /*  increment the ABI version each time one of the following changes:
  *
@@ -124,23 +118,6 @@ const gchar   * gegl_extension_handler_get_saver   (const gchar         *extensi
   matrix.coeff[1][1] = ay - by;         \
 }
 
-typedef struct
-{
-  GObject       parent_instance;
-  void (* get) (GeglSampler    *self,
-                gdouble         x,
-                gdouble         y,
-                GeglMatrix2    *scale,
-                void           *output,
-                GeglAbyssPolicy repeat_mode);
-} SamplerMock;
-
-
-#define gegl_sampler_get(sampler,x,y,scale,dest,repeat) \
-  ((SamplerMock*)(sampler))->get((sampler),(x),(y),(scale),(dest),(repeat))
-
-#include <glib-object.h>
-#include <babl/babl.h>
 #include <operation/gegl-operation.h>
 #include <operation/gegl-operation-filter.h>
 #include <operation/gegl-operation-area-filter.h>
@@ -154,8 +131,6 @@ typedef struct
 #include <operation/gegl-operation-source.h>
 #include <operation/gegl-operation-sink.h>
 #include <operation/gegl-operation-meta.h>
-
-#include <gegl-lookup.h>
 
 G_END_DECLS
 #endif  /* __GEGL_PLUGIN_H__ */
