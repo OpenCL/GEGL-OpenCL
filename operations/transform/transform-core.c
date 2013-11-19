@@ -1157,9 +1157,9 @@ gegl_transform_process (GeglOperation        *operation,
                                          transform->sampler);
 
       if (gegl_matrix3_is_affine (&matrix))
-        transform_affine  (output, input, &matrix, sampler, context->level);
+        transform_affine  (output, input, &matrix, sampler, level);
       else
-        transform_generic (output, input, &matrix, sampler, context->level);
+        transform_generic (output, input, &matrix, sampler, level);
 
       g_object_unref (sampler);
 
