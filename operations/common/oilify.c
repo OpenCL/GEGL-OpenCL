@@ -399,7 +399,7 @@ process (GeglOperation       *operation,
   gint total_pixels;
 
   if (gegl_operation_use_opencl (operation))
-    if(cl_process(operation, input, output, result))
+    if (cl_process (operation, input, output, result))
       return TRUE;
 
   src_rect.x      = result->x - op_area->left;
@@ -411,13 +411,15 @@ process (GeglOperation       *operation,
 
   src_buf = g_slice_alloc (4 * total_pixels * sizeof (gfloat));
   dst_buf = g_slice_alloc (4 * n_pixels * sizeof (gfloat));
-  if(o->use_inten)
+  if (o->use_inten)
     inten_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
+  else
+    inten_buf = NULL;
 
   gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RGBA float"),
                    src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
 
-  if(o->use_inten)
+  if (inten_buf)
     gegl_buffer_get (input, &src_rect, 1.0, babl_format ("Y float"),
                    inten_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
 
@@ -425,7 +427,7 @@ process (GeglOperation       *operation,
 
   while (n_pixels--)
     {
-      if(o->use_inten)
+      if (inten_buf)
         oilify_pixel_inten (x, y, o->mask_radius, o->exponent, o->intensities,
                    src_rect.width, src_buf, inten_buf, out_pixel);
       else
@@ -448,7 +450,7 @@ process (GeglOperation       *operation,
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
   g_slice_free1 (4 * total_pixels * sizeof (gfloat), src_buf);
   g_slice_free1 (4 * n_pixels * sizeof (gfloat), dst_buf);
-  if(o->use_inten)
+  if (inten_buf)
     g_slice_free1 (total_pixels * sizeof (gfloat), inten_buf);
 
   return  TRUE;
