@@ -33,11 +33,6 @@
 G_BEGIN_DECLS
 
 /* Extra types needed when coding operations */
-typedef struct _GeglOperation        GeglOperation;
-typedef struct _GeglOperationContext GeglOperationContext;
-typedef struct _GeglPad              GeglPad;
-typedef struct _GeglConnection       GeglConnection;
-
 typedef struct _GeglModule     GeglModule;
 typedef struct _GeglModuleInfo GeglModuleInfo;
 typedef struct _GeglModuleDB   GeglModuleDB;

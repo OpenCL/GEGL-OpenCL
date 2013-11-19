@@ -30,12 +30,6 @@ typedef struct _GeglFinishVisitor    GeglFinishVisitor;
 typedef struct _GeglHaveVisitor      GeglHaveVisitor;
 typedef struct _GeglNeedVisitor      GeglNeedVisitor;
 typedef struct _GeglDotVisitor       GeglDotVisitor;
-#ifndef __GEGL_PLUGIN_H__
-typedef struct _GeglPad              GeglPad;
-typedef struct _GeglOperation        GeglOperation;
-typedef struct _GeglOperationContext GeglOperationContext;
-typedef struct _GeglConnection       GeglConnection;
-#endif
 typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;
 typedef struct _GeglLockVisitor      GeglLockVisitor;
 typedef struct _GeglUnlockVisitor    GeglUnlockVisitor;
