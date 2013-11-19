@@ -1590,8 +1590,6 @@ gegl_node_get_bounding_box (GeglNode *self)
   return self->have_rect;
 }
 
-#if 1
-
 void
 gegl_node_process (GeglNode *self)
 {
@@ -1604,45 +1602,6 @@ gegl_node_process (GeglNode *self)
   while (gegl_processor_work (processor, NULL)) ;
   g_object_unref (processor);
 }
-
-#else
-/* simplest form of GeglProcess that processes all data in one
- *
- * single large chunk
- */
-void
-gegl_node_process (GeglNode *self)
-{
-  GeglNode        *input;
-  GeglOperationContext *context;
-  GeglBuffer      *buffer;
-  GeglRectangle    defined;
-
-  g_return_if_fail (GEGL_IS_NODE (self));
-  g_return_if_fail (g_type_is_a (G_OBJECT_TYPE (self->operation),
-                                 GEGL_TYPE_OPERATION_SINK));
-
-  input   = gegl_node_get_producer (self, "input", NULL);
-  defined = gegl_node_get_bounding_box (input);
-  buffer  = gegl_node_apply_roi (input, &defined);
-
-  g_assert (GEGL_IS_BUFFER (buffer));
-  context = gegl_node_add_context (self, &defined);
-
-  {
-    GValue value = { 0, };
-    g_value_init (&value, GEGL_TYPE_BUFFER);
-    g_value_set_object (&value, buffer);
-    gegl_operation_context_set_property (context, "input", &value);
-    g_value_unset (&value);
-  }
-
-  gegl_operation_context_set_result_rect (context, &defined);
-  gegl_operation_process (self->operation, context, "output", &defined);
-  gegl_node_remove_context (self, &defined);
-  g_object_unref (buffer);
-}
-#endif
 
 GeglNode *
 gegl_node_detect (GeglNode *root,
