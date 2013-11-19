@@ -24,8 +24,11 @@
  *
  * It would be better to use a proper xml parser and/or xpath,
  * but we don't want to have more dependencies than
- * GEGL itself, to ensure that the tests are always available. */
-static void
+ * GEGL itself, to ensure that the tests are always available.
+ */
+void assert_equivalent_xml (const gchar *actual, const gchar *expected);
+
+void
 assert_equivalent_xml(const gchar *actual, const gchar *expected)
 {
 	gboolean equal;

@@ -92,6 +92,7 @@ test_load_multiple_nodes (void)
 }
 
 
+#if 0
 /* Test that loading a subgraph works */
 static void
 test_load_subgraph (void)
@@ -154,7 +155,7 @@ test_load_subgraph (void)
 	g_slist_free(toplevel_children);
     g_object_unref(graph);
 }
-
+#endif
 
 int
 main (int argc, char *argv[])

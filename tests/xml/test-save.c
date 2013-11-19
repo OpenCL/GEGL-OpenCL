@@ -107,6 +107,7 @@ test_save_multiple_nodes (void)
 }
 
 
+#if 0
 /* Test that saving a subgraph works */
 static void
 test_save_toplevel_graph (void)
@@ -144,7 +145,7 @@ test_save_toplevel_graph (void)
     g_object_unref(graph);
     g_free(xml);
 }
-
+#endif
 
 int
 main (int argc, char *argv[])
