@@ -113,37 +113,21 @@ void             npd_remove_control_points      (NPDModel        *model,
 void             npd_remove_all_control_points  (NPDModel        *model);
 void             npd_set_control_point_weight   (NPDControlPoint *cp,
                                                  gfloat           weight);
-gboolean         npd_equal_coordinates          (NPDPoint        *p1,
-                                                 NPDPoint        *p2);
-gboolean         npd_equal_coordinates_epsilon  (NPDPoint        *p1,
-                                                 NPDPoint        *p2,
-                                                 gfloat           epsilon);
 NPDControlPoint *npd_get_control_point_with_radius_at
                                                 (NPDModel        *model,
                                                  NPDPoint        *coord,
                                                  gfloat           control_point_radius);
-NPDControlPoint *npd_get_control_point_at       (NPDModel        *model,
-                                                 NPDPoint        *coord);
 void             npd_create_square              (NPDBone         *square,
                                                  gint             x,
                                                  gint             y,
                                                  gint             width,
                                                  gint             height);
-void             npd_create_list_of_overlapping_points
-                                                (NPDHiddenModel  *model);
-void             add_point_to_suitable_cluster  (GHashTable      *coords_to_cluster,
-                                                 NPDPoint        *point,
-                                                 GPtrArray       *list_of_overlapping_points);
-void             npd_set_overlapping_points_weight
-                                                (NPDOverlappingPoints *op,
-                                                 gfloat           weight);
 void             npd_set_point_coordinates      (NPDPoint        *target,
                                                  NPDPoint        *source);
 void             npd_set_deformation_type       (NPDModel        *model,
                                                  gboolean         ASAP,
                                                  gboolean         MLS_weights);
 void             npd_compute_MLS_weights        (NPDModel        *model);
-void             npd_reset_weights              (NPDHiddenModel  *hidden_model);
 
 void             npd_print_model                (NPDModel        *model,
                                                  gboolean         print_control_points);

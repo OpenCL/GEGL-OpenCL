@@ -25,8 +25,19 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-gint  npd_int_sort_function_descending (gconstpointer a,
-                                        gconstpointer b);
+static NPDControlPoint *npd_get_control_point_at (NPDModel     *model,
+                                                  NPDPoint     *coord);
+
+#if 0
+static void add_point_to_suitable_cluster     (GHashTable      *coords_to_cluster,
+                                               NPDPoint        *point,
+                                               GPtrArray       *list_of_overlapping_points);
+#endif
+
+static void npd_set_overlapping_points_weight (NPDOverlappingPoints *op,
+                                               gfloat           weight);
+
+static void npd_reset_weights                 (NPDHiddenModel  *hidden_model);
 
 void
 npd_init_model (NPDModel *model)
@@ -181,7 +192,7 @@ npd_remove_control_point (NPDModel        *model,
     }
 }
 
-gint
+static gint
 npd_int_sort_function_descending (gconstpointer a,
                                   gconstpointer b)
 {
@@ -243,14 +254,7 @@ npd_set_control_point_weight (NPDControlPoint *cp,
   npd_set_overlapping_points_weight(cp->overlapping_points, weight);
 }
 
-gboolean
-npd_equal_coordinates (NPDPoint *p1,
-                       NPDPoint *p2)
-{
-  return npd_equal_coordinates_epsilon(p1, p2, NPD_EPSILON);
-}
-
-gboolean
+static gboolean
 npd_equal_coordinates_epsilon (NPDPoint *p1,
                                NPDPoint *p2,
                                gfloat    epsilon)
@@ -263,6 +267,15 @@ npd_equal_coordinates_epsilon (NPDPoint *p1,
   
   return FALSE;
 }
+
+#if 0
+static gboolean
+npd_equal_coordinates (NPDPoint *p1,
+                       NPDPoint *p2)
+{
+  return npd_equal_coordinates_epsilon(p1, p2, NPD_EPSILON);
+}
+#endif
 
 NPDControlPoint*
 npd_get_control_point_with_radius_at (NPDModel        *model,
@@ -286,7 +299,7 @@ npd_get_control_point_with_radius_at (NPDModel        *model,
   return NULL;
 }
 
-NPDControlPoint*
+static NPDControlPoint*
 npd_get_control_point_at (NPDModel *model,
                           NPDPoint *coord)
 {
@@ -321,7 +334,8 @@ npd_create_square (NPDBone *square,
     }
 }
 
-void
+#if 0
+static void
 npd_create_list_of_overlapping_points (NPDHiddenModel *hm)
 {
   gint        i, j, num_of_bones;
@@ -382,7 +396,7 @@ npd_create_list_of_overlapping_points (NPDHiddenModel *hm)
 name_of_string = g_new (gchar, 10);                                            \
 g_ascii_dtostr (name_of_string, 10, value);
 
-void
+static void
 add_point_to_suitable_cluster (GHashTable *coords_to_cluster,
                                NPDPoint   *point,
                                GPtrArray  *list_of_overlapping_points)
@@ -416,8 +430,9 @@ add_point_to_suitable_cluster (GHashTable *coords_to_cluster,
   
   g_ptr_array_add (op, point);
 }
+#endif
 
-void
+static void
 npd_set_overlapping_points_weight (NPDOverlappingPoints *op,
                                    gfloat                weight)
 {
@@ -503,7 +518,7 @@ npd_compute_MLS_weights (NPDModel *model)
     }
 }
 
-void
+static void
 npd_reset_weights (NPDHiddenModel *hm)
 {
   NPDOverlappingPoints *op;
