@@ -77,25 +77,28 @@ int main(int argc, char *argv[])
 void
 init_main_context (SDL_Surface *main_window, MainContext *context)
 {
-  GeglNode *ptn = gegl_node_new ();
+  GeglNode   *ptn = gegl_node_new ();
+  GeglNode   *background_node, *over, *buffer_src;
+
+  GeglColor  *color1 = gegl_color_new ("rgb(0.4, 0.4, 0.4)");
+  GeglColor  *color2 = gegl_color_new ("rgb(0.6, 0.6, 0.6)");
+  GeglBuffer *paint_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, 0, 0), babl_format ("RGBA float"));
+
   g_object_set (ptn, "dont-cache", TRUE, NULL);
 
   /* Our graph represents a single drawing layer over a fixed background */
-  GeglColor *color1 = gegl_color_new ("rgb(0.4, 0.4, 0.4)");
-  GeglColor *color2 = gegl_color_new ("rgb(0.6, 0.6, 0.6)");
-  GeglBuffer *paint_buffer = gegl_buffer_new (GEGL_RECTANGLE (0, 0, 0, 0), babl_format ("RGBA float"));
-  GeglNode *background_node = gegl_node_new_child (ptn,
-                                                   "operation", "gegl:checkerboard",
-                                                   "color1", color1,
-                                                   "color2", color2,
-                                                   NULL);
-  GeglNode *over            = gegl_node_new_child (ptn,
-                                                   "operation", "gegl:over",
-                                                   NULL);
-  GeglNode *buffer_src      = gegl_node_new_child (ptn,
-                                                   "operation", "gegl:buffer-source",
-                                                   "buffer", paint_buffer,
-                                                   NULL);
+  background_node = gegl_node_new_child (ptn,
+                                         "operation", "gegl:checkerboard",
+                                         "color1", color1,
+                                         "color2", color2,
+                                         NULL);
+  over            = gegl_node_new_child (ptn,
+                                         "operation", "gegl:over",
+                                         NULL);
+  buffer_src      = gegl_node_new_child (ptn,
+                                         "operation", "gegl:buffer-source",
+                                         "buffer", paint_buffer,
+                                         NULL);
 
   /* The "aux" node of "gegl:over" is the image on top */
   gegl_node_connect_to (background_node, "output", over, "input");
@@ -175,6 +178,9 @@ draw_circle (GeglBuffer *buffer, int x, int y, float r)
   GeglRectangle roi;
   GeglBufferIterator *iter;
 
+  float color_pixel[4] = {0.0f, 0.0f, 0.0f, 1.0f};
+  float r_sqr = r*r;
+
   roi.x = x - r - 0.5;
   roi.y = y - r - 0.5;
   roi.width  = 2.0 * r + 1.5;
@@ -189,10 +195,6 @@ draw_circle (GeglBuffer *buffer, int x, int y, float r)
                                    babl_format ("RGBA float"),
                                    GEGL_BUFFER_READWRITE,
                                    GEGL_ABYSS_NONE);
-
-  float color_pixel[4] = {0.0f, 0.0f, 0.0f, 1.0f};
-
-  float r_sqr = r*r;
 
   while (gegl_buffer_iterator_next (iter))
     {
