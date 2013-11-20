@@ -49,12 +49,6 @@ typedef struct
 static guint     tuple_hash  (gconstpointer v);
 static gboolean  tuple_equal (gconstpointer v1,
                               gconstpointer v2);
-static void      get_pixel   (gint    x,
-                              gint    y,
-                              gint    buf_width,
-                              gfloat *src_begin,
-                              gfloat *dst);
-
 static guint
 tuple_hash (gconstpointer v)
 {
@@ -70,21 +64,6 @@ tuple_equal (gconstpointer v1,
   const pair *data2 = v2;
   return (g_int_equal (&data1->x, &data2->x) &&
           g_int_equal (&data1->y, &data2->y));
-}
-
-static void
-get_pixel (gint    x,
-           gint    y,
-           gint    buf_width,
-           gfloat *src_begin,
-           gfloat *dst)
-{
-  gint b;
-  gfloat* src = src_begin + 4*(x + buf_width*y);
-  for (b = 0; b < 4; b++)
-    {
-      dst[b] = src[b];
-    }
 }
 
 static void
@@ -115,40 +94,65 @@ threshold_exceeded (gfloat  *pixel1,
 }
 
 static void
-calculate_bleed (GHashTable    *h,
-                 gfloat        *data,
-                 gfloat         threshold,
-                 gfloat         max_length,
-                 GeglRectangle *rect,
-                 gint           seed)
+calculate_bleed (GeglOperation *operation,
+                 GeglBuffer    *input)
 {
-  gint x, y;
-  GRand *gr = g_rand_new_with_seed (seed);
-  for (y = 0; y < rect->height; y++)
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle rectA, rectB;
+  GeglBufferIterator *iter;
+  gfloat max_length = (gfloat) o->strength;
+  gfloat threshold  = o->threshold;
+  GHashTable *bleed_table = o->chant_data;
+
+  rectA = *gegl_operation_source_get_bounding_box (operation, "input");
+  rectA.width -= 3;
+  rectB = rectA;
+  rectB.x += 3;
+
+  if (rectA.width <= 0)
+    return;
+
+  iter = gegl_buffer_iterator_new (input,
+                                   &rectA,
+                                   0,
+                                   babl_format ("RGBA float"),
+                                   GEGL_BUFFER_READ,
+                                   GEGL_ABYSS_NONE);
+
+  gegl_buffer_iterator_add (iter,
+                            input,
+                            &rectB,
+                            0,
+                            babl_format ("RGBA float"),
+                            GEGL_BUFFER_READ,
+                            GEGL_ABYSS_NONE);
+
+  while (gegl_buffer_iterator_next (iter))
     {
-      for (x = 0; x < rect->width - 3; x++)
-        {
-          gfloat pixel1[4];
-          gfloat pixel2[4];
-          get_pixel (x, y, rect->width, data, pixel1);
-          get_pixel (x + 3, y, rect->width, data, pixel2);
-          if (threshold_exceeded (pixel1,
-                                  pixel2,
-                                  threshold))
-            {
-              pair *k = g_new (pair, 1);
-              gint *v = g_new (gint, 1);
-              gint bleed_length = 1 + (gint)(g_rand_double (gr) * max_length);
+      gint ix, iy;
+      gfloat *pixelsA = (gfloat *)iter->data[0];
+      gfloat *pixelsB = (gfloat *)iter->data[1];
 
-              k->x = x;
-              k->y = y;
+      for (ix = 0; ix < iter->roi[0].width; ix++)
+        for (iy = 0; iy < iter->roi[0].height; iy++)
+          {
+            gint idx = iy * iter->roi[0].width + ix * 4;
+            if (threshold_exceeded (&pixelsA[idx], &pixelsB[idx], threshold))
+              {
+                gint x = ix + iter->roi[0].x;
+                gint y = iy + iter->roi[0].y;
+                pair *k = g_new (pair, 1);
+                gint *v = g_new (gint, 1);
+                gint bleed_length = 1 + gegl_random_int_range (o->rand, x, y, 0, 0, 0, max_length);
 
-              *v = bleed_length;
-              g_hash_table_insert (h, k, v);
-            }
-        }
+                k->x = x;
+                k->y = y;
+
+                *v = bleed_length;
+                g_hash_table_insert (bleed_table, k, v);
+              }
+          }
     }
-  g_rand_free (gr);
 }
 
 static void
@@ -212,13 +216,8 @@ process (GeglOperation       *operation,
   g_mutex_lock (&mutex);
   if (!o->chant_data)
     {
-      GeglRectangle *whole_rect = gegl_operation_source_get_bounding_box (operation, "input");
-      gfloat *data = (gfloat*) gegl_buffer_linear_open (input, NULL, NULL, babl_format ("RGBA float"));
-
-      bleed_table = g_hash_table_new_full (tuple_hash, tuple_equal, g_free, g_free);
-      calculate_bleed (bleed_table, data, o->threshold, (gfloat) o->strength, whole_rect, o->seed);
-      o->chant_data = bleed_table;
-      gegl_buffer_linear_close (input, data);
+      o->chant_data = g_hash_table_new_full (tuple_hash, tuple_equal, g_free, g_free);
+      calculate_bleed (operation, input);
     }
   g_mutex_unlock (&mutex);
 
@@ -232,8 +231,8 @@ process (GeglOperation       *operation,
   total_src_pixels = src_rect.width * src_rect.height;
   total_dst_pixels = result->width * result->height;
 
-  src_buf = g_slice_alloc (4 * total_src_pixels * sizeof (gfloat));
-  dst_buf = g_slice_alloc (4 * total_dst_pixels * sizeof (gfloat));
+  src_buf = gegl_malloc (4 * total_src_pixels * sizeof (gfloat));
+  dst_buf = gegl_malloc (4 * total_dst_pixels * sizeof (gfloat));
 
   gegl_buffer_get (input,
                    &src_rect,
@@ -325,8 +324,8 @@ process (GeglOperation       *operation,
                    dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
 
-  g_slice_free1 (4 * total_src_pixels * sizeof (gfloat), src_buf);
-  g_slice_free1 (4 * total_dst_pixels * sizeof (gfloat), dst_buf);
+  gegl_free (src_buf);
+  gegl_free (dst_buf);
 
   return TRUE;
 }
