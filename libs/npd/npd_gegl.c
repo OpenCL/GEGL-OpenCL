@@ -19,20 +19,8 @@
  * Copyright (C) 2013 Marek Dvoroznak <dvoromar@gmail.com>
  */
 
-#include "npd_gegl.h"
+#include "npd_math.h"
 #include <glib.h>
-
-void
-npd_new_matrix (NPDMatrix **matrix)
-{
-  *matrix = g_new (NPDMatrix, 1);
-}
-
-void
-npd_destroy_matrix (NPDMatrix **matrix)
-{
-  g_free (*matrix);
-}
 
 void
 npd_compute_affinity (NPDPoint  *p11,
@@ -54,7 +42,7 @@ npd_compute_affinity (NPDPoint  *p11,
   X.coeff[0][2] = p31->x; X.coeff[1][2] = p31->y; X.coeff[2][2] = 1;
   
   gegl_matrix3_invert (&X);
-  gegl_matrix3_multiply (&Y, &X, &T->matrix);
+  gegl_matrix3_multiply (&Y, &X, T);
 }
 
 void
@@ -63,6 +51,6 @@ npd_apply_transformation (NPDMatrix *T,
                           NPDPoint  *dest)
 {
   gdouble x = src->x, y = src->y;
-  gegl_matrix3_transform_point (&T->matrix, &x, &y);
+  gegl_matrix3_transform_point (T, &x, &y);
   dest->x = x; dest->y = y;
 }

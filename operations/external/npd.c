@@ -55,7 +55,6 @@ gegl_chant_boolean (mesh_visible, _("mesh visible"),
 #include <stdio.h>
 #include <math.h>
 #include <npd/npd.h>
-#include <npd/npd_gegl.h>
 #include <cairo.h>
 
 struct _NPDImage

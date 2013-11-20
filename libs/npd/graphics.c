@@ -458,26 +458,23 @@ npd_texture_quadrilateral (NPDBone    *reference_bone,
   NPDPoint *p1 = current_bone->points;
   NPDPoint *p2 = reference_bone->points;
 
-  NPDMatrix *A = NULL;
-  npd_new_matrix (&A);
+  NPDMatrix A;
 
   npd_compute_affinity (&p1[0], &p1[1], &p1[2],
-                        &p2[0], &p2[1], &p2[2], A);
+                        &p2[0], &p2[1], &p2[2], &A);
   npd_texture_fill_triangle ((gint) p1[0].x, (gint) p1[0].y,
                              (gint) p1[1].x, (gint) p1[1].y,
                              (gint) p1[2].x, (gint) p1[2].y,
-                             A, input_image, output_image,
+                             &A, input_image, output_image,
                              settings);
 
   npd_compute_affinity (&p1[0], &p1[2], &p1[3],
-                        &p2[0], &p2[2], &p2[3], A);
+                        &p2[0], &p2[2], &p2[3], &A);
   npd_texture_fill_triangle ((gint) p1[0].x, (gint) p1[0].y,
                              (gint) p1[2].x, (gint) p1[2].y,
                              (gint) p1[3].x, (gint) p1[3].y,
-                             A, input_image, output_image,
+                             &A, input_image, output_image,
                              settings);
-
-  npd_destroy_matrix (&A);
 }
 
 void

@@ -52,7 +52,5 @@ gboolean    npd_equal_floats         (gfloat a,
                                       gfloat b);
 gfloat      npd_SED                  (NPDPoint *p1,
                                       NPDPoint *p2);
-void        npd_new_matrix           (NPDMatrix **matrix);
-void        npd_destroy_matrix       (NPDMatrix **matrix);
 
 #endif	/* __NPD_MATH_H__ */
