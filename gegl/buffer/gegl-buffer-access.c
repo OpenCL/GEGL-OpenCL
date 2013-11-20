@@ -1695,41 +1695,104 @@ gegl_buffer_clear (GeglBuffer          *dst,
 
 void
 gegl_buffer_set_pattern (GeglBuffer          *buffer,
-                         const GeglRectangle *rect, /* XXX:should be respected*/
+                         const GeglRectangle *rect,
                          GeglBuffer          *pattern,
-                         gdouble              x_offset,
-                         gdouble              y_offset)
+                         gint                 x_offset,
+                         gint                 y_offset)
 {
-  GeglRectangle src_rect = {0,}, dst_rect;
-  int pat_width, pat_height;
-  int cols, rows;
-  int col, row;
-  int width, height;
+  const GeglRectangle *pattern_extent;
+  const Babl          *buffer_format;
+  GeglRectangle        roi;                  /* the rect if not NULL, else the whole buffer */
+  GeglRectangle        pattern_data_extent;  /* pattern_extent clamped to rect */
+  GeglRectangle        extended_data_extent; /* many patterns to avoid copying too small chunks of data */
+  gint                 bpp;
+  gint                 x, y;
+  gint                 rowstride;
+  gpointer             pattern_data;
 
-  pat_width  = gegl_buffer_get_width (pattern);
-  pat_height = gegl_buffer_get_height (pattern);
-  width      = gegl_buffer_get_width (buffer);
-  height     = gegl_buffer_get_height (buffer);
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+  g_return_if_fail (GEGL_IS_BUFFER (pattern));
 
-  while (y_offset < 0) y_offset += pat_height;
-  while (x_offset < 0) x_offset += pat_width;
+  if (rect != NULL)
+    roi = *rect;
+  else
+    roi = *gegl_buffer_get_extent (buffer);
 
-  x_offset = fmod (x_offset, pat_width);
-  y_offset = fmod (y_offset, pat_height);
+  pattern_extent = gegl_buffer_get_extent (pattern);
+  buffer_format  = gegl_buffer_get_format (buffer);
 
-  src_rect.width  = dst_rect.width  = pat_width;
-  src_rect.height = dst_rect.height = pat_height;
+  pattern_data_extent.x      = - x_offset + roi.x;
+  pattern_data_extent.y      = - y_offset + roi.y;
+  pattern_data_extent.width  = MIN (pattern_extent->width,  roi.width);
+  pattern_data_extent.height = MIN (pattern_extent->height, roi.height);
 
-  cols = width  / pat_width  + 1;
-  rows = height / pat_height + 1;
+  /* Sanity */
+  if (pattern_data_extent.width < 1 || pattern_data_extent.height < 1)
+    return;
 
-  for (row = 0; row <= rows + 1; row++)
-    for (col = 0; col <= cols + 1; col++)
+  bpp = babl_format_get_bytes_per_pixel (buffer_format);
+
+  extended_data_extent = pattern_data_extent;
+
+  /* Avoid gegl_buffer_set on too small chunks */
+  while (extended_data_extent.width < buffer->tile_width * 2 &&
+         extended_data_extent.width < roi.width)
+    extended_data_extent.width += pattern_extent->width;
+
+  while (extended_data_extent.height < buffer->tile_height * 2 &&
+         extended_data_extent.height < roi.height)
+    extended_data_extent.height += pattern_extent->height;
+
+  /* XXX: Bad taste, the pattern needs to be small enough.
+   * See Bug 712814 for an alternative malloc-free implementation */
+  pattern_data = gegl_malloc (extended_data_extent.width *
+                              extended_data_extent.height *
+                              bpp);
+
+  rowstride = extended_data_extent.width * bpp;
+
+  /* only do babl conversions once on the whole pattern */
+  gegl_buffer_get (pattern, &pattern_data_extent, 1.0,
+                   buffer_format, pattern_data,
+                   rowstride, GEGL_ABYSS_LOOP);
+
+  /* fill the remaining space by duplicating the small pattern */
+  for (y = 0; y < pattern_data_extent.height; y++)
+    for (x = pattern_extent->width;
+         x < extended_data_extent.width;
+         x *= 2)
       {
-        dst_rect.x = x_offset + (col-1) * pat_width;
-        dst_rect.y = y_offset + (row-1) * pat_height;
-        gegl_buffer_copy (pattern, &src_rect, buffer, &dst_rect);
+        guchar *src  = ((guchar*) pattern_data) + y * rowstride;
+        guchar *dst  = src + x * bpp;
+        gint    size = bpp * MIN (extended_data_extent.width - x, x);
+        memcpy (dst, src, size);
       }
+
+  for (y = pattern_extent->height;
+       y < extended_data_extent.height;
+       y *= 2)
+    {
+      guchar *src  = ((guchar*) pattern_data);
+      guchar *dst  = src + y * rowstride;
+      gint    size = rowstride * MIN (extended_data_extent.height - y, y);
+      memcpy (dst, src, size);
+    }
+
+  /* Now fill the acutal buffer */
+  for (y = roi.y; y < roi.y + roi.height; y += extended_data_extent.height)
+    for (x = roi.x; x < roi.x + roi.width; x += extended_data_extent.width)
+      {
+        GeglRectangle dest_rect = {x, y,
+                                   extended_data_extent.width,
+                                   extended_data_extent.height};
+
+        gegl_rectangle_intersect (&dest_rect, &dest_rect, &roi);
+
+        gegl_buffer_set (buffer, &dest_rect, 1, buffer_format,
+                         pattern_data, rowstride);
+      }
+
+  gegl_free (pattern_data);
 }
 
 void

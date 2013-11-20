@@ -310,18 +310,20 @@ void            gegl_buffer_set_color         (GeglBuffer          *buffer,
 /**
  * gegl_buffer_set_pattern:
  * @buffer: a #GeglBuffer
- * @rect: a rectangular region
+ * @rect: the region of @buffer to fill
  * @pattern: a #GeglBuffer to be repeated as a pattern
  * @x_offset: where the pattern starts horizontally
  * @y_offset: where the pattern starts vertical
  *
- * Fill a region with a repeating pattern.
+ * Fill a region with a repeating pattern. Offsets parameters are
+ * relative to the origin (0, 0) and not to the rectangle. So be carefull
+ * about the origin of @pattern and @buffer extents.
  */
 void            gegl_buffer_set_pattern       (GeglBuffer          *buffer,
                                                const GeglRectangle *rect,
                                                GeglBuffer          *pattern,
-                                               gdouble              x_offset,
-                                               gdouble              y_offset);
+                                               gint                 x_offset,
+                                               gint                 y_offset);
 
 /**
  * gegl_buffer_get_format: (skip)
