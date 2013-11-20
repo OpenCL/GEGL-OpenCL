@@ -362,7 +362,6 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       gegl_operation_sink_needs_full (processor->node->operation))
     {
       GeglCache *cache;
-      GValue     value = { 0, };
 
       cache = gegl_node_get_cache (processor->input);
 
@@ -371,11 +370,7 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
           processor->context = gegl_operation_context_new (processor->node->operation);
         }
 
-      g_value_init (&value, GEGL_TYPE_BUFFER);
-      g_value_set_object (&value, cache);
-      gegl_operation_context_set_property (processor->context, "input", &value);
-      g_value_unset (&value);
-
+      gegl_operation_context_set_object (processor->context, "input", G_OBJECT (cache));
 
       gegl_operation_context_set_result_rect (processor->context,
                                               &processor->rectangle);
