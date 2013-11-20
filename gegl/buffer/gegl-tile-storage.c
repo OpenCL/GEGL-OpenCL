@@ -51,20 +51,6 @@ enum
 
 guint gegl_tile_storage_signals[LAST_SIGNAL] = { 0 };
 
-static gboolean
-tile_storage_idle (gpointer data)
-{
-  GeglTileStorage *tile_storage = GEGL_TILE_STORAGE (data);
-
-  if (0 /* nothing to do*/)
-    {
-      tile_storage->idle_swapper = 0;
-      return FALSE;
-    }
-
-  return gegl_tile_source_idle (GEGL_TILE_SOURCE (tile_storage));
-}
-
 GeglTileBackend * gegl_buffer_backend (GeglBuffer *buffer);
 
 GeglTileStorage *
@@ -148,12 +134,6 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   ((GeglTileBackend *)gegl_buffer_backend2 ((void*)tile_storage))->priv->storage = (gpointer)
                                               tile_storage;
 
-  tile_storage->idle_swapper = g_timeout_add_full (G_PRIORITY_LOW,
-                                                   250,
-                                                   tile_storage_idle,
-                                                   tile_storage,
-                                                   NULL);
-
   return tile_storage;
 }
 
@@ -161,9 +141,6 @@ static void
 gegl_tile_storage_finalize (GObject *object)
 {
   GeglTileStorage *self = GEGL_TILE_STORAGE (object);
-
-  if (self->idle_swapper)
-    g_source_remove (self->idle_swapper);
 
   if (self->path)
     g_free (self->path);
