@@ -28,6 +28,7 @@
 #include "gegl.h"
 #include "gegl/gegl-debug.h"
 #include "gegl-types-internal.h"
+#include "gegl-algorithms.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
@@ -42,8 +43,6 @@
 #include "gegl-tile-backend.h"
 #include "gegl-buffer-iterator.h"
 #include "gegl-buffer-cl-cache.h"
-
- #include "gegl-algorithms.h"
 
 #if 0
 static inline void
@@ -606,7 +605,7 @@ fill_abyss_none (guchar *buf, gint width, gint height, gint buf_stride, gint pix
 static void
 fill_abyss_color (guchar *buf, gint width, gint height, gint buf_stride, guchar *pixel, gint pixel_size)
 {
-  if (buf_stride == width)
+  if (buf_stride == width * pixel_size)
     {
       gegl_memset_pattern (buf, pixel, pixel_size, width * height);
     }
@@ -706,7 +705,7 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
         }
 
       buf += inner_roi.height * buf_stride;
-      current_roi.x += inner_roi.height;
+      /* current_roi.y += inner_roi.height; */
       current_roi.height -= inner_roi.height;
     }
 
