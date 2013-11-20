@@ -62,29 +62,8 @@ GType gegl_module_register_type (GTypeModule     *module,
                                  const GTypeInfo *type_info,
                                  GTypeFlags       flags);
 
-gint            gegl_operation_context_get_level  (GeglOperationContext *self);
-GeglBuffer     *gegl_operation_context_get_source (GeglOperationContext *self,
-                                                   const gchar          *padname);
-GeglBuffer     *gegl_operation_context_get_target (GeglOperationContext *self,
-                                                   const gchar          *padname);
-void            gegl_operation_context_set_object (GeglOperationContext *context,
-                                                   const gchar          *padname,
-                                                   GObject              *data);
-void            gegl_operation_context_take_object(GeglOperationContext *context,
-                                                   const gchar          *padname,
-                                                   GObject              *data);
-GObject        *gegl_operation_context_get_object (GeglOperationContext *context,
-                                                   const gchar          *padname);
-
-void            gegl_extension_handler_register    (const gchar         *extension,
-                                                    const gchar         *handler);
-void            gegl_extension_handler_register_saver
-                                                   (const gchar         *extension,
-                                                    const gchar         *handler);
-const gchar   * gegl_extension_handler_get         (const gchar         *extension);
-const gchar   * gegl_extension_handler_get_saver   (const gchar         *extension);
-
 #include <operation/gegl-operation.h>
+#include <operation/gegl-operation-context.h>
 #include <operation/gegl-operation-filter.h>
 #include <operation/gegl-operation-area-filter.h>
 #include <operation/gegl-operation-point-filter.h>
@@ -97,6 +76,8 @@ const gchar   * gegl_extension_handler_get_saver   (const gchar         *extensi
 #include <operation/gegl-operation-source.h>
 #include <operation/gegl-operation-sink.h>
 #include <operation/gegl-operation-meta.h>
+#include <operation/gegl-extension-handler.h>
 
 G_END_DECLS
+
 #endif  /* __GEGL_PLUGIN_H__ */
