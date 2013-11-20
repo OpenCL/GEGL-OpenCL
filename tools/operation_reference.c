@@ -269,6 +269,7 @@ static void category_index (gpointer key,
   g_print ("<div style='clear:both;'></div></div>\n");
 }
 
+#if 0
 static void category_menu_index (gpointer key,
                                  gpointer value,
                                  gpointer user_data)
@@ -288,6 +289,7 @@ static void category_menu_index (gpointer key,
       g_print ("<li><a href='#op_%s'>%s</a></li>\n", klass->name, klass->name);
     }
 }
+#endif
 
 /* convert operation name to path of example image */
 static gchar*
