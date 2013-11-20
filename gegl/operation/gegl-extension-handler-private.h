@@ -16,14 +16,9 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
-#ifndef __GEGL_EXTENSION_HANDLER_H__
-#define __GEGL_EXTENSION_HANDLER_H__
+#ifndef __GEGL_EXTENSION_HANDLER_PRIVATE_H__
+#define __GEGL_EXTENSION_HANDLER_PRIVATE_H__
 
-void          gegl_extension_handler_register       (const gchar *extension,
-                                                     const gchar *handler);
-void          gegl_extension_handler_register_saver (const gchar *extension,
-                                                     const gchar *handler);
-const gchar * gegl_extension_handler_get            (const gchar *extension);
-const gchar * gegl_extension_handler_get_saver      (const gchar *extension);
+void          gegl_extension_handler_cleanup        (void);
 
-#endif
+#endif /* __GEGL_EXTENSION_HANDLER_PRIVATE_H__ */

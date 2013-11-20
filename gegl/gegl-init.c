@@ -95,7 +95,7 @@ guint gegl_debug_flags = 0;
 #include "buffer/gegl-buffer.h"
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"
-#include "operation/gegl-extension-handler.h"
+#include "operation/gegl-extension-handler-private.h"
 #include "buffer/gegl-buffer-private.h"
 #include "buffer/gegl-buffer-iterator-private.h"
 #include "buffer/gegl-tile-backend-ram.h"

@@ -14,6 +14,7 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 liboperation_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)/operation
 
 liboperation_public_HEADERS = \
+	gegl-extension-handler.h         \
 	gegl-operation.h        	 \
 	gegl-operation-area-filter.h     \
 	gegl-operation-composer.h     	 \
@@ -31,6 +32,7 @@ liboperation_public_HEADERS = \
 
 liboperation_sources = \
 	gegl-extension-handler.c		\
+	gegl-extension-handler-private.h \
 	gegl-operation.c			\
 	gegl-operation-area-filter.c		\
 	gegl-operation-composer.c		\
@@ -47,7 +49,6 @@ liboperation_sources = \
 	gegl-operation-context.c		\
 	gegl-operation-context-private.h \
 	gegl-operations.c			\
-	gegl-extension-handler.h		\
 	gegl-operations.h
 
 noinst_LTLIBRARIES = liboperation.la

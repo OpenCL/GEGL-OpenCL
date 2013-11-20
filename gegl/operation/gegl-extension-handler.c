@@ -19,6 +19,7 @@
 #include "config.h"
 #include <glib.h>
 #include "gegl-extension-handler.h"
+#include "gegl-extension-handler-private.h"
 
 static GHashTable *load_handlers = NULL;
 static GHashTable *save_handlers = NULL;
