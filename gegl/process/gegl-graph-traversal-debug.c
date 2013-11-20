@@ -33,6 +33,7 @@
 
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operation-context.h"
+#include "operation/gegl-operation-context-private.h"
 
 #include <stdio.h>
 

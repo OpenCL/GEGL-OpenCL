@@ -15,6 +15,7 @@
  *
  * Copyright 2003 Calvin Williamson
  *           2006-2008 Øyvind Kolås
+ *           2013 Daniel Sabo
  */
 
 #include "config.h"
@@ -27,6 +28,7 @@
 #include "gegl/gegl-utils.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-context.h"
+#include "gegl-operation-context-private.h"
 #include "gegl/graph/gegl-node.h"
 #include "gegl-config.h"
 

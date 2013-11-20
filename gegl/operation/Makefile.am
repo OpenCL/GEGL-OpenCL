@@ -18,6 +18,7 @@ liboperation_public_HEADERS = \
 	gegl-operation-area-filter.h     \
 	gegl-operation-composer.h     	 \
 	gegl-operation-composer3.h     	 \
+	gegl-operation-context.h         \
 	gegl-operation-filter.h       	 \
 	gegl-operation-meta.h       	 \
 	gegl-operation-point-composer.h  \
@@ -44,9 +45,9 @@ liboperation_sources = \
 	gegl-operation-source.c			\
 	gegl-operation-temporal.c		\
 	gegl-operation-context.c		\
+	gegl-operation-context-private.h \
 	gegl-operations.c			\
 	gegl-extension-handler.h		\
-	gegl-operation-context.h		\
 	gegl-operations.h
 
 noinst_LTLIBRARIES = liboperation.la
