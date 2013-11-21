@@ -94,17 +94,12 @@ do_setup (GeglOperation *operation)
       if (self->cached_path != NULL)
         {
           gegl_node_link (self->input, self->output);
-          g_free(self->cached_path);
+          g_free (self->cached_path);
           self->cached_path = NULL;
         }
 
       return;
     }
-
-  /* warning: this might trigger regeneration of the graph,
-   *          for now this is evaded by just ignoring additional
-   *          requests to be made into members of the graph
-   */
 
   /* Check if the composite operation we're using has changed from that which
    * is already in use.
@@ -119,47 +114,19 @@ do_setup (GeglOperation *operation)
       self->p_composite_op = g_strdup (o->composite_op);
     }
 
-  g_assert(o->src && o->src[0]);
-
   /* Load a src image, and relink the input/composite/output chain, as it
    * will currently be set to an input/output chain without a composite
    * source.
    */
 
-  /* FIXME:
-   * this reimplements the "load" op, which shouldn't be neccesary, but
-   * currently seems to be neccesary since GEGL doesn't like a meta-op
-   * to be implemented using another meta-op.
-   */
   if (self->cached_path == NULL || strcmp (o->src, self->cached_path))
     {
-      const gchar *extension = strrchr (o->src, '.');
-      const gchar *handler = NULL;
-
-      if (!g_file_test (o->src, G_FILE_TEST_EXISTS))
-      {
-        gchar *name = g_filename_display_name (o->src);
-        gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
-        g_free (name);
-        g_warning ("load: %s", tmp);
-        gegl_node_set (self->load,
-            "operation", "gegl:text",
-            "size", 12.0,
-            "string", tmp,
-            NULL);
-        g_free (tmp);
-      }
-      else
-      {
-        if (extension)
-          handler = gegl_extension_handler_get (extension);
-        gegl_node_set (self->load,
-            "operation", handler,
-            NULL);
-        gegl_node_set (self->load,
-            "path",  o->src,
-            NULL);
-      }
+      gegl_node_set (self->load,
+          "operation", "gegl:load",
+          NULL);
+      gegl_node_set (self->load,
+          "path",  o->src,
+          NULL);
 
       /* Currently not using the composite op, reinsert it */
       if (!self->cached_path)
