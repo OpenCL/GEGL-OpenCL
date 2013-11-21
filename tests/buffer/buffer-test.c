@@ -61,6 +61,7 @@ static void fill                  (GeglBuffer *buffer,
                                    gfloat      value);
 
 static void vgrad                 (GeglBuffer *buffer);
+static void hgrad                 (GeglBuffer *buffer);
 
 static void rectangle             (GeglBuffer *buffer,
                                    gint        x,
@@ -252,6 +253,33 @@ static void vgrad (GeglBuffer *buffer)
       for (x=0;x<width;x++)
         {
           buf[i++]= (1.0*y)/height;
+        }
+    }
+  gegl_buffer_set (buffer, NULL, 0, babl_format ("Y float"), buf, GEGL_AUTO_ROWSTRIDE);
+  g_free (buf);
+}
+
+static void hgrad (GeglBuffer *buffer)
+{
+  gfloat *buf;
+  gint x,y;
+  gint i;
+  gint width, height, x0, y0;
+  g_object_get (buffer, "x", &x0,
+                        "y", &y0,
+                        "width", &width,
+                        "height", &height,
+                        NULL);
+  buf = g_malloc (width*height*sizeof(gfloat));
+  gegl_buffer_get (buffer, NULL, 1.0, babl_format ("Y float"), buf, 0,
+                   GEGL_ABYSS_NONE);
+
+  i=0;
+  for (y=0;y<height;y++)
+    {
+      for (x=0;x<width;x++)
+        {
+          buf[i++]= (1.0*x)/width;
         }
     }
   gegl_buffer_set (buffer, NULL, 0, babl_format ("Y float"), buf, GEGL_AUTO_ROWSTRIDE);
