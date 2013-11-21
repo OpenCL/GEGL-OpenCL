@@ -19,7 +19,17 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifndef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_CHANT_PROPERTIES
+
+gegl_chant_int (offset_x, _("Horizontal offset"),
+                G_MININT, G_MAXINT, 0,
+                _("Horizontal offset"))
+
+gegl_chant_int (offset_y, _("Vertical offset"),
+                G_MININT, G_MAXINT, 0,
+                _("Vertical offset"))
+
+#else
 
 #define GEGL_CHANT_TYPE_FILTER
 #define GEGL_CHANT_C_FILE "tile.c"
@@ -72,13 +82,11 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  gfloat *buf = g_new (gfloat, result->width * result->height * 4);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
-  gegl_buffer_get (input, result, 1.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_LOOP);
-
-  gegl_buffer_set (output, result, 0.0, babl_format ("RGBA float"), buf, GEGL_AUTO_ROWSTRIDE);
-
-  g_free (buf);
+  gegl_buffer_set_pattern (output, result, input,
+                           o->offset_x,
+                           o->offset_y);
 
   return TRUE;
 }
