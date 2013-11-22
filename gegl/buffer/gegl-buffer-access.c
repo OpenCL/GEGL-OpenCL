@@ -198,7 +198,7 @@ gegl_buffer_set_pixel (GeglBuffer *buffer,
   }
 }
 
-static inline void
+static void
 gegl_buffer_get_pixel (GeglBuffer     *buffer,
                        gint            x,
                        gint            y,
@@ -206,22 +206,23 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
                        gpointer        data,
                        GeglAbyssPolicy repeat_mode)
 {
-  guchar     *buf         = data;
-  gint        bpx_size    = babl_format_get_bytes_per_pixel (format);
+  const GeglRectangle *abyss    = &buffer->abyss;
+  guchar              *buf      = data;
+  gint                 bpx_size = babl_format_get_bytes_per_pixel (format);
 
-  if (gegl_buffer_in_abyss (buffer, x, y))
-    { /* in abyss */
-      const GeglRectangle *abyss;
+  if (y <  abyss->y ||
+      y >= abyss->y + abyss->height ||
+      x <  abyss->x ||
+      x >= abyss->x + abyss->width)
+    {
       switch (repeat_mode)
       {
         case GEGL_ABYSS_CLAMP:
-          abyss = gegl_buffer_get_abyss (buffer);
           x = CLAMP (x, abyss->x, abyss->x+abyss->width-1);
           y = CLAMP (y, abyss->y, abyss->y+abyss->height-1);
           break;
 
         case GEGL_ABYSS_LOOP:
-          abyss = gegl_buffer_get_abyss (buffer);
           x = abyss->x + GEGL_REMAINDER (x - abyss->x, abyss->width);
           y = abyss->y + GEGL_REMAINDER (y - abyss->y, abyss->height);
           break;
@@ -255,55 +256,51 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
     }
 
   {
-    gint  tile_width     = buffer->tile_storage->tile_width;
-    gint  tile_height    = buffer->tile_storage->tile_height;
+    gint tile_width  = buffer->tile_width;
+    gint tile_height = buffer->tile_height;
+    gint tiledy      = y + buffer->shift_x;
+    gint tiledx      = x + buffer->shift_y;
+    gint indice_x    = gegl_tile_indice (tiledx, tile_width);
+    gint indice_y    = gegl_tile_indice (tiledy, tile_height);
 
-    gint  buffer_shift_x = buffer->shift_x;
-    gint  buffer_shift_y = buffer->shift_y;
-    gint  px_size        = babl_format_get_bytes_per_pixel (buffer->soft_format);
-
-    gint tiledy = y + buffer_shift_y;
-    gint tiledx = x + buffer_shift_x;
-
-    gint      indice_x = gegl_tile_indice (tiledx, tile_width);
-    gint      indice_y = gegl_tile_indice (tiledy, tile_height);
-    GeglTile *tile     = NULL;
-
-    const Babl *fish   = NULL;
+    GeglTile *tile = buffer->tile_storage->hot_tile;
+    const Babl *fish = NULL;
+    gint px_size;
 
     if (format != buffer->soft_format)
       {
-        fish = babl_fish ((gpointer) buffer->soft_format,
-                          (gpointer) format);
-      }
-
-    if (buffer->tile_storage->hot_tile &&
-        buffer->tile_storage->hot_tile->x == indice_x &&
-        buffer->tile_storage->hot_tile->y == indice_y)
-      {
-        tile = buffer->tile_storage->hot_tile;
+        fish    = babl_fish (buffer->soft_format, format);
+        px_size = babl_format_get_bytes_per_pixel (buffer->soft_format);
       }
     else
+      {
+        px_size = bpx_size;
+      }
+
+    if (!(tile &&
+          tile->x == indice_x &&
+          tile->y == indice_y))
       {
         _gegl_buffer_drop_hot_tile (buffer);
         tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
                                           indice_x, indice_y,
                                           0);
+        buffer->tile_storage->hot_tile = tile;
       }
 
     if (tile)
       {
-        gint    offsetx = gegl_tile_offset (tiledx, tile_width);
-        gint    offsety = gegl_tile_offset (tiledy, tile_height);
-        guchar *tp      = gegl_tile_get_data (tile) +
-                          (offsety * tile_width + offsetx) * px_size;
+        gint tile_origin_x = indice_x * tile_width;
+        gint tile_origin_y = indice_y * tile_height;
+        gint       offsetx = tiledx - tile_origin_x;
+        gint       offsety = tiledy - tile_origin_y;
+
+        guchar *tp         = gegl_tile_get_data (tile) + (offsety * tile_width + offsetx) * px_size;
+
         if (fish)
           babl_process (fish, tp, buf, 1);
         else
           memcpy (buf, tp, px_size);
-
-        /*gegl_tile_unref (tile);*/
-        buffer->tile_storage->hot_tile = tile;
       }
   }
 }
@@ -1294,13 +1291,6 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     GeglAbyssPolicy   repeat_mode)
 {
   GType desired_type;
-  g_return_if_fail (GEGL_IS_BUFFER (buffer));
-
-/*#define USE_WORKING_SHORTCUT*/
-#ifdef USE_WORKING_SHORTCUT
-  gegl_buffer_get_pixel (buffer, x, y, format, dest, repeat_mode);
-  return;
-#endif
 
   if (!format)
     format = buffer->soft_format;
