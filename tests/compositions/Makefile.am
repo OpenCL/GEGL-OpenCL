@@ -52,6 +52,7 @@ TESTS = \
 NO_OPENCL_TESTS = \
   rgbe-load.xml                 \
   rgbe-save.xml                 \
+  shift.xml                     \
   stretch-contrast-hsv.xml      \
   pnm-raw-load.xml              \
   pnm-ascii-load.xml
