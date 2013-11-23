@@ -29,7 +29,7 @@ gegl_chant_register_enum (gegl_shift_direction)
 gegl_chant_register_enum_end (GeglShiftDirection)
 
 gegl_chant_int  (shift, _("Shift"),
-                 1, 200, 5,
+                 0, 200, 5,
                  _("Maximum amount to shift"))
 
 gegl_chant_seed (seed, rand, _("Seed"),
@@ -52,12 +52,7 @@ prepare (GeglOperation *operation)
 {
   GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-
-  if (o->chant_data)
-    {
-      g_array_free (o->chant_data, TRUE);
-      o->chant_data = NULL;
-    }
+  const Babl              *format;
 
   if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
     {
@@ -74,11 +69,12 @@ prepare (GeglOperation *operation)
       op_area->right  = 0;
     }
 
-  gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  format = gegl_operation_get_source_format (operation, "input");
+
+  gegl_operation_set_format (operation, "input",  format);
+  gegl_operation_set_format (operation, "output", format);
 }
 
-static GMutex mutex;
 
 static gboolean
 process (GeglOperation       *operation,
@@ -87,140 +83,65 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
-  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  gint           size, i, pos;
+  GeglRectangle  dst_rect;
 
-  gfloat *src_buf;
-  gfloat *dst_buf;
-  GeglRectangle src_rect;
 
-  gint x = 0; /* initial x                   */
-  gint y = 0; /*           and y coordinates */
-
-  gfloat *in_pixel;
-  gfloat *out_pixel;
-
-  gint n_pixels = result->width * result->height;
-  gint i;
-  gint shift;
-  gint s = o->shift;
-
-  GArray *offsets;
-
-  GeglRectangle *boundary;
-
-  gint array_size = 0;
-  gint r;
-
-  /* calculate offsets once */
-  g_mutex_lock (&mutex);
-  if (!o->chant_data)
+  if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
     {
-      boundary = gegl_operation_source_get_bounding_box (operation, "input");
-
-      if (boundary)
-        {
-          offsets = g_array_new (FALSE, FALSE, sizeof (gint));
-
-          if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
-            {
-              array_size = boundary->height;
-            }
-          else if (o->direction == GEGL_SHIFT_DIRECTION_VERTICAL)
-            {
-              array_size = boundary->width;
-            }
-
-          for (i = 0; i < array_size; i++)
-            {
-              r = gegl_random_int_range (o->rand, i, 0, 0, 0, -s, s + 1);
-              g_array_append_val (offsets, r);
-            }
-          o->chant_data = offsets;
-        }
+      size = result->height;
+      dst_rect.width  = result->width;
+      dst_rect.height = 1;
+      pos = result->y;
     }
-  g_mutex_unlock (&mutex);
-
-  offsets = o->chant_data;
-
-  src_rect.x      = result->x - op_area->left;
-  src_rect.width  = result->width + op_area->left + op_area->right;
-  src_rect.y      = result->y - op_area->top;
-  src_rect.height = result->height + op_area->top + op_area->bottom;
-
-  src_buf = g_slice_alloc (src_rect.width * src_rect.height * 4 * sizeof (gfloat));
-  dst_buf = g_slice_alloc (result->width * result->height * 4 * sizeof (gfloat));
-
-  in_pixel = src_buf;
-  out_pixel = dst_buf;
-
-  gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RGBA float"),
-                   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-  while (n_pixels--)
+  else
     {
-      /* select the desired input pixel */
+      size = result->width;
+      dst_rect.width  = 1;
+      dst_rect.height = result->height;
+      pos = result->x;
+    }
+
+  dst_rect.x = result->x;
+  dst_rect.y = result->y;
+
+  for (i = 0; i < size; i++)
+    {
+      GeglRectangle src_rect;
+      gint shift = gegl_random_int_range (o->rand, i + pos, 0, 0, 0,
+                                          -o->shift, o->shift + 1);
+
       if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
         {
-          shift = g_array_index (offsets, gint, result->y + y);
-          in_pixel = src_buf + 4*(src_rect.width * y + s + x + shift);
+          dst_rect.y = i + result->y;
+          src_rect = dst_rect;
+          src_rect.x = result->x + shift;
         }
-      else if (o->direction == GEGL_SHIFT_DIRECTION_VERTICAL)
+      else
         {
-          shift = g_array_index (offsets, gint, result->x + x);
-          in_pixel = src_buf + 4*(src_rect.width * (y + s + shift) + x);
+          dst_rect.x = i + result->x;
+          src_rect = dst_rect;
+          src_rect.y = result->y + shift;
         }
 
-      /* copy pixel */
-      for (i = 0; i < 4; i++)
-        {
-          *out_pixel = *in_pixel;
-          in_pixel ++;
-          out_pixel ++;
-        }
-      x++;
-      if (x == result->width)
-        {
-          x = 0;
-          y++;
-        }
+      /* XXX: gegl_buffer_copy doesn't allow to set the abyss policy,
+       * but we probably need _CLAMP here */
+      gegl_buffer_copy (input, &src_rect, output, &dst_rect);
     }
-
-  gegl_buffer_set (output, result, 0, babl_format ("RGBA float"),
-                   dst_buf, GEGL_AUTO_ROWSTRIDE);
-
-  g_slice_free1 (src_rect.width * src_rect.height * 4 * sizeof (gfloat), src_buf);
-  g_slice_free1 (result->width * result->height * 4 * sizeof (gfloat), dst_buf);
 
   return  TRUE;
 }
 
 static void
-finalize (GObject *object)
-{
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
-
-  if (o->chant_data)
-    {
-      g_array_free (o->chant_data, TRUE);
-      o->chant_data = NULL;
-    }
-
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
-}
-
-static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  object_class->finalize = finalize;
   filter_class->process    = process;
   operation_class->prepare = prepare;
 
