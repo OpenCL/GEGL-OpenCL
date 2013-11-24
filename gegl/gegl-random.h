@@ -24,6 +24,15 @@
 
 G_BEGIN_DECLS
 
+/***
+ * Random numbers:
+ *
+ * GEGL provides functions to generate deterministic random numbers,
+ * based on a seed and on 2D coordinates. It allows to reproduce the
+ * same sequence of random numbers in both CPU and GPU devices where
+ * operations are not done in the same order.
+ */
+
 /**
  * gegl_random_new_with_seed:
  * @seed: an integer seed, change for different permutation.
@@ -53,7 +62,8 @@ GeglRandom* gegl_random_duplicate (GeglRandom *rand);
  * gegl_random_free:
  * @rand: The GeglRandom structure to free
  *
- * Free a GeglRandom structure created with gegl_random_new() or gegl_random_new_with_seed()
+ * Free a GeglRandom structure created with gegl_random_new() or
+ * gegl_random_new_with_seed()
  */
 void gegl_random_free (GeglRandom *rand);
 
@@ -64,7 +74,8 @@ void gegl_random_free (GeglRandom *rand);
  *
  * Change the seed of an existing GeglRandom.
  */
-void gegl_random_set_seed (GeglRandom *rand, guint32 seed);
+void gegl_random_set_seed (GeglRandom *rand,
+                           guint32     seed);
 
 /**
  * gegl_random_float_range:
@@ -81,7 +92,13 @@ void gegl_random_set_seed (GeglRandom *rand, guint32 seed);
  * for the given x,y coordinates and GeglRandom provided, if multiple different
  * numbers are needed pass in incrementing n's.
  */
-gfloat gegl_random_float_range (const GeglRandom *rand, gint x, gint y, gint z, gint n, gfloat min, gfloat max);
+gfloat gegl_random_float_range (const GeglRandom *rand,
+                                gint              x,
+                                gint              y,
+                                gint              z,
+                                gint              n,
+                                gfloat            min,
+                                gfloat            max);
 
 /**
  * gegl_random_int_range:
@@ -98,7 +115,13 @@ gfloat gegl_random_float_range (const GeglRandom *rand, gint x, gint y, gint z, 
  * for the given x,y coordinates and GeglRandom provided, if multiple different
  * numbers are needed pass in incrementing n's.
  */
-gint32 gegl_random_int_range (const GeglRandom *rand, gint x, gint y, gint z, gint n, gint min, gint max);
+gint32 gegl_random_int_range (const GeglRandom *rand,
+                              gint              x,
+                              gint              y,
+                              gint              z,
+                              gint              n,
+                              gint              min,
+                              gint              max);
 
 /**
  * gegl_random_int:
@@ -111,7 +134,11 @@ gint32 gegl_random_int_range (const GeglRandom *rand, gint x, gint y, gint z, gi
  *
  * Return a random integer number in range 0 .. MAX_UINT
  */
-guint32 gegl_random_int (const GeglRandom *rand, gint x, gint y, gint z, gint n);
+guint32 gegl_random_int (const GeglRandom *rand,
+                         gint              x,
+                         gint              y,
+                         gint              z,
+                         gint              n);
 
 /**
  * gegl_random_float:
@@ -124,7 +151,11 @@ guint32 gegl_random_int (const GeglRandom *rand, gint x, gint y, gint z, gint n)
  *
  * Return a random floating point number in range 0.0 .. 1.0.
  */
-gfloat gegl_random_float (const GeglRandom *rand, gint x, gint y, gint z, gint n);
+gfloat gegl_random_float (const GeglRandom *rand,
+                          gint              x,
+                          gint              y,
+                          gint              z,
+                          gint              n);
 
 G_END_DECLS
 
