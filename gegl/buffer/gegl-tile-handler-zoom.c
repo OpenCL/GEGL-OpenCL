@@ -24,7 +24,6 @@
 #include <glib-object.h>
 
 #include "gegl-types.h"
-#include "gegl-matrix.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile-handler.h"

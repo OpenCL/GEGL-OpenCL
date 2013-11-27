@@ -19,7 +19,6 @@
 
 #include <string.h>
 
-#include <babl/babl.h>
 #include <glib-object.h>
 #include <glib/gstdio.h>
 
