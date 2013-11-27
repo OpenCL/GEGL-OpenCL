@@ -19,12 +19,11 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <string.h>
 
 #include "gegl.h"
-#include "gegl-types-internal.h"
 #include "gegl-operation-meta.h"
 #include "graph/gegl-node.h"
-#include <string.h>
 
 static void       finalize     (GObject       *self_object);
 static GeglNode * detect       (GeglOperation *operation,

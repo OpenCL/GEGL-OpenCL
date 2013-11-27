@@ -22,7 +22,6 @@
 #include <glib-object.h>
 
 #include "gegl.h"
-#include "gegl-types-internal.h"
 #include "gegl-operation-point-render.h"
 #include "gegl-operation-context.h"
 

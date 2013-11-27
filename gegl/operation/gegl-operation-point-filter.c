@@ -20,13 +20,12 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <string.h>
 
 #include "gegl.h"
 #include "gegl/gegl-debug.h"
-#include "gegl-types-internal.h"
 #include "gegl-operation-point-filter.h"
 #include "gegl-operation-context.h"
-#include <string.h>
 
 #include "opencl/gegl-cl.h"
 #include "gegl-buffer-cl-iterator.h"

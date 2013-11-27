@@ -18,19 +18,12 @@
 
 #include "config.h"
 
-#include <math.h>
-#include <string.h>
 #include <glib-object.h>
+#include <string.h>
 
 #include "gegl.h"
-#include "gegl-types-internal.h"
 #include "gegl-operation-area-filter.h"
-#include "gegl-utils.h"
-#include "graph/gegl-node.h"
-#include "graph/gegl-connection.h"
-#include "graph/gegl-pad.h"
-#include "buffer/gegl-region.h"
-#include "buffer/gegl-buffer.h"
+#include "gegl-operation-context.h"
 
 
 static void          prepare                  (GeglOperation       *operation);

@@ -23,12 +23,12 @@
 
 #include "gegl.h"
 #include "gegl/gegl-debug.h"
-#include "gegl-types-internal.h"
 #include "gegl-operation-point-composer.h"
 #include "gegl-operation-context.h"
 #include <string.h>
 
-#include "gegl-buffer-private.h"
+#include "opencl/gegl-cl.h"
+#include "gegl-buffer-cl-iterator.h"
 
 static gboolean gegl_operation_point_composer_process
                               (GeglOperation       *operation,

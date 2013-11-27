@@ -22,7 +22,6 @@
 #include <string.h>
 
 #include "gegl.h"
-#include "gegl-types-internal.h"
 #include "gegl-operation-filter.h"
 #include "gegl-operation-context.h"
 

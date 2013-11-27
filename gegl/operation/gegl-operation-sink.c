@@ -18,9 +18,8 @@
 
 #include "config.h"
 
-#include <string.h>
-
 #include <glib-object.h>
+#include <string.h>
 
 #include "gegl.h"
 #include "gegl-types-internal.h"

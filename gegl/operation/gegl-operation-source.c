@@ -18,12 +18,10 @@
 
 #include "config.h"
 
+#include <glib-object.h>
 #include <string.h>
 
-#include <glib-object.h>
-
 #include "gegl.h"
-#include "gegl-types-internal.h"
 #include "gegl-operation-source.h"
 #include "gegl-operation-context.h"
 
