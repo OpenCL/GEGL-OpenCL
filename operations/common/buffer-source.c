@@ -28,11 +28,9 @@ gegl_chant_object(buffer, _("Input buffer"),
 #else
 
 #define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "buffer-source.c"
+#define GEGL_CHANT_C_FILE "buffer-source.c"
 
 #include "gegl-chant.h"
-#include <gegl.h>
-#include "graph/gegl-node.h"
 
 typedef struct
 {
