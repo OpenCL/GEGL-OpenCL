@@ -30,10 +30,9 @@ gegl_chant_double (height, _("Height"), -G_MAXFLOAT, G_MAXFLOAT, 10.0, _("Height
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "crop.c"
+#define GEGL_CHANT_C_FILE "crop.c"
 
 #include "gegl-chant.h"
-#include "graph/gegl-node.h"
 #include <math.h>
 
 static void
@@ -56,9 +55,9 @@ gegl_crop_detect (GeglOperation *operation,
   input_node = gegl_operation_get_source_node (operation, "input");
 
   if (input_node)
-    return gegl_operation_detect (input_node->operation,
-                                  x - floor (o->x),
-                                  y - floor (o->y));
+    return gegl_node_detect (input_node,
+                             x - floor (o->x),
+                             y - floor (o->y));
 
   return operation->node;
 }
@@ -134,19 +133,11 @@ gegl_crop_process (GeglOperation        *operation,
   extent.width = o->width;
   extent.height = o->height;
 
-  if (strcmp (output_prop, "output"))
+  input = gegl_operation_context_get_source (context, "input");
+
+  if (input)
     {
-      g_warning ("requested processing of %s pad on a crop", output_prop);
-      return FALSE;
-    }
-
-  input  = gegl_operation_context_get_source (context, "input");
-
-  if (input != NULL)
-    {
-      GeglBuffer *output;
-
-      output = gegl_buffer_create_sub_buffer (input, &extent);
+      GeglBuffer *output = gegl_buffer_create_sub_buffer (input, &extent);
 
       if (gegl_object_get_has_forked (G_OBJECT (input)))
         gegl_object_set_has_forked (G_OBJECT (output));
@@ -158,10 +149,7 @@ gegl_crop_process (GeglOperation        *operation,
     }
   else
     {
-      if (!g_object_get_data (G_OBJECT (operation->node), "graph"))
-        g_warning ("%s got %s",
-                   gegl_node_get_debug_name (operation->node),
-                   input==NULL?"input==NULL":"");
+      g_warning ("%s got NULL input pad", gegl_node_get_operation (operation->node));
     }
 
   return success;
