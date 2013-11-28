@@ -526,6 +526,11 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
   item->y         = y;
   item->z         = z;
 
+  tile->x = x;
+  tile->y = y;
+  tile->z = z;
+  tile->tile_storage = cache->tile_storage;
+
   // XXX : remove entry if it already exists
   gegl_tile_handler_cache_void (cache, x, y, z);
 
