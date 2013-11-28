@@ -33,7 +33,6 @@ gegl_chant_format (format, _("Babl Format"),
 #define GEGL_CHANT_C_FILE           "color.c"
 
 #include "gegl-chant.h"
-#include <gegl-utils.h>
 
 static void
 gegl_color_op_prepare (GeglOperation *operation)

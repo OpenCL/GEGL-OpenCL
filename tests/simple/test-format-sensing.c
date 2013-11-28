@@ -19,7 +19,6 @@
 #include <stdio.h>
 
 #include "gegl.h"
-#include "gegl-utils.h"
 
 #define SUCCESS  0
 #define FAILURE -1

@@ -18,7 +18,6 @@
 #include <string.h>
 
 #include "gegl.h"
-#include "gegl-utils.h"
 
 
 #define SUCCESS  0

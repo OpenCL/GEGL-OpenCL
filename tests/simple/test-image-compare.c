@@ -17,7 +17,6 @@
  */
 
 #include "gegl.h"
-#include "gegl-utils.h"
 
 #include <string.h>
 #include <math.h>

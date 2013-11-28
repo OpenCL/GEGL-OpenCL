@@ -18,7 +18,6 @@
  */
 
 #include <gegl.h>
-#include <gegl-utils.h>
 #include <poly2tri-c/refine/refine.h>
 #include <poly2tri-c/render/mesh-render.h>
 

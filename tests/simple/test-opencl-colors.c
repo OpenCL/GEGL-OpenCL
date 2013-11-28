@@ -19,7 +19,6 @@
 #include <stdio.h>
 
 #include "gegl.h"
-#include "gegl-utils.h"
 #include "opencl/gegl-cl.h"
 
 #define SUCCESS  0

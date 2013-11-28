@@ -15,7 +15,6 @@
  * Copyright (C) 2013 Daniel Sabo
  */
 #include "gegl.h"
-#include "gegl-utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>

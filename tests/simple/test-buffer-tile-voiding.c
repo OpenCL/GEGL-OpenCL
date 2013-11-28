@@ -16,7 +16,6 @@
  */
 #include "gegl.h"
 #include "gegl-buffer-backend.h"
-#include "gegl-utils.h"
 
 #include <stdio.h>
 #include <stdlib.h>
