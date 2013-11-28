@@ -13,10 +13,9 @@
 #include "gegl-tile-handler-cache.h"
 #include "gegl-utils.h"
 
-static GeglBuffer *
-gegl_buffer_linear_new2 (const GeglRectangle *extent,
-                         const Babl          *format,
-                         gint                 rowstride)
+GeglBuffer *
+gegl_buffer_linear_new (const GeglRectangle *extent,
+                        const Babl          *format)
 {
   GeglBuffer *buffer;
 
@@ -27,9 +26,6 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
 
   if (format==NULL)
     format = babl_format ("RGBA float");
-
-  if (rowstride <= 0)
-    rowstride = extent->width;
 
   /* creating a linear buffer for GeglBuffer is a matter of
    * requesting the correct parameters when creating the
@@ -42,7 +38,7 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
                        "shift-y",    -extent->y,
                        "width",      extent->width,
                        "height",     extent->height,
-                       "tile-width", rowstride,
+                       "tile-width", extent->width,
                        "tile-height", extent->height,
                        "format", format,
                        NULL);
@@ -50,13 +46,6 @@ gegl_buffer_linear_new2 (const GeglRectangle *extent,
   g_object_set_data (G_OBJECT (buffer), "is-linear", (void*)0xf00);
 
   return buffer;
-}
-
-GeglBuffer *
-gegl_buffer_linear_new (const GeglRectangle *extent,
-                        const Babl          *format)
-{
-  return gegl_buffer_linear_new2 (extent, format, 0);
 }
 
 /* XXX:
@@ -77,6 +66,11 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
 {
   GeglBuffer *buffer;
 
+  if (extent==NULL)
+    {
+      g_error ("got a NULL extent");
+    }
+
   g_assert (format);
 
   if (rowstride <= 0) /* handle both 0 and negative coordinates as a request
@@ -85,7 +79,21 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
     rowstride = extent->width;
   else
     rowstride = rowstride / babl_format_get_bytes_per_pixel (format);
-    buffer = gegl_buffer_linear_new2 (extent, format, rowstride);
+
+  buffer = g_object_new (GEGL_TYPE_BUFFER,
+                         "x",          extent->x,
+                         "y",          extent->y,
+                         "shift-x",    -extent->x,
+                         "shift-y",    -extent->y,
+                         "width",      extent->width,
+                         "height",     extent->height,
+                         "tile-width", rowstride,
+                         "tile-height", extent->height,
+                         "format", format,
+                         "path", "RAM",
+                         NULL);
+
+  g_object_set_data (G_OBJECT (buffer), "is-linear", (void*)0xf00);
 
   {
     GeglTile *tile = gegl_tile_new_bare ();
@@ -96,6 +104,7 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
     tile->z = 0;
     tile->next_shared = tile;
     tile->prev_shared = tile;
+    tile->rev = tile->stored_rev + 1;
     gegl_tile_set_data_full (tile,
                              (gpointer) data,
                              babl_format_get_bytes_per_pixel (format) * rowstride * extent->height,
