@@ -62,7 +62,6 @@ static void path_changed (GeglPath *path,
                           gpointer userdata);
 
 #include "gegl-chant.h"
-#include "gegl-buffer-private.h"
 #include <cairo.h>
 #include <math.h>
 
@@ -126,10 +125,6 @@ gegl_path_stroke (GeglBuffer *buffer,
    {
      return;
    }
-  if (gegl_buffer_is_shared (buffer))
-    while (!gegl_buffer_try_lock (buffer));
-
-  /*gegl_buffer_clear (buffer, &extent);*/
 
   while (iter)
     {
@@ -204,9 +199,6 @@ gegl_path_stroke (GeglBuffer *buffer,
         }
       iter=iter->next;
     }
-
-  if (gegl_buffer_is_shared (buffer))
-    gegl_buffer_unlock (buffer);
 }
 
 static void
@@ -256,7 +248,7 @@ gegl_path_stamp (GeglBuffer *buffer,
     }
   g_assert (s.buf);
 
-  gegl_buffer_get_unlocked (buffer, 1.0, &roi, s.format, s.buf, 0, GEGL_ABYSS_NONE);
+  gegl_buffer_get (buffer, &roi, 1.0, s.format, s.buf, 0, GEGL_ABYSS_NONE);
 
   {
     gint u, v;
@@ -294,7 +286,7 @@ gegl_path_stamp (GeglBuffer *buffer,
         }
     }
   }
-  gegl_buffer_set_unlocked (buffer, &roi, s.format, s.buf, 0);
+  gegl_buffer_set (buffer, &roi, 0, s.format, s.buf, 0);
   g_free (s.buf);
 }
 
