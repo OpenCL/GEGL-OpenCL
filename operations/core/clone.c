@@ -31,7 +31,6 @@ gegl_chant_string (ref, _("Reference"), "ID",
 #define GEGL_CHANT_C_FILE       "clone.c"
 
 #include "gegl-chant.h"
-#include "graph/gegl-node.h"
 #include <math.h>
 #include <string.h>
 
@@ -40,14 +39,14 @@ detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglNode *node = operation->node;
+  GeglRectangle have_rect = gegl_node_get_bounding_box (operation->node);
 
-  if (x >= node->have_rect.x &&
-      y >= node->have_rect.y &&
-      x < node->have_rect.width &&
-      y < node->have_rect.height)
+  if (x >= have_rect.x &&
+      y >= have_rect.y &&
+      x < have_rect.width &&
+      y < have_rect.height)
     {
-      return node;
+      return operation->node;
     }
   return NULL;
 }
