@@ -762,8 +762,6 @@ matting_upsample (const gdouble       *restrict pixels,
   static const gdouble  UPSAMPLE_KERNEL[] =
     { 0.125, 0.5, 0.75, 0.5, 0.125 };
 
-  gint     x_start, x_end,
-           y_start, y_end;
   gint     x, y;
   guint    c;
   gdouble *newpix = NULL;
@@ -776,16 +774,11 @@ matting_upsample (const gdouble       *restrict pixels,
   g_return_val_if_fail (abs (output->width  - 2 * input->width ) <= 1, NULL);
   g_return_val_if_fail (abs (output->height - 2 * input->height) <= 1, NULL);
 
-  x_start = 1;
-  y_start = 1;
-  x_end   = output->width  - output->width  % 2;
-  y_end   = output->height - output->height % 2;
-
   newpix  = g_new0 (gdouble, output->width * output->height * components);
 
-  for (y = y_start; y < output->height; y += 2)
+  for (y = 1; y < output->height; y += 2)
     {
-      for (x = x_start; x < output->width; x += 2)
+      for (x = 1; x < output->width; x += 2)
         {
           guint newoff = (x     +  y      * output->width) * components,
                 oldoff = (x / 2 + (y / 2) * input->width ) * components;

@@ -48,14 +48,11 @@ cblas_dgemm(enum CBLAS_ORDER      order,
             gdouble              *restrict c,
             gint                  ldc)
 {
-  /* System generated locals */
-  gint i__1, i__2, i__3;
-
   /* Local variables */
   gint     info;
   gboolean nota, notb;
   gdouble  temp;
-  gint     i, j, l, ncola;
+  gint     i, j, l;
   gint     nrowa, nrowb;
 
   /* Rather than catering for arbitrary indexing, just force row-major */
@@ -74,12 +71,10 @@ cblas_dgemm(enum CBLAS_ORDER      order,
   if (nota)
     {
       nrowa = m;
-      ncola = k;
     }
   else
     {
       nrowa = k;
-      ncola = m;
     }
   if (notb)
     {
@@ -121,31 +116,24 @@ cblas_dgemm(enum CBLAS_ORDER      order,
       if (nota)
         {
           /* Form  C := alpha*A*B + beta*C. */
-          i__1 = n;
           for (j = 1; j <= n; ++j)
             {
               if (beta == 0.)
                 {
-                  i__2 = m;
-
                   for (i = 1; i <= m; ++i)
                       C(i,j) = 0.;
                 }
               else if (beta != 1.)
                 {
-                  i__2 = m;
-
                   for (i = 1; i <= m; ++i)
                     C(i,j) = beta * C(i,j);
                 }
 
-              i__2 = k;
               for (l = 1; l <= k; ++l)
                 {
                   if (B(l,j) != 0.)
                     {
                       temp = alpha * B(l,j);
-                      i__3 = m;
 
                       for (i = 1; i <= m; ++i)
                         C(i,j) += temp * A(i,l);
@@ -155,14 +143,11 @@ cblas_dgemm(enum CBLAS_ORDER      order,
         }
       else
         {
-          i__1 = n;
           for (j = 1; j <= n; ++j)
             {
-              i__2 = m;
               for (i = 1; i <= m; ++i)
                 {
                   temp = 0.;
-                  i__3 = k;
 
                   for (l = 1; l <= k; ++l)
                     temp += A(l,i) * B(l,j);
@@ -180,31 +165,26 @@ cblas_dgemm(enum CBLAS_ORDER      order,
       if (nota)
         {
           /* Form  C := alpha*A*B' + beta*C */
-          i__1 = n;
           for (j = 1; j <= n; ++j)
             {
               if (beta == 0.)
                 {
-                  i__2 = m;
 
                   for (i = 1; i <= m; ++i)
                     C(i,j) = 0.;
                 }
               else if (beta != 1.)
                 {
-                  i__2 = m;
 
                   for (i = 1; i <= m; ++i)
                     C(i,j) = beta * C(i,j);
                 }
 
-              i__2 = k;
               for (l = 1; l <= k; ++l)
                 {
                   if (B(j,l) != 0.)
                     {
                       temp = alpha * B(j,l);
-                      i__3 = m;
 
                       for (i = 1; i <= m; ++i)
                         C(i,j) += temp * A(i,l);
@@ -216,14 +196,11 @@ cblas_dgemm(enum CBLAS_ORDER      order,
         {
           /* Form  C := alpha*A'*B' + beta*C */
 
-          i__1 = n;
           for (j = 1; j <= n; ++j)
             {
-              i__2 = m;
               for (i = 1; i <= m; ++i)
                 {
                   temp = 0.;
-                  i__3 = k;
                   for (l = 1; l <= k; ++l)
                     temp += A(l,i) * B(j,l);
 
