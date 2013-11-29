@@ -105,8 +105,6 @@ guint gegl_debug_flags = 0;
 #include "graph/gegl-node.h"
 #include "gegl-random-priv.h"
 
-static const gchar *makefile (void);
-
 static gboolean  gegl_post_parse_hook (GOptionContext *context,
                                        GOptionGroup   *group,
                                        gpointer        data,
@@ -650,24 +648,13 @@ gegl_post_parse_hook (GOptionContext *context,
           gegl_module_db_load (module_db, module_path);
           g_free (module_path);
 
-          /* also load plug-ins from ~/.local/share/gegl-0.0/plugins */
+          /* also load plug-ins from ~/.local/share/gegl-0.0/plug-ins */
           module_path = g_build_filename (g_get_user_data_dir (),
                                           GEGL_LIBRARY,
                                           "plug-ins",
                                           NULL);
 
-          if (g_mkdir_with_parents (module_path,
-                                    S_IRUSR | S_IWUSR | S_IXUSR) == 0)
-            {
-              gchar *makefile_path = g_build_filename (module_path,
-                                                       "Makefile",
-                                                       NULL);
-
-              if (! g_file_test (makefile_path, G_FILE_TEST_EXISTS))
-                g_file_set_contents (makefile_path, makefile (), -1, NULL);
-
-              g_free (makefile_path);
-            }
+          g_mkdir_with_parents (module_path, S_IRUSR | S_IWUSR | S_IXUSR);
 
           gegl_module_db_load (module_db, module_path);
           g_free (module_path);
@@ -698,27 +685,3 @@ gegl_get_debug_enabled (void)
   return FALSE;
 #endif
 }
-
-
-static const gchar *makefile (void)
-{
-  return
-    "# This is a generic makefile for GEGL operations. Just add .c files,\n"
-    "# rename mentions of the filename and opname to the new name, and it should \n"
-    "# compile. Operations in this dir should be loaded by GEGL by default\n"
-    "# If the operation being written depends on extra libraries, you'd better\n"
-    "# add a dedicated target with the extra bits linked in.\n"
-    "\n\n"
-    "CFLAGS  += `pkg-config gegl --cflags`  -I. -fPIC\n"
-    "LDFLAGS += `pkg-config gegl --libs` -shared\n"
-    "SHREXT=.so\n"
-    "CFILES = $(wildcard ./*.c)\n"
-    "SOBJS  = $(subst ./,,$(CFILES:.c=$(SHREXT)))\n"
-    "all: $(SOBJS)\n"
-    "%$(SHREXT): %.c $(GEGLHEADERS)\n"
-    "	@echo $@; $(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDADD)\n"
-    "clean:\n"
-    "	rm -f *$(SHREXT) $(OFILES)\n";
-}
-
-
