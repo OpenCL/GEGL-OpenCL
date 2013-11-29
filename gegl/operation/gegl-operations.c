@@ -25,13 +25,10 @@
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
-#include "gegl-utils.h"
+#include "gegl-cache.h"
 #include "gegl-operation.h"
 #include "gegl-operations.h"
-#include "graph/gegl-node.h"
-#include "graph/gegl-pad.h"
 #include "gegl-operation-context.h"
-#include "buffer/gegl-region.h"
 
 
 static GHashTable *gtype_hash        = NULL;

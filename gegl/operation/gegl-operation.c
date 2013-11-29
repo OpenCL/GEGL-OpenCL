@@ -29,8 +29,6 @@
 #include "graph/gegl-node.h"
 #include "graph/gegl-connection.h"
 #include "graph/gegl-pad.h"
-#include "buffer/gegl-region.h"
-#include "buffer/gegl-buffer.h"
 #include "gegl-operations.h"
 
 static void         attach                    (GeglOperation       *self);
@@ -135,9 +133,6 @@ gegl_operation_create_pad (GeglOperation *self,
   gegl_pad_set_node (pad, self->node);
   gegl_node_add_pad (self->node, pad);
 }
-
-void gegl_node_emit_computed (GeglNode *node, const GeglRectangle *rect);
-
 
 gboolean
 gegl_operation_process (GeglOperation        *operation,
