@@ -1,4 +1,14 @@
-include $(top_srcdir)/operations/Makefile-operations.am
+include $(top_srcdir)/operations/Makefile-common.am
 
-AM_CPPFLAGS += \
-	-I$(top_srcdir)/operations/core
+EXTRA_DIST = $(wildcard $(srcdir)/*.h)
+
+AM_CPPFLAGS += -I$(srcdir)
+
+LIBS = $(op_libs)
+
+opdir = $(ext_dir)
+op_LTLIBRARIES = \
+	clone.la \
+	convert-format.la \
+	crop.la \
+	nop.la

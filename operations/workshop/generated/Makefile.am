@@ -1,5 +1,16 @@
-include $(top_srcdir)/operations/Makefile-operations.am
+include $(top_srcdir)/operations/Makefile-common.am
 
-AM_CPPFLAGS += -I$(top_srcdir)/operations/workshop/generated
+EXTRA_DIST = $(wildcard $(srcdir)/*.rb) $(wildcard $(srcdir)/*.h)
 
-EXTRA_DIST += $(wildcard $(srcdir)/*.rb) $(wildcard $(srcdir)/*.c)
+AM_CPPFLAGS += -I$(srcdir)
+
+LIBS = $(op_libs)
+
+opdir = $(ext_dir)
+op_LTLIBRARIES = \
+	average.la \
+	blend-reflect.la \
+	negation.la \
+	soft-burn.la \
+	soft-dodge.la \
+	subtractive.la

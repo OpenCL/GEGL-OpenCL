@@ -7,9 +7,8 @@ SUBDIRS = \
 	external
 
 if ENABLE_WORKSHOP
-SUBDIRS+= workshop
+SUBDIRS += workshop
 endif
 
-EXTRA_DIST= \
-	Makefile-operations.am	\
+EXTRA_DIST = \
 	Makefile-common.am
