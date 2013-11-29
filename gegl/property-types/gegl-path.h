@@ -198,9 +198,9 @@ void                 gegl_path_get_matrix     (GeglPath    *path,
  * @path: a #GeglPath
  * @x: x coordinate.
  * @y: y coordinate
- * @on_path_x: return location for x coordinate on the path that was closest
- * @on_path_y: return location for y coordinate on the path that was closest
- * @node_pos_before: the node position interpreted before this position
+ * @on_path_x: (out): return location for x coordinate on the path that was closest
+ * @on_path_y: (out): return location for y coordinate on the path that was closest
+ * @node_pos_before: (out): the node position interpreted before this position
  * was deemed the closest coordinate.
  *
  * Figure out what and where on a path is closest to arbitrary coordinates.
@@ -218,8 +218,8 @@ gdouble              gegl_path_closest_point  (GeglPath     *path,
  * gegl_path_calc:
  * @path: a #GeglPath
  * @pos: how far along the path.
- * @x: return location for x coordinate.
- * @y: return location for y coordinate
+ * @x: (out): return location for x coordinate.
+ * @y: (out): return location for y coordinate
  *
  * Compute the coordinates of the path at the @position (length measured from
  * start of path, not including discontinuities).
@@ -230,11 +230,11 @@ gboolean             gegl_path_calc           (GeglPath     *path,
                                                gdouble      *y);
 
 /**
- * gegl_path_calc_values:
+ * gegl_path_calc_values: (skip)
  * @path: a #GeglPath
  * @num_samples: number of samples to compute
- * @xs: return location for x coordinates
- * @ys: return location for y coordinates
+ * @xs: (out caller-allocates) (array length=num_samples): return location for x coordinates
+ * @ys: (out caller-allocates) (array length=num_samples): return location for y coordinates
  *
  * Compute @num_samples for a path into the provided arrays @xs and @ys
  * the returned values include the start and end positions of the path.
@@ -247,10 +247,10 @@ void                 gegl_path_calc_values    (GeglPath    *path,
 /**
  * gegl_path_get_bounds:
  * @self: a #GeglPath.
- * @min_x: return location for minimum x coordinate
- * @max_x: return location for maximum x coordinate
- * @min_y: return location for minimum y coordinate
- * @max_y: return location for maximum y coordinate
+ * @min_x: (out): return location for minimum x coordinate
+ * @max_x: (out): return location for maximum x coordinate
+ * @min_y: (out): return location for minimum y coordinate
+ * @max_y: (out): return location for maximum y coordinate
  *
  * Compute the bounding box of a path.
  */
