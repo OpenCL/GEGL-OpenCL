@@ -22,14 +22,8 @@
 #include <string.h>
 
 #include "gegl.h"
-#include "gegl-types-internal.h"
 #include "gegl-operation-temporal.h"
-#include "gegl-utils.h"
-#include "graph/gegl-node.h"
-#include "graph/gegl-connection.h"
-#include "graph/gegl-pad.h"
-#include "buffer/gegl-region.h"
-#include "buffer/gegl-buffer.h"
+#include "gegl-operation-context.h"
 
 struct _GeglOperationTemporalPrivate
 {
