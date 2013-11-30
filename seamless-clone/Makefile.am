@@ -32,7 +32,7 @@ libgegl_sc_@GEGL_API_VERSION@_la_CFLAGS = \
 lib_LTLIBRARIES = libgegl-sc-@GEGL_API_VERSION@.la
 
 libgegl_sc_@GEGL_API_VERSION@_la_LIBADD = \
-	$(libgegl)
+	$(libgegl) $(BABL_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gegl-sc-$(GEGL_API_VERSION).pc
