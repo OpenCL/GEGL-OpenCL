@@ -24,7 +24,7 @@
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-buffer-types.h"
-#include "gegl-node.h"
+#include "gegl-node-private.h"
 #include "gegl-pad.h"
 #include "gegl-visitor.h"
 #include "gegl-utils.h"

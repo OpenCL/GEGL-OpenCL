@@ -31,6 +31,7 @@ libgraph_la_SOURCES = \
 	\
 	gegl-connection.h	\
 	gegl-node.h		\
+	gegl-node-private.h	\
 	gegl-pad.h		\
 	gegl-visitor.h		\
 	gegl-visitable.h

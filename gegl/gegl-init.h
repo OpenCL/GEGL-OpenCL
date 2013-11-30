@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2003 Calvin Williamson, Øyvind Kolås
+ *           2013 Daniel Sabo
  */
 
 #ifndef __GEGL_INIT_H__
@@ -21,34 +22,50 @@
 
 G_BEGIN_DECLS
 
+/***
+ * Initialization:
+ *
+ * Before GEGL can be used the engine should be initialized by either calling
+ * #gegl_init or through the use of #gegl_get_option_group. To shut down the
+ * GEGL engine call #gegl_exit.
+ *
+ * ---Code sample:
+ * #include <gegl.h>
+ *
+ * int main(int argc, char **argv)
+ * {
+ *   gegl_init (&argc, &argv);
+ *       # other GEGL code
+ *   gegl_exit ();
+ * }
+ */
+
 /**
  * gegl_init:
  * @argc: (inout): a pointer to the number of command line arguments.
  * @argv: (inout) (array length=argc) (allow-none): a pointer to the array of command line arguments.
  *
- * Call this function before using any other GEGL functions. It will initialize
- * everything needed to operate GEGL and parses some standard command line
- * options.  @argc and @argv are adjusted accordingly so your own code will
- * never see those standard arguments.
+ * Call this function before using any other GEGL functions. It will
+ * initialize everything needed to operate GEGL and parses some
+ * standard command line options.  @argc and @argv are adjusted
+ * accordingly so your own code will never see those standard
+ * arguments.
  *
- * Note that there is an alternative ways to initialize GEGL: if you are
- * calling g_option_context_parse() with the option group returned by
- * gegl_get_option_group(), you don't have to call gegl_init().
+ * Note that there is an alternative way to initialize GEGL: if you
+ * are calling g_option_context_parse() with the option group returned
+ * by #gegl_get_option_group(), you don't have to call #gegl_init().
  **/
-void           gegl_init              (gint    *argc,
-                                       gchar ***argv);
-
+void          gegl_init                  (gint          *argc,
+                                          gchar       ***argv);
 /**
  * gegl_get_option_group: (skip)
  *
- * Returns a #GOptionGroup for the commandline arguments recognized
- * by GEGL. You should add this group to your #GOptionContext
- * with g_option_context_add_group(), if you are using
+ * Returns a GOptionGroup for the commandline arguments recognized
+ * by GEGL. You should add this group to your GOptionContext
+ * with g_option_context_add_group() if you are using
  * g_option_context_parse() to parse your commandline arguments.
- *
- * Returns a #GOptionGroup for the commandline arguments recognized by GEGL.
  */
-GOptionGroup * gegl_get_option_group  (void);
+GOptionGroup *gegl_get_option_group      (void);
 
 /**
  * gegl_exit:
@@ -57,22 +74,25 @@ GOptionGroup * gegl_get_option_group  (void);
  * caches and write/dump debug information if the correct debug flags
  * are set.
  */
-void           gegl_exit              (void);
+void          gegl_exit                  (void);
 
 /**
- * gegl_get_debug_enabled:
+ * gegl_load_module_directory:
+ * @path: the directory to load modules from
  *
- * Check if gegl has debugging turned on.
- *
- * Return value: TRUE if debugging is turned on, FALSE otherwise.
+ * Load all gegl modules found in the given directory.
  */
-gboolean       gegl_get_debug_enabled (void); /* should be moved into config */
+void          gegl_load_module_directory (const gchar *path);
 
-void           gegl_get_version          (int *major,
-                                          int *minor,
-                                          int *micro);
-
-void           gegl_load_module_directory (const gchar *path);
+/**
+ * gegl_config:
+ *
+ * Returns a GeglConfig object with properties that can be manipulated to control
+ * GEGLs behavior.
+ *
+ * Return value: (transfer none): a #GeglConfig
+ */
+GeglConfig   *gegl_config                (void);
 
 G_END_DECLS
 

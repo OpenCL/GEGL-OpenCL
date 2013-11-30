@@ -26,7 +26,7 @@
 #include "gegl-types-internal.h"
 #include "gegl-operation.h"
 #include "gegl-operation-context.h"
-#include "graph/gegl-node.h"
+#include "graph/gegl-node-private.h"
 #include "graph/gegl-connection.h"
 #include "graph/gegl-pad.h"
 #include "gegl-operations.h"

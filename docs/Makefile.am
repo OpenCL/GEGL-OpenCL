@@ -179,6 +179,10 @@ endif
 
 API_DOC_FILES = \
 	$(top_srcdir)/gegl/gegl.h			\
+	$(top_srcdir)/gegl/gegl-init.h		\
+	$(top_srcdir)/gegl/gegl-operations-util.h	\
+	$(top_srcdir)/gegl/graph/gegl-node.h		\
+	$(top_srcdir)/gegl/process/gegl-processor.h	\
 	$(top_builddir)/gegl/gegl-version.h		\
 	$(top_srcdir)/gegl/buffer/gegl-buffer.h		\
 	$(top_srcdir)/gegl/buffer/gegl-buffer-iterator.h\
@@ -187,7 +191,8 @@ API_DOC_FILES = \
 	$(top_srcdir)/gegl/property-types/gegl-color.h	\
 	$(top_srcdir)/gegl/gegl-matrix.h 		\
 	$(top_srcdir)/gegl/property-types/gegl-path.h	\
-	$(top_srcdir)/gegl/property-types/gegl-curve.h
+	$(top_srcdir)/gegl/property-types/gegl-curve.h \
+	$(top_srcdir)/gegl/gegl-apply.h
 
 api.html: $(API_DOC_FILES) \
 	  $(top_srcdir)/tools/create-reference.rb

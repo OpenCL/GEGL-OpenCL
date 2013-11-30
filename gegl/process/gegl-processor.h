@@ -19,32 +19,61 @@
 #ifndef __GEGL_PROCESSOR_H__
 #define __GEGL_PROCESSOR_H__
 
-#include "gegl-types-internal.h"
-
 G_BEGIN_DECLS
 
-#define GEGL_PROCESSOR_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_PROCESSOR, GeglProcessorClass))
-#define GEGL_IS_PROCESSOR_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_PROCESSOR))
-#define GEGL_PROCESSOR_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_PROCESSOR, GeglProcessorClass))
-/* The rest is in gegl-types.h */
+/***
+ * GeglProcessor:
+ *
+ * A #GeglProcessor, is a worker that can be used for background rendering
+ * of regions in a node's cache. Or for processing a sink node. For most
+ * non GUI tasks using #gegl_node_blit and #gegl_node_process directly
+ * should be sufficient. See #gegl_processor_work for a code sample.
+ *
+ */
 
-
-typedef struct _GeglProcessorClass GeglProcessorClass;
-
-struct _GeglProcessorClass
-{
-  GObjectClass  parent_class;
-};
-
-
-GType          gegl_processor_get_type      (void) G_GNUC_CONST;
-
+/**
+ * gegl_node_new_processor:
+ * @node: a #GeglNode
+ * @rectangle: the #GeglRectangle to work on or NULL to work on all available
+ * data.
+ *
+ * Return value: (transfer full): a new #GeglProcessor.
+ */
 GeglProcessor *gegl_node_new_processor      (GeglNode            *node,
                                              const GeglRectangle *rectangle);
+
+/**
+ * gegl_processor_set_rectangle:
+ * @processor: a #GeglProcessor
+ * @rectangle: the new #GeglRectangle the processor shold work on or NULL
+ * to make it work on all data in the buffer.
+ *
+ * Change the rectangle a #GeglProcessor is working on.
+ */
 void           gegl_processor_set_rectangle (GeglProcessor       *processor,
                                              const GeglRectangle *rectangle);
-gboolean       gegl_processor_work          (GeglProcessor       *processor,
-                                             gdouble             *progress);
+
+
+/**
+ * gegl_processor_work:
+ * @processor: a #GeglProcessor
+ * @progress: (out caller-allocates): a location to store the (estimated) percentage complete.
+ *
+ * Do an iteration of work for the processor.
+ *
+ * Returns TRUE if there is more work to be done.
+ *
+ * ---
+ * GeglProcessor *processor = gegl_node_new_processor (node, &roi);
+ * double         progress;
+ *
+ * while (gegl_processor_work (processor, &progress))
+ *   g_warning ("%f%% complete", progress);
+ * g_object_unref (processor);
+ */
+gboolean       gegl_processor_work          (GeglProcessor *processor,
+                                             gdouble       *progress);
+
 G_END_DECLS
 
 #endif /* __GEGL_PROCESSOR_H__ */

@@ -46,11 +46,14 @@ GEGL_publicdir = $(includedir)/gegl-$(GEGL_API_VERSION)
 GEGL_introspectable_headers =	\
 	gegl.h				\
 	gegl-types.h			\
+	gegl-apply.h			\
 	gegl-enums.h			\
+	gegl-operations-util.h		\
 	gegl-utils.h			\
 	gegl-matrix.h			\
 	gegl-lookup.h			\
 	gegl-random.h			\
+	gegl-init.h			\
 	gegl-version.h			\
 	buffer/gegl-buffer.h		\
 	buffer/gegl-buffer-iterator.h	\
@@ -58,7 +61,9 @@ GEGL_introspectable_headers =	\
 	buffer/gegl-tile-backend.h		\
 	buffer/gegl-tile-handler.h		\
 	buffer/gegl-tile-source.h		\
+	graph/gegl-node.h			\
 	process/gegl-graph-debug.h		\
+	process/gegl-processor.h		\
 	property-types/gegl-paramspecs.h	\
 	property-types/gegl-color.h		\
 	property-types/gegl-path.h		\
@@ -66,6 +71,7 @@ GEGL_introspectable_headers =	\
 
 GEGL_public_HEADERS = \
 	$(GEGL_introspectable_headers)	\
+	gegl-c.h			\
 	gegl-chant.h			\
 	gegl-cpuaccel.h			\
 	gegl-plugin.h			\
@@ -91,7 +97,6 @@ GEGL_sources = \
 	gegl-matrix.c			\
 	\
 	gegl-algorithms.h \
-	gegl-apply.h			\
 	gegl-chant.h			\
 	gegl-config.h			\
 	gegl-cpuaccel.h			\
@@ -99,7 +104,7 @@ GEGL_sources = \
 	gegl-debug.h			\
 	gegl-dot.h			\
 	gegl-dot-visitor.h		\
-	gegl-init.h			\
+	gegl-init-private.h		\
 	gegl-instrument.h		\
 	gegl-introspection-support.h	\
 	gegl-lookup.h			\

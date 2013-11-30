@@ -31,7 +31,7 @@
 #include "gegl-types-internal.h"
 
 #include "gegl.h"
-#include "graph/gegl-node.h"
+#include "graph/gegl-node-private.h"
 #include "gegl-introspection-support.h"
 
 GValue *

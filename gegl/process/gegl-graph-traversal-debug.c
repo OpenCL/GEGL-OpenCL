@@ -24,7 +24,7 @@
 #include "gegl.h"
 #include "gegl-utils.h"
 
-#include "graph/gegl-node.h"
+#include "graph/gegl-node-private.h"
 #include "graph/gegl-pad.h"
 
 #include "process/gegl-graph-debug.h"

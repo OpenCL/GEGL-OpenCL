@@ -25,11 +25,10 @@
 #include <glib-object.h>
 
 #include "gegl.h"
-#include "gegl/gegl-utils.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation-context.h"
 #include "gegl-operation-context-private.h"
-#include "gegl/graph/gegl-node.h"
+#include "gegl-node-private.h"
 #include "gegl-config.h"
 
 #include "operation/gegl-operation.h"

@@ -29,7 +29,7 @@
 
 #include "gegl.h"
 #include "gegl-debug.h"
-#include "gegl-node.h"
+#include "gegl-node-private.h"
 #include "gegl-connection.h"
 #include "gegl-pad.h"
 #include "gegl-utils.h"
@@ -43,7 +43,6 @@
 #include "operation/gegl-operation-meta.h"
 
 #include "process/gegl-eval-manager.h"
-#include "process/gegl-processor.h"
 
 enum
 {

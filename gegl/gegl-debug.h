@@ -2,7 +2,6 @@
 #define __GEGL_DEBUG_H__
 
 #include <glib.h>
-#include "gegl-init.h"
 
 G_BEGIN_DECLS
 

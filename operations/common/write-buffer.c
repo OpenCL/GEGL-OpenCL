@@ -31,7 +31,7 @@ gegl_chant_object (buffer, _("Buffer location"),
 #define GEGL_CHANT_C_FILE       "write-buffer.c"
 
 #include "gegl-chant.h"
-#include "graph/gegl-node.h"
+#include "graph/gegl-node-private.h"
 
 #include "gegl/gegl-debug.h"
 #include "opencl/gegl-cl.h"

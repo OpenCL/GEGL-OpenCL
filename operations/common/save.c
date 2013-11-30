@@ -29,7 +29,7 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to save."))
 #define GEGL_CHANT_C_FILE       "save.c"
 
 #include "gegl-plugin.h"
-#include "gegl/graph/gegl-node.h"
+#include "gegl-node-private.h"
 
 struct _GeglChant
 {

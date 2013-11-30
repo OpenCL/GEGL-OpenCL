@@ -82,16 +82,17 @@ pid_is_running (gint pid)
 #endif
 
 
-#include <gegl-debug.h>
-
+#include "gegl-debug.h"
 
 guint gegl_debug_flags = 0;
 
+#include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "gegl-instrument.h"
 #include "gegl-init.h"
+#include "gegl-init-private.h"
 #include "module/geglmodule.h"
 #include "module/geglmoduledb.h"
-#include "gegl-types-internal.h"
 #include "buffer/gegl-buffer.h"
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"
@@ -102,7 +103,7 @@ guint gegl_debug_flags = 0;
 #include "buffer/gegl-tile-backend-tiledir.h"
 #include "buffer/gegl-tile-backend-file.h"
 #include "gegl-config.h"
-#include "graph/gegl-node.h"
+#include "graph/gegl-node-private.h"
 #include "gegl-random-priv.h"
 
 static gboolean  gegl_post_parse_hook (GOptionContext *context,

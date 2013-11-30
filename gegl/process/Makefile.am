@@ -34,6 +34,7 @@ libprocess_la_SOURCES = \
 	gegl-graph-traversal.h		\
 	gegl-graph-traversal-private.h	\
 	gegl-list-visitor.h		\
-	gegl-processor.h
+	gegl-processor.h		\
+	gegl-processor-private.h
 
 #libprocess_la_SOURCES = $(lib_process_sources) $(libprocess_public_HEADERS)

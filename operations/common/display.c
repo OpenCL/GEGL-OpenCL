@@ -27,7 +27,7 @@ gegl_chant_string  (window_title, _(""), "window_title",
 #define GEGL_CHANT_C_FILE       "display.c"
 
 #include "gegl-plugin.h"
-#include "gegl/graph/gegl-node.h"
+#include "gegl-node-private.h"
 
 /* gegl:display
  * Meta operation for displaying the output of a buffer.

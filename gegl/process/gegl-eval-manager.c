@@ -27,7 +27,7 @@
 #include "gegl-eval-manager.h"
 #include "gegl-instrument.h"
 
-#include "graph/gegl-node.h"
+#include "graph/gegl-node-private.h"
 
 #include "process/gegl-graph-traversal.h"
 

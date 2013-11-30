@@ -52,8 +52,6 @@ struct _GeglConfigClass
   GObjectClass parent_class;
 };
 
-GeglConfig   * gegl_config            (void);
-
 G_END_DECLS
 
 #endif

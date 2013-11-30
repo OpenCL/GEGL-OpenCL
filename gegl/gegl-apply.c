@@ -29,7 +29,7 @@
 #include "gegl.h"
 #include "gegl-apply.h"
 
-#include "graph/gegl-node.h"
+#include "graph/gegl-node-private.h"
 
 #include "operation/gegl-operation.h"
 #include "operation/gegl-operations.h"

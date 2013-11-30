@@ -23,7 +23,7 @@
 
 #include "gegl.h"
 #include "gegl-operation-meta.h"
-#include "graph/gegl-node.h"
+#include "graph/gegl-node-private.h"
 
 static void       finalize     (GObject       *self_object);
 static GeglNode * detect       (GeglOperation *operation,

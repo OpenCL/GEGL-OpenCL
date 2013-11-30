@@ -32,8 +32,8 @@
 #include <math.h>
 #include <gegl.h>
 #include <gegl-plugin.h>
+#include <graph/gegl-node-private.h>
 #include <graph/gegl-pad.h>
-#include <graph/gegl-node.h>
 #include <graph/gegl-connection.h>
 
 #include "transform-core.h"
