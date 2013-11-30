@@ -492,6 +492,15 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *node,
 const gchar * gegl_node_get_operation    (const GeglNode *node);
 
 /**
+ * gegl_node_get_gegl_operation: (skip)
+ * @node: a #GeglNode
+ *
+ * Return value: (transfer none) (allow-none): The operation object
+ * assoicated with this node or NULL if there is no op associated.
+ */
+GeglOperation *gegl_node_get_gegl_operation   (GeglNode *node);
+
+/**
  * gegl_node_get_output_proxy:
  * @node: a #GeglNode
  * @pad_name: the name of the pad.

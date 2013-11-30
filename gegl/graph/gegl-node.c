@@ -1495,6 +1495,15 @@ gegl_node_get_operation (const GeglNode *node)
   return GEGL_OPERATION_GET_CLASS (node->operation)->name;
 }
 
+GeglOperation *
+gegl_node_get_gegl_operation (GeglNode *node)
+{
+  if (node == NULL)
+    return NULL;
+
+  return node->operation;
+}
+
 const gchar *
 gegl_node_get_debug_name (GeglNode *node)
 {
