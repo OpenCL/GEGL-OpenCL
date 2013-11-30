@@ -1,7 +1,6 @@
 #ifndef __OP_TRANSFORM_H__
 #define __OP_TRANSFORM_H__
 
-#include "gegl-buffer-private.h"
 #include <gegl-matrix.h>
 
 G_BEGIN_DECLS
