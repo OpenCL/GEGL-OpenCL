@@ -32,9 +32,6 @@
 #include <math.h>
 #include <gegl.h>
 #include <gegl-plugin.h>
-#include <graph/gegl-node-private.h>
-#include <graph/gegl-pad.h>
-#include <graph/gegl-connection.h>
 
 #include "transform-core.h"
 #include "module.h"
@@ -351,41 +348,50 @@ gegl_transform_bounding_box (const gdouble *points,
 static gboolean
 gegl_transform_is_intermediate_node (OpTransform *transform)
 {
-  GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (transform);
 
-  connections = gegl_pad_get_connections (gegl_node_get_pad (op->node,
-                                                             "output"));
-  if (! connections)
-    return FALSE;
+  gboolean is_intermediate = TRUE;
 
-  do
+  GeglNode **consumers = NULL;
+
+  if (0 == gegl_node_get_consumers (op->node, "output", &consumers, NULL))
     {
-      GeglOperation *sink;
-
-      sink = gegl_connection_get_sink_node (connections->data)->operation;
-
-      if (! IS_OP_TRANSFORM (sink) || transform->sampler != OP_TRANSFORM (sink)->sampler)
-        return FALSE;
+      is_intermediate = FALSE;
     }
-  while ((connections = g_slist_next (connections)));
+  else
+    {
+      int i;
+      for (i = 0; consumers[i]; ++i)
+        {
+          GeglOperation *sink = gegl_node_get_gegl_operation (consumers[i]);
 
-  return TRUE;
+          if (! IS_OP_TRANSFORM (sink) || transform->sampler != OP_TRANSFORM (sink)->sampler)
+            {
+              is_intermediate = FALSE;
+              break;
+            }
+        }
+    }
+
+  if (consumers)
+    g_free (consumers);
+
+  return is_intermediate;
 }
 
 static gboolean
 gegl_transform_is_composite_node (OpTransform *transform)
 {
-  GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (transform);
+  GeglNode *source_node;
   GeglOperation *source;
 
-  connections = gegl_pad_get_connections (gegl_node_get_pad (op->node,"input"));
+  source_node = gegl_node_get_producer (op->node, "input", NULL);
 
-  if (! connections)
+  if (!source_node)
     return FALSE;
 
-  source = gegl_connection_get_source_node (connections->data)->operation;
+  source = gegl_node_get_gegl_operation (source_node);
 
   return (IS_OP_TRANSFORM (source) && transform->sampler == OP_TRANSFORM (source)->sampler);
 }
@@ -394,15 +400,15 @@ static void
 gegl_transform_get_source_matrix (OpTransform *transform,
                                   GeglMatrix3 *output)
 {
-  GSList        *connections;
   GeglOperation *op = GEGL_OPERATION (transform);
+  GeglNode *source_node;
   GeglOperation *source;
 
-  connections = gegl_pad_get_connections (gegl_node_get_pad (op->node,
-                                                             "input"));
-  g_assert (connections);
+  source_node = gegl_node_get_producer (op->node, "input", NULL);
 
-  source = gegl_connection_get_source_node (connections->data)->operation;
+  g_assert (source_node);
+
+  source = gegl_node_get_gegl_operation (source_node);
   g_assert (IS_OP_TRANSFORM (source));
 
   gegl_transform_create_composite_matrix (OP_TRANSFORM (source), output);
@@ -477,11 +483,11 @@ gegl_transform_detect (GeglOperation *operation,
                        gint           x,
                        gint           y)
 {
-  OpTransform *transform = OP_TRANSFORM (operation);
-  GeglNode    *source_node =
-    gegl_operation_get_source_node (operation, "input");
-  GeglMatrix3  inverse;
-  gdouble      need_points [2];
+  OpTransform   *transform = OP_TRANSFORM (operation);
+  GeglNode      *source_node;
+  GeglMatrix3    inverse;
+  gdouble        need_points [2];
+  GeglOperation *source;
 
   /*
    * transform_detect figures out which pixel in the input most
@@ -489,9 +495,19 @@ gegl_transform_detect (GeglOperation *operation,
    * Ties are resolved toward the right and bottom.
    */
 
+  source_node = gegl_operation_get_source_node (operation, "input");
+
+  if (!source_node)
+    return NULL;
+
+  source = gegl_node_get_gegl_operation (source_node);
+
+  if (!source)
+    return NULL;
+
   if (gegl_transform_is_intermediate_node (transform) ||
       gegl_matrix3_is_identity (&inverse))
-    return gegl_operation_detect (source_node->operation, x, y);
+    return gegl_operation_detect (source, x, y);
 
   gegl_transform_create_matrix (transform, &inverse);
   gegl_matrix3_invert (&inverse);
@@ -510,7 +526,7 @@ gegl_transform_detect (GeglOperation *operation,
    * With the "origin at top left corner of pixel [0][0]" convention,
    * the index of the nearest pixel is given by floor.
    */
-  return gegl_operation_detect (source_node->operation,
+  return gegl_operation_detect (source,
                                 (gint) floor ((double) need_points [0]),
                                 (gint) floor ((double) need_points [1]));
 }
