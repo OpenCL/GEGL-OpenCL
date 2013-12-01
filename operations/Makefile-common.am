@@ -7,7 +7,9 @@ libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 op_libs = $(DEP_LIBS) $(BABL_LIBS) $(libgegl)
 
 AM_CPPFLAGS = \
+	-I$(top_builddir) \
 	-I$(top_srcdir) \
+	-I$(top_builddir)/gegl \
 	-I$(top_srcdir)/gegl \
 	-I$(top_builddir)/gegl/buffer \
 	-I$(top_srcdir)/gegl/buffer \
