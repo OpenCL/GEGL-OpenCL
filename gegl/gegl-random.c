@@ -38,7 +38,7 @@
 #include <glib.h>
 #include <gegl.h>
 #include "gegl-random.h"
-#include "gegl-random-priv.h"
+#include "gegl-random-private.h"
 
 /* a set of reasonably large primes to choose from for array sizes
  */

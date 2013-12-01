@@ -100,7 +100,7 @@ GEGL_sources = \
 	gegl-chant.h			\
 	gegl-config.h			\
 	gegl-cpuaccel.h			\
-	gegl-cpuaccel-priv.h		\
+	gegl-cpuaccel-private.h		\
 	gegl-debug.h			\
 	gegl-dot.h			\
 	gegl-dot-visitor.h		\
@@ -111,7 +111,7 @@ GEGL_sources = \
 	gegl-matrix.h			\
 	gegl-module.h			\
 	gegl-plugin.h			\
-	gegl-random-priv.h		\
+	gegl-random-private.h		\
 	gegl-types-internal.h		\
 	gegl-xml.h
 

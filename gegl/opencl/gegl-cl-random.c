@@ -19,7 +19,7 @@
 #include <glib.h>
 #include "gegl-cl-random.h"
 #include "opencl/gegl-cl.h"
-#include "gegl-random-priv.h"
+#include "gegl-random-private.h"
 
 static cl_mem cl_random_data = NULL;
 
