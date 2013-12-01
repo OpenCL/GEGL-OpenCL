@@ -28,13 +28,13 @@ gegl_chant_object (buffer, _("Buffer location"),
 #else
 
 #define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "write-buffer.c"
+#define GEGL_CHANT_C_FILE "write-buffer.c"
 
 #include "gegl-chant.h"
-#include "graph/gegl-node-private.h"
 
 #include "gegl/gegl-debug.h"
 #include "opencl/gegl-cl.h"
+#include "gegl-buffer-cl-iterator.h"
 
 static gboolean
 process (GeglOperation       *operation,
@@ -47,9 +47,11 @@ process (GeglOperation       *operation,
   if (o->buffer)
     {
       GeglBuffer *output = GEGL_BUFFER (o->buffer);
+      const Babl *in_format = gegl_buffer_get_format (input);
+      const Babl *out_format = gegl_buffer_get_format (output);
 
       if (gegl_operation_use_opencl (operation)
-          && gegl_cl_color_supported (input->soft_format, output->soft_format) == GEGL_CL_COLOR_CONVERT)
+          && gegl_cl_color_supported (in_format, out_format) == GEGL_CL_COLOR_CONVERT)
         {
           size_t size;
           gboolean err;
@@ -57,25 +59,25 @@ process (GeglOperation       *operation,
 
           GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                                  result,
-                                                                 output->soft_format,
+                                                                 out_format,
                                                                  GEGL_CL_BUFFER_WRITE);
 
           gint read = gegl_buffer_cl_iterator_add (i,
                                                    input,
                                                    result,
-                                                   output->soft_format,
+                                                   out_format,
                                                    GEGL_CL_BUFFER_READ,
                                                    GEGL_ABYSS_NONE);
 
-          gegl_cl_color_babl (output->soft_format, &size);
+          gegl_cl_color_babl (out_format, &size);
 
           GEGL_NOTE (GEGL_DEBUG_OPENCL,
                      "write-buffer: "
                      "%p %p %s %s {%d %d %d %d}",
                      input,
                      output,
-                     babl_get_name(input->soft_format),
-                     babl_get_name(output->soft_format),
+                     babl_get_name (in_format),
+                     babl_get_name (out_format),
                      result->x,
                      result->y,
                      result->width,
@@ -97,7 +99,7 @@ process (GeglOperation       *operation,
 
               if (cl_err != CL_SUCCESS)
                 {
-                  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", gegl_cl_errstring(cl_err));
+                  GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s", gegl_cl_errstring (cl_err));
                   break;
                 }
             }
@@ -109,8 +111,6 @@ process (GeglOperation       *operation,
         gegl_buffer_copy (input, result, output, result);
 
       gegl_buffer_flush (output);
-
-      gegl_node_emit_computed (operation->node, result);
     }
 
   return TRUE;
