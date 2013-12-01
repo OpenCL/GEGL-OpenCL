@@ -55,7 +55,8 @@ NO_OPENCL_TESTS = \
   shift.xml                     \
   stretch-contrast-hsv.xml      \
   pnm-raw-load.xml              \
-  pnm-ascii-load.xml
+  pnm-ascii-load.xml            \
+  tile.xml
 
 # Conditional tests
 if HAVE_JASPER
