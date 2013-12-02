@@ -24,9 +24,6 @@
 
 #include <glib.h>
 
-#include <gegl-matrix.h>
-typedef GeglMatrix3 NPDMatrix;
-
 /* opaque types for independency on used display library */
 typedef struct _NPDImage    NPDImage;
 typedef struct _NPDColor    NPDColor;

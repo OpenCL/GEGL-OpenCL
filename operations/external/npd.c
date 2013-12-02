@@ -55,15 +55,8 @@ gegl_chant_boolean (mesh_visible, _("mesh visible"),
 #include <stdio.h>
 #include <math.h>
 #include <npd/npd.h>
+#include <npd/npd_gegl.h>
 #include <cairo.h>
-
-struct _NPDImage
-{
-  gint     width;
-  gint     height;
-  NPDPoint position;
-  guchar  *buffer;
-};
 
 struct _NPDDisplay
 {
@@ -77,96 +70,22 @@ typedef struct
   NPDModel  model;
 } NPDProperties;
 
-void npd_create_image         (NPDImage   *image,
-                               GeglBuffer *gegl_buffer,
-                               const Babl *format);
-
-void npd_set_pixel_color_impl (NPDImage *image,
-                               gint      x,
-                               gint      y,
-                               NPDColor *color);
-
-void npd_get_pixel_color_impl (NPDImage *image,
-                               gint      x,
-                               gint      y,
-                               NPDColor *color);
-
-void npd_draw_line_impl       (NPDDisplay *display,
-                               gfloat      x0,
-                               gfloat      y0,
-                               gfloat      x1,
-                               gfloat      y1);
-
-void npd_set_pixel_color_impl (NPDImage *image,
-                               gint      x,
-                               gint      y,
-                               NPDColor *color)
-{
-  if (x > -1 && x < image->width &&
-      y > -1 && y < image->height)
-    {
-      gint position = 4 * (y * image->width + x);
-
-      image->buffer[position + 0] = color->r;
-      image->buffer[position + 1] = color->g;
-      image->buffer[position + 2] = color->b;
-      image->buffer[position + 3] = color->a;
-    }
-}
-
-void
-npd_get_pixel_color_impl (NPDImage *image,
-                          gint      x,
-                          gint      y,
-                          NPDColor *color)
-{
-  if (x > -1 && x < image->width &&
-      y > -1 && y < image->height)
-    {
-      gint position = 4 * (y * image->width + x);
-
-      color->r = image->buffer[position + 0];
-      color->g = image->buffer[position + 1];
-      color->b = image->buffer[position + 2];
-      color->a = image->buffer[position + 3];
-    }
-  else
-    {
-      color->r = color->g = color->b = color->a = 0;
-    }
-}
-
-void npd_draw_line_impl (NPDDisplay *display,
-                         gfloat      x0,
-                         gfloat      y0,
-                         gfloat      x1,
-                         gfloat      y1)
+static void npd_draw_line_impl (NPDDisplay *display,
+                                gfloat      x0,
+                                gfloat      y0,
+                                gfloat      x1,
+                                gfloat      y1)
 {
   cairo_move_to (display->cr, x0, y0);
   cairo_line_to (display->cr, x1, y1);
 }
 
-void
+static void
 npd_draw_model (NPDModel   *model,
                 NPDDisplay *display)
 {
-  NPDHiddenModel *hm = model->hidden_model;
-  NPDImage *image = model->reference_image;
-  gint i;
+  npd_draw_model_into_image (model, &display->image);
 
-  /* draw texture */
-  if (model->texture_visible)
-    {
-      for (i = 0; i < hm->num_of_bones; i++)
-        {
-          npd_texture_quadrilateral(&hm->reference_bones[i],
-                                    &hm->current_bones[i],
-                                     image,
-                                    &display->image,
-                                     NPD_BILINEAR_INTERPOLATION | NPD_ALPHA_BLENDING);
-        }
-    }
-  
   /* draw mesh */
   if (model->mesh_visible)
     {
@@ -176,46 +95,13 @@ npd_draw_model (NPDModel   *model,
                                                      CAIRO_FORMAT_ARGB32,
                                                      display->image.width,
                                                      display->image.height,
-                                                     display->image.width * 4);
+                                                     display->image.width);
       display->cr = cairo_create (surface);
       cairo_set_line_width (display->cr, 1);
       cairo_set_source_rgba (display->cr, 0, 0, 0, 1);
       npd_draw_mesh (model, display);
       cairo_stroke (display->cr);
     }
-}
-
-void
-npd_create_model_from_image (NPDModel *model,
-                             NPDImage *image,
-                             gint      square_size)
-{
-  npd_init_model(model);
-  model->reference_image = image;
-  model->mesh_square_size = square_size;
-    
-  npd_create_mesh_from_image (model, image->width, image->height, 0, 0);
-}
-
-void
-npd_create_image (NPDImage   *image,
-                  GeglBuffer *gegl_buffer,
-                  const Babl *format)
-{
-  guchar *buffer;
-  buffer = g_new0 (guchar, gegl_buffer_get_pixel_count (gegl_buffer) * 4);
-  gegl_buffer_get (gegl_buffer, NULL, 1.0, format,
-                   buffer, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-  image->buffer = buffer;
-  image->width = gegl_buffer_get_width (gegl_buffer);
-  image->height = gegl_buffer_get_height (gegl_buffer);
-}
-
-void
-npd_destroy_image (NPDImage *image)
-{
-  g_free(image->buffer);
 }
 
 static void
@@ -230,7 +116,7 @@ prepare (GeglOperation *operation)
       props->first_run = TRUE;
       o->chant_data    = props;
     }
-  
+
   gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output",
@@ -258,11 +144,11 @@ process (GeglOperation       *operation,
       NPDImage *input_image = g_new (NPDImage, 1);
       NPDDisplay *display = g_new (NPDDisplay, 1);
 
-      npd_init (npd_set_pixel_color_impl,
-                npd_get_pixel_color_impl,
+      npd_init (npd_gegl_set_pixel_color,
+                npd_gegl_get_pixel_color,
                 npd_draw_line_impl);
 
-      npd_create_image (input_image, input, format);
+      npd_gegl_create_image (input_image, input, format);
       width = input_image->width;
       height = input_image->height;
 
@@ -272,9 +158,8 @@ process (GeglOperation       *operation,
       display->image.buffer = output_buffer;
       model->display = display;
 
-      npd_create_model_from_image (model, input_image, o->square_size);
+      npd_create_model_from_image (model, input_image, width, height, 0, 0, o->square_size);
       hm = model->hidden_model;
-/*      npd_create_list_of_overlapping_points (hm);*/
 
       o->model = model;
 
@@ -302,7 +187,7 @@ process (GeglOperation       *operation,
     }
 
   gegl_buffer_set (output, NULL, 0, format, output_buffer, GEGL_AUTO_ROWSTRIDE);
-  
+
   return TRUE;
 }
 

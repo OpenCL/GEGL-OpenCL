@@ -23,6 +23,9 @@
 #define	__NPD_MATH_H__
 
 #include "npd_common.h"
+#include <gegl-matrix.h>
+
+typedef GeglMatrix3 NPDMatrix;
 
 #define NPD_EPSILON 0.00001
 
