@@ -42,10 +42,6 @@ gegl_chant_boolean (MLS_weights, _("MLS weights"),
 gegl_chant_double  (MLS_weights_alpha, _("MLS weights alpha"),
                     0.1, 2.0, 1.0,
                     _("Alpha parameter of MLS weights"))
-
-gegl_chant_boolean (mesh_visible, _("mesh visible"),
-                    TRUE,
-                    _("Should the mesh be visible?"))
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
@@ -56,12 +52,10 @@ gegl_chant_boolean (mesh_visible, _("mesh visible"),
 #include <math.h>
 #include <npd/npd.h>
 #include <npd/npd_gegl.h>
-#include <cairo.h>
 
 struct _NPDDisplay
 {
   NPDImage  image;
-  cairo_t  *cr;
 };
 
 typedef struct
@@ -69,40 +63,6 @@ typedef struct
   gboolean  first_run;
   NPDModel  model;
 } NPDProperties;
-
-static void npd_draw_line_impl (NPDDisplay *display,
-                                gfloat      x0,
-                                gfloat      y0,
-                                gfloat      x1,
-                                gfloat      y1)
-{
-  cairo_move_to (display->cr, x0, y0);
-  cairo_line_to (display->cr, x1, y1);
-}
-
-static void
-npd_draw_model (NPDModel   *model,
-                NPDDisplay *display)
-{
-  npd_draw_model_into_image (model, &display->image);
-
-  /* draw mesh */
-  if (model->mesh_visible)
-    {
-      cairo_surface_t *surface;
-
-      surface = cairo_image_surface_create_for_data (display->image.buffer,
-                                                     CAIRO_FORMAT_ARGB32,
-                                                     display->image.width,
-                                                     display->image.height,
-                                                     display->image.rowstride);
-      display->cr = cairo_create (surface);
-      cairo_set_line_width (display->cr, 1);
-      cairo_set_source_rgba (display->cr, 0, 0, 0, 1);
-      npd_draw_mesh (model, display);
-      cairo_stroke (display->cr);
-    }
-}
 
 static void
 prepare (GeglOperation *operation)
@@ -144,7 +104,7 @@ process (GeglOperation       *operation,
 
       npd_init (npd_gegl_set_pixel_color,
                 npd_gegl_get_pixel_color,
-                npd_draw_line_impl);
+                NULL);
 
       npd_gegl_init_image (input_image, input, format);
       npd_gegl_open_buffer (input_image);
@@ -171,13 +131,11 @@ process (GeglOperation       *operation,
           npd_compute_MLS_weights (model);
         }
 
-      model->mesh_visible = o->mesh_visible;
-
       npd_gegl_open_buffer (model->reference_image);
       npd_gegl_open_buffer (&display->image);
       memset (display->image.buffer, 0, length);
       npd_deform_model (model, o->rigidity);
-      npd_draw_model (model, model->display);
+      npd_draw_model_into_image (model, &display->image);
     }
 
   npd_gegl_close_buffer (model->reference_image);
