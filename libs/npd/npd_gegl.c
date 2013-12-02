@@ -65,7 +65,7 @@ npd_gegl_set_pixel_color (NPDImage *image,
   if (x > -1 && x < image->width &&
       y > -1 && y < image->height)
     {
-      gint position = 4 * (y * image->width + x);
+      gint position = y * image->rowstride + 4 * x;
 
       image->buffer[position + 0] = color->r;
       image->buffer[position + 1] = color->g;
@@ -83,7 +83,7 @@ npd_gegl_get_pixel_color (NPDImage *image,
   if (x > -1 && x < image->width &&
       y > -1 && y < image->height)
     {
-      gint position = 4 * (y * image->width + x);
+      gint position = y * image->rowstride + 4 * x;
 
       color->r = image->buffer[position + 0];
       color->g = image->buffer[position + 1];
@@ -97,22 +97,24 @@ npd_gegl_get_pixel_color (NPDImage *image,
 }
 
 void
-npd_gegl_create_image (NPDImage   *image,
-                       GeglBuffer *gegl_buffer,
-                       const Babl *format)
+npd_gegl_open_buffer (NPDImage *image)
 {
-  guchar *buffer;
-  buffer = g_new0 (guchar, gegl_buffer_get_pixel_count (gegl_buffer) * 4);
-  gegl_buffer_get (gegl_buffer, NULL, 1.0, format,
-                   buffer, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-  image->buffer = buffer;
-  image->width = gegl_buffer_get_width (gegl_buffer);
-  image->height = gegl_buffer_get_height (gegl_buffer);
+  image->buffer = (guchar*) gegl_buffer_linear_open (image->gegl_buffer, NULL, &image->rowstride, image->format);
 }
 
 void
-npd_gegl_destroy_image (NPDImage *image)
+npd_gegl_close_buffer (NPDImage *image)
 {
-  g_free(image->buffer);
+  gegl_buffer_linear_close (image->gegl_buffer, image->buffer);
+}
+
+void
+npd_gegl_init_image (NPDImage   *image,
+                     GeglBuffer *gegl_buffer,
+                     const Babl *format)
+{
+  image->gegl_buffer = gegl_buffer;
+  image->width = gegl_buffer_get_width (gegl_buffer);
+  image->height = gegl_buffer_get_height (gegl_buffer);
+  image->format = format;
 }

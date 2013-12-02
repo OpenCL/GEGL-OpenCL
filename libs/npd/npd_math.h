@@ -29,15 +29,6 @@ typedef GeglMatrix3 NPDMatrix;
 
 #define NPD_EPSILON 0.00001
 
-void        npd_compute_homography   (NPDPoint  *p11,
-                                      NPDPoint  *p21,
-                                      NPDPoint  *p31,
-                                      NPDPoint  *p41,
-                                      NPDPoint  *p12,
-                                      NPDPoint  *p22,
-                                      NPDPoint  *p32,
-                                      NPDPoint  *p42,
-                                      NPDMatrix *T);
 void        npd_compute_affinity     (NPDPoint  *p11,
                                       NPDPoint  *p21,
                                       NPDPoint  *p31,

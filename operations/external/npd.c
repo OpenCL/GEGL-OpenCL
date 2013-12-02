@@ -95,7 +95,7 @@ npd_draw_model (NPDModel   *model,
                                                      CAIRO_FORMAT_ARGB32,
                                                      display->image.width,
                                                      display->image.height,
-                                                     display->image.width);
+                                                     display->image.rowstride);
       display->cr = cairo_create (surface);
       cairo_set_line_width (display->cr, 1);
       cairo_set_source_rgba (display->cr, 0, 0, 0, 1);
@@ -127,43 +127,36 @@ static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
          GeglBuffer          *output,
-         const GeglRectangle *result,
+         const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
-  const Babl *format = babl_format ("RGBA u8");
-  NPDProperties *props = o->chant_data;
-  NPDModel *model = &props->model;
-  NPDHiddenModel *hm;
-  guchar *output_buffer;
-  gint length = gegl_buffer_get_pixel_count (input) * 4;
+  GeglChantO    *o       = GEGL_CHANT_PROPERTIES (operation);
+  const Babl    *format  = babl_format ("RGBA u8");
+  NPDProperties *props   = o->chant_data;
+  NPDModel      *model   = &props->model;
+  gint           length  = gegl_buffer_get_pixel_count (input) * 4;
+  NPDDisplay    *display = model->display;
 
   if (props->first_run)
     {
-      gint width, height;
       NPDImage *input_image = g_new (NPDImage, 1);
-      NPDDisplay *display = g_new (NPDDisplay, 1);
+      display = g_new (NPDDisplay, 1);
 
       npd_init (npd_gegl_set_pixel_color,
                 npd_gegl_get_pixel_color,
                 npd_draw_line_impl);
 
-      npd_gegl_create_image (input_image, input, format);
-      width = input_image->width;
-      height = input_image->height;
+      npd_gegl_init_image (input_image, input, format);
+      npd_gegl_open_buffer (input_image);
+      npd_gegl_init_image (&display->image, output, format);
+      npd_gegl_open_buffer (&display->image);
 
-      output_buffer = g_new0 (guchar, length);
-      display->image.width = width;
-      display->image.height = height;
-      display->image.buffer = output_buffer;
       model->display = display;
-
-      npd_create_model_from_image (model, input_image, width, height, 0, 0, o->square_size);
-      hm = model->hidden_model;
-
+      npd_create_model_from_image (model,input_image,
+                                   input_image->width, input_image->height,
+                                   0, 0, o->square_size);
       o->model = model;
-
-      memcpy (output_buffer, input_image->buffer, length);
+      memcpy (display->image.buffer, input_image->buffer, length);
 
       props->first_run = FALSE;
     }
@@ -180,13 +173,15 @@ process (GeglOperation       *operation,
 
       model->mesh_visible = o->mesh_visible;
 
-      output_buffer = model->display->image.buffer;
-      memset (output_buffer, 0, length);
+      npd_gegl_open_buffer (model->reference_image);
+      npd_gegl_open_buffer (&display->image);
+      memset (display->image.buffer, 0, length);
       npd_deform_model (model, o->rigidity);
       npd_draw_model (model, model->display);
     }
 
-  gegl_buffer_set (output, NULL, 0, format, output_buffer, GEGL_AUTO_ROWSTRIDE);
+  npd_gegl_close_buffer (model->reference_image);
+  npd_gegl_close_buffer (&display->image);
 
   return TRUE;
 }

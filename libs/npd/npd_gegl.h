@@ -28,10 +28,13 @@
 
 struct _NPDImage
 {
-  gint     width;
-  gint     height;
-  NPDPoint position;
-  guchar  *buffer;
+  gint        width;
+  gint        height;
+  NPDPoint    position;
+  gint        rowstride;
+  GeglBuffer *gegl_buffer;
+  guchar     *buffer;
+  const Babl *format;
 };
 
 void npd_gegl_set_pixel_color (NPDImage *image,
@@ -43,9 +46,10 @@ void npd_gegl_get_pixel_color (NPDImage *image,
                                gint      x,
                                gint      y,
                                NPDColor *color);
-void npd_gegl_create_image    (NPDImage   *image,
+void npd_gegl_open_buffer     (NPDImage *image);
+void npd_gegl_close_buffer    (NPDImage *image);
+void npd_gegl_init_image      (NPDImage   *image,
                                GeglBuffer *gegl_buffer,
                                const Babl *format);
-void npd_gegl_destroy_image   (NPDImage *image);
 
 #endif	/* __NPD_GEGL_H__ */
