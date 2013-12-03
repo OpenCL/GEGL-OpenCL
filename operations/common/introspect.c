@@ -31,6 +31,7 @@ gegl_chant_object(node, _("Node"), _("GeglNode to introspect"))
 #define GEGL_CHANT_C_FILE       "introspect.c"
 
 #include "gegl-chant.h"
+#include "gegl-types-internal.h"
 #include "gegl-dot.h" /* XXX: internal header file */
 #include <stdio.h>
 

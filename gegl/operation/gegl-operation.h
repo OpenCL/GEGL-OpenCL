@@ -29,12 +29,10 @@
 
 G_BEGIN_DECLS
 
-#define GEGL_TYPE_OPERATION            (gegl_operation_get_type ())
-#define GEGL_OPERATION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION, GeglOperation))
 #define GEGL_OPERATION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass),  GEGL_TYPE_OPERATION, GeglOperationClass))
-#define GEGL_IS_OPERATION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION))
 #define GEGL_IS_OPERATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass),  GEGL_TYPE_OPERATION))
 #define GEGL_OPERATION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj),  GEGL_TYPE_OPERATION, GeglOperationClass))
+/* The rest is in gegl-types.h */
 
 typedef struct _GeglOperationClass GeglOperationClass;
 
@@ -148,8 +146,6 @@ struct _GeglOperationClass
 };
 
 
-
-GType           gegl_operation_get_type        (void) G_GNUC_CONST;
 
 GeglRectangle   gegl_operation_get_invalidated_by_change
                                              (GeglOperation *operation,

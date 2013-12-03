@@ -20,8 +20,8 @@
 #ifndef __GEGL_NODE_PRIVATE_H__
 #define __GEGL_NODE_PRIVATE_H__
 
-#include "gegl-buffer.h"
 #include "gegl-cache.h"
+#include "gegl-types-internal.h"
 #include "gegl-node.h"
 
 G_BEGIN_DECLS

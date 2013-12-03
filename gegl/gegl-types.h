@@ -46,11 +46,6 @@ GType gegl_config_get_type (void) G_GNUC_CONST;
 #define GEGL_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CONFIG, GeglConfig))
 #define GEGL_IS_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CONFIG))
 
-typedef struct _GeglPad              GeglPad;
-typedef struct _GeglOperation        GeglOperation;
-typedef struct _GeglOperationContext GeglOperationContext;
-typedef struct _GeglConnection       GeglConnection;
-
 typedef struct _GeglCurve  GeglCurve;
 typedef struct _GeglPath   GeglPath;
 typedef struct _GeglColor  GeglColor;
@@ -69,6 +64,13 @@ GType gegl_rectangle_get_type (void) G_GNUC_CONST;
 
 #define  GEGL_RECTANGLE(x,y,w,h) (&((GeglRectangle){(x), (y),   (w), (h)}))
 
+typedef struct _GeglOperationContext GeglOperationContext;
+
+typedef struct _GeglOperation  GeglOperation;
+GType gegl_operation_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_OPERATION    (gegl_operation_get_type ())
+#define GEGL_OPERATION(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_OPERATION, GeglOperation))
+#define GEGL_IS_OPERATION(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_OPERATION))
 
 typedef struct _GeglNode  GeglNode;
 GType gegl_node_get_type  (void) G_GNUC_CONST;

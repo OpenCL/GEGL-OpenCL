@@ -492,7 +492,7 @@ GeglNode    * gegl_node_get_input_proxy  (GeglNode      *node,
 const gchar * gegl_node_get_operation    (const GeglNode *node);
 
 /**
- * gegl_node_get_gegl_operation: (skip)
+ * gegl_node_get_gegl_operation:
  * @node: a #GeglNode
  *
  * Return value: (transfer none) (allow-none): The operation object
