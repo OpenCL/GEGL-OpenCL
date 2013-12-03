@@ -29,7 +29,6 @@
 #define NUM_PIXELS (NUM_ROWS * NUM_COLS)
 
 #define SQR(x)     ((x)*(x))
-#define EPSILON    1e-5
 
 typedef struct
 {
@@ -109,7 +108,7 @@ compare_values (GeglNode            *comparison,
   test_result = SUCCESS;
 
   if (fabs (actual_result.max_diff - expected_result->max_diff)
-      > EPSILON)
+      > GEGL_FLOAT_EPSILON)
     {
       g_printerr ("The max_diff property differs: %f instead of %f. ",
                   (gfloat) actual_result.max_diff,
@@ -117,7 +116,7 @@ compare_values (GeglNode            *comparison,
       test_result = FAILURE;
     }
   if (fabs (actual_result.avg_diff_wrong - expected_result->avg_diff_wrong)
-      > EPSILON)
+      > GEGL_FLOAT_EPSILON)
     {
       g_printerr ("The avg_diff_wrong property differs: %f instead of %f. ",
                   (gfloat) actual_result.avg_diff_wrong,
@@ -125,7 +124,7 @@ compare_values (GeglNode            *comparison,
       test_result = FAILURE;
     }
   if (fabs (actual_result.avg_diff_total - expected_result->avg_diff_total)
-      > EPSILON)
+      > GEGL_FLOAT_EPSILON)
     {
       g_printerr ("The avg_diff_total property differs: %f instead of %f. ",
                   (gfloat) actual_result.avg_diff_total,
