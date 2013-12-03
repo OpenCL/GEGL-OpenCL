@@ -27,7 +27,6 @@ gegl_chant_string  (window_title, _(""), "window_title",
 #define GEGL_CHANT_C_FILE       "display.c"
 
 #include "gegl-plugin.h"
-#include "gegl-node-private.h"
 
 /* gegl:display
  * Meta operation for displaying the output of a buffer.
@@ -120,7 +119,7 @@ process (GeglOperation        *operation,
 {
   GeglChant   *self = GEGL_CHANT (operation);
 
-  return gegl_operation_process (self->display->operation, 
+  return gegl_operation_process (gegl_node_get_gegl_operation (self->display),
                                  context, output_pad, roi, level);
 }
 
