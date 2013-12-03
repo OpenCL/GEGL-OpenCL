@@ -76,7 +76,7 @@ iir_young_find_constants (gfloat   sigma,
 {
   gdouble q;
 
-  if (sigma == 0.0)
+  if (GEGL_FLOAT_IS_ZERO (sigma))
     {
       /* to prevent unexpected ringing at tile boundaries,
          we define an (expensive) copy operation here */
@@ -244,7 +244,7 @@ iir_young_ver_blur (GeglBuffer          *src,
 static gint
 fir_calc_convolve_matrix_length (gdouble sigma)
 {
-  return sigma ? ceil (sigma)*6.0+1.0 : 1;
+  return sigma > GEGL_FLOAT_EPSILON ? ceil (sigma) * 6 + 1 : 1;
 }
 
 static gint
