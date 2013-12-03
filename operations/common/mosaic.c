@@ -89,7 +89,6 @@ gegl_chant_boolean   (antialiasing, _("Antialiasing"), TRUE,
 #define MAX_POINTS        12
 #define NB_CPN            4
 #define STD_DEV           1.0
-#define EPSILON           1e-5
 
 typedef enum
 {
@@ -1039,7 +1038,7 @@ grid_localize (const GeglRectangle *result,
             result->y + pt->y < 0 || result->y + pt->y >= mdatas->height)
           continue;
 
-        if (rand_localize > EPSILON)
+        if (rand_localize > GEGL_FLOAT_EPSILON)
           {
             /* Rely on global values to make gegl's tiles seamless */
             max_x = pt->x + (gint) rand_f (o->rand,
@@ -2139,7 +2138,7 @@ calc_spec_vec (SpecVec *vec,
 
   r = sqrt (SQR (x2 - x1) + SQR (y2 - y1));
 
-  if (r > EPSILON)
+  if (r > GEGL_FLOAT_EPSILON)
     {
       vec->norm_x = - (y2 - y1) / r;
       vec->norm_y =   (x2 - x1) / r;
@@ -2166,7 +2165,7 @@ distance (SpecVec *vec,
 
   l2 = SQR (vec->base_x - vec->base_x2) + SQR (vec->base_y - vec->base_y2);
 
-  if (l2 < EPSILON)
+  if (l2 < GEGL_FLOAT_EPSILON)
     return sqrt (SQR (vec->base_x - x) + SQR (vec->base_y - y));
 
   pv_x = x - vec->base_x;

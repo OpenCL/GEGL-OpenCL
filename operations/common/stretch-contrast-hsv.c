@@ -84,13 +84,13 @@ buffer_get_auto_strech_data (GeglBuffer      *buffer,
 static void
 clean_autostretch_data (AutostretchData *data)
 {
-  if (data->sdiff < 1e-5)
+  if (data->sdiff < GEGL_FLOAT_EPSILON)
     {
       data->sdiff = 1.0;
       data->slo   = 0.0;
     }
 
-  if (data->vdiff < 1e-5)
+  if (data->vdiff < GEGL_FLOAT_EPSILON)
     {
       data->vdiff = 1.0;
       data->vlo   = 0.0;

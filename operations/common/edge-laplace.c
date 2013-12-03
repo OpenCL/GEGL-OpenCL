@@ -36,7 +36,6 @@
 
 #define LAPLACE_RADIUS 2
 #define CHUNK_SIZE     1024
-#define EPSILON        1e-5f
 #define SQR(x)         ((x)*(x))
 
 static void
@@ -216,7 +215,7 @@ edge_laplace (GeglBuffer          *src,
                           src_pix[c + 4 + src_width * 4]);
 
 
-            if (temp_value < EPSILON)
+            if (temp_value < GEGL_FLOAT_EPSILON)
               gradient[c] *= -1.0f;
           }
 
