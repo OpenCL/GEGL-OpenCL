@@ -1,0 +1,190 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='svg:src-over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='origin-x'>0</param>
+        <param name='origin-y'>0</param>
+        <param name='sampler'>nearest</param>
+        <param name='x'>128</param>
+        <param name='y'>96</param>
+      </params>
+    </node>
+    <node operation='gegl:color-reduction'>
+      <params>
+	<param name='dither-strategy'>None</param>
+	<param name='red-bits'>3</param>
+	<param name='green-bits'>3</param>
+	<param name='blue-bits'>3</param>
+	<param name='seed'>0</param>
+      </params>
+    </node>
+    <node operation='gegl:scale-ratio'>
+      <params>
+	<param name='x'>0.3</param>
+	<param name='y'>0.3</param>
+      </params>
+    </node>
+    <node operation='gegl:load'>
+      <params>
+	<param name='path'>data/car-stack.png</param>
+      </params>
+    </node>
+  </node>
+  <node operation='svg:src-over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='origin-x'>0</param>
+        <param name='origin-y'>0</param>
+        <param name='sampler'>nearest</param>
+        <param name='x'>200</param>
+        <param name='y'>160</param>
+      </params>
+    </node>
+    <node operation='gegl:color-reduction'>
+      <params>
+	<param name='dither-strategy'>Floyd-Steinberg</param>
+	<param name='red-bits'>3</param>
+	<param name='green-bits'>3</param>
+	<param name='blue-bits'>3</param>
+	<param name='seed'>0</param>
+      </params>
+    </node>
+    <node operation='gegl:scale-ratio'>
+      <params>
+	<param name='x'>0.3</param>
+	<param name='y'>0.3</param>
+      </params>
+    </node>
+    <node operation='gegl:load'>
+      <params>
+	<param name='path'>data/car-stack.png</param>
+      </params>
+    </node>
+  </node>
+  <node operation='svg:src-over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='origin-x'>0</param>
+        <param name='origin-y'>0</param>
+        <param name='sampler'>nearest</param>
+        <param name='x'>256</param>
+        <param name='y'>0</param>
+      </params>
+    </node>
+    <node operation='gegl:color-reduction'>
+      <params>
+	<param name='dither-strategy'>Random</param>
+	<param name='red-bits'>3</param>
+	<param name='green-bits'>3</param>
+	<param name='blue-bits'>3</param>
+	<param name='seed'>0</param>
+      </params>
+    </node>
+    <node operation='gegl:scale-ratio'>
+      <params>
+	<param name='x'>0.5</param>
+	<param name='y'>0.5</param>
+      </params>
+    </node>
+    <node operation='gegl:load'>
+      <params>
+	<param name='path'>data/car-stack.png</param>
+      </params>
+    </node>
+  </node>
+  <node operation='svg:src-over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='origin-x'>0</param>
+        <param name='origin-y'>0</param>
+        <param name='sampler'>nearest</param>
+        <param name='x'>0</param>
+        <param name='y'>192</param>
+      </params>
+    </node>
+    <node operation='gegl:color-reduction'>
+      <params>
+	<param name='dither-strategy'>Random Covariant</param>
+	<param name='red-bits'>3</param>
+	<param name='green-bits'>3</param>
+	<param name='blue-bits'>3</param>
+	<param name='seed'>0</param>
+      </params>
+    </node>
+    <node operation='gegl:scale-ratio'>
+      <params>
+	<param name='x'>0.5</param>
+	<param name='y'>0.5</param>
+      </params>
+    </node>
+    <node operation='gegl:load'>
+      <params>
+	<param name='path'>data/car-stack.png</param>
+      </params>
+    </node>
+  </node>
+  <node operation='svg:src-over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='origin-x'>0</param>
+        <param name='origin-y'>0</param>
+        <param name='sampler'>nearest</param>
+        <param name='x'>0</param>
+        <param name='y'>0</param>
+      </params>
+    </node>
+    <node operation='gegl:color-reduction'>
+      <params>
+	<param name='dither-strategy'>Resilient</param>
+	<param name='red-bits'>3</param>
+	<param name='green-bits'>3</param>
+	<param name='blue-bits'>3</param>
+	<param name='seed'>0</param>
+      </params>
+    </node>
+    <node operation='gegl:scale-ratio'>
+      <params>
+	<param name='x'>0.5</param>
+	<param name='y'>0.5</param>
+      </params>
+    </node>
+    <node operation='gegl:load'>
+      <params>
+	<param name='path'>data/car-stack.png</param>
+      </params>
+    </node>
+  </node>
+  <node operation='svg:src-over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='origin-x'>0</param>
+        <param name='origin-y'>0</param>
+        <param name='sampler'>nearest</param>
+        <param name='x'>256</param>
+        <param name='y'>192</param>
+      </params>
+    </node>
+    <node operation='gegl:color-reduction'>
+      <params>
+	<param name='dither-strategy'>Bayer</param>
+	<param name='red-bits'>3</param>
+	<param name='green-bits'>3</param>
+	<param name='blue-bits'>3</param>
+	<param name='seed'>0</param>
+      </params>
+    </node>
+    <node operation='gegl:scale-ratio'>
+      <params>
+	<param name='x'>0.5</param>
+	<param name='y'>0.5</param>
+      </params>
+    </node>
+    <node operation='gegl:load'>
+      <params>
+	<param name='path'>data/car-stack.png</param>
+      </params>
+    </node>
+  </node>
+</gegl>
+

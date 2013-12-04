@@ -50,6 +50,7 @@ TESTS = \
   #run-matting-global-big.xml.sh
 
 NO_OPENCL_TESTS = \
+  color-reduction.xml           \
   rgbe-load.xml                 \
   rgbe-save.xml                 \
   shift.xml                     \
