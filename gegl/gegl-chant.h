@@ -640,9 +640,9 @@ set_property (GObject      *gobject,
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
-      properties->name = g_strdup (g_value_get_string (value));       \
+      properties->name = g_value_dup_string (value);                  \
       break;
-#define gegl_chant_enum(name, nick, enum, enum_name, def, blurb)          \
+#define gegl_chant_enum(name, nick, enum, enum_name, def, blurb)      \
     case PROP_##name:                                                 \
       properties->name = g_value_get_enum (value);                    \
       break;
@@ -650,13 +650,13 @@ set_property (GObject      *gobject,
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
-      properties->name = g_strdup (g_value_get_string (value));       \
+      properties->name = g_value_dup_string (value);                  \
       break;
 #define gegl_chant_multiline(name, nick, def, blurb)                  \
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
-      properties->name = g_strdup (g_value_get_string (value));       \
+      properties->name = g_value_dup_string (value);                  \
       break;
 #define gegl_chant_object(name, nick, blurb)                          \
     case PROP_##name:                                                 \
