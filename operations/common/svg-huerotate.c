@@ -63,8 +63,8 @@ process (GeglOperation       *op,
                     0.0, 0.0, 0.0, 0.0, 1.0};
   char        *endptr;
   gfloat       value;
-  const gchar  delimiter=',';
-  const gchar *delimiters=" ";
+  const gchar *delimiter = ",";
+  const gchar *delimiters = " ";
   gchar      **values;
   glong        i;
 
@@ -73,8 +73,8 @@ process (GeglOperation       *op,
   if ( o->values != NULL )
     {
       g_strstrip(o->values);
-      g_strdelimit (o->values, delimiters, delimiter);
-      values = g_strsplit (o->values, &delimiter, 1);
+      g_strdelimit (o->values, delimiters, *delimiter);
+      values = g_strsplit (o->values, delimiter, 1);
       if ( values[0] != NULL )
         {
           value = g_ascii_strtod(values[0], &endptr);

@@ -118,7 +118,7 @@ static void prepare (GeglOperation *operation)
   const Babl *format;
 
   if (o->chant_data == NULL)
-    o->chant_data = g_slice_new (CmParamsType);
+    o->chant_data = g_slice_new0 (CmParamsType);
 
   mix = (CmParamsType*) o->chant_data;
 
