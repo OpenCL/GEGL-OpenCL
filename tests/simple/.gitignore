@@ -7,6 +7,7 @@
 /Makefile.in
 /test-change-processor-rect
 /test-color-op
+/test-convert-format
 /test-exp-combine.sh
 /test-gegl-rectangle
 /test-gegl-tile

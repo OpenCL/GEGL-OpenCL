@@ -5,6 +5,7 @@ noinst_PROGRAMS =			\
 	test-buffer-extract		\
 	test-buffer-tile-voiding	\
 	test-change-processor-rect	\
+	test-convert-format		\
 	test-color-op			\
 	test-format-sensing		\
 	test-gegl-rectangle		\

@@ -15,65 +15,71 @@
  *
  * Copyright 2007 Étienne Bersac <bersace03@laposte.net>
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2013 Daniel Sabo
  *
- * This operation is just a forked grey op with format parameters.
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_string(format, _("Output format"), "RGBA float",
-                  _("Babl output format string"))
+gegl_chant_format (format, _("Output Format"),
+                   _("The babl format of the output"))
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "convert-format.c"
+#define GEGL_CHANT_TYPE_FILTER
+#define GEGL_CHANT_C_FILE "convert-format.c"
 
 #include "gegl-chant.h"
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *self)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  const Babl *format;
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
 
-  g_assert (o->format);
-
-  format = babl_format (o->format);
-  /* check format ? */
-
-  gegl_operation_set_format (operation, "input", format);
-  gegl_operation_set_format (operation, "output", format);
+  if (o->format)
+    gegl_operation_set_format (self, "output", o->format);
+  else
+    gegl_operation_set_format (self, "output", gegl_operation_get_source_format (self, "input"));
 }
 
 static gboolean
-process (GeglOperation       *op,
-         void                *in_buf,
-         void                *out_buf,
-         glong                samples,
-         const GeglRectangle *roi,
-         gint                 level)
+process (GeglOperation        *operation,
+         GeglOperationContext *context,
+         const gchar          *output_prop,
+         const GeglRectangle  *roi,
+         gint                  level)
 {
-	int bpp = babl_format_get_bytes_per_pixel (gegl_operation_get_format (op, "output"));
-	memcpy(out_buf, in_buf, samples * bpp);
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBuffer *input;
+  GeglBuffer *output;
+
+  input  = gegl_operation_context_get_source (context, "input");
+
+  if (gegl_buffer_get_format (input) != o->format)
+    {
+      output = gegl_operation_context_get_target (context, "output");
+      gegl_buffer_copy (input, roi, output, roi);
+      g_object_unref (input);
+    }
+  else
+    {
+      gegl_operation_context_take_object (context, "output", G_OBJECT (input));
+    }
+
   return TRUE;
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GeglOperationClass            *operation_class;
-  GeglOperationPointFilterClass *point_filter_class;
+  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class    = GEGL_OPERATION_CLASS (klass);
-  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
-
-  point_filter_class->process = process;
-  operation_class->prepare = prepare;
+  operation_class->prepare  = prepare;
+  operation_class->process  = process;
+  operation_class->no_cache = FALSE;
 
   gegl_operation_class_set_keys (operation_class,
                 "name",       "gegl:convert-format",
