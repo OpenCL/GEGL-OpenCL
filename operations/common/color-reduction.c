@@ -24,7 +24,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_register_enum (gegl_dither_strategy)
-  enum_value (GEGL_DITHER_NONE,   "None")
+  enum_value (GEGL_DITHER_NONE, "None")
   enum_value (GEGL_DITHER_RANDOM, "Random")
   enum_value (GEGL_DITHER_RESILIENT, "Resilient")
   enum_value (GEGL_DITHER_RANDOM_COVARIANT, "Random Covariant")
@@ -52,12 +52,17 @@ gegl_chant_enum (dither_strategy, _("Dithering Strategy"),
                  GeglDitherStrategy, gegl_dither_strategy, GEGL_DITHER_RESILIENT,
                  _("The dithering strategy to use"))
 
+gegl_chant_seed (seed, rand, _("Seed"),
+                 _("Random seed"))
+
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "color-reduction.c"
+#define GEGL_CHANT_C_FILE "color-reduction.c"
 
 #include "gegl-chant.h"
+
+#define REDUCE_16B(value) (((value) & ((1 << 17) - 1)) - 65536)
 
 static void
 prepare (GeglOperation *operation)
@@ -67,7 +72,8 @@ prepare (GeglOperation *operation)
 }
 
 static void
-generate_channel_masks (guint *channel_bits, guint *channel_mask)
+generate_channel_masks (guint *channel_bits,
+                        guint *channel_mask)
 {
   gint i;
 
@@ -76,7 +82,9 @@ generate_channel_masks (guint *channel_bits, guint *channel_mask)
 }
 
 static guint
-quantize_value (guint value, guint n_bits, guint mask)
+quantize_value (guint value,
+                guint n_bits,
+                guint mask)
 {
   gint i;
 
@@ -88,42 +96,17 @@ quantize_value (guint value, guint n_bits, guint mask)
   return value;
 }
 
-static gint
-fast_random_int (void)
-{
-  #define PRIME1 2713
-  #define PRIME2 1913
-  static gboolean inited = 0;
-  static int rand1[PRIME1];
-  static int rand2[PRIME2];
-  static int r1, r2;
-  int ret;
-  if (G_UNLIKELY (!inited))
-    {
-       for (r1 = 0; r1 < PRIME1; r1++)
-         rand1[r1] = g_random_int ();
-       for (r2 = 0; r2 < PRIME2; r2++)
-         rand2[r2] = g_random_int ();
-       inited = TRUE;
-    }
-  ret = ((rand1[(r1++) % PRIME1] + rand2[(r2++) % PRIME2]));
-  ret &= ((1 << 17)-1);
-  ret -= 65536;
-  return ret;
-}
-
-
 static void
-process_floyd_steinberg (GeglBuffer *input,
-                         GeglBuffer *output,
+process_floyd_steinberg (GeglBuffer          *input,
+                         GeglBuffer          *output,
                          const GeglRectangle *result,
-                         guint *channel_bits)
+                         guint               *channel_bits)
 {
-  GeglRectangle        line_rect;
-  guint16             *line_buf;
-  gdouble             *error_buf [2];
-  guint                channel_mask [4];
-  gint                 y;
+  GeglRectangle  line_rect;
+  guint16       *line_buf;
+  gdouble       *error_buf [2];
+  guint          channel_mask [4];
+  gint           y;
 
   line_rect.x      = result->x;
   line_rect.y      = result->y;
@@ -137,86 +120,86 @@ process_floyd_steinberg (GeglBuffer *input,
   generate_channel_masks (channel_bits, channel_mask);
 
   for (y = 0; y < result->height; y++)
-  {
-    gdouble  *error_buf_swap;
-    gint      step;
-    gint      start_x;
-    gint      end_x;
-    gint      x;
-
-    /* Serpentine scanning; reverse direction every row */
-
-    if (y & 1)
     {
-      start_x = result->width - 1;
-      end_x   = -1;
-      step    = -1;
-    }
-    else
-    {
-      start_x = 0;
-      end_x   = result->width;
-      step    = 1;
-    }
+      gdouble  *error_buf_swap;
+      gint      step;
+      gint      start_x;
+      gint      end_x;
+      gint      x;
 
-    /* Pull input row */
+      /* Serpentine scanning; reverse direction every row */
 
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
-                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-    /* Process the row */
-
-    for (x = start_x; x != end_x; x += step)
-    {
-      guint16  *pixel = &line_buf [x * 4];
-      guint     ch;
-
-      for (ch = 0; ch < 4; ch++)
-      {
-        gdouble value;
-        gdouble value_clamped;
-        gdouble quantized;
-        gdouble qerror;
-
-        value         = pixel [ch] + error_buf [0] [x * 4 + ch];
-        value_clamped = CLAMP (value, 0.0, 65535.0);
-        quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
-        qerror        = value - quantized;
-
-        pixel [ch] = (guint16) quantized;
-
-        /* Distribute the error */
-
-        error_buf [1] [x * 4 + ch] += qerror * 5.0 / 16.0;  /* Down */
-
-        if (x + step >= 0 && x + step < result->width)
+      if (y & 1)
         {
-          error_buf [0] [(x + step) * 4 + ch] += qerror * 6.0 / 16.0;  /* Ahead */
-          error_buf [1] [(x + step) * 4 + ch] += qerror * 1.0 / 16.0;  /* Down, ahead */
+          start_x = result->width - 1;
+          end_x   = -1;
+          step    = -1;
+        }
+      else
+        {
+          start_x = 0;
+          end_x   = result->width;
+          step    = 1;
         }
 
-        if (x - step >= 0 && x - step < result->width)
+      /* Pull input row */
+
+      gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
+                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
+      /* Process the row */
+
+      for (x = start_x; x != end_x; x += step)
         {
-          error_buf [1] [(x - step) * 4 + ch] += qerror * 3.0 / 16.0;  /* Down, behind */
+          guint16  *pixel = &line_buf [x * 4];
+          guint     ch;
+
+          for (ch = 0; ch < 4; ch++)
+            {
+              gdouble value;
+              gdouble value_clamped;
+              gdouble quantized;
+              gdouble qerror;
+
+              value         = pixel [ch] + error_buf [0] [x * 4 + ch];
+              value_clamped = CLAMP (value, 0.0, 65535.0);
+              quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
+              qerror        = value - quantized;
+
+              pixel [ch] = (guint16) quantized;
+
+              /* Distribute the error */
+
+              error_buf [1] [x * 4 + ch] += qerror * 5.0 / 16.0;  /* Down */
+
+              if (x + step >= 0 && x + step < result->width)
+                {
+                  error_buf [0] [(x + step) * 4 + ch] += qerror * 6.0 / 16.0;  /* Ahead */
+                  error_buf [1] [(x + step) * 4 + ch] += qerror * 1.0 / 16.0;  /* Down, ahead */
+                }
+
+              if (x - step >= 0 && x - step < result->width)
+                {
+                  error_buf [1] [(x - step) * 4 + ch] += qerror * 3.0 / 16.0;  /* Down, behind */
+                }
+            }
         }
-      }
+
+      /* Swap error accumulation rows */
+
+      error_buf_swap = error_buf [0];
+      error_buf [0]  = error_buf [1];
+      error_buf [1]  = error_buf_swap;
+
+      /* Clear error buffer for next-plus-one line */
+
+      memset (error_buf [1], 0, line_rect.width * 4 * sizeof (gdouble));
+
+      /* Push output row */
+
+      gegl_buffer_set (output, &line_rect, 0, babl_format ("R'G'B'A u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
+      line_rect.y++;
     }
-
-    /* Swap error accumulation rows */
-
-    error_buf_swap = error_buf [0];
-    error_buf [0]  = error_buf [1];
-    error_buf [1]  = error_buf_swap;
-
-    /* Clear error buffer for next-plus-one line */
-
-    memset (error_buf [1], 0, line_rect.width * 4 * sizeof (gdouble));
-
-    /* Push output row */
-
-    gegl_buffer_set (output, &line_rect, 0, babl_format ("R'G'B'A u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
-    line_rect.y++;
-  }
 
   g_free (line_buf);
   g_free (error_buf [0]);
@@ -236,278 +219,235 @@ static const gdouble bayer_matrix_8x8 [] =
 };
 
 static void
-process_bayer (GeglBuffer *input,
-               GeglBuffer *output,
-               const GeglRectangle *result,
-               guint *channel_bits)
+process_row_bayer (GeglBufferIterator *gi,
+                   guint               channel_mask [4],
+                   guint               channel_bits [4],
+                   gint                y)
 {
-  GeglRectangle        line_rect;
-  guint16             *line_buf;
-  guint                channel_mask [4];
-  guint                y;
-
-  line_rect.x = result->x;
-  line_rect.y = result->y;
-  line_rect.width = result->width;
-  line_rect.height = 1;
-
-  line_buf = g_new (guint16, line_rect.width * 4);
-
-  generate_channel_masks (channel_bits, channel_mask);
-
-  for (y = 0; y < result->height; y++)
-  {
-    guint x;
-
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
-                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-    for (x = 0; x < result->width; x++)
+  guint16 *data_in  = (guint16*) gi->data [0];
+  guint16 *data_out = (guint16*) gi->data [1];
+  guint x;
+  for (x = 0; x < gi->roi->width; x++)
     {
-      guint16 *pixel = &line_buf [x * 4];
-      guint    ch;
+      guint pixel = 4 * (gi->roi->width * y + x);
+      guint ch;
 
       for (ch = 0; ch < 4; ch++)
-      {
-        gdouble value;
-        gdouble value_clamped;
-        gdouble quantized;
+        {
+          gdouble bayer;
+          gdouble value;
+          gdouble value_clamped;
+          gdouble quantized;
 
-        value         = pixel [ch] + ((bayer_matrix_8x8 [(y % 8) * 8 + (x % 8)] - 32) * 65536.0 / 65.0) / (1 << (channel_bits [ch] - 1));
-        value_clamped = CLAMP (value, 0.0, 65535.0);
-        quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
+          bayer         = bayer_matrix_8x8 [((gi->roi->y + y) % 8) * 8 + ((gi->roi->x + x) % 8)];
+          bayer         = ((bayer - 32) * 65536.0 / 65.0) / (1 << (channel_bits [ch] - 1));
+          value         = data_in [pixel + ch] + bayer;
+          value_clamped = CLAMP (value, 0.0, 65535.0);
+          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+                                          channel_bits [ch],
+                                          channel_mask [ch]);
 
-        pixel [ch] = (guint16) quantized;
-      }
+          data_out [pixel + ch] = (guint16) quantized;
+        }
     }
-
-    gegl_buffer_set (output, &line_rect, 0, babl_format ("R'G'B'A u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
-    line_rect.y++;
-  }
-
-  g_free (line_buf);
 }
 
 static void
-process_random_covariant (GeglBuffer *input,
-                          GeglBuffer *output,
-                          const GeglRectangle *result,
-                          guint *channel_bits)
+process_row_random_covariant (GeglBufferIterator *gi,
+                              guint               channel_mask [4],
+                              guint               channel_bits [4],
+                              gint                y,
+                              GeglRandom         *rand)
 {
-  GeglRectangle        line_rect;
-  guint16             *line_buf;
-  guint                channel_mask [4];
-  guint                y;
-
-  line_rect.x = result->x;
-  line_rect.y = result->y;
-  line_rect.width = result->width;
-  line_rect.height = 1;
-
-  line_buf = g_new (guint16, line_rect.width * 4);
-
-  generate_channel_masks (channel_bits, channel_mask);
-
-  for (y = 0; y < result->height; y++)
-  {
-    guint x;
-
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
-                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-    for (x = 0; x < result->width; x++)
+  guint16 *data_in  = (guint16*) gi->data [0];
+  guint16 *data_out = (guint16*) gi->data [1];
+  guint x;
+  for (x = 0; x < gi->roi->width; x++)
     {
-      guint16 *pixel = &line_buf [x * 4];
-      guint    ch;
-      gint     r = fast_random_int ();
-
+      guint pixel = 4 * (gi->roi->width * y + x);
+      guint ch;
+      gint  r = REDUCE_16B (gegl_random_int (rand, gi->roi->x + x,
+                                             gi->roi->y + y, 0, 0));
       for (ch = 0; ch < 4; ch++)
-      {
-        gdouble value;
-        gdouble value_clamped;
-        gdouble quantized;
+        {
+          gdouble value;
+          gdouble value_clamped;
+          gdouble quantized;
 
-        value         = pixel [ch] + (r / (1 << channel_bits [ch]));
-        value_clamped = CLAMP (value, 0.0, 65535.0);
-        quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
+          value         = data_in [pixel + ch] + (r / (1 << channel_bits [ch]));
+          value_clamped = CLAMP (value, 0.0, 65535.0);
+          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+                                          channel_bits [ch],
+                                          channel_mask [ch]);
 
-        pixel [ch] = (guint16) quantized;
-      }
+          data_out [pixel + ch] = (guint16) quantized;
+        }
     }
-
-    gegl_buffer_set (output, &line_rect, 0, babl_format ("R'G'B'A u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
-    line_rect.y++;
-  }
-
-  g_free (line_buf);
 }
 
 static void
-process_random (GeglBuffer *input,
-                GeglBuffer *output,
-                const GeglRectangle *result,
-                guint *channel_bits)
+process_row_random (GeglBufferIterator *gi,
+                    guint               channel_mask [4],
+                    guint               channel_bits [4],
+                    gint                y,
+                    GeglRandom         *rand)
 {
-  GeglRectangle        line_rect;
-  guint16             *line_buf;
-  guint                channel_mask [4];
-  guint                y;
-
-  line_rect.x = result->x;
-  line_rect.y = result->y;
-  line_rect.width = result->width;
-  line_rect.height = 1;
-
-  line_buf = g_new (guint16, line_rect.width * 4);
-
-  generate_channel_masks (channel_bits, channel_mask);
-
-  for (y = 0; y < result->height; y++)
-  {
-    guint x;
-
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
-                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-    for (x = 0; x < result->width; x++)
+  guint16 *data_in  = (guint16*) gi->data [0];
+  guint16 *data_out = (guint16*) gi->data [1];
+  guint x;
+  for (x = 0; x < gi->roi->width; x++)
     {
-      guint16 *pixel = &line_buf [x * 4];
-      guint    ch;
-
+      guint pixel = 4 * (gi->roi->width * y + x);
+      guint ch;
       for (ch = 0; ch < 4; ch++)
-      {
-        gdouble value;
-        gdouble value_clamped;
-        gdouble quantized;
+        {
+          gdouble value;
+          gdouble value_clamped;
+          gdouble quantized;
+          gint    r = REDUCE_16B (gegl_random_int (rand, gi->roi->x + x,
+                                                   gi->roi->y + y, 0, ch));
 
-        value         = pixel [ch] + (fast_random_int () / (1 << channel_bits [ch]));
-        value_clamped = CLAMP (value, 0.0, 65535.0);
-        quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
+          value         = data_in [pixel + ch] + (r / (1 << channel_bits [ch]));
+          value_clamped = CLAMP (value, 0.0, 65535.0);
+          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+                                          channel_bits [ch],
+                                          channel_mask [ch]);
 
-        pixel [ch] = (guint16) quantized;
-      }
+          data_out [pixel + ch] = (guint16) quantized;
+        }
     }
-
-    gegl_buffer_set (output, &line_rect, 0, babl_format ("R'G'B'A u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
-    line_rect.y++;
-  }
-
-  g_free (line_buf);
 }
 
 static void
-process_resilient (GeglBuffer *input,
-                   GeglBuffer *output,
-                   const GeglRectangle *result,
-                   guint *channel_bits)
+process_row_resilient (GeglBufferIterator *gi,
+                       guint               channel_mask [4],
+                       guint               channel_bits [4],
+                       gint                y,
+                       GeglRandom         *rand)
 {
-  GeglRectangle        line_rect;
-  guint16             *line_buf;
-  guint                channel_mask [4];
-  guint                y;
-
-  line_rect.x = result->x;
-  line_rect.y = result->y;
-  line_rect.width = result->width;
-  line_rect.height = 1;
-
-  line_buf = g_new (guint16, line_rect.width * 4);
-
-  generate_channel_masks (channel_bits, channel_mask);
-
-  for (y = 0; y < result->height; y++)
-  {
-    guint x;
-
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
-                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-    for (x = 0; x < result->width; x++)
+  guint16 *data_in  = (guint16*) gi->data [0];
+  guint16 *data_out = (guint16*) gi->data [1];
+  guint    x;
+  for (x = 0; x < gi->roi->width; x++)
     {
-      guint16 *pixel = &line_buf [x * 4];
-      guint    ch;
-
+      guint pixel = 4 * (gi->roi->width * y + x);
+      guint ch;
       for (ch = 0; ch < 4; ch++)
-      {
-        gdouble value;
-        gdouble value_clamped;
-        gdouble quantized;
+        {
+          gdouble value;
+          gdouble value_clamped;
+          gdouble quantized;
+          gint    r = REDUCE_16B (gegl_random_int (rand, gi->roi->x + x,
+                                                   gi->roi->y + y, 0, ch));
+          value         = data_in [pixel + ch];
+          value         = value + ((65535.0 / (8 * value + 48 * 65535)) + 1.2) *
+                                  (r / (1 << channel_bits [ch]));
+          value_clamped = CLAMP (value, 0.0, 65535.0);
+          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+                                          channel_bits [ch],
+                                          channel_mask [ch]);
 
-        value         = pixel [ch] + 
-        (1.0/(((pixel[ch]+6*65535)/65535.0))/8 + 1.2) *(fast_random_int () / (1 << channel_bits [ch]));
-
-        value_clamped = CLAMP (value, 0.0, 65535.0);
-        quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_bits [ch], channel_mask [ch]);
-
-        pixel [ch] = (guint16) quantized;
-      }
+          data_out [pixel + ch] = (guint16) quantized;
+        }
     }
-
-    gegl_buffer_set (output, &line_rect, 0, babl_format ("R'G'B'A u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
-    line_rect.y++;
-  }
-
-  g_free (line_buf);
 }
 
 static void
-process_no_dither (GeglBuffer *input,
-                   GeglBuffer *output,
-                   const GeglRectangle *result,
-                   guint *channel_bits)
+process_row_no_dither (GeglBufferIterator *gi,
+                       guint               channel_mask [4],
+                       guint               channel_bits [4],
+                       guint               y)
 {
-  GeglRectangle        line_rect;
-  guint16             *line_buf;
-  guint                channel_mask [4];
-  guint                y;
+  guint16 *data_in  = (guint16*) gi->data [0];
+  guint16 *data_out = (guint16*) gi->data [1];
+  guint x;
+  for (x = 0; x < gi->roi->width; x++)
+    {
+      guint pixel = 4 * (gi->roi->width * y + x);
+      guint ch;
+      for (ch = 0; ch < 4; ch++)
+        {
+          data_out [pixel + ch] = (guint16) quantize_value (data_in [pixel + ch],
+                                                            channel_bits [ch],
+                                                            channel_mask [ch]);
+        }
+    }
+}
 
-  line_rect.x = result->x;
-  line_rect.y = result->y;
-  line_rect.width = result->width;
-  line_rect.height = 1;
-
-  line_buf = g_new (guint16, line_rect.width * 4);
+static void
+process_standard (GeglBuffer          *input,
+                  GeglBuffer          *output,
+                  const GeglRectangle *result,
+                  guint               *channel_bits,
+                  GeglRandom          *rand,
+                  GeglDitherStrategy   dither_strategy)
+{
+  GeglBufferIterator *gi;
+  guint               channel_mask [4];
 
   generate_channel_masks (channel_bits, channel_mask);
 
-  for (y = 0; y < result->height; y++)
-  {
-    guint x;
+  gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("R'G'B'A u16"),
+                                 GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-    gegl_buffer_get (input, &line_rect, 1.0, babl_format ("R'G'B'A u16"), line_buf,
-                     GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_iterator_add (gi, output, result, 0, babl_format ("R'G'B'A u16"),
+                            GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
 
-    for (x = 0; x < result->width; x++)
+  while (gegl_buffer_iterator_next (gi))
     {
-      guint16 *pixel = &line_buf [x * 4];
-      guint    ch;
-
-      for (ch = 0; ch < 4; ch++)
-      {
-        pixel [ch] = quantize_value (pixel [ch], channel_bits [ch], channel_mask [ch]);
-      }
+      guint    y;
+      for (y = 0; y < gi->roi->height; y++)
+        {
+          switch (dither_strategy)
+            {
+            case GEGL_DITHER_NONE:
+              process_row_no_dither (gi, channel_mask, channel_bits, y);
+              break;
+            case GEGL_DITHER_RANDOM:
+              process_row_random (gi, channel_mask, channel_bits, y, rand);
+              break;
+            case GEGL_DITHER_RESILIENT:
+              process_row_resilient (gi, channel_mask, channel_bits, y, rand);
+              break;
+            case GEGL_DITHER_RANDOM_COVARIANT:
+              process_row_random_covariant (gi, channel_mask, channel_bits, y, rand);
+              break;
+            case GEGL_DITHER_BAYER:
+              process_row_bayer (gi, channel_mask, channel_bits, y);
+              break;
+            case GEGL_DITHER_FLOYD_STEINBERG:
+              /* Done separately */
+              break;
+            default:
+              process_row_no_dither (gi, channel_mask, channel_bits, y);
+            }
+        }
     }
-
-    gegl_buffer_set (output, &line_rect, 0, babl_format ("R'G'B'A u16"), line_buf, GEGL_AUTO_ROWSTRIDE);
-    line_rect.y++;
-  }
-
-  g_free (line_buf);
 }
 
 static GeglRectangle
-get_required_for_output (GeglOperation        *self,
+get_required_for_output (GeglOperation       *self,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  return *gegl_operation_source_get_bounding_box (self, "input");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
+
+  if (o->dither_strategy == GEGL_DITHER_FLOYD_STEINBERG)
+    return *gegl_operation_source_get_bounding_box (self, "input");
+  else
+    return *roi;
 }
 
 static GeglRectangle
 get_cached_region (GeglOperation       *self,
                    const GeglRectangle *roi)
 {
-  return *gegl_operation_source_get_bounding_box (self, "input");
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
+
+  if (o->dither_strategy == GEGL_DITHER_FLOYD_STEINBERG)
+    return *gegl_operation_source_get_bounding_box (self, "input");
+  else
+    return *roi;
 }
 
 static gboolean
@@ -525,31 +465,11 @@ process (GeglOperation       *operation,
   channel_bits [2] = o->blue_bits;
   channel_bits [3] = o->alpha_bits;
 
-  switch (o->dither_strategy)
-    {
-      case GEGL_DITHER_NONE:
-        process_no_dither (input, output, result, channel_bits);
-        break;
-      case GEGL_DITHER_RANDOM:
-        process_random (input, output, result, channel_bits);
-        break;
-      case GEGL_DITHER_RESILIENT:
-        process_resilient (input, output, result, channel_bits);
-        break;
-      case GEGL_DITHER_RANDOM_COVARIANT:
-        process_random_covariant (input, output, result,
-                                  channel_bits);
-        break;
-      case GEGL_DITHER_FLOYD_STEINBERG:
-        process_floyd_steinberg (input, output, result,
-                                 channel_bits);
-        break;
-      case GEGL_DITHER_BAYER:
-        process_bayer (input, output, result, channel_bits);
-        break;
-      default:
-        process_no_dither (input, output, result, channel_bits);
-    }
+  if (o->dither_strategy != GEGL_DITHER_FLOYD_STEINBERG)
+    process_standard (input, output, result, channel_bits,
+                      o->rand, o->dither_strategy);
+  else
+    process_floyd_steinberg (input, output, result, channel_bits);
 
   return TRUE;
 }
