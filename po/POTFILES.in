@@ -187,6 +187,8 @@ operations/workshop/external/ff-save.c
 operations/workshop/external/gluas.c
 operations/workshop/external/lens-correct.c
 operations/workshop/external/line-profile.c
+operations/workshop/gaussian-blur-iir.c
+operations/workshop/gblur-1d.c
 operations/workshop/generated/average.c
 operations/workshop/generated/blend-reflect.c
 operations/workshop/generated/negation.c
