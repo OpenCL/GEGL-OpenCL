@@ -23,10 +23,12 @@
 
 gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglAbyssPolicy,
                       gegl_abyss_policy, GEGL_ABYSS_CLAMP, _(""))
-gegl_chant_double_ui (std_dev_x, _("Horizontal Std. Dev."), 0.5, 1000.0, 4.0, 0.5, 1000.0,
-                      2, _("Standard deviation (spatial scale factor)"))
-gegl_chant_double_ui (std_dev_y, _("Vertical Std. Dev."), 0.5, 1000.0, 4.0, 0.5, 1000.0,
-                      2, _("Standard deviation (spatial scale factor)"))
+gegl_chant_double_ui (std_dev_x, _("Horizontal Std. Dev."),
+                      0.5, 1500.0, 1.5, 0.5, 100.0, 3.0,
+                      _("Standard deviation (spatial scale factor)"))
+gegl_chant_double_ui (std_dev_y, _("Vertical Std. Dev."),
+                      0.5, 1500.0, 1.5, 0.5, 100.0, 3.0,
+                      _("Standard deviation (spatial scale factor)"))
 
 #else
 

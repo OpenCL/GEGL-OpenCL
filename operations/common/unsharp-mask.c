@@ -22,11 +22,11 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double_ui (std_dev, _("Std. Dev."),
-                      0.0, 500.0, 1.0, 0.0, 200.0, 1.5,
+                      0.2, 300.0, 0.55, 0.2, 10.0, 3.0,
                       _("Standard deviation (spatial scale factor)"))
 
 gegl_chant_double_ui (scale, _("Scale"),
-                      0.0, 100.0, 1.0, 0.0, 100.0, 1.5,
+                      0.0, 300.0, 4.0, 0.0, 10.0, 3.0,
                       _("Scale, strength of effect"))
 
 #else

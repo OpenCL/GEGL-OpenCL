@@ -42,7 +42,7 @@ gegl_chant_register_enum (gegl_gblur_1d_orientation)
 gegl_chant_register_enum_end (GeglGblur1dOrientation)
 
 gegl_chant_double_ui (std_dev, _("Size"),
-                      0.5, 1000.0, 4.0, 0.5, 1000.0, 2,
+                      0.5, 1500.0, 1.5, 0.5, 100.0, 3.0,
                       _("Standard deviation "
                         "(multiply by ~2 to get radius)"))
 gegl_chant_enum      (orientation, _("Orientation"),

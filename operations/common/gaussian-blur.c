@@ -33,12 +33,12 @@ gegl_chant_register_enum (gegl_gaussian_blur_filter)
 gegl_chant_register_enum_end (GeglGaussianBlurFilter)
 
 gegl_chant_double_ui (std_dev_x, _("Size X"),
-                      0.0, 10000.0, 4.0, 0.0, 1000.0, 1.5,
+                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
                       _("Standard deviation for the horizontal axis "
                         "(multiply by ~2 to get radius)"))
 
 gegl_chant_double_ui (std_dev_y, _("Size Y"),
-                      0.0, 10000.0, 4.0, 0.0, 1000.0, 1.5,
+                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
                       _("Standard deviation for the vertical axi. "
                         "(multiply by ~2 to get radius)"))
 
