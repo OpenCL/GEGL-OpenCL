@@ -107,12 +107,15 @@ process (GeglOperation       *operation,
                 NULL);
 
       npd_gegl_init_image (input_image, input, format);
-      npd_gegl_open_buffer (input_image);
+      input_image->buffer = g_new0 (guchar, gegl_buffer_get_pixel_count (input) * 4);
+      gegl_buffer_get (input, NULL, 1.0, format, input_image->buffer,
+                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
       npd_gegl_init_image (&display->image, output, format);
       npd_gegl_open_buffer (&display->image);
 
       model->display = display;
-      npd_create_model_from_image (model,input_image,
+      npd_create_model_from_image (model, input_image,
                                    input_image->width, input_image->height,
                                    0, 0, o->square_size);
       o->model = model;
@@ -131,14 +134,12 @@ process (GeglOperation       *operation,
           npd_compute_MLS_weights (model);
         }
 
-      npd_gegl_open_buffer (model->reference_image);
       npd_gegl_open_buffer (&display->image);
       memset (display->image.buffer, 0, length);
       npd_deform_model (model, o->rigidity);
       npd_draw_model_into_image (model, &display->image);
     }
 
-  npd_gegl_close_buffer (model->reference_image);
   npd_gegl_close_buffer (&display->image);
 
   return TRUE;

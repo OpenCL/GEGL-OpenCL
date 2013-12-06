@@ -115,6 +115,7 @@ npd_gegl_init_image (NPDImage   *image,
 {
   image->gegl_buffer = gegl_buffer;
   image->width = gegl_buffer_get_width (gegl_buffer);
+  image->rowstride = image->width * babl_format_get_bytes_per_pixel (format);
   image->height = gegl_buffer_get_height (gegl_buffer);
   image->format = format;
 }
