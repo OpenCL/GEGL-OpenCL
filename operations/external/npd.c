@@ -67,7 +67,7 @@ typedef struct
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO    *o      = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
   NPDProperties *props;
 
   if (o->chant_data == NULL)
@@ -146,6 +146,28 @@ process (GeglOperation       *operation,
 }
 
 static void
+finalize (GObject *object)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+
+  if (o->chant_data)
+    {
+      NPDProperties *props = o->chant_data;
+      NPDModel   *model = &props->model;
+      NPDDisplay *display = model->display;
+
+      g_free (model->reference_image->buffer);
+      g_free (model->reference_image);
+      g_free (display);
+      npd_destroy_model (model);
+
+      o->chant_data = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+}
+
+static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
   GeglOperationClass       *operation_class;
@@ -156,6 +178,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process    = process;
   operation_class->prepare = prepare;
+  G_OBJECT_CLASS (klass)->finalize = finalize;
 
   gegl_operation_class_set_keys (operation_class,
     "categories"  , "transform",
