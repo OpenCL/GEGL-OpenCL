@@ -1802,6 +1802,8 @@ gegl_node_get_cache (GeglNode *node)
                                   "format", format,
                                   NULL);
 
+      gegl_object_set_has_forked (G_OBJECT (node->cache));
+
       gegl_node_get_bounding_box (node);
       gegl_buffer_set_extent (GEGL_BUFFER (node->cache), &node->have_rect);
 

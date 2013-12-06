@@ -25,7 +25,7 @@
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
-#include "gegl-cache.h"
+#include "gegl-debug.h"
 #include "gegl-operation.h"
 #include "gegl-operations.h"
 #include "gegl-operation-context.h"
@@ -179,13 +179,12 @@ gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
                                          GeglBuffer          *input,
                                          const GeglRectangle *result)
 {
-  if (!input ||
-      GEGL_IS_CACHE (input))
+  if (!input)
     return FALSE;
   if (gegl_object_get_has_forked (G_OBJECT (input)))
     return FALSE;
 
-  if (input->format == gegl_operation_get_format (operation, "output") &&
+  if (gegl_buffer_get_format (input) == gegl_operation_get_format (operation, "output") &&
       gegl_rectangle_contains (gegl_buffer_get_extent (input), result))
     return TRUE;
   return FALSE;
