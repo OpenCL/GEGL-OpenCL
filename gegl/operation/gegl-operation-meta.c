@@ -23,7 +23,6 @@
 
 #include "gegl.h"
 #include "gegl-operation-meta.h"
-#include "graph/gegl-node-private.h"
 
 static void       finalize     (GObject       *self_object);
 static GeglNode * detect       (GeglOperation *operation,
@@ -150,7 +149,7 @@ gegl_operation_meta_redirect (GeglOperation *operation,
   /* set default value */
   gegl_node_copy_property_property (G_OBJECT (operation),
                                     redirect->name,
-                                    G_OBJECT (internal->operation),
+                                    G_OBJECT (gegl_node_get_gegl_operation (internal)),
                                     redirect->internal_name);
 }
 
@@ -169,7 +168,7 @@ gegl_operation_meta_property_changed (GeglOperationMeta *self,
           if (!strcmp (redirect->name, arg1->name))
             {
               gegl_node_copy_property_property (G_OBJECT (self), arg1->name,
-                                                G_OBJECT (redirect->internal->operation),
+                                                G_OBJECT (gegl_node_get_gegl_operation (redirect->internal)),
                                                 redirect->internal_name);
             }
           iter = iter->next;
