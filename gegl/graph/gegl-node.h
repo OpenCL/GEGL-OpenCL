@@ -42,11 +42,11 @@ G_BEGIN_DECLS
  *
  * gegl = gegl_node_new ();
  * load = gegl_node_new_child (gegl,
- *                             "operation", "load",
+ *                             "operation", "gegl:load",
  *                             "path",      "input.png",
  *                             NULL);
  * bcontrast = gegl_node_new_child (gegl,
- *                                  "operation", "brightness-contrast",
+ *                                  "operation", "gegl:brightness-contrast",
  *                                  "brightness", 0.2,
  *                                  "contrast",   1.5,
  *                                  NULL);
@@ -321,7 +321,7 @@ void          gegl_node_blit_buffer      (GeglNode            *node,
  * # create png_save from the graph, the parent/child relationship
  * # only mean anything when it comes to memory management.
  * png_save = gegl_node_new_child (gegl,
- *                                 "operation", "png-save",
+ *                                 "operation", "gegl:png-save",
  *                                 "path",      "output.png",
  *                                 NULL);
  *
@@ -330,11 +330,11 @@ void          gegl_node_blit_buffer      (GeglNode            *node,
  *
  * buffer = malloc (roi.w*roi.h*4);
  * gegl_node_blit (gegl,
- *                 &roi,
  *                 1.0,
- *                 babl_format("R'G'B'A u8",
- *                 roi.w*4,
+ *                 &roi,
+ *                 babl_format("R'G'B'A u8"),
  *                 buffer,
+ *                 GEGL_AUTO_ROWSTRIDE,
  *                 GEGL_BLIT_DEFAULT);
  */
 void          gegl_node_process          (GeglNode      *sink_node);
