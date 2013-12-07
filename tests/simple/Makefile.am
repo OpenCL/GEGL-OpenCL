@@ -13,6 +13,7 @@ noinst_PROGRAMS =			\
 	test-image-compare		\
 	test-misc			\
 	test-node-properties		\
+	test-object-forked		\
 	test-opencl-colors		\
 	test-path			\
 	test-proxynop-processing	\
