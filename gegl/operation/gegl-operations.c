@@ -191,15 +191,26 @@ gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
   return FALSE;
 }
 
+static GQuark
+gegl_has_forked_quark (void)
+{
+  static GQuark the_quark = 0;
+
+  if (G_UNLIKELY (the_quark == 0))
+    the_quark = g_quark_from_static_string ("gegl-object-has-forked");
+
+  return the_quark;
+}
+
 void
 gegl_object_set_has_forked (GObject *object)
 {
-  g_object_set_data (object, "gegl has-forked", (void*)0xf);
+  g_object_set_qdata (object, gegl_has_forked_quark (), (void*)0xf);
 }
 
 
 gboolean
 gegl_object_get_has_forked (GObject *object)
 {
-  return g_object_get_data(object, "gegl has-forked") != NULL;
+  return g_object_get_qdata (object, gegl_has_forked_quark ()) != NULL;
 }
