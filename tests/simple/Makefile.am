@@ -12,6 +12,7 @@ noinst_PROGRAMS =			\
 	test-gegl-rectangle		\
 	test-gegl-tile			\
 	test-image-compare		\
+	test-license-check		\
 	test-misc			\
 	test-node-connections		\
 	test-node-properties		\
