@@ -19,10 +19,12 @@
 	<param name='seed'>0</param>
       </params>
     </node>
-    <node operation='gegl:scale-ratio'>
+    <node operation='gegl:crop'>
       <params>
-	<param name='x'>0.3</param>
-	<param name='y'>0.3</param>
+	<param name='x'>100</param>
+	<param name='y'>100</param>
+	<param name='width'>170</param>
+	<param name='height'>120</param>
       </params>
     </node>
     <node operation='gegl:load'>
@@ -50,10 +52,12 @@
 	<param name='seed'>0</param>
       </params>
     </node>
-    <node operation='gegl:scale-ratio'>
+    <node operation='gegl:crop'>
       <params>
-	<param name='x'>0.3</param>
-	<param name='y'>0.3</param>
+	<param name='x'>100</param>
+	<param name='y'>100</param>
+	<param name='width'>170</param>
+	<param name='height'>120</param>
       </params>
     </node>
     <node operation='gegl:load'>
@@ -81,10 +85,12 @@
 	<param name='seed'>0</param>
       </params>
     </node>
-    <node operation='gegl:scale-ratio'>
+    <node operation='gegl:crop'>
       <params>
-	<param name='x'>0.5</param>
-	<param name='y'>0.5</param>
+	<param name='x'>100</param>
+	<param name='y'>100</param>
+	<param name='width'>256</param>
+	<param name='height'>192</param>
       </params>
     </node>
     <node operation='gegl:load'>
@@ -112,10 +118,12 @@
 	<param name='seed'>0</param>
       </params>
     </node>
-    <node operation='gegl:scale-ratio'>
+    <node operation='gegl:crop'>
       <params>
-	<param name='x'>0.5</param>
-	<param name='y'>0.5</param>
+	<param name='x'>100</param>
+	<param name='y'>100</param>
+	<param name='width'>256</param>
+	<param name='height'>192</param>
       </params>
     </node>
     <node operation='gegl:load'>
@@ -143,10 +151,12 @@
 	<param name='seed'>0</param>
       </params>
     </node>
-    <node operation='gegl:scale-ratio'>
+    <node operation='gegl:crop'>
       <params>
-	<param name='x'>0.5</param>
-	<param name='y'>0.5</param>
+	<param name='x'>100</param>
+	<param name='y'>100</param>
+	<param name='width'>256</param>
+	<param name='height'>192</param>
       </params>
     </node>
     <node operation='gegl:load'>
@@ -174,10 +184,12 @@
 	<param name='seed'>0</param>
       </params>
     </node>
-    <node operation='gegl:scale-ratio'>
+    <node operation='gegl:crop'>
       <params>
-	<param name='x'>0.5</param>
-	<param name='y'>0.5</param>
+	<param name='x'>100</param>
+	<param name='y'>100</param>
+	<param name='width'>256</param>
+	<param name='height'>192</param>
       </params>
     </node>
     <node operation='gegl:load'>
