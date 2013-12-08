@@ -128,13 +128,4 @@ void             npd_set_deformation_type       (NPDModel        *model,
                                                  gboolean         MLS_weights);
 void             npd_compute_MLS_weights        (NPDModel        *model);
 
-void             npd_print_model                (NPDModel        *model,
-                                                 gboolean         print_control_points);
-void             npd_print_hidden_model         (NPDHiddenModel  *hm,
-                                                 gboolean         print_bones,
-                                                 gboolean         print_overlapping_points);
-void             npd_print_bone                 (NPDBone         *bone);
-void             npd_print_point                (NPDPoint        *point,
-                                                 gboolean         print_details);
-void             npd_print_overlapping_points   (NPDOverlappingPoints *op);
 #endif	/* __NPD_COMMON_H__ */

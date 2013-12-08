@@ -44,7 +44,7 @@ npd_init_model (NPDModel *model)
 {
   NPDHiddenModel *hidden_model;
   GArray         *control_points;
-  
+
   /* init hidden model */
   hidden_model        = g_new (NPDHiddenModel, 1);
   model->hidden_model = hidden_model;
@@ -82,7 +82,7 @@ npd_destroy_hidden_model (NPDHiddenModel *hm)
       g_free (hm->current_bones[i].points);
       g_free (hm->reference_bones[i].points);
     }
-  
+
   g_free (hm->current_bones);
   g_free (hm->reference_bones);
 }
@@ -102,7 +102,7 @@ npd_destroy_model (NPDModel *model)
  * Finds nearest (to specified position) overlapping points, creates a new
  * control point at the position of overlapping points and assigns them to the
  * control point.
- * 
+ *
  * @param  model
  * @param  coord     specified position
  * @return pointer to a newly created control point or NULL when there already
@@ -264,7 +264,7 @@ npd_equal_coordinates_epsilon (NPDPoint *p1,
     {
       return TRUE;
     }
-  
+
   return FALSE;
 }
 
@@ -343,7 +343,7 @@ npd_create_list_of_overlapping_points (NPDHiddenModel *hm)
   NPDPoint   *point;
   GPtrArray  *list_of_ops;
   GHashTable *coords_to_cluster;
-  
+
   list_of_ops       = g_ptr_array_new ();
   num_of_bones      = hm->num_of_bones;
   coords_to_cluster = g_hash_table_new_full
@@ -374,7 +374,7 @@ npd_create_list_of_overlapping_points (NPDHiddenModel *hm)
       hm->list_of_overlapping_points[i].num_of_points = op->len;
       hm->list_of_overlapping_points[i].representative =
               hm->list_of_overlapping_points[i].points[0];
-      
+
       for (j = 0; j < op->len; j++)
         {
           NPDPoint *p = hm->list_of_overlapping_points[i].points[j];
@@ -407,7 +407,7 @@ add_point_to_suitable_cluster (GHashTable *coords_to_cluster,
 
   NPD_FLOAT_TO_STRING (str_coord_x, point->x);
   NPD_FLOAT_TO_STRING (str_coord_y, point->y);
-  
+
   coord_y = g_hash_table_lookup (coords_to_cluster, str_coord_x);
 
   if (coord_y == NULL)
@@ -419,7 +419,7 @@ add_point_to_suitable_cluster (GHashTable *coords_to_cluster,
                                        NULL);       /* hash table        */
       g_hash_table_insert (coords_to_cluster, str_coord_x, coord_y);
     }
-  
+
   op = g_hash_table_lookup (coord_y, str_coord_y);
   if (op == NULL)
     {
@@ -427,7 +427,7 @@ add_point_to_suitable_cluster (GHashTable *coords_to_cluster,
       g_hash_table_insert (coord_y, str_coord_y, op);
       g_ptr_array_add (list_of_overlapping_points, op);
     }
-  
+
   g_ptr_array_add (op, point);
 }
 #endif
@@ -528,107 +528,5 @@ npd_reset_weights (NPDHiddenModel *hm)
     {
       op  = &hm->list_of_overlapping_points[i];
       npd_set_overlapping_points_weight (op, 1.0);
-    }
-}
-
-void
-npd_print_model (NPDModel        *model,
-                 gboolean         print_control_points)
-{
-  gint i;
-  g_printf ("NPDModel:\n");
-  g_printf ("control point radius: %f\n", model->control_point_radius);
-  g_printf ("control points visible: %d\n", model->control_points_visible);
-  g_printf ("mesh visible: %d\n", model->mesh_visible);
-  g_printf ("texture visible: %d\n", model->texture_visible);
-  g_printf ("mesh square size: %d\n", model->mesh_square_size);
-
-  npd_print_hidden_model (model->hidden_model, FALSE, FALSE);
-
-  if (print_control_points)
-    {
-      g_printf ("%d control points:\n", model->control_points->len);
-      for (i = 0; i < model->control_points->len; i++)
-        {
-          NPDControlPoint *cp = &g_array_index (model->control_points,
-                                                NPDControlPoint,
-                                                i);
-          npd_print_point (&cp->point, TRUE);
-        }
-    }
-}
-
-void
-npd_print_hidden_model (NPDHiddenModel *hm,
-                        gboolean        print_bones,
-                        gboolean        print_overlapping_points)
-{
-  gint i;
-  g_printf ("NPDHiddenModel:\n");
-  g_printf ("number of bones: %d\n", hm->num_of_bones);
-  g_printf ("ASAP: %d\n", hm->ASAP);
-  g_printf ("MLS weights: %d\n", hm->MLS_weights);
-  g_printf ("number of overlapping points: %d\n", hm->num_of_overlapping_points);
-  
-  if (print_bones)
-    {
-      g_printf ("bones:\n");
-      for (i = 0; i < hm->num_of_bones; i++)
-        {
-          npd_print_bone (&hm->current_bones[i]);
-        }
-    }
-  
-  if (print_overlapping_points)
-    {
-      g_printf ("overlapping points:\n");
-      for (i = 0; i < hm->num_of_overlapping_points; i++)
-        {
-          npd_print_overlapping_points (&hm->list_of_overlapping_points[i]);
-        }
-    }
-}
-
-void
-npd_print_bone (NPDBone *bone)
-{
-  gint i;
-  g_printf ("NPDBone:\n");
-  g_printf ("number of points: %d\n", bone->num_of_points);
-  g_printf ("points:\n");
-  for (i = 0; i < bone->num_of_points; i++)
-    {
-      npd_print_point (&bone->points[i], TRUE);
-    }
-}
-
-void
-npd_print_point (NPDPoint *point,
-                 gboolean  print_details)
-{
-  if (print_details)
-    {
-      g_printf ("(NPDPoint: x: %f, y: %f, weight: %f, fixed: %d)\n",
-              point->x, point->y, *point->weight, point->fixed);
-    }
-  else
-    {
-      g_printf ("(NPDPoint: x: %f, y: %f)\n",
-              point->x, point->y);
-    }
-}
-
-void
-npd_print_overlapping_points (NPDOverlappingPoints *op)
-{
-  gint i;
-  g_printf ("NPDOverlappingPoints:\n");
-  g_printf ("number of points: %d\n", op->num_of_points);
-  g_printf ("representative: ");
-  npd_print_point (op->representative, TRUE);
-  g_printf ("points:\n");
-  for (i = 0; i < op->num_of_points; i++)
-    {
-      npd_print_point (op->points[i], TRUE);
     }
 }
