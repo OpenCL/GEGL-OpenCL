@@ -100,7 +100,6 @@ npd_get_pixel_color      = get_pixel;                                          \
 npd_draw_line            = draw_line;
 
 void             npd_init_model                 (NPDModel        *model);
-void             npd_destroy_hidden_model       (NPDHiddenModel  *model);
 void             npd_destroy_model              (NPDModel        *model);
 
 NPDControlPoint *npd_add_control_point          (NPDModel        *model,
@@ -112,6 +111,8 @@ void             npd_remove_control_points      (NPDModel        *model,
 void             npd_remove_all_control_points  (NPDModel        *model);
 void             npd_set_control_point_weight   (NPDControlPoint *cp,
                                                  gfloat           weight);
+NPDControlPoint *npd_get_control_point_at       (NPDModel        *model,
+                                                 NPDPoint        *coord);
 NPDControlPoint *npd_get_control_point_with_radius_at
                                                 (NPDModel        *model,
                                                  NPDPoint        *coord,

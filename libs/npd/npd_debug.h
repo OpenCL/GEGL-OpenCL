@@ -19,6 +19,12 @@
  * Copyright (C) 2013 Marek Dvoroznak <dvoromar@gmail.com>
  */
 
+#ifndef __NPD_DEBUG_H__
+#define __NPD_DEBUG_H__
+
+#include "npd_common.h"
+#include <glib.h>
+
 void             npd_print_model                (NPDModel        *model,
                                                  gboolean         print_control_points);
 void             npd_print_hidden_model         (NPDHiddenModel  *hm,
@@ -28,3 +34,5 @@ void             npd_print_bone                 (NPDBone         *bone);
 void             npd_print_point                (NPDPoint        *point,
                                                  gboolean         print_details);
 void             npd_print_overlapping_points   (NPDOverlappingPoints *op);
+
+#endif	/* __NPD_DEBUG_H__ */

@@ -13,7 +13,7 @@ GEGL_NPD_public_HEADERS = \
 	graphics.h       \
 	lattice_cut.h    \
 	npd_gegl.h       \
-	npd_debug        \
+	npd_debug.h      \
 	npd.h
 
 GEGL_NPD_SOURCES = \

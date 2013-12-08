@@ -19,6 +19,11 @@
  * Copyright (C) 2013 Marek Dvoroznak <dvoromar@gmail.com>
  */
 
+#include "npd_debug.h"
+#include "npd_common.h"
+#include <glib.h>
+#include <glib/gprintf.h>
+
 void
 npd_print_model (NPDModel        *model,
                  gboolean         print_control_points)

@@ -25,20 +25,6 @@
 #include <glib.h>
 #include <glib/gprintf.h>
 
-static NPDControlPoint *npd_get_control_point_at (NPDModel     *model,
-                                                  NPDPoint     *coord);
-
-#if 0
-static void add_point_to_suitable_cluster     (GHashTable      *coords_to_cluster,
-                                               NPDPoint        *point,
-                                               GPtrArray       *list_of_overlapping_points);
-#endif
-
-static void npd_set_overlapping_points_weight (NPDOverlappingPoints *op,
-                                               gfloat           weight);
-
-static void npd_reset_weights                 (NPDHiddenModel  *hidden_model);
-
 void
 npd_init_model (NPDModel *model)
 {
@@ -65,7 +51,7 @@ npd_init_model (NPDModel *model)
   model->texture_visible                  = TRUE;
 }
 
-void
+static void
 npd_destroy_hidden_model (NPDHiddenModel *hm)
 {
   gint i;
@@ -247,11 +233,22 @@ npd_remove_all_control_points (NPDModel *model)
                         model->control_points->len);
 }
 
+static void
+npd_set_overlapping_points_weight (NPDOverlappingPoints *op,
+                                   gfloat                weight)
+{
+  gint i;
+  for (i = 0; i < op->num_of_points; i++)
+    {
+      (*op->points[i]->weight) = weight;
+    }
+}
+
 void
 npd_set_control_point_weight (NPDControlPoint *cp,
                               gfloat           weight)
 {
-  npd_set_overlapping_points_weight(cp->overlapping_points, weight);
+  npd_set_overlapping_points_weight (cp->overlapping_points, weight);
 }
 
 static gboolean
@@ -299,7 +296,7 @@ npd_get_control_point_with_radius_at (NPDModel        *model,
   return NULL;
 }
 
-static NPDControlPoint*
+NPDControlPoint*
 npd_get_control_point_at (NPDModel *model,
                           NPDPoint *coord)
 {
@@ -334,121 +331,25 @@ npd_create_square (NPDBone *square,
     }
 }
 
-#if 0
-static void
-npd_create_list_of_overlapping_points (NPDHiddenModel *hm)
-{
-  gint        i, j, num_of_bones;
-  NPDBone    *bone;
-  NPDPoint   *point;
-  GPtrArray  *list_of_ops;
-  GHashTable *coords_to_cluster;
-
-  list_of_ops       = g_ptr_array_new ();
-  num_of_bones      = hm->num_of_bones;
-  coords_to_cluster = g_hash_table_new_full
-                          (g_str_hash, g_str_equal,
-                           g_free,     (GDestroyNotify) g_hash_table_destroy);
-
-  for (i = 0; i < num_of_bones; i++)
-    {
-      bone = &hm->current_bones[i];
-
-      for (j = 0; j < bone->num_of_points; j++)
-        {
-          point =  &bone->points[j];
-          add_point_to_suitable_cluster (coords_to_cluster,
-                                         point,
-                                         list_of_ops);
-        }
-    }
-
-  hm->list_of_overlapping_points = g_new (NPDOverlappingPoints,
-                                          list_of_ops->len);
-  hm->num_of_overlapping_points  = list_of_ops->len;
-
-  for (i = 0; i < list_of_ops->len; i++)
-    {
-      GPtrArray *op = g_ptr_array_index (list_of_ops, i);
-      hm->list_of_overlapping_points[i].points = (NPDPoint**) op->pdata;
-      hm->list_of_overlapping_points[i].num_of_points = op->len;
-      hm->list_of_overlapping_points[i].representative =
-              hm->list_of_overlapping_points[i].points[0];
-
-      for (j = 0; j < op->len; j++)
-        {
-          NPDPoint *p = hm->list_of_overlapping_points[i].points[j];
-          p->overlapping_points = &hm->list_of_overlapping_points[i];
-          p->counterpart->overlapping_points = &hm->list_of_overlapping_points[i];
-        }
-
-      g_ptr_array_free (op, FALSE); /* we want to preserve the underlying
-                                       array */
-    }
-
-  /* free allocated memory */
-  g_hash_table_destroy (coords_to_cluster);
-  g_ptr_array_free (list_of_ops, TRUE);
-}
-
-#define NPD_FLOAT_TO_STRING(name_of_string, value)                             \
-/* must be freed */                                                            \
-name_of_string = g_new (gchar, 10);                                            \
-g_ascii_dtostr (name_of_string, 10, value);
-
-static void
-add_point_to_suitable_cluster (GHashTable *coords_to_cluster,
-                               NPDPoint   *point,
-                               GPtrArray  *list_of_overlapping_points)
-{
-  gchar      *str_coord_x, *str_coord_y;
-  GHashTable *coord_y;
-  GPtrArray  *op;
-
-  NPD_FLOAT_TO_STRING (str_coord_x, point->x);
-  NPD_FLOAT_TO_STRING (str_coord_y, point->y);
-
-  coord_y = g_hash_table_lookup (coords_to_cluster, str_coord_x);
-
-  if (coord_y == NULL)
-    {
-      /* coordinate doesn't exist */
-      coord_y = g_hash_table_new_full (g_str_hash,  /* is freed during   */
-                                       g_str_equal, /* destroying        */
-                                       g_free,      /* coords_to_cluster */
-                                       NULL);       /* hash table        */
-      g_hash_table_insert (coords_to_cluster, str_coord_x, coord_y);
-    }
-
-  op = g_hash_table_lookup (coord_y, str_coord_y);
-  if (op == NULL)
-    {
-      op = g_ptr_array_new ();
-      g_hash_table_insert (coord_y, str_coord_y, op);
-      g_ptr_array_add (list_of_overlapping_points, op);
-    }
-
-  g_ptr_array_add (op, point);
-}
-#endif
-
-static void
-npd_set_overlapping_points_weight (NPDOverlappingPoints *op,
-                                   gfloat                weight)
-{
-  gint i;
-  for (i = 0; i < op->num_of_points; i++)
-    {
-      (*op->points[i]->weight) = weight;
-    }
-}
-
 void
 npd_set_point_coordinates (NPDPoint *target,
                            NPDPoint *source)
 {
   target->x = source->x;
   target->y = source->y;
+}
+
+static void
+npd_reset_weights (NPDHiddenModel *hm)
+{
+  NPDOverlappingPoints *op;
+  gint                  i;
+
+  for (i = 0; i < hm->num_of_overlapping_points; i++)
+    {
+      op  = &hm->list_of_overlapping_points[i];
+      npd_set_overlapping_points_weight (op, 1.0);
+    }
 }
 
 /**
@@ -515,18 +416,5 @@ npd_compute_MLS_weights (NPDModel *model)
       if (npd_equal_floats (min, 0.0)) min = 0.0000001;
       MLS_weight = 1 / pow (min, hm->MLS_weights_alpha);
       npd_set_overlapping_points_weight (op, MLS_weight);
-    }
-}
-
-static void
-npd_reset_weights (NPDHiddenModel *hm)
-{
-  NPDOverlappingPoints *op;
-  gint                  i;
-
-  for (i = 0; i < hm->num_of_overlapping_points; i++)
-    {
-      op  = &hm->list_of_overlapping_points[i];
-      npd_set_overlapping_points_weight (op, 1.0);
     }
 }
