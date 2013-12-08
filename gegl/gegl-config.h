@@ -45,6 +45,7 @@ struct _GeglConfig
   gint     threads;
   gboolean use_opencl;
   gint     queue_size;
+  gchar   *application_license;
 };
 
 struct _GeglConfigClass

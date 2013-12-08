@@ -34,4 +34,6 @@ void       gegl_operation_class_register_name (GeglOperationClass *klass,
                                                const gchar        *name,
                                                const gboolean      is_compat);
 
+void       gegl_operations_set_licenses_from_string (const gchar *license_str);
+
 #endif

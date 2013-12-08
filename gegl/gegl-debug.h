@@ -15,7 +15,8 @@ typedef enum {
   GEGL_DEBUG_MISC            = 1 << 6,
   GEGL_DEBUG_INVALIDATION    = 1 << 7,
   GEGL_DEBUG_OPENCL          = 1 << 8,
-  GEGL_DEBUG_BUFFER_ALLOC    = 1 << 9
+  GEGL_DEBUG_BUFFER_ALLOC    = 1 << 9,
+  GEGL_DEBUG_LICENSE         = 1 << 10
 } GeglDebugFlag;
 
 /* only compiled in from gegl-init.c but kept here to
@@ -33,6 +34,7 @@ static const GDebugKey gegl_debug_keys[] = {
   { "invalidation",  GEGL_DEBUG_INVALIDATION},
   { "opencl",        GEGL_DEBUG_OPENCL},
   { "buffer-alloc",  GEGL_DEBUG_BUFFER_ALLOC},
+  { "license",       GEGL_DEBUG_LICENSE},
   { "all",           GEGL_DEBUG_PROCESS|
                      GEGL_DEBUG_BUFFER_LOAD|
                      GEGL_DEBUG_BUFFER_SAVE|
@@ -40,7 +42,8 @@ static const GDebugKey gegl_debug_keys[] = {
                      GEGL_DEBUG_PROCESSOR|
                      GEGL_DEBUG_CACHE|
                      GEGL_DEBUG_OPENCL|
-                     GEGL_DEBUG_BUFFER_ALLOC},
+                     GEGL_DEBUG_BUFFER_ALLOC|
+                     GEGL_DEBUG_LICENSE},
 };
 #endif /* __GEGL_INIT_C */
 

@@ -45,7 +45,8 @@ enum
   PROP_TILE_HEIGHT,
   PROP_THREADS,
   PROP_USE_OPENCL,
-  PROP_QUEUE_SIZE
+  PROP_QUEUE_SIZE,
+  PROP_APPLICATION_LICENSE
 };
 
 static void
@@ -96,6 +97,10 @@ gegl_config_get_property (GObject    *gobject,
 
       case PROP_QUEUE_SIZE:
         g_value_set_int (value, config->queue_size);
+        break;
+
+      case PROP_APPLICATION_LICENSE:
+        g_value_set_string (value, config->application_license);
         break;
 
       default:
@@ -171,6 +176,11 @@ gegl_config_set_property (GObject      *gobject,
         break;
       case PROP_QUEUE_SIZE:
         config->queue_size = g_value_get_int (value);
+        break;
+      case PROP_APPLICATION_LICENSE:
+        if (config->application_license)
+          g_free (config->application_license);
+        config->application_license = g_value_dup_string (value);
         break;
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -280,6 +290,14 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                      2, G_MAXINT, 50 * 1024 *1024,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (gobject_class, PROP_APPLICATION_LICENSE,
+                                   g_param_spec_string ("application-license",
+                                                        "Application license",
+                                                        "A list of additional licenses to allow for operations",
+                                                        "",
+                                                        G_PARAM_READWRITE |
+                                                        G_PARAM_CONSTRUCT));
 }
 
 static void

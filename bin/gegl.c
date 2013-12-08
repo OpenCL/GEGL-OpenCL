@@ -86,6 +86,10 @@ main (gint    argc,
   GError      *err       = NULL;
   gchar       *path_root = NULL;
 
+  g_object_set (gegl_config (),
+                "application-license", "GPL3",
+                NULL);
+
   gegl_init (&argc, &argv);
 #ifdef HAVE_SPIRO
   gegl_path_spiro_init ();

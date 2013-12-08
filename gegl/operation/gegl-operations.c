@@ -30,11 +30,13 @@
 #include "gegl-operations.h"
 #include "gegl-operation-context.h"
 
+static gchar     **accepted_licenses       = NULL;
+static GHashTable *known_operation_names   = NULL;
+static GHashTable *visible_operation_names = NULL;
+static GSList     *operations_list         = NULL;
+static guint       gtype_hash_serial       = 0;
 
-static GHashTable *gtype_hash        = NULL;
-static GSList     *operations_list   = NULL;
-static guint       gtype_hash_serial = 0;
-G_LOCK_DEFINE_STATIC (gtype_hash);
+static GMutex operations_cache_mutex = { 0, };
 
 void
 gegl_operation_class_register_name (GeglOperationClass *klass,
@@ -44,9 +46,9 @@ gegl_operation_class_register_name (GeglOperationClass *klass,
   GType this_type, check_type;
   this_type = G_TYPE_FROM_CLASS (klass);
 
-  G_LOCK (gtype_hash);
+  g_mutex_lock (&operations_cache_mutex);
 
-  check_type = (GType) g_hash_table_lookup (gtype_hash, name);
+  check_type = (GType) g_hash_table_lookup (known_operation_names, name);
   if (check_type && check_type != this_type)
     {
       g_warning ("Adding %s shadows %s for operation %s",
@@ -54,13 +56,10 @@ gegl_operation_class_register_name (GeglOperationClass *klass,
                   g_type_name (check_type),
                   name);
     }
-  g_hash_table_insert (gtype_hash, g_strdup (name), (gpointer) this_type);
 
-  if (!check_type && !is_compat)
-    operations_list = g_slist_insert_sorted (operations_list, (gpointer) name,
-                                             (GCompareFunc) strcmp);
+  g_hash_table_insert (known_operation_names, g_strdup (name), (gpointer) this_type);
 
-  G_UNLOCK (gtype_hash);
+  g_mutex_unlock (&operations_cache_mutex);
 }
 
 static void
@@ -87,6 +86,126 @@ add_operations (GType parent)
   g_free (types);
 }
 
+static gboolean
+gegl_operations_check_license (const gchar *operation_license)
+{
+  gint i;
+
+  if (!accepted_licenses || !accepted_licenses[0])
+    return FALSE;
+
+  if (0 == g_ascii_strcasecmp (operation_license, "GPL1+"))
+    {
+      /* Search for GPL1 */
+      for (i = 0; accepted_licenses[i]; ++i)
+        if (0 == g_ascii_strcasecmp ("GPL1", accepted_licenses[i]))
+          return TRUE;
+      /* Search for GPL2 */
+      for (i = 0; accepted_licenses[i]; ++i)
+        if (0 == g_ascii_strcasecmp ("GPL2", accepted_licenses[i]))
+          return TRUE;
+      /* Search for GPL3 */
+      for (i = 0; accepted_licenses[i]; ++i)
+        if (0 == g_ascii_strcasecmp ("GPL3", accepted_licenses[i]))
+          return TRUE;
+    }
+  else if (0 == g_ascii_strcasecmp (operation_license, "GPL2+"))
+    {
+      /* Search for GPL2 */
+      for (i = 0; accepted_licenses[i]; ++i)
+        if (0 == g_ascii_strcasecmp ("GPL2", accepted_licenses[i]))
+          return TRUE;
+      /* Search for GPL3 */
+      for (i = 0; accepted_licenses[i]; ++i)
+        if (0 == g_ascii_strcasecmp ("GPL3", accepted_licenses[i]))
+          return TRUE;
+    }
+  else if (0 == g_ascii_strcasecmp (operation_license, "GPL3+"))
+    {
+      /* Search for GPL3 */
+      for (i = 0; accepted_licenses[i]; ++i)
+        if (0 == g_ascii_strcasecmp ("GPL3", accepted_licenses[i]))
+          return TRUE;
+    }
+  else
+    {
+      /* Search for exact match */
+      for (i = 0; accepted_licenses[i]; ++i)
+        if (0 == g_ascii_strcasecmp (operation_license, accepted_licenses[i]))
+          return TRUE;
+    }
+
+  return FALSE;
+}
+
+static void
+gegl_operations_update_visible (void)
+{
+  g_mutex_lock (&operations_cache_mutex);
+
+  GHashTableIter iter;
+  const gchar *iter_key;
+  GType iter_value;
+
+  g_hash_table_remove_all (visible_operation_names);
+  g_slist_free (operations_list);
+
+  operations_list = NULL;
+
+  g_hash_table_iter_init (&iter, known_operation_names);
+
+  while (g_hash_table_iter_next (&iter, (gpointer)&iter_key, (gpointer)&iter_value))
+    {
+      GObjectClass *object_class;
+      GeglOperationClass *operation_class;
+
+      object_class = g_type_class_ref (iter_value);
+      operation_class = GEGL_OPERATION_CLASS (object_class);
+
+      const gchar *operation_license = g_hash_table_lookup (operation_class->keys, "license");
+
+      if (!operation_license || gegl_operations_check_license (operation_license))
+        {
+          if (operation_license)
+            {
+              GEGL_NOTE (GEGL_DEBUG_LICENSE, "Accepted %s for %s", operation_license, iter_key);
+            }
+
+          if (operation_class->name && (0 == strcmp (iter_key, operation_class->name)))
+            {
+              /* Is the primary name of the operation */
+              operations_list = g_slist_insert_sorted (operations_list, (gpointer) iter_key,
+                                                       (GCompareFunc) strcmp);
+            }
+
+          g_hash_table_insert (visible_operation_names, g_strdup (iter_key), (gpointer) iter_value);
+        }
+      else if (operation_license)
+        {
+          GEGL_NOTE (GEGL_DEBUG_LICENSE, "Rejected %s for %s", operation_license, iter_key);
+        }
+
+      g_type_class_unref (object_class);
+    }
+
+  g_mutex_unlock (&operations_cache_mutex);
+}
+
+void
+gegl_operations_set_licenses_from_string (const gchar *license_str)
+{
+  g_mutex_lock (&operations_cache_mutex);
+
+  if (accepted_licenses)
+    g_strfreev (accepted_licenses);
+
+  accepted_licenses = g_strsplit (license_str, ",", 0);
+
+  g_mutex_unlock (&operations_cache_mutex);
+
+  gegl_operations_update_visible ();
+}
+
 GType
 gegl_operation_gtype_from_name (const gchar *name)
 {
@@ -96,10 +215,13 @@ gegl_operation_gtype_from_name (const gchar *name)
   if (gtype_hash_serial != latest_serial)
     {
       add_operations (GEGL_TYPE_OPERATION);
+
       gtype_hash_serial = latest_serial;
+
+      gegl_operations_update_visible ();
     }
 
-  return (GType) g_hash_table_lookup (gtype_hash, name);
+  return (GType) g_hash_table_lookup (visible_operation_names, name);
 }
 
 gboolean
@@ -130,6 +252,8 @@ gchar **gegl_list_operations (guint *n_operations_p)
         }
     }
 
+  g_mutex_lock (&operations_cache_mutex);
+
   n_operations = g_slist_length (operations_list);
   pasp_size   += (n_operations + 1) * sizeof (gchar *);
   for (iter = operations_list; iter != NULL; iter = g_slist_next (iter))
@@ -149,30 +273,42 @@ gchar **gegl_list_operations (guint *n_operations_p)
   pasp[i] = NULL;
   if (n_operations_p)
     *n_operations_p = n_operations;
+
+  g_mutex_unlock (&operations_cache_mutex);
+
   return pasp;
 }
 
 void
 gegl_operation_gtype_init (void)
 {
-  G_LOCK (gtype_hash);
+  g_mutex_lock (&operations_cache_mutex);
 
-  if (!gtype_hash)
-    gtype_hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  if (!known_operation_names)
+    known_operation_names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
 
-  G_UNLOCK (gtype_hash);
+  if (!visible_operation_names)
+    visible_operation_names = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+
+  g_mutex_unlock (&operations_cache_mutex);
 }
 
 void
 gegl_operation_gtype_cleanup (void)
 {
-  G_LOCK (gtype_hash);
-  if (gtype_hash)
+  g_mutex_lock (&operations_cache_mutex);
+  if (known_operation_names)
     {
-      g_hash_table_destroy (gtype_hash);
-      gtype_hash = NULL;
+      g_hash_table_destroy (known_operation_names);
+      known_operation_names = NULL;
+
+      g_hash_table_destroy (visible_operation_names);
+      visible_operation_names = NULL;
+
+      g_slist_free (operations_list);
+      operations_list = NULL;
     }
-  G_UNLOCK (gtype_hash);
+  g_mutex_unlock (&operations_cache_mutex);
 }
 
 gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,

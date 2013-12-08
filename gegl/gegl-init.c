@@ -172,6 +172,17 @@ gegl_swap_dir (void)
 }
 
 static void
+gegl_config_application_license_notify (GObject    *gobject,
+                                        GParamSpec *pspec,
+                                        gpointer    user_data)
+{
+  GeglConfig *cfg = GEGL_CONFIG (gobject);
+
+  gegl_operations_set_licenses_from_string (cfg->application_license);
+}
+
+
+static void
 gegl_config_use_opencl_notify (GObject    *gobject,
                                GParamSpec *pspec,
                                gpointer    user_data)
@@ -662,6 +673,12 @@ gegl_post_parse_hook (GOptionContext *context,
                    G_CALLBACK (gegl_config_use_opencl_notify),
                    NULL);
   g_object_set (config, "use-opencl", config->use_opencl, NULL);
+
+  g_signal_connect (G_OBJECT (config),
+                   "notify::application-license",
+                   G_CALLBACK (gegl_config_application_license_notify),
+                   NULL);
+  gegl_operations_set_licenses_from_string (config->application_license);
 
   return TRUE;
 }
