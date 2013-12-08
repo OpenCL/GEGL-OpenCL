@@ -209,6 +209,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name",        "gegl:seamless-clone",
     "categories",  "blend",
     "description", "Seamless cloning operation",
+    "license",     "GPL3+",
     NULL);
   operation_class->get_required_for_output = get_required_for_output;
 }
