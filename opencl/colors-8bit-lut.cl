@@ -348,8 +348,8 @@ __kernel void rgba_gamma_u8_to_ragabaf (__global const uchar4 * in,
   float4 tmp_v;
 
   tmp_v = (float4)(u8_gamma_to_linear_lut[(int)in_v.x],
-                   u8_gamma_to_linear_lut[(int)in_v.x],
-                   u8_gamma_to_linear_lut[(int)in_v.x],
+                   u8_gamma_to_linear_lut[(int)in_v.y],
+                   u8_gamma_to_linear_lut[(int)in_v.z],
                    in_v.w / 255.0f);
 
   out_v   = tmp_v * tmp_v.w;
@@ -366,8 +366,8 @@ __kernel void rgba_gamma_u8_to_yaf (__global const uchar4 * in,
   uchar4 in_v  = in[gid];
   float4 tmp_v;
   tmp_v = (float4)(u8_gamma_to_linear_lut[(int)in_v.x],
-                   u8_gamma_to_linear_lut[(int)in_v.x],
-                   u8_gamma_to_linear_lut[(int)in_v.x],
+                   u8_gamma_to_linear_lut[(int)in_v.y],
+                   u8_gamma_to_linear_lut[(int)in_v.z],
                    in_v.w / 255.0f);
   float2 out_v;
 
