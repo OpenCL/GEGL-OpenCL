@@ -880,8 +880,8 @@ matting_sparse_elems (const sparse_t *s)
 static gboolean
 matting_verify (const sparse_t *s)
 {
-  guint    i, j;
-  gboolean rows[s->rows];
+  guint     i, j;
+  gboolean *rows;
 
   /* Must be a square matrix */
   g_return_val_if_fail (s->columns == s->rows, FALSE);
@@ -906,16 +906,30 @@ matting_verify (const sparse_t *s)
    * not a requirement of the UMFPACK format; rather, something we expect of
    * the matrix from the matting algorithm.
    */
+  rows = g_new (gboolean, s->rows);
+
   for (i = 0; i < s->rows; ++i)
     rows [i] = FALSE;
   for (i = 0; i < matting_sparse_elems (s); ++i)
     {
       guint row = s->row_idx[i];
-      g_return_val_if_fail (row < s->rows, FALSE);
+      if (!(row < s->rows))
+        {
+          g_free (rows);
+          g_return_val_if_reached (FALSE);
+        }
       rows[row] = TRUE;
     }
   for (i = 0; i < s->rows; ++i)
-    g_return_val_if_fail (rows[i], FALSE);
+    {
+      if (!rows[i])
+        {
+          g_free (rows);
+          g_return_val_if_reached (FALSE);
+        }
+      }
+
+  g_free (rows);
 
   return TRUE;
 }
@@ -1076,7 +1090,7 @@ matting_get_laplacian (const gdouble       *restrict image,
     }
 
   {
-    gdouble row_sum[image_elems];
+    gdouble *row_sum = g_new (gdouble, image_elems);
 
     /* Calculate the sum of all the elements in each row */
     for (i = 0; i < image_elems; ++i)
@@ -1115,6 +1129,8 @@ matting_get_laplacian (const gdouble       *restrict image,
         g_warn_if_fail (float_cmp (row_sum [i], 0.0) ||
                         float_cmp (row_sum [i], lambda));
       }
+
+    g_free (row_sum);
   }
 
   g_warn_if_fail (trip_cursor == trip_nz);
