@@ -36,10 +36,10 @@ gegl_chant_register_enum_end (GeglGaussianBlurPolicy)
 
 
 gegl_chant_double_ui (std_dev_x, _("Horizontal Std. Dev."),
-                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
+                      0.0, 1500.0, 1.5, 0.24, 100.0, 3.0,
                       _("Standard deviation (spatial scale factor)"))
 gegl_chant_double_ui (std_dev_y, _("Vertical Std. Dev."),
-                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
+                      0.0, 1500.0, 1.5, 0.24, 100.0, 3.0,
                       _("Standard deviation (spatial scale factor)"))
 gegl_chant_enum      (filter, _("Filter"),
                       GeglGaussianBlurFilter2, gegl_gaussian_blur_filter2,
