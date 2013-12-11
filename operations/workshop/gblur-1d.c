@@ -519,7 +519,10 @@ static gint
 fir_calc_convolve_matrix_length (gfloat sigma)
 {
 #if 1
-  return sigma > GEGL_FLOAT_EPSILON ? ceil (sigma) * 6 + 1 : 1;
+  /* an arbitrary precision */
+  gint clen = sigma > GEGL_FLOAT_EPSILON ? ceil (sigma * 6.5) : 1;
+  clen = clen + ((clen + 1) % 2);
+  return clen;
 #else
   if (sigma > GEGL_FLOAT_EPSILON)
     {
