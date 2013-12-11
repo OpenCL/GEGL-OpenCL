@@ -32,22 +32,24 @@ struct _NPDImage
   gint        height;
   NPDPoint    position;
   gint        rowstride;
+  gint        length;
   GeglBuffer *gegl_buffer;
   guchar     *buffer;
+  gfloat     *buffer_f;
   const Babl *format;
+  GeglSamplerType sampler_type;
 };
 
-void npd_gegl_set_pixel_color (NPDImage *image,
-                               gint      x,
-                               gint      y,
-                               NPDColor *color);
-
-void npd_gegl_get_pixel_color (NPDImage *image,
-                               gint      x,
-                               gint      y,
-                               NPDColor *color);
-void npd_gegl_open_buffer     (NPDImage *image);
-void npd_gegl_close_buffer    (NPDImage *image);
+void npd_gegl_set_pixel_color (NPDImage   *image,
+                               gint        x,
+                               gint        y,
+                               NPDColor   *color);
+void npd_gegl_get_pixel_color (NPDImage   *image,
+                               gint        x,
+                               gint        y,
+                               NPDColor   *color);
+void npd_gegl_open_buffer     (NPDImage   *image);
+void npd_gegl_close_buffer    (NPDImage   *image);
 void npd_gegl_init_image      (NPDImage   *image,
                                GeglBuffer *gegl_buffer,
                                const Babl *format);

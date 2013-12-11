@@ -65,7 +65,7 @@ npd_gegl_set_pixel_color (NPDImage *image,
   if (x > -1 && x < image->width &&
       y > -1 && y < image->height)
     {
-      gint position = y * image->rowstride + 4 * x;
+      gint position = 4 * (y * image->width + x);
 
       image->buffer[position + 0] = color->r;
       image->buffer[position + 1] = color->g;
@@ -83,7 +83,7 @@ npd_gegl_get_pixel_color (NPDImage *image,
   if (x > -1 && x < image->width &&
       y > -1 && y < image->height)
     {
-      gint position = y * image->rowstride + 4 * x;
+      gint position = 4 * (y * image->width + x);
 
       color->r = image->buffer[position + 0];
       color->g = image->buffer[position + 1];
@@ -116,6 +116,9 @@ npd_gegl_init_image (NPDImage   *image,
   image->gegl_buffer = gegl_buffer;
   image->width = gegl_buffer_get_width (gegl_buffer);
   image->rowstride = image->width * babl_format_get_bytes_per_pixel (format);
+  image->length = babl_format_get_n_components (format) * gegl_buffer_get_pixel_count (gegl_buffer);
   image->height = gegl_buffer_get_height (gegl_buffer);
   image->format = format;
+  image->buffer = NULL;
+  image->buffer_f = NULL;
 }

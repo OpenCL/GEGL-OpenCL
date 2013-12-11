@@ -42,6 +42,15 @@ gegl_chant_boolean (MLS_weights, _("MLS weights"),
 gegl_chant_double  (MLS_weights_alpha, _("MLS weights alpha"),
                     0.1, 2.0, 1.0,
                     _("Alpha parameter of MLS weights"))
+
+gegl_chant_boolean (preserve_model, _("preserve model"),
+                    FALSE,
+                    _("When TRUE the model will not be freed"))
+
+gegl_chant_enum    (sampler_type, _("Sampler"),
+                    GeglSamplerType, gegl_sampler_type,
+                    GEGL_SAMPLER_CUBIC,
+                    _("Sampler used internally"))
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
@@ -61,7 +70,7 @@ struct _NPDDisplay
 typedef struct
 {
   gboolean  first_run;
-  NPDModel  model;
+  NPDModel *model;
 } NPDProperties;
 
 static void
@@ -69,18 +78,45 @@ prepare (GeglOperation *operation)
 {
   GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
   NPDProperties *props;
-
   if (o->chant_data == NULL)
     {
       props = g_new (NPDProperties, 1);
-      props->first_run = TRUE;
-      o->chant_data    = props;
+      props->first_run      = TRUE;
+      props->model          = o->model;
+      o->chant_data         = props;
     }
 
-  gegl_operation_set_format (operation, "input",
-                             babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output",
-                             babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+}
+
+static void
+npd_gegl_process_pixel (NPDImage *input_image,
+                        gfloat    ix,
+                        gfloat    iy,
+                        NPDImage *output_image,
+                        gfloat    ox,
+                        gfloat    oy,
+                        NPDSettings settings)
+{
+  if (ox > -1 && ox < output_image->width &&
+      oy > -1 && oy < output_image->height)
+    {
+      gint position = 4 * (((gint) oy) * output_image->width + ((gint) ox));
+      gegl_buffer_sample (input_image->gegl_buffer, ix, iy, NULL,
+                          &output_image->buffer_f[position], output_image->format,
+                          output_image->sampler_type, GEGL_ABYSS_NONE);
+    }
+}
+
+static void
+npd_gegl_get_pixel_color_f (NPDImage *image,
+                          gint      x,
+                          gint      y,
+                          NPDColor *color)
+{
+  gegl_buffer_sample (image->gegl_buffer, x, y, NULL,
+                      &color->color, babl_format ("RGBA u8"),
+                      GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 }
 
 static gboolean
@@ -90,41 +126,48 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO    *o       = GEGL_CHANT_PROPERTIES (operation);
-  const Babl    *format  = babl_format ("RGBA u8");
-  NPDProperties *props   = o->chant_data;
-  NPDModel      *model   = &props->model;
-  gint           length  = gegl_buffer_get_pixel_count (input) * 4;
-  NPDDisplay    *display = model->display;
+  GeglChantO    *o          = GEGL_CHANT_PROPERTIES (operation);
+  const Babl    *format_f   = babl_format ("RGBA float");
+  NPDProperties *props      = o->chant_data;
+  NPDModel      *model      = props->model;
+  gboolean       have_model = model != NULL;
+  NPDDisplay    *display    = NULL;
 
   if (props->first_run)
     {
       NPDImage *input_image = g_new (NPDImage, 1);
       display = g_new (NPDDisplay, 1);
 
-      npd_init (npd_gegl_set_pixel_color,
-                npd_gegl_get_pixel_color,
-                NULL);
+      npd_init (NULL,
+                npd_gegl_get_pixel_color_f,
+                npd_gegl_process_pixel, NULL);
 
-      npd_gegl_init_image (input_image, input, format);
-      input_image->buffer = g_new0 (guchar, gegl_buffer_get_pixel_count (input) * 4);
-      gegl_buffer_get (input, NULL, 1.0, format, input_image->buffer,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+      npd_gegl_init_image (&display->image, output, format_f);
+      display->image.sampler_type = o->sampler_type;
+      npd_gegl_init_image (input_image, input, gegl_buffer_get_format (output));
 
-      npd_gegl_init_image (&display->image, output, format);
-      npd_gegl_open_buffer (&display->image);
+      if (!have_model)
+        {
+          model = props->model = o->model = g_new (NPDModel, 1);
+          gegl_buffer_copy (input, NULL, output, NULL);
+          display->image.buffer_f = (gfloat*) gegl_buffer_linear_open (display->image.gegl_buffer,
+                                                                       NULL,
+                                                                      &display->image.rowstride,
+                                                                       format_f);
+          npd_create_model_from_image (model, input_image,
+                                       input_image->width, input_image->height,
+                                       0, 0, o->square_size);
+        }
 
+      model->reference_image = input_image;
       model->display = display;
-      npd_create_model_from_image (model, input_image,
-                                   input_image->width, input_image->height,
-                                   0, 0, o->square_size);
-      o->model = model;
-      memcpy (display->image.buffer, input_image->buffer, length);
-
       props->first_run = FALSE;
     }
-  else
+
+  if (have_model)
     {
+      display = model->display;
+
       npd_set_deformation_type (model, o->ASAP_deformation, o->MLS_weights);
 
       if (o->MLS_weights &&
@@ -134,13 +177,17 @@ process (GeglOperation       *operation,
           npd_compute_MLS_weights (model);
         }
 
-      npd_gegl_open_buffer (&display->image);
-      memset (display->image.buffer, 0, length);
+      gegl_buffer_clear (display->image.gegl_buffer, NULL);
+      display->image.buffer_f = (gfloat*) gegl_buffer_linear_open (display->image.gegl_buffer,
+                                                                   NULL,
+                                                                  &display->image.rowstride,
+                                                                   format_f);
+
       npd_deform_model (model, o->rigidity);
       npd_draw_model_into_image (model, &display->image);
     }
 
-  npd_gegl_close_buffer (&display->image);
+  gegl_buffer_linear_close (display->image.gegl_buffer, display->image.buffer_f);
 
   return TRUE;
 }
@@ -152,14 +199,17 @@ finalize (GObject *object)
 
   if (o->chant_data)
     {
-      NPDProperties *props = o->chant_data;
-      NPDModel   *model = &props->model;
-      NPDDisplay *display = model->display;
+      NPDProperties *props   = o->chant_data;
+      NPDModel      *model   = props->model;
+      NPDDisplay    *display = model->display;
 
-      g_free (model->reference_image->buffer);
-      g_free (model->reference_image);
       g_free (display);
-      npd_destroy_model (model);
+      g_free (model->reference_image);
+      if (!o->preserve_model)
+        {
+          npd_destroy_model (model);
+          g_free (model);
+        }
 
       o->chant_data = NULL;
     }

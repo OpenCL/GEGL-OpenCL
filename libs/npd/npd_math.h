@@ -39,12 +39,12 @@ void        npd_compute_affinity     (NPDPoint  *p11,
 void        npd_apply_transformation (NPDMatrix *T,
                                       NPDPoint  *src,
                                       NPDPoint  *dest);
-gboolean    npd_equal_floats_epsilon (gfloat a,
-                                      gfloat b,
-                                      gfloat epsilon);
-gboolean    npd_equal_floats         (gfloat a,
-                                      gfloat b);
-gfloat      npd_SED                  (NPDPoint *p1,
-                                      NPDPoint *p2);
+gboolean    npd_equal_floats_epsilon (gfloat     a,
+                                      gfloat     b,
+                                      gfloat     epsilon);
+gboolean    npd_equal_floats         (gfloat     a,
+                                      gfloat     b);
+gfloat      npd_SED                  (NPDPoint  *p1,
+                                      NPDPoint  *p2);
 
 #endif	/* __NPD_MATH_H__ */

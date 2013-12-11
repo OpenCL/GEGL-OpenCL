@@ -24,20 +24,17 @@
 
 #include "npd_common.h"
 
-//#define NPD_RGBA_FLOAT
-
-struct _NPDColor {
-#ifdef NPD_RGBA_FLOAT
-  gfloat r;
-  gfloat g;
-  gfloat b;
-  gfloat a;
-#else
-  guint8 r;
-  guint8 g;
-  guint8 b;
-  guint8 a;
-#endif
+struct _NPDColor
+{
+  union {
+    guint32 color;
+    struct {
+      guint8 r;
+      guint8 g;
+      guint8 b;
+      guint8 a;
+    };
+  };
 };
 
 typedef enum
@@ -46,30 +43,49 @@ typedef enum
   NPD_ALPHA_BLENDING         = 1 << 1
 } NPDSettings;
 
-void        npd_create_model_from_image       (NPDModel   *model,
-                                               NPDImage   *image,
-                                               gint        width,
-                                               gint        height,
-                                               gint        position_x,
-                                               gint        position_y,
-                                               gint        square_size);
-void        npd_draw_model_into_image         (NPDModel   *model,
-                                               NPDImage   *image);
-void        npd_draw_mesh                     (NPDModel   *model,
-                                               NPDDisplay *display);
-gboolean    npd_is_color_transparent          (NPDColor *color);
-void      (*npd_draw_line)                    (NPDDisplay *display,
-                                               gfloat      x0,
-                                               gfloat      y0,
-                                               gfloat      x1,
-                                               gfloat      y1);
-void      (*npd_get_pixel_color)              (NPDImage   *image,
-                                               gint        x,
-                                               gint        y,
-                                               NPDColor   *color);
-void      (*npd_set_pixel_color)              (NPDImage   *image,
-                                               gint        x,
-                                               gint        y,
-                                               NPDColor   *color);
+void            npd_create_model_from_image       (NPDModel   *model,
+                                                   NPDImage   *image,
+                                                   gint        width,
+                                                   gint        height,
+                                                   gint        position_x,
+                                                   gint        position_y,
+                                                   gint        square_size);
+void            npd_draw_model_into_image         (NPDModel   *model,
+                                                   NPDImage   *image);
+void            npd_draw_mesh                     (NPDModel   *model,
+                                                   NPDDisplay *display);
+gboolean        npd_is_color_transparent          (NPDColor   *color);
+gfloat          npd_blend_band                    (gfloat      src,
+                                                   gfloat      dst,
+                                                   gfloat      src_alpha,
+                                                   gfloat      dst_alpha,
+                                                   gfloat      out_alpha_recip);
+extern void   (*npd_draw_line)                    (NPDDisplay *display,
+                                                   gfloat      x0,
+                                                   gfloat      y0,
+                                                   gfloat      x1,
+                                                   gfloat      y1);
+extern void   (*npd_process_pixel)                (NPDImage   *input_image,
+                                                   gfloat      ix,
+                                                   gfloat      iy,
+                                                   NPDImage   *output_image,
+                                                   gfloat      ox,
+                                                   gfloat      oy,
+                                                   NPDSettings settings);
+void            npd_process_pixel_bilinear        (NPDImage   *input_image,
+                                                   gfloat      ix,
+                                                   gfloat      iy,
+                                                   NPDImage   *output_image,
+                                                   gfloat      ox,
+                                                   gfloat      oy,
+                                                   NPDSettings settings);
+extern void   (*npd_get_pixel_color)              (NPDImage   *image,
+                                                   gint        x,
+                                                   gint        y,
+                                                   NPDColor   *color);
+extern void   (*npd_set_pixel_color)              (NPDImage   *image,
+                                                   gint        x,
+                                                   gint        y,
+                                                   NPDColor   *color);
 
 #endif	/*__NPD_GRAPHICS_H__ */

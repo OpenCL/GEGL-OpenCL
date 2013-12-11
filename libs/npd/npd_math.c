@@ -41,7 +41,7 @@ gfloat
 npd_SED (NPDPoint *p1,
          NPDPoint *p2)
 {
-  gint dx = p1->x - p2->x;
-  gint dy = p1->y - p2->y;
+  gfloat dx = p1->x - p2->x;
+  gfloat dy = p1->y - p2->y;
   return dx * dx + dy * dy;
 }

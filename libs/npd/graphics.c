@@ -54,7 +54,7 @@ npd_bilinear_color_interpolation (NPDColor *I0,
   out->a = npd_bilinear_interpolation (I0->a, I1->a, I2->a, I3->a, dx, dy);
 }
 
-static gfloat
+gfloat
 npd_blend_band (gfloat src,
                 gfloat dst,
                 gfloat src_alpha,
@@ -70,24 +70,60 @@ npd_blend_colors (NPDColor *src,
                   NPDColor *dst,
                   NPDColor *out_color)
 {
-#ifdef NPD_RGBA_FLOAT
-  gfloat src_A = src->a,
-         dst_A = dst->a;
-#else
   gfloat src_A = src->a / 255.0,
          dst_A = dst->a / 255.0;
-#endif
   gfloat out_alpha = src_A + dst_A * (1 - src_A);
   gfloat out_alpha_recip = 1 / out_alpha;
 
   out_color->r = npd_blend_band (src->r, dst->r, src_A, dst_A, out_alpha_recip);
   out_color->g = npd_blend_band (src->g, dst->g, src_A, dst_A, out_alpha_recip);
   out_color->b = npd_blend_band (src->b, dst->b, src_A, dst_A, out_alpha_recip);
-#ifdef NPD_RGBA_FLOAT
-  out_color->a = out_alpha;
-#else
   out_color->a = out_alpha * 255;
-#endif
+}
+
+void
+npd_process_pixel_bilinear (NPDImage   *input_image,
+                            gfloat      ix,
+                            gfloat      iy,
+                            NPDImage   *output_image,
+                            gfloat      ox,
+                            gfloat      oy,
+                            NPDSettings settings)
+{
+  gint fx, fy;
+  gfloat dx, dy;
+  NPDColor I0, interpolated, *final_color;
+
+  fx = floor (ix);
+  fy = floor (iy);
+
+  npd_get_pixel_color (input_image, fx, fy, &I0);
+  final_color = &I0;
+
+  /* bilinear interpolation */
+  if (settings & NPD_BILINEAR_INTERPOLATION)
+    {
+      NPDColor I1, I2, I3;
+
+      dx =  ix - fx;
+      dy =  iy - fy;
+
+      npd_get_pixel_color (input_image, fx + 1, fy,     &I1);
+      npd_get_pixel_color (input_image, fx,     fy + 1, &I2);
+      npd_get_pixel_color (input_image, fx + 1, fy + 1, &I3);
+      npd_bilinear_color_interpolation (&I0, &I1, &I2, &I3, dx, dy, &interpolated);
+      final_color = &interpolated;
+    }
+
+  /* alpha blending */
+  if (settings & NPD_ALPHA_BLENDING)
+    {
+      NPDColor dest;
+      npd_get_pixel_color (output_image, ox, oy, &dest);
+      npd_blend_colors (final_color, &dest, final_color);
+    }
+
+  npd_set_pixel_color (output_image, ox, oy, final_color);
 }
 
 static void
@@ -99,47 +135,18 @@ npd_draw_texture_line (gint        x1,
                        NPDImage   *output_image,
                        NPDSettings settings)
 {
-  gint x, fx, fy;
-  gfloat dx, dy;
+  gint x;
 
   for (x = x1; x <= x2; x++)
     {
       NPDPoint p, q;
-      NPDColor I0, interpolated, *final;
 
       q.x = x; q.y = y;
       npd_apply_transformation (A, &q, &p);
 
-      fx = floor (p.x);
-      fy = floor (p.y);
-
-      npd_get_pixel_color (input_image, fx, fy, &I0);
-      final = &I0;
-
-      /* bilinear interpolation */
-      if (settings & NPD_BILINEAR_INTERPOLATION)
-        {
-          NPDColor I1, I2, I3;
-
-          dx =  p.x - fx;
-          dy =  p.y - fy;
-
-          npd_get_pixel_color (input_image, fx + 1, fy,     &I1);
-          npd_get_pixel_color (input_image, fx,     fy + 1, &I2);
-          npd_get_pixel_color (input_image, fx + 1, fy + 1, &I3);
-          npd_bilinear_color_interpolation (&I0, &I1, &I2, &I3, dx, dy, &interpolated);
-          final = &interpolated;
-        }
-
-      /* alpha blending */
-      if (settings & NPD_ALPHA_BLENDING)
-        {
-          NPDColor dest;
-          npd_get_pixel_color (output_image, x, y, &dest);
-          npd_blend_colors (final, &dest, final);
-        }
-
-      npd_set_pixel_color (output_image, x, y, final);
+      npd_process_pixel (input_image, p.x, p.y,
+                         output_image, x, y,
+                         settings);
     }
 }
 
@@ -354,7 +361,7 @@ npd_create_mesh (NPDModel *model,
   gint      square_size = model->mesh_square_size;
   NPDImage *image = model->reference_image;
   gint      i, cy, cx, y, x, r, c, ow, oh;
-  NPDColor  pixel_color = { 0, 0, 0, 0 };
+  NPDColor  pixel_color;
   GArray   *squares;
   gint     *sq2id;
   gboolean *empty_squares;
@@ -549,7 +556,6 @@ npd_create_model_from_image (NPDModel  *model,
   npd_create_mesh (model, width, height, position_x, position_y);
 }
 
-
 void
 npd_draw_mesh (NPDModel   *model,
                NPDDisplay *display)
@@ -572,3 +578,8 @@ npd_draw_mesh (NPDModel   *model,
       npd_draw_line (display, p1->x, p1->y, first->x, first->y);
     }
 }
+
+void (*npd_process_pixel)   (NPDImage*, gfloat, gfloat, NPDImage*, gfloat, gfloat, NPDSettings) = NULL;
+void (*npd_draw_line)       (NPDDisplay*, gfloat, gfloat, gfloat, gfloat) = NULL;
+void (*npd_get_pixel_color) (NPDImage*, gint, gint, NPDColor*) = NULL;
+void (*npd_set_pixel_color) (NPDImage*, gint, gint, NPDColor*) = NULL;
