@@ -21,14 +21,33 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglAbyssPolicy,
-                      gegl_abyss_policy, GEGL_ABYSS_CLAMP, _(""))
+gegl_chant_register_enum (gegl_gaussian_blur_filter)
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "Auto")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "FIR")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
+gegl_chant_register_enum_end (GeglGaussianBlurFilter)
+
+gegl_chant_register_enum (gegl_gaussian_blur_policy)
+   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_NONE,  "None")
+   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_CLAMP, "Clamp")
+   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_BLACK, "Black")
+   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_WHITE, "White")
+gegl_chant_register_enum_end (GeglGaussianBlurPolicy)
+
+
 gegl_chant_double_ui (std_dev_x, _("Horizontal Std. Dev."),
-                      0.5, 1500.0, 1.5, 0.5, 100.0, 3.0,
+                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
                       _("Standard deviation (spatial scale factor)"))
 gegl_chant_double_ui (std_dev_y, _("Vertical Std. Dev."),
-                      0.5, 1500.0, 1.5, 0.5, 100.0, 3.0,
+                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
                       _("Standard deviation (spatial scale factor)"))
+gegl_chant_enum      (filter, _("Filter"),
+                      GeglGaussianBlurFilter, gegl_gaussian_blur_filter,
+                      GEGL_GAUSSIAN_BLUR_FILTER_AUTO,
+                      _("How the gaussian kernel is discretized"))
+gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglGaussianBlurPolicy,
+                      gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_NONE,
+                      _("How image edges are handled"))
 
 #else
 
@@ -40,17 +59,30 @@ gegl_chant_double_ui (std_dev_y, _("Vertical Std. Dev."),
 static void
 attach (GeglOperation *operation)
 {
-  GeglNode *gegl = operation->node;
+  GeglNode *gegl   = operation->node;
   GeglNode *output = gegl_node_get_output_proxy (gegl, "output");
-  GeglNode *vblur = gegl_node_new_child (gegl, "operation", "gegl:gblur-1d", "orientation", 1, "abyss-policy", 0, NULL);
-  GeglNode *hblur = gegl_node_new_child (gegl, "operation", "gegl:gblur-1d", "abyss-policy", 0, NULL);
-  GeglNode *input = gegl_node_get_input_proxy (gegl, "input");
+
+  GeglNode *vblur  = gegl_node_new_child (gegl,
+                                          "operation", "gegl:gblur-1d",
+                                          "orientation", 1,
+                                          NULL);
+
+  GeglNode *hblur  = gegl_node_new_child (gegl,
+                                          "operation", "gegl:gblur-1d",
+                                          "orientation", 0,
+                                          NULL);
+
+  GeglNode *input  = gegl_node_get_input_proxy (gegl, "input");
 
   gegl_node_link_many (input, hblur, vblur, output, NULL);
-  gegl_operation_meta_redirect (operation, "std-dev-x" , hblur, "std-dev");
+
+  gegl_operation_meta_redirect (operation, "std-dev-x",    hblur, "std-dev");
   gegl_operation_meta_redirect (operation, "abyss-policy", hblur, "abyss-policy");
-  gegl_operation_meta_redirect (operation, "std-dev-y" , vblur, "std-dev");
+  gegl_operation_meta_redirect (operation, "filter",       hblur, "filter");
+
+  gegl_operation_meta_redirect (operation, "std-dev-y",    vblur, "std-dev");
   gegl_operation_meta_redirect (operation, "abyss-policy", vblur, "abyss-policy");
+  gegl_operation_meta_redirect (operation, "filter",       vblur, "filter");
 }
 
 static void

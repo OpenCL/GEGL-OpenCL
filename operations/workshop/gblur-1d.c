@@ -25,32 +25,40 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_CHANT_PROPERTIES
-#if 0
+
 gegl_chant_register_enum (gegl_gblur_1d_policy)
-   enum_value (GEGL_BLUR_1D_ABYSS_NONE, "None")
-   enum_value (GEGL_BLUR_1D_ABYSS_CLAMP, "Clamp")
-//   enum_value (GEGL_BLUR_1D_ABYSS_LOOP,
-   enum_value (GEGL_BLUR_1D_ABYSS_BLACK, "Black")
-   enum_value (GEGL_BLUR_1D_ABYSS_WHITE, "White")
+   enum_value (GEGL_GBLUR_1D_ABYSS_NONE,  "None")
+   enum_value (GEGL_GBLUR_1D_ABYSS_CLAMP, "Clamp")
+   enum_value (GEGL_GBLUR_1D_ABYSS_BLACK, "Black")
+   enum_value (GEGL_GBLUR_1D_ABYSS_WHITE, "White")
 gegl_chant_register_enum_end (GeglGblur1dPolicy)
-#endif
+
 gegl_chant_register_enum (gegl_gblur_1d_orientation)
-  enum_value (GEGL_BLUR_1D_HORIZONTAL, "Horizontal")
-  enum_value (GEGL_BLUR_1D_VERTICAL,   "Vertical")
-gegl_chant_register_enum_end (GeglGblur1dOrientation)
+  enum_value (GEGL_GBLUR_1D_HORIZONTAL, "Horizontal")
+  enum_value (GEGL_GBLUR_1D_VERTICAL,   "Vertical")
+  gegl_chant_register_enum_end (GeglGblur1dOrientation)
+
+gegl_chant_register_enum (gegl_gblur_1d_filter)
+  enum_value (GEGL_GBLUR_1D_AUTO, "Auto")
+  enum_value (GEGL_GBLUR_1D_FIR,  "FIR")
+  enum_value (GEGL_GBLUR_1D_IIR,  "IIR")
+gegl_chant_register_enum_end (GeglGblur1dFilter)
 
 gegl_chant_double_ui (std_dev, _("Size"),
-                      0.5, 1500.0, 1.5, 0.5, 100.0, 3.0,
-                      _("Standard deviation "
-                        "(multiply by ~2 to get radius)"))
+                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
+                      _("Standard deviation (spatial scale factor)"))
 gegl_chant_enum      (orientation, _("Orientation"),
                       GeglGblur1dOrientation, gegl_gblur_1d_orientation,
-                      GEGL_BLUR_1D_HORIZONTAL,
+                      GEGL_GBLUR_1D_HORIZONTAL,
                       _("The orientation of the blur - hor/ver"))
-gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglAbyssPolicy,
-                      gegl_abyss_policy, GEGL_ABYSS_CLAMP, _(""))
+gegl_chant_enum      (filter, _("Filter"),
+                      GeglGblur1dFilter, gegl_gblur_1d_filter,
+                      GEGL_GBLUR_1D_AUTO,
+                      _("How the gaussian kernel is discretized"))
+gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglGblur1dPolicy,
+                      gegl_gblur_1d_policy, GEGL_GBLUR_1D_ABYSS_NONE,
+                      _("How image edges are handled"))
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
@@ -59,6 +67,13 @@ gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglAbyssPolicy,
 #include "gegl-chant.h"
 #include <math.h>
 #include <stdio.h>
+
+
+/**********************************************
+ *
+ * Infinite Impulse Response (IIR)
+ *
+ **********************************************/
 
 static void
 iir_young_find_constants (gfloat   sigma,
@@ -74,10 +89,10 @@ iir_young_find_constants (gfloat   sigma,
   const gdouble b2 =         - q*           q*(1.4281  + q*1.26661);
   const gdouble b3 =           q*           q*           q*0.422205;
 
-  const double a1 = b1 / b0;
-  const double a2 = b2 / b0;
-  const double a3 = b3 / b0;
-  const gdouble c = 1. / ((1+a1-a2+a3) * (1+a2+(a1-a3)*a3));
+  const gdouble a1 = b1 / b0;
+  const gdouble a2 = b2 / b0;
+  const gdouble a3 = b3 / b0;
+  const gdouble c  = 1. / ((1+a1-a2+a3) * (1+a2+(a1-a3)*a3));
 
   m[0][0] = c * (-a3*(a1+a3)-a2 + 1);
   m[0][1] = c * (a3+a1)*(a2+a3*a1);
@@ -127,7 +142,7 @@ iir_young_blur_1D (gfloat        *buf,
 {
   gfloat  white[4] = { 1, 1, 1, 1 };
   gfloat  black[4] = { 0, 0, 0, 1 };
-  gfloat  none[4]  = { 0, };
+  gfloat  none[4]  = { 0, 0, 0, 0 };
   gfloat *uplus, *iminus;
   gint    i, j, c;
 
@@ -241,6 +256,340 @@ iir_young_ver_blur (GeglBuffer          *src,
   g_free (col);
 }
 
+
+/**********************************************
+ *
+ * Finite Impulse Response (FIR)
+ *
+ **********************************************/
+
+static inline void
+fir_blur_1D (const gfloat *input,
+                   gfloat *output,
+             const gfloat *cmatrix,
+             const gint    clen,
+             const gint    len,
+             const gint    nc)
+{
+  gint i;
+  for (i = 0; i < len; i++)
+    {
+      gint c;
+      for (c = 0; c < nc; c++)
+        {
+          gint   index = i * nc + c;
+          gfloat acc   = 0.0f;
+          gint   m;
+
+          for (m = 0; m < clen; m++)
+            acc += input [index + m * nc] * cmatrix [m];
+
+          output [index] = acc;
+        }
+    }
+}
+
+static void
+fir_hor_blur (GeglBuffer          *src,
+              const GeglRectangle *rect,
+              GeglBuffer          *dst,
+              gfloat              *cmatrix,
+              gint                 clen,
+              GeglAbyssPolicy      policy,
+              const Babl          *format)
+{
+  GeglRectangle  cur_row = *rect;
+  GeglRectangle  in_row;
+  const gint     nc = babl_format_get_n_components (format);
+  gfloat        *row;
+  gfloat        *out;
+  gint           v;
+
+  cur_row.height = 1;
+
+  in_row         = cur_row;
+  in_row.width  += clen - 1;
+  in_row.x      -= clen / 2;
+
+  row = gegl_malloc (sizeof (gfloat) * in_row.width  * nc);
+  out = gegl_malloc (sizeof (gfloat) * cur_row.width * nc);
+
+  for (v = 0; v < rect->height; v++)
+    {
+      cur_row.y = in_row.y = rect->y + v;
+
+      gegl_buffer_get (src, &in_row, 1.0, format, row, GEGL_AUTO_ROWSTRIDE, policy);
+
+      fir_blur_1D (row, out, cmatrix, clen, rect->width, nc);
+
+      gegl_buffer_set (dst, &cur_row, 0, format, out, GEGL_AUTO_ROWSTRIDE);
+    }
+
+  gegl_free (out);
+  gegl_free (row);
+}
+
+static void
+fir_ver_blur (GeglBuffer          *src,
+              const GeglRectangle *rect,
+              GeglBuffer          *dst,
+              gfloat              *cmatrix,
+              gint                 clen,
+              GeglAbyssPolicy      policy,
+              const Babl          *format)
+{
+  GeglRectangle  cur_col = *rect;
+  GeglRectangle  in_col;
+  const gint     nc = babl_format_get_n_components (format);
+  gfloat        *col;
+  gfloat        *out;
+  gint           v;
+
+  cur_col.width = 1;
+
+  in_col         = cur_col;
+  in_col.height += clen - 1;
+  in_col.y      -= clen / 2;
+
+  col = gegl_malloc (sizeof (gfloat) * in_col.height  * nc);
+  out = gegl_malloc (sizeof (gfloat) * cur_col.height * nc);
+
+  for (v = 0; v < rect->width; v++)
+    {
+      cur_col.x = in_col.x = rect->x + v;
+
+      gegl_buffer_get (src, &in_col, 1.0, format, col, GEGL_AUTO_ROWSTRIDE, policy);
+
+      fir_blur_1D (col, out, cmatrix, clen, rect->height, nc);
+
+      gegl_buffer_set (dst, &cur_col, 0, format, out, GEGL_AUTO_ROWSTRIDE);
+    }
+
+  gegl_free (out);
+  gegl_free (col);
+}
+
+
+#include "opencl/gegl-cl.h"
+#include "buffer/gegl-buffer-cl-iterator.h"
+
+#include "opencl/gblur-1d.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+
+static gboolean
+cl_gaussian_blur (cl_mem                 in_tex,
+                  cl_mem                 out_tex,
+                  const GeglRectangle   *roi,
+                  cl_mem                 cl_cmatrix,
+                  gint                   clen,
+                  GeglGblur1dOrientation orientation)
+{
+  cl_int cl_err = 0;
+  size_t global_ws[2];
+  gint   kernel_num;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"fir_ver_blur", "fir_hor_blur", NULL};
+      cl_data = gegl_cl_compile_and_build (gblur_1d_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
+
+  if (orientation == GEGL_GBLUR_1D_VERTICAL)
+    kernel_num = 0;
+  else
+    kernel_num = 1;
+
+  global_ws[0] = roi->width;
+  global_ws[1] = roi->height;
+
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[kernel_num],
+                                    sizeof(cl_mem), (void*)&in_tex,
+                                    sizeof(cl_mem), (void*)&out_tex,
+                                    sizeof(cl_mem), (void*)&cl_cmatrix,
+                                    sizeof(cl_int), (void*)&clen,
+                                    NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[kernel_num], 2,
+                                        NULL, global_ws, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
+  CL_CHECK;
+
+  return FALSE;
+
+error:
+  return TRUE;
+}
+
+static gboolean
+fir_cl_process (GeglBuffer            *input,
+                GeglBuffer            *output,
+                const GeglRectangle   *result,
+                const Babl            *format,
+                gfloat                *cmatrix,
+                gint                   clen,
+                GeglGblur1dOrientation orientation,
+                GeglAbyssPolicy        abyss)
+{
+  gboolean              err = FALSE;
+  cl_int                cl_err;
+  cl_mem                cl_cmatrix = NULL;
+  GeglBufferClIterator *i;
+  gint                  read;
+  gint                  left, right, top, bottom;
+
+  if (orientation == GEGL_GBLUR_1D_HORIZONTAL)
+    {
+      right = left = clen / 2;
+      top = bottom = 0;
+    }
+  else
+    {
+      right = left = 0;
+      top = bottom = clen / 2;
+    }
+
+  i = gegl_buffer_cl_iterator_new (output,
+                                   result,
+                                   format,
+                                   GEGL_CL_BUFFER_WRITE);
+
+  read = gegl_buffer_cl_iterator_add_2 (i,
+                                        input,
+                                        result,
+                                        format,
+                                        GEGL_CL_BUFFER_READ,
+                                        left, right,
+                                        top, bottom,
+                                        abyss);
+
+  cl_cmatrix = gegl_clCreateBuffer (gegl_cl_get_context(),
+                                    CL_MEM_COPY_HOST_PTR | CL_MEM_READ_ONLY,
+                                    clen * sizeof(cl_float), cmatrix, &cl_err);
+  CL_CHECK;
+
+  while (gegl_buffer_cl_iterator_next (i, &err) && !err)
+    {
+      err = cl_gaussian_blur(i->tex[read],
+                             i->tex[0],
+                             &i->roi[0],
+                             cl_cmatrix,
+                             clen,
+                             orientation);
+
+      if (err)
+        {
+          gegl_buffer_cl_iterator_stop (i);
+          break;
+        }
+    }
+
+  cl_err = gegl_clReleaseMemObject (cl_cmatrix);
+  CL_CHECK;
+
+  cl_cmatrix = NULL;
+
+  return !err;
+
+error:
+  if (cl_cmatrix)
+    gegl_clReleaseMemObject (cl_cmatrix);
+
+  return FALSE;
+}
+
+static gfloat
+gaussian_func_1d (gfloat x,
+                  gfloat sigma)
+{
+  return (1.0 / (sigma * sqrt (2.0 * G_PI))) *
+          exp (-(x * x) / (2.0 * sigma * sigma));
+}
+
+static gint
+fir_calc_convolve_matrix_length (gfloat sigma)
+{
+#if 1
+  return sigma > GEGL_FLOAT_EPSILON ? ceil (sigma) * 6 + 1 : 1;
+#else
+  if (sigma > GEGL_FLOAT_EPSILON)
+    {
+      gint x = 0;
+      while (gaussian_func_1d (x, sigma) > 1e-3)
+        x++;
+      return 2 * x + 1;
+    }
+  else return 1;
+#endif
+}
+
+static gint
+fir_gen_convolve_matrix (gfloat   sigma,
+                         gfloat **cmatrix)
+{
+  gint    clen;
+  gfloat *cmatrix_p;
+
+  clen = fir_calc_convolve_matrix_length (sigma);
+
+  *cmatrix  = gegl_malloc (sizeof (gfloat) * clen);
+  cmatrix_p = *cmatrix;
+
+  if (clen == 1)
+    {
+      cmatrix_p [0] = 1;
+    }
+  else
+    {
+      gint    i;
+      gdouble sum = 0;
+      gint    half_clen = clen / 2;
+
+      for (i = 0; i < clen; i++)
+        {
+          cmatrix_p [i] = gaussian_func_1d (i - half_clen, sigma);
+          sum += cmatrix_p [i];
+        }
+
+      for (i = 0; i < clen; i++)
+        {
+          cmatrix_p [i] /= sum;
+        }
+    }
+
+  return clen;
+}
+
+static GeglGblur1dFilter
+filter_disambiguation (GeglGblur1dFilter filter,
+                       gfloat            std_dev)
+{
+  if (filter == GEGL_GBLUR_1D_AUTO)
+    {
+      if (std_dev < 1.0)
+        filter = GEGL_GBLUR_1D_FIR;
+      else
+        filter = GEGL_GBLUR_1D_IIR;
+    }
+  return filter;
+}
+
+
+/**********************************************
+ *
+ * GEGL Operation API
+ *
+ **********************************************/
+
 static void
 gegl_gblur_1d_prepare (GeglOperation *operation)
 {
@@ -269,23 +618,45 @@ gegl_gblur_1d_get_required_for_output (GeglOperation       *operation,
                                        const GeglRectangle *output_roi)
 {
   GeglRectangle        required_for_output = { 0, };
-  const GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, input_pad);
+  GeglChantO          *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglGblur1dFilter    filter  = filter_disambiguation (o->filter, o->std_dev);
 
-  if (in_rect && ! gegl_rectangle_is_infinite_plane (in_rect))
+  if (filter == GEGL_GBLUR_1D_IIR)
     {
-      GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+      const GeglRectangle *in_rect =
+        gegl_operation_source_get_bounding_box (operation, input_pad);
+
+      if (in_rect && ! gegl_rectangle_is_infinite_plane (in_rect))
+        {
+          required_for_output = *output_roi;
+
+          if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+            {
+              required_for_output.x     = in_rect->x;
+              required_for_output.width = in_rect->width;
+            }
+          else
+            {
+              required_for_output.y      = in_rect->y;
+              required_for_output.height = in_rect->height;
+            }
+        }
+    }
+  else
+    {
+      gint clen = fir_calc_convolve_matrix_length (o->std_dev);
 
       required_for_output = *output_roi;
 
-      if (o->orientation == GEGL_BLUR_1D_HORIZONTAL)
+      if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
         {
-          required_for_output.x     = in_rect->x;
-          required_for_output.width = in_rect->width;
+          required_for_output.x     -= clen / 2;
+          required_for_output.width += clen - 1;
         }
       else
         {
-          required_for_output.y      = in_rect->y;
-          required_for_output.height = in_rect->height;
+          required_for_output.y      -= clen / 2;
+          required_for_output.height += clen - 1;
         }
     }
 
@@ -296,29 +667,62 @@ static GeglRectangle
 gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
                                  const GeglRectangle *output_roi)
 {
-  GeglRectangle        cached_region = { 0, };
-  const GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
-                                                                         "input");
+  GeglRectangle      cached_region = { 0, };
+  GeglChantO        *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglGblur1dFilter  filter  = filter_disambiguation (o->filter, o->std_dev);
 
-  if (in_rect && ! gegl_rectangle_is_infinite_plane (in_rect))
+  if (filter == GEGL_GBLUR_1D_IIR)
     {
-      GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+      const GeglRectangle *in_rect =
+        gegl_operation_source_get_bounding_box (operation, "input");
 
+      if (in_rect && ! gegl_rectangle_is_infinite_plane (in_rect))
+        {
+          GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+
+          cached_region = *output_roi;
+
+          if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+            {
+              cached_region.x     = in_rect->x;
+              cached_region.width = in_rect->width;
+            }
+          else
+            {
+              cached_region.y      = in_rect->y;
+              cached_region.height = in_rect->height;
+            }
+        }
+    }
+  else
+    {
       cached_region = *output_roi;
-
-      if (o->orientation == GEGL_BLUR_1D_HORIZONTAL)
-        {
-          cached_region.x     = in_rect->x;
-          cached_region.width = in_rect->width;
-        }
-      else
-        {
-          cached_region.y      = in_rect->y;
-          cached_region.height = in_rect->height;
-        }
     }
 
   return cached_region;
+}
+
+static GeglAbyssPolicy
+to_gegl_policy (GeglGblur1dPolicy policy)
+{
+  switch (policy)
+    {
+    case (GEGL_GBLUR_1D_ABYSS_NONE):
+      return GEGL_ABYSS_NONE;
+      break;
+    case (GEGL_GBLUR_1D_ABYSS_CLAMP):
+      return GEGL_ABYSS_CLAMP;
+      break;
+    case (GEGL_GBLUR_1D_ABYSS_WHITE):
+      return GEGL_ABYSS_WHITE;
+      break;
+    case (GEGL_GBLUR_1D_ABYSS_BLACK):
+      return GEGL_ABYSS_BLACK;
+      break;
+    default:
+      g_warning ("gblur-1d: unsupported abyss policy");
+      return GEGL_ABYSS_NONE;
+    }
 }
 
 static gboolean
@@ -328,16 +732,46 @@ gegl_gblur_1d_process (GeglOperation       *operation,
                        const GeglRectangle *result,
                        gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
   const Babl *format = gegl_operation_get_format (operation, "output");
-  gdouble b[4], m[3][3];
 
-  iir_young_find_constants (o->std_dev, b, m);
+  GeglGblur1dFilter filter;
+  GeglAbyssPolicy   abyss_policy = to_gegl_policy (o->abyss_policy);
 
-  if (o->orientation == GEGL_BLUR_1D_HORIZONTAL)
-    iir_young_hor_blur (input, result, output, b, m, o->abyss_policy, format);
+  filter = filter_disambiguation (o->filter, o->std_dev);
+
+  if (filter == GEGL_GBLUR_1D_IIR)
+    {
+      gdouble b[4], m[3][3];
+
+      iir_young_find_constants (o->std_dev, b, m);
+
+      if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+        iir_young_hor_blur (input, result, output, b, m, abyss_policy, format);
+      else
+        iir_young_ver_blur (input, result, output, b, m, abyss_policy, format);
+    }
   else
-    iir_young_ver_blur (input, result, output, b, m, o->abyss_policy, format);
+    {
+      gfloat *cmatrix;
+      gint    clen;
+
+      clen = fir_gen_convolve_matrix (o->std_dev, &cmatrix);
+
+      /* FIXME: implement others format cases */
+      if (gegl_operation_use_opencl (operation) &&
+          format == babl_format ("RaGaBaA float"))
+        if (fir_cl_process(input, output, result, format,
+                           cmatrix, clen, o->orientation, abyss_policy))
+          return TRUE;
+
+      if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+        fir_hor_blur (input, result, output, cmatrix, clen, abyss_policy, format);
+      else
+        fir_ver_blur (input, result, output, cmatrix, clen, abyss_policy, format);
+
+      gegl_free (cmatrix);
+    }
 
   return  TRUE;
 }
@@ -355,6 +789,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->prepare                 = gegl_gblur_1d_prepare;
   operation_class->get_required_for_output = gegl_gblur_1d_get_required_for_output;
   operation_class->get_cached_region       = gegl_gblur_1d_get_cached_region;
+  operation_class->opencl_support          = TRUE;
   gegl_operation_class_set_keys (operation_class,
     "name",       "gegl:gblur-1d",
     "categories", "hidden:blur",
