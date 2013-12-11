@@ -21,11 +21,11 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_register_enum (gegl_gaussian_blur_filter)
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "Auto")
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "FIR")
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
-gegl_chant_register_enum_end (GeglGaussianBlurFilter)
+gegl_chant_register_enum (gegl_gaussian_blur_filter2)
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_AUTO, "Auto")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_FIR,  "FIR")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_IIR,  "IIR")
+gegl_chant_register_enum_end (GeglGaussianBlurFilter2)
 
 gegl_chant_register_enum (gegl_gaussian_blur_policy)
    enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_NONE,  "None")
@@ -42,8 +42,8 @@ gegl_chant_double_ui (std_dev_y, _("Vertical Std. Dev."),
                       0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
                       _("Standard deviation (spatial scale factor)"))
 gegl_chant_enum      (filter, _("Filter"),
-                      GeglGaussianBlurFilter, gegl_gaussian_blur_filter,
-                      GEGL_GAUSSIAN_BLUR_FILTER_AUTO,
+                      GeglGaussianBlurFilter2, gegl_gaussian_blur_filter2,
+                      GEGL_GAUSSIAN_BLUR_FILTER2_AUTO,
                       _("How the gaussian kernel is discretized"))
 gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglGaussianBlurPolicy,
                       gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_NONE,
