@@ -104,6 +104,7 @@ op_LTLIBRARIES = \
 	svg-luminancetoalpha.la \
 	svg-matrix.la \
 	svg-saturate.la \
+	texturize-canvas.la \
 	threshold.la \
 	tile-seamless.la \
 	tile.la \
