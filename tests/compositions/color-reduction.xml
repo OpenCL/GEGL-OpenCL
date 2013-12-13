@@ -27,7 +27,7 @@
 	<param name='height'>120</param>
       </params>
     </node>
-    <node operation='gegl:load'>
+    <node operation='gegl:load' id='car-stack'>
       <params>
 	<param name='path'>data/car-stack.png</param>
       </params>
@@ -60,11 +60,7 @@
 	<param name='height'>120</param>
       </params>
     </node>
-    <node operation='gegl:load'>
-      <params>
-	<param name='path'>data/car-stack.png</param>
-      </params>
-    </node>
+    <clone ref='car-stack'/>
   </node>
   <node operation='svg:src-over'>
     <node operation='gegl:translate'>
@@ -93,11 +89,7 @@
 	<param name='height'>192</param>
       </params>
     </node>
-    <node operation='gegl:load'>
-      <params>
-	<param name='path'>data/car-stack.png</param>
-      </params>
-    </node>
+    <clone ref='car-stack'/>
   </node>
   <node operation='svg:src-over'>
     <node operation='gegl:translate'>
@@ -126,11 +118,7 @@
 	<param name='height'>192</param>
       </params>
     </node>
-    <node operation='gegl:load'>
-      <params>
-	<param name='path'>data/car-stack.png</param>
-      </params>
-    </node>
+    <clone ref='car-stack'/>
   </node>
   <node operation='svg:src-over'>
     <node operation='gegl:translate'>
@@ -159,11 +147,7 @@
 	<param name='height'>192</param>
       </params>
     </node>
-    <node operation='gegl:load'>
-      <params>
-	<param name='path'>data/car-stack.png</param>
-      </params>
-    </node>
+    <clone ref='car-stack'/>
   </node>
   <node operation='svg:src-over'>
     <node operation='gegl:translate'>
@@ -192,11 +176,7 @@
 	<param name='height'>192</param>
       </params>
     </node>
-    <node operation='gegl:load'>
-      <params>
-	<param name='path'>data/car-stack.png</param>
-      </params>
-    </node>
+    <clone ref='car-stack'/>
   </node>
 </gegl>
 
