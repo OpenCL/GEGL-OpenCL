@@ -47,6 +47,7 @@ operations/common/invert-linear.c
 operations/common/layer.c
 operations/common/lens-distortion.c
 operations/common/levels.c
+operations/common/linear-gradient.c
 operations/common/load.c
 operations/common/magick-load.c
 operations/common/mantiuk06.c
@@ -197,7 +198,6 @@ operations/workshop/generated/soft-dodge.c
 operations/workshop/generated/subtractive.c
 operations/workshop/hstack.c
 operations/workshop/kuwahara.c
-operations/workshop/linear-gradient.c
 operations/workshop/mandelbrot.c
 operations/workshop/radial-gradient.c
 operations/workshop/rawbayer-load.c

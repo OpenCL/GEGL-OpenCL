@@ -54,6 +54,7 @@ op_LTLIBRARIES = \
 	layer.la \
 	lens-distortion.la \
 	levels.la \
+	linear-gradient.la \
 	load.la \
 	magick-load.la \
 	mantiuk06.la \

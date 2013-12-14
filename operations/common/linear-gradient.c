@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2008 Øyvind Kolås <pippin@gimp.org>
+ *           2013 Daniel Sabo
  */
 
 #include "config.h"
@@ -21,19 +22,19 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x1,        _("X1"),  -1000.0, 1000.0, 25.0, "")
-gegl_chant_double (y1,        _("Y1"),  -1000.0, 1000.0, 25.0, "")
-gegl_chant_double (x2,        _("X2"),  -1000.0, 1000.0, 150.0, "")
-gegl_chant_double (y2,        _("Y2"),  -1000.0, 1000.0, 150.0, "")
-gegl_chant_color (color1,   _("Color"), "black",
-                  _("One end of a agradient"))
-gegl_chant_color (color2,   _("Other color"), "white",
-                  _("The other end of a gradient"))
+gegl_chant_double (start_x,      _("X1"), G_MININT, G_MAXINT, 25.0, "")
+gegl_chant_double (start_y,      _("Y1"), G_MININT, G_MAXINT, 25.0, "")
+gegl_chant_double (end_x,        _("X2"), G_MININT, G_MAXINT, 150.0, "")
+gegl_chant_double (end_y,        _("Y2"), G_MININT, G_MAXINT, 150.0, "")
+gegl_chant_color  (start_color,  _("Start Color"), "black",
+                                 _("The color at (x1, y1)"))
+gegl_chant_color  (end_color,    _("End Color"), "white",
+                                 _("The color at (x2, y2)"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE       "linear-gradient.c"
+#define GEGL_CHANT_C_FILE "linear-gradient.c"
 
 #include "gegl-chant.h"
 
@@ -42,18 +43,13 @@ gegl_chant_color (color2,   _("Other color"), "white",
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
 }
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   return gegl_rectangle_infinite_plane ();
-}
-
-static gfloat dist(gfloat x1, gfloat y1, gfloat x2, gfloat y2)
-{
-  return sqrt(  (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
 }
 
 static gboolean
@@ -67,54 +63,49 @@ process (GeglOperation       *operation,
   gfloat     *out_pixel = out_buf;
   gfloat      color1[4];
   gfloat      color2[4];
-  gint        x, y;
+  gfloat      length;
   gfloat      dx, dy;
 
-  gfloat length = dist (o->x1, o->y1, o->x2, o->y2);
+  dx = o->end_x - o->start_x;
+  dy = o->end_y - o->start_y;
 
-  gegl_color_get_pixel (o->color1, babl_format ("RGBA float"), color1);
-  gegl_color_get_pixel (o->color2, babl_format ("RGBA float"), color2);
+  length = sqrtf (dx * dx + dy * dy);
 
-
-  x= roi->x;
-  y= roi->y;
-
-  dx = (o->x2-o->x1)/length;
-  dy = (o->y2-o->y1)/length;
-
-  while (n_pixels--)
+  if (GEGL_FLOAT_IS_ZERO (length))
     {
-      gfloat v;
-      gint c;
+      memset (out_buf, 0, n_pixels * sizeof(float) * 4);
+    }
+  else
+    {
+      gfloat vec0 = dx / length;
+      gfloat vec1 = dy / length;
+      gint x, y;
 
-      if (length == 0.0)
-        v = 0.5;
-      else
+      gegl_color_get_pixel (o->start_color, babl_format ("R'G'B'A float"), color1);
+      gegl_color_get_pixel (o->end_color, babl_format ("R'G'B'A float"), color2);
+
+      for (y = roi->y; y < roi->y + roi->height; ++y)
         {
-          v = (dx * x + dy * y) / length;
+          for (x = roi->x; x < roi->x + roi->width; ++x)
+            {
+              gint c;
+              gfloat v = (vec0 * (x - o->start_x) + vec1 * (y - o->start_y)) / length;
 
-          if (v < 0.0)
-            v = 0.0;
-          else if (v>1.0)
-            v = 1.0;
+              if (v > 1.0f - GEGL_FLOAT_EPSILON)
+                v = 1.0f;
+              if (v < 0.0f + GEGL_FLOAT_EPSILON)
+                v = 0.0f;
+
+              for (c = 0; c < 4; c++)
+                out_pixel[c] = color1[c] * v + color2[c] * (1.0f - v);
+
+              out_pixel += 4;
+            }
         }
-
-      for (c=0;c<4;c++)
-        out_pixel[c]=color1[c] * v + color2[c] * (1.0-v);
-
-      out_pixel += 4;
-
-      /* update x and y coordinates */
-      if (++x>=roi->x + roi->width)
-        {
-          x=roi->x;
-          y++;
-      }
     }
 
   return  TRUE;
 }
-
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)

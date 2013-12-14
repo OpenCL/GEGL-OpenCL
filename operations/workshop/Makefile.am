@@ -24,7 +24,6 @@ op_LTLIBRARIES =    \
 	gblur-1d.la \
 	hstack.la \
 	kuwahara.la \
-	linear-gradient.la \
 	mandelbrot.la \
 	radial-gradient.la \
 	rawbayer-load.la \
