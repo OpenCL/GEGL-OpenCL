@@ -36,7 +36,8 @@ gegl_chant_file_path (path, _("File"), "", _("Path of file to load"))
 static gint
 gegl_jpg_load_query_jpg (const gchar *path,
                          gint        *width,
-                         gint        *height)
+                         gint        *height,
+                         gint        *components)
 {
   struct jpeg_decompress_struct  cinfo;
   struct jpeg_error_mgr          jerr;
@@ -58,6 +59,8 @@ gegl_jpg_load_query_jpg (const gchar *path,
     *width = cinfo.image_width;
   if (height)
     *height = cinfo.image_height;
+  if (components)
+    *components = cinfo.num_components;
 
   jpeg_destroy_decompress (&cinfo);
 
@@ -76,7 +79,8 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   struct jpeg_error_mgr          jerr;
   FILE                          *infile;
   JSAMPARRAY                     buffer;
-  int row=0;
+  const Babl                    *format;
+  GeglRectangle                  write_rect;
 
   if ((infile = fopen (path, "rb")) == NULL)
     {
@@ -91,8 +95,11 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   (void) jpeg_read_header (&cinfo, TRUE);
   (void) jpeg_start_decompress (&cinfo);
 
-  if ((cinfo.output_components != 1) &&
-      (cinfo.output_components != 3))
+  if (cinfo.output_components == 1)
+    format = babl_format ("Y' u8");
+  else if (cinfo.output_components == 3)
+    format = babl_format ("R'G'B' u8");
+  else
     {
       g_warning ("attempted to load unsupported JPEG (components=%d)",
                  cinfo.output_components);
@@ -109,33 +116,25 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   buffer = (*cinfo.mem->alloc_sarray)
     ((j_common_ptr) &cinfo, JPOOL_IMAGE, row_stride, 1);
 
+  write_rect.x = dest_x;
+  write_rect.y = dest_y;
+  write_rect.width  = cinfo.output_width;
+  write_rect.height = 1;
+
   while (cinfo.output_scanline < cinfo.output_height)
     {
-      GeglRectangle rect;
-
-      rect.x = dest_x;
-      rect.y = dest_y + row++;
-      rect.width = cinfo.output_width;
-      rect.height = 1;
-
       jpeg_read_scanlines (&cinfo, buffer, 1);
 
-      switch (cinfo.output_components)
-        {
-        case 1:
-          gegl_buffer_set (gegl_buffer, &rect, 0,
-                           babl_format ("Y' u8"), buffer[0],
-                           GEGL_AUTO_ROWSTRIDE);
-          break;
-        case 3:
-        default:
-          gegl_buffer_set (gegl_buffer, &rect, 0,
-                           babl_format ("R'G'B' u8"), buffer[0],
-                           GEGL_AUTO_ROWSTRIDE);
-	      }
+      gegl_buffer_set (gegl_buffer, &write_rect, 0,
+                       format, buffer[0],
+                       GEGL_AUTO_ROWSTRIDE);
+
+      write_rect.y += 1;
     }
+
   jpeg_destroy_decompress (&cinfo);
   fclose (infile);
+
   return 0;
 }
 
@@ -143,25 +142,24 @@ static GeglRectangle
 gegl_jpg_load_get_bounding_box (GeglOperation *operation)
 {
   GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle result = {0,0,0,0};
-  gint width, height;
+  gint width, height, components;
   gint status;
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
-  status = gegl_jpg_load_query_jpg (o->path, &width, &height);
+  status = gegl_jpg_load_query_jpg (o->path, &width, &height, &components);
 
-  if (status)
-    {
-      /*g_warning ("calc have rect of %s failed", o->path);*/
-      result.width  = 0;
-      result.height  = 0;
-    }
+  if (components == 1)
+    gegl_operation_set_format (operation, "output", babl_format ("Y' u8"));
+  else if (components == 3)
+    gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
   else
     {
-      result.width  = width;
-      result.height  = height;
+      g_warning ("attempted to load unsupported JPEG (components=%d)", components);
+      status = -1;
     }
 
-  return result;
+  if (status)
+    return (GeglRectangle) {0, 0, 0, 0};
+  else
+    return (GeglRectangle) {0, 0, width, height};
 }
 
 static gboolean
@@ -171,22 +169,8 @@ gegl_jpg_load_process (GeglOperation       *operation,
                        gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle        rect={0,0};
-  gint                 problem;
 
-  problem = gegl_jpg_load_query_jpg (o->path, &rect.width, &rect.height);
-
-  if (problem)
-    {
-      g_warning ("%s failed to open file %s for reading.",
-        G_OBJECT_TYPE_NAME (operation), o->path);
-      return FALSE;
-    }
-
-
-  problem = gegl_jpg_load_buffer_import_jpg (output, o->path, 0, 0);
-
-  if (problem)
+  if (gegl_jpg_load_buffer_import_jpg (output, o->path, 0, 0))
     {
       g_warning ("%s failed to open file %s for reading.",
         G_OBJECT_TYPE_NAME (operation), o->path);
