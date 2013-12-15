@@ -20,15 +20,15 @@
  */
 
 #include "deformation.h"
+#include "npd_math.h"
 #include <math.h>
 
 static void
-npd_compute_centroid_of_overlapping_points (gint      num_of_points,
-                                            NPDPoint *points[],
-                                            gfloat    weights[],
-                                            NPDPoint *centroid)
+npd_compute_centroid_of_overlapping_points (gint       num_of_points,
+                                            NPDPoint **points,
+                                            NPDPoint  *centroid)
 {
-  gfloat x_sum = 0, y_sum = 0, weights_sum;
+  gfloat x_sum = 0, y_sum = 0;
   gint i;
 
   /* first compute sum of all values for each coordinate */
@@ -38,17 +38,15 @@ npd_compute_centroid_of_overlapping_points (gint      num_of_points,
       y_sum += points[i]->y;
     }
 
-  weights_sum = num_of_points; /* All weights are 1 */
-
   /* then compute mean */
-  centroid->x = x_sum / weights_sum;
-  centroid->y = y_sum / weights_sum;
+  centroid->x = x_sum / num_of_points;
+  centroid->y = y_sum / num_of_points;
 }
 
 static void
 npd_compute_centroid_from_weighted_points (gint      num_of_points,
-                                           NPDPoint  points[],
-                                           gfloat    weights[],
+                                           NPDPoint *points,
+                                           gfloat   *weights,
                                            NPDPoint *centroid)
 {
   gfloat x_sum = 0, y_sum = 0, weights_sum = 0;
@@ -68,11 +66,11 @@ npd_compute_centroid_from_weighted_points (gint      num_of_points,
 }
 
 static void
-npd_compute_ARSAP_transformation (gint     num_of_points,
-                                  NPDPoint reference_points[],
-                                  NPDPoint current_points[],
-                                  gfloat   weights[],
-                                  gboolean ASAP)
+npd_compute_ARSAP_transformation (gint      num_of_points,
+                                  NPDPoint *reference_points,
+                                  NPDPoint *current_points,
+                                  gfloat   *weights,
+                                  gboolean  ASAP)
 {
   NPDPoint pc = {0, 0}, qc = {0, 0};
   gfloat a = 0, b = 0, mu_part = 0, mu, r1, r2, x0, y0;
@@ -117,7 +115,9 @@ npd_compute_ARSAP_transformation (gint     num_of_points,
 
   mu = 1;
   if (ASAP) mu = mu_part;
-  else      mu = sqrt(a * a + b * b);
+  else      mu = sqrt (a * a + b * b);
+
+  if (npd_equal_floats (mu, 0)) mu = NPD_EPSILON;
 
   r1 =  a / mu;
   r2 = -b / mu;
@@ -131,10 +131,10 @@ npd_compute_ARSAP_transformation (gint     num_of_points,
     {
       if (!current_points[i].fixed)
         {
-          current_points[i].x =  r1 * reference_points[i].x
-                  + r2 * reference_points[i].y + x0;
-          current_points[i].y = -r2 * reference_points[i].x
-                  + r1 * reference_points[i].y + y0;
+          current_points[i].x =  r1 * reference_points[i].x +
+                                 r2 * reference_points[i].y + x0;
+          current_points[i].y = -r2 * reference_points[i].x +
+                                 r1 * reference_points[i].y + y0;
         }
     }
 }
@@ -146,12 +146,12 @@ npd_compute_ARSAP_transformations (NPDHiddenModel *hidden_model)
 
   for (i = 0; i < hidden_model->num_of_bones; ++i)
     {
-      NPDBone *reference_bones = &hidden_model->reference_bones[i];
-      NPDBone *current_bones   = &hidden_model->current_bones[i];
-      npd_compute_ARSAP_transformation (reference_bones->num_of_points,
-                                        reference_bones->points,
-                                        current_bones->points,
-                                        current_bones->weights,
+      NPDBone *reference_bone = &hidden_model->reference_bones[i];
+      NPDBone *current_bone   = &hidden_model->current_bones[i];
+      npd_compute_ARSAP_transformation (reference_bone->num_of_points,
+                                        reference_bone->points,
+                                        current_bone->points,
+                                        current_bone->weights,
                                         hidden_model->ASAP);
     }
 }
@@ -172,7 +172,6 @@ npd_deform_hidden_model_once (NPDHiddenModel *hidden_model)
 
       npd_compute_centroid_of_overlapping_points (list_of_ops->num_of_points,
                                                   list_of_ops->points,
-                                                  NULL,
                                                  &centroid);
 
       for (j = 0; j < list_of_ops->num_of_points; ++j)

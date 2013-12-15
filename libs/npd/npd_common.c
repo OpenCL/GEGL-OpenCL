@@ -413,7 +413,7 @@ npd_compute_MLS_weights (NPDModel *model)
           if (SED < min) min = SED;
         }
 
-      if (npd_equal_floats (min, 0.0)) min = 0.0000001;
+      if (npd_equal_floats (min, 0.0)) min = NPD_EPSILON;
       MLS_weight = 1 / pow (min, hm->MLS_weights_alpha);
       npd_set_overlapping_points_weight (op, MLS_weight);
     }
