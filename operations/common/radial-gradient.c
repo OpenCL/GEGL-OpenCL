@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2008 Øyvind Kolås <pippin@gimp.org>
+ *           2013 Daniel Sabo
  */
 
 #include "config.h"
@@ -21,19 +22,19 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_double (x1,        _("x1"),  -1000.0, 1000.0, 25.0, "")
-gegl_chant_double (y1,        _("y1"),  -1000.0, 1000.0, 25.0, "")
-gegl_chant_double (x2,        _("x2"),  -1000.0, 1000.0, 50.0, "")
-gegl_chant_double (y2,        _("y2"),  -1000.0, 1000.0, 50.0, "")
-gegl_chant_color (color1,   _("Color"), "black",
-                  _("One end of gradient"))
-gegl_chant_color (color2,   _("Other color"), "white",
-                  _("One end of gradient"))
+gegl_chant_double (start_x,      _("X1"), G_MININT, G_MAXINT, 25.0, "")
+gegl_chant_double (start_y,      _("Y1"), G_MININT, G_MAXINT, 25.0, "")
+gegl_chant_double (end_x,        _("X2"), G_MININT, G_MAXINT, 50.0, "")
+gegl_chant_double (end_y,        _("Y2"), G_MININT, G_MAXINT, 50.0, "")
+gegl_chant_color  (start_color,  _("Start Color"), "black",
+                                 _("The color at (x1, y1)"))
+gegl_chant_color  (end_color,    _("End Color"), "white",
+                                 _("The color at (x2, y2)"))
 
 #else
 
 #define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE       "radial-gradient.c"
+#define GEGL_CHANT_C_FILE "radial-gradient.c"
 
 #include "gegl-chant.h"
 
@@ -42,7 +43,7 @@ gegl_chant_color (color2,   _("Other color"), "white",
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A float"));
 }
 
 static GeglRectangle
@@ -51,9 +52,13 @@ get_bounding_box (GeglOperation *operation)
   return gegl_rectangle_infinite_plane ();
 }
 
-static gfloat dist(gfloat x1, gfloat y1, gfloat x2, gfloat y2)
+static gfloat
+dist (gfloat x1, gfloat y1, gfloat x2, gfloat y2)
 {
-  return sqrt(  (x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+  gfloat dx = x1 - x2;
+  gfloat dy = y1 - y2;
+
+  return sqrtf (dx * dx + dy * dy);
 }
 
 static gboolean
@@ -67,40 +72,33 @@ process (GeglOperation       *operation,
   gfloat     *out_pixel = out_buf;
   gfloat      color1[4];
   gfloat      color2[4];
-  gint        x, y;
-  gfloat length = dist (o->x1, o->y1, o->x2, o->y2);
+  gfloat      length = dist (o->start_x, o->start_y, o->end_x, o->end_y);
 
-  gegl_color_get_pixel (o->color1, babl_format ("RGBA float"), color1);
-  gegl_color_get_pixel (o->color2, babl_format ("RGBA float"), color2);
+  gegl_color_get_pixel (o->start_color, babl_format ("R'G'B'A float"), color1);
+  gegl_color_get_pixel (o->end_color, babl_format ("R'G'B'A float"), color2);
 
-  x= roi->x;
-  y= roi->y;
-  while (n_pixels--)
+  if (GEGL_FLOAT_IS_ZERO (length))
     {
-      gfloat v;
-      gint c;
-
-      if (length == 0.0)
-        v = 0.5;
-      else
+      gegl_memset_pattern (out_buf, color2, sizeof(float) * 4, n_pixels);
+    }
+  else
+    {
+      gint x, y;
+      for (y = roi->y; y < roi->y + roi->height; ++y)
         {
-          v = dist(x,y,o->x2,o->y2)/length;
-          if (v<0.0)
-            v= 0.0;
-          if (v>1.0)
-            v= 1.0;
-        }
+          for (x = roi->x; x < roi->x + roi->width; ++x)
+            {
+              gint c;
+              gfloat v = dist (x, y, o->start_x, o->start_y) / length;
 
-      for (c=0;c<4;c++)
-        out_pixel[c]=color1[c] * v + color2[c] * (1.0-v);
+              if (v > 1.0f - GEGL_FLOAT_EPSILON)
+                v = 1.0f;
 
-      out_pixel += 4;
+              for (c = 0; c < 4; c++)
+                out_pixel[c] = color1[c] * v + color2[c] * (1.0f - v);
 
-      /* update x and y coordinates */
-      if (++x>=roi->x + roi->width)
-        {
-          x=roi->x;
-          y++;
+              out_pixel += 4;
+            }
         }
     }
 

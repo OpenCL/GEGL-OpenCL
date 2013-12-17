@@ -87,6 +87,7 @@ op_LTLIBRARIES = \
 	polar-coordinates.la \
 	posterize.la \
 	raw-load.la \
+	radial-gradient.la \
 	rectangle.la \
 	red-eye-removal.la \
 	reinhard05.la \

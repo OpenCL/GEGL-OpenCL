@@ -25,7 +25,6 @@ op_LTLIBRARIES =    \
 	hstack.la \
 	kuwahara.la \
 	mandelbrot.la \
-	radial-gradient.la \
 	rawbayer-load.la \
 	snn-percentile.la \
 	unpremul.la
