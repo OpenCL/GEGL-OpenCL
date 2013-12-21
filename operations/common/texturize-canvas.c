@@ -50,7 +50,7 @@ gegl_chant_int  (depth, _("Depth"), 1, 50, 4,
 #include "gegl-chant.h"
 
 /* This array contains 16384 floats interpreted as a 128x128 texture */
-static const gfloat sdata[] =
+static const gfloat sdata [128 * 128] =
 {
 +0.000000000000000, +0.019607843137255, -0.011764705882353, -0.050980392156863,
 +0.050980392156863, +0.039215686274510, -0.043137254901961, +0.023529411764706,
@@ -4196,12 +4196,11 @@ process (GeglOperation       *operation,
   gfloat *src  = in_buf;
   gfloat *dest = out_buf;
 
-  gint    i, xm, ym, offs;
+  gint    xm, ym, offs;
   gfloat  mult = (gfloat) opt->depth * 0.25;
 
   gint   row;   /* Row number in rectangle */
   gint   col;   /* Column number in rectangle */
-  gfloat color; /* Single color value */
 
   const Babl *format = gegl_operation_get_format (operation, "input");
   gboolean    has_alpha  = babl_format_has_alpha (format);
@@ -4231,7 +4230,7 @@ process (GeglOperation       *operation,
       case GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_RIGHT:
         xm = 128;
         ym = -1;
-        offs = 128;
+        offs = 127;
         break;
     }
 
@@ -4239,14 +4238,17 @@ process (GeglOperation       *operation,
     {
       for (col = 0; col < roi->width; ++col)
         {
+          gint i;
           for (i = 0; i < components; ++i)
             {
               /*
-              * Assuming twos-complement representation, it holds that n & 127
-              * is n % 128 for n >= 0 and (n % 128) + 128 for n < 0.
-              */
-              color = mult * sdata[((roi->x + col) & 127) * xm +
-                                   ((roi->y + row) & 127) * ym + offs] + *src++;
+               * Assuming twos-complement representation, it holds that n & 127
+               * is n % 128 for n >= 0 and (n % 128) + 128 for n < 0.
+               */
+              gint   index = ((roi->x + col) & 127) * xm +
+                             ((roi->y + row) & 127) * ym +
+                             offs;
+              gfloat color = mult * sdata [index] + *src++;
               *dest++ = CLAMP (color, 0.0, 1.0);
             }
 
