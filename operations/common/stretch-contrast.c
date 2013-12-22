@@ -99,6 +99,11 @@ get_required_for_output (GeglOperation       *operation,
                          const GeglRectangle *roi)
 {
   GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
+
+  /* Don't request an infinite plane */
+  if (gegl_rectangle_is_infinite_plane (&result))
+    return *GEGL_RECTANGLE (0, 0, 0, 0);
+
   return result;
 }
 
@@ -449,6 +454,10 @@ process (GeglOperation       *operation,
   GeglBufferIterator *gi;
   GeglChantO         *o;
   gint                c;
+
+  /* Don't process an infinite plane */
+  if (gegl_rectangle_is_infinite_plane (result))
+    return FALSE;
 
   if (gegl_cl_is_accelerated ())
     if (cl_process (operation, input, output, result))
