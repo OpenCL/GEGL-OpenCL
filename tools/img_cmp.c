@@ -68,8 +68,7 @@ main (gint    argc,
                   (wrong_pixels*100.0/total_pixels), max_diff,
                   avg_diff_wrong, avg_diff_total);
 
-      if (max_diff > 1.5 &&
-          !strstr (argv[2], "broken"))
+      if (!strstr (argv[2], "broken"))
         {
           GeglNode *save;
           gchar *debug_path = g_malloc (strlen (argv[2])+16);
@@ -88,8 +87,8 @@ main (gint    argc,
           /*gegl_graph (sink=gegl_node ("gegl:png-save",
                                       "path", debug_path, NULL,
                                       gegl_node ("gegl:buffer-source", "buffer", debug_buf, NULL)));*/
-
-          return 1;
+          if (max_diff > 1.5)
+            return 1;
         }
       if (strstr (argv[2], "broken"))
         g_print ("because the test is expected to fail ");
