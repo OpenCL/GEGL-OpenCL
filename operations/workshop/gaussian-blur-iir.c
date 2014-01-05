@@ -48,6 +48,8 @@ gegl_chant_enum      (filter, _("Filter"),
 gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglGaussianBlurPolicy,
                       gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_NONE,
                       _("How image edges are handled"))
+gegl_chant_boolean   (clip_extent, _("Clip to the input extent"), TRUE,
+                      _("Should the output extent be clipped to the input extent"))
 
 #else
 
@@ -79,10 +81,12 @@ attach (GeglOperation *operation)
   gegl_operation_meta_redirect (operation, "std-dev-x",    hblur, "std-dev");
   gegl_operation_meta_redirect (operation, "abyss-policy", hblur, "abyss-policy");
   gegl_operation_meta_redirect (operation, "filter",       hblur, "filter");
+  gegl_operation_meta_redirect (operation, "clip-extent",  hblur, "clip-extent");
 
   gegl_operation_meta_redirect (operation, "std-dev-y",    vblur, "std-dev");
   gegl_operation_meta_redirect (operation, "abyss-policy", vblur, "abyss-policy");
   gegl_operation_meta_redirect (operation, "filter",       vblur, "filter");
+  gegl_operation_meta_redirect (operation, "clip-extent",  vblur, "clip-extent");
 }
 
 static void

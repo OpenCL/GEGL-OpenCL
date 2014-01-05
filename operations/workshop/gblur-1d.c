@@ -59,6 +59,8 @@ gegl_chant_enum      (filter, _("Filter"),
 gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglGblur1dPolicy,
                       gegl_gblur_1d_policy, GEGL_GBLUR_1D_ABYSS_NONE,
                       _("How image edges are handled"))
+gegl_chant_boolean   (clip_extent, _("Clip to the input extent"), TRUE,
+                      _("Should the output extent be clipped to the input extent"))
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
@@ -578,6 +580,7 @@ filter_disambiguation (GeglGblur1dFilter filter,
 {
   if (filter == GEGL_GBLUR_1D_AUTO)
     {
+      /* Threshold 1.0 is arbitrary */
       if (std_dev < 1.0)
         filter = GEGL_GBLUR_1D_FIR;
       else
@@ -599,6 +602,10 @@ gegl_gblur_1d_prepare (GeglOperation *operation)
   const Babl *src_format = gegl_operation_get_source_format (operation, "input");
   const char *format     = "RaGaBaA float";
 
+  /*
+   * FIXME: when the abyss policy is _NONE, the behavior at the edge
+   *        depends on input format (with or without an alpha component)
+   */
   if (src_format)
     {
       const Babl *model = babl_format_get_model (src_format);
@@ -613,6 +620,28 @@ gegl_gblur_1d_prepare (GeglOperation *operation)
     }
 
   gegl_operation_set_format (operation, "output", babl_format (format));
+}
+
+static GeglRectangle
+gegl_gblur_1d_enlarge_extent (GeglChantO          *o,
+                              const GeglRectangle *input_extent)
+{
+  gint clen = fir_calc_convolve_matrix_length (o->std_dev);
+
+  GeglRectangle bounding_box = *input_extent;
+
+  if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+    {
+      bounding_box.x     -= clen / 2;
+      bounding_box.width += clen - 1;
+    }
+  else
+    {
+      bounding_box.y      -= clen / 2;
+      bounding_box.height += clen - 1;
+    }
+
+  return bounding_box;
 }
 
 static GeglRectangle
@@ -643,27 +672,42 @@ gegl_gblur_1d_get_required_for_output (GeglOperation       *operation,
               required_for_output.y      = in_rect->y;
               required_for_output.height = in_rect->height;
             }
+
+          if (!o->clip_extent)
+            required_for_output =
+              gegl_gblur_1d_enlarge_extent (o, &required_for_output);
         }
     }
   else
     {
-      gint clen = fir_calc_convolve_matrix_length (o->std_dev);
-
-      required_for_output = *output_roi;
-
-      if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
-        {
-          required_for_output.x     -= clen / 2;
-          required_for_output.width += clen - 1;
-        }
-      else
-        {
-          required_for_output.y      -= clen / 2;
-          required_for_output.height += clen - 1;
-        }
+      required_for_output = gegl_gblur_1d_enlarge_extent (o, output_roi);
     }
 
   return required_for_output;
+}
+
+static GeglRectangle
+gegl_gblur_1d_get_bounding_box (GeglOperation *operation)
+{
+  GeglChantO          *o       = GEGL_CHANT_PROPERTIES (operation);
+  const GeglRectangle *in_rect =
+    gegl_operation_source_get_bounding_box (operation, "input");
+
+  if (! in_rect)
+    return *GEGL_RECTANGLE (0, 0, 0, 0);
+
+  if (gegl_rectangle_is_infinite_plane (in_rect))
+    return *in_rect;
+
+  if (o->clip_extent)
+    {
+      return *in_rect;
+    }
+  else
+    {
+      /* We use the FIR convolution length for both the FIR and the IIR case */
+      return gegl_gblur_1d_enlarge_extent (o, in_rect);
+    }
 }
 
 static GeglRectangle
@@ -676,10 +720,11 @@ gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
 
   if (filter == GEGL_GBLUR_1D_IIR)
     {
-      const GeglRectangle *in_rect =
-        gegl_operation_source_get_bounding_box (operation, "input");
+      const GeglRectangle in_rect =
+        gegl_gblur_1d_get_bounding_box (operation);
 
-      if (in_rect && ! gegl_rectangle_is_infinite_plane (in_rect))
+      if (! gegl_rectangle_is_empty (&in_rect) &&
+          ! gegl_rectangle_is_infinite_plane (&in_rect))
         {
           GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
 
@@ -687,13 +732,13 @@ gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
 
           if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
             {
-              cached_region.x     = in_rect->x;
-              cached_region.width = in_rect->width;
+              cached_region.x     = in_rect.x;
+              cached_region.width = in_rect.width;
             }
           else
             {
-              cached_region.y      = in_rect->y;
-              cached_region.height = in_rect->height;
+              cached_region.y      = in_rect.y;
+              cached_region.height = in_rect.height;
             }
         }
     }
@@ -790,6 +835,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process                    = gegl_gblur_1d_process;
   operation_class->prepare                 = gegl_gblur_1d_prepare;
+  operation_class->get_bounding_box        = gegl_gblur_1d_get_bounding_box;
   operation_class->get_required_for_output = gegl_gblur_1d_get_required_for_output;
   operation_class->get_cached_region       = gegl_gblur_1d_get_cached_region;
   operation_class->opencl_support          = TRUE;
