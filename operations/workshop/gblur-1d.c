@@ -658,24 +658,30 @@ gegl_gblur_1d_get_required_for_output (GeglOperation       *operation,
       const GeglRectangle *in_rect =
         gegl_operation_source_get_bounding_box (operation, input_pad);
 
-      if (in_rect && ! gegl_rectangle_is_infinite_plane (in_rect))
+      if (in_rect)
         {
-          required_for_output = *output_roi;
-
-          if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+          if (!gegl_rectangle_is_infinite_plane (in_rect))
             {
-              required_for_output.x     = in_rect->x;
-              required_for_output.width = in_rect->width;
+              required_for_output = *output_roi;
+
+              if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+                {
+                  required_for_output.x     = in_rect->x;
+                  required_for_output.width = in_rect->width;
+                }
+              else
+                {
+                  required_for_output.y      = in_rect->y;
+                  required_for_output.height = in_rect->height;
+                }
+
+              if (!o->clip_extent)
+                required_for_output =
+                  gegl_gblur_1d_enlarge_extent (o, &required_for_output);
             }
+          /* pass-through case */
           else
-            {
-              required_for_output.y      = in_rect->y;
-              required_for_output.height = in_rect->height;
-            }
-
-          if (!o->clip_extent)
-            required_for_output =
-              gegl_gblur_1d_enlarge_extent (o, &required_for_output);
+            return *output_roi;
         }
     }
   else
@@ -714,9 +720,11 @@ static GeglRectangle
 gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
                                  const GeglRectangle *output_roi)
 {
-  GeglRectangle      cached_region = { 0, };
+  GeglRectangle      cached_region;
   GeglChantO        *o       = GEGL_CHANT_PROPERTIES (operation);
   GeglGblur1dFilter  filter  = filter_disambiguation (o->filter, o->std_dev);
+
+  cached_region = *output_roi;
 
   if (filter == GEGL_GBLUR_1D_IIR)
     {
@@ -741,10 +749,6 @@ gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
               cached_region.height = in_rect.height;
             }
         }
-    }
-  else
-    {
-      cached_region = *output_roi;
     }
 
   return cached_region;
@@ -824,6 +828,41 @@ gegl_gblur_1d_process (GeglOperation       *operation,
   return  TRUE;
 }
 
+/* Pass-through when trying to perform IIR on an infinite plane
+ */
+static gboolean
+operation_process (GeglOperation        *operation,
+                   GeglOperationContext *context,
+                   const gchar          *output_prop,
+                   const GeglRectangle  *result,
+                   gint                  level)
+{
+  GeglOperationClass  *operation_class;
+  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglGblur1dFilter    filter  = filter_disambiguation (o->filter, o->std_dev);
+
+  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+
+  if (filter == GEGL_GBLUR_1D_IIR)
+    {
+      const GeglRectangle *in_rect =
+        gegl_operation_source_get_bounding_box (operation, "input");
+
+      if (in_rect && gegl_rectangle_is_infinite_plane (in_rect))
+        {
+          gpointer in = gegl_operation_context_get_object (context, "input");
+          gegl_operation_context_take_object (context, "output",
+                                              g_object_ref (G_OBJECT (in)));
+          return TRUE;
+        }
+    }
+  /* chain up, which will create the needed buffers for our actual
+   * process function
+   */
+  return operation_class->process (operation, context, output_prop, result,
+                                   gegl_operation_context_get_level (context));
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -835,6 +874,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process                    = gegl_gblur_1d_process;
   operation_class->prepare                 = gegl_gblur_1d_prepare;
+  operation_class->process                 = operation_process;
   operation_class->get_bounding_box        = gegl_gblur_1d_get_bounding_box;
   operation_class->get_required_for_output = gegl_gblur_1d_get_required_for_output;
   operation_class->get_cached_region       = gegl_gblur_1d_get_cached_region;
