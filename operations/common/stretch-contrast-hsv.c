@@ -109,20 +109,25 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle *result;
-  result = gegl_operation_source_get_bounding_box (operation, "input");
+  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
 
-  if (result != NULL)
-    return *result;
-  else
-    return *GEGL_RECTANGLE (0, 0, 0, 0);
+  /* Don't request an infinite plane */
+  if (gegl_rectangle_is_infinite_plane (&result))
+    return *roi;
+
+  return result;
 }
 
 static GeglRectangle
 get_cached_region (GeglOperation       *operation,
                    const GeglRectangle *roi)
 {
-  return get_required_for_output (operation, "input", roi);
+  GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
+
+  if (gegl_rectangle_is_infinite_plane (&result))
+    return *roi;
+
+  return result;
 }
 
 static gboolean
@@ -165,6 +170,37 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
+/* Pass-through when trying to perform a reduction on an infinite plane
+ */
+static gboolean
+operation_process (GeglOperation        *operation,
+                   GeglOperationContext *context,
+                   const gchar          *output_prop,
+                   const GeglRectangle  *result,
+                   gint                  level)
+{
+  GeglOperationClass  *operation_class;
+
+  const GeglRectangle *in_rect =
+    gegl_operation_source_get_bounding_box (operation, "input");
+
+  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+
+  if (in_rect && gegl_rectangle_is_infinite_plane (in_rect))
+    {
+      gpointer in = gegl_operation_context_get_object (context, "input");
+      gegl_operation_context_take_object (context, "output",
+                                          g_object_ref (G_OBJECT (in)));
+      return TRUE;
+    }
+
+  /* chain up, which will create the needed buffers for our actual
+   * process function
+   */
+  return operation_class->process (operation, context, output_prop, result,
+                                   gegl_operation_context_get_level (context));
+}
+
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
@@ -176,6 +212,7 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process                    = process;
   operation_class->prepare                 = prepare;
+  operation_class->process                 = operation_process;
   operation_class->get_required_for_output = get_required_for_output;
   operation_class->get_cached_region       = get_cached_region;
 
