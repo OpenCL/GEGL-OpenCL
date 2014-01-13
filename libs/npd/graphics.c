@@ -54,7 +54,7 @@ npd_bilinear_color_interpolation (NPDColor *I0,
   out->a = npd_bilinear_interpolation (I0->a, I1->a, I2->a, I3->a, dx, dy);
 }
 
-gfloat
+static gfloat
 npd_blend_band (gfloat src,
                 gfloat dst,
                 gfloat src_alpha,
@@ -73,11 +73,14 @@ npd_blend_colors (NPDColor *src,
   gfloat src_A = src->a / 255.0,
          dst_A = dst->a / 255.0;
   gfloat out_alpha = src_A + dst_A * (1 - src_A);
-  gfloat out_alpha_recip = 1 / out_alpha;
+  if (out_alpha > 0)
+    {
+      gfloat out_alpha_recip = 1 / out_alpha;
 
-  out_color->r = npd_blend_band (src->r, dst->r, src_A, dst_A, out_alpha_recip);
-  out_color->g = npd_blend_band (src->g, dst->g, src_A, dst_A, out_alpha_recip);
-  out_color->b = npd_blend_band (src->b, dst->b, src_A, dst_A, out_alpha_recip);
+      out_color->r = npd_blend_band (src->r, dst->r, src_A, dst_A, out_alpha_recip);
+      out_color->g = npd_blend_band (src->g, dst->g, src_A, dst_A, out_alpha_recip);
+      out_color->b = npd_blend_band (src->b, dst->b, src_A, dst_A, out_alpha_recip);
+    }
   out_color->a = out_alpha * 255;
 }
 

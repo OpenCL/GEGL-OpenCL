@@ -89,6 +89,9 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
+#define NPD_BLEND_BAND(src,dst,src_alpha,dst_alpha,out_alpha_recip) \
+(src * src_alpha + dst * dst_alpha * (1 - src_alpha)) * out_alpha_recip;
+
 static void
 npd_gegl_process_pixel (NPDImage *input_image,
                         gfloat    ix,
@@ -101,18 +104,36 @@ npd_gegl_process_pixel (NPDImage *input_image,
   if (ox > -1 && ox < output_image->width &&
       oy > -1 && oy < output_image->height)
     {
-      gint position = 4 * (((gint) oy) * output_image->width + ((gint) ox));
+      gint    position = 4 * (((gint) oy) * output_image->width + ((gint) ox));
+      gfloat  sample_color[4];
+      gfloat *dst_color = &output_image->buffer_f[position];
+      gfloat  src_A, dst_A, out_alpha, out_alpha_recip;
       gegl_buffer_sample (input_image->gegl_buffer, ix, iy, NULL,
-                          &output_image->buffer_f[position], output_image->format,
+                          sample_color, output_image->format,
                           output_image->sampler_type, GEGL_ABYSS_NONE);
+
+      /* suppose that output_image has RGBA float pixel format - and what about endianness? */
+      src_A = sample_color[3];
+      dst_A = dst_color[3];
+      out_alpha = src_A + dst_A * (1 - src_A);
+      if (out_alpha > 0)
+        {
+          out_alpha_recip = 1 / out_alpha;
+          dst_color[0] = NPD_BLEND_BAND (sample_color[0], dst_color[0], src_A, dst_A, out_alpha_recip);
+          dst_color[1] = NPD_BLEND_BAND (sample_color[1], dst_color[1], src_A, dst_A, out_alpha_recip);
+          dst_color[2] = NPD_BLEND_BAND (sample_color[2], dst_color[2], src_A, dst_A, out_alpha_recip);
+        }
+      dst_color[3] = out_alpha;
     }
 }
 
+#undef NPD_BLEND_BAND
+
 static void
 npd_gegl_get_pixel_color_f (NPDImage *image,
-                          gint      x,
-                          gint      y,
-                          NPDColor *color)
+                            gint      x,
+                            gint      y,
+                            NPDColor *color)
 {
   gegl_buffer_sample (image->gegl_buffer, x, y, NULL,
                       &color->color, babl_format ("RGBA u8"),

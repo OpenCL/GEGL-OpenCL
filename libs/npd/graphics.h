@@ -55,11 +55,6 @@ void            npd_draw_model_into_image         (NPDModel   *model,
 void            npd_draw_mesh                     (NPDModel   *model,
                                                    NPDDisplay *display);
 gboolean        npd_is_color_transparent          (NPDColor   *color);
-gfloat          npd_blend_band                    (gfloat      src,
-                                                   gfloat      dst,
-                                                   gfloat      src_alpha,
-                                                   gfloat      dst_alpha,
-                                                   gfloat      out_alpha_recip);
 extern void   (*npd_draw_line)                    (NPDDisplay *display,
                                                    gfloat      x0,
                                                    gfloat      y0,
