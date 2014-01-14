@@ -154,45 +154,25 @@ npd_draw_texture_line (gint        x1,
 }
 
 static void
-npd_texture_fill_triangle (gint       x1,
-                           gint       y1,
-                           gint       x2,
-                           gint       y2,
-                           gint       x3,
-                           gint       y3,
-                           NPDMatrix *A,
-                           NPDImage  *input_image,
-                           NPDImage  *output_image,
-                           NPDSettings settings)
+npd_texture_fill_triangle (gint         x1,
+                           gint         y1,
+                           gint         x2,
+                           gint         y2,
+                           gint         x3,
+                           gint         y3,
+                           NPDMatrix   *A,
+                           NPDImage    *input_image,
+                           NPDImage    *output_image,
+                           NPDSettings  settings)
 {
   gint yA, yB, yC, xA, xB, xC;
-  gint tmp, y;
+  gint y;
   gint deltaXAB, deltaYAB;
   gint deltaXBC, deltaYBC;
   gint deltaXAC, deltaYAC;
-
-  gfloat slopeAB;
-  gfloat slopeBC;
-  gfloat slopeAC;
-
-  gfloat k, l;
-  gfloat slope1, slope2, slope3, slope4;
-
-  if (y1 == y2 && x1 > x2)
-    {
-      tmp = y1; y1 = y2; y2 = tmp;
-      tmp = x1; x1 = x2; x2 = tmp;
-    }
-  if (y1 == y3 && x1 > x3)
-    {
-      tmp = y1; y1 = y3; y3 = tmp;
-      tmp = x1; x1 = x3; x3 = tmp;
-    }
-  if (y2 == y3 && x2 > x3)
-    {
-      tmp = y2; y2 = y3; y3 = tmp;
-      tmp = x2; x2 = x3; x3 = tmp;
-    }
+  gint dX1, dX2, dX3, dX4;
+  gint dY1, dY2, dY3, dY4;
+  gint k, l;
 
   if (y1 <= y2)
     {
@@ -241,60 +221,61 @@ npd_texture_fill_triangle (gint       x1,
   deltaXBC = xC - xB, deltaYBC = yC - yB;
   deltaXAC = xC - xA, deltaYAC = yC - yA;
 
-  slopeBC = (deltaYBC == 0 ? 0 : (gfloat) deltaXBC / deltaYBC);
-  slopeAC = (deltaYAC == 0 ? 0 : (gfloat) deltaXAC / deltaYAC);
-
-  if (deltaYAB == 0)
+  if (deltaYAB != 0)
     {
-      slopeAB = 0;
-      k = xA;
-      l = xB;
-
-      slope1 = slopeAB;
-      slope2 = slopeAC;
-      slope3 = slopeAC;
-      slope4 = slopeBC;
-    }
-  else
-    {
-      slopeAB = (gfloat) deltaXAB / deltaYAB;
-      k = xA;
-      l = xA;
-
-      if (slopeAB > slopeAC)
+      gboolean test = ((gfloat) deltaXAB / deltaYAB) > ((gfloat) deltaXAC / deltaYAC);
+      if (test)
         {
-          slope1 = slopeAC;
-          slope2 = slopeAB;
-          slope3 = slopeAC;
-          slope4 = slopeBC;
+          dX1 = deltaXAC; dY1 = deltaYAC;
+          dX2 = deltaXAB; dY2 = deltaYAB;
+          dX3 = deltaXAC; dY3 = deltaYAC;
+          dX4 = deltaXBC; dY4 = deltaYBC;
         }
       else
         {
-          slope1 = slopeAB;
-          slope2 = slopeAC;
-          slope3 = slopeBC;
-          slope4 = slopeAC;
+          dX1 = deltaXAB; dY1 = deltaYAB;
+          dX2 = deltaXAC; dY2 = deltaYAC;
+          dX3 = deltaXBC; dY3 = deltaYBC;
+          dX4 = deltaXAC; dY4 = deltaYAC;
+        }
+
+      k = xA * dY1; l = xA * dY2;
+
+      for (y = yA; y < yB; y++)
+        {
+          npd_draw_texture_line (k / dY1, l / dY2 - 1,
+                                 y, A,
+                                 input_image, output_image,
+                                 settings);
+          k += dX1; l += dX2;
+        }
+
+      if (test) l = xB * dY4;
+      else      k = xB * dY3;
+    }
+  else
+    {
+      if (deltaXAB > 0)
+        {
+          dX3 = deltaXAC; dY3 = deltaYAC;
+          dX4 = deltaXBC; dY4 = deltaYBC;
+          k = xA * dY3; l = xB * dY4;
+        }
+      else
+        {
+          dX3 = deltaXBC; dY3 = deltaYBC;
+          dX4 = deltaXAC; dY4 = deltaYAC;
+          k = xB * dY3; l = xA * dY4;
         }
     }
 
-  for (y = yA; y < yB; y++)
+  for (y = yB; y < yC; y++)
     {
-      npd_draw_texture_line ((gint) round (k), (gint) round (l),
+      npd_draw_texture_line (k / dY3, l / dY4 - 1,
                              y, A,
                              input_image, output_image,
                              settings);
-      k += slope1;
-      l += slope2;
-    }
-
-  for (y = yB; y <= yC; y++)
-    {
-      npd_draw_texture_line ((gint) round (k), (gint) round (l),
-                             y, A,
-                             input_image, output_image,
-                             settings);
-      k += slope3;
-      l += slope4;
+      k += dX3; l += dX4;
     }
 }
 
