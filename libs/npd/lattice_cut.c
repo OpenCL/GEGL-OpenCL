@@ -105,12 +105,12 @@ npd_cut_edges (GList **edges,
 
       if (num_of_neighbors == 0) continue;
 
-#define NPD_ADD_COUNT(count) ops = g_list_append (ops, GINT_TO_POINTER (count))
+#define NPD_ADD_COUNT(count) ops = g_list_prepend (ops, GINT_TO_POINTER (count))
 #define NPD_ADD_P(r,col,point)                                                 \
       if ((r) > -1 && (r) < (oh - 1) && (col) > -1 && (col) < (ow - 1))        \
         {                                                                      \
-          ops = g_list_append (ops, GINT_TO_POINTER ((r) * width + (col)));    \
-          ops = g_list_append (ops, GINT_TO_POINTER (point));                  \
+          ops = g_list_prepend (ops, GINT_TO_POINTER ((r) * width + (col)));   \
+          ops = g_list_prepend (ops, GINT_TO_POINTER (point));                 \
         }
 
       for (i = 0; i < num_of_neighbors; i++)
@@ -128,10 +128,7 @@ npd_cut_edges (GList **edges,
           NPD_ADD_P (r - 1, col,     3);
           NPD_ADD_P (r,     col,     0);
           NPD_ADD_P (r,     col - 1, 1);
-          if (border)
-            ops = g_list_insert_before (ops,
-                                        g_list_nth_prev (g_list_last (ops), 1),
-                                        GINT_TO_POINTER (1));
+          if (border) ops = g_list_insert (ops, GINT_TO_POINTER (1), 2);
 #undef NPD_ADD_P
         }
       else
@@ -142,7 +139,6 @@ npd_cut_edges (GList **edges,
 
 #define NPD_OP_X(op) ((op) % ow)
 #define NPD_OP_Y(op) ((op) / ow)
-
           if (NPD_OP_X (neighbors[0]) != NPD_OP_X (neighbors[1])) x_differs = TRUE;
           if (NPD_OP_Y (neighbors[0]) != NPD_OP_Y (neighbors[1])) y_differs = TRUE;
 
@@ -174,8 +170,8 @@ npd_cut_edges (GList **edges,
                       (op == 2 ? ((r - 1) * width + col - 1) :                 \
                                  ((r - 1) * width + col))))
 #define NPD_ADD_P(square,point)                                                \
-              ops = g_list_append (ops, GINT_TO_POINTER (square));             \
-              ops = g_list_append (ops, GINT_TO_POINTER (point));
+              ops = g_list_prepend (ops, GINT_TO_POINTER (square));            \
+              ops = g_list_prepend (ops, GINT_TO_POINTER (point));
 
               NPD_ADD_COUNT (3);
               NPD_ADD_P (NPD_OP2SQ (a), a);
@@ -274,5 +270,7 @@ npd_cut_edges (GList **edges,
 #undef NPD_OP_Y
 #undef NPD_ADD_COUNT
 
-  return ops;
+  /* because of efficiency, we've used g_list_prepend instead of g_list_append,
+   * thus at the end, we have to reverse the list */
+  return g_list_reverse (ops);
 }
