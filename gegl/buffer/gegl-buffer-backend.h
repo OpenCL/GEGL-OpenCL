@@ -19,13 +19,12 @@
 #ifndef __GEGL_BUFFER_BACKEND_H__
 #define __GEGL_BUFFER_BACKEND_H__
 
+#include "gegl-types.h"
+
 G_BEGIN_DECLS
 
 typedef struct _GeglTile                  GeglTile;
 typedef struct _GeglTileSource            GeglTileSource;
-#ifndef __GEGL_BUFFER_H__
-typedef struct _GeglTileBackend           GeglTileBackend;
-#endif
 typedef struct _GeglTileHandler           GeglTileHandler;
 
 
@@ -52,7 +51,6 @@ typedef enum
 
 G_END_DECLS
 
-#include "gegl-types.h"
 #include "gegl-tile-backend.h"
 #include "gegl-tile-source.h"
 #include "gegl-tile-handler.h"

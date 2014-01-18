@@ -22,20 +22,9 @@
 #include <glib-object.h>
 #include <babl/babl.h>
 #include <gegl-matrix.h>
-#include <gegl-enums.h>
+#include <gegl-types.h>
 
 G_BEGIN_DECLS
-
-#define GEGL_TYPE_BUFFER (gegl_buffer_get_type ())
-#define GEGL_BUFFER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
-#define GEGL_IS_BUFFER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER))
-#ifndef __GEGL_BUFFER_TYPES_H__
-typedef struct _GeglBuffer   GeglBuffer;
-typedef struct _GeglSampler  GeglSampler;
-#endif
-#ifndef __GEGL_BUFFER_BACKEND_H__
-typedef struct _GeglTileBackend GeglTileBackend;
-#endif
 
 /***
  * GeglBuffer:
@@ -48,7 +37,6 @@ typedef struct _GeglTileBackend GeglTileBackend;
  * can be swapped to disk. In the future GeglBuffer might also support a linear
  * backend, a GPU memory backend and a network backend for buffers.
  */
-GType           gegl_buffer_get_type          (void) G_GNUC_CONST;
 
 /**
  * gegl_buffer_new: (skip)
@@ -235,10 +223,6 @@ gboolean          gegl_buffer_set_abyss      (GeglBuffer          *buffer,
  * Returns the number of pixels of the extent of the buffer.
  */
 #define gegl_buffer_get_pixel_count(buffer) (gegl_buffer_get_width(buffer) * gegl_buffer_get_height(buffer))
-
-#ifndef GEGL_AUTO_ROWSTRIDE
-#define GEGL_AUTO_ROWSTRIDE 0
-#endif
 
 /**
  * gegl_buffer_get: (skip)

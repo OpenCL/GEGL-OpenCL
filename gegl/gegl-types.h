@@ -46,9 +46,10 @@ GType gegl_config_get_type (void) G_GNUC_CONST;
 #define GEGL_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CONFIG, GeglConfig))
 #define GEGL_IS_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CONFIG))
 
-typedef struct _GeglCurve  GeglCurve;
-typedef struct _GeglPath   GeglPath;
-typedef struct _GeglColor  GeglColor;
+typedef struct _GeglSampler GeglSampler;
+typedef struct _GeglCurve   GeglCurve;
+typedef struct _GeglPath    GeglPath;
+typedef struct _GeglColor   GeglColor;
 
 typedef struct _GeglRectangle GeglRectangle;
 
@@ -64,7 +65,15 @@ GType gegl_rectangle_get_type (void) G_GNUC_CONST;
 
 #define  GEGL_RECTANGLE(x,y,w,h) (&((GeglRectangle){(x), (y),   (w), (h)}))
 
+typedef struct _GeglTileBackend GeglTileBackend;
+
 typedef struct _GeglOperationContext GeglOperationContext;
+
+typedef struct _GeglBuffer  GeglBuffer;
+GType gegl_buffer_get_type  (void) G_GNUC_CONST;
+#define GEGL_TYPE_BUFFER    (gegl_buffer_get_type ())
+#define GEGL_BUFFER(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_BUFFER, GeglBuffer))
+#define GEGL_IS_BUFFER(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_BUFFER))
 
 typedef struct _GeglOperation  GeglOperation;
 GType gegl_operation_get_type  (void) G_GNUC_CONST;

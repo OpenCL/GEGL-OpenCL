@@ -47,11 +47,6 @@ typedef struct _GeglTileHandlerChain      GeglTileHandlerChain;
 
 typedef struct _GeglTileStorage           GeglTileStorage;
 
-#ifndef __GEGL_BUFFER_H__
-typedef struct _GeglBuffer                GeglBuffer;
-typedef struct _GeglSampler               GeglSampler;
-#endif
-
 typedef struct _GeglCache                 GeglCache;
 
 typedef struct _GeglRegion                GeglRegion;
