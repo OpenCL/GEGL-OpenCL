@@ -35,8 +35,6 @@
 
 #include <glib-object.h>
 #include <glib/gstdio.h>
-#include <glib/gprintf.h>
-#include <gio/gio.h>
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
@@ -44,25 +42,12 @@
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-debug.h"
-#include "gegl-tile-handler.h"
 #include "gegl-tile-storage.h"
-#include "gegl-tile-backend.h"
 #include "gegl-tile-backend-file.h"
 #include "gegl-tile-backend-swap.h"
 #include "gegl-tile-backend-tiledir.h"
 #include "gegl-tile-backend-ram.h"
-#include "gegl-tile.h"
-#include "gegl-tile-handler-cache.h"
-#include "gegl-tile-handler-log.h"
-#include "gegl-tile-handler-empty.h"
-#include "gegl-sampler-nearest.h"
-#include "gegl-sampler-linear.h"
-#include "gegl-sampler-cubic.h"
-#include "gegl-sampler-nohalo.h"
-#include "gegl-sampler-lohalo.h"
 #include "gegl-types-internal.h"
-#include "gegl-utils.h"
-#include "gegl-buffer-index.h"
 #include "gegl-config.h"
 #include "gegl-buffer-cl-cache.h"
 
