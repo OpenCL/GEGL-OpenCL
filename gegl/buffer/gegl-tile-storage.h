@@ -46,8 +46,6 @@ struct _GeglTileStorage
   gint           tile_height;
   gint           tile_size;
   gint           px_size;
-  gint           width;
-  gint           height;
   gint           seen_zoom; /* the maximum zoom level we've seen tiles for */
 
   GeglTile      *hot_tile; /* cached tile for speeding up gegl_buffer_get_pixel

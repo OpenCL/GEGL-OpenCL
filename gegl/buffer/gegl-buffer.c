@@ -643,13 +643,6 @@ gegl_buffer_constructor (GType                  type,
           buffer->extent.width  = GEGL_BUFFER (source)->extent.width;
           buffer->extent.height = GEGL_BUFFER (source)->extent.height;
         }
-      else if (GEGL_IS_TILE_STORAGE (source))
-        {
-          buffer->extent.x = 0;
-          buffer->extent.y = 0;
-          buffer->extent.width  = GEGL_TILE_STORAGE (source)->width;
-          buffer->extent.height = GEGL_TILE_STORAGE (source)->height;
-        }
       else
         {
           buffer->extent.x = 0;

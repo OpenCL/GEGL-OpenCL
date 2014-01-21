@@ -65,8 +65,6 @@ gegl_tile_storage_new (GeglTileBackend *backend)
 
   tile_storage->seen_zoom = 0;
   g_mutex_init (&tile_storage->mutex);
-  tile_storage->width = G_MAXINT;
-  tile_storage->height = G_MAXINT;
 
   tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
   handler  = GEGL_TILE_HANDLER (tile_storage);
