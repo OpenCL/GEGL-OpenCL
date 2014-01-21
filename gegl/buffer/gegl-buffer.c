@@ -695,14 +695,15 @@ gegl_buffer_constructor (GType                  type,
    */
   if (GEGL_IS_BUFFER (source))
     {
+      GeglBuffer *source_buf = GEGL_BUFFER (source);
       GeglRectangle parent;
       GeglRectangle request;
       GeglRectangle self;
 
-      parent.x = GEGL_BUFFER (source)->abyss.x - buffer->shift_x;
-      parent.y = GEGL_BUFFER (source)->abyss.y - buffer->shift_y;
-      parent.width = GEGL_BUFFER (source)->abyss.width;
-      parent.height = GEGL_BUFFER (source)->abyss.height;
+      parent.x = source_buf->abyss.x - buffer->shift_x;
+      parent.y = source_buf->abyss.y - buffer->shift_y;
+      parent.width = source_buf->abyss.width;
+      parent.height = source_buf->abyss.height;
 
       request.x = buffer->abyss.x;
       request.y = buffer->abyss.y;
@@ -727,21 +728,11 @@ gegl_buffer_constructor (GType                  type,
       buffer->abyss.y      = self.y;
       buffer->abyss.width  = self.width;
       buffer->abyss.height = self.height;
-    }
 
-  /* compute our own total shift <- this should probably happen
-   * approximatly first */
-  if (GEGL_IS_BUFFER (source))
-    {
-      GeglBuffer *source_buf;
-
-      source_buf = GEGL_BUFFER (source);
-
+      /* compute our own total shift <- this should probably happen
+       * approximatly first */
       buffer->shift_x += source_buf->shift_x;
       buffer->shift_y += source_buf->shift_y;
-    }
-  else
-    {
     }
 
   buffer->tile_storage = gegl_buffer_tile_storage (buffer);
