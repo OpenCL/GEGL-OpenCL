@@ -68,11 +68,6 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   tile_storage->width = G_MAXINT;
   tile_storage->height = G_MAXINT;
 
-  if (g_object_class_find_property (G_OBJECT_GET_CLASS (backend), "path"))
-    {
-      g_object_get (backend, "path", &tile_storage->path, NULL);
-    }
-
   tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
   handler  = GEGL_TILE_HANDLER (tile_storage);
 
@@ -142,8 +137,6 @@ gegl_tile_storage_finalize (GObject *object)
 {
   GeglTileStorage *self = GEGL_TILE_STORAGE (object);
 
-  if (self->path)
-    g_free (self->path);
   g_mutex_clear (&self->mutex);
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
