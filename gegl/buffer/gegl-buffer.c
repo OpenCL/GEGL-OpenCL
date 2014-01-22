@@ -461,19 +461,8 @@ gegl_buffer_backend2 (GeglBuffer *buffer)
 {
   GeglTileSource *tmp = GEGL_TILE_SOURCE (buffer);
 
-  if (!tmp)
-    return NULL;
-
-  do
-    {
-      tmp = GEGL_TILE_HANDLER (tmp)->source;
-    }
-  while (tmp &&
-         !GEGL_IS_TILE_BACKEND (tmp));
-
-  if (!tmp &&
-      !GEGL_IS_TILE_BACKEND (tmp))
-    return NULL;
+  while (tmp && !GEGL_IS_TILE_BACKEND (tmp))
+    tmp = GEGL_TILE_HANDLER (tmp)->source;
 
   return (GeglTileBackend *) tmp;
 }
@@ -497,15 +486,12 @@ gegl_buffer_backend (GeglBuffer *buffer)
 static GeglTileStorage *
 gegl_buffer_tile_storage (GeglBuffer *buffer)
 {
-  GeglTileSource *tmp = (GeglTileSource*) buffer;
+  GeglTileSource *tmp = GEGL_TILE_SOURCE (buffer);
 
-  do
-    {
-      tmp = ((GeglTileHandler *) (tmp))->source;
-    }
-  while (!GEGL_IS_TILE_STORAGE (tmp));
+  while (tmp && !GEGL_IS_TILE_STORAGE (tmp))
+    tmp = GEGL_TILE_HANDLER (tmp)->source;
 
-  g_assert (tmp);
+  g_warn_if_fail (tmp);
 
   return (GeglTileStorage *) tmp;
 }
@@ -515,7 +501,7 @@ gegl_buffer_storage_changed (GeglTileStorage     *storage,
                              const GeglRectangle *rect,
                              gpointer             userdata)
 {
-  g_signal_emit_by_name (GEGL_BUFFER (userdata), "changed", rect, NULL);
+  gegl_buffer_emit_changed_signal (GEGL_BUFFER (userdata), rect);
 }
 
 static GObject *

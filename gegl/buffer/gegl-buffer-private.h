@@ -72,7 +72,7 @@ struct _GeglBuffer
                                           useful for debugging */
   gint              alloc_stack_size;
 
-  gpointer          backend;
+  GeglTileBackend  *backend;
 };
 
 struct _GeglBufferClass

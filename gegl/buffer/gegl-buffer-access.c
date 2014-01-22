@@ -1453,14 +1453,8 @@ gegl_buffer_copy (GeglBuffer          *src,
            */
           {
             /* first we do a dumb copy,. but with fetched tiles */
-
+            GeglTileHandlerCache *cache = dst->tile_storage->cache;
             gint dst_x, dst_y;
-            GeglTileHandlerChain   *storage;
-            GeglTileHandlerCache   *cache;
-
-            storage = GEGL_TILE_HANDLER_CHAIN (dst->tile_storage);
-            cache = GEGL_TILE_HANDLER_CACHE (gegl_tile_handler_chain_get_first (storage, GEGL_TYPE_TILE_HANDLER_CACHE));
-
 
             for (dst_y = cow_rect.y + dst->shift_y; dst_y < cow_rect.y + dst->shift_y + cow_rect.height; dst_y += tile_height)
             for (dst_x = cow_rect.x + dst->shift_x; dst_x < cow_rect.x + dst->shift_x + cow_rect.width; dst_x += tile_width)
@@ -1482,7 +1476,7 @@ gegl_buffer_copy (GeglBuffer          *src,
                                                       stx, sty, 0);
 
                 dst_tile = gegl_tile_dup (src_tile);
-                dst_tile->tile_storage = (void*)storage;
+                dst_tile->tile_storage = dst->tile_storage;
                 dst_tile->x = dtx;
                 dst_tile->y = dty;
                 dst_tile->z = 0;
