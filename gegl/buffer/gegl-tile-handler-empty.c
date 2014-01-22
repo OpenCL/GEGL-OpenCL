@@ -23,6 +23,7 @@
 #include "gegl-types.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer-private.h"
+#include "gegl-utils.h"
 #include "gegl-tile-handler.h"
 #include "gegl-tile-handler-empty.h"
 #include "gegl-tile-backend.h"
@@ -41,6 +42,41 @@ finalize (GObject *object)
   G_OBJECT_CLASS (gegl_tile_handler_empty_parent_class)->finalize (object);
 }
 
+static GeglTile *
+_new_empty_tile (const gint tile_size)
+{
+  static const gint  common_empty_size = sizeof (gdouble) * 4 * 128 * 128;
+  static guchar     *common_buffer = NULL;
+
+  GeglTile *tile;
+
+  if (tile_size > common_empty_size)
+    {
+      /* The tile size is too big to use the shared buffer */
+      tile = gegl_tile_new (tile_size);
+
+      memset (gegl_tile_get_data (tile), 0x00, tile_size);
+      tile->is_zero_tile = 1;
+    }
+  else
+    {
+      if (!common_buffer && g_once_init_enter (&common_buffer))
+        {
+          guchar *allocated_buffer = gegl_malloc (common_empty_size);
+          memset (allocated_buffer, 0x00, common_empty_size);
+          g_once_init_leave (&common_buffer, allocated_buffer);
+        }
+
+      tile = gegl_tile_new_bare ();
+
+      tile->destroy_notify = NULL;
+      tile->data = common_buffer;
+      tile->size = tile_size;
+      tile->is_zero_tile = 1;
+    }
+
+  return tile;
+}
 
 static GeglTile *
 get_tile (GeglTileSource *gegl_tile_source,
@@ -57,12 +93,10 @@ get_tile (GeglTileSource *gegl_tile_source,
   if (tile)
     return tile;
 
-  if (G_UNLIKELY(!empty->tile))
+  if (G_UNLIKELY (!empty->tile))
     {
       gint tile_size = gegl_tile_backend_get_tile_size (empty->backend);
-      empty->tile    = gegl_tile_new (tile_size);
-      memset (gegl_tile_get_data (empty->tile), 0x00, tile_size);
-      empty->tile->is_zero_tile = 1;
+      empty->tile    = _new_empty_tile (tile_size);
     }
 
   return gegl_tile_handler_dup_tile (GEGL_TILE_HANDLER (empty),
