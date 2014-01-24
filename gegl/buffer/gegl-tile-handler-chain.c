@@ -30,62 +30,20 @@ G_DEFINE_TYPE (GeglTileHandlerChain, gegl_tile_handler_chain,
                GEGL_TYPE_TILE_HANDLER)
 
 static void
-gegl_tile_handler_chain_nuke_cache (GeglTileHandlerChain *tile_handler_chain)
-{
-  GSList *iter;
-
-  while (gegl_tile_handler_chain_get_first (tile_handler_chain, GEGL_TYPE_TILE_HANDLER_CACHE))
-    {
-      iter = tile_handler_chain->chain;
-      while (iter)
-        {
-          if (GEGL_IS_TILE_HANDLER_CACHE (iter->data))
-            {
-              g_object_unref (iter->data);
-              tile_handler_chain->chain = g_slist_remove (tile_handler_chain->chain, iter->data);
-              break;
-            }
-          iter = iter->next;
-        }
-    }
-}
-
-static void
 gegl_tile_handler_chain_dispose (GObject *object)
 {
   GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (object);
-  GSList       *iter;
-  GSList       *chain;
+  GSList *iter = tile_handler_chain->chain;
 
-  /* Get rid of the cache before any further parts of the deconstruction of the
-   * TileStore chain, unwritten tiles need a living TileStore for their
-   * deconstruction.
-   */
-  gegl_tile_handler_chain_nuke_cache (tile_handler_chain);
-
-  /* While we destroy tile_handler_chain->chain, don't have
-   * tile_handler_chain->chain set, because it might otherwise be used
-   * by other objects in the dispose phase
-   */
-  chain = tile_handler_chain->chain;
-  tile_handler_chain->chain = NULL;
-
-  iter = chain;
   while (iter)
     {
-      if (iter->data)
-        {
-          if (G_IS_OBJECT (iter->data))
-            g_object_unref (iter->data);
-          else
-            g_free (iter->data);
-        }
-      iter = iter->next;
-    }
+      tile_handler_chain->chain = iter->next;
 
-  if (chain)
-    g_slist_free (chain);
-  chain = NULL;
+      g_object_unref (iter->data);
+      g_slist_free_1 (iter);
+
+      iter = tile_handler_chain->chain;
+    }
 
   G_OBJECT_CLASS (gegl_tile_handler_chain_parent_class)->dispose (object);
 }
