@@ -286,7 +286,6 @@ get_tile (GeglTileSource *gegl_tile_source,
   GeglTileStorage     *tile_storage;
   gint                 tile_width;
   gint                 tile_height;
-  gint                 tile_size;
 
   if (source)
     tile = gegl_tile_source_get_tile (source, x, y, z);
@@ -305,11 +304,8 @@ get_tile (GeglTileSource *gegl_tile_source,
   if (z > tile_storage->seen_zoom)
     tile_storage->seen_zoom = z;
 
-  g_object_get (zoom->backend,
-                "tile-width", &tile_width,
-                "tile-height", &tile_height,
-                "tile-size", &tile_size,
-                NULL);
+  tile_width = tile_storage->tile_width;
+  tile_height = tile_storage->tile_height;
 
   {
     gint      i, j;
