@@ -413,11 +413,7 @@ gegl_buffer_dispose (GObject *object)
     {
       GeglTileBackend *backend = gegl_buffer_backend (buffer);
 
-      /* only flush non-internal backends,. */
-      if (!(GEGL_IS_TILE_BACKEND_FILE (backend) ||
-            GEGL_IS_TILE_BACKEND_RAM (backend) ||
-            GEGL_IS_TILE_BACKEND_TILE_DIR (backend) ||
-            GEGL_IS_TILE_BACKEND_SWAP (backend)))
+      if (gegl_tile_backend_get_flush_on_destroy (backend))
         gegl_buffer_flush (buffer);
 
       gegl_tile_source_reinit (GEGL_TILE_SOURCE (handler->source));

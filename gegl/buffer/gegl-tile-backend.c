@@ -39,7 +39,8 @@ enum
   PROP_TILE_HEIGHT,
   PROP_PX_SIZE,
   PROP_TILE_SIZE,
-  PROP_FORMAT
+  PROP_FORMAT,
+  PROP_FLUSH_ON_DESTROY
 };
 
 static void
@@ -72,6 +73,10 @@ get_property (GObject    *gobject,
         g_value_set_pointer (value, (void*)backend->priv->format);
         break;
 
+      case PROP_FLUSH_ON_DESTROY:
+        g_value_set_boolean (value, backend->priv->flush_on_destroy);
+        break;
+
       default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
         break;
@@ -98,6 +103,10 @@ set_property (GObject      *gobject,
 
       case PROP_FORMAT:
         backend->priv->format = g_value_get_pointer (value);
+        break;
+
+      case PROP_FLUSH_ON_DESTROY:
+        backend->priv->flush_on_destroy = g_value_get_boolean (value);
         break;
 
       default:
@@ -162,6 +171,12 @@ gegl_tile_backend_class_init (GeglTileBackendClass *klass)
                                                          "babl format",
                                                          G_PARAM_READWRITE |
                                                          G_PARAM_CONSTRUCT_ONLY));
+  g_object_class_install_property (gobject_class, PROP_FLUSH_ON_DESTROY,
+                                   g_param_spec_boolean ("flush-on-destroy", "flush-on-destroy",
+                                                         "Cache tiles will be flushed before the backend is destroyed",
+                                                         TRUE,
+                                                         G_PARAM_READWRITE |
+                                                         G_PARAM_CONSTRUCT));
 
   g_type_class_add_private (gobject_class, sizeof (GeglTileBackendPrivate));
 }
@@ -218,6 +233,19 @@ GeglTileSource *
 gegl_tile_backend_peek_storage (GeglTileBackend *backend)
 {
   return backend->priv->storage;
+}
+
+void
+gegl_tile_backend_set_flush_on_destroy (GeglTileBackend *tile_backend,
+                                        gboolean         flush_on_destroy)
+{
+  tile_backend->priv->flush_on_destroy = flush_on_destroy;
+}
+
+gboolean
+gegl_tile_backend_get_flush_on_destroy (GeglTileBackend *tile_backend)
+{
+  return tile_backend->priv->flush_on_destroy;
 }
 
 void

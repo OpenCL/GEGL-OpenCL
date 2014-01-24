@@ -796,6 +796,8 @@ gegl_tile_backend_swap_constructor (GType                  type,
 
   backend->priv->shared = FALSE;
 
+  gegl_tile_backend_set_flush_on_destroy (backend, FALSE);
+
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "constructing swap backend");
 
   return object;

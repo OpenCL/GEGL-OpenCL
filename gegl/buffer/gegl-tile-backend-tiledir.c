@@ -356,6 +356,9 @@ gegl_tile_backend_tiledir_constructor (GType                  type,
   gio->buffer_dir = g_file_new_for_commandline_arg (gio->path);
   g_file_make_directory (gio->buffer_dir, NULL, NULL);
   ((GeglTileSource*)(object))->command = gegl_tile_backend_tiledir_command;
+
+  gegl_tile_backend_set_flush_on_destroy (GEGL_TILE_BACKEND (object), FALSE);
+
   return object;
 }
 

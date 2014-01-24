@@ -1212,6 +1212,8 @@ gegl_tile_backend_file_constructor (GType                  type,
 
   backend->priv->header = &self->header;
 
+  gegl_tile_backend_set_flush_on_destroy (backend, FALSE);
+
   return object;
 }
 

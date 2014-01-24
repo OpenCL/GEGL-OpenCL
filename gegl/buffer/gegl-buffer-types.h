@@ -36,6 +36,8 @@ struct _GeglTileBackendPrivate
   gint        px_size;   /* size of a single pixel in bytes */
   gint        tile_size; /* size of an entire tile in bytes */
 
+  gboolean    flush_on_destroy;
+
   GeglRectangle extent;
 
   gpointer    header;

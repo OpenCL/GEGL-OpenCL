@@ -108,6 +108,19 @@ void  gegl_tile_backend_set_extent    (GeglTileBackend *tile_backend,
 
 GeglRectangle gegl_tile_backend_get_extent (GeglTileBackend *tile_backend);
 
+/**
+ * gegl_tile_backend_set_flush_on_destroy:
+ * @tile_backend: a #GeglTileBackend
+ * @flush_on_destroy: true if the backend needs to be flushed
+ *
+ * Control whether cached data will be written to the backend before it
+ * is destroyed. If false unwritten data will be discarded.
+ */
+void gegl_tile_backend_set_flush_on_destroy (GeglTileBackend *tile_backend,
+                                             gboolean         flush_on_destroy);
+
+gboolean gegl_tile_backend_get_flush_on_destroy (GeglTileBackend *tile_backend);
+
 GType gegl_tile_backend_get_type (void) G_GNUC_CONST;
 
 /**

@@ -345,6 +345,8 @@ gegl_tile_backend_ram_constructor (GType                  type,
                                         NULL,
                                         ram_entry_free_func);
 
+  gegl_tile_backend_set_flush_on_destroy (GEGL_TILE_BACKEND (object), FALSE);
+
   return object;
 }
 
