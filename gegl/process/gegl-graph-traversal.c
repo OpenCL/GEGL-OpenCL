@@ -375,16 +375,18 @@ gegl_graph_process (GeglGraphTraversal *path)
   GeglBuffer *result = NULL;
   GeglOperationContext *context = NULL;
   GeglOperationContext *last_context = NULL;
+  GeglBuffer *operation_result = NULL;
 
   for (list_iter = path->dfs_path; list_iter; list_iter = list_iter->next)
     {
       GeglNode *node = GEGL_NODE (list_iter->data);
       GeglOperation *operation = node->operation;
-      GeglBuffer *operation_result = NULL;
       g_return_val_if_fail (node, NULL);
       g_return_val_if_fail (operation, NULL);
       
       GEGL_INSTRUMENT_START();
+
+      operation_result = NULL;
 
       if (last_context)
         gegl_operation_context_purge (last_context);
@@ -458,9 +460,8 @@ gegl_graph_process (GeglGraphTraversal *path)
   
   if (last_context)
     {
-      GValue *value = gegl_operation_context_get_value (context, "output");
-      if (value)
-        result = g_value_dup_object (value);
+      if (operation_result)
+        result = g_object_ref (operation_result);
       else if (gegl_node_has_pad (last_context->operation->node, "output"))
         result = g_object_ref (gegl_graph_get_shared_empty (path));
       gegl_operation_context_purge (last_context);
