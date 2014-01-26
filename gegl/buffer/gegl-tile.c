@@ -24,8 +24,6 @@
 #include <unistd.h>
 #endif
 
-#define __GEGL_TILE_C
-
 #include <glib-object.h>
 
 #include "gegl-types-internal.h"
