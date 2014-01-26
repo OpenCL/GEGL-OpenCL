@@ -51,8 +51,6 @@ enum
 
 guint gegl_tile_storage_signals[LAST_SIGNAL] = { 0 };
 
-GeglTileBackend * gegl_buffer_backend (GeglBuffer *buffer);
-
 GeglTileStorage *
 gegl_tile_storage_new (GeglTileBackend *backend)
 {
