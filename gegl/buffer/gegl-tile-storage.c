@@ -63,9 +63,6 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   GeglTileHandler       *empty = NULL;
   GeglTileHandler       *zoom = NULL;
 
-  tile_storage->seen_zoom = 0;
-  g_mutex_init (&tile_storage->mutex);
-
   tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
   handler  = GEGL_TILE_HANDLER (tile_storage);
 
@@ -75,28 +72,7 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   tile_storage->format      = gegl_tile_backend_get_format (backend);
   tile_storage->tile_size   = gegl_tile_backend_get_tile_size (backend);
 
-  gegl_tile_handler_set_source (handler, (void*)backend);
-
-  { /* should perhaps be a.. method on gegl_tile_handler_chain_set_source
-       wrapping handler_set_source() and this*/
-    GeglTileHandlerChain *tile_handler_chain2 = GEGL_TILE_HANDLER_CHAIN (handler);
-    GSList         *iter   = (void *) tile_handler_chain2->chain;
-    while (iter && iter->next)
-      iter = iter->next;
-    if (iter)
-      {
-        gegl_tile_handler_set_source (GEGL_TILE_HANDLER (iter->data), handler->source);
-      }
-  }
-
-  backend = GEGL_TILE_BACKEND (handler->source);
-
-#if 0
-  if (g_getenv("GEGL_LOG_TILE_BACKEND")||
-      g_getenv("GEGL_TILE_LOG"))
-    gegl_tile_handler_chain_add (tile_handler_chain,
-                                 g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
-#endif
+  gegl_tile_handler_set_source (handler, GEGL_TILE_SOURCE (backend));
 
   cache = gegl_tile_handler_cache_new ();
   empty = gegl_tile_handler_empty_new (backend);
@@ -114,18 +90,11 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   g_object_unref (zoom);
   g_object_unref (empty);
 
-#if 0
-  if (g_getenv("GEGL_LOG_TILE_CACHE"))
-    gegl_tile_handler_chain_add (tile_handler_chain,
-                                 g_object_new (GEGL_TYPE_TILE_HANDLER_LOG, NULL));
-#endif
-
   tile_storage->cache = (GeglTileHandlerCache *) cache;
   ((GeglTileHandlerCache *) cache)->tile_storage = tile_storage;
   gegl_tile_handler_chain_bind (tile_handler_chain);
 
-  ((GeglTileBackend *)gegl_buffer_backend2 ((void*)tile_storage))->priv->storage = (gpointer)
-                                              tile_storage;
+  backend->priv->storage = tile_storage;
 
   return tile_storage;
 }
@@ -160,6 +129,8 @@ gegl_tile_storage_class_init (GeglTileStorageClass *class)
 }
 
 static void
-gegl_tile_storage_init (GeglTileStorage *buffer)
+gegl_tile_storage_init (GeglTileStorage *tile_storage)
 {
+  tile_storage->seen_zoom = 0;
+  g_mutex_init (&tile_storage->mutex);
 }
