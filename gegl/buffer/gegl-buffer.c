@@ -404,13 +404,6 @@ gegl_buffer_dispose (GObject *object)
 
       if (gegl_tile_backend_get_flush_on_destroy (backend))
         gegl_buffer_flush (buffer);
-
-      gegl_tile_source_reinit (GEGL_TILE_SOURCE (handler->source));
-
-#if 0
-      g_object_unref (handler->source);
-      handler->source = NULL; /* this might be a dangerous way of marking that we have already voided */
-#endif
     }
 
   _gegl_buffer_drop_hot_tile (buffer);

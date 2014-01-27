@@ -113,23 +113,29 @@ gegl_tile_handler_cache_init (GeglTileHandlerCache *cache)
   gegl_tile_cache_init ();
 }
 
+typedef struct
+{
+  GeglTileHandlerCache *cache;
+  GSList               *free_list;
+} CacheReInitContext;
 
 static void
-gegl_tile_handler_cache_reinit_buffer_tiles (gpointer itm,
+gegl_tile_handler_cache_reinit_buffer_tiles (gpointer queue_item,
                                              gpointer userdata)
 {
-  CacheItem *item;
-  item = itm;
-  if (item->handler == userdata)
+  CacheReInitContext *ctx  = userdata;
+  CacheItem          *item = queue_item;
+
+  if (item->handler == ctx->cache)
     {
-      GeglTileHandlerCache *cache = userdata;
-      cache->free_list = g_slist_prepend (cache->free_list, item);
+      ctx->free_list = g_slist_prepend (ctx->free_list, item);
     }
 }
 
 static void
 gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
 {
+  CacheReInitContext    ctx = {cache, NULL};
   CacheItem            *item;
   GSList               *iter;
 
@@ -143,11 +149,8 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
     return;
 
   g_mutex_lock (&mutex);
-  /* only throw out items belonging to this cache instance */
-
-  cache->free_list = NULL;
-  g_queue_foreach (cache_queue, gegl_tile_handler_cache_reinit_buffer_tiles, cache);
-  for (iter = cache->free_list; iter; iter = g_slist_next (iter))
+  g_queue_foreach (cache_queue, gegl_tile_handler_cache_reinit_buffer_tiles, &ctx);
+  for (iter = ctx.free_list; iter; iter = g_slist_next (iter))
     {
       item = iter->data;
       if (item->tile)
@@ -161,67 +164,22 @@ gegl_tile_handler_cache_reinit (GeglTileHandlerCache *cache)
       g_hash_table_remove (cache_ht, item);
       g_slice_free (CacheItem, item);
     }
-  g_slist_free (cache->free_list);
-  cache->free_list = NULL;
+  g_slist_free (ctx.free_list);
   g_mutex_unlock (&mutex);
-}
-
-static void
-gegl_tile_handler_cache_dispose_buffer_tiles (gpointer itm,
-                                              gpointer userdata)
-{
-  CacheItem *item;
-  item = itm;
-  if (item->handler == userdata)
-    {
-      GeglTileHandlerCache *cache = userdata;
-      cache->free_list = g_slist_prepend (cache->free_list, item);
-    }
 }
 
 static void
 gegl_tile_handler_cache_dispose (GObject *object)
 {
-  GeglTileHandlerCache *cache;
-  CacheItem            *item;
-  GSList               *iter;
+  GeglTileHandlerCache *cache = GEGL_TILE_HANDLER_CACHE (object);
 
-  cache = (GeglTileHandlerCache*) (object);
-
-  /* only throw out items belonging to this cache instance */
-
-  cache->free_list = NULL;
-  /* XXX: for optimization this could be delayed,. or collected among multiple
-   * buffer destructions, to avoid the overhead of walking the full queue for
-   * every tiny buffer being destroyed.
-   */
-
-  if (cache->count)
-    {
-      g_mutex_lock (&mutex);
-      g_queue_foreach (cache_queue, gegl_tile_handler_cache_dispose_buffer_tiles, cache);
-      for (iter = cache->free_list; iter; iter = g_slist_next (iter))
-        {
-            item = iter->data;
-            if (item->tile)
-              {
-                cache_total -= item->tile->size;
-                gegl_tile_unref (item->tile);
-                cache->count--;
-              }
-            g_queue_unlink (cache_queue, &item->link);
-            g_hash_table_remove (cache_ht, item);
-            g_slice_free (CacheItem, item);
-        }
-      g_slist_free (cache->free_list);
-      cache->free_list = NULL;
-      g_mutex_unlock (&mutex);
-    }
+  gegl_tile_handler_cache_reinit (cache);
 
   if (cache->count < 0)
     {
       g_warning ("cache-handler tile balance not zero: %i\n", cache->count);
     }
+
   G_OBJECT_CLASS (gegl_tile_handler_cache_parent_class)->dispose (object);
 }
 
