@@ -135,17 +135,6 @@ gegl_buffer_get_property (GObject    *gobject,
         break;
 
       case PROP_PATH:
-        {
-          GeglTileBackend *backend = gegl_buffer_backend (buffer);
-
-          if (GEGL_IS_TILE_BACKEND_FILE (backend))
-            {
-              if (buffer->path)
-                g_free (buffer->path);
-              buffer->path = NULL;
-              g_object_get (backend, "path", &buffer->path, NULL);
-            }
-        }
         g_value_set_string (value, buffer->path);
         break;
 
@@ -544,6 +533,14 @@ gegl_buffer_constructor (GType                  type,
           buffer->format = gegl_tile_backend_get_format (backend);
           buffer->tile_width = gegl_tile_backend_get_tile_width (backend);
           buffer->tile_height = gegl_tile_backend_get_tile_height (backend);
+
+          if (buffer->path)
+            g_free (buffer->path);
+
+          if (GEGL_IS_TILE_BACKEND_FILE (backend))
+            g_object_get (backend, "path", &buffer->path, NULL);
+          else
+            buffer->path = NULL;
         }
       else
         {
@@ -883,7 +880,7 @@ gegl_buffer_class_init (GeglBufferClass *class)
                                                         "URI to where the buffer is stored",
                                                         NULL,
                                                         G_PARAM_READWRITE |
-                                                        G_PARAM_CONSTRUCT));
+                                                        G_PARAM_CONSTRUCT_ONLY));
 
   gegl_buffer_signals[CHANGED] =
     g_signal_new ("changed",
