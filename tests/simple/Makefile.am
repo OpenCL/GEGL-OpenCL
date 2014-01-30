@@ -1,5 +1,6 @@
 # The tests
 noinst_PROGRAMS =			\
+	test-backend-file		\
 	test-buffer-cast		\
 	test-buffer-changes		\
 	test-buffer-extract		\

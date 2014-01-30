@@ -5,6 +5,7 @@
 /.libs
 /Makefile
 /Makefile.in
+/test-backend-file
 /test-change-processor-rect
 /test-color-op
 /test-convert-format
