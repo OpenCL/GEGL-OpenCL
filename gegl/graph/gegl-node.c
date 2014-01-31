@@ -69,6 +69,7 @@ struct _GeglNodePrivate
   GSList          *children;  /*  used for children */
   GeglNode        *parent;
   gchar           *name;
+  gchar           *debug_name;
   GeglEvalManager *eval_manager;
 };
 
@@ -110,6 +111,8 @@ static void            gegl_node_disconnect_sources       (GeglNode      *self);
 static void            gegl_node_property_changed         (GObject       *gobject,
                                                            GParamSpec    *arg1,
                                                            gpointer       user_data);
+
+static void            gegl_node_update_debug_name        (GeglNode *node);
 
 
 G_DEFINE_TYPE_WITH_CODE (GeglNode, gegl_node, G_TYPE_OBJECT,
@@ -274,6 +277,12 @@ gegl_node_finalize (GObject *gobject)
     {
       g_free (self->priv->name);
     }
+
+  if (self->priv->debug_name)
+    {
+      g_free (self->priv->debug_name);
+    }
+
   g_mutex_clear (&self->mutex);
 
   G_OBJECT_CLASS (gegl_node_parent_class)->finalize (gobject);
@@ -1213,6 +1222,9 @@ gegl_node_set_operation_object (GeglNode      *self,
 
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (gegl_node_invalidate_have_rect), self);
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (gegl_node_property_changed), self);
+
+  gegl_node_update_debug_name (self);
+
   gegl_node_property_changed (G_OBJECT (operation), (GParamSpec *) self, self);
 }
 
@@ -1495,31 +1507,32 @@ gegl_node_get_gegl_operation (GeglNode *node)
   return node->operation;
 }
 
+static void
+gegl_node_update_debug_name (GeglNode *node)
+{
+  const gchar  *name = gegl_node_get_name (node);
+  const gchar  *operation = gegl_node_get_operation (node);
+  gchar        *new_name = NULL;
+
+  g_return_if_fail (GEGL_IS_NODE (node));
+
+  if (node->priv->debug_name)
+    g_free (node->priv->debug_name);
+
+  if (name && *name)
+    new_name = g_strdup_printf ("%s '%s' %p", operation ? operation : "(none)", name, node);
+  else
+    new_name = g_strdup_printf ("%s %p", operation ? operation : "(none)", node);
+
+  node->priv->debug_name = new_name;
+}
+
 const gchar *
 gegl_node_get_debug_name (GeglNode *node)
 {
-  static gchar  ret_buf[512];
-
-  const gchar  *name;
-  const gchar  *operation;
-
   g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
 
-  name      = gegl_node_get_name (node);
-  operation = gegl_node_get_operation (node);
-
-  if (name && *name)
-    {
-      g_snprintf (ret_buf, sizeof (ret_buf),
-                  "%s '%s' %p", operation ? operation : "(none)", name, node);
-    }
-  else
-    {
-      g_snprintf (ret_buf, sizeof (ret_buf),
-                  "%s %p", operation ? operation : "(none)", node);
-    }
-
-  return ret_buf;
+  return node->priv->debug_name;
 }
 
 GeglNode *
@@ -1821,7 +1834,10 @@ gegl_node_set_name (GeglNode    *self,
 
   if (self->priv->name)
     g_free (self->priv->name);
+
   self->priv->name = g_strdup (name);
+
+  gegl_node_update_debug_name (self);
 }
 
 void
