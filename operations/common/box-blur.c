@@ -180,9 +180,7 @@ static void prepare (GeglOperation *operation)
 #include "buffer/gegl-buffer-cl-iterator.h"
 
 #include "opencl/box-blur.cl.h"
-
 static GeglClRunData *cl_data = NULL;
-
 static gboolean
 cl_box_blur (cl_mem                in_tex,
              cl_mem                aux_tex,
@@ -192,57 +190,82 @@ cl_box_blur (cl_mem                in_tex,
              gint                  radius)
 {
   cl_int cl_err = 0;
-  size_t global_ws_hor[2], global_ws_ver[2];
-  size_t local_ws_hor[2], local_ws_ver[2];
-
+  size_t global_ws_hor[2], global_ws_ver[2], global_ws[2];
+  size_t local_ws_hor[2], local_ws_ver[2], local_ws[2];
+  size_t step_size ;
   if (!cl_data)
     {
-      const char *kernel_name[] = {"kernel_blur_hor", "kernel_blur_ver", NULL};
+      const char *kernel_name[] = { "kernel_blur_hor", "kernel_blur_ver","kernel_box_blur_fast", NULL};
       cl_data = gegl_cl_compile_and_build (box_blur_cl_source, kernel_name);
     }
 
   if (!cl_data)
     return TRUE;
-
-  local_ws_hor[0] = 1;
-  local_ws_hor[1] = 256;
-  global_ws_hor[0] = roi->height + 2 * radius;
-  global_ws_hor[1] = ((roi->width + local_ws_hor[1] -1)/local_ws_hor[1]) * local_ws_hor[1];
-
-  local_ws_ver[0] = 1;
-  local_ws_ver[1] = 256;
-  global_ws_ver[0] = roi->height;
-  global_ws_ver[1] = ((roi->width + local_ws_ver[1] -1)/local_ws_ver[1]) * local_ws_ver[1];
+  step_size = 64;
+  local_ws[0]=256;
+  local_ws[1]=1;
 
 
-  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
-                                    sizeof(cl_mem), (void*)&in_tex,
-                                    sizeof(cl_mem), (void*)&aux_tex,
-                                    sizeof(cl_int), (void*)&roi->width,
-                                    sizeof(cl_int), (void*)&radius,
-                                    NULL);
-  CL_CHECK;
+  if( radius <=110 )
+  {
+    global_ws[0] = (roi->width + local_ws[0] - 2 * radius - 1) / ( local_ws[0] - 2 * radius ) * local_ws[0];
+    global_ws[1] = (roi->height + step_size - 1) / step_size;
+    cl_err = gegl_cl_set_kernel_args(cl_data->kernel[2],
+                                     sizeof(cl_mem), (void *)&in_tex,
+                                     sizeof(cl_mem), (void *)&out_tex,
+                                     sizeof(cl_float4)*local_ws[0], (void *)NULL,
+                                     sizeof(cl_int), (void *)&roi->width,
+                                     sizeof(cl_int), (void *)&roi->height,
+                                     sizeof(cl_int), (void *)&radius,
+                                     sizeof(cl_int), (void *)&step_size, NULL);
+    CL_CHECK;
+    cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue(),
+                                         cl_data->kernel[2], 2,
+                                         NULL, global_ws, local_ws, 0, NULL, NULL );
+       CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
-                                        cl_data->kernel[0], 2,
-                                        NULL, global_ws_hor, local_ws_hor,
-                                        0, NULL, NULL);
-  CL_CHECK;
+  }
+  else
+  {
+    local_ws_hor[0] = 1;
+    local_ws_hor[1] = 256;
+    global_ws_hor[0] = roi->height + 2 * radius;
+    global_ws_hor[1] = ((roi->width + local_ws_hor[1] -1)/local_ws_hor[1]) * local_ws_hor[1];
+
+    local_ws_ver[0] = 1;
+    local_ws_ver[1] = 256;
+    global_ws_ver[0] = roi->height;
+    global_ws_ver[1] = ((roi->width + local_ws_ver[1] -1)/local_ws_ver[1]) * local_ws_ver[1];
 
 
-  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[1],
-                                    sizeof(cl_mem), (void*)&aux_tex,
-                                    sizeof(cl_mem), (void*)&out_tex,
-                                    sizeof(cl_int), (void*)&roi->width,
-                                    sizeof(cl_int), (void*)&radius,
-                                    NULL);
-  CL_CHECK;
+    cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                      sizeof(cl_mem), (void*)&in_tex,
+                                      sizeof(cl_mem), (void*)&aux_tex,
+                                      sizeof(cl_int), (void*)&roi->width,
+                                      sizeof(cl_int), (void*)&radius,
+                                      NULL);
+    CL_CHECK;
+    cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                          cl_data->kernel[0], 2,
+                                          NULL, global_ws_hor, local_ws_hor,
+                                          0, NULL, NULL);
+    CL_CHECK;
 
-  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
-                                        cl_data->kernel[1], 2,
-                                        NULL, global_ws_ver, local_ws_ver,
-                                        0, NULL, NULL);
-  CL_CHECK;
+
+    cl_err = gegl_cl_set_kernel_args (cl_data->kernel[1],
+                                      sizeof(cl_mem), (void*)&aux_tex,
+                                      sizeof(cl_mem), (void*)&out_tex,
+                                      sizeof(cl_int), (void*)&roi->width,
+                                      sizeof(cl_int), (void*)&radius,
+                                      NULL);
+    CL_CHECK;
+
+    cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                          cl_data->kernel[1], 2,
+                                          NULL, global_ws_ver, local_ws_ver,
+                                          0, NULL, NULL);
+    CL_CHECK;
+  }
 
   return FALSE;
 
