@@ -13,6 +13,7 @@ noinst_PROGRAMS =			\
 	test-gegl-tile			\
 	test-image-compare		\
 	test-misc			\
+	test-node-connections		\
 	test-node-properties		\
 	test-object-forked		\
 	test-opencl-colors		\
