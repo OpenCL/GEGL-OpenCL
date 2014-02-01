@@ -1154,6 +1154,12 @@ static void
 gegl_node_set_operation_object (GeglNode      *self,
                                 GeglOperation *operation)
 {
+  GeglNode    **consumer_nodes = NULL;
+  const gchar **consumer_names = NULL;
+  GeglNode    *input           = NULL;
+  GeglNode    *aux             = NULL;
+  GeglNode    *aux2            = NULL;
+
   g_return_if_fail (GEGL_IS_NODE (self));
 
   if (!operation)
@@ -1161,64 +1167,49 @@ gegl_node_set_operation_object (GeglNode      *self,
 
   g_return_if_fail (GEGL_IS_OPERATION (operation));
 
-  {
-    GSList   *output_c        = NULL;
-    GeglNode *output          = NULL;
-    gchar    *output_dest_pad = NULL;
-    GSList   *old_pads        = NULL;
-    GeglNode *input           = NULL;
-    GeglNode *aux             = NULL;
-    GeglNode *aux2            = NULL;
+  if (self->operation)
+    g_object_unref (self->operation);
 
-    if (self->operation)
-      g_object_unref (self->operation);
+  self->operation = g_object_ref (operation);
 
-    g_object_ref (operation);
-    self->operation = operation;
+  if (gegl_node_has_pad (self, "output"))
+    gegl_node_get_consumers (self, "output", &consumer_nodes, &consumer_names);
 
-    /* FIXME: handle multiple outputs */
+  input = gegl_node_get_producer (self, "input", NULL);
+  aux   = gegl_node_get_producer (self, "aux", NULL);
+  aux2  = gegl_node_get_producer (self, "aux2", NULL);
 
-    if (gegl_node_get_pad (self, "output"))
-      output_c = gegl_pad_get_connections (gegl_node_get_pad (self, "output"));
-    if (output_c && output_c->data)
-      {
-        GeglConnection *connection = output_c->data;
-        GeglPad        *pad;
+  gegl_node_disconnect_sources (self);
+  gegl_node_disconnect_sinks (self);
 
-        output          = gegl_connection_get_sink_node (connection);
-        pad             = gegl_connection_get_sink_pad (connection);
-        output_dest_pad = g_strdup (pad->param_spec->name);
-      }
-    input = gegl_node_get_producer (self, "input", NULL);
-    aux   = gegl_node_get_producer (self, "aux", NULL);
-    aux2  = gegl_node_get_producer (self, "aux2", NULL);
+  /* Delete all the pads from the previous operation */
+  while (self->pads)
+    gegl_node_remove_pad (self, self->pads->data);
 
-    gegl_node_disconnect_sources (self);
-    gegl_node_disconnect_sinks (self);
+  gegl_operation_attach (operation, self);
 
-    /* Delete all the pads from the previous operation */
-    while ((old_pads = gegl_node_get_pads (self)) != NULL)
-      {
-        gegl_node_remove_pad (self, old_pads->data);
-      }
+  /* FIXME: This should handle all input pads instead of just these 3 */
+  if (input)
+    gegl_node_connect_from (self, "input", input, "output");
+  if (aux)
+    gegl_node_connect_from (self, "aux", aux, "output");
+  if (aux2)
+    gegl_node_connect_from (self, "aux2", aux2, "output");
 
-    gegl_operation_attach (operation, self);
+  if (consumer_nodes)
+    {
+      for (gint i = 0; consumer_nodes[i]; ++i)
+        {
+          GeglNode    *output          = consumer_nodes[i];
+          const gchar *output_dest_pad = consumer_names[i];
 
-    /* FIXME: handle this in a more generic way, but it is needed to allow
-     * the attach to work properly.
-     */
-    if (input)
-      gegl_node_connect_from (self, "input", input, "output");
-    if (aux)
-      gegl_node_connect_from (self, "aux", aux, "output");
-    if (aux2)
-      gegl_node_connect_from (self, "aux2", aux2, "output");
-    if (output)
-      gegl_node_connect_to (self, "output", output, output_dest_pad);
+          if (output)
+            gegl_node_connect_to (self, "output", output, output_dest_pad);
+        }
 
-    if (output_dest_pad)
-      g_free (output_dest_pad);
-  }
+      g_free (consumer_nodes);
+      g_free (consumer_names);
+    }
 
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (gegl_node_invalidate_have_rect), self);
   g_signal_connect (G_OBJECT (operation), "notify", G_CALLBACK (gegl_node_property_changed), self);
