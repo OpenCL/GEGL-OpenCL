@@ -33,17 +33,8 @@ static void
 gegl_tile_handler_chain_dispose (GObject *object)
 {
   GeglTileHandlerChain *tile_handler_chain = GEGL_TILE_HANDLER_CHAIN (object);
-  GSList *iter = tile_handler_chain->chain;
 
-  while (iter)
-    {
-      tile_handler_chain->chain = iter->next;
-
-      g_object_unref (iter->data);
-      g_slist_free_1 (iter);
-
-      iter = tile_handler_chain->chain;
-    }
+  g_slist_free_full (tile_handler_chain->chain, g_object_unref);
 
   G_OBJECT_CLASS (gegl_tile_handler_chain_parent_class)->dispose (object);
 }
