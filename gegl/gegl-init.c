@@ -243,7 +243,6 @@ static gchar    *cmd_gegl_tile_size      = NULL;
 static gchar    *cmd_babl_tolerance      = NULL;
 static gchar    *cmd_gegl_threads        = NULL;
 static gboolean *cmd_gegl_disable_opencl = NULL;
-static gchar    *cmd_gegl_queue_size     = NULL;
 
 static const GOptionEntry cmd_entries[]=
 {
@@ -286,11 +285,6 @@ static const GOptionEntry cmd_entries[]=
       "gegl-disable-opencl", 0, 0,
       G_OPTION_ARG_NONE, &cmd_gegl_disable_opencl,
       N_("Disable OpenCL"), NULL
-    },
-    {
-      "gegl-queue-size", 0, 0,
-      G_OPTION_ARG_STRING, &cmd_gegl_queue_size,
-      N_("Maximum size of a file backend's writer thread queue (in MB)"), "<count>"
     },
     { NULL }
 };
@@ -380,9 +374,6 @@ static void gegl_config_parse_env (GeglConfig *config)
       else
         g_warning ("Unknown value for GEGL_USE_OPENCL: %s", opencl_env);
     }
-
-  if (g_getenv ("GEGL_QUEUE_SIZE"))
-    config->queue_size = atoi(g_getenv ("GEGL_QUEUE_SIZE")) * 1024 * 1024;
 
   if (g_getenv ("GEGL_SWAP"))
     g_object_set (config, "swap", g_getenv ("GEGL_SWAP"), NULL);
@@ -612,8 +603,6 @@ gegl_post_parse_hook (GOptionContext *context,
     g_object_set (config, "babl-tolerance", atof(cmd_babl_tolerance), NULL);
   if (cmd_gegl_disable_opencl)
     gegl_cl_hard_disable ();
-  if (cmd_gegl_queue_size)
-    config->queue_size = atoi (cmd_gegl_queue_size) * 1024 * 1024;
 
   gegl_init_swap_dir ();
 

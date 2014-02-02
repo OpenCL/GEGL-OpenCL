@@ -77,7 +77,7 @@ typedef struct
 {
   SwapEntry *entry;
   gint       length;
-  guchar    *source;
+  GeglTile  *tile;
   ThreadOp   operation;
 } ThreadParams;
 
@@ -96,7 +96,7 @@ static void        gegl_tile_backend_swap_entry_read    (GeglTileBackendSwap   *
                                                          guchar                *dest);
 static void        gegl_tile_backend_swap_entry_write   (GeglTileBackendSwap   *self,
                                                          SwapEntry             *entry,
-                                                         guchar                *source);
+                                                         GeglTile              *tile);
 static SwapEntry * gegl_tile_backend_swap_entry_create  (gint                   x,
                                                          gint                   y,
                                                          gint                   z);
@@ -160,10 +160,8 @@ static GThread      *writer_thread = NULL;
 static GQueue       *queue         = NULL;
 static ThreadParams *in_progress   = NULL;
 static gboolean      exit_thread   = FALSE;
-static gint          queue_size    = 0;
 static GMutex        mutex;
 static GCond         queue_cond;
-static GCond         max_cond;
 
 
 static void
@@ -171,18 +169,10 @@ gegl_tile_backend_swap_push_queue (ThreadParams *params)
 {
   g_mutex_lock (&mutex);
 
-  /* block if the queue has gotten too big */
-  while (queue_size > gegl_config ()->queue_size)
-    g_cond_wait (&max_cond, &mutex);
-
   g_queue_push_tail (queue, params);
 
   if (params->operation == OP_WRITE)
-    {
-      params->entry->link = g_queue_peek_tail_link (queue);
-      queue_size += params->length + sizeof (GList) +
-        sizeof (ThreadParams);
-    }
+    params->entry->link = g_queue_peek_tail_link (queue);
 
   /* wake up the writer thread */
   g_cond_signal (&queue_cond);
@@ -210,7 +200,8 @@ gegl_tile_backend_swap_write (ThreadParams *params)
     {
       gint wrote;
       wrote = write (out_fd,
-                     params->source + params->length - to_be_written,
+                     gegl_tile_get_data (params->tile) + params->length
+                     - to_be_written,
                      to_be_written);
       if (wrote <= 0)
         {
@@ -271,15 +262,7 @@ gegl_tile_backend_swap_writer_thread (gpointer ignored)
       in_progress = NULL;
 
       if (params->operation == OP_WRITE)
-        {
-          queue_size -= params->length + sizeof (GList) +
-            sizeof (ThreadParams);
-          g_free (params->source);
-
-          /* unblock the main thread if the queue had gotten too big */
-          if (queue_size < gegl_config ()->queue_size)
-            g_cond_signal (&max_cond);
-        }
+        gegl_tile_unref (params->tile);
 
       g_slice_free (ThreadParams, params);
 
@@ -312,7 +295,7 @@ gegl_tile_backend_swap_entry_read (GeglTileBackendSwap *self,
 
       if (queued_op)
         {
-          memcpy (dest, queued_op->source, to_be_read);
+          memcpy (dest, gegl_tile_get_data (queued_op->tile), to_be_read);
           g_mutex_unlock (&mutex);
 
           GEGL_NOTE(GEGL_DEBUG_TILE_BACKEND, "read entry %i, %i, %i from queue", entry->x, entry->y, entry->z);
@@ -356,11 +339,10 @@ gegl_tile_backend_swap_entry_read (GeglTileBackendSwap *self,
 static void
 gegl_tile_backend_swap_entry_write (GeglTileBackendSwap *self,
                                     SwapEntry           *entry,
-                                    guchar              *source)
+                                    GeglTile            *tile)
 {
   ThreadParams *params;
   gint          length = gegl_tile_backend_get_tile_size (GEGL_TILE_BACKEND (self));
-  guchar       *new_source;
 
   gegl_tile_backend_swap_ensure_exist ();
 
@@ -371,10 +353,11 @@ gegl_tile_backend_swap_entry_write (GeglTileBackendSwap *self,
       if (entry->link)
         {
           params = entry->link->data;
-          memcpy (params->source, source, length);
+          gegl_tile_unref (params->tile);
+          params->tile = gegl_tile_dup (tile);
           g_mutex_unlock (&mutex);
 
-          GEGL_NOTE(GEGL_DEBUG_TILE_BACKEND, "overwrote queue entry %i, %i, %i at %i", entry->x, entry->y, entry->z, (gint)entry->offset);
+          GEGL_NOTE(GEGL_DEBUG_TILE_BACKEND, "tile %i, %i, %i at %i is already enqueued, changed data", entry->x, entry->y, entry->z, (gint)entry->offset);
 
           return;
         }
@@ -382,13 +365,10 @@ gegl_tile_backend_swap_entry_write (GeglTileBackendSwap *self,
       g_mutex_unlock (&mutex);
     }
 
-  new_source = g_malloc (length);
-  memcpy (new_source, source, length);
-
   params            = g_slice_new0 (ThreadParams);
   params->operation = OP_WRITE;
   params->length    = length;
-  params->source    = new_source;
+  params->tile      = gegl_tile_dup (tile);
   params->entry     = entry;
 
   gegl_tile_backend_swap_push_queue (params);
@@ -488,7 +468,7 @@ gegl_tile_backend_swap_entry_destroy (GeglTileBackendSwap *self,
         {
           ThreadParams *queued_op = link->data;
           g_queue_delete_link (queue, link);
-          g_free (queued_op->source);
+          gegl_tile_unref (queued_op->tile);
           g_slice_free (ThreadParams, queued_op);
         }
 
@@ -657,7 +637,7 @@ gegl_tile_backend_swap_set_tile (GeglTileSource *self,
       g_hash_table_insert (tile_backend_swap->index, entry, entry);
     }
 
-  gegl_tile_backend_swap_entry_write (tile_backend_swap, entry, gegl_tile_get_data (tile));
+  gegl_tile_backend_swap_entry_write (tile_backend_swap, entry, tile);
 
   gegl_tile_mark_as_stored (tile);
 
