@@ -1069,6 +1069,9 @@ gegl_buffer_remove_handler (GeglBuffer *buffer,
   g_return_if_fail (g_slist_find (chain->chain, handler));
 
   chain->chain = g_slist_remove (chain->chain, handler);
+
+  gegl_tile_handler_set_source (handler, NULL);
+
   g_object_unref (handler);
 
   gegl_tile_handler_chain_bind (chain);
