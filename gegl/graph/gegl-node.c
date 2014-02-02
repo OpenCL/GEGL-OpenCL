@@ -451,6 +451,8 @@ void
 gegl_node_remove_pad (GeglNode *self,
                       GeglPad  *pad)
 {
+  GeglNode *pad_node;
+
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (GEGL_IS_PAD (pad));
 
@@ -461,6 +463,12 @@ gegl_node_remove_pad (GeglNode *self,
 
   if (gegl_pad_is_input (pad))
     self->input_pads = g_slist_remove (self->input_pads, pad);
+
+  pad_node = gegl_pad_get_node (pad);
+
+  /* This was a proxy pad, also remove the nop node */
+  if (self != pad_node)
+    gegl_node_remove_child (self, pad_node);
 
   g_object_unref (pad);
 }
