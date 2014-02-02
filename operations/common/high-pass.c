@@ -56,6 +56,8 @@ attach (GeglOperation *operation)
   gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-x");
   gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-y");
   gegl_operation_meta_redirect (operation, "contrast", contrast, "contrast");
+
+  gegl_operation_meta_watch_nodes (operation, invert, blur, opacity, over, contrast, NULL);
 }
 
 static void

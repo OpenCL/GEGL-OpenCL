@@ -83,6 +83,11 @@ attach (GeglOperation *operation)
   gegl_operation_meta_redirect (operation, "y", translate, "y");
   gegl_operation_meta_redirect (operation, "color", color, "value");
   gegl_operation_meta_redirect (operation, "opacity", opacity, "value");
+
+  gegl_operation_meta_watch_nodes (operation,
+                                   over, translate, opacity,
+                                   blur, darken, color,
+                                   NULL);
 }
 
 static void

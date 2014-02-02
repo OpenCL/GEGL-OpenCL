@@ -216,6 +216,14 @@ static void attach (GeglOperation *operation)
   gegl_node_link_many (self->input, self->composite_op, self->output, NULL);
   gegl_node_connect_from (self->composite_op, "aux", self->translate, "output");
 
+  gegl_operation_meta_watch_nodes (operation,
+                                   self->composite_op,
+                                   self->translate,
+                                   self->scale,
+                                   self->opacity,
+                                   self->load,
+                                   NULL);
+
   do_setup (operation);
 }
 

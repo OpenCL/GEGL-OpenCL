@@ -108,6 +108,8 @@ static void attach (GeglOperation *operation)
   do_setup (operation, o->path);
 
   gegl_node_link (self->load, self->output);
+
+  gegl_operation_meta_watch_node (operation, self->load);
 }
 
 static GeglNode *

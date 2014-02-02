@@ -53,6 +53,9 @@ static void attach (GeglOperation *operation)
   color = gegl_node_new_child (gegl, "operation", "gegl:color", NULL);
   crop  = gegl_node_new_child (gegl, "operation", "gegl:crop", NULL);
 
+  gegl_operation_meta_watch_node (operation, color);
+  gegl_operation_meta_watch_node (operation, crop);
+
   gegl_node_link_many (color, crop, output, NULL);
 
   gegl_operation_meta_redirect (operation, "color", color, "value");

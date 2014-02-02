@@ -76,6 +76,8 @@ attach (GeglOperation *operation)
   gegl_operation_meta_redirect (operation, "xoff", seamless, "xoff");
   gegl_operation_meta_redirect (operation, "yoff", seamless, "yoff");
   gegl_operation_meta_redirect (operation, "error-msg", seamless, "error-msg");
+
+  gegl_operation_meta_watch_nodes (operation, seamless, overlay, NULL);
 }
 
 static void

@@ -36,56 +36,37 @@ gegl_chant_double_ui (radius2, _("Radius 2"),
 
 #include "gegl-chant.h"
 
-typedef struct _Priv Priv;
-struct _Priv
-{
-  GeglNode *self;
-  GeglNode *input;
-  GeglNode *output;
-
-  GeglNode *multiply;
-  GeglNode *subtract;
-  GeglNode *blur1;
-  GeglNode *blur2;
-};
-
 static void attach (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv       *priv = g_new0 (Priv, 1);
+  GeglNode *gegl = operation->node;
+  GeglNode *input, *output, *subtract, *blur1, *blur2;
 
-  o->chant_data = (void*) priv;
+  input    = gegl_node_get_input_proxy (gegl, "input");
+  output   = gegl_node_get_output_proxy (gegl, "output");
 
-  if (!priv->blur1)
-    {
-      GeglNode      *gegl;
-      gegl = operation->node;
+  subtract = gegl_node_new_child (gegl,
+                                  "operation", "gegl:subtract",
+                                  NULL);
 
-      priv->input    = gegl_node_get_input_proxy (gegl, "input");
-      priv->output   = gegl_node_get_output_proxy (gegl, "output");
+  blur1    = gegl_node_new_child (gegl,
+                                  "operation", "gegl:gaussian-blur",
+                                  NULL);
 
-      priv->subtract = gegl_node_new_child (gegl,
-                                            "operation", "gegl:subtract",
-                                            NULL);
+  blur2    = gegl_node_new_child (gegl,
+                                  "operation", "gegl:gaussian-blur",
+                                  NULL);
 
-      priv->blur1    = gegl_node_new_child (gegl,
-                                            "operation", "gegl:gaussian-blur",
-                                            NULL);
+  gegl_node_link_many (input, blur1, subtract, output, NULL);
+  gegl_node_link (input, blur2);
 
-      priv->blur2    = gegl_node_new_child (gegl,
-                                            "operation", "gegl:gaussian-blur",
-                                            NULL);
+  gegl_node_connect_from (subtract, "aux", blur2, "output");
 
-      gegl_node_link_many (priv->input, priv->blur1, priv->subtract, priv->output, NULL);
-      gegl_node_link (priv->input, priv->blur2);
+  gegl_operation_meta_redirect (operation, "radius1", blur1, "std-dev-x");
+  gegl_operation_meta_redirect (operation, "radius1", blur1, "std-dev-y");
+  gegl_operation_meta_redirect (operation, "radius2", blur2, "std-dev-x");
+  gegl_operation_meta_redirect (operation, "radius2", blur2, "std-dev-y");
 
-      gegl_node_connect_from (priv->subtract, "aux",   priv->blur2,     "output");
-
-      gegl_operation_meta_redirect (operation, "radius1", priv->blur1, "std-dev-x");
-      gegl_operation_meta_redirect (operation, "radius1", priv->blur1, "std-dev-y");
-      gegl_operation_meta_redirect (operation, "radius2", priv->blur2, "std-dev-x");
-      gegl_operation_meta_redirect (operation, "radius2", priv->blur2, "std-dev-y");
-    }
+  gegl_operation_meta_watch_nodes (operation, subtract, blur1, blur2, NULL);
 }
 
 static void

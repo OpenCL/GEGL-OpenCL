@@ -87,6 +87,8 @@ attach (GeglOperation *operation)
   gegl_operation_meta_redirect (operation, "abyss-policy", vblur, "abyss-policy");
   gegl_operation_meta_redirect (operation, "filter",       vblur, "filter");
   gegl_operation_meta_redirect (operation, "clip-extent",  vblur, "clip-extent");
+
+  gegl_operation_meta_watch_nodes (operation, hblur, vblur, NULL);
 }
 
 static void
