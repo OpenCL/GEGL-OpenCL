@@ -1100,14 +1100,6 @@ gegl_node_property_changed (GObject    *gobject,
 {
   GeglNode *self = GEGL_NODE (user_data);
 
-  if (self->operation &&
-      arg1 != user_data &&
-      g_type_is_a (G_OBJECT_TYPE (self->operation), GEGL_TYPE_OPERATION_META))
-    {
-      gegl_operation_meta_property_changed (
-        GEGL_OPERATION_META (self->operation), arg1, user_data);
-    }
-
   if (arg1 != user_data &&
       ((arg1 &&
         arg1->value_type != GEGL_TYPE_BUFFER) ||

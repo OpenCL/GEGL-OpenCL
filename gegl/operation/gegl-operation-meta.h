@@ -60,7 +60,7 @@ void  gegl_operation_meta_redirect         (GeglOperation     *operation,
                                             const gchar       *internal_name);
 
 void  gegl_operation_meta_property_changed (GeglOperationMeta *self,
-                                            GParamSpec        *arg1,
+                                            GParamSpec        *pspec,
                                             gpointer           user_data);
 
 G_END_DECLS

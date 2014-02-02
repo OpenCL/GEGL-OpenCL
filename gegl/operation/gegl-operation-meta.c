@@ -25,10 +25,14 @@
 #include "gegl-operation-meta.h"
 
 static void       finalize     (GObject       *self_object);
+
 static GeglNode * detect       (GeglOperation *operation,
                                 gint           x,
                                 gint           y);
 
+static GObject *   constructor (GType                  gtype,
+                                guint                  n_properties,
+                                GObjectConstructParam *properties);
 
 G_DEFINE_TYPE (GeglOperationMeta, gegl_operation_meta, GEGL_TYPE_OPERATION)
 
@@ -39,6 +43,7 @@ gegl_operation_meta_class_init (GeglOperationMetaClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize               = finalize;
+  object_class->constructor            = constructor;
   GEGL_OPERATION_CLASS (klass)->detect = detect;
 }
 
@@ -46,6 +51,18 @@ static void
 gegl_operation_meta_init (GeglOperationMeta *self)
 {
   self->redirects = NULL;
+}
+
+static GObject *
+constructor (GType                  gtype,
+             guint                  n_properties,
+             GObjectConstructParam *properties)
+{
+  GObject *operation = G_OBJECT_CLASS (gegl_operation_meta_parent_class)->constructor (gtype, n_properties, properties);
+
+  g_signal_connect (operation, "notify", G_CALLBACK (gegl_operation_meta_property_changed), NULL);
+
+  return operation;
 }
 
 static GeglNode *
@@ -115,14 +132,11 @@ redirect_destroy (Redirect *self)
   g_slice_free (Redirect, self);
 }
 
-/* FIXME: take GeglNode's as parameters, since we need
- * extra behavior provided by GeglNode on top of GObject.
- */
 static void
-gegl_node_copy_property_property (GObject     *source,
-                                  const gchar *source_property,
-                                  GObject     *destination,
-                                  const gchar *destination_property)
+gegl_node_copy_property_property (GeglOperation *source,
+                                  const gchar   *source_property,
+                                  GeglOperation *destination,
+                                  const gchar   *destination_property)
 {
   GValue      value = { 0 };
   GParamSpec *spec  = g_object_class_find_property (G_OBJECT_GET_CLASS (source),
@@ -130,8 +144,8 @@ gegl_node_copy_property_property (GObject     *source,
 
   g_assert (spec);
   g_value_init (&value, G_PARAM_SPEC_VALUE_TYPE (spec));
-  gegl_node_get_property (GEGL_OPERATION (source)->node, source_property, &value);
-  gegl_node_set_property (GEGL_OPERATION (destination)->node, destination_property, &value);
+  gegl_node_get_property (source->node, source_property, &value);
+  gegl_node_set_property (destination->node, destination_property, &value);
   g_value_unset (&value);
 }
 
@@ -147,31 +161,31 @@ gegl_operation_meta_redirect (GeglOperation *operation,
   self->redirects = g_slist_prepend (self->redirects, redirect);
 
   /* set default value */
-  gegl_node_copy_property_property (G_OBJECT (operation),
+  gegl_node_copy_property_property (operation,
                                     redirect->name,
-                                    G_OBJECT (gegl_node_get_gegl_operation (internal)),
+                                    gegl_node_get_gegl_operation (internal),
                                     redirect->internal_name);
 }
 
 void
 gegl_operation_meta_property_changed (GeglOperationMeta *self,
-                                      GParamSpec        *arg1,
+                                      GParamSpec        *pspec,
                                       gpointer           user_data)
 {
-  g_assert (GEGL_IS_OPERATION_META (self));
-  if (arg1)
+  GSList *iter;
+
+  g_return_if_fail (GEGL_IS_OPERATION_META (self));
+  g_return_if_fail (pspec);
+
+  for (iter = self->redirects; iter; iter = iter->next)
     {
-      GSList *iter = self->redirects;
-      while (iter)
+      Redirect *redirect = iter->data;
+
+      if (!strcmp (redirect->name, pspec->name))
         {
-          Redirect *redirect = iter->data;
-          if (!strcmp (redirect->name, arg1->name))
-            {
-              gegl_node_copy_property_property (G_OBJECT (self), arg1->name,
-                                                G_OBJECT (gegl_node_get_gegl_operation (redirect->internal)),
-                                                redirect->internal_name);
-            }
-          iter = iter->next;
+          gegl_node_copy_property_property (GEGL_OPERATION (self), pspec->name,
+                                            gegl_node_get_gegl_operation (redirect->internal),
+                                            redirect->internal_name);
         }
     }
 }
