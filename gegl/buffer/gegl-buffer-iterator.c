@@ -362,7 +362,7 @@ needs_indirect_read (GeglBufferIterator *iter,
     return TRUE;
 
   /* Needs abyss generation */
-  if (!gegl_rectangle_contains (&sub->buffer->extent, &iter->roi[index]))
+  if (!gegl_rectangle_contains (&sub->buffer->abyss, &iter->roi[index]))
     return TRUE;
 
   return FALSE;
