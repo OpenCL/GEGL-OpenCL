@@ -1775,33 +1775,35 @@ GeglCache *
 gegl_node_get_cache (GeglNode *node)
 {
   GeglPad    *pad;
+  GeglNode   *real_node;
   const Babl *format = NULL;
   g_return_val_if_fail (GEGL_IS_NODE (node), NULL);
 
-  /* XXX: it should be possible to have cache for other pads than
-   * only "output" pads
-   */
   pad = gegl_node_get_pad (node, "output");
-  if (!pad)
-    return NULL;
+  g_return_val_if_fail (pad, NULL);
+
+  real_node = gegl_pad_get_node (pad);
+
+  if (node != real_node)
+    return gegl_node_get_cache (real_node);
 
   format = gegl_pad_get_format (pad);
 
-  if (node->cache && format &&
-      node->cache->format != format)
-  {
-    /* FIXME: Also cover output_format = NULL and cache->format != RGBA float */
-    g_object_unref(node->cache);
-    node->cache = NULL;
-  }
+  if (!format)
+    {
+      g_warning ("Output of %s has no format", gegl_node_get_debug_name (node));
+
+      format = babl_format ("RGBA float");
+    }
+
+  if (node->cache && node->cache->format != format)
+    {
+      g_object_unref (node->cache);
+      node->cache = NULL;
+    }
 
   if (!node->cache)
     {
-      if (!format)
-        {
-          format = babl_format ("RGBA float");
-        }
-
       node->cache = g_object_new (GEGL_TYPE_CACHE,
                                   "format", format,
                                   NULL);
@@ -1815,6 +1817,7 @@ gegl_node_get_cache (GeglNode *node)
                         (GCallback) gegl_node_computed_event,
                         node);
     }
+
   return node->cache;
 }
 
