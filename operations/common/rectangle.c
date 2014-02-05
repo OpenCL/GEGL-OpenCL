@@ -14,10 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
- */
-
-/* FIXME: need to make this OpenRaster inspired layer integrate better
- * with the newer caching system
+ *           2013 Daniel Sabo
  */
 
 #include "config.h"
