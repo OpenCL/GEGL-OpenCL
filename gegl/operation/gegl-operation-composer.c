@@ -147,20 +147,12 @@ get_bounding_box (GeglOperation *self)
   GeglRectangle *in_rect  = gegl_operation_source_get_bounding_box (self, "input");
   GeglRectangle *aux_rect = gegl_operation_source_get_bounding_box (self, "aux");
 
-  if (!in_rect)
-    {
-      if (aux_rect)
-        return *aux_rect;
-      return result;
-    }
+  if (in_rect)
+    result = *in_rect;
+
   if (aux_rect)
-    {
-      gegl_rectangle_bounding_box (&result, in_rect, aux_rect);
-    }
-  else
-    {
-      return *in_rect;
-    }
+    gegl_rectangle_bounding_box (&result, &result, aux_rect);
+
   return result;
 }
 

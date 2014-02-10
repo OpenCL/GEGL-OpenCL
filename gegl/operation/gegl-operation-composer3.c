@@ -163,31 +163,15 @@ get_bounding_box (GeglOperation *self)
   GeglRectangle *aux_rect  = gegl_operation_source_get_bounding_box (self, "aux");
   GeglRectangle *aux2_rect = gegl_operation_source_get_bounding_box (self, "aux2");
 
-  if (!in_rect)
-    if (!aux_rect)
-      if (!aux2_rect)
-        return result;
-      else
-        return *aux2_rect;
-    else
-      if (!aux2_rect)
-        return *aux_rect;
-      else
-        gegl_rectangle_bounding_box (&result, aux_rect, aux2_rect);
-  else
-    if (!aux_rect)
-      if (!aux2_rect)
-        return *in_rect;
-      else
-        gegl_rectangle_bounding_box (&result, in_rect, aux2_rect);
-    else
-      if (!aux2_rect)
-        gegl_rectangle_bounding_box (&result, in_rect, aux_rect);
-      else
-        {
-          gegl_rectangle_bounding_box (&result, in_rect, aux_rect);
-          gegl_rectangle_bounding_box (&result, &result,  aux2_rect);
-        }
+  if (in_rect)
+    result = *in_rect;
+
+  if (aux_rect)
+    gegl_rectangle_bounding_box (&result, &result, aux_rect);
+
+  if (aux2_rect)
+    gegl_rectangle_bounding_box (&result, &result, aux2_rect);
+
   return result;
 }
 
