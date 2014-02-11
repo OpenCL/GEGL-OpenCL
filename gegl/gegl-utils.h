@@ -125,6 +125,8 @@ GeglRectangle *gegl_rectangle_dup       (const GeglRectangle *rectangle);
  *
  * Copies the rectangle information stored in @source over the information in
  * @destination.
+ *
+ * @destination may point to the same object as @source.
  */
 void        gegl_rectangle_copy          (GeglRectangle       *destination,
                                           const GeglRectangle *source);
@@ -137,6 +139,8 @@ void        gegl_rectangle_copy          (GeglRectangle       *destination,
  *
  * Computes the bounding box of the rectangles @source1 and @source2 and stores the
  * resulting bounding box in @destination.
+ *
+ * @destination may point to the same object as @source1 or @source2.
  */
 void        gegl_rectangle_bounding_box  (GeglRectangle       *destination,
                                           const GeglRectangle *source1,
@@ -148,9 +152,11 @@ void        gegl_rectangle_bounding_box  (GeglRectangle       *destination,
  * @src1: a #GeglRectangle
  * @src2: a #GeglRectangle
  *
- * Calculates the intersection of two rectangles. It is allows for dest to be the same
- * as either @src1 or @src2. If the rectangles do not intersect, dest's width and height
- * are set to 0 and its x and y values are undefined.
+ * Calculates the intersection of two rectangles. If the rectangles do not
+ * intersect, dest's width and height are set to 0 and its x and y values
+ * are undefined.
+ *
+ * @dest may point to the same object as @src1 or @src2.
  *
  * Returns TRUE if the rectangles intersect.
  */
@@ -236,7 +242,7 @@ gpointer gegl_calloc (gsize size, int n_memb) G_GNUC_MALLOC;
  * @pattern_size: the length of @src_ptr
  * @count: number of copies
  *
- * Fill @dst_ptr with @count copies of the byes in @src_ptr.
+ * Fill @dst_ptr with @count copies of the bytes in @src_ptr.
  */
 void gegl_memset_pattern              (void *       dst_ptr,
                                        const void * src_ptr,
