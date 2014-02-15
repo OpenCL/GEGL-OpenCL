@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+    <node operation='gegl:apply-lens'>
+	    <params>
+        <param name='refraction_index'>1.0</param>
+        <param name='keep_surroundings'>true</param>
+      </params>
+    </node>
+    <node operation='gegl:load'>
+      <params>
+        <param name='path'>data/car-stack.png</param>
+      </params>
+    </node>
+</gegl>
