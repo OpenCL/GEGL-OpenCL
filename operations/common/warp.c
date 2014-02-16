@@ -130,6 +130,9 @@ gauss (gdouble f)
 {
   /* This is not a real gauss function. */
   /* Approximation is valid if -1 < f < 1 */
+  if (f < -1.0)
+    return 0.0;
+
   if (f < -0.5)
     {
       f = -1.0 - f;
@@ -139,8 +142,13 @@ gauss (gdouble f)
   if (f < 0.5)
     return (1.0 - 2.0 * f*f);
 
-  f = 1.0 - f;
-  return (2.0 * f*f);
+  if (f < 1.0)
+    {
+      f = 1.0 - f;
+      return (2.0 * f*f);
+    }
+
+  return 0.0;
 }
 
 /* set up lookup table */
@@ -152,7 +160,7 @@ calc_lut (GeglChantO  *o)
   gint          x;
   gdouble       exponent;
 
-  length = ceil (0.5 * o->size + 2.0); /* Make sure the stamp's after value also always fits */
+  length = (gint)(0.5 * o->size + 1.0) + 1;
 
   priv->lookup = g_malloc (length * sizeof (gdouble));
 
@@ -185,14 +193,15 @@ get_stamp_force (GeglChantO *o,
   if (radius < 0.5 * o->size + 1)
     {
       /* linear interpolation */
-      gdouble a, ratio;
+      gint a;
+      gdouble ratio;
       gdouble before, after;
 
-      a = floor (radius);
+      a = (gint)(radius);
       ratio = (radius - a);
 
-      before = priv->lookup[(gint) a];
-      after = priv->lookup[(gint) a + 1];
+      before = priv->lookup[a];
+      after = priv->lookup[a + 1];
 
       return ratio * before + (1.0 - ratio) * after;
     }
