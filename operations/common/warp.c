@@ -152,7 +152,7 @@ calc_lut (GeglChantO  *o)
   gint          x;
   gdouble       exponent;
 
-  length = ceil (0.5 * o->size + 1.0);
+  length = ceil (0.5 * o->size + 2.0); /* Make sure the stamp's after value also always fits */
 
   priv->lookup = g_malloc (length * sizeof (gdouble));
 
