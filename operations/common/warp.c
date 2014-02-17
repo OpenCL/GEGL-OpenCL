@@ -388,6 +388,10 @@ process (GeglOperation       *operation,
   /* prepare for the recomputing of the op */
   priv->last_point_set = FALSE;
 
+  /* free the LUT */
+  g_free (priv->lookup);
+  priv->lookup = NULL;
+
   return TRUE;
 }
 
