@@ -203,7 +203,7 @@ get_stamp_force (GeglChantO *o,
       before = priv->lookup[a];
       after = priv->lookup[a + 1];
 
-      return ratio * before + (1.0 - ratio) * after;
+      return (1.0 - ratio) * before + ratio * after;
     }
 
   return 0.0;
