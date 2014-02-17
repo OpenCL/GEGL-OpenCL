@@ -160,7 +160,7 @@ calc_lut (GeglChantO  *o)
   gint          x;
   gdouble       exponent;
 
-  length = (gint)(0.5 * o->size + 1.0) + 1;
+  length = (gint)(0.5 * o->size + 1.0) + 2;
 
   priv->lookup = g_malloc (length * sizeof (gdouble));
 
