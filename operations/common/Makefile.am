@@ -12,6 +12,7 @@ opdir = $(ext_dir)
 op_LTLIBRARIES = \
 	alien-map.la \
 	antialias.la \
+	apply-lens.la \
 	bilateral-filter-fast.la \
 	bilateral-filter.la \
 	box-blur.la \

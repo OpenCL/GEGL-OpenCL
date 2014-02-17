@@ -5,6 +5,7 @@ gegl/gegl-init.c
 gegl/module/geglmodule.c
 operations/common/alien-map.c
 operations/common/antialias.c
+operations/common/apply-lens.c
 operations/common/bilateral-filter.c
 operations/common/bilateral-filter-fast.c
 operations/common/box-blur.c
