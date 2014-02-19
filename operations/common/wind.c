@@ -246,7 +246,6 @@ process (GeglOperation       *operation,
   dst_pix = dst_buf;
   x = 0;
   y = 0;
-  n_pixels = result->width * result->height;
   bleed_max = 0;
   bleed_index = 0;
   while (n_pixels--)
