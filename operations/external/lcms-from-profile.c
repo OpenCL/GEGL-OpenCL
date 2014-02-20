@@ -62,14 +62,21 @@ create_lcms_linear_rgb_profile (void)
 {
   cmsHPROFILE ret;
 
-  /* white point is D65 */
-  cmsCIExyY whitepoint = {0.312713, 0.329016, 1.0};
+  /* white point is D65 from the sRGB specs */
+  cmsCIExyY whitepoint = {0.3127, 0.3290, 1.0};
 
-  /* primaries are ITU‐R BT.709‐5 (xYY) */
+  /* primaries are ITU‐R BT.709‐5 (xYY),
+   * which are also the primaries from the sRGB specs,
+   * modified to properly account for hexadecimal quantization
+   * during the profile making process.
+   */
   cmsCIExyYTRIPLE primaries = {
-    /*R*/ {0.6400, 0.3300, 1.0},
-    /*G*/ {0.3000, 0.6000, 1.0},
-    /*B*/ {0.1500, 0.0600, 1.0}
+    /*R {0.6400, 0.3300, 1.0},*/
+    /*G {0.3000, 0.6000, 1.0},*/
+    /*B {0.1500, 0.0600, 1.0} */
+    /*R*/ {0.639998686, 0.330010138, 1.0},
+    /*G*/ {0.300003784, 0.600003357, 1.0},
+    /*B*/ {0.150002046, 0.059997204, 1.0}
   };
 
   /* linear light */
