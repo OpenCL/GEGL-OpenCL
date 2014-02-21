@@ -105,6 +105,8 @@ p2tr_cdt_get_segments_encroached_by (P2trCDT   *self,
        * since it's still faster */
       if (e->constrained && p2tr_cdt_is_encroached (e))
         p2tr_vedge_set_add2 (encroached, p2tr_vedge_new2 (e));
+
+      p2tr_edge_unref(e);
     }
 
   return encroached;
@@ -431,6 +433,9 @@ SplitEncroachedSubsegments (P2trDelaunayTerminator *self, gdouble theta, P2trTri
               p2tr_dt_enqueue_segment (self, e);
             p2tr_edge_unref (e);
           }
+
+        g_list_free(parts);
+        p2tr_point_unref(Pv);
       }
     p2tr_edge_unref (s);
   }

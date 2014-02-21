@@ -772,7 +772,15 @@ gegl_sc_context_free (GeglScContext *context)
     g_object_unref (context->uvt);
 
   gegl_sc_mesh_sampling_free (context->sampling);
+
+  /* p2tr_mesh_clear is necessary since p2tr_mesh_unref itself is unable to
+   * free context->mesh entirely.
+   * The reason is because the N points in context->mesh holds N references
+   * back to context->mesh itself, and an initiative to break these circular
+   * references is needed. */
+  p2tr_mesh_clear(context->mesh);
   p2tr_mesh_unref (context->mesh);
+
   gegl_sc_outline_free (context->outline);
 
   g_slice_free (GeglScContext, context);

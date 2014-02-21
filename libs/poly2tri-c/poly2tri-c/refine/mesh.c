@@ -200,11 +200,11 @@ p2tr_mesh_action_group_commit (P2trMesh *self)
 
   g_assert (self->record_undo);
 
+  self->record_undo = FALSE;
+
   for (iter = self->undo.head; iter != NULL; iter = iter->next)
     p2tr_mesh_action_unref ((P2trMeshAction*)iter->data);
   g_queue_clear (&self->undo);
-
-  self->record_undo = FALSE;
 }
 
 void
@@ -214,14 +214,16 @@ p2tr_mesh_action_group_undo (P2trMesh *self)
 
   g_assert (self->record_undo);
 
+  /* Set the record_undo flag to FALSE before p2tr_mesh_action_undo, so that
+   * we don't create zombie objects therein. */
+  self->record_undo = FALSE;
+
   for (iter = self->undo.tail; iter != NULL; iter = iter->prev)
     {
       p2tr_mesh_action_undo ((P2trMeshAction*)iter->data, self);
       p2tr_mesh_action_unref ((P2trMeshAction*)iter->data);
     }
   g_queue_clear (&self->undo);
-
-  self->record_undo = FALSE;
 }
 
 void

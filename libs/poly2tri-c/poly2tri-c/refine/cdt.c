@@ -319,6 +319,8 @@ p2tr_cdt_insert_point (P2trCDT           *self,
           GList *parts = p2tr_cdt_split_edge (self, edge, pt), *eIter;
           for (eIter = parts; eIter != NULL; eIter = eIter->next)
             p2tr_edge_unref ((P2trEdge*)eIter->data);
+          g_list_free(parts);
+
           inserted = TRUE;
           break;
         }

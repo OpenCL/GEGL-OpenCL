@@ -152,6 +152,9 @@ gegl_sc_compute_sample_list_weights (gdouble           Px,
       sl->total_weight += weightTemp;
       g_array_append_val (sl->weights, weightTemp);
     }
+
+  g_free (norms);
+  g_free (tan_as_half);
 }
 
 GeglScSampleList*

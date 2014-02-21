@@ -81,7 +81,7 @@ p2tr_cluster_get_for (P2trPoint   *P,
 
   g_queue_push_head (&cluster->edges, p2tr_edge_ref (E));
 
-  current = E;
+  current = p2tr_edge_ref (E);
   next = p2tr_point_edge_cw (P, current);
   
   while (next != g_queue_peek_head (&cluster->edges)
@@ -89,22 +89,29 @@ p2tr_cluster_get_for (P2trPoint   *P,
       && p2tr_cluster_cw_tri_between_is_in_domain (current, next))
     {
       g_queue_push_tail (&cluster->edges, p2tr_edge_ref (next));
+      p2tr_edge_unref (current);
       current = next;
       next = p2tr_point_edge_cw (P, current);
       cluster->min_angle = MIN (cluster->min_angle, temp_angle);
     }
+  p2tr_edge_unref (current);
+  p2tr_edge_unref (next);
 
-  current = E;
+  current = p2tr_edge_ref (E);
   next = p2tr_point_edge_ccw(P, current);
+  p2tr_edge_unref(next);
   while (next != g_queue_peek_tail (&cluster->edges)
       && (temp_angle = p2tr_edge_angle_between (current->mirror, next)) <= P2TR_CLUSTER_LIMIT_ANGLE
       && p2tr_cluster_cw_tri_between_is_in_domain (next, current))
     {
       g_queue_push_head (&cluster->edges, p2tr_edge_ref (next));
+      p2tr_edge_unref (current);
       current = next;
       next = p2tr_point_edge_ccw (P, current);
       cluster->min_angle = MIN(cluster->min_angle, temp_angle);
     }
+  p2tr_edge_unref (current);
+  p2tr_edge_unref (next);
 
   return cluster;
 }
