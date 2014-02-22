@@ -53,7 +53,7 @@ typedef struct
   GeglBufferHeader header;
   GList           *tiles;
   gchar           *path;
-  int             o;
+  gint             o;
 
   gint             tile_size;
   gint             offset;
@@ -259,11 +259,10 @@ gegl_buffer_save (GeglBuffer          *buffer,
   {
     gint z;
     gint factor = 1;
-    int  bufy = roi->y;
 
     for (z = 0; z < 1; z++)
       {
-        bufy = roi->y;
+        gint bufy = roi->y;
         while (bufy < roi->y + roi->height)
           {
             gint tiledy  = roi->y + bufy;
