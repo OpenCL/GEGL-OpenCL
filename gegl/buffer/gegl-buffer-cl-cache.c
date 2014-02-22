@@ -155,7 +155,6 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
           cl_err = gegl_clEnqueueReadBuffer(gegl_cl_get_command_queue(),
                                             entry->tex, CL_TRUE, 0, entry->roi.width * entry->roi.height * size, data,
                                             0, NULL, NULL);
-
           /* tile-ize */
           gegl_buffer_set (entry->buffer, &entry->roi, 0, entry->buffer->soft_format, data, GEGL_AUTO_ROWSTRIDE);
 
@@ -163,6 +162,8 @@ gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
           need_cl = TRUE;
 
           g_free(data);
+
+          CL_CHECK;
         }
     }
 
