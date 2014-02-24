@@ -4183,6 +4183,101 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", new_format);
 }
 
+#include "opencl/gegl-cl.h"
+#include "opencl/texturize-canvas.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+static gboolean
+cl_process(GeglOperation *op,
+           cl_mem in_tex,
+           cl_mem out_tex,
+           glong samples,
+           const GeglRectangle *roi,
+           gint level)
+{
+   GeglChantO *opt = GEGL_CHANT_PROPERTIES(op);
+   float mult = (float)opt->depth * 0.25;
+   const Babl *format = gegl_operation_get_format(op, "input");
+   int has_alpha = babl_format_has_alpha(format);
+   int components = babl_format_get_n_components(format) - has_alpha;
+   int xm, ym, offs;
+   size_t global_ws[] = {roi->width, roi->height};
+
+   switch(opt->direction)
+   {
+      default:
+      case GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT:
+          xm = 1;
+          ym = 128;
+          offs = 0;
+          break;
+      case GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_LEFT:
+          xm = -1;
+          ym=128;
+          offs = 127;
+          break;
+      case GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_LEFT:
+          xm = 128;
+          ym = 1;
+          offs = 0;
+          break;
+      case GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_RIGHT:
+          xm = 128;
+          ym = -1;
+          offs = 127;
+          break;
+   }
+
+   if(!cl_data)
+   {
+      const char *kernel_name[] = {"cl_texturize_canvas", NULL};
+      cl_data = gegl_cl_compile_and_build(texturize_canvas_cl_source, kernel_name);
+   }
+   if(!cl_data)
+      return TRUE;
+   else
+   {
+      cl_int cl_err = 0;
+
+      cl_mem sdata_tex = gegl_clCreateBuffer(gegl_cl_get_context(),
+                                             CL_MEM_USE_HOST_PTR|CL_MEM_READ_ONLY,
+                                             sizeof(cl_float)*128*128,(void *)sdata , &cl_err);
+      CL_CHECK;
+
+      cl_err = gegl_cl_set_kernel_args(cl_data->kernel[0],
+                                       sizeof(cl_mem), (void *)&in_tex,
+                                       sizeof(cl_mem), (void *)&out_tex,
+                                       sizeof(cl_mem), (void *)&sdata_tex,
+                                       sizeof(cl_int), (void *)&roi->x,
+                                       sizeof(cl_int), (void *)&roi->y,
+                                       sizeof(cl_int), (void *)&xm,
+                                       sizeof(cl_int), (void *)&ym,
+                                       sizeof(cl_int), (void *)&offs,
+                                       sizeof(cl_float), (void *)&mult,
+                                       sizeof(cl_int), (void *)&components,
+                                       sizeof(cl_int), (void *)&has_alpha, NULL);
+      CL_CHECK;
+
+      cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue(),
+                                           cl_data->kernel[0], 2, NULL,
+                                           global_ws, NULL, 0, NULL, NULL);
+      CL_CHECK;
+
+      cl_err = gegl_clFinish(gegl_cl_get_command_queue());
+      CL_CHECK;
+
+      cl_err = gegl_clReleaseMemObject(sdata_tex);
+      CL_CHECK_ONLY(cl_err);
+
+      return FALSE;
+
+error:
+      return TRUE;
+   }
+}
+
+
 static gboolean
 process (GeglOperation       *operation,
          void                *in_buf,
@@ -4271,8 +4366,10 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   point_filter_class->process = process;
+  point_filter_class->cl_process = cl_process;
   operation_class->prepare = prepare;
 
+  operation_class->opencl_support = TRUE;
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:texturize-canvas",
     "categories" , "artistic",
