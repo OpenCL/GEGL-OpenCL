@@ -300,6 +300,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:apply-lens",
     "categories",  "Distorts",
+    "license",     "GPL3+",
     "description", _("After applying this filter, a part of the active layer is rendered through a spherical lens."),
     "reference-composition", composition,
     NULL);
