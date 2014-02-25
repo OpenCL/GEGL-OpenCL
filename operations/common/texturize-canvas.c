@@ -4373,6 +4373,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:texturize-canvas",
     "categories" , "artistic",
+    "license"    , "GPL3+",
     "description", _("Textures the image as if it were an artist's canvas."),
     NULL);
 }
