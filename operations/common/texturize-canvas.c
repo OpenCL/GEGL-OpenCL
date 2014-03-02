@@ -4192,7 +4192,7 @@ static gboolean
 cl_process(GeglOperation *op,
            cl_mem in_tex,
            cl_mem out_tex,
-           glong samples,
+           size_t samples,
            const GeglRectangle *roi,
            gint level)
 {
