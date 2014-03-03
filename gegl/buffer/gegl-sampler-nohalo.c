@@ -149,7 +149,6 @@
  */
 
 #include "config.h"
-#include <glib-object.h>
 #include <math.h>
 
 #include "gegl.h"

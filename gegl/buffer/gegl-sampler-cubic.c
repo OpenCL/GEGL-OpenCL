@@ -21,10 +21,6 @@
 #include <string.h>
 #include <math.h>
 
-#include <glib-object.h>
-#include <glib/gstdio.h>
-#include <glib/gprintf.h>
-
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-sampler-cubic.h"
