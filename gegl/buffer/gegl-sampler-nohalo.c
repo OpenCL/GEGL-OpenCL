@@ -154,8 +154,6 @@
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
-#include "gegl-buffer-private.h"
-
 #include "gegl-sampler-nohalo.h"
 
 /*

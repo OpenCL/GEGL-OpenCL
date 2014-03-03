@@ -21,8 +21,6 @@
 #include <glib-object.h>
 #include <babl/babl.h>
 
-/* this file needs to be included by gegl-buffer-private */
-
 G_BEGIN_DECLS
 
 #define GEGL_TYPE_SAMPLER            (gegl_sampler_get_type ())

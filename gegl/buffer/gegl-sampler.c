@@ -27,8 +27,6 @@
 #include "gegl.h"
 #include "gegl-types-internal.h"
 #include "gegl-buffer.h"
-#include "gegl-utils.h"
-#include "gegl-buffer-private.h"
 
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
