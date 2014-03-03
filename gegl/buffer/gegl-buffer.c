@@ -1038,12 +1038,6 @@ gegl_buffer_add_handler (GeglBuffer *buffer,
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
   g_return_if_fail (GEGL_IS_TILE_HANDLER (handler));
 
-  g_object_set (handler,
-                "format", buffer->tile_storage->format,
-                "tile-width", buffer->tile_storage->tile_width,
-                "tile-height", buffer->tile_storage->tile_height,
-                NULL);
-
   chain = GEGL_TILE_HANDLER_CHAIN (buffer->tile_storage);
 
   gegl_tile_handler_chain_add (chain, handler);
