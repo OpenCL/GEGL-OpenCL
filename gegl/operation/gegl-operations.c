@@ -141,11 +141,11 @@ gegl_operations_check_license (const gchar *operation_license)
 static void
 gegl_operations_update_visible (void)
 {
-  g_mutex_lock (&operations_cache_mutex);
-
   GHashTableIter iter;
-  const gchar *iter_key;
-  GType iter_value;
+  const gchar   *iter_key;
+  GType          iter_value;
+
+  g_mutex_lock (&operations_cache_mutex);
 
   g_hash_table_remove_all (visible_operation_names);
   g_slist_free (operations_list);
@@ -156,13 +156,14 @@ gegl_operations_update_visible (void)
 
   while (g_hash_table_iter_next (&iter, (gpointer)&iter_key, (gpointer)&iter_value))
     {
-      GObjectClass *object_class;
+      GObjectClass       *object_class;
       GeglOperationClass *operation_class;
+      const gchar        *operation_license;
 
       object_class = g_type_class_ref (iter_value);
       operation_class = GEGL_OPERATION_CLASS (object_class);
 
-      const gchar *operation_license = g_hash_table_lookup (operation_class->keys, "license");
+      operation_license = g_hash_table_lookup (operation_class->keys, "license");
 
       if (!operation_license || gegl_operations_check_license (operation_license))
         {
