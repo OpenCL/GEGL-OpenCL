@@ -25,7 +25,6 @@
 
 #include "gegl.h"
 #include "gegl-path.h"
-#include "gegl-utils.h"
 #include <glib/gprintf.h>
 
 #include <stdarg.h>

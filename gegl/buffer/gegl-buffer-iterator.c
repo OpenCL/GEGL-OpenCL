@@ -32,7 +32,6 @@
 #include "gegl-buffer-iterator-private.h"
 #include "gegl-buffer-private.h"
 #include "gegl-buffer-cl-cache.h"
-#include "gegl-utils.h"
 
 #define GEGL_ITERATOR_INCOMPATIBLE (1 << 2)
 

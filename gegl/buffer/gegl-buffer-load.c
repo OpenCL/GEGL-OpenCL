@@ -39,7 +39,6 @@
 #include "gegl-tile-handler-log.h"
 #include "gegl-tile-handler-empty.h"
 #include "gegl-types-internal.h"
-#include "gegl-utils.h"
 #include "gegl-buffer-save.h"
 #include "gegl-cache.h"
 #include "gegl-region.h"

@@ -34,7 +34,6 @@
 #include "gegl-tile-handler-log.h"
 #include "gegl-tile-handler-private.h"
 #include "gegl-types-internal.h"
-#include "gegl-utils.h"
 #include "gegl-config.h"
 #include "gegl-buffer-private.h"
 

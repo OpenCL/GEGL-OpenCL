@@ -23,7 +23,6 @@
 
 #include "gegl-types-internal.h"
 #include "gegl.h"
-#include "gegl-utils.h"
 #include "gegl-debug.h"
 #include "gegl-instrument.h"
 

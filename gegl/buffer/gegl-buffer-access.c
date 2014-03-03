@@ -26,14 +26,13 @@
 #include <gio/gio.h>
 
 #include "gegl.h"
-#include "gegl/gegl-debug.h"
+#include "gegl-debug.h"
 #include "gegl-types-internal.h"
 #include "gegl-algorithms.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
-#include "gegl-utils.h"
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
 #include "gegl-sampler-cubic.h"

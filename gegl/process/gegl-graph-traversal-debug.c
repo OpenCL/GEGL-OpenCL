@@ -22,7 +22,6 @@
 
 #include "gegl-types-internal.h"
 #include "gegl.h"
-#include "gegl-utils.h"
 
 #include "graph/gegl-node-private.h"
 #include "graph/gegl-pad.h"

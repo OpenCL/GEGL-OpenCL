@@ -35,8 +35,6 @@
 #include "gegl-tile-source.h"
 #include "gegl-tile-storage.h"
 
-#include "gegl-utils.h"
-
 static GMutex cowmutex = { 0, };
 
 GeglTile *gegl_tile_ref (GeglTile *tile)

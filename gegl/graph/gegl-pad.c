@@ -27,7 +27,6 @@
 #include "gegl-node-private.h"
 #include "gegl-pad.h"
 #include "gegl-visitor.h"
-#include "gegl-utils.h"
 #include "gegl-connection.h"
 #include "gegl-visitable.h"
 

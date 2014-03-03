@@ -11,7 +11,6 @@
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 #include "gegl-tile-handler-cache.h"
-#include "gegl-utils.h"
 
 GeglBuffer *
 gegl_buffer_linear_new (const GeglRectangle *extent,

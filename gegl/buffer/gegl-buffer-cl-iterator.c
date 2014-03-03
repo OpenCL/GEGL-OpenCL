@@ -32,7 +32,6 @@
 #include "gegl-buffer-cl-cache.h"
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
-#include "gegl-utils.h"
 
 #include "opencl/gegl-cl.h"
 

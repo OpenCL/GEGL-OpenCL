@@ -32,7 +32,6 @@
 #include "gegl-node-private.h"
 #include "gegl-connection.h"
 #include "gegl-pad.h"
-#include "gegl-utils.h"
 #include "gegl-visitable.h"
 #include "gegl-config.h"
 
