@@ -64,20 +64,24 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
                                   gpointer             destroy_fn_data)
 {
   GeglBuffer *buffer;
+  GeglTile   *tile;
+  gint        bpp;
 
-  if (extent==NULL)
+  g_return_val_if_fail (extent, NULL);
+  g_return_val_if_fail (format, NULL);
+
+  bpp = babl_format_get_bytes_per_pixel (format);
+
+  if (rowstride == 0)
     {
-      g_error ("got a NULL extent");
+      rowstride = extent->width;
     }
-
-  g_assert (format);
-
-  if (rowstride <= 0) /* handle both 0 and negative coordinates as a request
-                       * for a rowstride, negative rowstrides are not supported.
-                       */
-    rowstride = extent->width;
   else
-    rowstride = rowstride / babl_format_get_bytes_per_pixel (format);
+    {
+      g_return_val_if_fail (rowstride > 0, NULL);
+      g_return_val_if_fail (rowstride % bpp == 0, NULL);
+      rowstride = rowstride / bpp;
+    }
 
   buffer = g_object_new (GEGL_TYPE_BUFFER,
                          "x",          extent->x,
@@ -94,26 +98,24 @@ gegl_buffer_linear_new_from_data (const gpointer       data,
 
   g_object_set_data (G_OBJECT (buffer), "is-linear", (void*)0xf00);
 
-  {
-    GeglTile *tile = gegl_tile_new_bare ();
+  tile = gegl_tile_new_bare ();
 
-    tile->tile_storage = buffer->tile_storage;
-    tile->x = 0;
-    tile->y = 0;
-    tile->z = 0;
-    tile->next_shared = tile;
-    tile->prev_shared = tile;
-    tile->rev = tile->stored_rev + 1;
-    gegl_tile_set_data_full (tile,
-                             (gpointer) data,
-                             babl_format_get_bytes_per_pixel (format) * rowstride * extent->height,
-                             destroy_fn,
-                             destroy_fn_data);
+  tile->tile_storage = buffer->tile_storage;
+  tile->x = 0;
+  tile->y = 0;
+  tile->z = 0;
+  tile->next_shared = tile;
+  tile->prev_shared = tile;
+  tile->rev = tile->stored_rev + 1;
+  gegl_tile_set_data_full (tile,
+                           (gpointer) data,
+                           bpp * rowstride * extent->height,
+                           destroy_fn,
+                           destroy_fn_data);
 
-    if (buffer->tile_storage->cache)
-      gegl_tile_handler_cache_insert (buffer->tile_storage->cache, tile, 0, 0, 0);
-    gegl_tile_unref (tile);
-  }
+  if (buffer->tile_storage->cache)
+    gegl_tile_handler_cache_insert (buffer->tile_storage->cache, tile, 0, 0, 0);
+  gegl_tile_unref (tile);
 
   return buffer;
 }
