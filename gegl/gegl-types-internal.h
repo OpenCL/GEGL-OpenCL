@@ -25,18 +25,9 @@ G_BEGIN_DECLS
 typedef struct _GeglPad              GeglPad;
 typedef struct _GeglConnection       GeglConnection;
 
-typedef struct _GeglCRVisitor        GeglCRVisitor;
-typedef struct _GeglDebugRectVisitor GeglDebugRectVisitor;
 typedef struct _GeglEvalManager      GeglEvalManager;
-typedef struct _GeglEvalVisitor      GeglEvalVisitor;
-typedef struct _GeglFinishVisitor    GeglFinishVisitor;
-typedef struct _GeglHaveVisitor      GeglHaveVisitor;
-typedef struct _GeglNeedVisitor      GeglNeedVisitor;
 typedef struct _GeglDotVisitor       GeglDotVisitor;
-typedef struct _GeglPrepareVisitor   GeglPrepareVisitor;
-typedef struct _GeglLockVisitor      GeglLockVisitor;
-typedef struct _GeglUnlockVisitor    GeglUnlockVisitor;
-typedef struct _GeglVisitable        GeglVisitable; /* dummy typedef */
+typedef struct _GeglVisitable        GeglVisitable;
 typedef struct _GeglVisitor          GeglVisitor;
 
 typedef struct _GeglPoint            GeglPoint;
