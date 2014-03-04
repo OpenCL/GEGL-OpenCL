@@ -317,6 +317,10 @@ main (gint    argc,
   g_option_context_add_main_entries (context, options, NULL);
   g_option_context_add_group (context, gegl_get_option_group ());
 
+  g_object_set (gegl_config (),
+                "application-license", "GPL3",
+                NULL);
+
   if (!g_option_context_parse (context, &argc, &argv, &error))
     {
       g_printf ("%s\n", error->message);
