@@ -96,6 +96,39 @@ gegl_tile_storage_new (GeglTileBackend *backend)
   return tile_storage;
 }
 
+void
+gegl_tile_storage_add_handler (GeglTileStorage *tile_storage,
+                               GeglTileHandler *handler)
+{
+  GeglTileHandlerChain *chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
+
+  g_return_if_fail (GEGL_IS_TILE_HANDLER (handler));
+
+  gegl_tile_handler_chain_add (chain, handler);
+
+  /* FIXME: Move the handler to before the cache and other custom handlers */
+  chain->chain = g_slist_remove (chain->chain, handler);
+  chain->chain = g_slist_insert (chain->chain, handler, 2);
+
+  gegl_tile_handler_chain_bind (chain);
+}
+
+void
+gegl_tile_storage_remove_handler (GeglTileStorage *tile_storage,
+                                  GeglTileHandler *handler)
+{
+  GeglTileHandlerChain *chain = GEGL_TILE_HANDLER_CHAIN (tile_storage);
+
+  g_return_if_fail (GEGL_IS_TILE_HANDLER (handler));
+  g_return_if_fail (g_slist_find (chain->chain, handler));
+
+  chain->chain = g_slist_remove (chain->chain, handler);
+  gegl_tile_handler_set_source (handler, NULL);
+  g_object_unref (handler);
+
+  gegl_tile_handler_chain_bind (chain);
+}
+
 static void
 gegl_tile_storage_finalize (GObject *object)
 {

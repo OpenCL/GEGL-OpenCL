@@ -62,4 +62,7 @@ GType gegl_tile_storage_get_type (void) G_GNUC_CONST;
 GeglTileStorage *
 gegl_tile_storage_new (GeglTileBackend *backend);
 
+void gegl_tile_storage_add_handler (GeglTileStorage *tile_storage, GeglTileHandler *handler);
+void gegl_tile_storage_remove_handler (GeglTileStorage *tile_storage, GeglTileHandler *handler);
+
 #endif
