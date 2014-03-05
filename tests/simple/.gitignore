@@ -9,6 +9,7 @@
 /test-change-processor-rect
 /test-color-op
 /test-convert-format
+/test-empty-tile
 /test-exp-combine.sh
 /test-gegl-rectangle
 /test-gegl-tile

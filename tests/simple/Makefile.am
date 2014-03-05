@@ -8,6 +8,7 @@ noinst_PROGRAMS =			\
 	test-change-processor-rect	\
 	test-convert-format		\
 	test-color-op			\
+	test-empty-tile			\
 	test-format-sensing		\
 	test-gegl-rectangle		\
 	test-gegl-tile			\
