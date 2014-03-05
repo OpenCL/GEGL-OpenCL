@@ -251,17 +251,11 @@ static gchar    *cmd_gegl_cache_size     = NULL;
 static gchar    *cmd_gegl_chunk_size     = NULL;
 static gchar    *cmd_gegl_quality        = NULL;
 static gchar    *cmd_gegl_tile_size      = NULL;
-static gchar    *cmd_babl_tolerance      = NULL;
 static gchar    *cmd_gegl_threads        = NULL;
 static gboolean *cmd_gegl_disable_opencl = NULL;
 
 static const GOptionEntry cmd_entries[]=
 {
-    {
-     "babl-tolerance", 0, 0,
-     G_OPTION_ARG_STRING, &cmd_babl_tolerance,
-     N_("babls error tolerance, a value between 0.2 and 0.000000001"), "<float>"
-    },
     {
      "gegl-swap", 0, 0,
      G_OPTION_ARG_STRING, &cmd_gegl_swap,
@@ -609,9 +603,6 @@ gegl_post_parse_hook (GOptionContext *context,
     }
   if (cmd_gegl_threads)
     config->threads = atoi (cmd_gegl_threads);
-  /* FIXME: This comes after babl init and is useless */
-  if (cmd_babl_tolerance)
-    g_object_set (config, "babl-tolerance", atof(cmd_babl_tolerance), NULL);
   if (cmd_gegl_disable_opencl)
     gegl_cl_hard_disable ();
 

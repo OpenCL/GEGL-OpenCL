@@ -40,7 +40,6 @@ enum
   PROP_TILE_CACHE_SIZE,
   PROP_CHUNK_SIZE,
   PROP_SWAP,
-  PROP_BABL_TOLERANCE,
   PROP_TILE_WIDTH,
   PROP_TILE_HEIGHT,
   PROP_THREADS,
@@ -77,10 +76,6 @@ gegl_config_get_property (GObject    *gobject,
 
       case PROP_QUALITY:
         g_value_set_double (value, config->quality);
-        break;
-
-      case PROP_BABL_TOLERANCE:
-        g_value_set_double (value, config->babl_tolerance);
         break;
 
       case PROP_SWAP:
@@ -133,35 +128,6 @@ gegl_config_set_property (GObject      *gobject,
         break;
       case PROP_QUALITY:
         config->quality = g_value_get_double (value);
-        return;
-      case PROP_BABL_TOLERANCE:
-          {
-            /* XXX: this only works the first time, and since it is a
-             * construct property the values overriden from gimp does not take
-             * effect
-             */
-            static gboolean first = TRUE;
-            static gboolean overridden = FALSE;
-
-            gchar buf[256];
-
-            if (first)
-              {
-                if (g_getenv ("BABL_TOLERANCE") != NULL)
-                  overridden = TRUE;
-                first = FALSE;
-              }
-            if (!overridden)
-              {
-                config->babl_tolerance = g_value_get_double (value);
-                g_sprintf (buf, "%f", config->babl_tolerance);
-                g_setenv ("BABL_TOLERANCE", buf, 0);
-                /* babl picks up the babl error through the environment, babl
-                 * caches valid conversions though so this needs to be set
-                 * before _any_ processing is done
-                 */
-              }
-          }
         return;
       case PROP_SWAP:
         if (config->swap)
@@ -248,14 +214,6 @@ gegl_config_class_init (GeglConfigClass *klass)
                                                         "Quality",
                                                         "quality/speed trade off 1.0 = full quality, 0.0 = full speed",
                                                         0.0, 1.0, 1.0,
-                                                        G_PARAM_READWRITE |
-                                                        G_PARAM_CONSTRUCT));
-
-  g_object_class_install_property (gobject_class, PROP_BABL_TOLERANCE,
-                                   g_param_spec_double ("babl-tolerance",
-                                                        "babl error",
-                                                        "the error tolerance babl operates with",
-                                                        0.0, 0.2, 0.000001,
                                                         G_PARAM_READWRITE |
                                                         G_PARAM_CONSTRUCT));
 
