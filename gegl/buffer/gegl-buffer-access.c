@@ -39,6 +39,24 @@
 #include "gegl-buffer-iterator.h"
 #include "gegl-buffer-cl-cache.h"
 
+static void gegl_buffer_iterate_read_fringed (GeglBuffer          *buffer,
+                                              const GeglRectangle *roi,
+                                              const GeglRectangle *abyss,
+                                              guchar              *buf,
+                                              gint                 buf_stride,
+                                              const Babl          *format,
+                                              gint                 level,
+                                              GeglAbyssPolicy      repeat_mode);
+
+
+static void gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
+                                               const GeglRectangle *roi,
+                                               guchar              *buf,
+                                               gint                 rowstride,
+                                               const Babl          *format,
+                                               gint                 level,
+                                               GeglAbyssPolicy      repeat_mode);
+
 static void
 gegl_buffer_get_pixel (GeglBuffer     *buffer,
                        gint            x,
@@ -465,7 +483,8 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
                                       gint                 buf_stride,
                                       const Babl          *format,
                                       gint                 level,
-                                      guchar              *color)
+                                      guchar              *color,
+                                      GeglAbyssPolicy      repeat_mode)
 {
   GeglRectangle current_roi = *roi;
   gint bpp = babl_format_get_bytes_per_pixel (format);
@@ -522,12 +541,22 @@ gegl_buffer_iterate_read_abyss_color (GeglBuffer          *buffer,
               inner_roi.width -= (inner_roi.width + inner_roi.x) - (abyss->width + abyss->x);
             }
 
-          gegl_buffer_iterate_read_simple (buffer,
-                                           &inner_roi,
-                                           inner_buf,
-                                           buf_stride,
-                                           format,
-                                           level);
+          if (level)
+            gegl_buffer_iterate_read_fringed (buffer,
+                                              &inner_roi,
+                                              abyss,
+                                              inner_buf,
+                                              buf_stride,
+                                              format,
+                                              level,
+                                              repeat_mode);
+          else
+            gegl_buffer_iterate_read_simple (buffer,
+                                             &inner_roi,
+                                             inner_buf,
+                                             buf_stride,
+                                             format,
+                                             level);
 
           inner_buf += inner_roi.width * bpp;
           inner_roi.width = full_width - inner_roi.width;
@@ -606,12 +635,22 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
   read_input_rect.width = read_output_rect.width;
   read_input_rect.height = read_output_rect.height;
 
-  gegl_buffer_iterate_read_simple (buffer,
-                                   &read_input_rect,
-                                   read_buf,
-                                   buf_stride,
-                                   format,
-                                   level);
+  if (level)
+    gegl_buffer_iterate_read_fringed (buffer,
+                                      &read_input_rect,
+                                      abyss,
+                                      read_buf,
+                                      buf_stride,
+                                      format,
+                                      level,
+                                      GEGL_ABYSS_CLAMP);
+  else
+    gegl_buffer_iterate_read_simple (buffer,
+                                     &read_input_rect,
+                                     read_buf,
+                                     buf_stride,
+                                     format,
+                                     level);
 
   /* All calculations are done relative to read_output_rect because it is guranteed
    * to be inside of the roi rect and none of these calculations can return a value
@@ -778,7 +817,186 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
     }
 }
 
-static inline void
+static gpointer
+gegl_buffer_read_at_level (GeglBuffer          *buffer,
+                           const GeglRectangle *roi,
+                           guchar              *buf,
+                           gint                 rowstride,
+                           const Babl          *format,
+                           gint                 level,
+                           GeglAbyssPolicy      repeat_mode)
+{
+  gint bpp = babl_format_get_bytes_per_pixel (format);
+
+  if (level == 0)
+    {
+      if (!buf)
+        {
+          gpointer scratch = gegl_malloc (bpp * roi->width * roi->height);
+
+          gegl_buffer_iterate_read_dispatch (buffer, roi, scratch, roi->width * bpp, format, 0, repeat_mode);
+
+          return scratch;
+        }
+      else
+        {
+          gegl_buffer_iterate_read_dispatch (buffer, roi, buf, rowstride, format, 0, repeat_mode);
+
+          return NULL;
+        }
+    }
+  else
+    {
+      gpointer scratch;
+      GeglRectangle next_roi;
+      next_roi.x = roi->x * 2;
+      next_roi.y = roi->y * 2;
+      next_roi.width = roi->width * 2;
+      next_roi.height = roi->height * 2;
+
+      /* If the next block is too big split it in half */
+      if (next_roi.width * next_roi.height > 256 * 256)
+        {
+          GeglRectangle next_roi_a = next_roi;
+          GeglRectangle next_roi_b = next_roi;
+          gint scratch_stride = next_roi.width * bpp;
+          gpointer scratch_a;
+          gpointer scratch_b;
+          scratch = gegl_malloc (bpp * next_roi.width * next_roi.height);
+
+          if (next_roi.width > next_roi.height)
+            {
+              next_roi_a.width = roi->width;
+              next_roi_b.width = roi->width;
+              next_roi_b.x += next_roi_a.width;
+
+              scratch_a = scratch;
+              scratch_b = (guchar *)scratch + next_roi_a.width * bpp;
+            }
+          else
+            {
+              next_roi_a.height = roi->height;
+              next_roi_b.height = roi->height;
+              next_roi_b.y += next_roi_a.height;
+
+              scratch_a = scratch;
+              scratch_b = (guchar *)scratch + next_roi_a.height * scratch_stride;
+            }
+
+          gegl_buffer_read_at_level (buffer, &next_roi_a, scratch_a, scratch_stride, format, level - 1, repeat_mode);
+          gegl_buffer_read_at_level (buffer, &next_roi_b, scratch_b, scratch_stride, format, level - 1, repeat_mode);
+
+        }
+      else
+        {
+          scratch = gegl_buffer_read_at_level (buffer, &next_roi, NULL, 0, format, level - 1, repeat_mode);
+        }
+
+      if (buf)
+        {
+          gegl_downscale_2x2 (format,
+                              next_roi.width,
+                              next_roi.height,
+                              scratch,
+                              next_roi.width * bpp,
+                              buf,
+                              rowstride);
+          gegl_free (scratch);
+          return NULL;
+        }
+      else
+        {
+          gegl_downscale_2x2 (format,
+                              next_roi.width,
+                              next_roi.height,
+                              scratch,
+                              next_roi.width * bpp,
+                              scratch,
+                              roi->width * bpp);
+          return scratch;
+        }
+    }
+}
+
+static void
+gegl_buffer_iterate_read_fringed (GeglBuffer          *buffer,
+                                  const GeglRectangle *roi,
+                                  const GeglRectangle *abyss,
+                                  guchar              *buf,
+                                  gint                 buf_stride,
+                                  const Babl          *format,
+                                  gint                 level,
+                                  GeglAbyssPolicy      repeat_mode)
+{
+  gint x = roi->x;
+  gint y = roi->y;
+  gint width  = roi->width;
+  gint height = roi->height;
+  guchar        *inner_buf = buf;
+
+  gint bpp = babl_format_get_bytes_per_pixel (format);
+
+  if (x <= abyss->x)
+    {
+      GeglRectangle fringe_roi = {x, y, 1, height};
+      guchar *fringe_buf = inner_buf;
+
+      gegl_buffer_read_at_level (buffer, &fringe_roi, fringe_buf, buf_stride, format, level, repeat_mode);
+      inner_buf += bpp;
+      x     += 1;
+      width -= 1;
+
+      if (!width)
+        return;
+    }
+
+  if (y <= abyss->y)
+    {
+      GeglRectangle fringe_roi = {x, y, width, 1};
+      guchar *fringe_buf = inner_buf;
+
+      gegl_buffer_read_at_level (buffer, &fringe_roi, fringe_buf, buf_stride, format, level, repeat_mode);
+      inner_buf += buf_stride;
+      y      += 1;
+      height -= 1;
+
+      if (!height)
+        return;
+    }
+
+  if (y + height >= abyss->y + abyss->height)
+    {
+      GeglRectangle fringe_roi = {x, y + height - 1, width, 1};
+      guchar *fringe_buf = inner_buf + (height - 1) * buf_stride;
+
+      gegl_buffer_read_at_level (buffer, &fringe_roi, fringe_buf, buf_stride, format, level, repeat_mode);
+      height -= 1;
+
+      if (!height)
+        return;
+    }
+
+  if (x + width >= abyss->x + abyss->width)
+    {
+      GeglRectangle fringe_roi = {x + width - 1, y, 1, height};
+      guchar *fringe_buf = inner_buf + (width - 1) * bpp;
+
+      gegl_buffer_read_at_level (buffer, &fringe_roi, fringe_buf, buf_stride, format, level, repeat_mode);
+      width -= 1;
+
+      if (!width)
+        return;
+    }
+
+  gegl_buffer_iterate_read_simple (buffer,
+                                   GEGL_RECTANGLE (x, y, width, height),
+                                   inner_buf,
+                                   buf_stride,
+                                   format,
+                                   level);
+}
+
+static void
 gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
                                    const GeglRectangle *roi,
                                    guchar              *buf,
@@ -790,6 +1008,7 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
   GeglRectangle abyss          = buffer->abyss;
   GeglRectangle abyss_factored = abyss;
   GeglRectangle roi_factored   = *roi;
+
   if (level)
     {
       const gint    factor         = 1 << level;
@@ -826,7 +1045,8 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
   else if (repeat_mode == GEGL_ABYSS_NONE)
     {
       gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
-                                            buf, rowstride, format, level, NULL);
+                                            buf, rowstride, format, level, NULL,
+                                            GEGL_ABYSS_NONE);
     }
   else if (repeat_mode == GEGL_ABYSS_WHITE)
     {
@@ -837,7 +1057,8 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
                     in_color, color, 1);
 
       gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
-                                            buf, rowstride, format, level, color);
+                                            buf, rowstride, format, level, color,
+                                            GEGL_ABYSS_WHITE);
     }
   else if (repeat_mode == GEGL_ABYSS_BLACK)
     {
@@ -848,13 +1069,15 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
                     in_color, color, 1);
 
       gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
-                                            buf, rowstride, format, level, color);
+                                            buf, rowstride, format, level, color,
+                                            GEGL_ABYSS_BLACK);
     }
   else if (repeat_mode == GEGL_ABYSS_CLAMP)
     {
       if (abyss_factored.width == 0 || abyss_factored.height == 0)
         gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
-                                              buf, rowstride, format, level, NULL);
+                                              buf, rowstride, format, level, NULL,
+                                              GEGL_ABYSS_NONE);
       else
         gegl_buffer_iterate_read_abyss_clamp (buffer, &roi_factored, &abyss_factored,
                                               buf, rowstride, format, level);
@@ -863,7 +1086,10 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
     {
       if (abyss_factored.width == 0 || abyss_factored.height == 0)
         gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
-                                              buf, rowstride, format, level, NULL);
+                                              buf, rowstride, format, level, NULL,
+                                              GEGL_ABYSS_NONE);
+      else if (level)
+        gegl_buffer_read_at_level (buffer, &roi_factored, buf, rowstride, format, level, GEGL_ABYSS_LOOP);
       else
         gegl_buffer_iterate_read_abyss_loop (buffer, &roi_factored, &abyss_factored,
                                              buf, rowstride, format, level);
