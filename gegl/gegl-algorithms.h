@@ -90,7 +90,7 @@ void gegl_resample_boxfilter_float (guchar              *dest_buf,
                                     const GeglRectangle *src_rect,
                                     gint                 s_rowstride,
                                     gdouble              scale,
-                                    gint                 components,
+                                    gint                 bpp,
                                     gint                 d_rowstride);
 
 void gegl_resample_boxfilter_u32 (guchar              *dest_buf,
@@ -99,7 +99,7 @@ void gegl_resample_boxfilter_u32 (guchar              *dest_buf,
                                   const GeglRectangle *src_rect,
                                   gint                 s_rowstride,
                                   gdouble              scale,
-                                  gint                 components,
+                                  gint                 bpp,
                                   gint                 d_rowstride);
 
 void gegl_resample_boxfilter_u16 (guchar              *dest_buf,
@@ -108,7 +108,7 @@ void gegl_resample_boxfilter_u16 (guchar              *dest_buf,
                                   const GeglRectangle *src_rect,
                                   gint                 s_rowstride,
                                   gdouble              scale,
-                                  gint                 components,
+                                  gint                 bpp,
                                   gint                 d_rowstride);
 
 void gegl_resample_boxfilter_u8 (guchar              *dest_buf,
@@ -117,7 +117,7 @@ void gegl_resample_boxfilter_u8 (guchar              *dest_buf,
                                  const GeglRectangle *src_rect,
                                  gint                 s_rowstride,
                                  gdouble              scale,
-                                 gint                 components,
+                                 gint                 bpp,
                                  gint                 d_rowstride);
 
 void gegl_resample_nearest (guchar              *dst,

@@ -5,13 +5,14 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
                     const GeglRectangle *src_rect,
                     const gint           s_rowstride,
                     const gdouble        scale,
-                    const gint           components,
+                    const gint           bpp,
                     const gint           d_rowstride)
 {
   gdouble  left_weight, center_weight, right_weight;
   gdouble  top_weight, middle_weight, bottom_weight;
   const BOXFILTER_TYPE *src[9];
   gint     x, y;
+  gint     components = bpp / sizeof(BOXFILTER_TYPE);
 
   for (y = 0; y < dst_rect->height; y++)
     {

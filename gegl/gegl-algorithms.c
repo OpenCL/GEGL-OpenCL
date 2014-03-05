@@ -92,7 +92,6 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
                               gint                 d_rowstride)
 {
   const Babl *comp_type  = babl_format_get_type (format, 0);
-  guint num_componenets;
 
   void (*resample_boxfilter_func) (guchar              *dest_buf,
                                    const guchar        *source_buf,
@@ -100,7 +99,7 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
                                    const GeglRectangle *src_rect,
                                    gint                 s_rowstride,
                                    gdouble              scale,
-                                   gint                 components,
+                                   gint                 bpp,
                                    gint                 d_rowstride) = NULL;
 
   if (comp_type == babl_type ("u8"))
@@ -121,18 +120,8 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
     }
   else
     {
-      gegl_resample_nearest (dest_buf,
-                             source_buf,
-                             dst_rect,
-                             src_rect,
-                             s_rowstride,
-                             scale,
-                             babl_format_get_bytes_per_pixel (format),
-                             d_rowstride);
-      return;
+      resample_boxfilter_func = gegl_resample_nearest;
     }
-
-  num_componenets = babl_format_get_n_components (format);
 
   resample_boxfilter_func (dest_buf,
                            source_buf,
@@ -140,7 +129,7 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
                            src_rect,
                            s_rowstride,
                            scale,
-                           num_componenets,
+                           babl_format_get_bytes_per_pixel (format),
                            d_rowstride);
 }
 
