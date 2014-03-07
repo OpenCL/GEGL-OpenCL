@@ -390,6 +390,8 @@ prepare_iteration (GeglBufferIterator *iter)
 {
   int index;
   GeglBufferIteratorPriv *priv = iter->priv;
+  gint origin_offset_x;
+  gint origin_offset_y;
 
   /* Set up the origin tile */
   /* FIXME: Pick the most compatable buffer, not just the first */
@@ -400,6 +402,9 @@ prepare_iteration (GeglBufferIterator *iter)
     priv->origin_tile.y      = buf->shift_y;
     priv->origin_tile.width  = buf->tile_width;
     priv->origin_tile.height = buf->tile_height;
+
+    origin_offset_x = buf->shift_x + priv->sub_iter[0].full_rect.x;
+    origin_offset_y = buf->shift_y + priv->sub_iter[0].full_rect.y;
   }
 
   for (index = 0; index < priv->num_buffers; index++)
@@ -407,14 +412,17 @@ prepare_iteration (GeglBufferIterator *iter)
       SubIterState *sub = &priv->sub_iter[index];
       GeglBuffer *buf   = sub->buffer;
 
+      gint current_offset_x = buf->shift_x + priv->sub_iter[index].full_rect.x;
+      gint current_offset_y = buf->shift_y + priv->sub_iter[index].full_rect.y;
+
       /* Format converison needed */
       if (gegl_buffer_get_format (sub->buffer) != sub->format)
         sub->flags |= GEGL_ITERATOR_INCOMPATIBLE;
       /* Incompatable tiles */
-      else if ((priv->origin_tile.x      != buf->shift_x) ||
-               (priv->origin_tile.y      != buf->shift_y) ||
-               (priv->origin_tile.width  != buf->tile_width) ||
-               (priv->origin_tile.height != buf->tile_height))
+      else if ((priv->origin_tile.width  != buf->tile_width) ||
+               (priv->origin_tile.height != buf->tile_height) ||
+               (abs(origin_offset_x - current_offset_x) % priv->origin_tile.width != 0) ||
+               (abs(origin_offset_y - current_offset_y) % priv->origin_tile.height != 0))
         {
           /* Check if the buffer is a linear buffer */
           if ((buf->extent.x      == -buf->shift_x) &&
