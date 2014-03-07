@@ -63,9 +63,7 @@ static void      gegl_processor_get_property (GObject               *gobject,
                                               GParamSpec            *pspec);
 static void      gegl_processor_set_node     (GeglProcessor         *processor,
                                               GeglNode              *node);
-static GObject * gegl_processor_constructor  (GType                  type,
-                                              guint                  n_params,
-                                              GObjectConstructParam *params);
+static void      gegl_processor_constructed  (GObject               *object);
 static gdouble   gegl_processor_progress     (GeglProcessor         *processor);
 static gint      gegl_processor_get_band_size(gint                   size) G_GNUC_CONST;
 
@@ -96,7 +94,7 @@ gegl_processor_class_init (GeglProcessorClass *klass)
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
   gobject_class->finalize     = gegl_processor_finalize;
-  gobject_class->constructor  = gegl_processor_constructor;
+  gobject_class->constructed  = gegl_processor_constructed;
   gobject_class->set_property = gegl_processor_set_property;
   gobject_class->get_property = gegl_processor_get_property;
 
@@ -141,23 +139,14 @@ gegl_processor_init (GeglProcessor *processor)
   processor->chunk_size       = 128 * 128;
 }
 
-/* Initialises the fields processor->input, processor->valid_region
- * and processor->queued_region.
- */
-static GObject *
-gegl_processor_constructor (GType                  type,
-                            guint                  n_params,
-                            GObjectConstructParam *params)
+static void
+gegl_processor_constructed (GObject *object)
 {
-  GObject       *object;
-  GeglProcessor *processor;
+  GeglProcessor *processor = GEGL_PROCESSOR (object);
 
-  object    = G_OBJECT_CLASS (gegl_processor_parent_class)->constructor (type, n_params, params);
-  processor = GEGL_PROCESSOR (object);
+  G_OBJECT_CLASS (gegl_processor_parent_class)->constructed (object);
 
   processor->queued_region = gegl_region_new ();
-
-  return object;
 }
 
 static void

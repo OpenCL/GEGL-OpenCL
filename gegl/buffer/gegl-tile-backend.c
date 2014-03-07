@@ -115,24 +115,18 @@ set_property (GObject      *gobject,
     }
 }
 
-static GObject *
-constructor (GType                  type,
-             guint                  n_params,
-             GObjectConstructParam *params)
+static void
+constructed (GObject *object)
 {
-  GObject         *object;
-  GeglTileBackend *backend;
+  GeglTileBackend *backend = GEGL_TILE_BACKEND (object);
 
-  object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  backend = GEGL_TILE_BACKEND (object);
+  G_OBJECT_CLASS (parent_class)->constructed (object);
 
   g_assert (backend->priv->tile_width > 0 && backend->priv->tile_height > 0);
   g_assert (backend->priv->format);
 
   backend->priv->px_size = babl_format_get_bytes_per_pixel (backend->priv->format);
   backend->priv->tile_size = backend->priv->tile_width * backend->priv->tile_height * backend->priv->px_size;
-
-  return object;
 }
 
 static void
@@ -142,7 +136,7 @@ gegl_tile_backend_class_init (GeglTileBackendClass *klass)
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
-  gobject_class->constructor  = constructor;
+  gobject_class->constructed  = constructed;
 
   g_object_class_install_property (gobject_class, PROP_TILE_WIDTH,
                                    g_param_spec_int ("tile-width", "tile-width",
@@ -175,8 +169,7 @@ gegl_tile_backend_class_init (GeglTileBackendClass *klass)
                                    g_param_spec_boolean ("flush-on-destroy", "flush-on-destroy",
                                                          "Cache tiles will be flushed before the backend is destroyed",
                                                          TRUE,
-                                                         G_PARAM_READWRITE |
-                                                         G_PARAM_CONSTRUCT));
+                                                         G_PARAM_READWRITE));
 
   g_type_class_add_private (gobject_class, sizeof (GeglTileBackendPrivate));
 }
@@ -188,6 +181,7 @@ gegl_tile_backend_init (GeglTileBackend *self)
                                             GEGL_TYPE_TILE_BACKEND,
                                             GeglTileBackendPrivate);
   self->priv->shared = FALSE;
+  self->priv->flush_on_destroy = TRUE;
 }
 
 

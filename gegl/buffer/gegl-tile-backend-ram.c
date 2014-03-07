@@ -329,25 +329,12 @@ ram_entry_free_func (gpointer data)
   g_slice_free (RamEntry, entry);
 }
 
-static GObject *
-gegl_tile_backend_ram_constructor (GType                  type,
-                                   guint                  n_params,
-                                   GObjectConstructParam *params)
+static void
+gegl_tile_backend_ram_constructed (GObject *object)
 {
-  GObject            *object;
-  GeglTileBackendRam *ram;
-
-  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  ram    = GEGL_TILE_BACKEND_RAM (object);
-
-  ram->entries = g_hash_table_new_full (ram_entry_hash_func,
-                                        ram_entry_equal_func,
-                                        NULL,
-                                        ram_entry_free_func);
+  G_OBJECT_CLASS (parent_class)->constructed (object);
 
   gegl_tile_backend_set_flush_on_destroy (GEGL_TILE_BACKEND (object), FALSE);
-
-  return object;
 }
 
 static void
@@ -357,7 +344,7 @@ gegl_tile_backend_ram_class_init (GeglTileBackendRamClass *klass)
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
-  gobject_class->constructor  = gegl_tile_backend_ram_constructor;
+  gobject_class->constructed  = gegl_tile_backend_ram_constructed;
   gobject_class->finalize     = gegl_tile_backend_ram_finalize;
 }
 
@@ -365,5 +352,9 @@ static void
 gegl_tile_backend_ram_init (GeglTileBackendRam *self)
 {
   GEGL_TILE_SOURCE (self)->command = gegl_tile_backend_ram_command;
-  self->entries = NULL;
+
+  self->entries = g_hash_table_new_full (ram_entry_hash_func,
+                                         ram_entry_equal_func,
+                                         NULL,
+                                         ram_entry_free_func);
 }

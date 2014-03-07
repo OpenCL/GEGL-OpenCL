@@ -138,9 +138,7 @@ static gpointer    gegl_tile_backend_swap_command       (GeglTileSource        *
 static guint       gegl_tile_backend_swap_hashfunc      (gconstpointer key);
 static gboolean    gegl_tile_backend_swap_equalfunc     (gconstpointer          a,
                                                          gconstpointer          b);
-static GObject *   gegl_tile_backend_swap_constructor   (GType                  type,
-                                                         guint                  n_params,
-                                                         GObjectConstructParam *params);
+static void        gegl_tile_backend_swap_constructed   (GObject *object);
 static void        gegl_tile_backend_swap_finalize      (GObject *object);
 static void        gegl_tile_backend_swap_ensure_exist  (void);
 static void        gegl_tile_backend_swap_class_init    (GeglTileBackendSwapClass *klass);
@@ -758,29 +756,18 @@ gegl_tile_backend_swap_equalfunc (gconstpointer a,
   return FALSE;
 }
 
-static GObject *
-gegl_tile_backend_swap_constructor (GType                  type,
-                                    guint                  n_params,
-                                    GObjectConstructParam *params)
+static void
+gegl_tile_backend_swap_constructed (GObject *object)
 {
-  GObject             *object;
-  GeglTileBackendSwap *self;
-  GeglTileBackend     *backend;
+  GeglTileBackend *backend = GEGL_TILE_BACKEND (object);
 
-  object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  self    = GEGL_TILE_BACKEND_SWAP (object);
-  backend = GEGL_TILE_BACKEND (object);
-
-  self->index = g_hash_table_new (gegl_tile_backend_swap_hashfunc,
-                                  gegl_tile_backend_swap_equalfunc);
+  G_OBJECT_CLASS (parent_class)->constructed (object);
 
   backend->priv->shared = FALSE;
 
   gegl_tile_backend_set_flush_on_destroy (backend, FALSE);
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "constructing swap backend");
-
-  return object;
 }
 
 static void
@@ -836,7 +823,7 @@ gegl_tile_backend_swap_class_init (GeglTileBackendSwapClass *klass)
 
   parent_class = g_type_class_peek_parent (klass);
 
-  gobject_class->constructor  = gegl_tile_backend_swap_constructor;
+  gobject_class->constructed  = gegl_tile_backend_swap_constructed;
   gobject_class->finalize     = gegl_tile_backend_swap_finalize;
 
   queue         = g_queue_new ();
@@ -885,4 +872,7 @@ static void
 gegl_tile_backend_swap_init (GeglTileBackendSwap *self)
 {
   ((GeglTileSource*)self)->command = gegl_tile_backend_swap_command;
+
+  self->index = g_hash_table_new (gegl_tile_backend_swap_hashfunc,
+                                  gegl_tile_backend_swap_equalfunc);
 }

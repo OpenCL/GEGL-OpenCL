@@ -62,23 +62,15 @@ G_DEFINE_TYPE (GeglCache, gegl_cache, GEGL_TYPE_BUFFER)
 
 guint gegl_cache_signals[LAST_SIGNAL] = { 0 };
 
-static GObject *
-gegl_cache_constructor (GType                  type,
-                        guint                  n_params,
-                        GObjectConstructParam *params)
+static void
+gegl_cache_constructed (GObject *object)
 {
-  GObject   *object;
-  GeglCache *self;
+  GeglCache *self = GEGL_CACHE (object);
 
-  object = G_OBJECT_CLASS (gegl_cache_parent_class)->constructor (type,
-                                                                  n_params,
-                                                                  params);
-  self = GEGL_CACHE (object);
+  G_OBJECT_CLASS (gegl_cache_parent_class)->constructed (object);
 
   self->valid_region = gegl_region_new ();
-  self->format       = GEGL_BUFFER (self)->format;
-
-  return object;
+  self->format       = gegl_buffer_get_format (GEGL_BUFFER (self));
 }
 
 /* expand invalidated regions to be align with coordinates divisible by 8 in both
@@ -119,7 +111,7 @@ gegl_cache_class_init (GeglCacheClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
-  gobject_class->constructor  = gegl_cache_constructor;
+  gobject_class->constructed  = gegl_cache_constructed;
   gobject_class->finalize     = finalize;
   gobject_class->dispose      = dispose;
   gobject_class->set_property = set_property;

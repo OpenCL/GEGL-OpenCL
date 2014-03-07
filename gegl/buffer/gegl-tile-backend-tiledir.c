@@ -342,24 +342,18 @@ finalize (GObject *object)
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
 
-static GObject *
-gegl_tile_backend_tiledir_constructor (GType                  type,
-                                         guint                  n_params,
-                                         GObjectConstructParam *params)
+static void
+gegl_tile_backend_tiledir_constructed (GObject *object)
 {
-  GObject      *object;
-  GeglTileBackendTileDir *gio;
+  GeglTileBackendTileDir *gio = GEGL_TILE_BACKEND_TILE_DIR (object);
 
-  object = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  gio    = GEGL_TILE_BACKEND_TILE_DIR (object);
+  G_OBJECT_CLASS (parent_class)->constructed (object);
 
   gio->buffer_dir = g_file_new_for_commandline_arg (gio->path);
   g_file_make_directory (gio->buffer_dir, NULL, NULL);
   ((GeglTileSource*)(object))->command = gegl_tile_backend_tiledir_command;
 
   gegl_tile_backend_set_flush_on_destroy (GEGL_TILE_BACKEND (object), FALSE);
-
-  return object;
 }
 
 static void
@@ -371,7 +365,7 @@ gegl_tile_backend_tiledir_class_init (GeglTileBackendTileDirClass *klass)
 
   gobject_class->get_property = get_property;
   gobject_class->set_property = set_property;
-  gobject_class->constructor  = gegl_tile_backend_tiledir_constructor;
+  gobject_class->constructed  = gegl_tile_backend_tiledir_constructed;
   gobject_class->finalize     = finalize;
 
   g_object_class_install_property (gobject_class, PROP_PATH,

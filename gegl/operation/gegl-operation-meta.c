@@ -30,9 +30,7 @@ static GeglNode * detect       (GeglOperation *operation,
                                 gint           x,
                                 gint           y);
 
-static GObject *   constructor (GType                  gtype,
-                                guint                  n_properties,
-                                GObjectConstructParam *properties);
+static void       constructed  (GObject       *object);
 
 G_DEFINE_TYPE (GeglOperationMeta, gegl_operation_meta, GEGL_TYPE_OPERATION)
 
@@ -43,7 +41,7 @@ gegl_operation_meta_class_init (GeglOperationMetaClass *klass)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
 
   object_class->finalize               = finalize;
-  object_class->constructor            = constructor;
+  object_class->constructed            = constructed;
   GEGL_OPERATION_CLASS (klass)->detect = detect;
 }
 
@@ -53,16 +51,12 @@ gegl_operation_meta_init (GeglOperationMeta *self)
   self->redirects = NULL;
 }
 
-static GObject *
-constructor (GType                  gtype,
-             guint                  n_properties,
-             GObjectConstructParam *properties)
+static void
+constructed (GObject *object)
 {
-  GObject *operation = G_OBJECT_CLASS (gegl_operation_meta_parent_class)->constructor (gtype, n_properties, properties);
+  G_OBJECT_CLASS (gegl_operation_meta_parent_class)->constructed (object);
 
-  g_signal_connect (operation, "notify", G_CALLBACK (gegl_operation_meta_property_changed), NULL);
-
-  return operation;
+  g_signal_connect (object, "notify", G_CALLBACK (gegl_operation_meta_property_changed), NULL);
 }
 
 static GeglNode *

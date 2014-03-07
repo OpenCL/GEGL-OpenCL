@@ -1127,18 +1127,13 @@ gegl_tile_backend_file_file_changed (GFileMonitor        *monitor,
     }
 }
 
-static GObject *
-gegl_tile_backend_file_constructor (GType                  type,
-                                    guint                  n_params,
-                                    GObjectConstructParam *params)
+static void
+gegl_tile_backend_file_constructed (GObject *object)
 {
-  GObject             *object;
-  GeglTileBackendFile *self;
-  GeglTileBackend     *backend;
+  GeglTileBackendFile *self = GEGL_TILE_BACKEND_FILE (object);
+  GeglTileBackend     *backend = GEGL_TILE_BACKEND (object);
 
-  object  = G_OBJECT_CLASS (parent_class)->constructor (type, n_params, params);
-  self    = GEGL_TILE_BACKEND_FILE (object);
-  backend = GEGL_TILE_BACKEND (object);
+  G_OBJECT_CLASS (parent_class)->constructed (object);
 
   GEGL_NOTE (GEGL_DEBUG_TILE_BACKEND, "constructing file backend: %s", self->path);
 
@@ -1213,8 +1208,6 @@ gegl_tile_backend_file_constructor (GType                  type,
   backend->priv->header = &self->header;
 
   gegl_tile_backend_set_flush_on_destroy (backend, FALSE);
-
-  return object;
 }
 
 static void
@@ -1259,7 +1252,7 @@ gegl_tile_backend_file_class_init (GeglTileBackendFileClass *klass)
 
   gobject_class->get_property = gegl_tile_backend_file_get_property;
   gobject_class->set_property = gegl_tile_backend_file_set_property;
-  gobject_class->constructor  = gegl_tile_backend_file_constructor;
+  gobject_class->constructed  = gegl_tile_backend_file_constructed;
   gobject_class->finalize     = gegl_tile_backend_file_finalize;
 
   g_cond_init (&queue_cond);
