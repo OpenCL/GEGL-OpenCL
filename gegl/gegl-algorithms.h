@@ -31,6 +31,14 @@ void gegl_downscale_2x2 (const Babl *format,
                          guchar *dst_data,
                          gint    dst_rowstride);
 
+void gegl_downscale_2x2_double (gint    bpp,
+                                gint    src_width,
+                                gint    src_height,
+                                guchar *src_data,
+                                gint    src_rowstride,
+                                guchar *dst_data,
+                                gint    dst_rowstride);
+
 void gegl_downscale_2x2_float (gint    bpp,
                                gint    src_width,
                                gint    src_height,
@@ -83,6 +91,15 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
                               gdouble              scale,
                               const Babl          *format,
                               gint                 d_rowstride);
+
+void gegl_resample_boxfilter_double (guchar              *dest_buf,
+                                     const guchar        *source_buf,
+                                     const GeglRectangle *dst_rect,
+                                     const GeglRectangle *src_rect,
+                                     gint                 s_rowstride,
+                                     gdouble              scale,
+                                     gint                 bpp,
+                                     gint                 d_rowstride);
 
 void gegl_resample_boxfilter_float (guchar              *dest_buf,
                                     const guchar        *source_buf,

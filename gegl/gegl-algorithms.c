@@ -49,6 +49,8 @@ void gegl_downscale_2x2 (const Babl *format,
     gegl_downscale_2x2_u16 (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
   else if (comp_type == babl_type ("u32"))
     gegl_downscale_2x2_u32 (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
+  else if (comp_type == babl_type ("double"))
+    gegl_downscale_2x2_double (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
   else
     gegl_downscale_2x2_nearest (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
 }
@@ -103,25 +105,17 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
                                    gint                 d_rowstride) = NULL;
 
   if (comp_type == babl_type ("u8"))
-    {
-      resample_boxfilter_func = gegl_resample_boxfilter_u8;
-    }
+    resample_boxfilter_func = gegl_resample_boxfilter_u8;
   else if (comp_type == babl_type ("u16"))
-    {
-      resample_boxfilter_func = gegl_resample_boxfilter_u16;
-    }
+    resample_boxfilter_func = gegl_resample_boxfilter_u16;
   else if (comp_type == babl_type ("u32"))
-    {
-      resample_boxfilter_func = gegl_resample_boxfilter_u32;
-    }
+    resample_boxfilter_func = gegl_resample_boxfilter_u32;
   else if (comp_type == babl_type ("float"))
-    {
-      resample_boxfilter_func = gegl_resample_boxfilter_float;
-    }
+    resample_boxfilter_func = gegl_resample_boxfilter_float;
+  else if (comp_type == babl_type ("double"))
+    resample_boxfilter_func = gegl_resample_boxfilter_double;
   else
-    {
-      resample_boxfilter_func = gegl_resample_nearest;
-    }
+    resample_boxfilter_func = gegl_resample_nearest;
 
   resample_boxfilter_func (dest_buf,
                            source_buf,
@@ -162,7 +156,6 @@ gegl_resample_nearest (guchar              *dst,
     }
 }
 
-/*
 #define BOXFILTER_FUNCNAME   gegl_resample_boxfilter_double
 #define BOXFILTER_TYPE       gdouble
 #define BOXFILTER_ROUND(val) (val)
@@ -170,7 +163,6 @@ gegl_resample_nearest (guchar              *dst,
 #undef BOXFILTER_FUNCNAME
 #undef BOXFILTER_TYPE
 #undef BOXFILTER_ROUND
-*/
 
 #define BOXFILTER_FUNCNAME   gegl_resample_boxfilter_float
 #define BOXFILTER_TYPE       gfloat
@@ -204,7 +196,6 @@ gegl_resample_nearest (guchar              *dst,
 #undef BOXFILTER_TYPE
 #undef BOXFILTER_ROUND
 
-/*
 #define DOWNSCALE_FUNCNAME gegl_downscale_2x2_double
 #define DOWNSCALE_TYPE     gdouble
 #define DOWNSCALE_SUM      gdouble
@@ -214,7 +205,6 @@ gegl_resample_nearest (guchar              *dst,
 #undef DOWNSCALE_TYPE
 #undef DOWNSCALE_SUM
 #undef DOWNSCALE_DIVISOR
-*/
 
 #define DOWNSCALE_FUNCNAME gegl_downscale_2x2_float
 #define DOWNSCALE_TYPE     gfloat
