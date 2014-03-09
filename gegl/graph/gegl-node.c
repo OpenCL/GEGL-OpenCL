@@ -1795,7 +1795,7 @@ gegl_node_get_cache (GeglNode *node)
       format = babl_format ("RGBA float");
     }
 
-  if (node->cache && node->cache->format != format)
+  if (node->cache && gegl_buffer_get_format ((GeglBuffer *)(node->cache)) != format)
     {
       g_object_unref (node->cache);
       node->cache = NULL;

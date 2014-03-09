@@ -70,7 +70,6 @@ gegl_cache_constructed (GObject *object)
   G_OBJECT_CLASS (gegl_cache_parent_class)->constructed (object);
 
   self->valid_region = gegl_region_new ();
-  self->format       = gegl_buffer_get_format (GEGL_BUFFER (self));
 }
 
 /* expand invalidated regions to be align with coordinates divisible by 8 in both
@@ -172,10 +171,6 @@ static void
 gegl_cache_init (GeglCache *self)
 {
   g_mutex_init (&self->mutex);
-
-  /* thus providing a default value for GeglCache, that overrides the NULL
-   * from GeglBuffer */
-  GEGL_BUFFER (self)->format = (gpointer) babl_format ("R'G'B'A u8");
 }
 
 static void
@@ -258,42 +253,10 @@ get_property (GObject    *gobject,
     }
 }
 
-#if 0
-static void
-gegl_buffer_clear (GeglBuffer    *buffer,
-                   GeglRectangle *rectangle)
-{
-  gint pixels = rectangle->width * rectangle->height;
-  guchar *buf = g_malloc (pixels * 4);
-  gint i;
-
-  for (i=0;i<pixels;i++)
-    {
-      buf[i*4+0]=25;
-      buf[i*4+1]=0;
-      buf[i*4+2]=25;
-      buf[i*4+3]=40;
-    }
-  gegl_buffer_set (buffer, rectangle, babl_format ("RGBA u8"), buf);
-  g_free (buf);
-}
-#endif
-
 void
 gegl_cache_invalidate (GeglCache           *self,
                        const GeglRectangle *roi)
 {
-#if 0
-  if (roi)
-    {
-      gegl_buffer_clear (GEGL_BUFFER (self), roi);
-    }
-  else
-    {
-      g_warning ("XXX: full invalidation of GeglCache NYI\n");
-    }
-#endif
-
   g_mutex_lock (&self->mutex);
 
   if (roi)

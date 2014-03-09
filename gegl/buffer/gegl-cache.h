@@ -37,7 +37,6 @@ struct _GeglCache
 {
   GeglBuffer    parent_instance;
 
-  const void   *format;
   GeglRegion   *valid_region;
   GMutex        mutex;
 };

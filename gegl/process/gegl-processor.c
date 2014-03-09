@@ -411,10 +411,11 @@ gegl_processor_get_band_size (gint size)
 static gboolean
 render_rectangle (GeglProcessor *processor)
 {
-  gboolean   buffered;
-  const gint max_area = processor->chunk_size;
-  GeglCache *cache    = NULL;
-  gint       pxsize;
+  gboolean    buffered;
+  const gint  max_area = processor->chunk_size;
+  GeglCache  *cache    = NULL;
+  const Babl *format   = NULL;
+  gint        pxsize;
 
   /* Retreive the cache if the processor's node is not buffered if it's
    * operation is a sink and it doesn't use the full area  */
@@ -423,7 +424,8 @@ render_rectangle (GeglProcessor *processor)
   if (buffered)
     {
       cache = gegl_node_get_cache (processor->input);
-      g_object_get (cache, "px-size", &pxsize, NULL);
+      format = gegl_buffer_get_format ((GeglBuffer *)cache);
+      pxsize = babl_format_get_bytes_per_pixel (format);
     }
 
   if (processor->dirty_rectangles)
@@ -488,13 +490,13 @@ render_rectangle (GeglProcessor *processor)
               /* FIXME: Check if the node caches naturaly, if so the buffer_set call isn't needed */
 
               /* do the image calculations using the buffer */
-              gegl_node_blit (processor->input, 1.0, dr, cache->format, buf,
+              gegl_node_blit (processor->input, 1.0, dr, format, buf,
                               GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
 
 
               /* copy the buffer data into the cache */
-              gegl_buffer_set (GEGL_BUFFER (cache), dr, 0, cache->format, buf,
-                               GEGL_AUTO_ROWSTRIDE); /* XXX: deal with the level */
+              gegl_buffer_set (GEGL_BUFFER (cache), dr, 0, format, buf,
+                               GEGL_AUTO_ROWSTRIDE);
 
               /* tells the cache that the rectangle (dr) has been computed */
               gegl_cache_computed (cache, dr);
