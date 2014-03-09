@@ -94,37 +94,26 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
                               gint                 d_rowstride)
 {
   const Babl *comp_type  = babl_format_get_type (format, 0);
-
-  void (*resample_boxfilter_func) (guchar              *dest_buf,
-                                   const guchar        *source_buf,
-                                   const GeglRectangle *dst_rect,
-                                   const GeglRectangle *src_rect,
-                                   gint                 s_rowstride,
-                                   gdouble              scale,
-                                   gint                 bpp,
-                                   gint                 d_rowstride) = NULL;
+  const gint bpp = babl_format_get_bytes_per_pixel (format);
 
   if (comp_type == babl_type ("u8"))
-    resample_boxfilter_func = gegl_resample_boxfilter_u8;
+    gegl_resample_boxfilter_u8 (dest_buf, source_buf, dst_rect, src_rect,
+                                s_rowstride, scale, bpp, d_rowstride);
   else if (comp_type == babl_type ("u16"))
-    resample_boxfilter_func = gegl_resample_boxfilter_u16;
+    gegl_resample_boxfilter_u16 (dest_buf, source_buf, dst_rect, src_rect,
+                                 s_rowstride, scale, bpp, d_rowstride);
   else if (comp_type == babl_type ("u32"))
-    resample_boxfilter_func = gegl_resample_boxfilter_u32;
+    gegl_resample_boxfilter_u32 (dest_buf, source_buf, dst_rect, src_rect,
+                                 s_rowstride, scale, bpp, d_rowstride);
   else if (comp_type == babl_type ("float"))
-    resample_boxfilter_func = gegl_resample_boxfilter_float;
+    gegl_resample_boxfilter_float (dest_buf, source_buf, dst_rect, src_rect,
+                                   s_rowstride, scale, bpp, d_rowstride);
   else if (comp_type == babl_type ("double"))
-    resample_boxfilter_func = gegl_resample_boxfilter_double;
+    gegl_resample_boxfilter_double (dest_buf, source_buf, dst_rect, src_rect,
+                                    s_rowstride, scale, bpp, d_rowstride);
   else
-    resample_boxfilter_func = gegl_resample_nearest;
-
-  resample_boxfilter_func (dest_buf,
-                           source_buf,
-                           dst_rect,
-                           src_rect,
-                           s_rowstride,
-                           scale,
-                           babl_format_get_bytes_per_pixel (format),
-                           d_rowstride);
+    gegl_resample_nearest (dest_buf, source_buf, dst_rect, src_rect,
+                           s_rowstride, scale, bpp, d_rowstride);
 }
 
 void
