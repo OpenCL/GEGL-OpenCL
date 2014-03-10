@@ -25,23 +25,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <glib-object.h>
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
-#include "gegl-buffer-types.h"
-#include "gegl-buffer.h"
-#include "gegl-tile-storage.h"
-#include "gegl-tile-backend.h"
-#include "gegl-tile-handler.h"
-#include "gegl-tile.h"
-#include "gegl-tile-handler-cache.h"
-#include "gegl-tile-handler-log.h"
-#include "gegl-tile-handler-empty.h"
-#include "gegl-types-internal.h"
-#include "gegl-buffer-save.h"
-#include "gegl-cache.h"
-#include "gegl-region.h"
+#include "gegl-buffer-private.h"
 #include "gegl-buffer-index.h"
 #include "gegl-debug.h"
 
