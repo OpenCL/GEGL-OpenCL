@@ -245,8 +245,6 @@ gegl_sc_mesh_sampling_entry_free_hfunc (gpointer point,
                                         gpointer sampling_list,
                                         gpointer unused)
 {
-  /* Unref the point returned from triangulation_get_points */
-  p2tr_point_unref ((P2trPoint*)point);
   /* Free the sampling list */
   gegl_sc_sample_list_free ((GeglScSampleList*)sampling_list);
 }

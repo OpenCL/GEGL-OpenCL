@@ -187,6 +187,7 @@ gegl_sc_context_update_from_outline (GeglScContext *self,
 
   if (self->mesh != NULL)
     {
+      p2tr_mesh_clear (self->mesh);
       p2tr_mesh_unref (self->mesh);
       self->mesh = NULL;
     }
@@ -778,7 +779,7 @@ gegl_sc_context_free (GeglScContext *context)
    * The reason is because the N points in context->mesh holds N references
    * back to context->mesh itself, and an initiative to break these circular
    * references is needed. */
-  p2tr_mesh_clear(context->mesh);
+  p2tr_mesh_clear (context->mesh);
   p2tr_mesh_unref (context->mesh);
 
   gegl_sc_outline_free (context->outline);
