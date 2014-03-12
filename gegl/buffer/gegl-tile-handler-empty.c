@@ -93,7 +93,7 @@ get_tile (GeglTileSource *gegl_tile_source,
   if (tile)
     return tile;
 
-  if (G_UNLIKELY (!empty->tile))
+  if (!empty->tile)
     {
       gint tile_size = gegl_tile_backend_get_tile_size (empty->backend);
       empty->tile    = _new_empty_tile (tile_size);
