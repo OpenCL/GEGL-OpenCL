@@ -183,8 +183,6 @@ apply_whirl_pinch (gdouble              whirl,
   /* Store dst pixels. */
   gegl_buffer_set (dst, roi, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
-  gegl_buffer_flush(dst);
-
   g_free (dst_buf);
   g_object_unref (sampler);
 }

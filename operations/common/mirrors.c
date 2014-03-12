@@ -252,8 +252,6 @@ apply_mirror (double               mirror_angle,
   /* Store dst pixels. */
   gegl_buffer_set (dst, roi, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
 
-  gegl_buffer_flush(dst);
-
   /* Free acquired storage. */
 #ifdef DO_NOT_USE_BUFFER_SAMPLE
   g_free (src_buf);

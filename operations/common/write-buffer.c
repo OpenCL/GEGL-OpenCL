@@ -109,8 +109,6 @@ process (GeglOperation       *operation,
         }
       else
         gegl_buffer_copy (input, result, output, result);
-
-      gegl_buffer_flush (output);
     }
 
   return TRUE;
