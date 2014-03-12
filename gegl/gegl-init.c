@@ -100,7 +100,6 @@ guint gegl_debug_flags = 0;
 #include "buffer/gegl-buffer-private.h"
 #include "buffer/gegl-buffer-iterator-private.h"
 #include "buffer/gegl-tile-backend-ram.h"
-#include "buffer/gegl-tile-backend-tiledir.h"
 #include "buffer/gegl-tile-backend-file.h"
 #include "gegl-config.h"
 #include "graph/gegl-node-private.h"
@@ -465,7 +464,6 @@ gegl_exit (void)
       gegl_buffer_stats ();
       gegl_tile_backend_ram_stats ();
       gegl_tile_backend_file_stats ();
-      gegl_tile_backend_tiledir_stats ();
     }
   global_time = gegl_ticks () - global_time;
   gegl_instrument ("gegl", "gegl", global_time);

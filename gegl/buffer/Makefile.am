@@ -21,7 +21,6 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 noinst_LTLIBRARIES = libbuffer.la
 
 libbuffer_la_SOURCES = \
-    gegl-tile-backend-tiledir.c	\
     gegl-buffer.c		\
     gegl-buffer-access.c	\
     gegl-buffer-index.h		\
@@ -76,7 +75,6 @@ libbuffer_la_SOURCES = \
     gegl-tile-backend.h		\
     gegl-tile-backend-file.h	\
 	gegl-tile-backend-swap.h \
-    gegl-tile-backend-tiledir.h	\
     gegl-tile-backend-ram.h	\
     gegl-tile-handler.h		\
     gegl-tile-handler-chain.h	\

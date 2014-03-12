@@ -45,7 +45,6 @@
 #include "gegl-tile-storage.h"
 #include "gegl-tile-backend-file.h"
 #include "gegl-tile-backend-swap.h"
-#include "gegl-tile-backend-tiledir.h"
 #include "gegl-tile-backend-ram.h"
 #include "gegl-types-internal.h"
 #include "gegl-config.h"
