@@ -29,21 +29,12 @@
 #include <glib-object.h>
 #include <glib/gstdio.h>
 
-#include "gegl-types-internal.h"
-
 #include "gegl.h"
 #include "gegl-buffer-types.h"
-#include "gegl-buffer.h"
 #include "gegl-buffer-private.h"
 #include "gegl-debug.h"
 #include "gegl-tile-storage.h"
-#include "gegl-tile-backend.h"
-#include "gegl-tile-handler.h"
 #include "gegl-tile.h"
-#include "gegl-tile-handler-cache.h"
-#include "gegl-tile-handler-log.h"
-#include "gegl-tile-handler-empty.h"
-#include "gegl-types-internal.h"
 #include "gegl-buffer-save.h"
 #include "gegl-buffer-index.h"
 
