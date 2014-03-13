@@ -99,8 +99,8 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
   {
     gint tile_width  = buffer->tile_width;
     gint tile_height = buffer->tile_height;
-    gint tiledy      = y + buffer->shift_x;
-    gint tiledx      = x + buffer->shift_y;
+    gint tiledy      = y + buffer->shift_y;
+    gint tiledx      = x + buffer->shift_x;
     gint indice_x    = gegl_tile_indice (tiledx, tile_width);
     gint indice_y    = gegl_tile_indice (tiledy, tile_height);
 
