@@ -574,13 +574,9 @@ gegl_tile_backend_swap_lookup_entry (GeglTileBackendSwap *self,
                                      gint                 y,
                                      gint                 z)
 {
-  SwapEntry *ret = NULL;
-  SwapEntry *key = gegl_tile_backend_swap_entry_create (x, y, z);
+  SwapEntry key = {0, NULL, x, y, z};
 
-  ret = g_hash_table_lookup (self->index, key);
-  g_slice_free (SwapEntry, key);
-
-  return ret;
+  return g_hash_table_lookup (self->index, &key);
 }
 
 static GeglTile *
@@ -589,14 +585,12 @@ gegl_tile_backend_swap_get_tile (GeglTileSource *self,
                                  gint            y,
                                  gint            z)
 {
-  GeglTileBackend     *backend;
   GeglTileBackendSwap *tile_backend_swap;
   SwapEntry           *entry;
   GeglTile            *tile = NULL;
   gint                 tile_size;
 
-  backend           = GEGL_TILE_BACKEND (self);
-  tile_backend_swap = GEGL_TILE_BACKEND_SWAP (backend);
+  tile_backend_swap = GEGL_TILE_BACKEND_SWAP (self);
   entry             = gegl_tile_backend_swap_lookup_entry (tile_backend_swap, x, y, z);
 
   if (!entry)
@@ -762,8 +756,6 @@ gegl_tile_backend_swap_constructed (GObject *object)
   GeglTileBackend *backend = GEGL_TILE_BACKEND (object);
 
   G_OBJECT_CLASS (parent_class)->constructed (object);
-
-  backend->priv->shared = FALSE;
 
   gegl_tile_backend_set_flush_on_destroy (backend, FALSE);
 
