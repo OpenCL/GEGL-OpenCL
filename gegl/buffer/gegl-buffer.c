@@ -94,21 +94,6 @@ enum
 
 guint gegl_buffer_signals[LAST_SIGNAL] = { 0 };
 
-
-static inline gint
-gegl_buffer_needed_tiles (gint w,
-                          gint stride)
-{
-  return ((w - 1) / stride) + 1;
-}
-
-static inline gint
-gegl_buffer_needed_width (gint w,
-                          gint stride)
-{
-  return gegl_buffer_needed_tiles (w, stride) * stride;
-}
-
 static void
 gegl_buffer_get_property (GObject    *gobject,
                           guint       property_id,
