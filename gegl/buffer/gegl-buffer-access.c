@@ -1088,8 +1088,6 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
         gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
                                               buf, rowstride, format, level, NULL,
                                               GEGL_ABYSS_NONE);
-      else if (level)
-        gegl_buffer_read_at_level (buffer, &roi_factored, buf, rowstride, format, level, GEGL_ABYSS_LOOP);
       else
         gegl_buffer_iterate_read_abyss_loop (buffer, &roi_factored, &abyss_factored,
                                              buf, rowstride, format, level);
