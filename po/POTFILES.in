@@ -200,6 +200,7 @@ operations/workshop/generated/soft-burn.c
 operations/workshop/generated/soft-dodge.c
 operations/workshop/generated/subtractive.c
 operations/workshop/hstack.c
+operations/workshop/ink-simulator.c
 operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c
 operations/workshop/rawbayer-load.c
