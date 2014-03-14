@@ -35,7 +35,6 @@
 #include "gegl-debug.h"
 #include "gegl-tile-storage.h"
 #include "gegl-tile.h"
-#include "gegl-buffer-save.h"
 #include "gegl-buffer-index.h"
 
 typedef struct
