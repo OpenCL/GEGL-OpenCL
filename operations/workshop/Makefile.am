@@ -23,6 +23,7 @@ op_LTLIBRARIES =    \
 	gaussian-blur-iir.la \
 	gblur-1d.la \
 	hstack.la \
+	ink-simulator.la \
 	kuwahara.la \
 	mandelbrot.la \
 	rawbayer-load.la \
