@@ -1,5 +1,4 @@
 /* This file is part of GEGL.
- * ck
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -81,18 +80,11 @@ struct _GeglBufferClass
 };
 
 
-
 gint              gegl_buffer_leaks       (void);
 
 void              gegl_buffer_stats       (void);
 
-void              gegl_buffer_save        (GeglBuffer          *buffer,
-                                           const gchar         *path,
-                                           const GeglRectangle *roi);
-
-
 const gchar      *gegl_swap_dir           (void);
-
 
 void              gegl_tile_cache_init    (void);
 
@@ -108,16 +100,19 @@ gboolean          gegl_buffer_is_shared   (GeglBuffer *buffer);
 gboolean          gegl_buffer_try_lock    (GeglBuffer *buffer);
 gboolean          gegl_buffer_lock        (GeglBuffer *buffer);
 gboolean          gegl_buffer_unlock      (GeglBuffer *buffer);
+
 void              gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                                             const GeglRectangle *rect,
                                             const Babl          *format,
                                             const void          *src,
                                             gint                 rowstride);
-void              gegl_buffer_set_unlocked_no_notify (GeglBuffer  *buffer,
-                                              const GeglRectangle *rect,
-                                              const Babl          *format,
-                                              const void          *src,
-                                              gint                 rowstride);
+
+void              gegl_buffer_set_unlocked_no_notify (GeglBuffer          *buffer,
+                                                      const GeglRectangle *rect,
+                                                      const Babl          *format,
+                                                      const void          *src,
+                                                      gint                 rowstride);
+
 void              gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                             gdouble              scale,
                                             const GeglRectangle *rect,
@@ -126,20 +121,11 @@ void              gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                             gint                 rowstride,
                                             GeglAbyssPolicy      repeat_mode);
 
-GeglBuffer *
-gegl_buffer_new_ram (const GeglRectangle *extent,
-                     const Babl          *format);
+GeglBuffer *      gegl_buffer_new_ram     (const GeglRectangle *extent,
+                                           const Babl          *format);
 
-void            gegl_buffer_sampler           (GeglBuffer     *buffer,
-                                               gdouble         x,
-                                               gdouble         y,
-                                               gdouble         scale,
-                                               gpointer        dest,
-                                               const Babl     *format,
-                                               gpointer        sampler);
-
-void            gegl_buffer_emit_changed_signal(GeglBuffer *buffer,
-                                                const GeglRectangle *rect);
+void              gegl_buffer_emit_changed_signal (GeglBuffer *buffer,
+                                                   const GeglRectangle *rect);
 
 /* the instance size of a GeglTile is a bit large, and should if possible be
  * trimmed down
