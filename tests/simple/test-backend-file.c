@@ -339,6 +339,76 @@ test_buffer_open (void)
   return result;
 }
 
+static gboolean
+test_buffer_change_extent (void)
+{
+  gboolean         result = TRUE;
+  gchar           *tmpdir = NULL;
+  gchar           *buf_a_path = NULL;
+  GeglBuffer      *buf_a = NULL;
+  const Babl      *format = babl_format ("R'G'B'A u8");
+  GeglRectangle    roi = {0, 0, 128, 128};
+  GeglRectangle    roi2 = {0, 0, 64, 64};
+
+  tmpdir = g_dir_make_tmp ("test-backend-file-XXXXXX", NULL);
+  g_return_val_if_fail (tmpdir, FALSE);
+
+  buf_a_path = g_build_filename (tmpdir, "buf_a.gegl", NULL);
+
+  buf_a = g_object_new (GEGL_TYPE_BUFFER,
+                        "format", format,
+                        "path", buf_a_path,
+                        "x", roi.x,
+                        "y", roi.y,
+                        "width", roi.width,
+                        "height", roi.height,
+                        NULL);
+
+  gegl_buffer_flush (buf_a);
+  g_object_unref (buf_a);
+
+  buf_a = g_object_new (GEGL_TYPE_BUFFER,
+                        "format", babl_format ("RGBA u16"),
+                        "path", buf_a_path,
+                        NULL);
+
+  if (!gegl_rectangle_equal (gegl_buffer_get_extent (buf_a), &roi))
+    {
+      printf ("Extent does not match:\n");
+      gegl_rectangle_dump (gegl_buffer_get_extent (buf_a));
+      gegl_rectangle_dump (&roi);
+      result = FALSE;
+    }
+
+  gegl_buffer_set_extent (buf_a, &roi2);
+
+  gegl_buffer_flush (buf_a);
+  g_object_unref (buf_a);
+
+  buf_a = g_object_new (GEGL_TYPE_BUFFER,
+                        "format", babl_format ("RGBA u16"),
+                        "path", buf_a_path,
+                        NULL);
+
+  if (!gegl_rectangle_equal (gegl_buffer_get_extent (buf_a), &roi2))
+    {
+      printf ("Extent does not match:\n");
+      gegl_rectangle_dump (gegl_buffer_get_extent (buf_a));
+      gegl_rectangle_dump (&roi2);
+      result = FALSE;
+    }
+
+  g_object_unref (buf_a);
+
+  g_unlink (buf_a_path);
+  g_remove (tmpdir);
+
+  g_free (tmpdir);
+  g_free (buf_a_path);
+
+  return result;
+}
+
 #define RUN_TEST(test_name) \
 { \
   if (test_name()) \
@@ -371,6 +441,7 @@ int main(int argc, char **argv)
   RUN_TEST (test_buffer_load)
   RUN_TEST (test_buffer_same_path)
   RUN_TEST (test_buffer_open)
+  RUN_TEST (test_buffer_change_extent)
 
   gegl_exit();
 
