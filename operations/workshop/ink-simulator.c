@@ -24,9 +24,9 @@
 #define DEFAULT_INKS \
 "illuminant = 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1\n" \
 "substrate  = white\n" \
-"ink1 = cyan\n"\
-"ink2 = yellow\n"\
-"ink3 = magenta\n"\
+"ink1 = cyan 1.8\n"\
+"ink2 = magenta 1.8\n"\
+"ink3 = yellow 2.2\n"\
 "ink4 = black opaque\n"
 
 gegl_chant_multiline (config, _("ink configuration"), DEFAULT_INKS,
@@ -64,28 +64,31 @@ static Spectrum STANDARD_OBSERVER_S   = {{
   0.05312, 0.45811575, 0.9226575, 0.83515125, 0.46085625, 0.146032125, 0.03805695, 0.00723844, 0.0010894, 0.000158823, 0.0000025, 0.000000336, 0
 }};
 
-/* Better reflectances for this sure would be nice */
-#define REFLECTANCE_CYAN    {{1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0}}
-#define REFLECTANCE_MAGENTA {{1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0}}
-#define REFLECTANCE_YELLOW  {{0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0}}
-#define REFLECTANCE_RED     {{0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0}}
-#define REFLECTANCE_GREEN   {{0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0}}
-#define REFLECTANCE_BLUE    {{0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
-#define REFLECTANCE_BLACK   {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
-#define REFLECTANCE_GRAY    {{0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5}}
-#define REFLECTANCE_WHITE   {{0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}}
-#define ILLUMINANT_E         REFLECTANCE_WHITE
+#define TRANSMITTANCE_CYAN    {{0.8,0.8,0.9,0.95,0.95,0.95,0.9,0.9,0.82,0.75,0.6,0.55,0.5,0.4,0.3,0.22,0.3,0.37,0.57,0.72}}
+#define TRANSMITTANCE_MAGENTA {{1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0}}
+#define TRANSMITTANCE_YELLOW  {{0.42,0.48,0.53,0.58,0.64,0.68,0.77,0.86,0.9, 1,1,1,1,0,0,0,0,0,0,0}}
+
+// this tranmittans looks more blue than magenta:
+//#define TRANSMITTANCE_MAGENTA {{1.0,0.7,0.9,0.85,0.8,0.7,0.64,0.54,0.5,0.38,0.6,0.8,0.9,1.0,1.0,1.0,1.0,0.9,0.9,0.9}}
+
+#define TRANSMITTANCE_RED     {{0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0}}
+#define TRANSMITTANCE_GREEN   {{0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0}}
+#define TRANSMITTANCE_BLUE    {{0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
+#define TRANSMITTANCE_BLACK   {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
+#define TRANSMITTANCE_GRAY    {{0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5}}
+#define TRANSMITTANCE_WHITE   {{0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}}
+#define ILLUMINANT_E         TRANSMITTANCE_WHITE
 
 /* the even illuminant; which is easy and almost cheating */
 static Spectrum ILLUMINANT            = ILLUMINANT_E;
-static Spectrum SUBSTRATE_REFLECTANCE = REFLECTANCE_WHITE;
+static Spectrum SUBSTRATE_TRANSMITTANCE = TRANSMITTANCE_WHITE;
 
 static int inks = 3;
-static Spectrum INK_REFLECTANCE_INK1 = REFLECTANCE_GREEN;
-static Spectrum INK_REFLECTANCE_INK2 = REFLECTANCE_BLACK;
-static Spectrum INK_REFLECTANCE_INK3 = REFLECTANCE_YELLOW;
-static Spectrum INK_REFLECTANCE_INK4 = REFLECTANCE_WHITE;
-static Spectrum INK_REFLECTANCE_INK5 = REFLECTANCE_WHITE;
+static Spectrum INK_TRANSMITTANCE_INK1 = TRANSMITTANCE_GREEN;
+static Spectrum INK_TRANSMITTANCE_INK2 = TRANSMITTANCE_BLACK;
+static Spectrum INK_TRANSMITTANCE_INK3 = TRANSMITTANCE_YELLOW;
+static Spectrum INK_TRANSMITTANCE_INK4 = TRANSMITTANCE_WHITE;
+static Spectrum INK_TRANSMITTANCE_INK5 = TRANSMITTANCE_WHITE;
 static int ink1_opaque = 0;
 static int ink2_opaque = 0;
 static int ink3_opaque = 0;
@@ -156,6 +159,8 @@ prepare (GeglOperation *operation)
   parse_config (operation);
 }
 
+static float ink_scale[4] = {1,1,1,1};
+
 static gboolean
 process (GeglOperation       *op,
          void                *in_buf,
@@ -172,34 +177,34 @@ process (GeglOperation       *op,
       Spectrum spec = ILLUMINANT;
       float l, m, s;
 
-      spec = spectrum_remove_light (spec, SUBSTRATE_REFLECTANCE, 1.0);
+      spec = spectrum_remove_light (spec, SUBSTRATE_TRANSMITTANCE, 1.0);
       if (inks >=1)
       {
         if (ink1_opaque)
-          spec = spectrum_add_color (spec, INK_REFLECTANCE_INK1, in[0]);
+          spec = spectrum_add_color (spec, INK_TRANSMITTANCE_INK1, in[0] * ink_scale[0]);
         else
-          spec = spectrum_remove_light (spec, INK_REFLECTANCE_INK1, in[0]);
+          spec = spectrum_remove_light (spec, INK_TRANSMITTANCE_INK1, in[0] * ink_scale[0]);
       }
       if (inks >=2)
       {
         if (ink2_opaque)
-          spec = spectrum_add_color (spec, INK_REFLECTANCE_INK2, in[1]);
+          spec = spectrum_add_color (spec, INK_TRANSMITTANCE_INK2, in[1] * ink_scale[1]);
         else
-          spec = spectrum_remove_light (spec, INK_REFLECTANCE_INK2, in[1]);
+          spec = spectrum_remove_light (spec, INK_TRANSMITTANCE_INK2, in[1] * ink_scale[1]);
       }
       if (inks >=3)
       {
         if (ink3_opaque)
-          spec = spectrum_add_color (spec, INK_REFLECTANCE_INK3, in[2]);
+          spec = spectrum_add_color (spec, INK_TRANSMITTANCE_INK3, in[2] * ink_scale[2]);
         else
-          spec = spectrum_remove_light (spec, INK_REFLECTANCE_INK3, in[2]);
+          spec = spectrum_remove_light (spec, INK_TRANSMITTANCE_INK3, in[2] * ink_scale[2]);
       }
       if (inks >=4)
       {
         if (ink4_opaque)
-          spec = spectrum_add_color (spec, INK_REFLECTANCE_INK4, in[3]);
+          spec = spectrum_add_color (spec, INK_TRANSMITTANCE_INK4, in[3] * ink_scale[3]);
         else
-          spec = spectrum_remove_light (spec, INK_REFLECTANCE_INK4, in[3]);
+          spec = spectrum_remove_light (spec, INK_TRANSMITTANCE_INK4, in[3] * ink_scale[3]);
       }
 
       l = spectrum_observed_l (spec) /6;
@@ -220,31 +225,31 @@ process (GeglOperation       *op,
 }
 
 
-static Spectrum parse_spectrum (gchar *spectrum)
+static Spectrum parse_spectrum (gchar *spectrum, float *scale)
 {
-  Spectrum s = REFLECTANCE_WHITE;
+  Spectrum s = TRANSMITTANCE_WHITE;
   if (!spectrum)
     return s;
   while (*spectrum == ' ') spectrum ++;
 
   if (g_str_has_prefix (spectrum, "red"))
-  { Spectrum color = REFLECTANCE_RED; s = color;
+  { Spectrum color = TRANSMITTANCE_RED; s = color;
   } else if (g_str_has_prefix (spectrum, "green"))
-  { Spectrum color = REFLECTANCE_GREEN; s = color;
+  { Spectrum color = TRANSMITTANCE_GREEN; s = color;
   } else if (g_str_has_prefix (spectrum, "blue"))
-  { Spectrum color = REFLECTANCE_BLUE; s = color;
+  { Spectrum color = TRANSMITTANCE_BLUE; s = color;
   } else if (g_str_has_prefix (spectrum, "cyan"))
-  { Spectrum color = REFLECTANCE_CYAN; s = color;
+  { Spectrum color = TRANSMITTANCE_CYAN; s = color;
   } else if (g_str_has_prefix (spectrum, "yellow"))
-  { Spectrum color = REFLECTANCE_YELLOW; s = color;
+  { Spectrum color = TRANSMITTANCE_YELLOW; s = color;
   } else if (g_str_has_prefix (spectrum, "magenta"))
-  { Spectrum color = REFLECTANCE_MAGENTA; s = color;
+  { Spectrum color = TRANSMITTANCE_MAGENTA; s = color;
   } else if (g_str_has_prefix (spectrum, "white"))
-  { Spectrum color = REFLECTANCE_WHITE; s = color;
+  { Spectrum color = TRANSMITTANCE_WHITE; s = color;
   } else if (g_str_has_prefix (spectrum, "black"))
-  { Spectrum color = REFLECTANCE_BLACK; s = color;
+  { Spectrum color = TRANSMITTANCE_BLACK; s = color;
   } else if (g_str_has_prefix (spectrum, "gray"))
-  { Spectrum color = REFLECTANCE_GRAY; s = color;
+  { Spectrum color = TRANSMITTANCE_GRAY; s = color;
   } else
   {
     int band = 0;
@@ -254,6 +259,13 @@ static Spectrum parse_spectrum (gchar *spectrum)
     } while (spectrum && band < SPECTRUM_BANDS);
   }
 
+  *scale = 1.0;
+  if (strrchr(spectrum, ' '))
+  {
+    char *p = strrchr(spectrum, ' ');
+    if (atof (p)) *scale = atof (p);
+  }
+
   return s;
 }
 
@@ -261,6 +273,7 @@ static void parse_config_line (GeglOperation *operation,
                                const char *line)
 {
   Spectrum s;
+  float scale = 1.0;
   if (!line)
     return;
 
@@ -269,41 +282,45 @@ static void parse_config_line (GeglOperation *operation,
 
   while (*line == ' ') line++;
   
-  s = parse_spectrum (strchr (line, '=') + 1);
+  s = parse_spectrum (strchr (line, '=') + 1, &scale);
 
   inks = 0;
 
   if (g_str_has_prefix (line, "illuminant"))
     ILLUMINANT = s;
   else if (g_str_has_prefix (line, "substrate"))
-    SUBSTRATE_REFLECTANCE = s;
+    SUBSTRATE_TRANSMITTANCE = s;
   else if (g_str_has_prefix (line, "ink1"))
     {
-      INK_REFLECTANCE_INK1 = s;
+      INK_TRANSMITTANCE_INK1 = s;
       if (strstr(line, "opaque"))
         ink1_opaque = 1;
       inks = MAX(inks, 1);
+      ink_scale[0] = scale;
     }
   else if (g_str_has_prefix (line, "ink2"))
     {
-      INK_REFLECTANCE_INK2 = s;
+      INK_TRANSMITTANCE_INK2 = s;
       inks = MAX(inks, 2);
       if (strstr(line, "opaque"))
         ink2_opaque = 2;
+      ink_scale[1] = scale;
     }
   else if (g_str_has_prefix (line, "ink3"))
     {
-      INK_REFLECTANCE_INK3 = s;
+      INK_TRANSMITTANCE_INK3 = s;
       inks = MAX(inks, 3);
       if (strstr(line, "opaque"))
         ink3_opaque = 3;
+      ink_scale[2] = scale;
     }
   else if (g_str_has_prefix (line, "ink4"))
     {
-      INK_REFLECTANCE_INK4 = s;
+      INK_TRANSMITTANCE_INK4 = s;
       inks = MAX(inks, 4);
       if (strstr(line, "opaque"))
         ink4_opaque = 4;
+      ink_scale[3] = scale;
     }
 }
 
@@ -316,11 +333,11 @@ static void parse_config (GeglOperation *operation)
   if (!p)
     return;
 
-  memset (&INK_REFLECTANCE_INK1, 0, sizeof (INK_REFLECTANCE_INK1));
-  memset (&INK_REFLECTANCE_INK2, 0, sizeof (INK_REFLECTANCE_INK2));
-  memset (&INK_REFLECTANCE_INK3, 0, sizeof (INK_REFLECTANCE_INK3));
-  memset (&INK_REFLECTANCE_INK4, 0, sizeof (INK_REFLECTANCE_INK4));
-  memset (&INK_REFLECTANCE_INK5, 0, sizeof (INK_REFLECTANCE_INK5));
+  memset (&INK_TRANSMITTANCE_INK1, 0, sizeof (INK_TRANSMITTANCE_INK1));
+  memset (&INK_TRANSMITTANCE_INK2, 0, sizeof (INK_TRANSMITTANCE_INK2));
+  memset (&INK_TRANSMITTANCE_INK3, 0, sizeof (INK_TRANSMITTANCE_INK3));
+  memset (&INK_TRANSMITTANCE_INK4, 0, sizeof (INK_TRANSMITTANCE_INK4));
+  memset (&INK_TRANSMITTANCE_INK5, 0, sizeof (INK_TRANSMITTANCE_INK5));
   ink1_opaque = 0;
   ink2_opaque = 0;
   ink3_opaque = 0;
