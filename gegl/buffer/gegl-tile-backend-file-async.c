@@ -1186,6 +1186,10 @@ gegl_tile_backend_file_constructed (GObject *object)
       backend->priv->tile_size   = backend->priv->tile_width *
                                     backend->priv->tile_height *
                                     backend->priv->px_size;
+      backend->priv->extent      = (GeglRectangle) {self->header.x,
+                                                    self->header.y,
+                                                    self->header.width,
+                                                    self->header.height};
 
       /* insert each of the entries into the hash table */
       gegl_tile_backend_file_load_index (self, TRUE);

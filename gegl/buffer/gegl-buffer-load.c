@@ -233,7 +233,13 @@ gegl_buffer_open (const gchar *path)
 {
   sanity();
 
-  return g_object_new (GEGL_TYPE_BUFFER, "path", path, NULL);
+  return g_object_new (GEGL_TYPE_BUFFER,
+                       /* FIXME: Currently the buffer must always have a format specified,
+                                 this format will be used if the path did not point to an
+                                 existing file. */
+                       "format", babl_format ("RGBA float"),
+                       "path", path,
+                       NULL);
 }
 
 GeglBuffer *

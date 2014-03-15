@@ -559,6 +559,14 @@ gegl_buffer_constructor (GType                  type,
                                       "format",      buffer->format,
                                       "path",        buffer->path,
                                       NULL);
+
+              /* Re-inherit values in case path pointed to an existing buffer */
+              buffer->format = gegl_tile_backend_get_format (backend);
+              buffer->tile_width = gegl_tile_backend_get_tile_width (backend);
+              buffer->tile_height = gegl_tile_backend_get_tile_height (backend);
+
+              if (buffer->extent.width == -1 || buffer->extent.height == -1)
+                buffer->extent = gegl_tile_backend_get_extent (backend);
             }
           else
             {
