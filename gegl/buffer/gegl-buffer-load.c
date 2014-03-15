@@ -279,7 +279,6 @@ gegl_buffer_load (const gchar *path)
                       "tile-height", info->header.tile_height,
                       "height", info->header.height,
                       "width", info->header.width,
-                      "path", path,
                       NULL);
 
   /* sanity check, should probably report error condition and return safely instead
