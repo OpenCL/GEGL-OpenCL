@@ -146,6 +146,199 @@ test_buffer_path_from_backend (void)
   return result;
 }
 
+static gboolean
+test_buffer_load (void)
+{
+  gboolean         result = TRUE;
+  gchar           *tmpdir = NULL;
+  gchar           *buf_a_path = NULL;
+  GeglBuffer      *buf_a = NULL;
+  const Babl      *format = babl_format ("R'G'B'A u8");
+  GeglRectangle    roi = {0, 0, 128, 128};
+
+  tmpdir = g_dir_make_tmp ("test-backend-file-XXXXXX", NULL);
+  g_return_val_if_fail (tmpdir, FALSE);
+
+  buf_a_path = g_build_filename (tmpdir, "buf_a.gegl", NULL);
+
+  buf_a = g_object_new (GEGL_TYPE_BUFFER,
+                        "format", format,
+                        "path", buf_a_path,
+                        "x", roi.x,
+                        "y", roi.y,
+                        "width", roi.width,
+                        "height", roi.height,
+                        NULL);
+
+  gegl_buffer_flush (buf_a);
+  g_object_unref (buf_a);
+
+  buf_a = gegl_buffer_load (buf_a_path);
+
+  if (!GEGL_IS_BUFFER (buf_a))
+    {
+      printf ("Failed to load file:%s\n",
+              buf_a_path);
+      result = FALSE;
+    }
+
+  if (!gegl_rectangle_equal (gegl_buffer_get_extent (buf_a), &roi))
+    {
+      printf ("Extent does not match:\n");
+      gegl_rectangle_dump (gegl_buffer_get_extent (buf_a));
+      gegl_rectangle_dump (&roi);
+      result = FALSE;
+    }
+
+  if (gegl_buffer_get_format (buf_a) != format)
+    {
+      printf ("Formats do not match:\n%s\n%s\n",
+        babl_get_name (gegl_buffer_get_format (buf_a)),
+        babl_get_name (format));
+      result = FALSE;
+    }
+
+  g_object_unref (buf_a);
+
+  g_unlink (buf_a_path);
+  g_remove (tmpdir);
+
+  g_free (tmpdir);
+  g_free (buf_a_path);
+
+  return result;
+}
+
+static gboolean
+test_buffer_same_path (void)
+{
+  gboolean         result = TRUE;
+  gchar           *tmpdir = NULL;
+  gchar           *buf_a_path = NULL;
+  GeglBuffer      *buf_a = NULL;
+  const Babl      *format = babl_format ("R'G'B'A u8");
+  GeglRectangle    roi = {0, 0, 128, 128};
+
+  tmpdir = g_dir_make_tmp ("test-backend-file-XXXXXX", NULL);
+  g_return_val_if_fail (tmpdir, FALSE);
+
+  buf_a_path = g_build_filename (tmpdir, "buf_a.gegl", NULL);
+
+  buf_a = g_object_new (GEGL_TYPE_BUFFER,
+                        "format", format,
+                        "path", buf_a_path,
+                        "x", roi.x,
+                        "y", roi.y,
+                        "width", roi.width,
+                        "height", roi.height,
+                        NULL);
+
+  gegl_buffer_flush (buf_a);
+  g_object_unref (buf_a);
+
+  buf_a = g_object_new (GEGL_TYPE_BUFFER,
+                        /* FIXME: Currently the buffer must always have a format specified */
+                        "format", babl_format ("RGBA u16"),
+                        "path", buf_a_path,
+                        NULL);
+
+  if (!GEGL_IS_BUFFER (buf_a))
+    {
+      printf ("Failed to load file:%s\n",
+              buf_a_path);
+      result = FALSE;
+    }
+
+  if (!gegl_rectangle_equal (gegl_buffer_get_extent (buf_a), &roi))
+    {
+      printf ("Extent does not match:\n");
+      gegl_rectangle_dump (gegl_buffer_get_extent (buf_a));
+      gegl_rectangle_dump (&roi);
+      result = FALSE;
+    }
+
+  if (gegl_buffer_get_format (buf_a) != format)
+    {
+      printf ("Formats do not match:\n%s\n%s\n",
+        babl_get_name (gegl_buffer_get_format (buf_a)),
+        babl_get_name (format));
+      result = FALSE;
+    }
+
+  g_object_unref (buf_a);
+
+  g_unlink (buf_a_path);
+  g_remove (tmpdir);
+
+  g_free (tmpdir);
+  g_free (buf_a_path);
+
+  return result;
+}
+
+static gboolean
+test_buffer_open (void)
+{
+  gboolean         result = TRUE;
+  gchar           *tmpdir = NULL;
+  gchar           *buf_a_path = NULL;
+  GeglBuffer      *buf_a = NULL;
+  const Babl      *format = babl_format ("R'G'B'A u8");
+  GeglRectangle    roi = {0, 0, 128, 128};
+
+  tmpdir = g_dir_make_tmp ("test-backend-file-XXXXXX", NULL);
+  g_return_val_if_fail (tmpdir, FALSE);
+
+  buf_a_path = g_build_filename (tmpdir, "buf_a.gegl", NULL);
+
+  buf_a = g_object_new (GEGL_TYPE_BUFFER,
+                        "format", format,
+                        "path", buf_a_path,
+                        "x", roi.x,
+                        "y", roi.y,
+                        "width", roi.width,
+                        "height", roi.height,
+                        NULL);
+
+  gegl_buffer_flush (buf_a);
+  g_object_unref (buf_a);
+
+  buf_a = gegl_buffer_open (buf_a_path);
+
+  if (!GEGL_IS_BUFFER (buf_a))
+    {
+      printf ("Failed to load file:%s\n",
+              buf_a_path);
+      result = FALSE;
+    }
+
+  if (!gegl_rectangle_equal (gegl_buffer_get_extent (buf_a), &roi))
+    {
+      printf ("Extent does not match:\n");
+      gegl_rectangle_dump (gegl_buffer_get_extent (buf_a));
+      gegl_rectangle_dump (&roi);
+      result = FALSE;
+    }
+
+  if (gegl_buffer_get_format (buf_a) != format)
+    {
+      printf ("Formats do not match:\n%s\n%s\n",
+        babl_get_name (gegl_buffer_get_format (buf_a)),
+        babl_get_name (format));
+      result = FALSE;
+    }
+
+  g_object_unref (buf_a);
+
+  g_unlink (buf_a_path);
+  g_remove (tmpdir);
+
+  g_free (tmpdir);
+  g_free (buf_a_path);
+
+  return result;
+}
+
 #define RUN_TEST(test_name) \
 { \
   if (test_name()) \
@@ -175,6 +368,9 @@ int main(int argc, char **argv)
 
   RUN_TEST (test_buffer_path)
   RUN_TEST (test_buffer_path_from_backend)
+  RUN_TEST (test_buffer_load)
+  RUN_TEST (test_buffer_same_path)
+  RUN_TEST (test_buffer_open)
 
   gegl_exit();
 
