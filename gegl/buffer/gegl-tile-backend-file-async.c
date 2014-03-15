@@ -523,8 +523,14 @@ gegl_tile_backend_file_write_header (GeglTileBackendFile *self)
 {
   GeglFileBackendThreadParams *params = g_new0 (GeglFileBackendThreadParams, 1);
   guchar *new_source = g_malloc (256);
+  GeglRectangle roi = gegl_tile_backend_get_extent ((GeglTileBackend *)self);
 
   gegl_tile_backend_file_ensure_exist (self);
+
+  self->header.x = roi.x;
+  self->header.y = roi.y;
+  self->header.width = roi.width;
+  self->header.height = roi.height;
 
   memcpy (new_source, &(self->header), 256);
 
@@ -1208,8 +1214,6 @@ gegl_tile_backend_file_constructed (GObject *object)
     }
 
   g_assert (self->file);
-
-  backend->priv->header = &self->header;
 
   gegl_tile_backend_set_flush_on_destroy (backend, FALSE);
 }

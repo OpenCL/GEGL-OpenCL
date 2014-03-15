@@ -290,26 +290,15 @@ gboolean
 gegl_buffer_set_extent (GeglBuffer          *buffer,
                         const GeglRectangle *extent)
 {
-  GeglBufferHeader *header;
-
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), FALSE);
 
   buffer->extent = *extent;
 
-  header = gegl_buffer_backend (buffer)->priv->header;
-
-  if (header)
-    {
-      header->x = buffer->extent.x;
-      header->y = buffer->extent.y;
-      header->width = buffer->extent.width;
-      header->height = buffer->extent.height;
-    }
+  if (buffer->backend)
+    gegl_tile_backend_set_extent (buffer->backend, &buffer->extent);
 
   if (buffer->abyss_tracks_extent)
-    {
-      buffer->abyss = *extent;
-    }
+    buffer->abyss = *extent;
 
   return TRUE;
 }

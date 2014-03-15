@@ -34,7 +34,6 @@
 #include "gegl-buffer-private.h"
 #include "gegl-tile-storage.h"
 #include "gegl-sampler.h"
-#include "gegl-buffer-index.h"
 #include "gegl-tile-backend.h"
 #include "gegl-buffer-iterator.h"
 #include "gegl-buffer-cl-cache.h"
@@ -177,14 +176,8 @@ gegl_buffer_flush (GeglBuffer *buffer)
 
   _gegl_buffer_drop_hot_tile (buffer);
 
-  if ((GeglBufferHeader*)(backend->priv->header))
-    {
-      GeglBufferHeader* header = backend->priv->header;
-      header->x = buffer->extent.x;
-      header->y = buffer->extent.y;
-      header->width =buffer->extent.width;
-      header->height =buffer->extent.height;
-    }
+  if (backend)
+    gegl_tile_backend_set_extent (backend, &buffer->extent);
 
   gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),
                             GEGL_TILE_FLUSH, 0,0,0,NULL);

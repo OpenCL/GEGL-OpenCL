@@ -40,7 +40,6 @@ struct _GeglTileBackendPrivate
 
   GeglRectangle extent;
 
-  gpointer    header;
   gpointer    storage;
   gboolean    shared;
 };
