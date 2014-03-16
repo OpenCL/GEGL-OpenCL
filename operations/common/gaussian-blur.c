@@ -101,58 +101,64 @@ iir_young_find_constants (gfloat   sigma,
 }
 
 static inline void
-iir_young_blur_1D (gfloat  * buf,
-                   gint      offset,
-                   gint      delta_offset,
-                   gdouble   B,
-                   gdouble * b,
-                   gfloat  * w,
-                   gint      w_len)
+iir_young_blur_pixels_1D (gfloat  *buf,
+                          gint     components,
+                          gdouble  B,
+                          gdouble *b,
+                          gfloat  *w,
+                          gint     w_len)
 {
-  gint wcount, i;
+  gint wcount, i, c;
   gdouble tmp;
   gdouble recip = 1.0 / b[0];
+  gint offset = 0;
 
   /* forward filter */
   wcount = 0;
 
   while (wcount < w_len)
     {
-      tmp = 0;
-
-      for (i=1; i<4; i++)
+      for (c = 0; c < components; ++c)
         {
-          if (wcount-i >= 0)
-            tmp += b[i]*w[wcount-i];
+          tmp = 0;
+
+          for (i = 1; i < 4; i++)
+            {
+              if (wcount - i >= 0)
+                tmp += b[i] * w[(wcount - i) * components + c];
+            }
+
+          tmp *= recip;
+          tmp += B * buf[offset + c];
+          w[wcount * components + c] = tmp;
         }
 
-      tmp *= recip;
-      tmp += B*buf[offset];
-      w[wcount] = tmp;
-
       wcount++;
-      offset += delta_offset;
+      offset += components;
     }
 
   /* backward filter */
   wcount = w_len - 1;
-  offset -= delta_offset;
+  offset -= components;
 
   while (wcount >= 0)
     {
-      tmp = 0;
-
-      for (i=1; i<4; i++)
+      for (c = 0; c < components; ++c)
         {
-          if (wcount+i < w_len)
-            tmp += b[i]*buf[offset+delta_offset*i];
+          tmp = 0;
+
+          for (i = 1; i < 4; i++)
+            {
+              if (wcount + i < w_len)
+                tmp += b[i] * buf[offset + components * i + c];
+            }
+
+          tmp *= recip;
+          tmp += B * w[wcount * components + c];
+          buf[offset + c] = tmp;
         }
 
-      tmp *= recip;
-      tmp += B*w[wcount];
-      buf[offset] = tmp;
-
-      offset -= delta_offset;
+      offset -= components;
       wcount--;
     }
 }
@@ -167,11 +173,10 @@ iir_young_hor_blur (GeglBuffer          *src,
                     gdouble             *b)
 {
   gint v;
-  gint c;
   const Babl *format = babl_format ("RaGaBaA float");
   const int pixel_count = src_rect->width;
   gfloat *buf     = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
-  gfloat *scratch = gegl_malloc (pixel_count * sizeof(gfloat));
+  gfloat *scratch = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
   GeglRectangle read_rect = {src_rect->x, src_rect->y, src_rect->width, 1};
 
   for (v = 0; v < src_rect->height; v++)
@@ -179,10 +184,7 @@ iir_young_hor_blur (GeglBuffer          *src,
       read_rect.y = src_rect->y + v;
       gegl_buffer_get (src, &read_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-      for (c = 0; c < 4; c++)
-        {
-          iir_young_blur_1D (buf, c, 4, B, b, scratch, pixel_count);
-        }
+      iir_young_blur_pixels_1D (buf, 4, B, b, scratch, pixel_count);
 
       gegl_buffer_set (dst, &read_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
     }
@@ -201,11 +203,10 @@ iir_young_ver_blur (GeglBuffer          *src,
                     gdouble             *b)
 {
   gint u;
-  gint c;
   const Babl *format = babl_format ("RaGaBaA float");
   const int pixel_count = src_rect->height;
   gfloat *buf     = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
-  gfloat *scratch = gegl_malloc (pixel_count * sizeof(gfloat));
+  gfloat *scratch = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
   GeglRectangle read_rect = {src_rect->x, src_rect->y, 1, src_rect->height};
 
   for (u = 0; u < src_rect->width; u++)
@@ -213,10 +214,7 @@ iir_young_ver_blur (GeglBuffer          *src,
       read_rect.x = src_rect->x + u;
       gegl_buffer_get (src, &read_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-      for (c = 0; c < 4; c++)
-        {
-          iir_young_blur_1D (buf, c, 4, B, b, scratch, pixel_count);
-        }
+      iir_young_blur_pixels_1D (buf, 4, B, b, scratch, pixel_count);
 
       gegl_buffer_set (dst, &read_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
     }
