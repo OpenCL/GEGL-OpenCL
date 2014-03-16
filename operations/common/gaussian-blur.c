@@ -13,6 +13,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2006 Dominik Ernst <dernst@gmx.de>
+ *           2014 Daniel Sabo
  *
  * Recursive Gauss IIR Filter as described by Young / van Vliet
  * in "Signal Processing 44 (1995) 139 - 151"
@@ -167,35 +168,27 @@ iir_young_hor_blur (GeglBuffer          *src,
 {
   gint v;
   gint c;
-  gint w_len;
-  gfloat *buf;
-  gfloat *w;
+  const Babl *format = babl_format ("RaGaBaA float");
+  const int pixel_count = src_rect->width;
+  gfloat *buf     = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
+  gfloat *scratch = gegl_malloc (pixel_count * sizeof(gfloat));
+  GeglRectangle read_rect = {src_rect->x, src_rect->y, src_rect->width, 1};
 
-  buf = g_new0 (gfloat, src_rect->height * src_rect->width * 4);
-  w   = g_new0 (gfloat, src_rect->width);
-
-  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
-                   buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-  w_len = src_rect->width;
-  for (v=0; v<src_rect->height; v++)
+  for (v = 0; v < src_rect->height; v++)
     {
+      read_rect.y = src_rect->y + v;
+      gegl_buffer_get (src, &read_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
       for (c = 0; c < 4; c++)
         {
-          iir_young_blur_1D (buf,
-                             v*src_rect->width*4+c,
-                             4,
-                             B,
-                             b,
-                             w,
-                             w_len);
+          iir_young_blur_1D (buf, c, 4, B, b, scratch, pixel_count);
         }
+
+      gegl_buffer_set (dst, &read_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
     }
 
-  gegl_buffer_set (dst, src_rect, 0.0, babl_format ("RaGaBaA float"),
-                   buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (buf);
-  g_free (w);
+  gegl_free (buf);
+  gegl_free (scratch);
 }
 
 /* expects src and dst buf to have the same width and no x-offset */
@@ -209,35 +202,27 @@ iir_young_ver_blur (GeglBuffer          *src,
 {
   gint u;
   gint c;
-  gint w_len;
-  gfloat *buf;
-  gfloat *w;
+  const Babl *format = babl_format ("RaGaBaA float");
+  const int pixel_count = src_rect->height;
+  gfloat *buf     = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
+  gfloat *scratch = gegl_malloc (pixel_count * sizeof(gfloat));
+  GeglRectangle read_rect = {src_rect->x, src_rect->y, 1, src_rect->height};
 
-  buf = g_new0 (gfloat, src_rect->height * src_rect->width * 4);
-  w   = g_new0 (gfloat, src_rect->height);
-
-  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
-                   buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-  w_len = src_rect->height;
-  for (u=0; u<dst_rect->width; u++)
+  for (u = 0; u < src_rect->width; u++)
     {
+      read_rect.x = src_rect->x + u;
+      gegl_buffer_get (src, &read_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
       for (c = 0; c < 4; c++)
         {
-          iir_young_blur_1D (buf,
-                             u*4 + c,
-                             src_rect->width*4,
-                             B,
-                             b,
-                             w,
-                             w_len);
+          iir_young_blur_1D (buf, c, 4, B, b, scratch, pixel_count);
         }
+
+      gegl_buffer_set (dst, &read_rect, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
     }
 
-  gegl_buffer_set (dst, src_rect, 0,
-                   babl_format ("RaGaBaA float"), buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (buf);
-  g_free (w);
+  gegl_free (buf);
+  gegl_free (scratch);
 }
 
 
@@ -324,39 +309,42 @@ fir_hor_blur (GeglBuffer          *src,
               gint                 matrix_length,
               gint                 xoff) /* offset between src and dst */
 {
-  gint        u,v;
+  gint        u, v;
   gint        offset;
-  gfloat     *src_buf;
-  gfloat     *dst_buf;
-  const gint  radius = matrix_length/2;
-  const gint  src_width = src_rect->width;
+  const gint  radius = matrix_length / 2;
+  const Babl *format = babl_format ("RaGaBaA float");
+  gfloat *src_buf     = gegl_malloc (src_rect->width * sizeof(gfloat) * 4);
+  gfloat *dst_buf     = gegl_malloc (dst_rect->width * sizeof(gfloat) * 4);
+  GeglRectangle read_rect  = {src_rect->x, src_rect->y, src_rect->width, 1};
+  GeglRectangle write_rect = {dst_rect->x, dst_rect->y, dst_rect->width, 1};
 
   g_assert (xoff >= radius);
 
-  src_buf = g_new0 (gfloat, src_rect->height * src_rect->width * 4);
-  dst_buf = g_new0 (gfloat, dst_rect->height * dst_rect->width * 4);
+  for (v = 0; v < dst_rect->height; v++)
+    {
+      offset = 0;
+      read_rect.y = src_rect->y + v;
+      write_rect.y = dst_rect->y + v;
+      gegl_buffer_get (src, &read_rect, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
-                   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+      for (u = 0; u < dst_rect->width; u++)
+        {
+          gint src_offset = (u - radius + xoff) * 4;
+          gint c;
 
-  offset = 0;
-  for (v=0; v<dst_rect->height; v++)
-    for (u=0; u<dst_rect->width; u++)
-      {
-        gint src_offset = (u-radius+xoff + v*src_width) * 4;
-        gint c;
-        for (c=0; c<4; c++)
-          dst_buf [offset++] = fir_get_mean_component_1D (src_buf,
-                                                          src_offset + c,
-                                                          4,
-                                                          cmatrix,
-                                                          matrix_length);
-      }
+          for (c = 0; c < 4; c++)
+            dst_buf [offset++] = fir_get_mean_component_1D (src_buf,
+                                                            src_offset + c,
+                                                            4,
+                                                            cmatrix,
+                                                            matrix_length);
+        }
 
-  gegl_buffer_set (dst, dst_rect, 0.0, babl_format ("RaGaBaA float"),
-                   dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (src_buf);
-  g_free (dst_buf);
+      gegl_buffer_set (dst, &write_rect, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+    }
+
+  gegl_free (src_buf);
+  gegl_free (dst_buf);
 }
 
 /* expects src and dst buf to have the same width and no x-offset */
@@ -371,37 +359,40 @@ fir_ver_blur (GeglBuffer          *src,
 {
   gint        u,v;
   gint        offset;
-  gfloat     *src_buf;
-  gfloat     *dst_buf;
-  const gint  radius = matrix_length/2;
-  const gint  src_width = src_rect->width;
+  const gint  radius = matrix_length / 2;
+  const Babl *format = babl_format ("RaGaBaA float");
+  gfloat *src_buf    = gegl_malloc (src_rect->height * sizeof(gfloat) * 4);
+  gfloat *dst_buf    = gegl_malloc (dst_rect->height * sizeof(gfloat) * 4);
+  GeglRectangle read_rect  = {src_rect->x, src_rect->y, 1, src_rect->height};
+  GeglRectangle write_rect = {dst_rect->x, dst_rect->y, 1, dst_rect->height};
 
   g_assert (yoff >= radius);
 
-  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
-  dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
+  for (u = 0; u < dst_rect->width; u++)
+    {
+      offset = 0;
+      read_rect.x = src_rect->x + u;
+      write_rect.x = dst_rect->x + u;
+      gegl_buffer_get (src, &read_rect, 1.0, format, src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RaGaBaA float"),
-                   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+      for (v = 0; v < dst_rect->height; v++)
+        {
+          gint src_offset = (v - radius + yoff) * 4;
+          gint c;
 
-  offset=0;
-  for (v=0; v< dst_rect->height; v++)
-    for (u=0; u< dst_rect->width; u++)
-      {
-        gint src_offset = (u + (v-radius+yoff)*src_width) * 4;
-        gint c;
-        for (c=0; c<4; c++)
-          dst_buf [offset++] = fir_get_mean_component_1D (src_buf,
-                                                          src_offset + c,
-                                                          src_width * 4,
-                                                          cmatrix,
-                                                          matrix_length);
-      }
+          for (c = 0; c < 4; c++)
+            dst_buf [offset++] = fir_get_mean_component_1D (src_buf,
+                                                            src_offset + c,
+                                                            4,
+                                                            cmatrix,
+                                                            matrix_length);
+        }
 
-  gegl_buffer_set (dst, dst_rect, 0, babl_format ("RaGaBaA float"),
-                   dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (src_buf);
-  g_free (dst_buf);
+      gegl_buffer_set (dst, &write_rect, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+    }
+
+  gegl_free (src_buf);
+  gegl_free (dst_buf);
 }
 
 static void
