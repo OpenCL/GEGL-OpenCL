@@ -87,7 +87,6 @@ get_tile (GeglTileSource *gegl_tile_source,
   GeglTileSource      *source = ((GeglTileHandler *) gegl_tile_source)->source;
   GeglTileHandlerZoom *zoom   = (GeglTileHandlerZoom *) gegl_tile_source;
   GeglTile            *tile   = NULL;
-  const Babl          *format = gegl_tile_backend_get_format (zoom->backend);
   GeglTileStorage     *tile_storage;
   gint                 tile_width;
   gint                 tile_height;
@@ -95,14 +94,8 @@ get_tile (GeglTileSource *gegl_tile_source,
   if (source)
     tile = gegl_tile_source_get_tile (source, x, y, z);
 
-  if (tile)
+  if (tile || (z == 0))
     return tile;
-
-  if (z == 0)/* at base level with no tile found->send null, and shared empty
-               tile will be used instead */
-    {
-      return NULL;
-    }
 
   tile_storage = _gegl_tile_handler_get_tile_storage ((GeglTileHandler *) zoom);
 
@@ -113,8 +106,9 @@ get_tile (GeglTileSource *gegl_tile_source,
   tile_height = tile_storage->tile_height;
 
   {
-    gint      i, j;
-    GeglTile *source_tile[2][2] = { { NULL, NULL }, { NULL, NULL } };
+    gint        i, j;
+    const Babl *format = gegl_tile_backend_get_format (zoom->backend);
+    GeglTile   *source_tile[2][2] = { { NULL, NULL }, { NULL, NULL } };
 
     for (i = 0; i < 2; i++)
       for (j = 0; j < 2; j++)
