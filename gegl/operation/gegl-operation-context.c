@@ -317,7 +317,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
   if (result->width == 0 ||
       result->height == 0)
     {
-      output = gegl_buffer_new_ram (GEGL_RECTANGLE (0, 0, 0, 0), format);
+      output = gegl_buffer_new (GEGL_RECTANGLE (0, 0, 0, 0), format);
     }
   else if (node->dont_cache == FALSE &&
       ! GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
@@ -335,12 +335,12 @@ gegl_operation_context_get_target (GeglOperationContext *context,
         }
       else
         {
-          output = gegl_buffer_new_ram (result, format);
+          output = gegl_buffer_new (result, format);
         }
     }
   else
     {
-      output = gegl_buffer_new_ram (result, format);
+      output = gegl_buffer_new (result, format);
     }
 
   gegl_operation_context_take_object (context, padname, G_OBJECT (output));
