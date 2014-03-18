@@ -98,8 +98,8 @@ p2tr_cluster_get_for (P2trPoint   *P,
   p2tr_edge_unref (next);
 
   current = p2tr_edge_ref (E);
-  next = p2tr_point_edge_ccw(P, current);
-  p2tr_edge_unref(next);
+  next = p2tr_point_edge_ccw (P, current);
+
   while (next != g_queue_peek_tail (&cluster->edges)
       && (temp_angle = p2tr_edge_angle_between (current->mirror, next)) <= P2TR_CLUSTER_LIMIT_ANGLE
       && p2tr_cluster_cw_tri_between_is_in_domain (next, current))
