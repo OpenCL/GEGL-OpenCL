@@ -102,14 +102,11 @@ grey_blur_buffer (GeglBuffer  *input,
 }
 
 static gdouble
-compute_ramp (GeglBuffer    *input,
-              GeglOperation *operation,
-              gdouble        pct_black)
+compute_ramp (GeglSampler         *sampler1,
+              GeglSampler         *sampler2,
+              const GeglRectangle *roi,
+              gdouble              pct_black)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-
-  GeglRectangle *whole_region;
-  gint    n_pixels;
   gint    hist[100];
   gdouble diff;
   gint    count;
@@ -118,77 +115,49 @@ compute_ramp (GeglBuffer    *input,
   gint y;
   gint i;
   gint sum;
-  GeglSampler *sampler1;
-  GeglSampler *sampler2;
-  GeglBuffer *dest1, *dest2;
 
-  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-  grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);
-
-  sampler1 = gegl_buffer_sampler_new (dest1,
-                                      babl_format ("Y' float"),
-                                      GEGL_SAMPLER_LINEAR);
-
-  sampler2 = gegl_buffer_sampler_new (dest2,
-                                      babl_format ("Y' float"),
-                                      GEGL_SAMPLER_LINEAR);
-
-  n_pixels = whole_region->width * whole_region->height;
   memset (hist, 0, sizeof (int) * 100);
   count = 0;
-  x = whole_region->x;
-  y = whole_region->y;
 
-  while (n_pixels--)
-    {
-      gegl_sampler_get (sampler1,
-                        x,
-                        y,
-                        NULL,
-                        &pixel1,
-                        GEGL_ABYSS_NONE);
-
-      gegl_sampler_get (sampler2,
-                        x,
-                        y,
-                        NULL,
-                        &pixel2,
-                        GEGL_ABYSS_NONE);
-
-      if (pixel2 != 0)
+  for (y = roi->y; y < roi->y + roi->height; ++y)
+    for (x = roi->x; x < roi->x + roi->width; ++x)
       {
-        diff = (gdouble) pixel1 / (gdouble) pixel2;
+        gegl_sampler_get (sampler1,
+                          x,
+                          y,
+                          NULL,
+                          &pixel1,
+                          GEGL_ABYSS_NONE);
 
-        if (diff < 1.0)
-        {
-          hist[(int) (diff * 100)] += 1;
-          count += 1;
-        }
+        gegl_sampler_get (sampler2,
+                          x,
+                          y,
+                          NULL,
+                          &pixel2,
+                          GEGL_ABYSS_NONE);
+
+        if (pixel2 != 0)
+          {
+            diff = (gdouble) pixel1 / (gdouble) pixel2;
+
+            if (diff < 1.0 && diff >= 0.0)
+              {
+                hist[(int) (diff * 100)] += 1;
+                count += 1;
+              }
+          }
       }
-
-      x++;
-      if (x >= whole_region->x + whole_region->width)
-        {
-          x = whole_region->x;
-          y++;
-        }
-    }
-
-  g_object_unref (sampler1);
-  g_object_unref (sampler2);
-  g_object_unref (dest1);
-  g_object_unref (dest2);
 
   if (pct_black == 0.0 || count == 0)
     return 1.0;
 
   sum = 0;
   for (i = 0; i < 100; i++)
-  {
-    sum += hist[i];
-    if (((gdouble) sum / (gdouble) count) > pct_black)
-      return (1.0 - (gdouble) i / 100.0);
-  }
+    {
+      sum += hist[i];
+      if (((gdouble) sum / (gdouble) count) > pct_black)
+        return (1.0 - (gdouble) i / 100.0);
+    }
 
   return 0.0;
 
@@ -197,25 +166,10 @@ compute_ramp (GeglBuffer    *input,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-
   gegl_operation_set_format (operation, "input",
                              babl_format ("Y'CbCrA float"));
   gegl_operation_set_format (operation, "output",
                              babl_format ("Y'CbCrA float"));
-
- if(o->chant_data)
-    {
-      Ramps* ramps = (Ramps*) o->chant_data;
-
-      /* hack so that thresholds are only calculated once */
-      if(ramps->prev_mask_radius != o->mask_radius ||
-      ramps->prev_pct_black    != o->pct_black)
-      {
-        g_slice_free (Ramps, o->chant_data);
-        o->chant_data = NULL;
-      }
-    }
 }
 
 static GeglRectangle
@@ -231,6 +185,31 @@ get_bounding_box (GeglOperation *operation)
     return *GEGL_RECTANGLE (0, 0, 0, 0);
 }
 
+static GeglRectangle
+get_required_for_output (GeglOperation       *operation,
+                         const gchar         *input_pad,
+                         const GeglRectangle *output_roi)
+{
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, input_pad);
+
+  if (in_rect)
+    return *in_rect;
+  else
+    return (GeglRectangle){0, 0, 0, 0};
+}
+
+static GeglRectangle
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *output_roi)
+{
+  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+
+  if (in_rect)
+    return *in_rect;
+  else
+    return (GeglRectangle){0, 0, 0, 0};
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -238,51 +217,16 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglChantO         *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglBufferIterator *iter;
+  GeglBuffer         *dest1;
+  GeglBuffer         *dest2;
+  GeglSampler        *sampler1;
+  GeglSampler        *sampler2;
+  gdouble             ramp;
+  gint                x;
+  gint                y;
 
-  GeglBuffer  *dest1;
-  GeglBuffer  *dest2;
-  GeglSampler *sampler1;
-  GeglSampler *sampler2;
-
-  Ramps* ramps;
-
-  gint n_pixels;
-  gfloat pixel1, pixel2;
-  gfloat *out_pixel;
-  gint x;
-  gint y;
-
-
-  gdouble diff;
-  Ramps *get_ramps;
-  gdouble ramp;
-  gdouble mult = 0.0;
-
-  gfloat *dst_buf;
-  GeglRectangle *whole_region;
-
-  static GMutex mutex = { 0, };
-
-  dst_buf = g_slice_alloc (result->width * result->height * 4 * sizeof(gfloat));
-
-  gegl_buffer_get (input, result, 1.0, babl_format ("Y'CbCrA float"), dst_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-
-  g_mutex_lock (&mutex);
-  if(o->chant_data == NULL)
-    {
-      whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-      gegl_buffer_set_extent (input, whole_region);
-      o->chant_data = g_slice_new (Ramps);
-      ramps = (Ramps*) o->chant_data;
-      ramps->prev_ramp = compute_ramp (input,operation,o->pct_black);
-      ramps->prev_mask_radius = o->mask_radius;
-      ramps->prev_pct_black   = o->pct_black;
-    }
-  g_mutex_unlock (&mutex);
-
-  gegl_buffer_set_extent (input, result);
   grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);
 
   sampler1 = gegl_buffer_sampler_new (dest1,
@@ -293,99 +237,83 @@ process (GeglOperation       *operation,
                                       babl_format ("Y' float"),
                                       GEGL_SAMPLER_LINEAR);
 
-  x = result->x;
-  y = result->y;
-  n_pixels = result->width * result->height;
+  ramp = compute_ramp (sampler1, sampler2, result, o->pct_black);
 
-  out_pixel = dst_buf;
-  get_ramps = (Ramps*) o->chant_data;
-  ramp = get_ramps->prev_ramp;
+  iter = gegl_buffer_iterator_new (output, result, 0, babl_format ("Y'CbCrA float"),
+                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+  gegl_buffer_iterator_add (iter, input, result, 0, babl_format ("Y'CbCrA float"),
+                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
 
-  while (n_pixels--)
+
+  while (gegl_buffer_iterator_next (iter))
     {
-      gegl_sampler_get (sampler1,
-                        x,
-                        y,
-                        NULL,
-                        &pixel1,
-                        GEGL_ABYSS_NONE);
+      gfloat *out_pixel = iter->data[0];
+      gfloat *in_pixel  = iter->data[1];
 
-      gegl_sampler_get (sampler2,
-                        x,
-                        y,
-                        NULL,
-                        &pixel2,
-                        GEGL_ABYSS_NONE);
+      for (y = iter->roi[0].y; y < iter->roi[0].y + iter->roi[0].height; ++y)
+        for (x = iter->roi[0].x; x < iter->roi[0].x + iter->roi[0].width; ++x)
+          {
+            gfloat  pixel1;
+            gfloat  pixel2;
+            gdouble mult = 0.0;
+            gdouble diff;
 
-      if (pixel2 != 0)
-      {
-        diff = (gdouble) pixel1 / (gdouble) pixel2;
-        if (diff < THRESHOLD)
-        {
-          if (GEGL_FLOAT_EQUAL(ramp,0.0))
-            mult = 0.0;
-          else
-            mult = (ramp - MIN (ramp, (THRESHOLD - diff))) / ramp;
-        }
-        else
-          mult = 1.0;
-      }
+            gegl_sampler_get (sampler1, x, y,
+                              NULL, &pixel1,
+                              GEGL_ABYSS_NONE);
 
-      *out_pixel = CLAMP(pixel1 * mult, 0.0, 1.0);
+            gegl_sampler_get (sampler2, x, y,
+                              NULL, &pixel2,
+                              GEGL_ABYSS_NONE);
 
-      out_pixel += 4;
+            if (pixel2 != 0)
+              {
+                diff = (gdouble) pixel1 / (gdouble) pixel2;
+                if (diff < THRESHOLD)
+                  {
+                    if (GEGL_FLOAT_EQUAL (ramp, 0.0))
+                      mult = 0.0;
+                    else
+                      mult = (ramp - MIN (ramp, (THRESHOLD - diff))) / ramp;
+                  }
+                else
+                  mult = 1.0;
+              }
 
-      x++;
-      if (x >= result->x + result->width)
-      {
-        x = result->x;
-        y++;
-      }
+            out_pixel[0] = CLAMP (pixel1 * mult, 0.0, 1.0);
+            out_pixel[1] = in_pixel[1];
+            out_pixel[2] = in_pixel[2];
+            out_pixel[3] = in_pixel[3];
+
+            out_pixel += 4;
+            in_pixel  += 4;
+          }
     }
-
-
-  gegl_buffer_set (output, result, 0, babl_format ("Y'CbCrA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_slice_free1 (result->width * result->height * 4 * sizeof(gfloat), dst_buf);
 
   g_object_unref (sampler1);
   g_object_unref (sampler2);
+
   g_object_unref (dest1);
   g_object_unref (dest2);
 
-  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
-  gegl_buffer_set_extent (input, whole_region);
-  return  TRUE;
-}
-
-static void
-finalize (GObject *object)
-{
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
-
-  if (o->chant_data)
-    {
-      g_slice_free (Ramps, o->chant_data);
-      o->chant_data = NULL;
-    }
-
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  return TRUE;
 }
 
 static void
 gegl_chant_class_init (GeglChantClass *klass)
 {
-  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  object_class->finalize            = finalize;
-  operation_class->prepare          = prepare;
-  operation_class->get_bounding_box = get_bounding_box;
-  filter_class->process             = process;
+  operation_class->prepare                 = prepare;
+  operation_class->get_bounding_box        = get_bounding_box;
+  operation_class->get_cached_region       = get_cached_region;
+  operation_class->get_required_for_output = get_required_for_output;
+
+  filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
     "categories",  "artistic",
