@@ -95,70 +95,61 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
-
-  gint x = result->x; /* initial x                   */
-  gint y = result->y; /*           and y coordinates */
-
-  gfloat *dst_buf = g_slice_alloc (result->width * result->height * 4 * sizeof(gfloat));
-
-  gfloat *out_pixel = dst_buf;
-
-  GeglSampler *sampler = gegl_buffer_sampler_new (input,
-                                                  babl_format ("RGBA float"),
-                                                  o->sampler_type);
-
-  gint n_pixels = result->width * result->height;
+  GeglChantO         *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglSampler        *sampler = gegl_buffer_sampler_new (input,
+                                                         babl_format ("RGBA float"),
+                                                         o->sampler_type);
+  GeglBufferIterator *iter;
 
   GeglAbyssPolicy abyss = o->tileable ? GEGL_ABYSS_LOOP : GEGL_ABYSS_NONE;
 
-  while (n_pixels--)
+  iter = gegl_buffer_iterator_new (output, result, 0, babl_format ("RGBA float"),
+                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+
+  while (gegl_buffer_iterator_next (iter))
     {
-      gdouble shift;
-      gdouble coordsx;
-      gdouble coordsy;
-      gdouble lambda;
+      gint x = result->x;
+      gint y = result->y;
+      gfloat *out_pixel = iter->data[0];
 
-      gdouble angle_rad = o->angle / 180.0 * G_PI;
-      gdouble nx = x * cos (angle_rad) + y * sin (angle_rad);
+      for (y = iter->roi[0].y; y < iter->roi[0].y + iter->roi[0].height; ++y)
+        for (x = iter->roi[0].x; x < iter->roi[0].x + iter->roi[0].width; ++x)
+          {
+            gdouble shift;
+            gdouble coordsx;
+            gdouble coordsy;
+            gdouble lambda;
 
-      switch (o->wave_type)
-        {
-          case GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH:
-            lambda = div (nx,o->period).rem - o->phi * o->period;
-            if (lambda < 0)
-              lambda += o->period;
-            shift = o->amplitude * (fabs (((lambda / o->period) * 4) - 2) - 1);
-            break;
-          case GEGl_RIPPLE_WAVE_TYPE_SINE:
-          default:
-            shift = o->amplitude * sin (2.0 * G_PI * nx / o->period + 2.0 * G_PI * o->phi);
-            break;
-        }
+            gdouble angle_rad = o->angle / 180.0 * G_PI;
+            gdouble nx = x * cos (angle_rad) + y * sin (angle_rad);
 
-      coordsx = x + shift * sin (angle_rad);
-      coordsy = y + shift * cos (angle_rad);
+            switch (o->wave_type)
+              {
+                case GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH:
+                  lambda = div (nx,o->period).rem - o->phi * o->period;
+                  if (lambda < 0)
+                    lambda += o->period;
+                  shift = o->amplitude * (fabs (((lambda / o->period) * 4) - 2) - 1);
+                  break;
+                case GEGl_RIPPLE_WAVE_TYPE_SINE:
+                default:
+                  shift = o->amplitude * sin (2.0 * G_PI * nx / o->period + 2.0 * G_PI * o->phi);
+                  break;
+              }
 
-      gegl_sampler_get (sampler,
-                        coordsx,
-                        coordsy,
-                        NULL,
-                        out_pixel,
-                        abyss);
+            coordsx = x + shift * sin (angle_rad);
+            coordsy = y + shift * cos (angle_rad);
 
-      out_pixel += 4;
+            gegl_sampler_get (sampler,
+                              coordsx,
+                              coordsy,
+                              NULL,
+                              out_pixel,
+                              abyss);
 
-      /* update x and y coordinates */
-      x++;
-      if (x>=result->x + result->width)
-        {
-          x=result->x;
-          y++;
-        }
+            out_pixel += 4;
+          }
     }
-
-  gegl_buffer_set (output, result, 0, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_slice_free1 (result->width * result->height * 4 * sizeof(gfloat), dst_buf);
 
   g_object_unref (sampler);
 
