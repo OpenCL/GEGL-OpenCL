@@ -87,19 +87,12 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO  *o = GEGL_CHANT_PROPERTIES (operation);
-  gint         x = result->x; /* initial x                   */
-  gint         y = result->y; /*           and y coordinates */
+  GeglChantO         *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglSampler        *sampler = gegl_buffer_sampler_new (input,
+                                                         babl_format ("RGBA float"),
+                                                         o->sampler_type);
+  GeglBufferIterator *iter;
 
-  gfloat      *dst_buf = g_slice_alloc (result->width * result->height * 4 * sizeof (gfloat));
-
-  gfloat      *out_pixel = dst_buf;
-
-  GeglSampler *sampler = gegl_buffer_sampler_new (input,
-                                                  babl_format ("RGBA float"),
-                                                  o->sampler_type);
-
-  gint         n_pixels = result->width * result->height;
   GeglAbyssPolicy abyss = o->clamp ? GEGL_ABYSS_CLAMP : GEGL_ABYSS_NONE;
 
   gdouble scalex;
@@ -121,48 +114,46 @@ process (GeglOperation       *operation,
       scaley = 1.0;
     }
 
-  while (n_pixels--)
+  iter = gegl_buffer_iterator_new (output, result, 0, babl_format ("RGBA float"),
+                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+
+  while (gegl_buffer_iterator_next (iter))
     {
-      gdouble radius;
-      gdouble shift;
-      gdouble dx;
-      gdouble dy;
-      gdouble ux;
-      gdouble uy;
+      gint x = result->x;
+      gint y = result->y;
+      gfloat *out_pixel = iter->data[0];
 
-      dx = (x - o->x) * scalex;
-      dy = (y - o->y) * scaley;
+      for (y = iter->roi[0].y; y < iter->roi[0].y + iter->roi[0].height; ++y)
+        for (x = iter->roi[0].x; x < iter->roi[0].x + iter->roi[0].width; ++x)
+          {
+            gdouble radius;
+            gdouble shift;
+            gdouble dx;
+            gdouble dy;
+            gdouble ux;
+            gdouble uy;
 
-      radius = sqrt (dx * dx + dy * dy);
+            dx = (x - o->x) * scalex;
+            dy = (y - o->y) * scaley;
 
-      shift = o->amplitude * sin (2.0 * G_PI * radius / o->period +
-                                  2.0 * G_PI * o->phi);
+            radius = sqrt (dx * dx + dy * dy);
 
-      ux = dx / radius;
-      uy = dy / radius;
+            shift = o->amplitude * sin (2.0 * G_PI * radius / o->period +
+                                        2.0 * G_PI * o->phi);
 
-      gegl_sampler_get (sampler,
-                        x + (shift + ux) / scalex,
-                        y + (shift + uy) / scaley,
-                        NULL,
-                        out_pixel,
-                        abyss);
+            ux = dx / radius;
+            uy = dy / radius;
 
-      out_pixel += 4;
+            gegl_sampler_get (sampler,
+                              x + (shift + ux) / scalex,
+                              y + (shift + uy) / scaley,
+                              NULL,
+                              out_pixel,
+                              abyss);
 
-      /* update x and y coordinates */
-      x++;
-      if (x >= result->x + result->width)
-        {
-          x = result->x;
-          y++;
-        }
+            out_pixel += 4;
+          }
     }
-
-  gegl_buffer_set (output, result, 0, babl_format ("RGBA float"),
-                   dst_buf, GEGL_AUTO_ROWSTRIDE);
-
-  g_slice_free1 (result->width * result->height * 4 * sizeof (gfloat), dst_buf);
 
   g_object_unref (sampler);
 
