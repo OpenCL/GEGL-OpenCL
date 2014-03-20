@@ -22,24 +22,28 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 #define DEFAULT_INKS \
-"illuminant=1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1\n" \
-"substrate= rgb 0.98 0.98 0.98 \n" \
-"ink1=cyan    s=1.5\n"\
-"ink2=magenta s=1.5\n"\
-"ink3=yellow  s=1.5\n"\
-"ink4=black   s=1\n"\
-"inklimit=150\n"
+"illuminant=D65\n" \
+"substrate=white\n" \
+"\n"\
+"ink1=cyan\n"\
+"ink2=magenta\n"\
+"ink3=yellow\n"\
+"ink4=black\n"\
+"\n"\
+"inklimit=3.0\n"\
+"iterations=32\n"\
+"bail=0.0004\n"
 
 gegl_chant_register_enum (ink_sim_mode)
-  enum_value (GEGL_INK_SIMULATOR_PROOF, "simulate printing of inks")
-  enum_value (GEGL_INK_SIMULATOR_SEPARATE, "separate to inks")
-  enum_value (GEGL_INK_SIMULATOR_SEPARATE_PROOF, "separate and simulate")
+  enum_value (GEGL_INK_SIMULATOR_PROOF, "proof")
+  enum_value (GEGL_INK_SIMULATOR_SEPARATE, "separate")
+  enum_value (GEGL_INK_SIMULATOR_SEPARATE_PROOF, "proof-separation")
 gegl_chant_register_enum_end (GeglInkSimMode)
 
 gegl_chant_multiline (config, _("ink configuration"), DEFAULT_INKS,
          _("Textual desciption of inks passed in"))
 
-gegl_chant_enum (mode, _("mode"), GeglInkSimMode, ink_sim_mode, GEGL_INK_SIMULATOR_SEPARATE_PROOF, _("how the ink simulator is used"))
+gegl_chant_enum (mode, _("mode"), GeglInkSimMode, ink_sim_mode, GEGL_INK_SIMULATOR_PROOF, _("how the ink simulator is used"))
 
 #else
 
@@ -47,13 +51,13 @@ gegl_chant_enum (mode, _("mode"), GeglInkSimMode, ink_sim_mode, GEGL_INK_SIMULAT
 #define GEGL_CHANT_C_FILE       "ink-simulator.c"
 
 #include "gegl-chant.h"
+#include <math.h>
 
 #define SPECTRUM_BANDS 20
 
 typedef struct _Config Config;
 typedef struct _Ink Ink;
 typedef struct _Spectrum Spectrum;
-
 
 struct _Spectrum {
   float bands[SPECTRUM_BANDS];
@@ -69,15 +73,40 @@ struct _Ink {
   Spectrum transmittance; /* spectral energy of this ink; as reflected of a fully reflective background */
   float    opacity;       /* how much this ink covers up instead of mixes with background (substrate+inks) */
   float    scale;         /* scale factor; increasing the amount of spectral contribution */
+
+  /* per ink inklimit as well? */
+};
+
+#define LUT_DIM 100
+
+typedef struct _InkMix InkMix;
+struct _InkMix {
+  int   defined;
+  float level[4];
 };
 
 struct _Config {
   Spectrum illuminant;
   Spectrum substrate;
   Ink      ink_def[4];
-  float    ink_limit;
   int      inks;
+  int      iterations;
+  float    bail;
+  float    ink_limit;
+  InkMix   lut[LUT_DIM*LUT_DIM*LUT_DIM]; 
 };
+
+
+static inline int rgb_to_lut_index (float red, float green, float blue)
+{
+  int r = floor (red * LUT_DIM);
+  int g = floor (green * LUT_DIM);
+  int b = floor (blue * LUT_DIM);
+  if (r < 0) r = 0; if (r >= LUT_DIM) r = LUT_DIM - 1;
+  if (g < 0) g = 0; if (g >= LUT_DIM) g = LUT_DIM - 1;
+  if (b < 0) b = 0; if (b >= LUT_DIM) b = LUT_DIM - 1;
+  return r * LUT_DIM * LUT_DIM + g * LUT_DIM + b;
+}
 
 static Config config;
 
@@ -97,52 +126,79 @@ static Spectrum STANDARD_OBSERVER_S   = {{
 #define TRANSMITTANCE_MAGENTA {{1,1,1,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0}}
 #define TRANSMITTANCE_YELLOW  {{0.42,0.48,0.53,0.58,0.64,0.68,0.77,0.86,0.9, 1,1,1,1,0,0,0,0,0,0,0}}
 
-// this tranmittans looks more blue than magenta:
+// this transmittance looks more blue than magenta:
 //#define TRANSMITTANCE_MAGENTA {{1.0,0.7,0.9,0.85,0.8,0.7,0.64,0.54,0.5,0.38,0.6,0.8,0.9,1.0,1.0,1.0,1.0,0.9,0.9,0.9}}
 
 #define TRANSMITTANCE_RED     {{0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0}}
-#define TRANSMITTANCE_GREEN   {{0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0}}
+#define TRANSMITTANCE_GREEN   {{0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0}}
 #define TRANSMITTANCE_BLUE    {{0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
 #define TRANSMITTANCE_BLACK   {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
 #define TRANSMITTANCE_GRAY    {{0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5}}
 #define TRANSMITTANCE_WHITE   {{0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}}
-#define ILLUMINANT_E         TRANSMITTANCE_WHITE
 
 /* the even illuminant; which is easy and almost cheating */
+#define ILLUMINANT_E         TRANSMITTANCE_WHITE
 
-//static int inks = 3;
-//static Ink ink_defs[4] = {{{{0}}}};
-//static Spectrum ILLUMINANT              = ILLUMINANT_E;
-//static Spectrum SUBSTRATE_TRANSMITTANCE = TRANSMITTANCE_WHITE;
+#define ILLUMINANT_D65 {{\
+0.54648200, 0.91486000, 0.86682300, 1.17008000, 1.14861000, 1.08811000, 1.07802000, 1.07689000, 1.04046000, 0.96334200, 0.88685600, 0.89599100, 0.83288600, 0.80026800, 0.82277800, 0.69721300, 0.74349000, 0.69885600, 0.63592700, 0.66805400 }} 
 
-static inline Spectrum add_ink (Spectrum s, Spectrum ink, float coverage, float opacity)
+#define ILLUMINANT_D55 {{\
+0.3809, 0.6855, 0.6791, 0.9799, 0.9991, 0.9808, 1.0070, 1.0421, 1.0297, 0.9722, 0.9143, 0.9514, 0.9045, 0.8885, 0.9395, 0.7968, 0.8484, 0.7930, 0.7188, 0.7593 }}
+
+#define ILLUMINANT_D50 {{\
+0.4980, 0.5850, 0.5780, 0.8720, 0.9140, 0.9200, 0.9660, 1.0210, 1.0230, 0.9770, 0.9350, 0.9930, 0.9570, 0.9570, 1.0300, 0.8740, 0.9290, 0.8660, 0.7820, 0.8290 }}
+
+
+static inline void spectrum_remove_light (Spectrum *s, const Spectrum *ink, float coverage)
 {
   int i;
   for (i = 0; i < SPECTRUM_BANDS; i++)
-  {
-    float transparent = s.bands[i] * (1.0 - coverage) + s.bands[i] * ink.bands[i] * coverage;
-    float opaque      = s.bands[i] * (1.0 - coverage) + ink.bands[i] * coverage;
-    s.bands[i] = opaque * opacity + transparent * (1.0 - opacity);
-  }
-  return s;
+    s->bands[i] = s->bands[i] * (1.0 - coverage) + s->bands[i] * ink->bands[i] * coverage;
 }
 
-static Spectrum spectrum_remove_light (Spectrum s, Spectrum ink, float coverage)
+static inline void spectrum_add_opaque_ink (Spectrum *s, const Spectrum *ink, const Spectrum *illuminant, float coverage)
 {
   int i;
   for (i = 0; i < SPECTRUM_BANDS; i++)
-  {
-    s.bands[i] = s.bands[i] * (1.0 - coverage) + s.bands[i] * ink.bands[i] * coverage;
-  }
-  return s;
+    s->bands[i] = s->bands[i] * (1.0 - coverage) + ink->bands[i] * illuminant->bands[i] * coverage;
 }
 
-static float spectrum_integrate (Spectrum s, Spectrum is, float scale)
+static inline void spectrum_lerp (Spectrum *s, const Spectrum *a, const Spectrum *b, float delta)
+{
+  int i;
+  for (i = 0; i < SPECTRUM_BANDS; i++)
+    s->bands[i] = a->bands[i] * (1.0 - delta) + b->bands[i] * delta;
+}
+
+static inline void add_ink (Spectrum *s, const Spectrum *illuminant, const Spectrum *ink, float coverage, float opacity)
+{
+
+  if (fabs (opacity - 1.0) < 0.01)
+  {
+    spectrum_add_opaque_ink (s, ink, illuminant, coverage);
+  }
+  else if (fabs (opacity) < 0.01)
+  {
+    spectrum_remove_light (s, ink, coverage);
+  }
+  else
+  {
+    Spectrum opaque = *s;
+    spectrum_add_opaque_ink (&opaque, ink, illuminant, coverage);
+    spectrum_remove_light (s, ink, coverage);
+  
+    /* linear interpolation of the two simpler cases */
+
+    spectrum_lerp (s, s, &opaque, opacity);
+  }
+}
+
+static inline float spectrum_integrate (const Spectrum *s, const Spectrum *is, float scale)
 {
   float result = 0.0;
   int i;
   for (i = 0; i < SPECTRUM_BANDS; i++)
-    result += s.bands[i] * is.bands[i];
+    result += s->bands[i] * is->bands[i];
   return (result / SPECTRUM_BANDS) * scale;
 }
 
@@ -158,12 +214,12 @@ prepare (GeglOperation *operation)
   parse_config (operation);
 }
 
-static inline void spectrum_to_rgba (Spectrum spec, float *rgba)
+static inline void spectrum_to_rgba (const Spectrum *spec, float *rgba)
 {
   float l, m, s;
-  l = spectrum_integrate (spec, STANDARD_OBSERVER_L, 0.4);
-  m = spectrum_integrate (spec, STANDARD_OBSERVER_M, 0.4);
-  s = spectrum_integrate (spec, STANDARD_OBSERVER_S, 0.4);
+  l = spectrum_integrate (spec, &STANDARD_OBSERVER_L, 0.5);
+  m = spectrum_integrate (spec, &STANDARD_OBSERVER_M, 0.5);
+  s = spectrum_integrate (spec, &STANDARD_OBSERVER_S, 0.5);
   /* this LMS to linear RGB -- likely not right..  */
   rgba[0] = ((30.83) * l + (-29.83) * m + (1.61) * s);
   rgba[1] = ((-6.481) * l + (17.7155) * m + (-2.532) * s);
@@ -175,22 +231,23 @@ static inline Spectrum inks_to_spectrum (Config *config, float *ink_levels)
 {
   int i;
   Spectrum spec = config->illuminant;
+  spectrum_remove_light (&spec, &config->substrate, 1.0);
 
-  spec = spectrum_remove_light (spec, config->substrate, 1.0);
   for (i = 0; i < config->inks; i++)
-    spec = add_ink (spec,
-                    config->ink_def[i].transmittance,
+    add_ink (&spec, &config->illuminant,
+                    &config->ink_def[i].transmittance,
                     ink_levels[i] * config->ink_def[i].scale,
                     config->ink_def[i].opacity);
   return spec;
 }
 
-static inline void spectral_proof (Config *config, float *ink_levels, float *rgba)
+static inline void inks_to_rgb (Config *config, float *ink_levels, float *rgba)
 {
-  spectrum_to_rgba (inks_to_spectrum (config, ink_levels), rgba);
+  Spectrum spec = inks_to_spectrum (config, ink_levels);
+  spectrum_to_rgba (&spec, rgba);
 }
 
-static inline double colordiff (float *cola, float *colb)
+static inline double colordiff_squared (float *cola, float *colb)
 {
   return 
     (cola[0]-colb[0])*(cola[0]-colb[0])+
@@ -204,37 +261,69 @@ static inline void rgb_to_inks (Config *config, float *rgb, float *ink_levels)
   float bestdiff = 3;
   int i;
 
-  float rrange = 0.5;
-  for (i = 0; i < 64; i++)
+  int lutidx = rgb_to_lut_index (rgb[0], rgb[1], rgb[2]);
+  float rrange;
+  int iterations;
+  
+again: /* if on first run we seeded LUT */
+
+  if (config->lut[lutidx].defined)
+  {
+    for (i = 0; i < 4; i++)
+      best[i] = config->lut[lutidx].level[i];
+    rrange = 0.03;
+    iterations = config->iterations;
+  }
+  else
+  {
+    rrange = 0.6;
+    iterations = 128;
+  }
+
+  for (i = 0; i < iterations; i++)
   {
     int j;
     float attempt[8];
     float softrgb[4];
     float diff;
     float inksum = 0;
+
     do{
       inksum = 0.0;
       for (j = 0; j < config->inks; j++)
       {
         attempt[j] = best[j] + g_random_double_range(-rrange, rrange);
-        if (attempt[j] < 0) attempt[j] = 0;
-        if (attempt[j] > 1) attempt[j] = 1;
+        if (attempt[j] < 0) attempt[j] = 0.0;
+        if (attempt[j] > 1) attempt[j] = 1.0;
         inksum += attempt[j];
       }
     } while (inksum > config->ink_limit);
 
-    spectral_proof (config, attempt, softrgb);
-    diff = colordiff (rgb, softrgb);
+    inks_to_rgb (config, attempt, softrgb);
+    diff = colordiff_squared (rgb, softrgb) + (inksum / 100.0) * (inksum / 100.0);
     if (diff < bestdiff)
     {
       bestdiff = diff;
       for (j = 0; j < config->inks; j++)
         best[j] = attempt[j];
-      rrange *= 0.8;
-      //if (diff < 0.001) /* bail early */
-      //  i = 1000;
+      if (diff < config->bail) /* bail early */
+        i = 10000;
     }
   }
+
+  if (config->lut[lutidx].defined == 0)
+  {
+    config->lut[lutidx].defined = 1;
+    for (i = 0; i < 4; i++)
+      config->lut[lutidx].level[i] = best[i];
+    goto again;
+  }
+  else
+  {
+    //for (i = 0; i < 4; i++)
+    //  config->lut[lutidx].level[i] = best[i];
+  }
+
   for (i = 0; i < config->inks; i++)
     ink_levels[i] = best[i];
 }
@@ -256,7 +345,7 @@ process (GeglOperation       *op,
     case GEGL_INK_SIMULATOR_PROOF:
       while (samples--)
         {
-          spectral_proof    (&config, in, out);
+          inks_to_rgb (&config, in, out);
           in  += 4;
           out += 4;
         }
@@ -276,13 +365,24 @@ process (GeglOperation       *op,
       }
       break;
     case GEGL_INK_SIMULATOR_SEPARATE_PROOF:
-    while (samples--)
       {
-        float temp[4];
-        rgb_to_inks (&config, in, temp);
-        spectral_proof    (&config, temp, out);
-        in  += 4;
-        out += 4;
+        gint x = roi->x;
+        gint y = roi->y;
+        while (samples--)
+          {
+            float temp[4];
+            int foo = ((x+y)/64);
+            gint actual_inks = config.inks;
+            rgb_to_inks (&config, in, temp);
+            config.inks = MIN(foo, actual_inks);
+            inks_to_rgb  (&config, temp, out);
+            config.inks = actual_inks;
+
+            in  += 4;
+            out += 4;
+
+            x++; if (x>=roi->x+roi->width){x=roi->x;y++;}
+          }
       }
       break;
   }
@@ -327,6 +427,19 @@ static Spectrum parse_spectrum (gchar *spectrum)
   { Spectrum color = TRANSMITTANCE_MAGENTA; s = color;
   } else if (g_str_has_prefix (spectrum, "white"))
   { Spectrum color = TRANSMITTANCE_WHITE; s = color;
+
+  } else if (g_str_has_prefix (spectrum, "D50"))
+  { Spectrum color = ILLUMINANT_D50; s = color;
+
+  } else if (g_str_has_prefix (spectrum, "D55"))
+  { Spectrum color = ILLUMINANT_D55; s = color;
+
+  } else if (g_str_has_prefix (spectrum, "D65"))
+  { Spectrum color = ILLUMINANT_D65; s = color;
+
+  } else if (g_str_has_prefix (spectrum, "E"))
+  { Spectrum color = ILLUMINANT_E; s = color;
+
   } else if (g_str_has_prefix (spectrum, "black"))
   { Spectrum color = TRANSMITTANCE_BLACK; s = color;
   } else if (g_str_has_prefix (spectrum, "gray"))
@@ -364,6 +477,14 @@ static void parse_config_line (GeglOperation *operation,
       if (config.ink_limit < 0.2)
         config.ink_limit = 0.2;
     }
+  else if (g_str_has_prefix (line, "bail"))
+    {
+      config.bail = strchr(line, '=') ? g_strtod (strchr (line, '=')+1, NULL) : 3.0;
+    }
+  else if (g_str_has_prefix (line, "iterations"))
+    {
+      config.iterations = strchr(line, '=') ? g_strtod (strchr (line, '=')+1, NULL) : 3.0;
+    }
   else
   for (i = 0; i < 4; i++)
   {
@@ -391,7 +512,9 @@ static void parse_config (GeglOperation *operation)
 
   memset (&config, 0, sizeof (config));
   for (i = 0; i < 4; i++) config.ink_def[i].scale = 1.0;
-  config.ink_limit = 3.0;
+  config.ink_limit = 4.0;
+  config.iterations = 32;
+  config.bail = 0.00001;
 
   str = g_string_new ("");
   while (*p)
