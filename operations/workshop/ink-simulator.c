@@ -54,6 +54,7 @@ gegl_chant_enum (mode, _("mode"), GeglInkSimMode, ink_sim_mode,
 #define SPECTRUM_BANDS 20
 #define LUT_DIM        32
 #define LUT_ITERATIONS 256
+#define MAX_INKS       7
 
 typedef struct _Config Config;
 typedef struct _Ink Ink;
@@ -77,17 +78,16 @@ struct _Ink {
   /* per ink inklimit as well? */
 };
 
-
 typedef struct _InkMix InkMix;
 struct _InkMix {
   gint   defined;
-  gfloat level[4];
+  gfloat level[MAX_INKS];
 };
 
 struct _Config {
   Spectrum illuminant;
   Spectrum substrate;
-  Ink      ink_def[4];
+  Ink      ink_def[MAX_INKS];
   gint     inks;
   gfloat   ink_limit;
   InkMix   lut[LUT_DIM*LUT_DIM*LUT_DIM]; 
@@ -264,7 +264,7 @@ inks_to_spectrum (Config *config,
   Spectrum spec = config->illuminant;
   spectrum_remove_light (&spec, &config->substrate, 1.0);
 
-  for (i = 0; i < config->inks; i++)
+  for (i = 0; i < MIN(4, config->inks); i++) /* XXX: MIN(4, to avoid walking out of RGBA */
     add_ink (&spec, &config->illuminant,
                     &config->ink_def[i].transmittance,
                     ink_levels[i] * config->ink_def[i].scale,
@@ -298,9 +298,12 @@ rgb_to_inks_stochastic (Config *config,
                         gint    iterations,
                         gfloat  rrange)
 {
-  gfloat best[8] = {0.5,0.5,0.5,0.5,0.5};
+  gfloat best[MAX_INKS] = {};
   gfloat bestdiff = 1000.0;
   gint i;
+  for (i = 0; i < config->inks; i++)
+    best[i] = 0.0; /* XXX: maybe 0.0 is better to limit inks,
+                           and metamers? */
 
   for (i = 0; i < iterations; i++)
   {
@@ -351,7 +354,7 @@ ensure_lut (Config *config,
                       (float)gi / LUT_DIM,
                       (float)bi / LUT_DIM };
 
-    rgb_to_inks_stochastic (config, trgb, &config->lut[l_index].level[0], LUT_ITERATIONS, 0.5);
+    rgb_to_inks_stochastic (config, trgb, &config->lut[l_index].level[0], LUT_ITERATIONS, 0.6);
     config->lut[l_index].defined = 1;
   }
   return &config->lut[l_index].level[0];
@@ -378,10 +381,10 @@ static inline void rgb_to_inks (Config *config,
   gint gi = lut_indice (rgb[1], &gdelta);
   gint bi = lut_indice (rgb[2], &bdelta);
   gfloat *ink_corner[8];
-  gfloat  temp1[4];
-  gfloat  temp2[4];
-  gfloat  temp3[4];
-  gfloat  temp4[4];
+  gfloat  temp1[MAX_INKS];
+  gfloat  temp2[MAX_INKS];
+  gfloat  temp3[MAX_INKS];
+  gfloat  temp4[MAX_INKS];
 
 /* numbering of corners, and positions of R,G,B axes
       6
@@ -442,7 +445,11 @@ process (GeglOperation       *op,
     case GEGL_INK_SIMULATOR_SEPARATE:
     while (samples--)
       {
-        rgb_to_inks (config, in, out);
+        int i;
+        gfloat inks[MAX_INKS];
+        rgb_to_inks (config, in, inks);
+        for (i = 0; i < MIN(4, config->inks); i++)
+          out[i] = inks[i];
         if (config->inks < 4)
           out[3] = 1.0;
         if (config->inks < 3)
@@ -460,8 +467,8 @@ process (GeglOperation       *op,
         gint y = roi->y;
         while (samples--)
           {
-            gfloat inks[4];
-            gint foo = ((x+y)/64);
+            gfloat inks[MAX_INKS];
+            gint foo = ((x+y)/config->debug_width);
             gint actual_inks = config->inks;
             rgb_to_inks (config, in, inks);
             config->inks = MIN(foo, actual_inks);
@@ -478,9 +485,9 @@ process (GeglOperation       *op,
       {
         while (samples--)
           {
-            gfloat temp[4];
-            rgb_to_inks (config, in, temp);
-            spectral_proof (config, temp, out);
+            gfloat inks[MAX_INKS];
+            rgb_to_inks (config, in, inks);
+            spectral_proof (config, inks, out);
 
             in  += 4;
             out += 4;
@@ -580,7 +587,7 @@ static void parse_config_line (GeglOperation *operation,
       config->debug_width= strchr(line, '=') ? g_strtod (strchr (line, '=')+1, NULL) : 25;
     }
   else
-  for (i = 0; i < 4; i++)
+  for (i = 0; i < MAX_INKS; i++)
   {
     gchar prefix[] = "ink1";
     prefix[3] = (i+1) + '0';
@@ -619,8 +626,8 @@ static void parse_config (GeglOperation *operation)
     }
 
   memset (config, 0, sizeof (Config));
-  for (i = 0; i < 4; i++) config->ink_def[i].scale = 1.0;
-  config->ink_limit = 4.0;
+  for (i = 0; i < MAX_INKS; i++) config->ink_def[i].scale = 1.0;
+  config->ink_limit = MAX_INKS;
 
   str = g_string_new ("");
   while (*p)
