@@ -34,6 +34,7 @@ TESTS = \
   image-compare.xml               \
   mantiuk06.xml                   \
   noise-hurl.xml        	  \
+  noise-cell.xml        	  \
   pixelize.xml                    \
   posterize.xml                   \
   red-eye-removal.xml             \

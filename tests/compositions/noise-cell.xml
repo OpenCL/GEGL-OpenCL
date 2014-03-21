@@ -1,0 +1,152 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:add'>
+      <params>
+        <param name='value'>0</param>
+      </params>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>linear</param>
+            <param name='x'>128</param>
+            <param name='y'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>-64</param>
+            <param name='y'>-64</param>
+            <param name='width'>128</param>
+            <param name='height'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:cell-noise'>
+          <params>
+            <param name='seed'>0</param>
+            <param name='scale'>1</param>
+            <param name='shape'>2</param>
+            <param name='rank'>3</param>
+            <param name='iterations'>3</param>
+            <param name='palettize'>false</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:add'>
+      <params>
+        <param name='value'>0</param>
+      </params>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>linear</param>
+            <param name='x'>0</param>
+            <param name='y'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>-64</param>
+            <param name='y'>-64</param>
+            <param name='width'>128</param>
+            <param name='height'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:cell-noise'>
+          <params>
+            <param name='seed'>0</param>
+            <param name='scale'>1</param>
+            <param name='shape'>2</param>
+            <param name='rank'>1</param>
+            <param name='iterations'>1</param>
+            <param name='palettize'>true</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:add'>
+      <params>
+        <param name='value'>0</param>
+      </params>
+      <node operation='gegl:translate'>
+          <params>
+            <param name='origin-x'>0</param>
+            <param name='origin-y'>0</param>
+            <param name='sampler'>linear</param>
+            <param name='x'>128</param>
+            <param name='y'>0</param>
+          </params>
+      </node>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>-64</param>
+            <param name='y'>-64</param>
+            <param name='width'>128</param>
+            <param name='height'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:subtract'>
+          <params>
+            <param name='value'>0</param>
+          </params>
+          <node operation='gegl:cell-noise'>
+              <params>
+                <param name='seed'>0</param>
+                <param name='scale'>1</param>
+                <param name='shape'>2</param>
+                <param name='rank'>1</param>
+                <param name='iterations'>1</param>
+                <param name='palettize'>false</param>
+              </params>
+          </node>
+      </node>
+      <node operation='gegl:cell-noise'>
+          <params>
+            <param name='seed'>0</param>
+            <param name='scale'>1</param>
+            <param name='shape'>2</param>
+            <param name='rank'>2</param>
+            <param name='iterations'>1</param>
+            <param name='palettize'>false</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:add'>
+      <params>
+        <param name='value'>0</param>
+      </params>
+      <node operation='gegl:crop'>
+          <params>
+            <param name='x'>-64</param>
+            <param name='y'>-64</param>
+            <param name='width'>128</param>
+            <param name='height'>128</param>
+          </params>
+      </node>
+      <node operation='gegl:cell-noise'>
+          <params>
+            <param name='seed'>0</param>
+            <param name='scale'>1</param>
+            <param name='shape'>2</param>
+            <param name='rank'>1</param>
+            <param name='iterations'>1</param>
+            <param name='palettize'>false</param>
+          </params>
+      </node>
+  </node>
+  <node operation='gegl:crop'>
+      <params>
+        <param name='x'>-64</param>
+        <param name='y'>-64</param>
+        <param name='width'>256</param>
+        <param name='height'>256</param>
+      </params>
+  </node>
+  <node operation='gegl:color'>
+      <params>
+        <param name='value'>rgb(0, 0, 0)</param>
+        <param name='format'></param>
+      </params>
+  </node>
+</gegl>
+

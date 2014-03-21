@@ -77,6 +77,7 @@ op_LTLIBRARIES = \
 	noise-rgb.la \
 	noise-slur.la \
 	noise-spread.la \
+	noise-cell.la \
 	noise.la \
 	oilify.la \
 	opacity.la \
