@@ -30,9 +30,7 @@
 "ink3=yellow\n"\
 "ink4=black\n"\
 "\n"\
-"inklimit=3.0\n"\
-"iterations=32\n"\
-"bail=0.0004\n"
+"inklimit=3.0\n"
 
 gegl_chant_register_enum (ink_sim_mode)
   enum_value (GEGL_INK_SIMULATOR_PROOF, "proof")
@@ -54,6 +52,8 @@ gegl_chant_enum (mode, _("mode"), GeglInkSimMode, ink_sim_mode, GEGL_INK_SIMULAT
 #include <math.h>
 
 #define SPECTRUM_BANDS 20
+#define LUT_DIM        64
+#define LUT_ITERATIONS 256
 
 typedef struct _Config Config;
 typedef struct _Ink Ink;
@@ -77,7 +77,6 @@ struct _Ink {
   /* per ink inklimit as well? */
 };
 
-#define LUT_DIM 100
 
 typedef struct _InkMix InkMix;
 struct _InkMix {
@@ -90,22 +89,34 @@ struct _Config {
   Spectrum substrate;
   Ink      ink_def[4];
   int      inks;
-  int      iterations;
-  float    bail;
   float    ink_limit;
   InkMix   lut[LUT_DIM*LUT_DIM*LUT_DIM]; 
 };
 
 
+static inline int lut_indice (float val, float *delta)
+{
+  int v = floor (val * (LUT_DIM - 1));
+  if (v < 0) v = 0; if (v >= (LUT_DIM-1)) v = LUT_DIM - 2;
+  if (delta)
+    {
+       *delta = ((val * (LUT_DIM - 1)) - v);
+       g_assert (*delta >= 0.0);
+       g_assert (*delta <= 1.0);
+    }
+  return v;
+}
+
+static inline int lut_index (int ri, int gi, int bi)
+{
+  return ri * LUT_DIM * LUT_DIM + gi * LUT_DIM + bi;
+}
+
 static inline int rgb_to_lut_index (float red, float green, float blue)
 {
-  int r = floor (red * LUT_DIM);
-  int g = floor (green * LUT_DIM);
-  int b = floor (blue * LUT_DIM);
-  if (r < 0) r = 0; if (r >= LUT_DIM) r = LUT_DIM - 1;
-  if (g < 0) g = 0; if (g >= LUT_DIM) g = LUT_DIM - 1;
-  if (b < 0) b = 0; if (b >= LUT_DIM) b = LUT_DIM - 1;
-  return r * LUT_DIM * LUT_DIM + g * LUT_DIM + b;
+  return lut_index (lut_indice (red, NULL),
+                    lut_indice (green, NULL),
+                    lut_indice (blue, NULL));
 }
 
 static Config config;
@@ -130,7 +141,7 @@ static Spectrum STANDARD_OBSERVER_S   = {{
 //#define TRANSMITTANCE_MAGENTA {{1.0,0.7,0.9,0.85,0.8,0.7,0.64,0.54,0.5,0.38,0.6,0.8,0.9,1.0,1.0,1.0,1.0,0.9,0.9,0.9}}
 
 #define TRANSMITTANCE_RED     {{0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0}}
-#define TRANSMITTANCE_GREEN   {{0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0}}
+#define TRANSMITTANCE_GREEN   {{0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0}}
 #define TRANSMITTANCE_BLUE    {{0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
 #define TRANSMITTANCE_BLACK   {{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}}
 #define TRANSMITTANCE_GRAY    {{0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5,0.5}}
@@ -193,7 +204,7 @@ static inline void add_ink (Spectrum *s, const Spectrum *illuminant, const Spect
   }
 }
 
-static inline float spectrum_integrate (const Spectrum *s, const Spectrum *is, float scale)
+static float spectrum_integrate (const Spectrum *s, const Spectrum *is, float scale)
 {
   float result = 0.0;
   int i;
@@ -241,13 +252,13 @@ static inline Spectrum inks_to_spectrum (Config *config, float *ink_levels)
   return spec;
 }
 
-static inline void inks_to_rgb (Config *config, float *ink_levels, float *rgba)
+static inline void spectral_proof (Config *config, float *ink_levels, float *rgba)
 {
   Spectrum spec = inks_to_spectrum (config, ink_levels);
   spectrum_to_rgba (&spec, rgba);
 }
 
-static inline double colordiff_squared (float *cola, float *colb)
+static inline double colordiff (float *cola, float *colb)
 {
   return 
     (cola[0]-colb[0])*(cola[0]-colb[0])+
@@ -255,30 +266,18 @@ static inline double colordiff_squared (float *cola, float *colb)
     (cola[2]-colb[2])*(cola[2]-colb[2]);
 }
 
-static inline void rgb_to_inks (Config *config, float *rgb, float *ink_levels)
+static inline void rgb_to_inks_stochastic (Config *config,
+                                           float  *rgb,
+                                           float  *ink_levels,
+                                           int     iterations,
+                                           float   rrange)
 {
   float best[8] = {0.5,0.5,0.5,0.5,0.5};
   float bestdiff = 3;
   int i;
 
-  int lutidx = rgb_to_lut_index (rgb[0], rgb[1], rgb[2]);
-  float rrange;
-  int iterations;
-  
-again: /* if on first run we seeded LUT */
-
-  if (config->lut[lutidx].defined)
-  {
-    for (i = 0; i < 4; i++)
-      best[i] = config->lut[lutidx].level[i];
-    rrange = 0.03;
-    iterations = config->iterations;
-  }
-  else
-  {
-    rrange = 0.6;
-    iterations = 128;
-  }
+  for (i = 0; i < config->inks; i++)
+    best[i] = ink_levels[i];
 
   for (i = 0; i < iterations; i++)
   {
@@ -288,7 +287,7 @@ again: /* if on first run we seeded LUT */
     float diff;
     float inksum = 0;
 
-    do{
+    do {
       inksum = 0.0;
       for (j = 0; j < config->inks; j++)
       {
@@ -299,34 +298,108 @@ again: /* if on first run we seeded LUT */
       }
     } while (inksum > config->ink_limit);
 
-    inks_to_rgb (config, attempt, softrgb);
-    diff = colordiff_squared (rgb, softrgb) + (inksum / 100.0) * (inksum / 100.0);
+    spectral_proof (config, attempt, softrgb);
+    diff = colordiff (rgb, softrgb) + (inksum / 100.0) * (inksum / 100.0);
     if (diff < bestdiff)
     {
       bestdiff = diff;
       for (j = 0; j < config->inks; j++)
         best[j] = attempt[j];
-      if (diff < config->bail) /* bail early */
+      if (diff < 0.0001) /* close enough */
         i = 10000;
     }
-  }
-
-  if (config->lut[lutidx].defined == 0)
-  {
-    config->lut[lutidx].defined = 1;
-    for (i = 0; i < 4; i++)
-      config->lut[lutidx].level[i] = best[i];
-    goto again;
-  }
-  else
-  {
-    //for (i = 0; i < 4; i++)
-    //  config->lut[lutidx].level[i] = best[i];
   }
 
   for (i = 0; i < config->inks; i++)
     ink_levels[i] = best[i];
 }
+
+static inline float * ensure_lut (Config *config, int ri, int gi, int bi)
+{
+  int l_index;
+  int i;
+
+  if (ri >= LUT_DIM ||
+      gi >= LUT_DIM ||
+      bi >= LUT_DIM)
+  {
+    //g_warning ("oops");
+    return &config->lut[0].level[0];
+  }
+
+  l_index = lut_index (ri, gi, bi);
+  if (!config->lut[l_index].defined)
+  {
+    float trgb[3] = {(float)ri / LUT_DIM, (float)gi / LUT_DIM, (float)bi / LUT_DIM };
+    for (i = 0; i < config->inks; i++)
+      {
+        config->lut[l_index].level[i] = 0.5;
+      }
+    rgb_to_inks_stochastic (config, trgb, &config->lut[l_index].level[0], LUT_ITERATIONS, 0.5);
+    config->lut[l_index].defined = 1;
+  }
+  return &config->lut[l_index].level[0];
+}
+
+static inline void lerp_inks (int inks, float *ink_res, const float *inka, const float *inkb, float delta)
+{
+  int i;
+  for (i = 0; i < inks; i++)
+  {
+    ink_res[i] = inka[i]  * (1.0 - delta) + inkb[i] * delta;
+  }
+}
+
+static inline void rgb_to_inks (Config *config, float *rgb, float *ink_levels)
+{
+  float rdelta, gdelta, bdelta;
+  int ri = lut_indice (rgb[0], &rdelta);
+  int gi = lut_indice (rgb[1], &gdelta);
+  int bi = lut_indice (rgb[2], &bdelta);
+  float *ink_corner[8];
+  float  temp1[4];
+  float  temp2[4];
+  float  temp3[4];
+  float  temp4[4];
+
+#if 0
+  numbering of corners, and positions of R,G,B axes
+
+      6
+      /\
+    /   \
+ 7/   d  \5
+  |\     /|
+  |  \4/  |
+ 3\B G|2  |
+   \  |  /1
+     \|/R
+      0
+
+#endif
+
+  ink_corner[0] = ensure_lut (config, ri + 0, gi + 0, bi + 0);
+  ink_corner[1] = ensure_lut (config, ri + 1, gi + 0, bi + 0);
+  ink_corner[2] = ensure_lut (config, ri + 1, gi + 0, bi + 1);
+  ink_corner[3] = ensure_lut (config, ri + 0, gi + 0, bi + 1);
+
+  ink_corner[4] = ensure_lut (config, ri + 0, gi + 1, bi + 0);
+  ink_corner[5] = ensure_lut (config, ri + 1, gi + 1, bi + 0);
+  ink_corner[6] = ensure_lut (config, ri + 1, gi + 1, bi + 1);
+  ink_corner[7] = ensure_lut (config, ri + 0, gi + 1, bi + 1);
+
+  lerp_inks (config->inks, temp1, ink_corner[0], ink_corner[1], rdelta);
+  lerp_inks (config->inks, temp2, ink_corner[3], ink_corner[2], rdelta);
+  lerp_inks (config->inks, temp3, ink_corner[4], ink_corner[5], rdelta);
+  lerp_inks (config->inks, temp4, ink_corner[7], ink_corner[6], rdelta);
+  lerp_inks (config->inks, temp1, temp1, temp3, gdelta);
+  lerp_inks (config->inks, temp2, temp2, temp4, gdelta);
+  lerp_inks (config->inks, ink_levels, temp1, temp2, bdelta);
+}
+
+
+
+
 
 static gboolean
 process (GeglOperation       *op,
@@ -343,12 +416,31 @@ process (GeglOperation       *op,
   switch (o->mode)
   {
     case GEGL_INK_SIMULATOR_PROOF:
-      while (samples--)
-        {
-          inks_to_rgb (&config, in, out);
-          in  += 4;
-          out += 4;
-        }
+      {
+        gint x = roi->x;
+        gint y = roi->y;
+
+        gint actual_inks = config.inks;
+          
+        while (samples--)
+          {
+            int foo = (x / 16);
+            config.inks = MIN (foo, actual_inks);
+            spectral_proof  (&config, in, out);
+            in  += 4;
+            out += 4;
+
+            x++;
+            if (x>=roi->x + roi->width)
+              {
+                x=roi->x;
+                y++;
+              }
+
+          }
+
+        config.inks = actual_inks;
+      }
       break;
     case GEGL_INK_SIMULATOR_SEPARATE:
     while (samples--)
@@ -375,7 +467,7 @@ process (GeglOperation       *op,
             gint actual_inks = config.inks;
             rgb_to_inks (&config, in, temp);
             config.inks = MIN(foo, actual_inks);
-            inks_to_rgb  (&config, temp, out);
+            spectral_proof  (&config, temp, out);
             config.inks = actual_inks;
 
             in  += 4;
@@ -477,14 +569,6 @@ static void parse_config_line (GeglOperation *operation,
       if (config.ink_limit < 0.2)
         config.ink_limit = 0.2;
     }
-  else if (g_str_has_prefix (line, "bail"))
-    {
-      config.bail = strchr(line, '=') ? g_strtod (strchr (line, '=')+1, NULL) : 3.0;
-    }
-  else if (g_str_has_prefix (line, "iterations"))
-    {
-      config.iterations = strchr(line, '=') ? g_strtod (strchr (line, '=')+1, NULL) : 3.0;
-    }
   else
   for (i = 0; i < 4; i++)
   {
@@ -511,10 +595,9 @@ static void parse_config (GeglOperation *operation)
     return;
 
   memset (&config, 0, sizeof (config));
+  g_warning ("blanking");
   for (i = 0; i < 4; i++) config.ink_def[i].scale = 1.0;
   config.ink_limit = 4.0;
-  config.iterations = 32;
-  config.bail = 0.00001;
 
   str = g_string_new ("");
   while (*p)
