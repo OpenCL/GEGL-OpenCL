@@ -177,11 +177,11 @@ iir_young_hor_blur (GeglBuffer          *src,
   const int pixel_count = src_rect->width;
   gfloat *buf     = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
   gfloat *scratch = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
-  GeglRectangle read_rect = {src_rect->x, src_rect->y, src_rect->width, 1};
+  GeglRectangle read_rect = {src_rect->x, dst_rect->y, src_rect->width, 1};
 
-  for (v = 0; v < src_rect->height; v++)
+  for (v = 0; v < dst_rect->height; v++)
     {
-      read_rect.y = src_rect->y + v;
+      read_rect.y = dst_rect->y + v;
       gegl_buffer_get (src, &read_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       iir_young_blur_pixels_1D (buf, 4, B, b, scratch, pixel_count);
@@ -207,11 +207,11 @@ iir_young_ver_blur (GeglBuffer          *src,
   const int pixel_count = src_rect->height;
   gfloat *buf     = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
   gfloat *scratch = gegl_malloc (pixel_count * sizeof(gfloat) * 4);
-  GeglRectangle read_rect = {src_rect->x, src_rect->y, 1, src_rect->height};
+  GeglRectangle read_rect = {dst_rect->x, src_rect->y, 1, src_rect->height};
 
-  for (u = 0; u < src_rect->width; u++)
+  for (u = 0; u < dst_rect->width; u++)
     {
-      read_rect.x = src_rect->x + u;
+      read_rect.x = dst_rect->x + u;
       gegl_buffer_get (src, &read_rect, 1.0, format, buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       iir_young_blur_pixels_1D (buf, 4, B, b, scratch, pixel_count);
@@ -222,7 +222,6 @@ iir_young_ver_blur (GeglBuffer          *src,
   gegl_free (buf);
   gegl_free (scratch);
 }
-
 
 static gint
 fir_calc_convolve_matrix_length (gdouble sigma)
@@ -636,7 +635,6 @@ process (GeglOperation       *operation,
   rect.y      = result->y - op_area->top;
   rect.height = result->height + op_area->top + op_area->bottom;
 
-
   if (o->filter == GEGL_GAUSSIAN_BLUR_FILTER_IIR)
     {
       horizontal_irr = TRUE;
@@ -653,12 +651,11 @@ process (GeglOperation       *operation,
       vertical_irr   = o->std_dev_y > 1.0;
     }
 
-
   if (gegl_operation_use_opencl (operation) && !(horizontal_irr | vertical_irr))
     if (cl_process(operation, input, output, result))
       return TRUE;
 
-  temp_extend = rect;
+  gegl_rectangle_intersect (&temp_extend, &rect, gegl_buffer_get_extent (input));
   temp_extend.x      = result->x;
   temp_extend.width  = result->width;
   temp = gegl_buffer_new (&temp_extend, babl_format ("RaGaBaA float"));
@@ -676,16 +673,15 @@ process (GeglOperation       *operation,
       g_free (cmatrix);
     }
 
-
   if (vertical_irr)
     {
       iir_young_find_constants (o->std_dev_y, &B, b);
-      iir_young_ver_blur (temp, &temp_extend, output, result, B, b);
+      iir_young_ver_blur (temp, &rect, output, result, B, b);
     }
   else
     {
       cmatrix_len = fir_gen_convolve_matrix (o->std_dev_y, &cmatrix);
-      fir_ver_blur (temp, &temp_extend, output, result, cmatrix, cmatrix_len,
+      fir_ver_blur (temp, &rect, output, result, cmatrix, cmatrix_len,
                     op_area->top);
       g_free (cmatrix);
     }
