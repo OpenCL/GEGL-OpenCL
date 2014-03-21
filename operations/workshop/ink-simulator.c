@@ -264,7 +264,7 @@ inks_to_spectrum (Config *config,
   Spectrum spec = config->illuminant;
   spectrum_remove_light (&spec, &config->substrate, 1.0);
 
-  for (i = 0; i < MIN(4, config->inks); i++) /* XXX: MIN(4, to avoid walking out of RGBA */
+  for (i = 0; i < config->inks; i++) 
     add_ink (&spec, &config->illuminant,
                     &config->ink_def[i].transmittance,
                     ink_levels[i] * config->ink_def[i].scale,
@@ -308,7 +308,7 @@ rgb_to_inks_stochastic (Config *config,
   for (i = 0; i < iterations; i++)
   {
     gint j;
-    gfloat attempt[8];
+    gfloat attempt[MAX_INKS];
     gfloat softrgb[4];
     gfloat diff;
     gfloat inksum = 0;
@@ -434,12 +434,28 @@ process (GeglOperation       *op,
   {
     case GEGL_INK_SIMULATOR_PROOF:
       {
-        while (samples--)
-          {
-            spectral_proof  (config, in, out);
-            in  += 4;
-            out += 4;
-          }
+        if (config->inks > 4)
+        {
+          while (samples--)
+            {
+              gfloat inks[4];
+              int i;
+              for (i = 0; i < 4; i++)
+                inks[i] = in[i];
+              spectral_proof  (config, inks, out);
+              in  += 4;
+              out += 4;
+            }
+        }
+        else
+        {
+          while (samples--)
+            {
+              spectral_proof  (config, in, out);
+              in  += 4;
+              out += 4;
+            }
+        }
       }
       break;
     case GEGL_INK_SIMULATOR_SEPARATE:
