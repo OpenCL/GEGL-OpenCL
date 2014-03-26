@@ -17,40 +17,49 @@
  * Copyright 2013 Carlos Zubieta  <czubieta.dev@gmail.com>
  */
 
+int
+block_index (int pos,
+             int size)
+{
+  return pos < 0 ? ((pos + 1) / size - 1) : (pos / size);
+}
+
 __kernel void calc_block_color(__global float4 *in,
                                __global float4 *out,
                                         int     xsize,
                                         int     ysize,
                                         int     roi_x,
                                         int     roi_y,
-                                        int     total_width_x,
-                                        int     total_width_y,
+                                        int4    bbox,
                                         int     line_width,
                                         int     block_count_x )
 {
   int gidx = get_global_id(0);
   int gidy = get_global_id(1);
 
-  int cx = roi_x / xsize + gidx;
-  int cy = roi_y / ysize + gidy;
+  int cx = block_index (roi_x, xsize) + gidx;
+  int cy = block_index (roi_y, ysize) + gidy;
 
-  int px = cx * xsize - roi_x;
-  int py = cy * ysize - roi_y;
+  int px0 = max (bbox.s0, cx * xsize) - roi_x + xsize;
+  int py0 = max (bbox.s1, cy * ysize) - roi_y + ysize;
+
+  int px1 = min (bbox.s2, cx * xsize + xsize) - roi_x + xsize;
+  int py1 = min (bbox.s3, cy * ysize + ysize) - roi_y + ysize;
 
   int i, j;
 
   float4 col = (float4)(0.0f, 0.0f, 0.0f, 0.0f);
 
-  int real_xsize = min (total_width_x - px - roi_x, xsize);
-  int real_ysize = min (total_width_y - py - roi_y, ysize);
+  int real_xsize = px1 - px0;
+  int real_ysize = py1 - py0;
 
   float weight = 1.0f / (real_xsize * real_ysize);
 
-  for (j = py; j < py + real_ysize; ++j)
+  for (j = py0; j < py1; ++j)
     {
-      for (i = px; i < px + real_xsize; ++i)
+      for (i = px0; i < px1; ++i)
         {
-          col += in[(j + ysize) * line_width + i + xsize];
+          col += in[j * line_width + i];
         }
     }
   out[gidy * block_count_x + gidx] = col * weight;
@@ -78,8 +87,8 @@ __kernel void kernel_pixelize(__global float4 *in,
   int gidy = get_global_id(1);
 
   int src_width  = get_global_size(0);
-  int cx = (gidx + roi_x) / xsize - roi_x / xsize;
-  int cy = (gidy + roi_y) / ysize - roi_y / ysize;
+  int cx = block_index (gidx + roi_x, xsize) - block_index (roi_x, xsize);
+  int cy = block_index (gidy + roi_y, ysize) - block_index (roi_y, ysize);
 
   float4 grid_color = in[cx + cy * block_count_x];
   float4 out_color = bg_color;
@@ -93,8 +102,8 @@ __kernel void kernel_pixelize(__global float4 *in,
   int off_shape_x = floor ((xsize - xratio * xsize) / 2.0f);
   int off_shape_y = floor ((ysize - yratio * ysize) / 2.0f);
 
-  int start_x = (x_pos / xsize) * xsize - roi_x;
-  int start_y = (y_pos / ysize) * ysize - roi_y;
+  int start_x = block_index (x_pos, xsize) * xsize - roi_x;
+  int start_y = block_index (y_pos, ysize) * ysize - roi_y;
 
   float shape_area = rect_shape_width * rect_shape_height;
 

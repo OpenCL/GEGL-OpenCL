@@ -267,6 +267,13 @@ set_rectangle_noalloc (GeglBuffer      *output,
     }
 }
 
+static int
+block_index (int pos,
+             int size)
+{
+  return pos < 0 ? ((pos + 1) / size - 1) : (pos / size);
+}
+
 static void
 pixelize_noalloc (GeglBuffer          *input,
                   GeglBuffer          *output,
@@ -274,8 +281,8 @@ pixelize_noalloc (GeglBuffer          *input,
                   const GeglRectangle *whole_region,
                   GeglChantO          *o)
 {
-  gint start_x = (roi->x / o->size_x) * o->size_x;
-  gint start_y = (roi->y / o->size_y) * o->size_y;
+  gint start_x = block_index (roi->x, o->size_x) * o->size_x;
+  gint start_y = block_index (roi->y, o->size_y) * o->size_y;
   gint x, y;
   gint off_shape_x, off_shape_y;
 
@@ -320,8 +327,8 @@ pixelize (gfloat              *input,
           const GeglRectangle *whole_region,
           GeglChantO          *o)
 {
-  gint          start_x = (roi->x / o->size_x) * o->size_x;
-  gint          start_y = (roi->y / o->size_y) * o->size_y;
+  gint          start_x = block_index (roi->x, o->size_x) * o->size_x;
+  gint          start_y = block_index (roi->y, o->size_y) * o->size_y;
   gint          x, y;
   gint          off_shape_x, off_shape_y;
   gfloat        color[4];
@@ -393,10 +400,13 @@ cl_pixelize (cl_mem               in_tex,
   cl_int cl_err = 0;
   const size_t gbl_size[2]= {roi->width, roi->height};
 
-  gint cx0 = roi->x / xsize;
-  gint cy0 = roi->y / ysize;
-  gint block_count_x = ((roi->x + roi->width  + xsize - 1) / xsize) - cx0;
-  gint block_count_y = ((roi->y + roi->height + ysize - 1) / ysize) - cy0;
+  gint cx0 = block_index (roi->x, xsize);
+  gint cy0 = block_index (roi->y, ysize);
+  gint block_count_x = block_index (roi->x + roi->width  + xsize - 1, xsize) - cx0;
+  gint block_count_y = block_index (roi->y + roi->height + ysize - 1, ysize) - cy0;
+  cl_int4 bbox = {{ image_extent->x, image_extent->y,
+                    image_extent->x + image_extent->width,
+                    image_extent->y + image_extent->height }};
 
   cl_int line_width = roi->width + 2 * xsize;
 
@@ -417,8 +427,7 @@ cl_pixelize (cl_mem               in_tex,
                                     sizeof(cl_int), (void*)&ysize,
                                     sizeof(cl_int), (void*)&roi->x,
                                     sizeof(cl_int), (void*)&roi->y,
-                                    sizeof(cl_int), (void*)&image_extent->width,
-                                    sizeof(cl_int), (void*)&image_extent->height,
+                                    sizeof(cl_int4), &bbox,
                                     sizeof(cl_int), (void*)&line_width,
                                     sizeof(cl_int), (void*)&block_count_x,
                                     NULL);
