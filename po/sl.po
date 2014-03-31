@@ -3,16 +3,16 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # This file is distributed under the same license as the package.
 #
-# Martin Srebotnjak <miles@filmsi.net>, 2012-2013.
+# Martin Srebotnjak <miles@filmsi.net>, 2012-2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-10-17 23:29+0000\n"
-"PO-Revision-Date: 2013-10-29 14:30+0100\n"
-"Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
+"POT-Creation-Date: 2014-02-11 06:20+0000\n"
+"PO-Revision-Date: 2014-02-11 10:46+0100\n"
+"Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: sl.libreoffice.org <users@sl.libreoffice.org>\n"
 "Language: Slovenian\n"
 "MIME-Version: 1.0\n"
@@ -164,43 +164,38 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:247
+#: ../gegl/gegl-init.c:252
 msgid "babls error tolerance, a value between 0.2 and 0.000000001"
 msgstr "Toleranca napake babl-a, vrednost med 0,2 in 0,000000001"
 
-#: ../gegl/gegl-init.c:252
+#: ../gegl/gegl-init.c:257
 msgid "Where GEGL stores its swap"
 msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
-#: ../gegl/gegl-init.c:257
+#: ../gegl/gegl-init.c:262
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Koliko pomnilnika (približno) uporabiti za predpomnenje podob"
 
-#: ../gegl/gegl-init.c:262
+#: ../gegl/gegl-init.c:267
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Privzeta velikost tlakovcev za GeglBuffer"
 
-#: ../gegl/gegl-init.c:267
+#: ../gegl/gegl-init.c:272
 msgid "The count of pixels to compute simultaneously"
 msgstr "Število slikovnih točk, ki naj se izračunajo hkrati"
 
-#: ../gegl/gegl-init.c:272
+#: ../gegl/gegl-init.c:277
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 "Kakovost izrisovanja, vrednost med 0,0 (hitro) in 1,0 (referenčna kakovost)"
 
-#: ../gegl/gegl-init.c:277
+#: ../gegl/gegl-init.c:282
 msgid "The number of concurrent processing threads to use"
 msgstr "Število uporabljenih vzporednih procesnih niti."
 
-#: ../gegl/gegl-init.c:282
-#| msgid "Use OpenCL"
+#: ../gegl/gegl-init.c:287
 msgid "Disable OpenCL"
 msgstr "Onemogoči OpenCL"
-
-#: ../gegl/gegl-init.c:287
-msgid "Maximum size of a file backend's writer thread queue (in MB)"
-msgstr "Največje velikost datoteke v pisalni vrsti niti ozadja (v MB)"
 
 #: ../gegl/module/geglmodule.c:147 ../gegl/module/geglmodule.c:165
 #: ../gegl/module/geglmodule.c:274 ../gegl/module/geglmodule.c:301
@@ -269,11 +264,11 @@ msgstr "Ohrani komponento 2"
 msgid "Keep component 3"
 msgstr "Ohrani komponento 3"
 
-#: ../operations/common/alien-map.c:158
+#: ../operations/common/alien-map.c:222
 msgid "Alters colors using sine transformations"
 msgstr "Spreminja barve z uporabi sinusoidnih transformacij"
 
-#: ../operations/common/antialias.c:264
+#: ../operations/common/antialias.c:278
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
 msgstr "Zgladi robove z uporabo algoritma ekstrapolacije robov Scale3X"
 
@@ -315,7 +310,7 @@ msgstr "Uglajenost"
 msgid "Level of smoothness"
 msgstr "Raven uglajenosti"
 
-#: ../operations/common/bilateral-filter-fast.c:481
+#: ../operations/common/bilateral-filter-fast.c:495
 msgid "A fast approximate implementation of the bilateral filter"
 msgstr "Hitra približna izvedba dvostranskega filtra"
 
@@ -339,7 +334,7 @@ msgid "Radius of square pixel region, (width and height will be radius*2+1)"
 msgstr ""
 "Polmer območja kvadratne slikovne točke (širina in višina bosta polmer*2+1)"
 
-#: ../operations/common/box-blur.c:371
+#: ../operations/common/box-blur.c:391
 msgid "Performs an averaging of a square box of pixels"
 msgstr "Izvede poprečenje kvadratnega polja slikovnih točk"
 
@@ -402,7 +397,7 @@ msgstr "Vhodni medpomnilnika"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "GeglBuffer, ki naj se naloži v cevovod"
 
-#: ../operations/common/buffer-source.c:190
+#: ../operations/common/buffer-source.c:188
 msgid "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 msgstr ""
 "Izvor, ki uporablja notranje-pomnilniški GeglBuffer, za GEGL-ovo interno "
@@ -452,6 +447,7 @@ msgstr "Dvignjenost"
 
 #: ../operations/common/bump-map.c:70 ../operations/common/bump-map.c:72
 #: ../operations/common/emboss.c:42 ../operations/common/fractal-trace.c:55
+#: ../operations/common/texturize-canvas.c:41
 msgid "Depth"
 msgstr "Globina"
 
@@ -535,7 +531,7 @@ msgstr ""
 "Število ponavljanj, višje število ponavljanj ponuja manj šuma v rezultatih "
 "ob višjem strošku izračuna"
 
-#: ../operations/common/c2g.c:355
+#: ../operations/common/c2g.c:364
 msgid ""
 "Color to grayscale conversion, uses envelopes formed from spatial color "
 "differences to perform color-feature preserving grayscale spatial contrast "
@@ -553,7 +549,7 @@ msgstr "Polmer maske"
 msgid "Percent black"
 msgstr "Odstotek črnine"
 
-#: ../operations/common/cartoon.c:379
+#: ../operations/common/cartoon.c:393
 msgid "Simulate a cartoon by enhancing edges"
 msgstr "Simuliraj stripovsko risbo s poudarjanjem robov"
 
@@ -644,7 +640,7 @@ msgid "Alter colors by mixing RGB Channels"
 msgstr "Spremeni barve s mešanjem kanalov RGB"
 
 #: ../operations/common/checkerboard.c:25 ../operations/common/grid.c:24
-#: ../operations/common/plasma.c:45 ../operations/common/rectangle.c:33
+#: ../operations/common/plasma.c:45 ../operations/common/rectangle.c:30
 #: ../operations/core/crop.c:27 ../operations/external/svg-load.c:27
 #: ../operations/external/text.c:38 ../operations/external/v4l.c:27
 #: ../operations/external/vector-stroke.c:30
@@ -657,7 +653,7 @@ msgid "Horizontal width of cells pixels"
 msgstr "Vodoravni širina celic v slikovnih točkah."
 
 #: ../operations/common/checkerboard.c:29 ../operations/common/grid.c:26
-#: ../operations/common/plasma.c:47 ../operations/common/rectangle.c:35
+#: ../operations/common/plasma.c:47 ../operations/common/rectangle.c:32
 #: ../operations/core/crop.c:28 ../operations/external/svg-load.c:29
 #: ../operations/external/text.c:40 ../operations/external/v4l.c:28
 #: ../operations/workshop/external/line-profile.c:30
@@ -679,11 +675,9 @@ msgstr "Navpični odmik (od izvora) za začetek mreže."
 #: ../operations/common/checkerboard.c:41 ../operations/common/color.c:24
 #: ../operations/common/color-to-alpha.c:28
 #: ../operations/common/dropshadow.c:37 ../operations/common/grid.c:36
-#: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:35
+#: ../operations/common/rectangle.c:34 ../operations/common/vignette.c:35
 #: ../operations/external/text.c:31 ../operations/external/vector-fill.c:27
 #: ../operations/external/vector-stroke.c:27
-#: ../operations/workshop/linear-gradient.c:28
-#: ../operations/workshop/radial-gradient.c:28
 msgid "Color"
 msgstr "Barva"
 
@@ -692,8 +686,6 @@ msgid "One of the cell colors (defaults to 'black')"
 msgstr "Prva barva celic (privzeto črna, 'black')"
 
 #: ../operations/common/checkerboard.c:45
-#: ../operations/workshop/linear-gradient.c:30
-#: ../operations/workshop/radial-gradient.c:30
 msgid "Other color"
 msgstr "Druga barva"
 
@@ -702,16 +694,15 @@ msgid "The other cell color (defaults to 'white')"
 msgstr "Druga barva celic (privzeto bela, 'white')"
 
 #: ../operations/common/checkerboard.c:49 ../operations/common/color.c:27
-#| msgid "babl format"
 msgid "Babl Format"
 msgstr "Zapis babl"
 
 #: ../operations/common/checkerboard.c:50 ../operations/common/color.c:28
-#| msgid "The value of the offset"
+#: ../operations/core/convert-format.c:28
 msgid "The babl format of the output"
 msgstr "Zapis babl izhoda"
 
-#: ../operations/common/checkerboard.c:159
+#: ../operations/common/checkerboard.c:326
 msgid "Create a checkerboard pattern"
 msgstr "Ustvari vzorec šahovnice"
 
@@ -719,7 +710,7 @@ msgstr "Ustvari vzorec šahovnice"
 msgid "The color to render (defaults to 'black')"
 msgstr "Barva izrisovanja (privzeto črna, 'black')"
 
-#: ../operations/common/color.c:92
+#: ../operations/common/color.c:91
 msgid ""
 "Generates a buffer entirely filled with the specified color, crop it to get "
 "smaller dimensions."
@@ -767,7 +758,26 @@ msgstr "Strategija drgeta"
 msgid "The dithering strategy to use"
 msgstr "Strategija drgeta, ki jo želite uporabiti"
 
-#: ../operations/common/color-reduction.c:591
+#: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
+#: ../operations/common/noise.c:31 ../operations/common/noise-cie-lch.c:41
+#: ../operations/common/noise-hsv.c:43 ../operations/common/noise-hurl.c:31
+#: ../operations/common/noise-pick.c:32 ../operations/common/noise-rgb.c:52
+#: ../operations/common/noise-slur.c:34 ../operations/common/noise-spread.c:37
+#: ../operations/common/shift.c:35 ../operations/common/wind.c:33
+msgid "Seed"
+msgstr "Zasadi"
+
+#: ../operations/common/color-reduction.c:56 ../operations/common/cubism.c:43
+#: ../operations/common/mosaic.c:73 ../operations/common/noise-cie-lch.c:42
+#: ../operations/common/noise-hsv.c:44 ../operations/common/noise-hurl.c:32
+#: ../operations/common/noise-pick.c:33 ../operations/common/noise-rgb.c:53
+#: ../operations/common/noise-slur.c:35 ../operations/common/noise-spread.c:38
+#: ../operations/common/plasma.c:36 ../operations/common/shift.c:36
+#: ../operations/common/wind.c:33
+msgid "Random seed"
+msgstr "Naključno seme"
+
+#: ../operations/common/color-reduction.c:511
 msgid ""
 "Reduce the number of colors in the image, by reducing the bits per channel "
 "(colors and alpha), with optional dithering"
@@ -800,7 +810,7 @@ msgstr "Spremeni barvno temperaturo slike."
 msgid "The color to render (defaults to 'white')"
 msgstr "Barva izrisovanja (privzeto bela, 'white')"
 
-#: ../operations/common/color-to-alpha.c:200
+#: ../operations/common/color-to-alpha.c:255
 msgid "Convert a specified color to transparency"
 msgstr "Pretvori navedeno barvo v prosojnost"
 
@@ -820,7 +830,7 @@ msgstr "Krivulja"
 msgid "The contrast curve."
 msgstr "Krivulja kontrasta."
 
-#: ../operations/common/contrast-curve.c:125
+#: ../operations/common/contrast-curve.c:255
 msgid "Adjusts the contrast of the image according to a curve."
 msgstr "Prilagodi kontrast slike glede na krivuljo."
 
@@ -848,22 +858,6 @@ msgstr "Barva ozadja"
 msgid "The tiles' background color"
 msgstr "Barva ozadja tlakovcev"
 
-#: ../operations/common/cubism.c:42 ../operations/common/noise.c:31
-#: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:32
-#: ../operations/common/noise-rgb.c:52 ../operations/common/noise-slur.c:34
-#: ../operations/common/noise-spread.c:37 ../operations/common/shift.c:35
-#: ../operations/common/wind.c:33
-msgid "Seed"
-msgstr "Zasadi"
-
-#: ../operations/common/cubism.c:43 ../operations/common/mosaic.c:73
-#: ../operations/common/noise-hurl.c:32 ../operations/common/noise-pick.c:33
-#: ../operations/common/noise-rgb.c:53 ../operations/common/noise-slur.c:35
-#: ../operations/common/noise-spread.c:38 ../operations/common/plasma.c:36
-#: ../operations/common/shift.c:36 ../operations/common/wind.c:33
-msgid "Random seed"
-msgstr "Naključno seme"
-
 #: ../operations/common/cubism.c:614
 msgid ""
 "Convert the image into randomly rotated square blobs, somehow resembling a "
@@ -880,7 +874,7 @@ msgstr "Ohrani"
 msgid "Keep even or odd fields"
 msgstr "Obdrži soda/liha slikovna polja"
 
-#: ../operations/common/deinterlace.c:45
+#: ../operations/common/deinterlace.c:45 ../operations/workshop/gblur-1d.c:51
 msgid "Orientation"
 msgstr "Usmerjenost"
 
@@ -908,7 +902,7 @@ msgstr "Polmer 1"
 msgid "Radius 2"
 msgstr "Polmer 2"
 
-#: ../operations/common/difference-of-gaussians.c:103
+#: ../operations/common/difference-of-gaussians.c:84
 msgid ""
 "Edge detection with control of edge thickness, based on the difference of "
 "two gaussian blurs"
@@ -920,35 +914,15 @@ msgstr ""
 msgid "Title to be given to output window"
 msgstr "Naslov za izhodno okno."
 
-#: ../operations/common/display.c:142
+#: ../operations/common/display.c:141
 msgid "Display the input buffer in a window."
 msgstr "Prikaži vhodni medpomnilnik v oknu."
-
-#: ../operations/common/dot.c:26 ../operations/common/pixelize.c:25
-msgid "Block Width"
-msgstr "Širina bloka"
-
-#: ../operations/common/dot.c:28
-msgid "Size of each block in pixels"
-msgstr "Širina bloka v slikovnih točkah"
-
-#: ../operations/common/dot.c:30
-msgid "Dot size ratio"
-msgstr "Razmerje stranic pike"
-
-#: ../operations/common/dot.c:32
-msgid "Size ratio of a dot inside each block"
-msgstr "Razmerje stranic pike oz. točke v vsakem bloku"
-
-#: ../operations/common/dot.c:194
-msgid "Simplify image into an array of solid-colored dots"
-msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih pik"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:34
 #: ../operations/common/motion-blur-circular.c:41
 #: ../operations/common/motion-blur-zoom.c:40 ../operations/common/plasma.c:41
 #: ../operations/common/polar-coordinates.c:55
-#: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:64
+#: ../operations/common/rectangle.c:26 ../operations/common/vignette.c:64
 #: ../operations/common/waves.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
@@ -961,7 +935,7 @@ msgstr "Vodoravni odmik sence"
 #: ../operations/common/motion-blur-circular.c:46
 #: ../operations/common/motion-blur-zoom.c:45 ../operations/common/plasma.c:43
 #: ../operations/common/polar-coordinates.c:59
-#: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:68
+#: ../operations/common/rectangle.c:28 ../operations/common/vignette.c:68
 #: ../operations/common/waves.c:30 ../operations/core/crop.c:26
 msgid "Y"
 msgstr "Y"
@@ -984,11 +958,11 @@ msgstr "Barva sence (privzeto črna, 'black')"
 msgid "Opacity"
 msgstr "Prekrivnost"
 
-#: ../operations/common/dropshadow.c:99
+#: ../operations/common/dropshadow.c:104
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Ustvari učinek padle sence na vhodnem medpomnilniku"
 
-#: ../operations/common/edge-laplace.c:410
+#: ../operations/common/edge-laplace.c:407
 msgid "High-resolution edge detection"
 msgstr "Razpoznava robov visoke ločljivosti"
 
@@ -1058,7 +1032,7 @@ msgstr "Sigma teže"
 msgid "Weight distribution sigma controlling response contributions"
 msgstr "Sigma porazdelitve uteži, ki nadzira prispevke odziva"
 
-#: ../operations/common/exp-combine.c:1271
+#: ../operations/common/exp-combine.c:1270
 msgid "Combine multiple scene exposures into one high range buffer"
 msgstr "Združi več ekspozicij prizorov v posamičen visokoobsežni medpomnilnik."
 
@@ -1274,8 +1248,9 @@ msgid "Fractal Explorer"
 msgstr "Raziskovalec fraktalov"
 
 #: ../operations/common/fractal-trace.c:34
+#: ../operations/common/linear-gradient.c:25
+#: ../operations/common/radial-gradient.c:25
 #: ../operations/workshop/external/line-profile.c:26
-#: ../operations/workshop/linear-gradient.c:24
 msgid "X1"
 msgstr "X1"
 
@@ -1284,7 +1259,8 @@ msgid "X1 value, position"
 msgstr "Vrednost, položaj X1"
 
 #: ../operations/common/fractal-trace.c:37
-#: ../operations/workshop/linear-gradient.c:26
+#: ../operations/common/linear-gradient.c:27
+#: ../operations/common/radial-gradient.c:27
 msgid "X2"
 msgstr "X2"
 
@@ -1294,13 +1270,15 @@ msgid "X2 value, position"
 msgstr "Vrednost, položaj X2"
 
 #: ../operations/common/fractal-trace.c:41
+#: ../operations/common/linear-gradient.c:26
+#: ../operations/common/radial-gradient.c:26
 #: ../operations/workshop/external/line-profile.c:28
-#: ../operations/workshop/linear-gradient.c:25
 msgid "Y1"
 msgstr "Y1"
 
 #: ../operations/common/fractal-trace.c:44
-#: ../operations/workshop/linear-gradient.c:27
+#: ../operations/common/linear-gradient.c:28
+#: ../operations/common/radial-gradient.c:28
 msgid "Y2"
 msgstr "Y2"
 
@@ -1337,6 +1315,8 @@ msgid "Bailout length"
 msgstr "Dolžina umika"
 
 #: ../operations/common/fractal-trace.c:63
+#: ../operations/workshop/gaussian-blur-iir.c:48
+#: ../operations/workshop/gblur-1d.c:59
 msgid "Abyss policy"
 msgstr "Politika ponora"
 
@@ -1370,6 +1350,8 @@ msgid "Standard deviation for the vertical axi. (multiply by ~2 to get radius)"
 msgstr "Standardna deviacija za navpično os (pomnožite z ~2 za polmer)."
 
 #: ../operations/common/gaussian-blur.c:45
+#: ../operations/workshop/gaussian-blur-iir.c:44
+#: ../operations/workshop/gblur-1d.c:55
 msgid "Filter"
 msgstr "Filter"
 
@@ -1377,7 +1359,9 @@ msgstr "Filter"
 msgid "Optional parameter to override the automatic selection of blur filter"
 msgstr "Neobvezni parameter, ki preglasi samodejni izbor filtra zabrisanosti."
 
-#: ../operations/common/gaussian-blur.c:710
+#: ../operations/common/gaussian-blur.c:723
+#: ../operations/workshop/gaussian-blur-iir.c:106
+#: ../operations/workshop/gblur-1d.c:886
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
@@ -1452,6 +1436,9 @@ msgid "Std. Dev."
 msgstr "Stand. dev."
 
 #: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:26
+#: ../operations/workshop/gaussian-blur-iir.c:40
+#: ../operations/workshop/gaussian-blur-iir.c:43
+#: ../operations/workshop/gblur-1d.c:50
 msgid "Standard deviation (spatial scale factor)"
 msgstr "Standardna deviacija (faktor prostorske spremembe merila)"
 
@@ -1459,7 +1446,7 @@ msgstr "Standardna deviacija (faktor prostorske spremembe merila)"
 msgid "Contrast of high-pass"
 msgstr "Kontrast visokega prehoda"
 
-#: ../operations/common/high-pass.c:74
+#: ../operations/common/high-pass.c:76
 msgid "Enhances fine details."
 msgstr "Izboljša podrobnosti."
 
@@ -1495,7 +1482,7 @@ msgstr "Povprečna razlika (skupaj)"
 msgid "Average difference between all pixels."
 msgstr "Povprečna razlika med vsemi slikovnimi točkami."
 
-#: ../operations/common/image-compare.c:217
+#: ../operations/common/image-compare.c:208
 msgid ""
 "Compares if input and aux buffers are different. Results are saved in the "
 "properties."
@@ -1511,7 +1498,7 @@ msgstr "Vozlišče"
 msgid "GeglNode to introspect"
 msgstr "GeglNode za introspekcijo"
 
-#: ../operations/common/introspect.c:160
+#: ../operations/common/introspect.c:161
 msgid "GEGL graph visualizer."
 msgstr "Vizualizator grafikonov GEGL."
 
@@ -1531,11 +1518,11 @@ msgstr "Operacija"
 msgid "Composite operation to use"
 msgstr "Operacija sestavljanja, ki jo želite uporabiti"
 
-#: ../operations/common/layer.c:35 ../operations/common/rectangle.c:30
+#: ../operations/common/layer.c:35 ../operations/common/rectangle.c:27
 msgid "Horizontal position"
 msgstr "Vodoravni položaj"
 
-#: ../operations/common/layer.c:37 ../operations/common/rectangle.c:32
+#: ../operations/common/layer.c:37 ../operations/common/rectangle.c:29
 msgid "Vertical position"
 msgstr "Navpični položaj"
 
@@ -1557,7 +1544,7 @@ msgstr "Vir"
 msgid "Source datafile (png, jpg, raw, svg, bmp, tif, ...)"
 msgstr "Izvorna podatkovna datoteka (png, jpg, raw, svg, bmp, tif, ...)"
 
-#: ../operations/common/layer.c:286
+#: ../operations/common/layer.c:261
 msgid "A layer in the traditional sense"
 msgstr "Plast v klasičnem pomenu."
 
@@ -1566,23 +1553,20 @@ msgid "Main"
 msgstr "Glavna"
 
 #: ../operations/common/lens-distortion.c:35
-#, fuzzy
 #| msgid "Amount of edge preservation"
 msgid "Amount of second-order distortion"
-msgstr "Raven ohranjanja robov"
+msgstr "Količina popačenja drugega reda"
 
 #: ../operations/common/lens-distortion.c:37
 msgid "Edge"
 msgstr "Robna"
 
 #: ../operations/common/lens-distortion.c:39
-#, fuzzy
 #| msgid "Amount of edge preservation"
 msgid "Amount of fourth-order distortion"
-msgstr "Raven ohranjanja robov"
+msgstr "Količina popačenja četrtega reda"
 
 #: ../operations/common/lens-distortion.c:43
-#, fuzzy
 msgid "Rescale overall image size"
 msgstr "Spremeni velikost celotne slike"
 
@@ -1611,12 +1595,11 @@ msgid "Adjust brightness in corners"
 msgstr "Prilagodi svetlost v kotih"
 
 #: ../operations/common/lens-distortion.c:57
-#| msgid "Background Color"
 msgid "Background"
 msgstr "Ozadje"
 
 #: ../operations/common/lens-distortion.c:59
-#| msgid "Background Color"
+#: ../operations/common/pixelize.c:54
 msgid "Background color"
 msgstr "Barva ozadja"
 
@@ -1662,6 +1645,32 @@ msgstr "Najvišja raven svetilnosti v izhodu"
 msgid "Remaps the intensity range of the image"
 msgstr "Preslika obseg intenzivnosti slike"
 
+#: ../operations/common/linear-gradient.c:29
+#: ../operations/common/radial-gradient.c:29
+#| msgid "Stroke Color"
+msgid "Start Color"
+msgstr "Začetna barva"
+
+#: ../operations/common/linear-gradient.c:30
+#: ../operations/common/radial-gradient.c:30
+msgid "The color at (x1, y1)"
+msgstr "Barva na (x1, y1)"
+
+#: ../operations/common/linear-gradient.c:31
+#: ../operations/common/radial-gradient.c:31
+#| msgid "Color"
+msgid "End Color"
+msgstr "Končna barva"
+
+#: ../operations/common/linear-gradient.c:32
+#: ../operations/common/radial-gradient.c:32
+msgid "The color at (x2, y2)"
+msgstr "Barva na (x2, y2)"
+
+#: ../operations/common/linear-gradient.c:127
+msgid "Linear gradient renderer"
+msgstr "Upodobljevalnik linearnih prelivov"
+
 #: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
 #: ../operations/common/raw-load.c:27 ../operations/external/png-load.c:27
 #: ../operations/external/ppm-load.c:25 ../operations/external/rgbe-load.c:26
@@ -1670,7 +1679,7 @@ msgstr "Preslika obseg intenzivnosti slike"
 msgid "Path of file to load."
 msgstr "Pot datoteke, ki jo želite naložiti."
 
-#: ../operations/common/load.c:188
+#: ../operations/common/load.c:190
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -1707,7 +1716,7 @@ msgstr ""
 #: ../operations/common/map-absolute.c:22
 #: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:48
 #: ../operations/common/waves.c:50
-#: ../operations/transform/transform-core.c:190
+#: ../operations/transform/transform-core.c:186
 #: ../operations/workshop/ditto.c:27
 msgid "Sampler"
 msgstr "Vzorčevalnik"
@@ -1715,7 +1724,7 @@ msgstr "Vzorčevalnik"
 #: ../operations/common/map-absolute.c:23
 #: ../operations/common/map-relative.c:27 ../operations/common/ripple.c:50
 #: ../operations/common/waves.c:53
-#: ../operations/transform/transform-core.c:191
+#: ../operations/transform/transform-core.c:187
 #: ../operations/workshop/ditto.c:28
 msgid "Sampler used internally"
 msgstr "Notranje uporabljeni vzorčevalnik"
@@ -1989,7 +1998,7 @@ msgstr "Glajenje robov"
 msgid "Enables smoother tile output"
 msgstr "Omogoča bolj gladek izhod tlakovcev"
 
-#: ../operations/common/mosaic.c:2464
+#: ../operations/common/mosaic.c:2463
 msgid ""
 "Mosaic is a filter which transforms an image into what appears to be a "
 "mosaic, composed of small primitives, each of constant color and of an "
@@ -2087,18 +2096,18 @@ msgstr "Kroma"
 msgid "Hue"
 msgstr "Obarvanost"
 
-#: ../operations/common/noise-cie-lch.c:167
+#: ../operations/common/noise-cie-lch.c:198
 msgid "Randomize lightness, chroma and hue independently"
 msgstr "Neodvisna naključnost svetlosti, krome in obarvanosti"
 
 #: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hsv.c:41
-#: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
-#: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
-#: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
+#: ../operations/generated/add.c:29 ../operations/generated/divide.c:29
+#: ../operations/generated/gamma.c:29 ../operations/generated/multiply.c:29
+#: ../operations/generated/subtract.c:29
 msgid "Value"
 msgstr "Vrednost"
 
-#: ../operations/common/noise-hsv.c:172
+#: ../operations/common/noise-hsv.c:200
 msgid "Randomize hue, saturation and value independently"
 msgstr "Neodvisna naključnost obarvanosti, nasičenosti in vrednosti"
 
@@ -2118,11 +2127,11 @@ msgstr "Naključnost"
 msgid "Repeat"
 msgstr "Ponovi"
 
-#: ../operations/common/noise-hurl.c:143
+#: ../operations/common/noise-hurl.c:215
 msgid "Completely randomize a fraction of pixels"
 msgstr "Povsem naključen lom slikovnih točk"
 
-#: ../operations/common/noise-pick.c:190
+#: ../operations/common/noise-pick.c:144
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "Naključno izmenjaj nekaj slikovnih točk s sosednjimi"
 
@@ -2147,7 +2156,7 @@ msgstr "Neodvisni RGB"
 msgid "Distort colors by random amounts."
 msgstr "Popači barve z naključnimi vrednostmi."
 
-#: ../operations/common/noise-slur.c:195
+#: ../operations/common/noise-slur.c:156
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr "Naključno porini nekaj slikovnih točk navzdol (podobno taljenju)"
 
@@ -2159,7 +2168,7 @@ msgstr "Količina vodoravnega širjenja"
 msgid "Vertical spread amount"
 msgstr "Količina navpičnega širjenja"
 
-#: ../operations/common/noise-spread.c:172
+#: ../operations/common/noise-spread.c:152
 msgid "Move pixels around randomly"
 msgstr "Slikovne točke pomikaj naokoli naključno"
 
@@ -2241,19 +2250,56 @@ msgstr "Odstotek bele"
 msgid "Simulate color distortion produced by a copy machine"
 msgstr "Simuliraj popačenje barv, kakršno ustvari kopirni stroj"
 
-#: ../operations/common/pixelize.c:27
+#: ../operations/common/pixelize.c:32 ../operations/common/vignette.c:30
+msgid "Shape"
+msgstr "Lik"
+
+#: ../operations/common/pixelize.c:36
+#| msgid "The value of hue"
+msgid "The shape of pixels"
+msgstr "Oblika slikovnih točk"
+
+#: ../operations/common/pixelize.c:38
+msgid "Block Width"
+msgstr "Širina bloka"
+
+#: ../operations/common/pixelize.c:40
 msgid "Width of blocks in pixels"
 msgstr "Širina blokov v slikovnih točkah"
 
-#: ../operations/common/pixelize.c:29
+#: ../operations/common/pixelize.c:42
 msgid "Block Height"
 msgstr "Višina bloka"
 
-#: ../operations/common/pixelize.c:31
+#: ../operations/common/pixelize.c:44
 msgid "Height of blocks in pixels"
 msgstr "Višina blokov v slikovnih točkah"
 
-#: ../operations/common/pixelize.c:439
+#: ../operations/common/pixelize.c:46
+#| msgid "Dot size ratio"
+msgid "X size ratio"
+msgstr "Razmerje stranice X"
+
+#: ../operations/common/pixelize.c:48
+#| msgid "Size ratio of a dot inside each block"
+msgid "Horizontal size ratio of a pixel inside each block"
+msgstr "Razmerje vodoravne velikosti pike oz. točke v vsakem bloku"
+
+#: ../operations/common/pixelize.c:50
+#| msgid "Dot size ratio"
+msgid "Y size ratio"
+msgstr "Razmerje stranice Y"
+
+#: ../operations/common/pixelize.c:52
+#| msgid "Size ratio of a dot inside each block"
+msgid "Vertical size ratio of a pixel inside each block"
+msgstr "Razmerje navpične velikosti pike oz. točke v vsakem bloku"
+
+#: ../operations/common/pixelize.c:56
+msgid "Color used to fill the background"
+msgstr "Barva za zapolnitev ozadja"
+
+#: ../operations/common/pixelize.c:637
 msgid "Simplify image into an array of solid-colored rectangles"
 msgstr "Poenostavi sliko v matriko prekrivno zapolnjenih pravokotnikov"
 
@@ -2348,27 +2394,31 @@ msgstr "Ravni"
 msgid "number of levels per component"
 msgstr "Število ravni na komponento"
 
-#: ../operations/common/posterize.c:82
+#: ../operations/common/posterize.c:133
 msgid "Reduces the number of levels in each color component of the image."
 msgstr "Zmanjša število ravni v vsaki barvni komponenti slike."
+
+#: ../operations/common/radial-gradient.c:126
+msgid "Radial gradient renderer"
+msgstr "Upodobljevalnik krožnega preliva"
 
 #: ../operations/common/raw-load.c:183
 msgid "Raw image loader, wrapping dcraw with pipes."
 msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi."
 
-#: ../operations/common/rectangle.c:34
+#: ../operations/common/rectangle.c:31
 msgid "Horizontal extent"
 msgstr "Vodoravni obseg"
 
-#: ../operations/common/rectangle.c:36
+#: ../operations/common/rectangle.c:33
 msgid "Vertical extent"
 msgstr "Navpični obseg"
 
-#: ../operations/common/rectangle.c:38
+#: ../operations/common/rectangle.c:35
 msgid "Color to render"
 msgstr "Barva, ki jo želite upodobiti"
 
-#: ../operations/common/rectangle.c:156
+#: ../operations/common/rectangle.c:76
 msgid "A rectangular source of a fixed size with a solid color"
 msgstr "Pravokotni izvor nespremenljive velikosti prekrivne barve"
 
@@ -2383,7 +2433,7 @@ msgstr "Prag"
 msgid "Red eye threshold"
 msgstr "Prag rdečih oči"
 
-#: ../operations/common/red-eye-removal.c:119
+#: ../operations/common/red-eye-removal.c:170
 msgid "Remove the red eye effect caused by camera flashes"
 msgstr "Odstrani učinek rdečih uči, ki ga ustvarjajo bliskavice."
 
@@ -2418,7 +2468,7 @@ msgstr ""
 "uporabo nizkega obsega dinamike. To je učinkovit splošni operator, izveden "
 "iz enostavnih psiholoških opazovanj, ki izdela svetilnost v območju 0,0-1,0."
 
-#: ../operations/common/remap.c:96
+#: ../operations/common/remap.c:98
 msgid "stretch components of pixels individually based on luminance envelopes"
 msgstr ""
 "Posamično raztegne komponente slikovnih točk glede na ovojnice svetilnosti"
@@ -2472,7 +2522,7 @@ msgstr "Razmesti slikovne točke v vzorcu valovanja."
 msgid "Path of file to save."
 msgstr "Pot datoteke, ki jo želite shraniti."
 
-#: ../operations/common/save.c:202
+#: ../operations/common/save.c:201
 msgid "Multipurpose file saver, that uses other native handlers."
 msgstr ""
 "Večnamenski shranjevalnik datotek, ki uporablja druge domorodne ročice."
@@ -2485,7 +2535,7 @@ msgstr "Odmik"
 msgid "Maximum amount to shift"
 msgstr "Največja količina za odmik"
 
-#: ../operations/common/shift.c:38
+#: ../operations/common/shift.c:38 ../operations/common/texturize-canvas.c:34
 msgid "Direction"
 msgstr "Smer"
 
@@ -2493,7 +2543,7 @@ msgstr "Smer"
 msgid "Shift direction"
 msgstr "Smer odmika"
 
-#: ../operations/common/shift.c:230
+#: ../operations/common/shift.c:151
 msgid "Shift each row or column of pixels by a random amount"
 msgstr ""
 "Zamakni vsako vrstico ali stolpec slikovnih točk za naključno vrednost."
@@ -2519,7 +2569,7 @@ msgstr ""
 msgid "Glow radius"
 msgstr "Polmer žarenja"
 
-#: ../operations/common/softglow.c:250
+#: ../operations/common/softglow.c:233
 msgid "Simulate glow by making highlights intense and fuzzy"
 msgstr "Simulira žarenje z intenziviranjem in nejasnostjo najsvetlejših delov"
 
@@ -2544,7 +2594,16 @@ msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
 msgstr ""
 "Prostorsko časovna ovojnica, podobna Retinex, s stohastičnim vzorčenjem"
 
-#: ../operations/common/stretch-contrast.c:158
+#: ../operations/common/stretch-contrast.c:25
+#| msgid "Other color"
+msgid "Keep colors"
+msgstr "Ohrani barve"
+
+#: ../operations/common/stretch-contrast.c:26
+msgid "Impact each channel with the same amount"
+msgstr "Na vsak kanal vplivaj v enaki meri"
+
+#: ../operations/common/stretch-contrast.c:568
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
@@ -2553,6 +2612,23 @@ msgstr ""
 "Spremeni merilo komponent medpomnilnika, da ustrezajo obsegu 0,0-1,0. S tem "
 "se izboljšajo slike, ki slabo izkoriščajo kontrast, ki je na voljo (nizko "
 "kontrastne, zelo temne ali zelo svetle slike)."
+
+#: ../operations/common/stretch-contrast-hsv.c:223
+#| msgid ""
+#| "Scales the components of the buffer to be in the 0.0-1.0 range. This "
+#| "improves images that make poor use of the available contrast (little "
+#| "contrast, very dark, or very bright images)."
+msgid ""
+"Scales the components of the buffer to be in the 0.0-1.0 range. This "
+"improves images that make poor use of the available contrast (little "
+"contrast, very dark, or very bright images). This version differs from "
+"Contrast Autostretch in that it works in HSV scpace, and preserves hue."
+msgstr ""
+"Spremeni merilo komponent medpomnilnika, da ustrezajo obsegu 0,0-1,0. S tem "
+"se izboljšajo slike, ki slabo izkoriščajo kontrast, ki je na voljo (nizko "
+"kontrastne, zelo temne ali zelo svetle slike). Ta različica se razlikuje od "
+"Samodejno raztegni kontrast v tem, da deluje v prostoru HSV ter ohranja "
+"obarvanost."
 
 #: ../operations/common/svg-huerotate.c:27
 #: ../operations/common/svg-luminancetoalpha.c:27
@@ -2582,6 +2658,22 @@ msgstr "Operacija barvne matrike SVG svg_matrix"
 msgid "SVG color matrix operation svg_saturate"
 msgstr "Operacija barvne matrike SVG svg_saturate"
 
+#: ../operations/common/texturize-canvas.c:38
+msgid ""
+"Position of the light source which lightens the canvas: Top-right, Top-left, "
+"Bottom-left or Bottom-right"
+msgstr ""
+
+#: ../operations/common/texturize-canvas.c:42
+msgid ""
+"Apparent depth of the rendered canvas effect; from 1 (very flat) to 50 (very "
+"deep)"
+msgstr ""
+
+#: ../operations/common/texturize-canvas.c:4279
+msgid "Textures the image as if it were an artist's canvas."
+msgstr ""
+
 #: ../operations/common/threshold.c:26
 msgid "Global threshold level (used when there is no auxiliary input buffer)."
 msgstr ""
@@ -2595,7 +2687,17 @@ msgstr ""
 "Uporablja prag slike za belo/črno glede na nastavljeno splošno vrednost v "
 "lastnosti vrednosti ali glede na slikovno točko iz pomožnega vhoda."
 
-#: ../operations/common/tile.c:121
+#: ../operations/common/tile.c:24 ../operations/common/tile.c:26
+#| msgid "Horizontal shadow offset"
+msgid "Horizontal offset"
+msgstr "Vodoravni odmik"
+
+#: ../operations/common/tile.c:28 ../operations/common/tile.c:30
+#| msgid "Vertical shadow offset"
+msgid "Vertical offset"
+msgstr "Navpični odmik"
+
+#: ../operations/common/tile.c:133
 msgid "Infinitely repeats the input image."
 msgstr "Ponavlja vhodno sliko v neskončnost."
 
@@ -2611,7 +2713,7 @@ msgstr ""
 msgid "Scale, strength of effect"
 msgstr "Merilo, jakost ali učinek"
 
-#: ../operations/common/unsharp-mask.c:77
+#: ../operations/common/unsharp-mask.c:79
 msgid ""
 "The most widely used method for sharpening an image, sharpens by adding "
 "false mach-bands around edges"
@@ -2625,10 +2727,6 @@ msgid ""
 "image."
 msgstr ""
 "Preobrne le komponento vrednosti, rezultat je ustrezna `reobrnjena' slika."
-
-#: ../operations/common/vignette.c:30
-msgid "Shape"
-msgstr "Lik"
 
 #: ../operations/common/vignette.c:33
 msgid "Shape of the vignette"
@@ -2707,6 +2805,7 @@ msgid "Effect Strength"
 msgstr "Jakost učinka"
 
 #: ../operations/common/warp.c:39 ../operations/external/text.c:29
+#: ../operations/workshop/gblur-1d.c:48
 msgid "Size"
 msgstr "Velikost"
 
@@ -2766,13 +2865,7 @@ msgstr "Omeji deformacijo v območju slike."
 msgid "Distort the image with waves"
 msgstr "Popači sliko z valovi"
 
-#: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
-#: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
-#: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
-msgid "global value used if aux doesn't contain data"
-msgstr "Uporabljena splošna vrednost, če pomožni ne vsebuje podatkov"
-
-#: ../operations/common/weighted-blend.c:124
+#: ../operations/common/weighted-blend.c:187
 msgid "blend two images using alpha values as weights"
 msgstr "Združi dve sliki z uporabo alfa-vrednosti kot uteži"
 
@@ -2812,7 +2905,7 @@ msgstr "Višje vrednosti omejujejo učinek na manj območij slike"
 msgid "Higher values increase the magnitude of the effect"
 msgstr "Višje vrednosti povečajo jakost učinka"
 
-#: ../operations/common/wind.c:367
+#: ../operations/common/wind.c:366
 msgid "Wind-like bleed effect"
 msgstr "Učinek prelivanja, podoben vetru"
 
@@ -2828,23 +2921,20 @@ msgstr "Navezave"
 msgid "The reference ID used as input (for use in XML)."
 msgstr "Sklicni ID, uporabljen kot vhod (za uporabo v XML)."
 
-#: ../operations/core/clone.c:110
+#: ../operations/core/clone.c:109
 msgid "Clone a buffer"
 msgstr "Kloniraj medpomnilnik"
 
-#: ../operations/core/convert-format.c:28
-msgid "Output format"
+#: ../operations/core/convert-format.c:27
+#| msgid "Output format"
+msgid "Output Format"
 msgstr "Izhodni zapis"
 
-#: ../operations/core/convert-format.c:29
-msgid "Babl output format string"
-msgstr "Izhodna oblika niza Babl"
-
-#: ../operations/core/convert-format.c:81
+#: ../operations/core/convert-format.c:87
 msgid "Convert the data to the specified format"
 msgstr "Pretvori podatke v navedeno obliko"
 
-#: ../operations/core/crop.c:204
+#: ../operations/core/crop.c:192
 msgid "Crop a buffer"
 msgstr "Obreži medpomnilnik"
 
@@ -2852,10 +2942,10 @@ msgstr "Obreži medpomnilnik"
 msgid "No operation (can be used as a routing point)"
 msgstr "Brez operacije (lahko jo uporabite kot točko preusmeritve)"
 
-#: ../operations/external/ff-load.c:25 ../operations/external/jp2-load.c:25
-#: ../operations/external/jpg-load.c:25
-msgid "Path of file to load"
-msgstr "Pot datoteke, ki jo želite naložiti"
+#: ../operations/external/ff-load.c:25
+#| msgid "Path of file to load"
+msgid "Path of video file to load"
+msgstr "Pot videodatoteke, ki jo želite naložiti"
 
 #: ../operations/external/ff-load.c:26 ../operations/external/v4l.c:29
 msgid "Frame"
@@ -2868,6 +2958,10 @@ msgstr "Številka sličice"
 #: ../operations/external/ff-load.c:471
 msgid "FFmpeg video frame importer"
 msgstr "Uvoznik video-sličic FFmpeg"
+
+#: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:25
+msgid "Path of file to load"
+msgstr "Pot datoteke, ki jo želite naložiti"
 
 #: ../operations/external/jp2-load.c:70
 #, c-format
@@ -2923,7 +3017,7 @@ msgstr "Napaka pri branju vrstice %d komponente %d iz '%s'"
 msgid "JPEG 2000 image loader"
 msgstr "Nalagalnik slik JPEG 2000"
 
-#: ../operations/external/jpg-load.c:223
+#: ../operations/external/jpg-load.c:207
 msgid "JPG image loader"
 msgstr "Nalagalnik slik JPG"
 
@@ -3046,7 +3140,7 @@ msgstr "Aktivne ravni"
 msgid "Number of levels to perform solving"
 msgstr "Število ravni, na katerih se izvaja reševanje"
 
-#: ../operations/external/matting-levin.c:1439
+#: ../operations/external/matting-levin.c:1448
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha mat. Set white as selected, black as unselected, for the tri-map."
@@ -3142,7 +3236,7 @@ msgstr "Vektor"
 msgid "A GeglVector representing the path of the stroke"
 msgstr "Vektor GeglVector, ki predstavlja pot poteze"
 
-#: ../operations/external/path.c:517
+#: ../operations/external/path.c:509
 msgid "Renders a brush stroke"
 msgstr "Upodobi potezo čopiča"
 
@@ -3386,9 +3480,15 @@ msgstr "Pot ciljne datoteke."
 msgid "WebP compression quality"
 msgstr "Kakovost stiskanja WebP"
 
-#: ../operations/external/webp-save.c:117
+#: ../operations/external/webp-save.c:114
 msgid "WebP image saver."
 msgstr "Shranjevalnik slik WebP."
+
+#: ../operations/generated/add.c:29 ../operations/generated/divide.c:29
+#: ../operations/generated/gamma.c:29 ../operations/generated/multiply.c:29
+#: ../operations/generated/subtract.c:29
+msgid "global value used if aux doesn't contain data"
+msgstr "Uporabljena splošna vrednost, če pomožni ne vsebuje podatkov"
 
 #: ../operations/generated/add.c:125
 msgid "Math operation add (c = c + value)"
@@ -3667,19 +3767,19 @@ msgstr "Niz transformacije"
 msgid "Transforms the group (used by svg)."
 msgstr "Preoblikuje skupino (uporablja svg)."
 
-#: ../operations/transform/transform-core.c:174
+#: ../operations/transform/transform-core.c:170
 msgid "Origin-x"
 msgstr "Izvor-X"
 
-#: ../operations/transform/transform-core.c:175
+#: ../operations/transform/transform-core.c:171
 msgid "X coordinate of origin"
 msgstr "Koordinata X izvora"
 
-#: ../operations/transform/transform-core.c:182
+#: ../operations/transform/transform-core.c:178
 msgid "Origin-y"
 msgstr "Izvor-Y"
 
-#: ../operations/transform/transform-core.c:183
+#: ../operations/transform/transform-core.c:179
 msgid "Y coordinate of origin"
 msgstr "Koordinata Y izvora"
 
@@ -3708,7 +3808,7 @@ msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
 "Polmer območja kvadratnih slikovnih točk (širina in višina sta polmer*2+1)"
 
-#: ../operations/workshop/box-max.c:198
+#: ../operations/workshop/box-max.c:336
 msgid ""
 "Sets the target pixel to the value of the maximum value in a box surrounding "
 "the pixel"
@@ -3716,7 +3816,7 @@ msgstr ""
 "Ciljni slikovni točki nastavi na vrednost najvišje vrednosti v polju, ki "
 "obkroža slikovno točko"
 
-#: ../operations/workshop/box-min.c:198
+#: ../operations/workshop/box-min.c:335
 msgid ""
 "Sets the target pixel to the value of the minimum value in a box surrounding "
 "the pixel"
@@ -4377,6 +4477,41 @@ msgstr ""
 "navedene črte v vhodnem medpomnilnik, izrisane medpomnilniku navedene "
 "velikosti."
 
+#: ../operations/workshop/gaussian-blur-iir.c:38
+#| msgid "Horizontal extent"
+msgid "Horizontal Std. Dev."
+msgstr "Vodoravni stand. odklon"
+
+#: ../operations/workshop/gaussian-blur-iir.c:41
+#| msgid "Std. Dev."
+msgid "Vertical Std. Dev."
+msgstr "Navpični stand. odklon"
+
+#: ../operations/workshop/gaussian-blur-iir.c:47
+#: ../operations/workshop/gblur-1d.c:58
+msgid "How the gaussian kernel is discretized"
+msgstr ""
+
+#: ../operations/workshop/gaussian-blur-iir.c:50
+#: ../operations/workshop/gblur-1d.c:61
+msgid "How image edges are handled"
+msgstr "Kako se obravnavajo robovi slike"
+
+#: ../operations/workshop/gaussian-blur-iir.c:51
+#: ../operations/workshop/gblur-1d.c:62
+#| msgid "Clip result to input size"
+msgid "Clip to the input extent"
+msgstr "Poreži na velikost vhoda"
+
+#: ../operations/workshop/gaussian-blur-iir.c:52
+#: ../operations/workshop/gblur-1d.c:63
+msgid "Should the output extent be clipped to the input extent"
+msgstr ""
+
+#: ../operations/workshop/gblur-1d.c:54
+msgid "The orientation of the blur - hor/ver"
+msgstr "Usmeritev zabrisanosti - vod/navp"
+
 #: ../operations/workshop/generated/average.c:109
 msgid "Image blending operation 'average' (<tt>c = (cA + aB)/2</tt>)"
 msgstr "Operacija zlivanja slik 'average' (<tt>c = (cA + aB)/2</tt>)"
@@ -4427,18 +4562,6 @@ msgstr ""
 msgid "Edge preserving blur"
 msgstr "Zabrisanost, ki ohranja robove"
 
-#: ../operations/workshop/linear-gradient.c:29
-msgid "One end of a agradient"
-msgstr "Prvi konec preliva"
-
-#: ../operations/workshop/linear-gradient.c:31
-msgid "The other end of a gradient"
-msgstr "Drugi konec preliva"
-
-#: ../operations/workshop/linear-gradient.c:136
-msgid "Linear gradient renderer"
-msgstr "Upodobljevalnik linearnih prelivov"
-
 #: ../operations/workshop/mandelbrot.c:25
 msgid "Real"
 msgstr "Realna"
@@ -4470,31 +4593,6 @@ msgstr "Največje število ponovitev"
 #: ../operations/workshop/mandelbrot.c:144
 msgid "Mandelbrot set renderer"
 msgstr "Upodobljevalnik Mandelbrotove množice"
-
-#: ../operations/workshop/radial-gradient.c:24
-msgid "x1"
-msgstr "x1"
-
-#: ../operations/workshop/radial-gradient.c:25
-msgid "y1"
-msgstr "y1"
-
-#: ../operations/workshop/radial-gradient.c:26
-msgid "x2"
-msgstr "x2"
-
-#: ../operations/workshop/radial-gradient.c:27
-msgid "y2"
-msgstr "y2"
-
-#: ../operations/workshop/radial-gradient.c:29
-#: ../operations/workshop/radial-gradient.c:31
-msgid "One end of gradient"
-msgstr "Prvi konec preliva"
-
-#: ../operations/workshop/radial-gradient.c:128
-msgid "Radial gradient renderer"
-msgstr "Upodobljevalnik krožnega preliva"
 
 #: ../operations/workshop/rawbayer-load.c:154
 msgid ""
