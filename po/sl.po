@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-02-11 06:20+0000\n"
-"PO-Revision-Date: 2014-02-11 10:46+0100\n"
+"POT-Creation-Date: 2014-04-04 05:36+0000\n"
+"PO-Revision-Date: 2014-04-04 11:24+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: sl.libreoffice.org <users@sl.libreoffice.org>\n"
 "Language: Slovenian\n"
@@ -23,17 +23,17 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 "X-Generator: Poedit 1.5.7\n"
 
-#: ../bin/gegl.c:144
+#: ../bin/gegl.c:148
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Datoteke ni mogoče prebrati: %s"
 
-#: ../bin/gegl.c:175
+#: ../bin/gegl.c:179
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Neveljaven graf, sledi prekinitev.\n"
 
-#: ../bin/gegl.c:241 ../bin/gegl-options.c:131
+#: ../bin/gegl.c:245 ../bin/gegl-options.c:131
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Neznan način GeglOption: %d"
@@ -164,36 +164,32 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:252
-msgid "babls error tolerance, a value between 0.2 and 0.000000001"
-msgstr "Toleranca napake babl-a, vrednost med 0,2 in 0,000000001"
-
-#: ../gegl/gegl-init.c:257
+#: ../gegl/gegl-init.c:262
 msgid "Where GEGL stores its swap"
 msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
-#: ../gegl/gegl-init.c:262
+#: ../gegl/gegl-init.c:267
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Koliko pomnilnika (približno) uporabiti za predpomnenje podob"
 
-#: ../gegl/gegl-init.c:267
+#: ../gegl/gegl-init.c:272
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Privzeta velikost tlakovcev za GeglBuffer"
 
-#: ../gegl/gegl-init.c:272
+#: ../gegl/gegl-init.c:277
 msgid "The count of pixels to compute simultaneously"
 msgstr "Število slikovnih točk, ki naj se izračunajo hkrati"
 
-#: ../gegl/gegl-init.c:277
+#: ../gegl/gegl-init.c:282
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 "Kakovost izrisovanja, vrednost med 0,0 (hitro) in 1,0 (referenčna kakovost)"
 
-#: ../gegl/gegl-init.c:282
+#: ../gegl/gegl-init.c:287
 msgid "The number of concurrent processing threads to use"
 msgstr "Število uporabljenih vzporednih procesnih niti."
 
-#: ../gegl/gegl-init.c:287
+#: ../gegl/gegl-init.c:292
 msgid "Disable OpenCL"
 msgstr "Onemogoči OpenCL"
 
@@ -271,6 +267,35 @@ msgstr "Spreminja barve z uporabi sinusoidnih transformacij"
 #: ../operations/common/antialias.c:278
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
 msgstr "Zgladi robove z uporabo algoritma ekstrapolacije robov Scale3X"
+
+#: ../operations/common/apply-lens.c:31 ../operations/common/apply-lens.c:33
+msgid "Lens refraction index"
+msgstr ""
+
+#: ../operations/common/apply-lens.c:35
+msgid "Keep original surroundings"
+msgstr "Ohrani izvirno okolico"
+
+#: ../operations/common/apply-lens.c:37
+msgid "Keep image unchanged, where not affected by the lens."
+msgstr "Ohrani sliko nespremenjeno, kjer objektiv nima vpliva."
+
+#: ../operations/common/apply-lens.c:39 ../operations/common/cubism.c:38
+msgid "Background Color"
+msgstr "Barva ozadja"
+
+#: ../operations/common/apply-lens.c:41
+#| msgid "The shadow's color (defaults to 'black')"
+msgid "Background Color (defaults to 'none')"
+msgstr "Barva sence (privzeto 'brez' oz. 'none')"
+
+#: ../operations/common/apply-lens.c:304
+msgid ""
+"After applying this filter, a part of the active layer is rendered through a "
+"spherical lens."
+msgstr ""
+"Po uporabi tega filtra se del aktivne plasti upodobi prek širokokotnega "
+"objektiva"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/bilateral-filter-fast.c:37
@@ -385,7 +410,7 @@ msgstr ""
 "Zapis babl izhoda GeglBuffer, NULL za uporabo vhodnega zapisa medpomnilnika"
 
 #: ../operations/common/buffer-sink.c:83
-#: ../operations/common/write-buffer.c:150
+#: ../operations/common/write-buffer.c:148
 msgid "A GEGL buffer destination surface."
 msgstr "Ciljna ploskev medpomnilnika GEGL."
 
@@ -549,7 +574,7 @@ msgstr "Polmer maske"
 msgid "Percent black"
 msgstr "Odstotek črnine"
 
-#: ../operations/common/cartoon.c:393
+#: ../operations/common/cartoon.c:321
 msgid "Simulate a cartoon by enhancing edges"
 msgstr "Simuliraj stripovsko risbo s poudarjanjem robov"
 
@@ -849,10 +874,6 @@ msgstr "Nasičenost tlakovcev"
 #: ../operations/common/cubism.c:36
 msgid "Expand tiles by this amount"
 msgstr "Razširi tlakovce za toliko"
-
-#: ../operations/common/cubism.c:38
-msgid "Background Color"
-msgstr "Barva ozadja"
 
 #: ../operations/common/cubism.c:40
 msgid "The tiles' background color"
@@ -1332,34 +1353,34 @@ msgstr "Nepodprta vrsta fraktala"
 msgid "Transform the image with the fractals"
 msgstr "Preoblikuj sliko s fraktali"
 
-#: ../operations/common/gaussian-blur.c:35
+#: ../operations/common/gaussian-blur.c:36
 msgid "Size X"
 msgstr "Velikost X"
 
-#: ../operations/common/gaussian-blur.c:37
+#: ../operations/common/gaussian-blur.c:38
 msgid ""
 "Standard deviation for the horizontal axis (multiply by ~2 to get radius)"
 msgstr "Standardna deviacija za vodoravno os (pomnožite z ~2 za polmer)."
 
-#: ../operations/common/gaussian-blur.c:40
+#: ../operations/common/gaussian-blur.c:41
 msgid "Size Y"
 msgstr "Velikost Y"
 
-#: ../operations/common/gaussian-blur.c:42
+#: ../operations/common/gaussian-blur.c:43
 msgid "Standard deviation for the vertical axi. (multiply by ~2 to get radius)"
 msgstr "Standardna deviacija za navpično os (pomnožite z ~2 za polmer)."
 
-#: ../operations/common/gaussian-blur.c:45
+#: ../operations/common/gaussian-blur.c:46
 #: ../operations/workshop/gaussian-blur-iir.c:44
 #: ../operations/workshop/gblur-1d.c:55
 msgid "Filter"
 msgstr "Filter"
 
-#: ../operations/common/gaussian-blur.c:48
+#: ../operations/common/gaussian-blur.c:49
 msgid "Optional parameter to override the automatic selection of blur filter"
 msgstr "Neobvezni parameter, ki preglasi samodejni izbor filtra zabrisanosti."
 
-#: ../operations/common/gaussian-blur.c:723
+#: ../operations/common/gaussian-blur.c:699
 #: ../operations/workshop/gaussian-blur-iir.c:106
 #: ../operations/workshop/gblur-1d.c:886
 msgid ""
@@ -1553,7 +1574,6 @@ msgid "Main"
 msgstr "Glavna"
 
 #: ../operations/common/lens-distortion.c:35
-#| msgid "Amount of edge preservation"
 msgid "Amount of second-order distortion"
 msgstr "Količina popačenja drugega reda"
 
@@ -1562,7 +1582,6 @@ msgid "Edge"
 msgstr "Robna"
 
 #: ../operations/common/lens-distortion.c:39
-#| msgid "Amount of edge preservation"
 msgid "Amount of fourth-order distortion"
 msgstr "Količina popačenja četrtega reda"
 
@@ -1647,7 +1666,6 @@ msgstr "Preslika obseg intenzivnosti slike"
 
 #: ../operations/common/linear-gradient.c:29
 #: ../operations/common/radial-gradient.c:29
-#| msgid "Stroke Color"
 msgid "Start Color"
 msgstr "Začetna barva"
 
@@ -1658,7 +1676,6 @@ msgstr "Barva na (x1, y1)"
 
 #: ../operations/common/linear-gradient.c:31
 #: ../operations/common/radial-gradient.c:31
-#| msgid "Color"
 msgid "End Color"
 msgstr "Končna barva"
 
@@ -1872,7 +1889,7 @@ msgstr "Ovij vnos"
 msgid "Fill full output area"
 msgstr "Zapolni celotno izhodno območje"
 
-#: ../operations/common/mirrors.c:401
+#: ../operations/common/mirrors.c:399
 msgid "Applies mirroring effect on the image."
 msgstr "Sliki doda učinek zrcaljenja."
 
@@ -2201,7 +2218,7 @@ msgstr "Način intenzivnosti"
 msgid "Use pixel luminance values"
 msgstr "Uporabi vrednosti svetlosti slik. točk"
 
-#: ../operations/common/oilify.c:472
+#: ../operations/common/oilify.c:474
 msgid "Emulate an oil painting"
 msgstr "Emuliraj oljno sliko"
 
@@ -2229,7 +2246,43 @@ msgstr "GeglBuffer na disku za odpiranje"
 msgid "A source that uses an on-disk GeglBuffer."
 msgstr "Vir, ki uporablja GeglBuffer na disku."
 
-#: ../operations/common/over.c:140
+#: ../operations/common/over.c:25 ../operations/generated/clear.c:38
+#: ../operations/generated/color-burn.c:38
+#: ../operations/generated/color-dodge.c:38
+#: ../operations/generated/darken.c:38 ../operations/generated/difference.c:38
+#: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
+#: ../operations/generated/dst-in.c:38 ../operations/generated/dst-out.c:38
+#: ../operations/generated/dst-over.c:38
+#: ../operations/generated/exclusion.c:38
+#: ../operations/generated/hard-light.c:38
+#: ../operations/generated/lighten.c:38 ../operations/generated/overlay.c:38
+#: ../operations/generated/plus.c:38 ../operations/generated/screen.c:38
+#: ../operations/generated/soft-light.c:38
+#: ../operations/generated/src-atop.c:38 ../operations/generated/src.c:38
+#: ../operations/generated/src-in.c:38 ../operations/generated/src-out.c:38
+#: ../operations/generated/svg-multiply.c:38 ../operations/generated/xor.c:38
+msgid "sRGB"
+msgstr "sRGB"
+
+#: ../operations/common/over.c:27 ../operations/generated/clear.c:40
+#: ../operations/generated/color-burn.c:40
+#: ../operations/generated/color-dodge.c:40
+#: ../operations/generated/darken.c:40 ../operations/generated/difference.c:40
+#: ../operations/generated/dst-atop.c:40 ../operations/generated/dst.c:40
+#: ../operations/generated/dst-in.c:40 ../operations/generated/dst-out.c:40
+#: ../operations/generated/dst-over.c:40
+#: ../operations/generated/exclusion.c:40
+#: ../operations/generated/hard-light.c:40
+#: ../operations/generated/lighten.c:40 ../operations/generated/overlay.c:40
+#: ../operations/generated/plus.c:40 ../operations/generated/screen.c:40
+#: ../operations/generated/soft-light.c:40
+#: ../operations/generated/src-atop.c:40 ../operations/generated/src.c:40
+#: ../operations/generated/src-in.c:40 ../operations/generated/src-out.c:40
+#: ../operations/generated/svg-multiply.c:40 ../operations/generated/xor.c:40
+msgid "Use sRGB gamma instead of linear"
+msgstr "Uporabi sRGB z gamo namesto linearnega sRGB"
+
+#: ../operations/common/over.c:185
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr "Operacija Porter Duff over (d = cA + cB * (1 - aA))"
 
@@ -2246,7 +2299,7 @@ msgstr "Odstotek črne"
 msgid "Percent White"
 msgstr "Odstotek bele"
 
-#: ../operations/common/photocopy.c:398
+#: ../operations/common/photocopy.c:330
 msgid "Simulate color distortion produced by a copy machine"
 msgstr "Simuliraj popačenje barv, kakršno ustvari kopirni stroj"
 
@@ -2255,7 +2308,6 @@ msgid "Shape"
 msgstr "Lik"
 
 #: ../operations/common/pixelize.c:36
-#| msgid "The value of hue"
 msgid "The shape of pixels"
 msgstr "Oblika slikovnih točk"
 
@@ -2276,22 +2328,18 @@ msgid "Height of blocks in pixels"
 msgstr "Višina blokov v slikovnih točkah"
 
 #: ../operations/common/pixelize.c:46
-#| msgid "Dot size ratio"
 msgid "X size ratio"
 msgstr "Razmerje stranice X"
 
 #: ../operations/common/pixelize.c:48
-#| msgid "Size ratio of a dot inside each block"
 msgid "Horizontal size ratio of a pixel inside each block"
 msgstr "Razmerje vodoravne velikosti pike oz. točke v vsakem bloku"
 
 #: ../operations/common/pixelize.c:50
-#| msgid "Dot size ratio"
 msgid "Y size ratio"
 msgstr "Razmerje stranice Y"
 
 #: ../operations/common/pixelize.c:52
-#| msgid "Size ratio of a dot inside each block"
 msgid "Vertical size ratio of a pixel inside each block"
 msgstr "Razmerje navpične velikosti pike oz. točke v vsakem bloku"
 
@@ -2514,7 +2562,7 @@ msgstr "Tlakovalnost"
 msgid "Retain tilebility"
 msgstr "Ohrani tlakovalnost"
 
-#: ../operations/common/ripple.c:184
+#: ../operations/common/ripple.c:175
 msgid "Displace pixels in a ripple pattern"
 msgstr "Razmesti slikovne točke v vzorcu valovanja."
 
@@ -2595,7 +2643,6 @@ msgstr ""
 "Prostorsko časovna ovojnica, podobna Retinex, s stohastičnim vzorčenjem"
 
 #: ../operations/common/stretch-contrast.c:25
-#| msgid "Other color"
 msgid "Keep colors"
 msgstr "Ohrani barve"
 
@@ -2614,10 +2661,6 @@ msgstr ""
 "kontrastne, zelo temne ali zelo svetle slike)."
 
 #: ../operations/common/stretch-contrast-hsv.c:223
-#| msgid ""
-#| "Scales the components of the buffer to be in the 0.0-1.0 range. This "
-#| "improves images that make poor use of the available contrast (little "
-#| "contrast, very dark, or very bright images)."
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
@@ -2663,16 +2706,20 @@ msgid ""
 "Position of the light source which lightens the canvas: Top-right, Top-left, "
 "Bottom-left or Bottom-right"
 msgstr ""
+"Položaj svetlobnega vira, ki osvetli platno: desno-zgoraj, levo-zgoraj, levo-"
+"spodaj ali desno-spodaj"
 
 #: ../operations/common/texturize-canvas.c:42
 msgid ""
 "Apparent depth of the rendered canvas effect; from 1 (very flat) to 50 (very "
 "deep)"
 msgstr ""
+"Očitna globina upodobljenega učinka platna; od 1 (zelo plosko) do 50 (zelo "
+"globoko)"
 
-#: ../operations/common/texturize-canvas.c:4279
+#: ../operations/common/texturize-canvas.c:4377
 msgid "Textures the image as if it were an artist's canvas."
-msgstr ""
+msgstr "Teksturira sliko, kot da gre za slikarsko platno."
 
 #: ../operations/common/threshold.c:26
 msgid "Global threshold level (used when there is no auxiliary input buffer)."
@@ -2688,12 +2735,10 @@ msgstr ""
 "lastnosti vrednosti ali glede na slikovno točko iz pomožnega vhoda."
 
 #: ../operations/common/tile.c:24 ../operations/common/tile.c:26
-#| msgid "Horizontal shadow offset"
 msgid "Horizontal offset"
 msgstr "Vodoravni odmik"
 
 #: ../operations/common/tile.c:28 ../operations/common/tile.c:30
-#| msgid "Vertical shadow offset"
 msgid "Vertical offset"
 msgstr "Navpični odmik"
 
@@ -2833,7 +2878,7 @@ msgstr "Vedenje"
 msgid "Behavior of the op"
 msgstr "Vedenje operacije"
 
-#: ../operations/common/warp.c:399
+#: ../operations/common/warp.c:415
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Izračunaj relativno razmestitveno preslikavo iz poteze"
 
@@ -2861,7 +2906,7 @@ msgstr "Obrzdaj deformacijo"
 msgid "Limit deformation in the image area."
 msgstr "Omeji deformacijo v območju slike."
 
-#: ../operations/common/waves.c:187
+#: ../operations/common/waves.c:178
 msgid "Distort the image with waves"
 msgstr "Popači sliko z valovi"
 
@@ -2893,7 +2938,7 @@ msgstr ""
 "Polmer (1,0 je največji krog, ki ga je mogoče postaviti v sliko, 2,0 pa sega "
 "vse do robov slike)"
 
-#: ../operations/common/whirl-pinch.c:274
+#: ../operations/common/whirl-pinch.c:272
 msgid "Distort an image by whirling and pinching"
 msgstr "Popači sliko z vrtinčenjem in priščipnjenjem"
 
@@ -2905,7 +2950,7 @@ msgstr "Višje vrednosti omejujejo učinek na manj območij slike"
 msgid "Higher values increase the magnitude of the effect"
 msgstr "Višje vrednosti povečajo jakost učinka"
 
-#: ../operations/common/wind.c:366
+#: ../operations/common/wind.c:365
 msgid "Wind-like bleed effect"
 msgstr "Učinek prelivanja, podoben vetru"
 
@@ -2926,7 +2971,6 @@ msgid "Clone a buffer"
 msgstr "Kloniraj medpomnilnik"
 
 #: ../operations/core/convert-format.c:27
-#| msgid "Output format"
 msgid "Output Format"
 msgstr "Izhodni zapis"
 
@@ -2943,7 +2987,6 @@ msgid "No operation (can be used as a routing point)"
 msgstr "Brez operacije (lahko jo uporabite kot točko preusmeritve)"
 
 #: ../operations/external/ff-load.c:25
-#| msgid "Path of file to load"
 msgid "Path of video file to load"
 msgstr "Pot videodatoteke, ki jo želite naložiti"
 
@@ -3096,7 +3139,7 @@ msgstr "Kompenzacija črne točke"
 msgid "Convert using black point compensation."
 msgstr "Pretvori s kompenzacijo črne točke."
 
-#: ../operations/external/lcms-from-profile.c:232
+#: ../operations/external/lcms-from-profile.c:239
 msgid ""
 "Converts the input from an ICC color profile to a well defined babl format. "
 "The input buffer should be a babl_format_n type."
@@ -3273,7 +3316,7 @@ msgstr "Bitna globina"
 msgid "8 and 16 are amongst the currently accepted values."
 msgstr "8 in 16 sta med trenutno podprtimi vrednostmi."
 
-#: ../operations/external/png-save.c:233
+#: ../operations/external/png-save.c:228
 msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
 msgstr ""
 "Shranjevalnik slik PNG (preide medpomnilnik, stranski učinek je "
@@ -3494,11 +3537,11 @@ msgstr "Uporabljena splošna vrednost, če pomožni ne vsebuje podatkov"
 msgid "Math operation add (c = c + value)"
 msgstr "Matematična operacija seštevanja add (c = c + vrednost)"
 
-#: ../operations/generated/clear.c:118
+#: ../operations/generated/clear.c:128
 msgid "Porter Duff operation clear (d = 0.0f)"
 msgstr "Operacija Porter Duff clear (d = 0.0f)"
 
-#: ../operations/generated/color-burn.c:165
+#: ../operations/generated/color-burn.c:175
 msgid ""
 "SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = "
 "cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
@@ -3508,7 +3551,7 @@ msgstr ""
 "= cA * (1 - aB) + cB * (1 - aA) sicer: d = (cA == 0 ? 1 : (aA * (cA * aB + "
 "cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 
-#: ../operations/generated/color-dodge.c:165
+#: ../operations/generated/color-dodge.c:175
 msgid ""
 "SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = "
 "aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
@@ -3518,7 +3561,7 @@ msgstr ""
 "= aA * aB + cA * (1 - aB) + cB * (1 - aA) sicer: d = (cA == aA ? 1 : cB * "
 "aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/darken.c:162
+#: ../operations/generated/darken.c:172
 msgid ""
 "SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
 "+ cB * (1 - aA)</code>)"
@@ -3526,7 +3569,7 @@ msgstr ""
 "Operacija zlivanja SVG darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/difference.c:162
+#: ../operations/generated/difference.c:172
 msgid ""
 "SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
 "aA))</code>)"
@@ -3538,27 +3581,27 @@ msgstr ""
 msgid "Math operation divide (c = value==0.0f?0.0f:c/value)"
 msgstr "Matematična operacija deljenja (c = vrednost==0.0f?0.0f:c/vrednost)"
 
-#: ../operations/generated/dst-atop.c:118
+#: ../operations/generated/dst-atop.c:128
 msgid "Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"
 msgstr "Operacija Porter Duff dst-atop (d = cB * aA + cA * (1.0f - aB))"
 
-#: ../operations/generated/dst.c:140
+#: ../operations/generated/dst.c:150
 msgid "Porter Duff operation dst (d = cB)"
 msgstr "Operacija Porter Duff dst (d = cB)"
 
-#: ../operations/generated/dst-in.c:118
+#: ../operations/generated/dst-in.c:128
 msgid "Porter Duff operation dst-in (d = cB * aA)"
 msgstr "Operacija Porter Duff dst-in (d = cB * aA)"
 
-#: ../operations/generated/dst-out.c:140
+#: ../operations/generated/dst-out.c:150
 msgid "Porter Duff operation dst-out (d = cB * (1.0f - aA))"
 msgstr "Operacija Porter Duff dst-out (d = cB * (1.0f - aA))"
 
-#: ../operations/generated/dst-over.c:140
+#: ../operations/generated/dst-over.c:150
 msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
 msgstr "Operacija Porter Duff dst-over (d = cB + cA * (1.0f - aB))"
 
-#: ../operations/generated/exclusion.c:162
+#: ../operations/generated/exclusion.c:172
 msgid ""
 "SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
@@ -3570,7 +3613,7 @@ msgstr ""
 msgid "Math operation gamma (c = powf (c, value))"
 msgstr "Matematična operacija gama (c = powf (c, vrednost))"
 
-#: ../operations/generated/hard-light.c:165
+#: ../operations/generated/hard-light.c:175
 msgid ""
 "SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * "
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
@@ -3580,7 +3623,7 @@ msgstr ""
 "cA * (1 - aB) + cB * (1 - aA) sicer: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
 "+ cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/lighten.c:162
+#: ../operations/generated/lighten.c:172
 msgid ""
 "SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
@@ -3592,7 +3635,7 @@ msgstr ""
 msgid "Math operation multiply (c = c * value)"
 msgstr "Matematična operacija množenja multiply (c = c * vrednost)"
 
-#: ../operations/generated/overlay.c:165
+#: ../operations/generated/overlay.c:175
 msgid ""
 "SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 "
 "- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
@@ -3602,15 +3645,15 @@ msgstr ""
 "(1 - aB) + cB * (1 - aA) sicer: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA "
 "* (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/plus.c:163
+#: ../operations/generated/plus.c:173
 msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
 msgstr "Operacija zlivanja SVG plus (<code>d = cA + cB</code>)"
 
-#: ../operations/generated/screen.c:162
+#: ../operations/generated/screen.c:172
 msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
 msgstr "Operacija zlivanja SVG screen (<code>d = cA + cB - cA * cB</code>)"
 
-#: ../operations/generated/soft-light.c:167
+#: ../operations/generated/soft-light.c:177
 msgid ""
 "SVG blend operation soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == "
 "0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 "
@@ -3626,19 +3669,19 @@ msgstr ""
 "(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * "
 "(1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/src-atop.c:140
+#: ../operations/generated/src-atop.c:150
 msgid "Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"
 msgstr "Operacija Porter Duff src-atop (d = cA * aB + cB * (1.0f - aA))"
 
-#: ../operations/generated/src.c:118
+#: ../operations/generated/src.c:128
 msgid "Porter Duff operation src (d = cA)"
 msgstr "Operacija Porter Duff src (d = cA)"
 
-#: ../operations/generated/src-in.c:126
+#: ../operations/generated/src-in.c:136
 msgid "Porter Duff operation src-in (d = cA * aB)"
 msgstr "Operacija Porter Duff src-in (d = cA * aB)"
 
-#: ../operations/generated/src-out.c:118
+#: ../operations/generated/src-out.c:128
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
 msgstr "Operacija Porter Duff src-out (d = cA * (1.0f - aB))"
 
@@ -3646,7 +3689,7 @@ msgstr "Operacija Porter Duff src-out (d = cA * (1.0f - aB))"
 msgid "Math operation subtract (c = c - value)"
 msgstr "Matematična operacija odštevanja (c = c - vrednost)"
 
-#: ../operations/generated/svg-multiply.c:162
+#: ../operations/generated/svg-multiply.c:172
 msgid ""
 "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
 "aA)</code>)"
@@ -3654,7 +3697,7 @@ msgstr ""
 "Operacija zlivanja SVG multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * "
 "(1 - aA)</code>)"
 
-#: ../operations/generated/xor.c:140
+#: ../operations/generated/xor.c:150
 msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 msgstr "Operacija Porter Duff xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
@@ -4478,12 +4521,10 @@ msgstr ""
 "velikosti."
 
 #: ../operations/workshop/gaussian-blur-iir.c:38
-#| msgid "Horizontal extent"
 msgid "Horizontal Std. Dev."
 msgstr "Vodoravni stand. odklon"
 
 #: ../operations/workshop/gaussian-blur-iir.c:41
-#| msgid "Std. Dev."
 msgid "Vertical Std. Dev."
 msgstr "Navpični stand. odklon"
 
@@ -4499,7 +4540,6 @@ msgstr "Kako se obravnavajo robovi slike"
 
 #: ../operations/workshop/gaussian-blur-iir.c:51
 #: ../operations/workshop/gblur-1d.c:62
-#| msgid "Clip result to input size"
 msgid "Clip to the input extent"
 msgstr "Poreži na velikost vhoda"
 
@@ -4557,6 +4597,31 @@ msgid ""
 msgstr ""
 "Vodoravno skladaj vhode (v izhodu, \"output\", je pomožni, \"aux\", "
 "postavljen desno od vhoda, \"input\")"
+
+#: ../operations/workshop/ink-simulator.c:41
+msgid "ink configuration"
+msgstr "Prilagoditev črnil"
+
+#: ../operations/workshop/ink-simulator.c:42
+msgid "Textual desciption of inks used for simulated print-job"
+msgstr ""
+"Besedilni opis črnil, uporabljenih za simulacijo tiskalniškega opravila"
+
+#: ../operations/workshop/ink-simulator.c:43
+#| msgid "Red mode"
+msgid "mode"
+msgstr "način"
+
+#: ../operations/workshop/ink-simulator.c:44
+#, fuzzy
+msgid "how the ink simulator is used"
+msgstr "Kako naj bo uporabljen simulator črnil"
+
+#: ../operations/workshop/ink-simulator.c:700
+msgid "spectral ink simulator, for softproofing/simulating press inks"
+msgstr ""
+"Spektralni simulator črnila, namenjen preverjanju odtisov/simuliranju "
+"tiskarskih črnil"
 
 #: ../operations/workshop/kuwahara.c:243
 msgid "Edge preserving blur"
