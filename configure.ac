@@ -164,6 +164,14 @@ if test -z "$CXX" && test -n "$prefered_cc"; then
   CXX=$prefered_cxx
 fi
 
+if test -n "$CFLAGS"; then
+  user_set_cflags=yes
+fi
+
+if test -n "$CXXFLAGS"; then
+  user_set_cxxflags=yes
+fi
+
 dnl Checks for programs.
 
 AC_PROG_CC
@@ -171,6 +179,26 @@ AC_PROG_CC_C99
 AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
+
+case "$CC" in
+  clang* | gcc*)
+    if test -z $user_set_cflags; then
+      CFLAGS="-g -O3"
+    fi
+    ;;
+  *)
+    ;;
+esac
+
+case "$CXX" in
+  clang* | g++*)
+    if test -z $user_set_cxxflags; then
+      CXXFLAGS="-g -O3"
+    fi
+    ;;
+  *)
+    ;;
+esac
 
 dnl Large file support.
 AC_SYS_LARGEFILE
