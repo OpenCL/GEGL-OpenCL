@@ -301,7 +301,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "name",        "gegl:apply-lens",
     "categories",  "Distorts",
     "license",     "GPL3+",
-    "description", _("After applying this filter, a part of the active layer is rendered through a spherical lens."),
+    "description", _("Simulate an elliptical lens over the image"),
     "reference-composition", composition,
     NULL);
 }
