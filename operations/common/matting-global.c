@@ -370,6 +370,14 @@ matting_process (GeglOperation       *operation,
         }
     }
 
+  /* If we have no information to work with, there is nothing to process. */
+  if (foreground_samples->len == 0 ||
+      background_samples->len == 0)
+    {
+      success = FALSE;
+      goto cleanup;
+    }
+
   // Initialize unknowns
   for (y = 0; y < h; y++)
     {
@@ -449,7 +457,7 @@ matting_process (GeglOperation       *operation,
                    GEGL_AUTO_ROWSTRIDE);
   success = TRUE;
 
-  // Free memory
+cleanup:
   g_free (input);
   g_free (trimap);
   g_free (output);
