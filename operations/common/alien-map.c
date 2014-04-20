@@ -181,13 +181,13 @@ cl_process (GeglOperation       *operation,
   keep.s[1] = (cl_int)o->cpn_2_keep;
   keep.s[2] = (cl_int)o->cpn_3_keep;
 
-  gegl_cl_set_kernel_args (cl_data->kernel[0],
-                           sizeof(cl_mem),    &in,
-                           sizeof(cl_mem),    &out,
-                           sizeof(cl_float3), &freq,
-                           sizeof(cl_float3), &phaseshift,
-                           sizeof(cl_int3),   &keep,
-                           NULL);
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof(cl_mem),    &in,
+                                    sizeof(cl_mem),    &out,
+                                    sizeof(cl_float3), &freq,
+                                    sizeof(cl_float3), &phaseshift,
+                                    sizeof(cl_int3),   &keep,
+                                    NULL);
   CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
