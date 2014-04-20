@@ -125,7 +125,7 @@ __kernel void kernel_noise (__global float *out,
       int   s = (int)floor(x);
       int   t = (int)floor(y);
 
-      for (i = 0 ; i < rank ; closest[i] = 1.0 / 0.0, i += 1);
+      for (i = 0 ; i < rank ; closest[i] = 1.0f / 0.0f, i += 1);
 
       /* Search the box the point is in. */
 
@@ -133,9 +133,9 @@ __kernel void kernel_noise (__global float *out,
 
       d_0 = &closest[rank - 1];
       d_l = x - s; d_l *= d_l;
-      d_r = 1.0 - x + s; d_r *= d_r;
+      d_r = 1.0f - x + s; d_r *= d_r;
       d_b = y - t; d_b *= d_b;
-      d_t = 1.0 - y + t; d_t *= d_t;
+      d_t = 1.0f - y + t; d_t *= d_t;
 
       /* Search adjacent boxes if it is possible for them to contain a
        * nearby feature point. */
