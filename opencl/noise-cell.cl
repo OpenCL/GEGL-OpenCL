@@ -3,7 +3,7 @@
 /* Random feature counts following the Poisson distribution with
    lambda equal to 7. */
 
-static const __constant char poisson[256] = {
+const __constant char poisson[256] = {
   7, 9, 12, 12, 8, 7, 5, 5, 6, 7, 8, 6, 10, 7, 6, 2, 8, 3, 9, 5, 13, 10, 9,
   8, 8, 9, 3, 8, 9, 6, 8, 7, 4, 9, 6, 3, 10, 7, 7, 7, 6, 7, 4, 14, 7, 6, 11,
   7, 7, 7, 12, 7, 10, 6, 8, 11, 3, 5, 7, 7, 8, 7, 9, 8, 5, 8, 11, 3, 4, 5, 8,
@@ -17,7 +17,7 @@ static const __constant char poisson[256] = {
   9, 10, 8, 8, 6, 4, 9, 9, 8, 11, 6, 8, 13, 8, 9, 12, 6, 9, 8
 };
 
-static uint
+uint
 philox (uint s,
         uint t,
         uint k)
@@ -38,13 +38,13 @@ philox (uint s,
   return s;
 }
 
-static float
+float
 lcg (uint *hash)
 {
   return (*hash = *hash * 1664525u + 1013904223u) / 4294967296.0f;
 }
 
-static void
+void
 search_box (float              *closest,
             uint               *feature,
             int                 s,
