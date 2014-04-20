@@ -16,9 +16,9 @@
  * Copyright 2013 Carlos Zubieta <czubieta.dev@gmail.com>
  */
 
-#define RED_FACTOR    0.5133333
+#define RED_FACTOR    0.5133333f
 #define GREEN_FACTOR  1
-#define BLUE_FACTOR   0.1933333
+#define BLUE_FACTOR   0.1933333f
 
 __kernel void cl_red_eye_removal(__global const float4 *in,
                                  __global       float4 *out,
@@ -29,13 +29,13 @@ __kernel void cl_red_eye_removal(__global const float4 *in,
   float adjusted_red       = in_v.x * RED_FACTOR;
   float adjusted_green     = in_v.y * GREEN_FACTOR;
   float adjusted_blue      = in_v.z * BLUE_FACTOR;
-  float adjusted_threshold = (threshold - 0.4) * 2;
+  float adjusted_threshold = (threshold - 0.4f) * 2;
   float tmp;
 
   if (adjusted_red >= adjusted_green - adjusted_threshold &&
       adjusted_red >= adjusted_blue  - adjusted_threshold)
     {
-      tmp = (adjusted_green + adjusted_blue) / (2.0 * RED_FACTOR);
+      tmp = (adjusted_green + adjusted_blue) / (2.0f * RED_FACTOR);
       in_v.x = clamp(tmp, 0.0f, 1.0f);
     }
   out[gid]  = in_v;
