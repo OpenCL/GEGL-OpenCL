@@ -543,8 +543,7 @@ AC_CHECK_FUNCS(bind_textdomain_codeset,,
 ]))
 LIBS=$gegl_save_LIBS
 
-m4_ifdef([IT_PROG_INTLTOOL],[IT_PROG_INTLTOOL(0.40.1),],
-  AC_MSG_ERROR([*** intltool version 0.40.1 or later required]))
+IT_PROG_INTLTOOL(0.40.1)
 
 AM_GLIB_GNU_GETTEXT
 
