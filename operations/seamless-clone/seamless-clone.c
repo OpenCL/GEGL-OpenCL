@@ -19,8 +19,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_int (max_refine_steps, _("Refinement steps"), 2000)
-  description (_("Maximal amount of refinement points to be used for the interpolation mesh"))
+property_int (max_refine_scale, _("Refinement scale"), 5)
+  description (_("Maximal scale of refinement points to be used for the interpolation mesh"))
   value_range (0, 100000)
 
 property_int (xoff, _("Offset X"), 0)
@@ -156,11 +156,22 @@ process (GeglOperation       *operation,
       const gchar *error_msg = "";
       if (props->context == NULL)
         {
-          props->context = gegl_sc_context_new (aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
+          props->context = gegl_sc_context_new (aux,
+                                                gegl_operation_source_get_bounding_box (operation, "aux"),
+                                                0.5,
+                                                o->max_refine_scale,
+                                                &error);
           gegl_sc_context_set_uvt_cache (props->context, TRUE);
         }
       else
-        gegl_sc_context_update (props->context, aux, gegl_operation_source_get_bounding_box (operation, "aux"), 0.5, &error);
+        {
+          gegl_sc_context_update (props->context,
+                                  aux,
+                                  gegl_operation_source_get_bounding_box (operation, "aux"),
+                                  0.5,
+                                  o->max_refine_scale,
+                                  &error);
+        }
 
       switch (error)
         {
@@ -205,12 +216,33 @@ process (GeglOperation       *operation,
 }
 
 static void
+notify (GObject    *object,
+        GParamSpec *pspec)
+{
+  if (strcmp (pspec->name, "max-refine-steps") == 0)
+    {
+      GeglProperties *o = GEGL_PROPERTIES (object);
+
+      if (o->user_data)
+        {
+          g_free (o->user_data);
+          o->user_data = NULL;
+        }
+    }
+
+  if (G_OBJECT_CLASS (gegl_op_parent_class)->notify)
+    G_OBJECT_CLASS (gegl_op_parent_class)->notify (object, pspec);
+}
+
+static void
 gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationComposerClass *composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
 
   G_OBJECT_CLASS (klass)->finalize = finalize;
+  G_OBJECT_CLASS (klass)->notify   = notify;
+
   operation_class->prepare         = prepare;
   composer_class->process          = process;
 

@@ -62,12 +62,14 @@ typedef enum {
 GeglScContext*  gegl_sc_context_new            (GeglBuffer          *input,
                                                 const GeglRectangle *roi,
                                                 gdouble              threshold,
+                                                gint                 max_refine_scale,
                                                 GeglScCreationError *error);
 
 gboolean        gegl_sc_context_update         (GeglScContext       *self,
                                                 GeglBuffer          *input,
                                                 const GeglRectangle *roi,
                                                 gdouble              threshold,
+                                                gint                 max_refine_scale,
                                                 GeglScCreationError *error);
 
 /**

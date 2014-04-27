@@ -33,10 +33,11 @@ static GeglScOutline*  gegl_sc_context_create_outline             (GeglBuffer   
 
 static P2trMesh*       gegl_sc_make_fine_mesh                     (GeglScOutline       *outline,
                                                                    GeglRectangle       *mesh_bounds,
-                                                                   int                  max_refine_steps);
+                                                                   int                  max_refine_scale);
 
 static void            gegl_sc_context_update_from_outline        (GeglScContext       *self,
-                                                                   GeglScOutline       *outline);
+                                                                   GeglScOutline       *outline,
+                                                                   gint                 max_refine_scale);
 
 static gboolean        gegl_sc_context_render_cache_pt2col_update (GeglScContext       *context,
                                                                    GeglScRenderInfo    *info);
@@ -66,6 +67,7 @@ GeglScContext*
 gegl_sc_context_new (GeglBuffer          *input,
                      const GeglRectangle *roi,
                      gdouble              threshold,
+                     gint                 max_refine_scale,
                      GeglScCreationError *error)
 {
   GeglScContext *self;
@@ -84,7 +86,7 @@ gegl_sc_context_new (GeglBuffer          *input,
   self->uvt          = NULL;
   self->render_cache = NULL;
 
-  gegl_sc_context_update_from_outline (self, outline);
+  gegl_sc_context_update_from_outline (self, outline, max_refine_scale);
 
   return self;
 }
@@ -94,6 +96,7 @@ gegl_sc_context_update (GeglScContext       *self,
                         GeglBuffer          *input,
                         const GeglRectangle *roi,
                         gdouble              threshold,
+                        gint                 max_refine_scale,
                         GeglScCreationError *error)
 {
   GeglScOutline *outline
@@ -110,7 +113,7 @@ gegl_sc_context_update (GeglScContext       *self,
     }
   else
     {
-      gegl_sc_context_update_from_outline (self, outline);
+      gegl_sc_context_update_from_outline (self, outline, max_refine_scale);
       return TRUE;
     }
 }
@@ -161,7 +164,8 @@ gegl_sc_context_create_outline (GeglBuffer          *input,
 
 static void
 gegl_sc_context_update_from_outline (GeglScContext *self,
-                                     GeglScOutline *outline)
+                                     GeglScOutline *outline,
+                                     gint           max_refine_scale)
 {
   guint outline_length;
 
@@ -203,7 +207,7 @@ gegl_sc_context_update_from_outline (GeglScContext *self,
   self->outline  = outline;
   self->mesh     = gegl_sc_make_fine_mesh (self->outline,
                                            &self->mesh_bounds,
-                                           5 * outline_length);
+                                           max_refine_scale * outline_length);
   self->sampling = gegl_sc_mesh_sampling_compute (self->outline,
                                                   self->mesh);
 }
@@ -216,7 +220,7 @@ gegl_sc_context_update_from_outline (GeglScContext *self,
  *               stored
  */
 static P2trMesh*
-gegl_sc_make_fine_mesh (GeglScOutline     *outline,
+gegl_sc_make_fine_mesh (GeglScOutline *outline,
                         GeglRectangle *mesh_bounds,
                         int            max_refine_steps)
 {
