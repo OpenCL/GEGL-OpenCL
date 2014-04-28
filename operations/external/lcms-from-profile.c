@@ -237,8 +237,7 @@ gegl_chant_class_init (GeglChantClass *klass)
     "categories",  "color",
     "description",
        _("Converts the input from an ICC color profile to "
-         "a well defined babl format. The input buffer should "
-         "be a babl_format_n type."),
+         "a well defined babl format."),
     NULL);
 }
 #endif
