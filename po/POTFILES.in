@@ -38,6 +38,7 @@ operations/common/fractal-trace.c
 operations/common/gaussian-blur.c
 operations/common/gegl-buffer-load-op.c
 operations/common/gegl-buffer-save-op.c
+operations/common/gnomonic-projection.c
 operations/common/grey.c
 operations/common/grid.c
 operations/common/high-pass.c
