@@ -45,6 +45,7 @@ op_LTLIBRARIES = \
 	gaussian-blur.la \
 	gegl-buffer-load-op.la \
 	gegl-buffer-save-op.la \
+	gnomonic-projection.la \
 	grey.la \
 	grid.la \
 	high-pass.la \
