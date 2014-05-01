@@ -356,7 +356,7 @@ static void gegl_config_parse_env (GeglConfig *config)
 
       if (config->threads > GEGL_MAX_THREADS)
         {
-          g_warning ("Tried to use %i threads max is %i",
+          g_warning ("Tried to use %i threads, max is %i",
                      config->threads, GEGL_MAX_THREADS);
           config->threads = GEGL_MAX_THREADS;
         }

@@ -227,8 +227,8 @@ gegl_config_class_init (GeglConfigClass *klass)
 
   g_object_class_install_property (gobject_class, PROP_THREADS,
                                    g_param_spec_int ("threads",
+                                                     "Number of threads",
                                                      "Number of concurrent evaluation threads",
-                                                     "default tile height for created buffers.",
                                                      0, 16, 1,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
