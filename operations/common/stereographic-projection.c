@@ -22,13 +22,15 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (pan, _("pan"), -180.0, 360, 0.0,
-       _("pan of camera"))
-gegl_chant_double (tilt, _("tilt"), -180.0, 180.0, 0.0,
-       _("tilt of camera"))
+       _("pan degree of ground for planet"))
+gegl_chant_double (tilt, _("tilt"), -180.0, 180.0, 90.0,
+       _("tilt degree of ground for planet"))
 gegl_chant_double (spin, _("spin"), -360.0, 360.0, 0.0,
-       _("spin of camera"))
-gegl_chant_double (zoom, _("zoom"), 0.01, 1000.0, 100.0, 
-       _("zoom of camera"))
+       _("spin of camera / rendering"))
+gegl_chant_double (zoom, _("zoom"), 0.01, 1000.0, 50.0, 
+       _("scale factor"))
+gegl_chant_double (radius, _("local radius"), 0.01, 100.0, 5.0, 
+       _("factor determining dimension of planet"))
 
 gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
                  GEGL_SAMPLER_CUBIC, _("Image resampling method to use"))
@@ -36,7 +38,7 @@ gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "gnomonic-projection.c"
+#define GEGL_CHANT_C_FILE       "stereographic-projection.c"
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
@@ -63,21 +65,22 @@ get_required_for_output (GeglOperation       *operation,
 }
 
 /* formulas from:
- * http://mathworld.wolfram.com/GnomonicProjection.html
+ * http://mathworld.wolfram.com/StereographicProjection.html
  */
 
 static void inline
 calc_long_lat (float x, float  y,
-               float tilt, float pan, float spin,
+               float tilt, float pan, float spin, float radius,
                float sin_tilt, float cos_tilt,
                float *in_long, float *in_lat)
 {
   float p, c;
   float longtitude, latitude;
   float sin_c, cos_c;
+  float R = radius;
 
   p = sqrtf (x*x+y*y);
-  c = atanf (p);
+  c = 2 * atanf (p / 2 * R);
 
   sin_c = sinf(c);
   cos_c = cosf(c);
@@ -116,6 +119,7 @@ process (GeglOperation       *operation,
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
   GeglMatrix2  scale_matrix;
   GeglMatrix2 *scale = NULL;
+  float radius = o->radius;
 
   format_io = babl_format ("RaGaBaA float");
   sampler = gegl_buffer_sampler_new (input, format_io, o->sampler_type);
@@ -164,7 +168,7 @@ process (GeglOperation       *operation,
                   calc_long_lat (\
                       xx * cos_spin - yy * sin_spin,\
                       yy * cos_spin + xx * sin_spin,\
-                      tilt, pan, spin,\
+                      tilt, pan, spin, radius,\
                       sin_tilt, cos_tilt,\
                       &rx, &ry);\
   ud = rx;vd = ry;}
@@ -177,7 +181,7 @@ process (GeglOperation       *operation,
                   calc_long_lat (
                       u * cos_spin - v * sin_spin,
                       v * cos_spin + u * sin_spin,
-                      tilt, pan, spin,
+                      tilt, pan, spin, radius,
                       sin_tilt, cos_tilt,
                       &cx, &cy);
               }
@@ -217,9 +221,9 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->get_required_for_output = get_required_for_output;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:gnomonic-projection",
+    "name"       , "gegl:stereographic-projection",
     "categories" , "misc",
-    "description", _("Perform a gnomonic / equilinear projection of a equirectangular input image. (renders virtual camera images from a panorama)"),
+    "description", _("Perform a stereographics / little planet projection of a equirectangular input image."),
     NULL);
 }
 #endif

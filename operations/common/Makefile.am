@@ -100,6 +100,7 @@ op_LTLIBRARIES = \
 	shift.la \
 	snn-mean.la \
 	softglow.la \
+	stereographic-projection.la \
 	stress.la \
 	stretch-contrast-hsv.la \
 	stretch-contrast.la \

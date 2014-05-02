@@ -93,6 +93,7 @@ operations/common/save.c
 operations/common/shift.c
 operations/common/snn-mean.c
 operations/common/softglow.c
+operations/common/stereographic-projection.c
 operations/common/stress.c
 operations/common/stretch-contrast.c
 operations/common/stretch-contrast-hsv.c
