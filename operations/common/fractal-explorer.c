@@ -28,19 +28,19 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_register_enum (gegl_fractal_explorer_type)
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_MANDELBROT,   "Mandelbrot")
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_JULIA,        "Julia")
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_BARNSLEY_1,   "Barnsley 1")
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_BARNSLEY_2,   "Barnsley 2")
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_BARNSLEY_3,   "Barnsley 3")
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_SPIDER,       "Spider")
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_MAN_O_WAR,    "Man O War")
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_LAMBDA,       "Lambda")
-  enum_value (GEGl_FRACTAL_EXPLORER_TYPE_SIERPINSKI,   "Sierpinski")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT,   "Mandelbrot")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_JULIA,        "Julia")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_1,   "Barnsley 1")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_2,   "Barnsley 2")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_3,   "Barnsley 3")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SPIDER,       "Spider")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MAN_O_WAR,    "Man O War")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_LAMBDA,       "Lambda")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SIERPINSKI,   "Sierpinski")
 gegl_chant_register_enum_end (GeglFractalExplorerType)
 
 gegl_chant_enum (fractaltype, _("Fractal type"), GeglFractalExplorerType,
-                 gegl_fractal_explorer_type, GEGl_FRACTAL_EXPLORER_TYPE_MANDELBROT,
+                 gegl_fractal_explorer_type, GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT,
                  _("Type of a fractal"))
 
 gegl_chant_int (iter, _("Iterations"), 1, 1000, 50, _("Iterations"))
@@ -63,19 +63,19 @@ gegl_chant_double (bluestretch,  _("Blue stretch"),  0.0, 1.0, 1.0,
                    _("Blue stretching factor"))
 
 gegl_chant_register_enum (gegl_fractal_explorer_mode)
-  enum_value (GEGl_FRACTAL_EXPLORER_MODE_SIN,       "Sine")
-  enum_value (GEGl_FRACTAL_EXPLORER_MODE_COS,       "Cosinus")
-  enum_value (GEGl_FRACTAL_EXPLORER_MODE_NONE,      "None")
+  enum_value (GEGL_FRACTAL_EXPLORER_MODE_SIN,       "Sine")
+  enum_value (GEGL_FRACTAL_EXPLORER_MODE_COS,       "Cosinus")
+  enum_value (GEGL_FRACTAL_EXPLORER_MODE_NONE,      "None")
 gegl_chant_register_enum_end (GeglFractalExplorerMode)
 
 gegl_chant_enum (redmode,   _("Red mode"),   GeglFractalExplorerMode,
-                 gegl_fractal_explorer_mode, GEGl_FRACTAL_EXPLORER_MODE_COS,
+                 gegl_fractal_explorer_mode, GEGL_FRACTAL_EXPLORER_MODE_COS,
                 _("Red application mode"))
 gegl_chant_enum (greenmode,   _("Green mode"),   GeglFractalExplorerMode,
-                 gegl_fractal_explorer_mode, GEGl_FRACTAL_EXPLORER_MODE_COS,
+                 gegl_fractal_explorer_mode, GEGL_FRACTAL_EXPLORER_MODE_COS,
                 _("Green application mode"))
 gegl_chant_enum (bluemode,   _("Blue mode"),   GeglFractalExplorerMode,
-                 gegl_fractal_explorer_mode, GEGl_FRACTAL_EXPLORER_MODE_SIN,
+                 gegl_fractal_explorer_mode, GEGL_FRACTAL_EXPLORER_MODE_SIN,
                 _("Blue application mode"))
 
 gegl_chant_boolean (redinvert,   _("Red inversion"),   FALSE,
@@ -122,13 +122,13 @@ make_color_map (GeglChantO *o, clrmap colormap)
 
       switch (o->redmode)
         {
-        case GEGl_FRACTAL_EXPLORER_MODE_SIN:
+        case GEGL_FRACTAL_EXPLORER_MODE_SIN:
           r = 0.5 * o->redstretch *(1.0 + sin((x - 1) * G_PI));
           break;
-        case GEGl_FRACTAL_EXPLORER_MODE_COS:
+        case GEGL_FRACTAL_EXPLORER_MODE_COS:
           r = 0.5 * o->redstretch *(1.0 + cos((x - 1) * G_PI));
           break;
-        case GEGl_FRACTAL_EXPLORER_MODE_NONE:
+        case GEGL_FRACTAL_EXPLORER_MODE_NONE:
           r = 0.5 * o->redstretch * x;
           break;
         default:
@@ -137,13 +137,13 @@ make_color_map (GeglChantO *o, clrmap colormap)
 
       switch (o->greenmode)
         {
-        case GEGl_FRACTAL_EXPLORER_MODE_SIN:
+        case GEGL_FRACTAL_EXPLORER_MODE_SIN:
           gr = 0.5 * o->greenstretch *(1.0 + sin((x - 1) * G_PI));
           break;
-        case GEGl_FRACTAL_EXPLORER_MODE_COS:
+        case GEGL_FRACTAL_EXPLORER_MODE_COS:
           gr = 0.5 * o->greenstretch *(1.0 + cos((x - 1) * G_PI));
           break;
-        case GEGl_FRACTAL_EXPLORER_MODE_NONE:
+        case GEGL_FRACTAL_EXPLORER_MODE_NONE:
           gr = 0.5 * o->greenstretch * x;
           break;
         default:
@@ -152,13 +152,13 @@ make_color_map (GeglChantO *o, clrmap colormap)
 
       switch (o->bluemode)
         {
-        case GEGl_FRACTAL_EXPLORER_MODE_SIN:
+        case GEGL_FRACTAL_EXPLORER_MODE_SIN:
           bl = 0.5 * o->bluestretch * (1.0 + sin ((x - 1) * G_PI));
           break;
-        case GEGl_FRACTAL_EXPLORER_MODE_COS:
+        case GEGL_FRACTAL_EXPLORER_MODE_COS:
           bl = 0.5 * o->bluestretch * (1.0 + cos ((x - 1) * G_PI));
           break;
-        case GEGl_FRACTAL_EXPLORER_MODE_NONE:
+        case GEGL_FRACTAL_EXPLORER_MODE_NONE:
           bl = 0.5 * o->bluestretch * x;
           break;
         default:
@@ -230,7 +230,7 @@ process (GeglOperation       *operation,
 
       switch (o->fractaltype)
         {
-        case GEGl_FRACTAL_EXPLORER_TYPE_MANDELBROT:
+        case GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT:
           a = b = 0;
           tmpx = tmpy = 0;
           break;
@@ -246,17 +246,17 @@ process (GeglOperation       *operation,
 
           switch (o->fractaltype)
             {
-            case GEGl_FRACTAL_EXPLORER_TYPE_MANDELBROT:
+            case GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT:
               nexta = a * a - b * b + x;
               b = 2.0 * a * b + y;
               break;
 
-            case GEGl_FRACTAL_EXPLORER_TYPE_JULIA:
+            case GEGL_FRACTAL_EXPLORER_TYPE_JULIA:
               nexta = a * a - b * b + o->cx;
               b = 2.0 * a * b + o->cy;
               break;
 
-            case GEGl_FRACTAL_EXPLORER_TYPE_BARNSLEY_1:
+            case GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_1:
               foldxinitx = olda * o->cx;
               foldyinity = oldb * o->cy;
               foldxinity = olda * o->cy;
@@ -274,7 +274,7 @@ process (GeglOperation       *operation,
                 }
               break;
 
-            case GEGl_FRACTAL_EXPLORER_TYPE_BARNSLEY_2:
+            case GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_2:
               foldxinitx = olda * o->cx;
               foldyinity = oldb * o->cy;
               foldxinity = olda * o->cy;
@@ -292,7 +292,7 @@ process (GeglOperation       *operation,
                 }
               break;
 
-            case GEGl_FRACTAL_EXPLORER_TYPE_BARNSLEY_3:
+            case GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_3:
               foldxinitx  = olda * olda;
               foldyinity  = oldb * oldb;
               foldxinity  = olda * oldb;
@@ -310,7 +310,7 @@ process (GeglOperation       *operation,
                 }
               break;
 
-            case GEGl_FRACTAL_EXPLORER_TYPE_SPIDER:
+            case GEGL_FRACTAL_EXPLORER_TYPE_SPIDER:
               /* { c=z=pixel: z=z*z+c; c=c/2+z, |z|<=4 } */
               nexta = a*a - b*b + tmpx + o->cx;
               b = 2 * olda * oldb + tmpy + o->cy;
@@ -318,14 +318,14 @@ process (GeglOperation       *operation,
               tmpy = tmpy/2 + b;
               break;
 
-            case GEGl_FRACTAL_EXPLORER_TYPE_MAN_O_WAR:
+            case GEGL_FRACTAL_EXPLORER_TYPE_MAN_O_WAR:
               nexta = a*a - b*b + tmpx + o->cx;
               b = 2.0 * a * b + tmpy + o->cy;
               tmpx = olda;
               tmpy = oldb;
               break;
 
-            case GEGl_FRACTAL_EXPLORER_TYPE_LAMBDA:
+            case GEGL_FRACTAL_EXPLORER_TYPE_LAMBDA:
               tempsqrx = a * a;
               tempsqry = b * b;
               tempsqrx = olda - tempsqrx + tempsqry;
@@ -335,7 +335,7 @@ process (GeglOperation       *operation,
               b = o->cx * tempsqry + o->cy * tempsqrx;
               break;
 
-            case GEGl_FRACTAL_EXPLORER_TYPE_SIERPINSKI:
+            case GEGL_FRACTAL_EXPLORER_TYPE_SIERPINSKI:
               nexta = olda + olda;
               b = oldb + oldb;
               if (oldb > .5)

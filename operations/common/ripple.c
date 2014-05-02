@@ -25,8 +25,8 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_register_enum (gegl_ripple_wave_type)
-  enum_value (GEGl_RIPPLE_WAVE_TYPE_SINE,     "Sine")
-  enum_value (GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH, "Sawtooth")
+  enum_value (GEGL_RIPPLE_WAVE_TYPE_SINE,     "Sine")
+  enum_value (GEGL_RIPPLE_WAVE_TYPE_SAWTOOTH, "Sawtooth")
 gegl_chant_register_enum_end (GeglRippleWaveType)
 
 gegl_chant_double_ui (amplitude, _("Amplitude"),
@@ -51,7 +51,7 @@ gegl_chant_enum      (sampler_type, _("Sampler"),
 
 gegl_chant_enum      (wave_type, _("Wave type"),
                       GeglRippleWaveType, gegl_ripple_wave_type,
-                      GEGl_RIPPLE_WAVE_TYPE_SINE,
+                      GEGL_RIPPLE_WAVE_TYPE_SINE,
                       _("Type of wave"))
 
 gegl_chant_boolean   (tileable, _("Tileable"),
@@ -125,13 +125,13 @@ process (GeglOperation       *operation,
 
             switch (o->wave_type)
               {
-                case GEGl_RIPPLE_WAVE_TYPE_SAWTOOTH:
+                case GEGL_RIPPLE_WAVE_TYPE_SAWTOOTH:
                   lambda = div (nx,o->period).rem - o->phi * o->period;
                   if (lambda < 0)
                     lambda += o->period;
                   shift = o->amplitude * (fabs (((lambda / o->period) * 4) - 2) - 1);
                   break;
-                case GEGl_RIPPLE_WAVE_TYPE_SINE:
+                case GEGL_RIPPLE_WAVE_TYPE_SINE:
                 default:
                   shift = o->amplitude * sin (2.0 * G_PI * nx / o->period + 2.0 * G_PI * o->phi);
                   break;

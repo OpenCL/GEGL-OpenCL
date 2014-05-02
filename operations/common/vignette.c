@@ -22,14 +22,14 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_register_enum (gegl_vignette_shape)
-  enum_value (GEGl_VIGNETTE_SHAPE_CIRCLE,  "Circle")
-  enum_value (GEGl_VIGNETTE_SHAPE_SQUARE,  "Square")
-  enum_value (GEGl_VIGNETTE_SHAPE_DIAMOND, "Diamond")
+  enum_value (GEGL_VIGNETTE_SHAPE_CIRCLE,  "Circle")
+  enum_value (GEGL_VIGNETTE_SHAPE_SQUARE,  "Square")
+  enum_value (GEGL_VIGNETTE_SHAPE_DIAMOND, "Diamond")
 gegl_chant_register_enum_end (GeglVignetteShape)
 
 gegl_chant_enum   (shape, _("Shape"),
                    GeglVignetteShape, gegl_vignette_shape,
-                   GEGl_VIGNETTE_SHAPE_CIRCLE,
+                   GEGL_VIGNETTE_SHAPE_CIRCLE,
                    _("Shape of the vignette"))
 
 gegl_chant_color  (color, _("Color"),
@@ -317,11 +317,11 @@ process (GeglOperation       *operation,
         {
           switch (o->shape)
           {
-            case GEGl_VIGNETTE_SHAPE_CIRCLE:
+            case GEGL_VIGNETTE_SHAPE_CIRCLE:
               strength = hypot ((u-midx) / scale, v-midy);      break;
-            case GEGl_VIGNETTE_SHAPE_SQUARE:
+            case GEGL_VIGNETTE_SHAPE_SQUARE:
               strength = MAX(ABS(u-midx) / scale, ABS(v-midy)); break;
-            case GEGl_VIGNETTE_SHAPE_DIAMOND:
+            case GEGL_VIGNETTE_SHAPE_DIAMOND:
               strength = ABS(u-midx) / scale + ABS(v-midy);     break;
           }
           strength /= length;
