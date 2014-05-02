@@ -228,12 +228,13 @@ process (GeglOperation       *operation,
       x = (pixelx + o->shiftx) / o->zoom;
       y = (pixely + o->shifty) / o->zoom;
 
-      if (o->fractaltype == GEGl_FRACTAL_EXPLORER_TYPE_MANDELBROT)
+      switch (o->fractaltype)
         {
+        case GEGl_FRACTAL_EXPLORER_TYPE_MANDELBROT:
           a = b = 0;
-        }
-      else
-        {
+          tmpx = tmpy = 0;
+          break;
+        default:
           tmpx = a = x;
           tmpy = b = y;
         }
