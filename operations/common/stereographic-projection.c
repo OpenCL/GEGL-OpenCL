@@ -29,8 +29,6 @@ gegl_chant_double (spin, _("spin"), -360.0, 360.0, 0.0,
        _("spin of camera / rendering"))
 gegl_chant_double (zoom, _("zoom"), 0.01, 1000.0, 50.0, 
        _("scale factor"))
-gegl_chant_double (radius, _("local radius"), 0.01, 100.0, 5.0, 
-       _("factor determining dimension of planet"))
 
 gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
                  GEGL_SAMPLER_CUBIC, _("Image resampling method to use"))
@@ -43,7 +41,6 @@ gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
 #include "config.h"
 #include <glib/gi18n-lib.h>
 #include "gegl-chant.h"
-
 
 static void
 prepare (GeglOperation *operation)
@@ -70,20 +67,19 @@ get_required_for_output (GeglOperation       *operation,
 
 static void inline
 calc_long_lat (float x, float  y,
-               float tilt, float pan, float spin, float radius,
+               float tilt, float pan, float spin,
                float sin_tilt, float cos_tilt,
                float *in_long, float *in_lat)
 {
   float p, c;
   float longtitude, latitude;
   float sin_c, cos_c;
-  float R = radius;
 
   p = sqrtf (x*x+y*y);
-  c = 2 * atanf (p / 2 * R);
+  c = 2 * atan2f (p / 2, 1);
 
-  sin_c = sinf(c);
-  cos_c = cosf(c);
+  sin_c = sinf (c);
+  cos_c = cosf (c);
 
   latitude = asinf (cos_c * sin_tilt + ( y * sin_c * cos_tilt) / p);
   longtitude = pan + atan2f ( x * sin_c, p * cos_tilt * cos_c - y * sin_tilt * sin_c);
@@ -105,7 +101,7 @@ process (GeglOperation       *operation,
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
   float pan = o->pan / 360 * M_PI * 2;
   float spin = o->spin / 360 * M_PI * 2;
-  float zoom = o->zoom / 100.0;
+  float zoom = o->zoom / 100.0 / 10;
   float tilt = o->tilt / 360 * M_PI * 2;
   float width;
   float height;
@@ -119,7 +115,6 @@ process (GeglOperation       *operation,
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
   GeglMatrix2  scale_matrix;
   GeglMatrix2 *scale = NULL;
-  float radius = o->radius;
 
   format_io = babl_format ("RaGaBaA float");
   sampler = gegl_buffer_sampler_new (input, format_io, o->sampler_type);
@@ -168,7 +163,7 @@ process (GeglOperation       *operation,
                   calc_long_lat (\
                       xx * cos_spin - yy * sin_spin,\
                       yy * cos_spin + xx * sin_spin,\
-                      tilt, pan, spin, radius,\
+                      tilt, pan, spin, \
                       sin_tilt, cos_tilt,\
                       &rx, &ry);\
   ud = rx;vd = ry;}
@@ -181,7 +176,7 @@ process (GeglOperation       *operation,
                   calc_long_lat (
                       u * cos_spin - v * sin_spin,
                       v * cos_spin + u * sin_spin,
-                      tilt, pan, spin, radius,
+                      tilt, pan, spin,
                       sin_tilt, cos_tilt,
                       &cx, &cy);
               }

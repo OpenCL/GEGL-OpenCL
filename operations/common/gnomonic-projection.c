@@ -42,7 +42,6 @@ gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
 #include <glib/gi18n-lib.h>
 #include "gegl-chant.h"
 
-
 static void
 prepare (GeglOperation *operation)
 {
@@ -77,13 +76,13 @@ calc_long_lat (float x, float  y,
   float sin_c, cos_c;
 
   p = sqrtf (x*x+y*y);
-  c = atanf (p);
+  c = atan2f (p, 1);
 
   sin_c = sinf(c);
   cos_c = cosf(c);
 
   latitude = asinf (cos_c * sin_tilt + ( y * sin_c * cos_tilt) / p);
-  longtitude = pan + atan2f ( x * sin_c, p * cos_tilt * cos_c - y * sin_tilt * sin_c);
+  longtitude = pan + atan2f (x * sin_c, p * cos_tilt * cos_c - y * sin_tilt * sin_c);
 
   if (longtitude < 0)
     longtitude += M_PI * 2;
@@ -184,7 +183,6 @@ process (GeglOperation       *operation,
 
               gegl_sampler_get (sampler, cx * in_rect.width, cy * in_rect.height,
                                 scale, out, GEGL_ABYSS_NONE);
-
               in  += 4;
               out += 4;
 
