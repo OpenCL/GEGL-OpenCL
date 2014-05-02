@@ -136,6 +136,8 @@ process (GeglOperation       *operation,
     scale = &scale_matrix;
 
     {
+      float   ud = ((1.0/width))/zoom;
+      float   vd = ((1.0/height))/zoom;
       it = gegl_buffer_iterator_new (output, result, level, format_io, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
       index_out = 0;
 
@@ -145,58 +147,83 @@ process (GeglOperation       *operation,
           gint    n_pixels = it->length;
           gint    x = it->roi->x; /* initial x                   */
           gint    y = it->roi->y; /*           and y coordinates */
+
+          float   u0 = ((x/width) - xoffset)/zoom;
+          float   u, v;
+
           float *in = it->data[index_in];
           float *out = it->data[index_out];
 
-          for (i=0; i<n_pixels; i++)
+          u = u0;
+          v = ((y/height) - 0.5) / zoom; 
+
+          if (scale)
             {
-              float cx, cy;
-              float u, v;
-
-              u = ((x/width) - xoffset) / zoom; 
-              v = ((y/height) - 0.5) / zoom; 
-              
-              if (scale)
-              {
-#define gegl_unmap(xx,yy,ud,vd) { \
-  float rx, ry;\
-                  calc_long_lat (\
-                      xx * cos_spin - yy * sin_spin,\
-                      yy * cos_spin + xx * sin_spin,\
-                      tilt, pan, spin,\
-                      sin_tilt, cos_tilt,\
-                      &rx, &ry);\
-  ud = rx;vd = ry;}
-              gegl_sampler_compute_scale (scale_matrix, u, v);
-              gegl_unmap(u,v, cx, cy);
-#undef gegl_unmap
-              }
-              else
-              {
-                  calc_long_lat (
-                      u * cos_spin - v * sin_spin,
-                      v * cos_spin + u * sin_spin,
-                      tilt, pan, spin,
-                      sin_tilt, cos_tilt,
-                      &cx, &cy);
-              }
-
-              gegl_sampler_get (sampler, cx * in_rect.width, cy * in_rect.height,
-                                scale, out, GEGL_ABYSS_NONE);
-              in  += 4;
-              out += 4;
-
-              /* update x and y coordinates */
-              x++;
-              if (x >= (it->roi->x + it->roi->width))
+              for (i=0; i<n_pixels; i++)
                 {
-                  x = it->roi->x;
-                  y++;
+                  float cx, cy;
+#define gegl_unmap(xx,yy,ud,vd) { \
+                  float rx, ry;\
+                  calc_long_lat (\
+                     xx * cos_spin - yy * sin_spin,\
+                     yy * cos_spin + xx * sin_spin,\
+                     tilt, pan, spin,\
+                     sin_tilt, cos_tilt,\
+                     &rx, &ry);\
+                  ud = rx;vd = ry;}
+                  gegl_sampler_compute_scale (scale_matrix, u, v);
+                  gegl_unmap(u,v, cx, cy);
+#undef gegl_unmap
+
+                  gegl_sampler_get (sampler, cx * in_rect.width, cy * in_rect.height,
+                                    scale, out, GEGL_ABYSS_NONE);
+                  in  += 4;
+                  out += 4;
+
+                  /* update x, y and u,v coordinates */
+                  x++;
+                  u+=ud;
+                  if (x >= (it->roi->x + it->roi->width))
+                    {
+                      x = it->roi->x;
+                      y++;
+                      u = u0;
+                      v += vd;
+                    }
                 }
-            }
+              }
+            else
+              {
+                for (i=0; i<n_pixels; i++)
+                  {
+                    float cx, cy;
+
+                    calc_long_lat (
+                        u * cos_spin - v * sin_spin,
+                        v * cos_spin + u * sin_spin,
+                        tilt, pan, spin,
+                        sin_tilt, cos_tilt,
+                        &cx, &cy);
+
+                    gegl_sampler_get (sampler, cx * in_rect.width, cy * in_rect.height,
+                                      scale, out, GEGL_ABYSS_NONE);
+                    in  += 4;
+                    out += 4;
+
+                    /* update x, y and u,v coordinates */
+                    x++;
+                    u+=ud;
+                    if (x >= (it->roi->x + it->roi->width))
+                      {
+                        x = it->roi->x;
+                        u = u0;
+                        y++;
+                        v += vd;
+                      }
+                  }
+              }
         }
     }
-
   g_object_unref (sampler);
 
   return TRUE;
