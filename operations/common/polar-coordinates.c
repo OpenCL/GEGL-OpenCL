@@ -351,7 +351,7 @@ process (GeglOperation       *operation,
     for (x = result->x; x < result->x + result->width; x++)
       {
 #define gegl_unmap(u,v,ud,vd) {                                         \
-          gdouble rx, ry;                                               \
+          gdouble rx = 0.0, ry = 0.0;                                   \
           inside = calc_undistorted_coords ((gdouble)x, (gdouble)y,     \
                                             &rx, &ry, o, boundary);     \
           ud = rx;                                                      \
