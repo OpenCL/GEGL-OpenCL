@@ -345,7 +345,8 @@ process (GeglOperation       *operation,
               break;
 
             default:
-              g_error (_("Unsupported fractal type"));
+              g_warning (_("Unsupported fractal type: %d"), o->fractaltype);
+              return FALSE;
             }
 
           a = nexta;
