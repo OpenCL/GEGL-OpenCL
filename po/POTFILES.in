@@ -38,7 +38,6 @@ operations/common/fractal-trace.c
 operations/common/gaussian-blur.c
 operations/common/gegl-buffer-load-op.c
 operations/common/gegl-buffer-save-op.c
-operations/common/gnomonic-projection.c
 operations/common/grey.c
 operations/common/grid.c
 operations/common/high-pass.c
@@ -77,6 +76,7 @@ operations/common/oilify.c
 operations/common/opacity.c
 operations/common/open-buffer.c
 operations/common/over.c
+operations/common/panorama-projection.c
 operations/common/photocopy.c
 operations/common/pixelize.c
 operations/common/plasma.c
@@ -93,7 +93,6 @@ operations/common/save.c
 operations/common/shift.c
 operations/common/snn-mean.c
 operations/common/softglow.c
-operations/common/stereographic-projection.c
 operations/common/stress.c
 operations/common/stretch-contrast.c
 operations/common/stretch-contrast-hsv.c
