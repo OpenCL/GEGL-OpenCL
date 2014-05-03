@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2014 <pippin@gimp.org>
+ * Copyright 2014 Øyvind Kolås <pippin@gimp.org>
  *
  */
 
@@ -22,13 +22,17 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (pan, _("pan"), -180.0, 360, 0.0,
-       _("pan of camera"))
+       _("camera pan"))
 gegl_chant_double (tilt, _("tilt"), -180.0, 180.0, 0.0,
-       _("tilt of camera"))
+       _("camera tilt"))
 gegl_chant_double (spin, _("spin"), -360.0, 360.0, 0.0,
-       _("spin of camera"))
+       _("rotation of camera"))
 gegl_chant_double (zoom, _("zoom"), 0.01, 1000.0, 100.0, 
        _("zoom of camera"))
+gegl_chant_int (width, _("width"), -1, 10000, -1, _("output buffer width, -1 for same as input"))
+gegl_chant_int (height, _("height"), -1, 10000, -1, _("input buffer height, -1 for same as input"))
+
+gegl_chant_boolean (little_planet, _("little planet"), FALSE, _("use the pan/tilt location as center for a stereographic/little planet projection."))
 
 gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
                  GEGL_SAMPLER_CUBIC, _("Image resampling method to use"))
@@ -36,11 +40,13 @@ gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
 #else
 
 #define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "gnomonic-projection.c"
+#define GEGL_CHANT_C_FILE "panorama-projection.c"
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 #include "gegl-chant.h"
+
+//#include "speedmath.inc"
 
 static void
 prepare (GeglOperation *operation)
@@ -52,11 +58,41 @@ prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle result = {0,0,0,0};
+
+  if (o->width <= 0 || o->height <= 0)
+  {
+     GeglRectangle *in_rect;
+     in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+     if (in_rect)
+       {
+          result = *in_rect;
+       }
+     else
+     {
+       result.width = 320;
+       result.height = 200;
+     }
+  }
+  else
+  {
+    result.width = o->width;
+    result.height = o->height;
+  }
+
+  return result;
+}
+
+static GeglRectangle
 get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *region)
 {
   GeglRectangle result = *gegl_operation_source_get_bounding_box (operation, "input");
+  /* XXX: do inverse computations; and use their bounding box */
 
   return result;
 }
@@ -66,10 +102,10 @@ get_required_for_output (GeglOperation       *operation,
  */
 
 static void inline
-calc_long_lat (float x, float  y,
-               float tilt, float pan, float spin,
-               float sin_tilt, float cos_tilt,
-               float *in_long, float *in_lat)
+gnomonic_calc_long_lat (float x,   float  y,
+                        float pan, float spin,
+                        float sin_tilt, float cos_tilt,
+                        float *in_long, float *in_lat)
 {
   float p, c;
   float longtitude, latitude;
@@ -91,6 +127,32 @@ calc_long_lat (float x, float  y,
   *in_lat = ((latitude + M_PI/2) / M_PI);
 }
 
+static void inline
+stereographic_calc_long_lat (float x,   float y,
+                             float pan, float spin,
+                             float sin_tilt, float  cos_tilt,
+                             float *in_long, float *in_lat)
+{
+  float p, c;
+  float longtitude, latitude;
+  float sin_c, cos_c;
+
+  p = sqrtf (x*x+y*y);
+  c = 2 * atan2f (p / 2, 1);
+
+  sin_c = sinf (c);
+  cos_c = cosf (c);
+
+  latitude = asinf (cos_c * sin_tilt + ( y * sin_c * cos_tilt) / p);
+  longtitude = pan + atan2f ( x * sin_c, p * cos_tilt * cos_c - y * sin_tilt * sin_c);
+
+  if (longtitude < 0)
+    longtitude += M_PI * 2;
+
+  *in_long = (longtitude / (M_PI * 2));
+  *in_lat = ((latitude + M_PI/2) / M_PI);
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -99,22 +161,27 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  float pan = o->pan / 360 * M_PI * 2;
+  float pan  = o->pan / 360 * M_PI * 2;
   float spin = o->spin / 360 * M_PI * 2;
   float zoom = o->zoom / 100.0;
   float tilt = o->tilt / 360 * M_PI * 2;
   float width;
   float height;
-  const Babl           *format_io;
-  GeglSampler          *sampler;
-  GeglBufferIterator   *it;
+  const Babl         *format_io;
+  GeglSampler        *sampler;
+  GeglBufferIterator *it;
   float sin_tilt, cos_tilt;
   float cos_spin, sin_spin;
-  gint                  index_in, index_out;
+  gint  index_in, index_out;
   float xoffset = 0.5;
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
   GeglMatrix2  scale_matrix;
   GeglMatrix2 *scale = NULL;
+  void (*calc_long_lat) (float x, float  y,
+                         float pan, float spin,
+                         float sin_tilt, float cos_tilt,
+                         float *in_long, float *in_lat) =
+    gnomonic_calc_long_lat;
 
   format_io = babl_format ("RaGaBaA float");
   sampler = gegl_buffer_sampler_new (input, format_io, o->sampler_type);
@@ -127,9 +194,26 @@ process (GeglOperation       *operation,
   sin_spin = sinf (spin);
   cos_spin = cosf (spin);
 
-  width = in_rect.height;
-  height = width;
-  xoffset = ((in_rect.width - height)/height) / 2 + 0.5;
+  width = o->width;
+  height = o->height;
+
+  if (width <= 0 || height <= 0)
+  {
+    width = in_rect.height;
+    height = width;
+    xoffset = ((in_rect.width - height)/height) / 2 + 0.5;
+  }
+  else
+  {
+    width = height;
+    xoffset = ((o->width - height)/height) / 2 + 0.5;
+  }
+
+  if (o->little_planet)
+  {
+    calc_long_lat = stereographic_calc_long_lat;
+    zoom /= 10;
+  }
 
   if (o->sampler_type == GEGL_SAMPLER_NOHALO ||
       o->sampler_type == GEGL_SAMPLER_LOHALO)
@@ -167,7 +251,7 @@ process (GeglOperation       *operation,
                   calc_long_lat (\
                      xx * cos_spin - yy * sin_spin,\
                      yy * cos_spin + xx * sin_spin,\
-                     tilt, pan, spin,\
+                     pan, spin,\
                      sin_tilt, cos_tilt,\
                      &rx, &ry);\
                   ud = rx;vd = ry;}
@@ -175,8 +259,9 @@ process (GeglOperation       *operation,
                   gegl_unmap(u,v, cx, cy);
 #undef gegl_unmap
 
-                  gegl_sampler_get (sampler, cx * in_rect.width, cy * in_rect.height,
-                                    scale, out, GEGL_ABYSS_NONE);
+                  gegl_sampler_get (sampler,
+                                    cx * in_rect.width, cy * in_rect.height,
+                                    scale, out, GEGL_ABYSS_LOOP);
                   in  += 4;
                   out += 4;
 
@@ -201,12 +286,12 @@ process (GeglOperation       *operation,
                     calc_long_lat (
                         u * cos_spin - v * sin_spin,
                         v * cos_spin + u * sin_spin,
-                        tilt, pan, spin,
+                        pan, spin,
                         sin_tilt, cos_tilt,
                         &cx, &cy);
 
                     gegl_sampler_get (sampler, cx * in_rect.width, cy * in_rect.height,
-                                      scale, out, GEGL_ABYSS_NONE);
+                                      scale, out, GEGL_ABYSS_LOOP);
                     in  += 4;
                     out += 4;
 
@@ -239,12 +324,13 @@ gegl_chant_class_init (GeglChantClass *klass)
 
   filter_class->process = process;
   operation_class->prepare = prepare;
+  operation_class->get_bounding_box = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:gnomonic-projection",
+    "name"       , "gegl:panorama-projection",
     "categories" , "misc",
-    "description", _("Perform a gnomonic / equilinear projection of a equirectangular input image. (renders virtual camera images from a panorama)"),
+    "description", _("Perform a equlinear/gnomonic or little planet/stereographic projection of a equirectangular input image."),
     NULL);
 }
 #endif

@@ -45,7 +45,6 @@ op_LTLIBRARIES = \
 	gaussian-blur.la \
 	gegl-buffer-load-op.la \
 	gegl-buffer-save-op.la \
-	gnomonic-projection.la \
 	grey.la \
 	grid.la \
 	high-pass.la \
@@ -84,6 +83,7 @@ op_LTLIBRARIES = \
 	opacity.la \
 	open-buffer.la \
 	over.la \
+	panorama-projection.la \
 	photocopy.la \
 	pixelize.la \
 	plasma.la \
@@ -100,7 +100,6 @@ op_LTLIBRARIES = \
 	shift.la \
 	snn-mean.la \
 	softglow.la \
-	stereographic-projection.la \
 	stress.la \
 	stretch-contrast-hsv.la \
 	stretch-contrast.la \
