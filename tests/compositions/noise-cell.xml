@@ -21,7 +21,7 @@
             <param name='height'>128</param>
           </params>
       </node>
-      <node operation='gegl:cell-noise'>
+      <node operation='gegl:noise-cell'>
           <params>
             <param name='seed'>0</param>
             <param name='scale'>1</param>
@@ -53,7 +53,7 @@
             <param name='height'>128</param>
           </params>
       </node>
-      <node operation='gegl:cell-noise'>
+      <node operation='gegl:noise-cell'>
           <params>
             <param name='seed'>0</param>
             <param name='scale'>1</param>
@@ -89,7 +89,7 @@
           <params>
             <param name='value'>0</param>
           </params>
-          <node operation='gegl:cell-noise'>
+          <node operation='gegl:noise-cell'>
               <params>
                 <param name='seed'>0</param>
                 <param name='scale'>1</param>
@@ -100,7 +100,7 @@
               </params>
           </node>
       </node>
-      <node operation='gegl:cell-noise'>
+      <node operation='gegl:noise-cell'>
           <params>
             <param name='seed'>0</param>
             <param name='scale'>1</param>
@@ -123,7 +123,7 @@
             <param name='height'>128</param>
           </params>
       </node>
-      <node operation='gegl:cell-noise'>
+      <node operation='gegl:noise-cell'>
           <params>
             <param name='seed'>0</param>
             <param name='scale'>1</param>

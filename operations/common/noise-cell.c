@@ -409,7 +409,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:cell-noise",
+    "name"       , "gegl:noise-cell",
     "categories" , "render",
     "description", _("Generates a cellular texture."),
     NULL);
