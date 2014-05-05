@@ -696,7 +696,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:gaussian-blur",
     "categories",  "blur",
-    "description", _("Performs an averaging of neighboring pixels with the "
+    "description", _("Simplest, most commonly used way of blurring, "
+                     "performs an averaging of neighboring pixels with the "
                      "normal distribution as weighting"),
     NULL);
 }

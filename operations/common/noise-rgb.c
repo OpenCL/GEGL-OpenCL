@@ -183,7 +183,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:noise-rgb",
     "categories",  "noise",
-    "description", _("Distort colors by random amounts."),
+    "description", _("Distort colors by random amounts"),
     NULL);
 }
 
