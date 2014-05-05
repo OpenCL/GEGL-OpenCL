@@ -114,6 +114,7 @@ operations/common/whirl-pinch.c
 operations/common/wind.c
 operations/common/write-buffer.c
 operations/core/clone.c
+operations/core/cast-format.c
 operations/core/convert-format.c
 operations/core/crop.c
 operations/core/nop.c
