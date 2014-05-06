@@ -538,6 +538,29 @@ GeglNode    * gegl_node_get_producer     (GeglNode      *node,
 gboolean      gegl_node_has_pad          (GeglNode      *node,
                                           const gchar   *pad_name);
 
+/**
+ * gegl_node_list_input_pads:
+ * @node: the node we are querying
+ *
+ * If the node has any input pads this function returns a null terminated
+ * array of pad names, otherwise it returns NULL. The return value can be
+ * freed with g_strfreev().
+ *
+ * Return value: (transfer full) (array zero-terminated=1)
+ */
+gchar      ** gegl_node_list_input_pads  (GeglNode      *node);
+
+/**
+ * gegl_node_list_output_pads:
+ * @node: the node we are querying
+ *
+ * If the node has any output pads this function returns a null terminated
+ * array of pad names, otherwise it returns NULL. The return value can be
+ * freed with g_strfreev().
+ *
+ * Return value: (transfer full) (array zero-terminated=1)
+ */
+gchar      ** gegl_node_list_output_pads (GeglNode      *node);
 
 /***
  * Binding conveniences:

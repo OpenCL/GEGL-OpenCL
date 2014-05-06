@@ -408,6 +408,42 @@ gegl_node_has_pad (GeglNode      *self,
   return gegl_node_get_pad (self, name) != NULL;
 }
 
+static inline gchar **
+_make_pad_list (GSList *iter)
+{
+  gchar **list;
+  gint    i;
+
+  if (!iter)
+    return NULL;
+
+  list = g_new0 (gchar *, g_slist_length (iter) + 1);
+
+  for (i = 0; iter; iter = iter->next, i++)
+    {
+      GeglPad *pad = iter->data;
+      list[i] = g_strdup (pad->name);
+    }
+
+  return list;
+}
+
+gchar **
+gegl_node_list_input_pads (GeglNode *self)
+{
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  return _make_pad_list (self->input_pads);
+}
+
+gchar **
+gegl_node_list_output_pads (GeglNode *self)
+{
+  g_return_val_if_fail (GEGL_IS_NODE (self), NULL);
+
+  return _make_pad_list (self->output_pads);
+}
+
 /**
  * gegl_node_get_pads:
  * @self: a #GeglNode.
