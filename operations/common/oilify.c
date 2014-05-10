@@ -409,10 +409,10 @@ process (GeglOperation       *operation,
 
   total_pixels = src_rect.width * src_rect.height;
 
-  src_buf = g_slice_alloc (4 * total_pixels * sizeof (gfloat));
-  dst_buf = g_slice_alloc (4 * n_pixels * sizeof (gfloat));
+  src_buf = gegl_malloc (4 * total_pixels * sizeof (gfloat));
+  dst_buf = gegl_malloc (4 * n_pixels * sizeof (gfloat));
   if (o->use_inten)
-    inten_buf = g_slice_alloc (total_pixels * sizeof (gfloat));
+    inten_buf = gegl_malloc (total_pixels * sizeof (gfloat));
   else
     inten_buf = NULL;
 
@@ -448,10 +448,10 @@ process (GeglOperation       *operation,
   gegl_buffer_set (output, result, 0,
                    babl_format ("RGBA float"),
                    dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_slice_free1 (4 * total_pixels * sizeof (gfloat), src_buf);
-  g_slice_free1 (4 * n_pixels * sizeof (gfloat), dst_buf);
+  gegl_free (src_buf);
+  gegl_free (dst_buf);
   if (inten_buf)
-    g_slice_free1 (total_pixels * sizeof (gfloat), inten_buf);
+    gegl_free (inten_buf);
 
   return  TRUE;
 }
