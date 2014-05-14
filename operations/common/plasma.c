@@ -31,45 +31,77 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_seed (seed, rand, _("Random seed"), _("Random seed"))
+gegl_property_seed (
+    seed, rand,
+    "nick",  _("Random seed"),
+    NULL)
 
-gegl_chant_double (turbulence, _("Turbulence"), 0.0, 7.0, 1.0,
-                   _("The value of the turbulence"))
+gegl_property_double (
+    turbulence,
+    "nick", _("Turbulence"),
+    "min",     0.0,
+    "max",     7.0,
+    "default", 1.0,
+    "blurb", _("High values; gives more variation in details"),
+    NULL)
 
-gegl_chant_int_ui (x, _("X"), G_MININT, G_MAXINT, 0,
-                   -4096, 4096, 1.0,
-                   _("X start of the generated buffer"))
-gegl_chant_int_ui (y, _("Y"), G_MININT, G_MAXINT, 0,
-                   -4096, 4096, 1.0,
-                   _("Y start of the generated buffer"))
-gegl_chant_int_ui (width, _("Width"), 0, G_MAXINT, 1024,
-                   0, 4096, 1.0,
-                   _("Width of the generated buffer"))
-gegl_chant_int_ui (height, _("Height"), 0, G_MAXINT, 768,
-                   0, 4096, 1.0,
-                   _("Height of the generated buffer"))
+gegl_property_int (
+    x,
+    "nick", _("X"),
+    "ui-min", -4096,
+    "ui-max",  4096,
+    "blurb", _("X start of the generated buffer"),
+    NULL)
+
+gegl_property_int (
+    y,
+    "nick", _("Y"),
+    "ui-min", -4096,
+    "ui-max",  4096,
+    "blurb", _("Y start of the generated buffer"),
+    NULL)
+
+gegl_property_int (
+    width,
+    "nick", _("Width"),
+    "min", 0,
+    "default", 1024,
+    "ui-min",     0,
+    "ui-max",  4096,
+    "blurb", _("Width of the generated buffer"),
+    NULL)
+
+gegl_property_int (
+    height,
+    "nick", _("Height"),
+    "min",       0,
+    "default", 768,
+    "ui-min",    0,
+    "ui-max", 4096,
+    "blurb", _("Height of the generated buffer"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE "plasma.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE "plasma.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #define TILE_SIZE 512
 
 typedef struct
 {
-  GeglBuffer *output;
-  GRand      *gr;
-  GeglChantO *o;
-  float      *buffer;
-  gboolean    using_buffer;
-  gint        buffer_x;
-  gint        buffer_y;
-  gint        buffer_width;
+  GeglBuffer     *output;
+  GRand          *gr;
+  GeglProperties *o;
+  float          *buffer;
+  gboolean        using_buffer;
+  gint            buffer_x;
+  gint            buffer_y;
+  gint            buffer_width;
 } PlasmaContext;
 
 static void
@@ -328,7 +360,7 @@ process (GeglOperation       *operation,
   gint           x, y;
 
   context = g_new (PlasmaContext, 1);
-  context->o = GEGL_CHANT_PROPERTIES (operation);
+  context->o = GEGL_PROPERTIES (operation);
   context->output = output;
   context->buffer = g_malloc (TILE_SIZE * TILE_SIZE * 3 * sizeof (gfloat));
   context->using_buffer = FALSE;
@@ -362,7 +394,7 @@ process (GeglOperation       *operation,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   return *GEGL_RECTANGLE (o->x, o->y, o->width, o->height);
 }
@@ -383,7 +415,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
