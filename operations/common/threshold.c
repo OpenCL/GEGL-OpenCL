@@ -20,17 +20,25 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (value, _("Threshold"), -10.0, 10.0, 0.5, 0.0, 1.0, 1.0, 
-   _("Global threshold level (used when there is no auxiliary input buffer)."))
+gegl_property_double (
+    value,
+    "nick",  _("Threshold"),
+    "default",    0.5,
+    "min",     -200.0,
+    "max",      200.0,
+    "ui-min",   -10.0,
+    "ui-max",    10.0,
+    "blurb", _("Scalar threshold level (overriden if an auxiliary input buffer is provided.)."),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE       "threshold.c"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE       "threshold.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void prepare (GeglOperation *operation)
 {
@@ -55,7 +63,7 @@ process (GeglOperation       *op,
 
   if (aux == NULL)
     {
-      gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
+      gfloat value = GEGL_PROPERTIES (op)->value;
       for (i=0; i<n_pixels; i++)
         {
           gfloat c;
@@ -92,7 +100,7 @@ process (GeglOperation       *op,
 #include "opencl/threshold.cl.h"
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass              *operation_class;
   GeglOperationPointComposerClass *point_composer_class;
