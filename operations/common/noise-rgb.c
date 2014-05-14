@@ -23,41 +23,64 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_boolean (correlated, _("Correlated noise"),
-                    FALSE,
-                    _("Correlated noise"))
+gegl_property_boolean (
+    correlated,
+    "nick",    _("Correlated noise"),
+    "default", FALSE,
+    "blurb",   "",
+    NULL)
 
-gegl_chant_boolean (independent, _("Independent RGB"),
-                    TRUE,
-                    _("Independent RGB"))
+gegl_property_boolean (
+    independent,
+    "nick",   _("Independent RGB"),
+    "default", TRUE,
+    NULL)
 
-gegl_chant_double  (red, _("Red"),
-                    0.0, 1.0, 0.20,
-                    _("Red"))
+gegl_property_double  (
+    red,
+    "nick", _("Red"),
+    "min",     0.0,
+    "max",     1.0,
+    "default", 0.20,
+    NULL)
 
-gegl_chant_double  (green, _("Green"),
-                    0.0, 1.0, 0.20,
-                    _("Green"))
+gegl_property_double  (
+    green,
+    "nick", _("Green"),
+    "min",     0.0,
+    "max",     1.0,
+    "default", 0.20,
+    NULL)
 
-gegl_chant_double  (blue, _("Blue"),
-                    0.0, 1.0, 0.20,
-                    _("Blue"))
+gegl_property_double (
+    blue,
+    "nick",  _("Blue"),
+    "min",     0.0,
+    "max",     1.0,
+    "default", 0.20,
+    NULL)
 
-gegl_chant_double  (alpha, _("Alpha"),
-                    0.0, 1.0, 0.00,
-                    _("Alpha"))
+gegl_property_double (
+    alpha,
+    "nick",  _("Alpha"),
+    "min",     0.0,
+    "max",     1.0,
+    "default", 0.00,
+    NULL)
 
-gegl_chant_seed    (seed, rand, _("Seed"),
-                    _("Random seed"))
+gegl_property_seed (
+    seed, rand,
+    "nick",  _("Random seed"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "noise-rgb.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "noise-rgb.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -106,7 +129,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o  = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o  = GEGL_PROPERTIES (operation);
 
   gdouble  noise_coeff = 0.0;
   int      rint = 0;
@@ -169,7 +192,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
