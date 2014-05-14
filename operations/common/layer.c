@@ -25,25 +25,50 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_string(composite_op, _("Operation"), "gegl:over",
-                  _("Composite operation to use"))
-gegl_chant_double(opacity, _("Opacity"), 0.0, 1.0, 1.0,
-                  _("Opacity"))
-gegl_chant_double(x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                  _("Horizontal position"))
-gegl_chant_double(y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                  _("Vertical position"))
-gegl_chant_double(scale, _("Scale"), -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
-                  _("Scale 1:1 size"))
-gegl_chant_file_path(src, _("Source"), "",
-                _("Source datafile (png, jpg, raw, svg, bmp, tif, ...)"))
+gegl_property_string(
+    composite_op,
+    "nick",  _("Operation"),
+    "default", "gegl:over",
+    "blurb", _("Composite operation to use"),
+    NULL)
+
+gegl_property_double(
+    opacity,
+    "nick", _("Opacity"),
+    "min",     0.0,
+    "max",     1.0,
+    "default", 1.0,
+    NULL)
+
+gegl_property_double(
+    x, _("X"),
+    "blurb", _("Horizontal position in pixels"),
+    NULL)
+
+gegl_property_double(
+    y,
+    "nick",  _("Y"),
+    "blurb", _("Vertical position in pixels"),
+    NULL)
+gegl_property_double(
+    scale,
+    "nick",  _("Scale"),
+    "default", 1.0,
+    "blurb", _("Scale 1:1 size"),
+    NULL)
+gegl_property_file_path(
+    src,
+    "nick",  _("Source"),
+    "default", "",
+    "blurb", _("Source image file path (png, jpg, raw, svg, bmp, tif, ...)"),
+    NULL)
 
 #else
 
 #include <gegl-plugin.h>
-struct _GeglChant
+struct _GeglOp
 {
   GeglOperationMeta parent_instance;
   gpointer          properties;
@@ -71,10 +96,10 @@ struct _GeglChant
 typedef struct
 {
   GeglOperationMetaClass parent_class;
-} GeglChantClass;
+} GeglOpClass;
 
-#define GEGL_CHANT_C_FILE "layer.c"
-#include "gegl-chant.h"
+#define GEGL_OP_C_FILE "layer.c"
+#include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 
 #include <glib/gprintf.h>
@@ -82,8 +107,8 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 static void
 do_setup (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglChant *self = GEGL_CHANT (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglOp         *self = GEGL_OP (operation);
 
   /* If the src is NULL, and we previously used a source, clear what we have
    * cached and directly link the input and output. We don't need a composite
@@ -175,7 +200,7 @@ my_set_property (GObject      *gobject,
                  GParamSpec   *pspec)
 {
   GeglOperation *operation = GEGL_OPERATION (gobject);
-  GeglChant     *self      = GEGL_CHANT (operation);
+  GeglOp        *self      = GEGL_OP (operation);
 
   /* The set_property provided by the chant system does the
    * storing and reffing/unreffing of the input properties */
@@ -187,8 +212,8 @@ my_set_property (GObject      *gobject,
 
 static void attach (GeglOperation *operation)
 {
-  GeglChant  *self = GEGL_CHANT (operation);
-  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglOp         *self = GEGL_OP (operation);
+  GeglProperties *o    = GEGL_PROPERTIES (operation);
   GeglNode *gegl;
 
   self->self = GEGL_OPERATION (self)->node;
@@ -231,18 +256,18 @@ static void attach (GeglOperation *operation)
 static void
 finalize (GObject *object)
 {
-  GeglChant *self = GEGL_CHANT (object);
+  GeglOp *self = GEGL_OP (object);
 
   if (self->cached_path)
     g_free (self->cached_path);
   if (self->p_composite_op)
     g_free (self->p_composite_op);
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass       *object_class;
   GeglOperationClass *operation_class;
@@ -261,6 +286,5 @@ gegl_chant_class_init (GeglChantClass *klass)
     "description", _("A layer in the traditional sense"),
     NULL);
 }
-
 
 #endif
