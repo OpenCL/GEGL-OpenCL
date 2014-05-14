@@ -19,22 +19,37 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-/* Followed by this #if ... */
-#ifdef GEGL_CHANT_PROPERTIES
-/* ... are the properties of the filter, these are all scalar values
- * (doubles), the the parameters are:
- *       property name,   min,   max, default, "description of property"
+#ifdef GEGL_PROPERTIES
+
+/*  Here in the top of the file the properties of the operation is declared,
+ *  this causes the declaration of a structure for containing the data.
+ *
+ *  The first member of each gegl_property_ macro becomes a struct member
+ *  in the GeglProperties struct used when processing.
  */
 
-gegl_chant_double_ui (contrast, _("Contrast"), -5.0, 5.0, 1.0, 0.0, 2.0, 1.0,
-                   _("Range scale factor"))
-gegl_chant_double_ui (brightness, _("Brightness"), -3.0, 3.0, 0.0, -1.0, 1.0, 1.0,
-                   _("Amount to increase brightness"))
+gegl_property_double (contrast,
+   "nick", _("Contrast"), 
+   "min"   , -5.0,
+   "max",     5.0,
+   "default", 1.0,
+   "ui-min",  0.0,
+   "ui-max",  2.0,
+   "ui-gamma", 1.0,
+   "blurb", _("Magnitude of contrast scaling >1.0 brighten < 1.0 darken"),
+   NULL)
 
-/* this will create the instance structure for our use, and register the
- * property with the given ranges, default values and a comment for the
- * documentation/tooltip.
- */
+gegl_property_double (brightness,
+   "nick",  _("Brightness"), 
+   "min",     -3.0,
+   "max",      3.0,
+   "default",  0.0,
+   "ui-min",  -1.0,
+   "ui-max",   1.0,
+   "ui-gamma", 1.0,
+   "blurb",  _("Amount to increase brightness"),
+   NULL)
+
 #else
 
 /* Specify the base class we're building our operation on, the base
@@ -42,19 +57,20 @@ gegl_chant_double_ui (brightness, _("Brightness"), -3.0, 3.0, 0.0, -1.0, 1.0, 1.
  * brightness contrast the best base class is the POINT_FILTER base
  * class.
  */
-#define GEGL_CHANT_TYPE_POINT_FILTER
+
+#define GEGL_OP_POINT_FILTER
 
 /* We specify the file we're in, this is needed to make the code
  * generation for the properties work.
  */
-#define GEGL_CHANT_C_FILE       "brightness-contrast.c"
+#define GEGL_OP_C_FILE       "brightness-contrast.c"
 
-/* Including gegl-chant.h creates most of the GObject boiler plate
- * needed, creating a GeglChant instance structure a GeglChantClass
+/* Including gegl-op.h creates most of the GObject boiler plate
+ * needed, creating a GeglOp instance structure a GeglOpClass
  * structure for our operation, as well as the needed code to register
  * our new gobject with GEGL.
  */
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 /* prepare() is called on each operation providing data to a node that
  * is requested to provide a rendered result. When prepare is called
@@ -81,7 +97,7 @@ process (GeglOperation       *op,
   /* Retrieve a pointer to GeglChantO structure which contains all the
    * chanted properties
    */
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
   gfloat     * GEGL_ALIGNED in_pixel;
   gfloat     * GEGL_ALIGNED out_pixel;
   gfloat      brightness, contrast;
@@ -112,7 +128,7 @@ process (GeglOperation       *op,
  * (template) in the GObject OO framework.
  */
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
