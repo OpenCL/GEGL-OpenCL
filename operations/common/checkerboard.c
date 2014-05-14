@@ -20,48 +20,80 @@
 #include <glib/gi18n-lib.h>
 #include <stdlib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int_ui   (x, _("Width"),
-                     1, G_MAXINT, 16, 1, 256, 1.5,
-                     _("Horizontal width of cells pixels"))
+gegl_property_int (x,
+    "nick",  _("Width"),
+    "min",        1,
+    "max",    G_MAXINT,
+    "default",   16,
+    "ui-min",     1,
+    "ui-max",   256,
+    "ui-gamma", 1.5,
+    "blurb", _("Horizontal width of cells pixels"),
+    NULL)
 
-gegl_chant_int_ui   (y, _("Height"),
-                     1, G_MAXINT, 16, 1, 256, 1.5,
-                     _("Vertical width of cells in pixels"))
+gegl_property_int (
+    y,
+    "nick", _("Height"),
+    "min", 1,
+    "max", G_MAXINT,
+    "default", 16,
+    "ui-min", 1,
+    "ui-max", 256,
+    "ui-gamma", 1.5,
+    "blurb", _("Vertical width of cells pixels"),
+    NULL)
 
-gegl_chant_int_ui   (x_offset, _("X offset"),
-                     -G_MAXINT, G_MAXINT, 0, -10, 10, 1.0,
-                     _("Horizontal offset (from origin) for start of grid"))
+gegl_property_int (
+    x_offset,
+    "nick", _("X offset"),
+    "ui-min", -10,
+    "ui-max", 10,
+    "blurb", _("Horizontal offset (from origin) for start of grid"),
+    NULL)
 
-gegl_chant_int_ui   (y_offset, _("Y offset"),
-                     -G_MAXINT, G_MAXINT,  0, -10, 10, 1.0,
-                     _("Vertical offset (from origin) for start of grid"))
+gegl_property_int (
+    y_offset,
+    "nick", _("Y offset"),
+    "ui-min", -10,
+    "ui-max",  10,
+    "blurb", _("Vertical offset (from origin) for start of grid"),
+    NULL)
 
-gegl_chant_color    (color1, _("Color"),
-                     "black",
-                     _("One of the cell colors (defaults to 'black')"))
+gegl_property_color (
+    color1,
+    "nick", _("Color"),
+    "default", "black",
+    "blurb", _("One of the cell colors (defaults to 'black')"),
+    NULL)
 
-gegl_chant_color    (color2, _("Other color"),
-                     "white",
-                     _("The other cell color (defaults to 'white')"))
+gegl_property_color (
+    color2,
+    "nick",  _("Color"),
+    "default", "white",
+    "blurb", _("One of the cell colors (defaults to 'white')"),
+    NULL)
 
-gegl_chant_format   (format, _("Babl Format"),
-                     _("The babl format of the output"))
+gegl_property_format (
+    format,
+    "nick",  _("Babl Format"),
+    "blurb", _("The babl format of the output"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE "checkerboard.c"
+#define GEGL_OP_POINT_RENDER
+#define GEGL_OP_C_FILE "checkerboard.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <gegl-buffer-cl-iterator.h>
 #include <gegl-debug.h>
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->format)
     gegl_operation_set_format (operation, "output", o->format);
@@ -154,7 +186,7 @@ checkerboard_cl_process (GeglOperation       *operation,
                          const GeglRectangle *roi,
                          gint                 level)
 {
-  GeglChantO   *o           = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o         = GEGL_PROPERTIES (operation);
   const Babl   *out_format  = gegl_operation_get_format (operation, "output");
   const size_t  gbl_size[1] = {roi->height};
   cl_int        cl_err      = 0;
@@ -205,7 +237,7 @@ checkerboard_process (GeglOperation       *operation,
                       const GeglRectangle *roi,
                       gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint        pixel_size = babl_format_get_bytes_per_pixel (out_format);
   guchar     *out_pixel = out_buf;
@@ -308,7 +340,7 @@ operation_source_process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationSourceClass      *source_class;
