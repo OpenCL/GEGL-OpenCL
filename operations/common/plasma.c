@@ -38,14 +38,18 @@ gegl_chant_seed (seed, rand, _("Random seed"), _("Random seed"))
 gegl_chant_double (turbulence, _("Turbulence"), 0.0, 7.0, 1.0,
                    _("The value of the turbulence"))
 
-gegl_chant_int (x, _("X"), G_MININT, G_MAXINT, 0,
-                _("X start of the generated buffer"))
-gegl_chant_int (y, _("Y"), G_MININT, G_MAXINT, 0,
-                _("Y start of the generated buffer"))
-gegl_chant_int (width, _("Width"), 0, G_MAXINT, 1024,
-                _("Width of the generated buffer"))
-gegl_chant_int (height, _("Height"), 0, G_MAXINT, 768,
-                _("Height of the generated buffer"))
+gegl_chant_int_ui (x, _("X"), G_MININT, G_MAXINT, 0,
+                   -4096, 4096, 1.0,
+                   _("X start of the generated buffer"))
+gegl_chant_int_ui (y, _("Y"), G_MININT, G_MAXINT, 0,
+                   -4096, 4096, 1.0,
+                   _("Y start of the generated buffer"))
+gegl_chant_int_ui (width, _("Width"), 0, G_MAXINT, 1024,
+                   0, 4096, 1.0,
+                   _("Width of the generated buffer"))
+gegl_chant_int_ui (height, _("Height"), 0, G_MAXINT, 768,
+                   0, 4096, 1.0,
+                   _("Height of the generated buffer"))
 
 #else
 
