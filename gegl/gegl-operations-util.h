@@ -77,6 +77,38 @@ gboolean       gegl_has_operation           (const gchar *operation_type);
 GParamSpec** gegl_operation_list_properties (const gchar   *operation_type,
                                              guint         *n_properties_p);
 
+
+/**
+ * gegl_operation_get_property_key:
+ * @operation_type: the name of the operation type we want to query to property keys for.
+ * @property_name: the property to query a key for.
+ * @property_key_name: the property mata data key to query
+ *
+ * Return value: NULL or a string with the meta-data value for the operation
+ * key.
+ */
+const gchar *
+gegl_operation_get_property_key (const gchar *operation_type,
+                                 const gchar *property_name,
+                                 const gchar *property_key_name);
+
+/**
+ * gegl_operation_list_property_keys:
+ * @operation_type: the name of the operation type we want to query to property keys for.
+ * @property_name: the property to query a key for.
+ * @n_keys: (out caller-allocates): return location for number of property
+ * keys.
+ *
+ * Return value: (transfer container) (array length=n_keys): An allocated NULL terminated array of property-key names. The list should be freed with g_free after use.
+ */
+gchar **
+gegl_operation_list_property_keys (const gchar *operation_type,
+                                   const gchar *property_name,
+                                   guint       *n_keys);
+
+
+
+
 G_END_DECLS
 
 #endif /* __GEGL_OPERATIONS_UTIL_H__ */

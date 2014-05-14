@@ -32,6 +32,7 @@ liboperation_public_HEADERS = \
 	gegl-operation-point-composer3.h \
 	gegl-operation-point-filter.h    \
 	gegl-operation-point-render.h    \
+	gegl-operation-property-keys.h \
 	gegl-operation-sink.h       	 \
 	gegl-operation-source.h          \
 	gegl-operation-temporal.h
@@ -49,6 +50,7 @@ liboperation_sources = \
 	gegl-operation-point-composer3.c	\
 	gegl-operation-point-filter.c		\
 	gegl-operation-point-render.c		\
+	gegl-operation-property-keys.c \
 	gegl-operation-sink.c			\
 	gegl-operation-source.c			\
 	gegl-operation-temporal.c		\
