@@ -20,35 +20,53 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_emboss_type)
-  enum_value (GEGL_EMBOSS_TYPE_EMBOSS,  "Emboss")
-  enum_value (GEGL_EMBOSS_TYPE_BUMPMAP, "Bumpmap")
-gegl_chant_register_enum_end (GeglEmbossType)
+gegl_enum_start (gegl_emboss_type)
+  gegl_enum_value (GEGL_EMBOSS_TYPE_EMBOSS,  "Emboss")
+  gegl_enum_value (GEGL_EMBOSS_TYPE_BUMPMAP, "Bumpmap (preserve original colors)")
+gegl_enum_end (GeglEmbossType)
 
-gegl_chant_enum   (type, _("Emboss Type"),
-                   GeglEmbossType, gegl_emboss_type, GEGL_EMBOSS_TYPE_EMBOSS,
-                   _("Emboss or Bumpmap"))
+gegl_property_enum (
+    type,
+    GeglEmbossType, gegl_emboss_type, GEGL_EMBOSS_TYPE_EMBOSS,
+    "nick",  _("Emboss Type"),
+    "blurb", _("Rendering type"),
+    NULL)
 
-gegl_chant_double (azimuth, _("Azimuth"),
-                   0.0, 360.0, 30.0,
-                   _("The light angle (degrees)"))
+gegl_property_double (
+    azimuth,
+    "nick",   _("Azimuth"),
+    "min",      0.0,
+    "max",    360.0,
+    "default", 30.0,
+    "blurb",  _("The light angle (degrees)"),
+    NULL)
 
-gegl_chant_double (elevation, _("Elevation"),
-                   0.0, 180.0, 45.0,
-                   _("The elevation angle (degrees)"))
+gegl_property_double (
+    elevation,
+    "nick",  _("Elevation"),
+    "min",      0.0,
+    "max",    180.0,
+    "default", 45.0,
+    "blurb", _("The elevation angle (degrees)"),
+    NULL)
 
-gegl_chant_int    (depth, _("Depth"),
-                   1, 100, 20,
-                   _("The filter width"))
+gegl_property_int (
+    depth,
+    "nick", _("Depth"),
+    "min",      1,
+    "max",    100,
+    "default", 20,
+    "blurb", _("The filter width"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "emboss.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "emboss.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -169,7 +187,7 @@ emboss (gfloat              *src_buf,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   op_area->left = op_area->right = op_area->top = op_area->bottom = 3;
@@ -189,7 +207,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   GeglRectangle  rect;
@@ -240,7 +258,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
