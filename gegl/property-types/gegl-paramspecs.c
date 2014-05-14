@@ -25,6 +25,11 @@
 #include <glib.h>
 #include <glib-object.h>
 #include "gegl-paramspecs.h"
+#include "gegl-types.h"
+#include <babl/babl.h>
+#include "gegl-color.h"
+#include "gegl-curve.h"
+#include "gegl-path.h"
 
 static void       gegl_param_double_class_init (GParamSpecClass *klass);
 static void       gegl_param_double_init       (GParamSpec      *pspec);
@@ -739,4 +744,598 @@ gegl_param_spec_format (const gchar *name,
                                  name, nick, blurb, flags);
 
   return G_PARAM_SPEC (pspec);
+}
+
+GParamSpec *
+gegl_param_spec_double_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+  gdouble min_value     = DBL_MIN,
+          max_value     = DBL_MAX,
+          default_value = 0.0,
+          ui_min = -100,
+          ui_max = 100,
+          ui_gamma = 1.0;
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if      (g_str_equal (key, "min"))
+      min_value = va_arg (var_args, double);
+    else if (g_str_equal (key, "max"))
+      max_value = va_arg (var_args, double);
+    else if (g_str_equal (key, "ui-min"))
+      ui_min = va_arg (var_args, double);
+    else if (g_str_equal (key, "ui-gamma"))
+      ui_gamma = va_arg (var_args, double);
+    else if (g_str_equal (key, "ui-max"))
+      ui_max = va_arg (var_args, double);
+    else if (g_str_equal (key, "default"))
+      default_value = va_arg (var_args, double);
+    else if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+
+  if (ui_min < min_value)
+    ui_min = min_value;
+  if (ui_max > max_value)
+    ui_max = max_value;
+
+  pspec = gegl_param_spec_double (name, nick, blurb,
+                               min_value, max_value, default_value,
+                               ui_min, ui_max, ui_gamma, \
+                               (GParamFlags) (         \
+                               G_PARAM_READWRITE |     \
+                               G_PARAM_CONSTRUCT |     \
+                               GEGL_PARAM_PAD_INPUT));
+
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+
+GParamSpec *
+gegl_param_spec_int_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+  gint min_value     = G_MININT,
+       max_value     = G_MAXINT,
+       default_value = 0,
+       ui_min = -100,
+       ui_max = 100,
+       ui_gamma = 1.0;
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if      (g_str_equal (key, "min"))
+      min_value = va_arg (var_args, gint);
+    else if (g_str_equal (key, "max"))
+      max_value = va_arg (var_args, gint);
+    else if (g_str_equal (key, "ui-min"))
+      ui_min = va_arg (var_args, gint);
+    else if (g_str_equal (key, "ui-gamma"))
+      ui_gamma = va_arg (var_args, double);
+    else if (g_str_equal (key, "ui-max"))
+      ui_max = va_arg (var_args, gint);
+    else if (g_str_equal (key, "default"))
+      default_value = va_arg (var_args, gint);
+    else if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+
+  if (ui_min < min_value)
+    ui_min = min_value;
+  if (ui_max > max_value)
+    ui_max = max_value;
+
+  pspec = gegl_param_spec_int (name, nick, blurb,
+                               min_value, max_value, default_value,
+                               ui_min, ui_max, ui_gamma, \
+                               (GParamFlags) (         \
+                               G_PARAM_READWRITE |     \
+                               G_PARAM_CONSTRUCT |     \
+                               GEGL_PARAM_PAD_INPUT));
+
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+
+GParamSpec *
+gegl_param_spec_boolean_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+  gboolean default_value = FALSE;
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "default"))
+      default_value = va_arg (var_args, gboolean);
+    else if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = g_param_spec_boolean (name, nick, blurb,
+                            default_value,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_string_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+  const gchar *default_value = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "default"))
+      default_value = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = g_param_spec_string (name, nick, blurb,
+                            default_value,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_file_path_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+  const gchar *default_value = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "default"))
+      default_value = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = gegl_param_spec_file_path (name, nick, blurb,
+                            FALSE, FALSE, /* XXX: take from varargs? */
+                            default_value,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_enum_from_vararg (const char *name, GType enum_type, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+  int default_value = 0;
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, enum_type);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "default"))
+      default_value = va_arg (var_args, int);
+    else if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+
+  pspec = g_param_spec_enum (name, nick, blurb,
+                             enum_type,
+                             default_value,
+                             (GParamFlags) (
+                             G_PARAM_READWRITE |
+                             G_PARAM_CONSTRUCT |
+                             GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_pointer_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = g_param_spec_pointer (name, nick, blurb,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_object_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = g_param_spec_object (name, nick, blurb,
+                            G_TYPE_OBJECT,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_curve_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+  GeglCurve  *curve;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  curve = gegl_curve_new_default ();
+  pspec = gegl_param_spec_curve (name, nick, blurb,
+                             curve,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_object_unref (curve);
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_path_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = gegl_param_spec_path (name, nick, blurb, NULL,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_format_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = gegl_param_spec_format (name, nick, blurb,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_color_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+  const gchar *default_value = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "default"))
+    {
+      default_value = va_arg (var_args, const gchar *);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (default_value));
+    }
+    else if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = gegl_param_spec_color_from_string (name, nick, blurb,
+                            default_value,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
+}
+
+GParamSpec *
+gegl_param_spec_seed_from_vararg (const char *name, ...)
+{
+  const gchar *nick  = name,
+              *blurb = "";
+
+  GParamSpec *pspec;
+  GHashTable *ht;
+
+  va_list var_args;
+  const gchar *key;
+
+  ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+  va_start (var_args, name);
+  key = va_arg (var_args, const char*);
+  while (key)
+  {
+    if (g_str_equal (key, "blurb"))
+      blurb = va_arg (var_args, const gchar *);
+    else if (g_str_equal (key, "nick"))
+      nick = va_arg (var_args, const gchar *);
+    else
+    {
+      const char *value = va_arg (var_args, const gchar*);
+      g_hash_table_insert (ht, g_strdup (key), g_strdup (value));
+    }
+    key = va_arg (var_args, const char*);
+  }
+  va_end (var_args);
+  pspec = gegl_param_spec_seed (name, nick, blurb,
+                            (GParamFlags) (
+                            G_PARAM_READWRITE |
+                            G_PARAM_CONSTRUCT |
+                            GEGL_PARAM_PAD_INPUT));
+  g_param_spec_set_qdata_full (pspec, g_quark_from_static_string ("gegl-property-keys"),
+                               ht, (GDestroyNotify)g_hash_table_unref);
+  return pspec;
 }

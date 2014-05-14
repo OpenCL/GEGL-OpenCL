@@ -374,5 +374,33 @@ GParamSpec * gegl_param_spec_format (const gchar *name,
                                      const gchar *blurb,
                                      GParamFlags  flags);
 
+GParamSpec * gegl_param_spec_double_from_vararg (const char *name, ...) 
+                                                 G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_int_from_vararg (const char *name, ...)
+                                              G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_string_from_vararg (const char *name, ...)
+                                                 G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_boolean_from_vararg (const char *name, ...)
+                                                  G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_pointer_from_vararg (const char *name, ...)
+                                                  G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_enum_from_vararg (const char *name, GType enum_type, ...)
+                                               G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_color_from_vararg (const char *name, ...)
+                                                G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_seed_from_vararg (const char *name, ...)
+                                               G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_object_from_vararg (const char *name, ...)
+                                                 G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_format_from_vararg (const char *name, ...)
+                                                 G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_curve_from_vararg (const char *name, ...)
+                                                G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_path_from_vararg (const char *name, ...)
+                                               G_GNUC_NULL_TERMINATED;
+GParamSpec * gegl_param_spec_file_path_from_vararg (const char *name, ...)
+                                                    G_GNUC_NULL_TERMINATED;
+
+
 G_END_DECLS
 #endif  /*  __GEGL_PARAM_SPECS_H__  */

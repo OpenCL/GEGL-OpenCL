@@ -74,6 +74,7 @@ GEGL_public_HEADERS = \
 	gegl-c.h			\
 	gegl-chant.h			\
 	gegl-cpuaccel.h			\
+	gegl-op.h			\
 	gegl-plugin.h			\
 	buffer/gegl-tile.h \
 	buffer/gegl-buffer-cl-iterator.h
@@ -110,6 +111,7 @@ GEGL_sources = \
 	gegl-lookup.h			\
 	gegl-matrix.h			\
 	gegl-module.h			\
+	gegl-op.h			    \
 	gegl-plugin.h			\
 	gegl-random-private.h		\
 	gegl-types-internal.h		\
