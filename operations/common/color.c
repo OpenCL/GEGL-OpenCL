@@ -19,25 +19,27 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
+gegl_property_color (value,
+                     "nick", _("Color"),
+                     "default", "black",
+                     "blurb", _("The color to render (defaults to 'black')"),
+                     NULL)
 
-gegl_chant_color (value, _("Color"), "black",
-                  _("The color to render (defaults to 'black')"))
-
-gegl_chant_format (format, _("Babl Format"),
-                   _("The babl format of the output"))
-
+gegl_property_format (format, "nick", _("Babl Format"),
+                     "blurb", _("The babl format of the output"),
+                     NULL)
 #else
 
-#define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE           "color.c"
+#define GEGL_OP_POINT_RENDER
+#define GEGL_OP_C_FILE           "color.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 gegl_color_op_prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->format)
     gegl_operation_set_format (operation, "output", o->format);
@@ -58,7 +60,7 @@ gegl_color_op_process (GeglOperation       *operation,
                        const GeglRectangle *roi,
                        gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint        pixel_size = babl_format_get_bytes_per_pixel (out_format);
   void       *out_color  = alloca(pixel_size);
@@ -72,7 +74,7 @@ gegl_color_op_process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointRenderClass *point_render_class;
