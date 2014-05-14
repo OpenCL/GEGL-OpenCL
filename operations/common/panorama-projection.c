@@ -18,34 +18,80 @@
 
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (pan, _("pan"), -180.0, 360, 0.0,
-       _("camera pan"))
-gegl_chant_double (tilt, _("tilt"), -180.0, 180.0, 0.0,
-       _("camera tilt"))
-gegl_chant_double (spin, _("spin"), -360.0, 360.0, 0.0,
-       _("rotation of camera"))
-gegl_chant_double (zoom, _("zoom"), 0.01, 1000.0, 100.0, 
-       _("zoom of camera"))
-gegl_chant_int (width, _("width"), -1, 10000, -1, _("output buffer width, -1 for same as input"))
-gegl_chant_int (height, _("height"), -1, 10000, -1, _("input buffer height, -1 for same as input"))
+gegl_property_double (
+    pan,
+    "nick", _("Pan"),
+    "min",  -180.0,
+    "max",   360.0,
+    "blurb", _("Horizontal camera panning"),
+    NULL)
 
-gegl_chant_boolean (little_planet, _("little planet"), FALSE, _("use the pan/tilt location as center for a stereographic/little planet projection."))
+gegl_property_double (
+    tilt,
+    "nick", _("Tilt"),
+    "min", -180.0,
+    "max",  180.0,
+    "blurb", _("Vertical angle"),
+    NULL)
 
-gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
-                 GEGL_SAMPLER_NEAREST, _("Image resampling method to use"))
+gegl_property_double (
+    spin,
+    "nick", _("Spin"),
+    "min",  -360.0,
+    "max",   360.0,
+    "blurb", _("Spin angle around camera axis"),
+    NULL)
+
+gegl_property_double (
+    zoom,
+    "nick",   _("Zoom"),
+    "min",      0.01,
+    "max",    1000.0,
+    "default", 100.0,
+    "blurb",   _("Zoom level"),
+    NULL)
+
+gegl_property_int (
+    width,
+    "min",        -1,
+    "max",     10000,
+    "default",    -1,
+    "blurb",   _("output/rendering width in pixels, -1 for input width"),
+    NULL)
+
+gegl_property_int (
+    height,
+    "min",     -1,
+    "max",  10000,
+    "default", -1,
+    "blurb",   _("output/rendering height in pixels, -1 for input height"),
+    NULL)
+
+gegl_property_boolean (
+    little_planet,
+    "default", FALSE,
+    "blurb",  _("use the pan/tilt location as center for a stereographic/little planet projection."),
+    NULL)
+
+gegl_property_enum (
+    sampler_type,
+    GeglSamplerType, gegl_sampler_type,
+    "default", GEGL_SAMPLER_NEAREST,
+    "blurb",   _("Image resampling method to use"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "panorama-projection.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "panorama-projection.c"
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
-//#include "speedmath.inc"
+/*#include "speedmath.inc"*/
 
 typedef struct _Transform Transform;
 struct _Transform
@@ -277,7 +323,7 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle result = {0,0,0,0};
 
   if (o->width <= 0 || o->height <= 0)
@@ -306,7 +352,7 @@ get_bounding_box (GeglOperation *operation)
 static void prepare_transform2 (Transform *transform,
                                 GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
 
   prepare_transform (transform, 
@@ -332,7 +378,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   Transform           transform;
   const Babl         *format_io;
   GeglSampler        *sampler;
@@ -474,7 +520,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationFilterClass *filter_class;
