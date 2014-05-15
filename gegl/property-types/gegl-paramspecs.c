@@ -1276,7 +1276,6 @@ gegl_param_spec_color_from_vararg (const char *name, ...)
     if (g_str_equal (key, "default"))
     {
       default_value = va_arg (var_args, const gchar *);
-      g_hash_table_insert (ht, g_strdup (key), g_strdup (default_value));
     }
     else if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
