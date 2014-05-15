@@ -45,8 +45,8 @@ finalize (GObject *object)
 static GeglTile *
 _new_empty_tile (const gint tile_size)
 {
+  static GeglTile   *common_tile = NULL;
   static const gint  common_empty_size = sizeof (gdouble) * 4 * 128 * 128;
-  static guchar     *common_buffer = NULL;
 
   GeglTile *tile;
 
@@ -60,19 +60,23 @@ _new_empty_tile (const gint tile_size)
     }
   else
     {
-      if (!common_buffer && g_once_init_enter (&common_buffer))
+      if (!common_tile && g_once_init_enter (&common_tile))
         {
+          GeglTile *allocated_tile = gegl_tile_new_bare ();
           guchar *allocated_buffer = gegl_malloc (common_empty_size);
           memset (allocated_buffer, 0x00, common_empty_size);
-          g_once_init_leave (&common_buffer, allocated_buffer);
+
+          allocated_tile->data           = allocated_buffer;
+          allocated_tile->destroy_notify = NULL;
+          allocated_tile->size           = common_empty_size;
+          allocated_tile->is_zero_tile   = 1;
+
+          g_once_init_leave (&common_tile, allocated_tile);
         }
 
-      tile = gegl_tile_new_bare ();
+      tile = gegl_tile_dup (common_tile);
 
-      tile->destroy_notify = NULL;
-      tile->data = common_buffer;
       tile->size = tile_size;
-      tile->is_zero_tile = 1;
     }
 
   return tile;
