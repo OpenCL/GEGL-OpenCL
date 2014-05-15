@@ -43,7 +43,8 @@ gegl_property_double(
     NULL)
 
 gegl_property_double(
-    x, _("X"),
+    x,
+    "nick",  _("X"),
     "blurb", _("Horizontal position in pixels"),
     NULL)
 
