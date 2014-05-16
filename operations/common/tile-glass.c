@@ -23,22 +23,28 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int (tileWidth, _("Tile Width"),
-                   10, 50, 25,
-                   _("Tile Width"))
+gegl_property_int (tileWidth, "nick", _("Tile Width"),
+   "default", 25, "min", 10, "max", 500,
+   "ui-max",  50,
+   "unit",   "pixel-distance",
+   "axis",   "x",
+   NULL)
 
-gegl_chant_int (tileHeight, _("Tile Height"),
-                   10, 50, 25,
-                   _("Tile Height"))
+gegl_property_int (tileHeight, "nick", _("Tile Height"),
+   "default", 25, "min", 10, "max", 500,
+   "ui-max",  50,
+   "unit",    "pixel-distance",
+   "axis",    "y",
+   NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "tile-glass.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "tile-glass.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -48,7 +54,7 @@ prepare (GeglOperation *operation)
 {
   const Babl *input_format = gegl_operation_get_source_format (operation, "input");
   const Babl *format;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
 
@@ -203,7 +209,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   const Babl *format = gegl_operation_get_format (operation, "input");
 
   tile_glass (input, output, result, format, o->tileWidth, o->tileHeight);
@@ -212,30 +218,14 @@ process (GeglOperation       *operation,
 }
 
 static void
-finalize (GObject *object)
+gegl_op_class_init (GeglOpClass *klass)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
-
-  if (o->chant_data)
-    {
-      o->chant_data = NULL;
-    }
-
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
-}
-
-static void
-gegl_chant_class_init (GeglChantClass *klass)
-{
-  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  object_class->finalize            = finalize;
   operation_class->prepare          = prepare;
   operation_class->get_bounding_box = get_bounding_box;
   filter_class->process             = process;
