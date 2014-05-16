@@ -20,66 +20,49 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (
-    pan,
-    "nick", _("Pan"),
-    "min",  -180.0,
-    "max",   360.0,
+gegl_property_double (pan, "nick", _("Pan"),
     "blurb", _("Horizontal camera panning"),
+    "min",  -180.0, "max", 360.0,
+    "unit", "degree",
     NULL)
 
-gegl_property_double (
-    tilt,
-    "nick", _("Tilt"),
-    "min", -180.0,
-    "max",  180.0,
+gegl_property_double (tilt, "nick", _("Tilt"),
     "blurb", _("Vertical angle"),
+    "min", -180.0, "max",  180.0,
+    "unit", "degree",
     NULL)
 
-gegl_property_double (
-    spin,
-    "nick", _("Spin"),
-    "min",  -360.0,
-    "max",   360.0,
+gegl_property_double (spin, "nick", _("Spin"),
     "blurb", _("Spin angle around camera axis"),
+    "min",  -360.0, "max",   360.0,
     NULL)
 
-gegl_property_double (
-    zoom,
-    "nick",   _("Zoom"),
-    "min",      0.01,
-    "max",    1000.0,
-    "default", 100.0,
+gegl_property_double (zoom, "nick", _("Zoom"),
     "blurb",   _("Zoom level"),
+    "default", 100.0, "min", 0.01, "max", 1000.0,
     NULL)
 
-gegl_property_int (
-    width,
-    "min",        -1,
-    "max",     10000,
-    "default",    -1,
+gegl_property_int (width,
     "blurb",   _("output/rendering width in pixels, -1 for input width"),
+    "default", -1, "min", -1, "max", 10000,
+    "role", "output-extent",
+    "axis", "x",
     NULL)
 
-gegl_property_int (
-    height,
-    "min",     -1,
-    "max",  10000,
-    "default", -1,
+gegl_property_int (height,
     "blurb",   _("output/rendering height in pixels, -1 for input height"),
+    "default", -1, "min", -1, "max", 10000,
+    "role", "output-extent",
+    "axis", "y",
     NULL)
 
-gegl_property_boolean (
-    little_planet,
-    "default", FALSE,
+gegl_property_boolean (little_planet, "nick", _("Little planet"),
     "blurb",  _("use the pan/tilt location as center for a stereographic/little planet projection."),
     NULL)
 
-gegl_property_enum (
-    sampler_type,
-    GeglSamplerType, gegl_sampler_type,
-    "default", GEGL_SAMPLER_NEAREST,
+gegl_property_enum (sampler_type, GeglSamplerType, gegl_sampler_type,
     "blurb",   _("Image resampling method to use"),
+    "default", GEGL_SAMPLER_NEAREST,
     NULL)
 
 #else
