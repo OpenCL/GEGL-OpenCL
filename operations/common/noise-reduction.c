@@ -21,16 +21,20 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int_ui (iterations, _("Strength"), 0, 32, 4, 0, 8, 1, _("How many iteratarions to run the algorithm with"))
+gegl_property_int (iterations, "int", _("Strength"),
+    "blurb", _("Controls the number of iterations; lower values give better results."),
+    "default", 4, "min",    1, "max", 32,
+    "ui-min",  1, "ui-max", 8,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "noise-reduction.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "noise-reduction.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 /* The core noise_reduction function, which is implemented as
@@ -142,7 +146,7 @@ noise_reduction (float *src_buf,     /* source buffer, one pixel to the left
 static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o = GEGL_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = o->iterations;
   gegl_operation_set_format (operation, "input",  babl_format ("R'G'B'A float"));
@@ -266,7 +270,7 @@ cl_process (GeglOperation       *operation,
   gint err = 0;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                          result,
@@ -321,7 +325,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
 
   int iteration;
   int stride;
@@ -404,7 +408,7 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
@@ -421,7 +425,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:noise-reduction",
     "categories" , "enhance",
-    "description", "Anisotropic like smoothing operation",
+    "description", _("Anisotropic smoothing operation"),
     NULL);
 }
 
