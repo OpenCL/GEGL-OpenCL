@@ -25,36 +25,42 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_gaussian_blur_filter)
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "Auto")
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "FIR")
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
-gegl_chant_register_enum_end (GeglGaussianBlurFilter)
+gegl_enum_start (gegl_gaussian_blur_filter)
+  gegl_enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "Auto")
+  gegl_enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "FIR")
+  gegl_enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
+gegl_enum_end (GeglGaussianBlurFilter)
 
-gegl_chant_double_ui (std_dev_x, _("Size X"),
-                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
-                      _("Standard deviation for the horizontal axis "
-                        "(multiply by ~2 to get radius)"))
+gegl_property_double (std_dev_x, "nick", _("Size X"),
+    "blurb", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),
+    "default", 1.5, "min", 0.0, "max", 1500.0,
+    "ui-min", 0.0, "ui-max", 100.0, "ui-gamma", 3.0,
+    "axis", "x",
+    "unit", "pixel-coordinate",
+    NULL)
 
-gegl_chant_double_ui (std_dev_y, _("Size Y"),
-                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
-                      _("Standard deviation for the vertical axi. "
-                        "(multiply by ~2 to get radius)"))
+gegl_property_double (std_dev_y, "nick", _("Size Y"),
+    "blurb", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),
+    "default", 1.5, "min", 0.0, "max", 1500.0,
+    "ui-min", 0.0, "ui-max", 100.0, "ui-gamma", 3.0,
+    "axis", "y",
+    "unit", "pixel-coordinate",
+    NULL)
 
-gegl_chant_enum      (filter, _("Filter"),
-                      GeglGaussianBlurFilter, gegl_gaussian_blur_filter,
-                      GEGL_GAUSSIAN_BLUR_FILTER_AUTO,
-                      _("Optional parameter to override the automatic "
-                        "selection of blur filter"))
+gegl_property_enum  (filter, GeglGaussianBlurFilter, gegl_gaussian_blur_filter,
+    "nick", _("Filter"),
+    "default", GEGL_GAUSSIAN_BLUR_FILTER_AUTO,
+    "blurb", _("Optional parameter to override the automatic selection of blur filter"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "gaussian-blur.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "gaussian-blur.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -389,7 +395,7 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o    = GEGL_PROPERTIES (operation);
 
   gfloat fir_radius_x = fir_calc_convolve_matrix_length (o->std_dev_x) / 2;
   gfloat fir_radius_y = fir_calc_convolve_matrix_length (o->std_dev_y) / 2;
@@ -525,7 +531,7 @@ cl_process (GeglOperation       *operation,
   gint j;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
 
   gdouble *cmatrix_x, *cmatrix_y;
   gint cmatrix_len_x, cmatrix_len_y;
@@ -611,7 +617,7 @@ process (GeglOperation       *operation,
   GeglRectangle rect;
   GeglBuffer *temp;
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
 
   GeglRectangle temp_extend;
   gdouble       B, b[4];
@@ -680,7 +686,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
