@@ -44,7 +44,7 @@ gegl_property_double (
     "min",     0.0,
     "max",     7.0,
     "default", 1.0,
-    "blurb", _("High values; gives more variation in details"),
+    "blurb", _("High values give more variation in details"),
     NULL)
 
 gegl_property_int (
@@ -53,6 +53,7 @@ gegl_property_int (
     "ui-min", -4096,
     "ui-max",  4096,
     "blurb", _("X start of the generated buffer"),
+    "role",  "source-x",
     NULL)
 
 gegl_property_int (
@@ -61,6 +62,7 @@ gegl_property_int (
     "ui-min", -4096,
     "ui-max",  4096,
     "blurb", _("Y start of the generated buffer"),
+    "role",  "source-y",
     NULL)
 
 gegl_property_int (
@@ -71,6 +73,7 @@ gegl_property_int (
     "ui-min",     0,
     "ui-max",  4096,
     "blurb", _("Width of the generated buffer"),
+    "role",  "source-width",
     NULL)
 
 gegl_property_int (
@@ -81,6 +84,7 @@ gegl_property_int (
     "ui-min",    0,
     "ui-max", 4096,
     "blurb", _("Height of the generated buffer"),
+    "role",  "source-height",
     NULL)
 
 #else
