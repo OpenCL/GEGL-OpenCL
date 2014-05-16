@@ -25,14 +25,14 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (tileWidth, "nick", _("Tile Width"),
+gegl_property_int (tile_width, "nick", _("Tile Width"),
    "default", 25, "min", 10, "max", 500,
    "ui-max",  50,
    "unit",   "pixel-distance",
    "axis",   "x",
    NULL)
 
-gegl_property_int (tileHeight, "nick", _("Tile Height"),
+gegl_property_int (tile_height, "nick", _("Tile Height"),
    "default", 25, "min", 10, "max", 500,
    "ui-max",  50,
    "unit",    "pixel-distance",
@@ -63,8 +63,8 @@ prepare (GeglOperation *operation)
   else
     format = babl_format ("R'G'B' float");
 
-  area->left = area->right = o->tileWidth - 1;
-  area->top = area->bottom = o->tileHeight - 1;
+  area->left = area->right = o->tile_width - 1;
+  area->top = area->bottom = o->tile_height - 1;
 
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
@@ -212,7 +212,7 @@ process (GeglOperation       *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   const Babl *format = gegl_operation_get_format (operation, "input");
 
-  tile_glass (input, output, result, format, o->tileWidth, o->tileHeight);
+  tile_glass (input, output, result, format, o->tile_width, o->tile_height);
 
   return TRUE;
 }
