@@ -33,8 +33,9 @@ TESTS = \
   hdr-color.xml                   \
   image-compare.xml               \
   mantiuk06.xml                   \
-  noise-hurl.xml        	  \
-  noise-cell.xml        	  \
+  noise-cell.xml        	  			\
+  noise-hurl.xml        	  			\
+  noise-simplex.xml        	  		\
   pixelize.xml                    \
   posterize.xml                   \
   red-eye-removal.xml             \

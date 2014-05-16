@@ -69,6 +69,7 @@ operations/common/noise-hsv.c
 operations/common/noise-hurl.c
 operations/common/noise-pick.c
 operations/common/noise-reduction.c
+operations/common/noise-simplex.c
 operations/common/noise-rgb.c
 operations/common/noise-slur.c
 operations/common/noise-spread.c

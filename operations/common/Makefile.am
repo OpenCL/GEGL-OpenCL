@@ -75,6 +75,7 @@ op_LTLIBRARIES = \
 	noise-pick.la \
 	noise-reduction.la \
 	noise-rgb.la \
+	noise-simplex.la \
 	noise-slur.la \
 	noise-spread.la \
 	noise-cell.la \
