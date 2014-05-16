@@ -19,66 +19,78 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_vignette_shape)
-  enum_value (GEGL_VIGNETTE_SHAPE_CIRCLE,  "Circle")
-  enum_value (GEGL_VIGNETTE_SHAPE_SQUARE,  "Square")
-  enum_value (GEGL_VIGNETTE_SHAPE_DIAMOND, "Diamond")
-gegl_chant_register_enum_end (GeglVignetteShape)
+gegl_enum_start (gegl_vignette_shape)
+  gegl_enum_value (GEGL_VIGNETTE_SHAPE_CIRCLE,  "Circle")
+  gegl_enum_value (GEGL_VIGNETTE_SHAPE_SQUARE,  "Square")
+  gegl_enum_value (GEGL_VIGNETTE_SHAPE_DIAMOND, "Diamond")
+gegl_enum_end (GeglVignetteShape)
 
-gegl_chant_enum   (shape, _("Shape"),
-                   GeglVignetteShape, gegl_vignette_shape,
-                   GEGL_VIGNETTE_SHAPE_CIRCLE,
-                   _("Shape of the vignette"))
+gegl_property_enum (shape, GeglVignetteShape, gegl_vignette_shape,
+    "nick",    _("Shape"),
+    "blurb",   _("Shape of the vignette"),
+    "default", GEGL_VIGNETTE_SHAPE_CIRCLE,
+    NULL)
 
-gegl_chant_color  (color, _("Color"),
-                   "black",
-                   _("Defaults to 'black', you can use transparency here "
-                     "to erase portions of an image"))
+gegl_property_color (color, "nick", _("Color"),
+    "blurb", _("Defaults to 'black', you can use transparency here to erase portions of an image"),
+    "default", "black",
+    NULL)
 
-gegl_chant_double (radius, _("Radius"),
-                   0.0, 3.0, 1.5,
-                   _("How far out vignetting goes as portion of half "
-                     "image diagonal"))
+gegl_property_double (radius, "nick", _("Radius"),
+    "blurb",_("How far out vignetting goes as portion of half image diagonal"),
+    "default", 1.5, "min", 0.0, "max", 3.0,
+    "unit", "relative-distance",
+    NULL)
 
-gegl_chant_double (softness, _("Softness"),
-                   0.0, 1.0, 0.8,
-                   _("Softness"))
+gegl_property_double (softness, "nick", _("Softness"),
+    "default", 0.8, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (gamma, _("Gamma"),
-                   1.0, 20.0, 2.0,
-                   _("Falloff linearity"))
+gegl_property_double (gamma, "nick", _("Gamma"),
+    "blurb", _("Falloff linearity"),
+    "default", 2.0, "min", 1.0, "max", 20.0, 2.0,
+    NULL)
 
-gegl_chant_double (proportion, _("Proportion"),
-                   0.0, 1.0, 1.0,
-                   _("How close we are to image proportions"))
+gegl_property_double (proportion, "nick", _("Proportion"),
+    "blurb", _("How close we are to image proportions"),
+    "default", 1.0, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (squeeze, _("Squeeze"),
-                   -1.0, 1.0, 0.0,
-                   _("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, "
-                     "-1.0 = 1:inf 1.0 = inf:1, this is applied after "
-                     "proportion is taken into account, to directly use "
-                     "squeeze factor as proportions, set proportion to 0.0."))
+gegl_property_double (squeeze, "nick", _("Squeeze"),
+    "blurb",_("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, "
+              "-1.0 = 1:inf 1.0 = inf:1, this is applied after "
+              "proportion is taken into account, to directly use "
+              "squeeze factor as proportions, set proportion to 0.0."),
+    "default", 0.0, "min", -1.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (x, _("X"),
-                   -1.0, 2.0, 0.5,
-                   _("Horizontal center of vignetting"))
+gegl_property_double (x, "nick", _("X"),
+    "blurb", _("Horizontal center of vignetting"),
+    "default", 0.5, "min", -1.0, "max", 2.0,
+    "unit", "relative-distance",
+    "axis", "x",
+    NULL)
 
-gegl_chant_double (y, _("Y"),
-                   -1.0, 2.0, 0.5,
-                   _("Vertical center of vignetting"))
+gegl_property_double (y, "nick", _("Y"),
+    "blurb", _("Vertical center of vignetting"),
+    "default", 0.5, "min", -1.0, "max", 2.0, 
+    "unit", "relative-distance",
+    "axis", "y",
+    NULL)
 
-gegl_chant_double (rotation, _("Rotation"),
-                   0.0, 360.0, 0.0,
-                   _("Rotation angle"))
+gegl_property_double (rotation, "nick", _("Rotation"),
+    "min", 0.0, "max", 360.0,
+    "unit", "degree", /* XXX: perhaps change to radians? */
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "vignette.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "vignette.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include <math.h>
 
@@ -136,7 +148,7 @@ cl_process (GeglOperation       *operation,
             const GeglRectangle *roi,
             gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gfloat      scale;
   gfloat      radius0, radius1;
   gint        roi_x, roi_y,x;
@@ -249,7 +261,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gfloat     *in_pixel =  in_buf;
   gfloat     *out_pixel = out_buf;
   gfloat      scale;
@@ -362,7 +374,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
