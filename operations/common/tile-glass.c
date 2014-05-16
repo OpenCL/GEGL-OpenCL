@@ -234,7 +234,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",  "artistic",
     "license",     "GPL3+",
     "name",        "gegl:tile-glass",
-    "description", _("Creates the effect of watching on the picture through thick glass "),
+    "description", _("Simulate distortion caused by rectangular glass tiles"),
     NULL);
 }
 
