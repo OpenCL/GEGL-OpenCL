@@ -19,19 +19,21 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
+#ifdef GEGL_PROPERTIES
 
-#ifdef GEGL_CHANT_PROPERTIES
-
-gegl_chant_int_ui (levels, _("Levels"), 1, 64, 8, 1, 64, 2,
-                   _("number of levels per component"))
+gegl_property_int (levels, "nick", _("Levels"),
+    "blurb", _("number of levels per component"),
+    "default", 8, "min",    1,  "max",      64,
+    "ui-min",  1, "ui-max", 64, "ui-gamma", 2,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "posterize.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE       "posterize.c"
 #define GEGLV4
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #ifndef RINT
 #define RINT(a) ((gint)(a+0.5))
@@ -45,7 +47,7 @@ static gboolean process (GeglOperation       *operation,
                          const GeglRectangle *roi,
                          gint                 level)
 {
-  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
   gfloat     *src    = in_buf;
   gfloat     *dest   = out_buf;
   gfloat      levels = o->levels;
@@ -77,7 +79,7 @@ cl_process (GeglOperation       *operation,
             const GeglRectangle *roi,
             gint                level)
 {
-  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
   cl_float    levels = o->levels;
 
   if (!cl_data)
@@ -114,7 +116,7 @@ error:
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
