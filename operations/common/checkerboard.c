@@ -31,6 +31,8 @@ gegl_property_int (x,
     "ui-max",   256,
     "ui-gamma", 1.5,
     "blurb", _("Horizontal width of cells pixels"),
+    "unit", "pixel-distance",
+    "axis", "x",
     NULL)
 
 gegl_property_int (
@@ -43,6 +45,8 @@ gegl_property_int (
     "ui-max", 256,
     "ui-gamma", 1.5,
     "blurb", _("Vertical width of cells pixels"),
+    "unit", "pixel-distance",
+    "axis", "y",
     NULL)
 
 gegl_property_int (
@@ -51,6 +55,8 @@ gegl_property_int (
     "ui-min", -10,
     "ui-max", 10,
     "blurb", _("Horizontal offset (from origin) for start of grid"),
+    "unit", "pixel-coordinate",
+    "axis", "x",
     NULL)
 
 gegl_property_int (
@@ -59,6 +65,8 @@ gegl_property_int (
     "ui-min", -10,
     "ui-max",  10,
     "blurb", _("Vertical offset (from origin) for start of grid"),
+    "unit", "pixel-coordinate",
+    "axis", "y",
     NULL)
 
 gegl_property_color (
@@ -66,6 +74,7 @@ gegl_property_color (
     "nick", _("Color"),
     "default", "black",
     "blurb", _("One of the cell colors (defaults to 'black')"),
+    "role", "foreground",
     NULL)
 
 gegl_property_color (
@@ -73,6 +82,7 @@ gegl_property_color (
     "nick",  _("Color"),
     "default", "white",
     "blurb", _("One of the cell colors (defaults to 'white')"),
+    "role", "background",
     NULL)
 
 gegl_property_format (
