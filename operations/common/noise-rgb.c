@@ -25,55 +25,24 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_boolean (
-    correlated,
-    "nick",    _("Correlated noise"),
-    "default", FALSE,
-    "blurb",   "",
-    NULL)
+gegl_property_boolean (correlated, "nick", _("Correlated noise"), NULL)
 
-gegl_property_boolean (
-    independent,
-    "nick",   _("Independent RGB"),
-    "default", TRUE,
-    NULL)
+gegl_property_boolean (independent, "nick", _("Independent RGB"),
+                       "default", TRUE, NULL)
 
-gegl_property_double  (
-    red,
-    "nick", _("Red"),
-    "min",     0.0,
-    "max",     1.0,
-    "default", 0.20,
-    NULL)
+gegl_property_double (red, "nick", _("Red"),
+    "default", 0.20, "min", 0.0, "max", 1.0, NULL)
 
-gegl_property_double  (
-    green,
-    "nick", _("Green"),
-    "min",     0.0,
-    "max",     1.0,
-    "default", 0.20,
-    NULL)
+gegl_property_double (green, "nick", _("Green"),
+    "default", 0.20, "min", 0.0, "max", 1.0, NULL)
 
-gegl_property_double (
-    blue,
-    "nick",  _("Blue"),
-    "min",     0.0,
-    "max",     1.0,
-    "default", 0.20,
-    NULL)
+gegl_property_double (blue, "nick",  _("Blue"),
+    "default", 0.20, "min", 0.0, "max", 1.0, NULL)
 
-gegl_property_double (
-    alpha,
-    "nick",  _("Alpha"),
-    "min",     0.0,
-    "max",     1.0,
-    "default", 0.00,
-    NULL)
+gegl_property_double (alpha, "nick",  _("Alpha"),
+    "default", 0.00, "min", 0.0, "max", 1.0, NULL)
 
-gegl_property_seed (
-    seed, rand,
-    "nick",  _("Random seed"),
-    NULL)
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
 
 #else
 
