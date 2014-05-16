@@ -20,17 +20,19 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (value, _("Opacity"), -10.0, 10.0, 1.0,
-         _("Global opacity value that is always used on top of the optional auxiliary input buffer."))
+gegl_property_double (value, "nick", _("Opacity"),
+    "blurb", _("Global opacity value that is always used on top of the optional auxiliary input buffer."),
+    "default", 1.0, "min", -10.0, "max", 10.0,
+    "ui-min", 0.0, "ui-max", 1.0, NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE       "opacity.c"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE       "opacity.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include <stdio.h>
 
@@ -38,7 +40,7 @@ static void
 prepare (GeglOperation *self)
 {
   const Babl *fmt = gegl_operation_get_source_format (self, "input");
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
+  GeglProperties *o = GEGL_PROPERTIES (self);
 
   if (fmt)
     {
@@ -47,13 +49,13 @@ prepare (GeglOperation *self)
       if (model == babl_model ("R'aG'aB'aA") ||
           model == babl_model ("Y'aA"))
         {
-          o->chant_data = NULL;
+          o->user_data = NULL;
           fmt = babl_format ("R'aG'aB'aA float");
         }
       else if (model == babl_model ("RaGaBaA") ||
                model == babl_model ("YaA"))
         {
-          o->chant_data = NULL;
+          o->user_data = NULL;
           fmt = babl_format ("RaGaBaA float");
         }
       else if (model == babl_model ("R'G'B'A") ||
@@ -61,18 +63,18 @@ prepare (GeglOperation *self)
                model == babl_model ("Y'")      ||
                model == babl_model ("Y'A"))
         {
-          o->chant_data = (void*)0xabc;
+          o->user_data = (void*)0xabc;
           fmt = babl_format ("R'G'B'A float");
         }
       else
         {
-          o->chant_data = (void*)0xabc;
+          o->user_data = (void*)0xabc;
           fmt = babl_format ("RGBA float");
         }
     }
   else
     {
-      o->chant_data = (void*)0xabc;
+      o->user_data = (void*)0xabc;
       fmt = babl_format ("RGBA float");
     }
 
@@ -95,7 +97,7 @@ process_RaGaBaAfloat (GeglOperation       *op,
   gfloat *in = in_buf;
   gfloat *out = out_buf;
   gfloat *aux = aux_buf;
-  gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
+  gfloat value = GEGL_PROPERTIES (op)->value;
 
   if (aux == NULL)
     {
@@ -144,7 +146,7 @@ process_RGBAfloat (GeglOperation       *op,
   gfloat *in = in_buf;
   gfloat *out = out_buf;
   gfloat *aux = aux_buf;
-  gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
+  gfloat value = GEGL_PROPERTIES (op)->value;
 
   if (aux == NULL)
     {
@@ -193,7 +195,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  if (GEGL_CHANT_PROPERTIES (op)->chant_data != NULL)
+  if (GEGL_PROPERTIES (op)->user_data != NULL)
     process_RGBAfloat (op, in_buf, aux_buf, out_buf, samples, roi, level);
   else
     process_RaGaBaAfloat (op, in_buf, aux_buf, out_buf, samples, roi, level);
@@ -227,9 +229,9 @@ cl_process (GeglOperation       *op,
     }
   if (!cl_data) return TRUE;
 
-  value = GEGL_CHANT_PROPERTIES (op)->value;
+  value = GEGL_PROPERTIES (op)->value;
 
-  kernel = (GEGL_CHANT_PROPERTIES (op)->chant_data == NULL)? 0 : 1;
+  kernel = (GEGL_PROPERTIES (op)->user_data == NULL)? 0 : 1;
 
   cl_err = gegl_clSetKernelArg(cl_data->kernel[kernel], 0, sizeof(cl_mem),   (void*)&in_tex);
   CL_CHECK;
@@ -262,13 +264,13 @@ static gboolean operation_process (GeglOperation        *operation,
 {
   GeglOperationClass  *operation_class;
   gpointer in, aux;
-  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
 
   /* get the raw values this does not increase the reference count */
   in = gegl_operation_context_get_object (context, "input");
   aux = gegl_operation_context_get_object (context, "aux");
 
-  if (in && !aux && GEGL_CHANT_PROPERTIES (operation)->value == 1.0)
+  if (in && !aux && GEGL_PROPERTIES (operation)->value == 1.0)
     {
       gegl_operation_context_take_object (context, "output",
                                           g_object_ref (G_OBJECT (in)));
@@ -283,7 +285,7 @@ static gboolean operation_process (GeglOperation        *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass              *operation_class;
   GeglOperationPointComposerClass *point_composer_class;
