@@ -751,8 +751,8 @@ gegl_param_spec_double_from_vararg (const char *name, ...)
 {
   const gchar *nick  = name,
               *blurb = "";
-  gdouble min_value     = DBL_MIN,
-          max_value     = DBL_MAX,
+  gdouble min_value     = -G_MAXDOUBLE,
+          max_value     = G_MAXDOUBLE,
           default_value = 0.0,
           ui_min = -100,
           ui_max = 100,
