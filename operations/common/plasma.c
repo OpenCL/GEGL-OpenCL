@@ -53,7 +53,9 @@ gegl_property_int (
     "ui-min", -4096,
     "ui-max",  4096,
     "blurb", _("X start of the generated buffer"),
-    "role",  "source-x",
+    "unit",  "pixel-coordinate",
+    "axis",  "x",
+    "role",  "output-extent",
     NULL)
 
 gegl_property_int (
@@ -62,7 +64,9 @@ gegl_property_int (
     "ui-min", -4096,
     "ui-max",  4096,
     "blurb", _("Y start of the generated buffer"),
-    "role",  "source-y",
+    "unit",  "pixel-coordinate",
+    "axis",  "y",
+    "role",  "output-extent",
     NULL)
 
 gegl_property_int (
@@ -73,7 +77,9 @@ gegl_property_int (
     "ui-min",     0,
     "ui-max",  4096,
     "blurb", _("Width of the generated buffer"),
-    "role",  "source-width",
+    "unit",  "pixel-distance",
+    "axis",  "x",
+    "role",  "output-extent",
     NULL)
 
 gegl_property_int (
@@ -84,7 +90,9 @@ gegl_property_int (
     "ui-min",    0,
     "ui-max", 4096,
     "blurb", _("Height of the generated buffer"),
-    "role",  "source-height",
+    "unit",  "pixel-distance",
+    "axis",  "y",
+    "role",  "output-extent",
     NULL)
 
 #else
