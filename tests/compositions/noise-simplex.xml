@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:crop'>
+      <params>
+        <param name='x'>-128</param>
+        <param name='y'>-128</param>
+        <param name='width'>256</param>
+        <param name='height'>256</param>
+      </params>
+  </node>
+  <node operation='gegl:multiply'>
+      <params>
+        <param name='value'>0.5</param>
+      </params>
+  </node>
+  <node operation='gegl:add'>
+      <params>
+        <param name='value'>1</param>
+      </params>
+  </node>
+  <node operation='gegl:simplex-noise'>
+      <params>
+        <param name='seed'>0</param>
+        <param name='scale'>2.4</param>
+        <param name='iterations'>3</param>
+      </params>
+  </node>
+</gegl>
+
