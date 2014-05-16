@@ -21,46 +21,58 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_pixelize_norm)
-  enum_value (GEGL_PIXELIZE_NORM_MANHATTAN, "Diamond")
-  enum_value (GEGL_PIXELIZE_NORM_EUCLIDEAN, "Round")
-  enum_value (GEGL_PIXELIZE_NORM_INFINITY,  "Square")
-gegl_chant_register_enum_end (GeglPixelizeNorm)
+gegl_enum_start (gegl_pixelize_norm)
+  gegl_enum_value (GEGL_PIXELIZE_NORM_MANHATTAN, "Diamond")
+  gegl_enum_value (GEGL_PIXELIZE_NORM_EUCLIDEAN, "Round")
+  gegl_enum_value (GEGL_PIXELIZE_NORM_INFINITY,  "Square")
+gegl_enum_end (GeglPixelizeNorm)
 
-gegl_chant_enum    (norm, _("Shape"),
-                    GeglPixelizeNorm,
-                    gegl_pixelize_norm,
-                    GEGL_PIXELIZE_NORM_INFINITY,
-                    _("The shape of pixels"))
+gegl_property_enum (norm, GeglPixelizeNorm, gegl_pixelize_norm,
+    "nick",    _("Shape"),
+    "blurb",   _("The shape of pixels"),
+    "default", GEGL_PIXELIZE_NORM_INFINITY,
+    NULL)
 
-gegl_chant_int_ui (size_x, _("Block Width"),
-                   1, 123456, 16, 1, 2048, 1.5,
-                   _("Width of blocks in pixels"))
+gegl_property_int (size_x, "nick", _("Block width"),
+    "blurb", _("Width of blocks in pixels"),
+    "min", 1, "default", 16,
+    "ui-min", 1, "ui-max", 2048, "ui-gamma", 1.5,
+    "unit", "pixel-distance",
+    "axis", "x",
+    NULL)
 
-gegl_chant_int_ui (size_y, _("Block Height"),
-                   1, 123456, 16, 1, 2048, 1.5,
-                   _("Height of blocks in pixels"))
+gegl_property_int (size_y, "nick", _("Block height"),
+    "blurb", _("Width of blocks in pixels"),
+    "min", 1, "default", 16,
+    "ui-min", 1, "ui-max", 2048, "ui-gamma", 1.5,
+    "unit", "pixel-distance",
+    "axis", "y",
+    NULL)
 
-gegl_chant_double (ratio_x, _("X size ratio"),
-                   0.0, 1.0, 1.0,
-                   _("Horizontal size ratio of a pixel inside each block"))
+gegl_property_double (ratio_x, "nick", _("X size ratio"),
+    "blurb", _("Horizontal size ratio of a pixel inside each block"),
+    "default", 1.0, "min", 0.0, "max", 1.0, 
+    NULL)
 
-gegl_chant_double (ratio_y, _("Y size ratio"),
-                   0.0, 1.0, 1.0,
-                   _("Vertical size ratio of a pixel inside each block"))
+gegl_property_double (ratio_y, "nick", _("Y size ratio"),
+    "blurb", _("Vertical size ratio of a pixel inside each block"),
+    "default", 1.0, "min", 0.0, "max", 1.0, 
+    NULL)
 
-gegl_chant_color  (background, _("Background color"),
-                   "white",
-                   _("Color used to fill the background"))
+gegl_property_color  (background, "nick", _("Background color"),
+    "blurb", _("Color used to fill the background"),
+    "default", "white",
+    "role", "color-secondary",
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "pixelize.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "pixelize.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #define CHUNK_SIZE           (1024)
 #define ALLOC_THRESHOLD_SIZE (64)
@@ -69,11 +81,11 @@ gegl_chant_color  (background, _("Background color"),
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
+  GeglProperties              *o;
   GeglOperationAreaFilter *op_area;
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  o       = GEGL_PROPERTIES (operation);
 
   op_area->left   =
   op_area->right  = o->size_x;
@@ -279,7 +291,7 @@ pixelize_noalloc (GeglBuffer          *input,
                   GeglBuffer          *output,
                   const GeglRectangle *roi,
                   const GeglRectangle *whole_region,
-                  GeglChantO          *o)
+                  GeglProperties          *o)
 {
   gint start_x = block_index (roi->x, o->size_x) * o->size_x;
   gint start_y = block_index (roi->y, o->size_y) * o->size_y;
@@ -325,7 +337,7 @@ pixelize (gfloat              *input,
           const GeglRectangle *roi,
           const GeglRectangle *extended_roi,
           const GeglRectangle *whole_region,
-          GeglChantO          *o)
+          GeglProperties          *o)
 {
   gint          start_x = block_index (roi->x, o->size_x) * o->size_x;
   gint          start_y = block_index (roi->y, o->size_y) * o->size_y;
@@ -479,7 +491,7 @@ cl_process (GeglOperation       *operation,
   gint   norm;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle *image_extent;
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new   (output,
@@ -549,7 +561,7 @@ process (GeglOperation       *operation,
 {
   GeglRectangle            src_rect;
   GeglRectangle           *whole_region;
-  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area;
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
@@ -626,7 +638,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
