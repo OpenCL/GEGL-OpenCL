@@ -25,78 +25,107 @@
 
 #define MAXNCOLORS 8192
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_fractal_explorer_type)
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT,   "Mandelbrot")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_JULIA,        "Julia")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_1,   "Barnsley 1")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_2,   "Barnsley 2")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_3,   "Barnsley 3")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SPIDER,       "Spider")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MAN_O_WAR,    "Man O War")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_LAMBDA,       "Lambda")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SIERPINSKI,   "Sierpinski")
-gegl_chant_register_enum_end (GeglFractalExplorerType)
+gegl_enum_start (gegl_fractal_explorer_type)
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT, "Mandelbrot")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_JULIA,      "Julia")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_1, "Barnsley 1")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_2, "Barnsley 2")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_3, "Barnsley 3")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SPIDER,     "Spider")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MAN_O_WAR,  "Man O War")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_LAMBDA,     "Lambda")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SIERPINSKI, "Sierpinski")
+gegl_enum_end (GeglFractalExplorerType)
 
-gegl_chant_enum (fractaltype, _("Fractal type"), GeglFractalExplorerType,
-                 gegl_fractal_explorer_type, GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT,
-                 _("Type of a fractal"))
+gegl_property_enum (fractaltype,
+    GeglFractalExplorerType, gegl_fractal_explorer_type,
+    "nick"   , _("Fractal type"),
+    "blurb"  , _("Type of a fractal"),
+    "default", GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT,
+    NULL)
+gegl_property_int (iter, "nick",  _("Iterations"),
+    "blurb"  , _("Iterations"),
+    "default", 50, "min", 1, "max", 1000,
+    NULL)
+gegl_property_double (zoom, "nick", _("Zoom"),
+    "blurb"  ,  _("Zoom in the fractal space"),
+    "default",  300.0 , "min"   , 0.0000001, "max"     , 10000000.0,
+    "ui-min" ,  0.0001, "ui-max", 10000.0  , "ui-gamma", 1.5,
+   NULL)
+gegl_property_double (shiftx, "nick", _("Shift X"),
+    "blurb" , _("X shift in the fractal space"),
+    "ui-min", -1000.0, "ui-max",  1000.0, "ui-gamma", 1.5,
+    NULL)
+gegl_property_double (shifty, "nick", _("Shift Y"),
+    "blurb" , _("Y shift in the fractal space"),
+    "ui-min", -1000.0, "ui-max",  1000.0, "ui-gamma", 1.5,
+    NULL)
+gegl_property_double (cx, "nick", _("CX"),
+    "blurb"  , _("CX (No effect in Mandelbrot and Sierpinski)"),
+    "default", -0.75, "min", -2.5, "max", 2.5,
+    NULL)
+gegl_property_double (cy, "nick", _("CY"),
+    "blurb"  , _("CY (No effect in Mandelbrot and Sierpinski)"),
+    "default", 0.2, "min", -2.5, "max", 2.5,
+    NULL)
+gegl_property_double (redstretch, "nick", _("Red stretch"),
+                      "blurb", _("Red stretching factor"), 
+                      "default", 1.0, "min", 0.0, "max", 1.0,
+                      NULL)
+gegl_property_double (greenstretch, "nick", _("Green stretch"),
+                      "blurb", _("Green stretching factor"),
+                      "default", 1.0, "min", 0.0, "max", 1.0,
+                      NULL)
+gegl_property_double (bluestretch, "nick", _("Blue stretch"),
+                      "blurb", _("Green stretching factor"), 
+                      "default", 1.0, "min", 0.0, "max", 1.0,
+                      NULL)
 
-gegl_chant_int (iter, _("Iterations"), 1, 1000, 50, _("Iterations"))
+gegl_enum_start (gegl_fractal_explorer_mode)
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_MODE_SIN , "Sine")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_MODE_COS , "Cosinus")
+  gegl_enum_value (GEGL_FRACTAL_EXPLORER_MODE_NONE, "None")
+gegl_enum_end (GeglFractalExplorerMode)
 
-gegl_chant_double_ui (zoom, _("Zoom"), 0.0000001, 10000000.0, 300, 0.0001, 10000.0, 1.5,
-   _("Zoom in the fractal space"))
-gegl_chant_double_ui (shiftx, _("Shift X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0, -1000.0, 1000.0, 1.5,
-   _("X shift in the fractal space"))
-gegl_chant_double_ui (shifty, _("Shift Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0, -1000.0, 1000.0, 1.5,
-   _("Y shift in the fractal space"))
+gegl_property_enum (redmode,
+    GeglFractalExplorerMode, gegl_fractal_explorer_mode,
+    "nick"   , _("Red mode"),
+    "blurb"  , _("Red application mode"),
+    "default", GEGL_FRACTAL_EXPLORER_MODE_COS,
+    NULL)
 
-gegl_chant_double (cx, _("CX"), -2.5, 2.5, -0.75, _("CX (No effect in Mandelbrot and Sierpinski)"))
-gegl_chant_double (cy, _("CY"), -2.5, 2.5,  0.2,  _("CY (No effect in Mandelbrot and Sierpinski)"))
+gegl_property_enum (greenmode,
+    GeglFractalExplorerMode, gegl_fractal_explorer_mode,
+    "default", GEGL_FRACTAL_EXPLORER_MODE_COS,
+    "nick"   , _("Green mode"),
+    "blurb"  , _("Green application mode"), NULL)
 
-gegl_chant_double (redstretch,   _("Red stretch"),   0.0, 1.0, 1.0,
-                   _("Red stretching factor"))
-gegl_chant_double (greenstretch, _("Green stretch"), 0.0, 1.0, 1.0,
-                   _("Green stretching factor"))
-gegl_chant_double (bluestretch,  _("Blue stretch"),  0.0, 1.0, 1.0,
-                   _("Blue stretching factor"))
+gegl_property_enum (bluemode,
+    GeglFractalExplorerMode, gegl_fractal_explorer_mode,
+    "default", GEGL_FRACTAL_EXPLORER_MODE_SIN,
+    "nick"   , _("Blue mode"),
+    "blurb"  , _("Blue application mode"),
+    NULL)
 
-gegl_chant_register_enum (gegl_fractal_explorer_mode)
-  enum_value (GEGL_FRACTAL_EXPLORER_MODE_SIN,       "Sine")
-  enum_value (GEGL_FRACTAL_EXPLORER_MODE_COS,       "Cosinus")
-  enum_value (GEGL_FRACTAL_EXPLORER_MODE_NONE,      "None")
-gegl_chant_register_enum_end (GeglFractalExplorerMode)
+gegl_property_boolean (redinvert  , "nick", _("Red inversion")  , NULL)
+gegl_property_boolean (greeninvert, "nick", _("Green inversion"), NULL)
+gegl_property_boolean (blueinvert , "nick", _("Blue inversion") , NULL)
 
-gegl_chant_enum (redmode,   _("Red mode"),   GeglFractalExplorerMode,
-                 gegl_fractal_explorer_mode, GEGL_FRACTAL_EXPLORER_MODE_COS,
-                _("Red application mode"))
-gegl_chant_enum (greenmode,   _("Green mode"),   GeglFractalExplorerMode,
-                 gegl_fractal_explorer_mode, GEGL_FRACTAL_EXPLORER_MODE_COS,
-                _("Green application mode"))
-gegl_chant_enum (bluemode,   _("Blue mode"),   GeglFractalExplorerMode,
-                 gegl_fractal_explorer_mode, GEGL_FRACTAL_EXPLORER_MODE_SIN,
-                _("Blue application mode"))
+gegl_property_int (ncolors, "nick", _("Colors"),
+    "blurb", _("Number of colors"),
+    "default", 256, "min", 2, "max", MAXNCOLORS,
+    NULL)
 
-gegl_chant_boolean (redinvert,   _("Red inversion"),   FALSE,
-                    _("Red inversion"))
-gegl_chant_boolean (greeninvert, _("Green inversion"), FALSE,
-                    _("Green inversion"))
-gegl_chant_boolean (blueinvert,  _("Blue inversion"),  FALSE,
-                    _("Blue inversion"))
-
-gegl_chant_int (ncolors, _("Colors"), 2, MAXNCOLORS, 256,
-                _("Number of colors"))
-
-gegl_chant_boolean (useloglog, _("Loglog smoothing"), FALSE,
-                    _("Use loglog smoothing"))
+gegl_property_boolean (useloglog,  "nick", _("Loglog smoothing"), NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE       "fractal-explorer.c"
+#define GEGL_OP_POINT_RENDER
+#define GEGL_OP_C_FILE       "fractal-explorer.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -108,7 +137,7 @@ typedef struct
 typedef gfloatRGB  clrmap[MAXNCOLORS];
 
 static void
-make_color_map (GeglChantO *o, clrmap colormap)
+make_color_map (GeglProperties *o, clrmap colormap)
 {
   gint     i;
   gfloat   r;
@@ -199,7 +228,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gfloat     *out_pixel = out_buf;
   gint        pixelx = roi->x; /* initial x                   */
   gint        pixely = roi->y; /*           and y coordinates */
@@ -388,7 +417,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointRenderClass *point_render_class;
