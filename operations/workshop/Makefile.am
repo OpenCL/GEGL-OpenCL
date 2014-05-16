@@ -28,4 +28,5 @@ op_LTLIBRARIES =    \
 	mandelbrot.la \
 	rawbayer-load.la \
 	snn-percentile.la \
-	unpremul.la
+	unpremul.la \
+	gradient-map.la
