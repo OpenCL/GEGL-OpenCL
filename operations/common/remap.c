@@ -20,16 +20,16 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
 /* no properties */
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_COMPOSER3
-#define GEGL_CHANT_C_FILE        "remap.c"
+#define GEGL_OP_POINT_COMPOSER3
+#define GEGL_OP_C_FILE        "remap.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void prepare (GeglOperation *operation)
 {
@@ -81,7 +81,7 @@ process (GeglOperation       *op,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass               *operation_class;
   GeglOperationPointComposer3Class *point_composer3_class;
