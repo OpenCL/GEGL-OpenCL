@@ -27,43 +27,35 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_string(
-    composite_op,
-    "nick",  _("Operation"),
-    "default", "gegl:over",
+gegl_property_string(composite_op, "nick", _("Operation"),
     "blurb", _("Composite operation to use"),
+    "default", "gegl:over",
     NULL)
 
-gegl_property_double(
-    opacity,
-    "nick", _("Opacity"),
-    "min",     0.0,
-    "max",     1.0,
-    "default", 1.0,
+gegl_property_double(opacity, "nick", _("Opacity"),
+    "default", 1.0, "min", 0.0, "max", 1.0,
     NULL)
 
-gegl_property_double(
-    x,
-    "nick",  _("X"),
+gegl_property_double(x, "nick", _("X"),
     "blurb", _("Horizontal position in pixels"),
+    "axis", "x",
+    "unit", "pixel-coordinate",
     NULL)
 
-gegl_property_double(
-    y,
-    "nick",  _("Y"),
+gegl_property_double(y, "nick", _("Y"),
     "blurb", _("Vertical position in pixels"),
+    "axis", "y",
+    "unit", "pixel-coordinate",
     NULL)
-gegl_property_double(
-    scale,
-    "nick",  _("Scale"),
+
+gegl_property_double(scale, "nick", _("Scale"),
+    "blurb",   _("Scale 1:1 size"),
     "default", 1.0,
-    "blurb", _("Scale 1:1 size"),
     NULL)
-gegl_property_file_path(
-    src,
-    "nick",  _("Source"),
+
+gegl_property_file_path(src, "nick", _("Source"),
+    "blurb",   _("Source image file path (png, jpg, raw, svg, bmp, tif, ...)"),
     "default", "",
-    "blurb", _("Source image file path (png, jpg, raw, svg, bmp, tif, ...)"),
     NULL)
 
 #else
