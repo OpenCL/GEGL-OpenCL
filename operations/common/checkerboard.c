@@ -22,72 +22,50 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (x,
-    "nick",  _("Width"),
-    "min",        1,
-    "max",    G_MAXINT,
-    "default",   16,
-    "ui-min",     1,
-    "ui-max",   256,
-    "ui-gamma", 1.5,
+gegl_property_int (x, "nick",  _("Width"),
     "blurb", _("Horizontal width of cells pixels"),
+    "default",  16,
+    "min",       1, 
+    "ui-min",    1, "ui-max", 256, "ui-gamma", 1.5,
     "unit", "pixel-distance",
     "axis", "x",
     NULL)
 
-gegl_property_int (
-    y,
-    "nick", _("Height"),
-    "min", 1,
-    "max", G_MAXINT,
-    "default", 16,
-    "ui-min", 1,
-    "ui-max", 256,
-    "ui-gamma", 1.5,
+gegl_property_int (y, "nick", _("Height"),
     "blurb", _("Vertical width of cells pixels"),
+    "default", 16, "min", 1,
+    "ui-min",  1,  "ui-max", 256, "ui-gamma", 1.5,
     "unit", "pixel-distance",
     "axis", "y",
     NULL)
 
-gegl_property_int (
-    x_offset,
-    "nick", _("X offset"),
-    "ui-min", -10,
-    "ui-max", 10,
+gegl_property_int (x_offset, "nick", _("X offset"),
     "blurb", _("Horizontal offset (from origin) for start of grid"),
+    "ui-min", -10, "ui-max", 10,
     "unit", "pixel-coordinate",
     "axis", "x",
     NULL)
 
-gegl_property_int (
-    y_offset,
-    "nick", _("Y offset"),
-    "ui-min", -10,
-    "ui-max",  10,
+gegl_property_int (y_offset, "nick", _("Y offset"),
     "blurb", _("Vertical offset (from origin) for start of grid"),
+    "ui-min", -10, "ui-max",  10,
     "unit", "pixel-coordinate",
     "axis", "y",
     NULL)
 
-gegl_property_color (
-    color1,
-    "nick", _("Color"),
-    "default", "black",
+gegl_property_color (color1, "nick", _("Color"),
     "blurb", _("One of the cell colors (defaults to 'black')"),
-    "role", "foreground",
+    "default", "black",
+    "role",    "color-primary",
     NULL)
 
-gegl_property_color (
-    color2,
-    "nick",  _("Color"),
-    "default", "white",
+gegl_property_color (color2, "nick",  _("Color"),
     "blurb", _("One of the cell colors (defaults to 'white')"),
-    "role", "background",
+    "default", "white",
+    "role",    "color-secondary",
     NULL)
 
-gegl_property_format (
-    format,
-    "nick",  _("Babl Format"),
+gegl_property_format (format, "nick",  _("Babl Format"),
     "blurb", _("The babl format of the output"),
     NULL)
 
