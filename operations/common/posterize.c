@@ -24,7 +24,7 @@
 gegl_property_int (levels, "nick", _("Levels"),
     "blurb", _("number of levels per component"),
     "default", 8, "min",    1,  "max",      64,
-    "ui-min",  1, "ui-max", 64, "ui-gamma", 2,
+    "ui-min",  1, "ui-max", 64, "ui-gamma", 2.0,
     NULL)
 
 #else
