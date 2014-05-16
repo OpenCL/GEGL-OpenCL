@@ -111,6 +111,7 @@ op_LTLIBRARIES = \
 	threshold.la \
 	tile-seamless.la \
 	tile.la \
+	tile-glass.la \
 	unsharp-mask.la \
 	value-invert.la \
 	vignette.la \

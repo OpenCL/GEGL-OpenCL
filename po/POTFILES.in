@@ -103,6 +103,7 @@ operations/common/svg-saturate.c
 operations/common/texturize-canvas.c
 operations/common/threshold.c
 operations/common/tile.c
+operations/common/tile-glass.c
 operations/common/tile-seamless.c
 operations/common/unsharp-mask.c
 operations/common/value-invert.c
