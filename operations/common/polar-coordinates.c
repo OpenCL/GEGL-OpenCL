@@ -31,43 +31,43 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (depth, "nick", _("Circle depth in percent"),
+gegl_property_double (depth, _("Circle depth in percent"),
     "min", 0.0, "max", 100.0, "default", 100.0,
     NULL)
 
-gegl_property_double  (angle, "nick", _("Offset angle"),
+gegl_property_double  (angle, _("Offset angle"),
     "min", 0.0, "max", 359.9, 
     NULL)
 
-gegl_property_boolean (bw, "nick", _("Map backwards"),
+gegl_property_boolean (bw, _("Map backwards"),
     "blurb", _("Start from the right instead of the left"),
     NULL)
 
-gegl_property_boolean (top, "nick", _("Map from top"),
+gegl_property_boolean (top, _("Map from top"),
   "blurb", _("Put the top row in the middle and the bottom row on the outside"),
   "default", TRUE,
   NULL)
 
-gegl_property_boolean (polar, "nick", _("To polar"),
+gegl_property_boolean (polar, _("To polar"),
     "blurb", _("Map the image to a circle"),
     "default", TRUE,
     NULL)
 
-gegl_property_int (pole_x, "nick", _("X"),
+gegl_property_int (pole_x, _("X"),
     "blurb", _("Origin point for the polar coordinates"),
     "min", 0, "max", G_MAXINT,
     "unit", "pixel-coordinate",
     "axis", "x",
     NULL)
 
-gegl_property_int (pole_y, "nick", _("Y"),
+gegl_property_int (pole_y, _("Y"),
     "blurb", _("Origin point for the polar coordinates"),
     "min", 0, "max", G_MAXINT,
     "unit", "pixel-coordinate",
     "axis", "y",
     NULL)
 
-gegl_property_boolean (middle, "nick", _("Choose middle"),
+gegl_property_boolean (middle, _("Choose middle"),
     "blurb", _("Let origin point to be the middle one"),
     "default", TRUE,
     NULL)

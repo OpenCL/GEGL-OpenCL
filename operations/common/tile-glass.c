@@ -25,14 +25,14 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (tile_width, "nick", _("Tile Width"),
+gegl_property_int (tile_width, _("Tile Width"),
    "default", 25, "min", 10, "max", 500,
    "ui-max",  50,
    "unit",   "pixel-distance",
    "axis",   "x",
    NULL)
 
-gegl_property_int (tile_height, "nick", _("Tile Height"),
+gegl_property_int (tile_height, _("Tile Height"),
    "default", 25, "min", 10, "max", 500,
    "ui-max",  50,
    "unit",    "pixel-distance",

@@ -33,12 +33,12 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (turbulence, "nick", _("Turbulence"),
+gegl_property_double (turbulence, _("Turbulence"),
     "blurb", _("High values give more variation in details"),
     "default", 1.0, "min", 0.0, "max", 7.0,
     NULL)
 
-gegl_property_int (x, "nick", _("X"),
+gegl_property_int (x, _("X"),
     "blurb", _("X start of the generated buffer"),
     "ui-min", -4096, "ui-max",  4096,
     "unit",  "pixel-coordinate",
@@ -46,7 +46,7 @@ gegl_property_int (x, "nick", _("X"),
     "role",  "output-extent",
     NULL)
 
-gegl_property_int (y, "nick", _("Y"),
+gegl_property_int (y, _("Y"),
     "blurb", _("Y start of the generated buffer"),
     "ui-min", -4096, "ui-max",  4096,
     "unit",  "pixel-coordinate",
@@ -54,7 +54,7 @@ gegl_property_int (y, "nick", _("Y"),
     "role",  "output-extent",
     NULL)
 
-gegl_property_int (width, "nick", _("Width"),
+gegl_property_int (width, _("Width"),
     "blurb", _("Width of the generated buffer"),
     "default", 1024, "min", 0,
     "ui-min",  0, "ui-max",  4096,
@@ -63,7 +63,7 @@ gegl_property_int (width, "nick", _("Width"),
     "role",  "output-extent",
     NULL)
 
-gegl_property_int (height, "nick", _("Height"),
+gegl_property_int (height, _("Height"),
     "blurb", _("Height of the generated buffer"),
     "default", 768, "min",       0,
     "ui-min",    0, "ui-max", 4096,
@@ -72,9 +72,7 @@ gegl_property_int (height, "nick", _("Height"),
     "role",  "output-extent",
     NULL)
 
-gegl_property_seed (seed, rand,
-    "nick",  _("Random seed"),
-    NULL)
+gegl_property_seed (seed, _("Random seed"), rand, NULL)
 
 #else
 

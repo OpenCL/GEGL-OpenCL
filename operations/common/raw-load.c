@@ -23,7 +23,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_file_path (path, "nick", _("File"),
+gegl_property_file_path (path, _("File"),
     "blurb", _("Path of file to load."),
     "default", "/tmp/test.raw",
     NULL)

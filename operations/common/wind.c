@@ -23,17 +23,17 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (threshold, "nick", _("Threshold"),
+gegl_property_double (threshold, _("Threshold"),
     "blurb", _("Higher values restrict the effect to fewer areas of the image"),
     "default", 10.0, "min", 0.0, "max", 100.0,
     NULL)
 
-gegl_property_int (strength, "nick", _("Strength"),
+gegl_property_int (strength, _("Strength"),
     "blurb", _("Higher values increase the magnitude of the effect"),
     "default", 40, "min", 1, "max", 1000,
     NULL)
 
-gegl_property_seed (seed, rand, "nick", _("Seed"),
+gegl_property_seed (seed, _("Seed"), rand,
     "blurb", _("Random seed"),
     NULL)
 

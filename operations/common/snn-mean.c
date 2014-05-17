@@ -23,14 +23,14 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (radius, "nick", _("Radius"),
+gegl_property_int (radius, _("Radius"),
     "blurb", _("Radius of square pixel region, (width and height will be radius*2+1)"),
     "default", 8, "min",     0, "max",      100,
     "ui-min",  0, "ui-max", 40, "ui-gamma", 1.5,
     "unit", "  pixel-distance",
     NULL)
 
-gegl_property_int (pairs, "nick", _("Pairs"),
+gegl_property_int (pairs, _("Pairs"),
   "blurb", _("Number of pairs; higher number preserves more acute features"),
   "default", 2, "min", 1, "max", 2,
   NULL)

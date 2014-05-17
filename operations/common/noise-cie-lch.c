@@ -22,22 +22,22 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (holdness, "nick", _("Holdness"),
+gegl_property_int (holdness, _("Holdness"),
     "default", 2, "min", 1, "max", 8,
     NULL)
 
-gegl_property_double (lightness_distance, "nick", _("Lightness"),
+gegl_property_double (lightness_distance, _("Lightness"),
     "default", 40.0, "min", 0.0, "max", 100.0,
     NULL)
 
-gegl_property_double (chroma_distance, "nick", _("Chroma"),
+gegl_property_double (chroma_distance, _("Chroma"),
     "default", 40.0, "min", 0.0, "max", 100.0,
     NULL)
 
-gegl_property_double (hue_distance, "nick", _("Hue"),
+gegl_property_double (hue_distance, _("Hue"),
     "default", 3.0, "min", 0.0, "max", 180.0,
     NULL)
-gegl_property_seed   (seed, rand, "nick", _("Random seed"), NULL)
+gegl_property_seed   (seed, _("Random seed"), rand, NULL)
 
 #else
 

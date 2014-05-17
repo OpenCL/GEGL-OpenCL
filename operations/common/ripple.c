@@ -29,36 +29,36 @@ gegl_enum_start (gegl_ripple_wave_type)
   gegl_enum_value (GEGL_RIPPLE_WAVE_TYPE_SAWTOOTH, "Sawtooth")
 gegl_enum_end (GeglRippleWaveType)
 
-gegl_property_double (amplitude, "nick", _("Amplitude"),
+gegl_property_double (amplitude, _("Amplitude"),
     "default", 25.0, "min", 0.0, "max", 1000.0,
     "ui-min", 0.0, "ui-max", 1000.0, "ui-gamma", 2.0,
     NULL)
 
-gegl_property_double (period, "nick", _("Period"),
+gegl_property_double (period, _("Period"),
     "default", 200.0, "min", 0.0, "max", 1000.0,
     "ui-min", 0.0, "ui-max", 1000.0, "ui-gamma", 1.5,
     NULL)
 
-gegl_property_double (phi, "nick", _("Phase shift"),
+gegl_property_double (phi, _("Phase shift"),
     "min", -1.0, "max", 1.0,
     NULL)
 
-gegl_property_double (angle, "nick", _("Angle"),
+gegl_property_double (angle, _("Angle"),
     "min", -180.0, "max", 180.0,
     "unit", "degree",
     NULL)
 
-gegl_property_enum  (sampler_type, GeglSamplerType, gegl_sampler_type, 
-    "nick", _("Resampling method"),
+gegl_property_enum  (sampler_type, _("Resampling method"),
+    GeglSamplerType, gegl_sampler_type, 
     "default", GEGL_SAMPLER_CUBIC,
     NULL)
 
-gegl_property_enum (wave_type, GeglRippleWaveType, gegl_ripple_wave_type,
-    "nick", _("Wave type"),
+gegl_property_enum (wave_type, _("Wave type"),
+    GeglRippleWaveType, gegl_ripple_wave_type,
     "default", GEGL_RIPPLE_WAVE_TYPE_SINE,
     NULL)
 
-gegl_property_boolean (tileable, "nick", _("Tileable"),
+gegl_property_boolean (tileable, _("Tileable"),
     "blurb", _("Retain tilebility"),
     NULL)
 

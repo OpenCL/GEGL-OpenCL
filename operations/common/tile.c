@@ -21,12 +21,12 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (offset_x, "nick", _("Horizontal offset"),
+gegl_property_int (offset_x, _("Horizontal offset"),
     "unit", "pixel-coordinate",
     "axis", "x",
     NULL)
 
-gegl_property_int (offset_y, "nick", _("Vertical offset"),
+gegl_property_int (offset_y, _("Vertical offset"),
     "unit", "pixel-coordinate",
     "axis", "y",
     NULL)

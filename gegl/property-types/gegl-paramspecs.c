@@ -747,10 +747,11 @@ gegl_param_spec_format (const gchar *name,
 }
 
 GParamSpec *
-gegl_param_spec_double_from_vararg (const char *name, ...)
+gegl_param_spec_double_from_vararg (const char *name,
+                                    const char *nick,
+                                    ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
   gdouble min_value     = -G_MAXDOUBLE,
           max_value     = G_MAXDOUBLE,
           default_value = 0.0,
@@ -769,7 +770,7 @@ gegl_param_spec_double_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
@@ -799,8 +800,6 @@ gegl_param_spec_double_from_vararg (const char *name, ...)
       default_value = va_arg (var_args, double);
     else if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -837,10 +836,10 @@ gegl_param_spec_double_from_vararg (const char *name, ...)
 
 
 GParamSpec *
-gegl_param_spec_int_from_vararg (const char *name, ...)
+gegl_param_spec_int_from_vararg (const char *name,
+                                 const char *nick, ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
   gint min_value     = G_MININT,
        max_value     = G_MAXINT,
        default_value = 0,
@@ -859,7 +858,7 @@ gegl_param_spec_int_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
@@ -889,8 +888,6 @@ gegl_param_spec_int_from_vararg (const char *name, ...)
       default_value = va_arg (var_args, gint);
     else if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -927,10 +924,10 @@ gegl_param_spec_int_from_vararg (const char *name, ...)
 
 
 GParamSpec *
-gegl_param_spec_boolean_from_vararg (const char *name, ...)
+gegl_param_spec_boolean_from_vararg (const char *name,
+                                     const char *nick, ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
   gboolean default_value = FALSE;
 
   GParamSpec *pspec;
@@ -940,7 +937,7 @@ gegl_param_spec_boolean_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
@@ -948,8 +945,6 @@ gegl_param_spec_boolean_from_vararg (const char *name, ...)
       default_value = va_arg (var_args, gboolean);
     else if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -970,10 +965,11 @@ gegl_param_spec_boolean_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_string_from_vararg (const char *name, ...)
+gegl_param_spec_string_from_vararg (const char *name,
+                                    const char *nick,
+                                    ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
   const gchar *default_value = "";
 
   GParamSpec *pspec;
@@ -983,7 +979,7 @@ gegl_param_spec_string_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
@@ -991,8 +987,6 @@ gegl_param_spec_string_from_vararg (const char *name, ...)
       default_value = va_arg (var_args, const gchar *);
     else if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1013,10 +1007,10 @@ gegl_param_spec_string_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_file_path_from_vararg (const char *name, ...)
+gegl_param_spec_file_path_from_vararg (const char *name,
+                                       const char *nick, ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
   const gchar *default_value = "";
 
   GParamSpec *pspec;
@@ -1026,7 +1020,7 @@ gegl_param_spec_file_path_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
@@ -1034,8 +1028,6 @@ gegl_param_spec_file_path_from_vararg (const char *name, ...)
       default_value = va_arg (var_args, const gchar *);
     else if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1057,10 +1049,11 @@ gegl_param_spec_file_path_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_enum_from_vararg (const char *name, GType enum_type, ...)
+gegl_param_spec_enum_from_vararg (const char *name,
+                                  const char *nick,
+                                  GType       enum_type, ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
   int default_value = 0;
 
   GParamSpec *pspec;
@@ -1078,8 +1071,6 @@ gegl_param_spec_enum_from_vararg (const char *name, GType enum_type, ...)
       default_value = va_arg (var_args, int);
     else if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1102,10 +1093,11 @@ gegl_param_spec_enum_from_vararg (const char *name, GType enum_type, ...)
 }
 
 GParamSpec *
-gegl_param_spec_pointer_from_vararg (const char *name, ...)
+gegl_param_spec_pointer_from_vararg (const char *name,
+                                     const char *nick,
+                                     ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
 
   GParamSpec *pspec;
   GHashTable *ht;
@@ -1114,14 +1106,12 @@ gegl_param_spec_pointer_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
     if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1141,10 +1131,9 @@ gegl_param_spec_pointer_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_object_from_vararg (const char *name, ...)
+gegl_param_spec_object_from_vararg (const char *name, const char *nick, ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
 
   GParamSpec *pspec;
   GHashTable *ht;
@@ -1153,14 +1142,12 @@ gegl_param_spec_object_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
     if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1181,10 +1168,11 @@ gegl_param_spec_object_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_curve_from_vararg (const char *name, ...)
+gegl_param_spec_curve_from_vararg (const char *name,
+                                   const char *nick,
+                                   ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
 
   GParamSpec *pspec;
   GHashTable *ht;
@@ -1194,14 +1182,12 @@ gegl_param_spec_curve_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
     if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1224,10 +1210,11 @@ gegl_param_spec_curve_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_path_from_vararg (const char *name, ...)
+gegl_param_spec_path_from_vararg (const char *name,
+                                  const char *nick,
+                                  ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
 
   GParamSpec *pspec;
   GHashTable *ht;
@@ -1236,14 +1223,12 @@ gegl_param_spec_path_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
     if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1263,10 +1248,10 @@ gegl_param_spec_path_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_format_from_vararg (const char *name, ...)
+gegl_param_spec_format_from_vararg (const char *name,
+                                    const char *nick, ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
 
   GParamSpec *pspec;
   GHashTable *ht;
@@ -1275,14 +1260,12 @@ gegl_param_spec_format_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
     if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1302,10 +1285,11 @@ gegl_param_spec_format_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_color_from_vararg (const char *name, ...)
+gegl_param_spec_color_from_vararg (const char *name,
+                                   const char *nick,
+                                   ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
   const gchar *default_value = "";
 
   GParamSpec *pspec;
@@ -1315,7 +1299,7 @@ gegl_param_spec_color_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
@@ -1325,8 +1309,6 @@ gegl_param_spec_color_from_vararg (const char *name, ...)
     }
     else if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);
@@ -1347,10 +1329,10 @@ gegl_param_spec_color_from_vararg (const char *name, ...)
 }
 
 GParamSpec *
-gegl_param_spec_seed_from_vararg (const char *name, ...)
+gegl_param_spec_seed_from_vararg (const char *name,
+                                  const char *nick, ...)
 {
-  const gchar *nick  = name,
-              *blurb = "";
+  const gchar *blurb = "";
 
   GParamSpec *pspec;
   GHashTable *ht;
@@ -1359,14 +1341,12 @@ gegl_param_spec_seed_from_vararg (const char *name, ...)
   const gchar *key;
 
   ht = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-  va_start (var_args, name);
+  va_start (var_args, nick);
   key = va_arg (var_args, const char*);
   while (key)
   {
     if (g_str_equal (key, "blurb"))
       blurb = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "nick"))
-      nick = va_arg (var_args, const gchar *);
     else
     {
       const char *value = va_arg (var_args, const gchar*);

@@ -27,21 +27,20 @@ gegl_enum_start (gegl_emboss_type)
   gegl_enum_value (GEGL_EMBOSS_TYPE_BUMPMAP, "Bumpmap (preserve original colors)")
 gegl_enum_end (GeglEmbossType)
 
-gegl_property_enum (type,
+gegl_property_enum (type, _("Emboss Type"),
     GeglEmbossType, gegl_emboss_type,
-    "nick"   , _("Emboss Type"),
     "blurb"  , _("Rendering type"),
     "default", GEGL_EMBOSS_TYPE_EMBOSS,
     NULL)
-gegl_property_double (azimuth, "nick", _("Azimuth"),
+gegl_property_double (azimuth, _("Azimuth"),
     "blurb",  _("Light angle (degrees)"),
     "min"  , 0.0, "max", 360.0, "default", 30.0,
     NULL)
-gegl_property_double (elevation, "nick", _("Elevation"),
+gegl_property_double (elevation, _("Elevation"),
     "blurb"  , _("Elevation angle (degrees)"),
     "default", 45.0, "min", 0.0, "max", 180.0,
     NULL)
-gegl_property_int (depth, "nick", _("Depth"),
+gegl_property_int (depth, _("Depth"),
     "blurb"  , _("Filter width"),
     "default", 20, "min", 1, "max", 100,
     NULL)

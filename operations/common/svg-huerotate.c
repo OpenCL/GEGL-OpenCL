@@ -24,7 +24,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_string (values, "nick", _("Values"), 
+gegl_property_string (values, _("Values"), 
     "blurb", _("list of <number>s"),
     NULL)
 

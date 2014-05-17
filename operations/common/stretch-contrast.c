@@ -22,7 +22,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_boolean (keep_colors, "nick", _("Keep colors"),
+gegl_property_boolean (keep_colors, _("Keep colors"),
     "blurb", _("Impact each channel with the same amount"),
     "default", TRUE,
     NULL)

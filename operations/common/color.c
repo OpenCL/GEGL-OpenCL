@@ -20,12 +20,12 @@
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_PROPERTIES
-gegl_property_color (value, "nick", _("Color"),
+gegl_property_color (value, _("Color"),
     "blurb", _("The color to render (defaults to 'black')"),
     "default", "black",
     NULL)
 
-gegl_property_format (format, "nick", _("Babl Format"),
+gegl_property_format (format, _("Babl Format"),
     "blurb", _("The babl format of the output"),
     NULL)
 #else

@@ -27,33 +27,33 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_string(composite_op, "nick", _("Operation"),
+gegl_property_string(composite_op, _("Operation"),
     "blurb", _("Composite operation to use"),
     "default", "gegl:over",
     NULL)
 
-gegl_property_double(opacity, "nick", _("Opacity"),
+gegl_property_double(opacity, _("Opacity"),
     "default", 1.0, "min", 0.0, "max", 1.0,
     NULL)
 
-gegl_property_double(x, "nick", _("X"),
+gegl_property_double(x, _("X"),
     "blurb", _("Horizontal position in pixels"),
     "axis", "x",
     "unit", "pixel-coordinate",
     NULL)
 
-gegl_property_double(y, "nick", _("Y"),
+gegl_property_double(y, _("Y"),
     "blurb", _("Vertical position in pixels"),
     "axis", "y",
     "unit", "pixel-coordinate",
     NULL)
 
-gegl_property_double(scale, "nick", _("Scale"),
+gegl_property_double(scale, _("Scale"),
     "blurb",   _("Scale 1:1 size"),
     "default", 1.0,
     NULL)
 
-gegl_property_file_path(src, "nick", _("Source"),
+gegl_property_file_path(src, _("Source"),
     "blurb",   _("Source image file path (png, jpg, raw, svg, bmp, tif, ...)"),
     "default", "",
     NULL)

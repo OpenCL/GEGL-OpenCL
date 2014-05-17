@@ -26,21 +26,21 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (amount_x, "nick", _("Horizontal"),
+gegl_property_int (amount_x, _("Horizontal"),
     "blurb", _("Horizontal spread amount"),
     "default", 5, "min", 0, "max", 256,
     "unit", "pixel-distance",
     "axis", "x",
     NULL)
 
-gegl_property_int (amount_y, "nick", _("Vertical"),
+gegl_property_int (amount_y, _("Vertical"),
     "blurb", _("Vertical spread amount"),
     "default", 5, "min", 0, "max", 256,
     "unit", "pixel-distance",
     "axis", "y",
     NULL)
 
-gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
+gegl_property_seed (seed, _("Random seed"), rand, NULL)
 
 #else
 

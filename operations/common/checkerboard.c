@@ -22,7 +22,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (x, "nick",  _("Width"),
+gegl_property_int (x, _("Width"),
     "blurb", _("Horizontal width of cells pixels"),
     "default",  16,
     "min",       1, 
@@ -31,7 +31,7 @@ gegl_property_int (x, "nick",  _("Width"),
     "axis", "x",
     NULL)
 
-gegl_property_int (y, "nick", _("Height"),
+gegl_property_int (y, _("Height"),
     "blurb", _("Vertical width of cells pixels"),
     "default", 16, "min", 1,
     "ui-min",  1,  "ui-max", 256, "ui-gamma", 1.5,
@@ -39,33 +39,33 @@ gegl_property_int (y, "nick", _("Height"),
     "axis", "y",
     NULL)
 
-gegl_property_int (x_offset, "nick", _("X offset"),
+gegl_property_int (x_offset, _("X offset"),
     "blurb", _("Horizontal offset (from origin) for start of grid"),
     "ui-min", -10, "ui-max", 10,
     "unit", "pixel-coordinate",
     "axis", "x",
     NULL)
 
-gegl_property_int (y_offset, "nick", _("Y offset"),
+gegl_property_int (y_offset, _("Y offset"),
     "blurb", _("Vertical offset (from origin) for start of grid"),
     "ui-min", -10, "ui-max",  10,
     "unit", "pixel-coordinate",
     "axis", "y",
     NULL)
 
-gegl_property_color (color1, "nick", _("Color"),
+gegl_property_color (color1, _("Color"),
     "blurb", _("One of the cell colors (defaults to 'black')"),
     "default", "black",
     "role",    "color-primary",
     NULL)
 
-gegl_property_color (color2, "nick",  _("Color"),
+gegl_property_color (color2, _("Color"),
     "blurb", _("One of the cell colors (defaults to 'white')"),
     "default", "white",
     "role",    "color-secondary",
     NULL)
 
-gegl_property_format (format, "nick",  _("Babl Format"),
+gegl_property_format (format, _("Babl Format"),
     "blurb", _("The babl format of the output"),
     NULL)
 

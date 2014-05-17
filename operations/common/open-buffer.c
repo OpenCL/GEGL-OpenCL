@@ -22,7 +22,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_string(path, "nick", _("File"),
+gegl_property_string(path, _("File"),
     "blurb", _("a GeglBuffer on disk to open"),
     NULL)
 

@@ -22,19 +22,19 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (mask_radius, "nick", _("Mask Radius"),
+gegl_property_double (mask_radius, _("Mask Radius"),
     "default", 10.0, "min", 0.0, "max", 50.0,
     NULL)
 
-gegl_property_double (sharpness, "nick", _("Sharpness"),
+gegl_property_double (sharpness, _("Sharpness"),
     "default", 0.5, "min", 0.0, "max", 1.0,
     NULL)
 
-gegl_property_double (black, "nick", _("Percent Black"),
+gegl_property_double (black, _("Percent Black"),
     "default", 0.2, "min", 0.0, "max", 1.0,
     NULL)
 
-gegl_property_double (white, "nick", _("Percent White"),
+gegl_property_double (white, _("Percent White"),
     "default", 0.2, "min", 0.0, "max", 1.0,
     NULL)
 

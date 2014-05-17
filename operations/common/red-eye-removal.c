@@ -28,7 +28,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (threshold, "nick", _("Threshold"),
+gegl_property_double (threshold, _("Threshold"),
     "blurb", _("Red eye threshold"),
     "default", 0.4, "min", 0.0, "max", 0.8,
     NULL)

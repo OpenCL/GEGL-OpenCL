@@ -229,19 +229,19 @@ gegl_module_register (GTypeModule *module)
 #endif
 
 /* enum registration */
-#define gegl_property_double(name, ...)
-#define gegl_property_string(name, ...)
-#define gegl_property_file_path(name, ...)
-#define gegl_property_int(name, ...)
-#define gegl_property_boolean(name, ...)
-#define gegl_property_enum(name, enum, enum_name, ...)
-#define gegl_property_object(name, ...)
-#define gegl_property_pointer(name, ...)
-#define gegl_property_format(name, ...)
-#define gegl_property_color(name, ...)
-#define gegl_property_curve(name, ...)
-#define gegl_property_seed(name, rand_name, ...)
-#define gegl_property_path(name, ...)
+#define gegl_property_double(name, label, ...)
+#define gegl_property_string(name, label, ...)
+#define gegl_property_file_path(name, label, ...)
+#define gegl_property_int(name, label, ...)
+#define gegl_property_boolean(name, label, ...)
+#define gegl_property_enum(name, label, enum, enum_name, ...)
+#define gegl_property_object(name, label, ...)
+#define gegl_property_pointer(name, label, ...)
+#define gegl_property_format(name, label, ...)
+#define gegl_property_color(name, label, ...)
+#define gegl_property_curve(name, label, ...)
+#define gegl_property_seed(name, label, rand_name, ...)
+#define gegl_property_path(name, label, ...)
 
 #define gegl_enum_start(enum_name)   typedef enum {
 #define gegl_enum_value(value, nick)    value ,
@@ -299,20 +299,20 @@ GType enum_name ## _get_type (void)               \
 struct _GeglProperties
 {
   gpointer user_data; /* for use by the op implementation */
-#define gegl_property_double(name, ...)                gdouble     name;
-#define gegl_property_boolean(name, ...)               gboolean    name;
-#define gegl_property_int(name, ...)                   gint        name;
-#define gegl_property_string(name, ...)                gchar      *name;
-#define gegl_property_file_path(name, ...)             gchar      *name;
-#define gegl_property_enum(name, enum, enum_name, ...) enum        name;
-#define gegl_property_object(name, ...)                GObject    *name;
-#define gegl_property_pointer(name, ...)               gpointer    name;
-#define gegl_property_format(name, ...)                gpointer    name;
-#define gegl_property_color(name, ...)                 GeglColor  *name;
-#define gegl_property_curve(name, ...)                 GeglCurve  *name;
-#define gegl_property_seed(name, rand_name, ...)       gint        name;\
+#define gegl_property_double(name, label, ...)         gdouble     name;
+#define gegl_property_boolean(name, label, ...)        gboolean    name;
+#define gegl_property_int(name, label, ...)            gint        name;
+#define gegl_property_string(name, label, ...)         gchar      *name;
+#define gegl_property_file_path(name, label, ...)      gchar      *name;
+#define gegl_property_enum(name, label, enum, enum_name, ...) enum        name;
+#define gegl_property_object(name, label, ...)         GObject    *name;
+#define gegl_property_pointer(name, label, ...)        gpointer    name;
+#define gegl_property_format(name, label, ...)         gpointer    name;
+#define gegl_property_color(name, label, ...)          GeglColor  *name;
+#define gegl_property_curve(name, label, ...)          GeglCurve  *name;
+#define gegl_property_seed(name, label, rand_name, ...)gint        name;\
                                                        GeglRandom *rand_name;
-#define gegl_property_path(name, ...)                  GeglPath   *name;\
+#define gegl_property_path(name, label, ...)                  GeglPath   *name;\
                                                        gulong path_changed_handler;
 
 #include GEGL_OP_C_FILE
@@ -338,19 +338,19 @@ enum
 {
   PROP_0,
 
-#define gegl_property_double(name, ...)     PROP_##name,
-#define gegl_property_boolean(name, ...)    PROP_##name,
-#define gegl_property_int(name, ...)        PROP_##name,
-#define gegl_property_string(name, ...)     PROP_##name,
-#define gegl_property_file_path(name, ...)  PROP_##name,
-#define gegl_property_enum(name, enum, enum_name, ...)  PROP_##name,
-#define gegl_property_object(name, ...)     PROP_##name,
-#define gegl_property_pointer(name, ...)    PROP_##name,
-#define gegl_property_format(name, ...)     PROP_##name,
-#define gegl_property_color(name, ...)      PROP_##name,
-#define gegl_property_curve(name, ...)      PROP_##name,
-#define gegl_property_seed(name, rand_name, ...)   PROP_##name,
-#define gegl_property_path(name, ...)       PROP_##name,
+#define gegl_property_double(name, label, ...)     PROP_##name,
+#define gegl_property_boolean(name, label, ...)    PROP_##name,
+#define gegl_property_int(name, label, ...)        PROP_##name,
+#define gegl_property_string(name, label, ...)     PROP_##name,
+#define gegl_property_file_path(name, label, ...)  PROP_##name,
+#define gegl_property_enum(name, label, enum, enum_name, ...)  PROP_##name,
+#define gegl_property_object(name, label, ...)     PROP_##name,
+#define gegl_property_pointer(name, label, ...)    PROP_##name,
+#define gegl_property_format(name, label, ...)     PROP_##name,
+#define gegl_property_color(name, label, ...)      PROP_##name,
+#define gegl_property_curve(name, label, ...)      PROP_##name,
+#define gegl_property_seed(name, label, rand_name, ...)   PROP_##name,
+#define gegl_property_path(name, label, ...)       PROP_##name,
 
 #include GEGL_OP_C_FILE
 
@@ -382,55 +382,55 @@ get_property (GObject      *gobject,
 
   switch (property_id)
   {
-#define gegl_property_double(name,...)                        \
+#define gegl_property_double(name, label,...)                 \
     case PROP_##name:                                         \
       g_value_set_double (value, properties->name);           \
       break;
-#define gegl_property_boolean(name,...)                       \
+#define gegl_property_boolean(name, label,...)                \
     case PROP_##name:                                         \
       g_value_set_boolean (value, properties->name);          \
       break;
-#define gegl_property_int(name,...)                           \
+#define gegl_property_int(name, label,...)                    \
     case PROP_##name:                                         \
       g_value_set_int (value, properties->name);              \
       break;
-#define gegl_property_string(name, ...)                       \
+#define gegl_property_string(name, label, ...)                \
     case PROP_##name:                                         \
       g_value_set_string (value, properties->name);           \
       break;
-#define gegl_property_file_path(name, ...)                    \
+#define gegl_property_file_path(name, label, ...)             \
     case PROP_##name:                                         \
-      g_value_set_string (value, properties->name);        \
+      g_value_set_string (value, properties->name);           \
       break;
-#define gegl_property_enum(name, enum, enum_name, ...)        \
+#define gegl_property_enum(name, label, enum, enum_name, ...) \
     case PROP_##name:                                         \
       g_value_set_enum (value, properties->name);             \
       break;
-#define gegl_property_object(name, ...)                       \
+#define gegl_property_object(name, label, ...)                \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
-#define gegl_property_pointer(name, ...)                      \
+#define gegl_property_pointer(name, label, ...)               \
     case PROP_##name:                                         \
       g_value_set_pointer (value, properties->name);          \
       break;
-#define gegl_property_format(name, ...)                       \
+#define gegl_property_format(name, label, ...)                \
     case PROP_##name:                                         \
       g_value_set_pointer (value, properties->name);          \
       break;
-#define gegl_property_color(name, ...)                        \
+#define gegl_property_color(name, label, ...)                 \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
-#define gegl_property_curve(name, ...)                        \
+#define gegl_property_curve(name, label, ...)                 \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
-#define gegl_property_seed(name, rand_name, ...)              \
+#define gegl_property_seed(name, label, rand_name, ...)       \
     case PROP_##name:                                         \
       g_value_set_int (value, properties->name);              \
       break;
-#define gegl_property_path(name, ...)                         \
+#define gegl_property_path(name, label, ...)                  \
     case PROP_##name:                                         \
       g_value_set_object (value, properties->name);           \
       break;
@@ -469,61 +469,61 @@ set_property (GObject      *gobject,
 
   switch (property_id)
   {
-#define gegl_property_double(name, ...)                               \
+#define gegl_property_double(name, label, ...)                               \
     case PROP_##name:                                                 \
       properties->name = g_value_get_double (value);                  \
       break;
-#define gegl_property_boolean(name, ...)                              \
+#define gegl_property_boolean(name, label, ...)                              \
     case PROP_##name:                                                 \
       properties->name = g_value_get_boolean (value);                 \
       break;
-#define gegl_property_int(name, ...)                                  \
+#define gegl_property_int(name, label, ...)                                  \
     case PROP_##name:                                                 \
       properties->name = g_value_get_int (value);                     \
       break;
-#define gegl_property_string(name, ...)                               \
+#define gegl_property_string(name, label, ...)                               \
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
       properties->name = g_value_dup_string (value);                  \
       break;
-#define gegl_property_file_path(name, ...)                            \
+#define gegl_property_file_path(name, label, ...)                            \
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
       properties->name = g_value_dup_string (value);                  \
       break;
-#define gegl_property_enum(name, enum, enum_name, ...)                \
+#define gegl_property_enum(name, label, enum, enum_name, ...)                \
     case PROP_##name:                                                 \
       properties->name = g_value_get_enum (value);                    \
       break;
-#define gegl_property_object(name, ...)                               \
+#define gegl_property_object(name, label, ...)                               \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
-#define gegl_property_pointer(name, ...)                              \
+#define gegl_property_pointer(name, label, ...)                              \
     case PROP_##name:                                                 \
       properties->name = g_value_get_pointer (value);                 \
       break;
-#define gegl_property_format(name, ...)                               \
+#define gegl_property_format(name, label, ...)                               \
     case PROP_##name:                                                 \
       properties->name = g_value_get_pointer (value);                 \
       break;
-#define gegl_property_color(name, ...)                                \
+#define gegl_property_color(name, label, ...)                                \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
-#define gegl_property_curve(name, ...)                                \
+#define gegl_property_curve(name, label, ...)                                \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
-#define gegl_property_seed(name, rand_name, ...)                      \
+#define gegl_property_seed(name, label, rand_name, ...)                      \
     case PROP_##name:                                                 \
       properties->name = g_value_get_int (value);                     \
       if (!properties->rand_name)                                     \
@@ -531,7 +531,7 @@ set_property (GObject      *gobject,
       else                                                            \
         gegl_random_set_seed (properties->rand_name, properties->name);\
       break;
-#define gegl_property_path(name, ...)                                 \
+#define gegl_property_path(name, label, ...)                          \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
         {                                                             \
@@ -578,49 +578,49 @@ static void gegl_op_destroy_notify (gpointer data)
 {
   GeglProperties *properties = GEGL_PROPERTIES (data);
 
-#define gegl_property_double(name, ...)
-#define gegl_property_boolean(name, ...)
-#define gegl_property_int(name, ...)
-#define gegl_property_string(name, ...)             \
+#define gegl_property_double(name, label, ...)
+#define gegl_property_boolean(name, label, ...)
+#define gegl_property_int(name, label, ...)
+#define gegl_property_string(name, label, ...)      \
   if (properties->name)                             \
     {                                               \
       g_free (properties->name);                    \
       properties->name = NULL;                      \
     }
-#define gegl_property_file_path(name, ...)          \
+#define gegl_property_file_path(name, label, ...)   \
   if (properties->name)                             \
     {                                               \
       g_free (properties->name);                    \
       properties->name = NULL;                      \
     }
-#define gegl_property_enum(name, enum, enum_name, ...)
-#define gegl_property_object(name, ...)             \
+#define gegl_property_enum(name, label, enum, enum_name, ...)
+#define gegl_property_object(name, label, ...)      \
   if (properties->name)                             \
     {                                               \
       g_object_unref (properties->name);            \
       properties->name = NULL;                      \
     }
-#define gegl_property_pointer(name, ...)
-#define gegl_property_format(name, ...)
-#define gegl_property_color(name, ...)              \
+#define gegl_property_pointer(name, label, ...)
+#define gegl_property_format(name, label, ...)
+#define gegl_property_color(name, label, ...)       \
   if (properties->name)                             \
     {                                               \
       g_object_unref (properties->name);            \
       properties->name = NULL;                      \
     }
-#define gegl_property_curve(name, ...)              \
+#define gegl_property_curve(name, label, ...)       \
   if (properties->name)                             \
     {                                               \
       g_object_unref (properties->name);            \
       properties->name = NULL;                      \
     }
-#define gegl_property_seed(name, rand_name, ...)    \
+#define gegl_property_seed(name, label, rand_name, ...)    \
   if (properties->rand_name)                        \
     {                                               \
       gegl_random_free (properties->rand_name);     \
       properties->rand_name = NULL;                 \
     }
-#define gegl_property_path(name, ...)               \
+#define gegl_property_path(name, label, ...)        \
   if (properties->name)                             \
     {                                               \
       g_object_unref (properties->name);            \
@@ -660,23 +660,23 @@ gegl_op_constructor (GType                  type,
   /* create dummy colors and vectors */
   properties = GEGL_PROPERTIES (obj);
 
-#define gegl_property_double(name, ...)
-#define gegl_property_boolean(name, ...)
-#define gegl_property_int(name, ...)
-#define gegl_property_string(name, ...)
-#define gegl_property_file_path(name, ...)
-#define gegl_property_enum(name, enum, enum_name, ...)
-#define gegl_property_object(name, ...)
-#define gegl_property_pointer(name, ...)
-#define gegl_property_format(name, ...)
-#define gegl_property_color(name, ...)              \
+#define gegl_property_double(name, label, ...)
+#define gegl_property_boolean(name, label, ...)
+#define gegl_property_int(name, label, ...)
+#define gegl_property_string(name, label, ...)
+#define gegl_property_file_path(name, label, ...)
+#define gegl_property_enum(name, label, enum, enum_name, ...)
+#define gegl_property_object(name, label, ...)
+#define gegl_property_pointer(name, label, ...)
+#define gegl_property_format(name, label, ...)
+#define gegl_property_color(name, label, ...)              \
     if (properties->name == NULL)                   \
     {const char *def = gegl_operation_class_get_property_key (g_type_class_peek (type), #name, "default");properties->name = gegl_color_new(def?def:"black");}
-#define gegl_property_seed(name, rand_name, ...)    \
+#define gegl_property_seed(name, label, rand_name, ...)    \
     if (properties->rand_name == NULL)              \
       {properties->rand_name = gegl_random_new_with_seed (0);}
-#define gegl_property_path(name, ...)
-#define gegl_property_curve(name, ...)
+#define gegl_property_path(name, label, ...)
+#define gegl_property_curve(name, label, ...)
 
 #include GEGL_OP_C_FILE
 
@@ -708,46 +708,46 @@ gegl_op_class_intern_init (gpointer klass)
   object_class->get_property = get_property;
   object_class->constructor  = gegl_op_constructor;
 
-#define gegl_property_double(name, foo...)                                   \
-  { GParamSpec *pspec = gegl_param_spec_double_from_vararg (#name, foo);     \
+#define gegl_property_double(name, label, foo...)                              \
+  { GParamSpec *pspec = gegl_param_spec_double_from_vararg (#name, label, foo);\
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_boolean(name, foo...)                                  \
-  { GParamSpec *pspec = gegl_param_spec_boolean_from_vararg (#name, foo);    \
+#define gegl_property_boolean(name, label, foo...)                             \
+  { GParamSpec *pspec = gegl_param_spec_boolean_from_vararg(#name, label, foo);\
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_int(name, foo...)                                      \
-  { GParamSpec *pspec = gegl_param_spec_int_from_vararg (#name, foo);        \
+#define gegl_property_int(name, label, foo...)                                 \
+  { GParamSpec *pspec = gegl_param_spec_int_from_vararg (#name, label, foo);   \
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_string(name, foo...)                                   \
-  { GParamSpec *pspec = gegl_param_spec_string_from_vararg (#name, foo);     \
+#define gegl_property_string(name, label, foo...)                              \
+  { GParamSpec *pspec = gegl_param_spec_string_from_vararg (#name, label, foo);\
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_file_path(name, foo...)                                \
-  { GParamSpec *pspec = gegl_param_spec_file_path_from_vararg (#name, foo);  \
+#define gegl_property_file_path(name, label, foo...)                           \
+  { GParamSpec *pspec =gegl_param_spec_file_path_from_vararg(#name,label, foo);\
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_enum(name, enum, enum_name, foo... )                   \
-  { GParamSpec *pspec = gegl_param_spec_enum_from_vararg (#name,             \
-                                     enum_name ## _get_type (), foo);        \
+#define gegl_property_enum(name, label, enum, enum_name, foo... )              \
+  { GParamSpec *pspec = gegl_param_spec_enum_from_vararg (#name, label,        \
+                                     enum_name ## _get_type (), foo);          \
     g_object_class_install_property (object_class, PROP_##name, pspec);};
 
-#define gegl_property_object(name, foo...)                                   \
-  { GParamSpec *pspec = gegl_param_spec_object_from_vararg (#name, foo);     \
+#define gegl_property_object(name, label, foo...)                              \
+  { GParamSpec *pspec = gegl_param_spec_object_from_vararg (#name, label, foo);\
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_pointer(name, foo...)                                  \
-  { GParamSpec *pspec = gegl_param_spec_pointer_from_vararg (#name, foo);    \
+#define gegl_property_pointer(name, label, foo...)                             \
+  { GParamSpec *pspec = gegl_param_spec_pointer_from_vararg(#name, label, foo);\
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_format(name, foo...)                                   \
-  { GParamSpec *pspec = gegl_param_spec_format_from_vararg (#name, foo);     \
+#define gegl_property_format(name, label, foo...)                              \
+  { GParamSpec *pspec = gegl_param_spec_format_from_vararg (#name, label, foo);\
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_seed(name, rand_name, foo...)                          \
-  { GParamSpec *pspec = gegl_param_spec_seed_from_vararg (#name, foo);       \
+#define gegl_property_seed(name, label, rand_name, foo...)                     \
+  { GParamSpec *pspec = gegl_param_spec_seed_from_vararg (#name, label, foo);  \
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_color(name, foo...)                                    \
-  { GParamSpec *pspec = gegl_param_spec_color_from_vararg (#name, foo);      \
+#define gegl_property_color(name, label, foo...)                               \
+  { GParamSpec *pspec = gegl_param_spec_color_from_vararg (#name, label, foo); \
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_path(name, foo...)                                     \
-  { GParamSpec *pspec = gegl_param_spec_path_from_vararg (#name, foo);       \
+#define gegl_property_path(name, label, foo...)                                \
+  { GParamSpec *pspec = gegl_param_spec_path_from_vararg (#name, label, foo);  \
     g_object_class_install_property (object_class, PROP_##name, pspec);};
-#define gegl_property_curve(name, foo...)                                    \
-  { GParamSpec *pspec = gegl_param_spec_curve_from_vararg (#name, foo);      \
+#define gegl_property_curve(name, label, foo...)                               \
+  { GParamSpec *pspec = gegl_param_spec_curve_from_vararg (#name, label, foo); \
     g_object_class_install_property (object_class, PROP_##name, pspec);};
 
 #include GEGL_OP_C_FILE

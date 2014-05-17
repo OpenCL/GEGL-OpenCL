@@ -24,22 +24,22 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (mask_radius, "nick", _("Mask Radius"),
+gegl_property_int (mask_radius, _("Mask Radius"),
     "blurb", _("Radius of circle around pixel"),
     "default", 4, "min", 1, "max", 25,
     "unit", "pixel-distance",
     NULL)
 
-gegl_property_int (exponent, "nick", _("Exponent"),
+gegl_property_int (exponent, _("Exponent"),
     "default", 8, "min", 1, "max", 20,
     NULL)
 
-gegl_property_int (intensities, "nick", _("Number of intensities"),
+gegl_property_int (intensities, _("Number of intensities"),
     "blurb", _("Histogram size"),
     "default", 128, "min", 8, "max", 256,
     NULL)
 
-gegl_property_boolean (use_inten, "nick", _("Intensity Mode"),
+gegl_property_boolean (use_inten, _("Intensity Mode"),
     "blurb", _("Use pixel luminance values"),
     "default", TRUE,
     NULL)

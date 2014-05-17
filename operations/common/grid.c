@@ -21,7 +21,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (x, "nick", _("Width"),
+gegl_property_int (x, _("Width"),
     "blurb", _("Horizontal width of cells pixels"),
     "default", 32, "min", 1, "max", G_MAXINT,
     "ui-min", 1, "ui-max", 128,
@@ -29,7 +29,7 @@ gegl_property_int (x, "nick", _("Width"),
     "axis", "x",
     NULL)
 
-gegl_property_int (y, "nick", _("Height"),
+gegl_property_int (y, _("Height"),
     "blurb", _("Vertical width of cells pixels"),
     "default", 32, "min", 1, "max", G_MAXINT,
     "ui-min", 1, "ui-max", 128,
@@ -37,7 +37,7 @@ gegl_property_int (y, "nick", _("Height"),
     "axis", "y",
     NULL)
 
-gegl_property_int (x_offset, "nick", _("X offset"),
+gegl_property_int (x_offset, _("X offset"),
     "blurb", _("Horizontal offset (from origin) for start of grid"),
     "default", 0,
     "ui-min", -64, "ui-max", 64,
@@ -45,7 +45,7 @@ gegl_property_int (x_offset, "nick", _("X offset"),
     "axis", "x",
     NULL)
 
-gegl_property_int (y_offset, "nick", _("Y offset"),
+gegl_property_int (y_offset, _("Y offset"),
     "blurb", _("Vertical offset (from origin) for start of grid"),
     "default", 0,
     "ui-min", -64, "ui-max", 64,
@@ -53,7 +53,7 @@ gegl_property_int (y_offset, "nick", _("Y offset"),
     "axis", "y",
     NULL)
 
-gegl_property_int (line_width, "nick", _("Line width"),
+gegl_property_int (line_width, _("Line width"),
     "blurb", _("Width of grid lines in pixels"),
     "default", 4, "min", 0,
     "ui-min", 0, "ui-max", 16,
@@ -61,7 +61,7 @@ gegl_property_int (line_width, "nick", _("Line width"),
     "axis", "x",
     NULL)
 
-gegl_property_int (line_height, "nick", _("Line height"),
+gegl_property_int (line_height, _("Line height"),
     "blurb", _("Width of grid lines in pixels"),
     "default", 4, "min", 0,
     "ui-min", 0, "ui-max", 16,
@@ -69,7 +69,7 @@ gegl_property_int (line_height, "nick", _("Line height"),
     "axis", "y",
     NULL)
 
-gegl_property_color (line_color, "nick", _("Color"),
+gegl_property_color (line_color, _("Color"),
     "blurb", _("Color of the grid lines"),
     "default", "black",
     "role",    "color-primary",

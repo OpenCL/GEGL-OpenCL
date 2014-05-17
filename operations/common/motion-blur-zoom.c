@@ -37,7 +37,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (center_x, "nick", _("X center"),
+gegl_property_double (center_x, _("X center"),
     "blurb", _("Horizontal center position"),
     "default", 20.0,
     "ui-min",  -100000.0, "ui-max", 100000.0,
@@ -45,7 +45,7 @@ gegl_property_double (center_x, "nick", _("X center"),
     "axis",    "x",
     NULL)
 
-gegl_property_double (center_y, "nick", _("Y center"),
+gegl_property_double (center_y, _("Y center"),
     "blurb", _("Vertical center position"),
     "default", 20.0,
     "ui-min",  -100000.0, "ui-max", 100000.0,
@@ -53,7 +53,7 @@ gegl_property_double (center_y, "nick", _("Y center"),
     "axis",    "x",
     NULL)
 
-gegl_property_double (factor, "nick", _("Factor"),
+gegl_property_double (factor, _("Factor"),
     "blurb", _("Bluring factor"),
     "default", 0.1, "min", -10.0, "max", 1.0,
     "ui-min", -0.5, "ui-max", 1.0, "ui-gamma", 2.0,

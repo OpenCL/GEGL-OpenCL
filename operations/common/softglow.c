@@ -23,16 +23,16 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (glow_radius, "nick", _("Glow radius"),
+gegl_property_double (glow_radius, _("Glow radius"),
     "default", 10.0, "min", 1.0, "max", 50.0,
     "unit", "pixel-distance",
     NULL)
 
-gegl_property_double (brightness, "nick", _("Brightness"),
+gegl_property_double (brightness, _("Brightness"),
     "default", 0.30, "min", 0.0, "max", 1.0,
     NULL)
 
-gegl_property_double (sharpness, "nick", _("Sharpness"),
+gegl_property_double (sharpness, _("Sharpness"),
     "default", 0.85, "min", 0.0, "max", 1.0,
     NULL)
 

@@ -23,17 +23,17 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (brightness, "nick", _("Brightness"),
+gegl_property_double (brightness, _("Brightness"),
     "blurb", _("Overall brightness of the image"),
     "min", -100.0, "max", 100.0,
     NULL)
 
-gegl_property_double (chromatic, "nick", _("Chromatic Adaptation"),
+gegl_property_double (chromatic, _("Chromatic Adaptation"),
     "blurb", _("Adaptation to color variation across the image"),
     "min", 0.0, "max", 1.0,
     NULL)
 
-gegl_property_double (light, "nick", _("Light Adaptation"),
+gegl_property_double (light, _("Light Adaptation"),
     "blurb", _("Adaptation to light variation across the image"),
     "default", 1.0, "min", 0.0, "max", 1.0,
     NULL)
