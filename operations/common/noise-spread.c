@@ -24,25 +24,30 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int  (amount_x, _("Horizontal"),
-                 0, 256, 5,
-                 _("Horizontal spread amount"))
+gegl_property_int (amount_x, "nick", _("Horizontal"),
+    "blurb", _("Horizontal spread amount"),
+    "default", 5, "min", 0, "max", 256,
+    "unit", "pixel-distance",
+    "axis", "x",
+    NULL)
 
-gegl_chant_int  (amount_y, _("Vertical"),
-                 0, 256, 5,
-                 _("Vertical spread amount"))
+gegl_property_int (amount_y, "nick", _("Vertical"),
+    "blurb", _("Vertical spread amount"),
+    "default", 5, "min", 0, "max", 256,
+    "unit", "pixel-distance",
+    "axis", "y",
+    NULL)
 
-gegl_chant_seed (seed, rand, _("Seed"),
-                 _("Random seed"))
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "noise-spread.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "noise-spread.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static inline void
@@ -72,7 +77,7 @@ calc_sample_coords (gint        src_x,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   const Babl              *format;
 
@@ -94,14 +99,14 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO         *o;
+  GeglProperties         *o;
   const Babl         *format;
   gint                bpp;
   GeglBufferIterator *gi;
   gint                amount_x;
   gint                amount_y;
 
-  o = GEGL_CHANT_PROPERTIES (operation);
+  o = GEGL_PROPERTIES (operation);
 
   amount_x = (o->amount_x + 1) / 2;
   amount_y = (o->amount_y + 1) / 2;
@@ -135,7 +140,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
