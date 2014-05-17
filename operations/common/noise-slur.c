@@ -29,31 +29,30 @@
 
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_seed   (seed, rand, _("Seed"),
-                   _("Random seed"))
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
 
-gegl_chant_double (pct_random, _("Randomization (%)"),
-                   0.0, 100.0, 50.0,
-                   _("Randomization"))
+gegl_property_double (pct_random, "nick", _("Randomization (%)"),
+    "default", 50.0, "min", 0.0, "max", 100.0,
+    NULL)
 
-gegl_chant_int    (repeat, _("Repeat"),
-                   1, 100, 1,
-                   _("Repeat"))
+gegl_property_int (repeat, "nick", _("Repeat"),
+    "default", 1, "min", 1, "max", 100,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "noise-slur.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "noise-slur.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   const Babl              *format;
 
   op_area->left   =
@@ -79,12 +78,12 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO         *o;
+  GeglProperties     *o;
   const Babl         *format;
   gint                bpp;
   GeglBufferIterator *gi;
 
-  o = GEGL_CHANT_PROPERTIES (operation);
+  o = GEGL_PROPERTIES (operation);
 
   format = gegl_operation_get_source_format (operation, "input");
   bpp = babl_format_get_bytes_per_pixel (format);
@@ -139,7 +138,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
