@@ -21,26 +21,29 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
+#ifdef GEGL_PROPERTIES
 
-#ifdef GEGL_CHANT_PROPERTIES
+gegl_property_double (brightness, "nick", _("Brightness"),
+    "blurb", _("Overall brightness of the image"),
+    "min", -100.0, "max", 100.0,
+    NULL)
 
-gegl_chant_double (brightness, _("Brightness"),
-                  -100.0, 100.0, 0.0,
-                  _("Overall brightness of the image"))
-gegl_chant_double (chromatic, _("Chromatic Adaptation"),
-                  0.0, 1.0, 0.0,
-                  _("Adaptation to color variation across the image"))
-gegl_chant_double (light, _("Light Adaptation"),
-                  0.0, 1.0, 1.0,
-                  _("Adaptation to light variation across the image"))
+gegl_property_double (chromatic, "nick", _("Chromatic Adaptation"),
+    "blurb", _("Adaptation to color variation across the image"),
+    "min", 0.0, "max", 1.0,
+    NULL)
 
+gegl_property_double (light, "nick", _("Light Adaptation"),
+    "blurb", _("Adaptation to light variation across the image"),
+    "default", 1.0, "min", 0.0, "max", 1.0,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "reinhard05.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "reinhard05.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 
 typedef struct {
@@ -123,7 +126,7 @@ reinhard05_process (GeglOperation       *operation,
                     const GeglRectangle *result,
                     gint                 level)
 {
-  const GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  const GeglProperties *o = GEGL_PROPERTIES (operation);
 
   const gint  pix_stride = 4, /* RGBA */
               RGB        = 3;
@@ -253,7 +256,7 @@ reinhard05_process (GeglOperation       *operation,
 /*
  */
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
