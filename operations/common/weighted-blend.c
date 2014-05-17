@@ -20,14 +20,14 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE       "weighted-blend.c"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE       "weighted-blend.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void prepare (GeglOperation *operation)
 {
@@ -167,7 +167,7 @@ process (GeglOperation       *op,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass              *operation_class;
   GeglOperationPointComposerClass *point_composer_class;
