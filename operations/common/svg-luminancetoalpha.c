@@ -22,16 +22,14 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
-
-gegl_chant_string (values, _("Values"), "", _("list of <number>s"))
+#ifdef GEGL_PROPERTIES
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "svg-luminancetoalpha.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE       "svg-luminancetoalpha.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -77,7 +75,7 @@ process (GeglOperation       *op,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
