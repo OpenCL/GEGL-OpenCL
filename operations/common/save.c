@@ -20,17 +20,19 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Path of file to save."))
+gegl_property_file_path (path, "nick", _("File"), 
+    "blurb", _("Path of file to save."),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_C_FILE       "save.c"
+#define GEGL_OP_C_FILE       "save.c"
 
 #include "gegl-plugin.h"
 
-struct _GeglChant
+struct _GeglOp
 {
   GeglOperationSink  parent_instance;
   gpointer           properties;
@@ -43,9 +45,9 @@ struct _GeglChant
 typedef struct
 {
   GeglOperationSinkClass parent_class;
-} GeglChantClass;
+} GeglOpClass;
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SINK)
 
 #include <stdio.h>
@@ -54,8 +56,8 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SINK)
 static void
 gegl_save_set_saver (GeglOperation *operation)
 {
-  GeglChantO  *o    = GEGL_CHANT_PROPERTIES (operation);
-  GeglChant   *self = GEGL_CHANT (operation);
+  GeglProperties  *o    = GEGL_PROPERTIES (operation);
+  GeglOp   *self = GEGL_OP (operation);
   const gchar *extension, *handler;
 
   /* If prepare has already been invoked, bail out early */
@@ -100,7 +102,7 @@ gegl_save_set_saver (GeglOperation *operation)
 static void
 gegl_save_attach (GeglOperation *operation)
 {
-  GeglChant   *self = GEGL_CHANT (operation);
+  GeglOp   *self = GEGL_OP (operation);
   /* const gchar *nodename; */
   /* gchar       *childname; */
 
@@ -140,7 +142,7 @@ gegl_save_set_property (GObject      *gobject,
                         GParamSpec   *pspec)
 {
   GeglOperation *operation = GEGL_OPERATION (gobject);
-  GeglChant     *self = GEGL_CHANT (operation);
+  GeglOp     *self = GEGL_OP (operation);
 
   /* The set_property provided by the chant system does the
    * storing and reffing/unreffing of the input properties */
@@ -158,7 +160,7 @@ gegl_save_process (GeglOperation        *operation,
                    const GeglRectangle  *roi,
                    gint                  level)
 {
-  GeglChant *self = GEGL_CHANT (operation);
+  GeglOp *self = GEGL_OP (operation);
 
   return gegl_operation_process (gegl_node_get_gegl_operation (self->save),
                                  context,
@@ -170,17 +172,17 @@ gegl_save_process (GeglOperation        *operation,
 static void
 gegl_save_dispose (GObject *object)
 {
-  GeglChant *self = GEGL_CHANT (object);
+  GeglOp *self = GEGL_OP (object);
 
   g_free (self->cached_path);
   self->cached_path = NULL;
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->dispose (object);
 }
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass           *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationSinkClass *sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
