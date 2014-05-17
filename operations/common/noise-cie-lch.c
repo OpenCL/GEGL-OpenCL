@@ -20,33 +20,32 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int    (holdness, _("Holdness"),
-                   1, 8, 2,
-                   _("Holdness"))
+gegl_property_int (holdness, "nick", _("Holdness"),
+    "default", 2, "min", 1, "max", 8,
+    NULL)
 
-gegl_chant_double (lightness_distance, _("Lightness"),
-                   0.0, 100.0, 40.0,
-                   _("Lightness"))
+gegl_property_double (lightness_distance, "nick", _("Lightness"),
+    "default", 40.0, "min", 0.0, "max", 100.0,
+    NULL)
 
-gegl_chant_double (chroma_distance, _("Chroma"),
-                   0.0, 100.0, 40.0,
-                   _("Chroma"))
+gegl_property_double (chroma_distance, "nick", _("Chroma"),
+    "default", 40.0, "min", 0.0, "max", 100.0,
+    NULL)
 
-gegl_chant_double (hue_distance, _("Hue"),
-                   0.0, 180.0,  3.0,
-                   _("Hue"))
+gegl_property_double (hue_distance, "nick", _("Hue"),
+    "default", 3.0, "min", 0.0, "max", 180.0,
+    NULL)
 
-gegl_chant_seed   (seed, rand, _("Seed"),
-                   _("Random seed"))
+gegl_property_seed   (seed, rand, "nick", _("Random seed"), NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "noise-cie-lch.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "noise-cie-lch.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include "gegl.h"
 #include <stdio.h>
 #include <math.h>
@@ -116,13 +115,13 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  gfloat       *GEGL_ALIGNED in_pixel;
-  gfloat       *GEGL_ALIGNED out_pixel;
-  GeglRectangle whole_region;
-  gfloat        lightness, chroma, hue, alpha;
-  gint          i;
-  gint          x, y;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  gfloat         *GEGL_ALIGNED in_pixel;
+  gfloat         *GEGL_ALIGNED out_pixel;
+  GeglRectangle   whole_region;
+  gfloat          lightness, chroma, hue, alpha;
+  gint            i;
+  gint            x, y;
 
   in_pixel  = in_buf;
   out_pixel = out_buf;
@@ -181,7 +180,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
