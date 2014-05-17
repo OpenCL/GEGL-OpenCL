@@ -26,18 +26,19 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (threshold, _("Threshold"),
-                   0.0, 0.8, 0.4,
-                   _("Red eye threshold"))
+gegl_property_double (threshold, "nick", _("Threshold"),
+    "blurb", _("Red eye threshold"),
+    "default", 0.4, "min", 0.0, "max", 0.8,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "red-eye-removal.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "red-eye-removal.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -81,7 +82,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   gfloat *dest = out_buf;
   glong   i;
@@ -114,7 +115,7 @@ cl_process (GeglOperation       *operation,
             const GeglRectangle *roi,
             gint                level)
 {
-  GeglChantO *o           = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o           = GEGL_PROPERTIES (operation);
   cl_float   threshold    = o->threshold;
 
 
@@ -151,7 +152,7 @@ error:
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
