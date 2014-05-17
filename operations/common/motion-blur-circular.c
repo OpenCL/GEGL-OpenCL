@@ -53,7 +53,7 @@ gegl_property_double (center_y, "nick", _("Center Y"),
     NULL)
 
 /* FIXME: With a large angle, we lose AreaFilter's flavours */
-gegl_property_double (angle, _("Angle"),
+gegl_property_double (angle, "nick", _("Angle"),
     "blurb", _("Rotation blur angle. A large angle may take some time to render"),
     "default", 5.0, "min", 0.0, "max", 360.0,
     "ui-min", 0.0, "ui-max", 90.0, "ui-gamma", 2.0,
