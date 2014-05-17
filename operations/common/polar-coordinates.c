@@ -29,47 +29,55 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double  (depth, _("Circle depth in percent"),
-                    0.0, 100.0, 100.0,
-                    _("Circle depth in percent"))
+gegl_property_double (depth, "nick", _("Circle depth in percent"),
+    "min", 0.0, "max", 100.0, "default", 100.0,
+    NULL)
 
-gegl_chant_double  (angle, _("Offset angle"),
-                    0.0, 359.9, 0.0,
-                    _("Offset angle."))
+gegl_property_double  (angle, "nick", _("Offset angle"),
+    "min", 0.0, "max", 359.9, 
+    NULL)
 
-gegl_chant_boolean (bw, _("Map backwards"),
-                    FALSE,
-                    _("Start from the right instead of the left"))
+gegl_property_boolean (bw, "nick", _("Map backwards"),
+    "blurb", _("Start from the right instead of the left"),
+    NULL)
 
-gegl_chant_boolean (top, _("Map from top"),
-                    TRUE,
-                    _("Put the top row in the middle and the bottom row on "
-                      "the outside"))
+gegl_property_boolean (top, "nick", _("Map from top"),
+  "blurb", _("Put the top row in the middle and the bottom row on the outside"),
+  "default", TRUE,
+  NULL)
 
-gegl_chant_boolean (polar, _("To polar"),
-                    TRUE,
-                    _("Map the image to a circle"))
+gegl_property_boolean (polar, "nick", _("To polar"),
+    "blurb", _("Map the image to a circle"),
+    "default", TRUE,
+    NULL)
 
-gegl_chant_int     (pole_x, _("X"),
-                    0, G_MAXINT, 0,
-                    _("Origin point for the polar coordinates"))
+gegl_property_int (pole_x, "nick", _("X"),
+    "blurb", _("Origin point for the polar coordinates"),
+    "min", 0, "max", G_MAXINT,
+    "unit", "pixel-coordinate",
+    "axis", "x",
+    NULL)
 
-gegl_chant_int     (pole_y, _("Y"),
-                    0, G_MAXINT, 0,
-                    _("Origin point for the polar coordinates"))
+gegl_property_int (pole_y, "nick", _("Y"),
+    "blurb", _("Origin point for the polar coordinates"),
+    "min", 0, "max", G_MAXINT,
+    "unit", "pixel-coordinate",
+    "axis", "y",
+    NULL)
 
-gegl_chant_boolean (middle, _("Choose middle"),
-                    TRUE,
-                    _("Let origin point to be the middle one"))
+gegl_property_boolean (middle, "nick", _("Choose middle"),
+    "blurb", _("Let origin point to be the middle one"),
+    "default", TRUE,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "polar-coordinates.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "polar-coordinates.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -93,7 +101,7 @@ calc_undistorted_coords (gdouble        wx,
                          gdouble        wy,
                          gdouble       *x,
                          gdouble       *y,
-                         GeglChantO    *o,
+                         GeglProperties    *o,
                          GeglRectangle  boundary)
 {
   gboolean inside;
@@ -321,7 +329,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o            = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o            = GEGL_PROPERTIES (operation);
   GeglRectangle            boundary     = get_effective_area (operation);
   const Babl              *format       = babl_format ("RGBA float");
 
@@ -402,7 +410,7 @@ get_required_for_output (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
