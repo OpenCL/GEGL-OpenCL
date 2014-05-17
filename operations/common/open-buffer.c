@@ -20,16 +20,18 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_string(path, _("File"), "", _("a GeglBuffer on disk to open"))
+gegl_property_string(path, "nick", _("File"),
+    "blurb", _("a GeglBuffer on disk to open"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "open-buffer.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "open-buffer.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void buffer_changed (GeglBuffer          *buffer,
                             const GeglRectangle *rect,
@@ -40,14 +42,14 @@ static void buffer_changed (GeglBuffer          *buffer,
 
 static GeglBuffer *ensure_buffer (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer   *buffer = o->chant_data;
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
+  GeglBuffer   *buffer = o->user_data;
   if (buffer)
     return buffer;
   if (!buffer)
     {
       buffer = gegl_buffer_open (o->path);
-      o->chant_data = buffer;
+      o->user_data = buffer;
     }
   g_signal_connect (buffer, "changed",
                     G_CALLBACK(buffer_changed), operation);
@@ -98,21 +100,21 @@ process (GeglOperation         *operation,
 static void
 dispose (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
-  GeglBuffer *buffer = o->chant_data;
+  GeglProperties *o      = GEGL_PROPERTIES (object);
+  GeglBuffer     *buffer = o->user_data;
 
   if (buffer)
     {
       g_object_unref (buffer);
-      o->chant_data = NULL;
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->dispose (object);
 }
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
 
