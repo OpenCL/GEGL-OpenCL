@@ -22,19 +22,30 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int_ui (radius, _("Radius"), 2, 5000.0, 300, 2, 2000, 1.0,
-                _("Neighborhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime"))
-gegl_chant_int_ui (samples, _("Samples"), 2, 200, 5, 2, 10, 1.0,
-                _("Number of samples to do per iteration looking for the range of colors"))
-gegl_chant_int_ui (iterations, _("Iterations"), 1, 200, 5, 1, 10, 1.0,
-                _("Number of iterations, a higher number of iterations provides a less noisy rendering at a computational cost"))
+gegl_property_int (radius, "nick", _("Radius"),
+    "blurb", _("Neighborhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime"),
+    "default", 300, "min", 2, "max", 5000,
+    "ui-min", 2, "ui-max", 2000, "ui-gamma", 1.0,
+    "unit", "pixel-distance",
+    NULL)
 
+gegl_property_int (samples, "nick", _("Samples"),
+    "blurb", _("Number of samples to do per iteration looking for the range of colors"),
+    "default", 5, "min", 2, "max", 200,
+    "ui-min", 2, "ui-max", 10,
+    NULL)
+
+gegl_property_int (iterations, "nick", _("Iterations"),
+    "blurb", _("Number of iterations, a higher number of iterations provides a less noisy rendering at a computational cost"),
+    "default", 5, "min", 1, "max", 200, 
+    "ui-min", 1, "ui-max", 10,
+    NULL)
 
 /*
 
-gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
+gegl_property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
                 _("Gamma applied to radial distribution"))
 
 */
@@ -43,10 +54,10 @@ gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "stress.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "stress.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #define RGAMMA   2.0
 #define GAMMA    1.0
@@ -128,7 +139,7 @@ static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->left = area->right = area->top = area->bottom =
-      ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
+      ceil (GEGL_PROPERTIES (operation)->radius);
 
   gegl_operation_set_format (operation, "output",
                              babl_format ("RaGaBaA float"));
@@ -152,7 +163,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle compute;
   compute = gegl_operation_get_required_for_output (operation, "input",result);
 
@@ -167,7 +178,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
