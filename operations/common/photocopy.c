@@ -20,30 +20,30 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (mask_radius, _("Mask Radius"),
-                   0.0, 50.0, 10.0,
-                   _("Mask Radius"))
+gegl_property_double (mask_radius, "nick", _("Mask Radius"),
+    "default", 10.0, "min", 0.0, "max", 50.0,
+    NULL)
 
-gegl_chant_double (sharpness, _("Sharpness"),
-                   0.0, 1.0, 0.5,
-                   _("Sharpness"))
+gegl_property_double (sharpness, "nick", _("Sharpness"),
+    "default", 0.5, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (black, _("Percent Black"),
-                   0.0, 1.0, 0.2,
-                   _("Percent Black"))
+gegl_property_double (black, "nick", _("Percent Black"),
+    "default", 0.2, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (white, _("Percent White"),
-                   0.0, 1.0, 0.2,
-                   _("Percent White"))
+gegl_property_double (white, "nick", _("Percent White"),
+    "default", 0.2, "min", 0.0, "max", 1.0,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "photocopy.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "photocopy.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 #define THRESHOLD 0.75
@@ -235,7 +235,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglBufferIterator *iter;
 
@@ -311,7 +311,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
