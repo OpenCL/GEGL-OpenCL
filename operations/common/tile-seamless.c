@@ -20,14 +20,14 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "tile-seamless.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "tile-seamless.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 
@@ -146,7 +146,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
