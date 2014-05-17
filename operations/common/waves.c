@@ -21,47 +21,56 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (x, _("X"),
-                      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0.0, 1024.0, 1.0,
-                      _("X coordinate of the center of the waves"))
+gegl_property_double (x, "nick", _("X center"),
+    "blurb", _("X coordinate of the center of the waves"),
+    "ui-min", 0.0, "ui-max", 1024.0, "ui-gamma", 1.0,
+    "unit", "pixel-coordinate",
+    "axis", "x",
+    NULL)
 
-gegl_chant_double_ui (y, _("Y"),
-                      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0.0, 1024.0, 1.0,
-                      _("Y coordinate of the center of the waves"))
+gegl_property_double (y, "nick", _("Y center"),
+    "blurb", _("Y coordinate of the center of the waves"),
+    "ui-min", 0.0, "ui-max", 1024.0, "ui-gamma", 1.0,
+    "unit", "pixel-coordinate",
+    "axis", "y",
+    NULL)
 
-gegl_chant_double    (amplitude, _("Amplitude"),
-                      0.0, 1000.0, 25.0,
-                      _("Amplitude of the ripple"))
+gegl_property_double (amplitude, "nick", _("Amplitude"),
+    "blurb", _("Amplitude of the ripple"),
+    "default", 25.0, "min", 0.0, "max", 1000.0,
+    NULL)
 
-gegl_chant_double    (period, _("Period"),
-                      0.0, 1000.0, 200.0,
-                      _("Period (wavelength) of the ripple"))
+gegl_property_double (period, "nick", _("Period"),
+    "blurb", _("Period (wavelength) of the ripple"),
+    "default", 200.0, "min", 0.0, "max", 1000.0,
+    NULL)
 
-gegl_chant_double    (phi, _("Phase shift"),
-                      -1.0, 1.0, 0.0,
-                      _("Phase shift"))
+gegl_property_double (phi, "nick", _("Phase shift"),
+    "min", -1.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double    (aspect, _("Aspect ratio"),
-                      0.1, 10.0, 1.0,
-                      _("Aspect ratio"))
+gegl_property_double (aspect, "nick", _("Aspect ratio"),
+    "default", 1.0, "min", 0.1, "max", 10.0,
+    NULL)
 
-gegl_chant_enum      (sampler_type, _("Sampler"),
-                      GeglSamplerType, gegl_sampler_type,
-                      GEGL_SAMPLER_CUBIC,
-                      _("Sampler used internally"))
+gegl_property_enum (sampler_type, GeglSamplerType, gegl_sampler_type,
+    "nick", _("Resampling method"),
+    "blurb", _("Mathematical method for reconstructing pixel values"),
+    "default", GEGL_SAMPLER_CUBIC,
+    NULL)
 
-gegl_chant_boolean   (clamp, _("Clamp deformation"),
-                      FALSE,
-                      _("Limit deformation in the image area."))
+gegl_property_boolean (clamp, "nick", _("Clamp deformation"),
+    "blurb", _("Limit deformation in the image area."),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "waves.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "waves.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -69,7 +78,7 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
 
   op_area->left   = o->amplitude;
   op_area->right  = o->amplitude;
@@ -87,7 +96,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO         *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties         *o       = GEGL_PROPERTIES (operation);
   GeglSampler        *sampler = gegl_buffer_sampler_new (input,
                                                          babl_format ("RGBA float"),
                                                          o->sampler_type);
@@ -161,7 +170,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
