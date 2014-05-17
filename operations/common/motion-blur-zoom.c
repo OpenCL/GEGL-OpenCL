@@ -35,29 +35,36 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (center_x, _("X"),
-                      -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
-                      -100000.0, 100000.0, 1.0,
-                      _("Horizontal center position"))
+gegl_property_double (center_x, "nick", _("X center"),
+    "blurb", _("Horizontal center position"),
+    "default", 20.0,
+    "ui-min",  -100000.0, "ui-max", 100000.0,
+    "unit",    "pixel-coordinate",
+    "axis",    "x",
+    NULL)
 
-gegl_chant_double_ui (center_y, _("Y"),
-                      -G_MAXDOUBLE, G_MAXDOUBLE, 20.0,
-                      -100000.0, 100000.0, 1.0,
-                      _("Vertical center position"))
+gegl_property_double (center_y, "nick", _("Y center"),
+    "blurb", _("Vertical center position"),
+    "default", 20.0,
+    "ui-min",  -100000.0, "ui-max", 100000.0,
+    "unit",    "pixel-coordinate",
+    "axis",    "x",
+    NULL)
 
-gegl_chant_double_ui (factor, _("Factor"),
-                      -10.0, 1.0, 0.1,
-                      -0.5, 1.0, 2.0,
-                      _("Bluring factor"))
+gegl_property_double (factor, "nick", _("Factor"),
+    "blurb", _("Bluring factor"),
+    "default", 0.1, "min", -10.0, "max", 1.0,
+    "ui-min", -0.5, "ui-max", 1.0, "ui-gamma", 2.0,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "motion-blur-zoom.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "motion-blur-zoom.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #define SQR(c) ((c) * (c))
 
@@ -68,7 +75,7 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o       = GEGL_PROPERTIES (operation);
   GeglRectangle           *whole_region;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
@@ -119,7 +126,7 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   gfloat                  *in_buf, *out_buf, *out_pixel;
   gint                     x, y;
   GeglRectangle            src_rect;
@@ -209,7 +216,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
