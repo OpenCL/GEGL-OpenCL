@@ -37,7 +37,6 @@ gegl_property_double (chroma_distance, "nick", _("Chroma"),
 gegl_property_double (hue_distance, "nick", _("Hue"),
     "default", 3.0, "min", 0.0, "max", 180.0,
     NULL)
-
 gegl_property_seed   (seed, rand, "nick", _("Random seed"), NULL)
 
 #else

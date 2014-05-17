@@ -28,12 +28,12 @@
 
 #ifdef GEGL_CHANT_PROPERTIES
 
-gegl_chant_seed    (seed, rand, _("Random seed"),
-                    _("The random seed for the noise function"))
 gegl_chant_double  (scale, _("Scale"), 0, 20.0, 1.0,
                     _("The scale of the noise function"))
 gegl_chant_int     (iterations, _("Iterations"), 1, 20, 1,
                     _("The number of noise octaves."))
+gegl_chant_seed    (seed, rand, _("Random seed"),
+                    _("The random seed for the noise function"))
 
 #else
 

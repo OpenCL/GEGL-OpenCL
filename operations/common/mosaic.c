@@ -102,12 +102,12 @@ gegl_property_double (light_dir, "nick", _("Light direction"),
     "unit", "degree",
     NULL)
 
-gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
-
 gegl_property_boolean (antialiasing, "nick", _("Antialiasing"),
     "blurb", _("Enables smoother tile output"),
     "default", TRUE,
     NULL)
+
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
 
 #else
 

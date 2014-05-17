@@ -34,12 +34,12 @@ gegl_property_int  (shift, "nick", _("Shift"),
     "unit", "pixel-distance",
     NULL)
 
-gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
-
 gegl_property_enum (direction, GeglShiftDirection, gegl_shift_direction,
     "nick", _("Shift direction"),
     "default", GEGL_SHIFT_DIRECTION_HORIZONTAL,
     NULL)
+
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
 
 #else
 

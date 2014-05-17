@@ -33,10 +33,6 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_seed (seed, rand,
-    "nick",  _("Random seed"),
-    NULL)
-
 gegl_property_double (turbulence, "nick", _("Turbulence"),
     "blurb", _("High values give more variation in details"),
     "default", 1.0, "min", 0.0, "max", 7.0,
@@ -74,6 +70,10 @@ gegl_property_int (height, "nick", _("Height"),
     "unit",  "pixel-distance",
     "axis",  "y",
     "role",  "output-extent",
+    NULL)
+
+gegl_property_seed (seed, rand,
+    "nick",  _("Random seed"),
     NULL)
 
 #else

@@ -28,8 +28,6 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL) 
-
 gegl_property_double (pct_random, "nick", _("Randomization (%)"),
     "default", 50.0, "min", 0.0, "max", 100.0,
     NULL)
@@ -37,6 +35,8 @@ gegl_property_double (pct_random, "nick", _("Randomization (%)"),
 gegl_property_int (repeat, "nick", _("Repeat"),
     "default", 1, "min", 1, "max", 100, 
     NULL)
+
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL) 
 
 #else
 
