@@ -22,26 +22,34 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int (mask_radius, _("Mask Radius"), 1, 25, 4,
-                _("Radius of circle around pixel"))
+gegl_property_int (mask_radius, "nick", _("Mask Radius"),
+    "blurb", _("Radius of circle around pixel"),
+    "default", 4, "min", 1, "max", 25,
+    "unit", "pixel-distance",
+    NULL)
 
-gegl_chant_int (exponent, _("Exponent"), 1, 20, 8,
-                   _("Exponent"))
+gegl_property_int (exponent, "nick", _("Exponent"),
+    "default", 8, "min", 1, "max", 20,
+    NULL)
 
-gegl_chant_int (intensities, _("Number of intensities"), 8, 256, 128,
-                    _("Histogram size"))
+gegl_property_int (intensities, "nick", _("Number of intensities"),
+    "blurb", _("Histogram size"),
+    "default", 128, "min", 8, "max", 256,
+    NULL)
 
-gegl_chant_boolean (use_inten, _("Intensity Mode"), TRUE,
-                    _("Use pixel luminance values"))
+gegl_property_boolean (use_inten, "nick", _("Intensity Mode"),
+    "blurb", _("Use pixel luminance values"),
+    "default", TRUE,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "oilify.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "oilify.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 #define NUM_INTENSITIES       256
@@ -258,11 +266,11 @@ oilify_pixel (gint           x,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
+  GeglProperties              *o;
   GeglOperationAreaFilter *op_area;
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  o       = GEGL_PROPERTIES (operation);
 
   op_area->left   =
   op_area->right  =
@@ -341,7 +349,7 @@ cl_process (GeglOperation       *operation,
   const Babl *out_format = gegl_operation_get_format (operation, "output");
   gint err;
 
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                          result,
@@ -385,7 +393,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o                = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   gint x = o->mask_radius; /* initial x                   */
@@ -457,7 +465,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
