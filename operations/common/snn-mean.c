@@ -21,19 +21,26 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int_ui (radius, _("Radius"), 0, 100, 8, 0, 40, 1.5,
-  _("Radius of square pixel region, (width and height will be radius*2+1)"))
-gegl_chant_int (pairs, _("Pairs"), 1, 2, 2,
-  _("Number of pairs; higher number preserves more acute features"))
+gegl_property_int (radius, "nick", _("Radius"),
+    "blurb", _("Radius of square pixel region, (width and height will be radius*2+1)"),
+    "default", 8, "min",     0, "max",      100,
+    "ui-min",  0, "ui-max", 40, "ui-gamma", 1.5,
+    "unit", "  pixel-distance",
+    NULL)
+
+gegl_property_int (pairs, "nick", _("Pairs"),
+  "blurb", _("Number of pairs; higher number preserves more acute features"),
+  "default", 2, "min", 1, "max", 2,
+  NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "snn-mean.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "snn-mean.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static void
@@ -47,7 +54,7 @@ snn_mean (GeglBuffer          *src,
 static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o    = GEGL_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = ceil (o->radius);
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
@@ -67,7 +74,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties      *o = GEGL_PROPERTIES (operation);
   GeglBuffer          *temp_in;
   GeglRectangle        compute;
 
@@ -75,8 +82,7 @@ process (GeglOperation       *operation,
     if (cl_process (operation, input, output, result))
       return TRUE;
 
-  compute  = gegl_operation_get_required_for_output (
-                   operation, "input", result);
+  compute = gegl_operation_get_required_for_output (operation, "input", result);
 
   if (o->radius < 1.0)
     {
@@ -122,7 +128,8 @@ snn_mean (GeglBuffer          *src,
   src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+  gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf, 
+                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   offset = 0;
 
@@ -273,7 +280,7 @@ cl_process (GeglOperation       *operation,
   gint err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                          result,
@@ -309,7 +316,7 @@ cl_process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
