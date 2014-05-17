@@ -19,22 +19,27 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (std_dev, _("Std. Dev."),
-                      0.2, 300.0, 0.55, 0.2, 10.0, 3.0,
-                      _("Standard deviation (spatial scale factor)"))
+gegl_property_double (std_dev, "nick", _("Std. Dev."),
+    "blurb", _("Standard deviation (spatial scale factor)"),
+    "default", 0.55, "min", 0.2, "max", 300.0,
+    "ui-min", 0.2, "ui-max", 10.0, "ui-gamma", 3.0,
+    "unit", "pixel-distance",
+    NULL)
 
-gegl_chant_double_ui (scale, _("Scale"),
-                      0.0, 300.0, 4.0, 0.0, 10.0, 3.0,
-                      _("Scale, strength of effect"))
+gegl_property_double (scale, "nick", _("Scale"),
+    "blurb", _("Scale, strength of effect"),
+    "default", 4.0, "min", 0.0, "max", 300.0,
+    "ui-max", 10.0, "ui-gamma", 3.0,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE "unsharp-mask.c"
+#define GEGL_OP_META
+#define GEGL_OP_C_FILE "unsharp-mask.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 attach (GeglOperation *operation)
@@ -65,7 +70,7 @@ attach (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class;
 
