@@ -34,7 +34,7 @@ gegl_enum_start (gegl_gaussian_blur_filter)
 gegl_enum_end (GeglGaussianBlurFilter)
 
 gegl_property_double (std_dev_x, _("Size X"),
-    "blurb", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),
+    "description", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),
     "default", 1.5, "min", 0.0, "max", 1500.0,
     "ui-min", 0.0, "ui-max", 100.0, "ui-gamma", 3.0,
     "axis", "x",
@@ -42,7 +42,7 @@ gegl_property_double (std_dev_x, _("Size X"),
     NULL)
 
 gegl_property_double (std_dev_y, _("Size Y"),
-    "blurb", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),
+    "description", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),
     "default", 1.5, "min", 0.0, "max", 1500.0,
     "ui-min", 0.0, "ui-max", 100.0, "ui-gamma", 3.0,
     "axis", "y",
@@ -52,7 +52,7 @@ gegl_property_double (std_dev_y, _("Size Y"),
 gegl_property_enum  (filter, _("Filter"),
     GeglGaussianBlurFilter, gegl_gaussian_blur_filter,
     "default", GEGL_GAUSSIAN_BLUR_FILTER_AUTO,
-    "blurb", _("Optional parameter to override the automatic selection of blur filter"),
+    "description", _("Optional parameter to override the automatic selection of blur filter"),
     NULL)
 
 #else

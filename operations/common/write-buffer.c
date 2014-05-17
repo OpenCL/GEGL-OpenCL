@@ -23,7 +23,7 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_object (buffer, _("Buffer location"),
-    "blurb", _("A pre-existing GeglBuffer to write incoming buffer data to."),
+    "description", _("A pre-existing GeglBuffer to write incoming buffer data to."),
     NULL)
 
 #else

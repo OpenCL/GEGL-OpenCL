@@ -29,7 +29,7 @@ gegl_enum_start (gegl_shift_direction)
 gegl_enum_end (GeglShiftDirection)
 
 gegl_property_int  (shift, _("Shift"),
-    "blurb", _("Maximum amount to shift"),
+    "description", _("Maximum amount to shift"),
     "default", 5, "min", 0, "max", 200,
     "unit", "pixel-distance",
     NULL)

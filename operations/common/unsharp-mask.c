@@ -22,14 +22,14 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_double (std_dev, _("Std. Dev."),
-    "blurb", _("Standard deviation (spatial scale factor)"),
+    "description", _("Standard deviation (spatial scale factor)"),
     "default", 0.55, "min", 0.2, "max", 300.0,
     "ui-min", 0.2, "ui-max", 10.0, "ui-gamma", 3.0,
     "unit", "pixel-distance",
     NULL)
 
 gegl_property_double (scale, _("Scale"),
-    "blurb", _("Scale, strength of effect"),
+    "description", _("Scale, strength of effect"),
     "default", 4.0, "min", 0.0, "max", 300.0,
     "ui-max", 10.0, "ui-gamma", 3.0,
     NULL)

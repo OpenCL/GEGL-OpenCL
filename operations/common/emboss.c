@@ -29,19 +29,19 @@ gegl_enum_end (GeglEmbossType)
 
 gegl_property_enum (type, _("Emboss Type"),
     GeglEmbossType, gegl_emboss_type,
-    "blurb"  , _("Rendering type"),
+    "description" , _("Rendering type"),
     "default", GEGL_EMBOSS_TYPE_EMBOSS,
     NULL)
 gegl_property_double (azimuth, _("Azimuth"),
-    "blurb",  _("Light angle (degrees)"),
+    "description",  _("Light angle (degrees)"),
     "min"  , 0.0, "max", 360.0, "default", 30.0,
     NULL)
 gegl_property_double (elevation, _("Elevation"),
-    "blurb"  , _("Elevation angle (degrees)"),
+    "description", _("Elevation angle (degrees)"),
     "default", 45.0, "min", 0.0, "max", 180.0,
     NULL)
 gegl_property_int (depth, _("Depth"),
-    "blurb"  , _("Filter width"),
+    "description", _("Filter width"),
     "default", 20, "min", 1, "max", 100,
     NULL)
 

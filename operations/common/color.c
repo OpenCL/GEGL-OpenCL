@@ -21,12 +21,12 @@
 
 #ifdef GEGL_PROPERTIES
 gegl_property_color (value, _("Color"),
-    "blurb", _("The color to render (defaults to 'black')"),
+    "description", _("The color to render (defaults to 'black')"),
     "default", "black",
     NULL)
 
 gegl_property_format (format, _("Babl Format"),
-    "blurb", _("The babl format of the output"),
+    "description", _("The babl format of the output"),
     NULL)
 #else
 

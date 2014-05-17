@@ -798,7 +798,7 @@ gegl_param_spec_double_from_vararg (const char *name,
     }
     else if (g_str_equal (key, "default"))
       default_value = va_arg (var_args, double);
-    else if (g_str_equal (key, "blurb"))
+    else if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -886,7 +886,7 @@ gegl_param_spec_int_from_vararg (const char *name,
     }
     else if (g_str_equal (key, "default"))
       default_value = va_arg (var_args, gint);
-    else if (g_str_equal (key, "blurb"))
+    else if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -943,7 +943,7 @@ gegl_param_spec_boolean_from_vararg (const char *name,
   {
     if (g_str_equal (key, "default"))
       default_value = va_arg (var_args, gboolean);
-    else if (g_str_equal (key, "blurb"))
+    else if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -985,7 +985,7 @@ gegl_param_spec_string_from_vararg (const char *name,
   {
     if (g_str_equal (key, "default"))
       default_value = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "blurb"))
+    else if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1026,7 +1026,7 @@ gegl_param_spec_file_path_from_vararg (const char *name,
   {
     if (g_str_equal (key, "default"))
       default_value = va_arg (var_args, const gchar *);
-    else if (g_str_equal (key, "blurb"))
+    else if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1069,7 +1069,7 @@ gegl_param_spec_enum_from_vararg (const char *name,
   {
     if (g_str_equal (key, "default"))
       default_value = va_arg (var_args, int);
-    else if (g_str_equal (key, "blurb"))
+    else if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1110,7 +1110,7 @@ gegl_param_spec_pointer_from_vararg (const char *name,
   key = va_arg (var_args, const char*);
   while (key)
   {
-    if (g_str_equal (key, "blurb"))
+    if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1146,7 +1146,7 @@ gegl_param_spec_object_from_vararg (const char *name, const char *nick, ...)
   key = va_arg (var_args, const char*);
   while (key)
   {
-    if (g_str_equal (key, "blurb"))
+    if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1186,7 +1186,7 @@ gegl_param_spec_curve_from_vararg (const char *name,
   key = va_arg (var_args, const char*);
   while (key)
   {
-    if (g_str_equal (key, "blurb"))
+    if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1227,7 +1227,7 @@ gegl_param_spec_path_from_vararg (const char *name,
   key = va_arg (var_args, const char*);
   while (key)
   {
-    if (g_str_equal (key, "blurb"))
+    if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1264,7 +1264,7 @@ gegl_param_spec_format_from_vararg (const char *name,
   key = va_arg (var_args, const char*);
   while (key)
   {
-    if (g_str_equal (key, "blurb"))
+    if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1307,7 +1307,7 @@ gegl_param_spec_color_from_vararg (const char *name,
     {
       default_value = va_arg (var_args, const gchar *);
     }
-    else if (g_str_equal (key, "blurb"))
+    else if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {
@@ -1345,7 +1345,7 @@ gegl_param_spec_seed_from_vararg (const char *name,
   key = va_arg (var_args, const char*);
   while (key)
   {
-    if (g_str_equal (key, "blurb"))
+    if (g_str_equal (key, "description"))
       blurb = va_arg (var_args, const gchar *);
     else
     {

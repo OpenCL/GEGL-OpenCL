@@ -34,12 +34,12 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_double (turbulence, _("Turbulence"),
-    "blurb", _("High values give more variation in details"),
+    "description", _("High values give more variation in details"),
     "default", 1.0, "min", 0.0, "max", 7.0,
     NULL)
 
 gegl_property_int (x, _("X"),
-    "blurb", _("X start of the generated buffer"),
+    "description", _("X start of the generated buffer"),
     "ui-min", -4096, "ui-max",  4096,
     "unit",  "pixel-coordinate",
     "axis",  "x",
@@ -47,7 +47,7 @@ gegl_property_int (x, _("X"),
     NULL)
 
 gegl_property_int (y, _("Y"),
-    "blurb", _("Y start of the generated buffer"),
+    "description", _("Y start of the generated buffer"),
     "ui-min", -4096, "ui-max",  4096,
     "unit",  "pixel-coordinate",
     "axis",  "y",
@@ -55,7 +55,7 @@ gegl_property_int (y, _("Y"),
     NULL)
 
 gegl_property_int (width, _("Width"),
-    "blurb", _("Width of the generated buffer"),
+    "description", _("Width of the generated buffer"),
     "default", 1024, "min", 0,
     "ui-min",  0, "ui-max",  4096,
     "unit",  "pixel-distance",
@@ -64,7 +64,7 @@ gegl_property_int (width, _("Width"),
     NULL)
 
 gegl_property_int (height, _("Height"),
-    "blurb", _("Height of the generated buffer"),
+    "description", _("Height of the generated buffer"),
     "default", 768, "min",       0,
     "ui-min",    0, "ui-max", 4096,
     "unit",  "pixel-distance",

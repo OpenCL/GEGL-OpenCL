@@ -27,19 +27,18 @@ gegl_enum_start (gegl_vignette_shape)
   gegl_enum_value (GEGL_VIGNETTE_SHAPE_DIAMOND, "Diamond")
 gegl_enum_end (GeglVignetteShape)
 
-gegl_property_enum (shape, _("Shape"),
+gegl_property_enum (shape, _("Vignette shape"),
     GeglVignetteShape, gegl_vignette_shape,
-    "blurb",   _("Shape of the vignette"),
     "default", GEGL_VIGNETTE_SHAPE_CIRCLE,
     NULL)
 
 gegl_property_color (color, _("Color"),
-    "blurb", _("Defaults to 'black', you can use transparency here to erase portions of an image"),
+    "description", _("Defaults to 'black', you can use transparency here to erase portions of an image"),
     "default", "black",
     NULL)
 
 gegl_property_double (radius, _("Radius"),
-    "blurb",_("How far out vignetting goes as portion of half image diagonal"),
+    "description",_("How far out vignetting goes as portion of half image diagonal"),
     "default", 1.5, "min", 0.0, "max", 3.0,
     "unit", "relative-distance",
     NULL)
@@ -49,32 +48,32 @@ gegl_property_double (softness, _("Softness"),
     NULL)
 
 gegl_property_double (gamma, _("Gamma"),
-    "blurb", _("Falloff linearity"),
+    "description", _("Falloff linearity"),
     "default", 2.0, "min", 1.0, "max", 20.0, 2.0,
     NULL)
 
 gegl_property_double (proportion, _("Proportion"),
-    "blurb", _("How close we are to image proportions"),
+    "description", _("How close we are to image proportions"),
     "default", 1.0, "min", 0.0, "max", 1.0,
     NULL)
 
 gegl_property_double (squeeze, _("Squeeze"),
-    "blurb",_("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, "
+    "description",_("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, "
               "-1.0 = 1:inf 1.0 = inf:1, this is applied after "
               "proportion is taken into account, to directly use "
               "squeeze factor as proportions, set proportion to 0.0."),
     "default", 0.0, "min", -1.0, "max", 1.0,
     NULL)
 
-gegl_property_double (x, _("X"),
-    "blurb", _("Horizontal center of vignetting"),
+gegl_property_double (x, _("X center"),
+    "description", _("Horizontal center of vignetting"),
     "default", 0.5, "min", -1.0, "max", 2.0,
     "unit", "relative-distance",
     "axis", "x",
     NULL)
 
-gegl_property_double (y, _("Y"),
-    "blurb", _("Vertical center of vignetting"),
+gegl_property_double (y, _("Y center"),
+    "description", _("Vertical center of vignetting"),
     "default", 0.5, "min", -1.0, "max", 2.0, 
     "unit", "relative-distance",
     "axis", "y",

@@ -59,7 +59,7 @@ gegl_property_enum (wave_type, _("Wave type"),
     NULL)
 
 gegl_property_boolean (tileable, _("Tileable"),
-    "blurb", _("Retain tilebility"),
+    "description", _("Retain tilebility"),
     NULL)
 
 #else

@@ -23,7 +23,7 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_file_path (path, _("File"), 
-    "blurb", _("Path of file to save."),
+    "description", _("Path of file to save."),
     NULL)
 
 #else

@@ -23,7 +23,7 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_string (values, _("Values"),
-    "blurb", _("list of <number>s"),
+    "description", _("list of <number>s"),
     NULL)
 
 #else

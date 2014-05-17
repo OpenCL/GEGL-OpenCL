@@ -29,13 +29,13 @@
  */
 
 gegl_property_double (contrast, _("Contrast"), 
-   "blurb", _("Magnitude of contrast scaling >1.0 brighten < 1.0 darken"),
+   "description", _("Magnitude of contrast scaling >1.0 brighten < 1.0 darken"),
    "default", 1.0, "min", -5.0, "max", 5.0,
    "ui-min", 0.0, "ui-max", 2.0, "ui-gamma", 1.0,
    NULL)
 
 gegl_property_double (brightness, _("Brightness"), 
-   "blurb",  _("Amount to increase brightness"),
+   "description", _("Amount to increase brightness"),
    "default", 0.0, "min", -3.0, "max", 3.0,
    "ui-min", -1.0, "ui-max", 1.0, "ui-gamma", 1.0,
    NULL)

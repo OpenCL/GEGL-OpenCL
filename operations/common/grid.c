@@ -22,7 +22,7 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_int (x, _("Width"),
-    "blurb", _("Horizontal width of cells pixels"),
+    "description", _("Horizontal width of cells pixels"),
     "default", 32, "min", 1, "max", G_MAXINT,
     "ui-min", 1, "ui-max", 128,
     "unit", "pixel-distance",
@@ -30,7 +30,7 @@ gegl_property_int (x, _("Width"),
     NULL)
 
 gegl_property_int (y, _("Height"),
-    "blurb", _("Vertical width of cells pixels"),
+    "description", _("Vertical width of cells pixels"),
     "default", 32, "min", 1, "max", G_MAXINT,
     "ui-min", 1, "ui-max", 128,
     "unit", "pixel-distance",
@@ -38,7 +38,7 @@ gegl_property_int (y, _("Height"),
     NULL)
 
 gegl_property_int (x_offset, _("X offset"),
-    "blurb", _("Horizontal offset (from origin) for start of grid"),
+    "description", _("Horizontal offset (from origin) for start of grid"),
     "default", 0,
     "ui-min", -64, "ui-max", 64,
     "unit", "pixel-coordinate",
@@ -46,7 +46,7 @@ gegl_property_int (x_offset, _("X offset"),
     NULL)
 
 gegl_property_int (y_offset, _("Y offset"),
-    "blurb", _("Vertical offset (from origin) for start of grid"),
+    "description", _("Vertical offset (from origin) for start of grid"),
     "default", 0,
     "ui-min", -64, "ui-max", 64,
     "unit", "pixel-coordinate",
@@ -54,7 +54,7 @@ gegl_property_int (y_offset, _("Y offset"),
     NULL)
 
 gegl_property_int (line_width, _("Line width"),
-    "blurb", _("Width of grid lines in pixels"),
+    "description", _("Width of grid lines in pixels"),
     "default", 4, "min", 0,
     "ui-min", 0, "ui-max", 16,
     "unit", "pixel-distance",
@@ -62,7 +62,7 @@ gegl_property_int (line_width, _("Line width"),
     NULL)
 
 gegl_property_int (line_height, _("Line height"),
-    "blurb", _("Width of grid lines in pixels"),
+    "description", _("Width of grid lines in pixels"),
     "default", 4, "min", 0,
     "ui-min", 0, "ui-max", 16,
     "unit", "pixel-distance",
@@ -70,7 +70,7 @@ gegl_property_int (line_height, _("Line height"),
     NULL)
 
 gegl_property_color (line_color, _("Color"),
-    "blurb", _("Color of the grid lines"),
+    "description", _("Color of the grid lines"),
     "default", "black",
     "role",    "color-primary",
     NULL)

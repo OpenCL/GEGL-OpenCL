@@ -23,7 +23,7 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_double (value, _("Opacity"),
-    "blurb", _("Global opacity value that is always used on top of the optional auxiliary input buffer."),
+    "description", _("Global opacity value that is always used on top of the optional auxiliary input buffer."),
     "default", 1.0, "min", -10.0, "max", 10.0,
     "ui-min", 0.0, "ui-max", 1.0, NULL)
 

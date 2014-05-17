@@ -24,26 +24,26 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_double (x, _("X center"),
-    "blurb", _("X coordinate of the center of the waves"),
+    "description", _("X coordinate of the center of the waves"),
     "ui-min", 0.0, "ui-max", 1024.0, "ui-gamma", 1.0,
     "unit", "pixel-coordinate",
     "axis", "x",
     NULL)
 
 gegl_property_double (y, _("Y center"),
-    "blurb", _("Y coordinate of the center of the waves"),
+    "description", _("Y coordinate of the center of the waves"),
     "ui-min", 0.0, "ui-max", 1024.0, "ui-gamma", 1.0,
     "unit", "pixel-coordinate",
     "axis", "y",
     NULL)
 
 gegl_property_double (amplitude, _("Amplitude"),
-    "blurb", _("Amplitude of the ripple"),
+    "description", _("Amplitude of the ripple"),
     "default", 25.0, "min", 0.0, "max", 1000.0,
     NULL)
 
 gegl_property_double (period, _("Period"),
-    "blurb", _("Period (wavelength) of the ripple"),
+    "description", _("Period (wavelength) of the ripple"),
     "default", 200.0, "min", 0.0, "max", 1000.0,
     NULL)
 
@@ -57,12 +57,12 @@ gegl_property_double (aspect, _("Aspect ratio"),
 
 gegl_property_enum (sampler_type, _("Resampling method"),
     GeglSamplerType, gegl_sampler_type,
-    "blurb", _("Mathematical method for reconstructing pixel values"),
+    "description", _("Mathematical method for reconstructing pixel values"),
     "default", GEGL_SAMPLER_CUBIC,
     NULL)
 
 gegl_property_boolean (clamp, _("Clamp deformation"),
-    "blurb", _("Limit deformation in the image area."),
+    "description", _("Limit deformation in the image area."),
     NULL)
 
 #else

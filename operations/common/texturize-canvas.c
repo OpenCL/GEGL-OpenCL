@@ -33,13 +33,13 @@ gegl_enum_end (GeglTexturizeCanvasDirection)
 
 gegl_property_enum (direction, _("Direction"),
     GeglTexturizeCanvasDirection, gegl_texturize_canvas_direction,
-    "blurb", _("Position of the light source which lightens the canvas: "
+    "description", _("Position of the light source which lightens the canvas: "
                "Top-right, Top-left, Bottom-left or Bottom-right"),
     "default", GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT,
     NULL)
 
 gegl_property_int (depth, _("Depth"),
-    "blurb",  _("Apparent depth of the rendered canvas effect; "
+    "description",  _("Apparent depth of the rendered canvas effect; "
                 "from 1 (very flat) to 50 (very deep)"),
     "default", 4, "min", 1, "max", 50,
     NULL)

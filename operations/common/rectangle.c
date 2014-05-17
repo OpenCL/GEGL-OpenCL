@@ -24,33 +24,33 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_double (x, _("X"),
-    "blurb", _("Horizontal position"),
+    "description", _("Horizontal position"),
     "unit", "pixel-coordinate",
     "axis", "x",
     NULL)
 
 gegl_property_double (y, _("Y"),
-    "blurb", _("Vertical position"),
+    "description", _("Vertical position"),
     "unit", "pixel-coordinate",
     "axis", "y",
     NULL)
 
 gegl_property_double (width, _("Width"),
-    "blurb", _("Horizontal extent"),
+    "description", _("Horizontal extent"),
     "min", 0.0, "max", G_MAXDOUBLE,
     "unit", "pixel-distance",
     "axis", "x",
     NULL)
 
 gegl_property_double (height, _("Height"),
-    "blurb", _("Vertical extent"),
+    "description", _("Vertical extent"),
     "min", 0.0, "max", G_MAXDOUBLE,
     "unit", "pixel-distance",
     "axis", "y",
     NULL)
 
 gegl_property_color(color, _("Color"),
-    "blurb", _("Color to render"),
+    "description", _("Color to render"),
     "default", "white",
     NULL)
 

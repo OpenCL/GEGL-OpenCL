@@ -41,44 +41,44 @@ gegl_enum_end (GeglFractalExplorerType)
 
 gegl_property_enum (fractaltype, _("Fractal type"),
     GeglFractalExplorerType, gegl_fractal_explorer_type,
-    "blurb",   _("Type of a fractal"),
+    "description", _("Type of a fractal"),
     "default", GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT,
     NULL)
 gegl_property_int (iter, _("Iterations"),
-    "blurb",   _("Iterations"),
+    "description", _("Iterations"),
     "default", 50, "min", 1, "max", 1000,
     NULL)
 gegl_property_double (zoom, _("Zoom"),
-    "blurb",   _("Zoom in the fractal space"),
+    "description", _("Zoom in the fractal space"),
     "default", 300.0 , "min"   , 0.0000001, "max"     , 10000000.0,
     "ui-min",  0.0001, "ui-max", 10000.0  , "ui-gamma", 1.5,
    NULL)
 gegl_property_double (shiftx, _("Shift X"),
-    "blurb",  _("X shift in the fractal space"),
+    "description", _("X shift in the fractal space"),
     "ui-min", -1000.0, "ui-max",  1000.0, "ui-gamma", 1.5,
     NULL)
 gegl_property_double (shifty, _("Shift Y"),
-    "blurb",  _("Y shift in the fractal space"),
+    "description", _("Y shift in the fractal space"),
     "ui-min", -1000.0, "ui-max",  1000.0, "ui-gamma", 1.5,
     NULL)
 gegl_property_double (cx, _("CX"),
-    "blurb",   _("CX (No effect in Mandelbrot and Sierpinski)"),
+    "description", _("CX (No effect in Mandelbrot and Sierpinski)"),
     "default", -0.75, "min", -2.5, "max", 2.5,
     NULL)
 gegl_property_double (cy, _("CY"),
-    "blurb",   _("CY (No effect in Mandelbrot and Sierpinski)"),
+    "description", _("CY (No effect in Mandelbrot and Sierpinski)"),
     "default", 0.2, "min", -2.5, "max", 2.5,
     NULL)
 gegl_property_double (redstretch, _("Red stretch"),
-    "blurb", _("Red stretching factor"), 
+    "description", _("Red stretching factor"), 
     "default", 1.0, "min", 0.0, "max", 1.0,
     NULL)
 gegl_property_double (greenstretch, _("Green stretch"),
-    "blurb", _("Green stretching factor"),
+    "description", _("Green stretching factor"),
     "default", 1.0, "min", 0.0, "max", 1.0,
     NULL)
 gegl_property_double (bluestretch, _("Blue stretch"),
-    "blurb", _("Green stretching factor"), 
+    "description", _("Green stretching factor"), 
     "default", 1.0, "min", 0.0, "max", 1.0,
     NULL)
 
@@ -90,19 +90,19 @@ gegl_enum_end (GeglFractalExplorerMode)
 
 gegl_property_enum (redmode, _("Red mode"),
     GeglFractalExplorerMode, gegl_fractal_explorer_mode,
-    "blurb",   _("Red application mode"),
+    "description",   _("Red application mode"),
     "default", GEGL_FRACTAL_EXPLORER_MODE_COS,
     NULL)
 
 gegl_property_enum (greenmode, _("Green mode"),
     GeglFractalExplorerMode, gegl_fractal_explorer_mode,
     "default", GEGL_FRACTAL_EXPLORER_MODE_COS,
-    "blurb",   _("Green application mode"), 
+    "description",   _("Green application mode"), 
     NULL)
 
 gegl_property_enum (bluemode, _("Blue mode"),
     GeglFractalExplorerMode, gegl_fractal_explorer_mode,
-    "blurb", _("Blue application mode"),
+    "description", _("Blue application mode"),
     "default", GEGL_FRACTAL_EXPLORER_MODE_SIN,
     NULL)
 
@@ -111,7 +111,7 @@ gegl_property_boolean (greeninvert, _("Green inversion"), NULL)
 gegl_property_boolean (blueinvert , _("Blue inversion") , NULL)
 
 gegl_property_int (ncolors, _("Colors"),
-    "blurb", _("Number of colors"),
+    "description", _("Number of colors"),
     "default", 256, "min", 2, "max", MAXNCOLORS,
     NULL)
 

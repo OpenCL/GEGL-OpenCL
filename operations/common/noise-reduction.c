@@ -24,7 +24,7 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_int (iterations, _("Strength"),
-    "blurb", _("Controls the number of iterations; lower values give better results."),
+    "description", _("Controls the number of iterations; lower values give better results."),
     "default", 4, "min",    1, "max", 32,
     "ui-min",  1, "ui-max", 8,
     NULL)

@@ -31,12 +31,12 @@ gegl_enum_end (GeglPixelizeNorm)
 
 gegl_property_enum (norm, _("Shape"),
     GeglPixelizeNorm, gegl_pixelize_norm,
-    "blurb",   _("The shape of pixels"),
+    "description", _("The shape of pixels"),
     "default", GEGL_PIXELIZE_NORM_INFINITY,
     NULL)
 
 gegl_property_int (size_x, _("Block width"),
-    "blurb", _("Width of blocks in pixels"),
+    "description", _("Width of blocks in pixels"),
     "min", 1, "default", 16,
     "ui-min", 1, "ui-max", 2048, "ui-gamma", 1.5,
     "unit", "pixel-distance",
@@ -44,7 +44,7 @@ gegl_property_int (size_x, _("Block width"),
     NULL)
 
 gegl_property_int (size_y, _("Block height"),
-    "blurb", _("Width of blocks in pixels"),
+    "description", _("Width of blocks in pixels"),
     "min", 1, "default", 16,
     "ui-min", 1, "ui-max", 2048, "ui-gamma", 1.5,
     "unit", "pixel-distance",
@@ -52,17 +52,17 @@ gegl_property_int (size_y, _("Block height"),
     NULL)
 
 gegl_property_double (ratio_x, _("X size ratio"),
-    "blurb", _("Horizontal size ratio of a pixel inside each block"),
+    "description", _("Horizontal size ratio of a pixel inside each block"),
     "default", 1.0, "min", 0.0, "max", 1.0, 
     NULL)
 
 gegl_property_double (ratio_y, _("Y size ratio"),
-    "blurb", _("Vertical size ratio of a pixel inside each block"),
+    "description", _("Vertical size ratio of a pixel inside each block"),
     "default", 1.0, "min", 0.0, "max", 1.0, 
     NULL)
 
 gegl_property_color  (background, _("Background color"),
-    "blurb", _("Color used to fill the background"),
+    "description", _("Color used to fill the background"),
     "default", "white",
     "role", "color-secondary",
     NULL)

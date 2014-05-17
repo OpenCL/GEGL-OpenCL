@@ -25,20 +25,20 @@
 #ifdef GEGL_PROPERTIES
 
 gegl_property_int (radius, _("Radius"),
-    "blurb", _("Neighborhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime"),
+    "description", _("Neighborhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime"),
     "default", 300, "min", 2, "max", 5000,
     "ui-min", 2, "ui-max", 2000, "ui-gamma", 1.0,
     "unit", "pixel-distance",
     NULL)
 
 gegl_property_int (samples, _("Samples"),
-    "blurb", _("Number of samples to do per iteration looking for the range of colors"),
+    "description", _("Number of samples to do per iteration looking for the range of colors"),
     "default", 5, "min", 2, "max", 200,
     "ui-min", 2, "ui-max", 10,
     NULL)
 
 gegl_property_int (iterations, _("Iterations"),
-    "blurb", _("Number of iterations, a higher number of iterations provides a less noisy rendering at a computational cost"),
+    "description", _("Number of iterations, a higher number of iterations provides a less noisy rendering at a computational cost"),
     "default", 5, "min", 1, "max", 200, 
     "ui-min", 1, "ui-max", 10,
     NULL)

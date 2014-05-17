@@ -37,12 +37,12 @@ gegl_enum_end (GeglMosaicTile)
 
 gegl_property_enum (tile_type, _("Tile geometry"),
     GeglMosaicTile, gegl_mosaic_tile,
-    "blurb", _("What shape to use for tiles"),
+    "description", _("What shape to use for tiles"),
     "default", GEGL_MOSAIC_TILE_HEXAGONS,
     NULL)
 
 gegl_property_double (tile_size, _("Tile size"),
-    "blurb", _("Average diameter of each tile (in pixels)"),
+    "description", _("Average diameter of each tile (in pixels)"),
     "default", 15.0, "min", 1.0, "max", 1000.0,
     "ui-min", 5.0, "ui-max", 400.0,
     "unit", "pixel-distance",
@@ -50,7 +50,7 @@ gegl_property_double (tile_size, _("Tile size"),
     NULL)
 
 gegl_property_double (tile_height, _("Tile height"),
-    "blurb", _("Apparent height of each tile (in pixels)"),
+    "description", _("Apparent height of each tile (in pixels)"),
     "default", 4.0,
     "min", 1.0, "max", 1000.0,
     "ui-min", 1.0, "ui-max", 20.0,
@@ -59,30 +59,30 @@ gegl_property_double (tile_height, _("Tile height"),
     NULL)
 
 gegl_property_double (tile_neatness, _("Tile neatness"),
-    "blurb", _("Deviation from perfectly formed tiles"),
+    "description", _("Deviation from perfectly formed tiles"),
     "default", 0.65, "min", 0.0, "max", 1.0,
     NULL)
 
 gegl_property_double (color_variation, _("Tile color variation"),
-    "blurb",  _("Magnitude of random color variations"),
+    "description", _("Magnitude of random color variations"),
     "default", 0.2, "min", 0.0, "max", 1.0,
     NULL)
 
 gegl_property_boolean (color_averaging, _("Color averaging"),
-    "blurb", _("Tile color based on average of subsumed pixels"),
+    "description", _("Tile color based on average of subsumed pixels"),
     "default", TRUE,
     NULL)
 
 gegl_property_boolean (tile_surface, _("Rough tile surface"),
-    "blurb", _("Surface characteristics"), NULL)
+    "description", _("Surface characteristics"), NULL)
 
 gegl_property_boolean (tile_allow_split, _("Allow splitting tiles"),
-    "blurb", _("Allows splitting tiles at hard edges"),
+    "description", _("Allows splitting tiles at hard edges"),
     "default", TRUE,
     NULL)
 
 gegl_property_double (tile_spacing, _("Tile spacing"),
-    "blurb", _("Inter-tile spacing (in pixels)"),
+    "description", _("Inter-tile spacing (in pixels)"),
     "default", 1.0, "min", 0.0, "max", 1000.0,
     "ui-min", 0.5, "ui-max", 30.0,
     "unit", "pixel-distance",
@@ -97,13 +97,13 @@ gegl_property_color (light_color, _("Light color"),
     NULL)
 
 gegl_property_double (light_dir, _("Light direction"),
-    "blurb", _("Direction of light-source (in degrees)"),
+    "description", _("Direction of light-source (in degrees)"),
     "default", 135.0, "min", 0.0, "max", 360.0,
     "unit", "degree",
     NULL)
 
 gegl_property_boolean (antialiasing, _("Antialiasing"),
-    "blurb", _("Enables smoother tile output"),
+    "description", _("Enables smoother tile output"),
     "default", TRUE,
     NULL)
 
