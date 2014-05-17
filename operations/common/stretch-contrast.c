@@ -20,17 +20,19 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_boolean (keep_colors, _("Keep colors"), TRUE,
-                    _("Impact each channel with the same amount"))
+gegl_property_boolean (keep_colors, "nick", _("Keep colors"),
+    "blurb", _("Impact each channel with the same amount"),
+    "default", TRUE,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "stretch-contrast.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "stretch-contrast.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static void
@@ -349,10 +351,10 @@ cl_process (GeglOperation       *operation,
   cl_int    err = 0;
   gint      read, c;
   GeglBufferClIterator *i;
-  GeglChantO           *o;
+  GeglProperties           *o;
   cl_float4 cl_min, cl_diff;
 
-  o = GEGL_CHANT_PROPERTIES (operation);
+  o = GEGL_PROPERTIES (operation);
 
   if (cl_build_kernels ())
     return FALSE;
@@ -456,14 +458,14 @@ process (GeglOperation       *operation,
 {
   gfloat  min[3], max[3], diff[3];
   GeglBufferIterator *gi;
-  GeglChantO         *o;
+  GeglProperties         *o;
   gint                c;
 
   if (gegl_cl_is_accelerated ())
     if (cl_process (operation, input, output, result))
       return TRUE;
 
-  o = GEGL_CHANT_PROPERTIES (operation);
+  o = GEGL_PROPERTIES (operation);
 
   buffer_get_min_max (input, min, max);
 
@@ -523,7 +525,7 @@ operation_process (GeglOperation        *operation,
   const GeglRectangle *in_rect =
     gegl_operation_source_get_bounding_box (operation, "input");
 
-  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
 
   if (in_rect && gegl_rectangle_is_infinite_plane (in_rect))
     {
@@ -546,7 +548,7 @@ operation_process (GeglOperation        *operation,
  * computations.
  */
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
