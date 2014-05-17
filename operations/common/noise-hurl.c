@@ -26,25 +26,24 @@
 
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_seed   (seed, rand, _("Seed"),
-                   _("Random seed"))
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL) 
 
-gegl_chant_double (pct_random, _("Randomization (%)"),
-                   0.0, 100.0, 50.0,
-                   _("Randomization"))
+gegl_property_double (pct_random, "nick", _("Randomization (%)"),
+    "default", 50.0, "min", 0.0, "max", 100.0,
+    NULL)
 
-gegl_chant_int    (repeat, _("Repeat"),
-                   1, 100, 1,
-                   _("Repeat"))
+gegl_property_int (repeat, "nick", _("Repeat"),
+    "default", 1, "min", 1, "max", 100, 
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "noise-hurl.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "noise-hurl.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 prepare (GeglOperation *operation)
@@ -61,12 +60,12 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO    *o  = GEGL_CHANT_PROPERTIES (operation);
-  gfloat        *in_pix  = in_buf;
-  gfloat        *out_pix = out_buf;
-  GeglRectangle *whole_region;
-  gint           total_size, cnt;
-  gint           x, y;
+  GeglProperties *o       = GEGL_PROPERTIES (operation);
+  gfloat         *in_pix  = in_buf;
+  gfloat         *out_pix = out_buf;
+  GeglRectangle  *whole_region;
+  gint            total_size, cnt;
+  gint            x, y;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
   total_size   = whole_region->width * whole_region->height;
@@ -121,7 +120,7 @@ cl_process (GeglOperation       *operation,
             const GeglRectangle *roi,
             gint                level)
 {
-  GeglChantO    *o          = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties    *o          = GEGL_PROPERTIES (operation);
   GeglRectangle *wr         = gegl_operation_source_get_bounding_box (operation,
                                                                       "input");
   cl_int      cl_err           = 0;
@@ -196,7 +195,7 @@ error:
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
