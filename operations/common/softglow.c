@@ -21,26 +21,27 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (glow_radius, _("Glow radius"),
-                   1.0, 50.0, 10.0,
-                   _("Glow radius"))
+gegl_property_double (glow_radius, "nick", _("Glow radius"),
+    "default", 10.0, "min", 1.0, "max", 50.0,
+    "unit", "pixel-distance",
+    NULL)
 
-gegl_chant_double (brightness, _("Brightness"),
-                   0.0, 1.0, 0.30,
-                   _("Brightness"))
+gegl_property_double (brightness, "nick", _("Brightness"),
+    "default", 0.30, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (sharpness, _("Sharpness"),
-                   0.0, 1.0, 0.85,
-                   _("Sharpness"))
+gegl_property_double (sharpness, "nick", _("Sharpness"),
+    "default", 0.85, "min", 0.0, "max", 1.0,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "softglow.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "softglow.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -96,7 +97,7 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o    = GEGL_PROPERTIES (operation);
 
   area->left = area->right = ceil (fabs (o->glow_radius)) +1;
   area->top = area->bottom = ceil (fabs (o->glow_radius)) +1;
@@ -128,7 +129,7 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o    = GEGL_PROPERTIES (operation);
 
   GeglBuffer *dest, *dest_tmp;
 
@@ -215,7 +216,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
