@@ -22,16 +22,18 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_string (values, _("Values"), "", _("list of <number>s"))
+gegl_property_string (values, "nick", _("Values"),
+    "blurb", _("list of <number>s"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE          "svg-matrix.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE          "svg-matrix.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -51,10 +53,10 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  gfloat     *in = in_buf;
-  gfloat     *out = out_buf;
-  gfloat     *m;
+  GeglProperties *o = GEGL_PROPERTIES (op);
+  gfloat         *in = in_buf;
+  gfloat         *out = out_buf;
+  gfloat         *m;
 
   gfloat mi[25] = { 1.0, 0.0, 0.0, 0.0, 0.0,
                     0.0, 1.0, 0.0, 0.0, 0.0,
@@ -115,7 +117,7 @@ process (GeglOperation       *op,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
