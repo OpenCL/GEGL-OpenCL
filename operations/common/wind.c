@@ -21,23 +21,28 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (threshold, _("Threshold"), 0.0, 100.0, 10.0,
-                   _("Higher values restrict the effect to fewer "
-                     "areas of the image"))
+gegl_property_double (threshold, "nick", _("Threshold"),
+    "blurb", _("Higher values restrict the effect to fewer areas of the image"),
+    "default", 10.0, "min", 0.0, "max", 100.0,
+    NULL)
 
-gegl_chant_int (strength, _("Strength"), 1, 1000, 40,
-                _("Higher values increase the magnitude of the effect"))
+gegl_property_int (strength, "nick", _("Strength"),
+    "blurb", _("Higher values increase the magnitude of the effect"),
+    "default", 40, "min", 1, "max", 1000,
+    NULL)
 
-gegl_chant_seed (seed, rand, _("Seed"), _("Random seed"))
+gegl_property_seed (seed, rand, "nick", _("Seed"),
+    "blurb", _("Random seed"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "wind.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "wind.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdlib.h>
 
 typedef struct
@@ -97,12 +102,12 @@ static void
 calculate_bleed (GeglOperation *operation,
                  GeglBuffer    *input)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle rectA, rectB;
   GeglBufferIterator *iter;
   gfloat max_length = (gfloat) o->strength;
   gfloat threshold  = o->threshold;
-  GHashTable *bleed_table = o->chant_data;
+  GHashTable *bleed_table = o->user_data;
 
   rectA = *gegl_operation_source_get_bounding_box (operation, "input");
   rectA.width -= 3;
@@ -158,16 +163,16 @@ calculate_bleed (GeglOperation *operation,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
+  GeglProperties          *o;
   GeglOperationAreaFilter *op_area;
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  o       = GEGL_PROPERTIES (operation);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      g_hash_table_destroy (o->chant_data);
-      o->chant_data = NULL;
+      g_hash_table_destroy (o->user_data);
+      o->user_data = NULL;
     }
 
   op_area->left   = o->strength;
@@ -188,7 +193,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o                    = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   gfloat *src_buf;
@@ -214,14 +219,14 @@ process (GeglOperation       *operation,
   static GMutex mutex = { 0, };
 
   g_mutex_lock (&mutex);
-  if (!o->chant_data)
+  if (!o->user_data)
     {
-      o->chant_data = g_hash_table_new_full (tuple_hash, tuple_equal, g_free, g_free);
+      o->user_data = g_hash_table_new_full (tuple_hash, tuple_equal, g_free, g_free);
       calculate_bleed (operation, input);
     }
   g_mutex_unlock (&mutex);
 
-  bleed_table = (GHashTable*) o->chant_data;
+  bleed_table = (GHashTable*) o->user_data;
 
   src_rect.x      = result->x - op_area->left;
   src_rect.width  = result->width + op_area->left + op_area->right;
@@ -333,19 +338,19 @@ process (GeglOperation       *operation,
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      g_hash_table_destroy (o->chant_data);
-      o->chant_data = NULL;
+      g_hash_table_destroy (o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
