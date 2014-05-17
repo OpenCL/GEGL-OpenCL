@@ -757,6 +757,10 @@ gegl_param_spec_double_from_vararg (const char *name, ...)
           ui_min = -100,
           ui_max = 100,
           ui_gamma = 1.0;
+  gboolean min_set = FALSE,
+           max_set = FALSE,
+           ui_min_set = FALSE,
+           ui_max_set = FALSE;
 
   GParamSpec *pspec;
   GHashTable *ht;
@@ -770,15 +774,27 @@ gegl_param_spec_double_from_vararg (const char *name, ...)
   while (key)
   {
     if      (g_str_equal (key, "min"))
+    {
       min_value = va_arg (var_args, double);
+      min_set = TRUE;
+    }
     else if (g_str_equal (key, "max"))
+    {
       max_value = va_arg (var_args, double);
+      max_set = TRUE;
+    }
     else if (g_str_equal (key, "ui-min"))
+    {
       ui_min = va_arg (var_args, double);
+      ui_min_set = TRUE;
+    }
     else if (g_str_equal (key, "ui-gamma"))
       ui_gamma = va_arg (var_args, double);
     else if (g_str_equal (key, "ui-max"))
+    {
       ui_max = va_arg (var_args, double);
+      ui_max_set = TRUE;
+    }
     else if (g_str_equal (key, "default"))
       default_value = va_arg (var_args, double);
     else if (g_str_equal (key, "blurb"))
@@ -794,10 +810,17 @@ gegl_param_spec_double_from_vararg (const char *name, ...)
   }
   va_end (var_args);
 
-  if (ui_min < min_value)
+  if (!ui_min_set && min_set)
     ui_min = min_value;
-  if (ui_max > max_value)
+  if (!ui_max_set && max_set)
     ui_max = max_value;
+
+  if (ui_min < min_value)
+    g_warning ("ui-min %f smaller than min %f for property %s",
+               ui_min, min_value, name);
+  if (ui_max > max_value)
+    g_warning ("ui-max %f bigger than max %f for property %s",
+               ui_max, max_value, name);
 
   pspec = gegl_param_spec_double (name, nick, blurb,
                                min_value, max_value, default_value,
@@ -824,6 +847,10 @@ gegl_param_spec_int_from_vararg (const char *name, ...)
        ui_min = -100,
        ui_max = 100,
        ui_gamma = 1.0;
+  gboolean min_set = FALSE,
+           max_set = FALSE,
+           ui_min_set = FALSE,
+           ui_max_set = FALSE;
 
   GParamSpec *pspec;
   GHashTable *ht;
@@ -837,15 +864,27 @@ gegl_param_spec_int_from_vararg (const char *name, ...)
   while (key)
   {
     if      (g_str_equal (key, "min"))
+    {
       min_value = va_arg (var_args, gint);
+      min_set = TRUE;
+    }
     else if (g_str_equal (key, "max"))
+    {
       max_value = va_arg (var_args, gint);
+      max_set = TRUE;
+    }
     else if (g_str_equal (key, "ui-min"))
+    {
       ui_min = va_arg (var_args, gint);
+      ui_min_set = TRUE;
+    }
     else if (g_str_equal (key, "ui-gamma"))
       ui_gamma = va_arg (var_args, double);
     else if (g_str_equal (key, "ui-max"))
+    {
       ui_max = va_arg (var_args, gint);
+      ui_max_set = TRUE;
+    }
     else if (g_str_equal (key, "default"))
       default_value = va_arg (var_args, gint);
     else if (g_str_equal (key, "blurb"))
@@ -861,10 +900,17 @@ gegl_param_spec_int_from_vararg (const char *name, ...)
   }
   va_end (var_args);
 
-  if (ui_min < min_value)
+  if (!ui_min_set && min_set)
     ui_min = min_value;
-  if (ui_max > max_value)
+  if (!ui_max_set && max_set)
     ui_max = max_value;
+
+  if (ui_min < min_value)
+    g_warning ("ui-min %i smaller than min %i for property %s",
+               ui_min, min_value, name);
+  if (ui_max > max_value)
+    g_warning ("ui-max %i bigger than max %i for property %s",
+               ui_max, max_value, name);
 
   pspec = gegl_param_spec_int (name, nick, blurb,
                                min_value, max_value, default_value,
