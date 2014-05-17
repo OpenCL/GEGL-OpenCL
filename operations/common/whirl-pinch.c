@@ -31,27 +31,32 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (whirl, _("Whirl"),
-                      -G_MAXDOUBLE, G_MAXDOUBLE, 90, -720.0, 720.0, 1.0,
-                      _("Whirl angle (degrees)"))
+gegl_property_double (whirl, "nick", _("Whirl"),
+    "blurb", _("Whirl angle (degrees)"),
+    "default", 90.0,
+    "ui-min", -720.0, "ui-max", 720.0, "ui-gamma", 1.0,
+    "unit", "degrees",
+    NULL)
 
-gegl_chant_double    (pinch, _("Pinch"),
-                      -1.0, 1.0, 0.0,
-                      _("Pinch amount"))
+gegl_property_double (pinch, "nick", _("Pinch"),
+    "blurb", _("Pinch amount"),
+    "default", 0.0, "min", -1.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double    (radius, _("Radius"),
-                      0.0, 2.0, 1.0,
-                      _("Radius (1.0 is the largest circle that fits in the "
-                        "image, and 2.0 goes all the way to the corners)"))
+gegl_property_double (radius, "nick", _("Radius"),
+    "blurb", _("Radius (1.0 is the largest circle that fits in the "
+               "image, and 2.0 goes all the way to the corners)"),
+    "default", 1.0, "min", 0.0, "max", 2.0,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "whirl-pinch.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "whirl-pinch.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 /* This function is a slightly modified version from the one in the
@@ -233,9 +238,9 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO    *o        = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle  boundary = gegl_operation_get_bounding_box (operation);
-  const Babl    *format   = babl_format ("RaGaBaA float");
+  GeglProperties *o        = GEGL_PROPERTIES (operation);
+  GeglRectangle   boundary = gegl_operation_get_bounding_box (operation);
+  const Babl     *format   = babl_format ("RaGaBaA float");
 
   apply_whirl_pinch (o->whirl,
                      o->pinch,
@@ -253,7 +258,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
