@@ -42,14 +42,14 @@ gegl_property_double (zoom, "nick", _("Zoom"),
     "default", 100.0, "min", 0.01, "max", 1000.0,
     NULL)
 
-gegl_property_int (width,
+gegl_property_int (width, "nick", _("Width"),
     "blurb",   _("output/rendering width in pixels, -1 for input width"),
     "default", -1, "min", -1, "max", 10000,
     "role", "output-extent",
     "axis", "x",
     NULL)
 
-gegl_property_int (height,
+gegl_property_int (height, "nick", _("Height"),
     "blurb",   _("output/rendering height in pixels, -1 for input height"),
     "default", -1, "min", -1, "max", 10000,
     "role", "output-extent",
@@ -61,6 +61,7 @@ gegl_property_boolean (little_planet, "nick", _("Little planet"),
     NULL)
 
 gegl_property_enum (sampler_type, GeglSamplerType, gegl_sampler_type,
+    "nick",    _("Resampling method"),
     "blurb",   _("Image resampling method to use"),
     "default", GEGL_SAMPLER_NEAREST,
     NULL)
