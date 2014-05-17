@@ -21,17 +21,19 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
+#ifdef GEGL_PROPERTIES
 
-#ifdef GEGL_CHANT_PROPERTIES
-
-gegl_chant_file_path (path, _("File"), "/tmp/test.raw", _("Path of file to load."))
+gegl_property_file_path (path, "nick", _("File"),
+    "blurb", _("Path of file to load."),
+    "default", "/tmp/test.raw",
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "raw-load.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "raw-load.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -50,9 +52,9 @@ gegl_chant_file_path (path, _("File"), "/tmp/test.raw", _("Path of file to load.
 #define ERROR -1
 
 static void
-load_buffer (GeglChantO *op_raw_load)
+load_buffer (GeglProperties *op_raw_load)
 {
-  if (!op_raw_load->chant_data)
+  if (!op_raw_load->user_data)
     {
       FILE  *pfp;
       gchar *command;
@@ -75,7 +77,7 @@ load_buffer (GeglChantO *op_raw_load)
           GeglRectangle extent = { 0, 0, 0, 0 };
           extent.width = width;
           extent.height = height;
-          op_raw_load->chant_data = (gpointer) gegl_buffer_new (&extent,
+          op_raw_load->user_data = (gpointer) gegl_buffer_new (&extent,
                                                    babl_format_new (
                                                      babl_model ("RGB"),
                                                      babl_type ("u16"),
@@ -88,7 +90,7 @@ load_buffer (GeglChantO *op_raw_load)
 
            guint16 *buf = g_new (guint16, width * height * 3);
            fread (buf, 1, width * height * 3 * 2, pfp);
-           gegl_buffer_set (GEGL_BUFFER (op_raw_load->chant_data),
+           gegl_buffer_set (GEGL_BUFFER (op_raw_load->user_data),
                             NULL,
                             0,
                             babl_format_new (
@@ -111,14 +113,14 @@ static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result = {0,0,0,0};
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
 
   load_buffer (o);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      result.width  = gegl_buffer_get_width  (GEGL_BUFFER (o->chant_data));
-      result.height = gegl_buffer_get_height (GEGL_BUFFER (o->chant_data));
+      result.width  = gegl_buffer_get_width  (GEGL_BUFFER (o->user_data));
+      result.height = gegl_buffer_get_height (GEGL_BUFFER (o->user_data));
     }
 
   return result;
@@ -131,14 +133,14 @@ process (GeglOperation         *operation,
          const GeglRectangle   *result,
          gint                   level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer *output;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglBuffer     *output;
 
   load_buffer (o);
-  g_assert (o->chant_data);
+  g_assert (o->user_data);
   g_assert (g_str_equal (output_pad, "output"));
 
-  output = GEGL_BUFFER (o->chant_data);
+  output = GEGL_BUFFER (o->user_data);
   g_object_ref (output);
   gegl_operation_context_take_object (context, "output", G_OBJECT (output));
   return TRUE;
@@ -154,15 +156,15 @@ get_cached_region (GeglOperation *operation,
 static void finalize (GObject *object)
 {
   GeglOperation *op = (void*) object;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  if (o->chant_data)
-    g_object_unref (o->chant_data);
-  o->chant_data = NULL;
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  GeglProperties *o = GEGL_PROPERTIES (op);
+  if (o->user_data)
+    g_object_unref (o->user_data);
+  o->user_data = NULL;
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GObjectClass             *object_class;
