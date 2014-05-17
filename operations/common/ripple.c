@@ -22,48 +22,52 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_ripple_wave_type)
-  enum_value (GEGL_RIPPLE_WAVE_TYPE_SINE,     "Sine")
-  enum_value (GEGL_RIPPLE_WAVE_TYPE_SAWTOOTH, "Sawtooth")
-gegl_chant_register_enum_end (GeglRippleWaveType)
+gegl_enum_start (gegl_ripple_wave_type)
+  gegl_enum_value (GEGL_RIPPLE_WAVE_TYPE_SINE,     "Sine")
+  gegl_enum_value (GEGL_RIPPLE_WAVE_TYPE_SAWTOOTH, "Sawtooth")
+gegl_enum_end (GeglRippleWaveType)
 
-gegl_chant_double_ui (amplitude, _("Amplitude"),
-                      0.0, 1000.0, 25.0, 0.0, 1000.0, 2.0,
-                      _("Amplitude of the ripple"))
+gegl_property_double (amplitude, "nick", _("Amplitude"),
+    "default", 25.0, "min", 0.0, "max", 1000.0,
+    "ui-min", 0.0, "ui-max", 1000.0, "ui-gamma", 2.0,
+    NULL)
 
-gegl_chant_double_ui (period, _("Period"),
-                      0.0, 1000.0, 200.0, 0.0, 1000.0, 1.5,
-                      _("Period of the ripple"))
+gegl_property_double (period, "nick", _("Period"),
+    "default", 200.0, "min", 0.0, "max", 1000.0,
+    "ui-min", 0.0, "ui-max", 1000.0, "ui-gamma", 1.5,
+    NULL)
 
-gegl_chant_double    (phi, _("Phase shift"),
-                      -1.0, 1.0, 0.0,
-                      _("Phase shift"))
+gegl_property_double (phi, "nick", _("Phase shift"),
+    "min", -1.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double    (angle, _("Angle"),
-                      -180.0, 180.0, 0.0,
-                      _("Angle in degree"))
+gegl_property_double (angle, "nick", _("Angle"),
+    "min", -180.0, "max", 180.0,
+    "unit", "degree",
+    NULL)
 
-gegl_chant_enum      (sampler_type, _("Sampler"),
-                      GeglSamplerType, gegl_sampler_type, GEGL_SAMPLER_CUBIC,
-                      _("Sampler used internally"))
+gegl_property_enum  (sampler_type, GeglSamplerType, gegl_sampler_type, 
+    "nick", _("Resampling method"),
+    "default", GEGL_SAMPLER_CUBIC,
+    NULL)
 
-gegl_chant_enum      (wave_type, _("Wave type"),
-                      GeglRippleWaveType, gegl_ripple_wave_type,
-                      GEGL_RIPPLE_WAVE_TYPE_SINE,
-                      _("Type of wave"))
+gegl_property_enum (wave_type, GeglRippleWaveType, gegl_ripple_wave_type,
+    "nick", _("Wave type"),
+    "default", GEGL_RIPPLE_WAVE_TYPE_SINE,
+    NULL)
 
-gegl_chant_boolean   (tileable, _("Tileable"),
-                      FALSE,
-                      _("Retain tilebility"))
+gegl_property_boolean (tileable, "nick", _("Tileable"),
+    "blurb", _("Retain tilebility"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "ripple.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "ripple.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -71,11 +75,11 @@ gegl_chant_boolean   (tileable, _("Tileable"),
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
+  GeglProperties              *o;
   GeglOperationAreaFilter *op_area;
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  o       = GEGL_PROPERTIES (operation);
 
   op_area->left   = o->amplitude;
   op_area->right  = o->amplitude;
@@ -95,7 +99,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO         *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties         *o       = GEGL_PROPERTIES (operation);
   GeglSampler        *sampler = gegl_buffer_sampler_new (input,
                                                          babl_format ("RGBA float"),
                                                          o->sampler_type);
@@ -158,7 +162,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
