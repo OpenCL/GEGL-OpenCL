@@ -21,36 +21,37 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_shift_direction)
-  enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "Horizontal")
-  enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "Vertical")
-gegl_chant_register_enum_end (GeglShiftDirection)
+gegl_enum_start (gegl_shift_direction)
+  gegl_enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "Horizontal")
+  gegl_enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "Vertical")
+gegl_enum_end (GeglShiftDirection)
 
-gegl_chant_int  (shift, _("Shift"),
-                 0, 200, 5,
-                 _("Maximum amount to shift"))
+gegl_property_int  (shift, "nick", _("Shift"),
+    "blurb", _("Maximum amount to shift"),
+    "default", 5, "min", 0, "max", 200,
+    "unit", "pixel-distance",
+    NULL)
 
-gegl_chant_seed (seed, rand, _("Seed"),
-                 _("Random seed"))
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
 
-gegl_chant_enum (direction, _("Direction"),
-                 GeglShiftDirection, gegl_shift_direction,
-                 GEGL_SHIFT_DIRECTION_HORIZONTAL,
-                 _("Shift direction"))
+gegl_property_enum (direction, GeglShiftDirection, gegl_shift_direction,
+    "nick", _("Shift direction"),
+    "default", GEGL_SHIFT_DIRECTION_HORIZONTAL,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "shift.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "shift.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   const Babl              *format;
 
@@ -83,7 +84,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties    *o = GEGL_PROPERTIES (operation);
   gint           size, i, pos;
   GeglRectangle  dst_rect;
 
@@ -134,7 +135,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
