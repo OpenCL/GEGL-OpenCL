@@ -22,32 +22,34 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_texturize_canvas_direction)
-  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT,    "Top-right")
-  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_LEFT,     "Top-left")
-  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_LEFT,  "Bottom-left")
-  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_RIGHT, "Bottom-right")
-gegl_chant_register_enum_end (GeglTexturizeCanvasDirection)
+gegl_enum_start (gegl_texturize_canvas_direction)
+  gegl_enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT,    "Top-right")
+  gegl_enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_LEFT,     "Top-left")
+  gegl_enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_LEFT,  "Bottom-left")
+  gegl_enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_RIGHT, "Bottom-right")
+gegl_enum_end (GeglTexturizeCanvasDirection)
 
-gegl_chant_enum (direction, _("Direction"),
-                 GeglTexturizeCanvasDirection,
-                 gegl_texturize_canvas_direction,
-                 GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT,
-                 _("Position of the light source which lightens the canvas: "
-                   "Top-right, Top-left, Bottom-left or Bottom-right"))
+gegl_property_enum (direction, GeglTexturizeCanvasDirection, gegl_texturize_canvas_direction,
+    "nick", _("Direction"),
+    "blurb", _("Position of the light source which lightens the canvas: "
+               "Top-right, Top-left, Bottom-left or Bottom-right"),
+    "default", GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT,
+    NULL)
 
-gegl_chant_int  (depth, _("Depth"), 1, 50, 4,
-                 _("Apparent depth of the rendered canvas effect; "
-                   "from 1 (very flat) to 50 (very deep)"))
+gegl_property_int (depth, "nick", _("Depth"),
+    "blurb",  _("Apparent depth of the rendered canvas effect; "
+                "from 1 (very flat) to 50 (very deep)"),
+    "default", 4, "min", 1, "max", 50,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "texturize-canvas.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "texturize-canvas.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 /* This array contains 16384 floats interpreted as a 128x128 texture */
 static const gfloat sdata [128 * 128] =
@@ -4196,7 +4198,7 @@ cl_process(GeglOperation *op,
            const GeglRectangle *roi,
            gint level)
 {
-   GeglChantO *opt = GEGL_CHANT_PROPERTIES(op);
+   GeglProperties *opt = GEGL_PROPERTIES(op);
    float mult = (float)opt->depth * 0.25;
    const Babl *format = gegl_operation_get_format(op, "input");
    int has_alpha = babl_format_has_alpha(format);
@@ -4286,7 +4288,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *opt = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *opt = GEGL_PROPERTIES (operation);
 
   gfloat *src  = in_buf;
   gfloat *dest = out_buf;
@@ -4297,7 +4299,7 @@ process (GeglOperation       *operation,
   gint   row;   /* Row number in rectangle */
   gint   col;   /* Column number in rectangle */
 
-  const Babl *format = gegl_operation_get_format (operation, "input");
+  const Babl *format     = gegl_operation_get_format (operation, "input");
   gboolean    has_alpha  = babl_format_has_alpha (format);
   gint        components = babl_format_get_n_components (format) - has_alpha;
 
@@ -4357,7 +4359,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
