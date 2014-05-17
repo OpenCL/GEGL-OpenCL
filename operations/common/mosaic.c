@@ -26,61 +26,95 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_mosaic_tile)
-  enum_value (GEGL_MOSAIC_TILE_SQUARES,   "SQUARES")
-  enum_value (GEGL_MOSAIC_TILE_HEXAGONS,  "HEXAGONS")
-  enum_value (GEGL_MOSAIC_TILE_OCTAGONS,  "OCTAGONS")
-  enum_value (GEGL_MOSAIC_TILE_TRIANGLES, "TRIANGLES")
-gegl_chant_register_enum_end (GeglMosaicTile)
+gegl_enum_start (gegl_mosaic_tile)
+  gegl_enum_value (GEGL_MOSAIC_TILE_SQUARES,   "SQUARES")
+  gegl_enum_value (GEGL_MOSAIC_TILE_HEXAGONS,  "HEXAGONS")
+  gegl_enum_value (GEGL_MOSAIC_TILE_OCTAGONS,  "OCTAGONS")
+  gegl_enum_value (GEGL_MOSAIC_TILE_TRIANGLES, "TRIANGLES")
+gegl_enum_end (GeglMosaicTile)
 
-gegl_chant_enum      (tile_type, _("Tile geometry"), GeglMosaicTile,
-                      gegl_mosaic_tile, GEGL_MOSAIC_TILE_HEXAGONS,
-                      _("What shape to use for tiles"))
+gegl_property_enum (tile_type, GeglMosaicTile, gegl_mosaic_tile,
+    "nick", _("Tile geometry"),
+    "blurb", _("What shape to use for tiles"),
+    "default", GEGL_MOSAIC_TILE_HEXAGONS,
+    NULL)
 
-gegl_chant_double_ui (tile_size, _("Tile size"), 1.0, 1000.0, 15.0,
-                      5.0, 400, 1.0, _("Average diameter of each tile (in pixels)"))
+gegl_property_double (tile_size, "nick", _("Tile size"),
+    "blurb", _("Average diameter of each tile (in pixels)"),
+    "default", 15.0, "min", 1.0, "max", 1000.0,
+    "ui-min", 5.0, "ui-max", 400.0,
+    "unit", "pixel-distance",
+    "axis", "x",
+    NULL)
 
-gegl_chant_double_ui (tile_height, _("Tile height"), 1.0, 1000.0, 4.0,
-                      1.0, 20.0, 1.0, _("Apparent height of each tile (in pixels)"))
+gegl_property_double (tile_height, "nick", _("Tile height"),
+    "blurb", _("Apparent height of each tile (in pixels)"),
+    "default", 4.0,
+    "min", 1.0, "max", 1000.0,
+    "ui-min", 1.0, "ui-max", 20.0,
+    "unit", "pixel-distance",
+    "axis", "y",
+    NULL)
 
-gegl_chant_double    (tile_neatness, _("Tile neatness"), 0.0, 1.0, 0.65,
-                      _("Deviation from perfectly formed tiles"))
+gegl_property_double (tile_neatness, "nick", _("Tile neatness"),
+    "blurb", _("Deviation from perfectly formed tiles"),
+    "default", 0.65, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double    (color_variation, _("Tile color variation"),
-                      0.0, 1.0, 0.2, _("Magnitude of random color variations"))
+gegl_property_double (color_variation, "nick", _("Tile color variation"),
+    "blurb",  _("Magnitude of random color variations"),
+    "default", 0.2, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_boolean   (color_averaging, _("Color averaging"), TRUE,
-                      _("Tile color based on average of subsumed pixels"))
+gegl_property_boolean (color_averaging, "nick", _("Color averaging"),
+    "blurb", _("Tile color based on average of subsumed pixels"),
+    "default", TRUE,
+    NULL)
 
-gegl_chant_boolean   (tile_surface, _("Rough tile surface"), FALSE,
-                       _("Surface characteristics"))
+gegl_property_boolean (tile_surface, "nick", _("Rough tile surface"),
+    "blurb", _("Surface characteristics"), NULL)
 
-gegl_chant_boolean   (tile_allow_split, _("Allow splitting tiles"), TRUE,
-                      _("Allows splitting tiles at hard edges"))
+gegl_property_boolean (tile_allow_split, "nick", _("Allow splitting tiles"),
+    "blurb", _("Allows splitting tiles at hard edges"),
+    "default", TRUE,
+    NULL)
 
-gegl_chant_double_ui (tile_spacing, _("Tile spacing"), 0.0, 1000.0, 1.0,
-                      0.5, 30.0, 1.0,  _("Inter-tile spacing (in pixels)"))
+gegl_property_double (tile_spacing, "nick", _("Tile spacing"),
+    "blurb", _("Inter-tile spacing (in pixels)"),
+    "default", 1.0, "min", 0.0, "max", 1000.0,
+    "ui-min", 0.5, "ui-max", 30.0,
+    "unit", "pixel-distance",
+    NULL)
 
-gegl_chant_color     (joints_color, _("Joints color"), "black", _("Joints color"))
+gegl_property_color (joints_color, "nick", _("Joints color"),
+    "default", "black",
+    NULL)
 
-gegl_chant_color     (light_color, _("Light color"), "white", _("Light color"))
+gegl_property_color (light_color, "nick", _("Light color"),
+    "default", "white",
+    NULL)
 
-gegl_chant_double    (light_dir,  _("Light direction"),
-                      0.0, 360.0, 135, _("Direction of light-source (in degrees)"))
+gegl_property_double (light_dir, "nick", _("Light direction"),
+    "blurb", _("Direction of light-source (in degrees)"),
+    "default", 135.0, "min", 0.0, "max", 360.0,
+    "unit", "degree",
+    NULL)
 
-gegl_chant_seed      (seed, rand, _("Random seed"), _("Random seed"))
+gegl_property_seed (seed, rand, "nick", _("Random seed"), NULL)
 
-gegl_chant_boolean   (antialiasing, _("Antialiasing"), TRUE,
-                      _("Enables smoother tile output"))
+gegl_property_boolean (antialiasing, "nick", _("Antialiasing"),
+    "blurb", _("Enables smoother tile output"),
+    "default", TRUE,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "mosaic.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "mosaic.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 #define SUPERSAMPLE       3
@@ -198,11 +232,11 @@ static void      grid_create_triangles (const GeglRectangle *result,
                                         gdouble              tile_size,
                                         GridDescriptor      *grid);
 static void      grid_localize         (const GeglRectangle *result,
-                                        GeglChantO          *o,
+                                        GeglProperties          *o,
                                         MosaicDatas         *mdatas);
 static gfloat*   grid_render           (gfloat              *input_buf,
                                         const GeglRectangle *result,
-                                        GeglChantO          *o,
+                                        GeglProperties          *o,
                                         MosaicDatas         *mdatas);
 static void      split_poly            (Polygon             *poly,
                                         gfloat              *input_buf,
@@ -210,7 +244,7 @@ static void      split_poly            (Polygon             *poly,
                                         gdouble             *dir,
                                         gdouble              color_vary,
                                         const GeglRectangle *result,
-                                        GeglChantO          *o,
+                                        GeglProperties          *o,
                                         MosaicDatas         *mdatas);
 static void      clip_poly             (gdouble             *vec,
                                         gdouble             *pt,
@@ -228,14 +262,14 @@ static void      process_poly          (Polygon             *poly,
                                         gfloat              *input_buf,
                                         gfloat              *output_buf,
                                         const GeglRectangle *result,
-                                        GeglChantO          *o,
+                                        GeglProperties          *o,
                                         MosaicDatas         *mdatas);
 static void      render_poly           (Polygon             *poly,
                                         gfloat              *input_buf,
                                         gfloat              *output_buf,
                                         gdouble              vary,
                                         const GeglRectangle *result,
-                                        GeglChantO          *o,
+                                        GeglProperties          *o,
                                         MosaicDatas         *mdatas);
 static void      find_poly_dir         (Polygon             *poly,
                                         gfloat              *m_gr,
@@ -356,13 +390,13 @@ mosaic (GeglOperation       *operation,
         GeglBuffer          *drawable,
         const GeglRectangle *result)
 {
-  GeglChantO          *o;
+  GeglProperties          *o;
   MosaicDatas          mdatas;
   gfloat              *rendered;
   const GeglRectangle *whole_region;
   gfloat              *input_buf;
 
-  o = GEGL_CHANT_PROPERTIES (operation);
+  o = GEGL_PROPERTIES (operation);
 
   input_buf = g_new (gfloat, NB_CPN * result->width * result->height);
 
@@ -1008,7 +1042,7 @@ grid_create_triangles (const GeglRectangle *result,
 
 static void
 grid_localize (const GeglRectangle *result,
-               GeglChantO          *o,
+               GeglProperties          *o,
                MosaicDatas         *mdatas)
 {
   gint           i, j;
@@ -1089,7 +1123,7 @@ grid_localize (const GeglRectangle *result,
 static gfloat*
 grid_render (gfloat              *input_buf,
              const GeglRectangle *result,
-             GeglChantO          *o,
+             GeglProperties          *o,
              MosaicDatas         *mdatas)
 {
   gint            i, j, k, index;
@@ -1329,7 +1363,7 @@ process_poly (Polygon             *poly,
               gfloat              *input_buf,
               gfloat              *output_buf,
               const GeglRectangle *result,
-              GeglChantO          *o,
+              GeglProperties          *o,
               MosaicDatas         *mdatas)
 {
   gdouble  dir[2];
@@ -1388,7 +1422,7 @@ render_poly (Polygon             *poly,
              gfloat              *output_buf,
              gdouble              vary,
              const GeglRectangle *result,
-             GeglChantO          *o,
+             GeglProperties          *o,
              MosaicDatas         *mdatas)
 {
   gdouble cx = 0.0;
@@ -1417,7 +1451,7 @@ split_poly (Polygon             *poly,
             gdouble             *dir,
             gdouble              vary,
             const GeglRectangle *result,
-            GeglChantO          *o,
+            GeglProperties          *o,
             MosaicDatas         *mdatas)
 {
   Polygon new_poly;
@@ -2371,7 +2405,7 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o    = GEGL_PROPERTIES (operation);
 
   /* Should be slightly larger than needed */
   area->left = area->right = 2 * ceil (o->tile_size) + 1;
@@ -2445,7 +2479,7 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
