@@ -21,24 +21,44 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double(x, _("X"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                  _("Horizontal position"))
-gegl_chant_double(y, _("Y"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                  _("Vertical position"))
-gegl_chant_double(width, _("Width"), 0, G_MAXDOUBLE, 0.0,
-                  _("Horizontal extent"))
-gegl_chant_double(height, _("Height"), 0, G_MAXDOUBLE, 0.0,
-                  _("Vertical extent"))
-gegl_chant_color(color, _("Color"), "white",
-                  _("Color to render"))
+gegl_property_double (x, "nick", _("X"),
+    "blurb", _("Horizontal position"),
+    "unit", "pixel-coordinate",
+    "axis", "x",
+    NULL)
+
+gegl_property_double (y, "nick", _("Y"),
+    "blurb", _("Vertical position"),
+    "unit", "pixel-coordinate",
+    "axis", "y",
+    NULL)
+
+gegl_property_double (width, "nick", _("Width"),
+    "blurb", _("Horizontal extent"),
+    "min", 0.0, "max", G_MAXDOUBLE,
+    "unit", "pixel-distance",
+    "axis", "x",
+    NULL)
+
+gegl_property_double (height, "nick", _("Height"),
+    "blurb", _("Vertical extent"),
+    "min", 0.0, "max", G_MAXDOUBLE,
+    "unit", "pixel-distance",
+    "axis", "y",
+    NULL)
+
+gegl_property_color(color, "nick", _("Color"),
+    "blurb", _("Color to render"),
+    "default", "white",
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE "rectangle.c"
-#include "gegl-chant.h"
+#define GEGL_OP_META
+#define GEGL_OP_C_FILE "rectangle.c"
+#include "gegl-op.h"
 
 static void attach (GeglOperation *operation)
 {
@@ -63,7 +83,7 @@ static void attach (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
