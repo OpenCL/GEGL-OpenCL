@@ -26,25 +26,29 @@
 #include <math.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (contrast, _("Contrast"),
-                  0.0, 1.0, 0.1,
-                  _("The amount of contrast compression"))
-gegl_chant_double (saturation, _("Saturation"),
-                  0.0, 2.0, 0.8,
-                  _("Global color saturation factor"))
-gegl_chant_double (detail, _("Detail"),
-                  1.0, 99.0, 1.0,
-                  _("Level of emphasis on image gradient details"))
+gegl_property_double (contrast, _("Contrast"),
+    "description", _("The amount of contrast compression"),
+    "default", 0.1, "min", 0.0, "max", 1.0, 
+    NULL)
 
+gegl_property_double (saturation, _("Saturation"),
+    "description", _("Global color saturation factor"),
+    "default", 0.8, "min", 0.0, "max", 2.0,
+    NULL)
+
+gegl_property_double (detail, _("Detail"),
+    "description", _("Level of emphasis on image gradient details"),
+    "default", 1.0, "min", 1.0, "max", 99.0,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "mantiuk06.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "mantiuk06.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -1581,10 +1585,9 @@ mantiuk06_process (GeglOperation       *operation,
                    const GeglRectangle *result,
                    gint                 level)
 {
-  const GeglChantO *o          = GEGL_CHANT_PROPERTIES (operation);
-  const gint        pix_stride = 4; /* RGBA */
-  gfloat           *lum,
-                   *pix;
+  const GeglProperties *o      = GEGL_PROPERTIES (operation);
+  const gint            pix_stride = 4; /* RGBA */
+  gfloat               *lum, *pix;
 
   g_return_val_if_fail (operation, FALSE);
   g_return_val_if_fail (input, FALSE);
@@ -1618,7 +1621,7 @@ mantiuk06_process (GeglOperation       *operation,
 /*
  */
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

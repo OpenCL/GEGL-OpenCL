@@ -20,17 +20,19 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
+gegl_property_file_path (path, _("File"),
+    "description", _("Path of file to load."),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_C_FILE       "load.c"
+#define GEGL_OP_C_FILE       "load.c"
 
 #include "gegl-plugin.h"
 
-struct _GeglChant
+struct _GeglOp
 {
   GeglOperationMeta parent_instance;
   gpointer          properties;
@@ -42,9 +44,9 @@ struct _GeglChant
 typedef struct
 {
   GeglOperationMetaClass parent_class;
-} GeglChantClass;
+} GeglOpClass;
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 
 #include <stdio.h>
@@ -52,7 +54,7 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 static void
 do_setup (GeglOperation *operation, const gchar *new_path)
 {
-  GeglChant  *self = GEGL_CHANT (operation);
+  GeglOp  *self = GEGL_OP (operation);
 
   if (!new_path || 0 == strlen (new_path))
     {
@@ -96,8 +98,8 @@ do_setup (GeglOperation *operation, const gchar *new_path)
 
 static void attach (GeglOperation *operation)
 {
-  GeglChant  *self = GEGL_CHANT (operation);
-  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
+  GeglOp         *self = GEGL_OP (operation);
+  GeglProperties *o    = GEGL_PROPERTIES (operation);
 
   self->output = gegl_node_get_output_proxy (operation->node, "output");
 
@@ -117,7 +119,7 @@ detect (GeglOperation *operation,
         gint           x,
         gint           y)
 {
-  GeglChant *self = GEGL_CHANT (operation);
+  GeglOp *self = GEGL_OP (operation);
   GeglNode *output = self->output;
   GeglRectangle bounds;
 
@@ -142,9 +144,9 @@ my_set_property (GObject      *gobject,
                  const GValue *value,
                  GParamSpec   *pspec)
 {
-  GeglOperation *operation = GEGL_OPERATION (gobject);
-  GeglChant     *self = GEGL_CHANT (operation);
-  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglOperation  *operation = GEGL_OPERATION (gobject);
+  GeglOp         *self      = GEGL_OP (operation);
+  GeglProperties *o         = GEGL_PROPERTIES (operation);
 
   const gchar *new_path = g_value_get_string (value);
 
@@ -159,7 +161,7 @@ my_set_property (GObject      *gobject,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChant  *self = GEGL_CHANT (operation);
+  GeglOp  *self = GEGL_OP (operation);
   GeglOperation *op;
 
   /* forward the set BablFormat of the image loader on the meta-op itself,
@@ -171,7 +173,7 @@ prepare (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);

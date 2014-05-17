@@ -21,23 +21,31 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (in_low, _("Low input"), -1.0, 4.0, 0.0, 0.0, 1.0, 1.0,
-                   _("Input luminance level to become lowest output"))
-gegl_chant_double_ui (in_high, _("High input"), -1.0, 4.0, 1.0, 0.0, 1.0, 1.0,
-                   _("Input luminance level to become white."))
-gegl_chant_double_ui (out_low, _("Low output"), -1.0, 4.0, 0.0, 0.0, 1.0, 1.0,
-                   _("Lowest luminance level in output"))
-gegl_chant_double_ui (out_high, _("High output"), -1.0, 4.0, 1.0, 0.0, 1.0, 1.0,
-                   _("Highest luminance level in output"))
+gegl_property_double (in_low, _("Low input"),
+    "description", _("Input luminance level to become lowest output"),
+    "min", -1.0, "max", 4.0, "default", 0.0, "ui-min", 0.0, "ui-max", 1.0,
+    NULL)
+gegl_property_double (in_high, _("High input"),
+    "description", _("Input luminance level to become white"),
+    "min", -1.0, "max", 4.0, "default", 1.0, "ui-min", 0.0, "ui-max", 1.0,
+    NULL)
+gegl_property_double (out_low, _("Low output"),
+    "description", _("Lowest luminance level in output"),
+    "min", -1.0, "max", 4.0, "default", 0.0, "ui-min", 0.0, "ui-max", 1.0,
+    NULL)
+gegl_property_double (out_high, _("High output"),
+    "description", _("Highest luminance level in output"),
+    "min", -1.0, "max", 4.0, "default", 1.0, "ui-min", 0.0, "ui-max", 1.0,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE         "levels.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE         "levels.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 /* GeglOperationPointFilter gives us a linear buffer to operate on
  * in our requested pixel format
@@ -50,7 +58,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
   gfloat     *in_pixel;
   gfloat     *out_pixel;
   gfloat      in_range;
@@ -100,11 +108,11 @@ cl_process (GeglOperation       *op,
             const GeglRectangle *roi,
             gint                 level)
 {
-  /* Retrieve a pointer to GeglChantO structure which contains all the
+  /* Retrieve a pointer to GeglProperties structure which contains all the
    * chanted properties
    */
 
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
 
   gfloat      in_range;
   gfloat      out_range;
@@ -157,7 +165,7 @@ error:
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;

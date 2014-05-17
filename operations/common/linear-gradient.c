@@ -20,23 +20,48 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (start_x,      _("X1"), G_MININT, G_MAXINT, 25.0, "")
-gegl_chant_double (start_y,      _("Y1"), G_MININT, G_MAXINT, 25.0, "")
-gegl_chant_double (end_x,        _("X2"), G_MININT, G_MAXINT, 150.0, "")
-gegl_chant_double (end_y,        _("Y2"), G_MININT, G_MAXINT, 150.0, "")
-gegl_chant_color  (start_color,  _("Start Color"), "black",
-                                 _("The color at (x1, y1)"))
-gegl_chant_color  (end_color,    _("End Color"), "white",
-                                 _("The color at (x2, y2)"))
+gegl_property_double (start_x, _("X1"),
+    "default", 25.0,
+    "unit", "pixel-coordinate",
+    "axis", "x",
+    NULL)
+gegl_property_double (start_y, _("Y1"),
+    "default", 25.0,
+    "unit", "pixel-coordinate",
+    "axis", "y",
+    NULL)
+
+gegl_property_double (end_x, _("X2"),
+    "default", 150.0,
+    "unit", "pixel-coordinate",
+    "axis", "x",
+    NULL)
+gegl_property_double (end_y, _("Y2"),
+    "default", 150.0,
+    "unit", "pixel-coordinate",
+    "axis", "y",
+    NULL)
+
+gegl_property_color (start_color, _("Start Color"),
+    "description", _("The color at (x1, y1)"),
+    "default", "black",
+    "role", "color-primary",
+    NULL)
+
+gegl_property_color  (end_color, _("End Color"),
+    "description", _("The color at (x2, y2)"),
+    "default", "white",
+    "role", "color-secondary",
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE "linear-gradient.c"
+#define GEGL_OP_POINT_RENDER
+#define GEGL_OP_C_FILE "linear-gradient.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include <math.h>
 
@@ -59,12 +84,9 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gfloat     *out_pixel = out_buf;
-  gfloat      color1[4];
-  gfloat      color2[4];
-  gfloat      length;
-  gfloat      dx, dy;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  gfloat         *out_pixel = out_buf;
+  gfloat          color1[4], color2[4], length, dx, dy;
 
   dx = o->end_x - o->start_x;
   dy = o->end_y - o->start_y;
@@ -108,7 +130,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointRenderClass *point_render_class;

@@ -20,17 +20,18 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int (iterations, _("Iterations"), 1, G_MAXINT, 10,
-                _("Number of iterations"))
+gegl_property_int (iterations, _("Iterations"),
+    "description", _("Number of iterations"), 
+    "default", 10, "ui-max", 200, "min", 1, NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE "matting-global.c"
+#define GEGL_OP_COMPOSER
+#define GEGL_OP_C_FILE "matting-global.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include "gegl-debug.h"
 
 #define max(a,b) \
@@ -284,7 +285,7 @@ matting_process (GeglOperation       *operation,
                  int                  level)
 {
 
-  const GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  const GeglProperties   *o       = GEGL_PROPERTIES (operation);
   gfloat                 *input   = NULL;
   guchar                 *trimap  = NULL;
   gfloat                 *output  = NULL;
@@ -469,7 +470,7 @@ cleanup:
   return success;
 }
 
-static void gegl_chant_class_init (GeglChantClass *klass)
+static void gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;

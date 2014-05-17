@@ -20,17 +20,19 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (dampness, _("Dampness"), 0.0, 1.0, 0.95,
-    _("The value represents the contribution of the past to the new frame."))
+gegl_property_double (dampness, _("Dampness"),
+    "description", _("The value represents the contribution of the past to the new frame."),
+    "min", 0.0, "max", 1.0, "default", 0.95,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "mblur.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "mblur.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 typedef struct
 {
@@ -39,15 +41,15 @@ typedef struct
 
 
 static void
-init (GeglChantO *o)
+init (GeglProperties *o)
 {
-  Priv         *priv = (Priv*)o->chant_data;
+  Priv         *priv = (Priv*)o->user_data;
   GeglRectangle extent = {0,0,1024,1024};
 
   g_assert (priv == NULL);
 
   priv = g_new0 (Priv, 1);
-  o->chant_data = (void*) priv;
+  o->user_data = (void*) priv;
 
   priv->acc = gegl_buffer_new (&extent, babl_format ("RGBA float"));
 }
@@ -64,14 +66,14 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO          *o;
-  Priv *p;
+  GeglProperties *o;
+  Priv           *p;
 
-  o   = GEGL_CHANT_PROPERTIES (operation);
-  p = (Priv*)o->chant_data;
+  o = GEGL_PROPERTIES (operation);
+  p = (Priv*)o->user_data;
   if (p == NULL)
     init (o);
-  p = (Priv*)o->chant_data;
+  p = (Priv*)o->user_data;
 
     {
       GeglBuffer *temp_in;
@@ -104,28 +106,27 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
-
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      Priv *p = (Priv*)o->chant_data;
+      Priv *p = (Priv*)o->user_data;
 
       g_object_unref (p->acc);
 
-      g_free (o->chant_data);
-      o->chant_data = NULL;
+      g_free (o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

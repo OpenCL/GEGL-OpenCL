@@ -18,22 +18,26 @@
  */
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (scaling, _("Scaling"), 0.0, 5000.0, 1.0,
-       _("scaling factor of displacement, indicates how large spatial"
-         " displacement a relative mapping value of 1.0 corresponds to."))
-gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
-                 GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
+gegl_property_double (scaling, _("Scaling"),
+  "description", _("scaling factor of displacement, indicates how large spatial"
+              " displacement a relative mapping value of 1.0 corresponds to."),
+    "min", 0.0, "max", 5000.0, "default", 1.0,
+    NULL)
+gegl_property_enum (sampler_type, _("Resampling method"),
+    GeglSamplerType, gegl_sampler_type,
+    "default", GEGL_SAMPLER_CUBIC,
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "map-relative.c"
+#define GEGL_OP_COMPOSER
+#define GEGL_OP_C_FILE       "map-relative.c"
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 
 static void
@@ -64,7 +68,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO           *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties       *o = GEGL_PROPERTIES (operation);
   const Babl           *format_io, *format_coords;
   GeglSampler          *sampler;
   GeglBufferIterator   *it;
@@ -89,7 +93,7 @@ process (GeglOperation       *operation,
           gint        n_pixels = it->length;
           gint        x = it->roi->x; /* initial x                   */
           gint        y = it->roi->y; /*           and y coordinates */
-          gdouble     scaling = GEGL_CHANT_PROPERTIES (operation)->scaling;
+          gdouble     scaling = GEGL_PROPERTIES (operation)->scaling;
           gfloat     *in = it->data[index_in];
           gfloat     *out = it->data[index_out];
           gfloat     *coords = it->data[index_coords];
@@ -139,7 +143,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;

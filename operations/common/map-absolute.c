@@ -17,19 +17,20 @@
  *
  */
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
-                 GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
+gegl_property_enum (sampler_type, _("Resampling method"),
+    GeglSamplerType, gegl_sampler_type,
+    "default", GEGL_SAMPLER_CUBIC, NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "map-absolute.c"
+#define GEGL_OP_COMPOSER
+#define GEGL_OP_C_FILE       "map-absolute.c"
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 
 static void
@@ -60,7 +61,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO           *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties       *o = GEGL_PROPERTIES (operation);
   const Babl           *format_io, *format_coords;
   GeglSampler          *sampler;
   GeglBufferIterator   *it;
@@ -130,7 +131,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;

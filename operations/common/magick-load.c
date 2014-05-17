@@ -21,22 +21,25 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "/tmp/gegl-logo.svg", _("Path of file to load."))
+gegl_property_file_path (path, _("File"),
+    "description", _("Path of file to load."),
+    "default", "/tmp/gegl-logo.svg",
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "magick-load.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "magick-load.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 
 static void
-load_cache (GeglChantO *op_magick_load)
+load_cache (GeglProperties *op_magick_load)
 {
-  if (!op_magick_load->chant_data)
+  if (!op_magick_load->user_data)
     {
       gchar    *filename;
       gchar    *cmd;
@@ -56,7 +59,7 @@ load_cache (GeglChantO *op_magick_load)
       graph = gegl_graph (sink=gegl_node ("gegl:buffer-sink", "buffer", &newbuf, NULL,
                                           gegl_node ("gegl:png-load", "path", filename, NULL)));
       gegl_node_process (sink);
-      op_magick_load->chant_data = (gpointer) newbuf;
+      op_magick_load->user_data = (gpointer) newbuf;
       g_object_unref (graph);
       g_free (cmd);
       g_free (filename);
@@ -67,12 +70,12 @@ static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result = {0,0,0,0};
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   gint width, height;
 
   load_cache (o);
 
-  g_object_get (o->chant_data, "width", &width,
+  g_object_get (o->user_data, "width", &width,
                                "height", &height, NULL);
   result.width  = width;
   result.height = height;
@@ -93,28 +96,28 @@ process (GeglOperation         *operation,
          const GeglRectangle   *result,
          gint                   level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
-  if (!o->chant_data)
+  if (!o->user_data)
     return FALSE;
   /* overriding the predefined behavior */
-  g_object_ref (o->chant_data);
-  gegl_operation_context_take_object (context, "output", G_OBJECT (o->chant_data));
+  g_object_ref (o->user_data);
+  gegl_operation_context_take_object (context, "output", G_OBJECT (o->user_data));
   return  TRUE;
 }
 
 static void finalize (GObject *object)
 {
   GeglOperation *op = (void*) object;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  if (o->chant_data)
-    g_object_unref (o->chant_data);
-  o->chant_data = NULL;
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  GeglProperties *o = GEGL_PROPERTIES (op);
+  if (o->user_data)
+    g_object_unref (o->user_data);
+  o->user_data = NULL;
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GObjectClass             *object_class;

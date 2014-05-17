@@ -21,28 +21,34 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (length, _("Length"),
-                      0.0, 1000.0, 10.0, 0.0, 300.0, 1.5,
-                      _("Length of blur in pixels"))
+gegl_property_double (length, _("Length"),
+    "description", _("Length of blur in pixels"),
+    "default", 10.0, "min", 0.0, "max", 1000.0,
+    "ui-max", 300.0, "ui-gamma", 1.5,
+    "unit", "pixel-distance",
+    NULL)
 
-gegl_chant_double_ui (angle, _("Angle"),
-                      -360, 360, 0, -180.0, 180.0, 1.0,
-                      _("Angle of blur in degrees"))
+gegl_property_double (angle, _("Angle"),
+    "description", _("Angle of blur in degrees"),
+    "default", 0.0, "min", -360.0, "max", 360.0,
+    "ui-min", -180.0, "ui-max", 180.0,
+    "unit", "degrees",
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "motion-blur-linear.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "motion-blur-linear.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
 
   gdouble theta    = o->angle * G_PI / 180.0;
   gdouble offset_x = fabs (o->length * cos (theta));
@@ -132,7 +138,7 @@ cl_process (GeglOperation       *operation,
             const GeglRectangle *src_rect)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o       = GEGL_PROPERTIES (operation);
 
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
@@ -201,7 +207,7 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o       = GEGL_PROPERTIES (operation);
   GeglRectangle            src_rect;
   gfloat                  *in_buf;
   gfloat                  *out_buf;
@@ -286,7 +292,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

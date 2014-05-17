@@ -21,23 +21,25 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_object(node, _("Node"), _("GeglNode to introspect"))
+gegl_property_object(node, _("Node"),
+    "description", _("GeglNode to introspect"),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "introspect.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "introspect.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include "gegl-types-internal.h"
 #include "gegl-dot.h" /* XXX: internal header file */
 #include <stdio.h>
 
 
 static void
-gegl_introspect_load_cache (GeglChantO *op_introspect)
+gegl_introspect_load_cache (GeglProperties *op_introspect)
 {
   GeglBuffer *new_buffer   = NULL;
   GeglNode   *png_load     = NULL;
@@ -47,7 +49,7 @@ gegl_introspect_load_cache (GeglChantO *op_introspect)
   gchar      *dot_filename = NULL;
   gchar      *dot_cmd      = NULL;
 
-  if (op_introspect->chant_data)
+  if (op_introspect->user_data)
     return;
 
   /* Construct temp filenames */
@@ -77,7 +79,7 @@ gegl_introspect_load_cache (GeglChantO *op_introspect)
   gegl_node_link_many (png_load, buffer_sink, NULL);
   gegl_node_process (buffer_sink);
 
-  op_introspect->chant_data= new_buffer;
+  op_introspect->user_data= new_buffer;
 
   /* Cleanup */
   g_object_unref (buffer_sink);
@@ -91,27 +93,27 @@ gegl_introspect_load_cache (GeglChantO *op_introspect)
 static void
 gegl_introspect_dispose (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data != NULL)
+  if (o->user_data != NULL)
     {
-      g_object_unref (o->chant_data);
-      o->chant_data = NULL;
+      g_object_unref (o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->dispose (object);
 }
 
 static GeglRectangle
 gegl_introspect_get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle result = {0,0,0,0};
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglRectangle   result = {0,0,0,0};
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gint width, height;
 
   gegl_introspect_load_cache (o);
 
-  g_object_get (o->chant_data, "width", &width,
+  g_object_get (o->user_data, "width", &width,
                                "height", &height, NULL);
 
   result.width  = width;
@@ -127,22 +129,22 @@ gegl_introspect_process (GeglOperation        *operation,
                          const GeglRectangle  *result,
                          gint                  level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   gegl_introspect_load_cache (o);
 
   /* gegl_operation_context_take_object() takes the reference we have,
    * so we must increase it since we want to keep the object
    */
-  g_object_ref (o->chant_data);
+  g_object_ref (o->user_data);
 
-  gegl_operation_context_take_object (context, output_pad, G_OBJECT (o->chant_data));
+  gegl_operation_context_take_object (context, output_pad, G_OBJECT (o->user_data));
 
   return  TRUE;
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass             *object_class;
   GeglOperationClass       *operation_class;

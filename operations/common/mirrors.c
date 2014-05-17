@@ -25,41 +25,80 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (m_angle, _("Mirror rotation"), 0.0, 180.0, 0.0, _("Rotation applied to the mirrors"))
+gegl_property_double (m_angle, _("Mirror rotation"),
+    "description", _("Rotation applied to the mirrors"),
+    "default", 0.0, "min", 0.0, "max", 180.0,
+    "unit", "degree",
+    NULL)
 
-gegl_chant_double (r_angle, _("Result rotation"), 0.0, 360.0, 0.0, _("Rotation applied to the result"))
+gegl_property_double (r_angle, _("Result rotation"),
+    "description", _("Rotation applied to the result"),
+    "min", 0.0, "max", 360.0, "default", 0.0, 
+    "unit", "degree",
+    NULL)
 
-gegl_chant_int    (n_segs, _("Mirrors"), 2, 24, 6, _("Number of mirrors to use"))
+gegl_property_int    (n_segs, _("Mirrors"),
+    "description", _("Number of mirrors to use"),
+    "default", 6, "min", 2, "max", 24,
+    NULL)
 
-gegl_chant_double (c_x,  _("X offset"), 0.0, 1.0, 0.5, _("X offset of the result of mirroring"))
+gegl_property_double (c_x, _("X offset"),
+    "description", _("X offset of the result of mirroring"),
+    "default", 0.5, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (c_y,  _("Y offset"), 0.0, 1.0, 0.5, _("Y offset of the result of mirroring"))
+gegl_property_double (c_y, _("Y offset"),
+    "description", _("Y offset of the result of mirroring"),
+    "default", 0.5, "min", 0.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (o_x, _("Center X"), -1.0, 1.0, 0.0, _("X axis ratio for the center of mirroring"))
+gegl_property_double (o_x, _("Center X"),
+    "description", _("X axis ratio for the center of mirroring"),
+    "min", -1.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (o_y, _("Center Y"), -1.0, 1.0, 0.0, _("Y axis ratio for the center of mirroring"))
+gegl_property_double (o_y, _("Center Y"),
+    "description", _("Y axis ratio for the center of mirroring"),
+    "min", -1.0, "max", 1.0,
+    NULL)
 
-gegl_chant_double (trim_x, _("Trim X"), 0.0, 0.5, 0.0, _("X axis ratio for trimming mirror expanse"))
+gegl_property_double (trim_x, _("Trim X"),
+    "description", _("X axis ratio for trimming mirror expanse"),
+    "min", 0.0, "max", 0.5,
+    NULL)
 
-gegl_chant_double (trim_y, _("Trim Y"), 0.0, 0.5, 0.0, _("Y axis ratio for trimming mirror expanse"))
+gegl_property_double (trim_y, _("Trim Y"),
+    "description", _("Y axis ratio for trimming mirror expanse"),
+    "min", 0.0, "max", 0.5,
+    NULL)
 
-gegl_chant_double (input_scale, _("Zoom"), 0.1, 100.0, 100.0, _("Scale factor to make rendering size bigger"))
+gegl_property_double (input_scale, _("Zoom"),
+    "description", _("Scale factor to make rendering size bigger"),
+    "default", 100.0, "min", 0.1, "max", 100.0,
+    NULL)
 
-gegl_chant_double (output_scale, _("Expand"), 0.0, 100.0, 1.0, _("Scale factor to make rendering size bigger"))
+gegl_property_double (output_scale, _("Expand"),
+    "description", _("Scale factor to make rendering size bigger"),
+    "default", 1.0, "min", 0.0, "max", 100.0,
+    NULL)
 
-gegl_chant_boolean (clip, _("Clip result"), TRUE, _("Clip result to input size"))
+gegl_property_boolean (clip, _("Clip result"),
+    "description", _("Clip result to input size"),
+    "default", TRUE, NULL)
 
-gegl_chant_boolean (warp, _("Wrap input"), TRUE, _("Fill full output area"))
+gegl_property_boolean (warp, _("Wrap input"),
+    "description", _("Fill full output area"),
+    "default", TRUE, NULL)
 
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "mirrors.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "mirrors.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 #if 0
@@ -267,7 +306,7 @@ get_effective_area (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gdouble xt = o->trim_x * in_rect->width;
   gdouble yt = o->trim_y * in_rect->height;
 
@@ -290,7 +329,7 @@ get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (!in_rect){
         return result;
@@ -350,10 +389,10 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglRectangle boundary = gegl_operation_get_bounding_box (operation);
-  GeglRectangle  eff_boundary = get_effective_area (operation);
-  const Babl *format = babl_format ("RaGaBaA float");
+  GeglProperties *o            = GEGL_PROPERTIES (operation);
+  GeglRectangle   boundary     = gegl_operation_get_bounding_box (operation);
+  GeglRectangle   eff_boundary = get_effective_area (operation);
+  const Babl     *format       = babl_format ("RaGaBaA float");
 
 #ifdef DO_NOT_USE_BUFFER_SAMPLE
  g_warning ("NOT USING BUFFER SAMPLE!");
@@ -379,7 +418,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

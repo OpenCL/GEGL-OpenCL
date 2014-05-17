@@ -28,42 +28,49 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (main, _("Main"),
-                   -100.0, 100.0, 0.0,
-                   _("Amount of second-order distortion"))
+gegl_property_double (main, _("Main"),
+    "description", _("Amount of second-order distortion"),
+    "min", -100.0, "max", 100.0,
+    NULL)
 
-gegl_chant_double (edge, _("Edge"),
-                   -100.0, 100.0, 0.0,
-                   _("Amount of fourth-order distortion"))
+gegl_property_double (edge, _("Edge"),
+    "description", _("Amount of fourth-order distortion"),
+    "min", -100.0, "max", 100.0,
+    NULL)
 
-gegl_chant_double (zoom, _("Zoom"),
-                   -100.0, 100.0, 0.0,
-                   _("Rescale overall image size"))
+gegl_property_double (zoom, _("Zoom"),
+    "description", _("Rescale overall image size"),
+    "min", -100.0, "max", 100.0,
+    NULL)
 
-gegl_chant_double (x_shift, _("X shift"),
-                   -100.0, 100.0, 0.0,
-                   _("Effect centre offset in X"))
+gegl_property_double (x_shift, _("X shift"),
+    "description", _("Effect centre offset in X"),
+    "min", -100.0, "max", 100.0,
+    NULL)
 
-gegl_chant_double (y_shift, _("Y shift"),
-                   -100.0, 100.0, 0.0,
-                   _("Effect centre offset in Y"))
+gegl_property_double (y_shift, _("Y shift"),
+    "description", _("Effect centre offset in Y"),
+    "min", -100.0, "max", 100.0,
+    NULL)
 
-gegl_chant_double (brighten, _("Brighten"),
-                   -100.0, 100.0, 0.0,
-                   _("Adjust brightness in corners"))
+gegl_property_double (brighten, _("Brighten"),
+    "description", _("Adjust brightness in corners"),
+    "min", -100.0, "max", 100.0,
+    NULL)
 
-gegl_chant_color  (background, _("Background"),
-                   "white",
-                   _("Background color"))
+gegl_property_color  (background, _("Background"),
+    "description", _("Background color"),
+    "default", "white",
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "lens-distortion.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "lens-distortion.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -103,8 +110,8 @@ reorder (gdouble *low,
 }
 
 static LensValues
-lens_setup_calc (GeglChantO    *o,
-                 GeglRectangle  boundary)
+lens_setup_calc (GeglProperties *o,
+                 GeglRectangle   boundary)
 {
   LensValues lens;
 
@@ -153,13 +160,13 @@ get_required (GeglRectangle       *boundary,
               GeglOperation       *operation)
 {
 
-  GeglChantO    *o;
-  GeglRectangle  area;
-  LensValues     lens;
-  gdouble        x1, y1, x2, y2, x3, y3, x4, y4, mag;
-  gint           x, y, width, height;
+  GeglProperties *o;
+  GeglRectangle   area;
+  LensValues      lens;
+  gdouble         x1, y1, x2, y2, x3, y3, x4, y4, mag;
+  gint            x, y, width, height;
 
-  o = GEGL_CHANT_PROPERTIES (operation);
+  o = GEGL_PROPERTIES (operation);
 
   lens = lens_setup_calc (o, *boundary);
 
@@ -408,12 +415,12 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
-  LensValues     lens;
-  GeglRectangle  boundary;
-  gint           i, j;
-  gfloat        *src_buf, *dst_buf;
-  gfloat         background[4];
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  LensValues      lens;
+  GeglRectangle   boundary;
+  gint            i, j;
+  gfloat         *src_buf, *dst_buf;
+  gfloat          background[4];
 
   boundary = *gegl_operation_source_get_bounding_box (operation, "input");
   lens     =  lens_setup_calc (o, boundary);
@@ -464,7 +471,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
