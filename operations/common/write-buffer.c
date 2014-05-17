@@ -20,17 +20,18 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_object (buffer, _("Buffer location"),
-                   _("Write to an existing GeglBuffer"))
+gegl_property_object (buffer, "nick", _("Buffer location"),
+    "blurb", _("A pre-existing GeglBuffer to write incoming buffer data to."),
+    NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE "write-buffer.c"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_FILE "write-buffer.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include "gegl/gegl-debug.h"
 #include "opencl/gegl-cl.h"
@@ -42,7 +43,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->buffer)
     {
@@ -117,7 +118,7 @@ process (GeglOperation       *operation,
 static void
 dispose (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
   if (o->buffer)
     {
@@ -125,11 +126,11 @@ dispose (GObject *object)
       o->buffer = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->dispose (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass     *operation_class;
   GeglOperationSinkClass *sink_class;
