@@ -46,7 +46,6 @@ gegl_property_double (tile_size, _("Tile size"),
     "default", 15.0, "min", 1.0, "max", 1000.0,
     "ui-min", 5.0, "ui-max", 400.0,
     "unit", "pixel-distance",
-    "axis", "x",
     NULL)
 
 gegl_property_double (tile_height, _("Tile height"),
@@ -55,7 +54,6 @@ gegl_property_double (tile_height, _("Tile height"),
     "min", 1.0, "max", 1000.0,
     "ui-min", 1.0, "ui-max", 20.0,
     "unit", "pixel-distance",
-    "axis", "y",
     NULL)
 
 gegl_property_double (tile_neatness, _("Tile neatness"),

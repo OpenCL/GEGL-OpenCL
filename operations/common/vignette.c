@@ -49,7 +49,7 @@ gegl_property_double (softness, _("Softness"),
 
 gegl_property_double (gamma, _("Gamma"),
     "description", _("Falloff linearity"),
-    "default", 2.0, "min", 1.0, "max", 20.0, 
+    "default", 2.0, "min", 1.0, "max", 20.0,
     NULL)
 
 gegl_property_double (proportion, _("Proportion"),
@@ -65,16 +65,16 @@ gegl_property_double (squeeze, _("Squeeze"),
     "default", 0.0, "min", -1.0, "max", 1.0,
     NULL)
 
-gegl_property_double (x, _("X center"),
+gegl_property_double (x, _("Center X"),
     "description", _("Horizontal center of vignetting"),
     "default", 0.5, "min", -1.0, "max", 2.0,
     "unit", "relative-distance",
     "axis", "x",
     NULL)
 
-gegl_property_double (y, _("Y center"),
+gegl_property_double (y, _("Center Y"),
     "description", _("Vertical center of vignetting"),
-    "default", 0.5, "min", -1.0, "max", 2.0, 
+    "default", 0.5, "min", -1.0, "max", 2.0,
     "unit", "relative-distance",
     "axis", "y",
     NULL)
