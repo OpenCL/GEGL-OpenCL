@@ -49,7 +49,7 @@ gegl_property_double (softness, _("Softness"),
 
 gegl_property_double (gamma, _("Gamma"),
     "description", _("Falloff linearity"),
-    "default", 2.0, "min", 1.0, "max", 20.0, 2.0,
+    "default", 2.0, "min", 1.0, "max", 20.0, 
     NULL)
 
 gegl_property_double (proportion, _("Proportion"),
