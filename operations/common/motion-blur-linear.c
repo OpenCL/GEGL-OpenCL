@@ -33,7 +33,7 @@ gegl_property_double (length, _("Length"),
 gegl_property_double (angle, _("Angle"),
     "description", _("Angle of blur in degrees"),
     "default", 0.0, "min", -180.0, "max", 180.0,
-    "unit", "degrees",
+    "unit", "degree",
     NULL)
 
 #else

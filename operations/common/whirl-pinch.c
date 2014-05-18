@@ -36,8 +36,8 @@
 gegl_property_double (whirl, _("Whirl"),
     "description", _("Whirl angle (degrees)"),
     "default", 90.0,
-    "ui-min", -720.0, "ui-max", 720.0, "ui-gamma", 1.0,
-    "unit", "degrees",
+    "ui-min", -720.0, "ui-max", 720.0,
+    "unit", "degree",
     NULL)
 
 gegl_property_double (pinch, _("Pinch"),
