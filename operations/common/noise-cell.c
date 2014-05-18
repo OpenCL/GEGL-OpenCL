@@ -49,7 +49,7 @@ gegl_chant_seed    (seed, rand, _("Random seed"),
 #else
 
 #define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE       "noise-cell.c"
+#define GEGL_CHANT_C_FILE "noise-cell.c"
 
 #include "gegl-chant.h"
 #include <gegl-buffer-cl-iterator.h>
@@ -409,7 +409,7 @@ gegl_chant_class_init (GeglChantClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:noise-cell",
+    "name"       , "gegl:cell-noise",
     "categories" , "render",
     "description", _("Generates a cellular texture."),
     NULL);
