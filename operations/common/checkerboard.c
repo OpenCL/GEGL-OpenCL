@@ -25,7 +25,7 @@
 gegl_property_int (x, _("Width"),
     "description", _("Horizontal width of cells pixels"),
     "default",  16,
-    "min",       1, 
+    "min",       1,
     "ui-min",    1, "ui-max", 256, "ui-gamma", 1.5,
     "unit", "pixel-distance",
     "axis", "x",
@@ -39,14 +39,14 @@ gegl_property_int (y, _("Height"),
     "axis", "y",
     NULL)
 
-gegl_property_int (x_offset, _("X offset"),
+gegl_property_int (x_offset, _("Offset X"),
     "description", _("Horizontal offset (from origin) for start of grid"),
     "ui-min", -10, "ui-max", 10,
     "unit", "pixel-coordinate",
     "axis", "x",
     NULL)
 
-gegl_property_int (y_offset, _("Y offset"),
+gegl_property_int (y_offset, _("Offset Y"),
     "description", _("Vertical offset (from origin) for start of grid"),
     "ui-min", -10, "ui-max",  10,
     "unit", "pixel-coordinate",

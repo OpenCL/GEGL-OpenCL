@@ -23,14 +23,14 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (x, _("X center"),
+gegl_property_double (x, _("Center X"),
     "description", _("X coordinate of the center of the waves"),
     "ui-min", 0.0, "ui-max", 1024.0, "ui-gamma", 1.0,
     "unit", "pixel-coordinate",
     "axis", "x",
     NULL)
 
-gegl_property_double (y, _("Y center"),
+gegl_property_double (y, _("Center Y"),
     "description", _("Y coordinate of the center of the waves"),
     "ui-min", 0.0, "ui-max", 1024.0, "ui-gamma", 1.0,
     "unit", "pixel-coordinate",

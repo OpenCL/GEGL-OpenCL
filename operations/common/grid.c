@@ -37,7 +37,7 @@ gegl_property_int (y, _("Height"),
     "axis", "y",
     NULL)
 
-gegl_property_int (x_offset, _("X offset"),
+gegl_property_int (x_offset, _("Offset X"),
     "description", _("Horizontal offset (from origin) for start of grid"),
     "default", 0,
     "ui-min", -64, "ui-max", 64,
@@ -45,7 +45,7 @@ gegl_property_int (x_offset, _("X offset"),
     "axis", "x",
     NULL)
 
-gegl_property_int (y_offset, _("Y offset"),
+gegl_property_int (y_offset, _("Offset Y"),
     "description", _("Vertical offset (from origin) for start of grid"),
     "default", 0,
     "ui-min", -64, "ui-max", 64,

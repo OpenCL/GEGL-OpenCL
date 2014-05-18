@@ -35,7 +35,7 @@ gegl_property_double (m_angle, _("Mirror rotation"),
 
 gegl_property_double (r_angle, _("Result rotation"),
     "description", _("Rotation applied to the result"),
-    "min", 0.0, "max", 360.0, "default", 0.0, 
+    "min", 0.0, "max", 360.0, "default", 0.0,
     "unit", "degree",
     NULL)
 
@@ -44,12 +44,12 @@ gegl_property_int    (n_segs, _("Mirrors"),
     "default", 6, "min", 2, "max", 24,
     NULL)
 
-gegl_property_double (c_x, _("X offset"),
+gegl_property_double (c_x, _("Offset X"),
     "description", _("X offset of the result of mirroring"),
     "default", 0.5, "min", 0.0, "max", 1.0,
     NULL)
 
-gegl_property_double (c_y, _("Y offset"),
+gegl_property_double (c_y, _("Offset Y"),
     "description", _("Y offset of the result of mirroring"),
     "default", 0.5, "min", 0.0, "max", 1.0,
     NULL)

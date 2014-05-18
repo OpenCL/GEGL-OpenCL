@@ -45,12 +45,12 @@ gegl_property_double (zoom, _("Zoom"),
     "min", -100.0, "max", 100.0,
     NULL)
 
-gegl_property_double (x_shift, _("X shift"),
+gegl_property_double (x_shift, _("Shift X"),
     "description", _("Effect centre offset in X"),
     "min", -100.0, "max", 100.0,
     NULL)
 
-gegl_property_double (y_shift, _("Y shift"),
+gegl_property_double (y_shift, _("Shift Y"),
     "description", _("Effect centre offset in Y"),
     "min", -100.0, "max", 100.0,
     NULL)
