@@ -32,8 +32,7 @@ gegl_property_double (length, _("Length"),
 
 gegl_property_double (angle, _("Angle"),
     "description", _("Angle of blur in degrees"),
-    "default", 0.0, "min", -360.0, "max", 360.0,
-    "ui-min", -180.0, "ui-max", 180.0,
+    "default", 0.0, "min", -180.0, "max", 180.0,
     "unit", "degrees",
     NULL)
 
@@ -49,10 +48,15 @@ prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglProperties          *o       = GEGL_PROPERTIES (operation);
+  gdouble                  theta   = o->angle * G_PI / 180.0;
+  gdouble                  offset_x;
+  gdouble                  offset_y;
 
-  gdouble theta    = o->angle * G_PI / 180.0;
-  gdouble offset_x = fabs (o->length * cos (theta));
-  gdouble offset_y = fabs (o->length * sin (theta));
+  while (theta < 0.0)
+    theta += 2 * G_PI;
+
+  offset_x = fabs (o->length * cos (theta));
+  offset_y = fabs (o->length * sin (theta));
 
   op_area->left   =
   op_area->right  = (gint) ceil (0.5 * offset_x);
@@ -140,45 +144,54 @@ cl_process (GeglOperation       *operation,
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   GeglProperties              *o       = GEGL_PROPERTIES (operation);
 
+  GeglBufferClIterator *i;
   const Babl *in_format  = gegl_operation_get_format (operation, "input");
   const Babl *out_format = gegl_operation_get_format (operation, "output");
-  gint err;
+  gint        err;
+  gdouble     theta     = o->angle * G_PI / 180.0;
+  gint        num_steps = (gint)ceil(o->length) + 1;
+  gfloat      offset_x;
+  gfloat      offset_y;
+  gint        read;
 
-  gdouble theta = o->angle * G_PI / 180.0;
-  gfloat  offset_x = (gfloat)(o->length * cos(theta));
-  gfloat  offset_y = (gfloat)(o->length * sin(theta));
-  gint num_steps = (gint)ceil(o->length) + 1;
+  while (theta < 0.0)
+    theta += 2 * G_PI;
 
-  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
-                                                         result,
-                                                         out_format,
-                                                         GEGL_CL_BUFFER_WRITE);
+  offset_x = (gfloat) (o->length * cos (theta));
+  offset_y = (gfloat) (o->length * sin (theta));
 
-  gint read = gegl_buffer_cl_iterator_add_2 (i,
-                                             input,
-                                             result,
-                                             in_format,
-                                             GEGL_CL_BUFFER_READ,
-                                             op_area->left,
-                                             op_area->right,
-                                             op_area->top,
-                                             op_area->bottom,
-                                             GEGL_ABYSS_NONE);
+  i = gegl_buffer_cl_iterator_new (output,
+                                   result,
+                                   out_format,
+                                   GEGL_CL_BUFFER_WRITE);
+
+  read = gegl_buffer_cl_iterator_add_2 (i,
+                                        input,
+                                        result,
+                                        in_format,
+                                        GEGL_CL_BUFFER_READ,
+                                        op_area->left,
+                                        op_area->right,
+                                        op_area->top,
+                                        op_area->bottom,
+                                        GEGL_ABYSS_NONE);
 
   while (gegl_buffer_cl_iterator_next (i, &err))
     {
-      if (err) return FALSE;
+      if (err)
+        return FALSE;
 
-      err = cl_motion_blur_linear(i->tex[read],
-                                  i->tex[0],
-                                  i->size[0],
-                                  &i->roi[0],
-                                  &i->roi[read],
-                                  num_steps,
-                                  offset_x,
-                                  offset_y);
+      err = cl_motion_blur_linear (i->tex[read],
+                                   i->tex[0],
+                                   i->size[0],
+                                   &i->roi[0],
+                                   &i->roi[read],
+                                   num_steps,
+                                   offset_x,
+                                   offset_y);
 
-      if (err) return FALSE;
+      if (err)
+        return FALSE;
     }
 
   return TRUE;
@@ -215,10 +228,16 @@ process (GeglOperation       *operation,
   gint                     x, y;
 
   gdouble theta         = o->angle * G_PI / 180.0;
-  gdouble offset_x      = o->length * cos (theta);
-  gdouble offset_y      = o->length * sin (theta);
   gint    num_steps     = (gint) ceil (o->length) + 1;
   gfloat  inv_num_steps = 1.0f / num_steps;
+  gdouble offset_x;
+  gdouble offset_y;
+
+  while (theta < 0.0)
+    theta += 2 * G_PI;
+
+  offset_x = o->length * cos (theta);
+  offset_y = o->length * sin (theta);
 
   src_rect = *roi;
   src_rect.x -= op_area->left;
