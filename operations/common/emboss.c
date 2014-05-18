@@ -76,14 +76,14 @@ emboss (gfloat              *src_buf,
         const GeglRectangle *src_rect,
         gfloat              *dst_buf,
         const GeglRectangle *dst_rect,
-        gint                 x,
+        GeglEmbossType       type,
+        gint                 y,
         gint                 floats_per_pixel,
-        gint                 alpha,
         gdouble              azimuth,
         gdouble              elevation,
         gint                 width45)
 {
-  gint y;
+  gint x;
   gint offset, verify;
   gint bytes;
 
@@ -97,12 +97,12 @@ emboss (gfloat              *src_buf,
   Nz2  = Nz * Nz;
   NzLz = Nz * Lz;
 
-  bytes = (alpha) ? floats_per_pixel - 1 : floats_per_pixel;
+  bytes = floats_per_pixel - 1;
 
   verify = src_rect->width * src_rect->height * floats_per_pixel;
-  offset = x * dst_rect->width * floats_per_pixel;
+  offset = y * dst_rect->width * floats_per_pixel;
 
-  for (y = 0; y < dst_rect->width; y++)
+  for (x = 0; x < dst_rect->width; x++)
     {
       gint   i, j, b, count;
       gfloat Nx, Ny, NdotL;
@@ -115,56 +115,67 @@ emboss (gfloat              *src_buf,
           M[i][j] = 0.0;
 
       for (b = 0; b < bytes; b++)
-        for (i = 0; i < 3; i++)
-          for (j = 0; j < 3; j++)
+        {
+          for (i = 0; i < 3; i++)
             {
-              count = ((x+i-1)*src_rect->width + (y+j-1))*floats_per_pixel + bytes;
+              for (j = 0; j < 3; j++)
+                {
+                  count = ((y + i - 1) * src_rect->width + (x + j - 1)) * floats_per_pixel + bytes;
 
-              /*verify each time that we are in the source image*/
-              if (alpha && count >= 0 && count < verify)
-                a = src_buf[count];
-              else
-                a = 1.0;
+                  /* verify each time that we are in the source image */
+                  if (count >= 0 && count < verify)
+                    a = src_buf[count];
+                  else
+                    a = 1.0;
 
-              /*calculate recalculate the sorrounding pixels by multiplication*/
-              /*after we have that we can calculate new value of the pixel*/
-              if ((count - bytes + b) >= 0 && (count - bytes + b) < verify)
-                M[i][j] += a * src_buf[count - bytes + b];
+                  /* calculate recalculate the sorrounding pixels by
+                   * multiplication after we have that we can
+                   * calculate new value of the pixel
+                   */
+                  if ((count - bytes + b) >= 0 && (count - bytes + b) < verify)
+                    M[i][j] += a * src_buf[count - bytes + b];
+                }
             }
+        }
 
       Nx = M[0][0] + M[1][0] + M[2][0] - M[0][2] - M[1][2] - M[2][2];
       Ny = M[2][0] + M[2][1] + M[2][2] - M[0][0] - M[0][1] - M[0][2];
 
-      /*calculating the shading result (same as in gimp)*/
-      if ( Nx == 0 && Ny == 0 )
+      /* calculating the shading result (same as in gimp) */
+      if (Nx == 0 && Ny == 0)
         shade = Lz;
-      else if ( (NdotL = Nx * Lx + Ny * Ly + NzLz) < 0 )
+      else if ((NdotL = Nx * Lx + Ny * Ly + NzLz) < 0)
         shade = 0;
       else
-        shade = NdotL / sqrt(Nx*Nx + Ny*Ny + Nz2);
+        shade = NdotL / sqrt (Nx * Nx + Ny * Ny + Nz2);
 
-      count = (x*src_rect->width + y)*floats_per_pixel;
+      count = (y * src_rect->width + x) * floats_per_pixel;
 
-      /*setting the value of the destination buffer*/
-      if (bytes == 1)
-        dst_buf[offset++] = shade;
+      /* setting the value of the destination buffer */
+      if (type == GEGL_EMBOSS_TYPE_EMBOSS)
+        {
+          dst_buf[offset++] = shade;
+        }
       else
         {
-          /*recalculating every byte of a pixel*/
-          /*by multiplying with the shading result*/
+          /* recalculating every byte of a pixel by multiplying with
+           * the shading result
+           */
 
           for (b = 0; b < bytes; b++)
-            if ((count + b) >= 0 && (count + b) < verify)
-              dst_buf[offset++] = (src_buf[count+b] * shade) ;
-            else
-              dst_buf[offset++] = 1.0;
-
-          /*preserving alpha*/
-          if (alpha && (count + bytes) >= 0 && (count + bytes) < verify)
-            dst_buf[offset++] = src_buf[count + bytes];
-          else
-            dst_buf[offset++] = 1.0 ;
+            {
+              if ((count + b) >= 0 && (count + b) < verify)
+                dst_buf[offset++] = (src_buf[count + b] * shade);
+              else
+                dst_buf[offset++] = 1.0;
+            }
         }
+
+      /* preserving alpha */
+      if ((count + bytes) >= 0 && (count + bytes) < verify)
+        dst_buf[offset++] = src_buf[count + bytes];
+      else
+        dst_buf[offset++] = 1.0;
     }
 }
 
@@ -181,7 +192,7 @@ prepare (GeglOperation *operation)
                                babl_format ("RGBA float"));
   else
     gegl_operation_set_format (operation, "output",
-                               babl_format ("Y float"));
+                               babl_format ("YA float"));
 }
 
 static gboolean
@@ -198,8 +209,7 @@ process (GeglOperation       *operation,
   gfloat        *src_buf;
   gfloat        *dst_buf;
   const Babl    *format;
-  gint           alpha;
-  gint           x;
+  gint           y;
   gint           floats_per_pixel;
 
   /*blur-map or emboss*/
@@ -207,13 +217,11 @@ process (GeglOperation       *operation,
     {
       format = babl_format ("RGBA float");
       floats_per_pixel = 4;
-      alpha = 1;
     }
   else
     {
-      format = babl_format ("Y float");
-      floats_per_pixel = 1;
-      alpha = 0;
+      format = babl_format ("YA float");
+      floats_per_pixel = 2;
     }
 
   rect.x      = result->x - op_area->left;
@@ -228,8 +236,8 @@ process (GeglOperation       *operation,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   /*do for every row*/
-  for (x = 0; x < rect.height; x++)
-    emboss (src_buf, &rect, dst_buf, &rect, x, floats_per_pixel, alpha,
+  for (y = 0; y < rect.height; y++)
+    emboss (src_buf, &rect, dst_buf, &rect, o->type, y, floats_per_pixel,
             DEG_TO_RAD (o->azimuth), DEG_TO_RAD (o->elevation), o->depth);
 
   gegl_buffer_set (output, &rect, 0, format,
