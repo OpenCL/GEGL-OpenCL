@@ -36,7 +36,7 @@ gegl_chant_double_ui (seed,  _("Random seed"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0
 #else
 
 #define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE       "noise.c"
+#define GEGL_CHANT_C_FILE "noise-perlin.c"
 
 #include "gegl-chant.h"
 #include "perlin/perlin.c"

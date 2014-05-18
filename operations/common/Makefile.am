@@ -72,6 +72,7 @@ op_LTLIBRARIES = \
 	noise-cie-lch.la \
 	noise-hsv.la \
 	noise-hurl.la \
+	noise-perlin.la \
 	noise-pick.la \
 	noise-reduction.la \
 	noise-rgb.la \
@@ -79,7 +80,6 @@ op_LTLIBRARIES = \
 	noise-slur.la \
 	noise-spread.la \
 	noise-cell.la \
-	noise.la \
 	oilify.la \
 	opacity.la \
 	open-buffer.la \

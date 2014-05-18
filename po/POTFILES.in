@@ -62,11 +62,11 @@ operations/common/mosaic.c
 operations/common/motion-blur-circular.c
 operations/common/motion-blur-linear.c
 operations/common/motion-blur-zoom.c
-operations/common/noise.c
 operations/common/noise-cell.c
 operations/common/noise-cie-lch.c
 operations/common/noise-hsv.c
 operations/common/noise-hurl.c
+operations/common/noise-perlin.c
 operations/common/noise-pick.c
 operations/common/noise-reduction.c
 operations/common/noise-simplex.c
