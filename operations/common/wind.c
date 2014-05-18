@@ -33,14 +33,12 @@ gegl_property_int (strength, _("Strength"),
     "default", 40, "min", 1, "max", 1000,
     NULL)
 
-gegl_property_seed (seed, _("Seed"), rand,
-    "description", _("Random seed"),
-    NULL)
+gegl_property_seed (seed, _("Random seed"), rand, NULL)
 
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "wind.c"
+#define GEGL_OP_C_FILE "wind.c"
 
 #include "gegl-op.h"
 #include <stdlib.h>

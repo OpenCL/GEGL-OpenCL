@@ -52,8 +52,8 @@ gegl_chant_enum (dither_strategy, _("Dithering Strategy"),
                  GeglDitherStrategy, gegl_dither_strategy, GEGL_DITHER_RESILIENT,
                  _("The dithering strategy to use"))
 
-gegl_chant_seed (seed, rand, _("Seed"),
-                 _("Random seed"))
+gegl_chant_seed (seed, rand, _("Random seed"),
+                 NULL)
 
 #else
 

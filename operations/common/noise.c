@@ -30,7 +30,7 @@ gegl_chant_double_ui (zoff,  _("Z offset"), -G_MAXDOUBLE, G_MAXDOUBLE,  -1, -1.0
                       NULL)
 gegl_chant_int       (n,     _("Iteration"), 0, 20, 3,
                       NULL)
-gegl_chant_double_ui (seed,  _("Seed"),     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0.0, 100.0, 1.0,
+gegl_chant_double_ui (seed,  _("Random seed"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0.0, 100.0, 1.0,
                       NULL)
 
 #else
