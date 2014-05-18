@@ -53,12 +53,14 @@ gegl_property_int (size_y, _("Block height"),
 
 gegl_property_double (ratio_x, _("X size ratio"),
     "description", _("Horizontal size ratio of a pixel inside each block"),
-    "default", 1.0, "min", 0.0, "max", 1.0, 
+    "default", 1.0, "min", 0.0, "max", 1.0,
+    "axis", "x",
     NULL)
 
 gegl_property_double (ratio_y, _("Y size ratio"),
     "description", _("Vertical size ratio of a pixel inside each block"),
-    "default", 1.0, "min", 0.0, "max", 1.0, 
+    "default", 1.0, "min", 0.0, "max", 1.0,
+    "axis", "y",
     NULL)
 
 gegl_property_color  (background, _("Background color"),
