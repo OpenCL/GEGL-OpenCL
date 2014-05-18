@@ -41,15 +41,15 @@
 gegl_property_double (center_x, _("Center X"),
     "default", 20.0,
     "ui-min", -100000.0, "ui-max", 100000.0,
-    "axis", "x",
     "unit", "pixel-coordinate",
+    "axis", "x",
     NULL)
 
 gegl_property_double (center_y, _("Center Y"),
     "default", 20.0,
     "ui-min", -100000.0, "ui-max", 100000.0,
-    "axis", "y",
     "unit", "pixel-coordinate",
+    "axis", "y",
     NULL)
 
 /* FIXME: With a large angle, we lose AreaFilter's flavours */

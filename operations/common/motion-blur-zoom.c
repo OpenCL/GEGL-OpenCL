@@ -37,7 +37,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (center_x, _("X center"),
+gegl_property_double (center_x, _("Center X"),
     "description", _("Horizontal center position"),
     "default", 20.0,
     "ui-min",  -100000.0, "ui-max", 100000.0,
@@ -45,12 +45,12 @@ gegl_property_double (center_x, _("X center"),
     "axis",    "x",
     NULL)
 
-gegl_property_double (center_y, _("Y center"),
+gegl_property_double (center_y, _("Center Y"),
     "description", _("Vertical center position"),
     "default", 20.0,
     "ui-min",  -100000.0, "ui-max", 100000.0,
     "unit",    "pixel-coordinate",
-    "axis",    "x",
+    "axis",    "y",
     NULL)
 
 gegl_property_double (factor, _("Factor"),
