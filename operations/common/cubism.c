@@ -25,29 +25,32 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (tile_size, _("Tile size"),
-                   0.0, 256.0, 10.0,
-                   _("Average diameter of each tile (in pixels)"))
+gegl_property_double (tile_size, _("Tile size"),
+    "default", 10.0, "min", 0.0, "max", 256.0,
+    "description", _("Average diameter of each tile (in pixels)"),
+    "unit", "pixel-distance",
+    NULL)
 
-gegl_chant_double (tile_saturation, _("Tile saturation"),
-                   0.0, 10.0, 2.5,
-                   _("Expand tiles by this amount"))
+gegl_property_double (tile_saturation, _("Tile saturation"),
+    "default", 2.5, "min", 0.0, "max", 10.0,
+    _("Expand tiles by this amount"),
+    NULL)
 
-gegl_chant_color  (bg_color, _("Background Color"),
-                   "rgba(0.0, 0.0, 0.0, 0.0)",
-                   _("The tiles' background color"))
+gegl_property_color (bg_color, _("Background Color"),
+    "description", _("The tiles' background color"),
+    "default", "rgba(0.0, 0.0, 0.0, 0.0)",
+    NULL)
 
-gegl_chant_seed   (seed, rand, _("Seed"),
-                   _("Random seed"))
+gegl_property_seed (seed, _("Random seed"), rand, NULL)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "cubism.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "cubism.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -73,7 +76,7 @@ typedef struct
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   gint tmp;
@@ -445,7 +448,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o         = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o         = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area   = GEGL_OPERATION_AREA_FILTER (operation);
   GeglRectangle            boundary  = get_effective_area (operation);
   GeglRectangle            extended;
@@ -594,7 +597,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
