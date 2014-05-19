@@ -233,6 +233,7 @@ gegl_module_register (GTypeModule *module)
 #define value_range(min,max)
 #define ui_range(min,max)
 #define ui_gamma(gamma)
+#define ui_steps(small_increment, big_increment)
 #define ui_meta(key,val)
 
 #define ITEM(name,label,def_val, type)
@@ -906,10 +907,90 @@ gegl_op_constructor (GType                  type,
 }
 
 static void
+param_spec_update_ui (GParamSpec *pspec,
+                      gboolean    ui_range_set,
+                      gboolean    ui_steps_set)
+{
+  if (GEGL_IS_PARAM_SPEC_DOUBLE (pspec))
+    {
+      GeglParamSpecDouble *upspec = GEGL_PARAM_SPEC_DOUBLE (pspec);
+      GParamSpecDouble    *vpspec = G_PARAM_SPEC_DOUBLE (pspec);
+
+      if (!ui_steps_set)
+        {
+          if (!ui_range_set)
+          {
+            upspec->ui_maximum = vpspec->maximum;
+            upspec->ui_minimum = vpspec->minimum;
+          }
+
+          if (upspec->ui_maximum <= 5.0)
+            {
+              upspec->ui_step_small = 0.01;
+              upspec->ui_step_big   = 0.10;
+            }
+          else if (upspec->ui_maximum <= 50)
+            {
+              upspec->ui_step_small = 0.1;
+              upspec->ui_step_big   = 1.0;
+            }
+          else if (upspec->ui_maximum <= 500)
+            {
+              upspec->ui_step_small = 1.0;
+              upspec->ui_step_big   = 10.0;
+            }
+          else if (upspec->ui_maximum <= 5000)
+            {
+              upspec->ui_step_small = 1.0;
+              upspec->ui_step_big   = 100.0;
+            }
+        }
+    }
+  else if (GEGL_IS_PARAM_SPEC_INT (pspec))
+    {
+      GeglParamSpecInt *upspec = GEGL_PARAM_SPEC_INT (pspec);
+      GParamSpecInt    *vpspec = G_PARAM_SPEC_INT (pspec);
+
+      if (!ui_steps_set)
+        {
+          if (!ui_range_set)
+          {
+            upspec->ui_maximum = vpspec->maximum;
+            upspec->ui_minimum = vpspec->minimum;
+          }
+
+         if (upspec->ui_maximum <= 5)
+           {
+             upspec->ui_step_small = 1;
+             upspec->ui_step_big   = 2;
+           }
+         else if (upspec->ui_maximum <= 50)
+           {
+             upspec->ui_step_small = 1;
+             upspec->ui_step_big   = 5;
+           }
+         else if (upspec->ui_maximum <= 500)
+           {
+             upspec->ui_step_small = 1;
+             upspec->ui_step_big   = 10;
+           }
+         else if (upspec->ui_maximum <= 5000)
+           {
+             upspec->ui_step_small = 1;
+             upspec->ui_step_big   = 100;
+           }
+        
+        }
+    }
+}
+
+static void
 gegl_op_class_intern_init (gpointer klass)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   int current_prop = -1;
+  gboolean G_GNUC_UNUSED ui_range_set = FALSE;
+  gboolean G_GNUC_UNUSED ui_steps_set = FALSE;
   GParamFlags flags G_GNUC_UNUSED = G_PARAM_READWRITE | G_PARAM_CONSTRUCT | GEGL_PARAM_PAD_INPUT;
 
   object_class->set_property = set_property;
@@ -922,13 +1003,16 @@ gegl_op_class_intern_init (gpointer klass)
 #undef description
 #undef value_range
 #undef ui_range
+#undef ui_steps
 #undef ui_gamma
 #undef ui_meta
 
 #define REGISTER_IF_ANY \
     if (pspec && current_prop >=0) {\
+      param_spec_update_ui (pspec, ui_range_set, ui_steps_set);\
       g_object_class_install_property (object_class, current_prop, pspec);\
       pspec = NULL; current_prop = -1;\
+      ui_range_set = ui_steps_set = FALSE;\
     }
 
 #define description(blurb) \
@@ -937,7 +1021,11 @@ gegl_op_class_intern_init (gpointer klass)
     vpspec->minimum = min; vpspec->maximum = max; \
     upspec->ui_minimum = min; upspec->ui_maximum = max;
 #define ui_range(min,max) \
-    upspec->ui_minimum = min; upspec->ui_maximum = max;
+    upspec->ui_minimum = min; upspec->ui_maximum = max;\
+    ui_range_set = TRUE;
+#define ui_steps(step_small,step_big) \
+    upspec->ui_step_small = step_small; upspec->ui_step_big = step_big; \
+    ui_steps_set = TRUE;
 #define ui_gamma(gamma) \
     upspec->ui_gamma = gamma;
 #define ui_meta(key,val) \
@@ -1078,6 +1166,7 @@ gegl_op_class_intern_init (gpointer klass)
 #undef description
 #undef value_range
 #undef ui_range
+#undef ui_steps
 #undef ui_gamma
 #undef ui_meta
 #undef property_double

@@ -98,9 +98,24 @@ gegl_param_spec_double (const gchar *name,
   pspec->ui_minimum = ui_minimum;
   pspec->ui_maximum = ui_maximum;
   pspec->ui_gamma   = ui_gamma;
+  gegl_param_spec_double_set_steps (pspec, 0.1, 1.0);
 
   return G_PARAM_SPEC (pspec);
 }
+
+void
+gegl_param_spec_double_set_steps (GeglParamSpecDouble *pspec,
+                                  gdouble              step_small,
+                                  gdouble              step_big)
+{
+  g_return_if_fail (GEGL_IS_PARAM_SPEC_DOUBLE (pspec));
+
+  pspec->ui_step_small = step_small;
+  pspec->ui_step_big = step_big;
+}
+
+gdouble gegl_param_spec_double_get_step_size (GeglParamSpecDouble *pspec);
+gdouble gegl_param_spec_double_get_page_size (GeglParamSpecDouble *pspec);
 
 static void       gegl_param_int_class_init (GParamSpecClass *klass);
 static void       gegl_param_int_init       (GParamSpec      *pspec);
@@ -171,7 +186,19 @@ gegl_param_spec_int (const gchar *name,
   pspec->ui_maximum = ui_maximum;
   pspec->ui_gamma = ui_gamma;
 
+  gegl_param_spec_int_set_steps (pspec, 0.1, 1.0);
   return G_PARAM_SPEC (pspec);
+}
+
+void
+gegl_param_spec_int_set_steps (GeglParamSpecInt *pspec,
+                               gint              step_small,
+                               gint              step_big)
+{
+  g_return_if_fail (GEGL_IS_PARAM_SPEC_INT (pspec));
+
+  pspec->ui_step_small = step_small;
+  pspec->ui_step_big = step_big;
 }
 
 /*

@@ -59,6 +59,8 @@ struct _GeglParamSpecDouble
                                   or gaussian blur radius - where more
                                   detailed control of small values is needed
                                   */
+  gdouble          ui_step_small;
+  gdouble          ui_step_big;
 };
 
 GType        gegl_param_double_get_type (void) G_GNUC_CONST;
@@ -92,6 +94,10 @@ GParamSpec * gegl_param_spec_double (const gchar *name,
                                      GParamFlags  flags);
 
 
+void gegl_param_spec_double_set_steps (GeglParamSpecDouble *pspec,
+                                       gdouble              small_step,
+                                       gdouble              big_step);
+
 /*
  * GEGL_TYPE_PARAM_INT
  */
@@ -107,6 +113,8 @@ struct _GeglParamSpecInt
   gint          ui_minimum; /* reasonable range to present to user */
   gint          ui_maximum;
   gdouble       ui_gamma;
+  gint          ui_step_small;
+  gint          ui_step_big;
 };
 
 GType        gegl_param_int_get_type (void) G_GNUC_CONST;
@@ -139,6 +147,10 @@ GParamSpec * gegl_param_spec_int (const gchar *name,
                                   gdouble      ui_gamma,
                                   GParamFlags  flags);
 
+
+void gegl_param_spec_int_set_steps (GeglParamSpecInt  *pspec,
+                                    gint               small_step,
+                                    gint               big_step);
 
 /*
  * GEGL_TYPE_PARAM_STRING
