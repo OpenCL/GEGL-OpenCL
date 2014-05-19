@@ -20,14 +20,13 @@
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_PROPERTIES
-gegl_property_color (value, _("Color"),
-    "description", _("The color to render (defaults to 'black')"),
-    "default", "black",
-    NULL)
 
-gegl_property_format (format, _("Babl Format"),
-    "description", _("The babl format of the output"),
-    NULL)
+property_color (value, _("Color"), "black")
+    description (("The color to render (Idefaults to 'black')"))
+
+property_format (format, _("Babl Format"), 666)
+    description (_("The babl format of the output"))
+
 #else
 
 #define GEGL_OP_POINT_RENDER
