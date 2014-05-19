@@ -25,24 +25,23 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_boolean (correlated, _("Correlated noise"), NULL)
+property_boolean (correlated, _("Correlated noise"), FALSE)
 
-gegl_property_boolean (independent, _("Independent RGB"),
-                       "default", TRUE, NULL)
+property_boolean (independent, _("Independent RGB"), TRUE)
 
-gegl_property_double (red, _("Red"),
-    "default", 0.20, "min", 0.0, "max", 1.0, NULL)
+property_double (red, _("Red"), 0.20)
+   ui_range     (0.0, 1.0)
 
-gegl_property_double (green, _("Green"),
-    "default", 0.20, "min", 0.0, "max", 1.0, NULL)
+property_double (green, _("Green"), 0.20)
+   ui_range     (0.0, 1.0)
 
-gegl_property_double (blue, _("Blue"),
-    "default", 0.20, "min", 0.0, "max", 1.0, NULL)
+property_double (blue, _("Blue"), 0.20)
+   ui_range     (0.0, 1.0)
 
-gegl_property_double (alpha, _("Alpha"),
-    "default", 0.00, "min", 0.0, "max", 1.0, NULL)
+property_double (alpha, _("Alpha"), 0.0)
+   ui_range     (0.0, 1.0)
 
-gegl_property_seed (seed, _("Random seed"), rand, NULL)
+property_seed (seed, _("Random seed"), rand)
 
 #else
 
