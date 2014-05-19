@@ -24,7 +24,7 @@
 const gchar *gegl_param_spec_get_property_key (GParamSpec  *pspec,
                                                const gchar *key_name);
 
-const gchar *gegl_param_spec_set_property_key (GParamSpec  *pspec,
+void         gegl_param_spec_set_property_key (GParamSpec  *pspec,
                                                const gchar *key_name,
                                                const gchar *value);
 
