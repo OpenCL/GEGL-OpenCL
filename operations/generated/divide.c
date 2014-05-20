@@ -24,16 +24,17 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (value, _("Value"), -G_MAXDOUBLE, G_MAXDOUBLE, 1.0, _("global value used if aux doesn't contain data"))
+property_double (value, _("Value"), 1.0)
+   description(_("global value used if aux doesn't contain data"))
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE       "divide.c"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE       "divide.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include <math.h>
 #ifdef _MSC_VER
@@ -51,13 +52,13 @@ static void prepare (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation        *op,
-          void                *in_buf,
-          void                *aux_buf,
-          void                *out_buf,
-          glong                n_pixels,
-          const GeglRectangle *roi,
-          gint                 level)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *aux_buf,
+         void                *out_buf,
+         glong                n_pixels,
+         const GeglRectangle *roi,
+         gint                 level)
 {
   gfloat * GEGL_ALIGNED in = in_buf;
   gfloat * GEGL_ALIGNED out = out_buf;
@@ -66,7 +67,7 @@ process (GeglOperation        *op,
 
   if (aux == NULL)
     {
-      gfloat value = GEGL_CHANT_PROPERTIES (op)->value;
+      gfloat value = GEGL_PROPERTIES (op)->value;
       for (i=0; i<n_pixels; i++)
         {
           gint   j;
@@ -107,7 +108,7 @@ process (GeglOperation        *op,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass              *operation_class;
   GeglOperationPointComposerClass *point_composer_class;

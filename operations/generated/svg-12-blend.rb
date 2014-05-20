@@ -76,11 +76,10 @@ file_head1 = '
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_boolean (srgb, _("sRGB"),
-                    FALSE,
-                    _("Use sRGB gamma instead of linear"))
+property_boolean (srgb, _("sRGB"), FALSE)
+    description (_("Use sRGB gamma instead of linear"))
 
 #else
 '
@@ -88,11 +87,9 @@ gegl_chant_boolean (srgb, _("sRGB"),
 file_head2 = '
 static void prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-
   const Babl *format;
 
-  if (o->srgb)
+  if (GEGL_PROPERTIES (operation))
     format = babl_format ("R\'aG\'aB\'aA float");
   else
     format = babl_format ("RaGaBaA float");
@@ -111,7 +108,7 @@ static gboolean operation_process (GeglOperation        *operation,
 {
   GeglOperationClass  *operation_class;
   gpointer input, aux;
-  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
 
   /* get the raw values this does not increase the reference count */
   input = gegl_operation_context_get_object (context, "input");
@@ -172,7 +169,7 @@ file_tail1 = '
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass              *operation_class;
   GeglOperationPointComposerClass *point_composer_class;
@@ -181,8 +178,8 @@ gegl_chant_class_init (GeglChantClass *klass)
   point_composer_class = GEGL_OPERATION_POINT_COMPOSER_CLASS (klass);
 
   point_composer_class->process = process;
-  operation_class->process = operation_process;
-  operation_class->prepare = prepare;
+  operation_class->process      = operation_process;
+  operation_class->prepare      = prepare;
 '
 
 file_tail2 = '  gegl_operation_class_set_key (operation_class, "categories", "compositors:svgfilter");
@@ -210,10 +207,10 @@ a.each do
     file.write copyright
     file.write file_head1
     file.write "
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE        \"#{filename}\"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE        \"#{filename}\"
 
-#include \"gegl-chant.h\"
+#include \"gegl-op.h\"
 "
     file.write file_head2
     file.write "
@@ -272,10 +269,10 @@ b.each do
     file.write copyright
     file.write file_head1
     file.write "
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE       \"#{filename}\"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE       \"#{filename}\"
 
-#include \"gegl-chant.h\"
+#include \"gegl-op.h\"
 "
     file.write file_head2
     file.write "
@@ -339,10 +336,10 @@ c.each do
     file.write copyright
     file.write file_head1
     file.write "
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE       \"#{filename}\"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE       \"#{filename}\"
 
-#include \"gegl-chant.h\"
+#include \"gegl-op.h\"
 #include <math.h>
 "
     file.write file_head2
@@ -405,10 +402,10 @@ d.each do
     file.write copyright
     file.write file_head1
     file.write "
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE       \"#{filename}\"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE       \"#{filename}\"
 
-#include \"gegl-chant.h\"
+#include \"gegl-op.h\"
 "
     file.write file_head2
     file.write "
