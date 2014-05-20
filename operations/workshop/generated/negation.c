@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- *  Copyright 2006 Øyvind Kolås <pippin@gimp.org>
+ *  Copyright 2006 Oyvind Kolas <pippin@gimp.org>
  *
  * The formulas used for the blend modes are from:
  *     http://www.pegtop.net/delphi/articles/blendmodes/
@@ -27,16 +27,16 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
 /* no properties */
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE          "negation.c"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE          "negation.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static void prepare (GeglOperation *self)
@@ -91,7 +91,7 @@ process (GeglOperation       *op,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass              *operation_class;
   GeglOperationPointComposerClass *point_composer_class;
