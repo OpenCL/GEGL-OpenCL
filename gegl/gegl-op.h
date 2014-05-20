@@ -1034,7 +1034,7 @@ gegl_op_class_intern_init (gpointer klass)
 #define property_double(name, label, def_val) \
     REGISTER_IF_ANY  \
   }{ GParamSpec *pspec = \
-       gegl_param_spec_double (#name, label, NULL,-G_MAXDOUBLE,G_MAXDOUBLE,0,-100,100,1.0,flags);\
+       gegl_param_spec_double (#name, label, NULL,-G_MAXDOUBLE,G_MAXDOUBLE,def_val,-100,100,1.0,flags);\
      GeglParamSpecDouble *upspec G_GNUC_UNUSED = GEGL_PARAM_SPEC_DOUBLE (pspec);\
      GParamSpecDouble    *vpspec G_GNUC_UNUSED = G_PARAM_SPEC_DOUBLE (pspec);\
      current_prop = PROP_##name ;
@@ -1042,7 +1042,7 @@ gegl_op_class_intern_init (gpointer klass)
 #define property_int(name, label, def_val) \
     REGISTER_IF_ANY  \
   }{ GParamSpec *pspec = \
-       gegl_param_spec_int (#name, label, NULL,G_MININT,G_MAXINT,0,-100,100,1.0,flags);\
+       gegl_param_spec_int (#name, label, NULL,G_MININT,G_MAXINT,def_val,-100,100,1.0,flags);\
      GeglParamSpecInt *upspec G_GNUC_UNUSED = GEGL_PARAM_SPEC_INT (pspec);\
      GParamSpecInt    *vpspec G_GNUC_UNUSED = G_PARAM_SPEC_INT (pspec);\
      current_prop = PROP_##name ;
