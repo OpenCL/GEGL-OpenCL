@@ -61,6 +61,7 @@ struct _GeglParamSpecDouble
                                   */
   gdouble          ui_step_small;
   gdouble          ui_step_big;
+  gint             ui_digits;
 };
 
 GType        gegl_param_double_get_type (void) G_GNUC_CONST;
@@ -94,9 +95,14 @@ GParamSpec * gegl_param_spec_double (const gchar *name,
                                      GParamFlags  flags);
 
 
+/* utility function to initialize ui_steps; should be moved to constructor
+ * when breaking API/ABI */
 void gegl_param_spec_double_set_steps (GeglParamSpecDouble *pspec,
                                        gdouble              small_step,
                                        gdouble              big_step);
+
+void gegl_param_spec_double_set_digits (GeglParamSpecDouble *pspec,
+                                        gint                 digits);
 
 /*
  * GEGL_TYPE_PARAM_INT

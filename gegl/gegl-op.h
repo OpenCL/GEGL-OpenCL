@@ -235,6 +235,7 @@ gegl_module_register (GTypeModule *module)
 #define ui_gamma(gamma)
 #define ui_steps(small_increment, big_increment)
 #define ui_meta(key,val)
+#define ui_digits(digits)
 
 #define ITEM(name,label,def_val, type)
 #define ITEM2(name,label,def_val,type) ITEM(name,label,def_val,type)
@@ -906,10 +907,21 @@ gegl_op_constructor (GType                  type,
   return obj;
 }
 
+static gboolean has_key (GParamSpec *pspec,
+                         const gchar *key,
+                         const gchar *value)
+{
+  const char *set_value = gegl_param_spec_get_property_key (pspec, key);
+  if (set_value && g_str_equal (value, set_value))
+    return TRUE;
+  return FALSE;
+}
+
 static void
 param_spec_update_ui (GParamSpec *pspec,
                       gboolean    ui_range_set,
-                      gboolean    ui_steps_set)
+                      gboolean    ui_steps_set,
+                      gboolean    ui_digits_set)
 {
   if (GEGL_IS_PARAM_SPEC_DOUBLE (pspec))
     {
@@ -924,15 +936,20 @@ param_spec_update_ui (GParamSpec *pspec,
             upspec->ui_minimum = vpspec->minimum;
           }
 
-          if (upspec->ui_maximum <= 5.0)
+          if (has_key (pspec, "unit", "degree"))
             {
-              upspec->ui_step_small = 0.01;
-              upspec->ui_step_big   = 0.10;
+              upspec->ui_step_small = 1.0;
+              upspec->ui_step_big = 15.0;
+            }
+          else if (upspec->ui_maximum <= 5.0)
+            {
+              upspec->ui_step_small = 0.001;
+              upspec->ui_step_big   = 0.100;
             }
           else if (upspec->ui_maximum <= 50)
             {
-              upspec->ui_step_small = 0.1;
-              upspec->ui_step_big   = 1.0;
+              upspec->ui_step_small = 0.01;
+              upspec->ui_step_big   = 1.00;
             }
           else if (upspec->ui_maximum <= 500)
             {
@@ -945,6 +962,30 @@ param_spec_update_ui (GParamSpec *pspec,
               upspec->ui_step_big   = 100.0;
             }
         }
+
+      if (!ui_digits_set)
+      {
+        if (has_key (pspec, "unit", "degrees"))
+        {
+          upspec->ui_digits = 2;
+        }
+        else if (upspec->ui_maximum <= 5.0)
+          {
+            upspec->ui_digits = 4;
+          }
+        if (upspec->ui_maximum <= 50.0)
+          {
+            upspec->ui_digits = 3;
+          }
+        else if (upspec->ui_maximum <= 500)
+          {
+            upspec->ui_digits = 2;
+          }
+        else
+          {
+            upspec->ui_digits = 1;
+          }
+      }
     }
   else if (GEGL_IS_PARAM_SPEC_INT (pspec))
     {
@@ -979,7 +1020,6 @@ param_spec_update_ui (GParamSpec *pspec,
              upspec->ui_step_small = 1;
              upspec->ui_step_big   = 100;
            }
-        
         }
     }
 }
@@ -991,6 +1031,7 @@ gegl_op_class_intern_init (gpointer klass)
   int current_prop = -1;
   gboolean G_GNUC_UNUSED ui_range_set = FALSE;
   gboolean G_GNUC_UNUSED ui_steps_set = FALSE;
+  gboolean G_GNUC_UNUSED ui_digits_set = FALSE;
   GParamFlags flags G_GNUC_UNUSED = G_PARAM_READWRITE | G_PARAM_CONSTRUCT | GEGL_PARAM_PAD_INPUT;
 
   object_class->set_property = set_property;
@@ -1006,13 +1047,14 @@ gegl_op_class_intern_init (gpointer klass)
 #undef ui_steps
 #undef ui_gamma
 #undef ui_meta
+#undef ui_digits
 
 #define REGISTER_IF_ANY \
     if (pspec && current_prop >=0) {\
-      param_spec_update_ui (pspec, ui_range_set, ui_steps_set);\
+      param_spec_update_ui (pspec, ui_range_set, ui_steps_set, ui_digits_set);\
       g_object_class_install_property (object_class, current_prop, pspec);\
       pspec = NULL; current_prop = -1;\
-      ui_range_set = ui_steps_set = FALSE;\
+      ui_range_set = ui_steps_set = ui_digits_set = FALSE;\
     }
 
 #define description(blurb) \
@@ -1030,6 +1072,9 @@ gegl_op_class_intern_init (gpointer klass)
     upspec->ui_gamma = gamma;
 #define ui_meta(key,val) \
     gegl_param_spec_set_property_key(pspec, key, val);
+#define ui_digits(digits) \
+    upspec->ui_digits = digits; \
+    ui_digits_set = TRUE; 
 
 #define property_double(name, label, def_val) \
     REGISTER_IF_ANY  \

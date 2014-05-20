@@ -99,6 +99,7 @@ gegl_param_spec_double (const gchar *name,
   pspec->ui_maximum = ui_maximum;
   pspec->ui_gamma   = ui_gamma;
   gegl_param_spec_double_set_steps (pspec, 0.1, 1.0);
+  gegl_param_spec_double_set_digits (pspec, 2);
 
   return G_PARAM_SPEC (pspec);
 }
@@ -112,6 +113,14 @@ gegl_param_spec_double_set_steps (GeglParamSpecDouble *pspec,
 
   pspec->ui_step_small = step_small;
   pspec->ui_step_big = step_big;
+}
+
+void gegl_param_spec_double_set_digits (GeglParamSpecDouble *pspec,
+                                        gint                 digits)
+{
+  g_return_if_fail (GEGL_IS_PARAM_SPEC_DOUBLE (pspec));
+
+  pspec->ui_digits = digits;
 }
 
 gdouble gegl_param_spec_double_get_step_size (GeglParamSpecDouble *pspec);
