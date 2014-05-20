@@ -127,6 +127,7 @@ operations/external/jpg-save.c
 operations/external/lcms-from-profile.c
 operations/external/matting-levin.c
 operations/external/npy-save.c
+operations/external/openraw.c
 operations/external/path.c
 operations/external/pixbuf.c
 operations/external/png-load.c
