@@ -22,7 +22,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_file_path (path, _("File"), "", _("Path of file to load."))
+property_file_path (path, _("File"), "")
+    description(_("Path of file to load."))
 
 #else
 
