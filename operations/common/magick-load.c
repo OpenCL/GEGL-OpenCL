@@ -23,10 +23,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_file_path (path, _("File"),
-    "description", _("Path of file to load."),
-    "default", "/tmp/gegl-logo.svg",
-    NULL)
+property_file_path (path, _("File"), "/tmp/gegl-logo.svg")
+    description (_("Path of file to load."))
 
 #else
 

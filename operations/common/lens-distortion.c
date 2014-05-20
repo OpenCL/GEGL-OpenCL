@@ -30,40 +30,31 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (main, _("Main"),
-    "description", _("Amount of second-order distortion"),
-    "min", -100.0, "max", 100.0,
-    NULL)
+property_double (main, _("Main"), 0.0)
+    description (_("Amount of second-order distortion"))
+    value_range (-100.0, 100.0)
 
-gegl_property_double (edge, _("Edge"),
-    "description", _("Amount of fourth-order distortion"),
-    "min", -100.0, "max", 100.0,
-    NULL)
+property_double (edge, _("Edge"), 0.0)
+    description (_("Amount of fourth-order distortion"))
+    value_range (-100.0, 100.0)
 
-gegl_property_double (zoom, _("Zoom"),
-    "description", _("Rescale overall image size"),
-    "min", -100.0, "max", 100.0,
-    NULL)
+property_double (zoom, _("Zoom"), 0.0)
+    description (_("Rescale overall image size"))
+    value_range (-100, 100.0)
 
-gegl_property_double (x_shift, _("Shift X"),
-    "description", _("Effect centre offset in X"),
-    "min", -100.0, "max", 100.0,
-    NULL)
+property_double (x_shift, _("Shift X"), 0.0)
+    description (_("Effect centre offset in X"))
+    value_range (-100.0, 100.0)
 
-gegl_property_double (y_shift, _("Shift Y"),
-    "description", _("Effect centre offset in Y"),
-    "min", -100.0, "max", 100.0,
-    NULL)
+property_double (y_shift, _("Shift Y"), 0.0)
+    description (_("Effect centre offset in Y"))
+    value_range (-100.0, 100.0)
 
-gegl_property_double (brighten, _("Brighten"),
-    "description", _("Adjust brightness in corners"),
-    "min", -100.0, "max", 100.0,
-    NULL)
+property_double (brighten, _("Brighten"), 0.0)
+    description (_("Adjust brightness in corners"))
+    value_range (-100.0, 100.0)
 
-gegl_property_color  (background, _("Background"),
-    "description", _("Background color"),
-    "default", "white",
-    NULL)
+property_color  (background, _("Background color"), "white")
 
 #else
 

@@ -19,9 +19,9 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_enum (sampler_type, _("Resampling method"),
+property_enum (sampler_type, _("Resampling method"),
     GeglSamplerType, gegl_sampler_type,
-    "default", GEGL_SAMPLER_CUBIC, NULL)
+    GEGL_SAMPLER_CUBIC)
 
 #else
 

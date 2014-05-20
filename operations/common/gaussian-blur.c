@@ -33,27 +33,26 @@ enum_start (gegl_gaussian_blur_filter)
   enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
 enum_end (GeglGaussianBlurFilter)
 
-gegl_property_double (std_dev_x, _("Size X"),
-    "description", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),
-    "default", 1.5, "min", 0.0, "max", 1500.0,
-    "ui-min", 0.0, "ui-max", 100.0, "ui-gamma", 3.0,
-    "axis", "x",
-    "unit", "pixel-coordinate",
-    NULL)
+property_double (std_dev_x, _("Size X"), 1.5)
+    description (_("Standard deviation for the horizontal axis"))
+    value_range (0.0, 1500.0)
+    ui_range    (0.0, 100.0)
+    ui_gamma    (3.0)
+    ui_meta     ("axis", "x")
+    ui_meta     ("unit", "pixel-coordinate")
 
-gegl_property_double (std_dev_y, _("Size Y"),
-    "description", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),
-    "default", 1.5, "min", 0.0, "max", 1500.0,
-    "ui-min", 0.0, "ui-max", 100.0, "ui-gamma", 3.0,
-    "axis", "y",
-    "unit", "pixel-coordinate",
-    NULL)
+property_double (std_dev_y, _("Size Y"), 1.5)
+    description (_("Standard deviation for the vertical axis"))
+    value_range (0.0, 1500.0)
+    ui_range    (0.0, 100.0)
+    ui_gamma    (3.0)
+    ui_meta     ("axis", "y")
+    ui_meta     ("unit", "pixel-coordinate")
 
-gegl_property_enum  (filter, _("Filter"),
+property_enum  (filter, _("Filter"),
     GeglGaussianBlurFilter, gegl_gaussian_blur_filter,
-    "default", GEGL_GAUSSIAN_BLUR_FILTER_AUTO,
-    "description", _("Optional parameter to override the automatic selection of blur filter"),
-    NULL)
+    GEGL_GAUSSIAN_BLUR_FILTER_AUTO)
+    description (_("Optional parameter to override the automatic selection of blur filter"))
 
 #else
 

@@ -22,10 +22,9 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (dampness, _("Dampness"),
-    "description", _("The value represents the contribution of the past to the new frame."),
-    "min", 0.0, "max", 1.0, "default", 0.95,
-    NULL)
+property_double (dampness, _("Dampness"), 0.95)
+    description (_("The value represents the contribution of the past to the new frame."))
+    value_range (0.0, 1.0)
 
 #else
 

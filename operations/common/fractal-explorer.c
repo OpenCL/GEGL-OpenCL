@@ -39,48 +39,44 @@ enum_start (gegl_fractal_explorer_type)
   enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SIERPINSKI, "Sierpinski")
 enum_end (GeglFractalExplorerType)
 
-gegl_property_enum (fractaltype, _("Fractal type"),
+property_enum (fractaltype, _("Fractal type"),
     GeglFractalExplorerType, gegl_fractal_explorer_type,
-    "description", _("Type of a fractal"),
-    "default", GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT,
-    NULL)
-gegl_property_int (iter, _("Iterations"),
-    "description", _("Iterations"),
-    "default", 50, "min", 1, "max", 1000,
-    NULL)
-gegl_property_double (zoom, _("Zoom"),
-    "description", _("Zoom in the fractal space"),
-    "default", 300.0 , "min"   , 0.0000001, "max"     , 10000000.0,
-    "ui-min",  0.0001, "ui-max", 10000.0  , "ui-gamma", 1.5,
-   NULL)
-gegl_property_double (shiftx, _("Shift X"),
-    "description", _("X shift in the fractal space"),
-    "ui-min", -1000.0, "ui-max",  1000.0, "ui-gamma", 1.5,
-    NULL)
-gegl_property_double (shifty, _("Shift Y"),
-    "description", _("Y shift in the fractal space"),
-    "ui-min", -1000.0, "ui-max",  1000.0, "ui-gamma", 1.5,
-    NULL)
-gegl_property_double (cx, _("CX"),
-    "description", _("CX (No effect in Mandelbrot and Sierpinski)"),
-    "default", -0.75, "min", -2.5, "max", 2.5,
-    NULL)
-gegl_property_double (cy, _("CY"),
-    "description", _("CY (No effect in Mandelbrot and Sierpinski)"),
-    "default", 0.2, "min", -2.5, "max", 2.5,
-    NULL)
-gegl_property_double (redstretch, _("Red stretch"),
-    "description", _("Red stretching factor"), 
-    "default", 1.0, "min", 0.0, "max", 1.0,
-    NULL)
-gegl_property_double (greenstretch, _("Green stretch"),
-    "description", _("Green stretching factor"),
-    "default", 1.0, "min", 0.0, "max", 1.0,
-    NULL)
-gegl_property_double (bluestretch, _("Blue stretch"),
-    "description", _("Green stretching factor"), 
-    "default", 1.0, "min", 0.0, "max", 1.0,
-    NULL)
+    GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT)
+    description (_("Type of a fractal"))
+
+property_int (iter, _("Iterations"), 50)
+    value_range (1, 1000)
+
+property_double (zoom, _("Zoom"), 300.0)
+    description (_("Zoom in the fractal space"))
+    value_range (0.0000001, 10000000.0)
+    ui_range    (0.0000001, 10000.0)
+    ui_gamma    (1.5)
+
+property_double (shiftx, _("Shift X"), 0.0)
+    description (_("X shift in the fractal space"))
+    ui_range    (-1000.0, 1000.0)
+
+property_double (shifty, _("Shift Y"), 0.0)
+    description (_("Y shift in the fractal space"))
+    ui_range    (-1000.0, 1000.0)
+
+property_double (cx, _("CX"), -0.75)
+    description (_("CX (No effect in Mandelbrot and Sierpinski)"))
+    value_range (-2.5, 2.5)
+
+property_double (cy, _("CY"), -0.2)
+    description (_("CY (No effect in Mandelbrot and Sierpinski)"))
+    value_range (-2.5, 2.5)
+
+property_double (redstretch, _("Red stretching factor"), 1.0)
+    value_range (0.0, 1.0)
+
+property_double (greenstretch, _("Green stretching factor"), 1.0)
+    value_range (0.0, 1.0)
+
+property_double (bluestretch, _("Blue stretching factor"), 1.0)
+    value_range (0.0, 1.0)
 
 enum_start (gegl_fractal_explorer_mode)
   enum_value (GEGL_FRACTAL_EXPLORER_MODE_SIN , "Sine")
@@ -88,34 +84,26 @@ enum_start (gegl_fractal_explorer_mode)
   enum_value (GEGL_FRACTAL_EXPLORER_MODE_NONE, "None")
 enum_end (GeglFractalExplorerMode)
 
-gegl_property_enum (redmode, _("Red mode"),
+property_enum (redmode, _("Red application mode"),
     GeglFractalExplorerMode, gegl_fractal_explorer_mode,
-    "description",   _("Red application mode"),
-    "default", GEGL_FRACTAL_EXPLORER_MODE_COS,
-    NULL)
+    GEGL_FRACTAL_EXPLORER_MODE_COS)
 
-gegl_property_enum (greenmode, _("Green mode"),
+property_enum (greenmode, _("Green application mode"),
     GeglFractalExplorerMode, gegl_fractal_explorer_mode,
-    "default", GEGL_FRACTAL_EXPLORER_MODE_COS,
-    "description",   _("Green application mode"), 
-    NULL)
+    GEGL_FRACTAL_EXPLORER_MODE_COS)
 
-gegl_property_enum (bluemode, _("Blue mode"),
+property_enum (bluemode, _("Blue application mode"),
     GeglFractalExplorerMode, gegl_fractal_explorer_mode,
-    "description", _("Blue application mode"),
-    "default", GEGL_FRACTAL_EXPLORER_MODE_SIN,
-    NULL)
+    GEGL_FRACTAL_EXPLORER_MODE_SIN)
 
-gegl_property_boolean (redinvert  , _("Red inversion")  , NULL)
-gegl_property_boolean (greeninvert, _("Green inversion"), NULL)
-gegl_property_boolean (blueinvert , _("Blue inversion") , NULL)
+property_boolean (redinvert  , _("Red inversion")  , FALSE)
+property_boolean (greeninvert, _("Green inversion"), FALSE)
+property_boolean (blueinvert , _("Blue inversion") , FALSE)
 
-gegl_property_int (ncolors, _("Colors"),
-    "description", _("Number of colors"),
-    "default", 256, "min", 2, "max", MAXNCOLORS,
-    NULL)
+property_int    (ncolors, _("Number of colors"), 256)
+    value_range (2, MAXNCOLORS)
 
-gegl_property_boolean (useloglog, _("Loglog smoothing"), NULL)
+property_boolean (useloglog, _("Loglog smoothing"), FALSE)
 
 #else
 

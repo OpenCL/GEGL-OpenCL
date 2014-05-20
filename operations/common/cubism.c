@@ -27,23 +27,19 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (tile_size, _("Tile size"),
-    "default", 10.0, "min", 0.0, "max", 256.0,
-    "description", _("Average diameter of each tile (in pixels)"),
-    "unit", "pixel-distance",
-    NULL)
+property_double (tile_size, _("Tile size"), 10.0)
+    description (_("Average diameter of each tile (in pixels)"))
+    value_range (0.0, 256.0)
+    ui_meta     ("unit", "pixel-distance")
 
-gegl_property_double (tile_saturation, _("Tile saturation"),
-    "default", 2.5, "min", 0.0, "max", 10.0,
-    _("Expand tiles by this amount"),
-    NULL)
+property_double (tile_saturation, _("Tile saturation"), 2.5)
+    description (_("Expand tiles by this amount"))
+    value_range (0.0, 10.0)
 
-gegl_property_color (bg_color, _("Background Color"),
-    "description", _("The tiles' background color"),
-    "default", "rgba(0.0, 0.0, 0.0, 0.0)",
-    NULL)
+property_color  (bg_color, _("Background Color"), "rgba(0.0, 0.0, 0.0, 0.0)")
+    description (("The tiles' background color"))
 
-gegl_property_seed (seed, _("Random seed"), rand, NULL)
+property_seed (seed, _("Random seed"), rand)
 
 #else
 

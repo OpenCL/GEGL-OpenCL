@@ -27,36 +27,27 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_string(composite_op, _("Operation"),
-    "description", _("Composite operation to use"),
-    "default", "gegl:over",
-    NULL)
+property_string(composite_op, _("Operation"), "gegl:over")
+    description (_("Composite operation to use"))
 
-gegl_property_double(opacity, _("Opacity"),
-    "default", 1.0, "min", 0.0, "max", 1.0,
-    NULL)
+property_double(opacity, _("Opacity"), 1.0)
+    value_range (0.0, 1.0)
 
-gegl_property_double(x, _("X"),
-    "description", _("Horizontal position in pixels"),
-    "axis", "x",
-    "unit", "pixel-coordinate",
-    NULL)
+property_double(x, _("X"), 0.0)
+    description (_("Horizontal position in pixels"))
+    ui_meta     ("axis", "x")
+    ui_meta     ("unit", "pixel-coordinate")
 
-gegl_property_double(y, _("Y"),
-    "description", _("Vertical position in pixels"),
-    "axis", "y",
-    "unit", "pixel-coordinate",
-    NULL)
+property_double(y, _("Y"), 0.0)
+    description (_("Vertical position in pixels"))
+    ui_meta     ("axis", "y")
+    ui_meta     ("unit", "pixel-coordinate")
 
-gegl_property_double(scale, _("Scale"),
-    "description", _("Scale 1:1 size"),
-    "default", 1.0,
-    NULL)
+property_double(scale, _("Scale"), 1.0)
+    description (_("Scale 1:1 size"))
 
-gegl_property_file_path(src, _("Source"),
-    "description", _("Source image file path (png, jpg, raw, svg, bmp, tif, ...)"),
-    "default", "",
-    NULL)
+property_file_path(src, _("Source"), "")
+    description (_("Source image file path (png, jpg, raw, svg, bmp, tif, ...)"))
 
 #else
 

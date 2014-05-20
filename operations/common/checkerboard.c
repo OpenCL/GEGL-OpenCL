@@ -22,52 +22,44 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (x, _("Width"),
-    "description", _("Horizontal width of cells pixels"),
-    "default",  16,
-    "min",       1,
-    "ui-min",    1, "ui-max", 256, "ui-gamma", 1.5,
-    "unit", "pixel-distance",
-    "axis", "x",
-    NULL)
+property_int (x, _("Width"), 16)
+    description (_("Horizontal width of cells pixels"))
+    value_range (1, G_MAXINT)
+    ui_range    (1, 256)
+    ui_gamma    (1.5)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "x")
 
-gegl_property_int (y, _("Height"),
-    "description", _("Vertical width of cells pixels"),
-    "default", 16, "min", 1,
-    "ui-min",  1,  "ui-max", 256, "ui-gamma", 1.5,
-    "unit", "pixel-distance",
-    "axis", "y",
-    NULL)
+property_int (y, _("Height"), 16)
+    description (_("Vertical width of cells pixels"))
+    value_range (1, G_MAXINT)
+    ui_range    (1, 256)
+    ui_gamma    (1.5)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "y")
 
-gegl_property_int (x_offset, _("Offset X"),
-    "description", _("Horizontal offset (from origin) for start of grid"),
-    "ui-min", -10, "ui-max", 10,
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
+property_int (x_offset, _("Offset X"), 0.0)
+    description (_("Horizontal offset (from origin) for start of grid"))
+    ui_range (-10, 10)
+    ui_meta("unit", "pixel-coordinate")
+    ui_meta ("axis", "x")
 
-gegl_property_int (y_offset, _("Offset Y"),
-    "description", _("Vertical offset (from origin) for start of grid"),
-    "ui-min", -10, "ui-max",  10,
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_int (y_offset, _("Offset Y"), 0)
+    description (_("Vertical offset (from origin) for start of grid"))
+    ui_range    (-10, 10)
+    ui_meta     ("unit", "pixel-coordinate")
+    ui_meta     ("axis", "y")
 
-gegl_property_color (color1, _("Color"),
-    "description", _("One of the cell colors (defaults to 'black')"),
-    "default", "black",
-    "role",    "color-primary",
-    NULL)
+property_color  (color1, _("Color"), "black")
+    description (_("One of the cell colors (defaults to 'black')"))
+    ui_meta     ("role", "color-primary")
 
-gegl_property_color (color2, _("Color"),
-    "description", _("One of the cell colors (defaults to 'white')"),
-    "default", "white",
-    "role",    "color-secondary",
-    NULL)
+property_color  (color2, _("Color"), "white")
+    description (_("One of the cell colors (defaults to 'white')"))
+    ui_meta     ("role", "color-secondary")
 
-gegl_property_format (format, _("Babl Format"),
-    "description", _("The babl format of the output"),
-    NULL)
+property_format (format, _("Babl Format"), NULL)
+    description ( _("The babl format of the output"))
 
 #else
 

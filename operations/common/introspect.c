@@ -23,9 +23,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_object(node, _("Node"),
-    "description", _("GeglNode to introspect"),
-    NULL)
+property_object(node, _("Node"), GEGL_TYPE_NODE)
 
 #else
 

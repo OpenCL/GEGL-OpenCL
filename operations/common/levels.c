@@ -23,22 +23,25 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (in_low, _("Low input"),
-    "description", _("Input luminance level to become lowest output"),
-    "min", -1.0, "max", 4.0, "default", 0.0, "ui-min", 0.0, "ui-max", 1.0,
-    NULL)
-gegl_property_double (in_high, _("High input"),
-    "description", _("Input luminance level to become white"),
-    "min", -1.0, "max", 4.0, "default", 1.0, "ui-min", 0.0, "ui-max", 1.0,
-    NULL)
-gegl_property_double (out_low, _("Low output"),
-    "description", _("Lowest luminance level in output"),
-    "min", -1.0, "max", 4.0, "default", 0.0, "ui-min", 0.0, "ui-max", 1.0,
-    NULL)
-gegl_property_double (out_high, _("High output"),
-    "description", _("Highest luminance level in output"),
-    "min", -1.0, "max", 4.0, "default", 1.0, "ui-min", 0.0, "ui-max", 1.0,
-    NULL)
+property_double (in_low, _("Low input"), 0.0)
+    description ( _("Input luminance level to become lowest output"))
+    value_range (-1.0, 4.0)
+    ui_range    (0.0, 1.0)
+
+property_double (in_high, _("High input"), 1.0)
+    description (_("Input luminance level to become white"))
+    value_range (-1.0, 4.0)
+    ui_range    (0.0, 1.0)
+
+property_double (out_low, _("Low output"), 0.0)
+    description (_("Lowest luminance level in output"))
+    value_range (-1.0, 4.0)
+    ui_range    (0.0, 1.0)
+
+property_double (out_high, _("High output"), 1.0)
+    description (_("Highest luminance level in output"))
+    value_range (-1.0, 4.0)
+    ui_range    (0.0, 1.0)
 
 #else
 

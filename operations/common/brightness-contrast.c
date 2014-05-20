@@ -24,21 +24,19 @@
 /*  Here in the top of the file the properties of the operation is declared,
  *  this causes the declaration of a structure for containing the data.
  *
- *  The first member of each gegl_property_ macro becomes a struct member
+ *  The first member of each property_ macro becomes a struct member
  *  in the GeglProperties struct used when processing.
  */
 
-gegl_property_double (contrast, _("Contrast"), 
-   "description", _("Magnitude of contrast scaling >1.0 brighten < 1.0 darken"),
-   "default", 1.0, "min", -5.0, "max", 5.0,
-   "ui-min", 0.0, "ui-max", 2.0, "ui-gamma", 1.0,
-   NULL)
+property_double (contrast, _("Contrast"),  1.0)
+   description  (_("Magnitude of contrast scaling >1.0 brighten < 1.0 darken"))
+   value_range  (-5.0, 5.0)
+   ui_range     (0.0, 2.0)
 
-gegl_property_double (brightness, _("Brightness"), 
-   "description", _("Amount to increase brightness"),
-   "default", 0.0, "min", -3.0, "max", 3.0,
-   "ui-min", -1.0, "ui-max", 1.0, "ui-gamma", 1.0,
-   NULL)
+property_double (brightness, _("Brightness"), 0.0)
+   description  (_("Amount to increase brightness"))
+   value_range  (-3.0, 3.0)
+   ui_range     (-1.0, 1.0)
 
 #else
 
@@ -84,7 +82,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  /* Retrieve a pointer to GeglChantO structure which contains all the
+  /* Retrieve a pointer to GeglProperties structure which contains all the
    * chanted properties
    */
   GeglProperties *o = GEGL_PROPERTIES (op);
@@ -156,4 +154,4 @@ gegl_op_class_init (GeglOpClass *klass)
       NULL);
 }
 
-#endif /* closing #ifdef GEGL_CHANT_PROPERTIES ... else ... */
+#endif /* closing #ifdef GEGL_PROPERTIES ... else ... */

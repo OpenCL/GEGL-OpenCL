@@ -28,20 +28,17 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (contrast, _("Contrast"),
-    "description", _("The amount of contrast compression"),
-    "default", 0.1, "min", 0.0, "max", 1.0, 
-    NULL)
+property_double (contrast, _("Contrast"), 0.1)
+    description (_("The amount of contrast compression"))
+    value_range (0.0, 1.0)
 
-gegl_property_double (saturation, _("Saturation"),
-    "description", _("Global color saturation factor"),
-    "default", 0.8, "min", 0.0, "max", 2.0,
-    NULL)
+property_double (saturation, _("Saturation"), 0.8)
+    description (("Global color saturation factor"))
+    value_range (0.0, 2.0)
 
-gegl_property_double (detail, _("Detail"),
-    "description", _("Level of emphasis on image gradient details"),
-    "default", 1.0, "min", 1.0, "max", 99.0,
-    NULL)
+property_double (detail, _("Detail"), 1.0)
+    description (_("Level of emphasis on image gradient details"))
+    value_range (1.0, 99.0)
 
 #else
 

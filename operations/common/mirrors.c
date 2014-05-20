@@ -27,70 +27,60 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (m_angle, _("Mirror rotation"),
-    "description", _("Rotation applied to the mirrors"),
-    "default", 0.0, "min", 0.0, "max", 180.0,
-    "unit", "degree",
-    NULL)
+property_double (m_angle, _("Mirror rotation"), 0.0)
+    description (_("Rotation applied to the mirrors"))
+    value_range (0.0, 180.0)
+    ui_meta     ("unit", "degree")
 
-gegl_property_double (r_angle, _("Result rotation"),
-    "description", _("Rotation applied to the result"),
-    "min", 0.0, "max", 360.0, "default", 0.0,
-    "unit", "degree",
-    NULL)
+property_double (r_angle, _("Result rotation"), 0.0)
+    description (_("Rotation applied to the result"))
+    value_range (0.0, 360.0)
+    ui_meta     ("unit", "degree")
 
-gegl_property_int    (n_segs, _("Mirrors"),
-    "description", _("Number of mirrors to use"),
-    "default", 6, "min", 2, "max", 24,
-    NULL)
+property_int    (n_segs, _("Mirrors"), 6)
+    description (_("Number of mirrors to use"))
+    value_range (2, 24)
 
-gegl_property_double (c_x, _("Offset X"),
-    "description", _("X offset of the result of mirroring"),
-    "default", 0.5, "min", 0.0, "max", 1.0,
-    NULL)
+property_double (c_x, _("Offset X"), 0.5)
+    description (_("X offset of the result of mirroring"))
+    value_range (0.0, 1.0)
+    ui_meta     ("unit", "relative-coordinate")
+    ui_meta     ("axis", "x")
 
-gegl_property_double (c_y, _("Offset Y"),
-    "description", _("Y offset of the result of mirroring"),
-    "default", 0.5, "min", 0.0, "max", 1.0,
-    NULL)
+property_double (c_y, _("Offset Y"), 0.5)
+    description (_("Y offset of the result of mirroring"))
+    value_range (0.0, 1.0)
+    ui_meta     ("unit", "relative-coordinate")
+    ui_meta     ("axis", "y")
 
-gegl_property_double (o_x, _("Center X"),
-    "description", _("X axis ratio for the center of mirroring"),
-    "min", -1.0, "max", 1.0,
-    NULL)
+property_double (o_x, _("Center X"), 0.0)
+    description (_("X axis ratio for the center of mirroring"))
+    value_range (-1.0, 1.0)
 
-gegl_property_double (o_y, _("Center Y"),
-    "description", _("Y axis ratio for the center of mirroring"),
-    "min", -1.0, "max", 1.0,
-    NULL)
+property_double (o_y, _("Center Y"), 0.0)
+    description (_("Y axis ratio for the center of mirroring"))
+    value_range (-1.0, 1.0)
 
-gegl_property_double (trim_x, _("Trim X"),
-    "description", _("X axis ratio for trimming mirror expanse"),
-    "min", 0.0, "max", 0.5,
-    NULL)
+property_double (trim_x, _("Trim X"), 0.0)
+    description (_("X axis ratio for trimming mirror expanse"))
+    value_range (0.0, 0.5)
 
-gegl_property_double (trim_y, _("Trim Y"),
-    "description", _("Y axis ratio for trimming mirror expanse"),
-    "min", 0.0, "max", 0.5,
-    NULL)
+property_double (trim_y, _("Trim Y"), 0.0)
+    description (_("Y axis ratio for trimming mirror expanse"))
+    value_range (0.0, 0.5)
 
-gegl_property_double (input_scale, _("Zoom"),
-    "description", _("Scale factor to make rendering size bigger"),
-    "default", 100.0, "min", 0.1, "max", 100.0,
-    NULL)
+property_double (input_scale, _("Zoom"), 100.0)
+    description (_("Scale factor to make rendering size bigger"))
+    value_range (0.1, 100.0)
 
-gegl_property_double (output_scale, _("Expand"),
-    "description", _("Scale factor to make rendering size bigger"),
-    "default", 1.0, "min", 0.0, "max", 100.0,
-    NULL)
+property_double (output_scale, _("Expand"), 1.0)
+    description (_("Scale factor to make rendering size bigger"))
+    value_range (0.0, 100.0)
 
-gegl_property_boolean (clip, _("Clip result"),
-    "description", _("Clip result to input size"),
-    "default", TRUE, NULL)
+property_boolean (clip, _("Clip result to input size"), TRUE)
 
-gegl_property_boolean (warp, _("Wrap input"),
-    "description", _("Fill full output area"),
-    "default", TRUE, NULL)
+property_boolean (warp, _("Wrap input"), TRUE)
+    description (_("Fill full output area"))
 
 
 #else

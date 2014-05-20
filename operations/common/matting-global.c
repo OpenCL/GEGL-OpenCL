@@ -22,9 +22,9 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (iterations, _("Iterations"),
-    "description", _("Number of iterations"), 
-    "default", 10, "ui-max", 200, "min", 1, NULL)
+property_int (iterations, _("Iterations"), 10)
+    value_range (1, 10000)
+    ui_range (1, 200)
 
 #else
 

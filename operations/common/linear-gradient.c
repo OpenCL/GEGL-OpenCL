@@ -22,39 +22,29 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (start_x, _("X1"),
-    "default", 25.0,
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
-gegl_property_double (start_y, _("Y1"),
-    "default", 25.0,
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_double (start_x, _("X1"), 25.0)
+    ui_meta("unit", "pixel-coordinate")
+    ui_meta("axis", "x")
 
-gegl_property_double (end_x, _("X2"),
-    "default", 150.0,
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
-gegl_property_double (end_y, _("Y2"),
-    "default", 150.0,
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_double (start_y, _("Y1"), 25.0)
+    ui_meta("unit", "pixel-coordinate")
+    ui_meta("axis", "y")
 
-gegl_property_color (start_color, _("Start Color"),
-    "description", _("The color at (x1, y1)"),
-    "default", "black",
-    "role", "color-primary",
-    NULL)
+property_double (end_x, _("X2"), 150.0)
+    ui_meta("unit", "pixel-coordinate")
+    ui_meta("axis", "x")
 
-gegl_property_color  (end_color, _("End Color"),
-    "description", _("The color at (x2, y2)"),
-    "default", "white",
-    "role", "color-secondary",
-    NULL)
+property_double (end_y, _("Y2"), 150.0)
+    ui_meta ("unit", "pixel-coordinate")
+    ui_meta ("axis", "y")
+
+property_color (start_color, _("Start Color"), "black")
+    description (_("The color at (x1, y1)"))
+    ui_meta ("role", "color-primary")
+
+property_color  (end_color, _("End Color"), "white")
+    description (_("The color at (x2, y2)"))
+    ui_meta     ("role", "color-secondary")
 
 #else
 

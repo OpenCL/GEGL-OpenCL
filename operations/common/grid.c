@@ -21,59 +21,49 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (x, _("Width"),
-    "description", _("Horizontal width of cells pixels"),
-    "default", 32, "min", 1, "max", G_MAXINT,
-    "ui-min", 1, "ui-max", 128,
-    "unit", "pixel-distance",
-    "axis", "x",
-    NULL)
+property_int    (x, _("Width"), 32)
+    description (_("Horizontal width of cells pixels"))
+    value_range (1, G_MAXINT)
+    ui_range    (1, 128)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "x")
 
-gegl_property_int (y, _("Height"),
-    "description", _("Vertical width of cells pixels"),
-    "default", 32, "min", 1, "max", G_MAXINT,
-    "ui-min", 1, "ui-max", 128,
-    "unit", "pixel-distance",
-    "axis", "y",
-    NULL)
+property_int    (y, _("Height"), 32)
+    description (_("Vertical width of cells pixels"))
+    value_range (1, G_MAXINT)
+    ui_range    (1, 128)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "y")
 
-gegl_property_int (x_offset, _("Offset X"),
-    "description", _("Horizontal offset (from origin) for start of grid"),
-    "default", 0,
-    "ui-min", -64, "ui-max", 64,
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
+property_int    (x_offset, _("Offset X"), 0)
+    description (_("Horizontal offset (from origin) for start of grid"))
+    ui_range    (-64, 64)
+    ui_meta     ("unit", "pixel-coordinate")
+    ui_meta     ("axis", "x")
 
-gegl_property_int (y_offset, _("Offset Y"),
-    "description", _("Vertical offset (from origin) for start of grid"),
-    "default", 0,
-    "ui-min", -64, "ui-max", 64,
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_int    (y_offset, _("Offset Y"), 0)
+    description (_("Vertical offset (from origin) for start of grid"))
+    ui_range    (-64, 64)
+    ui_meta     ("unit", "pixel-coordinate")
+    ui_meta     ("axis", "y")
 
-gegl_property_int (line_width, _("Line width"),
-    "description", _("Width of grid lines in pixels"),
-    "default", 4, "min", 0,
-    "ui-min", 0, "ui-max", 16,
-    "unit", "pixel-distance",
-    "axis", "x",
-    NULL)
+property_int    (line_width, _("Line width"), 4)
+    description (_("Width of grid lines in pixels"))
+    value_range (0, G_MAXINT)
+    ui_range    (0, 16)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "x")
 
-gegl_property_int (line_height, _("Line height"),
-    "description", _("Width of grid lines in pixels"),
-    "default", 4, "min", 0,
-    "ui-min", 0, "ui-max", 16,
-    "unit", "pixel-distance",
-    "axis", "y",
-    NULL)
+property_int    (line_height, _("Line height"), 4)
+    description (_("Height of grid lines in pixels"))
+    value_range (0, G_MAXINT)
+    ui_range    (0, 16)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "y")
 
-gegl_property_color (line_color, _("Color"),
-    "description", _("Color of the grid lines"),
-    "default", "black",
-    "role",    "color-primary",
-    NULL)
+property_color (line_color, _("Color"), "black")
+    description (_("Color of the grid lines"))
+    ui_meta     ("role",    "color-primary")
 
 #else
 

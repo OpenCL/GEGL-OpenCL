@@ -23,23 +23,17 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (red, _("Red"),
-    "description", _("Amount of red"),
-    "default", 0.5, "min", -10.0, "max", 10.0,
-    "ui-min", -1.0, "ui-max", 1.0,
-    NULL)
+property_double (red, _("Amount of red"), 0.5)
+    value_range (-10.0, 10.0)
+    ui_range    (-1.0, 1.0)
 
-gegl_property_double (green, _("Green"),
-    "description", _("Amount of green"),
-    "default", 0.5, "min", -10.0, "max", 10.0,
-    "ui-min", -1.0, "ui-max", 1.0,
-    NULL)
+property_double (green, _("Amount of green"), 0.5)
+    value_range (-10.0, 10.0)
+    ui_range    (-1.0, 1.0)
 
-gegl_property_double (blue, _("Blue"),
-    "description", _("Amount of blue"),
-    "default", 0.5, "min", -10.0, "max", 10.0,
-    "ui-min", -1.0, "ui-max", 1.0,
-    NULL)
+property_double (blue, _("Amount of blue"), 0.5)
+    value_range (-10.0, 10.0)
+    ui_range    (-1.0, 1.0)
 
 #else
 

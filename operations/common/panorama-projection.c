@@ -20,55 +20,43 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (pan, _("Pan"),
-    "description", _("Horizontal camera panning"),
-    "min",  -180.0, "max", 360.0,
-    "unit", "degree",
-    NULL)
+property_double (pan, _("Pan"), 0.0)
+  description   (_("Horizontal camera panning"))
+  value_range   (-360.0, 360.0)
+  ui_meta       ("unit", "degree")
 
-gegl_property_double (tilt, _("Tilt"),
-    "description", _("Vertical angle"),
-    "min", -180.0, "max",  180.0,
-    "unit", "degree",
-    NULL)
+property_double (tilt, _("Tilt"), 0.0)
+  description   (_("Vertical camera panning"))
+  value_range   (-180.0, 180.0)
+  ui_range      (-180.0, 180.0)
+  ui_meta       ("unit", "degree")
 
-gegl_property_double (spin, _("Spin"),
-    "description", _("Spin angle around camera axis"),
-    "min",  -360.0, "max",   360.0,
-    NULL)
+property_double (spin, _("Spin"), 0.0)
+  description   (_("Spin angle around camera axis"))
+  value_range   (-360.0, 360.0)
 
-gegl_property_double (zoom, _("Zoom"),
-    "description", _("Zoom level"),
-    "default", 100.0, "min", 0.01, "max", 1000.0,
-    NULL)
+property_double (zoom, _("Zoom"), 100.0)
+  description   (("Zoom level"))
+  value_range   (0.01, 1000.0)
 
-gegl_property_int (width, _("Width"),
-    "description", _("output/rendering width in pixels, -1 for input width"),
-    "default", -1, "min", -1, "max", 10000,
-    "role", "output-extent",
-    "axis", "x",
-    NULL)
+property_int    (width, _("Width"), -1)
+  description   (_("output/rendering width in pixels, -1 for input width"))
+  value_range   (-1, 10000)
+  ui_meta       ("role", "output-extent")
+  ui_meta       ("axis", "x")
 
-gegl_property_int (height, _("Height"),
-    "description", _("output/rendering height in pixels, -1 for input height"),
-    "default", -1, "min", -1, "max", 10000,
-    "role", "output-extent",
-    "axis", "y",
-    NULL)
+property_int    (height, _("Height"), -1)
+  description   (_("output/rendering height in pixels, -1 for input height"))
+  value_range   (-1, 10000)
+  ui_meta       ("role", "output-extent")
+  ui_meta       ("axis", "y")
 
-gegl_property_boolean (little_planet, _("Little planet"),
-    "description", _("use the pan/tilt location as center for a stereographic/little planet projection."),
-    NULL)
+property_boolean(little_planet, _("Little planet"), FALSE)
+  description   (_("use the pan/tilt location as center for a stereographic/little planet projection."))
 
-gegl_property_enum (sampler_type, _("Resampling method"),
-    GeglSamplerType, gegl_sampler_type,
-    "description", _("Image resampling method to use"),
-    "default", GEGL_SAMPLER_NEAREST,
-    NULL)
-
-gegl_property_boolean (inverse, _("Inverse"),
-    "description", _("do an inverse projection"),
-    NULL)
+property_enum   (sampler_type, _("Resampling method"),
+                  GeglSamplerType, gegl_sampler_type, GEGL_SAMPLER_NEAREST)
+  description   (_("Image resampling method to use"))
 
 #else
 
