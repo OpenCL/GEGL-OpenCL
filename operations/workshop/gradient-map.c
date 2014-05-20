@@ -22,17 +22,17 @@
 #include "math.h"
 
 
-#ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_color(color1, _("Color 1"), "black",
-                  _("Starting color for gradient"))
-gegl_chant_color(color2, _("Color 2"), "white",
-                  _("End color for gradient"))
+#ifdef GEGL_PROPERTIES
+property_color(color1, _("Color 1"), "black")
+    description (_("Starting color for gradient"))
+property_color(color2, _("Color 2"), "white")
+    description (_("End color for gradient"))
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "gradient-map.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "gradient-map.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 
 // TODO: create a custom GeglGradient type
@@ -89,8 +89,8 @@ process_pixel_gradient_map(gfloat *in, gfloat *out, gdouble *gradient, gint grad
 
 static void prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  GradientMapProperties *props = (GradientMapProperties*)o->chant_data;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GradientMapProperties *props = (GradientMapProperties*)o->user_data;
 
   gegl_operation_set_format (operation, "input", babl_format ("YA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
@@ -99,22 +99,22 @@ static void prepare (GeglOperation *operation)
     {
       props = g_new(GradientMapProperties, 1);
       props->gradient = NULL;
-      o->chant_data = props;
+      o->user_data = props;
     }
 }
 
 static void finalize (GObject *object)
 {
     GeglOperation *op = (void*)object;
-    GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-    if (o->chant_data) {
-      GradientMapProperties *props = (GradientMapProperties *) o->chant_data;
+    GeglProperties *o = GEGL_PROPERTIES (op);
+    if (o->user_data) {
+      GradientMapProperties *props = (GradientMapProperties *) o->user_data;
       if (props->gradient) {
         g_free(props->gradient);
       }
-      o->chant_data = NULL;
+      o->user_data = NULL;
     }
-    G_OBJECT_CLASS(gegl_chant_parent_class)->finalize (object);
+    G_OBJECT_CLASS(gegl_op_parent_class)->finalize (object);
 }
 
 
@@ -126,12 +126,12 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
   gfloat     * GEGL_ALIGNED in_pixel = in_buf;
   gfloat     * GEGL_ALIGNED out_pixel = out_buf;
   const gint gradient_length = 2048;
   const gint gradient_channels = 4; // RGBA
-  GradientMapProperties *props = (GradientMapProperties*)o->chant_data;
+  GradientMapProperties *props = (GradientMapProperties*)o->user_data;
   gdouble *cached_c1 = props->cached_c1;
   gdouble *cached_c2 = props->cached_c2;
 
@@ -155,7 +155,7 @@ process (GeglOperation       *op,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;
@@ -189,4 +189,4 @@ gegl_chant_class_init (GeglChantClass *klass)
       NULL);
 }
 
-#endif /* #ifdef GEGL_CHANT_PROPERTIES */
+#endif /* #ifdef GEGL_PROPERTIES */

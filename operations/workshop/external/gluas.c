@@ -20,7 +20,7 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
 #define THRESHOLD_SCRIPT \
 "level = user_value/2\n"\
@@ -38,18 +38,23 @@
 "  progress (y/height)\n"\
 "end"
 
-gegl_chant_multiline (script, _("Script"), THRESHOLD_SCRIPT,
-         _("The lua script containing the implementation of this operation."))
-gegl_chant_file_path (file, _("File"), "", _("a stored lua script on disk implementing an operation."))
-gegl_chant_double (user_value, _("User value"), -1000.0, 1000.0, 1.0,
-         _("(appears in the global variable 'user_value' in lua."))
+property_string (script, _("Script"), THRESHOLD_SCRIPT)
+    description(_("The lua script containing the implementation of this operation."))
+    ui_meta    ("multiline", "true")
+
+property_file_path (file, _("File"), "")
+    description(_("a stored lua script on disk implementing an operation."))
+
+property_double (user_value, _("User value"), 1.0)
+    description(_("(appears in the global variable 'user_value' in lua."))
+    value_range (-1000.0, 1000.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "gluas.c"
+#define GEGL_OP_COMPOSER
+#define GEGL_OP_C_FILE       "gluas.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>
@@ -940,7 +945,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->file && g_file_test (o->file, G_FILE_TEST_IS_REGULAR))
     {
@@ -964,7 +969,7 @@ get_required_for_output (GeglOperation        *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;

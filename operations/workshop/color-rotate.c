@@ -28,38 +28,56 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_boolean (s_cl, _("Clockwise"), FALSE,
-                    _("Switch to clockwise"))
-gegl_chant_int (s_fr, _("From:"), 0, 360, 0,
-                _("Starting angle for the color rotation"))
-gegl_chant_int (s_to, _("To:"), 0, 360, 0,
-                _("End angle for the color rotation"))
-gegl_chant_boolean (d_cl, _("Clockwise"), FALSE,
-                    _("Switch to clockwise"))
-gegl_chant_int (d_fr, _("From:"), 0, 360, 0,
-                _("Starting angle for the color rotation"))
-gegl_chant_int (d_to, _("To:"), 0, 360, 0,
-                _("End angle for the color rotation"))
+property_boolean (s_cl, _("Clockwise"), FALSE)
+    description (_("Switch to clockwise"))
 
-gegl_chant_boolean (gray, _("Grayscale"), FALSE,
-                    _("Choose in case of grayscale images"))
-gegl_chant_double (hue, _("Hue"), 0.0, 2.0, 0.0,
-                   _("The value of hue"))
-gegl_chant_double (saturation, _("Saturation"), 0.0, 1.0, 0.0,
-                   _("The value of saturation"))
-gegl_chant_boolean (change, _("Change/Treat to this"), FALSE,
-                    _("Change/Treat to this"))
-gegl_chant_double (threshold, _("Threshold"), 0.0, 1.0, 0.0,
-                   _("The value of gray threshold"))
+property_int (s_fr, _("From:"), 0)
+    description (_("Starting angle for the color rotation"))
+    value_range (0, 360)
+    ui_meta     ("unit", "degree")
+
+property_int (s_to, _("To:"), 0)
+    description (_("End angle for the color rotation"))
+    value_range (0, 360)
+    ui_meta     ("unit", "degree")
+
+property_boolean (d_cl, _("Clockwise"), FALSE)
+    description (_("Switch to clockwise"))
+
+property_int (d_fr, _("From:"), 0)
+    value_range (0, 360)
+    description (_("Starting angle for the color rotation"))
+
+property_int (d_to, _("To:"), 0)
+    value_range (0, 360)
+    description (_("End angle for the color rotation"))
+
+property_boolean (gray, _("Grayscale"), FALSE)
+    description (_("Choose in case of grayscale images"))
+
+property_double (hue, _("Hue"), 0.0)
+    value_range (0.0, 2.0)
+    description (_("The value of hue"))
+
+property_double (saturation, _("Saturation"), 0.0)
+    description (_("The value of saturation"))
+    value_range (0.0, 1.0)
+
+property_boolean (change, _("Change/Treat to this"), FALSE)
+    description (_("Change/Treat to this"))
+
+property_double (threshold, _("Threshold"), 0.0)
+    description (_("The value of gray threshold"))
+    value_range (0.0, 1.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "color-rotate.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "color-rotate.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -284,7 +302,7 @@ right_end (gint     from,
 static void
 color_rotate (gfloat     *src,
               gint        offset,
-              GeglChantO *o)
+              GeglProperties *o)
 {
   gfloat   h, s, v;
   gboolean skip = FALSE;
@@ -344,7 +362,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
   const Babl *format = babl_format ("RGBA float");
   gfloat     *src_buf;
   gint        x;
@@ -366,7 +384,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

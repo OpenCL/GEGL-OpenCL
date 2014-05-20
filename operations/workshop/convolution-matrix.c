@@ -20,84 +20,57 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (a1, _("(1,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (1,1)"))
-gegl_chant_double (a2, _("(1,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (1,2)"))
-gegl_chant_double (a3, _("(1,3) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (1,3)"))
-gegl_chant_double (a4, _("(1,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (1,4)"))
-gegl_chant_double (a5, _("(1,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (1,5)"))
-gegl_chant_double (b1, _("(2,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (2,1)"))
-gegl_chant_double (b2, _("(2,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (2,2)"))
-gegl_chant_double (b3, _("(2,3) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (2,3)"))
-gegl_chant_double (b4, _("(2,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (2,4)"))
-gegl_chant_double (b5, _("(2,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (2,5)"))
-gegl_chant_double (c1, _("(3,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (3,1)"))
-gegl_chant_double (c2, _("(3,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (3,2)"))
-gegl_chant_double (c3, _("(3,3) "), -G_MAXINT, G_MAXINT, 1.0,
-                   _("Value of the element in position (3,3)"))
-gegl_chant_double (c4, _("(3,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (3,4)"))
-gegl_chant_double (c5, _("(3,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (3,5)"))
-gegl_chant_double (d1, _("(4,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (4,1)"))
-gegl_chant_double (d2, _("(4,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (4,2)"))
-gegl_chant_double (d3, _("(4,3) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (4,3)"))
-gegl_chant_double (d4, _("(4,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (4,4)"))
-gegl_chant_double (d5, _("(4,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (4,5)"))
-gegl_chant_double (e1, _("(5,1) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (5,1)"))
-gegl_chant_double (e2, _("(5,2) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (5,2)"))
-gegl_chant_double (e3, _("(5,3) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (5,3)"))
-gegl_chant_double (e4, _("(5,4) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (5,4)"))
-gegl_chant_double (e5, _("(5,5) "), -G_MAXINT, G_MAXINT, 0.0,
-                   _("Value of the element in position (5,5)"))
+property_double (a1, _("(1,1) "), 0.0)
+property_double (a2, _("(1,2) "), 0.0)
+property_double (a3, _("(1,3) "), 0.0)
+property_double (a4, _("(1,4) "), 0.0)
+property_double (a5, _("(1,5) "), 0.0)
+property_double (b1, _("(2,1) "), 0.0)
+property_double (b2, _("(2,2) "), 0.0)
+property_double (b3, _("(2,3) "), 0.0)
+property_double (b4, _("(2,4) "), 0.0)
+property_double (b5, _("(2,5) "), 0.0)
+property_double (c1, _("(3,1) "), 0.0)
+property_double (c2, _("(3,2) "), 0.0)
+property_double (c3, _("(3,3) "), 1.0)
+property_double (c4, _("(3,4) "), 0.0)
+property_double (c5, _("(3,5) "), 0.0)
+property_double (d1, _("(4,1) "), 0.0)
+property_double (d2, _("(4,2) "), 0.0)
+property_double (d3, _("(4,3) "), 0.0)
+property_double (d4, _("(4,4) "), 0.0)
+property_double (d5, _("(4,5) "), 0.0)
+property_double (e1, _("(5,1) "), 0.0)
+property_double (e2, _("(5,2) "), 0.0)
+property_double (e3, _("(5,3) "), 0.0)
+property_double (e4, _("(5,4) "), 0.0)
+property_double (e5, _("(5,5) "), 0.0)
 
-gegl_chant_double (div, _("Divisor: "), -G_MAXINT, G_MAXINT, 1.0,
-                   _("The value of the divisor"))
-gegl_chant_double (off, _("Offset: "), -1.0, 1.0, 0.0,
-                   _("The value of the offset"))
+property_double (div, _("Divisor: "), 1.0)
+property_double (off, _("Offset: "), 0.0)
+   value_range (-1.0, 1.0)
 
-gegl_chant_boolean (norm, _("Normalize"), TRUE, _("Normalize or not"))
+property_boolean (norm, _("Normalize"), TRUE)
 
-gegl_chant_boolean (red, _("Red"), TRUE, _("Red channel"))
-gegl_chant_boolean (green, _("Green"), TRUE, _("Green channel"))
-gegl_chant_boolean (blue, _("Blue"), TRUE, _("Blue channel"))
-gegl_chant_boolean (alpha, _("Alpha"), TRUE, _("Alpha channel"))
+property_boolean (red, _("Red channel"), TRUE )
+property_boolean (green, _("Green channel"), TRUE)
+property_boolean (blue, _("Blue channel"), TRUE)
+property_boolean (alpha, _("Alpha channel"), TRUE)
+property_boolean (weight, _("Alpha-weighting"), TRUE)
 
-gegl_chant_boolean (weight, _("Alpha-weighting"), TRUE, _("Alpha weighting"))
-
-gegl_chant_string (border, _("Border"), "extend",
-                   _("Type of border to choose. "
-                     "Choices are extend, wrap, crop. "
-                     "Default is extend"))
+/* XXX: use enum */
+property_string (border, _("Border"), "extend")
+    description (_("Type of border to choose. Choices are extend, wrap, crop. "
+                   "Default is extend"))
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE        "convolution-matrix.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE        "convolution-matrix.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -132,7 +105,7 @@ prepare (GeglOperation *operation)
 }
 
 static void
-make_matrix (GeglChantO  *o,
+make_matrix (GeglProperties  *o,
              gdouble    **matrix)
 {
   matrix[0][0] = o->a1;
@@ -167,7 +140,7 @@ make_matrix (GeglChantO  *o,
 }
 
 static void
-normalize_o (GeglChantO  *o,
+normalize_o (GeglProperties  *o,
              gdouble    **matrix)
 {
   gint      x, y;
@@ -207,7 +180,7 @@ convolve_pixel(gfloat               *src_buf,
                const GeglRectangle  *extended,
                const GeglRectangle  *boundary,
                gdouble             **matrix,
-               GeglChantO           *o,
+               GeglProperties           *o,
                GeglBuffer           *input,
                gint                  xx,
                gint                  yy,
@@ -326,7 +299,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   GeglRectangle   rect;
@@ -413,7 +386,7 @@ get_required_for_output (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

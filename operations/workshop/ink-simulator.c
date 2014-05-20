@@ -22,7 +22,7 @@
 
 //#define USE_UI
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
 #define DEFAULT_CONFIG \
 "\n"\
@@ -33,39 +33,43 @@
 "ink2.black=black\n"\
 "\n"\
 
-gegl_chant_register_enum (ink_sim_mode)
+enum_start (ink_sim_mode)
   enum_value (GEGL_SSIM_PROOF, "proof")
   enum_value (GEGL_SSIM_SEPARATE, "separate")
   enum_value (GEGL_SSIM_SEPARATE_PROOF, "separate-proof")
-gegl_chant_register_enum_end (GeglInkSimMode)
+enum_end (GeglInkSimMode)
 
-gegl_chant_multiline (config, _("ink configuration"), DEFAULT_CONFIG,
-         _("Textual desciption of inks used for simulated print-job"))
-gegl_chant_enum (mode, _("mode"), GeglInkSimMode, ink_sim_mode,
-                 GEGL_SSIM_SEPARATE_PROOF, _("how the ink simulator is used"))
+property_string (config, _("ink configuration"), DEFAULT_CONFIG)
+  description (_("Textual desciption of inks used for simulated print-job"))
+
+property_enum (mode, _("mode"), GeglInkSimMode, ink_sim_mode,
+                 GEGL_SSIM_SEPARATE_PROOF)
+  description (_("how the ink simulator is used"))
 
 #ifdef USE_UI
 
-gegl_chant_color (substrate_color, _("Substrate color"), "#ffffff", _("paper/fabric/material color"))
-gegl_chant_color (ink1_color, _("Ink1 color"), "#00ffff00", _("ink color"))
-gegl_chant_color (ink2_color, _("Ink2 color"), "#ff00ff00", _("ink color"))
-gegl_chant_color (ink3_color, _("Ink3 color"), "#ffff0000", _("ink color"))
-gegl_chant_color (ink4_color, _("Ink4 color"), "#00000000", _("ink color"))
-gegl_chant_color (ink5_color, _("Ink5 color"), "#ff000000", _("ink color"))
+property_color (substrate_color, _("Substrate color"), "#ffffff", _("paper/fabric/material color"))
+property_color (ink1_color, _("Ink1 color"), "#00ffff00", _("ink color"))
+property_color (ink2_color, _("Ink2 color"), "#ff00ff00", _("ink color"))
+property_color (ink3_color, _("Ink3 color"), "#ffff0000", _("ink color"))
+property_color (ink4_color, _("Ink4 color"), "#00000000", _("ink color"))
+property_color (ink5_color, _("Ink5 color"), "#ff000000", _("ink color"))
 
-gegl_chant_double (ink_limit, _("Ink limit"), 0.0, 5.0, 3.0,
+property_double (ink_limit, _("Ink limit"), 0.0, 5.0, 3.0,
                    _("maximum amount of ink for one pixel, 2.5 = 250% coverage"))
 
 #endif
 
-gegl_chant_int (debug_width, _("debug width"), 0, 150, 0, _("how wide peel off bands for ink order vis"))
+property_int (debug_width, _("debug width"), 0)
+   value_range (0, 150)
+   description (_("how wide peel off bands for ink order vis"))
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "ink-simulator.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE       "ink-simulator.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 /*********************/
@@ -1212,7 +1216,7 @@ int   ssim_get_halftone_sim (SSim *ssim)
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   const Babl *input_format = gegl_operation_get_source_format (operation, "input");
   gint input_components = 1;
   if (input_format)
@@ -1228,7 +1232,7 @@ prepare (GeglOperation *operation)
       break;
     case GEGL_SSIM_SEPARATE:
       //gegl_operation_set_format (operation, "output", 
-      //  babl_format_n (babl_type("float"), ssim_get_ink_count (o->chant_data)));
+      //  babl_format_n (babl_type("float"), ssim_get_ink_count (o->user_data)));
       gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 
       gegl_operation_set_format (operation, "input",
@@ -1270,16 +1274,16 @@ prepare (GeglOperation *operation)
 
   g_string_append_printf (conf_str, "inklimit=%f\n", o->ink_limit);
 
-  if (o->chant_data)
-    ssim_destroy (o->chant_data);
-  o->chant_data = ssim_new (conf_str->str);
+  if (o->user_data)
+    ssim_destroy (o->user_data);
+  o->user_data = ssim_new (conf_str->str);
 
   g_string_free (conf_str, TRUE);
 #else
 
-  if (o->chant_data)
-    ssim_destroy (o->chant_data);
-  o->chant_data = ssim_new (o->config);
+  if (o->user_data)
+    ssim_destroy (o->user_data);
+  o->user_data = ssim_new (o->config);
 #endif
 }
 
@@ -1291,10 +1295,10 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
   gfloat *in  = in_buf;
   gfloat *out = out_buf;
-  SSim *ssim = o->chant_data;
+  SSim *ssim = o->user_data;
   int in_components = 
     babl_format_get_n_components (gegl_operation_get_format (op, "input"));
 
@@ -1387,17 +1391,17 @@ process (GeglOperation       *op,
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
-  if (o->chant_data)
+  GeglProperties *o = GEGL_PROPERTIES (object);
+  if (o->user_data)
   {
-    ssim_destroy (o->chant_data);
-    o->chant_data = NULL;
+    ssim_destroy (o->user_data);
+    o->user_data = NULL;
   }
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;

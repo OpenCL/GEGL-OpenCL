@@ -20,22 +20,22 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_pointer (buffer, _("Cache buffer"),
+property_pointer (buffer, _("Cache buffer"),
                   _("The GeglBuffer where the caching is done"))
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "buffer-cache.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "buffer-cache.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
 
   if (o->buffer)
     return *gegl_buffer_get_extent (GEGL_BUFFER (o->buffer));
@@ -50,7 +50,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO           *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties           *o = GEGL_PROPERTIES (operation);
 
   if (!o->buffer)
     {
@@ -65,7 +65,7 @@ process (GeglOperation       *operation,
 static void
 dispose (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
   if (o->buffer)
     {
@@ -73,11 +73,11 @@ dispose (GObject *object)
       o->buffer = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->dispose (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationFilterClass   *filter_class;

@@ -16,17 +16,17 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
    /* no properties */
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "unpremul.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE       "unpremul.c"
 #define GEGLV4
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static gboolean
 process (GeglOperation       *op,
@@ -59,7 +59,7 @@ process (GeglOperation       *op,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;

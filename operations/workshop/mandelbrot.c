@@ -20,26 +20,27 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double(real, _("Real"),      -200.0, 200.0, -1.77,
-                  _("Real coordinate"))
-gegl_chant_double(img,  _("Imaginary"), -200.0, 200.0, 0.0,
-                  _("Imaginary coordinate"))
-gegl_chant_double(level, _("Level"), -200.0, 200.0, 3.5,
-                  _("Water level"))
-gegl_chant_int (maxiter, _("Iterations"), 0, 512, 128,
-                _("Maximum number of iterations"))
+property_double(real, _("Real coordinate"), -1.77)
+   value_range (-200.0, 200.0)
+property_double(img,  _("Imaginary coordinate"), 0.0)
+   value_range (-200.0, 200.0)
+property_double(level, _("Water level"), 3.5)
+   value_range (-200.0, 200.0)
+property_int (maxiter, _("Iterations"), 128)
+   description (_("Maximum number of iterations"))
+   value_range (0, 512)
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE           "mandelbrot.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE           "mandelbrot.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static gfloat
-mandel_calc(GeglChantO *o, gfloat x, gfloat y)
+mandel_calc(GeglProperties *o, gfloat x, gfloat y)
 {
   gfloat fViewRectReal = o->real;
   gfloat fViewRectImg  = o->img;
@@ -85,7 +86,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gfloat     *buf;
   gint        pxsize;
 
@@ -126,7 +127,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

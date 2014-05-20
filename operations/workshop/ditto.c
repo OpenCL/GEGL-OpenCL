@@ -22,17 +22,18 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
-                 GEGL_SAMPLER_CUBIC, _("Sampler used internally"))
+property_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
+                 GEGL_SAMPLER_CUBIC)
+   description (_("Sampler used internally"))
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "ditto.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "ditto.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -51,7 +52,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   gint x = result->x; /* initial x                   */
   gint y = result->y; /*           and y coordinates */
@@ -95,7 +96,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

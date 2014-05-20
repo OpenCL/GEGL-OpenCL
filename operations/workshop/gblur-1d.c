@@ -25,48 +25,50 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_gblur_1d_policy)
+enum_start (gegl_gblur_1d_policy)
    enum_value (GEGL_GBLUR_1D_ABYSS_NONE,  "None")
    enum_value (GEGL_GBLUR_1D_ABYSS_CLAMP, "Clamp")
    enum_value (GEGL_GBLUR_1D_ABYSS_BLACK, "Black")
    enum_value (GEGL_GBLUR_1D_ABYSS_WHITE, "White")
-gegl_chant_register_enum_end (GeglGblur1dPolicy)
+enum_end (GeglGblur1dPolicy)
 
-gegl_chant_register_enum (gegl_gblur_1d_orientation)
+enum_start (gegl_gblur_1d_orientation)
   enum_value (GEGL_GBLUR_1D_HORIZONTAL, "Horizontal")
   enum_value (GEGL_GBLUR_1D_VERTICAL,   "Vertical")
-  gegl_chant_register_enum_end (GeglGblur1dOrientation)
+  enum_end (GeglGblur1dOrientation)
 
-gegl_chant_register_enum (gegl_gblur_1d_filter)
+enum_start (gegl_gblur_1d_filter)
   enum_value (GEGL_GBLUR_1D_AUTO, "Auto")
   enum_value (GEGL_GBLUR_1D_FIR,  "FIR")
   enum_value (GEGL_GBLUR_1D_IIR,  "IIR")
-gegl_chant_register_enum_end (GeglGblur1dFilter)
+enum_end (GeglGblur1dFilter)
 
-gegl_chant_double_ui (std_dev, _("Size"),
-                      0.0, 1500.0, 1.5, 0.0, 100.0, 3.0,
-                      _("Standard deviation (spatial scale factor)"))
-gegl_chant_enum      (orientation, _("Orientation"),
+property_double (std_dev, _("Size"), 1.5)
+  description (_("Standard deviation (spatial scale factor)"))
+  value_range   (0.0, 1500.0)
+  ui_range      (0.0, 100.0)
+  ui_gamma      (3.0)
+property_enum      (orientation, _("Orientation"),
                       GeglGblur1dOrientation, gegl_gblur_1d_orientation,
-                      GEGL_GBLUR_1D_HORIZONTAL,
-                      _("The orientation of the blur - hor/ver"))
-gegl_chant_enum      (filter, _("Filter"),
+                      GEGL_GBLUR_1D_HORIZONTAL)
+  description (_("The orientation of the blur - hor/ver"))
+property_enum      (filter, _("Filter"),
                       GeglGblur1dFilter, gegl_gblur_1d_filter,
-                      GEGL_GBLUR_1D_AUTO,
-                      _("How the gaussian kernel is discretized"))
-gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglGblur1dPolicy,
-                      gegl_gblur_1d_policy, GEGL_GBLUR_1D_ABYSS_NONE,
-                      _("How image edges are handled"))
-gegl_chant_boolean   (clip_extent, _("Clip to the input extent"), TRUE,
-                      _("Should the output extent be clipped to the input extent"))
+                      GEGL_GBLUR_1D_AUTO)
+  description (_("How the gaussian kernel is discretized"))
+property_enum      (abyss_policy, _("Abyss policy"), GeglGblur1dPolicy,
+                      gegl_gblur_1d_policy, GEGL_GBLUR_1D_ABYSS_NONE)
+  description (_("How image edges are handled"))
+property_boolean   (clip_extent, _("Clip to the input extent"), TRUE)
+  description (_("Should the output extent be clipped to the input extent"))
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "gblur-1d.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "gblur-1d.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -623,7 +625,7 @@ gegl_gblur_1d_prepare (GeglOperation *operation)
 }
 
 static GeglRectangle
-gegl_gblur_1d_enlarge_extent (GeglChantO          *o,
+gegl_gblur_1d_enlarge_extent (GeglProperties          *o,
                               const GeglRectangle *input_extent)
 {
   gint clen = fir_calc_convolve_matrix_length (o->std_dev);
@@ -650,7 +652,7 @@ gegl_gblur_1d_get_required_for_output (GeglOperation       *operation,
                                        const GeglRectangle *output_roi)
 {
   GeglRectangle        required_for_output = { 0, };
-  GeglChantO          *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglGblur1dFilter    filter  = filter_disambiguation (o->filter, o->std_dev);
 
   if (filter == GEGL_GBLUR_1D_IIR)
@@ -695,7 +697,7 @@ gegl_gblur_1d_get_required_for_output (GeglOperation       *operation,
 static GeglRectangle
 gegl_gblur_1d_get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO          *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   const GeglRectangle *in_rect =
     gegl_operation_source_get_bounding_box (operation, "input");
 
@@ -721,7 +723,7 @@ gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
                                  const GeglRectangle *output_roi)
 {
   GeglRectangle      cached_region;
-  GeglChantO        *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties        *o       = GEGL_PROPERTIES (operation);
   GeglGblur1dFilter  filter  = filter_disambiguation (o->filter, o->std_dev);
 
   cached_region = *output_roi;
@@ -734,7 +736,7 @@ gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
       if (! gegl_rectangle_is_empty (&in_rect) &&
           ! gegl_rectangle_is_infinite_plane (&in_rect))
         {
-          GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+          GeglProperties *o = GEGL_PROPERTIES (operation);
 
           cached_region = *output_roi;
 
@@ -784,7 +786,7 @@ gegl_gblur_1d_process (GeglOperation       *operation,
                        const GeglRectangle *result,
                        gint                 level)
 {
-  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
   const Babl *format = gegl_operation_get_format (operation, "output");
 
   GeglGblur1dFilter filter;
@@ -838,10 +840,10 @@ operation_process (GeglOperation        *operation,
                    gint                  level)
 {
   GeglOperationClass  *operation_class;
-  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o = GEGL_PROPERTIES (operation);
   GeglGblur1dFilter    filter  = filter_disambiguation (o->filter, o->std_dev);
 
-  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
 
   if (filter == GEGL_GBLUR_1D_IIR)
     {
@@ -864,7 +866,7 @@ operation_process (GeglOperation        *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

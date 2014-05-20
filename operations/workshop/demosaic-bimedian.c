@@ -21,17 +21,18 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int (pattern, _("Bayer pattern"), 0, 3, 0,
-                _("Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji files."))
+property_int (pattern, _("Bayer pattern"), 0)
+   description (_("Bayer pattern used, 0 seems to work for some nikon files, 2 for some Fuji files."))
+   value_range (0, 3)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "demosaic-bimedian.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "demosaic-bimedian.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 
 /* Returns the median of four floats. We define the median as the average of
@@ -79,7 +80,7 @@ m4 (gfloat a, gfloat b, gfloat c, gfloat d)
  * of dst_extent.
  */
 static void
-demosaic (GeglChantO          *op,
+demosaic (GeglProperties          *op,
           GeglBuffer          *src,
           const GeglRectangle *src_rect,
           GeglBuffer          *dst,
@@ -192,7 +193,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle src_rect = gegl_operation_get_required_for_output (operation, "input", result);
 
   demosaic (o, input, &src_rect, output, result);
@@ -202,7 +203,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

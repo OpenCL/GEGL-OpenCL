@@ -19,44 +19,52 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_gaussian_blur_filter2)
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_AUTO, "Auto")
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_FIR,  "FIR")
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_IIR,  "IIR")
-gegl_chant_register_enum_end (GeglGaussianBlurFilter2)
+enum_start (gegl_gaussian_blur_filter2)
+   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_AUTO, "Auto")
+   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_FIR,  "FIR")
+   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_IIR,  "IIR")
+enum_end (GeglGaussianBlurFilter2)
 
-gegl_chant_register_enum (gegl_gaussian_blur_policy)
+enum_start (gegl_gaussian_blur_policy)
    enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_NONE,  "None")
    enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_CLAMP, "Clamp")
    enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_BLACK, "Black")
    enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_WHITE, "White")
-gegl_chant_register_enum_end (GeglGaussianBlurPolicy)
+enum_end (GeglGaussianBlurPolicy)
 
 
-gegl_chant_double_ui (std_dev_x, _("Horizontal Std. Dev."),
-                      0.0, 1500.0, 1.5, 0.24, 100.0, 3.0,
-                      _("Standard deviation (spatial scale factor)"))
-gegl_chant_double_ui (std_dev_y, _("Vertical Std. Dev."),
-                      0.0, 1500.0, 1.5, 0.24, 100.0, 3.0,
-                      _("Standard deviation (spatial scale factor)"))
-gegl_chant_enum      (filter, _("Filter"),
+property_double (std_dev_x, _("Horizontal Std. Dev."), 1.5)
+   description (_("Standard deviation (spatial scale factor)"))
+   value_range (0.0, 1500.0)
+   ui_range (0.24, 100.0)
+   ui_gamma (3.0)
+
+property_double (std_dev_y, _("Vertical Std. Dev."), 1.5)
+   description (_("Standard deviation (spatial scale factor)"))
+   value_range (0.0, 1500.0)
+   ui_range (0.24, 100.0)
+   ui_gamma (3.0)
+
+property_enum      (filter, _("Filter"),
                       GeglGaussianBlurFilter2, gegl_gaussian_blur_filter2,
-                      GEGL_GAUSSIAN_BLUR_FILTER2_AUTO,
-                      _("How the gaussian kernel is discretized"))
-gegl_chant_enum      (abyss_policy, _("Abyss policy"), GeglGaussianBlurPolicy,
-                      gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_NONE,
-                      _("How image edges are handled"))
-gegl_chant_boolean   (clip_extent, _("Clip to the input extent"), TRUE,
-                      _("Should the output extent be clipped to the input extent"))
+                      GEGL_GAUSSIAN_BLUR_FILTER2_AUTO)
+   description (_("How the gaussian kernel is discretized"))
+
+property_enum      (abyss_policy, _("Abyss policy"), GeglGaussianBlurPolicy,
+                      gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_NONE)
+   description (_("How image edges are handled"))
+
+property_boolean   (clip_extent, _("Clip to the input extent"), TRUE)
+   description (_("Should the output extent be clipped to the input extent"))
 
 #else
 
-#define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE "gaussian-blur-iir.c"
+#define GEGL_OP_META
+#define GEGL_OP_C_FILE "gaussian-blur-iir.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 attach (GeglOperation *operation)
@@ -92,7 +100,7 @@ attach (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class;
 

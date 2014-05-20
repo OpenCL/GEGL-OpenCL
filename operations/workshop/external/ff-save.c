@@ -25,18 +25,24 @@
 #include <libswscale/swscale.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_string (path, _("File"), "/tmp/fnord.mp4", _("Target path and filename, use '-' for stdout."))
-gegl_chant_double (bitrate, _("Bitrate"), 0.0, 100000000.0, 800000.0, _("target bitrate"))
-gegl_chant_double (fps, _("FPS"), 0.0, 100.0, 25, _("frames per second"))
+property_string (path, _("File"), "/tmp/fnord.mp4")
+    description (_("Target path and filename, use '-' for stdout."))
+
+property_double (bitrate, _("Target itrate"), 800000.0)
+     value_range (0.0, 100000000.0)
+
+property_double (fps, _("FPS"), 25)
+     value_range (0.0, 100.0)
+     description (_("frames per second"))
 
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "ff-save.c"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_FILE       "ff-save.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
 #include <libavformat/avformat.h>
@@ -110,15 +116,15 @@ typedef struct
 #define DISABLE_AUDIO
 
 static void
-init (GeglChantO *o)
+init (GeglProperties *o)
 {
   static gint inited = 0; /*< this is actually meant to be static, only to be done once */
-  Priv       *p = (Priv*)o->chant_data;
+  Priv       *p = (Priv*)o->user_data;
 
   if (p == NULL)
     {
       p = g_new0 (Priv, 1);
-      o->chant_data = (void*) p;
+      o->user_data = (void*) p;
     }
 
   if (!inited)
@@ -166,11 +172,11 @@ static void close_video       (Priv            *p,
 void        close_audio       (Priv            *p,
                                AVFormatContext *oc,
                                AVStream        *st);
-static int  tfile             (GeglChantO      *self);
-static void write_video_frame (GeglChantO      *self,
+static int  tfile             (GeglProperties      *self);
+static void write_video_frame (GeglProperties      *self,
                                AVFormatContext *oc,
                                AVStream        *st);
-static void write_audio_frame (GeglChantO      *self,
+static void write_audio_frame (GeglProperties      *self,
                                AVFormatContext *oc,
                                AVStream        *st);
 
@@ -218,7 +224,7 @@ buffer_flush (Priv * p)
 }
 
 static void
-buffer_open (GeglChantOperation *op, int size)
+buffer_open (GeglOpOperation *op, int size)
 {
   Priv     *p = (Priv*)op->priv;
 
@@ -233,7 +239,7 @@ buffer_open (GeglChantOperation *op, int size)
 }
 
 static void
-buffer_close (GeglChantOperation *op)
+buffer_close (GeglOpOperation *op)
 {
   Priv     *p = (Priv*)op->priv;
 
@@ -351,7 +357,7 @@ buffer_write (Priv * p, uint8_t * source, int count)
 #ifndef DISABLE_AUDIO
 /* add an audio output stream */
 static AVStream *
-add_audio_stream (GeglChantOperation *op, AVFormatContext * oc, int codec_id)
+add_audio_stream (GeglOpOperation *op, AVFormatContext * oc, int codec_id)
 {
   Priv     *p = (Priv*)op->priv;
   AVCodecContext *c;
@@ -429,9 +435,9 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 }
 
 void
-write_audio_frame (GeglChantO *op, AVFormatContext * oc, AVStream * st)
+write_audio_frame (GeglProperties *op, AVFormatContext * oc, AVStream * st)
 {
-  Priv *p = (Priv*)op->chant_data;
+  Priv *p = (Priv*)op->user_data;
 
   AVCodecContext *c;
   AVPacket  pkt;
@@ -480,9 +486,9 @@ close_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 
 /* add a video output stream */
 static AVStream *
-add_video_stream (GeglChantO *op, AVFormatContext * oc, int codec_id)
+add_video_stream (GeglProperties *op, AVFormatContext * oc, int codec_id)
 {
-  Priv *p = (Priv*)op->chant_data;
+  Priv *p = (Priv*)op->user_data;
 
   AVCodecContext *c;
   AVStream *st;
@@ -624,10 +630,10 @@ close_video (Priv * p, AVFormatContext * oc, AVStream * st)
 
 /* prepare a dummy image */
 static void
-fill_yuv_image (GeglChantO *op,
+fill_yuv_image (GeglProperties *op,
                 AVFrame *pict, int frame_index, int width, int height)
 {
-  Priv     *p = (Priv*)op->chant_data;
+  Priv     *p = (Priv*)op->user_data;
   /*memcpy (pict->data[0],
 
    op->input_pad[0]->data,
@@ -638,10 +644,10 @@ fill_yuv_image (GeglChantO *op,
 }
 
 static void
-write_video_frame (GeglChantO *op,
+write_video_frame (GeglProperties *op,
                    AVFormatContext *oc, AVStream *st)
 {
-  Priv     *p = (Priv*)op->chant_data;
+  Priv     *p = (Priv*)op->user_data;
   int       out_size, ret;
   AVCodecContext *c;
   AVFrame  *picture_ptr;
@@ -734,9 +740,9 @@ write_video_frame (GeglChantO *op,
 }
 
 static int
-tfile (GeglChantO *self)
+tfile (GeglProperties *self)
 {
-  Priv *p = (Priv*)self->chant_data;
+  Priv *p = (Priv*)self->user_data;
 
   p->fmt = av_guess_format (NULL, self->path, NULL);
   if (!p->fmt)
@@ -795,7 +801,7 @@ tfile (GeglChantO *self)
 
 #if 0
 static int
-filechanged (GeglChantOperation *op, const char *att)
+filechanged (GeglOpOperation *op, const char *att)
 {
   init (op);
   return 0;
@@ -809,14 +815,14 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   static gint inited = 0;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv       *p = (Priv*)o->chant_data;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->user_data;
 
   g_assert (input);
 
   if (p == NULL)
     init (o);
-  p = (Priv*)o->chant_data;
+  p = (Priv*)o->user_data;
 
   p->width = result->width;
   p->height = result->height;
@@ -838,10 +844,10 @@ process (GeglOperation       *operation,
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
-  if (o->chant_data)
+  GeglProperties *o = GEGL_PROPERTIES (object);
+  if (o->user_data)
     {
-      Priv *p = (Priv*)o->chant_data;
+      Priv *p = (Priv*)o->user_data;
 
     if (p->oc)
       {
@@ -861,8 +867,8 @@ finalize (GObject *object)
         url_fclose (&p->oc->pb);
         free (p->oc);
       }
-      g_free (o->chant_data);
-      o->chant_data = NULL;
+      g_free (o->user_data);
+      o->user_data = NULL;
     }
 
   G_OBJECT_CLASS (g_type_class_peek_parent (G_OBJECT_GET_CLASS (object)))->finalize (object);
@@ -870,7 +876,7 @@ finalize (GObject *object)
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass     *operation_class;
   GeglOperationSinkClass *sink_class;

@@ -22,23 +22,28 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (radius, _("Radius"), 0.0, 70.0, 8.0,
-  _("Radius of square pixel region (width and height will be radius*2+1)"))
-gegl_chant_int (pairs, _("Pairs"), 1, 2, 2,
-  _("Number of pairs, higher number preserves more acute features"))
-gegl_chant_double (percentile, _("Percentile"), 0.0, 100.0, 50.0,
-  _("The percentile to return, the default value 50 is equal to the median"))
+property_double (radius, _("Radius"), 8.0)
+   description(_("Radius of square pixel region (width and height will be radius*2+1)"))
+   value_range (0.0, 70.0)
+
+property_int (pairs, _("Pairs"), 2)
+   description (_("Number of pairs, higher number preserves more acute features"))
+   value_range (1, 2)
+
+property_double (percentile, _("Percentile"), 50.0)
+   description (_("The percentile to return, the default value 50 is equal to the median"))
+   value_range (0.0, 100.0)
 
 #else
 
 #define MAX_SAMPLES 20000 /* adapted to percentile level of radius */
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "snn-percentile.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "snn-percentile.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 #define RGB_LUMINANCE_RED    (0.222491)
@@ -222,7 +227,7 @@ static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->left = area->right = area->top = area->bottom =
-      GEGL_CHANT_PROPERTIES (operation)->radius;
+      GEGL_PROPERTIES (operation)->radius;
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
@@ -233,7 +238,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglBuffer   *temp_in;
   GeglRectangle compute  = gegl_operation_get_required_for_output (operation, "input", result);
 
@@ -255,7 +260,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

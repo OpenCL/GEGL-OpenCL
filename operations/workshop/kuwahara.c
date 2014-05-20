@@ -20,17 +20,18 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (radius, _("Radius"), 0.0, 50.0, 10.0,
-  _("Radius of square pixel region (width and height will be radius*2+1)"))
+property_double (radius, _("Radius"), 10.0)
+   value_range (0.0, 50.0)
+   description (_("Radius of square pixel region (width and height will be radius*2+1)"))
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "kuwahara.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "kuwahara.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static inline void
@@ -201,7 +202,7 @@ static void prepare (GeglOperation *operation)
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
 
   area->left = area->right = area->top = area->bottom =
-      ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
+      ceil (GEGL_PROPERTIES (operation)->radius);
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
@@ -212,7 +213,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglBuffer   *temp_in;
   GeglRectangle compute = gegl_operation_get_required_for_output (operation, "input", result);
 
@@ -226,7 +227,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

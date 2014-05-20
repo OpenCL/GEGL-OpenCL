@@ -21,21 +21,23 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (radius, _("Radius"), 0.0, 70.0, 4.0,
-  _("Radius of square pixel region (width and height will be radius*2+1)"))
-gegl_chant_double (percentile, _("Percentile"), 0.0, 100.0, 50,
-                   _("The percentile to compute, defaults to 50, which is a median filter."))
+property_double (radius, _("Radius"), 4.0)
+    value_range (0.0, 70.0)
+    description (_("Radius of square pixel region (width and height will be radius*2+1)"))
+property_double (percentile, _("Percentile"), 50.0)
+    description (_("The percentile to compute, defaults to 50, which is a median filter."))
+    value_range (0.0, 100.0)
 
 #else
 
 #define MAX_SAMPLES 20000 /* adapted to max level of radius */
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "disc-percentile.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "disc-percentile.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static void median (GeglBuffer *src,
@@ -182,7 +184,7 @@ median (GeglBuffer *src,
 static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o = GEGL_PROPERTIES (operation);
   area->left = area->right = area->top = area->bottom = ceil (o->radius);
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
@@ -194,7 +196,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglBuffer   *temp_in;
   GeglRectangle compute =
         gegl_operation_get_required_for_output (operation, "input", result);
@@ -216,7 +218,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

@@ -23,70 +23,80 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_string (maker, _("Maker:"),"none",
-                   _("Write lens maker correctly"))
-gegl_chant_string (Camera, _("Camera:"),"none",
-                   _("Write camera name correctly"))
-gegl_chant_string (Lens, _("Lens:"),"none",
-                   _("Write your lens model with uppercase letters"))
-gegl_chant_double (focal, _("Focal of the camera"), 0.0, 300.0, 20.0,
-                   _("Calculate b value from focal"))
+property_string (maker, _("Maker:"),"none")
+    description (_("Write lens maker correctly"))
 
-gegl_chant_boolean (center, _("Center"), TRUE,
-                    _("If you want center"))
-gegl_chant_int (cx, _("Lens center x"), -G_MAXINT, G_MAXINT, 0,
-                _("Coordinates of lens center"))
-gegl_chant_int (cy, _("Lens center y"), -G_MAXINT, G_MAXINT, 0,
-                _("Coordinates of lens center"))
-gegl_chant_double (rscale, _("Scale"), 0.001, 10.0, 0.5,
-                   _("Scale of the image"))
-gegl_chant_boolean (correct, _("Autocorrect d values"), TRUE,
-                    _("Autocorrect D values for lens correction models."))
+property_string (Camera, _("Camera:"),"none")
+    description (_("Write camera name correctly"))
 
-gegl_chant_double (red_a, _("Model red a:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (red_b, _("Model red b:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (red_c, _("Model red c:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (red_d, _("Model red d:"), 0.0, 2.0, 1.0,
-                   _("Correction parameters for each color channel"))
+property_string (Lens, _("Lens:"),"none")
+    description(_("Write your lens model with uppercase letters"))
 
-gegl_chant_double (green_a, _("Model green a:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (green_b, _("Model green b:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (green_c, _("Model green c:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (green_d, _("Model green d:"), 0.0, 2.0, 1.00,
-                   _("Correction parameters for each color channel"))
+property_double (focal, _("Focal of the camera"), 20.0)
+    description (_("Calculate b value from focal"))
+    value_range (0.0, 300.0)
 
-gegl_chant_double (blue_a, _("Model blue a:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (blue_b, _("Model blue b:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (blue_c, _("Model blue c:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for each color channel"))
-gegl_chant_double (blue_d, _("Model blue d:"), 0.0, 2.0, 1.0,
-                   _("Correction parameters for each color channel"))
+property_boolean (center, _("Center"), TRUE)
+    description (_("If you want center"))
 
-gegl_chant_double (alpha_a, _("Model alpha a:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for alpha channel"))
-gegl_chant_double (alpha_b, _("Model alpha b:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for alpha channel"))
-gegl_chant_double (alpha_c, _("Model alpha c:"), -1.0, 1.0, 0.0,
-                   _("Correction parameters for alpha channel"))
-gegl_chant_double (alpha_d, _("Model alpha d:"), 0.0, 2.0, 1.0,
-                   _("Correction parameters for alpha channel"))
+property_int (cx, _("Lens center x"), 0)
+    description (_("Coordinates of lens center"))
+
+property_int (cy, _("Lens center y"), 0)
+    description (_("Coordinates of lens center"))
+
+property_double (rscale, _("Scale"), 0.5)
+    description (_("Scale of the image"))
+    value_range (0.001, 10.0)
+
+property_boolean (correct, _("Autocorrect d values"), TRUE)
+    description (_("Autocorrect D values for lens correction models."))
+
+property_double (red_a, _("Model red a:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (red_b, _("Model red b:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (red_c, _("Model red c:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (red_d, _("Model red d:"), 1.0)
+   value_range (0.0, 2.0)
+
+property_double (green_a, _("Model green a:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (green_b, _("Model green b:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (green_c, _("Model green c:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (green_d, _("Model green d:"), 1.0)
+   value_range (0.0, 2.0)
+
+property_double (blue_a, _("Model blue a:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (blue_b, _("Model blue b:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (blue_c, _("Model blue c:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (blue_d, _("Model blue d:"), 1.0)
+   value_range (0.0, 2.0)
+
+
+property_double (alpha_a, _("Model alpha a:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (alpha_b, _("Model alpha b:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (alpha_c, _("Model alpha c:"), 0.0)
+   value_range (-1.0, 1.0)
+property_double (alpha_d, _("Model alpha d:"), 1.0)
+   value_range (0.0, 2.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "lens-correct.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "lens-correct.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -116,7 +126,7 @@ typedef struct {
 
 static void
 make_lens (LensCorrectionModel *lens,
-           GeglChantO          *o,
+           GeglProperties          *o,
            GeglRectangle        boundary)
 {
   lens->BB.x = boundary.x;
@@ -181,7 +191,7 @@ make_lens (LensCorrectionModel *lens,
 
 static gboolean
 find_make_lens(LensCorrectionModel *lens,
-               GeglChantO          *o,
+               GeglProperties          *o,
                GeglRectangle        boundary)
 {
   struct lfDatabase *ldb;
@@ -422,7 +432,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties          *o = GEGL_PROPERTIES (operation);
   LensCorrectionModel  lens = { { 0, }, };
   GeglRectangle        boundary = *gegl_operation_source_get_bounding_box
     (operation, "input");
@@ -456,7 +466,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

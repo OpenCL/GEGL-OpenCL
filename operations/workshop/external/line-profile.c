@@ -20,23 +20,41 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int (x0, _("X0"), 0, 1000, 0, _("Start x coordinate"))
-gegl_chant_int (x1, _("X1"), 0, 1000, 200, _("End x coordinate"))
-gegl_chant_int (y0, _("Y0"), 0, 1000, 0, _("Start y coordinate"))
-gegl_chant_int (y1, _("Y1"), 0, 1000, 200, _("End y coordinate"))
-gegl_chant_int (width,  _("Width"),  10, 10000, 1024, _("Width of plot"))
-gegl_chant_int (height, _("Height"), 10, 10000, 256,  _("Height of plot"))
-gegl_chant_double (min, _("Min"), -500.0, 500,  0.0, _("Value at bottom"))
-gegl_chant_double (max, _("Max"), -500.0, 500,  8.0, _("Value at top"))
+property_int (x0, _("X0"), 0)
+  description (_("Start x coordinate"))
+  value_range (0, 1000)
+property_int (x1, _("X1"), 0)
+  description (_("End x coordinate"))
+  value_range (0, 1000)
+
+property_int (y0, _("Y0"), 0)
+  description (_("Start y coordinate"))
+  value_range (0, 1000)
+property_int (y1, _("Y1"), 0)
+  description (_("End y coordinate"))
+  value_range (0, 1000)
+
+property_int (width,  _("Width"),  1024)
+  value_range (10, 10000)
+property_int (height,  _("Height"),  256)
+  value_range (10, 10000)
+
+property_double (min, _("Min"), 500)
+  value_range (-500.0, 500)
+  description (_("Value at bottom"))
+
+property_double (max, _("Max"), 8.0)
+  value_range (-500.0, 500)
+  description (_("Value at top"))
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "line-profile.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "line-profile.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <cairo.h>
 
 static gfloat
@@ -59,7 +77,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gint        width = MAX(MAX (o->width, o->x0), o->x1);
   gint        height = MAX(MAX (o->height, o->y0), o->y1);
 
@@ -149,7 +167,7 @@ get_required_for_output (GeglOperation        *self,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle defined = {0,0,o->width,o->height};
 
   defined.width  = MAX (MAX (o->width,  o->x0), o->x1);
@@ -159,7 +177,7 @@ get_bounding_box (GeglOperation *operation)
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
