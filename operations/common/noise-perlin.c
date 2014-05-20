@@ -20,25 +20,29 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (alpha, _("Alpha"),    -G_MAXDOUBLE, G_MAXDOUBLE, 1.2, 0.0, 4.0, 1.0,
-                      NULL)
-gegl_chant_double_ui (scale, _("Scale"),    -G_MAXDOUBLE, G_MAXDOUBLE, 1.8, 0.0, 20.0, 1.0,
-                      NULL)
-gegl_chant_double_ui (zoff,  _("Z offset"), -G_MAXDOUBLE, G_MAXDOUBLE,  -1, -1.0, 8.0, 1.0,
-                      NULL)
-gegl_chant_int       (n,     _("Iteration"), 0, 20, 3,
-                      NULL)
-gegl_chant_double_ui (seed,  _("Random seed"), -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, 0.0, 100.0, 1.0,
-                      NULL)
+property_double (alpha, _("Alpha"), 1.2)
+    ui_range    (0.0, 4.0)
+property_double (scale, _("Scale"), 1.8)
+    ui_range    (0.0, 20.0)
+
+property_double (zoff,  _("Z offset"), -1)
+    ui_range    (-1.0, 8.0)
+
+property_int (n, _("Iterations"), 3)
+  value_range     (0, 20)
+
+  /* XXX: what? */
+property_double (seed, _("Random seed"), 0.0)
+  ui_range (0.0, 100.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE "noise-perlin.c"
+#define GEGL_OP_POINT_RENDER
+#define GEGL_OP_C_FILE "noise-perlin.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include "perlin/perlin.c"
 #include "perlin/perlin.h"
 
@@ -62,7 +66,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gfloat     *out_pixel = out_buf;
   gint        x = roi->x; /* initial x                   */
   gint        y = roi->y; /*           and y coordinates */
@@ -91,7 +95,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointRenderClass *point_render_class;

@@ -29,83 +29,63 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_mosaic_tile)
-  enum_value (GEGL_MOSAIC_TILE_SQUARES,   "SQUARES")
-  enum_value (GEGL_MOSAIC_TILE_HEXAGONS,  "HEXAGONS")
-  enum_value (GEGL_MOSAIC_TILE_OCTAGONS,  "OCTAGONS")
-  enum_value (GEGL_MOSAIC_TILE_TRIANGLES, "TRIANGLES")
+  enum_value (GEGL_MOSAIC_TILE_SQUARES,   "Squares")
+  enum_value (GEGL_MOSAIC_TILE_HEXAGONS,  "Hexagons")
+  enum_value (GEGL_MOSAIC_TILE_OCTAGONS,  "Octagons")
+  enum_value (GEGL_MOSAIC_TILE_TRIANGLES, "Triangles")
 enum_end (GeglMosaicTile)
 
-gegl_property_enum (tile_type, _("Tile geometry"),
-    GeglMosaicTile, gegl_mosaic_tile,
-    "description", _("What shape to use for tiles"),
-    "default", GEGL_MOSAIC_TILE_HEXAGONS,
-    NULL)
+property_enum (tile_type, _("Tile geometry"),
+    GeglMosaicTile, gegl_mosaic_tile, GEGL_MOSAIC_TILE_HEXAGONS)
+    description (_("What shape to use for tiles"))
 
-gegl_property_double (tile_size, _("Tile size"),
-    "description", _("Average diameter of each tile (in pixels)"),
-    "default", 15.0, "min", 1.0, "max", 1000.0,
-    "ui-min", 5.0, "ui-max", 400.0,
-    "unit", "pixel-distance",
-    NULL)
+property_double (tile_size, _("Tile size"), 15.0)
+    description (_("Average diameter of each tile (in pixels)"))
+    value_range (1.0, 1000.0)
+    ui_range    (5.0, 400.0)
+    ui_meta     ("unit", "pixel-distance")
 
-gegl_property_double (tile_height, _("Tile height"),
-    "description", _("Apparent height of each tile (in pixels)"),
-    "default", 4.0,
-    "min", 1.0, "max", 1000.0,
-    "ui-min", 1.0, "ui-max", 20.0,
-    "unit", "pixel-distance",
-    NULL)
+property_double (tile_height, _("Tile height"), 4.0)
+    description (_("Apparent height of each tile (in pixels)"))
+    value_range (1.0, 1000.0)
+    ui_range    (1.0, 20.0)
 
-gegl_property_double (tile_neatness, _("Tile neatness"),
-    "description", _("Deviation from perfectly formed tiles"),
-    "default", 0.65, "min", 0.0, "max", 1.0,
-    NULL)
+property_double (tile_neatness, _("Tile neatness"), 0.65)
+    description (_("Deviation from perfectly formed tiles"))
+    value_range (0.0, 1.0)
 
-gegl_property_double (color_variation, _("Tile color variation"),
-    "description", _("Magnitude of random color variations"),
-    "default", 0.2, "min", 0.0, "max", 1.0,
-    NULL)
+property_double (color_variation, _("Tile color variation"), 0.2)
+    description (("Magnitude of random color variations"))
+    value_range (0.0, 1.0)
 
-gegl_property_boolean (color_averaging, _("Color averaging"),
-    "description", _("Tile color based on average of subsumed pixels"),
-    "default", TRUE,
-    NULL)
+property_boolean (color_averaging, _("Color averaging"), TRUE)
+    description (_("Tile color based on average of subsumed pixels"))
 
-gegl_property_boolean (tile_surface, _("Rough tile surface"),
-    "description", _("Surface characteristics"), NULL)
+property_boolean (tile_surface, _("Rough tile surface"), FALSE)
+    description (_("Surface characteristics"))
 
-gegl_property_boolean (tile_allow_split, _("Allow splitting tiles"),
-    "description", _("Allows splitting tiles at hard edges"),
-    "default", TRUE,
-    NULL)
+property_boolean (tile_allow_split, _("Allow splitting tiles"), TRUE)
+    description (_("Allows splitting tiles at hard edges"))
 
-gegl_property_double (tile_spacing, _("Tile spacing"),
-    "description", _("Inter-tile spacing (in pixels)"),
-    "default", 1.0, "min", 0.0, "max", 1000.0,
-    "ui-min", 0.5, "ui-max", 30.0,
-    "unit", "pixel-distance",
-    NULL)
+property_double (tile_spacing, _("Tile spacing"), 1.0)
+    description (_("Inter-tile spacing (in pixels)"))
+    value_range (0.0, 1000.0)
+    ui_range    (0.5, 30.0)
+    ui_meta     ("unit", "pixel-distance")
 
-gegl_property_color (joints_color, _("Joints color"),
-    "default", "black",
-    NULL)
+property_color (joints_color, _("Joints color"), "black")
 
-gegl_property_color (light_color, _("Light color"),
-    "default", "white",
-    NULL)
+property_color (light_color, _("Light color"), "white")
 
-gegl_property_double (light_dir, _("Light direction"),
-    "description", _("Direction of light-source (in degrees)"),
-    "default", 135.0, "min", 0.0, "max", 360.0,
-    "unit", "degree",
-    NULL)
+property_double (light_dir, _("Light direction"), 135.0)
+    description (("Direction of light-source (in degrees)"))
+    value_range (0.0, 360.0)
+    ui_meta     ("unit", "degree")
 
-gegl_property_boolean (antialiasing, _("Antialiasing"),
-    "description", _("Enables smoother tile output"),
-    "default", TRUE,
-    NULL)
+property_boolean (antialiasing, _("Antialiasing"), TRUE)
+    description  (_("Enables smoother tile output"))
 
-gegl_property_seed (seed, _("Random seed"), rand, NULL)
+property_seed (seed, _("Random seed"), rand)
 
 #else
 

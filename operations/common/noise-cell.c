@@ -31,27 +31,36 @@
 
 #define MAX_RANK 3
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double  (scale, _("Scale"), 0, 20.0, 1.0,
-                    _("The scale of the noise function"))
-gegl_chant_double  (shape, _("Shape"), 1.0, 2.0, 2.0,
-                    _("Interpolate between Manhattan and Euclidean distance."))
-gegl_chant_int     (rank, _("Rank"), 1, MAX_RANK, 1,
-                    _("Select the n-th closest point"))
-gegl_chant_int     (iterations, _("Iterations"), 1, 20, 1,
-                    _("The number of noise octaves."))
-gegl_chant_boolean (palettize, _("Palettize"), FALSE,
-                    _("Fill each cell with a random color"))
-gegl_chant_seed    (seed, rand, _("Random seed"),
-                    _("The random seed for the noise function"))
+property_double  (scale, _("Scale"), 1.0)
+    description  (_("The scale of the noise function"))
+    value_range  (0, 20.0)
+
+property_double  (shape, _("Shape"), 2.0)
+    description  (_("Interpolate between Manhattan and Euclidean distance."))
+    value_range  (1.0, 2.0)
+
+property_int     (rank, _("Rank"), 1)
+    description  (_("Select the n-th closest point"))
+    value_range  (1, MAX_RANK)
+
+property_int     (iterations, _("Iterations"), 1)
+    description  (_("The number of noise octaves."))
+    value_range  (1, 20)
+
+property_boolean (palettize, _("Palettize"), FALSE)
+    description  (_("Fill each cell with a random color"))
+
+property_seed    (seed, _("Random seed"), rand)
+    description  (_("The random seed for the noise function"))
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE "noise-cell.c"
+#define GEGL_OP_POINT_RENDER
+#define GEGL_OP_C_FILE "noise-cell.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <gegl-buffer-cl-iterator.h>
 #include <gegl-debug.h>
 #include <math.h>
@@ -250,7 +259,7 @@ cl_process (GeglOperation       *operation,
             cl_mem               out_tex,
             const GeglRectangle *roi)
 {
-  GeglChantO   *o          = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o        = GEGL_PROPERTIES (operation);
   const size_t  gbl_size[] = {roi->width, roi->height};
   size_t        work_group_size;
   cl_uint       cl_iterations   = o->iterations;
@@ -314,10 +323,10 @@ c_process (GeglOperation       *operation,
            const GeglRectangle *roi,
            gint                 level)
 {
-  GeglChantO *o         = GEGL_CHANT_PROPERTIES (operation);
-  Context     context;
-  gfloat     *pixel;
-  gint        s, t;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Context         context;
+  gfloat         *pixel;
+  gint            s, t;
 
   context.seed = o->seed;
   context.rank = o->rank;
@@ -395,7 +404,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

@@ -23,18 +23,17 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (length, _("Length"),
-    "description", _("Length of blur in pixels"),
-    "default", 10.0, "min", 0.0, "max", 1000.0,
-    "ui-max", 300.0, "ui-gamma", 1.5,
-    "unit", "pixel-distance",
-    NULL)
+property_double (length, _("Length"), 10.0)
+    description (_("Length of blur in pixels"))
+    value_range (0.0, 1000.0)
+    ui_range    (0.0, 300.0)
+    ui_gamma    (1.5)
+    ui_meta     ("unit", "pixel-distance")
 
-gegl_property_double (angle, _("Angle"),
-    "description", _("Angle of blur in degrees"),
-    "default", 0.0, "min", -180.0, "max", 180.0,
-    "unit", "degree",
-    NULL)
+property_double (angle, _("Angle"), 0.0)
+    description (_("Angle of blur in degrees"))
+    value_range (-180, 180)
+    ui_meta     ("unit", "degree")
 
 #else
 

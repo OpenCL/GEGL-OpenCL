@@ -38,26 +38,21 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (center_x, _("Center X"),
-    "default", 20.0,
-    "ui-min", -100000.0, "ui-max", 100000.0,
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
+property_double (center_x, _("Center X"), 20.0)
+    ui_range    (-10000.0, 10000.0)
+    ui_meta     ("unit", "pixel-coordinate")
+    ui_meta     ("axis", "x")
 
-gegl_property_double (center_y, _("Center Y"),
-    "default", 20.0,
-    "ui-min", -100000.0, "ui-max", 100000.0,
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_double (center_y, _("Center Y"), 20.0)
+    ui_range    (-10000.0, 10000.0)
+    ui_meta     ("unit", "pixel-coordinate")
+    ui_meta     ("axis", "y")
 
 /* FIXME: With a large angle, we lose AreaFilter's flavours */
-gegl_property_double (angle, _("Angle"),
-    "description", _("Rotation blur angle. A large angle may take some time to render"),
-    "default", 5.0, "min", -180.0, "max", 180.0,
-    "unit", "degree",
-    NULL)
+property_double (angle, _("Angle"), 5.0)
+    description (_("Rotation blur angle. A large angle may take some time to render"))
+    value_range (-180.0, 180.0)
+    ui_meta     ("unit", "degree")
 
 #else
 
