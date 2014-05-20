@@ -27,62 +27,51 @@ enum_start (gegl_vignette_shape)
   enum_value (GEGL_VIGNETTE_SHAPE_DIAMOND, "Diamond")
 enum_end (GeglVignetteShape)
 
-gegl_property_enum (shape, _("Vignette shape"),
+property_enum (shape, _("Vignette shape"),
     GeglVignetteShape, gegl_vignette_shape,
-    "default", GEGL_VIGNETTE_SHAPE_CIRCLE,
-    NULL)
+    GEGL_VIGNETTE_SHAPE_CIRCLE)
 
-gegl_property_color (color, _("Color"),
-    "description", _("Defaults to 'black', you can use transparency here to erase portions of an image"),
-    "default", "black",
-    NULL)
+property_color (color, _("Color"), "black")
+    description (_("Defaults to 'black', you can use transparency here to erase portions of an image"))
 
-gegl_property_double (radius, _("Radius"),
-    "description",_("How far out vignetting goes as portion of half image diagonal"),
-    "default", 1.5, "min", 0.0, "max", 3.0,
-    "unit", "relative-distance",
-    NULL)
+property_double (radius, _("Radius"), 1.5)
+    description (_("How far out vignetting goes as portion of half image diagonal"))
+    value_range (0.0, 3.0)
+    ui_meta     ("unit", "relative-distance")
 
-gegl_property_double (softness, _("Softness"),
-    "default", 0.8, "min", 0.0, "max", 1.0,
-    NULL)
+property_double (softness, _("Softness"), 0.8)
+    value_range (0.0, 1.0)
 
-gegl_property_double (gamma, _("Gamma"),
-    "description", _("Falloff linearity"),
-    "default", 2.0, "min", 1.0, "max", 20.0,
-    NULL)
+property_double (gamma, _("Gamma"), 2.0)
+    description (_("Falloff linearity"))
+    value_range (1.0, 20.0)
 
-gegl_property_double (proportion, _("Proportion"),
-    "description", _("How close we are to image proportions"),
-    "default", 1.0, "min", 0.0, "max", 1.0,
-    NULL)
+property_double (proportion, _("Proportion"), 1.0)
+    description(_("How close we are to image proportions"))
+    value_range (0.0, 1.0)
 
-gegl_property_double (squeeze, _("Squeeze"),
-    "description",_("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, "
+property_double (squeeze, _("Squeeze"), 0.0)
+    description (("Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, "
               "-1.0 = 1:inf 1.0 = inf:1, this is applied after "
               "proportion is taken into account, to directly use "
-              "squeeze factor as proportions, set proportion to 0.0."),
-    "default", 0.0, "min", -1.0, "max", 1.0,
-    NULL)
+              "squeeze factor as proportions, set proportion to 0.0."))
+    value_range (-1.0, 1.0)
 
-gegl_property_double (x, _("Center X"),
-    "description", _("Horizontal center of vignetting"),
-    "default", 0.5, "min", -1.0, "max", 2.0,
-    "unit", "relative-distance",
-    "axis", "x",
-    NULL)
+property_double (x, _("Center X"), 0.5)
+    description (_("Horizontal center of vignetting"))
+    value_range (-1.0, 2.0)
+    ui_meta     ("unit", "relative-distance")
+    ui_meta     ("axis", "x")
 
-gegl_property_double (y, _("Center Y"),
-    "description", _("Vertical center of vignetting"),
-    "default", 0.5, "min", -1.0, "max", 2.0,
-    "unit", "relative-distance",
-    "axis", "y",
-    NULL)
+property_double (y, _("Center Y"), 0.5)
+    description (_("Vertical center of vignetting"))
+    value_range (-1, 2)
+    ui_meta     ("unit", "relative-distance")
+    ui_meta     ("axis", "y")
 
-gegl_property_double (rotation, _("Rotation"),
-    "min", 0.0, "max", 360.0,
-    "unit", "degree", /* XXX: perhaps change to radians? */
-    NULL)
+property_double (rotation, _("Rotation"), 0.0)
+    value_range (0.0, 360.0)
+    ui_meta     ("unit", "degree") /* XXX: change to radians */
 
 #else
 

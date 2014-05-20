@@ -23,47 +23,38 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (x, _("Center X"),
-    "description", _("X coordinate of the center of the waves"),
-    "ui-min", 0.0, "ui-max", 1024.0, "ui-gamma", 1.0,
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
+property_double (x, _("Center X"), 0.0)
+    description(_("X coordinate of the center of the waves"))
+    ui_range   (0.0, 1024.0)
+    ui_meta    ("unit", "pixel-coordinate") /* XXX: should be relative */
+    ui_meta    ("axis", "x")
 
-gegl_property_double (y, _("Center Y"),
-    "description", _("Y coordinate of the center of the waves"),
-    "ui-min", 0.0, "ui-max", 1024.0, "ui-gamma", 1.0,
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_double (y, _("Center Y"), 0.0)
+    description(_("Y coordinate of the center of the waves"))
+    ui_range   (0.0, 1024.0)
+    ui_meta    ("unit", "pixel-coordinate")
+    ui_meta    ("axis", "y")
 
-gegl_property_double (amplitude, _("Amplitude"),
-    "description", _("Amplitude of the ripple"),
-    "default", 25.0, "min", 0.0, "max", 1000.0,
-    NULL)
+property_double (amplitude, _("Amplitude"), 25.0)
+    description(_("Amplitude of the ripple"))
+    value_range (0.0, 1000.0)
 
-gegl_property_double (period, _("Period"),
-    "description", _("Period (wavelength) of the ripple"),
-    "default", 200.0, "min", 0.0, "max", 1000.0,
-    NULL)
+property_double (period, _("Period"), 200)
+    description(_("Period (wavelength) of the ripple"))
+    value_range (0, 1000)
 
-gegl_property_double (phi, _("Phase shift"),
-    "min", -1.0, "max", 1.0,
-    NULL)
+property_double (phi, _("Phase shift"), 0)
+    value_range (-1, 1)
 
-gegl_property_double (aspect, _("Aspect ratio"),
-    "default", 1.0, "min", 0.1, "max", 10.0,
-    NULL)
+property_double (aspect, _("Aspect ratio"), 1.0)
+    value_range (0.1, 10.0)  /* XXX: needs better ui type */
 
-gegl_property_enum (sampler_type, _("Resampling method"),
-    GeglSamplerType, gegl_sampler_type,
-    "description", _("Mathematical method for reconstructing pixel values"),
-    "default", GEGL_SAMPLER_CUBIC,
-    NULL)
+property_enum (sampler_type, _("Resampling method"),
+    GeglSamplerType, gegl_sampler_type, GEGL_SAMPLER_CUBIC)
+    description(_("Mathematical method for reconstructing pixel values"))
 
-gegl_property_boolean (clamp, _("Clamp deformation"),
-    "description", _("Limit deformation in the image area."),
-    NULL)
+property_boolean (clamp, _("Clamp deformation"), FALSE)
+    description(_("Limit deformation in the image area."))
 
 #else
 
