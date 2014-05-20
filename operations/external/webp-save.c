@@ -19,13 +19,14 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_PROPERTIES
 
-property_file_path (path, _("File"), "", _("Target file path."))
+property_file_path (path, _("File"), "")
+  description (_("Target file path."))
 
-property_int    (quality, _("Quality"), 1, 100, 90,
-                   _("WebP compression quality"))
+property_int (quality, _("Quality"), 90)
+  description (_("WebP compression quality"))
+  value_range (1, 100)
 
 #else
 
