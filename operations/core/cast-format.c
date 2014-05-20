@@ -22,24 +22,24 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_format (input_format, _("Input Format"),
-                   _("The babl format of the input"))
-gegl_chant_format (output_format, _("Output Format"),
-                   _("The babl format of the output"))
+property_format (input_format, _("Input Format"), NULL)
+    description(_("The babl format of the input"))
+property_format (output_format, _("Output Format"), NULL)
+    description(_("The babl format of the output"))
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "cast-format.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "cast-format.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->input_format)
     gegl_operation_set_format (operation, "input", o->input_format);
@@ -55,7 +55,7 @@ process (GeglOperation        *operation,
          const GeglRectangle  *roi,
          gint                  level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglBuffer *input;
   GeglBuffer *output;
 
@@ -99,7 +99,7 @@ process (GeglOperation        *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 

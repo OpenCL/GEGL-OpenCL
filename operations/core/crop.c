@@ -20,19 +20,30 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (x,      _("X"),      -G_MAXFLOAT, G_MAXFLOAT,  0.0, _("X"))
-gegl_chant_double (y,      _("Y"),      -G_MAXFLOAT, G_MAXFLOAT,  0.0, _("Y"))
-gegl_chant_double (width,  _("Width"),  -G_MAXFLOAT, G_MAXFLOAT, 10.0, _("Width"))
-gegl_chant_double (height, _("Height"), -G_MAXFLOAT, G_MAXFLOAT, 10.0, _("Height"))
+property_double (x,      _("X"),      0.0)
+  ui_meta       ("unit", "pixel-coordinate")
+  ui_meta       ("axis", "x")
+
+property_double (y,      _("Y"),      0.0)
+  ui_meta       ("unit", "pixel-coordinate")
+  ui_meta       ("axis", "y")
+
+property_double (width,  _("Width"),  10.0 )
+  ui_meta       ("unit", "pixel-distance")
+  ui_meta       ("axis", "x")
+
+property_double (height, _("Height"), 10.0 )
+  ui_meta       ("unit", "pixel-distance")
+  ui_meta       ("axis", "y")
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "crop.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "crop.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static void
@@ -49,7 +60,7 @@ gegl_crop_detect (GeglOperation *operation,
                   gint           x,
                   gint           y)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglNode   *input_node;
 
   input_node = gegl_operation_get_source_node (operation, "input");
@@ -66,15 +77,15 @@ gegl_crop_detect (GeglOperation *operation,
 static GeglRectangle
 gegl_crop_get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties      *o = GEGL_PROPERTIES (operation);
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
   GeglRectangle  result  = { 0, 0, 0, 0 };
 
   if (!in_rect)
     return result;
 
-  result.x = o->x;
-  result.y = o->y;
+  result.x      = o->x;
+  result.y      = o->y;
   result.width  = o->width;
   result.height = o->height;
 
@@ -86,7 +97,7 @@ gegl_crop_get_invalidated_by_change (GeglOperation       *operation,
                                      const gchar         *input_pad,
                                      const GeglRectangle *input_region)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle result;
 
   result.x = o->x;
@@ -104,12 +115,12 @@ gegl_crop_get_required_for_output (GeglOperation       *operation,
                                    const gchar         *input_pad,
                                    const GeglRectangle *roi)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle result;
 
-  result.x = o->x;
-  result.y = o->y;
-  result.width = o->width;
+  result.x      = o->x;
+  result.y      = o->y;
+  result.width  = o->width;
   result.height = o->height;
 
   gegl_rectangle_intersect (&result, &result, roi);
@@ -123,14 +134,14 @@ gegl_crop_process (GeglOperation        *operation,
                    const GeglRectangle  *result,
                    gint                  level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
-  GeglBuffer   *input;
-  gboolean      success = FALSE;
-  GeglRectangle extent;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglBuffer     *input;
+  gboolean        success = FALSE;
+  GeglRectangle   extent;
 
-  extent.x = o->x;
-  extent.y = o->y;
-  extent.width = o->width;
+  extent.x      = o->x;
+  extent.y      = o->y;
+  extent.width  = o->width;
   extent.height = o->height;
 
   input = gegl_operation_context_get_source (context, "input");
@@ -155,9 +166,8 @@ gegl_crop_process (GeglOperation        *operation,
   return success;
 }
 
-
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class;
   gchar              *composition = "<?xml version='1.0' encoding='UTF-8'?>"

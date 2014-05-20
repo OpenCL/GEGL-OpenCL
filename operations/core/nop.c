@@ -20,16 +20,16 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
    /* no properties */
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "nop.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "nop.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 gegl_nop_prepare (GeglOperation *self)
@@ -66,7 +66,7 @@ gegl_nop_process (GeglOperation        *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class;
 
