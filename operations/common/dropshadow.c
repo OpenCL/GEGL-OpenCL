@@ -20,37 +20,41 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (x, _("X"),
-                      -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, -20.0, 20.0, 1.0,
-                      _("Horizontal shadow offset"))
+property_double (x, _("X"), 20.0)
+  description   (_("Horizontal shadow offset"))
+  ui_range      (-40.0, 40.0)
+  ui_meta       ("unit", "pixel-coordinate")
+  ui_meta       ("axis", "x")
 
-gegl_chant_double_ui (y, _("Y"),
-                      -G_MAXDOUBLE, G_MAXDOUBLE, 20.0, -20.0, 20.0, 1.0,
-                      _("Vertical shadow offset"))
+property_double (y, _("Y"), 20.0)
+  description   (_("Vertical shadow offset"))
+  ui_range      (-40.0, 40.0)
+  ui_meta       ("unit", "pixel-coordinate")
+  ui_meta       ("axis", "y")
 
-gegl_chant_double_ui (radius, _("Radius"),
-                      0.0, G_MAXDOUBLE, 10.0, 0.0, 300.0, 1.5,
-                      _("Blur radius"))
+property_double (radius, _("Blur radius"), 10.0)
+  value_range   (0.0, G_MAXDOUBLE)
+  ui_range      (0.0, 300.0)
+  ui_gamma      (1.5)
+  ui_meta       ("unit", "pixel-distance")
 
-gegl_chant_color     (color, _("Color"),
-                      "black",
-                      _("The shadow's color (defaults to 'black')"))
+property_color  (color, _("Color"), "black")
+  description   (_("The shadow's color (defaults to 'black')"))
 
 /* It does make sense to sometimes have opacities > 1 (see GEGL logo
  * for example)
  */
-gegl_chant_double    (opacity, _("Opacity"),
-                      0.0, 2.0, 0.5,
-                      _("Opacity"))
+property_double (opacity, _("Opacity"), 0.5)
+  value_range   (0.0, 2.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE "dropshadow.c"
+#define GEGL_OP_META
+#define GEGL_OP_C_FILE "dropshadow.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 /* in attach we hook into graph adding the needed nodes */
 static void
@@ -91,7 +95,7 @@ attach (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 

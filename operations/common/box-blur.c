@@ -20,17 +20,20 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int_ui (radius, _("Radius"), 0, 1000, 4, 0, 100, 1.5,
-   _("Radius of square pixel region, (width and height will be radius*2+1)"))
+property_int (radius, _("Radius"), 4)
+   description(_("Radius of square pixel region, (width and height will be radius*2+1)"))
+   value_range (0, 1000)
+   ui_range    (0, 100)
+   ui_gamma   (1.5)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "box-blur.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "box-blur.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -161,11 +164,11 @@ ver_blur (GeglBuffer          *src,
 
 static void prepare (GeglOperation *operation)
 {
-  GeglChantO              *o;
+  GeglProperties              *o;
   GeglOperationAreaFilter *op_area;
 
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  o       = GEGL_CHANT_PROPERTIES (operation);
+  o       = GEGL_PROPERTIES (operation);
 
   op_area->left   =
   op_area->right  =
@@ -285,7 +288,7 @@ cl_process (GeglOperation       *operation,
   gint err = 0;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                          result,
@@ -339,7 +342,7 @@ process (GeglOperation       *operation,
 {
   GeglRectangle rect;
   GeglRectangle tmprect;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglBuffer *temp;
   GeglOperationAreaFilter *op_area;
   op_area = GEGL_OPERATION_AREA_FILTER (operation);
@@ -372,7 +375,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

@@ -22,30 +22,26 @@
 #include <math.h>
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int    (wrong_pixels, _("Wrong pixels"),
-                   G_MININT, G_MAXINT, 0,
-                   _("Number of differing pixels."))
+property_int (wrong_pixels, _("Wrong pixels"), 0)
+    description(_("Number of differing pixels."))
 
-gegl_chant_double (max_diff, _("Maximum difference"),
-                   -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                   _("Maximum difference between two pixels."))
+property_double (max_diff, _("Maximum difference"), 0.0)
+    description(_("Maximum difference between two pixels."))
 
-gegl_chant_double (avg_diff_wrong, _("Average difference (wrong)"),
-                   -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                   _("Average difference between wrong pixels."))
+property_double (avg_diff_wrong, _("Average difference (wrong)"), 0.0)
+    description(_("Average difference between wrong pixels."))
 
-gegl_chant_double (avg_diff_total, _("Average difference (total)"),
-                   -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                   _("Average difference between all pixels."))
+property_double (avg_diff_total, _("Average difference (total)"), 0.0)
+    description(_("Average difference between all pixels."))
 
 #else
 
-#define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "image-compare.c"
+#define GEGL_OP_COMPOSER
+#define GEGL_OP_C_FILE       "image-compare.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #define ERROR_TOLERANCE 0.01
 #define SQR(x)          ((x) * (x))
@@ -81,7 +77,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO         *props        = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties         *props        = GEGL_PROPERTIES (operation);
   gdouble             max_diff     = 0.0;
   gdouble             diffsum      = 0.0;
   gint                wrong_pixels = 0;
@@ -189,7 +185,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;

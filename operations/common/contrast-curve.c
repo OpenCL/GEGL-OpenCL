@@ -20,18 +20,21 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int (sampling_points, _("Sample points"), 0, 65536, 0,
-                _("Number of curve sampling points.  0 for exact calculation."))
-gegl_chant_curve (curve, _("Curve"), _("The contrast curve."))
+property_int (sampling_points, _("Sample points"), 0)
+  description (_("Number of curve sampling points.  0 for exact calculation."))
+  value_range (0, 65536)
+
+property_curve (curve, _("Curve"), NULL)
+  description (_("The contrast curve."))
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE  "contrast-curve.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE  "contrast-curve.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void prepare (GeglOperation *operation)
 {
@@ -69,7 +72,7 @@ cl_process (GeglOperation       *self,
             const GeglRectangle *roi,
             gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
+  GeglProperties *o = GEGL_PROPERTIES (self);
   gint       num_sampling_points;
   gdouble    *xs, *ys;
   gfloat     *ysf = NULL;
@@ -177,7 +180,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
   gint        num_sampling_points;
   GeglCurve  *curve;
   gint i;
@@ -235,7 +238,7 @@ process (GeglOperation       *op,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;

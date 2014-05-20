@@ -23,60 +23,52 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_alien_map_color_model)
+enum_start (gegl_alien_map_color_model)
   enum_value (GEGL_ALIEN_MAP_COLOR_MODEL_RGB, "RGB")
   enum_value (GEGL_ALIEN_MAP_COLOR_MODEL_HSL, "HSL")
-gegl_chant_register_enum_end (GeglAlienMapColorModel)
+enum_end (GeglAlienMapColorModel)
 
-gegl_chant_enum    (color_model, _("Color model"),
-                    GeglAlienMapColorModel,
-                    gegl_alien_map_color_model,
-                    GEGL_ALIEN_MAP_COLOR_MODEL_RGB,
-                    _("What color model used for the transformation"))
+property_enum (color_model, _("Color model"),
+               GeglAlienMapColorModel, gegl_alien_map_color_model,
+               GEGL_ALIEN_MAP_COLOR_MODEL_RGB)
+  description (_("What color model used for the transformation"))
 
-gegl_chant_double  (cpn_1_frequency, _("Component 1 frequency"),
-                    0, 20, 1,
-                    _("Component 1 frequency"))
-gegl_chant_double  (cpn_2_frequency, _("Component 2 frequency"),
-                    0, 20, 1,
-                    _("Component 2 frequency"))
-gegl_chant_double  (cpn_3_frequency, _("Component 3 frequency"),
-                    0, 20, 1,
-                    _("Component 3 frequency"))
+property_double (cpn_1_frequency, _("Component 1 frequency"), 1)
+  value_range (0, 20)
 
-gegl_chant_double  (cpn_1_phaseshift, _("Component 1 phase shift"),
-                    0, 360, 0,
-                    _("Component 1 phase shift"))
-gegl_chant_double  (cpn_2_phaseshift, _("Component 2 phase shift"),
-                    0, 360, 0,
-                    _("Component 2 phase shift"))
-gegl_chant_double  (cpn_3_phaseshift, _("Component 3 phase shift"),
-                    0, 360, 0,
-                    _("Component 3 phase shift"))
+property_double  (cpn_2_frequency, _("Component 2 frequency"), 1)
+  value_range (0, 20)
 
-gegl_chant_boolean (cpn_1_keep, _("Keep component 1"),
-                    FALSE,
-                    _("Keep component 1"))
-gegl_chant_boolean (cpn_2_keep, _("Keep component 2"),
-                    FALSE,
-                    _("Keep component 2"))
-gegl_chant_boolean (cpn_3_keep, _("Keep component 3"),
-                    FALSE,
-                    _("Keep component 3"))
+property_double  (cpn_3_frequency, _("Component 3 frequency"), 1)
+  value_range (0, 20)
+
+property_double  (cpn_1_phaseshift, _("Component 1 phase shift"), 0)
+  value_range (0, 360)
+  ui_meta     ("unit", "degree")
+property_double  (cpn_2_phaseshift, _("Component 2 phase shift"), 0)
+  value_range (0, 360)
+  ui_meta     ("unit", "degree")
+property_double  (cpn_3_phaseshift, _("Component 3 phase shift"), 0)
+  value_range (0, 360)
+  ui_meta     ("unit", "degree")
+
+property_boolean (cpn_1_keep, _("Keep component 1"), FALSE)
+property_boolean (cpn_2_keep, _("Keep component 2"), FALSE)
+property_boolean (cpn_3_keep, _("Keep component 3"), FALSE)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "alien-map.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "alien-map.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->color_model == GEGL_ALIEN_MAP_COLOR_MODEL_RGB)
     {
@@ -102,7 +94,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o   = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
   gfloat     *in  = in_buf;
   gfloat     *out = out_buf;
   gfloat      freq[3];
@@ -153,7 +145,7 @@ cl_process (GeglOperation       *operation,
             const GeglRectangle *roi,
             gint                level)
 {
-  GeglChantO *o   = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   cl_float3   freq;
   cl_float3   phaseshift;
   cl_int3     keep;
@@ -203,7 +195,7 @@ error:
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;

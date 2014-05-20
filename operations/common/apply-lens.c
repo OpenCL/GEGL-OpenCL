@@ -26,25 +26,23 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (refraction_index, _("Lens refraction index"),
-                   1.0, 100.0, 1.7,
-                   _("Lens refraction index"))
+property_double (refraction_index, _("Lens refraction index"), 1.7)
+  value_range (1.0, 100.0)
 
-gegl_chant_boolean (keep_surroundings, _("Keep original surroundings"),
-                    FALSE,
-                    _("Keep image unchanged, where not affected by the lens."))
+property_boolean (keep_surroundings, _("Keep original surroundings"), FALSE)
+  description(_("Keep image unchanged, where not affected by the lens."))
 
-gegl_chant_color (background_color, _("Background Color"),
-                  "none",
-                  _("Background Color (defaults to 'none')"))
+property_color (background_color, _("Background Color"), "none")
+  //ui_meta ("role", "color-secondary")
+
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "apply-lens.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "apply-lens.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -136,7 +134,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO  *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties         *o = GEGL_PROPERTIES (operation);
   const Babl  *input_format = gegl_buffer_get_format (input);
   const int bytes_per_pixel = babl_format_get_bytes_per_pixel (input_format);
 
@@ -269,7 +267,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

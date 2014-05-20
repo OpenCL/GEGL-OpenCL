@@ -21,20 +21,24 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
+property_double (blur_radius, _("Blur radius"), 4.0)
+  description(_("Radius of square pixel region, (width and height will be radius*2+1)."))
+  value_range   (0.0, 1000.0)
+  ui_range      (0.0, 100.0)
+  ui_gamma      (1.5)
 
-gegl_chant_double_ui (blur_radius, _("Blur radius"), 0.0, 1000.0, 4.0, 0.0, 100.0, 1.5,
-  _("Radius of square pixel region, (width and height will be radius*2+1)."))
-gegl_chant_double (edge_preservation, _("Edge preservation"), 0.0, 100.0, 8.0,
-  _("Amount of edge preservation"))
+property_double (edge_preservation, _("Edge preservation"), 8.0)
+  description   (_("Amount of edge preservation"))
+  value_range   (0.0, 100.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE       "bilateral-filter.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE       "bilateral-filter.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static void
@@ -50,7 +54,7 @@ bilateral_filter (GeglBuffer          *src,
 static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o = GEGL_PROPERTIES (operation);
 
   area->left = area->right = area->top = area->bottom = ceil (o->blur_radius);
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
@@ -117,7 +121,7 @@ cl_process (GeglOperation       *operation,
   gint err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                          result,
@@ -159,7 +163,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle compute;
 
   if (o->blur_radius >= 1.0 && gegl_operation_use_opencl (operation))
@@ -266,7 +270,7 @@ bilateral_filter (GeglBuffer          *src,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

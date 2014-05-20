@@ -34,65 +34,62 @@
 
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_bump_map_type)
+enum_start (gegl_bump_map_type)
   enum_value (GEGL_BUMP_MAP_TYPE_LINEAR,     "Linear")
   enum_value (GEGL_BUMP_MAP_TYPE_SPHERICAL,  "Cosinus")
   enum_value (GEGL_BUMP_MAP_TYPE_SINUSOIDAL, "Sinusoidal")
-gegl_chant_register_enum_end (GeglBumpMapType)
+enum_end (GeglBumpMapType)
 
-gegl_chant_enum    (type, _("Type"),
-                    GeglBumpMapType, gegl_bump_map_type,
-                    GEGL_BUMP_MAP_TYPE_LINEAR,
-                    _("Type of map"))
+property_enum (type, _("Type"), GeglBumpMapType, gegl_bump_map_type,
+               GEGL_BUMP_MAP_TYPE_LINEAR)
+  description (_("Type of map"))
 
-gegl_chant_boolean (compensate, _("Compensate"),
-                    TRUE,
-                    _("Compensate for darkening"))
+property_boolean (compensate, _("Compensate"), TRUE)
+  description (_("Compensate for darkening"))
 
-gegl_chant_boolean (invert, _("Invert"),
-                    FALSE,
-                    _("Invert bumpmap"))
+property_boolean (invert, _("Invert"), FALSE)
+  description (_("Invert bumpmap"))
 
-gegl_chant_boolean (tiled, _("Tiled"),
-                    FALSE,
-                    _("Tiled bumpmap"))
+property_boolean (tiled, _("Tiled"), FALSE)
+  description (_("Tiled bumpmap"))
 
-gegl_chant_double  (azimuth, _("Azimuth"),
-                    0.0, 360.0, 135.0,
-                    _("Azimuth"))
+property_double  (azimuth, _("Azimuth"), 135.0)
+  value_range (0.0, 360.0)
+  ui_meta     ("unit", "degree")
 
-gegl_chant_double  (elevation, _("Elevation"),
-                    0.0, 360.0, 45.0,
-                    _("Elevation"))
+property_double  (elevation, _("Elevation"), 45.0)
+  value_range (0.0, 360.0)
 
-gegl_chant_double  (depth, _("Depth"),
-                    0.0005, 100, 0.005,
-                    _("Depth"))
+property_double  (depth, _("Depth"), 0.005)
+  value_range (0.0005, 100)
 
-gegl_chant_int_ui  (offset_x, _("Offset X"),
-                    -20000, 20000,0, -1000.0, 1000.0, 1.0,
-                    NULL)
+property_int  (offset_x, _("Offset X"), -1000.0)
+  value_range (-20000, 20000)
+  ui_range (-1000.0, 1000.0)
+  ui_meta  ("axis", "x")
+  ui_meta  ("unit", "pixel-coordinate")
 
-gegl_chant_int_ui  (offset_y, _("Offset Y"),
-                    -20000, 20000,0, -1000.0, 1000.0, 1.0,
-                    NULL)
+property_int  (offset_y, _("Offset Y"), -1000.0)
+  value_range (-20000, 20000)
+  ui_range (-1000.0, 1000.0)
+  ui_meta  ("axis", "y")
+  ui_meta  ("unit", "pixel-coordinate")
 
-gegl_chant_double  (waterlevel, _("Waterlevel"),
-                    0.0,1.0,0.0,
-                    _("Level that full transparency should represent"))
+property_double  (waterlevel, _("Waterlevel"), 0.0)
+  description(_("Level that full transparency should represent"))
+  value_range (0.0, 1.0)
 
-gegl_chant_double  (ambient, _("Ambient"),
-                    0.0, 1.0, 0.0,
-                    _("Ambient lighting factor"))
+property_double  (ambient, _("Ambient lighting factor"), 0.0)
+  value_range (0.0, 1.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE "bump-map.c"
+#define GEGL_OP_COMPOSER
+#define GEGL_OP_C_FILE "bump-map.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 /***** Macros *****/
@@ -114,7 +111,7 @@ typedef struct
 } bumpmap_params_t;
 
 static void
-bumpmap_setup_calc (GeglChantO     *o,
+bumpmap_setup_calc (GeglProperties     *o,
                     bumpmap_params_t *params)
 {
   /* Convert to radians */
@@ -180,7 +177,7 @@ bumpmap_row (const gfloat     *src,
              gint              bm_width,
              gint              bm_xofs,
              gboolean          row_in_bumpmap,
-             GeglChantO       *o,
+             GeglProperties       *o,
              bumpmap_params_t *params)
 {
   gint xofs1, xofs2, xofs3;
@@ -298,7 +295,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *rect,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gfloat  *src_buf, *dst_buf, *bm_row1, *bm_row2, *bm_row3, *src_row, *dest_row, *bm_tmprow;
   const Babl *format = gegl_operation_get_format (operation, "output");
   gint channels = babl_format_get_n_components (format);
@@ -459,7 +456,7 @@ get_bounding_box (GeglOperation *self)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;

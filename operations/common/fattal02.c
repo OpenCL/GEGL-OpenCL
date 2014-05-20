@@ -28,28 +28,31 @@
 #include <math.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (alpha, _("Alpha"),
-                  0.0, 2.0, 1.0,
-                  _("Gradient threshold for detail enhancement"))
-gegl_chant_double (beta, _("Beta"),
-                  0.1, 2.0, 0.9,
-                  _("Strength of local detail enhancement"))
-gegl_chant_double (saturation, _("Saturation"),
-                  0.0, 1.0, 0.8,
-                  _("Global color saturation factor"))
-gegl_chant_double (noise, _("Noise"),
-                  0.0, 1.0, 0.0,
-                  _("Gradient threshold for lowering detail enhancement"))
+property_double (alpha, _("Alpha"), 1.0)
+    description(_("Gradient threshold for detail enhancement"))
+    value_range (0.0, 2.0)
+
+property_double (beta, _("Beta"), 0.9)
+    description(_("Strength of local detail enhancement"))
+    value_range (0.1, 2.0)
+
+property_double (saturation, _("Saturation"), 0.8)
+    description (_("Global color saturation factor"))
+    value_range (0.0, 1.0)
+
+property_double (noise, _("Noise"), 0.0)
+    description (_("Gradient threshold for lowering detail enhancement"))
+    value_range (0.0, 1.0)
 
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "fattal02.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "fattal02.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include "gegl-debug.h"
 #include <stdlib.h>
 
@@ -1246,7 +1249,7 @@ fattal02_process (GeglOperation       *operation,
                   const GeglRectangle *result,
                   gint                 level)
 {
-  const GeglChantO *o     = GEGL_CHANT_PROPERTIES (operation);
+  const GeglProperties *o     = GEGL_PROPERTIES (operation);
   gfloat            noise;
 
   const gint  pix_stride = 3; /* RGBA */
@@ -1304,7 +1307,7 @@ fattal02_process (GeglOperation       *operation,
 /*
  */
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

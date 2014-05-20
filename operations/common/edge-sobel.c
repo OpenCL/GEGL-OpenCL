@@ -22,26 +22,20 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_boolean (horizontal,  _("Horizontal"),
-                    TRUE,
-                    _("Horizontal"))
+property_boolean (horizontal,  _("Horizontal"), TRUE)
 
-gegl_chant_boolean (vertical,  _("Vertical"),
-                    TRUE,
-                    _("Vertical"))
+property_boolean (vertical,  _("Vertical"), TRUE)
 
-gegl_chant_boolean (keep_signal,  _("Keep Signal"),
-                    TRUE,
-                    _("Keep Signal"))
+property_boolean (keep_signal,  _("Keep Signal"), TRUE)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "edge-sobel.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "edge-sobel.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
@@ -62,7 +56,7 @@ edge_sobel (GeglBuffer          *src,
 static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  //GeglChantO              *o = GEGL_CHANT_PROPERTIES (operation);
+  //GeglProperties              *o = GEGL_PROPERTIES (operation);
 
   const Babl *source_format = gegl_operation_get_source_format (operation, "input");
 
@@ -144,7 +138,7 @@ cl_process (GeglOperation       *operation,
   gint err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                          result,
@@ -188,7 +182,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle compute;
   gboolean has_alpha;
 
@@ -310,7 +304,7 @@ edge_sobel (GeglBuffer          *src,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

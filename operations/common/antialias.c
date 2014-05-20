@@ -33,16 +33,16 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
 /* This operation has no properties */
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE           "antialias.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE           "antialias.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 prepare (GeglOperation *operation)
@@ -260,7 +260,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

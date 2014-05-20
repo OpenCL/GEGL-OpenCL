@@ -863,9 +863,11 @@ gegl_op_class_intern_init (gpointer klass)
 
 #define property_curve(name, label, def_val) \
     REGISTER_IF_ANY  \
-  }{ GParamSpec *pspec = \
-       gegl_param_spec_curve (#name, label, NULL, flags);\
-     current_prop = PROP_##name ;
+  }{  GeglCurve *_gegl_op_default_curve = gegl_curve_new_default (); \
+    GParamSpec *pspec = \
+       gegl_param_spec_curve (#name, label, NULL, _gegl_op_default_curve, flags);\
+     current_prop = PROP_##name ;\
+     g_object_unref (_gegl_op_default_curve);\
 
 #define property_color(name, label, def_val) \
     REGISTER_IF_ANY  \

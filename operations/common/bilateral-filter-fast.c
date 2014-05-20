@@ -28,22 +28,22 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (r_sigma, _("Smoothness"),
-                   1, 100, 50,
-                   _("Level of smoothness"))
+property_double (r_sigma, _("Smoothness"), 50)
+    description(_("Level of smoothness"))
+    value_range (1, 100)
 
-gegl_chant_int (s_sigma, _("Blur radius"),
-                1, 100, 8,
-                _("Radius of square pixel region, (width and height will be radius*2+1)."))
+property_int (s_sigma, _("Blur radius"), 8)
+   description(_("Radius of square pixel region, (width and height will be radius*2+1)."))
+   value_range (1, 100)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "bilateral-filter-fast.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE       "bilateral-filter-fast.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 inline static float lerp(float a, float b, float v)
@@ -100,7 +100,7 @@ bilateral_process (GeglOperation       *operation,
                    const GeglRectangle *result,
                    gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
 
   if (gegl_operation_use_opencl (operation))
     if (bilateral_cl_process (operation, input, output, result, o->s_sigma, o->r_sigma/100))
@@ -472,7 +472,7 @@ bilateral_cl_process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

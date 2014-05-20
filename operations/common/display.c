@@ -19,12 +19,12 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_string  (window_title, _(""), "window_title",
-                    _("Title to be given to output window"))
+#ifdef GEGL_PROPERTIES
+property_string  (window_title, _(""), "window_title")
+    description(_("Title to be given to output window"))
 #else
 
-#define GEGL_CHANT_C_FILE       "display.c"
+#define GEGL_OP_C_FILE       "display.c"
 
 #include "gegl-plugin.h"
 
@@ -33,7 +33,7 @@ gegl_chant_string  (window_title, _(""), "window_title",
  * Will use one of several well-known display operations 
  * to actually display the output. */
 
-struct _GeglChant
+struct _GeglOp
 {
   GeglOperationSink parent_instance;
   gpointer          properties;
@@ -45,18 +45,18 @@ struct _GeglChant
 typedef struct
 {
   GeglOperationSinkClass parent_class;
-} GeglChantClass;
+} GeglOpClass;
 
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SINK)
 
 /* Set the correct display handler operation. */
 static void
 set_display_handler (GeglOperation *operation)
 {
-  GeglChantO  *o    = GEGL_CHANT_PROPERTIES (operation);
-  GeglChant   *self = GEGL_CHANT (operation);
+  GeglProperties  *o    = GEGL_PROPERTIES (operation);
+  GeglOp   *self = GEGL_OP (operation);
   const gchar *known_handlers[] = {"gegl-gtk3:display", 
                                    "gegl-gtk2:display",
                                    "gegl:sdl-display"};
@@ -94,7 +94,7 @@ set_display_handler (GeglOperation *operation)
 static void
 attach (GeglOperation *operation)
 {
-  GeglChant   *self = GEGL_CHANT (operation);
+  GeglOp   *self = GEGL_OP (operation);
 
   g_assert (!self->input);
   g_assert (!self->display);
@@ -117,14 +117,14 @@ process (GeglOperation        *operation,
          const GeglRectangle  *roi,
          gint                  level)
 {
-  GeglChant   *self = GEGL_CHANT (operation);
+  GeglOp   *self = GEGL_OP (operation);
 
   return gegl_operation_process (gegl_node_get_gegl_operation (self->display),
                                  context, output_pad, roi, level);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass     *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationSinkClass *sink_class = GEGL_OPERATION_SINK_CLASS (klass);

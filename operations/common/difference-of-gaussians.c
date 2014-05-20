@@ -19,22 +19,24 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (radius1, _("Radius 1"),
-                      0.0, 1000.0, 1.0, 0.0, 10.0, 1.5,
-                     _("Radius"))
+property_double (radius1, _("Radius 1"), 1.0)
+  value_range (0.0, 1000.0)
+  ui_range (0.0, 10.0)
+  ui_gamma (1.5)
 
-gegl_chant_double_ui (radius2, _("Radius 2"),
-                      0.0, 1000.0, 2.0, 0.0, 10.0, 1.5,
-                     _("Radius"))
+property_double (radius2, _("Radius 2"), 2.0)
+  value_range (0.0, 1000.0)
+  ui_range (0.0, 20.0)
+  ui_gamma (1.5)
 
 #else
 
-#define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE "difference-of-gaussians.c"
+#define GEGL_OP_META
+#define GEGL_OP_C_FILE "difference-of-gaussians.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void attach (GeglOperation *operation)
 {
@@ -70,7 +72,7 @@ static void attach (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class;
 

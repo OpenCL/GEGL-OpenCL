@@ -31,58 +31,56 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_boolean (monochrome, _("Monochrome"),
-                    FALSE,
-                    _("Monochrome"))
+property_boolean (monochrome, _("Monochrome"), FALSE)
 
-gegl_chant_boolean (preserve_luminosity, _("Preserve Luminosity"),
-                    FALSE,
-                    _("Preserve Luminosity"))
+property_boolean (preserve_luminosity, _("Preserve Luminosity"), FALSE)
 
-gegl_chant_double (rr_gain, _("Red Red Gain"),
-                   -2.0, +2.0, 1.0,
-                   _("Set the red gain for the red channel"))
+property_double (rr_gain, _("Red Red Gain"), 1.0)
+  description(_("Set the red gain for the red channel"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_double (rg_gain, _("Red Green Gain"),
-                   -2.0, +2.0, 0.0,
-                   _("Set the green gain for the red channel"))
+property_double (rg_gain, _("Red Green Gain"), 0.0)
+  description(_("Set the green gain for the red channel"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_double (rb_gain, _("Red Blue Gain"),
-                   -2.0, +2.0, 0.0,
-                   _("Set the blue gain for the red channel"))
+property_double (rb_gain, _("Blue Gain"), 0.0)
+  description(_("Set the blue gain for the red channel"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_double (gr_gain, _("Green Red Gain"),
-                   -2.0, +2.0, 0.0,
-                   _("Set the red gain for the green channel"))
+property_double (gr_gain, _("Green Red Gain"), 0.0)
+  description(_("Set the red gain for the green channel"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_double (gg_gain, _("Green Green Gain"),
-                   -2.0, +2.0, 1.0,
-                   _("Set the green gain for the green channel"))
+property_double (gg_gain, _("Green Green Gain"), 1.0)
+  description(_("Set the green gain for the green channel"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_double (gb_gain, _("Green Blue Gain"),
-                   -2.0, +2.0, 0.0,
-                   _("Set the blue gain for the green channel"))
+property_double (gb_gain, _("Green Blue Gain"), 0.0)
+  description(_("Set the blue gain for the green channel"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_double (br_gain, _("Blue Red Gain"),
-                   -2.0, +2.0, 0.0,
-                   _("Set the red gain for the blue channel"))
 
-gegl_chant_double (bg_gain, _("Blue Green Gain"),
-                   -2.0, +2.0, 0.0,
-                   _("Set the green gain for the blue channel"))
+property_double (br_gain, _("Blue Red Gain"), 0.0)
+  description(_("Set the red gain for the green channel"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_double (bb_gain, _("Blue Blue Gain"),
-                   -2.0, +2.0, 1.0,
-                   _("Set the blue gain for the blue channel"))
+property_double (bg_gain, _("Blue Green Gain"), 0.0)
+  description(_("Set the green gain for the green channel"))
+  value_range (-2.0, 2.0)
+
+property_double (bb_gain, _("Blue Blue Gain"), 1.0)
+  description(_("Set the blue gain for the green channel"))
+  value_range (-2.0, 2.0)
+
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE       "channel-mixer.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE       "channel-mixer.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 typedef enum
 {
@@ -113,14 +111,14 @@ typedef struct
 static void prepare (GeglOperation *operation)
 {
   const Babl *input_format = gegl_operation_get_source_format (operation, "input");
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   CmParamsType *mix;
   const Babl *format;
 
-  if (o->chant_data == NULL)
-    o->chant_data = g_slice_new0 (CmParamsType);
+  if (o->user_data == NULL)
+    o->user_data = g_slice_new0 (CmParamsType);
 
-  mix = (CmParamsType*) o->chant_data;
+  mix = (CmParamsType*) o->user_data;
 
   mix->monochrome          = o->monochrome;
   mix->preserve_luminosity = o->preserve_luminosity;
@@ -164,15 +162,15 @@ static void prepare (GeglOperation *operation)
 static void finalize (GObject *object)
 {
   GeglOperation *op = (void*) object;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      g_slice_free (CmParamsType, o->chant_data);
-      o->chant_data = NULL;
+      g_slice_free (CmParamsType, o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static gdouble
@@ -231,8 +229,8 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (op);
-  CmParamsType *mix = (CmParamsType*) o->chant_data;
+  GeglProperties   *o = GEGL_PROPERTIES (op);
+  CmParamsType *mix = (CmParamsType*) o->user_data;
 
   gdouble       red_norm, green_norm, blue_norm, black_norm;
   gfloat       *in, *out;
@@ -276,7 +274,7 @@ process (GeglOperation       *op,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;

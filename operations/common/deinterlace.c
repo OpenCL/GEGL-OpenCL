@@ -25,38 +25,38 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_deinterlace_keep)
+enum_start (gegl_deinterlace_keep)
   enum_value (GEGL_DEINTERLACE_KEEP_EVEN, "Keep even fields")
   enum_value (GEGL_DEINTERLACE_KEEP_ODD,  "Keep odd fields")
-gegl_chant_register_enum_end (GeglDeinterlaceKeep)
+enum_end (GeglDeinterlaceKeep)
 
-gegl_chant_register_enum (gegl_orientation)
+enum_start (gegl_orientation)
   enum_value (GEGL_ORIENTATION_HORIZONTAL, "Horizontal")
   enum_value (GEGL_ORIENTATION_VERTICAL,   "Vertical")
-gegl_chant_register_enum_end (GeglOrientation)
+enum_end (GeglOrientation)
 
-gegl_chant_enum (keep, _("Keep"),
-                 GeglDeinterlaceKeep, gegl_deinterlace_keep,
-                 GEGL_DEINTERLACE_KEEP_EVEN,
-                 _("Keep even or odd fields"))
+property_enum (keep, _("Keep"),
+  GeglDeinterlaceKeep, gegl_deinterlace_keep,
+  GEGL_DEINTERLACE_KEEP_EVEN)
+  description(_("Keep even or odd fields"))
 
-gegl_chant_enum (orientation, _("Orientation"),
-                 GeglOrientation, gegl_orientation,
-                 GEGL_ORIENTATION_HORIZONTAL,
-                 _("Deinterlace horizontally or vertically"))
+property_enum (orientation, _("Orientation"),
+  GeglOrientation, gegl_orientation,
+  GEGL_ORIENTATION_HORIZONTAL)
+  description(_("Deinterlace horizontally or vertically"))
 
-gegl_chant_int  (size, _("Block size"),
-                 0, 100, 1,
-                 _("Block size of deinterlacing rows/columns"))
+property_int  (size, _("Block size"), 1)
+  value_range (0, 100)
+  description (_("Block size of deinterlacing rows/columns"))
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "deinterlace.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "deinterlace.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -64,7 +64,7 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO              *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o       = GEGL_PROPERTIES (operation);
 
   if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
     {
@@ -240,7 +240,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO              *o        = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties              *o        = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area  = GEGL_OPERATION_AREA_FILTER (operation);
   const Babl              *format   = babl_format ("RGBA float");
   GeglRectangle            rect;
@@ -318,7 +318,7 @@ get_required_for_output (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

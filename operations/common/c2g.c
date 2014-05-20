@@ -22,34 +22,38 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int_ui (radius, _("Radius"),
-                   2, 3000, 300, 2, 3000, 1.6,
-                   _("Neighborhood taken into account, this is the radius "
+property_int (radius, _("Radius"), 300)
+  description(_("Neighborhood taken into account, this is the radius "
                      "in pixels taken into account when deciding which "
                      "colors map to which gray values"))
+  value_range (2, 3000)
+  ui_range    (2, 1000)
+  ui_gamma    (1.6)
+  ui_meta     ("unit", "pixel-distance")
 
-gegl_chant_int_ui (samples, _("Samples"),
-                   1, 1000, 4, 1, 20, 1.0,
-                   _("Number of samples to do per iteration looking for "
-                     "the range of colors"))
+property_int  (samples, _("Samples"), 4)
+  description (_("Number of samples to do per iteration looking for the range of colors"))
+  value_range (1, 1000) 
+  ui_range    (1, 20)
 
-gegl_chant_int_ui (iterations, _("Iterations"),
-                   1, 1000, 10, 1, 20, 1.0,
-                   _("Number of iterations, a higher number of iterations "
+property_int (iterations, _("Iterations"), 10)
+  description(_("Number of iterations, a higher number of iterations "
                      "provides less noisy results at a computational cost"))
+  value_range (1, 1000)
+  ui_range (1, 20)
 
 /*
-gegl_chant_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
+property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
                 _("Gamma applied to radial distribution"))
 */
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "c2g.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "c2g.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 #include <stdlib.h>
 #include "envelopes.h"
@@ -141,7 +145,7 @@ static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
   area->left = area->right = area->top = area->bottom =
-      ceil (GEGL_CHANT_PROPERTIES (operation)->radius);
+      ceil (GEGL_PROPERTIES (operation)->radius);
 
   gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("YA float"));
@@ -273,7 +277,7 @@ cl_process (GeglOperation       *operation,
   gint err;
 
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
                                                          result,
@@ -318,7 +322,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle compute;
   compute = gegl_operation_get_required_for_output (operation, "input",result);
 
@@ -337,7 +341,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

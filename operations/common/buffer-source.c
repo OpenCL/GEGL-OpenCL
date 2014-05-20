@@ -20,17 +20,17 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_object(buffer, _("Input buffer"),
-		  _("The GeglBuffer to load into the pipeline"))
+property_object(buffer, _("Input buffer"), GEGL_TYPE_BUFFER)
+	  description (_("The GeglBuffer to load into the pipeline"))
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE "buffer-source.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE "buffer-source.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 typedef struct
 {
@@ -38,12 +38,12 @@ typedef struct
 } Priv;
 
 static Priv *
-get_priv (GeglChantO *o)
+get_priv (GeglProperties *o)
 {
-  Priv *priv = (Priv*)o->chant_data;
+  Priv *priv = (Priv*)o->user_data;
   if (priv == NULL) {
     priv = g_new0 (Priv, 1);
-    o->chant_data = (void*) priv;
+    o->user_data = (void*) priv;
 
     priv->buffer_changed_handler = 0;
   }
@@ -62,7 +62,7 @@ static void
 gegl_buffer_source_prepare (GeglOperation *operation)
 {
   const Babl *format = NULL;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->buffer)
     format = gegl_buffer_get_format (GEGL_BUFFER (o->buffer));
@@ -74,7 +74,7 @@ static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result = {0,0,0,0};
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
 
   if (!o->buffer)
     {
@@ -91,7 +91,7 @@ my_set_property (GObject  *gobject,
                           GParamSpec   *pspec)
 {
   GeglOperation *operation = GEGL_OPERATION (gobject);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   Priv *p = get_priv(o);
   GObject *buffer = NULL;
 
@@ -124,7 +124,7 @@ process (GeglOperation        *operation,
          const GeglRectangle  *result,
          gint                  level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->buffer)
     {
@@ -147,7 +147,7 @@ process (GeglOperation        *operation,
 static void
 dispose (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
   Priv *p = get_priv(o);
 
   if (o->buffer)
@@ -161,15 +161,15 @@ dispose (GObject *object)
 
   if (p) {
     g_free(p);
-    o->chant_data = NULL;
+    o->user_data = NULL;
   }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->dispose (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->dispose (object);
 }
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
 

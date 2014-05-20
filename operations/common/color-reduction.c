@@ -21,46 +21,45 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_dither_strategy)
+enum_start (gegl_dither_strategy)
   enum_value (GEGL_DITHER_NONE, "None")
   enum_value (GEGL_DITHER_RANDOM, "Random")
   enum_value (GEGL_DITHER_RESILIENT, "Resilient")
   enum_value (GEGL_DITHER_RANDOM_COVARIANT, "Random Covariant")
   enum_value (GEGL_DITHER_BAYER,  "Bayer")
   enum_value (GEGL_DITHER_FLOYD_STEINBERG, "Floyd-Steinberg")
-gegl_chant_register_enum_end (GeglDitherStrategy)
+enum_end (GeglDitherStrategy)
 
-gegl_chant_int  (red_bits, _("Red bits"),
-                 1, 16, 8,
-                 _("Number of bits for red channel"))
+property_int  (red_bits, _("Red bits"), 8)
+    description(_("Number of bits for red channel"))
+    value_range (1, 16)
 
-gegl_chant_int  (green_bits, _("Green bits"),
-                 1, 16, 8,
-                 _("Number of bits for green channel"))
+property_int  (green_bits, _("Green bits"), 8)
+    description(_("Number of bits for green channel"))
+    value_range (1, 16)
 
-gegl_chant_int  (blue_bits, _("Blue bits"),
-                 1, 16, 8,
-                 _("Number of bits for blue channel"))
+property_int  (blue_bits, _("Blue bits"), 8)
+    description(_("Number of bits for blue channel"))
+    value_range (1, 16)
 
-gegl_chant_int  (alpha_bits, _("Alpha bits"),
-                 1, 16, 8,
-                 _("Number of bits for alpha channel"))
+property_int  (alpha_bits, _("Alpha bits"), 8)
+    description(_("Number of bits for alpha channel"))
+    value_range (1, 16)
 
-gegl_chant_enum (dither_strategy, _("Dithering Strategy"),
-                 GeglDitherStrategy, gegl_dither_strategy, GEGL_DITHER_RESILIENT,
-                 _("The dithering strategy to use"))
+property_enum (dither_strategy, _("Dithering Strategy"),
+               GeglDitherStrategy, gegl_dither_strategy, GEGL_DITHER_RESILIENT)
+    description (_("The dithering strategy to use"))
 
-gegl_chant_seed (seed, rand, _("Random seed"),
-                 NULL)
+property_seed (seed, _("Random seed"), rand)
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "color-reduction.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "color-reduction.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #define REDUCE_16B(value) (((value) & ((1 << 17) - 1)) - 65536)
 
@@ -430,7 +429,7 @@ get_required_for_output (GeglOperation       *self,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
+  GeglProperties *o = GEGL_PROPERTIES (self);
 
   if (o->dither_strategy == GEGL_DITHER_FLOYD_STEINBERG)
     return *gegl_operation_source_get_bounding_box (self, "input");
@@ -442,7 +441,7 @@ static GeglRectangle
 get_cached_region (GeglOperation       *self,
                    const GeglRectangle *roi)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (self);
+  GeglProperties *o = GEGL_PROPERTIES (self);
 
   if (o->dither_strategy == GEGL_DITHER_FLOYD_STEINBERG)
     return *gegl_operation_source_get_bounding_box (self, "input");
@@ -457,7 +456,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   guint       channel_bits [4];
 
   channel_bits [0] = o->red_bits;
@@ -475,7 +474,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

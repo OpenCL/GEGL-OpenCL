@@ -20,16 +20,18 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_string(exposures, _("Exposure Values"), "",
-                  _("Relative brightness of each exposure in EV"))
-gegl_chant_int   (steps, _("Discretization Bits"),
-                  8, 32, 12,
-                  _("Log2 of source's discretization steps"))
-gegl_chant_double (sigma, _("Weight Sigma"),
-                  0.0f, 32.0f, 8.0f,
-                  _("Weight distribution sigma controlling response contributions"))
+property_string(exposures, _("Exposure Values"), "")
+    description (_("Relative brightness of each exposure in EV"))
+
+property_int (steps, _("Discretization Bits"), 13)
+    description (_("Log2 of source's discretization steps"))
+    value_range (8, 32)
+
+property_double (sigma, _("Weight Sigma"), 8.0f)
+    description (_("Weight distribution sigma controlling response contributions"))
+    value_range (0.0f, 32.0f)
 
 #else
 
@@ -37,7 +39,7 @@ gegl_chant_double (sigma, _("Weight Sigma"),
 /*#define DEBUG_SAVE_CURVES*/
 
 #include <gegl-plugin.h>
-struct _GeglChant
+struct _GeglOp
 {
   GeglOperationFilter parent_instance;
   gpointer            properties;
@@ -46,11 +48,11 @@ struct _GeglChant
 typedef struct
 {
   GeglOperationFilterClass parent_class;
-} GeglChantClass;
+} GeglOpClass;
 
 
-#define GEGL_CHANT_C_FILE "exp-combine.c"
-#include "gegl-chant.h"
+#define GEGL_OP_C_FILE "exp-combine.c"
+#include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_FILTER)
 
 #include <errno.h>
@@ -868,7 +870,7 @@ gegl_expcombine_get_exposures (GeglOperation        *operation,
                                const GeglRectangle  *full_roi,
                                GeglRectangle        *scaled_roi)
 {
-  GeglChantO    *o          = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties    *o          = GEGL_PROPERTIES (operation);
   gchar         *ev_cursor  = o->exposures;
   GSList        *exposures  = NULL,
                 *inputs,
@@ -1041,7 +1043,7 @@ gegl_expcombine_process (GeglOperation        *operation,
                          const GeglRectangle  *full_roi,
                          gint                  level)
 {
-  GeglChantO *o           = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o           = GEGL_PROPERTIES (operation);
   GeglBuffer *output      = gegl_operation_context_get_target (context,
                                                                output_pad);
 
@@ -1249,7 +1251,7 @@ gegl_expcombine_get_required_for_output (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
 

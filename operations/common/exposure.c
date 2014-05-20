@@ -20,26 +20,26 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (exposure, _("Exposure"),
-                      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0, -10.0, 10.0, 1.0,
-                      _("Relative brightness change in stops"))
+property_double (exposure, _("Exposure"), 0.0)
+    description (_("Relative brightness change in stops"))
+    ui_range    (-10.0, 10.0)
 
-gegl_chant_double_ui (offset, _("Offset"),
-                      -0.5, 0.5, 0.0, -0.5, 0.5, 1.0,
-                      _("Offset value added"))
+property_double (offset, _("Offset"), 0.0)
+    description (_("Offset value added"))
+    value_range (-0.5, 0.5)
 
-gegl_chant_double_ui (gamma, _("Gamma"),
-                      0.01, 10, 1.0, 0.01, 3.0, 1.0,
-                      _("Gamma correction"))
+property_double (gamma, _("Gamma correction"), 0.01)
+    value_range (0.01, 10)
+    ui_range    (0.01, 3.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "exposure.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "exposure.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include <math.h>
 #ifdef _MSC_VER
@@ -64,7 +64,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
   gfloat     *in_pixel;
   gfloat     *out_pixel;
 
@@ -131,11 +131,11 @@ cl_process (GeglOperation       *op,
             const GeglRectangle *roi,
             gint                 level)
 {
-  /* Retrieve a pointer to GeglChantO structure which contains all the
+  /* Retrieve a pointer to GeglProperties structure which contains all the
    * chanted properties
    */
 
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
 
   gfloat      gain = powf(2.0, o->exposure);
   gfloat      offset = o->offset;
@@ -167,7 +167,7 @@ cl_process (GeglOperation       *op,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *point_filter_class;

@@ -19,37 +19,38 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "/tmp/gegl-buffer.gegl", _("Path of GeglBuffer file to load."))
+property_file_path (path, _("File"), "/tmp/gegl-buffer.gegl")
+  description(_("Path of GeglBuffer file to load."))
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "gegl-buffer-load-op.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "gegl-buffer-load-op.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 
 static void
-gegl_buffer_load_op_ensure_buffer (GeglChantO *o)
+gegl_buffer_load_op_ensure_buffer (GeglProperties *o)
 {
-  if (!o->chant_data)
-    o->chant_data = gegl_buffer_load (o->path);
+  if (!o->user_data)
+    o->user_data = gegl_buffer_load (o->path);
 }
 
 static GeglRectangle
 gegl_buffer_load_op_get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle  result = { 0, 0, 0, 0 };
-  GeglChantO    *o      = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties    *o      = GEGL_PROPERTIES (operation);
 
   gegl_buffer_load_op_ensure_buffer (o);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      result.width  = gegl_buffer_get_width  (GEGL_BUFFER (o->chant_data));
-      result.height = gegl_buffer_get_height (GEGL_BUFFER (o->chant_data));
+      result.width  = gegl_buffer_get_width  (GEGL_BUFFER (o->user_data));
+      result.height = gegl_buffer_get_height (GEGL_BUFFER (o->user_data));
     }
 
   return result;
@@ -62,18 +63,18 @@ gegl_buffer_load_op_process (GeglOperation        *operation,
                              const GeglRectangle  *result,
                              gint                  level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   gegl_buffer_load_op_ensure_buffer (o);
 
-  gegl_operation_context_take_object (context, output_pad, o->chant_data);
-  o->chant_data = NULL;
+  gegl_operation_context_take_object (context, output_pad, o->user_data);
+  o->user_data = NULL;
 
   return TRUE;
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class;
 

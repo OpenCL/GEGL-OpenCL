@@ -20,22 +20,20 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (mask_radius, _("Mask radius"),
-                   0.0, 50.0, 7.0,
-                   _("Mask radius"))
+property_double (mask_radius, _("Mask radius"), 7.0)
+    value_range (0.0, 50.0)
 
-gegl_chant_double (pct_black, _("Percent black"),
-                   0.0, 1.0, 0.2,
-                   _("Percent black"))
+property_double (pct_black, _("Percent black"), 0.2)
+    value_range (0.0, 1.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_AREA_FILTER
-#define GEGL_CHANT_C_FILE "cartoon.c"
+#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_C_FILE "cartoon.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -217,7 +215,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO         *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties         *o = GEGL_PROPERTIES (operation);
   GeglBufferIterator *iter;
   GeglBuffer         *dest1;
   GeglBuffer         *dest2;
@@ -300,7 +298,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

@@ -22,24 +22,26 @@
 #define LOWEST_TEMPERATURE     1000
 #define HIGHEST_TEMPERATURE   12000
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (original_temperature, _("Original temperature"),
-                   LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500,
-                   _("Estimated temperature of the light source in Kelvin "
-                     "the image was taken with."))
+property_double (original_temperature, _("Original temperature"), 6500)
+  description(_("Estimated temperature of the light source in Kelvin "
+                "the image was taken with."))
+  value_range (LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE)
+  ui_meta     ("unit", "kelvin")
 
-gegl_chant_double (intended_temperature, _("Intended temperature"),
-                   LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE, 6500,
-                   _("Corrected estimation of the temperature of the light "
-                     "source in Kelvin."))
+property_double (intended_temperature, _("Intended temperature"), 6500)
+  description(_("Corrected estimation of the temperature of the light "
+                "source in Kelvin."))
+  value_range (LOWEST_TEMPERATURE, HIGHEST_TEMPERATURE)
+  ui_meta     ("unit", "kelvin")
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "color-temperature.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "color-temperature.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static const gfloat rgb_r55[3][12];
 
@@ -88,15 +90,15 @@ static void prepare (GeglOperation *operation)
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      g_free (o->chant_data);
-      o->chant_data = NULL;
+      g_free (o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static void
@@ -106,25 +108,25 @@ notify (GObject    *object,
   if (strcmp (pspec->name, "original-temperature") == 0 ||
       strcmp (pspec->name, "intended-temperature") == 0)
     {
-      GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+      GeglProperties *o = GEGL_PROPERTIES (object);
 
       /* one of the properties has changed,
        * invalidate the preprocessed coefficients
        */
-      if (o->chant_data)
+      if (o->user_data)
         {
-          g_free (o->chant_data);
-          o->chant_data = NULL;
+          g_free (o->user_data);
+          o->user_data = NULL;
         }
     }
 
-  if (G_OBJECT_CLASS (gegl_chant_parent_class)->notify)
-    G_OBJECT_CLASS (gegl_chant_parent_class)->notify (object, pspec);
+  if (G_OBJECT_CLASS (gegl_op_parent_class)->notify)
+    G_OBJECT_CLASS (gegl_op_parent_class)->notify (object, pspec);
 }
 
 
 static gfloat *
-preprocess (GeglChantO *o)
+preprocess (GeglProperties *o)
 {
   gfloat *coeffs = g_new (gfloat, 3);
   gfloat  original_temperature_rgb[3];
@@ -151,17 +153,17 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO   *o         = GEGL_CHANT_PROPERTIES (op);
+  GeglProperties   *o         = GEGL_PROPERTIES (op);
   gfloat       *in_pixel  = in_buf;
   gfloat       *out_pixel = out_buf;
-  const gfloat *coeffs    = o->chant_data;
+  const gfloat *coeffs    = o->user_data;
 
   in_pixel = in_buf;
   out_pixel = out_buf;
 
   if (! coeffs)
     {
-      coeffs = o->chant_data = preprocess (o);
+      coeffs = o->user_data = preprocess (o);
     }
 
   while (n_pixels--)
@@ -192,18 +194,18 @@ cl_process (GeglOperation       *op,
             const GeglRectangle *roi,
             int                  level)
 {
-  /* Retrieve a pointer to GeglChantO structure which contains all the
+  /* Retrieve a pointer to GeglProperties structure which contains all the
    * chanted properties
    */
 
-  GeglChantO   *o         = GEGL_CHANT_PROPERTIES (op);
-  const gfloat *coeffs    = o->chant_data;
+  GeglProperties   *o         = GEGL_PROPERTIES (op);
+  const gfloat *coeffs    = o->user_data;
 
   cl_int cl_err = 0;
 
   if (! coeffs)
     {
-      coeffs = o->chant_data = preprocess (o);
+      coeffs = o->user_data = preprocess (o);
     }
 
   if (!cl_data)
@@ -240,7 +242,7 @@ error:
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass                  *object_class;
   GeglOperationClass            *operation_class;

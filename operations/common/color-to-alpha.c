@@ -23,18 +23,17 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_color (color, _("Color"),
-                  "white",
-                  _("The color to render (defaults to 'white')"))
+property_color (color, _("Color"), "white")
+    description(_("The color to render (defaults to, and works best with, 'white')"))
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_FILTER
-#define GEGL_CHANT_C_FILE "color-to-alpha.c"
+#define GEGL_OP_POINT_FILTER
+#define GEGL_OP_C_FILE "color-to-alpha.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 
@@ -143,7 +142,7 @@ cl_process (GeglOperation       *operation,
             const GeglRectangle *roi,
             gint                level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gfloat      color[4];
   gegl_color_get_pixel (o->color, babl_format ("R'G'B'A float"), color);
 
@@ -192,7 +191,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o      = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
   const Babl *format = babl_format ("R'G'B'A float");
   gfloat      color[4];
   gint        x;
@@ -213,7 +212,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointFilterClass *filter_class;

@@ -20,56 +20,57 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_fractal_trace_type)
+enum_start (gegl_fractal_trace_type)
   enum_value (GEGL_FRACTAL_TRACE_TYPE_MANDELBROT, "Mandelbrot")
   enum_value (GEGL_FRACTAL_TRACE_TYPE_JULIA,      "Julia")
-gegl_chant_register_enum_end (GeglFractalTraceType)
+enum_end (GeglFractalTraceType)
 
-gegl_chant_enum   (fractal, _("Fractal type"),
-                   GeglFractalTraceType, gegl_fractal_trace_type,
-                   GEGL_FRACTAL_TRACE_TYPE_MANDELBROT, _("Type of a fractal"))
+property_enum (fractal, _("Fractal type"),
+               GeglFractalTraceType, gegl_fractal_trace_type,
+               GEGL_FRACTAL_TRACE_TYPE_MANDELBROT)
 
-gegl_chant_double (X1, _("X1"),
-                   -50.0, 50.0, -1.00,
-                   _("X1 value, position"))
-gegl_chant_double (X2, _("X2"),
-                   -50.0, 50.0, 0.50,
-                   _("X2 value, position"))
+property_double (X1, _("X1"), -1.0)
+  description   (_("X1 value, position"))
+  value_range   (-50.0, 50.0)
 
-gegl_chant_double (Y1, _("Y1"),
-                   -50.0, 50.0, -1.00,
-                   _("X2 value, position"))
-gegl_chant_double (Y2, _("Y2"),
-                   -50.0, 50.0, 1.00,
-                   _("Y2 value, position"))
+property_double (X2, _("X2"), 0.50)
+  description   (_("X2 value, position"))
+  value_range   (-50.0, 50.0)
 
-gegl_chant_double (JX, _("JX"),
-                   -50.0, 50.0, 0.5,
-                   _("Julia seed X value, position"))
-gegl_chant_double (JY, _("JY"),
-                   -50.0, 50.0, 0.5,
-                   _("Julia seed Y value, position"))
+property_double (Y1, _("Y1"), -1.0)
+  description   (_("Y1 value, position"))
+  value_range   (-50.0, 50.0)
 
-gegl_chant_int    (depth, _("Depth"),
-                   1, 65536, 3,
-                   _("Depth value"))
+property_double (Y2, _("Y2"), 1.0)
+  description   (_("Y@ value, position"))
+  value_range   (-50.0, 50.0)
 
-gegl_chant_double (bailout, _("Bailout"),
-                   0.0, G_MAXDOUBLE, G_MAXDOUBLE,
-                   _("Bailout length"))
+property_double (JX, _("JX"), 0.5)
+  description (_("Julia seed X value, position"))
+  value_range   (-50.0, 50.0)
 
-gegl_chant_enum   (abyss_policy, _("Abyss policy"),
-                   GeglAbyssPolicy, gegl_abyss_policy, GEGL_ABYSS_LOOP,
-                   _("How to deal with pixels outside of the input buffer"))
+property_double (JY, _("JY"), 0.5)
+  description (_("Julia seed Y value, position"))
+  value_range   (-50.0, 50.0)
+
+property_int    (depth, _("Depth"), 3)
+  value_range   (1, 65536)
+
+property_double (bailout, _("Bailout length"), G_MAXDOUBLE)
+  value_range   (0.0, G_MAXDOUBLE)
+
+property_enum   (abyss_policy, _("Abyss policy"),
+                   GeglAbyssPolicy, gegl_abyss_policy, GEGL_ABYSS_LOOP)
+  description   (_("How to deal with pixels outside of the input buffer"))
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "fractal-trace.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "fractal-trace.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <math.h>
 
 static void
@@ -116,7 +117,7 @@ fractaltrace (GeglBuffer            *input,
               const GeglRectangle   *picture,
               gfloat                *dst_buf,
               const GeglRectangle   *roi,
-              GeglChantO            *o,
+              GeglProperties            *o,
               gint                   y,
               GeglFractalTraceType  fractal_type,
               const Babl           *format)
@@ -191,7 +192,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties    *o = GEGL_PROPERTIES (operation);
   GeglRectangle  boundary;
   const Babl    *format;
   gfloat        *dst_buf;
@@ -236,7 +237,7 @@ get_required_for_output (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

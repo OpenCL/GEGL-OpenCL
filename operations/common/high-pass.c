@@ -19,19 +19,25 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double_ui (std_dev, _("Std. Dev."), 0.0, 10000.0, 4.0, 0.0, 1000.0,
-                      1.5, _("Standard deviation (spatial scale factor)"))
-gegl_chant_double_ui (contrast, _("Contrast"), 0.0, 5.0, 1.0,
-                      0.0, 5.0, 1.0, _("Contrast of high-pass"))
+property_double (std_dev, _("Std. Dev."), 4.0)
+    description (_("Standard deviation (spatial scale factor)"))
+    value_range (0.0, 10000.0)
+    ui_range (0.0, 1000.0)
+    ui_gamma (1.5)
+
+property_double (contrast, _("Contrast"), 1.0)
+    description(_("Contrast of high-pass"))
+    value_range (0.0, 5.0)
+    ui_range (0.0, 5.0)
 
 #else
 
-#define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE "high-pass.c"
+#define GEGL_OP_META
+#define GEGL_OP_C_FILE "high-pass.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 attach (GeglOperation *operation)
@@ -61,7 +67,7 @@ attach (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class;
 
