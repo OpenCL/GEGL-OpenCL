@@ -89,7 +89,7 @@ static void prepare (GeglOperation *operation)
 {
   const Babl *format;
 
-  if (GEGL_PROPERTIES (operation))
+  if (GEGL_PROPERTIES (operation)->srgb)
     format = babl_format ("R\'aG\'aB\'aA float");
   else
     format = babl_format ("RaGaBaA float");
