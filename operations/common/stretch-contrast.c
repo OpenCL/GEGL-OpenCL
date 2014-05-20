@@ -22,10 +22,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_boolean (keep_colors, _("Keep colors"),
-    "description", _("Impact each channel with the same amount"),
-    "default", TRUE,
-    NULL)
+property_boolean (keep_colors, _("Keep colors"), TRUE)
+    description(_("Impact each channel with the same amount"))
 
 #else
 

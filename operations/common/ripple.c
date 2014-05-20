@@ -29,38 +29,29 @@ enum_start (gegl_ripple_wave_type)
   enum_value (GEGL_RIPPLE_WAVE_TYPE_SAWTOOTH, "Sawtooth")
 enum_end (GeglRippleWaveType)
 
-gegl_property_double (amplitude, _("Amplitude"),
-    "default", 25.0, "min", 0.0, "max", 1000.0,
-    "ui-min", 0.0, "ui-max", 1000.0, "ui-gamma", 2.0,
-    NULL)
+property_double (amplitude, _("Amplitude"), 25.0)
+    value_range (0.0, 1000.0)
+    ui_gamma    (2.0)
 
-gegl_property_double (period, _("Period"),
-    "default", 200.0, "min", 0.0, "max", 1000.0,
-    "ui-min", 0.0, "ui-max", 1000.0, "ui-gamma", 1.5,
-    NULL)
+property_double (period, _("Period"), 200.0)
+    value_range (0.0, 1000.0)
+    ui_gamma    (1.5)
 
-gegl_property_double (phi, _("Phase shift"),
-    "min", -1.0, "max", 1.0,
-    NULL)
+property_double (phi, _("Phase shift"), 0.0)
+    value_range (-1.0, 1.0)
 
-gegl_property_double (angle, _("Angle"),
-    "min", -180.0, "max", 180.0,
-    "unit", "degree",
-    NULL)
+property_double (angle, _("Angle"), 0.0)
+    value_range (-180, 180)
+    ui_meta     ("unit", "degree")
 
-gegl_property_enum  (sampler_type, _("Resampling method"),
-    GeglSamplerType, gegl_sampler_type, 
-    "default", GEGL_SAMPLER_CUBIC,
-    NULL)
+property_enum  (sampler_type, _("Resampling method"),
+    GeglSamplerType, gegl_sampler_type, GEGL_SAMPLER_CUBIC)
 
-gegl_property_enum (wave_type, _("Wave type"),
-    GeglRippleWaveType, gegl_ripple_wave_type,
-    "default", GEGL_RIPPLE_WAVE_TYPE_SINE,
-    NULL)
+property_enum (wave_type, _("Wave type"),
+    GeglRippleWaveType, gegl_ripple_wave_type, GEGL_RIPPLE_WAVE_TYPE_SINE)
 
-gegl_property_boolean (tileable, _("Tileable"),
-    "description", _("Retain tilebility"),
-    NULL)
+property_boolean (tileable, _("Tileable"), FALSE)
+    description(_("Retain tilebility"))
 
 #else
 

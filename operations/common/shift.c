@@ -28,18 +28,16 @@ enum_start (gegl_shift_direction)
   enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "Vertical")
 enum_end (GeglShiftDirection)
 
-gegl_property_int  (shift, _("Shift"),
-    "description", _("Maximum amount to shift"),
-    "default", 5, "min", 0, "max", 200,
-    "unit", "pixel-distance",
-    NULL)
+property_int  (shift, _("Shift"), 5)
+    description(_("Maximum amount to shift"))
+    value_range (0, 200)
+    ui_meta    ("unit", "pixel-distance")
 
-gegl_property_enum (direction, _("Shift direction"),
+property_enum (direction, _("Shift direction"),
     GeglShiftDirection, gegl_shift_direction,
-    "default", GEGL_SHIFT_DIRECTION_HORIZONTAL,
-    NULL)
+    GEGL_SHIFT_DIRECTION_HORIZONTAL)
 
-gegl_property_seed (seed, _("Random seed"), rand, NULL)
+property_seed (seed, _("Random seed"), rand)
 
 #else
 

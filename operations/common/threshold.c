@@ -22,11 +22,10 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (value, _("Threshold"),
-    "description", _("Scalar threshold level (overriden if an auxiliary input buffer is provided.)."),
-    "default", 0.5, "min", -200.0, "max", 200.0,
-    "ui-min", -10.0, "ui-max", 10.0,
-    NULL)
+property_double (value, _("Threshold"), 0.5)
+    value_range (-200, 200)
+    ui_range    (-1, 2)
+    description(_("Scalar threshold level (overriden if an auxiliary input buffer is provided.)."))
 
 #else
 

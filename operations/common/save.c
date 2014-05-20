@@ -22,9 +22,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_file_path (path, _("File"), 
-    "description", _("Path of file to save."),
-    NULL)
+property_file_path (path, _("File"), "")
+    description(_("Path of file to save."))
 
 #else
 

@@ -527,7 +527,7 @@ set_property (GObject      *gobject,
     case PROP_##name:                                                 \
       properties->name = g_value_get_boolean (value);                 \
       break;
-#define property_file_path (name, label, def_val)                     \
+#define property_file_path(name, label, def_val)                      \
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
@@ -554,8 +554,20 @@ set_property (GObject      *gobject,
 #define property_path(name, label, def_val)                           \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
-         g_object_unref (properties->name);                           \
+        {                                                             \
+          if (properties->path_changed_handler)                       \
+            g_signal_handler_disconnect (G_OBJECT (properties->name), \
+                                         properties->path_changed_handler); \
+          properties->path_changed_handler = 0;                       \
+          g_object_unref (properties->name);                          \
+        }                                                             \
       properties->name = g_value_dup_object (value);                  \
+      if (properties->name != NULL)                                   \
+        {                                                             \
+          properties->path_changed_handler =                          \
+            g_signal_connect (G_OBJECT (properties->name), "changed", \
+                              G_CALLBACK(path_changed), gobject);     \
+         }                                                            \
       break;
 #define property_pointer(name, label, def_val)                        \
     case PROP_##name:                                                 \
@@ -1095,7 +1107,7 @@ gegl_op_class_intern_init (gpointer klass)
 #define property_string(name, label, def_val) \
     REGISTER_IF_ANY  \
   }{ GParamSpec *pspec = \
-       g_param_spec_string (#name, label, def_val, flags);\
+       g_param_spec_string (#name, label, NULL, def_val, flags);\
      current_prop = PROP_##name ;
 
 #define property_boolean(name, label, def_val) \
@@ -1110,10 +1122,10 @@ gegl_op_class_intern_init (gpointer klass)
        gegl_param_spec_file_path (#name, label, NULL, FALSE, FALSE, def_val, flags);\
      current_prop = PROP_##name ;
 
-#define property_object(name, label, def_val) \
+#define property_object(name, label, type) \
     REGISTER_IF_ANY  \
   }{ GParamSpec *pspec = \
-       g_param_spec_object (#name, label, NULL, flags);\
+       g_param_spec_object (#name, label, NULL, type, flags);\
      current_prop = PROP_##name ;
 
 #define property_curve(name, label, def_val) \
@@ -1131,7 +1143,7 @@ gegl_op_class_intern_init (gpointer klass)
 #define property_path(name, label, def_val) \
     REGISTER_IF_ANY  \
   }{ GParamSpec *pspec = \
-       gegl_param_spec_path (#name, label, NULL, flags);\
+       gegl_param_spec_path (#name, label, NULL, def_val, flags);\
      current_prop = PROP_##name ;
 
 #define property_pointer(name, label, def_val) \

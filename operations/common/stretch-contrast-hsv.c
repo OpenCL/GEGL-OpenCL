@@ -23,14 +23,14 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "stretch-contrast-hsv.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "stretch-contrast-hsv.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 typedef struct {
   gfloat slo;
@@ -184,7 +184,7 @@ operation_process (GeglOperation        *operation,
   const GeglRectangle *in_rect =
     gegl_operation_source_get_bounding_box (operation, "input");
 
-  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
 
   if (in_rect && gegl_rectangle_is_infinite_plane (in_rect))
     {
@@ -202,7 +202,7 @@ operation_process (GeglOperation        *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

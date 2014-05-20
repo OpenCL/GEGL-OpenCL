@@ -23,17 +23,16 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (radius, _("Radius"),
-    "description", _("Radius of square pixel region, (width and height will be radius*2+1)"),
-    "default", 8, "min",     0, "max",      100,
-    "ui-min",  0, "ui-max", 40, "ui-gamma", 1.5,
-    "unit", "  pixel-distance",
-    NULL)
+property_int (radius, _("Radius"), 8)
+    description(_("Radius of square pixel region, (width and height will be radius*2+1)"))
+    value_range (0, 100)
+    ui_range    (0, 40)
+    ui_gamma    (1.5)
+    ui_meta     ("unit", "pixel-distance")
 
-gegl_property_int (pairs, _("Pairs"),
-  "description", _("Number of pairs; higher number preserves more acute features"),
-  "default", 2, "min", 1, "max", 2,
-  NULL)
+property_int (pairs, _("Pairs"), 2)
+  description(_("Number of pairs; higher number preserves more acute features"))
+  value_range (1, 2)
 
 #else
 

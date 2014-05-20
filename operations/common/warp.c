@@ -20,9 +20,9 @@
 #include <glib/gi18n-lib.h>
 #include <math.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_register_enum (gegl_warp_behavior)
+enum_start (gegl_warp_behavior)
   enum_value (GEGL_WARP_BEHAVIOR_MOVE,      "Move pixels")
   enum_value (GEGL_WARP_BEHAVIOR_GROW,      "Grow area")
   enum_value (GEGL_WARP_BEHAVIOR_SHRINK,    "Shrink area")
@@ -30,32 +30,28 @@ gegl_chant_register_enum (gegl_warp_behavior)
   enum_value (GEGL_WARP_BEHAVIOR_SWIRL_CCW, "Swirl counter-clockwise")
   enum_value (GEGL_WARP_BEHAVIOR_ERASE,     "Erase warping")
   enum_value (GEGL_WARP_BEHAVIOR_SMOOTH,    "Smooth warping")
-gegl_chant_register_enum_end (GeglWarpBehavior)
+enum_end (GeglWarpBehavior)
 
-gegl_chant_double (strength, _("Strength"),
-                   0.0, 100.0, 50,
-                   _("Effect Strength"))
+property_double (strength, _("Strength"), 50)
+  value_range (0, 100)
 
-gegl_chant_double (size, _("Size"),
-                   1.0, 10000.0, 40.0,
-                   _("Effect Size"))
+property_double (size, _("Size"), 40.0)
+  value_range (1.0, 10000.0)
 
-gegl_chant_double (hardness, _("Hardness"),
-                   0.0, 1.0, 0.5,
-                   _("Effect Hardness"))
+property_double (hardness, _("Hardness"), 0.5)
+  value_range (0.0, 1.0)
 
-gegl_chant_path   (stroke, _("Stroke"),
-                   _("Effect Strength"))
+property_path   (stroke, _("Stroke"), NULL)
 
-gegl_chant_enum   (behavior, _("Behavior"),
+property_enum   (behavior, _("Behavior"),
                    GeglWarpBehavior, gegl_warp_behavior,
-                   GEGL_WARP_BEHAVIOR_MOVE,
-                   _("Behavior of the op"))
+                   GEGL_WARP_BEHAVIOR_MOVE)
+  description   (_("Behavior of the op"))
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "warp.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "warp.c"
 
 #include "gegl-plugin.h"
 #include "gegl-path.h"
@@ -63,7 +59,7 @@ gegl_chant_enum   (behavior, _("Behavior"),
 static void path_changed (GeglPath            *path,
                           const GeglRectangle *roi,
                           gpointer             userdata);
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 typedef struct {
   gdouble     *lookup;
@@ -79,7 +75,7 @@ path_changed (GeglPath            *path,
               gpointer             userdata)
 {
   GeglRectangle rect = *roi;
-  GeglChantO    *o   = GEGL_CHANT_PROPERTIES (userdata);
+  GeglProperties    *o   = GEGL_PROPERTIES (userdata);
   /* invalidate the incoming rectangle */
 
   rect.x -= o->size/2;
@@ -93,19 +89,19 @@ path_changed (GeglPath            *path,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO  *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties  *o = GEGL_PROPERTIES (operation);
   WarpPrivate *priv;
 
   const Babl *format = babl_format_n (babl_type ("float"), 2);
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
 
-  if (!o->chant_data)
+  if (!o->user_data)
     {
-      o->chant_data = g_slice_new (WarpPrivate);
+      o->user_data = g_slice_new (WarpPrivate);
     }
 
-  priv = (WarpPrivate*) o->chant_data;
+  priv = (WarpPrivate*) o->user_data;
   priv->last_point_set = FALSE;
   priv->lookup = NULL;
   priv->buffer = NULL;
@@ -114,15 +110,15 @@ prepare (GeglOperation *operation)
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      g_slice_free (WarpPrivate, o->chant_data);
-      o->chant_data = NULL;
+      g_slice_free (WarpPrivate, o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static gdouble
@@ -153,9 +149,9 @@ gauss (gdouble f)
 
 /* set up lookup table */
 static void
-calc_lut (GeglChantO  *o)
+calc_lut (GeglProperties  *o)
 {
-  WarpPrivate  *priv = (WarpPrivate*) o->chant_data;
+  WarpPrivate  *priv = (WarpPrivate*) o->user_data;
   gint          length;
   gint          x;
   gdouble       exponent;
@@ -176,11 +172,11 @@ calc_lut (GeglChantO  *o)
 }
 
 static gdouble
-get_stamp_force (GeglChantO *o,
+get_stamp_force (GeglProperties *o,
                  gdouble     x,
                  gdouble     y)
 {
-  WarpPrivate  *priv = (WarpPrivate*) o->chant_data;
+  WarpPrivate  *priv = (WarpPrivate*) o->user_data;
   gfloat        radius;
 
   if (!priv->lookup)
@@ -210,12 +206,12 @@ get_stamp_force (GeglChantO *o,
 }
 
 static void
-stamp (GeglChantO          *o,
+stamp (GeglProperties          *o,
        const GeglRectangle *result,
        gdouble              x,
        gdouble              y)
 {
-  WarpPrivate         *priv = (WarpPrivate*) o->chant_data;
+  WarpPrivate         *priv = (WarpPrivate*) o->user_data;
   GeglBufferIterator  *it;
   const Babl          *format;
   gdouble              influence;
@@ -341,8 +337,8 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO          *o = GEGL_CHANT_PROPERTIES (operation);
-  WarpPrivate         *priv = (WarpPrivate*) o->chant_data;
+  GeglProperties          *o = GEGL_PROPERTIES (operation);
+  WarpPrivate         *priv = (WarpPrivate*) o->user_data;
   gdouble              dist;
   gdouble              stamps;
   gdouble              spacing = MAX (o->size * 0.01, 0.5); /*1% spacing for starters*/
@@ -399,7 +395,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass               *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass         *operation_class = GEGL_OPERATION_CLASS (klass);

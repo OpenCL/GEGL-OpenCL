@@ -24,28 +24,25 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (radius, _("Radius"),
-    "description", _("Neighborhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime"),
-    "default", 300, "min", 2, "max", 5000,
-    "ui-min", 2, "ui-max", 2000, "ui-gamma", 1.0,
-    "unit", "pixel-distance",
-    NULL)
+property_int (radius, _("Radius"), 300)
+    description(_("Neighborhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime"))
+    value_range (2, 5000)
+    ui_range    (2, 2000)
+    ui_meta     ("unit", "pixel-distance")
 
-gegl_property_int (samples, _("Samples"),
-    "description", _("Number of samples to do per iteration looking for the range of colors"),
-    "default", 5, "min", 2, "max", 200,
-    "ui-min", 2, "ui-max", 10,
-    NULL)
+property_int (samples, _("Samples"), 5)
+    description(_("Number of samples to do per iteration looking for the range of colors"))
+    value_range (2, 200)
+    ui_range    (2, 10)
 
-gegl_property_int (iterations, _("Iterations"),
-    "description", _("Number of iterations, a higher number of iterations provides a less noisy rendering at a computational cost"),
-    "default", 5, "min", 1, "max", 200, 
-    "ui-min", 1, "ui-max", 10,
-    NULL)
+property_int (iterations, _("Iterations"), 5)
+    description(_("Number of iterations, a higher number of iterations provides a less noisy rendering at a computational cost"))
+    value_range (1, 200)
+    ui_range    (1, 10)
 
 /*
 
-gegl_property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
+property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
                 _("Gamma applied to radial distribution"))
 
 */

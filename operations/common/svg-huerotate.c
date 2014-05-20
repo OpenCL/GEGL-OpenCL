@@ -24,9 +24,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_string (values, _("Values"), 
-    "description", _("list of <number>s"),
-    NULL)
+property_string (values, _("Values"), "")
+    description(_("list of <number>s"))
 
 #else
 

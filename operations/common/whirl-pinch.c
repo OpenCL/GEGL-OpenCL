@@ -33,23 +33,19 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (whirl, _("Whirl"),
-    "description", _("Whirl angle (degrees)"),
-    "default", 90.0,
-    "ui-min", -720.0, "ui-max", 720.0,
-    "unit", "degree",
-    NULL)
+property_double (whirl, _("Whirl"), 90.0)
+    description (_("Whirl angle (degrees)"))
+    ui_range    (-720, 720)
+    ui_meta     ("unit", "degree")
 
-gegl_property_double (pinch, _("Pinch"),
-    "description", _("Pinch amount"),
-    "default", 0.0, "min", -1.0, "max", 1.0,
-    NULL)
+property_double (pinch, _("Pinch"), 0.0)
+    description (_("Pinch amount"))
+    value_range (-1.0, 1.0)
 
-gegl_property_double (radius, _("Radius"),
-    "description", _("Radius (1.0 is the largest circle that fits in the "
-               "image, and 2.0 goes all the way to the corners)"),
-    "default", 1.0, "min", 0.0, "max", 2.0,
-    NULL)
+property_double (radius, _("Radius"), 1.0)
+    description(_("Radius (1.0 is the largest circle that fits in the "
+               "image, and 2.0 goes all the way to the corners)"))
+    value_range (0.0, 2.0)
 
 #else
 

@@ -21,15 +21,15 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (offset_x, _("Horizontal offset"),
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
+property_int (offset_x, _("Horizontal offset"), 0)
+    ui_range (0, 1024)
+    ui_meta  ("unit", "pixel-coordinate")
+    ui_meta  ("axis", "x")
 
-gegl_property_int (offset_y, _("Vertical offset"),
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_int (offset_y, _("Vertical offset"), 0)
+    ui_range (0, 1024)
+    ui_meta  ("unit", "pixel-coordinate")
+    ui_meta  ("axis", "y")
 
 #else
 

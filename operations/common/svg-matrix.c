@@ -24,9 +24,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_string (values, _("Values"),
-    "description", _("list of <number>s"),
-    NULL)
+property_string (values, _("Values"), "")
+    description(_("list of <number>s"))
 
 #else
 
@@ -131,7 +130,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:svg-matrix",
     "categories" , "compositors:svgfilter",
-    "description", _("SVG color matrix operation svg_matrix"),
+    "description",_("SVG color matrix operation svg_matrix"),
     NULL);
 }
 

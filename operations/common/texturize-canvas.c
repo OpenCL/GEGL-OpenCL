@@ -31,18 +31,16 @@ enum_start (gegl_texturize_canvas_direction)
   enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_RIGHT, "Bottom-right")
 enum_end (GeglTexturizeCanvasDirection)
 
-gegl_property_enum (direction, _("Direction"),
+property_enum (direction, _("Direction"),
     GeglTexturizeCanvasDirection, gegl_texturize_canvas_direction,
-    "description", _("Position of the light source which lightens the canvas: "
-               "Top-right, Top-left, Bottom-left or Bottom-right"),
-    "default", GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT,
-    NULL)
+    GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT)
+    description(_("Position of the light source which lightens the canvas: "
+               "Top-right, Top-left, Bottom-left or Bottom-right"))
 
-gegl_property_int (depth, _("Depth"),
-    "description",  _("Apparent depth of the rendered canvas effect; "
-                "from 1 (very flat) to 50 (very deep)"),
-    "default", 4, "min", 1, "max", 50,
-    NULL)
+property_int (depth, _("Depth"), 4)
+    description (_("Apparent depth of the rendered canvas effect; "
+                "from 1 (very flat) to 50 (very deep)"))
+    value_range (1, 50)
 
 #else
 
@@ -4376,7 +4374,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "gegl:texturize-canvas",
     "categories" , "artistic",
     "license"    , "GPL3+",
-    "description", _("Textures the image as if it were an artist's canvas."),
+    "description",_("Textures the image as if it were an artist's canvas."),
     NULL);
 }
 
