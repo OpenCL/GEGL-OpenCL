@@ -22,23 +22,30 @@
 
 
 #ifdef GEGL_PROPERTIES
-property_int    (epsilon, _("Epsilon"),
-                  -9, -1, -6,
-                  _("Log of the error weighting"))
-property_int    (radius, _("Radius"),
-                  1, 3, 1,
-                  _("Radius of the processing window"))
-property_double (threshold, _("Threshold"),
-                  0.0, 0.1, 0.02,
-                  _("Alpha threshold for multilevel processing"))
-property_double (lambda, _("Lambda"),
-                  0.0, 100.0, 100.0, _("Trimap influence factor"))
-property_int    (levels, _("Levels"),
-                   0, 8, 4,
-                   _("Number of downsampled levels to use"))
-property_int    (active_levels, _("Active Levels"),
-                   0, 8, 2,
-                   _("Number of levels to perform solving"))
+property_int   (epsilon, _("Epsilon"), -6)
+   description (_("Log of the error weighting"))
+   value_range (-9, -1)
+
+property_int    (radius, _("Radius"), 1)
+   description  (_("Radius of the processing window"))
+   value_range  (1, 3)
+
+property_double (threshold, _("Threshold"), 0.02)
+   description  (_("Alpha threshold for multilevel processing"))
+   value_range  (0.0, 0.1)
+
+property_double (lambda, _("Lambda"), 100.0)
+   value_range  (0.0, 100.0)
+   description  (_("Trimap influence factor"))
+
+property_int    (levels, _("Levels"), 4)
+   description  (_("Number of downsampled levels to use"))
+   value_range  (0, 8)
+
+property_int    (active_levels, _("Active Levels"), 2)
+   description  (_("Number of levels to perform solving"))
+   value_range  (0, 8)
+
 #else
 
 #define GEGL_OP_COMPOSER
