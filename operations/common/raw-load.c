@@ -23,10 +23,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_file_path (path, _("File"),
-    "description", _("Path of file to load."),
-    "default", "/tmp/test.raw",
-    NULL)
+property_file_path (path, _("File"), "/tmp/test.raw")
+    description(_("Path of file to load."))
 
 #else
 

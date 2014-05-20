@@ -22,9 +22,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_string(path, _("File"),
-    "description", _("a GeglBuffer on disk to open"),
-    NULL)
+property_string (path, _("File"), "")
+    description (_("a GeglBuffer on disk to open"))
 
 #else
 

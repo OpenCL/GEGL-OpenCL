@@ -20,23 +20,23 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (start_x,      _("X1"), G_MININT, G_MAXINT, 25.0, "")
-gegl_chant_double (start_y,      _("Y1"), G_MININT, G_MAXINT, 25.0, "")
-gegl_chant_double (end_x,        _("X2"), G_MININT, G_MAXINT, 50.0, "")
-gegl_chant_double (end_y,        _("Y2"), G_MININT, G_MAXINT, 50.0, "")
-gegl_chant_color  (start_color,  _("Start Color"), "black",
-                                 _("The color at (x1, y1)"))
-gegl_chant_color  (end_color,    _("End Color"), "white",
-                                 _("The color at (x2, y2)"))
+property_double (start_x, _("X1"), 25.0)
+property_double (start_y, _("Y1"), 25.0)
+property_double (end_x,   _("X2"), 50.0)
+property_double (end_y,   _("Y2"), 50.0)
+property_color  (start_color, _("Start Color"), "black")
+    description (_("The color at (x1, y1)"))
+property_color  (end_color, _("End Color"), "white")
+    description (_("The color at (x2, y2)"))
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_RENDER
-#define GEGL_CHANT_C_FILE "radial-gradient.c"
+#define GEGL_OP_POINT_RENDER
+#define GEGL_OP_C_FILE "radial-gradient.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include <math.h>
 
@@ -68,11 +68,11 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  gfloat     *out_pixel = out_buf;
-  gfloat      color1[4];
-  gfloat      color2[4];
-  gfloat      length = dist (o->start_x, o->start_y, o->end_x, o->end_y);
+  GeglProperties *o         = GEGL_PROPERTIES (operation);
+  gfloat         *out_pixel = out_buf;
+  gfloat         color1[4];
+  gfloat         color2[4];
+  gfloat         length = dist (o->start_x, o->start_y, o->end_x, o->end_y);
 
   gegl_color_get_pixel (o->start_color, babl_format ("R'G'B'A float"), color1);
   gegl_color_get_pixel (o->end_color, babl_format ("R'G'B'A float"), color2);
@@ -107,18 +107,18 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
   GeglOperationPointRenderClass *point_render_class;
 
-  operation_class = GEGL_OPERATION_CLASS (klass);
+  operation_class    = GEGL_OPERATION_CLASS (klass);
   point_render_class = GEGL_OPERATION_POINT_RENDER_CLASS (klass);
 
-  point_render_class->process = process;
+  point_render_class->process       = process;
   operation_class->get_bounding_box = get_bounding_box;
-  operation_class->prepare = prepare;
-  operation_class->no_cache = TRUE;
+  operation_class->prepare          = prepare;
+  operation_class->no_cache         = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:radial-gradient",

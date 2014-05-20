@@ -21,11 +21,10 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (levels, _("Levels"),
-    "description", _("number of levels per component"),
-    "default", 8, "min",    1,  "max",      64,
-    "ui-min",  1, "ui-max", 64, "ui-gamma", 2.0,
-    NULL)
+property_int  (levels, _("Levels"), 8)
+  description (_("number of levels per component"))
+  value_range (1, 64)
+  ui_gamma    (2.0)
 
 #else
 

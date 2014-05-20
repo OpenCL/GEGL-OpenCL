@@ -31,15 +31,13 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (pct_random, _("Randomization (%)"),
-    "default", 50.0, "min", 0.0, "max", 100.0,
-    NULL)
+property_double (pct_random, _("Randomization (%)"), 50.0)
+    value_range (0.0, 100.0)
 
-gegl_property_int (repeat, _("Repeat"),
-    "default", 1, "min", 1, "max", 100,
-    NULL)
+property_int    (repeat, _("Repeat"), 1)
+    value_range (1, 100)
 
-gegl_property_seed (seed, _("Random seed"), rand, NULL)
+property_seed (seed, _("Random seed"), rand)
 
 #else
 

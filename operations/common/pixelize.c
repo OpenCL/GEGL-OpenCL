@@ -29,45 +29,39 @@ enum_start (gegl_pixelize_norm)
   enum_value (GEGL_PIXELIZE_NORM_INFINITY,  "Square")
 enum_end (GeglPixelizeNorm)
 
-gegl_property_enum (norm, _("Shape"),
-    GeglPixelizeNorm, gegl_pixelize_norm,
-    "description", _("The shape of pixels"),
-    "default", GEGL_PIXELIZE_NORM_INFINITY,
-    NULL)
+property_enum   (norm, _("Shape"),
+    GeglPixelizeNorm, gegl_pixelize_norm, GEGL_PIXELIZE_NORM_INFINITY)
+    description (_("The shape of pixels"))
 
-gegl_property_int (size_x, _("Block width"),
-    "description", _("Width of blocks in pixels"),
-    "min", 1, "default", 16,
-    "ui-min", 1, "ui-max", 2048, "ui-gamma", 1.5,
-    "unit", "pixel-distance",
-    "axis", "x",
-    NULL)
+property_int    (size_x, _("Block width"), 16)
+    description (_("Width of blocks in pixels"))
+    value_range (1, G_MAXINT)
+    ui_range    (1, 2048)
+    ui_gamma    (1.5)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "x")
 
-gegl_property_int (size_y, _("Block height"),
-    "description", _("Width of blocks in pixels"),
-    "min", 1, "default", 16,
-    "ui-min", 1, "ui-max", 2048, "ui-gamma", 1.5,
-    "unit", "pixel-distance",
-    "axis", "y",
-    NULL)
+property_int    (size_y, _("Block height"), 16)
+    description (_("Height of blocks in pixels"))
+    value_range (1, G_MAXINT)
+    ui_range    (1, 2048)
+    ui_gamma    (1.5)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "y")
 
-gegl_property_double (ratio_x, _("X size ratio"),
-    "description", _("Horizontal size ratio of a pixel inside each block"),
-    "default", 1.0, "min", 0.0, "max", 1.0,
-    "axis", "x",
-    NULL)
+property_double (ratio_x, _("X size ratio"), 1.0)
+    description (_("Horizontal size ratio of a pixel inside each block"))
+    value_range (0.0, 1.0)
+    ui_meta     ("axis", "x")
 
-gegl_property_double (ratio_y, _("Y size ratio"),
-    "description", _("Vertical size ratio of a pixel inside each block"),
-    "default", 1.0, "min", 0.0, "max", 1.0,
-    "axis", "y",
-    NULL)
+property_double (ratio_y, _("Y size ratio"), 1.0)
+    description (_("Vertical size ratio of a pixel inside each block"))
+    value_range (0.0, 1.0)
+    ui_meta     ("axis", "y")
 
-gegl_property_color  (background, _("Background color"),
-    "description", _("Color used to fill the background"),
-    "default", "white",
-    "role", "color-secondary",
-    NULL)
+property_color  (background, _("Background color"), "white")
+    description (_("Color used to fill the background"))
+    ui_meta     ("role", "color-secondary")
 
 #else
 

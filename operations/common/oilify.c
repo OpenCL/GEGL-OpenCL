@@ -24,25 +24,20 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_int (mask_radius, _("Mask Radius"),
-    "description", _("Radius of circle around pixel"),
-    "default", 4, "min", 1, "max", 25,
-    "unit", "pixel-distance",
-    NULL)
+property_int    (mask_radius, _("Mask Radius"), 4)
+    description (_("Radius of circle around pixel"))
+    value_range (1, 25)
+    ui_meta     ("unit", "pixel-distance")
 
-gegl_property_int (exponent, _("Exponent"),
-    "default", 8, "min", 1, "max", 20,
-    NULL)
+property_int    (exponent, _("Exponent"), 8)
+    value_range (1, 20)
 
-gegl_property_int (intensities, _("Number of intensities"),
-    "description", _("Histogram size"),
-    "default", 128, "min", 8, "max", 256,
-    NULL)
+property_int (intensities, _("Number of intensities"), 128)
+    description(_("Histogram size"))
+    value_range (8, 256)
 
-gegl_property_boolean (use_inten, _("Intensity Mode"),
-    "description", _("Use pixel luminance values"),
-    "default", TRUE,
-    NULL)
+property_boolean (use_inten, _("Intensity Mode"), TRUE)
+    description(_("Use pixel luminance values"))
 
 #else
 
@@ -479,7 +474,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
                                  "categories" , "artistic",
                                  "name"       , "gegl:oilify",
-                                 "description", _("Emulate an oil painting"),
+                                 "description",_("Emulate an oil painting"),
                                  NULL);
 }
 #endif

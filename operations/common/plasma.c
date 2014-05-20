@@ -33,46 +33,41 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (turbulence, _("Turbulence"),
-    "description", _("High values give more variation in details"),
-    "default", 1.0, "min", 0.0, "max", 7.0,
-    NULL)
+property_double (turbulence, _("Turbulence"), 1.0)
+    description (_("High values give more variation in details"))
+    value_range (0.0, 7.0)
 
-gegl_property_int (x, _("X"),
-    "description", _("X start of the generated buffer"),
-    "ui-min", -4096, "ui-max",  4096,
-    "unit",  "pixel-coordinate",
-    "axis",  "x",
-    "role",  "output-extent",
-    NULL)
+property_int   (x, _("X"), 0)
+    description(_("X start of the generated buffer"))
+    ui_range   (-4096, 4096)
+    ui_meta    ("unit", "pixel-coordinate")
+    ui_meta    ("axis", "x")
+    ui_meta    ("role", "output-extent")
 
-gegl_property_int (y, _("Y"),
-    "description", _("Y start of the generated buffer"),
-    "ui-min", -4096, "ui-max",  4096,
-    "unit",  "pixel-coordinate",
-    "axis",  "y",
-    "role",  "output-extent",
-    NULL)
+property_int   (y, _("Y"), 0)
+    description(_("Y start of the generated buffer"))
+    ui_range   (-4096, 4096)
+    ui_meta    ("unit", "pixel-coordinate")
+    ui_meta    ("axis", "y")
+    ui_meta    ("role", "output-extent")
 
-gegl_property_int (width, _("Width"),
-    "description", _("Width of the generated buffer"),
-    "default", 1024, "min", 0,
-    "ui-min",  0, "ui-max",  4096,
-    "unit",  "pixel-distance",
-    "axis",  "x",
-    "role",  "output-extent",
-    NULL)
+property_int    (width, _("Width"), 1024)
+    description (_("Width of the generated buffer"))
+    value_range (0, G_MAXINT)
+    ui_range    (0, 4096)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "x")
+    ui_meta     ("role", "output-extent")
 
-gegl_property_int (height, _("Height"),
-    "description", _("Height of the generated buffer"),
-    "default", 768, "min",       0,
-    "ui-min",    0, "ui-max", 4096,
-    "unit",  "pixel-distance",
-    "axis",  "y",
-    "role",  "output-extent",
-    NULL)
+property_int (height, _("Height"), 768)
+    description(_("Height of the generated buffer"))
+    value_range (0, G_MAXINT)
+    ui_range    (0, 4096)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "y")
+    ui_meta     ("role", "output-extent")
 
-gegl_property_seed (seed, _("Random seed"), rand, NULL)
+property_seed (seed, _("Random seed"), rand)
 
 #else
 

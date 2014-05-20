@@ -20,22 +20,21 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_boolean (srgb, _("sRGB"),
-                    FALSE,
-                    _("Use sRGB gamma instead of linear"))
+property_boolean (srgb, _("sRGB"), FALSE)
+    description (_("Use sRGB gamma instead of linear"))
 
 #else
 
-#define GEGL_CHANT_TYPE_POINT_COMPOSER
-#define GEGL_CHANT_C_FILE        "over.c"
+#define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_C_FILE        "over.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   const Babl *format;
 
@@ -125,7 +124,7 @@ static gboolean operation_process (GeglOperation        *operation,
 {
   GeglOperationClass  *operation_class;
   gpointer input, aux;
-  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
 
   /* get the raw values this does not increase the reference count */
   input = gegl_operation_context_get_object (context, "input");
@@ -164,7 +163,7 @@ static gboolean operation_process (GeglOperation        *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass              *operation_class;
   GeglOperationPointComposerClass *point_composer_class;

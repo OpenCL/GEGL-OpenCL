@@ -23,36 +23,30 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (x, _("X"),
-    "description", _("Horizontal position"),
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
+property_double (x, _("X"), 0)
+    description(_("Horizontal position"))
+    ui_meta    ("unit", "pixel-coordinate")
+    ui_meta    ("axis", "x")
 
-gegl_property_double (y, _("Y"),
-    "description", _("Vertical position"),
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_double (y, _("Y"), 0)
+    description(_("Vertical position"))
+    ui_meta    ("unit", "pixel-coordinate")
+    ui_meta    ("axis", "y")
 
-gegl_property_double (width, _("Width"),
-    "description", _("Horizontal extent"),
-    "min", 0.0, "max", G_MAXDOUBLE,
-    "unit", "pixel-distance",
-    "axis", "x",
-    NULL)
+property_double (width, _("Width"), 0)
+    description (_("Horizontal extent"))
+    value_range (0, G_MAXDOUBLE)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "x")
 
-gegl_property_double (height, _("Height"),
-    "description", _("Vertical extent"),
-    "min", 0.0, "max", G_MAXDOUBLE,
-    "unit", "pixel-distance",
-    "axis", "y",
-    NULL)
+property_double (height, _("Height"), 0)
+    description (_("Vertical extent"))
+    value_range (0, G_MAXDOUBLE)
+    ui_meta     ("unit", "pixel-distance")
+    ui_meta     ("axis", "y")
 
-gegl_property_color(color, _("Color"),
-    "description", _("Color to render"),
-    "default", "white",
-    NULL)
+property_color  (color, _("Color"), "white")
+    description (_("Color to render"))
 
 #else
 

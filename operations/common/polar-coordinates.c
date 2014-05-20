@@ -31,46 +31,37 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_property_double (depth, _("Circle depth in percent"),
-    "min", 0.0, "max", 100.0, "default", 100.0,
-    NULL)
+property_double (depth, _("Circle depth in percent"), 100.0)
+  value_range (0.0, 100.0)
+  ui_meta     ("unit", "percent")
 
-gegl_property_double  (angle, _("Offset angle"),
-    "min", 0.0, "max", 359.9, 
-    NULL)
+property_double (angle, _("Offset angle"), 0.0)
+  value_range   (0.0, 360.0)
+  ui_meta       ("unit", "degree")
 
-gegl_property_boolean (bw, _("Map backwards"),
-    "description", _("Start from the right instead of the left"),
-    NULL)
+property_boolean (bw, _("Map backwards"), FALSE)
+  description    (_("Start from the right instead of the left"))
 
-gegl_property_boolean (top, _("Map from top"),
-  "description", _("Put the top row in the middle and the bottom row on the outside"),
-  "default", TRUE,
-  NULL)
+property_boolean (top, _("Map from top"), TRUE)
+  description    (_("Put the top row in the middle and the bottom row on the outside"))
 
-gegl_property_boolean (polar, _("To polar"),
-    "description", _("Map the image to a circle"),
-    "default", TRUE,
-    NULL)
+property_boolean (polar, _("To polar"), TRUE)
+  description    (_("Map the image to a circle"))
 
-gegl_property_int (pole_x, _("X"),
-    "description", _("Origin point for the polar coordinates"),
-    "min", 0, "max", G_MAXINT,
-    "unit", "pixel-coordinate",
-    "axis", "x",
-    NULL)
+property_int  (pole_x, _("X"), 0)
+  description (_("Origin point for the polar coordinates"))
+  value_range (0, G_MAXINT)
+  ui_meta     ("unit", "pixel-coordinate")
+  ui_meta     ("axis", "x")
 
-gegl_property_int (pole_y, _("Y"),
-    "description", _("Origin point for the polar coordinates"),
-    "min", 0, "max", G_MAXINT,
-    "unit", "pixel-coordinate",
-    "axis", "y",
-    NULL)
+property_int  (pole_y, _("Y"), 0)
+  description (_("Origin point for the polar coordinates"))
+  value_range (0, G_MAXINT)
+  ui_meta     ("unit", "pixel-coordinate")
+  ui_meta     ("axis", "y")
 
-gegl_property_boolean (middle, _("Choose middle"),
-    "description", _("Let origin point to be the middle one"),
-    "default", TRUE,
-    NULL)
+property_boolean (middle, _("Choose middle"), TRUE)
+  description(_("Let origin point to be the middle one"))
 
 #else
 
