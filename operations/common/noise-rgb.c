@@ -30,15 +30,20 @@ property_boolean (correlated, _("Correlated noise"), FALSE)
 property_boolean (independent, _("Independent RGB"), TRUE)
 
 property_double (red, _("Red"), 0.20)
+   value_range  (0.0, 1.0)
    ui_range     (0.0, 1.0)
+   ui_steps     (0.01, 0.1)
 
 property_double (green, _("Green"), 0.20)
+   value_range  (0.0, 1.0)
    ui_range     (0.0, 1.0)
 
 property_double (blue, _("Blue"), 0.20)
+   value_range  (0.0, 1.0)
    ui_range     (0.0, 1.0)
 
 property_double (alpha, _("Alpha"), 0.0)
+   value_range  (0.0, 1.0)
    ui_range     (0.0, 1.0)
 
 property_seed (seed, _("Random seed"), rand)
