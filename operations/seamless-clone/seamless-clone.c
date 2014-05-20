@@ -17,25 +17,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
-                _("Maximal amount of refinement points to be used for the interpolation mesh"))
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_int (xoff, _("X offset"), -100000, 100000, 0,
-                _("How much horizontal offset should applied to the paste"))
+property_int (max_refine_steps, _("Refinement Steps"), 2000)
+  description (_("Maximal amount of refinement points to be used for the interpolation mesh"))
+  value_range (0, 100000)
 
-gegl_chant_int (yoff, _("Y offset"), -100000, 100000, 0,
-                _("How much vertical offset should applied to the paste"))
+property_int (xoff, _("X offset"), 0)
+  description (_("How much horizontal offset should applied to the paste"))
+  value_range (-100000, 100000)
+  ui_meta     ("unit", "pixel-coordinate")
+  ui_meta     ("axis", "x")
 
-gegl_chant_string (error_msg, _("Error message"), "", _("An error message in case of a failure"))
+property_int (yoff, _("Y offset"), 0)
+  description (_("How much horizontal offset should applied to the paste"))
+  value_range (-100000, 100000)
+  ui_meta     ("unit", "pixel-coordinate")
+  ui_meta     ("axis", "y")
+
+property_string (error_msg, _("Error message"), "")
+  description (_("An error message in case of a failure"))
+
 #else
 
-#define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "seamless-clone.c"
+#define GEGL_OP_COMPOSER
+#define GEGL_OP_C_FILE       "seamless-clone.c"
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include "sc-context.h"
 #include "sc-common.h"
@@ -79,17 +89,17 @@ static void
 prepare (GeglOperation *operation)
 {
   const Babl *format = babl_format (GEGL_SC_COLOR_BABL_NAME);
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   SCProps *props;
 
-  if ((props = (SCProps*) o->chant_data) == NULL)
+  if ((props = (SCProps*) o->user_data) == NULL)
     {
       props = g_slice_new (SCProps);
       g_mutex_init (&props->mutex);
       props->first_processing = TRUE;
       props->is_valid = FALSE;
       props->context = NULL;
-      o->chant_data = props;
+      o->user_data = props;
     }
   props->first_processing = TRUE;
   props->is_valid = FALSE;
@@ -101,17 +111,17 @@ prepare (GeglOperation *operation)
 static void finalize (GObject *object)
 {
   GeglOperation *op = (void*) object;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (op);
-  if (o->chant_data)
+  GeglProperties *o = GEGL_PROPERTIES (op);
+  if (o->user_data)
     {
-      SCProps *props = (SCProps*) o->chant_data;
+      SCProps *props = (SCProps*) o->user_data;
       g_mutex_clear (&props->mutex);
       if (props->context)
         gegl_sc_context_free (props->context);
       g_slice_free (SCProps, props);
-      o->chant_data = NULL;
+      o->user_data = NULL;
     }
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static gboolean
@@ -123,12 +133,12 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   gboolean  return_val;
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   SCProps *props;
   GeglScCreationError error;
   GeglScRenderInfo info;
 
-  g_assert (o->chant_data != NULL);
+  g_assert (o->user_data != NULL);
 
   info.bg = input;
   info.bg_rect = *gegl_operation_source_get_bounding_box (operation, "input");
@@ -138,7 +148,7 @@ process (GeglOperation       *operation,
   info.yoff = o->yoff;
   info.render_bg = FALSE;
 
-  props = (SCProps*) o->chant_data;
+  props = (SCProps*) o->user_data;
 
   g_mutex_lock (&props->mutex);
   if (props->first_processing)
@@ -195,7 +205,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class = GEGL_OPERATION_CLASS (klass);
   GeglOperationComposerClass *composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);

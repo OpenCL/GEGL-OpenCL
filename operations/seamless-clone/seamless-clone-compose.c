@@ -17,25 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_int (max_refine_steps, _("Refinement Steps"), 0, 100000.0, 2000,
-                _("Maximal amount of refinement points to be used for the interpolation mesh"))
+#ifdef GEGL_PROPERTIES
+property_int (max_refine_steps, _("Refinement Steps"), 2000)
+  description(_("Maximal amount of refinement points to be used for the interpolation mesh"))
+  value_range (0, 100000)
 
-gegl_chant_int (xoff, _("X offset"), -100000, 100000, 0,
-                _("How much horizontal offset should applied to the paste"))
+property_int (xoff, _("X offset"), 0)
+  description (_("How much horizontal offset should applied to the paste"))
+  value_range (0, 100000)
+  ui_meta     ("axis", "x")
+  ui_meta     ("unit", "pixel-coordinate")
 
-gegl_chant_int (yoff, _("Y offset"), -100000, 100000, 0,
-                _("How much vertical offset should applied to the paste"))
+property_int (yoff, _("Y offset"), 0)
+  description(_("How much vertical offset should applied to the paste"))
+  value_range (0, 100000)
+  ui_meta     ("axis", "y")
+  ui_meta     ("unit", "pixel-coordinate")
 
-gegl_chant_string (error_msg, _("Error message"), "", _("An error message in case of a failure"))
+property_string (error_msg, _("Error message"), "")
+  description (_("An error message in case of a failure"))
+
 #else
 
-#define GEGL_CHANT_TYPE_META
-#define GEGL_CHANT_C_FILE       "seamless-clone-compose.c"
+#define GEGL_OP_META
+#define GEGL_OP_C_FILE       "seamless-clone-compose.c"
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 static void
 attach (GeglOperation *operation)
@@ -81,7 +90,7 @@ attach (GeglOperation *operation)
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass  *operation_class = GEGL_OPERATION_CLASS (klass);
 
