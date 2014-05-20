@@ -20,19 +20,19 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Target file path."))
+property_file_path (path, _("File"), "", _("Target file path."))
 
-gegl_chant_int    (quality, _("Quality"), 1, 100, 90,
+property_int    (quality, _("Quality"), 1, 100, 90,
                    _("WebP compression quality"))
 
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "webp-save.c"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_FILE       "webp-save.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <webp/encode.h>
 #include <stdio.h>
 
@@ -51,7 +51,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   const GeglRectangle *bounds = gegl_buffer_get_extent (input);
 
   FILE* file;
@@ -97,7 +97,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass     *operation_class;
   GeglOperationSinkClass *sink_class;

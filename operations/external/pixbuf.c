@@ -20,23 +20,23 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_pointer (pixbuf, _("Pixbuf"), _("GdkPixbuf to use"))
+property_pointer (pixbuf, _("Pixbuf"), _("GdkPixbuf to use"))
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "pixbuf.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "pixbuf.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixdata.h>
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle result = {0,0,0,0};
 
   if (!o->pixbuf)
@@ -53,7 +53,7 @@ get_bounding_box (GeglOperation *operation)
 
 static void prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gegl_operation_set_format (operation, "output",
       babl_format(gdk_pixbuf_get_has_alpha(o->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
 }
@@ -64,7 +64,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->pixbuf)
     {
@@ -83,7 +83,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

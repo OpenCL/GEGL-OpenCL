@@ -23,17 +23,17 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_pointer (pixbuf, _("Pixbuf location"),
+property_pointer (pixbuf, _("Pixbuf location"),
                     _("The location where to store the output GdkPixbuf."))
 
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "save-pixbuf.c"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_FILE       "save-pixbuf.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
 static gboolean
@@ -42,7 +42,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (o->pixbuf)
     {
@@ -89,7 +89,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass     *operation_class;
   GeglOperationSinkClass *sink_class;

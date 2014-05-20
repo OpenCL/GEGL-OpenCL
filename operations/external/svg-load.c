@@ -20,21 +20,23 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "",
-                 _("Path to SVG file to load"))
-gegl_chant_int (width,  _("Width"),  -1, G_MAXINT, -1,
-                _("Width for rendered image"))
-gegl_chant_int (height, _("Height"), -1, G_MAXINT, -1,
-                _("Height for rendered image"))
+property_file_path (path, _("File"), "")
+    description    (_("Path to SVG file to load"))
+
+property_int (width,  _("Width"),  -1)
+    description (_("Width for rendered image"))
+
+property_int (height, _("Height"), -1)
+    description (_("Height for rendered image"))
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "svg-load.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "svg-load.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <cairo.h>
 #include <librsvg/rsvg.h>
 
@@ -103,7 +105,7 @@ gegl_buffer_import_svg (GeglBuffer  *gegl_buffer,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o      = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o      = GEGL_PROPERTIES (operation);
   gint          width  = o->width;
   gint          height = o->height;
 
@@ -141,7 +143,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result_foo,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gint        result;
   gint        width, height;
 
@@ -161,7 +163,7 @@ process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

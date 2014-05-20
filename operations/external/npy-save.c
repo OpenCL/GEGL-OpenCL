@@ -26,17 +26,17 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "",
-                      _("Target path and filename, use '-' for stdout."))
+property_file_path (path, _("File"), "")
+    description (_("Target path and filename, use '-' for stdout."))
 
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "npy-save.c"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_FILE       "npy-save.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 
 static int npywrite_header(FILE *fp, int width, int height, int num_channels)
@@ -71,7 +71,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *rect,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   FILE     *fp;
   guchar   *data;
@@ -126,7 +126,7 @@ process (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass     *operation_class;
   GeglOperationSinkClass *sink_class;

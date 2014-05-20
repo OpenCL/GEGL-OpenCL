@@ -20,21 +20,22 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
+property_file_path (path, _("File"), "")
+   description     (_("Path of file to load."))
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "ppm-load.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "ppm-load.c"
 
 #define MAX_CHARS_IN_ROW        500
 #define CHANNEL_COUNT           3
 #define CHANNEL_COUNT_GRAY      1
 #define ASCII_P                 'P'
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -218,7 +219,7 @@ ppm_load_read_image(FILE       *fp,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle result = {0,0,0,0};
   pnm_struct    img;
   FILE         *fp;
@@ -268,7 +269,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   FILE         *fp;
   pnm_struct    img;
   GeglRectangle rect = {0,0,0,0};
@@ -363,7 +364,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

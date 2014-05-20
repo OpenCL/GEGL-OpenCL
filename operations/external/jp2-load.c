@@ -20,16 +20,17 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Path of file to load"))
+property_file_path (path, _("File"), "")
+  description (_("Path of file to load"))
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "jp2-load.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "jp2-load.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <jasper/jasper.h>
 
@@ -170,7 +171,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle rect = {0,0,0,0};
   jas_image_t *image;
   gint width, height, depth;
@@ -339,7 +340,7 @@ process (GeglOperation       *operation,
 static GeglRectangle
 get_bounding_box (GeglOperation * operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle result = { 0, 0, 0, 0 };
   gint width, height, depth;
 
@@ -378,7 +379,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

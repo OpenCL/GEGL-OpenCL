@@ -20,18 +20,18 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_string  (window_title, _(""), "window_title",
-                    _("Title to be given to output window"))
-gegl_chant_string  (icon_title, _(""), "icon_title",
-                    _("Icon to be used for output window"))
+property_string (window_title, _(""), "window_title")
+    description (_("Title to be given to output window"))
+property_string (icon_title, _(""), "icon_title")
+    description (_("Icon to be used for output window"))
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "sdl-display.c"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_FILE       "sdl-display.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <SDL.h>
 
 typedef struct {
@@ -81,12 +81,12 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   SDLState     *state = NULL;
 
-  if(!o->chant_data)
-      o->chant_data = g_new0 (SDLState, 1);
-  state = o->chant_data;
+  if(!o->user_data)
+      o->user_data = g_new0 (SDLState, 1);
+  state = o->user_data;
 
   init_sdl ();
 
@@ -139,19 +139,19 @@ process (GeglOperation       *operation,
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      g_free (o->chant_data);
-      o->chant_data = NULL;
+      g_free (o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass           *object_class;
   GeglOperationClass     *operation_class;

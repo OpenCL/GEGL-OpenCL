@@ -20,16 +20,16 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Path of file to load."))
+property_file_path (path, _("File"), "", _("Path of file to load."))
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "webp-load.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "webp-load.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <webp/decode.h>
 
 static gboolean
@@ -94,7 +94,7 @@ read_webp (const gchar *path, GeglBuffer *buf, GeglRectangle *bounds_out, const 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle result = {0,0,0,0};
   const Babl   *format = NULL;
 
@@ -112,7 +112,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   return read_webp (o->path, output, NULL, NULL);
 }
 
@@ -124,7 +124,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

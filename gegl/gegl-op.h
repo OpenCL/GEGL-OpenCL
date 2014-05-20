@@ -777,7 +777,7 @@ gegl_op_class_intern_init (gpointer klass)
   gboolean G_GNUC_UNUSED ui_range_set = FALSE;
   gboolean G_GNUC_UNUSED ui_steps_set = FALSE;
   gboolean G_GNUC_UNUSED ui_digits_set = FALSE;
-  GParamFlags flags G_GNUC_UNUSED = G_PARAM_READWRITE | G_PARAM_CONSTRUCT | GEGL_PARAM_PAD_INPUT;
+  GParamFlags flags G_GNUC_UNUSED = (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT | GEGL_PARAM_PAD_INPUT);
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;

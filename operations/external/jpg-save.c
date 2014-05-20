@@ -20,27 +20,32 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "",
-                      _("Target path and filename, use '-' for stdout"))
-gegl_chant_int    (quality, _("Quality"), 1, 100, 90,
-                   _("JPEG compression quality (between 1 and 100)"))
-gegl_chant_int    (smoothing, _("Smoothing"),
-                   0, 100, 0, _("Smoothing factor from 1 to 100; 0 disables smoothing"))
-gegl_chant_boolean (optimize, _("Optimize"), TRUE,
-                    _("Use optimized huffman tables"))
-gegl_chant_boolean (progressive, _("Progressive"), TRUE,
-                    _("Create progressive JPEG images"))
-gegl_chant_boolean (grayscale, _("Grayscale"), FALSE,
-                    _("Create a grayscale (monochrome) image"))
+property_file_path (path, _("File"), "")
+    description (_("Target path and filename, use '-' for stdout"))
+
+property_int    (quality, _("Quality"), 90)
+    description (_("JPEG compression quality (between 1 and 100)"))
+    value_range (1, 100)
+
+property_int    (smoothing, _("Smoothing"), 0)
+    description(_("Smoothing factor from 1 to 100; 0 disables smoothing"))
+    value_range (0, 100)
+
+property_boolean (optimize, _("Optimize"), TRUE)
+    description  (_("Use optimized huffman tables"))
+property_boolean (progressive, _("Progressive"), TRUE)
+    description  (_("Create progressive JPEG images"))
+property_boolean (grayscale, _("Grayscale"), FALSE)
+    description  (_("Create a grayscale (monochrome) image"))
 
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "jpg-save.c"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_FILE       "jpg-save.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <jpeglib.h>
 
@@ -163,7 +168,7 @@ gegl_jpg_save_process (GeglOperation       *operation,
                        const GeglRectangle *result,
                        int                  level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   gegl_buffer_export_jpg (input, o->path, o->quality, o->smoothing,
                           o->optimize, o->progressive, o->grayscale,
@@ -174,7 +179,7 @@ gegl_jpg_save_process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass     *operation_class;
   GeglOperationSinkClass *sink_class;

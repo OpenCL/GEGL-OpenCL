@@ -20,25 +20,34 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_multiline (string, _("Text"), "Hello",
-                      _("String to display (utf8)"))
-gegl_chant_string (font, _("Font family"), "Sans",
-                   _("Font family (utf8)"))
-gegl_chant_double (size, _("Size"), 1.0, 2048.0, 10.0,
-                   _("Approximate height of text in pixels."))
-gegl_chant_color  (color, _("Color"), "black",
-                   _("Color for the text (defaults to 'white')"))
-gegl_chant_int    (wrap, _("Wrap width"), -1, 1000000, -1,
-                   _("Sets the width in pixels at which long lines will wrap. "
+property_string (string, _("Text"), "Hello")
+    description(_("String to display (utf8)"))
+    ui_meta    ("multiline", "true")
+
+property_string (font, _("Font family"), "Sans")
+    description(_("Font family (utf8)"))
+
+property_double (size, _("Size"), 10.0)
+    description (_("Approximate height of text in pixels."))
+    value_range (1.0, 2048.0)
+
+property_color  (color, _("Color"), "black")
+    description(_("Color for the text (defaults to 'white')"))
+property_int  (wrap, _("Wrap width"), -1)
+    description (_("Sets the width in pixels at which long lines will wrap. "
                      "Use -1 for no wrapping."))
-gegl_chant_int    (alignment, _("Justification"), 0, 2, 0,
-                   _("Alignment for multi-line text (0=Left, 1=Center, 2=Right)"))
-gegl_chant_int    (width, _("Width"), 0, 1000000, 0,
-                   _("Rendered width in pixels. (read only)"))
-gegl_chant_int    (height, _("Height"), 0, 1000000, 0,
-                   _("Rendered height in pixels. (read only)"))
+    value_range (-1, 1000000)
+
+property_int    (alignment, _("Justification"), 0)
+    value_range (0, 2)
+    description (_("Alignment for multi-line text (0=Left, 1=Center, 2=Right)"))
+
+property_int (width, _("Width"), 0)
+    description (_("Rendered width in pixels. (read only)"))
+property_int    (height, _("Height"), 0)
+    description (_("Rendered height in pixels. (read only)"))
 
 #else
 
@@ -48,7 +57,7 @@ gegl_chant_int    (height, _("Height"), 0, 1000000, 0,
 #include <pango/pangocairo.h>
 
 /* XXX: this struct is unneeded and could be folded directly into
- * struct _GeglChant
+ * struct _GeglOp
  */
 typedef struct {
   gchar         *string;
@@ -59,7 +68,7 @@ typedef struct {
   GeglRectangle  defined;
 } CachedExtent;
 
-struct _GeglChant
+struct _GeglOp
 {
   GeglOperationSource parent_instance;
   gpointer            properties;
@@ -69,23 +78,23 @@ struct _GeglChant
 typedef struct
 {
   GeglOperationSourceClass parent_class;
-} GeglChantClass;
+} GeglOpClass;
 
-#define GEGL_CHANT_C_FILE "text.c"
-#include "gegl-chant.h"
+#define GEGL_OP_C_FILE "text.c"
+#include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION (GEGL_TYPE_OPERATION_SOURCE)
 
 
 
 
 
-static void text_layout_text (GeglChant *self,
+static void text_layout_text (GeglOp *self,
                               cairo_t   *cr,
                               gdouble    rowstride,
                               gdouble   *width,
                               gdouble   *height)
 {
-  GeglChantO           *o = GEGL_CHANT_PROPERTIES (self);
+  GeglProperties           *o = GEGL_PROPERTIES (self);
   PangoFontDescription *desc;
   PangoLayout    *layout;
   PangoAttrList  *attrs;
@@ -173,7 +182,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChant *self = GEGL_CHANT (operation);
+  GeglOp *self = GEGL_OP (operation);
 
   guchar          *data = g_new0 (guchar, result->width * result->height * 4);
   cairo_t         *cr;
@@ -202,8 +211,8 @@ process (GeglOperation       *operation,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChant *self = GEGL_CHANT (operation);
-  GeglChantO           *o = GEGL_CHANT_PROPERTIES (self);
+  GeglOp *self = GEGL_OP (operation);
+  GeglProperties           *o = GEGL_PROPERTIES (self);
   CachedExtent *extent;
   gint status = FALSE;
 
@@ -262,14 +271,14 @@ get_bounding_box (GeglOperation *operation)
 static void
 finalize (GObject *object)
 {
-  GeglChant *self = GEGL_CHANT (object);
+  GeglOp *self = GEGL_OP (object);
 
   if (self->cex.string)
     g_free (self->cex.string);
   if (self->cex.font)
     g_free (self->cex.font);
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static void
@@ -280,7 +289,7 @@ prepare (GeglOperation *operation)
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass             *object_class;
   GeglOperationClass       *operation_class;

@@ -18,17 +18,18 @@
  * Copyright 2006 Dominik Ernst <dernst@gmx.de>
  */
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, "File", "", "Path of file to load.")
+property_file_path (path, "File", "")
+  description ("Path of file to load.")
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "exr-load.cpp"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "exr-load.cpp"
 
 extern "C" {
-#include "gegl-chant.h"
+#include "gegl-op.h"
 }
 
 #include <ImfInputFile.h>
@@ -617,7 +618,7 @@ query_exr (const gchar *path,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   GeglRectangle result = {0, 0, 10, 10};
   gint          w, h, ff;
   gpointer      format;
@@ -638,7 +639,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          int                  level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gint        w,h,ff;
   gpointer    format;
   gboolean    ok;
@@ -665,7 +666,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

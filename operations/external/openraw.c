@@ -18,15 +18,17 @@
  */
 
 #include "config.h"
+#include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, "File", "", "Path of file to load.")
+property_file_path (path, "File", "")
+  description (_("Path of file to load."))
 
 #else
 
 #include "gegl-plugin.h"
-struct _GeglChant
+struct _GeglOp
 {
   GeglOperationSource parent_instance;
   gpointer            properties;
@@ -37,10 +39,10 @@ struct _GeglChant
 typedef struct
 {
   GeglOperationSourceClass parent_class;
-} GeglChantClass;
+} GeglOpClass;
 
-#define GEGL_CHANT_C_FILE       "openraw.c"
-#include "gegl-chant.h"
+#define GEGL_OP_C_FILE       "openraw.c"
+#include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE)
 
 #include <stdio.h>
@@ -60,14 +62,14 @@ destroy_rawdata (void * rawdata)
 static void
 free_buffer (GeglOperation * operation)
 {
-  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
-  GeglChant  *self = GEGL_CHANT(operation);
+  GeglProperties *o    = GEGL_PROPERTIES (operation);
+  GeglOp  *self = GEGL_OP(operation);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
       g_assert (self->cached_path);
-      g_object_unref (o->chant_data);
-      o->chant_data = NULL;
+      g_object_unref (o->user_data);
+      o->user_data = NULL;
     }
 
   if (self->cached_path)
@@ -85,8 +87,8 @@ free_buffer (GeglOperation * operation)
 static GeglBuffer *
 load_buffer (GeglOperation *operation)
 {
-  GeglChantO *o    = GEGL_CHANT_PROPERTIES (operation);
-  GeglChant  *self = GEGL_CHANT(operation);
+  GeglProperties *o    = GEGL_PROPERTIES (operation);
+  GeglOp  *self = GEGL_OP(operation);
 
   ORRawDataRef rawdata;
   ORRawFileRef rawfile;
@@ -97,9 +99,9 @@ load_buffer (GeglOperation *operation)
       free_buffer(operation);
     }
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      return o->chant_data;
+      return o->user_data;
     }
   g_assert (self->cached_path == NULL);
 
@@ -132,8 +134,8 @@ load_buffer (GeglOperation *operation)
       extent.width  = width;
       extent.height = height;
 
-      g_assert (o->chant_data == NULL);
-      o->chant_data = gegl_buffer_linear_new_from_data(data,
+      g_assert (o->user_data == NULL);
+      o->user_data = gegl_buffer_linear_new_from_data(data,
                                                        babl_format ("Y u16"),
                                                        &extent,
                                                        GEGL_AUTO_ROWSTRIDE,
@@ -146,7 +148,7 @@ load_buffer (GeglOperation *operation)
 clean_file:
   or_rawfile_release(rawfile);
 
-  return o->chant_data;
+  return o->user_data;
 }
 
 
@@ -160,14 +162,14 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO   *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties   *o = GEGL_PROPERTIES (operation);
   if (!load_buffer (operation))
     {
       GeglRectangle nullrect = { 0, 0, 0, 0 };
       return nullrect;
     }
 
-  return *gegl_buffer_get_extent (o->chant_data);
+  return *gegl_buffer_get_extent (o->user_data);
 }
 
 
@@ -186,7 +188,7 @@ process (GeglOperation          *operation,
          const GeglRectangle    *result,
          gint                    level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   g_assert (g_str_equal (output_pad, "output"));
 
   if (!load_buffer (operation))
@@ -199,9 +201,9 @@ process (GeglOperation          *operation,
    * we continue to service metadata calls after giving the object to the
    * context.
    */
-  g_assert(o->chant_data);
-  gegl_operation_context_take_object (context, "output", G_OBJECT (o->chant_data));
-  g_object_ref (G_OBJECT (o->chant_data));
+  g_assert(o->user_data);
+  gegl_operation_context_take_object (context, "output", G_OBJECT (o->user_data));
+  g_object_ref (G_OBJECT (o->user_data));
 
   return TRUE;
 }
@@ -214,12 +216,12 @@ finalize (GObject *object)
 {
   free_buffer (GEGL_OPERATION (object));
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   static gboolean done = FALSE;
 

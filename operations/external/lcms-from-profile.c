@@ -19,35 +19,36 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_pointer (src_profile, _("Source Profile"),
+property_pointer (src_profile, _("Source Profile"),
                     _("The cmsHPROFILE corresponding to the icc profile for "
                       "the input data."))
 
 /* These are positioned so their values match up with the LCMS enum */
-gegl_chant_register_enum (gegl_rendering_intent)
+enum_start (gegl_rendering_intent)
   enum_value (GEGL_RENDERING_INTENT_PERCEPTUAL,            "Perceptual")
   enum_value (GEGL_RENDERING_INTENT_RELATIVE_COLORIMETRIC, "Relative Colorimetric")
   enum_value (GEGL_RENDERING_INTENT_SATURATION,            "Saturation")
   enum_value (GEGL_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC, "Absolute Colorimetric")
 /* TODO: Add the K_ONLY and K_PLANE intents */
-gegl_chant_register_enum_end (GeglRenderingIntent)
+enum_end (GeglRenderingIntent)
 
-gegl_chant_enum (intent, _("Rendering Intent"),
+property_enum (intent, _("Rendering Intent"),
                  GeglRenderingIntent, gegl_rendering_intent,
-                 GEGL_RENDERING_INTENT_PERCEPTUAL,
-                 _("The rendering intent to use in the conversion."))
+                 GEGL_RENDERING_INTENT_PERCEPTUAL)
+  description(_("The rendering intent to use in the conversion."))
 
-gegl_chant_boolean (black_point_compensation, _("Black Point Compensation"),
-                    FALSE, _("Convert using black point compensation."))
+property_boolean (black_point_compensation, _("Black Point Compensation"),
+                  FALSE)
+  description (_("Convert using black point compensation."))
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE      "lcms-from-profile.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE      "lcms-from-profile.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <lcms2.h>
 
 static void prepare (GeglOperation *operation)
@@ -128,7 +129,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   cmsHTRANSFORM transform;
   const Babl *in_format, *out_format;
@@ -200,10 +201,10 @@ operation_process (GeglOperation        *operation,
                    const GeglRectangle  *result,
                    gint                  level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglOperationClass  *operation_class;
 
-  operation_class = GEGL_OPERATION_CLASS (gegl_chant_parent_class);
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
 
   /* If the profile is NULL, simply become a nop */
   if (!o->src_profile)
@@ -219,7 +220,7 @@ operation_process (GeglOperation        *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

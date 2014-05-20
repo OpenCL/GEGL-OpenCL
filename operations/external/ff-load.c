@@ -20,17 +20,21 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "", _("Path of video file to load"))
-gegl_chant_int (frame, _("Frame"), 0, 1000000, 0, _("Frame number"))
+property_file_path (path, _("File"), "")
+   description (_("Path of video file to load"))
+
+property_int (frame, _("Frame number"), 0)
+   value_range (0, G_MAXINT)
+   ui_range (0, 10000)
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "ff-load.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "ff-load.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <errno.h>
 
 #ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
@@ -97,15 +101,15 @@ print_error (const char *filename, int err)
 }
 
 static void
-init (GeglChantO *o)
+init (GeglProperties *o)
 {
   static gint inited = 0; /*< this is actually meant to be static, only to be done once */
-  Priv       *p = (Priv*)o->chant_data;
+  Priv       *p = (Priv*)o->user_data;
 
   if (p==NULL)
     {
       p = g_new0 (Priv, 1);
-      o->chant_data = (void*) p;
+      o->user_data = (void*) p;
     }
 
   p->width = 320;
@@ -124,9 +128,9 @@ init (GeglChantO *o)
 
 /* FIXME: probably some more stuff to free here */
 static void
-ff_cleanup (GeglChantO *o)
+ff_cleanup (GeglProperties *o)
 {
-  Priv *p = (Priv*)o->chant_data;
+  Priv *p = (Priv*)o->user_data;
   if (p)
     {
       if (p->codec_name)
@@ -163,8 +167,8 @@ static int
 decode_frame (GeglOperation *operation,
               glong          frame)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv       *p = (Priv*)o->chant_data;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->user_data;
   glong       prevframe = p->prevframe;
   glong       decodeframe;        /*< frame to be requested decoded */
 
@@ -252,14 +256,14 @@ decode_frame (GeglOperation *operation,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv       *p = (Priv*)o->chant_data;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->user_data;
 
   if (p == NULL)
     init (o);
-  p = (Priv*)o->chant_data;
+  p = (Priv*)o->user_data;
 
-  g_assert (o->chant_data != NULL);
+  g_assert (o->user_data != NULL);
 
   gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
 
@@ -355,7 +359,7 @@ static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result = {0,0,320,200};
-  Priv *p = (Priv*)GEGL_CHANT_PROPERTIES (operation)->chant_data;
+  Priv *p = (Priv*)GEGL_PROPERTIES (operation)->user_data;
   result.width = p->width;
   result.height = p->height;
   return result;
@@ -367,8 +371,8 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv       *p = (Priv*)o->chant_data;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->user_data;
 
   {
     if (p->ic && !decode_frame (operation, o->frame))
@@ -425,21 +429,21 @@ process (GeglOperation       *operation,
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      Priv *p = (Priv*)o->chant_data;
+      Priv *p = (Priv*)o->user_data;
 
       g_free (p->loadedfilename);
       g_free (p->fourcc);
       g_free (p->codec_name);
 
-      g_free (o->chant_data);
-      o->chant_data = NULL;
+      g_free (o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static GeglRectangle
@@ -450,7 +454,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

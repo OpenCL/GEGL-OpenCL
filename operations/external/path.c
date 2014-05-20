@@ -21,39 +21,43 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
+property_color  (fill, _("Fill Color"), "rgba(0.0,0.0,0.0,0.6)")
+  description(_("Color of paint to use for filling, use 0 opacity to disable filling"))
 
-gegl_chant_color  (fill, _("Fill Color"),  "rgba(0.0,0.0,0.0,0.6)",
-                         _("Color of paint to use for filling, use 0 opacity to disable filling"))
-gegl_chant_color  (stroke,    _("Stroke Color"),      "rgba(0.0,0.0,0.0,0.0)",
-                             _("Color of paint to use for stroking"))
+property_color  (stroke, _("Stroke Color"), "rgba(0.0,0.0,0.0,0.0)")
+  description(_("Color of paint to use for stroking"))
 
-gegl_chant_double (stroke_width,_("Stroke width"),  0.0, 200.0, 2.0,
-                             _("The width of the brush used to stroke the path"))
+property_double (stroke_width,_("Stroke width"), 2.0)
+  description (_("The width of the brush used to stroke the path"))
+  value_range (0.0, 200.0)
 
-gegl_chant_double (stroke_opacity,  _("Stroke opacity"),  -2.0, 2.0, 1.0,
-                             _("Opacity of stroke, note, does not behave like SVG since at the moment stroking is done using an airbrush tool"))
+property_double (stroke_opacity, _("Stroke opacity"), 1.0)
+  description (_("Opacity of stroke, note, does not behave like SVG since at the moment stroking is done using an airbrush tool"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_double (stroke_hardness, _("Hardness"),   0.0, 1.0, 0.6,
-                             _("Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"))
+property_double (stroke_hardness, _("Hardness"), 0.6)
+  description (_("Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"))
+  value_range (0.0, 1.0)
 
-gegl_chant_string (fill_rule,_("Fill rule"), "nonzero",
-                             _("How to determine what to fill (nonzero|evenodd)"))
+property_string (fill_rule,_("Fill rule"), "nonzero")
+  description(_("How to determine what to fill (nonzero|evenodd)"))
 
-gegl_chant_string (transform,_("Transform"), "",
-                             _("SVG style description of transform"))
+property_string (transform,_("Transform"), "")
+  description(_("SVG style description of transform"))
 
-gegl_chant_double (fill_opacity, _("Fill opacity"),  -2.0, 2.0, 1.0,
-                             _("The fill opacity to use"))
+property_double (fill_opacity, _("Fill opacity"), 1.0)
+  description(_("The fill opacity to use"))
+  value_range (-2.0, 2.0)
 
-gegl_chant_path   (d,        _("Vector"),
-                             _("A GeglVector representing the path of the stroke"))
+property_path (d, _("Vector"), NULL)
+  description (_("A GeglVector representing the path of the stroke"))
 
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE "path.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_FILE "path.c"
 
 #include "gegl-plugin.h"
 #include "gegl-path.h"
@@ -61,7 +65,7 @@ static void path_changed (GeglPath *path,
                           const GeglRectangle *roi,
                           gpointer userdata);
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <cairo.h>
 #include <math.h>
 
@@ -295,7 +299,7 @@ static void path_changed (GeglPath *path,
                           gpointer userdata)
 {
   GeglRectangle rect = *roi;
-  GeglChantO    *o   = GEGL_CHANT_PROPERTIES (userdata);
+  GeglProperties    *o   = GEGL_PROPERTIES (userdata);
   /* invalidate the incoming rectangle */
 
   rect.x -= o->stroke_width/2;
@@ -309,7 +313,7 @@ static void path_changed (GeglPath *path,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   gegl_operation_set_format (operation, "output", babl_format ("R'aG'aB'aA float"));
   if (o->transform && o->transform[0] != '\0')
     {
@@ -322,7 +326,7 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglChantO    *o       = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties    *o       = GEGL_PROPERTIES (operation);
   GeglRectangle  defined = { 0, 0, 512, 512 };
   GeglRectangle *in_rect;
   gdouble        x0, x1, y0, y1;
@@ -353,7 +357,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   if (input)
     {
@@ -451,7 +455,7 @@ static GeglNode *detect (GeglOperation *operation,
                          gint           x,
                          gint           y)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   cairo_t *cr;
   cairo_surface_t *surface;
   gchar *data = "     ";
@@ -489,7 +493,7 @@ static GeglNode *detect (GeglOperation *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;

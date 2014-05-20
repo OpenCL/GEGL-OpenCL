@@ -21,22 +21,22 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path,   _("Path"), "/dev/video0", _("Path to v4l device"))
-gegl_chant_int  (width,  _("Width"),  0, G_MAXINT, 320, _("Width for rendered image"))
-gegl_chant_int  (height, _("Height"), 0, G_MAXINT, 240, _("Height for rendered image"))
-gegl_chant_int  (frame,  _("Frame"),  0, G_MAXINT, 0,
+property_file_path (path,   _("Path"), "/dev/video0", _("Path to v4l device"))
+property_int  (width,  _("Width"),  0, G_MAXINT, 320, _("Width for rendered image"))
+property_int  (height, _("Height"), 0, G_MAXINT, 240, _("Height for rendered image"))
+property_int  (frame,  _("Frame"),  0, G_MAXINT, 0,
         _("current frame number, can be changed to trigger a reload of the image."))
-gegl_chant_int  (fps,    _("FPS"),  0, G_MAXINT, 0,
+property_int  (fps,    _("FPS"),  0, G_MAXINT, 0,
         _("autotrigger reload this many times a second."))
 
 #else
 
-#define GEGL_CHANT_TYPE_SOURCE
-#define GEGL_CHANT_C_FILE       "v4l.c"
+#define GEGL_OP_SOURCE
+#define GEGL_OP_C_FILE       "v4l.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 
 #include "v4lutils/v4lutils.h"
 #include "v4lutils/v4lutils.c"
@@ -54,14 +54,14 @@ typedef struct
 } Priv;
 
 static void
-init (GeglChantO *o)
+init (GeglProperties *o)
 {
-  Priv *p = (Priv*)o->chant_data;
+  Priv *p = (Priv*)o->user_data;
 
   if (p==NULL)
     {
       p = g_new0 (Priv, 1);
-      o->chant_data = (void*) p;
+      o->user_data = (void*) p;
     }
 
   p->w = 320;
@@ -73,7 +73,7 @@ static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
   GeglRectangle result ={0,0,320,200};
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   result.width = o->width;
   result.height = o->height;
@@ -83,12 +83,12 @@ get_bounding_box (GeglOperation *operation)
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv *p= (Priv*)o->chant_data;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv *p= (Priv*)o->user_data;
 
   if (p == NULL)
     init (o);
-  p = (Priv*)o->chant_data;
+  p = (Priv*)o->user_data;
 
   gegl_operation_set_format (operation, "output",
                             babl_format_new (
@@ -174,11 +174,11 @@ prepare (GeglOperation *operation)
 static void
 finalize (GObject *object)
 {
- GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+ GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      Priv *p = (Priv*)o->chant_data;
+      Priv *p = (Priv*)o->user_data;
 
       if (p->vd)
         {
@@ -186,11 +186,11 @@ finalize (GObject *object)
           v4lclose (p->vd);
           g_free (p->vd);
         }
-      g_free (o->chant_data);
-      o->chant_data = NULL;
+      g_free (o->user_data);
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static gboolean update (gpointer operation)
@@ -206,8 +206,8 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
-  Priv       *p = (Priv*)o->chant_data;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->user_data;
   guchar     *capbuf;
   static gboolean inited = FALSE;
 
@@ -301,7 +301,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;

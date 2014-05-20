@@ -21,30 +21,30 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_int    (epsilon, _("Epsilon"),
+#ifdef GEGL_PROPERTIES
+property_int    (epsilon, _("Epsilon"),
                   -9, -1, -6,
                   _("Log of the error weighting"))
-gegl_chant_int    (radius, _("Radius"),
+property_int    (radius, _("Radius"),
                   1, 3, 1,
                   _("Radius of the processing window"))
-gegl_chant_double (threshold, _("Threshold"),
+property_double (threshold, _("Threshold"),
                   0.0, 0.1, 0.02,
                   _("Alpha threshold for multilevel processing"))
-gegl_chant_double (lambda, _("Lambda"),
+property_double (lambda, _("Lambda"),
                   0.0, 100.0, 100.0, _("Trimap influence factor"))
-gegl_chant_int    (levels, _("Levels"),
+property_int    (levels, _("Levels"),
                    0, 8, 4,
                    _("Number of downsampled levels to use"))
-gegl_chant_int    (active_levels, _("Active Levels"),
+property_int    (active_levels, _("Active Levels"),
                    0, 8, 2,
                    _("Number of levels to perform solving"))
 #else
 
-#define GEGL_CHANT_TYPE_COMPOSER
-#define GEGL_CHANT_C_FILE       "matting-levin.c"
+#define GEGL_OP_COMPOSER
+#define GEGL_OP_C_FILE       "matting-levin.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include "gegl-debug.h"
 
 #include <stdlib.h>
@@ -1387,7 +1387,7 @@ matting_process (GeglOperation       *operation,
                  const GeglRectangle *result,
                  gint                 level)
 {
-  const GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  const GeglProperties *o = GEGL_PROPERTIES (operation);
   gdouble          *input   = NULL,
                    *trimap  = NULL;
   gdouble          *output  = NULL;
@@ -1427,7 +1427,7 @@ matting_process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;

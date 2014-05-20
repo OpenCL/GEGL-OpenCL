@@ -21,21 +21,23 @@
 #include <glib/gi18n-lib.h>
 
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_file_path (path, _("File"), "",
-                      _("Target path and filename, use '-' for stdout."))
-gegl_chant_int    (compression, _("Compression"),
-                   1, 9, 1, _("PNG compression level from 1 to 9"))
-gegl_chant_int    (bitdepth, _("Bitdepth"),
-                   8, 16, 16, _("8 and 16 are amongst the currently accepted values."))
+property_file_path (path, _("File"), "")
+  description (_("Target path and filename, use '-' for stdout."))
+property_int    (compression, _("Compression"), 3)
+  description (_("PNG compression level from 1 to 9"))
+  value_range (1, 9)
+property_int    (bitdepth, _("Bitdepth"), 16)
+  description(_("8 and 16 are the currently accepted values."))
+  value_range (8, 16)
 
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE       "png-save.c"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_FILE       "png-save.c"
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <png.h>
 #include <stdio.h>
 
@@ -200,7 +202,7 @@ gegl_png_save_process (GeglOperation       *operation,
                        const GeglRectangle *result,
                        gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   gegl_buffer_export_png (input, o->path, o->compression, o->bitdepth,
                           result->x, result->y,
@@ -210,7 +212,7 @@ gegl_png_save_process (GeglOperation       *operation,
 
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass     *operation_class;
   GeglOperationSinkClass *sink_class;
