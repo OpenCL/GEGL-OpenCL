@@ -515,7 +515,7 @@ set_property (GObject      *gobject,
       break;
 #define property_int(name, label, def_val)                            \
     case PROP_##name:                                                 \
-      properties->name = g_value_get_double (value);                  \
+      properties->name = g_value_get_int (value);                     \
       break;
 #define property_string(name, label, def_val)                         \
     case PROP_##name:                                                 \
