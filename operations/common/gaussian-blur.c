@@ -27,11 +27,11 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_enum_start (gegl_gaussian_blur_filter)
-  gegl_enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "Auto")
-  gegl_enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "FIR")
-  gegl_enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
-gegl_enum_end (GeglGaussianBlurFilter)
+enum_start (gegl_gaussian_blur_filter)
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "Auto")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "FIR")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
+enum_end (GeglGaussianBlurFilter)
 
 gegl_property_double (std_dev_x, _("Size X"),
     "description", _("Standard deviation for the horizontal axis (multiply by ~2 to get radius)"),

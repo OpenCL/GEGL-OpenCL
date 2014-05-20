@@ -268,17 +268,17 @@ gegl_module_register (GTypeModule *module)
 #define gegl_property_seed(name, label, rand_name, ...)   ITEM(name,label,def_val,int)
 #define gegl_property_enum(name, label, enm, enum_name, ...)  ITEM(name,label,def_val,enum)
 
-#define gegl_enum_start(enum_name)   typedef enum {
-#define gegl_enum_value(value, nick)    value ,
-#define gegl_enum_end(enum)          } enum ;
+#define enum_start(enum_name)   typedef enum {
+#define enum_value(value, nick)    value ,
+#define enum_end(enum)          } enum ;
 
 #include GEGL_OP_C_FILE
 
-#undef gegl_enum_start
-#undef gegl_enum_value
-#undef gegl_enum_end
+#undef enum_start
+#undef enum_value
+#undef enum_end
 
-#define gegl_enum_start(enum_name)          \
+#define enum_start(enum_name)          \
 GType enum_name ## _get_type (void) G_GNUC_CONST; \
 GType enum_name ## _get_type (void)               \
 {                                                 \
@@ -286,10 +286,10 @@ GType enum_name ## _get_type (void)               \
   if (etype == 0) {                               \
     static const GEnumValue values[] = {
 
-#define gegl_enum_value(value, nick) \
+#define enum_value(value, nick) \
       { value, nick, nick },
 
-#define gegl_enum_end(enum)             \
+#define enum_end(enum)             \
       { 0, NULL, NULL }                             \
     };                                              \
     etype = g_enum_register_static (#enum, values); \
@@ -325,12 +325,12 @@ GType enum_name ## _get_type (void)               \
 #undef gegl_property_curve
 #undef gegl_property_seed
 #undef gegl_property_path
-#undef gegl_enum_start
-#undef gegl_enum_value
-#undef gegl_enum_end
-#define gegl_enum_start(enum_name)
-#define gegl_enum_value(value, nick)
-#define gegl_enum_end(enum)
+#undef enum_start
+#undef enum_value
+#undef enum_end
+#define enum_start(enum_name)
+#define enum_value(value, nick)
+#define enum_end(enum)
 
 /* Properties */
 

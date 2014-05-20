@@ -24,10 +24,10 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_enum_start (gegl_ripple_wave_type)
-  gegl_enum_value (GEGL_RIPPLE_WAVE_TYPE_SINE,     "Sine")
-  gegl_enum_value (GEGL_RIPPLE_WAVE_TYPE_SAWTOOTH, "Sawtooth")
-gegl_enum_end (GeglRippleWaveType)
+enum_start (gegl_ripple_wave_type)
+  enum_value (GEGL_RIPPLE_WAVE_TYPE_SINE,     "Sine")
+  enum_value (GEGL_RIPPLE_WAVE_TYPE_SAWTOOTH, "Sawtooth")
+enum_end (GeglRippleWaveType)
 
 gegl_property_double (amplitude, _("Amplitude"),
     "default", 25.0, "min", 0.0, "max", 1000.0,

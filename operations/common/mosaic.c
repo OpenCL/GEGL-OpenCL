@@ -28,12 +28,12 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_enum_start (gegl_mosaic_tile)
-  gegl_enum_value (GEGL_MOSAIC_TILE_SQUARES,   "SQUARES")
-  gegl_enum_value (GEGL_MOSAIC_TILE_HEXAGONS,  "HEXAGONS")
-  gegl_enum_value (GEGL_MOSAIC_TILE_OCTAGONS,  "OCTAGONS")
-  gegl_enum_value (GEGL_MOSAIC_TILE_TRIANGLES, "TRIANGLES")
-gegl_enum_end (GeglMosaicTile)
+enum_start (gegl_mosaic_tile)
+  enum_value (GEGL_MOSAIC_TILE_SQUARES,   "SQUARES")
+  enum_value (GEGL_MOSAIC_TILE_HEXAGONS,  "HEXAGONS")
+  enum_value (GEGL_MOSAIC_TILE_OCTAGONS,  "OCTAGONS")
+  enum_value (GEGL_MOSAIC_TILE_TRIANGLES, "TRIANGLES")
+enum_end (GeglMosaicTile)
 
 gegl_property_enum (tile_type, _("Tile geometry"),
     GeglMosaicTile, gegl_mosaic_tile,

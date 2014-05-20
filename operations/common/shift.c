@@ -23,10 +23,10 @@
 
 #ifdef GEGL_PROPERTIES
 
-gegl_enum_start (gegl_shift_direction)
-  gegl_enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "Horizontal")
-  gegl_enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "Vertical")
-gegl_enum_end (GeglShiftDirection)
+enum_start (gegl_shift_direction)
+  enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "Horizontal")
+  enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "Vertical")
+enum_end (GeglShiftDirection)
 
 gegl_property_int  (shift, _("Shift"),
     "description", _("Maximum amount to shift"),
