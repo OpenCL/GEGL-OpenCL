@@ -42,7 +42,7 @@ property_int    (levels, _("Levels"), 4)
    description  (_("Number of downsampled levels to use"))
    value_range  (0, 8)
 
-property_int    (active_levels, _("Active Levels"), 2)
+property_int    (active_levels, _("Active levels"), 2)
    description  (_("Number of levels to perform solving"))
    value_range  (0, 8)
 

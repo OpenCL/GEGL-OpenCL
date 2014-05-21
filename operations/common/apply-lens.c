@@ -34,7 +34,7 @@ property_double (refraction_index, _("Lens refraction index"), 1.7)
 property_boolean (keep_surroundings, _("Keep original surroundings"), FALSE)
   description(_("Keep image unchanged, where not affected by the lens."))
 
-property_color (background_color, _("Background Color"), "none")
+property_color (background_color, _("Background color"), "none")
   //ui_meta ("role", "color-secondary")
 
 #else

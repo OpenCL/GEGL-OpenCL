@@ -35,13 +35,13 @@ enum_start (gegl_gaussian_blur_policy)
 enum_end (GeglGaussianBlurPolicy)
 
 
-property_double (std_dev_x, _("Horizontal Std. Dev."), 1.5)
+property_double (std_dev_x, _("Standard deviation X"), 1.5)
    description (_("Standard deviation (spatial scale factor)"))
    value_range (0.0, 1500.0)
    ui_range (0.24, 100.0)
    ui_gamma (3.0)
 
-property_double (std_dev_y, _("Vertical Std. Dev."), 1.5)
+property_double (std_dev_y, _("Standard deviation Y"), 1.5)
    description (_("Standard deviation (spatial scale factor)"))
    value_range (0.0, 1500.0)
    ui_range (0.24, 100.0)

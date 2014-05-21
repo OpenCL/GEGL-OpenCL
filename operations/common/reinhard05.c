@@ -27,11 +27,11 @@ property_double (brightness, _("Brightness"), 0.0)
     description(_("Overall brightness of the image"))
     value_range (-100.0, 100.0)
 
-property_double (chromatic, _("Chromatic Adaptation"), 0.0)
+property_double (chromatic, _("Chromatic adaptation"), 0.0)
     description(_("Adaptation to color variation across the image"))
     value_range (0.0, 1.0)
 
-property_double (light, _("Light Adaptation"), 1.0)
+property_double (light, _("Light adaptation"), 1.0)
     description(_("Adaptation to light variation across the image"))
     value_range (0.0, 1.0)
 

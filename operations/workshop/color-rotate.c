@@ -33,12 +33,12 @@
 property_boolean (s_cl, _("Clockwise"), FALSE)
     description (_("Switch to clockwise"))
 
-property_int (s_fr, _("From:"), 0)
+property_int (s_fr, _("From"), 0)
     description (_("Starting angle for the color rotation"))
     value_range (0, 360)
     ui_meta     ("unit", "degree")
 
-property_int (s_to, _("To:"), 0)
+property_int (s_to, _("To"), 0)
     description (_("End angle for the color rotation"))
     value_range (0, 360)
     ui_meta     ("unit", "degree")
@@ -46,11 +46,11 @@ property_int (s_to, _("To:"), 0)
 property_boolean (d_cl, _("Clockwise"), FALSE)
     description (_("Switch to clockwise"))
 
-property_int (d_fr, _("From:"), 0)
+property_int (d_fr, _("From"), 0)
     value_range (0, 360)
     description (_("Starting angle for the color rotation"))
 
-property_int (d_to, _("To:"), 0)
+property_int (d_to, _("To"), 0)
     value_range (0, 360)
     description (_("End angle for the color rotation"))
 
@@ -59,17 +59,13 @@ property_boolean (gray, _("Grayscale"), FALSE)
 
 property_double (hue, _("Hue"), 0.0)
     value_range (0.0, 2.0)
-    description (_("The value of hue"))
 
 property_double (saturation, _("Saturation"), 0.0)
-    description (_("The value of saturation"))
     value_range (0.0, 1.0)
 
-property_boolean (change, _("Change/Treat to this"), FALSE)
-    description (_("Change/Treat to this"))
+property_boolean (change, _("Change/treat to this"), FALSE)
 
-property_double (threshold, _("Threshold"), 0.0)
-    description (_("The value of gray threshold"))
+property_double (threshold, _("Gray threshold"), 0.0)
     value_range (0.0, 1.0)
 
 #else

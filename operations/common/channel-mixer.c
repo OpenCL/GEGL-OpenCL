@@ -35,7 +35,7 @@
 
 property_boolean (monochrome, _("Monochrome"), FALSE)
 
-property_boolean (preserve_luminosity, _("Preserve Luminosity"), FALSE)
+property_boolean (preserve_luminosity, _("Preserve luminosity"), FALSE)
 
 property_double (rr_gain, _("Red Red Gain"), 1.0)
   description(_("Set the red gain for the red channel"))

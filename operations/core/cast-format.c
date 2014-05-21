@@ -24,9 +24,9 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_format (input_format, _("Input Format"), NULL)
+property_format (input_format, _("Input format"), NULL)
     description(_("The babl format of the input"))
-property_format (output_format, _("Output Format"), NULL)
+property_format (output_format, _("Output format"), NULL)
     description(_("The babl format of the output"))
 
 #else

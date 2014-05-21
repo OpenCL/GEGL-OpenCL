@@ -22,14 +22,14 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_string(exposures, _("Exposure Values"), "")
+property_string(exposures, _("Exposure values"), "")
     description (_("Relative brightness of each exposure in EV"))
 
-property_int (steps, _("Discretization Bits"), 13)
+property_int (steps, _("Discretization bits"), 13)
     description (_("Log2 of source's discretization steps"))
     value_range (8, 32)
 
-property_double (sigma, _("Weight Sigma"), 8.0f)
+property_double (sigma, _("Weight sigma"), 8.0f)
     description (_("Weight distribution sigma controlling response contributions"))
     value_range (0.0f, 32.0f)
 

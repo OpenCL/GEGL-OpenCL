@@ -48,7 +48,7 @@ property_int  (alpha_bits, _("Alpha bits"), 8)
     description(_("Number of bits for alpha channel"))
     value_range (1, 16)
 
-property_enum (dither_strategy, _("Dithering Strategy"),
+property_enum (dither_strategy, _("Dithering strategy"),
                GeglDitherStrategy, gegl_dither_strategy, GEGL_DITHER_RESILIENT)
     description (_("The dithering strategy to use"))
 

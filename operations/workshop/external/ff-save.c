@@ -30,12 +30,11 @@
 property_string (path, _("File"), "/tmp/fnord.mp4")
     description (_("Target path and filename, use '-' for stdout."))
 
-property_double (bitrate, _("Target itrate"), 800000.0)
+property_double (bitrate, _("Target bitrate"), 800000.0)
      value_range (0.0, 100000000.0)
 
-property_double (fps, _("FPS"), 25)
+property_double (fps, _("Frames/second"), 25)
      value_range (0.0, 100.0)
-     description (_("frames per second"))
 
 #else
 

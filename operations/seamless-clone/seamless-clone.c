@@ -19,17 +19,17 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_int (max_refine_steps, _("Refinement Steps"), 2000)
+property_int (max_refine_steps, _("Refinement steps"), 2000)
   description (_("Maximal amount of refinement points to be used for the interpolation mesh"))
   value_range (0, 100000)
 
-property_int (xoff, _("X offset"), 0)
+property_int (xoff, _("Offset X"), 0)
   description (_("How much horizontal offset should applied to the paste"))
   value_range (-100000, 100000)
   ui_meta     ("unit", "pixel-coordinate")
   ui_meta     ("axis", "x")
 
-property_int (yoff, _("Y offset"), 0)
+property_int (yoff, _("Offset Y"), 0)
   description (_("How much horizontal offset should applied to the paste"))
   value_range (-100000, 100000)
   ui_meta     ("unit", "pixel-coordinate")

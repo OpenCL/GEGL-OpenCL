@@ -21,7 +21,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (std_dev, _("Std. Dev."), 0.55)
+property_double (std_dev, _("Standard Deviation"), 0.55)
     description(_("Standard deviation (spatial scale factor)"))
     value_range (0.2, 300)
     ui_range    (0.2, 40.0)

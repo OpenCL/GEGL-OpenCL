@@ -34,12 +34,12 @@ enum_start (gegl_rendering_intent)
 /* TODO: Add the K_ONLY and K_PLANE intents */
 enum_end (GeglRenderingIntent)
 
-property_enum (intent, _("Rendering Intent"),
+property_enum (intent, _("Rendering intent"),
                  GeglRenderingIntent, gegl_rendering_intent,
                  GEGL_RENDERING_INTENT_PERCEPTUAL)
   description(_("The rendering intent to use in the conversion."))
 
-property_boolean (black_point_compensation, _("Black Point Compensation"),
+property_boolean (black_point_compensation, _("Black point compensation"),
                   FALSE)
   description (_("Convert using black point compensation."))
 

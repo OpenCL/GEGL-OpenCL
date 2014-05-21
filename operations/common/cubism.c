@@ -36,7 +36,7 @@ property_double (tile_saturation, _("Tile saturation"), 2.5)
     description (_("Expand tiles by this amount"))
     value_range (0.0, 10.0)
 
-property_color  (bg_color, _("Background Color"), "rgba(0.0, 0.0, 0.0, 0.0)")
+property_color  (bg_color, _("Background color"), "rgba(0.0, 0.0, 0.0, 0.0)")
     description (("The tiles' background color"))
 
 property_seed (seed, _("Random seed"), rand)

@@ -39,10 +39,10 @@ enum_start (ink_sim_mode)
   enum_value (GEGL_SSIM_SEPARATE_PROOF, "separate-proof")
 enum_end (GeglInkSimMode)
 
-property_string (config, _("ink configuration"), DEFAULT_CONFIG)
+property_string (config, _("Ink configuration"), DEFAULT_CONFIG)
   description (_("Textual desciption of inks used for simulated print-job"))
 
-property_enum (mode, _("mode"), GeglInkSimMode, ink_sim_mode,
+property_enum (mode, _("Mode"), GeglInkSimMode, ink_sim_mode,
                  GEGL_SSIM_SEPARATE_PROOF)
   description (_("how the ink simulator is used"))
 
@@ -60,7 +60,7 @@ property_double (ink_limit, _("Ink limit"), 0.0, 5.0, 3.0,
 
 #endif
 
-property_int (debug_width, _("debug width"), 0)
+property_int (debug_width, _("Debug width"), 0)
    value_range (0, 150)
    description (_("how wide peel off bands for ink order vis"))
 

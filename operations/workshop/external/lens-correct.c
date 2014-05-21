@@ -25,13 +25,13 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_string (maker, _("Maker:"),"none")
+property_string (maker, _("Maker"),"none")
     description (_("Write lens maker correctly"))
 
-property_string (Camera, _("Camera:"),"none")
+property_string (Camera, _("Camera"),"none")
     description (_("Write camera name correctly"))
 
-property_string (Lens, _("Lens:"),"none")
+property_string (Lens, _("Lens"),"none")
     description(_("Write your lens model with uppercase letters"))
 
 property_double (focal, _("Focal of the camera"), 20.0)
@@ -41,10 +41,10 @@ property_double (focal, _("Focal of the camera"), 20.0)
 property_boolean (center, _("Center"), TRUE)
     description (_("If you want center"))
 
-property_int (cx, _("Lens center x"), 0)
+property_int (cx, _("Lens center X"), 0)
     description (_("Coordinates of lens center"))
 
-property_int (cy, _("Lens center y"), 0)
+property_int (cy, _("Lens center Y"), 0)
     description (_("Coordinates of lens center"))
 
 property_double (rscale, _("Scale"), 0.5)
@@ -54,41 +54,41 @@ property_double (rscale, _("Scale"), 0.5)
 property_boolean (correct, _("Autocorrect d values"), TRUE)
     description (_("Autocorrect D values for lens correction models."))
 
-property_double (red_a, _("Model red a:"), 0.0)
+property_double (red_a, _("Model red a"), 0.0)
    value_range (-1.0, 1.0)
-property_double (red_b, _("Model red b:"), 0.0)
+property_double (red_b, _("Model red b"), 0.0)
    value_range (-1.0, 1.0)
-property_double (red_c, _("Model red c:"), 0.0)
+property_double (red_c, _("Model red c"), 0.0)
    value_range (-1.0, 1.0)
-property_double (red_d, _("Model red d:"), 1.0)
+property_double (red_d, _("Model red d"), 1.0)
    value_range (0.0, 2.0)
 
-property_double (green_a, _("Model green a:"), 0.0)
+property_double (green_a, _("Model green a"), 0.0)
    value_range (-1.0, 1.0)
-property_double (green_b, _("Model green b:"), 0.0)
+property_double (green_b, _("Model green b"), 0.0)
    value_range (-1.0, 1.0)
-property_double (green_c, _("Model green c:"), 0.0)
+property_double (green_c, _("Model green c"), 0.0)
    value_range (-1.0, 1.0)
-property_double (green_d, _("Model green d:"), 1.0)
+property_double (green_d, _("Model green d"), 1.0)
    value_range (0.0, 2.0)
 
-property_double (blue_a, _("Model blue a:"), 0.0)
+property_double (blue_a, _("Model blue a"), 0.0)
    value_range (-1.0, 1.0)
-property_double (blue_b, _("Model blue b:"), 0.0)
+property_double (blue_b, _("Model blue b"), 0.0)
    value_range (-1.0, 1.0)
-property_double (blue_c, _("Model blue c:"), 0.0)
+property_double (blue_c, _("Model blue c"), 0.0)
    value_range (-1.0, 1.0)
-property_double (blue_d, _("Model blue d:"), 1.0)
+property_double (blue_d, _("Model blue d"), 1.0)
    value_range (0.0, 2.0)
 
 
-property_double (alpha_a, _("Model alpha a:"), 0.0)
+property_double (alpha_a, _("Model alpha a"), 0.0)
    value_range (-1.0, 1.0)
-property_double (alpha_b, _("Model alpha b:"), 0.0)
+property_double (alpha_b, _("Model alpha b"), 0.0)
    value_range (-1.0, 1.0)
-property_double (alpha_c, _("Model alpha c:"), 0.0)
+property_double (alpha_c, _("Model alpha c"), 0.0)
    value_range (-1.0, 1.0)
-property_double (alpha_d, _("Model alpha d:"), 1.0)
+property_double (alpha_d, _("Model alpha d"), 1.0)
    value_range (0.0, 2.0)
 
 #else
