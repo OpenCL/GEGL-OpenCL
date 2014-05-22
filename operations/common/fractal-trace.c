@@ -44,7 +44,7 @@ property_double (Y1, _("Y1"), -1.0)
   value_range   (-50.0, 50.0)
 
 property_double (Y2, _("Y2"), 1.0)
-  description   (_("Y@ value, position"))
+  description   (_("Y2 value, position"))
   value_range   (-50.0, 50.0)
 
 property_double (JX, _("JX"), 0.5)

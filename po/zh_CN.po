@@ -9,9 +9,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2013-12-19 22:47+0000\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-22 14:52+0200\n"
 "PO-Revision-Date: 2013-04-12 01:26+1000\n"
 "Last-Translator: 周周 <u4978108@anu.edu.au>\n"
 "Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
@@ -21,17 +20,17 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.5.5\n"
 
-#: ../bin/gegl.c:144
+#: ../bin/gegl.c:148
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "无法读取文件: %s"
 
-#: ../bin/gegl.c:175
+#: ../bin/gegl.c:179
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "无效的图形，异常中止。\n"
 
-#: ../bin/gegl.c:241 ../bin/gegl-options.c:131
+#: ../bin/gegl.c:245 ../bin/gegl-options.c:131
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "未知的 GeglOption 模式：%d"
@@ -159,41 +158,33 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:253
-msgid "babls error tolerance, a value between 0.2 and 0.000000001"
-msgstr "babls 误差容限，0.2 和 0.000000001 之间的一个值"
-
-#: ../gegl/gegl-init.c:258
+#: ../gegl/gegl-init.c:261
 msgid "Where GEGL stores its swap"
 msgstr "GEGL 存储其交换区的位置"
 
-#: ../gegl/gegl-init.c:263
+#: ../gegl/gegl-init.c:266
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "(约)多少内存用于缓存图像"
 
-#: ../gegl/gegl-init.c:268
+#: ../gegl/gegl-init.c:271
 msgid "Default size of tiles in GeglBuffers"
 msgstr "GeglBuffers 中图块的默认尺寸"
 
-#: ../gegl/gegl-init.c:273
+#: ../gegl/gegl-init.c:276
 msgid "The count of pixels to compute simultaneously"
 msgstr "同时计算像素的数量"
 
-#: ../gegl/gegl-init.c:278
+#: ../gegl/gegl-init.c:281
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr "渲染质量，介于 0.0(快速) 和 1.0(参考) 之间的一个值"
 
-#: ../gegl/gegl-init.c:283
+#: ../gegl/gegl-init.c:286
 msgid "The number of concurrent processing threads to use"
 msgstr "使用并行处理线程的数量"
 
-#: ../gegl/gegl-init.c:288
+#: ../gegl/gegl-init.c:291
 msgid "Disable OpenCL"
 msgstr "禁用 OpenCL"
-
-#: ../gegl/gegl-init.c:293
-msgid "Maximum size of a file backend's writer thread queue (in MB)"
-msgstr "文件写线程队伍的最大尺寸(MB)"
 
 #: ../gegl/module/geglmodule.c:147 ../gegl/module/geglmodule.c:165
 #: ../gegl/module/geglmodule.c:274 ../gegl/module/geglmodule.c:301
@@ -222,47 +213,47 @@ msgstr "未载入"
 msgid "Color model"
 msgstr "色彩模型"
 
-#: ../operations/common/alien-map.c:37
+#: ../operations/common/alien-map.c:36
 msgid "What color model used for the transformation"
 msgstr "变换使用什么色彩模型"
 
-#: ../operations/common/alien-map.c:39 ../operations/common/alien-map.c:41
+#: ../operations/common/alien-map.c:38
 msgid "Component 1 frequency"
 msgstr "分量 1 频率"
 
-#: ../operations/common/alien-map.c:42 ../operations/common/alien-map.c:44
+#: ../operations/common/alien-map.c:41
 msgid "Component 2 frequency"
 msgstr "分量 2 频率"
 
-#: ../operations/common/alien-map.c:45 ../operations/common/alien-map.c:47
+#: ../operations/common/alien-map.c:44
 msgid "Component 3 frequency"
 msgstr "分量 3 频率"
 
-#: ../operations/common/alien-map.c:49 ../operations/common/alien-map.c:51
+#: ../operations/common/alien-map.c:47
 msgid "Component 1 phase shift"
 msgstr "分量 1 相移"
 
-#: ../operations/common/alien-map.c:52 ../operations/common/alien-map.c:54
+#: ../operations/common/alien-map.c:50
 msgid "Component 2 phase shift"
 msgstr "分量 2 相移"
 
-#: ../operations/common/alien-map.c:55 ../operations/common/alien-map.c:57
+#: ../operations/common/alien-map.c:53
 msgid "Component 3 phase shift"
 msgstr "分量 3 相移"
 
-#: ../operations/common/alien-map.c:59 ../operations/common/alien-map.c:61
+#: ../operations/common/alien-map.c:57
 msgid "Keep component 1"
 msgstr "保留分量 1"
 
-#: ../operations/common/alien-map.c:62 ../operations/common/alien-map.c:64
+#: ../operations/common/alien-map.c:58
 msgid "Keep component 2"
 msgstr "保留分量 2"
 
-#: ../operations/common/alien-map.c:65 ../operations/common/alien-map.c:67
+#: ../operations/common/alien-map.c:59
 msgid "Keep component 3"
 msgstr "保留分量 3"
 
-#: ../operations/common/alien-map.c:222
+#: ../operations/common/alien-map.c:214
 msgid "Alters colors using sine transformations"
 msgstr "使用正弦变换改变色彩"
 
@@ -270,26 +261,48 @@ msgstr "使用正弦变换改变色彩"
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
 msgstr "使用 Scale3X 边缘外插算法进行平滑"
 
-#: ../operations/common/bilateral-filter.c:27
+#: ../operations/common/apply-lens.c:31
+msgid "Lens refraction index"
+msgstr ""
+
+#: ../operations/common/apply-lens.c:34
+msgid "Keep original surroundings"
+msgstr ""
+
+#: ../operations/common/apply-lens.c:35
+msgid "Keep image unchanged, where not affected by the lens."
+msgstr ""
+
+#: ../operations/common/apply-lens.c:37 ../operations/common/cubism.c:39
+#: ../operations/common/lens-distortion.c:57
+#: ../operations/common/pixelize.c:62
+msgid "Background color"
+msgstr "背景色"
+
+#: ../operations/common/apply-lens.c:302
+msgid "Simulate an elliptical lens over the image"
+msgstr ""
+
+#: ../operations/common/bilateral-filter.c:26
 #: ../operations/common/bilateral-filter-fast.c:37
-#: ../operations/common/dropshadow.c:35
+#: ../operations/common/dropshadow.c:37
 msgid "Blur radius"
 msgstr "模糊半径"
 
-#: ../operations/common/bilateral-filter.c:28
-#: ../operations/common/bilateral-filter-fast.c:39
+#: ../operations/common/bilateral-filter.c:27
+#: ../operations/common/bilateral-filter-fast.c:38
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr "方形像素区域的半径，(宽度和高度为 半径*2+1)。"
 
-#: ../operations/common/bilateral-filter.c:29
+#: ../operations/common/bilateral-filter.c:32
 msgid "Edge preservation"
 msgstr "边缘保留"
 
-#: ../operations/common/bilateral-filter.c:30
+#: ../operations/common/bilateral-filter.c:33
 msgid "Amount of edge preservation"
 msgstr "边缘保留量"
 
-#: ../operations/common/bilateral-filter.c:286
+#: ../operations/common/bilateral-filter.c:290
 msgid ""
 "An edge preserving blur filter that can be used for noise reduction. It is a "
 "gaussian blur where the contribution of neighbourhood pixels are weighted by "
@@ -300,7 +313,7 @@ msgstr ""
 msgid "Smoothness"
 msgstr "平滑"
 
-#: ../operations/common/bilateral-filter-fast.c:35
+#: ../operations/common/bilateral-filter-fast.c:34
 msgid "Level of smoothness"
 msgstr "平滑度"
 
@@ -309,12 +322,9 @@ msgid "A fast approximate implementation of the bilateral filter"
 msgstr "一个快速的近似的双边滤波器的实现"
 
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
-#: ../operations/common/difference-of-gaussians.c:26
-#: ../operations/common/difference-of-gaussians.c:30
-#: ../operations/common/dropshadow.c:33 ../operations/common/snn-mean.c:26
-#: ../operations/common/stress.c:27 ../operations/common/vignette.c:40
-#: ../operations/common/whirl-pinch.c:44
-#: ../operations/external/matting-levin.c:28
+#: ../operations/common/snn-mean.c:26 ../operations/common/stress.c:27
+#: ../operations/common/vignette.c:37 ../operations/common/whirl-pinch.c:45
+#: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/box-max.c:25 ../operations/workshop/box-min.c:25
 #: ../operations/workshop/box-percentile.c:27
 #: ../operations/workshop/disc-percentile.c:26
@@ -327,34 +337,35 @@ msgstr "半径"
 msgid "Radius of square pixel region, (width and height will be radius*2+1)"
 msgstr "方形像素区域的半径，(宽度和高度为 半径*2+1)"
 
-#: ../operations/common/box-blur.c:368
+#: ../operations/common/box-blur.c:394
 msgid "Performs an averaging of a square box of pixels"
 msgstr "对一个方框中的像素进行平均"
 
-#. ... are the properties of the filter, these are all scalar values
-#. * (doubles), the the parameters are:
-#. *       property name,   min,   max, default, "description of property"
+#. Here in the top of the file the properties of the operation is declared,
+#. *  this causes the declaration of a structure for containing the data.
+#. *
+#. *  The first member of each property_ macro becomes a struct member
+#. *  in the GeglProperties struct used when processing.
 #.
-#: ../operations/common/brightness-contrast.c:29
-#: ../operations/common/high-pass.c:26 ../operations/common/mantiuk06.c:31
+#: ../operations/common/brightness-contrast.c:31
+#: ../operations/common/high-pass.c:30 ../operations/common/mantiuk06.c:31
 msgid "Contrast"
 msgstr "对比度"
 
-#: ../operations/common/brightness-contrast.c:30
-msgid "Range scale factor"
-msgstr "范围比例因子"
+#: ../operations/common/brightness-contrast.c:32
+msgid "Magnitude of contrast scaling >1.0 brighten < 1.0 darken"
+msgstr ""
 
-#: ../operations/common/brightness-contrast.c:31
-#: ../operations/common/reinhard05.c:27 ../operations/common/softglow.c:30
-#: ../operations/common/softglow.c:32
+#: ../operations/common/brightness-contrast.c:36
+#: ../operations/common/reinhard05.c:26 ../operations/common/softglow.c:30
 msgid "Brightness"
 msgstr "亮度"
 
-#: ../operations/common/brightness-contrast.c:32
+#: ../operations/common/brightness-contrast.c:37
 msgid "Amount to increase brightness"
 msgstr "亮度增加量"
 
-#: ../operations/common/brightness-contrast.c:147
+#: ../operations/common/brightness-contrast.c:151
 msgid "Changes the light level and contrast."
 msgstr "改变亮度和对比度。"
 
@@ -377,7 +388,7 @@ msgid ""
 msgstr "GeglBuffer 的 babl 格式输出，为 NULL 则使用输入缓存格式"
 
 #: ../operations/common/buffer-sink.c:83
-#: ../operations/common/write-buffer.c:150
+#: ../operations/common/write-buffer.c:148
 msgid "A GEGL buffer destination surface."
 msgstr "一个 GEGL 缓存目标图面。"
 
@@ -397,89 +408,77 @@ msgstr "一个 GEGL 内部使用的，使用内存中 GeglBuffer的源。"
 msgid "Type"
 msgstr "类型"
 
-#: ../operations/common/bump-map.c:48
+#: ../operations/common/bump-map.c:47
 msgid "Type of map"
 msgstr "映射类型"
 
-#: ../operations/common/bump-map.c:50
+#: ../operations/common/bump-map.c:49
 msgid "Compensate"
 msgstr "补偿"
 
-#: ../operations/common/bump-map.c:52
+#: ../operations/common/bump-map.c:50
 msgid "Compensate for darkening"
 msgstr "补偿暗色"
 
-#: ../operations/common/bump-map.c:54
+#: ../operations/common/bump-map.c:52
 msgid "Invert"
 msgstr "反转"
 
-#: ../operations/common/bump-map.c:56
+#: ../operations/common/bump-map.c:53
 msgid "Invert bumpmap"
 msgstr "反转 bumpmap"
 
-#: ../operations/common/bump-map.c:58
+#: ../operations/common/bump-map.c:55
 msgid "Tiled"
 msgstr "平铺的"
 
-#: ../operations/common/bump-map.c:60
+#: ../operations/common/bump-map.c:56
 msgid "Tiled bumpmap"
 msgstr "平铺 bumpmap"
 
-#: ../operations/common/bump-map.c:62 ../operations/common/bump-map.c:64
-#: ../operations/common/emboss.c:34
+#: ../operations/common/bump-map.c:58 ../operations/common/emboss.c:34
 msgid "Azimuth"
 msgstr "方位角"
 
-#: ../operations/common/bump-map.c:66 ../operations/common/bump-map.c:68
-#: ../operations/common/emboss.c:38
+#: ../operations/common/bump-map.c:62 ../operations/common/emboss.c:39
 msgid "Elevation"
 msgstr "海拔"
 
-#: ../operations/common/bump-map.c:70 ../operations/common/bump-map.c:72
-#: ../operations/common/emboss.c:42 ../operations/common/fractal-trace.c:55
-#: ../operations/common/texturize-canvas.c:41
+#: ../operations/common/bump-map.c:65 ../operations/common/emboss.c:44
+#: ../operations/common/fractal-trace.c:58
+#: ../operations/common/texturize-canvas.c:40
 msgid "Depth"
 msgstr "深度"
 
-#: ../operations/common/bump-map.c:74
-msgid "X Offset"
-msgstr "X 偏移量"
+#: ../operations/common/bump-map.c:68 ../operations/common/checkerboard.c:41
+#: ../operations/common/grid.c:38 ../operations/common/mirrors.c:44
+#: ../operations/seamless-clone/seamless-clone.c:26
+#: ../operations/seamless-clone/seamless-clone-compose.c:25
+#, fuzzy
+msgid "Offset X"
+msgstr "偏移："
 
-#: ../operations/common/bump-map.c:76 ../operations/common/checkerboard.c:33
-#: ../operations/common/grid.c:28 ../operations/common/mirrors.c:36
-#: ../operations/seamless-clone/seamless-clone.c:24
-#: ../operations/seamless-clone/seamless-clone-compose.c:24
-msgid "X offset"
-msgstr "X偏移量"
+#: ../operations/common/bump-map.c:74 ../operations/common/checkerboard.c:47
+#: ../operations/common/grid.c:44 ../operations/common/mirrors.c:50
+#: ../operations/seamless-clone/seamless-clone.c:32
+#: ../operations/seamless-clone/seamless-clone-compose.c:31
+#, fuzzy
+msgid "Offset Y"
+msgstr "偏移："
 
-#: ../operations/common/bump-map.c:78
-msgid "Y Offset"
-msgstr "Y 偏移量"
-
-#: ../operations/common/bump-map.c:80 ../operations/common/checkerboard.c:37
-#: ../operations/common/grid.c:30 ../operations/common/mirrors.c:38
-#: ../operations/seamless-clone/seamless-clone.c:27
-#: ../operations/seamless-clone/seamless-clone-compose.c:27
-msgid "Y offset"
-msgstr "Y 偏移量"
-
-#: ../operations/common/bump-map.c:82
+#: ../operations/common/bump-map.c:80
 msgid "Waterlevel"
 msgstr "水位"
 
-#: ../operations/common/bump-map.c:84
+#: ../operations/common/bump-map.c:81
 msgid "Level that full transparency should represent"
 msgstr "完全透明所代表的级别"
 
-#: ../operations/common/bump-map.c:86
-msgid "Ambient"
-msgstr "环境"
-
-#: ../operations/common/bump-map.c:88
+#: ../operations/common/bump-map.c:84
 msgid "Ambient lighting factor"
 msgstr "环境光照系数"
 
-#: ../operations/common/bump-map.c:477
+#: ../operations/common/bump-map.c:474
 msgid ""
 "This plug-in uses the algorithm described by John Schlag, \"Fast Embossing "
 "Effects on Raster Image Data\" in Graphics GEMS IV (ISBN 0-12-336155-9). It "
@@ -487,208 +486,198 @@ msgid ""
 "nice embossing effect."
 msgstr ""
 
-#: ../operations/common/c2g.c:29
+#: ../operations/common/c2g.c:28
 msgid ""
 "Neighborhood taken into account, this is the radius in pixels taken into "
 "account when deciding which colors map to which gray values"
 msgstr ""
 
-#: ../operations/common/c2g.c:33 ../operations/common/stress.c:29
+#: ../operations/common/c2g.c:36 ../operations/common/stress.c:33
 msgid "Samples"
 msgstr "采样"
 
-#: ../operations/common/c2g.c:35 ../operations/common/stress.c:30
+#: ../operations/common/c2g.c:37 ../operations/common/stress.c:34
 msgid "Number of samples to do per iteration looking for the range of colors"
 msgstr "每次迭代寻找色彩范围的采样数目"
 
-#: ../operations/common/c2g.c:38 ../operations/common/fractal-explorer.c:46
-#: ../operations/common/matting-global.c:25 ../operations/common/stress.c:31
+#: ../operations/common/c2g.c:41 ../operations/common/fractal-explorer.c:47
+#: ../operations/common/matting-global.c:25
+#: ../operations/common/noise-cell.c:48 ../operations/common/noise-perlin.c:33
+#: ../operations/common/noise-simplex.c:35 ../operations/common/stress.c:38
 #: ../operations/workshop/mandelbrot.c:31
 msgid "Iterations"
 msgstr "迭代"
 
-#: ../operations/common/c2g.c:40
+#: ../operations/common/c2g.c:42
 msgid ""
 "Number of iterations, a higher number of iterations provides less noisy "
 "results at a computational cost"
 msgstr "迭代次数，更多的迭代能得到噪声较少的结果，但计算量大"
 
-#: ../operations/common/c2g.c:364
+#: ../operations/common/c2g.c:368
 msgid ""
 "Color to grayscale conversion, uses envelopes formed from spatial color "
 "differences to perform color-feature preserving grayscale spatial contrast "
 "enhancement"
 msgstr ""
 
-#: ../operations/common/cartoon.c:25 ../operations/common/cartoon.c:27
+#: ../operations/common/cartoon.c:25
 msgid "Mask radius"
 msgstr "蒙版半径"
 
-#: ../operations/common/cartoon.c:29 ../operations/common/cartoon.c:31
+#: ../operations/common/cartoon.c:28
 #, fuzzy
 msgid "Percent black"
 msgstr "灰度"
 
-#: ../operations/common/cartoon.c:393
+#: ../operations/common/cartoon.c:319
 msgid "Simulate a cartoon by enhancing edges"
 msgstr "通过增强边缘模拟卡通效果"
 
 #: ../operations/common/channel-mixer.c:36
-#: ../operations/common/channel-mixer.c:38
 msgid "Monochrome"
 msgstr "单色"
 
-#: ../operations/common/channel-mixer.c:40
-#: ../operations/common/channel-mixer.c:42
-msgid "Preserve Luminosity"
+#: ../operations/common/channel-mixer.c:38
+#, fuzzy
+msgid "Preserve luminosity"
 msgstr "保留光度"
 
-#: ../operations/common/channel-mixer.c:44
+#: ../operations/common/channel-mixer.c:40
 msgid "Red Red Gain"
 msgstr "红红增益"
 
-#: ../operations/common/channel-mixer.c:46
+#: ../operations/common/channel-mixer.c:41
 msgid "Set the red gain for the red channel"
 msgstr "设置红色通道的红增益"
 
-#: ../operations/common/channel-mixer.c:48
+#: ../operations/common/channel-mixer.c:44
 msgid "Red Green Gain"
 msgstr "红绿增益"
 
-#: ../operations/common/channel-mixer.c:50
+#: ../operations/common/channel-mixer.c:45
 msgid "Set the green gain for the red channel"
 msgstr "设置红色通道的绿增益"
 
-#: ../operations/common/channel-mixer.c:52
-msgid "Red Blue Gain"
+#: ../operations/common/channel-mixer.c:48
+#, fuzzy
+msgid "Blue Gain"
 msgstr "红蓝增益"
 
-#: ../operations/common/channel-mixer.c:54
+#: ../operations/common/channel-mixer.c:49
 msgid "Set the blue gain for the red channel"
 msgstr "设置红色通道的蓝增益"
 
-#: ../operations/common/channel-mixer.c:56
+#: ../operations/common/channel-mixer.c:52
 msgid "Green Red Gain"
 msgstr "绿红增益"
 
-#: ../operations/common/channel-mixer.c:58
+#: ../operations/common/channel-mixer.c:53
+#: ../operations/common/channel-mixer.c:66
 msgid "Set the red gain for the green channel"
 msgstr "设置绿通道的红增益"
 
-#: ../operations/common/channel-mixer.c:60
+#: ../operations/common/channel-mixer.c:56
 msgid "Green Green Gain"
 msgstr "绿绿增益"
 
-#: ../operations/common/channel-mixer.c:62
+#: ../operations/common/channel-mixer.c:57
+#: ../operations/common/channel-mixer.c:70
 msgid "Set the green gain for the green channel"
 msgstr "设置绿通道的绿增益"
 
-#: ../operations/common/channel-mixer.c:64
+#: ../operations/common/channel-mixer.c:60
 msgid "Green Blue Gain"
 msgstr "绿蓝增益"
 
-#: ../operations/common/channel-mixer.c:66
+#: ../operations/common/channel-mixer.c:61
+#: ../operations/common/channel-mixer.c:74
 msgid "Set the blue gain for the green channel"
 msgstr "设置绿通道的蓝增益"
 
-#: ../operations/common/channel-mixer.c:68
+#: ../operations/common/channel-mixer.c:65
 msgid "Blue Red Gain"
 msgstr "蓝红增益"
 
-#: ../operations/common/channel-mixer.c:70
-msgid "Set the red gain for the blue channel"
-msgstr "设置蓝通道的红增益"
-
-#: ../operations/common/channel-mixer.c:72
+#: ../operations/common/channel-mixer.c:69
 msgid "Blue Green Gain"
 msgstr "蓝绿增益"
 
-#: ../operations/common/channel-mixer.c:74
-msgid "Set the green gain for the blue channel"
-msgstr "设置蓝通道的绿增益"
-
-#: ../operations/common/channel-mixer.c:76
+#: ../operations/common/channel-mixer.c:73
 msgid "Blue Blue Gain"
 msgstr "蓝蓝增益"
 
-#: ../operations/common/channel-mixer.c:78
-msgid "Set the blue gain for the blue channel"
-msgstr "设置蓝通道的蓝增益"
-
-#: ../operations/common/channel-mixer.c:296
+#: ../operations/common/channel-mixer.c:294
 msgid "Alter colors by mixing RGB Channels"
 msgstr "通过混合 RGB 通道调整色彩"
 
 #: ../operations/common/checkerboard.c:25 ../operations/common/grid.c:24
-#: ../operations/common/plasma.c:45 ../operations/common/rectangle.c:33
-#: ../operations/core/crop.c:27 ../operations/external/svg-load.c:27
-#: ../operations/external/text.c:38 ../operations/external/v4l.c:27
+#: ../operations/common/panorama-projection.c:42
+#: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
+#: ../operations/core/crop.c:33 ../operations/external/svg-load.c:28
+#: ../operations/external/text.c:47 ../operations/external/v4l.c:27
 #: ../operations/external/vector-stroke.c:30
-#: ../operations/workshop/external/line-profile.c:29
+#: ../operations/workshop/external/line-profile.c:39
 msgid "Width"
 msgstr "宽度"
 
-#: ../operations/common/checkerboard.c:27 ../operations/common/grid.c:25
+#: ../operations/common/checkerboard.c:26 ../operations/common/grid.c:25
 msgid "Horizontal width of cells pixels"
 msgstr "单元像素的水平宽度"
 
-#: ../operations/common/checkerboard.c:29 ../operations/common/grid.c:26
-#: ../operations/common/plasma.c:47 ../operations/common/rectangle.c:35
-#: ../operations/core/crop.c:28 ../operations/external/svg-load.c:29
-#: ../operations/external/text.c:40 ../operations/external/v4l.c:28
-#: ../operations/workshop/external/line-profile.c:30
+#: ../operations/common/checkerboard.c:33 ../operations/common/grid.c:31
+#: ../operations/common/panorama-projection.c:48
+#: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
+#: ../operations/core/crop.c:37 ../operations/external/svg-load.c:31
+#: ../operations/external/text.c:49 ../operations/external/v4l.c:28
+#: ../operations/workshop/external/line-profile.c:41
 msgid "Height"
 msgstr "高度"
 
-#: ../operations/common/checkerboard.c:31 ../operations/common/grid.c:27
-msgid "Vertical width of cells in pixels"
+#: ../operations/common/checkerboard.c:34 ../operations/common/grid.c:32
+#, fuzzy
+msgid "Vertical width of cells pixels"
 msgstr "单元像素的垂直宽度"
 
-#: ../operations/common/checkerboard.c:35 ../operations/common/grid.c:29
+#: ../operations/common/checkerboard.c:42 ../operations/common/grid.c:39
 msgid "Horizontal offset (from origin) for start of grid"
 msgstr "网格起始位置(相对原点的)水平偏移量"
 
-#: ../operations/common/checkerboard.c:39 ../operations/common/grid.c:31
+#: ../operations/common/checkerboard.c:48 ../operations/common/grid.c:45
 msgid "Vertical offset (from origin) for start of grid"
 msgstr "网格起始位置(相对原点的)竖直偏移量"
 
-#: ../operations/common/checkerboard.c:41 ../operations/common/color.c:24
+#: ../operations/common/checkerboard.c:53
+#: ../operations/common/checkerboard.c:57 ../operations/common/color.c:24
 #: ../operations/common/color-to-alpha.c:28
-#: ../operations/common/dropshadow.c:37 ../operations/common/grid.c:36
-#: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:35
-#: ../operations/external/text.c:31 ../operations/external/vector-fill.c:27
+#: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
+#: ../operations/common/rectangle.c:48 ../operations/common/vignette.c:34
+#: ../operations/external/text.c:36 ../operations/external/vector-fill.c:26
 #: ../operations/external/vector-stroke.c:27
 msgid "Color"
 msgstr "颜色"
 
-#: ../operations/common/checkerboard.c:43
+#: ../operations/common/checkerboard.c:54
 msgid "One of the cell colors (defaults to 'black')"
 msgstr "其中一个单元格颜色(默认为“black”，黑色)"
 
-#: ../operations/common/checkerboard.c:45
-msgid "Other color"
-msgstr "其他颜色"
-
-#: ../operations/common/checkerboard.c:47
-msgid "The other cell color (defaults to 'white')"
+#: ../operations/common/checkerboard.c:58
+#, fuzzy
+msgid "One of the cell colors (defaults to 'white')"
 msgstr "其他单元格颜色(默认为“white”，白色)"
 
-#: ../operations/common/checkerboard.c:49 ../operations/common/color.c:27
+#: ../operations/common/checkerboard.c:61 ../operations/common/color.c:27
 msgid "Babl Format"
 msgstr "babl 格式"
 
-#: ../operations/common/checkerboard.c:50 ../operations/common/color.c:28
-#: ../operations/core/convert-format.c:28
+#: ../operations/common/checkerboard.c:62 ../operations/common/color.c:28
+#: ../operations/core/cast-format.c:30 ../operations/core/convert-format.c:28
 msgid "The babl format of the output"
 msgstr "输出的 babl 格式"
 
-#: ../operations/common/checkerboard.c:326
+#: ../operations/common/checkerboard.c:338
 msgid "Create a checkerboard pattern"
 msgstr "创建棋盘图案"
-
-#: ../operations/common/color.c:25
-msgid "The color to render (defaults to 'black')"
-msgstr "要渲染的颜色(默认为“black”，黑色)"
 
 #: ../operations/common/color.c:91
 msgid ""
@@ -700,7 +689,7 @@ msgstr "生成完全用指定颜色填充的缓存，裁剪以获得更小的尺
 msgid "Red bits"
 msgstr "红位"
 
-#: ../operations/common/color-reduction.c:37
+#: ../operations/common/color-reduction.c:36
 msgid "Number of bits for red channel"
 msgstr "红色通道的位数"
 
@@ -708,7 +697,7 @@ msgstr "红色通道的位数"
 msgid "Green bits"
 msgstr "绿位"
 
-#: ../operations/common/color-reduction.c:41
+#: ../operations/common/color-reduction.c:40
 msgid "Number of bits for green channel"
 msgstr "绿色通道的位数"
 
@@ -716,7 +705,7 @@ msgstr "绿色通道的位数"
 msgid "Blue bits"
 msgstr "蓝位"
 
-#: ../operations/common/color-reduction.c:45
+#: ../operations/common/color-reduction.c:44
 msgid "Number of bits for blue channel"
 msgstr "蓝色通道的位数"
 
@@ -724,38 +713,33 @@ msgstr "蓝色通道的位数"
 msgid "Alpha bits"
 msgstr "Alpha 位"
 
-#: ../operations/common/color-reduction.c:49
+#: ../operations/common/color-reduction.c:48
 msgid "Number of bits for alpha channel"
 msgstr "Alpha 通道的比特数"
 
 #: ../operations/common/color-reduction.c:51
-msgid "Dithering Strategy"
+#, fuzzy
+msgid "Dithering strategy"
 msgstr "仿色战略"
 
 #: ../operations/common/color-reduction.c:53
 msgid "The dithering strategy to use"
 msgstr "要使用的仿色战略"
 
+#. XXX: what?
 #: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
-#: ../operations/common/noise.c:31 ../operations/common/noise-cie-lch.c:41
-#: ../operations/common/noise-hsv.c:43 ../operations/common/noise-hurl.c:31
-#: ../operations/common/noise-pick.c:32 ../operations/common/noise-rgb.c:52
-#: ../operations/common/noise-slur.c:34 ../operations/common/noise-spread.c:37
-#: ../operations/common/shift.c:35 ../operations/common/wind.c:33
-msgid "Seed"
-msgstr "种子"
-
-#: ../operations/common/color-reduction.c:56 ../operations/common/cubism.c:43
-#: ../operations/common/mosaic.c:73 ../operations/common/noise-cie-lch.c:42
-#: ../operations/common/noise-hsv.c:44 ../operations/common/noise-hurl.c:32
-#: ../operations/common/noise-pick.c:33 ../operations/common/noise-rgb.c:53
-#: ../operations/common/noise-slur.c:35 ../operations/common/noise-spread.c:38
-#: ../operations/common/plasma.c:36 ../operations/common/shift.c:36
-#: ../operations/common/wind.c:33
+#: ../operations/common/mosaic.c:88 ../operations/common/noise-cell.c:55
+#: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
+#: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
+#: ../operations/common/noise-pick.c:38
+#: ../operations/common/noise-simplex.c:39 ../operations/common/noise-rgb.c:44
+#: ../operations/common/noise-slur.c:40 ../operations/common/noise-spread.c:41
+#: ../operations/common/plasma.c:70 ../operations/common/shift.c:40
+#: ../operations/common/wind.c:34
 msgid "Random seed"
 msgstr "随机种子"
 
-#: ../operations/common/color-reduction.c:511
+#: ../operations/common/color-reduction.c:510
 msgid ""
 "Reduce the number of colors in the image, by reducing the bits per channel "
 "(colors and alpha), with optional dithering"
@@ -766,12 +750,12 @@ msgstr ""
 msgid "Original temperature"
 msgstr "原始色温"
 
-#: ../operations/common/color-temperature.c:29
+#: ../operations/common/color-temperature.c:28
 msgid ""
 "Estimated temperature of the light source in Kelvin the image was taken with."
 msgstr "估算的图像拍摄时的光源色温(单位为 Kelvin)。"
 
-#: ../operations/common/color-temperature.c:32
+#: ../operations/common/color-temperature.c:33
 msgid "Intended temperature"
 msgstr "预定色温"
 
@@ -779,15 +763,16 @@ msgstr "预定色温"
 msgid "Corrected estimation of the temperature of the light source in Kelvin."
 msgstr "校正的光源色温估计值(单位为 Kelvin)。"
 
-#: ../operations/common/color-temperature.c:279
+#: ../operations/common/color-temperature.c:281
 msgid "Change the color temperature of the image"
 msgstr "改变图像的色温"
 
-#: ../operations/common/color-to-alpha.c:30
-msgid "The color to render (defaults to 'white')"
+#: ../operations/common/color-to-alpha.c:29
+#, fuzzy
+msgid "The color to render (defaults to, and works best with, 'white')"
 msgstr "要渲染的颜色(默认为“white”，白色)"
 
-#: ../operations/common/color-to-alpha.c:255
+#: ../operations/common/color-to-alpha.c:254
 msgid "Convert a specified color to transparency"
 msgstr "将指定色彩转换为透明"
 
@@ -799,15 +784,15 @@ msgstr "采样点"
 msgid "Number of curve sampling points.  0 for exact calculation."
 msgstr "曲线采样点数。0 为精确的计算。"
 
-#: ../operations/common/contrast-curve.c:27
+#: ../operations/common/contrast-curve.c:29
 msgid "Curve"
 msgstr "曲线"
 
-#: ../operations/common/contrast-curve.c:27
+#: ../operations/common/contrast-curve.c:30
 msgid "The contrast curve."
 msgstr "对比度曲线。"
 
-#: ../operations/common/contrast-curve.c:255
+#: ../operations/common/contrast-curve.c:258
 msgid "Adjusts the contrast of the image according to a curve."
 msgstr "按曲线调节图像的对比度。"
 
@@ -815,11 +800,11 @@ msgstr "按曲线调节图像的对比度。"
 msgid "Tile size"
 msgstr "图块尺寸"
 
-#: ../operations/common/cubism.c:32 ../operations/common/mosaic.c:43
+#: ../operations/common/cubism.c:31 ../operations/common/mosaic.c:43
 msgid "Average diameter of each tile (in pixels)"
 msgstr "每个图块的平均直径(像素)"
 
-#: ../operations/common/cubism.c:34
+#: ../operations/common/cubism.c:35
 msgid "Tile saturation"
 msgstr "图块的饱和度"
 
@@ -827,15 +812,7 @@ msgstr "图块的饱和度"
 msgid "Expand tiles by this amount"
 msgstr "按这个量扩展图块"
 
-#: ../operations/common/cubism.c:38
-msgid "Background Color"
-msgstr "背景色"
-
-#: ../operations/common/cubism.c:40
-msgid "The tiles' background color"
-msgstr "标题的背景色"
-
-#: ../operations/common/cubism.c:614
+#: ../operations/common/cubism.c:613
 msgid ""
 "Convert the image into randomly rotated square blobs, somehow resembling a "
 "cubist painting style"
@@ -847,11 +824,10 @@ msgstr "保留"
 
 #: ../operations/common/deinterlace.c:43
 #, fuzzy
-#| msgid "Keep even/odd fields"
 msgid "Keep even or odd fields"
 msgstr "保留奇数或偶数字段"
 
-#: ../operations/common/deinterlace.c:45 ../operations/workshop/gblur-1d.c:51
+#: ../operations/common/deinterlace.c:45 ../operations/workshop/gblur-1d.c:53
 msgid "Orientation"
 msgstr "方向"
 
@@ -875,11 +851,11 @@ msgstr "修复隔行或隔列缺失的图像"
 msgid "Radius 1"
 msgstr "半径 1"
 
-#: ../operations/common/difference-of-gaussians.c:28
+#: ../operations/common/difference-of-gaussians.c:29
 msgid "Radius 2"
 msgstr "半径 2"
 
-#: ../operations/common/difference-of-gaussians.c:103
+#: ../operations/common/difference-of-gaussians.c:86
 msgid ""
 "Edge detection with control of edge thickness, based on the difference of "
 "two gaussian blurs"
@@ -893,47 +869,42 @@ msgstr "指定输出窗口的标题："
 msgid "Display the input buffer in a window."
 msgstr "在一个窗口中显示输入缓存。"
 
-#: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:34
-#: ../operations/common/motion-blur-circular.c:41
-#: ../operations/common/motion-blur-zoom.c:40 ../operations/common/plasma.c:41
-#: ../operations/common/polar-coordinates.c:55
-#: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:64
-#: ../operations/common/waves.c:26 ../operations/core/crop.c:25
+#: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
+#: ../operations/common/plasma.c:40
+#: ../operations/common/polar-coordinates.c:51
+#: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
 
-#: ../operations/common/dropshadow.c:27
+#: ../operations/common/dropshadow.c:26
 msgid "Horizontal shadow offset"
 msgstr "水平阴影偏移"
 
-#: ../operations/common/dropshadow.c:29 ../operations/common/layer.c:36
-#: ../operations/common/motion-blur-circular.c:46
-#: ../operations/common/motion-blur-zoom.c:45 ../operations/common/plasma.c:43
-#: ../operations/common/polar-coordinates.c:59
-#: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:68
-#: ../operations/common/waves.c:30 ../operations/core/crop.c:26
+#: ../operations/common/dropshadow.c:31 ../operations/common/layer.c:41
+#: ../operations/common/plasma.c:47
+#: ../operations/common/polar-coordinates.c:57
+#: ../operations/common/rectangle.c:31 ../operations/core/crop.c:29
 msgid "Y"
 msgstr "Y"
 
-#: ../operations/common/dropshadow.c:31
+#: ../operations/common/dropshadow.c:32
 msgid "Vertical shadow offset"
 msgstr "竖直阴影偏移"
 
-#: ../operations/common/dropshadow.c:39
+#: ../operations/common/dropshadow.c:44
 msgid "The shadow's color (defaults to 'black')"
 msgstr "阴影的颜色(默认为“black”，黑色)"
 
 #. It does make sense to sometimes have opacities > 1 (see GEGL logo
 #. * for example)
 #.
-#: ../operations/common/dropshadow.c:44 ../operations/common/dropshadow.c:46
-#: ../operations/common/layer.c:32 ../operations/common/layer.c:33
-#: ../operations/common/opacity.c:25 ../operations/external/vector-fill.c:30
-#: ../operations/external/vector-stroke.c:33
+#: ../operations/common/dropshadow.c:49 ../operations/common/layer.c:33
+#: ../operations/common/opacity.c:25 ../operations/external/vector-fill.c:29
+#: ../operations/external/vector-stroke.c:34
 msgid "Opacity"
 msgstr "不透明度"
 
-#: ../operations/common/dropshadow.c:99
+#: ../operations/common/dropshadow.c:108
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "对输入缓存创建投影效果"
 
@@ -941,21 +912,19 @@ msgstr "对输入缓存创建投影效果"
 msgid "High-resolution edge detection"
 msgstr "高分辨率的边缘检测"
 
-#: ../operations/common/edge-sobel.c:27 ../operations/common/edge-sobel.c:29
-#: ../operations/common/noise-spread.c:29
+#: ../operations/common/edge-sobel.c:27 ../operations/common/noise-spread.c:29
 msgid "Horizontal"
 msgstr "水平"
 
-#: ../operations/common/edge-sobel.c:31 ../operations/common/edge-sobel.c:33
-#: ../operations/common/noise-spread.c:33
+#: ../operations/common/edge-sobel.c:29 ../operations/common/noise-spread.c:35
 msgid "Vertical"
 msgstr "竖直"
 
-#: ../operations/common/edge-sobel.c:35 ../operations/common/edge-sobel.c:37
+#: ../operations/common/edge-sobel.c:31
 msgid "Keep Signal"
 msgstr "保持信号"
 
-#: ../operations/common/edge-sobel.c:329
+#: ../operations/common/edge-sobel.c:323
 msgid "Specialized direction-dependent edge detection"
 msgstr "特定的依赖于方向的边缘检测"
 
@@ -964,51 +933,58 @@ msgid "Emboss Type"
 msgstr "浮雕类型"
 
 #: ../operations/common/emboss.c:32
-msgid "Emboss or Bumpmap"
-msgstr "浮雕或 Bumpmap"
+#, fuzzy
+msgid "Rendering type"
+msgstr "渲染意图"
 
-#: ../operations/common/emboss.c:36
-msgid "The light angle (degrees)"
+#: ../operations/common/emboss.c:35
+#, fuzzy
+msgid "Light angle (degrees)"
 msgstr "光照角度(度)"
 
 #: ../operations/common/emboss.c:40
-msgid "The elevation angle (degrees)"
+#, fuzzy
+msgid "Elevation angle (degrees)"
 msgstr "旋转角度(度)"
 
-#: ../operations/common/emboss.c:44
-msgid "The filter width"
+#: ../operations/common/emboss.c:45
+#, fuzzy
+msgid "Filter width"
 msgstr "滤镜宽度"
 
-#: ../operations/common/emboss.c:257
+#: ../operations/common/emboss.c:267
 msgid "Simulates an image created by embossing"
 msgstr "模拟以浮雕方式生成的图像"
 
 #: ../operations/common/exp-combine.c:25
-msgid "Exposure Values"
+#, fuzzy
+msgid "Exposure values"
 msgstr "曝光值"
 
 #: ../operations/common/exp-combine.c:26
 msgid "Relative brightness of each exposure in EV"
 msgstr "EV 每次曝光的相对亮度"
 
-#: ../operations/common/exp-combine.c:27
-msgid "Discretization Bits"
+#: ../operations/common/exp-combine.c:28
+#, fuzzy
+msgid "Discretization bits"
 msgstr "离散位"
 
 #: ../operations/common/exp-combine.c:29
 msgid "Log2 of source's discretization steps"
 msgstr "源的离散步数的 Log2"
 
-#: ../operations/common/exp-combine.c:30
-msgid "Weight Sigma"
+#: ../operations/common/exp-combine.c:32
+#, fuzzy
+msgid "Weight sigma"
 msgstr "Sigma 权重"
 
-#: ../operations/common/exp-combine.c:32
+#: ../operations/common/exp-combine.c:33
 #, fuzzy
 msgid "Weight distribution sigma controlling response contributions"
 msgstr "控制响应影响力多少的 sigma 权重分布"
 
-#: ../operations/common/exp-combine.c:1270
+#: ../operations/common/exp-combine.c:1272
 msgid "Combine multiple scene exposures into one high range buffer"
 msgstr "将多个场景曝光组合成一个高范围缓存"
 
@@ -1016,23 +992,20 @@ msgstr "将多个场景曝光组合成一个高范围缓存"
 msgid "Exposure"
 msgstr "曝光"
 
-#: ../operations/common/exposure.c:27
+#: ../operations/common/exposure.c:26
 msgid "Relative brightness change in stops"
 msgstr "步与步之间的相对亮度变化"
 
 #: ../operations/common/exposure.c:29
+#: ../operations/workshop/convolution-matrix.c:52
 msgid "Offset"
 msgstr "偏移量"
 
-#: ../operations/common/exposure.c:31
+#: ../operations/common/exposure.c:30
 msgid "Offset value added"
 msgstr "增加的偏移值"
 
-#: ../operations/common/exposure.c:33 ../operations/common/vignette.c:49
-msgid "Gamma"
-msgstr "Gamma"
-
-#: ../operations/common/exposure.c:35
+#: ../operations/common/exposure.c:33
 msgid "Gamma correction"
 msgstr "Gamma 校正"
 
@@ -1041,17 +1014,16 @@ msgid ""
 "Changes Exposure and Contrast, mainly for use with high dynamic range images"
 msgstr "改变曝光和对比度，主要用于高动态范围图像"
 
-#: ../operations/common/fattal02.c:33 ../operations/common/noise.c:25
-#: ../operations/common/noise-rgb.c:48 ../operations/common/noise-rgb.c:50
-#: ../operations/workshop/convolution-matrix.c:86
+#: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
+#: ../operations/common/noise-rgb.c:41
 msgid "Alpha"
 msgstr "Alpha"
 
-#: ../operations/common/fattal02.c:35
+#: ../operations/common/fattal02.c:34
 msgid "Gradient threshold for detail enhancement"
 msgstr "细节增强的梯度阈值"
 
-#: ../operations/common/fattal02.c:36
+#: ../operations/common/fattal02.c:37
 msgid "Beta"
 msgstr "Beta"
 
@@ -1059,25 +1031,25 @@ msgstr "Beta"
 msgid "Strength of local detail enhancement"
 msgstr "局部细节增强的力度"
 
-#: ../operations/common/fattal02.c:39 ../operations/common/mantiuk06.c:34
-#: ../operations/common/noise-hsv.c:35 ../operations/common/noise-hsv.c:37
-#: ../operations/workshop/color-rotate.c:50
+#: ../operations/common/fattal02.c:41 ../operations/common/mantiuk06.c:35
+#: ../operations/common/noise-hsv.c:33
+#: ../operations/workshop/color-rotate.c:63
 msgid "Saturation"
 msgstr "饱和度"
 
-#: ../operations/common/fattal02.c:41 ../operations/common/mantiuk06.c:36
+#: ../operations/common/fattal02.c:42
 msgid "Global color saturation factor"
 msgstr "全局色彩饱和度因子"
 
-#: ../operations/common/fattal02.c:42
+#: ../operations/common/fattal02.c:45
 msgid "Noise"
 msgstr "噪点"
 
-#: ../operations/common/fattal02.c:44
+#: ../operations/common/fattal02.c:46
 msgid "Gradient threshold for lowering detail enhancement"
 msgstr "降低细节增强的梯度阈值"
 
-#: ../operations/common/fattal02.c:1325
+#: ../operations/common/fattal02.c:1328
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator attenuates the magnitudes of local image "
@@ -1091,260 +1063,229 @@ msgstr ""
 msgid "Fractal type"
 msgstr "分形类型"
 
-#: ../operations/common/fractal-explorer.c:44
-#: ../operations/common/fractal-trace.c:32
+#: ../operations/common/fractal-explorer.c:45
 msgid "Type of a fractal"
 msgstr "一个分形的类型"
 
-#: ../operations/common/fractal-explorer.c:48
-#: ../operations/common/lens-distortion.c:41 ../operations/common/mirrors.c:48
+#: ../operations/common/fractal-explorer.c:50
+#: ../operations/common/lens-distortion.c:41 ../operations/common/mirrors.c:72
+#: ../operations/common/panorama-projection.c:38
 msgid "Zoom"
 msgstr "缩放"
 
-#: ../operations/common/fractal-explorer.c:49
+#: ../operations/common/fractal-explorer.c:51
 msgid "Zoom in the fractal space"
 msgstr "在分形空间中缩放"
 
-#: ../operations/common/fractal-explorer.c:50
+#: ../operations/common/fractal-explorer.c:56
+#: ../operations/common/lens-distortion.c:45
 msgid "Shift X"
 msgstr "X 平移"
 
-#: ../operations/common/fractal-explorer.c:51
+#: ../operations/common/fractal-explorer.c:57
 msgid "X shift in the fractal space"
 msgstr "在分形空间中 X 平移"
 
-#: ../operations/common/fractal-explorer.c:52
+#: ../operations/common/fractal-explorer.c:60
+#: ../operations/common/lens-distortion.c:49
 msgid "Shift Y"
 msgstr "Y 平移"
 
-#: ../operations/common/fractal-explorer.c:53
+#: ../operations/common/fractal-explorer.c:61
 msgid "Y shift in the fractal space"
 msgstr "在分形空间中 Y 平移"
 
-#: ../operations/common/fractal-explorer.c:55
+#: ../operations/common/fractal-explorer.c:64
 msgid "CX"
 msgstr "CX"
 
-#: ../operations/common/fractal-explorer.c:55
+#: ../operations/common/fractal-explorer.c:65
 msgid "CX (No effect in Mandelbrot and Sierpinski)"
 msgstr "CX (在 Mandelbrot 和 Sierpinski 中无效)"
 
-#: ../operations/common/fractal-explorer.c:56
+#: ../operations/common/fractal-explorer.c:68
 msgid "CY"
 msgstr "CY"
 
-#: ../operations/common/fractal-explorer.c:56
+#: ../operations/common/fractal-explorer.c:69
 msgid "CY (No effect in Mandelbrot and Sierpinski)"
 msgstr "CY (在 Mandelbrot 和 Sierpinski 中无效)"
 
-#: ../operations/common/fractal-explorer.c:58
-msgid "Red stretch"
-msgstr "红色拉伸"
-
-#: ../operations/common/fractal-explorer.c:59
+#: ../operations/common/fractal-explorer.c:72
 msgid "Red stretching factor"
 msgstr "红色拉伸因子"
 
-#: ../operations/common/fractal-explorer.c:60
-msgid "Green stretch"
-msgstr "绿色拉伸"
-
-#: ../operations/common/fractal-explorer.c:61
+#: ../operations/common/fractal-explorer.c:75
 msgid "Green stretching factor"
 msgstr "绿色拉伸因子"
 
-#: ../operations/common/fractal-explorer.c:62
-msgid "Blue stretch"
-msgstr "蓝色拉伸"
-
-#: ../operations/common/fractal-explorer.c:63
+#: ../operations/common/fractal-explorer.c:78
 msgid "Blue stretching factor"
 msgstr "蓝色拉伸因子"
 
-#: ../operations/common/fractal-explorer.c:71
-msgid "Red mode"
-msgstr "红色模式"
-
-#: ../operations/common/fractal-explorer.c:73
+#: ../operations/common/fractal-explorer.c:87
 msgid "Red application mode"
 msgstr "红色应用模式"
 
-#: ../operations/common/fractal-explorer.c:74
-msgid "Green mode"
-msgstr "绿色模式"
-
-#: ../operations/common/fractal-explorer.c:76
+#: ../operations/common/fractal-explorer.c:91
 msgid "Green application mode"
 msgstr "绿色应用模式"
 
-#: ../operations/common/fractal-explorer.c:77
-msgid "Blue mode"
-msgstr "蓝色模式"
-
-#: ../operations/common/fractal-explorer.c:79
+#: ../operations/common/fractal-explorer.c:95
 msgid "Blue application mode"
 msgstr "蓝色应用模式"
 
-#: ../operations/common/fractal-explorer.c:81
-#: ../operations/common/fractal-explorer.c:82
+#: ../operations/common/fractal-explorer.c:99
 msgid "Red inversion"
 msgstr "红色反转"
 
-#: ../operations/common/fractal-explorer.c:83
-#: ../operations/common/fractal-explorer.c:84
+#: ../operations/common/fractal-explorer.c:100
 msgid "Green inversion"
 msgstr "绿色反转"
 
-#: ../operations/common/fractal-explorer.c:85
-#: ../operations/common/fractal-explorer.c:86
+#: ../operations/common/fractal-explorer.c:101
 msgid "Blue inversion"
 msgstr "蓝色反转"
 
-#: ../operations/common/fractal-explorer.c:88
-msgid "Colors"
-msgstr "色彩"
-
-#: ../operations/common/fractal-explorer.c:89
+#: ../operations/common/fractal-explorer.c:103
 msgid "Number of colors"
 msgstr "色彩数目"
 
-#: ../operations/common/fractal-explorer.c:91
+#: ../operations/common/fractal-explorer.c:106
 msgid "Loglog smoothing"
 msgstr "Loglog 平滑"
 
-#: ../operations/common/fractal-explorer.c:92
-msgid "Use loglog smoothing"
-msgstr "使用 loglog 平滑"
+#: ../operations/common/fractal-explorer.c:362
+#, fuzzy, c-format
+msgid "Unsupported fractal type: %d"
+msgstr "不支持的分形类型"
 
-#: ../operations/common/fractal-explorer.c:404
+#: ../operations/common/fractal-explorer.c:420
 msgid "Fractal Explorer"
 msgstr "分形浏览器"
 
 #: ../operations/common/fractal-trace.c:34
 #: ../operations/common/linear-gradient.c:25
 #: ../operations/common/radial-gradient.c:25
-#: ../operations/workshop/external/line-profile.c:26
+#: ../operations/workshop/external/line-profile.c:28
 msgid "X1"
 msgstr "X1"
 
-#: ../operations/common/fractal-trace.c:36
+#: ../operations/common/fractal-trace.c:35
 msgid "X1 value, position"
 msgstr "X1 值，位置"
 
-#: ../operations/common/fractal-trace.c:37
-#: ../operations/common/linear-gradient.c:27
+#: ../operations/common/fractal-trace.c:38
+#: ../operations/common/linear-gradient.c:33
 #: ../operations/common/radial-gradient.c:27
 msgid "X2"
 msgstr "X2"
 
 #: ../operations/common/fractal-trace.c:39
-#: ../operations/common/fractal-trace.c:43
 msgid "X2 value, position"
 msgstr "X2 值，位置"
 
-#: ../operations/common/fractal-trace.c:41
-#: ../operations/common/linear-gradient.c:26
+#: ../operations/common/fractal-trace.c:42
+#: ../operations/common/linear-gradient.c:29
 #: ../operations/common/radial-gradient.c:26
-#: ../operations/workshop/external/line-profile.c:28
+#: ../operations/workshop/external/line-profile.c:35
 msgid "Y1"
 msgstr "Y1"
 
-#: ../operations/common/fractal-trace.c:44
-#: ../operations/common/linear-gradient.c:28
+#: ../operations/common/fractal-trace.c:43
+#, fuzzy
+msgid "Y1 value, position"
+msgstr "X1 值，位置"
+
+#: ../operations/common/fractal-trace.c:46
+#: ../operations/common/linear-gradient.c:37
 #: ../operations/common/radial-gradient.c:28
 msgid "Y2"
 msgstr "Y2"
 
-#: ../operations/common/fractal-trace.c:46
+#: ../operations/common/fractal-trace.c:47
+#, fuzzy
 msgid "Y2 value, position"
-msgstr "Y2 值，位置"
+msgstr "X2 值，位置"
 
-#: ../operations/common/fractal-trace.c:48
+#: ../operations/common/fractal-trace.c:50
 msgid "JX"
 msgstr "JX"
 
-#: ../operations/common/fractal-trace.c:50
+#: ../operations/common/fractal-trace.c:51
 msgid "Julia seed X value, position"
 msgstr "Julia 种子 X 值，位置"
 
-#: ../operations/common/fractal-trace.c:51
+#: ../operations/common/fractal-trace.c:54
 msgid "JY"
 msgstr "JY"
 
-#: ../operations/common/fractal-trace.c:53
+#: ../operations/common/fractal-trace.c:55
 msgid "Julia seed Y value, position"
 msgstr "Julia 种子 Y 值，位置"
-
-#: ../operations/common/fractal-trace.c:57
-msgid "Depth value"
-msgstr "深度值"
-
-#: ../operations/common/fractal-trace.c:59
-msgid "Bailout"
-msgstr ""
 
 #: ../operations/common/fractal-trace.c:61
 #, fuzzy
 msgid "Bailout length"
 msgstr "Bailout 长度"
 
-#: ../operations/common/fractal-trace.c:63
-#: ../operations/workshop/gaussian-blur-iir.c:48
-#: ../operations/workshop/gblur-1d.c:59
+#: ../operations/common/fractal-trace.c:64
+#: ../operations/workshop/gaussian-blur-iir.c:55
+#: ../operations/workshop/gblur-1d.c:61
 msgid "Abyss policy"
 msgstr ""
 
-#: ../operations/common/fractal-trace.c:65
+#: ../operations/common/fractal-trace.c:66
 msgid "How to deal with pixels outside of the input buffer"
 msgstr "如何处理输入缓冲器以外的像素"
 
-#: ../operations/common/fractal-trace.c:176
+#: ../operations/common/fractal-trace.c:177
 msgid "Unsupported fractal type"
 msgstr "不支持的分形类型"
 
-#: ../operations/common/fractal-trace.c:256
+#: ../operations/common/fractal-trace.c:257
 msgid "Transform the image with the fractals"
 msgstr "用分形变换图像"
 
-#: ../operations/common/gaussian-blur.c:35
+#: ../operations/common/gaussian-blur.c:36
 msgid "Size X"
 msgstr "X 大小"
 
 #: ../operations/common/gaussian-blur.c:37
-msgid ""
-"Standard deviation for the horizontal axis (multiply by ~2 to get radius)"
+#, fuzzy
+msgid "Standard deviation for the horizontal axis"
 msgstr "水平轴的标准偏差(大约乘以 2 可得到半径)"
 
-#: ../operations/common/gaussian-blur.c:40
+#: ../operations/common/gaussian-blur.c:44
 msgid "Size Y"
 msgstr "Y 大小"
 
-#: ../operations/common/gaussian-blur.c:42
-msgid "Standard deviation for the vertical axi. (multiply by ~2 to get radius)"
+#: ../operations/common/gaussian-blur.c:45
+#, fuzzy
+msgid "Standard deviation for the vertical axis"
 msgstr "竖直轴的标准偏差(大约乘以 2 可得到半径)"
 
-#: ../operations/common/gaussian-blur.c:45
-#: ../operations/workshop/gaussian-blur-iir.c:44
-#: ../operations/workshop/gblur-1d.c:55
+#: ../operations/common/gaussian-blur.c:52
+#: ../operations/workshop/gaussian-blur-iir.c:50
+#: ../operations/workshop/gblur-1d.c:57
 msgid "Filter"
 msgstr "滤镜"
 
-#: ../operations/common/gaussian-blur.c:48
+#: ../operations/common/gaussian-blur.c:55
 msgid "Optional parameter to override the automatic selection of blur filter"
 msgstr "可选参数，用来覆盖自动选择的模糊滤镜"
 
-#: ../operations/common/gaussian-blur.c:723
-#: ../operations/workshop/gaussian-blur-iir.c:100
-#: ../operations/workshop/gblur-1d.c:800
+#: ../operations/common/gaussian-blur.c:704
+#, fuzzy
 msgid ""
-"Performs an averaging of neighboring pixels with the normal distribution as "
-"weighting"
+"Simplest, most commonly used way of blurring, performs an averaging of "
+"neighboring pixels with the normal distribution as weighting"
 msgstr "以正态分布权重对相邻像素进行平均"
 
 #: ../operations/common/gegl-buffer-load-op.c:24
 #: ../operations/common/gegl-buffer-save-op.c:24
 #: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
-#: ../operations/common/open-buffer.c:25 ../operations/common/raw-load.c:27
+#: ../operations/common/open-buffer.c:25 ../operations/common/raw-load.c:26
 #: ../operations/common/save.c:25 ../operations/external/ff-load.c:25
 #: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:25
 #: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
@@ -1352,26 +1293,26 @@ msgstr "以正态分布权重对相邻像素进行平均"
 #: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
 #: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
 #: ../operations/external/svg-load.c:25 ../operations/external/webp-load.c:25
-#: ../operations/external/webp-save.c:25
+#: ../operations/external/webp-save.c:24
 #: ../operations/workshop/external/ff-save.c:30
-#: ../operations/workshop/external/gluas.c:43
+#: ../operations/workshop/external/gluas.c:45
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "File"
 msgstr "文件"
 
-#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-load-op.c:25
 msgid "Path of GeglBuffer file to load."
 msgstr "要加载的 GeglBuffer 文件的路径。"
 
-#: ../operations/common/gegl-buffer-load-op.c:88
+#: ../operations/common/gegl-buffer-load-op.c:89
 msgid "GeglBuffer file loader."
 msgstr "GeglBuffer 文件加载器。"
 
-#: ../operations/common/gegl-buffer-save-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:25
 msgid "Target file path to write GeglBuffer to."
 msgstr "要写入 GeglBuffer 的目标文件路径。"
 
-#: ../operations/common/gegl-buffer-save-op.c:62
+#: ../operations/common/gegl-buffer-save-op.c:63
 msgid "GeglBuffer file writer."
 msgstr "GeglBuffer 文件写入器。"
 
@@ -1379,46 +1320,48 @@ msgstr "GeglBuffer 文件写入器。"
 msgid "Turns the image greyscale"
 msgstr "将图像转为灰度"
 
-#: ../operations/common/grid.c:32
-msgid "Line Width"
+#: ../operations/common/grid.c:50
+#, fuzzy
+msgid "Line width"
 msgstr "线宽"
 
-#: ../operations/common/grid.c:33
+#: ../operations/common/grid.c:51
 msgid "Width of grid lines in pixels"
 msgstr "以像素为单位的网格线的宽度"
 
-#: ../operations/common/grid.c:34
-msgid "Line Height"
+#: ../operations/common/grid.c:57
+#, fuzzy
+msgid "Line height"
 msgstr "线高"
 
-#: ../operations/common/grid.c:35
+#: ../operations/common/grid.c:58
 msgid "Height of grid lines in pixels"
 msgstr "以像素为单位的网格线的高度"
 
-#: ../operations/common/grid.c:37
+#: ../operations/common/grid.c:65
 msgid "Color of the grid lines"
 msgstr "网格线的颜色"
 
-#: ../operations/common/grid.c:129
+#: ../operations/common/grid.c:157
 msgid "Grid renderer"
 msgstr "网格渲染器"
 
-#: ../operations/common/high-pass.c:24 ../operations/common/unsharp-mask.c:24
+#: ../operations/common/high-pass.c:24
 msgid "Std. Dev."
 msgstr "标准偏差"
 
-#: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:26
-#: ../operations/workshop/gaussian-blur-iir.c:40
-#: ../operations/workshop/gaussian-blur-iir.c:43
-#: ../operations/workshop/gblur-1d.c:50
+#: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:25
+#: ../operations/workshop/gaussian-blur-iir.c:39
+#: ../operations/workshop/gaussian-blur-iir.c:45
+#: ../operations/workshop/gblur-1d.c:49
 msgid "Standard deviation (spatial scale factor)"
 msgstr "标准偏差(空间尺度因子)"
 
-#: ../operations/common/high-pass.c:27
+#: ../operations/common/high-pass.c:31
 msgid "Contrast of high-pass"
 msgstr "高通对比度"
 
-#: ../operations/common/high-pass.c:74
+#: ../operations/common/high-pass.c:82
 msgid "Enhances fine details."
 msgstr "增强微小的细节。"
 
@@ -1426,35 +1369,35 @@ msgstr "增强微小的细节。"
 msgid "Wrong pixels"
 msgstr "错误的像素"
 
-#: ../operations/common/image-compare.c:29
+#: ../operations/common/image-compare.c:28
 msgid "Number of differing pixels."
 msgstr "像素差异化的数量。"
 
-#: ../operations/common/image-compare.c:31
+#: ../operations/common/image-compare.c:30
 msgid "Maximum difference"
 msgstr "最大差异"
 
-#: ../operations/common/image-compare.c:33
+#: ../operations/common/image-compare.c:31
 msgid "Maximum difference between two pixels."
 msgstr "使两个像素间的差异最大。"
 
-#: ../operations/common/image-compare.c:35
+#: ../operations/common/image-compare.c:33
 msgid "Average difference (wrong)"
 msgstr "平均差异(错误)"
 
-#: ../operations/common/image-compare.c:37
+#: ../operations/common/image-compare.c:34
 msgid "Average difference between wrong pixels."
 msgstr "错误像素之间的平均差异。"
 
-#: ../operations/common/image-compare.c:39
+#: ../operations/common/image-compare.c:36
 msgid "Average difference (total)"
 msgstr "平均差异(总体)"
 
-#: ../operations/common/image-compare.c:41
+#: ../operations/common/image-compare.c:37
 msgid "Average difference between all pixels."
 msgstr "所有像素的平均差异。"
 
-#: ../operations/common/image-compare.c:208
+#: ../operations/common/image-compare.c:204
 msgid ""
 "Compares if input and aux buffers are different. Results are saved in the "
 "properties."
@@ -1463,10 +1406,6 @@ msgstr "当输入和辅助缓存不同时进行比较。比较结果存储在属
 #: ../operations/common/introspect.c:26
 msgid "Node"
 msgstr "节点"
-
-#: ../operations/common/introspect.c:26
-msgid "GeglNode to introspect"
-msgstr "要自省的 GeglNode"
 
 #: ../operations/common/introspect.c:161
 msgid "GEGL graph visualizer."
@@ -1487,33 +1426,38 @@ msgstr "操作"
 msgid "Composite operation to use"
 msgstr "要使用的合成操作"
 
-#: ../operations/common/layer.c:35 ../operations/common/rectangle.c:30
-msgid "Horizontal position"
+#: ../operations/common/layer.c:37
+#, fuzzy
+msgid "Horizontal position in pixels"
 msgstr "水平位置"
 
-#: ../operations/common/layer.c:37 ../operations/common/rectangle.c:32
-msgid "Vertical position"
+#: ../operations/common/layer.c:42
+#, fuzzy
+msgid "Vertical position in pixels"
 msgstr "竖直位置"
 
-#: ../operations/common/layer.c:38 ../operations/common/noise.c:27
-#: ../operations/common/unsharp-mask.c:28
-#: ../operations/workshop/external/lens-correct.c:43
+#: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
+#: ../operations/common/noise-perlin.c:27
+#: ../operations/common/noise-simplex.c:31
+#: ../operations/common/unsharp-mask.c:31
+#: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
 msgstr "比例"
 
-#: ../operations/common/layer.c:39
+#: ../operations/common/layer.c:47
 msgid "Scale 1:1 size"
 msgstr "比例 1:1 大小"
 
-#: ../operations/common/layer.c:40
+#: ../operations/common/layer.c:49
 msgid "Source"
 msgstr "源"
 
-#: ../operations/common/layer.c:41
-msgid "Source datafile (png, jpg, raw, svg, bmp, tif, ...)"
+#: ../operations/common/layer.c:50
+#, fuzzy
+msgid "Source image file path (png, jpg, raw, svg, bmp, tif, ...)"
 msgstr "源数据文件(png, jpg, raw, svg, bmp, tif, ...)"
 
-#: ../operations/common/layer.c:253
+#: ../operations/common/layer.c:270
 msgid "A layer in the traditional sense"
 msgstr "传统意义上的一层"
 
@@ -1521,7 +1465,7 @@ msgstr "传统意义上的一层"
 msgid "Main"
 msgstr "主"
 
-#: ../operations/common/lens-distortion.c:35
+#: ../operations/common/lens-distortion.c:34
 msgid "Amount of second-order distortion"
 msgstr "二阶扭曲的量"
 
@@ -1529,27 +1473,19 @@ msgstr "二阶扭曲的量"
 msgid "Edge"
 msgstr "边缘"
 
-#: ../operations/common/lens-distortion.c:39
+#: ../operations/common/lens-distortion.c:38
 msgid "Amount of fourth-order distortion"
 msgstr "四阶扭曲的量"
 
-#: ../operations/common/lens-distortion.c:43
+#: ../operations/common/lens-distortion.c:42
 msgid "Rescale overall image size"
 msgstr "改变整个图像尺寸比例"
 
-#: ../operations/common/lens-distortion.c:45
-msgid "X shift"
-msgstr "X 平移"
-
-#: ../operations/common/lens-distortion.c:47
+#: ../operations/common/lens-distortion.c:46
 msgid "Effect centre offset in X"
 msgstr "效果中心 X 偏移"
 
-#: ../operations/common/lens-distortion.c:49
-msgid "Y shift"
-msgstr "Y 平移"
-
-#: ../operations/common/lens-distortion.c:51
+#: ../operations/common/lens-distortion.c:50
 msgid "Effect centre offset in Y"
 msgstr "效果中心 Y 偏移"
 
@@ -1557,20 +1493,11 @@ msgstr "效果中心 Y 偏移"
 msgid "Brighten"
 msgstr "变亮"
 
-#: ../operations/common/lens-distortion.c:55
+#: ../operations/common/lens-distortion.c:54
 msgid "Adjust brightness in corners"
 msgstr "调整角落亮度"
 
-#: ../operations/common/lens-distortion.c:57
-msgid "Background"
-msgstr "背景"
-
-#: ../operations/common/lens-distortion.c:59
-#: ../operations/common/pixelize.c:54
-msgid "Background color"
-msgstr "背景色"
-
-#: ../operations/common/lens-distortion.c:501
+#: ../operations/common/lens-distortion.c:499
 msgid "Corrects barrel or pincushion lens distortion."
 msgstr "校正桶形或枕形镜头扭曲。"
 
@@ -1582,85 +1509,86 @@ msgstr "低输入"
 msgid "Input luminance level to become lowest output"
 msgstr "输入的亮度水平成为最低输出"
 
-#: ../operations/common/levels.c:28
+#: ../operations/common/levels.c:31
 msgid "High input"
 msgstr "高输入"
 
-#: ../operations/common/levels.c:29
-msgid "Input luminance level to become white."
+#: ../operations/common/levels.c:32
+#, fuzzy
+msgid "Input luminance level to become white"
 msgstr "输入亮度水平成为白色。"
 
-#: ../operations/common/levels.c:30
+#: ../operations/common/levels.c:36
 msgid "Low output"
 msgstr "低输出"
 
-#: ../operations/common/levels.c:31
+#: ../operations/common/levels.c:37
 msgid "Lowest luminance level in output"
 msgstr "最低亮度水平的输出"
 
-#: ../operations/common/levels.c:32
+#: ../operations/common/levels.c:41
 msgid "High output"
 msgstr "高输出"
 
-#: ../operations/common/levels.c:33
+#: ../operations/common/levels.c:42
 msgid "Highest luminance level in output"
 msgstr "最高亮度水平的输出"
 
-#: ../operations/common/levels.c:192
+#: ../operations/common/levels.c:203
 msgid "Remaps the intensity range of the image"
 msgstr "重新映射图像的强度范围"
 
-#: ../operations/common/linear-gradient.c:29
+#: ../operations/common/linear-gradient.c:41
 #: ../operations/common/radial-gradient.c:29
 msgid "Start Color"
 msgstr "起始颜色"
 
-#: ../operations/common/linear-gradient.c:30
+#: ../operations/common/linear-gradient.c:42
 #: ../operations/common/radial-gradient.c:30
 msgid "The color at (x1, y1)"
 msgstr "(x1, y1) 处的颜色"
 
-#: ../operations/common/linear-gradient.c:31
+#: ../operations/common/linear-gradient.c:45
 #: ../operations/common/radial-gradient.c:31
 msgid "End Color"
 msgstr "终止颜色"
 
-#: ../operations/common/linear-gradient.c:32
+#: ../operations/common/linear-gradient.c:46
 #: ../operations/common/radial-gradient.c:32
 msgid "The color at (x2, y2)"
 msgstr "(x2, y2) 处的颜色"
 
-#: ../operations/common/linear-gradient.c:127
+#: ../operations/common/linear-gradient.c:139
 msgid "Linear gradient renderer"
 msgstr "线性渐变渲染器"
 
-#: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
-#: ../operations/common/raw-load.c:27 ../operations/external/png-load.c:27
-#: ../operations/external/ppm-load.c:25 ../operations/external/rgbe-load.c:26
-#: ../operations/external/webp-load.c:25
-#: ../operations/workshop/rawbayer-load.c:25
+#: ../operations/common/load.c:26 ../operations/common/magick-load.c:27
+#: ../operations/common/raw-load.c:27 ../operations/external/openraw.c:26
+#: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
+#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
+#: ../operations/workshop/rawbayer-load.c:26
 msgid "Path of file to load."
 msgstr "要载入文件的路径。"
 
-#: ../operations/common/load.c:188
+#: ../operations/common/load.c:191
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
 msgstr "使用其他原生处理程序的多用途文件加载器，失败后转用 Image Magick 转换。"
 
-#: ../operations/common/magick-load.c:136
+#: ../operations/common/magick-load.c:137
 msgid "Image Magick wrapper using the png op."
 msgstr "使用 png op 的 Image Magick 封装器。"
 
-#: ../operations/common/mantiuk06.c:33
+#: ../operations/common/mantiuk06.c:32
 msgid "The amount of contrast compression"
 msgstr "对比度压缩的量"
 
-#: ../operations/common/mantiuk06.c:37
+#: ../operations/common/mantiuk06.c:39
 msgid "Detail"
 msgstr "细节"
 
-#: ../operations/common/mantiuk06.c:39
+#: ../operations/common/mantiuk06.c:40
 msgid "Level of emphasis on image gradient details"
 msgstr "对图像的梯度细节的强调程度"
 
@@ -1673,23 +1601,15 @@ msgstr ""
 "处理一幅可能具有高动态范围的图像以便用低动态范围呈现。这个操作符将在多个空间"
 "频率上约束对比度，会产生 0.0-1.0 范围内的亮度。"
 
+#. XXX: needs better ui type
 #: ../operations/common/map-absolute.c:22
-#: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:48
-#: ../operations/common/waves.c:50
-#: ../operations/transform/transform-core.c:186
-#: ../operations/workshop/ditto.c:27
-msgid "Sampler"
-msgstr "采样器"
+#: ../operations/common/map-relative.c:28
+#: ../operations/common/panorama-projection.c:57
+#: ../operations/common/ripple.c:47 ../operations/common/waves.c:52
+msgid "Resampling method"
+msgstr ""
 
-#: ../operations/common/map-absolute.c:23
-#: ../operations/common/map-relative.c:27 ../operations/common/ripple.c:50
-#: ../operations/common/waves.c:53
-#: ../operations/transform/transform-core.c:187
-#: ../operations/workshop/ditto.c:28
-msgid "Sampler used internally"
-msgstr "内部使用的采样器"
-
-#: ../operations/common/map-absolute.c:148
+#: ../operations/common/map-absolute.c:149
 msgid ""
 "sample input with an auxiliary buffer that contain absolute source "
 "coordinates"
@@ -1705,17 +1625,13 @@ msgid ""
 "relative mapping value of 1.0 corresponds to."
 msgstr "位移比例因子，表示了相对映射值 1.0 对应的空间位移量。"
 
-#: ../operations/common/map-relative.c:173
+#: ../operations/common/map-relative.c:175
 msgid ""
 "sample input with an auxiliary buffer that contain relative source "
 "coordinates"
 msgstr "带一个包含源相对坐标的辅助缓存的采样输入"
 
-#: ../operations/common/matting-global.c:26
-msgid "Number of iterations"
-msgstr "迭代次数"
-
-#: ../operations/common/matting-global.c:481
+#: ../operations/common/matting-global.c:490
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha matte. Set white as foreground, black as background for the tri-map. "
@@ -1738,122 +1654,106 @@ msgstr "累积运动模糊"
 msgid "Mirror rotation"
 msgstr "镜像旋转"
 
-#: ../operations/common/mirrors.c:30
+#: ../operations/common/mirrors.c:31
 msgid "Rotation applied to the mirrors"
 msgstr "对镜像施加旋转"
 
-#: ../operations/common/mirrors.c:32
+#: ../operations/common/mirrors.c:35
 msgid "Result rotation"
 msgstr "结果旋转"
 
-#: ../operations/common/mirrors.c:32
+#: ../operations/common/mirrors.c:36
 msgid "Rotation applied to the result"
 msgstr "对结果施加旋转"
 
-#: ../operations/common/mirrors.c:34
+#: ../operations/common/mirrors.c:40
 msgid "Mirrors"
 msgstr "镜像"
 
-#: ../operations/common/mirrors.c:34
+#: ../operations/common/mirrors.c:41
 msgid "Number of mirrors to use"
 msgstr "使用镜像的数量"
 
-#: ../operations/common/mirrors.c:36
+#: ../operations/common/mirrors.c:45
 msgid "X offset of the result of mirroring"
 msgstr "镜像结果的 X 偏移"
 
-#: ../operations/common/mirrors.c:38
+#: ../operations/common/mirrors.c:51
 msgid "Y offset of the result of mirroring"
 msgstr "镜像结果的 Y 偏移"
 
-#: ../operations/common/mirrors.c:40
+#: ../operations/common/mirrors.c:56
+#: ../operations/common/motion-blur-circular.c:41
+#: ../operations/common/motion-blur-zoom.c:40
+#: ../operations/common/vignette.c:60 ../operations/common/waves.c:26
 msgid "Center X"
 msgstr "中心 X"
 
-#: ../operations/common/mirrors.c:40
+#: ../operations/common/mirrors.c:57
 msgid "X axis ratio for the center of mirroring"
 msgstr "镜像中心的 X 轴比率"
 
-#: ../operations/common/mirrors.c:42
+#: ../operations/common/mirrors.c:60
+#: ../operations/common/motion-blur-circular.c:46
+#: ../operations/common/motion-blur-zoom.c:46
+#: ../operations/common/vignette.c:66 ../operations/common/waves.c:32
 msgid "Center Y"
 msgstr "中心 Y"
 
-#: ../operations/common/mirrors.c:42
+#: ../operations/common/mirrors.c:61
 msgid "Y axis ratio for the center of mirroring"
 msgstr "镜像中心的 Y 轴比率"
 
-#: ../operations/common/mirrors.c:44
+#: ../operations/common/mirrors.c:64
 msgid "Trim X"
 msgstr "微调 X"
 
-#: ../operations/common/mirrors.c:44
+#: ../operations/common/mirrors.c:65
 msgid "X axis ratio for trimming mirror expanse"
 msgstr "用于微调镜像扩展的 X 轴比率"
 
-#: ../operations/common/mirrors.c:46
+#: ../operations/common/mirrors.c:68
 msgid "Trim Y"
 msgstr "微调 Y"
 
-#: ../operations/common/mirrors.c:46
+#: ../operations/common/mirrors.c:69
 msgid "Y axis ratio for trimming mirror expanse"
 msgstr "用于微调镜像扩展的 Y 轴比率"
 
-#: ../operations/common/mirrors.c:48 ../operations/common/mirrors.c:50
+#: ../operations/common/mirrors.c:73 ../operations/common/mirrors.c:77
 msgid "Scale factor to make rendering size bigger"
 msgstr "增大渲染尺寸的比例因子"
 
-#: ../operations/common/mirrors.c:50
+#: ../operations/common/mirrors.c:76
 msgid "Expand"
 msgstr "扩大"
 
-#: ../operations/common/mirrors.c:52
-msgid "Clip result"
-msgstr "裁剪结果"
-
-#: ../operations/common/mirrors.c:52
+#: ../operations/common/mirrors.c:80
 msgid "Clip result to input size"
 msgstr "将结果裁剪为输入尺寸"
 
-#: ../operations/common/mirrors.c:54
+#: ../operations/common/mirrors.c:82
 #, fuzzy
 msgid "Wrap input"
 msgstr "卷边输入"
 
-#: ../operations/common/mirrors.c:54
+#: ../operations/common/mirrors.c:83
 msgid "Fill full output area"
 msgstr "填满输出区域"
 
-#: ../operations/common/mirrors.c:401
+#: ../operations/common/mirrors.c:428
 msgid "Applies mirroring effect on the image."
 msgstr "对图像应用镜像效果。"
 
-#: ../operations/common/mono-mixer.c:26 ../operations/common/noise-rgb.c:36
-#: ../operations/common/noise-rgb.c:38
-#: ../operations/workshop/convolution-matrix.c:83
-msgid "Red"
-msgstr "红色"
-
-#: ../operations/common/mono-mixer.c:28
+#: ../operations/common/mono-mixer.c:26
 msgid "Amount of red"
 msgstr "红色的量"
 
-#: ../operations/common/mono-mixer.c:30 ../operations/common/noise-rgb.c:40
-#: ../operations/common/noise-rgb.c:42
-#: ../operations/workshop/convolution-matrix.c:84
-msgid "Green"
-msgstr "绿色"
-
-#: ../operations/common/mono-mixer.c:32
+#: ../operations/common/mono-mixer.c:30
 msgid "Amount of green"
 msgstr "绿色的量"
 
-#: ../operations/common/mono-mixer.c:34 ../operations/common/noise-rgb.c:44
-#: ../operations/common/noise-rgb.c:46
-#: ../operations/workshop/convolution-matrix.c:85
-msgid "Blue"
-msgstr "蓝色"
-
-#: ../operations/common/mono-mixer.c:36
+#: ../operations/common/mono-mixer.c:34
 msgid "Amount of blue"
 msgstr "蓝色的量"
 
@@ -1869,115 +1769,97 @@ msgstr "图块几何属性"
 msgid "What shape to use for tiles"
 msgstr "图块使用什么形状"
 
-#: ../operations/common/mosaic.c:45
+#: ../operations/common/mosaic.c:48
 msgid "Tile height"
 msgstr "图块高度"
 
-#: ../operations/common/mosaic.c:46
+#: ../operations/common/mosaic.c:49
 msgid "Apparent height of each tile (in pixels)"
 msgstr "每个图块的显示高度(像素)"
 
-#: ../operations/common/mosaic.c:48
+#: ../operations/common/mosaic.c:53
 msgid "Tile neatness"
 msgstr "图块规则度"
 
-#: ../operations/common/mosaic.c:49
+#: ../operations/common/mosaic.c:54
 msgid "Deviation from perfectly formed tiles"
 msgstr "偏离规则图块的程度"
 
-#: ../operations/common/mosaic.c:51
+#: ../operations/common/mosaic.c:57
 msgid "Tile color variation"
 msgstr "图块色彩变化量"
 
-#: ../operations/common/mosaic.c:52
-msgid "Magnitude of random color variations"
-msgstr "随机色彩变化的幅度"
-
-#: ../operations/common/mosaic.c:54
+#: ../operations/common/mosaic.c:61
 msgid "Color averaging"
 msgstr "色彩平均"
 
-#: ../operations/common/mosaic.c:55
+#: ../operations/common/mosaic.c:62
 msgid "Tile color based on average of subsumed pixels"
 msgstr "基于部分累加像素平均的图块色彩"
 
-#: ../operations/common/mosaic.c:57
+#: ../operations/common/mosaic.c:64
 msgid "Rough tile surface"
 msgstr "粗糙的图块表面"
 
-#: ../operations/common/mosaic.c:58
+#: ../operations/common/mosaic.c:65
 msgid "Surface characteristics"
 msgstr "表面特征"
 
-#: ../operations/common/mosaic.c:60
+#: ../operations/common/mosaic.c:67
 msgid "Allow splitting tiles"
 msgstr "允许分割图块"
 
-#: ../operations/common/mosaic.c:61
+#: ../operations/common/mosaic.c:68
 msgid "Allows splitting tiles at hard edges"
 msgstr "允许在硬边缘分割图块"
 
-#: ../operations/common/mosaic.c:63
+#: ../operations/common/mosaic.c:70
 msgid "Tile spacing"
 msgstr "图块间隔"
 
-#: ../operations/common/mosaic.c:64
+#: ../operations/common/mosaic.c:71
 msgid "Inter-tile spacing (in pixels)"
 msgstr "图块间隔(像素)"
 
-#: ../operations/common/mosaic.c:66
+#: ../operations/common/mosaic.c:76
 msgid "Joints color"
 msgstr "结合颜色"
 
-#: ../operations/common/mosaic.c:68
+#: ../operations/common/mosaic.c:78
 msgid "Light color"
 msgstr "光的颜色"
 
-#: ../operations/common/mosaic.c:70
+#: ../operations/common/mosaic.c:80
 msgid "Light direction"
 msgstr "光的方向"
 
-#: ../operations/common/mosaic.c:71
-msgid "Direction of light-source (in degrees)"
-msgstr "光源的方向(度)"
-
-#: ../operations/common/mosaic.c:75
+#: ../operations/common/mosaic.c:85
 msgid "Antialiasing"
 msgstr "平滑"
 
-#: ../operations/common/mosaic.c:76
+#: ../operations/common/mosaic.c:86
 msgid "Enables smoother tile output"
 msgstr "启用更平滑的图块输出"
 
-#: ../operations/common/mosaic.c:2463
+#: ../operations/common/mosaic.c:2475
 msgid ""
 "Mosaic is a filter which transforms an image into what appears to be a "
 "mosaic, composed of small primitives, each of constant color and of an "
 "approximate size."
 msgstr ""
 
-#: ../operations/common/motion-blur-circular.c:44
-#: ../operations/common/motion-blur-zoom.c:43
-msgid "Horizontal center position"
-msgstr "水平中心位置"
-
-#: ../operations/common/motion-blur-circular.c:49
-#: ../operations/common/motion-blur-zoom.c:48
-msgid "Vertical center position"
-msgstr "垂直中心位置"
-
 #. FIXME: With a large angle, we lose AreaFilter's flavours
 #: ../operations/common/motion-blur-circular.c:52
-#: ../operations/common/motion-blur-linear.c:30
-#: ../operations/common/ripple.c:44
+#: ../operations/common/motion-blur-linear.c:33
+#: ../operations/common/ripple.c:43
 msgid "Angle"
 msgstr "角度"
 
-#: ../operations/common/motion-blur-circular.c:55
+#: ../operations/common/motion-blur-circular.c:53
 msgid "Rotation blur angle. A large angle may take some time to render"
 msgstr "旋转模糊角度。更大的角度可能需要更长时间渲染。"
 
-#: ../operations/common/motion-blur-circular.c:281
+#: ../operations/common/motion-blur-circular.c:286
 msgid "Circular motion blur"
 msgstr "圆周运动模糊"
 
@@ -1985,19 +1867,27 @@ msgstr "圆周运动模糊"
 msgid "Length"
 msgstr "长度"
 
-#: ../operations/common/motion-blur-linear.c:28
+#: ../operations/common/motion-blur-linear.c:27
 msgid "Length of blur in pixels"
 msgstr "模糊的长度(像素)"
 
-#: ../operations/common/motion-blur-linear.c:32
+#: ../operations/common/motion-blur-linear.c:34
 msgid "Angle of blur in degrees"
 msgstr "模糊的角度(度)"
 
-#: ../operations/common/motion-blur-linear.c:306
+#: ../operations/common/motion-blur-linear.c:330
 msgid "Linear motion blur"
 msgstr "直线运动模糊"
 
-#: ../operations/common/motion-blur-zoom.c:50
+#: ../operations/common/motion-blur-zoom.c:41
+msgid "Horizontal center position"
+msgstr "水平中心位置"
+
+#: ../operations/common/motion-blur-zoom.c:47
+msgid "Vertical center position"
+msgstr "垂直中心位置"
+
+#: ../operations/common/motion-blur-zoom.c:52
 msgid "Factor"
 msgstr "因子"
 
@@ -2005,81 +1895,109 @@ msgstr "因子"
 msgid "Bluring factor"
 msgstr "模糊因子"
 
-#: ../operations/common/motion-blur-zoom.c:226
+#: ../operations/common/motion-blur-zoom.c:229
 msgid "Zoom motion blur"
 msgstr "缩放运动模糊"
 
-#: ../operations/common/noise.c:29
-msgid "Z offset"
-msgstr "Z 偏移"
+#: ../operations/common/noise-cell.c:37
+#: ../operations/common/noise-simplex.c:32
+#, fuzzy
+msgid "The scale of the noise function"
+msgstr "偏移值"
 
-#: ../operations/common/noise.c:33
-msgid "Iteration"
-msgstr "迭代"
+#: ../operations/common/noise-cell.c:40 ../operations/common/pixelize.c:32
+msgid "Shape"
+msgstr "形状"
 
-#: ../operations/common/noise.c:111
-msgid "Perlin noise generator"
-msgstr "Perlin 噪声生成器"
+#: ../operations/common/noise-cell.c:41
+msgid "Interpolate between Manhattan and Euclidean distance."
+msgstr ""
 
-#: ../operations/common/noise-cie-lch.c:25
-#: ../operations/common/noise-cie-lch.c:27 ../operations/common/noise-hsv.c:27
-#: ../operations/common/noise-hsv.c:29
+#: ../operations/common/noise-cell.c:44
+msgid "Rank"
+msgstr ""
+
+#: ../operations/common/noise-cell.c:45
+msgid "Select the n-th closest point"
+msgstr ""
+
+#: ../operations/common/noise-cell.c:49
+#: ../operations/common/noise-simplex.c:36
+msgid "The number of noise octaves."
+msgstr ""
+
+#: ../operations/common/noise-cell.c:52
+msgid "Palettize"
+msgstr ""
+
+#: ../operations/common/noise-cell.c:53
+msgid "Fill each cell with a random color"
+msgstr ""
+
+#: ../operations/common/noise-cell.c:56
+#: ../operations/common/noise-simplex.c:40
+#, fuzzy
+msgid "The random seed for the noise function"
+msgstr "Lanczos 函数的宽度"
+
+#: ../operations/common/noise-cell.c:423
+msgid "Generates a cellular texture."
+msgstr ""
+
+#: ../operations/common/noise-cie-lch.c:25 ../operations/common/noise-hsv.c:27
 msgid "Holdness"
 msgstr "约束度"
 
-#: ../operations/common/noise-cie-lch.c:29
-#: ../operations/common/noise-cie-lch.c:31
+#: ../operations/common/noise-cie-lch.c:28
 msgid "Lightness"
 msgstr "亮度"
 
-#: ../operations/common/noise-cie-lch.c:33
-#: ../operations/common/noise-cie-lch.c:35
+#: ../operations/common/noise-cie-lch.c:31
 msgid "Chroma"
 msgstr "色度"
 
-#: ../operations/common/noise-cie-lch.c:37
-#: ../operations/common/noise-cie-lch.c:39 ../operations/common/noise-hsv.c:31
-#: ../operations/common/noise-hsv.c:33
-#: ../operations/workshop/color-rotate.c:48
+#: ../operations/common/noise-cie-lch.c:34 ../operations/common/noise-hsv.c:30
+#: ../operations/workshop/color-rotate.c:60
 msgid "Hue"
 msgstr "色调"
 
-#: ../operations/common/noise-cie-lch.c:198
+#: ../operations/common/noise-cie-lch.c:193
 msgid "Randomize lightness, chroma and hue independently"
 msgstr "独立的随机化亮度，色度和色调"
 
-#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hsv.c:41
-#: ../operations/generated/add.c:29 ../operations/generated/divide.c:29
-#: ../operations/generated/gamma.c:29 ../operations/generated/multiply.c:29
-#: ../operations/generated/subtract.c:29
+#: ../operations/common/noise-hsv.c:36 ../operations/generated/add.c:29
+#: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
+#: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
 msgid "Value"
 msgstr "值"
 
-#: ../operations/common/noise-hsv.c:200
+#: ../operations/common/noise-hsv.c:195
 msgid "Randomize hue, saturation and value independently"
 msgstr "独立的随机化色调，饱和度和值"
 
-#: ../operations/common/noise-hurl.c:34 ../operations/common/noise-pick.c:35
-#: ../operations/common/noise-slur.c:37
+#: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:32
+#: ../operations/common/noise-slur.c:34
 msgid "Randomization (%)"
 msgstr "随机化(％)"
 
-#: ../operations/common/noise-hurl.c:36 ../operations/common/noise-pick.c:37
-#: ../operations/common/noise-slur.c:39
-msgid "Randomization"
-msgstr "随机化"
-
-#: ../operations/common/noise-hurl.c:38 ../operations/common/noise-hurl.c:40
-#: ../operations/common/noise-pick.c:39 ../operations/common/noise-pick.c:41
-#: ../operations/common/noise-slur.c:41 ../operations/common/noise-slur.c:43
+#: ../operations/common/noise-hurl.c:34 ../operations/common/noise-pick.c:35
+#: ../operations/common/noise-slur.c:37
 msgid "Repeat"
 msgstr "重复"
 
-#: ../operations/common/noise-hurl.c:215
+#: ../operations/common/noise-hurl.c:212
 msgid "Completely randomize a fraction of pixels"
 msgstr "完全随机化像素的一部分"
 
-#: ../operations/common/noise-pick.c:144
+#: ../operations/common/noise-perlin.c:30
+msgid "Z offset"
+msgstr "Z 偏移"
+
+#: ../operations/common/noise-perlin.c:115
+msgid "Perlin noise generator"
+msgstr "Perlin 噪声生成器"
+
+#: ../operations/common/noise-pick.c:141
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "随机交换一些相邻像素"
 
@@ -2088,40 +2006,61 @@ msgstr "随机交换一些相邻像素"
 msgid "Strength"
 msgstr "强度"
 
-#: ../operations/common/noise-reduction.c:26
-msgid "How many iteratarions to run the algorithm with"
-msgstr "迭代运行算法多少次"
+#: ../operations/common/noise-reduction.c:27
+msgid ""
+"Controls the number of iterations; lower values give less plastic results"
+msgstr ""
 
-#: ../operations/common/noise-rgb.c:28 ../operations/common/noise-rgb.c:30
+#: ../operations/common/noise-reduction.c:427
+msgid "Anisotropic smoothing operation"
+msgstr ""
+
+#: ../operations/common/noise-simplex.c:325
+msgid "Generates a solid noise texture."
+msgstr ""
+
+#: ../operations/common/noise-rgb.c:28
 msgid "Correlated noise"
 msgstr "相关噪声"
 
-#: ../operations/common/noise-rgb.c:32 ../operations/common/noise-rgb.c:34
+#: ../operations/common/noise-rgb.c:30
 msgid "Independent RGB"
 msgstr "独立 RGB"
 
-#: ../operations/common/noise-rgb.c:186
-msgid "Distort colors by random amounts."
+#: ../operations/common/noise-rgb.c:32
+msgid "Red"
+msgstr "红色"
+
+#: ../operations/common/noise-rgb.c:35
+msgid "Green"
+msgstr "绿色"
+
+#: ../operations/common/noise-rgb.c:38
+msgid "Blue"
+msgstr "蓝色"
+
+#: ../operations/common/noise-rgb.c:177
+#, fuzzy
+msgid "Distort colors by random amounts"
 msgstr "按随机的量扭曲颜色。"
 
-#: ../operations/common/noise-slur.c:156
+#: ../operations/common/noise-slur.c:153
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr "随机向下滑动某些像素(类似融化)"
 
-#: ../operations/common/noise-spread.c:31
+#: ../operations/common/noise-spread.c:30
 msgid "Horizontal spread amount"
 msgstr "横向扩散量"
 
-#: ../operations/common/noise-spread.c:35
+#: ../operations/common/noise-spread.c:36
 msgid "Vertical spread amount"
 msgstr "纵向扩散量"
 
-#: ../operations/common/noise-spread.c:152
+#: ../operations/common/noise-spread.c:155
 msgid "Move pixels around randomly"
 msgstr "随机移动像素"
 
 #: ../operations/common/oilify.c:27 ../operations/common/photocopy.c:25
-#: ../operations/common/photocopy.c:27
 msgid "Mask Radius"
 msgstr "蒙版半径"
 
@@ -2129,27 +2068,27 @@ msgstr "蒙版半径"
 msgid "Radius of circle around pixel"
 msgstr "围绕像素的圆的半径"
 
-#: ../operations/common/oilify.c:30 ../operations/common/oilify.c:31
+#: ../operations/common/oilify.c:32
 msgid "Exponent"
 msgstr "指数"
 
-#: ../operations/common/oilify.c:33
+#: ../operations/common/oilify.c:35
 msgid "Number of intensities"
 msgstr "强度的值"
 
-#: ../operations/common/oilify.c:34
+#: ../operations/common/oilify.c:36
 msgid "Histogram size"
 msgstr "直方图大小"
 
-#: ../operations/common/oilify.c:36
+#: ../operations/common/oilify.c:39
 msgid "Intensity Mode"
 msgstr "强度模式"
 
-#: ../operations/common/oilify.c:37
+#: ../operations/common/oilify.c:40
 msgid "Use pixel luminance values"
 msgstr "使用像素的亮度值"
 
-#: ../operations/common/oilify.c:472
+#: ../operations/common/oilify.c:477
 msgid "Emulate an oil painting"
 msgstr "仿真油画"
 
@@ -2159,123 +2098,210 @@ msgid ""
 "input buffer."
 msgstr "全局的不透明度的值，该值始终用在可选的辅助输入缓存上。"
 
-#: ../operations/common/opacity.c:305
+#: ../operations/common/opacity.c:307
 #, fuzzy
 msgid ""
 "Weights the opacity of the input both the value of the aux input and the "
 "global value property."
 msgstr "权衡输入的不透明度的值，综合辅助输入和全局值属性。"
 
-#: ../operations/common/open-buffer.c:25
+#: ../operations/common/open-buffer.c:26
 msgid "a GeglBuffer on disk to open"
 msgstr "要打开的磁盘上的 GeglBuffer"
 
-#: ../operations/common/open-buffer.c:130
+#: ../operations/common/open-buffer.c:131
 msgid "A source that uses an on-disk GeglBuffer."
 msgstr "一个使用磁盘上的 GeglBuffer 的源。"
 
-#: ../operations/common/over.c:140
+#: ../operations/common/over.c:25 ../operations/generated/clear.c:38
+#: ../operations/generated/color-burn.c:38
+#: ../operations/generated/color-dodge.c:38
+#: ../operations/generated/darken.c:38 ../operations/generated/difference.c:38
+#: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
+#: ../operations/generated/dst-in.c:38 ../operations/generated/dst-out.c:38
+#: ../operations/generated/dst-over.c:38
+#: ../operations/generated/exclusion.c:38
+#: ../operations/generated/hard-light.c:38
+#: ../operations/generated/lighten.c:38 ../operations/generated/overlay.c:38
+#: ../operations/generated/plus.c:38 ../operations/generated/screen.c:38
+#: ../operations/generated/soft-light.c:38
+#: ../operations/generated/src-atop.c:38 ../operations/generated/src.c:38
+#: ../operations/generated/src-in.c:38 ../operations/generated/src-out.c:38
+#: ../operations/generated/svg-multiply.c:38 ../operations/generated/xor.c:38
+msgid "sRGB"
+msgstr ""
+
+#: ../operations/common/over.c:26 ../operations/generated/clear.c:39
+#: ../operations/generated/color-burn.c:39
+#: ../operations/generated/color-dodge.c:39
+#: ../operations/generated/darken.c:39 ../operations/generated/difference.c:39
+#: ../operations/generated/dst-atop.c:39 ../operations/generated/dst.c:39
+#: ../operations/generated/dst-in.c:39 ../operations/generated/dst-out.c:39
+#: ../operations/generated/dst-over.c:39
+#: ../operations/generated/exclusion.c:39
+#: ../operations/generated/hard-light.c:39
+#: ../operations/generated/lighten.c:39 ../operations/generated/overlay.c:39
+#: ../operations/generated/plus.c:39 ../operations/generated/screen.c:39
+#: ../operations/generated/soft-light.c:39
+#: ../operations/generated/src-atop.c:39 ../operations/generated/src.c:39
+#: ../operations/generated/src-in.c:39 ../operations/generated/src-out.c:39
+#: ../operations/generated/svg-multiply.c:39 ../operations/generated/xor.c:39
+msgid "Use sRGB gamma instead of linear"
+msgstr ""
+
+#: ../operations/common/over.c:184
 #, fuzzy
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr "Porter Duff 操作，按照(d = cA + cB * (1 - aA))"
 
-#: ../operations/common/photocopy.c:29 ../operations/common/photocopy.c:31
-#: ../operations/common/softglow.c:34 ../operations/common/softglow.c:36
+#: ../operations/common/panorama-projection.c:23
+msgid "Pan"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:24
+#, fuzzy
+msgid "Horizontal camera panning"
+msgstr "水平中心位置"
+
+#: ../operations/common/panorama-projection.c:28
+msgid "Tilt"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:29
+#, fuzzy
+msgid "Vertical camera panning"
+msgstr "垂直中心位置"
+
+#: ../operations/common/panorama-projection.c:34
+msgid "Spin"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:35
+msgid "Spin angle around camera axis"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:43
+msgid "output/rendering width in pixels, -1 for input width"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:49
+msgid "output/rendering height in pixels, -1 for input height"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:54
+msgid "Little planet"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:55
+msgid ""
+"use the pan/tilt location as center for a stereographic/little planet "
+"projection."
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:59
+msgid "Image resampling method to use"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:514
+msgid ""
+"Perform a equlinear/gnomonic or little planet/stereographic projection of a "
+"equirectangular input image."
+msgstr ""
+
+#: ../operations/common/photocopy.c:28 ../operations/common/softglow.c:33
 msgid "Sharpness"
 msgstr "锐度"
 
-#: ../operations/common/photocopy.c:33 ../operations/common/photocopy.c:35
+#: ../operations/common/photocopy.c:31
 msgid "Percent Black"
 msgstr "％ 黑色"
 
-#: ../operations/common/photocopy.c:37 ../operations/common/photocopy.c:39
+#: ../operations/common/photocopy.c:34
 msgid "Percent White"
 msgstr "％ 白色"
 
-#: ../operations/common/photocopy.c:398
+#: ../operations/common/photocopy.c:326
 msgid "Simulate color distortion produced by a copy machine"
 msgstr "模拟复印机产生的色彩失真"
 
-#: ../operations/common/pixelize.c:32 ../operations/common/vignette.c:30
-msgid "Shape"
-msgstr "形状"
-
-#: ../operations/common/pixelize.c:36
+#: ../operations/common/pixelize.c:34
 msgid "The shape of pixels"
 msgstr "像素的形状"
 
-#: ../operations/common/pixelize.c:38
-msgid "Block Width"
+#: ../operations/common/pixelize.c:36
+#, fuzzy
+msgid "Block width"
 msgstr "块的宽度"
 
-#: ../operations/common/pixelize.c:40
+#: ../operations/common/pixelize.c:37
 msgid "Width of blocks in pixels"
 msgstr "块的宽度(像素)"
 
-#: ../operations/common/pixelize.c:42
-msgid "Block Height"
+#: ../operations/common/pixelize.c:44
+#, fuzzy
+msgid "Block height"
 msgstr "块的高度"
 
-#: ../operations/common/pixelize.c:44
+#: ../operations/common/pixelize.c:45
 msgid "Height of blocks in pixels"
 msgstr "块的高度(像素)"
 
-#: ../operations/common/pixelize.c:46
-msgid "X size ratio"
+#: ../operations/common/pixelize.c:52
+#, fuzzy
+msgid "Size ratio X"
 msgstr "x 尺寸比率"
 
-#: ../operations/common/pixelize.c:48
+#: ../operations/common/pixelize.c:53
 msgid "Horizontal size ratio of a pixel inside each block"
 msgstr "每个块内的一个像素点的水平尺寸比率"
 
-#: ../operations/common/pixelize.c:50
-msgid "Y size ratio"
-msgstr "Y 尺寸比率"
+#: ../operations/common/pixelize.c:57
+#, fuzzy
+msgid "Size ratio Y"
+msgstr "x 尺寸比率"
 
-#: ../operations/common/pixelize.c:52
+#: ../operations/common/pixelize.c:58
 msgid "Vertical size ratio of a pixel inside each block"
 msgstr "每个块内的一个像素点的竖直尺寸比率"
 
-#: ../operations/common/pixelize.c:56
+#: ../operations/common/pixelize.c:63
 msgid "Color used to fill the background"
 msgstr "用于填充背景的颜色"
 
-#: ../operations/common/pixelize.c:637
+#: ../operations/common/pixelize.c:654
 msgid "Simplify image into an array of solid-colored rectangles"
 msgstr "将图像简化为一个纯色矩形的数组"
 
-#: ../operations/common/plasma.c:38
+#: ../operations/common/plasma.c:36
 #, fuzzy
 msgid "Turbulence"
 msgstr "紊流"
 
-#: ../operations/common/plasma.c:39
-#, fuzzy
-msgid "The value of the turbulence"
-msgstr "紊流值"
+#: ../operations/common/plasma.c:37
+msgid "High values give more variation in details"
+msgstr ""
 
-#: ../operations/common/plasma.c:42
+#: ../operations/common/plasma.c:41
 msgid "X start of the generated buffer"
 msgstr "生成缓存的 X 起始值"
 
-#: ../operations/common/plasma.c:44
+#: ../operations/common/plasma.c:48
 msgid "Y start of the generated buffer"
 msgstr "生成缓存的 Y 起始值"
 
-#: ../operations/common/plasma.c:46
+#: ../operations/common/plasma.c:55
 msgid "Width of the generated buffer"
 msgstr "生成缓存的宽度"
 
-#: ../operations/common/plasma.c:48
+#: ../operations/common/plasma.c:63
 msgid "Height of the generated buffer"
 msgstr "生成缓存的高度"
 
-#: ../operations/common/plasma.c:399
+#: ../operations/common/plasma.c:421
 msgid "Creates an image filled with a plasma effect."
 msgstr "创建以等离子效果填充的图像。"
 
 #: ../operations/common/polar-coordinates.c:34
-#: ../operations/common/polar-coordinates.c:36
 msgid "Circle depth in percent"
 msgstr "圈的深度(％)"
 
@@ -2283,36 +2309,32 @@ msgstr "圈的深度(％)"
 msgid "Offset angle"
 msgstr "偏移角度"
 
-#: ../operations/common/polar-coordinates.c:40
-msgid "Offset angle."
-msgstr "偏移角度。"
-
 #: ../operations/common/polar-coordinates.c:42
 msgid "Map backwards"
 msgstr "向后映射"
 
-#: ../operations/common/polar-coordinates.c:44
+#: ../operations/common/polar-coordinates.c:43
 msgid "Start from the right instead of the left"
 msgstr "从右侧而不是左侧开始"
 
-#: ../operations/common/polar-coordinates.c:46
+#: ../operations/common/polar-coordinates.c:45
 msgid "Map from top"
 msgstr "从上方映射"
 
-#: ../operations/common/polar-coordinates.c:48
+#: ../operations/common/polar-coordinates.c:46
 msgid "Put the top row in the middle and the bottom row on the outside"
 msgstr "最上面一行放在中间，底部的行放在外面"
 
-#: ../operations/common/polar-coordinates.c:51
+#: ../operations/common/polar-coordinates.c:48
 msgid "To polar"
 msgstr "到极坐标"
 
-#: ../operations/common/polar-coordinates.c:53
+#: ../operations/common/polar-coordinates.c:49
 msgid "Map the image to a circle"
 msgstr "将图像映射到一个圆"
 
-#: ../operations/common/polar-coordinates.c:57
-#: ../operations/common/polar-coordinates.c:61
+#: ../operations/common/polar-coordinates.c:52
+#: ../operations/common/polar-coordinates.c:58
 msgid "Origin point for the polar coordinates"
 msgstr "极坐标的原点"
 
@@ -2320,24 +2342,24 @@ msgstr "极坐标的原点"
 msgid "Choose middle"
 msgstr "选择中心"
 
-#: ../operations/common/polar-coordinates.c:65
+#: ../operations/common/polar-coordinates.c:64
 msgid "Let origin point to be the middle one"
 msgstr "让原点作为中间点"
 
-#: ../operations/common/polar-coordinates.c:422
+#: ../operations/common/polar-coordinates.c:421
 msgid "Convert image to or from polar coordinates"
 msgstr "将图像转换成极坐标或转换回来"
 
-#: ../operations/common/posterize.c:25
-#: ../operations/external/matting-levin.c:36
+#: ../operations/common/posterize.c:24
+#: ../operations/external/matting-levin.c:41
 msgid "Levels"
 msgstr "级别"
 
-#: ../operations/common/posterize.c:26
+#: ../operations/common/posterize.c:25
 msgid "number of levels per component"
 msgstr "每个分量的级别数"
 
-#: ../operations/common/posterize.c:133
+#: ../operations/common/posterize.c:134
 msgid "Reduces the number of levels in each color component of the image."
 msgstr "减少图像中每个色彩分量的级别数。"
 
@@ -2349,30 +2371,37 @@ msgstr "径向渐变渲染器"
 msgid "Raw image loader, wrapping dcraw with pipes."
 msgstr "Raw 图像加载器，以管道对 dcraw 进行了封装。"
 
-#: ../operations/common/rectangle.c:34
+#: ../operations/common/rectangle.c:27
+msgid "Horizontal position"
+msgstr "水平位置"
+
+#: ../operations/common/rectangle.c:32
+msgid "Vertical position"
+msgstr "竖直位置"
+
+#: ../operations/common/rectangle.c:37
 msgid "Horizontal extent"
 msgstr "水平范围"
 
-#: ../operations/common/rectangle.c:36
+#: ../operations/common/rectangle.c:43
 msgid "Vertical extent"
 msgstr "竖直范围"
 
-#: ../operations/common/rectangle.c:38
+#: ../operations/common/rectangle.c:49
 msgid "Color to render"
 msgstr "要渲染的颜色"
 
-#: ../operations/common/rectangle.c:76
+#: ../operations/common/rectangle.c:90
 msgid "A rectangular source of a fixed size with a solid color"
 msgstr "纯色的大小固定的矩形源"
 
 #: ../operations/common/red-eye-removal.c:31
 #: ../operations/common/threshold.c:25 ../operations/common/wind.c:26
-#: ../operations/external/matting-levin.c:31
-#: ../operations/workshop/color-rotate.c:54
+#: ../operations/external/matting-levin.c:33
 msgid "Threshold"
 msgstr "阈值"
 
-#: ../operations/common/red-eye-removal.c:33
+#: ../operations/common/red-eye-removal.c:32
 msgid "Red eye threshold"
 msgstr "红眼阈值"
 
@@ -2380,20 +2409,22 @@ msgstr "红眼阈值"
 msgid "Remove the red eye effect caused by camera flashes"
 msgstr "消除由相机闪光造成的红外现象"
 
-#: ../operations/common/reinhard05.c:29
+#: ../operations/common/reinhard05.c:27
 msgid "Overall brightness of the image"
 msgstr "图像的整体亮度"
 
 #: ../operations/common/reinhard05.c:30
-msgid "Chromatic Adaptation"
+#, fuzzy
+msgid "Chromatic adaptation"
 msgstr "色差自适应"
 
-#: ../operations/common/reinhard05.c:32
+#: ../operations/common/reinhard05.c:31
 msgid "Adaptation to color variation across the image"
 msgstr "自适应图像间的色彩变化"
 
-#: ../operations/common/reinhard05.c:33
-msgid "Light Adaptation"
+#: ../operations/common/reinhard05.c:34
+#, fuzzy
+msgid "Light adaptation"
 msgstr "光自适应"
 
 #: ../operations/common/reinhard05.c:35
@@ -2414,56 +2445,39 @@ msgstr ""
 msgid "stretch components of pixels individually based on luminance envelopes"
 msgstr "根据亮度包络单独拉伸像素的各分量"
 
-#: ../operations/common/ripple.c:32 ../operations/common/waves.c:34
+#: ../operations/common/ripple.c:32 ../operations/common/waves.c:38
 msgid "Amplitude"
 msgstr "幅度"
 
-#: ../operations/common/ripple.c:34 ../operations/common/waves.c:36
-msgid "Amplitude of the ripple"
-msgstr "波纹的幅度"
-
-#: ../operations/common/ripple.c:36 ../operations/common/waves.c:38
+#: ../operations/common/ripple.c:36 ../operations/common/waves.c:42
 msgid "Period"
 msgstr "周期"
 
-#: ../operations/common/ripple.c:38
-msgid "Period of the ripple"
-msgstr "波纹的周期"
-
-#: ../operations/common/ripple.c:40 ../operations/common/ripple.c:42
-#: ../operations/common/waves.c:42 ../operations/common/waves.c:44
+#: ../operations/common/ripple.c:40 ../operations/common/waves.c:46
 msgid "Phase shift"
 msgstr "相移"
 
-#: ../operations/common/ripple.c:46
-msgid "Angle in degree"
-msgstr "角度(度)"
-
-#: ../operations/common/ripple.c:52
+#: ../operations/common/ripple.c:50
 msgid "Wave type"
 msgstr "波形"
 
-#: ../operations/common/ripple.c:55
-msgid "Type of wave"
-msgstr "波的类形"
-
-#: ../operations/common/ripple.c:57
+#: ../operations/common/ripple.c:53
 msgid "Tileable"
 msgstr "可平铺"
 
-#: ../operations/common/ripple.c:59
+#: ../operations/common/ripple.c:54
 msgid "Retain tilebility"
 msgstr "保留可平铺性"
 
-#: ../operations/common/ripple.c:184
+#: ../operations/common/ripple.c:170
 msgid "Displace pixels in a ripple pattern"
 msgstr "以波纹状移动像素"
 
-#: ../operations/common/save.c:25
+#: ../operations/common/save.c:26
 msgid "Path of file to save."
 msgstr "保存文件的路径。"
 
-#: ../operations/common/save.c:201
+#: ../operations/common/save.c:202
 msgid "Multipurpose file saver, that uses other native handlers."
 msgstr "使用其他原生处理程序的多用途文件保存器。"
 
@@ -2471,42 +2485,38 @@ msgstr "使用其他原生处理程序的多用途文件保存器。"
 msgid "Shift"
 msgstr "平移"
 
-#: ../operations/common/shift.c:33
+#: ../operations/common/shift.c:32
 msgid "Maximum amount to shift"
 msgstr "平移的最大数量"
 
-#: ../operations/common/shift.c:38 ../operations/common/texturize-canvas.c:34
-msgid "Direction"
-msgstr "方向"
-
-#: ../operations/common/shift.c:41
+#: ../operations/common/shift.c:36
 msgid "Shift direction"
 msgstr "平移方向"
 
-#: ../operations/common/shift.c:151
+#: ../operations/common/shift.c:150
 msgid "Shift each row or column of pixels by a random amount"
 msgstr "按随机的量平移各行或各列像素"
 
-#: ../operations/common/snn-mean.c:28
-#: ../operations/workshop/snn-percentile.c:29
+#: ../operations/common/snn-mean.c:33
+#: ../operations/workshop/snn-percentile.c:31
 msgid "Pairs"
 msgstr "对数"
 
-#: ../operations/common/snn-mean.c:29
+#: ../operations/common/snn-mean.c:34
 msgid "Number of pairs; higher number preserves more acute features"
 msgstr "对数；较多对数会保留更锐利的特征"
 
-#: ../operations/common/snn-mean.c:329
+#: ../operations/common/snn-mean.c:335
 msgid ""
 "Noise reducing edge enhancing blur filter based  on Symmetric Nearest "
 "Neighbours"
 msgstr "基于 对称最近领域 的降噪音边缘增强模糊滤镜"
 
-#: ../operations/common/softglow.c:26 ../operations/common/softglow.c:28
+#: ../operations/common/softglow.c:26
 msgid "Glow radius"
 msgstr "辉光半径"
 
-#: ../operations/common/softglow.c:233
+#: ../operations/common/softglow.c:231
 msgid "Simulate glow by making highlights intense and fuzzy"
 msgstr "通过集中而模糊的高亮来模拟辉光"
 
@@ -2517,13 +2527,13 @@ msgid ""
 msgstr ""
 "考虑到邻域的数量，对于要增强的理想值接近图像最长边的情况，这会增加运行时间"
 
-#: ../operations/common/stress.c:32
+#: ../operations/common/stress.c:39
 msgid ""
 "Number of iterations, a higher number of iterations provides a less noisy "
 "rendering at a computational cost"
 msgstr "迭代次数，更多的迭代能得到噪声较少的结果，但计算量大"
 
-#: ../operations/common/stress.c:191
+#: ../operations/common/stress.c:199
 msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
 msgstr "空间时间域的 Retinex 包络，使用随机采样"
 
@@ -2535,14 +2545,14 @@ msgstr "保留颜色"
 msgid "Impact each channel with the same amount"
 msgstr "对各通道施加等量的影响"
 
-#: ../operations/common/stretch-contrast.c:527
+#: ../operations/common/stretch-contrast.c:568
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
 "contrast, very dark, or very bright images)."
 msgstr ""
 
-#: ../operations/common/stretch-contrast-hsv.c:186
+#: ../operations/common/stretch-contrast-hsv.c:223
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
@@ -2551,26 +2561,24 @@ msgid ""
 msgstr ""
 
 #: ../operations/common/svg-huerotate.c:27
-#: ../operations/common/svg-luminancetoalpha.c:27
-#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:26
+#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:25
 msgid "Values"
 msgstr "值"
 
-#: ../operations/common/svg-huerotate.c:27
-#: ../operations/common/svg-luminancetoalpha.c:27
-#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:26
+#: ../operations/common/svg-huerotate.c:28
+#: ../operations/common/svg-matrix.c:28 ../operations/common/svg-saturate.c:26
 msgid "list of <number>s"
 msgstr "<number> 列表"
 
-#: ../operations/common/svg-huerotate.c:116
+#: ../operations/common/svg-huerotate.c:117
 msgid "SVG color matrix operation svg_huerotate"
 msgstr "SVG 色彩矩阵运算 svg_huerotate"
 
-#: ../operations/common/svg-luminancetoalpha.c:95
+#: ../operations/common/svg-luminancetoalpha.c:93
 msgid "SVG color matrix operation svg_luminancetoalpha"
 msgstr "SVG 色彩矩阵运算 svg_luminancetoalpha"
 
-#: ../operations/common/svg-matrix.c:132
+#: ../operations/common/svg-matrix.c:133
 msgid "SVG color matrix operation svg_matrix"
 msgstr "SVG 色彩矩阵运算 svg_matrix"
 
@@ -2578,43 +2586,64 @@ msgstr "SVG 色彩矩阵运算 svg_matrix"
 msgid "SVG color matrix operation svg_saturate"
 msgstr "SVG 色彩矩阵运算 svg_saturate"
 
-#: ../operations/common/texturize-canvas.c:38
+#: ../operations/common/texturize-canvas.c:34
+msgid "Direction"
+msgstr "方向"
+
+#: ../operations/common/texturize-canvas.c:37
 msgid ""
 "Position of the light source which lightens the canvas: Top-right, Top-left, "
 "Bottom-left or Bottom-right"
 msgstr ""
 
-#: ../operations/common/texturize-canvas.c:42
+#: ../operations/common/texturize-canvas.c:41
 msgid ""
 "Apparent depth of the rendered canvas effect; from 1 (very flat) to 50 (very "
 "deep)"
 msgstr ""
 
-#: ../operations/common/texturize-canvas.c:4277
+#: ../operations/common/texturize-canvas.c:4377
 msgid "Textures the image as if it were an artist's canvas."
 msgstr ""
 
-#: ../operations/common/threshold.c:26
-msgid "Global threshold level (used when there is no auxiliary input buffer)."
+#: ../operations/common/threshold.c:28
+#, fuzzy
+msgid ""
+"Scalar threshold level (overriden if an auxiliary input buffer is provided.)."
 msgstr "全局阈值级别(在没有辅助输入缓存时使用)。"
 
-#: ../operations/common/threshold.c:110
+#: ../operations/common/threshold.c:112
 msgid ""
 "Thresholds the image to white/black based on either the global value set in "
 "the value property, or per pixel from the aux input."
 msgstr ""
 
-#: ../operations/common/tile.c:24 ../operations/common/tile.c:26
+#: ../operations/common/tile.c:24
 msgid "Horizontal offset"
 msgstr "水平偏移"
 
-#: ../operations/common/tile.c:28 ../operations/common/tile.c:30
+#: ../operations/common/tile.c:29
 msgid "Vertical offset"
 msgstr "垂直偏移"
 
-#: ../operations/common/tile.c:133
+#: ../operations/common/tile.c:135
 msgid "Infinitely repeats the input image."
 msgstr "无限重复输入图像。"
+
+#: ../operations/common/tile-glass.c:28
+#, fuzzy
+msgid "Tile Width"
+msgstr "线宽"
+
+#: ../operations/common/tile-glass.c:34
+#, fuzzy
+msgid "Tile Height"
+msgstr "图块高度"
+
+#: ../operations/common/tile-glass.c:235
+#, fuzzy
+msgid "Simulate distortion caused by rectangular glass tiles"
+msgstr "模拟复印机产生的色彩失真"
 
 #: ../operations/common/tile-seamless.c:165
 msgid ""
@@ -2622,80 +2651,75 @@ msgid ""
 "aware, so the result may need post-processing."
 msgstr ""
 
-#: ../operations/common/unsharp-mask.c:30
+#: ../operations/common/unsharp-mask.c:24
+msgid "Standard Deviation"
+msgstr ""
+
+#: ../operations/common/unsharp-mask.c:32
 msgid "Scale, strength of effect"
 msgstr "比例，效果的强度"
 
-#: ../operations/common/unsharp-mask.c:77
+#: ../operations/common/unsharp-mask.c:84
 msgid ""
 "The most widely used method for sharpening an image, sharpens by adding "
 "false mach-bands around edges"
 msgstr ""
 
-#: ../operations/common/value-invert.c:150
+#: ../operations/common/value-invert.c:149
 msgid ""
 "Inverts just the value component, the result is the corresponding `inverted' "
 "image."
 msgstr "只反转值分量，其结果是对应的“颠倒”的图像。"
 
-#: ../operations/common/vignette.c:33
-msgid "Shape of the vignette"
-msgstr "晕影的形状"
+#: ../operations/common/vignette.c:30
+msgid "Vignette shape"
+msgstr ""
 
-#: ../operations/common/vignette.c:37
+#: ../operations/common/vignette.c:35
 msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
 msgstr "默认为“black”(黑色)，您可以使用透明度擦除部分图像"
 
-#: ../operations/common/vignette.c:42
+#: ../operations/common/vignette.c:38
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr "晕影的远近，单位是占图像半对角线的比例"
 
-#: ../operations/common/vignette.c:45 ../operations/common/vignette.c:47
+#: ../operations/common/vignette.c:42
 msgid "Softness"
 msgstr "柔度"
 
-#: ../operations/common/vignette.c:51
+#: ../operations/common/vignette.c:45
+msgid "Gamma"
+msgstr "Gamma"
+
+#: ../operations/common/vignette.c:46
 msgid "Falloff linearity"
 msgstr "衰减线性度"
 
-#: ../operations/common/vignette.c:53
+#: ../operations/common/vignette.c:49
 msgid "Proportion"
 msgstr "比例"
 
-#: ../operations/common/vignette.c:55
+#: ../operations/common/vignette.c:50
 msgid "How close we are to image proportions"
 msgstr "与图像比例的接近程度"
 
-#: ../operations/common/vignette.c:57
+#: ../operations/common/vignette.c:53
 msgid "Squeeze"
 msgstr "挤压"
 
-#: ../operations/common/vignette.c:59
-msgid ""
-"Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
-"inf:1, this is applied after proportion is taken into account, to directly "
-"use squeeze factor as proportions, set proportion to 0.0."
-msgstr ""
-"使用的高宽比, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, 在"
-"考虑比例后应用，要直接使用挤压因子作为比例，将比例设置为 0.0。"
-
-#: ../operations/common/vignette.c:66
+#: ../operations/common/vignette.c:61
 msgid "Horizontal center of vignetting"
 msgstr "晕影的水平中心"
 
-#: ../operations/common/vignette.c:70
+#: ../operations/common/vignette.c:67
 msgid "Vertical center of vignetting"
 msgstr "晕影的竖直中心"
 
 #: ../operations/common/vignette.c:72
 msgid "Rotation"
 msgstr "旋转"
-
-#: ../operations/common/vignette.c:74
-msgid "Rotation angle"
-msgstr "旋转角度"
 
 #: ../operations/common/vignette.c:383
 msgid ""
@@ -2706,62 +2730,58 @@ msgstr ""
 "对图像应用晕影。模拟亮度在曝光的胶片边缘衰减的效果，以及其他一些在模拟摄影中"
 "可能自然发生的边界模糊效果。"
 
-#: ../operations/common/warp.c:37 ../operations/common/warp.c:48
-msgid "Effect Strength"
-msgstr "效果强度"
-
-#: ../operations/common/warp.c:39 ../operations/external/text.c:29
+#: ../operations/common/warp.c:38 ../operations/external/text.c:32
 #: ../operations/workshop/gblur-1d.c:48
 msgid "Size"
 msgstr "尺寸"
 
-#: ../operations/common/warp.c:41
-msgid "Effect Size"
-msgstr "效果尺寸"
-
-#: ../operations/common/warp.c:43 ../operations/external/path.c:38
+#: ../operations/common/warp.c:41 ../operations/external/path.c:40
 msgid "Hardness"
 msgstr "硬度"
 
-#: ../operations/common/warp.c:45
-msgid "Effect Hardness"
-msgstr "效果硬度"
-
-#: ../operations/common/warp.c:47
+#: ../operations/common/warp.c:44
 msgid "Stroke"
 msgstr "划线"
 
-#: ../operations/common/warp.c:50
+#: ../operations/common/warp.c:46
 msgid "Behavior"
 msgstr "行为"
 
-#: ../operations/common/warp.c:53
+#: ../operations/common/warp.c:49
 #, fuzzy
 msgid "Behavior of the op"
 msgstr "运算的行为"
 
-#: ../operations/common/warp.c:399
+#: ../operations/common/warp.c:411
 #, fuzzy
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "由划线计算相对位移映射"
 
-#: ../operations/common/waves.c:28
+#: ../operations/common/waves.c:27
 msgid "X coordinate of the center of the waves"
 msgstr "波的中心的 X 坐标"
 
-#: ../operations/common/waves.c:32
+#: ../operations/common/waves.c:33
 msgid "Y coordinate of the center of the waves"
 msgstr "波的中心的 Y 坐标"
 
-#: ../operations/common/waves.c:40
+#: ../operations/common/waves.c:39
+msgid "Amplitude of the ripple"
+msgstr "波纹的幅度"
+
+#: ../operations/common/waves.c:43
 msgid "Period (wavelength) of the ripple"
 msgstr "波纹的周期(波长)"
 
-#: ../operations/common/waves.c:46 ../operations/common/waves.c:48
+#: ../operations/common/waves.c:49
 msgid "Aspect ratio"
 msgstr "宽高比"
 
-#: ../operations/common/waves.c:55
+#: ../operations/common/waves.c:54
+msgid "Mathematical method for reconstructing pixel values"
+msgstr ""
+
+#: ../operations/common/waves.c:56
 msgid "Clamp deformation"
 msgstr "夹紧变形"
 
@@ -2769,7 +2789,7 @@ msgstr "夹紧变形"
 msgid "Limit deformation in the image area."
 msgstr "在图像区域中受限变形。"
 
-#: ../operations/common/waves.c:187
+#: ../operations/common/waves.c:178
 msgid "Distort the image with waves"
 msgstr "用波浪扭曲图像"
 
@@ -2781,11 +2801,11 @@ msgstr "混合两个图像，使用 alpha 值作为权重"
 msgid "Whirl"
 msgstr "回旋"
 
-#: ../operations/common/whirl-pinch.c:38
+#: ../operations/common/whirl-pinch.c:37
 msgid "Whirl angle (degrees)"
 msgstr "回旋角度(度)"
 
-#: ../operations/common/whirl-pinch.c:40
+#: ../operations/common/whirl-pinch.c:41
 msgid "Pinch"
 msgstr "挤压"
 
@@ -2799,7 +2819,7 @@ msgid ""
 "the way to the corners)"
 msgstr "半径(1.0 是图像可容纳的最大圆，2.0 覆盖所有角落)"
 
-#: ../operations/common/whirl-pinch.c:274
+#: ../operations/common/whirl-pinch.c:273
 msgid "Distort an image by whirling and pinching"
 msgstr ""
 
@@ -2816,8 +2836,8 @@ msgid "Wind-like bleed effect"
 msgstr "风状流血效果"
 
 #: ../operations/common/write-buffer.c:26
-msgid "Write to an existing GeglBuffer"
-msgstr "写入已有 GeglBuffer"
+msgid "A pre-existing GeglBuffer to write incoming buffer data to."
+msgstr ""
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -2831,15 +2851,32 @@ msgstr "输入的参考 ID (用于 XML)。"
 msgid "Clone a buffer"
 msgstr "复制缓存"
 
-#: ../operations/core/convert-format.c:27
-msgid "Output Format"
+#: ../operations/core/cast-format.c:27
+#, fuzzy
+msgid "Input format"
 msgstr "输出格式"
+
+#: ../operations/core/cast-format.c:28
+#, fuzzy
+msgid "The babl format of the input"
+msgstr "输出的 babl 格式"
+
+#: ../operations/core/cast-format.c:29 ../operations/core/convert-format.c:27
+#, fuzzy
+msgid "Output format"
+msgstr "输出格式"
+
+#: ../operations/core/cast-format.c:113
+msgid ""
+"Cast the data between input_format and output_format, both bormats must have "
+"the same bpp"
+msgstr ""
 
 #: ../operations/core/convert-format.c:87
 msgid "Convert the data to the specified format"
 msgstr "将数据转换成指定的格式"
 
-#: ../operations/core/crop.c:192
+#: ../operations/core/crop.c:202
 msgid "Crop a buffer"
 msgstr "裁剪缓存"
 
@@ -2847,81 +2884,77 @@ msgstr "裁剪缓存"
 msgid "No operation (can be used as a routing point)"
 msgstr "无操作(可以作为一个路径点)"
 
-#: ../operations/external/ff-load.c:25
+#: ../operations/external/ff-load.c:26
 msgid "Path of video file to load"
 msgstr "要加载的视频文件的路径"
 
-#: ../operations/external/ff-load.c:26 ../operations/external/v4l.c:29
-msgid "Frame"
-msgstr "帧"
-
-#: ../operations/external/ff-load.c:26
+#: ../operations/external/ff-load.c:28
 msgid "Frame number"
 msgstr "帧号"
 
-#: ../operations/external/ff-load.c:471
+#: ../operations/external/ff-load.c:475
 msgid "FFmpeg video frame importer"
 msgstr "FFmpeg 视频帧载入器"
 
-#: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:25
+#: ../operations/external/jp2-load.c:26 ../operations/external/jpg-load.c:26
 msgid "Path of file to load"
 msgstr "要加载的文件的路径"
 
-#: ../operations/external/jp2-load.c:70
+#: ../operations/external/jp2-load.c:71
 #, c-format
 msgid "Unknown JPEG 2000 image format in '%s'"
 msgstr "“%s”是未知的 JPEG 2000 图像格式"
 
-#: ../operations/external/jp2-load.c:77
+#: ../operations/external/jp2-load.c:78
 #, c-format
 msgid "Unable to open JPEG 2000 image in '%s'"
 msgstr "无法打开“%s”中的 JPEG 2000 图像"
 
-#: ../operations/external/jp2-load.c:84
+#: ../operations/external/jp2-load.c:85
 #, c-format
 msgid "Unable to create output color profile for '%s'"
 msgstr "无法为“%s”创建输出色彩配置"
 
-#: ../operations/external/jp2-load.c:92
+#: ../operations/external/jp2-load.c:93
 #, c-format
 msgid "Unable to convert image to sRGB color space when processing '%s'"
 msgstr "当处理“%s”时，无法将图像转换为 sRGB 色彩空间"
 
-#: ../operations/external/jp2-load.c:100
+#: ../operations/external/jp2-load.c:101
 #, c-format
 msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
 msgstr "不支持“%2$s”中带 %1$d 分量的非 RGB JPEG 2000 文件"
 
-#: ../operations/external/jp2-load.c:111
+#: ../operations/external/jp2-load.c:112
 #, c-format
 msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
 msgstr "不支持“%2$s”中深度为 %1$d 的 JPEG 2000 文件"
 
-#: ../operations/external/jp2-load.c:124
+#: ../operations/external/jp2-load.c:125
 #, c-format
 msgid "Components of input image '%s' don't match"
 msgstr "输入图像“%s”的分量不符"
 
-#: ../operations/external/jp2-load.c:209
+#: ../operations/external/jp2-load.c:210
 #, c-format
 msgid "One or more of R, G, B components are missing from '%s'"
 msgstr "“%s”缺少一个或多个 R、G、B 分量"
 
-#: ../operations/external/jp2-load.c:218
+#: ../operations/external/jp2-load.c:219
 #, c-format
 msgid "One or more of R, G, B components have signed data in '%s'"
 msgstr "“%s”中有一个或多个 R、G、B 分量包含有符号数据"
 
-#: ../operations/external/jp2-load.c:252
+#: ../operations/external/jp2-load.c:253
 #, c-format
 msgid "Error reading row %d component %d from '%s'"
 msgstr "从“%3$s”读取第 %2$d 行分量 %1$d 出错"
 
-#: ../operations/external/jp2-load.c:397
+#: ../operations/external/jp2-load.c:398
 msgid "JPEG 2000 image loader"
 msgstr "JPEG 2000 图像加载器"
 
-#: ../operations/external/jpg-load.c:207
+#: ../operations/external/jpg-load.c:208
 msgid "JPG image loader"
 msgstr "JPG 图像加载器"
 
@@ -2929,48 +2962,48 @@ msgstr "JPG 图像加载器"
 msgid "Target path and filename, use '-' for stdout"
 msgstr "目标路径和文件名，请用“- ”代表 stdout"
 
-#: ../operations/external/jpg-save.c:27 ../operations/external/webp-save.c:27
+#: ../operations/external/jpg-save.c:28 ../operations/external/webp-save.c:27
 msgid "Quality"
 msgstr "质量"
 
-#: ../operations/external/jpg-save.c:28
+#: ../operations/external/jpg-save.c:29
 msgid "JPEG compression quality (between 1 and 100)"
 msgstr "JPEG 压缩质量(1 到 100 之间)"
 
-#: ../operations/external/jpg-save.c:29
+#: ../operations/external/jpg-save.c:32
 msgid "Smoothing"
 msgstr "平滑"
 
-#: ../operations/external/jpg-save.c:30
+#: ../operations/external/jpg-save.c:33
 msgid "Smoothing factor from 1 to 100; 0 disables smoothing"
 msgstr "平滑因子(1 到 100)；0 为禁用平滑"
 
-#: ../operations/external/jpg-save.c:31
+#: ../operations/external/jpg-save.c:36
 msgid "Optimize"
 msgstr "优化"
 
-#: ../operations/external/jpg-save.c:32
+#: ../operations/external/jpg-save.c:37
 msgid "Use optimized huffman tables"
 msgstr "使用优化的霍夫曼表"
 
-#: ../operations/external/jpg-save.c:33
+#: ../operations/external/jpg-save.c:38
 msgid "Progressive"
 msgstr "渐进"
 
-#: ../operations/external/jpg-save.c:34
+#: ../operations/external/jpg-save.c:39
 msgid "Create progressive JPEG images"
 msgstr "创建渐进式 JPEG 图像"
 
-#: ../operations/external/jpg-save.c:35
-#: ../operations/workshop/color-rotate.c:46
+#: ../operations/external/jpg-save.c:40
+#: ../operations/workshop/color-rotate.c:57
 msgid "Grayscale"
 msgstr "灰度"
 
-#: ../operations/external/jpg-save.c:36
+#: ../operations/external/jpg-save.c:41
 msgid "Create a grayscale (monochrome) image"
 msgstr "创建一个灰度(单色)图像"
 
-#: ../operations/external/jpg-save.c:192
+#: ../operations/external/jpg-save.c:197
 #, fuzzy
 msgid "JPEG image saver (passes the buffer through, saves as a side-effect)"
 msgstr "JPEG 图像保存器(绕过缓存，保存为副本)"
@@ -2984,7 +3017,8 @@ msgid "The cmsHPROFILE corresponding to the icc profile for the input data."
 msgstr "与输入数据的 icc 配置对应的 cmsHPROFILE"
 
 #: ../operations/external/lcms-from-profile.c:37
-msgid "Rendering Intent"
+#, fuzzy
+msgid "Rendering intent"
 msgstr "渲染意图"
 
 #: ../operations/external/lcms-from-profile.c:40
@@ -2992,17 +3026,18 @@ msgid "The rendering intent to use in the conversion."
 msgstr "会话中使用的渲染意图(rendering intent)。"
 
 #: ../operations/external/lcms-from-profile.c:42
-msgid "Black Point Compensation"
+#, fuzzy
+msgid "Black point compensation"
 msgstr "黑点补偿"
 
-#: ../operations/external/lcms-from-profile.c:43
+#: ../operations/external/lcms-from-profile.c:44
 msgid "Convert using black point compensation."
 msgstr "使用黑点补偿的转换"
 
-#: ../operations/external/lcms-from-profile.c:232
+#: ../operations/external/lcms-from-profile.c:240
+#, fuzzy
 msgid ""
-"Converts the input from an ICC color profile to a well defined babl format. "
-"The input buffer should be a babl_format_n type."
+"Converts the input from an ICC color profile to a well defined babl format."
 msgstr ""
 "将输入从 ICC 色彩配置转换为完整定义的 babl 格式。输入缓存应为 babl_format_n "
 "类型。"
@@ -3011,7 +3046,7 @@ msgstr ""
 msgid "Epsilon"
 msgstr "Epsilon"
 
-#: ../operations/external/matting-levin.c:27
+#: ../operations/external/matting-levin.c:26
 msgid "Log of the error weighting"
 msgstr "记录错误权重"
 
@@ -3019,31 +3054,32 @@ msgstr "记录错误权重"
 msgid "Radius of the processing window"
 msgstr "处理窗口的半径"
 
-#: ../operations/external/matting-levin.c:33
+#: ../operations/external/matting-levin.c:34
 msgid "Alpha threshold for multilevel processing"
 msgstr "多级处理的 Alpha 阈值"
 
-#: ../operations/external/matting-levin.c:34
+#: ../operations/external/matting-levin.c:37
 msgid "Lambda"
 msgstr "Lambda"
 
-#: ../operations/external/matting-levin.c:35
+#: ../operations/external/matting-levin.c:39
 msgid "Trimap influence factor"
 msgstr "Trimap 影响因子"
 
-#: ../operations/external/matting-levin.c:38
+#: ../operations/external/matting-levin.c:42
 msgid "Number of downsampled levels to use"
 msgstr "降采样的的级别数"
 
-#: ../operations/external/matting-levin.c:39
-msgid "Active Levels"
+#: ../operations/external/matting-levin.c:45
+#, fuzzy
+msgid "Active levels"
 msgstr "活动级别"
 
-#: ../operations/external/matting-levin.c:41
+#: ../operations/external/matting-levin.c:46
 msgid "Number of levels to perform solving"
 msgstr "执行解算的级别数"
 
-#: ../operations/external/matting-levin.c:1448
+#: ../operations/external/matting-levin.c:1455
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha mat. Set white as selected, black as unselected, for the tri-map."
@@ -3051,7 +3087,7 @@ msgstr ""
 
 #: ../operations/external/npy-save.c:32 ../operations/external/png-save.c:27
 #: ../operations/external/ppm-save.c:26 ../operations/external/rgbe-save.c:27
-#: ../operations/workshop/external/ff-save.c:30
+#: ../operations/workshop/external/ff-save.c:31
 msgid "Target path and filename, use '-' for stdout."
 msgstr "目标路径和文件名，请用“-”代表 stdout。"
 
@@ -3059,11 +3095,11 @@ msgstr "目标路径和文件名，请用“-”代表 stdout。"
 msgid "NPY image saver (Numerical python file saver.)"
 msgstr "NPY 图像保存器(数值 python 文件保存器。)"
 
-#: ../operations/external/path.c:27
+#: ../operations/external/path.c:26
 msgid "Fill Color"
 msgstr "填充颜色"
 
-#: ../operations/external/path.c:28
+#: ../operations/external/path.c:27
 msgid "Color of paint to use for filling, use 0 opacity to disable filling"
 msgstr "用于填充的颜色，使用不透明度 0 来禁止填充"
 
@@ -3083,58 +3119,58 @@ msgstr "划线宽度"
 msgid "The width of the brush used to stroke the path"
 msgstr "按路径划线时刷子的宽度"
 
-#: ../operations/external/path.c:35
+#: ../operations/external/path.c:36
 msgid "Stroke opacity"
 msgstr "划线不透明度"
 
-#: ../operations/external/path.c:36
+#: ../operations/external/path.c:37
 msgid ""
 "Opacity of stroke, note, does not behave like SVG since at the moment "
 "stroking is done using an airbrush tool"
 msgstr ""
 "划线的不透明度，注意与 SVG 效果不同，因为目前划线是使用喷枪工具实现的。"
 
-#: ../operations/external/path.c:39
+#: ../operations/external/path.c:41
 msgid "Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"
 msgstr "刷子硬度，0.0 为软刷，1.0 为硬刷"
 
-#: ../operations/external/path.c:41
+#: ../operations/external/path.c:44
 msgid "Fill rule"
 msgstr "填充规则"
 
-#: ../operations/external/path.c:42
+#: ../operations/external/path.c:45
 #, fuzzy
 msgid "How to determine what to fill (nonzero|evenodd)"
 msgstr "如何确定填写内容(非零|偶奇)"
 
-#: ../operations/external/path.c:44 ../operations/external/vector-fill.c:36
-#: ../operations/external/vector-stroke.c:36
+#: ../operations/external/path.c:47 ../operations/external/vector-fill.c:37
+#: ../operations/external/vector-stroke.c:38
 msgid "Transform"
 msgstr "变换"
 
-#: ../operations/external/path.c:45
+#: ../operations/external/path.c:48
 msgid "SVG style description of transform"
 msgstr "变换的 SVG 样式描述"
 
-#: ../operations/external/path.c:47
+#: ../operations/external/path.c:50
 msgid "Fill opacity"
 msgstr "填充不透明度"
 
-#: ../operations/external/path.c:48
+#: ../operations/external/path.c:51
 msgid "The fill opacity to use"
 msgstr "使用的填充不透明度"
 
-#: ../operations/external/path.c:50 ../operations/external/vector-fill.c:39
-#: ../operations/external/vector-stroke.c:39
+#: ../operations/external/path.c:54 ../operations/external/vector-fill.c:40
+#: ../operations/external/vector-stroke.c:41
 msgid "Vector"
 msgstr "向量"
 
-#: ../operations/external/path.c:51 ../operations/external/vector-fill.c:40
-#: ../operations/external/vector-stroke.c:40
+#: ../operations/external/path.c:55 ../operations/external/vector-fill.c:41
+#: ../operations/external/vector-stroke.c:42
 msgid "A GeglVector representing the path of the stroke"
 msgstr "一个表示划线路径的 GeglVector"
 
-#: ../operations/external/path.c:509
+#: ../operations/external/path.c:513
 msgid "Renders a brush stroke"
 msgstr "渲染一个刷子划线"
 
@@ -3150,7 +3186,7 @@ msgstr "使用的 GdkPixbuf"
 msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
 msgstr "使用位于内存中 <em>pixbuf</em> 位置的 GdkPixbuf。"
 
-#: ../operations/external/png-load.c:446
+#: ../operations/external/png-load.c:447
 msgid "PNG image loader."
 msgstr "PNG 图像加载器。"
 
@@ -3162,32 +3198,33 @@ msgstr "压缩"
 msgid "PNG compression level from 1 to 9"
 msgstr "PNG 压缩级别，从 1 到 9"
 
-#: ../operations/external/png-save.c:30 ../operations/external/ppm-save.c:28
+#: ../operations/external/png-save.c:31 ../operations/external/ppm-save.c:29
 msgid "Bitdepth"
 msgstr "位深"
 
-#: ../operations/external/png-save.c:31 ../operations/external/ppm-save.c:30
-msgid "8 and 16 are amongst the currently accepted values."
+#: ../operations/external/png-save.c:32 ../operations/external/ppm-save.c:30
+#, fuzzy
+msgid "8 and 16 are the currently accepted values."
 msgstr "当前可接受的值为 8 和 16。"
 
-#: ../operations/external/png-save.c:233
+#: ../operations/external/png-save.c:230
 #, fuzzy
 msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
 msgstr "PNG 图像保存器(绕过缓存，保存为副本。)"
 
-#: ../operations/external/ppm-load.c:381
+#: ../operations/external/ppm-load.c:382
 msgid "PPM image loader."
 msgstr "PPM 图像加载器。"
 
-#: ../operations/external/ppm-save.c:27
+#: ../operations/external/ppm-save.c:28
 msgid "Raw format"
 msgstr "原始格式"
 
-#: ../operations/external/ppm-save.c:190
+#: ../operations/external/ppm-save.c:191
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "PPM 图像保存器(便携 pixmap 保存器。)"
 
-#: ../operations/external/rgbe-load.c:135
+#: ../operations/external/rgbe-load.c:136
 msgid "RGBE image loader (Radiance HDR format)."
 msgstr "RGBE 图像加载器(Radiance HDR 格式)。"
 
@@ -3221,16 +3258,16 @@ msgstr ""
 msgid "Path to SVG file to load"
 msgstr "要加载的 SVG 文件的路径"
 
-#: ../operations/external/svg-load.c:28 ../operations/external/v4l.c:27
+#: ../operations/external/svg-load.c:29 ../operations/external/v4l.c:27
 msgid "Width for rendered image"
 msgstr "渲染图像的宽度"
 
-#: ../operations/external/svg-load.c:30 ../operations/external/v4l.c:28
+#: ../operations/external/svg-load.c:32 ../operations/external/v4l.c:28
 msgid "Height for rendered image"
 msgstr "渲染图像的高度"
 
 #. not hidden because it has extra API
-#: ../operations/external/svg-load.c:179
+#: ../operations/external/svg-load.c:181
 msgid "Load an SVG file using librsvg"
 msgstr "使用 librsvg 载入一个 SVG 文件"
 
@@ -3242,49 +3279,49 @@ msgstr "文本"
 msgid "String to display (utf8)"
 msgstr "要显示的字符串(utf8)"
 
-#: ../operations/external/text.c:27
+#: ../operations/external/text.c:29
 msgid "Font family"
 msgstr "字体族"
 
-#: ../operations/external/text.c:28
+#: ../operations/external/text.c:30
 msgid "Font family (utf8)"
 msgstr "字体家族(utf8)"
 
-#: ../operations/external/text.c:30
+#: ../operations/external/text.c:33
 msgid "Approximate height of text in pixels."
 msgstr "文本的近似高度(像素)。"
 
-#: ../operations/external/text.c:32
+#: ../operations/external/text.c:37
 msgid "Color for the text (defaults to 'white')"
 msgstr "文本颜色(默认为“white”，白色)"
 
-#: ../operations/external/text.c:33
+#: ../operations/external/text.c:38
 msgid "Wrap width"
 msgstr "折行宽度"
 
-#: ../operations/external/text.c:34
+#: ../operations/external/text.c:39
 msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
 msgstr "设置对长行进行折行的宽度(像素)。使用 -1 表示不折行。"
 
-#: ../operations/external/text.c:36
+#: ../operations/external/text.c:43
 msgid "Justification"
 msgstr "对齐"
 
-#: ../operations/external/text.c:37
+#: ../operations/external/text.c:45
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
 msgstr "多行文本的对齐方式(0=左，1=居中，2=右)"
 
-#: ../operations/external/text.c:39
+#: ../operations/external/text.c:48
 msgid "Rendered width in pixels. (read only)"
 msgstr "渲染的宽度(像素)。(只读)"
 
-#: ../operations/external/text.c:41
+#: ../operations/external/text.c:50
 msgid "Rendered height in pixels. (read only)"
 msgstr "呈现的高度(以像素为单位)。(只读)"
 
-#: ../operations/external/text.c:301
+#: ../operations/external/text.c:310
 msgid "Display a string of text using pango and cairo."
 msgstr "使用 pango 和 cairo 显示文本字符串。"
 
@@ -3296,12 +3333,15 @@ msgstr "路径"
 msgid "Path to v4l device"
 msgstr "v4l 设备的路径"
 
+#: ../operations/external/v4l.c:29
+msgid "Frame"
+msgstr "帧"
+
 #: ../operations/external/v4l.c:30
 msgid "current frame number, can be changed to trigger a reload of the image."
 msgstr "当前帧号，可以更改以触发图像重新加载。"
 
 #: ../operations/external/v4l.c:31
-#: ../operations/workshop/external/ff-save.c:32
 msgid "FPS"
 msgstr "帧率"
 
@@ -3313,29 +3353,30 @@ msgstr "自动触发重新加载图像，次数/秒"
 msgid "Video4Linux input, webcams framegrabbers and similar devices."
 msgstr "Video4Linux 的输入，摄像头、图像采集卡和类似的设备。"
 
-#: ../operations/external/vector-fill.c:28
+#: ../operations/external/vector-fill.c:27
 msgid "Color of paint to use for filling."
 msgstr "要使用的填充颜色。"
 
-#: ../operations/external/vector-fill.c:31
+#: ../operations/external/vector-fill.c:30
 msgid "The fill opacity to use."
 msgstr "要使用的填充不透明度。"
 
-#: ../operations/external/vector-fill.c:33
+#. XXX: replace with enum?
+#: ../operations/external/vector-fill.c:34
 msgid "Fill rule."
 msgstr "填充规则。"
 
-#: ../operations/external/vector-fill.c:34
+#: ../operations/external/vector-fill.c:35
 #, fuzzy
 msgid "how to determine what to fill (nonzero|evenodd)"
 msgstr "如何确定填充内容(非零|偶奇)"
 
-#: ../operations/external/vector-fill.c:37
-#: ../operations/external/vector-stroke.c:37
+#: ../operations/external/vector-fill.c:38
+#: ../operations/external/vector-stroke.c:39
 msgid "svg style description of transform."
 msgstr "变换的 SVG 样式描述"
 
-#: ../operations/external/vector-fill.c:268
+#: ../operations/external/vector-fill.c:269
 msgid "Renders a filled region"
 msgstr "渲染一个填充区域"
 
@@ -3343,22 +3384,22 @@ msgstr "渲染一个填充区域"
 msgid "Color of paint to use for stroking."
 msgstr "划线的颜色。"
 
-#: ../operations/external/vector-stroke.c:31
+#: ../operations/external/vector-stroke.c:32
 msgid "The width of the brush used to stroke the path."
 msgstr "按路径划线的刷子的宽度。"
 
-#: ../operations/external/vector-stroke.c:34
+#: ../operations/external/vector-stroke.c:36
 msgid ""
 "Opacity of stroke, note, does not behave like SVG since at the moment "
 "stroking is done using an airbrush tool."
 msgstr ""
 "划线的不透明度，注意与 SVG 效果不同，因为目前划线是使用喷枪工具实现的。"
 
-#: ../operations/external/vector-stroke.c:281
+#: ../operations/external/vector-stroke.c:283
 msgid "Renders a vector stroke"
 msgstr "渲染一个向量划线"
 
-#: ../operations/external/webp-load.c:142
+#: ../operations/external/webp-load.c:143
 msgid "WebP image loader."
 msgstr "WebP 图像加载器。"
 
@@ -3370,25 +3411,25 @@ msgstr "目标文件路径。"
 msgid "WebP compression quality"
 msgstr "WebP 压缩质量"
 
-#: ../operations/external/webp-save.c:114
+#: ../operations/external/webp-save.c:115
 msgid "WebP image saver."
 msgstr "WebP 图像保存器。"
 
-#: ../operations/generated/add.c:29 ../operations/generated/divide.c:29
-#: ../operations/generated/gamma.c:29 ../operations/generated/multiply.c:29
-#: ../operations/generated/subtract.c:29
+#: ../operations/generated/add.c:30 ../operations/generated/divide.c:30
+#: ../operations/generated/gamma.c:30 ../operations/generated/multiply.c:30
+#: ../operations/generated/subtract.c:30
 msgid "global value used if aux doesn't contain data"
 msgstr "如果辅助不包含数据，使用全局值"
 
-#: ../operations/generated/add.c:125
+#: ../operations/generated/add.c:126
 msgid "Math operation add (c = c + value)"
 msgstr "数学运算 add (c = c + value)"
 
-#: ../operations/generated/clear.c:118
+#: ../operations/generated/clear.c:125
 msgid "Porter Duff operation clear (d = 0.0f)"
 msgstr "Porter 操作 clear (d =0.0f)"
 
-#: ../operations/generated/color-burn.c:165
+#: ../operations/generated/color-burn.c:172
 msgid ""
 "SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = "
 "cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
@@ -3398,7 +3439,7 @@ msgstr ""
 "- aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + cB * aA "
 "- aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 
-#: ../operations/generated/color-dodge.c:165
+#: ../operations/generated/color-dodge.c:172
 msgid ""
 "SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = "
 "aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
@@ -3408,7 +3449,7 @@ msgstr ""
 "+ cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * aA / (aA "
 "== 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/darken.c:162
+#: ../operations/generated/darken.c:169
 msgid ""
 "SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
 "+ cB * (1 - aA)</code>)"
@@ -3416,7 +3457,7 @@ msgstr ""
 "SVG 混合操作 darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * "
 "(1 - aA)</code>)"
 
-#: ../operations/generated/difference.c:162
+#: ../operations/generated/difference.c:169
 msgid ""
 "SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
 "aA))</code>)"
@@ -3424,31 +3465,31 @@ msgstr ""
 "SVG 混合操作 difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * aA))</"
 "code>)"
 
-#: ../operations/generated/divide.c:125
+#: ../operations/generated/divide.c:126
 msgid "Math operation divide (c = value==0.0f?0.0f:c/value)"
 msgstr "数学运算 divide (c = value==0.0f?0.0f:c/value)"
 
-#: ../operations/generated/dst-atop.c:118
+#: ../operations/generated/dst-atop.c:125
 msgid "Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"
 msgstr "Porter Duff 操作 dst-atop (d = cB * aA + cA * (1.0f - aB))"
 
-#: ../operations/generated/dst.c:140
+#: ../operations/generated/dst.c:147
 msgid "Porter Duff operation dst (d = cB)"
 msgstr "Porter Duff 操作 dst (d = cB)"
 
-#: ../operations/generated/dst-in.c:118
+#: ../operations/generated/dst-in.c:125
 msgid "Porter Duff operation dst-in (d = cB * aA)"
 msgstr "Porter Duff 操作 dst-in (d = cB * aA)"
 
-#: ../operations/generated/dst-out.c:140
+#: ../operations/generated/dst-out.c:147
 msgid "Porter Duff operation dst-out (d = cB * (1.0f - aA))"
 msgstr "Porter Duff 操作 dst-out (d = cB * (1.0f - aA))"
 
-#: ../operations/generated/dst-over.c:140
+#: ../operations/generated/dst-over.c:147
 msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
 msgstr "Porter Duff 操作 dst-over (d = cB + cA * (1.0f - aB))"
 
-#: ../operations/generated/exclusion.c:162
+#: ../operations/generated/exclusion.c:169
 msgid ""
 "SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
@@ -3456,11 +3497,11 @@ msgstr ""
 "SVG 混合操作 exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + cA * "
 "(1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/gamma.c:125
+#: ../operations/generated/gamma.c:126
 msgid "Math operation gamma (c = powf (c, value))"
 msgstr "数学运算 gamma (c = powf (c, value))"
 
-#: ../operations/generated/hard-light.c:165
+#: ../operations/generated/hard-light.c:172
 msgid ""
 "SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * "
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
@@ -3470,7 +3511,7 @@ msgstr ""
 "aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA "
 "* (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/lighten.c:162
+#: ../operations/generated/lighten.c:169
 msgid ""
 "SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
@@ -3478,11 +3519,11 @@ msgstr ""
 "SVG 混合操作 lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - aB) + cB "
 "* (1 - aA)</code>)"
 
-#: ../operations/generated/multiply.c:125
+#: ../operations/generated/multiply.c:126
 msgid "Math operation multiply (c = c * value)"
 msgstr "数学运算 multiply (c = c * value)"
 
-#: ../operations/generated/overlay.c:165
+#: ../operations/generated/overlay.c:172
 msgid ""
 "SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 "
 "- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
@@ -3492,15 +3533,15 @@ msgstr ""
 "+ cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 "
 "- aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/plus.c:163
+#: ../operations/generated/plus.c:170
 msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
 msgstr "SVG 混合操作 plus (<code>d = cA + cB</code>)"
 
-#: ../operations/generated/screen.c:162
+#: ../operations/generated/screen.c:169
 msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
 msgstr "SVG 混合操作 screen (<code>d = cA + cB - cA * cB</code>)"
 
-#: ../operations/generated/soft-light.c:167
+#: ../operations/generated/soft-light.c:174
 msgid ""
 "SVG blend operation soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == "
 "0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 "
@@ -3516,27 +3557,27 @@ msgstr ""
 "cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/src-atop.c:140
+#: ../operations/generated/src-atop.c:147
 msgid "Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"
 msgstr "Porter Duff 操作 src-atop (d = cA * aB + cB * (1.0f - aA))"
 
-#: ../operations/generated/src.c:118
+#: ../operations/generated/src.c:125
 msgid "Porter Duff operation src (d = cA)"
 msgstr "Porter Duff 操作 src (d = cA)"
 
-#: ../operations/generated/src-in.c:126
+#: ../operations/generated/src-in.c:133
 msgid "Porter Duff operation src-in (d = cA * aB)"
 msgstr "Porter Duff 操作 src-in (d = cA * aB)"
 
-#: ../operations/generated/src-out.c:118
+#: ../operations/generated/src-out.c:125
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
 msgstr "Porter Duff 操作 src-out (d = cA * (1.0f - aB))"
 
-#: ../operations/generated/subtract.c:125
+#: ../operations/generated/subtract.c:126
 msgid "Math operation subtract (c = c - value)"
 msgstr "数学运算 subtract (c = c - value)"
 
-#: ../operations/generated/svg-multiply.c:162
+#: ../operations/generated/svg-multiply.c:169
 msgid ""
 "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
 "aA)</code>)"
@@ -3544,56 +3585,57 @@ msgstr ""
 "SVG 混合操作 multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</"
 "code>)"
 
-#: ../operations/generated/xor.c:140
+#: ../operations/generated/xor.c:147
 msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 msgstr "Porter Duff 操作 xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
-#: ../operations/seamless-clone/seamless-clone.c:21
+#: ../operations/seamless-clone/seamless-clone.c:22
 #: ../operations/seamless-clone/seamless-clone-compose.c:21
-msgid "Refinement Steps"
+#, fuzzy
+msgid "Refinement steps"
 msgstr "精细步数"
 
-#: ../operations/seamless-clone/seamless-clone.c:22
+#: ../operations/seamless-clone/seamless-clone.c:23
 #: ../operations/seamless-clone/seamless-clone-compose.c:22
 msgid ""
 "Maximal amount of refinement points to be used for the interpolation mesh"
 msgstr "用于插值网面(mesh)的最大精细(refinement)点数"
 
-#: ../operations/seamless-clone/seamless-clone.c:25
-#: ../operations/seamless-clone/seamless-clone-compose.c:25
+#: ../operations/seamless-clone/seamless-clone.c:27
+#: ../operations/seamless-clone/seamless-clone.c:33
+#: ../operations/seamless-clone/seamless-clone-compose.c:26
 msgid "How much horizontal offset should applied to the paste"
 msgstr ""
 
-#: ../operations/seamless-clone/seamless-clone.c:28
-#: ../operations/seamless-clone/seamless-clone-compose.c:28
-msgid "How much vertical offset should applied to the paste"
-msgstr ""
-
-#: ../operations/seamless-clone/seamless-clone.c:30
-#: ../operations/seamless-clone/seamless-clone-compose.c:30
+#: ../operations/seamless-clone/seamless-clone.c:38
+#: ../operations/seamless-clone/seamless-clone-compose.c:37
 msgid "Error message"
 msgstr "出错消息"
 
-#: ../operations/seamless-clone/seamless-clone.c:30
-#: ../operations/seamless-clone/seamless-clone-compose.c:30
+#: ../operations/seamless-clone/seamless-clone.c:39
+#: ../operations/seamless-clone/seamless-clone-compose.c:38
 msgid "An error message in case of a failure"
 msgstr "失败时的出错消息"
 
-#: ../operations/seamless-clone/seamless-clone.c:161
+#: ../operations/seamless-clone/seamless-clone.c:171
 msgid "The foreground does not contain opaque parts"
 msgstr "前景不包含不透明部分"
 
-#: ../operations/seamless-clone/seamless-clone.c:164
+#: ../operations/seamless-clone/seamless-clone.c:174
 msgid "The foreground is too small to use"
 msgstr "前景太小，无法使用"
 
-#: ../operations/seamless-clone/seamless-clone.c:167
+#: ../operations/seamless-clone/seamless-clone.c:177
 msgid "The foreground contains holes and/or several unconnected parts"
 msgstr "前景包含孔和/或几个不相连的部分"
 
-#: ../operations/seamless-clone/seamless-clone.c:178
+#: ../operations/seamless-clone/seamless-clone.c:188
 msgid "The opaque parts of the foreground are not above the background!"
 msgstr "前景的不透明部分不在背景上方！"
+
+#: ../operations/seamless-clone/seamless-clone-compose.c:32
+msgid "How much vertical offset should applied to the paste"
+msgstr ""
 
 #: ../operations/transform/reflect.c:30
 msgid "Direction vector's X component"
@@ -3671,6 +3713,16 @@ msgstr "原点-y"
 msgid "Y coordinate of origin"
 msgstr "原点的 Y 坐标"
 
+#: ../operations/transform/transform-core.c:186
+#: ../operations/workshop/ditto.c:27
+msgid "Sampler"
+msgstr "采样器"
+
+#: ../operations/transform/transform-core.c:187
+#: ../operations/workshop/ditto.c:29
+msgid "Sampler used internally"
+msgstr "内部使用的采样器"
+
 #: ../operations/transform/translate.c:26
 msgid "Horizontal translation"
 msgstr "水平变换"
@@ -3687,37 +3739,37 @@ msgstr ""
 "重新定位缓冲区(次像素精度)，如果传递的是整数坐标，将使用一个不重采样的快速路"
 "径实现"
 
-#: ../operations/workshop/box-max.c:26 ../operations/workshop/box-min.c:26
+#: ../operations/workshop/box-max.c:27 ../operations/workshop/box-min.c:27
 #: ../operations/workshop/box-percentile.c:28
-#: ../operations/workshop/disc-percentile.c:27
-#: ../operations/workshop/kuwahara.c:26
+#: ../operations/workshop/disc-percentile.c:28
+#: ../operations/workshop/kuwahara.c:27
 #: ../operations/workshop/snn-percentile.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr "方形像素区域的半径(宽度和高度为 半径*2+1)"
 
-#: ../operations/workshop/box-max.c:336
+#: ../operations/workshop/box-max.c:337
 msgid ""
 "Sets the target pixel to the value of the maximum value in a box surrounding "
 "the pixel"
 msgstr "将目标像素设为围绕该像素的框中像素的最大值"
 
-#: ../operations/workshop/box-min.c:335
+#: ../operations/workshop/box-min.c:336
 msgid ""
 "Sets the target pixel to the value of the minimum value in a box surrounding "
 "the pixel"
 msgstr "将目标像素设为围绕该像素的框中像素的最小值"
 
-#: ../operations/workshop/box-percentile.c:29
-#: ../operations/workshop/disc-percentile.c:28
-#: ../operations/workshop/snn-percentile.c:31
+#: ../operations/workshop/box-percentile.c:31
+#: ../operations/workshop/disc-percentile.c:29
+#: ../operations/workshop/snn-percentile.c:35
 msgid "Percentile"
 msgstr "百分位"
 
-#: ../operations/workshop/box-percentile.c:30
+#: ../operations/workshop/box-percentile.c:32
 msgid "The percentile to compute, defaults to 50, which is a median filter"
 msgstr "计算的百分位数，默认值为 50，这是一个中值滤镜"
 
-#: ../operations/workshop/box-percentile.c:230
+#: ../operations/workshop/box-percentile.c:233
 msgid ""
 "Sets the target pixel to the color corresponding to a given percentile when "
 "colors are sorted by luminance"
@@ -3737,321 +3789,222 @@ msgid ""
 msgstr "内部对输入缓存进行缓冲，进一步处理时该缓存将作为输入。"
 
 #: ../operations/workshop/color-rotate.c:33
-#: ../operations/workshop/color-rotate.c:39
+#: ../operations/workshop/color-rotate.c:46
 msgid "Clockwise"
 msgstr "顺时针"
 
 #: ../operations/workshop/color-rotate.c:34
-#: ../operations/workshop/color-rotate.c:40
+#: ../operations/workshop/color-rotate.c:47
 msgid "Switch to clockwise"
 msgstr "转换为顺时针"
 
-#: ../operations/workshop/color-rotate.c:35
-#: ../operations/workshop/color-rotate.c:41
-msgid "From:"
+#: ../operations/workshop/color-rotate.c:36
+#: ../operations/workshop/color-rotate.c:49
+#, fuzzy
+msgid "From"
 msgstr "从："
 
-#: ../operations/workshop/color-rotate.c:36
-#: ../operations/workshop/color-rotate.c:42
+#: ../operations/workshop/color-rotate.c:37
+#: ../operations/workshop/color-rotate.c:51
 msgid "Starting angle for the color rotation"
 msgstr "色彩旋转的起始角度"
 
-#: ../operations/workshop/color-rotate.c:37
-#: ../operations/workshop/color-rotate.c:43
-msgid "To:"
+#: ../operations/workshop/color-rotate.c:41
+#: ../operations/workshop/color-rotate.c:53
+#, fuzzy
+msgid "To"
 msgstr "到："
 
-#: ../operations/workshop/color-rotate.c:38
-#: ../operations/workshop/color-rotate.c:44
+#: ../operations/workshop/color-rotate.c:42
+#: ../operations/workshop/color-rotate.c:55
 msgid "End angle for the color rotation"
 msgstr "色彩旋转的终止角度"
 
-#: ../operations/workshop/color-rotate.c:47
+#: ../operations/workshop/color-rotate.c:58
 msgid "Choose in case of grayscale images"
 msgstr "灰度图像时选择"
 
-#: ../operations/workshop/color-rotate.c:49
-msgid "The value of hue"
-msgstr "色相的值"
-
-#: ../operations/workshop/color-rotate.c:51
-msgid "The value of saturation"
-msgstr "饱和度的值"
-
-#: ../operations/workshop/color-rotate.c:52
-#: ../operations/workshop/color-rotate.c:53
+#: ../operations/workshop/color-rotate.c:66
 #, fuzzy
-msgid "Change/Treat to this"
+msgid "Change/treat to this"
 msgstr "更改/处理至"
 
-#: ../operations/workshop/color-rotate.c:55
-msgid "The value of gray threshold"
-msgstr "灰度阈值的值"
+#: ../operations/workshop/color-rotate.c:68
+#, fuzzy
+msgid "Gray threshold"
+msgstr "红眼阈值"
 
-#: ../operations/workshop/color-rotate.c:383
+#: ../operations/workshop/color-rotate.c:397
 msgid "Rotate colors on the image"
 msgstr "旋转图像上的色彩"
 
 #: ../operations/workshop/convolution-matrix.c:25
-msgid "(1,1) "
+#, fuzzy
+msgid "(1,1)"
 msgstr "(1,1) "
 
 #: ../operations/workshop/convolution-matrix.c:26
-msgid "Value of the element in position (1,1)"
-msgstr "位置(1,1)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:27
-msgid "(1,2) "
+#, fuzzy
+msgid "(1,2)"
 msgstr "(1,2) "
 
-#: ../operations/workshop/convolution-matrix.c:28
-msgid "Value of the element in position (1,2)"
-msgstr "位置(1,2)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:29
-msgid "(1,3) "
+#: ../operations/workshop/convolution-matrix.c:27
+#, fuzzy
+msgid "(1,3)"
 msgstr "(1,3) "
 
-#: ../operations/workshop/convolution-matrix.c:30
-msgid "Value of the element in position (1,3)"
-msgstr "位置(1,3)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:31
-msgid "(1,4) "
+#: ../operations/workshop/convolution-matrix.c:28
+#, fuzzy
+msgid "(1,4)"
 msgstr "(1,4) "
 
-#: ../operations/workshop/convolution-matrix.c:32
-msgid "Value of the element in position (1,4)"
-msgstr "位置(1,4)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:33
-msgid "(1,5) "
+#: ../operations/workshop/convolution-matrix.c:29
+#, fuzzy
+msgid "(1,5)"
 msgstr "(1,5) "
 
-#: ../operations/workshop/convolution-matrix.c:34
-msgid "Value of the element in position (1,5)"
-msgstr "位置(1,5)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:35
-msgid "(2,1) "
+#: ../operations/workshop/convolution-matrix.c:30
+#, fuzzy
+msgid "(2,1)"
 msgstr "(2,1) "
 
-#: ../operations/workshop/convolution-matrix.c:36
-msgid "Value of the element in position (2,1)"
-msgstr "位置(2,1)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:37
-msgid "(2,2) "
+#: ../operations/workshop/convolution-matrix.c:31
+#, fuzzy
+msgid "(2,2)"
 msgstr "(2,2) "
 
-#: ../operations/workshop/convolution-matrix.c:38
-msgid "Value of the element in position (2,2)"
-msgstr "位置(2,2)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:39
-msgid "(2,3) "
+#: ../operations/workshop/convolution-matrix.c:32
+#, fuzzy
+msgid "(2,3)"
 msgstr "(2,3) "
 
-#: ../operations/workshop/convolution-matrix.c:40
-msgid "Value of the element in position (2,3)"
-msgstr "位置(2,3)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:41
-msgid "(2,4) "
+#: ../operations/workshop/convolution-matrix.c:33
+#, fuzzy
+msgid "(2,4)"
 msgstr "(2,4) "
 
-#: ../operations/workshop/convolution-matrix.c:42
-msgid "Value of the element in position (2,4)"
-msgstr "位置(2,4)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:43
-msgid "(2,5) "
+#: ../operations/workshop/convolution-matrix.c:34
+#, fuzzy
+msgid "(2,5)"
 msgstr "(2,5) "
 
-#: ../operations/workshop/convolution-matrix.c:44
-msgid "Value of the element in position (2,5)"
-msgstr "位置(2,5)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:45
-msgid "(3,1) "
+#: ../operations/workshop/convolution-matrix.c:35
+#, fuzzy
+msgid "(3,1)"
 msgstr "(3,1) "
 
-#: ../operations/workshop/convolution-matrix.c:46
-msgid "Value of the element in position (3,1)"
-msgstr "位置(3,1)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:47
-msgid "(3,2) "
+#: ../operations/workshop/convolution-matrix.c:36
+#, fuzzy
+msgid "(3,2)"
 msgstr "(3,2) "
 
-#: ../operations/workshop/convolution-matrix.c:48
-msgid "Value of the element in position (3,2)"
-msgstr "位置(3,2)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:49
-msgid "(3,3) "
+#: ../operations/workshop/convolution-matrix.c:37
+#, fuzzy
+msgid "(3,3)"
 msgstr "(3,3) "
 
-#: ../operations/workshop/convolution-matrix.c:50
-msgid "Value of the element in position (3,3)"
-msgstr "位置(3,3)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:51
-msgid "(3,4) "
+#: ../operations/workshop/convolution-matrix.c:38
+#, fuzzy
+msgid "(3,4)"
 msgstr "(3,4) "
 
-#: ../operations/workshop/convolution-matrix.c:52
-msgid "Value of the element in position (3,4)"
-msgstr "位置(3,4)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:53
-msgid "(3,5) "
+#: ../operations/workshop/convolution-matrix.c:39
+#, fuzzy
+msgid "(3,5)"
 msgstr "(3,5) "
 
-#: ../operations/workshop/convolution-matrix.c:54
-msgid "Value of the element in position (3,5)"
-msgstr "位置(3,5)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:55
-msgid "(4,1) "
+#: ../operations/workshop/convolution-matrix.c:40
+#, fuzzy
+msgid "(4,1)"
 msgstr "(4,1) "
 
-#: ../operations/workshop/convolution-matrix.c:56
-msgid "Value of the element in position (4,1)"
-msgstr "位置(4,1)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:57
-msgid "(4,2) "
+#: ../operations/workshop/convolution-matrix.c:41
+#, fuzzy
+msgid "(4,2)"
 msgstr "(4,2) "
 
-#: ../operations/workshop/convolution-matrix.c:58
-msgid "Value of the element in position (4,2)"
-msgstr "位置(4,2)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:59
-msgid "(4,3) "
+#: ../operations/workshop/convolution-matrix.c:42
+#, fuzzy
+msgid "(4,3)"
 msgstr "(4,3) "
 
-#: ../operations/workshop/convolution-matrix.c:60
-msgid "Value of the element in position (4,3)"
-msgstr "位置(4,3)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:61
-msgid "(4,4) "
+#: ../operations/workshop/convolution-matrix.c:43
+#, fuzzy
+msgid "(4,4)"
 msgstr "(4,4) "
 
-#: ../operations/workshop/convolution-matrix.c:62
-msgid "Value of the element in position (4,4)"
-msgstr "位置(4,4)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:63
-msgid "(4,5) "
+#: ../operations/workshop/convolution-matrix.c:44
+#, fuzzy
+msgid "(4,5)"
 msgstr "(4,5) "
 
-#: ../operations/workshop/convolution-matrix.c:64
-msgid "Value of the element in position (4,5)"
-msgstr "位置(4,4)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:65
-msgid "(5,1) "
+#: ../operations/workshop/convolution-matrix.c:45
+#, fuzzy
+msgid "(5,1)"
 msgstr "(5,1) "
 
-#: ../operations/workshop/convolution-matrix.c:66
-msgid "Value of the element in position (5,1)"
-msgstr "位置(5,1)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:67
-msgid "(5,2) "
+#: ../operations/workshop/convolution-matrix.c:46
+#, fuzzy
+msgid "(5,2)"
 msgstr "(5,2) "
 
-#: ../operations/workshop/convolution-matrix.c:68
-msgid "Value of the element in position (5,2)"
-msgstr "位置(5,2)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:69
-msgid "(5,3) "
+#: ../operations/workshop/convolution-matrix.c:47
+#, fuzzy
+msgid "(5,3)"
 msgstr "(5,3) "
 
-#: ../operations/workshop/convolution-matrix.c:70
-msgid "Value of the element in position (5,3)"
-msgstr "位置(5,3)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:71
-msgid "(5,4) "
+#: ../operations/workshop/convolution-matrix.c:48
+#, fuzzy
+msgid "(5,4)"
 msgstr "(5,4) "
 
-#: ../operations/workshop/convolution-matrix.c:72
-msgid "Value of the element in position (5,4)"
-msgstr "位置(5,4)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:73
-msgid "(5,5) "
+#: ../operations/workshop/convolution-matrix.c:49
+#, fuzzy
+msgid "(5,5)"
 msgstr "(5,5) "
 
-#: ../operations/workshop/convolution-matrix.c:74
-msgid "Value of the element in position (5,5)"
-msgstr "位置(5,5)处元素的值"
-
-#: ../operations/workshop/convolution-matrix.c:76
-msgid "Divisor: "
+#: ../operations/workshop/convolution-matrix.c:51
+#, fuzzy
+msgid "Divisor"
 msgstr "除数："
 
-#: ../operations/workshop/convolution-matrix.c:77
-msgid "The value of the divisor"
-msgstr "除数的值"
-
-#: ../operations/workshop/convolution-matrix.c:78
-msgid "Offset: "
-msgstr "偏移："
-
-#: ../operations/workshop/convolution-matrix.c:79
-msgid "The value of the offset"
-msgstr "偏移值"
-
-#: ../operations/workshop/convolution-matrix.c:81
+#: ../operations/workshop/convolution-matrix.c:55
 msgid "Normalize"
 msgstr "标准化"
 
-#: ../operations/workshop/convolution-matrix.c:81
-msgid "Normalize or not"
-msgstr "是否标准化"
-
-#: ../operations/workshop/convolution-matrix.c:83
+#: ../operations/workshop/convolution-matrix.c:57
 msgid "Red channel"
 msgstr "红色通道"
 
-#: ../operations/workshop/convolution-matrix.c:84
+#: ../operations/workshop/convolution-matrix.c:58
 msgid "Green channel"
 msgstr "绿色通道"
 
-#: ../operations/workshop/convolution-matrix.c:85
+#: ../operations/workshop/convolution-matrix.c:59
 msgid "Blue channel"
 msgstr "蓝色通道"
 
-#: ../operations/workshop/convolution-matrix.c:86
+#: ../operations/workshop/convolution-matrix.c:60
 msgid "Alpha channel"
 msgstr "Alpha 通道"
 
-#: ../operations/workshop/convolution-matrix.c:88
+#: ../operations/workshop/convolution-matrix.c:61
 msgid "Alpha-weighting"
 msgstr "Alpha 权重"
 
-#: ../operations/workshop/convolution-matrix.c:88
-msgid "Alpha weighting"
-msgstr "Alpha 权重"
-
-#: ../operations/workshop/convolution-matrix.c:90
+#. XXX: use enum
+#: ../operations/workshop/convolution-matrix.c:64
 msgid "Border"
 msgstr "边界"
 
-#: ../operations/workshop/convolution-matrix.c:91
+#: ../operations/workshop/convolution-matrix.c:65
 #, fuzzy
 msgid ""
 "Type of border to choose. Choices are extend, wrap, crop. Default is extend"
 msgstr ""
 "选择边界的类型。选项有 extend(扩展)，wrap(卷边)，crop(裁剪)。默认为 text"
 
-#: ../operations/workshop/convolution-matrix.c:433
+#: ../operations/workshop/convolution-matrix.c:406
 msgid "Creates image by manually set convolution matrix"
 msgstr "通过手动设置卷积矩阵创建图像"
 
@@ -4067,44 +4020,42 @@ msgid ""
 "files."
 msgstr "要使用的 Bayer 模式，0 一般适合尼康文件，2 适合富士文件。"
 
-#: ../operations/workshop/demosaic-bimedian.c:220
+#: ../operations/workshop/demosaic-bimedian.c:221
 msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
 msgstr "用双中值插值，对图像执行 grayscale2color 去马赛克处理。"
 
-#: ../operations/workshop/demosaic-simple.c:152
+#: ../operations/workshop/demosaic-simple.c:153
 msgid ""
 "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr "不用差值，对图像执行简单的 grayscale2color 去马赛克处理。"
 
-#: ../operations/workshop/disc-percentile.c:29
+#: ../operations/workshop/disc-percentile.c:30
 msgid "The percentile to compute, defaults to 50, which is a median filter."
 msgstr "要计算的百分位数，默认值为50，即一个中值滤镜。"
 
-#: ../operations/workshop/disc-percentile.c:234
+#: ../operations/workshop/disc-percentile.c:236
 msgid ""
 "Sets the target pixel to the color corresponding to a given percentile when "
 "colors are sorted by luminance."
 msgstr ""
 
-#: ../operations/workshop/ditto.c:112
+#: ../operations/workshop/ditto.c:113
 msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr "采样时，做一个输入到输出的 1:1 映射来测试操作"
 
-#: ../operations/workshop/external/ff-save.c:31
-msgid "Bitrate"
-msgstr "位率"
-
-#: ../operations/workshop/external/ff-save.c:31
-msgid "target bitrate"
+#: ../operations/workshop/external/ff-save.c:33
+#, fuzzy
+msgid "Target bitrate"
 msgstr "目标位率"
 
-#: ../operations/workshop/external/ff-save.c:32
-msgid "frames per second"
+#: ../operations/workshop/external/ff-save.c:36
+#, fuzzy
+msgid "Frames/second"
 msgstr "帧每秒"
 
-#: ../operations/workshop/external/ff-save.c:889
+#: ../operations/workshop/external/ff-save.c:894
 msgid "FFmpeg video output sink"
 msgstr "FFmpeg 视频输出池"
 
@@ -4116,191 +4067,175 @@ msgstr "脚本"
 msgid "The lua script containing the implementation of this operation."
 msgstr "包含此操作实现的 lua 脚本。"
 
-#: ../operations/workshop/external/gluas.c:43
+#: ../operations/workshop/external/gluas.c:46
 msgid "a stored lua script on disk implementing an operation."
 msgstr "一个存储在磁盘上的，实现某项操作的 lua 脚本。"
 
-#: ../operations/workshop/external/gluas.c:44
+#: ../operations/workshop/external/gluas.c:48
 msgid "User value"
 msgstr "用户值"
 
-#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/external/gluas.c:49
 msgid "(appears in the global variable 'user_value' in lua."
 msgstr "(在 lua 中出现在全局变量“user_value”里。"
 
-#: ../operations/workshop/external/gluas.c:984
+#: ../operations/workshop/external/gluas.c:989
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
 msgstr "Lua 编程语言的一个通用的 滤镜/合成 实现代理。"
 
 #: ../operations/workshop/external/lens-correct.c:28
-msgid "Maker:"
+#, fuzzy
+msgid "Maker"
 msgstr "制造商："
 
 #: ../operations/workshop/external/lens-correct.c:29
 msgid "Write lens maker correctly"
 msgstr "正确填写镜头制造商"
 
-#: ../operations/workshop/external/lens-correct.c:30
-msgid "Camera:"
+#: ../operations/workshop/external/lens-correct.c:31
+#, fuzzy
+msgid "Camera"
 msgstr "相机："
 
-#: ../operations/workshop/external/lens-correct.c:31
+#: ../operations/workshop/external/lens-correct.c:32
 msgid "Write camera name correctly"
 msgstr "正确填写相机名称"
 
-#: ../operations/workshop/external/lens-correct.c:32
-msgid "Lens:"
+#: ../operations/workshop/external/lens-correct.c:34
+#, fuzzy
+msgid "Lens"
 msgstr "镜头："
 
-#: ../operations/workshop/external/lens-correct.c:33
+#: ../operations/workshop/external/lens-correct.c:35
 msgid "Write your lens model with uppercase letters"
 msgstr "用大写字母填写您镜头的型号"
 
-#: ../operations/workshop/external/lens-correct.c:34
+#: ../operations/workshop/external/lens-correct.c:37
 msgid "Focal of the camera"
 msgstr "相机焦距"
 
-#: ../operations/workshop/external/lens-correct.c:35
+#: ../operations/workshop/external/lens-correct.c:38
 msgid "Calculate b value from focal"
 msgstr "从焦点计算 b 值"
 
-#: ../operations/workshop/external/lens-correct.c:37
+#: ../operations/workshop/external/lens-correct.c:41
 msgid "Center"
 msgstr "中心"
 
-#: ../operations/workshop/external/lens-correct.c:38
+#: ../operations/workshop/external/lens-correct.c:42
 msgid "If you want center"
 msgstr "如果您想要中心"
 
-#: ../operations/workshop/external/lens-correct.c:39
-msgid "Lens center x"
+#: ../operations/workshop/external/lens-correct.c:44
+#, fuzzy
+msgid "Lens center X"
 msgstr "镜头中心 x"
 
-#: ../operations/workshop/external/lens-correct.c:40
-#: ../operations/workshop/external/lens-correct.c:42
+#: ../operations/workshop/external/lens-correct.c:45
+#: ../operations/workshop/external/lens-correct.c:48
 msgid "Coordinates of lens center"
 msgstr "镜头中心的坐标"
 
-#: ../operations/workshop/external/lens-correct.c:41
-msgid "Lens center y"
-msgstr "镜头中心 y"
+#: ../operations/workshop/external/lens-correct.c:47
+#, fuzzy
+msgid "Lens center Y"
+msgstr "镜头中心 x"
 
-#: ../operations/workshop/external/lens-correct.c:44
+#: ../operations/workshop/external/lens-correct.c:51
 msgid "Scale of the image"
 msgstr "图像比例"
 
-#: ../operations/workshop/external/lens-correct.c:45
+#: ../operations/workshop/external/lens-correct.c:54
 msgid "Autocorrect d values"
 msgstr "自动校正 d 值"
 
-#: ../operations/workshop/external/lens-correct.c:46
+#: ../operations/workshop/external/lens-correct.c:55
 msgid "Autocorrect D values for lens correction models."
 msgstr "自动校正 镜头校正模型 的 D 值。"
 
-#: ../operations/workshop/external/lens-correct.c:48
-msgid "Model red a:"
-msgstr "型号红色 a："
-
-#: ../operations/workshop/external/lens-correct.c:49
-#: ../operations/workshop/external/lens-correct.c:51
-#: ../operations/workshop/external/lens-correct.c:53
-#: ../operations/workshop/external/lens-correct.c:55
-#: ../operations/workshop/external/lens-correct.c:58
-#: ../operations/workshop/external/lens-correct.c:60
-#: ../operations/workshop/external/lens-correct.c:62
-#: ../operations/workshop/external/lens-correct.c:64
-#: ../operations/workshop/external/lens-correct.c:67
-#: ../operations/workshop/external/lens-correct.c:69
-#: ../operations/workshop/external/lens-correct.c:71
-#: ../operations/workshop/external/lens-correct.c:73
-msgid "Correction parameters for each color channel"
-msgstr "校正每个色彩通道的参数"
-
-#: ../operations/workshop/external/lens-correct.c:50
-#, fuzzy
-msgid "Model red b:"
-msgstr "型号红色 b："
-
-#: ../operations/workshop/external/lens-correct.c:52
-#, fuzzy
-msgid "Model red c:"
-msgstr "型号红色 c："
-
-#: ../operations/workshop/external/lens-correct.c:54
-#, fuzzy
-msgid "Model red d:"
-msgstr "型号红色 d："
-
 #: ../operations/workshop/external/lens-correct.c:57
 #, fuzzy
-msgid "Model green a:"
-msgstr "型号绿色 a:"
+msgid "Model red a"
+msgstr "型号红色 a："
 
 #: ../operations/workshop/external/lens-correct.c:59
 #, fuzzy
-msgid "Model green b:"
-msgstr "型号绿色 b:"
+msgid "Model red b"
+msgstr "型号红色 b："
 
 #: ../operations/workshop/external/lens-correct.c:61
 #, fuzzy
-msgid "Model green c:"
-msgstr "型号绿色 c:"
+msgid "Model red c"
+msgstr "型号红色 c："
 
 #: ../operations/workshop/external/lens-correct.c:63
 #, fuzzy
-msgid "Model green d:"
-msgstr "型号绿色 d:"
+msgid "Model red d"
+msgstr "型号红色 d："
 
 #: ../operations/workshop/external/lens-correct.c:66
 #, fuzzy
-msgid "Model blue a:"
-msgstr "型号蓝色 a:"
+msgid "Model green a"
+msgstr "型号绿色 a:"
 
 #: ../operations/workshop/external/lens-correct.c:68
 #, fuzzy
-msgid "Model blue b:"
-msgstr "型号蓝色 b:"
+msgid "Model green b"
+msgstr "型号绿色 b:"
 
 #: ../operations/workshop/external/lens-correct.c:70
 #, fuzzy
-msgid "Model blue c:"
-msgstr "型号蓝色 c:"
+msgid "Model green c"
+msgstr "型号绿色 c:"
 
 #: ../operations/workshop/external/lens-correct.c:72
 #, fuzzy
-msgid "Model blue d:"
-msgstr "型号蓝色 d:"
+msgid "Model green d"
+msgstr "型号绿色 d:"
 
 #: ../operations/workshop/external/lens-correct.c:75
 #, fuzzy
-msgid "Model alpha a:"
-msgstr "型号 alpha a:"
-
-#: ../operations/workshop/external/lens-correct.c:76
-#: ../operations/workshop/external/lens-correct.c:78
-#: ../operations/workshop/external/lens-correct.c:80
-#: ../operations/workshop/external/lens-correct.c:82
-msgid "Correction parameters for alpha channel"
-msgstr "校正 alpha 通道参数"
+msgid "Model blue a"
+msgstr "型号蓝色 a:"
 
 #: ../operations/workshop/external/lens-correct.c:77
 #, fuzzy
-msgid "Model alpha b:"
-msgstr "型号 alpha b:"
+msgid "Model blue b"
+msgstr "型号蓝色 b:"
 
 #: ../operations/workshop/external/lens-correct.c:79
 #, fuzzy
-msgid "Model alpha c:"
-msgstr "型号 alpha c:"
+msgid "Model blue c"
+msgstr "型号蓝色 c:"
 
 #: ../operations/workshop/external/lens-correct.c:81
 #, fuzzy
-msgid "Model alpha d:"
+msgid "Model blue d"
+msgstr "型号蓝色 d:"
+
+#: ../operations/workshop/external/lens-correct.c:85
+#, fuzzy
+msgid "Model alpha a"
+msgstr "型号 alpha a:"
+
+#: ../operations/workshop/external/lens-correct.c:87
+#, fuzzy
+msgid "Model alpha b"
+msgstr "型号 alpha b:"
+
+#: ../operations/workshop/external/lens-correct.c:89
+#, fuzzy
+msgid "Model alpha c"
+msgstr "型号 alpha c:"
+
+#: ../operations/workshop/external/lens-correct.c:91
+#, fuzzy
+msgid "Model alpha d"
 msgstr "型号 alpha d:"
 
-#: ../operations/workshop/external/lens-correct.c:476
+#: ../operations/workshop/external/lens-correct.c:486
 msgid "Copies image performing lens distortion correction."
 msgstr "复制进行镜头畸变校正的图像。"
 
@@ -4308,51 +4243,43 @@ msgstr "复制进行镜头畸变校正的图像。"
 msgid "X0"
 msgstr "X0"
 
-#: ../operations/workshop/external/line-profile.c:25
+#: ../operations/workshop/external/line-profile.c:26
 msgid "Start x coordinate"
 msgstr "开始 x 坐标"
 
-#: ../operations/workshop/external/line-profile.c:26
+#: ../operations/workshop/external/line-profile.c:29
 msgid "End x coordinate"
 msgstr "结束 x 坐标"
 
-#: ../operations/workshop/external/line-profile.c:27
+#: ../operations/workshop/external/line-profile.c:32
 msgid "Y0"
 msgstr "Y0"
 
-#: ../operations/workshop/external/line-profile.c:27
+#: ../operations/workshop/external/line-profile.c:33
 msgid "Start y coordinate"
 msgstr "开始 y 坐标"
 
-#: ../operations/workshop/external/line-profile.c:28
+#: ../operations/workshop/external/line-profile.c:36
 msgid "End y coordinate"
 msgstr "结束 y 坐标"
 
-#: ../operations/workshop/external/line-profile.c:29
-msgid "Width of plot"
-msgstr "绘图区宽度"
-
-#: ../operations/workshop/external/line-profile.c:30
-msgid "Height of plot"
-msgstr "绘图区高度"
-
-#: ../operations/workshop/external/line-profile.c:31
+#: ../operations/workshop/external/line-profile.c:44
 msgid "Min"
 msgstr "最小值"
 
-#: ../operations/workshop/external/line-profile.c:31
+#: ../operations/workshop/external/line-profile.c:46
 msgid "Value at bottom"
 msgstr "底部值"
 
-#: ../operations/workshop/external/line-profile.c:32
+#: ../operations/workshop/external/line-profile.c:48
 msgid "Max"
 msgstr "最大值"
 
-#: ../operations/workshop/external/line-profile.c:32
+#: ../operations/workshop/external/line-profile.c:50
 msgid "Value at top"
 msgstr "顶部值"
 
-#: ../operations/workshop/external/line-profile.c:178
+#: ../operations/workshop/external/line-profile.c:196
 msgid ""
 "Renders luminance profiles for red green and blue components along the "
 "specified line in the input buffer, plotted in a buffer of the specified "
@@ -4360,24 +4287,44 @@ msgid ""
 msgstr ""
 
 #: ../operations/workshop/gaussian-blur-iir.c:38
-msgid "Horizontal Std. Dev."
-msgstr "水平标准偏差"
+#, fuzzy
+msgid "Standard deviation X"
+msgstr "标准偏差(空间尺度因子)"
 
-#: ../operations/workshop/gaussian-blur-iir.c:41
-msgid "Vertical Std. Dev."
-msgstr "竖直标准偏差"
+#: ../operations/workshop/gaussian-blur-iir.c:44
+#, fuzzy
+msgid "Standard deviation Y"
+msgstr "标准偏差(空间尺度因子)"
 
-#: ../operations/workshop/gaussian-blur-iir.c:47
-#: ../operations/workshop/gblur-1d.c:58
+#: ../operations/workshop/gaussian-blur-iir.c:53
+#: ../operations/workshop/gblur-1d.c:60
 msgid "How the gaussian kernel is discretized"
 msgstr "高斯核是如何离散化的"
 
-#: ../operations/workshop/gaussian-blur-iir.c:50
-#: ../operations/workshop/gblur-1d.c:61
+#: ../operations/workshop/gaussian-blur-iir.c:57
+#: ../operations/workshop/gblur-1d.c:63
 msgid "How image edges are handled"
 msgstr "图像边缘如何处理"
 
-#: ../operations/workshop/gblur-1d.c:54
+#: ../operations/workshop/gaussian-blur-iir.c:59
+#: ../operations/workshop/gblur-1d.c:64
+#, fuzzy
+msgid "Clip to the input extent"
+msgstr "将结果裁剪为输入尺寸"
+
+#: ../operations/workshop/gaussian-blur-iir.c:60
+#: ../operations/workshop/gblur-1d.c:65
+msgid "Should the output extent be clipped to the input extent"
+msgstr ""
+
+#: ../operations/workshop/gaussian-blur-iir.c:114
+#: ../operations/workshop/gblur-1d.c:888
+msgid ""
+"Performs an averaging of neighboring pixels with the normal distribution as "
+"weighting"
+msgstr "以正态分布权重对相邻像素进行平均"
+
+#: ../operations/workshop/gblur-1d.c:56
 msgid "The orientation of the blur - hor/ver"
 msgstr "模糊的方向 - 纵/横"
 
@@ -4417,37 +4364,130 @@ msgstr ""
 msgid "Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
 msgstr "图像混合操作 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
 
+#: ../operations/workshop/gradient-map.c:26
+#, fuzzy
+msgid "Color 1"
+msgstr "颜色"
+
+#: ../operations/workshop/gradient-map.c:27
+#, fuzzy
+msgid "Starting color for gradient"
+msgstr "色彩旋转的起始角度"
+
+#: ../operations/workshop/gradient-map.c:28
+#, fuzzy
+msgid "Color 2"
+msgstr "颜色"
+
+#: ../operations/workshop/gradient-map.c:29
+#, fuzzy
+msgid "End color for gradient"
+msgstr "梯度的一端"
+
+#: ../operations/workshop/gradient-map.c:187
+msgid "Applies a color gradient."
+msgstr ""
+
 #: ../operations/workshop/hstack.c:178
 msgid ""
 "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of "
 "\"input\")"
 msgstr "横向堆叠栈输入， (在“输出”中，“辅助”放在“输入”右侧)"
 
-#: ../operations/workshop/kuwahara.c:243
+#: ../operations/workshop/ink-simulator.c:42
+msgid "Ink configuration"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:43
+msgid "Textual desciption of inks used for simulated print-job"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:45
+msgid "Mode"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:47
+msgid "how the ink simulator is used"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:51
+#, fuzzy
+msgid "Substrate color"
+msgstr "起始颜色"
+
+#: ../operations/workshop/ink-simulator.c:51
+msgid "paper/fabric/material color"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:52
+#, fuzzy
+msgid "Ink1 color"
+msgstr "结合颜色"
+
+#: ../operations/workshop/ink-simulator.c:52
+#: ../operations/workshop/ink-simulator.c:53
+#: ../operations/workshop/ink-simulator.c:54
+#: ../operations/workshop/ink-simulator.c:55
+#: ../operations/workshop/ink-simulator.c:56
+#, fuzzy
+msgid "ink color"
+msgstr "结合颜色"
+
+#: ../operations/workshop/ink-simulator.c:53
+#, fuzzy
+msgid "Ink2 color"
+msgstr "结合颜色"
+
+#: ../operations/workshop/ink-simulator.c:54
+#, fuzzy
+msgid "Ink3 color"
+msgstr "结合颜色"
+
+#: ../operations/workshop/ink-simulator.c:55
+#, fuzzy
+msgid "Ink4 color"
+msgstr "结合颜色"
+
+#: ../operations/workshop/ink-simulator.c:56
+#, fuzzy
+msgid "Ink5 color"
+msgstr "结合颜色"
+
+#: ../operations/workshop/ink-simulator.c:58
+msgid "Ink limit"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:59
+#, c-format
+msgid "maximum amount of ink for one pixel, 2.5 = 250% coverage"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:63
+#, fuzzy
+msgid "Debug width"
+msgstr "划线宽度"
+
+#: ../operations/workshop/ink-simulator.c:65
+msgid "how wide peel off bands for ink order vis"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:1422
+msgid "spectral ink simulator, for softproofing/simulating press inks"
+msgstr ""
+
+#: ../operations/workshop/kuwahara.c:244
 msgid "Edge preserving blur"
 msgstr "边缘预留模糊"
 
 #: ../operations/workshop/mandelbrot.c:25
-msgid "Real"
-msgstr "实数"
-
-#: ../operations/workshop/mandelbrot.c:26
 msgid "Real coordinate"
 msgstr "实坐标"
 
 #: ../operations/workshop/mandelbrot.c:27
-msgid "Imaginary"
-msgstr "虚数"
-
-#: ../operations/workshop/mandelbrot.c:28
 msgid "Imaginary coordinate"
 msgstr "虚数坐标"
 
 #: ../operations/workshop/mandelbrot.c:29
-msgid "Level"
-msgstr "级别"
-
-#: ../operations/workshop/mandelbrot.c:30
 msgid "Water level"
 msgstr "水位"
 
@@ -4455,11 +4495,11 @@ msgstr "水位"
 msgid "Maximum number of iterations"
 msgstr "最大迭代次数"
 
-#: ../operations/workshop/mandelbrot.c:144
+#: ../operations/workshop/mandelbrot.c:145
 msgid "Mandelbrot set renderer"
 msgstr "Mandelbrot 集渲染器"
 
-#: ../operations/workshop/rawbayer-load.c:154
+#: ../operations/workshop/rawbayer-load.c:155
 msgid ""
 "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as "
 "grayscale, if the fileformat is .rawbayer it will use this loader instead of "
@@ -4467,19 +4507,305 @@ msgid ""
 "returned 16bit numbers (the pnm loader is apparently buggy)"
 msgstr ""
 
-#: ../operations/workshop/snn-percentile.c:30
+#: ../operations/workshop/snn-percentile.c:32
 msgid "Number of pairs, higher number preserves more acute features"
 msgstr "对数，较多对数能保留更锐利的特征"
 
-#: ../operations/workshop/snn-percentile.c:32
+#: ../operations/workshop/snn-percentile.c:36
 msgid "The percentile to return, the default value 50 is equal to the median"
 msgstr "返回的百分位数，默认值为 50，等于中位数"
 
-#: ../operations/workshop/snn-percentile.c:273
+#: ../operations/workshop/snn-percentile.c:278
 msgid ""
 "Noise reducing edge enhancing percentile filter based on Symmetric Nearest "
 "Neighbours"
 msgstr "基于 对称最近邻域 的降噪边缘增强百分位数滤镜"
+
+#, fuzzy
+#~ msgid "Y@ value, position"
+#~ msgstr "Y2 值，位置"
+
+#~ msgid "babls error tolerance, a value between 0.2 and 0.000000001"
+#~ msgstr "babls 误差容限，0.2 和 0.000000001 之间的一个值"
+
+#~ msgid "Maximum size of a file backend's writer thread queue (in MB)"
+#~ msgstr "文件写线程队伍的最大尺寸(MB)"
+
+#~ msgid "Range scale factor"
+#~ msgstr "范围比例因子"
+
+#~ msgid "X Offset"
+#~ msgstr "X 偏移量"
+
+#~ msgid "X offset"
+#~ msgstr "X偏移量"
+
+#~ msgid "Y Offset"
+#~ msgstr "Y 偏移量"
+
+#~ msgid "Y offset"
+#~ msgstr "Y 偏移量"
+
+#~ msgid "Ambient"
+#~ msgstr "环境"
+
+#~ msgid "Set the red gain for the blue channel"
+#~ msgstr "设置蓝通道的红增益"
+
+#~ msgid "Set the green gain for the blue channel"
+#~ msgstr "设置蓝通道的绿增益"
+
+#~ msgid "Set the blue gain for the blue channel"
+#~ msgstr "设置蓝通道的蓝增益"
+
+#~ msgid "Other color"
+#~ msgstr "其他颜色"
+
+#~ msgid "The color to render (defaults to 'black')"
+#~ msgstr "要渲染的颜色(默认为“black”，黑色)"
+
+#~ msgid "Seed"
+#~ msgstr "种子"
+
+#~ msgid "Background Color"
+#~ msgstr "背景色"
+
+#~ msgid "The tiles' background color"
+#~ msgstr "标题的背景色"
+
+#~ msgid "Emboss or Bumpmap"
+#~ msgstr "浮雕或 Bumpmap"
+
+#~ msgid "Red stretch"
+#~ msgstr "红色拉伸"
+
+#~ msgid "Green stretch"
+#~ msgstr "绿色拉伸"
+
+#~ msgid "Blue stretch"
+#~ msgstr "蓝色拉伸"
+
+#~ msgid "Red mode"
+#~ msgstr "红色模式"
+
+#~ msgid "Green mode"
+#~ msgstr "绿色模式"
+
+#~ msgid "Blue mode"
+#~ msgstr "蓝色模式"
+
+#~ msgid "Colors"
+#~ msgstr "色彩"
+
+#~ msgid "Use loglog smoothing"
+#~ msgstr "使用 loglog 平滑"
+
+#~ msgid "Depth value"
+#~ msgstr "深度值"
+
+#~ msgid "GeglNode to introspect"
+#~ msgstr "要自省的 GeglNode"
+
+#~ msgid "X shift"
+#~ msgstr "X 平移"
+
+#~ msgid "Y shift"
+#~ msgstr "Y 平移"
+
+#~ msgid "Background"
+#~ msgstr "背景"
+
+#~ msgid "Number of iterations"
+#~ msgstr "迭代次数"
+
+#~ msgid "Clip result"
+#~ msgstr "裁剪结果"
+
+#~ msgid "Magnitude of random color variations"
+#~ msgstr "随机色彩变化的幅度"
+
+#~ msgid "Direction of light-source (in degrees)"
+#~ msgstr "光源的方向(度)"
+
+#~ msgid "Iteration"
+#~ msgstr "迭代"
+
+#~ msgid "Randomization"
+#~ msgstr "随机化"
+
+#~ msgid "How many iteratarions to run the algorithm with"
+#~ msgstr "迭代运行算法多少次"
+
+#~ msgid "Y size ratio"
+#~ msgstr "Y 尺寸比率"
+
+#, fuzzy
+#~ msgid "The value of the turbulence"
+#~ msgstr "紊流值"
+
+#~ msgid "Offset angle."
+#~ msgstr "偏移角度。"
+
+#~ msgid "Period of the ripple"
+#~ msgstr "波纹的周期"
+
+#~ msgid "Angle in degree"
+#~ msgstr "角度(度)"
+
+#~ msgid "Type of wave"
+#~ msgstr "波的类形"
+
+#~ msgid "Shape of the vignette"
+#~ msgstr "晕影的形状"
+
+#~ msgid ""
+#~ "Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
+#~ "inf:1, this is applied after proportion is taken into account, to "
+#~ "directly use squeeze factor as proportions, set proportion to 0.0."
+#~ msgstr ""
+#~ "使用的高宽比, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = inf:1, "
+#~ "在考虑比例后应用，要直接使用挤压因子作为比例，将比例设置为 0.0。"
+
+#~ msgid "Rotation angle"
+#~ msgstr "旋转角度"
+
+#~ msgid "Effect Strength"
+#~ msgstr "效果强度"
+
+#~ msgid "Effect Size"
+#~ msgstr "效果尺寸"
+
+#~ msgid "Effect Hardness"
+#~ msgstr "效果硬度"
+
+#~ msgid "Write to an existing GeglBuffer"
+#~ msgstr "写入已有 GeglBuffer"
+
+#~ msgid "The value of hue"
+#~ msgstr "色相的值"
+
+#~ msgid "The value of saturation"
+#~ msgstr "饱和度的值"
+
+#~ msgid "The value of gray threshold"
+#~ msgstr "灰度阈值的值"
+
+#~ msgid "Value of the element in position (1,1)"
+#~ msgstr "位置(1,1)处元素的值"
+
+#~ msgid "Value of the element in position (1,2)"
+#~ msgstr "位置(1,2)处元素的值"
+
+#~ msgid "Value of the element in position (1,3)"
+#~ msgstr "位置(1,3)处元素的值"
+
+#~ msgid "Value of the element in position (1,4)"
+#~ msgstr "位置(1,4)处元素的值"
+
+#~ msgid "Value of the element in position (1,5)"
+#~ msgstr "位置(1,5)处元素的值"
+
+#~ msgid "Value of the element in position (2,1)"
+#~ msgstr "位置(2,1)处元素的值"
+
+#~ msgid "Value of the element in position (2,2)"
+#~ msgstr "位置(2,2)处元素的值"
+
+#~ msgid "Value of the element in position (2,3)"
+#~ msgstr "位置(2,3)处元素的值"
+
+#~ msgid "Value of the element in position (2,4)"
+#~ msgstr "位置(2,4)处元素的值"
+
+#~ msgid "Value of the element in position (2,5)"
+#~ msgstr "位置(2,5)处元素的值"
+
+#~ msgid "Value of the element in position (3,1)"
+#~ msgstr "位置(3,1)处元素的值"
+
+#~ msgid "Value of the element in position (3,2)"
+#~ msgstr "位置(3,2)处元素的值"
+
+#~ msgid "Value of the element in position (3,3)"
+#~ msgstr "位置(3,3)处元素的值"
+
+#~ msgid "Value of the element in position (3,4)"
+#~ msgstr "位置(3,4)处元素的值"
+
+#~ msgid "Value of the element in position (3,5)"
+#~ msgstr "位置(3,5)处元素的值"
+
+#~ msgid "Value of the element in position (4,1)"
+#~ msgstr "位置(4,1)处元素的值"
+
+#~ msgid "Value of the element in position (4,2)"
+#~ msgstr "位置(4,2)处元素的值"
+
+#~ msgid "Value of the element in position (4,3)"
+#~ msgstr "位置(4,3)处元素的值"
+
+#~ msgid "Value of the element in position (4,4)"
+#~ msgstr "位置(4,4)处元素的值"
+
+#~ msgid "Value of the element in position (4,5)"
+#~ msgstr "位置(4,4)处元素的值"
+
+#~ msgid "Value of the element in position (5,1)"
+#~ msgstr "位置(5,1)处元素的值"
+
+#~ msgid "Value of the element in position (5,2)"
+#~ msgstr "位置(5,2)处元素的值"
+
+#~ msgid "Value of the element in position (5,3)"
+#~ msgstr "位置(5,3)处元素的值"
+
+#~ msgid "Value of the element in position (5,4)"
+#~ msgstr "位置(5,4)处元素的值"
+
+#~ msgid "Value of the element in position (5,5)"
+#~ msgstr "位置(5,5)处元素的值"
+
+#~ msgid "The value of the divisor"
+#~ msgstr "除数的值"
+
+#~ msgid "Normalize or not"
+#~ msgstr "是否标准化"
+
+#~ msgid "Alpha weighting"
+#~ msgstr "Alpha 权重"
+
+#~ msgid "Bitrate"
+#~ msgstr "位率"
+
+#~ msgid "Lens center y"
+#~ msgstr "镜头中心 y"
+
+#~ msgid "Correction parameters for each color channel"
+#~ msgstr "校正每个色彩通道的参数"
+
+#~ msgid "Correction parameters for alpha channel"
+#~ msgstr "校正 alpha 通道参数"
+
+#~ msgid "Width of plot"
+#~ msgstr "绘图区宽度"
+
+#~ msgid "Height of plot"
+#~ msgstr "绘图区高度"
+
+#~ msgid "Horizontal Std. Dev."
+#~ msgstr "水平标准偏差"
+
+#~ msgid "Vertical Std. Dev."
+#~ msgstr "竖直标准偏差"
+
+#~ msgid "Real"
+#~ msgstr "实数"
+
+#~ msgid "Imaginary"
+#~ msgstr "虚数"
+
+#~ msgid "Level"
+#~ msgstr "级别"
 
 #~ msgid "Cartoon effect"
 #~ msgstr "卡通效果"
@@ -4577,9 +4903,6 @@ msgstr "基于 对称最近邻域 的降噪边缘增强百分位数滤镜"
 #~ msgid "Lanczos width"
 #~ msgstr "Lanczos 宽度"
 
-#~ msgid "Width of the Lanczos function"
-#~ msgstr "Lanczos 函数的宽度"
-
 #~ msgid "Even/Odd"
 #~ msgstr "奇/偶"
 
@@ -4640,9 +4963,6 @@ msgstr "基于 对称最近邻域 的降噪边缘增强百分位数滤镜"
 
 #~ msgid "y2"
 #~ msgstr "y2"
-
-#~ msgid "One end of gradient"
-#~ msgstr "梯度的一端"
 
 #~ msgid "Performs red-eye-removal on the image"
 #~ msgstr "对图像进行去红眼处理"

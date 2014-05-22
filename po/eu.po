@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl gegl-0-2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-05 11:26+0200\n"
+"POT-Creation-Date: 2014-05-22 14:52+0200\n"
 "PO-Revision-Date: 2013-08-05 11:27+0200\n"
 "Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
 "Language-Team: Basque <kde-i18n-doc@kde.org>\n"
@@ -22,28 +22,35 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Lokalize 1.4\n"
 
-#: ../bin/gegl.c:144
+#: ../bin/gegl.c:148
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Ezin da fitxategia irakurri: %s"
 
-#: ../bin/gegl.c:175
+#: ../bin/gegl.c:179
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Grafiko baliogabea. abortatu,\n"
 
-#: ../bin/gegl.c:241 ../bin/gegl-options.c:124
+#: ../bin/gegl.c:245 ../bin/gegl-options.c:131
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "GeglOption modu ezezaguna: %d"
 
-#: ../bin/gegl-options.c:45
-#, c-format
+#: ../bin/gegl-options.c:46
+#, fuzzy, c-format
 msgid ""
 "usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
 "  Options:\n"
 "     -h, --help      this help information\n"
+"\n"
+"     --list-all      list all known operations\n"
+"\n"
+"     --exists        return 0 if the operation(s) exist\n"
+"\n"
+"     --properties    output the properties (name, type, description) of the "
+"operation\n"
 "\n"
 "     -i, --file      read xml from named file\n"
 "\n"
@@ -92,32 +99,32 @@ msgstr ""
 "erraz probatzea baimentzen du. Kontuan hartu lehenetsitako balioa\n"
 "erabiliko dela propietate guztietan.\n"
 
-#: ../bin/gegl-options.c:77
+#: ../bin/gegl-options.c:84
 #, c-format
 msgid "ERROR: '%s' option expected argument\n"
 msgstr "ERROREA: '%s' aukerak argumentu bat espero du\n"
 
-#: ../bin/gegl-options.c:116
+#: ../bin/gegl-options.c:123
 msgid "Display on screen"
 msgstr "Bistaratu pantailan"
 
-#: ../bin/gegl-options.c:118
+#: ../bin/gegl-options.c:125
 msgid "Print XML"
 msgstr "Inprimatu XML"
 
-#: ../bin/gegl-options.c:120
+#: ../bin/gegl-options.c:127
 msgid "Output in a file"
 msgstr "Kanporatu fitxategi baten"
 
-#: ../bin/gegl-options.c:122
+#: ../bin/gegl-options.c:129
 msgid "Display help information"
 msgstr "Bistaratu laguntzaren informazioa"
 
-#: ../bin/gegl-options.c:125
+#: ../bin/gegl-options.c:132
 msgid "unknown mode"
 msgstr "modu ezezaguna"
 
-#: ../bin/gegl-options.c:130
+#: ../bin/gegl-options.c:137
 #, c-format
 msgid ""
 "Parsed commandline:\n"
@@ -136,7 +143,7 @@ msgstr ""
 "\tgainontzekoa:   %s\n"
 "\t\n"
 
-#: ../bin/gegl-options.c:257
+#: ../bin/gegl-options.c:325
 #, c-format
 msgid ""
 "\n"
@@ -151,44 +158,36 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-init.c:245
-msgid "babls error tolerance, a value between 0.2 and 0.000000001"
-msgstr "babl errore tolerantzia, 0.2 eta 0.000000001 bitarteko balio bat"
-
-#: ../gegl/gegl-init.c:250
+#: ../gegl/gegl-init.c:261
 msgid "Where GEGL stores its swap"
 msgstr "GEGL-ek trukatzeko datuak gordetzen dituen lekua"
 
-#: ../gegl/gegl-init.c:255
+#: ../gegl/gegl-init.c:266
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Irudien cache gisa erabiliko den memoria kopurua (gutxi gorabehera)"
 
-#: ../gegl/gegl-init.c:260
+#: ../gegl/gegl-init.c:271
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Lehenetsitako lauzen tamaina GeglBuffer-etan"
 
-#: ../gegl/gegl-init.c:265
+#: ../gegl/gegl-init.c:276
 msgid "The count of pixels to compute simultaneously"
 msgstr "Aldi berean kalkulatuko diren pixel kopurua"
 
-#: ../gegl/gegl-init.c:270
+#: ../gegl/gegl-init.c:281
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 "Errendatzearen kalitatea, 0.0 (azkarra) eta 1.0 (erreferentziazkoa) "
 "bitarteko balio bat"
 
-#: ../gegl/gegl-init.c:275
+#: ../gegl/gegl-init.c:286
 msgid "The number of concurrent processing threads to use"
 msgstr "Aldi berean erabiliko diren prozesu-hari kopurua"
 
-#: ../gegl/gegl-init.c:280
-msgid "Use OpenCL"
-msgstr "Erabili OpenCL"
-
-#: ../gegl/gegl-init.c:285
+#: ../gegl/gegl-init.c:291
 #, fuzzy
-msgid "Maximum size of a file backend's writer thread queue (in MB)"
-msgstr "Gehienezko sarrera kopurua fitxategi lauza motorraren idatz-ilaran"
+msgid "Disable OpenCL"
+msgstr "Erabili OpenCL"
 
 #: ../gegl/module/geglmodule.c:147 ../gegl/module/geglmodule.c:165
 #: ../gegl/module/geglmodule.c:274 ../gegl/module/geglmodule.c:301
@@ -218,76 +217,99 @@ msgstr "Ez da kargatu"
 msgid "Color model"
 msgstr "Kolorea errendatzeko"
 
-#: ../operations/common/alien-map.c:37
+#: ../operations/common/alien-map.c:36
 msgid "What color model used for the transformation"
 msgstr ""
 
-#: ../operations/common/alien-map.c:39 ../operations/common/alien-map.c:41
+#: ../operations/common/alien-map.c:38
 msgid "Component 1 frequency"
 msgstr ""
 
-#: ../operations/common/alien-map.c:42 ../operations/common/alien-map.c:44
+#: ../operations/common/alien-map.c:41
 msgid "Component 2 frequency"
 msgstr ""
 
-#: ../operations/common/alien-map.c:45 ../operations/common/alien-map.c:47
+#: ../operations/common/alien-map.c:44
 msgid "Component 3 frequency"
 msgstr ""
 
-#: ../operations/common/alien-map.c:49 ../operations/common/alien-map.c:51
+#: ../operations/common/alien-map.c:47
 msgid "Component 1 phase shift"
 msgstr ""
 
-#: ../operations/common/alien-map.c:52 ../operations/common/alien-map.c:54
+#: ../operations/common/alien-map.c:50
 msgid "Component 2 phase shift"
 msgstr ""
 
-#: ../operations/common/alien-map.c:55 ../operations/common/alien-map.c:57
+#: ../operations/common/alien-map.c:53
 msgid "Component 3 phase shift"
 msgstr ""
 
-#: ../operations/common/alien-map.c:59 ../operations/common/alien-map.c:61
+#: ../operations/common/alien-map.c:57
 msgid "Keep component 1"
 msgstr ""
 
-#: ../operations/common/alien-map.c:62 ../operations/common/alien-map.c:64
+#: ../operations/common/alien-map.c:58
 msgid "Keep component 2"
 msgstr ""
 
-#: ../operations/common/alien-map.c:65 ../operations/common/alien-map.c:67
+#: ../operations/common/alien-map.c:59
 msgid "Keep component 3"
 msgstr ""
 
-#: ../operations/common/alien-map.c:158
+#: ../operations/common/alien-map.c:214
 msgid "Alters colors using sine transformations"
 msgstr ""
 
-#: ../operations/common/antialias.c:264
+#: ../operations/common/antialias.c:278
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
 msgstr ""
 
-#: ../operations/common/bilateral-filter.c:27
+#: ../operations/common/apply-lens.c:31
+msgid "Lens refraction index"
+msgstr ""
+
+#: ../operations/common/apply-lens.c:34
+msgid "Keep original surroundings"
+msgstr ""
+
+#: ../operations/common/apply-lens.c:35
+msgid "Keep image unchanged, where not affected by the lens."
+msgstr ""
+
+#: ../operations/common/apply-lens.c:37 ../operations/common/cubism.c:39
+#: ../operations/common/lens-distortion.c:57
+#: ../operations/common/pixelize.c:62
+#, fuzzy
+msgid "Background color"
+msgstr "Atzeko planoaren kolorea"
+
+#: ../operations/common/apply-lens.c:302
+msgid "Simulate an elliptical lens over the image"
+msgstr ""
+
+#: ../operations/common/bilateral-filter.c:26
 #: ../operations/common/bilateral-filter-fast.c:37
-#: ../operations/common/dropshadow.c:35
+#: ../operations/common/dropshadow.c:37
 msgid "Blur radius"
 msgstr "Lausotze-erradioa"
 
-#: ../operations/common/bilateral-filter.c:28
-#: ../operations/common/bilateral-filter-fast.c:39
+#: ../operations/common/bilateral-filter.c:27
+#: ../operations/common/bilateral-filter-fast.c:38
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Pixel eskualde karratuaren erradioa (zabalera eta altuera erradioa*2+1 "
 "izango dira)."
 
-#: ../operations/common/bilateral-filter.c:29
+#: ../operations/common/bilateral-filter.c:32
 msgid "Edge preservation"
 msgstr "Ertzak mantentzea"
 
-#: ../operations/common/bilateral-filter.c:30
+#: ../operations/common/bilateral-filter.c:33
 msgid "Amount of edge preservation"
 msgstr "Ertzak mantentze kopurua"
 
-#: ../operations/common/bilateral-filter.c:286
+#: ../operations/common/bilateral-filter.c:290
 msgid ""
 "An edge preserving blur filter that can be used for noise reduction. It is a "
 "gaussian blur where the contribution of neighbourhood pixels are weighted by "
@@ -301,21 +323,18 @@ msgstr ""
 msgid "Smoothness"
 msgstr "Leuntasuna"
 
-#: ../operations/common/bilateral-filter-fast.c:35
+#: ../operations/common/bilateral-filter-fast.c:34
 msgid "Level of smoothness"
 msgstr "Leuntasunaren maila"
 
-#: ../operations/common/bilateral-filter-fast.c:481
+#: ../operations/common/bilateral-filter-fast.c:495
 msgid "A fast approximate implementation of the bilateral filter"
 msgstr "Aldebiko iragazkiaren gutxi gorabeherako inplementazio azkar bat"
 
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
-#: ../operations/common/difference-of-gaussians.c:26
-#: ../operations/common/difference-of-gaussians.c:30
-#: ../operations/common/dropshadow.c:33 ../operations/common/snn-mean.c:26
-#: ../operations/common/stress.c:27 ../operations/common/vignette.c:40
-#: ../operations/common/whirl-pinch.c:44
-#: ../operations/external/matting-levin.c:28
+#: ../operations/common/snn-mean.c:26 ../operations/common/stress.c:27
+#: ../operations/common/vignette.c:37 ../operations/common/whirl-pinch.c:45
+#: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/box-max.c:25 ../operations/workshop/box-min.c:25
 #: ../operations/workshop/box-percentile.c:27
 #: ../operations/workshop/disc-percentile.c:26
@@ -330,34 +349,35 @@ msgstr ""
 "Pixel eskualde karratuaren erradioa, (zabalera eta altuera erradioa*2+1 "
 "izango dira)"
 
-#: ../operations/common/box-blur.c:371
+#: ../operations/common/box-blur.c:394
 msgid "Performs an averaging of a square box of pixels"
 msgstr "Pixel kutxa karratuen batez besteko bat egikaritzen du"
 
-#. ... are the properties of the filter, these are all scalar values
-#. * (doubles), the the parameters are:
-#. *       property name,   min,   max, default, "description of property"
+#. Here in the top of the file the properties of the operation is declared,
+#. *  this causes the declaration of a structure for containing the data.
+#. *
+#. *  The first member of each property_ macro becomes a struct member
+#. *  in the GeglProperties struct used when processing.
 #.
-#: ../operations/common/brightness-contrast.c:29
-#: ../operations/common/high-pass.c:26 ../operations/common/mantiuk06.c:31
+#: ../operations/common/brightness-contrast.c:31
+#: ../operations/common/high-pass.c:30 ../operations/common/mantiuk06.c:31
 msgid "Contrast"
 msgstr "Kontrastea"
 
-#: ../operations/common/brightness-contrast.c:30
-msgid "Range scale factor"
-msgstr "Barrutiaren eskala faktorea"
+#: ../operations/common/brightness-contrast.c:32
+msgid "Magnitude of contrast scaling >1.0 brighten < 1.0 darken"
+msgstr ""
 
-#: ../operations/common/brightness-contrast.c:31
-#: ../operations/common/reinhard05.c:27 ../operations/common/softglow.c:30
-#: ../operations/common/softglow.c:32
+#: ../operations/common/brightness-contrast.c:36
+#: ../operations/common/reinhard05.c:26 ../operations/common/softglow.c:30
 msgid "Brightness"
 msgstr "Distira"
 
-#: ../operations/common/brightness-contrast.c:32
+#: ../operations/common/brightness-contrast.c:37
 msgid "Amount to increase brightness"
 msgstr "Distira handitzeko kopurua"
 
-#: ../operations/common/brightness-contrast.c:147
+#: ../operations/common/brightness-contrast.c:151
 msgid "Changes the light level and contrast."
 msgstr "Argi maila eta kontrastea aldatzen ditu."
 
@@ -382,7 +402,7 @@ msgstr ""
 "erabiltzeko"
 
 #: ../operations/common/buffer-sink.c:83
-#: ../operations/common/write-buffer.c:150
+#: ../operations/common/write-buffer.c:148
 msgid "A GEGL buffer destination surface."
 msgstr "GEGL bufferraren helburuko azalera."
 
@@ -394,7 +414,7 @@ msgstr "Sarreraren bufferra"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "Hodian kargatuko den GeglBuffer-a"
 
-#: ../operations/common/buffer-source.c:190
+#: ../operations/common/buffer-source.c:188
 msgid "A source that uses an in-memory GeglBuffer, for use internally by GEGL."
 msgstr ""
 "Memorian dagoen Geglbuffer bat erabiltzen duen iturri bat, GEGL-ren barruan "
@@ -404,94 +424,81 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-#: ../operations/common/bump-map.c:48
+#: ../operations/common/bump-map.c:47
 #, fuzzy
 msgid "Type of map"
 msgstr "Uhinaren mota"
 
-#: ../operations/common/bump-map.c:50
+#: ../operations/common/bump-map.c:49
 msgid "Compensate"
 msgstr ""
 
-#: ../operations/common/bump-map.c:52
+#: ../operations/common/bump-map.c:50
 msgid "Compensate for darkening"
 msgstr ""
 
-#: ../operations/common/bump-map.c:54
+#: ../operations/common/bump-map.c:52
 msgid "Invert"
 msgstr ""
 
-#: ../operations/common/bump-map.c:56
+#: ../operations/common/bump-map.c:53
 msgid "Invert bumpmap"
 msgstr ""
 
-#: ../operations/common/bump-map.c:58
+#: ../operations/common/bump-map.c:55
 #, fuzzy
 msgid "Tiled"
 msgstr "Mosaikoan jar daiteke"
 
-#: ../operations/common/bump-map.c:60
+#: ../operations/common/bump-map.c:56
 msgid "Tiled bumpmap"
 msgstr ""
 
-#: ../operations/common/bump-map.c:62 ../operations/common/bump-map.c:64
-#: ../operations/common/emboss.c:34
+#: ../operations/common/bump-map.c:58 ../operations/common/emboss.c:34
 msgid "Azimuth"
 msgstr "Azimuta"
 
-#: ../operations/common/bump-map.c:66 ../operations/common/bump-map.c:68
-#: ../operations/common/emboss.c:38
+#: ../operations/common/bump-map.c:62 ../operations/common/emboss.c:39
 msgid "Elevation"
 msgstr "Goratzea"
 
-#: ../operations/common/bump-map.c:70 ../operations/common/bump-map.c:72
-#: ../operations/common/emboss.c:42 ../operations/common/fractal-trace.c:55
+#: ../operations/common/bump-map.c:65 ../operations/common/emboss.c:44
+#: ../operations/common/fractal-trace.c:58
+#: ../operations/common/texturize-canvas.c:40
 msgid "Depth"
 msgstr "Sakonera"
 
-#: ../operations/common/bump-map.c:74
+#: ../operations/common/bump-map.c:68 ../operations/common/checkerboard.c:41
+#: ../operations/common/grid.c:38 ../operations/common/mirrors.c:44
+#: ../operations/seamless-clone/seamless-clone.c:26
+#: ../operations/seamless-clone/seamless-clone-compose.c:25
 #, fuzzy
-msgid "X Offset"
-msgstr "X desplazamendua"
+msgid "Offset X"
+msgstr "Desplazamendua:"
 
-#: ../operations/common/bump-map.c:76 ../operations/common/checkerboard.c:33
-#: ../operations/common/grid.c:28 ../operations/common/mirrors.c:36
-#: ../operations/seamless-clone/seamless-clone.c:24
-#: ../operations/seamless-clone/seamless-clone-compose.c:24
-msgid "X offset"
-msgstr "X desplazamendua"
-
-#: ../operations/common/bump-map.c:78
+#: ../operations/common/bump-map.c:74 ../operations/common/checkerboard.c:47
+#: ../operations/common/grid.c:44 ../operations/common/mirrors.c:50
+#: ../operations/seamless-clone/seamless-clone.c:32
+#: ../operations/seamless-clone/seamless-clone-compose.c:31
 #, fuzzy
-msgid "Y Offset"
-msgstr "Y desplazamendua"
+msgid "Offset Y"
+msgstr "Desplazamendua:"
 
-#: ../operations/common/bump-map.c:80 ../operations/common/checkerboard.c:37
-#: ../operations/common/grid.c:30 ../operations/common/mirrors.c:38
-#: ../operations/seamless-clone/seamless-clone.c:27
-#: ../operations/seamless-clone/seamless-clone-compose.c:27
-msgid "Y offset"
-msgstr "Y desplazamendua"
-
-#: ../operations/common/bump-map.c:82
+#: ../operations/common/bump-map.c:80
 #, fuzzy
 msgid "Waterlevel"
 msgstr "Ur-maila"
 
-#: ../operations/common/bump-map.c:84
+#: ../operations/common/bump-map.c:81
 msgid "Level that full transparency should represent"
 msgstr ""
 
-#: ../operations/common/bump-map.c:86
-msgid "Ambient"
-msgstr ""
-
-#: ../operations/common/bump-map.c:88
+#: ../operations/common/bump-map.c:84
 #, fuzzy
 msgid "Ambient lighting factor"
 msgstr "Berdera tiratzeko faktorea"
 
-#: ../operations/common/bump-map.c:477
+#: ../operations/common/bump-map.c:474
 msgid ""
 "This plug-in uses the algorithm described by John Schlag, \"Fast Embossing "
 "Effects on Raster Image Data\" in Graphics GEMS IV (ISBN 0-12-336155-9). It "
@@ -499,7 +506,7 @@ msgid ""
 "nice embossing effect."
 msgstr ""
 
-#: ../operations/common/c2g.c:29
+#: ../operations/common/c2g.c:28
 msgid ""
 "Neighborhood taken into account, this is the radius in pixels taken into "
 "account when deciding which colors map to which gray values"
@@ -507,21 +514,23 @@ msgstr ""
 "Ingurukoak kontutan hartuta, kolore bakoitzari zein gris balio dagokion "
 "erabakitzean kontutan hartuko den erradioa (pixeletan)."
 
-#: ../operations/common/c2g.c:33 ../operations/common/stress.c:29
+#: ../operations/common/c2g.c:36 ../operations/common/stress.c:33
 msgid "Samples"
 msgstr "Laginak"
 
-#: ../operations/common/c2g.c:35 ../operations/common/stress.c:30
+#: ../operations/common/c2g.c:37 ../operations/common/stress.c:34
 msgid "Number of samples to do per iteration looking for the range of colors"
 msgstr "Iterazioko hartu beharreko lagin kopurua koloreen barrutia bilatzeko "
 
-#: ../operations/common/c2g.c:38 ../operations/common/fractal-explorer.c:46
-#: ../operations/common/matting-global.c:25 ../operations/common/stress.c:31
+#: ../operations/common/c2g.c:41 ../operations/common/fractal-explorer.c:47
+#: ../operations/common/matting-global.c:25
+#: ../operations/common/noise-cell.c:48 ../operations/common/noise-perlin.c:33
+#: ../operations/common/noise-simplex.c:35 ../operations/common/stress.c:38
 #: ../operations/workshop/mandelbrot.c:31
 msgid "Iterations"
 msgstr "Iterazioak"
 
-#: ../operations/common/c2g.c:40
+#: ../operations/common/c2g.c:42
 msgid ""
 "Number of iterations, a higher number of iterations provides less noisy "
 "results at a computational cost"
@@ -529,7 +538,7 @@ msgstr ""
 "Iterazio kopurua, iterazio kopuru handiago batek zarata gutxiagoko emaitza "
 "dakar, kalkuluaren kostu handiago batekin."
 
-#: ../operations/common/c2g.c:355
+#: ../operations/common/c2g.c:368
 msgid ""
 "Color to grayscale conversion, uses envelopes formed from spatial color "
 "differences to perform color-feature preserving grayscale spatial contrast "
@@ -539,180 +548,172 @@ msgstr ""
 "gainazalak erabiltzen ditu kolore-ezaugarriak mantentzen dituen gris-"
 "eskalaren kontraste espazialaren hobekuntzarako"
 
-#: ../operations/common/cartoon.c:25 ../operations/common/cartoon.c:27
+#: ../operations/common/cartoon.c:25
 msgid "Mask radius"
 msgstr "Maskara-erradioa"
 
-#: ../operations/common/cartoon.c:29 ../operations/common/cartoon.c:31
+#: ../operations/common/cartoon.c:28
 msgid "Percent black"
 msgstr "Beltzaren ehunekoa"
 
-#: ../operations/common/cartoon.c:379
+#: ../operations/common/cartoon.c:319
 msgid "Simulate a cartoon by enhancing edges"
 msgstr "Simulatu komikia ertzak hobetuz"
 
 #: ../operations/common/channel-mixer.c:36
-#: ../operations/common/channel-mixer.c:38
 msgid "Monochrome"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:40
-#: ../operations/common/channel-mixer.c:42
-msgid "Preserve Luminosity"
+#: ../operations/common/channel-mixer.c:38
+msgid "Preserve luminosity"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:44
+#: ../operations/common/channel-mixer.c:40
 msgid "Red Red Gain"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:46
+#: ../operations/common/channel-mixer.c:41
 #, fuzzy
 msgid "Set the red gain for the red channel"
 msgstr "Kanal gorriko bit kopurua"
 
-#: ../operations/common/channel-mixer.c:48
+#: ../operations/common/channel-mixer.c:44
 msgid "Red Green Gain"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:50
+#: ../operations/common/channel-mixer.c:45
 msgid "Set the green gain for the red channel"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:52
-msgid "Red Blue Gain"
-msgstr ""
+#: ../operations/common/channel-mixer.c:48
+#, fuzzy
+msgid "Blue Gain"
+msgstr "Berdea alderantzikatu"
 
-#: ../operations/common/channel-mixer.c:54
+#: ../operations/common/channel-mixer.c:49
 #, fuzzy
 msgid "Set the blue gain for the red channel"
 msgstr "Kanal gorriko bit kopurua"
 
-#: ../operations/common/channel-mixer.c:56
+#: ../operations/common/channel-mixer.c:52
 #, fuzzy
 msgid "Green Red Gain"
 msgstr "Berdea alderantzikatu"
 
-#: ../operations/common/channel-mixer.c:58
+#: ../operations/common/channel-mixer.c:53
+#: ../operations/common/channel-mixer.c:66
 #, fuzzy
 msgid "Set the red gain for the green channel"
 msgstr "Kanal berdeko bit kopurua"
 
-#: ../operations/common/channel-mixer.c:60
+#: ../operations/common/channel-mixer.c:56
 msgid "Green Green Gain"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:62
+#: ../operations/common/channel-mixer.c:57
+#: ../operations/common/channel-mixer.c:70
 #, fuzzy
 msgid "Set the green gain for the green channel"
 msgstr "Kanal berdeko bit kopurua"
 
-#: ../operations/common/channel-mixer.c:64
+#: ../operations/common/channel-mixer.c:60
 #, fuzzy
 msgid "Green Blue Gain"
 msgstr "Berdea alderantzikatu"
 
-#: ../operations/common/channel-mixer.c:66
+#: ../operations/common/channel-mixer.c:61
+#: ../operations/common/channel-mixer.c:74
 #, fuzzy
 msgid "Set the blue gain for the green channel"
 msgstr "Kanal berdeko bit kopurua"
 
-#: ../operations/common/channel-mixer.c:68
+#: ../operations/common/channel-mixer.c:65
 msgid "Blue Red Gain"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:70
-#, fuzzy
-msgid "Set the red gain for the blue channel"
-msgstr "Kanal urdineko bit kopurua"
-
-#: ../operations/common/channel-mixer.c:72
+#: ../operations/common/channel-mixer.c:69
 msgid "Blue Green Gain"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:74
-#, fuzzy
-msgid "Set the green gain for the blue channel"
-msgstr "Kanal urdineko bit kopurua"
-
-#: ../operations/common/channel-mixer.c:76
+#: ../operations/common/channel-mixer.c:73
 msgid "Blue Blue Gain"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:78
-#, fuzzy
-msgid "Set the blue gain for the blue channel"
-msgstr "Kanal urdineko bit kopurua"
-
-#: ../operations/common/channel-mixer.c:296
+#: ../operations/common/channel-mixer.c:294
 msgid "Alter colors by mixing RGB Channels"
 msgstr ""
 
 #: ../operations/common/checkerboard.c:25 ../operations/common/grid.c:24
-#: ../operations/common/rectangle.c:33 ../operations/core/crop.c:27
-#: ../operations/external/svg-load.c:27 ../operations/external/text.c:38
-#: ../operations/external/v4l.c:27 ../operations/external/vector-stroke.c:30
-#: ../operations/workshop/external/line-profile.c:29
+#: ../operations/common/panorama-projection.c:42
+#: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
+#: ../operations/core/crop.c:33 ../operations/external/svg-load.c:28
+#: ../operations/external/text.c:47 ../operations/external/v4l.c:27
+#: ../operations/external/vector-stroke.c:30
+#: ../operations/workshop/external/line-profile.c:39
 msgid "Width"
 msgstr "Zabalera"
 
-#: ../operations/common/checkerboard.c:27 ../operations/common/grid.c:25
+#: ../operations/common/checkerboard.c:26 ../operations/common/grid.c:25
 msgid "Horizontal width of cells pixels"
 msgstr "Gelaxken pixelen zabalera horizontala"
 
-#: ../operations/common/checkerboard.c:29 ../operations/common/grid.c:26
-#: ../operations/common/rectangle.c:35 ../operations/core/crop.c:28
-#: ../operations/external/svg-load.c:29 ../operations/external/text.c:40
-#: ../operations/external/v4l.c:28
-#: ../operations/workshop/external/line-profile.c:30
+#: ../operations/common/checkerboard.c:33 ../operations/common/grid.c:31
+#: ../operations/common/panorama-projection.c:48
+#: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
+#: ../operations/core/crop.c:37 ../operations/external/svg-load.c:31
+#: ../operations/external/text.c:49 ../operations/external/v4l.c:28
+#: ../operations/workshop/external/line-profile.c:41
 msgid "Height"
 msgstr "Altuera"
 
-#: ../operations/common/checkerboard.c:31 ../operations/common/grid.c:27
-msgid "Vertical width of cells in pixels"
+#: ../operations/common/checkerboard.c:34 ../operations/common/grid.c:32
+#, fuzzy
+msgid "Vertical width of cells pixels"
 msgstr "Gelaxken pixelen zabalera bertikala"
 
-#: ../operations/common/checkerboard.c:35 ../operations/common/grid.c:29
+#: ../operations/common/checkerboard.c:42 ../operations/common/grid.c:39
 msgid "Horizontal offset (from origin) for start of grid"
 msgstr "Saretaren hasieraren desplazamendu horizontala (abiapuntutik)"
 
-#: ../operations/common/checkerboard.c:39 ../operations/common/grid.c:31
+#: ../operations/common/checkerboard.c:48 ../operations/common/grid.c:45
 msgid "Vertical offset (from origin) for start of grid"
 msgstr "Saretaren hasieraren desplazamendu bertikala (abiapuntutik)"
 
-#: ../operations/common/checkerboard.c:41 ../operations/common/color.c:24
+#: ../operations/common/checkerboard.c:53
+#: ../operations/common/checkerboard.c:57 ../operations/common/color.c:24
 #: ../operations/common/color-to-alpha.c:28
-#: ../operations/common/dropshadow.c:37 ../operations/common/grid.c:36
-#: ../operations/common/rectangle.c:37 ../operations/common/vignette.c:35
-#: ../operations/external/text.c:31 ../operations/external/vector-fill.c:27
+#: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
+#: ../operations/common/rectangle.c:48 ../operations/common/vignette.c:34
+#: ../operations/external/text.c:36 ../operations/external/vector-fill.c:26
 #: ../operations/external/vector-stroke.c:27
-#: ../operations/workshop/linear-gradient.c:28
-#: ../operations/workshop/radial-gradient.c:28
 msgid "Color"
 msgstr "Kolorea"
 
-#: ../operations/common/checkerboard.c:43
+#: ../operations/common/checkerboard.c:54
 msgid "One of the cell colors (defaults to 'black')"
 msgstr "Gelaxkako koloreetako bat (lehenetsia 'beltza')"
 
-#: ../operations/common/checkerboard.c:45
-#: ../operations/workshop/linear-gradient.c:30
-#: ../operations/workshop/radial-gradient.c:30
-msgid "Other color"
-msgstr "Beste kolorea"
-
-#: ../operations/common/checkerboard.c:47
-msgid "The other cell color (defaults to 'white')"
+#: ../operations/common/checkerboard.c:58
+#, fuzzy
+msgid "One of the cell colors (defaults to 'white')"
 msgstr "Gelaxkako beste kolorea (lehenetsia 'zuria')"
 
-#: ../operations/common/checkerboard.c:157
+#: ../operations/common/checkerboard.c:61 ../operations/common/color.c:27
+#, fuzzy
+msgid "Babl Format"
+msgstr "babl formatua"
+
+#: ../operations/common/checkerboard.c:62 ../operations/common/color.c:28
+#: ../operations/core/cast-format.c:30 ../operations/core/convert-format.c:28
+#, fuzzy
+msgid "The babl format of the output"
+msgstr "Desplazamenduaren balioa"
+
+#: ../operations/common/checkerboard.c:338
 msgid "Create a checkerboard pattern"
 msgstr "Sortu xake-taula eredua"
 
-#: ../operations/common/color.c:25
-msgid "The color to render (defaults to 'black')"
-msgstr "Errendatzeko kolorea (lehenetsia 'beltza')"
-
-#: ../operations/common/color.c:88
+#: ../operations/common/color.c:91
 msgid ""
 "Generates a buffer entirely filled with the specified color, crop it to get "
 "smaller dimensions."
@@ -724,7 +725,7 @@ msgstr ""
 msgid "Red bits"
 msgstr "Bit gorriak"
 
-#: ../operations/common/color-reduction.c:37
+#: ../operations/common/color-reduction.c:36
 msgid "Number of bits for red channel"
 msgstr "Kanal gorriko bit kopurua"
 
@@ -732,7 +733,7 @@ msgstr "Kanal gorriko bit kopurua"
 msgid "Green bits"
 msgstr "Bit berdeak"
 
-#: ../operations/common/color-reduction.c:41
+#: ../operations/common/color-reduction.c:40
 msgid "Number of bits for green channel"
 msgstr "Kanal berdeko bit kopurua"
 
@@ -740,7 +741,7 @@ msgstr "Kanal berdeko bit kopurua"
 msgid "Blue bits"
 msgstr "Bit urdinak"
 
-#: ../operations/common/color-reduction.c:45
+#: ../operations/common/color-reduction.c:44
 msgid "Number of bits for blue channel"
 msgstr "Kanal urdineko bit kopurua"
 
@@ -748,19 +749,33 @@ msgstr "Kanal urdineko bit kopurua"
 msgid "Alpha bits"
 msgstr "Alfa bitak"
 
-#: ../operations/common/color-reduction.c:49
+#: ../operations/common/color-reduction.c:48
 msgid "Number of bits for alpha channel"
 msgstr "Alfa kanaleko bit kopurua"
 
 #: ../operations/common/color-reduction.c:51
-msgid "Dithering Strategy"
+#, fuzzy
+msgid "Dithering strategy"
 msgstr "Bilbearen estrategia"
 
 #: ../operations/common/color-reduction.c:53
 msgid "The dithering strategy to use"
 msgstr "Erabiliko den bilbearen  estrategia"
 
-#: ../operations/common/color-reduction.c:591
+#. XXX: what?
+#: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
+#: ../operations/common/mosaic.c:88 ../operations/common/noise-cell.c:55
+#: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
+#: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
+#: ../operations/common/noise-pick.c:38
+#: ../operations/common/noise-simplex.c:39 ../operations/common/noise-rgb.c:44
+#: ../operations/common/noise-slur.c:40 ../operations/common/noise-spread.c:41
+#: ../operations/common/plasma.c:70 ../operations/common/shift.c:40
+#: ../operations/common/wind.c:34
+msgid "Random seed"
+msgstr "Ausazko hazia"
+
+#: ../operations/common/color-reduction.c:510
 msgid ""
 "Reduce the number of colors in the image, by reducing the bits per channel "
 "(colors and alpha), with optional dithering"
@@ -772,14 +787,14 @@ msgstr ""
 msgid "Original temperature"
 msgstr "Jatorriko tenperatura"
 
-#: ../operations/common/color-temperature.c:29
+#: ../operations/common/color-temperature.c:28
 msgid ""
 "Estimated temperature of the light source in Kelvin the image was taken with."
 msgstr ""
 "Irudia hartzeko erabili den argi iturriaren tenperatura estimatua (Kelvin "
 "graduetan)."
 
-#: ../operations/common/color-temperature.c:32
+#: ../operations/common/color-temperature.c:33
 msgid "Intended temperature"
 msgstr "Helburuko tenperatura"
 
@@ -788,15 +803,16 @@ msgid "Corrected estimation of the temperature of the light source in Kelvin."
 msgstr ""
 "Argi iturriaren zuzendutako tenperaturaren estimazioa (Kelvin graduetan)."
 
-#: ../operations/common/color-temperature.c:279
+#: ../operations/common/color-temperature.c:281
 msgid "Change the color temperature of the image"
 msgstr "Aldatu irudiaren kolorearen tenperatura"
 
-#: ../operations/common/color-to-alpha.c:30
-msgid "The color to render (defaults to 'white')"
+#: ../operations/common/color-to-alpha.c:29
+#, fuzzy
+msgid "The color to render (defaults to, and works best with, 'white')"
 msgstr "Kolorea errendatzeko (lehenetsia 'zuria')"
 
-#: ../operations/common/color-to-alpha.c:200
+#: ../operations/common/color-to-alpha.c:254
 msgid "Convert a specified color to transparency"
 msgstr "Bihurtu kolore zehatz bat gardentasunera"
 
@@ -808,27 +824,27 @@ msgstr "Lagina-puntuak"
 msgid "Number of curve sampling points.  0 for exact calculation."
 msgstr "Kurbaren lagin-puntuen kopurua. 0 kalkulu zehatzerako."
 
-#: ../operations/common/contrast-curve.c:27
+#: ../operations/common/contrast-curve.c:29
 msgid "Curve"
 msgstr "Kurba"
 
-#: ../operations/common/contrast-curve.c:27
+#: ../operations/common/contrast-curve.c:30
 msgid "The contrast curve."
 msgstr "Kontraste-kurba."
 
-#: ../operations/common/contrast-curve.c:125
+#: ../operations/common/contrast-curve.c:258
 msgid "Adjusts the contrast of the image according to a curve."
 msgstr "Irudiaren kontrastea kurbaren arabera doitzen du."
 
-#: ../operations/common/cubism.c:30
+#: ../operations/common/cubism.c:30 ../operations/common/mosaic.c:42
 msgid "Tile size"
 msgstr "Lauzen tamaina"
 
-#: ../operations/common/cubism.c:32
+#: ../operations/common/cubism.c:31 ../operations/common/mosaic.c:43
 msgid "Average diameter of each tile (in pixels)"
 msgstr "Lauza bakoitzaren batez besteko diametroa (pixeletan)"
 
-#: ../operations/common/cubism.c:34
+#: ../operations/common/cubism.c:35
 msgid "Tile saturation"
 msgstr "Lauzen saturazioa"
 
@@ -836,30 +852,7 @@ msgstr "Lauzen saturazioa"
 msgid "Expand tiles by this amount"
 msgstr "Zabaldu lauzak kopuru honen arabera"
 
-#: ../operations/common/cubism.c:38
-msgid "Background Color"
-msgstr "Atzeko planoaren kolorea"
-
-#: ../operations/common/cubism.c:40
-msgid "The tiles' background color"
-msgstr "Lauzen atzeko planoaren kolorea"
-
-#: ../operations/common/cubism.c:42 ../operations/common/noise.c:31
-#: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:31
-#: ../operations/common/noise-rgb.c:52 ../operations/common/noise-slur.c:34
-#: ../operations/common/noise-spread.c:37 ../operations/common/shift.c:35
-#: ../operations/common/wind.c:33 ../operations/workshop/plasma.c:33
-msgid "Seed"
-msgstr "Hazia"
-
-#: ../operations/common/cubism.c:43 ../operations/common/noise-hurl.c:32
-#: ../operations/common/noise-pick.c:32 ../operations/common/noise-rgb.c:53
-#: ../operations/common/noise-slur.c:35 ../operations/common/noise-spread.c:38
-#: ../operations/common/shift.c:36 ../operations/common/wind.c:33
-msgid "Random seed"
-msgstr "Ausazko hazia"
-
-#: ../operations/common/cubism.c:614
+#: ../operations/common/cubism.c:613
 msgid ""
 "Convert the image into randomly rotated square blobs, somehow resembling a "
 "cubist painting style"
@@ -875,7 +868,7 @@ msgstr "Mantendu"
 msgid "Keep even or odd fields"
 msgstr "Mantendu eremu bakoiti edo bikoitiak"
 
-#: ../operations/common/deinterlace.c:45
+#: ../operations/common/deinterlace.c:45 ../operations/workshop/gblur-1d.c:53
 msgid "Orientation"
 msgstr "Orientazioa"
 
@@ -899,11 +892,11 @@ msgstr "Konpondu bi lerro edo zutabeetatik bat falta zaien irudiak"
 msgid "Radius 1"
 msgstr "1. erradioa"
 
-#: ../operations/common/difference-of-gaussians.c:28
+#: ../operations/common/difference-of-gaussians.c:29
 msgid "Radius 2"
 msgstr "2. erradioa"
 
-#: ../operations/common/difference-of-gaussians.c:103
+#: ../operations/common/difference-of-gaussians.c:86
 msgid ""
 "Edge detection with control of edge thickness, based on the difference of "
 "two gaussian blurs"
@@ -915,93 +908,66 @@ msgstr ""
 msgid "Title to be given to output window"
 msgstr "Titulua irteeraren leihoari emateko"
 
-#: ../operations/common/display.c:142
+#: ../operations/common/display.c:141
 msgid "Display the input buffer in a window."
 msgstr "Bistaratu sarreraren bufferra leiho batean."
 
-#: ../operations/common/dot.c:26 ../operations/common/pixelize.c:25
-msgid "Block Width"
-msgstr "Blokeen zabalera"
-
-#: ../operations/common/dot.c:28
-msgid "Size of each block in pixels"
-msgstr "Bloke bakoitzaren tamaina pixeletan"
-
-#: ../operations/common/dot.c:30
-msgid "Dot size ratio"
-msgstr "Puntuaren tamaina-erlazioa"
-
-#: ../operations/common/dot.c:32
-msgid "Size ratio of a dot inside each block"
-msgstr "Bloke bakoitzaren barneko puntuaren tamaina-erlazioa"
-
-#: ../operations/common/dot.c:194
-msgid "Simplify image into an array of solid-colored dots"
-msgstr "Soildu irudia kolore-soileko puntuen matrize batean"
-
-#: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:34
-#: ../operations/common/motion-blur-circular.c:41
-#: ../operations/common/motion-blur-zoom.c:40
-#: ../operations/common/polar-coordinates.c:55
-#: ../operations/common/rectangle.c:29 ../operations/common/vignette.c:64
-#: ../operations/common/waves.c:26 ../operations/core/crop.c:25
+#: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
+#: ../operations/common/plasma.c:40
+#: ../operations/common/polar-coordinates.c:51
+#: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
 
-#: ../operations/common/dropshadow.c:27
+#: ../operations/common/dropshadow.c:26
 msgid "Horizontal shadow offset"
 msgstr "Itzalaren desplazamendu horizontala"
 
-#: ../operations/common/dropshadow.c:29 ../operations/common/layer.c:36
-#: ../operations/common/motion-blur-circular.c:46
-#: ../operations/common/motion-blur-zoom.c:45
-#: ../operations/common/polar-coordinates.c:59
-#: ../operations/common/rectangle.c:31 ../operations/common/vignette.c:68
-#: ../operations/common/waves.c:30 ../operations/core/crop.c:26
+#: ../operations/common/dropshadow.c:31 ../operations/common/layer.c:41
+#: ../operations/common/plasma.c:47
+#: ../operations/common/polar-coordinates.c:57
+#: ../operations/common/rectangle.c:31 ../operations/core/crop.c:29
 msgid "Y"
 msgstr "Y"
 
-#: ../operations/common/dropshadow.c:31
+#: ../operations/common/dropshadow.c:32
 msgid "Vertical shadow offset"
 msgstr "Itzalaren desplazamendu bertikala"
 
-#: ../operations/common/dropshadow.c:39
+#: ../operations/common/dropshadow.c:44
 msgid "The shadow's color (defaults to 'black')"
 msgstr "Itzalaren kolorea (lehenetsia: 'beltza')"
 
 #. It does make sense to sometimes have opacities > 1 (see GEGL logo
 #. * for example)
 #.
-#: ../operations/common/dropshadow.c:44 ../operations/common/dropshadow.c:46
-#: ../operations/common/layer.c:32 ../operations/common/layer.c:33
-#: ../operations/common/opacity.c:24 ../operations/external/vector-fill.c:30
-#: ../operations/external/vector-stroke.c:33
+#: ../operations/common/dropshadow.c:49 ../operations/common/layer.c:33
+#: ../operations/common/opacity.c:25 ../operations/external/vector-fill.c:29
+#: ../operations/external/vector-stroke.c:34
 msgid "Opacity"
 msgstr "Opakutasuna"
 
-#: ../operations/common/dropshadow.c:99
+#: ../operations/common/dropshadow.c:108
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Itzalaren efektu bat sortzen du sarreraren bufferrean"
 
-#: ../operations/common/edge-laplace.c:368
+#: ../operations/common/edge-laplace.c:407
 msgid "High-resolution edge detection"
 msgstr "Bereizmen altuko ertz-detekzioa"
 
-#: ../operations/common/edge-sobel.c:27 ../operations/common/edge-sobel.c:29
-#: ../operations/common/noise-spread.c:29
+#: ../operations/common/edge-sobel.c:27 ../operations/common/noise-spread.c:29
 msgid "Horizontal"
 msgstr "Horizontala"
 
-#: ../operations/common/edge-sobel.c:31 ../operations/common/edge-sobel.c:33
-#: ../operations/common/noise-spread.c:33
+#: ../operations/common/edge-sobel.c:29 ../operations/common/noise-spread.c:35
 msgid "Vertical"
 msgstr "Bertikala"
 
-#: ../operations/common/edge-sobel.c:35 ../operations/common/edge-sobel.c:37
+#: ../operations/common/edge-sobel.c:31
 msgid "Keep Signal"
 msgstr "Mantendu seinalea"
 
-#: ../operations/common/edge-sobel.c:329
+#: ../operations/common/edge-sobel.c:323
 msgid "Specialized direction-dependent edge detection"
 msgstr "Norabidearen mendeko ertz-detekzio berezia"
 
@@ -1010,50 +976,56 @@ msgid "Emboss Type"
 msgstr "Bozeldura mota"
 
 #: ../operations/common/emboss.c:32
-msgid "Emboss or Bumpmap"
-msgstr "Bozeldura edo erliebe-mapa"
+msgid "Rendering type"
+msgstr ""
 
-#: ../operations/common/emboss.c:36
-msgid "The light angle (degrees)"
+#: ../operations/common/emboss.c:35
+#, fuzzy
+msgid "Light angle (degrees)"
 msgstr "Argiaren angelua (graduak)"
 
 #: ../operations/common/emboss.c:40
-msgid "The elevation angle (degrees)"
+#, fuzzy
+msgid "Elevation angle (degrees)"
 msgstr "Goratzearen angelua (graduak)"
 
-#: ../operations/common/emboss.c:44
-msgid "The filter width"
+#: ../operations/common/emboss.c:45
+#, fuzzy
+msgid "Filter width"
 msgstr "Iragazkiaren zabalera"
 
-#: ../operations/common/emboss.c:257
+#: ../operations/common/emboss.c:267
 msgid "Simulates an image created by embossing"
 msgstr "Bozelduraz sortutako irudia simulatzen du"
 
 #: ../operations/common/exp-combine.c:25
-msgid "Exposure Values"
+#, fuzzy
+msgid "Exposure values"
 msgstr "Esposizioaren balioak"
 
 #: ../operations/common/exp-combine.c:26
 msgid "Relative brightness of each exposure in EV"
 msgstr "Esposizio bakoitzaren distira erlatiboa Esposizio Balioan"
 
-#: ../operations/common/exp-combine.c:27
-msgid "Discretization Bits"
+#: ../operations/common/exp-combine.c:28
+#, fuzzy
+msgid "Discretization bits"
 msgstr "Diskretizazioaren bitak"
 
 #: ../operations/common/exp-combine.c:29
 msgid "Log2 of source's discretization steps"
 msgstr "Iturburuaren diskretizazio urratsen Log2"
 
-#: ../operations/common/exp-combine.c:30
-msgid "Weight Sigma"
+#: ../operations/common/exp-combine.c:32
+#, fuzzy
+msgid "Weight sigma"
 msgstr "Ponderatu sigma"
 
-#: ../operations/common/exp-combine.c:32
+#: ../operations/common/exp-combine.c:33
 msgid "Weight distribution sigma controlling response contributions"
 msgstr "Erantzunaren ekarpenak kontrolatzen dituen banaketaren sigma ponderatu"
 
-#: ../operations/common/exp-combine.c:1293
+#: ../operations/common/exp-combine.c:1272
 msgid "Combine multiple scene exposures into one high range buffer"
 msgstr "Konbinatu eszenaren hainbat esposizio barruti handiagoko buffer batean"
 
@@ -1062,23 +1034,20 @@ msgid "Exposure"
 msgstr "Esposizioa"
 
 # Stop gradienteetan etena gisa euskaratu ohi da
-#: ../operations/common/exposure.c:27
+#: ../operations/common/exposure.c:26
 msgid "Relative brightness change in stops"
 msgstr "Etenen distira erlatiboen aldaketa"
 
 #: ../operations/common/exposure.c:29
+#: ../operations/workshop/convolution-matrix.c:52
 msgid "Offset"
 msgstr "Desplazamendua"
 
-#: ../operations/common/exposure.c:31
+#: ../operations/common/exposure.c:30
 msgid "Offset value added"
 msgstr "Desplazamenduaren balioa gehituta"
 
-#: ../operations/common/exposure.c:33 ../operations/common/vignette.c:49
-msgid "Gamma"
-msgstr "Gamma"
-
-#: ../operations/common/exposure.c:35
+#: ../operations/common/exposure.c:33
 msgid "Gamma correction"
 msgstr "Gamma zuzenketa"
 
@@ -1089,17 +1058,16 @@ msgstr ""
 "Esposizioa eta kontrastea aldatzen du, nagusiki barruti dinamiko handiko "
 "irudiekin erabiltzeko"
 
-#: ../operations/common/fattal02.c:33 ../operations/common/noise.c:25
-#: ../operations/common/noise-rgb.c:48 ../operations/common/noise-rgb.c:50
-#: ../operations/workshop/convolution-matrix.c:86
+#: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
+#: ../operations/common/noise-rgb.c:41
 msgid "Alpha"
 msgstr "Alfa"
 
-#: ../operations/common/fattal02.c:35
+#: ../operations/common/fattal02.c:34
 msgid "Gradient threshold for detail enhancement"
 msgstr "Gradientearen atalasea xehetasuna hobetzeko"
 
-#: ../operations/common/fattal02.c:36
+#: ../operations/common/fattal02.c:37
 msgid "Beta"
 msgstr "Beta"
 
@@ -1107,25 +1075,25 @@ msgstr "Beta"
 msgid "Strength of local detail enhancement"
 msgstr "Lokaleko xehetasuna hobekuntzaren indarra"
 
-#: ../operations/common/fattal02.c:39 ../operations/common/mantiuk06.c:34
-#: ../operations/common/noise-hsv.c:35 ../operations/common/noise-hsv.c:37
-#: ../operations/workshop/color-rotate.c:50
+#: ../operations/common/fattal02.c:41 ../operations/common/mantiuk06.c:35
+#: ../operations/common/noise-hsv.c:33
+#: ../operations/workshop/color-rotate.c:63
 msgid "Saturation"
 msgstr "Saturazioa"
 
-#: ../operations/common/fattal02.c:41 ../operations/common/mantiuk06.c:36
+#: ../operations/common/fattal02.c:42
 msgid "Global color saturation factor"
 msgstr "Koloreen saturazio orokorraren faktorea"
 
-#: ../operations/common/fattal02.c:42
+#: ../operations/common/fattal02.c:45
 msgid "Noise"
 msgstr "Zarata "
 
-#: ../operations/common/fattal02.c:44
+#: ../operations/common/fattal02.c:46
 msgid "Gradient threshold for lowering detail enhancement"
 msgstr "Gradientearen atalasea xehetasunaren hobekuntza gutxiagotzeko"
 
-#: ../operations/common/fattal02.c:1325
+#: ../operations/common/fattal02.c:1328
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator attenuates the magnitudes of local image "
@@ -1140,255 +1108,234 @@ msgstr ""
 msgid "Fractal type"
 msgstr "Fraktal mota"
 
-#: ../operations/common/fractal-explorer.c:44
-#: ../operations/common/fractal-trace.c:32
+#: ../operations/common/fractal-explorer.c:45
 msgid "Type of a fractal"
 msgstr "Fraktal baten mota"
 
-#: ../operations/common/fractal-explorer.c:48
-#: ../operations/common/lens-distortion.c:36 ../operations/common/mirrors.c:48
+#: ../operations/common/fractal-explorer.c:50
+#: ../operations/common/lens-distortion.c:41 ../operations/common/mirrors.c:72
+#: ../operations/common/panorama-projection.c:38
 msgid "Zoom"
 msgstr "Zooma"
 
-#: ../operations/common/fractal-explorer.c:49
+#: ../operations/common/fractal-explorer.c:51
 msgid "Zoom in the fractal space"
 msgstr ""
 
-#: ../operations/common/fractal-explorer.c:50
+#: ../operations/common/fractal-explorer.c:56
+#: ../operations/common/lens-distortion.c:45
 #, fuzzy
 msgid "Shift X"
 msgstr "Desplazatu"
 
-#: ../operations/common/fractal-explorer.c:51
+#: ../operations/common/fractal-explorer.c:57
 msgid "X shift in the fractal space"
 msgstr ""
 
-#: ../operations/common/fractal-explorer.c:52
+#: ../operations/common/fractal-explorer.c:60
+#: ../operations/common/lens-distortion.c:49
 #, fuzzy
 msgid "Shift Y"
 msgstr "Desplazatu"
 
-#: ../operations/common/fractal-explorer.c:53
+#: ../operations/common/fractal-explorer.c:61
 msgid "Y shift in the fractal space"
 msgstr ""
 
-#: ../operations/common/fractal-explorer.c:55
+#: ../operations/common/fractal-explorer.c:64
 msgid "CX"
 msgstr "CX"
 
-#: ../operations/common/fractal-explorer.c:55
+#: ../operations/common/fractal-explorer.c:65
 msgid "CX (No effect in Mandelbrot and Sierpinski)"
 msgstr ""
 
-#: ../operations/common/fractal-explorer.c:56
+#: ../operations/common/fractal-explorer.c:68
 msgid "CY"
 msgstr "CY"
 
-#: ../operations/common/fractal-explorer.c:56
+#: ../operations/common/fractal-explorer.c:69
 msgid "CY (No effect in Mandelbrot and Sierpinski)"
 msgstr ""
 
-#: ../operations/common/fractal-explorer.c:58
-msgid "Red stretch"
-msgstr "Gorrira tiratzea"
-
-#: ../operations/common/fractal-explorer.c:59
+#: ../operations/common/fractal-explorer.c:72
 msgid "Red stretching factor"
 msgstr "Gorrira tiratzeko faktorea"
 
-#: ../operations/common/fractal-explorer.c:60
-msgid "Green stretch"
-msgstr "Berdera tiratzea"
-
-#: ../operations/common/fractal-explorer.c:61
+#: ../operations/common/fractal-explorer.c:75
 msgid "Green stretching factor"
 msgstr "Berdera tiratzeko faktorea"
 
-#: ../operations/common/fractal-explorer.c:62
-msgid "Blue stretch"
-msgstr "Urdinera tiratzea"
-
-#: ../operations/common/fractal-explorer.c:63
+#: ../operations/common/fractal-explorer.c:78
 msgid "Blue stretching factor"
 msgstr "Urdinera tiratzeko faktorea"
 
-#: ../operations/common/fractal-explorer.c:71
-msgid "Red mode"
-msgstr "Gorriaren modua"
-
-#: ../operations/common/fractal-explorer.c:73
+#: ../operations/common/fractal-explorer.c:87
 msgid "Red application mode"
 msgstr "Gorria aplikatzeko modua"
 
-#: ../operations/common/fractal-explorer.c:74
-msgid "Green mode"
-msgstr "Berdearen modua"
-
-#: ../operations/common/fractal-explorer.c:76
+#: ../operations/common/fractal-explorer.c:91
 msgid "Green application mode"
 msgstr "Berdea aplikatzeko modua"
 
-#: ../operations/common/fractal-explorer.c:77
-msgid "Blue mode"
-msgstr "Urdinaren modua"
-
-#: ../operations/common/fractal-explorer.c:79
+#: ../operations/common/fractal-explorer.c:95
 msgid "Blue application mode"
 msgstr "Urdina aplikatzeko modua"
 
-#: ../operations/common/fractal-explorer.c:81
-#: ../operations/common/fractal-explorer.c:82
+#: ../operations/common/fractal-explorer.c:99
 msgid "Red inversion"
 msgstr "Gorria alderantzikatu"
 
-#: ../operations/common/fractal-explorer.c:83
-#: ../operations/common/fractal-explorer.c:84
+#: ../operations/common/fractal-explorer.c:100
 msgid "Green inversion"
 msgstr "Berdea alderantzikatu"
 
-#: ../operations/common/fractal-explorer.c:85
-#: ../operations/common/fractal-explorer.c:86
+#: ../operations/common/fractal-explorer.c:101
 msgid "Blue inversion"
 msgstr "Urdina alderantzikatu"
 
-#: ../operations/common/fractal-explorer.c:88
-msgid "Colors"
-msgstr "Koloreak"
-
-#: ../operations/common/fractal-explorer.c:89
+#: ../operations/common/fractal-explorer.c:103
 msgid "Number of colors"
 msgstr "Kolore-kopurua"
 
-#: ../operations/common/fractal-explorer.c:91
+#: ../operations/common/fractal-explorer.c:106
 msgid "Loglog smoothing"
 msgstr "Loglog leuntzea"
 
-#: ../operations/common/fractal-explorer.c:92
-msgid "Use loglog smoothing"
-msgstr "Erabili loglog leuntzea"
+#: ../operations/common/fractal-explorer.c:362
+#, fuzzy, c-format
+msgid "Unsupported fractal type: %d"
+msgstr "Onartu gabeko fraktal mota"
 
-#: ../operations/common/fractal-explorer.c:404
+#: ../operations/common/fractal-explorer.c:420
 msgid "Fractal Explorer"
 msgstr "Fraktal-arakatzailea"
 
 #: ../operations/common/fractal-trace.c:34
-#: ../operations/workshop/external/line-profile.c:26
-#: ../operations/workshop/linear-gradient.c:24
+#: ../operations/common/linear-gradient.c:25
+#: ../operations/common/radial-gradient.c:25
+#: ../operations/workshop/external/line-profile.c:28
 msgid "X1"
 msgstr "X1"
 
-#: ../operations/common/fractal-trace.c:36
+#: ../operations/common/fractal-trace.c:35
 msgid "X1 value, position"
 msgstr "X1 balioa, posizioa"
 
-#: ../operations/common/fractal-trace.c:37
-#: ../operations/workshop/linear-gradient.c:26
+#: ../operations/common/fractal-trace.c:38
+#: ../operations/common/linear-gradient.c:33
+#: ../operations/common/radial-gradient.c:27
 msgid "X2"
 msgstr "X2"
 
 #: ../operations/common/fractal-trace.c:39
-#: ../operations/common/fractal-trace.c:43
 msgid "X2 value, position"
 msgstr "X2 balioa, posizioa"
 
-#: ../operations/common/fractal-trace.c:41
-#: ../operations/workshop/external/line-profile.c:28
-#: ../operations/workshop/linear-gradient.c:25
+#: ../operations/common/fractal-trace.c:42
+#: ../operations/common/linear-gradient.c:29
+#: ../operations/common/radial-gradient.c:26
+#: ../operations/workshop/external/line-profile.c:35
 msgid "Y1"
 msgstr "Y1"
 
-#: ../operations/common/fractal-trace.c:44
-#: ../operations/workshop/linear-gradient.c:27
+#: ../operations/common/fractal-trace.c:43
+#, fuzzy
+msgid "Y1 value, position"
+msgstr "X1 balioa, posizioa"
+
+#: ../operations/common/fractal-trace.c:46
+#: ../operations/common/linear-gradient.c:37
+#: ../operations/common/radial-gradient.c:28
 msgid "Y2"
 msgstr "Y2"
 
-#: ../operations/common/fractal-trace.c:46
+#: ../operations/common/fractal-trace.c:47
+#, fuzzy
 msgid "Y2 value, position"
-msgstr "Y2 balioa, posizioa"
+msgstr "X2 balioa, posizioa"
 
-#: ../operations/common/fractal-trace.c:48
+#: ../operations/common/fractal-trace.c:50
 msgid "JX"
 msgstr "JX"
 
-#: ../operations/common/fractal-trace.c:50
+#: ../operations/common/fractal-trace.c:51
 msgid "Julia seed X value, position"
 msgstr "Julia haziaren X balioa, posizioa"
 
-#: ../operations/common/fractal-trace.c:51
+#: ../operations/common/fractal-trace.c:54
 msgid "JY"
 msgstr "JY"
 
-#: ../operations/common/fractal-trace.c:53
+#: ../operations/common/fractal-trace.c:55
 msgid "Julia seed Y value, position"
 msgstr "Julia haziaren Y balioa, posizioa"
-
-#: ../operations/common/fractal-trace.c:57
-msgid "Depth value"
-msgstr "Sakoneraren balioa"
-
-#: ../operations/common/fractal-trace.c:59
-msgid "Bailout"
-msgstr "Segurtasuna"
 
 #: ../operations/common/fractal-trace.c:61
 msgid "Bailout length"
 msgstr "Segurtasunaren luzera"
 
-#: ../operations/common/fractal-trace.c:63
+#: ../operations/common/fractal-trace.c:64
+#: ../operations/workshop/gaussian-blur-iir.c:55
+#: ../operations/workshop/gblur-1d.c:61
 msgid "Abyss policy"
 msgstr "Amildegi politika"
 
-#: ../operations/common/fractal-trace.c:65
+#: ../operations/common/fractal-trace.c:66
 msgid "How to deal with pixels outside of the input buffer"
 msgstr "Zer egin sarreraren bufferretik kanpo dauden pixelekin"
 
-#: ../operations/common/fractal-trace.c:176
+#: ../operations/common/fractal-trace.c:177
 msgid "Unsupported fractal type"
 msgstr "Onartu gabeko fraktal mota"
 
-#: ../operations/common/fractal-trace.c:256
+#: ../operations/common/fractal-trace.c:257
 msgid "Transform the image with the fractals"
 msgstr "Eraldatu irudia fraktalekin"
 
-#: ../operations/common/gaussian-blur.c:35
+#: ../operations/common/gaussian-blur.c:36
 msgid "Size X"
 msgstr "X tamaina"
 
 #: ../operations/common/gaussian-blur.c:37
-msgid ""
-"Standard deviation for the horizontal axis (multiply by ~2 to get radius)"
+#, fuzzy
+msgid "Standard deviation for the horizontal axis"
 msgstr ""
 "Ardatz horizontalaren desbideratze estandarra (bider ~2 erradioa lortzeko)"
 
-#: ../operations/common/gaussian-blur.c:40
+#: ../operations/common/gaussian-blur.c:44
 msgid "Size Y"
 msgstr "Y tamaina"
 
-#: ../operations/common/gaussian-blur.c:42
-msgid "Standard deviation for the vertical axi. (multiply by ~2 to get radius)"
+#: ../operations/common/gaussian-blur.c:45
+#, fuzzy
+msgid "Standard deviation for the vertical axis"
 msgstr ""
 "Ardatz bertikalaren desbideratze estandarra (bider ~2 erradioa lortzeko)"
 
-#: ../operations/common/gaussian-blur.c:45
+#: ../operations/common/gaussian-blur.c:52
+#: ../operations/workshop/gaussian-blur-iir.c:50
+#: ../operations/workshop/gblur-1d.c:57
 msgid "Filter"
 msgstr "Iragazkia"
 
-#: ../operations/common/gaussian-blur.c:48
+#: ../operations/common/gaussian-blur.c:55
 msgid "Optional parameter to override the automatic selection of blur filter"
 msgstr ""
 "Lausotze iragazkiaren hautapen automatikoa gainidazteko aukerazko parametroa"
 
-#: ../operations/common/gaussian-blur.c:710
+#: ../operations/common/gaussian-blur.c:704
+#, fuzzy
 msgid ""
-"Performs an averaging of neighboring pixels with the normal distribution as "
-"weighting"
+"Simplest, most commonly used way of blurring, performs an averaging of "
+"neighboring pixels with the normal distribution as weighting"
 msgstr ""
 "Inguruko pixelen batez bestekoa lantzen du, distribuzio normalari jarraituz"
 
 #: ../operations/common/gegl-buffer-load-op.c:24
 #: ../operations/common/gegl-buffer-save-op.c:24
 #: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
-#: ../operations/common/open-buffer.c:25 ../operations/common/raw-load.c:27
+#: ../operations/common/open-buffer.c:25 ../operations/common/raw-load.c:26
 #: ../operations/common/save.c:25 ../operations/external/ff-load.c:25
 #: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:25
 #: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
@@ -1396,26 +1343,26 @@ msgstr ""
 #: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
 #: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
 #: ../operations/external/svg-load.c:25 ../operations/external/webp-load.c:25
-#: ../operations/external/webp-save.c:25
+#: ../operations/external/webp-save.c:24
 #: ../operations/workshop/external/ff-save.c:30
-#: ../operations/workshop/external/gluas.c:43
+#: ../operations/workshop/external/gluas.c:45
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "File"
 msgstr "Fitxategia"
 
-#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-load-op.c:25
 msgid "Path of GeglBuffer file to load."
 msgstr "Kargatuko den GeglBuffer fitxategiaren bide-izena."
 
-#: ../operations/common/gegl-buffer-load-op.c:88
+#: ../operations/common/gegl-buffer-load-op.c:89
 msgid "GeglBuffer file loader."
 msgstr "GeglBuffer fitxategi kargatzailea."
 
-#: ../operations/common/gegl-buffer-save-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:25
 msgid "Target file path to write GeglBuffer to."
 msgstr "Helburuko fitxategiaren bide-izena GeglBuffer gordetzeko."
 
-#: ../operations/common/gegl-buffer-save-op.c:62
+#: ../operations/common/gegl-buffer-save-op.c:63
 msgid "GeglBuffer file writer."
 msgstr "GeglBuffer fitxategi idazlea."
 
@@ -1423,79 +1370,84 @@ msgstr "GeglBuffer fitxategi idazlea."
 msgid "Turns the image greyscale"
 msgstr "Irudia gris-eskalara bihurtzen du"
 
-#: ../operations/common/grid.c:32
-msgid "Line Width"
+#: ../operations/common/grid.c:50
+#, fuzzy
+msgid "Line width"
 msgstr "Marra-zabalera"
 
-#: ../operations/common/grid.c:33
+#: ../operations/common/grid.c:51
 msgid "Width of grid lines in pixels"
 msgstr "Saretako marren zabalera (pixeletan)"
 
-#: ../operations/common/grid.c:34
-msgid "Line Height"
+#: ../operations/common/grid.c:57
+#, fuzzy
+msgid "Line height"
 msgstr "Marra-altuera"
 
-#: ../operations/common/grid.c:35
+#: ../operations/common/grid.c:58
 msgid "Height of grid lines in pixels"
 msgstr "Saretako marren altuera (pixeletan)"
 
-#: ../operations/common/grid.c:37
+#: ../operations/common/grid.c:65
 msgid "Color of the grid lines"
 msgstr "Saretako marren kolorea"
 
-#: ../operations/common/grid.c:129
+#: ../operations/common/grid.c:157
 msgid "Grid renderer"
 msgstr "Sareten errendatzailea"
 
-#: ../operations/common/high-pass.c:24 ../operations/common/unsharp-mask.c:24
+#: ../operations/common/high-pass.c:24
 msgid "Std. Dev."
 msgstr "Desb. est."
 
-#: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:26
+#: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:25
+#: ../operations/workshop/gaussian-blur-iir.c:39
+#: ../operations/workshop/gaussian-blur-iir.c:45
+#: ../operations/workshop/gblur-1d.c:49
 msgid "Standard deviation (spatial scale factor)"
 msgstr "Desbiderapen estandarra (eskala espazialaren faktorea)"
 
-#: ../operations/common/high-pass.c:27
+#: ../operations/common/high-pass.c:31
 msgid "Contrast of high-pass"
 msgstr ""
 
-#: ../operations/common/high-pass.c:74
+#: ../operations/common/high-pass.c:82
 msgid "Enhances fine details."
 msgstr ""
 
-#: ../operations/common/image-compare.c:26
+#: ../operations/common/image-compare.c:27
 msgid "Wrong pixels"
 msgstr "Pixel okerrak"
 
-#: ../operations/common/image-compare.c:26
+#: ../operations/common/image-compare.c:28
 msgid "Number of differing pixels."
 msgstr "Pixel diferenteen kopurua"
 
-#: ../operations/common/image-compare.c:27
+#: ../operations/common/image-compare.c:30
 msgid "Maximum difference"
 msgstr "Gehienezko diferentzia"
 
-#: ../operations/common/image-compare.c:27
+#: ../operations/common/image-compare.c:31
 msgid "Maximum difference between two pixels."
 msgstr "Bi pixelen arteko gehienezko diferentzia."
 
-#: ../operations/common/image-compare.c:28
+#: ../operations/common/image-compare.c:33
 msgid "Average difference (wrong)"
 msgstr "Batez besteko diferentzia (oker)"
 
-#: ../operations/common/image-compare.c:28
+#: ../operations/common/image-compare.c:34
 msgid "Average difference between wrong pixels."
 msgstr "Pixel okerren arteko batez besteko diferentzia."
 
-#: ../operations/common/image-compare.c:29
+#: ../operations/common/image-compare.c:36
 msgid "Average difference (total)"
 msgstr "Batez besteko diferentzia (guztira)"
 
-#: ../operations/common/image-compare.c:29
+#: ../operations/common/image-compare.c:37
 msgid "Average difference between all pixels."
 msgstr "Pixel guztien arteko batez besteko diferentzia."
 
-#: ../operations/common/image-compare.c:210
+#: ../operations/common/image-compare.c:204
 msgid ""
 "Compares if input and aux buffers are different. Results are saved in the "
 "properties."
@@ -1507,11 +1459,7 @@ msgstr ""
 msgid "Node"
 msgstr "Nodoa"
 
-#: ../operations/common/introspect.c:26
-msgid "GeglNode to introspect"
-msgstr "Introspekziorako GeglNode-a"
-
-#: ../operations/common/introspect.c:160
+#: ../operations/common/introspect.c:161
 msgid "GEGL graph visualizer."
 msgstr "GEGL grafikoen bistaratzailea."
 
@@ -1532,79 +1480,82 @@ msgstr "Eragiketa"
 msgid "Composite operation to use"
 msgstr "Erabiliko den konposizio eragiketa"
 
-#: ../operations/common/layer.c:35 ../operations/common/rectangle.c:30
-msgid "Horizontal position"
+#: ../operations/common/layer.c:37
+#, fuzzy
+msgid "Horizontal position in pixels"
 msgstr "Posizio horizontala"
 
-#: ../operations/common/layer.c:37 ../operations/common/rectangle.c:32
-msgid "Vertical position"
+#: ../operations/common/layer.c:42
+#, fuzzy
+msgid "Vertical position in pixels"
 msgstr "Posizio bertikala"
 
-#: ../operations/common/layer.c:38 ../operations/common/noise.c:27
-#: ../operations/common/unsharp-mask.c:28
-#: ../operations/workshop/external/lens-correct.c:43
+#: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
+#: ../operations/common/noise-perlin.c:27
+#: ../operations/common/noise-simplex.c:31
+#: ../operations/common/unsharp-mask.c:31
+#: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
 msgstr "Eskala"
 
-#: ../operations/common/layer.c:39
+#: ../operations/common/layer.c:47
 msgid "Scale 1:1 size"
 msgstr "Eskala 1:1 tamaina"
 
-#: ../operations/common/layer.c:40
+#: ../operations/common/layer.c:49
 msgid "Source"
 msgstr "Iturburua"
 
-#: ../operations/common/layer.c:41
-msgid "Source datafile (png, jpg, raw, svg, bmp, tif, ...)"
+#: ../operations/common/layer.c:50
+#, fuzzy
+msgid "Source image file path (png, jpg, raw, svg, bmp, tif, ...)"
 msgstr "Iturburuko datu-fitxategia (png, jpg, raw, svg, bmp, tif, ...)"
 
-#: ../operations/common/layer.c:286
+#: ../operations/common/layer.c:270
 msgid "A layer in the traditional sense"
 msgstr "Geruza bat ohiko zentzuan"
 
-#: ../operations/common/lens-distortion.c:32
+#: ../operations/common/lens-distortion.c:33
 msgid "Main"
 msgstr "Nagusia"
 
 #: ../operations/common/lens-distortion.c:34
-#: ../operations/common/lens-distortion.c:38
-msgid "Main value of distortion"
-msgstr "Distortsioaren balio nagusia"
+#, fuzzy
+msgid "Amount of second-order distortion"
+msgstr "Ertzak mantentze kopurua"
 
-#: ../operations/common/lens-distortion.c:39
+#: ../operations/common/lens-distortion.c:37
 msgid "Edge"
 msgstr "Ertza"
 
-#: ../operations/common/lens-distortion.c:41
-msgid "Edge value of distortion"
-msgstr "Distortsioaren ertzeko balioa"
+#: ../operations/common/lens-distortion.c:38
+#, fuzzy
+msgid "Amount of fourth-order distortion"
+msgstr "Ertzak mantentze kopurua"
 
-#: ../operations/common/lens-distortion.c:43
+#: ../operations/common/lens-distortion.c:42
+msgid "Rescale overall image size"
+msgstr ""
+
+#: ../operations/common/lens-distortion.c:46
+msgid "Effect centre offset in X"
+msgstr ""
+
+#: ../operations/common/lens-distortion.c:50
+msgid "Effect centre offset in Y"
+msgstr ""
+
+#: ../operations/common/lens-distortion.c:53
 msgid "Brighten"
 msgstr "Argitu"
 
-#: ../operations/common/lens-distortion.c:45
-msgid "Brighten the image"
-msgstr "Argitu irudia"
+#: ../operations/common/lens-distortion.c:54
+msgid "Adjust brightness in corners"
+msgstr ""
 
-#: ../operations/common/lens-distortion.c:47
-msgid "X shift"
-msgstr "X desplazamendua"
-
-#: ../operations/common/lens-distortion.c:49
-msgid "Shift horizontal"
-msgstr "Desplazamendu horizontala"
-
-#: ../operations/common/lens-distortion.c:51
-msgid "Y shift"
-msgstr "Y desplazamendua"
-
-#: ../operations/common/lens-distortion.c:53
-msgid "Shift vertical"
-msgstr "Desplazamendu bertikala"
-
-#: ../operations/common/lens-distortion.c:348
-msgid "Corrects lens distortion"
+#: ../operations/common/lens-distortion.c:499
+#, fuzzy
+msgid "Corrects barrel or pincushion lens distortion."
 msgstr "Objektiboaren distortsioa zuzentzen du"
 
 #: ../operations/common/levels.c:26
@@ -1615,43 +1566,70 @@ msgstr "Sarrera txikia"
 msgid "Input luminance level to become lowest output"
 msgstr "Sarreraren luminantzia maila irteera baxuenean bihurtzeko"
 
-#: ../operations/common/levels.c:28
+#: ../operations/common/levels.c:31
 msgid "High input"
 msgstr "Sarrera altua"
 
-#: ../operations/common/levels.c:29
-msgid "Input luminance level to become white."
+#: ../operations/common/levels.c:32
+#, fuzzy
+msgid "Input luminance level to become white"
 msgstr "Sarreraren luminantzia-maila zuri bihurtzeko."
 
-#: ../operations/common/levels.c:30
+#: ../operations/common/levels.c:36
 msgid "Low output"
 msgstr "Irteera baxua"
 
-#: ../operations/common/levels.c:31
+#: ../operations/common/levels.c:37
 msgid "Lowest luminance level in output"
 msgstr "Luminantzia-maila baxuena irteeran"
 
-#: ../operations/common/levels.c:32
+#: ../operations/common/levels.c:41
 msgid "High output"
 msgstr "Irteera handia"
 
-#: ../operations/common/levels.c:33
+#: ../operations/common/levels.c:42
 msgid "Highest luminance level in output"
 msgstr "Luminantzia-maila altuena irteeran"
 
-#: ../operations/common/levels.c:192
+#: ../operations/common/levels.c:203
 msgid "Remaps the intensity range of the image"
 msgstr "Irudiaren intentsitatearen barrutia birmapatzen du"
 
-#: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
-#: ../operations/common/raw-load.c:27 ../operations/external/png-load.c:27
-#: ../operations/external/ppm-load.c:25 ../operations/external/rgbe-load.c:26
-#: ../operations/external/webp-load.c:25
-#: ../operations/workshop/rawbayer-load.c:25
+#: ../operations/common/linear-gradient.c:41
+#: ../operations/common/radial-gradient.c:29
+#, fuzzy
+msgid "Start Color"
+msgstr "Trazuaren kolorea"
+
+#: ../operations/common/linear-gradient.c:42
+#: ../operations/common/radial-gradient.c:30
+msgid "The color at (x1, y1)"
+msgstr ""
+
+#: ../operations/common/linear-gradient.c:45
+#: ../operations/common/radial-gradient.c:31
+#, fuzzy
+msgid "End Color"
+msgstr "Kolorea"
+
+#: ../operations/common/linear-gradient.c:46
+#: ../operations/common/radial-gradient.c:32
+msgid "The color at (x2, y2)"
+msgstr ""
+
+#: ../operations/common/linear-gradient.c:139
+msgid "Linear gradient renderer"
+msgstr "Gradiente linealaren errendatzailea"
+
+#: ../operations/common/load.c:26 ../operations/common/magick-load.c:27
+#: ../operations/common/raw-load.c:27 ../operations/external/openraw.c:26
+#: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
+#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
+#: ../operations/workshop/rawbayer-load.c:26
 msgid "Path of file to load."
 msgstr "Fitxategiaren bide-izena kargatzeko."
 
-#: ../operations/common/load.c:188
+#: ../operations/common/load.c:191
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -1659,19 +1637,19 @@ msgstr ""
 "Xede anitzeko fitxategi-kargatzailea, jatorrizko kudeatzaileak erabiltzen "
 "ditu, bestela, ordezko gisa, 'Image Magick'-en bihurketa erabiltzen du."
 
-#: ../operations/common/magick-load.c:136
+#: ../operations/common/magick-load.c:137
 msgid "Image Magick wrapper using the png op."
 msgstr "Image Magick bildukiak png eragilea darabil."
 
-#: ../operations/common/mantiuk06.c:33
+#: ../operations/common/mantiuk06.c:32
 msgid "The amount of contrast compression"
 msgstr "Kontrastearen konpresio kopurua"
 
-#: ../operations/common/mantiuk06.c:37
+#: ../operations/common/mantiuk06.c:39
 msgid "Detail"
 msgstr "Xehetasunak"
 
-#: ../operations/common/mantiuk06.c:39
+#: ../operations/common/mantiuk06.c:40
 msgid "Level of emphasis on image gradient details"
 msgstr "Enfasi-maila irudiaren gradientearen xehetasunetan "
 
@@ -1685,23 +1663,15 @@ msgstr ""
 "baxuko aurkezpen batean erabiltzeko. Eragile honek kontrasteak murrizten "
 "ditu hainbat maiztasun espazialetan, luminantzia 0.0-1.0 barrutian sortuz."
 
+#. XXX: needs better ui type
 #: ../operations/common/map-absolute.c:22
-#: ../operations/common/map-relative.c:26 ../operations/common/ripple.c:48
-#: ../operations/common/waves.c:50
-#: ../operations/transform/transform-core.c:190
-#: ../operations/workshop/ditto.c:27
-msgid "Sampler"
-msgstr "Lagina"
+#: ../operations/common/map-relative.c:28
+#: ../operations/common/panorama-projection.c:57
+#: ../operations/common/ripple.c:47 ../operations/common/waves.c:52
+msgid "Resampling method"
+msgstr ""
 
-#: ../operations/common/map-absolute.c:23
-#: ../operations/common/map-relative.c:27 ../operations/common/ripple.c:50
-#: ../operations/common/waves.c:53
-#: ../operations/transform/transform-core.c:191
-#: ../operations/workshop/ditto.c:28
-msgid "Sampler used internally"
-msgstr "Barnean erabilitako lagina"
-
-#: ../operations/common/map-absolute.c:148
+#: ../operations/common/map-absolute.c:149
 msgid ""
 "sample input with an auxiliary buffer that contain absolute source "
 "coordinates"
@@ -1720,18 +1690,14 @@ msgstr ""
 "Desplazamenduaren eskalatze-faktorea, 1.0 balioko mapatze erlatiboak "
 "desplazamendu espaziala zeinen handia den adierazten du."
 
-#: ../operations/common/map-relative.c:173
+#: ../operations/common/map-relative.c:175
 msgid ""
 "sample input with an auxiliary buffer that contain relative source "
 "coordinates"
 msgstr ""
 "Iturburuaren koordenatu erlatiboak dituen buffer lagungarriaren lagin sarrera"
 
-#: ../operations/common/matting-global.c:26
-msgid "Number of iterations"
-msgstr "Iterazio kopurua"
-
-#: ../operations/common/matting-global.c:481
+#: ../operations/common/matting-global.c:490
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha matte. Set white as foreground, black as background for the tri-map. "
@@ -1758,121 +1724,105 @@ msgstr "Mugimendu-lausotze pilatua"
 msgid "Mirror rotation"
 msgstr "Ispilu biraketa"
 
-#: ../operations/common/mirrors.c:30
+#: ../operations/common/mirrors.c:31
 msgid "Rotation applied to the mirrors"
 msgstr "Ispiluei aplikatutako biraketa"
 
-#: ../operations/common/mirrors.c:32
+#: ../operations/common/mirrors.c:35
 msgid "Result rotation"
 msgstr "Emaitzaren biraketa"
 
-#: ../operations/common/mirrors.c:32
+#: ../operations/common/mirrors.c:36
 msgid "Rotation applied to the result"
 msgstr "Emaitzari aplikatutako biraketa"
 
-#: ../operations/common/mirrors.c:34
+#: ../operations/common/mirrors.c:40
 msgid "Mirrors"
 msgstr "Ispiluak"
 
-#: ../operations/common/mirrors.c:34
+#: ../operations/common/mirrors.c:41
 msgid "Number of mirrors to use"
 msgstr "Erabiliko den ispilu kopurua"
 
-#: ../operations/common/mirrors.c:36
+#: ../operations/common/mirrors.c:45
 msgid "X offset of the result of mirroring"
 msgstr "Ispiluaren emaitzaren X desplazamendua"
 
-#: ../operations/common/mirrors.c:38
+#: ../operations/common/mirrors.c:51
 msgid "Y offset of the result of mirroring"
 msgstr "Ispiluaren emaitzaren Y desplazamendua"
 
-#: ../operations/common/mirrors.c:40
+#: ../operations/common/mirrors.c:56
+#: ../operations/common/motion-blur-circular.c:41
+#: ../operations/common/motion-blur-zoom.c:40
+#: ../operations/common/vignette.c:60 ../operations/common/waves.c:26
 msgid "Center X"
 msgstr "X zentroa"
 
-#: ../operations/common/mirrors.c:40
+#: ../operations/common/mirrors.c:57
 msgid "X axis ratio for the center of mirroring"
 msgstr "Ispiluko zentroaren X ardatz-erlazioa"
 
-#: ../operations/common/mirrors.c:42
+#: ../operations/common/mirrors.c:60
+#: ../operations/common/motion-blur-circular.c:46
+#: ../operations/common/motion-blur-zoom.c:46
+#: ../operations/common/vignette.c:66 ../operations/common/waves.c:32
 msgid "Center Y"
 msgstr "Y zentroa"
 
-#: ../operations/common/mirrors.c:42
+#: ../operations/common/mirrors.c:61
 msgid "Y axis ratio for the center of mirroring"
 msgstr "Ispiluko zentroaren Y ardatz-erlazioa"
 
-#: ../operations/common/mirrors.c:44
+#: ../operations/common/mirrors.c:64
 msgid "Trim X"
 msgstr "Moztu X"
 
-#: ../operations/common/mirrors.c:44
+#: ../operations/common/mirrors.c:65
 msgid "X axis ratio for trimming mirror expanse"
 msgstr "X ardatz-erlazioa ispiluaren hedapena mozteko"
 
-#: ../operations/common/mirrors.c:46
+#: ../operations/common/mirrors.c:68
 msgid "Trim Y"
 msgstr "Moztu Y"
 
-#: ../operations/common/mirrors.c:46
+#: ../operations/common/mirrors.c:69
 msgid "Y axis ratio for trimming mirror expanse"
 msgstr "Y ardatz-erlazioa ispiluaren hedapena mozteko"
 
-#: ../operations/common/mirrors.c:48 ../operations/common/mirrors.c:50
+#: ../operations/common/mirrors.c:73 ../operations/common/mirrors.c:77
 msgid "Scale factor to make rendering size bigger"
 msgstr "Eskala-faktorea errendatze tamaina handitzeko "
 
-#: ../operations/common/mirrors.c:50
+#: ../operations/common/mirrors.c:76
 msgid "Expand"
 msgstr "Zabaldu"
 
-#: ../operations/common/mirrors.c:52
-msgid "Clip result"
-msgstr "Moztu emaitza"
-
-#: ../operations/common/mirrors.c:52
+#: ../operations/common/mirrors.c:80
 msgid "Clip result to input size"
 msgstr "Moztu emaitza sarreraren tamainara"
 
-#: ../operations/common/mirrors.c:54
+#: ../operations/common/mirrors.c:82
 msgid "Wrap input"
 msgstr "Doitu sarrera"
 
-#: ../operations/common/mirrors.c:54
+#: ../operations/common/mirrors.c:83
 msgid "Fill full output area"
 msgstr "Bete irteeraren area osoa"
 
-#: ../operations/common/mirrors.c:401
+#: ../operations/common/mirrors.c:428
 msgid "Applies mirroring effect on the image."
 msgstr "Ispilatzearen efektua aplikatzen dio irudiari."
 
-#: ../operations/common/mono-mixer.c:26 ../operations/common/noise-rgb.c:36
-#: ../operations/common/noise-rgb.c:38
-#: ../operations/workshop/convolution-matrix.c:83
-msgid "Red"
-msgstr "Gorria"
-
-#: ../operations/common/mono-mixer.c:28
+#: ../operations/common/mono-mixer.c:26
 msgid "Amount of red"
 msgstr "Gorri kopurua"
 
-#: ../operations/common/mono-mixer.c:30 ../operations/common/noise-rgb.c:40
-#: ../operations/common/noise-rgb.c:42
-#: ../operations/workshop/convolution-matrix.c:84
-msgid "Green"
-msgstr "Berdea"
-
-#: ../operations/common/mono-mixer.c:32
+#: ../operations/common/mono-mixer.c:30
 msgid "Amount of green"
 msgstr "Berde kopurua"
 
-#: ../operations/common/mono-mixer.c:34 ../operations/common/noise-rgb.c:44
-#: ../operations/common/noise-rgb.c:46
-#: ../operations/workshop/convolution-matrix.c:85
-msgid "Blue"
-msgstr "Urdina"
-
-#: ../operations/common/mono-mixer.c:36
+#: ../operations/common/mono-mixer.c:34
 msgid "Amount of blue"
 msgstr "Urdin kopurua"
 
@@ -1880,28 +1830,112 @@ msgstr "Urdin kopurua"
 msgid "Monochrome channel mixer"
 msgstr "Kanal-nahastaile monokromoa"
 
-#: ../operations/common/motion-blur-circular.c:44
-#: ../operations/common/motion-blur-zoom.c:43
-msgid "Horizontal center position"
-msgstr "Zentroaren posizio horizontala"
+#: ../operations/common/mosaic.c:38
+msgid "Tile geometry"
+msgstr ""
 
-#: ../operations/common/motion-blur-circular.c:49
-#: ../operations/common/motion-blur-zoom.c:48
-msgid "Vertical center position"
-msgstr "Zentroaren posizio bertikala"
+#: ../operations/common/mosaic.c:40
+msgid "What shape to use for tiles"
+msgstr ""
+
+#: ../operations/common/mosaic.c:48
+#, fuzzy
+msgid "Tile height"
+msgstr "Marra-altuera"
+
+#: ../operations/common/mosaic.c:49
+#, fuzzy
+msgid "Apparent height of each tile (in pixels)"
+msgstr "Lauza bakoitzaren batez besteko diametroa (pixeletan)"
+
+#: ../operations/common/mosaic.c:53
+msgid "Tile neatness"
+msgstr ""
+
+#: ../operations/common/mosaic.c:54
+msgid "Deviation from perfectly formed tiles"
+msgstr ""
+
+#: ../operations/common/mosaic.c:57
+#, fuzzy
+msgid "Tile color variation"
+msgstr "Lauzen saturazioa"
+
+#: ../operations/common/mosaic.c:61
+msgid "Color averaging"
+msgstr ""
+
+#: ../operations/common/mosaic.c:62
+msgid "Tile color based on average of subsumed pixels"
+msgstr ""
+
+#: ../operations/common/mosaic.c:64
+msgid "Rough tile surface"
+msgstr ""
+
+#: ../operations/common/mosaic.c:65
+msgid "Surface characteristics"
+msgstr ""
+
+#: ../operations/common/mosaic.c:67
+msgid "Allow splitting tiles"
+msgstr ""
+
+#: ../operations/common/mosaic.c:68
+msgid "Allows splitting tiles at hard edges"
+msgstr ""
+
+#: ../operations/common/mosaic.c:70
+#, fuzzy
+msgid "Tile spacing"
+msgstr "Lauzen tamaina"
+
+#: ../operations/common/mosaic.c:71
+msgid "Inter-tile spacing (in pixels)"
+msgstr ""
+
+#: ../operations/common/mosaic.c:76
+#, fuzzy
+msgid "Joints color"
+msgstr "Beste kolorea"
+
+#: ../operations/common/mosaic.c:78
+#, fuzzy
+msgid "Light color"
+msgstr "Trazuaren altuera"
+
+#: ../operations/common/mosaic.c:80
+#, fuzzy
+msgid "Light direction"
+msgstr "Desplazamenduaren norabidea"
+
+#: ../operations/common/mosaic.c:85
+msgid "Antialiasing"
+msgstr ""
+
+#: ../operations/common/mosaic.c:86
+msgid "Enables smoother tile output"
+msgstr ""
+
+#: ../operations/common/mosaic.c:2475
+msgid ""
+"Mosaic is a filter which transforms an image into what appears to be a "
+"mosaic, composed of small primitives, each of constant color and of an "
+"approximate size."
+msgstr ""
 
 #. FIXME: With a large angle, we lose AreaFilter's flavours
 #: ../operations/common/motion-blur-circular.c:52
-#: ../operations/common/motion-blur-linear.c:30
-#: ../operations/common/ripple.c:44
+#: ../operations/common/motion-blur-linear.c:33
+#: ../operations/common/ripple.c:43
 msgid "Angle"
 msgstr "Angelua"
 
-#: ../operations/common/motion-blur-circular.c:55
+#: ../operations/common/motion-blur-circular.c:53
 msgid "Rotation blur angle. A large angle may take some time to render"
 msgstr ""
 
-#: ../operations/common/motion-blur-circular.c:281
+#: ../operations/common/motion-blur-circular.c:286
 msgid "Circular motion blur"
 msgstr "Mugimendu zirkularraren lausotzea"
 
@@ -1909,19 +1943,27 @@ msgstr "Mugimendu zirkularraren lausotzea"
 msgid "Length"
 msgstr "Luzera"
 
-#: ../operations/common/motion-blur-linear.c:28
+#: ../operations/common/motion-blur-linear.c:27
 msgid "Length of blur in pixels"
 msgstr "Lausotzearen luzera (pixeletan)"
 
-#: ../operations/common/motion-blur-linear.c:32
+#: ../operations/common/motion-blur-linear.c:34
 msgid "Angle of blur in degrees"
 msgstr "Lausotzearen angelua (graduetan)"
 
-#: ../operations/common/motion-blur-linear.c:306
+#: ../operations/common/motion-blur-linear.c:330
 msgid "Linear motion blur"
 msgstr "Mugimendu linealaren lausotzea"
 
-#: ../operations/common/motion-blur-zoom.c:50
+#: ../operations/common/motion-blur-zoom.c:41
+msgid "Horizontal center position"
+msgstr "Zentroaren posizio horizontala"
+
+#: ../operations/common/motion-blur-zoom.c:47
+msgid "Vertical center position"
+msgstr "Zentroaren posizio bertikala"
+
+#: ../operations/common/motion-blur-zoom.c:52
 msgid "Factor"
 msgstr "Faktorea"
 
@@ -1929,82 +1971,111 @@ msgstr "Faktorea"
 msgid "Bluring factor"
 msgstr "Lausotzearen faktorea"
 
-#: ../operations/common/motion-blur-zoom.c:226
+#: ../operations/common/motion-blur-zoom.c:229
 msgid "Zoom motion blur"
 msgstr "Zoom mugimenduaren lausotzea"
 
-#: ../operations/common/noise.c:29
-msgid "Z offset"
-msgstr "Z desplazamendua"
+#: ../operations/common/noise-cell.c:37
+#: ../operations/common/noise-simplex.c:32
+#, fuzzy
+msgid "The scale of the noise function"
+msgstr "Desplazamenduaren balioa"
 
-#: ../operations/common/noise.c:33
-msgid "Iteration"
-msgstr "Iterazioa"
+# 'Itzala' ere izan daiteke
+#: ../operations/common/noise-cell.c:40 ../operations/common/pixelize.c:32
+msgid "Shape"
+msgstr "Forma"
 
-#: ../operations/common/noise.c:111
-msgid "Perlin noise generator"
-msgstr "Perlin zarata sortzailea"
+#: ../operations/common/noise-cell.c:41
+msgid "Interpolate between Manhattan and Euclidean distance."
+msgstr ""
 
-#: ../operations/common/noise-cie-lch.c:25
-#: ../operations/common/noise-cie-lch.c:27 ../operations/common/noise-hsv.c:27
-#: ../operations/common/noise-hsv.c:29
+#: ../operations/common/noise-cell.c:44
+msgid "Rank"
+msgstr ""
+
+#: ../operations/common/noise-cell.c:45
+msgid "Select the n-th closest point"
+msgstr ""
+
+#: ../operations/common/noise-cell.c:49
+#: ../operations/common/noise-simplex.c:36
+msgid "The number of noise octaves."
+msgstr ""
+
+#: ../operations/common/noise-cell.c:52
+msgid "Palettize"
+msgstr ""
+
+#: ../operations/common/noise-cell.c:53
+msgid "Fill each cell with a random color"
+msgstr ""
+
+#: ../operations/common/noise-cell.c:56
+#: ../operations/common/noise-simplex.c:40
+#, fuzzy
+msgid "The random seed for the noise function"
+msgstr "'Lanczos' funtzioaren zabalera"
+
+#: ../operations/common/noise-cell.c:423
+msgid "Generates a cellular texture."
+msgstr ""
+
+#: ../operations/common/noise-cie-lch.c:25 ../operations/common/noise-hsv.c:27
 msgid "Holdness"
 msgstr "Euste-maila"
 
-#: ../operations/common/noise-cie-lch.c:29
-#: ../operations/common/noise-cie-lch.c:31
+#: ../operations/common/noise-cie-lch.c:28
 msgid "Lightness"
 msgstr "Argitasuna"
 
-#: ../operations/common/noise-cie-lch.c:33
-#: ../operations/common/noise-cie-lch.c:35
+#: ../operations/common/noise-cie-lch.c:31
 msgid "Chroma"
 msgstr "Kroma"
 
-#: ../operations/common/noise-cie-lch.c:37
-#: ../operations/common/noise-cie-lch.c:39 ../operations/common/noise-hsv.c:31
-#: ../operations/common/noise-hsv.c:33
-#: ../operations/workshop/color-rotate.c:48
+#: ../operations/common/noise-cie-lch.c:34 ../operations/common/noise-hsv.c:30
+#: ../operations/workshop/color-rotate.c:60
 msgid "Hue"
 msgstr "Ñabardura"
 
-#: ../operations/common/noise-cie-lch.c:167
+#: ../operations/common/noise-cie-lch.c:193
 msgid "Randomize lightness, chroma and hue independently"
 msgstr ""
 "Ausaz nahastu argitasuna, krominantzia eta ñabardura bakoitza bere aldetik"
 
-#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hsv.c:41
-#: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
+#: ../operations/common/noise-hsv.c:36 ../operations/generated/add.c:29
 #: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
 #: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
 msgid "Value"
 msgstr "Balioa"
 
-#: ../operations/common/noise-hsv.c:172
+#: ../operations/common/noise-hsv.c:195
 msgid "Randomize hue, saturation and value independently"
 msgstr "Ausaz nahastu ñabardura, saturazioa eta balioa bakoitza bere aldetik"
 
-#: ../operations/common/noise-hurl.c:34 ../operations/common/noise-pick.c:34
-#: ../operations/common/noise-slur.c:37
+#: ../operations/common/noise-hurl.c:31 ../operations/common/noise-pick.c:32
+#: ../operations/common/noise-slur.c:34
 msgid "Randomization (%)"
 msgstr "Ausaz nahastea (%)"
 
-#: ../operations/common/noise-hurl.c:36 ../operations/common/noise-pick.c:36
-#: ../operations/common/noise-slur.c:39
-msgid "Randomization"
-msgstr "Ausaz nahastea"
-
-#: ../operations/common/noise-hurl.c:38 ../operations/common/noise-hurl.c:40
-#: ../operations/common/noise-pick.c:38 ../operations/common/noise-pick.c:40
-#: ../operations/common/noise-slur.c:41 ../operations/common/noise-slur.c:43
+#: ../operations/common/noise-hurl.c:34 ../operations/common/noise-pick.c:35
+#: ../operations/common/noise-slur.c:37
 msgid "Repeat"
 msgstr "Errepikatu"
 
-#: ../operations/common/noise-hurl.c:143
+#: ../operations/common/noise-hurl.c:212
 msgid "Completely randomize a fraction of pixels"
 msgstr "Erabat ausaz nahastu pixel frakzio bat"
 
-#: ../operations/common/noise-pick.c:210
+#: ../operations/common/noise-perlin.c:30
+msgid "Z offset"
+msgstr "Z desplazamendua"
+
+#: ../operations/common/noise-perlin.c:115
+msgid "Perlin noise generator"
+msgstr "Perlin zarata sortzailea"
+
+#: ../operations/common/noise-pick.c:141
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "Ausaz elkar trukatu pixel batzuk albokoekin"
 
@@ -2013,40 +2084,61 @@ msgstr "Ausaz elkar trukatu pixel batzuk albokoekin"
 msgid "Strength"
 msgstr "Indarra"
 
-#: ../operations/common/noise-reduction.c:26
-msgid "How many iteratarions to run the algorithm with"
-msgstr "Algoritmoa zenbat iterazioekin exekutatu"
+#: ../operations/common/noise-reduction.c:27
+msgid ""
+"Controls the number of iterations; lower values give less plastic results"
+msgstr ""
 
-#: ../operations/common/noise-rgb.c:28 ../operations/common/noise-rgb.c:30
+#: ../operations/common/noise-reduction.c:427
+msgid "Anisotropic smoothing operation"
+msgstr ""
+
+#: ../operations/common/noise-simplex.c:325
+msgid "Generates a solid noise texture."
+msgstr ""
+
+#: ../operations/common/noise-rgb.c:28
 msgid "Correlated noise"
 msgstr "Zarata korrelatua"
 
-#: ../operations/common/noise-rgb.c:32 ../operations/common/noise-rgb.c:34
+#: ../operations/common/noise-rgb.c:30
 msgid "Independent RGB"
 msgstr "GBU independentea"
 
-#: ../operations/common/noise-rgb.c:186
-msgid "Distort colors by random amounts."
+#: ../operations/common/noise-rgb.c:32
+msgid "Red"
+msgstr "Gorria"
+
+#: ../operations/common/noise-rgb.c:35
+msgid "Green"
+msgstr "Berdea"
+
+#: ../operations/common/noise-rgb.c:38
+msgid "Blue"
+msgstr "Urdina"
+
+#: ../operations/common/noise-rgb.c:177
+#, fuzzy
+msgid "Distort colors by random amounts"
 msgstr "Eman distortsioa koloreei ausazko kopuruekin."
 
-#: ../operations/common/noise-slur.c:195
+#: ../operations/common/noise-slur.c:153
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr "Ausaz desplazatu pixel batzuk beherantz (urtze-efektua)"
 
-#: ../operations/common/noise-spread.c:31
+#: ../operations/common/noise-spread.c:30
 msgid "Horizontal spread amount"
 msgstr "Sakabanatze horizontalaren kopurua"
 
-#: ../operations/common/noise-spread.c:35
+#: ../operations/common/noise-spread.c:36
 msgid "Vertical spread amount"
 msgstr "Sakabanatze bertikalaren kopurua"
 
-#: ../operations/common/noise-spread.c:172
+#: ../operations/common/noise-spread.c:155
 msgid "Move pixels around randomly"
 msgstr "Aldatu lekuz pixelak inguruan ausaz"
 
 #: ../operations/common/oilify.c:27 ../operations/common/photocopy.c:25
-#: ../operations/common/photocopy.c:27
 msgid "Mask Radius"
 msgstr "Maskara-erradioa"
 
@@ -2054,31 +2146,31 @@ msgstr "Maskara-erradioa"
 msgid "Radius of circle around pixel"
 msgstr "Pixelaren inguruko zirkuluaren erradioa"
 
-#: ../operations/common/oilify.c:30 ../operations/common/oilify.c:31
+#: ../operations/common/oilify.c:32
 msgid "Exponent"
 msgstr "Berretzailea"
 
-#: ../operations/common/oilify.c:33
+#: ../operations/common/oilify.c:35
 msgid "Number of intensities"
 msgstr "Intentsitate kopurua"
 
-#: ../operations/common/oilify.c:34
+#: ../operations/common/oilify.c:36
 msgid "Histogram size"
 msgstr "Histograma-tamaina"
 
-#: ../operations/common/oilify.c:36
+#: ../operations/common/oilify.c:39
 msgid "Intensity Mode"
 msgstr "Intentsitatearen modua"
 
-#: ../operations/common/oilify.c:37
+#: ../operations/common/oilify.c:40
 msgid "Use pixel luminance values"
 msgstr "Erabili pixelen luminantziaren balioak"
 
-#: ../operations/common/oilify.c:472
+#: ../operations/common/oilify.c:477
 msgid "Emulate an oil painting"
 msgstr "Emulatu olioz pintatzea"
 
-#: ../operations/common/opacity.c:25
+#: ../operations/common/opacity.c:26
 msgid ""
 "Global opacity value that is always used on top of the optional auxiliary "
 "input buffer."
@@ -2086,7 +2178,7 @@ msgstr ""
 "Opakutasunaren balio orokorra, aukerazko sarreraren buffer lagungarriaren "
 "gainean beti erabiltzen dena."
 
-#: ../operations/common/opacity.c:295
+#: ../operations/common/opacity.c:307
 msgid ""
 "Weights the opacity of the input both the value of the aux input and the "
 "global value property."
@@ -2094,53 +2186,206 @@ msgstr ""
 "Sarreraren opakutasuna ponderatzen du, bai sarrera lagungarriaren balioa, "
 "bai balio orokorraren propietatea."
 
-#: ../operations/common/open-buffer.c:25
+#: ../operations/common/open-buffer.c:26
 msgid "a GeglBuffer on disk to open"
 msgstr "Diskoko Geglbuffer bat irekitzeko"
 
-#: ../operations/common/open-buffer.c:130
+#: ../operations/common/open-buffer.c:131
 msgid "A source that uses an on-disk GeglBuffer."
 msgstr "Diskoko GeglBuffer bat darabilen iturburua."
 
-#: ../operations/common/over.c:140
+#: ../operations/common/over.c:25 ../operations/generated/clear.c:38
+#: ../operations/generated/color-burn.c:38
+#: ../operations/generated/color-dodge.c:38
+#: ../operations/generated/darken.c:38 ../operations/generated/difference.c:38
+#: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
+#: ../operations/generated/dst-in.c:38 ../operations/generated/dst-out.c:38
+#: ../operations/generated/dst-over.c:38
+#: ../operations/generated/exclusion.c:38
+#: ../operations/generated/hard-light.c:38
+#: ../operations/generated/lighten.c:38 ../operations/generated/overlay.c:38
+#: ../operations/generated/plus.c:38 ../operations/generated/screen.c:38
+#: ../operations/generated/soft-light.c:38
+#: ../operations/generated/src-atop.c:38 ../operations/generated/src.c:38
+#: ../operations/generated/src-in.c:38 ../operations/generated/src-out.c:38
+#: ../operations/generated/svg-multiply.c:38 ../operations/generated/xor.c:38
+msgid "sRGB"
+msgstr ""
+
+#: ../operations/common/over.c:26 ../operations/generated/clear.c:39
+#: ../operations/generated/color-burn.c:39
+#: ../operations/generated/color-dodge.c:39
+#: ../operations/generated/darken.c:39 ../operations/generated/difference.c:39
+#: ../operations/generated/dst-atop.c:39 ../operations/generated/dst.c:39
+#: ../operations/generated/dst-in.c:39 ../operations/generated/dst-out.c:39
+#: ../operations/generated/dst-over.c:39
+#: ../operations/generated/exclusion.c:39
+#: ../operations/generated/hard-light.c:39
+#: ../operations/generated/lighten.c:39 ../operations/generated/overlay.c:39
+#: ../operations/generated/plus.c:39 ../operations/generated/screen.c:39
+#: ../operations/generated/soft-light.c:39
+#: ../operations/generated/src-atop.c:39 ../operations/generated/src.c:39
+#: ../operations/generated/src-in.c:39 ../operations/generated/src-out.c:39
+#: ../operations/generated/svg-multiply.c:39 ../operations/generated/xor.c:39
+msgid "Use sRGB gamma instead of linear"
+msgstr ""
+
+#: ../operations/common/over.c:184
 msgid "Porter Duff operation over (d = cA + cB * (1 - aA))"
 msgstr "Porter Duff eragiketa: gainean (d = cA + cB * (1 - aA))"
 
-#: ../operations/common/photocopy.c:29 ../operations/common/photocopy.c:31
-#: ../operations/common/softglow.c:34 ../operations/common/softglow.c:36
+#: ../operations/common/panorama-projection.c:23
+msgid "Pan"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:24
+#, fuzzy
+msgid "Horizontal camera panning"
+msgstr "Zentroaren posizio horizontala"
+
+#: ../operations/common/panorama-projection.c:28
+msgid "Tilt"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:29
+#, fuzzy
+msgid "Vertical camera panning"
+msgstr "Zentroaren posizio bertikala"
+
+#: ../operations/common/panorama-projection.c:34
+msgid "Spin"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:35
+msgid "Spin angle around camera axis"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:43
+msgid "output/rendering width in pixels, -1 for input width"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:49
+msgid "output/rendering height in pixels, -1 for input height"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:54
+msgid "Little planet"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:55
+msgid ""
+"use the pan/tilt location as center for a stereographic/little planet "
+"projection."
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:59
+msgid "Image resampling method to use"
+msgstr ""
+
+#: ../operations/common/panorama-projection.c:514
+msgid ""
+"Perform a equlinear/gnomonic or little planet/stereographic projection of a "
+"equirectangular input image."
+msgstr ""
+
+#: ../operations/common/photocopy.c:28 ../operations/common/softglow.c:33
 msgid "Sharpness"
 msgstr "Zorroztasuna"
 
-#: ../operations/common/photocopy.c:33 ../operations/common/photocopy.c:35
+#: ../operations/common/photocopy.c:31
 msgid "Percent Black"
 msgstr "Beltzaren ehunekoa"
 
-#: ../operations/common/photocopy.c:37 ../operations/common/photocopy.c:39
+#: ../operations/common/photocopy.c:34
 msgid "Percent White"
 msgstr "Zuriaren ehunekoa"
 
-#: ../operations/common/photocopy.c:399
+#: ../operations/common/photocopy.c:326
 msgid "Simulate color distortion produced by a copy machine"
 msgstr "Simulatu fotokopiagailu batek sortzen duen koloreen distortsioa"
 
-#: ../operations/common/pixelize.c:27
+#: ../operations/common/pixelize.c:34
+#, fuzzy
+msgid "The shape of pixels"
+msgstr "Ñabarduraren balioa"
+
+#: ../operations/common/pixelize.c:36
+#, fuzzy
+msgid "Block width"
+msgstr "Blokeen zabalera"
+
+#: ../operations/common/pixelize.c:37
 msgid "Width of blocks in pixels"
 msgstr "Blokeen zabalera (pixeletan)"
 
-#: ../operations/common/pixelize.c:29
-msgid "Block Height"
+#: ../operations/common/pixelize.c:44
+#, fuzzy
+msgid "Block height"
 msgstr "Blokeen altuera"
 
-#: ../operations/common/pixelize.c:31
+#: ../operations/common/pixelize.c:45
 msgid "Height of blocks in pixels"
 msgstr "Blokeen altuera (pixeletan)"
 
-#: ../operations/common/pixelize.c:343
+#: ../operations/common/pixelize.c:52
+#, fuzzy
+msgid "Size ratio X"
+msgstr "Puntuaren tamaina-erlazioa"
+
+#: ../operations/common/pixelize.c:53
+#, fuzzy
+msgid "Horizontal size ratio of a pixel inside each block"
+msgstr "Bloke bakoitzaren barneko puntuaren tamaina-erlazioa"
+
+#: ../operations/common/pixelize.c:57
+#, fuzzy
+msgid "Size ratio Y"
+msgstr "Puntuaren tamaina-erlazioa"
+
+#: ../operations/common/pixelize.c:58
+#, fuzzy
+msgid "Vertical size ratio of a pixel inside each block"
+msgstr "Bloke bakoitzaren barneko puntuaren tamaina-erlazioa"
+
+#: ../operations/common/pixelize.c:63
+msgid "Color used to fill the background"
+msgstr ""
+
+#: ../operations/common/pixelize.c:654
 msgid "Simplify image into an array of solid-colored rectangles"
 msgstr "Soildu irudia kolore-soileko laukizuzenen matrizera"
 
+#: ../operations/common/plasma.c:36
+msgid "Turbulence"
+msgstr "Turbulentzia"
+
+#: ../operations/common/plasma.c:37
+msgid "High values give more variation in details"
+msgstr ""
+
+#: ../operations/common/plasma.c:41
+msgid "X start of the generated buffer"
+msgstr ""
+
+#: ../operations/common/plasma.c:48
+msgid "Y start of the generated buffer"
+msgstr ""
+
+#: ../operations/common/plasma.c:55
+#, fuzzy
+msgid "Width of the generated buffer"
+msgstr "Errendatutako irudiaren zabalera"
+
+#: ../operations/common/plasma.c:63
+#, fuzzy
+msgid "Height of the generated buffer"
+msgstr "Errendatutako irudiaren altuera"
+
+#: ../operations/common/plasma.c:421
+msgid "Creates an image filled with a plasma effect."
+msgstr ""
+
 #: ../operations/common/polar-coordinates.c:34
-#: ../operations/common/polar-coordinates.c:36
 msgid "Circle depth in percent"
 msgstr "Zirkuluaren sakonera ehunekotan"
 
@@ -2148,36 +2393,32 @@ msgstr "Zirkuluaren sakonera ehunekotan"
 msgid "Offset angle"
 msgstr "Desplazamendu-angelua"
 
-#: ../operations/common/polar-coordinates.c:40
-msgid "Offset angle."
-msgstr "Desplazamendu angelua."
-
 #: ../operations/common/polar-coordinates.c:42
 msgid "Map backwards"
 msgstr "Mapatu atzerantz"
 
-#: ../operations/common/polar-coordinates.c:44
+#: ../operations/common/polar-coordinates.c:43
 msgid "Start from the right instead of the left"
 msgstr "Hasi eskuinetik (ezkerretik hasi ordez)"
 
-#: ../operations/common/polar-coordinates.c:46
+#: ../operations/common/polar-coordinates.c:45
 msgid "Map from top"
 msgstr "Mapatu goitik"
 
-#: ../operations/common/polar-coordinates.c:48
+#: ../operations/common/polar-coordinates.c:46
 msgid "Put the top row in the middle and the bottom row on the outside"
 msgstr "Jarri goiko errenkada erdian, eta behekoa kanpoan"
 
-#: ../operations/common/polar-coordinates.c:51
+#: ../operations/common/polar-coordinates.c:48
 msgid "To polar"
 msgstr "Polarretara"
 
-#: ../operations/common/polar-coordinates.c:53
+#: ../operations/common/polar-coordinates.c:49
 msgid "Map the image to a circle"
 msgstr "Mapatu irudia zirkulura"
 
-#: ../operations/common/polar-coordinates.c:57
-#: ../operations/common/polar-coordinates.c:61
+#: ../operations/common/polar-coordinates.c:52
+#: ../operations/common/polar-coordinates.c:58
 msgid "Origin point for the polar coordinates"
 msgstr "Koordenatu polarren jatorrizko puntua"
 
@@ -2185,76 +2426,89 @@ msgstr "Koordenatu polarren jatorrizko puntua"
 msgid "Choose middle"
 msgstr "Aukeratu erdia"
 
-#: ../operations/common/polar-coordinates.c:65
+#: ../operations/common/polar-coordinates.c:64
 msgid "Let origin point to be the middle one"
 msgstr "Ezarri jatorrizko puntua erdiko puntu gisa"
 
-#: ../operations/common/polar-coordinates.c:422
+#: ../operations/common/polar-coordinates.c:421
 msgid "Convert image to or from polar coordinates"
 msgstr "Bihurtu irudia koordenatu polarrera/polarretik"
 
-#: ../operations/common/posterize.c:25
-#: ../operations/external/matting-levin.c:36
+#: ../operations/common/posterize.c:24
+#: ../operations/external/matting-levin.c:41
 msgid "Levels"
 msgstr "Mailak"
 
-#: ../operations/common/posterize.c:26
+#: ../operations/common/posterize.c:25
 msgid "number of levels per component"
 msgstr "maila kopurua osagaiko"
 
-#: ../operations/common/posterize.c:82
+#: ../operations/common/posterize.c:134
 msgid "Reduces the number of levels in each color component of the image."
 msgstr "Irudiaren kolore osagai bakoitzaren maila kopurua txikiagotzen du."
+
+#: ../operations/common/radial-gradient.c:126
+msgid "Radial gradient renderer"
+msgstr "Gradiente erradialaren errendatzailea"
 
 #: ../operations/common/raw-load.c:183
 msgid "Raw image loader, wrapping dcraw with pipes."
 msgstr "Irudi gordinen kargatzailea, dcraw hodiekin doitzen du."
 
-#: ../operations/common/rectangle.c:34
+#: ../operations/common/rectangle.c:27
+msgid "Horizontal position"
+msgstr "Posizio horizontala"
+
+#: ../operations/common/rectangle.c:32
+msgid "Vertical position"
+msgstr "Posizio bertikala"
+
+#: ../operations/common/rectangle.c:37
 msgid "Horizontal extent"
 msgstr "Hedadura horizontala"
 
-#: ../operations/common/rectangle.c:36
+#: ../operations/common/rectangle.c:43
 msgid "Vertical extent"
 msgstr "Hedadura bertikala"
 
-#: ../operations/common/rectangle.c:38
+#: ../operations/common/rectangle.c:49
 msgid "Color to render"
 msgstr "Kolorea errendatzeko"
 
-#: ../operations/common/rectangle.c:134
+#: ../operations/common/rectangle.c:90
 msgid "A rectangular source of a fixed size with a solid color"
 msgstr "Tamaina finkoko eta kolore-soileko iturburuko laukizuzena"
 
 #: ../operations/common/red-eye-removal.c:31
 #: ../operations/common/threshold.c:25 ../operations/common/wind.c:26
-#: ../operations/external/matting-levin.c:31
-#: ../operations/workshop/color-rotate.c:54
+#: ../operations/external/matting-levin.c:33
 msgid "Threshold"
 msgstr "Atalasea"
 
-#: ../operations/common/red-eye-removal.c:33
+#: ../operations/common/red-eye-removal.c:32
 msgid "Red eye threshold"
 msgstr "Begi gorrien atalasea"
 
-#: ../operations/common/red-eye-removal.c:119
+#: ../operations/common/red-eye-removal.c:170
 msgid "Remove the red eye effect caused by camera flashes"
 msgstr "Kendu begi gorri efektua (kameraren argiak sortutakoa)"
 
-#: ../operations/common/reinhard05.c:29
+#: ../operations/common/reinhard05.c:27
 msgid "Overall brightness of the image"
 msgstr "Irudiaren distira orokorra"
 
 #: ../operations/common/reinhard05.c:30
-msgid "Chromatic Adaptation"
+#, fuzzy
+msgid "Chromatic adaptation"
 msgstr "Moldaera kromatikoa"
 
-#: ../operations/common/reinhard05.c:32
+#: ../operations/common/reinhard05.c:31
 msgid "Adaptation to color variation across the image"
 msgstr "Irudian zehar dagoen kolore-aldakuntzara moldaera"
 
-#: ../operations/common/reinhard05.c:33
-msgid "Light Adaptation"
+#: ../operations/common/reinhard05.c:34
+#, fuzzy
+msgid "Light adaptation"
 msgstr "Argiaren moldaera"
 
 #: ../operations/common/reinhard05.c:35
@@ -2273,56 +2527,39 @@ msgstr ""
 "eratorritako eragile global eraginkor bat da hau, luminantzia 0.0-1.0 "
 "barrutian sortuz."
 
-#: ../operations/common/remap.c:96
+#: ../operations/common/remap.c:98
 msgid "stretch components of pixels individually based on luminance envelopes"
 msgstr "tiratu pixel osagaiak banaka luminantziaren gainazaletan oinarrituta"
 
-#: ../operations/common/ripple.c:32 ../operations/common/waves.c:34
+#: ../operations/common/ripple.c:32 ../operations/common/waves.c:38
 msgid "Amplitude"
 msgstr "Anplitudea"
 
-#: ../operations/common/ripple.c:34 ../operations/common/waves.c:36
-msgid "Amplitude of the ripple"
-msgstr "Izurtzearen anplitudea"
-
-#: ../operations/common/ripple.c:36 ../operations/common/waves.c:38
+#: ../operations/common/ripple.c:36 ../operations/common/waves.c:42
 msgid "Period"
 msgstr "Periodoa"
 
-#: ../operations/common/ripple.c:38
-msgid "Period of the ripple"
-msgstr "Izurtzearen periodoa"
-
-#: ../operations/common/ripple.c:40 ../operations/common/ripple.c:42
-#: ../operations/common/waves.c:42 ../operations/common/waves.c:44
+#: ../operations/common/ripple.c:40 ../operations/common/waves.c:46
 msgid "Phase shift"
 msgstr "Fasearen desplazamendua"
 
-#: ../operations/common/ripple.c:46
-msgid "Angle in degree"
-msgstr "Angelua gradutan"
-
-#: ../operations/common/ripple.c:52
+#: ../operations/common/ripple.c:50
 msgid "Wave type"
 msgstr "Uhin mota"
 
-#: ../operations/common/ripple.c:55
-msgid "Type of wave"
-msgstr "Uhinaren mota"
-
-#: ../operations/common/ripple.c:57
+#: ../operations/common/ripple.c:53
 msgid "Tileable"
 msgstr "Mosaikoan jar daiteke"
 
-#: ../operations/common/ripple.c:59
+#: ../operations/common/ripple.c:54
 msgid "Retain tilebility"
 msgstr "Mantendu mosaiko bihurtzeko gaitasuna"
 
-#: ../operations/common/ripple.c:184
+#: ../operations/common/ripple.c:170
 msgid "Displace pixels in a ripple pattern"
 msgstr "Desplazatu pixelak izurtze-ereduan"
 
-#: ../operations/common/save.c:25
+#: ../operations/common/save.c:26
 msgid "Path of file to save."
 msgstr "Gordeko den fitxategiaren bide-izena."
 
@@ -2336,33 +2573,29 @@ msgstr ""
 msgid "Shift"
 msgstr "Desplazatu"
 
-#: ../operations/common/shift.c:33
+#: ../operations/common/shift.c:32
 msgid "Maximum amount to shift"
 msgstr "Desplazamenduaren gehienezko kopurua"
 
-#: ../operations/common/shift.c:38
-msgid "Direction"
-msgstr "Norabidea"
-
-#: ../operations/common/shift.c:41
+#: ../operations/common/shift.c:36
 msgid "Shift direction"
 msgstr "Desplazamenduaren norabidea"
 
-#: ../operations/common/shift.c:230
+#: ../operations/common/shift.c:150
 msgid "Shift each row or column of pixels by a random amount"
 msgstr "Desplazatu errenkada edo zutabe bakoitza ausazko kopuruetan"
 
-#: ../operations/common/snn-mean.c:28
-#: ../operations/workshop/snn-percentile.c:29
+#: ../operations/common/snn-mean.c:33
+#: ../operations/workshop/snn-percentile.c:31
 msgid "Pairs"
 msgstr "Pareak"
 
-#: ../operations/common/snn-mean.c:29
+#: ../operations/common/snn-mean.c:34
 msgid "Number of pairs; higher number preserves more acute features"
 msgstr ""
 "Pare-kopurua; zenbaki altuago batek eginbide zehatzagoak mantentzen ditu "
 
-#: ../operations/common/snn-mean.c:340
+#: ../operations/common/snn-mean.c:335
 msgid ""
 "Noise reducing edge enhancing blur filter based  on Symmetric Nearest "
 "Neighbours"
@@ -2370,11 +2603,11 @@ msgstr ""
 "Zarata murriztu eta  ertzak hobetzeko lausotze iragazkia, auzokide simetriko "
 "hurbilenean oinarrituta"
 
-#: ../operations/common/softglow.c:26 ../operations/common/softglow.c:28
+#: ../operations/common/softglow.c:26
 msgid "Glow radius"
 msgstr "Dirdiraren erradioa"
 
-#: ../operations/common/softglow.c:250
+#: ../operations/common/softglow.c:231
 msgid "Simulate glow by making highlights intense and fuzzy"
 msgstr "Simulatu dirdira intentsitatea eta hurbilekoa nabarmenduz"
 
@@ -2386,7 +2619,7 @@ msgstr ""
 "Ingurukoa kontuan hartuta, irudiaren albo luzeenetik gertu dauden balio "
 "idealak hobetzeko, hau handitzeak exekuzio denbora handitzen du."
 
-#: ../operations/common/stress.c:32
+#: ../operations/common/stress.c:39
 msgid ""
 "Number of iterations, a higher number of iterations provides a less noisy "
 "rendering at a computational cost"
@@ -2394,12 +2627,21 @@ msgstr ""
 "Iterazio kopurua, iterazio kopuru handiago batek zarata gutxiagoko "
 "errendatzea dakar, kalkuluaren kostu handiago batekin."
 
-#: ../operations/common/stress.c:191
+#: ../operations/common/stress.c:199
 msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
 msgstr ""
 "'Spatio Temporal Retinex' bezalako gainazala laginketa estokastikoarekin"
 
-#: ../operations/common/stretch-contrast.c:158
+#: ../operations/common/stretch-contrast.c:25
+#, fuzzy
+msgid "Keep colors"
+msgstr "Beste kolorea"
+
+#: ../operations/common/stretch-contrast.c:26
+msgid "Impact each channel with the same amount"
+msgstr ""
+
+#: ../operations/common/stretch-contrast.c:568
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
@@ -2410,27 +2652,38 @@ msgstr ""
 "hobetzen ditu (kontraste gutxiko irudiak, irudi oso ilunak, edo irudi oso "
 "argiak)."
 
+#: ../operations/common/stretch-contrast-hsv.c:223
+#, fuzzy
+msgid ""
+"Scales the components of the buffer to be in the 0.0-1.0 range. This "
+"improves images that make poor use of the available contrast (little "
+"contrast, very dark, or very bright images). This version differs from "
+"Contrast Autostretch in that it works in HSV scpace, and preserves hue."
+msgstr ""
+"Bufferreko osagaiak eskalatzen ditu 0.0-1.0 barrutian egon daitezen. "
+"Eskuragarri dagoen kontrastearen erabilera pobrea egiten duten irudiak "
+"hobetzen ditu (kontraste gutxiko irudiak, irudi oso ilunak, edo irudi oso "
+"argiak)."
+
 #: ../operations/common/svg-huerotate.c:27
-#: ../operations/common/svg-luminancetoalpha.c:27
-#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:26
+#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:25
 msgid "Values"
 msgstr "Balioak"
 
-#: ../operations/common/svg-huerotate.c:27
-#: ../operations/common/svg-luminancetoalpha.c:27
-#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:26
+#: ../operations/common/svg-huerotate.c:28
+#: ../operations/common/svg-matrix.c:28 ../operations/common/svg-saturate.c:26
 msgid "list of <number>s"
 msgstr "<zenbaki>en zerrenda"
 
-#: ../operations/common/svg-huerotate.c:116
+#: ../operations/common/svg-huerotate.c:117
 msgid "SVG color matrix operation svg_huerotate"
 msgstr "SVG koloreen matrizearen eragiketa: svg_huerotate"
 
-#: ../operations/common/svg-luminancetoalpha.c:95
+#: ../operations/common/svg-luminancetoalpha.c:93
 msgid "SVG color matrix operation svg_luminancetoalpha"
 msgstr "SVG koloreen matrizearen eragiketa: svg_luminancetoalpha"
 
-#: ../operations/common/svg-matrix.c:132
+#: ../operations/common/svg-matrix.c:133
 msgid "SVG color matrix operation svg_matrix"
 msgstr "SVG koloreen matrizearen eragiketa: svg_matrix"
 
@@ -2438,13 +2691,35 @@ msgstr "SVG koloreen matrizearen eragiketa: svg_matrix"
 msgid "SVG color matrix operation svg_saturate"
 msgstr "SVG koloreen matrizearen eragiketa: svg_saturate"
 
-#: ../operations/common/threshold.c:26
-msgid "Global threshold level (used when there is no auxiliary input buffer)."
+#: ../operations/common/texturize-canvas.c:34
+msgid "Direction"
+msgstr "Norabidea"
+
+#: ../operations/common/texturize-canvas.c:37
+msgid ""
+"Position of the light source which lightens the canvas: Top-right, Top-left, "
+"Bottom-left or Bottom-right"
+msgstr ""
+
+#: ../operations/common/texturize-canvas.c:41
+msgid ""
+"Apparent depth of the rendered canvas effect; from 1 (very flat) to 50 (very "
+"deep)"
+msgstr ""
+
+#: ../operations/common/texturize-canvas.c:4377
+msgid "Textures the image as if it were an artist's canvas."
+msgstr ""
+
+#: ../operations/common/threshold.c:28
+#, fuzzy
+msgid ""
+"Scalar threshold level (overriden if an auxiliary input buffer is provided.)."
 msgstr ""
 "Atalase maila orokorra (sarreraren buffer lagungarririk ez dagoenean "
 "erabiltzen da)."
 
-#: ../operations/common/threshold.c:110
+#: ../operations/common/threshold.c:112
 msgid ""
 "Thresholds the image to white/black based on either the global value set in "
 "the value property, or per pixel from the aux input."
@@ -2453,9 +2728,34 @@ msgstr ""
 "ezarritako balio orokorrean, edo sarrera lagungarriko pixel bakoitzean "
 "oinarrituz."
 
-#: ../operations/common/tile.c:121
+#: ../operations/common/tile.c:24
+#, fuzzy
+msgid "Horizontal offset"
+msgstr "Itzalaren desplazamendu horizontala"
+
+#: ../operations/common/tile.c:29
+#, fuzzy
+msgid "Vertical offset"
+msgstr "Itzalaren desplazamendu bertikala"
+
+#: ../operations/common/tile.c:135
 msgid "Infinitely repeats the input image."
 msgstr "Sarrerako irudia etengabe errepikatzen du."
+
+#: ../operations/common/tile-glass.c:28
+#, fuzzy
+msgid "Tile Width"
+msgstr "Marra-zabalera"
+
+#: ../operations/common/tile-glass.c:34
+#, fuzzy
+msgid "Tile Height"
+msgstr "Marra-altuera"
+
+#: ../operations/common/tile-glass.c:235
+#, fuzzy
+msgid "Simulate distortion caused by rectangular glass tiles"
+msgstr "Simulatu fotokopiagailu batek sortzen duen koloreen distortsioa"
 
 #: ../operations/common/tile-seamless.c:165
 msgid ""
@@ -2463,11 +2763,15 @@ msgid ""
 "aware, so the result may need post-processing."
 msgstr ""
 
-#: ../operations/common/unsharp-mask.c:30
+#: ../operations/common/unsharp-mask.c:24
+msgid "Standard Deviation"
+msgstr ""
+
+#: ../operations/common/unsharp-mask.c:32
 msgid "Scale, strength of effect"
 msgstr "Eskala, efektuaren indarra"
 
-#: ../operations/common/unsharp-mask.c:77
+#: ../operations/common/unsharp-mask.c:84
 msgid ""
 "The most widely used method for sharpening an image, sharpens by adding "
 "false mach-bands around edges"
@@ -2475,7 +2779,7 @@ msgstr ""
 "Irudiaren zorroztasun maila hobetzeko metodorik erabiliena, zorroztasuna "
 "hobetzen du ertzen inguruan 'Mach' banda faltsuak gehituz"
 
-#: ../operations/common/value-invert.c:150
+#: ../operations/common/value-invert.c:149
 msgid ""
 "Inverts just the value component, the result is the corresponding `inverted' "
 "image."
@@ -2483,16 +2787,11 @@ msgstr ""
 "Balioaren osagaia soilik alderantzikatzen du, emaitza dagokion "
 "'alderantzikatutako' irudia da"
 
-# 'Itzala' ere izan daiteke
 #: ../operations/common/vignette.c:30
-msgid "Shape"
-msgstr "Forma"
+msgid "Vignette shape"
+msgstr ""
 
-#: ../operations/common/vignette.c:33
-msgid "Shape of the vignette"
-msgstr "Binetaren forma"
-
-#: ../operations/common/vignette.c:37
+#: ../operations/common/vignette.c:35
 msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
@@ -2500,56 +2799,45 @@ msgstr ""
 "'beltza' lehenetsi gisa, hemen gardentasuna erabili dezakezu irudiaren atal "
 "batzuk ezabatzeko"
 
-#: ../operations/common/vignette.c:42
+#: ../operations/common/vignette.c:38
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr "Zeinen urrun doa bineta irudiaren diagonal erdiaren zati bezala"
 
-#: ../operations/common/vignette.c:45 ../operations/common/vignette.c:47
+#: ../operations/common/vignette.c:42
 msgid "Softness"
 msgstr "Leuntasuna"
 
-#: ../operations/common/vignette.c:51
+#: ../operations/common/vignette.c:45
+msgid "Gamma"
+msgstr "Gamma"
+
+#: ../operations/common/vignette.c:46
 msgid "Falloff linearity"
 msgstr "Erortzearen linealtasuna"
 
-#: ../operations/common/vignette.c:53
+#: ../operations/common/vignette.c:49
 msgid "Proportion"
 msgstr "Proportzioa"
 
-#: ../operations/common/vignette.c:55
+#: ../operations/common/vignette.c:50
 msgid "How close we are to image proportions"
 msgstr "Zeinen hurbil gaude irudiaren proportzioetatik"
 
-#: ../operations/common/vignette.c:57
+#: ../operations/common/vignette.c:53
 msgid "Squeeze"
 msgstr "Estutu"
 
-#: ../operations/common/vignette.c:59
-msgid ""
-"Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
-"inf:1, this is applied after proportion is taken into account, to directly "
-"use squeeze factor as proportions, set proportion to 0.0."
-msgstr ""
-"Erabiliko den aspektu-erlazioa, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:"
-"inf 1.0 = inf:1, hau proportzioa kontuan hartu eta gero aplikatzen da, "
-"estutzearen faktorea zuzenean proportzio gisa erabiltzeko, ezarri "
-"proportzioa 0.0 gisa."
-
-#: ../operations/common/vignette.c:66
+#: ../operations/common/vignette.c:61
 msgid "Horizontal center of vignetting"
 msgstr "Binetaren zentro horizontala"
 
-#: ../operations/common/vignette.c:70
+#: ../operations/common/vignette.c:67
 msgid "Vertical center of vignetting"
 msgstr "Binetaren zentro bertikala"
 
 #: ../operations/common/vignette.c:72
 msgid "Rotation"
 msgstr "Biraketa"
-
-#: ../operations/common/vignette.c:74
-msgid "Rotation angle"
-msgstr "Biratze-angelua"
 
 #: ../operations/common/vignette.c:383
 msgid ""
@@ -2561,59 +2849,56 @@ msgstr ""
 "luminantziaren beherakada simulatzen du, eta argazkilaritza analogikoan "
 "naturalki ematen diren ertzen bestelako lausotze efektuak"
 
-#: ../operations/common/warp.c:37 ../operations/common/warp.c:48
-msgid "Effect Strength"
-msgstr "Efektuaren indarra"
-
-#: ../operations/common/warp.c:39 ../operations/external/text.c:29
+#: ../operations/common/warp.c:38 ../operations/external/text.c:32
+#: ../operations/workshop/gblur-1d.c:48
 msgid "Size"
 msgstr "Tamaina"
 
-#: ../operations/common/warp.c:41
-msgid "Effect Size"
-msgstr "Efektuaren tamaina"
-
-#: ../operations/common/warp.c:43 ../operations/external/path.c:38
+#: ../operations/common/warp.c:41 ../operations/external/path.c:40
 msgid "Hardness"
 msgstr "Gogortasuna"
 
-#: ../operations/common/warp.c:45
-msgid "Effect Hardness"
-msgstr "Efektuaren gogortasuna"
-
-#: ../operations/common/warp.c:47
+#: ../operations/common/warp.c:44
 msgid "Stroke"
 msgstr "Trazua"
 
-#: ../operations/common/warp.c:50
+#: ../operations/common/warp.c:46
 msgid "Behavior"
 msgstr "Portaera"
 
-#: ../operations/common/warp.c:53
+#: ../operations/common/warp.c:49
 msgid "Behavior of the op"
 msgstr "Eragilearen portaera"
 
-#: ../operations/common/warp.c:399
+#: ../operations/common/warp.c:411
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Kalkulatu desplazamenduaren mapatze erlatiboa trazu batetik"
 
-#: ../operations/common/waves.c:28
+#: ../operations/common/waves.c:27
 msgid "X coordinate of the center of the waves"
 msgstr "Uhinen zentroaren X koordenatua"
 
-#: ../operations/common/waves.c:32
+#: ../operations/common/waves.c:33
 msgid "Y coordinate of the center of the waves"
 msgstr "Uhinen zentroaren Y koordenatua"
 
-#: ../operations/common/waves.c:40
+#: ../operations/common/waves.c:39
+msgid "Amplitude of the ripple"
+msgstr "Izurtzearen anplitudea"
+
+#: ../operations/common/waves.c:43
 msgid "Period (wavelength) of the ripple"
 msgstr "Izurtzearen periodoa (uhin luzera)"
 
-#: ../operations/common/waves.c:46 ../operations/common/waves.c:48
+#: ../operations/common/waves.c:49
 msgid "Aspect ratio"
 msgstr "Aspektu-erlazioa"
 
-#: ../operations/common/waves.c:55
+#: ../operations/common/waves.c:54
+msgid "Mathematical method for reconstructing pixel values"
+msgstr ""
+
+#: ../operations/common/waves.c:56
 msgid "Clamp deformation"
 msgstr "Finkatu deformazioa"
 
@@ -2621,17 +2906,11 @@ msgstr "Finkatu deformazioa"
 msgid "Limit deformation in the image area."
 msgstr "Mugatu deformazioa irudiaren arean."
 
-#: ../operations/common/waves.c:187
+#: ../operations/common/waves.c:178
 msgid "Distort the image with waves"
 msgstr "Distortsionatu irudia uhinekin"
 
-#: ../operations/common/weighted-blend.c:25 ../operations/generated/add.c:29
-#: ../operations/generated/divide.c:29 ../operations/generated/gamma.c:29
-#: ../operations/generated/multiply.c:29 ../operations/generated/subtract.c:29
-msgid "global value used if aux doesn't contain data"
-msgstr "erabiliko den balio orokorra lagungarriak daturik ez badu"
-
-#: ../operations/common/weighted-blend.c:124
+#: ../operations/common/weighted-blend.c:187
 msgid "blend two images using alpha values as weights"
 msgstr "nahastu bi irudiak alfa balioak ponderazio gisa erabiliz"
 
@@ -2639,11 +2918,11 @@ msgstr "nahastu bi irudiak alfa balioak ponderazio gisa erabiliz"
 msgid "Whirl"
 msgstr "Bihurritu"
 
-#: ../operations/common/whirl-pinch.c:38
+#: ../operations/common/whirl-pinch.c:37
 msgid "Whirl angle (degrees)"
 msgstr "Bihurritze-angelua (graduak)"
 
-#: ../operations/common/whirl-pinch.c:40
+#: ../operations/common/whirl-pinch.c:41
 msgid "Pinch"
 msgstr "Tiratu"
 
@@ -2659,7 +2938,7 @@ msgstr ""
 "Erradioa (1.0 irudian sartzen den zirkulurik handiena da, eta 2.0 "
 "ertzetaraino doa)"
 
-#: ../operations/common/whirl-pinch.c:274
+#: ../operations/common/whirl-pinch.c:273
 msgid "Distort an image by whirling and pinching"
 msgstr "Distortsionatu irudia bihurrituz eta tiratuz"
 
@@ -2671,13 +2950,13 @@ msgstr "Balio handiek efektua irudiaren eremu gutxiagotara murrizten dute"
 msgid "Higher values increase the magnitude of the effect"
 msgstr "Balio handiek efektuaren magnitudea handitzen dute"
 
-#: ../operations/common/wind.c:367
+#: ../operations/common/wind.c:366
 msgid "Wind-like bleed effect"
 msgstr "Haizearen antzeko koskatze-efektua"
 
 #: ../operations/common/write-buffer.c:26
-msgid "Write to an existing GeglBuffer"
-msgstr "Idatzi existitzen den GeglBuffer batean"
+msgid "A pre-existing GeglBuffer to write incoming buffer data to."
+msgstr ""
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -2687,23 +2966,34 @@ msgstr "Erreferentzia"
 msgid "The reference ID used as input (for use in XML)."
 msgstr "Sarreran erabiliko den erreferentziaren IDa (XMLan erabiltzeko)."
 
-#: ../operations/core/clone.c:110
+#: ../operations/core/clone.c:109
 msgid "Clone a buffer"
 msgstr "Klonatu bufferra"
 
-#: ../operations/core/convert-format.c:28
+#: ../operations/core/cast-format.c:27
+#, fuzzy
+msgid "Input format"
+msgstr "Irteeraren formatua"
+
+#: ../operations/core/cast-format.c:28
+msgid "The babl format of the input"
+msgstr ""
+
+#: ../operations/core/cast-format.c:29 ../operations/core/convert-format.c:27
 msgid "Output format"
 msgstr "Irteeraren formatua"
 
-#: ../operations/core/convert-format.c:29
-msgid "Babl output format string"
-msgstr "Babl irteeraren formatu katea"
+#: ../operations/core/cast-format.c:113
+msgid ""
+"Cast the data between input_format and output_format, both bormats must have "
+"the same bpp"
+msgstr ""
 
-#: ../operations/core/convert-format.c:81
+#: ../operations/core/convert-format.c:87
 msgid "Convert the data to the specified format"
 msgstr "Bihurtu irudia zehaztutako formatura"
 
-#: ../operations/core/crop.c:194
+#: ../operations/core/crop.c:202
 msgid "Crop a buffer"
 msgstr "Moztu bufferra"
 
@@ -2711,79 +3001,79 @@ msgstr "Moztu bufferra"
 msgid "No operation (can be used as a routing point)"
 msgstr "Eragiketarik ez (bideratzearen puntu gisa erabili daiteke)"
 
-#: ../operations/external/ff-load.c:25 ../operations/external/jp2-load.c:25
-#: ../operations/external/jpg-load.c:25
-msgid "Path of file to load"
+#: ../operations/external/ff-load.c:26
+#, fuzzy
+msgid "Path of video file to load"
 msgstr "Fitxategiaren bide-izena kargatzeko"
 
-#: ../operations/external/ff-load.c:26 ../operations/external/v4l.c:29
-msgid "Frame"
-msgstr "Fotograma"
-
-#: ../operations/external/ff-load.c:26
+#: ../operations/external/ff-load.c:28
 msgid "Frame number"
 msgstr "Fotograma zenbakia"
 
-#: ../operations/external/ff-load.c:471
+#: ../operations/external/ff-load.c:475
 msgid "FFmpeg video frame importer"
 msgstr "FFmpeg bideoko fotogramen inportatzailea"
 
-#: ../operations/external/jp2-load.c:70
+#: ../operations/external/jp2-load.c:26 ../operations/external/jpg-load.c:26
+msgid "Path of file to load"
+msgstr "Fitxategiaren bide-izena kargatzeko"
+
+#: ../operations/external/jp2-load.c:71
 #, c-format
 msgid "Unknown JPEG 2000 image format in '%s'"
 msgstr "JPEG 2000 formatu ezezaguna '%s'(e)n"
 
-#: ../operations/external/jp2-load.c:77
+#: ../operations/external/jp2-load.c:78
 #, c-format
 msgid "Unable to open JPEG 2000 image in '%s'"
 msgstr "Ezin da JPEG 2000 irudia '%s'(e)n ireki"
 
-#: ../operations/external/jp2-load.c:84
+#: ../operations/external/jp2-load.c:85
 #, c-format
 msgid "Unable to create output color profile for '%s'"
 msgstr "Ezin da '%s'(r)en irteerako kolore-profila sortu"
 
-#: ../operations/external/jp2-load.c:92
+#: ../operations/external/jp2-load.c:93
 #, c-format
 msgid "Unable to convert image to sRGB color space when processing '%s'"
 msgstr "Ezin da irudia sGBU kolore-espaziora bihurtu '%s' prozesatzean"
 
-#: ../operations/external/jp2-load.c:100
+#: ../operations/external/jp2-load.c:101
 #, c-format
 msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
 msgstr "Onartu gabeko ez-GBU JPEG fitxategia %d osagaiekin '%s'(e)n"
 
-#: ../operations/external/jp2-load.c:111
+#: ../operations/external/jp2-load.c:112
 #, c-format
 msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
 msgstr "Onartu gabeko JPEG 2000 fitxategia %d sakonarekin '%s'(e)n"
 
-#: ../operations/external/jp2-load.c:124
+#: ../operations/external/jp2-load.c:125
 #, c-format
 msgid "Components of input image '%s' don't match"
 msgstr "Sarrerako '%s' irudiaren osagaiak ez datoz bat"
 
-#: ../operations/external/jp2-load.c:209
+#: ../operations/external/jp2-load.c:210
 #, c-format
 msgid "One or more of R, G, B components are missing from '%s'"
 msgstr "Gutxienez G, B edo U osagaietariko bat falta da '%s'(e)n"
 
-#: ../operations/external/jp2-load.c:218
+#: ../operations/external/jp2-load.c:219
 #, c-format
 msgid "One or more of R, G, B components have signed data in '%s'"
 msgstr ""
 "Gutxienez G, B edo U osagaietariko batek sinatutako datuak ditu '%s'(e)n"
 
-#: ../operations/external/jp2-load.c:252
+#: ../operations/external/jp2-load.c:253
 #, c-format
 msgid "Error reading row %d component %d from '%s'"
 msgstr "Errorea %d. errenkadako %d. osagaia '%s'(e)tik irakurtzean"
 
-#: ../operations/external/jp2-load.c:397
+#: ../operations/external/jp2-load.c:398
 msgid "JPEG 2000 image loader"
 msgstr "JPEG 2000 irudi kargatzailea"
 
-#: ../operations/external/jpg-load.c:223
+#: ../operations/external/jpg-load.c:208
 msgid "JPG image loader"
 msgstr "JPG irudi kargatzailea"
 
@@ -2792,48 +3082,48 @@ msgid "Target path and filename, use '-' for stdout"
 msgstr ""
 "Helburuaren bide- eta fitxategi-izena, erabili '-' helburua stdout bada"
 
-#: ../operations/external/jpg-save.c:27 ../operations/external/webp-save.c:27
+#: ../operations/external/jpg-save.c:28 ../operations/external/webp-save.c:27
 msgid "Quality"
 msgstr "Kalitatea"
 
-#: ../operations/external/jpg-save.c:28
+#: ../operations/external/jpg-save.c:29
 msgid "JPEG compression quality (between 1 and 100)"
 msgstr "JPEG konprimatze-kalitatea (1 eta 100 artekoa)"
 
-#: ../operations/external/jpg-save.c:29
+#: ../operations/external/jpg-save.c:32
 msgid "Smoothing"
 msgstr "Leuntzea"
 
-#: ../operations/external/jpg-save.c:30
+#: ../operations/external/jpg-save.c:33
 msgid "Smoothing factor from 1 to 100; 0 disables smoothing"
 msgstr "Leuntze-faktorea 1 eta 100 artean; 0 leuntzea desgaitzeko"
 
-#: ../operations/external/jpg-save.c:31
+#: ../operations/external/jpg-save.c:36
 msgid "Optimize"
 msgstr "Optimizatu"
 
-#: ../operations/external/jpg-save.c:32
+#: ../operations/external/jpg-save.c:37
 msgid "Use optimized huffman tables"
 msgstr "Erabili optimizatutako huffman taulak"
 
-#: ../operations/external/jpg-save.c:33
+#: ../operations/external/jpg-save.c:38
 msgid "Progressive"
 msgstr "Progresiboa"
 
-#: ../operations/external/jpg-save.c:34
+#: ../operations/external/jpg-save.c:39
 msgid "Create progressive JPEG images"
 msgstr "Sortu JPEG irudi progresiboak"
 
-#: ../operations/external/jpg-save.c:35
-#: ../operations/workshop/color-rotate.c:46
+#: ../operations/external/jpg-save.c:40
+#: ../operations/workshop/color-rotate.c:57
 msgid "Grayscale"
 msgstr "Gris-eskala"
 
-#: ../operations/external/jpg-save.c:36
+#: ../operations/external/jpg-save.c:41
 msgid "Create a grayscale (monochrome) image"
 msgstr "Sortu gris-eskalako irudia (monokromoa)"
 
-#: ../operations/external/jpg-save.c:192
+#: ../operations/external/jpg-save.c:197
 msgid "JPEG image saver (passes the buffer through, saves as a side-effect)"
 msgstr ""
 "JPEG irudi gordetzailea (bufferretik zehar pasatzen da, ondorio gisa "
@@ -2849,7 +3139,7 @@ msgid "The cmsHPROFILE corresponding to the icc profile for the input data."
 msgstr ""
 
 #: ../operations/external/lcms-from-profile.c:37
-msgid "Rendering Intent"
+msgid "Rendering intent"
 msgstr ""
 
 #: ../operations/external/lcms-from-profile.c:40
@@ -2857,24 +3147,23 @@ msgid "The rendering intent to use in the conversion."
 msgstr ""
 
 #: ../operations/external/lcms-from-profile.c:42
-msgid "Black Point Compensation"
+msgid "Black point compensation"
 msgstr ""
 
-#: ../operations/external/lcms-from-profile.c:43
+#: ../operations/external/lcms-from-profile.c:44
 msgid "Convert using black point compensation."
 msgstr ""
 
-#: ../operations/external/lcms-from-profile.c:232
+#: ../operations/external/lcms-from-profile.c:240
 msgid ""
-"Converts the input from an ICC color profile to a well defined babl format. "
-"The input buffer should be a babl_format_n type."
+"Converts the input from an ICC color profile to a well defined babl format."
 msgstr ""
 
 #: ../operations/external/matting-levin.c:25
 msgid "Epsilon"
 msgstr "Epsilon"
 
-#: ../operations/external/matting-levin.c:27
+#: ../operations/external/matting-levin.c:26
 msgid "Log of the error weighting"
 msgstr "Erregistratu ponderazioaren errorea"
 
@@ -2882,32 +3171,33 @@ msgstr "Erregistratu ponderazioaren errorea"
 msgid "Radius of the processing window"
 msgstr "Prozesuaren leihoaren erradioa"
 
-#: ../operations/external/matting-levin.c:33
+#: ../operations/external/matting-levin.c:34
 msgid "Alpha threshold for multilevel processing"
 msgstr "Maila anitzeko prozesatzearen Alfa atalasea"
 
-#: ../operations/external/matting-levin.c:34
+#: ../operations/external/matting-levin.c:37
 msgid "Lambda"
 msgstr "Lambda"
 
 # trimap = hiru tonutako mapa (beltza, zuria eta grisa)
-#: ../operations/external/matting-levin.c:35
+#: ../operations/external/matting-levin.c:39
 msgid "Trimap influence factor"
 msgstr "Hiru tonuko maparen influentziaren faktorea"
 
-#: ../operations/external/matting-levin.c:38
+#: ../operations/external/matting-levin.c:42
 msgid "Number of downsampled levels to use"
 msgstr "Gutxiagotutako laginen maila kopurua"
 
-#: ../operations/external/matting-levin.c:39
-msgid "Active Levels"
+#: ../operations/external/matting-levin.c:45
+#, fuzzy
+msgid "Active levels"
 msgstr "Maila aktiboak"
 
-#: ../operations/external/matting-levin.c:41
+#: ../operations/external/matting-levin.c:46
 msgid "Number of levels to perform solving"
 msgstr "Maila kopurua ebazteko"
 
-#: ../operations/external/matting-levin.c:1439
+#: ../operations/external/matting-levin.c:1455
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha mat. Set white as selected, black as unselected, for the tri-map."
@@ -2918,7 +3208,7 @@ msgstr ""
 
 #: ../operations/external/npy-save.c:32 ../operations/external/png-save.c:27
 #: ../operations/external/ppm-save.c:26 ../operations/external/rgbe-save.c:27
-#: ../operations/workshop/external/ff-save.c:30
+#: ../operations/workshop/external/ff-save.c:31
 msgid "Target path and filename, use '-' for stdout."
 msgstr ""
 "Helburuaren bide- eta fitxategi-izena, erabili '-' helburua stdout bada."
@@ -2927,11 +3217,11 @@ msgstr ""
 msgid "NPY image saver (Numerical python file saver.)"
 msgstr "NPY irudi gordetzailea (Zenbakizko Python fitxategi-gordetzailea)."
 
-#: ../operations/external/path.c:27
+#: ../operations/external/path.c:26
 msgid "Fill Color"
 msgstr "Kolore betegarria"
 
-#: ../operations/external/path.c:28
+#: ../operations/external/path.c:27
 msgid "Color of paint to use for filling, use 0 opacity to disable filling"
 msgstr ""
 "Betetzeko erabiliko den margoaren kolorea, erabili 0 opakutasuna betetzea "
@@ -2953,11 +3243,11 @@ msgstr "Trazu-zabalera"
 msgid "The width of the brush used to stroke the path"
 msgstr "Brotxaren zabalera bidea trazatzeko"
 
-#: ../operations/external/path.c:35
+#: ../operations/external/path.c:36
 msgid "Stroke opacity"
 msgstr "Trazuaren opakutasuna"
 
-#: ../operations/external/path.c:36
+#: ../operations/external/path.c:37
 msgid ""
 "Opacity of stroke, note, does not behave like SVG since at the moment "
 "stroking is done using an airbrush tool"
@@ -2965,46 +3255,46 @@ msgstr ""
 "Trazuaren opakutasunak  ez du SVG-n duen portaera bera, oraingoz trazua "
 "aerografo tresnarekin egiten delako."
 
-#: ../operations/external/path.c:39
+#: ../operations/external/path.c:41
 msgid "Hardness of the brush, 0.0 for a soft brush, 1.0 for a hard brush"
 msgstr "Brotxaren gogortasuna: 0.0 brotxa leuna; 1.0 brotxa gogorra"
 
-#: ../operations/external/path.c:41
+#: ../operations/external/path.c:44
 msgid "Fill rule"
 msgstr "Betetze-araua"
 
-#: ../operations/external/path.c:42
+#: ../operations/external/path.c:45
 msgid "How to determine what to fill (nonzero|evenodd)"
 msgstr "Nola erabaki zer beteko den (ez-zero|bikoiti-bakoitia)"
 
-#: ../operations/external/path.c:44 ../operations/external/vector-fill.c:36
-#: ../operations/external/vector-stroke.c:36
+#: ../operations/external/path.c:47 ../operations/external/vector-fill.c:37
+#: ../operations/external/vector-stroke.c:38
 msgid "Transform"
 msgstr "Eraldatu"
 
-#: ../operations/external/path.c:45
+#: ../operations/external/path.c:48
 msgid "SVG style description of transform"
 msgstr "Eraldaketaren SVG itxurako azalpena"
 
-#: ../operations/external/path.c:47
+#: ../operations/external/path.c:50
 msgid "Fill opacity"
 msgstr "Betegarriaren opakutasuna"
 
-#: ../operations/external/path.c:48
+#: ../operations/external/path.c:51
 msgid "The fill opacity to use"
 msgstr "Erabiliko den betegarriaren opakutasuna"
 
-#: ../operations/external/path.c:50 ../operations/external/vector-fill.c:39
-#: ../operations/external/vector-stroke.c:39
+#: ../operations/external/path.c:54 ../operations/external/vector-fill.c:40
+#: ../operations/external/vector-stroke.c:41
 msgid "Vector"
 msgstr "Bektorea"
 
-#: ../operations/external/path.c:51 ../operations/external/vector-fill.c:40
-#: ../operations/external/vector-stroke.c:40
+#: ../operations/external/path.c:55 ../operations/external/vector-fill.c:41
+#: ../operations/external/vector-stroke.c:42
 msgid "A GeglVector representing the path of the stroke"
 msgstr "Trazuaren bidea adierazten duen Gegl bektorea"
 
-#: ../operations/external/path.c:518
+#: ../operations/external/path.c:513
 msgid "Renders a brush stroke"
 msgstr "Brotxaren trazua errendatzen du"
 
@@ -3020,7 +3310,7 @@ msgstr "Erabiliko den GdkPixbuf"
 msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
 msgstr "<em>pixbuf</em>-eko memorian kokatutako GdkPixBuf erabiltzen du."
 
-#: ../operations/external/png-load.c:446
+#: ../operations/external/png-load.c:447
 msgid "PNG image loader."
 msgstr "PNG irudi kargatzailea."
 
@@ -3032,33 +3322,34 @@ msgstr "Konpresioa"
 msgid "PNG compression level from 1 to 9"
 msgstr "PNG konpresio-maila (1 eta 9 artekoa)"
 
-#: ../operations/external/png-save.c:30 ../operations/external/ppm-save.c:28
+#: ../operations/external/png-save.c:31 ../operations/external/ppm-save.c:29
 msgid "Bitdepth"
 msgstr "Bit-sakonera"
 
-#: ../operations/external/png-save.c:31 ../operations/external/ppm-save.c:30
-msgid "8 and 16 are amongst the currently accepted values."
+#: ../operations/external/png-save.c:32 ../operations/external/ppm-save.c:30
+#, fuzzy
+msgid "8 and 16 are the currently accepted values."
 msgstr "8 eta 16 unean onartutako balioen artean daude."
 
-#: ../operations/external/png-save.c:233
+#: ../operations/external/png-save.c:230
 msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
 msgstr ""
 "PNG irudi gordetzailea (bufferretik zehar pasatzen da, ondorio gisa "
 "gordetzen du)"
 
-#: ../operations/external/ppm-load.c:380
+#: ../operations/external/ppm-load.c:382
 msgid "PPM image loader."
 msgstr "PPM irudi kargatzailea."
 
-#: ../operations/external/ppm-save.c:27
+#: ../operations/external/ppm-save.c:28
 msgid "Raw format"
 msgstr "Formatu gordina"
 
-#: ../operations/external/ppm-save.c:190
+#: ../operations/external/ppm-save.c:191
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "PPM irudi gordetzailea (Portable Pixmap gordetzailea)"
 
-#: ../operations/external/rgbe-load.c:135
+#: ../operations/external/rgbe-load.c:136
 msgid "RGBE image loader (Radiance HDR format)."
 msgstr "RGBE irudi kargatzailea (Radiance HDR formatua)"
 
@@ -3082,7 +3373,7 @@ msgstr "Gorde irteera GdkPixBuf batean"
 msgid "Icon to be used for output window"
 msgstr "Ikonoa irteeraren leihoan erabiltzeko"
 
-#: ../operations/external/sdl-display.c:181
+#: ../operations/external/sdl-display.c:173
 msgid ""
 "Displays the input buffer in an SDL window (restricted to one display op/"
 "process, due to SDL implementation issues)."
@@ -3094,16 +3385,16 @@ msgstr ""
 msgid "Path to SVG file to load"
 msgstr "Bide-izena SVG fitxategia kargatzeko"
 
-#: ../operations/external/svg-load.c:28 ../operations/external/v4l.c:27
+#: ../operations/external/svg-load.c:29 ../operations/external/v4l.c:27
 msgid "Width for rendered image"
 msgstr "Errendatutako irudiaren zabalera"
 
-#: ../operations/external/svg-load.c:30 ../operations/external/v4l.c:28
+#: ../operations/external/svg-load.c:32 ../operations/external/v4l.c:28
 msgid "Height for rendered image"
 msgstr "Errendatutako irudiaren altuera"
 
 #. not hidden because it has extra API
-#: ../operations/external/svg-load.c:239
+#: ../operations/external/svg-load.c:181
 msgid "Load an SVG file using librsvg"
 msgstr "Kargatu SVG irudia 'librsvg' erabiliz"
 
@@ -3115,27 +3406,27 @@ msgstr "Testua"
 msgid "String to display (utf8)"
 msgstr "Bistaratuko den katea (utf8)"
 
-#: ../operations/external/text.c:27
+#: ../operations/external/text.c:29
 msgid "Font family"
 msgstr "Letra-familia"
 
-#: ../operations/external/text.c:28
+#: ../operations/external/text.c:30
 msgid "Font family (utf8)"
 msgstr "Letra-familia (utf8)"
 
-#: ../operations/external/text.c:30
+#: ../operations/external/text.c:33
 msgid "Approximate height of text in pixels."
 msgstr "Testuaren gutxi gorabeherako altuera (pixeletan)."
 
-#: ../operations/external/text.c:32
+#: ../operations/external/text.c:37
 msgid "Color for the text (defaults to 'white')"
 msgstr "Testuaren kolorea (lehenetsia 'zuria')"
 
-#: ../operations/external/text.c:33
+#: ../operations/external/text.c:38
 msgid "Wrap width"
 msgstr "Itzulbiratze-zabalera"
 
-#: ../operations/external/text.c:34
+#: ../operations/external/text.c:39
 msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
@@ -3143,24 +3434,24 @@ msgstr ""
 "Ezarri lerroak itzulbiratzeko zabalera pixeletan, Erabili -1 ez "
 "itzulbiratzeko"
 
-#: ../operations/external/text.c:36
+#: ../operations/external/text.c:43
 msgid "Justification"
 msgstr "Justifikazioa"
 
-#: ../operations/external/text.c:37
+#: ../operations/external/text.c:45
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
 msgstr ""
 "Lerrokatu hainbat lerroko testua (0=ezkerrean, 1=zentratuta, 2=eskuinean)"
 
-#: ../operations/external/text.c:39
+#: ../operations/external/text.c:48
 msgid "Rendered width in pixels. (read only)"
 msgstr "Errendatutako zabalera pixeletan. (Irakurtzeko soilik)"
 
-#: ../operations/external/text.c:41
+#: ../operations/external/text.c:50
 msgid "Rendered height in pixels. (read only)"
 msgstr "Errendatutako altuera pixeletan. (Irakurtzeko soilik)"
 
-#: ../operations/external/text.c:301
+#: ../operations/external/text.c:310
 msgid "Display a string of text using pango and cairo."
 msgstr "Bistaratu testu kate bat 'pango' eta 'cairo' erabiliz."
 
@@ -3172,12 +3463,15 @@ msgstr "Bide-izena"
 msgid "Path to v4l device"
 msgstr "v4l gailuaren bidea-izena"
 
+#: ../operations/external/v4l.c:29
+msgid "Frame"
+msgstr "Fotograma"
+
 #: ../operations/external/v4l.c:30
 msgid "current frame number, can be changed to trigger a reload of the image."
 msgstr "uneko fotogramaren zenbakia, irudia birkargatzeko alda daiteke."
 
 #: ../operations/external/v4l.c:31
-#: ../operations/workshop/external/ff-save.c:32
 msgid "FPS"
 msgstr "F/s"
 
@@ -3190,28 +3484,29 @@ msgid "Video4Linux input, webcams framegrabbers and similar devices."
 msgstr ""
 "Video4Linux sarrera, web kamerak, fotograma hartzaileak eta antzeko gailuak."
 
-#: ../operations/external/vector-fill.c:28
+#: ../operations/external/vector-fill.c:27
 msgid "Color of paint to use for filling."
 msgstr "Betetzeko erabiliko den margoaren kolorea."
 
-#: ../operations/external/vector-fill.c:31
+#: ../operations/external/vector-fill.c:30
 msgid "The fill opacity to use."
 msgstr "Betegarriaren opakutasuna."
 
-#: ../operations/external/vector-fill.c:33
+#. XXX: replace with enum?
+#: ../operations/external/vector-fill.c:34
 msgid "Fill rule."
 msgstr "Betetze-araua."
 
-#: ../operations/external/vector-fill.c:34
+#: ../operations/external/vector-fill.c:35
 msgid "how to determine what to fill (nonzero|evenodd)"
 msgstr "Nola erabaki zer beteko den (ez-zero|bikoiti-bakoitia)"
 
-#: ../operations/external/vector-fill.c:37
-#: ../operations/external/vector-stroke.c:37
+#: ../operations/external/vector-fill.c:38
+#: ../operations/external/vector-stroke.c:39
 msgid "svg style description of transform."
 msgstr "Eraldaketaren SVG itxurako azalpena."
 
-#: ../operations/external/vector-fill.c:268
+#: ../operations/external/vector-fill.c:269
 msgid "Renders a filled region"
 msgstr "Betetako eskualde bat errendatzen du"
 
@@ -3219,11 +3514,11 @@ msgstr "Betetako eskualde bat errendatzen du"
 msgid "Color of paint to use for stroking."
 msgstr "Trazurako erabiliko den margoaren kolorea."
 
-#: ../operations/external/vector-stroke.c:31
+#: ../operations/external/vector-stroke.c:32
 msgid "The width of the brush used to stroke the path."
 msgstr "Brotxaren zabalera bidea trazatzeko."
 
-#: ../operations/external/vector-stroke.c:34
+#: ../operations/external/vector-stroke.c:36
 msgid ""
 "Opacity of stroke, note, does not behave like SVG since at the moment "
 "stroking is done using an airbrush tool."
@@ -3231,11 +3526,11 @@ msgstr ""
 "Trazuaren opakutasunak  ez du SVG-n duen portaera bera, oraingoz trazua "
 "aerografo tresnarekin egiten delako.."
 
-#: ../operations/external/vector-stroke.c:280
+#: ../operations/external/vector-stroke.c:283
 msgid "Renders a vector stroke"
 msgstr "Trazu bektoriala errendatzen du"
 
-#: ../operations/external/webp-load.c:142
+#: ../operations/external/webp-load.c:143
 #, fuzzy
 msgid "WebP image loader."
 msgstr "PNG irudi kargatzailea."
@@ -3250,20 +3545,26 @@ msgstr "Iragazkiaren zabalera"
 msgid "WebP compression quality"
 msgstr "JPEG konprimatze-kalitatea (1 eta 100 artekoa)"
 
-#: ../operations/external/webp-save.c:117
+#: ../operations/external/webp-save.c:115
 #, fuzzy
 msgid "WebP image saver."
 msgstr "PNG irudi kargatzailea."
 
-#: ../operations/generated/add.c:125
+#: ../operations/generated/add.c:30 ../operations/generated/divide.c:30
+#: ../operations/generated/gamma.c:30 ../operations/generated/multiply.c:30
+#: ../operations/generated/subtract.c:30
+msgid "global value used if aux doesn't contain data"
+msgstr "erabiliko den balio orokorra lagungarriak daturik ez badu"
+
+#: ../operations/generated/add.c:126
 msgid "Math operation add (c = c + value)"
 msgstr "Eragiketa matematikoa: batuketa (c = c + balioa)"
 
-#: ../operations/generated/clear.c:116
+#: ../operations/generated/clear.c:125
 msgid "Porter Duff operation clear (d = 0.0f)"
 msgstr "Porter Duff eragiketa: garbia (d = 0.0f)"
 
-#: ../operations/generated/color-burn.c:165
+#: ../operations/generated/color-burn.c:172
 msgid ""
 "SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = "
 "cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
@@ -3273,7 +3574,7 @@ msgstr ""
 "aB: d = cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * "
 "(cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 
-#: ../operations/generated/color-dodge.c:165
+#: ../operations/generated/color-dodge.c:172
 msgid ""
 "SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = "
 "aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
@@ -3284,7 +3585,7 @@ msgstr ""
 "1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</"
 "code>)"
 
-#: ../operations/generated/darken.c:162
+#: ../operations/generated/darken.c:169
 msgid ""
 "SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
 "+ cB * (1 - aA)</code>)"
@@ -3292,7 +3593,7 @@ msgstr ""
 "SVG nahasketa eragiketa: ilundu (<code>d = MIN (cA * aB, cB * aA) + cA * (1 "
 "- aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/difference.c:162
+#: ../operations/generated/difference.c:169
 msgid ""
 "SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
 "aA))</code>)"
@@ -3300,33 +3601,33 @@ msgstr ""
 "SVG nahasketa eragiketa: diferentzia (<code>d = cA + cB - 2 * (MIN (cA * aB, "
 "cB * aA))</code>)"
 
-#: ../operations/generated/divide.c:125
+#: ../operations/generated/divide.c:126
 msgid "Math operation divide (c = value==0.0f?0.0f:c/value)"
 msgstr "Eragiketa matematikoa: zatiketa (c = balioa==0.0f?0.0f:c/balioa)"
 
 # http://www.ibm.com/developerworks/java/library/j-mer0918/
-#: ../operations/generated/dst-atop.c:116
+#: ../operations/generated/dst-atop.c:125
 msgid "Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"
 msgstr ""
 "Porter Duff eragiketa: gainjarri-helburua (d = cB * aA + cA * (1.0f - aB))"
 
-#: ../operations/generated/dst.c:116
+#: ../operations/generated/dst.c:147
 msgid "Porter Duff operation dst (d = cB)"
 msgstr "Porter Duff eragiketa: helburua-soilik (d = cB)"
 
-#: ../operations/generated/dst-in.c:116
+#: ../operations/generated/dst-in.c:125
 msgid "Porter Duff operation dst-in (d = cB * aA)"
 msgstr "Porter Duff eragiketa: barneko-helburua (d = cB * aA)"
 
-#: ../operations/generated/dst-out.c:116
+#: ../operations/generated/dst-out.c:147
 msgid "Porter Duff operation dst-out (d = cB * (1.0f - aA))"
 msgstr "Porter Duff eragiketa: kanpoko-helburua (d = cB * (1.0f - aA))"
 
-#: ../operations/generated/dst-over.c:116
+#: ../operations/generated/dst-over.c:147
 msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
 msgstr "Porter Duff eragiketa: helburua-gainean (d = cB + cA * (1.0f - aB))"
 
-#: ../operations/generated/exclusion.c:162
+#: ../operations/generated/exclusion.c:169
 msgid ""
 "SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
@@ -3334,11 +3635,11 @@ msgstr ""
 "SVG nahasketa eragiketa: esklusioa (<code>d = (cA * aB + cB * aA - 2 * cA * "
 "cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/gamma.c:125
+#: ../operations/generated/gamma.c:126
 msgid "Math operation gamma (c = powf (c, value))"
 msgstr "Eragiketa matematikoa: gamma  (c = powf (c, balioa))"
 
-#: ../operations/generated/hard-light.c:165
+#: ../operations/generated/hard-light.c:172
 msgid ""
 "SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * "
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
@@ -3348,7 +3649,7 @@ msgstr ""
 "+ cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA "
 "- cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/lighten.c:162
+#: ../operations/generated/lighten.c:169
 msgid ""
 "SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
@@ -3356,11 +3657,11 @@ msgstr ""
 "SVG nahasketa eragiketa: argitu (<code>d = MAX (cA * aB, cB * aA) + cA * (1 "
 "- aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/multiply.c:125
+#: ../operations/generated/multiply.c:126
 msgid "Math operation multiply (c = c * value)"
 msgstr "Eragiketa matematikoa: biderketa (c = c * balioa)"
 
-#: ../operations/generated/overlay.c:165
+#: ../operations/generated/overlay.c:172
 msgid ""
 "SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 "
 "- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
@@ -3370,15 +3671,15 @@ msgstr ""
 "cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - "
 "cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/plus.c:163
+#: ../operations/generated/plus.c:170
 msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
 msgstr "SVG nahasketa eragiketa: batuketa (<code>d = cA + cB</code>)"
 
-#: ../operations/generated/screen.c:162
+#: ../operations/generated/screen.c:169
 msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
 msgstr "SVG nahasketa eragiketa: pantaila (<code>d = cA + cB - cA * cB</code>)"
 
-#: ../operations/generated/soft-light.c:167
+#: ../operations/generated/soft-light.c:174
 msgid ""
 "SVG blend operation soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == "
 "0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 "
@@ -3395,28 +3696,28 @@ msgstr ""
 "- aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 # http://www.ibm.com/developerworks/java/library/j-mer0918/
-#: ../operations/generated/src-atop.c:116
+#: ../operations/generated/src-atop.c:147
 msgid "Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"
 msgstr ""
 "Porter Duff eragiketa: jatorria-gainean (d = cA * aB + cB * (1.0f - aA))"
 
-#: ../operations/generated/src.c:116
+#: ../operations/generated/src.c:125
 msgid "Porter Duff operation src (d = cA)"
 msgstr "Porter Duff eragiketa: iturburua (d = cA)"
 
-#: ../operations/generated/src-in.c:126
+#: ../operations/generated/src-in.c:133
 msgid "Porter Duff operation src-in (d = cA * aB)"
 msgstr "Porter Duff eragiketa: barneko-iturburua (d = cA * aB)"
 
-#: ../operations/generated/src-out.c:116
+#: ../operations/generated/src-out.c:125
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
 msgstr "Porter Duff eragiketa: kanpoko-iturburua (d = cA * (1.0f - aB))"
 
-#: ../operations/generated/subtract.c:125
+#: ../operations/generated/subtract.c:126
 msgid "Math operation subtract (c = c - value)"
 msgstr "Eragiketa matematikoa: kenketa (c = c - balioa)"
 
-#: ../operations/generated/svg-multiply.c:162
+#: ../operations/generated/svg-multiply.c:169
 msgid ""
 "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
 "aA)</code>)"
@@ -3424,56 +3725,57 @@ msgstr ""
 "SVG nahasketa eragiketa: biderketa (<code>d = cA * cB +  cA * (1 - aB) + cB "
 "* (1 - aA)</code>)"
 
-#: ../operations/generated/xor.c:116
+#: ../operations/generated/xor.c:147
 msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 msgstr "Porter Duff eragiketa: XOR (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
-#: ../operations/seamless-clone/seamless-clone.c:21
+#: ../operations/seamless-clone/seamless-clone.c:22
 #: ../operations/seamless-clone/seamless-clone-compose.c:21
-msgid "Refinement Steps"
+#, fuzzy
+msgid "Refinement steps"
 msgstr "Finketaren urratsak"
 
-#: ../operations/seamless-clone/seamless-clone.c:22
+#: ../operations/seamless-clone/seamless-clone.c:23
 #: ../operations/seamless-clone/seamless-clone-compose.c:22
 msgid ""
 "Maximal amount of refinement points to be used for the interpolation mesh"
 msgstr "Finketaren gehienezko puntu kopurua interpolazio-mailan erabiltzeko"
 
-#: ../operations/seamless-clone/seamless-clone.c:25
-#: ../operations/seamless-clone/seamless-clone-compose.c:25
+#: ../operations/seamless-clone/seamless-clone.c:27
+#: ../operations/seamless-clone/seamless-clone.c:33
+#: ../operations/seamless-clone/seamless-clone-compose.c:26
 msgid "How much horizontal offset should applied to the paste"
 msgstr "Desplazamendu horizontalaren kopurua itsasteari aplikatzeko"
 
-#: ../operations/seamless-clone/seamless-clone.c:28
-#: ../operations/seamless-clone/seamless-clone-compose.c:28
-msgid "How much vertical offset should applied to the paste"
-msgstr "Desplazamendu bertikalaren kopurua itsasteari aplikatzeko"
-
-#: ../operations/seamless-clone/seamless-clone.c:30
-#: ../operations/seamless-clone/seamless-clone-compose.c:30
+#: ../operations/seamless-clone/seamless-clone.c:38
+#: ../operations/seamless-clone/seamless-clone-compose.c:37
 msgid "Error message"
 msgstr "Errore-mezua"
 
-#: ../operations/seamless-clone/seamless-clone.c:30
-#: ../operations/seamless-clone/seamless-clone-compose.c:30
+#: ../operations/seamless-clone/seamless-clone.c:39
+#: ../operations/seamless-clone/seamless-clone-compose.c:38
 msgid "An error message in case of a failure"
 msgstr "Errore-mezua huts egitean"
 
-#: ../operations/seamless-clone/seamless-clone.c:161
+#: ../operations/seamless-clone/seamless-clone.c:171
 msgid "The foreground does not contain opaque parts"
 msgstr "Aurreko planoak ez du zati opakorik"
 
-#: ../operations/seamless-clone/seamless-clone.c:164
+#: ../operations/seamless-clone/seamless-clone.c:174
 msgid "The foreground is too small to use"
 msgstr "Aurreko planoa erabiltzeko txikiegia da"
 
-#: ../operations/seamless-clone/seamless-clone.c:167
+#: ../operations/seamless-clone/seamless-clone.c:177
 msgid "The foreground contains holes and/or several unconnected parts"
 msgstr "Aurreko planoak zuloak eta edo konektatu gabeko zatiak ditu"
 
-#: ../operations/seamless-clone/seamless-clone.c:178
+#: ../operations/seamless-clone/seamless-clone.c:188
 msgid "The opaque parts of the foreground are not above the background!"
 msgstr "Aurreko planoaren zati opakoak ez daude atzeko planoaren gainean!"
+
+#: ../operations/seamless-clone/seamless-clone-compose.c:32
+msgid "How much vertical offset should applied to the paste"
+msgstr "Desplazamendu bertikalaren kopurua itsasteari aplikatzeko"
 
 #: ../operations/transform/reflect.c:30
 msgid "Direction vector's X component"
@@ -3535,21 +3837,31 @@ msgstr "Eraldaketaren katea"
 msgid "Transforms the group (used by svg)."
 msgstr "Taldea eraldatzen du (svg-k erabilita)."
 
-#: ../operations/transform/transform-core.c:174
+#: ../operations/transform/transform-core.c:170
 msgid "Origin-x"
 msgstr "Jatorri-X"
 
-#: ../operations/transform/transform-core.c:175
+#: ../operations/transform/transform-core.c:171
 msgid "X coordinate of origin"
 msgstr "Jatorriaren X koordenatua"
 
-#: ../operations/transform/transform-core.c:182
+#: ../operations/transform/transform-core.c:178
 msgid "Origin-y"
 msgstr "Jatorri-Y"
 
-#: ../operations/transform/transform-core.c:183
+#: ../operations/transform/transform-core.c:179
 msgid "Y coordinate of origin"
 msgstr "Jatorriaren Y koordenatua"
+
+#: ../operations/transform/transform-core.c:186
+#: ../operations/workshop/ditto.c:27
+msgid "Sampler"
+msgstr "Lagina"
+
+#: ../operations/transform/transform-core.c:187
+#: ../operations/workshop/ditto.c:29
+msgid "Sampler used internally"
+msgstr "Barnean erabilitako lagina"
 
 #: ../operations/transform/translate.c:26
 msgid "Horizontal translation"
@@ -3568,17 +3880,17 @@ msgstr ""
 "zenbaki osoak pasatzen badira,  bidezidor bat erabiliko da berriz lagindu "
 "gabe"
 
-#: ../operations/workshop/box-max.c:26 ../operations/workshop/box-min.c:26
+#: ../operations/workshop/box-max.c:27 ../operations/workshop/box-min.c:27
 #: ../operations/workshop/box-percentile.c:28
-#: ../operations/workshop/disc-percentile.c:27
-#: ../operations/workshop/kuwahara.c:26
+#: ../operations/workshop/disc-percentile.c:28
+#: ../operations/workshop/kuwahara.c:27
 #: ../operations/workshop/snn-percentile.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
 "Pixel eskualde karratuaren erradioa, (zabalera eta altuera erradioa*2+1 "
 "izango dira)"
 
-#: ../operations/workshop/box-max.c:198
+#: ../operations/workshop/box-max.c:337
 msgid ""
 "Sets the target pixel to the value of the maximum value in a box surrounding "
 "the pixel"
@@ -3586,7 +3898,7 @@ msgstr ""
 "Helburuko pixelaren balioa pixela inguratzen duen kutxako gehienezko baliora "
 "ezartzen du"
 
-#: ../operations/workshop/box-min.c:198
+#: ../operations/workshop/box-min.c:336
 msgid ""
 "Sets the target pixel to the value of the minimum value in a box surrounding "
 "the pixel"
@@ -3594,17 +3906,17 @@ msgstr ""
 "Helburuko pixelaren balioa pixela inguratzen duen kutxako gutxieneko baliora "
 "ezartzen du"
 
-#: ../operations/workshop/box-percentile.c:29
-#: ../operations/workshop/disc-percentile.c:28
-#: ../operations/workshop/snn-percentile.c:31
+#: ../operations/workshop/box-percentile.c:31
+#: ../operations/workshop/disc-percentile.c:29
+#: ../operations/workshop/snn-percentile.c:35
 msgid "Percentile"
 msgstr "Pertzentila"
 
-#: ../operations/workshop/box-percentile.c:30
+#: ../operations/workshop/box-percentile.c:32
 msgid "The percentile to compute, defaults to 50, which is a median filter"
 msgstr "Kalkulatzeko pertzentila, lehenetsia 50, medianaren iragazkia da."
 
-#: ../operations/workshop/box-percentile.c:230
+#: ../operations/workshop/box-percentile.c:233
 msgid ""
 "Sets the target pixel to the color corresponding to a given percentile when "
 "colors are sorted by luminance"
@@ -3628,320 +3940,222 @@ msgstr ""
 "hartuko du sarreratzat."
 
 #: ../operations/workshop/color-rotate.c:33
-#: ../operations/workshop/color-rotate.c:39
+#: ../operations/workshop/color-rotate.c:46
 msgid "Clockwise"
 msgstr "Erlojuaren noranzkoan"
 
 #: ../operations/workshop/color-rotate.c:34
-#: ../operations/workshop/color-rotate.c:40
+#: ../operations/workshop/color-rotate.c:47
 msgid "Switch to clockwise"
 msgstr "Aldatu erlojuaren noranzkora"
 
-#: ../operations/workshop/color-rotate.c:35
-#: ../operations/workshop/color-rotate.c:41
-msgid "From:"
+#: ../operations/workshop/color-rotate.c:36
+#: ../operations/workshop/color-rotate.c:49
+#, fuzzy
+msgid "From"
 msgstr "Nondik:"
 
-#: ../operations/workshop/color-rotate.c:36
-#: ../operations/workshop/color-rotate.c:42
+#: ../operations/workshop/color-rotate.c:37
+#: ../operations/workshop/color-rotate.c:51
 msgid "Starting angle for the color rotation"
 msgstr "Kolore biraketaren hasierako angelua"
 
-#: ../operations/workshop/color-rotate.c:37
-#: ../operations/workshop/color-rotate.c:43
-msgid "To:"
+#: ../operations/workshop/color-rotate.c:41
+#: ../operations/workshop/color-rotate.c:53
+#, fuzzy
+msgid "To"
 msgstr "Nora:"
 
-#: ../operations/workshop/color-rotate.c:38
-#: ../operations/workshop/color-rotate.c:44
+#: ../operations/workshop/color-rotate.c:42
+#: ../operations/workshop/color-rotate.c:55
 msgid "End angle for the color rotation"
 msgstr "Kolore biraketaren bukaerako angelua"
 
-#: ../operations/workshop/color-rotate.c:47
+#: ../operations/workshop/color-rotate.c:58
 msgid "Choose in case of grayscale images"
 msgstr "Aukeratu irudiak gris-eskalan daudenean"
 
-#: ../operations/workshop/color-rotate.c:49
-msgid "The value of hue"
-msgstr "Ñabarduraren balioa"
-
-#: ../operations/workshop/color-rotate.c:51
-msgid "The value of saturation"
-msgstr "Saturazioaren balioa"
-
-#: ../operations/workshop/color-rotate.c:52
-#: ../operations/workshop/color-rotate.c:53
-msgid "Change/Treat to this"
+#: ../operations/workshop/color-rotate.c:66
+#, fuzzy
+msgid "Change/treat to this"
 msgstr "Aldatu/Tratatu hona"
 
-#: ../operations/workshop/color-rotate.c:55
-msgid "The value of gray threshold"
-msgstr "Grisa atalasearen balioa"
+#: ../operations/workshop/color-rotate.c:68
+#, fuzzy
+msgid "Gray threshold"
+msgstr "Begi gorrien atalasea"
 
-#: ../operations/workshop/color-rotate.c:383
+#: ../operations/workshop/color-rotate.c:397
 msgid "Rotate colors on the image"
 msgstr "Biratu irudiaren koloreak"
 
 #: ../operations/workshop/convolution-matrix.c:25
-msgid "(1,1) "
+#, fuzzy
+msgid "(1,1)"
 msgstr "(1,1) "
 
 #: ../operations/workshop/convolution-matrix.c:26
-msgid "Value of the element in position (1,1)"
-msgstr "(1,1) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:27
-msgid "(1,2) "
+#, fuzzy
+msgid "(1,2)"
 msgstr "(1,2) "
 
-#: ../operations/workshop/convolution-matrix.c:28
-msgid "Value of the element in position (1,2)"
-msgstr "(1,2) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:29
-msgid "(1,3) "
+#: ../operations/workshop/convolution-matrix.c:27
+#, fuzzy
+msgid "(1,3)"
 msgstr "(1,3) "
 
-#: ../operations/workshop/convolution-matrix.c:30
-msgid "Value of the element in position (1,3)"
-msgstr "(1,3) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:31
-msgid "(1,4) "
+#: ../operations/workshop/convolution-matrix.c:28
+#, fuzzy
+msgid "(1,4)"
 msgstr "(1,4) "
 
-#: ../operations/workshop/convolution-matrix.c:32
-msgid "Value of the element in position (1,4)"
-msgstr "(1,4) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:33
-msgid "(1,5) "
+#: ../operations/workshop/convolution-matrix.c:29
+#, fuzzy
+msgid "(1,5)"
 msgstr "(1,5) "
 
-#: ../operations/workshop/convolution-matrix.c:34
-msgid "Value of the element in position (1,5)"
-msgstr "(1,5) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:35
-msgid "(2,1) "
+#: ../operations/workshop/convolution-matrix.c:30
+#, fuzzy
+msgid "(2,1)"
 msgstr "(2,1) "
 
-#: ../operations/workshop/convolution-matrix.c:36
-msgid "Value of the element in position (2,1)"
-msgstr "(2,1) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:37
-msgid "(2,2) "
+#: ../operations/workshop/convolution-matrix.c:31
+#, fuzzy
+msgid "(2,2)"
 msgstr "(2,2) "
 
-#: ../operations/workshop/convolution-matrix.c:38
-msgid "Value of the element in position (2,2)"
-msgstr "(2,2) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:39
-msgid "(2,3) "
+#: ../operations/workshop/convolution-matrix.c:32
+#, fuzzy
+msgid "(2,3)"
 msgstr "(2,3) "
 
-#: ../operations/workshop/convolution-matrix.c:40
-msgid "Value of the element in position (2,3)"
-msgstr "(2,3) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:41
-msgid "(2,4) "
+#: ../operations/workshop/convolution-matrix.c:33
+#, fuzzy
+msgid "(2,4)"
 msgstr "(2,4) "
 
-#: ../operations/workshop/convolution-matrix.c:42
-msgid "Value of the element in position (2,4)"
-msgstr "(2,4) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:43
-msgid "(2,5) "
+#: ../operations/workshop/convolution-matrix.c:34
+#, fuzzy
+msgid "(2,5)"
 msgstr "(2,5) "
 
-#: ../operations/workshop/convolution-matrix.c:44
-msgid "Value of the element in position (2,5)"
-msgstr "(2,5) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:45
-msgid "(3,1) "
+#: ../operations/workshop/convolution-matrix.c:35
+#, fuzzy
+msgid "(3,1)"
 msgstr "(3,1) "
 
-#: ../operations/workshop/convolution-matrix.c:46
-msgid "Value of the element in position (3,1)"
-msgstr "(3,1) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:47
-msgid "(3,2) "
+#: ../operations/workshop/convolution-matrix.c:36
+#, fuzzy
+msgid "(3,2)"
 msgstr "(3,2) "
 
-#: ../operations/workshop/convolution-matrix.c:48
-msgid "Value of the element in position (3,2)"
-msgstr "(3,2) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:49
-msgid "(3,3) "
+#: ../operations/workshop/convolution-matrix.c:37
+#, fuzzy
+msgid "(3,3)"
 msgstr "(3,3) "
 
-#: ../operations/workshop/convolution-matrix.c:50
-msgid "Value of the element in position (3,3)"
-msgstr "(3,3) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:51
-msgid "(3,4) "
+#: ../operations/workshop/convolution-matrix.c:38
+#, fuzzy
+msgid "(3,4)"
 msgstr "(3,4) "
 
-#: ../operations/workshop/convolution-matrix.c:52
-msgid "Value of the element in position (3,4)"
-msgstr "(3,4) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:53
-msgid "(3,5) "
+#: ../operations/workshop/convolution-matrix.c:39
+#, fuzzy
+msgid "(3,5)"
 msgstr "(3,5) "
 
-#: ../operations/workshop/convolution-matrix.c:54
-msgid "Value of the element in position (3,5)"
-msgstr "(3,5) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:55
-msgid "(4,1) "
+#: ../operations/workshop/convolution-matrix.c:40
+#, fuzzy
+msgid "(4,1)"
 msgstr "(4,1) "
 
-#: ../operations/workshop/convolution-matrix.c:56
-msgid "Value of the element in position (4,1)"
-msgstr "(4,1) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:57
-msgid "(4,2) "
+#: ../operations/workshop/convolution-matrix.c:41
+#, fuzzy
+msgid "(4,2)"
 msgstr "(4,2) "
 
-#: ../operations/workshop/convolution-matrix.c:58
-msgid "Value of the element in position (4,2)"
-msgstr "(4,2) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:59
-msgid "(4,3) "
+#: ../operations/workshop/convolution-matrix.c:42
+#, fuzzy
+msgid "(4,3)"
 msgstr "(4,3) "
 
-#: ../operations/workshop/convolution-matrix.c:60
-msgid "Value of the element in position (4,3)"
-msgstr "(4,3) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:61
-msgid "(4,4) "
+#: ../operations/workshop/convolution-matrix.c:43
+#, fuzzy
+msgid "(4,4)"
 msgstr "(4,4) "
 
-#: ../operations/workshop/convolution-matrix.c:62
-msgid "Value of the element in position (4,4)"
-msgstr "(4,4) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:63
-msgid "(4,5) "
+#: ../operations/workshop/convolution-matrix.c:44
+#, fuzzy
+msgid "(4,5)"
 msgstr "(4,5) "
 
-#: ../operations/workshop/convolution-matrix.c:64
-msgid "Value of the element in position (4,5)"
-msgstr "(4,5) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:65
-msgid "(5,1) "
+#: ../operations/workshop/convolution-matrix.c:45
+#, fuzzy
+msgid "(5,1)"
 msgstr "(5,1) "
 
-#: ../operations/workshop/convolution-matrix.c:66
-msgid "Value of the element in position (5,1)"
-msgstr "(5,1) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:67
-msgid "(5,2) "
+#: ../operations/workshop/convolution-matrix.c:46
+#, fuzzy
+msgid "(5,2)"
 msgstr "(5,2) "
 
-#: ../operations/workshop/convolution-matrix.c:68
-msgid "Value of the element in position (5,2)"
-msgstr "(5,2) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:69
-msgid "(5,3) "
+#: ../operations/workshop/convolution-matrix.c:47
+#, fuzzy
+msgid "(5,3)"
 msgstr "(5,3) "
 
-#: ../operations/workshop/convolution-matrix.c:70
-msgid "Value of the element in position (5,3)"
-msgstr "(5,3) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:71
-msgid "(5,4) "
+#: ../operations/workshop/convolution-matrix.c:48
+#, fuzzy
+msgid "(5,4)"
 msgstr "(5,4) "
 
-#: ../operations/workshop/convolution-matrix.c:72
-msgid "Value of the element in position (5,4)"
-msgstr "(5,4) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:73
-msgid "(5,5) "
+#: ../operations/workshop/convolution-matrix.c:49
+#, fuzzy
+msgid "(5,5)"
 msgstr "(5,5) "
 
-#: ../operations/workshop/convolution-matrix.c:74
-msgid "Value of the element in position (5,5)"
-msgstr "(5,5) posizioko elementuaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:76
-msgid "Divisor: "
+#: ../operations/workshop/convolution-matrix.c:51
+#, fuzzy
+msgid "Divisor"
 msgstr "Zatitzailea:"
 
-#: ../operations/workshop/convolution-matrix.c:77
-msgid "The value of the divisor"
-msgstr "Zatitzailearen balioa"
-
-#: ../operations/workshop/convolution-matrix.c:78
-msgid "Offset: "
-msgstr "Desplazamendua:"
-
-#: ../operations/workshop/convolution-matrix.c:79
-msgid "The value of the offset"
-msgstr "Desplazamenduaren balioa"
-
-#: ../operations/workshop/convolution-matrix.c:81
+#: ../operations/workshop/convolution-matrix.c:55
 msgid "Normalize"
 msgstr "Normalizatu"
 
-#: ../operations/workshop/convolution-matrix.c:81
-msgid "Normalize or not"
-msgstr "Normalizatu ala ez"
-
-#: ../operations/workshop/convolution-matrix.c:83
+#: ../operations/workshop/convolution-matrix.c:57
 msgid "Red channel"
 msgstr "Kanal gorria"
 
-#: ../operations/workshop/convolution-matrix.c:84
+#: ../operations/workshop/convolution-matrix.c:58
 msgid "Green channel"
 msgstr "Kanal berdea"
 
-#: ../operations/workshop/convolution-matrix.c:85
+#: ../operations/workshop/convolution-matrix.c:59
 msgid "Blue channel"
 msgstr "Kanal urdina"
 
-#: ../operations/workshop/convolution-matrix.c:86
+#: ../operations/workshop/convolution-matrix.c:60
 msgid "Alpha channel"
 msgstr "Alfa kanala"
 
-#: ../operations/workshop/convolution-matrix.c:88
+#: ../operations/workshop/convolution-matrix.c:61
 msgid "Alpha-weighting"
 msgstr "Alfa ponderazioa"
 
-#: ../operations/workshop/convolution-matrix.c:88
-msgid "Alpha weighting"
-msgstr "Alfa ponderazioa"
-
-#: ../operations/workshop/convolution-matrix.c:90
+#. XXX: use enum
+#: ../operations/workshop/convolution-matrix.c:64
 msgid "Border"
 msgstr "Ertza"
 
-#: ../operations/workshop/convolution-matrix.c:91
+#: ../operations/workshop/convolution-matrix.c:65
 msgid ""
 "Type of border to choose. Choices are extend, wrap, crop. Default is extend"
 msgstr ""
 "Ertz mota aukeratzeko. Aukerak hedatu, doitu eta moztu dira. Lehenetsia "
 "hedatu da."
 
-#: ../operations/workshop/convolution-matrix.c:433
+#: ../operations/workshop/convolution-matrix.c:406
 msgid "Creates image by manually set convolution matrix"
 msgstr "Irudia sortzen du eskuz ezarritako konboluzio-matrizearen arabera"
 
@@ -3962,7 +4176,7 @@ msgstr ""
 # demosaicing: http://es.wikipedia.org/wiki/Interpolación_cromática
 # edo
 # http://es.wikipedia.org/wiki/Interpolación_cromática
-#: ../operations/workshop/demosaic-bimedian.c:220
+#: ../operations/workshop/demosaic-bimedian.c:221
 msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
@@ -3970,18 +4184,18 @@ msgstr ""
 "Irudi baten gris-eskalaren interpolazio kromatikoa lantzen du interpolazio "
 "bimediana erabiliz."
 
-#: ../operations/workshop/demosaic-simple.c:152
+#: ../operations/workshop/demosaic-simple.c:153
 msgid ""
 "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr ""
 "Irudi baten gris-eskalaren interpolazio kromatiko inozoa lantzen du, "
 "interpolaziorik gabe."
 
-#: ../operations/workshop/disc-percentile.c:29
+#: ../operations/workshop/disc-percentile.c:30
 msgid "The percentile to compute, defaults to 50, which is a median filter."
 msgstr "Kalkulatzeko pertzentila, lehenetsia 50, medianaren iragazkia da."
 
-#: ../operations/workshop/disc-percentile.c:234
+#: ../operations/workshop/disc-percentile.c:236
 msgid ""
 "Sets the target pixel to the color corresponding to a given percentile when "
 "colors are sorted by luminance."
@@ -3989,25 +4203,23 @@ msgstr ""
 "Helburuko pixelaren kolorea, koloreak luminantziaren arabera ordenatzean "
 "pertzentil zehatz bati dagokion kolorera ezartzen du."
 
-#: ../operations/workshop/ditto.c:112
+#: ../operations/workshop/ditto.c:113
 msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr "Probako eragiketa lagintzean sarreraren 1:1 mapa irteeran sortzeko"
 
-#: ../operations/workshop/external/ff-save.c:31
-msgid "Bitrate"
-msgstr "Bit-emaria"
-
-#: ../operations/workshop/external/ff-save.c:31
-msgid "target bitrate"
+#: ../operations/workshop/external/ff-save.c:33
+#, fuzzy
+msgid "Target bitrate"
 msgstr "Helburuaren bit-emaria"
 
-#: ../operations/workshop/external/ff-save.c:32
-msgid "frames per second"
+#: ../operations/workshop/external/ff-save.c:36
+#, fuzzy
+msgid "Frames/second"
 msgstr "fotogramak segundoko"
 
 # sink =
 # https://www.ffmpeg.org/ffmpeg-filters.html#Video-Sinks
-#: ../operations/workshop/external/ff-save.c:889
+#: ../operations/workshop/external/ff-save.c:894
 msgid "FFmpeg video output sink"
 msgstr "FFmpeg bideo-irteeraren kolektorea"
 
@@ -4019,19 +4231,19 @@ msgstr "Script-a"
 msgid "The lua script containing the implementation of this operation."
 msgstr "Eragiketa honen inplementazioa duen lua script-a"
 
-#: ../operations/workshop/external/gluas.c:43
+#: ../operations/workshop/external/gluas.c:46
 msgid "a stored lua script on disk implementing an operation."
 msgstr "eragiketa bat inplementatzen duen diskoan gordetako lua script bat."
 
-#: ../operations/workshop/external/gluas.c:44
+#: ../operations/workshop/external/gluas.c:48
 msgid "User value"
 msgstr "Erabiltzailearen balioa"
 
-#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/external/gluas.c:49
 msgid "(appears in the global variable 'user_value' in lua."
 msgstr "(lua-n 'user_value' aldagai globalean agertzen da."
 
-#: ../operations/workshop/external/gluas.c:984
+#: ../operations/workshop/external/gluas.c:989
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
@@ -4040,160 +4252,160 @@ msgstr ""
 "hizkuntzarentzat."
 
 #: ../operations/workshop/external/lens-correct.c:28
-msgid "Maker:"
+#, fuzzy
+msgid "Maker"
 msgstr "Egilea:"
 
 #: ../operations/workshop/external/lens-correct.c:29
 msgid "Write lens maker correctly"
 msgstr "Idatzi objektiboaren egilea behar bezala"
 
-#: ../operations/workshop/external/lens-correct.c:30
-msgid "Camera:"
+#: ../operations/workshop/external/lens-correct.c:31
+#, fuzzy
+msgid "Camera"
 msgstr "Kamera:"
 
-#: ../operations/workshop/external/lens-correct.c:31
+#: ../operations/workshop/external/lens-correct.c:32
 msgid "Write camera name correctly"
 msgstr "Idatzi kameraren izena behar bezala"
 
-#: ../operations/workshop/external/lens-correct.c:32
-msgid "Lens:"
+#: ../operations/workshop/external/lens-correct.c:34
+#, fuzzy
+msgid "Lens"
 msgstr "Objektiboa:"
 
-#: ../operations/workshop/external/lens-correct.c:33
+#: ../operations/workshop/external/lens-correct.c:35
 msgid "Write your lens model with uppercase letters"
 msgstr "Idatzi objektiboaren modeloa maiuskuletan"
 
 # fokua edo fokala?
-#: ../operations/workshop/external/lens-correct.c:34
+#: ../operations/workshop/external/lens-correct.c:37
 msgid "Focal of the camera"
 msgstr "Kameraren fokua"
 
-#: ../operations/workshop/external/lens-correct.c:35
+#: ../operations/workshop/external/lens-correct.c:38
 msgid "Calculate b value from focal"
 msgstr "Kalkulatu fokuaren b balioa"
 
-#: ../operations/workshop/external/lens-correct.c:37
+#: ../operations/workshop/external/lens-correct.c:41
 msgid "Center"
 msgstr "Zentratu"
 
-#: ../operations/workshop/external/lens-correct.c:38
+#: ../operations/workshop/external/lens-correct.c:42
 msgid "If you want center"
 msgstr "Zentratu nahi baduzu"
 
 # lens = objektiboa (argazki kameretan)
-#: ../operations/workshop/external/lens-correct.c:39
-msgid "Lens center x"
+#: ../operations/workshop/external/lens-correct.c:44
+#, fuzzy
+msgid "Lens center X"
 msgstr "Objektiboaren zentroaren x"
 
-#: ../operations/workshop/external/lens-correct.c:40
-#: ../operations/workshop/external/lens-correct.c:42
+#: ../operations/workshop/external/lens-correct.c:45
+#: ../operations/workshop/external/lens-correct.c:48
 msgid "Coordinates of lens center"
 msgstr "Objektiboaren zentroaren koordenatuak"
 
-#: ../operations/workshop/external/lens-correct.c:41
-msgid "Lens center y"
-msgstr "Objektiboaren zentroaren y"
+# lens = objektiboa (argazki kameretan)
+#: ../operations/workshop/external/lens-correct.c:47
+#, fuzzy
+msgid "Lens center Y"
+msgstr "Objektiboaren zentroaren x"
 
-#: ../operations/workshop/external/lens-correct.c:44
+#: ../operations/workshop/external/lens-correct.c:51
 msgid "Scale of the image"
 msgstr "Irudiaren eskala"
 
-#: ../operations/workshop/external/lens-correct.c:45
+#: ../operations/workshop/external/lens-correct.c:54
 msgid "Autocorrect d values"
 msgstr "Zuzendu automatikoki d balioak"
 
-#: ../operations/workshop/external/lens-correct.c:46
+#: ../operations/workshop/external/lens-correct.c:55
 msgid "Autocorrect D values for lens correction models."
 msgstr ""
 "D balioak automatikoki zuzentzen ditu objektiboaren zuzenketa modeloentzat."
 
-#: ../operations/workshop/external/lens-correct.c:48
-msgid "Model red a:"
+#: ../operations/workshop/external/lens-correct.c:57
+#, fuzzy
+msgid "Model red a"
 msgstr "A gorri modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:49
-#: ../operations/workshop/external/lens-correct.c:51
-#: ../operations/workshop/external/lens-correct.c:53
-#: ../operations/workshop/external/lens-correct.c:55
-#: ../operations/workshop/external/lens-correct.c:58
-#: ../operations/workshop/external/lens-correct.c:60
-#: ../operations/workshop/external/lens-correct.c:62
-#: ../operations/workshop/external/lens-correct.c:64
-#: ../operations/workshop/external/lens-correct.c:67
-#: ../operations/workshop/external/lens-correct.c:69
-#: ../operations/workshop/external/lens-correct.c:71
-#: ../operations/workshop/external/lens-correct.c:73
-msgid "Correction parameters for each color channel"
-msgstr "Kolore-kanal bakoitzaren zuzenketa-parametroak"
-
-#: ../operations/workshop/external/lens-correct.c:50
-msgid "Model red b:"
+#: ../operations/workshop/external/lens-correct.c:59
+#, fuzzy
+msgid "Model red b"
 msgstr "B gorri modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:52
-msgid "Model red c:"
+#: ../operations/workshop/external/lens-correct.c:61
+#, fuzzy
+msgid "Model red c"
 msgstr "C gorri modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:54
-msgid "Model red d:"
+#: ../operations/workshop/external/lens-correct.c:63
+#, fuzzy
+msgid "Model red d"
 msgstr "D gorri modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:57
-msgid "Model green a:"
+#: ../operations/workshop/external/lens-correct.c:66
+#, fuzzy
+msgid "Model green a"
 msgstr "A berde modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:59
-msgid "Model green b:"
+#: ../operations/workshop/external/lens-correct.c:68
+#, fuzzy
+msgid "Model green b"
 msgstr "B berde modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:61
-msgid "Model green c:"
+#: ../operations/workshop/external/lens-correct.c:70
+#, fuzzy
+msgid "Model green c"
 msgstr "C berde modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:63
-msgid "Model green d:"
+#: ../operations/workshop/external/lens-correct.c:72
+#, fuzzy
+msgid "Model green d"
 msgstr "D berde modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:66
-msgid "Model blue a:"
+#: ../operations/workshop/external/lens-correct.c:75
+#, fuzzy
+msgid "Model blue a"
 msgstr "A urdin modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:68
-msgid "Model blue b:"
+#: ../operations/workshop/external/lens-correct.c:77
+#, fuzzy
+msgid "Model blue b"
 msgstr "B urdin modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:70
-msgid "Model blue c:"
+#: ../operations/workshop/external/lens-correct.c:79
+#, fuzzy
+msgid "Model blue c"
 msgstr "C urdin modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:72
-msgid "Model blue d:"
+#: ../operations/workshop/external/lens-correct.c:81
+#, fuzzy
+msgid "Model blue d"
 msgstr "D urdin modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:75
-msgid "Model alpha a:"
+#: ../operations/workshop/external/lens-correct.c:85
+#, fuzzy
+msgid "Model alpha a"
 msgstr "A alfa modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:76
-#: ../operations/workshop/external/lens-correct.c:78
-#: ../operations/workshop/external/lens-correct.c:80
-#: ../operations/workshop/external/lens-correct.c:82
-msgid "Correction parameters for alpha channel"
-msgstr "Alfa kanalaren zuzenketa-parametroak"
-
-#: ../operations/workshop/external/lens-correct.c:77
-msgid "Model alpha b:"
+#: ../operations/workshop/external/lens-correct.c:87
+#, fuzzy
+msgid "Model alpha b"
 msgstr "B alfa modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:79
-msgid "Model alpha c:"
+#: ../operations/workshop/external/lens-correct.c:89
+#, fuzzy
+msgid "Model alpha c"
 msgstr "C alfa modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:81
-msgid "Model alpha d:"
+#: ../operations/workshop/external/lens-correct.c:91
+#, fuzzy
+msgid "Model alpha d"
 msgstr "D alfa modeloa:"
 
-#: ../operations/workshop/external/lens-correct.c:476
+#: ../operations/workshop/external/lens-correct.c:486
 msgid "Copies image performing lens distortion correction."
 msgstr "Irudia kopiatzen du objektiboaren distortsioa zuzenduz."
 
@@ -4201,51 +4413,43 @@ msgstr "Irudia kopiatzen du objektiboaren distortsioa zuzenduz."
 msgid "X0"
 msgstr "X0"
 
-#: ../operations/workshop/external/line-profile.c:25
+#: ../operations/workshop/external/line-profile.c:26
 msgid "Start x coordinate"
 msgstr "Hasierako X koordenatua"
 
-#: ../operations/workshop/external/line-profile.c:26
+#: ../operations/workshop/external/line-profile.c:29
 msgid "End x coordinate"
 msgstr "Amaieraren X koordenatua"
 
-#: ../operations/workshop/external/line-profile.c:27
+#: ../operations/workshop/external/line-profile.c:32
 msgid "Y0"
 msgstr "Y0"
 
-#: ../operations/workshop/external/line-profile.c:27
+#: ../operations/workshop/external/line-profile.c:33
 msgid "Start y coordinate"
 msgstr "Hasieraren Y koordenatua"
 
-#: ../operations/workshop/external/line-profile.c:28
+#: ../operations/workshop/external/line-profile.c:36
 msgid "End y coordinate"
 msgstr "Amaieraren Y koordenatua"
 
-#: ../operations/workshop/external/line-profile.c:29
-msgid "Width of plot"
-msgstr "Trazuaren zabalera"
-
-#: ../operations/workshop/external/line-profile.c:30
-msgid "Height of plot"
-msgstr "Trazuaren altuera"
-
-#: ../operations/workshop/external/line-profile.c:31
+#: ../operations/workshop/external/line-profile.c:44
 msgid "Min"
 msgstr "Gutx."
 
-#: ../operations/workshop/external/line-profile.c:31
+#: ../operations/workshop/external/line-profile.c:46
 msgid "Value at bottom"
 msgstr "Beheko balioa"
 
-#: ../operations/workshop/external/line-profile.c:32
+#: ../operations/workshop/external/line-profile.c:48
 msgid "Max"
 msgstr "Gehien."
 
-#: ../operations/workshop/external/line-profile.c:32
+#: ../operations/workshop/external/line-profile.c:50
 msgid "Value at top"
 msgstr "Goiko balioa"
 
-#: ../operations/workshop/external/line-profile.c:178
+#: ../operations/workshop/external/line-profile.c:196
 msgid ""
 "Renders luminance profiles for red green and blue components along the "
 "specified line in the input buffer, plotted in a buffer of the specified "
@@ -4254,6 +4458,49 @@ msgstr ""
 "Luminantziaren profilak errendatzen ditu sarreraren bufferreko zehaztutako "
 "marraren osagai gorri, berde eta urdinentzat, zehaztutako tamainako buffer "
 "batean marraztuta."
+
+#: ../operations/workshop/gaussian-blur-iir.c:38
+#, fuzzy
+msgid "Standard deviation X"
+msgstr "Desbiderapen estandarra (eskala espazialaren faktorea)"
+
+#: ../operations/workshop/gaussian-blur-iir.c:44
+#, fuzzy
+msgid "Standard deviation Y"
+msgstr "Desbiderapen estandarra (eskala espazialaren faktorea)"
+
+#: ../operations/workshop/gaussian-blur-iir.c:53
+#: ../operations/workshop/gblur-1d.c:60
+msgid "How the gaussian kernel is discretized"
+msgstr ""
+
+#: ../operations/workshop/gaussian-blur-iir.c:57
+#: ../operations/workshop/gblur-1d.c:63
+msgid "How image edges are handled"
+msgstr ""
+
+#: ../operations/workshop/gaussian-blur-iir.c:59
+#: ../operations/workshop/gblur-1d.c:64
+#, fuzzy
+msgid "Clip to the input extent"
+msgstr "Moztu emaitza sarreraren tamainara"
+
+#: ../operations/workshop/gaussian-blur-iir.c:60
+#: ../operations/workshop/gblur-1d.c:65
+msgid "Should the output extent be clipped to the input extent"
+msgstr ""
+
+#: ../operations/workshop/gaussian-blur-iir.c:114
+#: ../operations/workshop/gblur-1d.c:888
+msgid ""
+"Performs an averaging of neighboring pixels with the normal distribution as "
+"weighting"
+msgstr ""
+"Inguruko pixelen batez bestekoa lantzen du, distribuzio normalari jarraituz"
+
+#: ../operations/workshop/gblur-1d.c:56
+msgid "The orientation of the blur - hor/ver"
+msgstr ""
 
 #: ../operations/workshop/generated/average.c:109
 msgid "Image blending operation 'average' (<tt>c = (cA + aB)/2</tt>)"
@@ -4294,6 +4541,30 @@ msgstr ""
 msgid "Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
 msgstr "Irudi nahasketaren eragiketa: 'kenketa' (<tt>c = cA+cB-1.0</tt>)"
 
+#: ../operations/workshop/gradient-map.c:26
+#, fuzzy
+msgid "Color 1"
+msgstr "Kolorea"
+
+#: ../operations/workshop/gradient-map.c:27
+#, fuzzy
+msgid "Starting color for gradient"
+msgstr "Kolore biraketaren hasierako angelua"
+
+#: ../operations/workshop/gradient-map.c:28
+#, fuzzy
+msgid "Color 2"
+msgstr "Kolorea"
+
+#: ../operations/workshop/gradient-map.c:29
+#, fuzzy
+msgid "End color for gradient"
+msgstr "Gradientearen amaierako eten bat"
+
+#: ../operations/workshop/gradient-map.c:187
+msgid "Applies a color gradient."
+msgstr ""
+
 #: ../operations/workshop/hstack.c:178
 msgid ""
 "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of "
@@ -4302,43 +4573,95 @@ msgstr ""
 "Pilatu sarrerak horizontalki, ('lagungarria' 'sarrera'-ren eskuinean "
 "kokatzen da 'Irteera'-n)"
 
-#: ../operations/workshop/kuwahara.c:243
+#: ../operations/workshop/ink-simulator.c:42
+msgid "Ink configuration"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:43
+msgid "Textual desciption of inks used for simulated print-job"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:45
+msgid "Mode"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:47
+msgid "how the ink simulator is used"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:51
+#, fuzzy
+msgid "Substrate color"
+msgstr "Trazuaren kolorea"
+
+#: ../operations/workshop/ink-simulator.c:51
+msgid "paper/fabric/material color"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:52
+msgid "Ink1 color"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:52
+#: ../operations/workshop/ink-simulator.c:53
+#: ../operations/workshop/ink-simulator.c:54
+#: ../operations/workshop/ink-simulator.c:55
+#: ../operations/workshop/ink-simulator.c:56
+#, fuzzy
+msgid "ink color"
+msgstr "Kolore betegarria"
+
+#: ../operations/workshop/ink-simulator.c:53
+msgid "Ink2 color"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:54
+msgid "Ink3 color"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:55
+msgid "Ink4 color"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:56
+msgid "Ink5 color"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:58
+msgid "Ink limit"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:59
+#, c-format
+msgid "maximum amount of ink for one pixel, 2.5 = 250% coverage"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:63
+#, fuzzy
+msgid "Debug width"
+msgstr "Trazu-zabalera"
+
+#: ../operations/workshop/ink-simulator.c:65
+msgid "how wide peel off bands for ink order vis"
+msgstr ""
+
+#: ../operations/workshop/ink-simulator.c:1422
+msgid "spectral ink simulator, for softproofing/simulating press inks"
+msgstr ""
+
+#: ../operations/workshop/kuwahara.c:244
 msgid "Edge preserving blur"
 msgstr "Lausotu ertzak mantenduz"
 
-#: ../operations/workshop/linear-gradient.c:29
-msgid "One end of a agradient"
-msgstr "Gradiente baten amaierako eten bat"
-
-#: ../operations/workshop/linear-gradient.c:31
-msgid "The other end of a gradient"
-msgstr "Gradientearen amaierako beste eten bat"
-
-#: ../operations/workshop/linear-gradient.c:136
-msgid "Linear gradient renderer"
-msgstr "Gradiente linealaren errendatzailea"
-
 #: ../operations/workshop/mandelbrot.c:25
-msgid "Real"
-msgstr "Erreala"
-
-#: ../operations/workshop/mandelbrot.c:26
 msgid "Real coordinate"
 msgstr "Koordenatu erreala"
 
 #: ../operations/workshop/mandelbrot.c:27
-msgid "Imaginary"
-msgstr "Irudikaria"
-
-#: ../operations/workshop/mandelbrot.c:28
 msgid "Imaginary coordinate"
 msgstr "Koordenatu irudikaria"
 
 #: ../operations/workshop/mandelbrot.c:29
-msgid "Level"
-msgstr "Maila"
-
-#: ../operations/workshop/mandelbrot.c:30
 msgid "Water level"
 msgstr "Ur-maila"
 
@@ -4346,52 +4669,11 @@ msgstr "Ur-maila"
 msgid "Maximum number of iterations"
 msgstr "Gehienezko iterazio kopurua"
 
-#: ../operations/workshop/mandelbrot.c:144
+#: ../operations/workshop/mandelbrot.c:145
 msgid "Mandelbrot set renderer"
 msgstr "Mandelbrot multzoaren errendatzailea"
 
-#: ../operations/workshop/plasma.c:34
-msgid "Random seed. Passing -1 implies that the seed is randomly chosen."
-msgstr "Ausazko hazia. -1 pasatzea hazia ausaz aukeratuko dela esan nahi du."
-
-#: ../operations/workshop/plasma.c:35
-msgid "Turbulence"
-msgstr "Turbulentzia"
-
-#: ../operations/workshop/plasma.c:36
-msgid "The value of the turbulence"
-msgstr "Turbulentziaren balioa"
-
-#: ../operations/workshop/plasma.c:389
-msgid "Performs plasma effect on the image"
-msgstr "Plasma efektua aplikatzen dio irudiari"
-
-#: ../operations/workshop/radial-gradient.c:24
-msgid "x1"
-msgstr "x1"
-
-#: ../operations/workshop/radial-gradient.c:25
-msgid "y1"
-msgstr "y1"
-
-#: ../operations/workshop/radial-gradient.c:26
-msgid "x2"
-msgstr "x2"
-
-#: ../operations/workshop/radial-gradient.c:27
-msgid "y2"
-msgstr "y2"
-
-#: ../operations/workshop/radial-gradient.c:29
-#: ../operations/workshop/radial-gradient.c:31
-msgid "One end of gradient"
-msgstr "Gradientearen amaierako eten bat"
-
-#: ../operations/workshop/radial-gradient.c:128
-msgid "Radial gradient renderer"
-msgstr "Gradiente erradialaren errendatzailea"
-
-#: ../operations/workshop/rawbayer-load.c:154
+#: ../operations/workshop/rawbayer-load.c:155
 msgid ""
 "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as "
 "grayscale, if the fileformat is .rawbayer it will use this loader instead of "
@@ -4404,24 +4686,336 @@ msgstr ""
 "rawbayerS bada bueltatutako 16bit zenbakiak trukatuko ditu (pnm "
 "kargatzaileak antza akastuna da)"
 
-#: ../operations/workshop/snn-percentile.c:30
+#: ../operations/workshop/snn-percentile.c:32
 msgid "Number of pairs, higher number preserves more acute features"
 msgstr ""
 "Pare-kopurua, zenbaki altuago batek eginbide zehatzagoak mantentzen ditu "
 
-#: ../operations/workshop/snn-percentile.c:32
+#: ../operations/workshop/snn-percentile.c:36
 msgid "The percentile to return, the default value 50 is equal to the median"
 msgstr ""
 "Bueltatuko den pertzentila, lehenetsitako balioa 50 da, medianaren berdina "
 "da."
 
-#: ../operations/workshop/snn-percentile.c:272
+#: ../operations/workshop/snn-percentile.c:278
 msgid ""
 "Noise reducing edge enhancing percentile filter based on Symmetric Nearest "
 "Neighbours"
 msgstr ""
 "Zarata murriztu eta  ertzak hobetzeko pertzentilaren iragazkia, auzokide "
 "simetriko hurbilenean oinarrituta"
+
+#, fuzzy
+#~ msgid "Y@ value, position"
+#~ msgstr "Y2 balioa, posizioa"
+
+#~ msgid "babls error tolerance, a value between 0.2 and 0.000000001"
+#~ msgstr "babl errore tolerantzia, 0.2 eta 0.000000001 bitarteko balio bat"
+
+#, fuzzy
+#~ msgid "Maximum size of a file backend's writer thread queue (in MB)"
+#~ msgstr "Gehienezko sarrera kopurua fitxategi lauza motorraren idatz-ilaran"
+
+#~ msgid "Range scale factor"
+#~ msgstr "Barrutiaren eskala faktorea"
+
+#, fuzzy
+#~ msgid "X Offset"
+#~ msgstr "X desplazamendua"
+
+#~ msgid "X offset"
+#~ msgstr "X desplazamendua"
+
+#, fuzzy
+#~ msgid "Y Offset"
+#~ msgstr "Y desplazamendua"
+
+#~ msgid "Y offset"
+#~ msgstr "Y desplazamendua"
+
+#, fuzzy
+#~ msgid "Set the red gain for the blue channel"
+#~ msgstr "Kanal urdineko bit kopurua"
+
+#, fuzzy
+#~ msgid "Set the green gain for the blue channel"
+#~ msgstr "Kanal urdineko bit kopurua"
+
+#, fuzzy
+#~ msgid "Set the blue gain for the blue channel"
+#~ msgstr "Kanal urdineko bit kopurua"
+
+#~ msgid "The color to render (defaults to 'black')"
+#~ msgstr "Errendatzeko kolorea (lehenetsia 'beltza')"
+
+#~ msgid "The tiles' background color"
+#~ msgstr "Lauzen atzeko planoaren kolorea"
+
+#~ msgid "Seed"
+#~ msgstr "Hazia"
+
+#~ msgid "Size of each block in pixels"
+#~ msgstr "Bloke bakoitzaren tamaina pixeletan"
+
+#~ msgid "Simplify image into an array of solid-colored dots"
+#~ msgstr "Soildu irudia kolore-soileko puntuen matrize batean"
+
+#~ msgid "Emboss or Bumpmap"
+#~ msgstr "Bozeldura edo erliebe-mapa"
+
+#~ msgid "Red stretch"
+#~ msgstr "Gorrira tiratzea"
+
+#~ msgid "Green stretch"
+#~ msgstr "Berdera tiratzea"
+
+#~ msgid "Blue stretch"
+#~ msgstr "Urdinera tiratzea"
+
+#~ msgid "Red mode"
+#~ msgstr "Gorriaren modua"
+
+#~ msgid "Green mode"
+#~ msgstr "Berdearen modua"
+
+#~ msgid "Blue mode"
+#~ msgstr "Urdinaren modua"
+
+#~ msgid "Colors"
+#~ msgstr "Koloreak"
+
+#~ msgid "Use loglog smoothing"
+#~ msgstr "Erabili loglog leuntzea"
+
+#~ msgid "Depth value"
+#~ msgstr "Sakoneraren balioa"
+
+#~ msgid "Bailout"
+#~ msgstr "Segurtasuna"
+
+#~ msgid "GeglNode to introspect"
+#~ msgstr "Introspekziorako GeglNode-a"
+
+#~ msgid "Main value of distortion"
+#~ msgstr "Distortsioaren balio nagusia"
+
+#~ msgid "Edge value of distortion"
+#~ msgstr "Distortsioaren ertzeko balioa"
+
+#~ msgid "Brighten the image"
+#~ msgstr "Argitu irudia"
+
+#~ msgid "X shift"
+#~ msgstr "X desplazamendua"
+
+#~ msgid "Shift horizontal"
+#~ msgstr "Desplazamendu horizontala"
+
+#~ msgid "Y shift"
+#~ msgstr "Y desplazamendua"
+
+#~ msgid "Shift vertical"
+#~ msgstr "Desplazamendu bertikala"
+
+#~ msgid "Number of iterations"
+#~ msgstr "Iterazio kopurua"
+
+#~ msgid "Clip result"
+#~ msgstr "Moztu emaitza"
+
+#~ msgid "Iteration"
+#~ msgstr "Iterazioa"
+
+#~ msgid "Randomization"
+#~ msgstr "Ausaz nahastea"
+
+#~ msgid "How many iteratarions to run the algorithm with"
+#~ msgstr "Algoritmoa zenbat iterazioekin exekutatu"
+
+#~ msgid "Offset angle."
+#~ msgstr "Desplazamendu angelua."
+
+#~ msgid "Period of the ripple"
+#~ msgstr "Izurtzearen periodoa"
+
+#~ msgid "Angle in degree"
+#~ msgstr "Angelua gradutan"
+
+#~ msgid "Type of wave"
+#~ msgstr "Uhinaren mota"
+
+#~ msgid "Shape of the vignette"
+#~ msgstr "Binetaren forma"
+
+#~ msgid ""
+#~ "Aspect ratio to use, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = 1:inf 1.0 = "
+#~ "inf:1, this is applied after proportion is taken into account, to "
+#~ "directly use squeeze factor as proportions, set proportion to 0.0."
+#~ msgstr ""
+#~ "Erabiliko den aspektu-erlazioa, -0.5 = 1:2, 0.0 = 1:1, 0.5 = 2:1, -1.0 = "
+#~ "1:inf 1.0 = inf:1, hau proportzioa kontuan hartu eta gero aplikatzen da, "
+#~ "estutzearen faktorea zuzenean proportzio gisa erabiltzeko, ezarri "
+#~ "proportzioa 0.0 gisa."
+
+#~ msgid "Rotation angle"
+#~ msgstr "Biratze-angelua"
+
+#~ msgid "Effect Strength"
+#~ msgstr "Efektuaren indarra"
+
+#~ msgid "Effect Size"
+#~ msgstr "Efektuaren tamaina"
+
+#~ msgid "Effect Hardness"
+#~ msgstr "Efektuaren gogortasuna"
+
+#~ msgid "Write to an existing GeglBuffer"
+#~ msgstr "Idatzi existitzen den GeglBuffer batean"
+
+#~ msgid "Babl output format string"
+#~ msgstr "Babl irteeraren formatu katea"
+
+#~ msgid "The value of saturation"
+#~ msgstr "Saturazioaren balioa"
+
+#~ msgid "The value of gray threshold"
+#~ msgstr "Grisa atalasearen balioa"
+
+#~ msgid "Value of the element in position (1,1)"
+#~ msgstr "(1,1) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (1,2)"
+#~ msgstr "(1,2) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (1,3)"
+#~ msgstr "(1,3) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (1,4)"
+#~ msgstr "(1,4) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (1,5)"
+#~ msgstr "(1,5) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (2,1)"
+#~ msgstr "(2,1) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (2,2)"
+#~ msgstr "(2,2) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (2,3)"
+#~ msgstr "(2,3) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (2,4)"
+#~ msgstr "(2,4) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (2,5)"
+#~ msgstr "(2,5) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (3,1)"
+#~ msgstr "(3,1) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (3,2)"
+#~ msgstr "(3,2) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (3,3)"
+#~ msgstr "(3,3) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (3,4)"
+#~ msgstr "(3,4) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (3,5)"
+#~ msgstr "(3,5) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (4,1)"
+#~ msgstr "(4,1) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (4,2)"
+#~ msgstr "(4,2) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (4,3)"
+#~ msgstr "(4,3) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (4,4)"
+#~ msgstr "(4,4) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (4,5)"
+#~ msgstr "(4,5) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (5,1)"
+#~ msgstr "(5,1) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (5,2)"
+#~ msgstr "(5,2) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (5,3)"
+#~ msgstr "(5,3) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (5,4)"
+#~ msgstr "(5,4) posizioko elementuaren balioa"
+
+#~ msgid "Value of the element in position (5,5)"
+#~ msgstr "(5,5) posizioko elementuaren balioa"
+
+#~ msgid "The value of the divisor"
+#~ msgstr "Zatitzailearen balioa"
+
+#~ msgid "Normalize or not"
+#~ msgstr "Normalizatu ala ez"
+
+#~ msgid "Alpha weighting"
+#~ msgstr "Alfa ponderazioa"
+
+#~ msgid "Bitrate"
+#~ msgstr "Bit-emaria"
+
+#~ msgid "Lens center y"
+#~ msgstr "Objektiboaren zentroaren y"
+
+#~ msgid "Correction parameters for each color channel"
+#~ msgstr "Kolore-kanal bakoitzaren zuzenketa-parametroak"
+
+#~ msgid "Correction parameters for alpha channel"
+#~ msgstr "Alfa kanalaren zuzenketa-parametroak"
+
+#~ msgid "Width of plot"
+#~ msgstr "Trazuaren zabalera"
+
+#~ msgid "One end of a agradient"
+#~ msgstr "Gradiente baten amaierako eten bat"
+
+#~ msgid "The other end of a gradient"
+#~ msgstr "Gradientearen amaierako beste eten bat"
+
+#~ msgid "Real"
+#~ msgstr "Erreala"
+
+#~ msgid "Imaginary"
+#~ msgstr "Irudikaria"
+
+#~ msgid "Level"
+#~ msgstr "Maila"
+
+#~ msgid "Random seed. Passing -1 implies that the seed is randomly chosen."
+#~ msgstr ""
+#~ "Ausazko hazia. -1 pasatzea hazia ausaz aukeratuko dela esan nahi du."
+
+#~ msgid "The value of the turbulence"
+#~ msgstr "Turbulentziaren balioa"
+
+#~ msgid "Performs plasma effect on the image"
+#~ msgstr "Plasma efektua aplikatzen dio irudiari"
+
+#~ msgid "x1"
+#~ msgstr "x1"
+
+#~ msgid "y1"
+#~ msgstr "y1"
+
+#~ msgid "x2"
+#~ msgstr "x2"
+
+#~ msgid "y2"
+#~ msgstr "y2"
 
 #~ msgid "Left"
 #~ msgstr "Ezkerrean"
@@ -4461,6 +5055,3 @@ msgstr ""
 
 #~ msgid "Lanczos width"
 #~ msgstr "'Lanczos'-en zabalera"
-
-#~ msgid "Width of the Lanczos function"
-#~ msgstr "'Lanczos' funtzioaren zabalera"
