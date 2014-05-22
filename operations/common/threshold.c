@@ -93,6 +93,21 @@ process (GeglOperation       *op,
 
 #include "opencl/threshold.cl.h"
 
+static const gchar *composition =
+    "<?xml version='1.0'             encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:threshold'>"
+    "  <params>"
+    "    <param name='value'>0.5</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
+
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
@@ -112,6 +127,7 @@ gegl_op_class_init (GeglOpClass *klass)
           _("Thresholds the image to white/black based on either the global value "
             "set in the value property, or per pixel from the aux input."),
     "cl-source"  , threshold_cl_source,
+    "reference-composition", composition,
     NULL);
 }
 

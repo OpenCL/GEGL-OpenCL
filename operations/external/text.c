@@ -30,7 +30,7 @@ property_string (font, _("Font family"), "Sans")
     description(_("Font family (utf8)"))
 
 property_double (size, _("Size"), 10.0)
-    description (_("Approximate height of text in pixels."))
+    description (_("Font size in pixels."))
     value_range (1.0, 2048.0)
 
 property_color  (color, _("Color"), "black")
@@ -287,6 +287,18 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("RaGaBaA float"));
 }
 
+static const gchar *composition =
+    "<?xml version='1.0'             encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:crop' width='200' height='200'/>"
+    "<node operation='gegl:text'>"
+    "  <params>"
+    "    <param name='size'>16</param>"
+    "    <param name='wrap'>200</param>"
+    "    <param name='string'>loves or pursues or desires to obtain pain of itself, because it is pain, but occasionally circumstances occur in which toil and pain can procure him some great pleasure. To take a trivial example, which of us ever undertakes laborious physical exercise, except to obtain some advantage from it? But who has any right to find fault with a man who chooses to enjoy a pleasure that has no annoying consequences, or one who avoids a pain that produces no</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
@@ -305,6 +317,7 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_source_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
+    "reference-composition", composition,
     "name"        , "gegl:text",
     "categories"  , "render",
     "description" , _("Display a string of text using pango and cairo."),
