@@ -30,7 +30,7 @@ property_double (offset, _("Offset"), 0.0)
     description (_("Offset value added"))
     value_range (-0.5, 0.5)
 
-property_double (gamma, _("Gamma correction"), 0.01)
+property_double (gamma, _("Gamma correction"), 1.0)
     value_range (0.01, 10)
     ui_range    (0.01, 3.0)
 
