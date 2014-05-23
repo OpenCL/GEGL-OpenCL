@@ -21,18 +21,10 @@
 
 #include <glib-object.h>
 
-const gchar *gegl_param_spec_get_property_key (GParamSpec  *pspec,
-                                               const gchar *key_name);
-
-void         gegl_param_spec_set_property_key (GParamSpec  *pspec,
-                                               const gchar *key_name,
-                                               const gchar *value);
-
-void       gegl_operation_class_set_property_key
-                                            (GeglOperationClass *klass,
-                                             const gchar        *property_name,
-                                             const gchar        *key_name,
-                                             const gchar        *value);
+void gegl_operation_class_set_property_key (GeglOperationClass *klass,
+                                            const gchar        *property_name,
+                                            const gchar        *key_name,
+                                            const gchar        *value);
 
 const gchar *
 gegl_operation_class_get_property_key (GeglOperationClass *operation_class,

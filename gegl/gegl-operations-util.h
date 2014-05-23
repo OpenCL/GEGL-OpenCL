@@ -106,7 +106,12 @@ gegl_operation_list_property_keys (const gchar *operation_type,
                                    const gchar *property_name,
                                    guint       *n_keys);
 
+const gchar *gegl_param_spec_get_property_key (GParamSpec  *pspec,
+                                               const gchar *key_name);
 
+void         gegl_param_spec_set_property_key (GParamSpec  *pspec,
+                                               const gchar *key_name,
+                                               const gchar *value);
 
 
 G_END_DECLS
