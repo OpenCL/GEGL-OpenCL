@@ -246,15 +246,21 @@ gegl_op_class_init (GeglOpClass *klass)
   GeglOperationFilterClass *filter_class;
   gchar                    *composition = "<?xml version='1.0' encoding='UTF-8'?>"
     "<gegl>"
+    "<node operation='gegl:crop' width='200' height='200'/>"
+    "<node operation='gegl:over'>"
+    "<node operation='gegl:translate' x='40' y='40'/>"
     "<node operation='gegl:fill-path'>"
     "  <params>"
+    "    <param name='color'>rgb(0.0, 0.6, 1.0)</param>"
     "    <param name='d'>"
     "M0,50 C0,78 24,100 50,100 C77,100 100,78 100,50 C100,45 99,40 98,35 C82,35 66,35 50,35 C42,35 35,42 35,50 C35,58 42,65 50,65 C56,65 61,61 64,56 C67,51 75,55 73,60 C69,  69 60,75 50,75 C36,75 25,64 25,50 C25,36 36,25 50,25 L93,25 C83,9 67,0 49,0 C25,0 0,20 0,50   z"
     "                    </param>"
-    "    <param name='color'>rgb(0.0, 0.6, 1.0)</param>"
     "  </params>"
     "</node>"
+    "</node>"
+    "<node operation='gegl:checkerboard' color1='rgb(0.25,0.25,0.25)' color2='rgb(0.75,0.75,0.75)'/>"
     "</gegl>";
+
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
