@@ -23,6 +23,7 @@
 
 property_color (value, _("Color"), "black")
     description (("The color to render (Idefaults to 'black')"))
+    ui_meta     ("role", "color-primary")
 
 property_format (format, _("Babl Format"), 666)
     description (_("The babl format of the output"))
