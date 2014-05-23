@@ -113,6 +113,18 @@ void         gegl_param_spec_set_property_key (GParamSpec  *pspec,
                                                const gchar *key_name,
                                                const gchar *value);
 
+static inline gdouble
+gegl_coordinate_relative_to_pixel (gdouble relative, gdouble pixel_dim)
+{
+    return relative * pixel_dim;
+}
+
+static inline gdouble
+gegl_coordinate_pixel_to_relative (gdouble pixel, gdouble pixel_dim)
+{
+    return pixel / pixel_dim;
+}
+
 
 G_END_DECLS
 
