@@ -37,20 +37,17 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (center_x, _("Center X"), 20.0)
-    description (_("Horizontal center position"))
-    value_range (-10000, 10000)
-    ui_meta     ("unit", "pixel-coordinate")
+property_double (center_x, _("Center X"), 0.5)
+    ui_range    (0.0, 1.0)
+    ui_meta     ("unit", "relative-coordinate")
     ui_meta     ("axis", "x")
 
-property_double (center_y, _("Center Y"), 20.0)
-    description (_("Vertical center position"))
-    value_range (-10000, 10000)
-    ui_meta     ("unit", "pixel-coordinate")
+property_double (center_y, _("Center Y"), 0.5)
+    ui_range    (0.0, 1.0)
+    ui_meta     ("unit", "relative-coordinate")
     ui_meta     ("axis", "y")
 
-property_double (factor, _("Factor"), 0.1)
-    description (_("Bluring factor"))
+property_double (factor, _("Blurring factor"), 0.1)
     value_range (-10, 1.0)
     ui_range    (-0.5, 1.0)
     ui_gamma    (2.0)
@@ -71,20 +68,27 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglProperties              *o       = GEGL_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglRectangle           *whole_region;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
 
   if (whole_region != NULL)
     {
+     gdouble center_x, center_y;
+
+     center_x = gegl_coordinate_relative_to_pixel (
+                  o->center_x, whole_region->width);
+     center_y = gegl_coordinate_relative_to_pixel (
+                  o->center_y, whole_region->height);
+
       op_area->left = op_area->right
-        = MAX (fabs (whole_region->x - o->center_x),
-               fabs (whole_region->width + whole_region->x - o->center_x)) * fabs (o->factor) +1;
+        = MAX (fabs (whole_region->x - center_x),
+               fabs (whole_region->width + whole_region->x - center_x)) * fabs (o->factor) +1;
 
       op_area->top = op_area->bottom
-        = MAX (fabs (whole_region->y - o->center_y),
-               fabs (whole_region->height + whole_region->y - o->center_y)) * fabs (o->factor) +1;
+        = MAX (fabs (whole_region->y - center_y),
+               fabs (whole_region->height + whole_region->y - center_y)) * fabs (o->factor) +1;
     }
   else
     {
@@ -127,6 +131,15 @@ process (GeglOperation       *operation,
   gint                     x, y;
   GeglRectangle            src_rect;
 
+  GeglRectangle           *whole_region;
+  gdouble                  center_x, center_y;
+
+  whole_region = gegl_operation_source_get_bounding_box (operation, "input");
+  center_x = gegl_coordinate_relative_to_pixel (
+                o->center_x, whole_region->width);
+  center_y = gegl_coordinate_relative_to_pixel (
+                o->center_y, whole_region->width);
+
   src_rect = *roi;
   src_rect.x -= op_area->left;
   src_rect.y -= op_area->top;
@@ -150,8 +163,8 @@ process (GeglOperation       *operation,
 
           gfloat x_start = x;
           gfloat y_start = y;
-          gfloat x_end   = x + (o->center_x - (gfloat) x) * o->factor;
-          gfloat y_end   = y + (o->center_y - (gfloat) y) * o->factor;
+          gfloat x_end   = x + (center_x - (gfloat) x) * o->factor;
+          gfloat y_end   = y + (center_y - (gfloat) y) * o->factor;
 
           gint dist = ceil (sqrt (SQR (x_end - x_start) + SQR (y_end - y_start)) +1);
 

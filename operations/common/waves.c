@@ -23,16 +23,14 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (x, _("Center X"), 0.0)
-    description(_("X coordinate of the center of the waves"))
-    ui_range   (0.0, 1024.0)
-    ui_meta    ("unit", "pixel-coordinate") /* XXX: should be relative */
+property_double (x, _("Center X"), 0.5)
+    ui_range   (0.0, 1.0)
+    ui_meta    ("unit", "relative-coordinate")
     ui_meta    ("axis", "x")
 
-property_double (y, _("Center Y"), 0.0)
-    description(_("Y coordinate of the center of the waves"))
-    ui_range   (0.0, 1024.0)
-    ui_meta    ("unit", "pixel-coordinate")
+property_double (y, _("Center Y"), 0.5)
+    ui_range   (0.0, 1.0)
+    ui_meta    ("unit", "relative-coordinate")
     ui_meta    ("axis", "y")
 
 property_double (amplitude, _("Amplitude"), 25.0)
@@ -87,13 +85,17 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglProperties         *o       = GEGL_PROPERTIES (operation);
+  GeglProperties     *o       = GEGL_PROPERTIES (operation);
   GeglSampler        *sampler = gegl_buffer_sampler_new (input,
                                                          babl_format ("RGBA float"),
                                                          o->sampler_type);
+  GeglRectangle      *in_extent = gegl_operation_source_get_bounding_box (operation, "input");
   GeglBufferIterator *iter;
 
   GeglAbyssPolicy abyss = o->clamp ? GEGL_ABYSS_CLAMP : GEGL_ABYSS_NONE;
+
+  gdouble px_x = gegl_coordinate_relative_to_pixel (o->x, in_extent->width);
+  gdouble px_y = gegl_coordinate_relative_to_pixel (o->y, in_extent->height);
 
   gdouble scalex;
   gdouble scaley;
@@ -133,8 +135,8 @@ process (GeglOperation       *operation,
             gdouble ux;
             gdouble uy;
 
-            dx = (x - o->x) * scalex;
-            dy = (y - o->y) * scaley;
+            dx = (x - px_x) * scalex;
+            dy = (y - px_y) * scaley;
 
             radius = sqrt (dx * dx + dy * dy);
 

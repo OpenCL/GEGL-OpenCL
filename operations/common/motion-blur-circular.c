@@ -38,14 +38,14 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (center_x, _("Center X"), 20.0)
-    ui_range    (-10000.0, 10000.0)
-    ui_meta     ("unit", "pixel-coordinate")
+property_double (center_x, _("Center X"), 0.5)
+    ui_range    (0.0, 1.0)
+    ui_meta     ("unit", "relative-coordinate")
     ui_meta     ("axis", "x")
 
-property_double (center_y, _("Center Y"), 20.0)
-    ui_range    (-10000.0, 10000.0)
-    ui_meta     ("unit", "pixel-coordinate")
+property_double (center_y, _("Center Y"), 0.5)
+    ui_range    (0.0, 1.0)
+    ui_meta     ("unit", "relative-coordinate")
     ui_meta     ("axis", "y")
 
 /* FIXME: With a large angle, we lose AreaFilter's flavours */
@@ -81,10 +81,14 @@ prepare (GeglOperation *operation)
 
   if (whole_region != NULL)
     {
-      gdouble maxr_x = MAX (fabs (o->center_x - whole_region->x),
-                            fabs (o->center_x - whole_region->x - whole_region->width));
-      gdouble maxr_y = MAX (fabs (o->center_y - whole_region->y),
-                            fabs (o->center_y - whole_region->y - whole_region->height));
+      gdouble center_x = gegl_coordinate_relative_to_pixel (o->center_x, 
+                                                            whole_region->width);
+      gdouble center_y = gegl_coordinate_relative_to_pixel (o->center_y,
+                                                            whole_region->height);
+      gdouble maxr_x = MAX (fabs (center_x - whole_region->x),
+                            fabs (center_x - whole_region->x - whole_region->width));
+      gdouble maxr_y = MAX (fabs (center_y - whole_region->y),
+                            fabs (center_y - whole_region->y - whole_region->height));
 
       if (angle >= G_PI)
         angle = G_PI;
@@ -154,14 +158,21 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglProperties              *o       = GEGL_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   gfloat                  *in_buf, *out_buf, *out_pixel;
   gint                     x, y;
   GeglRectangle            src_rect;
   GeglRectangle           *whole_region;
   gdouble                  angle;
+  gdouble                  center_x, center_y;
 
   whole_region = gegl_operation_source_get_bounding_box (operation, "input");
+
+  center_x = gegl_coordinate_relative_to_pixel (
+                    o->center_x, whole_region->width);
+  center_y = gegl_coordinate_relative_to_pixel (
+                    o->center_y, whole_region->height);
+
 
   src_rect = *roi;
   src_rect.x -= op_area->left;
@@ -190,8 +201,8 @@ process (GeglOperation       *operation,
           gfloat sum[] = {0, 0, 0, 0};
           gint count = 0;
 
-          gdouble xr = x - o->center_x;
-          gdouble yr = y - o->center_y;
+          gdouble xr = x - center_x;
+          gdouble yr = y - center_y;
           gdouble radius  = sqrt (SQR (xr) + SQR (yr));
 
           /* This is not the "real" length, a bit shorter */
@@ -214,8 +225,8 @@ process (GeglOperation       *operation,
               gfloat s_val = sin (phi_start - i * phi_step);
               gfloat c_val = cos (phi_start - i * phi_step);
 
-              gfloat ix = o->center_x + radius * c_val;
-              gfloat iy = o->center_y + radius * s_val;
+              gfloat ix = center_x + radius * c_val;
+              gfloat iy = center_y + radius * s_val;
 
               if (ix >= whole_region->x && ix < whole_region->x + whole_region->width &&
                   iy >= whole_region->y && iy < whole_region->y + whole_region->height)
