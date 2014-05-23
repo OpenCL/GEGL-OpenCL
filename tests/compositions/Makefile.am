@@ -12,8 +12,6 @@ SUBDIRS=data
 
 EXTRA_DIST=$(wildcard $(srcdir)/*.xml) $(wildcard $(srcdir)/reference/*) run-compositions.py
 
-# List of tests. The .sh suffix allows us to use $(wildcard $(srcdir)/*.xml) in
-# EXTRA_DISTS
 TESTS = \
   affine-with-negative.xml        \
   alien-map.xml                   \
@@ -29,6 +27,7 @@ TESTS = \
   edge-laplace.xml                \
   edge-sobel.xml                  \
   fattal02.xml                    \
+	gegl.xml                        \
   gamma.xml                       \
   hdr-color.xml                   \
   image-compare.xml               \
