@@ -173,6 +173,21 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
+static const gchar *composition =
+    "<?xml version='1.0'             encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:stress'>"
+    "  <params>"
+    "    <param name='radius'>200</param>"
+    "    <param name='iterations'>90</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
@@ -193,8 +208,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:stress",
-    "categories" , "enhance",
+    "name",                  "gegl:stress",
+    "categories",            "enhance",
+    "reference-composition", composition,
     "description",
         _("Spatio Temporal Retinex-like Envelope with Stochastic Sampling"),
         NULL);

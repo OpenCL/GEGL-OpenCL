@@ -339,6 +339,21 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
+static const gchar *composition =
+    "<?xml version='1.0'             encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:c2g'>"
+    "  <params>"
+    "    <param name='radius'>200</param>"
+    "    <param name='iterations'>90</param>"
+    "  </params>"
+    "</node>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-input.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
@@ -364,6 +379,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:c2g",
     "categories",  "enhance",
+    "reference-composition", composition,
     "description",
     _("Color to grayscale conversion, uses envelopes formed from spatial "
       "color differences to perform color-feature preserving grayscale "
