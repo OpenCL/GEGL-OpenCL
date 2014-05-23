@@ -52,7 +52,7 @@ property_int    (height, _("Height"), -1)
   ui_meta       ("axis", "y")
 
 property_boolean(little_planet, _("Little planet"), FALSE)
-  description   (_("use the pan/tilt location as center for a stereographic/little planet projection."))
+  description   (_("Render a stereographic mapping, a tilt value of 90, which means looking at nadir provides a good default value."))
 
 property_enum   (sampler_type, _("Resampling method"),
                   GeglSamplerType, gegl_sampler_type, GEGL_SAMPLER_NEAREST)
@@ -494,6 +494,16 @@ process (GeglOperation       *operation,
 
   return TRUE;
 }
+
+static gchar *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+    "<gegl>"
+    "<node operation='gegl:panorama-projection' width='200' height='200'/>"
+    "<node operation='gegl:load'>"
+    "  <params>"
+    "    <param name='path'>standard-panorama.png</param>"
+    "  </params>"
+    "</node>"
+    "</gegl>";
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
