@@ -145,22 +145,21 @@ gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass         *operation_class;
   GeglOperationComposerClass *composer_class;
-  gchar                      *composition = "<?xml version='1.0' encoding='UTF-8'?>"
+  gchar                      *composition = 
     "<gegl>"
-    "<node operation='gegl:map-relative'>"
-    "  <params>"
-    "    <param name='scaling'>100</param>"
-    "  </params>"
-    "  <node operation='gegl:load'>"
-    "    <params><param name='path'>standard-aux.png</param></params>"
-    "  </node>"
+    "<node operation='gegl:crop' width='200' height='200'/>"
+    "<node operation='gegl:over'>"
+      "<node operation='gegl:map-relative'>"
+      "  <params>"
+      "    <param name='scaling'>30</param>"
+      "  </params>"
+      "  <node operation='gegl:perlin-noise' />"
+      "</node>"
+      "<node operation='gegl:load' path='standard-input.png'/>"
     "</node>"
-    "<node operation='gegl:load'>"
-    "  <params>"
-    "    <param name='path'>standard-input.png</param>"
-    "  </params>"
-    "</node>"
+    "<node operation='gegl:checkerboard' color1='rgb(0.25,0.25,0.25)' color2='rgb(0.75,0.75,0.75)'/>"
     "</gegl>";
+
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   composer_class  = GEGL_OPERATION_COMPOSER_CLASS (klass);
