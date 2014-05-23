@@ -167,7 +167,8 @@ test_operation (const gchar *op_name,
 static void
 standard_output (const gchar *op_name)
 {
-  GeglNode *composition, *input, *aux, *operation, *crop, *output;
+  GeglNode *composition, *input, *aux, *operation, *crop, *output, *translate;
+  GeglNode *background,  *over;
   gchar    *input_path  = g_build_path (G_DIR_SEPARATOR_S, data_dir,
                                         "standard-input.png", NULL);
   gchar    *aux_path    = g_build_path (G_DIR_SEPARATOR_S, data_dir,
@@ -183,6 +184,11 @@ standard_output (const gchar *op_name)
                                    "operation", "gegl:load",
                                    "path", input_path,
                                    NULL);
+      translate  = gegl_node_new_child (composition,
+                                 "operation", "gegl:translate",
+                                 "x", 0.0,
+                                 "y", 80.0,
+                                 NULL);
       aux = gegl_node_new_child (composition,
                                  "operation", "gegl:load",
                                  "path", aux_path,
@@ -197,14 +203,28 @@ standard_output (const gchar *op_name)
                                     "compression", 9,
                                     "path", output_path,
                                     NULL);
+      background = gegl_node_new_child (composition,
+                                        "operation", "gegl:checkerboard",
+                                        "color1", gegl_color_new ("rgb(0.75,0.75,0.75)"),
+                                        "color2", gegl_color_new ("rgb(0.25,0.25,0.25)"),
+                                        NULL);
+      over = gegl_node_new_child (composition, "operation", "gegl:over", NULL);
 
-      gegl_node_link_many (operation, crop, output, NULL);
 
       if (gegl_node_has_pad (operation, "input"))
         gegl_node_link (input, operation);
 
       if (gegl_node_has_pad (operation, "aux"))
-        gegl_node_connect_to (aux, "output", operation, "aux");
+      {
+        gegl_node_connect_to (aux, "output", translate, "input");
+        gegl_node_connect_to (translate, "output", operation, "aux");
+      }
+
+      gegl_node_connect_to (background, "output", over, "input");
+      gegl_node_connect_to (operation,  "output", over, "aux");
+      gegl_node_connect_to (over,       "output", crop, "input");
+      gegl_node_connect_to (crop,       "output", output, "input");
+
 
       gegl_node_process (output);
     }
