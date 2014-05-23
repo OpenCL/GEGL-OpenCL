@@ -1,11 +1,5 @@
 #include "config.h"
-
-#include <gegl-plugin.h>  /* needed to do full introspection */
-#include <stdio.h>
-#include <string.h>
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#include <gegl-plugin.h>
 
 static GList *
 gegl_operations_build (GList *list, GType type)
@@ -58,239 +52,6 @@ static GList *gegl_operations (void)
 GeglColor *
 gegl_param_spec_color_get_default (GParamSpec *self);
 
-
-static void
-list_properties (GType    type,
-                 gint     indent,
-                 gboolean html)
-{
-  GParamSpec **self;
-  GParamSpec **parent;
-  guint n_self;
-  guint n_parent;
-  gint prop_no;
-
-  if (!type)
-    return;
-
-  self = g_object_class_list_properties (
-            G_OBJECT_CLASS (g_type_class_ref (type)),
-            &n_self);
-  parent = g_object_class_list_properties (
-            /*G_OBJECT_CLASS (g_type_class_peek_parent (g_type_class_ref (type))),*/
-            G_OBJECT_CLASS (g_type_class_ref (GEGL_TYPE_OPERATION)),
-            &n_parent);
-
-  for (prop_no=0;prop_no<n_self;prop_no++)
-    {
-      gint parent_no;
-      gboolean found=FALSE;
-      for (parent_no=0;parent_no<n_parent;parent_no++)
-        if (self[prop_no]==parent[parent_no])
-          found=TRUE;
-      /* only print properties if we are an addition compared to
-       * GeglOperation
-       */
-      if (!found)
-        {
-          const gchar *type_name = g_type_name (G_OBJECT_TYPE (self[prop_no]));
-
-          type_name = strstr (type_name, "Param");
-          type_name+=5;
-
-          g_print("<tr><td colspan='1'>&nbsp;&nbsp;</td><td colspan='1' class='prop_type' valign='top'>%s<br/><span style='font-style:normal;text-align:right;float:right;padding-right:1em;'>", type_name);
-
-          if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_DOUBLE))
-            {
-              gdouble default_value = G_PARAM_SPEC_DOUBLE (self[prop_no])->default_value;
-              gdouble min = G_PARAM_SPEC_DOUBLE (self[prop_no])->minimum;
-              gdouble max = G_PARAM_SPEC_DOUBLE (self[prop_no])->maximum;
-
-              if (default_value<-10000000)
-                g_print ("-inf ");
-              else if (default_value>10000000)
-                g_print ("+inf");
-              else
-                g_print ("%2.2f", default_value);
-
-              g_print ("<br/>");
-              if (min<-10000000)
-                g_print ("-inf ");
-              else
-                g_print ("%2.2f", min);
-
-              g_print ("-");
-
-              if (max>10000000)
-                g_print (" +inf");
-              else
-                g_print ("%2.2f", max);
-            }
-          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_INT))
-            {
-              gint default_value = G_PARAM_SPEC_INT (self[prop_no])->default_value;
-              gint min = G_PARAM_SPEC_INT (self[prop_no])->minimum;
-              gint max = G_PARAM_SPEC_INT (self[prop_no])->maximum;
-
-              if (default_value<-10000000)
-                g_print ("-inf ");
-              else if (default_value>10000000)
-                g_print ("+inf");
-              else
-                g_print ("%i", default_value);
-
-              g_print ("<br/>");
-              if (min<-10000000)
-                g_print ("-inf ");
-              else
-                g_print ("%i", min);
-
-              g_print ("-");
-
-              if (max>10000000)
-                g_print (" +inf");
-              else
-                g_print ("%i", max);
-            }
-          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_FLOAT))
-            {
-              gfloat default_value = G_PARAM_SPEC_FLOAT (self[prop_no])->default_value;
-              gfloat min = G_PARAM_SPEC_FLOAT (self[prop_no])->minimum;
-              gfloat max = G_PARAM_SPEC_FLOAT (self[prop_no])->maximum;
-
-              if (default_value<-10000000)
-                g_print ("-inf ");
-              else if (default_value>10000000)
-                g_print ("+inf");
-              else
-                g_print ("%2.2f", default_value);
-
-              g_print ("<br/>");
-              if (min<-10000000)
-                g_print ("-inf ");
-              else
-                g_print ("%2.2f", min);
-
-              g_print ("-");
-
-              if (max>10000000)
-                g_print (" +inf");
-              else
-                g_print ("%2.2f", max);
-            }
-          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_BOOLEAN))
-            {
-              g_print ("%s", G_PARAM_SPEC_BOOLEAN (self[prop_no])->default_value?"True":"False");
-            }
-          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_STRING))
-            {
-              const gchar *string = G_PARAM_SPEC_STRING (self[prop_no])->default_value;
-
-              if (strlen (string) > 8)
-                {
-                  gchar copy[16];
-                  g_snprintf (copy, 12, "%s..", string);
-                  g_print ("%s", copy);
-                }
-              else
-                g_print ("%s", string);
-            }
-          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), GEGL_TYPE_COLOR))
-            {
-              GeglColor *color = gegl_param_spec_color_get_default (self[prop_no]);
-              if (color)
-                {
-                  gchar *string;
-
-                  g_object_get (color, "string", &string, NULL);
-                  g_print ("%s", string);
-                  g_free (string);
-
-                  g_object_unref (color);
-                }
-            }
-          else
-            {
-              g_print ("\n");
-            }
-          g_print ("</span></td>");
-
-          g_print("<td class='prop_name' valign='top'>%s</td>\n",
-            g_param_spec_get_name (self[prop_no]));
-
-          if (g_param_spec_get_blurb (self[prop_no]) &&
-              g_param_spec_get_blurb (self[prop_no])[0]!='\0')
-            g_print ("<td colspan='1' valign='top' class='prop_blurb'>%s</td>\n",
-            g_param_spec_get_blurb (self[prop_no]));
-          else
-            g_print ("<td><em>not documented</em></td>\n\n");
-
-          g_print ("</tr>\n");
-
-        }
-    }
-  if (self)
-    g_free (self);
-  if (parent)
-    g_free (parent);
-}
-
-
-static gchar *html_top = "<html>\n<head>\n<title>GEGL operations</title>\n<link rel='shortcut icon' href='images/gegl.ico'/>\n<style type='text/css'>\n@import url(gegl.css);\ndiv#toc ul { font-size:70%; }\n"
-".category { margin-bottom: 2em; }\n"
-".category a {\n  display: block;\n  width: 14em;\n  height: 1.2em;\n  float: left;\n  text-align: left;\n  font-size: 90%;\n}\n"
-"</style>\n<meta http-equiv='Content-Type' content='application/xhtml+xml; charset=UTF-8' /></head>\n\n<body>\n<div class='paper'>\n<div class='content'>\n";
-static gchar *html_bottom = "</div>\n</div>\n</body>\n</html>\n";
-
-
-static void category_index (gpointer key,
-                            gpointer value,
-                            gpointer user_data)
-{
-  gchar    *category = key;
-  GList    *operations = value;
-  GList    *iter;
-  gboolean  comma;
-
-  if (!strcmp (category, "hidden"))
-    return;
-  g_print ("<a name='cat_%s'></a><h3>%s</h3>\n", category, category);
-  g_print ("<div class='category'>\n");
-
-  for (iter=operations, comma=FALSE;iter;iter = g_list_next (iter))
-    {
-      GeglOperationClass *klass = iter->data;
-      const char *categories = gegl_operation_class_get_key (klass, "categories");
-      if (categories && strstr (categories, "hidden"))
-        continue;
-      g_print ("%s<a href='#op_%s'>%s</a>\n", comma?"":"", klass->name, klass->name);
-      comma = TRUE;
-    }
-  g_print ("<div style='clear:both;'></div></div>\n");
-}
-
-#if 0
-static void category_menu_index (gpointer key,
-                                 gpointer value,
-                                 gpointer user_data)
-{
-  gchar    *category = key;
-  GList    *operations = value;
-  GList    *iter;
-
-  if (!strcmp (category, "hidden"))
-    return;
-  for (iter=operations;iter;iter = g_list_next (iter))
-    {
-      GeglOperationClass *klass = iter->data;
-      const char *categories = gegl_operation_class_get_key (klass, "categories");
-      if (!categories || strstr (categories, "hidden"))
-        continue;
-      g_print ("<li><a href='#op_%s'>%s</a></li>\n", klass->name, klass->name);
-    }
-}
-#endif
-
 /* convert operation name to path of example image */
 static gchar*
 operation_to_path (const gchar *op_name)
@@ -308,116 +69,395 @@ operation_to_path (const gchar *op_name)
   return output_path;
 }
 
+static void json_escape_string (const char *description)
+{
+  const char *p;
+  if (!description)
+    return;
+  for (p = description; *p; p++)
+  {
+    switch (*p)
+    {
+      case '"':
+      case '\\':
+      case '/':
+        g_print ("\\%c", *p);
+        break;
+      case '\n':
+        g_print ("\\n");
+        break;
+      default:
+        g_print ("%c", *p);
+    }
+  }
+}
+
+static void
+json_list_properties (GType type, const gchar *opname)
+{
+  GParamSpec **self;
+  GParamSpec **parent;
+  guint n_self;
+  guint n_parent;
+  gint prop_no;
+  gboolean first_prop = TRUE;
+
+  g_print (",'properties':[\n");
+
+  if (!type)
+    return;
+
+  self = g_object_class_list_properties (
+            G_OBJECT_CLASS (g_type_class_ref (type)),
+            &n_self);
+  parent = g_object_class_list_properties (
+            /*G_OBJECT_CLASS (g_type_class_peek_parent (g_type_class_ref (type))),*/
+            G_OBJECT_CLASS (g_type_class_ref (GEGL_TYPE_OPERATION)),
+            &n_parent);
+
+
+  for (prop_no=0;prop_no<n_self;prop_no++)
+    {
+      gint parent_no;
+      gboolean found=FALSE;
+      for (parent_no=0;parent_no<n_parent;parent_no++)
+        if (self[prop_no]==parent[parent_no])
+          found=TRUE;
+      /* only print properties if we are an addition compared to
+       * GeglOperation
+       */
+      if (!found)
+        {
+          const gchar *type_name = g_type_name (G_OBJECT_TYPE (self[prop_no]));
+
+          if (first_prop)
+          {
+            first_prop = FALSE;
+            g_print(" { 'name':'%s'\n", g_param_spec_get_name (self[prop_no]));
+          }
+          else
+            g_print(",{'name':'%s'\n", g_param_spec_get_name (self[prop_no]));
+
+          g_print("  ,'label':\"");
+            json_escape_string (g_param_spec_get_nick (self[prop_no]));
+          g_print ("\"\n");
+
+          if(strstr (type_name, "Param"))
+          {
+            type_name = strstr (type_name, "Param");
+            type_name+=5;
+          }
+
+          g_print("  ,'type':'");
+          {
+            for (const char *p = type_name; *p; p++)
+              g_print("%c", g_ascii_tolower (*p));
+          }
+          g_print("'\n");
+
+          if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_DOUBLE))
+            {
+              gdouble default_value = G_PARAM_SPEC_DOUBLE (self[prop_no])->default_value;
+              gdouble min = G_PARAM_SPEC_DOUBLE (self[prop_no])->minimum;
+              gdouble max = G_PARAM_SPEC_DOUBLE (self[prop_no])->maximum;
+
+              if (default_value<-10000000)
+                g_print ("  ,'default':'-inf'\n");
+              else if (default_value>10000000)
+                g_print ("  ,'default':'+inf'\n");
+              else
+                g_print ("  ,'default':'%2.2f'\n", default_value);
+
+              if (min<-10000000)
+                g_print ("  ,'minimum':'-inf'\n");
+              else
+                g_print ("  ,'minimum':'%2.2f'\n", min);
+
+              if (max>10000000)
+                g_print ("  ,'maximum':'+inf'\n");
+              else
+                g_print ("  ,'maximum':'%2.2f'\n", max);
+              
+              if (GEGL_IS_PARAM_SPEC_DOUBLE (self[prop_no]))
+              {
+                GeglParamSpecDouble *pspec =
+                              GEGL_PARAM_SPEC_DOUBLE (self[prop_no]);
+
+                if (pspec->ui_minimum < -10000000)
+                  g_print ("  ,'ui-minimum':'-inf'\n");
+                else
+                  g_print ("  ,'ui-minimum':'%2.2f'\n", pspec->ui_minimum);
+
+                if (pspec->ui_maximum > 10000000)
+                  g_print ("  ,'ui-maximum':'+inf'\n");
+                else
+                  g_print ("  ,'ui-maximum':'%2.2f'\n", pspec->ui_maximum);
+
+                g_print ("  ,'ui-gamma':'%2.2f'\n", pspec->ui_gamma);
+                g_print ("  ,'ui-step-small':'%2.2f'\n", pspec->ui_step_small);
+                g_print ("  ,'ui-step-big':'%2.2f'\n", pspec->ui_step_big);
+                g_print ("  ,'ui-digits':'%i'\n", pspec->ui_digits);
+              }
+
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_INT))
+            {
+              gint default_value = G_PARAM_SPEC_INT (self[prop_no])->default_value;
+              gint min = G_PARAM_SPEC_INT (self[prop_no])->minimum;
+              gint max = G_PARAM_SPEC_INT (self[prop_no])->maximum;
+
+              if (default_value<-10000000)
+                g_print ("  ,'default':'-inf'\n");
+              else if (default_value>10000000)
+                g_print ("  ,'default':'+inf'\n");
+              else
+                g_print ("  ,'default':'%i'\n", default_value);
+
+              if (min<-10000000)
+                g_print ("  ,'minimum':'-inf'\n");
+              else
+                g_print ("  ,'minimum':'%i'\n", min);
+
+              if (max>10000000)
+                g_print ("  ,'maximum':'+inf'\n");
+              else
+                g_print ("  ,'maximum':'%i'\n", max);
+
+              if (GEGL_IS_PARAM_SPEC_INT (self[prop_no]))
+              {
+                GeglParamSpecInt *pspec =
+                              GEGL_PARAM_SPEC_INT (self[prop_no]);
+
+                if (pspec->ui_minimum < -10000000)
+                  g_print ("  ,'ui-minimum':'-inf'\n");
+                else
+                  g_print ("  ,'ui-minimum':'%i'\n", pspec->ui_minimum);
+
+                if (pspec->ui_maximum > 10000000)
+                  g_print ("  ,'ui-maximum':'+inf'\n");
+                else
+                  g_print ("  ,'ui-maximum':'%i'\n", pspec->ui_maximum);
+
+                g_print ("  ,'ui-gamma':'%2.2f'\n", pspec->ui_gamma);
+                g_print ("  ,'ui-step-small':'%i'\n", pspec->ui_step_small);
+                g_print ("  ,'ui-step-big':'%i'\n", pspec->ui_step_big);
+              }
+
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_BOOLEAN))
+            {
+              g_print ("  ,'default':'%s'\n", G_PARAM_SPEC_BOOLEAN (self[prop_no])->default_value?"True":"False");
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_STRING))
+            {
+              const gchar *string = G_PARAM_SPEC_STRING (self[prop_no])->default_value;
+
+              g_print ("  ,'default':\"");
+              json_escape_string (string);
+              g_print ("\"\n");
+
+            }
+          else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), GEGL_TYPE_COLOR))
+            {
+              GeglColor *color = gegl_param_spec_color_get_default (self[prop_no]);
+              if (color)
+                {
+                  gchar *string;
+
+                  g_object_get (color, "string", &string, NULL);
+                  g_print ("  ,'default':\"");
+                  json_escape_string (string);
+                  g_print ("\"\n");
+                  g_free (string);
+
+                  g_object_unref (color);
+                }
+            }
+          else
+            {
+            }
+
+          if (g_param_spec_get_blurb (self[prop_no]) &&
+              g_param_spec_get_blurb (self[prop_no])[0]!='\0')
+          {
+            g_print ("  ,'description':\"");
+          
+            json_escape_string (g_param_spec_get_blurb (self[prop_no]));
+            g_print ("\"\n");
+          }
+
+      {
+        guint count;
+        gchar **property_keys = gegl_operation_list_property_keys (
+            opname, 
+            g_param_spec_get_name (self[prop_no]),
+            
+            &count);
+
+        if (property_keys)
+        {
+          int i;
+          if (property_keys[0])
+          {
+            gboolean first = TRUE;
+            g_print ("  ,'meta':[\n");
+            for (i = 0; property_keys[i]; i++)
+            {
+              if (first)
+              {
+                g_print ("    ");
+                first = FALSE;
+              }
+              else
+                g_print ("   ,");
+              g_print ("['%s','%s']\n",
+                    property_keys[i],
+                    gegl_operation_get_property_key (opname, 
+            g_param_spec_get_name (self[prop_no]),
+                      property_keys[i]));
+            }
+            g_print ("  ]\n");
+          }
+          g_free (property_keys);
+        }
+      }
+
+          g_print(" }");
+        }
+    }
+  if (self)
+    g_free (self);
+  if (parent)
+    g_free (parent);
+  g_print ("]");
+}
+
 gint
-main (gint    argc,
-      gchar **argv)
+main (gint argc, gchar **argv)
 {
   GList      *operations;
   GList      *iter;
-  GHashTable *categories = NULL;
+  gboolean first = TRUE;
 
   gegl_init (&argc, &argv);
 
   operations = gegl_operations ();
 
-  /* Collect categories */
-  categories = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
+  g_print ("window.opdb=[\n");
+
   for (iter=operations;iter;iter = g_list_next (iter))
     {
       GeglOperationClass *klass = iter->data;
-      const char *categoris = gegl_operation_class_get_key (klass, "categories");
-      const gchar *ptr = categoris;
-      while (ptr && *ptr)
-        {
-          gchar category[64]="";
-          gint i=0;
-          while (*ptr && *ptr!=':' && i<63)
-            {
-              category[i++]=*(ptr++);
-              category[i]='\0';
-            }
-          if (*ptr==':')
-            ptr++;
-          {
-            GList *items = g_hash_table_lookup (categories, category);
-            g_hash_table_insert (categories, g_strdup (category), g_list_append (items, klass));
-          }
-        }
-    }
 
-  g_print ("%s", html_top);
 
-#if 0
-  g_print ("<div id='toc'>\n<ul>\n");
-  g_print ("<li><a href='index.html'>GEGL</a></li><li>&nbsp;</li>\n");
-  g_print ("<li><a href='index.html#Documentation'>Documentation</a></li>\n");
-  g_print ("<li><a href='index.html#Glossary'>&nbsp;&nbsp;Glossary</a></li>\n");
-  g_print ("<li><a href='operations.html#'>&nbsp;&nbsp;Operations</a></li>\n");
-  g_print ("<li><a href='api.html'>&nbsp;&nbsp;API reference</a></li>\n");
-  g_print ("<li><a href=''>&nbsp;</a></li>\n");
-  g_print ("<li><a href='#Categories'>Categories</a></li>\n");
-  g_print ("<li><a href=''>&nbsp;</a></li>\n");
-  /*category_menu_item ("All", NULL, NULL);
-  g_hash_table_foreach (categories, category_menu_item, NULL);*/
-
-      /*border: 0.1em dashed rgb(210,210,210);
-       */
-  //category_menu_index("All", operations, NULL);
-
-  g_print ("</ul>\n</div>\n");
-#endif
-
-    g_print ("<h1>GEGL operation reference</h1>");
-    g_print ("<p>Image processing operations are shared objects (plug-ins) loaded when GEGL initializes. "
-             "This page is generated from information registered by the plug-ins themselves.</p>"
-              "<a name='Categories'><h2>Categories</h2></a><p>A plug-in can "
-             "belong in multiple categories. Below is indexes broken down into the various available categories.</p>");
-
-  category_index ("All", operations, NULL);
-  /* create menus for each of the categories */
-
-  g_hash_table_foreach (categories, category_index, NULL);
-
-  /* list all operations */
-  g_print ("<table>\n");
-  for (iter=operations;iter;iter = g_list_next (iter))
-    {
-      GeglOperationClass *klass = iter->data;
-      const char *categoris = gegl_operation_class_get_key (klass, "categories");
-      const char *description = gegl_operation_class_get_key (klass, "description");
       const char *name = gegl_operation_class_get_key (klass, "name");
+      const char *description = gegl_operation_class_get_key (klass, "description");
+      const char *categoris = gegl_operation_class_get_key (klass, "categories");
 
-      if (categoris && strstr (categoris, "hidden"))
-        continue;
-
-      g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_name' colspan='4'><a name='op_%s'>%s</a></td>\n</tr>\n", klass->name, klass->name);
-
-      if (name)
-        {
-          char *image = operation_to_path (name);
-
-          if (g_file_test (image, G_FILE_TEST_EXISTS))
-            g_print ("<tr>\n <td colspan='1'>&nbsp;</td>\n  <td colspan='4'><img style='float:right;padding-left:1.5em;' src='%s' />", image);
-          else
-            g_print ("<tr>\n <td colspan='1'>&nbsp;</td>\n");
-          if (description)
-            g_print ("%s\n", description);
-          g_print ("</td></tr>\n");
-
-          g_free (image);
-        }
+      if (first)
+        first = FALSE;
       else
+        g_print (",");
+
+      g_print ("{'op':'%s'\n", name);
+
+      if (klass->compat_name)
+        g_print (",'compat-op':'%s'\n", klass->compat_name);
+
+      if (klass->opencl_support)
+        g_print (",'opencl-support':'true'\n");
+
       if (description)
-        g_print ("<tr>\n  <td colspan='1'>&nbsp;</td>\n  <td class='op_description' colspan='4'>%s</td>\n</tr>\n", description);
+      {
+        g_print (",'description':\"");
+        json_escape_string (description);
+        g_print ("\"\n");
+      }
 
-      list_properties (G_OBJECT_CLASS_TYPE (klass), 2, TRUE);
+
+      g_print (",'parent':'%s'\n", 
+          g_type_name (g_type_parent(G_OBJECT_CLASS_TYPE(klass))));
+
+      {
+        char *image = operation_to_path (name);
+
+        if (g_file_test (image, G_FILE_TEST_EXISTS))
+          g_print (",'image':'%s'\n", image);
+        g_free (image);
+      }
+
+
+      if (categoris)
+      {
+        const gchar *ptr = categoris;
+          gboolean first = TRUE;
+        g_print (",'categories':[");
+
+        while (ptr && *ptr)
+          {
+            gchar category[64]="";
+            gint i=0;
+            while (*ptr && *ptr!=':' && i<63)
+              {
+                category[i++]=*(ptr++);
+                category[i]='\0';
+              }
+            if (*ptr==':')
+              ptr++;
+            {
+            if (first)
+              first = FALSE;
+            else
+              g_print (",");
+              g_print ("'%s'", category);
+            }
+          }
+        g_print ("]\n");
+      }
+
+      json_list_properties (G_OBJECT_CLASS_TYPE (klass), name);
+
+      {
+        guint nkeys;
+        gchar **keys = gegl_operation_list_keys (name, &nkeys);
+
+        if (keys)
+          {
+            gboolean first_key = TRUE;
+            for (gint i = 0; keys[i]; i++)
+              {
+                const gchar *value = gegl_operation_get_key (name, keys[i]);
+
+                if (g_str_equal (keys[i], "categories") ||
+                    g_str_equal (keys[i], "cl-source") ||
+                    g_str_equal (keys[i], "name") ||
+                    g_str_equal (keys[i], "description")
+                    )
+                  continue;
+
+                if (first_key)
+                {
+                  g_print (",'meta':[\n");
+                  g_print ("  ");
+                  first_key = FALSE;
+                }
+                else
+                {
+                  g_print (" ,");
+                }
+                g_print ("[\"%s\", \"", keys[i]);
+                json_escape_string (value);
+                g_print ("\"]\n");
+              }
+            g_free (keys);
+            if (!first_key)
+              g_print ("]\n");
+          }
+      }
+
+      g_print (" }\n");
     }
-  g_print ("</table>\n");
+  g_print ("]\n");
 
-
-  g_print ("%s", html_bottom);
-
-  g_list_free (operations);
-  gegl_exit ();
   return 0;
 }

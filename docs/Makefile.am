@@ -18,11 +18,11 @@ ASC_DOC=index.html  abyss_policy.html bugzilla.html build.html commandline.html 
 
 
 HTML_FILES = \
-	operations.html		\
+	operations.json		\
 	class-hierarchy.html
 
 GTKDOC_FILES = \
-	operations.html		\
+	operations.json \
 	gegl.css
 
 if HAVE_RUBY
@@ -32,10 +32,6 @@ endif
 
 gegl.devhelp: api.html
 	echo
-
-# dummy target to force the operations be available for scanning when
-# creating the docbook index when doing parallel builds.
-api.html: operations.html
 
 if HAVE_ENSCRIPT
 ENSCRIPT_FILES = \
@@ -76,7 +72,7 @@ EXTRA_DIST = \
 	images/standard-aux.png \
 	index.txt.in
 
-BUILT_EXTRA_DIST = class-hierarchy.html operations.html $(ASC_DOC)
+BUILT_EXTRA_DIST = class-hierarchy.html operations.json $(ASC_DOC)
 EXTRA_DIST += $(BUILT_EXTRA_DIST)
 
 EXAMPLE_FILES = $(wildcard $(srcdir)/images/examples/*.png)
@@ -106,9 +102,9 @@ examples:  $(top_builddir)/bin/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*
 		-d $(srcdir)/images -e $(exclusion_pattern) ; \
 	fi
 
-operations.html: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c | examples
+operations.json: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c | examples
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/tools/operation_reference$(EXEEXT) --ops-html > $@
+	$(top_builddir)/tools/operation_reference$(EXEEXT) --json-db > $@
 
 class-hierarchy.html: $(top_builddir)/tools/introspect$(EXEEXT) $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
@@ -118,7 +114,6 @@ gegl.h.html: $(top_srcdir)/gegl/gegl.h
 if HAVE_ENSCRIPT
 	$(ENSCRIPT) -E --color --language=html -p$@ $<
 endif
-
 
 gegl-plugin.h.html: $(top_srcdir)/gegl/gegl-plugin.h
 if HAVE_ENSCRIPT

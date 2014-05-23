@@ -607,7 +607,7 @@ gegl_operation_list_keys (const gchar *operation_name,
   count = g_hash_table_size (GEGL_OPERATION_CLASS (klass)->keys);
   ret = g_malloc0 (sizeof (gpointer) * (count + 1));
   list = g_hash_table_get_keys (GEGL_OPERATION_CLASS (klass)->keys);
-  for (i = 0, l = list; l; l = l->next)
+  for (i = 0, l = list; l; l = l->next, i++)
     {
       ret[i] = l->data;
     }
