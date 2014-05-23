@@ -34,7 +34,7 @@ property_enum (shape, _("Vignette shape"),
 property_color (color, _("Color"), "black")
     description (_("Defaults to 'black', you can use transparency here to erase portions of an image"))
 
-property_double (radius, _("Radius"), 1.5)
+property_double (radius, _("Radius"), 1.2)
     description (_("How far out vignetting goes as portion of half image diagonal"))
     value_range (0.0, 3.0)
     ui_meta     ("unit", "relative-distance")
@@ -58,14 +58,12 @@ property_double (squeeze, _("Squeeze"), 0.0)
     value_range (-1.0, 1.0)
 
 property_double (x, _("Center X"), 0.5)
-    description (_("Horizontal center of vignetting"))
-    value_range (-1.0, 2.0)
+    ui_range    (0, 1.0)
     ui_meta     ("unit", "relative-distance")
     ui_meta     ("axis", "x")
 
 property_double (y, _("Center Y"), 0.5)
-    description (_("Vertical center of vignetting"))
-    value_range (-1, 2)
+    ui_range    (0, 1.0)
     ui_meta     ("unit", "relative-distance")
     ui_meta     ("axis", "y")
 
