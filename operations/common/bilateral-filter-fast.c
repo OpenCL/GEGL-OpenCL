@@ -102,9 +102,11 @@ bilateral_process (GeglOperation       *operation,
 {
   GeglProperties   *o = GEGL_PROPERTIES (operation);
 
+#if 0
   if (gegl_operation_use_opencl (operation))
     if (bilateral_cl_process (operation, input, output, result, o->s_sigma, o->r_sigma/100))
       return TRUE;
+#endif
 
   bilateral_filter (input, result, output, result, o->s_sigma, o->r_sigma/100);
 
@@ -486,7 +488,7 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_required_for_output = bilateral_get_required_for_output;
   operation_class->get_cached_region       = bilateral_get_cached_region;
 
-  operation_class->opencl_support = TRUE;
+  operation_class->opencl_support = FALSE;
 
   gegl_operation_class_set_keys (operation_class,
   "name"       , "gegl:bilateral-filter-fast",
