@@ -10,7 +10,7 @@
     
     <node operation='gegl:over'> 
       <node operation='gegl:translate'> <params> <param name='x'>0</param> <param name='y'>0</param> </params> </node> 
-      <node operation='gegl:dropshadow'> <params> <param name='opacity'>2.2</param> <param name='x'>0</param> <param name='y'>0</param> <param name='radius'>8</param> </params> </node> <gegl:fill-path d='M0,50 C0,78 24,100 50,100 C77,100 100,78 100,50 C100,45 99,40 98,35 C82,35 66,35 50,35 C42,35 35,42 35,50 C35,58 42,65 50,65 C56,65 61,61 64,56 C67,51 75,55 73,60 C69,69 60,75 50,75 C36,75 25,64 25,50 C25,36 36,25 50,25 L93,25 C83,9 67,0 49,0 C25,0 0,20 0,50 z' color='white'/> </node> 
+      <node operation='gegl:dropshadow'> <params> <param name='opacity'>1.2</param> <param name='x'>0</param> <param name='y'>0</param> <param name='radius'>8</param> </params> </node> <gegl:fill-path d='M0,50 C0,78 24,100 50,100 C77,100 100,78 100,50 C100,45 99,40 98,35 C82,35 66,35 50,35 C42,35 35,42 35,50 C35,58 42,65 50,65 C56,65 61,61 64,56 C67,51 75,55 73,60 C69,69 60,75 50,75 C36,75 25,64 25,50 C25,36 36,25 50,25 L93,25 C83,9 67,0 49,0 C25,0 0,20 0,50 z' color='white'/> </node> 
     <node operation='gegl:over'> 
       <node operation='gegl:translate'> <params> <param name='x'>88</param> <param name='y'>0</param> </params> </node> 
       <node operation='gegl:dropshadow'> <params> <param name='opacity'>1.2</param> <param name='x'>0</param> <param name='y'>0</param> <param name='radius'>8</param> </params> </node> 
