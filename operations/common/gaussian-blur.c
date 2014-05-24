@@ -38,16 +38,16 @@ property_double (std_dev_x, _("Size X"), 1.5)
     value_range (0.0, 1500.0)
     ui_range    (0.0, 100.0)
     ui_gamma    (3.0)
+    ui_meta     ("unit", "pixel-distance")
     ui_meta     ("axis", "x")
-    ui_meta     ("unit", "pixel-coordinate")
 
 property_double (std_dev_y, _("Size Y"), 1.5)
     description (_("Standard deviation for the vertical axis"))
     value_range (0.0, 1500.0)
     ui_range    (0.0, 100.0)
     ui_gamma    (3.0)
+    ui_meta     ("unit", "pixel-distance")
     ui_meta     ("axis", "y")
-    ui_meta     ("unit", "pixel-coordinate")
 
 property_enum  (filter, _("Filter"),
     GeglGaussianBlurFilter, gegl_gaussian_blur_filter,

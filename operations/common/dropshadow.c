@@ -25,13 +25,13 @@
 property_double (x, _("X"), 20.0)
   description   (_("Horizontal shadow offset"))
   ui_range      (-40.0, 40.0)
-  ui_meta       ("unit", "pixel-coordinate")
+  ui_meta       ("unit", "pixel-distance")
   ui_meta       ("axis", "x")
 
 property_double (y, _("Y"), 20.0)
   description   (_("Vertical shadow offset"))
   ui_range      (-40.0, 40.0)
-  ui_meta       ("unit", "pixel-coordinate")
+  ui_meta       ("unit", "pixel-distance")
   ui_meta       ("axis", "y")
 
 property_double (radius, _("Blur radius"), 10.0)

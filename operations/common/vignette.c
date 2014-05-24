@@ -59,12 +59,12 @@ property_double (squeeze, _("Squeeze"), 0.0)
 
 property_double (x, _("Center X"), 0.5)
     ui_range    (0, 1.0)
-    ui_meta     ("unit", "relative-distance")
+    ui_meta     ("unit", "relative-coordinate")
     ui_meta     ("axis", "x")
 
 property_double (y, _("Center Y"), 0.5)
     ui_range    (0, 1.0)
-    ui_meta     ("unit", "relative-distance")
+    ui_meta     ("unit", "relative-coordinate")
     ui_meta     ("axis", "y")
 
 property_double (rotation, _("Rotation"), 0.0)
