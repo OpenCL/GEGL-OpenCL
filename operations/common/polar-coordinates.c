@@ -416,8 +416,9 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process                    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:polar-coordinates",
-    "categories",  "enhance",
+    "name",               "gegl:polar-coordinates",
+    "categories",         "enhance",
+    "position-dependent", "true",
     "description", _("Convert image to or from polar coordinates"),
     NULL);
 }

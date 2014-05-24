@@ -110,8 +110,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region = NULL;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:perlin-noise",
-    "categories" , "render",
+    "name",               "gegl:perlin-noise",
+    "categories",         "render",
+    "position-dependent", "true",
     "description", _("Perlin noise generator"),
     NULL);
 

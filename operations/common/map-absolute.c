@@ -144,8 +144,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_required_for_output = get_required_for_output;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:map-absolute",
-    "categories" , "transform",
+    "name"       ,        "gegl:map-absolute",
+    "categories" ,        "transform",
+    "position-dependent", "true",
     "description", _("sample input with an auxiliary buffer that contain absolute source coordinates"),
     NULL);
 }

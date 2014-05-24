@@ -229,9 +229,10 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process             = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories",  "artistic",
-    "license",     "GPL3+",
-    "name",        "gegl:tile-glass",
+    "categories",         "artistic",
+    "license",            "GPL3+",
+    "name",               "gegl:tile-glass",
+    "position-dependent", "true",
     "description", _("Simulate distortion caused by rectangular glass tiles"),
     NULL);
 }

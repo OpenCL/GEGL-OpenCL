@@ -649,8 +649,9 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process           = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:pixelize",
-    "categories",  "blur",
+    "name",               "gegl:pixelize",
+    "categories",         "blur",
+    "position-dependent", "true",
     "description", _("Simplify image into an array of solid-colored rectangles"),
     NULL);
 }

@@ -320,8 +320,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:simplex-noise",
-    "categories" , "render",
+    "name",               "gegl:simplex-noise",
+    "categories",         "render",
+    "position-dependent", "true",
     "description", _("Generates a solid noise texture."),
     NULL);
 }

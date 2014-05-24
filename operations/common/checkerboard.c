@@ -333,9 +333,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:checkerboard",
-    "categories",  "render",
-    "description", _("Create a checkerboard pattern"),
+    "name",               "gegl:checkerboard",
+    "categories",         "render",
+    "position-dependent", "true",
+    "description",      _("Create a checkerboard pattern"),
     NULL);
 }
 

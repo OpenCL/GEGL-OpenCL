@@ -424,10 +424,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_required_for_output = get_required_for_output;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:mirrors",
-    "categories" , "blur",
-    "description",
-          _("Applies mirroring effect on the image."),
+    "name",               "gegl:mirrors",
+    "position-dependent", "true",
+    "categories",         "blur",
+    "description", _("Applies mirroring effect on the image."),
     NULL);
 }
 

@@ -406,8 +406,9 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:warp",
-    "categories",  "transform",
+    "name",               "gegl:warp",
+    "categories",         "transform",
+    "position-dependent", "true",
     "description", _("Compute a relative displacement mapping from a stroke"),
     NULL);
 }

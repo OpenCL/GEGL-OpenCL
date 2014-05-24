@@ -160,8 +160,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region       = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:tile-seamless",
-    "categories" , "misc",
+    "name"       ,        "gegl:tile-seamless",
+    "categories" ,        "misc",
+    "position-dependent", "true",
     "description", _("Make the input buffer seamlessly tileable."
                      " The algorithm is not content-aware,"
                      " so the result may need post-processing."),

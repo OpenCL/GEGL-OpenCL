@@ -134,8 +134,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->no_cache = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:linear-gradient",
-    "categories"  , "render",
+    "name",               "gegl:linear-gradient",
+    "categories",         "render",
+    "position-dependent", "true",
     "description" , _("Linear gradient renderer"),
     NULL);
 }

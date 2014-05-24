@@ -129,11 +129,12 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name", "gegl:tile",
-                                 "categories", "misc",
-                                 "description",
-                                 _("Infinitely repeats the input image."),
-                                 "reference-composition", composition,
-                                 NULL);
+      "name",                 "gegl:tile",
+      "categories",           "misc",
+      "position-dependent",   "true",
+      "reference-composition", composition,
+      "description",
+      _("Infinitely repeats the input image."),
+      NULL);
 }
 #endif

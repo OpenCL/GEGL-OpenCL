@@ -165,8 +165,9 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:ripple",
-    "categories",  "distort",
+    "name",               "gegl:ripple",
+    "categories",         "distort",
+    "position-dependent", "true",
     "description", _("Displace pixels in a ripple pattern"),
     NULL);
 }

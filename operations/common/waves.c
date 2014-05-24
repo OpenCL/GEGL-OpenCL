@@ -175,8 +175,9 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:waves",
-    "categories",  "distort",
+    "name",               "gegl:waves",
+    "categories",         "distort",
+    "position-dependent", "true",
     "description", _("Distort the image with waves"),
     NULL);
 }

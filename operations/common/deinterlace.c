@@ -332,8 +332,9 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process                    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:deinterlace",
-    "categories",  "enhance",
+    "name",               "gegl:deinterlace",
+    "categories",         "enhance",
+    "position-dependent", "true",
     "description", _("Fix images where every other row or column is missing"),
     NULL);
 }

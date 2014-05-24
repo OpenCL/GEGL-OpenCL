@@ -84,8 +84,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->attach = attach;
 
   gegl_operation_class_set_keys (operation_class,
-  "name"       , "gegl:rectangle",
-  "categories" , "input",
+  "name",               "gegl:rectangle",
+  "categories",         "input",
+  "position-dependent", "true",
   "description",
         _("A rectangular source of a fixed size with a solid color"),
         NULL);

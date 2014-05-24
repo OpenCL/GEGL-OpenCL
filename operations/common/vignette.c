@@ -376,8 +376,9 @@ gegl_op_class_init (GeglOpClass *klass)
   point_filter_class->cl_process = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:vignette",
-    "categories",  "render",
+    "name",               "gegl:vignette",
+    "position-dependent", "true",
+    "categories",         "render",
     "description", _("Applies a vignette to an image. Simulates the luminance "
                      "fall off at the edge of exposed film, and some other "
                      "fuzzier border effects that can naturally occur with "

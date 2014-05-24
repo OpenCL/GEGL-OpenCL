@@ -416,8 +416,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region       = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:plasma",
-    "categories" , "render",
+    "name",               "gegl:plasma",
+    "categories",         "render",
+    "position-dependent", "true",
     "description", _("Creates an image filled with a plasma effect."),
     NULL);
 }

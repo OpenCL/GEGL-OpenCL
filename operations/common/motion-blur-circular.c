@@ -292,10 +292,11 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "name",        "gegl:motion-blur-circular",
-                                 "categories",  "blur",
-                                 "description", _("Circular motion blur"),
-                                 NULL);
+      "name",               "gegl:motion-blur-circular",
+      "categories",         "blur",
+      "position-dependent", "true",
+      "description", _("Circular motion blur"),
+      NULL);
 }
 
 #endif

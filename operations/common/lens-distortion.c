@@ -494,10 +494,11 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process                    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:lens-distortion",
-    "categories",  "blur",
-    "description", _("Corrects barrel or pincushion lens distortion."),
+    "name",                  "gegl:lens-distortion",
+    "categories",            "blur",
+    "position-dependent",    "true",
     "reference-composition", composition,
+    "description", _("Corrects barrel or pincushion lens distortion."),
     NULL);
 }
 
