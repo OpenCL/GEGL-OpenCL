@@ -22,16 +22,16 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_gaussian_blur_filter2)
-   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_AUTO, "Auto")
-   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_FIR,  "FIR")
-   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_IIR,  "IIR")
+   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_AUTO, "auto", N_("Auto"))
+   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_FIR,  "fir",  N_("FIR"))
+   enum_value (GEGL_GAUSSIAN_BLUR_FILTER2_IIR,  "iir",  N_("IIR"))
 enum_end (GeglGaussianBlurFilter2)
 
 enum_start (gegl_gaussian_blur_policy)
-   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_NONE,  "None")
-   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_CLAMP, "Clamp")
-   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_BLACK, "Black")
-   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_WHITE, "White")
+   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_NONE,  "none",   N_("None"))
+   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_CLAMP, "clamp",  N_("Clamp"))
+   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_BLACK, "black",  N_("Black"))
+   enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_WHITE, "white",  N_("White"))
 enum_end (GeglGaussianBlurPolicy)
 
 

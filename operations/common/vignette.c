@@ -22,9 +22,9 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_vignette_shape)
-  enum_value (GEGL_VIGNETTE_SHAPE_CIRCLE,  "Circle")
-  enum_value (GEGL_VIGNETTE_SHAPE_SQUARE,  "Square")
-  enum_value (GEGL_VIGNETTE_SHAPE_DIAMOND, "Diamond")
+  enum_value (GEGL_VIGNETTE_SHAPE_CIRCLE,  "circle",  N_("Circle"))
+  enum_value (GEGL_VIGNETTE_SHAPE_SQUARE,  "square",  N_("Square"))
+  enum_value (GEGL_VIGNETTE_SHAPE_DIAMOND, "diamond", N_("Diamond"))
 enum_end (GeglVignetteShape)
 
 property_enum (shape, _("Vignette shape"),

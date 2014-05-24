@@ -27,10 +27,14 @@ property_pointer (src_profile, _("Source Profile"),
 
 /* These are positioned so their values match up with the LCMS enum */
 enum_start (gegl_rendering_intent)
-  enum_value (GEGL_RENDERING_INTENT_PERCEPTUAL,            "Perceptual")
-  enum_value (GEGL_RENDERING_INTENT_RELATIVE_COLORIMETRIC, "Relative Colorimetric")
-  enum_value (GEGL_RENDERING_INTENT_SATURATION,            "Saturation")
-  enum_value (GEGL_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC, "Absolute Colorimetric")
+  enum_value (GEGL_RENDERING_INTENT_PERCEPTUAL,
+              "perceptual",            N_("Perceptual"))
+  enum_value (GEGL_RENDERING_INTENT_RELATIVE_COLORIMETRIC,
+              "relative-colorimetric", N_("Relative Colorimetric"))
+  enum_value (GEGL_RENDERING_INTENT_SATURATION,
+              "saturation",            N_("Saturation"))
+  enum_value (GEGL_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC,
+              "absolute-colorimetric", N_("Absolute Colorimetric"))
 /* TODO: Add the K_ONLY and K_PLANE intents */
 enum_end (GeglRenderingIntent)
 

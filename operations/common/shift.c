@@ -24,8 +24,8 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_shift_direction)
-  enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "Horizontal")
-  enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "Vertical")
+  enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "horizontal", N_("Horizontal"))
+  enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "vertical",   N_("Vertical"))
 enum_end (GeglShiftDirection)
 
 property_int  (shift, _("Shift"), 5)

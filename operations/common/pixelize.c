@@ -24,9 +24,9 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_pixelize_norm)
-  enum_value (GEGL_PIXELIZE_NORM_MANHATTAN, "Diamond")
-  enum_value (GEGL_PIXELIZE_NORM_EUCLIDEAN, "Round")
-  enum_value (GEGL_PIXELIZE_NORM_INFINITY,  "Square")
+  enum_value (GEGL_PIXELIZE_NORM_MANHATTAN, "diamond", N_("Diamond"))
+  enum_value (GEGL_PIXELIZE_NORM_EUCLIDEAN, "round",   N_("Round"))
+  enum_value (GEGL_PIXELIZE_NORM_INFINITY,  "square",  N_("Square"))
 enum_end (GeglPixelizeNorm)
 
 property_enum   (norm, _("Shape"),

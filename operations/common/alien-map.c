@@ -26,8 +26,8 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_alien_map_color_model)
-  enum_value (GEGL_ALIEN_MAP_COLOR_MODEL_RGB, "RGB")
-  enum_value (GEGL_ALIEN_MAP_COLOR_MODEL_HSL, "HSL")
+  enum_value (GEGL_ALIEN_MAP_COLOR_MODEL_RGB, "rgb", N_("RGB"))
+  enum_value (GEGL_ALIEN_MAP_COLOR_MODEL_HSL, "hsl", N_("HSL"))
 enum_end (GeglAlienMapColorModel)
 
 property_enum (color_model, _("Color model"),

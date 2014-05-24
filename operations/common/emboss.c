@@ -23,8 +23,8 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_emboss_type)
-  enum_value (GEGL_EMBOSS_TYPE_EMBOSS,  "Emboss")
-  enum_value (GEGL_EMBOSS_TYPE_BUMPMAP, "Bumpmap (preserve original colors)")
+  enum_value (GEGL_EMBOSS_TYPE_EMBOSS,  "emboss",  N_("Emboss"))
+  enum_value (GEGL_EMBOSS_TYPE_BUMPMAP, "bumpmap", N_("Bumpmap (preserve original colors)"))
 enum_end (GeglEmbossType)
 
 property_enum (type, _("Emboss Type"),

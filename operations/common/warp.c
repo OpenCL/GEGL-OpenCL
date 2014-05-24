@@ -23,13 +23,13 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_warp_behavior)
-  enum_value (GEGL_WARP_BEHAVIOR_MOVE,      "Move pixels")
-  enum_value (GEGL_WARP_BEHAVIOR_GROW,      "Grow area")
-  enum_value (GEGL_WARP_BEHAVIOR_SHRINK,    "Shrink area")
-  enum_value (GEGL_WARP_BEHAVIOR_SWIRL_CW,  "Swirl clockwise")
-  enum_value (GEGL_WARP_BEHAVIOR_SWIRL_CCW, "Swirl counter-clockwise")
-  enum_value (GEGL_WARP_BEHAVIOR_ERASE,     "Erase warping")
-  enum_value (GEGL_WARP_BEHAVIOR_SMOOTH,    "Smooth warping")
+  enum_value (GEGL_WARP_BEHAVIOR_MOVE,      "move",      N_("Move pixels"))
+  enum_value (GEGL_WARP_BEHAVIOR_GROW,      "grow",      N_("Grow area"))
+  enum_value (GEGL_WARP_BEHAVIOR_SHRINK,    "shrink",    N_("Shrink area"))
+  enum_value (GEGL_WARP_BEHAVIOR_SWIRL_CW,  "swirl-cw",  N_("Swirl clockwise"))
+  enum_value (GEGL_WARP_BEHAVIOR_SWIRL_CCW, "swirl-ccw", N_("Swirl counter-clockwise"))
+  enum_value (GEGL_WARP_BEHAVIOR_ERASE,     "erase",     N_("Erase warping"))
+  enum_value (GEGL_WARP_BEHAVIOR_SMOOTH,    "smooth",    N_("Smooth warping"))
 enum_end (GeglWarpBehavior)
 
 property_double (strength, _("Strength"), 50)

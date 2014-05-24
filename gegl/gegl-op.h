@@ -29,7 +29,7 @@
 #error "GEGL_OP_C_FILE not defined"
 #endif
 
-#define gegl_chant_class_init   gegl_chant_class_init_SHOULD_BE_gegl_op_class_init 
+#define gegl_chant_class_init   gegl_chant_class_init_SHOULD_BE_gegl_op_class_init
 
 /* XXX: */
 #ifdef GEGL_CHANT_TYPE_POINT_RENDER
@@ -257,7 +257,7 @@ gegl_module_register (GTypeModule *module)
 #define property_color(name, label, def_val)      ITEM2(name,label,def_val,object)
 
 #define enum_start(enum_name)   typedef enum {
-#define enum_value(value, nick)    value ,
+#define enum_value(value, nick, name)    value ,
 #define enum_end(enum)          } enum ;
 
 #include GEGL_OP_C_FILE
@@ -265,6 +265,12 @@ gegl_module_register (GTypeModule *module)
 #undef enum_start
 #undef enum_value
 #undef enum_end
+
+#ifdef GETTEXT_PACKAGE
+static const gchar *gegl_op_gettext_package G_GNUC_UNUSED = GETTEXT_PACKAGE;
+#else
+static const gchar *gegl_op_gettext_package G_GNUC_UNUSED = NULL;
+#endif
 
 #define enum_start(enum_name)          \
 GType enum_name ## _get_type (void) G_GNUC_CONST; \
@@ -274,16 +280,29 @@ GType enum_name ## _get_type (void)               \
   if (etype == 0) {                               \
     static const GEnumValue values[] = {
 
-#define enum_value(value, nick) \
-      { value, nick, nick },
+#define enum_value(value, nick, name)                \
+      { value, name, nick },
 
-#define enum_end(enum)             \
-      { 0, NULL, NULL }                             \
-    };                                              \
-    etype = g_enum_register_static (#enum, values); \
-  }                                                 \
-  return etype;                                     \
-}                                                   \
+#define enum_end(enum)                                              \
+      { 0, NULL, NULL }                                             \
+    };                                                              \
+    etype = g_enum_register_static (#enum, values);                 \
+    if (gegl_op_gettext_package)                                    \
+      {                 g_printerr ("foo\n");                       \
+        GEnumClass *enum_class = g_type_class_ref (etype);          \
+        gint i;                                                     \
+        for (i = enum_class->minimum; i <= enum_class->maximum; i++)\
+          {                                                         \
+            GEnumValue *value = g_enum_get_value (enum_class, i);   \
+            if (value) { g_printerr ("%s -> %s\n", value->value_name, dgettext (GETTEXT_PACKAGE, value->value_name)); \
+              value->value_name =                                   \
+                dgettext (GETTEXT_PACKAGE, value->value_name);      }   \
+          }                                                         \
+        g_type_class_unref (enum_class);                            \
+      }                                                             \
+  }                                                                 \
+  return etype;                                                     \
+}
 
 #include GEGL_OP_C_FILE
 
@@ -304,7 +323,7 @@ GType enum_name ## _get_type (void)               \
 #undef enum_value
 #undef enum_end
 #define enum_start(enum_name)
-#define enum_value(value, nick)
+#define enum_value(value, nick, name)
 #define enum_end(enum)
 
 /* Properties */
@@ -819,7 +838,7 @@ gegl_op_class_intern_init (gpointer klass)
     gegl_param_spec_set_property_key(pspec, key, val);
 #define ui_digits(digits) \
     upspec->ui_digits = digits; \
-    ui_digits_set = TRUE; 
+    ui_digits_set = TRUE;
 
 #define property_double(name, label, def_val) \
     REGISTER_IF_ANY  \

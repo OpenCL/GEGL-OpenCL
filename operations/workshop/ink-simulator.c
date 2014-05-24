@@ -18,7 +18,6 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include <stdio.h>
 
 //#define USE_UI
 
@@ -34,9 +33,9 @@
 "\n"\
 
 enum_start (ink_sim_mode)
-  enum_value (GEGL_SSIM_PROOF, "proof")
-  enum_value (GEGL_SSIM_SEPARATE, "separate")
-  enum_value (GEGL_SSIM_SEPARATE_PROOF, "separate-proof")
+  enum_value (GEGL_SSIM_PROOF,          "proof",          N_("Proof"))
+  enum_value (GEGL_SSIM_SEPARATE,       "separate",       N_("Separate"))
+  enum_value (GEGL_SSIM_SEPARATE_PROOF, "separate-proof", N_("Separate and proof"))
 enum_end (GeglInkSimMode)
 
 property_string (config, _("Ink configuration"), DEFAULT_CONFIG)

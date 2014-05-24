@@ -28,13 +28,13 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_deinterlace_keep)
-  enum_value (GEGL_DEINTERLACE_KEEP_EVEN, "Keep even fields")
-  enum_value (GEGL_DEINTERLACE_KEEP_ODD,  "Keep odd fields")
+  enum_value (GEGL_DEINTERLACE_KEEP_EVEN, "even", N_("Keep even fields"))
+  enum_value (GEGL_DEINTERLACE_KEEP_ODD,  "odd",  N_("Keep odd fields"))
 enum_end (GeglDeinterlaceKeep)
 
 enum_start (gegl_orientation)
-  enum_value (GEGL_ORIENTATION_HORIZONTAL, "Horizontal")
-  enum_value (GEGL_ORIENTATION_VERTICAL,   "Vertical")
+  enum_value (GEGL_ORIENTATION_HORIZONTAL, "horizontal", N_("Horizontal"))
+  enum_value (GEGL_ORIENTATION_VERTICAL,   "vertical",   N_("Vertical"))
 enum_end (GeglOrientation)
 
 property_enum (keep, _("Keep"),

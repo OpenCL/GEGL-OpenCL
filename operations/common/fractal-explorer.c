@@ -28,15 +28,24 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_fractal_explorer_type)
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT, "Mandelbrot")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_JULIA,      "Julia")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_1, "Barnsley 1")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_2, "Barnsley 2")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_3, "Barnsley 3")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SPIDER,     "Spider")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MAN_O_WAR,  "Man O War")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_LAMBDA,     "Lambda")
-  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SIERPINSKI, "Sierpinski")
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MANDELBROT, "mandelbrot",
+              N_("Mandelbrot"))
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_JULIA,      "julia",
+              N_("Julia"))
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_1, "barnsley-1",
+              N_("Barnsley 1"))
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_2, "barnsley-2",
+              N_("Barnsley 2"))
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_BARNSLEY_3, "barnsley-3",
+              N_("Barnsley 3"))
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SPIDER,     "spider",
+              N_("Spider"))
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_MAN_O_WAR,  "man-o-war",
+              N_("Man O War"))
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_LAMBDA,     "lambda",
+              N_("Lambda"))
+  enum_value (GEGL_FRACTAL_EXPLORER_TYPE_SIERPINSKI, "sierpinski",
+              N_("Sierpinski"))
 enum_end (GeglFractalExplorerType)
 
 property_enum (fractaltype, _("Fractal type"),
@@ -79,9 +88,9 @@ property_double (bluestretch, _("Blue stretching factor"), 1.0)
     value_range (0.0, 1.0)
 
 enum_start (gegl_fractal_explorer_mode)
-  enum_value (GEGL_FRACTAL_EXPLORER_MODE_SIN , "Sine")
-  enum_value (GEGL_FRACTAL_EXPLORER_MODE_COS , "Cosinus")
-  enum_value (GEGL_FRACTAL_EXPLORER_MODE_NONE, "None")
+  enum_value (GEGL_FRACTAL_EXPLORER_MODE_SIN , "sine",   N_("Sine"))
+  enum_value (GEGL_FRACTAL_EXPLORER_MODE_COS , "cosine", N_("Cosine"))
+  enum_value (GEGL_FRACTAL_EXPLORER_MODE_NONE, "none",   N_("None"))
 enum_end (GeglFractalExplorerMode)
 
 property_enum (redmode, _("Red application mode"),

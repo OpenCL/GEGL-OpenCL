@@ -28,9 +28,9 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_gaussian_blur_filter)
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "Auto")
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "FIR")
-  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "IIR")
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_AUTO, "auto", N_("Auto"))
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_FIR,  "fir",  N_("FIR"))
+  enum_value (GEGL_GAUSSIAN_BLUR_FILTER_IIR,  "iir",  N_("IIR"))
 enum_end (GeglGaussianBlurFilter)
 
 property_double (std_dev_x, _("Size X"), 1.5)

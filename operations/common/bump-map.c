@@ -37,9 +37,9 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_bump_map_type)
-  enum_value (GEGL_BUMP_MAP_TYPE_LINEAR,     "Linear")
-  enum_value (GEGL_BUMP_MAP_TYPE_SPHERICAL,  "Cosinus")
-  enum_value (GEGL_BUMP_MAP_TYPE_SINUSOIDAL, "Sinusoidal")
+  enum_value (GEGL_BUMP_MAP_TYPE_LINEAR,     "linear",     N_("Linear"))
+  enum_value (GEGL_BUMP_MAP_TYPE_SPHERICAL,  "spherical",  N_("Spherical"))
+  enum_value (GEGL_BUMP_MAP_TYPE_SINUSOIDAL, "sinusodial", N_("Sinusoidal"))
 enum_end (GeglBumpMapType)
 
 property_enum (type, _("Type"), GeglBumpMapType, gegl_bump_map_type,

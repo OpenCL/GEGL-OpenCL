@@ -23,8 +23,8 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_fractal_trace_type)
-  enum_value (GEGL_FRACTAL_TRACE_TYPE_MANDELBROT, "Mandelbrot")
-  enum_value (GEGL_FRACTAL_TRACE_TYPE_JULIA,      "Julia")
+  enum_value (GEGL_FRACTAL_TRACE_TYPE_MANDELBROT, "mandelbrot", N_("Mandelbrot"))
+  enum_value (GEGL_FRACTAL_TRACE_TYPE_JULIA,      "julia",      N_("Julia"))
 enum_end (GeglFractalTraceType)
 
 property_enum (fractal, _("Fractal type"),

@@ -28,21 +28,21 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_gblur_1d_policy)
-   enum_value (GEGL_GBLUR_1D_ABYSS_NONE,  "None")
-   enum_value (GEGL_GBLUR_1D_ABYSS_CLAMP, "Clamp")
-   enum_value (GEGL_GBLUR_1D_ABYSS_BLACK, "Black")
-   enum_value (GEGL_GBLUR_1D_ABYSS_WHITE, "White")
+   enum_value (GEGL_GBLUR_1D_ABYSS_NONE,  "none",  N_("None"))
+   enum_value (GEGL_GBLUR_1D_ABYSS_CLAMP, "clamp", N_("Clamp"))
+   enum_value (GEGL_GBLUR_1D_ABYSS_BLACK, "black", N_("Black"))
+   enum_value (GEGL_GBLUR_1D_ABYSS_WHITE, "white", N_("White"))
 enum_end (GeglGblur1dPolicy)
 
 enum_start (gegl_gblur_1d_orientation)
-  enum_value (GEGL_GBLUR_1D_HORIZONTAL, "Horizontal")
-  enum_value (GEGL_GBLUR_1D_VERTICAL,   "Vertical")
+  enum_value (GEGL_GBLUR_1D_HORIZONTAL, "horizontal", N_("Horizontal"))
+  enum_value (GEGL_GBLUR_1D_VERTICAL,   "vertical",   N_("Vertical"))
   enum_end (GeglGblur1dOrientation)
 
 enum_start (gegl_gblur_1d_filter)
-  enum_value (GEGL_GBLUR_1D_AUTO, "Auto")
-  enum_value (GEGL_GBLUR_1D_FIR,  "FIR")
-  enum_value (GEGL_GBLUR_1D_IIR,  "IIR")
+  enum_value (GEGL_GBLUR_1D_AUTO, "auto", N_("Auto"))
+  enum_value (GEGL_GBLUR_1D_FIR,  "fir",  N_("FIR"))
+  enum_value (GEGL_GBLUR_1D_IIR,  "iir",  N_("IIR"))
 enum_end (GeglGblur1dFilter)
 
 property_double (std_dev, _("Size"), 1.5)
@@ -50,19 +50,24 @@ property_double (std_dev, _("Size"), 1.5)
   value_range   (0.0, 1500.0)
   ui_range      (0.0, 100.0)
   ui_gamma      (3.0)
-property_enum      (orientation, _("Orientation"),
-                      GeglGblur1dOrientation, gegl_gblur_1d_orientation,
-                      GEGL_GBLUR_1D_HORIZONTAL)
+
+property_enum (orientation, _("Orientation"),
+               GeglGblur1dOrientation, gegl_gblur_1d_orientation,
+               GEGL_GBLUR_1D_HORIZONTAL)
   description (_("The orientation of the blur - hor/ver"))
-property_enum      (filter, _("Filter"),
-                      GeglGblur1dFilter, gegl_gblur_1d_filter,
-                      GEGL_GBLUR_1D_AUTO)
+
+property_enum (filter, _("Filter"),
+               GeglGblur1dFilter, gegl_gblur_1d_filter,
+               GEGL_GBLUR_1D_AUTO)
   description (_("How the gaussian kernel is discretized"))
-property_enum      (abyss_policy, _("Abyss policy"), GeglGblur1dPolicy,
-                      gegl_gblur_1d_policy, GEGL_GBLUR_1D_ABYSS_NONE)
+
+property_enum (abyss_policy, _("Abyss policy"), GeglGblur1dPolicy,
+               gegl_gblur_1d_policy, GEGL_GBLUR_1D_ABYSS_NONE)
   description (_("How image edges are handled"))
-property_boolean   (clip_extent, _("Clip to the input extent"), TRUE)
+
+property_boolean (clip_extent, _("Clip to the input extent"), TRUE)
   description (_("Should the output extent be clipped to the input extent"))
+
 #else
 
 #define GEGL_OP_FILTER

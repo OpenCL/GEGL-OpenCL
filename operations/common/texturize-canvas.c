@@ -25,10 +25,14 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_texturize_canvas_direction)
-  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT,    "Top-right")
-  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_LEFT,     "Top-left")
-  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_LEFT,  "Bottom-left")
-  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_RIGHT, "Bottom-right")
+  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_RIGHT,    "top-right",
+              N_("Top-right"))
+  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_TOP_LEFT,     "top-left",
+              N_("Top-left"))
+  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_LEFT,  "bottom-left",
+              N_("Bottom-left"))
+  enum_value (GEGL_TEXTURIZE_CANVAS_DIRECTION_BOTTOM_RIGHT, "bottom-right",
+              N_("Bottom-right"))
 enum_end (GeglTexturizeCanvasDirection)
 
 property_enum (direction, _("Direction"),

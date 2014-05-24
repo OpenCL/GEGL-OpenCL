@@ -24,12 +24,12 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_dither_strategy)
-  enum_value (GEGL_DITHER_NONE, "None")
-  enum_value (GEGL_DITHER_RANDOM, "Random")
-  enum_value (GEGL_DITHER_RESILIENT, "Resilient")
-  enum_value (GEGL_DITHER_RANDOM_COVARIANT, "Random Covariant")
-  enum_value (GEGL_DITHER_BAYER,  "Bayer")
-  enum_value (GEGL_DITHER_FLOYD_STEINBERG, "Floyd-Steinberg")
+  enum_value (GEGL_DITHER_NONE,             "none",             N_("None"))
+  enum_value (GEGL_DITHER_RANDOM,           "random",           N_("Random"))
+  enum_value (GEGL_DITHER_RESILIENT,        "resilient",        N_("Resilient"))
+  enum_value (GEGL_DITHER_RANDOM_COVARIANT, "random-covariant", N_("Random Covariant"))
+  enum_value (GEGL_DITHER_BAYER,            "bayer",            N_("Bayer"))
+  enum_value (GEGL_DITHER_FLOYD_STEINBERG,  "floyd-steinberg",  N_("Floyd-Steinberg"))
 enum_end (GeglDitherStrategy)
 
 property_int  (red_bits, _("Red bits"), 8)
