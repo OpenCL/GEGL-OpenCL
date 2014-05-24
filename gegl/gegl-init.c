@@ -211,9 +211,15 @@ gegl_config_use_opencl_notify (GObject    *gobject,
 static void
 gegl_init_i18n (void)
 {
-  setlocale (LC_ALL, "");
-  bindtextdomain (GETTEXT_PACKAGE, GEGL_LOCALEDIR);
-  bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+  static gboolean i18n_initialized = FALSE;
+
+  if (! i18n_initialized)
+    {
+      bindtextdomain (GETTEXT_PACKAGE, GEGL_LOCALEDIR);
+      bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+
+      i18n_initialized = TRUE;
+    }
 }
 
 void
@@ -228,8 +234,6 @@ gegl_init (gint    *argc,
     return;
 
   initialized = TRUE;
-
-  gegl_init_i18n ();
 
   context = g_option_context_new (NULL);
   g_option_context_set_ignore_unknown_options (context, TRUE);
@@ -297,6 +301,8 @@ GOptionGroup *
 gegl_get_option_group (void)
 {
   GOptionGroup *group;
+
+  gegl_init_i18n ();
 
   group = g_option_group_new ("gegl", "GEGL Options", "Show GEGL Options",
                               NULL, NULL);
