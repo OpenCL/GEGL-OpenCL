@@ -111,7 +111,7 @@ gegl_operation_list_property_keys (const gchar *operation_name,
     count = g_hash_table_size (ht);
     ret = g_malloc0 (sizeof (gpointer) * (count + 1));
     list = g_hash_table_get_keys (ht);
-    for (i = 0, l = list; l; l = l->next)
+    for (i = 0, l = list; l; l = l->next, i++)
       {
         ret[i] = l->data;
       }
