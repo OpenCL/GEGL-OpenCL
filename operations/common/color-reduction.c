@@ -486,7 +486,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "    <param name='green-bits'>2</param>"
     "    <param name='blue-bits'>2</param>"
     "    <param name='alpha-bits'>2</param>"
-    "    <param name='dither-strategy'>Floyd-Steinberg</param>"
+    "    <param name='dither-strategy'>floyd-steinberg</param>"
     "  </params>"
     "</node>"
     "<node operation='gegl:load'>"
