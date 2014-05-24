@@ -20,7 +20,7 @@
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_PROPERTIES
-property_string  (window_title, _(""), "window_title")
+property_string  (window_title, _("Window title"), "window_title")
     description(_("Title to be given to output window"))
 #else
 

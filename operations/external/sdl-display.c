@@ -22,9 +22,9 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_string (window_title, _(""), "window_title")
+property_string (window_title, _("Window title"), "window_title")
     description (_("Title to be given to output window"))
-property_string (icon_title, _(""), "icon_title")
+property_string (icon_title, _("Icon title"), "icon_title")
     description (_("Icon to be used for output window"))
 #else
 
