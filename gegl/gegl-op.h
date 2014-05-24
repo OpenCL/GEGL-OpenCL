@@ -288,15 +288,15 @@ GType enum_name ## _get_type (void)               \
     };                                                              \
     etype = g_enum_register_static (#enum, values);                 \
     if (gegl_op_gettext_package)                                    \
-      {                 g_printerr ("foo\n");                       \
+      {                                                             \
         GEnumClass *enum_class = g_type_class_ref (etype);          \
         gint i;                                                     \
         for (i = enum_class->minimum; i <= enum_class->maximum; i++)\
           {                                                         \
             GEnumValue *value = g_enum_get_value (enum_class, i);   \
-            if (value) { g_printerr ("%s -> %s\n", value->value_name, dgettext (GETTEXT_PACKAGE, value->value_name)); \
+            if (value)                                              \
               value->value_name =                                   \
-                dgettext (GETTEXT_PACKAGE, value->value_name);      }   \
+                dgettext (GETTEXT_PACKAGE, value->value_name);      \
           }                                                         \
         g_type_class_unref (enum_class);                            \
       }                                                             \
