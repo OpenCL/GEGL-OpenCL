@@ -12,7 +12,7 @@
     </node>
     <node operation='gegl:color-reduction'>
       <params>
-	<param name='dither-strategy'>None</param>
+	<param name='dither-strategy'>none</param>
 	<param name='red-bits'>3</param>
 	<param name='green-bits'>3</param>
 	<param name='blue-bits'>3</param>
@@ -45,7 +45,7 @@
     </node>
     <node operation='gegl:color-reduction'>
       <params>
-	<param name='dither-strategy'>Floyd-Steinberg</param>
+	<param name='dither-strategy'>floyd-steinberg</param>
 	<param name='red-bits'>3</param>
 	<param name='green-bits'>3</param>
 	<param name='blue-bits'>3</param>
@@ -74,7 +74,7 @@
     </node>
     <node operation='gegl:color-reduction'>
       <params>
-	<param name='dither-strategy'>Random</param>
+	<param name='dither-strategy'>random</param>
 	<param name='red-bits'>3</param>
 	<param name='green-bits'>3</param>
 	<param name='blue-bits'>3</param>
@@ -103,7 +103,7 @@
     </node>
     <node operation='gegl:color-reduction'>
       <params>
-	<param name='dither-strategy'>Random Covariant</param>
+	<param name='dither-strategy'>random-covariant</param>
 	<param name='red-bits'>3</param>
 	<param name='green-bits'>3</param>
 	<param name='blue-bits'>3</param>
@@ -132,7 +132,7 @@
     </node>
     <node operation='gegl:color-reduction'>
       <params>
-	<param name='dither-strategy'>Resilient</param>
+	<param name='dither-strategy'>resilient</param>
 	<param name='red-bits'>3</param>
 	<param name='green-bits'>3</param>
 	<param name='blue-bits'>3</param>
@@ -161,7 +161,7 @@
     </node>
     <node operation='gegl:color-reduction'>
       <params>
-	<param name='dither-strategy'>Bayer</param>
+	<param name='dither-strategy'>bayer</param>
 	<param name='red-bits'>3</param>
 	<param name='green-bits'>3</param>
 	<param name='blue-bits'>3</param>
