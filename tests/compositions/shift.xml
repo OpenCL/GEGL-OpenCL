@@ -2,7 +2,7 @@
 <gegl>
   <node operation='gegl:shift'>
     <params>
-      <param name='direction'>Vertical</param>
+      <param name='direction'>vertical</param>
       <param name='shift'>10</param>
       <param name='seed'>0</param>
     </params>
