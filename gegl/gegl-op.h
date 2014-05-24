@@ -278,7 +278,7 @@ GType enum_name ## _get_type (void)               \
 {                                                 \
   static GType etype = 0;                         \
   if (etype == 0) {                               \
-    static const GEnumValue values[] = {
+    static GEnumValue values[] = {
 
 #define enum_value(value, nick, name)                \
       { value, name, nick },
