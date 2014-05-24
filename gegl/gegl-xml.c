@@ -181,7 +181,17 @@ set_clone_prop_as_well:
         {
           GEnumClass *eclass = g_type_class_peek (paramspec->value_type);
           GEnumValue *evalue = g_enum_get_value_by_nick (eclass, param_value);
-          gegl_node_set (new, param_name, evalue->value, NULL);
+          if (evalue)
+            {
+              gegl_node_set (new, param_name, evalue->value, NULL);
+            }
+          else
+            {
+              g_printerr ("gegl-xml (param_set %s): enum %s has no value '%s'\n",
+                          paramspec->name,
+                          g_type_name (paramspec->value_type),
+                          param_value);
+            }
         }
       else if (paramspec->value_type == GEGL_TYPE_COLOR)
         {
