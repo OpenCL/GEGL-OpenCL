@@ -297,7 +297,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:apply-lens",
-    "categories",  "Distorts",
+    "categories",  "distort",
     "license",     "GPL3+",
     "description", _("Simulate an elliptical lens over the image"),
     "reference-composition", composition,
