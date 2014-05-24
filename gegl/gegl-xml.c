@@ -187,10 +187,26 @@ set_clone_prop_as_well:
             }
           else
             {
+              /* warn, but try to get a valid nick out of the old-style
+               * value name
+               */
+              gchar *nick;
+              gchar *c;
               g_printerr ("gegl-xml (param_set %s): enum %s has no value '%s'\n",
                           paramspec->name,
                           g_type_name (paramspec->value_type),
                           param_value);
+              nick = g_strdup (param_value);
+              for (c = nick; *c; c++)
+                {
+                  *c = g_ascii_tolower (*c);
+                  if (*c == ' ')
+                    *c = '-';
+                }
+              evalue = g_enum_get_value_by_nick (eclass, nick);
+              if (evalue)
+                gegl_node_set (new, param_name, evalue->value, NULL);
+              g_free (nick);
             }
         }
       else if (paramspec->value_type == GEGL_TYPE_COLOR)
