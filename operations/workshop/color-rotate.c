@@ -33,26 +33,28 @@
 property_boolean (s_cl, _("Clockwise"), FALSE)
     description (_("Switch to clockwise"))
 
-property_int (s_fr, _("From"), 0)
+property_double (s_fr, _("From"), 0.0)
     description (_("Starting angle for the color rotation"))
-    value_range (0, 360)
+    value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
-property_int (s_to, _("To"), 0)
+property_double (s_to, _("To"), 0.0)
     description (_("End angle for the color rotation"))
-    value_range (0, 360)
+    value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
 property_boolean (d_cl, _("Clockwise"), FALSE)
     description (_("Switch to clockwise"))
 
-property_int (d_fr, _("From"), 0)
-    value_range (0, 360)
+property_double (d_fr, _("From"), 0.0)
     description (_("Starting angle for the color rotation"))
+    value_range (0.0, 360.0)
+    ui_meta     ("unit", "degree")
 
-property_int (d_to, _("To"), 0)
-    value_range (0, 360)
+property_double (d_to, _("To"), 0.0)
     description (_("End angle for the color rotation"))
+    value_range (0.0, 360.0)
+    ui_meta     ("unit", "degree")
 
 property_boolean (gray, _("Grayscale"), FALSE)
     description (_("Choose in case of grayscale images"))
@@ -212,15 +214,15 @@ angle_mod_2PI (gfloat angle)
 
 static gfloat
 angle_inside_slice (gfloat   hue,
-                    gint     from,
-                    gint     to,
+                    gfloat   from,
+                    gfloat   to,
                     gboolean cl)
 {
   gint cw_ccw = 1;
   if (!cl) cw_ccw = -1;
 
-  return angle_mod_2PI (cw_ccw * DEG_TO_RAD(to - hue)) /
-    angle_mod_2PI (cw_ccw * DEG_TO_RAD(from - to));
+  return angle_mod_2PI (cw_ccw * DEG_TO_RAD (to - hue)) /
+    angle_mod_2PI (cw_ccw * DEG_TO_RAD (from - to));
 }
 
 static gboolean
@@ -258,8 +260,8 @@ linear (gfloat A,
 }
 
 static gfloat
-left_end (gint     from,
-          gint     to,
+left_end (gfloat   from,
+          gfloat   to,
           gboolean cl)
 {
   gfloat alpha  = DEG_TO_RAD (from);
@@ -277,8 +279,8 @@ left_end (gint     from,
 }
 
 static gfloat
-right_end (gint     from,
-           gint     to,
+right_end (gfloat   from,
+           gfloat   to,
            gboolean cl)
 {
   gfloat alpha  = DEG_TO_RAD (from);
@@ -301,8 +303,8 @@ color_rotate (gfloat     *src,
               GeglProperties *o)
 {
   gfloat   h, s, v;
-  gboolean skip = FALSE;
-  gfloat   color[4];
+  gboolean skip     = FALSE;
+  gfloat   color[4] = { 0.0, };
   gint     i;
 
   rgb_to_hsv (src[offset],
@@ -359,9 +361,9 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglProperties *o      = GEGL_PROPERTIES (operation);
-  const Babl *format = babl_format ("RGBA float");
-  gfloat     *src_buf;
-  gint        x;
+  const Babl     *format = babl_format ("RGBA float");
+  gfloat         *src_buf;
+  gint            x;
 
   src_buf = g_new0 (gfloat, result->width * result->height * 4);
 
@@ -392,9 +394,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories"  , "color",
-    "name"        , "gegl:color-rotate",
-    "description" , _("Rotate colors on the image"),
+    "categories",   "color",
+    "name",         "gegl:color-rotate",
+    "description",  _("Rotate colors on the image"),
     NULL);
 }
 
