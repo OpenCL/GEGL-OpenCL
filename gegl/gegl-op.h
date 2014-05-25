@@ -44,7 +44,7 @@
 
 G_BEGIN_DECLS
 
-GType gegl_op_get_type (void);
+static GType gegl_op_get_type (void) G_GNUC_UNUSED;
 typedef struct _GeglProperties  GeglProperties;
 typedef struct _GeglOp   GeglOp;
 
@@ -65,7 +65,7 @@ static void     type_name##_class_chant_intern_init (gpointer klass)    \
     gegl_op_class_intern_init (klass);                                  \
     type_name##_class_init ((TypeName##Class*) klass);                  \
   }                                                                     \
-GType                                                                   \
+static GType                                                            \
 type_name##_get_type (void)                                             \
   {                                                                     \
     return type_name##_type_id;                                         \
@@ -273,8 +273,8 @@ static const gchar *gegl_op_gettext_package G_GNUC_UNUSED = NULL;
 #endif
 
 #define enum_start(enum_name)          \
-GType enum_name ## _get_type (void) G_GNUC_CONST; \
-GType enum_name ## _get_type (void)               \
+static GType enum_name ## _get_type (void) G_GNUC_CONST; \
+static GType enum_name ## _get_type (void)               \
 {                                                 \
   static GType etype = 0;                         \
   if (etype == 0) {                               \
