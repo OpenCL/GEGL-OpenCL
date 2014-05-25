@@ -96,7 +96,9 @@
       clear: left;
       padding-left: 2em;
     }
-    .opname { font-weight: bold; margin-bottom: 0.2em; display: none; }
+    .opname  { font-weight: bold; margin-bottom: 0.2em; display: none; }
+    .optitle { font-weight: bold; margin-bottom: 0.2em; }
+
     .description { }
     .result       { border: 2px solid transparent; }
     .result:hover { border: 2px solid black; background : #555; color :
@@ -298,7 +300,16 @@ function render_item (item)
   if (item.image)
     result += ' <img class="op-image" src="' + item.image + '" / >';
 
-  result += '<div class="opname">' + item.op + '</div>';
+    result += '<div class="opname">' + item.op + '</div>';
+
+    if (item.meta) {
+      for (var j = 0; j < item.meta.length; j++)
+      {
+        if (item.meta[j][0] == 'title')
+          result += '<div class="optitle">' + item.meta[j][1] + '</div>';
+      }
+    }
+
   result += '<div class="description">' + item.description +
     '</div>';
 
@@ -316,7 +327,8 @@ function render_item (item)
   {
     for (var j = 0; j < item.meta.length; j++)
     {
-      if (item.meta[j][0] == 'reference-composition')
+      if (item.meta[j][0] == 'reference-composition' ||
+          item.meta[j][0] == 'title')
         continue;
         result += '<div style="clear:both"><b>' + item.meta[j][0] +
             '</b>&nbsp;' + 
