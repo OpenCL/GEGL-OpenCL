@@ -78,11 +78,22 @@
         float: none;
         font-size: 1.4em;
         min-width: 10em;
+      }
+
+    .pad-c {
+    }
+    .pad-label {
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      display: inline-block;
+    }
+    .pad-val {
+      display: inline-block;
+      font-family: monospace;
+      padding-right: 0.6em;
     }
 
     .property-name {
       font-family: Monospace;
-      font-size: 1.4em;
       min-width: 6em;
       padding-right: 1em;
       float:left;
@@ -177,9 +188,12 @@
     }
 
     .opname  { font-weight: bold; margin-bottom: 0.2em; display: none; }
-    .optitle { font-weight: bold; margin-bottom: 0.2em; }
+    .optitle { margin-bottom: 0.2em; 
+    
+               font-size: 1.4em;
+    }
 
-    .description { }
+    .description { margin-bottom: 1em;}
     .result       { border: 2px solid transparent; }
     .result:hover { border: 2px solid black; background : #555; color :
       blue; cursor: hand; }
@@ -416,8 +430,27 @@ function render_item (item)
   result += '<div class="description">' + item.description +
     '</div>';
 
+  if (item['input-pads'])
+  {
+  result += '<div><div class="pad-label">Inputs:&nbsp;</div>';
+    for (var i = 0; i < item['input-pads'].length; i++)
+    {
+      result += '<div class="pad-val">' + item['input-pads'][i] + '</div>';
+    }
+  result += '</div>';
+  }
+  if (item['output-pads'])
+  {
+  result += '<div><div class="pad-label">Outputs:&nbsp;</div><div class="pad-val">';
+    for (var i = 0; i < item['output-pads'].length; i++)
+      result += item['output-pads'][i];
+      result += '</div></div>';
+  }
+
   if (item.properties.length)
     result += render_properties (item.properties);
+
+
 
     result += '<div style="clear:all">&nbsp;</div>';
     result += '<div style="margin-top:4em;"></div>';
