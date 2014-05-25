@@ -283,25 +283,20 @@ GType enum_name ## _get_type (void)               \
 #define enum_value(value, nick, name)                \
       { value, name, nick },
 
-#define enum_end(enum)                                              \
-      { 0, NULL, NULL }                                             \
-    };                                                              \
-    etype = g_enum_register_static (#enum, values);                 \
-    if (gegl_op_gettext_package)                                    \
-      {                                                             \
-        GEnumClass *enum_class = g_type_class_ref (etype);          \
-        gint i;                                                     \
-        for (i = enum_class->minimum; i <= enum_class->maximum; i++)\
-          {                                                         \
-            GEnumValue *value = g_enum_get_value (enum_class, i);   \
-            if (value)                                              \
-              value->value_name =                                   \
-                dgettext (GETTEXT_PACKAGE, value->value_name);      \
-          }                                                         \
-        g_type_class_unref (enum_class);                            \
-      }                                                             \
-  }                                                                 \
-  return etype;                                                     \
+#define enum_end(enum)                                            \
+      { 0, NULL, NULL }                                           \
+    };                                                            \
+    if (gegl_op_gettext_package)                                  \
+      {                                                           \
+        gint i;                                                   \
+        for (i = 0; i < G_N_ELEMENTS (values); i++)               \
+          if (values[i].value_name)                               \
+            values[i].value_name =                                \
+              dgettext (GETTEXT_PACKAGE, values[i].value_name);   \
+      }                                                           \
+    etype = g_enum_register_static (#enum, values);               \
+  }                                                               \
+  return etype;                                                   \
 }
 
 #include GEGL_OP_C_FILE
