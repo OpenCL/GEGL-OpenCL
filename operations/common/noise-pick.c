@@ -137,6 +137,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",       "gegl:noise-pick",
+    "title",      _("Noise Pick"),
     "categories", "noise",
     "description", _("Randomly interchange some pixels with neighbors"),
     NULL);

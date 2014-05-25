@@ -76,6 +76,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:invert-gamma",
+    "title",      _("Invert in Perceptual space"),
     "categories" , "color",
     "description",
        _("Inverts the components (except alpha), the result is the "

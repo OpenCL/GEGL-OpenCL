@@ -153,6 +153,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:grid",
+    "title",              _("Grid"),
     "position-dependent", "true",
     "categories" ,        "render",
     "description",        _("Grid renderer"),

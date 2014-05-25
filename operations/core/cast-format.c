@@ -109,6 +109,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",       "gegl:cast-format",
+    "title",      _("Cast Format"),
     "categories", "core:color",
     "description", _("Cast the data between input_format and output_format, "
                      "both bormats must have the same bpp"),

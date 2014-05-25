@@ -143,7 +143,8 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:value-invert",
+    "name",        "gegl:value-invert",
+    "title",       _("Value Invert"),
     "categories" , "color",
     "description",
         _("Inverts just the value component, the result is the corresponding "

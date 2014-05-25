@@ -408,6 +408,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:warp",
     "categories",         "transform",
+    "title",              _("Warp"),
     "position-dependent", "true",
     "description", _("Compute a relative displacement mapping from a stroke"),
     NULL);

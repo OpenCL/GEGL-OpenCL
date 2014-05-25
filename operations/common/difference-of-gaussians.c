@@ -82,6 +82,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:difference-of-gaussians",
+    "title",       _("Difference of Gaussians"),
     "categories",  "edge-detect",
     "description", _("Edge detection with control of edge thickness, based "
                      "on the difference of two gaussian blurs"),

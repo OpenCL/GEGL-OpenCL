@@ -191,6 +191,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",       "gegl:noise-hsv",
+    "title",      _("Add HSV Noise"),
     "categories", "noise",
     "description", _("Randomize hue, saturation and value independently"),
       NULL);

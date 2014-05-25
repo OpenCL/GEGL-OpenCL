@@ -94,6 +94,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:mono-mixer",
+    "title",       _("Mono Mixer"),
     "categories",  "color",
     "description", _("Monochrome channel mixer"),
     "cl-source",   mono_mixer_cl_source,

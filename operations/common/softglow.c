@@ -227,6 +227,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:softglow",
+    "title",       _("Softglow"),
     "categories",  "artistic",
     "license",     "GPL3+",
     "description", _("Simulate glow by making highlights intense and fuzzy"),

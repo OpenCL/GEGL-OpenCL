@@ -333,6 +333,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:deinterlace",
+    "title",              _("Deinterlace"),
     "categories",         "enhance",
     "license",            "GPL3+",
     "position-dependent", "true",

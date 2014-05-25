@@ -69,7 +69,8 @@ gegl_op_class_init (GeglOpClass *klass)
   point_filter_class->process  = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:invert-linear",
+    "name",        "gegl:invert-linear",
+    "title",       _("Invert"),
     "compat-name", "gegl:invert",
     "categories" , "color",
     "description",

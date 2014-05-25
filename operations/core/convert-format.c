@@ -83,6 +83,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
                 "name",       "gegl:convert-format",
+                "title",      _("Convert Format"),
                 "categories", "core:color",
                 "description", _("Convert the data to the specified format"),
                 NULL);

@@ -139,9 +139,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:mblur",
+    "name",        "gegl:mblur",
+    "title",       _("Temporal blur"),
     "categories" , "blur:video",
-    "description", _("Accumulating motion blur"),
+    "description", _("Accumulating motion blur using a kalman filter, for use with video sequences of frames."),
     NULL);
 }
 

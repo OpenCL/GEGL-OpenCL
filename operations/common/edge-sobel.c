@@ -319,6 +319,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:edge-sobel",
+    "title",       _("Sobel Edge Detection"),
     "categories",  "edge-detect",
     "description", _("Specialized direction-dependent edge detection"),
           NULL);

@@ -111,6 +111,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:perlin-noise",
+    "title",              _("Perlin Noise"),
     "categories",         "render",
     "position-dependent", "true",
     "description", _("Perlin noise generator"),

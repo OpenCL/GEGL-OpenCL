@@ -149,6 +149,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:noise-slur",
+    "title",       _("Noise Slur"),
     "categories",  "noise",
     "license",     "GPL3+",
     "description", _("Randomly slide some pixels downward (similar to melting)"),

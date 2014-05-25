@@ -128,7 +128,8 @@ gegl_op_class_init (GeglOpClass *klass)
   point_filter_class->cl_process  = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:posterize",
+    "name",        "gegl:posterize",
+    "title",       _("Posterize"),
     "categories" , "color",
     "description",
        _("Reduces the number of levels in each color component of the image."),

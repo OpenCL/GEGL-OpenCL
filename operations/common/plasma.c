@@ -417,6 +417,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:plasma",
+    "title",              _("Plasma"),
     "categories",         "render",
     "position-dependent", "true",
     "license",            "GPL3+",

@@ -238,6 +238,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
       "name",               "gegl:motion-blur-zoom",
+      "title",              _("Zooming Motion Blur"),
       "categories",         "blur",
       "position-dependent", "true",
       "license",            "GPL3+",

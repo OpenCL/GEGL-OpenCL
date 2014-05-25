@@ -76,6 +76,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
               "name",        "gegl:nop",
+              "title",       _("No Operation"),
               "categories",  "core",
               "description", _("No operation (can be used as a routing point)"),
               NULL);

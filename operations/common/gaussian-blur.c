@@ -700,10 +700,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:gaussian-blur",
+    "title",       _("Gaussian Blur"),
     "categories",  "blur",
-    "description", _("Simplest, most commonly used way of blurring, "
-                     "performs an averaging of neighboring pixels with the "
-                     "normal distribution as weighting"),
+    "description", _("Each result pixel is the average of the neighbouring pixels weighted by a normal distribution with specified standard deviation."),
     NULL);
 }
 

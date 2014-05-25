@@ -199,6 +199,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
       "name",        "gegl:crop",
       "categories",  "core",
+      "title",       _("Crop"),
       "description", _("Crop a buffer"),
       "reference-composition", composition,
       NULL);

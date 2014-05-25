@@ -173,6 +173,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:noise-rgb",
+    "title",       _("Add RGB Noise"),
     "categories",  "noise",
     "description", _("Distort colors by random amounts"),
     NULL);

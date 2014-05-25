@@ -1633,7 +1633,8 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region       = mantiuk06_get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-      "name"       , "gegl:mantiuk06",
+      "name",        "gegl:mantiuk06",
+      "title",       _("Mantiuk 2006 Tonemapping"),
       "categories" , "tonemapping",
       "description",
         _("Adapt an image, which may have a high dynamic range, for "

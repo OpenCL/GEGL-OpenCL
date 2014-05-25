@@ -272,16 +272,19 @@ function filter_db(query)
       var got_title = false;
       for (var j = 0; j < op.meta.length; j++)
       {
-        if (op.meta[0] == 'title' )
+        if (op.meta[j][0] == "title"  && query=="notitle")
           got_title = true;
         if (op.meta[j][1].indexOf(query) == 0) score += 100;
         if (op.meta[j][1].toUpperCase().indexOf(uquery) == 0) score += 100;
         if (op.meta[j][1].indexOf(query) >= 0) score += 10;
         if (op.meta[j][1].toUpperCase().indexOf(uquery) >= 0) score += 10;
       }
-      if (query == 'notitle' && !got_title)
+      if (query == 'notitle' && got_title == false)
         score += 2;
-    }
+      }
+    else
+      if (query == 'notitle')
+        score += 2;
 
     if (op.description &&
         op.description.indexOf(query) >= 0)  score += 10;

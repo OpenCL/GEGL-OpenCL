@@ -121,8 +121,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->no_cache         = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:radial-gradient",
-    "categories"  , "render",
+    "name",         "gegl:radial-gradient",
+    "title",        _("Radial Gradient"),
+    "categories",   "render:gradient",
     "description" , _("Radial gradient renderer"),
     NULL);
 }

@@ -77,6 +77,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
                                  "name",        "gegl:high-pass",
+                                 "title",       _("High Pass Filter"),
                                  "categories",  "frequency",
                                  "description",
                                  _("Enhances fine details."),
