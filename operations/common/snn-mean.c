@@ -331,6 +331,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:snn-mean",
     "categories" , "misc",
+    "title",       _("Symmetric Nearest Neighbour"),
     "description",
         _("Noise reducing edge enhancing blur filter based "
           " on Symmetric Nearest Neighbours"),

@@ -323,6 +323,8 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:photocopy",
     "categories",  "artistic",
+    "license",     "GPL3+",
+    "title",       _("Photocopy"),
     "description", _("Simulate color distortion produced by a copy machine"),
     NULL);
 }

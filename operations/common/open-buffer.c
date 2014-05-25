@@ -127,8 +127,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:open-buffer",
+    "title",       _("Open GEGL Buffer"),
     "categories" , "input",
-    "description", _("A source that uses an on-disk GeglBuffer."),
+    "description", _("Use an on-disk GeglBuffer as data source."),
     NULL);
 
   operation_class->no_cache = TRUE;

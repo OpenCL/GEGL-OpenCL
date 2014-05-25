@@ -523,7 +523,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",                 _("Panorama Projection"),
     "reference-composition", composition,
     "position-dependent",    "true",
-    "categories" ,           "misc",
+    "categories" ,           "misc:map",
     "description", _("Perform a equlinear/gnomonic or little planet/stereographic projection of a equirectangular input image."),
     NULL);
 }

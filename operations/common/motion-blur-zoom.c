@@ -237,9 +237,10 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",        "gegl:motion-blur-zoom",
+      "name",               "gegl:motion-blur-zoom",
       "categories",         "blur",
       "position-dependent", "true",
+      "license",            "GPL3+",
       "description", _("Zoom motion blur"),
       NULL);
 }

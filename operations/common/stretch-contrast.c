@@ -562,7 +562,8 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:stretch-contrast",
+    "name",        "gegl:stretch-contrast",
+    "title",       _("Stretch Contrast"),
     "categories" , "color:enhance",
     "description",
         _("Scales the components of the buffer to be in the 0.0-1.0 range. "

@@ -26,7 +26,7 @@
 #ifdef GEGL_PROPERTIES
 
 property_color (color, _("Color"), "white")
-    description(_("The color to render (defaults to, and works best with, 'white')"))
+    description(_("The color to make transparent."))
 
 #else
 
@@ -250,8 +250,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:color-to-alpha",
+    "title",       _("Color to Alpha"),
     "categories",  "color",
-    "description", _("Convert a specified color to transparency"),
+    "license",     "GPL3+",
+    "description", _("Convert a specified color to transparency, works best with white."),
     "reference-composition", composition,
     NULL);
 }

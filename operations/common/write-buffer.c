@@ -143,7 +143,8 @@ gegl_op_class_init (GeglOpClass *klass)
   G_OBJECT_CLASS (klass)->dispose = dispose;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:write-buffer",
+    "name",        "gegl:write-buffer",
+    "title",       _("Write Buffer"),
     "categories" , "programming:output",
     "description", _("A GEGL buffer destination surface."),
     NULL);

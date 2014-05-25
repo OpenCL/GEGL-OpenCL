@@ -197,9 +197,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:save",
+    "title",       _("Save"),
     "categories" , "meta:output",
     "description",
-        _("Multipurpose file saver, that uses other native handlers."),
+        _("Multipurpose file saver, that uses other native save handlers depending on extension, use the format specific save ops to specify additional parameters."),
         NULL);
 }
 

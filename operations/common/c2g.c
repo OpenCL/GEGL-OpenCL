@@ -379,11 +379,11 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:c2g",
     "categories",  "enhance",
+    "title",       "Color to Grayscale",
     "reference-composition", composition,
     "description",
-    _("Color to grayscale conversion, uses envelopes formed from spatial "
-      "color differences to perform color-feature preserving grayscale "
-      "spatial contrast enhancement"),
+    _("Color to grayscale conversion, uses envelopes formed with the STRESS approach "
+      "to perform local color-difference preserving grayscale generation."),
     NULL);
 }
 

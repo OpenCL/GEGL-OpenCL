@@ -1267,9 +1267,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"       , "gegl:exp-combine",
+  "title",       _("Combine Exposures"),
   "categories" , "compositors",
   "description",
-      _("Combine multiple scene exposures into one high range buffer"),
+      _("Combine multiple scene exposures into one high dynamic range image."),
       NULL);
 }
 

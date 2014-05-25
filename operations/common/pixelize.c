@@ -652,6 +652,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",               "gegl:pixelize",
     "categories",         "blur",
     "position-dependent", "true",
+    "title",              _("Pixelize"),
     "description", _("Simplify image into an array of solid-colored rectangles"),
     NULL);
 }

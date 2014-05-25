@@ -334,6 +334,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:deinterlace",
     "categories",         "enhance",
+    "license",            "GPL3+",
     "position-dependent", "true",
     "description", _("Fix images where every other row or column is missing"),
     NULL);

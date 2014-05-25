@@ -609,7 +609,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "categories",  "artistic",
+    "title",       _("Cubism"),
     "name",        "gegl:cubism",
+    "license",     "GPL3+",
     "description", _("Convert the image into randomly rotated square blobs, somehow resembling a cubist painting style"),
     NULL);
 }

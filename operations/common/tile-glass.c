@@ -230,6 +230,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "categories",         "artistic",
+    "title",              _("Tile Glass"),
     "license",            "GPL3+",
     "name",               "gegl:tile-glass",
     "position-dependent", "true",

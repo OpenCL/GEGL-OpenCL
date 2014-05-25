@@ -474,6 +474,8 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
                                  "categories" , "artistic",
                                  "name"       , "gegl:oilify",
+                                 "title",      _("Oilify"),
+                                 "license",     "GPL3+",
                                  "description",_("Emulate an oil painting"),
                                  NULL);
 }

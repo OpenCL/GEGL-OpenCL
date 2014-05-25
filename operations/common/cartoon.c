@@ -316,7 +316,9 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories",  "artistic",
     "name",        "gegl:cartoon",
-    "description", _("Simulate a cartoon by enhancing edges"),
+    "title",       _("Cartoon"),
+    "license",     "GPL3+",
+    "description", _("Simulates a cartoon, its result is similar to a black felt pen drawing subsequently shaded with color. This is achieved by enhancing edges and darkening areas that are already distinctly darker than their neighborhood"),
     NULL);
 }
 

@@ -277,8 +277,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:color-temperature",
+    "title",       _("Color Temperature"),
     "categories",  "color",
-    "description", _("Change the color temperature of the image"),
+    "description", _("Change the color temperature of the image, from an assumed original color temperature to an intended one."),
     "reference-composition", composition,
     NULL);
 }

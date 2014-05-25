@@ -497,6 +497,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",                  "gegl:lens-distortion",
     "categories",            "blur",
     "position-dependent",    "true",
+    "license",               "GPL3+",
     "reference-composition", composition,
     "description", _("Corrects barrel or pincushion lens distortion."),
     NULL);

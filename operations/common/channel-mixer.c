@@ -16,11 +16,6 @@
  * This operation is a port of the GIMP channel-mixer plugin:
  *
  *     Copyright (C) 2002 Martin Guldahl <mguldahl@xmission.com>
- *         Based on GTK code from:
- *         homomorphic (Copyright (C) 2001 Valter Marcus Hilden)
- *         rand-noted  (Copyright (C) 1998 Miles O'Neal)
- *         nlfilt      (Copyright (C) 1997 Eric L. Hernes)
- *         pagecurl    (Copyright (C) 1996 Federico Mena Quintero)
  *
  * The porting to GEGL was done by Barak Itkin
  *
@@ -289,9 +284,11 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-      "name"       , "gegl:channel-mixer",
-      "categories" , "color",
-      "description", _("Alter colors by mixing RGB Channels"),
+      "name",       "gegl:channel-mixer",
+      "categories", "color",
+      "title",      _("Channel Mixer"),
+      "license",    "GPL3+",
+      "description", _("Remix colors; by defining relative contributions from source components."),
       NULL);
 }
 

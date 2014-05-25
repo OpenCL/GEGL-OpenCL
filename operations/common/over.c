@@ -178,10 +178,11 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "svg:src-over",
+    "title",       _("Normal compositing"),
     "compat-name", "gegl:over",
     "categories" , "compositors:porter-duff",
     "description",
-          _("Porter Duff operation over (d = cA + cB * (1 - aA))"),
+          _("Porter Duff operation over (also known as normal mode, and src-over) (d = cA + cB * (1 - aA))"),
     "cl-source"  , svg_src_over_cl_source,
     NULL);
 }

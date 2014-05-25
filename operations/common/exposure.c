@@ -183,9 +183,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:exposure",
+    "title",       _("Exposure"),
     "categories",  "color",
-    "description", _("Changes Exposure and Contrast, mainly for use with "
-                     "high dynamic range images"),
+    "description", _("Changes Exposure of an image, allows stepping HDR and photographs up/down in stops. "),
     NULL);
 }
 

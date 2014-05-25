@@ -269,7 +269,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:whirl-pinch",
+    "title",              _("Whirl Pinch"),
     "categories",         "distort",
+    "license",            "GPL3+",
     "position-dependent", "true",
     "description", _("Distort an image by whirling and pinching"),
     NULL);

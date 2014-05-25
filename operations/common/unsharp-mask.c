@@ -80,9 +80,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:unsharp-mask",
-    "categories",  "meta:enhance",
-    "description", _("The most widely used method for sharpening an image, "
-                     "sharpens by adding false mach-bands around edges"),
+    "title",       _("Unsharp Mask"),
+    "categories",  "enhance:sharpen",
+    "description", _("Sharpen image, by adding difference to blurred image, a technique for sharpening originally used in darkrooms."),
     NULL);
 }
 

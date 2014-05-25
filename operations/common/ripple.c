@@ -168,6 +168,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",               "gegl:ripple",
     "categories",         "distort",
     "position-dependent", "true",
+    "license",            "GPL3+",
     "description", _("Displace pixels in a ripple pattern"),
     NULL);
 }

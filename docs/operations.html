@@ -269,13 +269,18 @@ function filter_db(query)
     if (op.op.indexOf(query) > 0)            score += 500;
 
     if (op.meta) {
+      var got_title = false;
       for (var j = 0; j < op.meta.length; j++)
       {
+        if (op.meta[0] == 'title' )
+          got_title = true;
         if (op.meta[j][1].indexOf(query) == 0) score += 100;
         if (op.meta[j][1].toUpperCase().indexOf(uquery) == 0) score += 100;
         if (op.meta[j][1].indexOf(query) >= 0) score += 10;
         if (op.meta[j][1].toUpperCase().indexOf(uquery) >= 0) score += 10;
       }
+      if (query == 'notitle' && !got_title)
+        score += 2;
     }
 
     if (op.description &&

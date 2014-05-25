@@ -295,6 +295,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "name",               "gegl:motion-blur-circular",
       "categories",         "blur",
       "position-dependent", "true",
+      "license",            "GPL3+",
       "description", _("Circular motion blur"),
       NULL);
 }

@@ -146,7 +146,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:shift",
+    "title",       _("Shift"),
     "categories",  "distort",
+    "license",     "GPL3+",
     "description", _("Shift each row or column of pixels by a random amount"),
     NULL);
 }

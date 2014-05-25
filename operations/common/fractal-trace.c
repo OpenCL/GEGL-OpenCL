@@ -253,8 +253,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:fractal-trace",
+    "title",              _("Fractal Trace"),
     "position-dependent", "true",
     "categories",         "map",
+    "license",            "GPL3+",
     "description", _("Transform the image with the fractals"),
     NULL);
 }

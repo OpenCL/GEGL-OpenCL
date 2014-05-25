@@ -361,8 +361,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-                                 "categories" , "distort",
-                                 "name"       , "gegl:wind",
+                                 "categories", "distort",
+                                 "name",       "gegl:wind",
+                                 "title",      _("Wind"),
+                                 "license",    "GPL3+",
                                  "description", _("Wind-like bleed effect"),
                                  NULL);
 }

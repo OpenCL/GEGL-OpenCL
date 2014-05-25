@@ -86,11 +86,12 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare          = gegl_color_op_prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:color",
+    "name",        "gegl:color",
+    "title",      _("Color"),
     "categories" , "render",
     "description",
       _("Generates a buffer entirely filled with the specified color, "
-        "crop it to get smaller dimensions."),
+        "use gegl:crop to get smaller dimensions."),
     NULL);
 }
 

@@ -121,12 +121,13 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:threshold",
+    "name" ,       "gegl:threshold",
+    "title",       _("Threshold"),
     "categories" , "color",
     "description",
           _("Thresholds the image to white/black based on either the global value "
             "set in the value property, or per pixel from the aux input."),
-    "cl-source"  , threshold_cl_source,
+    "cl-source",   threshold_cl_source,
     "reference-composition", composition,
     NULL);
 }

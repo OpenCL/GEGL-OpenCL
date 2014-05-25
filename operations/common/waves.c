@@ -176,8 +176,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:waves",
+    "title",              _("Waves"),
     "categories",         "distort",
     "position-dependent", "true",
+    "license",            "GPL3+",
     "description", _("Distort the image with waves"),
     NULL);
 }

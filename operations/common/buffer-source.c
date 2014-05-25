@@ -184,8 +184,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
       "name",       "gegl:buffer-source",
+      "title",      _("Buffer Source"),
       "categories", "programming:input",
-      "description", _("A source that uses an in-memory GeglBuffer, for use internally by GEGL."),
+      "description", _("Use an existing in-memory GeglBuffer as image source."),
       NULL);
 
   operation_class->no_cache = TRUE;

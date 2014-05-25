@@ -424,10 +424,12 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       ,        "gegl:fractal-explorer",
-    "categories" ,        "render",
+    "name",               "gegl:fractal-explorer",
+    "title",              _("Fractal Explorer"),
+    "categories",         "render:fractal",
     "position-dependent", "true",
-    "description", _("Fractal Explorer"),
+    "license",            "GPL3+",
+    "description",        _("Rendering of multiple different fractal systems, with configurable coloring options."),
     NULL);
 }
 
