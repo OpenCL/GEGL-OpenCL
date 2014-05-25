@@ -68,34 +68,113 @@
 
     .op-image { margin: 1em; margin-top: 0em; margin-left: 0em; float: left }
     .properties {margin-top: 1em; clear: left; }
-    .property { margin-top: 1em; margin-right: 2em; clear:
-      left;  
+    .property { margin-top: 1em; margin-right: 2em; clear: both;
        padding-top: 1em;
     }
-    .property>div { display: block-inline; float: left; }
-    .property-name {
-        font-family: Monospace ;
+    .property>div { }
+
+    .property>.property-label {
+        display: block;
+        float: none;
         font-size: 1.4em;
         min-width: 10em;
+    }
+
+    .property-name {
+        font-family: Monospace;
+        font-size: 1.4em;
+        min-width: 10em;
+      float:left;
+    }
+    .property-name:before { content:"name: ";
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      font-size: 60%;
     }
     .property-type {
       -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
       padding-left: 1em;
-        min-width: 4em;
+      min-width: 4em;
+      float:left;
+    }
+    .property-type:before { content:"type: ";
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      font-size: 60%;
     }
     .property-default {
       padding-left: 1em;
-        min-width: 4em;
+      min-width: 4em;
+      float:left;
     }
-    .property-value-range  {
+
+    .property-default:before { content:"default: ";
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      font-size: 60%;
+    }
+
+    .property-ui-gamma:before { content:"ui-gamma:";
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      font-size: 60%;
+    }
+
+    .property-ui-digits:before { content:"ui-digits:";
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      padding-right: 1.5em;
+      font-size: 60%;
+    }
+
+    .property-value-range:before { content:"range:";
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      padding-right: 2.2em;
+      font-size: 60%;
+    }
+
+    .property-ui-range:before { content:"ui-range: ";
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      padding-right: 0.8em;
+      font-size: 60%;
+    }
+    .property-ui-steps:before { content:"ui-steps: ";
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      padding-right: 1.0em;
+      font-size: 60%;
+    }
+    .property-meta-key {
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      font-size: 60%;
+      min-width: 5.5em;
+      display: inline-block;
+      vertical-align: text-bottom;
+      padding-top: 0.5em;
+      float :left;
+      clear: left;
+    }
+    .property-meta-value {
+      display: inline-block;
+      float :left;
+    }
+
+    .property-value-range,
+    .property-ui-range,
+    .property-ui-digits,
+    .property-ui-gamma,
+    .property-ui-steps,
+    {
       -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
       padding-left: 1em;
         min-width: 6em;
     }
     .property-description {
       clear: left;
-      padding-left: 2em;
+      padding-top: 0.5em;
     }
+
+    .property>div.property-meta {
+      float: right;
+      min-width: 11em;
+      padding-left: 1em;
+      clear: right;
+    }
+
     .opname  { font-weight: bold; margin-bottom: 0.2em; display: none; }
     .optitle { font-weight: bold; margin-bottom: 0.2em; }
 
@@ -241,38 +320,58 @@ function render_properties(properties)
        var prop = properties[i];
        result += '<div class="property">';
 
-       result += '<div class="property-name">' + prop.name + ' </div>';
-       result += '<div class="property-type" title="data type">' + prop.type + ' </div>';
-
-       if (prop.default)
-         result += '<div class="property-default" title="default value">' + prop.default+ ' </div>';
+       result += "<div class='property-meta'>";
 
        if (prop.minimum && prop.maximum)
          {
          result += '<div class="property-value-range" title="value range">' + prop.minimum + '&ndash;' + prop.maximum + ' </div>';
          }
 
+
        if (prop['ui-minimum'] && prop['ui-maximum'])
          {
-         result += '<div class="property-value-range" title="ui range, gamma">' + prop['ui-minimum'] +
-           '&ndash;' + prop['ui-maximum'] + ',' + prop['ui-gamma'] +' </div>';
+         result += '<div class="property-ui-range">' + prop['ui-minimum'] +
+           '&ndash;' + prop['ui-maximum'] + '</div>';
        }
+       if (prop['ui-gamma'])
+         {
+         result += '<div class="property-ui-gamma">' + prop['ui-gamma'] + ' </div>';
+         }
+
        if (prop['ui-step-small'] && prop['ui-step-big'])
          {
-         result += '<div class="property-value-range" title="step size small, step size big    digits">' + prop['ui-step-small'] +
-           ',' + prop['ui-step-big'] + ' ' + prop['ui-digits'] + ' </div>';
+         result += '<div class="property-ui-steps">' + prop['ui-step-small'] +
+           ',' + prop['ui-step-big'] + ' </div>';
          }
-       if (prop.description)
-         result += '<div class="property-description">' + prop.description + ' </div>';
+       if (prop['ui-digits'])
+         {
+         result += '<div class="property-ui-digits">' + prop['ui-digits'] + ' </div>';
+         }
        if (prop.meta)
        {
          for (var j = 0; j < prop.meta.length; j++)
          {
-           result += '<div style="clear:both"><b>' + prop.meta[j][0] +
-               '</b>&nbsp;' + 
+           result += '<div class="property-meta-key">' + prop.meta[j][0] +
+             ':</div><div class="property-meta-value">' + 
             prop.meta[j][1] + '</div>';
          }
        }
+
+       result += "</div>";
+
+
+       result += '<div class="property-label">' + prop.label + ' </div>';
+       result += '<div class="property-name">' + prop.name + ' </div>';
+       result += '<div class="property-type" title="data type">' + prop.type + ' </div>';
+
+       if (prop.default)
+         result += '<div class="property-default" title="default value">' + prop.default+ ' </div>';
+
+
+
+       if (prop.description)
+         result += '<div class="property-description">' + prop.description + ' </div>';
+
      result += '</div>'
    }
    result += '</div>'
@@ -291,7 +390,10 @@ function render_item (item)
     {
       result += '<div class="category" ' + "onclick='go(\""+item.categories[i]+"\")'" + '>' + item.categories[i] + '</div>';
     }
-  result += '<div class="category" '+"onclick='go(\""+item.parent+"\")'" + '>' + item.parent.slice(13) + '</div>';
+    result += '<div class="category" '+"onclick='go(\""+item.parent+"\")'" + '>' + item.parent.slice(13) + '</div>';
+
+  if (item['opencl-support'])
+    result += '<div class="category" '+"onclick=\"go('opencl')\"" + '>CL</div>';
 
    if (item.source)
      result += '<div class="view-source"><a href="' + item.source+ '#n18">View source</a></div>';
@@ -320,8 +422,6 @@ function render_item (item)
     result += '<div style="margin-top:4em;"></div>';
   }
 
-  if (item['opencl-support'])
-    result += '<div>OpenCL</div>';
 
   if (item.meta)
   {
