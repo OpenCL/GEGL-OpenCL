@@ -58,7 +58,7 @@ gegl_orientation_get_type (void)
   if (etype == 0)
     {
       static GEnumValue values[] = {
-        { GEGL_ORIENTATION_HORIZONTAL, N_("Horizontal"), "hotizontal" },
+        { GEGL_ORIENTATION_HORIZONTAL, N_("Horizontal"), "horizontal" },
         { GEGL_ORIENTATION_VERTICAL,   N_("Vertical"),   "vertical"   },
         { 0, NULL, NULL }
       };
