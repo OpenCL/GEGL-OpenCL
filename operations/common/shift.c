@@ -23,19 +23,14 @@
 
 #ifdef GEGL_PROPERTIES
 
-enum_start (gegl_shift_direction)
-  enum_value (GEGL_SHIFT_DIRECTION_HORIZONTAL, "horizontal", N_("Horizontal"))
-  enum_value (GEGL_SHIFT_DIRECTION_VERTICAL,   "vertical",   N_("Vertical"))
-enum_end (GeglShiftDirection)
-
 property_int  (shift, _("Shift"), 5)
     description(_("Maximum amount to shift"))
     value_range (0, 200)
     ui_meta    ("unit", "pixel-distance")
 
 property_enum (direction, _("Shift direction"),
-    GeglShiftDirection, gegl_shift_direction,
-    GEGL_SHIFT_DIRECTION_HORIZONTAL)
+    GeglOrientation, gegl_orientation,
+    GEGL_ORIENTATION_HORIZONTAL)
 
 property_seed (seed, _("Random seed"), rand)
 
@@ -53,14 +48,14 @@ prepare (GeglOperation *operation)
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
   const Babl              *format;
 
-  if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
+  if (o->direction == GEGL_ORIENTATION_HORIZONTAL)
     {
       op_area->left   = o->shift;
       op_area->right  = o->shift;
       op_area->top    = 0;
       op_area->bottom = 0;
     }
-  else if (o->direction == GEGL_SHIFT_DIRECTION_VERTICAL)
+  else if (o->direction == GEGL_ORIENTATION_VERTICAL)
     {
       op_area->top    = o->shift;
       op_area->bottom = o->shift;
@@ -87,7 +82,7 @@ process (GeglOperation       *operation,
   GeglRectangle  dst_rect;
 
 
-  if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
+  if (o->direction == GEGL_ORIENTATION_HORIZONTAL)
     {
       size = result->height;
       dst_rect.width  = result->width;
@@ -111,7 +106,7 @@ process (GeglOperation       *operation,
       gint shift = gegl_random_int_range (o->rand, i + pos, 0, 0, 0,
                                           -o->shift, o->shift + 1);
 
-      if (o->direction == GEGL_SHIFT_DIRECTION_HORIZONTAL)
+      if (o->direction == GEGL_ORIENTATION_HORIZONTAL)
         {
           dst_rect.y = i + result->y;
           src_rect = dst_rect;

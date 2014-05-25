@@ -34,11 +34,6 @@ enum_start (gegl_gblur_1d_policy)
    enum_value (GEGL_GBLUR_1D_ABYSS_WHITE, "white", N_("White"))
 enum_end (GeglGblur1dPolicy)
 
-enum_start (gegl_gblur_1d_orientation)
-  enum_value (GEGL_GBLUR_1D_HORIZONTAL, "horizontal", N_("Horizontal"))
-  enum_value (GEGL_GBLUR_1D_VERTICAL,   "vertical",   N_("Vertical"))
-  enum_end (GeglGblur1dOrientation)
-
 enum_start (gegl_gblur_1d_filter)
   enum_value (GEGL_GBLUR_1D_AUTO, "auto", N_("Auto"))
   enum_value (GEGL_GBLUR_1D_FIR,  "fir",  N_("FIR"))
@@ -52,8 +47,8 @@ property_double (std_dev, _("Size"), 1.5)
   ui_gamma      (3.0)
 
 property_enum (orientation, _("Orientation"),
-               GeglGblur1dOrientation, gegl_gblur_1d_orientation,
-               GEGL_GBLUR_1D_HORIZONTAL)
+               GeglOrientation, gegl_orientation,
+               GEGL_ORIENTATION_HORIZONTAL)
   description (_("The orientation of the blur - hor/ver"))
 
 property_enum (filter, _("Filter"),
@@ -393,7 +388,7 @@ cl_gaussian_blur (cl_mem                 in_tex,
                   const GeglRectangle   *roi,
                   cl_mem                 cl_cmatrix,
                   gint                   clen,
-                  GeglGblur1dOrientation orientation)
+                  GeglOrientation        orientation)
 {
   cl_int cl_err = 0;
   size_t global_ws[2];
@@ -408,7 +403,7 @@ cl_gaussian_blur (cl_mem                 in_tex,
   if (!cl_data)
     return TRUE;
 
-  if (orientation == GEGL_GBLUR_1D_VERTICAL)
+  if (orientation == GEGL_ORIENTATION_VERTICAL)
     kernel_num = 0;
   else
     kernel_num = 1;
@@ -446,7 +441,7 @@ fir_cl_process (GeglBuffer            *input,
                 const Babl            *format,
                 gfloat                *cmatrix,
                 gint                   clen,
-                GeglGblur1dOrientation orientation,
+                GeglOrientation        orientation,
                 GeglAbyssPolicy        abyss)
 {
   gboolean              err = FALSE;
@@ -456,7 +451,7 @@ fir_cl_process (GeglBuffer            *input,
   gint                  read;
   gint                  left, right, top, bottom;
 
-  if (orientation == GEGL_GBLUR_1D_HORIZONTAL)
+  if (orientation == GEGL_ORIENTATION_HORIZONTAL)
     {
       right = left = clen / 2;
       top = bottom = 0;
@@ -637,7 +632,7 @@ gegl_gblur_1d_enlarge_extent (GeglProperties          *o,
 
   GeglRectangle bounding_box = *input_extent;
 
-  if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+  if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
     {
       bounding_box.x     -= clen / 2;
       bounding_box.width += clen - 1;
@@ -671,7 +666,7 @@ gegl_gblur_1d_get_required_for_output (GeglOperation       *operation,
             {
               required_for_output = *output_roi;
 
-              if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+              if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
                 {
                   required_for_output.x     = in_rect->x;
                   required_for_output.width = in_rect->width;
@@ -745,7 +740,7 @@ gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
 
           cached_region = *output_roi;
 
-          if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+          if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
             {
               cached_region.x     = in_rect.x;
               cached_region.width = in_rect.width;
@@ -805,7 +800,7 @@ gegl_gblur_1d_process (GeglOperation       *operation,
 
       iir_young_find_constants (o->std_dev, b, m);
 
-      if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+      if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
         iir_young_hor_blur (input, result, output, b, m, abyss_policy, format);
       else
         iir_young_ver_blur (input, result, output, b, m, abyss_policy, format);
@@ -824,7 +819,7 @@ gegl_gblur_1d_process (GeglOperation       *operation,
                            cmatrix, clen, o->orientation, abyss_policy))
           return TRUE;
 
-      if (o->orientation == GEGL_GBLUR_1D_HORIZONTAL)
+      if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
         fir_hor_blur (input, result, output, cmatrix, clen, abyss_policy, format);
       else
         fir_ver_blur (input, result, output, cmatrix, clen, abyss_policy, format);

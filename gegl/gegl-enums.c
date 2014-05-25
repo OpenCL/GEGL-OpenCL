@@ -51,6 +51,31 @@ gegl_abyss_policy_get_type (void)
 }
 
 GType
+gegl_orientation_get_type (void)
+{
+  static GType etype = 0;
+
+  if (etype == 0)
+    {
+      static GEnumValue values[] = {
+        { GEGL_ORIENTATION_HORIZONTAL, N_("Horizontal"), "hotizontal" },
+        { GEGL_ORIENTATION_VERTICAL,   N_("Vertical"),   "vertical"   },
+        { 0, NULL, NULL }
+      };
+      gint i;
+
+      for (i = 0; i < G_N_ELEMENTS (values); i++)
+        if (values[i].value_name)
+          values[i].value_name =
+            dgettext (GETTEXT_PACKAGE, values[i].value_name);
+
+      etype = g_enum_register_static ("GeglOrientation", values);
+    }
+
+  return etype;
+}
+
+GType
 gegl_sampler_type_get_type (void)
 {
   static GType etype = 0;

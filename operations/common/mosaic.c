@@ -110,12 +110,6 @@ typedef enum
   TRIANGLES = 3
 } TileType;
 
-typedef enum
-{
-  HORIZONTAL   = 0,
-  VERTICAL     = 1
-} Direction;
-
 #define SMOOTH   FALSE
 #define ROUGH    TRUE
 
@@ -184,7 +178,7 @@ static void      find_max_gradient     (gfloat              *src_rgn,
 /*  gaussian & 1st derivative  */
 static void      gaussian_deriv        (gfloat              *src_rgn,
                                         gfloat              *dest_rgn,
-                                        Direction            direction,
+                                        GeglOrientation      direction,
                                         gdouble              std_dev,
                                         const GeglRectangle *result);
 static void      make_curve            (gfloat              *curve,
@@ -467,11 +461,11 @@ find_gradients (gfloat              *input_buf,
 
   dest_rgn = g_new (gfloat, result->width * result->height * NB_CPN);
 
-  gaussian_deriv (input_buf, dest_rgn, HORIZONTAL, std_dev, result);
+  gaussian_deriv (input_buf, dest_rgn, GEGL_ORIENTATION_HORIZONTAL, std_dev, result);
 
   find_max_gradient (dest_rgn, mdatas->h_grad, result->width, result->height);
 
-  gaussian_deriv (input_buf, dest_rgn, VERTICAL, std_dev, result);
+  gaussian_deriv (input_buf, dest_rgn, GEGL_ORIENTATION_VERTICAL, std_dev, result);
 
   find_max_gradient (dest_rgn, mdatas->v_grad, result->width, result->height);
 
@@ -537,7 +531,7 @@ find_max_gradient (gfloat *src_rgn,
 static void
 gaussian_deriv (gfloat              *src_rgn,
                 gfloat              *dest_rgn,
-                Direction            direction,
+                GeglOrientation      direction,
                 gdouble              std_dev,
                 const GeglRectangle *result)
 {
@@ -569,7 +563,7 @@ gaussian_deriv (gfloat              *src_rgn,
   sum = sum_array + length;
   buf = g_new (gfloat, MAX (width, height) * NB_CPN);
 
-  if (direction == VERTICAL)
+  if (direction == GEGL_ORIENTATION_VERTICAL)
     {
       make_curve_d (curve, sum, std_dev, length);
       total = sum[0] * -2;
@@ -625,7 +619,7 @@ gaussian_deriv (gfloat              *src_rgn,
         }
 
       b = buf;
-      if (direction == VERTICAL)
+      if (direction == GEGL_ORIENTATION_VERTICAL)
         for (row = 0; row < height; row++)
           {
             for (chan = 0; chan < NB_CPN; chan++)
@@ -648,7 +642,7 @@ gaussian_deriv (gfloat              *src_rgn,
           }
     }
 
-  if (direction == HORIZONTAL)
+  if (direction == GEGL_ORIENTATION_HORIZONTAL)
     {
       make_curve_d (curve, sum, std_dev, length);
       total = sum[0] * -2;
@@ -705,7 +699,7 @@ gaussian_deriv (gfloat              *src_rgn,
         }
 
       b = buf;
-      if (direction == HORIZONTAL)
+      if (direction == GEGL_ORIENTATION_HORIZONTAL)
         for (col = 0; col < width; col++)
           {
             for (chan = 0; chan < NB_CPN; chan++)

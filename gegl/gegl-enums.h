@@ -46,7 +46,17 @@ typedef enum {
 
 GType gegl_abyss_policy_get_type (void) G_GNUC_CONST;
 
-#define GEGL_TYPE_ABYSS_POLICY (gegl_abyss_policy_get_type())
+#define GEGL_TYPE_ABYSS_POLICY (gegl_abyss_policy_get_type ())
+
+
+typedef enum {
+  GEGL_ORIENTATION_HORIZONTAL,
+  GEGL_ORIENTATION_VERTICAL
+} GeglOrientation;
+
+GType gegl_orientation_get_type (void) G_GNUC_CONST;
+
+#define GEGL_TYPE_ORIENTATION (gegl_orientation_get_type ())
 
 
 typedef enum {
@@ -59,7 +69,7 @@ typedef enum {
 
 GType gegl_sampler_type_get_type (void) G_GNUC_CONST;
 
-#define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type())
+#define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type ())
 
 G_END_DECLS
 
