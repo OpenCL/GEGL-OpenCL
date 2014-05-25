@@ -386,6 +386,25 @@ main (gint argc, gchar **argv)
         g_free (image);
       }
 
+      {
+        gchar *commandline = g_strdup_printf (
+            "sh -c \"(cd ..;git grep '\\\"%s\\\"' ) | grep operations | grep '\\\"name\\\"' | cut -f 1 -d ':'\"",
+             name);
+        gchar *output = NULL;
+        
+        if (g_spawn_command_line_sync (commandline, &output, NULL, NULL, NULL))
+        {
+          if (strlen(output))
+            {
+              output[strlen(output)-1] = 0;
+              g_print (
+      ",'source':'https://git.gnome.org/browse/gegl/tree/%s'\n", output);
+            }
+          g_free (output);
+        }
+
+        g_free (commandline);
+      }
 
       if (categoris)
       {

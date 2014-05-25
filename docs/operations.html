@@ -1,0 +1,428 @@
+<!--
+
+/* This js doc browser is part of GEGL
+ *
+ * GEGL is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * GEGL is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
+ *
+ * 2014 Øyvind Kolås.
+ */
+
+-->
+
+<html>
+  <head><title>GEGL Operation Reference</title></head>
+
+  <style>
+    body { font-size: 1.0em; font-family: Sans; margin:0; }
+    #query { border:0;padding:0;margin:0; background: #eee; width: 100%;
+      position: fixed; top:0;left:0; z-index: 1;
+      font-size: 1.5em;
+      padding-left: 0.75em;
+    }
+    #view { padding-top: 4em; margin-left: 1em; margin-right: 1em; }
+    .categories {
+      margin-left: -0.25em; clear: left; float: right;
+      font-size: 0.8em;
+     }
+     .category { 
+       padding-left: 0.25em;
+       padding-right: 0.25em;
+       color: blue;
+       cursor: hand;
+     }
+    .category:hover { background: black; color: white; }
+    .op-image { margin: 1em; margin-top: 0em; margin-left: 0em; float: left }
+    .properties {margin-top: 1em; clear: left; }
+    .property { margin-top: 1em; margin-right: 2em; clear:
+      left;  
+       padding-top: 1em;
+    }
+    .property>div { display: block-inline; float: left; }
+    .property-name {
+        font-family: Monospace ;
+        font-size: 1.4em;
+        min-width: 10em;
+    }
+    .property-type {
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      padding-left: 1em;
+        min-width: 4em;
+    }
+    .property-default {
+      padding-left: 1em;
+        min-width: 4em;
+    }
+    .property-value-range  {
+      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
+      padding-left: 1em;
+        min-width: 6em;
+    }
+    .property-description {
+      clear: left;
+      padding-left: 2em;
+    }
+    .opname { font-weight: bold; margin-bottom: 0.2em; display: none; }
+    .description { }
+    .result       { border: 2px solid transparent; }
+    .result:hover { border: 2px solid black; background : #555; color :
+      blue; cursor: hand; }
+    .small .result     { display: inline-block; width: 150px; height: 150px;
+      overflow: clip; }
+    .small .result>img { margin-right:0.2em;min-width: 150px; height: 150px; }
+    .small .result>div { display: inline-block;  position: relative; background:
+      rgba(255,255,255, 0.8); padding-right: 0.4em; height: 1em;
+      overflow:hidden;
+      font-size: 0.75em;
+      top: -1.0em; }
+    .result { vertical-align: top; }
+    .big .result     { display: inline-block; width: 200px; height: 200px;
+      overflow: clip; }
+    .big .result>img { margin-right:0.2em;min-width: 200px; height: 200px; }
+    .big .result>div { display: inline-block;  position: relative; background:
+      rgba(255,255,255, 0.8); padding-right: 0.4em; height: 1em;
+      overflow:hidden;
+      top: -1.0em; }
+    .big>.result.text { height: 2em; }
+    .small>.result.text { height: 2em; }
+    .result.text>div { position:relative; top: 0.4em;}
+  </style>
+
+  <script src='operations.json'>
+  </script>
+
+  <script>
+
+function id(idi) { return document.getElementById(idi) }
+function show_op(op)
+{
+  id('view').innerHTML = window.opdb[0].op;
+}
+
+function filter_db(query)
+{
+  var opdb = window.opdb;
+  var result = [];
+  var uquery = query.toUpperCase ();
+
+  for (var i = 0; i < opdb.length; i++)
+  {
+    var score = 0;
+    var op_name = opdb[i].op;
+    var uop_name = op_name.toUpperCase ();
+
+    if (opdb[i].parent == query) score += 100;
+
+    if (op_name.indexOf(query) == 0)           score += 1000;
+    if (op_name.slice(5).indexOf(query) == 0)  score += 900;
+    if (op_name.indexOf(query) > 0)            score += 500;
+
+    if (opdb[i].description &&
+        opdb[i].description.indexOf(query) >= 0)  score += 10;
+
+    if (uop_name.indexOf(uquery) == 0)           score += 1000;
+    if (uop_name.slice(5).indexOf(uquery) == 0)  score += 900;
+    if (uop_name.indexOf(uquery) > 0)            score += 500;
+
+    if (opdb[i].description &&
+        opdb[i].description.toUpperCase().indexOf(uquery) >= 0)  score += 10;
+
+      {
+        if (opdb[i].categories)
+        for (var j = 0; j < opdb[i].categories.length; j++)
+        {
+          if (opdb[i].categories[j].indexOf(query) >= 0)
+          {
+            score += 30;
+            break;
+          }
+        }
+      }
+
+    if (score > 0)
+    {
+      /* var o = JSON.parse(JSON.stringify(opdb[i])); */
+        var o = opdb[i];
+        o.score = score;
+        result.push (o);
+      }
+  }
+
+  result = result.sort(function(a,b){
+    if (a.score != b.score)
+      return (b.score - a.score);
+    return a.op > b.op;
+  });
+  return result;
+}
+
+var initialized = false;
+var previous_content = "";
+
+function render_properties(properties)
+{
+  var result = ''
+  result += '<div class="properties">'
+   for (var i = 0; i < properties.length ; i++)
+     {
+       var prop = properties[i];
+       result += '<div class="property">';
+
+       result += '<div class="property-name">' + prop.name + ' </div>';
+       result += '<div class="property-type" title="data type">' + prop.type + ' </div>';
+
+       if (prop.default)
+         result += '<div class="property-default" title="default value">' + prop.default+ ' </div>';
+
+       if (prop.minimum && prop.maximum)
+         {
+         result += '<div class="property-value-range" title="value range">' + prop.minimum + '&ndash;' + prop.maximum + ' </div>';
+         }
+
+       if (prop['ui-minimum'] && prop['ui-maximum'])
+         {
+         result += '<div class="property-value-range" title="ui range, gamma">' + prop['ui-minimum'] +
+           '&ndash;' + prop['ui-maximum'] + ',' + prop['ui-gamma'] +' </div>';
+       }
+       if (prop['ui-step-small'] && prop['ui-step-big'])
+         {
+         result += '<div class="property-value-range" title="step size small, step size big    digits">' + prop['ui-step-small'] +
+           ',' + prop['ui-step-big'] + ' ' + prop['ui-digits'] + ' </div>';
+         }
+       if (prop.description)
+         result += '<div class="property-description">' + prop.description + ' </div>';
+       if (prop.meta)
+       {
+         for (var j = 0; j < prop.meta.length; j++)
+         {
+           result += '<div style="clear:both">' + prop.meta[j][0] + '=' + 
+            prop.meta[j][1] + '</div>';
+         }
+       }
+     result += '</div>'
+   }
+   result += '</div>'
+   return result;
+}
+
+function render_item (item)
+{
+  var result = '';
+  result += '<div class="categories"><b>Categories</b>';
+  if (item.categories)
+  {
+    for (var i = 0; i < item.categories.length; i ++)
+    {
+      result += '<div class="category" ' + "onclick='go(\""+item.categories[i]+"\")'" + '>' + item.categories[i] + '</div>';
+    }
+  result += '<div class="category" '+"onclick='go(\""+item.parent+"\")'" + '>'
+    + item.parent.slice(13) +
+    '</div>';
+
+   if (item.source)
+     result += '<b>Source</b><div><a href="' + item.source+ '#n18">git.gnome.org</a></div>';
+   result += '</div>';
+
+  if (item.image)
+    result += ' <img class="op-image" src="' + item.image + '" / >';
+
+  result += '<div class="opname">' + item.op + '</div>';
+  result += '<div class="description">' + item.description +
+    '</div>';
+
+  if (item.properties.length)
+    result += render_properties (item.properties);
+
+    result += '<div style="clear:all">&nbsp;</div>';
+    result += '<div style="margin-top:4em;"></div>';
+  }
+
+  if (item['opencl-support'])
+    result += '<div>OpenCL</div>';
+
+  if (item.meta)
+  {
+    for (var j = 0; j < item.meta.length; j++)
+    {
+      result += '<div style="clear:both">' + item.meta[j][0] + '=' + 
+       item.meta[j][1] + '</div>';
+    }
+  }
+
+  return result;
+}
+
+function go (query)
+{
+  window.location.hash=id('query').value;
+  window.location.hash=query;
+  id("query").value=query;
+  show_matches();
+}
+
+function render_list2 (items, maxitems)
+{
+  var result = '';
+  for (var i = 0; i < items.length && i < maxitems; i++)
+  {
+    var item = items[i];
+
+    if (items[i].image)
+    {
+      result += "<div class='result' onclick='go(\""+item.op+"\")' >";
+      result += ' <img src="' + items[i].image + '"/>';
+      result += '<div class="title">' + item.op + '</div>';
+      result += '</div>';
+    }
+    else
+    {
+      result += "<div class='result text' onclick='go(\""+item.op+"\")' >";
+      result += '<div class="title">' + item.op + '</div>';
+      result += '</div>';
+    }
+
+  }
+  return result;
+}
+
+function render_all ()
+{
+  var result = '';
+  var items = window.opdb;
+  for (var i = 0; i < items.length; i++)
+  {
+    result += '<div style="font-weight:bold;font-size:1.5em;margin-top:1em;margin-bottom:1em;">' + items[i].op +'</div>';
+    result += render_item (items[i]);
+  }
+  return result;
+}
+
+function render_list_big (items)
+{
+  return '<div class="big">' + render_list2 (items, 20) + '</div>';
+}
+
+function render_list_small (items)
+{
+  return '<div class="small">' + render_list2 (items, 30) + '</div>';
+}
+
+function render_categories ()
+{
+  var result = '';
+
+  var cats = [];
+  var opdb = window.opdb;
+
+  for (var i = 0; i < opdb.length; i++)
+  {
+      if (opdb[i].categories)
+      for (var j = 0; j < opdb[i].categories.length; j++)
+      {
+        var found = false;
+        for (var k = 0; k < cats.length; k++)
+        if (cats[k] == opdb[i].categories[j])
+          found = true;
+        if (!found)
+          cats.push(opdb[i].categories[j]);
+      }
+  }
+
+  cats = cats.sort();
+
+  for (var i = 0; i < cats.length; i++)
+  {
+  result += '<div class="category" style="font-size: 150%;"'
+    + "onclick='go(\""+cats[i]+"\")'>" 
+    + cats[i] + '</div>';
+  }
+
+
+  return result;
+}
+
+window.onhashchange = function ()
+{
+  id('query').value = window.location.hash.slice(1);
+  show_matches ();
+}
+
+
+function show_matches(e)
+{
+  var items;
+  var result = '';
+
+  if (e && e.keyCode == 13)
+  {
+    window.location.hash=id('query').value;
+  }
+
+  if (!initialized)
+  {
+    if (id('query').value == '')
+    id('query').value = window.location.hash.slice(1);
+    initialized = true;
+  }
+
+  items = filter_db(id('query').value);
+
+  if (id('query').value == 'list of all ops')
+  {
+    result += render_all ();
+  }
+  else if (id('query').value == '')
+  {
+    result += render_categories ();
+  }
+  else if (items.length == 0)
+  {
+    result = 'eek';
+  }
+  else if (items.length == 1)
+  {
+    if (items[0].op == id('query').value)
+    result += render_item (items[0]);
+    else
+    result += render_list_big (items);
+  }
+  else if (items.length < 20)
+  {
+    result += render_list_big (items);
+  }
+  else
+    result += render_list_small (items);
+
+
+  if (result != previous_content)
+  {
+    id('view').innerHTML = result;
+    previous_content = result;
+  }
+}
+
+  </script>
+
+  <body>
+    <input id='query' value='' placeholder="type to search"
+    onkeyup='show_matches(event);'
+    onactivate='setloc()'
+     autocomplete='off'></input>
+     <div id='view'>foo</div>
+  </body>
+
+  <script>
+    show_matches();
+    id('query').focus();
+  </script>
+</html>
