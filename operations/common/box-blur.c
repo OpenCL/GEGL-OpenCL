@@ -390,8 +390,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
       "name",        "gegl:box-blur",
+      "title",       "Box Blur",
       "categories",  "blur",
-      "description", _("Performs an averaging of a square box of pixels"),
+      "description", _("Blurs by averaging a square neighbourhood."),
       NULL);
 }
 

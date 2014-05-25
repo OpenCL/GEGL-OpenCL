@@ -274,6 +274,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:antialias",
+    "title",       _("Scale3X Antialiasing"),
     "categories",  "enhance",
     "description", _("Antialias using the Scale3X edge-extrapolation algorithm"),
     NULL);

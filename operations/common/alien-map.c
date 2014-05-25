@@ -210,8 +210,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:alien-map",
+    "title",       _("Alien Map"),
     "categories",  "artistic",
-    "description", _("Alters colors using sine transformations"),
+    "description", _("Heavily distort images colors by applying trigonometric functions to map color values."),
     NULL);
 }
 

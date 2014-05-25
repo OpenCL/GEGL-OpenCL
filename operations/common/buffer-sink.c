@@ -79,8 +79,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
       "name",       "gegl:buffer-sink",
+      "title",      _("Buffer Sink"),
       "categories", "programming:output",
-      "description", _("A GEGL buffer destination surface."),
+      "description", _("Write the resulting rendering to an already existing GEGL buffer."),
       NULL);
 }
 
