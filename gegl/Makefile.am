@@ -170,21 +170,3 @@ endif # HAVE_VALA
 EXTRA_DIST += gegl-@GEGL_API_VERSION@.deps
 
 endif # HAVE_INTROSPECTION
-
-#
-# rules to generate built sources
-#
-# setup autogeneration dependencies
-gen_sources = xgen-tec
-CLEANFILES += $(gen_sources)
-
-gegl-enums.c: $(srcdir)/gegl-enums.h
-	glib-mkenums \
-		--fhead "/* This is a generated file, do not edit directly */\n\n#include \"config.h\"\n#include <glib-object.h>\n#include \"gegl-enums.h\"" \
-		--fprod "\n/* enumerations from \"@filename@\" */" \
-		--vhead "GType\n@enum_name@_get_type (void)\n{\n  static GType etype = 0;\n  if (etype == 0) {\n    static const G@Type@Value values[] = {" \
-		--vprod "      { @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
-		--vtail "      { 0, NULL, NULL }\n    };\n    etype = g_@type@_register_static (\"@EnumName@\", values);\n  }\n  return etype;\n}\n\n" \
-		$(srcdir)/gegl-enums.h > xgen-tec \
-	&& cp xgen-tec $(@F) \
-	&& rm -f xgen-tec

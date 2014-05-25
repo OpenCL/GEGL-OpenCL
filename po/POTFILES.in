@@ -1,6 +1,7 @@
 [encoding: UTF-8]
 bin/gegl.c
 bin/gegl-options.c
+gegl/gegl-enums.c
 gegl/gegl-init.c
 gegl/module/geglmodule.c
 operations/common/alien-map.c

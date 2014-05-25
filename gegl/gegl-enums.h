@@ -17,13 +17,18 @@
  *
  */
 
-/* This file hold public enum from GEGL. A proper registration for them is
- * generated automatically with glib-mkenums.
+/* This file holds public enums from GEGL
  *
- * TODO: currently, description are not supported by glib-mkenums, and therefore
- * an often ugly name is generated, and i18n is not supported.
- * gimp-mkenums support these description, with a custom system to allow i18n,
- * so it could be a way to achieve this.
+ * !!!!!!!!!!!! NOTE !!!!!!!!!!!!!!
+ *
+ * Normally, gegl-enums.c file would be be generated my glib-mkenums,
+ * but we use the enum values' registered names for translatable,
+ * human readable labels for the GUI, so gegl-enums.c is maintained
+ * manually.
+ *
+ * DON'T FORGET TO UPDATE gegl-enums.c AFTER CHANGING THIS HEADER
+ *
+ * !!!!!!!!!!!! NOTE !!!!!!!!!!!!!!
  */
 
 #ifndef __GEGL_ENUMS_H__
@@ -32,24 +37,29 @@
 G_BEGIN_DECLS
 
 typedef enum {
-  GEGL_SAMPLER_NEAREST = 0,   /*< desc="nearest"      >*/
-  GEGL_SAMPLER_LINEAR,        /*< desc="linear"       >*/
-  GEGL_SAMPLER_CUBIC,         /*< desc="cubic"        >*/
-  GEGL_SAMPLER_NOHALO,        /*< desc="nohalo"       >*/
-  GEGL_SAMPLER_LOHALO         /*< desc="lohalo"       >*/
-} GeglSamplerType;
-GType gegl_sampler_type_get_type (void) G_GNUC_CONST;
-#define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type())
-
-typedef enum {
   GEGL_ABYSS_NONE,
   GEGL_ABYSS_CLAMP,
   GEGL_ABYSS_LOOP,
   GEGL_ABYSS_BLACK,
   GEGL_ABYSS_WHITE
 } GeglAbyssPolicy;
+
 GType gegl_abyss_policy_get_type (void) G_GNUC_CONST;
+
 #define GEGL_TYPE_ABYSS_POLICY (gegl_abyss_policy_get_type())
+
+
+typedef enum {
+  GEGL_SAMPLER_NEAREST,
+  GEGL_SAMPLER_LINEAR,
+  GEGL_SAMPLER_CUBIC,
+  GEGL_SAMPLER_NOHALO,
+  GEGL_SAMPLER_LOHALO
+} GeglSamplerType;
+
+GType gegl_sampler_type_get_type (void) G_GNUC_CONST;
+
+#define GEGL_TYPE_SAMPLER_TYPE (gegl_sampler_type_get_type())
 
 G_END_DECLS
 
