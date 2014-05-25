@@ -161,7 +161,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"       ,        "gegl:tile-seamless",
-    "categories" ,        "misc",
+    "categories" ,        "tile",
     "position-dependent", "true",
     "description", _("Make the input buffer seamlessly tileable."
                      " The algorithm is not content-aware,"

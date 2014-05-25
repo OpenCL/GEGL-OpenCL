@@ -131,7 +131,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
       "name",                 "gegl:tile",
       "title",                _("Tile"),
-      "categories",           "misc",
+      "categories",           "tile",
       "position-dependent",   "true",
       "reference-composition", composition,
       "description",

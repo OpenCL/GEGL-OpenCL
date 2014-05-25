@@ -229,7 +229,7 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process             = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories",         "artistic",
+    "categories",         "artistic:map",
     "title",              _("Tile Glass"),
     "license",            "GPL3+",
     "name",               "gegl:tile-glass",
