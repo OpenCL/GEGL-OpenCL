@@ -96,7 +96,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "gegl:remap",
     "description",
           _("stretch components of pixels individually based on luminance envelopes"),
-    "categories" , "compositors:porter-duff",
+    "categories" , "compositors",
     NULL);
 }
 
