@@ -162,6 +162,10 @@ function filter_db(query)
     var score = 0;
     var uop_name = op.op.toUpperCase ();
 
+    /* ad-hoc opencl query */
+    if (query == 'opencl' && op['opencl-support'])
+      score += 20;
+
     if (opdb[i].parent == query) score += 100;
 
     if (op.op.indexOf(query) == 0)           score += 1000;
@@ -370,12 +374,12 @@ function render_all ()
 
 function render_list_big (items)
 {
-  return '<div class="big">' + render_list2 (items, 20) + '</div>';
+  return '<div class="big">' + render_list2 (items, 23) + '</div>';
 }
 
 function render_list_small (items)
 {
-  return '<div class="small">' + render_list2 (items, 30) + '</div>';
+  return '<div class="small">' + render_list2 (items, 42) + '</div>';
 }
 
 function render_categories ()
@@ -458,7 +462,7 @@ function show_matches(e)
     else
     result += render_list_big (items);
   }
-  else if (items.length < 20)
+  else if (items.length < 23)
   {
     result += render_list_big (items);
   }
