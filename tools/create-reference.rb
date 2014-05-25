@@ -575,12 +575,14 @@ File.open("gegl.devhelp", "w") {|file|
 
     }
 
-    IO.foreach("operations.html"){ |line|
-        if line =~ /^<li><a href='#op_.*'>.*<\/a><\/li>/
-            opname=line.gsub(/.*op_/,'').gsub(/'.*/,'').strip
-            file.puts "<function name='#{opname}' link='operations.html#op_#{opname}'/>"
-        end
-    }
+
+    # XXX: make this extract from operations.json
+    #IO.foreach("operations.html"){ |line|
+    #    if line =~ /^<li><a href='#op_.*'>.*<\/a><\/li>/
+    #        opname=line.gsub(/.*op_/,'').gsub(/'.*/,'').strip
+    #        file.puts "<function name='#{opname}' link='operations.html#op_#{opname}'/>"
+    #    end
+    #}
 
     file.puts "</functions>"
     file.puts "</book>"
