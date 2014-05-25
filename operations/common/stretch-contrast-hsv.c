@@ -217,7 +217,8 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region       = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:stretch-contrast-hsv",
+    "name",        "gegl:stretch-contrast-hsv",
+    "title",       _("Stretch Contrast HSV"),
     "categories" , "color:enhance",
     "description",
         _("Scales the components of the buffer to be in the 0.0-1.0 range. "

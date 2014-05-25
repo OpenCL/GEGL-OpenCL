@@ -167,9 +167,10 @@ gegl_op_class_init (GeglOpClass *klass)
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:sdl-display",
-    "categories"  , "display",
-    "description" ,
+    "name",         "gegl:sdl-display",
+    "title",        _("SDL Display"),
+    "categories",   "display",
+    "description",
         _("Displays the input buffer in an SDL window (restricted to one"
           " display op/process, due to SDL implementation issues)."),
         NULL);

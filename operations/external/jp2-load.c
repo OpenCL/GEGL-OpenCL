@@ -393,9 +393,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:jp2-load",
-    "categories"  , "hidden",
-    "description" , _("JPEG 2000 image loader"),
+    "name",        "gegl:jp2-load",
+    "title",       _("JPEG 2000 File Loader"),
+    "categories",  "hidden",
+    "description", _("JPEG 2000 image loader using jasper."),
     NULL);
 
   gegl_extension_handler_register (".jp2", "gegl:jp2-load");

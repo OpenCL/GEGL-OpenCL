@@ -101,9 +101,10 @@ gegl_op_class_init (GeglOpClass *klass)
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:save-pixbuf",
+    "name",         "gegl:save-pixbuf",
+    "title",        _("Store in GdkPixbuf"),
     "categories"  , "programming:output",
-    "description" , _("Save output into a GdkPixbuf."),
+    "description" , _("Store image in a GdkPixbuf."),
     NULL);
 
 }

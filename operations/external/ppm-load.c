@@ -377,9 +377,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:ppm-load",
-    "categories"  , "hidden",
-    "description" , _("PPM image loader."),
+    "name",         "gegl:ppm-load",
+    "title",        _("PPM File Loader"),
+    "categories",   "hidden",
+    "description",  _("PPM image loader."),
     NULL);
 
   gegl_extension_handler_register (".ppm", "gegl:ppm-load");

@@ -317,9 +317,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare          = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:v4l",
-    "categories"  , "input:video",
-    "description" , _("Video4Linux input, webcams framegrabbers and similar devices."),
+    "name",         "gegl:v4l",
+    "title",        _("Video4Linux Frame Source"),
+    "categories",   "input:video",
+    "description",  _("Video4Linux input, webcams framegrabbers and similar devices."),
     NULL);
 }
 

@@ -191,10 +191,11 @@ gegl_op_class_init (GeglOpClass *klass)
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:jpg-save",
-    "categories"  , "output",
-    "description" ,
-    _("JPEG image saver (passes the buffer through, saves as a side-effect)"),
+    "name",         "gegl:jpg-save",
+    "title",        _("JPEG File Saver"),
+    "categories", "output",
+    "description",
+    _("JPEG image saver, using libjpeg"),
     NULL);
 
   gegl_extension_handler_register_saver (".jpg", "gegl:jpg-save");

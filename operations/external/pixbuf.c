@@ -97,11 +97,12 @@ gegl_op_class_init (GeglOpClass *klass)
   /*operation_class->no_cache = TRUE;*/
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:pixbuf",
+    "name",         "gegl:pixbuf",
+    "title",        _("GdkPixbuf Source"),
     "categories"  , "programming:input",
     "description" ,
-          _("Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."),
-          NULL);
+       _("Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."),
+       NULL);
 }
 
 #endif

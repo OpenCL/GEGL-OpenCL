@@ -176,7 +176,8 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_bounding_box = get_bounding_box;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:svg-load",
+    "name",         "gegl:svg-load",
+    "title",        _("SVG File Loader"),
     "categories"  , "input",   /* not hidden because it has extra API */
     "description" , _("Load an SVG file using librsvg"),
     NULL);

@@ -239,10 +239,11 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:lcms-from-profile",
+    "title",       _("LCMS From Profile"),
     "categories",  "color",
     "description",
        _("Converts the input from an ICC color profile to "
-         "a well defined babl format."),
+         "a well defined babl format. The buffer's data will then be correctly managed by GEGL for further processing."),
     NULL);
 }
 #endif

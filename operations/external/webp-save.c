@@ -110,7 +110,8 @@ gegl_op_class_init (GeglOpClass *klass)
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-  "name"       , "gegl:webp-save",
+  "name",        "gegl:webp-save",
+  "title",       _("WebP File Saver"),
   "categories" , "output",
   "description", _("WebP image saver."),
    NULL);

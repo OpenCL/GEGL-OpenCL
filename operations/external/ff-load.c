@@ -470,9 +470,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:ff-load",
+    "name",         "gegl:ff-load",
+    "title",        _("FFmpeg Frame Loader"),
     "categories"  , "input:video",
-    "description" , _("FFmpeg video frame importer"),
+    "description" , _("FFmpeg video frame importer."),
     NULL);
 }
 

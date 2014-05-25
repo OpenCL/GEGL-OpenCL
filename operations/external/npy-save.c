@@ -138,9 +138,10 @@ gegl_op_class_init (GeglOpClass *klass)
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:npy-save",
-    "categories"  , "output",
-    "description" ,
+    "name",       "gegl:npy-save",
+    "title",      _("NPY File Saver"),
+    "categories", "output",
+    "description",
         _("NPY image saver (Numerical python file saver.)"),
         NULL);
 

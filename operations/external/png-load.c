@@ -442,9 +442,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:png-load",
-    "categories"  , "hidden",
-    "description" , _("PNG image loader."),
+    "name",         "gegl:png-load",
+    "title",        _("PNG File Loader"),
+    "categories",   "hidden",
+    "description",  _("PNG image loader."),
     NULL);
 
 /*  static gboolean done=FALSE;

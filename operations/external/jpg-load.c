@@ -203,9 +203,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region = gegl_jpg_load_get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:jpg-load",
-    "categories"  , "hidden",
-    "description" , _("JPG image loader"),
+    "name",        "gegl:jpg-load",
+    "title",       _("JPEG File Loader"),
+    "categories",  "hidden",
+    "description", _("JPEG image loader using libjpeg"),
     NULL);
 
 /*  static gboolean done=FALSE;

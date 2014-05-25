@@ -271,7 +271,8 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->detect = detect;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:fill-path",
+    "name",        "gegl:fill-path",
+    "title",       _("Fill Path"),
     "categories" , "render",
     "description", _("Renders a filled region"),
     "reference-composition", composition,

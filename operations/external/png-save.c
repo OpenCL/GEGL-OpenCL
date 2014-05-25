@@ -224,7 +224,8 @@ gegl_op_class_init (GeglOpClass *klass)
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-  "name"       , "gegl:png-save",
+  "name",        "gegl:png-save",
+  "title",       _("PNG File Saver"),
   "categories" , "output",
   "description",
         _("PNG image saver (passes the buffer through, saves as a side-effect.)"),

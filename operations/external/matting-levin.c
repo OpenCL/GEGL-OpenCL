@@ -1449,9 +1449,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region       = matting_get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-  "name"        , "gegl:matting-levin",
-  "categories"  , "misc",
-  "description" ,
+  "name",         "gegl:matting-levin",
+  "title",        _("Matting Levin"),
+  "categories",   "matting",
+  "description",
         _("Given a sparse user supplied tri-map and an input image, create a "
           "foreground alpha mat. Set white as selected, black as unselected, "
           "for the tri-map."),

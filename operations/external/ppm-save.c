@@ -185,9 +185,10 @@ gegl_op_class_init (GeglOpClass *klass)
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:ppm-save",
-    "categories"  , "output",
-    "description" ,
+    "name",        "gegl:ppm-save",
+    "title",       _("PPM File Saver"),
+    "categories",  "output",
+    "description",
         _("PPM image saver (Portable pixmap saver.)"),
         NULL);
 

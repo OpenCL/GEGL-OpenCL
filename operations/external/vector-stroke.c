@@ -267,7 +267,7 @@ static GeglNode *detect (GeglOperation *operation,
     "<node operation='gegl:crop' width='200' height='200'/>"
     "<node operation='gegl:over'>"
     "<node operation='gegl:translate' x='40' y='40'/>"
-    "<node operation='gegl:stroke-path'>"
+    "<node operation='gegl:vector-stroke'>"
     "  <params>"
     "    <param name='color'>rgb(0.0, 0.6, 1.0)</param>"
     "    <param name='d'>"
@@ -295,10 +295,11 @@ gegl_op_class_init (GeglOpClass *klass)
   /*operation_class->no_cache = TRUE;*/
 
   gegl_operation_class_set_keys (operation_class,
+    "name",                  "gegl:vector-stroke",
+    "title",                 _("Vector Stroke"),
     "reference-composition", composition,
-    "name"        , "gegl:vector-stroke",
-    "categories"  , "render",
-    "description" , _("Renders a vector stroke"),
+    "categories",            "render",
+    "description",           _("Renders a vector stroke"),
     NULL);
 }
 

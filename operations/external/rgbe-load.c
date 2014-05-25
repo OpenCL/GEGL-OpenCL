@@ -131,8 +131,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region = gegl_rgbe_load_get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:rgbe-load",
-    "categories"  , "hidden",
+    "name",        "gegl:rgbe-load",
+    "title",       _("RGBE File Loader"),
+    "categories",  "hidden",
     "description" , _("RGBE image loader (Radiance HDR format)."),
     NULL);
 

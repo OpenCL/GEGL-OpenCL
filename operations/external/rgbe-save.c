@@ -80,8 +80,9 @@ gegl_op_class_init (GeglOpClass *klass)
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:rgbe-save",
-    "categories"  , "output",
+    "name",         "gegl:rgbe-save",
+    "title",        _("RGBE File Saver"),
+    "categories" ,  "output",
     "description" ,
         _("RGBE image saver (Radiance HDR format)"),
     NULL);

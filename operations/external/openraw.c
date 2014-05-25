@@ -239,9 +239,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare     = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"        , "gegl:openraw-load",
-    "categories"  , "hidden",
-    "description" , "Camera RAW image loader",
+    "name",        "gegl:openraw-load",
+    "title",       _("OpenRAW File Loader"),
+    "categories",  "hidden",
+    "description", "Camera RAW image loader using Open RAW",
     NULL);
 
   if (done)

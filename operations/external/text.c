@@ -319,9 +319,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "reference-composition", composition,
-    "name"        , "gegl:text",
-    "categories"  , "render",
-    "description" , _("Display a string of text using pango and cairo."),
+    "title",        _("Render Text"),
+    "name",         "gegl:text",
+    "categories",   "render",
+    "description",  _("Display a string of text using pango and cairo."),
     NULL);
 
 }
