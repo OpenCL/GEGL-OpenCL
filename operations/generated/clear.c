@@ -120,6 +120,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "svg:clear",
     "compat-name", "gegl:clear",
+    "title"      , "Clear",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation clear (d = 0.0f)"),

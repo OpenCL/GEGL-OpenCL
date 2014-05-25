@@ -142,6 +142,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "svg:dst-out",
     "compat-name", "gegl:dst-out",
+    "title"      , "Dst-out",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation dst-out (d = cB * (1.0f - aA))"),

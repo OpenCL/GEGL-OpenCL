@@ -168,6 +168,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:color-dodge",
   "compat-name" , "gegl:color-dodge",
+  "title"       , "Color-dodge",
   "description" ,
         _("SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"),
         NULL);

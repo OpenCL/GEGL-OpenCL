@@ -168,6 +168,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:hard-light",
   "compat-name" , "gegl:hard-light",
+  "title"       , "Hard-light",
   "description" ,
         _("SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"),
         NULL);

@@ -307,6 +307,7 @@ b.each do
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"svg:#{name}\",
   \"compat-name\" , \"gegl:#{name}\",
+  \"title\"       , \"#{name.capitalize}\",
   \"description\" ,
         _(\"SVG blend operation #{name} (<code>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</code>)\"),
         NULL);
@@ -376,6 +377,7 @@ c.each do
   file.write "
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"gegl:#{name}\",
+  \"title\"       , \"#{name.capitalize}\",
   \"description\" ,
         _(\"SVG blend operation #{name} (<code>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</code>)\"),
         NULL);
@@ -437,6 +439,7 @@ d.each do
 
   gegl_operation_class_set_keys (operation_class,
     \"name\"        , \"svg:#{name}\",
+    \"title\"       , \"#{name.capitalize}\",
     \"compat-name\" , \"gegl:#{name}\",
     \"description\" ,
     _(\"SVG blend operation #{name} (<code>d = #{formula1}</code>)\"),

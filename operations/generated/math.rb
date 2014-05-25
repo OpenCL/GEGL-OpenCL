@@ -25,13 +25,13 @@ copyright = '
  */'
 
 a = [
-      ['add',       'c = c + value', 0.0],
-      ['subtract',  'c = c - value', 0.0],
-      ['multiply',  'c = c * value', 1.0],
-      ['divide',    'c = value==0.0f?0.0f:c/value', 1.0],
-      ['gamma',     'c = powf (c, value)', 1.0],
-#     ['threshold', 'c = c>=value?1.0f:0.0f', 0.5],
-#     ['invert',    'c = 1.0-c']
+      ['add',       'result = input + value', 0.0],
+      ['subtract',  'result = input - value', 0.0],
+      ['multiply',  'result = input * value', 1.0],
+      ['divide',    'result = value==0.0f?0.0f:input/value', 1.0],
+      ['gamma',     'result = powf (input, value)', 1.0],
+#     ['threshold', 'result = c>=value?1.0f:0.0f', 0.5],
+#     ['invert',    'result = 1.0-c']
     ]
 
 a.each do
@@ -101,12 +101,12 @@ process (GeglOperation       *op,
       for (i=0; i<n_pixels; i++)
         {
           gint   j;
-          gfloat c;
           for (j=0; j<3; j++)
             {
-              c=in[j];
+              gfloat result;
+              gfloat input=in[j];
               #{formula};
-              out[j]=c;
+              out[j]=result;
             }
           out[3]=in[3];
           in += 4;
@@ -118,14 +118,14 @@ process (GeglOperation       *op,
       for (i=0; i<n_pixels; i++)
         {
           gint   j;
-          gfloat c;
           gfloat value;
           for (j=0; j<3; j++)
             {
-              c=in[j];
+              gfloat input =in[j];
+              gfloat result;
               value=aux[j];
               #{formula};
-              out[j]=c;
+              out[j]=result;
             }
           out[3]=in[3];
           in += 4;
@@ -151,9 +151,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"gegl:#{name}\",
+  \"title\"       , \"#{name.capitalize}\",
   \"categories\"  , \"compositors:math\",
   \"description\" ,
-       _(\"Math operation #{name} (#{formula})\"),
+       _(\"Math operation #{name}, performs the operation per pixel, using either the constant provided in 'value' or the corresponding pixel from the buffer on aux as operands. (formula: #{formula})\"),
        NULL);
 }
 #endif

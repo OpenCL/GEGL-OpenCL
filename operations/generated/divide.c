@@ -71,12 +71,12 @@ process (GeglOperation       *op,
       for (i=0; i<n_pixels; i++)
         {
           gint   j;
-          gfloat c;
           for (j=0; j<3; j++)
             {
-              c=in[j];
-              c = value==0.0f?0.0f:c/value;
-              out[j]=c;
+              gfloat result;
+              gfloat input=in[j];
+              result = value==0.0f?0.0f:input/value;
+              out[j]=result;
             }
           out[3]=in[3];
           in += 4;
@@ -88,14 +88,14 @@ process (GeglOperation       *op,
       for (i=0; i<n_pixels; i++)
         {
           gint   j;
-          gfloat c;
           gfloat value;
           for (j=0; j<3; j++)
             {
-              c=in[j];
+              gfloat input =in[j];
+              gfloat result;
               value=aux[j];
-              c = value==0.0f?0.0f:c/value;
-              out[j]=c;
+              result = value==0.0f?0.0f:input/value;
+              out[j]=result;
             }
           out[3]=in[3];
           in += 4;
@@ -121,9 +121,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:divide",
+  "title"       , "Divide",
   "categories"  , "compositors:math",
   "description" ,
-       _("Math operation divide (c = value==0.0f?0.0f:c/value)"),
+       _("Math operation divide, performs the operation per pixel, using either the constant provided in 'value' or the corresponding pixel from the buffer on aux as operands. (formula: result = value==0.0f?0.0f:input/value)"),
        NULL);
 }
 #endif

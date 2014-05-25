@@ -231,6 +231,7 @@ a.each do
   gegl_operation_class_set_keys (operation_class,
     \"name\"       , \"svg:#{name}\",
     \"compat-name\", \"gegl:#{name}\",
+    \"title\"      , \"#{name.capitalize}\",
     \"categories\" , \"compositors:porter-duff\",
     \"description\",
         _(\"Porter Duff operation #{name} (d = #{c_formula})\"),
@@ -312,9 +313,10 @@ static GeglRectangle get_bounding_box (GeglOperation *self)
   gegl_operation_class_set_keys (operation_class,
   \"name\"      , \"svg:#{name}\",
   \"compat-name\", \"gegl:#{name}\",
+  \"title\"     , \"#{name.capitalize}\",
   \"categories\", \"compositors:porter-duff\",
   \"description\" ,
-        _(\"Porter Duff operation #{name} (d = #{c_formula})\"),
+        _(\"Porter Duff compositing operation #{name} (formula:   #{c_formula})\"),
         NULL);
 "
   file.write file_tail2

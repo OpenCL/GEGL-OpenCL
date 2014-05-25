@@ -128,9 +128,10 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"      , "svg:src-in",
   "compat-name", "gegl:src-in",
+  "title"     , "Src-in",
   "categories", "compositors:porter-duff",
   "description" ,
-        _("Porter Duff operation src-in (d = cA * aB)"),
+        _("Porter Duff compositing operation src-in (formula:   cA * aB)"),
         NULL);
  
 
