@@ -510,7 +510,8 @@ gegl_param_color_set_default (GParamSpec *param_spec,
 {
   GeglParamColor *gegl_color = GEGL_PARAM_COLOR (param_spec);
 
-  g_value_take_object (value, gegl_color_duplicate (gegl_color->default_color));
+  if (gegl_color->default_color)
+    g_value_take_object (value, gegl_color_duplicate (gegl_color->default_color));
 }
 
 GType

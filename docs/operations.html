@@ -25,23 +25,47 @@
 
   <style>
     body { font-size: 1.0em; font-family: Sans; margin:0; }
-    #query { border:0;padding:0;margin:0; background: #eee; width: 100%;
+    #query { border:0;padding:0;margin:0; background: rgba(250,250,250,0.8); width: 100%;
       position: fixed; top:0;left:0; z-index: 1;
       font-size: 1.5em;
       padding-left: 0.75em;
     }
     #view { padding-top: 4em; margin-left: 1em; margin-right: 1em; }
     .categories {
-      margin-left: -0.25em; clear: left; float: right;
       font-size: 0.8em;
+      position: fixed;
+      width: auto;
+      top: 0; right: 0;
+      padding-top: 0.25em;
+      padding-right: 0.25em;
+      z-index: 2;
      }
      .category { 
+       display: inline-block;
        padding-left: 0.25em;
        padding-right: 0.25em;
        color: blue;
        cursor: hand;
      }
-    .category:hover { background: black; color: white; }
+
+     .view-source { 
+       display: inline-block;
+       padding-left: 0.25em;
+       padding-right: 0.25em;
+       color: blue;
+       cursor: hand;
+     }
+     .category:hover { background: black; color: white; }
+
+     .res_category { 
+       display: inline-block;
+       padding-left: 0.25em;
+       padding-right: 0.25em;
+       color: blue;
+       cursor: hand;
+     }
+     .res_category:hover { background: black; color: white; }
+
     .op-image { margin: 1em; margin-top: 0em; margin-left: 0em; float: left }
     .properties {margin-top: 1em; clear: left; }
     .property { margin-top: 1em; margin-right: 2em; clear:
@@ -115,33 +139,60 @@ function filter_db(query)
   var result = [];
   var uquery = query.toUpperCase ();
 
+  var command = query.split(' ');
+  if (command.length > 1)
+    {
+      var arg;
+      command = command[0];
+      arg = query.slice(command.length + 1);
+
+      if (command == 'op')
+      {
+        for (var i = 0; i < opdb.length; i++)
+        {
+          if (opdb[i].op == arg)
+            return [opdb[i]];
+        }
+      }
+    }
+
   for (var i = 0; i < opdb.length; i++)
   {
+    var op = opdb[i];
     var score = 0;
-    var op_name = opdb[i].op;
-    var uop_name = op_name.toUpperCase ();
+    var uop_name = op.op.toUpperCase ();
 
     if (opdb[i].parent == query) score += 100;
 
-    if (op_name.indexOf(query) == 0)           score += 1000;
-    if (op_name.slice(5).indexOf(query) == 0)  score += 900;
-    if (op_name.indexOf(query) > 0)            score += 500;
+    if (op.op.indexOf(query) == 0)           score += 1000;
+    if (op.op.slice(5).indexOf(query) == 0)  score += 900;
+    if (op.op.indexOf(query) > 0)            score += 500;
 
-    if (opdb[i].description &&
-        opdb[i].description.indexOf(query) >= 0)  score += 10;
+    if (op.meta) {
+      for (var j = 0; j < op.meta.length; j++)
+      {
+        if (op.meta[j][1].indexOf(query) == 0) score += 100;
+        if (op.meta[j][1].toUpperCase().indexOf(uquery) == 0) score += 100;
+        if (op.meta[j][1].indexOf(query) >= 0) score += 10;
+        if (op.meta[j][1].toUpperCase().indexOf(uquery) >= 0) score += 10;
+      }
+    }
+
+    if (op.description &&
+        op.description.indexOf(query) >= 0)  score += 10;
 
     if (uop_name.indexOf(uquery) == 0)           score += 1000;
     if (uop_name.slice(5).indexOf(uquery) == 0)  score += 900;
     if (uop_name.indexOf(uquery) > 0)            score += 500;
 
-    if (opdb[i].description &&
-        opdb[i].description.toUpperCase().indexOf(uquery) >= 0)  score += 10;
+    if (op.description &&
+        op.description.toUpperCase().indexOf(uquery) >= 0)  score += 10;
 
       {
-        if (opdb[i].categories)
-        for (var j = 0; j < opdb[i].categories.length; j++)
+        if (op.categories)
+        for (var j = 0; j < op.categories.length; j++)
         {
-          if (opdb[i].categories[j].indexOf(query) >= 0)
+          if (op.categories[j].indexOf(query) >= 0)
           {
             score += 30;
             break;
@@ -149,12 +200,18 @@ function filter_db(query)
         }
       }
 
+    if (op.image == undefined)
+    {
+      /* make image-less ones rise to(wards) top */
+      score *= 2;
+    }
+
     if (score > 0)
     {
-      /* var o = JSON.parse(JSON.stringify(opdb[i])); */
-        var o = opdb[i];
-        o.score = score;
-        result.push (o);
+      /* var o = JSON.parse(JSON.stringify(opdb[i])); */ /* we only have one
+      set of results,. so updating score in-place */
+        op.score = score;
+        result.push (op);
       }
   }
 
@@ -205,7 +262,8 @@ function render_properties(properties)
        {
          for (var j = 0; j < prop.meta.length; j++)
          {
-           result += '<div style="clear:both">' + prop.meta[j][0] + '=' + 
+           result += '<div style="clear:both"><b>' + prop.meta[j][0] +
+               '</b>&nbsp;' + 
             prop.meta[j][1] + '</div>';
          }
        }
@@ -218,19 +276,19 @@ function render_properties(properties)
 function render_item (item)
 {
   var result = '';
-  result += '<div class="categories"><b>Categories</b>';
+  result += '<div class="categories">';
+
+
   if (item.categories)
   {
     for (var i = 0; i < item.categories.length; i ++)
     {
       result += '<div class="category" ' + "onclick='go(\""+item.categories[i]+"\")'" + '>' + item.categories[i] + '</div>';
     }
-  result += '<div class="category" '+"onclick='go(\""+item.parent+"\")'" + '>'
-    + item.parent.slice(13) +
-    '</div>';
+  result += '<div class="category" '+"onclick='go(\""+item.parent+"\")'" + '>' + item.parent.slice(13) + '</div>';
 
    if (item.source)
-     result += '<b>Source</b><div><a href="' + item.source+ '#n18">git.gnome.org</a></div>';
+     result += '<div class="view-source"><a href="' + item.source+ '#n18">View source</a></div>';
    result += '</div>';
 
   if (item.image)
@@ -254,7 +312,10 @@ function render_item (item)
   {
     for (var j = 0; j < item.meta.length; j++)
     {
-      result += '<div style="clear:both">' + item.meta[j][0] + '=' + 
+      if (item.meta[j][0] == 'reference-composition')
+        continue;
+        result += '<div style="clear:both"><b>' + item.meta[j][0] +
+            '</b>&nbsp;' + 
        item.meta[j][1] + '</div>';
     }
   }
@@ -279,14 +340,14 @@ function render_list2 (items, maxitems)
 
     if (items[i].image)
     {
-      result += "<div class='result' onclick='go(\""+item.op+"\")' >";
+      result += "<div class='result' onclick='go(\"op "+item.op+"\")' >";
       result += ' <img src="' + items[i].image + '"/>';
       result += '<div class="title">' + item.op + '</div>';
       result += '</div>';
     }
     else
     {
-      result += "<div class='result text' onclick='go(\""+item.op+"\")' >";
+      result += "<div class='result text' onclick='go(\"op "+item.op+"\")' >";
       result += '<div class="title">' + item.op + '</div>';
       result += '</div>';
     }
@@ -342,7 +403,7 @@ function render_categories ()
 
   for (var i = 0; i < cats.length; i++)
   {
-  result += '<div class="category" style="font-size: 150%;"'
+  result += '<div class="res_category" style="font-size: 150%;"'
     + "onclick='go(\""+cats[i]+"\")'>" 
     + cats[i] + '</div>';
   }
@@ -391,7 +452,8 @@ function show_matches(e)
   }
   else if (items.length == 1)
   {
-    if (items[0].op == id('query').value)
+    if (items[0].op == id('query').value ||
+    id('query').value.indexOf('op')==0)
     result += render_item (items[0]);
     else
     result += render_list_big (items);

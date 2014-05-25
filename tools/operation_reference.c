@@ -93,6 +93,62 @@ static void json_escape_string (const char *description)
 }
 
 static void
+json_list_pads (GType type, const gchar *opname)
+{
+  GeglNode *gegl = gegl_node_new ();
+  GeglNode *node = gegl_node_new_child (gegl,
+                            "operation", opname,
+                            NULL);
+  gchar **input_pads;
+  gchar **output_pads;
+
+  int i;
+
+  input_pads = gegl_node_list_input_pads (node);
+  output_pads = gegl_node_list_output_pads (node);
+
+  if (input_pads && input_pads[0])
+  {
+    gboolean first = TRUE;
+    g_print (" ,'input-pads':[\n");
+    for (i = 0; input_pads[i]; i++)
+    {
+      if (first)
+      {
+        first = FALSE;
+      }
+      else
+      g_print (",");
+
+      g_print ("'%s'\n", input_pads[i]);
+    }
+    g_print (" ]");
+    g_free (input_pads);
+  }
+
+  if (output_pads && output_pads[0])
+  {
+    gboolean first = TRUE;
+    g_print (" ,'output-pads':[\n");
+    for (i = 0; output_pads[i]; i++)
+    {
+      if (first)
+      {
+        first = FALSE;
+      }
+      else
+      g_print (",");
+
+      g_print ("'%s'\n", output_pads[i]);
+    }
+    g_print (" ]");
+    g_free (output_pads);
+  }
+
+  g_object_unref (gegl);
+}
+
+static void
 json_list_properties (GType type, const gchar *opname)
 {
   GParamSpec **self;
@@ -269,8 +325,6 @@ json_list_properties (GType type, const gchar *opname)
                   json_escape_string (string);
                   g_print ("\"\n");
                   g_free (string);
-
-                  g_object_unref (color);
                 }
             }
           else
@@ -340,6 +394,11 @@ main (gint argc, gchar **argv)
   gboolean first = TRUE;
 
   gegl_init (&argc, &argv);
+
+  g_object_set (gegl_config (),
+                "application-license", "GPL3",
+                NULL);
+
 
   operations = gegl_operations ();
 
@@ -435,6 +494,7 @@ main (gint argc, gchar **argv)
       }
 
       json_list_properties (G_OBJECT_CLASS_TYPE (klass), name);
+      json_list_pads (G_OBJECT_CLASS_TYPE (klass), name);
 
       {
         guint nkeys;
