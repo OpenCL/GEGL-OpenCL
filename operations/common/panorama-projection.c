@@ -520,6 +520,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",                  "gegl:panorama-projection",
+    "reference-composition", composition,
     "position-dependent",    "true",
     "categories" ,           "misc",
     "description", _("Perform a equlinear/gnomonic or little planet/stereographic projection of a equirectangular input image."),
