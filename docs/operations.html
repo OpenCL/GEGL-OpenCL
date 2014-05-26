@@ -242,7 +242,7 @@ function filter_db(query)
       command = command[0];
       arg = query.slice(command.length + 1);
 
-      if (command == 'op')
+      if (command == 'operation')
       {
         for (var i = 0; i < opdb.length; i++)
         {
@@ -250,6 +250,25 @@ function filter_db(query)
             return [opdb[i]];
         }
       }
+
+      if (command == 'category')
+      {
+        for (var i = 0; i < opdb.length; i++)
+        {
+          var categories = opdb[i].categories;
+          for (var j = 0; j < categories.length; j++)
+          {
+            if (categories[j] == arg)
+            {
+              result.push (opdb[i]);
+              break;
+            }
+          }
+        }
+        return result;
+      }
+
+
     }
 
   for (var i = 0; i < opdb.length; i++)
@@ -411,7 +430,7 @@ function render_item (item)
   {
     for (var i = 0; i < item.categories.length; i ++)
     {
-      result += '<div class="category" ' + "onclick='go(\""+item.categories[i]+"\")'" + '>' + item.categories[i] + '</div>';
+      result += '<div class="category" ' + "onclick='go(\"category "+item.categories[i]+"\")'" + '>' + item.categories[i] + '</div>';
     }
     result += '<div class="category" '+"onclick='go(\""+item.parent+"\")'" + '>' + item.parent.slice(13) + '</div>';
 
@@ -483,8 +502,8 @@ function render_item (item)
 
 function go (query)
 {
-  window.location.hash=id('query').value;
-  window.location.hash=query;
+  window.location.hash=encodeURIComponent (id('query').value);
+  window.location.hash=encodeURIComponent (query);
   id("query").value=query;
   show_matches();
 }
@@ -498,14 +517,14 @@ function render_list2 (items, maxitems)
 
     if (items[i].image)
     {
-      result += "<div class='result' onclick='go(\"op "+item.op+"\")' >";
+      result += "<div class='result' onclick='go(\"operation "+item.op+"\")' >";
       result += ' <img src="' + items[i].image + '"/>';
       result += '<div class="title">' + item.op + '</div>';
       result += '</div>';
     }
     else
     {
-      result += "<div class='result text' onclick='go(\"op "+item.op+"\")' >";
+      result += "<div class='result text' onclick='go(\"operation "+item.op+"\")' >";
       result += '<div class="title">' + item.op + '</div>';
       result += '</div>';
     }
@@ -562,7 +581,7 @@ function render_categories ()
   for (var i = 0; i < cats.length; i++)
   {
   result += '<div class="res_category" style="font-size: 150%;"'
-    + "onclick='go(\""+cats[i]+"\")'>" 
+    + "onclick='go(\"category%20"+cats[i]+"\")'>" 
     + cats[i] + '</div>';
   }
 
@@ -572,7 +591,7 @@ function render_categories ()
 
 window.onhashchange = function ()
 {
-  id('query').value = window.location.hash.slice(1);
+  id('query').value = decodeURIComponent (window.location.hash.slice(1));
   show_matches ();
 }
 
@@ -584,13 +603,13 @@ function show_matches(e)
 
   if (e && e.keyCode == 13)
   {
-    window.location.hash=id('query').value;
+    window.location.hash= encodeURIComponent (id('query').value);
   }
 
   if (!initialized)
   {
     if (id('query').value == '')
-    id('query').value = window.location.hash.slice(1);
+    id('query').value = decodeURIComponent (window.location.hash.slice(1));
     initialized = true;
   }
 
