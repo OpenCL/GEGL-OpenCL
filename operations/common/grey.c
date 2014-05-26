@@ -103,7 +103,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
       "name",        "gegl:grey",
       "title",       _("Make Grey"),
-      "categories" , "color",
+      "categories" , "greyscale:color",
       "description", _("Turns the image greyscale"),
       NULL);
 }
