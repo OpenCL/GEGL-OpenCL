@@ -2466,7 +2466,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:mosaic",
     "title",       _("Mosaic"),
-    "categories",  "artistic",
+    "categories",  "artistic:scramble",
     "license",     "GPL3+",
     "description", _("Mosaic is a filter which transforms an image into "
                      "what appears to be a mosaic, composed of small primitives, "

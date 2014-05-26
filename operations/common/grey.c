@@ -101,10 +101,11 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-      "name",        "gegl:grey",
+      "name",        "gegl:gray",
+      "compat-name", "gegl:grey",
       "title",       _("Make Grey"),
-      "categories" , "greyscale:color",
-      "description", _("Turns the image greyscale"),
+      "categories" , "grayscale:color",
+      "description", _("Turns the image grayscale"),
       NULL);
 }
 

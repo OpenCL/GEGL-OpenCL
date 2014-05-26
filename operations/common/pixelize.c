@@ -650,7 +650,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:pixelize",
-    "categories",         "blur",
+    "categories",         "blur:scramble",
     "position-dependent", "true",
     "title",              _("Pixelize"),
     "description", _("Simplify image into an array of solid-colored rectangles"),

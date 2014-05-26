@@ -470,7 +470,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:bump-map",
-    "categories",  "map",
+    "categories",  "light",
     "title",       _("Bump Map"),
     "license",     "GPL3+",
     "description", _("This plug-in uses the algorithm described by John "

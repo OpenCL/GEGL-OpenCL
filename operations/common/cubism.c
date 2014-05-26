@@ -608,9 +608,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region       = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories",  "artistic",
     "title",       _("Cubism"),
     "name",        "gegl:cubism",
+    "categories",  "artistic:scramble",
     "license",     "GPL3+",
     "description", _("Convert the image into randomly rotated square blobs, somehow resembling a cubist painting style"),
     NULL);
