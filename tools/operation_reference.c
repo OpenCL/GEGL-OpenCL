@@ -353,24 +353,15 @@ json_list_properties (GType type, const gchar *opname)
           int i;
           if (property_keys[0])
           {
-            gboolean first = TRUE;
-            g_print ("  ,'meta':[\n");
+            /* XXX: list is in reverse order */
             for (i = 0; property_keys[i]; i++)
             {
-              if (first)
-              {
-                g_print ("    ");
-                first = FALSE;
-              }
-              else
-                g_print ("   ,");
-              g_print ("['%s','%s']\n",
+              g_print ("  ,'%s':'%s'\n",
                     property_keys[i],
                     gegl_operation_get_property_key (opname, 
-            g_param_spec_get_name (self[prop_no]),
-                      property_keys[i]));
+                                      g_param_spec_get_name (self[prop_no]),
+                                                property_keys[i]));
             }
-            g_print ("  ]\n");
           }
           g_free (property_keys);
         }
@@ -408,9 +399,7 @@ main (gint argc, gchar **argv)
     {
       GeglOperationClass *klass = iter->data;
 
-
       const char *name = gegl_operation_class_get_key (klass, "name");
-      const char *description = gegl_operation_class_get_key (klass, "description");
       const char *categoris = gegl_operation_class_get_key (klass, "categories");
 
       if (first)
@@ -425,14 +414,6 @@ main (gint argc, gchar **argv)
 
       if (klass->opencl_support)
         g_print (",'opencl-support':'true'\n");
-
-      if (description)
-      {
-        g_print (",'description':\"");
-        json_escape_string (description);
-        g_print ("\"\n");
-      }
-
 
       g_print (",'parent':'%s'\n", 
           g_type_name (g_type_parent(G_OBJECT_CLASS_TYPE(klass))));
@@ -502,35 +483,21 @@ main (gint argc, gchar **argv)
 
         if (keys)
           {
-            gboolean first_key = TRUE;
             for (gint i = 0; keys[i]; i++)
               {
                 const gchar *value = gegl_operation_get_key (name, keys[i]);
 
                 if (g_str_equal (keys[i], "categories") ||
                     g_str_equal (keys[i], "cl-source") ||
-                    g_str_equal (keys[i], "name") ||
-                    g_str_equal (keys[i], "description")
+                    g_str_equal (keys[i], "name")
                     )
                   continue;
 
-                if (first_key)
-                {
-                  g_print (",'meta':[\n");
-                  g_print ("  ");
-                  first_key = FALSE;
-                }
-                else
-                {
-                  g_print (" ,");
-                }
-                g_print ("[\"%s\", \"", keys[i]);
+                g_print (",\"%s\":\"", keys[i]);
                 json_escape_string (value);
-                g_print ("\"]\n");
+                g_print ("\"\n");
               }
             g_free (keys);
-            if (!first_key)
-              g_print ("]\n");
           }
       }
 

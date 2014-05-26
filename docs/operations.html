@@ -80,101 +80,23 @@
         min-width: 10em;
       }
 
-    .pad-c {
-    }
-    .pad-label {
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      display: inline-block;
-    }
-    .pad-val {
-      display: inline-block;
-      font-family: monospace;
-      padding-right: 0.6em;
-    }
-
-    .property-name {
-      font-family: Monospace;
-      min-width: 6em;
-      padding-right: 1em;
-      float:left;
-    }
-    .property-name:before { content:"name: ";
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      padding-right: 1em;
-    }
-    .property-type {
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      padding-right: 1em;
-      min-width: 4em;
-      float:left;
-    }
-    .property-type:before { content:"type: ";
+    .key {
       -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
       font-size: 60%;
-    }
-    .property-default {
-      padding-right: 1em;
-      min-width: 4em;
-      float:left;
-    }
-
-    .property-default:before { content:"default: ";
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      font-size: 60%;
-    }
-
-    .property-ui-gamma:before { content:"ui-gamma:";
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      font-size: 60%;
-    }
-
-    .property-ui-digits:before { content:"ui-digits:";
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      padding-right: 1.5em;
-      font-size: 60%;
-    }
-
-    .property-value-range:before { content:"range:";
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      padding-right: 2.2em;
-      font-size: 60%;
-    }
-
-    .property-ui-range:before { content:"ui-range: ";
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      padding-right: 0.8em;
-      font-size: 60%;
-    }
-    .property-ui-steps:before { content:"ui-steps: ";
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      padding-right: 1.0em;
-      font-size: 60%;
-    }
-    .property-meta-key {
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      font-size: 60%;
-      min-width: 5.5em;
+      min-width: 7em;
       display: inline-block;
       vertical-align: text-bottom;
-      padding-top: 0.5em;
       float :left;
       clear: left;
+      padding-top: 0.25em;
     }
-    .property-meta-value {
+    .value {
+      font-size: 80%;
       display: inline-block;
       float :left;
+      padding-right: 1em;
     }
 
-    .property-value-range,
-    .property-ui-range,
-    .property-ui-digits,
-    .property-ui-gamma,
-    .property-ui-steps,
-    {
-      -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      padding-left: 1em;
-        min-width: 6em;
-    }
     .property-description {
       clear: left;
       padding-top: 0.5em;
@@ -361,55 +283,25 @@ function render_properties(properties)
      {
        var prop = properties[i];
        result += '<div class="property">';
-
        result += "<div class='property-meta'>";
 
-       if (prop.minimum && prop.maximum)
-         {
-         result += '<div class="property-value-range" title="value range">' + prop.minimum + '&ndash;' + prop.maximum + ' </div>';
-         }
-
-
-       if (prop['ui-minimum'] && prop['ui-maximum'])
-         {
-         result += '<div class="property-ui-range">' + prop['ui-minimum'] +
-           '&ndash;' + prop['ui-maximum'] + '</div>';
-       }
-       if (prop['ui-gamma'])
-         {
-         result += '<div class="property-ui-gamma">' + prop['ui-gamma'] + ' </div>';
-         }
-
-       if (prop['ui-step-small'] && prop['ui-step-big'])
-         {
-         result += '<div class="property-ui-steps">' + prop['ui-step-small'] +
-           ',' + prop['ui-step-big'] + ' </div>';
-         }
-       if (prop['ui-digits'])
-         {
-         result += '<div class="property-ui-digits">' + prop['ui-digits'] + ' </div>';
-         }
-       if (prop.meta)
+       for (var key in prop)
        {
-         for (var j = 0; j < prop.meta.length; j++)
-         {
-           result += '<div class="property-meta-key">' + prop.meta[j][0] +
-             ':</div><div class="property-meta-value">' + 
-            prop.meta[j][1] + '</div>';
-         }
+         if (prop.hasOwnProperty(key) && key != 'name' 
+                                      && key != 'label'
+                                      && key != 'type'
+                                      && key != 'description'
+                                      && key != 'default')
+           result += '<div><div class="key">' + key + '</div><div class="value">' + prop[key] + '</div></div>';
        }
-
        result += "</div>";
 
-
        result += '<div class="property-label">' + prop.label + ' </div>';
-       result += '<div class="property-name">' + prop.name + ' </div>';
-       result += '<div class="property-type" title="data type">' + prop.type + ' </div>';
+       result += '<div style="float:left"><div class="key">name</div><div class="value">' + prop.name + '</div></div>';
+       result += '<div style="float:left"><div class="key">type</div><div class="value">' + prop.type + '</div></div>';
 
        if (prop.default)
-         result += '<div class="property-default" title="default value">' + prop.default+ ' </div>';
-
-
+         result += '<div style="float:left"><div class="key">default</div><div class="value">' + prop.default + '</div></div>';
 
        if (prop.description)
          result += '<div class="property-description">' + prop.description + ' </div>';
@@ -446,55 +338,34 @@ function render_item (item)
 
     result += '<div class="opname">' + item.op + '</div>';
 
-    if (item.meta) {
-      for (var j = 0; j < item.meta.length; j++)
-      {
-        if (item.meta[j][0] == 'title')
-          result += '<div class="optitle">' + item.meta[j][1] + '</div>';
-      }
-    }
+  if (item.title)
+    result += '<div class="optitle">' + item.title + '</div>';
 
   result += '<div class="description">' + item.description +
     '</div>';
 
   if (item['input-pads'])
   {
-  result += '<div><div class="pad-label">Inputs:&nbsp;</div>';
+  result += '<div><div class="key">inputs&nbsp;</div><div class="value">';
     for (var i = 0; i < item['input-pads'].length; i++)
     {
-      result += '<div class="pad-val">' + item['input-pads'][i] + '</div>';
+      result += item['input-pads'][i];
     }
-  result += '</div>';
+    result += '</div></div>';
   }
   if (item['output-pads'])
   {
-  result += '<div><div class="pad-label">Outputs:&nbsp;</div><div class="pad-val">';
+  result += '<div><div class="key">outputs&nbsp;</div><div class="value">';
     for (var i = 0; i < item['output-pads'].length; i++)
       result += item['output-pads'][i];
       result += '</div></div>';
   }
 
-  if (item.properties.length)
-    result += render_properties (item.properties);
-
-
+    if (item.properties)
+      result += render_properties (item.properties);
 
     result += '<div style="clear:all">&nbsp;</div>';
     result += '<div style="margin-top:4em;"></div>';
-  }
-
-
-  if (item.meta)
-  {
-    for (var j = 0; j < item.meta.length; j++)
-    {
-      if (item.meta[j][0] == 'reference-composition' ||
-          item.meta[j][0] == 'title')
-        continue;
-        result += '<div style="clear:both"><b>' + item.meta[j][0] +
-            '</b>&nbsp;' + 
-       item.meta[j][1] + '</div>';
-    }
   }
 
   return result;
@@ -581,7 +452,7 @@ function render_categories ()
   for (var i = 0; i < cats.length; i++)
   {
   result += '<div class="res_category" style="font-size: 150%;"'
-    + "onclick='go(\"category%20"+cats[i]+"\")'>" 
+    + "onclick='go(\"category "+cats[i]+"\")'>" 
     + cats[i] + '</div>';
   }
 
