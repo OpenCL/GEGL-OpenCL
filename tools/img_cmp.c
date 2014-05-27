@@ -4,6 +4,13 @@
 
 #define SQR(x) ((x) * (x))
 
+typedef enum {
+    SUCCESS = 0,
+    ERROR_WRONG_ARGUMENTS,
+    ERROR_WRONG_SIZE,
+    ERROR_PIXELS_DIFFERENT,
+} ExitCode;
+
 gint
 main (gint    argc,
       gchar **argv)
@@ -21,7 +28,7 @@ main (gint    argc,
                "return message is non zero if images are different, if they are equal"
                "the output will contain the string identical.");
       g_print ("Usage: %s <imageA> <imageB>\n", argv[0]);
-      return 1;
+      return ERROR_WRONG_ARGUMENTS;
     }
 
   gegl = gegl_node_new ();
@@ -43,7 +50,7 @@ main (gint    argc,
       g_printerr ("%s and %s differ in size\n", argv[1], argv[2]);
       g_printerr ("  %ix%i vs %ix%i\n",
                   boundsA.width, boundsA.height, boundsB.width, boundsB.height);
-      return 1;
+      return ERROR_WRONG_SIZE;
     }
 
   comparison = gegl_node_create_child (gegl, "gegl:image-compare");
@@ -88,7 +95,7 @@ main (gint    argc,
                                       "path", debug_path, NULL,
                                       gegl_node ("gegl:buffer-source", "buffer", debug_buf, NULL)));*/
           if (max_diff > 1.5)
-            return 1;
+            return ERROR_PIXELS_DIFFERENT;
         }
       if (strstr (argv[2], "broken"))
         g_print ("because the test is expected to fail ");
@@ -102,5 +109,5 @@ main (gint    argc,
   g_object_unref (gegl);
 
   gegl_exit ();
-  return 0;
+  return SUCCESS;
 }
