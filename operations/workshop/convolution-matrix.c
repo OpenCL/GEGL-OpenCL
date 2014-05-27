@@ -75,28 +75,14 @@ property_enum (border, _("Border"),
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE        "convolution-matrix.c"
+#define GEGL_OP_C_FILE "convolution-matrix.c"
 
 #include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>
 
-#define RESPONSE_RESET 1
-
-
-#define BIG_MATRIX  /* toggle for 11x11 matrix code experimental*/
-#undef BIG_MATRIX
-
-
-#ifndef BIG_MATRIX
 #define MATRIX_SIZE   (5)
-#else
-#define MATRIX_SIZE   (11)
-#endif
-
 #define HALF_WINDOW   (MATRIX_SIZE/2)
-#define MATRIX_CELLS  (MATRIX_SIZE*MATRIX_SIZE)
-#define DEST_ROWS     (MATRIX_SIZE/2 + 1)
 #define CHANNELS      (5)
 
 static void
@@ -112,7 +98,7 @@ prepare (GeglOperation *operation)
 
 static void
 make_matrix (GeglProperties  *o,
-             gdouble    **matrix)
+             gdouble        **matrix)
 {
   matrix[0][0] = o->a1;
   matrix[0][1] = o->a2;
@@ -147,7 +133,7 @@ make_matrix (GeglProperties  *o,
 
 static void
 normalize_o (GeglProperties  *o,
-             gdouble    **matrix)
+             gdouble        **matrix)
 {
   gint      x, y;
   gboolean  valid = FALSE;
@@ -176,21 +162,20 @@ normalize_o (GeglProperties  *o,
       o->off = 0.5;
       o->div = 1;
     }
-
 }
 
 static void
-convolve_pixel(gfloat               *src_buf,
-               gfloat               *dst_buf,
-               const GeglRectangle  *result,
-               const GeglRectangle  *extended,
-               const GeglRectangle  *boundary,
-               gdouble             **matrix,
-               GeglProperties           *o,
-               GeglBuffer           *input,
-               gint                  xx,
-               gint                  yy,
-               gdouble               matrixsum)
+convolve_pixel (gfloat               *src_buf,
+                gfloat               *dst_buf,
+                const GeglRectangle  *result,
+                const GeglRectangle  *extended,
+                const GeglRectangle  *boundary,
+                gdouble             **matrix,
+                GeglProperties       *o,
+                GeglBuffer           *input,
+                gint                  xx,
+                gint                  yy,
+                gdouble               matrixsum)
 {
   gint    i, x, y, temp, s_x, s_y;
   gdouble sum;
@@ -293,15 +278,13 @@ convolve_pixel(gfloat               *src_buf,
     dst_buf[d_offset + i] = color[i];
 }
 
-
-
 static GeglRectangle
 get_effective_area (GeglOperation *operation)
 {
   GeglRectangle  result = {0,0,0,0};
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
 
-  gegl_rectangle_copy(&result, in_rect);
+  gegl_rectangle_copy (&result, in_rect);
 
   return result;
 }
@@ -322,11 +305,9 @@ process (GeglOperation       *operation,
   gfloat         *dst_buf;
   gdouble       **matrix;
 
-  gchar         *type;
+  const Babl    *format = babl_format ("RGBA float");
   gint           x, y;
   gdouble        matrixsum = 0.0;
-
-  type = "RGBA float";
 
   matrix = g_new0 (gdouble*, MATRIX_SIZE);
 
@@ -350,7 +331,7 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, rect.width * rect.height * 4);
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  gegl_buffer_get (input, &rect, 1.0, babl_format (type), src_buf,
+  gegl_buffer_get (input, &rect, 1.0, format, src_buf,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   /*fill src_buf with wrap pixels if it is the case*/
@@ -362,14 +343,12 @@ process (GeglOperation       *operation,
           convolve_pixel (src_buf, dst_buf, result, &rect, &boundary,
                           matrix, o, input, x, y, matrixsum);
 
-      gegl_buffer_set (output, result, 0, babl_format (type),
+      gegl_buffer_set (output, result, 0, format,
                        dst_buf, GEGL_AUTO_ROWSTRIDE);
     }
   else
-    gegl_buffer_set (output, &rect, 0, babl_format (type),
+    gegl_buffer_set (output, &rect, 0, format,
                      src_buf, GEGL_AUTO_ROWSTRIDE);
-
-
 
   g_free (src_buf);
   g_free (dst_buf);
@@ -380,7 +359,7 @@ process (GeglOperation       *operation,
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle  result = { 0, };
   GeglRectangle *in_rect;
 
   in_rect = gegl_operation_source_get_bounding_box (operation, "input");
@@ -397,7 +376,6 @@ get_required_for_output (GeglOperation       *operation,
 {
   return get_bounding_box (operation);
 }
-
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
