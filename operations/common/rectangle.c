@@ -86,7 +86,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name",               "gegl:rectangle",
   "title",              _("Rectangle"),
-  "categories",         "input",
+  "categories",         "render",
   "position-dependent", "true",
   "description",
         _("A rectangular source of a fixed size with a solid color"),

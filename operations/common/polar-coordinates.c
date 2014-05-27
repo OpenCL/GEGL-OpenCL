@@ -418,7 +418,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:polar-coordinates",
     "title",              _("Polar Coordinates"),
-    "categories",         "transform",
+    "categories",         "transform:map",
     "position-dependent", "true",
     "license",            "GPL3+",
     "description", _("Convert image to or from polar coordinates"),

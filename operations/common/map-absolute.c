@@ -146,7 +146,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",              "gegl:map-absolute",
     "title",              _("Map Absolute"),
-    "categories",        "transform",
+    "categories",        "map",
     "position-dependent", "true",
     "description", _("sample input with an auxiliary buffer that contain absolute source coordinates"),
     NULL);
