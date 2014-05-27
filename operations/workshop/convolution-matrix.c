@@ -22,6 +22,12 @@
 
 #ifdef GEGL_PROPERTIES
 
+enum_start (gegl_convolution_matrix_border)
+  enum_value (GEGL_CONVOLUTION_MATRIX_EXTEND, "extend", N_("Extend"))
+  enum_value (GEGL_CONVOLUTION_MATRIX_WRAP,   "wrap",   N_("Wrap"))
+  enum_value (GEGL_CONVOLUTION_MATRIX_CROP,   "crop",   N_("Crop"))
+enum_end (GeglConvolutionMatrixBorder)
+
 property_double (a1, _("(1,1)"), 0.0)
 property_double (a2, _("(1,2)"), 0.0)
 property_double (a3, _("(1,3)"), 0.0)
@@ -49,21 +55,22 @@ property_double (e4, _("(5,4)"), 0.0)
 property_double (e5, _("(5,5)"), 0.0)
 
 property_double (div, _("Divisor"), 1.0)
+    ui_range    (-1000.0, 1000.0)
+
 property_double (off, _("Offset"), 0.0)
-   value_range (-1.0, 1.0)
+    value_range (-1.0, 1.0)
 
-property_boolean (norm, _("Normalize"), TRUE)
-
-property_boolean (red, _("Red channel"), TRUE )
+property_boolean (red,   _("Red channel"),   TRUE)
 property_boolean (green, _("Green channel"), TRUE)
-property_boolean (blue, _("Blue channel"), TRUE)
+property_boolean (blue,  _("Blue channel"),  TRUE)
 property_boolean (alpha, _("Alpha channel"), TRUE)
+
+property_boolean (norm,   _("Normalize"),       TRUE)
 property_boolean (weight, _("Alpha-weighting"), TRUE)
 
-/* XXX: use enum */
-property_string (border, _("Border"), "extend")
-    description (_("Type of border to choose. Choices are extend, wrap, crop. "
-                   "Default is extend"))
+property_enum (border, _("Border"),
+               GeglConvolutionMatrixBorder, gegl_convolution_matrix_border,
+               GEGL_CONVOLUTION_MATRIX_EXTEND)
 
 #else
 
@@ -91,7 +98,6 @@ property_string (border, _("Border"), "extend")
 #define MATRIX_CELLS  (MATRIX_SIZE*MATRIX_SIZE)
 #define DEST_ROWS     (MATRIX_SIZE/2 + 1)
 #define CHANNELS      (5)
-#define BORDER_MODES  (3)
 
 static void
 prepare (GeglOperation *operation)
@@ -212,8 +218,9 @@ convolve_pixel(gfloat               *src_buf,
           for (x=0;x < MATRIX_SIZE; x++)
             for (y=0; y < MATRIX_SIZE; y++)
               {
-                if (!strcmp(o->border,"wrap"))
+                switch (o->border)
                   {
+                  case GEGL_CONVOLUTION_MATRIX_WRAP:
                     s_x = fmod (x+xx, boundary->width);
                     while (s_x < 0)
                       s_x +=boundary->width;
@@ -221,12 +228,19 @@ convolve_pixel(gfloat               *src_buf,
                     s_y = fmod (y+yy, boundary->height);
                     while (s_y < 0)
                       s_y +=boundary->width;
-                  }
-                else if (!strcmp(o->border,"extend"))
-                  {
+                    break;
+
+                  case GEGL_CONVOLUTION_MATRIX_EXTEND:
                     s_x = CLAMP (x+xx, 0, boundary->width);
                     s_y = CLAMP (y+yy, 0, boundary->height);
+                    break;
+
+                  default:
+                    s_x = x+xx;
+                    s_y = y+yy;
+                    break;
                   }
+
                 temp = (s_y - extended->y) * extended->width * 4 +
                   (s_x - extended->x) * 4;
 
@@ -394,16 +408,15 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
-  operation_class->prepare = prepare;
+  filter_class->process                    = process;
+  operation_class->prepare                 = prepare;
   operation_class->get_bounding_box        = get_bounding_box;
   operation_class->get_required_for_output = get_required_for_output;
 
   gegl_operation_class_set_keys (operation_class,
-    "categories"  , "generic",
-    "name"        , "gegl:convolution-matrix",
-    "description" ,
-    _("Creates image by manually set convolution matrix"),
+    "categories",  "generic",
+    "name",        "gegl:convolution-matrix",
+    "description", _("Apply a generic 5x5 convolution matrix"),
     NULL);
 }
 
