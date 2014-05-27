@@ -266,7 +266,7 @@ left_end (gfloat   from,
 {
   gfloat alpha  = DEG_TO_RAD (from);
   gfloat beta   = DEG_TO_RAD (to);
-  gint   cw_ccw = cl ? 1 : -1;
+  gint   cw_ccw = cl ? -1 : 1;
 
   switch (cw_ccw)
     {
@@ -285,7 +285,7 @@ right_end (gfloat   from,
 {
   gfloat alpha  = DEG_TO_RAD (from);
   gfloat beta   = DEG_TO_RAD (to);
-  gint   cw_ccw = cl ? 1 : -1;
+  gint   cw_ccw = cl ? -1 : 1;
 
   switch (cw_ccw)
     {
