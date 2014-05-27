@@ -30,29 +30,29 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_boolean (s_cl, _("Clockwise"), FALSE)
+property_boolean (src_clockwise, _("Clockwise"), FALSE)
     description (_("Switch to clockwise"))
 
-property_double (s_fr, _("From"), 0.0)
-    description (_("Starting angle for the color rotation"))
+property_double (src_from, _("From"), 0.0)
+    description (_("Start angle of the source color range"))
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
-property_double (s_to, _("To"), 0.0)
-    description (_("End angle for the color rotation"))
+property_double (src_to, _("To"), 0.0)
+    description (_("End angle of the source color range"))
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
-property_boolean (d_cl, _("Clockwise"), FALSE)
+property_boolean (dest_clockwise, _("Clockwise"), FALSE)
     description (_("Switch to clockwise"))
 
-property_double (d_fr, _("From"), 0.0)
-    description (_("Starting angle for the color rotation"))
+property_double (dest_from, _("From"), 0.0)
+    description (_("Start angle of the desination color range"))
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
-property_double (d_to, _("To"), 0.0)
-    description (_("End angle for the color rotation"))
+property_double (dest_to, _("To"), 0.0)
+    description (_("End angle of the destination color range"))
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
@@ -73,7 +73,7 @@ property_double (threshold, _("Gray threshold"), 0.0)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE       "color-rotate.c"
+#define GEGL_OP_C_FILE "color-rotate.c"
 
 #include "gegl-op.h"
 #include <stdio.h>
@@ -241,19 +241,19 @@ linear (gfloat A,
 {
   if (B > A)
     {
-      if (A<=x && x<=B)
-        return C+(D-C)/(B-A)*(x-A);
-      else if (A<=x+TWO_PI && x+TWO_PI<=B)
-        return C+(D-C)/(B-A)*(x+TWO_PI-A);
+      if (A <= x && x <= B)
+        return C + (D - C) / (B - A) * (x - A);
+      else if (A <= x + TWO_PI && x + TWO_PI <= B)
+        return C + (D - C) / (B - A) * (x + TWO_PI - A);
       else
         return x;
     }
   else
     {
-      if (B<=x && x<=A)
-        return C+(D-C)/(B-A)*(x-A);
-      else if (B<=x+TWO_PI && x+TWO_PI<=A)
-        return C+(D-C)/(B-A)*(x+TWO_PI-A);
+      if (B <= x && x <= A)
+        return C + (D - C) / (B - A) * (x - A);
+      else if (B <= x + TWO_PI && x + TWO_PI <= A)
+        return C + (D - C) / (B - A) * (x + TWO_PI - A);
       else
         return x;
     }
@@ -270,7 +270,7 @@ left_end (gfloat   from,
 
   switch (cw_ccw)
     {
-    case (-1):
+    case -1:
       if (alpha < beta) return alpha + TWO_PI;
 
     default:
@@ -316,7 +316,8 @@ color_rotate (gfloat     *src,
     {
       if (o->change == FALSE)
         {
-          if (angle_inside_slice (o->hue, o->s_fr, o->s_to, o->s_cl) <= 1)
+          if (angle_inside_slice (o->hue, o->src_from, o->src_to,
+                                  o->src_clockwise) <= 1)
             {
               h = o->hue / TWO_PI;
               s = o->saturation;
@@ -337,10 +338,10 @@ color_rotate (gfloat     *src,
 
   if (! skip)
     {
-      h = linear (left_end (o->s_fr, o->s_to, o->s_cl),
-                  right_end (o->s_fr, o->s_to, o->s_cl),
-                  left_end (o->d_fr, o->d_to, o->d_cl),
-                  right_end (o->d_fr, o->d_to, o->d_cl),
+      h = linear (left_end (o->src_from, o->src_to, o->src_clockwise),
+                  right_end (o->src_from, o->src_to, o->src_clockwise),
+                  left_end (o->dest_from, o->dest_to, o->dest_clockwise),
+                  right_end (o->dest_from, o->dest_to, o->dest_clockwise),
                   h * TWO_PI);
       h = angle_mod_2PI (h) / TWO_PI;
       hsv_to_rgb (h, s, v,
@@ -380,7 +381,6 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
-
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
@@ -396,7 +396,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories",   "color",
     "name",         "gegl:color-rotate",
-    "description",  _("Rotate colors on the image"),
+    "description",  _("Replace a range of colors with another"),
     NULL);
 }
 
