@@ -40,22 +40,22 @@ property_int (y, _("Height"), 16)
 
 property_int (x_offset, _("Offset X"), 0.0)
     description (_("Horizontal offset (from origin) for start of grid"))
-    ui_range (-10, 10)
-    ui_meta("unit", "pixel-coordinate")
-    ui_meta ("axis", "x")
+    ui_range    (-128, 128)
+    ui_meta     ("unit", "pixel-coordinate")
+    ui_meta     ("axis", "x")
 
 property_int (y_offset, _("Offset Y"), 0)
     description (_("Vertical offset (from origin) for start of grid"))
-    ui_range    (-10, 10)
+    ui_range    (-128, 128)
     ui_meta     ("unit", "pixel-coordinate")
     ui_meta     ("axis", "y")
 
-property_color  (color1, _("Color"), "black")
-    description (_("One of the cell colors (defaults to 'black')"))
+property_color  (color1, _("Color 1"), "black")
+    description (_("The first cell color"))
     ui_meta     ("role", "color-primary")
 
-property_color  (color2, _("Color"), "white")
-    description (_("One of the cell colors (defaults to 'white')"))
+property_color  (color2, _("Color 2"), "white")
+    description (_("The second cell color"))
     ui_meta     ("role", "color-secondary")
 
 property_format (format, _("Babl Format"), NULL)
@@ -337,7 +337,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "render",
     "title",              _("Checkerboard"),
     "position-dependent", "true",
-    "description",      _("Create a checkerboard pattern"),
+    "description",        _("Create a checkerboard pattern"),
     NULL);
 }
 
