@@ -78,7 +78,8 @@ property_enum   (gray_mode, _("Gray mode"),
 
 property_double (hue, _("Hue"), 0.0)
     description (_("Hue value for above gray settings"))
-    value_range (0.0, 2.0)
+    value_range (0.0, 360.0)
+    ui_meta     ("unit", "degree")
 
 property_double (saturation, _("Saturation"), 0.0)
     description (_("Saturation value for above gray settings"))
@@ -232,11 +233,10 @@ angle_inside_slice (gfloat   hue,
                     gfloat   to,
                     gboolean cl)
 {
-  gint cw_ccw = 1;
-  if (!cl) cw_ccw = -1;
+  gint cw_ccw = cl ? -1 : 1;
 
   return angle_mod_2PI (cw_ccw * DEG_TO_RAD (to - hue)) /
-    angle_mod_2PI (cw_ccw * DEG_TO_RAD (from - to));
+         angle_mod_2PI (cw_ccw * DEG_TO_RAD (from - to));
 }
 
 static gboolean
@@ -333,7 +333,7 @@ color_rotate (GeglProperties *o,
           if (angle_inside_slice (o->hue, o->src_from, o->src_to,
                                   o->src_clockwise) <= 1)
             {
-              h = o->hue / TWO_PI;
+              h = DEG_TO_RAD (o->hue) / TWO_PI;
               s = o->saturation;
             }
           else
@@ -344,7 +344,7 @@ color_rotate (GeglProperties *o,
       else
         {
           skip = TRUE;
-          hsv_to_rgb (o->hue / TWO_PI, o->saturation, v,
+          hsv_to_rgb (DEG_TO_RAD (o->hue) / TWO_PI, o->saturation, v,
                       color, color + 1, color + 2);
         }
     }
@@ -356,6 +356,7 @@ color_rotate (GeglProperties *o,
                   left_end (o->dest_from, o->dest_to, o->dest_clockwise),
                   right_end (o->dest_from, o->dest_to, o->dest_clockwise),
                   h * TWO_PI);
+
       h = angle_mod_2PI (h) / TWO_PI;
       hsv_to_rgb (h, s, v,
                   color, color + 1, color + 2);
