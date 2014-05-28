@@ -29,6 +29,7 @@ op_LTLIBRARIES = \
 	color-to-alpha.la \
 	color.la \
 	contrast-curve.la \
+	convolution-matrix.la \
 	cubism.la \
 	deinterlace.la \
 	difference-of-gaussians.la \
