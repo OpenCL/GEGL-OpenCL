@@ -30,6 +30,13 @@
 
 #ifdef GEGL_PROPERTIES
 
+enum_start (gegl_color_rotate_gray_mode)
+  enum_value (GEGL_COLOR_ROTATE_GRAY_TREAT_AS,  "treat-as",
+              N_("Treat as this"))
+  enum_value (GEGL_COLOR_ROTATE_GRAY_CHANGE_TO, "change-to",
+              N_("Change to this"))
+enum_end (GeglColorRotateGrayMode)
+
 property_boolean (src_clockwise, _("Clockwise"), FALSE)
     description (_("Switch to clockwise"))
 
@@ -56,18 +63,25 @@ property_double (dest_to, _("To"), 0.0)
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
-property_boolean (gray, _("Grayscale"), FALSE)
-    description (_("Choose in case of grayscale images"))
+property_double (threshold, _("Gray threshold"), 0.0)
+    description (_("Colors with a saturation less than this will treated "
+                   "as gray"))
+    value_range (0.0, 1.0)
+
+property_enum   (gray_mode, _("Gray mode"),
+    GeglColorRotateGrayMode, gegl_color_rotate_gray_mode,
+    GEGL_COLOR_ROTATE_GRAY_CHANGE_TO)
+    description (_("Treat as this: Gray colors from above source range "
+                   "will be treated as if they had this hue and saturation\n"
+                   "Change to this: Change gray colors to this "
+                   "hue and saturation"))
 
 property_double (hue, _("Hue"), 0.0)
+    description (_("Hue value for above gray settings"))
     value_range (0.0, 2.0)
 
 property_double (saturation, _("Saturation"), 0.0)
-    value_range (0.0, 1.0)
-
-property_boolean (change, _("Change/treat to this"), FALSE)
-
-property_double (threshold, _("Gray threshold"), 0.0)
+    description (_("Saturation value for above gray settings"))
     value_range (0.0, 1.0)
 
 #else
@@ -298,13 +312,13 @@ right_end (gfloat   from,
 }
 
 static void
-color_rotate (gfloat     *src,
-              gint        offset,
-              GeglProperties *o)
+color_rotate (GeglProperties *o,
+              gfloat         *src,
+              gint            offset)
 {
   gfloat   h, s, v;
   gboolean skip     = FALSE;
-  gfloat   color[4] = { 0.0, };
+  gfloat   color[3] = { 0.0, };
   gint     i;
 
   rgb_to_hsv (src[offset],
@@ -314,7 +328,7 @@ color_rotate (gfloat     *src,
 
   if (is_gray (s, o->threshold))
     {
-      if (o->change == FALSE)
+      if (o->gray_mode == GEGL_COLOR_ROTATE_GRAY_TREAT_AS)
         {
           if (angle_inside_slice (o->hue, o->src_from, o->src_to,
                                   o->src_clockwise) <= 1)
@@ -332,7 +346,6 @@ color_rotate (gfloat     *src,
           skip = TRUE;
           hsv_to_rgb (o->hue / TWO_PI, o->saturation, v,
                       color, color + 1, color + 2);
-          color[3] = src[offset + 3];
         }
     }
 
@@ -346,10 +359,9 @@ color_rotate (gfloat     *src,
       h = angle_mod_2PI (h) / TWO_PI;
       hsv_to_rgb (h, s, v,
                   color, color + 1, color + 2);
-      color[3] = src[offset + 3];
     }
 
-  for (i = 0; i < 4; i++)
+  for (i = 0; i < 3; i++)
     src[offset + i] = color[i];
 }
 
@@ -363,20 +375,20 @@ process (GeglOperation       *operation,
 {
   GeglProperties *o      = GEGL_PROPERTIES (operation);
   const Babl     *format = babl_format ("RGBA float");
-  gfloat         *src_buf;
-  gint            x;
+  gfloat         *buf;
+  gint            i;
 
-  src_buf = g_new0 (gfloat, result->width * result->height * 4);
+  buf = g_new0 (gfloat, result->width * result->height * 4);
 
-  gegl_buffer_get (input, result, 1.0, format, src_buf,
+  gegl_buffer_get (input, result, 1.0, format, buf,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  for (x = 0; x < result->width * result->height; x++)
-    color_rotate (src_buf, 4 * x, o);
+  for (i = 0; i < result->width * result->height; i++)
+    color_rotate (o, buf, 4 * i);
 
-  gegl_buffer_set (output, result, 0, format, src_buf, GEGL_AUTO_ROWSTRIDE);
+  gegl_buffer_set (output, result, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
 
-  g_free (src_buf);
+  g_free (buf);
 
   return  TRUE;
 }
