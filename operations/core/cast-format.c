@@ -13,9 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2007 Étienne Bersac <bersace03@laposte.net>
- * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
- * Copyright 2013 Daniel Sabo
+ * Copyright 2014 Michael Natterer <mitch@gimp.org>
  *
  */
 
