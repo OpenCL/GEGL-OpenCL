@@ -177,111 +177,121 @@ convolve_pixel (gfloat               *src_buf,
                 gint                  yy,
                 gdouble               matrixsum)
 {
-  gint    i, x, y, temp, s_x, s_y;
-  gdouble sum;
+  gint    i, temp, s_x, s_y;
   gfloat  color[4];
   gint    d_offset, s_offset;
   gint    half;
-
-  gdouble alphasum  = 0.0;
 
   s_x = 0;
   s_y = 0;
 
   half = (MATRIX_SIZE / 2) + (MATRIX_SIZE % 2);
 
-  d_offset = ((yy - result->y)*result->width * 4) + (xx - result->x) * 4;
+  d_offset = ((yy - result->y) * result->width * 4) + (xx - result->x) * 4;
   s_offset = (yy - result->y + HALF_WINDOW) * extended->width * 4 +
-    (xx - result->x + HALF_WINDOW) * 4;
+             (xx - result->x + HALF_WINDOW) * 4;
 
-  for (i=0; i < 4; i++)
+  for (i = 0; i < 4; i++)
     {
-      sum  = 0.0;
-      if ((i==0 && o->red) || (i==1 && o->blue) || (i==2 && o->green)
-          || (i==3 && o->alpha))
+      gdouble sum      = 0.0;
+      gdouble alphasum = 0.0;
+
+      if ((i == 0 && o->red)   ||
+          (i == 1 && o->blue)  ||
+          (i == 2 && o->green) ||
+          (i == 3 && o->alpha))
         {
-          for (x=0;x < MATRIX_SIZE; x++)
-            for (y=0; y < MATRIX_SIZE; y++)
+          gint x, y;
+
+          for (x = 0; x < MATRIX_SIZE; x++)
+            for (y = 0; y < MATRIX_SIZE; y++)
               {
                 switch (o->border)
                   {
                   case GEGL_CONVOLUTION_MATRIX_WRAP:
-                    s_x = fmod (x+xx, boundary->width);
+                    s_x = fmod (x + xx, boundary->width);
                     while (s_x < 0)
-                      s_x +=boundary->width;
+                      s_x += boundary->width;
 
-                    s_y = fmod (y+yy, boundary->height);
+                    s_y = fmod (y + yy, boundary->height);
                     while (s_y < 0)
-                      s_y +=boundary->width;
+                      s_y += boundary->width;
                     break;
 
                   case GEGL_CONVOLUTION_MATRIX_EXTEND:
-                    s_x = CLAMP (x+xx, 0, boundary->width);
-                    s_y = CLAMP (y+yy, 0, boundary->height);
+                    s_x = CLAMP (x + xx, 0, boundary->width);
+                    s_y = CLAMP (y + yy, 0, boundary->height);
                     break;
 
                   default:
-                    s_x = x+xx;
-                    s_y = y+yy;
+                    s_x = x + xx;
+                    s_y = y + yy;
                     break;
                   }
 
                 temp = (s_y - extended->y) * extended->width * 4 +
                   (s_x - extended->x) * 4;
 
-                if ((s_x >= extended->x && (s_x < extended->x + extended->width))
-                    && (s_y >=extended->y && (s_y < extended->y + extended->height)))
+                if ((s_x >= extended->x &&
+                     (s_x < extended->x + extended->width)) &&
+                    (s_y >=extended->y &&
+                     (s_y < extended->y + extended->height)))
                   {
-                    if (i!=3 && o->weight)
-                      sum += matrix[x][y] * src_buf[temp + i]
-                        * src_buf[temp + 3];
+                    if (i != 3 && o->weight)
+                      sum += matrix[x][y] * src_buf[temp + i] * src_buf[temp + 3];
                     else
                       sum += matrix[x][y] * src_buf[temp + i];
 
-                    if (i==3)
-                      alphasum += fabs (matrix[x][y] * src_buf[temp+i]);
+                    if (i == 3)
+                      alphasum += fabs (matrix[x][y] * src_buf[temp + i]);
                   }
                 else
                   {
                     gfloat temp_color[4];
+
                     gegl_buffer_sample (input, s_x, s_y, NULL, temp_color,
                                         babl_format ("RGBA float"),
                                         GEGL_SAMPLER_NEAREST,
                                         GEGL_ABYSS_NONE);
-                    if (i!=3 && o->weight)
-                      sum += matrix[x][y] * temp_color[i]
-                        * temp_color[3];
+
+                    if (i != 3 && o->weight)
+                      sum += matrix[x][y] * temp_color[i] * temp_color[3];
                     else
                       sum += matrix[x][y] * temp_color[i];
 
-                    if (i==3)
+                    if (i == 3)
                       alphasum += fabs (matrix[x][y] * temp_color[i]);
                   }
               }
+
           sum = sum / o->div;
 
-          if (i==3 && o->weight)
+          if (i == 3 && o->weight)
             {
               if (alphasum != 0)
                 sum = sum * matrixsum / alphasum;
-              else sum = 0.0;
+              else
+                sum = 0.0;
             }
+
           sum += o->off;
 
           color[i] = sum;
         }
       else
-        color[i] = src_buf[s_offset + i];
+        {
+          color[i] = src_buf[s_offset + i];
+        }
     }
 
-  for (i=0; i < 4; i++)
+  for (i = 0; i < 4; i++)
     dst_buf[d_offset + i] = color[i];
 }
 
 static GeglRectangle
 get_effective_area (GeglOperation *operation)
 {
-  GeglRectangle  result = {0,0,0,0};
+  GeglRectangle  result  = { 0, };
   GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
 
   gegl_rectangle_copy (&result, in_rect);
@@ -296,7 +306,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglProperties              *o       = GEGL_PROPERTIES (operation);
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
 
   GeglRectangle   rect;
@@ -309,9 +319,9 @@ process (GeglOperation       *operation,
   gint           x, y;
   gdouble        matrixsum = 0.0;
 
-  matrix = g_new0 (gdouble*, MATRIX_SIZE);
+  matrix = g_new0 (gdouble *, MATRIX_SIZE);
 
-  for (x=0; x < MATRIX_SIZE ;x++)
+  for (x = 0; x < MATRIX_SIZE ;x++)
     matrix[x] = g_new0 (gdouble, MATRIX_SIZE);
 
   make_matrix (o, matrix);
@@ -319,8 +329,8 @@ process (GeglOperation       *operation,
   if (o->norm)
     normalize_o (o, matrix);
 
-  for (x=0; x < MATRIX_SIZE; x++)
-    for (y=0; y < MATRIX_SIZE; y++)
+  for (x = 0; x < MATRIX_SIZE; x++)
+    for (y = 0; y < MATRIX_SIZE; y++)
       matrixsum += fabs (matrix[x][y]);
 
   rect.x      = result->x - op_area->left;
@@ -338,8 +348,8 @@ process (GeglOperation       *operation,
 
   if (o->div != 0)
     {
-      for (y=result->y; y < result->height + result->y; y++)
-        for (x=result->x; x < result->width + result->x; x++)
+      for (y = result->y; y < result->height + result->y; y++)
+        for (x = result->x; x < result->width + result->x; x++)
           convolve_pixel (src_buf, dst_buf, result, &rect, &boundary,
                           matrix, o, input, x, y, matrixsum);
 
@@ -347,8 +357,10 @@ process (GeglOperation       *operation,
                        dst_buf, GEGL_AUTO_ROWSTRIDE);
     }
   else
-    gegl_buffer_set (output, &rect, 0, format,
-                     src_buf, GEGL_AUTO_ROWSTRIDE);
+    {
+      gegl_buffer_set (output, &rect, 0, format,
+                       src_buf, GEGL_AUTO_ROWSTRIDE);
+    }
 
   g_free (src_buf);
   g_free (dst_buf);
