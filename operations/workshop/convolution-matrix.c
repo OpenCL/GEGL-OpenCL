@@ -22,12 +22,6 @@
 
 #ifdef GEGL_PROPERTIES
 
-enum_start (gegl_convolution_matrix_border)
-  enum_value (GEGL_CONVOLUTION_MATRIX_EXTEND, "extend", N_("Extend"))
-  enum_value (GEGL_CONVOLUTION_MATRIX_WRAP,   "wrap",   N_("Wrap"))
-  enum_value (GEGL_CONVOLUTION_MATRIX_CROP,   "crop",   N_("Crop"))
-enum_end (GeglConvolutionMatrixBorder)
-
 property_double (a1, _("(1,1)"), 0.0)
 property_double (a2, _("(1,2)"), 0.0)
 property_double (a3, _("(1,3)"), 0.0)
@@ -69,8 +63,8 @@ property_boolean (norm,   _("Normalize"),       TRUE)
 property_boolean (weight, _("Alpha-weighting"), TRUE)
 
 property_enum (border, _("Border"),
-               GeglConvolutionMatrixBorder, gegl_convolution_matrix_border,
-               GEGL_CONVOLUTION_MATRIX_EXTEND)
+               GeglAbyssPolicy, gegl_abyss_policy,
+               GEGL_ABYSS_CLAMP)
 
 #else
 
@@ -131,7 +125,7 @@ make_matrix (GeglProperties  *o,
   matrix[4][4] = o->e5;
 }
 
-static void
+static gboolean
 normalize_o (GeglProperties  *o,
              gdouble        **matrix)
 {
@@ -162,34 +156,28 @@ normalize_o (GeglProperties  *o,
       o->off = 0.5;
       o->div = 1;
     }
+
+  return valid;
 }
 
 static void
-convolve_pixel (gfloat               *src_buf,
+convolve_pixel (GeglProperties       *o,
+                gfloat               *src_buf,
                 gfloat               *dst_buf,
                 const GeglRectangle  *result,
                 const GeglRectangle  *extended,
-                const GeglRectangle  *boundary,
                 gdouble             **matrix,
-                GeglProperties       *o,
-                GeglBuffer           *input,
                 gint                  xx,
                 gint                  yy,
                 gdouble               matrixsum)
 {
-  gint    i, temp, s_x, s_y;
   gfloat  color[4];
-  gint    d_offset, s_offset;
-  gint    half;
+  gint    d_offset;
+  gint    s_offset;
+  gint    i;
 
-  s_x = 0;
-  s_y = 0;
-
-  half = (MATRIX_SIZE / 2) + (MATRIX_SIZE % 2);
-
-  d_offset = ((yy - result->y) * result->width * 4) + (xx - result->x) * 4;
-  s_offset = (yy - result->y + HALF_WINDOW) * extended->width * 4 +
-             (xx - result->x + HALF_WINDOW) * 4;
+  d_offset = (yy - result->y) * result->width * 4 +
+             (xx - result->x) * 4;
 
   for (i = 0; i < 4; i++)
     {
@@ -206,62 +194,19 @@ convolve_pixel (gfloat               *src_buf,
           for (x = 0; x < MATRIX_SIZE; x++)
             for (y = 0; y < MATRIX_SIZE; y++)
               {
-                switch (o->border)
-                  {
-                  case GEGL_CONVOLUTION_MATRIX_WRAP:
-                    s_x = fmod (x + xx, boundary->width);
-                    while (s_x < 0)
-                      s_x += boundary->width;
+                gint s_x = x + xx - HALF_WINDOW;
+                gint s_y = y + yy - HALF_WINDOW;
 
-                    s_y = fmod (y + yy, boundary->height);
-                    while (s_y < 0)
-                      s_y += boundary->width;
-                    break;
+                s_offset = (s_y - extended->y) * extended->width * 4 +
+                           (s_x - extended->x) * 4;
 
-                  case GEGL_CONVOLUTION_MATRIX_EXTEND:
-                    s_x = CLAMP (x + xx, 0, boundary->width);
-                    s_y = CLAMP (y + yy, 0, boundary->height);
-                    break;
-
-                  default:
-                    s_x = x + xx;
-                    s_y = y + yy;
-                    break;
-                  }
-
-                temp = (s_y - extended->y) * extended->width * 4 +
-                  (s_x - extended->x) * 4;
-
-                if ((s_x >= extended->x &&
-                     (s_x < extended->x + extended->width)) &&
-                    (s_y >=extended->y &&
-                     (s_y < extended->y + extended->height)))
-                  {
-                    if (i != 3 && o->weight)
-                      sum += matrix[x][y] * src_buf[temp + i] * src_buf[temp + 3];
-                    else
-                      sum += matrix[x][y] * src_buf[temp + i];
-
-                    if (i == 3)
-                      alphasum += fabs (matrix[x][y] * src_buf[temp + i]);
-                  }
+                if (i != 3 && o->weight)
+                  sum += matrix[x][y] * src_buf[s_offset + i] * src_buf[s_offset + 3];
                 else
-                  {
-                    gfloat temp_color[4];
+                  sum += matrix[x][y] * src_buf[s_offset + i];
 
-                    gegl_buffer_sample (input, s_x, s_y, NULL, temp_color,
-                                        babl_format ("RGBA float"),
-                                        GEGL_SAMPLER_NEAREST,
-                                        GEGL_ABYSS_NONE);
-
-                    if (i != 3 && o->weight)
-                      sum += matrix[x][y] * temp_color[i] * temp_color[3];
-                    else
-                      sum += matrix[x][y] * temp_color[i];
-
-                    if (i == 3)
-                      alphasum += fabs (matrix[x][y] * temp_color[i]);
-                  }
+                if (i == 3)
+                  alphasum += fabs (matrix[x][y] * src_buf[s_offset + i]);
               }
 
           sum = sum / o->div;
@@ -280,23 +225,15 @@ convolve_pixel (gfloat               *src_buf,
         }
       else
         {
+          s_offset = (yy - result->y + HALF_WINDOW) * extended->width * 4 +
+                     (xx - result->x + HALF_WINDOW) * 4;
+
           color[i] = src_buf[s_offset + i];
         }
     }
 
   for (i = 0; i < 4; i++)
     dst_buf[d_offset + i] = color[i];
-}
-
-static GeglRectangle
-get_effective_area (GeglOperation *operation)
-{
-  GeglRectangle  result  = { 0, };
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-
-  gegl_rectangle_copy (&result, in_rect);
-
-  return result;
 }
 
 static gboolean
@@ -308,16 +245,13 @@ process (GeglOperation       *operation,
 {
   GeglProperties          *o       = GEGL_PROPERTIES (operation);
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-
-  GeglRectangle   rect;
-  GeglRectangle   boundary = get_effective_area (operation);
-  gfloat         *src_buf;
-  gfloat         *dst_buf;
-  gdouble       **matrix;
-
-  const Babl    *format = babl_format ("RGBA float");
-  gint           x, y;
-  gdouble        matrixsum = 0.0;
+  const Babl              *format  = babl_format ("RGBA float");
+  GeglRectangle            rect;
+  gfloat                  *src_buf;
+  gfloat                  *dst_buf;
+  gdouble                **matrix;
+  gdouble                  matrixsum = 0.0;
+  gint                     x, y;
 
   matrix = g_new0 (gdouble *, MATRIX_SIZE);
 
@@ -342,16 +276,14 @@ process (GeglOperation       *operation,
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
 
   gegl_buffer_get (input, &rect, 1.0, format, src_buf,
-                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-  /*fill src_buf with wrap pixels if it is the case*/
+                   GEGL_AUTO_ROWSTRIDE, o->border);
 
   if (o->div != 0)
     {
       for (y = result->y; y < result->height + result->y; y++)
         for (x = result->x; x < result->width + result->x; x++)
-          convolve_pixel (src_buf, dst_buf, result, &rect, &boundary,
-                          matrix, o, input, x, y, matrixsum);
+          convolve_pixel (o, src_buf, dst_buf, result, &rect,
+                          matrix, x, y, matrixsum);
 
       gegl_buffer_set (output, result, 0, format,
                        dst_buf, GEGL_AUTO_ROWSTRIDE);
