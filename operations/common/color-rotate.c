@@ -91,20 +91,20 @@ property_double (saturation, _("Saturation"), 0.0)
 #define GEGL_OP_C_FILE "color-rotate.c"
 
 #include "gegl-op.h"
-#include <stdio.h>
-#include <math.h>
 
-#define TWO_PI (2 * G_PI)
+#define TWO_PI        (2 * G_PI)
 #define DEG_TO_RAD(d) (((d) * G_PI) / 180.0)
 
 static void
 prepare (GeglOperation *operation)
 {
+  /* gamma-corrected RGB because that's what the HSV conversion
+   * functions expect
+   */
   gegl_operation_set_format (operation, "input",
-                             babl_format ("RGBA float"));
-
+                             babl_format ("R'G'B'A float"));
   gegl_operation_set_format (operation, "output",
-                             babl_format ("RGBA float"));
+                             babl_format ("R'G'B'A float"));
 }
 
 static void
@@ -286,7 +286,8 @@ left_end (gfloat   from,
   switch (cw_ccw)
     {
     case -1:
-      if (alpha < beta) return alpha + TWO_PI;
+      if (alpha < beta)
+        return alpha + TWO_PI;
 
     default:
       return alpha; /* 1 */
@@ -305,7 +306,8 @@ right_end (gfloat   from,
   switch (cw_ccw)
     {
     case 1:
-      if (beta < alpha) return beta + TWO_PI;
+      if (beta < alpha)
+        return beta + TWO_PI;
 
     default:
       return beta; /* -1 */
@@ -317,15 +319,10 @@ color_rotate (GeglProperties *o,
               gfloat         *input,
               gfloat         *output)
 {
-  gfloat   rgb[3];
   gfloat   h, s, v;
   gboolean skip = FALSE;
 
-  rgb[0] = input[0];
-  rgb[1] = input[1];
-  rgb[2] = input[2];
-
-  rgb_to_hsv (rgb[0], rgb[1], rgb[2],
+  rgb_to_hsv (input[0], input[1], input[2],
               &h, &s, &v);
 
   if (is_gray (s, o->threshold))
@@ -346,8 +343,9 @@ color_rotate (GeglProperties *o,
       else
         {
           skip = TRUE;
-          hsv_to_rgb (DEG_TO_RAD (o->hue) / TWO_PI, o->saturation, v,
-                      rgb, rgb + 1, rgb + 2);
+
+          h = DEG_TO_RAD (o->hue) / TWO_PI;
+          s = o->saturation;
         }
     }
 
@@ -360,13 +358,10 @@ color_rotate (GeglProperties *o,
                   h * TWO_PI);
 
       h = angle_mod_2PI (h) / TWO_PI;
-      hsv_to_rgb (h, s, v,
-                  rgb, rgb + 1, rgb + 2);
     }
 
-  output[0] = rgb[0];
-  output[1] = rgb[1];
-  output[2] = rgb[2];
+  hsv_to_rgb (h, s, v,
+              output, output + 1, output + 2);
 }
 
 static gboolean
