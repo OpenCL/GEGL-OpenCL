@@ -87,7 +87,7 @@ property_double (saturation, _("Saturation"), 0.0)
 
 #else
 
-#define GEGL_OP_FILTER
+#define GEGL_OP_POINT_FILTER
 #define GEGL_OP_C_FILE "color-rotate.c"
 
 #include "gegl-op.h"
@@ -97,7 +97,8 @@ property_double (saturation, _("Saturation"), 0.0)
 #define TWO_PI (2 * G_PI)
 #define DEG_TO_RAD(d) (((d) * G_PI) / 180.0)
 
-static void prepare (GeglOperation *operation)
+static void
+prepare (GeglOperation *operation)
 {
   gegl_operation_set_format (operation, "input",
                              babl_format ("RGBA float"));
@@ -313,16 +314,16 @@ right_end (gfloat   from,
 
 static void
 color_rotate (GeglProperties *o,
-              gfloat         *src,
-              gint            offset)
+              gfloat         *input,
+              gfloat         *output)
 {
   gfloat   rgb[3];
   gfloat   h, s, v;
   gboolean skip = FALSE;
 
-  rgb[0] = src[offset];
-  rgb[1] = src[offset + 1];
-  rgb[2] = src[offset + 2];
+  rgb[0] = input[0];
+  rgb[1] = input[1];
+  rgb[2] = input[2];
 
   rgb_to_hsv (rgb[0], rgb[1], rgb[2],
               &h, &s, &v);
@@ -363,35 +364,32 @@ color_rotate (GeglProperties *o,
                   rgb, rgb + 1, rgb + 2);
     }
 
-  src[offset]     = rgb[0];
-  src[offset + 1] = rgb[1];
-  src[offset + 2] = rgb[2];
+  output[0] = rgb[0];
+  output[1] = rgb[1];
+  output[2] = rgb[2];
 }
-
 
 static gboolean
 process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
+         void                *in_buf,
+         void                *out_buf,
+         glong                samples,
          const GeglRectangle *result,
          gint                 level)
 {
   GeglProperties *o      = GEGL_PROPERTIES (operation);
-  const Babl     *format = babl_format ("RGBA float");
-  gfloat         *buf;
-  gint            i;
+  gfloat         *input  = in_buf;
+  gfloat         *output = out_buf;
 
-  buf = g_new0 (gfloat, result->width * result->height * 4);
+  while (samples--)
+    {
+      color_rotate (o, input, output);
 
-  gegl_buffer_get (input, result, 1.0, format, buf,
-                   GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+      output[3] = input[3];
 
-  for (i = 0; i < result->width * result->height; i++)
-    color_rotate (o, buf, 4 * i);
-
-  gegl_buffer_set (output, result, 0, format, buf, GEGL_AUTO_ROWSTRIDE);
-
-  g_free (buf);
+      input  += 4;
+      output += 4;
+    }
 
   return  TRUE;
 }
@@ -399,14 +397,14 @@ process (GeglOperation       *operation,
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
-  GeglOperationClass       *operation_class;
-  GeglOperationFilterClass *filter_class;
+  GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *filter_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
-  filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+  filter_class    = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  filter_class->process    = process;
   operation_class->prepare = prepare;
+  filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
     "categories",   "color",
