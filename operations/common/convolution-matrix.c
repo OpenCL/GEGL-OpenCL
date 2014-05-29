@@ -48,10 +48,10 @@ property_double (e3, _("(5,3)"), 0.0)
 property_double (e4, _("(5,4)"), 0.0)
 property_double (e5, _("(5,5)"), 0.0)
 
-property_double (div, _("Divisor"), 1.0)
+property_double (divisor, _("Divisor"), 1.0)
     ui_range    (-1000.0, 1000.0)
 
-property_double (off, _("Offset"), 0.0)
+property_double (offset, _("Offset"), 0.0)
     value_range (-1.0, 1.0)
 
 property_boolean (red,   _("Red channel"),   TRUE)
@@ -59,8 +59,8 @@ property_boolean (green, _("Green channel"), TRUE)
 property_boolean (blue,  _("Blue channel"),  TRUE)
 property_boolean (alpha, _("Alpha channel"), TRUE)
 
-property_boolean (norm,   _("Normalize"),       TRUE)
-property_boolean (weight, _("Alpha-weighting"), TRUE)
+property_boolean (normalize,    _("Normalize"),       TRUE)
+property_boolean (alpha_weight, _("Alpha-weighting"), TRUE)
 
 property_enum (border, _("Border"),
                GeglAbyssPolicy, gegl_abyss_policy,
@@ -143,18 +143,18 @@ normalize_o (GeglProperties  *o,
 
   if (sum > 0)
     {
-      o->off = 0.0;
-      o->div = sum;
+      o->offset  = 0.0;
+      o->divisor = sum;
     }
   else if (sum < 0)
     {
-      o->off = 1.0;
-      o->div = -sum;
+      o->offset  = 1.0;
+      o->divisor = -sum;
     }
   else
     {
-      o->off = 0.5;
-      o->div = 1;
+      o->offset  = 0.5;
+      o->divisor = 1;
     }
 
   return valid;
@@ -200,7 +200,7 @@ convolve_pixel (GeglProperties       *o,
                 s_offset = (s_y - extended->y) * extended->width * 4 +
                            (s_x - extended->x) * 4;
 
-                if (i != 3 && o->weight)
+                if (i != 3 && o->alpha_weight)
                   sum += matrix[x][y] * src_buf[s_offset + i] * src_buf[s_offset + 3];
                 else
                   sum += matrix[x][y] * src_buf[s_offset + i];
@@ -209,9 +209,9 @@ convolve_pixel (GeglProperties       *o,
                   alphasum += fabs (matrix[x][y] * src_buf[s_offset + i]);
               }
 
-          sum = sum / o->div;
+          sum = sum / o->divisor;
 
-          if (i == 3 && o->weight)
+          if (i == 3 && o->alpha_weight)
             {
               if (alphasum != 0)
                 sum = sum * matrixsum / alphasum;
@@ -219,7 +219,7 @@ convolve_pixel (GeglProperties       *o,
                 sum = 0.0;
             }
 
-          sum += o->off;
+          sum += o->offset;
 
           color[i] = sum;
         }
@@ -260,7 +260,7 @@ process (GeglOperation       *operation,
 
   make_matrix (o, matrix);
 
-  if (o->norm)
+  if (o->normalize)
     normalize_o (o, matrix);
 
   for (x = 0; x < MATRIX_SIZE; x++)
@@ -278,7 +278,7 @@ process (GeglOperation       *operation,
   gegl_buffer_get (input, &rect, 1.0, format, src_buf,
                    GEGL_AUTO_ROWSTRIDE, o->border);
 
-  if (o->div != 0)
+  if (o->divisor != 0)
     {
       for (y = result->y; y < result->height + result->y; y++)
         for (x = result->x; x < result->width + result->x; x++)
