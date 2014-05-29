@@ -45,7 +45,7 @@ property_double (src_from, _("From"), 0.0)
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
-property_double (src_to, _("To"), 0.0)
+property_double (src_to, _("To"), 90.0)
     description (_("End angle of the source color range"))
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
@@ -58,7 +58,7 @@ property_double (dest_from, _("From"), 0.0)
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
-property_double (dest_to, _("To"), 0.0)
+property_double (dest_to, _("To"), 90.0)
     description (_("End angle of the destination color range"))
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
@@ -316,14 +316,15 @@ color_rotate (GeglProperties *o,
               gfloat         *src,
               gint            offset)
 {
+  gfloat   rgb[3];
   gfloat   h, s, v;
-  gboolean skip     = FALSE;
-  gfloat   color[3] = { 0.0, };
-  gint     i;
+  gboolean skip = FALSE;
 
-  rgb_to_hsv (src[offset],
-              src[offset + 1],
-              src[offset + 2],
+  rgb[0] = src[offset];
+  rgb[1] = src[offset + 1];
+  rgb[2] = src[offset + 2];
+
+  rgb_to_hsv (rgb[0], rgb[1], rgb[2],
               &h, &s, &v);
 
   if (is_gray (s, o->threshold))
@@ -345,7 +346,7 @@ color_rotate (GeglProperties *o,
         {
           skip = TRUE;
           hsv_to_rgb (DEG_TO_RAD (o->hue) / TWO_PI, o->saturation, v,
-                      color, color + 1, color + 2);
+                      rgb, rgb + 1, rgb + 2);
         }
     }
 
@@ -359,11 +360,12 @@ color_rotate (GeglProperties *o,
 
       h = angle_mod_2PI (h) / TWO_PI;
       hsv_to_rgb (h, s, v,
-                  color, color + 1, color + 2);
+                  rgb, rgb + 1, rgb + 2);
     }
 
-  for (i = 0; i < 3; i++)
-    src[offset + i] = color[i];
+  src[offset]     = rgb[0];
+  src[offset + 1] = rgb[1];
+  src[offset + 2] = rgb[2];
 }
 
 
