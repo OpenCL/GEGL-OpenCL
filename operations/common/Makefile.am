@@ -25,6 +25,7 @@ op_LTLIBRARIES = \
 	channel-mixer.la \
 	checkerboard.la \
 	color-reduction.la \
+	color-rotate.la \
 	color-temperature.la \
 	color-to-alpha.la \
 	color.la \

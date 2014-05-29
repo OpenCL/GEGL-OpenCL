@@ -20,6 +20,7 @@ operations/common/channel-mixer.c
 operations/common/checkerboard.c
 operations/common/color.c
 operations/common/color-reduction.c
+operations/common/color-rotate.c
 operations/common/color-temperature.c
 operations/common/color-to-alpha.c
 operations/common/contrast-curve.c
@@ -189,7 +190,6 @@ operations/workshop/box-max.c
 operations/workshop/box-min.c
 operations/workshop/box-percentile.c
 operations/workshop/buffer-cache.c
-operations/workshop/color-rotate.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/disc-percentile.c

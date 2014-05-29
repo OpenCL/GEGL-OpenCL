@@ -14,7 +14,6 @@ op_LTLIBRARIES =    \
 	box-min.la \
 	box-percentile.la \
 	buffer-cache.la \
-	color-rotate.la \
 	demosaic-bimedian.la \
 	demosaic-simple.la \
 	disc-percentile.la \
