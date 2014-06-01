@@ -294,10 +294,14 @@ gegl_operation_context_get_target (GeglOperationContext *context,
   const Babl          *format;
   GeglNode            *node;
   GeglOperation       *operation;
+  static gint          linear_buffers = -1;
 
 #if 0
   g_return_val_if_fail (GEGL_IS_OPERATION_CONTEXT (context), NULL);
 #endif
+
+  if (linear_buffers == -1)
+    linear_buffers = getenv ("GEGL_LINEAR_BUFFERS")?1:0;
 
   operation = context->operation;
   node = operation->node; /* <ick */
@@ -317,7 +321,10 @@ gegl_operation_context_get_target (GeglOperationContext *context,
   if (result->width == 0 ||
       result->height == 0)
     {
-      output = gegl_buffer_new (GEGL_RECTANGLE (0, 0, 0, 0), format);
+      if (linear_buffers)
+        output = gegl_buffer_linear_new (GEGL_RECTANGLE(0, 0, 0, 0), format);
+      else
+        output = gegl_buffer_new (GEGL_RECTANGLE (0, 0, 0, 0), format);
     }
   else if (node->dont_cache == FALSE &&
       ! GEGL_OPERATION_CLASS (G_OBJECT_GET_CLASS (operation))->no_cache)
@@ -335,12 +342,18 @@ gegl_operation_context_get_target (GeglOperationContext *context,
         }
       else
         {
-          output = gegl_buffer_new (result, format);
+          if (linear_buffers)
+            output = gegl_buffer_linear_new (result, format);
+          else
+            output = gegl_buffer_new (result, format);
         }
     }
   else
     {
-      output = gegl_buffer_new (result, format);
+      if (linear_buffers)
+        output = gegl_buffer_linear_new (result, format);
+      else
+        output = gegl_buffer_new (result, format);
     }
 
   gegl_operation_context_take_object (context, padname, G_OBJECT (output));
