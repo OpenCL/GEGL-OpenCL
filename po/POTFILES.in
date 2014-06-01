@@ -25,6 +25,7 @@ operations/common/color-temperature.c
 operations/common/color-to-alpha.c
 operations/common/contrast-curve.c
 operations/common/convolution-matrix.c
+operations/common/copy-buffer.c
 operations/common/cubism.c
 operations/common/deinterlace.c
 operations/common/difference-of-gaussians.c

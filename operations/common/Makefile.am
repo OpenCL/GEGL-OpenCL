@@ -31,6 +31,7 @@ op_LTLIBRARIES = \
 	color.la \
 	contrast-curve.la \
 	convolution-matrix.la \
+	copy-buffer.la \
 	cubism.la \
 	deinterlace.la \
 	difference-of-gaussians.la \
