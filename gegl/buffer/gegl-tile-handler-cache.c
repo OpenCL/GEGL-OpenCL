@@ -379,7 +379,7 @@ gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
       GeglTile *tile = last_writable->tile;
       GeglTileStorage *storage = tile->tile_storage;
 
-      cache->items = g_slist_remove (cache->items, last_writable);
+      last_writable->handler->items = g_slist_remove (last_writable->handler->items, last_writable);
       g_hash_table_remove (cache_ht, last_writable);
       cache_total -= tile->size;
 
