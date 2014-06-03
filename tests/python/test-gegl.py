@@ -31,8 +31,6 @@ class TestGegl(unittest.TestCase):
         gegl_config = Gegl.config()
         # Some default that are unlikely to change
         self.assertEqual(gegl_config.props.quality, 1.0)
-        self.assertEqual(gegl_config.get_property('tile-width'), 128)
-        self.assertEqual(gegl_config.get_property('tile-height'), 64)
 
     def test_300_exit(self):
         Gegl.exit()
