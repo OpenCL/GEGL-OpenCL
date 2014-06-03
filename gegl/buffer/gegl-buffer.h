@@ -570,7 +570,7 @@ GeglBuffer * gegl_buffer_linear_new_from_data (const gpointer       data,
  *
  * Returns: a pointer to a linear memory region describing the buffer, if the
  * request is compatible with the underlying data storage direct access
- * to the underlying data is provided.
+ * to the underlying data is provided. Otherwise, it returns a copy of the data.
  */
 gpointer *      gegl_buffer_linear_open       (GeglBuffer          *buffer,
                                                const GeglRectangle *extent,
