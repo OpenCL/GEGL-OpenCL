@@ -585,7 +585,10 @@ gegl_buffer_iterator_next (GeglBufferIterator *iter)
           && priv->sub_iter[0].full_rect.width == primary->tile_width 
           && priv->sub_iter[0].full_rect.height == primary->tile_height
           && priv->sub_iter[0].full_rect.x == primary->extent.x
-          && priv->sub_iter[0].full_rect.y == primary->extent.y)
+          && priv->sub_iter[0].full_rect.y == primary->extent.y
+          && priv->sub_iter[0].buffer->extent.x == iter->roi[0].x
+          && priv->sub_iter[0].buffer->extent.y == iter->roi[0].y
+          )
       {
         if (gegl_cl_is_accelerated ())
           for (index = 0; index < priv->num_buffers; index++)
