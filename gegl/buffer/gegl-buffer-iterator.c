@@ -548,9 +548,10 @@ static void linear_shortcut (GeglBufferIterator *iter)
       else
       {
         if (sub->buffer->tile_width == sub->buffer->extent.width 
-            && sub->buffer->tile_height == sub->buffer->extent.height)
+            && sub->buffer->tile_height == sub->buffer->extent.height
+            && sub->buffer->extent.x == iter->roi[index].x
+            && sub->buffer->extent.y == iter->roi[index].y)
         {
-          /* XXX: does this work correctly for coords? */
           get_tile (iter, index);
         }
         else
