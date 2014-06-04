@@ -48,7 +48,6 @@ typedef enum {
   GeglIteratorTileMode_DirectTile,
   GeglIteratorTileMode_LinearTile,
   GeglIteratorTileMode_GetBuffer,
-  GeglIteratorTileMode_Linear,
   GeglIteratorTileMode_Empty,
 } GeglIteratorTileMode;
 
@@ -193,13 +192,6 @@ release_tile (GeglBufferIterator *iter,
       sub->real_data = NULL;
       iter->data[index] = NULL;
 
-      sub->current_tile_mode = GeglIteratorTileMode_Empty;
-    }
-  else if (sub->current_tile_mode == GeglIteratorTileMode_Linear)
-    {
-      g_assert (sub->linear);
-      gegl_buffer_linear_close (sub->buffer, sub->linear);
-      sub->linear = NULL;
       sub->current_tile_mode = GeglIteratorTileMode_Empty;
     }
   else if (sub->current_tile_mode == GeglIteratorTileMode_Empty)
@@ -360,24 +352,6 @@ get_indirect (GeglBufferIterator *iter,
   sub->current_tile_mode = GeglIteratorTileMode_GetBuffer;
 }
 
-
-static void
-get_linear (GeglBufferIterator *iter,
-            int        index)
-{
-  GeglBufferIteratorPriv *priv = iter->priv;
-  SubIterState           *sub  = &priv->sub_iter[index];
-  int rowstride;
-
-  sub->linear = gegl_buffer_linear_open (sub->buffer,
-       &sub->real_roi, &rowstride, sub->format);
-      
-  sub->row_stride = rowstride;
-
-  iter->data[index] = sub->linear;
-  sub->current_tile_mode = GeglIteratorTileMode_Linear;
-}
-
 static gboolean
 needs_indirect_read (GeglBufferIterator *iter,
                      int        index)
@@ -535,8 +509,7 @@ gegl_buffer_iterator_stop (GeglBufferIterator *iter)
           gegl_tile_unref (sub->linear_tile);
         }
 
-      if (sub->current_tile_mode != GeglIteratorTileMode_Linear)
-        gegl_buffer_unlock (sub->buffer);
+      gegl_buffer_unlock (sub->buffer);
 
       if (sub->flags & GEGL_BUFFER_WRITE)
         gegl_buffer_emit_changed_signal (sub->buffer, &sub->full_rect);
@@ -556,30 +529,33 @@ static void linear_shortcut (GeglBufferIterator *iter)
   for (index = priv->num_buffers-1; index >=0 ; index--)
   {
     SubIterState *sub = &priv->sub_iter[index];
-    gboolean found = FALSE;
 
     sub->real_roi    = sub0->full_rect;
     iter->roi[index] = sub0->full_rect;
     iter->length = iter->roi[0].width * iter->roi[0].height;
-#if 1
-    found = FALSE;
+
     if (priv->sub_iter[0].buffer == sub->buffer && index != 0)
     {
-      found = TRUE;
       if (sub->format == priv->sub_iter[0].format)
         re_use_first[index] = 1;
     }
-    if (found)
+
+    if (!re_use_first[index])
     {
-      if (!re_use_first[index])
+      gegl_buffer_lock (sub->buffer);
+      if (index == 0)
+        get_tile (iter, index);
+      else
       {
-        gegl_buffer_lock (sub->buffer);
-        get_indirect (iter, index);
+        if (sub->buffer->tile_width == sub->buffer->extent.width 
+            && sub->buffer->tile_height == sub->buffer->extent.height)
+        {
+          /* XXX: does this work correctly for coords? */
+          get_tile (iter, index);
+        }
+        else
+          get_indirect (iter, index);
       }
-    }
-    else
-    {
-      get_linear (iter, index);
     }
   }
   for (index = 1; index < priv->num_buffers; index++)
@@ -589,10 +565,6 @@ static void linear_shortcut (GeglBufferIterator *iter)
       g_print ("!\n");
       iter->data[index] = iter->data[0];
     }
-#else
-    gegl_buffer_lock (sub->buffer);
-    get_indirect (iter, index);
-#endif
   }
 
   priv->state = GeglIteratorState_Invalid; /* quit on next iterator_next */
@@ -607,12 +579,12 @@ gegl_buffer_iterator_next (GeglBufferIterator *iter)
     {
       int index;
       GeglBuffer *primary = priv->sub_iter[0].buffer;
-      if (primary->tile_width == primary->extent.width &&
-          primary->tile_height == primary->extent.height &&
-          priv->sub_iter[0].full_rect.width == primary->tile_width &&
-          priv->sub_iter[0].full_rect.height == primary->tile_height &&
-          priv->sub_iter[0].full_rect.x == primary->extent.x &&
-          priv->sub_iter[0].full_rect.y == primary->extent.y && 0)
+      if (primary->tile_width == primary->extent.width 
+          && primary->tile_height == primary->extent.height 
+          && priv->sub_iter[0].full_rect.width == primary->tile_width 
+          && priv->sub_iter[0].full_rect.height == primary->tile_height
+          && priv->sub_iter[0].full_rect.x == primary->extent.x
+          && priv->sub_iter[0].full_rect.y == primary->extent.y)
       {
         if (gegl_cl_is_accelerated ())
           for (index = 0; index < priv->num_buffers; index++)
