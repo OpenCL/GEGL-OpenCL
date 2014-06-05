@@ -588,7 +588,8 @@ gegl_buffer_iterator_next (GeglBufferIterator *iter)
           && priv->sub_iter[0].full_rect.y == primary->extent.y
           && priv->sub_iter[0].buffer->extent.x == iter->roi[0].x
           && priv->sub_iter[0].buffer->extent.y == iter->roi[0].y
-          )
+          && FALSE) /* XXX: conditions are not strict enough, GIMPs TIFF
+                       plug-in fails; but GEGLs buffer test suite passes */
       {
         if (gegl_cl_is_accelerated ())
           for (index = 0; index < priv->num_buffers; index++)
