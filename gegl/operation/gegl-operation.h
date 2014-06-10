@@ -233,19 +233,15 @@ void          gegl_operation_class_set_keys    (GeglOperationClass *klass,
                                                 const gchar        *key_name,
                                                 ...);
 
-gchar      ** gegl_operation_list_keys         (const gchar *operation_type,
-                                                guint       *n_keys);
 
 void          gegl_operation_set_key           (const gchar *operation_type,
                                                 const gchar *key_name,
                                                 const gchar *key_value);
 
-const gchar * gegl_operation_get_key            (const gchar *operation_type,
-                                                 const gchar *key_name);
 
 gboolean      gegl_operation_use_opencl         (const GeglOperation *operation);
 
-/* invalidate a specific rectangle, indicating the any computation depending
+/* Invalidate a specific rectangle, indicating the any computation depending
  * on this roi is now invalid.
  *
  * @roi : the region to blank or NULL for the nodes current have_rect

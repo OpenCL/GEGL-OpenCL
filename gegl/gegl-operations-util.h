@@ -125,6 +125,12 @@ gegl_coordinate_pixel_to_relative (gdouble pixel, gdouble pixel_dim)
     return pixel / pixel_dim;
 }
 
+gchar      ** gegl_operation_list_keys         (const gchar *operation_type,
+                                                guint       *n_keys);
+
+const gchar * gegl_operation_get_key            (const gchar *operation_type,
+                                                 const gchar *key_name);
+
 
 G_END_DECLS
 
