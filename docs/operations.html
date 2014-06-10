@@ -1,5 +1,7 @@
 <!--
 
+// G_DIR_SEPARATOR_S is broken in GLib-.gir,. a \ in xmlattr
+
 /* This js doc browser is part of GEGL
  *
  * GEGL is free software; you can redistribute it and/or
@@ -16,8 +18,8 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * 2014 Øyvind Kolås.
+ *
  */
-
 -->
 
 <html>
@@ -26,63 +28,110 @@
   <style>
     body { font-size: 1.0em; font-family: Sans; margin:0; }
     #query { border:0;padding:0;margin:0; background: rgba(250,250,250,0.8); width: 100%;
-      position: fixed; top:0;left:0; z-index: 1;
+      position: fixed; top:0;left:0; z-index: 1; padding-bottom: 0.2em;
+      padding-top: 0.2em;
       font-size: 1.5em;
       padding-left: 0.75em;
     }
-    #view { padding-top: 4em; margin-left: 1em; margin-right: 1em; }
+    #debug { bottom: 0em; position: fixed; }
+    #status { bottom: 0em; right: 0em; background: white; position: fixed;
+       color: #666}
+    #view { padding-top: 4em; margin-left: auto; margin-right: auto;
+       max-width: 55em; padding-left: 1ex; padding-right: 1ex;
+       padding-bottom: 4em;}
+    .arguments {display: inline-block; vertical-align: top; padding:0;
+         position: relative; top: -0.1em; left: -0.1em; margin:0;border:0; }
+    .argtype { padding-right: 1em;}
+    .argname {font-style: italic; }
+    a { text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    dt { font-style: italic; }
+    .declaration { font-weight: bold; }
     .categories {
-      font-size: 0.8em;
-      position: fixed;
-      width: auto;
-      top: 0; right: 0;
-      padding-top: 0.25em;
+      font-size:     0.8em;
+      position:      fixed;
+      width:         auto;
+      top:           0;
+      right:         0;
+      padding-top:   0.25em;
       padding-right: 0.25em;
-      z-index: 2;
-     }
-     .category { 
-       display: inline-block;
-       padding-left: 0.25em;
-       padding-right: 0.25em;
-       color: blue;
-       cursor: hand;
-     }
-
-     .view-source { 
-       display: inline-block;
-       padding-left: 0.25em;
-       padding-right: 0.25em;
-       color: blue;
-       cursor: hand;
-     }
-     .category:hover { background: black; color: white; }
-
-     .res_category { 
-       display: inline-block;
-       padding-left: 0.25em;
-       padding-right: 0.25em;
-       color: blue;
-       cursor: hand;
-     }
-     .res_category:hover { background: black; color: white; }
-
+      z-index:       2;
+    }
+    .field { }
+    .field_type { padding-left: 2em; padding-right: 1em; }
+    .field_name { }
+    .linklist {
+       -moz-column-width: 16em; -webkit-column-width: 16em; column-width:
+       16em; margin-top: 1em;
+    }
+    .linklist a { display: block; }
+    dl { }
+    dt {
+      /* display: inline-block;
+      min-width: 6em;
+      float : left;
+      clear: left; 
+      width: 7.5em;
+      */
+    }
+    dd {
+      /* display: inline-block;
+      float: left; */
+      margin:0; padding: 0; padding-left: 1em;
+      /*margin-top: -1.2em;*/
+    }
+    .ancestry {margin-bottom: 1em;}
+    .constructor, .function, .method {
+      border:        0px solid green;
+      margin-top:    0.5em;
+      margin-bottom: 0.5em;
+      padding:       0.5em;
+      margin-left:  -0.5em;
+      margin-right: -0.5em;
+    }
+    .link, .view-source { cursor: pointer; color:blue }
+    .category { 
+      display:       inline-block;
+      padding-left:  0.25em;
+      padding-right: 0.25em;
+      color:         blue;
+      cursor:        pointer;
+    }
+    .view-source { 
+      display: inline-block;
+      padding-left: 0.25em;
+      padding-right: 0.25em;
+      color: blue;
+    }
+    .category:hover, .link:hover { background: black; color: white; }
+    .res_category { 
+      display: inline-block;
+      padding-left: 0.25em;
+      padding-right: 0.25em;
+      color: blue;
+      cursor: pointer;
+    }
+    .res_category:hover { background: black; color: white; }
     .op-image { margin: 1em; margin-top: 0em; margin-left: 0em; float: left }
     .properties {margin-top: 1em; clear: left; }
-    .property { margin-top: 1em; margin-right: 2em; clear: both;
+    .property { margin-top: 1.5em; margin-right: 2em; clear: both;
        padding-top: 1em;
     }
+    .link {padding:0; margin:0; }
     .property>div { }
-
     .property>.property-label {
         display: block;
         float: none;
         font-size: 1.4em;
         min-width: 10em;
       }
-
+    h2 { font-weight:normal; font-size: 2em; }
+    h3 { font-weight:normal; font-size: 1.5em; }
+    h4 { font-weight:normal; font-size: 1.3em; font-weight: bold; }
+    h5 { font-weight:normal; font-size: 1.0em; font-weight: bold; }
     .key {
       -webkit-opacity: 0.5; -moz-opacity: 0.5; opacity: 0.5 ;
-      font-size: 60%;
+      font-size: 70%;
       min-width: 7em;
       display: inline-block;
       vertical-align: text-bottom;
@@ -96,25 +145,31 @@
       float :left;
       padding-right: 1em;
     }
-
     .property-description {
       clear: left;
       padding-top: 0.5em;
     }
-
+    .property>div.property-meta .key {
+      min-width: 8em;
+      max-width: 8em;
+    }
+    .property>div.property-meta .value {
+      min-width: 4em;
+      max-width: 4em;
+    }
     .property>div.property-meta {
       float: right;
-      min-width: 11em;
+      max-width: 24em;
+      min-width: 21em;
+      min-height: 2em;
       padding-left: 1em;
       clear: right;
+      -webkit-column-width: 7em;
+      -moz-column-width: 7em;
+      column-width: 7em;
     }
-
     .opname  { font-weight: bold; margin-bottom: 0.2em; display: none; }
-    .optitle { margin-bottom: 0.2em; 
-    
-               font-size: 1.4em;
-    }
-
+    .optitle { margin-bottom: 0.2em; font-size: 1.4em; }
     .description { margin-bottom: 1em;}
     .result       { border: 2px solid transparent; }
     .result:hover { border: 2px solid black; background : #555; color :
@@ -140,10 +195,81 @@
     .result.text>div { position:relative; top: 0.4em;}
   </style>
 
-  <script src='operations.json'>
-  </script>
+  
+  <script type="text/javascript" src="showdown.js"></script>
+  <script type="text/javascript" src="xml2json.js"></script>
+
+  <script src='operations.json'></script>
 
   <script>
+
+  var showdown = new Showdown.converter();
+
+    var gir_paths = [
+       "GObject-2.0.gir", 
+       "Gegl-0.3.gir",
+       "Gtk-3.0.gir",
+       "GLib-2.0.gir"]
+    if(false)gir_paths = [
+       "GObject-2.0.gir", 
+       "Gegl-0.3.gir",
+       "Gtk-3.0.gir",
+       "Gdk-2.0.gir",
+       "GLib-2.0.gir",
+       "Gtk-3.0.gir",
+       "Gio-2.0.gir",
+       "Atk-1.0.gir",
+       "Gdk-2.0.gir",
+       "Polkit-1.0.gir",
+       "Pango-1.0.gir",
+       "PangoCairo-1.0.gir"]
+
+var index = [];
+var gir_max_results = 500;
+
+var core_types =
+[
+   {'name':'gint'
+   ,'doc':'Corresponds to the standard C int type. Values of this type can range from G_MININT to G_MAXINT.' },
+  ,{'name':'guint'
+   ,'doc':'Corresponds to the standard C unsigned int type. Values of this type can range from G_MININT to G_MAXUINT.' }
+  ,{'name':'void'
+   ,'doc':'nothing'}
+  ,{'name':'gboolean'
+   ,'doc':'A standard boolean type. Variables of this type should only contain the value TRUE or FALSE.'}
+  ,{'name':'gpointer'
+   ,'doc':'An untyped pointer. gpointer looks better and is easier to use than void*.'}
+  ,{'name':'gconstpointer'
+   ,'doc':'An untyped pointer to constant data. The data pointed to should not be changed.\n\n This is typically used in function prototypes to indicate that the data pointed to will not be altered by the function.'}
+  ,{'name':'gchar'
+   ,'doc':'Corresponds to the standard C char type.'}
+  ,{'name':'guchar'
+   ,'doc':'Corresponds to the standard C unsigned char type.'}
+  ,{'name':'gshort'
+   ,'doc':'Corresponds to the standard C short type. Values of this type can range from G_MINSHORT to G_MAXSHORT.'}
+  ,{'name':'gushort'
+   ,'doc':'Corresponds to the standard C unsigned short type. Values of this type can range from 0 to G_MAXUSHORT.'}
+  ,{'name':'glong'
+   ,'doc':'Corresponds to the standard C long type. Values of this type can range from G_MINLONG to G_MAXLONG.'}
+  ,{'name':'gulong'
+   ,'doc':'Corresponds to the standard C unsigned long type. Values of this type can range from 0 to G_MAXULONG.'}
+  ,{'name':'gfloat'
+   ,'doc':'Corresponds to the standard C float type. Values of this type can range from -G_MAXFLOAT to G_MAXFLOAT.'}
+  ,{'name':'gdouble'
+   ,'doc':'Corresponds to the standard C double type. Values of this type can range from -G_MAXDOUBLE to G_MAXDOUBLE.'}
+  ,{'name':'Babl'
+   ,'doc':'A Babl identifier reference, outside babl itself this means a specific babl pixel format. as created with babl_format("RGBA u8");'}
+  ,{'name':'int'
+   ,'doc':'Core C integer type'}
+  ,{'name':'float'
+   ,'doc':'Single precision floating point value'}
+  ,{'name':'double'
+   ,'doc':'Double precision floating point value'}
+  ,{'name':'utf8'
+   ,'doc':'String encoded in utf8'}
+
+];
+
 
 function id(idi) { return document.getElementById(idi) }
 function show_op(op)
@@ -172,7 +298,6 @@ function filter_db(query)
             return [opdb[i]];
         }
       }
-
       if (command == 'category')
       {
         for (var i = 0; i < opdb.length; i++)
@@ -189,8 +314,6 @@ function filter_db(query)
         }
         return result;
       }
-
-
     }
 
   for (var i = 0; i < opdb.length; i++)
@@ -228,7 +351,7 @@ function filter_db(query)
         score += 2;
 
     if (op.description &&
-        op.description.indexOf(query) >= 0)  score += 10;
+        op.description.indexOf(query) >= 0)      score += 10;
 
     if (uop_name.indexOf(uquery) == 0)           score += 1000;
     if (uop_name.slice(5).indexOf(uquery) == 0)  score += 900;
@@ -267,7 +390,9 @@ function filter_db(query)
   result = result.sort(function(a,b){
     if (a.score != b.score)
       return (b.score - a.score);
-    return a.op > b.op;
+
+    var x = a.op.toLowerCase(), y = b.op.toLowerCase();
+    return x < y ? -1 : x > y ? 1 : 0;
   });
   return result;
 }
@@ -361,8 +486,8 @@ function render_item (item)
       result += '</div></div>';
   }
 
-    if (item.properties)
-      result += render_properties (item.properties);
+  if (item.properties)
+    result += render_properties (item.properties);
 
     result += '<div style="clear:all">&nbsp;</div>';
     result += '<div style="margin-top:4em;"></div>';
@@ -376,7 +501,13 @@ function go (query)
   window.location.hash=encodeURIComponent (id('query').value);
   window.location.hash=encodeURIComponent (query);
   id("query").value=query;
-  show_matches();
+  setTimeout(1200,function(){
+  id("query").focus();
+  id("query").select();
+  id('debug').innerHTML = 'foo';
+  });
+  document.body.scrollTop = document.documentElement.scrollTop = 0;
+  update_view();
 }
 
 function render_list2 (items, maxitems)
@@ -399,7 +530,6 @@ function render_list2 (items, maxitems)
       result += '<div class="title">' + item.op + '</div>';
       result += '</div>';
     }
-
   }
   return result;
 }
@@ -463,11 +593,1869 @@ function render_categories ()
 window.onhashchange = function ()
 {
   id('query').value = decodeURIComponent (window.location.hash.slice(1));
-  show_matches ();
+  update_view ();
 }
 
 
-function show_matches(e)
+function gir_get_doc (gir, item, pre, post)
+{
+  if (item && item.doc && item.doc['#text'])
+  {
+    //var text = gir_recode_code (item.doc['#text']);
+    var text = item.doc['#text'];
+    //text = text.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+    //return item.doc['#text'];
+    //return "<pre>" + (pre?pre:"") + (expand_links_md(text)) + (post?post:"") + "</pre>";
+   return "<p>" + (pre?pre:"") + expand_links_code(showdown.makeHtml(expand_links_md(text))) + (post?post:"") + "</p>";
+   // return "<pre>" + (pre?pre:"") + text + (post?post:"") +
+    "</pre>";
+  }
+  return "";
+}
+
+function gir_list_arguments (gir, root)
+{
+  var result = '';
+  var first = true;
+
+  if (root.parameters && root.parameters.parameter)
+  {
+    var list = [].concat(root.parameters.parameter);
+    for (var k = 0; k < list.length; k++)
+    {
+      var pitem = list[k];
+
+      result += '<tr class="argument"><td class="argtype">';
+
+      if (pitem.type) {
+         if (pitem.type['@c:type'])
+           result += expand_links(pitem.type['@c:type']) + '</td>';
+         else if (pitem.type['@name'])
+           result += expand_links (
+           gir_prefix (gir) + pitem.type['@name']) + '*</td>';
+      } else if (pitem.array)
+      {
+          result += pitem.array['@c:type'] + '</td>';
+      } else /* if (pitem.varargs) */
+      {
+          result += '...</td>';
+      }
+
+      if (pitem['@name'])
+      {
+        result += '<td><span class="argname">' + pitem['@name'] + '</span>';
+
+        if (k == list.length-1)
+          result += ');';
+        else
+          result += ',';
+        result += '</td>';
+      }
+
+      result += '</tr>'
+      first = false;
+    }
+  }
+  return result;
+}
+
+var showdown = new Showdown.converter();
+
+function gir_list_arguments_doc (gir, root, pre)
+{
+  var result = '';
+  var first = true;
+
+  if (root.parameters && root.parameters.parameter)
+  {
+    var list = [].concat(root.parameters.parameter);
+    result += '<dl>' + (pre?pre:"");
+    for (var k = 0; k < list.length; k++)
+    {
+      var pitem = list[k];
+      if (pitem['@name']) result += '<dt>' + pitem['@name'] + '</dt>';
+
+      result += gir_get_doc (gir, pitem);
+    }
+    result += '</dl>';
+  }
+  else if (pre)
+  {
+    return "<dl>" + pre + "</dl>";
+  }
+  return result;
+}
+
+function gir_list_arguments_text (gir, root)
+{
+  var result = '';
+  var first = true;
+
+  if (root.parameters && root.parameters.parameter)
+  {
+    var list = [].concat(root.parameters.parameter);
+    for (var k = 0; k < list.length; k++)
+    {
+      var pitem = list[k];
+
+      if (first)
+      first = false;
+      else
+      result += ',';
+      
+      if (pitem.type) {
+         if (pitem.type['@c:type'])
+           result += '' + expand_links(pitem.type['@c:type']) + ' ';
+         else if (pitem.type['@name'])
+           result += '' + expand_links (
+           gir_prefix (gir) + pitem.type['@name']) + '* ';
+      }
+
+      if (pitem['@name']) result += '' + pitem['@name']
+        + '';
+    }
+    if (!first)
+      result += '';
+  }
+  return result;
+}
+
+function gir_find_enum (gir, name)
+{
+  if (gir)
+  {
+    var list = gir.repository.namespace['enumeration'];
+    if (list)
+    {
+      for (var i =0; i < list.length; i++)
+        {
+          var item = list[i];
+          if (item['@c:type'] == name)
+            return item;
+        }
+    }
+  }
+  return '';
+}
+
+function gir_find_class (gir, name)
+{
+  if (gir)
+  {
+    if (gir.repository.namespace['class']);
+    var list = [].concat(gir.repository.namespace['class']);
+    if (list)
+    {
+      for (var i =0; i < list.length; i++)
+        {
+          var item = list[i];
+          if (item['@c:type'] == name)
+            return item;
+        }
+    }
+  }
+  return '';
+}
+
+function gir_int_get_parent (gir, klass)
+{
+  if (!klass['@parent'])
+    return 'unknown';
+    /* XXX: ugly special casing; needs to be made generic */
+  if (klass['@parent'].indexOf('GObject.') == 0)
+  {
+    if (klass['@parent'].slice(8) == 'InitiallyUnowned')
+      return 'GObject';
+    return 'G' + klass['@parent'].slice(8);
+  }
+  return gir_prefix (gir) + klass['@parent'];
+}
+
+function gir_class_get_subclasses (name)
+{
+  var result = [];
+
+  for (var r = 0; r < window.apidb.length; r++)
+  {
+    var gir = window.apidb[r];
+    if (gir.repository.namespace['class'])
+    {
+      var list = [].concat(gir.repository.namespace['class']);
+      for (var i =0; i < list.length; i++)
+        {
+          var klass = list[i];
+          if (gir_int_get_parent (gir, klass) == name)
+            result.push(klass['@c:type']);
+        }
+    }
+  }
+  return result;
+}
+
+function gir_class_get_parent (gir, name)
+{
+  if (gir)
+  {
+    var klass = gir_find_class (gir, name);
+    if (klass)
+      return gir_int_get_parent (gir, klass);
+  }
+  return 'unknown';
+}
+
+function gir_prefix (gir)
+{
+  return gir.repository.namespace['@c:identifier-prefixes'];
+}
+
+function gir_symbol_prefix (gir)
+{
+  return gir.repository.namespace['@c:symbol-prefixes'];
+}
+
+
+function list_callbacks (gir, label, id)
+{
+  var result = '';
+  result += '<h3>' + label + '</h3>';
+  if (gir)
+  {
+    var list = gir.repository.namespace[id];
+    if (list)
+    for (var i =0; i < list.length; i++)
+      {
+        var item = list[i];
+        if (item['@c:type'])
+          {
+            if (item['return-value'] && item['return-value'].type)
+            {
+            result += '<b>';
+               result += item['return-value'].type['@c:type'] + '';
+
+            result += '&nbsp;&nbsp;' + item['@c:type'] + '(<table class="arguments">';
+            result += gir_list_arguments (gir, item);
+
+            result +='</table>';
+            result += '</b>';
+            }
+          }
+        else if (item['@c:type'])
+          result += '&nbsp;' + item['@c:type'];
+        else if (item['@glib:type-name'])
+          result += '&nbsp;' + item['@glib:type-name'];
+        else
+          result += item['@name'];
+        result += '<br/>';
+
+        result += gir_get_doc (gir, item);
+      }
+  }
+  return result;
+}
+
+
+function each_render (gir, item, cb, data)
+{
+  var result = ''
+  if (!item)
+    return result;
+  var list = [].concat (item);
+  for (var j = 0; j < list.length; j++)
+    result += cb (gir, list[j], data);
+  return result;
+}
+
+function gir_render_method (gir, citem, item)
+{
+  var result = '';
+    result += '<div class="method">';
+
+  if (citem['return-value'] && citem['return-value'].type)
+  {
+     result += expand_links(citem['return-value'].type['@c:type']) + '&nbsp;';
+  } else if (citem['return-value'] && citem['return-value'].array)
+  {
+     result += expand_links(citem['return-value'].array['@c:type']) + '&nbsp;';
+  }
+
+  result += '<span class="declaration">';
+
+  if (citem['@c:identifier'])
+    result += citem['@c:identifier'];
+  else 
+    result += citem['@name'];
+  result += '</span>&nbsp;(';
+
+  result += "<table class='arguments'><tr class='argument'><td class='argtype'>" + expand_links (item['@c:type']) + "*</td>" + 
+    "<td class='argname'>"+item['@c:symbol-prefix'] + (citem.parameters?',':'') + "</td></tr>";
+
+  if (citem.parameters && citem.parameters.parameter)
+  {
+    result += gir_list_arguments (gir, citem);
+  } else {
+    result += ');';
+  }
+  result +='</table>';
+  
+  var argdoc = "<dt>" + item['@c:symbol-prefix'] + '</dt>' +
+               '<dd>A ' + expand_links (item['@c:type']) + "</dd>";
+  result += gir_list_arguments_doc (gir, citem, argdoc);
+
+  result += gir_get_doc (gir, citem);
+  result += gir_get_doc (gir, citem['return-value'], "Returns ");
+
+  return result;
+}
+
+function gir_render_function (gir, citem, item)
+{
+  var result = '';
+  result += '<span class="declaration">';
+
+  if (citem['@c:identifier'])
+    result += citem['@c:identifier'];
+  else 
+    result += citem['@name'];
+  result += '</span>&nbsp;(';
+
+  result += "<table class='arguments'>";
+
+  if (citem.parameters && citem.parameters.parameter)
+  {
+    result += gir_list_arguments (gir, citem);
+  } else {
+    result += ');';
+  }
+  result +='</table>';
+
+
+  result += gir_get_doc (gir, citem);
+  result += gir_get_doc (gir, citem['return-value'], "Returns ");
+
+  return result;
+}
+
+function gir_render_property (gir, citem, item)
+{
+  var result = '';
+  if (citem.type)
+  {
+    if (citem.type['@glib:type-name'])
+    result += '<div><div style="width: 10em;display: inline-block;">'
+       + citem.type['@glib:type-name'] + '</div>';
+    else
+    result += '<div><div style="width: 10em;display: inline-block;">'
+       + citem.type['@name'] + '</div>';
+
+    result += '<div style="width: 30em;display: inline-block;">'
+        + citem['@name'] + '</div></div>';
+
+    result += gir_get_doc (gir, citem);
+  }
+  return result;
+}
+
+function gir_render_constructor (gir, citem, item)
+{
+  var result = '';
+
+  result += '<div class="constructor">';
+
+  if (citem['return-value'])
+  {
+    if(citem['return-value'].type)
+      result += expand_links (citem['return-value'].type['@c:type']) + ' ';
+  }
+
+  result += '<span class="declaration">' + citem['@c:identifier'] + '</span> (';
+
+  if (citem.parameters)
+  {
+    result += "<table class='arguments'>";
+    result += gir_list_arguments (gir, citem);
+    result += '</table>';
+  }
+  else
+    result += ');';
+
+  result += '</div>';
+
+  result += gir_list_arguments_doc (gir, citem);
+
+  result += gir_get_doc (gir, citem);
+  result += gir_get_doc (gir, citem['return-value'], "Returns ");
+
+  return result;
+}
+
+function gir_render_signal(gir, citem, item)
+{
+  var result = '';
+
+  result += '<b>';
+  if (citem['return-value'])
+  {
+     if (citem['return-value'].type['@name'] == 'none')
+       result += 'void ';
+     else
+       result += citem['return-value'].type['@name'] + ' ';
+  }
+
+  result += citem['@name'] + '(<table class="arguments"><tr class="argument"><td class="argtype">' + expand_links (gir_prefix(gir) +
+  item['@name']) +'*</td><td class="argname">' + item['@c:symbol-prefix'] +
+  (citem.parameters?',':'') + '</td></tr>';
+
+
+  if (citem.parameters && citem.parameters.parameter)
+  {
+    result += gir_list_arguments (gir, citem);
+  }
+  else
+  {
+    result += ');';
+  }
+
+  result +='</span>';
+  result += '</b>';
+
+  result += gir_list_arguments_doc (gir, citem);
+
+  result += gir_get_doc (gir, citem);
+
+  return result;
+}
+
+function href (target, label)
+{
+  return "<a href='#"+encodeURIComponent(target)+"'>" + label + "</a>";
+
+  //return "<span class='link' onclick='go(\"" + target + "\")'>" + label + "</span>" + post;
+  //return "<a href='#"+target+"'>" + label + "</a>" + post;
+}
+
+function href_missing (target, label)
+{
+  return "<style color='red'>" + label + "</style>";
+
+  //return "<span class='link' onclick='go(\"" + target + "\")'>" + label + "</span>" + post;
+  //return "<a href='#"+target+"'>" + label + "</a>" + post;
+}
+
+function expand_token (token)
+{
+  var i;
+
+  var target = false;
+  var label = token;
+  var post = "";
+
+  if (!token)
+    return '';
+
+  if (token.indexOf('@') == 0)
+    {
+      return '<em>' + expand_token(token.slice(1)) + '</em>';
+    }
+  else if (token.indexOf('%') == 0)
+    {
+      return '<tt>' + expand_token(token.slice(1)) + '</tt>';
+    }
+
+  if (index[token] && index.hasOwnProperty(token))
+  {
+    target = token;
+    label = index[token];
+  }
+  else  if (index[token.slice(1)] && index.hasOwnProperty(token.slice(1)))
+  {
+    target = token.slice(1);
+    label = index[token.slice(1)];
+  }
+
+  if (!target && token[token.length-1] == 's')
+  { /* also linkify plurals.. */
+    var singular_token = token.slice(0, token.length-1);
+    if (index[singular_token] && index.hasOwnProperty(singular_token))
+    {
+      target = singular_token;
+      label = index[singular_token];
+      post = 's';
+    }
+    else  if (index[singular_token.slice(1)] && index.hasOwnProperty(singular_token.slice(1)))
+    {
+      target = singular_token.slice(1);
+      label = index[singular_token.slice(1)];
+      post = 's';
+    }
+
+  }
+  if (target)
+    return href (target, label) + post;
+
+  if (token.indexOf('#') == 0)
+    return href_missing (token.slice(1), token.slice(1)) +  post;
+
+  return label;
+}
+
+function expand_links (text)
+{
+  var result = "";
+  var i;
+  var nls = 0;
+
+  var token = "";
+  if (!text)
+    return text;
+
+  var swallow = false;
+
+  for (i = 0; i < text.length; i++)
+  {
+    switch (text[i])
+    {
+      case '&':
+        if (!swallow)
+          result += expand_token (token);
+
+        if ((text[i+1] == 'l') &&
+            (text[i+2] == 't') &&
+            (text[i+3] == ';'))
+        {
+          swallow = true;
+          i+=3;
+        }
+        else if ((text[i+1] == 'g') &&
+                 (text[i+2] == 't') &&
+                 (text[i+3] == ';'))
+        {
+          swallow = false;
+          i+=3;
+        }
+        else
+        {
+          result += '&';
+        }
+        token = '';
+        break;
+      case ' ':
+      case ',':
+      case '"':
+      case ';':
+      case '*':
+      case '\n':
+      case "<":
+      case '(':
+      case ')':
+      case ">":
+      case '.':
+
+        if (!swallow)
+        {
+          result += expand_token (token);
+          result += text[i];
+          if (text[i] == '\n')
+          {
+            nls ++;
+            if (nls == 2)
+              result += '<div style="height:1em;margin-top:1em;"/>';
+          }
+          else
+          {
+            nls = 0;
+          }
+        }
+        token = '';
+        break;
+      default:
+        token += text[i];
+    }
+  }
+  if (!swallow)
+    result += expand_token (token);
+
+  return result;
+}
+
+
+function expand_links_code (text)
+{
+  var result = "";
+  var i;
+
+  var token = "";
+  if (!text)
+    return text;
+
+  var in_code = false;
+
+  for (i = 0; i < text.length; i++)
+  {
+    switch (text[i])
+    {
+      case "<":
+        {
+          if (in_code)
+          {
+            if (text[i+1]=='/' &&
+                text[i+2]=='c' &&
+                text[i+3]=='o' &&
+                text[i+4]=='d' &&
+                text[i+5]=='e')
+            {
+              in_code = false;
+              while (text[i] !='>')i++;
+              break;
+            }
+          }
+            else
+          {
+            if (text[i+1]=='c' &&
+                text[i+2]=='o' &&
+                text[i+3]=='d' &&
+                text[i+4]=='e')
+            {
+              in_code = true;
+              while (text[i] !='>')i++;
+
+              if (text[i+1]=='&' &&
+                  text[i+2]=='l' &&
+                  text[i+3]=='t' &&
+                  text[i+4]==';' &&
+                  text[i+5]=='!')
+              {
+                i+=5;
+                while (!(text[i] && 
+                       text[i+1] =='&' &&
+                       text[i+2] =='g' &&
+                       text[i+3] =='t' &&
+                       text[i+4] ==';'))i++;
+                i+=4;
+              }
+
+              break;
+            }
+          }
+        }
+      case '&':
+      case ' ':
+      case ',':
+      case '"':
+      case ';':
+      case '*':
+      case '\n':
+      case '(':
+      case ')':
+      case ">":
+      case '.':
+
+          if (in_code)
+            result += expand_token (token);
+          else
+            result += token;
+          result += text[i];
+
+        token = '';
+        break;
+      default:
+        token += text[i];
+    }
+  }
+ if (in_code)
+   result += expand_token (token);
+ else
+   result += token;
+
+  return result;
+}
+
+function md_escape (string)
+{
+  var ret = '';
+  if (string)
+  for (var i = 0; i < string.length; i++)
+  {
+    switch (string[i])
+    {
+      case '_': ret += '\\_'; break;
+      default:  ret += string[i]; break;
+    }
+  }
+  return ret;
+}
+
+function href_md (target, label)
+{
+  return "[" + md_escape (label) + "](#" + encodeURIComponent(target)+")";
+}
+
+function href_missing_md (target, label)
+{
+  return "<style color='red'>" + label + "</style>";
+}
+
+function expand_token_md (token)
+{
+  var i;
+
+  var target = false;
+  var label = token;
+  var post = "";
+
+  if (!token)
+    return '';
+
+  if (token.indexOf('@') == 0)
+    {
+      return '<em>' + expand_token_md(token.slice(1)) + '</em>';
+    }
+  else if (token.indexOf('%') == 0)
+    {
+      return '<tt>' + expand_token_md(token.slice(1)) + '</tt>';
+    }
+
+  if (index[token] && index.hasOwnProperty(token))
+  {
+    target = token;
+    label = index[token];
+  }
+  else  if (index[token.slice(1)] && index.hasOwnProperty(token.slice(1)))
+  {
+    target = token.slice(1);
+    label = index[token.slice(1)];
+  }
+
+  if (!target && token[token.length-1] == 's')
+  { /* also linkify plurals.. */
+    var singular_token = token.slice(0, token.length-1);
+    if (index[singular_token] && index.hasOwnProperty(singular_token))
+    {
+      target = singular_token;
+      label = index[singular_token];
+      post = 's';
+    }
+    else  if (index[singular_token.slice(1)] && index.hasOwnProperty(singular_token.slice(1)))
+    {
+      target = singular_token.slice(1);
+      label = index[singular_token.slice(1)];
+      post = 's';
+    }
+
+  }
+  if (target)
+    return href_md (target, label) + post;
+
+  if (token.indexOf('#') == 0)
+    return href_missing_md (token.slice(1), token.slice(1)) +  post;
+
+  return label;
+}
+
+function gir_recode_code (text)
+{
+  var result = '';
+
+  var in_code = false;
+
+  var prev = '-';
+
+  for (var i = 0; i < text.length; i++)
+  {
+    var c = text[i];
+    switch (c)
+    {
+      case '|':
+        if (in_code)
+        {
+          if (prev == ']')
+          {
+            in_code = false;
+            result = result.slice(0,result.length-1) + '\n';
+          }
+        }
+        else
+        {
+          result += c;
+        }
+        break;
+      case '[':
+        if (!in_code)
+        {
+          if (prev == '|')
+            { 
+              in_code = true;
+              result = result.slice(0,result.length-1) + '\n   ';
+            }
+          break;
+        }
+        else
+        {
+          result += c;
+        }
+        break;
+      case '\n':
+        if (in_code)
+          result += '\n    ';
+        else
+          result += '\n';
+      break;
+      default:
+        result += c;
+    }
+    prev = c;
+  }
+  return result;
+}
+
+function expand_links_md (text)
+{
+  var result = "";
+  var i;
+  var nls = 0;
+  var in_code = false;
+
+  var token = "";
+  if (!text)
+    return text;
+
+  var swallow = false;
+  var prev = 'a';
+
+  var in_code = false;
+
+  for (i = 0; i < text.length; i++)
+  {
+    if (in_code)
+    {
+      var c = text[i];
+      switch (c)
+      {
+        case '|':
+          if (prev == ']')
+          {
+            in_code = false;
+            result = result.slice(0,result.length-1) + '\n';
+          }
+        break;
+        case '\n':
+          result += '\n    ';
+          break;
+        case '&':
+          if (!swallow)
+            result += expand_token_md (token);
+          token = '';
+
+          if ((text[i+1] == 'l') &&
+              (text[i+2] == 't') &&
+              (text[i+3] == ';'))
+          {
+          //  swallow = true;
+            i+=3;
+            result += '<';
+          }
+          else if ((text[i+1] == 'g') &&
+                   (text[i+2] == 't') &&
+                   (text[i+3] == ';'))
+          {
+            //swallow = false;
+            i+=3;
+            result += '>';
+          }
+          else
+          {
+            result += '&';
+          }
+          break;
+        default:
+          result += c;
+      }
+    }
+    else
+    {
+      var c = text[i];
+      switch (c)
+      {
+        case '[':
+          if (prev == '|')
+          { 
+            in_code = true;
+            result += token;
+            token = '';
+            result = result.slice(0, result.length-1) + '\n    ';
+          }
+          else
+          {
+            token += c;
+          }
+          break;
+        case '&':
+          if (!swallow)
+            result += expand_token_md (token);
+
+          if ((text[i+1] == 'l') &&
+              (text[i+2] == 't') &&
+              (text[i+3] == ';'))
+          {
+            swallow = true;
+            i+=3;
+          }
+          else if ((text[i+1] == 'g') &&
+                   (text[i+2] == 't') &&
+                   (text[i+3] == ';'))
+          {
+            swallow = false;
+            i+=3;
+          }
+          else
+          {
+            result += '&';
+          }
+          token = '';
+          break;
+        case ' ':
+        case ',':
+        case '"':
+        case ';':
+        case '*':
+        case '\n':
+        case "<":
+        case '(':
+        case ')':
+        case ">":
+        case '.':
+          if (!swallow)
+          {
+            result += expand_token_md (token);
+            result += c;
+          }
+          token = '';
+          break;
+        case '_':
+          token += '\\'; // disabling this part of markdown, to avoid false positives
+        default:
+          token += c;
+      }
+    }
+    prev = c;
+  }
+  if (!swallow)
+    result += expand_token_md (token);
+
+  return result;
+}
+
+function gir_render_ancestry (gir, klass, tail)
+{
+  var result = '';
+
+  var tklass = klass;
+
+  if (tail)
+  {
+    result = expand_token (klass) + result;
+  }
+  else
+    result = klass;
+
+  var level = 0;
+
+  if (!tail)tail ='';
+
+  klass = gir_class_get_parent (gir, klass);
+  while (klass && klass!='unknown')
+  {
+    result = expand_token (klass) + '/' + result;
+    klass = gir_class_get_parent (gir, klass);
+    level++;
+  }
+
+  return '<div class="ancestry">' + result + ' ' + tail + '</div>';
+}
+
+function gir_render_subclasses (gir, tklass, linkself)
+{
+  var subs = '';
+  {
+    var subklasses = gir_class_get_subclasses (tklass);
+    subklasses = subklasses.sort();
+    if (subklasses.length)
+    {
+      subs = "<b>Subclasses</b>";
+      for (var i = 0; i < subklasses.length; i++)
+      {
+          var klass = subklasses[i];
+          subs += expand_token(klass);
+      }
+      subs  = '<div> ' +subs +' </div>';
+    }
+  }
+  return subs;
+}
+
+function gir_render_class (gir, item)
+{
+  var result = gir_render_ancestry (gir, gir_prefix(gir) + item['@name']);
+  
+  if (item.field) /* some GObject subclasses in GEGL have no public struct */
+  {
+    result += expand_links (item['@c:type']) + gir_render_struct (gir, item.field);
+  }
+  
+  result += gir_get_doc (gir, item);
+  result +='<div class="linklist">';
+
+  if (item.implements)
+  {
+    result += '<b>Implements</b>';
+    result += each_render (gir, item.implements, 
+       function(gir, citem, item){return '<div>' + expand_links (gir_prefix(gir) + citem['@name']) + '</div>';});
+  }
+  result += '</div>'
+  result +='<div class="linklist">';
+
+  if (item.property)
+  {
+    result += '<b>Properties</b>';
+    result += each_render (gir, item['property'], 
+       function(gir, citem, item){
+         var ref = gir_prefix(gir) + item['@name'] + ':' + citem['@name'];
+         return href(ref, ':' + citem['@name']);
+       }, item);
+  }
+
+  result += '</div>'
+  result +='<div class="linklist">';
+
+  if (item['constructor'] && item.hasOwnProperty('constructor'))
+  {
+    result += '<b>Constructors</b>';
+      result += each_render (gir, item['constructor'], 
+       function(gir, citem, item){
+         var ref = citem['@c:identifier'];
+         return href(ref, '.' + citem['@name'] + '()');
+       });
+  }
+  if (item.function)
+  {
+    result += '<b>Functions</b>';
+    result += each_render (gir, item.function, 
+       function(gir, citem, item){
+         var ref = citem['@c:identifier'];
+         return href(ref, '.' + citem['@name'] + '()');
+       });
+  }
+
+  if (item.method)
+  {
+    result += '<b>Methods</b>';
+    result += each_render (gir, item.method, 
+       function(gir, citem, item){
+         var ref = citem['@c:identifier'];
+         return href(ref, '.' + citem['@name'] + '()');
+       });
+  }
+  result += '</div>'
+  result +='<div class="linklist">';
+
+  if (item['virtual-method'])
+  {
+    result += '<b>Virtual methods</b>';
+    result += each_render (gir, item['virtual-method'], 
+       function(gir, citem, item){
+         var ref = gir_prefix(gir) +  item['@name'] + ':.' + citem['@name'];
+         return href(ref, ':.' + citem['@name'] + '()');
+       }, item);
+  }
+
+  result += '</div>'
+  result +='<div class="linklist">';
+
+  if (item['glib:signal'])
+  {
+    result += '<b>Signals</b>';
+    result += each_render (gir, item['glib:signal'], 
+       function(gir, citem, item){
+         var ref = gir_prefix(gir) + item['@name'] + '::' + citem['@name'];
+         return href(ref, '::' + citem['@name'] + '()');
+       }, item);
+  }
+
+  result += '</div>'
+  result +='<div class="linklist">';
+  result += gir_render_subclasses (gir, gir_prefix(gir) + item['@name']);
+  result += '</div>';
+  return result;
+}
+
+
+function gir_render_class_old (gir, item)
+{
+  var result = gir_render_ancestry (gir, gir_prefix(gir) + item['@name']);
+
+  result += gir_get_doc (gir, item);
+
+  if (item.property)
+  {
+    result += '<h4>Properties</h4>';
+    result += each_render (gir, item.property, gir_render_property, item);
+  }
+  if (item['glib:signal'])
+  {
+    result += each_render (gir, item["glib:signal"], gir_render_signal, item);
+  }
+  result += each_render (gir, item.constructor, gir_render_constructor, item);
+  /* does this really happen,. functions for classes... ? */
+  result += each_render (gir, item.method, gir_render_method, item);
+  result += each_render (gir, item.function, gir_render_function, item);
+  return result;
+}
+
+function list_class (gir, label, id)
+{
+  var result = '';
+  result += '<h3>' + label + '</h3>';
+  if (gir)
+  {
+    var list = gir.repository.namespace[id];
+    if (list)
+    for (var i =0; i < list.length; i++)
+      {
+        var item = list[i];
+        result += gir_render_class (gir, item);
+      }
+  }
+  return result;
+}
+
+function gir_render_enum (gir, item)
+{
+  var result = '';
+
+  result += '<h3>' + item['@c:type'] + '</h3>';
+
+  if (item.member)
+  {
+    result += '<table>';
+    for (j = 0; j < item.member.length; j ++)
+    {
+      var member = item.member[j];
+      result += '<tr><td class="key">' + member["@name"] + 
+         '</td><td class="value" valign="top">' + member["@c:identifier"] + '</td>';
+
+      result += '<td valign="top">' + gir_get_doc (gir, item.member[j]) + '</td>';
+
+      result += '</tr>';
+    }
+    result += '</table>';
+  }
+
+  result += gir_get_doc (gir, item);
+  //if (item.doc && item.doc['#text'])
+  //  result += '<br/><p style="clear:both">' + expand_links(item.doc['#text']) + '</p>';
+
+  return result;
+}
+
+function list_enums (gir, label, id)
+{
+  var result = '';
+  result += '<h3>' + label + '</h3>';
+  if (gir)
+  {
+    var list = gir.repository.namespace[id];
+    if (list)
+    for (var i =0; i < list.length; i++)
+      {
+        var item = list[i];
+        result += gir_render_enum (gir, item);
+      }
+  }
+  return result;
+}
+
+function list_enumerations (gir, label, id)
+{
+  var result = '';
+  result += '<h3 style="clear:both;margin-top:2em">' + label + '</h3>';
+  if (gir)
+  {
+    var list = gir.repository.namespace[id];
+    if (list) /* breaks with only one enum */
+    for (var i =0; i < list.length; i++)
+      {
+        var item = list[i];
+        result += '<h4 style="clear:both;margin-top:2em;">' +
+        gir_prefix(gir) + item['@name'] + '</h4>';
+        result += '<br/>';
+
+        if (item.member)
+        {
+          for (j = 0; j < item.member.length; j ++)
+          {
+            var member = item.member[j];
+            result += '<div class="key">' + member["@name"] + '</div>' +
+            '<div class="value">' + member["@c:identifier"] + '</div>';
+          }
+        }
+      }
+  }
+  return result;
+}
+
+function gir_render_struct (gir, item)
+{
+  var result = '';
+  result += " {<br/>";
+  if (item)
+  {
+    var list = [].concat(item);
+    result += '<table>';
+    for (var i = 0; i < list.length; i++)
+    {
+      result += '<tr class="field">'
+      if(list[i].type)
+        result += '<td class="field_type">' + expand_links
+        (list[i].type['@c:type']) + '</td>';
+      else if(list[i].array)
+        result += '<td class="field_type">' + expand_links
+        (list[i].array['@c:type']) + '[]</td>';
+      else
+        result += '<td class="field_type">' + list[i]  + '[]</td>';
+
+      result += '<td class="field_name">' + list[i]['@name'] + '</td>';
+      result += '</tr>'
+    }
+      result += '</table>'
+  }
+  result += "<div style='clear:both'>}</div>";
+  return result;
+}
+
+function gir_render_record (gir, item)
+{
+  var result = expand_links (item['@c:type']) + gir_render_struct (gir, item.field);
+
+  result += gir_get_doc (gir, item);
+
+  //result += each_render (gir, item.function, gir_render_function, item);
+  //result += each_render (gir, item.method, gir_render_method, item);
+
+  return result;
+}
+
+function list_constants (gir, label, id)
+{
+  var result = '';
+  result += '<h3>' + label + '</h3>';
+  if (gir)
+  {
+    var list = gir.repository.namespace[id];
+    if (list)
+    for (var i =0; i < list.length; i++)
+      {
+        var item = list[i];
+        if (item['@c:type'])
+          result += '<div><div class="key">' + item['@c:type'] + '</div>';
+        result += '<div>' + item['@value'] + '</div></div>';
+      }
+  }
+  return result;
+}
+
+/*
+ * classes = class hierarchy
+ *
+ * index = classes, enumerations, bitfields
+ */
+function gir_index (gir, arg)
+{
+  var result = '';
+
+  if (arg.indexOf('enum ') == 0)
+  {
+    var ref = gir_find_enum (gir, arg.slice(5));
+    if (ref)
+      result += render_enum (gir, ref);
+    else
+      result += "["+arg.slice(6)+']';
+  } 
+  else if (arg.indexOf('class') == 0)
+  {
+    var ref = gir_find_class (gir, arg.slice(6));
+    if (ref)
+      result += gir_render_class (gir, ref);
+    else
+      result += "["+arg.slice(6)+']';
+  } else if (arg == 'enums')
+  {
+    result += list_enumerations ('Enumerations', 'enumeration');
+  }
+  else if (arg == 'bitfields')
+  {
+    result += list_enumerations ('Bitfields',    'bitfield');
+  }
+  else if (arg == 'all')
+  {
+    result += list_class (gir, 'Classes', 'class');
+    result += list_callbacks (gir, 'Callbacks', 'callback');
+    result += list_constants    ('Constants', 'constant');
+    result += list_enumerations ('Enums', 'enumeration');
+    result += list_enumerations ('Bitfields', 'bitfield');
+  }
+
+  return result;
+}
+
+function gir_filter_index (query)
+{
+  var result = [];
+  var temp_result = [];
+
+  if (!index)
+    return [];
+
+  for (var term in index)
+  {
+    if (term)
+    {
+    var score = 0;
+
+    if(term == query)                                           score += 50;
+    else if(term.indexOf(query)==0)                             score += 30;
+    else if(term.toUpperCase() == query.toUpperCase())          score += 20;
+    else if(term.indexOf(query)>=0)                             score += 10;
+    else if(term.toUpperCase().indexOf(query.toUpperCase())==0) score += 5;
+    else if(term.toUpperCase().indexOf(query.toUpperCase())>=0) score += 1;
+
+    /* penalize signal matches */
+    if (query.indexOf(':')>0  && query.indexOf('::') < 0 &&
+        term.indexOf('::') > 0) score -= 5;
+
+    if (score > 0)
+      temp_result.push ([term, score]);
+    }
+  }
+
+  temp_result = temp_result.sort(
+    function(a,b){
+      if (a[1] != b[1])
+        return (b[1] - a[1]);
+      var x = a[0].toLowerCase(), y = b[0].toLowerCase();
+      return x < y ? -1 : x > y ? 1 : 0;
+    }
+  );
+
+  for (var i = 0; i < temp_result.length; i++)
+  {
+    result[result.length]=(temp_result[i][0]);
+  }
+
+  return result;
+}
+
+function gir_filter_index_exact (query)
+{
+  var result = [];
+
+  if (!index)
+    return [];
+
+  for (term in index)
+  {
+    if (term && term == (query))
+      result.push (term);
+  }
+
+  return result;
+}
+
+//\\/\
+
+function ns_list (gir, name, label, prefix)
+{
+  var list = [].concat(gir.repository.namespace[name]);
+  var result = '';
+  if (list[0])
+  {
+    result += '<div class="linklist">'
+    result += '<b>' + label + '</b>';
+  for (var i = 0; i < list.length; i++)
+  {
+    var term;
+    if (list[i]['@c:type'])
+      term = list[i]['@c:type'];
+    else 
+      term = prefix + list[i]['@name'];
+    result += href(term, term);
+  }
+    result +='</div>';
+  }
+  return result;
+}
+
+function gir_render_namespace (gir)
+{
+  var result = "";
+  result = "<div>Namespace " + gir.repository.namespace['@name'] + "</div>";
+
+  result += ns_list (gir, 'class', 'Classes', gir_prefix(gir));
+  result += ns_list (gir, 'record', 'Records', gir_prefix(gir));
+  result += ns_list (gir, 'function', 'Global functions',
+  gir_symbol_prefix(gir) + '_');
+  result += ns_list (gir, 'enumeration', 'Enumerations', gir_prefix(gir));
+  result += ns_list (gir, 'bitfield', 'Bitfields', gir_prefix(gir));
+  result += ns_list (gir, 'alias', 'Aliases', gir_prefix(gir));
+
+  return result;
+}
+
+
+/*
+
+render view,.. on basis of?
+
+   string
+
+   search term or title
+
+   each title in index should get associated view mode
+
+   the view mode itself;.. should be able to render from xml fragment
+                           ., it would be subtrees of the json..
+   
+
+
+
+*/
+
+
+function gir_search_class (gir, klass, query, collect_index)
+{
+  if (!klass)
+    return false;
+  var term = klass['@c:type'];
+  if (collect_index)
+    index[term] = term;
+  else if (query == term)
+    return gir_render_class (gir, klass);
+   
+  if (klass.method)
+  {
+    var methods = [].concat(klass.method);
+    for (var m = 0; m < methods.length; m ++)
+    {
+      var term = methods[m]['@c:identifier'];
+      if (collect_index)
+        index[term] = term;
+      else if (query == term)
+      {
+         return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) + klass['@name'], '.' +
+         methods[m]['@name'] + '()') +
+         "</div>" + gir_render_method (gir, methods[m], klass);
+      }
+
+      var term = gir_prefix (gir) + klass['@name'] + '.' + methods[m]['@name'];
+      if (collect_index)
+        index[term] = term;
+      else if (query == term)
+      {
+        return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) + klass['@name'], '.' +
+         methods[m]['@name'] + '()') +
+         "</div>" + gir_render_method (gir, methods[m], klass);
+      }
+    }
+  }
+
+  if (klass['glib:signal'])
+  {
+    var signals = [].concat(klass['glib:signal']);
+    for (var m = 0; m < signals.length; m ++)
+    {
+      var term = klass['@c:type'] + '::' + signals[m]['@name'];
+      if (collect_index)
+        index[term] = term;
+      else if (query == term)
+        return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) + klass['@name'], '::' + signals[m]['@name'] + '') + "</div>" +
+        gir_render_signal (gir, signals[m], klass);
+    }
+  }
+
+  if (klass.property)
+  {
+    var properties = [].concat(klass.property);
+    for (var m = 0; m < properties.length; m ++)
+    {
+      var term = klass['@c:type'] + ':' + properties[m]['@name'];
+      if (collect_index)
+        index[term] = term;
+      else if (query == term)
+        return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) + klass['@name'], ':' +
+         properties[m]['@name'] + '') +
+         "</div>" + gir_render_property (gir, properties[m], klass);
+    }
+  }
+
+  if (klass.constructor)
+  {
+    var constructors = [].concat(klass.constructor);
+    for (var c = 0; c < constructors.length; c ++)
+    {
+      var term = constructors[c]['@c:identifier'];
+      if (collect_index)
+        index[term] = term;
+      else if (query == term)
+        return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) +
+        klass['@name'], '.' + constructors[c]['@name'] + '()') + "</div>" +
+          gir_render_constructor (gir, constructors[c], klass);
+    }
+  }
+
+  if (klass.function)
+  {
+    var lst = [].concat(klass.function);
+    for (var j = 0; j < lst.length; j++)
+    {
+      var term = lst[j]['@c:identifier'];
+
+      if (collect_index)
+        index[term] = term;
+      else if (query == term)
+        return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) +
+        klass['@name'], '.' + lst[j]['@name'] + '()') + "</div>" +
+          gir_render_constructor (gir, lst[j], klass);
+    }
+  }
+
+
+  if (klass['virtual-method'])
+  {
+    var lst = [].concat(klass['virtual-method']);
+    for (var j = 0; j < lst.length; j++)
+    {
+      var term = klass['@c:type'] + ':.' + lst[j]['@name'];
+
+      if (collect_index)
+        index[term] = term;
+      else if (query == term)
+        return "<div>" + gir_render_ancestry (gir,
+        gir_prefix(gir) + klass['@name'], ':.' + lst[j]['@name'] + '()') +
+        "</div>" + gir_render_method (gir, lst[j], klass);
+    }
+  }
+
+  return false;
+}
+
+function gir_search (gir, query, collect_index)
+{
+  var result = "";
+  if (!gir)
+    return "";
+
+  if (!collect_index){
+    var qa = query.split(' ')
+
+    var matches = gir_filter_index (qa[0]);
+    var ematches = [];
+
+    if (qa.length > 1)
+    {
+      for (var j = 1; j < qa.length; j++)
+      {
+        var foo = matches;
+        matches = [];
+        for (var i = 0; i < foo.length; i ++)
+        {
+          if (foo[i].indexOf(qa[j]) >= 0)
+             matches.push (foo[i]);
+        }
+      }
+    }
+
+    for (var i = 0; i < matches.length; i ++)
+    {
+      if (matches[i] == query)
+         ematches.push (matches[i]);
+    }
+
+    if (ematches.length != 1 && matches.length > 1)
+    {
+
+      for (var i = 0; i < matches.length && i < gir_max_results; i ++)
+        result += href(matches[i], matches[i]) + '<br/>';
+
+      if (matches.length > gir_max_results)
+      {
+        return result + '<div>... ' + (matches.length - gir_max_results) + ' matches trimmed</div>';
+      }
+
+      return result;
+    }
+
+    if (matches.length == 1)
+      query = matches[0];
+    if (matches.length == 0)
+      return "";
+  }
+
+  /* real search; to find single unique match, or collect index */
+  for (var i = 0; i < core_types.length; i++)
+  {
+    if (core_types[i])
+    {
+    var term = core_types[i].name;
+    if (collect_index)
+      index[term]=term;
+    else if (query == term)
+    {
+      return "<div>" + term + '</div>' + '<div>' + expand_links (core_types[i].doc) + "</div>";
+    }
+    }
+  }
+
+  {
+    var term = gir.repository.namespace['@name'];
+    if (term == 'GObject')
+      term = 'Gobject'; /* special name space deconflicting hack */
+    if (collect_index)
+      index[term]=term;
+    else if (query == term)
+    {
+      return gir_render_namespace (gir);
+    }
+  }
+
+  if(gir.repository.namespace['alias'])
+  {
+    var list = [].concat(gir.repository.namespace['alias']);
+    for (var i = 0; i < list.length; i++)
+    {
+      var term = list[i]['@c:type'];
+      if (collect_index)
+        index[term]=term;
+      else if (query == term)
+      {
+        return "<div>" + term + '</div>' + gir_get_doc (gir, list[i]);
+      }
+    }
+  }
+
+  var list = [].concat(gir.repository.namespace['class']);
+  for (var i = 0; i < list.length; i++)
+  {
+    var res = gir_search_class (gir, list[i], query, collect_index);
+    if (res)
+      return res;
+  }
+
+  var list = [].concat(gir.repository.namespace['interface']);
+  for (var i = 0; i < list.length; i++)
+  {
+    var res = gir_search_class (gir, list[i], query, collect_index);
+    if (res)
+      return res;
+  }
+  
+  var list = [].concat(gir.repository.namespace['function']);
+  if (list[0])
+  for (var i = 0; i < list.length; i++)
+  {
+    var term = list[i]['@c:identifier'];
+    if (collect_index)
+      index[term] = term;
+    else if (query == term)
+      return gir_render_function (gir, list[i]);
+  }
+
+  var list = [].concat(gir.repository.namespace['enumeration']);
+  if (list[0])
+  for (var i = 0; i < list.length; i++)
+  {
+    var term = list[i]['@glib:type-name'];
+
+    if (collect_index)
+      index[term] = term;
+    else if (query == term)
+      return gir_render_enum (gir, list[i]);
+  }
+
+  if(gir.repository.namespace['record'])
+  {
+    var list = [].concat(gir.repository.namespace['record']);
+    for (var i = 0; i < list.length; i++)
+    {
+      var term = list[i]['@c:type'];
+      if (collect_index)
+        index[term] = term;
+      else if (query == term)
+        return gir_render_record (gir, list[i]);
+
+      var record = list[i];
+
+      if (record.method)
+      {
+        var lst = [].concat(record.method);
+        for (var j = 0; j < lst.length; j++)
+        {
+          var term = lst[j]['@c:identifier'];
+
+          if (collect_index)
+            index[term] = term;
+          else if (query == term)
+            return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) +
+            record['@name'], '.' + lst[j]['@name'] + '()') + "</div>" +
+              gir_render_method (gir, lst[j], record);
+
+          term = gir_prefix(gir) + record['@name'] + '.' + lst[j]['@name'];
+
+          if (collect_index)
+            index[term] = term;
+          else if (query == term)
+            return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) +
+            record['@name'], '.' + lst[j]['@name'] + '()') + "</div>" +
+              gir_render_method (gir, lst[j], record);
+
+        }
+      }
+
+      if (record['function'])
+      {
+        var lst = [].concat(record['function']);
+        for (var j = 0; j < lst.length; j++)
+        {
+          var term = lst[j]['@c:identifier'];
+
+          if (collect_index)
+            index[term] = term;
+          else if (query == term)
+            return "<div>" + gir_render_ancestry (gir, gir_prefix(gir) +
+            record['@name'], '.' + lst[j]['@name'] + '()') + "</div>" +
+              gir_render_method (gir, lst[j], record);
+        }
+      }
+
+    }
+  }
+
+  if(gir.repository.namespace['bitfield'])
+  {
+    var list = [].concat(gir.repository.namespace['bitfield']);
+    for (var i = 0; i < list.length; i++)
+    {
+      {
+        for (j = 0; j < list[i].member.length; j ++)
+          {
+            var member = list[i].member[j];
+            term = member["@c:identifier"];
+
+            if (collect_index)
+            {
+              index[term] = term;
+            }
+            else if (query == term)
+              return gir_render_enum (gir, list[i]);
+          }
+      }
+
+      var term = list[i]['@c:type'];
+      if (collect_index)
+      {
+        index[term] = term;
+      }
+      else if (query == term)
+        return gir_render_enum (gir, list[i]);
+    }
+  }
+
+  if(gir.repository.namespace['constant'])
+  {
+    var list = [].concat (gir.repository.namespace['constant']);
+    for (var i =0; i < list.length; i++)
+      {
+        var term = list[i]['@c:type'];
+        if (collect_index)
+        {
+          index[term] = term;
+        }
+        else if (query == term)
+          return '<div><div class="key">' + term + '</div>' + '<div>' + list[i]['@value'] + '</div></div>';
+      }
+  }
+
+  if(gir.repository.namespace['enumeration'])
+  {
+    var list = [].concat(gir.repository.namespace['enumeration']);
+    for (var i = 0; i < list.length; i++)
+    {
+      {
+        for (j = 0; j < list[i].member.length; j ++)
+          {
+            var member = list[i].member[j];
+            term = member["@c:identifier"];
+
+            if (collect_index)
+            {
+              index[term] = term;
+            }
+            else if (query == term)
+              return gir_render_enum (gir, list[i]);
+          }
+      }
+
+      var term = list[i]['@c:type'];
+      if (collect_index)
+      {
+        index[term] = term;
+      }
+      else if (query == term)
+        return gir_render_enum (gir, list[i]);
+    }
+  }
+  return "";
+}
+
+function foobail (e)
+{
+  return false;
+}
+
+function keydown (e)
+{
+  if (e && (e.keyCode != 9))
+    id('query').focus();
+  if (e && (e.keyCode == 40))
+  {
+    window.scrollBy(0,window.document.body.clientHeight * 0.1);
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
+  }
+  if (e && (e.keyCode == 38))
+  {
+    window.scrollBy(0,-window.document.body.clientHeight * 0.1);
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
+  }
+  if (e && (e.keyCode == 33))
+  {
+    window.scrollBy(0,-window.document.body.clientHeight * 0.8);
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
+  }
+  if (e && (e.keyCode == 34))
+  {
+    window.scrollBy(0,Math.floor(window.document.body.clientHeight * 0.8));
+    e.stopPropagation();
+    e.preventDefault();
+    return false;
+  }
+  id('status').innerHTML = e.keyCode;
+  return false;
+}
+
+function update_view(e)
 {
   var items;
   var result = '';
@@ -484,21 +2472,54 @@ function show_matches(e)
     initialized = true;
   }
 
+  var girres = undefined;
+
+  if (window.apidb)
+  {
+
+    if (id('query').value == "")
+    {
+      girres = "<div>" + href('GEGL operations','GEGL operations')  + '</div>';
+      girres += "<br/>";
+      girres += '<b>Namespaces</b>';
+      for (var i = 0; i < window.apidb.length; i++)
+      {
+        girres += '<div>' + href (window.apidb[i].repository.namespace['@name'],
+                        window.apidb[i].repository.namespace['@name']) +
+                        '</div>';
+      }
+    }
+    else 
+      for (var i = 0; i < window.apidb.length && !girres; i++)
+      {
+        girres = gir_search(window.apidb[i], id('query').value);
+        if (girres)
+          break;
+      }
+  }
+  
   items = filter_db(id('query').value);
 
-  if (id('query').value == 'list of all ops')
+  if (id('query').value == 'GEGL operations')
+  {
+    result = render_categories ();
+  }
+  else if (girres)
+  {
+    result = girres;
+  }
+  else if (id('query').value == 'list of all ops')
   {
     result += render_all ();
   }
-  else if (id('query').value == '')
-  {
-    result += render_categories ();
-  }
   else if (items.length == 0)
   {
-    result = 'eek';
+    if (!window.apidb || window.apidb.length < 4)
+      result = 'no matches (still loading, completa data set is 8.5mb of GIR files)';
+    else
+      result = 'no matches';
   }
-  else if (items.length == 1)
+  else if ((items.length == 1) || (items[0].op == id('query').value))
   {
     if (items[0].op == id('query').value ||
     id('query').value.indexOf('op')==0)
@@ -513,26 +2534,120 @@ function show_matches(e)
   else
     result += render_list_small (items);
 
-
   if (result != previous_content)
   {
     id('view').innerHTML = result;
     previous_content = result;
   }
 }
-
   </script>
 
-  <body>
+  <body onkeydown='keydown(event)'>
     <input id='query' value='' placeholder="type to search"
-    onkeyup='show_matches(event);'
+    onkeyup='update_view(event);'
+    onkeydown='foobail(event);'
     onactivate='setloc()'
      autocomplete='off'></input>
-     <div id='view'>foo</div>
+     <pre id='debug'></pre>
+     <pre id='status'></pre>
+     <div id='view'>Loading dynamic javascript content,.. or perhaps something
+     is broken?</div>
   </body>
 
   <script>
-    show_matches();
+    update_view();
     id('query').focus();
+
+    function load_xhtr (path, cb) { /* load gobject introspection data */
+    /* XXX: should have iframe code path for http(s) prefixed paths */
+
+      id('status').innerHTML = 'downloading ' + path;
+      var xhr = new XMLHttpRequest ();
+      xhr.open("GET", path, true);
+      xhr.onreadystatechange = function() {
+      if (this.readyState == this.DONE)
+        { 
+          if (xhr.responseText)
+            cb (xhr.responseText);
+        }
+      }
+      xhr.send();
+    }
+
+    function gir_loaded (content)
+    {
+      id('status').innerHTML = 'parsing';
+      var json = xml2json
+      (parseXml(content)).replace(/undefined/,
+      '').replace(/:null/g, ':""').
+      replace(/function Object()....\s*\[native code]\s*},/g,'');
+      var html = ("" + json+"\n").replace(/&/g, "&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g, "<br/>"); 
+      //id('debug').innerHTML = json;
+
+      var newdb = JSON.parse(json);
+      window.apidb.push(newdb);
+      gir_search (newdb, "foo", true);
+      update_view ();
+
+      id('status').innerHTML = '';
+      load_next_gir ();
+    }
+
+    var gir_path_i = 0;
+
+function load_next_gir ()
+{
+  if (gir_path_i < gir_paths.length)
+  {
+    load_xhtr (gir_paths[gir_path_i], gir_loaded);
+    gir_path_i ++;
+  }
+}
+
+function parseXml(xml) {
+   var dom = null;
+   if (window.DOMParser) {
+      try { 
+         dom = (new DOMParser()).parseFromString(xml, "text/xml"); 
+      } 
+      catch (e) { dom = null; }
+   }
+   else if (window.ActiveXObject) {
+      try {
+         dom = new ActiveXObject('Microsoft.XMLDOM');
+         dom.async = false;
+         if (!dom.loadXML(xml)) // parse error ..
+
+            window.alert(dom.parseError.reason + dom.parseError.srcText);
+      } 
+      catch (e) { dom = null; }
+   }
+   else
+      alert("cannot parse xml string!");
+   return dom;
+}
+    index = [];
+    window.apidb = [];
+
+    load_next_gir ();
+
+    window.addEventListener('keydown',
+ function(event) {
+    if (event.ctrlKey || event.metaKey) {
+        switch (String.fromCharCode(event.which).toLowerCase()) {
+        case 's':
+            event.preventDefault();
+            id('query').focus();
+            id('query').select();
+            
+            break;
+        }
+    }
+});
+
+    //function readfile(){alert(document.getElementById('iframe').contentDocument.body.firstChild.innerHTML);}
   </script>
+  <!--<iframe id='iframe' src = 'journal.txt' onload='readfile()'>
+  </iframe>-->
+
 </html>
