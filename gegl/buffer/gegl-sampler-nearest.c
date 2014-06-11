@@ -62,7 +62,7 @@ gegl_sampler_nearest_init (GeglSamplerNearest *self)
 }
 
 void
-gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
+gegl_sampler_nearest_get (      GeglSampler*    restrict  sampler,
                           const gdouble                   absolute_x,
                           const gdouble                   absolute_y,
                                 GeglMatrix2              *scale,
@@ -77,10 +77,22 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
    * located at (.5,.5) (instead of (0,0) as it would be if absolute
    * positions were center-based).
    */
+
+#if 1 /* There probably is faster ways to do this, */
+  GeglRectangle rect = {floorf(absolute_x), floorf(absolute_y), 1, 1};
+  gegl_buffer_get (sampler->buffer, &rect, 1.0,
+                   sampler->format, output, 0, repeat_mode);
+#else
+
+  /* this left in here; to make it easy to manually verify that the
+   * sampler framework behaves correctly.
+   */
+
   const gfloat* restrict in_bptr =
     gegl_sampler_get_ptr (self,
                           (gint) floor ((double) absolute_x),
                           (gint) floor ((double) absolute_y),
                           repeat_mode);
   babl_process (self->fish, in_bptr, output, 1);
+#endif
 }
