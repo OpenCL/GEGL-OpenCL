@@ -77,16 +77,10 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
    * located at (.5,.5) (instead of (0,0) as it would be if absolute
    * positions were center-based).
    */
-  const gint channels = 4;
-  gfloat newval[channels];
   const gfloat* restrict in_bptr =
     gegl_sampler_get_ptr (self,
                           (gint) floor ((double) absolute_x),
                           (gint) floor ((double) absolute_y),
                           repeat_mode);
-  newval[0] = *in_bptr++;
-  newval[1] = *in_bptr++;
-  newval[2] = *in_bptr++;
-  newval[3] = *in_bptr;
-  babl_process (self->fish, newval, output, 1);
+  babl_process (self->fish, in_bptr, output, 1);
 }
