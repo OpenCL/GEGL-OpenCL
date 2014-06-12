@@ -1345,8 +1345,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   if (!format)
     format = buffer->soft_format;
 
-  if (format == buffer->soft_format &&
-      sampler_type == GEGL_SAMPLER_NEAREST)
+  if (sampler_type == GEGL_SAMPLER_NEAREST)
     {
       /* XXX: not thread safe */
       gegl_buffer_get_pixel (buffer, x, y, format, dest, repeat_mode);
