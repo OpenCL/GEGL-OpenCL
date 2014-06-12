@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 #
+# ruby program to generate a performance report in PDF/png over git revisions, based on work
+# originally done for gegl by pippin@gimp.org, the original program is in the public domain.
+
 require 'cairo'
 
 def cairo_surface(w,h)
@@ -14,7 +17,6 @@ class Database
         @vals = Hash.new
         @runs = Array.new
         @colors = [
-          [0,0,1, 0.8],
           [0,1,0, 0.8],
           [0,1,1, 0.8],
           [1,0,0, 0.8],
@@ -30,11 +32,12 @@ class Database
           [1,1,0.5, 0.8],
           [1,1,1, 0.8],
         ]
-        @width  = 1024
-        @height = 300
+        @width  = 1800
+        @height = 500
 
         @marginlx = 10
-        @marginrx = 140
+        @marginrx = 180
+        @rgap = 40
         @marginy = 10
     end
     def val_max(key)
@@ -53,7 +56,7 @@ class Database
          val = @vals[key][run]
          min = val  if val and val < min
        }
-       min
+       #min
        0   # this shows the relative noise in measurements better
     end
     def add_run(run)
@@ -98,17 +101,17 @@ class Database
         cr.move_to 1.0 * i / @runs.length * (@width - @marginlx-@marginrx) + @marginlx, y
 
         cr.set_source_rgba(0.6,0.6,0.6,1)
-        cr.show_text(run[0..7])
+        cr.show_text(run[0..6])
         i+=1
       }
     end
 
     def draw_limits cr, key
-      cr.move_to @width - @marginrx, 20
+      cr.move_to @width - @marginrx + @rgap, 20
       cr.set_source_rgba(1.0, 1.0, 1.0, 1.0)
-      cr.show_text(" #{val_max(key)} mb/s")
-      cr.move_to @width - @marginrx, @height - @marginy
-      cr.show_text(" #{val_min(key)} mb/s")
+      cr.show_text(" #{val_max(key)} ")
+      cr.move_to @width - @marginrx + @rgap, @height - @marginy
+      cr.show_text(" #{val_min(key)} ")
     end
 
     def draw_val cr, key, valno
@@ -116,7 +119,7 @@ class Database
       max = val_max(key)
 
       cr.set_source_rgba(@colors[valno])
-      cr.move_to(@width - 137, valno * 14 + @marginy + 20)
+      cr.move_to(@width - @marginrx + @rgap, valno * 14 + @marginy + 20)
       cr.show_text(key)
 
       cr.line_width = 2
