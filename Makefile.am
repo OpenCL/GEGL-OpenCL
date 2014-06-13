@@ -13,6 +13,7 @@ SUBDIRS=\
 	tools \
 	examples \
 	tests \
+	perf \
 	po
 
 if ENABLE_DOCS
