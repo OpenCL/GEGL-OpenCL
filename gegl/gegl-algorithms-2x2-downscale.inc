@@ -1,3 +1,5 @@
+#define S(a)   ((DOWNSCALE_SUM)(a))
+
 void
 DOWNSCALE_FUNCNAME (gint    bpp,
                     gint    src_width,
@@ -30,7 +32,7 @@ DOWNSCALE_FUNCNAME (gint    bpp,
               DOWNSCALE_TYPE * ba = ((DOWNSCALE_TYPE *)(src + src_rowstride));
               DOWNSCALE_TYPE * bb = ((DOWNSCALE_TYPE *)(src + diag));
 
-              ((DOWNSCALE_TYPE *)dst)[0] = (aa[0] + ab[0] + ba[0] + bb[0]) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[0] = (S(aa[0]) + S(ab[0]) + S(ba[0]) + S(bb[0])) / DOWNSCALE_DIVISOR;
 
               dst += bpp;
               src += bpp * 2;
@@ -51,8 +53,10 @@ DOWNSCALE_FUNCNAME (gint    bpp,
               DOWNSCALE_TYPE * ba = ((DOWNSCALE_TYPE *)(src + src_rowstride));
               DOWNSCALE_TYPE * bb = ((DOWNSCALE_TYPE *)(src + diag));
 
-              ((DOWNSCALE_TYPE *)dst)[0] = (aa[0] + ab[0] + ba[0] + bb[0]) / DOWNSCALE_DIVISOR;
-              ((DOWNSCALE_TYPE *)dst)[1] = (aa[1] + ab[1] + ba[1] + bb[1]) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[0] = (S(aa[0]) + S(ab[0]) + S(ba[0]) +
+                S(bb[0])) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[1] = (S(aa[1]) + S(ab[1]) + S(ba[1]) +
+                  S(bb[1])) / DOWNSCALE_DIVISOR;
 
               dst += bpp;
               src += bpp * 2;
@@ -73,9 +77,12 @@ DOWNSCALE_FUNCNAME (gint    bpp,
               DOWNSCALE_TYPE * ba = ((DOWNSCALE_TYPE *)(src + src_rowstride));
               DOWNSCALE_TYPE * bb = ((DOWNSCALE_TYPE *)(src + diag));
 
-              ((DOWNSCALE_TYPE *)dst)[0] = (aa[0] + ab[0] + ba[0] + bb[0]) / DOWNSCALE_DIVISOR;
-              ((DOWNSCALE_TYPE *)dst)[1] = (aa[1] + ab[1] + ba[1] + bb[1]) / DOWNSCALE_DIVISOR;
-              ((DOWNSCALE_TYPE *)dst)[2] = (aa[2] + ab[2] + ba[2] + bb[2]) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[0] =
+               (S(aa[0]) + S(ab[0]) + S(ba[0]) + S(bb[0])) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[1] =
+               (S(aa[1]) + S(ab[1]) + S(ba[1]) + S(bb[1])) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[2] =
+               (S(aa[2]) + S(ab[2]) + S(ba[2]) + S(bb[2])) / DOWNSCALE_DIVISOR;
 
               dst += bpp;
               src += bpp * 2;
@@ -96,10 +103,14 @@ DOWNSCALE_FUNCNAME (gint    bpp,
               DOWNSCALE_TYPE * ba = ((DOWNSCALE_TYPE *)(src + src_rowstride));
               DOWNSCALE_TYPE * bb = ((DOWNSCALE_TYPE *)(src + diag));
 
-              ((DOWNSCALE_TYPE *)dst)[0] = (aa[0] + ab[0] + ba[0] + bb[0]) / DOWNSCALE_DIVISOR;
-              ((DOWNSCALE_TYPE *)dst)[1] = (aa[1] + ab[1] + ba[1] + bb[1]) / DOWNSCALE_DIVISOR;
-              ((DOWNSCALE_TYPE *)dst)[2] = (aa[2] + ab[2] + ba[2] + bb[2]) / DOWNSCALE_DIVISOR;
-              ((DOWNSCALE_TYPE *)dst)[3] = (aa[3] + ab[3] + ba[3] + bb[3]) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[0] =
+               (S(aa[0]) + S(ab[0]) + S(ba[0]) + S(bb[0])) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[1] =
+               (S(aa[1]) + S(ab[1]) + S(ba[1]) + S(bb[1])) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[2] =
+               (S(aa[2]) + S(ab[2]) + S(ba[2]) + S(bb[2])) / DOWNSCALE_DIVISOR;
+              ((DOWNSCALE_TYPE *)dst)[3] =
+               (S(aa[3]) + S(ab[3]) + S(ba[3]) + S(bb[3])) / DOWNSCALE_DIVISOR;
 
               dst += bpp;
               src += bpp * 2;
@@ -122,7 +133,8 @@ DOWNSCALE_FUNCNAME (gint    bpp,
               DOWNSCALE_TYPE * bb = ((DOWNSCALE_TYPE *)(src + diag));
 
               for (i = 0; i < components; i++)
-                ((DOWNSCALE_TYPE *)dst)[i] = (aa[i] + ab[i] + ba[i] + bb[i]) / DOWNSCALE_DIVISOR;
+                ((DOWNSCALE_TYPE *)dst)[i] =
+                  (S(aa[i]) + S(ab[i]) + S(ba[i]) + S(bb[i]))/DOWNSCALE_DIVISOR;
 
               dst += bpp;
               src += bpp * 2;
@@ -131,3 +143,5 @@ DOWNSCALE_FUNCNAME (gint    bpp,
     break;
   }
 }
+
+#undef S
