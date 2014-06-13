@@ -30,7 +30,7 @@ main (gint    argc,
     buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));
 
     gegl = gegl_graph (sink = gegl_node ("gegl:buffer-sink", "buffer", &buffer2, NULL,
-                              gegl_node ("gegl:rotate", "degrees", 4.0, "sampler", "nearest", NULL,
+                              gegl_node ("gegl:rotate", "degrees", 4.0, "sampler", GEGL_SAMPLER_NEAREST, NULL,
                               gegl_node ("gegl:buffer-source", "buffer", buffer, NULL))));
 
     test_start ();
