@@ -1,6 +1,6 @@
 #define MAX_RANK 3
 
-static float2
+float2
 philox (uint2 st,
         uint k)
 {
@@ -17,7 +17,7 @@ philox (uint2 st,
       k += 0x9e3779b9u;
     }
 
-  return convert_float2(st) / 2147483648.0 - 1.0;
+  return convert_float2(st) / 2147483648.0f - 1.0f;
 }
 
 __kernel void kernel_noise (__global float *out,
@@ -47,19 +47,19 @@ __kernel void kernel_noise (__global float *out,
       /* Skew the input point and find the lowest corner of the containing
          simplex. */
 
-      s = (p.x + p.y) * (sqrt(3.0) - 1) / 2;
+      s = (p.x + p.y) * (sqrt(3.0f) - 1) / 2;
       i = floor(p + s);
 
       /* Calculate the (unskewed) distance between the input point and all
          simplex corners. */
 
-      s = (i.x + i.y) * (3 - sqrt(3.0)) / 6;
+      s = (i.x + i.y) * (3 - sqrt(3.0f)) / 6;
       u[0] = p - i + s;
 
       di = u[0].x >= u[0].y ? (float2)(1, 0) : (float2)(0, 1);
 
-      u[1] = u[0] - di + (3 - sqrt(3.0)) / 6;
-      u[2] = u[0] - 1 + (3 - sqrt(3.0)) / 3;
+      u[1] = u[0] - di + (3 - sqrt(3.0f)) / 6;
+      u[2] = u[0] - 1 + (3 - sqrt(3.0f)) / 3;
 
       /* Calculate gradients for each corner vertex. We convert to
        * signed int first to avoid implementation-defined behavior for
@@ -72,7 +72,7 @@ __kernel void kernel_noise (__global float *out,
 
       for (k = 0, n = 0 ; k < 3 ; k += 1)
         {
-          t = 0.5 - dot(u[k], u[k]);
+          t = 0.5f - dot(u[k], u[k]);
 
           if (t > 0)
             {
