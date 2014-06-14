@@ -3,8 +3,9 @@ noinst_PROGRAMS = \
 	test-blur \
 	test-bcontrast \
 	test-bcontrast-minichunk \
+	test-bcontrast-megachunk \
 	test-unsharpmask \
-	test-passthrough \
+	test-bcontrast-4x \
 	test-gegl-buffer-access \
 	test-rotate
 
@@ -38,7 +39,8 @@ test_rotate_SOURCES = test-rotate.c
 test_blur_SOURCES = test-blur.c
 test_bcontrast_SOURCES = test-bcontrast.c
 test_bcontrast_minichunk_SOURCES = test-bcontrast-minichunk.c
-test_passthrough_SOURCES = test-passthrough.c
+test_bcontrast_megachunk_SOURCES = test-bcontrast-megachunk.c
+test_bcontrast_4x_SOURCES = test-bcontrast-4x.c
 test_unsharpmask_SOURCES = test-unsharpmask.c
 test_gegl_buffer_access_SOURCES = test-gegl-buffer-access.c
 

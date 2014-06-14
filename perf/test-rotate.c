@@ -5,15 +5,18 @@ main (gint    argc,
       gchar **argv)
 {
   GeglBuffer *buffer, *buffer2;
-  GeglNode   *gegl, *sink;
+  GeglNode   *gegl, *source, *rotate, *sink;
 
   gegl_init (&argc, &argv);
 
-  buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));
+  buffer = test_buffer (2048, 1024, babl_format ("RGBA float"));
 
-  gegl = gegl_graph (sink = gegl_node ("gegl:buffer-sink", "buffer", &buffer2, NULL,
-                            gegl_node ("gegl:rotate", "degrees", 4.0, NULL,
-                            gegl_node ("gegl:buffer-source", "buffer", buffer, NULL))));
+  gegl = gegl_node_new ();
+  source = gegl_node_new_child (gegl, "operation", "gegl:buffer-source", "buffer", buffer, NULL);
+  rotate = gegl_node_new_child (gegl, "operation", "gegl:rotate", "degrees", 4.0, NULL);
+  sink = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink", "buffer", &buffer2, NULL);
+
+  gegl_node_link_many (source, rotate, sink, NULL);
 
   test_start ();
   gegl_node_process (sink);
@@ -21,22 +24,19 @@ main (gint    argc,
 
   g_object_unref (gegl);
 
-  {
-    GeglBuffer *buffer, *buffer2;
-    GeglNode   *gegl, *sink;
 
-    gegl_init (&argc, &argv);
+  gegl = gegl_node_new ();
+  source = gegl_node_new_child (gegl, "operation", "gegl:buffer-source", "buffer", buffer, NULL);
+  rotate = gegl_node_new_child (gegl, "operation", "gegl:rotate", "degrees", 4.0, GEGL_SAMPLER_NEAREST, NULL);
+  sink = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink", "buffer", &buffer2, NULL);
 
-    buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));
+  gegl_node_link_many (source, rotate, sink, NULL);
 
-    gegl = gegl_graph (sink = gegl_node ("gegl:buffer-sink", "buffer", &buffer2, NULL,
-                              gegl_node ("gegl:rotate", "degrees", 4.0, "sampler", GEGL_SAMPLER_NEAREST, NULL,
-                              gegl_node ("gegl:buffer-source", "buffer", buffer, NULL))));
+  test_start ();
+  gegl_node_process (sink);
+  test_end ("rotate-nearest",  gegl_buffer_get_pixel_count (buffer) * 16);
 
-    test_start ();
-    gegl_node_process (sink);
-    test_end ("rotate-nearest",  gegl_buffer_get_pixel_count (buffer) * 16);
-  }
+  g_object_unref (gegl);
 
   return 0;
 }
