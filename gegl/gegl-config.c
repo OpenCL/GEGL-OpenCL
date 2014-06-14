@@ -181,7 +181,7 @@ gegl_config_class_init (GeglConfigClass *klass)
                                    g_param_spec_int ("tile-width",
                                                      "Tile width",
                                                      "default tile width for created buffers.",
-                                                     0, G_MAXINT, 512,
+                                                     0, G_MAXINT, 128,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
@@ -189,7 +189,7 @@ gegl_config_class_init (GeglConfigClass *klass)
                                    g_param_spec_int ("tile-height",
                                                      "Tile height",
                                                      "default tile height for created buffers.",
-                                                     0, G_MAXINT, 64,
+                                                     0, G_MAXINT, 128,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT));
 
