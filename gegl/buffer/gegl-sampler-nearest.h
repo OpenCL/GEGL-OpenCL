@@ -35,6 +35,7 @@ typedef struct _GeglSamplerNearestClass GeglSamplerNearestClass;
 struct _GeglSamplerNearest
 {
   GeglSampler parent_instance;
+  gint        buffer_bpp;
     /*< private >*/
 };
 

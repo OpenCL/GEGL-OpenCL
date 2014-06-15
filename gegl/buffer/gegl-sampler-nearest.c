@@ -76,10 +76,10 @@ static void inline
 gegl_sampler_get_pixel (GeglSampler    *sampler,
                         gint            x,
                         gint            y,
-                        const Babl     *format,
                         gpointer        data,
                         GeglAbyssPolicy repeat_mode)
 {
+  GeglSamplerNearest *nearest_sampler = (GeglSamplerNearest*)(sampler);
   GeglBuffer *buffer = sampler->buffer;
   const GeglRectangle *abyss = &buffer->abyss;
   guchar              *buf   = data;
@@ -104,7 +104,7 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
         case GEGL_ABYSS_BLACK:
           {
             gfloat color[4] = {0.0, 0.0, 0.0, 1.0};
-            babl_process (babl_fish (babl_format ("RGBA float"), format),
+            babl_process (babl_fish (babl_format ("RGBA float"), sampler->format),
                           color,
                           buf,
                           1);
@@ -115,7 +115,7 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
           {
             gfloat color[4] = {1.0, 1.0, 1.0, 1.0};
             babl_process (babl_fish (babl_format ("RGBA float"),
-                                     format),
+                                     sampler->format),
                           color,
                           buf,
                           1);
@@ -124,7 +124,7 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
 
         default:
         case GEGL_ABYSS_NONE:
-          memset (buf, 0x00, babl_format_get_bytes_per_pixel (format));
+          memset (buf, 0x00, babl_format_get_bytes_per_pixel (sampler->format));
           return;
       }
     }
@@ -138,16 +138,6 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
     gint indice_y    = gegl_tile_indice (tiledy, tile_height);
 
     GeglTile *tile = buffer->tile_storage->hot_tile;
-    gint px_size;
-
-    if (format != buffer->soft_format)
-      {
-        px_size = babl_format_get_bytes_per_pixel (buffer->soft_format);
-      }
-    else
-      {
-        px_size = babl_format_get_bytes_per_pixel (format);
-      }
 
     if (!(tile &&
           tile->x == indice_x &&
@@ -167,7 +157,7 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
         gint       offsetx = tiledx - tile_origin_x;
         gint       offsety = tiledy - tile_origin_y;
 
-        guchar *tp         = gegl_tile_get_data (tile) + (offsety * tile_width + offsetx) * px_size;
+        guchar *tp         = gegl_tile_get_data (tile) + (offsety * tile_width + offsetx) * nearest_sampler->buffer_bpp;
 
         babl_process (sampler->fish, tp, buf, 1);
       }
@@ -179,6 +169,7 @@ gegl_sampler_nearest_prepare (GeglSampler* restrict sampler)
 {
   if (!sampler->buffer) /* this happens when querying the extent of a sampler */
     return;
+  GEGL_SAMPLER_NEAREST (sampler)->buffer_bpp = babl_format_get_bytes_per_pixel (sampler->buffer->format);
 
   sampler->fish = babl_fish (sampler->buffer->soft_format, sampler->format);
 }
@@ -202,7 +193,6 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  sampler,
 #if 1
   return gegl_sampler_get_pixel (sampler,
            floorf(absolute_x), floorf(absolute_y),
-           sampler->format,
            output, repeat_mode);
 #else
 
