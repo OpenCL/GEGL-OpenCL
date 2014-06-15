@@ -56,7 +56,7 @@ property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 #include "gegl-op.h"
 #include <math.h>
 #include <stdlib.h>
-#include "envelopes2.h"
+#include "envelopes.h"
 
 #define RGAMMA 2.0
 
