@@ -64,13 +64,12 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
                        gpointer        data,
                        GeglAbyssPolicy repeat_mode)
 {
-  const GeglRectangle *abyss    = &buffer->abyss;
-  guchar              *buf      = data;
-  gint                 bpx_size = babl_format_get_bytes_per_pixel (format);
+  const GeglRectangle *abyss = &buffer->abyss;
+  guchar              *buf   = data;
 
   if (y <  abyss->y ||
-      y >= abyss->y + abyss->height ||
       x <  abyss->x ||
+      y >= abyss->y + abyss->height ||
       x >= abyss->x + abyss->width)
     {
       switch (repeat_mode)
@@ -108,7 +107,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
 
         default:
         case GEGL_ABYSS_NONE:
-          memset (buf, 0x00, bpx_size);
+          memset (buf, 0x00, babl_format_get_bytes_per_pixel (format));
           return;
       }
     }
@@ -132,7 +131,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
       }
     else
       {
-        px_size = bpx_size;
+        px_size = babl_format_get_bytes_per_pixel (format);
       }
 
     if (!(tile &&
@@ -1187,7 +1186,7 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
   if (format == NULL)
     format = buffer->soft_format;
 
-#if 0
+#if 1
   /* not thread-safe */
   if (scale == 1.0 &&
       rect &&
