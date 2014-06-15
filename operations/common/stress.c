@@ -26,19 +26,20 @@
 
 property_int (radius, _("Radius"), 300)
     description(_("Neighborhood taken into account, for enhancement ideal values are close to the longest side of the image, increasing this increases the runtime"))
-    value_range (2, 5000)
-    ui_range    (2, 2000)
+    value_range (2, 6000)
+    ui_range    (2, 1000)
+    ui_gamma    (1.6)
     ui_meta     ("unit", "pixel-distance")
 
 property_int (samples, _("Samples"), 5)
     description(_("Number of samples to do per iteration looking for the range of colors"))
-    value_range (2, 200)
-    ui_range    (2, 10)
+    value_range (2, 500)
+    ui_range    (3, 17)
 
 property_int (iterations, _("Iterations"), 5)
     description(_("Number of iterations, a higher number of iterations provides a less noisy rendering at a computational cost"))
-    value_range (1, 200)
-    ui_range    (1, 10)
+    value_range (1, 1000)
+    ui_range    (1, 30)
 
 /*
 
@@ -72,64 +73,64 @@ static void stress (GeglBuffer          *src,
                     gint                 iterations,
                     gdouble              rgamma)
 {
-  gint x,y;
-  gint    dst_offset=0;
-  gfloat *src_buf;
-  gfloat *dst_buf;
-  gint    inw = src_rect->width;
-  gint    inh = src_rect->height;
-  gint   outw = dst_rect->width;
+  const Babl *format = babl_format ("RGBA float");
+  
+  if (dst_rect->width > 0 && dst_rect->height > 0)
+  {
+    GeglBufferIterator *i = gegl_buffer_iterator_new (dst, dst_rect, 0, babl_format("RaGaBaA float"), GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+    GeglSampler *sampler = gegl_buffer_sampler_new (src, format, GEGL_SAMPLER_NEAREST);
 
-  /* this use of huge linear buffers should be avoided and
-   * most probably would lead to great speed ups
-   */
-
-  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
-  dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
-
-  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-  for (y=radius; y<dst_rect->height+radius; y++)
+    while (gegl_buffer_iterator_next (i))
     {
-      gint src_offset = (inw*y+radius)*4;
-      for (x=radius; x<outw+radius; x++)
-        {
-          gfloat *center_pix= src_buf + src_offset;
-          gfloat  min_envelope[4];
-          gfloat  max_envelope[4];
+      gint x,y;
+      gint    dst_offset=0;
+      gfloat *dst_buf = i->data[0];
 
-          compute_envelopes (src_buf,
-                             inw, inh,
-                             x, y,
-                             radius, samples,
-                             iterations,
-                             FALSE, /* same-spray */
-                             rgamma,
-                             min_envelope, max_envelope);
-           {
+      for (y=i->roi[0].y; y < i->roi[0].y + i->roi[0].height; y++)
+        {
+          for (x=i->roi[0].x; x < i->roi[0].x + i->roi[0].width; x++)
+            {
+              gfloat  min[4];
+              gfloat  max[4];
+              gfloat  pixel[4];
+
+              compute_envelopes (src, sampler,
+                                 x, y,
+                                 radius, samples,
+                                 iterations,
+                                 FALSE, /* same spray */
+                                 rgamma,
+                                 min, max, pixel, format);
+              {
+                /* this should be replaced with a better/faster projection of
+                 * pixel onto the vector spanned by min -> max, currently
+                 * computed by comparing the distance to min with the sum
+                 * of the distance to min/max.
+                 */
+
               gint c;
               for (c=0;c<3;c++)
                 {
-                  gfloat delta = max_envelope[c]-min_envelope[c];
+                  gfloat delta = max[c]-min[c];
                   if (delta != 0)
                     {
                       dst_buf[dst_offset+c] =
-                         (center_pix[c]-min_envelope[c])/delta;
+                         (pixel[c]-min[c])/delta;
                     }
                   else
                     {
                       dst_buf[dst_offset+c] = 0.5;
                     }
                 }
-           }
-          dst_buf[dst_offset+3] = src_buf[src_offset+3];
-          src_offset+=4;
-          dst_offset+=4;
-        }
+
+                dst_buf[dst_offset+3] = pixel[3];
+                dst_offset+=4;
+              }
+            }
+          }
     }
-  gegl_buffer_set (dst, dst_rect, 0, babl_format ("RGBA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (src_buf);
-  g_free (dst_buf);
+    g_object_unref (sampler);
+  }
 }
 
 static void prepare (GeglOperation *operation)

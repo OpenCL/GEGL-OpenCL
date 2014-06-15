@@ -28,7 +28,7 @@ property_int (radius, _("Radius"), 300)
   description(_("Neighborhood taken into account, this is the radius "
                      "in pixels taken into account when deciding which "
                      "colors map to which gray values"))
-  value_range (2, 3000)
+  value_range (2, 6000)
   ui_range    (2, 1000)
   ui_gamma    (1.6)
   ui_meta     ("unit", "pixel-distance")
@@ -36,13 +36,13 @@ property_int (radius, _("Radius"), 300)
 property_int  (samples, _("Samples"), 4)
   description (_("Number of samples to do per iteration looking for the range of colors"))
   value_range (1, 1000) 
-  ui_range    (1, 20)
+  ui_range    (3, 17)
 
 property_int (iterations, _("Iterations"), 10)
   description(_("Number of iterations, a higher number of iterations "
                      "provides less noisy results at a computational cost"))
   value_range (1, 1000)
-  ui_range (1, 20)
+  ui_range (1, 30)
 
 /*
 property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
@@ -56,7 +56,7 @@ property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 #include "gegl-op.h"
 #include <math.h>
 #include <stdlib.h>
-#include "envelopes.h"
+#include "envelopes2.h"
 
 #define RGAMMA 2.0
 
@@ -69,76 +69,71 @@ static void c2g (GeglBuffer          *src,
                  gint                 iterations,
                  gdouble              rgamma)
 {
-  gint x,y;
-  gint    dst_offset=0;
-  gfloat *src_buf;
-  gfloat *dst_buf;
-  gint    inw = src_rect->width;
-  gint    outw = dst_rect->width;
-  gint    inh = src_rect->height;
+  const Babl *format = babl_format ("RGBA float");
+  
+  if (dst_rect->width > 0 && dst_rect->height > 0)
+  {
+    GeglBufferIterator *i = gegl_buffer_iterator_new (dst, dst_rect, 0, babl_format("YA float"), GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+    GeglSampler *sampler = gegl_buffer_sampler_new (src, format, GEGL_SAMPLER_NEAREST);
 
-  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
-  dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 2);
-
-  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_NONE);
-
-  for (y=radius; y<dst_rect->height+radius; y++)
+    while (gegl_buffer_iterator_next (i))
     {
-      gint src_offset = (inw*y+radius)*4;
-      for (x=radius; x<outw+radius; x++)
+      gint x,y;
+      gint    dst_offset=0;
+      gfloat *dst_buf = i->data[0];
+
+      for (y=i->roi[0].y; y < i->roi[0].y + i->roi[0].height; y++)
         {
-          gfloat *pixel= src_buf + src_offset;
-          gfloat  min[4];
-          gfloat  max[4];
+          for (x=i->roi[0].x; x < i->roi[0].x + i->roi[0].width; x++)
+            {
+              gfloat  min[4];
+              gfloat  max[4];
+              gfloat  pixel[4];
 
-          compute_envelopes (src_buf,
-                             inw, inh,
-                             x, y,
-                             radius, samples,
-                             iterations,
-                             FALSE, /* same spray */
-                             rgamma,
-                             min, max);
-          {
-            /* this should be replaced with a better/faster projection of
-             * pixel onto the vector spanned by min -> max, currently
-             * computed by comparing the distance to min with the sum
-             * of the distance to min/max.
-             */
-
-            gfloat nominator = 0;
-            gfloat denominator = 0;
-            gint c;
-            for (c=0; c<3; c++)
+              compute_envelopes (src, sampler,
+                                 x, y,
+                                 radius, samples,
+                                 iterations,
+                                 FALSE, /* same spray */
+                                 rgamma,
+                                 min, max, pixel, format);
               {
-                nominator   += (pixel[c] - min[c]) * (pixel[c] - min[c]);
-                denominator += (pixel[c] - max[c]) * (pixel[c] - max[c]);
-              }
+                /* this should be replaced with a better/faster projection of
+                 * pixel onto the vector spanned by min -> max, currently
+                 * computed by comparing the distance to min with the sum
+                 * of the distance to min/max.
+                 */
 
-            nominator = sqrt (nominator);
-            denominator = sqrt (denominator);
-            denominator = nominator + denominator;
+                gfloat nominator = 0;
+                gfloat denominator = 0;
+                gint c;
+                for (c=0; c<3; c++)
+                  {
+                    nominator   += (pixel[c] - min[c]) * (pixel[c] - min[c]);
+                    denominator += (pixel[c] - max[c]) * (pixel[c] - max[c]);
+                  }
 
-            if (denominator>0.000)
-              {
-                dst_buf[dst_offset+0] = nominator/denominator;
-              }
-            else
-              {
-                /* shouldn't happen */
-                dst_buf[dst_offset+0] = 0.5;
-              }
-            dst_buf[dst_offset+1] = src_buf[src_offset+3];
+                nominator = sqrtf (nominator);
+                denominator = sqrtf (denominator);
+                denominator = nominator + denominator;
 
-            src_offset+=4;
-            dst_offset+=2;
+                if (denominator>0.000)
+                  {
+                    dst_buf[dst_offset+0] = nominator/denominator;
+                  }
+                else
+                  {
+                    /* shouldn't happen */
+                    dst_buf[dst_offset+0] = 0.5;
+                  }
+                dst_buf[dst_offset+1] = pixel[3];
+                dst_offset+=2;
+              }
+            }
           }
-        }
     }
-  gegl_buffer_set (dst, dst_rect, 0, babl_format ("YA float"), dst_buf, GEGL_AUTO_ROWSTRIDE);
-  g_free (src_buf);
-  g_free (dst_buf);
+    g_object_unref (sampler);
+  }
 }
 
 static void prepare (GeglOperation *operation)

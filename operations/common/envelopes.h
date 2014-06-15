@@ -52,43 +52,28 @@ static void compute_luts(gdouble rgamma)
 }
 
 static inline void
-sample (gfloat *buf,
-        gint    width,
-        gint    height,
-        gint    x,
-        gint    y,
-        gfloat *dst)
-{
-  gfloat *pixel = (buf + ((width * y) + x) * 4);
-  gint c;
-
-  for (c=0;c<4;c++)
-    {
-      dst[c] = pixel[c];
-    }
-}
-
-static inline void
-sample_min_max (gfloat *buf,
-                gint    width,
-                gint    height,
-                gint    x,
-                gint    y,
-                gint    radius,
-                gint    samples,
-                gfloat *min,
-                gfloat *max)
+sample_min_max (GeglBuffer  *buffer,
+                GeglSampler *sampler,
+                gint         x,
+                gint         y,
+                gint         radius,
+                gint         samples,
+                gfloat      *min,
+                gfloat      *max,
+                gfloat      *pixel,
+                const Babl  *format)
 {
   gfloat best_min[3];
   gfloat best_max[3];
-  gfloat *center_pix = (buf + (width * y + x) * 4);
-
+  gint width = gegl_buffer_get_width (buffer);
+  gint height = gegl_buffer_get_height (buffer);
+  
   gint i, c;
 
   for (c=0;c<3;c++)
     {
-      best_min[c]=center_pix[c];
-      best_max[c]=center_pix[c];
+      best_min[c]=pixel[c];
+      best_max[c]=pixel[c];
     }
 
   for (i=0; i<samples; i++)
@@ -119,7 +104,8 @@ retry:                      /* if we've sampled outside the valid image
         goto retry;
 
       {
-        gfloat *pixel = (buf + ((width * v) + u) * 4);
+        gfloat pixel[4];
+        gegl_sampler_get (sampler, u, v, NULL, (void*)(&pixel[0]), GEGL_ABYSS_CLAMP);
 
         if (pixel[3]>0.0) /* ignore fully transparent pixels */
           {
@@ -145,9 +131,8 @@ retry:                      /* if we've sampled outside the valid image
     }
 }
 
-static inline void compute_envelopes (gfloat  *buf,
-                                      gint     width,
-                                      gint     height,
+static inline void compute_envelopes (GeglBuffer *buffer,
+                                      GeglSampler *sampler,
                                       gint     x,
                                       gint     y,
                                       gint     radius,
@@ -156,13 +141,16 @@ static inline void compute_envelopes (gfloat  *buf,
                                       gboolean same_spray,
                                       gdouble  rgamma,
                                       gfloat  *min_envelope,
-                                      gfloat  *max_envelope)
+                                      gfloat  *max_envelope,
+                                      gfloat  *pixel,
+                                      const Babl *format)
 {
   gint    i;
   gint    c;
   gfloat  range_sum[4]               = {0,0,0,0};
   gfloat  relative_brightness_sum[4] = {0,0,0,0};
-  gfloat *pixel = buf + (width*y+x)*4;
+
+  gegl_sampler_get (sampler, x, y, NULL, (void*)(&pixel[0]), GEGL_ABYSS_CLAMP);
 
   /* compute lookuptables for the gamma, currently not used/exposed
    * as a tweakable property */
@@ -178,12 +166,11 @@ static inline void compute_envelopes (gfloat  *buf,
     {
       gfloat min[3], max[3];
 
-      sample_min_max (buf,
-                      width,
-                      height,
+      sample_min_max (buffer,
+                      sampler,
                       x, y,
                       radius, samples,
-                      min, max);
+                      min, max, pixel, format);
 
       for (c=0;c<3;c++)
         {
