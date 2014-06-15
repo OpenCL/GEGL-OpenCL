@@ -33,7 +33,7 @@ AM_CFLAGS = \
 perf-report: check
 
 check:
-	for a in $(noinst_PROGRAMS);do ./$$a;done;true
+	for a in $(noinst_PROGRAMS);do GEGL_PATH=../operations ./$$a;done;true
 
 test_rotate_SOURCES = test-rotate.c
 test_blur_SOURCES = test-blur.c
