@@ -201,10 +201,10 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  sampler,
    */
 
   const gfloat* restrict in_bptr =
-    gegl_sampler_get_ptr (self,
+    gegl_sampler_get_ptr (sampler,
                           (gint) floor ((double) absolute_x),
                           (gint) floor ((double) absolute_y),
                           repeat_mode);
-  babl_process (self->fish, in_bptr, output, 1);
+  babl_process (sampler->fish, in_bptr, output, 1);
 #endif
 }

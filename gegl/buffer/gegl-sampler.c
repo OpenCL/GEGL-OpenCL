@@ -143,7 +143,7 @@ gegl_sampler_prepare (GeglSampler *self)
 
   klass = GEGL_SAMPLER_GET_CLASS (self);
 
-  if (!self->buffer)
+  if (!self->buffer) /* happens when extent of sampler is queried */
     return;
   if (!self->format)
     self->format = self->buffer->soft_format;
@@ -183,8 +183,6 @@ gegl_sampler_set_buffer (GeglSampler *self, GeglBuffer *buffer)
 
   if (klass->set_buffer)
     klass->set_buffer (self, buffer);
-
-  gegl_sampler_prepare (self);
 }
 
 static void
