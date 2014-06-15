@@ -17,9 +17,16 @@
 
 #include "config.h"
 #include <math.h>
+#include <string.h>
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
+#include "gegl-buffer-types.h"
+#include "gegl-buffer.h"
+#include "gegl-buffer-private.h"
+#include "gegl-tile-storage.h"
+#include "gegl-tile-backend.h"
+
 #include "gegl-sampler-nearest.h"
 
 enum
@@ -29,12 +36,15 @@ enum
 };
 
 static void
-gegl_sampler_nearest_get (      GeglSampler*    restrict  self,
-                          const gdouble                   absolute_x,
-                          const gdouble                   absolute_y,
-                                GeglMatrix2              *scale,
-                                void*           restrict  output,
-                                GeglAbyssPolicy           repeat_mode);
+gegl_sampler_nearest_get (GeglSampler*    restrict self,
+                          const gdouble            absolute_x,
+                          const gdouble            absolute_y,
+                          GeglMatrix2             *scale,
+                          void*           restrict output,
+                          GeglAbyssPolicy          repeat_mode);
+
+static void
+gegl_sampler_nearest_prepare (GeglSampler*    restrict self);
 
 G_DEFINE_TYPE (GeglSamplerNearest, gegl_sampler_nearest, GEGL_TYPE_SAMPLER)
 
@@ -44,6 +54,7 @@ gegl_sampler_nearest_class_init (GeglSamplerNearestClass *klass)
   GeglSamplerClass *sampler_class = GEGL_SAMPLER_CLASS (klass);
 
   sampler_class->get = gegl_sampler_nearest_get;
+  sampler_class->prepare = gegl_sampler_nearest_prepare;
 }
 
 /*
@@ -59,6 +70,117 @@ gegl_sampler_nearest_init (GeglSamplerNearest *self)
   GEGL_SAMPLER (self)->context_rect[0].width = 1;
   GEGL_SAMPLER (self)->context_rect[0].height = 1;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+}
+
+static void inline
+gegl_sampler_get_pixel (GeglSampler    *sampler,
+                        gint            x,
+                        gint            y,
+                        const Babl     *format,
+                        gpointer        data,
+                        GeglAbyssPolicy repeat_mode)
+{
+  GeglBuffer *buffer = sampler->buffer;
+  const GeglRectangle *abyss = &buffer->abyss;
+  guchar              *buf   = data;
+
+  if (y <  abyss->y ||
+      x <  abyss->x ||
+      y >= abyss->y + abyss->height ||
+      x >= abyss->x + abyss->width)
+    {
+      switch (repeat_mode)
+      {
+        case GEGL_ABYSS_CLAMP:
+          x = CLAMP (x, abyss->x, abyss->x+abyss->width-1);
+          y = CLAMP (y, abyss->y, abyss->y+abyss->height-1);
+          break;
+
+        case GEGL_ABYSS_LOOP:
+          x = abyss->x + GEGL_REMAINDER (x - abyss->x, abyss->width);
+          y = abyss->y + GEGL_REMAINDER (y - abyss->y, abyss->height);
+          break;
+
+        case GEGL_ABYSS_BLACK:
+          {
+            gfloat color[4] = {0.0, 0.0, 0.0, 1.0};
+            babl_process (babl_fish (babl_format ("RGBA float"), format),
+                          color,
+                          buf,
+                          1);
+            return;
+          }
+
+        case GEGL_ABYSS_WHITE:
+          {
+            gfloat color[4] = {1.0, 1.0, 1.0, 1.0};
+            babl_process (babl_fish (babl_format ("RGBA float"),
+                                     format),
+                          color,
+                          buf,
+                          1);
+            return;
+          }
+
+        default:
+        case GEGL_ABYSS_NONE:
+          memset (buf, 0x00, babl_format_get_bytes_per_pixel (format));
+          return;
+      }
+    }
+
+  {
+    gint tile_width  = buffer->tile_width;
+    gint tile_height = buffer->tile_height;
+    gint tiledy      = y + buffer->shift_y;
+    gint tiledx      = x + buffer->shift_x;
+    gint indice_x    = gegl_tile_indice (tiledx, tile_width);
+    gint indice_y    = gegl_tile_indice (tiledy, tile_height);
+
+    GeglTile *tile = buffer->tile_storage->hot_tile;
+    gint px_size;
+
+    if (format != buffer->soft_format)
+      {
+        px_size = babl_format_get_bytes_per_pixel (buffer->soft_format);
+      }
+    else
+      {
+        px_size = babl_format_get_bytes_per_pixel (format);
+      }
+
+    if (!(tile &&
+          tile->x == indice_x &&
+          tile->y == indice_y))
+      {
+        _gegl_buffer_drop_hot_tile (buffer);
+        tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                          indice_x, indice_y,
+                                          0);
+        buffer->tile_storage->hot_tile = tile;
+      }
+
+    if (tile)
+      {
+        gint tile_origin_x = indice_x * tile_width;
+        gint tile_origin_y = indice_y * tile_height;
+        gint       offsetx = tiledx - tile_origin_x;
+        gint       offsety = tiledy - tile_origin_y;
+
+        guchar *tp         = gegl_tile_get_data (tile) + (offsety * tile_width + offsetx) * px_size;
+
+        babl_process (sampler->fish, tp, buf, 1);
+      }
+  }
+}
+
+static void
+gegl_sampler_nearest_prepare (GeglSampler* restrict sampler)
+{
+  if (!sampler->buffer) /* this happens when querying the extent of a sampler */
+    return;
+
+  sampler->fish = babl_fish (sampler->buffer->soft_format, sampler->format);
 }
 
 void
@@ -77,11 +199,11 @@ gegl_sampler_nearest_get (      GeglSampler*    restrict  sampler,
    * located at (.5,.5) (instead of (0,0) as it would be if absolute
    * positions were center-based).
    */
-
-#if 1 /* There probably is faster ways to do this, */
-  GeglRectangle rect = {floorf(absolute_x), floorf(absolute_y), 1, 1};
-  gegl_buffer_get (sampler->buffer, &rect, 1.0,
-                   sampler->format, output, 0, repeat_mode);
+#if 1
+  return gegl_sampler_get_pixel (sampler,
+           floorf(absolute_x), floorf(absolute_y),
+           sampler->format,
+           output, repeat_mode);
 #else
 
   /* this left in here; to make it easy to manually verify that the

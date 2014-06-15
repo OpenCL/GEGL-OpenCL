@@ -26,7 +26,11 @@
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
+#include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
+
+#include "gegl-buffer-private.h"
+
 
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
@@ -139,6 +143,11 @@ gegl_sampler_prepare (GeglSampler *self)
 
   klass = GEGL_SAMPLER_GET_CLASS (self);
 
+  if (!self->buffer)
+    return;
+  if (!self->format)
+    self->format = self->buffer->soft_format;
+
   if (klass->prepare)
     klass->prepare (self);
 
@@ -174,6 +183,8 @@ gegl_sampler_set_buffer (GeglSampler *self, GeglBuffer *buffer)
 
   if (klass->set_buffer)
     klass->set_buffer (self, buffer);
+
+  gegl_sampler_prepare (self);
 }
 
 static void
