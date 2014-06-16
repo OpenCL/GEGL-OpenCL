@@ -65,10 +65,10 @@ gegl_sampler_nearest_class_init (GeglSamplerNearestClass *klass)
 static void
 gegl_sampler_nearest_init (GeglSamplerNearest *self)
 {
-  GEGL_SAMPLER (self)->context_rect[0].x = 0;
-  GEGL_SAMPLER (self)->context_rect[0].y = 0;
-  GEGL_SAMPLER (self)->context_rect[0].width = 1;
-  GEGL_SAMPLER (self)->context_rect[0].height = 1;
+  GEGL_SAMPLER (self)->level[0].context_rect.x = 0;
+  GEGL_SAMPLER (self)->level[0].context_rect.y = 0;
+  GEGL_SAMPLER (self)->level[0].context_rect.width = 1;
+  GEGL_SAMPLER (self)->level[0].context_rect.height = 1;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }
 

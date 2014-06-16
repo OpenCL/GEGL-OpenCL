@@ -9,7 +9,7 @@ main (gint    argc,
 
   gegl_init (&argc, &argv);
 
-  buffer = test_buffer (2048, 1024, babl_format ("RGBA float"));
+  buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));
 
   gegl = gegl_node_new ();
   source = gegl_node_new_child (gegl, "operation", "gegl:buffer-source", "buffer", buffer, NULL);

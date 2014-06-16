@@ -442,6 +442,16 @@ void            gegl_buffer_sample_cleanup    (GeglBuffer *buffer);
  */
 GeglSamplerType gegl_sampler_type_from_string (const gchar *string);
 
+typedef void (*GeglSamplerGetFun)  (GeglSampler     *self,
+                                    gdouble          x,
+                                    gdouble          y,
+                                    GeglMatrix2     *scale,
+                                    void            *output,
+                                    GeglAbyssPolicy  repeat_mode);
+
+GeglSamplerGetFun gegl_sampler_get_fun (GeglSampler *sampler);
+
+
 /**
  * gegl_buffer_sampler_new: (skip)
  * @buffer: buffer to create a new sampler for

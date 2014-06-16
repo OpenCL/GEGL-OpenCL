@@ -113,10 +113,10 @@ gegl_sampler_cubic_init (GeglSamplerCubic *self)
    * right into left, and if the context_rect does not stretch far
    * enough on the left, pixel lookups will fail.
    */
-  GEGL_SAMPLER (self)->context_rect[0].x = -2;
-  GEGL_SAMPLER (self)->context_rect[0].y = -2;
-  GEGL_SAMPLER (self)->context_rect[0].width = 5;
-  GEGL_SAMPLER (self)->context_rect[0].height = 5;
+  GEGL_SAMPLER (self)->level[0].context_rect.x = -2;
+  GEGL_SAMPLER (self)->level[0].context_rect.y = -2;
+  GEGL_SAMPLER (self)->level[0].context_rect.width = 5;
+  GEGL_SAMPLER (self)->level[0].context_rect.height = 5;
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 
   self->b=1.0;

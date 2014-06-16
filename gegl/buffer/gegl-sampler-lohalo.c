@@ -374,45 +374,56 @@ gegl_sampler_lohalo_class_init (GeglSamplerLohaloClass *klass)
 static void
 gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
 {
-  GEGL_SAMPLER (self)->context_rect[0].x   = -LOHALO_OFFSET_0;
-  GEGL_SAMPLER (self)->context_rect[0].y   = -LOHALO_OFFSET_0;
-  GEGL_SAMPLER (self)->context_rect[0].width  = LOHALO_SIZE_0;
-  GEGL_SAMPLER (self)->context_rect[0].height = LOHALO_SIZE_0;
+  GeglSampler *sampler = GEGL_SAMPLER (self);
+  GeglSamplerLevel *level;
 
-  GEGL_SAMPLER (self)->context_rect[1].x   = -LOHALO_OFFSET_1;
-  GEGL_SAMPLER (self)->context_rect[1].y   = -LOHALO_OFFSET_1;
-  GEGL_SAMPLER (self)->context_rect[1].width  = LOHALO_SIZE_1;
-  GEGL_SAMPLER (self)->context_rect[1].height = LOHALO_SIZE_1;
+  level = &sampler->level[0];
+  level->context_rect.x   = -LOHALO_OFFSET_0;
+  level->context_rect.y   = -LOHALO_OFFSET_0;
+  level->context_rect.width  = LOHALO_SIZE_0;
+  level->context_rect.height = LOHALO_SIZE_0;
 
-  GEGL_SAMPLER (self)->context_rect[2].x   = -LOHALO_OFFSET_2;
-  GEGL_SAMPLER (self)->context_rect[2].y   = -LOHALO_OFFSET_2;
-  GEGL_SAMPLER (self)->context_rect[2].width  = LOHALO_SIZE_2;
-  GEGL_SAMPLER (self)->context_rect[2].height = LOHALO_SIZE_2;
+  level = &sampler->level[1];
+  level->context_rect.x   = -LOHALO_OFFSET_1;
+  level->context_rect.y   = -LOHALO_OFFSET_1;
+  level->context_rect.width  = LOHALO_SIZE_1;
+  level->context_rect.height = LOHALO_SIZE_1;
 
-  GEGL_SAMPLER (self)->context_rect[3].x   = -LOHALO_OFFSET_3;
-  GEGL_SAMPLER (self)->context_rect[3].y   = -LOHALO_OFFSET_3;
-  GEGL_SAMPLER (self)->context_rect[3].width  = LOHALO_SIZE_3;
-  GEGL_SAMPLER (self)->context_rect[3].height = LOHALO_SIZE_3;
+  level = &sampler->level[2];
+  level->context_rect.x   = -LOHALO_OFFSET_2;
+  level->context_rect.y   = -LOHALO_OFFSET_2;
+  level->context_rect.width  = LOHALO_SIZE_2;
+  level->context_rect.height = LOHALO_SIZE_2;
 
-  GEGL_SAMPLER (self)->context_rect[4].x   = -LOHALO_OFFSET_4;
-  GEGL_SAMPLER (self)->context_rect[4].y   = -LOHALO_OFFSET_4;
-  GEGL_SAMPLER (self)->context_rect[4].width  = LOHALO_SIZE_4;
-  GEGL_SAMPLER (self)->context_rect[4].height = LOHALO_SIZE_4;
+  level = &sampler->level[3];
+  level->context_rect.x   = -LOHALO_OFFSET_3;
+  level->context_rect.y   = -LOHALO_OFFSET_3;
+  level->context_rect.width  = LOHALO_SIZE_3;
+  level->context_rect.height = LOHALO_SIZE_3;
 
-  GEGL_SAMPLER (self)->context_rect[5].x   = -LOHALO_OFFSET_5;
-  GEGL_SAMPLER (self)->context_rect[5].y   = -LOHALO_OFFSET_5;
-  GEGL_SAMPLER (self)->context_rect[5].width  = LOHALO_SIZE_5;
-  GEGL_SAMPLER (self)->context_rect[5].height = LOHALO_SIZE_5;
+  level = &sampler->level[4];
+  level->context_rect.x   = -LOHALO_OFFSET_4;
+  level->context_rect.y   = -LOHALO_OFFSET_4;
+  level->context_rect.width  = LOHALO_SIZE_4;
+  level->context_rect.height = LOHALO_SIZE_4;
 
-  GEGL_SAMPLER (self)->context_rect[6].x   = -LOHALO_OFFSET_6;
-  GEGL_SAMPLER (self)->context_rect[6].y   = -LOHALO_OFFSET_6;
-  GEGL_SAMPLER (self)->context_rect[6].width  = LOHALO_SIZE_6;
-  GEGL_SAMPLER (self)->context_rect[6].height = LOHALO_SIZE_6;
+  level = &sampler->level[5];
+  level->context_rect.x   = -LOHALO_OFFSET_5;
+  level->context_rect.y   = -LOHALO_OFFSET_5;
+  level->context_rect.width  = LOHALO_SIZE_5;
+  level->context_rect.height = LOHALO_SIZE_5;
 
-  GEGL_SAMPLER (self)->context_rect[7].x   = -LOHALO_OFFSET_7;
-  GEGL_SAMPLER (self)->context_rect[7].y   = -LOHALO_OFFSET_7;
-  GEGL_SAMPLER (self)->context_rect[7].width  = LOHALO_SIZE_7;
-  GEGL_SAMPLER (self)->context_rect[7].height = LOHALO_SIZE_7;
+  level = &sampler->level[6];
+  level->context_rect.x   = -LOHALO_OFFSET_6;
+  level->context_rect.y   = -LOHALO_OFFSET_6;
+  level->context_rect.width  = LOHALO_SIZE_6;
+  level->context_rect.height = LOHALO_SIZE_6;
+
+  level = &sampler->level[7];
+  level->context_rect.x   = -LOHALO_OFFSET_7;
+  level->context_rect.y   = -LOHALO_OFFSET_7;
+  level->context_rect.width  = LOHALO_SIZE_7;
+  level->context_rect.height = LOHALO_SIZE_7;
 
   GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
 }

@@ -40,101 +40,128 @@ G_BEGIN_DECLS
  * twice as wide as they are tall.
  */
 
-//128 20.42 23.23
-// 96 26.91 30.39
-// 64 34.32 41.52
-// 48 38.66 46.67
-// 32 43.17 53.78
-// 24 45.38 56.11
-// 20 45.18 56.70
-// 20 45.41 56.32
-// 19 45.75 57.81
-// 19 45.81 57.69
-// 18 47.16 60.02
-// 18 47.19 60.36
-// 17 46.43 58.73
-// 17 46.61 58.85
-// 16 46.44 58.73
-//  8 43.25 54
-//  4 33.11 39
-
-#define GEGL_SAMPLER_MAXIMUM_HEIGHT (27)
+#define GEGL_SAMPLER_MAXIMUM_HEIGHT (64)
 #define GEGL_SAMPLER_MAXIMUM_WIDTH (GEGL_SAMPLER_MAXIMUM_HEIGHT)
+#define GEGL_SAMPLER_BPP 16
+#define GEGL_SAMPLER_ROWSTRIDE (GEGL_SAMPLER_MAXIMUM_WIDTH * GEGL_SAMPLER_BPP)
 
 typedef struct _GeglSamplerClass GeglSamplerClass;
 
+typedef struct GeglSamplerLevel
+{
+  GeglRectangle  context_rect;
+  gpointer       sampler_buffer;
+  GeglRectangle  sampler_rectangle;
+
+  gint           last_x;
+  gint           last_y;
+  float          x_delta;
+  float          y_delta;
+  float          x_magnitude;
+  float          y_magnitude;
+} GeglSamplerLevel;
+
 struct _GeglSampler
 {
-  GObject       parent_instance;
-  void (* get) (GeglSampler     *self,
-                gdouble          x,
-                gdouble          y,
-                GeglMatrix2     *scale,
-                void            *output,
-                GeglAbyssPolicy  repeat_mode);
-  /* we cache the getter in the instance, (being able to return the
-     function pointer itself and cache it outside the calling loop
-     would be even quicker.
-   */
+  GObject           parent_instance;
+  GeglSamplerGetFun get;
 
   /*< private >*/
   GeglBuffer    *buffer;
   const Babl    *format;
   const Babl    *interpolate_format;
   const Babl    *fish;
-  GeglRectangle  context_rect[GEGL_SAMPLER_MIPMAP_LEVELS];
-  gpointer       sampler_buffer[GEGL_SAMPLER_MIPMAP_LEVELS];
-  GeglRectangle  sampler_rectangle[GEGL_SAMPLER_MIPMAP_LEVELS];
-  gdouble        x; /* mirrors the currently requested */
-  gdouble        y; /* coordinates in the instance     */
 
-  gpointer       padding[8]; /* eat from the padding if adding to the struct */
+  GeglSamplerLevel level[GEGL_SAMPLER_MIPMAP_LEVELS];
 };
+
+typedef void (*GeglSamplerGetFun)  (GeglSampler     *self,
+                                    gdouble          x,
+                                    gdouble          y,
+                                    GeglMatrix2     *scale,
+                                    void            *output,
+                                    GeglAbyssPolicy  repeat_mode);
 
 struct _GeglSamplerClass
 {
   GObjectClass  parent_class;
 
   void (* prepare)   (GeglSampler     *self);
-  void (* get)       (GeglSampler     *self,
-                      gdouble          x,
-                      gdouble          y,
-                      GeglMatrix2     *scale,
-                      void            *output,
-                      GeglAbyssPolicy  repeat_mode);
- void  (*set_buffer) (GeglSampler     *self,
-                      GeglBuffer      *buffer);
-
- gpointer       padding[8]; /* eat from the padding if adding to the struct */
+  GeglSamplerGetFun   get;
+  void  (*set_buffer) (GeglSampler     *self,
+                       GeglBuffer      *buffer);
 };
 
 GType gegl_sampler_get_type    (void) G_GNUC_CONST;
 
 /* virtual method invokers */
-void  gegl_sampler_prepare     (GeglSampler *self);
-void  gegl_sampler_set_buffer  (GeglSampler *self,
-                                GeglBuffer  *buffer);
+void  gegl_sampler_prepare             (GeglSampler *self);
+void  gegl_sampler_set_buffer          (GeglSampler *self,
+                                        GeglBuffer  *buffer);
 
-void  gegl_sampler_get         (GeglSampler   *self,
-                                gdouble        x,
-                                gdouble        y,
-                                GeglMatrix2   *scale,
-                                void          *output,
-                                GeglAbyssPolicy repeat_mode);
+GeglSamplerGetFun gegl_sampler_get_fun (GeglSampler    *sampler);
 
-gfloat * gegl_sampler_get_from_buffer (GeglSampler *const sampler,
-                                       const gint         x,
-                                       const gint         y,
-                                       GeglAbyssPolicy    repeat_mode);
-gfloat * gegl_sampler_get_from_mipmap (GeglSampler *const sampler,
-                                       const gint         x,
-                                       const gint         y,
-                                       const gint         level,
-                                       GeglAbyssPolicy    repeat_mode);
-gfloat * gegl_sampler_get_ptr         (GeglSampler *const sampler,
-                                       const gint         x,
-                                       const gint         y,
-                                       GeglAbyssPolicy    repeat_mode);
+gfloat * gegl_sampler_get_from_buffer (GeglSampler     *sampler,
+                                       gint             x,
+                                       gint             y,
+                                       GeglAbyssPolicy  repeat_mode);
+gfloat * gegl_sampler_get_from_mipmap (GeglSampler     *sampler,
+                                       gint             x,
+                                       gint             y,
+                                       gint             level,
+                                       GeglAbyssPolicy  repeat_mode);
+gfloat * _gegl_sampler_get_ptr        (GeglSampler     *sampler,
+                                       gint             x,
+                                       gint             y,
+                                       GeglAbyssPolicy  repeat_mode);
+
+GeglRectangle _gegl_sampler_compute_rectangle (GeglSampler *sampler,
+                                               gint         x,
+                                               gint         y,
+                                               gint         level);
+
+/*
+ * Gets a pointer to the center pixel, within a buffer that has a
+ * rowstride of GEGL_SAMPLER_MAXIMUM_WIDTH * 16 (16 is the bpp of RaGaBaA
+ * float).
+ *
+ * inlining this function gives a 4-5% performance gain for affine ops for
+ * linear/cubic sampling.
+ */
+static inline gfloat *
+gegl_sampler_get_ptr (GeglSampler    *sampler,
+                      gint            x,
+                      gint            y,
+                      GeglAbyssPolicy repeat_mode)
+{
+  GeglSamplerLevel *level = &sampler->level[0];
+  if ((x + level->context_rect.x < level->sampler_rectangle.x)
+   || (y + level->context_rect.y < level->sampler_rectangle.y)
+   || (x + level->context_rect.x + level->context_rect.width
+     > level->sampler_rectangle.x + level->sampler_rectangle.width)
+   || (y + level->context_rect.y + level->context_rect.height
+     > level->sampler_rectangle.y + level->sampler_rectangle.height))
+    {
+      level->sampler_rectangle = _gegl_sampler_compute_rectangle (sampler, x, y, 0);
+
+      gegl_buffer_get (sampler->buffer,
+                       &level->sampler_rectangle,
+                       1.0,
+                       sampler->interpolate_format,
+                       level->sampler_buffer,
+                       GEGL_SAMPLER_MAXIMUM_WIDTH * GEGL_SAMPLER_BPP,
+                       repeat_mode);
+    }
+
+  {
+    gint    dx         = x - level->sampler_rectangle.x;
+    gint    dy         = y - level->sampler_rectangle.y;
+    gint    sof        = (dx + dy * GEGL_SAMPLER_MAXIMUM_WIDTH) * GEGL_SAMPLER_BPP;
+    guchar *buffer_ptr = (guchar *)level->sampler_buffer;
+
+    return (gfloat*)(buffer_ptr+sof);
+  }
+}
 
 G_END_DECLS
 
