@@ -8,6 +8,7 @@ LIBS = $(op_libs)
 
 opdir = $(ext_dir)
 op_LTLIBRARIES = \
+	cache.la \
 	clone.la \
 	cast-format.la \
 	convert-format.la \
