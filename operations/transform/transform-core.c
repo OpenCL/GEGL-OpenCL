@@ -701,6 +701,7 @@ transform_affine (GeglBuffer  *dest,
                   gint         level)
 {
   const Babl  *format = babl_format ("RaGaBaA float");
+  GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
   GeglMatrix3  inverse;
   GeglMatrix2  inverse_jacobian;
   gint         dest_pixels;
@@ -810,18 +811,26 @@ transform_affine (GeglBuffer  *dest,
      * irrespective of orientation ("left-hand" VS "right-hand")
      * issues.
      */
-    const gint flip_x =
+
+#if 0
+    const gint flip_x = 
       inverse.coeff [0][0] + inverse.coeff [1][0] < (gdouble) 0.
       ?
       (gint) 1
       :
       (gint) 0;
-    const gint flip_y =
+    const gint flip_y = 
       inverse.coeff [0][1] + inverse.coeff [1][1] < (gdouble) 0.
       ?
       (gint) 1
       :
       (gint) 0;
+#else
+    /* XXX: not doing the flipping tricks is faster with the adaptive
+     *      sampler cache that has been added */
+    const gint flip_x = 0;
+    const gint flip_y = 0;
+#endif
 
     /*
      * Hoist most of what can out of the while loop:
@@ -866,12 +875,11 @@ transform_affine (GeglBuffer  *dest,
 
           gint x = roi->width;
           do {
-            gegl_sampler_get (sampler,
-                              u_float,
-                              v_float,
-                              &inverse_jacobian,
-                              dest_ptr,
-                              GEGL_ABYSS_NONE);
+            sampler_get_fun (sampler,
+                             u_float, v_float,
+                             &inverse_jacobian,
+                             dest_ptr,
+                             GEGL_ABYSS_NONE);
             dest_ptr += (gint) 4 - (gint) 8 * flip_x;
 
             u_float += inverse_jacobian.coeff [0][0];
@@ -895,6 +903,7 @@ transform_generic (GeglBuffer  *dest,
                    gint         level)
 {
   const Babl          *format = babl_format ("RaGaBaA float");
+  GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
   GeglBufferIterator  *i;
   const GeglRectangle *dest_extent;
   GeglMatrix3          inverse;
@@ -1030,12 +1039,11 @@ transform_generic (GeglBuffer  *dest,
           inverse_jacobian.coeff [1][1] =
             (inverse.coeff [1][1] - inverse.coeff [2][1] * v) * w_recip;
 
-          gegl_sampler_get (sampler,
-                            u,
-                            v,
-                            &inverse_jacobian,
-                            dest_ptr,
-                            GEGL_ABYSS_NONE);
+          sampler_get_fun (sampler,
+                           u, v,
+                           &inverse_jacobian,
+                           dest_ptr,
+                           GEGL_ABYSS_NONE);
 
           dest_ptr += flip_x * (gint) 4;
           u_float += flip_x * inverse.coeff [0][0];

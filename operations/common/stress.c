@@ -180,7 +180,7 @@ static const gchar *composition =
     "<node operation='gegl:stress'>"
     "  <params>"
     "    <param name='radius'>200</param>"
-    "    <param name='iterations'>90</param>"
+    "    <param name='iterations'>30</param>"
     "  </params>"
     "</node>"
     "<node operation='gegl:load'>"

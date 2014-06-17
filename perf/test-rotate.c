@@ -26,7 +26,7 @@ main (gint    argc,
 
   gegl = gegl_node_new ();
   source = gegl_node_new_child (gegl, "operation", "gegl:buffer-source", "buffer", buffer, NULL);
-  rotate = gegl_node_new_child (gegl, "operation", "gegl:rotate", "degrees", 4.0, "sampler", GEGL_SAMPLER_NEAREST, NULL);
+  rotate = gegl_node_new_child (gegl, "operation", "gegl:rotate", "degrees", 4.0, "sampler", GEGL_SAMPLER_NOHALO, NULL);
   sink = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink", "buffer", &buffer2, NULL);
 
   gegl_node_link_many (source, rotate, sink, NULL);

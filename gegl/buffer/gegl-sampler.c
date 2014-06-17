@@ -124,7 +124,7 @@ gegl_sampler_init (GeglSampler *sampler)
 
   sampler->level[0].sampler_buffer =
     g_malloc0 (GEGL_SAMPLER_MAXIMUM_WIDTH *
-               GEGL_SAMPLER_MAXIMUM_HEIGHT * 16);
+               GEGL_SAMPLER_MAXIMUM_HEIGHT * GEGL_SAMPLER_BPP);
 }
 
 void
@@ -260,10 +260,6 @@ GeglRectangle _gegl_sampler_compute_rectangle (GeglSampler *sampler,
          perhaps working better on small local non-linear access patterns
        */
 
-      if (rectangle.width >= GEGL_SAMPLER_MAXIMUM_WIDTH)
-        rectangle.width = GEGL_SAMPLER_MAXIMUM_WIDTH;
-      if (rectangle.height >= GEGL_SAMPLER_MAXIMUM_HEIGHT)
-        rectangle.height = GEGL_SAMPLER_MAXIMUM_HEIGHT;
 
 
       /* align rectangle corner we've likely entered with sampled pixel
@@ -293,6 +289,11 @@ GeglRectangle _gegl_sampler_compute_rectangle (GeglSampler *sampler,
                         - (rectangle.height - level->context_rect.y)/4;
     }
 
+  if (rectangle.width >= GEGL_SAMPLER_MAXIMUM_WIDTH)
+    rectangle.width = GEGL_SAMPLER_MAXIMUM_WIDTH;
+  if (rectangle.height >= GEGL_SAMPLER_MAXIMUM_HEIGHT)
+    rectangle.height = GEGL_SAMPLER_MAXIMUM_HEIGHT;
+
   g_assert (level->context_rect.width  <= rectangle.width);
   g_assert (level->context_rect.height <= rectangle.height);
 
@@ -321,6 +322,7 @@ gegl_sampler_get_from_mipmap (GeglSampler    *sampler,
   g_assert (level->context_rect.width  <= maximum_width);
   g_assert (level->context_rect.height <= maximum_height);
 
+
   if ((level->sampler_buffer == NULL)
    || (x + level->context_rect.x < level->sampler_rectangle.x)
    || (y + level->context_rect.y < level->sampler_rectangle.y)
@@ -335,9 +337,10 @@ gegl_sampler_get_from_mipmap (GeglSampler    *sampler,
        */
       level->sampler_rectangle = _gegl_sampler_compute_rectangle (sampler, x, y, 
                                                                   level_no);
+      if (!level->sampler_buffer)
+        level->sampler_buffer =
+          g_malloc0 (GEGL_SAMPLER_ROWSTRIDE * GEGL_SAMPLER_MAXIMUM_HEIGHT);
 
-      level->sampler_buffer =
-        g_malloc0 (GEGL_SAMPLER_ROWSTRIDE * GEGL_SAMPLER_MAXIMUM_HEIGHT);
 
       gegl_buffer_get (sampler->buffer,
                        &level->sampler_rectangle,
