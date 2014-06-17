@@ -294,3 +294,22 @@ gegl_cache_computed (GeglCache           *self,
   g_signal_emit (self, gegl_cache_signals[COMPUTED], 0, rect, NULL);
   g_mutex_unlock (&self->mutex);
 }
+
+gboolean
+gegl_buffer_list_valid_rectangles (GeglBuffer     *buffer,
+                                   GeglRectangle **rectangles,
+                                   gint           *n_rectangles);
+
+gboolean
+gegl_buffer_list_valid_rectangles (GeglBuffer     *buffer,
+                                   GeglRectangle **rectangles,
+                                   gint           *n_rectangles)
+{
+  GeglCache *cache;
+  g_return_val_if_fail (GEGL_IS_CACHE (buffer), FALSE);
+  cache = GEGL_CACHE (buffer);
+
+  gegl_region_get_rectangles (cache->valid_region, rectangles, n_rectangles);
+
+  return TRUE;
+}
