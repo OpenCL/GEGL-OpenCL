@@ -119,6 +119,7 @@ operations/common/weighted-blend.c
 operations/common/whirl-pinch.c
 operations/common/wind.c
 operations/common/write-buffer.c
+operations/core/cache.c
 operations/core/clone.c
 operations/core/cast-format.c
 operations/core/convert-format.c
