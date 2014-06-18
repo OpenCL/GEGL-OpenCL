@@ -1159,12 +1159,25 @@ void
 gegl_buffer_emit_changed_signal (GeglBuffer          *buffer,
                                  const GeglRectangle *rect)
 {
-  GeglRectangle copy;
+  if (buffer->changed_signal_connections)
+  {
+    GeglRectangle copy;
 
-  if (rect == NULL)
-    copy = *gegl_buffer_get_extent (buffer);
-  else
-    copy = *rect;
+    if (rect == NULL)
+      copy = *gegl_buffer_get_extent (buffer);
+    else
+      copy = *rect;
 
-  g_signal_emit (buffer, gegl_buffer_signals[CHANGED], 0, &copy, NULL);
+    g_signal_emit (buffer, gegl_buffer_signals[CHANGED], 0, &copy, NULL);
+  }
 }
+
+glong gegl_buffer_signal_connect (GeglBuffer *buffer,
+                                  const char *detailed_signal,
+                                  GCallback   c_handler,
+                                  gpointer    data)
+{
+  buffer->changed_signal_connections++;
+  return g_signal_connect(buffer, detailed_signal, c_handler, data);
+}
+

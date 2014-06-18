@@ -82,7 +82,7 @@ test_buffer_change_signal_on_set(void)
     GeglRectangle rect = {0, 0, 100, 100};
     char *tmp = g_malloc(rect.height*rect.width*1*4);
     
-    g_signal_connect(test_case->buffer, "changed", (GCallback)handle_buffer_changed, test_case);
+    gegl_buffer_signal_connect(test_case->buffer, "changed", (GCallback)handle_buffer_changed, test_case);
     
     gegl_buffer_set(test_case->buffer, &rect, 1, test_case->buffer_format, tmp, GEGL_AUTO_ROWSTRIDE);
     
@@ -107,7 +107,7 @@ test_buffer_change_signal_with_iter(guint access_method, guint expected_signal_c
     GeglBufferIterator *gi = gegl_buffer_iterator_new(test_case->buffer, &rect, 0,
                                 test_case->buffer_format, access_method, GEGL_ABYSS_NONE);
     
-    g_signal_connect(test_case->buffer, "changed", (GCallback)handle_buffer_changed, test_case);
+    gegl_buffer_signal_connect(test_case->buffer, "changed", (GCallback)handle_buffer_changed, test_case);
 
     while (gegl_buffer_iterator_next(gi)) {
     }

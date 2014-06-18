@@ -72,6 +72,8 @@ struct _GeglBuffer
   gint              alloc_stack_size;
 
   GeglTileBackend  *backend;
+
+  gint              changed_signal_connections;
 };
 
 struct _GeglBufferClass

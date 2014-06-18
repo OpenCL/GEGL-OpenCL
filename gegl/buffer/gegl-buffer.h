@@ -610,6 +610,28 @@ void            gegl_buffer_linear_close      (GeglBuffer    *buffer,
  */
 const GeglRectangle * gegl_buffer_get_abyss   (GeglBuffer           *buffer);
 
+
+
+/**
+ * gegl_buffer_signal_connect:
+ * @buffer: a GeglBuffer
+ * @detailed_signal: only "changed" expected for now
+ * @c_handler: c function callback
+ * @data: user data:
+ *
+ * This function should be used instead of g_signal_connect when connecting to
+ * the GeglBuffer::changed signal handler, GeglBuffer contains additional
+ * machinery to avoid the overhead of changes when no signal handler have been
+ * connected, if regular g_signal_connect is used; then no signals will be
+ * emitted.
+ *
+ * Returns: an handle like g_signal_connect.
+ */
+glong gegl_buffer_signal_connect (GeglBuffer *buffer,
+                                  const char *detailed_signal,
+                                  GCallback   c_handler,
+                                  gpointer    data);
+
 #include <gegl-buffer-iterator.h>
 
 G_END_DECLS
