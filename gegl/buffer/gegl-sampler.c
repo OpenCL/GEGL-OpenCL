@@ -434,27 +434,6 @@ set_buffer (GeglSampler *self, GeglBuffer *buffer)
     }
 }
 
-GeglSamplerType
-gegl_sampler_type_from_string (const gchar *string)
-{
-  if (g_str_equal (string, "nearest") || g_str_equal (string, "none"))
-    return GEGL_SAMPLER_NEAREST;
-
-  if (g_str_equal (string, "linear")  || g_str_equal (string, "bilinear"))
-    return GEGL_SAMPLER_LINEAR;
-
-  if (g_str_equal (string, "cubic")   || g_str_equal (string, "bicubic"))
-    return GEGL_SAMPLER_CUBIC;
-
-  if (g_str_equal (string, "nohalo"))
-    return GEGL_SAMPLER_NOHALO;
-
-  if (g_str_equal (string, "lohalo"))
-    return GEGL_SAMPLER_LOHALO;
-
-  return GEGL_SAMPLER_LINEAR;
-}
-
 static inline GType
 gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
 {
