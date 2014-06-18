@@ -127,9 +127,10 @@ const char *gegl_cl_errstring(cl_int err) {
   return strings[-err];
 }
 
+gboolean _gegl_cl_is_accelerated;
+
 typedef struct
 {
-  gboolean         is_accelerated;
   gboolean         is_loaded;
   gboolean         have_opengl;
   gboolean         hard_disable;
@@ -155,11 +156,6 @@ static cl_device_type gegl_cl_default_device_type = CL_DEVICE_TYPE_DEFAULT;
 static GeglClState cl_state = { 0, };
 static GHashTable *cl_program_hash = NULL;
 
-gboolean
-gegl_cl_is_accelerated (void)
-{
-  return cl_state.is_accelerated;
-}
 
 gboolean
 gegl_cl_has_gl_sharing (void)
@@ -170,14 +166,14 @@ gegl_cl_has_gl_sharing (void)
 void
 gegl_cl_disable (void)
 {
-  cl_state.is_accelerated = FALSE;
+  _gegl_cl_is_accelerated = FALSE;
 }
 
 void
 gegl_cl_hard_disable (void)
 {
   cl_state.hard_disable = TRUE;
-  cl_state.is_accelerated = FALSE;
+  _gegl_cl_is_accelerated = FALSE;
 }
 
 cl_platform_id
@@ -744,7 +740,7 @@ gegl_cl_init_common (cl_device_type          requested_device_type,
 
       if (gl_sharing)
         cl_state.have_opengl = TRUE;
-      cl_state.is_accelerated = TRUE;
+      _gegl_cl_is_accelerated = TRUE;
       cl_state.is_loaded = TRUE;
 
       /* XXX: this dict is being leaked */
@@ -756,7 +752,7 @@ gegl_cl_init_common (cl_device_type          requested_device_type,
     }
 
   if (cl_state.is_loaded)
-    cl_state.is_accelerated = TRUE;
+    _gegl_cl_is_accelerated = TRUE;
 
   return TRUE;
 }
