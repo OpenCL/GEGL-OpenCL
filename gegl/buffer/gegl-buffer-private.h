@@ -71,9 +71,10 @@ struct _GeglBuffer
                                           useful for debugging */
   gint              alloc_stack_size;
 
-  GeglTileBackend  *backend;
+  gint              changed_signal_connections; /* to avoid firing changed signals
+                                                   with no listeners */
 
-  gint              changed_signal_connections;
+  GeglTileBackend  *backend;
 };
 
 struct _GeglBufferClass
@@ -105,12 +106,14 @@ gboolean          gegl_buffer_unlock      (GeglBuffer *buffer);
 
 void              gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                                             const GeglRectangle *rect,
+                                            gint                 level,
                                             const Babl          *format,
                                             const void          *src,
                                             gint                 rowstride);
 
 void              gegl_buffer_set_unlocked_no_notify (GeglBuffer          *buffer,
                                                       const GeglRectangle *rect,
+                                                      gint                 level,
                                                       const Babl          *format,
                                                       const void          *src,
                                                       gint                 rowstride);

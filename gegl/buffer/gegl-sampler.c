@@ -72,7 +72,7 @@ static void buffer_contents_changed (GeglBuffer          *buffer,
                                      const GeglRectangle *changed_rect,
                                      gpointer             userdata);
 
-GType gegl_sampler_gtype_from_enum  (GeglSamplerType      sampler_type);
+static GType gegl_sampler_gtype_from_enum  (GeglSamplerType      sampler_type);
 
 G_DEFINE_TYPE (GeglSampler, gegl_sampler, G_TYPE_OBJECT)
 
@@ -455,7 +455,7 @@ gegl_sampler_type_from_string (const gchar *string)
   return GEGL_SAMPLER_LINEAR;
 }
 
-GType
+static inline GType
 gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
 {
   switch (sampler_type)
@@ -473,6 +473,53 @@ gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
       default:
         return GEGL_TYPE_SAMPLER_LINEAR;
     }
+}
+
+void
+gegl_buffer_sample (GeglBuffer       *buffer,
+                    gdouble           x,
+                    gdouble           y,
+                    GeglMatrix2      *scale,
+                    gpointer          dest,
+                    const Babl       *format,
+                    GeglSamplerType   sampler_type,
+                    GeglAbyssPolicy   repeat_mode)
+{
+  GType desired_type;
+  if (sampler_type == GEGL_SAMPLER_NEAREST && format == buffer->soft_format)
+  {
+    GeglRectangle rect = {floorf (x), floorf(y), 1, 1};
+    gegl_buffer_get (buffer, &rect, 1, NULL, dest, GEGL_AUTO_ROWSTRIDE, repeat_mode);
+    return;
+  }
+
+  if (!format)
+    format = buffer->soft_format;
+
+  desired_type = gegl_sampler_gtype_from_enum (sampler_type);
+
+  /* unset the cached sampler if it dosn't match the needs */
+  if (buffer->sampler != NULL &&
+     (!G_TYPE_CHECK_INSTANCE_TYPE (buffer->sampler, desired_type) ||
+       buffer->sampler_format != format
+      ))
+    {
+      g_object_unref (buffer->sampler);
+      buffer->sampler = NULL;
+    }
+
+  /* look up appropriate sampler,. */
+  if (buffer->sampler == NULL)
+    {
+      buffer->sampler = g_object_new (desired_type,
+                                      "buffer", buffer,
+                                      "format", format,
+                                      NULL);
+      buffer->sampler_format = format;
+      gegl_sampler_prepare (buffer->sampler);
+    }
+
+  buffer->sampler->get(buffer->sampler, x, y, scale, dest, repeat_mode);
 }
 
 GeglSampler *

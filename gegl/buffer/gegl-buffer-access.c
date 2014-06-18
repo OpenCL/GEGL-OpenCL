@@ -56,7 +56,7 @@ static void gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
                                                gint                 level,
                                                GeglAbyssPolicy      repeat_mode);
 
-static void
+static void inline
 gegl_buffer_get_pixel (GeglBuffer     *buffer,
                        gint            x,
                        gint            y,
@@ -162,6 +162,130 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
   }
 }
 
+static inline void
+__gegl_buffer_set_pixel (GeglBuffer     *buffer,
+                       gint            x,
+                       gint            y,
+                       const Babl     *format,
+                       gconstpointer   data)
+{
+  const GeglRectangle *abyss = &buffer->abyss;
+  const guchar        *buf   = data;
+
+  if (y <  abyss->y ||
+      x <  abyss->x ||
+      y >= abyss->y + abyss->height ||
+      x >= abyss->x + abyss->width)
+    return;
+
+  {
+    gint tile_width  = buffer->tile_width;
+    gint tile_height = buffer->tile_height;
+    gint tiledy      = y + buffer->shift_y;
+    gint tiledx      = x + buffer->shift_x;
+    gint indice_x    = gegl_tile_indice (tiledx, tile_width);
+    gint indice_y    = gegl_tile_indice (tiledy, tile_height);
+
+    GeglTile *tile = buffer->tile_storage->hot_tile;
+    const Babl *fish = NULL;
+    gint px_size;
+
+    if (format != buffer->soft_format)
+      {
+        fish    = babl_fish (format, buffer->soft_format);
+        px_size = babl_format_get_bytes_per_pixel (buffer->soft_format);
+      }
+    else
+      {
+        px_size = babl_format_get_bytes_per_pixel (buffer->soft_format);
+      }
+
+    if (!(tile &&
+          tile->x == indice_x &&
+          tile->y == indice_y))
+      {
+        _gegl_buffer_drop_hot_tile (buffer);
+        tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                          indice_x, indice_y,
+                                          0);
+        buffer->tile_storage->hot_tile = tile;
+      }
+
+    if (tile)
+      {
+        gint tile_origin_x = indice_x * tile_width;
+        gint tile_origin_y = indice_y * tile_height;
+        gint       offsetx = tiledx - tile_origin_x;
+        gint       offsety = tiledy - tile_origin_y;
+
+        guchar *tp;
+        gegl_tile_lock (tile);
+        tp = gegl_tile_get_data (tile) + (offsety * tile_width + offsetx) * px_size;
+
+        if (fish)
+          babl_process (fish, buf, tp, 1);
+        else
+          memcpy (tp, buf, px_size);
+
+        gegl_tile_unlock (tile);
+      }
+  }
+}
+
+enum _GeglBufferSetFlag {
+  GEGL_BUFFER_SET_FLAG_FAST   = 0,
+  GEGL_BUFFER_SET_FLAG_LOCK   = 1<<0,
+  GEGL_BUFFER_SET_FLAG_NOTIFY = 1<<2,
+  GEGL_BUFFER_SET_FLAG_FULL   = GEGL_BUFFER_SET_FLAG_LOCK |
+                                GEGL_BUFFER_SET_FLAG_NOTIFY
+};
+
+typedef enum _GeglBufferSetFlag GeglBufferSetFlag;
+
+void
+gegl_buffer_set_with_flags (GeglBuffer          *buffer,
+                            const GeglRectangle *rect,
+                            gint                 level,
+                            const Babl          *format,
+                            const void          *src,
+                            gint                 rowstride,
+                            GeglBufferSetFlag    set_flags);
+
+
+static inline void
+_gegl_buffer_set_pixel (GeglBuffer       *buffer,
+                        gint              x,
+                        gint              y,
+                        const Babl       *format,
+                        gconstpointer     data,
+                        GeglBufferSetFlag flags)
+{
+  GeglRectangle rect = {x,y,1,1};
+  switch (flags)
+  {
+    case GEGL_BUFFER_SET_FLAG_FAST:
+      __gegl_buffer_set_pixel (buffer, x, y, format, data);
+    break;
+    case GEGL_BUFFER_SET_FLAG_LOCK:
+      gegl_buffer_lock (buffer);
+      __gegl_buffer_set_pixel (buffer, x, y, format, data);
+      gegl_buffer_unlock (buffer);
+      break;
+    case GEGL_BUFFER_SET_FLAG_NOTIFY:
+      __gegl_buffer_set_pixel (buffer, x, y, format, data);
+      if (flags & GEGL_BUFFER_SET_FLAG_NOTIFY)
+        gegl_buffer_emit_changed_signal(buffer, &rect);
+      break;
+    case GEGL_BUFFER_SET_FLAG_LOCK|GEGL_BUFFER_SET_FLAG_NOTIFY:
+    default:
+      gegl_buffer_lock (buffer);
+      __gegl_buffer_set_pixel (buffer, x, y, format, data);
+      gegl_buffer_unlock (buffer);
+      gegl_buffer_emit_changed_signal(buffer, &rect);
+      break;
+  }
+}
+
 /* flush any unwritten data (flushes the hot-cache of a single
  * tile used by gegl_buffer_set for 1x1 pixel sized rectangles
  */
@@ -181,8 +305,6 @@ gegl_buffer_flush (GeglBuffer *buffer)
   gegl_tile_source_command (GEGL_TILE_SOURCE (buffer),
                             GEGL_TILE_FLUSH, 0,0,0,NULL);
 }
-
-
 
 static inline void
 gegl_buffer_iterate_write (GeglBuffer          *buffer,
@@ -344,6 +466,76 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
         }
       bufy += (tile_height - offsety);
     }
+}
+
+static inline void
+gegl_buffer_set_internal (GeglBuffer          *buffer,
+                          const GeglRectangle *rect,
+                          gint                 level,
+                          const Babl          *format,
+                          const void          *src,
+                          gint                 rowstride)
+{
+  if (gegl_cl_is_accelerated ())
+    {
+      gegl_buffer_cl_cache_flush (buffer, rect);
+    }
+
+  gegl_buffer_iterate_write (buffer, rect, (void *) src, rowstride, format, 0);
+
+  if (gegl_buffer_is_shared (buffer))
+    {
+      gegl_buffer_flush (buffer);
+    }
+}
+
+static void inline
+_gegl_buffer_set_with_flags (GeglBuffer       *buffer,
+                            const GeglRectangle *rect,
+                            gint                 level,
+                            const Babl          *format,
+                            const void          *src,
+                            gint                 rowstride,
+                            GeglBufferSetFlag    flags)
+{
+  switch (flags)
+  {
+    case GEGL_BUFFER_SET_FLAG_FAST:
+      gegl_buffer_set_internal (buffer, rect, level, format, src, rowstride);
+    break;
+    case GEGL_BUFFER_SET_FLAG_LOCK:
+      gegl_buffer_lock (buffer);
+      gegl_buffer_set_internal (buffer, rect, level, format, src, rowstride);
+      gegl_buffer_unlock (buffer);
+      break;
+    case GEGL_BUFFER_SET_FLAG_NOTIFY:
+      gegl_buffer_set_internal (buffer, rect, level, format, src, rowstride);
+      if (flags & GEGL_BUFFER_SET_FLAG_NOTIFY)
+        gegl_buffer_emit_changed_signal(buffer, rect);
+      break;
+    case GEGL_BUFFER_SET_FLAG_LOCK|GEGL_BUFFER_SET_FLAG_NOTIFY:
+    default:
+      gegl_buffer_lock (buffer);
+      gegl_buffer_set_internal (buffer, rect, level, format, src, rowstride);
+      gegl_buffer_unlock (buffer);
+      gegl_buffer_emit_changed_signal(buffer, rect);
+      break;
+  }
+}
+
+void
+gegl_buffer_set_with_flags (GeglBuffer       *buffer,
+                            const GeglRectangle *rect,
+                            gint                 level,
+                            const Babl          *format,
+                            const void          *src,
+                            gint                 rowstride,
+                            GeglBufferSetFlag    flags)
+{
+  g_return_if_fail (GEGL_IS_BUFFER (buffer));
+  if (format == NULL)
+    format = buffer->soft_format;
+  _gegl_buffer_set_with_flags (buffer, rect, level, format, src, rowstride, flags);
 }
 
 static void
@@ -1089,37 +1281,27 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
 void
 gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                           const GeglRectangle *rect,
+                          gint                 level,
                           const Babl          *format,
                           const void          *src,
                           gint                 rowstride)
 {
-    gegl_buffer_set_unlocked_no_notify(buffer, rect, format, src, rowstride);
-    gegl_buffer_emit_changed_signal(buffer, rect);
+  _gegl_buffer_set_with_flags (buffer, rect, level, format, src, rowstride,
+                               GEGL_BUFFER_SET_FLAG_NOTIFY);
 }
-
 
 void
 gegl_buffer_set_unlocked_no_notify (GeglBuffer          *buffer,
                                     const GeglRectangle *rect,
+                                    gint                 level,
                                     const Babl          *format,
                                     const void          *src,
                                     gint                 rowstride)
 {
-  if (format == NULL)
-    format = buffer->soft_format;
-
-  if (gegl_cl_is_accelerated ())
-    {
-      gegl_buffer_cl_cache_flush (buffer, rect);
-    }
-
-  gegl_buffer_iterate_write (buffer, rect, (void *) src, rowstride, format, 0);
-
-  if (gegl_buffer_is_shared (buffer))
-    {
-      gegl_buffer_flush (buffer);
-    }
+  _gegl_buffer_set_with_flags (buffer, rect, level, format, src, rowstride,
+                               GEGL_BUFFER_SET_FLAG_FAST);
 }
+
 
 void
 gegl_buffer_set (GeglBuffer          *buffer,
@@ -1130,10 +1312,16 @@ gegl_buffer_set (GeglBuffer          *buffer,
                  gint                 rowstride)
 {
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
+  if (format == NULL)
+    format = buffer->soft_format;
 
-  gegl_buffer_lock (buffer);
-  gegl_buffer_set_unlocked (buffer, rect, format, src, rowstride);
-  gegl_buffer_unlock (buffer);
+  if (rect && (rect->width == 1 && rect->height == 1))
+      _gegl_buffer_set_pixel (buffer, rect->x, rect->y, format, src,
+                              GEGL_BUFFER_SET_FLAG_LOCK|GEGL_BUFFER_SET_FLAG_NOTIFY);
+  else
+    _gegl_buffer_set_with_flags (buffer, rect, level, format, src, rowstride,
+                                 GEGL_BUFFER_SET_FLAG_LOCK|
+                                 GEGL_BUFFER_SET_FLAG_NOTIFY);
 }
 
 /* Expand roi by scale so it uncludes all pixels needed
@@ -1172,35 +1360,32 @@ _gegl_get_required_for_scale (const Babl          *format,
       }
 }
 
-void
-gegl_buffer_get_unlocked (GeglBuffer          *buffer,
-                          gdouble              scale,
-                          const GeglRectangle *rect,
-                          const Babl          *format,
-                          gpointer             dest_buf,
-                          gint                 rowstride,
-                          GeglAbyssPolicy      repeat_mode)
+static inline void
+_gegl_buffer_get_unlocked (GeglBuffer          *buffer,
+                           gdouble              scale,
+                           const GeglRectangle *rect,
+                           const Babl          *format,
+                           gpointer             dest_buf,
+                           gint                 rowstride,
+                           GeglAbyssPolicy      repeat_mode)
 {
   g_return_if_fail (scale > 0.0);
 
   if (format == NULL)
     format = buffer->soft_format;
 
-#if 1
-  /* not thread-safe */
-  if (scale == 1.0 &&
-      rect &&
-      rect->width == 1 &&
-      rect->height == 1)  /* fast path */
-    {
-      gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf, repeat_mode);
-      return;
-    }
-#endif
-
   if (gegl_cl_is_accelerated ())
     {
       gegl_buffer_cl_cache_flush (buffer, rect);
+    }
+
+  if (scale == 1.0 &&
+      rect &&
+      rect->width == 1 &&
+      rect->height == 1)
+    {
+      gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf, repeat_mode);
+      return;
     }
 
   if (!rect && scale == 1.0)
@@ -1314,6 +1499,18 @@ gegl_buffer_get_unlocked (GeglBuffer          *buffer,
 }
 
 void
+gegl_buffer_get_unlocked (GeglBuffer          *buffer,
+                          gdouble              scale,
+                          const GeglRectangle *rect,
+                          const Babl          *format,
+                          gpointer             dest_buf,
+                          gint                 rowstride,
+                          GeglAbyssPolicy      repeat_mode)
+{
+  return _gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride, repeat_mode);
+}
+
+void
 gegl_buffer_get (GeglBuffer          *buffer,
                  const GeglRectangle *rect,
                  gdouble              scale,
@@ -1323,58 +1520,9 @@ gegl_buffer_get (GeglBuffer          *buffer,
                  GeglAbyssPolicy      repeat_mode)
 {
   g_return_if_fail (GEGL_IS_BUFFER (buffer));
-  gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride, repeat_mode);
-}
-
-GType
-gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type);
-
-void
-gegl_buffer_sample (GeglBuffer       *buffer,
-                    gdouble           x,
-                    gdouble           y,
-                    GeglMatrix2      *scale,
-                    gpointer          dest,
-                    const Babl       *format,
-                    GeglSamplerType   sampler_type,
-                    GeglAbyssPolicy   repeat_mode)
-{
-  GType desired_type;
-
-  if (!format)
-    format = buffer->soft_format;
-
-  if (sampler_type == GEGL_SAMPLER_NEAREST)
-    {
-      /* XXX: not thread safe */
-      gegl_buffer_get_pixel (buffer, x, y, format, dest, repeat_mode);
-      return;
-    }
-
-  desired_type = gegl_sampler_gtype_from_enum (sampler_type);
-
-  /* unset the cached sampler if it dosn't match the needs */
-  if (buffer->sampler != NULL &&
-     (!G_TYPE_CHECK_INSTANCE_TYPE (buffer->sampler, desired_type) ||
-       buffer->sampler_format != format
-      ))
-    {
-      g_object_unref (buffer->sampler);
-      buffer->sampler = NULL;
-    }
-
-  /* look up appropriate sampler,. */
-  if (buffer->sampler == NULL)
-    {
-      buffer->sampler = g_object_new (desired_type,
-                                      "buffer", buffer,
-                                      "format", format,
-                                      NULL);
-      buffer->sampler_format = format;
-      gegl_sampler_prepare (buffer->sampler);
-    }
-
-  gegl_sampler_get (buffer->sampler, x, y, scale, dest, repeat_mode);
+  gegl_buffer_lock (buffer);
+  _gegl_buffer_get_unlocked (buffer, scale, rect, format, dest_buf, rowstride, repeat_mode);
+  gegl_buffer_unlock (buffer);
 }
 
 void

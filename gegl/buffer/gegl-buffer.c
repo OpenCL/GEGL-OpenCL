@@ -91,7 +91,7 @@ enum
   LAST_SIGNAL
 };
 
-guint gegl_buffer_signals[LAST_SIGNAL] = { 0 };
+static guint gegl_buffer_signals[LAST_SIGNAL] = { 0 };
 
 static void
 gegl_buffer_get_property (GObject    *gobject,
@@ -1179,5 +1179,4 @@ glong gegl_buffer_signal_connect (GeglBuffer *buffer,
 {
   buffer->changed_signal_connections++;
   return g_signal_connect(buffer, detailed_signal, c_handler, data);
-}
-
+} 

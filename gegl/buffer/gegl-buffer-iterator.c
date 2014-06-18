@@ -183,6 +183,7 @@ release_tile (GeglBufferIterator *iter,
         {
           gegl_buffer_set_unlocked_no_notify (sub->buffer,
                                               &sub->real_roi,
+                                              0, /* level */
                                               sub->format,
                                               sub->real_data,
                                               GEGL_AUTO_ROWSTRIDE);
