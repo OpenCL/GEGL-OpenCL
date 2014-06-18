@@ -50,8 +50,8 @@ static GeglBuffer *ensure_buffer (GeglOperation *operation)
       buffer = gegl_buffer_open (o->path);
       o->user_data = buffer;
     }
-  g_signal_connect (buffer, "changed",
-                    G_CALLBACK(buffer_changed), operation);
+  gegl_buffer_signal_connect (buffer, "changed",
+                              G_CALLBACK(buffer_changed), operation);
   return buffer;
 }
 
