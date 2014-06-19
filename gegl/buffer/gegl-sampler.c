@@ -298,8 +298,10 @@ GeglRectangle _gegl_sampler_compute_rectangle (GeglSampler *sampler,
   if (rectangle.height >= GEGL_SAMPLER_MAXIMUM_HEIGHT)
     rectangle.height = GEGL_SAMPLER_MAXIMUM_HEIGHT;
 
-  g_assert (level->context_rect.width  <= rectangle.width);
-  g_assert (level->context_rect.height <= rectangle.height);
+  if (rectangle.width < level->context_rect.width)
+    rectangle.width = level->context_rect.width;
+  if (rectangle.height < level->context_rect.height)
+    rectangle.height = level->context_rect.height;
 
   return rectangle;
 }
