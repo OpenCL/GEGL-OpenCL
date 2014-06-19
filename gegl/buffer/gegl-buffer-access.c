@@ -235,7 +235,7 @@ __gegl_buffer_set_pixel (GeglBuffer     *buffer,
 enum _GeglBufferSetFlag {
   GEGL_BUFFER_SET_FLAG_FAST   = 0,
   GEGL_BUFFER_SET_FLAG_LOCK   = 1<<0,
-  GEGL_BUFFER_SET_FLAG_NOTIFY = 1<<2,
+  GEGL_BUFFER_SET_FLAG_NOTIFY = 1<<1,
   GEGL_BUFFER_SET_FLAG_FULL   = GEGL_BUFFER_SET_FLAG_LOCK |
                                 GEGL_BUFFER_SET_FLAG_NOTIFY
 };
@@ -273,15 +273,14 @@ _gegl_buffer_set_pixel (GeglBuffer       *buffer,
       break;
     case GEGL_BUFFER_SET_FLAG_NOTIFY:
       __gegl_buffer_set_pixel (buffer, x, y, format, data);
-      if (flags & GEGL_BUFFER_SET_FLAG_NOTIFY)
-        gegl_buffer_emit_changed_signal(buffer, &rect);
+      gegl_buffer_emit_changed_signal (buffer, &rect);
       break;
     case GEGL_BUFFER_SET_FLAG_LOCK|GEGL_BUFFER_SET_FLAG_NOTIFY:
     default:
       gegl_buffer_lock (buffer);
       __gegl_buffer_set_pixel (buffer, x, y, format, data);
       gegl_buffer_unlock (buffer);
-      gegl_buffer_emit_changed_signal(buffer, &rect);
+      gegl_buffer_emit_changed_signal (buffer, &rect);
       break;
   }
 }
