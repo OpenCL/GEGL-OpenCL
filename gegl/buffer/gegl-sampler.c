@@ -28,9 +28,8 @@
 #include "gegl-types-internal.h"
 #include "gegl-buffer-types.h"
 #include "gegl-buffer.h"
-
 #include "gegl-buffer-private.h"
-
+#include "gegl-buffer-cl-cache.h"
 
 #include "gegl-sampler-nearest.h"
 #include "gegl-sampler-linear.h"
@@ -135,6 +134,11 @@ gegl_sampler_get (GeglSampler     *self,
                   void            *output,
                   GeglAbyssPolicy  repeat_mode)
 {
+  if (gegl_cl_is_accelerated ())
+    {
+      GeglRectangle rect={x,y,1,1};
+      gegl_buffer_cl_cache_flush (self->buffer, &rect);
+    }
   self->get (self, x, y, scale, output, repeat_mode);
 }
 
@@ -318,6 +322,13 @@ gegl_sampler_get_from_mipmap (GeglSampler    *sampler,
 
   const gint maximum_width  = GEGL_SAMPLER_MAXIMUM_WIDTH;
   const gint maximum_height = GEGL_SAMPLER_MAXIMUM_HEIGHT;
+
+  if (gegl_cl_is_accelerated ())
+    {
+      GeglRectangle rect={x,y,1,1};
+      gegl_buffer_cl_cache_flush (sampler->buffer, &rect);
+    }
+
   g_assert (level_no >= 0 && level_no < GEGL_SAMPLER_MIPMAP_LEVELS);
   g_assert (level->context_rect.width  <= maximum_width);
   g_assert (level->context_rect.height <= maximum_height);
@@ -475,6 +486,12 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   if (!format)
     format = buffer->soft_format;
 
+  if (gegl_cl_is_accelerated ())
+  {
+    GeglRectangle rect = {floorf (x), floorf(y), 1, 1};
+    gegl_buffer_cl_cache_flush (buffer, &rect);
+  }
+
   desired_type = gegl_sampler_gtype_from_enum (sampler_type);
 
   /* unset the cached sampler if it dosn't match the needs */
@@ -553,5 +570,11 @@ buffer_contents_changed (GeglBuffer          *buffer,
 
 GeglSamplerGetFun gegl_sampler_get_fun (GeglSampler *sampler)
 {
+  /* this flushes the buffer in preparation for the use of the sampler,
+   * thus one can consider the handed out sampler function only temporarily
+   * available*/
+  if (gegl_cl_is_accelerated ())
+    gegl_buffer_cl_cache_flush (sampler->buffer, NULL);
   return sampler->get;
 }
+
