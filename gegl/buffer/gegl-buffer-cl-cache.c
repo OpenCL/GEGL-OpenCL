@@ -125,9 +125,9 @@ gegl_buffer_cl_cache_new (GeglBuffer            *buffer,
   g_mutex_unlock (&cache_mutex);
 }
 
-gboolean
-gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
-                             const GeglRectangle  *roi)
+static inline gboolean
+_gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
+                              const GeglRectangle  *roi)
 {
   size_t size;
   GList *elem;
@@ -212,10 +212,17 @@ error:
 }
 
 gboolean
+gegl_buffer_cl_cache_flush2 (GeglTileHandlerCache *cache,
+                             const GeglRectangle  *roi)
+{
+  return _gegl_buffer_cl_cache_flush2 (cache, roi);
+}
+
+gboolean
 gegl_buffer_cl_cache_flush (GeglBuffer          *buffer,
                             const GeglRectangle *roi)
 {
-  return gegl_buffer_cl_cache_flush2 (buffer->tile_storage->cache, roi);
+  return _gegl_buffer_cl_cache_flush2 (buffer->tile_storage->cache, roi);
 }
 
 void
