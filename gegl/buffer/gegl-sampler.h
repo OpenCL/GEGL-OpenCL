@@ -75,13 +75,6 @@ struct _GeglSampler
   GeglSamplerLevel level[GEGL_SAMPLER_MIPMAP_LEVELS];
 };
 
-typedef void (*GeglSamplerGetFun)  (GeglSampler     *self,
-                                    gdouble          x,
-                                    gdouble          y,
-                                    GeglMatrix2     *scale,
-                                    void            *output,
-                                    GeglAbyssPolicy  repeat_mode);
-
 struct _GeglSamplerClass
 {
   GObjectClass  parent_class;
@@ -98,8 +91,6 @@ GType gegl_sampler_get_type    (void) G_GNUC_CONST;
 void  gegl_sampler_prepare             (GeglSampler *self);
 void  gegl_sampler_set_buffer          (GeglSampler *self,
                                         GeglBuffer  *buffer);
-
-GeglSamplerGetFun gegl_sampler_get_fun (GeglSampler    *sampler);
 
 gfloat * gegl_sampler_get_from_buffer (GeglSampler     *sampler,
                                        gint             x,
