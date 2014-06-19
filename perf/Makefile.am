@@ -7,6 +7,7 @@ noinst_PROGRAMS = \
 	test-unsharpmask \
 	test-bcontrast-4x \
 	test-gegl-buffer-access \
+	test-samplers \
 	test-rotate
 
 INCLUDES = \
@@ -43,6 +44,7 @@ test_bcontrast_megachunk_SOURCES = test-bcontrast-megachunk.c
 test_bcontrast_4x_SOURCES = test-bcontrast-4x.c
 test_unsharpmask_SOURCES = test-unsharpmask.c
 test_gegl_buffer_access_SOURCES = test-gegl-buffer-access.c
+test_samplers_SOURCES = test-samplers.c
 
 EXTRA_DIST = Makefile-retrospect Makefile-tests create-report.rb test-common.h
 
