@@ -45,30 +45,13 @@ random:
 
 
 reports/%:
-	(cd checkout; git checkout `echo $@|sed s:reports/::`)
+	(cd checkout; git checkout `echo $@|sed s:reports/::` || ( cd .. ; rm -rf checkout ;  git clone -s $(PROJECT_PATH) checkout ; git checkout `echo $@|sed s:reports/::` ))
 	# write header for report
 	git log -1 `echo $@|sed s:reports/::` > $@  || true 
 	# make sure revision is built, and current prefix symlink
 	./perf-build.sh `echo $@|sed s:reports/::`
 	# run the Makefile for the tests
-	make -f Makefile-tests clean;\
-	make -f Makefile-tests; sync;\
-	make -f Makefile-tests check >> $@ || true
-	# update report.pdf / report.png
-	./create-report.rb
-	echo
-
-rreports/%:
-	# check out revision
-	(cd checkout; git checkout `echo $@|sed s:reports/::`)
-	# write header for report
-	git log -1 `echo $@|sed s:reports/::` > $@  || true 
-	# clean previous build
-	rm -rf prefix; mkdir prefixes; mkdir prefixes/`echo $@|sed s:reports/::`; ln -s prefixes/`echo $@|sed s:reports/::` prefix 
-	# build revision
-	(cd checkout; if [ ! -f Makefile ]; then CC=$(CC) ./autogen.sh --disable-introspection --prefix=`pwd`/../prefix; fi ; \
-	 make $(MAKE_FLAGS) ; make -k install ) > $@.log 2>&1 || true
-	# testing
+	tail -f $@ & \
 	make -f Makefile-tests clean;\
 	make -f Makefile-tests; sync;\
 	make -f Makefile-tests check >> $@ || true

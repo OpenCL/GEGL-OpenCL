@@ -1,7 +1,7 @@
 #include "test-common.h"
 
 #define BPP 16
-#define ITERATIONS 4
+#define ITERATIONS 12
 
 gint
 main (gint    argc,
@@ -9,12 +9,13 @@ main (gint    argc,
 {
   GeglBuffer    *buffer;
   GeglRectangle  bound = {0, 0, 4024, 4024};
-  const Babl *format;
+  const Babl *format, *format2;
   gchar *buf;
   gint i;
 
   gegl_init (NULL, NULL);
   format = babl_format ("RGBA float");
+  format2 = babl_format ("R'G'B'A float");
   buffer = gegl_buffer_new (&bound, format);
   buf = g_malloc0 (bound.width * bound.height * BPP);
 
@@ -70,6 +71,23 @@ main (gint    argc,
   }
   test_end ("gegl_buffer_get 1x1", SAMPLES * ITERATIONS * BPP);
 
+
+  test_start ();
+  for (i = 0; i < ITERATIONS; i++)
+  {
+    int j;
+    float px[4] = {0.2, 0.4, 0.1, 0.5};
+    for (j = 0; j < SAMPLES; j ++)
+    {
+      int x = rands[j*2];
+      int y = rands[j*2+1];
+      GeglRectangle rect = {x, y, 1, 1};
+      gegl_buffer_get (buffer, &rect, 1.0, format2, (void*)&px[0],
+                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+    }
+  }
+  test_end ("gegl_buffer_get 1x1 + babl", SAMPLES * ITERATIONS * BPP);
+
   test_start ();
   for (i = 0; i < ITERATIONS; i++)
   {
@@ -84,6 +102,21 @@ main (gint    argc,
     }
   }
   test_end ("gegl_buffer_sample nearest", SAMPLES * ITERATIONS * BPP);
+
+  test_start ();
+  for (i = 0; i < ITERATIONS; i++)
+  {
+    int j;
+    float px[4] = {0.2, 0.4, 0.1, 0.5};
+    for (j = 0; j < SAMPLES; j ++)
+    {
+      int x = rands[j*2];
+      int y = rands[j*2+1];
+      gegl_buffer_sample (buffer, x, y, NULL, (void*)&px[0], format,
+                          GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE); 
+    }
+  }
+  test_end ("gegl_buffer_sample near+ba", SAMPLES * ITERATIONS * BPP);
 
   test_start ();
   for (i = 0; i < ITERATIONS; i++)
@@ -125,6 +158,25 @@ main (gint    argc,
   test_end ("sampler_get_fun nearest", SAMPLES * ITERATIONS * BPP);
 
 
+  test_start ();
+  for (i = 0; i < ITERATIONS; i++)
+  {
+    int j;
+    float px[4] = {0.2, 0.4, 0.1, 0.5};
+    GeglSampler *sampler = gegl_buffer_sampler_new (buffer, format2, 
+                                                    GEGL_SAMPLER_NEAREST);
+    GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
+
+    for (j = 0; j < SAMPLES; j ++)
+    {
+      int x = rands[j*2];
+      int y = rands[j*2+1];
+      sampler_get_fun (sampler, x, y, NULL, (void*)&px[0], GEGL_ABYSS_NONE);
+    }
+
+    g_object_unref (sampler);
+  }
+  test_end ("sampler_get_fun nearest+babl", SAMPLES * ITERATIONS * BPP);
 
 
   test_start ();
@@ -235,22 +287,6 @@ main (gint    argc,
   }
   test_end ("sampler_get_fun cubic", SAMPLES * ITERATIONS * BPP);
 
-
-  test_start ();
-  for (i = 0; i < ITERATIONS; i++)
-  {
-    int j;
-    float px[4] = {0.2, 0.4, 0.1, 0.5};
-    for (j = 0; j < SAMPLES; j ++)
-    {
-      int x = rands[j*2];
-      int y = rands[j*2+1];
-      gegl_buffer_sample (buffer, x, y, NULL, (void*)&px[0], format,
-                          GEGL_SAMPLER_NOHALO, GEGL_ABYSS_NONE); 
-    }
-  }
-  test_end ("gegl_buffer_sample nohalo", SAMPLES * ITERATIONS * BPP);
-
   test_start ();
   for (i = 0; i < ITERATIONS; i++)
   {
@@ -276,41 +312,6 @@ main (gint    argc,
     int j;
     float px[4] = {0.2, 0.4, 0.1, 0.5};
     GeglSampler *sampler = gegl_buffer_sampler_new (buffer, format, 
-                                                    GEGL_SAMPLER_NOHALO);
-    GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
-
-    for (j = 0; j < SAMPLES; j ++)
-    {
-      int x = rands[j*2];
-      int y = rands[j*2+1];
-      sampler_get_fun (sampler, x, y, NULL, (void*)&px[0], GEGL_ABYSS_NONE);
-    }
-
-    g_object_unref (sampler);
-  }
-  test_end ("sampler_get_fun nohalo", SAMPLES * ITERATIONS * BPP);
-
-  test_start ();
-  for (i = 0; i < ITERATIONS; i++)
-  {
-    int j;
-    float px[4] = {0.2, 0.4, 0.1, 0.5};
-    for (j = 0; j < SAMPLES; j ++)
-    {
-      int x = rands[j*2];
-      int y = rands[j*2+1];
-      gegl_buffer_sample (buffer, x, y, NULL, (void*)&px[0], format,
-                          GEGL_SAMPLER_LOHALO, GEGL_ABYSS_NONE); 
-    }
-  }
-  test_end ("gegl_buffer_sample lohalo", SAMPLES * ITERATIONS * BPP);
-
-  test_start ();
-  for (i = 0; i < ITERATIONS; i++)
-  {
-    int j;
-    float px[4] = {0.2, 0.4, 0.1, 0.5};
-    GeglSampler *sampler = gegl_buffer_sampler_new (buffer, format, 
                                                     GEGL_SAMPLER_LOHALO);
 
     for (j = 0; j < SAMPLES; j ++)
@@ -323,26 +324,6 @@ main (gint    argc,
     g_object_unref (sampler);
   }
   test_end ("gegl_sampler_get lohalo", SAMPLES * ITERATIONS * BPP);
-
-  test_start ();
-  for (i = 0; i < ITERATIONS; i++)
-  {
-    int j;
-    float px[4] = {0.2, 0.4, 0.1, 0.5};
-    GeglSampler *sampler = gegl_buffer_sampler_new (buffer, format, 
-                                                    GEGL_SAMPLER_LOHALO);
-    GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
-
-    for (j = 0; j < SAMPLES; j ++)
-    {
-      int x = rands[j*2];
-      int y = rands[j*2+1];
-      sampler_get_fun (sampler, x, y, NULL, (void*)&px[0], GEGL_ABYSS_NONE);
-    }
-
-    g_object_unref (sampler);
-  }
-  test_end ("sampler_get_fun lohalo", SAMPLES * ITERATIONS * BPP);
 
   }
 

@@ -1,7 +1,10 @@
 
 # 24ee45ef27f19971da390aa232e505bf6c72956d  should be blacklisted
 
-master~36..master
+master~8..master
+master~16..master % 2
+master~32..master % 4
+master~64..master % 8
 
 #ae81fbf..master
 #
