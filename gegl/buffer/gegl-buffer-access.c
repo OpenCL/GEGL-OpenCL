@@ -1373,11 +1373,6 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
   if (format == NULL)
     format = buffer->soft_format;
 
-  if (gegl_cl_is_accelerated ())
-    {
-      gegl_buffer_cl_cache_flush (buffer, rect);
-    }
-
   if (scale == 1.0 &&
       rect &&
       rect->width == 1 &&
@@ -1385,6 +1380,11 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
     {
       gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf, repeat_mode);
       return;
+    }
+
+  if (gegl_cl_is_accelerated ())
+    {
+      gegl_buffer_cl_cache_flush (buffer, rect);
     }
 
   if (!rect && scale == 1.0)
