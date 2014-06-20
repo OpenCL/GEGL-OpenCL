@@ -45,7 +45,7 @@ random:
 
 
 reports/%:
-	(cd checkout; git checkout `echo $@|sed s:reports/::` || ( cd .. ; rm -rf checkout ;  git clone -s $(PROJECT_PATH) checkout ; git checkout `echo $@|sed s:reports/::` ))
+	(cd checkout; git checkout `echo $@|sed s:reports/::` || ( cd .. ; rm -rf checkout ;  git clone -s $(PROJECT_PATH) checkout ; cd checkout; git checkout `echo $@|sed s:reports/::` ))
 	# write header for report
 	git log -1 `echo $@|sed s:reports/::` > $@  || true 
 	# make sure revision is built, and current prefix symlink

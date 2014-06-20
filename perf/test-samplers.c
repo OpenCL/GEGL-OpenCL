@@ -40,42 +40,6 @@ main (gint    argc,
   for (i = 0; i < ITERATIONS; i++)
   {
     int j;
-    for (j = 0; j < SAMPLES; j ++)
-    {
-      int x = rands[j*2];
-      int y = rands[j*2+1];
-      float px[4] = {0.2, 0.4, 0.1, 0.5};
-#if 1
-      GeglRectangle rect = {x, y, 1, 1};
-      gegl_buffer_set (buffer, &rect, 0, format, (void*)&px[0], GEGL_AUTO_ROWSTRIDE);
-#else
-      gegl_buffer_set_pixel (buffer, x, y, format, (void*)&px[0], 3);
-#endif
-    }
-  }
-  test_end ("gegl_buffer_set 1x1", SAMPLES * ITERATIONS * BPP);
-
-  test_start ();
-  for (i = 0; i < ITERATIONS; i++)
-  {
-    int j;
-    float px[4] = {0.2, 0.4, 0.1, 0.5};
-    for (j = 0; j < SAMPLES; j ++)
-    {
-      int x = rands[j*2];
-      int y = rands[j*2+1];
-      GeglRectangle rect = {x, y, 1, 1};
-      gegl_buffer_get (buffer, &rect, 1.0, format, (void*)&px[0],
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-    }
-  }
-  test_end ("gegl_buffer_get 1x1", SAMPLES * ITERATIONS * BPP);
-
-
-  test_start ();
-  for (i = 0; i < ITERATIONS; i++)
-  {
-    int j;
     float px[4] = {0.2, 0.4, 0.1, 0.5};
     for (j = 0; j < SAMPLES; j ++)
     {

@@ -102,44 +102,6 @@ main (gint    argc,
   }
   test_end ("gegl_buffer_sample nearest", SAMPLES * ITERATIONS * BPP);
 
-  test_start ();
-  for (i = 0; i < ITERATIONS; i++)
-  {
-    int j;
-    float px[4] = {0.2, 0.4, 0.1, 0.5};
-    GeglSampler *sampler = gegl_buffer_sampler_new (buffer, format, 
-                                                    GEGL_SAMPLER_NEAREST);
-
-    for (j = 0; j < SAMPLES; j ++)
-    {
-      int x = rands[j*2];
-      int y = rands[j*2+1];
-      gegl_sampler_get (sampler, x, y, NULL, (void*)&px[0], GEGL_ABYSS_NONE);
-    }
-
-    g_object_unref (sampler);
-  }
-  test_end ("gegl_sampler_get nearest", SAMPLES * ITERATIONS * BPP);
-
-  test_start ();
-  for (i = 0; i < ITERATIONS; i++)
-  {
-    int j;
-    float px[4] = {0.2, 0.4, 0.1, 0.5};
-    GeglSampler *sampler = gegl_buffer_sampler_new (buffer, format, 
-                                                    GEGL_SAMPLER_NEAREST);
-    GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
-
-    for (j = 0; j < SAMPLES; j ++)
-    {
-      int x = rands[j*2];
-      int y = rands[j*2+1];
-      sampler_get_fun (sampler, x, y, NULL, (void*)&px[0], GEGL_ABYSS_NONE);
-    }
-
-    g_object_unref (sampler);
-  }
-  test_end ("sampler_get_fun nearest", SAMPLES * ITERATIONS * BPP);
   }
 
   g_free (buf);
