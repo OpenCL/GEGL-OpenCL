@@ -209,11 +209,11 @@ gegl_sampler_nearest_prepare (GeglSampler* restrict sampler)
     return;
   GEGL_SAMPLER_NEAREST (sampler)->buffer_bpp = babl_format_get_bytes_per_pixel (sampler->buffer->format);
 
-  if (sampler->format == sampler->buffer->soft_format)
-    {
+  //if (sampler->format == sampler->buffer->soft_format)
+  //  {
       sampler->get = gegl_sampler_nearest_get_same_format;
-    }
-  else
+  //  }
+  //else
     {
       sampler->fish = babl_fish (sampler->buffer->soft_format, sampler->format);
     }
