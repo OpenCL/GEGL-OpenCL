@@ -478,12 +478,13 @@ gegl_buffer_sample (GeglBuffer       *buffer,
                     GeglAbyssPolicy   repeat_mode)
 {
   GType desired_type;
+  /*
   if (sampler_type == GEGL_SAMPLER_NEAREST && format == buffer->soft_format)
   {
     GeglRectangle rect = {floorf (x), floorf(y), 1, 1};
     gegl_buffer_get (buffer, &rect, 1, NULL, dest, GEGL_AUTO_ROWSTRIDE, repeat_mode);
     return;
-  }
+  }*/
 
   if (!format)
     format = buffer->soft_format;
@@ -494,21 +495,23 @@ gegl_buffer_sample (GeglBuffer       *buffer,
     gegl_buffer_cl_cache_flush (buffer, &rect);
   }
 
-  desired_type = gegl_sampler_gtype_from_enum (sampler_type);
 
   /* unset the cached sampler if it dosn't match the needs */
   if (buffer->sampler != NULL &&
-     (!G_TYPE_CHECK_INSTANCE_TYPE (buffer->sampler, desired_type) ||
+     (buffer->sampler_type != sampler_type ||
        buffer->sampler_format != format
       ))
     {
       g_object_unref (buffer->sampler);
       buffer->sampler = NULL;
+      buffer->sampler_type = 0;
     }
 
   /* look up appropriate sampler,. */
   if (buffer->sampler == NULL)
     {
+      desired_type = gegl_sampler_gtype_from_enum (sampler_type);
+      buffer->sampler_type = sampler_type;
       buffer->sampler = g_object_new (desired_type,
                                       "buffer", buffer,
                                       "format", format,

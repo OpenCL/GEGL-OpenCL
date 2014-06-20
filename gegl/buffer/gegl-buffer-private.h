@@ -57,6 +57,7 @@ struct _GeglBuffer
   GeglSampler      *sampler; /* cached sampler for speeding up random
                                 access interpolated fetches from the
                                 buffer */
+  GeglSamplerType   sampler_type;
   const Babl       *sampler_format; /* the format of the cached sampler */
 
   GeglTileStorage  *tile_storage;
