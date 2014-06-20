@@ -1098,6 +1098,7 @@ gegl_buffer_is_shared (GeglBuffer *buffer)
   return backend->priv->shared;
 }
 
+#ifndef GEGL_BUFFER_DISABLE_LOCKS
 gboolean
 gegl_buffer_try_lock (GeglBuffer *buffer)
 {
@@ -1154,6 +1155,7 @@ gegl_buffer_unlock (GeglBuffer *buffer)
 
   return ret;
 }
+#endif
 
 void
 gegl_buffer_emit_changed_signal (GeglBuffer          *buffer,

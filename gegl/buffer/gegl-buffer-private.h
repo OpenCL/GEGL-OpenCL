@@ -100,9 +100,17 @@ GeglTileBackend * gegl_buffer_backend2    (GeglBuffer *buffer); /* non-cached */
 
 gboolean          gegl_buffer_is_shared   (GeglBuffer *buffer);
 
+#define GEGL_BUFFER_DISABLE_LOCKS 1
+
+#ifdef GEGL_BUFFER_DISABLE_LOCKS
+#define           gegl_buffer_try_lock(a)   (TRUE)
+#define           gegl_buffer_lock(a)       do{}while(0)
+#define           gegl_buffer_unlock(a)       do{}while(0)
+#else
 gboolean          gegl_buffer_try_lock    (GeglBuffer *buffer);
 gboolean          gegl_buffer_lock        (GeglBuffer *buffer);
 gboolean          gegl_buffer_unlock      (GeglBuffer *buffer);
+#endif
 
 void              gegl_buffer_set_unlocked (GeglBuffer          *buffer,
                                             const GeglRectangle *rect,
