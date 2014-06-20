@@ -25,7 +25,7 @@ if [ ! -d prefixes/$REV ]; then
 
     make $MAKE_FLAGS ;
     make -k install
-    touch built
+    touch `pwd`/../built
   ) > prefix/build_log 2>&1
 fi;
 
