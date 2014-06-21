@@ -176,7 +176,7 @@ gegl_sampler_nearest_get_same_format  (      GeglSampler*    restrict  sampler,
                                              GeglAbyssPolicy           repeat_mode)
 {
   GeglRectangle rectangle = {floorf(absolute_x), floorf(absolute_y), 1, 1};
-  gegl_buffer_get (sampler->buffer, &rectangle, 1.0, NULL, output, GEGL_AUTO_ROWSTRIDE, repeat_mode);
+  gegl_buffer_get (sampler->buffer, &rectangle, 1.0, sampler->format, output, GEGL_AUTO_ROWSTRIDE, repeat_mode);
 }
 
 static void
@@ -209,11 +209,13 @@ gegl_sampler_nearest_prepare (GeglSampler* restrict sampler)
     return;
   GEGL_SAMPLER_NEAREST (sampler)->buffer_bpp = babl_format_get_bytes_per_pixel (sampler->buffer->format);
 
+#if 0 // maybe re-enable; when certain result is correct
   if (sampler->format == sampler->buffer->soft_format)
     {
       sampler->get = gegl_sampler_nearest_get_same_format;
     }
   else
+#endif
     {
       sampler->fish = babl_fish (sampler->buffer->soft_format, sampler->format);
     }
