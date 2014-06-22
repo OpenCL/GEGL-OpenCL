@@ -25,6 +25,7 @@
 GeglTile   * gegl_tile_new            (gint             size);
 GeglTile   * gegl_tile_new_bare       (void);
 GeglTile   * gegl_tile_ref            (GeglTile         *tile);
+
 void         gegl_tile_unref          (GeglTile         *tile);
 
 /* lock a tile for writing, this would allow writing to buffers

@@ -197,6 +197,10 @@ gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
                                       gint        xB,
                                       gint        yB);
 
+#ifndef __GEGL_TILE_H__
+#define gegl_tile_get_data(tile)  ((tile)->data)
+#endif
+
 /* computes the positive integer remainder (also for negative dividends)
  */
 #define GEGL_REMAINDER(dividend, divisor) \
