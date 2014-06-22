@@ -30,12 +30,14 @@
 
 #include "gegl.h"
 #include "gegl-buffer.h"
-#include "gegl-buffer-private.h"
 #include "gegl-tile.h"
+#include "gegl-buffer-private.h"
 #include "gegl-tile-source.h"
 #include "gegl-tile-storage.h"
 
-static GMutex cowmutex = { 0, };
+static GMutex cowmutex = { 0, }; /* copy on write is maintained in a doubly linked
+                                  * list, which must be protected by a mutex
+                                  */
 
 GeglTile *gegl_tile_ref (GeglTile *tile)
 {
@@ -59,6 +61,7 @@ void gegl_tile_unref (GeglTile *tile)
 
   if (tile->data)
     {
+      g_mutex_lock (&cowmutex);
       if (tile->next_shared == tile)
         { /* no clones */
           if (tile->destroy_notify)
@@ -75,6 +78,7 @@ void gegl_tile_unref (GeglTile *tile)
           tile->prev_shared->next_shared = tile->next_shared;
           tile->next_shared->prev_shared = tile->prev_shared;
         }
+      g_mutex_unlock (&cowmutex);
     }
 
   g_slice_free (GeglTile, tile);
@@ -84,13 +88,13 @@ void gegl_tile_unref (GeglTile *tile)
 GeglTile *
 gegl_tile_new_bare (void)
 {
-  GeglTile *tile = g_slice_new0 (GeglTile);
-  tile->ref_count = 1;
+  GeglTile *tile     = g_slice_new0 (GeglTile);
+  tile->ref_count    = 1;
   tile->tile_storage = NULL;
-  tile->stored_rev = 1;
-  tile->rev        = 1;
-  tile->lock       = 0;
-  tile->data       = NULL;
+  tile->stored_rev   = 1;
+  tile->rev          = 1;
+  tile->lock         = 0;
+  tile->data         = NULL;
 
   tile->next_shared = tile;
   tile->prev_shared = tile;
@@ -114,21 +118,14 @@ gegl_tile_dup (GeglTile *src)
   tile->destroy_notify      = src->destroy_notify;
   tile->destroy_notify_data = src->destroy_notify_data;
 
+  g_mutex_lock (&cowmutex);
+
   tile->next_shared              = src->next_shared;
   src->next_shared               = tile;
   tile->prev_shared              = src;
-
-  if (tile->next_shared != src)
-    {
-      g_mutex_lock (&cowmutex);
-    }
-
   tile->next_shared->prev_shared = tile;
 
-  if (tile->next_shared != src)
-    {
-      g_mutex_unlock (&cowmutex);
-    }
+  g_mutex_unlock (&cowmutex);
 
   return tile;
 }
@@ -156,12 +153,12 @@ gegl_memdup (gpointer src, gsize size)
 static void
 gegl_tile_unclone (GeglTile *tile)
 {
+  g_mutex_lock (&cowmutex);
   if (tile->next_shared != tile)
     {
       /* the tile data is shared with other tiles,
        * create a local copy
        */
-      g_mutex_lock (&cowmutex);
 
       if (tile->is_zero_tile)
         {
@@ -178,23 +175,22 @@ gegl_tile_unclone (GeglTile *tile)
       tile->next_shared->prev_shared = tile->prev_shared;
       tile->prev_shared              = tile;
       tile->next_shared              = tile;
-
-
-      g_mutex_unlock (&cowmutex);
     }
+  g_mutex_unlock (&cowmutex);
 }
-
-void gegl_bt (void);
 
 void
 gegl_tile_lock (GeglTile *tile)
 {
-  if (tile->lock != 0)
+  int slept = 0;
+  while (tile->lock != 0)
+  {
+    if (slept++ == 1000)
     {
-      g_warning ("strange tile lock count: %i", tile->lock);
-      gegl_bt ();
+      g_warning ("blocking when trying to lock tile");
     }
-
+    g_usleep (5);
+  }
   tile->lock++;
 
   gegl_tile_unclone (tile);
@@ -239,16 +235,18 @@ gegl_tile_unlock (GeglTile *tile)
     {
       g_warning ("unlocked a tile with lock count == 0");
     }
-  tile->lock--;
-  if (tile->lock == 0 &&
-      tile->z == 0)
-    {
-      gegl_tile_void_pyramid (tile);
-    }
-  if (tile->lock==0)
-    tile->rev++;
-}
 
+  if (tile->lock==1)
+  {
+    if (tile->z == 0)
+      {
+        gegl_tile_void_pyramid (tile);
+      }
+      tile->rev++;
+  }
+
+  tile->lock--;
+}
 
 void
 gegl_tile_mark_as_stored (GeglTile *tile)
@@ -273,19 +271,21 @@ gegl_tile_void (GeglTile *tile)
 
 gboolean gegl_tile_store (GeglTile *tile)
 {
+  gboolean ret;
   if (gegl_tile_is_stored (tile))
     return TRUE;
   if (tile->tile_storage == NULL)
     return FALSE;
-  return gegl_tile_source_set_tile (GEGL_TILE_SOURCE (tile->tile_storage),
+  g_mutex_lock (&tile->tile_storage->mutex);
+  ret = gegl_tile_source_set_tile (GEGL_TILE_SOURCE (tile->tile_storage),
                                     tile->x,
                                     tile->y,
                                     tile->z,
                                     tile);
+  g_mutex_unlock (&tile->tile_storage->mutex);
+  return ret;
 }
 
-/* for internal use, a macro poking directly at the data will be faste
- */
 guchar *gegl_tile_get_data (GeglTile *tile)
 {
   return tile->data;
@@ -310,7 +310,6 @@ void gegl_tile_set_data_full (GeglTile      *tile,
   tile->destroy_notify      = destroy_notify;
   tile->destroy_notify_data = destroy_notify_data;
 }
-
 
 void         gegl_tile_set_rev        (GeglTile *tile,
                                        guint     rev)
