@@ -6,7 +6,7 @@ with msys/mingw, and probably other platforms.
 Download
 ~~~~~~~~
 The latest development snapshot, and eventually stable versions of GEGL are
-available at ftp://ftp.gimp.org/pub/gegl/[].
+available at http://download.gimp.org/pub/gegl/[].
 
 The current code under development can be
 http://git.gnome.org/cgit/gegl/tree[browsed online] and cloned from
