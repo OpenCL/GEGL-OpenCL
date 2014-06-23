@@ -183,7 +183,7 @@ void
 gegl_tile_lock (GeglTile *tile)
 {
   int slept = 0;
-  while (tile->lock != 0)
+  while (! (g_atomic_int_compare_and_exchange (&tile->lock, 0, 1)))
   {
     if (slept++ == 1000)
     {
@@ -191,7 +191,6 @@ gegl_tile_lock (GeglTile *tile)
     }
     g_usleep (5);
   }
-  tile->lock++;
 
   gegl_tile_unclone (tile);
 }
@@ -235,8 +234,7 @@ gegl_tile_unlock (GeglTile *tile)
     {
       g_warning ("unlocked a tile with lock count == 0");
     }
-
-  if (tile->lock==1)
+  else if (tile->lock==1)
   {
     if (tile->z == 0)
       {
@@ -245,7 +243,7 @@ gegl_tile_unlock (GeglTile *tile)
       tile->rev++;
   }
 
-  tile->lock--;
+  g_atomic_int_add (&tile->lock, -1);
 }
 
 void

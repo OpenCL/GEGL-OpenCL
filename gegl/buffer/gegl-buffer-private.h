@@ -164,7 +164,7 @@ struct _GeglTile
   guint            stored_rev;  /* what revision was we when we from tile_storage?
                                    (currently set to 1 when loaded from disk */
 
-  gchar            lock;        /* number of times the tile is write locked
+  gint             lock;        /* number of times the tile is write locked
                                  * should in theory just have the values 0/1
                                  */
   gint             is_zero_tile:1;
