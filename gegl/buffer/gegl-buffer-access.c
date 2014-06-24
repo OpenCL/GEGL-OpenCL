@@ -37,6 +37,7 @@
 #include "gegl-tile-backend.h"
 #include "gegl-buffer-iterator.h"
 #include "gegl-buffer-cl-cache.h"
+#include "gegl-config.h"
 
 static void gegl_buffer_iterate_read_fringed (GeglBuffer          *buffer,
                                               const GeglRectangle *roi,
@@ -334,6 +335,7 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
   gint abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint factor         = 1<<level;
+  gboolean threaded   = gegl_config()->threads > 1;
   const Babl *fish;
 
   /* roi specified, override buffers extent */
@@ -393,10 +395,19 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           index_x = gegl_tile_indice (tiledx, tile_width);
           index_y = gegl_tile_indice (tiledy, tile_height);
 
-          g_mutex_lock (&mutexes[(index_x&15) * 16 + (index_y&15)]);
-          tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                            index_x, index_y, level);
-          g_mutex_unlock (&mutexes[(index_x&15) * 16 + (index_y&15)]);
+          if (threaded)
+            {
+              g_mutex_lock (&mutexes[(index_x&15) * 16 + (index_y&15)]);
+              tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                                index_x, index_y, level);
+              g_mutex_unlock (&mutexes[(index_x&15) * 16 + (index_y&15)]);
+            }
+          else
+            {
+              tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
+                                                index_x, index_y, level);
+            }
+
 
           lskip = (buffer_abyss_x) - (buffer_x + bufx);
           /* gap between left side of tile, and abyss */
@@ -1319,7 +1330,8 @@ gegl_buffer_set (GeglBuffer          *buffer,
   if (format == NULL)
     format = buffer->soft_format;
 
-  if (rect && (rect->width == 1 && rect->height == 1))
+  if (rect && (rect->width == 1 && rect->height == 1) &&
+    gegl_config()->threads == 1)
       _gegl_buffer_set_pixel (buffer, rect->x, rect->y, format, src,
                               GEGL_BUFFER_SET_FLAG_LOCK|GEGL_BUFFER_SET_FLAG_NOTIFY);
   else
@@ -1377,7 +1389,7 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
 
   if (format == NULL)
     format = buffer->soft_format;
-
+/*
   if (scale == 1.0 &&
       rect &&
       rect->width == 1 &&
@@ -1386,7 +1398,7 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf, repeat_mode);
       return;
     }
-
+*/
   if (gegl_cl_is_accelerated ())
     {
       gegl_buffer_cl_cache_flush (buffer, rect);

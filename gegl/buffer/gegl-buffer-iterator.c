@@ -32,6 +32,7 @@
 #include "gegl-buffer-iterator-private.h"
 #include "gegl-buffer-private.h"
 #include "gegl-buffer-cl-cache.h"
+#include "gegl-config.h"
 
 #define GEGL_ITERATOR_INCOMPATIBLE (1 << 2)
 
@@ -79,6 +80,7 @@ struct _GeglBufferIteratorPriv
   SubIterState      sub_iter[GEGL_BUFFER_MAX_ITERATORS];
 };
 
+static gboolean threaded = TRUE;
 
 GeglBufferIterator *
 gegl_buffer_iterator_empty_new (void)
@@ -88,6 +90,9 @@ gegl_buffer_iterator_empty_new (void)
 
   iter->priv->num_buffers = 0;
   iter->priv->state       = GeglIteratorState_Start;
+
+  threaded = gegl_config()->threads > 1;
+
   return iter;
 }
 
@@ -314,10 +319,18 @@ get_tile (GeglBufferIterator *iter,
       int tile_x = gegl_tile_indice (iter->roi[index].x + shift_x, tile_width);
       int tile_y = gegl_tile_indice (iter->roi[index].y + shift_y, tile_height);
 
-      g_mutex_lock (&mutexes[(ABS(tile_x) % 16) * 16 + (ABS(tile_y)%16)]);
-      sub->current_tile = gegl_tile_source_get_tile ((GeglTileSource *)(buf),
-                                                     tile_x, tile_y, 0);
-      g_mutex_unlock (&mutexes[(ABS(tile_x) % 16) * 16 + (ABS(tile_y)%16)]);
+      if (threaded)
+        {
+          g_mutex_lock (&mutexes[(ABS(tile_x) % 16) * 16 + (ABS(tile_y)%16)]);
+          sub->current_tile = gegl_tile_source_get_tile ((GeglTileSource *)(buf),
+                                                         tile_x, tile_y, 0);
+          g_mutex_unlock (&mutexes[(ABS(tile_x) % 16) * 16 + (ABS(tile_y)%16)]);
+        }
+      else
+        {
+          sub->current_tile = gegl_tile_source_get_tile ((GeglTileSource *)(buf),
+                                                         tile_x, tile_y, 0);
+        }
 
       if (sub->flags & GEGL_BUFFER_WRITE)
         gegl_tile_lock (sub->current_tile);

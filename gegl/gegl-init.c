@@ -399,6 +399,13 @@ GeglConfig *gegl_config (void)
   return config;
 }
 
+gint gegl_config_threads (void)
+{
+  if (!config)
+    config = gegl_config ();
+  return config->threads;
+}
+
 static void swap_clean (void)
 {
   const gchar  *swap_dir = gegl_swap_dir ();

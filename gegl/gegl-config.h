@@ -52,6 +52,8 @@ struct _GeglConfigClass
   GObjectClass parent_class;
 };
 
+gint gegl_config_threads (void);
+
 G_END_DECLS
 
 #endif
