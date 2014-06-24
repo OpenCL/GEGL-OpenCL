@@ -60,6 +60,7 @@ gegl_operation_point_filter_class_init (GeglOperationPointFilterClass *klass)
   operation_class->process = gegl_operation_point_filter_op_process;
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
+  operation_class->want_in_place = TRUE;
 
   klass->process = NULL;
   klass->cl_process = NULL;
@@ -198,13 +199,15 @@ static gboolean gegl_operation_point_filter_op_process
                                const GeglRectangle  *roi,
                                gint                  level)
 {
+  GeglOperationClass       *klass = GEGL_OPERATION_GET_CLASS (operation);
   GeglBuffer               *input;
   GeglBuffer               *output;
   gboolean                  success = FALSE;
 
   input = gegl_operation_context_get_source (context, "input");
 
-  if (gegl_can_do_inplace_processing (operation, input, roi))
+  if (klass->want_in_place && 
+      gegl_can_do_inplace_processing (operation, input, roi))
     {
       output = g_object_ref (input);
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));

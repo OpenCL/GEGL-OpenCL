@@ -113,6 +113,7 @@ gegl_operation_composer3_process (GeglOperation        *operation,
                                   gint                  level)
 {
   GeglOperationComposer3Class *klass   = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
+  GeglOperationClass          *op_class = GEGL_OPERATION_CLASS (klass);
   GeglBuffer                  *input;
   GeglBuffer                  *aux;
   GeglBuffer                  *aux2;
@@ -124,11 +125,32 @@ gegl_operation_composer3_process (GeglOperation        *operation,
       g_warning ("requested processing of %s pad on a composer", output_prop);
       return FALSE;
     }
+  output = gegl_operation_context_get_target (context, "output");
+
+  if (result->width == 0 || result->height == 0)
+    return TRUE;
+
+  if (result->width == 0 || result->height == 0)
+  {
+    output = gegl_operation_context_get_target (context, "output");
+    return TRUE;
+  }
 
   input = gegl_operation_context_get_source (context, "input");
+
+  if (op_class->want_in_place && 
+      gegl_can_do_inplace_processing (operation, input, result))
+    {
+      output = g_object_ref (input);
+      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
+    }
+  else
+    {
+      output = gegl_operation_context_get_target (context, "output");
+    }
+
   aux   = gegl_operation_context_get_source (context, "aux");
   aux2  = gegl_operation_context_get_source (context, "aux2");
-  output = gegl_operation_context_get_target (context, "output");
 
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.

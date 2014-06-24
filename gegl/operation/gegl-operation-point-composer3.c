@@ -35,13 +35,6 @@ static gboolean gegl_operation_point_composer3_process
                                const GeglRectangle *result,
                                gint                 level);
 
-static gboolean
-gegl_operation_composer3_process2 (GeglOperation        *operation,
-                                   GeglOperationContext *context,
-                                   const gchar          *output_prop,
-                                   const GeglRectangle  *result,
-                                   gint                  level);
-
 G_DEFINE_TYPE (GeglOperationPointComposer3, gegl_operation_point_composer3, GEGL_TYPE_OPERATION_COMPOSER3)
 
 static void prepare (GeglOperation *operation)
@@ -63,72 +56,13 @@ gegl_operation_point_composer3_class_init (GeglOperationPointComposer3Class *kla
   composer_class->process = gegl_operation_point_composer3_process;
   operation_class->prepare = prepare;
   operation_class->no_cache =TRUE;
-  operation_class->process = gegl_operation_composer3_process2;
+  operation_class->want_in_place = TRUE;
 }
 
 static void
 gegl_operation_point_composer3_init (GeglOperationPointComposer3 *self)
 {
 
-}
-
-/* we replicate the process function from GeglOperationComposer3 to be
- * able to bail out earlier for some common processing time pitfalls
- */
-static gboolean
-gegl_operation_composer3_process2 (GeglOperation        *operation,
-                                   GeglOperationContext *context,
-                                   const gchar          *output_prop,
-                                   const GeglRectangle  *result,
-                                   gint                  level)
-{
-  GeglOperationComposer3Class *klass   = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
-  GeglBuffer                  *input;
-  GeglBuffer                  *aux;
-  GeglBuffer                  *aux2;
-  GeglBuffer                  *output;
-  gboolean                     success = FALSE;
-
-  if (strcmp (output_prop, "output"))
-    {
-      g_warning ("requested processing of %s pad on a composer", output_prop);
-      return FALSE;
-    }
-
-  input = gegl_operation_context_get_source (context, "input");
-  aux   = gegl_operation_context_get_source (context, "aux");
-  aux2  = gegl_operation_context_get_source (context, "aux2");
-
-  /* we could be even faster by not alway writing to this buffer, that
-   * would potentially break other assumptions we want to make from the
-   * GEGL core so we avoid doing that
-   */
-  output = gegl_operation_context_get_target (context, "output");
-
-
-  if (input != NULL ||
-      aux != NULL ||
-      aux2 != NULL)
-    {
-      if (result->width == 0 || result->height == 0)
-        success = TRUE;
-      else
-        success = klass->process (operation, input, aux, aux2, output, result, level);
-
-      if (input)
-         g_object_unref (input);
-      if (aux)
-         g_object_unref (aux);
-      if (aux2)
-         g_object_unref (aux2);
-    }
-  else
-    {
-      g_warning ("%s received NULL input, aux, and aux2",
-                 gegl_node_get_operation (operation->node));
-    }
-
-  return success;
 }
 
 static gboolean

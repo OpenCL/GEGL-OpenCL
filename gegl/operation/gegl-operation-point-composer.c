@@ -66,6 +66,7 @@ gegl_operation_point_composer_class_init (GeglOperationPointComposerClass *klass
   operation_class->prepare = prepare;
   operation_class->no_cache = FALSE;
   operation_class->process = gegl_operation_composer_process2;
+  operation_class->want_in_place = TRUE;
 
   klass->process = NULL;
   klass->cl_process = NULL;
@@ -88,6 +89,7 @@ gegl_operation_composer_process2 (GeglOperation        *operation,
                                   gint                  level)
 {
   GeglOperationComposerClass *klass   = GEGL_OPERATION_COMPOSER_GET_CLASS (operation);
+  GeglOperationClass         *op_class = (void*)klass;
   GeglBuffer                 *input;
   GeglBuffer                 *aux;
   GeglBuffer                 *output;
@@ -102,13 +104,16 @@ gegl_operation_composer_process2 (GeglOperation        *operation,
   input = gegl_operation_context_get_source (context, "input");
   aux   = gegl_operation_context_get_source (context, "aux");
 
-  if (gegl_can_do_inplace_processing (operation, input, result))
+  if (op_class->want_in_place && 
+      gegl_can_do_inplace_processing (operation, input, result))
     {
       output = g_object_ref (input);
       gegl_operation_context_take_object (context, "output", G_OBJECT (output));
     }
   else
-    output = gegl_operation_context_get_target (context, "output");
+    {
+      output = gegl_operation_context_get_target (context, "output");
+    }
 
     {
       if (result->width == 0 || result->height == 0)

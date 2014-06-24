@@ -78,7 +78,11 @@ struct _GeglOperationClass
 
   guint           no_cache      :1;  /* do not create a cache for this operation */
   guint           opencl_support:1;
-  guint64         bit_pad:62;
+  guint           want_in_place:1; /* if possible to use for in-place
+                                      processing, making output buffer =
+                                      input buffer.
+                                      */
+  guint64         bit_pad:61;
 
   /* attach this operation with a GeglNode, override this if you are creating a
    * GeglGraph, it is already defined for Filters/Sources/Composers.
