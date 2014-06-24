@@ -56,14 +56,14 @@ void gegl_tile_unref (GeglTile *tile)
    * the in-memory tile is written to disk before we free the memory,
    * otherwise this data will be lost.
    */
-  if (!gegl_tile_is_stored (tile))
-    gegl_tile_store (tile);
+  gegl_tile_store (tile);
 
+  g_mutex_lock (&cowmutex);
   if (tile->data)
     {
-      g_mutex_lock (&cowmutex);
       if (tile->next_shared == tile)
         { /* no clones */
+          g_mutex_unlock (&cowmutex);
           if (tile->destroy_notify)
             {
               if (tile->destroy_notify == (void*)&free_data_directly)
@@ -77,9 +77,11 @@ void gegl_tile_unref (GeglTile *tile)
         {
           tile->prev_shared->next_shared = tile->next_shared;
           tile->next_shared->prev_shared = tile->prev_shared;
+          g_mutex_unlock (&cowmutex);
         }
-      g_mutex_unlock (&cowmutex);
     }
+  else
+    g_mutex_unlock (&cowmutex);
 
   g_slice_free (GeglTile, tile);
 }
@@ -110,6 +112,8 @@ gegl_tile_dup (GeglTile *src)
 {
   GeglTile *tile = gegl_tile_new_bare ();
 
+  g_mutex_lock (&cowmutex);
+
   tile->tile_storage = src->tile_storage;
   tile->data         = src->data;
   tile->size         = src->size;
@@ -117,8 +121,6 @@ gegl_tile_dup (GeglTile *src)
 
   tile->destroy_notify      = src->destroy_notify;
   tile->destroy_notify_data = src->destroy_notify_data;
-
-  g_mutex_lock (&cowmutex);
 
   tile->next_shared              = src->next_shared;
   src->next_shared               = tile;
@@ -156,10 +158,15 @@ gegl_tile_unclone (GeglTile *tile)
   g_mutex_lock (&cowmutex);
   if (tile->next_shared != tile)
     {
+      tile->prev_shared->next_shared = tile->next_shared;
+      tile->next_shared->prev_shared = tile->prev_shared;
+      tile->prev_shared              = tile;
+      tile->next_shared              = tile;
+      g_mutex_unlock (&cowmutex);
+
       /* the tile data is shared with other tiles,
        * create a local copy
        */
-
       if (tile->is_zero_tile)
         {
           tile->data = gegl_calloc (tile->size, 1);
@@ -171,12 +178,11 @@ gegl_tile_unclone (GeglTile *tile)
         }
       tile->destroy_notify           = (void*)&free_data_directly;
       tile->destroy_notify_data      = NULL;
-      tile->prev_shared->next_shared = tile->next_shared;
-      tile->next_shared->prev_shared = tile->prev_shared;
-      tile->prev_shared              = tile;
-      tile->next_shared              = tile;
     }
-  g_mutex_unlock (&cowmutex);
+  else
+    {
+      g_mutex_unlock (&cowmutex);
+    }
 }
 
 void
@@ -261,10 +267,12 @@ gegl_tile_is_stored (GeglTile *tile)
 void
 gegl_tile_void (GeglTile *tile)
 {
+  g_mutex_lock (&tile->tile_storage->mutex);
   gegl_tile_mark_as_stored (tile);
 
   if (tile->z == 0)
     gegl_tile_void_pyramid (tile);
+  g_mutex_unlock (&tile->tile_storage->mutex);
 }
 
 gboolean gegl_tile_store (GeglTile *tile)
@@ -275,6 +283,11 @@ gboolean gegl_tile_store (GeglTile *tile)
   if (tile->tile_storage == NULL)
     return FALSE;
   g_mutex_lock (&tile->tile_storage->mutex);
+  if (gegl_tile_is_stored (tile))
+  {
+    g_mutex_unlock (&tile->tile_storage->mutex);
+    return FALSE;
+  }
   ret = gegl_tile_source_set_tile (GEGL_TILE_SOURCE (tile->tile_storage),
                                     tile->x,
                                     tile->y,
