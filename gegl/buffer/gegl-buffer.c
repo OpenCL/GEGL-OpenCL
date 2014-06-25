@@ -486,6 +486,7 @@ gegl_buffer_constructor (GType                  type,
         {
           GeglBuffer *src_buffer = GEGL_BUFFER (source);
           buffer->format      = src_buffer->format;
+          buffer->soft_format = src_buffer->soft_format;
           buffer->tile_width  = src_buffer->tile_width;
           buffer->tile_height = src_buffer->tile_height;
         }
