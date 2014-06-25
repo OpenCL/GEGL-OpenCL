@@ -685,9 +685,10 @@ gegl_buffer_constructor (GType                  type,
   buffer->tile_storage = gegl_buffer_tile_storage (buffer);
 
   /* intialize the soft format to be equivalent to the actual
-   * format
+   * format, unless the soft format was copied from a source buffer
    */
-  buffer->soft_format = buffer->format;
+  if (! buffer->soft_format)
+    buffer->soft_format = buffer->format;
 
   g_assert (buffer->tile_width == buffer->tile_storage->tile_width);
   g_assert (buffer->tile_height == buffer->tile_storage->tile_height);
