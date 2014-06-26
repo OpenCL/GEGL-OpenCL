@@ -303,6 +303,8 @@ gegl_buffer_flush (GeglBuffer *buffer)
                             GEGL_TILE_FLUSH, 0,0,0,NULL);
 }
 
+static GMutex mutexes[256];
+
 static inline void
 gegl_buffer_iterate_write (GeglBuffer          *buffer,
                            const GeglRectangle *roi,
@@ -375,6 +377,8 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           gint      tiledx  = buffer_x + bufx;
           gint      offsetx = gegl_tile_offset (tiledx, tile_width);
           gint      y       = bufy;
+          gint index_x;
+          gint index_y;
           gint      lskip, rskip, pixels, row;
           guchar   *bp, *tile_base, *tp;
           GeglTile *tile;
@@ -386,10 +390,13 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           else
             pixels = tile_width - offsetx;
 
+          index_x = gegl_tile_indice (tiledx, tile_width);
+          index_y = gegl_tile_indice (tiledy, tile_height);
+
+          g_mutex_lock (&mutexes[ABS (index_x) % 256]);
           tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                            gegl_tile_indice (tiledx, tile_width),
-                                            gegl_tile_indice (tiledy, tile_height),
-                                            level);
+                                            index_x, index_y, level);
+          g_mutex_unlock (&mutexes[ABS (index_x) % 256]);
 
           lskip = (buffer_abyss_x) - (buffer_x + bufx);
           /* gap between left side of tile, and abyss */

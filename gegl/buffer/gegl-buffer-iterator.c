@@ -285,6 +285,7 @@ increment_rects (GeglBufferIterator *iter)
   return TRUE;
 }
 
+static GMutex mutexes[256];
 static void
 get_tile (GeglBufferIterator *iter,
           int        index)
@@ -313,8 +314,10 @@ get_tile (GeglBufferIterator *iter,
       int tile_x = gegl_tile_indice (iter->roi[index].x + shift_x, tile_width);
       int tile_y = gegl_tile_indice (iter->roi[index].y + shift_y, tile_height);
 
+      g_mutex_lock (&mutexes[ABS (tile_x) % 256]);
       sub->current_tile = gegl_tile_source_get_tile ((GeglTileSource *)(buf),
                                                      tile_x, tile_y, 0);
+      g_mutex_unlock (&mutexes[ABS (tile_x) % 256]);
 
       if (sub->flags & GEGL_BUFFER_WRITE)
         gegl_tile_lock (sub->current_tile);
