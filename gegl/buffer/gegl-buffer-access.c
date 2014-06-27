@@ -393,10 +393,10 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           index_x = gegl_tile_indice (tiledx, tile_width);
           index_y = gegl_tile_indice (tiledy, tile_height);
 
-          g_mutex_lock (&mutexes[ABS (index_x) % 256]);
+          g_mutex_lock (&mutexes[(index_x&15) * 16 + (index_y&15)]);
           tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
                                             index_x, index_y, level);
-          g_mutex_unlock (&mutexes[ABS (index_x) % 256]);
+          g_mutex_unlock (&mutexes[(index_x&15) * 16 + (index_y&15)]);
 
           lskip = (buffer_abyss_x) - (buffer_x + bufx);
           /* gap between left side of tile, and abyss */
