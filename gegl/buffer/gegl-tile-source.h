@@ -90,10 +90,23 @@ gegl_tile_source_get_tile (GeglTileSource *source,
                            gint            y,
                            gint            z)
 {
-  GeglTile *tile = gegl_tile_source_command (source, GEGL_TILE_GET,
-                                             x, y, z, NULL);
+  
+  GeglTile *tile;
+  
+
+  tile = gegl_tile_source_command (source, GEGL_TILE_GET,
+                                   x, y, z, NULL);
+
   return tile;
 }
+
+
+GeglTile *
+gegl_buffer_get_tile (GeglBuffer *buffer,
+                      gint        x,
+                      gint        y,
+                      gint        z);
+
 
 /**
  * gegl_tile_source_set_tile:

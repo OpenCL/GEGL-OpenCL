@@ -343,6 +343,12 @@ gegl_tile_handler_cache_get_tile (GeglTileHandlerCache *cache,
       g_queue_unlink (cache_queue, &result->link);
       g_queue_push_head_link (cache_queue, &result->link);
       g_mutex_unlock (&mutex);
+      while (result->tile == NULL)
+      {
+        g_printerr ("NULL tile in %s %p %i %i %i %p\n", __FUNCTION__, result, result->x, result->y, result->z,
+                result->tile);
+        return NULL;
+      }
       return gegl_tile_ref (result->tile);
     }
   g_mutex_unlock (&mutex);
@@ -413,8 +419,10 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
       item->tile->tile_storage = NULL;
       gegl_tile_mark_as_stored (item->tile); /* to cheat it out of being stored */
       gegl_tile_unref (item->tile);
+
       g_queue_unlink (cache_queue, &item->link);
       cache->items = g_slist_remove (cache->items, item);
+
       g_hash_table_remove (cache_ht, item);
       g_slice_free (CacheItem, item);
     }
@@ -476,6 +484,8 @@ gegl_tile_handler_cache_insert (GeglTileHandlerCache *cache,
 
   // XXX : remove entry if it already exists
   gegl_tile_handler_cache_void (cache, x, y, z);
+
+  /* XXX: this is a window when the tile is a zero tile during update */
 
   g_mutex_lock (&mutex);
   cache_total  += item->tile->size;

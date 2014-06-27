@@ -697,10 +697,10 @@ gegl_buffer_constructor (GType                  type,
 }
 
 static GeglTile *
-gegl_buffer_get_tile (GeglTileSource *source,
-                      gint            x,
-                      gint            y,
-                      gint            z)
+gegl_buffer_get_tile_int (GeglTileSource *source,
+                          gint            x,
+                          gint            y,
+                          gint            z)
 {
   GeglTileHandler *handler = (GeglTileHandler*) (source);
   GeglTile        *tile   = NULL;
@@ -751,7 +751,7 @@ gegl_buffer_command (GeglTileSource *source,
   switch (command)
     {
       case GEGL_TILE_GET:
-        return gegl_buffer_get_tile (source, x, y, z);
+        return gegl_buffer_get_tile_int (source, x, y, z);
       default:
         return gegl_tile_handler_source_command (handler, command, x, y, z, data);
     }
@@ -1184,3 +1184,42 @@ glong gegl_buffer_signal_connect (GeglBuffer *buffer,
   buffer->changed_signal_connections++;
   return g_signal_connect(buffer, detailed_signal, c_handler, data);
 } 
+
+GeglTile *
+gegl_buffer_get_tile (GeglBuffer *buffer,
+                      gint        x,
+                      gint        y,
+                      gint        z)
+{
+  GeglTileSource  *source  = (GeglTileSource*)buffer;
+  GeglTile *tile;
+
+  static int threaded = -1;
+
+  if (threaded == -1)
+  {
+    threaded = gegl_config()->threads > 1;
+  }
+
+  g_assert (source);
+
+  if (threaded)
+  {
+    GeglTileStorage *tile_storage = buffer->tile_storage;
+    g_assert (tile_storage);
+
+    g_mutex_lock (&tile_storage->mutex);
+
+    tile = gegl_tile_source_command (source, GEGL_TILE_GET,
+                                     x, y, z, NULL);
+
+    g_mutex_unlock (&tile_storage->mutex);
+  }
+  else
+  {
+    return gegl_tile_source_command (source, GEGL_TILE_GET,
+                                     x, y, z, NULL);
+  }
+
+  return tile;
+}

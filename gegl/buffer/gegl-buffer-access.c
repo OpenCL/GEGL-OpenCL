@@ -304,8 +304,6 @@ gegl_buffer_flush (GeglBuffer *buffer)
                             GEGL_TILE_FLUSH, 0,0,0,NULL);
 }
 
-static GMutex mutexes[256];
-
 static inline void
 gegl_buffer_iterate_write (GeglBuffer          *buffer,
                            const GeglRectangle *roi,
@@ -335,7 +333,6 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
   gint abyss_x_total  = buffer_abyss_x + buffer->abyss.width;
   gint abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint factor         = 1<<level;
-  gboolean threaded   = gegl_config()->threads > 1;
   const Babl *fish;
 
   /* roi specified, override buffers extent */
@@ -395,19 +392,7 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           index_x = gegl_tile_indice (tiledx, tile_width);
           index_y = gegl_tile_indice (tiledy, tile_height);
 
-          if (threaded)
-            {
-              g_mutex_lock (&mutexes[(index_x&15) * 16 + (index_y&15)]);
-              tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                                index_x, index_y, level);
-              g_mutex_unlock (&mutexes[(index_x&15) * 16 + (index_y&15)]);
-            }
-          else
-            {
-              tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                                index_x, index_y, level);
-            }
-
+          tile = gegl_buffer_get_tile (buffer, index_x, index_y, level);
 
           lskip = (buffer_abyss_x) - (buffer_x + bufx);
           /* gap between left side of tile, and abyss */
@@ -1684,8 +1669,7 @@ gegl_buffer_copy (GeglBuffer          *src,
                 dtx = gegl_tile_indice (dst_x, tile_width);
                 dty = gegl_tile_indice (dst_y, tile_height);
 
-                src_tile = gegl_tile_source_get_tile ((GeglTileSource*)(src),
-                                                      stx, sty, 0);
+                src_tile = gegl_buffer_get_tile (src, stx, sty, 0);
 
                 dst_tile = gegl_tile_dup (src_tile);
                 dst_tile->tile_storage = dst->tile_storage;
