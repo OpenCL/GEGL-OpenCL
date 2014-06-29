@@ -413,7 +413,7 @@ gegl_sampler_nohalo_class_init (GeglSamplerNohaloClass *klass)
 /*
  * IMPORTANT: NOHALO_OFFSET_0 SHOULD BE AN INTEGER >= 2.
  */
-#define NOHALO_OFFSET_0 (7)
+#define NOHALO_OFFSET_0 (13)
 #define NOHALO_SIZE_0 (1+2*NOHALO_OFFSET_0)
 
 /*
