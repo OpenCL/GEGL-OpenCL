@@ -82,7 +82,12 @@ struct _GeglOperationClass
                                       processing, making output buffer =
                                       input buffer.
                                       */
-  guint64         bit_pad:61;
+  guint           threaded:1;  /* do threaded processing if possible,
+                                  some base classes have special logic
+                                  to accelerate rendering; this allows opting in/out
+                                  in the sub-classes of these.
+                                */
+  guint64         bit_pad:60;
 
   /* attach this operation with a GeglNode, override this if you are creating a
    * GeglGraph, it is already defined for Filters/Sources/Composers.
@@ -244,6 +249,10 @@ void          gegl_operation_set_key           (const gchar *operation_type,
 
 
 gboolean      gegl_operation_use_opencl         (const GeglOperation *operation);
+
+gboolean
+gegl_operation_use_threading (GeglOperation *operation,
+                              const GeglRectangle *roi);
 
 /* Invalidate a specific rectangle, indicating the any computation depending
  * on this roi is now invalid.
