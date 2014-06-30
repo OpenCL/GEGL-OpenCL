@@ -116,7 +116,10 @@ gegl_operation_composer_process (GeglOperation        *operation,
 
   input = gegl_operation_context_get_source (context, "input");
   aux   = gegl_operation_context_get_source (context, "aux");
-  output = gegl_operation_context_get_target (context, "output");
+  output = gegl_operation_context_get_output_maybe_in_place (operation,
+                                                             context,
+                                                             input,
+                                                             result);
 
   /* A composer with a NULL aux, can still be valid, the
    * subclass has to handle it.
@@ -124,7 +127,10 @@ gegl_operation_composer_process (GeglOperation        *operation,
   if (input != NULL ||
       aux != NULL)
     {
-      success = klass->process (operation, input, aux, output, result, level);
+      if (result->width == 0 || result->height == 0)
+        success = TRUE;
+      else
+        success = klass->process (operation, input, aux, output, result, level);
 
       if (input)
         g_object_unref (input);

@@ -37,13 +37,6 @@ static gboolean gegl_operation_point_filter_process
                                const GeglRectangle *result,
                                gint                 level);
 
-static gboolean gegl_operation_point_filter_op_process
-                              (GeglOperation       *operation,
-                               GeglOperationContext *context,
-                               const gchar          *output_pad,
-                               const GeglRectangle  *roi,
-                               gint                  level);
-
 G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_OPERATION_FILTER)
 
 static void prepare (GeglOperation *operation)
@@ -57,7 +50,7 @@ gegl_operation_point_filter_class_init (GeglOperationPointFilterClass *klass)
 {
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class->process = gegl_operation_point_filter_op_process;
+  GEGL_OPERATION_FILTER_CLASS(klass)->process = gegl_operation_point_filter_process;
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
   operation_class->want_in_place = TRUE;
@@ -190,36 +183,4 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
       }
     }
   return TRUE;
-}
-
-static gboolean gegl_operation_point_filter_op_process
-                              (GeglOperation       *operation,
-                               GeglOperationContext *context,
-                               const gchar          *output_pad,
-                               const GeglRectangle  *roi,
-                               gint                  level)
-{
-  GeglOperationClass       *klass = GEGL_OPERATION_GET_CLASS (operation);
-  GeglBuffer               *input;
-  GeglBuffer               *output;
-  gboolean                  success = FALSE;
-
-  input = gegl_operation_context_get_source (context, "input");
-
-  if (klass->want_in_place && 
-      gegl_can_do_inplace_processing (operation, input, roi))
-    {
-      output = g_object_ref (input);
-      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
-    }
-  else
-    {
-      output = gegl_operation_context_get_target (context, "output");
-    }
-
-  success = gegl_operation_point_filter_process (operation, input, output, roi, level);
-
-  if (input != NULL)
-    g_object_unref (input);
-  return success;
 }

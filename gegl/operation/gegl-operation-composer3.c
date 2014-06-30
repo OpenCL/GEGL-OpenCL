@@ -113,7 +113,6 @@ gegl_operation_composer3_process (GeglOperation        *operation,
                                   gint                  level)
 {
   GeglOperationComposer3Class *klass   = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
-  GeglOperationClass          *op_class = GEGL_OPERATION_CLASS (klass);
   GeglBuffer                  *input;
   GeglBuffer                  *aux;
   GeglBuffer                  *aux2;
@@ -137,17 +136,10 @@ gegl_operation_composer3_process (GeglOperation        *operation,
   }
 
   input = gegl_operation_context_get_source (context, "input");
-
-  if (op_class->want_in_place && 
-      gegl_can_do_inplace_processing (operation, input, result))
-    {
-      output = g_object_ref (input);
-      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
-    }
-  else
-    {
-      output = gegl_operation_context_get_target (context, "output");
-    }
+  output = gegl_operation_context_get_output_maybe_in_place (operation,
+                                                             context,
+                                                             input,
+                                                             result);
 
   aux   = gegl_operation_context_get_source (context, "aux");
   aux2  = gegl_operation_context_get_source (context, "aux2");

@@ -366,3 +366,26 @@ gegl_operation_context_get_level (GeglOperationContext *ctxt)
 {
   return ctxt->level;
 }
+
+
+GeglBuffer *
+gegl_operation_context_get_output_maybe_in_place (GeglOperation *operation,
+                                                  GeglOperationContext *context,
+                                                  GeglBuffer    *input,
+                                                  const GeglRectangle *roi)
+{
+  GeglOperationClass *klass = GEGL_OPERATION_GET_CLASS (operation);
+  GeglBuffer *output;
+
+  if (klass->want_in_place && 
+      gegl_can_do_inplace_processing (operation, input, roi))
+    {
+      output = g_object_ref (input);
+      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
+    }
+  else
+    {
+      output = gegl_operation_context_get_target (context, "output");
+    }
+  return output;
+}

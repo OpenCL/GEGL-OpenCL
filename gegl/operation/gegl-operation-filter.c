@@ -126,7 +126,10 @@ gegl_operation_filter_process (GeglOperation        *operation,
     }
 
   input  = gegl_operation_context_get_source (context, "input");
-  output = gegl_operation_context_get_target (context, "output");
+  output = gegl_operation_context_get_output_maybe_in_place (operation,
+                                                             context,
+                                                             input,
+                                                             result);
 
   success = klass->process (operation, input, output, result, level);
 

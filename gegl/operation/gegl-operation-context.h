@@ -43,6 +43,12 @@ gint            gegl_operation_context_get_level       (GeglOperationContext *se
 
 /* the rest of these functions are for internal use only */
 
+GeglBuffer *    gegl_operation_context_get_output_maybe_in_place (GeglOperation *operation,
+                                                            GeglOperationContext *context,
+                                                            GeglBuffer    *input,
+                                                            const GeglRectangle *roi);
+
+
 G_END_DECLS
 
 #endif /* __GEGL_OPERATION_CONTEXT_H__ */
