@@ -443,6 +443,8 @@ static void swap_clean (void)
     }
 }
 
+void gegl_temp_buffer_free (void);
+
 void
 gegl_exit (void)
 {
@@ -460,6 +462,8 @@ gegl_exit (void)
   gegl_extension_handler_cleanup ();
   gegl_random_cleanup ();
   gegl_cl_cleanup ();
+
+  gegl_temp_buffer_free ();
 
   if (module_db != NULL)
     {

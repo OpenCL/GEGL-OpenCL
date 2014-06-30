@@ -769,3 +769,30 @@ gegl_operation_use_threading (GeglOperation *operation,
   return FALSE;
 }
 
+static guchar *gegl_temp_alloc[GEGL_MAX_THREADS * 4]={NULL,};
+static gint    gegl_temp_size[GEGL_MAX_THREADS * 4]={0,};
+
+guchar *gegl_temp_buffer (int no, int size)
+{
+  if (!gegl_temp_alloc[no] || gegl_temp_size[no] < size)
+  {
+    if (gegl_temp_alloc[no])
+      gegl_free (gegl_temp_alloc[no]);
+    gegl_temp_alloc[no] = gegl_malloc (size);
+    gegl_temp_size[no] = size;
+  }
+  return gegl_temp_alloc[no];
+}
+
+void gegl_temp_buffer_free (void);
+void gegl_temp_buffer_free (void)
+{
+  int no;
+  for (no = 0; no < GEGL_MAX_THREADS * 4; no++)
+    if (gegl_temp_alloc[no])
+    {
+      gegl_free (gegl_temp_alloc[no]);
+      gegl_temp_alloc[no] = NULL;
+      gegl_temp_size[no] = 0;
+    }
+}

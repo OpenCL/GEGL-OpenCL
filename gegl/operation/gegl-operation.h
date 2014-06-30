@@ -293,6 +293,14 @@ void     gegl_object_set_has_forked       (GObject *object);
  */
 gboolean  gegl_object_get_has_forked      (GObject *object);
 
+/**
+ * gegl_temp_buffer:
+ *
+ * Returns a singleton scratch buffer for use with multi-threaded processing
+ * dispatch.
+ */
+guchar    *gegl_temp_buffer (int no, int min_size);
+
 G_END_DECLS
 
 /***
