@@ -211,8 +211,7 @@ gegl_operation_filter_process (GeglOperation        *operation,
       g_thread_pool_push (pool, &thread_data[i], NULL);
     thread_process (&thread_data[0], NULL);
 
-    while (pending != 0) g_usleep (1);
-
+    while (g_atomic_int_get (&pending)) {};
 
     success = thread_data[0].success;
   }
