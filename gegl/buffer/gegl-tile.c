@@ -267,12 +267,12 @@ gegl_tile_is_stored (GeglTile *tile)
 void
 gegl_tile_void (GeglTile *tile)
 {
-  g_mutex_lock (&tile->tile_storage->mutex);
+//  g_mutex_lock (&tile->tile_storage->mutex);
   gegl_tile_mark_as_stored (tile);
 
   if (tile->z == 0)
     gegl_tile_void_pyramid (tile);
-  g_mutex_unlock (&tile->tile_storage->mutex);
+ // g_mutex_unlock (&tile->tile_storage->mutex);
 }
 
 gboolean gegl_tile_store (GeglTile *tile)
