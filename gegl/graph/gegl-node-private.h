@@ -131,7 +131,6 @@ void
 gegl_node_emit_computed (GeglNode *node,
                          const GeglRectangle *rect);
 
-#define GEGL_MAX_THREADS 16
 
 G_END_DECLS
 

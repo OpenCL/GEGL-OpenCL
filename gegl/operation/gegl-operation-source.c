@@ -24,6 +24,7 @@
 #include "gegl.h"
 #include "gegl-operation-source.h"
 #include "gegl-operation-context.h"
+#include "gegl-config.h"
 
 static gboolean gegl_operation_source_process
                              (GeglOperation        *operation,
@@ -79,6 +80,47 @@ attach (GeglOperation *self)
   g_param_spec_sink (pspec);
 }
 
+typedef struct ThreadData
+{
+  GeglOperationSourceClass *klass;
+  GeglOperation            *operation;
+  GeglBuffer               *output;
+  gint                     *pending;
+  gint                      level;
+  gboolean                  success;
+  GeglRectangle             roi;
+} ThreadData;
+
+static GMutex pool_mutex = {0,};
+static GCond  pool_cond  = {0,};
+
+static void thread_process (gpointer thread_data, gpointer unused)
+{
+  ThreadData *data = thread_data;
+  if (!data->klass->process (data->operation,
+                       data->output, &data->roi, data->level))
+    data->success = FALSE;
+  g_atomic_int_add (data->pending, -1);
+
+  if (*data->pending == 0)
+  {
+    g_mutex_lock (&pool_mutex);
+    g_cond_signal (&pool_cond);
+    g_mutex_unlock (&pool_mutex);
+  }
+}
+
+static GThreadPool *thread_pool (void)
+{
+  static GThreadPool *pool = NULL;
+  if (!pool)
+    {
+      pool =  g_thread_pool_new (thread_process, NULL, gegl_config()->threads,
+                                 FALSE, NULL);
+    }
+  return pool;
+}
+
 static gboolean
 gegl_operation_source_process (GeglOperation        *operation,
                                GeglOperationContext *context,
@@ -88,7 +130,7 @@ gegl_operation_source_process (GeglOperation        *operation,
 {
   GeglOperationSourceClass *klass = GEGL_OPERATION_SOURCE_GET_CLASS (operation);
   GeglBuffer               *output;
-  gboolean                  success;
+  gboolean                  success = FALSE;
 
   if (strcmp (output_prop, "output"))
     {
@@ -98,7 +140,64 @@ gegl_operation_source_process (GeglOperation        *operation,
 
   g_assert (klass->process);
   output = gegl_operation_context_get_target (context, "output");
-  success = klass->process (operation, output, result, level);
+
+  if (gegl_operation_use_threading (operation, result))
+  {
+    gint threads = gegl_config ()->threads;
+    GThreadPool *pool = thread_pool ();
+    ThreadData thread_data[GEGL_MAX_THREADS];
+    gint pending = threads;
+
+    if (result->width > result->height)
+    {
+      gint bit = result->width / threads;
+      for (gint j = 0; j < threads; j++)
+      {
+        thread_data[j].roi.y = result->y;
+        thread_data[j].roi.height = result->height;
+        thread_data[j].roi.x = result->x + bit * j;
+        thread_data[j].roi.width = bit;
+      }
+      thread_data[threads-1].roi.width = result->width - (bit * (threads-1));
+    }
+    else
+    {
+      gint bit = result->height / threads;
+      for (gint j = 0; j < threads; j++)
+      {
+        thread_data[j].roi.x = result->x;
+        thread_data[j].roi.width = result->width;
+        thread_data[j].roi.y = result->y + bit * j;
+        thread_data[j].roi.height = bit;
+      }
+      thread_data[threads-1].roi.height = result->height - (bit * (threads-1));
+    }
+    for (gint i = 0; i < threads; i++)
+    {
+      thread_data[i].klass = klass;
+      thread_data[i].operation = operation;
+      thread_data[i].output = output;
+      thread_data[i].pending = &pending;
+      thread_data[i].level = level;
+      thread_data[i].success = TRUE;
+    }
+
+    g_mutex_lock (&pool_mutex);
+
+    for (gint i = 0; i < threads; i++)
+      g_thread_pool_push (pool, &thread_data[i], NULL);
+
+    while (pending != 0)
+      g_cond_wait (&pool_cond, &pool_mutex);
+
+    g_mutex_unlock (&pool_mutex);
+
+    success = thread_data[0].success;
+  }
+  else
+  {
+    success = klass->process (operation, output, result, level);
+  }
 
   return success;
 }

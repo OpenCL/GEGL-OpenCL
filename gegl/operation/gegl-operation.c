@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "gegl.h"
+#include "gegl-config.h"
 #include "gegl-types-internal.h"
 #include "gegl-operation.h"
 #include "gegl-operation-context.h"
@@ -86,6 +87,7 @@ gegl_operation_class_init (GeglOperationClass *klass)
   klass->attach                    = attach;
   klass->prepare                   = NULL;
   klass->no_cache                  = FALSE;
+  klass->threaded                  = FALSE;
   klass->get_bounding_box          = get_bounding_box;
   klass->get_invalidated_by_change = get_invalidated_by_change;
   klass->get_required_for_output   = get_required_for_output;
@@ -744,3 +746,26 @@ gegl_operation_get_source_format (GeglOperation *operation,
     }
   return NULL;
 }
+
+gboolean
+gegl_operation_use_threading (GeglOperation *operation,
+                              const GeglRectangle *roi)
+{
+  gint threads = gegl_config ()->threads;
+  if (threads == 1)
+    return FALSE;
+
+  {
+    GeglOperationClass       *op_class;
+    op_class = GEGL_OPERATION_GET_CLASS (operation);
+
+    if (op_class->opencl_support && gegl_cl_is_accelerated ())
+      return FALSE;
+
+    if (op_class->threaded &&
+        roi->width * roi->height > 64*64)
+      return TRUE;
+  }
+  return FALSE;
+}
+

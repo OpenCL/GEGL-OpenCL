@@ -57,6 +57,7 @@ gegl_operation_point_render_class_init (GeglOperationPointRenderClass *klass)
 
   operation_class->detect = detect;
   operation_class->no_cache = FALSE;
+  operation_class->threaded = TRUE;
   operation_class->get_cached_region = NULL; /* we are able to compute anything
                                                  anywhere when we're our kind
                                                  of class */

@@ -24,28 +24,29 @@
 #include "gegl.h"
 #include "gegl-operation-composer3.h"
 #include "gegl-operation-context.h"
+#include "gegl-config.h"
 
 static gboolean gegl_operation_composer3_process
-                             (GeglOperation        *operation,
-                              GeglOperationContext *context,
-                              const gchar          *output_prop,
-                              const GeglRectangle  *result,
-                              gint                  level);
+(GeglOperation        *operation,
+ GeglOperationContext *context,
+ const gchar          *output_prop,
+ const GeglRectangle  *result,
+ gint                  level);
 static void     attach       (GeglOperation        *operation);
 static GeglNode*detect       (GeglOperation        *operation,
-                              gint                  x,
-                              gint                  y);
+    gint                  x,
+    gint                  y);
 
 static GeglRectangle get_bounding_box        (GeglOperation        *self);
 static GeglRectangle get_required_for_output (GeglOperation        *self,
-                                               const gchar         *input_pad,
-                                               const GeglRectangle *roi);
+    const gchar         *input_pad,
+    const GeglRectangle *roi);
 
 G_DEFINE_TYPE (GeglOperationComposer3, gegl_operation_composer3,
-               GEGL_TYPE_OPERATION)
+    GEGL_TYPE_OPERATION)
 
 
-static void
+  static void
 gegl_operation_composer3_class_init (GeglOperationComposer3Class * klass)
 {
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
@@ -57,60 +58,105 @@ gegl_operation_composer3_class_init (GeglOperationComposer3Class * klass)
   operation_class->get_required_for_output = get_required_for_output;
 }
 
-static void
+  static void
 gegl_operation_composer3_init (GeglOperationComposer3 *self)
 {
 }
 
-static void
+  static void
 attach (GeglOperation *self)
 {
   GeglOperation *operation = GEGL_OPERATION (self);
   GParamSpec    *pspec;
 
   pspec = g_param_spec_object ("output",
-                               "Output",
-                               "Output pad for generated image buffer.",
-                               GEGL_TYPE_BUFFER,
-                               G_PARAM_READABLE |
-                               GEGL_PARAM_PAD_OUTPUT);
+      "Output",
+      "Output pad for generated image buffer.",
+      GEGL_TYPE_BUFFER,
+      G_PARAM_READABLE |
+      GEGL_PARAM_PAD_OUTPUT);
   gegl_operation_create_pad (operation, pspec);
   g_param_spec_sink (pspec);
 
   pspec = g_param_spec_object ("input",
-                               "Input",
-                               "Input pad, for image buffer input.",
-                               GEGL_TYPE_BUFFER,
-                               G_PARAM_READWRITE |
-                               GEGL_PARAM_PAD_INPUT);
+      "Input",
+      "Input pad, for image buffer input.",
+      GEGL_TYPE_BUFFER,
+      G_PARAM_READWRITE |
+      GEGL_PARAM_PAD_INPUT);
   gegl_operation_create_pad (operation, pspec);
   g_param_spec_sink (pspec);
 
   pspec = g_param_spec_object ("aux",
-                               "Aux",
-                               "Auxiliary image buffer input pad.",
-                               GEGL_TYPE_BUFFER,
-                               G_PARAM_READWRITE |
-                               GEGL_PARAM_PAD_INPUT);
+      "Aux",
+      "Auxiliary image buffer input pad.",
+      GEGL_TYPE_BUFFER,
+      G_PARAM_READWRITE |
+      GEGL_PARAM_PAD_INPUT);
   gegl_operation_create_pad (operation, pspec);
   g_param_spec_sink (pspec);
 
   pspec = g_param_spec_object ("aux2",
-                               "Aux2",
-                               "Second auxiliary image buffer input pad.",
-                               GEGL_TYPE_BUFFER,
-                               G_PARAM_READWRITE |
-                               GEGL_PARAM_PAD_INPUT);
+      "Aux2",
+      "Second auxiliary image buffer input pad.",
+      GEGL_TYPE_BUFFER,
+      G_PARAM_READWRITE |
+      GEGL_PARAM_PAD_INPUT);
   gegl_operation_create_pad (operation, pspec);
   g_param_spec_sink (pspec);
 }
 
-static gboolean
+typedef struct ThreadData
+{
+  GeglOperationComposer3Class *klass;
+  GeglOperation               *operation;
+  GeglBuffer                  *input;
+  GeglBuffer                  *aux;
+  GeglBuffer                  *aux2;
+  GeglBuffer                  *output;
+  gint                        *pending;
+  gint                         level;
+  gboolean                     success;
+  GeglRectangle                roi;
+} ThreadData;
+
+static GMutex pool_mutex = {0,};
+static GCond  pool_cond  = {0,};
+
+static void thread_process (gpointer thread_data, gpointer unused)
+{
+  ThreadData *data = thread_data;
+  if (!data->klass->process (data->operation,
+        data->input, data->aux, data->aux2, 
+        data->output, &data->roi, data->level))
+    data->success = FALSE;
+  g_atomic_int_add (data->pending, -1);
+  if (*data->pending == 0)
+    {
+      g_mutex_lock (&pool_mutex);
+      g_cond_signal (&pool_cond);
+      g_mutex_unlock (&pool_mutex);
+    }
+}
+
+static GThreadPool *thread_pool (void)
+{
+  static GThreadPool *pool = NULL;
+  if (!pool)
+  {
+    pool =  g_thread_pool_new (thread_process, NULL, gegl_config()->threads,
+        FALSE, NULL);
+  }
+  return pool;
+}
+
+
+  static gboolean
 gegl_operation_composer3_process (GeglOperation        *operation,
-                                  GeglOperationContext *context,
-                                  const gchar          *output_prop,
-                                  const GeglRectangle  *result,
-                                  gint                  level)
+    GeglOperationContext *context,
+    const gchar          *output_prop,
+    const GeglRectangle  *result,
+    gint                  level)
 {
   GeglOperationComposer3Class *klass   = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
   GeglBuffer                  *input;
@@ -120,14 +166,10 @@ gegl_operation_composer3_process (GeglOperation        *operation,
   gboolean                     success = FALSE;
 
   if (strcmp (output_prop, "output"))
-    {
-      g_warning ("requested processing of %s pad on a composer", output_prop);
-      return FALSE;
-    }
-  output = gegl_operation_context_get_target (context, "output");
-
-  if (result->width == 0 || result->height == 0)
-    return TRUE;
+  {
+    g_warning ("requested processing of %s pad on a composer", output_prop);
+    return FALSE;
+  }
 
   if (result->width == 0 || result->height == 0)
   {
@@ -151,7 +193,66 @@ gegl_operation_composer3_process (GeglOperation        *operation,
       aux != NULL ||
       aux2 != NULL)
     {
-      success = klass->process (operation, input, aux, aux2, output, result, level);
+      if (gegl_operation_use_threading (operation, result))
+      {
+        gint threads = gegl_config ()->threads;
+        GThreadPool *pool = thread_pool ();
+        ThreadData thread_data[GEGL_MAX_THREADS];
+        gint pending = threads;
+
+        if (result->width > result->height)
+        {
+          gint bit = result->width / threads;
+          for (gint j = 0; j < threads; j++)
+          {
+            thread_data[j].roi.y = result->y;
+            thread_data[j].roi.height = result->height;
+            thread_data[j].roi.x = result->x + bit * j;
+            thread_data[j].roi.width = bit;
+          }
+          thread_data[threads-1].roi.width = result->width - (bit * (threads-1));
+        }
+        else
+        {
+          gint bit = result->height / threads;
+          for (gint j = 0; j < threads; j++)
+          {
+            thread_data[j].roi.x = result->x;
+            thread_data[j].roi.width = result->width;
+            thread_data[j].roi.y = result->y + bit * j;
+            thread_data[j].roi.height = bit;
+          }
+          thread_data[threads-1].roi.height = result->height - (bit * (threads-1));
+        }
+        for (gint i = 0; i < threads; i++)
+        {
+          thread_data[i].klass = klass;
+          thread_data[i].operation = operation;
+          thread_data[i].input = input;
+          thread_data[i].aux = aux;
+          thread_data[i].aux2 = aux2;
+          thread_data[i].output = output;
+          thread_data[i].pending = &pending;
+          thread_data[i].level = level;
+          thread_data[i].success = TRUE;
+        }
+
+        g_mutex_lock (&pool_mutex);
+
+        for (gint i = 0; i < threads; i++)
+          g_thread_pool_push (pool, &thread_data[i], NULL);
+
+        while (pending != 0)
+          g_cond_wait (&pool_cond, &pool_mutex);
+        
+        g_mutex_unlock (&pool_mutex);
+
+        success = thread_data[0].success;
+      }
+      else
+      {
+        success = klass->process (operation, input, aux, aux2, output, result, level);
+      }
 
       if (input)
         g_object_unref (input);
