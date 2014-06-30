@@ -387,7 +387,12 @@ gegl_processor_get_band_size (gint size)
 
   /* try to make the rects generated match better with potential 2^n sized
    * tiles, XXX: should be improved to make the next slice fit as well. */
-  if (band_size <= 256)
+  if (band_size <= 128)
+    {
+      band_size = MIN(band_size, 64); /* prefer a band_size of 128,
+                                          hoping to hit tiles */
+    }
+  else if (band_size <= 256)
     {
       band_size = MIN(band_size, 128); /* prefer a band_size of 128,
                                           hoping to hit tiles */

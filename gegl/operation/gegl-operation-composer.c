@@ -50,8 +50,8 @@ gegl_operation_composer_class_init (GeglOperationComposerClass * klass)
 {
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class->threaded = TRUE;
   operation_class->process = gegl_operation_composer_process;
+  operation_class->threaded = TRUE;
   operation_class->attach = attach;
   operation_class->detect = detect;
   operation_class->get_bounding_box = get_bounding_box;
@@ -110,9 +110,6 @@ typedef struct ThreadData
   GeglRectangle               roi;
 } ThreadData;
 
-static GMutex pool_mutex = {0,};
-static GCond  pool_cond  = {0,};
-
 static void thread_process (gpointer thread_data, gpointer unused)
 {
   ThreadData *data = thread_data;
@@ -120,12 +117,6 @@ static void thread_process (gpointer thread_data, gpointer unused)
                        data->input, data->aux, data->output, &data->roi, data->level))
     data->success = FALSE;
   g_atomic_int_add (data->pending, -1);
-  if (*data->pending == 0)
-  {
-    g_mutex_lock (&pool_mutex);
-    g_cond_signal (&pool_cond);
-    g_mutex_unlock (&pool_mutex);
-  }
 }
 
 static GThreadPool *thread_pool (void)
@@ -214,15 +205,13 @@ gegl_operation_composer_process (GeglOperation        *operation,
           thread_data[i].success = TRUE;
         }
 
-        g_mutex_lock (&pool_mutex);
-
-        for (gint i = 0; i < threads; i++)
+        for (gint i = 1; i < threads; i++)
           g_thread_pool_push (pool, &thread_data[i], NULL);
+        thread_process (&thread_data[0], NULL);
 
         while (pending != 0)
-          g_cond_wait (&pool_cond, &pool_mutex);
+          g_usleep (1);
 
-        g_mutex_unlock (&pool_mutex);
         success = thread_data[0].success;
       }
       else

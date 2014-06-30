@@ -57,6 +57,7 @@ gegl_operation_point_composer3_class_init (GeglOperationPointComposer3Class *kla
   operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
   operation_class->want_in_place = TRUE;
+  operation_class->threaded = TRUE;
 }
 
 static void
