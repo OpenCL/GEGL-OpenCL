@@ -189,6 +189,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   operation_class = GEGL_OPERATION_CLASS (klass);
 
+  operation_class->threaded                  = FALSE;
   operation_class->process                   = gegl_crop_process;
   operation_class->prepare                   = gegl_crop_prepare;
   operation_class->get_bounding_box          = gegl_crop_get_bounding_box;

@@ -266,6 +266,7 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare                 = reinhard05_prepare;
   operation_class->get_required_for_output = reinhard05_get_required_for_output;
   operation_class->get_cached_region       = reinhard05_get_cached_region;
+  operation_class->threaded                = FALSE;
 
   gegl_operation_class_set_keys (operation_class,
   "name",      "gegl:reinhard05",

@@ -291,6 +291,7 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
+  operation_class->threaded                = FALSE;
   operation_class->prepare                 = prepare;
   operation_class->get_cached_region       = get_cached_region;
   filter_class->process                    = process;
