@@ -114,7 +114,8 @@ gegl_eval_manager_get_bounding_box (GeglEvalManager     *self)
 
 GeglBuffer *
 gegl_eval_manager_apply (GeglEvalManager     *self,
-                         const GeglRectangle *roi)
+                         const GeglRectangle *roi,
+                         gint                 level)
 {
   GeglBuffer  *object;
 
@@ -130,7 +131,7 @@ gegl_eval_manager_apply (GeglEvalManager     *self,
   GEGL_INSTRUMENT_END ("gegl", "prepare-request");
 
   GEGL_INSTRUMENT_START();
-  object = gegl_graph_process (self->traversal);
+  object = gegl_graph_process (self->traversal, level);
   GEGL_INSTRUMENT_END ("gegl", "process");
 
   return object;

@@ -930,25 +930,27 @@ gegl_node_get_eval_manager (GeglNode *self)
 
 static GeglBuffer *
 gegl_node_apply_roi (GeglNode            *self,
-                     const GeglRectangle *roi)
+                     const GeglRectangle *roi,
+                     gint                 level)
 {
   GeglEvalManager *eval_manager = gegl_node_get_eval_manager (self);
 
   if (roi)
     {
-      return gegl_eval_manager_apply (eval_manager, roi);
+      return gegl_eval_manager_apply (eval_manager, roi, level);
     }
   else
     {
       GeglRectangle node_bbox = gegl_node_get_bounding_box (self);
-      return gegl_eval_manager_apply (eval_manager, &node_bbox);
+      return gegl_eval_manager_apply (eval_manager, &node_bbox, level);
     }
 }
 
-void
-gegl_node_blit_buffer (GeglNode            *self,
-                       GeglBuffer          *buffer,
-                       const GeglRectangle *roi)
+static void
+gegl_node_blit_buffer2 (GeglNode            *self,
+                        GeglBuffer          *buffer,
+                        const GeglRectangle *roi,
+                        gint                 level)
 {
   GeglEvalManager *eval_manager;
   GeglBuffer      *result;
@@ -963,7 +965,7 @@ gegl_node_blit_buffer (GeglNode            *self,
   else
     request = gegl_node_get_bounding_box (self);
 
-  result = gegl_eval_manager_apply (eval_manager, &request);
+  result = gegl_eval_manager_apply (eval_manager, &request, level);
 
   if (result)
     {
@@ -971,6 +973,22 @@ gegl_node_blit_buffer (GeglNode            *self,
         gegl_buffer_copy (result, &request, buffer, NULL);
       g_object_unref (result);
     }
+}
+
+void
+gegl_node_blit_buffer (GeglNode            *self,
+                       GeglBuffer          *buffer,
+                       const GeglRectangle *roi)
+{
+  gegl_node_blit_buffer2 (self, buffer, roi, 0);
+}
+
+static inline gboolean gegl_mipmap_rendering_enabled (void)
+{
+  static int enabled = -1;
+  if (enabled == -1)
+    enabled = g_getenv("GEGL_MIPMAP_RENDERING")!=NULL;
+  return enabled;
 }
 
 void
@@ -993,11 +1011,12 @@ gegl_node_blit (GeglNode            *self,
         {
           const GeglRectangle unscaled_roi = _gegl_get_required_for_scale (format, roi, scale);
 
-          buffer = gegl_node_apply_roi (self, &unscaled_roi);
+          buffer = gegl_node_apply_roi (self, &unscaled_roi,
+              gegl_mipmap_rendering_enabled()?gegl_level_from_scale (scale):0);
         }
       else
         {
-          buffer = gegl_node_apply_roi (self, roi);
+          buffer = gegl_node_apply_roi (self, roi, 0);
         }
 
       if (buffer && destination_buf)
@@ -1017,7 +1036,8 @@ gegl_node_blit (GeglNode            *self,
             {
               const GeglRectangle unscaled_roi = _gegl_get_required_for_scale (format, roi, scale);
 
-              gegl_node_blit_buffer (self, buffer, &unscaled_roi);
+              gegl_node_blit_buffer2 (self, buffer, &unscaled_roi,
+                gegl_mipmap_rendering_enabled()?gegl_level_from_scale (scale):0);
               gegl_cache_computed (cache, &unscaled_roi);
             }
           else
@@ -1165,7 +1185,7 @@ gegl_node_property_changed (GObject    *gobject,
              or perhaps a bug lurks here?
            */
           GeglRectangle dirty_rect;
-/*          GeglRectangle new_have_rect;*/
+/*        GeglRectangle new_have_rect;*/
 
           dirty_rect = self->have_rect;
           /*new_have_rect = gegl_node_get_bounding_box (self);

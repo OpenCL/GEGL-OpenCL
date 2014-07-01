@@ -368,7 +368,8 @@ gegl_graph_get_shared_empty (GeglGraphTraversal *path)
  * there is no output pad.
  */
 GeglBuffer *
-gegl_graph_process (GeglGraphTraversal *path)
+gegl_graph_process (GeglGraphTraversal *path,
+                    gint                level)
 {
   GList *list_iter = NULL;
   GeglBuffer *result = NULL;
@@ -416,6 +417,7 @@ gegl_graph_process (GeglGraphTraversal *path)
                   gegl_operation_context_set_object (context, "input", G_OBJECT (gegl_graph_get_shared_empty(path)));
                 }
 
+              context->level = level; // XXX: get rid of context->level member?
               gegl_operation_process (operation, context, "output", &context->need_rect, context->level);
               operation_result = GEGL_BUFFER (gegl_operation_context_get_object (context, "output"));
 

@@ -28,7 +28,8 @@ void                gegl_graph_free             (GeglGraphTraversal  *path);
 void                gegl_graph_prepare          (GeglGraphTraversal  *path);
 void                gegl_graph_prepare_request  (GeglGraphTraversal  *path,
                                                  const GeglRectangle *roi);
-GeglBuffer         *gegl_graph_process          (GeglGraphTraversal  *path);
+GeglBuffer         *gegl_graph_process          (GeglGraphTraversal  *path,
+                                                 gint                 level);
 
 GeglRectangle       gegl_graph_get_bounding_box (GeglGraphTraversal  *path);
 
