@@ -156,6 +156,8 @@ gegl_sampler_prepare (GeglSampler *self)
   if (!self->format)
     self->format = self->buffer->soft_format;
 
+  self->get = klass->get; /* cache the sampler in the instance */
+  /* migh be overridden by samplers prepare*/
   if (klass->prepare)
     klass->prepare (self);
 
@@ -169,7 +171,6 @@ gegl_sampler_prepare (GeglSampler *self)
   self->level[0].sampler_rectangle.width = 0;
   self->level[0].sampler_rectangle.height = 0;
 
-  self->get = klass->get; /* cache the sampler in the instance */
 }
 
 void
