@@ -33,6 +33,8 @@
 #include <gegl.h>
 #include <gegl-plugin.h>
 
+#include "gegl-config.h"
+
 #include "transform-core.h"
 #include "module.h"
 
@@ -159,6 +161,7 @@ op_transform_class_init (OpTransformClass *klass)
   op_class->process                   = gegl_transform_process;
   op_class->prepare                   = gegl_transform_prepare;
   op_class->no_cache                  = TRUE;
+  op_class->threaded                  = TRUE;
 
   klass->create_matrix = NULL;
 
@@ -693,18 +696,64 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
   return affected_rect;
 }
 
+typedef struct ThreadData
+{
+  void (*func) (GeglOperation *operation,
+                GeglBuffer  *dest,
+                GeglBuffer  *src,
+                GeglMatrix3 *matrix,
+                gint         level);
+
+
+  GeglOperation            *operation;
+  GeglBuffer               *input;
+  GeglBuffer               *output;
+  gint                     *pending;
+  GeglMatrix3              *matrix;
+  gint                      level;
+  gboolean                  success;
+  GeglRectangle             roi;
+} ThreadData;
+
+static void thread_process (gpointer thread_data, gpointer unused)
+{
+  ThreadData *data = thread_data;
+  data->func (data->operation,
+                   data->output, data->input, data->matrix, data->level);
+    data->success = FALSE;
+  g_atomic_int_add (data->pending, -1);
+}
+
+static GThreadPool *thread_pool (void)
+{
+  static GThreadPool *pool = NULL;
+  if (!pool)
+    {
+      pool =  g_thread_pool_new (thread_process, NULL, gegl_config()->threads,
+                                 FALSE, NULL);
+    }
+  return pool;
+}
+
+
 static void
-transform_affine (GeglBuffer  *dest,
+transform_affine (GeglOperation *operation,
+                  GeglBuffer  *dest,
                   GeglBuffer  *src,
                   GeglMatrix3 *matrix,
-                  GeglSampler *sampler,
                   gint         level)
 {
+  OpTransform *transform = (OpTransform *) operation;
   const Babl  *format = babl_format ("RaGaBaA float");
-  GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
   GeglMatrix3  inverse;
   GeglMatrix2  inverse_jacobian;
   gint         dest_pixels;
+  GeglSampler *sampler = gegl_buffer_sampler_new (src,
+                                         babl_format("RaGaBaA float"),
+                                         transform->sampler);
+  GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
+
+
 
   /*
    * XXX: fast paths as existing in files in the same dir as
@@ -893,21 +942,27 @@ transform_affine (GeglBuffer  *dest,
         } while (--y);
       }
   }
+
+  g_object_unref (sampler);
 }
 
 static void
-transform_generic (GeglBuffer  *dest,
+transform_generic (GeglOperation *operation,
+                   GeglBuffer  *dest,
                    GeglBuffer  *src,
                    GeglMatrix3 *matrix,
-                   GeglSampler *sampler,
                    gint         level)
 {
+  OpTransform *transform = (OpTransform *) operation;
   const Babl          *format = babl_format ("RaGaBaA float");
-  GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
   GeglBufferIterator  *i;
   const GeglRectangle *dest_extent;
   GeglMatrix3          inverse;
   gint                 dest_pixels;
+  GeglSampler *sampler = gegl_buffer_sampler_new (src,
+                                         babl_format("RaGaBaA float"),
+                                         transform->sampler);
+  GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
 
   g_object_get (dest, "pixels", &dest_pixels, NULL);
   dest_extent = gegl_buffer_get_extent (dest);
@@ -1057,6 +1112,7 @@ transform_generic (GeglBuffer  *dest,
         w_start += flip_y * inverse.coeff [2][1];
       } while (--y);
     }
+  g_object_unref (sampler);
 }
 
 
@@ -1167,24 +1223,75 @@ gegl_transform_process (GeglOperation        *operation,
     }
   else
     {
+      void (*func) (GeglOperation *operation,
+                    GeglBuffer  *dest,
+                    GeglBuffer  *src,
+                    GeglMatrix3 *matrix,
+                    gint         level) = transform_generic;
+
+      if (gegl_matrix3_is_affine (&matrix))
+        func = transform_affine;
+
       /*
        * For all other cases, do a proper resampling
        */
-      GeglSampler *sampler;
-
       input  = gegl_operation_context_get_source (context, "input");
       output = gegl_operation_context_get_target (context, "output");
 
-      sampler = gegl_buffer_sampler_new (input,
-                                         babl_format("RaGaBaA float"),
-                                         transform->sampler);
+      if (gegl_operation_use_threading (operation, result))
+      {
+        gint threads = gegl_config ()->threads;
+        GThreadPool *pool = thread_pool ();
+        ThreadData thread_data[GEGL_MAX_THREADS];
+        gint pending = threads;
 
-      if (gegl_matrix3_is_affine (&matrix))
-        transform_affine  (output, input, &matrix, sampler, level);
+        if (result->width > result->height)
+        {
+          gint bit = result->width / threads;
+          for (gint j = 0; j < threads; j++)
+          {
+            thread_data[j].roi.y = result->y;
+            thread_data[j].roi.height = result->height;
+            thread_data[j].roi.x = result->x + bit * j;
+            thread_data[j].roi.width = bit;
+          }
+          thread_data[threads-1].roi.width = result->width - (bit * (threads-1));
+        }
+        else
+        {
+          gint bit = result->height / threads;
+          for (gint j = 0; j < threads; j++)
+          {
+            thread_data[j].roi.x = result->x;
+            thread_data[j].roi.width = result->width;
+            thread_data[j].roi.y = result->y + bit * j;
+            thread_data[j].roi.height = bit;
+          }
+          thread_data[threads-1].roi.height = result->height - (bit * (threads-1));
+        }
+
+        for (gint i = 0; i < threads; i++)
+        {
+          thread_data[i].func = func;
+          thread_data[i].matrix = &matrix;
+          thread_data[i].operation = operation;
+          thread_data[i].input = input;
+          thread_data[i].output = output;
+          thread_data[i].pending = &pending;
+          thread_data[i].level = level;
+          thread_data[i].success = TRUE;
+        }
+
+        for (gint i = 1; i < threads; i++)
+          g_thread_pool_push (pool, &thread_data[i], NULL);
+        thread_process (&thread_data[0], NULL);
+
+        while (g_atomic_int_get (&pending)) {};
+      }
       else
-        transform_generic (output, input, &matrix, sampler, level);
-
-      g_object_unref (sampler);
+      {
+        func (operation, output, input, &matrix, level);
+      }
 
       if (input != NULL)
         g_object_unref (input);
