@@ -131,7 +131,7 @@ gegl_tile_storage_finalize (GObject *object)
 {
   GeglTileStorage *self = GEGL_TILE_STORAGE (object);
 
-  g_mutex_clear (&self->mutex);
+  g_rec_mutex_clear (&self->mutex);
 
   (*G_OBJECT_CLASS (parent_class)->finalize)(object);
 }
@@ -159,5 +159,5 @@ static void
 gegl_tile_storage_init (GeglTileStorage *tile_storage)
 {
   tile_storage->seen_zoom = 0;
-  g_mutex_init (&tile_storage->mutex);
+  g_rec_mutex_init (&tile_storage->mutex);
 }
