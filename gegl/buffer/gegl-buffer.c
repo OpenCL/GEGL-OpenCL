@@ -1208,12 +1208,12 @@ gegl_buffer_get_tile (GeglBuffer *buffer,
     GeglTileStorage *tile_storage = buffer->tile_storage;
     g_assert (tile_storage);
 
-    g_mutex_lock (&tile_storage->mutex);
+    g_rec_mutex_lock (&tile_storage->mutex);
 
     tile = gegl_tile_source_command (source, GEGL_TILE_GET,
                                      x, y, z, NULL);
 
-    g_mutex_unlock (&tile_storage->mutex);
+    g_rec_mutex_unlock (&tile_storage->mutex);
   }
   else
   {
