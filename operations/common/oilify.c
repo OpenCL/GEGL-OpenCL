@@ -26,7 +26,8 @@
 
 property_int    (mask_radius, _("Mask Radius"), 4)
     description (_("Radius of circle around pixel"))
-    value_range (1, 25)
+    value_range (1, 100)
+    ui_range (1, 25)
     ui_meta     ("unit", "pixel-distance")
 
 property_int    (exponent, _("Exponent"), 8)
