@@ -93,13 +93,13 @@ process (GeglOperation       *operation,
   diff_buffer = gegl_buffer_new (result, yadbl);
 
   iter = gegl_buffer_iterator_new (diff_buffer, result, 0, yadbl,
-                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   gegl_buffer_iterator_add (iter, input, result, 0, cielab,
-                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                            GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
   gegl_buffer_iterator_add (iter, aux, result, 0, cielab,
-                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                            GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))
     {
@@ -140,10 +140,10 @@ process (GeglOperation       *operation,
     }
 
   iter  = gegl_buffer_iterator_new (output, result, 0, srgb,
-                                    GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                    GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   gegl_buffer_iterator_add (iter, diff_buffer, result, 0, yadbl,
-                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                            GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))
     {

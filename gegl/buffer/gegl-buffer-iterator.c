@@ -55,7 +55,7 @@ typedef enum {
 typedef struct _SubIterState {
   GeglRectangle        full_rect; /* The entire area we are iterating over */
   GeglBuffer          *buffer;
-  unsigned int         flags;
+  GeglAccessMode       access_mode;
   GeglAbyssPolicy      abyss_policy;
   const Babl          *format;
   gint                 format_bpp;
@@ -101,23 +101,24 @@ gegl_buffer_iterator_new (GeglBuffer          *buf,
                           const GeglRectangle *roi,
                           gint                 level,
                           const Babl          *format,
-                          unsigned int         flags,
+                          GeglAccessMode       access_mode,
                           GeglAbyssPolicy      abyss_policy)
 {
   GeglBufferIterator *iter = gegl_buffer_iterator_empty_new ();
 
-  gegl_buffer_iterator_add (iter, buf, roi, level, format, flags, abyss_policy);
+  gegl_buffer_iterator_add (iter, buf, roi, level, format,
+                            access_mode, abyss_policy);
 
   return iter;
 }
 
 int
-gegl_buffer_iterator_add (GeglBufferIterator           *iter,
+gegl_buffer_iterator_add (GeglBufferIterator  *iter,
                           GeglBuffer          *buf,
                           const GeglRectangle *roi,
                           gint                 level,
                           const Babl          *format,
-                          unsigned int         flags,
+                          GeglAccessMode       access_mode,
                           GeglAbyssPolicy      abyss_policy)
 {
   GeglBufferIteratorPriv *priv = iter->priv;
@@ -137,13 +138,13 @@ gegl_buffer_iterator_add (GeglBufferIterator           *iter,
 
   sub->buffer       = buf;
   sub->full_rect    = *roi;
-  sub->flags        = flags;
+  sub->access_mode  = access_mode;
+  sub->abyss_policy = abyss_policy;
   sub->current_tile = NULL;
   sub->real_data    = NULL;
   sub->linear_tile  = NULL;
   sub->format       = format;
   sub->format_bpp   = babl_format_get_bytes_per_pixel (format);
-  sub->abyss_policy = abyss_policy;
 
   if (index > 0)
     {
@@ -166,7 +167,7 @@ release_tile (GeglBufferIterator *iter,
 
   if (sub->current_tile_mode == GeglIteratorTileMode_DirectTile)
     {
-      if (sub->flags & GEGL_BUFFER_WRITE)
+      if (sub->access_mode & GEGL_ACCESS_WRITE)
         gegl_tile_unlock (sub->current_tile);
       gegl_tile_unref (sub->current_tile);
 
@@ -184,7 +185,7 @@ release_tile (GeglBufferIterator *iter,
     }
   else if (sub->current_tile_mode == GeglIteratorTileMode_GetBuffer)
     {
-      if (sub->flags & GEGL_BUFFER_WRITE)
+      if (sub->access_mode & GEGL_ACCESS_WRITE)
         {
           gegl_buffer_set_unlocked_no_notify (sub->buffer,
                                               &sub->real_roi,
@@ -320,7 +321,7 @@ get_tile (GeglBufferIterator *iter,
 
       sub->current_tile = gegl_buffer_get_tile (buf, tile_x, tile_y, 0);
 
-      if (sub->flags & GEGL_BUFFER_WRITE)
+      if (sub->access_mode & GEGL_ACCESS_WRITE)
         gegl_tile_lock (sub->current_tile);
 
       sub->real_roi.x = (tile_x * tile_width)  - shift_x;
@@ -345,7 +346,7 @@ get_indirect (GeglBufferIterator *iter,
 
   sub->real_data = gegl_malloc (sub->format_bpp * sub->real_roi.width * sub->real_roi.height);
 
-  if (sub->flags & GEGL_BUFFER_READ)
+  if (sub->access_mode & GEGL_ACCESS_READ)
     {
       gegl_buffer_get_unlocked (sub->buffer, 1.0, &sub->real_roi, sub->format, sub->real_data,
                                 GEGL_AUTO_ROWSTRIDE, sub->abyss_policy);
@@ -364,7 +365,7 @@ needs_indirect_read (GeglBufferIterator *iter,
   GeglBufferIteratorPriv *priv = iter->priv;
   SubIterState           *sub  = &priv->sub_iter[index];
 
-  if (sub->flags & GEGL_ITERATOR_INCOMPATIBLE)
+  if (sub->access_mode & GEGL_ITERATOR_INCOMPATIBLE)
     return TRUE;
 
   /* Needs abyss generation */
@@ -424,7 +425,7 @@ prepare_iteration (GeglBufferIterator *iter)
 
       /* Format converison needed */
       if (gegl_buffer_get_format (sub->buffer) != sub->format)
-        sub->flags |= GEGL_ITERATOR_INCOMPATIBLE;
+        sub->access_mode |= GEGL_ITERATOR_INCOMPATIBLE;
       /* Incompatable tiles */
       else if ((priv->origin_tile.width  != buf->tile_width) ||
                (priv->origin_tile.height != buf->tile_height) ||
@@ -439,11 +440,11 @@ prepare_iteration (GeglBufferIterator *iter)
             {
               sub->linear_tile = gegl_buffer_get_tile (sub->buffer, 0, 0, 0);
 
-              if (sub->flags & GEGL_BUFFER_WRITE)
+              if (sub->access_mode & GEGL_ACCESS_WRITE)
                 gegl_tile_lock (sub->linear_tile);
             }
           else
-            sub->flags |= GEGL_ITERATOR_INCOMPATIBLE;
+            sub->access_mode |= GEGL_ITERATOR_INCOMPATIBLE;
         }
 
       gegl_buffer_lock (sub->buffer);
@@ -509,14 +510,14 @@ gegl_buffer_iterator_stop (GeglBufferIterator *iter)
 
       if (sub->linear_tile)
         {
-          if (sub->flags & GEGL_BUFFER_WRITE)
+          if (sub->access_mode & GEGL_ACCESS_WRITE)
             gegl_tile_unlock (sub->linear_tile);
           gegl_tile_unref (sub->linear_tile);
         }
 
       gegl_buffer_unlock (sub->buffer);
 
-      if (sub->flags & GEGL_BUFFER_WRITE)
+      if (sub->access_mode & GEGL_ACCESS_WRITE)
         gegl_buffer_emit_changed_signal (sub->buffer, &sub->full_rect);
     }
 

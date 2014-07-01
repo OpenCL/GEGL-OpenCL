@@ -238,9 +238,9 @@ process (GeglOperation       *operation,
   ramp = compute_ramp (sampler1, sampler2, result, o->pct_black);
 
   iter = gegl_buffer_iterator_new (output, result, 0, babl_format ("Y'CbCrA float"),
-                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
   gegl_buffer_iterator_add (iter, input, result, 0, babl_format ("Y'CbCrA float"),
-                            GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                            GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
 
   while (gegl_buffer_iterator_next (iter))

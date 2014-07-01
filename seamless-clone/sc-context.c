@@ -545,7 +545,7 @@ gegl_sc_compute_uvt_cache (P2trMesh            *mesh,
   uvt = gegl_buffer_new (area, GEGL_SC_BABL_UVT_FORMAT);
 
   iter = gegl_buffer_iterator_new (uvt, area, 0, GEGL_SC_BABL_UVT_FORMAT,
-                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   config.step_x = config.step_y = 1;
   config.cpp = GEGL_SC_COLOR_CHANNEL_COUNT; /* Not that it will be used, but it won't harm */
@@ -651,7 +651,7 @@ gegl_sc_context_render (GeglScContext       *context,
                                         &to_render,
                                         0,
                                         format,
-                                        GEGL_BUFFER_WRITE,
+                                        GEGL_ACCESS_WRITE,
                                         GEGL_ABYSS_NONE);
   out_index = 0;
 
@@ -666,7 +666,7 @@ gegl_sc_context_render (GeglScContext       *context,
                                             &to_render_fg,
                                             0,
                                             GEGL_SC_BABL_UVT_FORMAT,
-                                            GEGL_BUFFER_READ,
+                                            GEGL_ACCESS_READ,
                                             GEGL_ABYSS_NONE);
     }
   else
@@ -679,7 +679,7 @@ gegl_sc_context_render (GeglScContext       *context,
                                         &to_render_fg,
                                         0,
                                         format,
-                                        GEGL_BUFFER_READ,
+                                        GEGL_ACCESS_READ,
                                         GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))

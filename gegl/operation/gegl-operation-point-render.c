@@ -90,7 +90,8 @@ gegl_operation_point_render_process (GeglOperation       *operation,
 
   if ((result->width > 0) && (result->height > 0))
     {
-      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, out_format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+      GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, out_format,
+                                                        GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
       while (gegl_buffer_iterator_next (i))
           point_render_class->process (operation, i->data[0], i->length, &i->roi[0], level);

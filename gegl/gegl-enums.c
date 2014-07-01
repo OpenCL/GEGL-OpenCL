@@ -51,6 +51,32 @@ gegl_abyss_policy_get_type (void)
 }
 
 GType
+gegl_access_mode_get_type (void)
+{
+  static GType ftype = 0;
+
+  if (ftype == 0)
+    {
+      static GFlagsValue values[] = {
+        { GEGL_ACCESS_READ,      N_("Read"),        "read"      },
+        { GEGL_ACCESS_WRITE,     N_("Write"),       "write"     },
+        { GEGL_ACCESS_READWRITE, N_("Read/Wrrite"), "readwrite" },
+        { 0, NULL, NULL }
+      };
+      gint i;
+
+      for (i = 0; i < G_N_ELEMENTS (values); i++)
+        if (values[i].value_name)
+          values[i].value_name =
+            dgettext (GETTEXT_PACKAGE, values[i].value_name);
+
+      ftype = g_flags_register_static ("GeglAccessMode", values);
+    }
+
+  return ftype;
+}
+
+GType
 gegl_orientation_get_type (void)
 {
   static GType etype = 0;

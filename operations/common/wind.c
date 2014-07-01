@@ -117,7 +117,7 @@ calculate_bleed (GeglOperation *operation,
                                    &rectA,
                                    0,
                                    babl_format ("RGBA float"),
-                                   GEGL_BUFFER_READ,
+                                   GEGL_ACCESS_READ,
                                    GEGL_ABYSS_NONE);
 
   gegl_buffer_iterator_add (iter,
@@ -125,7 +125,7 @@ calculate_bleed (GeglOperation *operation,
                             &rectB,
                             0,
                             babl_format ("RGBA float"),
-                            GEGL_BUFFER_READ,
+                            GEGL_ACCESS_READ,
                             GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))

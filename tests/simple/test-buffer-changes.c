@@ -95,7 +95,7 @@ test_buffer_change_signal_on_set(void)
 
 /* Utility function to test emission of 'changed' signal on GeglBuffer
  * when accessing with GeglBufferIterator. 
- * @access_method: GEGL_BUFFER_READ, GEGL_BUFFER_WRITE, GEGL_BUFFER_READWRITE
+ * @access_method: GEGL_ACCESS_READ, GEGL_ACCESS_WRITE, GEGL_ACCESS_READWRITE
  * @expected_signal_calls: Whether the 'changed' signal is expected to be emitted or not
  */
 void
@@ -126,21 +126,21 @@ test_buffer_change_signal_with_iter(guint access_method, guint expected_signal_c
 void
 test_buffer_change_signal_with_iter_write(void)
 {
-    test_buffer_change_signal_with_iter(GEGL_BUFFER_WRITE, 1);
+    test_buffer_change_signal_with_iter(GEGL_ACCESS_WRITE, 1);
 }
 
 /* Test that 'changed' signal is emitted once for gegl_buffer_iterator in READWRITE mode */
 void
 test_buffer_change_signal_with_iter_readwrite(void)
 {
-    test_buffer_change_signal_with_iter(GEGL_BUFFER_READWRITE, 1);
+    test_buffer_change_signal_with_iter(GEGL_ACCESS_READWRITE, 1);
 }
 
 /* Test that 'changed' signal is _not_ emitted on gegl_buffer_iterator in READ mode */
 void
 test_buffer_no_change_signal_with_iter_read(void)
 {
-    test_buffer_change_signal_with_iter(GEGL_BUFFER_READ, 0);
+    test_buffer_change_signal_with_iter(GEGL_ACCESS_READ, 0);
 }
 
 gint

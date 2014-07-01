@@ -778,7 +778,7 @@ transform_affine (GeglOperation *operation,
                                                       dest_extent,
                                                       level,
                                                       format,
-                                                      GEGL_BUFFER_WRITE,
+                                                      GEGL_ACCESS_WRITE,
                                                       GEGL_ABYSS_NONE);
 
     /*
@@ -974,7 +974,7 @@ transform_generic (GeglOperation *operation,
                                 dest_extent,
                                 level,
                                 format,
-                                GEGL_BUFFER_WRITE,
+                                GEGL_ACCESS_WRITE,
                                 GEGL_ABYSS_NONE);
 
   gegl_matrix3_copy_into (&inverse, matrix);

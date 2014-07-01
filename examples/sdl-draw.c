@@ -193,7 +193,7 @@ draw_circle (GeglBuffer *buffer, int x, int y, float r)
 
   iter = gegl_buffer_iterator_new (buffer, &roi, 0,
                                    babl_format ("RGBA float"),
-                                   GEGL_BUFFER_READWRITE,
+                                   GEGL_ACCESS_READWRITE,
                                    GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))

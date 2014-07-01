@@ -293,7 +293,7 @@ static void fill_rect (GeglBuffer          *buffer,
 {
   GeglBufferIterator *gi;
   gi = gegl_buffer_iterator_new (buffer, roi, 0, NULL,
-                                 GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                 GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
   while (gegl_buffer_iterator_next (gi))
     {
       gfloat *buf = gi->data[0];

@@ -99,7 +99,7 @@ process (GeglOperation       *operation,
   GeglAbyssPolicy abyss = o->tileable ? GEGL_ABYSS_LOOP : GEGL_ABYSS_NONE;
 
   iter = gegl_buffer_iterator_new (output, result, 0, babl_format ("RGBA float"),
-                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))
     {

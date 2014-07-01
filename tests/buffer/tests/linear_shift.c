@@ -48,19 +48,19 @@ TEST ()
   out = gegl_buffer_new (&out_extent, babl_format ("Y float"));
 
   iter = gegl_buffer_iterator_new (out, &out_extent, 0, NULL,
-                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   gegl_buffer_iterator_add (iter, linear_a, &out_extent, 0, NULL,
-                            GEGL_BUFFER_READ, GEGL_ABYSS_BLACK);
+                            GEGL_ACCESS_READ, GEGL_ABYSS_BLACK);
 
   gegl_buffer_iterator_add (iter, linear_b, &out_extent, 0, NULL,
-                            GEGL_BUFFER_READ, GEGL_ABYSS_BLACK);
+                            GEGL_ACCESS_READ, GEGL_ABYSS_BLACK);
 
   gegl_buffer_iterator_add (iter, linear_c, &out_extent, 0, NULL,
-                            GEGL_BUFFER_READ, GEGL_ABYSS_BLACK);
+                            GEGL_ACCESS_READ, GEGL_ABYSS_BLACK);
 
   gegl_buffer_iterator_add (iter, linear_d, &out_extent, 0, NULL,
-                            GEGL_BUFFER_READ, GEGL_ABYSS_BLACK);
+                            GEGL_ACCESS_READ, GEGL_ABYSS_BLACK);
 
   while (gegl_buffer_iterator_next (iter))
     {

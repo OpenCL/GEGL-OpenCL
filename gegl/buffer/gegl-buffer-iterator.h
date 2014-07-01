@@ -24,9 +24,9 @@
 
 #define GEGL_BUFFER_MAX_ITERATORS 6
 
-#define GEGL_BUFFER_READ      1
-#define GEGL_BUFFER_WRITE     2
-#define GEGL_BUFFER_READWRITE (GEGL_BUFFER_READ|GEGL_BUFFER_WRITE)
+#define GEGL_BUFFER_READ      GEGL_ACCESS_READ
+#define GEGL_BUFFER_WRITE     GEGL_ACCESS_WRITE
+#define GEGL_BUFFER_READWRITE GEGL_ACCESS_READWRITE
 
 typedef struct _GeglBufferIteratorPriv GeglBufferIteratorPriv;
 
@@ -62,8 +62,8 @@ GeglBufferIterator *gegl_buffer_iterator_empty_new (void);
  * @level: the level at which we are iterating, the roi will indicate the
  * extent at 1:1, x,y,width and height are/(2^level)
  * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
- * @flags: whether we need reading or writing to this buffer one of GEGL_BUFFER_READ, GEGL_BUFFER_WRITE and GEGL_BUFFER_READWRITE.
- * @repeat_mode: how request outside the buffer extent are handled.
+ * @access_mode: whether we need reading or writing to this buffer one of GEGL_BUFFER_READ, GEGL_BUFFER_WRITE and GEGL_BUFFER_READWRITE.
+ * @abyss_policy: how request outside the buffer extent are handled.
  *
  * Create a new buffer iterator, this buffer will be iterated through
  * in linear chunks, some chunks might be full tiles the coordinates, see
@@ -77,8 +77,8 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
                                                 const GeglRectangle *roi,
                                                 gint                 level,
                                                 const Babl          *format,
-                                                guint                flags,
-                                                GeglAbyssPolicy      repeat_mode);
+                                                GeglAccessMode       access_mode,
+                                                GeglAbyssPolicy      abyss_policy);
 
 
 /**
@@ -89,8 +89,8 @@ GeglBufferIterator * gegl_buffer_iterator_new  (GeglBuffer          *buffer,
  * @level: the level at which we are iterating, the roi will indicate the
  * extent at 1:1, x,y,width and height are/(2^level)
  * @format: the format we want to process this buffers data in, pass 0 to use the buffers format.
- * @flags: whether we need reading or writing to this buffer.
- * @repeat_mode: how request outside the buffer extent are handled.
+ * @access_mode: whether we need reading or writing to this buffer.
+ * @abyss_policy: how request outside the buffer extent are handled.
  *
  * Adds an additional buffer iterator that will be processed in sync with
  * the original one, if the buffer doesn't align with the other for tile access
@@ -105,8 +105,8 @@ gint                 gegl_buffer_iterator_add  (GeglBufferIterator  *iterator,
                                                 const GeglRectangle *roi,
                                                 gint                 level,
                                                 const Babl          *format,
-                                                guint                flags,
-                                                GeglAbyssPolicy      repeat_mode);
+                                                GeglAccessMode       access_mode,
+                                                GeglAbyssPolicy      abyss_policy);
 
 /**
  * gegl_buffer_iterator_stop: (skip)

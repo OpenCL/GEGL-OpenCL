@@ -117,7 +117,7 @@ mean_rectangle_noalloc (GeglBuffer    *input,
   gint                c;
 
   gi = gegl_buffer_iterator_new (input, rect, 0, babl_format ("RaGaBaA float"),
-                                 GEGL_BUFFER_READ, GEGL_ABYSS_CLAMP);
+                                 GEGL_ACCESS_READ, GEGL_ABYSS_CLAMP);
 
   while (gegl_buffer_iterator_next (gi))
     {
@@ -238,7 +238,7 @@ set_rectangle_noalloc (GeglBuffer      *output,
       gegl_color_get_pixel (color, babl_format ("RaGaBaA float"), col);
 
       gi = gegl_buffer_iterator_new (output, rect, 0, babl_format ("RaGaBaA float"),
-                                     GEGL_BUFFER_WRITE, GEGL_ABYSS_CLAMP);
+                                     GEGL_ACCESS_WRITE, GEGL_ABYSS_CLAMP);
 
       while (gegl_buffer_iterator_next (gi))
         {

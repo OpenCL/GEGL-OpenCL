@@ -1570,7 +1570,7 @@ gegl_buffer_copy2 (GeglBuffer          *src,
       dest_rect_r.height = src_rect->height;
 
       i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format,
-                                    GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                    GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
       while (gegl_buffer_iterator_next (i))
         {
           GeglRectangle src_rect = i->roi[0];
@@ -1771,7 +1771,7 @@ gegl_buffer_clear2 (GeglBuffer          *dst,
    * that fully voided tiles are dropped.
    */
   i = gegl_buffer_iterator_new (dst, dst_rect, 0, dst->soft_format,
-                                GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
   while (gegl_buffer_iterator_next (i))
     {
       memset (((guchar*)(i->data[0])), 0, i->length * pxsize);
@@ -2013,7 +2013,7 @@ gegl_buffer_set_color (GeglBuffer          *dst,
    * that fully filled tiles are shared.
    */
   i = gegl_buffer_iterator_new (dst, dst_rect, 0, dst->soft_format,
-                                GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
   while (gegl_buffer_iterator_next (i))
     {
       gegl_memset_pattern (i->data[0], pixel, bpp, i->length);

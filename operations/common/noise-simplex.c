@@ -297,7 +297,7 @@ process (GeglOperation       *operation,
     }
 
   iter = gegl_buffer_iterator_new (out_buf, roi, level, out_format,
-                                   GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))
     c_process (operation, iter->data[0], iter->length, &iter->roi[0], level);

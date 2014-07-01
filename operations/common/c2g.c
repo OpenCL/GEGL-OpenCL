@@ -70,10 +70,11 @@ static void c2g (GeglBuffer          *src,
                  gdouble              rgamma)
 {
   const Babl *format = babl_format ("RGBA float");
-  
+
   if (dst_rect->width > 0 && dst_rect->height > 0)
   {
-    GeglBufferIterator *i = gegl_buffer_iterator_new (dst, dst_rect, 0, babl_format("YA float"), GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+    GeglBufferIterator *i = gegl_buffer_iterator_new (dst, dst_rect, 0, babl_format("YA float"),
+                                                      GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
     GeglSampler *sampler = gegl_buffer_sampler_new (src, format, GEGL_SAMPLER_NEAREST);
 
     while (gegl_buffer_iterator_next (i))

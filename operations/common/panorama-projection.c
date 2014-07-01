@@ -376,7 +376,8 @@ process (GeglOperation       *operation,
     {
       float   ud = ((1.0/transform.width));
       float   vd = ((1.0/transform.height));
-      it = gegl_buffer_iterator_new (output, result, level, format_io, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+      it = gegl_buffer_iterator_new (output, result, level, format_io,
+                                     GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
       index_out = 0;
 
       while (gegl_buffer_iterator_next (it))

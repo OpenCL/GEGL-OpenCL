@@ -41,7 +41,7 @@ buffer_get_min_max (GeglBuffer *buffer,
   GeglBufferIterator *gi;
   gint c;
   gi = gegl_buffer_iterator_new (buffer, NULL, 0, babl_format ("R'G'B' float"),
-                                 GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                                 GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
   for (c = 0; c < 3; c++)
     {
       min[c] =  G_MAXFLOAT;
@@ -483,10 +483,10 @@ process (GeglOperation       *operation,
     }
 
   gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("R'G'B'A float"),
-                                 GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                                 GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
   gegl_buffer_iterator_add (gi, output, result, 0, babl_format ("R'G'B'A float"),
-                            GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                            GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (gi))
     {

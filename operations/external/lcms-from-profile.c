@@ -179,10 +179,10 @@ process (GeglOperation       *operation,
     GeglBufferIterator *gi;
 
     gi = gegl_buffer_iterator_new (input, result, 0, in_format,
-                                   GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                                   GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
     gegl_buffer_iterator_add (gi, output, result, 0, out_format,
-                              GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                              GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
     while (gegl_buffer_iterator_next (gi))
       {

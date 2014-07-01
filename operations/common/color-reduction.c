@@ -387,10 +387,10 @@ process_standard (GeglBuffer          *input,
   generate_channel_masks (channel_bits, channel_mask);
 
   gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("R'G'B'A u16"),
-                                 GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                                 GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
   gegl_buffer_iterator_add (gi, output, result, 0, babl_format ("R'G'B'A u16"),
-                            GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                            GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (gi))
     {

@@ -311,10 +311,11 @@ operation_source_process (GeglOperation       *operation,
             return TRUE;
         }
 
-      iter = gegl_buffer_iterator_new (output, result, level, out_format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+      iter = gegl_buffer_iterator_new (output, result, level, out_format,
+                                       GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
       while (gegl_buffer_iterator_next (iter))
-          checkerboard_process (operation, iter->data[0], iter->length, &iter->roi[0], level);
+        checkerboard_process (operation, iter->data[0], iter->length, &iter->roi[0], level);
     }
   return TRUE;
 }

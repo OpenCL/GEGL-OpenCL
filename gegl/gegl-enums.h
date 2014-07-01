@@ -50,6 +50,17 @@ GType gegl_abyss_policy_get_type (void) G_GNUC_CONST;
 
 
 typedef enum {
+  GEGL_ACCESS_READ      = 1 << 0,
+  GEGL_ACCESS_WRITE     = 1 << 1,
+  GEGL_ACCESS_READWRITE = (GEGL_ACCESS_READ | GEGL_ACCESS_WRITE)
+} GeglAccessMode;
+
+GType gegl_access_mode_get_type (void) G_GNUC_CONST;
+
+#define GEGL_TYPE_ACCESS_MODE (gegl_access_mode_get_type ())
+
+
+typedef enum {
   GEGL_ORIENTATION_HORIZONTAL,
   GEGL_ORIENTATION_VERTICAL
 } GeglOrientation;

@@ -240,7 +240,7 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
         gint threads = gegl_config ()->threads;
         GThreadPool *pool = thread_pool ();
         ThreadData thread_data[GEGL_MAX_THREADS];
-        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, output_buf_format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, output_buf_format, GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
         gint foo = 0, bar = 0, read = 0;
 
         gint in_bpp = input?babl_format_get_bytes_per_pixel (in_format):0;
@@ -257,7 +257,7 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
 
         if (input)
         {
-          read = gegl_buffer_iterator_add (i, input, result, level, in_buf_format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+          read = gegl_buffer_iterator_add (i, input, result, level, in_buf_format, GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
           for (gint j = 0; j < threads; j ++)
           {
             if (in_buf_format != in_format)
@@ -276,7 +276,8 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
             thread_data[j].input_fish = NULL;
         if (aux)
         {
-          foo = gegl_buffer_iterator_add (i, aux, result, level, aux_buf_format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+          foo = gegl_buffer_iterator_add (i, aux, result, level, aux_buf_format,
+                                          GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
           for (gint j = 0; j < threads; j ++)
           {
             if (aux_buf_format != aux_format)
@@ -297,7 +298,8 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
         }
         if (aux2)
         {
-          bar = gegl_buffer_iterator_add (i, aux2, result, level, aux2_buf_format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+          bar = gegl_buffer_iterator_add (i, aux2, result, level, aux2_buf_format,
+                                          GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
           for (gint j = 0; j < threads; j ++)
           {
             if (aux2_buf_format != aux2_format)
@@ -378,15 +380,19 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
       }
       else
       {
-        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, out_format, GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+        GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, out_format,
+                                                          GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
         gint foo = 0, bar = 0, read = 0;
 
         if (input)
-          read = gegl_buffer_iterator_add (i, input, result, level, in_format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+          read = gegl_buffer_iterator_add (i, input, result, level, in_format,
+                                           GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
         if (aux)
-          foo = gegl_buffer_iterator_add (i, aux, result, level, aux_format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+          foo = gegl_buffer_iterator_add (i, aux, result, level, aux_format,
+                                          GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
         if (aux2)
-          bar = gegl_buffer_iterator_add (i, aux2, result, level, aux2_format, GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+          bar = gegl_buffer_iterator_add (i, aux2, result, level, aux2_format,
+                                          GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
         while (gegl_buffer_iterator_next (i))
           {

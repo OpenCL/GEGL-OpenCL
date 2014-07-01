@@ -67,15 +67,15 @@ process (GeglOperation       *operation,
 
   gi = gegl_buffer_iterator_new (output, whole_region,
                                  0, babl_format ("R'G'B'A float"),
-                                 GEGL_BUFFER_WRITE, GEGL_ABYSS_NONE);
+                                 GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   index_iter = gegl_buffer_iterator_add (gi, input, whole_region,
                                          0, babl_format ("R'G'B'A float"),
-                                         GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+                                         GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
   index_iter2 = gegl_buffer_iterator_add (gi, input, &shift_region,
                                           0, babl_format ("R'G'B'A float"),
-                                          GEGL_BUFFER_READ, GEGL_ABYSS_LOOP);
+                                          GEGL_ACCESS_READ, GEGL_ABYSS_LOOP);
 
   while (gegl_buffer_iterator_next (gi))
     {

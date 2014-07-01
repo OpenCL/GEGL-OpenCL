@@ -142,11 +142,11 @@ compute_ramp (GeglBuffer          *dest1,
 
   iter = gegl_buffer_iterator_new (dest1, roi, 0,
                                    babl_format ("Y float"),
-                                   GEGL_BUFFER_READ,
+                                   GEGL_ACCESS_READ,
                                    GEGL_ABYSS_NONE);
   gegl_buffer_iterator_add (iter, dest2, roi, 0,
                             babl_format ("Y float"),
-                            GEGL_BUFFER_READ,
+                            GEGL_ACCESS_READ,
                             GEGL_ABYSS_NONE);
 
   memset (hist1, 0, sizeof (int) * 2000);
@@ -251,15 +251,15 @@ process (GeglOperation       *operation,
 
   iter = gegl_buffer_iterator_new (dest1, result, 0,
                                    babl_format ("Y float"),
-                                   GEGL_BUFFER_READ,
+                                   GEGL_ACCESS_READ,
                                    GEGL_ABYSS_NONE);
   gegl_buffer_iterator_add (iter, dest2, result, 0,
                             babl_format ("Y float"),
-                            GEGL_BUFFER_READ,
+                            GEGL_ACCESS_READ,
                             GEGL_ABYSS_NONE);
   gegl_buffer_iterator_add (iter, output, result, 0,
                             babl_format ("Y float"),
-                            GEGL_BUFFER_WRITE,
+                            GEGL_ACCESS_WRITE,
                             GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (iter))

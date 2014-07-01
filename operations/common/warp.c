@@ -243,8 +243,8 @@ stamp (GeglProperties          *o,
     {
       gint pixel_count = 0;
 
-      it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format
-                                     , GEGL_BUFFER_READ, GEGL_ABYSS_NONE);
+      it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format,
+                                     GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
       while (gegl_buffer_iterator_next (it))
         {
@@ -264,7 +264,7 @@ stamp (GeglProperties          *o,
     }
 
   it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format,
-                                 GEGL_BUFFER_READWRITE, GEGL_ABYSS_NONE);
+                                 GEGL_ACCESS_READWRITE, GEGL_ABYSS_NONE);
 
   while (gegl_buffer_iterator_next (it))
     {

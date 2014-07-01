@@ -86,7 +86,7 @@ process (GeglOperation       *operation,
   bpp = babl_format_get_bytes_per_pixel (format);
 
   gi = gegl_buffer_iterator_new (output, result, 0, format,
-                                 GEGL_BUFFER_WRITE, GEGL_ABYSS_CLAMP);
+                                 GEGL_ACCESS_WRITE, GEGL_ABYSS_CLAMP);
 
   while (gegl_buffer_iterator_next (gi))
     {
