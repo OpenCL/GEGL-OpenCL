@@ -257,7 +257,7 @@ process (GeglOperation       *operation,
         }
   }
 
-  gegl_buffer_set (output, result, 1.0, gegl_buffer_get_format (output), dst_buf,
+  gegl_buffer_set (output, result, 0, gegl_buffer_get_format (output), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
 
   gegl_free (dst_buf);

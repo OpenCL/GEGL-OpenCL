@@ -84,7 +84,7 @@ test_buffer_change_signal_on_set(void)
     
     gegl_buffer_signal_connect(test_case->buffer, "changed", (GCallback)handle_buffer_changed, test_case);
     
-    gegl_buffer_set(test_case->buffer, &rect, 1, test_case->buffer_format, tmp, GEGL_AUTO_ROWSTRIDE);
+    gegl_buffer_set(test_case->buffer, &rect, 0, test_case->buffer_format, tmp, GEGL_AUTO_ROWSTRIDE);
     
     g_assert_cmpint(test_case->buffer_changed_called, ==, 1);
     g_assert(test_gegl_rectangle_equal(&(test_case->buffer_changed_rect), &rect));

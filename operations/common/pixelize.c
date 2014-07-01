@@ -615,7 +615,7 @@ process (GeglOperation       *operation,
             pixelize (input_buf, output_buf, &chunked_result, &src_rect,
                       whole_region, o);
 
-            gegl_buffer_set (output, &chunked_result, 1.0,
+            gegl_buffer_set (output, &chunked_result, 0,
                              babl_format ("RaGaBaA float"),
                              output_buf, GEGL_AUTO_ROWSTRIDE);
           }

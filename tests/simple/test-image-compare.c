@@ -160,9 +160,9 @@ test_comparison (const gfloat        *reference,
   src_ref_buffer = gegl_buffer_new (&extent, input_format);
   src_aux_buffer = gegl_buffer_new (&extent, input_format);
 
-  gegl_buffer_set (src_ref_buffer, &extent, 1, input_format,
+  gegl_buffer_set (src_ref_buffer, &extent, 0, input_format,
                    reference, GEGL_AUTO_ROWSTRIDE);
-  gegl_buffer_set (src_aux_buffer, &extent, 1, input_format,
+  gegl_buffer_set (src_aux_buffer, &extent, 0, input_format,
                    test_case, GEGL_AUTO_ROWSTRIDE);
 
   /* Build the test graph */

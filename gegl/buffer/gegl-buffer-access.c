@@ -481,7 +481,7 @@ gegl_buffer_set_internal (GeglBuffer          *buffer,
       gegl_buffer_cl_cache_flush (buffer, rect);
     }
 
-  gegl_buffer_iterate_write (buffer, rect, (void *) src, rowstride, format, 0);
+  gegl_buffer_iterate_write (buffer, rect, (void *) src, rowstride, format, level);
 
   if (gegl_buffer_is_shared (buffer))
     {
@@ -1389,7 +1389,7 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       gegl_buffer_cl_cache_flush (buffer, rect);
     }
 
-  if (!rect && scale == 1.0)
+  if (!rect && GEGL_FLOAT_EQUAL (scale, 1.0))
     {
       gegl_buffer_iterate_read_dispatch (buffer, &buffer->extent, dest_buf,
                                          rowstride, format, 0, repeat_mode);
@@ -1978,7 +1978,7 @@ gegl_buffer_set_pattern (GeglBuffer          *buffer,
 
         gegl_rectangle_intersect (&dest_rect, &dest_rect, &roi);
 
-        gegl_buffer_set (buffer, &dest_rect, 1, buffer_format,
+        gegl_buffer_set (buffer, &dest_rect, 0, buffer_format,
                          pattern_data, rowstride);
       }
 

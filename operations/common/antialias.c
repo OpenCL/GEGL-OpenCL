@@ -235,7 +235,7 @@ process (GeglOperation       *operation,
 #undef USE_IF_ALPHA
 
       /* write result row to dest */
-      gegl_buffer_set (output, &rowrect, 1, format, &dest[0], GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (output, &rowrect, 0, format, &dest[0], GEGL_AUTO_ROWSTRIDE);
 
       /* rotate pointers */
       tmp       = rowbefore;

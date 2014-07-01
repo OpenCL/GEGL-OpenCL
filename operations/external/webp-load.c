@@ -75,7 +75,7 @@ read_webp (const gchar *path, GeglBuffer *buf, GeglRectangle *bounds_out, const 
           return FALSE;
         }
 
-      gegl_buffer_set (buf, &bounds, 1, format, config.output.u.RGBA.rgba,
+      gegl_buffer_set (buf, &bounds, 0, format, config.output.u.RGBA.rgba,
                        config.output.u.RGBA.stride);
 
       WebPFreeDecBuffer (&config.output);
