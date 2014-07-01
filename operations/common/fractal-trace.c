@@ -129,6 +129,7 @@ fractaltrace (GeglBuffer            *input,
   gdouble      scale_x, scale_y;
   gdouble      bailout2;
   gfloat       dest[4];
+  GeglSampler *sampler = gegl_buffer_sampler_new (input, format, GEGL_SAMPLER_NOHALO);
 
   scale_x = (o->X2 - o->X1) / picture->width;
   scale_y = (o->Y2 - o->Y1) / picture->height;
@@ -177,12 +178,12 @@ fractaltrace (GeglBuffer            *input,
           g_error (_("Unsupported fractal type"));
         }
 
-      gegl_buffer_sample (input, px, py, &scale, dest, format,
-                          GEGL_SAMPLER_NOHALO, o->abyss_policy);
+      gegl_sampler_get (sampler, px, py, &scale, dest, o->abyss_policy);
 
       for (i = 0; i < 4; i++)
         dst_buf[offset++] = dest[i];
     }
+  g_object_unref (sampler);
 }
 
 static gboolean
