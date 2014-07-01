@@ -11,14 +11,15 @@ GEGL Feature List
      * Iterative chunk-wise processing.
      * Processes subregions and dependencies.
      * Subgraph caches to aid performance of non-destructive editing.
+     * Multi-threaded processing.
      * Experimental OpenCL acceleration, with possibility of hybrid cpu/gpu
        processing.
   - link:api.html#GeglBuffer[GeglBuffer]
      * Storage of all babl supported formats.
-     * Tiled sparse buffers (larger than RAM images).
+     * Sparse swapped buffers (larger than RAM images).
      * linear buffers (allocated internally or from external allocation.)
      * On demand tiled mipmapping.
-     * inter process shared storage
+     * Thread-safe reading/writing.
      * External tile-backends (allow wrapping other tiled buffer systems
        to use them through the GeglBuffer API).
   - Operations
