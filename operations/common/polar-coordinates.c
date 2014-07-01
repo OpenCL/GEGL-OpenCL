@@ -323,6 +323,8 @@ process (GeglOperation       *operation,
   GeglProperties          *o            = GEGL_PROPERTIES (operation);
   GeglRectangle            boundary     = get_effective_area (operation);
   const Babl              *format       = babl_format ("RGBA float");
+  GeglSampler             *sampler      = gegl_buffer_sampler_new (
+                                    input, format, GEGL_SAMPLER_NOHALO);
 
   gint      x,y;
   gfloat   *src_buf, *dst_buf;
@@ -361,8 +363,8 @@ process (GeglOperation       *operation,
 #undef gegl_unmap
 
         if (inside)
-          gegl_buffer_sample (input, px, py, &scale, dest, format,
-                              GEGL_SAMPLER_NOHALO, GEGL_ABYSS_NONE);
+          gegl_sampler_get (sampler, px, py, &scale, dest,
+                            GEGL_ABYSS_NONE);
         else
           for (i=0; i<4; i++)
             dest[i] = 0.0;
@@ -375,6 +377,8 @@ process (GeglOperation       *operation,
 
   g_free (src_buf);
   g_free (dst_buf);
+
+  g_object_unref (sampler);
 
   return  TRUE;
 }
