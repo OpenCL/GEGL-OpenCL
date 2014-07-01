@@ -24,15 +24,4 @@ TEST ()
   g_object_unref (buffer);
   g_object_unref (buffer2);
   test_end ();
-
-
-  /* test writing to only higher mipmap levels,.   what happens to reads there
-   * and above?
-   *
-   *   below - perhaps synthesising these - bypassing cache would not be
-   *   half-bad? if the result is not for a 1:1 render?
-   *
-   */
-
-
 }
