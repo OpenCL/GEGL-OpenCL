@@ -106,7 +106,7 @@ my_set_property (GObject  *gobject,
       }
       buffer = G_OBJECT (g_value_get_object (value));
       if (buffer) {
-        p->buffer_changed_handler = gegl_buffer_signal_connect (buffer, "changed", G_CALLBACK(buffer_changed), operation);
+        p->buffer_changed_handler = gegl_buffer_signal_connect (GEGL_BUFFER(buffer), "changed", G_CALLBACK(buffer_changed), operation);
       }
       break;
     default:
