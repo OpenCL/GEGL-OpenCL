@@ -487,6 +487,8 @@ gegl_buffer_sample (GeglBuffer       *buffer,
     return;
   }*/
 
+  static GMutex mutex = {0,};
+
   if (!format)
     format = buffer->soft_format;
 
@@ -496,6 +498,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
     gegl_buffer_cl_cache_flush (buffer, &rect);
   }
 
+  g_mutex_lock (&mutex);
 
   /* unset the cached sampler if it dosn't match the needs */
   if (buffer->sampler != NULL &&
@@ -522,6 +525,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
     }
 
   buffer->sampler->get(buffer->sampler, x, y, scale, dest, repeat_mode);
+  g_mutex_unlock (&mutex);
 }
 
 GeglSampler *
