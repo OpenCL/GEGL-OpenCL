@@ -232,7 +232,7 @@ main (gint    argc,
                                                   "operation", "gegl:save",
                                                   "path", o->output,
                                                   NULL);
-          gegl_node_connect_from (output, "input", gegl_node_get_output_proxy (gegl, "output"), "output");
+          gegl_node_connect_from (output, "input", gegl, "output");
           gegl_node_process (output);
           g_object_unref (output);
         }
