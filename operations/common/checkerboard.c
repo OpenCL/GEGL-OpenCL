@@ -210,6 +210,74 @@ error:
   return TRUE;
 }
 
+
+static gboolean
+checkerboard_process_simple (GeglOperation       *operation,
+                             void                *out_buf,
+                             glong                n_pixels,
+                             const GeglRectangle *roi,
+                             gint                 level)
+{
+  gint        factor = 1 << level;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+
+  gint        pixel_size = babl_format_get_bytes_per_pixel (out_format);
+  guchar     *out_pixel = out_buf;
+  void       *color1 = alloca(pixel_size);
+  void       *color2 = alloca(pixel_size);
+
+  gint        x = roi->x; /* initial x                   */
+  gint        y = roi->y; /*           and y coordinates */
+
+  gegl_color_get_pixel (o->color1, out_format, color1);
+  gegl_color_get_pixel (o->color2, out_format, color2);
+
+  while (n_pixels--)
+    {
+      gint nx,ny;
+
+      if ((x - o->x_offset) < 0)
+        {
+          nx = div (x - o->x_offset + 1, o->x / factor).quot;
+        }
+      else
+        {
+          nx = div (x - o->x_offset, o->x / factor).quot;
+        }
+
+      if ((y - o->y_offset) < 0)
+        {
+          ny = div (y - o->y_offset + 1, o->y / factor).quot;
+        }
+      else
+        {
+          ny = div (y - o->y_offset, o->y / factor).quot;
+        }
+
+      /* shift negative cell indices */
+      nx -= (x - o->x_offset) < 0 ? 1 : 0;
+      ny -= (y - o->y_offset) < 0 ? 1 : 0;
+
+      if ( (nx+ny) % 2 == 0)
+        memcpy (out_pixel, color1, pixel_size);
+      else
+        memcpy (out_pixel, color2, pixel_size);
+
+      out_pixel += pixel_size;
+
+      /* update x and y coordinates */
+      x++;
+      if (x>=roi->x + roi->width)
+        {
+          x=roi->x;
+          y++;
+        }
+    }
+
+  return  TRUE;
+}
+
 static gboolean
 checkerboard_process (GeglOperation       *operation,
                       void                *out_buf,
@@ -231,6 +299,9 @@ checkerboard_process (GeglOperation       *operation,
 
   const gint  square_width  = o->x;
   const gint  square_height = o->y;
+
+  if (level)
+    return checkerboard_process_simple (operation, out_buf, n_pixels, roi, level);
 
   gegl_color_get_pixel (o->color1, out_format, color1);
   gegl_color_get_pixel (o->color2, out_format, color2);
