@@ -47,6 +47,8 @@ struct _GeglOptions
   gboolean     fatal_warnings;
 
   gboolean     play;
+
+  gdouble      scale;
 };
 
 GeglOptions *gegl_options_parse (gint    argc,

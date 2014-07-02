@@ -232,8 +232,40 @@ main (gint    argc,
                                                   "operation", "gegl:save",
                                                   "path", o->output,
                                                   NULL);
-          gegl_node_connect_from (output, "input", gegl, "output");
-          gegl_node_process (output);
+
+          if (o->scale != 1.0){
+            GeglRectangle bounds = gegl_node_get_bounding_box (gegl);
+            GeglBuffer *tempb;
+            GeglNode *n0;
+
+            guchar *temp;
+            
+            bounds.x *= o->scale;
+            bounds.y *= o->scale;
+            bounds.width *= o->scale;
+            bounds.height *= o->scale;
+            temp = gegl_malloc (bounds.width * bounds.height * 4);
+            tempb = gegl_buffer_new (&bounds, babl_format("R'G'B'A u8"));
+            gegl_node_blit (gegl, o->scale, &bounds, babl_format("R'G'B'A u8"), temp, GEGL_AUTO_ROWSTRIDE,
+                            GEGL_BLIT_DEFAULT);
+
+            gegl_buffer_set (tempb, &bounds, 0.0, babl_format ("R'G'B'A u8"),
+                             temp, GEGL_AUTO_ROWSTRIDE);
+
+            n0 = gegl_node_new_child (gegl, "operation", "gegl:buffer-source",
+                                            "buffer", tempb,
+                                            NULL);
+            gegl_node_connect_from (output, "input", n0, "output");
+            gegl_node_process (output);
+            gegl_free (temp);
+            g_object_unref (tempb);
+          }
+          else
+          {
+            gegl_node_connect_from (output, "input", gegl, "output");
+            gegl_node_process (output);
+          }
+          
           g_object_unref (output);
         }
         break;

@@ -36,6 +36,7 @@ static GeglOptions *opts_new (void)
   o->files    = NULL;
   o->file     = NULL;
   o->rest     = NULL;
+  o->scale    = 1.0;
   return o;
 }
 
@@ -65,6 +66,8 @@ _("usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
 "     -p              increment frame counters of various elements when\n"
 "                     processing is done.\n"
+"\n"
+"     -s scale, --scale scale  scale output dimensions by this factor.\n"
 "\n"
 "     -X              output the XML that was read in\n"
 "\n"
@@ -310,6 +313,11 @@ parse_args (int    argc,
                  match ("-o")) {
             get_string_forced (o->output);
             o->mode = GEGL_RUN_MODE_OUTPUT;
+        }
+
+        else if (match ("--scale") ||
+                 match ("-s")) {
+            get_float (o->scale);
         }
 
         else if (match ("-X")) {
