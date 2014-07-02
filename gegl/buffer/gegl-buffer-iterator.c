@@ -62,6 +62,7 @@ typedef struct _SubIterState {
   GeglIteratorTileMode current_tile_mode;
   gint                 row_stride;
   GeglRectangle        real_roi;
+  gint                 level;
   /* Direct data members */
   GeglTile            *current_tile;
   /* Indirect data members */
@@ -127,6 +128,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
 
   g_return_val_if_fail (priv->num_buffers < GEGL_BUFFER_MAX_ITERATORS, 0);
 
+
   index = priv->num_buffers++;
   sub = &priv->sub_iter[index];
 
@@ -138,6 +140,15 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
 
   sub->buffer       = buf;
   sub->full_rect    = *roi;
+
+  if (level)
+  {
+    sub->full_rect.x >>= level;
+    sub->full_rect.y >>= level;
+    sub->full_rect.width >>= level;
+    sub->full_rect.height >>= level;
+  }
+
   sub->access_mode  = access_mode;
   sub->abyss_policy = abyss_policy;
   sub->current_tile = NULL;
@@ -145,6 +156,7 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
   sub->linear_tile  = NULL;
   sub->format       = format;
   sub->format_bpp   = babl_format_get_bytes_per_pixel (format);
+  sub->level        = level;
 
   if (index > 0)
     {
@@ -152,8 +164,8 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
       priv->sub_iter[index].full_rect.height = priv->sub_iter[0].full_rect.height;
     }
 
-  if (level != 0)
-    g_warning ("iterator level != 0");
+  //if (level != 0)
+  //  g_warning ("iterator level != 0");
 
   return index;
 }
@@ -189,7 +201,7 @@ release_tile (GeglBufferIterator *iter,
         {
           gegl_buffer_set_unlocked_no_notify (sub->buffer,
                                               &sub->real_roi,
-                                              0, /* level */
+                                              sub->level,
                                               sub->format,
                                               sub->real_data,
                                               GEGL_AUTO_ROWSTRIDE);
@@ -310,7 +322,7 @@ get_tile (GeglBufferIterator *iter,
     }
   else
     {
-      int shift_x = buf->shift_x;
+      int shift_x = buf->shift_x; // XXX: affect by level?
       int shift_y = buf->shift_y;
 
       int tile_width  = buf->tile_width;
@@ -319,7 +331,7 @@ get_tile (GeglBufferIterator *iter,
       int tile_x = gegl_tile_indice (iter->roi[index].x + shift_x, tile_width);
       int tile_y = gegl_tile_indice (iter->roi[index].y + shift_y, tile_height);
 
-      sub->current_tile = gegl_buffer_get_tile (buf, tile_x, tile_y, 0);
+      sub->current_tile = gegl_buffer_get_tile (buf, tile_x, tile_y, sub->level);
 
       if (sub->access_mode & GEGL_ACCESS_WRITE)
         gegl_tile_lock (sub->current_tile);
@@ -348,6 +360,8 @@ get_indirect (GeglBufferIterator *iter,
 
   if (sub->access_mode & GEGL_ACCESS_READ)
     {
+                               // XXX: scale and roi's should be scaled by
+                               // level
       gegl_buffer_get_unlocked (sub->buffer, 1.0, &sub->real_roi, sub->format, sub->real_data,
                                 GEGL_AUTO_ROWSTRIDE, sub->abyss_policy);
     }
