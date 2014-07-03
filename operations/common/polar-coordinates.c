@@ -323,8 +323,9 @@ process (GeglOperation       *operation,
   GeglProperties          *o            = GEGL_PROPERTIES (operation);
   GeglRectangle            boundary     = get_effective_area (operation);
   const Babl              *format       = babl_format ("RGBA float");
-  GeglSampler             *sampler      = gegl_buffer_sampler_new (
-                                    input, format, GEGL_SAMPLER_NOHALO);
+  GeglSampler             *sampler      = gegl_buffer_sampler_new_at_level (
+                                    input, format, GEGL_SAMPLER_NOHALO,
+                                    level);
 
   gint      x,y;
   gfloat   *src_buf, *dst_buf;

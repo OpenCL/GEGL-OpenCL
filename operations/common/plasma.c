@@ -171,7 +171,8 @@ do_plasma (PlasmaContext *context,
            gint           x2,
            gint           y2,
            gint           plasma_depth,
-           gint           recursion_depth)
+           gint           recursion_depth,
+           gint           level)
 {
   gfloat tl[3], ml[3], bl[3], mt[3], mm[3], mb[3], tr[3], mr[3], br[3];
   gfloat tmp[3];
@@ -198,7 +199,7 @@ do_plasma (PlasmaContext *context,
       context->buffer_y = y1;
       context->buffer_width = x2 - x1 + 1;
 
-      ret = do_plasma (context, x1, y1, x2, y2, plasma_depth, recursion_depth);
+      ret = do_plasma (context, x1, y1, x2, y2, plasma_depth, recursion_depth, level);
 
       context->using_buffer = FALSE;
 
@@ -248,17 +249,17 @@ do_plasma (PlasmaContext *context,
       if (x1 == x2 && y1 == y2)
         return FALSE;
 
-      gegl_buffer_sample (context->output, x1, y1, NULL, tl,
-                          babl_format ("R'G'B' float"),
+      gegl_buffer_sample_at_level (context->output, x1, y1, NULL, tl,
+                          babl_format ("R'G'B' float"), level,
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-      gegl_buffer_sample (context->output, x1, y2, NULL, bl,
-                          babl_format ("R'G'B' float"),
+      gegl_buffer_sample_at_level (context->output, x1, y2, NULL, bl,
+                          babl_format ("R'G'B' float"), level,
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-      gegl_buffer_sample (context->output, x2, y1, NULL, tr,
-                          babl_format ("R'G'B' float"),
+      gegl_buffer_sample_at_level (context->output, x2, y1, NULL, tr,
+                          babl_format ("R'G'B' float"), level,
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
-      gegl_buffer_sample (context->output, x2, y2, NULL, br,
-                          babl_format ("R'G'B' float"),
+      gegl_buffer_sample_at_level (context->output, x2, y2, NULL, br,
+                          babl_format ("R'G'B' float"), level,
                           GEGL_SAMPLER_NEAREST, GEGL_ABYSS_NONE);
 
       ran = context->o->turbulence / (2.0 * recursion_depth);
@@ -316,14 +317,14 @@ do_plasma (PlasmaContext *context,
   if (x1 < x2 || y1 < y2)
     {
       /* Top left. */
-      do_plasma (context, x1, y1, xm, ym, plasma_depth - 1, recursion_depth + 1);
+      do_plasma (context, x1, y1, xm, ym, plasma_depth - 1, recursion_depth + 1, level);
       /* Bottom left. */
-      do_plasma (context, x1, ym, xm, y2, plasma_depth - 1, recursion_depth + 1);
+      do_plasma (context, x1, ym, xm, y2, plasma_depth - 1, recursion_depth + 1, level);
       /* Top right. */
-      do_plasma (context, xm, y1, x2, ym, plasma_depth - 1, recursion_depth + 1);
+      do_plasma (context, xm, y1, x2, ym, plasma_depth - 1, recursion_depth + 1, level);
       /* Bottom right. */
       return do_plasma (context, xm, ym, x2, y2,
-                        plasma_depth - 1, recursion_depth + 1);
+                        plasma_depth - 1, recursion_depth + 1, level);
     }
 
   return TRUE;
@@ -360,13 +361,13 @@ process (GeglOperation       *operation,
 
   context->gr = g_rand_new_with_seed (context->o->seed);
 
-  do_plasma (context, result->x, result->y, x-1, y-1, -1, 0);
+  do_plasma (context, result->x, result->y, x-1, y-1, -1, 0, level);
 
   /*
    * Now we recurse through the images, going deeper each time
    */
   depth = 1;
-  while (!do_plasma (context, result->x, result->y, x-1, y-1, depth, 0))
+  while (!do_plasma (context, result->x, result->y, x-1, y-1, depth, 0, level))
     depth++;
 
   gegl_buffer_sample_cleanup (context->output);

@@ -409,6 +409,17 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
  * of interpolation. The samplers used cache for a small neighbourhood of the
  * buffer for more efficient access.
  */
+
+void              gegl_buffer_sample_at_level (GeglBuffer       *buffer,
+                                               gdouble           x,
+                                               gdouble           y,
+                                               GeglMatrix2      *scale,
+                                               gpointer          dest,
+                                               const Babl       *format,
+                                               gint              level,
+                                               GeglSamplerType   sampler_type,
+                                               GeglAbyssPolicy   repeat_mode);
+
 void              gegl_buffer_sample          (GeglBuffer       *buffer,
                                                gdouble           x,
                                                gdouble           y,
@@ -459,6 +470,12 @@ GeglSamplerGetFun gegl_sampler_get_fun (GeglSampler *sampler);
 GeglSampler *    gegl_buffer_sampler_new      (GeglBuffer       *buffer,
                                                const Babl       *format,
                                                GeglSamplerType   sampler_type);
+
+GeglSampler *    gegl_buffer_sampler_new_at_level (GeglBuffer       *buffer,
+                                               const Babl       *format,
+                                               GeglSamplerType   sampler_type,
+                                               gint              level);
+
 
 /**
  * gegl_sampler_get:

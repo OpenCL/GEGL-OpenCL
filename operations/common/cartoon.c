@@ -227,13 +227,15 @@ process (GeglOperation       *operation,
 
   grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);
 
-  sampler1 = gegl_buffer_sampler_new (dest1,
+  sampler1 = gegl_buffer_sampler_new_at_level (dest1,
                                       babl_format ("Y' float"),
-                                      GEGL_SAMPLER_LINEAR);
+                                      GEGL_SAMPLER_LINEAR,
+                                      level);
 
-  sampler2 = gegl_buffer_sampler_new (dest2,
+  sampler2 = gegl_buffer_sampler_new_at_level (dest2,
                                       babl_format ("Y' float"),
-                                      GEGL_SAMPLER_LINEAR);
+                                      GEGL_SAMPLER_LINEAR,
+                                      level);
 
   ramp = compute_ramp (sampler1, sampler2, result, o->pct_black);
 

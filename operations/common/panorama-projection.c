@@ -367,7 +367,8 @@ process (GeglOperation       *operation,
   prepare_transform2 (&transform, operation);
 
   format_io = babl_format ("RaGaBaA float");
-  sampler = gegl_buffer_sampler_new (input, format_io, o->sampler_type);
+  sampler = gegl_buffer_sampler_new_at_level (input, format_io, o->sampler_type,
+                                     level);
 
   if (o->sampler_type == GEGL_SAMPLER_NOHALO ||
       o->sampler_type == GEGL_SAMPLER_LOHALO)

@@ -144,7 +144,8 @@ apply_whirl_pinch (gdouble              whirl,
                    GeglRectangle       *in_boundary,
                    GeglBuffer          *dst,
                    GeglRectangle       *boundary,
-                   const GeglRectangle *roi)
+                   const GeglRectangle *roi,
+                   gint                 level)
 {
   gfloat *dst_buf;
   gint row, col;
@@ -159,8 +160,8 @@ apply_whirl_pinch (gdouble              whirl,
 
   scale_x = 1.0;
   scale_y = (gdouble) in_boundary->width / in_boundary->height;
-  sampler = gegl_buffer_sampler_new (src, babl_format ("RaGaBaA float"),
-                                     GEGL_SAMPLER_NOHALO);
+  sampler = gegl_buffer_sampler_new_at_level (src, babl_format ("RaGaBaA float"),
+                                     GEGL_SAMPLER_NOHALO, level);
 
   for (row = 0; row < roi->height; row++) {
     for (col = 0; col < roi->width; col++) {
@@ -248,7 +249,8 @@ process (GeglOperation       *operation,
                      &boundary,
                      output,
                      &boundary,
-                     result);
+                     result,
+                     level);
   return TRUE;
 }
 

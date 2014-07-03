@@ -75,7 +75,7 @@ process (GeglOperation       *operation,
   format_io = babl_format ("RGBA float");
   format_coords = babl_format_n (babl_type ("float"), 2);
 
-  sampler = gegl_buffer_sampler_new (input, format_io, o->sampler_type);
+  sampler = gegl_buffer_sampler_new_at_level (input, format_io, o->sampler_type, level);
 
   if (aux != NULL)
     {

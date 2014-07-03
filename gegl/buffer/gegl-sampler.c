@@ -42,6 +42,7 @@ enum
   PROP_0,
   PROP_BUFFER,
   PROP_FORMAT,
+  PROP_LEVEL,
   PROP_CONTEXT_RECT,
   PROP_LAST
 };
@@ -97,6 +98,15 @@ gegl_sampler_class_init (GeglSamplerClass *klass)
                                        "format",
                                        "babl format",
                                        G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
+
+  g_object_class_install_property (
+                 object_class,
+                 PROP_LEVEL,
+                 g_param_spec_int ("level",
+                                   "level",
+                                   "mimmap level to sample from",
+                                   0, 100, 0,
+                                   G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
 
   g_object_class_install_property (
                    object_class,
@@ -391,6 +401,10 @@ get_property (GObject    *object,
         g_value_set_pointer (value, (void*)self->format);
         break;
 
+      case PROP_LEVEL:
+        g_value_set_int (value, self->lvel);
+        break;
+
       default:
         break;
     }
@@ -412,6 +426,10 @@ set_property (GObject      *object,
 
       case PROP_FORMAT:
         self->format = g_value_get_pointer (value);
+        break;
+
+      case PROP_LEVEL:
+        self->lvel = g_value_get_int  (value);
         break;
 
       default:
@@ -469,14 +487,15 @@ gegl_sampler_gtype_from_enum (GeglSamplerType sampler_type)
 }
 
 void
-gegl_buffer_sample (GeglBuffer       *buffer,
-                    gdouble           x,
-                    gdouble           y,
-                    GeglMatrix2      *scale,
-                    gpointer          dest,
-                    const Babl       *format,
-                    GeglSamplerType   sampler_type,
-                    GeglAbyssPolicy   repeat_mode)
+gegl_buffer_sample_at_level (GeglBuffer       *buffer,
+                             gdouble           x,
+                             gdouble           y,
+                             GeglMatrix2      *scale,
+                             gpointer          dest,
+                             const Babl       *format,
+                             gint              level,
+                             GeglSamplerType   sampler_type,
+                             GeglAbyssPolicy   repeat_mode)
 {
   GType desired_type;
   /*
@@ -519,6 +538,7 @@ gegl_buffer_sample (GeglBuffer       *buffer,
       buffer->sampler = g_object_new (desired_type,
                                       "buffer", buffer,
                                       "format", format,
+                                      "level", level,
                                       NULL);
       buffer->sampler_format = format;
       gegl_sampler_prepare (buffer->sampler);
@@ -528,10 +548,25 @@ gegl_buffer_sample (GeglBuffer       *buffer,
   g_mutex_unlock (&mutex);
 }
 
+
+void
+gegl_buffer_sample (GeglBuffer       *buffer,
+                    gdouble           x,
+                    gdouble           y,
+                    GeglMatrix2      *scale,
+                    gpointer          dest,
+                    const Babl       *format,
+                    GeglSamplerType   sampler_type,
+                    GeglAbyssPolicy   repeat_mode)
+{
+  gegl_buffer_sample_at_level (buffer, x, y, scale, dest, format, 0, sampler_type, repeat_mode);
+}
+
 GeglSampler *
-gegl_buffer_sampler_new (GeglBuffer      *buffer,
-                         const Babl      *format,
-                         GeglSamplerType  sampler_type)
+gegl_buffer_sampler_new_at_level (GeglBuffer      *buffer,
+                                  const Babl      *format,
+                                  GeglSamplerType  sampler_type,
+                                  gint             level)
 {
   GeglSampler *sampler;
   GType        desired_type;
@@ -544,12 +579,22 @@ gegl_buffer_sampler_new (GeglBuffer      *buffer,
   sampler = g_object_new (desired_type,
                           "buffer", buffer,
                           "format", format,
+                          "level", level,
                           NULL);
 
   gegl_sampler_prepare (sampler);
 
   return sampler;
 }
+
+GeglSampler *
+gegl_buffer_sampler_new (GeglBuffer      *buffer,
+                         const Babl      *format,
+                         GeglSamplerType  sampler_type)
+{
+  return gegl_buffer_sampler_new_at_level (buffer, format, sampler_type, 0);
+}
+
 
 const GeglRectangle*
 gegl_sampler_get_context_rect (GeglSampler *sampler)

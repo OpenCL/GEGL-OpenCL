@@ -331,7 +331,8 @@ lens_distort_func (gfloat              *src_buf,
                    gint                 xx,
                    gint                 yy,
                    GeglBuffer          *input,
-                   gfloat              *background)
+                   gfloat              *background,
+                   gint                 level)
 {
   gdouble sx, sy, mag;
   gdouble brighten;
@@ -379,8 +380,9 @@ lens_distort_func (gfloat              *src_buf,
                 }
               else
                 {
-                  gegl_buffer_sample (input, x, y, NULL, temp,
+                  gegl_buffer_sample_at_level (input, x, y, NULL, temp,
                                       babl_format ("RGBA float"),
+                                      level,
                                       GEGL_SAMPLER_LINEAR,
                                       GEGL_ABYSS_CLAMP);
                 }
@@ -448,7 +450,7 @@ process (GeglOperation       *operation,
           for (x = chunked_result.x; x < chunked_result.x + chunked_result.width; x++)
             {
               lens_distort_func (src_buf, dst_buf, &area, &chunked_result, &boundary,
-                                 &lens, x, y, input, background);
+                                 &lens, x, y, input, background, level);
             }
 
         gegl_buffer_set (output, &chunked_result, 0, babl_format ("RGBA float"),

@@ -86,9 +86,10 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglProperties     *o       = GEGL_PROPERTIES (operation);
-  GeglSampler        *sampler = gegl_buffer_sampler_new (input,
+  GeglSampler        *sampler = gegl_buffer_sampler_new_at_level (input,
                                                          babl_format ("RGBA float"),
-                                                         o->sampler_type);
+                                                         o->sampler_type,
+                                                         level);
   GeglRectangle      *in_extent = gegl_operation_source_get_bounding_box (operation, "input");
   GeglBufferIterator *iter;
 

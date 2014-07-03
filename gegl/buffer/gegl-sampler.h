@@ -68,6 +68,7 @@ struct _GeglSampler
 
   /*< private >*/
   GeglBuffer    *buffer;
+  gint           lvel;
   const Babl    *format;
   const Babl    *interpolate_format;
   const Babl    *fish;

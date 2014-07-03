@@ -114,13 +114,15 @@ julia (gdouble  x,
 
 static void
 fractaltrace (GeglBuffer            *input,
+              GeglSampler           *sampler,
               const GeglRectangle   *picture,
               gfloat                *dst_buf,
               const GeglRectangle   *roi,
-              GeglProperties            *o,
+              GeglProperties        *o,
               gint                   y,
-              GeglFractalTraceType  fractal_type,
-              const Babl           *format)
+              GeglFractalTraceType   fractal_type,
+              const Babl            *format,
+              gint                   level)
 {
   GeglMatrix2  scale;        /* a matrix indicating scaling factors around the
                                 current center pixel.
@@ -129,7 +131,6 @@ fractaltrace (GeglBuffer            *input,
   gdouble      scale_x, scale_y;
   gdouble      bailout2;
   gfloat       dest[4];
-  GeglSampler *sampler = gegl_buffer_sampler_new (input, format, GEGL_SAMPLER_NOHALO);
 
   scale_x = (o->X2 - o->X1) / picture->width;
   scale_y = (o->Y2 - o->Y1) / picture->height;
@@ -183,7 +184,6 @@ fractaltrace (GeglBuffer            *input,
       for (i = 0; i < 4; i++)
         dst_buf[offset++] = dest[i];
     }
-  g_object_unref (sampler);
 }
 
 static gboolean
@@ -196,6 +196,7 @@ process (GeglOperation       *operation,
   GeglProperties    *o = GEGL_PROPERTIES (operation);
   GeglRectangle  boundary;
   const Babl    *format;
+  GeglSampler   *sampler;
   gfloat        *dst_buf;
   gint           y;
 
@@ -203,11 +204,13 @@ process (GeglOperation       *operation,
 
   format = babl_format ("RGBA float");
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
+  sampler = gegl_buffer_sampler_new_at_level (input, format, GEGL_SAMPLER_NOHALO, level);
 
   for (y = result->y; y < result->y + result->height; y++)
-    fractaltrace (input, &boundary, dst_buf, result, o, y, o->fractal, format);
+    fractaltrace (input, sampler, &boundary, dst_buf, result, o, y, o->fractal, format, level);
 
   gegl_buffer_set (output, result, 0, format, dst_buf, GEGL_AUTO_ROWSTRIDE);
+  g_object_unref (sampler);
 
   g_free (dst_buf);
 

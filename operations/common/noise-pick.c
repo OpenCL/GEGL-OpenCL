@@ -114,7 +114,8 @@ process (GeglOperation       *operation,
                   }
               }
 
-            gegl_buffer_sample (input, pos_x, pos_y, NULL, data, format,
+            gegl_buffer_sample_at_level (input, pos_x, pos_y, NULL, data, format,
+                                level,
                                 GEGL_SAMPLER_NEAREST, GEGL_ABYSS_CLAMP);
             data += bpp;
           }

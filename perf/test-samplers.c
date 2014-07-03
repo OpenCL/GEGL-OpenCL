@@ -87,7 +87,7 @@ main (gint    argc,
   {
     int j;
     float px[4] = {0.2, 0.4, 0.1, 0.5};
-    GeglSampler *sampler = gegl_buffer_sampler_new (buffer, format, 
+    GeglSampler *sampler = gegl_buffer_sampler_new (buffer, format,
                                                     GEGL_SAMPLER_NEAREST);
 
     for (j = 0; j < SAMPLES; j ++)

@@ -557,9 +557,10 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
       gegl_matrix3_is_identity (&inverse))
     return requested_rect;
 
-  sampler = gegl_buffer_sampler_new (NULL,
+  sampler = gegl_buffer_sampler_new_at_level (NULL,
                                      babl_format("RaGaBaA float"),
-                                     transform->sampler);
+                                     transform->sampler,
+                                     0); //XXX: need level?
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
 
@@ -636,9 +637,10 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
    * allow for round off error (for "safety")?
    */
 
-  sampler = gegl_buffer_sampler_new (NULL,
+  sampler = gegl_buffer_sampler_new_at_level (NULL,
                                      babl_format("RaGaBaA float"),
-                                     transform->sampler);
+                                     transform->sampler,
+                                     0); // XXX: need level?
   context_rect = *gegl_sampler_get_context_rect (sampler);
   g_object_unref (sampler);
 
@@ -743,14 +745,16 @@ transform_affine (GeglOperation *operation,
                   GeglMatrix3 *matrix,
                   gint         level)
 {
+  //gint factor = 1 << level;
   OpTransform *transform = (OpTransform *) operation;
   const Babl  *format = babl_format ("RaGaBaA float");
   GeglMatrix3  inverse;
   GeglMatrix2  inverse_jacobian;
   gint         dest_pixels;
-  GeglSampler *sampler = gegl_buffer_sampler_new (src,
+  GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src,
                                          babl_format("RaGaBaA float"),
-                                         transform->sampler);
+                                         transform->sampler,
+                                         level);
   GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
 
 
@@ -959,9 +963,10 @@ transform_generic (GeglOperation *operation,
   const GeglRectangle *dest_extent;
   GeglMatrix3          inverse;
   gint                 dest_pixels;
-  GeglSampler *sampler = gegl_buffer_sampler_new (src,
+  GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src,
                                          babl_format("RaGaBaA float"),
-                                         transform->sampler);
+                                         transform->sampler,
+                                         level);
   GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
 
   g_object_get (dest, "pixels", &dest_pixels, NULL);

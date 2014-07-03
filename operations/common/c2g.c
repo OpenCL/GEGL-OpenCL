@@ -67,7 +67,8 @@ static void c2g (GeglBuffer          *src,
                  gint                 radius,
                  gint                 samples,
                  gint                 iterations,
-                 gdouble              rgamma)
+                 gdouble              rgamma,
+                 gint                 level)
 {
   const Babl *format = babl_format ("RGBA float");
 
@@ -75,7 +76,7 @@ static void c2g (GeglBuffer          *src,
   {
     GeglBufferIterator *i = gegl_buffer_iterator_new (dst, dst_rect, 0, babl_format("YA float"),
                                                       GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
-    GeglSampler *sampler = gegl_buffer_sampler_new (src, format, GEGL_SAMPLER_NEAREST);
+    GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src, format, GEGL_SAMPLER_NEAREST, level);
 
     while (gegl_buffer_iterator_next (i))
     {
@@ -330,7 +331,8 @@ process (GeglOperation       *operation,
        o->radius,
        o->samples,
        o->iterations,
-       /*o->rgamma*/RGAMMA);
+       /*o->rgamma*/RGAMMA,
+       level);
 
   return  TRUE;
 }
