@@ -144,6 +144,14 @@ gegl_sampler_get (GeglSampler     *self,
                   void            *output,
                   GeglAbyssPolicy  repeat_mode)
 {
+  if (self->lvel)
+  {
+    double factor = 1.0 / (1 << self->lvel);
+    GeglRectangle rect={floorf (x * factor), floorf (y * factor),1,1};
+    gegl_buffer_get (self->buffer, &rect, factor, self->format, output, GEGL_AUTO_ROWSTRIDE, repeat_mode);
+    return;
+  }
+
   if (gegl_cl_is_accelerated ())
     {
       GeglRectangle rect={x,y,1,1};
