@@ -360,9 +360,7 @@ get_indirect (GeglBufferIterator *iter,
 
   if (sub->access_mode & GEGL_ACCESS_READ)
     {
-                               // XXX: scale and roi's should be scaled by
-                               // level
-      gegl_buffer_get_unlocked (sub->buffer, 1.0, &sub->real_roi, sub->format, sub->real_data,
+      gegl_buffer_get_unlocked (sub->buffer, sub->level?1.0/(1<<sub->level):1.0, &sub->real_roi, sub->format, sub->real_data,
                                 GEGL_AUTO_ROWSTRIDE, sub->abyss_policy);
     }
 
