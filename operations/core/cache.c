@@ -34,11 +34,10 @@
 static void
 prepare (GeglOperation *operation)
 {
-  const Babl *format = babl_format ("RGBA float");
-  const Babl *input_format = gegl_operation_get_source_format (operation, "input");
+  const Babl *format = gegl_operation_get_source_format (operation, "input");
 
-  if (input_format)
-    format = input_format;
+  if (! format)
+    format = babl_format ("RGBA float");
 
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "output", format);
@@ -57,17 +56,17 @@ process (GeglOperation       *operation,
 
   memcpy (out_buf, in_buf, n_pixels * babl_format_get_bytes_per_pixel (format));
 
-  if (o->cache != (void*)operation->node->cache)
-  {
-    if (o->cache)
+  if (o->cache != (void *) operation->node->cache)
     {
-      g_object_unref (o->cache);
-      o->cache = NULL;
-    }
+      if (o->cache)
+        {
+          g_object_unref (o->cache);
+          o->cache = NULL;
+        }
 
-    if (operation->node->cache )
-      o->cache = g_object_ref (operation->node->cache);
-  }
+      if (operation->node->cache)
+        o->cache = g_object_ref (operation->node->cache);
+    }
 
   return TRUE;
 }
@@ -81,9 +80,10 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class    = GEGL_OPERATION_CLASS (klass);
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
-  operation_class->no_cache   = FALSE;
-  operation_class->prepare    = prepare;
-  point_filter_class->process = process;
+  operation_class->no_cache      = FALSE;
+  operation_class->want_in_place = FALSE;
+  operation_class->prepare       = prepare;
+  point_filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:cache",
