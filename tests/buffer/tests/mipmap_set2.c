@@ -37,4 +37,7 @@ TEST ()
 
   test_end ();
 
+  g_object_unref (buffer);
+  g_object_unref (buffer2);
+
 }

@@ -2,7 +2,6 @@ TEST ()
 {
   GeglBuffer    *buffer, *buffer2;
   GeglRectangle  bound = {0, 0, 20, 20};
-  GeglRectangle  source = {2, 2, 5, 5};
   GeglRectangle  dest = {10, 10, 5, 5};
   const gchar *blank = g_malloc0 (100000);
   test_start ();
