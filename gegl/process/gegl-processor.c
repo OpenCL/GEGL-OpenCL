@@ -74,6 +74,7 @@ struct _GeglProcessor
   GeglNode        *node;
   GeglRectangle    rectangle;
   GeglNode        *input;
+  gint             level;
   GeglOperationContext *context;
 
   GeglRegion      *valid_region;     /* used when doing unbuffered rendering */
@@ -123,7 +124,7 @@ gegl_processor_class_init (GeglProcessorClass *klass)
                                    g_param_spec_int ("chunksize",
                                                      "chunksize",
                                                      "Size of chunks being rendered (larger chunks need more memory to do the processing).",
-                                                     1, 1024 * 1024, gegl_config()->chunk_size,
+                                                     1, 4096 * 4096, gegl_config()->chunk_size,
                                                      G_PARAM_READWRITE |
                                                      G_PARAM_CONSTRUCT_ONLY));
 }
@@ -131,6 +132,7 @@ gegl_processor_class_init (GeglProcessorClass *klass)
 static void
 gegl_processor_init (GeglProcessor *processor)
 {
+  processor->level            = 0;
   processor->node             = NULL;
   processor->input            = NULL;
   processor->context          = NULL;
@@ -417,7 +419,7 @@ static gboolean
 render_rectangle (GeglProcessor *processor)
 {
   gboolean    buffered;
-  const gint  max_area = processor->chunk_size;
+  const gint  max_area = processor->chunk_size * (1<<processor->level) * (1<<processor->level);
   GeglCache  *cache    = NULL;
   const Babl *format   = NULL;
   gint        pxsize;
@@ -488,6 +490,7 @@ render_rectangle (GeglProcessor *processor)
             {
               /* create a buffer and initialise it */
               guchar *buf;
+              gint    rowstride = dr->width * babl_format_get_bytes_per_pixel(format);
 
               buf = g_malloc (dr->width * dr->height * pxsize);
               g_assert (buf);
@@ -495,13 +498,12 @@ render_rectangle (GeglProcessor *processor)
               /* FIXME: Check if the node caches naturaly, if so the buffer_set call isn't needed */
 
               /* do the image calculations using the buffer */
-              gegl_node_blit (processor->input, 1.0, dr, format, buf,
-                              GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
-
+              gegl_node_blit (processor->input, 1.0/(1<<processor->level),
+                              dr, format, buf,
+                              rowstride, GEGL_BLIT_DEFAULT);
 
               /* copy the buffer data into the cache */
-              gegl_buffer_set (GEGL_BUFFER (cache), dr, 0, format, buf,
-                               GEGL_AUTO_ROWSTRIDE);
+              gegl_buffer_set (GEGL_BUFFER (cache), dr, processor->level, format, buf, rowstride);
 
               /* tells the cache that the rectangle (dr) has been computed */
               gegl_cache_computed (cache, dr);
@@ -513,7 +515,8 @@ render_rectangle (GeglProcessor *processor)
         }
       else
         {
-           gegl_node_blit (processor->node, 1.0, dr, NULL, NULL,
+           gegl_node_blit (processor->node, 1.0/(1<<processor->level),
+                           dr, NULL, NULL,
                            GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
            gegl_region_union_with_rect (processor->valid_region, dr);
            g_slice_free (GeglRectangle, dr);
@@ -807,4 +810,15 @@ gegl_node_new_processor (GeglNode            *node,
                        "node",      node,
                        "rectangle", rectangle,
                        NULL);
+}
+
+void gegl_processor_set_level (GeglProcessor *processor,
+                               gint           level)
+{
+  processor->level = level;
+}
+void gegl_processor_set_scale (GeglProcessor *processor,
+                               gdouble        scale)
+{
+  processor->level = gegl_level_from_scale (scale);
 }

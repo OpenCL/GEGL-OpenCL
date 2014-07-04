@@ -42,6 +42,11 @@ G_BEGIN_DECLS
 GeglProcessor *gegl_node_new_processor      (GeglNode            *node,
                                              const GeglRectangle *rectangle);
 
+void gegl_processor_set_level (GeglProcessor *processor,
+                               gint           level);
+void gegl_processor_set_scale (GeglProcessor *processor,
+                               gdouble        scale);
+
 /**
  * gegl_processor_set_rectangle:
  * @processor: a #GeglProcessor
