@@ -323,37 +323,46 @@ c_process (GeglOperation       *operation,
            const GeglRectangle *roi,
            gint                 level)
 {
+  gint factor = (1 << level);
   GeglProperties *o = GEGL_PROPERTIES (operation);
-  Context         context;
-  gfloat         *pixel;
-  gint            s, t;
+  Context     context;
+  gfloat     *pixel = out_buf;
+
+  gint x = roi->x;
+  gint y = roi->y;
 
   context.seed = o->seed;
   context.rank = o->rank;
   context.shape = o->shape;
   context.palettize = o->palettize;
+    
+  while (n_pixels --)
+  {
+    gint    i;
+    gdouble c, d;
 
-  for (t = 0, pixel = out_buf ; t < roi->height ; t += 1)
-    {
-      for (s = 0 ; s < roi->width ; s += 1, pixel += 1)
-        {
-          gint    i;
-          gdouble c, d;
+    /* Pile up noise octaves onto the output value. */
 
-          /* Pile up noise octaves onto the output value. */
-
-          for (i = 0, c = 1, d = o->scale / 50.0, *pixel = 0;
-               i < o->iterations;
-               c *= 2, d *= 2, i += 1) {
-            *pixel += noise2 ((double) (s + roi->x) * d,
-                              (double) (t + roi->y) * d,
-                              &context) / c;
-          }
-        }
+    for (i = 0, c = 1, d = o->scale / 50.0, *pixel = 0;
+         i < o->iterations;
+         c *= 2, d *= 2, i += 1) {
+      *pixel += noise2 ((double) (x * d * factor),
+                        (double) (y * d * factor),
+                        &context) / c;
     }
+    pixel += 1;
 
-  return  TRUE;
+    x++;
+    if (x>=roi->x + roi->width)
+      {
+        x=roi->x;
+        y++;
+      }
+  }
+
+  return TRUE;
 }
+
 
 static gboolean
 process (GeglOperation       *operation,
