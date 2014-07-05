@@ -1337,9 +1337,9 @@ _gegl_get_required_for_scale (const Babl          *format,
     return *roi;
   else
     {
-      gint x1 = floor (roi->x / scale + GEGL_SCALE_EPSILON);
+      gint x1 = floorf (roi->x / scale + GEGL_SCALE_EPSILON);
       gint x2 = ceil ((roi->x + roi->width) / scale - GEGL_SCALE_EPSILON);
-      gint y1 = floor (roi->y / scale + GEGL_SCALE_EPSILON);
+      gint y1 = floorf (roi->y / scale + GEGL_SCALE_EPSILON);
       gint y2 = ceil ((roi->y + roi->height) / scale - GEGL_SCALE_EPSILON);
 
       gint pad = (1.0 / scale > 1.0) ? ceil (1.0 / scale) : 1;
@@ -1416,9 +1416,9 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       gint          bpp         = babl_format_get_bytes_per_pixel (format);
       GeglRectangle sample_rect;
       void         *sample_buf;
-      gint          x1 = floor (rect->x / scale + GEGL_SCALE_EPSILON);
+      gint          x1 = floorf (rect->x / scale + GEGL_SCALE_EPSILON);
       gint          x2 = ceil ((rect->x + rect->width) / scale - GEGL_SCALE_EPSILON);
-      gint          y1 = floor (rect->y / scale + GEGL_SCALE_EPSILON);
+      gint          y1 = floorf (rect->y / scale + GEGL_SCALE_EPSILON);
       gint          y2 = ceil ((rect->y + rect->height) / scale - GEGL_SCALE_EPSILON);
       gint          factor = 1;
       gint          stride;

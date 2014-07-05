@@ -130,13 +130,13 @@ gegl_resample_nearest (guchar              *dst,
 
   for (i = 0; i < dst_rect->height; i++)
     {
-      const gdouble sy = (dst_rect->y + .5 + i) / scale - src_rect->y;
-      const gint    ii = floor (sy + GEGL_SCALE_EPSILON);
+      const gfloat sy = (dst_rect->y + .5 + i) / scale - src_rect->y;
+      const gint   ii = floorf (sy + GEGL_SCALE_EPSILON);
 
       for (j = 0; j < dst_rect->width; j++)
         {
-          const gdouble sx = (dst_rect->x + .5 + j) / scale - src_rect->x;
-          const gint    jj = floor (sx + GEGL_SCALE_EPSILON);
+          const gfloat sx = (dst_rect->x + .5 + j) / scale - src_rect->x;
+          const gint   jj = floorf (sx + GEGL_SCALE_EPSILON);
 
           memcpy (&dst[i * dst_stride + j * bpp],
                   &src[ii * src_stride + jj * bpp],

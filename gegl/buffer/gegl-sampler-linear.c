@@ -93,11 +93,11 @@ gegl_sampler_linear_get (      GeglSampler*    restrict  self,
    * index (0,0), to a coordinate system in which the origin is at the
    * center of the same pixel.
    */
-  const double iabsolute_x = (double) absolute_x - 0.5;
-  const double iabsolute_y = (double) absolute_y - 0.5;
+  const float iabsolute_x = (float) absolute_x - 0.5;
+  const float iabsolute_y = (float) absolute_y - 0.5;
 
-  const gint ix = floor (iabsolute_x);
-  const gint iy = floor (iabsolute_y);
+  const gint ix = floorf (iabsolute_x);
+  const gint iy = floorf (iabsolute_y);
 
   /*
    * Point the data tile pointer to the first channel of the top_left

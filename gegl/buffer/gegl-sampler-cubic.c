@@ -188,8 +188,8 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
   const double iabsolute_x = (double) absolute_x - 0.5;
   const double iabsolute_y = (double) absolute_y - 0.5;
 
-  const gint ix = floor (iabsolute_x);
-  const gint iy = floor (iabsolute_y);
+  const gint ix = floorf (iabsolute_x);
+  const gint iy = floorf (iabsolute_y);
 
   /*
    * x is the x-coordinate of the sampling point relative to the
