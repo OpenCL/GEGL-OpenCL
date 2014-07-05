@@ -490,7 +490,6 @@ render_rectangle (GeglProcessor *processor)
             {
               /* create a buffer and initialise it */
               guchar *buf;
-              gint    rowstride = dr->width * babl_format_get_bytes_per_pixel(format);
 
               buf = g_malloc (dr->width * dr->height * pxsize);
               g_assert (buf);
@@ -500,10 +499,10 @@ render_rectangle (GeglProcessor *processor)
               /* do the image calculations using the buffer */
               gegl_node_blit (processor->input, 1.0/(1<<processor->level),
                               dr, format, buf,
-                              rowstride, GEGL_BLIT_DEFAULT);
+                              GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
 
               /* copy the buffer data into the cache */
-              gegl_buffer_set (GEGL_BUFFER (cache), dr, processor->level, format, buf, rowstride);
+              gegl_buffer_set (GEGL_BUFFER (cache), dr, processor->level, format, buf, GEGL_AUTO_ROWSTRIDE);
 
               /* tells the cache that the rectangle (dr) has been computed */
               gegl_cache_computed (cache, dr);

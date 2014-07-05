@@ -1003,6 +1003,9 @@ gegl_node_blit (GeglNode            *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (roi != NULL);
 
+  if (rowstride == GEGL_AUTO_ROWSTRIDE)
+    rowstride = babl_format_get_bytes_per_pixel (format) * roi->width;
+
   if (!flags)
     {
       GeglBuffer *buffer;
@@ -1018,7 +1021,6 @@ gegl_node_blit (GeglNode            *self,
         {
           buffer = gegl_node_apply_roi (self, roi, 0);
         }
-
       if (buffer && destination_buf)
         gegl_buffer_get (buffer, roi, scale, format, destination_buf, rowstride, GEGL_ABYSS_NONE);
 
