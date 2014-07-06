@@ -1003,7 +1003,7 @@ gegl_node_blit (GeglNode            *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (roi != NULL);
 
-  if (rowstride == GEGL_AUTO_ROWSTRIDE)
+  if (rowstride == GEGL_AUTO_ROWSTRIDE && format)
     rowstride = babl_format_get_bytes_per_pixel (format) * roi->width;
 
   if (!flags)
