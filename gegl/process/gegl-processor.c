@@ -483,10 +483,20 @@ render_rectangle (GeglProcessor *processor)
 
       if (buffered)
         {
-          /* only do work if the rectangle is not completely inside the valid
-           * region of the cache */
-          if (gegl_region_rect_in (cache->valid_region, dr) !=
-              GEGL_OVERLAP_RECTANGLE_IN)
+          gboolean found_full = FALSE;
+          for (gint level = processor->level; level >= 0; level--)
+          {
+            if (gegl_region_rect_in (cache->valid_region[level], dr) == GEGL_OVERLAP_RECTANGLE_IN)
+            {
+              found_full = TRUE;
+              break;
+            }
+            /* XXX: dr should be adjusted to be the bounding box of not-found
+             * in cache if there is partial hits
+             */
+          }
+
+          if (!found_full)
             {
               /* create a buffer and initialise it */
               guchar *buf;
@@ -505,7 +515,7 @@ render_rectangle (GeglProcessor *processor)
               gegl_buffer_set (GEGL_BUFFER (cache), dr, processor->level, format, buf, GEGL_AUTO_ROWSTRIDE);
 
               /* tells the cache that the rectangle (dr) has been computed */
-              gegl_cache_computed (cache, dr);
+              gegl_cache_computed (cache, dr, processor->level);
 
               /* release the buffer */
               g_free (buf);
@@ -593,7 +603,7 @@ gegl_processor_progress (GeglProcessor *processor)
     }
   else
     {
-      valid_region = gegl_node_get_cache (processor->input)->valid_region;
+      valid_region = gegl_node_get_cache (processor->input)->valid_region[processor->level];
     }
 
   wanted = rect_area (&(processor->rectangle));
@@ -633,7 +643,7 @@ gegl_processor_render (GeglProcessor *processor,
   else
     {
       g_return_val_if_fail (processor->input != NULL, FALSE);
-      valid_region = gegl_node_get_cache (processor->input)->valid_region;
+      valid_region = gegl_node_get_cache (processor->input)->valid_region[processor->level];
     }
 
   {

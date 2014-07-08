@@ -33,11 +33,13 @@ G_BEGIN_DECLS
 
 typedef struct _GeglCacheClass GeglCacheClass;
 
+#define GEGL_CACHE_VALID_MIPMAPS 8
+
 struct _GeglCache
 {
   GeglBuffer    parent_instance;
 
-  GeglRegion   *valid_region;
+  GeglRegion   *valid_region[GEGL_CACHE_VALID_MIPMAPS];
   GMutex        mutex;
 };
 
@@ -50,7 +52,8 @@ GType    gegl_cache_get_type    (void) G_GNUC_CONST;
 void     gegl_cache_invalidate  (GeglCache           *self,
                                  const GeglRectangle *roi);
 void     gegl_cache_computed    (GeglCache           *self,
-                                 const GeglRectangle *rect);
+                                 const GeglRectangle *rect,
+                                 gint                 level);
 
 G_END_DECLS
 

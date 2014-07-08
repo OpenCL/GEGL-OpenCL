@@ -127,7 +127,7 @@ gegl_eval_manager_apply (GeglEvalManager     *self,
   GEGL_INSTRUMENT_END ("gegl", "prepare-graph");
 
   GEGL_INSTRUMENT_START();
-  gegl_graph_prepare_request (self->traversal, roi);
+  gegl_graph_prepare_request (self->traversal, roi, level);
   GEGL_INSTRUMENT_END ("gegl", "prepare-request");
 
   GEGL_INSTRUMENT_START();

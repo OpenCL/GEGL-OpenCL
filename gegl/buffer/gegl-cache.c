@@ -66,10 +66,12 @@ static void
 gegl_cache_constructed (GObject *object)
 {
   GeglCache *self = GEGL_CACHE (object);
+  gint i;
 
   G_OBJECT_CLASS (gegl_cache_parent_class)->constructed (object);
 
-  self->valid_region = gegl_region_new ();
+  for (i = 0; i < GEGL_CACHE_VALID_MIPMAPS; i++)
+    self->valid_region[i] = gegl_region_new ();
 }
 
 /* expand invalidated regions to be align with coordinates divisible by 8 in both
@@ -185,10 +187,12 @@ static void
 finalize (GObject *gobject)
 {
   GeglCache *self = GEGL_CACHE (gobject);
+  gint i;
 
   g_mutex_clear (&self->mutex);
-  if (self->valid_region)
-    gegl_region_destroy (self->valid_region);
+  for (i = 0; i < GEGL_CACHE_VALID_MIPMAPS; i++)
+    if (self->valid_region[i])
+      gegl_region_destroy (self->valid_region[i]);
   G_OBJECT_CLASS (gegl_cache_parent_class)->finalize (gobject);
 }
 
@@ -257,6 +261,7 @@ void
 gegl_cache_invalidate (GeglCache           *self,
                        const GeglRectangle *roi)
 {
+  gint i;
   g_mutex_lock (&self->mutex);
 
   if (roi)
@@ -265,7 +270,8 @@ gegl_cache_invalidate (GeglCache           *self,
 
       GeglRegion *temp_region;
       temp_region = gegl_region_rectangle (&expanded);
-      gegl_region_subtract (self->valid_region, temp_region);
+      for (i = 0; i < GEGL_CACHE_VALID_MIPMAPS; i++)
+        gegl_region_subtract (self->valid_region[i], temp_region);
       gegl_region_destroy (temp_region);
       g_signal_emit (self, gegl_cache_signals[INVALIDATED], 0,
                      roi, NULL);
@@ -273,9 +279,12 @@ gegl_cache_invalidate (GeglCache           *self,
   else
     {
       GeglRectangle rect = { 0, 0, 0, 0 }; /* should probably be the extent of the cache */
-      if (self->valid_region)
-        gegl_region_destroy (self->valid_region);
-      self->valid_region = gegl_region_new ();
+      for (i = 0; i < GEGL_CACHE_VALID_MIPMAPS; i++)
+      {
+        if (self->valid_region[i])
+          gegl_region_destroy (self->valid_region[i]);
+        self->valid_region[i] = gegl_region_new ();
+      }
       g_signal_emit (self, gegl_cache_signals[INVALIDATED], 0,
                      &rect, NULL);
     }
@@ -284,13 +293,17 @@ gegl_cache_invalidate (GeglCache           *self,
 
 void
 gegl_cache_computed (GeglCache           *self,
-                     const GeglRectangle *rect)
+                     const GeglRectangle *rect,
+                     gint                 level)
 {
   g_return_if_fail (GEGL_IS_CACHE (self));
   g_return_if_fail (rect != NULL);
 
   g_mutex_lock (&self->mutex);
-  gegl_region_union_with_rect (self->valid_region, rect);
+
+  if (level <= GEGL_CACHE_VALID_MIPMAPS)
+    gegl_region_union_with_rect (self->valid_region[level], rect);
+
   g_signal_emit (self, gegl_cache_signals[COMPUTED], 0, rect, NULL);
   g_mutex_unlock (&self->mutex);
 }
@@ -306,10 +319,17 @@ gegl_buffer_list_valid_rectangles (GeglBuffer     *buffer,
                                    gint           *n_rectangles)
 {
   GeglCache *cache;
+  gint level = 0; /* should be an argument */
   g_return_val_if_fail (GEGL_IS_CACHE (buffer), FALSE);
   cache = GEGL_CACHE (buffer);
 
-  gegl_region_get_rectangles (cache->valid_region, rectangles, n_rectangles);
+  if (level < 0)
+    level = 0;
+  if (level >= GEGL_CACHE_VALID_MIPMAPS)
+    level = GEGL_CACHE_VALID_MIPMAPS-1;
+
+  gegl_region_get_rectangles (cache->valid_region[level],
+                              rectangles, n_rectangles);
 
   return TRUE;
 }

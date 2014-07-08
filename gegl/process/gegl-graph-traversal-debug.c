@@ -76,7 +76,7 @@ gegl_graph_dump_request (GeglNode            *node,
   GList              *list_iter = NULL;
 
   gegl_graph_prepare (path);
-  gegl_graph_prepare_request (path, roi);
+  gegl_graph_prepare_request (path, roi, 0);
 
   for (list_iter = path->dfs_path; list_iter; list_iter = list_iter->next)
   {

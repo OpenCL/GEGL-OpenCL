@@ -203,9 +203,11 @@ gegl_graph_prepare (GeglGraphTraversal *path)
  * the area that needs to be rendered from each node in the
  * graph to fulfill this request.
  */
+
 void
 gegl_graph_prepare_request (GeglGraphTraversal  *path,
-                            const GeglRectangle *request_roi)
+                            const GeglRectangle *request_roi,
+                            gint                 level)
 {
   GList *list_iter = NULL;
   static const GeglRectangle empty_rect = {0, 0, 0, 0};
@@ -261,49 +263,59 @@ gegl_graph_prepare_request (GeglGraphTraversal  *path,
       if (request->width == 0 || request->height == 0)
         {
           gegl_operation_context_set_result_rect (context, &empty_rect);
+          continue;
         }
-      else if (node->cache &&
-               gegl_region_rect_in (node->cache->valid_region, request) == GEGL_OVERLAP_RECTANGLE_IN)
+      
+      if (node->cache)
         {
-          /* This node is cached and the cache fulfills our need rect */
-          context->cached = TRUE;
-          gegl_operation_context_set_result_rect (context, &empty_rect);
-        }
-      else
-        {
-          /* Expand request if the operation has a minimum processing requirement */
-          GeglRectangle full_request = gegl_operation_get_cached_region (operation, request);
-
-          gegl_operation_context_set_need_rect (context, &full_request);
-
-          /* FIXME: We could trim this down based on the cache, instead of being all or nothing */
-          gegl_operation_context_set_result_rect (context, request);
-
-          for (input_pads = node->input_pads; input_pads; input_pads = input_pads->next)
+          gint i;
+          for (i = level; i >=0 && !context->cached; i--)
+          {
+            if (gegl_region_rect_in (node->cache->valid_region[level], request) == GEGL_OVERLAP_RECTANGLE_IN)
             {
-              GeglPad *source_pad = gegl_pad_get_connected_to (input_pads->data);
-
-              if (source_pad)
-                {
-                  GeglNode             *source_node    = gegl_pad_get_node (source_pad);
-                  GeglOperationContext *source_context = g_hash_table_lookup (path->contexts, source_node);
-                  const gchar          *pad_name       = gegl_pad_get_name (input_pads->data);
-
-                  GeglRectangle rect, current_need, new_need;
-
-                  /* Combine this need rect with any existing request */
-                  rect = gegl_operation_get_required_for_output (operation, pad_name, &full_request);
-                  current_need = *gegl_operation_context_get_need_rect (source_context);
-
-                  gegl_rectangle_bounding_box (&new_need, &rect, &current_need);
-
-                  /* Limit request to the nodes output */
-                  gegl_rectangle_intersect (&new_need, &source_node->have_rect, &new_need);
-
-                  gegl_operation_context_set_need_rect (source_context, &new_need);
-                }
+              /* This node is cached and the cache fulfills our need rect */
+              context->cached = TRUE;
+              gegl_operation_context_set_result_rect (context, &empty_rect);
             }
+          }
+          if (context->cached)
+            continue;
         }
+
+      {
+        /* Expand request if the operation has a minimum processing requirement */
+        GeglRectangle full_request = gegl_operation_get_cached_region (operation, request);
+
+        gegl_operation_context_set_need_rect (context, &full_request);
+
+        /* FIXME: We could trim this down based on the cache, instead of being all or nothing */
+        gegl_operation_context_set_result_rect (context, request);
+
+        for (input_pads = node->input_pads; input_pads; input_pads = input_pads->next)
+          {
+            GeglPad *source_pad = gegl_pad_get_connected_to (input_pads->data);
+
+            if (source_pad)
+              {
+                GeglNode             *source_node    = gegl_pad_get_node (source_pad);
+                GeglOperationContext *source_context = g_hash_table_lookup (path->contexts, source_node);
+                const gchar          *pad_name       = gegl_pad_get_name (input_pads->data);
+
+                GeglRectangle rect, current_need, new_need;
+
+                /* Combine this need rect with any existing request */
+                rect = gegl_operation_get_required_for_output (operation, pad_name, &full_request);
+                current_need = *gegl_operation_context_get_need_rect (source_context);
+
+                gegl_rectangle_bounding_box (&new_need, &rect, &current_need);
+
+                /* Limit request to the nodes output */
+                gegl_rectangle_intersect (&new_need, &source_node->have_rect, &new_need);
+
+                gegl_operation_context_set_need_rect (source_context, &new_need);
+              }
+          }
+      }
     }
 }
 
@@ -417,12 +429,12 @@ gegl_graph_process (GeglGraphTraversal *path,
                   gegl_operation_context_set_object (context, "input", G_OBJECT (gegl_graph_get_shared_empty(path)));
                 }
 
-              context->level = level; // XXX: get rid of context->level member?
+              context->level = level;
               gegl_operation_process (operation, context, "output", &context->need_rect, context->level);
               operation_result = GEGL_BUFFER (gegl_operation_context_get_object (context, "output"));
 
               if (operation_result && operation_result == (GeglBuffer *)operation->node->cache)
-                gegl_cache_computed (operation->node->cache, &context->need_rect);
+                gegl_cache_computed (operation->node->cache, &context->need_rect, level);
             }
         }
       else
