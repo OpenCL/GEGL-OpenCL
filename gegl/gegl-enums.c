@@ -60,7 +60,7 @@ gegl_access_mode_get_type (void)
       static GFlagsValue values[] = {
         { GEGL_ACCESS_READ,      N_("Read"),        "read"      },
         { GEGL_ACCESS_WRITE,     N_("Write"),       "write"     },
-        { GEGL_ACCESS_READWRITE, N_("Read/Wrrite"), "readwrite" },
+        { GEGL_ACCESS_READWRITE, N_("Read/Write"), "readwrite" },
         { 0, NULL, NULL }
       };
       gint i;
