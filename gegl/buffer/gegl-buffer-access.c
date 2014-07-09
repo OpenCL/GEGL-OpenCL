@@ -68,6 +68,8 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
   const GeglRectangle *abyss = &buffer->abyss;
   guchar              *buf   = data;
 
+  
+
   if (y <  abyss->y ||
       x <  abyss->x ||
       y >= abyss->y + abyss->height ||
@@ -113,6 +115,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
       }
     }
 
+  if (gegl_config_threads()>1)
   g_rec_mutex_lock (&buffer->tile_storage->mutex);
   {
     gint tile_width  = buffer->tile_width;
@@ -124,7 +127,6 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
 
     GeglTile *tile = buffer->tile_storage->hot_tile;
     const Babl *fish = NULL;
-
 
     if (!(tile &&
           tile->x == indice_x &&
@@ -160,6 +162,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
           }
       }
   }
+  if (gegl_config_threads()>1)
   g_rec_mutex_unlock (&buffer->tile_storage->mutex);
 }
 
@@ -179,6 +182,7 @@ __gegl_buffer_set_pixel (GeglBuffer     *buffer,
       x >= abyss->x + abyss->width)
     return;
 
+  if (gegl_config_threads()>1)
   g_rec_mutex_lock (&buffer->tile_storage->mutex);
   {
     gint tile_width  = buffer->tile_width;
@@ -232,6 +236,7 @@ __gegl_buffer_set_pixel (GeglBuffer     *buffer,
         gegl_tile_unlock (tile);
       }
   }
+  if (gegl_config_threads()>1)
   g_rec_mutex_unlock (&buffer->tile_storage->mutex);
 }
 
@@ -1319,8 +1324,7 @@ gegl_buffer_set (GeglBuffer          *buffer,
   if (format == NULL)
     format = buffer->soft_format;
 
-  if (rect && (rect->width == 1 && rect->height == 1) &&
-    gegl_config()->threads == 1)
+  if (rect && (rect->width == 1 && rect->height == 1))
       _gegl_buffer_set_pixel (buffer, rect->x, rect->y, format, src,
                               GEGL_BUFFER_SET_FLAG_LOCK|GEGL_BUFFER_SET_FLAG_NOTIFY);
   else
@@ -1378,7 +1382,7 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
 
   if (format == NULL)
     format = buffer->soft_format;
-/*
+
   if (scale == 1.0 &&
       rect &&
       rect->width == 1 &&
@@ -1387,7 +1391,7 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf, repeat_mode);
       return;
     }
-*/
+
   if (gegl_cl_is_accelerated ())
     {
       gegl_buffer_cl_cache_flush (buffer, rect);

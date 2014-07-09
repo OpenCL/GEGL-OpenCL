@@ -84,7 +84,6 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
   const GeglRectangle *abyss = &buffer->abyss;
   guchar              *buf   = data;
 
-  gegl_buffer_lock (sampler->buffer);
 
   if (y <  abyss->y ||
       x <  abyss->x ||
@@ -131,6 +130,9 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
       }
     }
 
+  gegl_buffer_lock (sampler->buffer);
+  g_rec_mutex_lock (&buffer->tile_storage->mutex);
+
   {
     gint tile_width  = buffer->tile_width;
     gint tile_height = buffer->tile_height;
@@ -164,6 +166,7 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
         babl_process (sampler->fish, tp, buf, 1);
       }
   }
+  g_rec_mutex_unlock (&buffer->tile_storage->mutex);
   gegl_buffer_unlock (sampler->buffer);
 }
 
