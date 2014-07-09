@@ -72,6 +72,8 @@ static void buffer_contents_changed (GeglBuffer          *buffer,
                                      const GeglRectangle *changed_rect,
                                      gpointer             userdata);
 
+static void constructed (GObject *sampler);
+
 static GType gegl_sampler_gtype_from_enum  (GeglSamplerType      sampler_type);
 
 G_DEFINE_TYPE (GeglSampler, gegl_sampler, G_TYPE_OBJECT)
@@ -83,6 +85,7 @@ gegl_sampler_class_init (GeglSamplerClass *klass)
 
   object_class->finalize = finalize;
   object_class->dispose  = dispose;
+  object_class->constructed  = constructed;
 
   klass->prepare    = NULL;
   klass->get        = NULL;
@@ -136,6 +139,14 @@ gegl_sampler_init (GeglSampler *sampler)
                GEGL_SAMPLER_MAXIMUM_HEIGHT * GEGL_SAMPLER_BPP);
 }
 
+static void
+constructed (GObject *self)
+{
+  GeglSampler *sampler = (void*)(self);
+  GeglSamplerClass *klass = GEGL_SAMPLER_GET_CLASS (sampler);
+  sampler->get = klass->get;
+}
+
 void
 gegl_sampler_get (GeglSampler     *self,
                   gdouble          x,
@@ -174,11 +185,9 @@ gegl_sampler_prepare (GeglSampler *self)
   if (!self->format)
     self->format = self->buffer->soft_format;
 
-  self->get = klass->get; /* cache the sampler in the instance */
-  /* migh be overridden by samplers prepare*/
   if (klass->prepare)
     klass->prepare (self);
-
+  
   if (!self->fish)
     self->fish = babl_fish (self->interpolate_format, self->format);
 
