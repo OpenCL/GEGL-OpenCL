@@ -67,8 +67,6 @@ property_enum   (sampler_type, _("Resampling method"),
 #include <glib/gi18n-lib.h>
 #include "gegl-op.h"
 
-/*#include "speedmath.inc"*/
-
 typedef struct _Transform Transform;
 struct _Transform
 {
@@ -326,14 +324,16 @@ get_bounding_box (GeglOperation *operation)
 
 
 static void prepare_transform2 (Transform *transform,
-                                GeglOperation *operation)
+                                GeglOperation *operation,
+                                gint level)
 {
+  gint factor = 1 << level;
   GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
 
   prepare_transform (transform, 
                      o->pan, o->spin, o->zoom, o->tilt,
-                     o->little_planet, o->width, o->height,
+                     o->little_planet, o->width / factor, o->height / factor,
                      in_rect.width, in_rect.height);
 }
 
@@ -358,44 +358,60 @@ process (GeglOperation       *operation,
   Transform           transform;
   const Babl         *format_io;
   GeglSampler        *sampler;
+  gint                factor = 1 << level;
   GeglBufferIterator *it;
   gint  index_in, index_out;
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
   GeglMatrix2  scale_matrix;
   GeglMatrix2 *scale = NULL;
+  gint sampler_type = o->sampler_type;
 
-  prepare_transform2 (&transform, operation);
+  prepare_transform2 (&transform, operation, level);
+
+  if (level)
+    sampler_type = GEGL_SAMPLER_NEAREST;
 
   format_io = babl_format ("RaGaBaA float");
-  sampler = gegl_buffer_sampler_new_at_level (input, format_io, o->sampler_type,
-                                     level);
+  {
+    /* XXX: panorama projection needs to sample from a higher resolution than
+     * its output to yield good results. This affects which level should
+     * be rendered for source nodes..
+     */
 
-  if (o->sampler_type == GEGL_SAMPLER_NOHALO ||
-      o->sampler_type == GEGL_SAMPLER_LOHALO)
+    gint sample_level = level - 3;
+
+    if (sample_level < 0)
+      sample_level = 0;
+    sampler = gegl_buffer_sampler_new_at_level (input, format_io, sampler_type,
+                                       sample_level);
+  }
+
+  if (sampler_type == GEGL_SAMPLER_NOHALO ||
+      sampler_type == GEGL_SAMPLER_LOHALO)
     scale = &scale_matrix;
 
     {
-      float   ud = ((1.0/transform.width));
-      float   vd = ((1.0/transform.height));
+      float   ud = ((1.0/transform.width)*factor);
+      float   vd = ((1.0/transform.height)*factor);
       it = gegl_buffer_iterator_new (output, result, level, format_io,
                                      GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
       index_out = 0;
 
       while (gegl_buffer_iterator_next (it))
         {
-          gint    i;
-          gint    n_pixels = it->length;
-          gint    x = it->roi->x; /* initial x                   */
-          gint    y = it->roi->y; /*           and y coordinates */
+          gint i;
+          gint n_pixels = it->length;
+          gint x = it->roi->x; /* initial x                   */
+          gint y = it->roi->y; /*           and y coordinates */
 
-          float   u0 = ((x/transform.width) - transform.xoffset);
+          float   u0 = (((x*factor)/transform.width) - transform.xoffset);
           float   u, v;
 
           float *in = it->data[index_in];
           float *out = it->data[index_out];
 
           u = u0;
-          v = ((y/transform.height) - 0.5); 
+          v = ((y*factor/transform.height) - 0.5); 
 
           if (scale)
             {
