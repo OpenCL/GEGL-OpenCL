@@ -48,6 +48,8 @@ enum
   PROP_APPLICATION_LICENSE
 };
 
+gint _gegl_threads = 1; 
+
 static void
 gegl_config_get_property (GObject    *gobject,
                           guint       property_id,
@@ -83,7 +85,7 @@ gegl_config_get_property (GObject    *gobject,
         break;
 
       case PROP_THREADS:
-        g_value_set_int (value, config->threads);
+        g_value_set_int (value, _gegl_threads);
         break;
 
       case PROP_USE_OPENCL:
@@ -135,7 +137,7 @@ gegl_config_set_property (GObject      *gobject,
         config->swap = g_value_dup_string (value);
         break;
       case PROP_THREADS:
-        config->threads = g_value_get_int (value);
+        _gegl_threads = g_value_get_int (value);
         return;
       case PROP_USE_OPENCL:
         config->use_opencl = g_value_get_boolean (value);

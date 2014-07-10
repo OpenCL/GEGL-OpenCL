@@ -357,13 +357,13 @@ static void gegl_config_parse_env (GeglConfig *config)
 
   if (g_getenv ("GEGL_THREADS"))
     {
-      config->threads = atoi(g_getenv("GEGL_THREADS"));
+      _gegl_threads = atoi(g_getenv("GEGL_THREADS"));
 
-      if (config->threads > GEGL_MAX_THREADS)
+      if (_gegl_threads > GEGL_MAX_THREADS)
         {
           g_warning ("Tried to use %i threads, max is %i",
-                     config->threads, GEGL_MAX_THREADS);
-          config->threads = GEGL_MAX_THREADS;
+                     _gegl_threads, GEGL_MAX_THREADS);
+          _gegl_threads = GEGL_MAX_THREADS;
         }
     }
 
@@ -397,13 +397,6 @@ GeglConfig *gegl_config (void)
       gegl_config_set_defaults (config);
     }
   return config;
-}
-
-gint gegl_config_threads (void)
-{
-  if (!config)
-    config = gegl_config ();
-  return config->threads;
 }
 
 static void swap_clean (void)
@@ -617,7 +610,7 @@ gegl_post_parse_hook (GOptionContext *context,
         config->tile_height = atoi(str+1);
     }
   if (cmd_gegl_threads)
-    config->threads = atoi (cmd_gegl_threads);
+    _gegl_threads = atoi (cmd_gegl_threads);
   if (cmd_gegl_disable_opencl)
     gegl_cl_hard_disable ();
 

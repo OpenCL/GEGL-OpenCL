@@ -41,7 +41,6 @@ struct _GeglConfig
   gdouble  quality;
   gint     tile_width;
   gint     tile_height;
-  gint     threads;
   gboolean use_opencl;
   gint     queue_size;
   gchar   *application_license;
@@ -52,7 +51,8 @@ struct _GeglConfigClass
   GObjectClass parent_class;
 };
 
-gint gegl_config_threads (void);
+extern gint _gegl_threads;
+#define gegl_config_threads()  (_gegl_threads)
 
 #define GEGL_MAX_THREADS 16
 

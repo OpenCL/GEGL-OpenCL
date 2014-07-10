@@ -1198,7 +1198,7 @@ gegl_buffer_get_tile (GeglBuffer *buffer,
 
   if (threaded == -1)
   {
-    threaded = gegl_config()->threads > 1;
+    threaded = gegl_config_threads () > 1;
   }
 
   g_assert (source);

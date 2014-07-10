@@ -223,7 +223,7 @@ gegl_sampler_nearest_prepare (GeglSampler* restrict sampler)
     return;
   GEGL_SAMPLER_NEAREST (sampler)->buffer_bpp = babl_format_get_bytes_per_pixel (sampler->buffer->format);
 
-  if (gegl_config()->threads > 1)
+  if (gegl_config_threads () > 1)
     sampler->get = gegl_sampler_nearest_get_threaded;
 
 #if 0 // maybe re-enable; when certain result is correct

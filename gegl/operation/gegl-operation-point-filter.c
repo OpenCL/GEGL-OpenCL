@@ -80,7 +80,7 @@ static GThreadPool *thread_pool (void)
   static GThreadPool *pool = NULL;
   if (!pool)
     {
-      pool =  g_thread_pool_new (thread_process, NULL, gegl_config()->threads,
+      pool =  g_thread_pool_new (thread_process, NULL, gegl_config_threads (),
                                  FALSE, NULL);
     }
   return pool;
@@ -195,7 +195,7 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
 
       if (gegl_operation_use_threading (operation, result) && result->height > 1)
       {
-        gint threads = gegl_config ()->threads;
+        gint threads = gegl_config_threads ();
         GThreadPool *pool = thread_pool ();
         ThreadData thread_data[GEGL_MAX_THREADS];
         GeglBufferIterator *i = gegl_buffer_iterator_new (output, result, level, output_buf_format, GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
@@ -242,7 +242,7 @@ gegl_operation_point_filter_process (GeglOperation       *operation,
 
         while (gegl_buffer_iterator_next (i))
           {
-            gint threads = gegl_config()->threads;
+            gint threads = gegl_config_threads ();
             gint pending;
             gint bit;
 

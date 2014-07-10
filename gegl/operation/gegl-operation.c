@@ -751,7 +751,7 @@ gboolean
 gegl_operation_use_threading (GeglOperation *operation,
                               const GeglRectangle *roi)
 {
-  gint threads = gegl_config ()->threads;
+  gint threads = gegl_config_threads ();
   if (threads == 1)
     return FALSE;
 

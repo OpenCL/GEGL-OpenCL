@@ -92,7 +92,7 @@ gegl_buffer_iterator_empty_new (void)
   iter->priv->num_buffers = 0;
   iter->priv->state       = GeglIteratorState_Start;
 
-  threaded = gegl_config()->threads > 1;
+  threaded = gegl_config_threads () > 1;
 
   return iter;
 }

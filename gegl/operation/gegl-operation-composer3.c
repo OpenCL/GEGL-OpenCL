@@ -135,7 +135,7 @@ static GThreadPool *thread_pool (void)
   static GThreadPool *pool = NULL;
   if (!pool)
   {
-    pool =  g_thread_pool_new (thread_process, NULL, gegl_config()->threads,
+    pool =  g_thread_pool_new (thread_process, NULL, gegl_config_threads (),
         FALSE, NULL);
   }
   return pool;
@@ -186,7 +186,7 @@ gegl_operation_composer3_process (GeglOperation        *operation,
     {
       if (gegl_operation_use_threading (operation, result))
       {
-        gint threads = gegl_config ()->threads;
+        gint threads = gegl_config_threads ();
         GThreadPool *pool = thread_pool ();
         ThreadData thread_data[GEGL_MAX_THREADS];
         gint pending = threads;
