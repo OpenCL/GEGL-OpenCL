@@ -250,7 +250,7 @@ static void prepare_transform (Transform *transform,
 
   if (width <= 0 || height <= 0)
   {
-    width = input_height; 
+    width = input_height;
     height = width;
     xoffset = ((input_width - height)/height) / 2 + 0.5;
   }
@@ -331,7 +331,7 @@ static void prepare_transform2 (Transform *transform,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
 
-  prepare_transform (transform, 
+  prepare_transform (transform,
                      o->pan, o->spin, o->zoom, o->tilt,
                      o->little_planet, o->width / factor, o->height / factor,
                      in_rect.width, in_rect.height);
@@ -360,7 +360,6 @@ process (GeglOperation       *operation,
   GeglSampler        *sampler;
   gint                factor = 1 << level;
   GeglBufferIterator *it;
-  gint  index_in, index_out;
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
   GeglMatrix2  scale_matrix;
   GeglMatrix2 *scale = NULL;
@@ -395,7 +394,6 @@ process (GeglOperation       *operation,
       float   vd = ((1.0/transform.height)*factor);
       it = gegl_buffer_iterator_new (output, result, level, format_io,
                                      GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
-      index_out = 0;
 
       while (gegl_buffer_iterator_next (it))
         {
@@ -407,11 +405,10 @@ process (GeglOperation       *operation,
           float   u0 = (((x*factor)/transform.width) - transform.xoffset);
           float   u, v;
 
-          float *in = it->data[index_in];
-          float *out = it->data[index_out];
+          float *out = it->data[0];
 
           u = u0;
-          v = ((y*factor/transform.height) - 0.5); 
+          v = ((y*factor/transform.height) - 0.5);
 
           if (scale)
             {
@@ -429,7 +426,6 @@ process (GeglOperation       *operation,
                   gegl_sampler_get (sampler,
                                     cx * in_rect.width, cy * in_rect.height,
                                     scale, out, GEGL_ABYSS_LOOP);
-                  in  += 4;
                   out += 4;
 
                   /* update x, y and u,v coordinates */
@@ -455,7 +451,6 @@ process (GeglOperation       *operation,
                     gegl_sampler_get (sampler,
                                       cx * in_rect.width, cy * in_rect.height,
                                       scale, out, GEGL_ABYSS_LOOP);
-                    in  += 4;
                     out += 4;
 
                     /* update x, y and u,v coordinates */
