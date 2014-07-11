@@ -37,6 +37,8 @@
 #include "gegl-sampler-nohalo.h"
 #include "gegl-sampler-lohalo.h"
 
+#include "gegl-config.h"
+
 enum
 {
   PROP_0,
@@ -524,6 +526,8 @@ gegl_buffer_sample_at_level (GeglBuffer       *buffer,
   }*/
 
   static GMutex mutex = {0,};
+  gboolean threaded =  gegl_config_threads ()>1;
+
 
   if (!format)
     format = buffer->soft_format;
@@ -534,7 +538,8 @@ gegl_buffer_sample_at_level (GeglBuffer       *buffer,
     gegl_buffer_cl_cache_flush (buffer, &rect);
   }
 
-  g_mutex_lock (&mutex);
+  if (threaded)
+    g_mutex_lock (&mutex);
 
   /* unset the cached sampler if it dosn't match the needs */
   if (buffer->sampler != NULL &&
@@ -562,7 +567,8 @@ gegl_buffer_sample_at_level (GeglBuffer       *buffer,
     }
 
   buffer->sampler->get(buffer->sampler, x, y, scale, dest, repeat_mode);
-  g_mutex_unlock (&mutex);
+  if (threaded)
+    g_mutex_unlock (&mutex);
 }
 
 

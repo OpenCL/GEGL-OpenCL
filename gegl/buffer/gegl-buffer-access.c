@@ -113,6 +113,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
       }
     }
 
+  g_rec_mutex_lock (&buffer->tile_storage->mutex);
   {
     gint tile_width  = buffer->tile_width;
     gint tile_height = buffer->tile_height;
@@ -159,6 +160,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
           }
       }
   }
+  g_rec_mutex_unlock (&buffer->tile_storage->mutex);
 }
 
 static inline void
@@ -177,6 +179,7 @@ __gegl_buffer_set_pixel (GeglBuffer     *buffer,
       x >= abyss->x + abyss->width)
     return;
 
+  g_rec_mutex_lock (&buffer->tile_storage->mutex);
   {
     gint tile_width  = buffer->tile_width;
     gint tile_height = buffer->tile_height;
@@ -229,6 +232,7 @@ __gegl_buffer_set_pixel (GeglBuffer     *buffer,
         gegl_tile_unlock (tile);
       }
   }
+  g_rec_mutex_unlock (&buffer->tile_storage->mutex);
 }
 
 enum _GeglBufferSetFlag {
