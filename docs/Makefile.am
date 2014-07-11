@@ -105,6 +105,7 @@ examples:  $(top_builddir)/bin/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*
 operations.json: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c | examples
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/tools/operation_reference$(EXEEXT) --json-db > $@
+	touch gegl.devhelp
 
 class-hierarchy.html: $(top_builddir)/tools/introspect$(EXEEXT) $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
