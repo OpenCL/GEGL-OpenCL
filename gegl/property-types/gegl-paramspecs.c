@@ -195,7 +195,7 @@ gegl_param_spec_int (const gchar *name,
   pspec->ui_maximum = ui_maximum;
   pspec->ui_gamma = ui_gamma;
 
-  gegl_param_spec_int_set_steps (pspec, 0.1, 1.0);
+  gegl_param_spec_int_set_steps (pspec, 1, 5);
   return G_PARAM_SPEC (pspec);
 }
 
