@@ -101,6 +101,10 @@ gegl_tile_source_get_tile (GeglTileSource *source,
 }
 
 
+/**
+ * gegl_buffer_get_tile: (skip)
+ */
+
 GeglTile *
 gegl_buffer_get_tile (GeglBuffer *buffer,
                       gint        x,

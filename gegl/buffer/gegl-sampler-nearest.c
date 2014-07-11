@@ -170,6 +170,7 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
   gegl_buffer_unlock (sampler->buffer);
 }
 
+#if 0
 static void
 gegl_sampler_nearest_get_same_format  (      GeglSampler*    restrict  sampler,
                                        const gdouble                   absolute_x,
@@ -181,6 +182,7 @@ gegl_sampler_nearest_get_same_format  (      GeglSampler*    restrict  sampler,
   GeglRectangle rectangle = {floorf(absolute_x), floorf(absolute_y), 1, 1};
   gegl_buffer_get (sampler->buffer, &rectangle, 1.0, sampler->format, output, GEGL_AUTO_ROWSTRIDE, repeat_mode);
 }
+#endif
 
 static void
 gegl_sampler_nearest_get_threaded (      GeglSampler*    restrict  sampler,

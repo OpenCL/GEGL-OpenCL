@@ -387,7 +387,7 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
 
 
 /**
- * gegl_buffer_sample: (skip)
+ * gegl_buffer_sample_at_level: (skip)
  * @buffer: the GeglBuffer to sample from
  * @x: x coordinate to sample in buffer coordinates
  * @y: y coordinate to sample in buffer coordinates
@@ -395,6 +395,7 @@ GeglBuffer *    gegl_buffer_dup               (GeglBuffer       *buffer);
  * gegl_sampler_compute_scale the same.
  * @dest: buffer capable of storing one pixel in @format.
  * @format: the format to store the sampled color in.
+ * @level: mipmap level to sample from (@x and @y are level 0 coordinates)
  * @sampler_type: the sampler type to use,
  * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
  * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC, GEGL_SAMPLER_NOHALO and
@@ -420,6 +421,29 @@ void              gegl_buffer_sample_at_level (GeglBuffer       *buffer,
                                                GeglSamplerType   sampler_type,
                                                GeglAbyssPolicy   repeat_mode);
 
+/**
+ * gegl_buffer_sample: (skip)
+ * @buffer: the GeglBuffer to sample from
+ * @x: x coordinate to sample in buffer coordinates
+ * @y: y coordinate to sample in buffer coordinates
+ * @scale: a matrix that indicates scaling factors, see
+ * gegl_sampler_compute_scale the same.
+ * @dest: buffer capable of storing one pixel in @format.
+ * @format: the format to store the sampled color in.
+ * @sampler_type: the sampler type to use,
+ * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
+ * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC, GEGL_SAMPLER_NOHALO and
+ * GEGL_SAMPLER_LOHALO
+ * @repeat_mode: how requests outside the buffer extent are handled.
+ * Valid values: GEGL_ABYSS_NONE (abyss pixels are zeroed), GEGL_ABYSS_WHITE
+ * (abyss pixels are white), GEGL_ABYSS_BLACK (abyss pixels are black),
+ * GEGL_ABYSS_CLAMP (coordinates are clamped to the abyss rectangle),
+ * GEGL_ABYSS_LOOP (buffer contents are tiled if outside of the abyss rectangle).
+ *
+ * Query interpolate pixel values at a given coordinate using a specified form
+ * of interpolation. The samplers used cache for a small neighbourhood of the
+ * buffer for more efficient access.
+ */
 void              gegl_buffer_sample          (GeglBuffer       *buffer,
                                                gdouble           x,
                                                gdouble           y,
@@ -449,6 +473,9 @@ typedef void (*GeglSamplerGetFun)  (GeglSampler     *self,
                                     void            *output,
                                     GeglAbyssPolicy  repeat_mode);
 
+/**
+ * gegl_sampler_get_fun: (skip)
+ */
 GeglSamplerGetFun gegl_sampler_get_fun (GeglSampler *sampler);
 
 
@@ -471,6 +498,22 @@ GeglSampler *    gegl_buffer_sampler_new      (GeglBuffer       *buffer,
                                                const Babl       *format,
                                                GeglSamplerType   sampler_type);
 
+/**
+ * gegl_buffer_sampler_new_at_level: (skip)
+ * @buffer: buffer to create a new sampler for
+ * @format: format we want data back in
+ * @sampler_type: the sampler type to use,
+ * @level: the mipmap level to create a sampler for
+ * to be ported from working code. Valid values: GEGL_SAMPLER_NEAREST,
+ * GEGL_SAMPLER_LINEAR, GEGL_SAMPLER_CUBIC, GEGL_SAMPLER_NOHALO and
+ * GEGL_SAMPLER_LOHALO
+ *
+ * Create a new sampler, when you are done with the sampler, g_object_unref
+ * it.
+ *
+ * Samplers only hold weak references to buffers, so if its buffer is freed
+ * the sampler will become invalid.
+ */
 GeglSampler *    gegl_buffer_sampler_new_at_level (GeglBuffer       *buffer,
                                                const Babl       *format,
                                                GeglSamplerType   sampler_type,
@@ -622,7 +665,7 @@ const GeglRectangle * gegl_buffer_get_abyss   (GeglBuffer           *buffer);
  * gegl_buffer_signal_connect:
  * @buffer: a GeglBuffer
  * @detailed_signal: only "changed" expected for now
- * @c_handler: c function callback
+ * @c_handler: (scope async) : c function callback
  * @data: user data:
  *
  * This function should be used instead of g_signal_connect when connecting to

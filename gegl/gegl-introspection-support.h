@@ -78,13 +78,11 @@ void
 gegl_color_set_components (GeglColor *color, GValue *format, gdouble *components, gint components_length);
 
  /**
- * gegl_node_introspectable_get_bounding_box:
+ * gegl_node_introspectable_get_bounding_box: (rename-to gegl_node_get_bounding_box)
  * @node: a #GeglNode
  *
  * Returns the position and dimensions of a rectangle spanning the area
  * defined by a node.
- *
- * Rename to: gegl_node_get_bounding_box
  *
  * Return value: (transfer full): pointer a #GeglRectangle
  */
@@ -92,11 +90,9 @@ GeglRectangle *
 gegl_node_introspectable_get_bounding_box (GeglNode *node);
 
 /**
- * gegl_node_introspectable_get_property:
+ * gegl_node_introspectable_get_property: (rename-to gegl_node_get_property)
  * @node: the node to get a property from
  * @property_name: the name of the property to get
- *
- * Rename to: gegl_node_get_property
  *
  * Return value: (transfer full): pointer to a GValue containing the value of the property
  */
@@ -105,7 +101,7 @@ GValue * gegl_node_introspectable_get_property (GeglNode    *node,
                                                 const gchar *property_name);
 
 /**
- * gegl_buffer_introspectable_new:
+ * gegl_buffer_introspectable_new: (rename-to gegl_buffer_new)
  * @format_name: The Babl format name for this buffer, e.g. "RGBA float"
  * @x: x origin of the buffer's extent
  * @y: y origin of the buffer's extent
@@ -113,8 +109,6 @@ GValue * gegl_node_introspectable_get_property (GeglNode    *node,
  * @height: height of the buffer's extent
  *
  * Create a new GeglBuffer with the given format and dimensions.
- *
- * Rename to: gegl_buffer_new
  */
 GeglBuffer *    gegl_buffer_introspectable_new (const char *format_name,
                                                 gint        x,
@@ -123,7 +117,7 @@ GeglBuffer *    gegl_buffer_introspectable_new (const char *format_name,
                                                 gint        height);
 
 /**
- * gegl_buffer_introspectable_get:
+ * gegl_buffer_introspectable_get: (rename-to gegl_buffer_get)
  * @buffer: the buffer to retrieve data from.
  * @rect: the coordinates we want to retrieve data from.
  * @scale: sampling scale, 1.0 = pixel for pixel 2.0 = magnify, 0.5 scale down.
@@ -137,8 +131,6 @@ GeglBuffer *    gegl_buffer_introspectable_new (const char *format_name,
  *
  * Fetch a rectangular linear buffer of pixel data from the GeglBuffer.
  *
- * Rename to: gegl_buffer_get
- *
  * Return value: (transfer full) (array length=data_length): A copy of the requested data
  */
 guchar *       gegl_buffer_introspectable_get (GeglBuffer          *buffer,
@@ -150,7 +142,7 @@ guchar *       gegl_buffer_introspectable_get (GeglBuffer          *buffer,
 
 
 /**
- * gegl_buffer_introspectable_set:
+ * gegl_buffer_introspectable_set: (rename-to gegl_buffer_set)
  * @buffer: the buffer to modify.
  * @rect: the rectangle to write.
  * @format_name: the format of the input data.
@@ -158,8 +150,6 @@ guchar *       gegl_buffer_introspectable_get (GeglBuffer          *buffer,
  * @src_length: the lenght of src in bytes
  *
  * Store a linear raster buffer into the GeglBuffer.
- *
- * Rename to: gegl_buffer_set
  */
 void           gegl_buffer_introspectable_set (GeglBuffer          *buffer,
                                                const GeglRectangle *rect,

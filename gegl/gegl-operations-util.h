@@ -125,6 +125,15 @@ gegl_coordinate_pixel_to_relative (gdouble pixel, gdouble pixel_dim)
     return pixel / pixel_dim;
 }
 
+
+/**
+ * gegl_operation_list_keys:
+ * @operation_type: the name of the operation type we want to query to property keys for.
+ * @n_keys: (out caller-allocates): return location for number of property keys.
+ *
+ * Return value: (transfer container) (array length=n_keys): An allocated NULL
+ * terminated array of operation-key names. The list should be freed with g_free after use.
+ */
 gchar      ** gegl_operation_list_keys         (const gchar *operation_type,
                                                 guint       *n_keys);
 
