@@ -31,6 +31,7 @@ reset:
 	# create clone
 	git clone -s $(PROJECT_PATH) checkout
 	mkdir reports > /dev/null 2>&1 || true
+	killall tail
 	make -f $(SELF) jobs
 	make -f $(SELF) prepare
 
@@ -39,6 +40,9 @@ jobs: joblist
 
 sequential:
 	for a in `cat jobs`;do make -f $(SELF) reports/$$a;done
+
+reverse:
+	for a in `tac jobs`;do make -f $(SELF) reports/$$a;done
 
 random:
 	for a in `cat jobs|sort`;do make -f $(SELF) reports/$$a;done
