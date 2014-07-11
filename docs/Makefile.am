@@ -26,11 +26,11 @@ GTKDOC_FILES = \
 	gegl.css
 
 if HAVE_RUBY
-HTML_FILES += api.html images/inheritance.png
-GTKDOC_FILES += api.html gegl.devhelp
+HTML_FILES += images/inheritance.png
+GTKDOC_FILES += gegl.devhelp
 endif
 
-gegl.devhelp: api.html
+gegl.devhelp: operations.json
 	echo
 
 if HAVE_ENSCRIPT
@@ -188,12 +188,6 @@ API_DOC_FILES = \
 	$(top_srcdir)/gegl/property-types/gegl-path.h	\
 	$(top_srcdir)/gegl/property-types/gegl-curve.h \
 	$(top_srcdir)/gegl/gegl-apply.h
-
-api.html: $(API_DOC_FILES) \
-	  $(top_srcdir)/tools/create-reference.rb
-if HAVE_RUBY
-		$(top_srcdir)/tools/create-reference.rb $(API_DOC_FILES) $@
-endif
 
 images/inheritance.png: Makefile
 if HAVE_RUBY
