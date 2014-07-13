@@ -79,6 +79,8 @@ struct _GeglNode
 
   GMutex          mutex;
 
+  gint            passthrough;
+
   /*< private >*/
   GeglNodePrivate *priv;
 };
