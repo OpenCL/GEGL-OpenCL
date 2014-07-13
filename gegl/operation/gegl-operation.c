@@ -14,7 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2003      Calvin Williamson
- *           2005-2008 Øyvind Kolås
+ * 2005-2009,2011-2014 Øyvind Kolås
  */
 
 #include "config.h"
@@ -159,6 +159,13 @@ gegl_operation_process (GeglOperation        *operation,
       return TRUE;
     }
 
+  if (operation->node->passthrough)
+  {
+    GeglBuffer *input = GEGL_BUFFER (gegl_operation_context_get_object (context, "input"));
+    gegl_operation_context_take_object (context, output_pad, g_object_ref (G_OBJECT (input)));
+    return TRUE;
+  }
+
   g_return_val_if_fail (klass->process, FALSE);
 
   return klass->process (operation, context, output_pad, result, level);
@@ -173,7 +180,16 @@ gegl_operation_get_bounding_box (GeglOperation *self)
   GeglOperationClass *klass = GEGL_OPERATION_GET_CLASS (self);
   GeglRectangle       rect  = { 0, 0, 0, 0 };
 
-  if (klass->get_bounding_box)
+  if (self->node->passthrough)
+  {
+    GeglRectangle  result = { 0, 0, 0, 0 };
+    GeglRectangle *in_rect;
+    in_rect = gegl_operation_source_get_bounding_box (self, "input");
+    if (in_rect)
+      return *in_rect;
+    return result;
+  }
+  else if (klass->get_bounding_box)
     return klass->get_bounding_box (self);
 
   return rect;
@@ -190,6 +206,9 @@ gegl_operation_get_invalidated_by_change (GeglOperation       *self,
   g_return_val_if_fail (GEGL_IS_OPERATION (self), retval);
   g_return_val_if_fail (input_pad != NULL, retval);
   g_return_val_if_fail (input_region != NULL, retval);
+
+  if (self->node && self->node->passthrough)
+    return *input_region;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
@@ -208,6 +227,9 @@ get_required_for_output (GeglOperation        *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
+  if (operation->node->passthrough)
+    return *roi;
+
   if (operation->node->is_graph)
     {
       return gegl_operation_get_required_for_output (operation, input_pad, roi);
@@ -227,6 +249,9 @@ gegl_operation_get_required_for_output (GeglOperation        *operation,
       roi->height == 0)
     return *roi;
 
+  if (operation->node->passthrough)
+    return *roi;
+
   g_assert (klass->get_required_for_output);
 
   return klass->get_required_for_output (operation, input_pad, roi);
@@ -239,6 +264,9 @@ gegl_operation_get_cached_region (GeglOperation        *operation,
                                   const GeglRectangle *roi)
 {
   GeglOperationClass *klass = GEGL_OPERATION_GET_CLASS (operation);
+
+  if (operation->node->passthrough)
+    return *roi;
 
   if (!klass->get_cached_region)
     {
@@ -279,6 +307,9 @@ gegl_operation_prepare (GeglOperation *self)
   GeglOperationClass *klass;
 
   g_return_if_fail (GEGL_IS_OPERATION (self));
+
+  if (self->node->passthrough)
+    return;
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 

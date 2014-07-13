@@ -1073,6 +1073,10 @@ add_stack (SerializeState *ss,
                         xml_attr (ss->buf, "operation", class);
                         if (id != NULL)
                           xml_attr (ss->buf, "id", id);
+
+                        if (gegl_node_get_passthrough (iter) == TRUE)
+                          xml_attr (ss->buf, "passthrough", "true");
+
                         g_free (name);
                         g_free (class);
                       }
@@ -1103,6 +1107,10 @@ add_stack (SerializeState *ss,
                             xml_attr (ss->buf, "operation", class);
                             if (id != NULL)
                               xml_attr (ss->buf, "id", id);
+
+                            if (gegl_node_get_passthrough (iter) == TRUE)
+                              xml_attr (ss->buf, "passthrough", "true");
+
                             g_free (name);
                             g_free (class);
                           }
