@@ -46,12 +46,12 @@ struct _ColorNameEntity
   const gfloat rgba_color[4];
 };
 
-static gboolean  parse_float_argument_list (GeglColor *color,
+static gboolean  parse_float_argument_list (float rgba_color[4],
                                             GScanner  *scanner,
                                             gint       num_arguments);
-static gboolean  parse_color_name (GeglColor   *color,
+static gboolean  parse_color_name (float rgba_color[4],
                                    const gchar *color_string);
-static gboolean  parse_hex (GeglColor   *color,
+static gboolean  parse_hex (float rgba_color[4],
                             const gchar *color_string);
 static void      set_property (GObject      *gobject,
                                guint         prop_id,
@@ -64,6 +64,8 @@ static void      get_property (GObject    *gobject,
 
 /* These color names are based on those defined in the HTML 4.01 standard. See
  * http://www.w3.org/TR/html4/types.html#h-6.5
+ *
+ * Note: these values are stored with gamma
  */
 static const ColorNameEntity color_names[] =
 {
@@ -122,7 +124,7 @@ gegl_color_class_init (GeglColorClass *klass)
 }
 
 static gboolean
-parse_float_argument_list (GeglColor *color,
+parse_float_argument_list (float rgba_color[4],
                            GScanner  *scanner,
                            gint       num_arguments)
 {
@@ -145,12 +147,12 @@ parse_float_argument_list (GeglColor *color,
         {
           case G_TOKEN_FLOAT:
             token_value = g_scanner_cur_value (scanner);
-            color->priv->rgba_color[i] = token_value.v_float;
+            rgba_color[i] = token_value.v_float;
             break;
 
           case G_TOKEN_INT:
             token_value = g_scanner_cur_value (scanner);
-            color->priv->rgba_color[i] = token_value.v_int64;
+            rgba_color[i] = token_value.v_int64;
             break;
 
           default:
@@ -179,7 +181,7 @@ parse_float_argument_list (GeglColor *color,
 }
 
 static gboolean
-parse_color_name (GeglColor   *color,
+parse_color_name (float rgba_color[4],
                   const gchar *color_string)
 {
   gsize i;
@@ -188,7 +190,7 @@ parse_color_name (GeglColor   *color,
     {
       if (g_ascii_strcasecmp (color_names[i].color_name, color_string) == 0)
         {
-          memcpy (color->priv->rgba_color, color_names[i].rgba_color, sizeof (color_names[i].rgba_color));
+          memcpy (rgba_color, color_names[i].rgba_color, sizeof (color_names[i].rgba_color));
           return TRUE;
         }
     }
@@ -197,7 +199,7 @@ parse_color_name (GeglColor   *color,
 }
 
 static gboolean
-parse_hex (GeglColor   *color,
+parse_hex (float rgba_color[4],
            const gchar *color_string)
 {
   gint              i;
@@ -212,7 +214,7 @@ parse_hex (GeglColor   *color,
           if (g_ascii_isxdigit (color_string[2 * i + 1]) &&
               g_ascii_isxdigit (color_string[2 * i + 2]))
             {
-              color->priv->rgba_color[i] = (g_ascii_xdigit_value (color_string[2 * i + 1]) << 4 |
+              rgba_color[i] = (g_ascii_xdigit_value (color_string[2 * i + 1]) << 4 |
                                      g_ascii_xdigit_value (color_string[2 * i + 2])) / 255.f;
             }
           else
@@ -232,7 +234,7 @@ parse_hex (GeglColor   *color,
         {
           if (g_ascii_isxdigit (color_string[i + 1]))
             {
-              color->priv->rgba_color[i] = (g_ascii_xdigit_value (color_string[i + 1]) << 4 |
+              rgba_color[i] = (g_ascii_xdigit_value (color_string[i + 1]) << 4 |
                                      g_ascii_xdigit_value (color_string[i + 1])) / 255.f;
             }
           else
@@ -322,6 +324,8 @@ gegl_color_set_from_string (GeglColor   *self,
   GTokenType        token_type;
   GTokenValue       token_value;
   gboolean          color_parsing_successfull;
+  float rgba[4] = {0.0, 0.0, 0.0, 1.0};
+  const Babl *format = babl_format ("R'G'B'A float");
 
   scanner                               = g_scanner_new (NULL);
   scanner->config->cpair_comment_single = "";
@@ -333,28 +337,34 @@ gegl_color_set_from_string (GeglColor   *self,
   if (token_type == G_TOKEN_IDENTIFIER &&
       g_ascii_strcasecmp (token_value.v_identifier, "rgb") == 0)
     {
-      color_parsing_successfull = parse_float_argument_list (self, scanner, 3);
-      self->priv->rgba_color[3]       = 1.f;
+      color_parsing_successfull = parse_float_argument_list (rgba, scanner, 3);
+      format = babl_format ("RGBA float");
     }
   else if (token_type == G_TOKEN_IDENTIFIER &&
            g_ascii_strcasecmp (token_value.v_identifier, "rgba") == 0)
     {
-      color_parsing_successfull = parse_float_argument_list (self, scanner, 4);
+      rgba[3] = 1.0;
+      color_parsing_successfull = parse_float_argument_list (rgba, scanner, 4);
+      format = babl_format ("RGBA float");
     }
   else if (token_type == '#') /* FIXME: Verify that this is a safe way to check for '#' */
     {
-      color_parsing_successfull = parse_hex (self, color_string);
+      color_parsing_successfull = parse_hex (rgba, color_string);
     }
   else if (token_type == G_TOKEN_IDENTIFIER)
     {
-      color_parsing_successfull = parse_color_name (self, color_string);
+      color_parsing_successfull = parse_color_name (rgba, color_string);
     }
   else
     {
       color_parsing_successfull = FALSE;
     }
 
-  if (!color_parsing_successfull)
+  if (color_parsing_successfull)
+    {
+        gegl_color_set_pixel(self, format, rgba);
+    }
+  else 
     {
       memcpy (self->priv->rgba_color,
               parsing_error_color,
