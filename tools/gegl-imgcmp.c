@@ -24,9 +24,9 @@ main (gint    argc,
 
   if (argc != 3)
     {
-      g_print ("This is simple image difference detection tool for use in regression testing"
-               "return message is non zero if images are different, if they are equal"
-               "the output will contain the string identical.");
+      g_print ("This is simple image difference detection tool for use in regression testing.\n"
+               "Exit code is non zero if images are different, if they are equal"
+               "the output will contain the string identical.\n");
       g_print ("Usage: %s <imageA> <imageB>\n", argv[0]);
       return ERROR_WRONG_ARGUMENTS;
     }
