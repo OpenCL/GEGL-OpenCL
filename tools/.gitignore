@@ -5,7 +5,7 @@
 /Makefile
 /Makefile.in
 /exp_combine
-/img_cmp
+/gegl-imgcmp
 /introspect
 /operation_reference
 /detect_opencl

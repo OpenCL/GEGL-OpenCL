@@ -43,7 +43,7 @@ class Context():
       exe_suffix = ""
 
     self.gegl_bin = os.path.join(self.build_dir, "bin", "gegl" + exe_suffix)
-    self.img_cmp_bin = os.path.join(self.build_dir, "tools", "img_cmp" + exe_suffix)
+    self.img_cmp_bin = os.path.join(self.build_dir, "tools", "gegl-imgcmp" + exe_suffix)
     self.detect_opencl_bin = os.path.join(self.build_dir, "tools", "detect_opencl" + exe_suffix)
 
     for prog in [self.gegl_bin, self.img_cmp_bin, self.detect_opencl_bin]:

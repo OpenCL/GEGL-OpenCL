@@ -5,7 +5,7 @@ builddir_gegl_env = GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations
 
 # Binary paths
 gegl_bin = $(top_builddir)/bin/gegl$(EXEEXT)
-img_cmp_bin = $(top_builddir)/tools/img_cmp$(EXEEXT)
+img_cmp_bin = $(top_builddir)/tools/gegl-imgcmp$(EXEEXT)
 
 # Commands run in a builddir env
 builddir_gegl = $(builddir_gegl_env) $(gegl_bin)
