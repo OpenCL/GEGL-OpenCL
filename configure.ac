@@ -245,6 +245,14 @@ AC_ARG_ENABLE([docs],
               [  --disable-docs          disable docs generation (default=no)],,
               enable_docs="yes")
 
+# While cross-compiling, doc generation will fail.
+if test "$cross_compiling" = "yes" && test "x$enable_docs" = "xyes"; then
+    AC_MSG_WARN([
+*** Our build system does not support doc generation in a cross-compiled environment yet.
+Disabling doc generation.])
+    enable_docs="no (cross-compilation environment)"
+fi
+
 AM_CONDITIONAL(ENABLE_DOCS, test "x$enable_docs" = "xyes")
 
 
