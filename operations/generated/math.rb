@@ -58,6 +58,7 @@ a.each do
 
 property_double (value, _(\"Value\"), #{item[2]})
    description(_(\"global value used if aux doesn't contain data\"))
+   ui_range (-1.0, 1.0)
 
 #else
 
