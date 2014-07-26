@@ -186,6 +186,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:load",
+    "title",       "Load Image",
     "categories" , "meta:input",
     "description",
           _("Multipurpose file loader, that uses other native handlers, and "
