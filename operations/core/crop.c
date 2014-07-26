@@ -23,18 +23,22 @@
 #ifdef GEGL_PROPERTIES
 
 property_double (x,      _("X"),      0.0)
+  ui_range      (0.0, 1024.0)
   ui_meta       ("unit", "pixel-coordinate")
   ui_meta       ("axis", "x")
 
 property_double (y,      _("Y"),      0.0)
+  ui_range      (0.0, 1024.0)
   ui_meta       ("unit", "pixel-coordinate")
   ui_meta       ("axis", "y")
 
 property_double (width,  _("Width"),  10.0 )
+  ui_range      (0.0, 1024.0)
   ui_meta       ("unit", "pixel-distance")
   ui_meta       ("axis", "x")
 
 property_double (height, _("Height"), 10.0 )
+  ui_range      (0.0, 1024.0)
   ui_meta       ("unit", "pixel-distance")
   ui_meta       ("axis", "y")
 
