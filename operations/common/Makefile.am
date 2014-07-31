@@ -36,6 +36,7 @@ op_LTLIBRARIES = \
 	deinterlace.la \
 	difference-of-gaussians.la \
 	display.la \
+	distance-transform.la \
 	dropshadow.la \
 	edge-laplace.la \
 	edge-sobel.la \
