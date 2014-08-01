@@ -81,7 +81,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "name",       "gegl:buffer-sink",
       "title",      _("Buffer Sink"),
       "categories", "programming:output",
-      "description", _("Write the resulting rendering to an already existing GEGL buffer."),
+      "description", _("Create a new GEGL buffer to write the resulting rendering."),
       NULL);
 }
 

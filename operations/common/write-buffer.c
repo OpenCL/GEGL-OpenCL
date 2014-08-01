@@ -146,7 +146,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:write-buffer",
     "title",       _("Write Buffer"),
     "categories" , "programming:output",
-    "description", _("A GEGL buffer destination surface."),
+    "description", _("Write input data into an existing GEGL buffer destination surface."),
     NULL);
 }
 
