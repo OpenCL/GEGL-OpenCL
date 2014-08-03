@@ -30,6 +30,7 @@ operations/common/cubism.c
 operations/common/deinterlace.c
 operations/common/difference-of-gaussians.c
 operations/common/display.c
+operations/common/distance-transform.c
 operations/common/dropshadow.c
 operations/common/edge-laplace.c
 operations/common/edge-sobel.c
