@@ -8,6 +8,7 @@
   <shortdesc xml:lang="en">GEGL (GObject Extendable Graphics Library) is a graph based image processing framework.</shortdesc>
   <homepage rdf:resource="http://www.gegl.org" />
   <mailing-list rdf:resource="https://lists.xcf.berkeley.edu/mailman/listinfo/gegl-developer" />
+  <programming-language>C</programming-language>
 
   <maintainer>
     <foaf:Person>
