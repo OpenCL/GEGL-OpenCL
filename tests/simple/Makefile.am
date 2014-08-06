@@ -11,6 +11,7 @@ noinst_PROGRAMS =			\
 	test-empty-tile			\
 	test-format-sensing		\
 	test-gegl-rectangle		\
+	test-gegl-color		    \
 	test-gegl-tile			\
 	test-image-compare		\
 	test-license-check		\
