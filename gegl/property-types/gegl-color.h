@@ -53,6 +53,15 @@ GType        gegl_color_get_type               (void) G_GNUC_CONST;
  * GeglColor is an object containing a color at the moment only RGB colors
  * are supported, in the future a GeglColor might also indicate other
  * enumerated or natively in other color representations colors.
+ *
+ * GeglColor accepts a subset of format string as defined by the CSS color specification:
+ *  http://dev.w3.org/csswg/css-color/
+ *
+ * - RGB hexadecimal notation: #rrggbb[aa] / #rgb[a]
+ * - Named colors, limited to the 16 specified in HTML4
+ * 
+ * To specify linear-light floating-point RGB, use: rgb[a](0.40, 0.44, 0.92 [, a])
+ * The normal bounds are [0.0 1.0], unlike CSS which is [0 255]. Out-of-bounds values are allowed.
  */
 
 /**
