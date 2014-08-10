@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
   int           result = SUCCESS;
   GeglNode     *graph  = NULL;
   GeglNode     *node   = NULL;
-  GeglColor    *color  = gegl_color_new ("rgb(0.0, 1.0, 0.0)");
+  GeglColor    *color  = NULL;
   double        x      = -5;
   double        y      = -5;
   char         *name   = NULL;
@@ -37,7 +37,9 @@ int main(int argc, char *argv[])
 
   /* Init */
   gegl_init (&argc, &argv);
-  
+
+  color = gegl_color_new ("rgb(0.0, 1.0, 0.0)");
+
   graph = gegl_node_new ();
   node  = gegl_node_new_child (graph,
                                "operation", "gegl:color",
