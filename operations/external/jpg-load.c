@@ -34,15 +34,66 @@ property_file_path (path, _("File"), "")
 #include <stdio.h>
 #include <jpeglib.h>
 
+static const gchar *
+jpeg_colorspace_name(J_COLOR_SPACE space)
+{
+    static const gchar * const names[] = {
+        "Unknown",
+        "Grayscale",
+        "RGB",
+        "YCbCr",
+        "CMYK",
+        "YCCK"
+    };
+    const gint n_valid_names = G_N_ELEMENTS(names);
+    const gint idx = (space > 0 && space < n_valid_names) ? (gint)space : 0;
+    return names[idx];
+}
+
+static const Babl *
+babl_from_jpeg_colorspace(J_COLOR_SPACE space)
+{
+    // XXX: assumes bitdepth == 8
+  const Babl *format = NULL;
+  if (space == JCS_GRAYSCALE)
+    format = babl_format ("Y' u8");
+  else if (space == JCS_RGB)
+    format = babl_format ("R'G'B' u8");
+  else if (space == JCS_CMYK) {
+    static gboolean reg = FALSE;
+    if (!reg) {
+        // TODO: move into babl?
+        reg = TRUE;
+        babl_format_new (
+            "name", "CMYK u8",
+            babl_model ("CMYK"),
+            babl_type ("u8"),
+            babl_component ("cyan"),
+            babl_component ("magenta"),
+            babl_component ("yellow"),
+            babl_component ("key"),
+            NULL
+        );
+    }
+    format = babl_format("CMYK u8");
+    g_assert(format);
+  }
+
+  return format;
+}
+
+
 static gint
 gegl_jpg_load_query_jpg (const gchar *path,
                          gint        *width,
                          gint        *height,
-                         gint        *components)
+                         const Babl  **out_format)
 {
   struct jpeg_decompress_struct  cinfo;
   struct jpeg_error_mgr          jerr;
   FILE                          *infile;
+  gint                           status = 0;
+  const Babl *format = NULL;
 
   if ((infile = fopen (path, "rb")) == NULL)
     {
@@ -56,17 +107,24 @@ gegl_jpg_load_query_jpg (const gchar *path,
 
   (void) jpeg_read_header (&cinfo, TRUE);
 
+  format = babl_from_jpeg_colorspace(cinfo.out_color_space);
   if (width)
     *width = cinfo.image_width;
   if (height)
     *height = cinfo.image_height;
-  if (components)
-    *components = cinfo.num_components;
+  if (out_format)
+    *out_format = format;
+  if (!format)
+    {
+      g_warning ("attempted to load JPEG with unsupported color space: '%s'",
+                 jpeg_colorspace_name(cinfo.out_color_space));
+      status = -1;
+    }
 
   jpeg_destroy_decompress (&cinfo);
 
   fclose (infile);
-  return 0;
+  return status;
 }
 
 static gint
@@ -96,14 +154,11 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   (void) jpeg_read_header (&cinfo, TRUE);
   (void) jpeg_start_decompress (&cinfo);
 
-  if (cinfo.output_components == 1)
-    format = babl_format ("Y' u8");
-  else if (cinfo.output_components == 3)
-    format = babl_format ("R'G'B' u8");
-  else
+  format = babl_from_jpeg_colorspace(cinfo.out_color_space);
+  if (!format)
     {
-      g_warning ("attempted to load unsupported JPEG (components=%d)",
-                 cinfo.output_components);
+      g_warning ("attempted to load JPEG with unsupported color space: '%s'",
+                 jpeg_colorspace_name(cinfo.out_color_space));
       jpeg_destroy_decompress (&cinfo);
       return -1;
     }
@@ -122,9 +177,19 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   write_rect.width  = cinfo.output_width;
   write_rect.height = 1;
 
+  // Most CMYK JPEG files are produced by Adobe Photoshop. Each component is stored where 0 means 100% ink
+  // However this might not be case for all. Gory details: https://bugzilla.mozilla.org/show_bug.cgi?id=674619
+  const gboolean is_inverted_cmyk = (format == babl_format("CMYK u8"));
+
   while (cinfo.output_scanline < cinfo.output_height)
     {
       jpeg_read_scanlines (&cinfo, buffer, 1);
+
+      if (is_inverted_cmyk) {
+        for (int i=0; i<row_stride; i++) {
+            buffer[0][i] = 255-buffer[0][i];
+        }
+      }
 
       gegl_buffer_set (gegl_buffer, &write_rect, 0,
                        format, buffer[0],
@@ -142,20 +207,13 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
 static GeglRectangle
 gegl_jpg_load_get_bounding_box (GeglOperation *operation)
 {
+  gint width, height;
   GeglProperties   *o = GEGL_PROPERTIES (operation);
-  gint width, height, components;
-  gint status;
-  status = gegl_jpg_load_query_jpg (o->path, &width, &height, &components);
+  const Babl *format = NULL;
+  const gint status = gegl_jpg_load_query_jpg (o->path, &width, &height, &format);
 
-  if (components == 1)
-    gegl_operation_set_format (operation, "output", babl_format ("Y' u8"));
-  else if (components == 3)
-    gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
-  else
-    {
-      g_warning ("attempted to load unsupported JPEG (components=%d)", components);
-      status = -1;
-    }
+  if (format)
+    gegl_operation_set_format (operation, "output", format);
 
   if (status)
     return (GeglRectangle) {0, 0, 0, 0};
