@@ -60,23 +60,7 @@ babl_from_jpeg_colorspace(J_COLOR_SPACE space)
   else if (space == JCS_RGB)
     format = babl_format ("R'G'B' u8");
   else if (space == JCS_CMYK) {
-    static gboolean reg = FALSE;
-    if (!reg) {
-        // TODO: move into babl?
-        reg = TRUE;
-        babl_format_new (
-            "name", "CMYK u8",
-            babl_model ("CMYK"),
-            babl_type ("u8"),
-            babl_component ("cyan"),
-            babl_component ("magenta"),
-            babl_component ("yellow"),
-            babl_component ("key"),
-            NULL
-        );
-    }
     format = babl_format("CMYK u8");
-    g_assert(format);
   }
 
   return format;
