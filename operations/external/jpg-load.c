@@ -124,6 +124,7 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   JSAMPARRAY                     buffer;
   const Babl                    *format;
   GeglRectangle                  write_rect;
+  gboolean                       is_inverted_cmyk = FALSE;
 
   if ((infile = fopen (path, "rb")) == NULL)
     {
@@ -163,7 +164,7 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
 
   // Most CMYK JPEG files are produced by Adobe Photoshop. Each component is stored where 0 means 100% ink
   // However this might not be case for all. Gory details: https://bugzilla.mozilla.org/show_bug.cgi?id=674619
-  const gboolean is_inverted_cmyk = (format == babl_format("CMYK u8"));
+  is_inverted_cmyk = (format == babl_format("CMYK u8"));
 
   while (cinfo.output_scanline < cinfo.output_height)
     {
