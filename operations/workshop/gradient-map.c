@@ -24,9 +24,15 @@
 
 #ifdef GEGL_PROPERTIES
 property_color(color1, _("Color 1"), "black")
-    description (_("Starting color for gradient"))
+property_double(stop1, _("Stop 1"), 0.0)
 property_color(color2, _("Color 2"), "white")
-    description (_("End color for gradient"))
+property_double(stop2, _("Stop 2"), 1.0)
+property_color(color3, _("Color 3"), "white")
+property_double(stop3, _("Stop 3"), 1.0)
+property_color(color4, _("Color 4"), "white")
+property_double(stop4, _("Stop 4"), 1.0)
+property_color(color5, _("Color 5"), "white")
+property_double(stop5, _("Stop 5"), 1.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
@@ -40,7 +46,7 @@ property_color(color2, _("Color 2"), "white")
 // - should have a number of GeglColor stops
 // - should be deserializable from a (JSON) array of GeglColor values
 
-#define GRADIENT_STOPS 2
+#define GRADIENT_STOPS 5
 
 typedef struct RgbaColor_ {
     gdouble r;
@@ -49,38 +55,80 @@ typedef struct RgbaColor_ {
     gdouble a;
 } RgbaColor;
 
+static void
+rgba_from_gegl_color(RgbaColor *c, GeglColor *color)
+{
+    gegl_color_get_rgba(color, &c->r, &c->g, &c->b, &c->a);
+}
+
 typedef struct GradientMapProperties_ {
     gdouble *gradient;
     RgbaColor cached_colors[GRADIENT_STOPS];
+    gdouble cached_stops[GRADIENT_STOPS];
 } GradientMapProperties;
 
-static gdouble *
-create_linear_gradient(GeglColor **colors, const gint gradient_len, gint gradient_channels)
+static inline void
+pixel_interpolate_gradient(gdouble *samples, const gint offset,
+                    const RgbaColor *c1, const RgbaColor *c2, const float weight)
 {
-    gdouble *samples;
-    gdouble c1[4];
-    gdouble c2[4];
-    gegl_color_get_rgba(colors[0], &c1[0], &c1[1], &c1[2], &c1[3]);
-    gegl_color_get_rgba(colors[1], &c2[0], &c2[1], &c2[2], &c2[3]);
+    samples[offset+0] = c1->r + (weight * (c2->r - c1->r));
+    samples[offset+1] = c1->g + (weight * (c2->g - c1->g));
+    samples[offset+2] = c1->b + (weight * (c2->b - c1->b));
+    samples[offset+3] = c1->a + (weight * (c2->a - c1->a));
+}
 
-    samples = (gdouble *)g_new(gdouble, gradient_len*gradient_channels);
+static inline float
+mapf(float x, float in_min, float in_max, float out_min, float out_max)
+{
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
+
+
+static gdouble *
+create_linear_gradient(GeglColor **colors, gdouble *stops, const gint no_stops,
+                       const gint gradient_len, gint gradient_channels)
+{
+    gdouble *samples = (gdouble *)g_new(gdouble, gradient_len*gradient_channels);
+
+    // XXX: assumes that
+    // - stops are in ascending order
+    // - first stop is at 0.0
+    RgbaColor from, to;
+    gint from_stop = 0;
+    gint to_stop = 1;
+    rgba_from_gegl_color(&from, colors[0]);
+    rgba_from_gegl_color(&to, colors[1]);
+
     for (int px=0; px < gradient_len; px++) {
-        const float weight = ((float)px)/gradient_len;
+        const float pos = ((float)px)/gradient_len;
+        float to_pos = (to_stop >= no_stops) ? 1.0 : stops[to_stop];
+        if (pos > to_pos) {
+            from_stop = (from_stop+1 < no_stops) ? from_stop+1 : from_stop;;
+            to_stop = (to_stop+1 < no_stops) ? to_stop+1 : to_stop;
+            to_pos = stops[to_stop];
+            rgba_from_gegl_color(&from, colors[from_stop]);
+            rgba_from_gegl_color(&to, colors[to_stop]);
+        }
+        const float from_pos = (from_stop < 0) ? 0.0 : stops[from_stop];
+        const float weight = ((to_stop-from_stop) == 0) ? 1.0 : mapf(pos, from_pos, to_pos, 0.0, 1.0);
         const size_t offset = px*gradient_channels;
-        samples[offset+0] = c1[0] + (weight * (c2[0] - c1[0]));
-        samples[offset+1] = c1[1] + (weight * (c2[1] - c1[1]));
-        samples[offset+2] = c1[2] + (weight * (c2[2] - c1[2]));
-        samples[offset+3] = c1[3] + (weight * (c2[3] - c1[3]));
+        pixel_interpolate_gradient(samples, offset, &from, &to, weight);
     }
     return samples;
 }
 
 static gboolean
-gradient_is_cached(gdouble *gradient, GeglColor **colors, const gint no_colors, const RgbaColor *cached_colors) {
+gradient_is_cached(gdouble *gradient, GeglColor **colors, const gdouble *stops, const gint no_colors,
+                    const RgbaColor *cached_colors, const gdouble *cached_stops)
+{
     gboolean match = TRUE;
     if (!gradient) {
         return FALSE;
     }
+    if (memcmp(stops, cached_stops, sizeof(gdouble)*no_colors) != 0) {
+        return FALSE;
+    }
+
     for (int i=0; i<no_colors; i++) {
         GeglColor *c = colors[i];
         gdouble *cached = (gdouble *)(&cached_colors[i]); // XXX: relies on struct packing
@@ -96,8 +144,11 @@ gradient_is_cached(gdouble *gradient, GeglColor **colors, const gint no_colors, 
 }
 
 static void
-update_cached_colors(GeglColor **colors, const gint no_colors, RgbaColor *cached)
+update_cached_vars(GeglColor **colors, const gint no_colors, RgbaColor *cached,
+                    const gdouble *stops, gdouble *cached_stops)
 {
+    memcpy(cached_stops, stops, sizeof(cached_stops[0])*no_colors);
+
     for (int i=0; i<no_colors; i++) {
         RgbaColor *cache = &(cached[i]);
         gegl_color_get_rgba(colors[i], &(cache->r), &(cache->g), &(cache->b), &(cache->a));
@@ -163,15 +214,27 @@ process (GeglOperation       *op,
   GradientMapProperties *props = (GradientMapProperties*)o->user_data;
   GeglColor *colors[GRADIENT_STOPS] = {
       o->color1,
-      o->color2
+      o->color2,
+      o->color3,
+      o->color4,
+      o->color5
+  };
+  gdouble stops[GRADIENT_STOPS] = {
+      o->stop1,
+      o->stop2,
+      o->stop3,
+      o->stop4,
+      o->stop5
   };
 
-  if (!gradient_is_cached(props->gradient, colors, GRADIENT_STOPS, props->cached_colors)) {
+  const gboolean cached = gradient_is_cached(props->gradient, colors, stops, GRADIENT_STOPS,
+                                       props->cached_colors, props->cached_stops);
+  if (!cached) {
     if (props->gradient) {
         g_free(props->gradient);
     }
-    props->gradient = create_linear_gradient(colors, gradient_length, gradient_channels);
-    update_cached_colors(colors, GRADIENT_STOPS, props->cached_colors);
+    props->gradient = create_linear_gradient(colors, stops, GRADIENT_STOPS, gradient_length, gradient_channels);
+    update_cached_vars(colors, GRADIENT_STOPS, props->cached_colors, stops, props->cached_stops);
   }
 
   for (int i=0; i<n_pixels; i++)
