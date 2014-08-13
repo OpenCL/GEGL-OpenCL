@@ -33,6 +33,7 @@ property_color(color4, _("Color 4"), "white")
 property_double(stop4, _("Stop 4"), 1.0)
 property_color(color5, _("Color 5"), "white")
 property_double(stop5, _("Stop 5"), 1.0)
+property_boolean(srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_FILTER
@@ -47,6 +48,8 @@ property_double(stop5, _("Stop 5"), 1.0)
 // - should be deserializable from a (JSON) array of GeglColor values
 
 #define GRADIENT_STOPS 5
+static const gint gradient_length = 2048;
+static const gint gradient_channels = 4; // RGBA
 
 typedef struct RgbaColor_ {
     gdouble r;
@@ -86,9 +89,9 @@ mapf(float x, float in_min, float in_max, float out_min, float out_max)
 
 static gdouble *
 create_linear_gradient(GeglColor **colors, gdouble *stops, const gint no_stops,
-                       const gint gradient_len, gint gradient_channels)
+                       const gint gradient_len, gint channels)
 {
-    gdouble *samples = (gdouble *)g_new(gdouble, gradient_len*gradient_channels);
+    gdouble *samples = (gdouble *)g_new(gdouble, gradient_len*channels);
 
     // XXX: assumes that
     // - stops are in ascending order
@@ -111,7 +114,7 @@ create_linear_gradient(GeglColor **colors, gdouble *stops, const gint no_stops,
         }
         const float from_pos = (from_stop < 0) ? 0.0 : stops[from_stop];
         const float weight = ((to_stop-from_stop) == 0) ? 1.0 : mapf(pos, from_pos, to_pos, 0.0, 1.0);
-        const size_t offset = px*gradient_channels;
+        const size_t offset = px*channels;
         pixel_interpolate_gradient(samples, offset, &from, &to, weight);
     }
     return samples;
@@ -171,8 +174,24 @@ static void prepare (GeglOperation *operation)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
   GradientMapProperties *props = (GradientMapProperties*)o->user_data;
+  GeglColor *colors[GRADIENT_STOPS] = {
+      o->color1,
+      o->color2,
+      o->color3,
+      o->color4,
+      o->color5
+  };
+  gdouble stops[GRADIENT_STOPS] = {
+      o->stop1,
+      o->stop2,
+      o->stop3,
+      o->stop4,
+      o->stop5
+  };
+  const Babl *f = (o->srgb) ? babl_format ("Y'A float") : babl_format ("YA float");
+  gboolean cached = FALSE;
 
-  gegl_operation_set_format (operation, "input", babl_format ("YA float"));
+  gegl_operation_set_format (operation, "input", f);
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 
   if (!props)
@@ -181,6 +200,16 @@ static void prepare (GeglOperation *operation)
       props->gradient = NULL;
       o->user_data = props;
     }
+
+  cached = gradient_is_cached(props->gradient, colors, stops, GRADIENT_STOPS,
+                              props->cached_colors, props->cached_stops);
+  if (!cached) {
+    if (props->gradient) {
+        g_free(props->gradient);
+    }
+    props->gradient = create_linear_gradient(colors, stops, GRADIENT_STOPS, gradient_length, gradient_channels);
+    update_cached_vars(colors, GRADIENT_STOPS, props->cached_colors, stops, props->cached_stops);
+  }
 }
 
 static void finalize (GObject *object)
@@ -209,33 +238,7 @@ process (GeglOperation       *op,
   GeglProperties *o = GEGL_PROPERTIES (op);
   gfloat     * GEGL_ALIGNED in_pixel = in_buf;
   gfloat     * GEGL_ALIGNED out_pixel = out_buf;
-  const gint gradient_length = 2048;
-  const gint gradient_channels = 4; // RGBA
   GradientMapProperties *props = (GradientMapProperties*)o->user_data;
-  GeglColor *colors[GRADIENT_STOPS] = {
-      o->color1,
-      o->color2,
-      o->color3,
-      o->color4,
-      o->color5
-  };
-  gdouble stops[GRADIENT_STOPS] = {
-      o->stop1,
-      o->stop2,
-      o->stop3,
-      o->stop4,
-      o->stop5
-  };
-
-  const gboolean cached = gradient_is_cached(props->gradient, colors, stops, GRADIENT_STOPS,
-                                       props->cached_colors, props->cached_stops);
-  if (!cached) {
-    if (props->gradient) {
-        g_free(props->gradient);
-    }
-    props->gradient = create_linear_gradient(colors, stops, GRADIENT_STOPS, gradient_length, gradient_channels);
-    update_cached_vars(colors, GRADIENT_STOPS, props->cached_colors, stops, props->cached_stops);
-  }
 
   for (int i=0; i<n_pixels; i++)
     {
