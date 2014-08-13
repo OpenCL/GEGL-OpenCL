@@ -40,20 +40,28 @@ property_color(color2, _("Color 2"), "white")
 // - should have a number of GeglColor stops
 // - should be deserializable from a (JSON) array of GeglColor values
 
+#define GRADIENT_STOPS 2
+
+typedef struct RgbaColor_ {
+    gdouble r;
+    gdouble g;
+    gdouble b;
+    gdouble a;
+} RgbaColor;
+
 typedef struct GradientMapProperties_ {
     gdouble *gradient;
-    gdouble cached_c1[4];
-    gdouble cached_c2[4];
+    RgbaColor cached_colors[GRADIENT_STOPS];
 } GradientMapProperties;
 
 static gdouble *
-create_linear_gradient(GeglColor *color1, GeglColor *color2, gint gradient_len, gint gradient_channels)
+create_linear_gradient(GeglColor **colors, const gint gradient_len, gint gradient_channels)
 {
     gdouble *samples;
     gdouble c1[4];
     gdouble c2[4];
-    gegl_color_get_rgba(color1, &c1[0], &c1[1], &c1[2], &c1[3]);
-    gegl_color_get_rgba(color2, &c2[0], &c2[1], &c2[2], &c2[3]);
+    gegl_color_get_rgba(colors[0], &c1[0], &c1[1], &c1[2], &c1[3]);
+    gegl_color_get_rgba(colors[1], &c2[0], &c2[1], &c2[2], &c2[3]);
 
     samples = (gdouble *)g_new(gdouble, gradient_len*gradient_channels);
     for (int px=0; px < gradient_len; px++) {
@@ -68,17 +76,38 @@ create_linear_gradient(GeglColor *color1, GeglColor *color2, gint gradient_len, 
 }
 
 static gboolean
-is_cached(GradientMapProperties *props, GeglColor *color1, GeglColor *color2) {
-    gdouble c1[4];
-    gdouble c2[4];
-    gegl_color_get_rgba(color1, &c1[0], &c1[1], &c1[2], &c1[3]);
-    gegl_color_get_rgba(color2, &c2[0], &c2[1], &c2[2], &c2[3]);
+gradient_is_cached(gdouble *gradient, GeglColor **colors, const gint no_colors, const RgbaColor *cached_colors) {
+    gboolean match = TRUE;
+    if (!gradient) {
+        return FALSE;
+    }
+    for (int i=0; i<no_colors; i++) {
+        GeglColor *c = colors[i];
+        gdouble *cached = (gdouble *)(&cached_colors[i]); // XXX: relies on struct packing
+        gdouble color[4];
+        gegl_color_get_rgba(c, &color[0], &color[1], &color[2], &color[3]);
+        if (memcmp(cached, color, 4) != 0) {
+            match = FALSE;
+            break;
+        }
+    }
 
-    return props->gradient && memcmp(props->cached_c1, c1, 4) == 0 && memcmp(props->cached_c2, c2, 4) == 0;
+    return match;
+}
+
+static void
+update_cached_colors(GeglColor **colors, const gint no_colors, RgbaColor *cached)
+{
+    for (int i=0; i<no_colors; i++) {
+        RgbaColor *cache = &(cached[i]);
+        gegl_color_get_rgba(colors[i], &(cache->r), &(cache->g), &(cache->b), &(cache->a));
+    }
 }
 
 static void inline
-process_pixel_gradient_map(gfloat *in, gfloat *out, gdouble *gradient, gint gradient_len, gint gradient_channels) {
+process_pixel_gradient_map(gfloat *in, gfloat *out, gdouble *gradient,
+                           gint gradient_len, gint gradient_channels)
+{
     const gint index = CLAMP (in[0] * (gradient_len-1), 0, gradient_len-1);
     gdouble *mapped = &(gradient[index * gradient_channels]);
     out[0] = mapped[0];
@@ -108,7 +137,7 @@ static void finalize (GObject *object)
     GeglOperation *op = (void*)object;
     GeglProperties *o = GEGL_PROPERTIES (op);
     if (o->user_data) {
-      GradientMapProperties *props = (GradientMapProperties *) o->user_data;
+      GradientMapProperties *props = (GradientMapProperties *)o->user_data;
       if (props->gradient) {
         g_free(props->gradient);
       }
@@ -132,17 +161,17 @@ process (GeglOperation       *op,
   const gint gradient_length = 2048;
   const gint gradient_channels = 4; // RGBA
   GradientMapProperties *props = (GradientMapProperties*)o->user_data;
-  gdouble *cached_c1 = props->cached_c1;
-  gdouble *cached_c2 = props->cached_c2;
+  GeglColor *colors[GRADIENT_STOPS] = {
+      o->color1,
+      o->color2
+  };
 
-  if (!is_cached(props, o->color1, o->color2)) {
+  if (!gradient_is_cached(props->gradient, colors, GRADIENT_STOPS, props->cached_colors)) {
     if (props->gradient) {
         g_free(props->gradient);
     }
-    props->gradient = create_linear_gradient(o->color1, o->color2, gradient_length, gradient_channels);
-
-    gegl_color_get_rgba(o->color1, &cached_c1[0], &cached_c1[1], &cached_c1[2], &cached_c1[3]);
-    gegl_color_get_rgba(o->color2, &cached_c2[0], &cached_c2[1], &cached_c2[2], &cached_c2[3]);
+    props->gradient = create_linear_gradient(colors, gradient_length, gradient_channels);
+    update_cached_colors(colors, GRADIENT_STOPS, props->cached_colors);
   }
 
   for (int i=0; i<n_pixels; i++)
