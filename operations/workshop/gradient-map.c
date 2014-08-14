@@ -66,8 +66,6 @@ rgba_from_gegl_color(RgbaColor *c, GeglColor *color)
 
 typedef struct GradientMapProperties_ {
     gdouble *gradient;
-    RgbaColor cached_colors[GRADIENT_STOPS];
-    gdouble cached_stops[GRADIENT_STOPS];
 } GradientMapProperties;
 
 static inline void
@@ -120,44 +118,6 @@ create_linear_gradient(GeglColor **colors, gdouble *stops, const gint no_stops,
     return samples;
 }
 
-static gboolean
-gradient_is_cached(gdouble *gradient, GeglColor **colors, const gdouble *stops, const gint no_colors,
-                    const RgbaColor *cached_colors, const gdouble *cached_stops)
-{
-    gboolean match = TRUE;
-    if (!gradient) {
-        return FALSE;
-    }
-    if (memcmp(stops, cached_stops, sizeof(gdouble)*no_colors) != 0) {
-        return FALSE;
-    }
-
-    for (int i=0; i<no_colors; i++) {
-        GeglColor *c = colors[i];
-        gdouble *cached = (gdouble *)(&cached_colors[i]); // XXX: relies on struct packing
-        gdouble color[4];
-        gegl_color_get_rgba(c, &color[0], &color[1], &color[2], &color[3]);
-        if (memcmp(cached, color, 4) != 0) {
-            match = FALSE;
-            break;
-        }
-    }
-
-    return match;
-}
-
-static void
-update_cached_vars(GeglColor **colors, const gint no_colors, RgbaColor *cached,
-                    const gdouble *stops, gdouble *cached_stops)
-{
-    memcpy(cached_stops, stops, sizeof(cached_stops[0])*no_colors);
-
-    for (int i=0; i<no_colors; i++) {
-        RgbaColor *cache = &(cached[i]);
-        gegl_color_get_rgba(colors[i], &(cache->r), &(cache->g), &(cache->b), &(cache->a));
-    }
-}
-
 static void inline
 process_pixel_gradient_map(gfloat *in, gfloat *out, gdouble *gradient,
                            gint gradient_len, gint gradient_channels)
@@ -189,7 +149,6 @@ static void prepare (GeglOperation *operation)
       o->stop5
   };
   const Babl *f = (o->srgb) ? babl_format ("Y'A float") : babl_format ("YA float");
-  gboolean cached = FALSE;
 
   gegl_operation_set_format (operation, "input", f);
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
@@ -201,15 +160,10 @@ static void prepare (GeglOperation *operation)
       o->user_data = props;
     }
 
-  cached = gradient_is_cached(props->gradient, colors, stops, GRADIENT_STOPS,
-                              props->cached_colors, props->cached_stops);
-  if (!cached) {
-    if (props->gradient) {
-        g_free(props->gradient);
-    }
-    props->gradient = create_linear_gradient(colors, stops, GRADIENT_STOPS, gradient_length, gradient_channels);
-    update_cached_vars(colors, GRADIENT_STOPS, props->cached_colors, stops, props->cached_stops);
+  if (props->gradient) {
+    g_free(props->gradient);
   }
+  props->gradient = create_linear_gradient(colors, stops, GRADIENT_STOPS, gradient_length, gradient_channels);
 }
 
 static void finalize (GObject *object)
