@@ -80,7 +80,7 @@ static const ColorNameEntity color_names[] =
   { "green",   { 0.f,      0.50196f, 0.f,      1.f } },
   { "lime",    { 0.f,      1.f,      0.f,      1.f } },
   { "olive",   { 0.50196f, 0.50196f, 0.f,      1.f } },
-  { "yellow",  { 1.f,      1.f,      01.f,     1.f } },
+  { "yellow",  { 1.f,      1.f,      0.f,      1.f } },
   { "navy",    { 0.f,      0.f,      0.50196f, 1.f } },
   { "blue",    { 0.f,      0.f,      1.f,      1.f } },
   { "teal",    { 0.f,      0.50196f, 0.50196f, 1.f } },
@@ -347,9 +347,14 @@ gegl_color_set_from_string (GeglColor   *self,
       color_parsing_successfull = parse_float_argument_list (rgba, scanner, 4);
       format = babl_format ("RGBA float");
     }
-  else if (token_type == '#') /* FIXME: Verify that this is a safe way to check for '#' */
+  else if (token_type == '#')
     {
+<<<<<<< Updated upstream
       color_parsing_successfull = parse_hex (rgba, color_string);
+=======
+      self->priv->rgba_color[3] = 1.f;
+      color_parsing_successfull = parse_hex (self, color_string);
+>>>>>>> Stashed changes
     }
   else if (token_type == G_TOKEN_IDENTIFIER)
     {
