@@ -349,12 +349,7 @@ gegl_color_set_from_string (GeglColor   *self,
     }
   else if (token_type == '#')
     {
-<<<<<<< Updated upstream
       color_parsing_successfull = parse_hex (rgba, color_string);
-=======
-      self->priv->rgba_color[3] = 1.f;
-      color_parsing_successfull = parse_hex (self, color_string);
->>>>>>> Stashed changes
     }
   else if (token_type == G_TOKEN_IDENTIFIER)
     {
