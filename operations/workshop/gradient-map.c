@@ -59,9 +59,14 @@ typedef struct RgbaColor_ {
 } RgbaColor;
 
 static void
-rgba_from_gegl_color(RgbaColor *c, GeglColor *color)
+rgba_from_gegl_color(RgbaColor *c, GeglColor *color, const Babl *format)
 {
-    gegl_color_get_rgba(color, &c->r, &c->g, &c->b, &c->a);
+    gfloat out[4];
+    gegl_color_get_pixel(color, format, out);
+    c->r = out[0];
+    c->g = out[1];
+    c->b = out[2];
+    c->a = out[3];
 }
 
 typedef struct GradientMapProperties_ {
@@ -87,7 +92,7 @@ mapf(float x, float in_min, float in_max, float out_min, float out_max)
 
 static gdouble *
 create_linear_gradient(GeglColor **colors, gdouble *stops, const gint no_stops,
-                       const gint gradient_len, gint channels)
+                       const gint gradient_len, gint channels, const Babl *format)
 {
     gdouble *samples = (gdouble *)g_new(gdouble, gradient_len*channels);
 
@@ -97,18 +102,18 @@ create_linear_gradient(GeglColor **colors, gdouble *stops, const gint no_stops,
     RgbaColor from, to;
     gint from_stop = 0;
     gint to_stop = 1;
-    rgba_from_gegl_color(&from, colors[0]);
-    rgba_from_gegl_color(&to, colors[1]);
+    rgba_from_gegl_color(&from, colors[from_stop], format);
+    rgba_from_gegl_color(&to, colors[to_stop], format);
 
     for (int px=0; px < gradient_len; px++) {
         const float pos = ((float)px)/gradient_len;
         float to_pos = (to_stop >= no_stops) ? 1.0 : stops[to_stop];
         if (pos > to_pos) {
-            from_stop = (from_stop+1 < no_stops) ? from_stop+1 : from_stop;;
+            from_stop = (from_stop+1 < no_stops) ? from_stop+1 : from_stop;
             to_stop = (to_stop+1 < no_stops) ? to_stop+1 : to_stop;
             to_pos = stops[to_stop];
-            rgba_from_gegl_color(&from, colors[from_stop]);
-            rgba_from_gegl_color(&to, colors[to_stop]);
+            rgba_from_gegl_color(&from, colors[from_stop], format);
+            rgba_from_gegl_color(&to, colors[to_stop], format);
         }
         const float from_pos = (from_stop < 0) ? 0.0 : stops[from_stop];
         const float weight = ((to_stop-from_stop) == 0) ? 1.0 : mapf(pos, from_pos, to_pos, 0.0, 1.0);
@@ -148,10 +153,11 @@ static void prepare (GeglOperation *operation)
       o->stop4,
       o->stop5
   };
-  const Babl *f = (o->srgb) ? babl_format ("Y'A float") : babl_format ("YA float");
+  const Babl *input_format = (o->srgb) ? babl_format ("Y'A float") : babl_format ("YA float");
+  const Babl *output_format = (o->srgb) ? babl_format ("R'G'B'A float") : babl_format ("RGBA float");
 
-  gegl_operation_set_format (operation, "input", f);
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "input", input_format);
+  gegl_operation_set_format (operation, "output", output_format);
 
   if (!props)
     {
@@ -163,7 +169,8 @@ static void prepare (GeglOperation *operation)
   if (props->gradient) {
     g_free(props->gradient);
   }
-  props->gradient = create_linear_gradient(colors, stops, GRADIENT_STOPS, gradient_length, gradient_channels);
+  props->gradient = create_linear_gradient(colors, stops, GRADIENT_STOPS,
+                                gradient_length, gradient_channels, output_format);
 }
 
 static void finalize (GObject *object)
