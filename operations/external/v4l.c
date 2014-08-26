@@ -23,13 +23,20 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_file_path (path,   _("Path"), "/dev/video0", _("Path to v4l device"))
-property_int  (width,  _("Width"),  0, G_MAXINT, 320, _("Width for rendered image"))
-property_int  (height, _("Height"), 0, G_MAXINT, 240, _("Height for rendered image"))
-property_int  (frame,  _("Frame"),  0, G_MAXINT, 0,
-        _("current frame number, can be changed to trigger a reload of the image."))
-property_int  (fps,    _("FPS"),  0, G_MAXINT, 0,
-        _("autotrigger reload this many times a second."))
+property_file_path (path,   _("Path"), "/dev/video0")
+  description (_("Path to v4l device"))
+property_int  (width,  _("Width"), 320)
+  description (_("Width for rendered image"))
+  value_range (0, G_MAXINT)
+property_int  (height, _("Height"), 240)
+  description (_("Height for rendered image"))
+  value_range (0, G_MAXINT)
+property_int  (frame,  _("Frame"), 0)
+  description (_("current frame number, can be changed to trigger a reload of the image."))
+  value_range (0, G_MAXINT)
+property_int  (fps,    _("FPS"), 0)
+  description (_("autotrigger reload this many times a second."))
+  value_range (0, G_MAXINT)
 
 #else
 
