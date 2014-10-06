@@ -164,6 +164,9 @@ gegl_config_finalize (GObject *gobject)
   if (config->swap)
     g_free (config->swap);
 
+  if (config->application_license)
+    g_free (config->application_license);
+
   G_OBJECT_CLASS (gegl_config_parent_class)->finalize (gobject);
 }
 
