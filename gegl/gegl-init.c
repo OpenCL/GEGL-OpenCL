@@ -322,6 +322,8 @@ static void gegl_config_set_defaults (GeglConfig *config)
   g_object_set (config,
                 "swap", swapdir,
                 NULL);
+
+  g_free (swapdir);
 }
 
 static void gegl_config_parse_env (GeglConfig *config)
