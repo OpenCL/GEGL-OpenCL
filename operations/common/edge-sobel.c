@@ -29,7 +29,7 @@ property_boolean (horizontal,  _("Horizontal"), TRUE)
 property_boolean (vertical,  _("Vertical"), TRUE)
 
 property_boolean (keep_signal,  _("Keep Signal"), TRUE)
-     description ("Keep negative values in result, when off the absolute value of the result is used instead.")
+     description (_("Keep negative values in result, when off the absolute value of the result is used instead."))
 
 #else
 
