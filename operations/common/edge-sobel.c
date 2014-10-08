@@ -249,6 +249,8 @@ edge_sobel (GeglBuffer          *src,
       ptr += src_width * 4;
     }
 
+  /* Fill in the 1px top and bottom borders of the source buffer from
+     its neighbour's pixel. */
   ptr = src_buf;
   ptr2 = src_buf + (src_rect->height + 1) * src_width * 4;
   for (x = 0; x < src_width; x++)
