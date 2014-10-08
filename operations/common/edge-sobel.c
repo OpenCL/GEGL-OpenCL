@@ -29,7 +29,7 @@ property_boolean (horizontal,  _("Horizontal"), TRUE)
 property_boolean (vertical,  _("Vertical"), TRUE)
 
 property_boolean (keep_sign,  _("Keep Sign"), TRUE)
-     description (_("Keep negative values in result, when off the absolute value of the result is used instead."))
+     description (_("Keep negative values in result; when off, the absolute value of the result is used instead."))
 
 #else
 
@@ -57,7 +57,6 @@ edge_sobel (GeglBuffer          *src,
 static void prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  //GeglProperties              *o = GEGL_PROPERTIES (operation);
 
   const Babl *source_format = gegl_operation_get_source_format (operation, "input");
 
@@ -200,7 +199,7 @@ process (GeglOperation       *operation,
 }
 
 inline static gfloat
-RMS(gfloat a, gfloat b)
+magnitude(gfloat a, gfloat b)
 {
   return sqrtf(a*a+b*b);
 }
@@ -220,80 +219,151 @@ edge_sobel (GeglBuffer          *src,
   gint offset;
   gfloat *src_buf;
   gfloat *dst_buf;
+  gfloat *ptr;
+  gfloat *ptr2;
+  gint src_width;
 
-  gint src_width = src_rect->width;
-
-  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
+  /* We use a source buffer that allows us to fill in a 1 pixel border
+     around the source data (which we eventually use in computation
+     below). */
+  src_width = src_rect->width + 2;
+  src_buf = g_new0 (gfloat, src_width * (src_rect->height + 2) * 4);
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RGBA float"), src_buf, GEGL_AUTO_ROWSTRIDE,
+  /* Get the source data at offset (1,1) into the source buffer. */
+  gegl_buffer_get (src, src_rect, 1.0, babl_format ("RGBA float"),
+                   src_buf + (src_width * 4) + 4, src_width * 4 * 4,
                    GEGL_ABYSS_NONE);
 
+  /* Fill in the 1px left and right borders of the source buffer from
+     its neighbour's pixel. */
+  ptr = src_buf + src_width * 4;
+  for (y = 1; y < src_rect->height + 1; y++)
+    {
+      gint c;
+      for (c = 0; c < 4; c++)
+        {
+          ptr[c] = ptr[c+4];
+          ptr[(src_width - 1) * 4 + c] = ptr[(src_width - 2) * 4 + c];
+        }
+      ptr += src_width * 4;
+    }
+
+  ptr = src_buf;
+  ptr2 = src_buf + (src_rect->height + 1) * src_width * 4;
+  for (x = 0; x < src_width; x++)
+    {
+      gint c;
+      for (c = 0; c < 4; c++)
+        {
+          ptr[c] = ptr[src_width * 4 + c];
+          ptr2[c] = ptr[-src_width * 4 + c];
+        }
+      ptr += 4;
+      ptr2 += 4;
+    }
+
+  /* Apply the Sobel operator. Technically, the following is not Sobel
+     as it does not use pixel intensities, but works on the individual
+     RGB channels. But it is similar to the classic GIMP and PhotoShop
+     filter.
+
+     See paper "History and Definition of the Sobel Operator" by Irwin
+     Sobel that seems to be the only free and authentic description.
+  */
   offset = 0;
-
-  for (y=0; y<dst_rect->height; y++)
-    for (x=0; x<dst_rect->width; x++)
+  for (y = 0; y < dst_rect->height; y++)
+    for (x = 0; x < dst_rect->width; x++)
       {
-
         gfloat hor_grad[3] = {0.0f, 0.0f, 0.0f};
         gfloat ver_grad[3] = {0.0f, 0.0f, 0.0f};
         gfloat gradient[4] = {0.0f, 0.0f, 0.0f, 0.0f};
-
-        gfloat *center_pix = src_buf + ((x+SOBEL_RADIUS)+((y+SOBEL_RADIUS) * src_width)) * 4;
-
+        gfloat *tl_px, *t_px, *tr_px;
+        gfloat *l_px, *center_px, *r_px;
+        gfloat *bl_px, *b_px, *br_px;
         gint c;
+
+        /* This pixel */
+        center_px  = src_buf + (src_width * 4) + 4;
+        center_px += (y * src_width + x) * 4;
+
+        /* Top-left pixel */
+        tl_px = center_px - 4 - src_width * 4;
+        /* Top pixel */
+        t_px = center_px - src_width * 4;
+        /* Top-right pixel */
+        tr_px = center_px + 4 - src_width * 4;
+        /* Left pixel */
+        l_px = center_px - 4;
+        /* Right pixel */
+        r_px = center_px + 4;
+        /* Bottom-left pixel */
+        bl_px = center_px - 4 + src_width * 4;
+        /* Bottom pixel */
+        b_px = center_px + src_width * 4;
+        /* Bottom-right pixel */
+        br_px = center_px + 4 + src_width * 4;
 
         if (horizontal)
           {
-            gint i=x+SOBEL_RADIUS, j=y+SOBEL_RADIUS;
-            gfloat *src_pix = src_buf + (i + j * src_width) * 4;
-
-            for (c=0;c<3;c++)
-                hor_grad[c] +=
-                    -1.0f*src_pix[c-4-src_width*4]+ src_pix[c+4-src_width*4] +
-                    -2.0f*src_pix[c-4] + 2.0f*src_pix[c+4] +
-                    -1.0f*src_pix[c-4+src_width*4]+ src_pix[c+4+src_width*4];
+            /*
+             * Horizontal kernel:
+             *
+             *      [-1  0  +1]
+             * Gx = [-2  0  +2] * P
+             *      [-1  0  -1]
+             */
+            for (c = 0; c < 3; c++)
+              {
+                hor_grad[c] += (-1.0f * tl_px[c]) + (0.0f * t_px[c]) + (1.0f * tr_px[c]);
+                hor_grad[c] += (-2.0f * l_px[c]) + (0.0f * center_px[c]) + (2.0f * r_px[c]);
+                hor_grad[c] += (-1.0f * bl_px[c]) + (0.0f * b_px[c]) + (1.0f * br_px[c]);
+              }
           }
 
         if (vertical)
           {
-            gint i=x+SOBEL_RADIUS, j=y+SOBEL_RADIUS;
-            gfloat *src_pix = src_buf + (i + j * src_width) * 4;
-
-            for (c=0;c<3;c++)
-                ver_grad[c] +=
-                  -1.0f*src_pix[c-4-src_width*4]-2.0f*src_pix[c-src_width*4]-1.0f*src_pix[c+4-src_width*4] +
-                  src_pix[c-4+src_width*4]+2.0f*src_pix[c+src_width*4]+     src_pix[c+4+src_width*4];
-        }
+            /*
+             * Vertical kernel:
+             *
+             *      [+1  +2  +1]
+             * Gy = [ 0   0   0] * P
+             *      [-1  -2  -1]
+             */
+            for (c = 0; c < 3; c++)
+              {
+                ver_grad[c] += (1.0f * tl_px[c]) + (2.0f * t_px[c]) + (1.0f * tr_px[c]);
+                ver_grad[c] += (0.0f * l_px[c]) + (0.0f * center_px[c]) + (0.0f * r_px[c]);
+                ver_grad[c] += (-1.0f * bl_px[c]) + (-2.0f * b_px[c]) + (-1.0f * br_px[c]);
+              }
+          }
 
         if (horizontal && vertical)
           {
-            for (c=0;c<3;c++)
-              // normalization to [0, 1]
-              gradient[c] = RMS(hor_grad[c],ver_grad[c])/1.41f;
+            for (c = 0; c < 3; c++)
+              gradient[c] = magnitude (hor_grad[c], ver_grad[c]) / sqrtf(32.0);
           }
         else
           {
             if (keep_sign)
               {
-                for (c=0;c<3;c++)
-                  gradient[c] = hor_grad[c]+ver_grad[c];
+                for (c = 0; c < 3; c++)
+                  gradient[c] = hor_grad[c] + ver_grad[c];
               }
             else
               {
-                for (c=0;c<3;c++)
-                  gradient[c] = fabsf(hor_grad[c]+ver_grad[c]);
+                for (c = 0; c < 3; c++)
+                  gradient[c] = fabsf (hor_grad[c] + ver_grad[c]);
               }
           }
 
         if (has_alpha)
-          gradient[3] = center_pix[3];
+          gradient[3] = center_px[3];
         else
           gradient[3] = 1.0f;
 
-
-        for (c=0; c<4;c++)
-          dst_buf[offset*4+c] = gradient[c];
+        for (c = 0; c < 4; c++)
+          dst_buf[offset * 4 + c] = gradient[c];
 
         offset++;
       }
@@ -303,7 +373,6 @@ edge_sobel (GeglBuffer          *src,
   g_free (src_buf);
   g_free (dst_buf);
 }
-
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
