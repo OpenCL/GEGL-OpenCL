@@ -3,7 +3,7 @@ kernel void kernel_edgesobel(global float4 *in,
                              global float4 *out,
                              const int horizontal,
                              const int vertical,
-                             const int keep_signal,
+                             const int keep_sign,
                              const int has_alpha)
 {
     int gidx = get_global_id(0);
@@ -52,7 +52,7 @@ kernel void kernel_edgesobel(global float4 *in,
     }
     else
     {
-        if (keep_signal)
+        if (keep_sign)
             gradient = hor_grad + ver_grad;
         else
             gradient = fabs(hor_grad + ver_grad);

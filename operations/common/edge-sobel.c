@@ -28,7 +28,7 @@ property_boolean (horizontal,  _("Horizontal"), TRUE)
 
 property_boolean (vertical,  _("Vertical"), TRUE)
 
-property_boolean (keep_signal,  _("Keep Signal"), TRUE)
+property_boolean (keep_sign,  _("Keep Sign"), TRUE)
      description (_("Keep negative values in result, when off the absolute value of the result is used instead."))
 
 #else
@@ -49,7 +49,7 @@ edge_sobel (GeglBuffer          *src,
             const GeglRectangle *dst_rect,
             gboolean            horizontal,
             gboolean            vertical,
-            gboolean            keep_signal,
+            gboolean            keep_sign,
             gboolean            has_alpha);
 
 
@@ -85,13 +85,13 @@ cl_edge_sobel (cl_mem              in_tex,
                const GeglRectangle *roi,
                gboolean            horizontal,
                gboolean            vertical,
-               gboolean            keep_signal,
+               gboolean            keep_sign,
                gboolean            has_alpha)
 {
   const size_t gbl_size[2] = {roi->width, roi->height};
   cl_int n_horizontal  = horizontal;
   cl_int n_vertical    = vertical;
-  cl_int n_keep_signal = keep_signal;
+  cl_int n_keep_sign = keep_sign;
   cl_int n_has_alpha   = has_alpha;
   cl_int cl_err = 0;
 
@@ -110,7 +110,7 @@ cl_edge_sobel (cl_mem              in_tex,
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_int), (void*)&n_vertical);
   CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int), (void*)&n_keep_signal);
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_int), (void*)&n_keep_sign);
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_int), (void*)&n_has_alpha);
   CL_CHECK;
@@ -167,7 +167,7 @@ cl_process (GeglOperation       *operation,
                           &i->roi[0],
                           o->horizontal,
                           o->vertical,
-                          o->keep_signal,
+                          o->keep_sign,
                           has_alpha);
 
       if (err) return FALSE;
@@ -194,7 +194,8 @@ process (GeglOperation       *operation,
     if (cl_process (operation, input, output, result, has_alpha))
       return TRUE;
 
-  edge_sobel (input, &compute, output, result, o->horizontal, o->vertical, o->keep_signal, has_alpha);
+  edge_sobel (input, &compute, output, result,
+              o->horizontal, o->vertical, o->keep_sign, has_alpha);
   return TRUE;
 }
 
@@ -211,7 +212,7 @@ edge_sobel (GeglBuffer          *src,
             const GeglRectangle *dst_rect,
             gboolean            horizontal,
             gboolean            vertical,
-            gboolean            keep_signal,
+            gboolean            keep_sign,
             gboolean            has_alpha)
 {
 
@@ -273,7 +274,7 @@ edge_sobel (GeglBuffer          *src,
           }
         else
           {
-            if (keep_signal)
+            if (keep_sign)
               {
                 for (c=0;c<3;c++)
                   gradient[c] = hor_grad[c]+ver_grad[c];
