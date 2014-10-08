@@ -343,7 +343,7 @@ edge_sobel (GeglBuffer          *src,
         if (horizontal && vertical)
           {
             for (c = 0; c < 3; c++)
-              gradient[c] = magnitude (hor_grad[c], ver_grad[c]) / sqrtf(32.0);
+              gradient[c] = magnitude (hor_grad[c], ver_grad[c]) / sqrtf (32.0f);
           }
         else
           {
