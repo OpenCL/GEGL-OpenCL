@@ -214,56 +214,19 @@ edge_sobel (GeglBuffer          *src,
             gboolean            keep_sign,
             gboolean            has_alpha)
 {
-
   gint x,y;
   gint offset;
   gfloat *src_buf;
+  gfloat *after_src_buf;
   gfloat *dst_buf;
-  gfloat *ptr;
-  gfloat *ptr2;
-  gint src_width;
 
-  /* We use a source buffer that allows us to fill in a 1 pixel border
-     around the source data (which we eventually use in computation
-     below). */
-  src_width = src_rect->width + 2;
-  src_buf = g_new0 (gfloat, src_width * (src_rect->height + 2) * 4);
+  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  /* Get the source data at offset (1,1) into the source buffer. */
   gegl_buffer_get (src, src_rect, 1.0, babl_format ("RGBA float"),
-                   src_buf + (src_width * 4) + 4, src_width * 4 * 4,
-                   GEGL_ABYSS_NONE);
+                   src_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
-  /* Fill in the 1px left and right borders of the source buffer from
-     its neighbour's pixel. */
-  ptr = src_buf + src_width * 4;
-  for (y = 1; y < src_rect->height + 1; y++)
-    {
-      gint c;
-      for (c = 0; c < 4; c++)
-        {
-          ptr[c] = ptr[c+4];
-          ptr[(src_width - 1) * 4 + c] = ptr[(src_width - 2) * 4 + c];
-        }
-      ptr += src_width * 4;
-    }
-
-  /* Fill in the 1px top and bottom borders of the source buffer from
-     its neighbour's pixel. */
-  ptr = src_buf;
-  ptr2 = src_buf + (src_rect->height + 1) * src_width * 4;
-  for (x = 0; x < src_width; x++)
-    {
-      gint c;
-      for (c = 0; c < 4; c++)
-        {
-          ptr[c] = ptr[src_width * 4 + c];
-          ptr2[c] = ptr[-src_width * 4 + c];
-        }
-      ptr += 4;
-      ptr2 += 4;
-    }
+  after_src_buf = src_buf + src_rect->width * src_rect->height * 4;
 
   /* Apply the Sobel operator. Technically, the following is not Sobel
      as it does not use pixel intensities, but works on the individual
@@ -280,31 +243,61 @@ edge_sobel (GeglBuffer          *src,
         gfloat hor_grad[3] = {0.0f, 0.0f, 0.0f};
         gfloat ver_grad[3] = {0.0f, 0.0f, 0.0f};
         gfloat gradient[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+        gfloat *row_start, *row_next;
         gfloat *tl_px, *t_px, *tr_px;
         gfloat *l_px, *center_px, *r_px;
         gfloat *bl_px, *b_px, *br_px;
         gint c;
 
-        /* This pixel */
-        center_px  = src_buf + (src_width * 4) + 4;
-        center_px += (y * src_width + x) * 4;
+        row_start = src_buf + y * src_rect->width * 4;
+        row_next = row_start + src_rect->width * 4;
 
-        /* Top-left pixel */
-        tl_px = center_px - 4 - src_width * 4;
+        /* This pixel */
+        center_px = row_start + x * 4;
         /* Top pixel */
-        t_px = center_px - src_width * 4;
+        t_px = center_px - src_rect->width * 4;
+        /* Top-left pixel */
+        tl_px = t_px - 4;
         /* Top-right pixel */
-        tr_px = center_px + 4 - src_width * 4;
+        tr_px = t_px + 4;
         /* Left pixel */
         l_px = center_px - 4;
         /* Right pixel */
         r_px = center_px + 4;
-        /* Bottom-left pixel */
-        bl_px = center_px - 4 + src_width * 4;
         /* Bottom pixel */
-        b_px = center_px + src_width * 4;
+        b_px = center_px + src_rect->width * 4;
+        /* Bottom-left pixel */
+        bl_px = b_px - 4;
         /* Bottom-right pixel */
-        br_px = center_px + 4 + src_width * 4;
+        br_px = b_px + 4;
+
+        /* If pixels around the center pixel are out of source rect
+           bounds, clamp them into the rect. */
+        if (t_px < src_buf)
+          {
+            tl_px += src_rect->width * 4;
+            t_px += src_rect->width * 4;
+            tr_px += src_rect->width * 4;
+          }
+        else if (b_px >= after_src_buf)
+          {
+            bl_px -= src_rect->width * 4;
+            b_px -= src_rect->width * 4;
+            br_px -= src_rect->width * 4;
+          }
+
+        if (l_px < row_start)
+          {
+            tl_px += 4;
+            l_px += 4;
+            bl_px += 4;
+          }
+        else if (r_px >= row_next)
+          {
+            tr_px -= 4;
+            r_px -= 4;
+            br_px -= 4;
+          }
 
         if (horizontal)
           {
