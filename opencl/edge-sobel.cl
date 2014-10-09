@@ -32,23 +32,22 @@ kernel void kernel_edgesobel(global float4 *in,
     if (horizontal)
     {
         hor_grad +=
-            - 1.0f * pix_fl + 1.0f * pix_fr
-            - 2.0f * pix_ml + 2.0f * pix_mr
-            - 1.0f * pix_bl + 1.0f * pix_br;
+            (-1.0f * pix_fl + 1.0f * pix_fr) +
+            (-2.0f * pix_ml + 2.0f * pix_mr) +
+            (-1.0f * pix_bl + 1.0f * pix_br);
     }
     if (vertical)
     {
         ver_grad +=
-            - 1.0f * pix_fl - 2.0f * pix_fm
-            - 1.0f * pix_fr + 1.0f * pix_bl
-            + 2.0f * pix_bm + 1.0f * pix_br;
+            ( 1.0f * pix_fl) + ( 2.0f * pix_fm) + ( 1.0f * pix_fr) +
+            (-1.0f * pix_bl) + (-2.0f * pix_bm) + (-1.0f * pix_br);
     }
 
     if (horizontal && vertical)
     {
-        gradient = sqrt(
-            hor_grad * hor_grad +
-            ver_grad * ver_grad) / 1.41f;
+        /* sqrt(32.0) = 5.656854249492381 */
+        gradient = sqrt(hor_grad * hor_grad +
+                        ver_grad * ver_grad) / 5.656854249492381;
     }
     else
     {
