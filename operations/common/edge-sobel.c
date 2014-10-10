@@ -343,12 +343,12 @@ edge_sobel (GeglBuffer          *src,
             if (keep_sign)
               {
                 for (c = 0; c < 3; c++)
-                  gradient[c] = hor_grad[c] + ver_grad[c];
+                  gradient[c] = 0.5f + (hor_grad[c] + ver_grad[c]) / 8.0f;
               }
             else
               {
                 for (c = 0; c < 3; c++)
-                  gradient[c] = fabsf (hor_grad[c] + ver_grad[c]);
+                  gradient[c] = fabsf (hor_grad[c] + ver_grad[c]) / 4.0f;
               }
           }
 
