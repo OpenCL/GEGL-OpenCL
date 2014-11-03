@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:color-exchange'>
+    <params>
+      <param name='from-color'>rgba(1.0000, 1.0000, 0.0000, 1.0000)</param>
+      <param name='to-color'>rgba(0.0000, 1.0000, 0.0000, 1.0000)</param>
+      <param name='red-threshold'>0.500</param>
+      <param name='green-threshold'>0.500</param>
+      <param name='blue-threshold'>0.500</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/duck.png</param>
+    </params>
+  </node>
+</gegl>
+
