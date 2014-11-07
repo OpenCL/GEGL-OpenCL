@@ -31,3 +31,6 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 AM_LDFLAGS = -avoid-version -export-dynamic -module $(no_undefined)
 
 ext_dir = $(libdir)/gegl-@GEGL_API_VERSION@
+
+%.c.h: %.c $(top_builddir)/tools/csourcetostring.py
+	$(PYTHON) $(top_builddir)/tools/csourcetostring.py $<
