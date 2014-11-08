@@ -74,8 +74,8 @@ path_changed (GeglPath            *path,
               const GeglRectangle *roi,
               gpointer             userdata)
 {
-  GeglRectangle rect = *roi;
-  GeglProperties    *o   = GEGL_PROPERTIES (userdata);
+  GeglRectangle   rect = *roi;
+  GeglProperties *o    = GEGL_PROPERTIES (userdata);
   /* invalidate the incoming rectangle */
 
   rect.x -= o->size/2;
@@ -89,8 +89,8 @@ path_changed (GeglPath            *path,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglProperties  *o = GEGL_PROPERTIES (operation);
-  WarpPrivate *priv;
+  GeglProperties *o     = GEGL_PROPERTIES (operation);
+  WarpPrivate    *priv;
 
   const Babl *format = babl_format_n (babl_type ("float"), 2);
   gegl_operation_set_format (operation, "input", format);
@@ -173,8 +173,8 @@ calc_lut (GeglProperties  *o)
 
 static gdouble
 get_stamp_force (GeglProperties *o,
-                 gdouble     x,
-                 gdouble     y)
+                 gdouble         x,
+                 gdouble         y)
 {
   WarpPrivate  *priv = (WarpPrivate*) o->user_data;
   gfloat        radius;
@@ -207,9 +207,9 @@ get_stamp_force (GeglProperties *o,
 
 static void
 stamp (GeglProperties          *o,
-       const GeglRectangle *result,
-       gdouble              x,
-       gdouble              y)
+       const GeglRectangle     *result,
+       gdouble                  x,
+       gdouble                  y)
 {
   WarpPrivate         *priv = (WarpPrivate*) o->user_data;
   GeglBufferIterator  *it;
@@ -337,7 +337,7 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglProperties          *o = GEGL_PROPERTIES (operation);
+  GeglProperties      *o    = GEGL_PROPERTIES (operation);
   WarpPrivate         *priv = (WarpPrivate*) o->user_data;
   gdouble              dist;
   gdouble              stamps;
