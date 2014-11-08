@@ -473,7 +473,7 @@ if test "x$with_vala" != "xno"; then
     have_vapigen="no  (vapigen not found)")
 fi
 
-if test "x$have_vapigen" == "xyes"; then
+if test "x$have_vapigen" = "xyes"; then
   AC_PATH_PROG(VAPIGEN, vapigen, no)
   if test "$VAPIGEN" = "no"; then
     have_vapigen="no  (vapigen executable not found)"
