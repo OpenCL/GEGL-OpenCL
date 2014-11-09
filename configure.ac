@@ -494,6 +494,16 @@ AC_CHECK_FUNCS(fsync)
 PKG_CHECK_MODULES(BABL, babl >= babl_required_version)
 
 GLIB_PACKAGES="gobject-2.0 gmodule-2.0 gio-2.0"
+# select platform-specific GIO
+case "$os_win32" in
+  yes)
+    GLIB_PACKAGES+=" gio-windows-2.0"
+    ;;
+  *)
+    GLIB_PACKAGES+=" gio-unix-2.0"
+    ;;
+esac
+
 AC_SUBST(GLIB_PACKAGES)
 
 dnl This PATH_GLIB is somewhat redundant, but does a sanity compile and 
