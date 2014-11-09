@@ -124,7 +124,9 @@ class Context():
       subprocess.check_call([self.img_cmp_bin, ref_image_path, out_image_path], env=img_cmp_env)
     except KeyboardInterrupt:
       raise
-    except subprocess.CalledProcessError:
+    except subprocess.CalledProcessError, e:
+      if VERBOSE:
+        print (e)
       print (FAIL_STR, result_name_str)
       self.fail_count += 1
       return False
