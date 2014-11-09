@@ -20,12 +20,15 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-
+#include <gio/gio.h>
 
 #ifdef GEGL_PROPERTIES
 
 property_file_path (path, _("File"), "")
   description (_("Path of file to load."))
+// TODO: use dedicated property spec for URI
+property_string (uri, _("URI"), "")
+  description (_("URI for file to load."))
 
 #else
 
@@ -35,46 +38,86 @@ property_file_path (path, _("File"), "")
 #include "gegl-op.h"
 #include <png.h>
 
-static FILE * open_png(const gchar *path)
+static void
+read_fn(png_structp png_ptr, png_bytep buffer, png_size_t length)
 {
-  FILE *infile;
+  GError *err = NULL;
+  GInputStream *stream = G_INPUT_STREAM(png_get_io_ptr(png_ptr));
+  gboolean success = FALSE;
+  gsize bytes_read = 0;
+  g_assert(stream);
+
+  success = g_input_stream_read_all(stream, buffer, length, &bytes_read, NULL, &err);
+  if (!success) {
+    g_printerr("gegl:load-png %s: %s\n", __PRETTY_FUNCTION__, err->message);
+  }
+}
+
+static void
+error_fn(png_structp png_ptr, png_const_charp msg)
+{
+  g_printerr("LIBPNG ERROR: %s", msg);
+}
+
+static GFile * open_png(const gchar *uri, const gchar *path)
+{
+  GError *err = NULL;
+  GFile *infile = NULL;
+  GInputStream *fis = NULL;
   const size_t hdr_size=8;
-  size_t hdr_read_size;
+  gssize hdr_read_size;
   unsigned char header[hdr_size];
 
-  if (!strcmp (path, "-"))
+  g_return_val_if_fail(uri || path, NULL);
+
+  if (strlen(uri) > 0)
     {
-      infile = stdin;
+      infile = g_file_new_for_uri(uri);
+    }
+  else if (g_strcmp0 (path, "-") == 0)
+    {
+      //infile = stdin; // FIXME: implement
+      g_assert(FALSE);
     }
   else
     {
-      infile = fopen (path, "rb");
+      infile = g_file_new_for_path(path);
     }
-  if (!infile)
-    {
-      return infile;
-    }
+  g_return_val_if_fail(infile, NULL);
 
-  if((hdr_read_size=fread(header, 1, hdr_size, infile))!=hdr_size)
+  fis = G_INPUT_STREAM(g_file_read(infile, NULL, &err));
+  hdr_read_size = g_input_stream_read(G_INPUT_STREAM(fis), header, hdr_size, NULL, &err);
+  if (hdr_read_size != hdr_size)
     {
-      fclose(infile);
-      g_warning ("%s is too short for a png file, only %lu bytes.",
-                 path, (unsigned long)hdr_read_size);
+      g_input_stream_close(fis, NULL, NULL);
+      g_object_unref(fis);
+
+      if (err) {
+        g_printerr("%s", err->message);
+      } else {
+        g_warning ("%s is too short for a png file, only %lu bytes.",
+                   path, (unsigned long)hdr_read_size);
+      }
+
       return NULL;
     }
 
   if (png_sig_cmp (header, 0, hdr_size))
     {
-      fclose (infile);
+      g_input_stream_close(fis, NULL, NULL);
+      g_object_unref(fis);
       g_warning ("%s is not a png file", path);
       return NULL;
     }
+
+  g_input_stream_close(fis, NULL, NULL); // consumer should open new
+  g_object_unref(fis);
   return infile;
 }
 
 static gint
 gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
+                        GInputStream *stream,
                         gint         dest_x,
                         gint         dest_y,
                         gint        *ret_width,
@@ -87,7 +130,6 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   gint           number_of_passes=1;
   png_uint_32    w;
   png_uint_32    h;
-  FILE          *infile;
   png_structp    load_png_ptr;
   png_infop      load_info_ptr;
   guchar        *pixels;
@@ -97,18 +139,12 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   unsigned   int i;
   png_bytep  *row_p = NULL;
 
-  infile = open_png (path);
+  g_return_val_if_fail(stream, -1);
 
-  if (!infile)
-    {
-      return -1;
-    }
-
-  load_png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  load_png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, error_fn, NULL);
 
   if (!load_png_ptr)
     {
-      fclose (infile);
       return -1;
     }
 
@@ -116,7 +152,6 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
   if (!load_info_ptr)
     {
       png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
-      fclose (infile);
       return -1;
     }
 
@@ -125,12 +160,12 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
       png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
      if (row_p)
         g_free (row_p);
-      fclose (infile);
       return -1;
     }
 
-  png_init_io (load_png_ptr, infile);
-  png_set_sig_bytes (load_png_ptr, 8);
+  png_set_read_fn(load_png_ptr, stream, read_fn);
+
+//  png_set_sig_bytes (load_png_ptr, 8);
   png_read_info (load_png_ptr, load_info_ptr);
   {
     int color_type;
@@ -184,7 +219,6 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
         default:
           g_warning ("color type mismatch");
           png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
-          fclose (infile);
           return -1;
       }
 
@@ -244,36 +278,26 @@ gegl_buffer_import_png (GeglBuffer  *gegl_buffer,
 
   g_free (pixels);
 
-  if (infile!=stdin)
-    fclose (infile);
-
   return 0;
 }
 
-static gint query_png (const gchar *path,
+static gint query_png (GInputStream *stream,
                        gint        *width,
                        gint        *height,
                        gpointer    *format)
 {
   png_uint_32   w;
   png_uint_32   h;
-  FILE         *infile;
   png_structp   load_png_ptr;
   png_infop     load_info_ptr;
 
   png_bytep  *row_p = NULL;
 
-  infile = open_png (path);
+  g_return_val_if_fail(stream, -1);
 
-  if (!infile)
-    {
-      return -1;
-    }
-
-  load_png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  load_png_ptr = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL, error_fn, NULL);
   if (!load_png_ptr)
     {
-      fclose (infile);
       return -1;
     }
 
@@ -281,7 +305,6 @@ static gint query_png (const gchar *path,
   if (!load_info_ptr)
     {
       png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
-      fclose (infile);
       return -1;
     }
 
@@ -290,12 +313,11 @@ static gint query_png (const gchar *path,
      png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
      if (row_p)
         g_free (row_p);
-      fclose (infile);
       return -1;
     }
 
-  png_init_io (load_png_ptr, infile);
-  png_set_sig_bytes (load_png_ptr, 8);
+  png_set_read_fn(load_png_ptr, stream, read_fn);
+//  png_set_sig_bytes (load_png_ptr, 8);
   png_read_info (load_png_ptr, load_info_ptr);
   {
     int bit_depth;
@@ -339,7 +361,6 @@ static gint query_png (const gchar *path,
       {
         g_warning ("color type mismatch");
         png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
-        fclose (infile);
         return -1;
       }
 
@@ -355,14 +376,12 @@ static gint query_png (const gchar *path,
       {
         g_warning ("bit depth mismatch");
         png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
-        fclose (infile);
         return -1;
       }
 
     *format = (void*)babl_format (format_string);
   }
   png_destroy_read_struct (&load_png_ptr, &load_info_ptr, NULL);
-  fclose (infile);
   return 0;
 }
 
@@ -374,8 +393,12 @@ get_bounding_box (GeglOperation *operation)
   gint          width, height;
   gint          status;
   gpointer      format;
+  GError *err = NULL;
 
-  status = query_png (o->path, &width, &height, &format);
+  GFile *infile = open_png(o->uri, o->path);
+  GInputStream *stream = G_INPUT_STREAM(g_file_read(infile, NULL, &err));
+  status = query_png (stream, &width, &height, &format);
+  g_input_stream_close(stream, NULL, NULL);
 
   if (status)
     {
@@ -386,6 +409,9 @@ get_bounding_box (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
   result.width  = width;
   result.height  = height;
+
+  g_object_unref(infile);
+  g_object_unref(stream);
   return result;
 }
 
@@ -399,26 +425,40 @@ process (GeglOperation       *operation,
   gint        problem;
   gpointer    format;
   gint        width, height;
+  GFile *infile = open_png(o->uri, o->path);
+  GError *err = NULL;
+  
+  GInputStream *stream = G_INPUT_STREAM(g_file_read(infile, NULL, &err));
 
-  problem = query_png (o->path, &width, &height, &format);
+  problem = query_png (stream, &width, &height, &format);
   if (problem)
     {
+      g_object_unref(infile);
+      g_object_unref(stream);
       g_warning ("%s is %s really a PNG file?",
       G_OBJECT_TYPE_NAME (operation), o->path);
       return FALSE;
     }
 
-  problem = gegl_buffer_import_png (output, o->path, 0, 0,
+  // TEMP: avoding having to recreate stream. import_png should do query??
+  g_input_stream_close(stream, NULL, NULL);
+  g_object_unref(stream);
+  stream = G_INPUT_STREAM(g_file_read(infile, NULL, &err));
+
+  problem = gegl_buffer_import_png (output, stream, 0, 0,
                                     &width, &height, format);
 
   if (problem)
     {
+      g_object_unref(infile);
+      g_object_unref(stream);
       g_warning ("%s failed to open file %s for reading.",
                  G_OBJECT_TYPE_NAME (operation), o->path);
       return FALSE;
     }
-
-  return  TRUE;
+  g_object_unref(infile);
+  g_object_unref(stream);
+  return TRUE;
 }
 
 static GeglRectangle
