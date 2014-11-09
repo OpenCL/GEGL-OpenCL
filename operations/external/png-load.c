@@ -71,8 +71,8 @@ read_fn(png_structp png_ptr, png_bytep buffer, png_size_t length)
   gsize bytes_read = 0;
   g_assert(stream);
 
-  success = g_input_stream_read_all(stream, buffer, length, &bytes_read, NULL, &err);
-  if (!success) {
+  g_input_stream_read_all(stream, buffer, length, &bytes_read, NULL, &err);
+  if (err) {
     g_printerr("gegl:load-png %s: %s\n", __PRETTY_FUNCTION__, err->message);
   }
 }
