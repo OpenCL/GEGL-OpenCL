@@ -141,8 +141,9 @@ set_clone_prop_as_well:
                 }
               else
                 {
-                  g_warning ("Unable to obtain absolute path for parameter %s\n",
-                             param_name);
+                  g_warning ("Unable to obtain absolute path for parameter %s\n", param_name);
+                  // Attempt to set raw value, useful for '-' meaning stdin
+                  gegl_node_set (new, param_name, param_value, NULL);
                 }
             }
         }
