@@ -421,11 +421,11 @@ get_bounding_box (GeglOperation *operation)
 
   GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &infile, &err);
   WARN_IF_ERROR(err);
+  if (!stream) return;
   status = query_png(stream, &width, &height, &format, &err);
   WARN_IF_ERROR(err);
   g_input_stream_close(stream, NULL, NULL);
 
-  g_assert(status == 0);
   if (status)
     {
       width = 0;
