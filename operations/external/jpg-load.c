@@ -286,6 +286,8 @@ gegl_jpg_load_get_bounding_box (GeglOperation *operation)
   GFile *file = NULL;
   GError *err = NULL;
   GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &file, &err);
+  if (!stream)
+    return;
   const gint status = gegl_jpg_load_query_jpg (stream, &width, &height, &format);
 
   if (format)
@@ -308,6 +310,8 @@ gegl_jpg_load_process (GeglOperation       *operation,
   GFile *file = NULL;
   GError *err = NULL;
   GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &file, &err);
+  if (!stream)
+    return;
   const gint status = gegl_jpg_load_buffer_import_jpg(output, stream, 0, 0);
   if (err)
     {
