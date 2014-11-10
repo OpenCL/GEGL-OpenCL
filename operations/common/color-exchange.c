@@ -32,6 +32,9 @@
 property_color (from_color, _("From Color"), "white")
     description(_("The color to change."))
 
+property_color (to_color, _("To Color"), "black")
+    description(_("Replacement color."))
+
 property_double (red_threshold, _("Red Threshold"), 0.0)
     description (_("Red threshold of the input color"))
     value_range (0.0, 1.0)
@@ -43,9 +46,6 @@ property_double (green_threshold, _("Green Threshold"), 0.0)
 property_double (blue_threshold, _("Blue Threshold"), 0.0)
     description (_("Blue threshold of the input color"))
     value_range (0.0, 1.0)
-
-property_color (to_color, _("To Color"), "black")
-    description(_("Replacement color."))
 
 #else
 
