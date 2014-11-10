@@ -94,6 +94,7 @@ GEGL_sources = \
 	gegl-utils.c			\
 	gegl-lookup.c			\
 	gegl-xml.c			\
+	gegl-gio.c			\
 	gegl-random.c			\
 	gegl-matrix.c			\
 	\
@@ -114,6 +115,7 @@ GEGL_sources = \
 	gegl-op.h			    \
 	gegl-plugin.h			\
 	gegl-random-private.h		\
+	gegl-gio-private.h		\
 	gegl-types-internal.h		\
 	gegl-xml.h
 

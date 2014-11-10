@@ -20,13 +20,7 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include <gio/gio.h>
-
-#ifdef G_OS_WIN32
-#include <gio/gwin32inputstream.h>  
-#else
-#include <gio/gunixinputstream.h>
-#endif
+#include <gegl-gio-private.h>
 
 #ifdef GEGL_PROPERTIES
 
@@ -67,7 +61,6 @@ read_fn(png_structp png_ptr, png_bytep buffer, png_size_t length)
 {
   GError *err = NULL;
   GInputStream *stream = G_INPUT_STREAM(png_get_io_ptr(png_ptr));
-  gboolean success = FALSE;
   gsize bytes_read = 0;
   g_assert(stream);
 
@@ -116,50 +109,6 @@ check_valid_png_header(GInputStream *stream, GError **err)
       return FALSE;
     }
   return TRUE;
-}
-
-
-// TODO: move somewhere general for operations to reuse?
-static GInputStream *
-open_stream(const gchar *uri, const gchar *path, GFile **out_file, GError **err)
-{
-  GFile *infile = NULL;
-  GInputStream *fis = NULL;
-  g_return_val_if_fail(uri || path, NULL);
-  g_return_val_if_fail(out_file, NULL);
-
-  g_print("open_stream: path=%s uri=%s", path, uri);
-
-  if (path && g_strcmp0(path, "-") == 0)
-    {
-      const gboolean close_fd = FALSE;
-      infile = NULL;
-#ifdef G_OS_WIN32 // untested :)
-      fis = g_win32_input_stream_new(stdin, close_fd);
-#else
-      fis = g_unix_input_stream_new(STDIN_FILENO, close_fd);
-#endif
-    }
-  else if (uri && strlen(uri) > 0)
-    {
-      infile = g_file_new_for_uri(uri);
-    }
-  else if (path && strlen(path) > 0)
-    {
-      infile = g_file_new_for_path(path);
-    }
-  else {
-    return NULL;
-  }
-
-  if (infile)
-    {
-      g_assert(!fis);
-      fis = G_INPUT_STREAM(g_file_read(infile, NULL, err));
-      *out_file = infile;
-    }
-
-  return fis;
 }
 
 static const Babl *
@@ -470,7 +419,7 @@ get_bounding_box (GeglOperation *operation)
   GError *err = NULL;
   GFile *infile = NULL;
 
-  GInputStream *stream = open_stream(o->uri, o->path, &infile, &err);
+  GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &infile, &err);
   WARN_IF_ERROR(err);
   status = query_png(stream, &width, &height, &format, &err);
   WARN_IF_ERROR(err);
@@ -504,7 +453,7 @@ process (GeglOperation       *operation,
   Babl        *format = NULL;
   GError *err = NULL;
   GFile *infile = NULL;
-  GInputStream *stream = open_stream(o->uri, o->path, &infile, &err);
+  GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &infile, &err);
   WARN_IF_ERROR(err);
   problem = gegl_buffer_import_png (output, stream, 0, 0,
                                     &width, &height, format, &err);
