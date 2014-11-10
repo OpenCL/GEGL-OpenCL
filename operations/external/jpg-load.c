@@ -285,14 +285,18 @@ gegl_jpg_load_get_bounding_box (GeglOperation *operation)
   const Babl *format = NULL;
   GFile *file = NULL;
   GError *err = NULL;
+  gint status = -1;
+
   GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &file, &err);
   if (!stream)
-    return;
-  const gint status = gegl_jpg_load_query_jpg (stream, &width, &height, &format);
+    return (GeglRectangle) {0, 0, 0, 0};
+  status = gegl_jpg_load_query_jpg (stream, &width, &height, &format);
+  g_input_stream_close(stream, NULL, NULL);
 
   if (format)
     gegl_operation_set_format (operation, "output", format);
 
+  g_object_unref(stream);
   if (file) g_object_unref(file);
   if (err || status)
     return (GeglRectangle) {0, 0, 0, 0};
@@ -309,22 +313,23 @@ gegl_jpg_load_process (GeglOperation       *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   GFile *file = NULL;
   GError *err = NULL;
+  gint status = -1;
   GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &file, &err);
   if (!stream)
-    return;
-  const gint status = gegl_jpg_load_buffer_import_jpg(output, stream, 0, 0);
+    return FALSE;
+  status = gegl_jpg_load_buffer_import_jpg(output, stream, 0, 0);
+  g_input_stream_close(stream, NULL, NULL);
+
   if (err)
     {
       g_warning ("%s failed to open file %s for reading: %s",
         G_OBJECT_TYPE_NAME (operation), o->path, err->message);
-      return FALSE;
-    }
-  if (status)
-    {
+      g_object_unref(stream);
       return FALSE;
     }
 
-  return  TRUE;
+  g_object_unref(stream);
+  return status != 1;
 }
 
 static GeglRectangle
