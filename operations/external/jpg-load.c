@@ -19,11 +19,13 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_PROPERTIES
 
 property_file_path (path, _("File"), "")
   description (_("Path of file to load"))
+
+property_string (uri, _("URI"), "") // TODO: use file_ui property type
+  description (_("URI of file to load"))
 
 #else
 
@@ -33,6 +35,7 @@ property_file_path (path, _("File"), "")
 #include "gegl-op.h"
 #include <stdio.h>
 #include <jpeglib.h>
+#include <gegl-gio-private.h>
 
 static const gchar *
 jpeg_colorspace_name(J_COLOR_SPACE space)
@@ -66,28 +69,120 @@ babl_from_jpeg_colorspace(J_COLOR_SPACE space)
   return format;
 }
 
+typedef struct {
+    GInputStream *stream;
+    gchar *buffer;
+    gsize buffer_size;
+} GioSource;
+
+static boolean
+gio_source_fill(j_decompress_ptr cinfo)
+{
+    struct jpeg_source_mgr* src = cinfo->src;
+    GioSource *self = (GioSource *)cinfo->client_data;
+    GError *err = NULL;
+
+    const gssize bytes_read = g_input_stream_read(self->stream, self->buffer,
+                                                  self->buffer_size, NULL, &err);
+    if (!err)
+      {
+        src->next_input_byte = (JOCTET*)self->buffer;
+        src->bytes_in_buffer = bytes_read;
+      }
+    else
+      {
+        g_print("%s: %s\n", __PRETTY_FUNCTION__, err->message);
+      }
+    
+
+    /* FIXME: needed for EOF?
+    static const JOCTET EOI_BUFFER[ 2 ] = { (JOCTET)0xFF, (JOCTET)JPEG_EOI };
+    src->next_input_byte = EOI_BUFFER;
+    src->bytes_in_buffer = sizeof( EOI_BUFFER );
+    */
+
+    return TRUE;
+}
+
+static void
+gio_source_skip(j_decompress_ptr cinfo, long num_bytes)
+{
+    struct jpeg_source_mgr* src = (struct jpeg_source_mgr*)cinfo->src;
+    GioSource *self = (GioSource *)cinfo->client_data;
+
+    if (num_bytes < src->bytes_in_buffer)
+      {
+        // just skip inside buffer
+        src->next_input_byte += (size_t)num_bytes;
+        src->bytes_in_buffer -= (size_t)num_bytes;
+      }
+    else
+      {
+        // skip in stream, discard whole buffer
+        GError *err = NULL;
+        const gssize bytes_to_skip = num_bytes-src->bytes_in_buffer;
+        const gssize skipped = g_input_stream_skip(self->stream, bytes_to_skip, NULL, &err);
+        if (err)
+          {
+            g_printerr("%s: skipped=%ld, err=%s\n", __PRETTY_FUNCTION__, skipped, err->message);
+            g_error_free(err);
+          }
+        src->bytes_in_buffer = 0;
+        src->next_input_byte = NULL;
+      }
+
+}
+
+static void
+gio_source_init(j_decompress_ptr cinfo)
+{
+    GioSource *self = (GioSource *)cinfo->client_data;
+    self->buffer = g_new(gchar, self->buffer_size);
+}
+ 
+static void
+gio_source_destroy(j_decompress_ptr cinfo)
+{
+    GioSource *self = (GioSource *)cinfo->client_data;
+    g_free(self->buffer);
+}
+
+static void
+gio_source_enable(j_decompress_ptr cinfo, struct jpeg_source_mgr* src, GioSource *data)
+{
+    src->resync_to_restart = jpeg_resync_to_restart;
+
+    src->init_source = gio_source_init;
+    src->fill_input_buffer = gio_source_fill;
+    src->skip_input_data = gio_source_skip;
+    src->term_source = gio_source_destroy;
+
+    // force fill at once
+    src->bytes_in_buffer = 0;
+    src->next_input_byte = (JOCTET*)NULL;
+
+    //g_assert(!cinfo->client_data);
+    cinfo->client_data = data;
+    cinfo->src = src;
+}
+
 
 static gint
-gegl_jpg_load_query_jpg (const gchar *path,
+gegl_jpg_load_query_jpg (GInputStream *stream,
                          gint        *width,
                          gint        *height,
                          const Babl  **out_format)
 {
   struct jpeg_decompress_struct  cinfo;
   struct jpeg_error_mgr          jerr;
-  FILE                          *infile;
+  struct jpeg_source_mgr         src;
   gint                           status = 0;
   const Babl *format = NULL;
-
-  if ((infile = fopen (path, "rb")) == NULL)
-    {
-      /*g_warning ("unable to open %s for jpeg import", path);*/
-      return -1;
-    }
+  GioSource gio_source = { stream, NULL, 1024 };
 
   jpeg_create_decompress (&cinfo);
   cinfo.err = jpeg_std_error (&jerr);
-  jpeg_stdio_src (&cinfo, infile);
+  gio_source_enable(&cinfo, &src, &gio_source);
 
   (void) jpeg_read_header (&cinfo, TRUE);
 
@@ -107,34 +202,28 @@ gegl_jpg_load_query_jpg (const gchar *path,
 
   jpeg_destroy_decompress (&cinfo);
 
-  fclose (infile);
   return status;
 }
 
 static gint
 gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
-                                 const gchar *path,
+                                 GInputStream *stream,
                                  gint         dest_x,
                                  gint         dest_y)
 {
   gint row_stride;
   struct jpeg_decompress_struct  cinfo;
   struct jpeg_error_mgr          jerr;
-  FILE                          *infile;
+  struct jpeg_source_mgr         src;
   JSAMPARRAY                     buffer;
   const Babl                    *format;
   GeglRectangle                  write_rect;
   gboolean                       is_inverted_cmyk = FALSE;
-
-  if ((infile = fopen (path, "rb")) == NULL)
-    {
-      g_warning ("unable to open %s for jpeg import", path);
-      return -1;
-    }
+  GioSource gio_source = { stream, NULL, 1024 };
 
   jpeg_create_decompress (&cinfo);
   cinfo.err = jpeg_std_error (&jerr);
-  jpeg_stdio_src (&cinfo, infile);
+  gio_source_enable(&cinfo, &src, &gio_source);
 
   (void) jpeg_read_header (&cinfo, TRUE);
   (void) jpeg_start_decompress (&cinfo);
@@ -184,7 +273,6 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
     }
 
   jpeg_destroy_decompress (&cinfo);
-  fclose (infile);
 
   return 0;
 }
@@ -195,12 +283,16 @@ gegl_jpg_load_get_bounding_box (GeglOperation *operation)
   gint width, height;
   GeglProperties   *o = GEGL_PROPERTIES (operation);
   const Babl *format = NULL;
-  const gint status = gegl_jpg_load_query_jpg (o->path, &width, &height, &format);
+  GFile *file = NULL;
+  GError *err = NULL;
+  GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &file, &err);
+  const gint status = gegl_jpg_load_query_jpg (stream, &width, &height, &format);
 
   if (format)
     gegl_operation_set_format (operation, "output", format);
 
-  if (status)
+  if (file) g_object_unref(file);
+  if (err || status)
     return (GeglRectangle) {0, 0, 0, 0};
   else
     return (GeglRectangle) {0, 0, width, height};
@@ -213,12 +305,18 @@ gegl_jpg_load_process (GeglOperation       *operation,
                        gint                 level)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
-
-  if (gegl_jpg_load_buffer_import_jpg (output, o->path, 0, 0))
+  GFile *file = NULL;
+  GError *err = NULL;
+  GInputStream *stream = gegl_gio_open_input_stream(o->uri, o->path, &file, &err);
+  const gint status = gegl_jpg_load_buffer_import_jpg(output, stream, 0, 0);
+  if (err)
     {
-      g_warning ("%s failed to open file %s for reading.",
-        G_OBJECT_TYPE_NAME (operation), o->path);
-
+      g_warning ("%s failed to open file %s for reading: %s",
+        G_OBJECT_TYPE_NAME (operation), o->path, err->message);
+      return FALSE;
+    }
+  if (status)
+    {
       return FALSE;
     }
 
