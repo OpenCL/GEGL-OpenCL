@@ -48,6 +48,7 @@ TESTS = \
   softglow.xml                    \
   stretch-contrast.xml            \
   transform.xml                   \
+  video-degradation.xml           \
   weighted-blend.xml              \
   rectangles.xml
 

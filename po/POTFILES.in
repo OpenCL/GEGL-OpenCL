@@ -19,6 +19,7 @@ operations/common/cartoon.c
 operations/common/channel-mixer.c
 operations/common/checkerboard.c
 operations/common/color.c
+operations/common/color-exchange.c
 operations/common/color-reduction.c
 operations/common/color-rotate.c
 operations/common/color-temperature.c
@@ -113,6 +114,7 @@ operations/common/tile-glass.c
 operations/common/tile-seamless.c
 operations/common/unsharp-mask.c
 operations/common/value-invert.c
+operations/common/video-degradation.c
 operations/common/vignette.c
 operations/common/warp.c
 operations/common/waves.c
