@@ -18,6 +18,7 @@
 
 #include <gegl-gio-private.h>
 #include <string.h>
+#include <stdio.h>
 
 #ifdef G_OS_WIN32
 #include <gio/gwin32inputstream.h>  
