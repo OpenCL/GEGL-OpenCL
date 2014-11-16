@@ -109,6 +109,7 @@ op_LTLIBRARIES = \
 	stress.la \
 	stretch-contrast-hsv.la \
 	stretch-contrast.la \
+	supernova.la \
 	svg-huerotate.la \
 	svg-luminancetoalpha.la \
 	svg-matrix.la \

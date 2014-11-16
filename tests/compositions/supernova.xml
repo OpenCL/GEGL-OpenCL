@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:supernova'>
+    <params>
+      <param name='center-x'>0.500</param>
+      <param name='center-y'>0.500</param>
+      <param name='radius'>20</param>
+      <param name='spokes-count'>200</param>
+      <param name='random-hue'>20</param>
+      <param name='color'>rgba(1.0000, 0.0000, 0.0000, 1.0000)</param>
+      <param name='seed'>0</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/duck.png</param>
+    </params>
+  </node>
+</gegl>
+

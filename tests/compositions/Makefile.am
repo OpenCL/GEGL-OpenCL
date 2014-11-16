@@ -47,6 +47,7 @@ TESTS = \
   simple-scale.xml                \
   softglow.xml                    \
   stretch-contrast.xml            \
+  supernova.xml                   \
   transform.xml                   \
   video-degradation.xml           \
   weighted-blend.xml              \
