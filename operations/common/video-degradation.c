@@ -187,6 +187,53 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
 }
 
+static gboolean
+cl_process (GeglOperation       *operation,
+            cl_mem               in_buf,
+            cl_mem               out_buf,
+            const size_t         n_pixels,
+            const GeglRectangle *roi,
+            gint                 level)
+{
+  GeglOperationClass *operation_class = GEGL_OPERATION_GET_CLASS (operation);
+  GeglClRunData *cl_data = operation_class->cl_data;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  const size_t gbl_size[2] = {roi->width, roi->height};
+  const size_t gbl_off[2]  = {roi->x, roi->y};
+  cl_int cl_err = 0;
+
+  cl_mem filter_pat = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                           CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                           pattern_width[o->pattern] *
+                                           pattern_height[o->pattern] * sizeof(cl_int),
+                                           (void*)pattern[o->pattern],
+                                           &cl_err);
+  CL_CHECK;
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof(cl_mem), &in_buf,
+                                    sizeof(cl_mem), &out_buf,
+                                    sizeof(cl_mem), &filter_pat,
+                                    sizeof(cl_int), &pattern_width[o->pattern],
+                                    sizeof(cl_int), &pattern_height[o->pattern],
+                                    sizeof(cl_int), &o->additive,
+                                    sizeof(cl_int), &o->rotated,
+                                    NULL);
+  CL_CHECK;
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        gbl_off, gbl_size, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+  cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
+  CL_CHECK;
+  cl_err = gegl_clReleaseMemObject (filter_pat);
+  CL_CHECK;
+  return FALSE;
+  error:
+    if (filter_pat)
+      gegl_clReleaseMemObject (filter_pat);
+    return TRUE;
+}
 
 static gboolean
 process (GeglOperation       *operation,
@@ -250,6 +297,8 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
+#include "opencl/video-degradation.cl.h"
+
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
@@ -260,9 +309,9 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class    = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   operation_class->prepare = prepare;
-  operation_class->opencl_support = FALSE;
 
   filter_class->process    = process;
+  filter_class->cl_process = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:video-degradation",
@@ -271,6 +320,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "license",     "GPL3+",
     "description", _("This function simulates the degradation of "
                      "being on an old low-dotpitch RGB video monitor."),
+    "cl-source"  , video_degradation_cl_source,
     NULL);
 }
 
