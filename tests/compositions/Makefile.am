@@ -45,6 +45,7 @@ TESTS = \
   rgb-params.xml                  \
   rotate.xml                      \
   simple-scale.xml                \
+  sinus.xml                       \
   softglow.xml                    \
   stretch-contrast.xml            \
   supernova.xml                   \

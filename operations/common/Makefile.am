@@ -104,6 +104,7 @@ op_LTLIBRARIES = \
 	ripple.la \
 	save.la \
 	shift.la \
+	sinus.la \
 	snn-mean.la \
 	softglow.la \
 	stress.la \
