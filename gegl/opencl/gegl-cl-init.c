@@ -152,7 +152,10 @@ typedef struct
 }
 GeglClState;
 
-static cl_device_type gegl_cl_default_device_type = CL_DEVICE_TYPE_DEFAULT;
+/* we made some performance measurements and OpenCL in the CPU is rarely worth it,
+ * specially now that we got our multi-threading working */
+
+static cl_device_type gegl_cl_default_device_type = CL_DEVICE_TYPE_GPU;
 static GeglClState cl_state = { 0, };
 static GHashTable *cl_program_hash = NULL;
 
