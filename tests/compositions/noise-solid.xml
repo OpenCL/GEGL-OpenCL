@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:crop'>
+      <params>
+        <param name='x'>0</param>
+        <param name='y'>0</param>
+        <param name='width'>400</param>
+        <param name='height'>400</param>
+      </params>
+  </node>
+  <node operation='gegl:noise-solid'>
+    <params>
+        <param name='x-size'>5.00</param>
+        <param name='y-size'>5.00</param>
+        <param name='detail'>10</param>
+        <param name='tilable'>true</param>
+        <param name='turbulent'>true</param>
+        <param name='seed'>0</param>
+        <param name="width">100</param>
+        <param name="height">100</param>
+      </params>
+  </node>
+</gegl>

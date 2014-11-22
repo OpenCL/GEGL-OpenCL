@@ -78,6 +78,7 @@ operations/common/noise-reduction.c
 operations/common/noise-simplex.c
 operations/common/noise-rgb.c
 operations/common/noise-slur.c
+operations/common/noise-solid.c
 operations/common/noise-spread.c
 operations/common/oilify.c
 operations/common/opacity.c

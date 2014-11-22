@@ -36,6 +36,7 @@ TESTS = \
   noise-cell.xml        	  			\
   noise-hurl.xml        	  			\
   noise-simplex.xml        	  		\
+  noise-solid.xml                 \
   pixelize.xml                    \
   posterize.xml                   \
   red-eye-removal.xml             \

@@ -83,7 +83,8 @@ op_LTLIBRARIES = \
 	noise-rgb.la \
 	noise-simplex.la \
 	noise-slur.la \
-	noise-spread.la \
+	noise-solid.la \
+        noise-spread.la \
 	noise-cell.la \
 	oilify.la \
 	opacity.la \
