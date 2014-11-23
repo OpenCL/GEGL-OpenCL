@@ -497,10 +497,10 @@ GLIB_PACKAGES="gobject-2.0 gmodule-2.0 gio-2.0"
 # select platform-specific GIO
 case "$os_win32" in
   yes)
-    GLIB_PACKAGES+=" gio-windows-2.0"
+    GLIB_PACKAGES="$GLIB_PACKAGES gio-windows-2.0"
     ;;
   *)
-    GLIB_PACKAGES+=" gio-unix-2.0"
+    GLIB_PACKAGES="$GLIB_PACKAGES gio-unix-2.0"
     ;;
 esac
 
