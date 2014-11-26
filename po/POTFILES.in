@@ -221,3 +221,4 @@ operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c
 operations/workshop/rawbayer-load.c
 operations/workshop/snn-percentile.c
+operations/workshop/v4l2.c
