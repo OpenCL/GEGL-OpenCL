@@ -50,8 +50,7 @@ enum
   PROP_OPERATION,
   PROP_NAME,
   PROP_DONT_CACHE,
-  PROP_USE_OPENCL,
-  PROP_PASSTHROUGH
+  PROP_USE_OPENCL
 };
 
 enum
@@ -170,14 +169,6 @@ gegl_node_class_init (GeglNodeClass *klass)
                                                         "Name",
                                                         "The name of the node",
                                                         "",
-                                                        G_PARAM_CONSTRUCT |
-                                                        G_PARAM_READWRITE));
-
-  g_object_class_install_property (gobject_class, PROP_PASSTHROUGH,
-                                   g_param_spec_boolean ("passthrough",
-                                                         "Passthrough",
-                                                        "Act as a nop, passing input unmodifed through to ouput.",
-                                                        FALSE,
                                                         G_PARAM_CONSTRUCT |
                                                         G_PARAM_READWRITE));
 
@@ -314,10 +305,6 @@ gegl_node_local_set_property (GObject      *gobject,
         node->dont_cache = g_value_get_boolean (value);
         break;
 
-      case PROP_PASSTHROUGH:
-        node->passthrough = g_value_get_boolean (value);
-        break;
-
       case PROP_USE_OPENCL:
         node->use_opencl = g_value_get_boolean (value);
         break;
@@ -362,10 +349,6 @@ gegl_node_local_get_property (GObject    *gobject,
 
       case PROP_DONT_CACHE:
         g_value_set_boolean (value, node->dont_cache);
-        break;
-
-      case PROP_PASSTHROUGH:
-        g_value_set_boolean (value, node->passthrough);
         break;
 
       case PROP_USE_OPENCL:
@@ -2144,22 +2127,4 @@ GeglNode *
 gegl_node_new (void)
 {
   return g_object_new (GEGL_TYPE_NODE, NULL);
-}
-
-gboolean
-gegl_node_get_passthrough (GeglNode *node)
-{
-  g_return_val_if_fail (GEGL_IS_NODE (node), FALSE);
-
-  return node->passthrough;
-}
-
-void
-gegl_node_set_passthrough (GeglNode *node,
-                           gboolean  passthrough)
-{
-  g_return_if_fail (GEGL_IS_NODE (node));
-
-  gegl_node_invalidated (node, NULL, TRUE);
-  node->passthrough = passthrough;
 }

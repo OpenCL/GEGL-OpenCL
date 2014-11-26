@@ -667,12 +667,6 @@ GeglNode    * gegl_node_new_from_file    (const gchar   *path);
 gchar       * gegl_node_to_xml           (GeglNode      *node,
                                           const gchar   *path_root);
 
-gboolean       gegl_node_get_passthrough (GeglNode      *node);
-
-void           gegl_node_set_passthrough (GeglNode      *node,
-                                          gboolean       passthrough);
-
-
 G_END_DECLS
 
 #endif /* __GEGL_NODE_H__ */
