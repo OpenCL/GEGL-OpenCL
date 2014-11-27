@@ -21,6 +21,7 @@
 #include <stdio.h>
 
 #ifdef G_OS_WIN32
+#include <windows.h>
 #include <gio/gwin32inputstream.h>  
 #else
 #include <gio/gunixinputstream.h>
@@ -48,8 +49,8 @@ gegl_gio_open_input_stream(const gchar *uri, const gchar *path, GFile **out_file
     {
       const gboolean close_fd = FALSE;
       infile = NULL;
-#ifdef G_OS_WIN32 // untested :)
-      fis = g_win32_input_stream_new(stdin, close_fd);
+#ifdef G_OS_WIN32
+      fis = g_win32_input_stream_new (GetStdHandle (STD_INPUT_HANDLE), close_fd);
 #else
       fis = g_unix_input_stream_new(STDIN_FILENO, close_fd);
 #endif
