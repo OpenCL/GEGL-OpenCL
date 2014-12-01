@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:illusion'>
+    <params>
+      <param name='division'>7</param>
+      <param name='illusion-type'>type1</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>
+

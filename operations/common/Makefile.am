@@ -53,6 +53,7 @@ op_LTLIBRARIES = \
 	grey.la \
 	grid.la \
 	high-pass.la \
+	illusion.la \
 	image-compare.la \
 	introspect.la \
 	invert-gamma.la \

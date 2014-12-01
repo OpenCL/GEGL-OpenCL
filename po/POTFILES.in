@@ -47,6 +47,7 @@ operations/common/gegl-buffer-save-op.c
 operations/common/grey.c
 operations/common/grid.c
 operations/common/high-pass.c
+operations/common/illusion.c
 operations/common/image-compare.c
 operations/common/introspect.c
 operations/common/invert-gamma.c

@@ -31,6 +31,7 @@ TESTS = \
 	gegl.xml                        \
   gamma.xml                       \
   hdr-color.xml                   \
+  illusion.xml                    \
   image-compare.xml               \
   mantiuk06.xml                   \
   noise-cell.xml        	  			\
