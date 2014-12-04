@@ -199,6 +199,7 @@ operations/workshop/box-max.c
 operations/workshop/box-min.c
 operations/workshop/box-percentile.c
 operations/workshop/buffer-cache.c
+operations/workshop/color-warp.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/disc-percentile.c
