@@ -90,10 +90,8 @@ get_bounding_box (GeglOperation *operation)
 static const char* checkerboard_cl_source =
 "inline int tile_index (int coordinate, int stride)          \n"
 "{                                                           \n"
-"  if (coordinate >= 0)                                      \n"
-"    return coordinate / stride;                             \n"
-"  else                                                      \n"
-"    return ((coordinate + 1) / stride) - 1;                 \n"
+"  int a = (coordinate < 0);                                 \n"
+"  return ((coordinate + a) / stride) - a;                   \n"
 "}                                                           \n"
 "                                                            \n"
 "__kernel void kernel_checkerboard (__global float4 *out,    \n"
@@ -102,53 +100,21 @@ static const char* checkerboard_cl_source =
 "                                   int square_width,        \n"
 "                                   int square_height,       \n"
 "                                   int x_offset,            \n"
-"                                   int y_offset,            \n"
-"                                   int roi_x,               \n"
-"                                   int roi_y,               \n"
-"                                   int roi_width)           \n"
+"                                   int y_offset)            \n"
 "{                                                           \n"
-"    int gidx = 0;                                           \n"
-"    int gidy = get_global_id(0);                            \n"
-"    float4 cur_color;                                       \n"
-"    bool in_color1;                                         \n"
+"    size_t roi_width = get_global_size(0);                  \n"
+"    size_t roi_x     = get_global_offset(0);                \n"
+"    size_t roi_y     = get_global_offset(1);                \n"
+"    size_t gidx      = get_global_id(0) - roi_x;            \n"
+"    size_t gidy      = get_global_id(1) - roi_y;            \n"
 "                                                            \n"
-"    int x = roi_x + gidx - x_offset;                        \n"
-"    int y = roi_y + gidy - y_offset;                        \n"
+"    int x = get_global_id(0) - x_offset;                    \n"
+"    int y = get_global_id(1) - y_offset;                    \n"
 "                                                            \n"
 "    int tilex = tile_index (x, square_width);               \n"
 "    int tiley = tile_index (y, square_height);              \n"
-"                                                            \n"
-"    if ((tilex + tiley) % 2 == 0)                           \n"
-"      {                                                     \n"
-"        cur_color = color1;                                 \n"
-"        in_color1 = true;                                   \n"
-"      }                                                     \n"
-"    else                                                    \n"
-"      {                                                     \n"
-"        cur_color = color2;                                 \n"
-"        in_color1 = false;                                  \n"
-"      }                                                     \n"
-"                                                            \n"
-"    int stripe_end = (tilex + 1) * square_width;            \n"
-"    int stripe_width = stripe_end - x;                      \n"
-"    int gidx_max = roi_width;                               \n"
-"                                                            \n"
-"    while (gidx < gidx_max)                                 \n"
-"      {                                                     \n"
-"        out[gidx++ + gidy * roi_width] = cur_color;         \n"
-"        stripe_width--;                                     \n"
-"                                                            \n"
-"        if (stripe_width == 0)                              \n"
-"          {                                                 \n"
-"            stripe_width = square_width;                    \n"
-"                                                            \n"
-"            if (in_color1)                                  \n"
-"              cur_color = color2;                           \n"
-"            else                                            \n"
-"              cur_color = color1;                           \n"
-"            in_color1 = !in_color1;                         \n"
-"          }                                                 \n"
-"      }                                                     \n"
+"    out[gidx + gidy * roi_width] = (tilex + tiley) & 1 ?    \n"
+"                                   color2 : color1;         \n"
 "}                                                           \n";
 
 #define TILE_INDEX(coordinate,stride) \
@@ -168,7 +134,8 @@ checkerboard_cl_process (GeglOperation       *operation,
 {
   GeglProperties *o         = GEGL_PROPERTIES (operation);
   const Babl   *out_format  = gegl_operation_get_format (operation, "output");
-  const size_t  gbl_size[1] = {roi->height};
+  const size_t  gbl_size[2] = {roi->width, roi->height};
+  const size_t  gbl_offs[2] = {roi->x, roi->y};
   cl_int        cl_err      = 0;
   float         color1[4];
   float         color2[4];
@@ -193,15 +160,12 @@ checkerboard_cl_process (GeglOperation       *operation,
                                     sizeof(cl_int), &o->y,
                                     sizeof(cl_int), &o->x_offset,
                                     sizeof(cl_int), &o->y_offset,
-                                    sizeof(cl_int), &roi->x,
-                                    sizeof(cl_int), &roi->y,
-                                    sizeof(cl_int), &roi->width,
                                     NULL);
   CL_CHECK;
 
   cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
-                                        cl_data->kernel[0], 1,
-                                        NULL, gbl_size, NULL,
+                                        cl_data->kernel[0], 2,
+                                        gbl_offs, gbl_size, NULL,
                                         0, NULL, NULL);
   CL_CHECK;
 
