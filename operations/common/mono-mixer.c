@@ -19,9 +19,11 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
+#include <math.h>
 
 
 #ifdef GEGL_PROPERTIES
+property_boolean (preserve_luminosity, _("Preserve luminosity"), FALSE)
 
 property_double (red, _("Amount of red"), 0.5)
     value_range (-10.0, 10.0)
@@ -57,10 +59,12 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglProperties *o = GEGL_PROPERTIES (op);
-  gfloat      red   = o->red;
-  gfloat      green = o->green;
-  gfloat      blue  = o->blue;
+  GeglProperties *o       = GEGL_PROPERTIES (op);
+  gfloat      red         = o->red;
+  gfloat      green       = o->green;
+  gfloat      blue        = o->blue;
+  gboolean    normalize   = o->preserve_luminosity;
+  gfloat      norm_factor = 1.0;
   gfloat     * GEGL_ALIGNED in_pixel;
   gfloat     * GEGL_ALIGNED out_pixel;
   glong       i;
@@ -68,17 +72,35 @@ process (GeglOperation       *op,
   in_pixel   = in_buf;
   out_pixel  = out_buf;
 
+  if (normalize)
+   {
+     gdouble sum = red + green + blue;
+
+     if (sum == 0.0)
+       norm_factor = 1.0;
+     else
+       norm_factor = fabs (1 / sum);
+   }
+
   for (i=0; i<n_pixels; i++)
     {
-      out_pixel[0] = in_pixel[0] * red + in_pixel[1] * green + in_pixel[2] * blue;
+      out_pixel[0] = (in_pixel[0] * red +
+                      in_pixel[1] * green +
+                      in_pixel[2] * blue) * norm_factor;
       out_pixel[1] = in_pixel[3];
       in_pixel  += 4;
       out_pixel += 2;
     }
   return TRUE;
 }
-
+/* FIXME!
+ * CL variant of the operation gives a different
+ * result than the non-cl code even without the luminoscity preservation code
+ * that seems to have no effect, as if toggle parameter never changes.
+ * Disabling for now. */
+/*
 #include "opencl/mono-mixer.cl.h"
+ */
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
@@ -97,7 +119,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Mono Mixer"),
     "categories",  "color",
     "description", _("Monochrome channel mixer"),
-    "cl-source",   mono_mixer_cl_source,
+/*  "cl-source",   mono_mixer_cl_source, */
     NULL);
 }
 
