@@ -36,12 +36,14 @@
 
 property_double (x_size, _("X Size"), 4.0)
     description (_("Horizontal texture size"))
+    value_range (0.1, 16.0)
     ui_range    (0.1, 16.0)
     ui_meta     ("unit", "pixel-distance")
     ui_meta     ("axis", "x")
 
 property_double (y_size, _("Y Size"), 4.0)
     description (_("Vertical texture size"))
+    value_range (0.1, 16.0)
     ui_range    (0.1, 16.0)
     ui_meta     ("unit", "pixel-distance")
     ui_meta     ("axis", "y")
