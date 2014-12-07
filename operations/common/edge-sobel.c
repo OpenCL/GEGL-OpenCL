@@ -197,9 +197,11 @@ process (GeglOperation       *operation,
   compute = gegl_operation_get_required_for_output (operation, "input", result);
   has_alpha = babl_format_has_alpha (gegl_operation_get_format (operation, "output"));
 
+  /*
   if (gegl_operation_use_opencl (operation))
     if (cl_process (operation, input, output, result, has_alpha))
       return TRUE;
+   */
 
   edge_sobel (input, &compute, output, result,
               o->horizontal, o->vertical, o->keep_sign, has_alpha);
