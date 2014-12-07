@@ -70,6 +70,13 @@ static void prepare (GeglOperation *operation)
     gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
+/** FIXME - disabling CL
+ *  CL border handling is broken. As is the whole result is shifted to avoid the
+ *  issue. This is causing tests to fail. The shift can be corrected, but real
+ *  issue is handling pixels that the sobel kernel needs from outside the image.
+ */
+/*
+
 #include "opencl/gegl-cl.h"
 #include "buffer/gegl-buffer-cl-iterator.h"
 
@@ -174,6 +181,7 @@ cl_process (GeglOperation       *operation,
 
   return TRUE;
 }
+*/
 
 static gboolean
 process (GeglOperation       *operation,
