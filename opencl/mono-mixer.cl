@@ -1,9 +1,9 @@
 __kernel void gegl_mono_mixer (__global const float4 *src_buf,
                                __global       float2 *dst_buf,
+                               const int              preserve_luminocity,
                                float                  red,
                                float                  green,
-                               float                  blue,
-                               const int              preserve_luminocity)
+                               float                  blue)
 {
   int gid = get_global_id(0);
   float4 in_v = src_buf[gid];

@@ -93,14 +93,8 @@ process (GeglOperation       *op,
     }
   return TRUE;
 }
-/* FIXME!
- * CL variant of the operation gives a different
- * result than the non-cl code even without the luminoscity preservation code
- * that seems to have no effect, as if toggle parameter never changes.
- * Disabling for now. */
-/*
+
 #include "opencl/mono-mixer.cl.h"
- */
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
@@ -119,7 +113,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Mono Mixer"),
     "categories",  "color",
     "description", _("Monochrome channel mixer"),
-/*  "cl-source",   mono_mixer_cl_source, */
+    "cl-source",   mono_mixer_cl_source,
     NULL);
 }
 
