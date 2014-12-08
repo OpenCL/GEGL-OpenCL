@@ -87,42 +87,13 @@ get_bounding_box (GeglOperation *operation)
   return gegl_rectangle_infinite_plane ();
 }
 
-static const char* checkerboard_cl_source =
-"inline int tile_index (int coordinate, int stride)          \n"
-"{                                                           \n"
-"  int a = (coordinate < 0);                                 \n"
-"  return ((coordinate + a) / stride) - a;                   \n"
-"}                                                           \n"
-"                                                            \n"
-"__kernel void kernel_checkerboard (__global float4 *out,    \n"
-"                                   float4 color1,           \n"
-"                                   float4 color2,           \n"
-"                                   int square_width,        \n"
-"                                   int square_height,       \n"
-"                                   int x_offset,            \n"
-"                                   int y_offset)            \n"
-"{                                                           \n"
-"    size_t roi_width = get_global_size(0);                  \n"
-"    size_t roi_x     = get_global_offset(0);                \n"
-"    size_t roi_y     = get_global_offset(1);                \n"
-"    size_t gidx      = get_global_id(0) - roi_x;            \n"
-"    size_t gidy      = get_global_id(1) - roi_y;            \n"
-"                                                            \n"
-"    int x = get_global_id(0) - x_offset;                    \n"
-"    int y = get_global_id(1) - y_offset;                    \n"
-"                                                            \n"
-"    int tilex = tile_index (x, square_width);               \n"
-"    int tiley = tile_index (y, square_height);              \n"
-"    out[gidx + gidy * roi_width] = (tilex + tiley) & 1 ?    \n"
-"                                   color2 : color1;         \n"
-"}                                                           \n";
-
 #define TILE_INDEX(coordinate,stride) \
   (((coordinate) >= 0)?\
       (coordinate) / (stride):\
       ((((coordinate) + 1) /(stride)) - 1))
 
 
+#include "opencl/checkerboard.cl.h"
 static GeglClRunData *cl_data = NULL;
 
 static gboolean
