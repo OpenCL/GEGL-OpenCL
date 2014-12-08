@@ -94,19 +94,20 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglProperties     *o = GEGL_PROPERTIES (operation);
+  GeglBufferIterator *iter;
+  GeglSampler        *sampler;
 
-  gfloat   *src;
-  gfloat   *dst;
-  gint     x, y, xx, yy, b;
-  gint     width, height, components;
-  gdouble  radius, cx, cy, angle;
-  gdouble  center_x;
-  gdouble  center_y;
-  gdouble  scale;
-  gdouble  offset;
-  glong    idx1, idx2;
-  gboolean has_alpha;
-  gfloat   alpha, alpha1, alpha2;
+  gint         x, y, xx, yy, b;
+  gint         width, height, components;
+  gdouble      radius, cx, cy, angle;
+  gdouble      center_x;
+  gdouble      center_y;
+  gdouble      scale;
+  gdouble      offset;
+  gboolean     has_alpha;
+  gfloat       alpha, alpha1, alpha2;
+  gfloat      *in_pixel1;
+  gfloat      *in_pixel2;
 
   const Babl *format = gegl_operation_get_format (operation, "output");
   has_alpha  = babl_format_has_alpha (format);
@@ -116,71 +117,81 @@ process (GeglOperation       *operation,
   else
     components = 3;
 
+  in_pixel1 = g_new (float, components);
+  in_pixel2 = g_new (float, components);
+
+  iter = gegl_buffer_iterator_new (output, result, level, format,
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
+
+  sampler = gegl_buffer_sampler_new_at_level (input, format,
+                                              GEGL_SAMPLER_NEAREST, level);
+
   width = result->width;
   height = result->height;
-
-  src = g_new0 (gfloat, width * height * components);
-  dst = g_new0 (gfloat, width * height * components);
-
-  gegl_buffer_get (input, result, 1.0, format, src, GEGL_AUTO_ROWSTRIDE,
-                   GEGL_ABYSS_CLAMP);
 
   center_x = width / 2.0;
   center_y = height / 2.0;
   scale = sqrt (width * width + height * height) / 2;
   offset = (gint) (scale / 2);
 
-  for (y = 0; y < height; y++)
-    for (x = 0; x < width; x++)
-      {
-        cy = ((gdouble) y - center_y) / scale;
-        cx = ((gdouble) x - center_x) / scale;
+  while (gegl_buffer_iterator_next (iter))
+    {
+       gfloat  *out_pixel = iter->data[0];
 
-        angle = floor (atan2 (cy, cx) * o->division / G_PI_2) *
-                      G_PI_2 / o->division + (G_PI / o->division);
-        radius = sqrt ((gdouble) (cx * cx + cy * cy));
+       for (y = iter->roi[0].y; y < iter->roi[0].y + iter->roi[0].height; ++y)
+         for (x = iter->roi[0].x; x < iter->roi[0].x + iter->roi[0].width; ++x)
+           {
+              cy = ((gdouble) y - center_y) / scale;
+              cx = ((gdouble) x - center_x) / scale;
 
-        if (o->illusion_type == GEGL_ILLUSION_TYPE_1)
-          {
-            xx = x - offset * cos (angle);
-            yy = y - offset * sin (angle);
-          }
-        else                          /* GEGL_ILLUSION_TYPE_2 */
-          {
-            xx = x - offset * sin (angle);
-            yy = y - offset * cos (angle);
-          }
+              angle = floor (atan2 (cy, cx) * o->division / G_PI_2) *
+                             G_PI_2 / o->division + (G_PI / o->division);
+              radius = sqrt ((gdouble) (cx * cx + cy * cy));
 
-        xx = CLAMP (xx, 0, width - 1);
-        yy = CLAMP (yy, 0, height - 1);
+              if (o->illusion_type == GEGL_ILLUSION_TYPE_1)
+                {
+                   xx = x - offset * cos (angle);
+                   yy = y - offset * sin (angle);
+                }
+              else                          /* GEGL_ILLUSION_TYPE_2 */
+                {
+                   xx = x - offset * sin (angle);
+                   yy = y - offset * cos (angle);
+                }
 
-        idx1 = (y * width + x) * components;
-        idx2 = (yy * width + xx) * components;
+                gegl_sampler_get (sampler, x, y, NULL,
+                                  in_pixel1, GEGL_ABYSS_CLAMP);
 
-        if (has_alpha)
-          {
-            alpha1 = src[idx1 + 3];
-            alpha2 = src[idx2 + 3];
-            alpha  = (1 - radius) * alpha1 + radius * alpha2;
+                gegl_sampler_get (sampler, xx, yy, NULL,
+                                  in_pixel2, GEGL_ABYSS_CLAMP);
 
-            if ((dst[idx1 + 3] = (alpha / 2)))
-             {
-               for (b = 0; b < 3; b++)
-                 dst[idx1 + b] = ((1 - radius) * src[idx1 + b] * alpha1 +
-                                radius * src[idx2 + b] * alpha2) / alpha;
-             }
-          }
-        else
-          {
-            for (b = 0; b < 3; b++)
-              dst[idx1 + b] = (1 - radius) * src[idx1 + b] + radius * src[idx2 + b];
-          }
-        }
+                if (has_alpha)
+                  {
+                     alpha1 = in_pixel1[3];
+                     alpha2 = in_pixel2[3];
+                     alpha  = (1 - radius) * alpha1 + radius * alpha2;
 
-  gegl_buffer_set (output, result, level, format, dst, GEGL_AUTO_ROWSTRIDE);
+                     if ((out_pixel[3] = (alpha / 2)))
+                       {
+                         for (b = 0; b < 3; b++)
+                           out_pixel[b] = ((1 - radius) * in_pixel1[b] * alpha1 +
+                                           radius * in_pixel2[b] * alpha2) / alpha;
+                       }
+                  }
+                else
+                 {
+                   for (b = 0; b < 3; b++)
+                     out_pixel[b] = (1 - radius) * in_pixel1[b] + radius * in_pixel2[b];
+                 }
 
-  g_free (src);
-  g_free (dst);
+                 out_pixel += components;
+           }
+    }
+
+  g_free (in_pixel1);
+  g_free (in_pixel2);
+
+  g_object_unref (sampler);
 
   return  TRUE;
 }
