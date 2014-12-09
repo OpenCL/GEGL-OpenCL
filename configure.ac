@@ -47,6 +47,7 @@ m4_define([jasper_required_version], [1.900.1])
 m4_define([lcms_required_version], [2.2])
 m4_define([lensfun_required_version], [0.2.5])
 m4_define([librsvg_required_version], [2.14.0])
+m4_define([libv4l2_required_version], [1.0.1])
 m4_define([lua_required_version], [5.1.0])
 m4_define([openexr_required_version], [0.0.0])
 m4_define([openraw_required_version], [0.0.5])
@@ -799,6 +800,25 @@ AC_SUBST(RSVG_LIBS)
 
 
 ###################
+# Check for libv4l2
+###################
+
+AC_ARG_WITH(libv4l2, [  --without-libv4l2      build without v4l2 support])
+
+have_libv4l2="no"
+if test "x$with_libv4l" != "xno"; then
+  PKG_CHECK_MODULES(V4L2, libv4l2 >= libv4l2_required_version,
+    have_libv4l2="yes",
+    have_libv4l2="no  (usable libv4l2 not found)")
+fi
+
+AM_CONDITIONAL(HAVE_V4L2, test "$have_libv4l2" = "yes")
+
+AC_SUBST(V4L2_CFLAGS) 
+AC_SUBST(V4L2_LIBS) 
+
+
+###################
 # Check for OpenEXR
 ###################
 
@@ -1258,6 +1278,7 @@ Optional dependencies:
   graphviz:        $have_graphviz
   avformat:        $have_libavformat
   V4L:             $have_v4l
+  V4L2:            $have_libv4l2
   spiro:           $spiro_ok
   EXIV:            $have_exiv2
   umfpack:         $have_umfpack

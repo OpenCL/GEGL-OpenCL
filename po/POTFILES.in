@@ -208,6 +208,7 @@ operations/workshop/external/ff-save.c
 operations/workshop/external/gluas.c
 operations/workshop/external/lens-correct.c
 operations/workshop/external/line-profile.c
+operations/workshop/external/v4l2.c
 operations/workshop/gaussian-blur-iir.c
 operations/workshop/gblur-1d.c
 operations/workshop/generated/average.c
@@ -223,4 +224,3 @@ operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c
 operations/workshop/rawbayer-load.c
 operations/workshop/snn-percentile.c
-operations/workshop/v4l2.c

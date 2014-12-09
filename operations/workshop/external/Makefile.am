@@ -32,5 +32,12 @@ lens_correct_la_LIBADD = $(op_libs) $(LENSFUN_LIBS)
 lens_correct_la_CFLAGS = $(AM_CFLAGS) $(LENSFUN_CFLAGS)
 endif
 
+if HAVE_V4L2
+ops += v4l2.la
+v4l2_la_SOURCES = v4l2.c
+v4l2_la_LIBADD = $(op_libs) $(V4L2_LIBS)
+v4l2_la_CFLAGS = $(AM_CFLAGS) $(V4L2_CFLAGS)
+endif
+
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 op_LTLIBRARIES = $(ops)
