@@ -28,8 +28,6 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_boolean (monochrome, _("Monochrome"), FALSE)
-
 property_boolean (preserve_luminosity, _("Preserve luminosity"), FALSE)
 
 /* Red channel */
@@ -98,9 +96,7 @@ typedef struct
   CmChannelType  red;
   CmChannelType  green;
   CmChannelType  blue;
-  CmChannelType  black;
 
-  gboolean       monochrome;
   gboolean       preserve_luminosity;
   gboolean       has_alpha;
 } CmParamsType;
@@ -117,29 +113,19 @@ static void prepare (GeglOperation *operation)
 
   mix = (CmParamsType*) o->user_data;
 
-  mix->monochrome          = o->monochrome;
   mix->preserve_luminosity = o->preserve_luminosity;
 
-  if (mix->monochrome)
-    {
-      mix->black.red_gain   = o->rr_gain;
-      mix->black.green_gain = o->rg_gain;
-      mix->black.blue_gain  = o->rb_gain;
-    }
-  else
-    {
-      mix->red.red_gain     = o->rr_gain;
-      mix->red.green_gain   = o->rg_gain;
-      mix->red.blue_gain    = o->rb_gain;
+  mix->red.red_gain     = o->rr_gain;
+  mix->red.green_gain   = o->rg_gain;
+  mix->red.blue_gain    = o->rb_gain;
 
-      mix->green.red_gain   = o->gr_gain;
-      mix->green.green_gain = o->gg_gain;
-      mix->green.blue_gain  = o->gb_gain;
+  mix->green.red_gain   = o->gr_gain;
+  mix->green.green_gain = o->gg_gain;
+  mix->green.blue_gain  = o->gb_gain;
 
-      mix->blue.red_gain    = o->br_gain;
-      mix->blue.green_gain  = o->bg_gain;
-      mix->blue.blue_gain   = o->bb_gain;
-    }
+  mix->blue.red_gain    = o->br_gain;
+  mix->blue.green_gain  = o->bg_gain;
+  mix->blue.blue_gain   = o->bb_gain;
 
   if (input_format == NULL || babl_format_has_alpha (input_format))
     {
@@ -202,20 +188,12 @@ cm_process_pixel (CmParamsType  *mix,
                   gfloat        *d,
                   const gdouble  red_norm,
                   const gdouble  green_norm,
-                  const gdouble  blue_norm,
-                  const gdouble  black_norm)
+                  const gdouble  blue_norm)
 {
-  if (mix->monochrome)
-    {
-      d[0] = d[1] = d[2] =
-        cm_mix_pixel (&mix->black, s[0], s[1], s[2], black_norm);
-    }
-  else
-    {
-      d[0] = cm_mix_pixel (&mix->red,   s[0], s[1], s[2], red_norm);
-      d[1] = cm_mix_pixel (&mix->green, s[0], s[1], s[2], green_norm);
-      d[2] = cm_mix_pixel (&mix->blue,  s[0], s[1], s[2], blue_norm);
-    }
+
+  d[0] = cm_mix_pixel (&mix->red,   s[0], s[1], s[2], red_norm);
+  d[1] = cm_mix_pixel (&mix->green, s[0], s[1], s[2], green_norm);
+  d[2] = cm_mix_pixel (&mix->blue,  s[0], s[1], s[2], blue_norm);
 }
 
 static gboolean
@@ -229,7 +207,7 @@ process (GeglOperation       *op,
   GeglProperties   *o = GEGL_PROPERTIES (op);
   CmParamsType *mix = (CmParamsType*) o->user_data;
 
-  gdouble       red_norm, green_norm, blue_norm, black_norm;
+  gdouble       red_norm, green_norm, blue_norm;
   gfloat       *in, *out;
 
   g_assert (mix != NULL);
@@ -237,7 +215,6 @@ process (GeglOperation       *op,
   red_norm   = cm_calculate_norm (mix, &mix->red);
   green_norm = cm_calculate_norm (mix, &mix->green);
   blue_norm  = cm_calculate_norm (mix, &mix->blue);
-  black_norm = cm_calculate_norm (mix, &mix->black);
 
   in = in_buf;
   out = out_buf;
@@ -247,8 +224,7 @@ process (GeglOperation       *op,
       while (samples--)
         {
           cm_process_pixel (mix, in, out,
-                            red_norm, green_norm, blue_norm,
-                            black_norm);
+                            red_norm, green_norm, blue_norm);
           out[3] = in[3];
 
           in += 4;
@@ -260,8 +236,7 @@ process (GeglOperation       *op,
       while (samples--)
         {
           cm_process_pixel (mix, in, out,
-                            red_norm, green_norm, blue_norm,
-                            black_norm);
+                            red_norm, green_norm, blue_norm);
           in += 3;
           out += 3;
         }
