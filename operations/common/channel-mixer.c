@@ -32,42 +32,43 @@ property_boolean (monochrome, _("Monochrome"), FALSE)
 
 property_boolean (preserve_luminosity, _("Preserve luminosity"), FALSE)
 
-property_double (rr_gain, _("Red for Red amount"), 1.0)
+/* Red channel */
+property_double (rr_gain, _("Red in Red channel"), 1.0)
   description(_("Set the red amount for the red channel"))
   value_range (-2.0, 2.0)
 
-property_double (rg_gain, _("Green for Red amount"), 0.0)
+property_double (rg_gain, _("Green in Red channel"), 0.0)
   description(_("Set the green amount for the red channel"))
   value_range (-2.0, 2.0)
 
-property_double (rb_gain, _("Blue for Red amount"), 0.0)
+property_double (rb_gain, _("Blue in Red channel"), 0.0)
   description(_("Set the blue amount for the red channel"))
   value_range (-2.0, 2.0)
 
-
-property_double (gg_gain, _("Green for Green amount"), 1.0)
-  description(_("Set the green amount for the green channel"))
-  value_range (-2.0, 2.0)
-
-property_double (gr_gain, _("Red for Green amount"), 0.0)
+/* Green channel */
+property_double (gr_gain, _("Red in Green channel"), 0.0)
   description(_("Set the red amount for the green channel"))
   value_range (-2.0, 2.0)
 
-property_double (gb_gain, _("Blue for Green amount"), 0.0)
+property_double (gg_gain, _("Green for Green channel"), 1.0)
+  description(_("Set the green amount for the green channel"))
+  value_range (-2.0, 2.0)
+
+property_double (gb_gain, _("Blue in Green channel"), 0.0)
   description(_("Set the blue amount for the green channel"))
   value_range (-2.0, 2.0)
 
-property_double (bb_gain, _("Blue for Blue amount"), 1.0)
+/* Blue channel */
+property_double (br_gain, _("Red in Blue channel"), 0.0)
+  description(_("Set the red amount for the blue channel"))
+  value_range (-2.0, 2.0)
+
+property_double (bg_gain, _("Green in Blue channel"), 0.0)
+  description(_("Set the green amount for the blue channel"))
+  value_range (-2.0, 2.0)
+
+property_double (bb_gain, _("Blue in Blue channel"), 1.0)
   description(_("Set the blue amount for the blue channel"))
-  value_range (-2.0, 2.0)
-
-
-property_double (br_gain, _("Red for Blue amount"), 0.0)
-  description(_("Set the red amount for the green channel"))
-  value_range (-2.0, 2.0)
-
-property_double (bg_gain, _("Green for Blue amount"), 0.0)
-  description(_("Set the green amount for the green channel"))
   value_range (-2.0, 2.0)
 
 
