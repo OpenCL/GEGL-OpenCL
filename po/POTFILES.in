@@ -36,6 +36,7 @@ operations/common/dropshadow.c
 operations/common/edge-laplace.c
 operations/common/edge-sobel.c
 operations/common/emboss.c
+operations/common/engrave.c
 operations/common/exp-combine.c
 operations/common/exposure.c
 operations/common/fattal02.c

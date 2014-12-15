@@ -27,6 +27,7 @@ TESTS = \
   contrast-curve.xml              \
   edge-laplace.xml                \
   edge-sobel.xml                  \
+  engrave.xml                     \
   fattal02.xml                    \
 	gegl.xml                        \
   gamma.xml                       \

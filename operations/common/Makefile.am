@@ -42,6 +42,7 @@ op_LTLIBRARIES = \
 	edge-laplace.la \
 	edge-sobel.la \
 	emboss.la \
+	engrave.la \
 	exp-combine.la \
 	exposure.la \
 	fattal02.la \
