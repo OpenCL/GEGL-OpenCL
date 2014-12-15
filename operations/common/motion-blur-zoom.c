@@ -138,7 +138,7 @@ process (GeglOperation       *operation,
   center_x = gegl_coordinate_relative_to_pixel (
                 o->center_x, whole_region->width);
   center_y = gegl_coordinate_relative_to_pixel (
-                o->center_y, whole_region->width);
+                o->center_y, whole_region->height);
 
   src_rect = *roi;
   src_rect.x -= op_area->left;
