@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * 2014 (c) Øyvind Kolås pippin@gimp.org
+ * 2002, 2014 (c) Øyvind Kolås pippin@gimp.org
  */
 
 #include "config.h"
@@ -23,37 +23,39 @@
 
 property_color (from_0, _("From 0"), "black")
 property_color (to_0, _("To 0"), "black")
-property_double (weight_0, _("color neighbourhood of influence 0"), 100.0)
+property_double (weight_0, _("weight 0"), 100.0)
              ui_range (0.0, 220.0)
 property_color (from_1, _("From 1"), "black")
 property_color (to_1, _("To 1"), "black")
-property_double (weight_1, _("color neighbourhood of influence 1"), 100.0)
+property_double (weight_1, _("weight 1"), 100.0)
              ui_range (0.0, 220.0)
 property_color (from_2, _("From 2"), "black")
 property_color (to_2, _("To 2"), "black")
-property_double (weight_2, _("color neighbourhood of influence 2"), 100.0)
+property_double (weight_2, _("weight 2"), 100.0)
              ui_range (0.0, 220.0)
 property_color (from_3, _("From 3"), "black")
 property_color (to_3, _("To 3"), "black")
-property_double (weight_3, _("color neighbourhood of influence 3"), 100.0)
+property_double (weight_3, _("weight 3"), 100.0)
              ui_range (0.0, 220.0)
 property_color (from_4, _("From 4"), "black")
 property_color (to_4, _("To 4"), "black")
-property_double (weight_4, _("color neighbourhood of influence 4"), 100.0)
+property_double (weight_4, _("weight 4"), 100.0)
              ui_range (0.0, 220.0)
 property_color (from_5, _("From 5"), "black")
 property_color (to_5, _("To 5"), "black")
-property_double (weight_5, _("color neighbourhood of influence 5"), 100.0)
+property_double (weight_5, _("weight 5"), 100.0)
              ui_range (0.0, 220.0)
 property_color (from_6, _("From 6"), "black")
 property_color (to_6, _("To 6"), "black")
-property_double (weight_6, _("color neighbourhood of influence 6"), 100.0)
+property_double (weight_6, _("weight 6"), 100.0)
              ui_range (0.0, 220.0)
 property_color (from_7, _("From 7"), "black")
 property_color (to_7, _("To 7"), "black")
-property_double (weight_7, _("color neighbourhood of influence 7"), 100.0)
+property_double (weight_7, _("weight 7"), 100.0)
              ui_range (0.0, 220.0)
 property_double (weight, _("global weight scale"), 1.0)
+             ui_range (0.0, 1.0)
+property_double (amount, _("amount"), 1.0)
              ui_range (0.0, 1.0)
 
 #else
@@ -251,13 +253,25 @@ process (GeglOperation       *op,
   gfloat         *in_pixel  = in_buf;
   gfloat         *out_pixel = out_buf;
   CoordWarp      *cw        = o->user_data;
+  float           amount    = o->amount;
 
   in_pixel  = in_buf;
   out_pixel = out_buf;
 
   while (n_pixels--)
     {
-      cw_map (cw, in_pixel, out_pixel);
+      if (amount == 1.0)
+      {
+        cw_map (cw, in_pixel, out_pixel);
+      }
+      else
+      {
+        int d;
+        float res[4];
+        cw_map (cw, in_pixel, res);
+        for (d = 0; d < 3; d++)
+          out_pixel[d] = in_pixel[d] * (1.0-amount) + res[d] * amount;
+      }
       in_pixel  += 3;
       out_pixel += 3;
     }
