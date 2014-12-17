@@ -68,6 +68,7 @@ NO_OPENCL_TESTS = \
   stretch-contrast-hsv.xml      \
   pnm-raw-load.xml              \
   pnm-ascii-load.xml            \
+  jpg-load-datauri.xml          \
   tile.xml
 
 # Conditional tests
