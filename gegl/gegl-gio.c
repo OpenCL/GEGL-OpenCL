@@ -27,6 +27,48 @@
 #include <gio/gunixinputstream.h>
 #endif
 
+static const gint data_prefix_len = strlen("data:");
+
+// Supports data embedded in the URI itself
+// http://en.wikipedia.org/wiki/Data_URI_scheme
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/data_URIs
+static GInputStream *
+input_stream_datauri(const gchar *uri)
+{
+  GInputStream *stream = NULL;
+
+  // Determine data format
+  const gchar * header_end = g_strstr_len (uri, -1, ",");
+  g_return_val_if_fail(header_end, NULL);
+
+  const gint header_len = header_end - uri - data_prefix_len;
+  gchar *header = g_strndup(uri+data_prefix_len, header_len);  
+
+  gchar **header_items = g_strsplit(header, ";", 3);
+  gint header_items_no = -1;
+  while (header_items[++header_items_no]) {
+  }
+
+  // Note: header_item[0] is content-type
+  const gboolean is_base64 = header_items_no > 1 && g_strcmp0(header_items[1], "base64") == 0;
+  g_free(header);
+  g_strfreev(header_items);
+
+  const gchar *raw_data = uri+data_prefix_len+header_len;
+
+  if (is_base64) {
+    gsize len = 0;
+    gchar * data = g_base64_decode (raw_data, &len);
+    stream = g_memory_input_stream_new_from_data (data, len, g_free);
+  } else {
+    gchar *data = g_strdup(raw_data);
+    const gint len = strlen(data);
+    stream = g_memory_input_stream_new_from_data (data, len, g_free);
+  }
+
+  return stream;
+}
+
 /**
  * gegl_gio_open_input_stream:
  * @uri: (allow none) URI to open. @uri is preferred over @path if both are set
@@ -57,7 +99,14 @@ gegl_gio_open_input_stream(const gchar *uri, const gchar *path, GFile **out_file
     }
   else if (uri && strlen(uri) > 0)
     {
-      infile = g_file_new_for_uri(uri);
+      if (g_str_has_prefix(uri, "data:"))
+        {
+          fis = input_stream_datauri(uri);
+        }
+      else
+        {
+          infile = g_file_new_for_uri(uri);
+        }
     }
   else if (path && strlen(path) > 0)
     {
