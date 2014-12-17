@@ -27,19 +27,13 @@
 #include <gio/gunixinputstream.h>
 #endif
 
-static const gint data_prefix_len = strlen("data:");
-
-// Supports data embedded in the URI itself
-// http://en.wikipedia.org/wiki/Data_URI_scheme
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/data_URIs
-static GInputStream *
-input_stream_datauri(const gchar *uri)
+// Note: header_item[0] is content-type, header_items[1] is encoding
+static gchar **
+parse_datauri_header(const gchar *uri, gchar **raw_data_out, gint *header_items_no_out)
 {
-  GInputStream *stream = NULL;
-
   // Determine data format
   const gchar * header_end = g_strstr_len (uri, -1, ",");
-  g_return_val_if_fail(header_end, NULL);
+  const gint data_prefix_len = strlen("data:");
 
   const gint header_len = header_end - uri - data_prefix_len;
   gchar *header = g_strndup(uri+data_prefix_len, header_len);  
@@ -48,17 +42,35 @@ input_stream_datauri(const gchar *uri)
   gint header_items_no = -1;
   while (header_items[++header_items_no]) {
   }
-
-  // Note: header_item[0] is content-type
-  const gboolean is_base64 = header_items_no > 1 && g_strcmp0(header_items[1], "base64") == 0;
   g_free(header);
-  g_strfreev(header_items);
 
-  const gchar *raw_data = uri+data_prefix_len+header_len;
+  if (header_items_no_out)
+    {
+      *header_items_no_out = header_items_no;
+    }
+
+  if (raw_data_out)
+    {
+      *raw_data_out = (gchar *)uri+data_prefix_len+header_len;
+    }
+  return header_items;
+}
+
+// Supports data embedded in the URI itself
+// http://en.wikipedia.org/wiki/Data_URI_scheme
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/data_URIs
+static GInputStream *
+input_stream_datauri(const gchar *uri)
+{
+  GInputStream *stream = NULL;
+  gchar * raw_data = NULL;
+  gint header_items_no = 0;
+  gchar **header_items = parse_datauri_header(uri, &raw_data, &header_items_no);
+  const gboolean is_base64 = header_items_no > 1 && g_strcmp0(header_items[1], "base64") == 0;
 
   if (is_base64) {
     gsize len = 0;
-    gchar * data = g_base64_decode (raw_data, &len);
+    guchar * data = g_base64_decode (raw_data, &len);
     stream = g_memory_input_stream_new_from_data (data, len, g_free);
   } else {
     gchar *data = g_strdup(raw_data);
@@ -66,6 +78,7 @@ input_stream_datauri(const gchar *uri)
     stream = g_memory_input_stream_new_from_data (data, len, g_free);
   }
 
+  g_strfreev(header_items);
   return stream;
 }
 
