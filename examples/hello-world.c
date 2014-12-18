@@ -8,6 +8,11 @@ main (gint    argc,
 {
   gegl_init (&argc, &argv);  /* initialize the GEGL library */
 
+  /* license for this application, needed by fractal-explorer */
+  g_object_set (gegl_config (),
+                "application-license", "GPL3",
+                NULL);
+
   {
     /* instantiate a graph */
     GeglNode *gegl = gegl_node_new ();
