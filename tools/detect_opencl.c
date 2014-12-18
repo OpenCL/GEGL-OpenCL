@@ -22,17 +22,22 @@
 
 int main(int argc, char **argv)
 {
+  int ret;
+
   gegl_init(&argc, &argv);
+
   if (gegl_cl_is_accelerated())
     {
       printf ("yes");
-      gegl_exit ();
-      return 0;
+      ret = 0;
     }
   else
     {
       printf ("no");
-      gegl_exit ();
-      return 1;
+      ret = 1;
     }
+
+  gegl_exit ();
+
+  return ret;
 }
