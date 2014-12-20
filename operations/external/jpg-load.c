@@ -180,8 +180,9 @@ gegl_jpg_load_query_jpg (GInputStream *stream,
   const Babl *format = NULL;
   GioSource gio_source = { stream, NULL, 1024 };
 
-  jpeg_create_decompress (&cinfo);
   cinfo.err = jpeg_std_error (&jerr);
+  jpeg_create_decompress (&cinfo);
+
   gio_source_enable(&cinfo, &src, &gio_source);
 
   (void) jpeg_read_header (&cinfo, TRUE);
@@ -221,8 +222,9 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   gboolean                       is_inverted_cmyk = FALSE;
   GioSource gio_source = { stream, NULL, 1024 };
 
-  jpeg_create_decompress (&cinfo);
   cinfo.err = jpeg_std_error (&jerr);
+  jpeg_create_decompress (&cinfo);
+
   gio_source_enable(&cinfo, &src, &gio_source);
 
   (void) jpeg_read_header (&cinfo, TRUE);
