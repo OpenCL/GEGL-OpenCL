@@ -228,6 +228,13 @@ gegl_jpg_load_buffer_import_jpg (GeglBuffer  *gegl_buffer,
   gio_source_enable(&cinfo, &src, &gio_source);
 
   (void) jpeg_read_header (&cinfo, TRUE);
+
+  /* This is the most accurate method and could be the fastest too. But
+   * the results may vary on different platforms due to different
+   * rounding behavior and precision.
+   */
+  cinfo.dct_method = JDCT_FLOAT;
+
   (void) jpeg_start_decompress (&cinfo);
 
   format = babl_from_jpeg_colorspace(cinfo.out_color_space);
