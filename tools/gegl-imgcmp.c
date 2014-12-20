@@ -1,6 +1,10 @@
 #include <gegl.h>
+#include <stdlib.h>
+#include <errno.h>
 #include <math.h>
 #include <string.h>
+
+#define DEFAULT_ERROR_DIFFERENCE 1.5
 
 #define SQR(x) ((x) * (x))
 
@@ -18,17 +22,31 @@ main (gint    argc,
   GeglNode      *gegl, *imgA, *imgB, *comparison;
   GeglRectangle  boundsA, boundsB;
   gdouble        max_diff, avg_diff_wrong, avg_diff_total;
+  gdouble        error_diff;
   gint           wrong_pixels, total_pixels;
 
   gegl_init (&argc, &argv);
 
-  if (argc != 3)
+  if ((argc != 3) && (argc != 4))
     {
       g_print ("This is simple image difference detection tool for use in regression testing.\n"
                "Exit code is non zero if images are different, if they are equal"
                "the output will contain the string identical.\n");
-      g_print ("Usage: %s <imageA> <imageB>\n", argv[0]);
+      g_print ("Usage: %s <imageA> <imageB> [<error-difference>]\n", argv[0]);
       return ERROR_WRONG_ARGUMENTS;
+    }
+
+  error_diff = DEFAULT_ERROR_DIFFERENCE;
+  if (argc == 4)
+    {
+      gdouble t;
+      char *end;
+
+      end = NULL;
+      errno = 0;
+      t = strtod(argv[3], &end);
+      if ((errno != ERANGE) && (end != argv[3]) && (end != NULL) && (*end == 0))
+        error_diff = t;
     }
 
   gegl = gegl_node_new ();
@@ -94,13 +112,13 @@ main (gint    argc,
           /*gegl_graph (sink=gegl_node ("gegl:png-save",
                                       "path", debug_path, NULL,
                                       gegl_node ("gegl:buffer-source", "buffer", debug_buf, NULL)));*/
-          if (max_diff > 1.5)
+          if (max_diff > error_diff)
             return ERROR_PIXELS_DIFFERENT;
         }
       if (strstr (argv[2], "broken"))
         g_print ("because the test is expected to fail ");
       else
-        g_print ("because the error is small ");
+        g_print ("because the error is smaller than %0.2f ", error_diff);
       g_print ("we'll say ");
     }
 
