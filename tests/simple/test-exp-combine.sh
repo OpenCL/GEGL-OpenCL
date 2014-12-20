@@ -10,9 +10,9 @@ if [ ! -f $abs_top_builddir/tools/exp_combine ]; then
 else
   $abs_top_builddir/tools/exp_combine                              \
           $abs_top_builddir/tests/simple/test-exp-combine.hdr      \
-          $abs_top_srcdir/tests/compositions/data/parliament_0.jpg \
-          $abs_top_srcdir/tests/compositions/data/parliament_1.jpg \
-          $abs_top_srcdir/tests/compositions/data/parliament_2.jpg \
+          $abs_top_srcdir/tests/compositions/data/parliament_0.png \
+          $abs_top_srcdir/tests/compositions/data/parliament_1.png \
+          $abs_top_srcdir/tests/compositions/data/parliament_2.png \
   && $abs_top_builddir/tools/gegl-imgcmp                               \
           $abs_top_srcdir/tests/compositions/data/parliament.hdr   \
           $abs_top_builddir/tests/simple/test-exp-combine.hdr
