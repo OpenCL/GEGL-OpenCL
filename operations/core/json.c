@@ -43,6 +43,8 @@ dropshadow a good initial testcase?
 typedef struct _JsonOp
 {
   GeglOperationMetaJson parent_instance;
+  JsonObject *json_root;
+  GHashTable *nodes;
 } JsonOp;
 
 typedef struct
@@ -60,6 +62,17 @@ json_op_get_type (void)
     return json_op_type_id;                                         
 }                                                                     
 */
+
+gchar *
+component2geglop(const gchar *name) {
+    gchar *dup = g_strdup(name);
+    gchar *sep = g_strstr_len(dup, -1, "/");
+    if (sep) {
+        *sep = ':';
+    }
+    g_ascii_strdown(dup, -1);
+    return dup;
+}
 
 static void
 install_properties(JsonOpClass *json_op_class)
@@ -107,6 +120,21 @@ install_properties(JsonOpClass *json_op_class)
 
 }
 
+static GObject *
+constructor (GType                  type,
+            guint                  n_construct_properties,
+            GObjectConstructParam *construct_properties)
+{
+  gpointer klass = g_type_class_peek(GEGL_TYPE_OPERATION_META_JSON);
+  GObjectClass *gobject_class = G_OBJECT_CLASS(klass);
+  GObject *obj = gobject_class->constructor(type, n_construct_properties, construct_properties);
+  JsonOpClass *json_op_class = G_TYPE_INSTANCE_GET_CLASS(obj, type, JsonOpClass);
+  JsonOp *json_op = (JsonOp *)obj;
+  json_op->json_root = json_op_class->json_root; // to avoid looking up via class/gtype
+  return obj;
+}
+
+
 static void
 get_property (GObject      *gobject,
               guint         property_id,
@@ -136,6 +164,67 @@ set_property (GObject      *gobject,
 }
 
 static void
+attach (GeglOperation *operation)
+{
+  JsonOp *self = (JsonOp *)operation;
+  GeglNode  *gegl = operation->node;
+  GeglNode  *input = gegl_node_get_input_proxy (gegl, "input");
+  GeglNode  *output = gegl_node_get_output_proxy (gegl, "output");
+
+  // Processes
+  JsonObject *root = self->json_root;
+  JsonObject *processes = json_object_get_object_member(root, "processes");
+
+  GList *process_names = json_object_get_members(processes);
+  for (int i=0; i<g_list_length(process_names); i++) {
+      const gchar *name = g_list_nth_data(process_names, i);
+      JsonObject *proc = json_object_get_object_member(processes, name);
+      const gchar *component = json_object_get_string_member(proc, "component");
+      gchar *opname = component2geglop(component);
+      g_print("creating node %s with operation %s\n", name, opname);
+      GeglNode *node = gegl_node_new_child (gegl, "operation", opname, NULL);
+      gegl_operation_meta_watch_node (operation, node);
+      g_hash_table_insert(self->nodes, (gpointer)g_strdup(name), (gpointer)node);
+      g_free(opname);
+  }
+  g_list_free(process_names);
+
+/*
+  // Connections
+  JsonArray *connections = json_object_get_array_member(root, "connections");
+  g_assert(connections);
+  for (int i=0; i<json_array_get_length(connections); i++) {
+      JsonObject *conn = json_array_get_object_element(connections, i);
+      JsonObject *tgt = json_object_get_object_member(conn, "tgt");
+      const gchar *tgt_proc = json_object_get_string_member(tgt, "process");
+      const gchar *tgt_port = json_object_get_string_member(tgt, "port");
+
+      JsonNode *srcnode = json_object_get_member(conn, "src");
+      if (srcnode) {
+          // Connection
+          JsonObject *src = json_object_get_object_member(conn, "src");
+          const gchar *src_proc = json_object_get_string_member(src, "process");
+          const gchar *src_port = json_object_get_string_member(src, "port");
+
+          gegl_node_connect_from (over, "aux", input, "output");
+      } else {
+          // IIP
+          JsonNode *datanode = json_object_get_member(conn, "data");
+          GValue value = G_VALUE_INIT;
+          g_assert(JSON_NODE_HOLDS_VALUE(datanode));
+          json_node_get_value(datanode, &value);
+          // TODO: set property value
+          g_value_unset(&value);
+      }
+  }
+*/
+
+  // TODO: go over the exported ports and redirect them
+  // gegl_operation_meta_redirect (operation, "radius", blur, "std-dev-x");
+
+}
+
+static void
 json_op_class_init (gpointer klass, gpointer class_data)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
@@ -143,13 +232,11 @@ json_op_class_init (gpointer klass, gpointer class_data)
   JsonOpClass *json_op_class = (JsonOpClass *) (klass);
   json_op_class->json_root = (JsonObject *) (class_data);
 
-    // TODO: store the class data, so it can be accessed
-
   object_class->set_property = set_property;
   object_class->get_property = get_property;
-/*
-  object_class->constructor  = gegl_chant_constructor;
-*/
+  object_class->constructor  = constructor;
+
+  operation_class->attach = attach;
 
   install_properties(json_op_class);
 
@@ -171,10 +258,8 @@ json_op_class_finalize (JsonOpClass *self)
 static void
 json_op_init (JsonOp *self)
 {
-
+  self->nodes = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref); // FIXME: free
 }
-
-
 
 static GType                                                             
 json_op_register_type (GTypeModule *type_module, const gchar *name, gpointer klass_data)                    
@@ -221,62 +306,6 @@ json_op_register_type_for_file (GTypeModule *type_module, const gchar *filepath)
 //    g_object_unref(parser);
     return ret;
 }
-
-/*
-static void
-graph_load_json(Graph *self, JsonParser *parser) {
-
-    JsonNode *rootnode = json_parser_get_root(parser);
-    g_assert(JSON_NODE_HOLDS_OBJECT(rootnode));
-    JsonObject *root = json_node_get_object(rootnode);
-
-    // Processes
-    JsonObject *processes = json_object_get_object_member(root, "processes");
-    g_assert(processes);
-
-    GList *process_names = json_object_get_members(processes);
-    for (int i=0; i<g_list_length(process_names); i++) {
-        const gchar *name = g_list_nth_data(process_names, i);
-        JsonObject *proc = json_object_get_object_member(processes, name);
-        const gchar *component = json_object_get_string_member(proc, "component");
-        graph_add_node(self, name, component);
-    }
-
-    //g_free(process_names); crashes??
-
-    // Connections
-    JsonArray *connections = json_object_get_array_member(root, "connections");
-    g_assert(connections);
-    for (int i=0; i<json_array_get_length(connections); i++) {
-        JsonObject *conn = json_array_get_object_element(connections, i);
-
-        JsonObject *tgt = json_object_get_object_member(conn, "tgt");
-        const gchar *tgt_proc = json_object_get_string_member(tgt, "process");
-        const gchar *tgt_port = json_object_get_string_member(tgt, "port");
-
-        JsonNode *srcnode = json_object_get_member(conn, "src");
-        if (srcnode) {
-            // Connection
-            JsonObject *src = json_object_get_object_member(conn, "src");
-            const gchar *src_proc = json_object_get_string_member(src, "process");
-            const gchar *src_port = json_object_get_string_member(src, "port");
-
-            graph_add_edge(self, src_proc, src_port, tgt_proc, tgt_port);
-        } else {
-            // IIP
-            JsonNode *datanode = json_object_get_member(conn, "data");
-            GValue value = G_VALUE_INIT;
-            g_assert(JSON_NODE_HOLDS_VALUE(datanode));
-            json_node_get_value(datanode, &value);
-
-            graph_add_iip(self, tgt_proc, tgt_port, &value);
-            g_value_unset(&value);
-        }
-    }
-
-
-}
-*/
 
 /* JSON operation enumeration */
 #define JSON_OP_DIR "/home/jon/contrib/code/imgflo-server/runtime/dependencies/gegl/operations/json"

@@ -11,7 +11,7 @@ OUTPORT=over.OUTPUT:OUTPUT
 # FIXME: allow - in property names, or map _ to - ?
 # TODO: allow \ or \n between connections
 
-input(gegl/noop) OUTPUT -> INPUT darken(gegl/src:in) OUTPUT -> INPUT blur(gegl/gaussian:blur) OUTPUT -> INPUT opacity(gegl/opacity) OUTPUT -> INPUT translate(gegl/translate) OUTPUT -> INPUT over(gegl/over)
+input(gegl/nop) OUTPUT -> INPUT darken(gegl/src_in) OUTPUT -> INPUT blur(gegl/gaussian_blur) OUTPUT -> INPUT opacity(gegl/opacity) OUTPUT -> INPUT translate(gegl/translate) OUTPUT -> INPUT over(gegl/over)
 input OUTPUT -> AUX over
 color OUTPUT -> AUX darken
 

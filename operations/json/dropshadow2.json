@@ -1,16 +1,16 @@
 {
   "processes": {
     "input": {
-      "component": "gegl/noop"
+      "component": "gegl/nop"
     },
     "darken": {
-      "component": "gegl/src",
+      "component": "gegl/src-in",
       "metadata": {
         "routes": "in"
       }
     },
     "blur": {
-      "component": "gegl/gaussian",
+      "component": "gegl/gaussian-blur",
       "metadata": {
         "routes": "blur"
       }
