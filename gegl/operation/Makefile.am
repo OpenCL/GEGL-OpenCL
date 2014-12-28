@@ -28,6 +28,7 @@ liboperation_public_HEADERS = \
 	gegl-operation-context.h         \
 	gegl-operation-filter.h       	 \
 	gegl-operation-meta.h       	 \
+	gegl-operation-meta-json.h       \
 	gegl-operation-point-composer.h  \
 	gegl-operation-point-composer3.h \
 	gegl-operation-point-filter.h    \
@@ -46,6 +47,7 @@ liboperation_sources = \
 	gegl-operation-composer3.c		\
 	gegl-operation-filter.c			\
 	gegl-operation-meta.c			\
+	gegl-operation-meta-json.c			\
 	gegl-operation-point-composer.c		\
 	gegl-operation-point-composer3.c	\
 	gegl-operation-point-filter.c		\

@@ -494,7 +494,7 @@ AC_CHECK_FUNCS(fsync)
 
 PKG_CHECK_MODULES(BABL, babl >= babl_required_version)
 
-GLIB_PACKAGES="gobject-2.0 gmodule-2.0 gio-2.0"
+GLIB_PACKAGES="gobject-2.0 gmodule-2.0 gio-2.0 json-glib-1.0"
 # select platform-specific GIO
 case "$os_win32" in
   yes)
