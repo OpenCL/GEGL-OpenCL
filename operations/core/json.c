@@ -48,6 +48,7 @@ typedef struct _JsonOp
 typedef struct
 {
   GeglOperationMetaJsonClass parent_class;
+  JsonObject *json_root;
 } JsonOpClass;
 
 
@@ -61,29 +62,104 @@ json_op_get_type (void)
 */
 
 static void
+install_properties(JsonOpClass *json_op_class)
+{
+    GObjectClass *object_class = G_OBJECT_CLASS (json_op_class);
+    JsonObject *root = json_op_class->json_root;
+
+    guint prop = 1;
+
+    g_print("%s: %p\n", __PRETTY_FUNCTION__, json_op_class->json_root);
+
+    // Exported ports
+    if (json_object_has_member(root, "inports")) {
+        JsonObject *inports = json_object_get_object_member(root, "inports");
+        GList *inport_names = json_object_get_members(inports);
+        for (int i=0; i<g_list_length(inport_names); i++) {
+            const gchar *name = g_list_nth_data(inport_names, i);
+            JsonObject *conn = json_object_get_object_member(inports, name);
+            const gchar *proc = json_object_get_string_member(conn, "process");
+            const gchar *port = json_object_get_string_member(conn, "port");
+            GParamSpec *spec = NULL;
+
+            g_print("adding property %s, pointing to %s %s\n", name, port, proc);
+
+            // TODO: look up property on the class/op the port points to and use that paramspec
+            spec = g_param_spec_int (name, name, "DUMMY description", 0, 1000, 1,
+                                        (GParamFlags) (G_PARAM_READWRITE | G_PARAM_CONSTRUCT | GEGL_PARAM_PAD_INPUT));
+            g_object_class_install_property (object_class, prop++, spec);
+        }
+    }
+
+/*
+    if (json_object_has_member(root, "outports")) {
+        JsonObject *outports = json_object_get_object_member(root, "outports");
+        GList *outport_names = json_object_get_members(outports);
+        for (int i=0; i<g_list_length(outport_names); i++) {
+            const gchar *name = g_list_nth_data(outport_names, i);
+            JsonObject *conn = json_object_get_object_member(outports, name);
+            const gchar *proc = json_object_get_string_member(conn, "process");
+            const gchar *port = json_object_get_string_member(conn, "port");
+            graph_add_port(self, GraphOutPort, name, proc, port);
+        }
+    }
+*/
+
+}
+
+static void
+get_property (GObject      *gobject,
+              guint         property_id,
+              GValue       *value,
+              GParamSpec   *pspec)
+{
+  switch (property_id)
+  {
+    default:
+//      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+      break;
+  }
+}
+
+static void
+set_property (GObject      *gobject,
+              guint         property_id,
+              const GValue *value,
+              GParamSpec   *pspec)
+{
+  switch (property_id)
+  {
+    default:
+//      G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
+      break;
+  }
+}
+
+static void
 json_op_class_init (gpointer klass, gpointer class_data)
 {
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
+  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
+  JsonOpClass *json_op_class = (JsonOpClass *) (klass);
+  json_op_class->json_root = (JsonObject *) (class_data);
 
     // TODO: store the class data, so it can be accessed
 
-/*
   object_class->set_property = set_property;
   object_class->get_property = get_property;
+/*
   object_class->constructor  = gegl_chant_constructor;
 */
 
-/* TODO: go over exported ports and create properties for them
+  install_properties(json_op_class);
 
-#define gegl_chant_int(name, nick, min, max, def, blurb)                     \
-  g_object_class_install_property (object_class, PROP_##name,                \
-                                   g_param_spec_int (#name, nick, blurb,     \
-                                                     min, max, def,          \
-                                                     (GParamFlags) (         \
-                                                     G_PARAM_READWRITE |     \
-                                                     G_PARAM_CONSTRUCT |     \
-                                                     GEGL_PARAM_PAD_INPUT)));
-*/
+  // FIXME: unharcode, look up in properties
+  gegl_operation_class_set_keys (operation_class,
+    "name",        "gegl:dropshadow2",
+    "categories",  "effects:light",
+    "description", "Creates a dropshadow effect on the input buffer",
+    NULL);
+
 }
 
 static void
@@ -98,36 +174,52 @@ json_op_init (JsonOp *self)
 
 }
 
+
+
 static GType                                                             
 json_op_register_type (GTypeModule *type_module, const gchar *name, gpointer klass_data)                    
 {
     gint flags = 0;
     const GTypeInfo g_define_type_info =                                
-    {                                                                   
+    {
       sizeof (JsonOpClass),
-      (GBaseInitFunc) NULL,                             
+      (GBaseInitFunc) NULL,
       (GBaseFinalizeFunc) NULL,
-      (GClassInitFunc) json_op_class_init,     
+      (GClassInitFunc) json_op_class_init,
       (GClassFinalizeFunc) json_op_class_finalize,
       klass_data,
       sizeof (JsonOp),
       0,      /* n_preallocs */
       (GInstanceInitFunc) json_op_init,
       NULL    /* value_table */
-    };                                          
+    };
                               
     return g_type_module_register_type (type_module, GEGL_TYPE_OPERATION_META_JSON, name,
-            &g_define_type_info, (GTypeFlags) flags);
+                                        &g_define_type_info, (GTypeFlags) flags);
 }
 
 
 static GType
 json_op_register_type_for_file (GTypeModule *type_module, const gchar *filepath)
 {
-    // TODO: parse json, pass to register_type
-    gpointer class_data = NULL;
-    // FIXME: unhardoce name, look up in json structure
-    return json_op_register_type(type_module, "dropshadow_json", class_data);
+    GType ret = 0;
+    GError *error = NULL;
+    JsonParser *parser = json_parser_new();
+    const gboolean success = json_parser_load_from_file(parser, filepath, &error);
+
+    g_print("%s: %s\n", __PRETTY_FUNCTION__, filepath);
+
+    if (success) {
+        JsonNode *root_node = json_node_copy (json_parser_get_root (parser));
+        JsonObject *root = json_node_get_object (root_node);
+        g_assert(root_node);
+        g_print("%s: %p\n", __PRETTY_FUNCTION__, root_node);
+        // FIXME: unhardoce name, look up in json structure, fallback to basename
+        ret = json_op_register_type(type_module, "dropshadow_json", root);
+    }
+
+//    g_object_unref(parser);
+    return ret;
 }
 
 /*
@@ -182,30 +274,7 @@ graph_load_json(Graph *self, JsonParser *parser) {
         }
     }
 
-    // Exported ports
-    if (json_object_has_member(root, "inports")) {
-        JsonObject *inports = json_object_get_object_member(root, "inports");
-        GList *inport_names = json_object_get_members(inports);
-        for (int i=0; i<g_list_length(inport_names); i++) {
-            const gchar *name = g_list_nth_data(inport_names, i);
-            JsonObject *conn = json_object_get_object_member(inports, name);
-            const gchar *proc = json_object_get_string_member(conn, "process");
-            const gchar *port = json_object_get_string_member(conn, "port");
-            graph_add_port(self, GraphInPort, name, proc, port);
-        }
-    }
 
-    if (json_object_has_member(root, "outports")) {
-        JsonObject *outports = json_object_get_object_member(root, "outports");
-        GList *outport_names = json_object_get_members(outports);
-        for (int i=0; i<g_list_length(outport_names); i++) {
-            const gchar *name = g_list_nth_data(outport_names, i);
-            JsonObject *conn = json_object_get_object_member(outports, name);
-            const gchar *proc = json_object_get_string_member(conn, "process");
-            const gchar *port = json_object_get_string_member(conn, "port");
-            graph_add_port(self, GraphOutPort, name, proc, port);
-        }
-    }
 }
 */
 
@@ -215,7 +284,7 @@ static void
 json_register_operations(GTypeModule *module)
 {
     // FIXME: unhardcode, follow GEGL_PATH properly
-    json_op_register_type_for_file (module, JSON_OP_DIR "/dropshadow.json");
+    json_op_register_type_for_file (module, JSON_OP_DIR "/dropshadow2.json");
 }
 
 
