@@ -63,7 +63,7 @@ json_op_get_type (void)
 }                                                                     
 */
 
-gchar *
+static gchar *
 component2geglop(const gchar *name) {
     gchar *dup = g_strdup(name);
     gchar *sep = g_strstr_len(dup, -1, "/");
@@ -72,6 +72,65 @@ component2geglop(const gchar *name) {
     }
     g_ascii_strdown(dup, -1);
     return dup;
+}
+
+static gboolean
+gvalue_from_string(GValue *value, GType target_type, GValue *dest_value) {
+
+    // Custom conversion from string
+    if (!G_VALUE_HOLDS_STRING(value)) {
+        return FALSE;
+    }
+    const gchar *iip = g_value_get_string(value);
+    if (g_type_is_a(target_type, G_TYPE_DOUBLE)) {
+        gdouble d = g_ascii_strtod(iip, NULL);
+        g_value_set_double(dest_value, d);
+    } else if (g_type_is_a(target_type, G_TYPE_INT)) {
+        gint i = g_ascii_strtoll(iip, NULL, 10);
+        g_value_set_int(dest_value, i);
+    } else if (g_type_is_a(target_type, G_TYPE_INT64)) {
+        gint64 i = g_ascii_strtoll(iip, NULL, 10);
+        g_value_set_int64(dest_value, i);
+    } else if (g_type_is_a(target_type, GEGL_TYPE_COLOR)) {
+        GeglColor *color = gegl_color_new(iip);
+        if (!color || !GEGL_IS_COLOR(color)) {
+            return FALSE;
+        }
+        g_value_set_object(dest_value, color);
+    } else if (g_type_is_a(target_type, G_TYPE_ENUM)) {
+        GEnumClass *klass = (GEnumClass *)g_type_class_ref(target_type);
+        GEnumValue *val = g_enum_get_value_by_nick(klass, iip);
+        g_return_val_if_fail(val, FALSE);
+
+        g_value_set_enum(dest_value, val->value);
+        g_type_class_unref((gpointer)klass);
+    } else if (g_type_is_a(target_type, G_TYPE_BOOLEAN)) {
+        gboolean b = g_ascii_strcasecmp("true", iip) == 0;
+        g_value_set_boolean(dest_value, b);
+    } else {
+        return FALSE;
+    }
+    return TRUE;
+}
+
+gboolean
+set_prop(GeglNode *t, const gchar *port, GParamSpec *paramspec, GValue *value)  {
+    GType target_type = G_PARAM_SPEC_VALUE_TYPE(paramspec);
+    GValue dest_value = {0,};
+    g_value_init(&dest_value, target_type);
+
+    gboolean success = g_param_value_convert(paramspec, value, &dest_value, FALSE);
+    if (success) {
+        gegl_node_set_property(t, port, &dest_value);
+        return TRUE;
+    }
+
+    if (gvalue_from_string(value, target_type, &dest_value)) {
+        g_param_value_validate(paramspec, &dest_value);
+        gegl_node_set_property(t, port, &dest_value);
+        return TRUE;
+    }
+    return FALSE;
 }
 
 static void
@@ -216,7 +275,11 @@ attach (GeglOperation *operation)
           GValue value = G_VALUE_INIT;
           g_assert(JSON_NODE_HOLDS_VALUE(datanode));
           json_node_get_value(datanode, &value);
-          // TODO: set property value
+          GParamSpec *paramspec = gegl_node_find_property(tgt_node, tgt_port);
+
+          g_print("setting property value on %s,%s\n", tgt_proc, tgt_port);
+
+          set_prop(tgt_node, tgt_port, paramspec, &value);
           g_value_unset(&value);
       }
   }
