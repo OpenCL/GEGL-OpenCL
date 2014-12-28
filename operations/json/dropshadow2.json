@@ -18,6 +18,9 @@
     "opacity": {
       "component": "gegl/opacity"
     },
+    "color": {
+      "component": "gegl/color"
+    },
     "translate": {
       "component": "gegl/translate"
     },

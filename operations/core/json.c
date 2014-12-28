@@ -189,7 +189,6 @@ attach (GeglOperation *operation)
   }
   g_list_free(process_names);
 
-/*
   // Connections
   JsonArray *connections = json_object_get_array_member(root, "connections");
   g_assert(connections);
@@ -198,6 +197,8 @@ attach (GeglOperation *operation)
       JsonObject *tgt = json_object_get_object_member(conn, "tgt");
       const gchar *tgt_proc = json_object_get_string_member(tgt, "process");
       const gchar *tgt_port = json_object_get_string_member(tgt, "port");
+      GeglNode *tgt_node = g_hash_table_lookup(self->nodes, tgt_proc);
+      g_assert(tgt_node);
 
       JsonNode *srcnode = json_object_get_member(conn, "src");
       if (srcnode) {
@@ -205,8 +206,12 @@ attach (GeglOperation *operation)
           JsonObject *src = json_object_get_object_member(conn, "src");
           const gchar *src_proc = json_object_get_string_member(src, "process");
           const gchar *src_port = json_object_get_string_member(src, "port");
+          GeglNode *src_node = g_hash_table_lookup(self->nodes, src_proc);
 
-          gegl_node_connect_from (over, "aux", input, "output");
+          g_print("connecting %s,%s to %s,%s\n", src_proc, src_port, tgt_port, tgt_proc);
+          g_assert(src_node);
+
+          gegl_node_connect_to (src_node, src_port, tgt_node, tgt_port);
       } else {
           // IIP
           JsonNode *datanode = json_object_get_member(conn, "data");
@@ -217,7 +222,6 @@ attach (GeglOperation *operation)
           g_value_unset(&value);
       }
   }
-*/
 
   // TODO: go over the exported ports and redirect them
   // gegl_operation_meta_redirect (operation, "radius", blur, "std-dev-x");

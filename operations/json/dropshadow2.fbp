@@ -13,7 +13,7 @@ OUTPORT=over.OUTPUT:OUTPUT
 
 input(gegl/nop) OUTPUT -> INPUT darken(gegl/src_in) OUTPUT -> INPUT blur(gegl/gaussian_blur) OUTPUT -> INPUT opacity(gegl/opacity) OUTPUT -> INPUT translate(gegl/translate) OUTPUT -> INPUT over(gegl/over)
 input OUTPUT -> AUX over
-color OUTPUT -> AUX darken
+color(gegl/color) OUTPUT -> AUX darken
 
 'rgba(0.0, 0.0, 0.0, 0.0)' -> VALUE color
 '0.5' -> VALUE opacity
