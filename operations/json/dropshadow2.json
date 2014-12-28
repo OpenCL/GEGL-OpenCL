@@ -97,9 +97,16 @@
       }
     },
     {
-      "data": "rgb(0.0,0.0,0.0)",
+      "data": "rgba(0.0, 0.0, 0.0, 0.0)",
       "tgt": {
         "process": "color",
+        "port": "value"
+      }
+    },
+    {
+      "data": "0.5",
+      "tgt": {
+        "process": "opacity",
         "port": "value"
       }
     }
@@ -115,11 +122,15 @@
     },
     "radius": {
       "process": "blur",
-      "port": "std_dev_x"
+      "port": "std-dev-x"
+    },
+    "opacity": {
+      "process": "opacity",
+      "port": "value"
     },
     "input": {
       "process": "input",
-      "port": "output"
+      "port": "input"
     }
   },
   "outports": {

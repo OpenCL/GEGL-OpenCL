@@ -2,7 +2,9 @@ INPORT=translate.X:X
 INPORT=translate.Y:X
 INPORT=color.VALUE:COLOR
 INPORT=blur.STD_DEV_X:RADIUS
-INPORT=input.OUTPUT:INPUT
+INPORT=opacity.VALUE:OPACITY
+
+INPORT=input.INPUT:INPUT
 OUTPORT=over.OUTPUT:OUTPUT
 
 # FIXME: multiple export mapping? INPORT=blur.STD-DEV-Y:RADIUS
@@ -13,4 +15,8 @@ input(gegl/noop) OUTPUT -> INPUT darken(gegl/src:in) OUTPUT -> INPUT blur(gegl/g
 input OUTPUT -> AUX over
 color OUTPUT -> AUX darken
 
-'rgb(0.0,0.0,0.0)' -> VALUE color
+'rgba(0.0, 0.0, 0.0, 0.0)' -> VALUE color
+'0.5' -> VALUE opacity
+'10' -> STD_DEV_Y blur
+'20' -> Y translate
+'20' -> X translate
