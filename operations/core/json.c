@@ -168,8 +168,6 @@ attach (GeglOperation *operation)
 {
   JsonOp *self = (JsonOp *)operation;
   GeglNode  *gegl = operation->node;
-  GeglNode  *input = gegl_node_get_input_proxy (gegl, "input");
-  GeglNode  *output = gegl_node_get_output_proxy (gegl, "output");
 
   // Processes
   JsonObject *root = self->json_root;
@@ -223,8 +221,51 @@ attach (GeglOperation *operation)
       }
   }
 
-  // TODO: go over the exported ports and redirect them
-  // gegl_operation_meta_redirect (operation, "radius", blur, "std-dev-x");
+
+  // Exported ports
+  if (json_object_has_member(root, "inports")) {
+      JsonObject *inports = json_object_get_object_member(root, "inports");
+      GList *inport_names = json_object_get_members(inports);
+      for (int i=0; i<g_list_length(inport_names); i++) {
+          const gchar *name = g_list_nth_data(inport_names, i);
+          JsonObject *conn = json_object_get_object_member(inports, name);
+          const gchar *proc = json_object_get_string_member(conn, "process");
+          const gchar *port = json_object_get_string_member(conn, "port");
+          GeglNode *node = g_hash_table_lookup(self->nodes, proc);
+
+          g_print("redirecting input %s, to %s %s\n", name, port, proc);
+          g_assert(node);
+
+          if (g_strcmp0(name, "input") == 0) {
+              GeglNode *input = gegl_node_get_input_proxy (gegl, "input");
+              gegl_node_connect_to (input, "output", node, "input");
+          } else {
+            gegl_operation_meta_redirect (operation, name, node, port);
+          }
+      }
+  }
+
+  if (json_object_has_member(root, "outports")) {
+      JsonObject *outports = json_object_get_object_member(root, "outports");
+      GList *outport_names = json_object_get_members(outports);
+      for (int i=0; i<g_list_length(outport_names); i++) {
+          const gchar *name = g_list_nth_data(outport_names, i);
+          JsonObject *conn = json_object_get_object_member(outports, name);
+          const gchar *proc = json_object_get_string_member(conn, "process");
+          const gchar *port = json_object_get_string_member(conn, "port");
+          GeglNode *node = g_hash_table_lookup(self->nodes, proc);
+
+          g_print("redirecting output %s, to %s %s\n", name, port, proc);
+          g_assert(node);
+
+          if (g_strcmp0(name, "output") == 0) {
+            GeglNode *output = gegl_node_get_output_proxy (gegl, "output");
+            gegl_node_connect_to (node, "output", output, "input");
+          } else {
+            g_warning("Unsupported output '%s' exported in .json file", name);
+          }
+      }
+  }
 
 }
 

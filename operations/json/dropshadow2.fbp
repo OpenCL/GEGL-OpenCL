@@ -1,5 +1,5 @@
 INPORT=translate.X:X
-INPORT=translate.Y:X
+INPORT=translate.Y:Y
 INPORT=color.VALUE:COLOR
 INPORT=blur.STD_DEV_X:RADIUS
 INPORT=opacity.VALUE:OPACITY
