@@ -61,6 +61,7 @@ op_LTLIBRARIES = \
 	invert-linear.la \
 	layer.la \
 	lens-distortion.la \
+	lens-flare.la \
 	levels.la \
 	linear-gradient.la \
 	load.la \

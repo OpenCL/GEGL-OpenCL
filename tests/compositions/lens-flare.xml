@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:lens-flare'>
+    <params>
+      <param name='pos-x'>0.2</param>
+      <param name='pos-y'>0.2</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/boats.png</param>
+    </params>
+  </node>
+</gegl>
+

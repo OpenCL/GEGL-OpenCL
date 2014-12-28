@@ -34,6 +34,7 @@ TESTS = \
   hdr-color.xml                   \
   illusion.xml                    \
   image-compare.xml               \
+  lens-flare.xml                  \
   mantiuk06.xml                   \
   noise-cell.xml        	  			\
   noise-hurl.xml        	  			\

@@ -55,6 +55,7 @@ operations/common/invert-gamma.c
 operations/common/invert-linear.c
 operations/common/layer.c
 operations/common/lens-distortion.c
+operations/common/lens-flare.c
 operations/common/levels.c
 operations/common/linear-gradient.c
 operations/common/load.c
