@@ -26,8 +26,7 @@
 
 property_file_path (path, _("File"), "")
   description (_("Path of file to load."))
-// TODO: use dedicated property spec for URI
-property_string (uri, _("URI"), "")
+property_uri (uri, _("URI"), "")
   description (_("URI for file to load."))
 
 #else

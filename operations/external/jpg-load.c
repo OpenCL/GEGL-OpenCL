@@ -23,8 +23,7 @@
 
 property_file_path (path, _("File"), "")
   description (_("Path of file to load"))
-
-property_string (uri, _("URI"), "") // TODO: use file_ui property type
+property_uri (uri, _("URI"), "")
   description (_("URI of file to load"))
 
 #else
