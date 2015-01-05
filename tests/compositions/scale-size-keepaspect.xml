@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:scale-size-keepaspect'>
+    <params>
+        <param name='x'>80</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name="path">data/grid.png</param>
+    </params>
+  </node>
+</gegl>
