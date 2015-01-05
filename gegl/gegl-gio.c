@@ -27,9 +27,18 @@
 #include <gio/gunixinputstream.h>
 #endif
 
-// Note: header_item[0] is content-type, header_items[1] is encoding
+/**
+ * datauri_parse_header:
+ * @uri: URI to parse
+ * @raw_data_out: (out) (transfer full): return location for pointer to raw data, following header
+ * @header_items_no_out: (out) (transfer none): return location for number of items parsed from header
+ *
+ * Return value: (transfer full): header_item[0] is content-type, header_items[1] is encoding, free with g_strfreev()
+ *
+ * Note: currently private API
+ */
 static gchar **
-parse_datauri_header(const gchar *uri, gchar **raw_data_out, gint *header_items_no_out)
+datauri_parse_header(const gchar *uri, gchar **raw_data_out, gint *header_items_no_out)
 {
   // Determine data format
   const gchar * header_end = g_strstr_len (uri, -1, ",");
@@ -65,7 +74,7 @@ input_stream_datauri(const gchar *uri)
   GInputStream *stream = NULL;
   gchar * raw_data = NULL;
   gint header_items_no = 0;
-  gchar **header_items = parse_datauri_header(uri, &raw_data, &header_items_no);
+  gchar **header_items = datauri_parse_header(uri, &raw_data, &header_items_no);
   const gboolean is_base64 = header_items_no > 1 && g_strcmp0(header_items[1], "base64") == 0;
 
   if (is_base64) {
@@ -80,6 +89,24 @@ input_stream_datauri(const gchar *uri)
 
   g_strfreev(header_items);
   return stream;
+}
+
+gchar *
+gegl_gio_datauri_get_content_type(const gchar *uri)
+{
+  gchar *content_type = NULL;
+  gint header_items_no = 0;
+  gchar **header_items = datauri_parse_header(uri, NULL, &header_items_no);
+  if (header_items_no)
+    content_type = g_strdup(header_items[0]);
+  g_strfreev(header_items);
+  return content_type;
+}
+
+gboolean
+gegl_gio_uri_is_datauri(const gchar *uri)
+{
+    return g_str_has_prefix(uri, "data:");
 }
 
 /**
@@ -112,7 +139,7 @@ gegl_gio_open_input_stream(const gchar *uri, const gchar *path, GFile **out_file
     }
   else if (uri && strlen(uri) > 0)
     {
-      if (g_str_has_prefix(uri, "data:"))
+      if (gegl_gio_uri_is_datauri(uri))
         {
           fis = input_stream_datauri(uri);
         }

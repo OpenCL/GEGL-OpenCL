@@ -18,7 +18,7 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-
+#include <gegl-gio-private.h>
 
 #ifdef GEGL_PROPERTIES
 
@@ -52,6 +52,17 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 
 #include <stdio.h>
 
+static gchar * const
+extension_from_mimetype(const gchar *mime)
+{
+    // XXX: maybe file loader opts should register mimetypes also?
+    static const gchar * const mime_prefix = "image/";
+    if (g_str_has_prefix(mime, mime_prefix)) {
+       return g_strdup_printf(".%s", mime+strlen(mime_prefix));
+    }
+    return NULL;
+}
+
 static void
 do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
 {
@@ -59,12 +70,24 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
 
   if (new_uri && strlen (new_uri) > 0)
       {
-        const gchar *extension = strrchr (new_uri, '.');
+        gchar *extension = NULL;
         const gchar *handler   = NULL;
+
+        if (gegl_gio_uri_is_datauri(new_uri))
+          {
+            gchar *mime = gegl_gio_datauri_get_content_type(new_uri);
+            extension = extension_from_mimetype(mime);
+            g_free(mime);
+          }
+        else
+            extension = g_strdup(strrchr (new_uri, '.'));
+
         if (extension)
             handler = gegl_extension_handler_get (extension);
         gegl_node_set (self->load, "operation", handler, NULL);
         gegl_node_set (self->load, "uri", new_uri, NULL);
+
+        g_free(extension);
       }
   else if (new_path && strlen (new_path) > 0)
     {

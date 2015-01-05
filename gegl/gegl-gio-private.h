@@ -27,6 +27,12 @@ G_BEGIN_DECLS
 GInputStream *
 gegl_gio_open_input_stream(const gchar *uri, const gchar *path, GFile **out_file, GError **err);
 
+gboolean
+gegl_gio_uri_is_datauri(const gchar *uri);
+
+gchar *
+gegl_gio_datauri_get_content_type(const gchar *uri);
+
 #endif // __GEGL_GIO_PRIVATE_H__
 
 G_END_DECLS
