@@ -42,6 +42,7 @@ gegl_module_query (GTypeModule *module)
 GType rotate_get_type      (void);
 GType scale_ratio_get_type  (void);
 GType scale_size_get_type   (void);
+GType scale_size_keepaspect_get_type   (void);
 GType shear_get_type       (void);
 GType translate_get_type   (void);
 GType reflect_get_type     (void);
@@ -57,6 +58,7 @@ gegl_module_register (GTypeModule *module)
   dummy = rotate_get_type ();
   dummy = scale_ratio_get_type ();
   dummy = scale_size_get_type ();
+  dummy = scale_size_keepaspect_get_type ();
   dummy = shear_get_type ();
   dummy = translate_get_type ();
   dummy = reflect_get_type ();
