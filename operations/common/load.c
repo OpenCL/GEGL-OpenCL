@@ -24,6 +24,8 @@
 
 property_file_path (path, _("File"), "")
     description (_("Path of file to load."))
+property_uri (uri, _("URI"), "")
+    description (_("URI of file to load."))
 
 #else
 
@@ -51,18 +53,20 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 #include <stdio.h>
 
 static void
-do_setup (GeglOperation *operation, const gchar *new_path)
+do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
 {
   GeglOp  *self = GEGL_OP (operation);
 
-  if (!new_path || 0 == strlen (new_path))
-    {
-      gegl_node_set (self->load,
-                     "operation", "gegl:text",
-                     "string",    "No path specified",
-                     NULL);
-    }
-  else
+  if (new_uri && strlen (new_uri) > 0)
+      {
+        const gchar *extension = strrchr (new_uri, '.');
+        const gchar *handler   = NULL;
+        if (extension)
+            handler = gegl_extension_handler_get (extension);
+        gegl_node_set (self->load, "operation", handler, NULL);
+        gegl_node_set (self->load, "uri", new_uri, NULL);
+      }
+  else if (new_path && strlen (new_path) > 0)
     {
       const gchar *extension = strrchr (new_path, '.');
       const gchar *handler   = NULL;
@@ -93,6 +97,14 @@ do_setup (GeglOperation *operation, const gchar *new_path)
                          NULL);
         }
     }
+  else
+    {
+      gegl_node_set (self->load,
+                     "operation", "gegl:text",
+                     "string",    "No path specified",
+                     NULL);
+    }
+
 }
 
 static void attach (GeglOperation *operation)
@@ -106,7 +118,7 @@ static void attach (GeglOperation *operation)
                                     "operation", "gegl:text",
                                     NULL);
 
-  do_setup (operation, o->path);
+  do_setup (operation, o->path, o->uri);
 
   gegl_node_link (self->load, self->output);
 
@@ -147,14 +159,17 @@ my_set_property (GObject      *gobject,
   GeglOp         *self      = GEGL_OP (operation);
   GeglProperties *o         = GEGL_PROPERTIES (operation);
 
-  const gchar *new_path = g_value_get_string (value);
-
-  if (self->load && (o->path != new_path))
-    do_setup (operation, new_path);
+  const gchar *old_path = o->path;
+  const gchar *old_uri = o->uri;
 
   /* The set_property provided by the chant system does the
    * storing and reffing/unreffing of the input properties */
   set_property(gobject, property_id, value, pspec);
+
+  const gboolean props_changed = ((o->path != old_path) || (o->uri != old_uri));
+
+  if (self->load && props_changed)
+    do_setup (operation, o->path, o->uri);
 }
 
 static void
