@@ -393,5 +393,50 @@ GParamSpec * gegl_param_spec_format (const gchar *name,
                                      GParamFlags  flags);
 
 
+
+/*
+ * GEGL_TYPE_PARAM_URI
+ */
+
+#define GEGL_TYPE_PARAM_URI           (gegl_param_uri_get_type ())
+#define GEGL_PARAM_SPEC_URI(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), GEGL_TYPE_PARAM_URI, GeglParamSpecUri))
+#define GEGL_IS_PARAM_SPEC_URI(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_URI))
+
+typedef struct _GeglParamSpecUri GeglParamSpecUri;
+
+struct _GeglParamSpecUri
+{
+  GParamSpecString parent_instance;
+
+  guint            no_validate : 1;
+  guint            null_ok     : 1;
+};
+
+GType        gegl_param_uri_get_type (void) G_GNUC_CONST;
+
+/**
+ * gegl_param_spec_uri:
+ * @name: canonical name of the property specified
+ * @nick: nick name for the property specified
+ * @blurb: description of the property specified
+ * @no_validate: true if the string should be validated with g_utf8_validate
+ * @null_ok: true if the string can be NULL
+ * @default_value: default value for the property specified
+ * @flags: flags for the property specified
+ *
+ * Creates a new #GeglParamSpecUri instance.
+ *
+ * Return value: (transfer full): a newly created parameter specification
+ */
+GParamSpec * gegl_param_spec_uri (const gchar *name,
+                                        const gchar *nick,
+                                        const gchar *blurb,
+                                        gboolean     no_validate,
+                                        gboolean     null_ok,
+                                        const gchar *default_value,
+                                        GParamFlags  flags);
+
+
+
 G_END_DECLS
 #endif  /*  __GEGL_PARAM_SPECS_H__  */

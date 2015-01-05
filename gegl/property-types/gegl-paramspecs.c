@@ -781,3 +781,110 @@ gegl_param_spec_format (const gchar *name,
 
   return G_PARAM_SPEC (pspec);
 }
+
+/*
+ * GEGL_TYPE_PARAM_URI
+ */
+
+static void       gegl_param_uri_class_init (GParamSpecClass *klass);
+static void       gegl_param_uri_init       (GParamSpec *pspec);
+static gboolean   gegl_param_uri_validate   (GParamSpec *pspec,
+                                                   GValue     *value);
+
+GType
+gegl_param_uri_get_type (void)
+{
+  static GType type = 0;
+
+  if (!type)
+    {
+      const GTypeInfo info =
+      {
+        sizeof (GParamSpecClass),
+        NULL,                                        NULL,
+        (GClassInitFunc) gegl_param_uri_class_init,
+        NULL,                                        NULL,
+        sizeof (GeglParamSpecString),
+        0,
+        (GInstanceInitFunc) gegl_param_uri_init
+      };
+
+      type = g_type_register_static (G_TYPE_PARAM_STRING,
+                                     "GeglParamUri", &info, 0);
+    }
+
+  return type;
+}
+
+static void
+gegl_param_uri_class_init (GParamSpecClass *klass)
+{
+  klass->value_type     = G_TYPE_STRING;
+  klass->value_validate = gegl_param_uri_validate;
+}
+
+static void
+gegl_param_uri_init (GParamSpec *pspec)
+{
+  GeglParamSpecUri *sspec = GEGL_PARAM_SPEC_URI (pspec);
+
+  sspec->no_validate = FALSE;
+  sspec->null_ok     = FALSE;
+}
+
+static gboolean
+gegl_param_uri_validate (GParamSpec *pspec,
+                               GValue     *value)
+{
+  GeglParamSpecUri *sspec = GEGL_PARAM_SPEC_URI (pspec);
+  gchar                 *path  = value->data[0].v_pointer;
+
+  if (path)
+    {
+      gchar *s;
+
+      if (!sspec->no_validate &&
+          !g_utf8_validate (path, -1, (const gchar **) &s))
+        {
+          for (; *s; s++)
+            if (*s < ' ')
+              *s = '?';
+
+          return TRUE;
+        }
+    }
+  else if (!sspec->null_ok)
+    {
+      value->data[0].v_pointer = g_strdup ("");
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+GParamSpec *
+gegl_param_spec_uri (const gchar *name,
+                           const gchar *nick,
+                           const gchar *blurb,
+                           gboolean     no_validate,
+                           gboolean     null_ok,
+                           const gchar *default_value,
+                           GParamFlags  flags)
+{
+  GeglParamSpecUri *sspec;
+
+  sspec = g_param_spec_internal (GEGL_TYPE_PARAM_URI,
+                                 name, nick, blurb, flags);
+
+  if (sspec)
+    {
+      g_free (G_PARAM_SPEC_STRING (sspec)->default_value);
+      G_PARAM_SPEC_STRING (sspec)->default_value = g_strdup (default_value);
+
+      sspec->no_validate = no_validate ? TRUE : FALSE;
+      sspec->null_ok     = null_ok     ? TRUE : FALSE;
+    }
+
+  return G_PARAM_SPEC (sspec);
+}
+

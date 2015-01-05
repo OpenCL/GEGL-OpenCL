@@ -246,6 +246,7 @@ gegl_module_register (GTypeModule *module)
 #define property_int(name, label, def_val)        ITEM(name,label,def_val,int)
 #define property_string(name, label, def_val)     ITEM(name,label,def_val,string)
 #define property_file_path(name, label, def_val)  ITEM(name,label,def_val,string)
+#define property_uri(name, label, def_val)        ITEM(name,label,def_val,string)
 #define property_boolean(name, label, def_val)    ITEM(name,label,def_val,boolean)
 #define property_pointer(name, label, def_val)    ITEM(name,label,def_val,pointer)
 #define property_object(name, label, def_val)     ITEM2(name,label,def_val,object)
@@ -306,6 +307,7 @@ static GType enum_name ## _get_type (void)               \
 #undef property_string
 #undef property_boolean
 #undef property_file_path
+#undef property_uri
 #undef property_object
 #undef property_pointer
 #undef property_format
@@ -331,6 +333,7 @@ struct _GeglProperties
 #define property_string(name, label, def_val)          gchar      *name;
 #define property_boolean(name, label, def_val)         gboolean    name;
 #define property_file_path(name, label, def_val)       gchar      *name;
+#define property_uri(name, label, def_val)             gchar      *name;
 #define property_object(name, label, def_val)          GObject    *name;
 #define property_curve(name, label, def_val)           GeglCurve  *name;
 #define property_color(name, label, def_val)           GeglColor  *name;
@@ -348,6 +351,7 @@ struct _GeglProperties
 #undef property_string
 #undef property_boolean
 #undef property_file_path
+#undef property_uri
 #undef property_object
 #undef property_pointer
 #undef property_format
@@ -372,6 +376,7 @@ enum
 #define property_int(name, label, def_val)        ITEM(name,label,def_val,int)
 #define property_string(name, label, def_val)     ITEM(name,label,def_val,string)
 #define property_file_path(name, label, def_val)  ITEM(name,label,def_val,string)
+#define property_uri(name, label, def_val)        ITEM(name,label,def_val,string)
 #define property_boolean(name, label, def_val)    ITEM(name,label,def_val,boolean)
 #define property_object(name, label, def_val)     ITEM2(name,label,def_val,object)
 #define property_curve(name, label, def_val)      ITEM2(name,label,def_val,object)
@@ -414,6 +419,7 @@ get_property (GObject      *gobject,
 #undef property_string
 #undef property_boolean
 #undef property_file_path
+#undef property_uri
 #undef property_object
 #undef property_pointer
 #undef property_format
@@ -460,6 +466,12 @@ set_property (GObject      *gobject,
       properties->name = g_value_get_boolean (value);                 \
       break;
 #define property_file_path(name, label, def_val)                      \
+    case PROP_##name:                                                 \
+      if (properties->name)                                           \
+        g_free (properties->name);                                    \
+      properties->name = g_value_dup_string (value);                  \
+      break;
+#define property_uri(name, label, def_val)                            \
     case PROP_##name:                                                 \
       if (properties->name)                                           \
         g_free (properties->name);                                    \
@@ -529,6 +541,7 @@ set_property (GObject      *gobject,
 #undef property_string
 #undef property_boolean
 #undef property_file_path
+#undef property_uri
 #undef property_object
 #undef property_pointer
 #undef property_curve
@@ -560,6 +573,12 @@ static void gegl_op_destroy_notify (gpointer data)
     }
 #define property_boolean(name, label, def_val)
 #define property_file_path(name, label, def_val)    \
+  if (properties->name)                             \
+    {                                               \
+      g_free (properties->name);                    \
+      properties->name = NULL;                      \
+    }
+#define property_uri(name, label, def_val)          \
   if (properties->name)                             \
     {                                               \
       g_free (properties->name);                    \
@@ -601,6 +620,7 @@ static void gegl_op_destroy_notify (gpointer data)
 #undef property_string
 #undef property_boolean
 #undef property_file_path
+#undef property_uri
 #undef property_object
 #undef property_pointer
 #undef property_format
@@ -632,6 +652,7 @@ gegl_op_constructor (GType                  type,
 #define property_string(name, label, def_val)
 #define property_boolean(name, label, def_val)
 #define property_file_path(name, label, def_val)
+#define property_uri(name, label, def_val)
 #define property_object(name, label, def_val)
 #define property_pointer(name, label, def_val)
 #define property_format(name, label, def_val)
@@ -652,6 +673,7 @@ gegl_op_constructor (GType                  type,
 #undef property_string
 #undef property_boolean
 #undef property_file_path
+#undef property_uri
 #undef property_object
 #undef property_pointer
 #undef property_format
@@ -867,6 +889,12 @@ gegl_op_class_intern_init (gpointer klass)
     REGISTER_IF_ANY  \
   }{ GParamSpec *pspec = \
        gegl_param_spec_file_path (#name, label, NULL, FALSE, FALSE, def_val, flags);\
+     current_prop = PROP_##name ;
+
+#define property_uri(name, label, def_val) \
+    REGISTER_IF_ANY  \
+  }{ GParamSpec *pspec = \
+       gegl_param_spec_uri (#name, label, NULL, FALSE, FALSE, def_val, flags);\
      current_prop = PROP_##name ;
 
 #define property_object(name, label, type) \
