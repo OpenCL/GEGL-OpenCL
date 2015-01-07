@@ -193,6 +193,7 @@ operations/transform/reflect.c
 operations/transform/rotate.c
 operations/transform/scale-ratio.c
 operations/transform/scale-size.c
+operations/transform/scale-size-keepaspect.c
 operations/transform/shear.c
 operations/transform/transform.c
 operations/transform/transform-core.c
