@@ -22,6 +22,16 @@
  * 2006-2008 © Øyvind Kolås.
  */
 
+
+#ifdef GEGL_OP_C_SOURCE
+#define __GEGL_HEADER(x) #x
+#define _GEGL_HEADER(x) __GEGL_HEADER(x)
+#define GEGL_HEADER(x) _GEGL_HEADER(x)
+
+#define GEGL_OP_C_FILE GEGL_HEADER(GEGL_OP_C_SOURCE)
+#define GEGL_OP_C_FILE_SOURCE GEGL_HEADER(GEGL_OP_C_SOURCE.h)
+#endif
+
 #ifndef GEGL_OP_C_FILE
 #ifdef GEGL_CHANT_C_FILE
 #error   GEGL_OP_C_FILE not defined, %s/GEGL_CHANT_C_FILE/GEGL_OP_C_FILE/
@@ -53,7 +63,6 @@ static void gegl_op_init_properties     (GeglOp   *self);
 static void gegl_op_class_intern_init   (gpointer     klass);
 static gpointer gegl_op_parent_class = NULL;
 
-#define GEGL_DEFINE_DYNAMIC_OPERATION(T_P)  GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED (GEGL_OP_C_FILE, GeglOp, gegl_op, T_P, 0, {})
 #define GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, TypeName, type_name, TYPE_PARENT, flags, CODE) \
 static void     type_name##_init              (TypeName        *self);  \
 static void     type_name##_class_init        (TypeName##Class *klass); \
@@ -89,7 +98,7 @@ type_name##_register_type (GTypeModule *type_module)                    \
       NULL    /* value_table */                                         \
     };                                                                  \
     g_snprintf (tempname, sizeof (tempname),                            \
-                "%s", #TypeName GEGL_OP_C_FILE);                        \
+                "%s", #TypeName C_FILE);                                \
     for (p = tempname; *p; p++)                                         \
       if (*p=='.') *p='_';                                              \
                                                                         \
@@ -100,6 +109,9 @@ type_name##_register_type (GTypeModule *type_module)                    \
                                                        (GTypeFlags) flags); \
     { CODE ; }                                                          \
   }
+
+#define GEGL_DEFINE_DYNAMIC_OPERATION_(T_P, C_FILE) GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, GeglOp, gegl_op, T_P, 0, {})
+#define GEGL_DEFINE_DYNAMIC_OPERATION(T_P) GEGL_DEFINE_DYNAMIC_OPERATION_(T_P, GEGL_OP_C_FILE)
 
 
 #define GEGL_PROPERTIES(op) ((GeglProperties *) (((GeglOp*)(op))->properties))

@@ -45,8 +45,7 @@ property_double (height, _("Height"), 10.0 )
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "crop.c"
-#define GEGL_OP_C_FILE_SOURCE "crop.c.h"
+#define GEGL_OP_C_SOURCE crop.c
 
 #include "gegl-op.h"
 #include <math.h>

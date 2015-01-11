@@ -27,8 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "cache.c"
-#define GEGL_OP_C_FILE_SOURCE "cache.c.h"
+#define GEGL_OP_C_SOURCE cache.c
 
 #include "gegl-op.h"
 
