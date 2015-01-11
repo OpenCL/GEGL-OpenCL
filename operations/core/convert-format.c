@@ -31,6 +31,7 @@ property_format (format, _("Output format"), NULL)
 
 #define GEGL_OP_FILTER
 #define GEGL_OP_C_FILE "convert-format.c"
+#define GEGL_OP_C_FILE_SOURCE "convert-format.c.h"
 
 #include "gegl-op.h"
 

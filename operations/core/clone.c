@@ -28,7 +28,8 @@ property_string (ref, _("Reference"), "ID")
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE       "clone.c"
+#define GEGL_OP_C_FILE        "clone.c"
+#define GEGL_OP_C_FILE_SOURCE "clone.c.h"
 
 #include "gegl-op.h"
 #include <math.h>
