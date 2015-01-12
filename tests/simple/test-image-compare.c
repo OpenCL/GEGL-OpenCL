@@ -57,27 +57,27 @@ const CompareResult
 rgba_r_case =
   {
     2,
-    108.086754,
-    54.521946,
-    0.851905
+    110.236848,
+    55.606493,
+    0.868851
   };
 
 const CompareResult
 rgba_g_case =
   {
     2,
-    1.945577,
-    1.076242,
-    0.016816
+    1.832882,
+    1.013884,
+    0.015842
   };
 
 const CompareResult
 rgba_b_case =
   {
     2,
-    33.873798,
-    17.264227,
-    0.269754
+    34.399933,
+    17.536424,
+    0.274007
   };
 
 const CompareResult
