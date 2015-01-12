@@ -242,8 +242,8 @@ static inline void do_random_search(GArray *foreground_samples, GArray *backgrou
       // Get new indices to check
       int fl = foreground_samples->len;
       int bl = background_samples->len;
-      int fi = (start_fi + (rand() % (dist_f * 2 + 1)) + fl - dist_f) % fl;
-      int bi = (start_bi + (rand() % (dist_b * 2 + 1)) + fl - dist_b) % bl;
+      int fi = (start_fi + (rand () % (dist_f * 2 + 1)) + fl - dist_f) % fl;
+      int bi = (start_bi + (rand () % (dist_b * 2 + 1)) + bl - dist_b) % bl;
 
       ColorSample foreground = g_array_index(foreground_samples, ColorSample, fi);
       ColorSample background = g_array_index(background_samples, ColorSample, bi);
@@ -463,9 +463,9 @@ cleanup:
   g_free (trimap);
   g_free (output);
   g_free (buffer);
-  g_array_free(foreground_samples, FALSE);
-  g_array_free(background_samples, FALSE);
-  g_array_free(unknown_positions, FALSE);
+  g_array_free (foreground_samples, TRUE);
+  g_array_free (background_samples, TRUE);
+  g_array_free (unknown_positions, TRUE);
 
   return success;
 }
