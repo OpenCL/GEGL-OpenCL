@@ -24,6 +24,7 @@ op_LTLIBRARIES = \
 	cartoon.la \
 	channel-mixer.la \
 	checkerboard.la \
+	color-enhance.la \
 	color-exchange.la \
 	color-reduction.la \
 	color-rotate.la \

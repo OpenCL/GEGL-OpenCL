@@ -21,6 +21,7 @@ TESTS = \
   checkerboard.xml                \
   clones.xml                      \
   colors.xml                      \
+  color-enhance.xml               \
   color-exchange.xml              \
   color-to-alpha.xml              \
   composite-transform.xml         \

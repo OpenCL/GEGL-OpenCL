@@ -19,6 +19,7 @@ operations/common/cartoon.c
 operations/common/channel-mixer.c
 operations/common/checkerboard.c
 operations/common/color.c
+operations/common/color-enhance.c
 operations/common/color-exchange.c
 operations/common/color-reduction.c
 operations/common/color-rotate.c

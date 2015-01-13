@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:color-enhance'>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/parliament_0.png</param>
+    </params>
+  </node>
+</gegl>
+
