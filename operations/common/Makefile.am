@@ -37,6 +37,7 @@ op_LTLIBRARIES = \
 	cubism.la \
 	deinterlace.la \
 	difference-of-gaussians.la \
+	diffraction-patterns.la \
 	display.la \
 	distance-transform.la \
 	dropshadow.la \

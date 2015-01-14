@@ -26,6 +26,7 @@ TESTS = \
   color-to-alpha.xml              \
   composite-transform.xml         \
   contrast-curve.xml              \
+  diffraction-patterns.xml        \
   edge-laplace.xml                \
   edge-sobel.xml                  \
   engrave.xml                     \
