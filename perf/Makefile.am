@@ -9,7 +9,7 @@ noinst_PROGRAMS = \
 	test-samplers \
 	test-rotate
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I$(top_srcdir)/ \
 	-I$(top_srcdir)/gegl/ \
 	-I$(top_srcdir)/gegl/buffer \
@@ -17,18 +17,16 @@ INCLUDES = \
 	-I$(top_srcdir)/gegl/graph \
 	-I$(top_srcdir)/gegl/process \
 	-I$(top_srcdir)/gegl/property-types \
-	-I$(top_builddir)/gegl
-
-common_ldadd = $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la
-
-LDADD = $(common_ldadd) $(DEP_LIBS) $(BABL_LIBS) -lm
-
-AM_CFLAGS = \
-	$(DEP_CFLAGS) $(BABL_CFLAGS)\
+	-I$(top_builddir)/gegl \
+	$(DEP_CFLAGS) $(BABL_CFLAGS) \
 	-DG_DISABLE_SINGLE_INCLUDES \
 	-DGLIB_DISABLE_DEPRECATION_WARNINGS \
 	-DCLUTTER_DISABLE_DEPRECATION_WARNINGS \
 	-DTESTS_DATA_DIR=\""$(top_srcdir)/tests/data/"\"
+
+common_ldadd = $(top_builddir)/gegl/libgegl-@GEGL_API_VERSION@.la
+
+LDADD = $(common_ldadd) $(DEP_LIBS) $(BABL_LIBS) -lm
 
 perf-report: check
 
