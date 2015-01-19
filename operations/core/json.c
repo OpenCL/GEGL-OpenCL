@@ -38,6 +38,10 @@ dropshadow a good initial testcase?
 #include <json-glib/json-glib.h>
 #include <gegl-plugin.h>
 
+// For module paths
+#include <gegl-init-private.h>
+#include <gegldatafiles.h>
+
 /* JsonOp: Meta-operation base class for ops defined by .json file */
 #include <operation/gegl-operation-meta-json.h>
 typedef struct _JsonOp
@@ -520,13 +524,30 @@ json_op_register_type_for_file (GTypeModule *type_module, const gchar *filepath)
 }
 
 /* JSON operation enumeration */
-#define JSON_OP_DIR "/home/jon/contrib/code/imgflo-server/runtime/dependencies/gegl/operations/json"
+static void
+load_file(const GeglDatafileData *file_data, gpointer user_data)
+{
+    GTypeModule *module = (GTypeModule *)user_data;
+    if (!g_str_has_suffix(file_data->filename, ".json")) {
+        return;
+    }
+    g_message("%s: %s", __PRETTY_FUNCTION__, file_data->filename);
+
+    json_op_register_type_for_file(module, file_data->filename);
+}
+
+static void
+load_path(gchar *path, gpointer user_data)
+{
+    gegl_datafiles_read_directories (path, G_FILE_TEST_EXISTS, load_file, user_data);
+}
+
 static void
 json_register_operations(GTypeModule *module)
 {
-    // FIXME: unhardcode, follow GEGL_PATH properly
-//    json_op_register_type_for_file (module, JSON_OP_DIR "/dropshadow2.json");
-    json_op_register_type_for_file (module, JSON_OP_DIR "/grey2.json");
+  GSList *paths = gegl_get_default_module_paths();
+  g_slist_foreach(paths, (GFunc)load_path, module);
+  g_slist_free_full(paths, g_free);
 }
 
 
