@@ -184,8 +184,11 @@ copy_param_spec(GParamSpec *in, const gchar *name) {
   } else if (G_IS_PARAM_SPEC_LONG(in)) {
     GParamSpecLong *l = G_PARAM_SPEC_LONG(in);
     out = g_param_spec_int(name, name, blurb, l->minimum, l->maximum, l->default_value, flags);
+  } else if (GEGL_IS_PARAM_SPEC_COLOR(in)) {
+    GeglColor *default_value = gegl_param_spec_color_get_default(in);
+    out = gegl_param_spec_color(name, name, blurb, default_value, flags);
   } else {
-    g_critical("json: Unknown param spec type");
+    g_critical("json: Unknown param spec type for property %s", g_param_spec_get_nick(in));
   }
   return out;
 }
