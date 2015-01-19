@@ -182,6 +182,16 @@ GParamSpec * gegl_param_spec_color_from_string (const gchar *name,
                                                 const gchar *blurb,
                                                 const gchar *default_color_string,
                                                 GParamFlags  flags);
+/**
+ * gegl_param_spec_color_get_default:
+ * @self: a #GeglColor #GParamSpec
+ *
+ * Get the default color value of the param spec
+ *
+ * Returns: (transfer none): the default #GeglColor
+ */
+GeglColor *
+gegl_param_spec_color_get_default (GParamSpec *self);
 
 G_END_DECLS
 
