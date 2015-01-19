@@ -558,6 +558,52 @@ gegl_load_module_directory (const gchar *path)
   gegl_module_db_load (module_db, path);
 }
 
+
+GSList *
+gegl_get_default_module_paths(void)
+{
+  GSList *list = NULL;
+  gchar *module_path = NULL;
+
+  // GEGL_PATH
+  const gchar *gegl_path = g_getenv ("GEGL_PATH");
+  if (gegl_path)
+    {
+      list = g_slist_append (list, g_strdup (gegl_path));
+      return list;
+    }
+
+  // System library dir
+#ifdef G_OS_WIN32
+  {
+    gchar *prefix;
+    prefix = g_win32_get_package_installation_directory_of_module ( hLibGeglModule );
+    module_path = g_build_filename (prefix, "lib", GEGL_LIBRARY, NULL);
+    g_free(prefix);
+  }
+#else
+  module_path = g_build_filename (LIBDIR, GEGL_LIBRARY, NULL);
+#endif
+  list = g_slist_append (list, g_strdup (gegl_path));
+
+  /* User data dir
+   * ~/.local/share/gegl-x.y/plug-ins */
+  module_path = g_build_filename (g_get_user_data_dir (),
+                                  GEGL_LIBRARY,
+                                  "plug-ins",
+                                  NULL);
+  g_mkdir_with_parents (module_path, S_IRUSR | S_IWUSR | S_IXUSR);
+  list = g_slist_append (list, g_strdup (gegl_path));
+
+  return list;
+}
+
+static void
+load_module_path(gchar *path, GeglModuleDB *db)
+{
+  gegl_module_db_load (db, path);
+}
+
 static gboolean
 gegl_post_parse_hook (GOptionContext *context,
                       GOptionGroup   *group,
@@ -624,43 +670,10 @@ gegl_post_parse_hook (GOptionContext *context,
 
   if (!module_db)
     {
-      const gchar *gegl_path = g_getenv ("GEGL_PATH");
-
+      GSList *paths = gegl_get_default_module_paths ();
       module_db = gegl_module_db_new (FALSE);
-
-      if (gegl_path)
-        {
-          gegl_module_db_load (module_db, gegl_path);
-        }
-      else
-        {
-          gchar *module_path;
-
-#ifdef G_OS_WIN32
-          {
-            gchar *prefix;
-            prefix = g_win32_get_package_installation_directory_of_module ( hLibGeglModule );
-            module_path = g_build_filename (prefix, "lib", GEGL_LIBRARY, NULL);
-            g_free(prefix);
-          }
-#else
-          module_path = g_build_filename (LIBDIR, GEGL_LIBRARY, NULL);
-#endif
-
-          gegl_module_db_load (module_db, module_path);
-          g_free (module_path);
-
-          /* also load plug-ins from ~/.local/share/gegl-0.0/plug-ins */
-          module_path = g_build_filename (g_get_user_data_dir (),
-                                          GEGL_LIBRARY,
-                                          "plug-ins",
-                                          NULL);
-
-          g_mkdir_with_parents (module_path, S_IRUSR | S_IWUSR | S_IXUSR);
-
-          gegl_module_db_load (module_db, module_path);
-          g_free (module_path);
-        }
+      g_slist_foreach(paths, (GFunc)load_module_path, module_db);
+      g_slist_free_full (paths, g_free);
     }
 
   GEGL_INSTRUMENT_END ("gegl_init", "load modules");

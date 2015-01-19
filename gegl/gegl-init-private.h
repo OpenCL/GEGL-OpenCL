@@ -31,6 +31,16 @@ G_BEGIN_DECLS
  */
 gboolean      gegl_get_debug_enabled     (void);
 
+/**
+ * gegl_get_default_module_paths:
+ *
+ * Paths which modules should be loaded from
+ *
+ * Returns: ordered #GSList of #gchar* to load. Free using g_slist_free(l, g_free)
+ */
+GSList *
+gegl_get_default_module_paths(void);
+
 G_END_DECLS
 
 #endif /* __GEGL_INIT_PRIVATE_H__ */
