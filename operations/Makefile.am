@@ -12,3 +12,4 @@ endif
 
 EXTRA_DIST = \
 	Makefile-common.am
+	json/grey2.json
