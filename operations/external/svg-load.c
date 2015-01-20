@@ -34,7 +34,7 @@ property_int (height, _("Height"), -1)
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE       "svg-load.c"
+#define GEGL_OP_C_SOURCE svg-load.c
 
 #include "gegl-op.h"
 #include <cairo.h>

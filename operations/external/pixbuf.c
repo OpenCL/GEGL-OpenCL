@@ -27,7 +27,7 @@ property_pointer (pixbuf, _("Pixbuf"), _("GdkPixbuf to use"))
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE       "pixbuf.c"
+#define GEGL_OP_C_SOURCE pixbuf.c
 
 #include "gegl-op.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>

@@ -33,7 +33,7 @@ property_int     (bitdepth, _("Bitdepth"), 16)
 #else
 
 #define GEGL_OP_SINK
-#define GEGL_OP_C_FILE       "ppm-save.c"
+#define GEGL_OP_C_SOURCE ppm-save.c
 
 #define CHANNEL_COUNT           3
 

@@ -29,7 +29,7 @@ property_string (icon_title, _("Icon title"), "icon_title")
 #else
 
 #define GEGL_OP_SINK
-#define GEGL_OP_C_FILE       "sdl-display.c"
+#define GEGL_OP_C_SOURCE sdl-display.c
 
 #include "gegl-op.h"
 #include <SDL.h>

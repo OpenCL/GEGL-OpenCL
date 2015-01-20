@@ -31,7 +31,7 @@ property_int (quality, _("Quality"), 90)
 #else
 
 #define GEGL_OP_SINK
-#define GEGL_OP_C_FILE       "webp-save.c"
+#define GEGL_OP_C_SOURCE webp-save.c
 
 #include "gegl-op.h"
 #include <webp/encode.h>

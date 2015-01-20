@@ -29,7 +29,7 @@ property_file_path (path, _("File"), "")
 #else
 
 #define GEGL_OP_SINK
-#define GEGL_OP_C_FILE       "rgbe-save.c"
+#define GEGL_OP_C_SOURCE rgbe-save.c
 
 #include "gegl-op.h"
 #include "rgbe/rgbe.h"

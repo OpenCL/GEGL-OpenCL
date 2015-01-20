@@ -41,7 +41,7 @@ typedef struct
   GeglOperationSourceClass parent_class;
 } GeglOpClass;
 
-#define GEGL_OP_C_FILE       "openraw.c"
+#define GEGL_OP_C_SOURCE openraw.c
 #include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE)
 

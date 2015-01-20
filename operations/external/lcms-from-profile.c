@@ -50,7 +50,7 @@ property_boolean (black_point_compensation, _("Black point compensation"),
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE      "lcms-from-profile.c"
+#define GEGL_OP_C_SOURCE lcms-from-profile.c
 
 #include "gegl-op.h"
 #include <lcms2.h>

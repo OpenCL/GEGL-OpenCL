@@ -49,7 +49,7 @@ property_int    (active_levels, _("Active levels"), 2)
 #else
 
 #define GEGL_OP_COMPOSER
-#define GEGL_OP_C_FILE       "matting-levin.c"
+#define GEGL_OP_C_SOURCE matting-levin.c
 
 #include "gegl-op.h"
 #include "gegl-debug.h"

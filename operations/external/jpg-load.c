@@ -29,7 +29,7 @@ property_uri (uri, _("URI"), "")
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE       "jpg-load.c"
+#define GEGL_OP_C_SOURCE jpg-load.c
 
 #include "gegl-op.h"
 #include <stdio.h>

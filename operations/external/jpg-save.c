@@ -43,7 +43,7 @@ property_boolean (grayscale, _("Grayscale"), FALSE)
 #else
 
 #define GEGL_OP_SINK
-#define GEGL_OP_C_FILE       "jpg-save.c"
+#define GEGL_OP_C_SOURCE jpg-save.c
 
 #include "gegl-op.h"
 #include <stdio.h>

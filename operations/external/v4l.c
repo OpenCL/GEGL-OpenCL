@@ -41,12 +41,12 @@ property_int  (fps,    _("FPS"), 0)
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE       "v4l.c"
+#define GEGL_OP_C_SOURCE v4l.c
 
 #include "gegl-op.h"
 
 #include "v4lutils/v4lutils.h"
-#include "v4lutils/v4lutils.c"
+#define GEGL_OP_C_SOURCE v4lutils/v4lutils.c
 
 typedef struct
 {

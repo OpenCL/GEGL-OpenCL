@@ -28,7 +28,7 @@ property_file_path (path, _("File"), "")
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE       "ppm-load.c"
+#define GEGL_OP_C_SOURCE ppm-load.c
 
 #define MAX_CHARS_IN_ROW        500
 #define CHANNEL_COUNT           3

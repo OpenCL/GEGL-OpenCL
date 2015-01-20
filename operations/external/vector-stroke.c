@@ -44,7 +44,7 @@ property_path   (d, _("Vector"), NULL)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "vector-stroke.c"
+#define GEGL_OP_C_SOURCE vector-stroke.c
 
 #include "gegl-plugin.h"
 

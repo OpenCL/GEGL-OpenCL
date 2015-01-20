@@ -31,7 +31,7 @@ property_pointer (pixbuf, _("Pixbuf location"),
 #else
 
 #define GEGL_OP_SINK
-#define GEGL_OP_C_FILE       "save-pixbuf.c"
+#define GEGL_OP_C_SOURCE save-pixbuf.c
 
 #include "gegl-op.h"
 #include <gdk-pixbuf/gdk-pixbuf.h>

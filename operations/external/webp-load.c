@@ -28,7 +28,7 @@ property_file_path (path, _("File"), "")
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE       "webp-load.c"
+#define GEGL_OP_C_SOURCE webp-load.c
 
 #include "gegl-op.h"
 #include <webp/decode.h>
