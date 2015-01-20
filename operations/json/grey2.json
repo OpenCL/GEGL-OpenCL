@@ -7,7 +7,7 @@
       "component": "gegl/nop"
     },
     "g": {
-      "component": "gegl/c2g"
+      "component": "gegl/gray"
     },
     "tr": {
       "component": "gegl/crop"
@@ -52,14 +52,6 @@
     "input": {
       "process": "in",
       "port": "input"
-    },
-    "samples": {
-      "process": "g",
-      "port": "samples"
-    },
-    "iterations": {
-      "process": "g",
-      "port": "iterations"
     },
     "height": {
       "process": "tr",

@@ -58,6 +58,7 @@ TESTS = \
   supernova.xml                   \
   transform.xml                   \
   video-degradation.xml           \
+  grey-json.xml                   \
   weighted-blend.xml              \
   rectangles.xml
 
