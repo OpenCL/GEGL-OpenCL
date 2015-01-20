@@ -584,7 +584,7 @@ gegl_get_default_module_paths(void)
 #else
   module_path = g_build_filename (LIBDIR, GEGL_LIBRARY, NULL);
 #endif
-  list = g_slist_append (list, g_strdup (gegl_path));
+  list = g_slist_append (list, module_path);
 
   /* User data dir
    * ~/.local/share/gegl-x.y/plug-ins */
@@ -593,7 +593,7 @@ gegl_get_default_module_paths(void)
                                   "plug-ins",
                                   NULL);
   g_mkdir_with_parents (module_path, S_IRUSR | S_IWUSR | S_IXUSR);
-  list = g_slist_append (list, g_strdup (gegl_path));
+  list = g_slist_append (list, module_path);
 
   return list;
 }
