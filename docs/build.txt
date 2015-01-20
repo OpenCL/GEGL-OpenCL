@@ -25,6 +25,7 @@ other systems where glib and gtk+ work.
       * glib (including gobject, and gmodule) 2.32 or newer, which provides
         inheritance, dynamic modules, common algorithms and data structures
         for C programming.
+      * json-glib 1.0.0 or newer, for loading operations from .json format
       * http://gegl.org/babl/[babl] 0.1.10 or newer (for pixel-format
         agnostisism).
       * libpng (png load/export ops, and image magick fallback import)
