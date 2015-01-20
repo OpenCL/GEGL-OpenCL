@@ -54,7 +54,7 @@ class Context():
 
     test_env = os.environ.copy()
     test_env["GEGL_SWAP"] = "RAM"
-    test_env["GEGL_PATH"] = os.path.join(self.build_dir, "operations")
+    test_env["GEGL_PATH"] = os.path.join(self.build_dir, "operations")+os.pathsep+os.path.join(self.src_dir, "operations")
     self.opencl_available = not subprocess.call(self.detect_opencl_bin, stdout=FNULL, env=test_env)
 
     self.ref_dir = os.path.join(self.src_dir, "tests", "compositions", "reference")
@@ -88,7 +88,7 @@ class Context():
     if not use_opencl:
       test_env["GEGL_USE_OPENCL"] = "no"
     test_env["GEGL_SWAP"] = "RAM"
-    test_env["GEGL_PATH"] = os.path.join(self.build_dir, "operations")
+    test_env["GEGL_PATH"] = os.path.join(self.build_dir, "operations")+os.pathsep+os.path.join(self.src_dir, "operations")
     img_cmp_env = test_env.copy()
     img_cmp_env["GEGL_USE_OPENCL"] = "no"
 
