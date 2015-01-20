@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <gegl>
-  <node operation='gegl:dropshadow2'>
+  <node operation='gegl:json:dropshadow2'>
     <params>
       <param name='radius'>10</param>
     </params>

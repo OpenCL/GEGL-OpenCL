@@ -81,22 +81,32 @@ property_target_free(PropertyTarget *self)
     g_free(self);
 }
 
-// FIXME: needed?
-/*
-GType                                                                   
-json_op_get_type (void)                                             
-{                                                                     
-    return json_op_type_id;                                         
-}                                                                     
-*/
+static gchar *
+replace_char_inline(gchar *str, gchar from, gchar to) {
+    for (int i=0; i<strlen(str); i++) {
+        str[i] = (str[i] == from) ? to : str[i];
+    }
+    return str;
+}
 
 static gchar *
 component2geglop(const gchar *name) {
-    gchar *dup = g_strdup(name);
-    gchar *sep = g_strstr_len(dup, -1, "/");
-    if (sep) {
-        *sep = ':';
+    if (!name) {
+      return NULL;
     }
+    gchar *dup = g_strdup(name);
+    replace_char_inline(dup, '/', ':');
+    g_ascii_strdown(dup, -1);
+    return dup;
+}
+
+static gchar *
+component2gtypename(const gchar *name) {
+    if (!name) {
+      return NULL;
+    }
+    gchar *dup = g_strdup(name);
+    replace_char_inline(dup, '/', '_');
     g_ascii_strdown(dup, -1);
     return dup;
 }
@@ -445,6 +455,18 @@ finalize (GObject *gobject)
 // FIXME: causes infinite loop GEGL_OPERATION_CLASS(json_op_class)->finalize(gobject);
 }
 
+/* json_op_class */
+static const gchar *
+metadata_get_property(JsonObject *root, const gchar *prop) {
+  if (json_object_has_member(root, "properties")) {
+      JsonObject *properties = json_object_get_object_member(root, "properties");
+      if (json_object_has_member(properties, prop)) {
+        return json_object_get_string_member(properties, prop);
+      }
+  }
+  return NULL;
+}
+
 static void
 json_op_class_init (gpointer klass, gpointer class_data)
 {
@@ -464,11 +486,13 @@ json_op_class_init (gpointer klass, gpointer class_data)
                                                     NULL, (GDestroyNotify)property_target_free);
   install_properties(json_op_class);
 
-  // FIXME: unharcode, look up in properties
+  const gchar *description = metadata_get_property(json_op_class->json_root, "description");
+  gchar *name = component2geglop(metadata_get_property(json_op_class->json_root, "name"));
+
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:greyy",
-    "categories",  "effects:light",
-    "description", "Creates a dropshadow effect on the input buffer",
+    "name",        (name) ? name : g_strdup_printf("json:%s", G_OBJECT_CLASS_NAME(object_class)),
+    "categories",  "meta:json",
+    "description",  (description) ? description : "",
     NULL);
 
 }
@@ -518,8 +542,11 @@ json_op_register_type_for_file (GTypeModule *type_module, const gchar *filepath)
         JsonObject *root = json_node_get_object (root_node);
         g_assert(root_node);
         g_print("%s: %p\n", __PRETTY_FUNCTION__, root_node);
-        // FIXME: unhardoce name, look up in json structure, fallback to basename
-        ret = json_op_register_type(type_module, "grey_json", root);
+
+        const gchar *name = metadata_get_property(root, "name");
+        gchar *type_name = (name) ? component2gtypename(name) : component2gtypename(filepath);
+        ret = json_op_register_type(type_module, type_name, root);
+        g_free(type_name);
     }
 
 //    g_object_unref(parser);

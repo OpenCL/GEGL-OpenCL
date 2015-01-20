@@ -1,4 +1,7 @@
 {
+  "properties": {
+    "name": "gegl/json/grey2"
+  },
   "processes": {
     "in": {
       "component": "gegl/nop"

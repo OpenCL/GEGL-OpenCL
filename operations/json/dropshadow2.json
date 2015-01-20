@@ -1,4 +1,7 @@
 {
+  "properties": {
+    "name": "gegl/json/dropshadow2"
+  },
   "processes": {
     "input": {
       "component": "gegl/nop"
