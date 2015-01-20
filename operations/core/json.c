@@ -64,7 +64,7 @@ typedef struct
   gchar *port;
 } PropertyTarget;
 
-PropertyTarget *
+static PropertyTarget *
 property_target_new(gchar *node, gchar *port)
 {
     PropertyTarget *self = g_new(PropertyTarget, 1);
@@ -73,7 +73,7 @@ property_target_new(gchar *node, gchar *port)
     return self;
 }
 
-void
+static void
 property_target_free(PropertyTarget *self)
 {
     g_free(self->node);
@@ -287,7 +287,7 @@ get_property (GObject      *gobject,
   JsonOpClass * json_op_class = (JsonOpClass *)G_OBJECT_GET_CLASS(gobject);
   JsonOp * self = (JsonOp *)(gobject);
 
-  PropertyTarget *target = g_hash_table_lookup(json_op_class->properties, property_id);
+  PropertyTarget *target = g_hash_table_lookup(json_op_class->properties, GINT_TO_POINTER(property_id));
   if (!target) {
     G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
     return;
@@ -312,7 +312,7 @@ set_property (GObject      *gobject,
   JsonOp * self = (JsonOp *)(gobject);
   g_assert(self);
 
-  PropertyTarget *target = g_hash_table_lookup(json_op_class->properties, property_id);
+  PropertyTarget *target = g_hash_table_lookup(json_op_class->properties, GINT_TO_POINTER(property_id));
   if (!target) {
     G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
     return;
@@ -428,8 +428,8 @@ attach (GeglOperation *operation)
           g_assert(node);
 
           if (g_strcmp0(name, "output") == 0) {
-            GeglNode *output = gegl_node_get_output_proxy (gegl, "output");
-            gegl_node_connect_to (node, "output", output, "input");
+            GeglNode *proxy = gegl_node_get_output_proxy (gegl, "output");
+            gegl_node_connect_to (node, port, proxy, "input");
           } else {
             g_warning("Unsupported output '%s' exported in .json file", name);
           }
@@ -448,7 +448,7 @@ static void
 finalize (GObject *gobject)
 {
   JsonOp *self = (JsonOp *)(gobject);
-  JsonOpClass *json_op_class = (JsonOpClass *)G_OBJECT_GET_CLASS(gobject);
+//  JsonOpClass *json_op_class = (JsonOpClass *)G_OBJECT_GET_CLASS(gobject);
 
   g_hash_table_unref (self->nodes);
 
