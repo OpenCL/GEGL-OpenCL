@@ -13,4 +13,5 @@ op_LTLIBRARIES = \
 	cast-format.la \
 	convert-format.la \
 	crop.la \
+	json.la \
 	nop.la

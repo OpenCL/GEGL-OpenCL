@@ -1,0 +1,152 @@
+{
+  "properties": {
+    "name": "gegl/json/dropshadow2"
+  },
+  "processes": {
+    "input": {
+      "component": "gegl/nop"
+    },
+    "darken": {
+      "component": "gegl/src-in",
+      "metadata": {
+        "routes": "in"
+      }
+    },
+    "blur": {
+      "component": "gegl/gaussian-blur",
+      "metadata": {
+        "routes": "blur"
+      }
+    },
+    "opacity": {
+      "component": "gegl/opacity"
+    },
+    "color": {
+      "component": "gegl/color"
+    },
+    "translate": {
+      "component": "gegl/translate"
+    },
+    "over": {
+      "component": "gegl/over"
+    }
+  },
+  "connections": [
+    {
+      "src": {
+        "process": "input",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "darken",
+        "port": "input"
+      }
+    },
+    {
+      "src": {
+        "process": "darken",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "blur",
+        "port": "input"
+      }
+    },
+    {
+      "src": {
+        "process": "blur",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "opacity",
+        "port": "input"
+      }
+    },
+    {
+      "src": {
+        "process": "opacity",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "translate",
+        "port": "input"
+      }
+    },
+    {
+      "src": {
+        "process": "translate",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "over",
+        "port": "input"
+      }
+    },
+    {
+      "src": {
+        "process": "input",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "over",
+        "port": "aux"
+      }
+    },
+    {
+      "src": {
+        "process": "color",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "darken",
+        "port": "aux"
+      }
+    },
+    {
+      "data": "rgba(0.0, 0.0, 0.0, 0.0)",
+      "tgt": {
+        "process": "color",
+        "port": "value"
+      }
+    },
+    {
+      "data": "0.5",
+      "tgt": {
+        "process": "opacity",
+        "port": "value"
+      }
+    }
+  ],
+  "inports": {
+    "x": {
+      "process": "translate",
+      "port": "x"
+    },
+    "y": {
+      "process": "translate",
+      "port": "y"
+    },
+    "color": {
+      "process": "color",
+      "port": "value"
+    },
+    "radius": {
+      "process": "blur",
+      "port": "std-dev-x"
+    },
+    "opacity": {
+      "process": "opacity",
+      "port": "value"
+    },
+    "input": {
+      "process": "input",
+      "port": "input"
+    }
+  },
+  "outports": {
+    "output": {
+      "process": "over",
+      "port": "output"
+    }
+  }
+}

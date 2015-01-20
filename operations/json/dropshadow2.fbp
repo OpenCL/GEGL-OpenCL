@@ -1,0 +1,22 @@
+INPORT=translate.X:X
+INPORT=translate.Y:Y
+INPORT=color.VALUE:COLOR
+INPORT=blur.STD_DEV_X:RADIUS
+INPORT=opacity.VALUE:OPACITY
+
+INPORT=input.INPUT:INPUT
+OUTPORT=over.OUTPUT:OUTPUT
+
+# FIXME: multiple export mapping? INPORT=blur.STD-DEV-Y:RADIUS
+# FIXME: allow - in property names, or map _ to - ?
+# TODO: allow \ or \n between connections
+
+input(gegl/nop) OUTPUT -> INPUT darken(gegl/src_in) OUTPUT -> INPUT blur(gegl/gaussian_blur) OUTPUT -> INPUT opacity(gegl/opacity) OUTPUT -> INPUT translate(gegl/translate) OUTPUT -> INPUT over(gegl/over)
+input OUTPUT -> AUX over
+color(gegl/color) OUTPUT -> AUX darken
+
+'rgba(0.0, 0.0, 0.0, 0.0)' -> VALUE color
+'0.5' -> VALUE opacity
+'10' -> STD_DEV_Y blur
+'20' -> Y translate
+'20' -> X translate

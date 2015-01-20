@@ -1,0 +1,71 @@
+{
+  "properties": {
+    "name": "gegl/json/grey2"
+  },
+  "processes": {
+    "in": {
+      "component": "gegl/nop"
+    },
+    "g": {
+      "component": "gegl/gray"
+    },
+    "tr": {
+      "component": "gegl/crop"
+    },
+    "out": {
+      "component": "gegl/nop"
+    }
+  },
+  "connections": [
+    {
+      "src": {
+        "process": "in",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "g",
+        "port": "input"
+      }
+    },
+    {
+      "src": {
+        "process": "g",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "tr",
+        "port": "input"
+      }
+    },
+    {
+      "src": {
+        "process": "tr",
+        "port": "output"
+      },
+      "tgt": {
+        "process": "out",
+        "port": "input"
+      }
+    }
+  ],
+  "inports": {
+    "input": {
+      "process": "in",
+      "port": "input"
+    },
+    "height": {
+      "process": "tr",
+      "port": "height"
+    },
+    "width": {
+      "process": "tr",
+      "port": "width"
+    }
+  },
+  "outports": {
+    "output": {
+      "process": "out",
+      "port": "output"
+    }
+  }
+}

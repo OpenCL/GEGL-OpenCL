@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:json:grey2'>
+    <params>
+      <param name='height'>200</param>
+      <param name='width'>100</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>

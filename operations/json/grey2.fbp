@@ -1,0 +1,6 @@
+INPORT=in.INPUT:INPUT
+OUTPORT=out.OUTPUT:OUTPUT
+INPORT=tr.HEIGHT:HEIGHT
+INPORT=tr.WIDTH:WIDTH
+
+in(gegl/nop) OUTPUT -> INPUT g(gegl/gray) OUTPUT -> INPUT tr(gegl/crop) OUTPUT -> INPUT out(gegl/nop)
