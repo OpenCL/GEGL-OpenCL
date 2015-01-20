@@ -27,15 +27,15 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (red_frequency, _("Red frenquency"), 0.815)
+property_double (red_frequency, _("Red frequency"), 0.815)
     description (_("Light frequency (red)"))
     value_range (0.0, 20.0)
 
-property_double (green_frequency, _("Green frenquency"), 1.221)
+property_double (green_frequency, _("Green frequency"), 1.221)
     description (_("Light frequency (green)"))
     value_range (0.0, 20.0)
 
-property_double (blue_frequency, _("Blue frenquency"), 1.123)
+property_double (blue_frequency, _("Blue frequency"), 1.123)
     description (_("Light frequency (blue)"))
     value_range (0.0, 20.0)
 
@@ -68,7 +68,7 @@ property_double (brightness, _("Brightness"), 0.066)
     value_range (0.0, 1.0)
 
 property_double (scattering, _("Scattering"), 37.126)
-    description (_("Scattering (Speed vs. quality)"))
+    description (_("Scattering (speed vs. quality)"))
     value_range (0.0, 100.0)
 
 property_double (polarization, _("Polarization"), -0.473)
