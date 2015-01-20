@@ -62,7 +62,7 @@ property_boolean   (clip_extent, _("Clip to the input extent"), TRUE)
 #else
 
 #define GEGL_OP_META
-#define GEGL_OP_C_FILE "gaussian-blur-iir.c"
+#define GEGL_OP_C_SOURCE gaussian-blur-iir.c
 
 #include "gegl-op.h"
 

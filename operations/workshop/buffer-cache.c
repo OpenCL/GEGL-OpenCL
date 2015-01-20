@@ -28,7 +28,7 @@ property_pointer (buffer, _("Cache buffer"),
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE       "buffer-cache.c"
+#define GEGL_OP_C_SOURCE buffer-cache.c
 
 #include "gegl-op.h"
 

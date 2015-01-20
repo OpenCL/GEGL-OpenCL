@@ -52,7 +52,7 @@ property_double (max, _("Max"), 8.0)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE       "line-profile.c"
+#define GEGL_OP_C_SOURCE line-profile.c
 
 #include "gegl-op.h"
 #include <cairo.h>

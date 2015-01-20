@@ -39,7 +39,7 @@ property_double (fps, _("Frames/second"), 25)
 #else
 
 #define GEGL_OP_SINK
-#define GEGL_OP_C_FILE       "ff-save.c"
+#define GEGL_OP_C_SOURCE ff-save.c
 
 #include "gegl-op.h"
 

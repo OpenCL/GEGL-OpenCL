@@ -27,7 +27,7 @@
 #else
 
 #define GEGL_OP_COMPOSER
-#define GEGL_OP_C_FILE       "hstack.c"
+#define GEGL_OP_C_SOURCE hstack.c
 
 #include "gegl-op.h"
 #include <math.h>

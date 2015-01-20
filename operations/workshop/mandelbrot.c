@@ -35,7 +35,7 @@ property_int (maxiter, _("Iterations"), 128)
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE           "mandelbrot.c"
+#define GEGL_OP_C_SOURCE mandelbrot.c
 
 #include "gegl-op.h"
 

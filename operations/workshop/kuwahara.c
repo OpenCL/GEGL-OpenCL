@@ -29,7 +29,7 @@ property_double (radius, _("Radius"), 10.0)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "kuwahara.c"
+#define GEGL_OP_C_SOURCE kuwahara.c
 
 #include "gegl-op.h"
 #include <math.h>

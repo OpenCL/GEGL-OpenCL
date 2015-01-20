@@ -41,7 +41,7 @@ property_double (percentile, _("Percentile"), 50.0)
 #define MAX_SAMPLES 20000 /* adapted to percentile level of radius */
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "snn-percentile.c"
+#define GEGL_OP_C_SOURCE snn-percentile.c
 
 #include "gegl-op.h"
 #include <math.h>

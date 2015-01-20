@@ -37,7 +37,7 @@ property_boolean(srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "gradient-map.c"
+#define GEGL_OP_C_SOURCE gradient-map.c
 
 #include "gegl-op.h"
 

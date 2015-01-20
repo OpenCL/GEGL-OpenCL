@@ -37,7 +37,7 @@ property_double (percentile, _("Percentile"), 50.0)
 #define MAX_SAMPLES 20000 /* adapted to max level of radius */
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "box-percentile.c"
+#define GEGL_OP_C_SOURCE box-percentile.c
 
 #include "gegl-op.h"
 #include <stdio.h>
