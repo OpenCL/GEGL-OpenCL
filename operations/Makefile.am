@@ -4,6 +4,7 @@ SUBDIRS = \
 	generated	\
 	seamless-clone \
 	transform \
+    json \
 	external
 
 if ENABLE_WORKSHOP
@@ -12,4 +13,3 @@ endif
 
 EXTRA_DIST = \
 	Makefile-common.am
-	json/grey2.json

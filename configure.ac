@@ -1204,6 +1204,7 @@ libs/poly2tri-c/poly2tri-c/refine/Makefile
 seamless-clone/Makefile
 operations/Makefile
 operations/core/Makefile
+operations/json/Makefile
 operations/common/Makefile
 operations/common/perlin/Makefile
 operations/seamless-clone/Makefile
