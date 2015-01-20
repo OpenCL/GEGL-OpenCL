@@ -208,10 +208,7 @@ install_properties(JsonOpClass *json_op_class)
 {
     GObjectClass *object_class = G_OBJECT_CLASS (json_op_class);
     JsonObject *root = json_op_class->json_root;
-
     guint prop = 1;
-
-    g_print("%s: %p\n", __PRETTY_FUNCTION__, json_op_class->json_root);
 
     // Exported ports
     if (json_object_has_member(root, "inports")) {
@@ -236,7 +233,6 @@ install_properties(JsonOpClass *json_op_class)
               target_spec = gegl_node_find_property(n, port);
               if (target_spec) {
                 GParamSpec *spec = copy_param_spec(target_spec, name);
-                g_print("adding property %s, pointing to %s %s\n", name, port, proc);
                 PropertyTarget *t = property_target_new(g_strdup(proc), g_strdup(port));
                 g_hash_table_insert(json_op_class->properties, GINT_TO_POINTER(prop), t);
                 g_object_class_install_property (object_class, prop, spec);
@@ -343,7 +339,7 @@ attach (GeglOperation *operation)
       JsonObject *proc = json_object_get_object_member(processes, name);
       const gchar *component = json_object_get_string_member(proc, "component");
       gchar *opname = component2geglop(component);
-      g_print("creating node %s with operation %s\n", name, opname);
+
       GeglNode *node = gegl_node_new_child (gegl, "operation", opname, NULL);
       gegl_operation_meta_watch_node (operation, node);
       g_assert(node);
@@ -371,7 +367,6 @@ attach (GeglOperation *operation)
           const gchar *src_port = json_object_get_string_member(src, "port");
           GeglNode *src_node = g_hash_table_lookup(self->nodes, src_proc);
 
-          g_print("connecting %s,%s to %s,%s\n", src_proc, src_port, tgt_port, tgt_proc);
           g_assert(src_node);
 
           gegl_node_connect_to (src_node, src_port, tgt_node, tgt_port);
@@ -382,8 +377,6 @@ attach (GeglOperation *operation)
           g_assert(JSON_NODE_HOLDS_VALUE(datanode));
           json_node_get_value(datanode, &value);
           GParamSpec *paramspec = gegl_node_find_property(tgt_node, tgt_port);
-
-          g_print("setting property value on %s,%s\n", tgt_proc, tgt_port);
 
           set_prop(tgt_node, tgt_port, paramspec, &value);
           g_value_unset(&value);
@@ -402,7 +395,6 @@ attach (GeglOperation *operation)
           const gchar *port = json_object_get_string_member(conn, "port");
           GeglNode *node = g_hash_table_lookup(self->nodes, proc);
 
-          g_print("redirecting input %s, to %s %s\n", name, port, proc);
           g_assert(node);
 
           if (g_strcmp0(name, "input") == 0) {
@@ -423,8 +415,6 @@ attach (GeglOperation *operation)
           const gchar *proc = json_object_get_string_member(conn, "process");
           const gchar *port = json_object_get_string_member(conn, "port");
           GeglNode *node = g_hash_table_lookup(self->nodes, proc);
-
-          g_print("redirecting output %s, to %s %s\n", name, port, proc);
           g_assert(node);
 
           if (g_strcmp0(name, "output") == 0) {
@@ -535,13 +525,10 @@ json_op_register_type_for_file (GTypeModule *type_module, const gchar *filepath)
     JsonParser *parser = json_parser_new();
     const gboolean success = json_parser_load_from_file(parser, filepath, &error);
 
-    g_print("%s: %s\n", __PRETTY_FUNCTION__, filepath);
-
     if (success) {
         JsonNode *root_node = json_node_copy (json_parser_get_root (parser));
         JsonObject *root = json_node_get_object (root_node);
         g_assert(root_node);
-        g_print("%s: %p\n", __PRETTY_FUNCTION__, root_node);
 
         const gchar *name = metadata_get_property(root, "name");
         gchar *type_name = (name) ? component2gtypename(name) : component2gtypename(filepath);
@@ -561,7 +548,6 @@ load_file(const GeglDatafileData *file_data, gpointer user_data)
     if (!g_str_has_suffix(file_data->filename, ".json")) {
         return;
     }
-    g_message("%s: %s", __PRETTY_FUNCTION__, file_data->filename);
 
     json_op_register_type_for_file(module, file_data->filename);
 }
