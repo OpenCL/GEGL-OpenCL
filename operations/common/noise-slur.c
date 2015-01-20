@@ -42,7 +42,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "noise-slur.c"
+#define GEGL_OP_C_SOURCE noise-slur.c
 
 #include "gegl-op.h"
 

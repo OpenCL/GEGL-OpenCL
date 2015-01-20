@@ -74,7 +74,7 @@ property_double (rotation, _("Rotation"), 0.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "vignette.c"
+#define GEGL_OP_C_SOURCE vignette.c
 
 #include "gegl-op.h"
 

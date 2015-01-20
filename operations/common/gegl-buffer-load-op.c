@@ -27,7 +27,7 @@ property_file_path (path, _("File"), "/tmp/gegl-buffer.gegl")
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE       "gegl-buffer-load-op.c"
+#define GEGL_OP_C_SOURCE gegl-buffer-load-op.c
 
 #include "gegl-op.h"
 

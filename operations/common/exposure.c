@@ -37,7 +37,7 @@ property_double (gamma, _("Gamma correction"), 1.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "exposure.c"
+#define GEGL_OP_C_SOURCE exposure.c
 
 #include "gegl-op.h"
 

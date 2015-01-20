@@ -31,7 +31,7 @@ property_int  (iterations, _("Strength"), 4)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "noise-reduction.c"
+#define GEGL_OP_C_SOURCE noise-reduction.c
 
 #include "gegl-op.h"
 #include <math.h>

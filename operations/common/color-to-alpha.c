@@ -31,7 +31,7 @@ property_color (color, _("Color"), "white")
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "color-to-alpha.c"
+#define GEGL_OP_C_SOURCE color-to-alpha.c
 
 #include "gegl-op.h"
 #include <stdio.h>

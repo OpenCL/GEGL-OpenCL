@@ -27,7 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_COMPOSER3
-#define GEGL_OP_C_FILE        "remap.c"
+#define GEGL_OP_C_SOURCE remap.c
 
 #include "gegl-op.h"
 

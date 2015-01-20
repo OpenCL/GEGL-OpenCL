@@ -49,7 +49,7 @@ property_int (depth, _("Depth"), 4)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "texturize-canvas.c"
+#define GEGL_OP_C_SOURCE texturize-canvas.c
 
 #include "gegl-op.h"
 

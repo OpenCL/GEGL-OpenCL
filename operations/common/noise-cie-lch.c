@@ -39,7 +39,7 @@ property_seed   (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "noise-cie-lch.c"
+#define GEGL_OP_C_SOURCE noise-cie-lch.c
 
 #include "gegl-op.h"
 #include "gegl.h"

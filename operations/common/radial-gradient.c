@@ -34,7 +34,7 @@ property_color  (end_color, _("End Color"), "white")
 #else
 
 #define GEGL_OP_POINT_RENDER
-#define GEGL_OP_C_FILE "radial-gradient.c"
+#define GEGL_OP_C_SOURCE radial-gradient.c
 
 #include "gegl-op.h"
 

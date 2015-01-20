@@ -46,7 +46,7 @@ property_double (out_high, _("High output"), 1.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE         "levels.c"
+#define GEGL_OP_C_SOURCE levels.c
 
 #include "gegl-op.h"
 

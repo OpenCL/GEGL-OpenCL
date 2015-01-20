@@ -27,7 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE       "svg-luminancetoalpha.c"
+#define GEGL_OP_C_SOURCE svg-luminancetoalpha.c
 
 #include "gegl-op.h"
 #include <math.h>

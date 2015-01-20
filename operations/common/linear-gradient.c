@@ -49,7 +49,7 @@ property_color  (end_color, _("End Color"), "white")
 #else
 
 #define GEGL_OP_POINT_RENDER
-#define GEGL_OP_C_FILE "linear-gradient.c"
+#define GEGL_OP_C_SOURCE linear-gradient.c
 
 #include "gegl-op.h"
 

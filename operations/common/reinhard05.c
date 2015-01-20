@@ -38,7 +38,7 @@ property_double (light, _("Light adaptation"), 1.0)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE       "reinhard05.c"
+#define GEGL_OP_C_SOURCE reinhard05.c
 
 #include "gegl-op.h"
 

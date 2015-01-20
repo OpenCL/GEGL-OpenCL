@@ -55,7 +55,7 @@ property_double (factor, _("Blurring factor"), 0.1)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "motion-blur-zoom.c"
+#define GEGL_OP_C_SOURCE motion-blur-zoom.c
 
 #include "gegl-op.h"
 

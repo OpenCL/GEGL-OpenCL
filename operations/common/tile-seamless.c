@@ -25,7 +25,7 @@
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "tile-seamless.c"
+#define GEGL_OP_C_SOURCE tile-seamless.c
 
 #include "gegl-op.h"
 #include <math.h>

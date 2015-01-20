@@ -29,7 +29,7 @@ property_int (iterations, _("Iterations"), 10)
 #else
 
 #define GEGL_OP_COMPOSER
-#define GEGL_OP_C_FILE "matting-global.c"
+#define GEGL_OP_C_SOURCE matting-global.c
 
 #include "gegl-op.h"
 #include "gegl-debug.h"

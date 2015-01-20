@@ -88,7 +88,7 @@ property_boolean (warp, _("Wrap input"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE       "mirrors.c"
+#define GEGL_OP_C_SOURCE mirrors.c
 
 #include "gegl-op.h"
 #include <math.h>

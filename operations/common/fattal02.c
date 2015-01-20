@@ -50,7 +50,7 @@ property_double (noise, _("Noise"), 0.0)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE       "fattal02.c"
+#define GEGL_OP_C_SOURCE fattal02.c
 
 #include "gegl-op.h"
 #include "gegl-debug.h"

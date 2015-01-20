@@ -50,7 +50,7 @@ property_double (radius, _("Radius"), 1.0)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "whirl-pinch.c"
+#define GEGL_OP_C_SOURCE whirl-pinch.c
 
 #include "gegl-op.h"
 #include <math.h>

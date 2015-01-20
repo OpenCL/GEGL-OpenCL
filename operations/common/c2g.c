@@ -51,7 +51,7 @@ property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "c2g.c"
+#define GEGL_OP_C_SOURCE c2g.c
 
 #include "gegl-op.h"
 #include <math.h>

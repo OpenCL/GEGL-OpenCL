@@ -30,7 +30,7 @@ property_double (value, _("Opacity"), 1.0)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE       "opacity.c"
+#define GEGL_OP_C_SOURCE opacity.c
 
 #include "gegl-op.h"
 

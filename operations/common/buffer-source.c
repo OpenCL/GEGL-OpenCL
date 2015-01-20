@@ -28,7 +28,7 @@ property_object(buffer, _("Input buffer"), GEGL_TYPE_BUFFER)
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE "buffer-source.c"
+#define GEGL_OP_C_SOURCE buffer-source.c
 
 #include "gegl-op.h"
 

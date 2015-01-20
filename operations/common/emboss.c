@@ -48,7 +48,7 @@ property_int (depth, _("Depth"), 20)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "emboss.c"
+#define GEGL_OP_C_SOURCE emboss.c
 
 #include "gegl-op.h"
 #include <math.h>

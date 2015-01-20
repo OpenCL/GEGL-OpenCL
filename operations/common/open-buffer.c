@@ -28,7 +28,7 @@ property_string (path, _("File"), "")
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_FILE       "open-buffer.c"
+#define GEGL_OP_C_SOURCE open-buffer.c
 
 #include "gegl-op.h"
 

@@ -93,7 +93,7 @@ property_int    (height, _("Height"), 768)
 #else
 
 #define GEGL_OP_POINT_RENDER
-#define GEGL_OP_C_FILE "sinus.c"
+#define GEGL_OP_C_SOURCE sinus.c
 
 #include "gegl-op.h"
 

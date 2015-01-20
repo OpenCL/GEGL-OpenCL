@@ -52,7 +52,7 @@ property_double (opacity, _("Opacity"), 0.5)
 #else
 
 #define GEGL_OP_META
-#define GEGL_OP_C_FILE "dropshadow.c"
+#define GEGL_OP_C_SOURCE dropshadow.c
 
 #include "gegl-op.h"
 

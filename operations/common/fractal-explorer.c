@@ -117,7 +117,7 @@ property_boolean (useloglog, _("Loglog smoothing"), FALSE)
 #else
 
 #define GEGL_OP_POINT_RENDER
-#define GEGL_OP_C_FILE       "fractal-explorer.c"
+#define GEGL_OP_C_SOURCE fractal-explorer.c
 
 #include "gegl-op.h"
 #include <math.h>

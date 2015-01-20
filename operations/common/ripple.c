@@ -56,7 +56,7 @@ property_boolean (tileable, _("Tileable"), FALSE)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "ripple.c"
+#define GEGL_OP_C_SOURCE ripple.c
 
 #include "gegl-op.h"
 #include <stdio.h>

@@ -29,7 +29,7 @@
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE  "color-enhance.c"
+#define GEGL_OP_C_SOURCE color-enhance.c
 
 #include "gegl-op.h"
 

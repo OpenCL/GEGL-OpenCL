@@ -57,7 +57,7 @@ property_boolean (clamp, _("Clamp deformation"), FALSE)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "waves.c"
+#define GEGL_OP_C_SOURCE waves.c
 
 #include "gegl-op.h"
 #include <stdio.h>

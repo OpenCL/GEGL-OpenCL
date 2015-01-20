@@ -30,7 +30,7 @@ property_string (values, _("Values"), "")
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE       "svg-huerotate.c"
+#define GEGL_OP_C_SOURCE svg-huerotate.c
 
 #include "gegl-op.h"
 #include <math.h>

@@ -38,7 +38,7 @@ property_double (angle, _("Angle"), 0.0)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "motion-blur-linear.c"
+#define GEGL_OP_C_SOURCE motion-blur-linear.c
 
 #include "gegl-op.h"
 

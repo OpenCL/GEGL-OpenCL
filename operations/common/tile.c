@@ -34,7 +34,7 @@ property_int (offset_y, _("Vertical offset"), 0)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "tile.c"
+#define GEGL_OP_C_SOURCE tile.c
 
 #include "gegl-op.h"
 

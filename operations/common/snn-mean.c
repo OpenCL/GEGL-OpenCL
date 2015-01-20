@@ -37,7 +37,7 @@ property_int (pairs, _("Pairs"), 2)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "snn-mean.c"
+#define GEGL_OP_C_SOURCE snn-mean.c
 
 #include "gegl-op.h"
 #include <math.h>

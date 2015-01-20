@@ -39,7 +39,7 @@ property_boolean (limit, _("Limit line width"), FALSE)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "engrave.c"
+#define GEGL_OP_C_SOURCE engrave.c
 
 #include "gegl-op.h"
 

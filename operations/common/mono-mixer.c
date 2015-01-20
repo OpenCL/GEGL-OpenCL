@@ -40,7 +40,7 @@ property_double (blue, _("Amount of blue"), 0.5)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "mono-mixer.c"
+#define GEGL_OP_C_SOURCE mono-mixer.c
 
 #include "gegl-op.h"
 

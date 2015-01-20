@@ -51,7 +51,7 @@ property_color  (color, _("Color"), "green")
 #else
 
 #define GEGL_OP_META
-#define GEGL_OP_C_FILE "rectangle.c"
+#define GEGL_OP_C_SOURCE rectangle.c
 #include "gegl-op.h"
 
 static void attach (GeglOperation *operation)

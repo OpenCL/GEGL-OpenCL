@@ -57,7 +57,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "color-reduction.c"
+#define GEGL_OP_C_SOURCE color-reduction.c
 
 #include "gegl-op.h"
 

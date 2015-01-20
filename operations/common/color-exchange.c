@@ -50,7 +50,7 @@ property_double (blue_threshold, _("Blue Threshold"), 0.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "color-exchange.c"
+#define GEGL_OP_C_SOURCE color-exchange.c
 
 #include "gegl-op.h"
 

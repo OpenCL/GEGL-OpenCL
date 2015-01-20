@@ -27,7 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE       "invert-linear.c"
+#define GEGL_OP_C_SOURCE invert-linear.c
 
 #include "gegl-op.h"
 

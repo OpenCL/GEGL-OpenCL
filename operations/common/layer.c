@@ -82,7 +82,7 @@ typedef struct
   GeglOperationMetaClass parent_class;
 } GeglOpClass;
 
-#define GEGL_OP_C_FILE "layer.c"
+#define GEGL_OP_C_SOURCE layer.c
 #include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 

@@ -59,7 +59,7 @@ property_color  (background, _("Background color"), "white")
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "lens-distortion.c"
+#define GEGL_OP_C_SOURCE lens-distortion.c
 
 #include "gegl-op.h"
 #include <math.h>

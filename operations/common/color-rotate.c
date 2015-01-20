@@ -88,7 +88,7 @@ property_double (saturation, _("Saturation"), 0.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "color-rotate.c"
+#define GEGL_OP_C_SOURCE color-rotate.c
 
 #include "gegl-op.h"
 

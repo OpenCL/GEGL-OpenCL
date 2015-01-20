@@ -29,7 +29,7 @@ property_double (dampness, _("Dampness"), 0.95)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE       "mblur.c"
+#define GEGL_OP_C_SOURCE mblur.c
 
 #include "gegl-op.h"
 

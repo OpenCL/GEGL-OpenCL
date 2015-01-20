@@ -69,7 +69,7 @@ property_enum (border, _("Border"),
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "convolution-matrix.c"
+#define GEGL_OP_C_SOURCE convolution-matrix.c
 
 #include "gegl-op.h"
 #include <math.h>

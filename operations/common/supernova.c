@@ -66,7 +66,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "supernova.c"
+#define GEGL_OP_C_SOURCE supernova.c
 
 #include "gegl-op.h"
 

@@ -27,7 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE       "grey.c"
+#define GEGL_OP_C_SOURCE grey.c
 
 #include "gegl-op.h"
 

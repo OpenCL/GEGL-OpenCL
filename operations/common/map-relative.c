@@ -31,7 +31,7 @@ property_enum (sampler_type, _("Resampling method"),
 #else
 
 #define GEGL_OP_COMPOSER
-#define GEGL_OP_C_FILE       "map-relative.c"
+#define GEGL_OP_C_SOURCE map-relative.c
 
 #include "config.h"
 #include <glib/gi18n-lib.h>

@@ -36,7 +36,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "wind.c"
+#define GEGL_OP_C_SOURCE wind.c
 
 #include "gegl-op.h"
 #include <stdlib.h>

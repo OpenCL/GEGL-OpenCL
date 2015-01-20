@@ -35,7 +35,7 @@ property_double (contrast, _("Contrast"), 1.0)
 #else
 
 #define GEGL_OP_META
-#define GEGL_OP_C_FILE "high-pass.c"
+#define GEGL_OP_C_SOURCE high-pass.c
 
 #include "gegl-op.h"
 

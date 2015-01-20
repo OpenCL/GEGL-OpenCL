@@ -28,7 +28,7 @@ property_string (values, _("Values"), "")
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE          "svg-saturate.c"
+#define GEGL_OP_C_SOURCE svg-saturate.c
 
 #include "gegl-op.h"
 #include <math.h>

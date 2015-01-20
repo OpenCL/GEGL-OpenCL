@@ -29,7 +29,7 @@ property_int  (levels, _("Levels"), 8)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE       "posterize.c"
+#define GEGL_OP_C_SOURCE posterize.c
 #define GEGLV4
 
 #include "gegl-op.h"

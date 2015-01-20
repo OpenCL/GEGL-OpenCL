@@ -55,7 +55,7 @@ property_boolean (normalize, _("normalize"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "distance-transform.c"
+#define GEGL_OP_C_SOURCE distance-transform.c
 #include "gegl-op.h"
 #include <math.h>
 #include <stdio.h>

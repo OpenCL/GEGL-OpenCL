@@ -90,7 +90,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "mosaic.c"
+#define GEGL_OP_C_SOURCE mosaic.c
 
 #include "gegl-op.h"
 #include <math.h>

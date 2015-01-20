@@ -51,7 +51,7 @@ property_double (brightness, _("Brightness"), 0.0)
 /* We specify the file we're in, this is needed to make the code
  * generation for the properties work.
  */
-#define GEGL_OP_C_FILE       "brightness-contrast.c"
+#define GEGL_OP_C_SOURCE brightness-contrast.c
 
 /* Including gegl-op.h creates most of the GObject boiler plate
  * needed, creating a GeglOp instance structure a GeglOpClass

@@ -32,7 +32,7 @@ property_curve (curve, _("Curve"), NULL)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE  "contrast-curve.c"
+#define GEGL_OP_C_SOURCE contrast-curve.c
 
 #include "gegl-op.h"
 

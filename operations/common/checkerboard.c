@@ -64,7 +64,7 @@ property_format (format, _("Babl Format"), NULL)
 #else
 
 #define GEGL_OP_POINT_RENDER
-#define GEGL_OP_C_FILE "checkerboard.c"
+#define GEGL_OP_C_SOURCE checkerboard.c
 
 #include "gegl-op.h"
 #include <gegl-buffer-cl-iterator.h>

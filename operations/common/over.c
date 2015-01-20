@@ -28,7 +28,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE        "over.c"
+#define GEGL_OP_C_SOURCE over.c
 
 #include "gegl-op.h"
 

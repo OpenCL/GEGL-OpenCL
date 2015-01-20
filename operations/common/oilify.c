@@ -43,7 +43,7 @@ property_boolean (use_inten, _("Intensity Mode"), TRUE)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "oilify.c"
+#define GEGL_OP_C_SOURCE oilify.c
 
 #include "gegl-op.h"
 #include <math.h>

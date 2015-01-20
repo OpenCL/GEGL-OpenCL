@@ -36,7 +36,7 @@ property_double (edge_preservation, _("Edge preservation"), 8.0)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "bilateral-filter.c"
+#define GEGL_OP_C_SOURCE bilateral-filter.c
 
 #include "gegl-op.h"
 #include <math.h>

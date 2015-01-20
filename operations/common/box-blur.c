@@ -31,7 +31,7 @@ property_int (radius, _("Radius"), 4)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE       "box-blur.c"
+#define GEGL_OP_C_SOURCE box-blur.c
 
 #include "gegl-op.h"
 #include <stdio.h>

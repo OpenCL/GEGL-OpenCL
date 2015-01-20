@@ -41,7 +41,7 @@ property_seed   (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "noise-hsv.c"
+#define GEGL_OP_C_SOURCE noise-hsv.c
 
 #include "gegl-op.h"
 #include <stdio.h>

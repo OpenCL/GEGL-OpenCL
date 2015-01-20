@@ -66,7 +66,7 @@ property_boolean (middle, _("Choose middle"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_C_FILE "polar-coordinates.c"
+#define GEGL_OP_C_SOURCE polar-coordinates.c
 
 #include "gegl-op.h"
 #include <stdio.h>

@@ -49,7 +49,7 @@ property_int  (size, _("Block size"), 1)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_FILE "deinterlace.c"
+#define GEGL_OP_C_SOURCE deinterlace.c
 
 #include "gegl-op.h"
 #include <stdio.h>

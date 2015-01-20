@@ -40,7 +40,7 @@ property_double (seed, _("Random seed"), 0.0)
 #else
 
 #define GEGL_OP_POINT_RENDER
-#define GEGL_OP_C_FILE "noise-perlin.c"
+#define GEGL_OP_C_SOURCE noise-perlin.c
 
 #include "gegl-op.h"
 #include "perlin/perlin.c"
