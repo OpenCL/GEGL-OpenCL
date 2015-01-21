@@ -159,6 +159,7 @@ rgbe_save_la_CFLAGS = $(AM_CFLAGS) -I $(top_srcdir)/libs
 rgbe_save_la_LIBADD = $(op_libs) $(top_builddir)/libs/rgbe/librgbe.la
 
 BUILT_SOURCES = $(subst .c,.c.h,$(wildcard $(srcdir)/*.c))
+EXTRA_DIST += $(BUILT_SOURCES)
 
 opdir = $(libdir)/gegl-@GEGL_API_VERSION@
 op_LTLIBRARIES = $(ops)
