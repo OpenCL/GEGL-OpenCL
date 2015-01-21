@@ -31,6 +31,7 @@ property_int (frame, _("Frame number"), 0)
 
 #else
 
+#define GEGL_OP_SOURCE
 #define GEGL_OP_C_SOURCE ff-load.c
 
 #include "gegl-op.h"
