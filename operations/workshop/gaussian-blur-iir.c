@@ -38,25 +38,29 @@ enum_end (GeglGaussianBlurPolicy)
 property_double (std_dev_x, _("Standard deviation X"), 1.5)
    description (_("Standard deviation (spatial scale factor)"))
    value_range (0.0, 1500.0)
-   ui_range (0.24, 100.0)
-   ui_gamma (3.0)
+   ui_range    (0.24, 100.0)
+   ui_gamma    (3.0)
+   ui_meta     ("unit", "pixel-distance")
+   ui_meta     ("axis", "x")
 
 property_double (std_dev_y, _("Standard deviation Y"), 1.5)
    description (_("Standard deviation (spatial scale factor)"))
    value_range (0.0, 1500.0)
-   ui_range (0.24, 100.0)
-   ui_gamma (3.0)
+   ui_range    (0.24, 100.0)
+   ui_gamma    (3.0)
+   ui_meta     ("unit", "pixel-distance")
+   ui_meta     ("axis", "y")
 
-property_enum      (filter, _("Filter"),
-                      GeglGaussianBlurFilter2, gegl_gaussian_blur_filter2,
-                      GEGL_GAUSSIAN_BLUR_FILTER2_AUTO)
+property_enum (filter, _("Filter"),
+               GeglGaussianBlurFilter2, gegl_gaussian_blur_filter2,
+               GEGL_GAUSSIAN_BLUR_FILTER2_AUTO)
    description (_("How the gaussian kernel is discretized"))
 
-property_enum      (abyss_policy, _("Abyss policy"), GeglGaussianBlurPolicy,
-                      gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_NONE)
+property_enum (abyss_policy, _("Abyss policy"), GeglGaussianBlurPolicy,
+               gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_NONE)
    description (_("How image edges are handled"))
 
-property_boolean   (clip_extent, _("Clip to the input extent"), TRUE)
+property_boolean (clip_extent, _("Clip to the input extent"), TRUE)
    description (_("Should the output extent be clipped to the input extent"))
 
 #else
