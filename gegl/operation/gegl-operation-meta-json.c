@@ -47,8 +47,5 @@ gegl_operation_meta_json_init (GeglOperationMetaJson *self)
 static void
 finalize (GObject *gobject)
 {
-  GeglOperationMetaJson *self = GEGL_OPERATION_META_JSON (gobject);
-
-
   G_OBJECT_CLASS (gegl_operation_meta_json_parent_class)->finalize (gobject);
 }
