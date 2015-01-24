@@ -91,10 +91,11 @@ replace_char_inline(gchar *str, gchar from, gchar to) {
 
 static gchar *
 component2geglop(const gchar *name) {
+    gchar *dup;
     if (!name) {
       return NULL;
     }
-    gchar *dup = g_strdup(name);
+    dup = g_strdup(name);
     replace_char_inline(dup, '/', ':');
     g_ascii_strdown(dup, -1);
     return dup;
@@ -102,10 +103,11 @@ component2geglop(const gchar *name) {
 
 static gchar *
 component2gtypename(const gchar *name) {
+    gchar *dup;
     if (!name) {
       return NULL;
     }
-    gchar *dup = g_strdup(name);
+    dup = g_strdup(name);
     replace_char_inline(dup, '/', '_');
     g_ascii_strdown(dup, -1);
     return dup;
@@ -113,12 +115,12 @@ component2gtypename(const gchar *name) {
 
 static gboolean
 gvalue_from_string(GValue *value, GType target_type, GValue *dest_value) {
-
-    // Custom conversion from string
+    const gchar *iip;
+    /* Custom conversion from string */
     if (!G_VALUE_HOLDS_STRING(value)) {
         return FALSE;
     }
-    const gchar *iip = g_value_get_string(value);
+    iip = g_value_get_string(value);
     if (g_type_is_a(target_type, G_TYPE_DOUBLE)) {
         gdouble d = g_ascii_strtod(iip, NULL);
         g_value_set_double(dest_value, d);
@@ -154,9 +156,11 @@ static gboolean
 set_prop(GeglNode *t, const gchar *port, GParamSpec *paramspec, GValue *value)  {
     GType target_type = G_PARAM_SPEC_VALUE_TYPE(paramspec);
     GValue dest_value = {0,};
+    gboolean success;
+
     g_value_init(&dest_value, target_type);
 
-    gboolean success = g_param_value_convert(paramspec, value, &dest_value, FALSE);
+    success = g_param_value_convert(paramspec, value, &dest_value, FALSE);
     if (success) {
         gegl_node_set_property(t, port, &dest_value);
         return TRUE;
@@ -282,6 +286,7 @@ get_property (GObject      *gobject,
 {
   JsonOpClass * json_op_class = (JsonOpClass *)G_OBJECT_GET_CLASS(gobject);
   JsonOp * self = (JsonOp *)(gobject);
+  GeglNode *node;
 
   PropertyTarget *target = g_hash_table_lookup(json_op_class->properties, GINT_TO_POINTER(property_id));
   if (!target) {
@@ -289,7 +294,7 @@ get_property (GObject      *gobject,
     return;
   }
 
-  GeglNode *node = g_hash_table_lookup(self->nodes, target->node);  
+  node = g_hash_table_lookup(self->nodes, target->node);
   if (!node) {
     G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
     return;
@@ -304,17 +309,20 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  JsonOpClass * json_op_class = (JsonOpClass *)G_OBJECT_GET_CLASS(gobject);
-  JsonOp * self = (JsonOp *)(gobject);
+  JsonOpClass *json_op_class = (JsonOpClass *)G_OBJECT_GET_CLASS(gobject);
+  JsonOp *self = (JsonOp *) gobject;
+  PropertyTarget *target;
+  GeglNode *node;
+
   g_assert(self);
 
-  PropertyTarget *target = g_hash_table_lookup(json_op_class->properties, GINT_TO_POINTER(property_id));
+  target = g_hash_table_lookup(json_op_class->properties, GINT_TO_POINTER(property_id));
   if (!target) {
     G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
     return;
   }
 
-  GeglNode *node = g_hash_table_lookup(self->nodes, target->node);  
+  node = g_hash_table_lookup(self->nodes, target->node);
   if (!node) {
     G_OBJECT_WARN_INVALID_PROPERTY_ID(gobject, property_id, pspec);
     return;
@@ -328,6 +336,7 @@ attach (GeglOperation *operation)
 {
   JsonOp *self = (JsonOp *)operation;
   GeglNode  *gegl = operation->node;
+  JsonArray *connections;
 
   // Processes
   JsonObject *root = self->json_root;
@@ -349,7 +358,7 @@ attach (GeglOperation *operation)
   g_list_free(process_names);
 
   // Connections
-  JsonArray *connections = json_object_get_array_member(root, "connections");
+  connections = json_object_get_array_member(root, "connections");
   g_assert(connections);
   for (int i=0; i<json_array_get_length(connections); i++) {
       JsonObject *conn = json_array_get_object_element(connections, i);
@@ -357,9 +366,11 @@ attach (GeglOperation *operation)
       const gchar *tgt_proc = json_object_get_string_member(tgt, "process");
       const gchar *tgt_port = json_object_get_string_member(tgt, "port");
       GeglNode *tgt_node = g_hash_table_lookup(self->nodes, tgt_proc);
+      JsonNode *srcnode;
+
       g_assert(tgt_node);
 
-      JsonNode *srcnode = json_object_get_member(conn, "src");
+      srcnode = json_object_get_member(conn, "src");
       if (srcnode) {
           // Connection
           JsonObject *src = json_object_get_object_member(conn, "src");
@@ -374,9 +385,11 @@ attach (GeglOperation *operation)
           // IIP
           JsonNode *datanode = json_object_get_member(conn, "data");
           GValue value = G_VALUE_INIT;
+          GParamSpec *paramspec;
+
           g_assert(JSON_NODE_HOLDS_VALUE(datanode));
           json_node_get_value(datanode, &value);
-          GParamSpec *paramspec = gegl_node_find_property(tgt_node, tgt_port);
+          paramspec = gegl_node_find_property(tgt_node, tgt_port);
 
           set_prop(tgt_node, tgt_port, paramspec, &value);
           g_value_unset(&value);
@@ -463,6 +476,9 @@ json_op_class_init (gpointer klass, gpointer class_data)
   GObjectClass *object_class = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
   JsonOpClass *json_op_class = (JsonOpClass *) (klass);
+  const gchar *description;
+  gchar *name;
+
   json_op_class->json_root = (JsonObject *) (class_data);
 
   object_class->set_property = set_property;
@@ -476,8 +492,8 @@ json_op_class_init (gpointer klass, gpointer class_data)
                                                     NULL, (GDestroyNotify)property_target_free);
   install_properties(json_op_class);
 
-  const gchar *description = metadata_get_property(json_op_class->json_root, "description");
-  gchar *name = component2geglop(metadata_get_property(json_op_class->json_root, "name"));
+  description = metadata_get_property(json_op_class->json_root, "description");
+  name = component2geglop(metadata_get_property(json_op_class->json_root, "name"));
 
   gegl_operation_class_set_keys (operation_class,
     "name",        (name) ? name : g_strdup_printf("json:%s", G_OBJECT_CLASS_NAME(object_class)),
@@ -528,10 +544,13 @@ json_op_register_type_for_file (GTypeModule *type_module, const gchar *filepath)
     if (success) {
         JsonNode *root_node = json_node_copy (json_parser_get_root (parser));
         JsonObject *root = json_node_get_object (root_node);
+        const gchar *name;
+        gchar *type_name;
+
         g_assert(root_node);
 
-        const gchar *name = metadata_get_property(root, "name");
-        gchar *type_name = (name) ? component2gtypename(name) : component2gtypename(filepath);
+        name = metadata_get_property(root, "name");
+        type_name = (name) ? component2gtypename(name) : component2gtypename(filepath);
         ret = json_op_register_type(type_module, type_name, root);
         g_free(type_name);
     }
