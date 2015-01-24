@@ -41,6 +41,8 @@ dropshadow a good initial testcase?
 // For module paths
 #include <gegl-init-private.h>
 #include <gegldatafiles.h>
+/* For forcing module to be persistent */
+#include <geglmodule.h>
 
 /* JsonOp: Meta-operation base class for ops defined by .json file */
 #include <operation/gegl-operation-meta-json.h>
@@ -605,6 +607,11 @@ gegl_module_query (GTypeModule *module)
 G_MODULE_EXPORT gboolean
 gegl_module_register (GTypeModule *module)
 {
+  /* Ensure the module, or shared libs it pulls in is not unloaded
+   * This because when GTypes are registered (like for json-glib),
+   *  all referenced data must stay in memory until process exit */
+  g_module_make_resident (GEGL_MODULE (module)->module);
+
   json_register_operations (module);
 
   return TRUE;
