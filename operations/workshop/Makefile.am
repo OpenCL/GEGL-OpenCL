@@ -19,6 +19,8 @@ op_LTLIBRARIES =    \
 	ditto.la \
 	hstack.la \
 	ink-simulator.la \
+	insta-curve.la \
+	insta-filter.la \
 	kuwahara.la \
 	mandelbrot.la \
 	median-blur.la \
