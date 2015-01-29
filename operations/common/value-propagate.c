@@ -201,7 +201,7 @@ propagate_white (gfloat  *pixel,
   gfloat best[4], tmp;
   gfloat sqr_px = square_pixel (pixel);
 
-  memcpy (&best, pixel, sizeof (gfloat) * 4);
+  memcpy (best, pixel, sizeof (gfloat) * 4);
 
   for (i = 0; i < n_neighbors; i++)
     {
@@ -211,11 +211,11 @@ propagate_white (gfloat  *pixel,
           value_difference_check (pixel, neighbors[i], o->upper_threshold, o->lower_threshold))
         {
           sqr_px = tmp;
-          memcpy (&best, neighbors[i], sizeof (gfloat) * 3);
+          memcpy (best, neighbors[i], sizeof (gfloat) * 3);
         }
     }
 
-  set_pixel (pixel, (void *) &best, dst_buf, idx, o);
+  set_pixel (pixel, best, dst_buf, idx, o);
 }
 
 static inline void
@@ -230,7 +230,7 @@ propagate_black (gfloat  *pixel,
   gfloat best[4], tmp;
   gfloat sqr_px = square_pixel (pixel);
 
-  memcpy (&best, pixel, sizeof (gfloat) * 4);
+  memcpy (best, pixel, sizeof (gfloat) * 4);
 
   for (i = 0; i < n_neighbors; i++)
     {
@@ -240,11 +240,11 @@ propagate_black (gfloat  *pixel,
           value_difference_check (pixel, neighbors[i], o->upper_threshold, o->lower_threshold))
         {
           sqr_px = tmp;
-          memcpy (&best, neighbors[i], sizeof (gfloat) * 3);
+          memcpy (best, neighbors[i], sizeof (gfloat) * 3);
         }
     }
 
-  set_pixel (pixel, (void *) &best, dst_buf, idx, o);
+  set_pixel (pixel, best, dst_buf, idx, o);
 }
 
 static inline void
@@ -263,7 +263,7 @@ propagate_middle (gfloat  *pixel,
   gint peak_min = 1;
   gint peak_includes_equals = 1;
 
-  memcpy (&best, pixel, sizeof (gfloat) * 4);
+  memcpy (best, pixel, sizeof (gfloat) * 4);
 
   mp.original_value = mp.minv = mp.maxv = square_pixel (pixel);
   mp.min_modified = mp.max_modified = 0;
@@ -279,13 +279,13 @@ propagate_middle (gfloat  *pixel,
       if ((tmp <= mp.minv) && vdc)
         {
           mp.minv = tmp;
-          memcpy (&mp.min, neighbors[i], sizeof (gfloat) * 3);
+          memcpy (mp.min, neighbors[i], sizeof (gfloat) * 3);
           mp.min_modified = 1;
         }
       if ((mp.maxv <= tmp) && vdc)
         {
           mp.maxv = tmp;
-          memcpy (&mp.max, neighbors[i], sizeof (gfloat) * 3);
+          memcpy (mp.max, neighbors[i], sizeof (gfloat) * 3);
           mp.max_modified = 1;
         }
     }
@@ -331,7 +331,7 @@ propagate_color_to_peak (gfloat  *pixel,
 
   gegl_color_get_pixel (o->color, babl_format ("R'G'B' float"), &color);
 
-  memcpy (&best, pixel, sizeof (gfloat) * 4);
+  memcpy (best, pixel, sizeof (gfloat) * 4);
 
   mp.original_value = mp.minv = mp.maxv = square_pixel (pixel);
   mp.min_modified = mp.max_modified = 0;
@@ -347,13 +347,13 @@ propagate_color_to_peak (gfloat  *pixel,
       if ((tmp <= mp.minv) && vdc)
         {
           mp.minv = tmp;
-          memcpy (&mp.min, neighbors[i], sizeof (gfloat) * 3);
+          memcpy (mp.min, neighbors[i], sizeof (gfloat) * 3);
           mp.min_modified = 1;
         }
       if ((mp.maxv <= tmp) && vdc)
         {
           mp.maxv = tmp;
-          memcpy (&mp.max, neighbors[i], sizeof (gfloat) * 3);
+          memcpy (mp.max, neighbors[i], sizeof (gfloat) * 3);
           mp.max_modified = 1;
         }
     }
@@ -388,7 +388,7 @@ propagate_color (gfloat  *pixel,
 
   gegl_color_get_pixel (o->color, babl_format ("R'G'B' float"), &color);
 
-  memcpy (&best, pixel, sizeof(gfloat) * 4);
+  memcpy (best, pixel, sizeof(gfloat) * 4);
 
   for (i = 0; i < n_neighbors; i++)
     {
@@ -397,11 +397,11 @@ propagate_color (gfloat  *pixel,
           GEGL_FLOAT_EQUAL (color[2], neighbors[i][2]) &&
           value_difference_check (pixel, neighbors[i], o->upper_threshold, o->lower_threshold))
         {
-          memcpy (&best, neighbors[i], sizeof(gfloat) * 3);
+          memcpy (best, neighbors[i], sizeof(gfloat) * 3);
         }
     }
 
-  set_pixel (pixel, (void *) &best, dst_buf, idx, o);
+  set_pixel (pixel, best, dst_buf, idx, o);
 }
 
 static inline void
@@ -415,18 +415,18 @@ propagate_opaque (gfloat  *pixel,
   gint   i;
   gfloat best[4];
 
-  memcpy (&best, pixel, sizeof (gfloat) * 4);
+  memcpy (best, pixel, sizeof (gfloat) * 4);
 
   for (i = 0; i < n_neighbors; i++)
     {
       if ((best[3] < neighbors[i][3]) &&
           value_difference_check (pixel, neighbors[i], o->upper_threshold, o->lower_threshold))
         {
-          memcpy (&best, neighbors[i], sizeof (gfloat) * 4);
+          memcpy (best, neighbors[i], sizeof (gfloat) * 4);
         }
     }
 
-  set_pixel (pixel, (void *) &best, dst_buf, idx, o);
+  set_pixel (pixel, best, dst_buf, idx, o);
 }
 
 static inline void
@@ -447,11 +447,11 @@ propagate_transparent (gfloat  *pixel,
       if ((neighbors[i][3] < best[3]) &&
           value_difference_check (pixel, neighbors[i], o->upper_threshold, o->lower_threshold))
         {
-          memcpy (&best, neighbors[i], sizeof (gfloat) * 4);
+          memcpy (best, neighbors[i], sizeof (gfloat) * 4);
         }
     }
 
-  set_pixel (pixel, (void *) &best, dst_buf, idx, o);
+  set_pixel (pixel, best, dst_buf, idx, o);
 }
 
 static void
