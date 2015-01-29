@@ -130,7 +130,8 @@ op_LTLIBRARIES = \
 	tile-glass.la \
 	unsharp-mask.la \
 	value-invert.la \
-	video-degradation.la \
+	value-propagate.la \
+        video-degradation.la \
 	vignette.la \
 	warp.la \
 	waves.la \
