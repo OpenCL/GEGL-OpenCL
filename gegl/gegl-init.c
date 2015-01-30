@@ -658,7 +658,15 @@ gegl_post_parse_hook (GOptionContext *context,
         config->tile_height = atoi(str+1);
     }
   if (cmd_gegl_threads)
-    _gegl_threads = atoi (cmd_gegl_threads);
+    {
+      _gegl_threads = atoi (cmd_gegl_threads);
+      if (_gegl_threads > GEGL_MAX_THREADS)
+        {
+          g_warning ("Tried to use %i threads, max is %i",
+                     _gegl_threads, GEGL_MAX_THREADS);
+          _gegl_threads = GEGL_MAX_THREADS;
+        }
+    }
   if (cmd_gegl_disable_opencl)
     gegl_cl_hard_disable ();
 
