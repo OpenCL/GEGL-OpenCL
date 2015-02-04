@@ -30,6 +30,7 @@
 #define GEGL_OP_C_SOURCE grey.c
 
 #include "gegl-op.h"
+#include <string.h>
 
 static void prepare (GeglOperation *operation)
 {
@@ -49,14 +50,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  float *in = in_buf;
-  float *out = out_buf;
-  while (samples--)
-    {
-      *out++ = *in++;
-      *out++ = *in++;
-    }
-
+  memcpy (out_buf, in_buf, sizeof (gfloat) * 2 * samples);
   return TRUE;
 }
 
