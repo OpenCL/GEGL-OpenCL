@@ -182,17 +182,18 @@ my_set_property (GObject      *gobject,
   GeglOp         *self      = GEGL_OP (operation);
   GeglProperties *o         = GEGL_PROPERTIES (operation);
 
-  const gchar *old_path = o->path;
-  const gchar *old_uri = o->uri;
+  const gchar *old_path = g_strdup (o->path);
+  const gchar *old_uri = g_strdup (o->uri);
 
   /* The set_property provided by the chant system does the
    * storing and reffing/unreffing of the input properties */
   set_property(gobject, property_id, value, pspec);
-
-  const gboolean props_changed = ((o->path != old_path) || (o->uri != old_uri));
+  const gboolean props_changed = g_strcmp0 (o->path, old_path) || g_strcmp0 (o->uri, old_uri);
 
   if (self->load && props_changed)
     do_setup (operation, o->path, o->uri);
+  g_free (old_path);
+  g_free (old_uri);
 }
 
 static void
