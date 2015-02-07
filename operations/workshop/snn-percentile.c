@@ -46,9 +46,9 @@ property_double (percentile, _("Percentile"), 50.0)
 #include "gegl-op.h"
 #include <math.h>
 
-#define RGB_LUMINANCE_RED    (0.222491)
-#define RGB_LUMINANCE_GREEN  (0.716888)
-#define RGB_LUMINANCE_BLUE   (0.060621)
+#define RGB_LUMINANCE_RED    (0.22248840)
+#define RGB_LUMINANCE_GREEN  (0.71690369)
+#define RGB_LUMINANCE_BLUE   (0.06060791)
 
 /* XXX: Use babl for this? */
 static inline gfloat rgb2luminance (gfloat *pix)

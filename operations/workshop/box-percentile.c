@@ -195,9 +195,9 @@ median (GeglBuffer *src,
                   v >= 0 && v < gegl_buffer_get_height (dst))
                 {
                   gfloat *src_pix = src_buf + (u+(v * gegl_buffer_get_width (src))) * 4;
-                  gfloat luma = (src_pix[0] * 0.212671 +
-                                 src_pix[1] * 0.715160 +
-                                 src_pix[2] * 0.072169);
+                  gfloat luma = (src_pix[0] * 0.22248840 +
+                                 src_pix[1] * 0.71690369 +
+                                 src_pix[2] * 0.06060791);
                   list_add (&list, luma, src_pix);
                 }
             }
