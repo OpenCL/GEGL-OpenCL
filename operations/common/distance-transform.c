@@ -49,7 +49,7 @@ property_int    (averaging, _("Grayscale Averaging"), 0)
     ui_range    (0, 256)
     ui_gamma    (1.5)
 
-property_boolean (normalize, _("normalize"), TRUE)
+property_boolean (normalize, _("Normalize"), TRUE)
   description(_("Normalize output to range 0.0 to 1.0."))
 
 #else
@@ -413,7 +413,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:distance-transform",
     "title",       _("Distance Transform"),
     "categories",  "map",
-    "description", _("calculates a distance transform"),
+    "description", _("Calculate a distance transform"),
     "reference-composition", composition,
     NULL);
 }
