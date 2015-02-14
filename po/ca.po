@@ -989,7 +989,7 @@ msgstr "Sentit horari"
 #: ../operations/common/color-rotate.c:41
 #: ../operations/common/color-rotate.c:54
 msgid "Switch to clockwise"
-msgstr "Canvia al sentit antihorari"
+msgstr "Canvia al sentit horari"
 
 #: ../operations/common/color-rotate.c:43
 #: ../operations/common/color-rotate.c:56
@@ -3511,7 +3511,7 @@ msgstr ""
 #: ../operations/common/softglow.c:234
 msgid "Simulate glow by making highlights intense and fuzzy"
 msgstr ""
-"Simula una lluentor amb la creació de taques de llum intenses i difoses"
+"Simula una lluentor amb la creació de taques de llum intenses i difuses"
 
 #: ../operations/common/stress.c:28
 msgid ""
