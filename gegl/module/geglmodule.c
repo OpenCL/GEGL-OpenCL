@@ -42,7 +42,7 @@ static void       gegl_module_unload         (GTypeModule *module);
 
 static gboolean   gegl_module_open           (GeglModule  *module);
 static gboolean   gegl_module_close          (GeglModule  *module);
-static void       gegl_module_set_last_error (GeglModule  *module,
+static void       gegl_module_error_message  (GeglModule  *module,
                                               const gchar *error_str);
 
 
@@ -141,12 +141,8 @@ gegl_module_load (GTypeModule *module)
   /* find the gegl_module_register symbol */
   if (! g_module_symbol (gegl_module->module, "gegl_module_register", &func))
     {
-      gegl_module_set_last_error (gegl_module,
-                                  "Missing gegl_module_register() symbol");
-
-      g_message (_("Module '%s' load error: %s"),
-                 gegl_filename_to_utf8 (gegl_module->filename),
-                 gegl_module->last_module_error);
+      gegl_module_error_message (gegl_module,
+                                 "Missing gegl_module_register() symbol");
 
       gegl_module_close (gegl_module);
 
@@ -159,12 +155,8 @@ gegl_module_load (GTypeModule *module)
 
   if (! gegl_module->register_module (module))
     {
-      gegl_module_set_last_error (gegl_module,
-                                  "gegl_module_register() returned FALSE");
-
-      g_message (_("Module '%s' load error: %s"),
-                 gegl_filename_to_utf8 (gegl_module->filename),
-                 gegl_module->last_module_error);
+      gegl_module_error_message (gegl_module,
+                                 "gegl_module_register() returned FALSE");
 
       gegl_module_close (gegl_module);
 
@@ -268,12 +260,8 @@ gegl_module_query_module (GeglModule *module)
   /* find the gegl_module_query symbol */
   if (! g_module_symbol (module->module, "gegl_module_query", &func))
     {
-      gegl_module_set_last_error (module,
-                                  "Missing gegl_module_query() symbol");
-
-      g_message (_("Module '%s' load error: %s"),
-                 gegl_filename_to_utf8 (module->filename),
-                 module->last_module_error);
+      gegl_module_error_message (module,
+                                 "Missing gegl_module_query() symbol");
 
       gegl_module_close (module);
 
@@ -293,14 +281,10 @@ gegl_module_query_module (GeglModule *module)
 
   if (! info || info->abi_version != GEGL_MODULE_ABI_VERSION)
     {
-      gegl_module_set_last_error (module,
-                                  info ?
-                                  "module ABI version does not match op not loaded, to get rid of this warning remove (clean/uninstall) .so files in GEGLs search path." :
-                                  "gegl_module_query() returned NULL");
-
-      g_message (_("Module '%s' load error: %s"),
-                 gegl_filename_to_utf8 (module->filename),
-                 module->last_module_error);
+      gegl_module_error_message (module,
+                                 info ?
+                                 "module ABI version does not match op not loaded, to get rid of this warning remove (clean/uninstall) .so files in GEGLs search path." :
+                                 "gegl_module_query() returned NULL");
 
       gegl_module_close (module);
 
@@ -388,12 +372,7 @@ gegl_module_open (GeglModule *module)
   if (! module->module)
     {
       module->state = GEGL_MODULE_STATE_ERROR;
-      gegl_module_set_last_error (module, g_module_error ());
-
-      g_message (_("Module '%s' load error: %s"),
-                 gegl_filename_to_utf8 (module->filename),
-                 module->last_module_error);
-
+      gegl_module_error_message (module, g_module_error ());
       return FALSE;
     }
 
@@ -414,13 +393,17 @@ gegl_module_close (GeglModule *module)
 }
 
 static void
-gegl_module_set_last_error (GeglModule  *module,
-                            const gchar *error_str)
+gegl_module_error_message (GeglModule  *module,
+                           const gchar *error_str)
 {
   if (module->last_module_error)
     g_free (module->last_module_error);
 
   module->last_module_error = g_strdup (error_str);
+
+  g_message (_("Module '%s' load error: %s"),
+             gegl_filename_to_utf8 (module->filename),
+             module->last_module_error);
 }
 
 
