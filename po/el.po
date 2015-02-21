@@ -9,16 +9,16 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2014-07-07 05:19+0000\n"
-"PO-Revision-Date: 2014-07-07 10:40+0300\n"
-"Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
+"POT-Creation-Date: 2014-08-14 17:18+0000\n"
+"PO-Revision-Date: 2014-08-16 23:28+0200\n"
+"Last-Translator: Maria Mavridou <mavridou@gmail.com>\n"
 "Language-Team: team@lists.gnome.gr\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.7.1\n"
+"X-Generator: Poedit 1.6.4\n"
 "X-Project-Style: gnome\n"
 
 #: ../bin/gegl.c:148
@@ -205,7 +205,8 @@ msgid "Write"
 msgstr "Εγγραφή"
 
 #: ../gegl/gegl-enums.c:63
-msgid "Read/Wrrite"
+#| msgid "Read/Wrrite"
+msgid "Read/Write"
 msgstr "Ανάγνωση/Εγγραφή"
 
 #: ../gegl/gegl-enums.c:87 ../operations/common/edge-sobel.c:27
@@ -797,7 +798,7 @@ msgstr ""
 #: ../operations/common/checkerboard.c:25 ../operations/common/grid.c:24
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
-#: ../operations/core/crop.c:33 ../operations/external/svg-load.c:28
+#: ../operations/core/crop.c:35 ../operations/external/svg-load.c:28
 #: ../operations/external/text.c:47 ../operations/external/v4l.c:27
 #: ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
@@ -811,7 +812,7 @@ msgstr "Οριζόντιο πλάτος κελιών σε εικονοστοιχ
 #: ../operations/common/checkerboard.c:33 ../operations/common/grid.c:31
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
-#: ../operations/core/crop.c:37 ../operations/external/svg-load.c:31
+#: ../operations/core/crop.c:40 ../operations/external/svg-load.c:31
 #: ../operations/external/text.c:49 ../operations/external/v4l.c:28
 #: ../operations/workshop/external/line-profile.c:41
 msgid "Height"
@@ -1389,6 +1390,65 @@ msgstr "Αποδιδόμενος τίτλος στο παράθυρο εξόδο
 msgid "Display the input buffer in a window."
 msgstr "Εμφάνιση της μνήμης εισόδου σε παράθυρο."
 
+#: ../operations/common/distance-transform.c:31
+msgid "Euclidean"
+msgstr "Ευκλείδειο"
+
+#: ../operations/common/distance-transform.c:32
+msgid "Manhattan"
+msgstr "Μανχάταν"
+
+#: ../operations/common/distance-transform.c:33
+#| msgid "Checkerboard"
+msgid "Chessboard"
+msgstr "Σκακιέρα"
+
+#: ../operations/common/distance-transform.c:36
+msgid "Metric"
+msgstr "Μετρικό"
+
+#: ../operations/common/distance-transform.c:38
+#| msgid "The random seed for the noise function"
+msgid "Metric to use for the distance calculation"
+msgstr "Μετρικό που θα χρησιμοποιηθεί για τον υπολογισμό απόστασης"
+
+#: ../operations/common/distance-transform.c:40
+#| msgid "Threshold"
+msgid "Threshold low"
+msgstr "Κατώτατο όριο"
+
+#: ../operations/common/distance-transform.c:43
+#| msgid "Threshold"
+msgid "Threshold high"
+msgstr "Ανώτατο όριο"
+
+#: ../operations/common/distance-transform.c:46
+#| msgid "Grayscale"
+msgid "Grayscale Averaging"
+msgstr "Μέσος όρος κλίμακας του γκρι"
+
+#: ../operations/common/distance-transform.c:47
+msgid "Number of computations for grayscale averaging"
+msgstr "Αριθμός υπολογισμών για τον μέσο όρο της κλίμακας του γκρι"
+
+#: ../operations/common/distance-transform.c:52
+#| msgid "Normalize"
+msgid "normalize"
+msgstr "κανονικοποίηση"
+
+#: ../operations/common/distance-transform.c:53
+msgid "Normalize output to range 0.0 to 1.0."
+msgstr "Κανονικοποίηση της εξόδου να κυμαίνεται από 0,0 έως 1,0."
+
+#: ../operations/common/distance-transform.c:414
+#| msgid "Transform"
+msgid "Distance Transform"
+msgstr "Μετασχηματισμός απόστασης"
+
+#: ../operations/common/distance-transform.c:416
+msgid "calculates a distance transform"
+msgstr "υπολογίζει έναν μετασχηματισμό απόστασης"
+
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
 #: ../operations/common/plasma.c:40
 #: ../operations/common/polar-coordinates.c:51
@@ -1403,7 +1463,7 @@ msgstr "Οριζόντια μετατόπιση σκιάς"
 #: ../operations/common/dropshadow.c:31 ../operations/common/layer.c:41
 #: ../operations/common/plasma.c:47
 #: ../operations/common/polar-coordinates.c:57
-#: ../operations/common/rectangle.c:31 ../operations/core/crop.c:29
+#: ../operations/common/rectangle.c:31 ../operations/core/crop.c:30
 msgid "Y"
 msgstr "Υ"
 
@@ -2201,7 +2261,7 @@ msgstr "Απόδοση γραμμικής διαβάθμισης"
 msgid "Path of file to load."
 msgstr "Διαδρομή αρχείου για φόρτωση."
 
-#: ../operations/common/load.c:191
+#: ../operations/common/load.c:192
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -2877,6 +2937,7 @@ msgstr "Χρήση μιας GeglBuffer στον δίσκο ως πηγής δε�
 #: ../operations/generated/src-atop.c:38 ../operations/generated/src.c:38
 #: ../operations/generated/src-in.c:38 ../operations/generated/src-out.c:38
 #: ../operations/generated/svg-multiply.c:38 ../operations/generated/xor.c:38
+#: ../operations/workshop/gradient-map.c:36
 msgid "sRGB"
 msgstr "sRGB"
 
@@ -2958,11 +3019,11 @@ msgstr ""
 msgid "Image resampling method to use"
 msgstr "Μέθοδος επαναδειγματοληψίας εικόνας προς χρήση"
 
-#: ../operations/common/panorama-projection.c:525
+#: ../operations/common/panorama-projection.c:536
 msgid "Panorama Projection"
 msgstr "Προβολή πανοράματος"
 
-#: ../operations/common/panorama-projection.c:529
+#: ../operations/common/panorama-projection.c:540
 msgid ""
 "Perform a equlinear/gnomonic or little planet/stereographic projection of a "
 "equirectangular input image."
@@ -3871,11 +3932,11 @@ msgstr "Μορφή μετατροπής"
 msgid "Convert the data to the specified format"
 msgstr "Μετατροπή δεδομένων σε συγκεκριμένη μορφή"
 
-#: ../operations/core/crop.c:203
+#: ../operations/core/crop.c:207
 msgid "Crop"
 msgstr "Περικοπή"
 
-#: ../operations/core/crop.c:204
+#: ../operations/core/crop.c:208
 msgid "Crop a buffer"
 msgstr "Περικοπή μνήμης"
 
@@ -3966,11 +4027,11 @@ msgstr "Φόρτωση εικόνας JPEG 2000"
 msgid "JPEG 2000 image loader using jasper."
 msgstr "Φόρτωση εικόνας JPEG 2000 χρησιμοποιώντας jasper."
 
-#: ../operations/external/jpg-load.c:207
+#: ../operations/external/jpg-load.c:250
 msgid "JPEG File Loader"
 msgstr "Φόρτωση εικόνας JPEG"
 
-#: ../operations/external/jpg-load.c:209
+#: ../operations/external/jpg-load.c:252
 msgid "JPEG image loader using libjpeg"
 msgstr "Φόρτωση εικόνας JPEG χρησιμοποιώντας libjpeg"
 
@@ -4547,7 +4608,7 @@ msgstr "Αποθήκευση εικόνας WebP."
 msgid "global value used if aux doesn't contain data"
 msgstr "χρησιμοποιούμενη γενική τιμή εάν η βοηθητική δεν περιέχει δεδομένα"
 
-#: ../operations/generated/add.c:127
+#: ../operations/generated/add.c:128
 msgid ""
 "Math operation add, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -4599,7 +4660,7 @@ msgstr ""
 "Πράξης ανάμειξη SVG διαφορά (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
 "aA))</code>)"
 
-#: ../operations/generated/divide.c:127
+#: ../operations/generated/divide.c:128
 msgid ""
 "Math operation divide, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -4638,7 +4699,7 @@ msgstr ""
 "Πράξη ανάμειξης SVG αποκλεισμός (<code>d = (cA * aB + cB * aA - 2 * cA * cB) "
 "+ cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/gamma.c:127
+#: ../operations/generated/gamma.c:128
 msgid ""
 "Math operation gamma, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -4667,7 +4728,7 @@ msgstr ""
 "Πράξη ανάμειξης SVG φωτισμός (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/multiply.c:127
+#: ../operations/generated/multiply.c:128
 msgid ""
 "Math operation multiply, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -4728,7 +4789,7 @@ msgstr "Πράξη σύνθεσης Porter Duff src-in (τύπος: cA * aB)"
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
 msgstr "Πράξη Porter Duff src-out (d = cA * (1.0f - aB))"
 
-#: ../operations/generated/subtract.c:127
+#: ../operations/generated/subtract.c:128
 msgid ""
 "Math operation subtract, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -5312,14 +5373,41 @@ msgid "Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
 msgstr "Πράξη ανάμειξης εικόνας 'αφαίρεση' (<tt>c = cA+cB-1.0</tt>)"
 
 #: ../operations/workshop/gradient-map.c:27
-msgid "Starting color for gradient"
-msgstr "Χρώμα εκκίνησης για τη διαβάθμιση"
+msgid "Stop 1"
+msgstr "Διακοπή 1"
 
 #: ../operations/workshop/gradient-map.c:29
-msgid "End color for gradient"
-msgstr "Χρώμα τέλους για τη διαβάθμιση"
+msgid "Stop 2"
+msgstr "Διακοπή 2"
 
-#: ../operations/workshop/gradient-map.c:187
+#: ../operations/workshop/gradient-map.c:30
+#| msgid "Color 1"
+msgid "Color 3"
+msgstr "Χρώμα 3"
+
+#: ../operations/workshop/gradient-map.c:31
+msgid "Stop 3"
+msgstr "Διακοπή 3"
+
+#: ../operations/workshop/gradient-map.c:32
+#| msgid "Color 1"
+msgid "Color 4"
+msgstr "Χρώμα 4"
+
+#: ../operations/workshop/gradient-map.c:33
+msgid "Stop 4"
+msgstr "Διακοπή 4"
+
+#: ../operations/workshop/gradient-map.c:34
+#| msgid "Color 1"
+msgid "Color 5"
+msgstr "Χρώμα 5"
+
+#: ../operations/workshop/gradient-map.c:35
+msgid "Stop 5"
+msgstr "Διακοπή 5"
+
+#: ../operations/workshop/gradient-map.c:236
 msgid "Applies a color gradient."
 msgstr "Εφαρμόζει μια διαβάθμιση χρώματος."
 
@@ -5474,6 +5562,12 @@ msgid ""
 msgstr ""
 "Βελτίωση του φίλτρου ποσόστωσης μειώνοντας το θόρυβο άκρης βασισμένο στους "
 "συμμετρικούς πολύ κοντινούς γείτονες"
+
+#~ msgid "Starting color for gradient"
+#~ msgstr "Χρώμα εκκίνησης για τη διαβάθμιση"
+
+#~ msgid "End color for gradient"
+#~ msgstr "Χρώμα τέλους για τη διαβάθμιση"
 
 #~ msgid "Alters colors using sine transformations"
 #~ msgstr "Αλλάζει χρώματα χρησιμοποιώντας μετασχηματισμούς ημιτόνου"
