@@ -40,6 +40,7 @@ op_LTLIBRARIES = \
 	deinterlace.la \
 	difference-of-gaussians.la \
 	diffraction-patterns.la \
+	displace.la \
 	display.la \
 	distance-transform.la \
 	dropshadow.la \
