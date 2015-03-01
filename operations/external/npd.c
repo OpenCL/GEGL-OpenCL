@@ -20,30 +20,30 @@
 #include <glib/gi18n-lib.h>
 
 #ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_pointer (model,       _("model"),
+gegl_chant_pointer (model,       _("Model"),
                     _("Model - basic element we operate on"))
 
-gegl_chant_int     (square_size, _("square size"),
+gegl_chant_int     (square_size, _("Square Size"),
                     5,  1000,  20,
                     _("Size of an edge of square the mesh consists of"))
 
-gegl_chant_int     (rigidity,    _("rigidity"),
+gegl_chant_int     (rigidity,    _("Rigidity"),
                     0, 10000, 100,
                     _("The number of deformation iterations"))
 
-gegl_chant_boolean (ASAP_deformation, _("ASAP deformation"),
+gegl_chant_boolean (asap_deformation, _("ASAP Deformation"),
                     FALSE,
                     _("ASAP deformation is performed when TRUE, ARAP deformation otherwise"))
 
-gegl_chant_boolean (MLS_weights, _("MLS weights"),
+gegl_chant_boolean (mls_weights, _("MLS Weights"),
                     FALSE,
                     _("Use MLS weights"))
 
-gegl_chant_double  (MLS_weights_alpha, _("MLS weights alpha"),
+gegl_chant_double  (mls_weights_alpha, _("MLS Weights Alpha"),
                     0.1, 2.0, 1.0,
                     _("Alpha parameter of MLS weights"))
 
-gegl_chant_boolean (preserve_model, _("preserve model"),
+gegl_chant_boolean (preserve_model, _("Preserve Model"),
                     FALSE,
                     _("When TRUE the model will not be freed"))
 
@@ -189,12 +189,12 @@ process (GeglOperation       *operation,
     {
       display = model->display;
 
-      npd_set_deformation_type (model, o->ASAP_deformation, o->MLS_weights);
+      npd_set_deformation_type (model, o->asap_deformation, o->mls_weights);
 
-      if (o->MLS_weights &&
-          model->hidden_model->MLS_weights_alpha != o->MLS_weights_alpha)
+      if (o->mls_weights &&
+          model->hidden_model->MLS_weights_alpha != o->mls_weights_alpha)
         {
-          model->hidden_model->MLS_weights_alpha = o->MLS_weights_alpha;
+          model->hidden_model->MLS_weights_alpha = o->mls_weights_alpha;
           npd_compute_MLS_weights (model);
         }
 
