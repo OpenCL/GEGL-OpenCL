@@ -34,12 +34,6 @@ enum_start (gegl_edge_algo)
    enum_value (GEGL_EDGE_LAPLACE,  "laplace",  N_("Laplace"))
 enum_end (GeglEdgeAlgo)
 
-enum_start (gegl_edge_policy)
-   enum_value (GEGL_EDGE_WRAP,  "wrap",  N_("Wrap"))
-   enum_value (GEGL_EDGE_SMEAR, "smear", N_("Smear"))
-   enum_value (GEGL_EDGE_BLACK, "black", N_("Black"))
-enum_end (GeglEdgePolicy)
-
 property_enum (algorithm, _("Algorithm"),
                GeglEdgeAlgo, gegl_edge_algo,
                GEGL_EDGE_SOBEL)
@@ -50,9 +44,9 @@ property_double (amount, _("Amount"), 2.0)
     value_range (1.0, 10.0)
     ui_range    (1.0, 10.0)
 
-property_enum (policy, _("Edge behavior"),
-               GeglEdgePolicy, gegl_edge_policy,
-               GEGL_EDGE_SMEAR)
+property_enum (border_behavior, _("Border behavior"),
+               GeglAbyssPolicy, gegl_abyss_policy,
+               GEGL_ABYSS_CLAMP)
   description (_("Edge detection behavior"))
 
 #else
@@ -62,26 +56,6 @@ property_enum (policy, _("Edge behavior"),
 
 #include <math.h>
 #include "gegl-op.h"
-
-static GeglAbyssPolicy
-to_gegl_policy (GeglEdgePolicy policy)
-{
-  switch (policy)
-    {
-    case (GEGL_EDGE_WRAP):
-      return GEGL_ABYSS_LOOP;
-      break;
-    case (GEGL_EDGE_SMEAR):
-      return GEGL_ABYSS_CLAMP;
-      break;
-    case (GEGL_EDGE_BLACK):
-      return GEGL_ABYSS_BLACK;
-      break;
-    default:
-      g_warning ("edge: unsupported abyss policy");
-      return GEGL_ABYSS_NONE;
-    }
-}
 
 static inline gfloat
 edge_sobel (gfloat *pixels, gdouble amount)
@@ -288,7 +262,7 @@ process (GeglOperation       *operation,
   dst_buff = g_new0 (gfloat, roi->width * roi->height * components);
 
   gegl_buffer_get (input, &rect, 1.0, format, src_buff,
-                   GEGL_AUTO_ROWSTRIDE, to_gegl_policy (o->policy));
+                   GEGL_AUTO_ROWSTRIDE, o->border_behavior);
 
   for (y = 0; y < roi->height; y++)
     {
