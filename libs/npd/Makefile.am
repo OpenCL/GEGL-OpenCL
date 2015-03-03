@@ -39,4 +39,4 @@ libgegl_npd_@GEGL_API_VERSION@_la_CFLAGS = \
 lib_LTLIBRARIES = libgegl-npd-@GEGL_API_VERSION@.la
 
 libgegl_npd_@GEGL_API_VERSION@_la_LIBADD = \
-	$(libgegl)
+	$(libgegl) $(GLIB_LIBS) $(BABL_LIBS)
