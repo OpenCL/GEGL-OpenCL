@@ -43,6 +43,7 @@ op_LTLIBRARIES = \
 	display.la \
 	distance-transform.la \
 	dropshadow.la \
+	edge.la \
 	edge-laplace.la \
 	edge-sobel.la \
 	emboss.la \

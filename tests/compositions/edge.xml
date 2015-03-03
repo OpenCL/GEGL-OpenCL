@@ -1,0 +1,124 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:over'>
+    <node operation='gegl:crop'>
+      <params>
+        <param name='x'>340.0</param>
+        <param name='y'>192.0</param>
+        <param name='width'>172.0</param>
+        <param name='height'>192.0</param>
+      </params>
+    </node>
+    <node operation='gegl:edge'>
+      <params>
+        <param name='algorithm'>laplace</param>
+        <param name='amount'>1.0</param>
+      </params>
+    </node>
+    <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:over'>
+    <node operation='gegl:crop'>
+      <params>
+        <param name='x'>170.0</param>
+        <param name='y'>192.0</param>
+        <param name='width'>170.0</param>
+        <param name='height'>192.0</param>
+      </params>
+    </node>
+    <node operation='gegl:edge'>
+      <params>
+        <param name='algorithm'>differential</param>
+        <param name='amount'>1.0</param>
+      </params>
+    </node>
+    <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:over'>
+    <node operation='gegl:crop'>
+      <params>
+        <param name='x'>0.0</param>
+        <param name='y'>192.0</param>
+        <param name='width'>170.0</param>
+        <param name='height'>192.0</param>
+      </params>
+    </node>
+    <node operation='gegl:edge'>
+      <params>
+        <param name='algorithm'>roberts</param>
+        <param name='amount'>1.0</param>
+      </params>
+    </node>
+    <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:over'>
+    <node operation='gegl:crop'>
+      <params>
+        <param name='x'>340.0</param>
+        <param name='y'>0.0</param>
+        <param name='width'>172.0</param>
+        <param name='height'>192.0</param>
+      </params>
+    </node>
+    <node operation='gegl:edge'>
+      <params>
+        <param name='algorithm'>gradient</param>
+        <param name='amount'>1.0</param>
+      </params>
+    </node>
+    <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:over'>
+    <node operation='gegl:crop'>
+      <params>
+        <param name='x'>170.0</param>
+        <param name='y'>0.0</param>
+        <param name='width'>170.0</param>
+        <param name='height'>192.0</param>
+      </params>
+    </node>
+    <node operation='gegl:edge'>
+      <params>
+        <param name='algorithm'>prewitt</param>
+        <param name='amount'>1.0</param>
+      </params>
+    </node>
+    <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:over'>
+    <node operation='gegl:crop'>
+      <params>
+        <param name='x'>170.0</param>
+        <param name='y'>0.0</param>
+        <param name='width'>170.0</param>
+        <param name='height'>192.0</param>
+      </params>
+    </node>
+    <node operation='gegl:edge'>
+      <params>
+        <param name='algorithm'>prewitt</param>
+        <param name='amount'>1.0</param>
+      </params>
+    </node>
+    <clone ref='clone0'/>
+  </node>
+  <node operation='gegl:crop'>
+    <params>
+      <param name='x'>0.0</param>
+      <param name='y'>0.0</param>
+      <param name='width'>170.0</param>
+      <param name='height'>192.0</param>
+    </params>
+  </node>
+  <node operation='gegl:edge'>
+    <params>
+      <param name='algorithm'>sobel</param>
+      <param name='amount'>1.0</param>
+    </params>
+  </node>
+  <node operation='gegl:load' id='clone0'>
+      <params>
+        <param name='path'>data/car-stack.png</param>
+      </params>
+  </node>
+</gegl>
