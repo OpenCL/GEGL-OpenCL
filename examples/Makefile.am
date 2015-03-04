@@ -27,7 +27,8 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 AM_LDFLAGS =  \
 	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
 	$(BABL_LIBS) \
-	$(DEP_LIBS)
+	$(DEP_LIBS) \
+	$(MATH_LIB)
 
 bin_PROGRAMS = \
 	2geglbuffer \

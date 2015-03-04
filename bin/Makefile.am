@@ -27,7 +27,7 @@ AM_CFLAGS = \
 
 AM_LDFLAGS =  \
 	$(no_undefined) ../gegl/libgegl-$(GEGL_API_VERSION).la \
-	$(DEP_LIBS) $(BABL_LIBS) $(PNG_LIBS) $(LIBSPIRO)
+	$(DEP_LIBS) $(BABL_LIBS) $(PNG_LIBS) $(LIBSPIRO) $(MATH_LIB)
 
 bin_PROGRAMS = gegl gegl-tester
 
