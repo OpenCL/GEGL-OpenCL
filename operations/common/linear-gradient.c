@@ -81,7 +81,7 @@ process (GeglOperation       *operation,
   dx = o->end_x - o->start_x;
   dy = o->end_y - o->start_y;
 
-  length = sqrtf (dx * dx + dy * dy);
+  length = dx * dx + dy * dy;
 
   if (GEGL_FLOAT_IS_ZERO (length))
     {
@@ -101,7 +101,7 @@ process (GeglOperation       *operation,
           for (x = roi->x; x < roi->x + roi->width; ++x)
             {
               gint c;
-              gfloat v = (vec0 * (x - o->start_x) + vec1 * (y - o->start_y)) / length;
+              gfloat v = vec0 * (x - o->start_x) + vec1 * (y - o->start_y);
 
               if (v > 1.0f - GEGL_FLOAT_EPSILON)
                 v = 1.0f;
