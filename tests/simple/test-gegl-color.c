@@ -40,14 +40,10 @@ assert_compare_rgba(const gdouble actual[4], const gdouble expect[4])
     }
 
     if (!colors_equal) {
-        gchar str[100];
-        g_snprintf(str, 100,
-                "GeglColor("COLOR_FMT","COLOR_FMT","COLOR_FMT","COLOR_FMT") != " \
+        g_error("GeglColor("COLOR_FMT","COLOR_FMT","COLOR_FMT","COLOR_FMT") != "
                 "GeglColor("COLOR_FMT","COLOR_FMT","COLOR_FMT","COLOR_FMT")",
                 actual[0], actual[1], actual[2], actual[3],
-                expect[0], expect[1], expect[2], expect[3]
-        );
-        g_error(str);
+                expect[0], expect[1], expect[2], expect[3]);
     }
     g_assert(colors_equal);
 }
