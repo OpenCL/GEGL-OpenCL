@@ -34,7 +34,7 @@ buffer_test_SOURCES_noinc = buffer-test.c
 buffer_test_SOURCES = $(buffer_test_SOURCES_noinc) buffer-tests.inc
 buffer_test_LDADD = 						\
 	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la	\
-	$(DEP_LIBS) $(BABL_LIBS)
+	$(DEP_LIBS) $(BABL_LIBS) $(MATH_LIB)
 
 
 # Our custom target rules
