@@ -14,7 +14,7 @@ TEST ()
     gfloat *buf;
     gint    x, y, i;
 
-    buf = (gpointer)gegl_buffer_linear_open (buffer, &extent, &rowstride, NULL);
+    buf = gegl_buffer_linear_open (buffer, &extent, &rowstride, NULL);
     g_assert (buf);
 
     i=0;

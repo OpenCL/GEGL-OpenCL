@@ -151,7 +151,7 @@ process (GeglOperation       *operation,
       guchar *data;
 
       g_mutex_lock (&mutex);
-      data = (void*)gegl_buffer_linear_open (output, result, NULL, babl_format ("cairo-ARGB32"));
+      data = gegl_buffer_linear_open (output, result, NULL, babl_format ("cairo-ARGB32"));
       surface = cairo_image_surface_create_for_data (data,
                                                      CAIRO_FORMAT_ARGB32,
                                                      result->width,

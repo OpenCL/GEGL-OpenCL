@@ -134,7 +134,7 @@ typedef struct {
 /* FIXME: make this use direct data access in more cases than the
  * case of the base buffer.
  */
-gpointer *
+gpointer
 gegl_buffer_linear_open (GeglBuffer          *buffer,
                          const GeglRectangle *extent,   /* if NULL, use buf  */
                          gint                *rowstride,/* returns rowstride */

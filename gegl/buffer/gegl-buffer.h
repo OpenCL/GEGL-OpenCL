@@ -631,7 +631,7 @@ GeglBuffer * gegl_buffer_linear_new_from_data (const gpointer       data,
  * request is compatible with the underlying data storage direct access
  * to the underlying data is provided. Otherwise, it returns a copy of the data.
  */
-gpointer *      gegl_buffer_linear_open       (GeglBuffer          *buffer,
+gpointer        gegl_buffer_linear_open       (GeglBuffer          *buffer,
                                                const GeglRectangle *extent,
                                                gint                *rowstride,
                                                const Babl          *format);
