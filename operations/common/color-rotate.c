@@ -54,7 +54,7 @@ property_boolean (dest_clockwise, _("Clockwise"), FALSE)
     description (_("Switch to clockwise"))
 
 property_double (dest_from, _("From"), 0.0)
-    description (_("Start angle of the desination color range"))
+    description (_("Start angle of the destination color range"))
     value_range (0.0, 360.0)
     ui_meta     ("unit", "degree")
 
