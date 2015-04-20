@@ -55,7 +55,7 @@ property_color (ink4_color, _("Ink4 color"), "#00000000", _("ink color"))
 property_color (ink5_color, _("Ink5 color"), "#ff000000", _("ink color"))
 
 property_double (ink_limit, _("Ink limit"), 0.0, 5.0, 3.0,
-                   _("maximum amount of ink for one pixel, 2.5 = 250% coverage"))
+                   _("maximum amount of ink for one pixel, 2.5 = 250%% coverage"))
 
 #endif
 
