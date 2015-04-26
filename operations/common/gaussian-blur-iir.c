@@ -35,15 +35,15 @@ enum_start (gegl_gaussian_blur_policy)
 enum_end (GeglGaussianBlurPolicy)
 
 
-property_double (std_dev_x, _("Standard deviation X"), 1.5)
-   description (_("Standard deviation (spatial scale factor)"))
+property_double (std_dev_x, _("Size X"), 1.5)
+   description (_("Standard deviation for the horizontal axis"))
    value_range (0.0, 1500.0)
    ui_range    (0.24, 100.0)
    ui_gamma    (3.0)
    ui_meta     ("unit", "pixel-distance")
    ui_meta     ("axis", "x")
 
-property_double (std_dev_y, _("Standard deviation Y"), 1.5)
+property_double (std_dev_y, _("Size Y"), 1.5)
    description (_("Standard deviation (spatial scale factor)"))
    value_range (0.0, 1500.0)
    ui_range    (0.24, 100.0)
@@ -113,7 +113,7 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->attach = attach;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:gaussian-blur-iir",
+    "name",        "gegl:gaussian-blur",
     "categories",  "blur",
     "description", _("Performs an averaging of neighboring pixels with the "
                      "normal distribution as weighting"),

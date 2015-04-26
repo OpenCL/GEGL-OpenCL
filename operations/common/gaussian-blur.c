@@ -699,7 +699,7 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process           = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:gaussian-blur",
+    "name",        "gegl:gaussian-blur-old",
     "title",       _("Gaussian Blur"),
     "categories",  "blur",
     "description", _("Each result pixel is the average of the neighbouring pixels weighted by a normal distribution with specified standard deviation."),

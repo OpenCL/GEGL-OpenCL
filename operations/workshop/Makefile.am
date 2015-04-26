@@ -21,8 +21,6 @@ op_LTLIBRARIES =    \
 	demosaic-simple.la \
 	disc-percentile.la \
 	ditto.la \
-	gaussian-blur-iir.la \
-	gblur-1d.la \
 	hstack.la \
 	ink-simulator.la \
 	kuwahara.la \

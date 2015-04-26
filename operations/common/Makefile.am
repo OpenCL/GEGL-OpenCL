@@ -54,6 +54,8 @@ op_LTLIBRARIES = \
 	fractal-explorer.la \
 	fractal-trace.la \
 	gaussian-blur.la \
+	gaussian-blur-iir.la \
+	gblur-1d.la \
 	gegl-buffer-load-op.la \
 	gegl-buffer-save-op.la \
 	grey.la \

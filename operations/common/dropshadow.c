@@ -69,11 +69,13 @@ attach (GeglOperation *operation)
   over      = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
   translate = gegl_node_new_child (gegl, "operation", "gegl:translate", NULL);
   opacity   = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
-  blur      = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", NULL);
+  blur      = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", 
+                                         "clip-extent", FALSE, NULL);
   darken    = gegl_node_new_child (gegl, "operation", "gegl:src-in", NULL);
   color     = gegl_node_new_child (gegl, "operation", "gegl:color",
                                    "value", black_color,
                                    NULL);
+
   g_object_unref (black_color);
 
   gegl_node_link_many (input, darken, blur, opacity, translate, over, output,
