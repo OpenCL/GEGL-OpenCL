@@ -46,6 +46,7 @@ operations/common/fattal02.c
 operations/common/fractal-explorer.c
 operations/common/fractal-trace.c
 operations/common/gaussian-blur.c
+operations/common/gaussian-blur-iir.c
 operations/common/gegl-buffer-load-op.c
 operations/common/gegl-buffer-save-op.c
 operations/common/grey.c
@@ -217,7 +218,6 @@ operations/workshop/external/gluas.c
 operations/workshop/external/lens-correct.c
 operations/workshop/external/line-profile.c
 operations/workshop/external/v4l2.c
-operations/workshop/gaussian-blur-iir.c
 operations/workshop/gblur-1d.c
 operations/workshop/generated/average.c
 operations/workshop/generated/blend-reflect.c
