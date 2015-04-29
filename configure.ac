@@ -1121,12 +1121,14 @@ AM_CONDITIONAL(HAVE_P2TC, test "$have_p2tc" = "yes")
 
 AC_SUBST(P2TC_CFLAGS)
 AC_SUBST(P2TC_LIBS)
+AC_SUBST(P2TC_PACKAGES, "poly2tri-c")
 
 # If no poly2tri-c version is installed, we should use the local version
 # we have cached in the libs directory
 if test "x$have_p2tc" != "xyes"; then
   AC_SUBST(P2TC_CFLAGS, "-I\$(top_srcdir)/libs/poly2tri-c")
   AC_SUBST(P2TC_LIBS, "-L\$(top_builddir)/libs/poly2tri-c/poly2tri-c -lpoly2tri-c")
+  AC_SUBST(P2TC_PACKAGES, "")
 fi
 
 ##################
