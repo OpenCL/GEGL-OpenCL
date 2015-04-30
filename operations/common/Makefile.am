@@ -128,9 +128,10 @@ op_LTLIBRARIES = \
 	svg-saturate.la \
 	texturize-canvas.la \
 	threshold.la \
-	tile-seamless.la \
 	tile.la \
 	tile-glass.la \
+	tile-paper.la \
+	tile-seamless.la \
 	unsharp-mask.la \
 	value-invert.la \
 	value-propagate.la \
