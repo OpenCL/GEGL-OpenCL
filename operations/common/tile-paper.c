@@ -63,8 +63,11 @@ property_color (bg_color, _("Background color"), "rgba(0.0, 0.0, 0.0, 1.0)")
   description (("The tiles' background color"))
   ui_meta     ("role", "color-primary")
 
-property_boolean (centering, _("Centering"), FALSE)
+property_boolean (centering, _("Centering"), TRUE)
   description (_("Centering of the tiles"))
+
+property_boolean (wrap_around, _("Wrap around"), FALSE)
+  description(_("Wrap the fractional tiles"))
 
 property_enum (tile_paper_background_type, _("Background type"),
                GeglTilePaperBackgroundType, gegl_tile_paper_background_type,
@@ -200,11 +203,12 @@ randomize_tiles (GeglProperties      *o,
 }
 
 static void
-draw_tiles (GeglProperties *o,
-            GeglBuffer     *input,
-            GeglBuffer     *output,
-            gint            num_of_tiles,
-            Tile           *tiles)
+draw_tiles (GeglProperties      *o,
+            const GeglRectangle *rect,
+            GeglBuffer          *input,
+            GeglBuffer          *output,
+            gint                 num_of_tiles,
+            Tile                *tiles)
 {
   const Babl *format;
   gfloat     *tile_buffer;
@@ -214,18 +218,56 @@ draw_tiles (GeglProperties *o,
   format = babl_format ("RGBA float");
   tile_buffer = g_new0 (gfloat, 4 * o->tile_width * o->tile_height);
 
-  for (t = tiles, i = 0; i < num_of_tiles; i++, t++)
+  if (o->wrap_around)
     {
-      GeglRectangle tile_rect = { t->x, t->y, t->width, t->height };
+      for (t = tiles, i = 0; i < num_of_tiles; i++, t++)
+        {
+          GeglRectangle tile_rect = {t->x, t->y, t->width, t->height};
+          gegl_buffer_get (input, &tile_rect, 1.0, format, tile_buffer,
+                                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+          tile_rect.x += t->move_x;
+          tile_rect.y += t->move_y;
+          gegl_buffer_set (output, &tile_rect, 0, format,
+                                 tile_buffer, GEGL_AUTO_ROWSTRIDE);
 
-      gegl_buffer_get (input, &tile_rect, 1.0, format, tile_buffer,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+          if (tile_rect.x < 0 || tile_rect.x + tile_rect.width > rect->width ||
+              tile_rect.y < 0 || tile_rect.y + tile_rect.height > rect->height )
+          {
+            if (tile_rect.x < 0)
+              {
+                tile_rect.x = rect->width + tile_rect.x;
+              }
+            else if (tile_rect.x+tile_rect.width > rect->width)
+              {
+                tile_rect.x -= rect->width;
+              }
 
-      tile_rect.x += t->move_x;
-      tile_rect.y += t->move_y;
+            if (tile_rect.y < 0)
+              {
+                tile_rect.y = rect->height + tile_rect.y;
+              }
+            else if (tile_rect.y + tile_rect.height > rect->height)
+              {
+                tile_rect.y -= rect->height;
+              }
 
-      gegl_buffer_set (output, &tile_rect, 0, format,
-                       tile_buffer, GEGL_AUTO_ROWSTRIDE);
+              gegl_buffer_set (output, &tile_rect, 0, format,
+                                   tile_buffer, GEGL_AUTO_ROWSTRIDE);
+          }
+        }
+    }
+  else
+    {
+      for (t = tiles, i = 0; i < num_of_tiles; i++, t++)
+        {
+          GeglRectangle tile_rect = {t->x, t->y, t->width, t->height};
+          gegl_buffer_get (input, &tile_rect, 1.0, format, tile_buffer,
+                                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+          tile_rect.x += t->move_x;
+          tile_rect.y += t->move_y;
+          gegl_buffer_set (output, &tile_rect, 0, format,
+                                 tile_buffer, GEGL_AUTO_ROWSTRIDE);
+        }
     }
 
   g_free (tile_buffer);
@@ -366,7 +408,7 @@ process (GeglOperation       *operation,
   set_background  (o, result, input, output, division_x, division_y,
                    offset_x, offset_y);
 
-  draw_tiles (o, input, output, n_tiles, tiles);
+  draw_tiles (o, result, input, output, n_tiles, tiles);
 
   return  TRUE;
 }
