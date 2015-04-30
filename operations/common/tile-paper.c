@@ -28,12 +28,12 @@
 
 enum_start (gegl_tile_paper_background_type)
   enum_value (GEGL_BACKGROUND_TYPE_TRANSPARENT, "transparent", N_("Transparent"))
-  enum_value (GEGL_BACKGROUND_TYPE_INVERT,      "invert",      N_("Invert"))
+  enum_value (GEGL_BACKGROUND_TYPE_INVERT,      "invert",      N_("Inverted image"))
   enum_value (GEGL_BACKGROUND_TYPE_IMAGE,       "image",       N_("Image"))
   enum_value (GEGL_BACKGROUND_TYPE_COLOR,       "color",       N_("Color"))
 enum_end (GeglTilePaperBackgroundType)
 
-enum_start (gegl_fractional_type)
+enum_start (gegl_tile_paper_fractional_type)
   enum_value (GEGL_FRACTIONAL_TYPE_BACKGROUND, "background", N_("Background"))
   enum_value (GEGL_FRACTIONAL_TYPE_IGNORE,     "ignore",     N_("Ignore"))
   enum_value (GEGL_FRACTIONAL_TYPE_FORCE,      "force",      N_("Force"))
@@ -59,25 +59,25 @@ property_double (move_rate, _("Move rate"), 25.0)
   ui_range    (1.0, 100.0)
   ui_meta     ("unit", "percent")
 
-property_color (bg_color, _("Background color"), "rgba(0.0, 0.0, 0.0, 1.0)")
-  description (("The tiles' background color"))
-  ui_meta     ("role", "color-primary")
+property_boolean (wrap_around, _("Wrap around"), FALSE)
+  description (_("Wrap the fractional tiles"))
+
+property_enum (fractional_type, _("Fractional type"),
+               GeglTilePaperFractionalType, gegl_tile_paper_fractional_type,
+               GEGL_FRACTIONAL_TYPE_FORCE)
+  description (_("Fractional Type"))
 
 property_boolean (centering, _("Centering"), TRUE)
   description (_("Centering of the tiles"))
 
-property_boolean (wrap_around, _("Wrap around"), FALSE)
-  description(_("Wrap the fractional tiles"))
-
-property_enum (tile_paper_background_type, _("Background type"),
+property_enum (background_type, _("Background type"),
                GeglTilePaperBackgroundType, gegl_tile_paper_background_type,
                GEGL_BACKGROUND_TYPE_INVERT)
   description (_("Background type"))
 
-property_enum (fractional_type, _("Fractional type"),
-               GeglTilePaperFractionalType, gegl_fractional_type,
-               GEGL_FRACTIONAL_TYPE_FORCE)
-  description (_("Fractional Type"))
+property_color (bg_color, _("Background color"), "rgba(0.0, 0.0, 0.0, 1.0)")
+  description (("The tiles' background color"))
+  ui_meta     ("role", "color-primary")
 
 #else
 
@@ -222,51 +222,57 @@ draw_tiles (GeglProperties      *o,
     {
       for (t = tiles, i = 0; i < num_of_tiles; i++, t++)
         {
-          GeglRectangle tile_rect = {t->x, t->y, t->width, t->height};
+          GeglRectangle tile_rect = { t->x, t->y, t->width, t->height };
+
           gegl_buffer_get (input, &tile_rect, 1.0, format, tile_buffer,
-                                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                           GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
           tile_rect.x += t->move_x;
           tile_rect.y += t->move_y;
+
           gegl_buffer_set (output, &tile_rect, 0, format,
-                                 tile_buffer, GEGL_AUTO_ROWSTRIDE);
+                           tile_buffer, GEGL_AUTO_ROWSTRIDE);
 
           if (tile_rect.x < 0 || tile_rect.x + tile_rect.width > rect->width ||
-              tile_rect.y < 0 || tile_rect.y + tile_rect.height > rect->height )
-          {
-            if (tile_rect.x < 0)
-              {
-                tile_rect.x = rect->width + tile_rect.x;
-              }
-            else if (tile_rect.x+tile_rect.width > rect->width)
-              {
-                tile_rect.x -= rect->width;
-              }
+              tile_rect.y < 0 || tile_rect.y + tile_rect.height > rect->height)
+            {
+              if (tile_rect.x < 0)
+                {
+                  tile_rect.x = rect->width + tile_rect.x;
+                }
+              else if (tile_rect.x+tile_rect.width > rect->width)
+                {
+                  tile_rect.x -= rect->width;
+                }
 
-            if (tile_rect.y < 0)
-              {
-                tile_rect.y = rect->height + tile_rect.y;
-              }
-            else if (tile_rect.y + tile_rect.height > rect->height)
-              {
-                tile_rect.y -= rect->height;
-              }
+              if (tile_rect.y < 0)
+                {
+                  tile_rect.y = rect->height + tile_rect.y;
+                }
+              else if (tile_rect.y + tile_rect.height > rect->height)
+                {
+                  tile_rect.y -= rect->height;
+                }
 
               gegl_buffer_set (output, &tile_rect, 0, format,
-                                   tile_buffer, GEGL_AUTO_ROWSTRIDE);
-          }
+                               tile_buffer, GEGL_AUTO_ROWSTRIDE);
+            }
         }
     }
   else
     {
       for (t = tiles, i = 0; i < num_of_tiles; i++, t++)
         {
-          GeglRectangle tile_rect = {t->x, t->y, t->width, t->height};
+          GeglRectangle tile_rect = { t->x, t->y, t->width, t->height };
+
           gegl_buffer_get (input, &tile_rect, 1.0, format, tile_buffer,
-                                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+                           GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
           tile_rect.x += t->move_x;
           tile_rect.y += t->move_y;
+
           gegl_buffer_set (output, &tile_rect, 0, format,
-                                 tile_buffer, GEGL_AUTO_ROWSTRIDE);
+                           tile_buffer, GEGL_AUTO_ROWSTRIDE);
         }
     }
 
@@ -312,7 +318,7 @@ set_background (GeglProperties      *o,
       clear_y1     = clear_y0 + rect->height;
     }
 
-  switch (o->tile_paper_background_type)
+  switch (o->background_type)
     {
     case GEGL_BACKGROUND_TYPE_TRANSPARENT:
       gegl_buffer_set_color (output, rect,
