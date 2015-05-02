@@ -2,6 +2,59 @@
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
+Changes in GEGL 0.4.0
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Improvements to thread safety and parallelism.
+ • Lower head graph travesal due from rewrite of visitors
+
+ • Buffer:
+   • New default tile backend, writing tiles in separate thread.
+ • Experimental mipmap rendering, eneable by setting
+ GEGL_MIPMAP_RENDERING=true in the environment.
+
+ • gaussian-blur: reimplemented
+ • Operations: 
+
+   support for using URIs in image loaders
+
+   new ops: alien-map, antialias, apply-lens, bilateral-filter, bump.map,
+   cartoon, channel-mixer, color-enhance, color-exchange, color-reduction,
+   color-rotate, convolution-matrix, copy-buffer, cubism, deinterlace,
+   diffraction-patterns, distance-transform, edge, emboss, engrave, exposure,
+   fractal-trace, high-pass, image-compare, illusion, invert-gamma,
+   lens-flare, linear, linear-gradient, mosaic, motion-blur-circular,
+   motion-blur-zoom, noise-cell noise-cie-lch, noise-hsv, noise-hurl,
+   noise-pick, noise-rgb, noise-simplex, noise-spread, n-point deformation
+   ops, oilify, panorama-projection, photocopy, plasma, radial-gradient,
+   red-eye-removal, scale-size-keep-aspect, softglow, stretch-contrast,
+   texturize-canvas, tile-glass, tile-seamless, tile-paper, tile, warp,
+   whirl-pinch, wind, cache, cast-format, lcms-from-profile, npy-save,
+   webp-load, webp-save, scale-ratio, scale-size, seamless-clone, sinus,
+   supernova, value-propagate, video-degradation
+
+
+Contributions from: 
+
+  Albert F, Alexandre Prokoudine, Alexia Death, Andika Triwidada, Andreas
+  Fischer, Angh, awaw fumin, Barak Itkin, Bruce Cowan, Carlos Zubieta, Chris
+  Leonard, Christian Kirbach, Christian Kirbach, Clayton Walker, Daniel
+  Mustieles, Daniel Nylander, Daniel Sabo, Debarshi Ray, Denis Knoepfle,
+  Dimitris Papavasiliou, Dimitris Spingos, Djavan Fagundes, Dov Grobgeld,
+  Elle Stone, Enrico Nicoletto, Felix Ulber, Florian Klemme, Francisco Vila,
+  Fran Diéguez, Georges Basile Stavracas Neto, Hans Lo, Harald Korneliussen,
+  Hartmut Kuhse, Inaki Larranaga Murgoitio, Isaac Wagner, Jan Vesely, Jan
+  Vesely, Jehan, Jon Nordby, Jordi Mas, Kalev Lember, Marco Ciampa, Marek
+  Dvoroznak, Maria  Mavridou, Martijn van Beers, Martin Nordholts, Martin
+  Srebotnjak, Massimo Valentini, Matej Urbančič, Maxime Nicco, Michael
+  Henning, Michael Henning, Michael Muré, Michael Natterer, Mikael Magnusson,
+  Miroslav Talasek, Muhammet Kara, Mukund Sivaraman, nick black, Nicolas
+  Robidoux, Nils Philippsen, Pascal Giessler, Piotr Drąg, Quentin Glidic,
+  Rafael Ferreira, Rasmus, RPG, Rūdolfs Mazurs, Samir Ribic, Samuel Pitoiset,
+  sebul, Simon Budig, Sven Claussner, Téo Mazars, Téo Mazars, Thomas Manni,
+  Tim Lunn, Ting-Wei Lan, Tom Stellard, Ulf-D. Ehlert, Vadim Rutkovsky, Victor
+  Oliveira, Ville Sokk, Yongjia Zhang, Yongjia Zhang, Øyvind Kolås and 周 周.
+
+
 Changes in GEGL 0.2.0
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • OpenCL support
