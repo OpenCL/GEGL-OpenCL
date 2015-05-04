@@ -206,14 +206,10 @@ operations/transform/shear.c
 operations/transform/transform.c
 operations/transform/transform-core.c
 operations/transform/translate.c
-operations/workshop/box-max.c
-operations/workshop/box-min.c
-operations/workshop/box-percentile.c
 operations/workshop/buffer-cache.c
 operations/workshop/color-warp.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
-operations/workshop/disc-percentile.c
 operations/workshop/ditto.c
 operations/workshop/external/ff-save.c
 operations/workshop/external/gluas.c
@@ -232,4 +228,3 @@ operations/workshop/ink-simulator.c
 operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c
 operations/workshop/rawbayer-load.c
-operations/workshop/snn-percentile.c
