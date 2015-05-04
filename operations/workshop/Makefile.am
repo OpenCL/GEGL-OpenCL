@@ -12,20 +12,15 @@ LIBS = $(op_libs)
 
 opdir = $(ext_dir)
 op_LTLIBRARIES =    \
-	box-max.la \
-	box-min.la \
-	box-percentile.la \
 	buffer-cache.la \
 	color-warp.la \
 	demosaic-bimedian.la \
 	demosaic-simple.la \
-	disc-percentile.la \
 	ditto.la \
 	hstack.la \
 	ink-simulator.la \
 	kuwahara.la \
 	mandelbrot.la \
 	rawbayer-load.la \
-	snn-percentile.la \
 	unpremul.la \
 	gradient-map.la
