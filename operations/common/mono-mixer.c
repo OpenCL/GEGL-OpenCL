@@ -25,17 +25,17 @@
 #ifdef GEGL_PROPERTIES
 property_boolean (preserve_luminosity, _("Preserve luminosity"), FALSE)
 
-property_double (red, _("Amount of red"), 0.5)
-    value_range (-10.0, 10.0)
-    ui_range    (-1.0, 1.0)
+property_double (red, _("Red Channel Multiplier"), 0.333)
+    value_range (-5.0, 5.0)
+    ui_range    (-2.0, 2.0)
 
-property_double (green, _("Amount of green"), 0.5)
-    value_range (-10.0, 10.0)
-    ui_range    (-1.0, 1.0)
+property_double (green, _("Green Channel Multiplier"), 0.333)
+    value_range (-5.0, 5.0)
+    ui_range    (-2.0, 2.0)
 
-property_double (blue, _("Amount of blue"), 0.5)
-    value_range (-10.0, 10.0)
-    ui_range    (-1.0, 1.0)
+property_double (blue, _("Blue Channel Multiplier"), 0.333)
+    value_range (-5.0, 5.0)
+    ui_range    (-2.0, 2.0)
 
 #else
 
