@@ -32,19 +32,20 @@ TESTS = \
   edge-sobel.xml                  \
   engrave.xml                     \
   fattal02.xml                    \
-	gegl.xml                        \
+  gegl.xml                        \
   gamma.xml                       \
   hdr-color.xml                   \
   illusion.xml                    \
   image-compare.xml               \
   lens-flare.xml                  \
   mantiuk06.xml                   \
-  noise-cell.xml        	  			\
-  noise-hurl.xml        	  			\
-  noise-simplex.xml        	  		\
+  noise-cell.xml                  \ 
+  noise-hurl.xml                  \
+  noise-simplex.xml               \
   noise-solid.xml                 \
   pixelize.xml                    \
   posterize.xml                   \
+  polar-coordinates.xml           \
   red-eye-removal.xml             \
   reflect.xml                     \
   reflect2.xml                    \
@@ -66,7 +67,7 @@ TESTS = \
   #run-matting-global.xml.sh
   #run-matting-global-big.xml.sh
 
-NO_OPENCL_TESTS = \
+NO_OPENCL_TESTS =               \
   color-reduction.xml           \
   rgbe-load.xml                 \
   rgbe-save.xml                 \
