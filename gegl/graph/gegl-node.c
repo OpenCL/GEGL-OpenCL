@@ -1889,10 +1889,9 @@ gegl_node_get_cache (GeglNode *node)
                             "format", format,
                             NULL);
 
-      gegl_object_set_has_forked (G_OBJECT (node->cache));
-
+      gegl_object_set_has_forked (G_OBJECT (cache));
       gegl_node_get_bounding_box (node);
-      gegl_buffer_set_extent (GEGL_BUFFER (node->cache), &node->have_rect);
+      gegl_buffer_set_extent (GEGL_BUFFER (cache), &node->have_rect);
 
       g_signal_connect (G_OBJECT (cache), "computed",
                         (GCallback) gegl_node_computed_event,
