@@ -82,11 +82,18 @@ sdl_display_la_LIBADD = $(op_libs) $(SDL_LIBS)
 sdl_display_la_CFLAGS = $(AM_CFLAGS) $(SDL_CFLAGS)
 endif
 
-if HAVE_OPENRAW
-ops += openraw.la
-openraw_la_SOURCES = openraw.c
-openraw_la_LIBADD = $(op_libs) $(OPENRAW_LIBS)
-openraw_la_CFLAGS = $(AM_CFLAGS) $(OPENRAW_CFLAGS)
+#if HAVE_OPENRAW
+#ops += openraw.la
+#openraw_la_SOURCES = openraw.c
+#openraw_la_LIBADD = $(op_libs) $(OPENRAW_LIBS)
+#openraw_la_CFLAGS = $(AM_CFLAGS) $(OPENRAW_CFLAGS)
+#endif
+
+if HAVE_LIBRAW
+ops += lraw.la
+lraw_la_SOURCES = lraw.c
+law_la_LIBADD = $(op_libs) $(LIBRAW_LIBS)
+lraw_la_CFLAGS = $(AM_CFLAGS) $(LIBRAW_CFLAGS)
 endif
 
 if HAVE_V4L

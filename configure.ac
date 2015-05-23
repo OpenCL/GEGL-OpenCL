@@ -50,6 +50,7 @@ m4_define([librsvg_required_version], [2.14.0])
 m4_define([libv4l2_required_version], [1.0.1])
 m4_define([lua_required_version], [5.1.0])
 m4_define([openexr_required_version], [0.0.0])
+m4_define([libraw_required_version], [0.16.0])
 m4_define([openraw_required_version], [0.0.5])
 m4_define([pango_required_version], [0.0.0])
 m4_define([pangocairo_required_version], [0.0.0])
@@ -890,6 +891,25 @@ AC_SUBST(OPENRAW_LIBS)
 
 
 ##################
+# Check for libraw
+##################
+
+AC_ARG_WITH(libraw, [  --without-libraw          build without libraw support])
+
+have_libraw="no"
+if test "x$with_libraw" != "xno"; then
+  PKG_CHECK_MODULES(LIBRAW, libraw >= libraw_required_version,
+    have_libraw="yes",
+    have_libraw="no  (libraw library not found)")
+fi
+
+AM_CONDITIONAL(HAVE_LIBRAW, test "$have_libraw" = "yes")
+
+AC_SUBST(LIBRAW_CFLAGS) 
+AC_SUBST(LIBRAW_LIBS) 
+
+
+##################
 # Check for Jasper
 ##################
 
@@ -1292,6 +1312,7 @@ Optional dependencies:
   rsvg:            $have_librsvg
   SDL:             $have_sdl
   openraw:         $have_libopenraw
+  libraw:          $have_libraw
   Jasper:          $have_jasper
   graphviz:        $have_graphviz
   avformat:        $have_libavformat
