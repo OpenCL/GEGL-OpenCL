@@ -269,6 +269,27 @@ GeglRectangle _gegl_sampler_compute_rectangle (GeglSampler *sampler,
   level->last_x = x;
   level->last_y = y;
 
+  rectangle.width  = level->context_rect.width + 2;
+  rectangle.height = level->context_rect.height + 2;
+
+  rectangle.x = x + level->context_rect.x;
+  rectangle.y = y + level->context_rect.y;
+
+  /* grow area slightly, maybe getting a couple of extra
+     hits out of cour cache
+   */
+  rectangle.x      -= 2;
+  rectangle.y      -= 2;
+  rectangle.width  += 4;
+  rectangle.height += 4;
+
+#if 0
+  /* XXX: FIXME: grow cached area based on sampling pattern profiling
+   * information, possibly with much bigger wins than the marginal wins the
+   * increase in size by 2 in each dir does.
+   */
+
+
   if (level->x_magnitude > 0.001 || level->y_magnitude > 0.001)
     {
       gfloat magnitude = sqrtf (level->x_magnitude * level->x_magnitude +
@@ -295,7 +316,6 @@ GeglRectangle _gegl_sampler_compute_rectangle (GeglSampler *sampler,
        */
 
 
-
       /* align rectangle corner we've likely entered with sampled pixel
        */
       if (level->x_delta >=0)
@@ -312,16 +332,7 @@ GeglRectangle _gegl_sampler_compute_rectangle (GeglSampler *sampler,
         rectangle.y = y + level->context_rect.y 
                         - (rectangle.height - level->context_rect.height) * 9/10;
     }
-  else
-    {
-      rectangle.width  = level->context_rect.width + 2;
-      rectangle.height = level->context_rect.height + 2;
-
-      rectangle.x = x + level->context_rect.x
-                       - (rectangle.width - level->context_rect.x)/4;
-      rectangle.y = y + level->context_rect.y
-                        - (rectangle.height - level->context_rect.y)/4;
-    }
+#endif
 
   if (rectangle.width >= GEGL_SAMPLER_MAXIMUM_WIDTH)
     rectangle.width = GEGL_SAMPLER_MAXIMUM_WIDTH;
