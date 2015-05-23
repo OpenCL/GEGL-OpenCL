@@ -1876,21 +1876,31 @@ gegl_node_get_cache (GeglNode *node)
       node->cache = NULL;
     }
 
+  if (node->cache)
+    return node->cache;
+
+  g_mutex_lock (&node->mutex);
+
   if (!node->cache)
     {
-      node->cache = g_object_new (GEGL_TYPE_CACHE,
-                                  "format", format,
-                                  NULL);
+      GeglCache *cache;
+
+      cache = g_object_new (GEGL_TYPE_CACHE,
+                            "format", format,
+                            NULL);
 
       gegl_object_set_has_forked (G_OBJECT (node->cache));
 
       gegl_node_get_bounding_box (node);
       gegl_buffer_set_extent (GEGL_BUFFER (node->cache), &node->have_rect);
 
-      g_signal_connect (G_OBJECT (node->cache), "computed",
+      g_signal_connect (G_OBJECT (cache), "computed",
                         (GCallback) gegl_node_computed_event,
                         node);
+      node->cache = cache;
     }
+
+  g_mutex_unlock (&node->mutex);
 
   return node->cache;
 }
