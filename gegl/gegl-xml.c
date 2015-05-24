@@ -123,6 +123,7 @@ set_clone_prop_as_well:
           else
             {
               gchar * absolute_path;
+              gchar   temp_path[PATH_MAX];
               if (pd->path_root)
                 {
                   buf = g_strdup_printf ("%s/%s", pd->path_root, param_value);
@@ -132,12 +133,11 @@ set_clone_prop_as_well:
                   buf = g_strdup_printf ("./%s", param_value);
                 }
 
-              absolute_path = realpath (buf, NULL);
+              absolute_path = realpath (buf, temp_path);
               g_free (buf);
               if (absolute_path)
                 {
                   gegl_node_set (new, param_name, absolute_path, NULL);
-                  free (absolute_path);
                 }
               else
                 {
