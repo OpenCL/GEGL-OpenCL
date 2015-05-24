@@ -8,7 +8,7 @@ TEST ()
   buffer = gegl_buffer_new (&rect, babl_format ("Y float"));
 
   vgrad (buffer);
-  gegl_buffer_copy (buffer, &source, buffer, &dest); /* copying to self */
+  gegl_buffer_copy (buffer, &source, GEGL_ABYSS_NONE, buffer, &dest); /* copying to self */
   print_buffer (buffer);
   g_object_unref (buffer);
   test_end ();

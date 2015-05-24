@@ -356,6 +356,7 @@ void            gegl_buffer_clear             (GeglBuffer          *buffer,
  * gegl_buffer_copy:
  * @src: (transfer none): source buffer.
  * @src_rect: source rectangle (or NULL to copy entire source buffer)
+ * @repeat_mode: the abyss policy to be using if src_rect is outside src's extent.
  * @dst: (transfer none): destination buffer.
  * @dst_rect: position of upper left destination pixel, or NULL for top
  * left coordinates of the buffer extents.
@@ -370,8 +371,10 @@ void            gegl_buffer_clear             (GeglBuffer          *buffer,
  */
 void            gegl_buffer_copy              (GeglBuffer          *src,
                                                const GeglRectangle *src_rect,
+                                               GeglAbyssPolicy      repeat_mode,
                                                GeglBuffer          *dst,
                                                const GeglRectangle *dst_rect);
+
 
 
 /**

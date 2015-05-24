@@ -173,7 +173,7 @@ gegl_apply_op_valist (GeglBuffer  *buffer,
 
   if (tempbuf)
     {
-      gegl_buffer_copy (tempbuf, NULL, buffer, NULL);
+      gegl_buffer_copy (tempbuf, NULL, GEGL_ABYSS_NONE, buffer, NULL);
       g_object_unref (tempbuf);
     }
   g_object_unref (buffer);

@@ -126,7 +126,8 @@ process (GeglOperation       *operation,
     }
   else
     {
-      gegl_buffer_copy (input, result, output, result);
+      gegl_buffer_copy (input, result, GEGL_ABYSS_NONE,
+                        output, result);
     }
 
   g_object_unref (sampler);

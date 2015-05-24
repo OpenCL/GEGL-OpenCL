@@ -85,7 +85,7 @@ process (GeglOperation        *operation,
 
   output = gegl_buffer_new (roi, o->input_format);
 
-  gegl_buffer_copy (input,  roi,
+  gegl_buffer_copy (input,  roi, GEGL_ABYSS_NONE,
                     output, roi);
   gegl_buffer_set_format (output, o->output_format);
 

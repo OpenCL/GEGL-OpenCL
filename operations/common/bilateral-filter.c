@@ -174,7 +174,8 @@ process (GeglOperation       *operation,
 
   if (o->blur_radius < 1.0)
     {
-      gegl_buffer_copy (input, result, output, result);
+      gegl_buffer_copy (input, result, GEGL_ABYSS_NONE,
+                        output, result);
     }
   else
     {

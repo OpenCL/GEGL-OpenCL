@@ -134,7 +134,8 @@ process (GeglOperation       *operation,
 
   if (! delta)
     {
-      gegl_buffer_copy (input, NULL, output, NULL);
+      gegl_buffer_copy (input, NULL, GEGL_ABYSS_NONE,
+                        output, NULL);
       return TRUE;
     }
 

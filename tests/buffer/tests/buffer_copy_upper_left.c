@@ -11,7 +11,7 @@ TEST ()
     rect.width-=10;
     rect.height-=10;
   buffer2 = gegl_buffer_new (gegl_buffer_get_extent (buffer), gegl_buffer_get_format (buffer));
-  gegl_buffer_copy (buffer, &rect, buffer2, &rect);
+  gegl_buffer_copy (buffer, &rect, GEGL_ABYSS_NONE, buffer2, &rect);
   }
   print_buffer (buffer2);
   g_object_unref (buffer);

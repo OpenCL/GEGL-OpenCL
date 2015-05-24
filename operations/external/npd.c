@@ -170,7 +170,8 @@ process (GeglOperation       *operation,
       if (!have_model)
         {
           model = props->model = o->model = g_new (NPDModel, 1);
-          gegl_buffer_copy (input, NULL, output, NULL);
+          gegl_buffer_copy (input, NULL, GEGL_ABYSS_NONE,
+                            output, NULL);
           display->image.buffer_f = (gfloat*) gegl_buffer_linear_open (display->image.gegl_buffer,
                                                                        NULL,
                                                                       &display->image.rowstride,

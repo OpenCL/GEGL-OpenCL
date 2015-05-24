@@ -1593,6 +1593,7 @@ gegl_buffer_copy2 (GeglBuffer          *src,
 void
 gegl_buffer_copy (GeglBuffer          *src,
                   const GeglRectangle *src_rect,
+                  GeglAbyssPolicy      repeat_mode,
                   GeglBuffer          *dst,
                   const GeglRectangle *dst_rect)
 {
@@ -2036,7 +2037,7 @@ gegl_buffer_dup (GeglBuffer *buffer)
   g_return_val_if_fail (GEGL_IS_BUFFER (buffer), NULL);
 
   new_buffer = gegl_buffer_new (gegl_buffer_get_extent (buffer), buffer->soft_format);
-  gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer),
+  gegl_buffer_copy (buffer, gegl_buffer_get_extent (buffer), GEGL_ABYSS_NONE,
                     new_buffer, gegl_buffer_get_extent (buffer));
   return new_buffer;
 }

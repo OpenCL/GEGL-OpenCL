@@ -377,7 +377,8 @@ process (GeglOperation       *operation,
     }
 
   /* Affect the output buffer */
-  gegl_buffer_copy (priv->buffer, result, output, result);
+  gegl_buffer_copy (priv->buffer, result, GEGL_ABYSS_NONE,
+                    output, result);
   gegl_buffer_set_extent (output, gegl_buffer_get_extent (input));
   g_object_unref (priv->buffer);
 

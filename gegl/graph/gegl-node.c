@@ -967,7 +967,7 @@ static void
 gegl_node_blit_buffer2 (GeglNode            *self,
                         GeglBuffer          *buffer,
                         const GeglRectangle *roi,
-                        gint                 level)
+                        gint                 level) // XXX: add abyss policy
 {
   GeglEvalManager *eval_manager;
   GeglBuffer      *result;
@@ -987,7 +987,7 @@ gegl_node_blit_buffer2 (GeglNode            *self,
   if (result)
     {
       if (buffer)
-        gegl_buffer_copy (result, &request, buffer, NULL);
+        gegl_buffer_copy (result, &request, GEGL_ABYSS_NONE, buffer, NULL);
       g_object_unref (result);
     }
 }

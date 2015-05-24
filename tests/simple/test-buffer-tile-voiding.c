@@ -89,7 +89,8 @@ test_buffer_copy (void)
     }
 
   /* Copy-on-write copy from B to A */
-  gegl_buffer_copy (bufferA, NULL, bufferB, NULL);
+  gegl_buffer_copy (bufferA, NULL, GEGL_ABYSS_NONE,
+                    bufferB, NULL);
 
   /* Assert that the copy-on-write actually happened */
   for (i = 0; i < 2; ++i)

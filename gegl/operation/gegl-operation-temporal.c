@@ -99,7 +99,7 @@ static gboolean gegl_operation_temporal_process (GeglOperation       *self,
    GeglRectangle write_rect = *result;
    write_rect.y = priv->next_to_write * priv->height;
 
-   gegl_buffer_copy (input, result, priv->frame_store, &write_rect);
+   gegl_buffer_copy (input, result, GEGL_ABYSS_NONE, priv->frame_store, &write_rect);
    priv->count++;
    priv->next_to_write++;
    if (priv->next_to_write >= priv->history_length)

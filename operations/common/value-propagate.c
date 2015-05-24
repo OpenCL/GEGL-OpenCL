@@ -529,7 +529,8 @@ process (GeglOperation       *operation,
       !(o->value || o->alpha) ||
        (o->upper_threshold < o->lower_threshold))
     {
-      gegl_buffer_copy (input, NULL, output, NULL);
+      gegl_buffer_copy (input, NULL, GEGL_ABYSS_CLAMP,
+                        output, NULL);
       return TRUE;
     }
 

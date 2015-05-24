@@ -42,7 +42,8 @@ test_buffer_cast (void)
                           babl_type ("u8"),
                           babl_component ("B'"),
                           NULL));
-  gegl_buffer_copy (buffer, NULL, cbuffer, NULL);
+  gegl_buffer_copy (buffer, NULL, GEGL_ABYSS_NONE,
+                    cbuffer, NULL);
   gegl_buffer_set_format (cbuffer, NULL);
 
   gegl_buffer_get (cbuffer, NULL, 1.0, NULL,

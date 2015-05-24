@@ -121,7 +121,8 @@ process (GeglOperation       *operation,
 
       /* XXX: gegl_buffer_copy doesn't allow to set the abyss policy,
        * but we probably need _CLAMP here */
-      gegl_buffer_copy (input, &src_rect, output, &dst_rect);
+      gegl_buffer_copy (input, &src_rect, GEGL_ABYSS_CLAMP,
+                        output, &dst_rect);
     }
 
   return  TRUE;

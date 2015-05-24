@@ -61,7 +61,8 @@ process (GeglOperation        *operation,
   if (gegl_buffer_get_format (input) != o->format)
     {
       output = gegl_operation_context_get_target (context, "output");
-      gegl_buffer_copy (input, roi, output, roi);
+      gegl_buffer_copy (input, roi, GEGL_ABYSS_NONE,
+                        output, roi);
       g_object_unref (input);
     }
   else

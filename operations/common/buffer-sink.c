@@ -57,7 +57,7 @@ process (GeglOperation       *operation,
       *output = gegl_buffer_new (gegl_buffer_get_extent (input),
                                  o->format);
 
-      gegl_buffer_copy (input, NULL,
+      gegl_buffer_copy (input, NULL, GEGL_ABYSS_NONE,
                         *output, NULL);
     }
 

@@ -20,7 +20,7 @@ TEST ()
   vgrad (buffer);
   fill (buffer2, 1.0);
 
-  gegl_buffer_copy (buffer2, &source, buffer, &source);
+  gegl_buffer_copy (buffer2, &source, GEGL_ABYSS_NONE, buffer, &source);
   print_buffer (buffer);
   g_object_unref (buffer2);
   g_object_unref (buffer);

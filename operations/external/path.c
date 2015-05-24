@@ -361,7 +361,8 @@ process (GeglOperation       *operation,
 
   if (input)
     {
-      gegl_buffer_copy (input, result, output, result);
+      gegl_buffer_copy (input, result, GEGL_ABYSS_NONE,
+                        output, result);
     }
   else
     {
