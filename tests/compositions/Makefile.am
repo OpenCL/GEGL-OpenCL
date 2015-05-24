@@ -10,7 +10,7 @@
 
 SUBDIRS=data
 
-EXTRA_DIST=$(wildcard $(srcdir)/*.xml) $(wildcard $(srcdir)/reference/*) run-compositions.py
+EXTRA_DIST=$(wildcard $(srcdir)/*.xml) run-compositions.py
 
 TESTS = \
   affine-with-negative.xml        \
@@ -39,7 +39,7 @@ TESTS = \
   image-compare.xml               \
   lens-flare.xml                  \
   mantiuk06.xml                   \
-  noise-cell.xml                  \ 
+  noise-cell.xml                  \
   noise-hurl.xml                  \
   noise-simplex.xml               \
   noise-solid.xml                 \

@@ -76,13 +76,13 @@ BUILT_EXTRA_DIST = class-hierarchy.html operations.json $(ASC_DOC)
 EXTRA_DIST += $(BUILT_EXTRA_DIST)
 
 EXAMPLE_FILES = $(wildcard $(srcdir)/images/examples/*.png)
-EXTRA_DIST += $(EXAMPLE_FILES)
+# EXTRA_DIST += $(EXAMPLE_FILES)
 
 dist_gtkdochtml_DATA = $(GTKDOC_FILES)
 dist_gtkdocimg_DATA = \
 	images/standard-input.png \
 	images/standard-aux.png
-dist_gtkdocexample_DATA = $(EXAMPLE_FILES)
+#dist_gtkdocexample_DATA = $(EXAMPLE_FILES)
 
 
 CLEANFILES = README $(HTML_FILES) index.txt
