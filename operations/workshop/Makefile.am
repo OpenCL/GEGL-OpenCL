@@ -24,5 +24,6 @@ op_LTLIBRARIES =    \
 	mandelbrot.la \
 	median-blur.la \
 	rawbayer-load.la \
+	rgb-clip.la \
 	unpremul.la \
 	gradient-map.la
