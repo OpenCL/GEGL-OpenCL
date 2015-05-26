@@ -21,6 +21,7 @@ op_LTLIBRARIES =    \
 	ink-simulator.la \
 	kuwahara.la \
 	mandelbrot.la \
+	median-blur.la \
 	rawbayer-load.la \
 	unpremul.la \
 	gradient-map.la
