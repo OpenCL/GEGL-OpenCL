@@ -1610,9 +1610,9 @@ gegl_node_get_debug_name (GeglNode *node)
 }
 
 GeglNode *
-gegl_node_get_producer (GeglNode *node,
-                        gchar    *pad_name,
-                        gchar   **output_pad_name)
+gegl_node_get_producer (GeglNode     *node,
+                        const gchar  *pad_name,
+                        gchar       **output_pad_name)
 {
   GeglNode *ret;
   gpointer pad;

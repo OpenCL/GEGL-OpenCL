@@ -525,7 +525,7 @@ GeglNode    * gegl_node_get_output_proxy (GeglNode      *node,
  * or NULL if no node is connected to the input_pad.
  */
 GeglNode    * gegl_node_get_producer     (GeglNode      *node,
-                                          gchar         *input_pad_name,
+                                          const gchar   *input_pad_name,
                                           gchar        **output_pad_name);
 
 /**
