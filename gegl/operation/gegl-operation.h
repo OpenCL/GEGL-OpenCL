@@ -227,9 +227,6 @@ const Babl  * gegl_operation_get_source_format (GeglOperation *operation,
 GeglNode    * gegl_operation_get_source_node   (GeglOperation *operation,
                                                 const gchar   *pad_name);
 
-GParamSpec ** gegl_operation_list_properties   (const gchar *operation_type,
-                                                guint       *n_properties_p);
-
 /* API to change  */
 void          gegl_operation_class_set_key     (GeglOperationClass *klass,
                                                 const gchar *key_name,
