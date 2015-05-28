@@ -3,9 +3,13 @@
 #include <errno.h>
 #include <math.h>
 #include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+
+/* running the gegl-imgcmp should build up the list of checksums..
+ */
 
 #define DEFAULT_ERROR_DIFFERENCE 1.5
-
 #define SQR(x) ((x) * (x))
 
 typedef enum {
@@ -14,6 +18,43 @@ typedef enum {
     ERROR_WRONG_SIZE,
     ERROR_PIXELS_DIFFERENT,
 } ExitCode;
+
+const gchar *compute_image_checksum (const char *path);
+const gchar *compute_image_checksum (const char *path)
+{
+  GeglNode *gegl, *img;
+  GeglRectangle  bounds;
+  GChecksum *checksum = g_checksum_new (G_CHECKSUM_MD5);
+  guchar *buf;
+  const gchar *ret;
+
+  gegl = gegl_node_new ();
+  img = gegl_node_new_child (gegl,
+                             "operation", "gegl:load",
+                             "path", path,
+                             NULL);
+  bounds = gegl_node_get_bounding_box (img);
+  fprintf (stderr, "%ix%i\n", bounds.width, bounds.height);
+
+  buf = g_malloc (bounds.width * bounds.height * 4);
+  gegl_node_blit (img, 1.0, &bounds, babl_format("R'G'B'A u8"), buf,
+    GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
+  
+  g_checksum_update (checksum, buf, bounds.width * bounds.height * 4);
+  ret = g_checksum_get_string (checksum);
+  ret = g_strdup (ret);
+
+  g_free (buf);
+  g_object_unref (gegl);
+
+  return ret;
+}
+
+const gchar *get_image_checksum (const char *path);
+const gchar *get_image_checksum (const char *path)
+{
+  return compute_image_checksum (path);
+}
 
 gint
 main (gint    argc,
@@ -48,6 +89,11 @@ main (gint    argc,
       if ((errno != ERANGE) && (end != argv[3]) && (end != NULL) && (*end == 0))
         error_diff = t;
     }
+
+  if( access( argv[3], F_OK ) != 0 ) {
+    g_print ("missing reference, assuming SUCCESS\n");
+    return SUCCESS;
+  }
 
   gegl = gegl_node_new ();
   imgA = gegl_node_new_child (gegl,
