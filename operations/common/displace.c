@@ -305,6 +305,7 @@ process (GeglOperation       *operation,
     }
 
   g_free (in_pixel);
+  g_object_unref (in_sampler);
 
   return  TRUE;
 }
@@ -317,14 +318,11 @@ operation_process (GeglOperation        *operation,
                    gint                  level)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
-  GeglBuffer     *input;
+  GeglBuffer     *input = NULL;
   GeglBuffer     *aux;
   GeglBuffer     *aux2;
   GeglBuffer     *output;
   gboolean        success;
-
-  const GeglRectangle *in_rect =
-    gegl_operation_source_get_bounding_box (operation, "input");
 
   aux   = gegl_operation_context_get_source (context, "aux");
   aux2  = gegl_operation_context_get_source (context, "aux2");
@@ -335,16 +333,15 @@ operation_process (GeglOperation        *operation,
       gpointer in = gegl_operation_context_get_object (context, "input");
       gegl_operation_context_take_object (context, "output",
                                           g_object_ref (G_OBJECT (in)));
-      return TRUE;
+      success = TRUE;
     }
+  else
+    {
+      input = gegl_operation_context_get_source (context, "input");
+      output = gegl_operation_context_get_target (context, "output");
 
-  input = gegl_operation_context_get_source (context, "input");
-  output = gegl_operation_context_get_output_maybe_in_place (operation,
-                                                             context,
-                                                             input,
-                                                             result);
-
-  success = process (operation, input, aux, aux2, output, result, level);
+      success = process (operation, input, aux, aux2, output, result, level);
+    }
 
   if (input != NULL)
     g_object_unref (input);
