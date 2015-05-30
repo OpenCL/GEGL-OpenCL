@@ -71,11 +71,11 @@ histogram_get_median (Histogram *hist, gint component)
 
 static inline void
 histogram_add_val (Histogram     *hist,
-         const gfloat  *src,
-         GeglRectangle *rect,
-         gint           bpp,
-         gint           x,
-         gint           y)
+                   const gfloat  *src,
+                   GeglRectangle *rect,
+                   gint           bpp,
+                   gint           x,
+                   gint           y)
 {
   const gint pos = (x + y * rect->width) * bpp;
   gint c;
@@ -83,7 +83,7 @@ histogram_add_val (Histogram     *hist,
   for (c = 0; c < 3; c++)
     {
       gfloat value = *(src + pos + c);
-      gint idx     = (gint) (value * (N_BINS - 1));
+      gint idx     = (gint) (CLAMP (value, 0.0, 1.0) * (N_BINS - 1));
       hist->elems[c][idx]++;
     }
   hist->count++;
@@ -91,11 +91,11 @@ histogram_add_val (Histogram     *hist,
 
 static inline void
 histogram_del_val (Histogram     *hist,
-         const gfloat  *src,
-         GeglRectangle *rect,
-         gint           bpp,
-         gint           x,
-         gint           y)
+                   const gfloat  *src,
+                   GeglRectangle *rect,
+                   gint           bpp,
+                   gint           x,
+                   gint           y)
 {
   const gint pos = (x + y * rect->width) * bpp;
   gint c;
@@ -103,7 +103,7 @@ histogram_del_val (Histogram     *hist,
   for (c = 0; c < 3; c++)
     {
       gfloat value = *(src + pos + c);
-      gint idx     = (gint) (value * (N_BINS - 1));
+      gint idx     = (gint) (CLAMP (value, 0.0, 1.0) * (N_BINS - 1));
       hist->elems[c][idx]--;
     }
   hist->count--;
@@ -111,13 +111,13 @@ histogram_del_val (Histogram     *hist,
 
 static inline void
 histogram_add_vals (Histogram     *hist,
-          const gfloat  *src,
-          GeglRectangle *rect,
-          gint           bpp,
-          gint           xmin,
-          gint           ymin,
-          gint           xmax,
-          gint           ymax)
+                    const gfloat  *src,
+                    GeglRectangle *rect,
+                    gint           bpp,
+                    gint           xmin,
+                    gint           ymin,
+                    gint           xmax,
+                    gint           ymax)
 {
   gint x;
   gint y;
@@ -136,13 +136,13 @@ histogram_add_vals (Histogram     *hist,
 
 static inline void
 histogram_del_vals (Histogram     *hist,
-          const gfloat  *src,
-          GeglRectangle *rect,
-          gint           bpp,
-          gint           xmin,
-          gint           ymin,
-          gint           xmax,
-          gint           ymax)
+                    const gfloat  *src,
+                    GeglRectangle *rect,
+                    gint           bpp,
+                    gint           xmin,
+                    gint           ymin,
+                    gint           xmax,
+                    gint           ymax)
 {
   gint x;
   gint y;
@@ -272,7 +272,7 @@ process (GeglOperation       *operation,
   gint dst_idx, src_idx;
   gint xmin, ymin, xmax, ymax;
 
-  src_rect  = gegl_operation_get_required_for_output (operation, "input", roi);
+  src_rect = gegl_operation_get_required_for_output (operation, "input", roi);
   n_pixels = roi->width * roi->height;
   dst_buf = g_new0 (gfloat, n_pixels * n_components);
   src_buf = g_new0 (gfloat, src_rect.width * src_rect.height * n_components);
@@ -407,7 +407,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:median-blur",
     "title",       _("Median Blur"),
     "categories",  "blur",
-    "description", _("Blur resulting from computing the median color of in a square neighbourhood."),
+    "description", _("Blur resulting from computing the median "
+                     "color of in a square neighbourhood."),
     NULL);
 }
 
