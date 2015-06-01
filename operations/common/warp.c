@@ -405,6 +405,7 @@ gegl_op_class_init (GeglOpClass *klass)
   object_class->finalize   = finalize;
   operation_class->prepare = prepare;
   filter_class->process    = process;
+  operation_class->threaded = FALSE;
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:warp",
