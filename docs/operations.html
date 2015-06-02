@@ -208,7 +208,6 @@
     var gir_paths = [
        "GObject-2.0.gir", 
        "Gegl-0.3.gir",
-       "Gtk-3.0.gir",
        "GLib-2.0.gir"]
     if(false)gir_paths = [
        "GObject-2.0.gir", 
@@ -2515,7 +2514,7 @@ function update_view(e)
   else if (items.length == 0)
   {
     if (!window.apidb || window.apidb.length < 4)
-      result = 'no matches (still loading, completa data set is 8.5mb of GIR files)';
+      result = 'no matches (still loading, completa data set is ~3.5mb of GIR files)';
     else
       result = 'no matches';
   }
