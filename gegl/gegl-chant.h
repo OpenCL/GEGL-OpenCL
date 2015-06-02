@@ -709,7 +709,7 @@ set_property (GObject      *gobject,
             g_signal_connect (G_OBJECT (properties->name), "changed", \
                               G_CALLBACK(path_changed), gobject);     \
          }                                                            \
-      break; /*XXX*/
+      break; 
 
 #include GEGL_CHANT_C_FILE
 
