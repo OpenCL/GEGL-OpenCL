@@ -27,11 +27,7 @@ GTKDOC_FILES = \
 
 if HAVE_RUBY
 HTML_FILES += images/inheritance.png
-GTKDOC_FILES += gegl.devhelp
 endif
-
-gegl.devhelp: operations.json
-	echo
 
 if HAVE_ENSCRIPT
 ENSCRIPT_FILES = \
@@ -63,7 +59,6 @@ EXTRA_DIST = \
 	development.txt			\
 	devhelp.css			\
 	gegl.css  			\
-	gegl.devhelp			\
 	images/GEGL.png			\
 	images/GEGL.svg			\
 	images/gaussian-blur-graph.png	\
@@ -105,7 +100,6 @@ examples:  $(top_builddir)/bin/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*
 operations.json: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c | examples
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
 	$(top_builddir)/tools/operation_reference$(EXEEXT) --json-db > $@
-	touch gegl.devhelp
 
 class-hierarchy.html: $(top_builddir)/tools/introspect$(EXEEXT) $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
@@ -215,9 +209,6 @@ endif
 
 clean-local:
 	rm -rf images/examples; \
-	if test $(srcdir) = .; then :; else 	\
-	    rm -f gegl.devhelp;	\
-	fi
 
 distclean-local:
 	if test $(srcdir) = .; then :; else 	\
