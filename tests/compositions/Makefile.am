@@ -18,6 +18,7 @@ TESTS = \
   apply-lens.xml                  \
   apply-lens2.xml                 \
   apply-lens3.xml                 \
+  bump-map.xml                    \
   checkerboard.xml                \
   clones.xml                      \
   colors.xml                      \

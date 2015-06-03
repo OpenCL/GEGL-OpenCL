@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+	<node operation='gegl:bump-map'>
+		<params>
+            <param name='depth'>15</param>
+            <param name='elevation'>30.0000</param>
+            <param name='tiled'>true</param>
+            <param name='offset-x'>100</param>
+            <param name='offset-y'>100</param>
+        </params>
+		<node operation='gegl:load'>
+			<params>
+      			<param name='path'>data/duck.png</param>
+    		</params>
+		</node>
+		
+	</node>
+	<node operation='gegl:crop'>
+		<params>
+            <param name='x'>0</param>
+            <param name='y'>0</param>
+            <param name='width'>300</param>
+            <param name='height'>500</param>
+        </params>
+	</node>
+	<node operation='gegl:color'>
+	    <params>
+            <param name='value'>rgba(0.5000, 0.5000, 0.5000, 1.0000)</param>
+            <param name='format'>RGBA float</param>
+        </params>
+	</node>	
+</gegl>
