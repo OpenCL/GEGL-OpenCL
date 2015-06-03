@@ -6,14 +6,13 @@ Changes in GEGL 0.4.0
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Improvements to thread safety and parallelism.
  • Lower overhead graph travesal due from rewrite of visitors
- • Buffer:
-   • New default tile backend, doing disk writes in a separate thread.
- • Experimental mipmap rendering, eneable by setting GEGL_MIPMAP_RENDERING=true
-   in the environment.
- • support for using URIs in image loaders
-
+ • OpenCL support now enabled by default when detected.
+ • Experimental multithreading, enable by setting
+   GEGL_THREADS=<number of threads> in the environment.
+ • Experimental mipmap rendering, which permits transparent rendering of
+   previews on smaller sized versions, enable by setting
+   GEGL_MIPMAP_RENDERING=true in the environment.
  • Operations: 
-   • reimplementation of gaussian-blur faster and more accurate
    • new operations: alien-map, antialias, apply-lens, bilateral-filter,
      bump.map, cartoon, channel-mixer, color-enhance, color-exchange,
      color-reduction, color-rotate, convolution-matrix, copy-buffer, cubism,
@@ -28,6 +27,10 @@ Changes in GEGL 0.4.0
      tile, warp, whirl-pinch, wind, cache, cast-format, lcms-from-profile,
      npy-save, webp-load, webp-save, scale-ratio, scale-size, seamless-clone,
      sinus, supernova, value-propagate, video-degradation
+   • reimplementation of gaussian-blur faster and more accurate
+   • support for using URIs in image loaders
+ • Buffer:
+   • New default tile backend, doing disk writes in a separate thread.
 
 Contributions from: 
 
