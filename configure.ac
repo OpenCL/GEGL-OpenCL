@@ -14,13 +14,13 @@ dnl    set GEGL_BINARY_AGE _and_ GEGL_INTERFACE_AGE to 0.
 
 m4_define([gegl_major_version], [0])
 m4_define([gegl_minor_version], [3])
-m4_define([gegl_micro_version], [0])
+m4_define([gegl_micro_version], [1])
 m4_define([gegl_real_version],
           [gegl_major_version.gegl_minor_version.gegl_micro_version])
 m4_define([gegl_version], [gegl_real_version])
 
 dnl Number of releases since we've added interfaces
-m4_define([gegl_interface_age], [1])
+m4_define([gegl_interface_age], [0])
 m4_define([gegl_binary_age],
           [m4_eval(100 * gegl_minor_version + gegl_micro_version)])
 
