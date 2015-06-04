@@ -90,7 +90,7 @@ main (gint    argc,
         error_diff = t;
     }
 
-  if( access( argv[3], F_OK ) != 0 ) {
+  if( access( argv[2], F_OK ) != 0 ) {
     g_print ("missing reference, assuming SUCCESS\n");
     return SUCCESS;
   }
