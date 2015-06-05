@@ -1549,6 +1549,7 @@ gegl_buffer_sample_cleanup (GeglBuffer *buffer)
 static void
 gegl_buffer_copy2 (GeglBuffer          *src,
                    const GeglRectangle *src_rect,
+                   GeglAbyssPolicy      repeat_mode,
                    GeglBuffer          *dst,
                    const GeglRectangle *dst_rect)
 {
@@ -1578,14 +1579,14 @@ gegl_buffer_copy2 (GeglBuffer          *src,
       dest_rect_r.height = src_rect->height;
 
       i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format,
-                                    GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
+                                    GEGL_ACCESS_WRITE, repeat_mode);
       while (gegl_buffer_iterator_next (i))
         {
           GeglRectangle src_rect = i->roi[0];
           src_rect.x += offset_x;
           src_rect.y += offset_y;
           gegl_buffer_iterate_read_dispatch (src, &src_rect, i->data[0], 0,
-                                             dst->soft_format, 0, GEGL_ABYSS_NONE);
+                                             dst->soft_format, 0, repeat_mode);
         }
     }
 }
@@ -1726,31 +1727,31 @@ gegl_buffer_copy (GeglBuffer          *src,
                              GEGL_RECTANGLE (src_rect->x + (top.x-dst_rect->x),
                                              src_rect->y + (top.y-dst_rect->y),
                                  top.width, top.height),
-                             dst, &top);
+                             repeat_mode, dst, &top);
           if (bottom.height)
           gegl_buffer_copy2 (src,
                              GEGL_RECTANGLE (src_rect->x + (bottom.x-dst_rect->x),
                                              src_rect->y + (bottom.y-dst_rect->y),
                                  bottom.width, bottom.height),
-                             dst, &bottom);
+                             repeat_mode, dst, &bottom);
           if (left.width)
           gegl_buffer_copy2 (src,
                              GEGL_RECTANGLE (src_rect->x + (left.x-dst_rect->x),
                                              src_rect->y + (left.y-dst_rect->y),
                                  left.width, left.height),
-                             dst, &left);
+                             repeat_mode, dst, &left);
           if (right.width && right.height)
           gegl_buffer_copy2 (src,
                              GEGL_RECTANGLE (src_rect->x + (right.x-dst_rect->x),
                                              src_rect->y + (right.y-dst_rect->y),
                                  right.width, right.height),
-                             dst, &right);
+                             repeat_mode, dst, &right);
         }
       }
     }
   else
     {
-      gegl_buffer_copy2 (src, src_rect, dst, dst_rect);
+      gegl_buffer_copy2 (src, src_rect, repeat_mode, dst, dst_rect);
     }
 }
 
