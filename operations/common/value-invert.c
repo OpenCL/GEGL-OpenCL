@@ -148,7 +148,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories" , "color",
     "description",
         _("Inverts just the value component, the result is the corresponding "
-          "`inverted' image."),
+          "'inverted' image."),
     "cl-source"  , value_invert_cl_source,
     NULL);
 }
