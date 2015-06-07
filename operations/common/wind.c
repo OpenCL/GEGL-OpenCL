@@ -594,13 +594,13 @@ process (GeglOperation       *operation,
 
       if (o->style == GEGL_WIND_STYLE_WIND)
         {
-          last_pix  = row_size - n_components;
+          last_pix  = row_size - (n_components * COMPARE_WIDTH);
           skip_rows = FALSE;
           render_wind_row (row_buf, n_components, last_pix, o, gr);
         }
       else
         {
-          last_pix = row_size - (n_components * COMPARE_WIDTH);
+          last_pix = row_size - n_components;
           skip_rows = render_blast_row (row_buf, n_components, last_pix, o, gr);
         }
 
