@@ -51,7 +51,6 @@ m4_define([libv4l2_required_version], [1.0.1])
 m4_define([lua_required_version], [5.1.0])
 m4_define([openexr_required_version], [0.0.0])
 m4_define([libraw_required_version], [0.16.0])
-m4_define([openraw_required_version], [0.0.5])
 m4_define([pango_required_version], [0.0.0])
 m4_define([pangocairo_required_version], [0.0.0])
 m4_define([png_required_version], [0.0.0])
@@ -871,21 +870,6 @@ AC_SUBST(SDL_CFLAGS)
 AC_SUBST(SDL_LIBS)
 
 
-######################
-# Check for libopenraw
-######################
-
-AC_ARG_WITH(libopenraw, [  --without-libopenraw    build without openraw support])
-
-have_libopenraw="no"
-if test "x$with_libopenraw" != "xno"; then
-  PKG_CHECK_MODULES(OPENRAW, libopenraw-1.0 >= openraw_required_version,
-    have_libopenraw="yes",
-    have_libopenraw="no  (openraw library not found)")
-fi
-
-AM_CONDITIONAL(HAVE_OPENRAW, test "$have_libopenraw" = "yes")
-
 AC_SUBST(OPENRAW_CFLAGS) 
 AC_SUBST(OPENRAW_LIBS) 
 
@@ -1311,7 +1295,6 @@ Optional dependencies:
   OpenEXR:         $have_openexr
   rsvg:            $have_librsvg
   SDL:             $have_sdl
-  openraw:         $have_libopenraw
   libraw:          $have_libraw
   Jasper:          $have_jasper
   graphviz:        $have_graphviz
