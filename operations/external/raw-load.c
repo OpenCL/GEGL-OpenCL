@@ -149,7 +149,7 @@ load_buffer (GeglOperation *operation)
                                                         babl_format ("Y u16"),
                                                         &extent,
                                                         GEGL_AUTO_ROWSTRIDE,
-                                                        G_CALLBACK (g_free),
+                                                        (void*)g_free,
                                                         NULL);
     }
 
@@ -195,7 +195,8 @@ static gboolean
 process (GeglOperation          *operation,
          GeglOperationContext   *context,
          const gchar            *output_pad,
-         const GeglRectangle    *result)
+         const GeglRectangle    *result,
+         int                     level)
 {
   GeglProperties *o    = GEGL_PROPERTIES (operation);
   g_assert (g_str_equal (output_pad, "output"));
