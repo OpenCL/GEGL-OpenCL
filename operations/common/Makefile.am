@@ -116,6 +116,7 @@ op_LTLIBRARIES = \
 	remap.la \
 	ripple.la \
 	save.la \
+	sepia.la \
 	shift.la \
 	sinus.la \
 	snn-mean.la \
