@@ -100,7 +100,7 @@ operations/common/plasma.c
 operations/common/polar-coordinates.c
 operations/common/posterize.c
 operations/common/radial-gradient.c
-operations/common/raw-load.c
+operations/common/dcraw-load.c
 operations/common/rectangle.c
 operations/common/red-eye-removal.c
 operations/common/reinhard05.c
@@ -150,7 +150,7 @@ operations/external/lcms-from-profile.c
 operations/external/matting-levin.c
 operations/external/npd.c
 operations/external/npy-save.c
-operations/external/openraw.c
+operations/external/raw-load.c
 operations/external/path.c
 operations/external/pixbuf.c
 operations/external/png-load.c
