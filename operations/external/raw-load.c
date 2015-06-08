@@ -16,6 +16,7 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  * Copyright 2008 Hubert Figuière <hub@figuiere.net>
  * Copyright 2011 Chong Kai Xiong <w_velocity@yahoo.com>
+ * Copyright 2011 Paul Sbarra <tones111@hotmail.com>
  */
 
 #include "config.h"
@@ -25,6 +26,9 @@
 
 property_file_path (path, "File", "")
   description (_("Path of file to load."))
+property_int (image_num, "Image number", 0)
+property_int (bps, "bits per sample", 16)
+property_int (quality, "quality", 10)
 
 #else
 
@@ -49,184 +53,166 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE)
 #include <stdio.h>
 #include <libraw.h>
 
-static void
-free_buffer (GeglOperation * operation)
-{
-  GeglProperties *o    = GEGL_PROPERTIES (operation);
-  GeglOp         *self = GEGL_OP(operation);
+#include <stdio.h>
+#include <string.h>
+#include <libraw/libraw.h>
 
-  if (o->user_data)
-    {
-      g_assert (self->cached_path);
-      g_object_unref (o->user_data);
-      o->user_data = NULL;
-    }
+typedef struct {
+  libraw_data_t            *LibRaw;
+  libraw_processed_image_t *image;
+} Private;
 
-  if (self->cached_path)
-  {
-    g_free (self->cached_path);
-    self->cached_path = NULL;
-  }
-}
-
-/* Loads the RAW pixel data from the specified path in chant parameters into
- * a GeglBuffer for caching. Maintains copy of the path that has been cached
- * so we can check for modifications and recache.
- */
-static GeglBuffer *
-load_buffer (GeglOperation *operation)
-{
-  GeglProperties *o    = GEGL_PROPERTIES (operation);
-  GeglOp         *self = GEGL_OP(operation);
-
-  libraw_data_t *rawdata;
-
-  /* If the path has changed since last time, destroy our cache */
-  if (!self->cached_path || strcmp (self->cached_path, o->path))
-    {
-      free_buffer(operation);
-    }
-
-  if (o->user_data)
-    {
-      return o->user_data;
-    }
-  g_assert (self->cached_path == NULL);
-
-  rawdata = libraw_init (0);
-
-  if (!rawdata)
-    {
-      return NULL;
-    }
-
-  /* Gather the file and data resources needed for our cache */
-
-  if (libraw_open_file(rawdata, o->path))
-    {
-      goto clean_data;
-    }
-
-  /* TODO: Handle 3-color Foveon and 4-color Sinar 4-shot */
-  if (rawdata->idata.is_foveon)
-    {
-      goto clean_data;
-    }
-
-  if (libraw_unpack (rawdata))
-    {
-      goto clean_data;
-    }
-
-  /* Build a gegl_buffer, backed with the LibRaw supplied data. */
-    {
-      GeglRectangle extent = { 0, 0, 0, 0 };
-      guint32 width, height;
-      gint row, col, component;
-      guint16 *buffer;
-      gint offset;
-
-      width  = rawdata->sizes.iwidth;
-      height = rawdata->sizes.iheight;
-
-      g_assert (height > 0 && width > 0);
-      extent.width  = width;
-      extent.height = height;
-
-      buffer = g_new (guint16, width * height);
-      offset = 0;
-
-      for (row = 0; row < height; row++)
-        for (col = 0; col < width; col++)
-          {
-            component = rawdata->idata.filters >> (((row << 1 & 14) + (col & 1)) << 1) & 3;
-            buffer[offset] = rawdata->image[offset][component];
-            offset++;
-          }
-
-      g_assert (o->user_data == NULL);
-      o->user_data = gegl_buffer_linear_new_from_data (buffer,
-                                                        babl_format ("Y u16"),
-                                                        &extent,
-                                                        GEGL_AUTO_ROWSTRIDE,
-                                                        (void*)g_free,
-                                                        NULL);
-    }
-
-  self->cached_path = g_strdup (o->path);
-
-clean_data:
-  libraw_close(rawdata);
-
-  return o->user_data;
-}
-
+unsigned char first_pass = 1;
 
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("Y u16"));
-}
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Private    *p = (Private*)o->user_data;
+  int         ret;
 
+  if (p == NULL && first_pass)
+    {
+      first_pass = 0;
+      
+      if ((p = g_new0(Private, 1)) == NULL)
+        g_warning ("raw-load: Error creating private structure");
+      else
+        {
+          o->user_data = (gpointer)p;
+          p->LibRaw = NULL;
+          p->image = NULL;
+
+          if ((p->LibRaw = libraw_init(0)) == NULL)
+            g_warning ("raw-load: Error Initializing raw library");
+          else
+            {
+              p->LibRaw->params.shot_select = o->image_num;
+        
+              p->LibRaw->params.gamm[0] = 1.0;
+              p->LibRaw->params.gamm[1] = 1.0;
+              p->LibRaw->params.no_auto_bright = 1;
+
+              p->LibRaw->params.output_bps = o->bps > 8 ? 16 : 8;
+              p->LibRaw->params.user_qual = o->quality;
+
+              if ((ret = libraw_open_file(p->LibRaw, o->path)) != LIBRAW_SUCCESS)
+                g_warning ("raw-load: Unable to open %s: %s", o->path, libraw_strerror (ret));
+            }
+        }
+    }
+}
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglProperties *o    = GEGL_PROPERTIES (operation);
-  if (!load_buffer (operation))
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
+  Private        *p      = (Private*)o->user_data;
+  GeglRectangle  result = {0,0,0,0};
+
+  if (p == NULL)
     {
-      GeglRectangle nullrect = { 0, 0, 0, 0 };
-      return nullrect;
+      prepare(operation);
+      p = (Private*)o->user_data;
     }
 
-  return *gegl_buffer_get_extent (o->user_data);
+  if (p != NULL &&
+      p->LibRaw != NULL &&
+      (p->LibRaw->progress_flags & LIBRAW_PROGRESS_IDENTIFY)) 
+    {
+      result.width  = p->LibRaw->sizes.width;
+      result.height = p->LibRaw->sizes.height;
+      gegl_operation_set_format (operation, "output", babl_format ("RGB u16"));
+    }
+
+  return result;
 }
-
-
-static GeglRectangle
-get_cached_region (GeglOperation       *operation,
-                   const GeglRectangle *roi)
-{
-  return get_bounding_box (operation);
-}
-
 
 static gboolean
-process (GeglOperation          *operation,
-         GeglOperationContext   *context,
-         const gchar            *output_pad,
-         const GeglRectangle    *result,
-         int                     level)
+process (GeglOperation       *operation,
+         GeglBuffer          *output,
+         const GeglRectangle *result,
+         int                  level)
 {
-  GeglProperties *o    = GEGL_PROPERTIES (operation);
-  g_assert (g_str_equal (output_pad, "output"));
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Private *p = (Private*)o->user_data;
+  GeglRectangle rect = {0,0,0,0};
+  const Babl *format = NULL;
+  int ret;
 
-  if (!load_buffer (operation))
+  if (p == NULL)
     {
-      return FALSE;
+      prepare(operation);
+      p = (Private*)o->user_data;
     }
 
-  /* Give the operation a reference to the object, and keep a reference
-   * ourselves. We desperately do not want to delete our cached object, as
-   * we continue to service metadata calls after giving the object to the
-   * context.
-   */
-  g_assert (o->user_data);
-  gegl_operation_context_take_object (context, "output", G_OBJECT (o->user_data));
-  g_object_ref (G_OBJECT (o->user_data));
+  if (p != NULL &&
+      p->LibRaw != NULL)
+    {
+      if (!(p->LibRaw->progress_flags & LIBRAW_PROGRESS_LOAD_RAW))
+        {
+          if ((ret = libraw_unpack(p->LibRaw)) != LIBRAW_SUCCESS)
+            g_warning ("raw-load: Error unpacking data: %s", libraw_strerror (ret));
 
-  return TRUE;
+          if (ret == LIBRAW_SUCCESS && !(p->LibRaw->progress_flags & LIBRAW_PROGRESS_CONVERT_RGB))
+            {
+              if ((ret = libraw_dcraw_process(p->LibRaw)) != LIBRAW_SUCCESS)
+                g_warning ("raw-load: Error processing data: %s", libraw_strerror (ret));
+              else if ((p->image = libraw_dcraw_make_mem_image(p->LibRaw, &ret)) == NULL)
+                g_warning ("raw-load: Error converting image: %s", libraw_strerror (ret));
+            }
+        }
+    }
+
+  if (p->image != NULL)
+    {
+      g_assert (p->image->type == LIBRAW_IMAGE_BITMAP);
+      rect.width  = p->image->width;
+      rect.height = p->image->height;
+
+      if (p->image->bits == 8)
+        {
+          if (p->image->colors == 1)
+            format = babl_format ("Y u8");
+          else // 3 color channels
+            format = babl_format ("RGB u8");
+        }
+      else // 16-bit
+        {
+          if (p->image->colors == 1)
+            format = babl_format ("Y u16");
+          else // 3 color channels
+            format = babl_format ("RGB u16");
+        }
+
+      gegl_buffer_set (output, &rect, 0, format, p->image->data, GEGL_AUTO_ROWSTRIDE);
+      return TRUE;
+    }
+
+  return FALSE;
 }
-
-
-#include <glib-object.h>
 
 static void
 finalize (GObject *object)
 {
-  free_buffer (GEGL_OPERATION (object));
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
+  if (o->user_data)
+    {
+      Private *p = (Private*)o->user_data;
+      if (p->LibRaw != NULL)
+        {
+          if (p->image != NULL)
+            libraw_dcraw_clear_mem (p->image);
+          
+          libraw_close (p->LibRaw);
+        }
+
+      g_free (o->user_data);
+      o->user_data = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize(object);
 }
 
 static void
@@ -236,20 +222,20 @@ gegl_op_class_init (GeglOpClass *klass)
 
   GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
 
   object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  object_class->finalize = finalize;
-
-  operation_class->process = process;
-  operation_class->get_bounding_box = get_bounding_box;
-  operation_class->get_cached_region = get_cached_region;
   operation_class->prepare     = prepare;
+  operation_class->get_bounding_box = get_bounding_box;
+  source_class->process = process;
+  object_class->finalize = finalize;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:raw-load",
-    "title",       _("LibRAW File Loader"),
+    "title",       _("libraw File Loader"),
     "categories",  "hidden",
     "description", "Camera RAW image loader",
     NULL);
@@ -262,6 +248,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_extension_handler_register (".nef", "gegl:raw-load");
   gegl_extension_handler_register (".raf", "gegl:raw-load");
   gegl_extension_handler_register (".orf", "gegl:raw-load");
+  gegl_extension_handler_register (".erf", "gegl:raw-load");
   gegl_extension_handler_register (".mrw", "gegl:raw-load");
   gegl_extension_handler_register (".crw", "gegl:raw-load");
   gegl_extension_handler_register (".cr2", "gegl:raw-load");
