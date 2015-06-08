@@ -90,10 +90,10 @@ endif
 #endif
 
 if HAVE_LIBRAW
-ops += lraw.la
-lraw_la_SOURCES = lraw.c
-law_la_LIBADD = $(op_libs) $(LIBRAW_LIBS)
-lraw_la_CFLAGS = $(AM_CFLAGS) $(LIBRAW_CFLAGS)
+ops += raw-load.la
+raw_load_la_SOURCES = raw-load.c
+raw_load_la_LIBADD = $(op_libs) $(LIBRAW_LIBS)
+raw_load_la_CFLAGS = $(AM_CFLAGS) $(LIBRAW_CFLAGS)
 endif
 
 if HAVE_V4L

@@ -42,7 +42,7 @@ typedef struct
   GeglOperationSourceClass parent_class;
 } GeglOpClass;
 
-#define GEGL_OP_C_SOURCE lraw.c
+#define GEGL_OP_C_SOURCE raw-load.c
 #include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE)
 
@@ -247,7 +247,7 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare     = prepare;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:libraw-load",
+    "name",        "gegl:raw-load",
     "title",       _("LibRAW File Loader"),
     "categories",  "hidden",
     "description", "Camera RAW image loader",
@@ -257,12 +257,13 @@ gegl_op_class_init (GeglOpClass *klass)
     return;
 
   /* query libopenraw instead. need a new API */
-  gegl_extension_handler_register (".cr2", "gegl:openraw-load");
-  gegl_extension_handler_register (".crw", "gegl:openraw-load");
-  gegl_extension_handler_register (".erf", "gegl:openraw-load");
-  gegl_extension_handler_register (".mrw", "gegl:openraw-load");
-  gegl_extension_handler_register (".nef", "gegl:openraw-load");
-  gegl_extension_handler_register (".dng", "gegl:openraw-load");
+  gegl_extension_handler_register (".pef", "gegl:raw-load");
+  gegl_extension_handler_register (".nef", "gegl:raw-load");
+  gegl_extension_handler_register (".raf", "gegl:raw-load");
+  gegl_extension_handler_register (".orf", "gegl:raw-load");
+  gegl_extension_handler_register (".mrw", "gegl:raw-load");
+  gegl_extension_handler_register (".crw", "gegl:raw-load");
+  gegl_extension_handler_register (".cr2", "gegl:raw-load");
 
   done = TRUE;
 }

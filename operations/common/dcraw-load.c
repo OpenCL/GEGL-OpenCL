@@ -29,7 +29,7 @@ property_file_path (path, _("File"), "/tmp/test.raw")
 #else
 
 #define GEGL_OP_SOURCE
-#define GEGL_OP_C_SOURCE raw-load.c
+#define GEGL_OP_C_SOURCE dcraw-load.c
 
 #include "gegl-op.h"
 #ifdef HAVE_UNISTD_H
@@ -177,15 +177,15 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region = get_cached_region;;
 
   gegl_operation_class_set_keys (operation_class,
-    "name"       , "gegl:raw-load",
+    "name"       , "gegl:dcraw-load",
     "categories" , "hidden",
     "description",
           _("Raw image loader, wrapping dcraw with pipes."),
     NULL);
 
-  gegl_extension_handler_register (".raw", "gegl:raw-load");
-  gegl_extension_handler_register (".raf", "gegl:raw-load");
-  gegl_extension_handler_register (".nef", "gegl:raw-load");
+  gegl_extension_handler_register (".raw", "gegl:dcraw-load");
+  gegl_extension_handler_register (".raf", "gegl:dcraw-load");
+  gegl_extension_handler_register (".nef", "gegl:dcraw-load");
 }
 
 #endif
