@@ -37,9 +37,9 @@ enum_start (gegl_wind_direction)
 enum_end (GeglWindDirection)
 
 enum_start (gegl_wind_edge)
+  enum_value (GEGL_WIND_EDGE_BOTH, "both", N_("Both"))
   enum_value (GEGL_WIND_EDGE_LEADING, "leading", N_("Leading"))
   enum_value (GEGL_WIND_EDGE_TRAILING, "trailing", N_("Trailing"))
-  enum_value (GEGL_WIND_EDGE_BOTH, "both", N_("Both"))
 enum_end (GeglWindEdge)
 
 property_enum (style, _("Style"),
