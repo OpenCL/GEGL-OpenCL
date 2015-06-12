@@ -1610,7 +1610,7 @@ msgstr "Politica abisso"
 #: ../operations/common/gaussian-blur-iir.c:61
 #: ../operations/common/gblur-1d.c:61
 msgid "How image edges are handled"
-msgstr "Come sono gestiti il bordi dell'immagine"
+msgstr "Come sono gestiti i bordi dell'immagine"
 
 #: ../operations/common/displace.c:47
 msgid "X displacement"
@@ -4504,7 +4504,7 @@ msgid ""
 "of exposed film, and some other fuzzier border effects that can naturally "
 "occur with analog photography"
 msgstr ""
-"Applica un effeto vignettatura all'immagine. Simula la diminuzione di "
+"Applica un effetto vignettatura all'immagine. Simula la diminuzione di "
 "luminanza e altri effetti particolari ai bordi, un fenomeno tipico "
 "dell'esposizione delle vecchie pellicole analogiche."
 
