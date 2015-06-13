@@ -27,7 +27,7 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
 AM_LDFLAGS = \
 	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
-	$(DEP_LIBS) $(BABL_LIBS)
+	$(DEP_LIBS) $(BABL_LIBS) $(MATH_LIB)
 
 bin_PROGRAMS = gegl-imgcmp
 noinst_PROGRAMS = introspect operation_reference detect_opencl
