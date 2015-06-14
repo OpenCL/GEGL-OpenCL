@@ -1836,15 +1836,6 @@ gegl_node_emit_computed (GeglNode *node,
   g_signal_emit (node, gegl_node_signals[COMPUTED], 0, rect, NULL, NULL);
 }
 
-static void
-gegl_node_computed_event (GeglCache *self,
-                          void      *foo,
-                          void      *user_data)
-{
-  GeglNode *node = GEGL_NODE (user_data);
-  gegl_node_emit_computed (node, foo);
-}
-
 GeglCache *
 gegl_node_get_cache (GeglNode *node)
 {
@@ -1893,9 +1884,9 @@ gegl_node_get_cache (GeglNode *node)
       gegl_node_get_bounding_box (node);
       gegl_buffer_set_extent (GEGL_BUFFER (cache), &node->have_rect);
 
-      g_signal_connect (G_OBJECT (cache), "computed",
-                        (GCallback) gegl_node_computed_event,
-                        node);
+      g_signal_connect_swapped (G_OBJECT (cache), "computed",
+                                (GCallback) gegl_node_emit_computed,
+                                node);
       node->cache = cache;
     }
 
