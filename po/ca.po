@@ -2280,7 +2280,7 @@ msgstr "Filtre de passada alta"
 
 #: ../operations/common/high-pass.c:83
 msgid "Enhances fine details."
-msgstr "Realça el detalls fins."
+msgstr "Realça els detalls fins."
 
 #: ../operations/common/illusion.c:28
 #, fuzzy
@@ -2368,7 +2368,7 @@ msgstr "Visualitzador de gràfiques GEGL."
 
 #: ../operations/common/invert-gamma.c:79
 msgid "Invert in Perceptual space"
-msgstr "Inverteix en l'espai perceptual"
+msgstr "Inverteix en l'espai perceptiu"
 
 #: ../operations/common/invert-gamma.c:82
 #: ../operations/common/invert-linear.c:77
@@ -2787,7 +2787,7 @@ msgstr "Emmirallament calidoscòpic"
 
 #: ../operations/common/mirrors.c:433
 msgid "Create a kaleidoscope like effect."
-msgstr "Crea un efecte similar al un calidoscopi."
+msgstr "Crea un efecte similar al d'un calidoscopi."
 
 #: ../operations/common/mono-mixer.c:28
 msgid "Amount of red"
@@ -3103,7 +3103,7 @@ msgstr "Força"
 msgid ""
 "Controls the number of iterations; lower values give less plastic results"
 msgstr ""
-"Control·la el nombre d'iteracions. Els valors baixos generen resultats menys "
+"Controla el nombre d'iteracions. Els valors baixos generen resultats menys "
 "plàstics"
 
 #: ../operations/common/noise-reduction.c:425
@@ -3841,7 +3841,7 @@ msgstr "Lluentor suau"
 #: ../operations/common/softglow.c:234
 msgid "Simulate glow by making highlights intense and fuzzy"
 msgstr ""
-"Simula una lluentor amb la creació de taques de llum intenses i difoses"
+"Simula una lluentor amb la creació de taques de llum intenses i difuses"
 
 #: ../operations/common/stress.c:28
 msgid ""
@@ -4317,7 +4317,7 @@ msgstr ""
 #: ../operations/common/vignette.c:38
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr ""
-"Distància a la que arriba el vinyetatge, expressada com a porció de la "
+"Distància a la qual arriba el vinyetatge, expressada com a porció de la "
 "meitat de la diagonal de la imatge"
 
 #: ../operations/common/vignette.c:42
@@ -4759,7 +4759,7 @@ msgstr "El cmsHPROFILE que correspon al perfil icc per les dades d'entrada."
 
 #: ../operations/external/lcms-from-profile.c:31
 msgid "Perceptual"
-msgstr "Perceptual"
+msgstr "Perceptiu"
 
 #: ../operations/external/lcms-from-profile.c:33
 msgid "Relative Colorimetric"
@@ -5006,7 +5006,7 @@ msgstr "Carregador d'imatges PNG"
 #: ../operations/external/png-save.c:231
 msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
 msgstr ""
-"Desador d'imatge PNG (travessa la memòria intermèdia i desa com conseqüència "
+"Desador d'imatge PNG (travessa la memòria intermèdia i desa com a conseqüència "
 "indirecta.)"
 
 #: ../operations/external/ppm-load.c:381
