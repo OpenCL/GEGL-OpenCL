@@ -17,7 +17,7 @@ adjusting colors, filtering in different ways, transforming and compositing imag
 link:operations.html[Operations reference gallery]::
   A page showcasing all the various gegl image processing operations.
 link:features.html[GEGL Feature list]::
-  The "feature list", a techinical specification of what GEGL can do.
+  The "feature list", a technical specification of what GEGL can do.
 link:glossary.html[GEGL glossary]::
   A cheat sheet of terms used in GEGL.
 link:hello-world.html[hello world]::
@@ -42,7 +42,7 @@ link:bugzilla.html[bugzilla]::
 link:copyright.html[Copyright]::
   Who made GEGL and under what conditions you can use it.
 link:development.html[Further pointers for development]::
-  Miscealanny notes about possible ways of building and developing with GEGL.
+  Miscellaneous notes about possible ways of building and developing with GEGL.
 
 
 If you read this on the gegl.org website you are reading the snapshot of the
@@ -64,7 +64,7 @@ GIMPnet (irc.gimp.org).
 
 You can subscribe to gegl-developer and view the archives
 http://mail.gnome.org/mailman/listinfo/gegl-developer-list[here]. The GEGL
-developer list is the appopriate place to ask development questions, and get
+developer list is the appropriate place to ask development questions, and get
 more information about GEGL development in general. You can email this list at
 mailto:gegl-developer-list@gnome.org[].
 
