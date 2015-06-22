@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
 "eywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-05-24 23:27+0000\n"
-"PO-Revision-Date: 2015-05-25 10:27+0300\n"
+"POT-Creation-Date: 2015-06-19 05:25+0000\n"
+"PO-Revision-Date: 2015-06-22 10:25+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@lists.gnome.gr\n"
 "Language: el\n"
@@ -222,7 +222,7 @@ msgstr "Κάθετη"
 msgid "Nearest"
 msgstr "Πλησιέστερη"
 
-#: ../gegl/gegl-enums.c:113 ../operations/common/bump-map.c:40
+#: ../gegl/gegl-enums.c:113 ../operations/common/bump-map.c:33
 #: ../operations/common/sinus.c:64
 msgid "Linear"
 msgstr "Γραμμική"
@@ -447,6 +447,7 @@ msgstr ""
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/kuwahara.c:25
+#: ../operations/workshop/median-blur.c:26
 msgid "Radius"
 msgstr "Ακτίνα"
 
@@ -528,7 +529,8 @@ msgstr "Δέκτης ενδιάμεσης μνήμης"
 
 #: ../operations/common/buffer-sink.c:84
 msgid "Create a new GEGL buffer to write the resulting rendering."
-msgstr "Δημιουργήστε μια νέα ενδιάμεση μνήμη για να γράψετε την τελική απόδοση."
+msgstr ""
+"Δημιουργήστε μια νέα ενδιάμεση μνήμη για να γράψετε την τελική απόδοση."
 
 #: ../operations/common/buffer-source.c:25
 msgid "Input buffer"
@@ -546,101 +548,107 @@ msgstr "Προέλευση ενδιάμεσης μνήμης"
 msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr "Χρήση μιας υφιστάμενης μνήμης GeglBuffer ως προέλευσης εικόνας."
 
-#: ../operations/common/bump-map.c:41
+#: ../operations/common/bump-map.c:34
 msgid "Spherical"
 msgstr "Σφαιρικό"
 
-#: ../operations/common/bump-map.c:42 ../operations/common/sinus.c:66
+#: ../operations/common/bump-map.c:35 ../operations/common/sinus.c:66
 msgid "Sinusoidal"
 msgstr "Ημιτονοειδές"
 
-#: ../operations/common/bump-map.c:45
+#: ../operations/common/bump-map.c:38
 msgid "Type"
 msgstr "Τύπος"
 
-#: ../operations/common/bump-map.c:47
+#: ../operations/common/bump-map.c:40
 msgid "Type of map"
 msgstr "Τύπος απεικόνισης"
 
-#: ../operations/common/bump-map.c:49
+#: ../operations/common/bump-map.c:42
 msgid "Compensate"
 msgstr "Αντιστάθμιση"
 
-#: ../operations/common/bump-map.c:50
+#: ../operations/common/bump-map.c:43
 msgid "Compensate for darkening"
 msgstr "Αντιστάθμιση για σκοτείνιασμα"
 
-#: ../operations/common/bump-map.c:52 ../operations/common/invert-linear.c:73
+#: ../operations/common/bump-map.c:45 ../operations/common/invert-linear.c:73
 msgid "Invert"
 msgstr "Αντιστροφή"
 
-#: ../operations/common/bump-map.c:53
+#: ../operations/common/bump-map.c:46
 msgid "Invert bumpmap"
 msgstr "Αντιστροφή χάρτη ανάγλυφου"
 
-#: ../operations/common/bump-map.c:55
+#: ../operations/common/bump-map.c:48
 msgid "Tiled"
 msgstr "Σε παράθεση"
 
-#: ../operations/common/bump-map.c:56
+#: ../operations/common/bump-map.c:49
 msgid "Tiled bumpmap"
 msgstr "Σε παράθεση χάρτη ανάγλυφου"
 
-#: ../operations/common/bump-map.c:58 ../operations/common/emboss.c:34
+#: ../operations/common/bump-map.c:51 ../operations/common/emboss.c:34
 msgid "Azimuth"
 msgstr "Αζιμούθιο"
 
-#: ../operations/common/bump-map.c:62 ../operations/common/emboss.c:39
+#: ../operations/common/bump-map.c:55 ../operations/common/emboss.c:39
 msgid "Elevation"
 msgstr "Ανύψωση"
 
-#: ../operations/common/bump-map.c:65 ../operations/common/emboss.c:44
+#: ../operations/common/bump-map.c:58 ../operations/common/emboss.c:44
 #: ../operations/common/fractal-trace.c:58
 #: ../operations/common/texturize-canvas.c:44
 msgid "Depth"
 msgstr "Βάθος"
 
-#: ../operations/common/bump-map.c:68 ../operations/common/checkerboard.c:41
+#: ../operations/common/bump-map.c:61 ../operations/common/checkerboard.c:41
 #: ../operations/common/grid.c:38 ../operations/common/mirrors.c:44
 #: ../operations/seamless-clone/seamless-clone.c:26
 #: ../operations/seamless-clone/seamless-clone-compose.c:25
 msgid "Offset X"
 msgstr "Μετατόπιση Χ"
 
-#: ../operations/common/bump-map.c:74 ../operations/common/checkerboard.c:47
+#: ../operations/common/bump-map.c:67 ../operations/common/checkerboard.c:47
 #: ../operations/common/grid.c:44 ../operations/common/mirrors.c:50
 #: ../operations/seamless-clone/seamless-clone.c:32
 #: ../operations/seamless-clone/seamless-clone-compose.c:31
 msgid "Offset Y"
 msgstr "Μετατόπιση Υ"
 
-#: ../operations/common/bump-map.c:80
+#: ../operations/common/bump-map.c:73
 msgid "Waterlevel"
 msgstr "Στάθμη νερού"
 
-#: ../operations/common/bump-map.c:81
+#: ../operations/common/bump-map.c:74
 msgid "Level that full transparency should represent"
 msgstr "Στάθμη που η πλήρης διαφάνεια πρέπει να αναπαριστά"
 
-#: ../operations/common/bump-map.c:84
+#: ../operations/common/bump-map.c:77
 msgid "Ambient lighting factor"
 msgstr "Συντελεστής περιβάλλοντος φως"
 
-#: ../operations/common/bump-map.c:474
+#: ../operations/common/bump-map.c:454
 msgid "Bump Map"
 msgstr "Απεικόνιση ανάγλυφου"
 
-#: ../operations/common/bump-map.c:476
+#: ../operations/common/bump-map.c:456
+#| msgid ""
+#| "This plug-in uses the algorithm described by John Schlag, \"Fast "
+#| "Embossing Effects on Raster Image Data\" in Graphics GEMS IV (ISBN "
+#| "0-12-336155-9). It takes a drawable to be applied as a bump map to "
+#| "another image and produces a nice embossing effect."
 msgid ""
 "This plug-in uses the algorithm described by John Schlag, \"Fast Embossing "
 "Effects on Raster Image Data\" in Graphics GEMS IV (ISBN 0-12-336155-9). It "
-"takes a drawable to be applied as a bump map to another image and produces a "
+"takes a buffer to be applied as a bump map to another buffer and produces a "
 "nice embossing effect."
 msgstr ""
 "Αυτό το πρόσθετο χρησιμοποιεί τον αλγόριθμο που περιγράφηκε από τον John "
 "Schlag, \"Γρήγορα εφέ χάραξης σε δεδομένα εικόνας εικονογραφίας\" σε γραφικά "
-"GEMS IV (ISBN 0-12-336155-9). Παίρνει ένα σχέδιο να εφαρμοστεί ως χάρτης "
-"εξογκωμάτων σε μια άλλη εικόνα και παράγει ένα όμορφο εφέ χάραξης."
+"GEMS IV (ISBN 0-12-336155-9). Παίρνει μια ενδιάμεση μνήμη που θα εφαρμοστεί "
+"ως χάρτης εξογκωμάτων σε μια άλλη ενδιάμεση μνήμη και παράγει ένα όμορφο εφέ "
+"χάραξης."
 
 #: ../operations/common/c2g.c:28
 msgid ""
@@ -1031,7 +1039,7 @@ msgstr "Η στρατηγική πρόσμειξης για χρήση"
 #: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
 #: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
 #: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
-#: ../operations/common/supernova.c:63 ../operations/common/wind.c:34
+#: ../operations/common/supernova.c:63
 msgid "Random seed"
 msgstr "Τυχαία σπορά"
 
@@ -1118,6 +1126,7 @@ msgstr ""
 
 #: ../operations/common/color-rotate.c:79
 #: ../operations/common/noise-cie-lch.c:34 ../operations/common/noise-hsv.c:30
+#: ../operations/workshop/component-extract.c:28
 msgid "Hue"
 msgstr "Απόχρωση"
 
@@ -1568,6 +1577,78 @@ msgstr "Μοτίβα διάθλασης"
 msgid "Generate diffraction patterns"
 msgstr "Δημιουργία μοτίβων διάθλασης"
 
+#: ../operations/common/displace.c:28
+#| msgid "Cartoon"
+msgid "Cartesian"
+msgstr "Καρτεσιανές"
+
+#: ../operations/common/displace.c:29
+#| msgid "To polar"
+msgid "Polar"
+msgstr "Πολικές"
+
+#: ../operations/common/displace.c:32
+#| msgid "Replacement color."
+msgid "Displacement mode"
+msgstr "Κατάσταση μετατόπισης"
+
+#: ../operations/common/displace.c:35
+msgid "Mode of displacement"
+msgstr "Κατάσταση μετατόπισης"
+
+#: ../operations/common/displace.c:37 ../operations/external/npd.c:50
+#: ../operations/transform/transform-core.c:189
+#: ../operations/workshop/ditto.c:27
+msgid "Sampler"
+msgstr "Δειγματοληψία"
+
+#: ../operations/common/displace.c:40
+msgid "Type of GeglSampler used to fetch input pixels"
+msgstr ""
+"Τύπος του GeglSampler που χρησιμοποιείται για την προσκόμιση εικονοστοιχείων "
+"εισόδου"
+
+#: ../operations/common/displace.c:42 ../operations/common/fractal-trace.c:64
+#: ../operations/common/gaussian-blur-iir.c:59
+#: ../operations/common/gblur-1d.c:59
+msgid "Abyss policy"
+msgstr "Πολιτική αβύσσου"
+
+#: ../operations/common/displace.c:45
+#: ../operations/common/gaussian-blur-iir.c:61
+#: ../operations/common/gblur-1d.c:61
+msgid "How image edges are handled"
+msgstr "Πώς διαχειρίζονται τα άκρα εικόνας"
+
+#: ../operations/common/displace.c:47
+msgid "X displacement"
+msgstr "Μετατόπιση Χ"
+
+#: ../operations/common/displace.c:48
+msgid "Displace multiplier for X or radial direction"
+msgstr "Μετατόπιση πολλαπλασιαστή για το Χ ή σε ακτινική κατεύθυνση"
+
+#: ../operations/common/displace.c:54
+msgid "Y displacement"
+msgstr "Μετατόπιση Υ"
+
+#: ../operations/common/displace.c:55
+msgid "Displace multiplier for Y or tangent (degrees) direction"
+msgstr ""
+"Μετατόπιση πολλαπλασιαστή για το Υ ή σε εφαπτομενική κατεύθυνση (μοίρες)"
+
+#: ../operations/common/displace.c:374
+#| msgid "Laplace"
+msgid "Displace"
+msgstr "Λαπλάς"
+
+#: ../operations/common/displace.c:377
+#| msgid "Displace pixels in a ripple pattern"
+msgid "Displace pixels as indicated by displacement maps"
+msgstr ""
+"Μετατόπιση εικονοστοιχείων όπως υποδεικνύεται από τις απεικονίσεις "
+"μετατόπισης"
+
 #: ../operations/common/display.c:23 ../operations/external/sdl-display.c:25
 msgid "Window title"
 msgstr "Τίτλος παραθύρου"
@@ -1859,6 +1940,7 @@ msgstr ""
 
 #: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
 #: ../operations/common/noise-rgb.c:41
+#: ../operations/workshop/component-extract.c:43
 msgid "Alpha"
 msgstr "Άλφα"
 
@@ -2124,12 +2206,6 @@ msgstr "Θέση τιμής Υ σπόρου Julia"
 msgid "Bailout length"
 msgstr "Μήκος ορίου"
 
-#: ../operations/common/fractal-trace.c:64
-#: ../operations/common/gaussian-blur-iir.c:59
-#: ../operations/common/gblur-1d.c:59
-msgid "Abyss policy"
-msgstr "Πολιτική αβύσσου"
-
 #: ../operations/common/fractal-trace.c:66
 msgid "How to deal with pixels outside of the input buffer"
 msgstr ""
@@ -2219,11 +2295,6 @@ msgstr "Τυπική απόκλιση (συντελεστής χωρικής κ�
 msgid "How the gaussian kernel is discretized"
 msgstr "Πώς ο πυρήνας Γκάους διακρίνεται"
 
-#: ../operations/common/gaussian-blur-iir.c:61
-#: ../operations/common/gblur-1d.c:61
-msgid "How image edges are handled"
-msgstr "Πώς διαχειρίζονται τα άκρα εικόνας"
-
 #: ../operations/common/gaussian-blur-iir.c:63
 #: ../operations/common/gblur-1d.c:63
 msgid "Clip to the input extent"
@@ -2255,7 +2326,7 @@ msgstr "Ο προσανατολισμός της θόλωσης - ορ/καθ"
 #: ../operations/common/gegl-buffer-load-op.c:24
 #: ../operations/common/gegl-buffer-save-op.c:24
 #: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
-#: ../operations/common/open-buffer.c:25 ../operations/common/raw-load.c:26
+#: ../operations/common/open-buffer.c:25 ../operations/common/dcraw-load.c:26
 #: ../operations/common/save.c:25 ../operations/external/ff-load.c:25
 #: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
 #: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
@@ -2609,7 +2680,7 @@ msgid "Linear gradient renderer"
 msgstr "Απόδοση γραμμικής διαβάθμισης"
 
 #: ../operations/common/load.c:26 ../operations/common/magick-load.c:27
-#: ../operations/common/raw-load.c:27 ../operations/external/openraw.c:26
+#: ../operations/common/dcraw-load.c:27 ../operations/external/raw-load.c:28
 #: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
 #: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
 #: ../operations/workshop/rawbayer-load.c:26
@@ -2625,7 +2696,7 @@ msgstr "URI"
 msgid "URI of file to load."
 msgstr "URI του αρχείου για φόρτωση."
 
-#: ../operations/common/load.c:231
+#: ../operations/common/load.c:234
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -3143,7 +3214,7 @@ msgid "Randomly interchange some pixels with neighbors"
 msgstr "Τυχαία ανταλλαγή μερικών εικονοστοιχείων με γειτονικά"
 
 #: ../operations/common/noise-reduction.c:26 ../operations/common/warp.c:35
-#: ../operations/common/wind.c:30
+#: ../operations/common/wind.c:64
 msgid "Strength"
 msgstr "Ισχύς"
 
@@ -3622,7 +3693,7 @@ msgstr "Ακτινική διαβάθμιση"
 msgid "Radial gradient renderer"
 msgstr "Απόδοση ακτινικής διαβάθμισης"
 
-#: ../operations/common/raw-load.c:183
+#: ../operations/common/dcraw-load.c:183
 msgid "Raw image loader, wrapping dcraw with pipes."
 msgstr "Φόρτωση ακατέργαστης εικόνας, αναδιπλώνοντας dcraw με σωλήνες."
 
@@ -3656,7 +3727,7 @@ msgstr "Ορθογώνια πηγή σταθερού μεγέθους με συ�
 
 #: ../operations/common/red-eye-removal.c:31
 #: ../operations/common/threshold.c:25 ../operations/common/threshold.c:125
-#: ../operations/common/wind.c:26 ../operations/external/matting-levin.c:33
+#: ../operations/common/wind.c:60 ../operations/external/matting-levin.c:33
 msgid "Threshold"
 msgstr "Όριο"
 
@@ -4021,7 +4092,7 @@ msgstr "Κάτω αριστερά"
 msgid "Bottom-right"
 msgstr "Κάτω δεξιά"
 
-#: ../operations/common/texturize-canvas.c:38
+#: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
 msgid "Direction"
 msgstr "Κατεύθυνση"
 
@@ -4207,12 +4278,15 @@ msgid "Value Invert"
 msgstr "Αντιστροφή τιμής"
 
 #: ../operations/common/value-invert.c:150
+#| msgid ""
+#| "Inverts just the value component, the result is the corresponding "
+#| "`inverted' image."
 msgid ""
-"Inverts just the value component, the result is the corresponding `inverted' "
+"Inverts just the value component, the result is the corresponding 'inverted' "
 "image."
 msgstr ""
 "Αντιστρέφει μόνο το συστατικό τιμής, το αποτέλεσμα είναι η αντίστοιχη "
-"`ανεστραμμένη' εικόνα."
+"'ανεστραμμένη' εικόνα."
 
 #: ../operations/common/value-propagate.c:29
 msgid "More white (larger value)"
@@ -4501,11 +4575,11 @@ msgstr "Συμπεριφορά"
 msgid "Behavior of the op"
 msgstr "Συμπεριφορά της λειτουργίας"
 
-#: ../operations/common/warp.c:412
+#: ../operations/common/warp.c:413
 msgid "Warp"
 msgstr "Στρέβλωση"
 
-#: ../operations/common/warp.c:414
+#: ../operations/common/warp.c:415
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Υπολογισμός σχετικής απεικόνισης μετατόπισης από πινελιά"
 
@@ -4581,19 +4655,75 @@ msgstr "Στροβιλισμός και πίεση"
 msgid "Distort an image by whirling and pinching"
 msgstr "Παραμόρφωση εικόνας με στροβιλισμό και πίεση"
 
-#: ../operations/common/wind.c:27
-msgid "Higher values restrict the effect to fewer areas of the image"
-msgstr "Υψηλότερες τιμές περιορίζουν το εφέ σε λιγότερες περιοχές της εικόνας"
-
-#: ../operations/common/wind.c:31
-msgid "Higher values increase the magnitude of the effect"
-msgstr "Υψηλότερες τιμές αυξάνουν το μέγεθος του εφέ"
-
-#: ../operations/common/wind.c:366
+#: ../operations/common/wind.c:28 ../operations/common/wind.c:659
 msgid "Wind"
 msgstr "Άνεμος"
 
-#: ../operations/common/wind.c:368
+#: ../operations/common/wind.c:29
+msgid "Blast"
+msgstr "Έκρηξη"
+
+#: ../operations/common/wind.c:33
+msgid "Left"
+msgstr "Αριστερά"
+
+#: ../operations/common/wind.c:34
+msgid "Right"
+msgstr "Δεξιά"
+
+#: ../operations/common/wind.c:35
+msgid "Top"
+msgstr "Επάνω"
+
+#: ../operations/common/wind.c:36
+#| msgid "Bottom-left"
+msgid "Bottom"
+msgstr "Κάτω"
+
+#: ../operations/common/wind.c:40
+msgid "Both"
+msgstr "Και τα δύο"
+
+#: ../operations/common/wind.c:41
+msgid "Leading"
+msgstr "Αρχή"
+
+#: ../operations/common/wind.c:42
+#| msgid "Scaling"
+msgid "Trailing"
+msgstr "Τέλος"
+
+#: ../operations/common/wind.c:45
+msgid "Style"
+msgstr "Τεχνοτροπία"
+
+#: ../operations/common/wind.c:48
+#| msgid "Scale, strength of effect"
+msgid "Style of effect"
+msgstr "Τεχνοτροπία του εφέ"
+
+#: ../operations/common/wind.c:53
+msgid "Direction of the effect"
+msgstr "Κατεύθυνση του εφέ"
+
+#: ../operations/common/wind.c:55
+msgid "Edge Affected"
+msgstr "Επηρεαζόμενη άκρη"
+
+#: ../operations/common/wind.c:58
+#| msgid "Border behavior"
+msgid "Edge behavior"
+msgstr "Συμπεριφορά άκρης"
+
+#: ../operations/common/wind.c:61
+msgid "Higher values restrict the effect to fewer areas of the image"
+msgstr "Υψηλότερες τιμές περιορίζουν το εφέ σε λιγότερες περιοχές της εικόνας"
+
+#: ../operations/common/wind.c:65
+msgid "Higher values increase the magnitude of the effect"
+msgstr "Υψηλότερες τιμές αυξάνουν το μέγεθος του εφέ"
+
+#: ../operations/common/wind.c:662
 msgid "Wind-like bleed effect"
 msgstr "Εφέ ανεμώδους διαρροής"
 
@@ -4608,7 +4738,6 @@ msgid "Write Buffer"
 msgstr "Εγγραφή ενδιάμεσης μνήμης"
 
 #: ../operations/common/write-buffer.c:151
-#| msgid "A GEGL buffer destination surface."
 msgid "Write input data into an existing GEGL buffer destination surface."
 msgstr ""
 "Γράψτε τα δεδομένα εισόδου σε μια υφιστάμενη επιφάνεια προορισμού ενδιάμεσης "
@@ -4998,12 +5127,6 @@ msgstr "Διατήρηση μοντέλου"
 msgid "When TRUE the model will not be freed"
 msgstr "Όταν είναι αληθές, το μοντέλο θα ελευθερωθεί"
 
-#: ../operations/external/npd.c:50
-#: ../operations/transform/transform-core.c:189
-#: ../operations/workshop/ditto.c:27
-msgid "Sampler"
-msgstr "Δειγματοληψία"
-
 #: ../operations/external/npd.c:53
 #: ../operations/transform/transform-core.c:190
 #: ../operations/workshop/ditto.c:29
@@ -5028,9 +5151,10 @@ msgstr "Αποθηκευτής αρχείου NPY"
 msgid "NPY image saver (Numerical python file saver.)"
 msgstr "Αποθήκευση εικόνας NPY (αποθήκευση αρχείου αριθμητικού python.)"
 
-#: ../operations/external/openraw.c:243
-msgid "OpenRAW File Loader"
-msgstr "Φορτωτής αρχείου OpenRAW"
+#: ../operations/external/raw-load.c:238
+#| msgid "WebP File Loader"
+msgid "libraw File Loader"
+msgstr "Φορτωτής αρχείου libraw"
 
 #: ../operations/external/path.c:26
 msgid "Fill Color"
@@ -5814,6 +5938,118 @@ msgstr ""
 "Αποθήκευση της μνήμης εισόδου εσωτερικά, παραπέρα επεξεργασία παίρνει αυτή "
 "τη μνήμη ως είσοδο."
 
+#: ../operations/workshop/component-extract.c:25
+msgid "RGB Red"
+msgstr "Κόκκινο RGB"
+
+#: ../operations/workshop/component-extract.c:26
+#| msgid "Green"
+msgid "RGB Green"
+msgstr "Πράσινο RGB"
+
+#: ../operations/workshop/component-extract.c:27
+#| msgid "Blue"
+msgid "RGB Blue"
+msgstr "Γαλάζιο RGB"
+
+#: ../operations/workshop/component-extract.c:29
+#| msgid "Saturation"
+msgid "HSV Saturation"
+msgstr "Κορεσμός HSV"
+
+#: ../operations/workshop/component-extract.c:30
+#| msgid "Value"
+msgid "HSV Value"
+msgstr "Τιμή HSV"
+
+#: ../operations/workshop/component-extract.c:31
+#| msgid "Saturation"
+msgid "HSL Saturation"
+msgstr "Κορεσμός HSL"
+
+#: ../operations/workshop/component-extract.c:32
+#| msgid "Lightness"
+msgid "HSL Lightness"
+msgstr "Φωτεινότητα HSL"
+
+#: ../operations/workshop/component-extract.c:33
+msgid "CMYK Cyan"
+msgstr "Γαλάζιο CMYK"
+
+#: ../operations/workshop/component-extract.c:34
+msgid "CMYK Magenta"
+msgstr "Μαντζέντα CMYK"
+
+#: ../operations/workshop/component-extract.c:35
+msgid "CMYK Yellow"
+msgstr "Κίτρινο CMYK"
+
+#: ../operations/workshop/component-extract.c:36
+msgid "CMYK Key"
+msgstr "Κλειδί CMYK"
+
+#: ../operations/workshop/component-extract.c:37
+msgid "Y'CbCr Y'"
+msgstr "Y'CbCr Y'"
+
+#: ../operations/workshop/component-extract.c:38
+msgid "Y'CbCr Cb"
+msgstr "Y'CbCr Cb"
+
+#: ../operations/workshop/component-extract.c:39
+msgid "Y'CbCr Cr"
+msgstr "Y'CbCr Cr"
+
+#: ../operations/workshop/component-extract.c:40
+msgid "LAB L"
+msgstr "LAB L"
+
+#: ../operations/workshop/component-extract.c:41
+msgid "LAB A"
+msgstr "LAB A"
+
+#: ../operations/workshop/component-extract.c:42
+msgid "LAB B"
+msgstr "LAB B"
+
+#: ../operations/workshop/component-extract.c:46
+#| msgid "Compensate"
+msgid "Component"
+msgstr "Στοιχείο"
+
+#: ../operations/workshop/component-extract.c:49
+#| msgid "Component 1 frequency"
+msgid "Component to extract"
+msgstr "Συστατικό για εξαγωγή"
+
+#: ../operations/workshop/component-extract.c:51
+#| msgid "Keep component 1"
+msgid "Invert component"
+msgstr "Αντιστροφή στοιχείου"
+
+#: ../operations/workshop/component-extract.c:52
+#| msgid "number of levels per component"
+msgid "Invert the extracted component"
+msgstr "Αντιστροφή των εξαχθέντος συστατικού"
+
+#: ../operations/workshop/component-extract.c:54
+#| msgid "Low output"
+msgid "Linear output"
+msgstr "Γραμμική έξοδος"
+
+#: ../operations/workshop/component-extract.c:55
+msgid "Use linear output instead of gamma corrected"
+msgstr "Χρήση της γραμμικής εξόδου αντί για τη διορθωμένη γάμα"
+
+#: ../operations/workshop/component-extract.c:264
+#| msgid "Exponent"
+msgid "Extract Component"
+msgstr "Εξαγωγή συστατικού"
+
+#: ../operations/workshop/component-extract.c:266
+msgid "Extract a color model component"
+msgstr "Εξαγωγή ενός συστατικού χρωματικού προτύπου"
+
 #: ../operations/workshop/color-warp.c:24
 msgid "From 0"
 msgstr "Από 0"
@@ -6368,6 +6604,7 @@ msgstr ""
 "μελανιών τύπου"
 
 #: ../operations/workshop/kuwahara.c:27
+#: ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
 "Ακτίνα της τετράγωνης περιοχής εικονοστοιχείου (πλάτος και ύψος θα είναι "
@@ -6397,6 +6634,19 @@ msgstr "Μέγιστος αριθμός επαναλήψεων"
 msgid "Mandelbrot set renderer"
 msgstr "Απόδοση συνόλου Mandelbrot"
 
+#: ../operations/workshop/median-blur.c:408
+#| msgid "Gaussian Blur"
+msgid "Median Blur"
+msgstr "Μέση θόλωση"
+
+#: ../operations/workshop/median-blur.c:410
+#| msgid "Blur resulting from averaging the colors of a square neighbourhood."
+msgid ""
+"Blur resulting from computing the median color of in a square neighbourhood."
+msgstr ""
+"Θόλωση ως αποτέλεσμα του υπολογισμού του μέσου χρώματος σε ένα γειτονικό "
+"τετράγωνο."
+
 #: ../operations/workshop/rawbayer-load.c:155
 msgid ""
 "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as "
@@ -6409,6 +6659,9 @@ msgstr ""
 "rawbayer θα χρησιμοποιήσει αυτή τη φόρτωση αντί για την κανονική φόρτωση "
 "dcraw, εάν η μορφή αρχείου είναι .rawbayerS θα εναλλάξει τους "
 "επιστρεφόμενους 16 δυαδικών αριθμούς (η φόρτωση pnm είναι προφανώς εσφαλμένη)"
+
+#~ msgid "OpenRAW File Loader"
+#~ msgstr "Φορτωτής αρχείου OpenRAW"
 
 #~ msgid "Write the resulting rendering to an already existing GEGL buffer."
 #~ msgstr ""
@@ -6979,15 +7232,6 @@ msgstr ""
 
 #~ msgid "Performs color-to-alpha on the image."
 #~ msgstr "Εκτελεί χρώμα σε άλφα στην εικόνα."
-
-#~ msgid "Left"
-#~ msgstr "Αριστερά"
-
-#~ msgid "Right"
-#~ msgstr "Δεξιά"
-
-#~ msgid "Top"
-#~ msgstr "Επάνω"
 
 #~ msgid "CX (only Julia)"
 #~ msgstr "CX (μόνο Julia)"
