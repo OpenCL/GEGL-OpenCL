@@ -145,7 +145,7 @@ main (gint    argc,
           gchar *debug_path = g_malloc (strlen (argv[2])+16);
 
           memcpy (debug_path, argv[2], strlen (argv[2])+1);
-          memcpy (debug_path + strlen(argv[2])-4, "-diff.png", 11);
+          memcpy (debug_path + strlen(argv[2])-4, "-diff.png", 10);
 
           save = gegl_node_new_child (gegl,
                                       "operation", "gegl:png-save",
