@@ -145,9 +145,7 @@ process (GeglOperation       *operation,
 
           for (chan = 0; chan < 3 ; chan++)
             {
-              delta[chan] = input[chan] > params->color_in[chan] ?
-                input[chan] - params->color_in[chan] :
-                params->color_in[chan] - input[chan];
+              delta[chan] = input[chan] - params->color_in[chan];
 
               output[chan] = CLAMP (params->color_out[chan] + delta[chan],
                                     0.0, 1.0);
