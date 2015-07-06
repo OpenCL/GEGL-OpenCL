@@ -161,23 +161,82 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+#include "opencl/color-exchange.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            cl_mem              in,
+            cl_mem              out,
+            size_t              global_worksize,
+            const GeglRectangle *roi,
+            gint                level)
+{
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  CeParamsType   *params = (CeParamsType*) o->user_data;
+  cl_float3   color_diff;
+  cl_float3   min;
+  cl_float3   max;
+  cl_int      cl_err = 0;
+  gint        i;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = {"cl_color_exchange",
+                                   NULL};
+      cl_data = gegl_cl_compile_and_build (color_exchange_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
+
+  for (i = 0; i < 3; i++)
+    {
+      color_diff.s[i] = params->color_diff[i];
+      min.s[i] = params->min[i];
+      max.s[i] = params->max[i];
+    }
+
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof(cl_mem),    &in,
+                                    sizeof(cl_mem),    &out,
+                                    sizeof(cl_float3), &color_diff,
+                                    sizeof(cl_float3), &min,
+                                    sizeof(cl_float3), &max,
+                                    NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  return  FALSE;
+
+error:
+  return TRUE;
+}
+
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass                  *object_class;
   GeglOperationClass            *operation_class;
-  GeglOperationPointFilterClass *filter_class;
+  GeglOperationPointFilterClass *point_filter_class;
 
-  object_class    = G_OBJECT_CLASS (klass);
-  operation_class = GEGL_OPERATION_CLASS (klass);
-  filter_class    = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
+  object_class       = G_OBJECT_CLASS (klass);
+  operation_class    = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   object_class->finalize = finalize;
 
-  operation_class->prepare = prepare;
-  operation_class->opencl_support = FALSE;
+  operation_class->prepare     = prepare;
 
-  filter_class->process    = process;
+  point_filter_class->process    = process;
+  point_filter_class->cl_process = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:color-exchange",
