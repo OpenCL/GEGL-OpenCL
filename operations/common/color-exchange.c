@@ -56,8 +56,7 @@ property_double (blue_threshold, _("Blue Threshold"), 0.0)
 
 typedef struct
 {
-  gfloat color_in[3];
-  gfloat color_out[3];
+  gfloat color_diff[3];
   gfloat min[3];
   gfloat max[3];
 } CeParamsType;
@@ -69,27 +68,38 @@ prepare (GeglOperation *operation)
   const Babl     *format = babl_format ("R'G'B'A float");
   const Babl     *colorformat = babl_format ("R'G'B' float");
   CeParamsType *params;
+  gfloat        color_in[3];
+  gfloat        color_out[3];
+  gint          chan;
 
   if (o->user_data == NULL)
     o->user_data = g_slice_new0 (CeParamsType);
 
   params = (CeParamsType*) o->user_data;
 
-  gegl_color_get_pixel (o->from_color, colorformat, &(params->color_in));
-  gegl_color_get_pixel (o->to_color, colorformat, &(params->color_out));
+  gegl_color_get_pixel (o->from_color, colorformat, &color_in);
+  gegl_color_get_pixel (o->to_color, colorformat, &color_out);
 
-  params->min[0] = CLAMP (params->color_in[0] - o->red_threshold,
-                          0.0, 1.0);
-  params->max[0] = CLAMP (params->color_in[0] + o->red_threshold,
-                          0.0, 1.0);
-  params->min[1] = CLAMP (params->color_in[1] - o->green_threshold,
-                          0.0, 1.0);
-  params->max[1] = CLAMP (params->color_in[1] + o->green_threshold,
-                          0.0, 1.0);
-  params->min[2] = CLAMP (params->color_in[2] - o->blue_threshold,
-                          0.0, 1.0);
-  params->max[2] = CLAMP (params->color_in[2] + o->blue_threshold,
-                          0.0, 1.0);
+  params->min[0] = CLAMP (color_in[0] - o->red_threshold,
+                          0.0, 1.0) - GEGL_FLOAT_EPSILON;
+
+  params->max[0] = CLAMP (color_in[0] + o->red_threshold,
+                          0.0, 1.0) + GEGL_FLOAT_EPSILON;
+
+  params->min[1] = CLAMP (color_in[1] - o->green_threshold,
+                          0.0, 1.0) - GEGL_FLOAT_EPSILON;
+
+  params->max[1] = CLAMP (color_in[1] + o->green_threshold,
+                          0.0, 1.0) + GEGL_FLOAT_EPSILON;
+
+  params->min[2] = CLAMP (color_in[2] - o->blue_threshold,
+                          0.0, 1.0) - GEGL_FLOAT_EPSILON;
+
+  params->max[2] = CLAMP (color_in[2] + o->blue_threshold,
+                          0.0, 1.0) + GEGL_FLOAT_EPSILON;
+
+  for (chan = 0; chan < 3; chan++)
+    params->color_diff[chan] = color_out[chan] - color_in[chan];
 
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
@@ -128,34 +138,18 @@ process (GeglOperation       *operation,
 
   while (n_pixels--)
     {
-      if ((GEGL_FLOAT_EQUAL (input[0], params->min[0]) ||
-          (input[0] > params->min[0])) &&
-          (GEGL_FLOAT_EQUAL (input[0], params->max[0]) ||
-          (input[0] < params->max[0])) &&
-          (GEGL_FLOAT_EQUAL (input[1], params->min[1]) ||
-          (input[1] > params->min[1])) &&
-          (GEGL_FLOAT_EQUAL (input[1], params->max[1]) ||
-          (input[1] < params->max[1])) &&
-          (GEGL_FLOAT_EQUAL (input[2], params->min[2]) ||
-          (input[2] > params->min[2])) &&
-          (GEGL_FLOAT_EQUAL (input[2], params->max[2]) ||
-          (input[2] < params->max[2])))
+      if (input[0] > params->min[0] && input[0] < params->max[0] &&
+          input[1] > params->min[1] && input[1] < params->max[1] &&
+          input[2] > params->min[2] && input[2] < params->max[2])
         {
-          gfloat delta[3];
-
           for (chan = 0; chan < 3 ; chan++)
-            {
-              delta[chan] = input[chan] - params->color_in[chan];
-
-              output[chan] = CLAMP (params->color_out[chan] + delta[chan],
+              output[chan] = CLAMP (input[chan] + params->color_diff[chan],
                                     0.0, 1.0);
-            }
         }
       else
         {
-          output[0] = input[0];
-          output[1] = input[1];
-          output[2] = input[2];
+          for (chan = 0; chan < 3 ; chan++)
+              output[chan] = input[chan];
         }
 
       output[3] = input[3];
