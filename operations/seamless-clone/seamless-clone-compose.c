@@ -18,7 +18,7 @@
  */
 
 #ifdef GEGL_PROPERTIES
-property_int (max_refine_steps, _("Refinement steps"), 2000)
+property_int (max_refine_scale, _("Refinement steps"), 2000)
   description(_("Maximal amount of refinement points to be used for the interpolation mesh"))
   value_range (0, 100000)
 
@@ -81,7 +81,7 @@ attach (GeglOperation *operation)
   gegl_node_connect_to (seamless, "output", overlay, "aux");
   gegl_node_connect_to (overlay, "output", output, "input");
 
-  gegl_operation_meta_redirect (operation, "max-refine-steps", seamless, "max-refine-steps");
+  gegl_operation_meta_redirect (operation, "max-refine-scale", seamless, "max-refine-scale");
   gegl_operation_meta_redirect (operation, "xoff", seamless, "xoff");
   gegl_operation_meta_redirect (operation, "yoff", seamless, "yoff");
   gegl_operation_meta_redirect (operation, "error-msg", seamless, "error-msg");
