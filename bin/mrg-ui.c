@@ -51,9 +51,8 @@ ActionData actions[]={
 
 static char *suffix = "-giev";
 
-
-#define USE_MIPMAPS 1
-#define DEBUG_OP_LIST 1
+#define USE_MIPMAPS    1
+#define DEBUG_OP_LIST  1
 
 typedef struct _State State;
 struct _State {
@@ -69,6 +68,8 @@ struct _State {
   GeglNode   *load;
   GeglNode   *save;
   GeglNode   *active;
+
+  GeglNode   *rotate;
   int         rev;
   float       u, v;
   float       scale;
@@ -189,13 +190,16 @@ static void mrg_gegl_blit (Mrg *mrg,
     copy_buf = malloc (copy_buf_len);
   }
   {
+    static int foo = 0;
     unsigned char *buf = copy_buf;
     GeglRectangle roi = {u, v, width, height};
     static const Babl *fmt = NULL;
-    if (!fmt) fmt = babl_format ("cairo-ARGB32");
+
+foo++;
+    if (!fmt) fmt = babl_format ("cairo-RGB24");
     gegl_node_blit (node, scale / fake_factor, &roi, fmt, buf, width * 4, 
          GEGL_BLIT_DEFAULT);
-  surface = cairo_image_surface_create_for_data (buf, CAIRO_FORMAT_ARGB32, width, height, width * 4);
+  surface = cairo_image_surface_create_for_data (buf, CAIRO_FORMAT_RGB24, width, height, width * 4);
   }
 
   cairo_save (cr);
@@ -412,6 +416,28 @@ static void zoom_to_fit (State *o)
   mrg_queue_draw (mrg, NULL);
 }
 
+static void zoom_to_fit_buffer (State *o)
+{
+  Mrg *mrg = o->mrg;
+  GeglRectangle rect = *gegl_buffer_get_extent (o->buffer);
+  float scale, scale2;
+
+  scale = 1.0 * mrg_width (mrg) / rect.width;
+  scale2 = 1.0 * mrg_height (mrg) / rect.height;
+
+  if (scale2 < scale) scale = scale2;
+
+  o->scale = scale;
+
+  o->u = -(mrg_width (mrg) - rect.width * scale) / 2;
+  o->v = -(mrg_height (mrg) - rect.height * scale) / 2;
+  
+  o->u += rect.x * scale;
+  o->v += rect.y * scale;
+
+  mrg_queue_draw (mrg, NULL);
+}
+
 static void zoom_fit_cb (MrgEvent *e, void *data1, void *data2)
 {
   zoom_to_fit (data1);
@@ -559,6 +585,8 @@ static void activate_op_cb (MrgEvent *event, void *data1, void *data2)
   if (found)
     {
        o->active = found;
+       if (!strcmp (ad->op_name, "gegl:crop"))
+         o->rotate = locate_node (o, "gegl:rotate");
     }
   else
     {
@@ -581,6 +609,18 @@ static void activate_op_cb (MrgEvent *event, void *data1, void *data2)
                                       "width", extent->width * 1.0,
                                       "height", extent->height * 1.0,
 			              NULL);
+        o->rotate = gegl_node_new_child (o->gegl,
+          "operation", "gegl:rotate", NULL);
+           gegl_node_set (o->rotate, "origin-x", extent->width * 0.5,
+                                     "origin-y", extent->height * 0.5,
+                                     "degrees", 0.0,
+                                     NULL);
+
+       gegl_node_link_many (gegl_node_get_producer (o->sink, "input", NULL),
+                              o->rotate,
+                              o->sink,
+                              NULL);
+
        } else
        {
           o->active = gegl_node_new_child (o->gegl, "operation", ad->op_name, NULL);
@@ -592,6 +632,16 @@ static void activate_op_cb (MrgEvent *event, void *data1, void *data2)
                               NULL);
   }
   mrg_queue_draw (o->mrg, NULL);
+}
+
+static void leave_editor (State *o)
+{
+  char *opname = NULL;
+  g_object_get (o->active, "operation", &opname, NULL);
+  if (!strcmp (opname, "gegl:crop"))
+   {
+      zoom_to_fit (o);
+   }
 }
 
 static void disable_filter_cb (MrgEvent *event, void *data1, void *data2)
@@ -611,14 +661,15 @@ static void disable_filter_cb (MrgEvent *event, void *data1, void *data2)
      }
    }
   gegl_node_link_many (next, prev, NULL);
+  leave_editor (o);
   gegl_node_remove_child (o->gegl, o->active);
   o->active = NULL;
   mrg_queue_draw (o->mrg, NULL);
 }
-
 static void  apply_filter_cb (MrgEvent *event, void *data1, void *data2)
 {
   State *o = data1;
+  leave_editor (o);
   o->active = NULL;
   mrg_queue_draw (o->mrg, NULL);
 }
@@ -659,10 +710,10 @@ static void prop_double_drag_cb (MrgEvent *e, void *data1, void *data2)
   GeglNode *node = data1;
   GParamSpec *pspec = data2;
   State *o = hack_state;
+  static float old_factor = 1;
   GeglParamSpecDouble *gspec = data2;
   gdouble value = 0.0;
   float range = gspec->ui_maximum - gspec->ui_minimum;
-  static float old_factor = 1;
 
   value = e->x / mrg_width (e->mrg);
   value = value * range + gspec->ui_minimum;
@@ -776,6 +827,123 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
   mrg_set_style (mrg, "color:yellow; background-color: transparent");
 }
 
+static void crop_drag_ul (MrgEvent *e, void *data1, void *data2)
+{
+  GeglNode *node = data1;
+  State *o = hack_state;
+  static float old_factor = 1;
+
+  double x,y,width,height;
+  double x0, y0, x1, y1;
+  gegl_node_get (node, "x", &x, "y", &y, "width", &width, "height", &height, NULL);
+  x0 = x; y0 = y; x1 = x0 + width; y1 = y + height;
+
+  if (e->type == MRG_DRAG_MOTION)
+  {
+    x0 += e->delta_x;
+    y0 += e->delta_y;
+
+    x=x0;
+    y=y0;
+    width = x1 - x0;
+    height = y1 - y0;
+    gegl_node_set (node, "x", x, "y", y, "width", width, "height", height, NULL);
+
+    mrg_queue_draw (e->mrg, NULL);
+  }
+
+  switch (e->type)
+  {
+    case MRG_DRAG_PRESS:
+      old_factor = o->render_quality;
+      if (o->render_quality < o->preview_quality)
+        o->render_quality = o->preview_quality;
+      break;
+    case MRG_DRAG_RELEASE:
+      o->render_quality = old_factor;
+      mrg_queue_draw (e->mrg, NULL);
+      break;
+    default:
+    break;
+  }
+}
+
+static void crop_drag_lr (MrgEvent *e, void *data1, void *data2)
+{
+  GeglNode *node = data1;
+  State *o = hack_state;
+  static float old_factor = 1;
+
+  double x,y,width,height;
+  double x0, y0, x1, y1;
+  gegl_node_get (node, "x", &x, "y", &y, "width", &width, "height", &height, NULL);
+  x0 = x; y0 = y; x1 = x0 + width; y1 = y + height;
+
+  if (e->type == MRG_DRAG_MOTION)
+  {
+    x1 += e->delta_x;
+    y1 += e->delta_y;
+
+    x=x0;
+    y=y0;
+    width = x1 - x0;
+    height = y1 - y0;
+    gegl_node_set (node, "x", x, "y", y, "width", width, "height", height, NULL);
+
+    mrg_queue_draw (e->mrg, NULL);
+  }
+
+
+  switch (e->type)
+  {
+    case MRG_DRAG_PRESS:
+      old_factor = o->render_quality;
+      if (o->render_quality < o->preview_quality)
+        o->render_quality = o->preview_quality;
+      break;
+    case MRG_DRAG_RELEASE:
+      o->render_quality = old_factor;
+      mrg_queue_draw (e->mrg, NULL);
+      break;
+    default:
+    break;
+  }
+}
+
+
+static void crop_drag_rotate (MrgEvent *e, void *data1, void *data2)
+{
+  State *o = hack_state;
+  static float old_factor = 1;
+
+  double degrees;
+  gegl_node_get (o->rotate, "degrees", &degrees, NULL);
+
+  if (e->type == MRG_DRAG_MOTION)
+  {
+    degrees += e->delta_x / 100.0;
+
+    gegl_node_set (o->rotate, "degrees", degrees, NULL);
+
+    mrg_queue_draw (e->mrg, NULL);
+  }
+
+  switch (e->type)
+  {
+    case MRG_DRAG_PRESS:
+      old_factor = o->render_quality;
+      if (o->render_quality < o->preview_quality)
+        o->render_quality = o->preview_quality;
+      break;
+    case MRG_DRAG_RELEASE:
+      o->render_quality = old_factor;
+      mrg_queue_draw (e->mrg, NULL);
+      break;
+    default:
+    break;
+  }
+}
+
 static void draw_gegl_crop (State *o, Mrg *mrg, cairo_t *cr, GeglNode *node)
 {
   const gchar* op_name = gegl_node_get_operation (node);
@@ -798,16 +966,16 @@ static void draw_gegl_crop (State *o, Mrg *mrg, cairo_t *cr, GeglNode *node)
   x0 = x; y0 = y; x1 = x0 + width; y1 = y + height;
 
   cairo_rectangle (cr, x0, y0, dim, dim);
-  contrasty_stroke (cr);
-
-  cairo_rectangle (cr, x1-dim, y0, dim, dim);
-  contrasty_stroke (cr);
-
-  cairo_rectangle (cr, x0, y1-dim, dim, dim);
+  mrg_listen (mrg, MRG_DRAG, crop_drag_ul, node, NULL);
   contrasty_stroke (cr);
 
   cairo_rectangle (cr, x1-dim, y1-dim, dim, dim);
+  mrg_listen (mrg, MRG_DRAG, crop_drag_lr, node, NULL);
   contrasty_stroke (cr);
+
+  cairo_rectangle (cr, x0+dim, y0+dim, width-dim-dim, height-dim-dim);
+  mrg_listen (mrg, MRG_DRAG, crop_drag_rotate, node, NULL);
+  cairo_new_path (cr);
 
   cairo_restore (cr);
   mrg_set_style (mrg, "color:yellow; background-color: transparent");
@@ -835,14 +1003,15 @@ static void ui_active_op (State *o)
   g_object_get (o->active, "operation", &opname, NULL);
 
   if (!strcmp (opname, "gegl:crop")) {
+    zoom_to_fit_buffer (o);
     draw_gegl_crop (o, mrg, cr, o->active);
+    ui_op_draw_apply_disable (o);
   }
   else
   {
     draw_gegl_generic (o, mrg, cr, o->active);
     ui_op_draw_apply_disable (o);
   }
-
 }
 
 static void save_cb (MrgEvent *event, void *data1, void *data2)
@@ -1022,7 +1191,6 @@ static void ui (Mrg *mrg, void *data)
   mrg_add_binding (mrg, "n", NULL, NULL,         go_next_cb, o);
   mrg_add_binding (mrg, "p", NULL, NULL,         go_prev_cb, o);
   mrg_add_binding (mrg, "backspace", NULL, NULL, go_prev_cb, o);
-
 
   mrg_add_binding (mrg, ",", NULL, NULL,         preview_less_cb, o);
   mrg_add_binding (mrg, ".", NULL, NULL,         preview_more_cb, o);
