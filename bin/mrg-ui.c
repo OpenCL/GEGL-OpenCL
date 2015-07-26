@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2015 Øyvind Kolås
+ * Copyright (C) 2015 Øyvind Kolås pippin@gimp.org
  */
 
 #define _BSD_SOURCE
@@ -83,69 +83,11 @@ struct _State {
 void   gegl_meta_set (const char *path, const char *meta_data);
 char * gegl_meta_get (const char *path);
 
-static char *suffix_path (const char *path)
-{
-  char *ret, *last_dot;
+static char *suffix_path (const char *path);
+static char *unsuffix_path (const char *path);
+static int is_giev_path (const char *path);
 
-  if (!path)
-    return NULL;
-  ret  = malloc (strlen (path) + strlen (suffix) + 3);
-  strcpy (ret, path);
-  last_dot = strrchr (ret, '.');
-  if (last_dot)
-  {
-    char *extension = strdup (last_dot + 1);
-    sprintf (last_dot, "%s.%s", suffix, extension);
-   free (extension);
-  }
-  else
-  {
-    sprintf (ret, "%s%s", path, suffix);
-  }
-  return ret;
-}
-
-static void contrasty_stroke (cairo_t *cr)
-{
-  double x0 = 6.0, y0 = 6.0;
-  double x1 = 4.0, y1 = 4.0;
-
-  cairo_device_to_user_distance (cr, &x0, &y0);
-  cairo_device_to_user_distance (cr, &x1, &y1);
-  cairo_set_source_rgba (cr, 0,0,0,0.5);
-  cairo_set_line_width (cr, y0);
-  cairo_stroke_preserve (cr);
-  cairo_set_source_rgba (cr, 1,1,1,0.5);
-  cairo_set_line_width (cr, y1);
-  cairo_stroke (cr);
-}
-
-static char *unsuffix_path (const char *path)
-{
-  char *ret = NULL, *last_dot, *extension;
-  char *suf;
-
-  if (!path)
-    return NULL;
-  ret = malloc (strlen (path) + 4);
-  strcpy (ret, path);
-  last_dot = strrchr (ret, '.');
-  extension = strdup (last_dot + 1);
-
-  suf = strstr(ret, suffix);
-  sprintf (suf, ".%s", extension);
-  free (extension);
-  return ret;
-}
-
-static int is_giev_path (const char *path)
-{
-  if (strstr (path, suffix)) return 1;
-  return 0;
-}
-
-static unsigned char *copy_buf = NULL;
-static int copy_buf_len = 0;
+static void contrasty_stroke (cairo_t *cr);
 
 static void mrg_gegl_blit (Mrg *mrg,
 			   float x0, float y0,
@@ -153,564 +95,133 @@ static void mrg_gegl_blit (Mrg *mrg,
 			   GeglNode *node,
 			   float u, float v,
 			   float scale,
-                           float preview_multiplier)
-{
-  float fake_factor = preview_multiplier;
-  GeglRectangle bounds;
-
-  cairo_t *cr = mrg_cr (mrg);
-  cairo_surface_t *surface = NULL;
-
-  if (!node)
-    return;
-
-  bounds = gegl_node_get_bounding_box (node);
-
-  if (width == -1 && height == -1)
-  {
-    width  = bounds.width;
-    height = bounds.height;
-  }
-
-  if (width == -1)
-    width = bounds.width * height / bounds.height;
-  if (height == -1)
-    height = bounds.height * width / bounds.width;
-
-  width /= fake_factor;
-  height /= fake_factor;
-  u /= fake_factor;
-  v /= fake_factor;
- 
-  if (copy_buf_len < width * height * 4)
-  {
-    if (copy_buf)
-      free (copy_buf);
-    copy_buf_len = width * height * 4;
-    copy_buf = malloc (copy_buf_len);
-  }
-  {
-    static int foo = 0;
-    unsigned char *buf = copy_buf;
-    GeglRectangle roi = {u, v, width, height};
-    static const Babl *fmt = NULL;
-
-foo++;
-    if (!fmt) fmt = babl_format ("cairo-RGB24");
-    gegl_node_blit (node, scale / fake_factor, &roi, fmt, buf, width * 4, 
-         GEGL_BLIT_DEFAULT);
-  surface = cairo_image_surface_create_for_data (buf, CAIRO_FORMAT_RGB24, width, height, width * 4);
-  }
-
-  cairo_save (cr);
-  cairo_surface_set_device_scale (surface, 1.0/fake_factor, 1.0/fake_factor);
-  
-  width *= fake_factor;
-  height *= fake_factor;
-  u *= fake_factor;
-  v *= fake_factor;
-
-  cairo_rectangle (cr, x0, y0, width, height);
-
-  cairo_clip (cr);
-  cairo_translate (cr, x0 * fake_factor, y0 * fake_factor);
-  cairo_pattern_set_filter (cairo_get_source (cr), CAIRO_FILTER_NEAREST);
-  cairo_set_source_surface (cr, surface, 0, 0);
-   
-  cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
-  cairo_paint (cr);
-  cairo_surface_destroy (surface);
-  cairo_restore (cr);
-}
+                           float preview_multiplier);
 
 static void load_path (State *o);
 
-static void go_next (State *o)
-{
-  char *lastslash = strrchr (o->path, '/');
-  if (lastslash)
-  {
-    struct dirent **namelist;
-    int n;
+static void go_next (State *o);
+static void go_prev (State *o);
 
-    if (lastslash == o->path)
-      lastslash[1] = '\0';
-    else
-      lastslash[0] = '\0';
 
-    n = scandir (o->path, &namelist, NULL, alphasort);
-    if (n)
-    {
-      int i;
-      int done = 0;
-      for (i = 0; i < n; i ++)
-      {
-        if (!done && !strcmp (namelist[i]->d_name, lastslash+1) && i + 1 < n)
-        {
-          char *tmp = malloc (strlen (o->path) + 2 + strlen (namelist[i+1]->d_name));
-          sprintf (tmp, "%s/%s", o->path, namelist[i+1]->d_name);
-          free (o->path);
-          o->path = tmp;
-          load_path (o);
-          done = 1;
-        }
-        free (namelist[i]);
-      }
-      free (namelist);
+static void go_next_cb (MrgEvent *event, void *data1, void *data2);
+static void go_prev_cb (MrgEvent *event, void *data1, void *data2);
 
-      if (!done)
-        lastslash[0] = '/';
-    }
-    mrg_queue_draw (o->mrg, NULL);
-  }
-}
+static void leave_editor (State *o);
 
-static void go_prev (State *o)
-{
-  char *lastslash;
-  if (access (o->giev_path, F_OK) != -1)
-  {
-    /* we need to skip from the -giev one, when walking the dir alphabetically backwards */
-    char *tmp = o->path;
-    o->path = o->giev_path;
-    o->giev_path = tmp;
-  }
-  lastslash  = strrchr (o->path, '/');
-  if (lastslash)
-  {
-    struct dirent **namelist;
-    int n;
+static void drag_preview (MrgEvent *e);
+static void load_into_buffer (State *o, const char *path);
 
-    if (lastslash == o->path)
-      lastslash[1] = '\0';
-    else
-      lastslash[0] = '\0';
+static GeglNode *locate_node (State *o, const char *op_name);
 
-    n = scandir (o->path, &namelist, NULL, alphasort);
-    if (n)
-    {
-      int i;
-      int done = 0;
-      for (i = 0; i < n; i ++)
-      {
-        if (!done && i > 0 &&
-            (namelist[i]->d_name[0] != '.') &&
-            (namelist[i-1]->d_name[0] != '.') &&
-            !strcmp (namelist[i]->d_name, lastslash+1))
-        {
-          char *tmp = malloc (strlen (o->path) + 2 + strlen (namelist[i-1]->d_name));
-          sprintf (tmp, "%s/%s", o->path, namelist[i-1]->d_name);
-          free (o->path);
-          o->path = tmp;
-          load_path (o);
-          done = 1;
-        }
-      }
-      for (i = 0; i < n; i ++)
-        free (namelist[i]);
-      free (namelist);
-      if (!done)
-        lastslash[0] = '/';
-    }
-  }
-}
+static void zoom_to_fit (State *o);
 
+static void zoom_to_fit_buffer (State *o);
+
+static void zoom_fit_cb (MrgEvent *e, void *data1, void *data2);
+static int deferred_zoom_to_fit (Mrg *mrg, void *data);
+
+static void pan_left_cb (MrgEvent *event, void *data1, void *data2);
+
+static void pan_right_cb (MrgEvent *event, void *data1, void *data2);
+
+static void pan_down_cb (MrgEvent *event, void *data1, void *data2);
+
+static void pan_up_cb (MrgEvent *event, void *data1, void *data2);
+
+static void get_coords (State *o, float screen_x, float screen_y, float *gegl_x, float *gegl_y);
+
+static void preview_more_cb (MrgEvent *event, void *data1, void *data2);
+
+static void preview_less_cb (MrgEvent *event, void *data1, void *data2);
+
+static void zoom_1_cb (MrgEvent *event, void *data1, void *data2);
+
+static void zoom_in_cb (MrgEvent *event, void *data1, void *data2);
+
+static void zoom_out_cb (MrgEvent *event, void *data1, void *data2);
+
+static void toggle_actions_cb (MrgEvent *event, void *data1, void *data2);
+
+static void toggle_fullscreen_cb (MrgEvent *event, void *data1, void *data2);
+
+
+static void activate_op_cb (MrgEvent *event, void *data1, void *data2);
+
+
+static void disable_filter_cb (MrgEvent *event, void *data1, void *data2);
+
+static void apply_filter_cb (MrgEvent *event, void *data1, void *data2);
+static void discard_cb (MrgEvent *event, void *data1, void *data2);
 static void save_cb (MrgEvent *event, void *data1, void *data2);
 
-static void go_next_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  if (o->rev)
-    save_cb (event, data1, data2);
-  go_next (data1);
-  o->active = NULL;
-  mrg_event_stop_propagate (event);
-}
 
-static void go_prev_cb (MrgEvent *event, void *data1, void *data2)
+
+
+static void toggle_show_controls_cb (MrgEvent *event, void *data1, void *data2);
+
+static void gegl_ui (Mrg *mrg, void *data);
+int mrg_ui_main (int argc, char **argv);
+
+void gegl_meta_set (const char *path, const char *meta_data);
+char * gegl_meta_get (const char *path); 
+
+static State *hack_state = NULL;  // XXX: this shoudl be factored away
+
+int mrg_ui_main (int argc, char **argv)
 {
-  State *o = data1;
-  if (o->rev)
-    save_cb (event, data1, data2);
-  go_prev (data1);
-  o->active = NULL;
-  mrg_event_stop_propagate (event);
+  Mrg *mrg = mrg_new (1024, 768, NULL);
+  State o = {NULL,};
+#ifdef USE_MIPMAPS
+  g_setenv ("GEGL_MIPMAP_RENDERING", "1", TRUE);
+#endif
+  g_setenv ("BABL_TOLERANCE", "0.1", TRUE);
+
+  gegl_init (&argc, &argv);
+  o.gegl           = gegl_node_new ();
+  o.mrg            = mrg;
+  o.scale          = 1.0;
+  o.render_quality = 1.0;
+  o.preview_quality = 4.0;
+
+  if (access (argv[1], F_OK) != -1)
+    o.path = strdup (argv[1]);
+  else
+    {
+      printf ("usage: %s <full-path-to-image>\n", argv[0]);
+      return -1;
+    }
+
+  load_path (&o);
+  mrg_set_ui (mrg, gegl_ui, &o);
+  hack_state = &o;  
+  mrg_main (mrg);
+
+  g_object_unref (o.gegl);
+  if (o.buffer)
+  {
+    g_object_unref (o.buffer);
+    o.buffer = NULL;
+  }
+  gegl_exit ();
+  return 0;
 }
 
 static void on_pan_drag (MrgEvent *e, void *data1, void *data2)
 {
   State *o = data1;
-
-  static float old_factor = 1;
-
-  switch (e->type)
+  if (e->type == MRG_DRAG_MOTION)
   {
-    case MRG_DRAG_PRESS:
-      old_factor = o->render_quality;
-      if (o->render_quality < o->preview_quality)
-        o->render_quality = o->preview_quality;
-      break;
-    case MRG_DRAG_RELEASE:
-      o->render_quality = old_factor;
-      mrg_queue_draw (e->mrg, NULL);
-      break;
-    case MRG_DRAG_MOTION:
     o->u -= (e->delta_x );
     o->v -= (e->delta_y );
     mrg_queue_draw (e->mrg, NULL);
-    break;
-    default:
-    break;
   }
+  drag_preview (e);
 }
 
-static void load_into_buffer (State *o, const char *path)
-{
-  GeglNode *gegl, *load, *sink;
-  GeglBuffer *tempbuf;
-
-  if (o->buffer)
-  {
-    g_object_unref (o->buffer);
-    o->buffer = NULL;
-  }
-
-  gegl = gegl_node_new ();
-  load = gegl_node_new_child (gegl, "operation", "gegl:load",
-                                    "path", path,
-                                    NULL);
-  sink = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink",
-                                    "buffer", &(o->buffer),
-                                    NULL);
-  gegl_node_link_many (load, sink, NULL);
-  gegl_node_process (sink);
-  g_object_unref (gegl);
-
-  tempbuf = gegl_buffer_new (gegl_buffer_get_extent (o->buffer),
-                                         babl_format ("RGBA float"));
-
-  gegl_buffer_copy (o->buffer, NULL, GEGL_ABYSS_NONE, tempbuf, NULL);
-  g_object_unref (o->buffer);
-  o->buffer = tempbuf;
-}
-
-static void zoom_to_fit (State *o)
-{
-  Mrg *mrg = o->mrg;
-  GeglRectangle rect = gegl_node_get_bounding_box (o->sink);
-  float scale, scale2;
-
-  scale = 1.0 * mrg_width (mrg) / rect.width;
-  scale2 = 1.0 * mrg_height (mrg) / rect.height;
-
-  if (scale2 < scale) scale = scale2;
-
-  o->scale = scale;
-
-  o->u = -(mrg_width (mrg) - rect.width * scale) / 2;
-  o->v = -(mrg_height (mrg) - rect.height * scale) / 2;
-  
-  o->u += rect.x * scale;
-  o->v += rect.y * scale;
-
-  mrg_queue_draw (mrg, NULL);
-}
-
-static void zoom_to_fit_buffer (State *o)
-{
-  Mrg *mrg = o->mrg;
-  GeglRectangle rect = *gegl_buffer_get_extent (o->buffer);
-  float scale, scale2;
-
-  scale = 1.0 * mrg_width (mrg) / rect.width;
-  scale2 = 1.0 * mrg_height (mrg) / rect.height;
-
-  if (scale2 < scale) scale = scale2;
-
-  o->scale = scale;
-
-  o->u = -(mrg_width (mrg) - rect.width * scale) / 2;
-  o->v = -(mrg_height (mrg) - rect.height * scale) / 2;
-  
-  o->u += rect.x * scale;
-  o->v += rect.y * scale;
-
-  mrg_queue_draw (mrg, NULL);
-}
-
-static void zoom_fit_cb (MrgEvent *e, void *data1, void *data2)
-{
-  zoom_to_fit (data1);
-}
-
-static int deferred_zoom_to_fit (Mrg *mrg, void *data)
-{
-  zoom_to_fit (data);
-  return 0;
-}
-
-static void pan_left_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  float amount = mrg_width (event->mrg) * 0.1;
-  o->u = o->u - amount;
-  mrg_queue_draw (o->mrg, NULL);
-}  
-
-static void pan_right_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  float amount = mrg_width (event->mrg) * 0.1;
-
-  o->u = o->u + amount;
-  mrg_queue_draw (o->mrg, NULL);
-}  
-
-static void pan_down_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  float amount = mrg_width (event->mrg) * 0.1;
-
-  o->v = o->v + amount;
-  mrg_queue_draw (o->mrg, NULL);
-}  
-
-static void pan_up_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  float amount = mrg_width (event->mrg) * 0.1;
-
-  o->v = o->v - amount;
-
-  mrg_queue_draw (o->mrg, NULL);
-}  
-
-static void get_coords (State *o, float screen_x, float screen_y, float *gegl_x, float *gegl_y)
-{
-  float scale = o->scale;
-  *gegl_x = (o->u + screen_x) / scale;
-  *gegl_y = (o->v + screen_y) / scale;
-}
-
-static void preview_more_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1; 
-  o->render_quality *= 2;
-  mrg_queue_draw (o->mrg, NULL);
-}
-
-static void preview_less_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1; 
-  o->render_quality /= 2;
-  if (o->render_quality <= 1.0)
-    o->render_quality = 1.0;
-
-  mrg_queue_draw (o->mrg, NULL);
-}
-
-static void zoom_1_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1; 
-  float x, y;
-  get_coords (o, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, &x, &y);
-  o->scale = 1.0;
-  o->u = x * o->scale - mrg_width(o->mrg)/2;
-  o->v = y * o->scale - mrg_height(o->mrg)/2;
-  mrg_queue_draw (o->mrg, NULL);
-}
-
-static void zoom_in_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1; 
-  float x, y;
-  get_coords (o, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, &x, &y);
-  o->scale = o->scale * 1.1;  
-  o->u = x * o->scale - mrg_width(o->mrg)/2;
-  o->v = y * o->scale - mrg_height(o->mrg)/2;
-  mrg_queue_draw (o->mrg, NULL);
-}
-
-static void zoom_out_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  float x, y;
-  get_coords (o, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, &x, &y);
-  o->scale = o->scale / 1.1;  
-  o->u = x * o->scale - mrg_width(o->mrg)/2;
-  o->v = y * o->scale - mrg_height(o->mrg)/2;
-  mrg_queue_draw (o->mrg, NULL);
-}
-
-static void toggle_actions_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  o->show_actions = !o->show_actions;
-  mrg_queue_draw (o->mrg, NULL);
-}
-
-static void toggle_fullscreen_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  mrg_set_fullscreen (event->mrg, !mrg_is_fullscreen (event->mrg));
-  mrg_event_stop_propagate (event);
-  mrg_add_timeout (event->mrg, 250, deferred_zoom_to_fit, o);
-}
-
-static GeglNode *locate_node (State *o, const char *op_name)
-{
-  GeglNode *iter = o->sink;
-  while (iter)
-   {
-     char *opname = NULL;
-     g_object_get (iter, "operation", &opname, NULL);
-     if (!strcmp (opname, op_name))
-       return iter;
-     g_free (opname);
-     iter = gegl_node_get_producer (iter, "input", NULL);
-   }
-  return NULL;
-}
-
-static void activate_op_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  GeglNode *found;
-  ActionData *ad = data2;
-
-  o->show_actions = 0;
-  o->rev ++;
-
-  found = locate_node (o, ad->op_name);
-  if (found)
-    {
-       o->active = found;
-       if (!strcmp (ad->op_name, "gegl:crop"))
-         o->rotate = locate_node (o, "gegl:rotate");
-    }
-  else
-    {
-      if (!strcmp (ad->op_name, "gegl:rotate"))
-      {
-        const GeglRectangle *extent = gegl_buffer_get_extent (o->buffer);
-        o->active = gegl_node_new_child (o->gegl,
-          "operation", ad->op_name, NULL);
-           gegl_node_set (o->active, "origin-x", extent->width * 0.5,
-                                     "origin-y", extent->height * 0.5,
-                                     "degrees", 0.0,
-                                     NULL);
-      } else if (!strcmp (ad->op_name, "gegl:crop"))
-      {
-         const GeglRectangle *extent = gegl_buffer_get_extent (o->buffer);
-         o->active = gegl_node_new_child (o->gegl,
-            "operation", ad->op_name, NULL);
-            gegl_node_set (o->active, "x", 0.0,
-                                      "y", 0.0,
-                                      "width", extent->width * 1.0,
-                                      "height", extent->height * 1.0,
-			              NULL);
-        o->rotate = gegl_node_new_child (o->gegl,
-          "operation", "gegl:rotate", NULL);
-           gegl_node_set (o->rotate, "origin-x", extent->width * 0.5,
-                                     "origin-y", extent->height * 0.5,
-                                     "degrees", 0.0,
-                                     NULL);
-
-       gegl_node_link_many (gegl_node_get_producer (o->sink, "input", NULL),
-                              o->rotate,
-                              o->sink,
-                              NULL);
-
-       } else
-       {
-          o->active = gegl_node_new_child (o->gegl, "operation", ad->op_name, NULL);
-       }
-
-       gegl_node_link_many (gegl_node_get_producer (o->sink, "input", NULL),
-                              o->active,
-                              o->sink,
-                              NULL);
-  }
-  mrg_queue_draw (o->mrg, NULL);
-}
-
-static void leave_editor (State *o)
-{
-  char *opname = NULL;
-  g_object_get (o->active, "operation", &opname, NULL);
-  if (!strcmp (opname, "gegl:crop"))
-   {
-      zoom_to_fit (o);
-   }
-}
-
-static void disable_filter_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  GeglNode *iter = o->sink;
-  GeglNode *prev = NULL;
-  GeglNode *next = NULL;
-  while (iter)
-   {
-     prev = iter;
-     iter = gegl_node_get_producer (iter, "input", NULL);
-     if (o->active == iter)
-     {
-       next = gegl_node_get_producer (iter, "input", NULL);
-       break;
-     }
-   }
-  gegl_node_link_many (next, prev, NULL);
-  leave_editor (o);
-  gegl_node_remove_child (o->gegl, o->active);
-  o->active = NULL;
-  mrg_queue_draw (o->mrg, NULL);
-}
-static void  apply_filter_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  leave_editor (o);
-  o->active = NULL;
-  mrg_queue_draw (o->mrg, NULL);
-}
-
-static void discard_cb (MrgEvent *event, void *data1, void *data2)
-{
-  State *o = data1;
-  char *old_path = strdup (o->path);
-  char *tmp;
-  char *lastslash;
-  go_next_cb (event, data1, data2); 
-  if (!strcmp (old_path, o->path))
-   {
-     go_prev_cb (event, data1, data2);
-   }
-  tmp = strdup (old_path);
-  lastslash  = strrchr (tmp, '/');
-  if (lastslash)
-  {
-    char command[2048];
-    if (lastslash == tmp)
-      lastslash[1] = '\0';
-    else
-      lastslash[0] = '\0';
-
-    sprintf (command, "mkdir %s/.discard > /dev/null 2>&1", tmp);
-    system (command);
-    sprintf (command, "mv %s %s/.discard", old_path, tmp);
-    system (command);
-  }
-  free (tmp);
-  free (old_path);
-}
-
-static State *hack_state = NULL;
 static void prop_double_drag_cb (MrgEvent *e, void *data1, void *data2)
 {
   GeglNode *node = data1;
   GParamSpec *pspec = data2;
-  State *o = hack_state;
-  static float old_factor = 1;
   GeglParamSpecDouble *gspec = data2;
   gdouble value = 0.0;
   float range = gspec->ui_maximum - gspec->ui_minimum;
@@ -718,21 +229,8 @@ static void prop_double_drag_cb (MrgEvent *e, void *data1, void *data2)
   value = e->x / mrg_width (e->mrg);
   value = value * range + gspec->ui_minimum;
   gegl_node_set (node, pspec->name, value, NULL);
-
-  switch (e->type)
-  {
-    case MRG_DRAG_PRESS:
-      old_factor = o->render_quality;
-      if (o->render_quality < o->preview_quality)
-        o->render_quality = o->preview_quality;
-      break;
-    case MRG_DRAG_RELEASE:
-      o->render_quality = old_factor;
-      mrg_queue_draw (e->mrg, NULL);
-      break;
-    default:
-    break;
-  }
+   
+  drag_preview (e);
 
   mrg_queue_draw (e->mrg, NULL);
 }
@@ -768,7 +266,6 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
       for (gint i = 0; i < n_props; i++)
       {
         mrg_set_xy (mrg, mrg_em(mrg), mrg_height (mrg) - mrg_em (mrg) * ((tot_pos-pos_no)));
-
 
         if (g_type_is_a (pspecs[i]->value_type, G_TYPE_DOUBLE))
         {
@@ -830,9 +327,6 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
 static void crop_drag_ul (MrgEvent *e, void *data1, void *data2)
 {
   GeglNode *node = data1;
-  State *o = hack_state;
-  static float old_factor = 1;
-
   double x,y,width,height;
   double x0, y0, x1, y1;
   gegl_node_get (node, "x", &x, "y", &y, "width", &width, "height", &height, NULL);
@@ -852,28 +346,12 @@ static void crop_drag_ul (MrgEvent *e, void *data1, void *data2)
     mrg_queue_draw (e->mrg, NULL);
   }
 
-  switch (e->type)
-  {
-    case MRG_DRAG_PRESS:
-      old_factor = o->render_quality;
-      if (o->render_quality < o->preview_quality)
-        o->render_quality = o->preview_quality;
-      break;
-    case MRG_DRAG_RELEASE:
-      o->render_quality = old_factor;
-      mrg_queue_draw (e->mrg, NULL);
-      break;
-    default:
-    break;
-  }
+  drag_preview (e);
 }
 
 static void crop_drag_lr (MrgEvent *e, void *data1, void *data2)
 {
   GeglNode *node = data1;
-  State *o = hack_state;
-  static float old_factor = 1;
-
   double x,y,width,height;
   double x0, y0, x1, y1;
   gegl_node_get (node, "x", &x, "y", &y, "width", &width, "height", &height, NULL);
@@ -893,29 +371,12 @@ static void crop_drag_lr (MrgEvent *e, void *data1, void *data2)
     mrg_queue_draw (e->mrg, NULL);
   }
 
-
-  switch (e->type)
-  {
-    case MRG_DRAG_PRESS:
-      old_factor = o->render_quality;
-      if (o->render_quality < o->preview_quality)
-        o->render_quality = o->preview_quality;
-      break;
-    case MRG_DRAG_RELEASE:
-      o->render_quality = old_factor;
-      mrg_queue_draw (e->mrg, NULL);
-      break;
-    default:
-    break;
-  }
+  drag_preview (e);
 }
-
 
 static void crop_drag_rotate (MrgEvent *e, void *data1, void *data2)
 {
   State *o = hack_state;
-  static float old_factor = 1;
-
   double degrees;
   gegl_node_get (o->rotate, "degrees", &degrees, NULL);
 
@@ -928,20 +389,7 @@ static void crop_drag_rotate (MrgEvent *e, void *data1, void *data2)
     mrg_queue_draw (e->mrg, NULL);
   }
 
-  switch (e->type)
-  {
-    case MRG_DRAG_PRESS:
-      old_factor = o->render_quality;
-      if (o->render_quality < o->preview_quality)
-        o->render_quality = o->preview_quality;
-      break;
-    case MRG_DRAG_RELEASE:
-      o->render_quality = old_factor;
-      mrg_queue_draw (e->mrg, NULL);
-      break;
-    default:
-    break;
-  }
+  drag_preview (e);
 }
 
 static void draw_gegl_crop (State *o, Mrg *mrg, cairo_t *cr, GeglNode *node)
@@ -1012,30 +460,6 @@ static void ui_active_op (State *o)
     draw_gegl_generic (o, mrg, cr, o->active);
     ui_op_draw_apply_disable (o);
   }
-}
-
-static void save_cb (MrgEvent *event, void *data1, void *data2)
-{
-  GeglNode *load;
-  State *o = data1;
-  gchar *path;
-  char *xml;
-
-  gegl_node_link_many (o->sink, o->save, NULL);
-  gegl_node_process (o->save);
-  gegl_node_get (o->save, "path", &path, NULL);
-  fprintf (stderr, "saved to %s\n", path);
-
-  load = gegl_node_new_child (o->gegl, "operation", "gegl:load",
-                                    "path", o->path,
-                                    NULL);
-  gegl_node_link_many (load, o->source, NULL);
-  xml = gegl_node_to_xml (o->sink, NULL);
-  gegl_node_remove_child (o->gegl, load);
-  gegl_node_link_many (o->load, o->source, NULL);
-  gegl_meta_set (path, xml);
-  g_free (xml);
-  o->rev = 0;
 }
 
 static void ui_debug_op_chain (State *o)
@@ -1134,7 +558,7 @@ static void toggle_show_controls_cb (MrgEvent *event, void *data1, void *data2)
   mrg_queue_draw (o->mrg, NULL);
 }
 
-static void ui (Mrg *mrg, void *data)
+static void gegl_ui (Mrg *mrg, void *data)
 {
   State *o = data;
   mrg_gegl_blit (mrg,
@@ -1196,43 +620,148 @@ static void ui (Mrg *mrg, void *data)
   mrg_add_binding (mrg, ".", NULL, NULL,         preview_more_cb, o);
 }
 
-#if 0
-void gegl_node_defaults (GeglNode *node)
-{
-  const gchar* op_name = gegl_node_get_operation (node);
-  {
-    guint n_props;
-    GParamSpec **pspecs = gegl_operation_list_properties (op_name, &n_props);
-    if (pspecs)
-    {
-      for (gint i = 0; i < n_props; i++)
-      {
-        if (g_type_is_a (pspecs[i]->value_type, G_TYPE_DOUBLE))
-        {
-          GParamSpecDouble    *pspec = (void*)pspecs[i];
-          gegl_node_set (node, pspecs[i]->name, pspec->default_value, NULL);
-        }
-        else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_INT))
-        {
-          GParamSpecInt *pspec = (void*)pspecs[i];
-          gegl_node_set (node, pspecs[i]->name, pspec->default_value, NULL);
-        }
-        else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_STRING))
-        {
-          GParamSpecString *pspec = (void*)pspecs[i];
-          gegl_node_set (node, pspecs[i]->name, pspec->default_value, NULL);
-        }
-      }
-      g_free (pspecs);
-    }
-  }
-}
-#endif
+/***********************************************/
 
-/* loads the source image corresponding to o->path into o->buffer and
- * creates live gegl pipeline, or nops.. rigs up o->giev_path to be
- * the location where default saves ends up.
- */
+static char *suffix_path (const char *path)
+{
+  char *ret, *last_dot;
+
+  if (!path)
+    return NULL;
+  ret  = malloc (strlen (path) + strlen (suffix) + 3);
+  strcpy (ret, path);
+  last_dot = strrchr (ret, '.');
+  if (last_dot)
+  {
+    char *extension = strdup (last_dot + 1);
+    sprintf (last_dot, "%s.%s", suffix, extension);
+   free (extension);
+  }
+  else
+  {
+    sprintf (ret, "%s%s", path, suffix);
+  }
+  return ret;
+}
+
+static char *unsuffix_path (const char *path)
+{
+  char *ret = NULL, *last_dot, *extension;
+  char *suf;
+
+  if (!path)
+    return NULL;
+  ret = malloc (strlen (path) + 4);
+  strcpy (ret, path);
+  last_dot = strrchr (ret, '.');
+  extension = strdup (last_dot + 1);
+
+  suf = strstr(ret, suffix);
+  sprintf (suf, ".%s", extension);
+  free (extension);
+  return ret;
+}
+
+static int is_giev_path (const char *path)
+{
+  if (strstr (path, suffix)) return 1;
+  return 0;
+}
+
+static void contrasty_stroke (cairo_t *cr)
+{
+  double x0 = 6.0, y0 = 6.0;
+  double x1 = 4.0, y1 = 4.0;
+
+  cairo_device_to_user_distance (cr, &x0, &y0);
+  cairo_device_to_user_distance (cr, &x1, &y1);
+  cairo_set_source_rgba (cr, 0,0,0,0.5);
+  cairo_set_line_width (cr, y0);
+  cairo_stroke_preserve (cr);
+  cairo_set_source_rgba (cr, 1,1,1,0.5);
+  cairo_set_line_width (cr, y1);
+  cairo_stroke (cr);
+}
+
+static unsigned char *copy_buf = NULL;
+static int copy_buf_len = 0;
+
+static void mrg_gegl_blit (Mrg *mrg,
+			   float x0, float y0,
+			   float width, float height,
+			   GeglNode *node,
+			   float u, float v,
+			   float scale,
+                           float preview_multiplier)
+{
+  float fake_factor = preview_multiplier;
+  GeglRectangle bounds;
+
+  cairo_t *cr = mrg_cr (mrg);
+  cairo_surface_t *surface = NULL;
+
+  if (!node)
+    return;
+
+  bounds = gegl_node_get_bounding_box (node);
+
+  if (width == -1 && height == -1)
+  {
+    width  = bounds.width;
+    height = bounds.height;
+  }
+
+  if (width == -1)
+    width = bounds.width * height / bounds.height;
+  if (height == -1)
+    height = bounds.height * width / bounds.width;
+
+  width /= fake_factor;
+  height /= fake_factor;
+  u /= fake_factor;
+  v /= fake_factor;
+ 
+  if (copy_buf_len < width * height * 4)
+  {
+    if (copy_buf)
+      free (copy_buf);
+    copy_buf_len = width * height * 4;
+    copy_buf = malloc (copy_buf_len);
+  }
+  {
+    static int foo = 0;
+    unsigned char *buf = copy_buf;
+    GeglRectangle roi = {u, v, width, height};
+    static const Babl *fmt = NULL;
+
+foo++;
+    if (!fmt) fmt = babl_format ("cairo-RGB24");
+    gegl_node_blit (node, scale / fake_factor, &roi, fmt, buf, width * 4, 
+         GEGL_BLIT_DEFAULT);
+  surface = cairo_image_surface_create_for_data (buf, CAIRO_FORMAT_RGB24, width, height, width * 4);
+  }
+
+  cairo_save (cr);
+  cairo_surface_set_device_scale (surface, 1.0/fake_factor, 1.0/fake_factor);
+  
+  width *= fake_factor;
+  height *= fake_factor;
+  u *= fake_factor;
+  v *= fake_factor;
+
+  cairo_rectangle (cr, x0, y0, width, height);
+
+  cairo_clip (cr);
+  cairo_translate (cr, x0 * fake_factor, y0 * fake_factor);
+  cairo_pattern_set_filter (cairo_get_source (cr), CAIRO_FILTER_NEAREST);
+  cairo_set_source_surface (cr, surface, 0, 0);
+   
+  cairo_set_operator (cr, CAIRO_OPERATOR_SOURCE);
+  cairo_paint (cr);
+  cairo_surface_destroy (surface);
+  cairo_restore (cr);
+}
+
 static void load_path (State *o)
 {
   char *path;
@@ -1316,46 +845,529 @@ static void load_path (State *o)
   o->rev = 0;
 }
 
-int mrg_ui_main (int argc, char **argv);
-int mrg_ui_main (int argc, char **argv)
+
+static void go_next (State *o)
 {
-  Mrg *mrg = mrg_new (1024, 768, NULL);
-  State o = {NULL,};
-#ifdef USE_MIPMAPS
-  g_setenv ("GEGL_MIPMAP_RENDERING", "1", TRUE);
-#endif
-  g_setenv ("BABL_TOLERANCE", "0.1", TRUE);
-
-  gegl_init (&argc, &argv);
-  o.gegl           = gegl_node_new ();
-  o.mrg            = mrg;
-  o.scale          = 1.0;
-  o.render_quality = 1.0;
-  o.preview_quality = 4.0;
-
-  if (access (argv[1], F_OK) != -1)
-    o.path = strdup (argv[1]);
-  else
-    {
-      printf ("usage: %s <full-path-to-image>\n", argv[0]);
-      return -1;
-    }
-
-  load_path (&o);
-  mrg_set_ui (mrg, ui, &o);
-  hack_state = &o;
-  mrg_main (mrg);
-
-  g_object_unref (o.gegl);
-  if (o.buffer)
+  char *lastslash = strrchr (o->path, '/');
+  if (lastslash)
   {
-    g_object_unref (o.buffer);
-    o.buffer = NULL;
+    struct dirent **namelist;
+    int n;
+
+    if (lastslash == o->path)
+      lastslash[1] = '\0';
+    else
+      lastslash[0] = '\0';
+
+    n = scandir (o->path, &namelist, NULL, alphasort);
+    if (n)
+    {
+      int i;
+      int done = 0;
+      for (i = 0; i < n; i ++)
+      {
+        if (!done && !strcmp (namelist[i]->d_name, lastslash+1) && i + 1 < n)
+        {
+          char *tmp = malloc (strlen (o->path) + 2 + strlen (namelist[i+1]->d_name));
+          sprintf (tmp, "%s/%s", o->path, namelist[i+1]->d_name);
+          free (o->path);
+          o->path = tmp;
+          load_path (o);
+          done = 1;
+        }
+        free (namelist[i]);
+      }
+      free (namelist);
+
+      if (!done)
+        lastslash[0] = '/';
+    }
+    mrg_queue_draw (o->mrg, NULL);
   }
-  gegl_exit ();
+}
+
+static void go_prev (State *o)
+{
+  char *lastslash;
+  if (access (o->giev_path, F_OK) != -1)
+  {
+    /* we need to skip from the -giev one, when walking the dir alphabetically backwards */
+    char *tmp = o->path;
+    o->path = o->giev_path;
+    o->giev_path = tmp;
+  }
+  lastslash  = strrchr (o->path, '/');
+  if (lastslash)
+  {
+    struct dirent **namelist;
+    int n;
+
+    if (lastslash == o->path)
+      lastslash[1] = '\0';
+    else
+      lastslash[0] = '\0';
+
+    n = scandir (o->path, &namelist, NULL, alphasort);
+    if (n)
+    {
+      int i;
+      int done = 0;
+      for (i = 0; i < n; i ++)
+      {
+        if (!done && i > 0 &&
+            (namelist[i]->d_name[0] != '.') &&
+            (namelist[i-1]->d_name[0] != '.') &&
+            !strcmp (namelist[i]->d_name, lastslash+1))
+        {
+          char *tmp = malloc (strlen (o->path) + 2 + strlen (namelist[i-1]->d_name));
+          sprintf (tmp, "%s/%s", o->path, namelist[i-1]->d_name);
+          free (o->path);
+          o->path = tmp;
+          load_path (o);
+          done = 1;
+        }
+      }
+      for (i = 0; i < n; i ++)
+        free (namelist[i]);
+      free (namelist);
+      if (!done)
+        lastslash[0] = '/';
+    }
+  }
+}
+
+static void go_next_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  if (o->rev)
+    save_cb (event, data1, data2);
+  go_next (data1);
+  o->active = NULL;
+  mrg_event_stop_propagate (event);
+}
+
+static void go_prev_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  if (o->rev)
+    save_cb (event, data1, data2);
+  go_prev (data1);
+  o->active = NULL;
+  mrg_event_stop_propagate (event);
+}
+
+static void leave_editor (State *o)
+{
+  char *opname = NULL;
+  g_object_get (o->active, "operation", &opname, NULL);
+  if (!strcmp (opname, "gegl:crop"))
+   {
+      zoom_to_fit (o);
+   }
+}
+
+static void drag_preview (MrgEvent *e)
+{
+  State *o = hack_state;
+  static float old_factor = 1;
+  switch (e->type)
+  {
+    case MRG_DRAG_PRESS:
+      old_factor = o->render_quality;
+      if (o->render_quality < o->preview_quality)
+        o->render_quality = o->preview_quality;
+      break;
+    case MRG_DRAG_RELEASE:
+      o->render_quality = old_factor;
+      mrg_queue_draw (e->mrg, NULL);
+      break;
+    default:
+    break;
+  }
+}
+
+static void load_into_buffer (State *o, const char *path)
+{
+  GeglNode *gegl, *load, *sink;
+  GeglBuffer *tempbuf;
+
+  if (o->buffer)
+  {
+    g_object_unref (o->buffer);
+    o->buffer = NULL;
+  }
+
+  gegl = gegl_node_new ();
+  load = gegl_node_new_child (gegl, "operation", "gegl:load",
+                                    "path", path,
+                                    NULL);
+  sink = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink",
+                                    "buffer", &(o->buffer),
+                                    NULL);
+  gegl_node_link_many (load, sink, NULL);
+  gegl_node_process (sink);
+  g_object_unref (gegl);
+
+  tempbuf = gegl_buffer_new (gegl_buffer_get_extent (o->buffer),
+                                         babl_format ("RGBA float"));
+
+  gegl_buffer_copy (o->buffer, NULL, GEGL_ABYSS_NONE, tempbuf, NULL);
+  g_object_unref (o->buffer);
+  o->buffer = tempbuf;
+}
+
+static GeglNode *locate_node (State *o, const char *op_name)
+{
+  GeglNode *iter = o->sink;
+  while (iter)
+   {
+     char *opname = NULL;
+     g_object_get (iter, "operation", &opname, NULL);
+     if (!strcmp (opname, op_name))
+       return iter;
+     g_free (opname);
+     iter = gegl_node_get_producer (iter, "input", NULL);
+   }
+  return NULL;
+}
+static void zoom_to_fit (State *o)
+{
+  Mrg *mrg = o->mrg;
+  GeglRectangle rect = gegl_node_get_bounding_box (o->sink);
+  float scale, scale2;
+
+  scale = 1.0 * mrg_width (mrg) / rect.width;
+  scale2 = 1.0 * mrg_height (mrg) / rect.height;
+
+  if (scale2 < scale) scale = scale2;
+
+  o->scale = scale;
+
+  o->u = -(mrg_width (mrg) - rect.width * scale) / 2;
+  o->v = -(mrg_height (mrg) - rect.height * scale) / 2;
+  
+  o->u += rect.x * scale;
+  o->v += rect.y * scale;
+
+  mrg_queue_draw (mrg, NULL);
+}
+
+static void zoom_to_fit_buffer (State *o)
+{
+  Mrg *mrg = o->mrg;
+  GeglRectangle rect = *gegl_buffer_get_extent (o->buffer);
+  float scale, scale2;
+
+  scale = 1.0 * mrg_width (mrg) / rect.width;
+  scale2 = 1.0 * mrg_height (mrg) / rect.height;
+
+  if (scale2 < scale) scale = scale2;
+
+  o->scale = scale;
+  o->u = -(mrg_width (mrg) - rect.width * scale) / 2;
+  o->v = -(mrg_height (mrg) - rect.height * scale) / 2;
+  o->u += rect.x * scale;
+  o->v += rect.y * scale;
+  mrg_queue_draw (mrg, NULL);
+}
+
+static void zoom_fit_cb (MrgEvent *e, void *data1, void *data2)
+{
+  zoom_to_fit (data1);
+}
+
+static int deferred_zoom_to_fit (Mrg *mrg, void *data)
+{
+  zoom_to_fit (data);
   return 0;
 }
 
+static void pan_left_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  float amount = mrg_width (event->mrg) * 0.1;
+  o->u = o->u - amount;
+  mrg_queue_draw (o->mrg, NULL);
+}  
+
+static void pan_right_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  float amount = mrg_width (event->mrg) * 0.1;
+  o->u = o->u + amount;
+  mrg_queue_draw (o->mrg, NULL);
+}  
+
+static void pan_down_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  float amount = mrg_width (event->mrg) * 0.1;
+  o->v = o->v + amount;
+  mrg_queue_draw (o->mrg, NULL);
+}  
+
+static void pan_up_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  float amount = mrg_width (event->mrg) * 0.1;
+  o->v = o->v - amount;
+  mrg_queue_draw (o->mrg, NULL);
+}  
+
+static void get_coords (State *o, float screen_x, float screen_y, float *gegl_x, float *gegl_y)
+{
+  float scale = o->scale;
+  *gegl_x = (o->u + screen_x) / scale;
+  *gegl_y = (o->v + screen_y) / scale;
+}
+
+static void preview_more_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1; 
+  o->render_quality *= 2;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void preview_less_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1; 
+  o->render_quality /= 2;
+  if (o->render_quality <= 1.0)
+    o->render_quality = 1.0;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void zoom_1_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1; 
+  float x, y;
+  get_coords (o, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, &x, &y);
+  o->scale = 1.0;
+  o->u = x * o->scale - mrg_width(o->mrg)/2;
+  o->v = y * o->scale - mrg_height(o->mrg)/2;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void zoom_in_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1; 
+  float x, y;
+  get_coords (o, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, &x, &y);
+  o->scale = o->scale * 1.1;  
+  o->u = x * o->scale - mrg_width(o->mrg)/2;
+  o->v = y * o->scale - mrg_height(o->mrg)/2;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void zoom_out_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  float x, y;
+  get_coords (o, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, &x, &y);
+  o->scale = o->scale / 1.1;  
+  o->u = x * o->scale - mrg_width(o->mrg)/2;
+  o->v = y * o->scale - mrg_height(o->mrg)/2;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void toggle_actions_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  o->show_actions = !o->show_actions;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void toggle_fullscreen_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  mrg_set_fullscreen (event->mrg, !mrg_is_fullscreen (event->mrg));
+  mrg_event_stop_propagate (event);
+  mrg_add_timeout (event->mrg, 250, deferred_zoom_to_fit, o);
+}
+
+
+static void activate_op_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  GeglNode *found;
+  ActionData *ad = data2;
+  o->show_actions = 0;
+  o->rev ++;
+  found = locate_node (o, ad->op_name);
+  if (found)
+    {
+       o->active = found;
+       if (!strcmp (ad->op_name, "gegl:crop"))
+         o->rotate = locate_node (o, "gegl:rotate");
+    }
+  else
+    {
+      if (!strcmp (ad->op_name, "gegl:rotate"))
+      {
+        const GeglRectangle *extent = gegl_buffer_get_extent (o->buffer);
+        o->active = gegl_node_new_child (o->gegl,
+          "operation", ad->op_name, NULL);
+           gegl_node_set (o->active, "origin-x", extent->width * 0.5,
+                                     "origin-y", extent->height * 0.5,
+                                     "degrees", 0.0,
+                                     NULL);
+      } else if (!strcmp (ad->op_name, "gegl:crop"))
+      {
+         const GeglRectangle *extent = gegl_buffer_get_extent (o->buffer);
+         o->active = gegl_node_new_child (o->gegl,
+            "operation", ad->op_name, NULL);
+            gegl_node_set (o->active, "x", 0.0,
+                                      "y", 0.0,
+                                      "width", extent->width * 1.0,
+                                      "height", extent->height * 1.0,
+			              NULL);
+        o->rotate = gegl_node_new_child (o->gegl,
+          "operation", "gegl:rotate", NULL);
+           gegl_node_set (o->rotate, "origin-x", extent->width * 0.5,
+                                     "origin-y", extent->height * 0.5,
+                                     "degrees", 0.0,
+                                     NULL);
+
+       gegl_node_link_many (gegl_node_get_producer (o->sink, "input", NULL),
+                              o->rotate,
+                              o->sink,
+                              NULL);
+
+       } else
+       {
+          o->active = gegl_node_new_child (o->gegl, "operation", ad->op_name, NULL);
+       }
+
+       gegl_node_link_many (gegl_node_get_producer (o->sink, "input", NULL),
+                              o->active,
+                              o->sink,
+                              NULL);
+  }
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void disable_filter_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  GeglNode *iter = o->sink;
+  GeglNode *prev = NULL;
+  GeglNode *next = NULL;
+  while (iter)
+   {
+     prev = iter;
+     iter = gegl_node_get_producer (iter, "input", NULL);
+     if (o->active == iter)
+     {
+       next = gegl_node_get_producer (iter, "input", NULL);
+       break;
+     }
+   }
+  gegl_node_link_many (next, prev, NULL);
+  leave_editor (o);
+  gegl_node_remove_child (o->gegl, o->active);
+  o->active = NULL;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void  apply_filter_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  leave_editor (o);
+  o->active = NULL;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void discard_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  char *old_path = strdup (o->path);
+  char *tmp;
+  char *lastslash;
+  go_next_cb (event, data1, data2); 
+  if (!strcmp (old_path, o->path))
+   {
+     go_prev_cb (event, data1, data2);
+   }
+  tmp = strdup (old_path);
+  lastslash  = strrchr (tmp, '/');
+  if (lastslash)
+  {
+    char command[2048];
+    if (lastslash == tmp)
+      lastslash[1] = '\0';
+    else
+      lastslash[0] = '\0';
+
+    sprintf (command, "mkdir %s/.discard > /dev/null 2>&1", tmp);
+    system (command);
+    sprintf (command, "mv %s %s/.discard", old_path, tmp);
+    system (command);
+  }
+  free (tmp);
+  free (old_path);
+}
+
+static void save_cb (MrgEvent *event, void *data1, void *data2)
+{
+  GeglNode *load;
+  State *o = data1;
+  gchar *path;
+  char *xml;
+
+  gegl_node_link_many (o->sink, o->save, NULL);
+  gegl_node_process (o->save);
+  gegl_node_get (o->save, "path", &path, NULL);
+  fprintf (stderr, "saved to %s\n", path);
+
+  load = gegl_node_new_child (o->gegl, "operation", "gegl:load",
+                                    "path", o->path,
+                                    NULL);
+  gegl_node_link_many (load, o->source, NULL);
+  xml = gegl_node_to_xml (o->sink, NULL);
+  gegl_node_remove_child (o->gegl, load);
+  gegl_node_link_many (o->load, o->source, NULL);
+  gegl_meta_set (path, xml);
+  g_free (xml);
+  o->rev = 0;
+}
+
+#if 0
+void gegl_node_defaults (GeglNode *node)
+{
+  const gchar* op_name = gegl_node_get_operation (node);
+  {
+    guint n_props;
+    GParamSpec **pspecs = gegl_operation_list_properties (op_name, &n_props);
+    if (pspecs)
+    {
+      for (gint i = 0; i < n_props; i++)
+      {
+        if (g_type_is_a (pspecs[i]->value_type, G_TYPE_DOUBLE))
+        {
+          GParamSpecDouble    *pspec = (void*)pspecs[i];
+          gegl_node_set (node, pspecs[i]->name, pspec->default_value, NULL);
+        }
+        else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_INT))
+        {
+          GParamSpecInt *pspec = (void*)pspecs[i];
+          gegl_node_set (node, pspecs[i]->name, pspec->default_value, NULL);
+        }
+        else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_STRING))
+        {
+          GParamSpecString *pspec = (void*)pspecs[i];
+          gegl_node_set (node, pspecs[i]->name, pspec->default_value, NULL);
+        }
+      }
+      g_free (pspecs);
+    }
+  }
+}
+#endif
+
+/* loads the source image corresponding to o->path into o->buffer and
+ * creates live gegl pipeline, or nops.. rigs up o->giev_path to be
+ * the location where default saves ends up.
+ */
 void
 gegl_meta_set (const char *path,
                const char *meta_data)
