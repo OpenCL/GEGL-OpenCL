@@ -22,12 +22,13 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/gegl/property-types
 
 AM_CFLAGS = \
-	$(DEP_CFLAGS) $(BABL_CFLAGS) $(PNG_CFLAGS)
-
+	$(DEP_CFLAGS) $(BABL_CFLAGS) $(PNG_CFLAGS) \
+        $(MRG_CFLAGS) $(GEXIV2_CFLAGS)
 
 AM_LDFLAGS =  \
 	$(no_undefined) ../gegl/libgegl-$(GEGL_API_VERSION).la \
-	$(DEP_LIBS) $(BABL_LIBS) $(PNG_LIBS) $(LIBSPIRO) $(MATH_LIB)
+	$(DEP_LIBS) $(BABL_LIBS) $(PNG_LIBS) $(LIBSPIRO) $(MATH_LIB) \
+        $(MRG_LIBS) $(GEXIV2_LIBS)
 
 bin_PROGRAMS = gegl gegl-tester
 
@@ -40,6 +41,10 @@ gegl_SOURCES =			\
 
 gegl_tester_SOURCES = \
 	gegl-tester.c
+
+if HAVE_MRG
+gegl_SOURCES += mrg-ui.c
+endif
 
 if HAVE_SPIRO
 gegl_SOURCES += gegl-path-spiro.h gegl-path-spiro.c
