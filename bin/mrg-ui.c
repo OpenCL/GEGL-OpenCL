@@ -16,6 +16,11 @@
  * Copyright (C) 2015 Øyvind Kolås pippin@gimp.org
  */
 
+/* The code in this file is an image viewer/editor written using microraptor
+ * gui and GEGL.
+ */
+
+
 #define _BSD_SOURCE
 #define _DEFAULT_SOURCE
 
@@ -172,16 +177,22 @@ int mrg_ui_main (int argc, char **argv)
   Mrg *mrg = mrg_new (1024, 768, NULL);
   State o = {NULL,};
 #ifdef USE_MIPMAPS
+  /* to use this UI comfortably, mipmap rendering needs to be enabled, there are
+   * still a few glitches, but for basic full frame un-panned, un-cropped use it
+   * already works well.
+   */
   g_setenv ("GEGL_MIPMAP_RENDERING", "1", TRUE);
 #endif
+
+/* we want to see the speed gotten if the fastest babl conversions we have were more accurate */
   g_setenv ("BABL_TOLERANCE", "0.1", TRUE);
 
   gegl_init (&argc, &argv);
-  o.gegl           = gegl_node_new ();
-  o.mrg            = mrg;
-  o.scale          = 1.0;
-  o.render_quality = 1.0;
-  o.preview_quality = 4.0;
+  o.gegl            = gegl_node_new ();
+  o.mrg             = mrg;
+  o.scale           = 1.0;
+  o.render_quality  = 1.0;
+  o.preview_quality = 2.0;
 
   if (access (argv[1], F_OK) != -1)
     o.path = strdup (argv[1]);
