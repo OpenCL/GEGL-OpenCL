@@ -47,6 +47,8 @@ struct _State {
 
   char       *path;
   char       *gegl_path;
+
+
   GeglBuffer *buffer;
   GeglNode   *gegl;
   GeglNode   *sink;
@@ -1024,12 +1026,14 @@ static void load_into_buffer (State *o, const char *path)
   gegl_node_process (sink);
   g_object_unref (gegl);
 
+#if 0 /* hack to see if having the data in some formats already is faster */
   tempbuf = gegl_buffer_new (gegl_buffer_get_extent (o->buffer),
                                          babl_format ("RGBA float"));
 
   gegl_buffer_copy (o->buffer, NULL, GEGL_ABYSS_NONE, tempbuf, NULL);
   g_object_unref (o->buffer);
   o->buffer = tempbuf;
+#endif
 }
 
 static GeglNode *locate_node (State *o, const char *op_name)
