@@ -176,8 +176,10 @@ main (gint    argc,
   
   if (o->mode == GEGL_RUN_MODE_DISPLAY)
     {
+#if HAVE_MRG
       mrg_ui_main (argc, argv);
       return 0;
+#endif
     }
 
   gegl = gegl_node_new_from_xml (script, path_root);
