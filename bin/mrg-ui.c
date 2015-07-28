@@ -17,9 +17,8 @@
  */
 
 /* The code in this file is an image viewer/editor written using microraptor
- * gui and GEGL.
+ * gui and GEGL. It renders the UI directly from GEGLs data structures. 
  */
-
 
 #define _BSD_SOURCE
 #define _DEFAULT_SOURCE
@@ -38,34 +37,16 @@
 #include <gexiv2/gexiv2.h>
 #include <gegl-paramspecs.h>
 
-typedef struct ActionData {
-  const char *label;
-  float priority;
-  const char *op_name;
-} ActionData;
-
-ActionData actions[]={
-  {"rotate",            10,  "gegl:rotate"},
-  {"crop",              20,  "gegl:crop"},
-  {"color temperature", 50,  "gegl:color-temperature"},
-  {"exposure",          60,  "gegl:exposure"},
-  {"levels",            60,  "gegl:levels"},
-  {"threshold",         70,  "gegl:threshold"},
-  {NULL, 0, NULL}, /* sentinel */
-};
-
-static char *suffix = "-giev";
-
-#define USE_MIPMAPS    1
-#define DEBUG_OP_LIST  1
-
+/*  this structure contains the full application state, and is what
+ *  re-renderings of the UI is directly based on.
+ */
 typedef struct _State State;
 struct _State {
   void      (*ui) (Mrg *mrg, void *state);
   Mrg        *mrg;
 
   char       *path;
-  char       *giev_path;
+  char       *gegl_path;
   GeglBuffer *buffer;
   GeglNode   *gegl;
   GeglNode   *sink;
@@ -85,12 +66,36 @@ struct _State {
   float       preview_quality;
 };
 
+
+typedef struct ActionData {
+  const char *label;
+  float priority; /* XXX: not yey used, should force scale/crop to happen early */
+  const char *op_name;
+} ActionData;
+
+/* white-list of operations useful for improving photos
+ */
+ActionData actions[]={
+  {"rotate",            10,  "gegl:rotate"},
+  {"crop",              20,  "gegl:crop"},
+  {"color temperature", 50,  "gegl:color-temperature"},
+  {"exposure",          60,  "gegl:exposure"},
+  //{"levels",            60,  "gegl:levels"},
+  //{"threshold",         70,  "gegl:threshold"},
+  {NULL, 0, NULL}, /* sentinel */
+};
+
+static char *suffix = "-gegl";
+
+#define USE_MIPMAPS    1
+#define DEBUG_OP_LIST  1
+
 void   gegl_meta_set (const char *path, const char *meta_data);
 char * gegl_meta_get (const char *path);
 
 static char *suffix_path (const char *path);
 static char *unsuffix_path (const char *path);
-static int is_giev_path (const char *path);
+static int is_gegl_path (const char *path);
 
 static void contrasty_stroke (cairo_t *cr);
 
@@ -195,7 +200,7 @@ int mrg_ui_main (int argc, char **argv)
   o.preview_quality = 2.0;
 
   if (access (argv[1], F_OK) != -1)
-    o.path = strdup (argv[1]);
+    o.path = realpath (argv[1], NULL);
   else
     {
       printf ("usage: %s <full-path-to-image>\n", argv[0]);
@@ -673,7 +678,7 @@ static char *unsuffix_path (const char *path)
   return ret;
 }
 
-static int is_giev_path (const char *path)
+static int is_gegl_path (const char *path)
 {
   if (strstr (path, suffix)) return 1;
   return 0;
@@ -777,23 +782,23 @@ static void load_path (State *o)
 {
   char *path;
   char *meta;
-  if (is_giev_path (o->path))
+  if (is_gegl_path (o->path))
   {
-    if (o->giev_path)
-      free (o->giev_path);
-    o->giev_path = o->path;
-    o->path = unsuffix_path (o->giev_path);
+    if (o->gegl_path)
+      free (o->gegl_path);
+    o->gegl_path = o->path;
+    o->path = unsuffix_path (o->gegl_path);
   }
   else
   {
-    if (o->giev_path)
-      free (o->giev_path);
-    o->giev_path = suffix_path (o->path);
+    if (o->gegl_path)
+      free (o->gegl_path);
+    o->gegl_path = suffix_path (o->path);
   }
   path  = o->path;
 
-  if (access (o->giev_path, F_OK) != -1)
-    path = o->giev_path;
+  if (access (o->gegl_path, F_OK) != -1)
+    path = o->gegl_path;
 
   g_object_unref (o->gegl);
   o->gegl = NULL;
@@ -845,7 +850,7 @@ static void load_path (State *o)
 			       NULL);
     o->save         = gegl_node_new_child (o->gegl,
   		     "operation", "gegl:save",
-  		     "path", o->giev_path,
+  		     "path", o->gegl_path,
   		     NULL);
     gegl_node_link_many (o->load, o->source, o->sink, NULL);
     gegl_node_set (o->load, "buffer", o->buffer, NULL);
@@ -900,12 +905,12 @@ static void go_next (State *o)
 static void go_prev (State *o)
 {
   char *lastslash;
-  if (access (o->giev_path, F_OK) != -1)
+  if (access (o->gegl_path, F_OK) != -1)
   {
-    /* we need to skip from the -giev one, when walking the dir alphabetically backwards */
+    /* we need to skip from the -gegl one, when walking the dir alphabetically backwards */
     char *tmp = o->path;
-    o->path = o->giev_path;
-    o->giev_path = tmp;
+    o->path = o->gegl_path;
+    o->gegl_path = tmp;
   }
   lastslash  = strrchr (o->path, '/');
   if (lastslash)
@@ -1376,7 +1381,7 @@ void gegl_node_defaults (GeglNode *node)
 #endif
 
 /* loads the source image corresponding to o->path into o->buffer and
- * creates live gegl pipeline, or nops.. rigs up o->giev_path to be
+ * creates live gegl pipeline, or nops.. rigs up o->gegl_path to be
  * the location where default saves ends up.
  */
 void
