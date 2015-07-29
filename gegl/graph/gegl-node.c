@@ -963,12 +963,15 @@ gegl_node_apply_roi (GeglNode            *self,
     }
 }
 
-static void
-gegl_node_blit_buffer2 (GeglNode            *self,
-                        GeglBuffer          *buffer,
-                        const GeglRectangle *roi,
-                        gint                 level) // XXX: add abyss policy
+void
+gegl_node_blit_buffer (GeglNode            *self,
+                       GeglBuffer          *buffer,
+                       const GeglRectangle *roi,
+                       gint                 level,
+                       GeglAbyssPolicy      abyss_policy) 
 {
+  // XXX: make use of abyss_policy
+
   GeglEvalManager *eval_manager;
   GeglBuffer      *result;
   GeglRectangle    request;
@@ -990,14 +993,6 @@ gegl_node_blit_buffer2 (GeglNode            *self,
         gegl_buffer_copy (result, &request, GEGL_ABYSS_NONE, buffer, NULL);
       g_object_unref (result);
     }
-}
-
-void
-gegl_node_blit_buffer (GeglNode            *self,
-                       GeglBuffer          *buffer,
-                       const GeglRectangle *roi)
-{
-  gegl_node_blit_buffer2 (self, buffer, roi, 0);
 }
 
 static inline gboolean gegl_mipmap_rendering_enabled (void)
@@ -1056,12 +1051,12 @@ gegl_node_blit (GeglNode            *self,
               const GeglRectangle unscaled_roi = _gegl_get_required_for_scale (format, roi, scale);
               gint  level = gegl_mipmap_rendering_enabled()?gegl_level_from_scale (scale):0;
 
-              gegl_node_blit_buffer2 (self, buffer, &unscaled_roi, level);
+              gegl_node_blit_buffer (self, buffer, &unscaled_roi, level, GEGL_ABYSS_NONE);
               gegl_cache_computed (cache, &unscaled_roi, level);
             }
           else
             {
-              gegl_node_blit_buffer (self, buffer, roi);
+              gegl_node_blit_buffer (self, buffer, roi, 0, GEGL_ABYSS_NONE);
               gegl_cache_computed (cache, roi, 0);
             }
         }

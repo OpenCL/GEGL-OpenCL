@@ -52,7 +52,9 @@ test_scale (const gdouble scale, const gint x, const gint y, const Babl *format)
 
   gegl_node_blit_buffer (checkerboard,
                          tmp_buffer,
-                         NULL);
+                         NULL,
+                         0,
+                         GEGL_ABYSS_NONE);
 
   gegl_buffer_get (tmp_buffer,
                    GEGL_RECTANGLE (x, y, scaled_width, scaled_height),

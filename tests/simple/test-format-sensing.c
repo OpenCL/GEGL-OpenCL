@@ -50,7 +50,7 @@ test_buffer_sink_001 (void)
 
   gegl_node_link_many (src, sink, NULL);
 
-  gegl_node_blit_buffer (sink, NULL, NULL);
+  gegl_node_blit_buffer (sink, NULL, NULL, 0, GEGL_ABYSS_NONE);
 
   if (gegl_buffer_get_format (src_buffer) != gegl_buffer_get_format (sink_buffer))
     result = FALSE;
@@ -99,7 +99,7 @@ test_opacity_common (const Babl *in_format,
 
   gegl_node_link_many (src, opacity, sink, NULL);
 
-  gegl_node_blit_buffer (sink, NULL, NULL);
+  gegl_node_blit_buffer (sink, NULL, NULL, 0, GEGL_ABYSS_NONE);
 
   if (out_format != gegl_buffer_get_format (sink_buffer))
     {

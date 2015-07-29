@@ -293,12 +293,15 @@ void          gegl_node_blit             (GeglNode            *node,
  * @node: a #GeglNode
  * @buffer: (transfer none) (allow-none): the #GeglBuffer to render to.
  * @roi: (allow-none): the rectangle to render.
+ * @level: mipmap level to render (0 for all)
  *
  * Render a rectangular region from a node to the given buffer.
  */
 void          gegl_node_blit_buffer      (GeglNode            *node,
                                           GeglBuffer          *buffer,
-                                          const GeglRectangle *roi);
+                                          const GeglRectangle *roi,
+                                          int                  level,
+                                          GeglAbyssPolicy      abyss_policy);
 
 /**
  * gegl_node_process:

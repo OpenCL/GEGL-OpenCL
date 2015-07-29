@@ -56,7 +56,7 @@ test_convert_common (const Babl *in_format,
 
   gegl_node_link_many (src, convert, sink, NULL);
 
-  gegl_node_blit_buffer (sink, NULL, NULL);
+  gegl_node_blit_buffer (sink, NULL, NULL, 0, GEGL_ABYSS_NONE);
 
   if (out_format != gegl_buffer_get_format (sink_buffer))
     {
