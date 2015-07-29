@@ -66,6 +66,8 @@ struct _State {
 
   float       render_quality;
   float       preview_quality;
+
+  int         controls_timeout;
 };
 
 
@@ -179,6 +181,7 @@ char * gegl_meta_get (const char *path);
 
 static State *hack_state = NULL;  // XXX: this shoudl be factored away
 
+static void on_viewer_motion (MrgEvent *e, void *data1, void *data2);
 int mrg_ui_main (int argc, char **argv)
 {
   Mrg *mrg = mrg_new (1024, 768, NULL);
@@ -212,6 +215,7 @@ int mrg_ui_main (int argc, char **argv)
   load_path (&o);
   mrg_set_ui (mrg, gegl_ui, &o);
   hack_state = &o;  
+  on_viewer_motion (NULL, &o, NULL);
   mrg_main (mrg);
 
   g_object_unref (o.gegl);
@@ -222,6 +226,33 @@ int mrg_ui_main (int argc, char **argv)
   }
   gegl_exit ();
   return 0;
+}
+
+static int hide_controls_cb (Mrg *mrg, void *data)
+{
+  State *o = data;
+  o->controls_timeout = 0;
+  o->show_controls = 0;
+  mrg_queue_draw (o->mrg, NULL);
+  return 0;
+}
+
+static void on_viewer_motion (MrgEvent *e, void *data1, void *data2)
+{
+  State *o = data1;
+  {
+    if (!o->show_controls)
+    {
+      o->show_controls = 1;
+      mrg_queue_draw (o->mrg, NULL);
+    }
+    if (o->controls_timeout)
+    {
+      mrg_remove_idle (o->mrg, o->controls_timeout);
+      o->controls_timeout = 0;
+    }
+    o->controls_timeout = mrg_add_timeout (o->mrg, 1000, hide_controls_cb, o);
+  }
 }
 
 static void on_pan_drag (MrgEvent *e, void *data1, void *data2)
@@ -539,6 +570,7 @@ static void ui_viewer (State *o)
   cairo_t *cr = mrg_cr (mrg);
   cairo_rectangle (cr, 0,0, mrg_width(mrg), mrg_height(mrg));
   mrg_listen (mrg, MRG_DRAG, on_pan_drag, o, NULL);
+  mrg_listen (mrg, MRG_MOTION, on_viewer_motion, o, NULL);
   cairo_new_path (cr);
   cairo_scale (cr, mrg_width(mrg), mrg_height(mrg));
   cairo_move_to (cr, 0.2, 0.8);
@@ -988,7 +1020,7 @@ static void leave_editor (State *o)
   g_object_get (o->active, "operation", &opname, NULL);
   if (!strcmp (opname, "gegl:crop"))
    {
-      zoom_to_fit (o);
+     zoom_to_fit (o);
    }
 }
 
@@ -1015,7 +1047,6 @@ static void drag_preview (MrgEvent *e)
 static void load_into_buffer (State *o, const char *path)
 {
   GeglNode *gegl, *load, *sink;
-  GeglBuffer *tempbuf;
 
   if (o->buffer)
   {
@@ -1035,12 +1066,15 @@ static void load_into_buffer (State *o, const char *path)
   g_object_unref (gegl);
 
 #if 0 /* hack to see if having the data in some formats already is faster */
+  {
+  GeglBuffer *tempbuf;
   tempbuf = gegl_buffer_new (gegl_buffer_get_extent (o->buffer),
                                          babl_format ("RGBA float"));
 
   gegl_buffer_copy (o->buffer, NULL, GEGL_ABYSS_NONE, tempbuf, NULL);
   g_object_unref (o->buffer);
   o->buffer = tempbuf;
+  }
 #endif
 }
 
@@ -1212,7 +1246,6 @@ static void toggle_fullscreen_cb (MrgEvent *event, void *data1, void *data2)
   mrg_event_stop_propagate (event);
   mrg_add_timeout (event->mrg, 250, deferred_zoom_to_fit, o);
 }
-
 
 static void activate_op_cb (MrgEvent *event, void *data1, void *data2)
 {
