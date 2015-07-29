@@ -527,8 +527,10 @@ static void ui_actions (State *o)
   cairo_scale (cr, mrg_width(mrg), mrg_height(mrg));
   cairo_new_path (cr);
   cairo_arc (cr, 0.9, 0.1, 0.1, 0.0, G_PI * 2);
-  mrg_listen (mrg, MRG_PRESS, toggle_actions_cb, o, NULL);
   contrasty_stroke (cr);
+  cairo_rectangle (cr, 0.8, 0.0, 0.2, 0.2); 
+  mrg_listen (mrg, MRG_PRESS, toggle_actions_cb, o, NULL);
+  cairo_new_path (cr);
 }
 
 static void ui_viewer (State *o)
@@ -543,30 +545,36 @@ static void ui_viewer (State *o)
   cairo_line_to (cr, 0.2, 1.0);
   cairo_line_to (cr, 0.0, 0.9);
   cairo_close_path (cr);
-  mrg_listen (mrg, MRG_PRESS, go_prev_cb, o, NULL);
   if (o->show_controls)
     contrasty_stroke (cr);
   else
     cairo_new_path (cr);
+  cairo_rectangle (cr, 0.0, 0.8, 0.2, 0.2); 
+  mrg_listen (mrg, MRG_PRESS, go_prev_cb, o, NULL);
+  cairo_new_path (cr);
 
   cairo_move_to (cr, 0.8, 0.8);
   cairo_line_to (cr, 0.8, 1.0);
   cairo_line_to (cr, 1.0, 0.9);
   cairo_close_path (cr);
 
-  mrg_listen (mrg, MRG_PRESS, go_next_cb, o, NULL);
   if (o->show_controls)
     contrasty_stroke (cr);
   else
     cairo_new_path (cr);
+  cairo_rectangle (cr, 0.8, 0.8, 0.2, 0.2); 
+  mrg_listen (mrg, MRG_PRESS, go_next_cb, o, NULL);
+  cairo_new_path (cr);
 
   cairo_arc (cr, 0.9, 0.1, 0.1, 0.0, G_PI * 2);
-  mrg_listen (mrg, MRG_PRESS, toggle_actions_cb, o, NULL);
 
   if (o->show_controls)
     contrasty_stroke (cr);
   else
     cairo_new_path (cr);
+  cairo_rectangle (cr, 0.8, 0.0, 0.2, 0.2); 
+  mrg_listen (mrg, MRG_PRESS, toggle_actions_cb, o, NULL);
+  cairo_new_path (cr);
 }
 
 static void toggle_show_controls_cb (MrgEvent *event, void *data1, void *data2)
