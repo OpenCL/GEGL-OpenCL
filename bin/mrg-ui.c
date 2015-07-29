@@ -37,6 +37,16 @@
 #include <gexiv2/gexiv2.h>
 #include <gegl-paramspecs.h>
 
+/* comment this out, and things render more correctly but much slower
+ * for images larger than your screen/window resolution
+ */
+#define USE_MIPMAPS    1
+
+
+/* set this to 1 to print the active gegl chain
+ */
+#define DEBUG_OP_LIST  0
+
 /*  this structure contains the full application state, and is what
  *  re-renderings of the UI is directly based on.
  */
@@ -47,7 +57,6 @@ struct _State {
 
   char       *path;
   char       *gegl_path;
-
 
   GeglBuffer *buffer;
   GeglNode   *gegl;
@@ -91,8 +100,6 @@ ActionData actions[]={
 
 static char *suffix = "-gegl";
 
-#define USE_MIPMAPS    1
-#define DEBUG_OP_LIST  1
 
 void   gegl_meta_set (const char *path, const char *meta_data);
 char * gegl_meta_get (const char *path);
