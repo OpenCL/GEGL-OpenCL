@@ -87,6 +87,8 @@ main (gint    argc,
   gchar       *script    = NULL;
   GError      *err       = NULL;
   gchar       *path_root = NULL;
+      mrg_ui_main (argc, argv);
+      return 0;
 
   g_object_set (gegl_config (),
                 "application-license", "GPL3",

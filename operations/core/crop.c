@@ -42,6 +42,8 @@ property_double (height, _("Height"), 10.0 )
   ui_meta       ("unit", "pixel-distance")
   ui_meta       ("axis", "y")
 
+property_boolean (reset_origin, _("Reset origin"), FALSE)
+
 #else
 
 #define GEGL_OP_FILTER

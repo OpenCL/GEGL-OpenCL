@@ -27,7 +27,10 @@
 
 #if HAVE_MRG
 
+#include <ctype.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -118,77 +121,66 @@ static void mrg_gegl_blit (Mrg *mrg,
 			   float scale,
                            float preview_multiplier);
 
+gchar *get_thumb_path (const char *path);
+gchar *get_thumb_path (const char *path)
+{
+  gchar *ret;
+  gchar *uri = g_strdup_printf ("file://%s", path);
+  gchar *hex = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
+  int i;  
+  for (i = 0; hex[i]; i++)
+    hex[i] = tolower (hex[i]);
+  ret = g_strdup_printf ("%s/.cache/thumbnails/normal/%s.png", g_get_home_dir(), hex);
+  g_free (uri);
+  g_free (hex);
+  return ret;
+}
+
+
 static void load_path (State *o);
 
 static void go_next (State *o);
 static void go_prev (State *o);
-
-
-static void go_next_cb (MrgEvent *event, void *data1, void *data2);
-static void go_prev_cb (MrgEvent *event, void *data1, void *data2);
-
-static void leave_editor (State *o);
-
-static void drag_preview (MrgEvent *e);
-static void load_into_buffer (State *o, const char *path);
-
-static GeglNode *locate_node (State *o, const char *op_name);
-
-static void zoom_to_fit (State *o);
-
-static void zoom_to_fit_buffer (State *o);
-
-static void zoom_fit_cb (MrgEvent *e, void *data1, void *data2);
-static int deferred_zoom_to_fit (Mrg *mrg, void *data);
-
-static void pan_left_cb (MrgEvent *event, void *data1, void *data2);
-
-static void pan_right_cb (MrgEvent *event, void *data1, void *data2);
-
-static void pan_down_cb (MrgEvent *event, void *data1, void *data2);
-
-static void pan_up_cb (MrgEvent *event, void *data1, void *data2);
+static void go_parent (State *o);
 
 static void get_coords (State *o, float screen_x, float screen_y, float *gegl_x, float *gegl_y);
+static void leave_editor (State *o);
+static void drag_preview (MrgEvent *e);
+static void load_into_buffer (State *o, const char *path);
+static GeglNode *locate_node (State *o, const char *op_name);
+static void zoom_to_fit (State *o);
+static void zoom_to_fit_buffer (State *o);
 
+static void go_next_cb   (MrgEvent *event, void *data1, void *data2);
+static void go_prev_cb   (MrgEvent *event, void *data1, void *data2);
+static void go_parent_cb (MrgEvent *event, void *data1, void *data2);
+static void zoom_fit_cb  (MrgEvent *e, void *data1, void *data2);
+static void pan_left_cb  (MrgEvent *event, void *data1, void *data2);
+static void pan_right_cb (MrgEvent *event, void *data1, void *data2);
+static void pan_down_cb  (MrgEvent *event, void *data1, void *data2);
+static void pan_up_cb    (MrgEvent *event, void *data1, void *data2);
 static void preview_more_cb (MrgEvent *event, void *data1, void *data2);
-
 static void preview_less_cb (MrgEvent *event, void *data1, void *data2);
-
-static void zoom_1_cb (MrgEvent *event, void *data1, void *data2);
-
-static void zoom_in_cb (MrgEvent *event, void *data1, void *data2);
-
-static void zoom_out_cb (MrgEvent *event, void *data1, void *data2);
-
-static void toggle_actions_cb (MrgEvent *event, void *data1, void *data2);
-
-static void toggle_fullscreen_cb (MrgEvent *event, void *data1, void *data2);
-
-
-static void activate_op_cb (MrgEvent *event, void *data1, void *data2);
-
-
-static void disable_filter_cb (MrgEvent *event, void *data1, void *data2);
-
-static void apply_filter_cb (MrgEvent *event, void *data1, void *data2);
-static void discard_cb (MrgEvent *event, void *data1, void *data2);
-static void save_cb (MrgEvent *event, void *data1, void *data2);
-
-
-
-
+static void zoom_1_cb               (MrgEvent *event, void *data1, void *data2);
+static void zoom_in_cb              (MrgEvent *event, void *data1, void *data2);
+static void zoom_out_cb             (MrgEvent *event, void *data1, void *data2);
+static void toggle_actions_cb       (MrgEvent *event, void *data1, void *data2);
+static void toggle_fullscreen_cb    (MrgEvent *event, void *data1, void *data2);
+static void activate_op_cb          (MrgEvent *event, void *data1, void *data2);
+static void disable_filter_cb       (MrgEvent *event, void *data1, void *data2);
+static void apply_filter_cb         (MrgEvent *event, void *data1, void *data2);
+static void discard_cb              (MrgEvent *event, void *data1, void *data2);
+static void save_cb                 (MrgEvent *event, void *data1, void *data2);
 static void toggle_show_controls_cb (MrgEvent *event, void *data1, void *data2);
 
-static void gegl_ui (Mrg *mrg, void *data);
-int mrg_ui_main (int argc, char **argv);
-
-void gegl_meta_set (const char *path, const char *meta_data);
-char * gegl_meta_get (const char *path); 
-
-static State *hack_state = NULL;  // XXX: this shoudl be factored away
+static void gegl_ui       (Mrg *mrg, void *data);
+int         mrg_ui_main   (int argc, char **argv);
+void        gegl_meta_set (const char *path, const char *meta_data);
+char *      gegl_meta_get (const char *path); 
 
 static void on_viewer_motion (MrgEvent *e, void *data1, void *data2);
+
+static State *hack_state = NULL;  // XXX: this shoudl be factored away
 int mrg_ui_main (int argc, char **argv)
 {
   Mrg *mrg = mrg_new (1024, 768, NULL);
@@ -518,6 +510,7 @@ static void ui_active_op (State *o)
   }
 }
 
+#if DEBUG_OP_LIST
 static void ui_debug_op_chain (State *o)
 {
   Mrg *mrg = o->mrg;
@@ -538,6 +531,7 @@ static void ui_debug_op_chain (State *o)
      iter = gegl_node_get_producer (iter, "input", NULL);
    }
 }
+#endif
 
 static void ui_actions (State *o)
 {
@@ -571,6 +565,147 @@ static void ui_actions (State *o)
   cairo_new_path (cr);
 }
 
+static void dir_pgdn_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  o->u -= mrg_width (o->mrg) * 0.6; 
+  mrg_queue_draw (o->mrg, NULL);
+  mrg_event_stop_propagate (event);
+}
+
+static void dir_pgup_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  o->u += mrg_width (o->mrg) * 0.6; 
+  mrg_queue_draw (o->mrg, NULL);
+  mrg_event_stop_propagate (event);
+}
+
+static void entry_pressed (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data2;
+  struct dirent *entry = data1;
+
+  if (!strcmp (entry->d_name, ".."))
+  {
+    go_parent (o);
+    mrg_event_stop_propagate (event);
+    return;
+  }
+  switch (entry->d_type)
+  {
+    case DT_DIR:
+    case DT_REG:
+     {
+       char *newpath = malloc (strlen(o->path) + strlen (entry->d_name) + 2);
+#define PATH_SEP "/"
+       if (!strcmp (o->path, PATH_SEP))
+         sprintf (newpath, "%s%s", PATH_SEP, entry->d_name);
+       else
+         sprintf (newpath, "%s%s%s", o->path, PATH_SEP, entry->d_name);
+       free (o->path);
+       o->path = newpath;
+       load_path (o);
+       mrg_queue_draw (event->mrg, NULL);
+     }
+    default:
+      break;
+  }
+}
+
+static void ui_dir_viewer (State *o)
+{
+  Mrg *mrg = o->mrg;
+  cairo_t *cr = mrg_cr (mrg);
+  struct dirent **namelist;
+  int n = scandir (o->path, &namelist, NULL, alphasort);
+  int i;
+  float x = 0;
+  float y = 0;
+  float dim = mrg_height (mrg) * 0.25;
+
+  cairo_rectangle (cr, 0,0, mrg_width(mrg), mrg_height(mrg));
+  //mrg_listen (mrg, MRG_DRAG, on_pan_drag, o, NULL);
+  mrg_listen (mrg, MRG_MOTION, on_viewer_motion, o, NULL);
+  cairo_new_path (cr);
+
+  mrg_set_edge_right (mrg, 4095);
+  cairo_save (cr);
+  cairo_translate (cr, o->u, 0);//o->v);
+
+  for (i = 0; i < n; i++)
+  {
+    if (namelist[i]->d_name[0] != '.')
+    {
+      int w, h;
+      gchar *path = g_strdup_printf ("%s/%s", o->path, namelist[i]->d_name);
+      gchar *thumbpath = get_thumb_path (path);
+  
+      if (
+         access (thumbpath, F_OK) != -1 && //XXX: query image should suffice
+         mrg_query_image (mrg, thumbpath, &w, &h))
+      {
+        float wdim = dim;
+        float hdim = dim;
+        if (w > h)
+          hdim = dim / (1.0 * w / h);
+        else
+          wdim = dim * (1.0 * w / h);
+
+        mrg_image (mrg, x + (dim-wdim)/2, y + (dim-hdim)/2, wdim, hdim, thumbpath);
+      }
+      g_free (path);
+      g_free (thumbpath);
+
+      mrg_set_xy (mrg, x, y + dim - mrg_em(mrg));
+      mrg_printf (mrg, "%s\n", namelist[i]->d_name);
+      cairo_new_path (mrg_cr(mrg));
+      cairo_rectangle (mrg_cr(mrg), x, y, dim, dim);
+      mrg_listen_full (mrg, MRG_CLICK, entry_pressed, namelist[i], o, (void*)free, NULL);
+      cairo_new_path (mrg_cr(mrg));
+
+      y += dim;
+      if (y+dim > mrg_height (mrg))
+      {
+        y = 0;
+        x += dim;
+      }
+    } 
+  }
+  cairo_restore (cr);
+
+  cairo_scale (cr, mrg_width(mrg), mrg_height(mrg));
+  cairo_new_path (cr);
+  cairo_move_to (cr, 0.2, 0.8);
+  cairo_line_to (cr, 0.2, 1.0);
+  cairo_line_to (cr, 0.0, 0.9);
+  cairo_close_path (cr);
+  if (o->show_controls)
+    contrasty_stroke (cr);
+  else
+    cairo_new_path (cr);
+  cairo_rectangle (cr, 0.0, 0.8, 0.2, 0.2); 
+  mrg_listen (mrg, MRG_PRESS, dir_pgup_cb, o, NULL);
+
+  cairo_new_path (cr);
+
+  cairo_move_to (cr, 0.8, 0.8);
+  cairo_line_to (cr, 0.8, 1.0);
+  cairo_line_to (cr, 1.0, 0.9);
+  cairo_close_path (cr);
+
+  if (o->show_controls)
+    contrasty_stroke (cr);
+  else
+    cairo_new_path (cr);
+  cairo_rectangle (cr, 0.8, 0.8, 0.2, 0.2); 
+  mrg_listen (mrg, MRG_PRESS, dir_pgdn_cb, o, NULL);
+  cairo_new_path (cr);
+
+  mrg_add_binding (mrg, "left", NULL, NULL, dir_pgup_cb, o);
+  mrg_add_binding (mrg, "right", NULL, NULL, dir_pgdn_cb, o);
+}
+
 static void ui_viewer (State *o)
 {
   Mrg *mrg = o->mrg;
@@ -578,8 +713,21 @@ static void ui_viewer (State *o)
   cairo_rectangle (cr, 0,0, mrg_width(mrg), mrg_height(mrg));
   mrg_listen (mrg, MRG_DRAG, on_pan_drag, o, NULL);
   mrg_listen (mrg, MRG_MOTION, on_viewer_motion, o, NULL);
-  cairo_new_path (cr);
   cairo_scale (cr, mrg_width(mrg), mrg_height(mrg));
+  cairo_new_path (cr);
+  cairo_rectangle (cr, 0.05, 0.05, 0.05, 0.05);
+  cairo_rectangle (cr, 0.15, 0.05, 0.05, 0.05);
+  cairo_rectangle (cr, 0.05, 0.15, 0.05, 0.05);
+  cairo_rectangle (cr, 0.15, 0.15, 0.05, 0.05);
+  if (o->show_controls)
+    contrasty_stroke (cr);
+  else
+    cairo_new_path (cr);
+  cairo_rectangle (cr, 0.0, 0.0, 0.2, 0.2); 
+  mrg_listen (mrg, MRG_PRESS, go_parent_cb, o, NULL);
+
+
+  cairo_new_path (cr);
   cairo_move_to (cr, 0.2, 0.8);
   cairo_line_to (cr, 0.2, 1.0);
   cairo_line_to (cr, 0.0, 0.9);
@@ -614,6 +762,23 @@ static void ui_viewer (State *o)
   cairo_rectangle (cr, 0.8, 0.0, 0.2, 0.2); 
   mrg_listen (mrg, MRG_PRESS, toggle_actions_cb, o, NULL);
   cairo_new_path (cr);
+
+  mrg_add_binding (mrg, "left", NULL, NULL,  pan_left_cb, o);
+  mrg_add_binding (mrg, "right", NULL, NULL, pan_right_cb, o);
+  mrg_add_binding (mrg, "up", NULL, NULL,    pan_up_cb, o);
+  mrg_add_binding (mrg, "down", NULL, NULL,  pan_down_cb, o);
+  mrg_add_binding (mrg, "+", NULL, NULL,     zoom_in_cb, o);
+  mrg_add_binding (mrg, "=", NULL, NULL,     zoom_in_cb, o);
+  mrg_add_binding (mrg, "-", NULL, NULL,     zoom_out_cb, o);
+  mrg_add_binding (mrg, "1", NULL, NULL,     zoom_1_cb, o);
+  mrg_add_binding (mrg, "m", NULL, NULL,     zoom_fit_cb, o);
+  mrg_add_binding (mrg, "m", NULL, NULL,     zoom_fit_cb, o);
+  mrg_add_binding (mrg, "x", NULL, NULL,     discard_cb, o);
+
+  mrg_add_binding (mrg, "space", NULL, NULL,     go_next_cb , o);
+  mrg_add_binding (mrg, "n", NULL, NULL,         go_next_cb, o);
+  mrg_add_binding (mrg, "p", NULL, NULL,         go_prev_cb, o);
+  mrg_add_binding (mrg, "backspace", NULL, NULL, go_prev_cb, o);
 }
 
 static void toggle_show_controls_cb (MrgEvent *event, void *data1, void *data2)
@@ -655,31 +820,27 @@ static void gegl_ui (Mrg *mrg, void *data)
   }
   else
   {
-    ui_viewer (o);
+    struct stat stat_buf;
+    lstat (o->path, &stat_buf);
+    if (S_ISREG (stat_buf.st_mode))
+    {
+      ui_viewer (o);
+
+    }
+    else if (S_ISDIR (stat_buf.st_mode))
+    {
+      ui_dir_viewer (o);
+    }
+    
+    mrg_add_binding (mrg, "escape", NULL, NULL, go_parent_cb, o);
     mrg_add_binding (mrg, "return", NULL, NULL, toggle_actions_cb, o);
   }
 
-  mrg_add_binding (mrg, "left", NULL, NULL,      pan_left_cb, o);
-  mrg_add_binding (mrg, "right", NULL, NULL,     pan_right_cb, o);
-  mrg_add_binding (mrg, "up", NULL, NULL,        pan_up_cb, o);
-  mrg_add_binding (mrg, "down", NULL, NULL,      pan_down_cb, o);
-  mrg_add_binding (mrg, "+", NULL, NULL,         zoom_in_cb, o);
-  mrg_add_binding (mrg, "=", NULL, NULL,         zoom_in_cb, o);
-  mrg_add_binding (mrg, "-", NULL, NULL,         zoom_out_cb, o);
-  mrg_add_binding (mrg, "1", NULL, NULL,         zoom_1_cb, o);
-  mrg_add_binding (mrg, "m", NULL, NULL,         zoom_fit_cb, o);
-
   mrg_add_binding (mrg, "control-q", NULL, NULL, mrg_quit_cb, o);
-  mrg_add_binding (mrg, "m", NULL, NULL,         zoom_fit_cb, o);
   mrg_add_binding (mrg, "q", NULL, NULL,         mrg_quit_cb, o);
-  mrg_add_binding (mrg, "x", NULL, NULL,         discard_cb, o);
   mrg_add_binding (mrg, "f", NULL, NULL,         toggle_fullscreen_cb, o);
   mrg_add_binding (mrg, "F11", NULL, NULL,       toggle_fullscreen_cb, o);
   mrg_add_binding (mrg, "tab", NULL, NULL,       toggle_show_controls_cb, o);
-  mrg_add_binding (mrg, "space", NULL, NULL,     go_next_cb , o);
-  mrg_add_binding (mrg, "n", NULL, NULL,         go_next_cb, o);
-  mrg_add_binding (mrg, "p", NULL, NULL,         go_prev_cb, o);
-  mrg_add_binding (mrg, "backspace", NULL, NULL, go_prev_cb, o);
 
   mrg_add_binding (mrg, ",", NULL, NULL,         preview_less_cb, o);
   mrg_add_binding (mrg, ".", NULL, NULL,         preview_more_cb, o);
@@ -851,6 +1012,11 @@ static void load_path (State *o)
 
   g_object_unref (o->gegl);
   o->gegl = NULL;
+  o->sink = NULL;
+  o->source = NULL;
+  o->rev = 0;
+  o->u = 0;
+  o->v = 0;
 
   meta = gegl_meta_get (path);
   if (meta)
@@ -907,7 +1073,6 @@ static void load_path (State *o)
   zoom_to_fit (o);
 
   mrg_queue_draw (o->mrg, NULL);
-  o->rev = 0;
 }
 
 
@@ -947,6 +1112,20 @@ static void go_next (State *o)
       if (!done)
         lastslash[0] = '/';
     }
+    mrg_queue_draw (o->mrg, NULL);
+  }
+}
+
+static void go_parent (State *o)
+{
+  char *lastslash = strrchr (o->path, '/');
+  if (lastslash)
+  {
+    if (lastslash == o->path)
+      lastslash[1] = '\0';
+    else
+      lastslash[0] = '\0';
+    load_path (o);
     mrg_queue_draw (o->mrg, NULL);
   }
 }
@@ -1007,6 +1186,16 @@ static void go_next_cb (MrgEvent *event, void *data1, void *data2)
   if (o->rev)
     save_cb (event, data1, data2);
   go_next (data1);
+  o->active = NULL;
+  mrg_event_stop_propagate (event);
+}
+
+static void go_parent_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  if (o->rev)
+    save_cb (event, data1, data2);
+  go_parent (data1);
   o->active = NULL;
   mrg_event_stop_propagate (event);
 }
