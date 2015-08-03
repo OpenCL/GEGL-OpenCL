@@ -132,7 +132,12 @@ gchar *get_thumb_path (const char *path)
   int i;  
   for (i = 0; hex[i]; i++)
     hex[i] = tolower (hex[i]);
-  ret = g_strdup_printf ("%s/.cache/thumbnails/normal/%s.png", g_get_home_dir(), hex);
+  ret = g_strdup_printf ("%s/.cache/thumbnails/large/%s.png", g_get_home_dir(), hex);
+  if (access (ret, F_OK) == -1)
+  {
+    g_free (ret);
+    ret = g_strdup_printf ("%s/.cache/thumbnails/normal/%s.png", g_get_home_dir(), hex);
+  }
   g_free (uri);
   g_free (hex);
   return ret;
@@ -193,8 +198,7 @@ static void populate_paths (State *o)
   while (o->paths)
     {
       char *freed = o->paths->data;
-      o->paths = o->paths->next;
-      g_list_remove (o->paths, freed);
+      o->paths = g_list_remove (o->paths, freed);
       g_free (freed);
     }
 
@@ -655,15 +659,11 @@ static void ui_dir_viewer (State *o)
   Mrg *mrg = o->mrg;
   cairo_t *cr = mrg_cr (mrg);
   GList *iter;
-  //struct dirent **namelist;
-  //int n = scandir (o->path, &namelist, NULL, alphasort);
-  //int i;
   float x = 0;
   float y = 0;
-  float dim = mrg_height (mrg) * 0.33;
+  float dim = mrg_height (mrg) * 0.25;
 
   cairo_rectangle (cr, 0,0, mrg_width(mrg), mrg_height(mrg));
-  //mrg_listen (mrg, MRG_DRAG, on_pan_drag, o, NULL);
   mrg_listen (mrg, MRG_MOTION, on_viewer_motion, o, NULL);
   cairo_new_path (cr);
 
@@ -675,7 +675,17 @@ static void ui_dir_viewer (State *o)
   {
       int w, h;
       gchar *path = iter->data;
-      gchar *thumbpath = get_thumb_path (path);
+      char *lastslash = strrchr (path, '/');
+
+      gchar *p2 = suffix_path (path);
+
+      gchar *thumbpath = get_thumb_path (p2);
+      free (p2);
+      if (access (thumbpath, F_OK) == -1)
+      {
+        g_free (thumbpath);
+        thumbpath = get_thumb_path (path);
+      }
   
       if (
          access (thumbpath, F_OK) != -1 && //XXX: query image should suffice
@@ -693,7 +703,6 @@ static void ui_dir_viewer (State *o)
       g_free (thumbpath);
 
       mrg_set_xy (mrg, x, y + dim - mrg_em(mrg));
-      char *lastslash = strrchr (path, '/');
       mrg_printf (mrg, "%s\n", lastslash+1);
       cairo_new_path (mrg_cr(mrg));
       cairo_rectangle (mrg_cr(mrg), x, y, dim, dim);
