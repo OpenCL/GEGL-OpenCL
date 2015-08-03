@@ -59,7 +59,7 @@ struct _State {
   Mrg        *mrg;
 
   char       *path;
-  char       *gegl_path;
+  char       *save_path;
 
   GeglBuffer *buffer;
   GeglNode   *gegl;
@@ -994,21 +994,21 @@ static void load_path (State *o)
   char *meta;
   if (is_gegl_path (o->path))
   {
-    if (o->gegl_path)
-      free (o->gegl_path);
-    o->gegl_path = o->path;
-    o->path = unsuffix_path (o->gegl_path);
+    if (o->save_path)
+      free (o->save_path);
+    o->save_path = o->path;
+    o->path = unsuffix_path (o->save_path);
   }
   else
   {
-    if (o->gegl_path)
-      free (o->gegl_path);
-    o->gegl_path = suffix_path (o->path);
+    if (o->save_path)
+      free (o->save_path);
+    o->save_path = suffix_path (o->path);
   }
   path  = o->path;
 
-  if (access (o->gegl_path, F_OK) != -1)
-    path = o->gegl_path;
+  if (access (o->save_path, F_OK) != -1)
+    path = o->save_path;
 
   g_object_unref (o->gegl);
   o->gegl = NULL;
@@ -1065,7 +1065,7 @@ static void load_path (State *o)
 			       NULL);
     o->save         = gegl_node_new_child (o->gegl,
   		     "operation", "gegl:save",
-  		     "path", o->gegl_path,
+  		     "path", o->save_path,
   		     NULL);
     gegl_node_link_many (o->load, o->source, o->sink, NULL);
     gegl_node_set (o->load, "buffer", o->buffer, NULL);
@@ -1138,12 +1138,12 @@ static void go_parent (State *o)
 static void go_prev (State *o)
 {
   char *lastslash;
-  if (access (o->gegl_path, F_OK) != -1)
+  if (access (o->save_path, F_OK) != -1)
   {
     /* we need to skip from the -gegl one, when walking the dir alphabetically backwards */
     char *tmp = o->path;
-    o->path = o->gegl_path;
-    o->gegl_path = tmp;
+    o->path = o->save_path;
+    o->save_path = tmp;
   }
   lastslash  = strrchr (o->path, '/');
   if (lastslash)
@@ -1642,7 +1642,7 @@ void gegl_node_defaults (GeglNode *node)
 #endif
 
 /* loads the source image corresponding to o->path into o->buffer and
- * creates live gegl pipeline, or nops.. rigs up o->gegl_path to be
+ * creates live gegl pipeline, or nops.. rigs up o->save_path to be
  * the location where default saves ends up.
  */
 void
