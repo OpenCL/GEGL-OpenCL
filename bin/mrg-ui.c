@@ -1070,7 +1070,12 @@ static void load_path (State *o)
     gegl_node_link_many (o->load, o->source, o->sink, NULL);
     gegl_node_set (o->load, "buffer", o->buffer, NULL);
   }
-  zoom_to_fit (o);
+  {
+    struct stat stat_buf;
+    lstat (o->path, &stat_buf);
+    if (S_ISREG (stat_buf.st_mode))
+      zoom_to_fit (o);
+  }
 
   mrg_queue_draw (o->mrg, NULL);
 }
@@ -1243,12 +1248,18 @@ static void drag_preview (MrgEvent *e)
 static void load_into_buffer (State *o, const char *path)
 {
   GeglNode *gegl, *load, *sink;
+  struct stat stat_buf;
 
   if (o->buffer)
   {
     g_object_unref (o->buffer);
     o->buffer = NULL;
   }
+
+  lstat (path, &stat_buf);
+  if (S_ISREG (stat_buf.st_mode))
+  {
+
 
   gegl = gegl_node_new ();
   load = gegl_node_new_child (gegl, "operation", "gegl:load",
@@ -1272,6 +1283,12 @@ static void load_into_buffer (State *o, const char *path)
   o->buffer = tempbuf;
   }
 #endif
+    }
+  else
+    {
+      GeglRectangle extent = {0,0,1,1}; /* segfaults with NULL / 0,0,0,0*/
+      o->buffer = gegl_buffer_new (&extent, babl_format("R'G'B' u8"));
+    }
 }
 
 static GeglNode *locate_node (State *o, const char *op_name)
@@ -1550,6 +1567,7 @@ static void discard_cb (MrgEvent *event, void *data1, void *data2)
   if (lastslash)
   {
     char command[2048];
+    char *suffixed = suffix_path (old_path);
     if (lastslash == tmp)
       lastslash[1] = '\0';
     else
@@ -1558,7 +1576,9 @@ static void discard_cb (MrgEvent *event, void *data1, void *data2)
     sprintf (command, "mkdir %s/.discard > /dev/null 2>&1", tmp);
     system (command);
     sprintf (command, "mv %s %s/.discard", old_path, tmp);
+    sprintf (command, "mv %s %s/.discard", suffixed, tmp);
     system (command);
+    free (suffixed);
   }
   free (tmp);
   free (old_path);
@@ -1656,10 +1676,10 @@ gegl_meta_get (const char *path)
   GError *error = NULL;
   GExiv2Metadata *e2m = gexiv2_metadata_new ();
   gexiv2_metadata_open_path (e2m, path, &error);
-  if (error)
-    g_warning ("%s", error->message);
-  else
+  if (!error)
     ret = gexiv2_metadata_get_tag_string (e2m, "Xmp.xmp.GEGL");
+  /*else
+    g_warning ("%s", error->message);*/
   gexiv2_metadata_free (e2m);
   return ret;
 }
