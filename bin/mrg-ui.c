@@ -188,6 +188,18 @@ char *      gegl_meta_get (const char *path);
 
 static void on_viewer_motion (MrgEvent *e, void *data1, void *data2);
 
+static int str_has_image_suffix (char *path)
+{
+  return g_str_has_suffix (path, ".jpg") ||
+         g_str_has_suffix (path, ".png") ||
+         g_str_has_suffix (path, ".JPG") ||
+         g_str_has_suffix (path, ".PNG") ||
+         g_str_has_suffix (path, ".jpeg") ||
+         g_str_has_suffix (path, ".JPEG") ||
+         g_str_has_suffix (path, ".CR2") ||
+         g_str_has_suffix (path, ".exr");
+}
+
 static void populate_paths (State *o)
 {
   struct dirent **namelist;
@@ -201,7 +213,6 @@ static void populate_paths (State *o)
       o->paths = g_list_remove (o->paths, freed);
       g_free (freed);
     }
-
 
   lstat (o->path, &stat_buf);
   if (S_ISREG (stat_buf.st_mode))
@@ -219,7 +230,8 @@ static void populate_paths (State *o)
   
   for (i = 0; i < n; i++)
   {
-    if (namelist[i]->d_name[0] != '.')
+    if (namelist[i]->d_name[0] != '.' &&
+        str_has_image_suffix (namelist[i]->d_name))
     {
       gchar *fpath = g_strdup_printf ("%s/%s", path, namelist[i]->d_name);
 
@@ -236,7 +248,6 @@ static void populate_paths (State *o)
         if (!g_list_find_custom (o->paths, fpath, (void*)g_strcmp0))
         {
           o->paths = g_list_append (o->paths, fpath);
-          fprintf (stderr, "[%s\n", fpath);
         }
       }
     }
@@ -1125,47 +1136,6 @@ static void load_path (State *o)
   mrg_queue_draw (o->mrg, NULL);
 }
 
-
-static void go_next (State *o)
-{
-  char *lastslash = strrchr (o->path, '/');
-  if (lastslash)
-  {
-    struct dirent **namelist;
-    int n;
-
-    if (lastslash == o->path)
-      lastslash[1] = '\0';
-    else
-      lastslash[0] = '\0';
-
-    n = scandir (o->path, &namelist, NULL, alphasort);
-    if (n)
-    {
-      int i;
-      int done = 0;
-      for (i = 0; i < n; i ++)
-      {
-        if (!done && !strcmp (namelist[i]->d_name, lastslash+1) && i + 1 < n)
-        {
-          char *tmp = malloc (strlen (o->path) + 2 + strlen (namelist[i+1]->d_name));
-          sprintf (tmp, "%s/%s", o->path, namelist[i+1]->d_name);
-          free (o->path);
-          o->path = tmp;
-          load_path (o);
-          done = 1;
-        }
-        free (namelist[i]);
-      }
-      free (namelist);
-
-      if (!done)
-        lastslash[0] = '/';
-    }
-    mrg_queue_draw (o->mrg, NULL);
-  }
-}
-
 static void go_parent (State *o)
 {
   char *lastslash = strrchr (o->path, '/');
@@ -1180,53 +1150,29 @@ static void go_parent (State *o)
   }
 }
 
+static void go_next (State *o)
+{
+  GList *curr = g_list_find_custom (o->paths, o->path, (void*)g_strcmp0);
+
+  if (curr && curr->next)
+  {
+    free (o->path);
+    o->path = strdup (curr->next->data);
+    load_path (o);
+    mrg_queue_draw (o->mrg, NULL);
+  }
+}
+
 static void go_prev (State *o)
 {
-  char *lastslash;
-  if (access (o->save_path, F_OK) != -1)
-  {
-    /* we need to skip from the -gegl one, when walking the dir alphabetically backwards */
-    char *tmp = o->path;
-    o->path = o->save_path;
-    o->save_path = tmp;
-  }
-  lastslash  = strrchr (o->path, '/');
-  if (lastslash)
-  {
-    struct dirent **namelist;
-    int n;
+  GList *curr = g_list_find_custom (o->paths, o->path, (void*)g_strcmp0);
 
-    if (lastslash == o->path)
-      lastslash[1] = '\0';
-    else
-      lastslash[0] = '\0';
-
-    n = scandir (o->path, &namelist, NULL, alphasort);
-    if (n)
-    {
-      int i;
-      int done = 0;
-      for (i = 0; i < n; i ++)
-      {
-        if (!done && i > 0 &&
-            (namelist[i]->d_name[0] != '.') &&
-            (namelist[i-1]->d_name[0] != '.') &&
-            !strcmp (namelist[i]->d_name, lastslash+1))
-        {
-          char *tmp = malloc (strlen (o->path) + 2 + strlen (namelist[i-1]->d_name));
-          sprintf (tmp, "%s/%s", o->path, namelist[i-1]->d_name);
-          free (o->path);
-          o->path = tmp;
-          load_path (o);
-          done = 1;
-        }
-      }
-      for (i = 0; i < n; i ++)
-        free (namelist[i]);
-      free (namelist);
-      if (!done)
-        lastslash[0] = '/';
-    }
+  if (curr && curr->prev)
+  {
+    free (o->path);
+    o->path = strdup (curr->prev->data);
+    load_path (o);
+    mrg_queue_draw (o->mrg, NULL);
   }
 }
 
