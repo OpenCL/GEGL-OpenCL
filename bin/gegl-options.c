@@ -325,12 +325,12 @@ parse_args (int    argc,
         }
 
         else if (match ("--")) {
-            o->rest = curr+1;
+            o->rest = curr;
             break;
         }
 
         else if (*curr[0]=='-') {
-            fprintf (stderr, _("\n\nunknown parameter '%s' giving you help instead\n\n\n"), *curr);
+            fprintf (stderr, _("\n\nunknown argument '%s' giving you help instead\n\n\n"), *curr);
             usage (argv[0]);
         }
 

@@ -82,6 +82,9 @@ struct _State {
   float       preview_quality;
 
   int         controls_timeout;
+
+
+  char      **ops; // the operations part of the commandline, if any
 };
 
 
@@ -181,7 +184,7 @@ static void save_cb                 (MrgEvent *event, void *data1, void *data2);
 static void toggle_show_controls_cb (MrgEvent *event, void *data1, void *data2);
 
 static void gegl_ui       (Mrg *mrg, void *data);
-int         mrg_ui_main   (int argc, char **argv);
+int         mrg_ui_main   (int argc, char **argv, char **ops);
 void        gegl_meta_set (const char *path, const char *meta_data);
 char *      gegl_meta_get (const char *path); 
 
@@ -256,7 +259,10 @@ static void populate_paths (State *o)
 }
 
 static State *hack_state = NULL;  // XXX: this shoudl be factored away
-int mrg_ui_main (int argc, char **argv)
+
+char **ops = NULL;
+
+int mrg_ui_main (int argc, char **argv, char **ops)
 {
   Mrg *mrg = mrg_new (1024, 768, NULL);
   State o = {NULL,};
@@ -270,6 +276,21 @@ int mrg_ui_main (int argc, char **argv)
 
 /* we want to see the speed gotten if the fastest babl conversions we have were more accurate */
   g_setenv ("BABL_TOLERANCE", "0.1", TRUE);
+  
+  if(ops)
+    o.ops = ops;
+  else
+  {
+    int i;
+    for (i = 0; argv[i]; i++)
+    {
+      if (!strcmp (argv[i], "--"))
+      {
+        o.ops = &argv[i];
+        break;
+      }
+    }
+  }
 
   gegl_init (&argc, &argv);
   o.gegl            = gegl_node_new ();
@@ -285,6 +306,7 @@ int mrg_ui_main (int argc, char **argv)
       printf ("usage: %s <full-path-to-image>\n", argv[0]);
       return -1;
     }
+
 
   load_path (&o);
   mrg_set_ui (mrg, gegl_ui, &o);
@@ -1131,6 +1153,21 @@ static void load_path (State *o)
     lstat (o->path, &stat_buf);
     if (S_ISREG (stat_buf.st_mode))
       zoom_to_fit (o);
+  }
+
+  if (o->ops)
+  {
+    int i;
+    for (i = 0; o->ops[i]; i++)
+    {
+      o->active = gegl_node_new_child (o->gegl,
+	"operation", o->ops[i], NULL);
+
+      gegl_node_link_many (gegl_node_get_producer (o->sink, "input", NULL),
+				  o->active,
+				  o->sink,
+				  NULL);
+    }
   }
 
   mrg_queue_draw (o->mrg, NULL);

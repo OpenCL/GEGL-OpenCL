@@ -76,7 +76,7 @@ static gboolean file_is_gegl_xml (const gchar *path)
   return FALSE;
 }
 
-int mrg_ui_main (int argc, char **argv);
+int mrg_ui_main (int argc, char **argv, char **ops);
 
 gint
 main (gint    argc,
@@ -92,13 +92,13 @@ main (gint    argc,
                 "application-license", "GPL3",
                 NULL);
 
+  o = gegl_options_parse (argc, argv);
   gegl_init (&argc, &argv);
 #ifdef HAVE_SPIRO
   gegl_path_spiro_init ();
 #endif
   gegl_path_smooth_init ();
 
-  o = gegl_options_parse (argc, argv);
 
   if (o->fatal_warnings)
     {
@@ -177,7 +177,7 @@ main (gint    argc,
   if (o->mode == GEGL_RUN_MODE_DISPLAY)
     {
 #if HAVE_MRG
-      mrg_ui_main (argc, argv);
+      mrg_ui_main (argc, argv, o->rest);
       return 0;
 #endif
     }
