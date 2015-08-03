@@ -61,6 +61,8 @@ struct _State {
   char       *path;
   char       *save_path;
 
+  GList      *paths;
+
   GeglBuffer *buffer;
   GeglNode   *gegl;
   GeglNode   *sink;
@@ -178,7 +180,65 @@ int         mrg_ui_main   (int argc, char **argv);
 void        gegl_meta_set (const char *path, const char *meta_data);
 char *      gegl_meta_get (const char *path); 
 
+
 static void on_viewer_motion (MrgEvent *e, void *data1, void *data2);
+
+static void populate_paths (State *o)
+{
+  struct dirent **namelist;
+  int i;
+  struct stat stat_buf;
+  char *path = strdup (o->path);
+  int n;
+  while (o->paths)
+    {
+      char *freed = o->paths->data;
+      o->paths = o->paths->next;
+      g_list_remove (o->paths, freed);
+      g_free (freed);
+    }
+
+
+  lstat (o->path, &stat_buf);
+  if (S_ISREG (stat_buf.st_mode))
+  {
+    char *lastslash = strrchr (path, '/');
+    if (lastslash)
+      {
+	if (lastslash == path)
+	  lastslash[1] = '\0';
+	else
+	  lastslash[0] = '\0';
+      }
+  }
+  n = scandir (path, &namelist, NULL, alphasort);
+  
+  for (i = 0; i < n; i++)
+  {
+    if (namelist[i]->d_name[0] != '.')
+    {
+      gchar *fpath = g_strdup_printf ("%s/%s", path, namelist[i]->d_name);
+
+      lstat (fpath, &stat_buf);
+      if (S_ISREG (stat_buf.st_mode))
+      {
+        if (is_gegl_path (fpath))
+        {
+          char *tmp = unsuffix_path (fpath);
+          g_free (fpath);
+          fpath = g_strdup (tmp);
+          free (tmp);
+        }
+        if (!g_list_find_custom (o->paths, fpath, (void*)g_strcmp0))
+        {
+          o->paths = g_list_append (o->paths, fpath);
+          fprintf (stderr, "[%s\n", fpath);
+        }
+      }
+    }
+  }
+  free (namelist);
+}
 
 static State *hack_state = NULL;  // XXX: this shoudl be factored away
 int mrg_ui_main (int argc, char **argv)
@@ -583,46 +643,24 @@ static void dir_pgup_cb (MrgEvent *event, void *data1, void *data2)
 
 static void entry_pressed (MrgEvent *event, void *data1, void *data2)
 {
-  State *o = data2;
-  struct dirent *entry = data1;
-
-  if (!strcmp (entry->d_name, ".."))
-  {
-    go_parent (o);
-    mrg_event_stop_propagate (event);
-    return;
-  }
-  switch (entry->d_type)
-  {
-    case DT_DIR:
-    case DT_REG:
-     {
-       char *newpath = malloc (strlen(o->path) + strlen (entry->d_name) + 2);
-#define PATH_SEP "/"
-       if (!strcmp (o->path, PATH_SEP))
-         sprintf (newpath, "%s%s", PATH_SEP, entry->d_name);
-       else
-         sprintf (newpath, "%s%s%s", o->path, PATH_SEP, entry->d_name);
-       free (o->path);
-       o->path = newpath;
-       load_path (o);
-       mrg_queue_draw (event->mrg, NULL);
-     }
-    default:
-      break;
-  }
+  State *o = data1;
+  free (o->path);
+  o->path = strdup (data2);
+  load_path (o);
+  mrg_queue_draw (event->mrg, NULL);
 }
 
 static void ui_dir_viewer (State *o)
 {
   Mrg *mrg = o->mrg;
   cairo_t *cr = mrg_cr (mrg);
-  struct dirent **namelist;
-  int n = scandir (o->path, &namelist, NULL, alphasort);
-  int i;
+  GList *iter;
+  //struct dirent **namelist;
+  //int n = scandir (o->path, &namelist, NULL, alphasort);
+  //int i;
   float x = 0;
   float y = 0;
-  float dim = mrg_height (mrg) * 0.25;
+  float dim = mrg_height (mrg) * 0.33;
 
   cairo_rectangle (cr, 0,0, mrg_width(mrg), mrg_height(mrg));
   //mrg_listen (mrg, MRG_DRAG, on_pan_drag, o, NULL);
@@ -633,12 +671,10 @@ static void ui_dir_viewer (State *o)
   cairo_save (cr);
   cairo_translate (cr, o->u, 0);//o->v);
 
-  for (i = 0; i < n; i++)
+  for (iter = o->paths; iter; iter=iter->next)
   {
-    if (namelist[i]->d_name[0] != '.')
-    {
       int w, h;
-      gchar *path = g_strdup_printf ("%s/%s", o->path, namelist[i]->d_name);
+      gchar *path = iter->data;
       gchar *thumbpath = get_thumb_path (path);
   
       if (
@@ -654,14 +690,14 @@ static void ui_dir_viewer (State *o)
 
         mrg_image (mrg, x + (dim-wdim)/2, y + (dim-hdim)/2, wdim, hdim, thumbpath);
       }
-      g_free (path);
       g_free (thumbpath);
 
       mrg_set_xy (mrg, x, y + dim - mrg_em(mrg));
-      mrg_printf (mrg, "%s\n", namelist[i]->d_name);
+      char *lastslash = strrchr (path, '/');
+      mrg_printf (mrg, "%s\n", lastslash+1);
       cairo_new_path (mrg_cr(mrg));
       cairo_rectangle (mrg_cr(mrg), x, y, dim, dim);
-      mrg_listen_full (mrg, MRG_CLICK, entry_pressed, namelist[i], o, (void*)free, NULL);
+      mrg_listen_full (mrg, MRG_CLICK, entry_pressed, o, path, NULL, NULL);
       cairo_new_path (mrg_cr(mrg));
 
       y += dim;
@@ -670,7 +706,6 @@ static void ui_dir_viewer (State *o)
         y = 0;
         x += dim;
       }
-    } 
   }
   cairo_restore (cr);
 
@@ -992,6 +1027,7 @@ static void load_path (State *o)
 {
   char *path;
   char *meta;
+  populate_paths (o);
   if (is_gegl_path (o->path))
   {
     if (o->save_path)
