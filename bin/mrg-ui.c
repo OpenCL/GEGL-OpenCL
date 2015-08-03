@@ -1300,6 +1300,49 @@ static void load_into_buffer (State *o, const char *path)
   gegl_node_process (sink);
   g_object_unref (gegl);
 
+  {
+    GExiv2Orientation orientation = path_get_orientation (path);
+    gboolean hflip = FALSE;
+    gboolean vflip = FALSE;
+    double degrees = 0.0;
+    switch (orientation)
+    {
+      case GEXIV2_ORIENTATION_UNSPECIFIED:
+      case GEXIV2_ORIENTATION_NORMAL:
+        break;
+      case GEXIV2_ORIENTATION_HFLIP: hflip=TRUE; break;
+      case GEXIV2_ORIENTATION_VFLIP: vflip=TRUE; break;
+      case GEXIV2_ORIENTATION_ROT_90: degrees = 90.0; break;
+      case GEXIV2_ORIENTATION_ROT_90_HFLIP: degrees = 90.0; hflip=TRUE; break;
+      case GEXIV2_ORIENTATION_ROT_90_VFLIP: degrees = 90.0; vflip=TRUE; break;
+      case GEXIV2_ORIENTATION_ROT_180: degrees = 180.0; break;
+      case GEXIV2_ORIENTATION_ROT_270: degrees = 270.0; break;
+    }
+
+    if (degrees != 0.0 || vflip || hflip)
+     {
+       /* XXX: deal with vflip/hflip */
+       GeglBuffer *new_buffer = NULL;
+       GeglNode *rotate;
+       gegl = gegl_node_new ();
+       load = gegl_node_new_child (gegl, "operation", "gegl:buffer-source",
+                                   "buffer", o->buffer,
+                                   NULL);
+       sink = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink",
+                                   "buffer", &(new_buffer),
+                                   NULL);
+       rotate = gegl_node_new_child (gegl, "operation", "gegl:rotate",
+                                   "degrees", -degrees,
+                                   "sampler", GEGL_SAMPLER_NEAREST,
+                                   NULL);
+       gegl_node_link_many (load, rotate, sink, NULL);
+       gegl_node_process (sink);
+       g_object_unref (gegl);
+       g_object_unref (o->buffer);
+       o->buffer = new_buffer;
+     }
+  }
+
 #if 0 /* hack to see if having the data in some formats already is faster */
   {
   GeglBuffer *tempbuf;
