@@ -925,6 +925,20 @@ static void gegl_ui (Mrg *mrg, void *data)
 
 /***********************************************/
 
+static char *get_path_parent (const char *path)
+{
+  char *ret = strdup (path);
+  char *lastslash = strrchr (ret, '/');
+  if (lastslash)
+  {
+    if (lastslash == ret)
+      lastslash[1] = '\0';
+    else
+      lastslash[0] = '\0';
+  }
+  return ret;
+}
+
 static char *suffix_path (const char *path)
 {
   char *ret, *last_dot;
@@ -1100,7 +1114,9 @@ static void load_path (State *o)
   if (meta)
   {
     GSList *nodes, *n;
-    o->gegl = gegl_node_new_from_xml (meta, NULL);
+    char *containing_path = get_path_parent (o->path);
+    o->gegl = gegl_node_new_from_xml (meta, containing_path);
+    free (containing_path);
     o->sink = gegl_node_new_child (o->gegl,
                        "operation", "gegl:nop", NULL);
     o->source = NULL;
@@ -1671,7 +1687,11 @@ static void save_cb (MrgEvent *event, void *data1, void *data2)
                                     "path", o->path,
                                     NULL);
   gegl_node_link_many (load, o->source, NULL);
-  xml = gegl_node_to_xml (o->sink, NULL);
+  {
+    char *containing_path = get_path_parent (o->path);
+    xml = gegl_node_to_xml (o->sink, containing_path);
+    free (containing_path);
+  }
   gegl_node_remove_child (o->gegl, load);
   gegl_node_link_many (o->load, o->source, NULL);
   gegl_meta_set (path, xml);
