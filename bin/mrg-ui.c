@@ -83,8 +83,11 @@ struct _State {
 
   int         controls_timeout;
 
-
   char      **ops; // the operations part of the commandline, if any
+
+  float       slide_pause;
+  int         slide_enabled;
+  int         slide_timeout;
 };
 
 
@@ -298,6 +301,8 @@ int mrg_ui_main (int argc, char **argv, char **ops)
   o.scale           = 1.0;
   o.render_quality  = 1.0;
   o.preview_quality = 2.0;
+  o.slide_pause     = 5.0;
+  o.slide_enabled   = 0;
 
   if (access (argv[1], F_OK) != -1)
     o.path = realpath (argv[1], NULL);
@@ -783,6 +788,14 @@ static void ui_dir_viewer (State *o)
   mrg_add_binding (mrg, "right", NULL, NULL, dir_pgdn_cb, o);
 }
 
+static int slide_cb (Mrg *mrg, void *data)
+{
+  State *o = data;
+  o->slide_timeout = 0;
+  go_next (data);
+  return 0;
+}
+
 static void ui_viewer (State *o)
 {
   Mrg *mrg = o->mrg;
@@ -856,12 +869,28 @@ static void ui_viewer (State *o)
   mrg_add_binding (mrg, "n", NULL, NULL,         go_next_cb, o);
   mrg_add_binding (mrg, "p", NULL, NULL,         go_prev_cb, o);
   mrg_add_binding (mrg, "backspace", NULL, NULL, go_prev_cb, o);
+
+  if (o->slide_enabled && o->slide_timeout == 0)
+  {
+    o->slide_timeout = 
+       mrg_add_timeout (o->mrg, o->slide_pause * 1000, slide_cb, o);
+  }
 }
 
 static void toggle_show_controls_cb (MrgEvent *event, void *data1, void *data2)
 {
   State *o = data1;
   o->show_controls = !o->show_controls;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
+static void toggle_slideshow_cb (MrgEvent *event, void *data1, void *data2)
+{
+  State *o = data1;
+  o->slide_enabled = !o->slide_enabled;
+  if (o->slide_timeout)
+      mrg_remove_idle (o->mrg, o->slide_timeout);
+  o->slide_timeout = 0;
   mrg_queue_draw (o->mrg, NULL);
 }
 
@@ -918,6 +947,7 @@ static void gegl_ui (Mrg *mrg, void *data)
   mrg_add_binding (mrg, "f", NULL, NULL,         toggle_fullscreen_cb, o);
   mrg_add_binding (mrg, "F11", NULL, NULL,       toggle_fullscreen_cb, o);
   mrg_add_binding (mrg, "tab", NULL, NULL,       toggle_show_controls_cb, o);
+  mrg_add_binding (mrg, "s", NULL, NULL,       toggle_slideshow_cb, o);
 
   mrg_add_binding (mrg, ",", NULL, NULL,         preview_less_cb, o);
   mrg_add_binding (mrg, ".", NULL, NULL,         preview_more_cb, o);
