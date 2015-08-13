@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Gegl-master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-07-21 17:27+0000\n"
-"PO-Revision-Date: 2015-08-04 09:47+0100\n"
+"POT-Creation-Date: 2015-08-13 05:27+0000\n"
+"PO-Revision-Date: 2015-08-13 10:44+0100\n"
 "Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
 "Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
@@ -1367,9 +1367,10 @@ msgstr "Saturação do mosaico"
 msgid "Expand tiles by this amount"
 msgstr "Expandir mosaicos neste valor"
 
-#: ../operations/common/cubism.c:38
-msgid "Background Color"
-msgstr "Cor de fundo"
+#: ../operations/common/cubism.c:612
+#| msgid "Cubic"
+msgid "Cubism"
+msgstr "Cubismo"
 
 #: ../operations/common/cubism.c:616
 msgid ""
@@ -2098,6 +2099,13 @@ msgstr "Tipo de fractal não suportado: %d"
 #: ../operations/common/fractal-explorer.c:428
 msgid "Fractal Explorer"
 msgstr "Explorador de fractais"
+
+#: ../operations/common/fractal-explorer.c:432
+msgid ""
+"Rendering of multiple different fractal systems, with configurable coloring "
+"options."
+msgstr ""
+"Desenho de múltiplos sitemas fractais, com opções de cor configuráveis."
 
 #: ../operations/common/fractal-trace.c:34
 #: ../operations/common/linear-gradient.c:25
@@ -3541,6 +3549,33 @@ msgstr "Pixelizar"
 msgid "Simplify image into an array of solid-colored rectangles"
 msgstr "Simplificar imagem numa matriz de retângulos de cores sólidas"
 
+#: ../operations/common/plasma.c:36
+#| msgid "Turbulent"
+msgid "Turbulence"
+msgstr "Turbulência"
+
+#: ../operations/common/plasma.c:37
+msgid "High values give more variation in details"
+msgstr "Valores altos dão mais variação nos detalhes"
+
+#: ../operations/common/plasma.c:41
+#| msgid "Width of the generated buffer"
+msgid "X start of the generated buffer"
+msgstr "Início X do buffer gerado"
+
+#: ../operations/common/plasma.c:48
+#| msgid "Width of the generated buffer"
+msgid "Y start of the generated buffer"
+msgstr "Início Y do buffer gerado"
+
+#: ../operations/common/plasma.c:421
+msgid "Plasma"
+msgstr "Plasma"
+
+#: ../operations/common/plasma.c:425
+msgid "Creates an image filled with a plasma effect."
+msgstr "Cria uma imagem cheia com um efeito de plasma"
+
 #: ../operations/common/polar-coordinates.c:34
 msgid "Circle depth in percent"
 msgstr "Profundidade do círculo em percentagem"
@@ -4182,7 +4217,11 @@ msgstr "Desvio padrão"
 msgid "Scale, strength of effect"
 msgstr "Escala, força do efeito"
 
-#: ../operations/common/unsharp-mask.c:77
+#: ../operations/common/unsharp-mask.c:83
+msgid "Unsharp Mask"
+msgstr "Máscara Remover aguçar"
+
+#: ../operations/common/unsharp-mask.c:85
 msgid ""
 "Sharpen image, by adding difference to blurred image, a technique for "
 "sharpening originally used in darkrooms."
@@ -5282,6 +5321,11 @@ msgstr "Largura da imagem desenhada"
 msgid "Height for rendered image"
 msgstr "Altura da imagem desenhada"
 
+#: ../operations/external/svg-load.c:180
+#| msgid "PNG File Loader"
+msgid "SVG File Loader"
+msgstr "Carregador de ficheiros SVG"
+
 #. not hidden because it has extra API
 #: ../operations/external/svg-load.c:182
 msgid "Load an SVG file using librsvg"
@@ -6046,10 +6090,10 @@ msgstr "Deformação de cor"
 
 #: ../operations/workshop/color-warp.c:300
 msgid ""
-"Type of border to choose. Choices are extend, wrap, crop. Default is extend"
+"Warps the colors of an image between colors with weighted distortion factors."
 msgstr ""
-"Tipo de contorno a escolher. As opções são estender, quebrar e cortar. "
-"Predefinido como estender"
+"Deforma as cores de uma imagem entre cores com fatores de distorção "
+"ponderados."
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
@@ -6538,3 +6582,13 @@ msgstr ""
 "este carregador em vez do carregador normal dcraw. Se o formato do ficheiro "
 "for .rawbayerS, troca os números 16 bit devolvidos (o carregador ppm "
 "aparenta estar com erros)"
+
+#~ msgid "Background Color"
+#~ msgstr "Cor de fundo"
+
+#~ msgid ""
+#~ "Type of border to choose. Choices are extend, wrap, crop. Default is "
+#~ "extend"
+#~ msgstr ""
+#~ "Tipo de contorno a escolher. As opções são estender, quebrar e cortar. "
+#~ "Predefinido como estender"
