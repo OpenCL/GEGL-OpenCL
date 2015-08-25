@@ -70,6 +70,7 @@ operations/common/mantiuk06.c
 operations/common/map-absolute.c
 operations/common/map-relative.c
 operations/common/matting-global.c
+operations/common/maze.c
 operations/common/mblur.c
 operations/common/mirrors.c
 operations/common/mono-mixer.c

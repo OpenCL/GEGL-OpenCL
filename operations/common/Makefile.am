@@ -78,6 +78,7 @@ op_LTLIBRARIES = \
 	map-absolute.la \
 	map-relative.la \
 	matting-global.la \
+	maze.la \
 	mblur.la \
 	mirrors.la \
 	mono-mixer.la \
