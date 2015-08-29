@@ -16,8 +16,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-04-09 22:44+0200\n"
-"PO-Revision-Date: 2015-04-09 22:45+0200\n"
+"POT-Creation-Date: 2015-08-29 19:00+0200\n"
+"PO-Revision-Date: 2015-08-29 19:01+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -102,7 +102,7 @@ msgstr ""
 #: ../bin/gegl-options.c:77
 #, c-format
 msgid "ERROR: '%s' option expected argument\n"
-msgstr "BŁĄD: opcja \"%s\" wymaga parametru\n"
+msgstr "BŁĄD: opcja „%s” wymaga parametru\n"
 
 #: ../bin/gegl-options.c:116
 msgid "Display on screen"
@@ -154,7 +154,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"nieznany parametr \"%s\", wyświetlanie pomocy zamiast tego\n"
+"nieznany parametr „%s”, wyświetlanie pomocy zamiast tego\n"
 "\n"
 "\n"
 
@@ -199,7 +199,7 @@ msgstr "Maksymalna liczba wpisów w kolejce zapisu mechanizmu kafla pliku"
 #: ../gegl/module/geglmodule.c:393
 #, c-format
 msgid "Module '%s' load error: %s"
-msgstr "Błąd podczas wczytywania modułu \"%s\": %s"
+msgstr "Błąd podczas wczytywania modułu „%s”: %s"
 
 #: ../gegl/module/geglmodule.c:369
 msgid "Module error"
@@ -470,7 +470,7 @@ msgstr "Kolor"
 
 #: ../operations/common/checkerboard.c:43
 msgid "One of the cell colors (defaults to 'black')"
-msgstr "Jeden z kolorów komórki (domyślnie \"black\" - czarny)"
+msgstr "Jeden z kolorów komórki (domyślnie „black” — czarny)"
 
 #: ../operations/common/checkerboard.c:45
 #: ../operations/workshop/linear-gradient.c:30
@@ -480,7 +480,7 @@ msgstr "Inny kolor"
 
 #: ../operations/common/checkerboard.c:47
 msgid "The other cell color (defaults to 'white')"
-msgstr "Inny kolor komórki (domyślnie \"white\" - biały)"
+msgstr "Inny kolor komórki (domyślnie „white” — biały)"
 
 #: ../operations/common/checkerboard.c:157
 msgid "Create a checkerboard pattern"
@@ -488,7 +488,7 @@ msgstr "Utwórz wzór szachownicy"
 
 #: ../operations/common/color.c:25
 msgid "The color to render (defaults to 'black')"
-msgstr "Kolor do renderowania (domyślnie \"black\" - czarny)"
+msgstr "Kolor do renderowania (domyślnie „black” — czarny)"
 
 #: ../operations/common/color.c:88
 msgid ""
@@ -571,7 +571,7 @@ msgstr "Zmień temperaturę kolorów obrazu"
 
 #: ../operations/common/color-to-alpha.c:30
 msgid "The color to render (defaults to 'white')"
-msgstr "Kolor do renderowania (domyślnie \"white\" - biały)"
+msgstr "Kolor do renderowania (domyślnie „white” — biały)"
 
 #: ../operations/common/color-to-alpha.c:200
 msgid "Convert a specified color to transparency"
@@ -744,7 +744,7 @@ msgstr "Pionowe przesunięcie cienia"
 
 #: ../operations/common/dropshadow.c:39
 msgid "The shadow's color (defaults to 'black')"
-msgstr "Kolor cienia (domyślnie \"black\" - czarny)"
+msgstr "Kolor cienia (domyślnie „black” — czarny)"
 
 #. It does make sense to sometimes have opacities > 1 (see GEGL logo
 #. * for example)
@@ -1283,7 +1283,7 @@ msgid ""
 "Inverts the components (except alpha), the result is the corresponding "
 "\"negative\" image."
 msgstr ""
-"Odwraca składowe (bez alfy), wynikiem jest odpowiedni \"negatyw\" obrazu."
+"Odwraca składowe (bez alfy), wynikiem jest odpowiedni „negatyw” obrazu."
 
 #: ../operations/common/layer.c:30
 msgid "Operation"
@@ -1317,7 +1317,7 @@ msgstr "Źródło"
 
 #: ../operations/common/layer.c:41
 msgid "Source datafile (png, jpg, raw, svg, bmp, tif, ...)"
-msgstr "Źródłowy plik danych (png, jpg, raw, svg, bmp, tif...)"
+msgstr "Źródłowy plik danych (png, jpg, raw, svg, bmp, tif…)"
 
 #: ../operations/common/layer.c:267
 msgid "A layer in the traditional sense"
@@ -2239,8 +2239,7 @@ msgid ""
 "Inverts just the value component, the result is the corresponding `inverted' "
 "image."
 msgstr ""
-"Odwraca tylko składową wartości, wynikiem jest odpowiedni \"odwrócony\" "
-"obraz."
+"Odwraca tylko składową wartości, wynikiem jest odpowiedni „odwrócony” obraz."
 
 #: ../operations/common/vignette.c:30
 msgid "Shape"
@@ -2255,7 +2254,7 @@ msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
 msgstr ""
-"Domyślnie \"black\" (czarny), można użyć przezroczystości, aby usunąć część "
+"Domyślnie „black” (czarny), można użyć przezroczystości, aby usunąć część "
 "obrazu"
 
 #: ../operations/common/vignette.c:42
@@ -2497,54 +2496,54 @@ msgstr "Importer klatek wideo biblioteki FFmpeg"
 #: ../operations/external/jp2-load.c:70
 #, c-format
 msgid "Unknown JPEG 2000 image format in '%s'"
-msgstr "Nieznany format obrazu JPEG 2000 w \"%s\""
+msgstr "Nieznany format obrazu JPEG 2000 w „%s”"
 
 #: ../operations/external/jp2-load.c:77
 #, c-format
 msgid "Unable to open JPEG 2000 image in '%s'"
-msgstr "Nie można otworzyć pliku JPEG 2000 w \"%s\""
+msgstr "Nie można otworzyć pliku JPEG 2000 w „%s”"
 
 #: ../operations/external/jp2-load.c:84
 #, c-format
 msgid "Unable to create output color profile for '%s'"
-msgstr "Nie można utworzyć wyjściowego profilu kolorów dla \"%s\""
+msgstr "Nie można utworzyć wyjściowego profilu kolorów dla „%s”"
 
 #: ../operations/external/jp2-load.c:92
 #, c-format
 msgid "Unable to convert image to sRGB color space when processing '%s'"
 msgstr ""
 "Nie można konwertować obrazu do przestrzeni kolorów sRGB podczas "
-"przetwarzania \"%s\""
+"przetwarzania „%s”"
 
 #: ../operations/external/jp2-load.c:100
 #, c-format
 msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
-msgstr "Nieobsługiwany plik JPEG 2000 niebędący RGB z %d składowymi w \"%s\""
+msgstr "Nieobsługiwany plik JPEG 2000 niebędący RGB z %d składowymi w „%s”"
 
 #: ../operations/external/jp2-load.c:111
 #, c-format
 msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
-msgstr "Nieobsługiwany plik JPEG 2000 z głębią kolorów %d w \"%s\""
+msgstr "Nieobsługiwany plik JPEG 2000 z głębią kolorów %d w „%s”"
 
 #: ../operations/external/jp2-load.c:124
 #, c-format
 msgid "Components of input image '%s' don't match"
-msgstr "Składowe obrazu wejściowego \"%s\" nie pasują"
+msgstr "Składowe obrazu wejściowego „%s” nie pasują"
 
 #: ../operations/external/jp2-load.c:209
 #, c-format
 msgid "One or more of R, G, B components are missing from '%s'"
-msgstr "Brak jednej lub więcej składowych R, G, B w \"%s\""
+msgstr "Brak jednej lub więcej składowych R, G, B w „%s”"
 
 #: ../operations/external/jp2-load.c:218
 #, c-format
 msgid "One or more of R, G, B components have signed data in '%s'"
-msgstr "Jedna lub więcej ze składowych R, G, B posiada podpisane dane w \"%s\""
+msgstr "Jedna lub więcej ze składowych R, G, B posiada podpisane dane w „%s”"
 
 #: ../operations/external/jp2-load.c:252
 #, c-format
 msgid "Error reading row %d component %d from '%s'"
-msgstr "Błąd podczas odczytywania rzędu %d składowej %d z \"%s\""
+msgstr "Błąd podczas odczytywania rzędu %d składowej %d z „%s”"
 
 #: ../operations/external/jp2-load.c:397
 msgid "JPEG 2000 image loader"
@@ -2556,7 +2555,7 @@ msgstr "Wczytywanie obrazów JPG"
 
 #: ../operations/external/jpg-save.c:26
 msgid "Target path and filename, use '-' for stdout"
-msgstr "Docelowa ścieżka i nazwa pliku, \"-\" oznacza standardowe wyjście"
+msgstr "Docelowa ścieżka i nazwa pliku, „-” oznacza standardowe wyjście"
 
 #: ../operations/external/jpg-save.c:27
 msgid "Quality"
@@ -2653,7 +2652,7 @@ msgstr ""
 #: ../operations/external/ppm-save.c:26 ../operations/external/rgbe-save.c:27
 #: ../operations/workshop/external/ff-save.c:30
 msgid "Target path and filename, use '-' for stdout."
-msgstr "Docelowa ścieżka i nazwa pliku, \"-\" oznacza standardowe wyjście."
+msgstr "Docelowa ścieżka i nazwa pliku, „-” oznacza standardowe wyjście."
 
 #: ../operations/external/npy-save.c:144
 msgid "NPY image saver (Numerical python file saver.)"
@@ -2858,7 +2857,7 @@ msgstr "Przybliżona wysokość tekstu w pikselach."
 
 #: ../operations/external/text.c:32
 msgid "Color for the text (defaults to 'white')"
-msgstr "Kolor tekstu (domyślnie \"white\" - biały)"
+msgstr "Kolor tekstu (domyślnie „white” — biały)"
 
 #: ../operations/external/text.c:33
 msgid "Wrap width"
@@ -2979,10 +2978,10 @@ msgid ""
 "cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
 "cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))</code>)"
 msgstr ""
-"Działanie mieszania \"color-burn\" SVG (<code>if cA * aB + cB * aA <= aA * "
-"aB: d = cA * (1 - aB) + cB * (1 - aA), w przeciwnym przypadku: d = (cA == "
-"0 ? 1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 "
-"- aA))</code>)"
+"Działanie mieszania „color-burn” SVG (<code>if cA * aB + cB * aA <= aA * aB: "
+"d = cA * (1 - aB) + cB * (1 - aA), w przeciwnym przypadku: d = (cA == 0 ? "
+"1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - "
+"aA))</code>)"
 
 #: ../operations/generated/color-dodge.c:165
 msgid ""
@@ -2990,7 +2989,7 @@ msgid ""
 "aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
 "aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
-"Działanie mieszania \"color-dodge\" SVG (<code>if cA * aB + cB * aA >= aA * "
+"Działanie mieszania „color-dodge” SVG (<code>if cA * aB + cB * aA >= aA * "
 "aB: d = aA * aB + cA * (1 - aB) + cB * (1 - aA), w przeciwnym przypadku: d = "
 "(cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB "
 "* (1 - aA)</code>)"
@@ -3000,16 +2999,16 @@ msgid ""
 "SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
 "+ cB * (1 - aA)</code>)"
 msgstr ""
-"Działanie mieszania \"darken\" SVG (<code>d = MIN (cA * aB, cB * aA) + cA * "
-"(1 - aB) + cB * (1 - aA)</code>)"
+"Działanie mieszania „darken” SVG (<code>d = MIN (cA * aB, cB * aA) + cA * (1 "
+"- aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/difference.c:163
 msgid ""
 "SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
 "aA))</code>)"
 msgstr ""
-"Działanie mieszania \"difference\" SVG (<code>d = cA + cB - 2 * (MIN (cA * "
-"aB, cB * aA))</code>)"
+"Działanie mieszania „difference” SVG (<code>d = cA + cB - 2 * (MIN (cA * aB, "
+"cB * aA))</code>)"
 
 #: ../operations/generated/divide.c:125
 msgid "Math operation divide (c = value==0.0f?0.0f:c/value)"
@@ -3017,31 +3016,31 @@ msgstr "Działanie matematyczne dzielenia (c = wartość==0.0f?0.0f:c/wartość)
 
 #: ../operations/generated/dst-atop.c:116
 msgid "Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"
-msgstr "Działanie Portera-Duffa \"dst-atop\" (d = cB * aA + cA * (1.0f - aB))"
+msgstr "Działanie Portera-Duffa „dst-atop” (d = cB * aA + cA * (1.0f - aB))"
 
 #: ../operations/generated/dst.c:116
 msgid "Porter Duff operation dst (d = cB)"
-msgstr "Działanie Portera-Duffa \"dst\" (d = cB)"
+msgstr "Działanie Portera-Duffa „dst” (d = cB)"
 
 #: ../operations/generated/dst-in.c:116
 msgid "Porter Duff operation dst-in (d = cB * aA)"
-msgstr "Działanie Portera-Duffa \"dst-in\" (d = cB * aA)"
+msgstr "Działanie Portera-Duffa „dst-in” (d = cB * aA)"
 
 #: ../operations/generated/dst-out.c:116
 msgid "Porter Duff operation dst-out (d = cB * (1.0f - aA))"
-msgstr "Działanie Portera-Duffa \"dst-out\" (d = cB * (1.0f - aA))"
+msgstr "Działanie Portera-Duffa „dst-out” (d = cB * (1.0f - aA))"
 
 #: ../operations/generated/dst-over.c:116
 msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
-msgstr "Działanie Portera-Duffa \"dst-over\" (d = cB + cA * (1.0f - aB))"
+msgstr "Działanie Portera-Duffa „dst-over” (d = cB + cA * (1.0f - aB))"
 
 #: ../operations/generated/exclusion.c:163
 msgid ""
 "SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
-"Działanie mieszania \"exclusion\" SVG (<code>d = (cA * aB + cB * aA - 2 * cA "
-"* cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+"Działanie mieszania „exclusion” SVG (<code>d = (cA * aB + cB * aA - 2 * cA * "
+"cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/gamma.c:125
 msgid "Math operation gamma (c = powf (c, value))"
@@ -3053,16 +3052,16 @@ msgid ""
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
 "+ cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
-"Działanie mieszania \"hard-light\" SVG (<code>if 2 * cA < aA: d = 2 * cA * "
-"cB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * "
-"(aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+"Działanie mieszania „hard-light” SVG (<code>if 2 * cA < aA: d = 2 * cA * cB "
+"+ cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA "
+"- cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/lighten.c:163
 msgid ""
 "SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
 msgstr ""
-"Działanie mieszania \"lighten\" SVG (<code>d = MAX (cA * aB, cB * aA) + cA * "
+"Działanie mieszania „lighten” SVG (<code>d = MAX (cA * aB, cB * aA) + cA * "
 "(1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/multiply.c:125
@@ -3075,18 +3074,17 @@ msgid ""
 "- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
-"Działanie mieszania \"overlay\" SVG (<code>if 2 * cB > aB: d = 2 * cA * cB + "
+"Działanie mieszania „overlay” SVG (<code>if 2 * cB > aB: d = 2 * cA * cB + "
 "cA * (1 - aB) + cB * (1 - aA), w przeciwnym przypadku: d = aA * aB - 2 * (aB "
 "- cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/plus.c:163
 msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
-msgstr "Działanie mieszania \"plus\" SVG (<code>d = cA + cB</code>)"
+msgstr "Działanie mieszania „plus” SVG (<code>d = cA + cB</code>)"
 
 #: ../operations/generated/screen.c:163
 msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
-msgstr ""
-"Działanie mieszania \"screen\" SVG (<code>d = cA + cB - cA * cB</code>)"
+msgstr "Działanie mieszania „screen” SVG (<code>d = cA + cB - cA * cB</code>)"
 
 #: ../operations/generated/soft-light.c:167
 msgid ""
@@ -3097,7 +3095,7 @@ msgid ""
 "(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * "
 "(1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
-"Działanie mieszania \"soft-light\" SVG (<code>if 2 * cA < aA: d = cB * (aA - "
+"Działanie mieszania „soft-light” SVG (<code>if 2 * cA < aA: d = cB * (aA - "
 "(aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - "
 "aA); if 8 * cB <= aB: d = cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - "
 "aA) * (aB == 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA); w "
@@ -3106,19 +3104,19 @@ msgstr ""
 
 #: ../operations/generated/src-atop.c:116
 msgid "Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"
-msgstr "Działanie Portera-Duffa \"src-atop\" (d = cA * aB + cB * (1.0f - aA))"
+msgstr "Działanie Portera-Duffa „src-atop” (d = cA * aB + cB * (1.0f - aA))"
 
 #: ../operations/generated/src.c:116
 msgid "Porter Duff operation src (d = cA)"
-msgstr "Działanie Portera-Duffa \"src\" (d = cA)"
+msgstr "Działanie Portera-Duffa „src” (d = cA)"
 
 #: ../operations/generated/src-in.c:125
 msgid "Porter Duff operation src-in (d = cA * aB)"
-msgstr "Działanie Portera-Duffa \"src-in\" (d = cA * aB)"
+msgstr "Działanie Portera-Duffa „src-in” (d = cA * aB)"
 
 #: ../operations/generated/src-out.c:116
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
-msgstr "Działanie Portera-Duffa \"src-out\" (d = cA * (1.0f - aB))"
+msgstr "Działanie Portera-Duffa „src-out” (d = cA * (1.0f - aB))"
 
 #: ../operations/generated/subtract.c:125
 msgid "Math operation subtract (c = c - value)"
@@ -3129,13 +3127,12 @@ msgid ""
 "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
 "aA)</code>)"
 msgstr ""
-"Działanie mieszania \"multiply\" SVG (<code>d = cA * cB +  cA * (1 - aB) + "
-"cB * (1 - aA)</code>)"
+"Działanie mieszania „multiply” SVG (<code>d = cA * cB +  cA * (1 - aB) + cB "
+"* (1 - aA)</code>)"
 
 #: ../operations/generated/xor.c:116
 msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
-msgstr ""
-"Działanie Portera-Duffa \"xor\" (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
+msgstr "Działanie Portera-Duffa „xor” (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
 #: ../operations/seamless-clone/seamless-clone.c:21
 #: ../operations/seamless-clone/seamless-clone-compose.c:21
@@ -3694,14 +3691,14 @@ msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
 msgstr ""
-"Wykonuje usuwanie mozaiki \"grayscale2color\" z obrazu za pomocą "
-"interpolacji bimediany."
+"Wykonuje usuwanie mozaiki „grayscale2color” z obrazu za pomocą interpolacji "
+"bimediany."
 
 #: ../operations/workshop/demosaic-simple.c:152
 msgid ""
 "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr ""
-"Wykonuje naiwne usuwanie mozaiki \"grayscale2color\" z obrazu, bez "
+"Wykonuje naiwne usuwanie mozaiki „grayscale2color” z obrazu, bez "
 "interpolacji."
 
 #: ../operations/workshop/disc-percentile.c:29
@@ -3758,7 +3755,7 @@ msgstr "Wartość użytkownika"
 
 #: ../operations/workshop/external/gluas.c:45
 msgid "(appears in the global variable 'user_value' in lua."
-msgstr "(pojawia się w globalnej zmiennej \"user_value\" w języku Lua."
+msgstr "(pojawia się w globalnej zmiennej „user_value” w języku Lua."
 
 #: ../operations/workshop/external/gluas.c:984
 msgid ""
@@ -3983,49 +3980,49 @@ msgstr ""
 
 #: ../operations/workshop/generated/average.c:109
 msgid "Image blending operation 'average' (<tt>c = (cA + aB)/2</tt>)"
-msgstr "Działanie mieszania obrazu \"average\" (<tt>c = (cA + aB)/2</tt>)"
+msgstr "Działanie mieszania obrazu „average” (<tt>c = (cA + aB)/2</tt>)"
 
 #: ../operations/workshop/generated/blend-reflect.c:109
 msgid ""
 "Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-"
 "cB)</tt>)"
 msgstr ""
-"Działanie mieszania obrazu \"blend-reflect\" (<tt>c = cB>=1.0?1.0:cA*cA / "
-"(1.0-cB)</tt>)"
+"Działanie mieszania obrazu „blend-reflect” (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-"
+"cB)</tt>)"
 
 #: ../operations/workshop/generated/negation.c:109
 msgid ""
 "Image blending operation 'negation' (<tt>c = 1.0 - fabs(1.0-cA-cB)</tt>)"
 msgstr ""
-"Działanie mieszania obrazu \"negation\" (<tt>c = 1.0 - fabs(1.0-cA-cB)</tt>)"
+"Działanie mieszania obrazu „negation” (<tt>c = 1.0 - fabs(1.0-cA-cB)</tt>)"
 
 #: ../operations/workshop/generated/soft-burn.c:109
 msgid ""
 "Image blending operation 'soft-burn' (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - "
 "cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
 msgstr ""
-"Działanie mieszania obrazu \"soft-burn\" (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 "
-"- cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
+"Działanie mieszania obrazu „soft-burn” (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - "
+"cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
 
 #: ../operations/workshop/generated/soft-dodge.c:109
 msgid ""
 "Image blending operation 'soft-dodge' (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - "
 "cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
 msgstr ""
-"Działanie mieszania obrazu \"soft-dodge\" (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 "
-"- cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
+"Działanie mieszania obrazu „soft-dodge” (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - "
+"cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
 
 #: ../operations/workshop/generated/subtractive.c:109
 msgid "Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
-msgstr "Działanie mieszania obrazu \"subtractive\" (<tt>c = cA+cB-1.0</tt>)"
+msgstr "Działanie mieszania obrazu „subtractive” (<tt>c = cA+cB-1.0</tt>)"
 
 #: ../operations/workshop/hstack.c:178
 msgid ""
 "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of "
 "\"input\")"
 msgstr ""
-"Poziomo składa wejścia na stos (w \"output\" \"aux\" jest umieszczane po "
-"prawej od \"input\")"
+"Poziomo składa wejścia na stos (w „output” „aux” jest umieszczane po prawej "
+"od „input”)"
 
 #: ../operations/workshop/kuwahara.c:243
 msgid "Edge preserving blur"
