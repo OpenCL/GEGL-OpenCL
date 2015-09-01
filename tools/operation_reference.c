@@ -489,6 +489,7 @@ main (gint argc, gchar **argv)
 
                 if (g_str_equal (keys[i], "categories") ||
                     g_str_equal (keys[i], "cl-source") ||
+                    g_str_equal (keys[i], "source") ||
                     g_str_equal (keys[i], "name")
                     )
                   continue;
