@@ -30,7 +30,7 @@ link:api.html#GeglBuffer[GeglBuffer API reference]::
   GEGL contains a powerful raster buffer abstraction powered by
   link:http://gegl.org/babl/[babl].
 
-link:operations-api.html[Extending GEGL with operations/plug-ins]::
+link:operation-api.html[Extending GEGL with operations/plug-ins]::
   The API to create new image processing atoms for combination in the graph.
 link:build.html[Getting sources, and building]::
   Links and information about various ways of getting a build environment for
