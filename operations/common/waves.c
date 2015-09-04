@@ -37,9 +37,9 @@ property_double (amplitude, _("Amplitude"), 25.0)
     description(_("Amplitude of the ripple"))
     value_range (0.0, 1000.0)
 
-property_double (period, _("Period"), 200)
+property_double (period, _("Period"), 200.0)
     description(_("Period (wavelength) of the ripple"))
-    value_range (0, 1000)
+    value_range (0.1, 1000.0)
 
 property_double (phi, _("Phase shift"), 0)
     value_range (-1, 1)
@@ -139,7 +139,10 @@ process (GeglOperation       *operation,
             dx = (x - px_x) * scalex;
             dy = (y - px_y) * scaley;
 
-            radius = sqrt (dx * dx + dy * dy);
+            if (!dx && !dy)
+              radius = 0.000001;
+            else
+              radius = sqrt (dx * dx + dy * dy);
 
             shift = o->amplitude * sin (2.0 * G_PI * radius / o->period +
                                         2.0 * G_PI * o->phi);
