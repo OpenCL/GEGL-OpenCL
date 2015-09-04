@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Gegl-master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-08-13 05:27+0000\n"
-"PO-Revision-Date: 2015-08-13 10:44+0100\n"
+"POT-Creation-Date: 2015-09-04 05:29+0000\n"
+"PO-Revision-Date: 2015-09-04 10:58+0100\n"
 "Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
 "Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
@@ -781,7 +781,8 @@ msgstr ""
 
 #: ../operations/common/checkerboard.c:25
 #: ../operations/common/diffraction-patterns.c:78
-#: ../operations/common/grid.c:24 ../operations/common/noise-solid.c:64
+#: ../operations/common/grid.c:24 ../operations/common/maze.c:42
+#: ../operations/common/noise-solid.c:64
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
@@ -793,13 +794,14 @@ msgid "Width"
 msgstr "Largura"
 
 #: ../operations/common/checkerboard.c:26 ../operations/common/grid.c:25
+#: ../operations/common/maze.c:43
 msgid "Horizontal width of cells pixels"
 msgstr "Largura horizontal de pixels de célula"
 
 #: ../operations/common/checkerboard.c:33
 #: ../operations/common/diffraction-patterns.c:86
 #: ../operations/common/engrave.c:31 ../operations/common/grid.c:31
-#: ../operations/common/noise-solid.c:72
+#: ../operations/common/maze.c:50 ../operations/common/noise-solid.c:72
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
@@ -811,6 +813,7 @@ msgid "Height"
 msgstr "Altura"
 
 #: ../operations/common/checkerboard.c:34 ../operations/common/grid.c:32
+#: ../operations/common/maze.c:51
 msgid "Vertical width of cells pixels"
 msgstr "Altura vertical de pixels de célula"
 
@@ -1003,7 +1006,8 @@ msgstr "A estratégia de pontilhado a usar"
 
 #. XXX: what?
 #: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
-#: ../operations/common/mosaic.c:88 ../operations/common/noise-cell.c:55
+#: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
+#: ../operations/common/noise-cell.c:55
 #: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
 #: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
 #: ../operations/common/noise-pick.c:38
@@ -1368,7 +1372,6 @@ msgid "Expand tiles by this amount"
 msgstr "Expandir mosaicos neste valor"
 
 #: ../operations/common/cubism.c:612
-#| msgid "Cubic"
 msgid "Cubism"
 msgstr "Cubismo"
 
@@ -2751,6 +2754,55 @@ msgstr ""
 "criar um 1º plano alfa mate. Definir branco como 1º plano e preto como fundo "
 "para o trimapa. Tudo o resto será tratado como desconhecido e preenchido."
 
+#: ../operations/common/maze.c:38
+#| msgid "Depth"
+msgid "Depth first"
+msgstr "Profundidade primeiro"
+
+#: ../operations/common/maze.c:39
+msgid "Prim's algotithm"
+msgstr "Algoritmo de Prim"
+
+#: ../operations/common/maze.c:58
+#| msgid "Algorithm"
+msgid "Algorithm type"
+msgstr "Tipo de algoritmo"
+
+#: ../operations/common/maze.c:61
+msgid "Maze algorithm type"
+msgstr "Tipo de algoritmo de labirinto"
+
+#: ../operations/common/maze.c:63 ../operations/common/noise-solid.c:56
+msgid "Tilable"
+msgstr "Mosaicos"
+
+#: ../operations/common/maze.c:67
+#| msgid "Background Color"
+msgid "Foreground Color"
+msgstr "Cor de 1º plano"
+
+#: ../operations/common/maze.c:68
+#| msgid "The second cell color"
+msgid "The foreground color"
+msgstr "A cor do primeiro plano"
+
+#: ../operations/common/maze.c:71
+msgid "Background Color"
+msgstr "Cor de fundo"
+
+#: ../operations/common/maze.c:72
+#| msgid "Background color"
+msgid "The background color"
+msgstr "A cor de fundo"
+
+#: ../operations/common/maze.c:732
+msgid "Maze"
+msgstr "Labirinto"
+
+#: ../operations/common/maze.c:736
+msgid "Draw a labyrinth"
+msgstr "Desenhar um labirinto"
+
 #: ../operations/common/mblur.c:25
 msgid "Dampness"
 msgstr "Humidade"
@@ -3256,10 +3308,6 @@ msgstr "Tamanho da textura vertical"
 msgid "Detail level"
 msgstr "Nível de detalhe"
 
-#: ../operations/common/noise-solid.c:56
-msgid "Tilable"
-msgstr "Mosaicos"
-
 #: ../operations/common/noise-solid.c:57
 msgid "Create a tilable output"
 msgstr "Criar uma saída em mosaicos"
@@ -3550,7 +3598,6 @@ msgid "Simplify image into an array of solid-colored rectangles"
 msgstr "Simplificar imagem numa matriz de retângulos de cores sólidas"
 
 #: ../operations/common/plasma.c:36
-#| msgid "Turbulent"
 msgid "Turbulence"
 msgstr "Turbulência"
 
@@ -3559,12 +3606,10 @@ msgid "High values give more variation in details"
 msgstr "Valores altos dão mais variação nos detalhes"
 
 #: ../operations/common/plasma.c:41
-#| msgid "Width of the generated buffer"
 msgid "X start of the generated buffer"
 msgstr "Início X do buffer gerado"
 
 #: ../operations/common/plasma.c:48
-#| msgid "Width of the generated buffer"
 msgid "Y start of the generated buffer"
 msgstr "Início Y do buffer gerado"
 
@@ -5322,7 +5367,6 @@ msgid "Height for rendered image"
 msgstr "Altura da imagem desenhada"
 
 #: ../operations/external/svg-load.c:180
-#| msgid "PNG File Loader"
 msgid "SVG File Loader"
 msgstr "Carregador de ficheiros SVG"
 
@@ -6582,9 +6626,6 @@ msgstr ""
 "este carregador em vez do carregador normal dcraw. Se o formato do ficheiro "
 "for .rawbayerS, troca os números 16 bit devolvidos (o carregador ppm "
 "aparenta estar com erros)"
-
-#~ msgid "Background Color"
-#~ msgstr "Cor de fundo"
 
 #~ msgid ""
 #~ "Type of border to choose. Choices are extend, wrap, crop. Default is "
