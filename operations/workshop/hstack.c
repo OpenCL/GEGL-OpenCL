@@ -90,7 +90,7 @@ get_invalidated_by_change (GeglOperation       *self,
                            const gchar         *input_pad,
                            const GeglRectangle *region)
 {
-  if (!strcmp ("input_pad", "input"))
+  if (!strcmp (input_pad, "input"))
     {
       return *region;
     }
