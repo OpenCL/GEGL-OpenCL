@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Gegl-master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-09-04 05:29+0000\n"
-"PO-Revision-Date: 2015-09-04 10:58+0100\n"
+"POT-Creation-Date: 2015-09-14 05:32+0000\n"
+"PO-Revision-Date: 2015-09-14 08:26+0100\n"
 "Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
 "Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
@@ -348,31 +348,34 @@ msgstr "Suavização Scale3X"
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
 msgstr "Suavização usando o algoritmo de extrapolação de margens Scale3X"
 
-#: ../operations/common/apply-lens.c:31
+#: ../operations/common/apply-lens.c:36
 msgid "Lens refraction index"
 msgstr "Índice de refração da lente"
 
-#: ../operations/common/apply-lens.c:34
+#: ../operations/common/apply-lens.c:39
 msgid "Keep original surroundings"
 msgstr "Manter o ambiente original"
 
-#: ../operations/common/apply-lens.c:35
+#: ../operations/common/apply-lens.c:40
 msgid "Keep image unchanged, where not affected by the lens."
 msgstr "Manter a imagem inalterada onde não for afetada pela lente."
 
-#: ../operations/common/apply-lens.c:37 ../operations/common/cubism.c:39
+#: ../operations/common/apply-lens.c:42 ../operations/common/cubism.c:39
 #: ../operations/common/lens-distortion.c:57
 #: ../operations/common/pixelize.c:62 ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Cor de fundo"
 
-#: ../operations/common/apply-lens.c:301
+#: ../operations/common/apply-lens.c:270
 msgid "Apply Lens"
 msgstr "Aplicar lente"
 
-#: ../operations/common/apply-lens.c:304
+#: ../operations/common/apply-lens.c:273
+#| msgid ""
+#| "Simulates the optical distoration caused by having an elliptical lens "
+#| "over the image"
 msgid ""
-"Simulates the optical distoration caused by having an elliptical lens over "
+"Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
 msgstr ""
 "Simula a distorção ótica causada por ter uma lente elíptica sobre uma imagem"
@@ -2755,7 +2758,6 @@ msgstr ""
 "para o trimapa. Tudo o resto será tratado como desconhecido e preenchido."
 
 #: ../operations/common/maze.c:38
-#| msgid "Depth"
 msgid "Depth first"
 msgstr "Profundidade primeiro"
 
@@ -2764,7 +2766,6 @@ msgid "Prim's algotithm"
 msgstr "Algoritmo de Prim"
 
 #: ../operations/common/maze.c:58
-#| msgid "Algorithm"
 msgid "Algorithm type"
 msgstr "Tipo de algoritmo"
 
@@ -2777,12 +2778,10 @@ msgid "Tilable"
 msgstr "Mosaicos"
 
 #: ../operations/common/maze.c:67
-#| msgid "Background Color"
 msgid "Foreground Color"
 msgstr "Cor de 1º plano"
 
 #: ../operations/common/maze.c:68
-#| msgid "The second cell color"
 msgid "The foreground color"
 msgstr "A cor do primeiro plano"
 
@@ -2791,7 +2790,6 @@ msgid "Background Color"
 msgstr "Cor de fundo"
 
 #: ../operations/common/maze.c:72
-#| msgid "Background color"
 msgid "The background color"
 msgstr "A cor de fundo"
 
