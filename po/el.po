@@ -1,16 +1,14 @@
 # Greek translation for gegl.
 # Copyright (C) 2012 gegl's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gegl package.
-# Dimitris Spingos <dmtrs32@gmail.com>, 2012.
-# Dimitris Spingos (Δημήτρης  Σπίγγος) <dmtrs32@gmail.com>, 2012.
-# Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2012, 2013, 2014, 2015.
+# Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2011-2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
 "eywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-07-27 05:28+0000\n"
-"PO-Revision-Date: 2015-07-28 12:11+0300\n"
+"POT-Creation-Date: 2015-09-11 05:33+0000\n"
+"PO-Revision-Date: 2015-09-13 14:34+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: www.gnome.gr\n"
 "Language: el\n"
@@ -360,34 +358,37 @@ msgstr "Εξομάλυνση κλίμακας3X"
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
 msgstr "Εξομάλυνση χρησιμοποιώντας το Scale3X αλγόριθμο επέκτασης άκρης"
 
-#: ../operations/common/apply-lens.c:31
+#: ../operations/common/apply-lens.c:36
 msgid "Lens refraction index"
 msgstr "Δείκτης διάθλασης φακού"
 
-#: ../operations/common/apply-lens.c:34
+#: ../operations/common/apply-lens.c:39
 msgid "Keep original surroundings"
 msgstr "Διατήρηση του αρχικού περιβάλλοντος"
 
-#: ../operations/common/apply-lens.c:35
+#: ../operations/common/apply-lens.c:40
 msgid "Keep image unchanged, where not affected by the lens."
 msgstr "Διατήρηση αμετάβλητης εικόνας, όταν δεν επηρεάζεται από τους φακούς."
 
-#: ../operations/common/apply-lens.c:37 ../operations/common/cubism.c:39
+#: ../operations/common/apply-lens.c:42 ../operations/common/cubism.c:39
 #: ../operations/common/lens-distortion.c:57
 #: ../operations/common/pixelize.c:62 ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Χρώμα παρασκηνίου"
 
-#: ../operations/common/apply-lens.c:301
+#: ../operations/common/apply-lens.c:270
 msgid "Apply Lens"
 msgstr "Εφαρμογή φακού"
 
-#: ../operations/common/apply-lens.c:304
+#: ../operations/common/apply-lens.c:273
+#| msgid ""
+#| "Simulates the optical distoration caused by having an elliptical lens "
+#| "over the image"
 msgid ""
-"Simulates the optical distoration caused by having an elliptical lens over "
+"Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
 msgstr ""
-"Προσομοιώνει οπτικές παραμορφώσεις που προκλήθηκαν έχοντας ελλειπτικό φακό "
+"Προσομοιώνει την οπτική παραμόρφωση που προκλήθηκε έχοντας ελλειπτικό φακό "
 "πάνω από την εικόνα"
 
 #: ../operations/common/bilateral-filter.c:26
@@ -804,7 +805,8 @@ msgstr ""
 
 #: ../operations/common/checkerboard.c:25
 #: ../operations/common/diffraction-patterns.c:78
-#: ../operations/common/grid.c:24 ../operations/common/noise-solid.c:64
+#: ../operations/common/grid.c:24 ../operations/common/maze.c:42
+#: ../operations/common/noise-solid.c:64
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
@@ -816,13 +818,14 @@ msgid "Width"
 msgstr "Πλάτος"
 
 #: ../operations/common/checkerboard.c:26 ../operations/common/grid.c:25
+#: ../operations/common/maze.c:43
 msgid "Horizontal width of cells pixels"
 msgstr "Οριζόντιο πλάτος κελιών σε εικονοστοιχεία"
 
 #: ../operations/common/checkerboard.c:33
 #: ../operations/common/diffraction-patterns.c:86
 #: ../operations/common/engrave.c:31 ../operations/common/grid.c:31
-#: ../operations/common/noise-solid.c:72
+#: ../operations/common/maze.c:50 ../operations/common/noise-solid.c:72
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
@@ -834,6 +837,7 @@ msgid "Height"
 msgstr "Ύψος"
 
 #: ../operations/common/checkerboard.c:34 ../operations/common/grid.c:32
+#: ../operations/common/maze.c:51
 msgid "Vertical width of cells pixels"
 msgstr "Κάθετο πλάτος των εικονοστοιχείων κελιών"
 
@@ -1026,7 +1030,8 @@ msgstr "Η στρατηγική πρόσμειξης για χρήση"
 
 #. XXX: what?
 #: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
-#: ../operations/common/mosaic.c:88 ../operations/common/noise-cell.c:55
+#: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
+#: ../operations/common/noise-cell.c:55
 #: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
 #: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
 #: ../operations/common/noise-pick.c:38
@@ -2780,6 +2785,55 @@ msgstr ""
 "μαύρο ως παρασκήνιο για τον τριπλό χάρτη. Ο,τιδήποτε άλλο θα επεξεργαστεί ως "
 "άγνωστο και γεμάτο."
 
+#: ../operations/common/maze.c:38
+#| msgid "Depth"
+msgid "Depth first"
+msgstr "Πρώτα βάθος"
+
+#: ../operations/common/maze.c:39
+msgid "Prim's algotithm"
+msgstr "Αλγόριθμος του Prim"
+
+#: ../operations/common/maze.c:58
+#| msgid "Algorithm"
+msgid "Algorithm type"
+msgstr "Τύπος αλγορίθμου"
+
+#: ../operations/common/maze.c:61
+msgid "Maze algorithm type"
+msgstr "Τύπος αλγορίθμου δαιδάλου"
+
+#: ../operations/common/maze.c:63 ../operations/common/noise-solid.c:56
+msgid "Tilable"
+msgstr "Σε παράθεση"
+
+#: ../operations/common/maze.c:67
+#| msgid "Background Color"
+msgid "Foreground Color"
+msgstr "Χρώμα προσκηνίου"
+
+#: ../operations/common/maze.c:68
+#| msgid "The second cell color"
+msgid "The foreground color"
+msgstr "Το χρώμα προσκηνίου"
+
+#: ../operations/common/maze.c:71
+msgid "Background Color"
+msgstr "Χρώμα παρασκηνίου"
+
+#: ../operations/common/maze.c:72
+#| msgid "Background color"
+msgid "The background color"
+msgstr "Το χρώμα παρασκηνίου"
+
+#: ../operations/common/maze.c:732
+msgid "Maze"
+msgstr "Δαίδαλος"
+
+#: ../operations/common/maze.c:736
+msgid "Draw a labyrinth"
+msgstr "Σχεδίαση ενός λαβύρινθου"
+
 #: ../operations/common/mblur.c:25
 msgid "Dampness"
 msgstr "Απόσβεση"
@@ -3288,10 +3342,6 @@ msgstr "Κάθετο μέγεθος υφής"
 #: ../operations/common/noise-solid.c:52
 msgid "Detail level"
 msgstr "Επίπεδο λεπτομέρειας"
-
-#: ../operations/common/noise-solid.c:56
-msgid "Tilable"
-msgstr "Σε παράθεση"
 
 #: ../operations/common/noise-solid.c:57
 msgid "Create a tilable output"
@@ -5756,13 +5806,10 @@ msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 msgstr "Πράξη Porter Duff xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
 #: ../operations/seamless-clone/seamless-clone.c:22
-#| msgid "Refinement steps"
 msgid "Refinement scale"
 msgstr "Κλίμακα βελτίωσης"
 
 #: ../operations/seamless-clone/seamless-clone.c:23
-#| msgid ""
-#| "Maximal amount of refinement points to be used for the interpolation mesh"
 msgid ""
 "Maximal scale of refinement points to be used for the interpolation mesh"
 msgstr ""
@@ -6894,9 +6941,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Y@ value, position"
 #~ msgstr "Θέση τιμής Υ2"
-
-#~ msgid "Background Color"
-#~ msgstr "Χρώμα παρασκηνίου"
 
 #~ msgid "Background Color (defaults to 'none')"
 #~ msgstr "Χρώμα παρασκηνίου (προεπιλογή το 'κανένα')"
