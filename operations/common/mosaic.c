@@ -537,7 +537,6 @@ gaussian_deriv (gfloat              *src_rgn,
 {
   gfloat *dp;
   gfloat *sp, *s;
-  gfloat *data;
   gfloat *buf, *b;
   gint    chan;
   gint    i, row, col;
@@ -554,7 +553,6 @@ gaussian_deriv (gfloat              *src_rgn,
 
   /*  allocate buffers for rows/cols  */
   length = MAX (result->width, result->height) * NB_CPN;
-  data = g_new (gfloat, length * 2);
 
   length = 3;
 
@@ -723,7 +721,6 @@ gaussian_deriv (gfloat              *src_rgn,
     }
 
   g_free (buf);
-  g_free (data);
 }
 
 /*
