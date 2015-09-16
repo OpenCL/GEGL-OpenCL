@@ -301,7 +301,7 @@ gegl_cache_computed (GeglCache           *self,
 
   g_mutex_lock (&self->mutex);
 
-  if (level <= GEGL_CACHE_VALID_MIPMAPS)
+  if (level < GEGL_CACHE_VALID_MIPMAPS)
     gegl_region_union_with_rect (self->valid_region[level], rect);
 
   g_signal_emit (self, gegl_cache_signals[COMPUTED], 0, rect, NULL);
