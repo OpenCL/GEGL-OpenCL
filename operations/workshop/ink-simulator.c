@@ -1089,6 +1089,7 @@ static void parse_config_line (SSim   *ssim,
         }
     }
   }
+  free (key);
 }
 
 
