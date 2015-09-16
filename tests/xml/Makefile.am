@@ -33,7 +33,7 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 
 # Common libs
 LIBS = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la	\
-	$(DEP_LIBS) $(BABL_LIBS)
+	$(DEP_LIBS) $(BABL_LIBS) $(MATH_LIB)
 
 check-TESTS: $(TESTS)
 	$(PYTHON) $(srcdir)/../run-tests.py \
