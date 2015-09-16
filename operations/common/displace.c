@@ -231,7 +231,7 @@ process (GeglOperation       *operation,
   GeglSampler        *in_sampler;
 
   gint     x, y;
-  gdouble  cx, cy;
+  gdouble  cx = 0, cy = 0;
   gfloat  *in_pixel;
   gint     n_components;
   gint     aux_index, aux2_index;
@@ -258,10 +258,10 @@ process (GeglOperation       *operation,
                                            GEGL_ACCESS_READ, o->abyss_policy);
 
   if (o->displace_mode == GEGL_DISPLACE_MODE_POLAR)
-  {
+    {
       cx = gegl_buffer_get_width (input) / 2.0;
       cy = gegl_buffer_get_height (input) / 2.0;
-  }
+    }
 
   while (gegl_buffer_iterator_next (iter))
     {
