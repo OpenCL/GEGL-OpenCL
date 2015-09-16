@@ -1,4 +1,3 @@
-#define CLAMP(val,lo,hi) (val < lo) ? lo : ((hi < val) ? hi : val )
 __kernel cl_texturize_canvas(__global const float * in,
                              __global float * out,
                              __global float * sdata,
@@ -23,7 +22,7 @@ __kernel cl_texturize_canvas(__global const float * in,
     for(i=0; i<components; ++i)
     {
        color = tmp + src[index];
-       out[index++] = CLAMP(color,0.0f,1.0f);
+       out[index++] = clamp(color,0.0f,1.0f);
     }
     if(has_alpha)
        out[index] = in[index];

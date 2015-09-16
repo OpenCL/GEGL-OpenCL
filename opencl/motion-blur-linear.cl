@@ -1,8 +1,3 @@
-int CLAMP(int val,int lo,int hi)
-{
-    return (val < lo) ? lo : ((hi < val) ? hi : val);
-}
-
 float4 get_pixel_color(const __global float4 *in_buf,
                        int     rect_width,
                        int     rect_height,
@@ -14,8 +9,8 @@ float4 get_pixel_color(const __global float4 *in_buf,
     int ix = x - rect_x;
     int iy = y - rect_y;
 
-    ix = CLAMP(ix, 0, rect_width-1);
-    iy = CLAMP(iy, 0, rect_height-1);
+    ix = clamp(ix, 0, rect_width-1);
+    iy = clamp(iy, 0, rect_height-1);
 
     return in_buf[iy * rect_width + ix];
 }

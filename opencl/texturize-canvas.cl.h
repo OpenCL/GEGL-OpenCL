@@ -1,5 +1,4 @@
 static const char* texturize_canvas_cl_source =
-"#define CLAMP(val,lo,hi) (val < lo) ? lo : ((hi < val) ? hi : val )           \n"
 "__kernel cl_texturize_canvas(__global const float * in,                       \n"
 "                             __global float * out,                            \n"
 "                             __global float * sdata,                          \n"
@@ -24,7 +23,7 @@ static const char* texturize_canvas_cl_source =
 "    for(i=0; i<components; ++i)                                               \n"
 "    {                                                                         \n"
 "       color = tmp + src[index];                                              \n"
-"       out[index++] = CLAMP(color,0.0f,1.0f);                                 \n"
+"       out[index++] = clamp(color,0.0f,1.0f);                                 \n"
 "    }                                                                         \n"
 "    if(has_alpha)                                                             \n"
 "       out[index] = in[index];                                                \n"
