@@ -57,7 +57,9 @@ void kernel_box_blur_fast (__global const float4 *in,
   const int twice_radius = 2 * radius;
   const int in_width = twice_radius + width;
   const int in_height = twice_radius + height;
-  const float4 area = (float4)( (twice_radius + 1) * (twice_radius + 1) );
+  const int start = fmax( -radius, -local_id0 );
+  const int stop = fmin( radius, get_local_size(0) - local_id0 );
+  const float4 area = (float4) ( ((stop - start) + 1) * (twice_radius + 1) );
   int column_index_start,column_index_end;
   int y = get_global_id(1) * size;
   const int out_x = get_group_id(0)
@@ -87,17 +89,14 @@ void kernel_box_blur_fast (__global const float4 *in,
     {
       if (out_x < width)
         {
-          if (local_id0 >= radius && local_id0 < get_local_size(0) - radius)
+          total_sum = (float4)0.0f;
+
+          for (int i = start; i < stop; ++i)
             {
-                total_sum = (float4)0.0f;
-
-                for (int i = 0; i < twice_radius + 1; ++i)
-                  {
-                    total_sum += column_sum[local_id0 - radius + i];
-                  }
-
-                out[y * width + out_x] = total_sum / area;
+              total_sum += column_sum[local_id0 + i];
             }
+
+          out[y * width + out_x] = total_sum / area;
         }
 
     if (--tmp_size == 0 || y == height - 1)
