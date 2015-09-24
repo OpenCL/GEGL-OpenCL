@@ -325,7 +325,7 @@ prepare (GeglOperation *operation)
       p->width = p->enc->width;
       p->height = p->enc->height;
       p->frames = 10000000;
-      p->lavc_frame = avcodec_alloc_frame ();
+      p->lavc_frame = av_frame_alloc ();
 
       if (p->fourcc)
         g_free (p->fourcc);
