@@ -1,15 +1,27 @@
 #include "test-common.h"
 
+void rotate(GeglBuffer *buffer);
+void rotate_nearest(GeglBuffer *buffer);
+
 gint
 main (gint    argc,
       gchar **argv)
 {
-  GeglBuffer *buffer, *buffer2;
-  GeglNode   *gegl, *source, *rotate, *sink;
+  GeglBuffer *buffer;
 
   gegl_init (&argc, &argv);
 
   buffer = test_buffer (1024, 1024, babl_format ("RGBA float"));
+  bench ("rotate", buffer, &rotate);
+  bench ("rotate-nearest", buffer, &rotate_nearest);
+
+  return 0;
+}
+
+void rotate(GeglBuffer *buffer)
+{
+  GeglBuffer *buffer2;
+  GeglNode   *gegl, *source, *rotate, *sink;
 
   gegl = gegl_node_new ();
   source = gegl_node_new_child (gegl, "operation", "gegl:buffer-source", "buffer", buffer, NULL);
@@ -17,12 +29,15 @@ main (gint    argc,
   sink = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink", "buffer", &buffer2, NULL);
 
   gegl_node_link_many (source, rotate, sink, NULL);
-
-  test_start ();
   gegl_node_process (sink);
-  test_end ("rotate",  gegl_buffer_get_pixel_count (buffer) * 16);
-
   g_object_unref (gegl);
+  g_object_unref (buffer2);
+}
+
+void rotate_nearest(GeglBuffer *buffer)
+{
+  GeglBuffer *buffer2;
+  GeglNode   *gegl, *source, *rotate, *sink;
 
   gegl = gegl_node_new ();
   source = gegl_node_new_child (gegl, "operation", "gegl:buffer-source", "buffer", buffer, NULL);
@@ -30,12 +45,7 @@ main (gint    argc,
   sink = gegl_node_new_child (gegl, "operation", "gegl:buffer-sink", "buffer", &buffer2, NULL);
 
   gegl_node_link_many (source, rotate, sink, NULL);
-
-  test_start ();
   gegl_node_process (sink);
-  test_end ("rotate-nearest",  gegl_buffer_get_pixel_count (buffer) * 16);
-
   g_object_unref (gegl);
-
-  return 0;
+  g_object_unref (buffer2);
 }
