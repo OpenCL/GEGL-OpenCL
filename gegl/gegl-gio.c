@@ -22,9 +22,11 @@
 
 #ifdef G_OS_WIN32
 #include <windows.h>
-#include <gio/gwin32inputstream.h>  
+#include <gio/gwin32inputstream.h>
+#include <gio/gwin32outputstream.h>
 #else
 #include <gio/gunixinputstream.h>
+#include <gio/gunixoutputstream.h>
 #endif
 
 /**
@@ -164,4 +166,53 @@ gegl_gio_open_input_stream(const gchar *uri, const gchar *path, GFile **out_file
     }
 
   return fis;
+}
+
+/**
+ * gegl_gio_open_output_stream:
+ * @uri: (allow none) URI to open. @uri is preferred over @path if both are set.
+ * @path: (allow none) path to open.
+ * @out_file: (out) (transfer full): return location for GFile, if stream is for a file.
+ *
+ * Return value: (transfer full): A new #GOutputStream, free with g_object_unref().
+ *
+ * Note: currently private API.
+ */
+GOutputStream *
+gegl_gio_open_output_stream(const gchar *uri, const gchar *path, GFile **out_file, GError **err)
+{
+  GOutputStream *stream = NULL;
+  const gboolean close = FALSE;
+  GFile *file = NULL;
+
+  g_return_val_if_fail(uri || path, NULL);
+  g_return_val_if_fail(out_file, NULL);
+
+  if (path && g_strcmp0(path, "-") == 0)
+    {
+#ifdef G_OS_WIN32
+      stream = g_win32_output_stream_new(GetStdHandle(STD_OUTPUT_HANDLE), close);
+#else
+      stream = g_unix_output_stream_new(STDOUT_FILENO, close);
+#endif
+    }
+  else if (uri && strlen(uri) > 0)
+    file = g_file_new_for_uri(uri);
+  else if (path && strlen(path) > 0)
+    file = g_file_new_for_path(path);
+  else
+    return NULL;
+
+  if (file != NULL)
+    {
+      g_assert(stream == NULL);
+
+      stream = G_OUTPUT_STREAM(g_file_replace(file, NULL,
+                                              FALSE, G_FILE_CREATE_NONE,
+                                              NULL, err));
+
+      *out_file = file;
+    }
+
+  return stream;
 }

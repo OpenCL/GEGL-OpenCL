@@ -27,6 +27,9 @@ G_BEGIN_DECLS
 GInputStream *
 gegl_gio_open_input_stream(const gchar *uri, const gchar *path, GFile **out_file, GError **err);
 
+GOutputStream *
+gegl_gio_open_output_stream(const gchar *uri, const gchar *path, GFile **out_file, GError **err);
+
 gboolean
 gegl_gio_uri_is_datauri(const gchar *uri);
 
