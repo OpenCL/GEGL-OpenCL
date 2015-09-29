@@ -1,0 +1,24 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:crop'>
+    <params>
+      <param name='x'>0</param>
+      <param name='y'>0</param>
+      <param name='width'>280</param>
+      <param name='height'>270</param>
+    </params>
+  </node>
+  <node operation='gegl:rotate-on-center'>
+    <params>
+        <param name='degrees'>45.8</param>
+        <param name='sampler'>linear</param>
+        <param name='origin-x'>0</param>
+        <param name='origin-y'>0</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name="path">data/duck.png</param>
+    </params>
+  </node>
+</gegl>

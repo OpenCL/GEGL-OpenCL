@@ -53,6 +53,7 @@ TESTS = \
   reinhard05.xml                  \
   rgb-params.xml                  \
   rotate.xml                      \
+  rotate-on-center.xml            \
   simple-scale.xml                \
   scale-size-keepaspect.xml       \
   sinus.xml                       \

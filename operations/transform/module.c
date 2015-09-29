@@ -40,6 +40,7 @@ gegl_module_query (GTypeModule *module)
 }
 
 GType rotate_get_type      (void);
+GType rotate_on_center_get_type (void);
 GType scale_ratio_get_type  (void);
 GType scale_size_get_type   (void);
 GType scale_size_keepaspect_get_type   (void);
@@ -56,6 +57,7 @@ gegl_module_register (GTypeModule *module)
 
   dummy = op_transform_get_type ();
   dummy = rotate_get_type ();
+  dummy = rotate_on_center_get_type ();
   dummy = scale_ratio_get_type ();
   dummy = scale_size_get_type ();
   dummy = scale_size_keepaspect_get_type ();

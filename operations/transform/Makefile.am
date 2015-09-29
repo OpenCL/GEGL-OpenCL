@@ -13,6 +13,7 @@ transformops_la_SOURCES = \
 	module.h	\
 	reflect.c	\
 	rotate.c	\
+	rotate-on-center.c      \
 	scale-ratio.c \
 	scale-size.c \
 	scale-size-keepaspect.c \
