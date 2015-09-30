@@ -28,6 +28,7 @@
 #include "gegl-types.h"
 #include <babl/babl.h>
 #include "gegl-color.h"
+#include "gegl-audio.h"
 #include "gegl-curve.h"
 #include "gegl-path.h"
 

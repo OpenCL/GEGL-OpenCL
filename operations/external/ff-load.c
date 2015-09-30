@@ -33,6 +33,8 @@ property_int (frames, _("frames"), 0)
    value_range (0, G_MAXINT)
    ui_range (0, 10000)
 
+property_audio (audio, _("audio"), 0)
+
 #else
 
 #define GEGL_OP_SOURCE
@@ -215,7 +217,6 @@ decode_frame (GeglOperation *operation,
   while (decodeframe <= frame)
     {
       int       got_picture = 0;
-
       do
         {
           int       decoded_bytes;
@@ -246,7 +247,7 @@ decode_frame (GeglOperation *operation,
               return -1;
             }
 
-          p->coded_buf += decoded_bytes;
+          p->coded_buf   += decoded_bytes;
           p->coded_bytes -= decoded_bytes;
         }
       while (!got_picture);
@@ -394,7 +395,11 @@ process (GeglOperation       *operation,
         gint    pxsize;
         gint    x,y;
 
-
+	o->audio->left[0]=23;
+	o->audio->right[0]=23;
+        o->audio->samplerate = 44100;
+        o->audio->samples = 1;
+	
         g_object_get (output, "px-size", &pxsize, NULL);
         buf = g_new (guchar, p->width * p->height * pxsize);
 

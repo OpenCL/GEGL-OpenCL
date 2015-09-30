@@ -20,11 +20,13 @@ AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS)
 noinst_LTLIBRARIES = libpropertytypes.la
 
 libpropertytypes_la_SOURCES = \
+	gegl-audio.c \
 	gegl-color.c \
 	gegl-curve.c \
 	gegl-path.c \
 	gegl-paramspecs.c \
 	\
+	gegl-audio.h		\
 	gegl-color.h		\
 	gegl-curve.h		\
 	gegl-path.h		\

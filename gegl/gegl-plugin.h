@@ -28,7 +28,9 @@
 #include <glib-object.h>
 #include <gmodule.h>
 #include <gegl.h>
+#include <gegl-types.h>
 #include <gegl-paramspecs.h>
+#include <gegl-audio.h>
 
 G_BEGIN_DECLS
 

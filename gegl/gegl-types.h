@@ -50,6 +50,7 @@ typedef struct _GeglSampler GeglSampler;
 typedef struct _GeglCurve   GeglCurve;
 typedef struct _GeglPath    GeglPath;
 typedef struct _GeglColor   GeglColor;
+typedef struct _GeglAudio   GeglAudio;
 
 typedef struct _GeglRectangle GeglRectangle;
 
