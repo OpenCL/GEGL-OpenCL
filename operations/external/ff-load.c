@@ -19,13 +19,17 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-
 #ifdef GEGL_PROPERTIES
 
 property_file_path (path, _("File"), "")
    description (_("Path of video file to load"))
 
 property_int (frame, _("Frame number"), 0)
+   value_range (0, G_MAXINT)
+   ui_range (0, 10000)
+
+property_int (frames, _("frames"), 0)
+   description (_("Number of frames in video, updates at least when first frame has been decoded."))
    value_range (0, G_MAXINT)
    ui_range (0, 10000)
 
@@ -200,7 +204,7 @@ decode_frame (GeglOperation *operation,
         decodeframe = prevframe + 1;
     }
 
-  if (decodeframe < prevframe)
+  if (decodeframe < prevframe + 0.0) // XXX: shuts up gcc
     {
       /* seeking backwards, since it ffmpeg doesn't allow us,. we'll reload the file */
       g_free (p->loadedfilename);
@@ -352,6 +356,15 @@ prepare (GeglOperation *operation)
       p->prevframe = -1;
       p->coded_bytes = 0;
       p->coded_buf = NULL;
+
+      o->frames = p->video_st->nb_frames;
+      if (!o->frames)
+      {
+	/* With no declared frame count, compute number of frames based on
+           duration and video codecs frame
+         */
+        o->frames = p->ic->duration * p->video_st->time_base.den  / p->video_st->time_base.num / AV_TIME_BASE;
+      }
     }
 }
 
