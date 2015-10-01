@@ -58,11 +58,15 @@ typedef struct
   gchar           *codec_name;
   gchar           *fourcc;
 
-  int              video_stream;
   AVFormatContext *ic;
+  int              video_stream;
+  int              audio_stream;
   AVStream        *video_st;
-  AVCodecContext  *enc;
-  AVCodec         *codec;
+  AVStream        *audio_st;
+  AVCodecContext  *video_context;
+  AVCodecContext  *audio_context;
+  AVCodec         *video_codec;
+  AVCodec         *audio_codec;
   AVPacket         pkt;
   AVFrame         *lavc_frame;
 
@@ -144,14 +148,17 @@ ff_cleanup (GeglProperties *o)
       if (p->loadedfilename)
         g_free (p->loadedfilename);
 
-      if (p->enc)
-        avcodec_close (p->enc);
+      if (p->video_context)
+        avcodec_close (p->video_context);
+      if (p->audio_context)
+        avcodec_close (p->audio_context);
       if (p->ic)
         avformat_close_input(&p->ic);
       if (p->lavc_frame)
         av_free (p->lavc_frame);
 
-      p->enc = NULL;
+      p->video_context = NULL;
+      p->audio_context = NULL;
       p->ic = NULL;
       p->lavc_frame = NULL;
       p->codec_name = NULL;
@@ -164,7 +171,6 @@ prev_keyframe (Priv *priv, glong frame)
 {
   /* no way to detect previous keyframe at the moment for ffmpeg,
      so we'll just return 0, the first, and a forced reload happens
-     if needed
    */
   return 0;
 }
@@ -295,56 +301,69 @@ prepare (GeglOperation *operation)
       for (i = 0; i< p->ic->nb_streams; i++)
         {
           AVCodecContext *c = p->ic->streams[i]->codec;
-#if LIBAVFORMAT_VERSION_MAJOR >= 53
           if (c->codec_type == AVMEDIA_TYPE_VIDEO)
-#else
-          if (c->codec_type == CODEC_TYPE_VIDEO)
-#endif
             {
               p->video_st = p->ic->streams[i];
               p->video_stream = i;
             }
+          if (c->codec_type == AVMEDIA_TYPE_AUDIO)
+            {
+              p->audio_st = p->ic->streams[i];
+              p->audio_stream = i;
+            }
         }
 
-      p->enc = p->video_st->codec;
-      p->codec = avcodec_find_decoder (p->enc->codec_id);
+      p->video_context = p->video_st->codec;
+      p->video_codec = avcodec_find_decoder (p->video_context->codec_id);
+      p->audio_context = p->audio_st->codec;
+      p->audio_codec = avcodec_find_decoder (p->audio_context->codec_id);
 
-      /* p->enc->error_resilience = 2; */
-      p->enc->error_concealment = 3;
-      p->enc->workaround_bugs = FF_BUG_AUTODETECT;
+      /* p->video_context->error_resilience = 2; */
+      p->video_context->error_concealment = 3;
+      p->video_context->workaround_bugs = FF_BUG_AUTODETECT;
 
-      if (p->codec == NULL)
+      if (p->video_codec == NULL)
         {
-          g_warning ("codec not found");
+          g_warning ("video codec not found");
+        }
+      if (p->audio_codec == NULL)
+        {
+          g_warning ("audio codec not found");
         }
 
-      if (p->codec->capabilities & CODEC_CAP_TRUNCATED)
-        p->enc->flags |= CODEC_FLAG_TRUNCATED;
+      if (p->video_codec->capabilities & CODEC_CAP_TRUNCATED)
+        p->video_context->flags |= CODEC_FLAG_TRUNCATED;
 
-      if (avcodec_open2 (p->enc, p->codec, NULL) < 0)
+      if (avcodec_open2 (p->video_context, p->video_codec, NULL) < 0)
         {
-          g_warning ("error opening codec %s", p->enc->codec->name);
+          g_warning ("error opening codec %s", p->video_context->codec->name);
           return;
         }
 
-      p->width = p->enc->width;
-      p->height = p->enc->height;
+      if (avcodec_open2 (p->audio_context, p->audio_codec, NULL) < 0)
+        {
+          g_warning ("error opening codec %s", p->audio_context->codec->name);
+          return;
+        }
+
+      p->width = p->video_context->width;
+      p->height = p->video_context->height;
       p->frames = 10000000;
       p->lavc_frame = av_frame_alloc ();
 
       if (p->fourcc)
         g_free (p->fourcc);
       p->fourcc = g_strdup ("none");
-          p->fourcc[0] = (p->enc->codec_tag) & 0xff;
-      p->fourcc[1] = (p->enc->codec_tag >> 8) & 0xff;
-      p->fourcc[2] = (p->enc->codec_tag >> 16) & 0xff;
-      p->fourcc[3] = (p->enc->codec_tag >> 24) & 0xff;
+          p->fourcc[0] = (p->video_context->codec_tag) & 0xff;
+      p->fourcc[1] = (p->video_context->codec_tag >> 8) & 0xff;
+      p->fourcc[2] = (p->video_context->codec_tag >> 16) & 0xff;
+      p->fourcc[3] = (p->video_context->codec_tag >> 24) & 0xff;
 
       if (p->codec_name)
         g_free (p->codec_name);
-      if (p->codec->name)
+      if (p->video_codec->name)
         {
-          p->codec_name = g_strdup (p->codec->name);
+          p->codec_name = g_strdup (p->video_codec->name);
         }
       else
         {
@@ -362,7 +381,7 @@ prepare (GeglOperation *operation)
       if (!o->frames)
       {
 	/* With no declared frame count, compute number of frames based on
-           duration and video codecs frame
+           duration and video codecs framerate
          */
         o->frames = p->ic->duration * p->video_st->time_base.den  / p->video_st->time_base.num / AV_TIME_BASE;
       }
