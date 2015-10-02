@@ -134,6 +134,11 @@ ops += tiff-load.la
 tiff_load_la_SOURCES = tiff-load.c
 tiff_load_la_LIBADD = $(op_libs) $(TIFF_LIBS)
 tiff_load_la_CFLAGS = $(AM_CFLAGS) $(TIFF_CFLAGS)
+
+ops += tiff-save.la
+tiff_save_la_SOURCES = tiff-save.c
+tiff_save_la_LIBADD = $(op_libs) $(TIFF_LIBS)
+tiff_save_la_CFLAGS = $(AM_CFLAGS) $(TIFF_CFLAGS)
 endif
 
 if HAVE_WEBP
