@@ -55,6 +55,7 @@ m4_define([pango_required_version], [0.0.0])
 m4_define([pangocairo_required_version], [0.0.0])
 m4_define([png_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
+m4_define([libtiff_required_version], [4.0.0])
 m4_define([webp_required_version], [0.0.0])
 m4_define([poly2tri-c_required_version], [0.0.0])
 
@@ -1142,6 +1143,25 @@ AM_CONDITIONAL(HAVE_UMFPACK, test "x$have_umfpack" = "xyes")
 AC_SUBST(UMFPACK_CFLAGS)
 AC_SUBST(UMFPACK_LIBS)
 
+###################
+# Check for libtiff
+###################
+
+AC_ARG_WITH(libtiff, [  --without-libtiff       build without libtiff support])
+
+have_libtiff="no"
+if test "x$with_libtiff" != "xno"; then
+  PKG_CHECK_MODULES(TIFF, libtiff-4 >= libtiff_required_version,
+    have_libtiff="yes",
+    have_libtiff="no  (libtiff library not found)")
+fi
+
+AM_CONDITIONAL(HAVE_TIFF, test "$have_libtiff" = "yes")
+
+AC_SUBST(TIFF_CFLAGS)
+AC_SUBST(TIFF_LIBS)
+
+
 ################
 # Check for webp
 ################
@@ -1346,6 +1366,7 @@ Optional dependencies:
   EXIV:            $have_exiv2
   gexiv2:          $have_gexiv2
   umfpack:         $have_umfpack
+  TIFF             $have_libtiff
   webp:            $have_webp
   poly2tri-c:      $have_p2tc
 ]);

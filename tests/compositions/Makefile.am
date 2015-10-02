@@ -78,6 +78,7 @@ NO_OPENCL_TESTS =               \
   pnm-raw-load.xml              \
   pnm-ascii-load.xml            \
   jpg-load-datauri.xml          \
+  tiff-load.xml                 \
   tile.xml
 
 # Conditional tests

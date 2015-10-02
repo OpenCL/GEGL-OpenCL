@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='x'>20.000000</param>
+        <param name='y'>20.000000</param>
+      </params>
+    </node>
+    <node operation='gegl:tiff-load'>
+      <params>
+        <param name='path'>data/gegl-8bit-4ch-assoc-contiguous.tif</param>
+
+      </params>
+    </node>
+  </node>
+  <node operation='gegl:over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='x'>488.000000</param>
+        <param name='y'>20.000000</param>
+      </params>
+    </node>
+    <node operation='gegl:tiff-load'>
+      <params>
+        <param name='path'>data/gegl-8bit-4ch-assoc-separated.tif</param>
+      </params>
+    </node>
+  </node>
+  <node operation='gegl:over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='x'>20.000000</param>
+        <param name='y'>190.000000</param>
+      </params>
+    </node>
+    <node operation='gegl:tiff-load'>
+      <params>
+        <param name='path'>data/gegl-8bit-4ch-unassoc-contiguous.tif</param>
+      </params>
+    </node>
+  </node>
+  <node operation='gegl:over'>
+    <node operation='gegl:translate'>
+      <params>
+        <param name='x'>488.000000</param>
+        <param name='y'>190.000000</param>
+      </params>
+    </node>
+    <node operation='gegl:tiff-load'>
+      <params>
+        <param name='path'>data/gegl-16bit-float-4ch-assoc-contiguous.tif</param>
+      </params>
+    </node>
+  </node>
+  <node operation='gegl:crop'>
+     <params>
+         <param name='width'>956</param>
+         <param name='height'>360</param>
+    </params>
+  </node>
+  <node operation='gegl:checkerboard'>
+  </node>
+</gegl>
+

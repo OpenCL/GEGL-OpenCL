@@ -128,6 +128,13 @@ lcms_from_profile_la_SOURCES = lcms-from-profile.c
 lcms_from_profile_la_LIBADD  = $(op_libs) $(LCMS_LIBS)
 lcms_from_profile_la_CFLAGS  = $(AM_CFLAGS)
 endif
+ 
+if HAVE_TIFF
+ops += tiff-load.la
+tiff_load_la_SOURCES = tiff-load.c
+tiff_load_la_LIBADD = $(op_libs) $(TIFF_LIBS)
+tiff_load_la_CFLAGS = $(AM_CFLAGS) $(TIFF_CFLAGS)
+endif
 
 if HAVE_WEBP
 ops += webp-load.la
