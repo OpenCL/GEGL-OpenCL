@@ -8,15 +8,15 @@ msgstr ""
 "Project-Id-Version: Gegl-master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-09-14 05:32+0000\n"
-"PO-Revision-Date: 2015-09-14 08:26+0100\n"
+"POT-Creation-Date: 2015-10-04 05:46+0000\n"
+"PO-Revision-Date: 2015-10-04 08:56+0100\n"
 "Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
 "Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\\n\n"
 "X-Generator: Gtranslator 2.91.6\n"
 "X-Project-Style: gnome\n"
 
@@ -371,9 +371,6 @@ msgid "Apply Lens"
 msgstr "Aplicar lente"
 
 #: ../operations/common/apply-lens.c:273
-#| msgid ""
-#| "Simulates the optical distoration caused by having an elliptical lens "
-#| "over the image"
 msgid ""
 "Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
@@ -2294,7 +2291,7 @@ msgstr "A orientação para desfocar - hor/ver"
 #: ../operations/common/gegl-buffer-save-op.c:24
 #: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
 #: ../operations/common/open-buffer.c:25 ../operations/common/dcraw-load.c:26
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:25
+#: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
 #: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
 #: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
 #: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
@@ -3033,11 +3030,11 @@ msgstr "Suavização"
 msgid "Enables smoother tile output"
 msgstr "Ativa saída suave dos mosaicos"
 
-#: ../operations/common/mosaic.c:2468
+#: ../operations/common/mosaic.c:2465
 msgid "Mosaic"
 msgstr "Mosaico"
 
-#: ../operations/common/mosaic.c:2471
+#: ../operations/common/mosaic.c:2468
 msgid ""
 "Mosaic is a filter which transforms an image into what appears to be a "
 "mosaic, composed of small primitives, each of constant color and of an "
@@ -3837,7 +3834,7 @@ msgstr ""
 "dependendo da extensão, use as opções específicas de formatos para passar "
 "parâmetros adicionais."
 
-#: ../operations/common/shift.c:26 ../operations/common/shift.c:145
+#: ../operations/common/shift.c:26 ../operations/common/shift.c:143
 msgid "Shift"
 msgstr "Deslocar"
 
@@ -3849,7 +3846,7 @@ msgstr "Quantia máxima de deslocação"
 msgid "Shift direction"
 msgstr "Direção do deslocamento"
 
-#: ../operations/common/shift.c:148
+#: ../operations/common/shift.c:146
 msgid "Shift each row or column of pixels by a random amount"
 msgstr "Deslocar cada linha ou coluna de pixels num valor aleatório"
 
@@ -4816,19 +4813,32 @@ msgstr "Sem operação"
 msgid "No operation (can be used as a routing point)"
 msgstr "Sem operação (pode ser usado como ponto de rota)"
 
-#: ../operations/external/ff-load.c:26
+#: ../operations/external/ff-load.c:25
 msgid "Path of video file to load"
 msgstr "Caminho do ficheiro vídeo a carregar"
 
-#: ../operations/external/ff-load.c:28
+#: ../operations/external/ff-load.c:27
 msgid "Frame number"
 msgstr "Número de moldura"
 
-#: ../operations/external/ff-load.c:474
+#: ../operations/external/ff-load.c:31
+#| msgid "Frame"
+msgid "frames"
+msgstr "molduras"
+
+#: ../operations/external/ff-load.c:32
+msgid ""
+"Number of frames in video, updates at least when first frame has been "
+"decoded."
+msgstr ""
+"Número de molduras no vídeo, atualiza, no mínimo, quand a 1ª moldura é "
+"descodificada."
+
+#: ../operations/external/ff-load.c:487
 msgid "FFmpeg Frame Loader"
 msgstr "Carregador de molduras ffmpeg"
 
-#: ../operations/external/ff-load.c:476
+#: ../operations/external/ff-load.c:489
 msgid "FFmpeg video frame importer."
 msgstr "Impostador de molduras vídeo ffmpeg"
 
@@ -5818,12 +5828,23 @@ msgid "Direction vector's Y component"
 msgstr "Componente Y dos vetores de direção"
 
 #: ../operations/transform/rotate.c:26
+#: ../operations/transform/rotate-on-center.c:26
 msgid "Angle to rotate (clockwise)"
 msgstr "Ângulo a rodar (à direita)"
 
 #: ../operations/transform/rotate.c:31
 msgid "Rotate the buffer around the specified origin."
 msgstr "Rodar o buffer à volta da origem especificada."
+
+#: ../operations/transform/rotate-on-center.c:32
+#: ../operations/transform/rotate-on-center.c:34
+msgid "Ignored. Always uses center of input buffer"
+msgstr "Ignorado. Usar sempre o centro do buffer de entrada"
+
+#: ../operations/transform/rotate-on-center.c:40
+#| msgid "Rotate the buffer around the specified origin."
+msgid "Rotate the buffer around its center, taking care of possible offsets."
+msgstr "Rodar o buffer à volta do seu centro, cuidando de possíveis desvios."
 
 #: ../operations/transform/scale-ratio.c:26
 msgid "Horizontal scale factor"
@@ -6568,7 +6589,7 @@ msgstr "Largura de depuração"
 msgid "how wide peel off bands for ink order vis"
 msgstr "Largura de bandas para ordem de tinta vis"
 
-#: ../operations/workshop/ink-simulator.c:1421
+#: ../operations/workshop/ink-simulator.c:1422
 msgid "spectral ink simulator, for softproofing/simulating press inks"
 msgstr ""
 "Simulador espectral de tinta para tintas de imprensa de prova suave/simulação"
