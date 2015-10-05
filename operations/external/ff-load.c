@@ -33,6 +33,11 @@ property_int (frames, _("frames"), 0)
    value_range (0, G_MAXINT)
    ui_range (0, 10000)
 
+property_double (frame_rate, _("frame-rate"), 0)
+   description (_("Frames per second, permits computing time vs frame"))
+   value_range (0, G_MAXINT)
+   ui_range (0, 10000)
+
 property_audio (audio, _("audio"), 0)
 
 #else
@@ -51,13 +56,13 @@ property_audio (audio, _("audio"), 0)
 
 typedef struct
 {
-  gdouble          frames;
   gint             width;
   gint             height;
   gdouble          fps;
   gchar           *codec_name;
   gchar           *fourcc;
-
+  GList           *audio_track; // XXX: must reset to NULL on reinit
+  long             audio_pos;
   AVFormatContext *ic;
   int              video_stream;
   int              audio_stream;
@@ -69,14 +74,17 @@ typedef struct
   AVCodec         *audio_codec;
   AVPacket         pkt;
   AVFrame         *lavc_frame;
-
   glong            coded_bytes;
   guchar          *coded_buf;
-
   gchar           *loadedfilename; /* to remember which file is "cached"     */
   glong            prevframe;      /* previously decoded frame in loadedfile */
 } Priv;
 
+typedef struct AudioFrame {
+  uint8_t          buf[16000];
+  int              len;
+  long             pos;
+} AudioFrame;
 
 static void
 print_error (const char *filename, int err)
@@ -131,6 +139,11 @@ init (GeglProperties *o)
       avcodec_register_all ();
       inited = 1;
     }
+  while (p->audio_track)
+  {
+    g_free (p->audio_track->data);
+    p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
+  }
   p->loadedfilename = g_strdup ("");
   p->fourcc = g_strdup ("");
   p->codec_name = g_strdup ("");
@@ -143,11 +156,15 @@ ff_cleanup (GeglProperties *o)
   Priv *p = (Priv*)o->user_data;
   if (p)
     {
+       while (p->audio_track)
+        {
+          g_free (p->audio_track->data);
+          p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
+	}
       if (p->codec_name)
         g_free (p->codec_name);
       if (p->loadedfilename)
         g_free (p->loadedfilename);
-
       if (p->video_context)
         avcodec_close (p->video_context);
       if (p->audio_context)
@@ -184,18 +201,17 @@ decode_frame (GeglOperation *operation,
   glong       prevframe = p->prevframe;
   glong       decodeframe;        /*< frame to be requested decoded */
 
-  if (frame >= p->frames)
+  if (frame >= o->frames)
     {
-      frame = p->frames - 1;
+      frame = o->frames - 1;
     }
-
   if (frame < 0)
     {
       frame = 0;
     }
-
   if (frame == prevframe)
     {
+      /* we've already got the right frame ready for delivery */
       return 0;
     }
 
@@ -237,6 +253,30 @@ decode_frame (GeglOperation *operation,
                                o->path);
                       return -1;
                     }
+                 if (p->pkt.stream_index==p->audio_stream)
+                   {
+                     static AVFrame frame;
+                     int got_frame;
+                     //int len1 = 
+                     avcodec_decode_audio4(p->audio_st->codec,
+                                                &frame, &got_frame, &(p->pkt));
+                     if (got_frame) {
+                       AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
+                       int data_size = av_samples_get_buffer_size(NULL,
+                           p->audio_context->channels,
+                           frame.nb_samples,
+                           p->audio_context->sample_fmt,
+                           1);
+                       af->pos = p->audio_pos;
+                       
+                       g_assert (data_size < 16000);
+                       p->audio_track = g_list_append (p->audio_track, af);
+                       memcpy (af->buf, frame.data[0], data_size);
+                       af->len = data_size;
+
+                       p->audio_pos += af->len;
+                     }
+                   }
                 }
               while (p->pkt.stream_index != p->video_stream);
 
@@ -345,10 +385,12 @@ prepare (GeglOperation *operation)
           g_warning ("error opening codec %s", p->audio_context->codec->name);
           return;
         }
+ 
+      fprintf (stderr, "samplerate: %i channels: %i\n", p->audio_context->sample_rate,
+  p->audio_context->channels);
 
       p->width = p->video_context->width;
       p->height = p->video_context->height;
-      p->frames = 10000000;
       p->lavc_frame = av_frame_alloc ();
 
       if (p->fourcc)
@@ -385,6 +427,8 @@ prepare (GeglOperation *operation)
          */
         o->frames = p->ic->duration * p->video_st->time_base.den  / p->video_st->time_base.num / AV_TIME_BASE;
       }
+
+      o->frame_rate = p->video_st->time_base.den  / p->video_st->time_base.num;
     }
 }
 
@@ -396,6 +440,52 @@ get_bounding_box (GeglOperation *operation)
   result.width = p->width;
   result.height = p->height;
   return result;
+}
+
+static int
+samples_per_frame (int    frame,
+                   double frame_rate,
+                   int    sample_rate,
+                   long  *start)
+/* XXX: this becomes a bottleneck for high frame numbers, but is good for now */
+{
+  double osamples;
+  double samples = 0;
+  int f = 0;
+  for (f = 0; f < frame; f++)
+  {
+    samples += sample_rate / frame_rate;
+  }
+  osamples = samples;
+  samples += sample_rate / frame_rate;
+  (*start) = ceil(osamples);
+  return ceil(samples)-ceil(osamples);
+}
+
+static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
+{
+  GList *l;
+  long no = 0;
+/* XXX: todo optimize this so that we at least can reuse the
+        found frame
+ */
+  for (l = p->audio_track; l; l = l->next)
+  {
+    AudioFrame *af = l->data;
+    int16_t *data = (void*) af->buf;
+
+    if (no + af->len/4 > sample_no)
+      {
+        int i = sample_no - no + af->len/4;
+        *left  = data[i*2+0] / 32768.0;
+        *right = data[i*2+0] / 32768.0;
+        return;
+      }
+
+    no += af->len/4;
+  }
+  *left  = 0;
+  *right = 0;
 }
 
 static gboolean
@@ -414,10 +504,16 @@ process (GeglOperation       *operation,
         gint    pxsize;
         gint    x,y;
 
-	o->audio->left[0]=23;
-	o->audio->right[0]=23;
-        o->audio->samplerate = 44100;
-        o->audio->samples = 1;
+        long sample_start = 0;
+        o->audio->samplerate = p->audio_context->sample_rate;
+        o->audio->samples = samples_per_frame (o->frame, o->frame_rate, o->audio->samplerate, &sample_start);
+        {
+          int i;
+          for (i = 0; i < o->audio->samples; i++)
+          {
+            get_sample_data (p, sample_start + i, &o->audio->left[i], &o->audio->right[i]);
+          }
+        }
 	
         g_object_get (output, "px-size", &pxsize, NULL);
         buf = g_new (guchar, p->width * p->height * pxsize);
@@ -455,7 +551,7 @@ process (GeglOperation       *operation,
                   vsrc++;
                 }
               }
-          }
+          }\
         gegl_buffer_set (output, NULL, 0, NULL, buf, GEGL_AUTO_ROWSTRIDE);
         g_free (buf);
       }
