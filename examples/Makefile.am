@@ -34,6 +34,7 @@ bin_PROGRAMS = \
 	2geglbuffer \
 	gegl-convert \
 	gegl-slicer \
+        gegl-video \
 	geglbuffer-add-image \
 	geglbuffer-clock \
 	hello-world
