@@ -1,7 +1,18 @@
 /*
- *   gegl-video play   <video-file|image folder>
- *   gegl-video decode <video-file> image-folder/
- *   gegl-video encode image-foler/ video-file
+ *   gegl-video <video-file|frame-folder|frames|edl>
+ *
+ *      --output-frames path/image- --frame-extension png
+ *      --output-video  path/video.avi
+ *      --play (default)
+ *      -- gegl:threshold value=0.3
+ *
+ * the edl,. should be a list of frames.. and video with frame start->end bits
+ * 0001.png
+ * 0002.png
+ * 0003.png
+ * 0004.png
+ * foo.avi 3-210
+ * clip2.avi
  *
  *   image folders are folder containing image files to be played in sequence
  *   each image file contains its own embedded PCM data, facilitating easy re-assembly.
@@ -13,6 +24,7 @@
 #include <glib/gprintf.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
 typedef enum NeglRunMode {
@@ -25,15 +37,12 @@ typedef enum NeglRunMode {
 int frame_start = 0;
 int frame_end   = 0;
 
+char *frame_extension = ".png";
+char *frame_path = NULL;
 char *video_path = NULL;
-char *thumb_path = NULL;
-char *input_analysis_path = NULL;
-char *output_analysis_path = NULL;
+int output_frame_no = -1;
 int run_mode = NEGL_NO_UI;
 int show_progress = 0;
-int sum_diff = 0;
-int frame_thumb = 0;
-int time_out = 0;
 
 long babl_ticks (void);
 
@@ -42,19 +51,10 @@ void usage(void)
 {
       printf ("usage: negl [options] <video> [thumb]\n"
 " -p, --progress   - display info about current frame/progress in terminal\n"
-" -oa <analysis-path>, --output-analysis\n"
-"                  - specify path for analysis dump to write (a PNG)\n"
-" -ia <analysis-path>, --input-analysis\n"
-"                  - specify path for analysis dump to read (a PNG)\n"
-" -d, --sum-diff\n"
-"           - sum up all pixel differences for neighbour frames (defaults to not do it)\n"
 "\n"
 "\n"
 "debug level control over run-mode options:\n"
-" -t, --timeout - stop doing frame info dump after this mant seconds have passed)\n"
 " --video   - show video frames as they are decoded (for debug)\n"
-" --terrain - show data realtime as it is being gathered\n"
-" --no-ui   - do not show a window (this is the default)\n"
 " -s <frame>, --start-frame <frame>\n"
 "           - first frame to extract analysis from (default 0)\n"
 " -e <frame>, --end-frame <frame>\n"
@@ -71,38 +71,39 @@ static void parse_args (int argc, char **argv)
   int stage = 0;
   for (i = 1; i < argc; i++)
   {
-    if (g_str_equal (argv[i], "-oa") ||
-        g_str_equal (argv[i], "--output-analysis"))
-    {
-      output_analysis_path = g_strdup (argv[i+1]);
-      i++;
-    } 
-    else if (g_str_equal (argv[i], "-p") ||
+    if (g_str_equal (argv[i], "-p") ||
         g_str_equal (argv[i], "--progress"))
     {
       show_progress = 1;
     }
-    else if (g_str_equal (argv[i], "-d") ||
-        g_str_equal (argv[i], "--sum-diff"))
-    {
-      sum_diff = 1;
-    }
-    else if (g_str_equal (argv[i], "-ia") ||
-        g_str_equal (argv[i], "--input-analysis"))
-    {
-      input_analysis_path = g_strdup (argv[i+1]);
-      i++;
-    } 
     else if (g_str_equal (argv[i], "-s") ||
              g_str_equal (argv[i], "--start-frame"))
     {
       frame_start = g_strtod (argv[i+1], NULL);
       i++;
     } 
-    else if (g_str_equal (argv[i], "-t") ||
-             g_str_equal (argv[i], "--time-out"))
+    else if (g_str_equal (argv[i], "-c") ||
+             g_str_equal (argv[i], "--frame-count"))
     {
-      time_out = g_strtod (argv[i+1], NULL);
+      frame_end = frame_start + g_strtod (argv[i+1], NULL) - 1;
+      i++;
+    } 
+    else if (g_str_equal (argv[i], "--output-frames") ||
+             g_str_equal (argv[i], "-of"))
+    {
+      frame_path = g_strdup (argv[i+1]);
+      i++;
+    } 
+    else if (g_str_equal (argv[i], "--output-frame-start") ||
+             g_str_equal (argv[i], "-ofs`"))
+    {
+      output_frame_no = g_strtod (argv[i+1], NULL);
+      i++;
+    } 
+    else if (g_str_equal (argv[i], "--frame-extension") ||
+             g_str_equal (argv[i], "-fe"))
+    {
+      frame_extension = g_strdup (argv[i+1]);
       i++;
     } 
     else if (g_str_equal (argv[i], "-e") ||
@@ -111,21 +112,13 @@ static void parse_args (int argc, char **argv)
       frame_end = g_strtod (argv[i+1], NULL);
       i++;
     } 
-    else if (g_str_equal (argv[i], "--video"))
+    else if (g_str_equal (argv[i], "--ui"))
     {
       run_mode = NEGL_VIDEO;
     }
     else if (g_str_equal (argv[i], "--no-ui"))
     {
       run_mode = NEGL_NO_UI;
-    }
-    else if (g_str_equal (argv[i], "--ui"))
-    {
-      run_mode = NEGL_UI;
-    }
-    else if (g_str_equal (argv[i], "--terrain"))
-    {
-      run_mode = NEGL_TERRAIN;
     }
     else if (g_str_equal (argv[i], "-h") ||
              g_str_equal (argv[i], "--help"))
@@ -136,21 +129,10 @@ static void parse_args (int argc, char **argv)
     {
       video_path = g_strdup (argv[i]);
       stage = 1;
-    } else if (stage == 1)
-    {
-      thumb_path = g_strdup (argv[i]);
-      stage = 2;
-    }
+    } 
   }
 
-  printf ("frames: %i - %i\n", frame_start, frame_end);
-  printf ("video: %s\n", video_path);
-  printf ("thumb: %s\n", thumb_path);
-  printf ("input analysis: %s\n", input_analysis_path);
-  printf ("output analysis: %s\n", output_analysis_path);
 }
-
-#include <string.h>
 
 GeglNode   *gegl_decode  = NULL;
 GeglNode   *gegl_display = NULL;
@@ -165,12 +147,6 @@ static void decode_frame_no (int frame)
 {
   if (video_frame)
   {
-    if (sum_diff)
-    {
-       if (previous_video_frame)
-         g_object_unref (previous_video_frame);
-       previous_video_frame = gegl_buffer_dup (video_frame);
-    }
     g_object_unref (video_frame);
   }
   video_frame = NULL;
@@ -218,6 +194,12 @@ main (gint    argc,
       frame_end = frames;
   }
 
+  if (output_frame_no == -1)
+    output_frame_no = frame_start;
+
+  printf ("frames: %i - %i\n", frame_start, frame_end);
+  printf ("video: %s\n", video_path);
+
   switch(run_mode)
   {
     case NEGL_NO_UI:
@@ -256,25 +238,24 @@ main (gint    argc,
 	    gegl_node_process (display);
             break;
         }
+
+	if (frame_path)
+	{
+          char *path = g_strdup_printf ("%s%07i%s", frame_path, output_frame_no++, frame_extension);
+	  GeglNode *save_graph = gegl_node_new ();
+	  GeglNode *readbuf, *save;
+	  readbuf = gegl_node_new_child (save_graph, "operation", "gegl:buffer-source", "buffer", video_frame, NULL);
+	  save = gegl_node_new_child (save_graph, "operation", "gegl:png-save", "bitdepth", 8, "compression", 2,
+	    "path", path, NULL);
+	    gegl_node_link_many (readbuf, save, NULL);
+	  gegl_node_process (save);
+	  g_object_unref (save_graph);
+          g_free (path);
+	}
+
       }
       if (show_progress)
-      {
         fprintf (stdout, "\n");
-        fflush (stdout);
-      }
-  }
-
-  if (thumb_path)
-  {
-    GeglNode *save_graph = gegl_node_new ();
-    GeglNode *readbuf, *save;
-    decode_frame_no (frame_thumb);
-    readbuf = gegl_node_new_child (save_graph, "operation", "gegl:buffer-source", "buffer", video_frame, NULL);
-    save = gegl_node_new_child (save_graph, "operation", "gegl:png-save",
-      "path", thumb_path, NULL);
-      gegl_node_link_many (readbuf, save, NULL);
-    gegl_node_process (save);
-    g_object_unref (save_graph);
   }
 
   if (video_frame)
