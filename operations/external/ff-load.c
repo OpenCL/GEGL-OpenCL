@@ -377,6 +377,7 @@ prepare (GeglOperation *operation)
               }
         }
 
+      p->video_context->err_recognition = AV_EF_CAREFUL | AV_EF_BITSTREAM;
       p->video_context->workaround_bugs = FF_BUG_AUTODETECT;
 
       if (p->video_codec == NULL)
