@@ -61,7 +61,9 @@ typedef struct
   gdouble          fps;
   gchar           *codec_name;
   gchar           *fourcc;
-  GList           *audio_track; // XXX: must reset to NULL on reinit
+  GList           *audio_track;
+  GList           *audio_cursor;
+  long             audio_cursor_pos;
   long             audio_pos;
   AVFormatContext *ic;
   int              video_stream;
@@ -121,10 +123,16 @@ print_error (const char *filename, int err)
 static void
 init (GeglProperties *o)
 {
-  static gint inited = 0; /*< this is actually meant to be static, only to be done once */
   Priv       *p = (Priv*)o->user_data;
+  static gint av_inited = 0;
+  if (av_inited == 0)
+    {
+      av_register_all ();
+      //avcodec_register_all ();
+      av_inited = 1;
+    }
 
-  if (p==NULL)
+  if (p == NULL)
     {
       p = g_new0 (Priv, 1);
       o->user_data = (void*) p;
@@ -133,17 +141,12 @@ init (GeglProperties *o)
   p->width = 320;
   p->height = 200;
 
-  if (!inited)
-    {
-      av_register_all ();
-      avcodec_register_all ();
-      inited = 1;
-    }
   while (p->audio_track)
   {
     g_free (p->audio_track->data);
     p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
   }
+  p->audio_cursor = NULL;
   p->loadedfilename = g_strdup ("");
   p->fourcc = g_strdup ("");
   p->codec_name = g_strdup ("");
@@ -253,7 +256,7 @@ decode_frame (GeglOperation *operation,
                                o->path);
                       return -1;
                     }
-                 if (p->pkt.stream_index==p->audio_stream)
+                 if (p->pkt.stream_index==p->audio_stream && p->audio_st)
                    {
                      static AVFrame frame;
                      int got_frame;
@@ -355,21 +358,29 @@ prepare (GeglOperation *operation)
 
       p->video_context = p->video_st->codec;
       p->video_codec = avcodec_find_decoder (p->video_context->codec_id);
-      p->audio_context = p->audio_st->codec;
-      p->audio_codec = avcodec_find_decoder (p->audio_context->codec_id);
 
-      /* p->video_context->error_resilience = 2; */
-      p->video_context->error_concealment = 3;
+      if (p->audio_st)
+        {
+	  p->audio_context = p->audio_st->codec;
+	  p->audio_codec = avcodec_find_decoder (p->audio_context->codec_id);
+	  if (p->audio_codec == NULL)
+            g_warning ("audio codec not found");
+          else 
+	    if (avcodec_open2 (p->audio_context, p->audio_codec, NULL) < 0)
+              {
+                 g_warning ("error opening codec %s", p->audio_context->codec->name);
+              }
+            else
+              {
+		 fprintf (stderr, "samplerate: %i channels: %i\n", p->audio_context->sample_rate,
+		p->audio_context->channels);
+              }
+        }
+
       p->video_context->workaround_bugs = FF_BUG_AUTODETECT;
 
       if (p->video_codec == NULL)
-        {
           g_warning ("video codec not found");
-        }
-      if (p->audio_codec == NULL)
-        {
-          g_warning ("audio codec not found");
-        }
 
       if (p->video_codec->capabilities & CODEC_CAP_TRUNCATED)
         p->video_context->flags |= CODEC_FLAG_TRUNCATED;
@@ -380,14 +391,7 @@ prepare (GeglOperation *operation)
           return;
         }
 
-      if (avcodec_open2 (p->audio_context, p->audio_codec, NULL) < 0)
-        {
-          g_warning ("error opening codec %s", p->audio_context->codec->name);
-          return;
-        }
  
-      fprintf (stderr, "samplerate: %i channels: %i\n", p->audio_context->sample_rate,
-  p->audio_context->channels);
 
       p->width = p->video_context->width;
       p->height = p->video_context->height;
@@ -435,7 +439,7 @@ prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle result = {0,0,320,200};
+  GeglRectangle result = {0, 0, 320, 200};
   Priv *p = (Priv*)GEGL_PROPERTIES (operation)->user_data;
   result.width = p->width;
   result.height = p->height;
@@ -447,12 +451,15 @@ samples_per_frame (int    frame,
                    double frame_rate,
                    int    sample_rate,
                    long  *start)
-/* XXX: this becomes a bottleneck for high frame numbers, but is good for now */
 {
   double osamples;
   double samples = 0;
   int f = 0;
-  for (f = 0; f < frame; f++)
+
+  if (sample_rate % ((int)frame_rate) == 0)
+    return sample_rate / frame_rate;
+
+  for (f = 0; f < frame; f++) 
   {
     samples += sample_rate / frame_rate;
   }
@@ -464,24 +471,37 @@ samples_per_frame (int    frame,
 
 static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
 {
-  GList *l;
   long no = 0;
-/* XXX: todo optimize this so that we at least can reuse the
-        found frame
- */
-  for (l = p->audio_track; l; l = l->next)
-  {
-    AudioFrame *af = l->data;
+  GList *l;
+  l = p->audio_track;
+  no = 0;
+  if (p->audio_cursor && sample_no > p->audio_cursor_pos) {
+    AudioFrame *af = p->audio_cursor->data;
     int16_t *data = (void*) af->buf;
-
-    if (no + af->len/4 > sample_no)
+    if (p->audio_cursor_pos + af->len/4 > sample_no)
       {
         int i = sample_no - no + af->len/4;
         *left  = data[i*2+0] / 32768.0;
         *right = data[i*2+0] / 32768.0;
         return;
       }
+    l = p->audio_cursor;
+    no = p->audio_cursor_pos;
+  }
+  for (; l; l = l->next)
+  {
+    AudioFrame *af = l->data;
+    int16_t *data = (void*) af->buf;
+    if (no + af->len/4 > sample_no)
+      {
+        int i = sample_no - no + af->len/4;
+        *left  = data[i*2+0] / 32768.0;
+        *right = data[i*2+0] / 32768.0;
 
+        p->audio_cursor     = l;
+        p->audio_cursor_pos = no;
+        return;
+      }
     no += af->len/4;
   }
   *left  = 0;
@@ -505,13 +525,18 @@ process (GeglOperation       *operation,
         gint    x,y;
 
         long sample_start = 0;
-        o->audio->samplerate = p->audio_context->sample_rate;
-        o->audio->samples = samples_per_frame (o->frame, o->frame_rate, o->audio->samplerate, &sample_start);
+
+	if (p->audio_context)
         {
-          int i;
-          for (i = 0; i < o->audio->samples; i++)
+          o->audio->samplerate = p->audio_context->sample_rate;
+          o->audio->samples = samples_per_frame (o->frame, o->frame_rate, o->audio->samplerate, &sample_start);
+
           {
-            get_sample_data (p, sample_start + i, &o->audio->left[i], &o->audio->right[i]);
+            int i;
+            for (i = 0; i < o->audio->samples; i++)
+            {
+              get_sample_data (p, sample_start + i, &o->audio->left[i], &o->audio->right[i]);
+            }
           }
         }
 	
@@ -520,16 +545,16 @@ process (GeglOperation       *operation,
 
         for (y=0; y < p->height; y++)
           {
-            guchar       *dst  = buf + y * p->width * 4;
-            const guchar *ysrc = p->lavc_frame->data[0] + y * p->lavc_frame->linesize[0];
-            const guchar *usrc = p->lavc_frame->data[1] + y/2 * p->lavc_frame->linesize[1];
-            const guchar *vsrc = p->lavc_frame->data[2] + y/2 * p->lavc_frame->linesize[2];
+            guchar       *dst  = buf                    + y     * p->width * 4;
+            const guchar *ysrc = p->lavc_frame->data[0] + y     * p->lavc_frame->linesize[0];
+            const guchar *usrc = p->lavc_frame->data[1] + y / 2 * p->lavc_frame->linesize[1];
+            const guchar *vsrc = p->lavc_frame->data[2] + y / 2 * p->lavc_frame->linesize[2];
 
             for (x=0;x < p->width; x++)
               {
                 gint R,G,B;
 #ifndef byteclamp
-#define byteclamp(j) do{if(j<0)j=0; else if(j>255)j=255;}while(0)
+#define byteclamp(j) j=j<0?0:j>255?255:j
 #endif
 #define YUV82RGB8(Y,U,V,R,G,B)do{\
                 R= ((Y<<15)                 + 37355*(V-128))>>15;\
@@ -539,19 +564,14 @@ process (GeglOperation       *operation,
                 byteclamp(G);\
                 byteclamp(B);\
               } while(0)
-
               YUV82RGB8 (*ysrc, *usrc, *vsrc, R, G, B);
-
               *(unsigned int *) dst = R + G * 256 + B * 256 * 256 + 0xff000000;
-              dst += 4;
+              dst  += 4;
+              usrc += x%2;
+              vsrc += x%2;
               ysrc ++;
-              if (x % 2)
-                {
-                  usrc++;
-                  vsrc++;
-                }
               }
-          }\
+          }
         gegl_buffer_set (output, NULL, 0, NULL, buf, GEGL_AUTO_ROWSTRIDE);
         g_free (buf);
       }
