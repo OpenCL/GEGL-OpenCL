@@ -481,9 +481,9 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
     int16_t *data = (void*) af->buf;
     if (p->audio_cursor_pos + af->len/4 > sample_no)
       {
-        int i = sample_no - no + af->len/4;
-        *left  = data[i*2+0] / 32768.0;
-        *right = data[i*2+0] / 32768.0;
+        int i = sample_no - p->audio_cursor_pos;
+        *left  = data[i*2+0] / 32767.0;
+        *right = data[i*2+1] / 32767.0;
         return;
       }
     l = p->audio_cursor;
@@ -495,10 +495,9 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
     int16_t *data = (void*) af->buf;
     if (no + af->len/4 > sample_no)
       {
-        int i = sample_no - no + af->len/4;
-        *left  = data[i*2+0] / 32768.0;
-        *right = data[i*2+0] / 32768.0;
-
+        int i = sample_no - no;
+        *left  = data[i*2+0] / 32767.0;
+        *right = data[i*2+1] / 32767.0;
         p->audio_cursor     = l;
         p->audio_cursor_pos = no;
         return;
