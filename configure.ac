@@ -683,8 +683,8 @@ fi
 
 AM_CONDITIONAL(HAVE_GEXIV2, test "$have_gexiv2" = "yes")
 
-AC_SUBST(GEXIV2_CFLAGS) 
-AC_SUBST(GEXIV2_LIBS) 
+AC_SUBST(GEXIV2_CFLAGS)
+AC_SUBST(GEXIV2_LIBS)
 
 #################
 # Check for Cairo
