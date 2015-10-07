@@ -22,6 +22,7 @@
 #include <gegl.h>
 #include <gegl-audio.h>
 #include <glib/gprintf.h>
+#include <gexiv2/gexiv2.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,7 +45,12 @@ int output_frame_no = -1;
 int run_mode = NEGL_NO_UI;
 int show_progress = 0;
 
-long babl_ticks (void);
+void
+gegl_meta_set_audio (const char *path,
+                     GeglAudio  *audio);
+void
+gegl_meta_get_audio (const char *path,
+                     GeglAudio  *audio);
 
 void usage(void);
 void usage(void)
@@ -244,13 +250,18 @@ main (gint    argc,
           char *path = g_strdup_printf ("%s%07i%s", frame_path, output_frame_no++, frame_extension);
 	  GeglNode *save_graph = gegl_node_new ();
 	  GeglNode *readbuf, *save;
+          GeglAudio *audio;
+          gegl_node_get (load, "audio", &audio, NULL);
+     
 	  readbuf = gegl_node_new_child (save_graph, "operation", "gegl:buffer-source", "buffer", video_frame, NULL);
 	  save = gegl_node_new_child (save_graph, "operation", "gegl:png-save", "bitdepth", 8, "compression", 2,
 	    "path", path, NULL);
 	    gegl_node_link_many (readbuf, save, NULL);
 	  gegl_node_process (save);
 	  g_object_unref (save_graph);
+          gegl_meta_set_audio (path, audio);
           g_free (path);
+          g_object_unref (audio);
 	}
 
       }
@@ -266,4 +277,58 @@ main (gint    argc,
 
   gegl_exit ();
   return 0;
+}
+
+void
+gegl_meta_set_audio (const char *path,
+                     GeglAudio  *audio)
+{
+  GError *error = NULL; 
+  GExiv2Metadata *e2m = gexiv2_metadata_new ();
+  gexiv2_metadata_open_path (e2m, path, &error);
+  if (error)
+  { 
+    g_warning ("%s", error->message);
+  }
+  else
+  { 
+    int i;
+    GString *str = g_string_new ("");
+    if (gexiv2_metadata_has_tag (e2m, "Xmp.xmp.GEGL"))
+      gexiv2_metadata_clear_tag (e2m, "Xmp.xmp.GEGL");
+
+    g_string_append_printf (str, "%i", audio->samplerate);
+    g_string_append_printf (str, " %i", audio->samples);
+    for (i = 0; i < audio->samples; i++)
+      {
+        g_string_append_printf (str, " %0.5f", audio->left[i]);
+        g_string_append_printf (str, " %0.5f", audio->right[i]);
+      }
+
+    gexiv2_metadata_set_tag_string (e2m, "Xmp.xmp.GEGL", str->str);
+    gexiv2_metadata_save_file (e2m, path, &error);
+    if (error)
+      g_warning ("%s", error->message);
+    g_string_free (str, TRUE);
+  }
+  gexiv2_metadata_free (e2m);
+}
+
+void
+gegl_meta_get_audio (const char *path,
+                     GeglAudio  *audio)
+{
+  //gchar  *ret   = NULL;
+  GError *error = NULL;
+  GExiv2Metadata *e2m = gexiv2_metadata_new ();
+  gexiv2_metadata_open_path (e2m, path, &error);
+  if (!error)
+  {
+    gchar *ret = gexiv2_metadata_get_tag_string (e2m, "Xmp.xmp.GEGL");
+    fprintf (stderr, "should parse audio\n");
+    g_free (ret);
+  }
+  else
+    g_warning ("%s", error->message);
+  gexiv2_metadata_free (e2m);
 }
