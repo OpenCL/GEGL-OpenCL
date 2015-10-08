@@ -572,7 +572,10 @@ process (GeglOperation       *operation,
               ysrc ++;
               }
           }
-        gegl_buffer_set (output, NULL, 0, NULL, buf, GEGL_AUTO_ROWSTRIDE);
+        {
+          GeglRectangle extent = {0,0,p->width,p->height};
+          gegl_buffer_set (output, &extent, 0, NULL, buf, GEGL_AUTO_ROWSTRIDE);
+        }
         g_free (buf);
       }
   }
