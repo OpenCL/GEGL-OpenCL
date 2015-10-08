@@ -82,8 +82,8 @@ typedef struct
   glong            prevframe;      /* previously decoded frame in loadedfile */
 } Priv;
 
-typedef struct AudioFrame {
-  uint8_t          buf[16000];
+typedef struct AudioFrame {     /* XXX: hardcoded for 16bit chunky stereo, */
+  uint8_t          buf[16000]; 
   int              len;
   long             pos;
 } AudioFrame;
@@ -260,9 +260,15 @@ decode_frame (GeglOperation *operation,
                    {
                      static AVFrame frame;
                      int got_frame;
-                     //int len1 = 
-                     avcodec_decode_audio4(p->audio_st->codec,
+                     decoded_bytes = avcodec_decode_audio4(p->audio_st->codec,
                                                 &frame, &got_frame, &(p->pkt));
+
+                     if (decoded_bytes < 0)
+                       {
+                         fprintf (stderr, "avcodec_decode_audio4 failed for %s\n",
+                                           o->path);
+		       }
+
                      if (got_frame) {
                        AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
                        int data_size = av_samples_get_buffer_size(NULL,
@@ -270,14 +276,21 @@ decode_frame (GeglOperation *operation,
                            frame.nb_samples,
                            p->audio_context->sample_fmt,
                            1);
-                       af->pos = p->audio_pos;
-                       
                        g_assert (data_size < 16000);
-                       p->audio_track = g_list_append (p->audio_track, af);
-                       memcpy (af->buf, frame.data[0], data_size);
-                       af->len = data_size;
 
+                       /* XXX: do not hardcode this planar to chunky conversion */
+		       int i;
+                       for (i = 0; i < frame.nb_samples; i++)
+                       {
+                         ((int16_t *)af->buf)[i*2] =  ((int16_t *)frame.data[0])[i];
+                         ((int16_t *)af->buf)[i*2+1] =  ((int16_t *)frame.data[1])[i];
+                       }
+
+                       af->len = data_size;
+                       af->pos = p->audio_pos;
                        p->audio_pos += af->len;
+
+                       p->audio_track = g_list_append (p->audio_track, af);
                      }
                    }
                 }
@@ -383,9 +396,6 @@ prepare (GeglOperation *operation)
       if (p->video_codec == NULL)
           g_warning ("video codec not found");
 
-      if (p->video_codec->capabilities & CODEC_CAP_TRUNCATED)
-        p->video_context->flags |= CODEC_FLAG_TRUNCATED;
-
       if (avcodec_open2 (p->video_context, p->video_codec, NULL) < 0)
         {
           g_warning ("error opening codec %s", p->video_context->codec->name);
@@ -477,6 +487,8 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
   long no = 0;
   GList *l;
   l = p->audio_track;
+  if (sample_no < 0)
+    return;
   no = 0;
   if (p->audio_cursor && sample_no > p->audio_cursor_pos) {
     AudioFrame *af = p->audio_cursor->data;
@@ -488,6 +500,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
         *right = data[i*2+1] / 32767.0;
         return;
       }
+    /* override start conditions of below loop */
     l = p->audio_cursor;
     no = p->audio_cursor_pos;
   }
@@ -531,13 +544,16 @@ process (GeglOperation       *operation,
 	if (p->audio_context)
         {
           o->audio->samplerate = p->audio_context->sample_rate;
-          o->audio->samples = samples_per_frame (o->frame, o->frame_rate, o->audio->samplerate, &sample_start);
+          o->audio->samples = samples_per_frame (o->frame,
+               o->frame_rate, o->audio->samplerate,
+               &sample_start);
 
           {
             int i;
             for (i = 0; i < o->audio->samples; i++)
             {
-              get_sample_data (p, sample_start + i, &o->audio->left[i], &o->audio->right[i]);
+              get_sample_data (p, sample_start + i, &o->audio->left[i],
+                                  &o->audio->right[i]);
             }
           }
         }
