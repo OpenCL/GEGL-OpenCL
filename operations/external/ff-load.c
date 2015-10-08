@@ -392,8 +392,6 @@ prepare (GeglOperation *operation)
           return;
         }
 
- 
-
       p->width = p->video_context->width;
       p->height = p->video_context->height;
       p->lavc_frame = av_frame_alloc ();
@@ -402,6 +400,7 @@ prepare (GeglOperation *operation)
         g_free (p->fourcc);
       p->fourcc = g_strdup ("none");
           p->fourcc[0] = (p->video_context->codec_tag) & 0xff;
+
       p->fourcc[1] = (p->video_context->codec_tag >> 8) & 0xff;
       p->fourcc[2] = (p->video_context->codec_tag >> 16) & 0xff;
       p->fourcc[3] = (p->video_context->codec_tag >> 24) & 0xff;
@@ -458,7 +457,10 @@ samples_per_frame (int    frame,
   int f = 0;
 
   if (sample_rate % ((int)frame_rate) == 0)
+  {
+    *start = (sample_rate / frame_rate) * frame;
     return sample_rate / frame_rate;
+  }
 
   for (f = 0; f < frame; f++) 
   {
