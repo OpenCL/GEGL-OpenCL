@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <SDL.h>
 
 typedef enum NeglRunMode {
   NEGL_NO_UI = 0,
@@ -137,7 +138,6 @@ static void parse_args (int argc, char **argv)
       stage = 1;
     } 
   }
-
 }
 
 GeglNode   *gegl_decode  = NULL;
@@ -162,12 +162,52 @@ static void decode_frame_no (int frame)
 
 GeglNode *translate = NULL;
 
+static int audio_len = 0;
+static int audio_pos = 0;
+
+int16_t audio_data[8192000];
+
+
+static void fill_audio(void *udata, Uint8 *stream, int len)
+{
+  int audio_remaining = audio_len - audio_pos;
+  if (audio_remaining < 0)
+    return;
+
+  if (audio_remaining < len) len = audio_remaining;
+
+  //SDL_MixAudio(stream, (uint8_t*)&audio_data[audio_pos/2], len, SDL_MIX_MAXVOLUME);
+  memcpy (stream, (uint8_t*)&audio_data[audio_pos/2], len);
+  audio_pos += len;
+}
+
+static int audio_started = 0;
+
 gint
 main (gint    argc,
       gchar **argv)
 {
+  SDL_AudioSpec AudioSettings = {0};
+
   GeglNode *display = NULL;
   GeglNode *readbuf = NULL;
+
+  SDL_Init(SDL_INIT_AUDIO);
+  AudioSettings.freq = 48000;
+  AudioSettings.format = AUDIO_S16SYS;
+  AudioSettings.channels = 2;
+  AudioSettings.samples = 1024;
+  AudioSettings.callback = fill_audio;
+  SDL_OpenAudio(&AudioSettings, 0);
+
+  if (AudioSettings.format != AUDIO_S16SYS)
+   {
+      fprintf (stderr, "not getting format we wanted\n");
+   }
+  if (AudioSettings.freq != 48000)
+   {
+      fprintf (stderr, "not getting rate we wanted\n");
+   }
 
   if (argc < 2)
     usage();
@@ -234,14 +274,42 @@ main (gint    argc,
         }
 
 	decode_frame_no (frame);
+        {
+        GeglAudio *audio;
+        gdouble fps;
+        gegl_node_get (load, "audio", &audio,
+                             "frame-rate", &fps, NULL);
+
+
+
+        if (audio->samples > 0)
+        {
+          int i;
+          if (!audio_started)
+           {
+             SDL_PauseAudio(0);
+             audio_started = 1;
+           }
+          for (i = 0; i < audio->samples; i++)
+          {
+            audio_data[audio_len/2 + 0] = audio->left[i] * 32767.0;
+            audio_data[audio_len/2 + 1] = audio->right[i] * 32767.0;
+            audio_len += 4;
+          }
+        }
 
         switch(run_mode)
         {
           case NEGL_NO_UI:
             break;
           case NEGL_VIDEO:
+
 	    gegl_node_set (readbuf, "buffer", video_frame, NULL);
 	    gegl_node_process (display);
+	    while ( (audio_pos / 4.0) / audio->samplerate < (frame / fps) - 0.05 )
+            {
+              g_usleep (500); /* sync audio */
+            }
             break;
         }
 
@@ -250,19 +318,18 @@ main (gint    argc,
           char *path = g_strdup_printf ("%s%07i%s", frame_path, output_frame_no++, frame_extension);
 	  GeglNode *save_graph = gegl_node_new ();
 	  GeglNode *readbuf, *save;
-          GeglAudio *audio;
-          gegl_node_get (load, "audio", &audio, NULL);
      
 	  readbuf = gegl_node_new_child (save_graph, "operation", "gegl:buffer-source", "buffer", video_frame, NULL);
-	  save = gegl_node_new_child (save_graph, "operation", "gegl:png-save", "bitdepth", 8, "compression", 2,
+	  save = gegl_node_new_child (save_graph, "operation", "gegl:save",
 	    "path", path, NULL);
 	    gegl_node_link_many (readbuf, save, NULL);
 	  gegl_node_process (save);
 	  g_object_unref (save_graph);
           gegl_meta_set_audio (path, audio);
           g_free (path);
-          g_object_unref (audio);
 	}
+        g_object_unref (audio);
+        }
 
       }
       if (show_progress)
@@ -312,6 +379,8 @@ gegl_meta_set_audio (const char *path,
     g_string_free (str, TRUE);
   }
   gexiv2_metadata_free (e2m);
+
+  SDL_CloseAudio();
 }
 
 void

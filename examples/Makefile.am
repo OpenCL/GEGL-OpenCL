@@ -22,13 +22,14 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/gegl/property-types \
 	-I$(top_srcdir)/gegl/property-types
 
-AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS) $(GEXIV2_CFLAGS)
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS) $(GEXIV2_CFLAGS) $(SDL_CFLAGS)
 
 AM_LDFLAGS =  \
 	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
 	$(GEXIV2_LIBS) \
 	$(BABL_LIBS) \
 	$(DEP_LIBS) \
+	$(SDL_LIBS) \
 	$(MATH_LIB)
 
 bin_PROGRAMS = \

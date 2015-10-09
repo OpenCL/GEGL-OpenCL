@@ -82,7 +82,7 @@ typedef struct
   glong            prevframe;      /* previously decoded frame in loadedfile */
 } Priv;
 
-typedef struct AudioFrame {     /* XXX: hardcoded for 16bit chunky stereo, */
+typedef struct AudioFrame {        /* XXX: hardcoded for 16bit chunky stereo, */
   uint8_t          buf[16000]; 
   int              len;
   long             pos;
