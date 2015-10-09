@@ -68,6 +68,7 @@ grey_blur_buffer (GeglBuffer          *input,
                 "operation", "gegl:gaussian-blur",
                 "std_dev_x", std_dev,
                 "std_dev_y", std_dev,
+                "abyss-policy", "none",
                 NULL);
 
   crop =  gegl_node_new_child (gegl,

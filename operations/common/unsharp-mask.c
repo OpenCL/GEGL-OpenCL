@@ -53,7 +53,7 @@ attach (GeglOperation *operation)
   add      = gegl_node_new_child (gegl, "operation", "gegl:add", NULL);
   multiply = gegl_node_new_child (gegl, "operation", "gegl:multiply", NULL);
   subtract = gegl_node_new_child (gegl, "operation", "gegl:subtract", NULL);
-  blur     = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur",NULL);
+  blur     = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", NULL);
 
   gegl_node_link_many (input, subtract, multiply, NULL);
   gegl_node_link (input, blur);
