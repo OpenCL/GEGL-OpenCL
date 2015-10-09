@@ -18,6 +18,7 @@
   <node operation='gegl:gaussian-blur'>
       <param name='std_dev_y'>4.0</param>
       <param name='std_dev_x'>4.0</param>
+      <param name='abyss-policy'>none</param>
   </node>
   <node operation='gegl:load'>
     <params>

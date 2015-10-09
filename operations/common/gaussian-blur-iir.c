@@ -34,7 +34,6 @@ enum_start (gegl_gaussian_blur_policy)
    enum_value (GEGL_GAUSSIAN_BLUR_ABYSS_WHITE, "white",  N_("White"))
 enum_end (GeglGaussianBlurPolicy)
 
-
 property_double (std_dev_x, _("Size X"), 1.5)
    description (_("Standard deviation for the horizontal axis"))
    value_range (0.0, 1500.0)
@@ -57,7 +56,7 @@ property_enum (filter, _("Filter"),
    description (_("How the gaussian kernel is discretized"))
 
 property_enum (abyss_policy, _("Abyss policy"), GeglGaussianBlurPolicy,
-               gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_NONE)
+               gegl_gaussian_blur_policy, GEGL_GAUSSIAN_BLUR_ABYSS_CLAMP)
    description (_("How image edges are handled"))
 
 property_boolean (clip_extent, _("Clip to the input extent"), TRUE)

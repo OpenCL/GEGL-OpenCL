@@ -182,6 +182,7 @@
               <params>
                 <param name='std-dev-x'>5.000000</param>
                 <param name='std-dev-y'>5.000000</param>
+                <param name='abyss-policy'>none</param>
               </params>
           </node>
           <node operation='gegl:load' id='clone3'>
