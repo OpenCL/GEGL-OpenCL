@@ -3,7 +3,8 @@ if HAVE_PYTHON
 if HAVE_INTROSPECTION
 if HAVE_PYGOBJECT
 # List of tests.
-TESTS = \
+TESTS =
+#  \
 	test-gegl.py \
 	test-gegl-node.py \
 	test-gegl-color.py \

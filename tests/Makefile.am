@@ -4,6 +4,7 @@ SUBDIRS = \
 	buffer \
 	compositions \
 	simple \
-	xml
+	xml \
+	python
 
 #opencl
