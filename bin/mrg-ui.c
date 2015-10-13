@@ -97,7 +97,7 @@ typedef struct ActionData {
   const char *op_name;
 } ActionData;
 
-/* white-list of operations useful for improving photos
+/* white-list of operations useful for improving/altering photos
  */
 ActionData actions[]={
   {"rotate",            10,  "gegl:rotate"},
@@ -224,7 +224,7 @@ static int str_has_visual_suffix (char *path)
   return str_has_image_suffix (path) || str_has_video_suffix (path);
 }
 
-static void populate_paths (State *o)
+static void populate_path_list (State *o)
 {
   struct dirent **namelist;
   int i;
@@ -1131,7 +1131,7 @@ static void load_path (State *o)
 {
   char *path;
   char *meta;
-  populate_paths (o);
+  populate_path_list (o);
   if (is_gegl_path (o->path))
   {
     if (o->save_path)
