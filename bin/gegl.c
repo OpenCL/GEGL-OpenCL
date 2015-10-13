@@ -76,6 +76,8 @@ static gboolean file_is_gegl_xml (const gchar *path)
   return FALSE;
 }
 
+int mrg_ui_main (int argc, char **argv);
+
 gint
 main (gint    argc,
       gchar **argv)
@@ -170,6 +172,12 @@ main (gint    argc,
         {
           script = g_strdup (DEFAULT_COMPOSITION);
         }
+    }
+  
+  if (o->mode == GEGL_RUN_MODE_DISPLAY)
+    {
+      mrg_ui_main (argc, argv);
+      return 0;
     }
 
   gegl = gegl_node_new_from_xml (script, path_root);

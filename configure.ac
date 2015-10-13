@@ -646,6 +646,46 @@ AM_CONDITIONAL(HAVE_DOT, test "x$have_dot" = "xyes")
 AM_PATH_PYTHON([2.5.0],, [:])
 AM_CONDITIONAL([HAVE_PYTHON], [test "$PYTHON" != :])
 
+###############
+# Check for mrg
+###############
+
+AC_ARG_WITH(mrg, [  --without-mrg           build without mrg support])
+
+have_mrg="no"
+if test "x$with_mrg" != "xno"; then
+  PKG_CHECK_MODULES(MRG, mrg,
+    AC_DEFINE(HAVE_MRG, 1,
+                [Define to 1 if the mrg library is available])
+    have_mrg="yes",
+    have_mrg="no  (mrg not found)")
+fi
+
+AM_CONDITIONAL(HAVE_MRG, test "$have_mrg" = "yes")
+
+AC_SUBST(MRG_CFLAGS) 
+AC_SUBST(MRG_LIBS) 
+
+##################
+# Check for gexiv2
+##################
+
+AC_ARG_WITH(gexiv2, [  --without-gexiv2         build without gexiv2 support])
+
+have_gexiv2="no"
+if test "x$with_gexiv2" != "xno"; then
+  PKG_CHECK_MODULES(GEXIV2, gexiv2,
+    AC_DEFINE(HAVE_GEXIV2, 1,
+                [Define to 1 if the gexiv2 library is available])
+    have_gexiv2="yes",
+    have_gexiv2="no  (gexiv2 not found)")
+fi
+
+AM_CONDITIONAL(HAVE_GEXIV2, test "$have_gexiv2" = "yes")
+
+AC_SUBST(GEXIV2_CFLAGS) 
+AC_SUBST(GEXIV2_LIBS) 
+
 #################
 # Check for Cairo
 #################
@@ -1284,6 +1324,7 @@ Optional features:
 Optional dependencies:
   asciidoc:        $have_asciidoc
   enscript:        $have_enscript
+  mrg:             $have_mrg
   Ruby:            $have_ruby
   Lua:             $have_lua
   Cairo:           $have_cairo
@@ -1303,6 +1344,7 @@ Optional dependencies:
   V4L2:            $have_libv4l2
   spiro:           $spiro_ok
   EXIV:            $have_exiv2
+  gexiv2:          $have_gexiv2
   umfpack:         $have_umfpack
   webp:            $have_webp
   poly2tri-c:      $have_p2tc
