@@ -254,7 +254,7 @@ main (gint    argc,
       readbuf = gegl_node_new_child (gegl_display,
                                      "operation", "gegl:buffer-source",
                                      NULL);
-      display = gegl_node_create_child (gegl_display, "gegl:display");
+      display = gegl_node_create_child (gegl_display, "gegl:sdl-display");
       gegl_node_link_many (readbuf, display, NULL);
       break;
   }

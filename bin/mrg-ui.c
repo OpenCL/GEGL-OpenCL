@@ -207,6 +207,23 @@ static int str_has_image_suffix (char *path)
          g_str_has_suffix (path, ".exr");
 }
 
+static int str_has_video_suffix (char *path)
+{
+  return g_str_has_suffix (path, ".avi") ||
+         g_str_has_suffix (path, ".AVI") ||
+         g_str_has_suffix (path, ".mp4") ||
+         g_str_has_suffix (path, ".MP4") ||
+         g_str_has_suffix (path, ".mkv") ||
+         g_str_has_suffix (path, ".MKV") ||
+         g_str_has_suffix (path, ".mov") ||
+         g_str_has_suffix (path, ".ogg");
+}
+
+static int str_has_visual_suffix (char *path)
+{
+  return str_has_image_suffix (path) || str_has_video_suffix (path);
+}
+
 static void populate_paths (State *o)
 {
   struct dirent **namelist;
@@ -238,7 +255,7 @@ static void populate_paths (State *o)
   for (i = 0; i < n; i++)
   {
     if (namelist[i]->d_name[0] != '.' &&
-        str_has_image_suffix (namelist[i]->d_name))
+        str_has_visual_suffix (namelist[i]->d_name))
     {
       gchar *fpath = g_strdup_printf ("%s/%s", path, namelist[i]->d_name);
 
