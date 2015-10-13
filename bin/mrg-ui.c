@@ -45,7 +45,6 @@
  */
 #define USE_MIPMAPS    1
 
-
 /* set this to 1 to print the active gegl chain
  */
 #define DEBUG_OP_LIST  0
@@ -88,6 +87,13 @@ struct _State {
   float       slide_pause;
   int         slide_enabled;
   int         slide_timeout;
+
+  GeglNode   *gegl_decode;
+  GeglNode   *decode_load;
+  GeglNode   *decode_store;
+
+  int         is_video;
+  int         frame_no;
 };
 
 
@@ -314,7 +320,7 @@ int mrg_ui_main (int argc, char **argv, char **ops)
   }
 
   gegl_init (&argc, &argv);
-  o.gegl            = gegl_node_new ();
+  o.gegl            = gegl_node_new (); // so that we have an object to unref
   o.mrg             = mrg;
   o.scale           = 1.0;
   o.render_quality  = 1.0;
@@ -915,6 +921,13 @@ static void toggle_slideshow_cb (MrgEvent *event, void *data1, void *data2)
 static void gegl_ui (Mrg *mrg, void *data)
 {
   State *o = data;
+
+  if (o->is_video)
+   {
+     o->frame_no++;
+     gegl_node_set (o->load, "frame", o->frame_no, NULL);
+   }
+
   mrg_gegl_blit (mrg,
 		 0, 0,
                  mrg_width (mrg), mrg_height (mrg),
@@ -1157,60 +1170,77 @@ static void load_path (State *o)
   o->rev = 0;
   o->u = 0;
   o->v = 0;
+  o->is_video = 0;
+  o->frame_no = 0;
 
-  meta = gegl_meta_get (path);
-  if (meta)
+  if (str_has_video_suffix (path))
   {
-    GSList *nodes, *n;
-    char *containing_path = get_path_parent (o->path);
-    o->gegl = gegl_node_new_from_xml (meta, containing_path);
-    free (containing_path);
-    o->sink = gegl_node_new_child (o->gegl,
-                       "operation", "gegl:nop", NULL);
-    o->source = NULL;
-    gegl_node_link_many (
-      gegl_node_get_producer (o->gegl, "input", NULL), o->sink, NULL);
-    nodes = gegl_node_get_children (o->gegl);
-    for (n = nodes; n; n=n->next)
-    {
-      const char *op_name = gegl_node_get_operation (n->data);
-      if (!strcmp (op_name, "gegl:load"))
-      {
-        GeglNode *load;
-        gchar *path;
-        gegl_node_get (n->data, "path", &path, NULL);
-        load_into_buffer (o, path);
-        gegl_node_set (n->data, "operation", "gegl:nop", NULL);
-        o->source = n->data;
-        load = gegl_node_new_child (o->gegl, "operation", "gegl:buffer-source",
-                                              "buffer", o->buffer, NULL);
-        gegl_node_link_many (load, o->source, NULL);
-        g_free (path);
-        break;
-      }
-    }
-    o->save = gegl_node_new_child (o->gegl,
-  		  "operation", "gegl:save",
-  		  "path", path,
-  		  NULL);
-  }
-  else
-  {
+    o->is_video = 1;
     o->gegl = gegl_node_new ();
     o->sink = gegl_node_new_child (o->gegl,
                        "operation", "gegl:nop", NULL);
     o->source = gegl_node_new_child (o->gegl,
                        "operation", "gegl:nop", NULL);
-    load_into_buffer (o, path);
     o->load = gegl_node_new_child (o->gegl,
-  			      "operation", "gegl:buffer-source",
+  			      "operation", "gegl:ff-load", "path", path, "frame", o->frame_no,
 			       NULL);
-    o->save         = gegl_node_new_child (o->gegl,
-  		     "operation", "gegl:save",
+    gegl_node_link_many (o->load, o->source, o->sink, NULL);
+  }
+  else
+  {
+    meta = gegl_meta_get (path);
+    if (meta)
+    {
+      GSList *nodes, *n;
+      char *containing_path = get_path_parent (o->path);
+      o->gegl = gegl_node_new_from_xml (meta, containing_path);
+      free (containing_path);
+      o->sink = gegl_node_new_child (o->gegl,
+                       "operation", "gegl:nop", NULL);
+      o->source = NULL;
+      gegl_node_link_many (
+        gegl_node_get_producer (o->gegl, "input", NULL), o->sink, NULL);
+      nodes = gegl_node_get_children (o->gegl);
+      for (n = nodes; n; n=n->next)
+      {
+        const char *op_name = gegl_node_get_operation (n->data);
+        if (!strcmp (op_name, "gegl:load"))
+        {
+          GeglNode *load;
+          gchar *path;
+          gegl_node_get (n->data, "path", &path, NULL);
+          load_into_buffer (o, path);
+          gegl_node_set (n->data, "operation", "gegl:nop", NULL);
+          o->source = n->data;
+          load = gegl_node_new_child (o->gegl, "operation", "gegl:buffer-source",
+                                               "buffer", o->buffer, NULL);
+          gegl_node_link_many (load, o->source, NULL);
+          g_free (path);
+          break;
+        }
+      }
+      o->save = gegl_node_new_child (o->gegl, "operation", "gegl:save",
+                                              "path", path,
+                                              NULL);
+    }
+    else
+    {
+      o->gegl = gegl_node_new ();
+      o->sink = gegl_node_new_child (o->gegl,
+                         "operation", "gegl:nop", NULL);
+      o->source = gegl_node_new_child (o->gegl,
+                         "operation", "gegl:nop", NULL);
+      load_into_buffer (o, path);
+      o->load = gegl_node_new_child (o->gegl,
+                                     "operation", "gegl:buffer-source",
+			             NULL);
+      o->save = gegl_node_new_child (o->gegl,
+                                     "operation", "gegl:save",
   		     "path", o->save_path,
   		     NULL);
     gegl_node_link_many (o->load, o->source, o->sink, NULL);
     gegl_node_set (o->load, "buffer", o->buffer, NULL);
+  }
   }
   {
     struct stat stat_buf;
