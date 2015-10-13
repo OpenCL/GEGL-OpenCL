@@ -114,6 +114,7 @@ static char *suffix = "-gegl";
 
 void   gegl_meta_set (const char *path, const char *meta_data);
 char * gegl_meta_get (const char *path);
+GExiv2Orientation path_get_orientation (const char *path);
 
 static char *suffix_path (const char *path);
 static char *unsuffix_path (const char *path);
@@ -1804,5 +1805,20 @@ gegl_meta_get (const char *path)
   gexiv2_metadata_free (e2m);
   return ret;
 }
+
+GExiv2Orientation path_get_orientation (const char *path)
+{
+  GExiv2Orientation ret = 0;
+  GError *error = NULL;
+  GExiv2Metadata *e2m = gexiv2_metadata_new ();
+  gexiv2_metadata_open_path (e2m, path, &error);
+  if (!error)
+    ret = gexiv2_metadata_get_orientation (e2m);
+  /*else
+    g_warning ("%s", error->message);*/
+  gexiv2_metadata_free (e2m);
+  return ret;
+}
+
 
 #endif
