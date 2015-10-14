@@ -39,6 +39,8 @@
 #include <gegl.h>
 #include <gexiv2/gexiv2.h>
 #include <gegl-paramspecs.h>
+#include <SDL.h>
+#include <gegl-audio.h>
 
 /* comment this out, and things render more correctly but much slower
  * for images larger than your screen/window resolution
@@ -48,6 +50,49 @@
 /* set this to 1 to print the active gegl chain
  */
 #define DEBUG_OP_LIST  0
+
+
+static int audio_len   = 0;
+static int audio_pos   = 0;
+static int audio_post   = 0;
+static int audio_start = 0; /* which sample no is at the start of our circular buffer */
+
+#define AUDIO_BUF_LEN 819200000
+
+int16_t audio_data[AUDIO_BUF_LEN];
+
+static void sdl_audio_cb(void *udata, Uint8 *stream, int len)
+{
+  int audio_remaining = audio_len - audio_pos;
+  if (audio_remaining < 0)
+    return;
+
+  if (audio_remaining < len) len = audio_remaining;
+
+  //SDL_MixAudio(stream, (uint8_t*)&audio_data[audio_pos/2], len, SDL_MIX_MAXVOLUME);
+  memcpy (stream, (uint8_t*)&audio_data[audio_pos/2], len);
+  audio_pos += len;
+  audio_post += len;
+  if (audio_pos >= AUDIO_BUF_LEN)
+  {
+    audio_pos = 0;
+  }
+}
+
+static void sdl_add_audio_sample (int sample_pos, float left, float right)
+{
+   audio_data[audio_len/2 + 0] = left * 32767.0;
+   audio_data[audio_len/2 + 1] = right * 32767.0;
+   audio_len += 4;
+
+   if (audio_len >= AUDIO_BUF_LEN)
+   {
+     audio_len = 0;
+   }
+}
+
+static int audio_started = 0;
+
 
 /*  this structure contains the full application state, and is what
  *  re-renderings of the UI is directly based on.
@@ -169,6 +214,7 @@ static void drag_preview (MrgEvent *e);
 static void load_into_buffer (State *o, const char *path);
 static GeglNode *locate_node (State *o, const char *op_name);
 static void zoom_to_fit (State *o);
+static void center (State *o);
 static void zoom_to_fit_buffer (State *o);
 
 static void go_next_cb   (MrgEvent *event, void *data1, void *data2);
@@ -289,10 +335,40 @@ static State *hack_state = NULL;  // XXX: this shoudl be factored away
 
 char **ops = NULL;
 
+
+static void init_audio (void)
+{
+  SDL_AudioSpec AudioSettings = {0};
+
+  SDL_Init(SDL_INIT_AUDIO);
+  AudioSettings.freq = 48000;
+  AudioSettings.format = AUDIO_S16SYS;
+  AudioSettings.channels = 2;
+  AudioSettings.samples = 1024;
+  AudioSettings.callback = sdl_audio_cb;
+  SDL_OpenAudio(&AudioSettings, 0);
+
+  if (AudioSettings.format != AUDIO_S16SYS)
+   {
+      fprintf (stderr, "not getting format we wanted\n");
+   }
+  if (AudioSettings.freq != 48000)
+   {
+      fprintf (stderr, "not getting rate we wanted\n");
+   }
+}
+
+static void end_audio (void)
+{
+  
+}
+
 int mrg_ui_main (int argc, char **argv, char **ops)
 {
   Mrg *mrg = mrg_new (1024, 768, NULL);
   State o = {NULL,};
+
+  init_audio ();
 #ifdef USE_MIPMAPS
   /* to use this UI comfortably, mipmap rendering needs to be enabled, there are
    * still a few glitches, but for basic full frame un-panned, un-cropped use it
@@ -350,6 +426,8 @@ int mrg_ui_main (int argc, char **argv, char **ops)
     o.buffer = NULL;
   }
   gegl_exit ();
+
+  end_audio ();
   return 0;
 }
 
@@ -926,6 +1004,7 @@ static void gegl_ui (Mrg *mrg, void *data)
    {
      o->frame_no++;
      gegl_node_set (o->load, "frame", o->frame_no, NULL);
+     mrg_queue_draw (o->mrg, NULL);
    }
 
   mrg_gegl_blit (mrg,
@@ -935,6 +1014,32 @@ static void gegl_ui (Mrg *mrg, void *data)
 		 o->u, o->v,
 		 o->scale,
                  o->render_quality);
+
+  {
+    GeglAudio *audio = NULL;
+    gdouble fps;
+    gegl_node_get (o->load, "audio", &audio, "frame-rate", &fps, NULL);
+    if (audio->samples > 0)
+    {
+       int i;
+       if (!audio_started)
+        {
+          SDL_PauseAudio(0);
+          audio_started = 1;
+        }
+       for (i = 0; i < audio->samples; i++)
+       {
+         sdl_add_audio_sample (0, audio->left[i], audio->right[i]);
+       }
+    }
+
+    while ( (audio_post / 4.0) / audio->samplerate < (o->frame_no / fps) - 0.05 )
+    {
+      g_usleep (500); /* sync audio */
+    }
+
+    g_object_unref (audio);
+  }
   
   if (o->show_controls)
   {
@@ -1246,7 +1351,12 @@ static void load_path (State *o)
     struct stat stat_buf;
     lstat (o->path, &stat_buf);
     if (S_ISREG (stat_buf.st_mode))
-      zoom_to_fit (o);
+    {
+      if (o->is_video)
+        center (o);
+      else
+        zoom_to_fit (o);
+    }
   }
 
   if (o->ops)
@@ -1483,11 +1593,23 @@ static void zoom_to_fit (State *o)
 
   o->scale = scale;
 
-  o->u = -(mrg_width (mrg) - rect.width * scale) / 2;
-  o->v = -(mrg_height (mrg) - rect.height * scale) / 2;
-  
-  o->u += rect.x * scale;
-  o->v += rect.y * scale;
+  o->u = -(mrg_width (mrg) - rect.width * o->scale) / 2;
+  o->v = -(mrg_height (mrg) - rect.height * o->scale) / 2;
+  o->u += rect.x * o->scale;
+  o->v += rect.y * o->scale;
+
+  mrg_queue_draw (mrg, NULL);
+}
+static void center (State *o)
+{
+  Mrg *mrg = o->mrg;
+  GeglRectangle rect = gegl_node_get_bounding_box (o->sink);
+  o->scale = 1.0;
+
+  o->u = -(mrg_width (mrg) - rect.width * o->scale) / 2;
+  o->v = -(mrg_height (mrg) - rect.height * o->scale) / 2;
+  o->u += rect.x * o->scale;
+  o->v += rect.y * o->scale;
 
   mrg_queue_draw (mrg, NULL);
 }
@@ -1504,10 +1626,12 @@ static void zoom_to_fit_buffer (State *o)
   if (scale2 < scale) scale = scale2;
 
   o->scale = scale;
-  o->u = -(mrg_width (mrg) - rect.width * scale) / 2;
-  o->v = -(mrg_height (mrg) - rect.height * scale) / 2;
-  o->u += rect.x * scale;
-  o->v += rect.y * scale;
+  o->u = -(mrg_width (mrg) - rect.width * o->scale) / 2;
+  o->v = -(mrg_height (mrg) - rect.height * o->scale) / 2;
+  o->u += rect.x * o->scale;
+  o->v += rect.y * o->scale;
+
+
   mrg_queue_draw (mrg, NULL);
 }
 
