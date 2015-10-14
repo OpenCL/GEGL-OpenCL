@@ -1429,7 +1429,6 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       gint          y1 = floorf (rect->y / scale + GEGL_SCALE_EPSILON);
       gint          y2 = ceil ((rect->y + rect->height) / scale - GEGL_SCALE_EPSILON);
       gint          factor = 1;
-      gint          stride;
       gint          offset = 0;
 
       while (scale <= 0.5)
@@ -1459,17 +1458,19 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       sample_rect.width  = factor * (x2 - x1);
       sample_rect.height = factor * (y2 - y1);
 
-      sample_buf = scale == 1.0 ? dest_buf : g_malloc0 (buf_height * buf_width * bpp);
-      stride     = scale == 1.0 ? rowstride : buf_width * bpp;
-
-      gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)sample_buf + offset, stride,
-                                         format, level, repeat_mode);
-
-      if (scale == 1.0)
-        return;
-
       if (rowstride == GEGL_AUTO_ROWSTRIDE)
         rowstride = rect->width * bpp;
+
+      if (scale == 1.0)
+        {
+          gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)dest_buf + offset, rowstride,
+                                         format, level, repeat_mode);
+          return;
+        }
+
+      sample_buf = g_malloc0 (buf_height * buf_width * bpp);
+      gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)sample_buf + offset, buf_width * bpp,
+                                         format, level, repeat_mode);
 
       if (scale <= 1.99)
         {
