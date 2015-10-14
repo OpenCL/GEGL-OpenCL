@@ -1468,7 +1468,7 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
           return;
         }
 
-      sample_buf = g_malloc0 (buf_height * buf_width * bpp);
+      sample_buf = g_malloc (buf_height * buf_width * bpp);
       gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)sample_buf + offset, buf_width * bpp,
                                          format, level, repeat_mode);
 
