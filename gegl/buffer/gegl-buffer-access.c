@@ -1488,6 +1488,24 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                    format,
                                    rowstride);
         }
+#if 0
+      else if (scale <= 1.99)
+        {
+          sample_rect.x      = x1 - 1;
+          sample_rect.y      = y1 - 1;
+          sample_rect.width  = x2 - x1 + 2;
+          sample_rect.height = y2 - y1 + 2;
+
+          gegl_resample_boxfilter (dest_buf,
+                                   sample_buf,
+                                   rect,
+                                   &sample_rect,
+                                   buf_width * bpp,
+                                   scale,
+                                   format,
+                                   rowstride);
+        }
+#endif
       else
         {
           sample_rect.x      = x1;

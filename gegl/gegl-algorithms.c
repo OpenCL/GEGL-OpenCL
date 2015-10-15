@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006,2007 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006,2007,2015 Øyvind Kolås <pippin@gimp.org>
  *           2013 Daniel Sabo
  */
 
@@ -116,6 +116,38 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
                            s_rowstride, scale, bpp, d_rowstride);
 }
 
+void gegl_resample_bilinear (guchar              *dest_buf,
+                             const guchar        *source_buf,
+                             const GeglRectangle *dst_rect,
+                             const GeglRectangle *src_rect,
+                             gint                 s_rowstride,
+                             gdouble              scale,
+                             const Babl          *format,
+                             gint                 d_rowstride)
+{
+  const Babl *comp_type  = babl_format_get_type (format, 0);
+  const gint bpp = babl_format_get_bytes_per_pixel (format);
+
+  if (comp_type == babl_type ("u8"))
+    gegl_resample_bilinear_u8 (dest_buf, source_buf, dst_rect, src_rect,
+                               s_rowstride, scale, bpp, d_rowstride);
+  else if (comp_type == babl_type ("u16"))
+    gegl_resample_bilinear_u16 (dest_buf, source_buf, dst_rect, src_rect,
+                                s_rowstride, scale, bpp, d_rowstride);
+  else if (comp_type == babl_type ("u32"))
+    gegl_resample_bilinear_u32 (dest_buf, source_buf, dst_rect, src_rect,
+                                s_rowstride, scale, bpp, d_rowstride);
+  else if (comp_type == babl_type ("float"))
+    gegl_resample_bilinear_float (dest_buf, source_buf, dst_rect, src_rect,
+                                  s_rowstride, scale, bpp, d_rowstride);
+  else if (comp_type == babl_type ("double"))
+    gegl_resample_bilinear_double (dest_buf, source_buf, dst_rect, src_rect,
+                                   s_rowstride, scale, bpp, d_rowstride);
+  else
+    gegl_resample_nearest (dest_buf, source_buf, dst_rect, src_rect,
+                           s_rowstride, scale, bpp, d_rowstride);
+}
+
 static inline int int_floorf (float x)
 {
   int i = (int)x; /* truncate */
@@ -169,7 +201,7 @@ gegl_resample_nearest (guchar              *dst,
 
 #define BOXFILTER_FUNCNAME   gegl_resample_boxfilter_u8
 #define BOXFILTER_TYPE       guchar
-#define BOXFILTER_ROUND(val) (lrint(val))
+#define BOXFILTER_ROUND(val) ((int)((val)+0.5))
 #include "gegl-algorithms-boxfilter.inc"
 #undef BOXFILTER_FUNCNAME
 #undef BOXFILTER_TYPE
@@ -177,7 +209,7 @@ gegl_resample_nearest (guchar              *dst,
 
 #define BOXFILTER_FUNCNAME   gegl_resample_boxfilter_u16
 #define BOXFILTER_TYPE       guint16
-#define BOXFILTER_ROUND(val) (lrint(val))
+#define BOXFILTER_ROUND(val) ((int)((val)+0.5))
 #include "gegl-algorithms-boxfilter.inc"
 #undef BOXFILTER_FUNCNAME
 #undef BOXFILTER_TYPE
@@ -185,7 +217,7 @@ gegl_resample_nearest (guchar              *dst,
 
 #define BOXFILTER_FUNCNAME   gegl_resample_boxfilter_u32
 #define BOXFILTER_TYPE       guint32
-#define BOXFILTER_ROUND(val) (lrint(val))
+#define BOXFILTER_ROUND(val) ((int)((val)+0.5))
 #include "gegl-algorithms-boxfilter.inc"
 #undef BOXFILTER_FUNCNAME
 #undef BOXFILTER_TYPE
@@ -240,3 +272,45 @@ gegl_resample_nearest (guchar              *dst,
 #undef DOWNSCALE_TYPE
 #undef DOWNSCALE_SUM
 #undef DOWNSCALE_DIVISOR
+
+
+#define BILINEAR_FUNCNAME   gegl_resample_bilinear_double
+#define BILINEAR_TYPE       gdouble
+#define BILINEAR_ROUND(val) (val)
+#include "gegl-algorithms-bilinear.inc"
+#undef BILINEAR_FUNCNAME
+#undef BILINEAR_TYPE
+#undef BILINEAR_ROUND
+
+#define BILINEAR_FUNCNAME   gegl_resample_bilinear_float
+#define BILINEAR_TYPE       gfloat
+#define BILINEAR_ROUND(val) (val)
+#include "gegl-algorithms-bilinear.inc"
+#undef BILINEAR_FUNCNAME
+#undef BILINEAR_TYPE
+#undef BILINEAR_ROUND
+
+#define BILINEAR_FUNCNAME   gegl_resample_bilinear_u8
+#define BILINEAR_TYPE       guchar
+#define BILINEAR_ROUND(val) ((int)((val)+0.5))
+#include "gegl-algorithms-bilinear.inc"
+#undef BILINEAR_FUNCNAME
+#undef BILINEAR_TYPE
+#undef BILINEAR_ROUND
+
+#define BILINEAR_FUNCNAME   gegl_resample_bilinear_u16
+#define BILINEAR_TYPE       guint16
+#define BILINEAR_ROUND(val) ((int)((val)+0.5))
+#include "gegl-algorithms-bilinear.inc"
+#undef BILINEAR_FUNCNAME
+#undef BILINEAR_TYPE
+#undef BILINEAR_ROUND
+
+#define BILINEAR_FUNCNAME   gegl_resample_bilinear_u32
+#define BILINEAR_TYPE       guint32
+#define BILINEAR_ROUND(val) ((int)((val)+0.5))
+#include "gegl-algorithms-bilinear.inc"
+#undef BILINEAR_FUNCNAME
+#undef BILINEAR_TYPE
+#undef BILINEAR_ROUND
+
