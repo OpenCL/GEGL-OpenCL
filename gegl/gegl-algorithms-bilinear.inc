@@ -39,7 +39,7 @@ BILINEAR_FUNCNAME (guchar              *dest_buf,
             src[0] = src[1] = src[2] = src[3] = (const BILINEAR_TYPE*)src_base + jj[x];
             src[1] += 4;
             src[2] += s_rowstride;
-            src[5] += s_rowstride + 4;
+            src[3] += s_rowstride + 4;
 
             if (src[0][3] == 0 &&  /* XXX: it would be even better to not call this at all for the abyss...  */
                 src[1][3] == 0 &&
@@ -72,7 +72,7 @@ BILINEAR_FUNCNAME (guchar              *dest_buf,
             src[0] = src[1] = src[2] = src[3] = (const BILINEAR_TYPE*)src_base + jj[x];
             src[1] += 3;
             src[2] += s_rowstride;
-            src[5] += s_rowstride + 3;
+            src[3] += s_rowstride + 3;
             dst[0] = BILINEAR_ROUND(
               (src[0][0] * (1.0-dx[x]) + src[1][0] * (dx[x])) * (rdy) +
               (src[2][0] * (1.0-dx[x]) + src[3][0] * (dx[x])) * (dy));
@@ -91,7 +91,7 @@ BILINEAR_FUNCNAME (guchar              *dest_buf,
             src[0] = src[1] = src[2] = src[3] = (const BILINEAR_TYPE*)src_base + jj[x];
             src[1] += 2;
             src[2] += s_rowstride;
-            src[5] += s_rowstride + 2;
+            src[3] += s_rowstride + 2;
             dst[0] = BILINEAR_ROUND(
               (src[0][0] * (1.0-dx[x]) + src[1][0] * (dx[x])) * (rdy) +
               (src[2][0] * (1.0-dx[x]) + src[3][0] * (dx[x])) * (dy));
@@ -107,7 +107,7 @@ BILINEAR_FUNCNAME (guchar              *dest_buf,
             src[0] = src[1] = src[2] = src[3] = (const BILINEAR_TYPE*)src_base + jj[x];
             src[1] += 1;
             src[2] += s_rowstride;
-            src[5] += s_rowstride + 1;
+            src[3] += s_rowstride + 1;
             dst[0] = BILINEAR_ROUND(
               (src[0][0] * (1.0-dx[x]) + src[1][0] * (dx[x])) * (rdy) +
               (src[2][0] * (1.0-dx[x]) + src[3][0] * (dx[x])) * (dy));
@@ -120,7 +120,7 @@ BILINEAR_FUNCNAME (guchar              *dest_buf,
             src[0] = src[1] = src[2] = src[3] = (const BILINEAR_TYPE*)src_base + jj[x];
             src[1] += components;
             src[2] += s_rowstride;
-            src[5] += s_rowstride + components;
+            src[3] += s_rowstride + components;
             {
               for (gint i = 0; i < components; ++i)
                 {
