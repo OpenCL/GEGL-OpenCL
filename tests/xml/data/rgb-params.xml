@@ -19,6 +19,7 @@
             <param name='y'>0</param>
             <param name='width'>5</param>
             <param name='height'>10</param>
+            <param name='reset-origin'>false</param>
           </params>
       </node>
       <node operation='gegl:color'>
@@ -34,6 +35,7 @@
         <param name='y'>0</param>
         <param name='width'>10</param>
         <param name='height'>10</param>
+        <param name='reset-origin'>false</param>
       </params>
   </node>
   <node operation='gegl:color'>

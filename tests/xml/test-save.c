@@ -83,6 +83,7 @@ test_save_multiple_nodes (void)
         <param name='y'>0</param>\n\
         <param name='width'>0</param>\n\
         <param name='height'>0</param>\n\
+        <param name='reset-origin'>false</param>\n\
       </params>\n\
   </node>\n\
 </gegl>\n";

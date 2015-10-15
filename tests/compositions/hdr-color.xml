@@ -2,8 +2,11 @@
 <gegl>
   <node operation='gegl:crop'>
     <params>
+      <param name='x'>0</param>
+      <param name='y'>0</param>
       <param name='width'>10.000000</param>
       <param name='height'>10.000000</param>
+      <param name='reset-origin'>true</param>
     </params>
   </node>
   <node operation='gegl:color'>

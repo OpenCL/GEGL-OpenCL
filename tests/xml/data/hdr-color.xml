@@ -6,6 +6,7 @@
         <param name='y'>0</param>
         <param name='width'>10</param>
         <param name='height'>10</param>
+        <param name='reset-origin'>true</param>
       </params>
   </node>
   <node operation='gegl:color'>

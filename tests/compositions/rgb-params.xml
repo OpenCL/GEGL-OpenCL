@@ -18,6 +18,7 @@
         <params>
           <param name='width'>5.000000</param>
           <param name='height'>10.000000</param>
+          <param name='reset-origin'>false</param>
         </params>
       </node>
       <node operation='gegl:color'>
@@ -30,6 +31,7 @@
     <params>
       <param name='width'>10.000000</param>
       <param name='height'>10.000000</param>
+      <param name='reset-origin'>false</param>
     </params>
   </node>
   <node operation='gegl:color'>
