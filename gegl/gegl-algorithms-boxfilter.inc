@@ -51,15 +51,15 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
           src[6] -= components;
 
           {
-            const gdouble lt = left_weight * top_weight;
-            const gdouble lm = left_weight * middle_weight;
-            const gdouble lb = left_weight * bottom_weight;
-            const gdouble ct = center_weight * top_weight;
-            const gdouble cm = center_weight * middle_weight;
-            const gdouble cb = center_weight * bottom_weight;
-            const gdouble rt = right_weight * top_weight;
-            const gdouble rm = right_weight * middle_weight;
-            const gdouble rb = right_weight * bottom_weight;
+            const gfloat lt = left_weight * top_weight;
+            const gfloat lm = left_weight * middle_weight;
+            const gfloat lb = left_weight * bottom_weight;
+            const gfloat ct = center_weight * top_weight;
+            const gfloat cm = center_weight * middle_weight;
+            const gfloat cb = center_weight * bottom_weight;
+            const gfloat rt = right_weight * top_weight;
+            const gfloat rm = right_weight * middle_weight;
+            const gfloat rb = right_weight * bottom_weight;
 
             /* XXX: move switch outside scanline loop */
 	    switch (components)
