@@ -11,6 +11,25 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
   const BOXFILTER_TYPE *src[9];
   gint  components = bpp / sizeof(BOXFILTER_TYPE);
 
+  gfloat left_weight[dst_rect->width];
+  gfloat center_weight[dst_rect->width];
+  gfloat right_weight[dst_rect->width];
+
+  gfloat sx[dst_rect->width];
+  gint   jj[dst_rect->width];
+
+  for (gint x = 0; x < dst_rect->width; x++)
+  {
+    sx[x]  = (dst_rect->x + x + .5) / scale - src_rect->x;
+    jj[x]  = int_floorf (sx[x]);
+
+    left_weight[x]   = .5 - scale * (sx[x] - jj[x]);
+    left_weight[x]   = MAX (0.0, left_weight[x]);
+    right_weight[x]  = .5 - scale * ((jj[x] + 1) - sx[x]);
+    right_weight[x]  = MAX (0.0, right_weight[x]);
+    center_weight[x] = 1. - left_weight[x] - right_weight[x];
+  }
+
   for (gint y = 0; y < dst_rect->height; y++)
     {
       gfloat top_weight, middle_weight, bottom_weight;
@@ -27,18 +46,7 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
 
       for (gint x = 0; x < dst_rect->width; x++)
         {
-          /* XXX: do the following computations once for first row only */
-          gfloat left_weight, center_weight, right_weight;
-          const gfloat sx = (dst_rect->x + x + .5) / scale - src_rect->x;
-          const gint   jj = int_floorf (sx);
-
-          left_weight   = .5 - scale * (sx - jj);
-          left_weight   = MAX (0.0, left_weight);
-          right_weight  = .5 - scale * ((jj + 1) - sx);
-          right_weight  = MAX (0.0, right_weight);
-          center_weight = 1. - left_weight - right_weight;
-
-          src[3] = src[4] = src[5] = (const BOXFILTER_TYPE*)src_base + jj * components;
+          src[3] = src[4] = src[5] = (const BOXFILTER_TYPE*)src_base + jj[x] * components;
           src[0] = src[1] = src[2] = src[3] - s_rowstride;
           src[6] = src[7] = src[8] = src[3] + s_rowstride;
 
@@ -51,15 +59,15 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
           src[6] -= components;
 
           {
-            const gfloat lt = left_weight * top_weight;
-            const gfloat lm = left_weight * middle_weight;
-            const gfloat lb = left_weight * bottom_weight;
-            const gfloat ct = center_weight * top_weight;
-            const gfloat cm = center_weight * middle_weight;
-            const gfloat cb = center_weight * bottom_weight;
-            const gfloat rt = right_weight * top_weight;
-            const gfloat rm = right_weight * middle_weight;
-            const gfloat rb = right_weight * bottom_weight;
+            const gfloat lt = left_weight[x] * top_weight;
+            const gfloat lm = left_weight[x] * middle_weight;
+            const gfloat lb = left_weight[x] * bottom_weight;
+            const gfloat ct = center_weight[x] * top_weight;
+            const gfloat cm = center_weight[x] * middle_weight;
+            const gfloat cb = center_weight[x] * bottom_weight;
+            const gfloat rt = right_weight[x] * top_weight;
+            const gfloat rm = right_weight[x] * middle_weight;
+            const gfloat rb = right_weight[x] * bottom_weight;
 
             /* XXX: move switch outside scanline loop */
 	    switch (components)
