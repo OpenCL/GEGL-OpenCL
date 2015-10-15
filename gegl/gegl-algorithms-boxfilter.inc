@@ -8,43 +8,47 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
                     const gint           bpp,
                     const gint           d_rowstride)
 {
-  gfloat left_weight, center_weight, right_weight;
-  gfloat top_weight, middle_weight, bottom_weight;
   const BOXFILTER_TYPE *src[9];
-  gint     x, y;
-  gint     components = bpp / sizeof(BOXFILTER_TYPE);
+  gint  components = bpp / sizeof(BOXFILTER_TYPE);
 
-  for (y = 0; y < dst_rect->height; y++)
+  for (gint y = 0; y < dst_rect->height; y++)
     {
+      gfloat top_weight, middle_weight, bottom_weight;
       const gfloat sy = (dst_rect->y + y + .5) / scale - src_rect->y;
-      const gint     ii = floorf (sy);
+      const gint     ii = int_floorf (sy);
       BOXFILTER_TYPE             *dst = (BOXFILTER_TYPE*)(dest_buf + y * d_rowstride);
       const guchar  *src_base = source_buf + ii * s_rowstride;
 
-      top_weight    = MAX (0., .5 - scale * (sy - ii));
-      bottom_weight = MAX (0., .5 - scale * ((ii + 1 ) - sy));
+      top_weight    = .5 - scale * (sy - ii);
+      top_weight    = MAX (0., top_weight);
+      bottom_weight = .5 - scale * ((ii + 1 ) - sy);
+      bottom_weight = MAX (0., bottom_weight);
       middle_weight = 1. - top_weight - bottom_weight;
 
-      for (x = 0; x < dst_rect->width; x++)
+      for (gint x = 0; x < dst_rect->width; x++)
         {
+          /* XXX: do the following computations once for first row only */
+          gfloat left_weight, center_weight, right_weight;
           const gfloat sx = (dst_rect->x + x + .5) / scale - src_rect->x;
-          const gint   jj = floorf (sx);
+          const gint   jj = int_floorf (sx);
 
-          left_weight   = MAX (0., .5 - scale * (sx - jj));
-          right_weight  = MAX (0., .5 - scale * ((jj + 1) - sx));
+          left_weight   = .5 - scale * (sx - jj);
+          left_weight   = MAX (0.0, left_weight);
+          right_weight  = .5 - scale * ((jj + 1) - sx);
+          right_weight  = MAX (0.0, right_weight);
           center_weight = 1. - left_weight - right_weight;
 
-          src[4] = (const BOXFILTER_TYPE*)src_base + jj * components;
-          src[1] = (const BOXFILTER_TYPE*)(src_base - s_rowstride) + jj * components;
-          src[7] = (const BOXFILTER_TYPE*)(src_base + s_rowstride) + jj * components;
+          src[3] = src[4] = src[5] = (const BOXFILTER_TYPE*)src_base + jj * components;
+          src[0] = src[1] = src[2] = src[3] - s_rowstride;
+          src[6] = src[7] = src[8] = src[3] + s_rowstride;
 
-          src[2] = src[1] + components;
-          src[5] = src[4] + components;
-          src[8] = src[7] + components;
+          src[2] += components;
+          src[5] += components;
+          src[8] += components;
 
-          src[0] = src[1] - components;
-          src[3] = src[4] - components;
-          src[6] = src[7] - components;
+          src[0] -= components;
+          src[3] -= components;
+          src[6] -= components;
 
           {
             const gdouble lt = left_weight * top_weight;
@@ -57,7 +61,8 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
             const gdouble rm = right_weight * middle_weight;
             const gdouble rb = right_weight * bottom_weight;
 
-            switch (components)
+            /* XXX: move switch outside scanline loop */
+	    switch (components)
             {
               case 4:
                 dst[3] = BOXFILTER_ROUND(

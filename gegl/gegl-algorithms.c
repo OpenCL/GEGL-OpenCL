@@ -116,6 +116,12 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
                            s_rowstride, scale, bpp, d_rowstride);
 }
 
+static inline int int_floorf (float x)
+{
+  int i = (int)x; /* truncate */
+  return i - ( i > x ); /* convert trunc to floor */
+}
+
 void
 gegl_resample_nearest (guchar              *dst,
                        const guchar        *src,
@@ -131,12 +137,12 @@ gegl_resample_nearest (guchar              *dst,
   for (i = 0; i < dst_rect->height; i++)
     {
       const gfloat sy = (dst_rect->y + .5 + i) / scale - src_rect->y;
-      const gint   ii = floorf (sy + GEGL_SCALE_EPSILON);
+      const gint   ii = int_floorf (sy + GEGL_SCALE_EPSILON);
 
       for (j = 0; j < dst_rect->width; j++)
         {
           const gfloat sx = (dst_rect->x + .5 + j) / scale - src_rect->x;
-          const gint   jj = floorf (sx + GEGL_SCALE_EPSILON);
+          const gint   jj = int_floorf (sx + GEGL_SCALE_EPSILON);
 
           memcpy (&dst[i * dst_stride + j * bpp],
                   &src[ii * src_stride + jj * bpp],
