@@ -59,6 +59,19 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
             src[0] -= 4;
             src[3] -= 4;
             src[6] -= 4;
+
+            if (src[0][3] == 0 &&  /* XXX: it would be even better to not call this at all for the abyss...  */
+                src[1][3] == 0 &&
+                src[2][3] == 0 &&
+                src[3][3] == 0 &&
+                src[4][3] == 0 &&
+                src[5][3] == 0 &&
+                src[6][3] == 0 &&
+                src[7][3] == 0)
+            {
+              dst[0] = dst[1] = dst[2] = dst[3] = 0;
+            }
+            else
             {
               const gfloat lt = left_weight[x] * top_weight;
               const gfloat lm = left_weight[x] * middle_weight;
@@ -69,6 +82,7 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
               const gfloat rt = right_weight[x] * top_weight;
               const gfloat rm = right_weight[x] * middle_weight;
               const gfloat rb = right_weight[x] * bottom_weight;
+
                 dst[0] = BOXFILTER_ROUND(
                   src[0][0] * lt + src[3][0] * lm + src[6][0] * lb +
                   src[1][0] * ct + src[4][0] * cm + src[7][0] * cb +
@@ -225,6 +239,5 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
         }
         break;
       }
-
     }
 }
