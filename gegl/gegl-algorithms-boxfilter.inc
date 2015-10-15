@@ -15,17 +15,16 @@ BOXFILTER_FUNCNAME (guchar              *dest_buf,
   gfloat center_weight[dst_rect->width];
   gfloat right_weight[dst_rect->width];
 
-  gfloat sx[dst_rect->width];
   gint   jj[dst_rect->width];
 
   for (gint x = 0; x < dst_rect->width; x++)
   {
-    sx[x]  = (dst_rect->x + x + .5) / scale - src_rect->x;
-    jj[x]  = int_floorf (sx[x]);
+    gfloat sx  = (dst_rect->x + x + .5) / scale - src_rect->x;
+    jj[x]  = int_floorf (sx);
 
-    left_weight[x]   = .5 - scale * (sx[x] - jj[x]);
+    left_weight[x]   = .5 - scale * (sx - jj[x]);
     left_weight[x]   = MAX (0.0, left_weight[x]);
-    right_weight[x]  = .5 - scale * ((jj[x] + 1) - sx[x]);
+    right_weight[x]  = .5 - scale * ((jj[x] + 1) - sx);
     right_weight[x]  = MAX (0.0, right_weight[x]);
     center_weight[x] = 1. - left_weight[x] - right_weight[x];
   }
