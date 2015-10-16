@@ -82,10 +82,17 @@ typedef struct
   glong            prevframe;      /* previously decoded frame in loadedfile */
 } Priv;
 
+#define MAX_AUDIO_CHANNELS  8
+#define MAX_AUDIO_SAMPLES   8192
+
 typedef struct AudioFrame {        /* XXX: hardcoded for 16bit chunky stereo, */
-  uint8_t          buf[16000]; 
+  float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
+  int              channels;
+  int              sample_rate;
+  //uint8_t          buf[16000]; 
   int              len;
   long             pos;
+
 } AudioFrame;
 
 static void
@@ -278,15 +285,42 @@ decode_frame (GeglOperation *operation,
                            1);
                        g_assert (data_size < 16000);
 
-                       /* XXX: do not hardcode this planar to chunky conversion */
-		       int i;
-                       for (i = 0; i < frame.nb_samples; i++)
+                       /* XXX: it might not be stereoo.. */
+                       switch (p->audio_context->sample_fmt)
                        {
-                         ((int16_t *)af->buf)[i*2] =  ((int16_t *)frame.data[0])[i];
-                         ((int16_t *)af->buf)[i*2+1] =  ((int16_t *)frame.data[1])[i];
+                         case AV_SAMPLE_FMT_FLTP:
+			   for (gint i = 0; i < frame.nb_samples; i++)
+			   {
+			     af->data[0][i] = ((float *)frame.data[0])[i];
+			     af->data[1][i] = ((float *)frame.data[1])[i];
+			   }
+                           break;
+                         case AV_SAMPLE_FMT_S16P:
+			   for (gint i = 0; i < frame.nb_samples; i++)
+			   {
+			     af->data[0][i] = ((int16_t *)frame.data[0])[i] / 32768.0;
+			     af->data[1][i] = ((int16_t *)frame.data[1])[i] / 32768.0;
+			   }
+                           break;
+                         default:
+                           fprintf (stderr, "undealt with sample format\n");
                        }
-
-                       af->len = data_size;
+#if 0
+                       if (p->audio_context->sample_fmt == AV_SAMPLE_FMT_FLT)
+                       {
+                       }
+                       else
+                       {
+			  /* XXX: do not hardcode this planar to chunky conversion */
+			  int i;
+			  for (i = 0; i < frame.nb_samples; i++)
+			  {
+			    ((int16_t *)af->buf)[i*2] =  ((int16_t *)frame.data[0])[i];
+			    ((int16_t *)af->buf)[i*2+1] =  ((int16_t *)frame.data[1])[i];
+			  }
+                       }
+#endif
+                       af->len = frame.nb_samples;
                        af->pos = p->audio_pos;
                        p->audio_pos += af->len;
 
@@ -385,8 +419,23 @@ prepare (GeglOperation *operation)
               }
             else
               {
-		 fprintf (stderr, "samplerate: %i channels: %i\n", p->audio_context->sample_rate,
+		 fprintf (stderr, "samplerate: %i channels: %i samplefmt: ", p->audio_context->sample_rate,
 		p->audio_context->channels);
+                 switch (p->audio_context->sample_fmt)
+                 {
+                   case AV_SAMPLE_FMT_U8: fprintf (stderr, "u8"); break;
+                   case AV_SAMPLE_FMT_S16: fprintf (stderr, "s16"); break;
+                   case AV_SAMPLE_FMT_S32: fprintf (stderr, "s32"); break;
+                   case AV_SAMPLE_FMT_FLT: fprintf (stderr, "flt"); break;
+                   case AV_SAMPLE_FMT_DBL: fprintf (stderr, "dbl"); break;
+                   case AV_SAMPLE_FMT_U8P: fprintf (stderr, "u8-planar"); break;
+                   case AV_SAMPLE_FMT_S16P: fprintf (stderr, "s16-planar"); break;
+                   case AV_SAMPLE_FMT_S32P: fprintf (stderr, "s32-planar"); break;
+                   case AV_SAMPLE_FMT_FLTP: fprintf (stderr, "flt-planar"); break;
+                   case AV_SAMPLE_FMT_DBLP: fprintf (stderr, "dbl-planar"); break;
+                   default: fprintf (stderr, "none"); break;
+                 }
+                 fprintf (stderr, "\n");
               }
         }
 
@@ -492,12 +541,11 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
   no = 0;
   if (p->audio_cursor && sample_no > p->audio_cursor_pos) {
     AudioFrame *af = p->audio_cursor->data;
-    int16_t *data = (void*) af->buf;
-    if (p->audio_cursor_pos + af->len/4 > sample_no)
+    if (p->audio_cursor_pos + af->len > sample_no)
       {
         int i = sample_no - p->audio_cursor_pos;
-        *left  = data[i*2+0] / 32767.0;
-        *right = data[i*2+1] / 32767.0;
+        *left  = af->data[0][i];
+        *right = af->data[1][i];
         return;
       }
     /* override start conditions of below loop */
@@ -507,17 +555,16 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
   for (; l; l = l->next)
   {
     AudioFrame *af = l->data;
-    int16_t *data = (void*) af->buf;
-    if (no + af->len/4 > sample_no)
+    if (no + af->len > sample_no)
       {
         int i = sample_no - no;
-        *left  = data[i*2+0] / 32767.0;
-        *right = data[i*2+1] / 32767.0;
+        *left  = af->data[0][i];
+        *right = af->data[1][i];
         p->audio_cursor     = l;
         p->audio_cursor_pos = no;
         return;
       }
-    no += af->len/4;
+    no += af->len;
   }
   *left  = 0;
   *right = 0;
