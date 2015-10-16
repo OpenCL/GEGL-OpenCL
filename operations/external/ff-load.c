@@ -283,43 +283,40 @@ decode_frame (GeglOperation *operation,
                            frame.nb_samples,
                            p->audio_context->sample_fmt,
                            1);
-                       g_assert (data_size < 16000);
+                       g_assert (frame.nb_samples < MAX_AUDIO_SAMPLES);
 
                        /* XXX: it might not be stereoo.. */
+                       af->channels = p->audio_context->channels;
+
                        switch (p->audio_context->sample_fmt)
                        {
+                         case AV_SAMPLE_FMT_FLT:
+                           if (af->channels != 1)
+                             g_warning ("receiving chunky float data!\n");
                          case AV_SAMPLE_FMT_FLTP:
 			   for (gint i = 0; i < frame.nb_samples; i++)
-			   {
-			     af->data[0][i] = ((float *)frame.data[0])[i];
-			     af->data[1][i] = ((float *)frame.data[1])[i];
-			   }
+			     for (gint c = 0; c < af->channels; c++)
+			       af->data[c][i] = ((float *)frame.data[c])[i];
                            break;
+                         case AV_SAMPLE_FMT_S16:
+                           if (af->channels != 1)
+                             g_warning ("receiving chunky 16bit data!\n");
                          case AV_SAMPLE_FMT_S16P:
 			   for (gint i = 0; i < frame.nb_samples; i++)
-			   {
-			     af->data[0][i] = ((int16_t *)frame.data[0])[i] / 32768.0;
-			     af->data[1][i] = ((int16_t *)frame.data[1])[i] / 32768.0;
-			   }
+			     for (gint c = 0; c < af->channels; c++)
+			       af->data[c][i] = ((int16_t *)frame.data[c])[i] / 32768.0;
+                           break;
+                         case AV_SAMPLE_FMT_S32:
+                           if (af->channels != 1)
+                             g_warning ("receiving chunky 32bit data!\n");
+                         case AV_SAMPLE_FMT_S32P:
+			   for (gint i = 0; i < frame.nb_samples; i++)
+			     for (gint c = 0; c < af->channels; c++)
+			       af->data[c][i] = ((int16_t *)frame.data[c])[i] / 2147483648.0;
                            break;
                          default:
                            fprintf (stderr, "undealt with sample format\n");
                        }
-#if 0
-                       if (p->audio_context->sample_fmt == AV_SAMPLE_FMT_FLT)
-                       {
-                       }
-                       else
-                       {
-			  /* XXX: do not hardcode this planar to chunky conversion */
-			  int i;
-			  for (i = 0; i < frame.nb_samples; i++)
-			  {
-			    ((int16_t *)af->buf)[i*2] =  ((int16_t *)frame.data[0])[i];
-			    ((int16_t *)af->buf)[i*2+1] =  ((int16_t *)frame.data[1])[i];
-			  }
-                       }
-#endif
                        af->len = frame.nb_samples;
                        af->pos = p->audio_pos;
                        p->audio_pos += af->len;

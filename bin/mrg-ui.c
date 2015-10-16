@@ -55,7 +55,7 @@
 static int audio_len   = 0;
 static int audio_pos   = 0;
 static int audio_post   = 0;
-static int audio_start = 0; /* which sample no is at the start of our circular buffer */
+//static int audio_start = 0; /* which sample no is at the start of our circular buffer */
 
 #define AUDIO_BUF_LEN 819200000
 
@@ -264,6 +264,11 @@ static int str_has_video_suffix (char *path)
   return g_str_has_suffix (path, ".avi") ||
          g_str_has_suffix (path, ".AVI") ||
          g_str_has_suffix (path, ".mp4") ||
+         g_str_has_suffix (path, ".mp3") ||
+         g_str_has_suffix (path, ".mpg") ||
+         g_str_has_suffix (path, ".ogv") ||
+         g_str_has_suffix (path, ".MPG") ||
+         g_str_has_suffix (path, ".webm") ||
          g_str_has_suffix (path, ".MP4") ||
          g_str_has_suffix (path, ".mkv") ||
          g_str_has_suffix (path, ".MKV") ||
@@ -336,25 +341,24 @@ static State *hack_state = NULL;  // XXX: this shoudl be factored away
 char **ops = NULL;
 
 
-static void init_audio (void)
+static void open_audio (int frequency)
 {
-  SDL_AudioSpec AudioSettings = {0};
-
+  SDL_AudioSpec spec = {0};
   SDL_Init(SDL_INIT_AUDIO);
-  AudioSettings.freq = 48000;
-  AudioSettings.format = AUDIO_S16SYS;
-  AudioSettings.channels = 2;
-  AudioSettings.samples = 1024;
-  AudioSettings.callback = sdl_audio_cb;
-  SDL_OpenAudio(&AudioSettings, 0);
+  spec.freq = frequency;
+  spec.format = AUDIO_S16SYS;
+  spec.channels = 2;
+  spec.samples = 1024;
+  spec.callback = sdl_audio_cb;
+  SDL_OpenAudio(&spec, 0);
 
-  if (AudioSettings.format != AUDIO_S16SYS)
+  if (spec.format != AUDIO_S16SYS)
    {
       fprintf (stderr, "not getting format we wanted\n");
    }
-  if (AudioSettings.freq != 48000)
+  if (spec.freq != frequency)
    {
-      fprintf (stderr, "not getting rate we wanted\n");
+      fprintf (stderr, "not getting desires samplerate(%i) we wanted got %i instead\n", frequency, spec.freq);
    }
 }
 
@@ -368,7 +372,6 @@ int mrg_ui_main (int argc, char **argv, char **ops)
   Mrg *mrg = mrg_new (1024, 768, NULL);
   State o = {NULL,};
 
-  init_audio ();
 #ifdef USE_MIPMAPS
   /* to use this UI comfortably, mipmap rendering needs to be enabled, there are
    * still a few glitches, but for basic full frame un-panned, un-cropped use it
@@ -1018,12 +1021,15 @@ static void gegl_ui (Mrg *mrg, void *data)
   {
     GeglAudio *audio = NULL;
     gdouble fps;
-    gegl_node_get (o->load, "audio", &audio, "frame-rate", &fps, NULL);
-    if (audio->samples > 0)
+    if (o->is_video)
+    {
+      gegl_node_get (o->load, "audio", &audio, "frame-rate", &fps, NULL);
+    if (audio && audio->samples > 0)
     {
        int i;
        if (!audio_started)
         {
+  	  open_audio (audio->samplerate);
           SDL_PauseAudio(0);
           audio_started = 1;
         }
@@ -1031,14 +1037,15 @@ static void gegl_ui (Mrg *mrg, void *data)
        {
          sdl_add_audio_sample (0, audio->left[i], audio->right[i]);
        }
-    }
 
-    while ( (audio_post / 4.0) / audio->samplerate < (o->frame_no / fps) - 0.05 )
-    {
-      g_usleep (500); /* sync audio */
-    }
+       while ( (audio_post / 4.0) / audio->samplerate < (o->frame_no / fps) - 0.05 )
+       {
+         g_usleep (100); /* sync audio */
+       }
 
     g_object_unref (audio);
+    }
+    }
   }
   
   if (o->show_controls)
