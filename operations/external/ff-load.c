@@ -89,7 +89,6 @@ typedef struct AudioFrame {        /* XXX: hardcoded for 16bit chunky stereo, */
   float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
   int              channels;
   int              sample_rate;
-  //uint8_t          buf[16000]; 
   int              len;
   long             pos;
 
@@ -135,7 +134,6 @@ init (GeglProperties *o)
   if (av_inited == 0)
     {
       av_register_all ();
-      //avcodec_register_all ();
       av_inited = 1;
     }
 
@@ -278,49 +276,47 @@ decode_frame (GeglOperation *operation,
 
                      if (got_frame) {
                        AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
-                       int data_size = av_samples_get_buffer_size(NULL,
-                           p->audio_context->channels,
-                           frame.nb_samples,
-                           p->audio_context->sample_fmt,
-                           1);
                        g_assert (frame.nb_samples < MAX_AUDIO_SAMPLES);
 
-                       /* XXX: it might not be stereoo.. */
                        af->channels = p->audio_context->channels;
-
                        switch (p->audio_context->sample_fmt)
                        {
                          case AV_SAMPLE_FMT_FLT:
-                           if (af->channels != 1)
-                             g_warning ("receiving chunky float data!\n");
+			   for (gint i = 0; i < frame.nb_samples; i++)
+			     for (gint c = 0; c < af->channels; c++)
+			       af->data[c][i] = ((int16_t *)frame.data[0])[i * af->channels + c];
+                           break;
                          case AV_SAMPLE_FMT_FLTP:
 			   for (gint i = 0; i < frame.nb_samples; i++)
 			     for (gint c = 0; c < af->channels; c++)
 			       af->data[c][i] = ((float *)frame.data[c])[i];
                            break;
                          case AV_SAMPLE_FMT_S16:
-                           if (af->channels != 1)
-                             g_warning ("receiving chunky 16bit data!\n");
+			   for (gint i = 0; i < frame.nb_samples; i++)
+			     for (gint c = 0; c < af->channels; c++)
+			       af->data[c][i] = ((int16_t *)frame.data[0])[i * af->channels + c] / 32768.0;
+                           break;
                          case AV_SAMPLE_FMT_S16P:
 			   for (gint i = 0; i < frame.nb_samples; i++)
 			     for (gint c = 0; c < af->channels; c++)
 			       af->data[c][i] = ((int16_t *)frame.data[c])[i] / 32768.0;
                            break;
                          case AV_SAMPLE_FMT_S32:
-                           if (af->channels != 1)
-                             g_warning ("receiving chunky 32bit data!\n");
+			   for (gint i = 0; i < frame.nb_samples; i++)
+			     for (gint c = 0; c < af->channels; c++)
+			       af->data[c][i] = ((int32_t *)frame.data[0])[i * af->channels + c] / 2147483648.0;
+                           break;
                          case AV_SAMPLE_FMT_S32P:
 			   for (gint i = 0; i < frame.nb_samples; i++)
 			     for (gint c = 0; c < af->channels; c++)
-			       af->data[c][i] = ((int16_t *)frame.data[c])[i] / 2147483648.0;
+			       af->data[c][i] = ((int32_t *)frame.data[c])[i] / 2147483648.0;
                            break;
                          default:
-                           fprintf (stderr, "undealt with sample format\n");
+                           g_warning ("undealt with sample format\n");
                        }
                        af->len = frame.nb_samples;
                        af->pos = p->audio_pos;
                        p->audio_pos += af->len;
-
                        p->audio_track = g_list_append (p->audio_track, af);
                      }
                    }
@@ -542,7 +538,10 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
       {
         int i = sample_no - p->audio_cursor_pos;
         *left  = af->data[0][i];
-        *right = af->data[1][i];
+        if (af->channels == 1)
+          *right = af->data[0][i];
+        else
+          *right = af->data[1][i];
         return;
       }
     /* override start conditions of below loop */
@@ -556,7 +555,10 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
       {
         int i = sample_no - no;
         *left  = af->data[0][i];
-        *right = af->data[1][i];
+        if (af->channels == 1)
+          *right = af->data[0][i];
+        else
+          *right = af->data[1][i];
         p->audio_cursor     = l;
         p->audio_cursor_pos = no;
         return;
