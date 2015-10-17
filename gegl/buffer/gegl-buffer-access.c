@@ -1458,9 +1458,6 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       sample_rect.width  = factor * (x2 - x1);
       sample_rect.height = factor * (y2 - y1);
 
-      if (rowstride == GEGL_AUTO_ROWSTRIDE)
-        rowstride = rect->width * bpp;
-
       if (scale == 1.0)
         {
           gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)dest_buf + offset, rowstride,
@@ -1468,7 +1465,10 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
           return;
         }
 
-      sample_buf = g_malloc (buf_height * buf_width * bpp);
+      if (rowstride == GEGL_AUTO_ROWSTRIDE)
+        rowstride = rect->width * bpp;
+
+      sample_buf = g_malloc0 (buf_height * buf_width * bpp);
       gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)sample_buf + offset, buf_width * bpp,
                                          format, level, repeat_mode);
 
