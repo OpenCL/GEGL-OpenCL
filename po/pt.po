@@ -1,16 +1,16 @@
 # Gegl Master
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Pedro Albuquerque <palbuquerque73@gmail.com>, 2015.
+# Pedro Albuquerque <palbuquerque73o@gmail.com>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gegl-master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-10-04 05:46+0000\n"
-"PO-Revision-Date: 2015-10-04 08:56+0100\n"
-"Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
+"POT-Creation-Date: 2015-10-17 05:43+0000\n"
+"PO-Revision-Date: 2015-10-17 07:52+0100\n"
+"Last-Translator: Pedro Albuquerque <palbuquerque73o@gmail.com>\n"
 "Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
@@ -20,17 +20,17 @@ msgstr ""
 "X-Generator: Gtranslator 2.91.6\n"
 "X-Project-Style: gnome\n"
 
-#: ../bin/gegl.c:148
+#: ../bin/gegl.c:150
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Impossível ler ficheiro: %s"
 
-#: ../bin/gegl.c:179
+#: ../bin/gegl.c:189
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Gráfico inválido, abortar-\n"
 
-#: ../bin/gegl.c:277 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:287 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Modo GeglOption desconhecido: %d"
@@ -146,16 +146,23 @@ msgstr ""
 
 #: ../bin/gegl-options.c:333
 #, c-format
+#| msgid ""
+#| "\n"
+#| "\n"
+#| "unknown parameter '%s' giving you help instead\n"
+#| "\n"
+#| "\n"
 msgid ""
 "\n"
 "\n"
-"unknown parameter '%s' giving you help instead\n"
+"unknown argument '%s' giving you help instead\n"
 "\n"
 "\n"
 msgstr ""
 "\n"
 "\n"
 "parâmetro \"%s\" desconhecido, a obter ajuda ao invés\n"
+"\n"
 "\n"
 
 #: ../gegl/gegl-enums.c:33 ../operations/common/color-reduction.c:27
@@ -1579,13 +1586,13 @@ msgid "Type of GeglSampler used to fetch input pixels"
 msgstr "Tipo de GeglSampler usado para obter pixels de entrada"
 
 #: ../operations/common/displace.c:42 ../operations/common/fractal-trace.c:64
-#: ../operations/common/gaussian-blur-iir.c:59
+#: ../operations/common/gaussian-blur-iir.c:58
 #: ../operations/common/gblur-1d.c:59
 msgid "Abyss policy"
 msgstr "Política de abismo"
 
 #: ../operations/common/displace.c:45
-#: ../operations/common/gaussian-blur-iir.c:61
+#: ../operations/common/gaussian-blur-iir.c:60
 #: ../operations/common/gblur-1d.c:61
 msgid "How image edges are handled"
 msgstr "Como são geridas as margens da imagem"
@@ -2207,17 +2214,17 @@ msgid "IIR"
 msgstr "IIR"
 
 #: ../operations/common/gaussian-blur.c:36
-#: ../operations/common/gaussian-blur-iir.c:38
+#: ../operations/common/gaussian-blur-iir.c:37
 msgid "Size X"
 msgstr "Tamanho X"
 
 #: ../operations/common/gaussian-blur.c:37
-#: ../operations/common/gaussian-blur-iir.c:39
+#: ../operations/common/gaussian-blur-iir.c:38
 msgid "Standard deviation for the horizontal axis"
 msgstr "Desvio padrão para o eixo horizontal"
 
 #: ../operations/common/gaussian-blur.c:44
-#: ../operations/common/gaussian-blur-iir.c:46
+#: ../operations/common/gaussian-blur-iir.c:45
 msgid "Size Y"
 msgstr "Tamanho Y"
 
@@ -2226,7 +2233,7 @@ msgid "Standard deviation for the vertical axis"
 msgstr "Desvio padrão para o eixo vertical"
 
 #: ../operations/common/gaussian-blur.c:52
-#: ../operations/common/gaussian-blur-iir.c:54
+#: ../operations/common/gaussian-blur-iir.c:53
 #: ../operations/common/gblur-1d.c:54
 msgid "Filter"
 msgstr "Filtro"
@@ -2248,28 +2255,28 @@ msgstr ""
 "Cada pixel resultante é a média dos pixels vizinhos ponderados por uma "
 "distribuição normal com desvio padrão espacificado."
 
-#: ../operations/common/gaussian-blur-iir.c:47
+#: ../operations/common/gaussian-blur-iir.c:46
 #: ../operations/common/gblur-1d.c:44 ../operations/common/high-pass.c:25
 #: ../operations/common/unsharp-mask.c:25
 msgid "Standard deviation (spatial scale factor)"
 msgstr "Desvio padrão (fator de escala espacial)"
 
-#: ../operations/common/gaussian-blur-iir.c:57
+#: ../operations/common/gaussian-blur-iir.c:56
 #: ../operations/common/gblur-1d.c:57
 msgid "How the gaussian kernel is discretized"
 msgstr "Como o kernel gaussiano é separado"
 
-#: ../operations/common/gaussian-blur-iir.c:63
+#: ../operations/common/gaussian-blur-iir.c:62
 #: ../operations/common/gblur-1d.c:63
 msgid "Clip to the input extent"
 msgstr "Cortar ao tamanho da entrada"
 
-#: ../operations/common/gaussian-blur-iir.c:64
+#: ../operations/common/gaussian-blur-iir.c:63
 #: ../operations/common/gblur-1d.c:64
 msgid "Should the output extent be clipped to the input extent"
 msgstr "Se o tamanho da saída deve ser cortado ao tamanho da entrada"
 
-#: ../operations/common/gaussian-blur-iir.c:118
+#: ../operations/common/gaussian-blur-iir.c:117
 #: ../operations/common/gblur-1d.c:891
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
@@ -2759,7 +2766,8 @@ msgid "Depth first"
 msgstr "Profundidade primeiro"
 
 #: ../operations/common/maze.c:39
-msgid "Prim's algotithm"
+#| msgid "Prim's algotithm"
+msgid "Prim's algorithm"
 msgstr "Algoritmo de Prim"
 
 #: ../operations/common/maze.c:58
@@ -3936,11 +3944,11 @@ msgstr ""
 msgid "Glow radius"
 msgstr "Raio de brilho"
 
-#: ../operations/common/softglow.c:231
+#: ../operations/common/softglow.c:232
 msgid "Softglow"
 msgstr "Brilho suave"
 
-#: ../operations/common/softglow.c:234
+#: ../operations/common/softglow.c:235
 msgid "Simulate glow by making highlights intense and fuzzy"
 msgstr "Simular brilho tornando os realces intensos e confusos"
 
@@ -4797,11 +4805,15 @@ msgstr "Converter formato"
 msgid "Convert the data to the specified format"
 msgstr "Converter os dados para o formato especificado"
 
-#: ../operations/core/crop.c:207
+#: ../operations/core/crop.c:45
+msgid "Reset origin"
+msgstr "Repor origem"
+
+#: ../operations/core/crop.c:209
 msgid "Crop"
 msgstr "Cortar"
 
-#: ../operations/core/crop.c:208
+#: ../operations/core/crop.c:210
 msgid "Crop a buffer"
 msgstr "Cortar um buffer"
 
@@ -4822,7 +4834,6 @@ msgid "Frame number"
 msgstr "Número de moldura"
 
 #: ../operations/external/ff-load.c:31
-#| msgid "Frame"
 msgid "frames"
 msgstr "molduras"
 
@@ -5842,7 +5853,6 @@ msgid "Ignored. Always uses center of input buffer"
 msgstr "Ignorado. Usar sempre o centro do buffer de entrada"
 
 #: ../operations/transform/rotate-on-center.c:40
-#| msgid "Rotate the buffer around the specified origin."
 msgid "Rotate the buffer around its center, taking care of possible offsets."
 msgstr "Rodar o buffer à volta do seu centro, cuidando de possíveis desvios."
 
