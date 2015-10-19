@@ -1388,7 +1388,8 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       rect->width == 1 &&
       rect->height == 1)
     {
-      gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf, repeat_mode);
+      gegl_buffer_get_pixel (buffer, rect->x, rect->y, format, dest_buf,
+                             repeat_mode);
       return;
     }
 
@@ -1418,18 +1419,18 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
     }
   else
     {
-      gint          level       = 0;
-      gint          buf_width;
-      gint          buf_height;
-      gint          bpp         = babl_format_get_bytes_per_pixel (format);
       GeglRectangle sample_rect;
-      void         *sample_buf;
-      gint          x1 = floorf (rect->x / scale + GEGL_SCALE_EPSILON);
-      gint          x2 = ceil ((rect->x + rect->width) / scale - GEGL_SCALE_EPSILON);
-      gint          y1 = floorf (rect->y / scale + GEGL_SCALE_EPSILON);
-      gint          y2 = ceil ((rect->y + rect->height) / scale - GEGL_SCALE_EPSILON);
-      gint          factor = 1;
-      gint          offset = 0;
+      gint    level       = 0;
+      gint    buf_width;
+      gint    buf_height;
+      gint    bpp         = babl_format_get_bytes_per_pixel (format);
+      void   *sample_buf;
+      gint    x1 = floorf (rect->x / scale + GEGL_SCALE_EPSILON);
+      gint    x2 = ceil ((rect->x + rect->width) / scale - GEGL_SCALE_EPSILON);
+      gint    y1 = floorf (rect->y / scale + GEGL_SCALE_EPSILON);
+      gint    y2 = ceil ((rect->y + rect->height) / scale - GEGL_SCALE_EPSILON);
+      gint    factor = 1;
+      gint    offset = 0;
 
       while (scale <= 0.5)
         {
@@ -1442,16 +1443,6 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
           level++;
         }
 
-      buf_width  = x2 - x1;
-      buf_height = y2 - y1;
-
-      /* ensure we always have some data to sample from */
-      if (scale != 1.0 && scale <= 1.99)
-        {
-          buf_width  += 2;
-          buf_height += 2;
-          offset = (buf_width + 1) * bpp;
-        }
 
       sample_rect.x      = factor * x1;
       sample_rect.y      = factor * y1;
@@ -1460,16 +1451,30 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
 
       if (scale == 1.0)
         {
-          gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)dest_buf + offset, rowstride,
-                                         format, level, repeat_mode);
+          gegl_buffer_iterate_read_dispatch (buffer, &sample_rect,
+                                             (guchar*)dest_buf, rowstride,
+                                             format, level, repeat_mode);
           return;
         }
 
       if (rowstride == GEGL_AUTO_ROWSTRIDE)
         rowstride = rect->width * bpp;
 
+      buf_width  = x2 - x1;
+      buf_height = y2 - y1;
+
+      /* ensure we always have some data to sample from */
+      if (scale <= 1.99)
+        {
+          buf_width  += 2;
+          buf_height += 2;
+          offset = (buf_width + 1) * bpp;
+        }
+
       sample_buf = g_malloc (buf_height * buf_width * bpp);
-      gegl_buffer_iterate_read_dispatch (buffer, &sample_rect, (guchar*)sample_buf + offset, buf_width * bpp,
+      gegl_buffer_iterate_read_dispatch (buffer, &sample_rect,
+                                         (guchar*)sample_buf + offset,
+                                         buf_width * bpp,
                                          format, level, repeat_mode);
 
       if (scale <= 1.99)
@@ -1488,24 +1493,6 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                    format,
                                    rowstride);
         }
-#if 0
-      else if (scale <= 1.99)
-        {
-          sample_rect.x      = x1 - 1;
-          sample_rect.y      = y1 - 1;
-          sample_rect.width  = x2 - x1 + 2;
-          sample_rect.height = y2 - y1 + 2;
-
-          gegl_resample_boxfilter (dest_buf,
-                                   sample_buf,
-                                   rect,
-                                   &sample_rect,
-                                   buf_width * bpp,
-                                   scale,
-                                   format,
-                                   rowstride);
-        }
-#endif
       else
         {
           sample_rect.x      = x1;
