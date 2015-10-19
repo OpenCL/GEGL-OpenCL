@@ -86,6 +86,7 @@ typedef struct
 #define MAX_AUDIO_SAMPLES   8192
 
 typedef struct AudioFrame {        /* XXX: hardcoded for 16bit chunky stereo, */
+  int64_t          pts;
   float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
   int              channels;
   int              sample_rate;
@@ -265,6 +266,8 @@ decode_frame (GeglOperation *operation,
                    {
                      static AVFrame frame;
                      int got_frame;
+
+
                      decoded_bytes = avcodec_decode_audio4(p->audio_st->codec,
                                                 &frame, &got_frame, &(p->pkt));
 
@@ -277,6 +280,11 @@ decode_frame (GeglOperation *operation,
                      if (got_frame) {
                        AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
                        g_assert (frame.nb_samples < MAX_AUDIO_SAMPLES);
+                     
+                       af->pts = p->pkt.pts;
+                       if (af->pts == 0)
+                         fprintf (stderr, "audio pts 0\n");
+                       fprintf (stderr, "audio-pts: %li\n", af->pts);
 
                        af->channels = p->audio_context->channels;
                        switch (p->audio_context->sample_fmt)
@@ -335,6 +343,11 @@ decode_frame (GeglOperation *operation,
                        o->path);
               return -1;
             }
+
+          if(got_picture)
+          {
+            fprintf (stderr, "video-pts: %li\n", p->pkt.pts);
+          }
 
           p->coded_buf   += decoded_bytes;
           p->coded_bytes -= decoded_bytes;
