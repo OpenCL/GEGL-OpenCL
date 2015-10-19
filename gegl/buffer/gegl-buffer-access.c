@@ -1463,22 +1463,18 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
       buf_width  = x2 - x1;
       buf_height = y2 - y1;
 
-      /* ensure we always have some data to sample from */
       if (scale <= 1.99)
         {
           buf_width  += 2;
           buf_height += 2;
           offset = (buf_width + 1) * bpp;
-        }
-
-      sample_buf = g_malloc0 (buf_height * buf_width * bpp);
-      gegl_buffer_iterate_read_dispatch (buffer, &sample_rect,
+          sample_buf = g_malloc0 (buf_height * buf_width * bpp);
+          
+          gegl_buffer_iterate_read_dispatch (buffer, &sample_rect,
                                          (guchar*)sample_buf + offset,
                                          buf_width * bpp,
                                          format, level, repeat_mode);
 
-      if (scale <= 1.99)
-        {
           sample_rect.x      = x1 - 1;
           sample_rect.y      = y1 - 1;
           sample_rect.width  = x2 - x1 + 2;
@@ -1492,9 +1488,17 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                    scale,
                                    format,
                                    rowstride);
+          g_free (sample_buf);
         }
       else
         {
+          sample_buf = g_malloc (buf_height * buf_width * bpp);
+          
+          gegl_buffer_iterate_read_dispatch (buffer, &sample_rect,
+                                         (guchar*)sample_buf,
+                                         buf_width * bpp,
+                                         format, level, repeat_mode);
+
           sample_rect.x      = x1;
           sample_rect.y      = y1;
           sample_rect.width  = x2 - x1;
@@ -1508,8 +1512,8 @@ _gegl_buffer_get_unlocked (GeglBuffer          *buffer,
                                  scale,
                                  bpp,
                                  rowstride);
+          g_free (sample_buf);
         }
-      g_free (sample_buf);
     }
 }
 
