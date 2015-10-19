@@ -130,12 +130,12 @@ static void prepare (GeglOperation *operation)
   if (input_format == NULL || babl_format_has_alpha (input_format))
     {
       mix->has_alpha = TRUE;
-      format = babl_format ("R'G'B'A float");
+      format = babl_format ("RGBA float");
     }
   else
     {
       mix->has_alpha = FALSE;
-      format = babl_format ("R'G'B' float");
+      format = babl_format ("RGB float");
     }
 
   gegl_operation_set_format (operation, "input", format);
@@ -179,7 +179,7 @@ cm_mix_pixel (CmChannelType *ch,
 
   c *= norm;
 
-  return (gfloat) MIN(1, MAX(0, c));
+  return (gfloat) c;
 }
 
 static inline void
