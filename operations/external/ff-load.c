@@ -284,7 +284,8 @@ decode_frame (GeglOperation *operation,
                        af->pts = p->pkt.pts;
                        if (af->pts == 0)
                          fprintf (stderr, "audio pts 0\n");
-                       fprintf (stderr, "audio-pts: %li\n", af->pts);
+                       //fprintf (stderr, "audio-pts: %li\n", af->pts);
+            fprintf (stderr, "audio-pts: %f\n", p->pkt.pts * av_q2d (p->audio_st->time_base));
 
                        af->channels = p->audio_context->channels;
                        switch (p->audio_context->sample_fmt)
@@ -346,7 +347,7 @@ decode_frame (GeglOperation *operation,
 
           if(got_picture)
           {
-            fprintf (stderr, "video-pts: %li\n", p->pkt.pts);
+            fprintf (stderr, "video-pts: %f\n", p->pkt.pts * av_q2d (p->video_st->time_base));
           }
 
           p->coded_buf   += decoded_bytes;
