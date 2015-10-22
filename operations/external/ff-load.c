@@ -65,7 +65,8 @@ typedef struct
   GList           *audio_cursor;
   long             audio_cursor_pos;
   long             audio_pos;
-  AVFormatContext *ic;
+  AVFormatContext *video_fcontext;
+  AVFormatContext *audio_fcontext;
   int              video_stream;
   int              audio_stream;
   AVStream        *video_st;
@@ -80,6 +81,9 @@ typedef struct
   guchar          *coded_buf;
   gchar           *loadedfilename; /* to remember which file is "cached"     */
   glong            prevframe;      /* previously decoded frame in loadedfile */
+  gdouble          prevpts;
+  gdouble          prevapts;
+  glong            a_prevframe;   /* previously decoded a_frame in loadedfile */
 } Priv;
 
 #define MAX_AUDIO_CHANNELS  8
@@ -178,14 +182,17 @@ ff_cleanup (GeglProperties *o)
         avcodec_close (p->video_context);
       if (p->audio_context)
         avcodec_close (p->audio_context);
-      if (p->ic)
-        avformat_close_input(&p->ic);
+      if (p->video_fcontext)
+        avformat_close_input(&p->video_fcontext);
+      if (p->audio_fcontext)
+        avformat_close_input(&p->audio_fcontext);
       if (p->lavc_frame)
         av_free (p->lavc_frame);
 
       p->video_context = NULL;
       p->audio_context = NULL;
-      p->ic = NULL;
+      p->video_fcontext = NULL;
+      p->audio_fcontext = NULL;
       p->lavc_frame = NULL;
       p->codec_name = NULL;
       p->loadedfilename = NULL;
@@ -200,6 +207,96 @@ prev_keyframe (Priv *priv, glong frame)
    */
   return 0;
 }
+
+static int
+decode_audio (GeglOperation *operation,
+              gdouble        pts1,
+              gdouble        pts2)
+{
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv       *p = (Priv*)o->user_data;
+
+  /* figure out which frame we should start decoding at */
+
+  while (p->prevapts < pts2)
+    {
+      int       decoded_bytes;
+
+      if (av_read_frame (p->audio_fcontext, &p->pkt) < 0)
+         {
+           fprintf (stderr, "av_read_frame failed for %s\n",
+                    o->path);
+           return -1;
+         }
+      if (p->pkt.stream_index==p->audio_stream && p->audio_st)
+        {
+          static AVFrame frame;
+          int got_frame;
+
+
+          decoded_bytes = avcodec_decode_audio4(p->audio_st->codec,
+                                     &frame, &got_frame, &(p->pkt));
+
+          if (decoded_bytes < 0)
+            {
+              fprintf (stderr, "avcodec_decode_audio4 failed for %s\n",
+                                o->path);
+            }
+
+          if (got_frame) {
+            AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
+            g_assert (frame.nb_samples < MAX_AUDIO_SAMPLES);
+          
+            af->pts = p->pkt.pts;
+            fprintf (stderr, "audio-pts: %f\n", p->pkt.pts * av_q2d (p->audio_st->time_base));
+
+            af->channels = p->audio_context->channels;
+            switch (p->audio_context->sample_fmt)
+            {
+              case AV_SAMPLE_FMT_FLT:
+                for (gint i = 0; i < frame.nb_samples; i++)
+                  for (gint c = 0; c < af->channels; c++)
+                    af->data[c][i] = ((int16_t *)frame.data[0])[i * af->channels + c];
+                break;
+              case AV_SAMPLE_FMT_FLTP:
+                for (gint i = 0; i < frame.nb_samples; i++)
+                  for (gint c = 0; c < af->channels; c++)
+                    af->data[c][i] = ((float *)frame.data[c])[i];
+                break;
+              case AV_SAMPLE_FMT_S16:
+                for (gint i = 0; i < frame.nb_samples; i++)
+                  for (gint c = 0; c < af->channels; c++)
+                    af->data[c][i] = ((int16_t *)frame.data[0])[i * af->channels + c] / 32768.0;
+                break;
+              case AV_SAMPLE_FMT_S16P:
+                for (gint i = 0; i < frame.nb_samples; i++)
+                  for (gint c = 0; c < af->channels; c++)
+                    af->data[c][i] = ((int16_t *)frame.data[c])[i] / 32768.0;
+                break;
+              case AV_SAMPLE_FMT_S32:
+                for (gint i = 0; i < frame.nb_samples; i++)
+                  for (gint c = 0; c < af->channels; c++)
+                    af->data[c][i] = ((int32_t *)frame.data[0])[i * af->channels + c] / 2147483648.0;
+                break;
+              case AV_SAMPLE_FMT_S32P:
+                for (gint i = 0; i < frame.nb_samples; i++)
+                  for (gint c = 0; c < af->channels; c++)
+                    af->data[c][i] = ((int32_t *)frame.data[c])[i] / 2147483648.0;
+                break;
+              default:
+                g_warning ("undealt with sample format\n");
+            }
+            af->len = frame.nb_samples;
+            af->pos = p->audio_pos;
+            p->audio_pos += af->len;
+            p->audio_track = g_list_append (p->audio_track, af);
+            p->prevapts = p->pkt.pts * av_q2d (p->audio_st->time_base);
+          }
+        }
+    }
+  return 0;
+}
+
 
 static int
 decode_frame (GeglOperation *operation,
@@ -256,79 +353,12 @@ decode_frame (GeglOperation *operation,
             {
               do
                 {
-                  if (av_read_frame (p->ic, &p->pkt) < 0)
+                  if (av_read_frame (p->video_fcontext, &p->pkt) < 0)
                     {
                       fprintf (stderr, "av_read_frame failed for %s\n",
                                o->path);
                       return -1;
                     }
-                 if (p->pkt.stream_index==p->audio_stream && p->audio_st)
-                   {
-                     static AVFrame frame;
-                     int got_frame;
-
-
-                     decoded_bytes = avcodec_decode_audio4(p->audio_st->codec,
-                                                &frame, &got_frame, &(p->pkt));
-
-                     if (decoded_bytes < 0)
-                       {
-                         fprintf (stderr, "avcodec_decode_audio4 failed for %s\n",
-                                           o->path);
-		       }
-
-                     if (got_frame) {
-                       AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
-                       g_assert (frame.nb_samples < MAX_AUDIO_SAMPLES);
-                     
-                       af->pts = p->pkt.pts;
-                       if (af->pts == 0)
-                         fprintf (stderr, "audio pts 0\n");
-                       //fprintf (stderr, "audio-pts: %li\n", af->pts);
-            fprintf (stderr, "audio-pts: %f\n", p->pkt.pts * av_q2d (p->audio_st->time_base));
-
-                       af->channels = p->audio_context->channels;
-                       switch (p->audio_context->sample_fmt)
-                       {
-                         case AV_SAMPLE_FMT_FLT:
-			   for (gint i = 0; i < frame.nb_samples; i++)
-			     for (gint c = 0; c < af->channels; c++)
-			       af->data[c][i] = ((int16_t *)frame.data[0])[i * af->channels + c];
-                           break;
-                         case AV_SAMPLE_FMT_FLTP:
-			   for (gint i = 0; i < frame.nb_samples; i++)
-			     for (gint c = 0; c < af->channels; c++)
-			       af->data[c][i] = ((float *)frame.data[c])[i];
-                           break;
-                         case AV_SAMPLE_FMT_S16:
-			   for (gint i = 0; i < frame.nb_samples; i++)
-			     for (gint c = 0; c < af->channels; c++)
-			       af->data[c][i] = ((int16_t *)frame.data[0])[i * af->channels + c] / 32768.0;
-                           break;
-                         case AV_SAMPLE_FMT_S16P:
-			   for (gint i = 0; i < frame.nb_samples; i++)
-			     for (gint c = 0; c < af->channels; c++)
-			       af->data[c][i] = ((int16_t *)frame.data[c])[i] / 32768.0;
-                           break;
-                         case AV_SAMPLE_FMT_S32:
-			   for (gint i = 0; i < frame.nb_samples; i++)
-			     for (gint c = 0; c < af->channels; c++)
-			       af->data[c][i] = ((int32_t *)frame.data[0])[i * af->channels + c] / 2147483648.0;
-                           break;
-                         case AV_SAMPLE_FMT_S32P:
-			   for (gint i = 0; i < frame.nb_samples; i++)
-			     for (gint c = 0; c < af->channels; c++)
-			       af->data[c][i] = ((int32_t *)frame.data[c])[i] / 2147483648.0;
-                           break;
-                         default:
-                           g_warning ("undealt with sample format\n");
-                       }
-                       af->len = frame.nb_samples;
-                       af->pos = p->audio_pos;
-                       p->audio_pos += af->len;
-                       p->audio_track = g_list_append (p->audio_track, af);
-                     }
-                   }
                 }
               while (p->pkt.stream_index != p->video_stream);
 
@@ -347,7 +377,8 @@ decode_frame (GeglOperation *operation,
 
           if(got_picture)
           {
-            fprintf (stderr, "video-pts: %f\n", p->pkt.pts * av_q2d (p->video_st->time_base));
+            p->prevpts = p->pkt.pts * av_q2d (p->video_st->time_base);
+            fprintf (stderr, "video-pts: %f\n", p->prevpts);
           }
 
           p->coded_buf   += decoded_bytes;
@@ -383,29 +414,42 @@ prepare (GeglOperation *operation)
       gint err;
 
       ff_cleanup (o);
-      err = avformat_open_input(&p->ic, o->path, NULL, 0);
+      err = avformat_open_input(&p->video_fcontext, o->path, NULL, 0);
       if (err < 0)
         {
           print_error (o->path, err);
         }
-      err = avformat_find_stream_info (p->ic, NULL);
+      err = avformat_find_stream_info (p->video_fcontext, NULL);
       if (err < 0)
         {
           g_warning ("ff-load: error finding stream info for %s", o->path);
 
           return;
         }
-      for (i = 0; i< p->ic->nb_streams; i++)
+      err = avformat_open_input(&p->audio_fcontext, o->path, NULL, 0);
+      if (err < 0)
         {
-          AVCodecContext *c = p->ic->streams[i]->codec;
+          print_error (o->path, err);
+        }
+      err = avformat_find_stream_info (p->audio_fcontext, NULL);
+      if (err < 0)
+        {
+          g_warning ("ff-load: error finding stream info for %s", o->path);
+
+          return;
+        }
+
+      for (i = 0; i< p->video_fcontext->nb_streams; i++)
+        {
+          AVCodecContext *c = p->video_fcontext->streams[i]->codec;
           if (c->codec_type == AVMEDIA_TYPE_VIDEO)
             {
-              p->video_st = p->ic->streams[i];
+              p->video_st = p->video_fcontext->streams[i];
               p->video_stream = i;
             }
           if (c->codec_type == AVMEDIA_TYPE_AUDIO)
             {
-              p->audio_st = p->ic->streams[i];
+              p->audio_st = p->audio_fcontext->streams[i];
               p->audio_stream = i;
             }
         }
@@ -448,6 +492,7 @@ prepare (GeglOperation *operation)
 
       p->video_context->err_recognition = AV_EF_CAREFUL | AV_EF_BITSTREAM;
       p->video_context->workaround_bugs = FF_BUG_AUTODETECT;
+      p->video_context->thread_count = 0;
 
       if (p->video_codec == NULL)
           g_warning ("video codec not found");
@@ -486,6 +531,7 @@ prepare (GeglOperation *operation)
         g_free (p->loadedfilename);
       p->loadedfilename = g_strdup (o->path);
       p->prevframe = -1;
+      p->a_prevframe = -1;
       p->coded_bytes = 0;
       p->coded_buf = NULL;
 
@@ -495,7 +541,7 @@ prepare (GeglOperation *operation)
 	/* With no declared frame count, compute number of frames based on
            duration and video codecs framerate
          */
-        o->frames = p->ic->duration * p->video_st->time_base.den  / p->video_st->time_base.num / AV_TIME_BASE;
+        o->frames = p->video_fcontext->duration * p->video_st->time_base.den  / p->video_st->time_base.num / AV_TIME_BASE;
       }
 
       o->frame_rate = p->video_st->time_base.den  / p->video_st->time_base.num;
@@ -593,7 +639,7 @@ process (GeglOperation       *operation,
   Priv       *p = (Priv*)o->user_data;
 
   {
-    if (p->ic && !decode_frame (operation, o->frame))
+    if (p->video_fcontext && !decode_frame (operation, o->frame))
       {
         guchar *buf;
         gint    pxsize;
@@ -607,6 +653,7 @@ process (GeglOperation       *operation,
           o->audio->samples = samples_per_frame (o->frame,
                o->frame_rate, o->audio->samplerate,
                &sample_start);
+	  decode_audio (operation, p->prevpts, p->prevpts + 1.0/o->frame_rate);
 
           {
             int i;
@@ -617,6 +664,7 @@ process (GeglOperation       *operation,
             }
           }
         }
+
 	
         g_object_get (output, "px-size", &pxsize, NULL);
         buf = g_new (guchar, p->width * p->height * pxsize);
