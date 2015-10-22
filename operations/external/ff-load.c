@@ -48,11 +48,7 @@ property_audio (audio, _("audio"), 0)
 #include "gegl-op.h"
 #include <errno.h>
 
-#ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
 #include <libavformat/avformat.h>
-#else
-#include <avformat.h>
-#endif
 
 typedef struct
 {
@@ -104,11 +100,7 @@ print_error (const char *filename, int err)
 {
   switch (err)
     {
-#if LIBAVFORMAT_VERSION_MAJOR >= 53
     case AVERROR(EINVAL):
-#else
-    case AVERROR_NUMEXPECTED:
-#endif
       g_warning ("%s: Incorrect image filename syntax.\n"
                  "Use '%%d' to specify the image number:\n"
                  "  for img1.jpg, img2.jpg, ..., use 'img%%d.jpg';\n"
@@ -116,14 +108,7 @@ print_error (const char *filename, int err)
                  filename);
       break;
     case AVERROR_INVALIDDATA:
-#if LIBAVFORMAT_VERSION_MAJOR >= 53
       g_warning ("%s: Error while parsing header or unknown format\n", filename);
-#else
-      g_warning ("%s: Error while parsing header\n", filename);
-      break;
-    case AVERROR_NOFMT:
-      g_warning ("%s: Unknown format\n", filename);
-#endif
       break;
     default:
       g_warning ("%s: Error while opening file\n", filename);
@@ -162,7 +147,6 @@ init (GeglProperties *o)
   p->codec_name = g_strdup ("");
 }
 
-/* FIXME: probably some more stuff to free here */
 static void
 ff_cleanup (GeglProperties *o)
 {
@@ -208,6 +192,7 @@ prev_keyframe (Priv *priv, glong frame)
   return 0;
 }
 
+/* maintain list of audio samples */
 static int
 decode_audio (GeglOperation *operation,
               gdouble        pts1,
@@ -218,7 +203,7 @@ decode_audio (GeglOperation *operation,
 
   /* figure out which frame we should start decoding at */
 
-  while (p->prevapts < pts2)
+  while (p->prevapts <= pts2)
     {
       int       decoded_bytes;
 
@@ -248,7 +233,7 @@ decode_audio (GeglOperation *operation,
             g_assert (frame.nb_samples < MAX_AUDIO_SAMPLES);
           
             af->pts = p->pkt.pts;
-            fprintf (stderr, "audio-pts: %f\n", p->pkt.pts * av_q2d (p->audio_st->time_base));
+            //fprintf (stderr, "audio-pts: %f\n", p->pkt.pts * av_q2d (p->audio_st->time_base));
 
             af->channels = p->audio_context->channels;
             switch (p->audio_context->sample_fmt)
@@ -378,7 +363,7 @@ decode_frame (GeglOperation *operation,
           if(got_picture)
           {
             p->prevpts = p->pkt.pts * av_q2d (p->video_st->time_base);
-            fprintf (stderr, "video-pts: %f\n", p->prevpts);
+            //fprintf (stderr, "video-pts: %f\n", p->prevpts);
           }
 
           p->coded_buf   += decoded_bytes;
