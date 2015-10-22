@@ -85,7 +85,7 @@ typedef struct
 #define MAX_AUDIO_CHANNELS  8
 #define MAX_AUDIO_SAMPLES   8192
 
-typedef struct AudioFrame {        /* XXX: hardcoded for 16bit chunky stereo, */
+typedef struct AudioFrame {
   int64_t          pts;
   float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
   int              channels;
@@ -202,6 +202,7 @@ decode_audio (GeglOperation *operation,
   Priv       *p = (Priv*)o->user_data;
 
   /* figure out which frame we should start decoding at */
+  //fprintf (stderr, "%f %f\n", p->prevapts, pts2);
 
   while (p->prevapts <= pts2)
     {
@@ -362,8 +363,11 @@ decode_frame (GeglOperation *operation,
 
           if(got_picture)
           {
-            p->prevpts = p->pkt.pts * av_q2d (p->video_st->time_base);
-            //fprintf (stderr, "video-pts: %f\n", p->prevpts);
+            if (p->pkt.pts < 0)
+              p->prevpts += av_q2d (p->video_st->time_base);
+            else
+              p->prevpts = p->pkt.pts * av_q2d (p->video_st->time_base);
+            //fprintf (stderr, "video-pts: %li %f\n", p->pkt.pts, p->prevpts);
           }
 
           p->coded_buf   += decoded_bytes;
@@ -527,9 +531,11 @@ prepare (GeglOperation *operation)
            duration and video codecs framerate
          */
         o->frames = p->video_fcontext->duration * p->video_st->time_base.den  / p->video_st->time_base.num / AV_TIME_BASE;
+        // XXX: check duration for multiple videos
       }
 
-      o->frame_rate = p->video_st->time_base.den  / p->video_st->time_base.num;
+      o->frame_rate = av_q2d (av_guess_frame_rate (p->video_fcontext, p->video_st, NULL));
+      fprintf (stderr, "fps: %f\n", o->frame_rate);
     }
 }
 
@@ -553,6 +559,7 @@ samples_per_frame (int    frame,
   double samples = 0;
   int f = 0;
 
+  //fprintf (stderr, "!!! %f %i!!!!!!!!!\n", frame_rate, sample_rate);
   if (sample_rate % ((int)frame_rate) == 0)
   {
     *start = (sample_rate / frame_rate) * frame;
@@ -638,7 +645,8 @@ process (GeglOperation       *operation,
           o->audio->samples = samples_per_frame (o->frame,
                o->frame_rate, o->audio->samplerate,
                &sample_start);
-	  decode_audio (operation, p->prevpts, p->prevpts + 1.0/o->frame_rate);
+	  //decode_audio (operation, p->prevpts, p->prevpts + 1.0/o->frame_rate + 5.0);
+	  decode_audio (operation, p->prevpts, p->prevpts + 5.0);//p->prevpts + 1.0/o->frame_rate + 5.0);
 
           {
             int i;
@@ -646,6 +654,9 @@ process (GeglOperation       *operation,
             {
               get_sample_data (p, sample_start + i, &o->audio->left[i],
                                   &o->audio->right[i]);
+              if(0)fprintf (stderr, "%f %f %i\n", 
+                 o->audio->left[i],
+                 o->audio->right[i], o->audio->samples);
             }
           }
         }
