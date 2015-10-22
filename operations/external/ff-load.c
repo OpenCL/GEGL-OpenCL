@@ -457,26 +457,6 @@ prepare (GeglOperation *operation)
               {
                  g_warning ("error opening codec %s", p->audio_context->codec->name);
               }
-            else
-              {
-		 fprintf (stderr, "samplerate: %i channels: %i samplefmt: ", p->audio_context->sample_rate,
-		p->audio_context->channels);
-                 switch (p->audio_context->sample_fmt)
-                 {
-                   case AV_SAMPLE_FMT_U8: fprintf (stderr, "u8"); break;
-                   case AV_SAMPLE_FMT_S16: fprintf (stderr, "s16"); break;
-                   case AV_SAMPLE_FMT_S32: fprintf (stderr, "s32"); break;
-                   case AV_SAMPLE_FMT_FLT: fprintf (stderr, "flt"); break;
-                   case AV_SAMPLE_FMT_DBL: fprintf (stderr, "dbl"); break;
-                   case AV_SAMPLE_FMT_U8P: fprintf (stderr, "u8-planar"); break;
-                   case AV_SAMPLE_FMT_S16P: fprintf (stderr, "s16-planar"); break;
-                   case AV_SAMPLE_FMT_S32P: fprintf (stderr, "s32-planar"); break;
-                   case AV_SAMPLE_FMT_FLTP: fprintf (stderr, "flt-planar"); break;
-                   case AV_SAMPLE_FMT_DBLP: fprintf (stderr, "dbl-planar"); break;
-                   default: fprintf (stderr, "none"); break;
-                 }
-                 fprintf (stderr, "\n");
-              }
         }
 
       p->video_context->err_recognition = AV_EF_CAREFUL | AV_EF_BITSTREAM;
@@ -531,11 +511,9 @@ prepare (GeglOperation *operation)
            duration and video codecs framerate
          */
         o->frames = p->video_fcontext->duration * p->video_st->time_base.den  / p->video_st->time_base.num / AV_TIME_BASE;
-        // XXX: check duration for multiple videos
       }
 
       o->frame_rate = av_q2d (av_guess_frame_rate (p->video_fcontext, p->video_st, NULL));
-      fprintf (stderr, "fps: %f\n", o->frame_rate);
     }
 }
 
@@ -559,8 +537,7 @@ samples_per_frame (int    frame,
   double samples = 0;
   int f = 0;
 
-  //fprintf (stderr, "!!! %f %i!!!!!!!!!\n", frame_rate, sample_rate);
-  if (sample_rate % ((int)frame_rate) == 0)
+  if (fabs(fmod (sample_rate, frame_rate)) < 0.0001)
   {
     *start = (sample_rate / frame_rate) * frame;
     return sample_rate / frame_rate;
