@@ -81,8 +81,8 @@ static void sdl_audio_cb(void *udata, Uint8 *stream, int len)
 
 static void sdl_add_audio_sample (int sample_pos, float left, float right)
 {
-   audio_data[audio_len/2 + 0] = left * 32767.0;
-   audio_data[audio_len/2 + 1] = right * 32767.0;
+   audio_data[audio_len/2 + 0] = left * 32767.0 * 0.66;
+   audio_data[audio_len/2 + 1] = right * 32767.0 * 0.66;
    audio_len += 4;
 
    if (audio_len >= AUDIO_BUF_LEN)
@@ -348,7 +348,7 @@ static void open_audio (int frequency)
   spec.freq = frequency;
   spec.format = AUDIO_S16SYS;
   spec.channels = 2;
-  spec.samples = 1024;
+  spec.samples = 127;
   spec.callback = sdl_audio_cb;
   SDL_OpenAudio(&spec, 0);
 
@@ -1018,14 +1018,15 @@ static void gegl_ui (Mrg *mrg, void *data)
 		 o->scale,
                  o->render_quality);
 
+  if (o->is_video)
   {
     GeglAudio *audio = NULL;
     gdouble fps;
-    if (o->is_video)
+    gegl_node_get (o->load, "audio", &audio, "frame-rate", &fps, NULL);
+    if (audio)
     {
-      gegl_node_get (o->load, "audio", &audio, "frame-rate", &fps, NULL);
-    if (audio && audio->samples > 0)
-    {
+       if (audio->samples > 0)
+       {
        int i;
        if (!audio_started)
         {
@@ -1041,10 +1042,9 @@ static void gegl_ui (Mrg *mrg, void *data)
        while ( (audio_post / 4.0) / audio->samplerate < (o->frame_no / fps) - 0.05 )
        {
          g_usleep (100); /* sync audio */
+       } 
        }
-
-    g_object_unref (audio);
-    }
+       g_object_unref (audio);
     }
   }
   
