@@ -457,11 +457,44 @@ prepare (GeglOperation *operation)
               {
                  g_warning ("error opening codec %s", p->audio_context->codec->name);
               }
+            else
+              {
+		 fprintf (stderr, "samplerate: %i channels: %i samplefmt: ", p->audio_context->sample_rate,
+		p->audio_context->channels);
+                 switch (p->audio_context->sample_fmt)
+                 {
+                   case AV_SAMPLE_FMT_U8: fprintf (stderr, "u8"); break;
+                   case AV_SAMPLE_FMT_S16: fprintf (stderr, "s16"); break;
+                   case AV_SAMPLE_FMT_S32: fprintf (stderr, "s32"); break;
+                   case AV_SAMPLE_FMT_FLT: fprintf (stderr, "flt"); break;
+                   case AV_SAMPLE_FMT_DBL: fprintf (stderr, "dbl"); break;
+                   case AV_SAMPLE_FMT_U8P: fprintf (stderr, "u8-planar"); break;
+                   case AV_SAMPLE_FMT_S16P: fprintf (stderr, "s16-planar"); break;
+                   case AV_SAMPLE_FMT_S32P: fprintf (stderr, "s32-planar"); break;
+                   case AV_SAMPLE_FMT_FLTP: fprintf (stderr, "flt-planar"); break;
+                   case AV_SAMPLE_FMT_DBLP: fprintf (stderr, "dbl-planar"); break;
+                   default: fprintf (stderr, "none"); break;
+                 }
+                 fprintf (stderr, "\n");
+              }
         }
 
-      p->video_context->err_recognition = AV_EF_CAREFUL | AV_EF_BITSTREAM;
+      p->video_context->err_recognition = AV_EF_IGNORE_ERR | AV_EF_BITSTREAM | AV_EF_BUFFER;
       p->video_context->workaround_bugs = FF_BUG_AUTODETECT;
+
+#if 1
+      p->video_context->error_concealment = 0;
+#else
+      p->video_context->error_concealment = FF_EC_DEBLOCK | FF_EC_GUESS_MVS | FF_EC_FAVOR_INTER;
+
+#endif
+
+      p->video_context->idct_algo = FF_IDCT_SIMPLEAUTO;
+
       p->video_context->thread_count = 0;
+      p->video_context->thread_type = FF_THREAD_SLICE;
+      /* XXX: permits slice parallell decode, at expense of h264 compliance of output */
+      p->video_context->flags2 = AV_CODEC_FLAG2_FAST;
 
       if (p->video_codec == NULL)
           g_warning ("video codec not found");
@@ -479,9 +512,8 @@ prepare (GeglOperation *operation)
       if (p->fourcc)
         g_free (p->fourcc);
       p->fourcc = g_strdup ("none");
-          p->fourcc[0] = (p->video_context->codec_tag) & 0xff;
-
-      p->fourcc[1] = (p->video_context->codec_tag >> 8) & 0xff;
+      p->fourcc[0] = (p->video_context->codec_tag >> 0)  & 0xff;
+      p->fourcc[1] = (p->video_context->codec_tag >> 8)  & 0xff;
       p->fourcc[2] = (p->video_context->codec_tag >> 16) & 0xff;
       p->fourcc[3] = (p->video_context->codec_tag >> 24) & 0xff;
 
@@ -505,15 +537,28 @@ prepare (GeglOperation *operation)
       p->coded_buf = NULL;
 
       o->frames = p->video_st->nb_frames;
+      o->frame_rate = av_q2d (av_guess_frame_rate (p->video_fcontext, p->video_st, NULL));
       if (!o->frames)
       {
-	/* With no declared frame count, compute number of frames based on
-           duration and video codecs framerate
-         */
-        o->frames = p->video_fcontext->duration * p->video_st->time_base.den  / p->video_st->time_base.num / AV_TIME_BASE;
+        /* this is a guesstimate of frame-count */
+	o->frames = p->video_fcontext->duration * o->frame_rate / AV_TIME_BASE;
+        /* make second guess for things like luxo */
+	if (o->frames < 1)
+          o->frames = 1000;
       }
-
-      o->frame_rate = av_q2d (av_guess_frame_rate (p->video_fcontext, p->video_st, NULL));
+      fprintf (stdout, "fps: %f\n", o->frame_rate);
+      fprintf (stdout, "frames: %i\n", o->frames);
+      {
+        int m ,h;
+        int s = o->frames / o->frame_rate;
+        m = s / 60;
+        s -= m * 60;
+        h = m / 60;
+        m -= h * 60;
+        fprintf (stdout, "duration: %02i:%02i:%02i\n", h, m, s);
+      }
+      fprintf (stdout, "fourcc: %s\n", p->fourcc);
+      fprintf (stdout, "codec-name: %s\n", p->codec_name);
     }
 }
 
