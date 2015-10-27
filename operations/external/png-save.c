@@ -41,7 +41,20 @@ property_int    (bitdepth, _("Bitdepth"), 16)
 #include <png.h>
 #include <stdio.h>
 
-static gint
+/* this call is available when the png-save plug-in is loaded,
+ * it might have to be dlsymed to be used?
+ */
+gint
+gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
+                        const gchar *path,
+                        gint         compression,
+                        gint         bd,
+                        gint         src_x,
+                        gint         src_y,
+                        gint         width,
+                        gint         height);
+
+gint
 gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
                         const gchar *path,
                         gint         compression,
@@ -61,7 +74,6 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
   gchar          format_string[16];
   const Babl    *format;
   gint           bit_depth = 8;
-       png_unknown_chunk unk_chunk[2];
 
   if (!strcmp (path, "-"))
     {
@@ -124,18 +136,6 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 
   info = png_create_info_struct (png);
 
-  {
-    strcpy((char *) unk_chunk[0].name, "auGG");
-    unk_chunk[0].data = (unsigned char *) "PRIVATE DATA";
-    unk_chunk[0].size = strlen((char*)unk_chunk[0].data)+1;
-    unk_chunk[0].location = PNG_AFTER_IDAT;
-    /* Needed because miNE is not safe-to-copy */
-    png_set_keep_unknown_chunks(png, PNG_HANDLE_CHUNK_ALWAYS,
-       (png_bytep) "auGG", 1);
-    png_set_unknown_chunks(png, info, unk_chunk, 1);
-    png_set_unknown_chunk_location(png, info, 0, PNG_AFTER_IDAT);
-  }
-
   if (setjmp (png_jmpbuf (png)))
     {
       if (stdout != fp)
@@ -184,8 +184,6 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
 
       png_write_rows (png, &pixels, 1);
     }
-
-
 
   png_write_end (png, info);
 
