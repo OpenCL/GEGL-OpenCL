@@ -71,6 +71,7 @@ typedef struct
   AVCodecContext  *audio_context;
   AVCodec         *video_codec;
   AVCodec         *audio_codec;
+  AVPacket         apkt;
   AVPacket         pkt;
   AVFrame         *lavc_frame;
   glong            coded_bytes;
@@ -83,7 +84,7 @@ typedef struct
 } Priv;
 
 #define MAX_AUDIO_CHANNELS  8
-#define MAX_AUDIO_SAMPLES   8192 /* XXX: not enough for some videos */
+#define MAX_AUDIO_SAMPLES   18192 /* XXX: not enough for some videos */
 
 typedef struct AudioFrame {
   int64_t          pts;
@@ -209,20 +210,21 @@ decode_audio (GeglOperation *operation,
     {
       int       decoded_bytes;
 
-      if (av_read_frame (p->audio_fcontext, &p->pkt) < 0)
+      if (av_read_frame (p->audio_fcontext, &p->apkt) < 0)
          {
+           av_free_packet (&p->apkt);
            fprintf (stderr, "av_read_frame failed for %s\n",
                     o->path);
            return -1;
          }
-      if (p->pkt.stream_index==p->audio_stream && p->audio_st)
+      if (p->apkt.stream_index==p->audio_stream && p->audio_st)
         {
           static AVFrame frame;
           int got_frame;
 
 
           decoded_bytes = avcodec_decode_audio4(p->audio_st->codec,
-                                     &frame, &got_frame, &(p->pkt));
+                                     &frame, &got_frame, &(p->apkt));
 
           if (decoded_bytes < 0)
             {
@@ -234,8 +236,8 @@ decode_audio (GeglOperation *operation,
             AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
             g_assert (frame.nb_samples < MAX_AUDIO_SAMPLES);
           
-            af->pts = p->pkt.pts;
-            //fprintf (stderr, "audio-pts: %f\n", p->pkt.pts * av_q2d (p->audio_st->time_base));
+            af->pts = p->apkt.pts;
+            //fprintf (stderr, "audio-pts: %f\n", p->apkt.pts * av_q2d (p->audio_st->time_base));
 
             af->channels = p->audio_context->channels;
             switch (p->audio_context->sample_fmt)
@@ -277,9 +279,10 @@ decode_audio (GeglOperation *operation,
             af->pos = p->audio_pos;
             p->audio_pos += af->len;
             p->audio_track = g_list_append (p->audio_track, af);
-            p->prevapts = p->pkt.pts * av_q2d (p->audio_st->time_base);
+            p->prevapts = p->apkt.pts * av_q2d (p->audio_st->time_base);
           }
         }
+      av_free_packet (&p->apkt);
     }
   return 0;
 }
@@ -340,6 +343,7 @@ decode_frame (GeglOperation *operation,
             {
               do
                 {
+                  av_free_packet (&p->pkt);
                   if (av_read_frame (p->video_fcontext, &p->pkt) < 0)
                     {
                       fprintf (stderr, "av_read_frame failed for %s\n",
@@ -373,6 +377,7 @@ decode_frame (GeglOperation *operation,
 
           p->coded_buf   += decoded_bytes;
           p->coded_bytes -= decoded_bytes;
+          av_free_packet (&p->pkt);
         }
       while (!got_picture);
 
