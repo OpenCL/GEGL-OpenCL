@@ -83,7 +83,7 @@ typedef struct
 } Priv;
 
 #define MAX_AUDIO_CHANNELS  8
-#define MAX_AUDIO_SAMPLES   8192
+#define MAX_AUDIO_SAMPLES   8192 /* XXX: not enough for some videos */
 
 typedef struct AudioFrame {
   int64_t          pts;
@@ -158,6 +158,7 @@ ff_cleanup (GeglProperties *o)
           g_free (p->audio_track->data);
           p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
 	}
+      p->audio_cursor = NULL;
       if (p->codec_name)
         g_free (p->codec_name);
       if (p->loadedfilename)
