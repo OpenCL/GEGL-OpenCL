@@ -83,8 +83,8 @@ typedef struct
   glong            a_prevframe;   /* previously decoded a_frame in loadedfile */
 } Priv;
 
-#define MAX_AUDIO_CHANNELS  8
-#define MAX_AUDIO_SAMPLES   18192 /* XXX: not enough for some videos */
+#define MAX_AUDIO_CHANNELS  6
+#define MAX_AUDIO_SAMPLES   512 
 
 typedef struct AudioFrame {
   int64_t          pts;
@@ -222,7 +222,6 @@ decode_audio (GeglOperation *operation,
           static AVFrame frame;
           int got_frame;
 
-
           decoded_bytes = avcodec_decode_audio4(p->audio_st->codec,
                                      &frame, &got_frame, &(p->apkt));
 
@@ -233,52 +232,64 @@ decode_audio (GeglOperation *operation,
             }
 
           if (got_frame) {
-            AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
-            g_assert (frame.nb_samples < MAX_AUDIO_SAMPLES);
-          
-            af->pts = p->apkt.pts;
-            //fprintf (stderr, "audio-pts: %f\n", p->apkt.pts * av_q2d (p->audio_st->time_base));
+            int samples_left = frame.nb_samples;
+            int si = 0;
 
-            af->channels = p->audio_context->channels;
-            switch (p->audio_context->sample_fmt)
+            while (samples_left)
             {
-              case AV_SAMPLE_FMT_FLT:
-                for (gint i = 0; i < frame.nb_samples; i++)
-                  for (gint c = 0; c < af->channels; c++)
-                    af->data[c][i] = ((int16_t *)frame.data[0])[i * af->channels + c];
-                break;
-              case AV_SAMPLE_FMT_FLTP:
-                for (gint i = 0; i < frame.nb_samples; i++)
-                  for (gint c = 0; c < af->channels; c++)
-                    af->data[c][i] = ((float *)frame.data[c])[i];
-                break;
-              case AV_SAMPLE_FMT_S16:
-                for (gint i = 0; i < frame.nb_samples; i++)
-                  for (gint c = 0; c < af->channels; c++)
-                    af->data[c][i] = ((int16_t *)frame.data[0])[i * af->channels + c] / 32768.0;
-                break;
-              case AV_SAMPLE_FMT_S16P:
-                for (gint i = 0; i < frame.nb_samples; i++)
-                  for (gint c = 0; c < af->channels; c++)
-                    af->data[c][i] = ((int16_t *)frame.data[c])[i] / 32768.0;
-                break;
-              case AV_SAMPLE_FMT_S32:
-                for (gint i = 0; i < frame.nb_samples; i++)
-                  for (gint c = 0; c < af->channels; c++)
-                    af->data[c][i] = ((int32_t *)frame.data[0])[i * af->channels + c] / 2147483648.0;
-                break;
-              case AV_SAMPLE_FMT_S32P:
-                for (gint i = 0; i < frame.nb_samples; i++)
-                  for (gint c = 0; c < af->channels; c++)
-                    af->data[c][i] = ((int32_t *)frame.data[c])[i] / 2147483648.0;
-                break;
-              default:
-                g_warning ("undealt with sample format\n");
-            }
-            af->len = frame.nb_samples;
-            af->pos = p->audio_pos;
-            p->audio_pos += af->len;
-            p->audio_track = g_list_append (p->audio_track, af);
+               int sample_count = MIN (samples_left, MAX_AUDIO_SAMPLES);
+
+               AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
+          
+               af->pts = p->apkt.pts; // XXX : only right for first of set
+               af->channels = MIN(p->audio_context->channels, MAX_AUDIO_CHANNELS);
+
+               switch (p->audio_context->sample_fmt)
+               {
+                 case AV_SAMPLE_FMT_FLT:
+                   for (gint i = 0; i < sample_count; i++)
+                     for (gint c = 0; c < af->channels; c++)
+                       af->data[c][i] = ((int16_t *)frame.data[0])[(i + si) * af->channels + c];
+                   break;
+                 case AV_SAMPLE_FMT_FLTP:
+                   for (gint i = 0; i < sample_count; i++)
+                     for (gint c = 0; c < af->channels; c++)
+                       {
+                         af->data[c][i] = ((float *)frame.data[c])[i + si];
+                       }
+                   break;
+                 case AV_SAMPLE_FMT_S16:
+                   for (gint i = 0; i < sample_count; i++)
+                     for (gint c = 0; c < af->channels; c++)
+                       af->data[c][i] = ((int16_t *)frame.data[0])[(i + si) * af->channels + c] / 32768.0;
+                   break;
+                 case AV_SAMPLE_FMT_S16P:
+                   for (gint i = 0; i < sample_count; i++)
+                     for (gint c = 0; c < af->channels; c++)
+                       af->data[c][i] = ((int16_t *)frame.data[c])[i + si] / 32768.0;
+                   break;
+                 case AV_SAMPLE_FMT_S32:
+                   for (gint i = 0; i < sample_count; i++)
+                     for (gint c = 0; c < af->channels; c++)
+                       af->data[c][i] = ((int32_t *)frame.data[0])[(i + si) * af->channels + c] / 2147483648.0;
+                  break;
+                case AV_SAMPLE_FMT_S32P:
+                   for (gint i = 0; i < sample_count; i++)
+                    for (gint c = 0; c < af->channels; c++)
+                      af->data[c][i] = ((int32_t *)frame.data[c])[i + si] / 2147483648.0;
+                  break;
+                default:
+                  g_warning ("undealt with sample format\n");
+                }
+                af->len = sample_count;
+                af->pos = p->audio_pos;
+                p->audio_pos += af->len;
+                p->audio_track = g_list_append (p->audio_track, af);
+
+                samples_left -= sample_count;
+                si += sample_count;
+              }
+	  
             p->prevapts = p->apkt.pts * av_q2d (p->audio_st->time_base);
           }
         }
