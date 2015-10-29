@@ -71,8 +71,6 @@ typedef struct
   AVCodecContext  *audio_context;
   AVCodec         *video_codec;
   AVCodec         *audio_codec;
-  AVPacket         apkt;
-  AVPacket         pkt;
   AVFrame         *lavc_frame;
   glong            coded_bytes;
   guchar          *coded_buf;
@@ -93,7 +91,6 @@ typedef struct AudioFrame {
   int              sample_rate;
   int              len;
   long             pos;
-
 } AudioFrame;
 
 static void
@@ -208,22 +205,23 @@ decode_audio (GeglOperation *operation,
 
   while (p->prevapts <= pts2)
     {
+      AVPacket  pkt = {0,};
       int       decoded_bytes;
 
-      if (av_read_frame (p->audio_fcontext, &p->apkt) < 0)
+      if (av_read_frame (p->audio_fcontext, &pkt) < 0)
          {
-           av_free_packet (&p->apkt);
+           av_free_packet (&pkt);
            fprintf (stderr, "av_read_frame failed for %s\n",
                     o->path);
            return -1;
          }
-      if (p->apkt.stream_index==p->audio_stream && p->audio_st)
+      if (pkt.stream_index==p->audio_stream && p->audio_st)
         {
           static AVFrame frame;
           int got_frame;
 
           decoded_bytes = avcodec_decode_audio4(p->audio_st->codec,
-                                     &frame, &got_frame, &(p->apkt));
+                                     &frame, &got_frame, &pkt);
 
           if (decoded_bytes < 0)
             {
@@ -241,7 +239,7 @@ decode_audio (GeglOperation *operation,
 
                AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
           
-               af->pts = p->apkt.pts; // XXX : only right for first of set
+               af->pts = pkt.pts; // XXX : only right for first of set
                af->channels = MIN(p->audio_context->channels, MAX_AUDIO_CHANNELS);
 
                switch (p->audio_context->sample_fmt)
@@ -290,10 +288,10 @@ decode_audio (GeglOperation *operation,
                 si += sample_count;
               }
 	  
-            p->prevapts = p->apkt.pts * av_q2d (p->audio_st->time_base);
+            p->prevapts = pkt.pts * av_q2d (p->audio_st->time_base);
           }
         }
-      av_free_packet (&p->apkt);
+      av_free_packet (&pkt);
     }
   return 0;
 }
@@ -349,27 +347,29 @@ decode_frame (GeglOperation *operation,
       do
         {
           int       decoded_bytes;
+          AVPacket  pkt = {0,};
 
           if (p->coded_bytes <= 0)
             {
               do
                 {
-                  av_free_packet (&p->pkt);
-                  if (av_read_frame (p->video_fcontext, &p->pkt) < 0)
+                  av_free_packet (&pkt);
+                  if (av_read_frame (p->video_fcontext, &pkt) < 0)
                     {
+                      av_free_packet (&pkt);
                       fprintf (stderr, "av_read_frame failed for %s\n",
                                o->path);
                       return -1;
                     }
                 }
-              while (p->pkt.stream_index != p->video_stream);
+              while (pkt.stream_index != p->video_stream);
 
-              p->coded_bytes = p->pkt.size;
-              p->coded_buf = p->pkt.data;
+              p->coded_bytes = pkt.size;
+              p->coded_buf = pkt.data;
             }
           decoded_bytes =
             avcodec_decode_video2 (p->video_st->codec, p->lavc_frame,
-                                  &got_picture, &p->pkt);
+                                  &got_picture, &pkt);
           if (decoded_bytes < 0)
             {
               fprintf (stderr, "avcodec_decode_video failed for %s\n",
@@ -379,16 +379,16 @@ decode_frame (GeglOperation *operation,
 
           if(got_picture)
           {
-            if (p->pkt.pts < 0)
+            if (pkt.pts < 0)
               p->prevpts += av_q2d (p->video_st->time_base);
             else
-              p->prevpts = p->pkt.pts * av_q2d (p->video_st->time_base);
+              p->prevpts = pkt.pts * av_q2d (p->video_st->time_base);
             //fprintf (stderr, "video-pts: %li %f\n", p->pkt.pts, p->prevpts);
           }
 
           p->coded_buf   += decoded_bytes;
           p->coded_bytes -= decoded_bytes;
-          av_free_packet (&p->pkt);
+          av_free_packet (&pkt);
         }
       while (!got_picture);
 
