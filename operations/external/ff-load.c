@@ -751,7 +751,7 @@ finalize (GObject *object)
   if (o->user_data)
     {
       Priv *p = (Priv*)o->user_data;
-
+      ff_cleanup (o);
       g_free (p->loadedfilename);
       g_free (p->fourcc);
       g_free (p->codec_name);
