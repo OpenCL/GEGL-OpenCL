@@ -211,8 +211,6 @@ decode_audio (GeglOperation *operation,
       if (av_read_frame (p->audio_fcontext, &pkt) < 0)
          {
            av_free_packet (&pkt);
-           fprintf (stderr, "av_read_frame failed for %s\n",
-                    o->path);
            return -1;
          }
       if (pkt.stream_index==p->audio_stream && p->audio_st)
@@ -383,7 +381,6 @@ decode_frame (GeglOperation *operation,
               p->prevpts += av_q2d (p->video_st->time_base);
             else
               p->prevpts = pkt.pts * av_q2d (p->video_st->time_base);
-            //fprintf (stderr, "video-pts: %li %f\n", p->pkt.pts, p->prevpts);
           }
 
           p->coded_buf   += decoded_bytes;
@@ -480,12 +477,12 @@ prepare (GeglOperation *operation)
 		p->audio_context->channels);
                  switch (p->audio_context->sample_fmt)
                  {
-                   case AV_SAMPLE_FMT_U8: fprintf (stderr, "u8"); break;
-                   case AV_SAMPLE_FMT_S16: fprintf (stderr, "s16"); break;
-                   case AV_SAMPLE_FMT_S32: fprintf (stderr, "s32"); break;
-                   case AV_SAMPLE_FMT_FLT: fprintf (stderr, "flt"); break;
-                   case AV_SAMPLE_FMT_DBL: fprintf (stderr, "dbl"); break;
-                   case AV_SAMPLE_FMT_U8P: fprintf (stderr, "u8-planar"); break;
+                   case AV_SAMPLE_FMT_U8:   fprintf (stderr, "u8"); break;
+                   case AV_SAMPLE_FMT_S16:  fprintf (stderr, "s16"); break;
+                   case AV_SAMPLE_FMT_S32:  fprintf (stderr, "s32"); break;
+                   case AV_SAMPLE_FMT_FLT:  fprintf (stderr, "flt"); break;
+                   case AV_SAMPLE_FMT_DBL:  fprintf (stderr, "dbl"); break;
+                   case AV_SAMPLE_FMT_U8P:  fprintf (stderr, "u8-planar"); break;
                    case AV_SAMPLE_FMT_S16P: fprintf (stderr, "s16-planar"); break;
                    case AV_SAMPLE_FMT_S32P: fprintf (stderr, "s32-planar"); break;
                    case AV_SAMPLE_FMT_FLTP: fprintf (stderr, "flt-planar"); break;
@@ -673,7 +670,7 @@ process (GeglOperation       *operation,
     if (p->video_fcontext && !decode_frame (operation, o->frame))
       {
         guchar *buf;
-        gint    pxsize;
+        gint    pxsize = 4;
         gint    x,y;
 
         long sample_start = 0;
@@ -684,24 +681,17 @@ process (GeglOperation       *operation,
           o->audio->samples = samples_per_frame (o->frame,
                o->frame_rate, o->audio->samplerate,
                &sample_start);
-	  //decode_audio (operation, p->prevpts, p->prevpts + 1.0/o->frame_rate + 5.0);
-	  decode_audio (operation, p->prevpts, p->prevpts + 5.0);//p->prevpts + 1.0/o->frame_rate + 5.0);
-
+	  decode_audio (operation, p->prevpts, p->prevpts + 5.0);
           {
             int i;
             for (i = 0; i < o->audio->samples; i++)
             {
               get_sample_data (p, sample_start + i, &o->audio->left[i],
                                   &o->audio->right[i]);
-              if(0)fprintf (stderr, "%f %f %i\n", 
-                 o->audio->left[i],
-                 o->audio->right[i], o->audio->samples);
             }
           }
         }
-
 	
-        g_object_get (output, "px-size", &pxsize, NULL);
         buf = g_new (guchar, p->width * p->height * pxsize);
 
         for (y=0; y < p->height; y++)
