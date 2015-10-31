@@ -33,10 +33,15 @@ property_int (frames, _("frames"), 0)
    value_range (0, G_MAXINT)
    ui_range (0, 10000)
 
+property_int (audio_sample_rate, _("audio_sample_rate"), 0)
+property_int (audio_channels, _("audio_channels"), 0)
+
 property_double (frame_rate, _("frame-rate"), 0)
    description (_("Frames per second, permits computing time vs frame"))
    value_range (0, G_MAXINT)
    ui_range (0, 10000)
+
+property_string (codec, _("codec"), "")
 
 property_audio (audio, _("audio"), 0)
 
@@ -55,7 +60,6 @@ typedef struct
   gint             width;
   gint             height;
   gdouble          fps;
-  gchar           *codec_name;
   gchar           *fourcc;
   GList           *audio_track;
   GList           *audio_cursor;
@@ -127,8 +131,6 @@ ff_cleanup (GeglProperties *o)
           p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
 	}
       p->audio_cursor = NULL;
-      if (p->codec_name)
-        g_free (p->codec_name);
       if (p->loadedfilename)
         g_free (p->loadedfilename);
       if (p->video_context)
@@ -147,7 +149,6 @@ ff_cleanup (GeglProperties *o)
       p->video_fcontext = NULL;
       p->audio_fcontext = NULL;
       p->lavc_frame = NULL;
-      p->codec_name = NULL;
       p->loadedfilename = NULL;
     }
 }
@@ -180,7 +181,6 @@ init (GeglProperties *o)
   p->audio_cursor = NULL;
   p->loadedfilename = g_strdup ("");
   p->fourcc = g_strdup ("");
-  p->codec_name = g_strdup ("");
 
   ff_cleanup (o);
 }
@@ -476,23 +476,8 @@ prepare (GeglOperation *operation)
               }
             else
               {
-		 fprintf (stderr, "samplerate: %i channels: %i samplefmt: ", p->audio_context->sample_rate,
-		p->audio_context->channels);
-                 switch (p->audio_context->sample_fmt)
-                 {
-                   case AV_SAMPLE_FMT_U8:   fprintf (stderr, "u8"); break;
-                   case AV_SAMPLE_FMT_S16:  fprintf (stderr, "s16"); break;
-                   case AV_SAMPLE_FMT_S32:  fprintf (stderr, "s32"); break;
-                   case AV_SAMPLE_FMT_FLT:  fprintf (stderr, "flt"); break;
-                   case AV_SAMPLE_FMT_DBL:  fprintf (stderr, "dbl"); break;
-                   case AV_SAMPLE_FMT_U8P:  fprintf (stderr, "u8-planar"); break;
-                   case AV_SAMPLE_FMT_S16P: fprintf (stderr, "s16-planar"); break;
-                   case AV_SAMPLE_FMT_S32P: fprintf (stderr, "s32-planar"); break;
-                   case AV_SAMPLE_FMT_FLTP: fprintf (stderr, "flt-planar"); break;
-                   case AV_SAMPLE_FMT_DBLP: fprintf (stderr, "dbl-planar"); break;
-                   default: fprintf (stderr, "none"); break;
-                 }
-                 fprintf (stderr, "\n");
+                 o->audio_sample_rate = p->audio_context->sample_rate;
+                 o->audio_channels = MIN(p->audio_context->channels, MAX_AUDIO_CHANNELS);
               }
         }
 
@@ -534,15 +519,15 @@ prepare (GeglOperation *operation)
       p->fourcc[2] = (p->video_context->codec_tag >> 16) & 0xff;
       p->fourcc[3] = (p->video_context->codec_tag >> 24) & 0xff;
 
-      if (p->codec_name)
-        g_free (p->codec_name);
+      if (o->codec)
+        g_free (o->codec);
       if (p->video_codec->name)
         {
-          p->codec_name = g_strdup (p->video_codec->name);
+          o->codec = g_strdup (p->video_codec->name);
         }
       else
         {
-          p->codec_name = g_strdup ("");
+          o->codec = g_strdup ("");
         }
 
       if (p->loadedfilename)
@@ -563,8 +548,7 @@ prepare (GeglOperation *operation)
 	if (o->frames < 1)
           o->frames = 1000;
       }
-      fprintf (stdout, "fps: %f\n", o->frame_rate);
-      fprintf (stdout, "frames: %i\n", o->frames);
+#if 0
       {
         int m ,h;
         int s = o->frames / o->frame_rate;
@@ -574,8 +558,7 @@ prepare (GeglOperation *operation)
         m -= h * 60;
         fprintf (stdout, "duration: %02i:%02i:%02i\n", h, m, s);
       }
-      fprintf (stdout, "fourcc: %s\n", p->fourcc);
-      fprintf (stdout, "codec-name: %s\n", p->codec_name);
+#endif
     }
 }
 
@@ -747,7 +730,6 @@ finalize (GObject *object)
       ff_cleanup (o);
       g_free (p->loadedfilename);
       g_free (p->fourcc);
-      g_free (p->codec_name);
 
       g_free (o->user_data);
       o->user_data = NULL;
