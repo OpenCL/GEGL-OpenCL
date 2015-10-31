@@ -114,36 +114,6 @@ print_error (const char *filename, int err)
     }
 }
 
-static void
-init (GeglProperties *o)
-{
-  Priv       *p = (Priv*)o->user_data;
-  static gint av_inited = 0;
-  if (av_inited == 0)
-    {
-      av_register_all ();
-      av_inited = 1;
-    }
-
-  if (p == NULL)
-    {
-      p = g_new0 (Priv, 1);
-      o->user_data = (void*) p;
-    }
-
-  p->width = 320;
-  p->height = 200;
-
-  while (p->audio_track)
-  {
-    g_free (p->audio_track->data);
-    p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
-  }
-  p->audio_cursor = NULL;
-  p->loadedfilename = g_strdup ("");
-  p->fourcc = g_strdup ("");
-  p->codec_name = g_strdup ("");
-}
 
 static void
 ff_cleanup (GeglProperties *o)
@@ -180,6 +150,39 @@ ff_cleanup (GeglProperties *o)
       p->codec_name = NULL;
       p->loadedfilename = NULL;
     }
+}
+
+static void
+init (GeglProperties *o)
+{
+  Priv       *p = (Priv*)o->user_data;
+  static gint av_inited = 0;
+  if (av_inited == 0)
+    {
+      av_register_all ();
+      av_inited = 1;
+    }
+
+  if (p == NULL)
+    {
+      p = g_new0 (Priv, 1);
+      o->user_data = (void*) p;
+    }
+
+  p->width = 320;
+  p->height = 200;
+
+  while (p->audio_track)
+  {
+    g_free (p->audio_track->data);
+    p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
+  }
+  p->audio_cursor = NULL;
+  p->loadedfilename = g_strdup ("");
+  p->fourcc = g_strdup ("");
+  p->codec_name = g_strdup ("");
+
+  ff_cleanup (o);
 }
 
 static glong
