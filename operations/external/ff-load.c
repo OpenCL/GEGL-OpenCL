@@ -185,15 +185,6 @@ init (GeglProperties *o)
   ff_cleanup (o);
 }
 
-static glong
-prev_keyframe (Priv *priv, glong frame)
-{
-  /* no way to detect previous keyframe at the moment for ffmpeg,
-     so we'll just return 0, the first, and a forced reload happens
-   */
-  return 0;
-}
-
 /* maintain list of audio samples */
 static int
 decode_audio (GeglOperation *operation,
@@ -305,44 +296,30 @@ decode_frame (GeglOperation *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   Priv       *p = (Priv*)o->user_data;
   glong       prevframe = p->prevframe;
-  glong       decodeframe;        /*< frame to be requested decoded */
+  glong       decodeframe = prevframe; 
 
-  if (frame >= o->frames)
-    {
-      frame = o->frames - 1;
-    }
   if (frame < 0)
     {
       frame = 0;
     }
+  else if (frame >= o->frames)
+    {
+      frame = o->frames - 1;
+    }
   if (frame == prevframe)
     {
-      /* we've already got the right frame ready for delivery */
       return 0;
     }
 
-  /* figure out which frame we should start decoding at */
+  decodeframe = frame;
+  if (frame > prevframe + 20 || frame < prevframe )
+  {
+    int64_t seek_target = av_rescale_q ((frame - 16) / o->frame_rate * AV_TIME_BASE, AV_TIME_BASE_Q, p->video_st->time_base);
+    if (av_seek_frame (p->video_fcontext, p->video_stream, seek_target, (AVSEEK_FLAG_BACKWARD )) < 0)
+      fprintf (stderr, "video seek error!\n");
+  }
 
-  if (frame == prevframe + 1)
-    {
-      decodeframe = prevframe + 1;
-    }
-  else
-    {
-      decodeframe = prev_keyframe (p, frame);
-      if (prevframe > decodeframe && prevframe < frame)
-        decodeframe = prevframe + 1;
-    }
-
-  if (decodeframe < prevframe + 0.0) // XXX: shuts up gcc
-    {
-      /* seeking backwards, since it ffmpeg doesn't allow us,. we'll reload the file */
-      g_free (p->loadedfilename);
-      p->loadedfilename = NULL;
-      init (o);
-    }
-
-  while (decodeframe <= frame)
+  do
     {
       int       got_picture = 0;
       do
@@ -368,9 +345,9 @@ decode_frame (GeglOperation *operation,
               p->coded_bytes = pkt.size;
               p->coded_buf = pkt.data;
             }
-          decoded_bytes =
-            avcodec_decode_video2 (p->video_st->codec, p->lavc_frame,
-                                  &got_picture, &pkt);
+
+          decoded_bytes = avcodec_decode_video2 (p->video_st->codec, p->lavc_frame,
+                                                 &got_picture, &pkt);
           if (decoded_bytes < 0)
             {
               fprintf (stderr, "avcodec_decode_video failed for %s\n",
@@ -381,9 +358,15 @@ decode_frame (GeglOperation *operation,
           if(got_picture)
           {
             if (pkt.pts < 0)
-              p->prevpts += av_q2d (p->video_st->time_base);
+            {
+              decodeframe++;
+              fprintf (stderr, "+");
+            }
             else
-              p->prevpts = pkt.pts * av_q2d (p->video_st->time_base);
+              {
+                p->prevpts = av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_st->time_base);
+                decodeframe = round (av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_st->time_base) * o->frame_rate) - 1;
+              }
           }
 
           p->coded_buf   += decoded_bytes;
@@ -391,9 +374,9 @@ decode_frame (GeglOperation *operation,
           av_free_packet (&pkt);
         }
       while (!got_picture);
-
-      decodeframe++;
     }
+    while (decodeframe < frame);
+
   p->prevframe = frame;
   return 0;
 }
@@ -485,7 +468,7 @@ prepare (GeglOperation *operation)
       p->video_context->workaround_bugs = FF_BUG_AUTODETECT;
 
 #if 1
-      p->video_context->error_concealment = 0;
+ //     p->video_context->error_concealment = 0;
 #else
       p->video_context->error_concealment = FF_EC_DEBLOCK | FF_EC_GUESS_MVS | FF_EC_FAVOR_INTER;
 
@@ -602,6 +585,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
 {
   long no = 0;
   GList *l;
+  return;
   l = p->audio_track;
   if (sample_no < 0)
     return;
@@ -661,7 +645,7 @@ process (GeglOperation       *operation,
 
         long sample_start = 0;
 
-	if (p->audio_context)
+	if (p->audio_context && 0)
         {
           o->audio->samplerate = p->audio_context->sample_rate;
           o->audio->samples = samples_per_frame (o->frame,

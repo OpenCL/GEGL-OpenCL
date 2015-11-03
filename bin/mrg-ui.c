@@ -139,6 +139,8 @@ struct _State {
 
   int         is_video;
   int         frame_no;
+
+  int         prev_frame_played;
 };
 
 
@@ -1006,6 +1008,9 @@ static void gegl_ui (Mrg *mrg, void *data)
   if (o->is_video)
    {
      o->frame_no++;
+     if ((o->frame_no / 50) % 2 == 1)
+       o->frame_no+=250;
+     fprintf (stderr, "\r%i", o->frame_no);
      gegl_node_set (o->load, "frame", o->frame_no, NULL);
      mrg_queue_draw (o->mrg, NULL);
    }
@@ -1027,22 +1032,29 @@ static void gegl_ui (Mrg *mrg, void *data)
     {
        if (audio->samples > 0)
        {
-       int i;
-       if (!audio_started)
-        {
-  	  open_audio (audio->samplerate);
-          SDL_PauseAudio(0);
-          audio_started = 1;
-        }
-       for (i = 0; i < audio->samples; i++)
-       {
-         sdl_add_audio_sample (0, audio->left[i], audio->right[i]);
-       }
+         int i;
+         if (!audio_started)
+         {
+  	   open_audio (audio->samplerate);
+           SDL_PauseAudio(0);
+           audio_started = 1;
+         }
+         for (i = 0; i < audio->samples; i++)
+         {
+           sdl_add_audio_sample (0, audio->left[i], audio->right[i]);
+         }
 
-       while ( (audio_post / 4.0) / audio->samplerate < (o->frame_no / fps) - 0.05 )
-       {
-         g_usleep (100); /* sync audio */
-       } 
+        /* XXX: needs adjustment with seeking enabled
+         */
+#if 0
+         while ( (audio_post / 4.0) / audio->samplerate <
+                 (o->frame_no / fps) - 1.0 &&
+                 (o->frame_no - o->prev_frame_played) < 2)
+         {
+           g_usleep (100); /* sync audio */
+         } 
+#endif
+         o->prev_frame_played = o->frame_no;
        }
        g_object_unref (audio);
     }
@@ -1284,6 +1296,7 @@ static void load_path (State *o)
   o->v = 0;
   o->is_video = 0;
   o->frame_no = 0;
+  o->prev_frame_played = 0;
 
   if (str_has_video_suffix (path))
   {
