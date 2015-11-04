@@ -41,7 +41,8 @@ property_double (frame_rate, _("frame-rate"), 0)
    value_range (0, G_MAXINT)
    ui_range (0, 10000)
 
-property_string (codec, _("codec"), "")
+property_string (video_codec, _("video-codec"), "")
+property_string (audio_codec, _("audio-codec"), "")
 
 property_audio (audio, _("audio"), 0)
 
@@ -129,9 +130,9 @@ ff_cleanup (GeglProperties *o)
       p->audio_cursor = NULL;
       if (p->loadedfilename)
         g_free (p->loadedfilename);
-      if (p->video_stream->codec)
+      if (p->video_stream && p->video_stream->codec)
         avcodec_close (p->video_stream->codec);
-      if (p->audio_stream->codec)
+      if (p->audio_stream && p->audio_stream->codec)
         avcodec_close (p->audio_stream->codec);
       if (p->video_fcontext)
         avformat_close_input(&p->video_fcontext);
@@ -480,16 +481,19 @@ prepare (GeglOperation *operation)
       p->fourcc[2] = (p->video_stream->codec->codec_tag >> 16) & 0xff;
       p->fourcc[3] = (p->video_stream->codec->codec_tag >> 24) & 0xff;
 
-      if (o->codec)
-        g_free (o->codec);
+      if (o->video_codec)
+        g_free (o->video_codec);
       if (p->video_codec->name)
-        {
-          o->codec = g_strdup (p->video_codec->name);
-        }
+        o->video_codec = g_strdup (p->video_codec->name);
       else
-        {
-          o->codec = g_strdup ("");
-        }
+        o->video_codec = g_strdup ("");
+
+      if (o->audio_codec)
+        g_free (o->audio_codec);
+      if (p->audio_codec->name)
+        o->audio_codec = g_strdup (p->audio_codec->name);
+      else
+        o->audio_codec = g_strdup ("");
 
       if (p->loadedfilename)
         g_free (p->loadedfilename);
