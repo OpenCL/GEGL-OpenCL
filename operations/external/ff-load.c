@@ -76,8 +76,6 @@ typedef struct
   AVCodec         *video_codec;
   AVCodec         *audio_codec;
   AVFrame         *lavc_frame;
-  glong            coded_bytes;
-  guchar          *coded_buf;
   gchar           *loadedfilename; /* to remember which file is "cached"     */
   glong            prevframe;      /* previously decoded frame in loadedfile */
   gdouble          prevpts;
@@ -327,24 +325,18 @@ decode_frame (GeglOperation *operation,
           int       decoded_bytes;
           AVPacket  pkt = {0,};
 
-          if (p->coded_bytes <= 0)
+          do
+          {
+            av_free_packet (&pkt);
+            if (av_read_frame (p->video_fcontext, &pkt) < 0)
             {
-              do
-                {
-                  av_free_packet (&pkt);
-                  if (av_read_frame (p->video_fcontext, &pkt) < 0)
-                    {
-                      av_free_packet (&pkt);
-                      fprintf (stderr, "av_read_frame failed for %s\n",
+              av_free_packet (&pkt);
+              fprintf (stderr, "av_read_frame failed for %s\n",
                                o->path);
-                      return -1;
-                    }
-                }
-              while (pkt.stream_index != p->video_stream);
-
-              p->coded_bytes = pkt.size;
-              p->coded_buf = pkt.data;
+              return -1;
             }
+          }
+          while (pkt.stream_index != p->video_stream);
 
           decoded_bytes = avcodec_decode_video2 (p->video_st->codec, p->lavc_frame,
                                                  &got_picture, &pkt);
@@ -357,20 +349,12 @@ decode_frame (GeglOperation *operation,
 
           if(got_picture)
           {
-            if (pkt.pts < 0)
-            {
-              decodeframe++;
-              fprintf (stderr, "+");
-            }
-            else
-              {
-                p->prevpts = av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_st->time_base);
-                decodeframe = round (av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_st->time_base) * o->frame_rate) - 1;
-              }
+             p->prevpts = av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_st->time_base);
+             decodeframe = roundf (av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_st->time_base) * o->frame_rate) - 1;
           }
 
-          p->coded_buf   += decoded_bytes;
-          p->coded_bytes -= decoded_bytes;
+          if (decoded_bytes != pkt.size)
+            fprintf (stderr, "bytes left!\n");
           av_free_packet (&pkt);
         }
       while (!got_picture);
@@ -518,8 +502,6 @@ prepare (GeglOperation *operation)
       p->loadedfilename = g_strdup (o->path);
       p->prevframe = -1;
       p->a_prevframe = -1;
-      p->coded_bytes = 0;
-      p->coded_buf = NULL;
 
       o->frames = p->video_st->nb_frames;
       o->frame_rate = av_q2d (av_guess_frame_rate (p->video_fcontext, p->video_st, NULL));
