@@ -67,10 +67,10 @@ typedef struct
   long             audio_pos;
   AVFormatContext *video_fcontext;
   AVFormatContext *audio_fcontext;
-  int              video_stream;
-  int              audio_stream;
-  AVStream        *video_st;
-  AVStream        *audio_st;
+  int              video_index;
+  int              audio_index;
+  AVStream        *video_stream;
+  AVStream        *audio_stream;
   AVCodecContext  *video_context;
   AVCodecContext  *audio_context;
   AVCodec         *video_codec;
@@ -205,12 +205,12 @@ decode_audio (GeglOperation *operation,
            av_free_packet (&pkt);
            return -1;
          }
-      if (pkt.stream_index==p->audio_stream && p->audio_st)
+      if (pkt.stream_index==p->audio_index && p->audio_stream)
         {
           static AVFrame frame;
           int got_frame;
 
-          decoded_bytes = avcodec_decode_audio4(p->audio_st->codec,
+          decoded_bytes = avcodec_decode_audio4(p->audio_stream->codec,
                                      &frame, &got_frame, &pkt);
 
           if (decoded_bytes < 0)
@@ -278,7 +278,7 @@ decode_audio (GeglOperation *operation,
                 si += sample_count;
               }
 	  
-            p->prevapts = pkt.pts * av_q2d (p->audio_st->time_base);
+            p->prevapts = pkt.pts * av_q2d (p->audio_stream->time_base);
           }
         }
       av_free_packet (&pkt);
@@ -312,8 +312,8 @@ decode_frame (GeglOperation *operation,
   decodeframe = frame;
   if (frame > prevframe + 20 || frame < prevframe )
   {
-    int64_t seek_target = av_rescale_q ((frame - 16) / o->frame_rate * AV_TIME_BASE, AV_TIME_BASE_Q, p->video_st->time_base);
-    if (av_seek_frame (p->video_fcontext, p->video_stream, seek_target, (AVSEEK_FLAG_BACKWARD )) < 0)
+    int64_t seek_target = av_rescale_q ((frame - 16) / o->frame_rate * AV_TIME_BASE, AV_TIME_BASE_Q, p->video_stream->time_base);
+    if (av_seek_frame (p->video_fcontext, p->video_index, seek_target, (AVSEEK_FLAG_BACKWARD )) < 0)
       fprintf (stderr, "video seek error!\n");
   }
 
@@ -336,9 +336,9 @@ decode_frame (GeglOperation *operation,
               return -1;
             }
           }
-          while (pkt.stream_index != p->video_stream);
+          while (pkt.stream_index != p->video_index);
 
-          decoded_bytes = avcodec_decode_video2 (p->video_st->codec, p->lavc_frame,
+          decoded_bytes = avcodec_decode_video2 (p->video_stream->codec, p->lavc_frame,
                                                  &got_picture, &pkt);
           if (decoded_bytes < 0)
             {
@@ -349,8 +349,8 @@ decode_frame (GeglOperation *operation,
 
           if(got_picture)
           {
-             p->prevpts = av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_st->time_base);
-             decodeframe = roundf (av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_st->time_base) * o->frame_rate) - 1;
+             p->prevpts = av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_stream->time_base);
+             decodeframe = roundf (av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_stream->time_base) * o->frame_rate) - 1;
           }
 
           if (decoded_bytes != pkt.size)
@@ -417,22 +417,22 @@ prepare (GeglOperation *operation)
           AVCodecContext *c = p->video_fcontext->streams[i]->codec;
           if (c->codec_type == AVMEDIA_TYPE_VIDEO)
             {
-              p->video_st = p->video_fcontext->streams[i];
-              p->video_stream = i;
+              p->video_stream = p->video_fcontext->streams[i];
+              p->video_index = i;
             }
           if (c->codec_type == AVMEDIA_TYPE_AUDIO)
             {
-              p->audio_st = p->audio_fcontext->streams[i];
-              p->audio_stream = i;
+              p->audio_stream = p->audio_fcontext->streams[i];
+              p->audio_index = i;
             }
         }
 
-      p->video_context = p->video_st->codec;
+      p->video_context = p->video_stream->codec;
       p->video_codec = avcodec_find_decoder (p->video_context->codec_id);
 
-      if (p->audio_st)
+      if (p->audio_stream)
         {
-	  p->audio_context = p->audio_st->codec;
+	  p->audio_context = p->audio_stream->codec;
 	  p->audio_codec = avcodec_find_decoder (p->audio_context->codec_id);
 	  if (p->audio_codec == NULL)
             g_warning ("audio codec not found");
@@ -503,8 +503,8 @@ prepare (GeglOperation *operation)
       p->prevframe = -1;
       p->a_prevframe = -1;
 
-      o->frames = p->video_st->nb_frames;
-      o->frame_rate = av_q2d (av_guess_frame_rate (p->video_fcontext, p->video_st, NULL));
+      o->frames = p->video_stream->nb_frames;
+      o->frame_rate = av_q2d (av_guess_frame_rate (p->video_fcontext, p->video_stream, NULL));
       if (!o->frames)
       {
         /* this is a guesstimate of frame-count */
