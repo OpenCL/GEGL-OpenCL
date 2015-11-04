@@ -71,8 +71,6 @@ typedef struct
   int              audio_index;
   AVStream        *video_stream;
   AVStream        *audio_stream;
-  AVCodecContext  *video_context;
-  AVCodecContext  *audio_context;
   AVCodec         *video_codec;
   AVCodec         *audio_codec;
   AVFrame         *lavc_frame;
@@ -131,10 +129,10 @@ ff_cleanup (GeglProperties *o)
       p->audio_cursor = NULL;
       if (p->loadedfilename)
         g_free (p->loadedfilename);
-      if (p->video_context)
-        avcodec_close (p->video_context);
-      if (p->audio_context)
-        avcodec_close (p->audio_context);
+      if (p->video_stream->codec)
+        avcodec_close (p->video_stream->codec);
+      if (p->audio_stream->codec)
+        avcodec_close (p->audio_stream->codec);
       if (p->video_fcontext)
         avformat_close_input(&p->video_fcontext);
       if (p->audio_fcontext)
@@ -142,8 +140,6 @@ ff_cleanup (GeglProperties *o)
       if (p->lavc_frame)
         av_free (p->lavc_frame);
 
-      p->video_context = NULL;
-      p->audio_context = NULL;
       p->video_fcontext = NULL;
       p->audio_fcontext = NULL;
       p->lavc_frame = NULL;
@@ -230,9 +226,9 @@ decode_audio (GeglOperation *operation,
                AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
           
                af->pts = pkt.pts; // XXX : only right for first of set
-               af->channels = MIN(p->audio_context->channels, MAX_AUDIO_CHANNELS);
+               af->channels = MIN(p->audio_stream->codec->channels, MAX_AUDIO_CHANNELS);
 
-               switch (p->audio_context->sample_fmt)
+               switch (p->audio_stream->codec->sample_fmt)
                {
                  case AV_SAMPLE_FMT_FLT:
                    for (gint i = 0; i < sample_count; i++)
@@ -427,64 +423,62 @@ prepare (GeglOperation *operation)
             }
         }
 
-      p->video_context = p->video_stream->codec;
-      p->video_codec = avcodec_find_decoder (p->video_context->codec_id);
+      p->video_codec = avcodec_find_decoder (p->video_stream->codec->codec_id);
 
       if (p->audio_stream)
         {
-	  p->audio_context = p->audio_stream->codec;
-	  p->audio_codec = avcodec_find_decoder (p->audio_context->codec_id);
+	  p->audio_codec = avcodec_find_decoder (p->audio_stream->codec->codec_id);
 	  if (p->audio_codec == NULL)
             g_warning ("audio codec not found");
           else 
-	    if (avcodec_open2 (p->audio_context, p->audio_codec, NULL) < 0)
+	    if (avcodec_open2 (p->audio_stream->codec, p->audio_codec, NULL) < 0)
               {
-                 g_warning ("error opening codec %s", p->audio_context->codec->name);
+                 g_warning ("error opening codec %s", p->audio_stream->codec->codec->name);
               }
             else
               {
-                 o->audio_sample_rate = p->audio_context->sample_rate;
-                 o->audio_channels = MIN(p->audio_context->channels, MAX_AUDIO_CHANNELS);
+                 o->audio_sample_rate = p->audio_stream->codec->sample_rate;
+                 o->audio_channels = MIN(p->audio_stream->codec->channels, MAX_AUDIO_CHANNELS);
               }
         }
 
-      p->video_context->err_recognition = AV_EF_IGNORE_ERR | AV_EF_BITSTREAM | AV_EF_BUFFER;
-      p->video_context->workaround_bugs = FF_BUG_AUTODETECT;
+      p->video_stream->codec->err_recognition = AV_EF_IGNORE_ERR | AV_EF_BITSTREAM | AV_EF_BUFFER;
+      p->video_stream->codec->workaround_bugs = FF_BUG_AUTODETECT;
 
 #if 1
- //     p->video_context->error_concealment = 0;
+ //     p->video_stream->codec->error_concealment = 0;
 #else
-      p->video_context->error_concealment = FF_EC_DEBLOCK | FF_EC_GUESS_MVS | FF_EC_FAVOR_INTER;
+      p->video_stream->codec->error_concealment = FF_EC_DEBLOCK | FF_EC_GUESS_MVS | FF_EC_FAVOR_INTER;
 
 #endif
 
-      p->video_context->idct_algo = FF_IDCT_SIMPLEAUTO;
+      p->video_stream->codec->idct_algo = FF_IDCT_SIMPLEAUTO;
 
-      p->video_context->thread_count = 0;
-      p->video_context->thread_type = FF_THREAD_SLICE;
+      p->video_stream->codec->thread_count = 0;
+      p->video_stream->codec->thread_type = FF_THREAD_SLICE;
       /* XXX: permits slice parallell decode, at expense of h264 compliance of output */
-      p->video_context->flags2 = AV_CODEC_FLAG2_FAST;
+      p->video_stream->codec->flags2 = AV_CODEC_FLAG2_FAST;
 
       if (p->video_codec == NULL)
           g_warning ("video codec not found");
 
-      if (avcodec_open2 (p->video_context, p->video_codec, NULL) < 0)
+      if (avcodec_open2 (p->video_stream->codec, p->video_codec, NULL) < 0)
         {
-          g_warning ("error opening codec %s", p->video_context->codec->name);
+          g_warning ("error opening codec %s", p->video_stream->codec->codec->name);
           return;
         }
 
-      p->width = p->video_context->width;
-      p->height = p->video_context->height;
+      p->width = p->video_stream->codec->width;
+      p->height = p->video_stream->codec->height;
       p->lavc_frame = av_frame_alloc ();
 
       if (p->fourcc)
         g_free (p->fourcc);
       p->fourcc = g_strdup ("none");
-      p->fourcc[0] = (p->video_context->codec_tag >> 0)  & 0xff;
-      p->fourcc[1] = (p->video_context->codec_tag >> 8)  & 0xff;
-      p->fourcc[2] = (p->video_context->codec_tag >> 16) & 0xff;
-      p->fourcc[3] = (p->video_context->codec_tag >> 24) & 0xff;
+      p->fourcc[0] = (p->video_stream->codec->codec_tag >> 0)  & 0xff;
+      p->fourcc[1] = (p->video_stream->codec->codec_tag >> 8)  & 0xff;
+      p->fourcc[2] = (p->video_stream->codec->codec_tag >> 16) & 0xff;
+      p->fourcc[3] = (p->video_stream->codec->codec_tag >> 24) & 0xff;
 
       if (o->codec)
         g_free (o->codec);
@@ -627,9 +621,9 @@ process (GeglOperation       *operation,
 
         long sample_start = 0;
 
-	if (p->audio_context && 0)
+	if (p->audio_stream->codec && 0)
         {
-          o->audio->samplerate = p->audio_context->sample_rate;
+          o->audio->samplerate = p->audio_stream->codec->sample_rate;
           o->audio->samples = samples_per_frame (o->frame,
                o->frame_rate, o->audio->samplerate,
                &sample_start);
