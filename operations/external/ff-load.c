@@ -565,7 +565,6 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
 {
   long no = 0;
   GList *l;
-  return;
   l = p->audio_track;
   if (sample_no < 0)
     return;
@@ -625,7 +624,7 @@ process (GeglOperation       *operation,
 
         long sample_start = 0;
 
-	if (p->audio_stream->codec && 0)
+	if (p->audio_stream->codec)
         {
           o->audio->samplerate = p->audio_stream->codec->sample_rate;
           o->audio->samples = samples_per_frame (o->frame,
