@@ -1008,9 +1008,9 @@ static void gegl_ui (Mrg *mrg, void *data)
   if (o->is_video)
    {
      o->frame_no++;
-#if 0
-     if ((o->frame_no / 50) % 2 == 1)
-       o->frame_no+=250;
+#if 1
+     if ((o->frame_no / 200) % 2 == 1)
+       o->frame_no+=600;
      fprintf (stderr, "\r%i", o->frame_no);
 #endif
      gegl_node_set (o->load, "frame", o->frame_no, NULL);

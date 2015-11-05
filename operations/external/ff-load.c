@@ -61,29 +61,34 @@ typedef struct
   gint             width;
   gint             height;
   gdouble          fps;
-  gchar           *fourcc;
+
+  gchar           *loadedfilename; /* to remember which file is "cached"     */
+
+  AVFormatContext *audio_fcontext;
+  AVCodec         *audio_codec;
+  int              audio_index;
   GList           *audio_track;
-  GList           *audio_cursor;
   long             audio_cursor_pos;
   long             audio_pos;
+  gdouble          prevapts;
+  glong            a_prevframe;   /* previously decoded a_frame in loadedfile */
+
+
   AVFormatContext *video_fcontext;
-  AVFormatContext *audio_fcontext;
   int              video_index;
-  int              audio_index;
   AVStream        *video_stream;
   AVStream        *audio_stream;
   AVCodec         *video_codec;
-  AVCodec         *audio_codec;
   AVFrame         *lavc_frame;
-  gchar           *loadedfilename; /* to remember which file is "cached"     */
-  glong            prevframe;      /* previously decoded frame in loadedfile */
-  gdouble          prevpts;
-  gdouble          prevapts;
-  glong            a_prevframe;   /* previously decoded a_frame in loadedfile */
+  glong            prevframe;      /* previously decoded frame number */
+  gdouble          prevpts;        /* timestamp in seconds of last decoded frame */
+
+
+
 } Priv;
 
 #define MAX_AUDIO_CHANNELS  6
-#define MAX_AUDIO_SAMPLES   512 
+#define MAX_AUDIO_SAMPLES   2048
 
 typedef struct AudioFrame {
   int64_t          pts;
@@ -127,7 +132,6 @@ ff_cleanup (GeglProperties *o)
           g_free (p->audio_track->data);
           p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
 	}
-      p->audio_cursor = NULL;
       if (p->loadedfilename)
         g_free (p->loadedfilename);
       if (p->video_stream && p->video_stream->codec)
@@ -173,9 +177,7 @@ init (GeglProperties *o)
     g_free (p->audio_track->data);
     p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
   }
-  p->audio_cursor = NULL;
   p->loadedfilename = g_strdup ("");
-  p->fourcc = g_strdup ("");
 
   ff_cleanup (o);
 }
@@ -189,8 +191,27 @@ decode_audio (GeglOperation *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   Priv       *p = (Priv*)o->user_data;
 
+  pts1 -= 15.0;
+  if (pts1 < 0.0)pts1 = 0.0;
+
   /* figure out which frame we should start decoding at */
   //fprintf (stderr, "%f %f\n", p->prevapts, pts2);
+  {
+  //int64_t seek_target = av_rescale_q ((pts1) * AV_TIME_BASE, AV_TIME_BASE_Q, p->audio_stream->time_base);
+  int64_t seek_target = pts1 * AV_TIME_BASE;
+
+#if 0
+  while (p->audio_track)
+  {
+    g_free (p->audio_track->data);
+    p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
+  }
+#endif
+  p->prevapts = 0.0;
+
+    if (av_seek_frame (p->audio_fcontext, -1, seek_target, (AVSEEK_FLAG_BACKWARD)) < 0)
+      fprintf (stderr, "audio seek error!\n");
+  }
 
   while (p->prevapts <= pts2)
     {
@@ -473,14 +494,6 @@ prepare (GeglOperation *operation)
       p->height = p->video_stream->codec->height;
       p->lavc_frame = av_frame_alloc ();
 
-      if (p->fourcc)
-        g_free (p->fourcc);
-      p->fourcc = g_strdup ("none");
-      p->fourcc[0] = (p->video_stream->codec->codec_tag >> 0)  & 0xff;
-      p->fourcc[1] = (p->video_stream->codec->codec_tag >> 8)  & 0xff;
-      p->fourcc[2] = (p->video_stream->codec->codec_tag >> 16) & 0xff;
-      p->fourcc[3] = (p->video_stream->codec->codec_tag >> 24) & 0xff;
-
       if (o->video_codec)
         g_free (o->video_codec);
       if (p->video_codec->name)
@@ -563,45 +576,46 @@ samples_per_frame (int    frame,
 
 static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
 {
-  long no = 0;
+  int to_remove = 0;
   GList *l;
   l = p->audio_track;
   if (sample_no < 0)
     return;
-  no = 0;
-  if (p->audio_cursor && sample_no > p->audio_cursor_pos) {
-    AudioFrame *af = p->audio_cursor->data;
-    if (p->audio_cursor_pos + af->len > sample_no)
-      {
-        int i = sample_no - p->audio_cursor_pos;
-        *left  = af->data[0][i];
-        if (af->channels == 1)
-          *right = af->data[0][i];
-        else
-          *right = af->data[1][i];
-        return;
-      }
-    /* override start conditions of below loop */
-    l = p->audio_cursor;
-    no = p->audio_cursor_pos;
-  }
   for (; l; l = l->next)
   {
     AudioFrame *af = l->data;
-    if (no + af->len > sample_no)
+    if (sample_no > af->pos + af->len)
+    {
+      to_remove ++;
+    }
+
+    if (af->pos <= sample_no &&
+        sample_no < af->pos + af->len)
       {
-        int i = sample_no - no;
+        int i = sample_no - af->pos;
         *left  = af->data[0][i];
         if (af->channels == 1)
           *right = af->data[0][i];
         else
           *right = af->data[1][i];
-        p->audio_cursor     = l;
-        p->audio_cursor_pos = no;
+
+	if (to_remove)
+        {
+          again:
+          for (l = p->audio_track; l; l = l->next)
+          {
+            AudioFrame *af = l->data;
+            if (sample_no > af->pos + af->len)
+            {
+              p->audio_track = g_list_remove (p->audio_track, af);
+              goto again;
+            }
+          }
+        }
         return;
       }
-    no += af->len;
   }
+  fprintf (stderr, "didn't find audio sample\n");
   *left  = 0;
   *right = 0;
 }
@@ -692,7 +706,6 @@ finalize (GObject *object)
       Priv *p = (Priv*)o->user_data;
       ff_cleanup (o);
       g_free (p->loadedfilename);
-      g_free (p->fourcc);
 
       g_free (o->user_data);
       o->user_data = NULL;
