@@ -41,13 +41,12 @@ property_double (fps, _("Frames/second"), 25)
 #define GEGL_OP_SINK
 #define GEGL_OP_C_SOURCE ff-save.c
 
+#define FF_API_OLD_ENCODE_AUDIO 1
+#define FF_API_DUMP_FORMAT  1
+
 #include "gegl-op.h"
 
-#ifdef HAVE_LIBAVFORMAT_AVFORMAT_H
 #include <libavformat/avformat.h>
-#else
-#include <avformat.h>
-#endif
 
 typedef struct
 {
@@ -492,7 +491,7 @@ add_video_stream (GeglProperties *op, AVFormatContext * oc, int codec_id)
   AVCodecContext *c;
   AVStream *st;
 
-  st = av_new_stream (oc, 0);
+  st = avformat_new_stream (oc, NULL);
   if (!st)
     {
       fprintf (stderr, "Could not alloc stream %p %p %i\n", op, oc, codec_id);
@@ -573,7 +572,7 @@ open_video (Priv * p, AVFormatContext * oc, AVStream * st)
     }
 
   /* open the codec */
-  if (avcodec_open (c, codec) < 0)
+  if (avcodec_open2 (c, codec, NULL) < 0)
     {
       fprintf (stderr, "could not open codec\n");
       exit (1);
@@ -673,7 +672,7 @@ write_video_frame (GeglProperties *op,
       else
         {
           sws_scale(img_convert_ctx,
-                    p->tmp_picture->data,
+                    (void*) p->tmp_picture->data,
                     p->tmp_picture->linesize,
                     0,
                     c->height,
@@ -774,26 +773,29 @@ tfile (GeglProperties *self)
      /*XXX: FOO p->audio_st = add_audio_stream (op, p->oc, p->fmt->audio_codec);*/
     }
 
+#if 0  /* ick - grid */
   if (av_set_parameters (p->oc, NULL) < 0)
     {
       fprintf (stderr, "Invalid output format propeters\n%s", "");
       return -1;
     }
+#endif
 
-  dump_format (p->oc, 0, self->path, 1);
+  av_dump_format (p->oc, 0, self->path, 1);
 
   if (p->video_st)
     open_video (p, p->oc, p->video_st);
   if (p->audio_st)
     open_audio (p, p->oc, p->audio_st);
 
-  if (url_fopen (&p->oc->pb, self->path, URL_WRONLY) < 0)
+  if (avio_open (&p->oc->pb, self->path, AVIO_FLAG_WRITE) < 0)
     {
       fprintf (stderr, "couldn't open '%s'\n", self->path);
       return -1;
     }
 
-  av_write_header (p->oc);
+  //av_write_header (p->oc);
+  avformat_write_header (p->oc, NULL);
 
   return 0;
 }
@@ -863,7 +865,7 @@ finalize (GObject *object)
             av_freep (&p->oc->streams[i]);
           }
 
-        url_fclose (&p->oc->pb);
+        avio_close (p->oc->pb);
         free (p->oc);
       }
       g_free (o->user_data);

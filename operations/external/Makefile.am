@@ -105,10 +105,14 @@ jp2_load_la_CFLAGS  = $(AM_CFLAGS) $(JASPER_CFLAGS)
 endif
 
 if HAVE_AVFORMAT
-ops += ff-load.la
+ops += ff-load.la ff-save.la
 ff_load_la_SOURCES = ff-load.c
 ff_load_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS)
-ff_load_la_CFLAGS = $(AM_CFLAGS) $(AVFORMAT_CFLAGS)
+ff_load_la_CFLAGS = $(AM_CFLAGS) $(AVFORMAT_CFLAGS) 
+
+ff_save_la_SOURCES = ff-save.c
+ff_save_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS)
+ff_save_la_CFLAGS = $(AM_CFLAGS) $(AVFORMAT_CFLAGS) -Wno-deprecated-declarations
 endif
 
 if HAVE_UMFPACK
