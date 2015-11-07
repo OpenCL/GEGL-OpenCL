@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2003, 2006 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2003, 2006, 2015 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
@@ -503,7 +503,7 @@ prepare (GeglOperation *operation)
 
       if (o->audio_codec)
         g_free (o->audio_codec);
-      if (p->audio_codec->name)
+      if (p->audio_codec && p->audio_codec->name)
         o->audio_codec = g_strdup (p->audio_codec->name);
       else
         o->audio_codec = g_strdup ("");
@@ -638,7 +638,7 @@ process (GeglOperation       *operation,
 
         long sample_start = 0;
 
-	if (p->audio_stream->codec)
+	if (p->audio_stream && p->audio_stream->codec) // XXX: remove second clause
         {
           o->audio->samplerate = p->audio_stream->codec->sample_rate;
           o->audio->samples = samples_per_frame (o->frame,
