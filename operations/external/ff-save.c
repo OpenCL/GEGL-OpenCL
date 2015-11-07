@@ -22,31 +22,31 @@
 
 #include <glib/gi18n-lib.h>
 
-#include <libswscale/swscale.h>
-
-
 #ifdef GEGL_PROPERTIES
 
 property_string (path, _("File"), "/tmp/fnord.ogv")
     description (_("Target path and filename, use '-' for stdout."))
-
-property_double (bitrate, _("Target bitrate"), 800000.0)
-     value_range (0.0, 100000000.0)
-
-property_double (fps, _("Frames/second"), 25)
-     value_range (0.0, 100.0)
+property_double (bitrate, _("Target bitrate"), 810000.0)
+    value_range (0.0, 500000000.0)
+property_double (fps, _("Frames/second"), 25.0)
+    value_range (0.0, 100.0)
 
 #else
 
 #define GEGL_OP_SINK
 #define GEGL_OP_C_SOURCE ff-save.c
 
+/* bitrot cruft */
 #define FF_API_OLD_ENCODE_AUDIO 1
 #define FF_API_DUMP_FORMAT  1
 
 #include "gegl-op.h"
 
 #include <libavformat/avformat.h>
+#include <libavcodec/avcodec.h>
+#include <libavutil/avutil.h>
+#include <libavutil/opt.h>
+#include <libswscale/swscale.h>
 
 typedef struct
 {
@@ -508,24 +508,21 @@ add_video_stream (GeglProperties *op, AVFormatContext * oc, int codec_id)
   c->width = p->width;
   c->height = p->height;
   /* frames per second */
-  /*c->frame_rate = op->fps;
-  c->frame_rate_base = 1;*/
-
-#if LIBAVCODEC_BUILD >= 4754
+  st->time_base=(AVRational){1, op->fps};
   c->time_base=(AVRational){1, op->fps};
-    #else
-        c->frame_rate=op->fps;
-        c->frame_rate_base=1;
-    #endif
-     c->pix_fmt = PIX_FMT_YUV420P;
+  c->pix_fmt = PIX_FMT_YUV420P;
 
-
-  c->gop_size = 12;             /* emit one intra frame every twelve frames at most */
-  if (c->codec_id == CODEC_ID_MPEG2VIDEO)
+  c->gop_size = 120;             /* emit one intra frame every twelve frames at most */
+  if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
     {
-      /* just for testing, we also add B frames */
-      /*c->max_b_frames = 2;*/
+      c->max_b_frames = 2;
     }
+  if (c->codec_id == AV_CODEC_ID_H264)
+   {
+     av_opt_set (c->priv_data, "preset", "slow", 0);
+   }
+
+
 /*    if (!strcmp (oc->oformat->name, "mp4") ||
           !strcmp (oc->oformat->name, "3gp"))
     c->flags |= CODEC_FLAG_GLOBAL_HEADER;
@@ -628,22 +625,12 @@ close_video (Priv * p, AVFormatContext * oc, AVStream * st)
 
 /* prepare a dummy image */
 static void
-fill_yuv_image (GeglProperties *op,
+fill_rgb_image (GeglProperties *op,
                 AVFrame *pict, int frame_index, int width, int height)
 {
   Priv     *p = (Priv*)op->user_data;
-  /*memcpy (pict->data[0],
-
-   op->input_pad[0]->data,
-
-          op->input_pad[0]->width * op->input_pad[0]->height * 3);*/
   GeglRectangle rect={0,0,width,height};
   gegl_buffer_get (p->input, &rect, 1.0, babl_format ("R'G'B' u8"), pict->data[0], GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-#if 0
-  pict->width = width;
-  pict->height = height;
-  pict->format = PIX_FMT_RGB24;
-#endif
 }
 
 static void
@@ -660,7 +647,7 @@ write_video_frame (GeglProperties *op,
   if (c->pix_fmt != PIX_FMT_RGB24)
     {
       struct SwsContext *img_convert_ctx;
-      fill_yuv_image (op, p->tmp_picture, p->frame_count, c->width,
+      fill_rgb_image (op, p->tmp_picture, p->frame_count, c->width,
                       c->height);
 
       img_convert_ctx = sws_getContext(c->width, c->height, PIX_FMT_RGB24,
@@ -674,7 +661,7 @@ write_video_frame (GeglProperties *op,
       else
         {
           sws_scale(img_convert_ctx,
-                    p->tmp_picture->data,
+                    (void*)p->tmp_picture->data,
                     p->tmp_picture->linesize,
                     0,
                     c->height,
@@ -687,7 +674,7 @@ write_video_frame (GeglProperties *op,
     }
   else
     {
-      fill_yuv_image (op, p->picture, p->frame_count, c->width, c->height);
+      fill_rgb_image (op, p->picture, p->frame_count, c->width, c->height);
     }
   picture_ptr = p->picture;
 
@@ -755,7 +742,7 @@ tfile (GeglProperties *self)
                "");
       p->fmt = av_guess_format ("mpeg", NULL, NULL);
     }
-  p->oc = avformat_alloc_context ();/*g_malloc (sizeof (AVFormatContext));*/
+  p->oc = avformat_alloc_context ();
   if (!p->oc)
     {
       fprintf (stderr, "memory error\n%s", "");
