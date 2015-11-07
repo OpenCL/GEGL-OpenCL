@@ -27,7 +27,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_string (path, _("File"), "/tmp/fnord.mp4")
+property_string (path, _("File"), "/tmp/fnord.ogv")
     description (_("Target path and filename, use '-' for stdout."))
 
 property_double (bitrate, _("Target bitrate"), 800000.0)
@@ -639,6 +639,11 @@ fill_yuv_image (GeglProperties *op,
           op->input_pad[0]->width * op->input_pad[0]->height * 3);*/
   GeglRectangle rect={0,0,width,height};
   gegl_buffer_get (p->input, &rect, 1.0, babl_format ("R'G'B' u8"), pict->data[0], GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+#if 0
+  pict->width = width;
+  pict->height = height;
+  pict->format = PIX_FMT_RGB24;
+#endif
 }
 
 static void
@@ -655,14 +660,11 @@ write_video_frame (GeglProperties *op,
   if (c->pix_fmt != PIX_FMT_RGB24)
     {
       struct SwsContext *img_convert_ctx;
-
-      /* as we only generate a RGB24 picture, we must convert it
-         to the codec pixel format if needed */
       fill_yuv_image (op, p->tmp_picture, p->frame_count, c->width,
                       c->height);
 
-      img_convert_ctx = sws_getContext(c->width, c->height, c->pix_fmt,
-                                       c->width, c->height, PIX_FMT_RGB24,
+      img_convert_ctx = sws_getContext(c->width, c->height, PIX_FMT_RGB24,
+                                       c->width, c->height, c->pix_fmt,
                                        SWS_BICUBIC, NULL, NULL, NULL);
 
       if (img_convert_ctx == NULL)
@@ -672,12 +674,15 @@ write_video_frame (GeglProperties *op,
       else
         {
           sws_scale(img_convert_ctx,
-                    (void*) p->tmp_picture->data,
+                    p->tmp_picture->data,
                     p->tmp_picture->linesize,
                     0,
                     c->height,
                     p->picture->data,
                     p->picture->linesize);
+         p->picture->format = c->pix_fmt;
+         p->picture->width = c->width;
+         p->picture->height = c->height;
         }
     }
   else
