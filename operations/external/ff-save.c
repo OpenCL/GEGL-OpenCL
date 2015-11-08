@@ -567,7 +567,7 @@ alloc_picture (int pix_fmt, int width, int height)
   picture = avcodec_alloc_frame ();
   if (!picture)
     return NULL;
-  size = avpicture_get_size (pix_fmt, width, height);
+  size = avpicture_get_size (pix_fmt, width, height + 1);
   picture_buf = malloc (size);
   if (!picture_buf)
     {
@@ -794,14 +794,6 @@ tfile (GeglProperties *o)
      /*XXX: FOO p->audio_st = add_audio_stream (op, p->oc, p->fmt->audio_codec);*/
     }
 
-#if 0  /* ick - grid */
-  if (av_set_parameters (p->oc, NULL) < 0)
-    {
-      fprintf (stderr, "Invalid output format propeters\n%s", "");
-      return -1;
-    }
-#endif
-
   av_dump_format (p->oc, 0, o->path, 1);
 
   if (p->video_st)
@@ -880,15 +872,17 @@ finalize (GObject *object)
           close_audio (p, p->oc, p->audio_st);
 
         av_write_trailer (p->oc);
-
+#if 0
         for (i = 0; i < p->oc->nb_streams; i++)
           {
             av_freep (&p->oc->streams[i]);
           }
+#endif
 
-        avio_close (p->oc->pb);
-        free (p->oc);
+        avio_closep (&p->oc->pb);
+        avformat_free_context (p->oc);
       }
+
       g_free (o->user_data);
       o->user_data = NULL;
     }
