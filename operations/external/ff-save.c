@@ -26,10 +26,12 @@
 
 property_string (path, _("File"), "/tmp/fnord.ogv")
     description (_("Target path and filename, use '-' for stdout."))
-property_double (bitrate, _("Target bitrate"), 810000.0)
+property_double (video_bitrate, _("video bitrate"), 810000.0)
     value_range (0.0, 500000000.0)
 property_double (fps, _("Frames/second"), 25.0)
     value_range (0.0, 100.0)
+
+property_audio (audio, _("audio"), 0)
 
 #else
 
@@ -69,7 +71,6 @@ typedef struct
      * of gggl, this means that the ops should be usable by other applications
      * using gggl directly,. without needing to link with the oxide library
      */
-
   AVStream *audio_st;
 
   void     *oxide_audio_instance;
@@ -170,11 +171,11 @@ static void close_video       (Priv            *p,
 void        close_audio       (Priv            *p,
                                AVFormatContext *oc,
                                AVStream        *st);
-static int  tfile             (GeglProperties      *self);
-static void write_video_frame (GeglProperties      *self,
+static int  tfile             (GeglProperties  *o);
+static void write_video_frame (GeglProperties  *o,
                                AVFormatContext *oc,
                                AVStream        *st);
-static void write_audio_frame (GeglProperties      *self,
+static void write_audio_frame (GeglProperties      *o,
                                AVFormatContext *oc,
                                AVStream        *st);
 
@@ -224,7 +225,7 @@ buffer_flush (Priv * p)
 static void
 buffer_open (GeglOpOperation *op, int size)
 {
-  Priv     *p = (Priv*)op->priv;
+  Priv     *p = (Priv*)o->priv;
 
   if (p->buffer)
     {
@@ -237,9 +238,9 @@ buffer_open (GeglOpOperation *op, int size)
 }
 
 static void
-buffer_close (GeglOpOperation *op)
+buffer_close (GeglOpOperation *o)
 {
-  Priv     *p = (Priv*)op->priv;
+  Priv     *p = (Priv*)o->priv;
 
   if (!p->buffer)
     return;
@@ -355,9 +356,9 @@ buffer_write (Priv * p, uint8_t * source, int count)
 #ifndef DISABLE_AUDIO
 /* add an audio output stream */
 static AVStream *
-add_audio_stream (GeglOpOperation *op, AVFormatContext * oc, int codec_id)
+add_audio_stream (GeglOpOperation *o, AVFormatContext * oc, int codec_id)
 {
-  Priv     *p = (Priv*)op->priv;
+  Priv     *p = (Priv*)o->priv;
   AVCodecContext *c;
   AVStream *st;
 
@@ -433,9 +434,9 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 }
 
 void
-write_audio_frame (GeglProperties *op, AVFormatContext * oc, AVStream * st)
+write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
 {
-  Priv *p = (Priv*)op->user_data;
+  Priv *p = (Priv*)o->user_data;
 
   AVCodecContext *c;
   AVPacket  pkt;
@@ -484,9 +485,9 @@ close_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 
 /* add a video output stream */
 static AVStream *
-add_video_stream (GeglProperties *op, AVFormatContext * oc, int codec_id)
+add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
 {
-  Priv *p = (Priv*)op->user_data;
+  Priv *p = (Priv*)o->user_data;
 
   AVCodecContext *c;
   AVStream *st;
@@ -494,7 +495,7 @@ add_video_stream (GeglProperties *op, AVFormatContext * oc, int codec_id)
   st = avformat_new_stream (oc, NULL);
   if (!st)
     {
-      fprintf (stderr, "Could not alloc stream %p %p %i\n", op, oc, codec_id);
+      fprintf (stderr, "Could not alloc stream %p %p %i\n", o, oc, codec_id);
       exit (1);
     }
 
@@ -503,23 +504,48 @@ add_video_stream (GeglProperties *op, AVFormatContext * oc, int codec_id)
   c->codec_type = AVMEDIA_TYPE_VIDEO;
 
   /* put sample propeters */
-  c->bit_rate = op->bitrate;
+  c->bit_rate = o->video_bitrate;
   /* resolution must be a multiple of two */
   c->width = p->width;
   c->height = p->height;
   /* frames per second */
-  st->time_base=(AVRational){1, op->fps};
-  c->time_base=(AVRational){1, op->fps};
-  c->pix_fmt = PIX_FMT_YUV420P;
+  st->time_base =(AVRational){1, o->fps};
+  c->time_base = st->time_base;
+  c->pix_fmt = AV_PIX_FMT_YUV420P;
 
-  c->gop_size = 120;             /* emit one intra frame every twelve frames at most */
+  c->gop_size = 12;             /* emit one intra frame every twelve frames at most */
   if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
     {
       c->max_b_frames = 2;
     }
   if (c->codec_id == AV_CODEC_ID_H264)
    {
-     av_opt_set (c->priv_data, "preset", "slow", 0);
+     c->coder_type = 1;  // coder = 1
+     c->flags|=CODEC_FLAG_LOOP_FILTER;   // flags=+loop
+     c->me_cmp|= 1;  // cmp=+chroma, where CHROMA = 1
+     //c->partitions|=X264_PART_I8X8+X264_PART_I4X4+X264_PART_P8X8+X264_PART_B8X8; // partitions=+parti8x8+parti4x4+partp8x8+partb8x8
+     c->me_method=ME_HEX;    // me_method=hex
+     c->me_subpel_quality = 7;   // subq=7
+     c->me_range = 16;   // me_range=16
+     c->gop_size = 250;  // g=250
+     c->keyint_min = 25; // keyint_min=25
+     c->scenechange_threshold = 40;  // sc_threshold=40
+     c->i_quant_factor = 0.71; // i_qfactor=0.71
+     c->b_frame_strategy = 1;  // b_strategy=1
+     c->qcompress = 0.6; // qcomp=0.6
+     c->qmin = 10;   // qmin=10
+     c->qmax = 51;   // qmax=51
+     c->max_qdiff = 4;   // qdiff=4
+     c->max_b_frames = 3;    // bf=3
+     c->refs = 3;    // refs=3
+     //c->directpred = 1;  // directpred=1
+     c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+     c->trellis = 1; // trellis=1
+     //c->flags2|=AV_CODEC_FLAG2_BPYRAMID|AV_CODEC_FLAG2_MIXED_REFS|AV_CODEC_FLAG2_WPRED+CODEC_FLAG2_8X8DCT+CODEC_FLAG2_FASTPSKIP;  // flags2=+bpyramid+mixed_refs+wpred+dct8x8+fastpskip
+     //c->weighted_p_pred = 2; // wpredp=2
+
+// libx264-main.ffpreset preset
+     //c->flags2|=CODEC_FLAG2_8X8DCT;c->flags2^=CODEC_FLAG2_8X8DCT;
    }
 
 
@@ -625,19 +651,19 @@ close_video (Priv * p, AVFormatContext * oc, AVStream * st)
 
 /* prepare a dummy image */
 static void
-fill_rgb_image (GeglProperties *op,
+fill_rgb_image (GeglProperties *o,
                 AVFrame *pict, int frame_index, int width, int height)
 {
-  Priv     *p = (Priv*)op->user_data;
+  Priv     *p = (Priv*)o->user_data;
   GeglRectangle rect={0,0,width,height};
   gegl_buffer_get (p->input, &rect, 1.0, babl_format ("R'G'B' u8"), pict->data[0], GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 }
 
 static void
-write_video_frame (GeglProperties *op,
+write_video_frame (GeglProperties *o,
                    AVFormatContext *oc, AVStream *st)
 {
-  Priv     *p = (Priv*)op->user_data;
+  Priv     *p = (Priv*)o->user_data;
   int       out_size, ret;
   AVCodecContext *c;
   AVFrame  *picture_ptr;
@@ -647,7 +673,7 @@ write_video_frame (GeglProperties *op,
   if (c->pix_fmt != PIX_FMT_RGB24)
     {
       struct SwsContext *img_convert_ctx;
-      fill_rgb_image (op, p->tmp_picture, p->frame_count, c->width,
+      fill_rgb_image (o, p->tmp_picture, p->frame_count, c->width,
                       c->height);
 
       img_convert_ctx = sws_getContext(c->width, c->height, PIX_FMT_RGB24,
@@ -674,9 +700,11 @@ write_video_frame (GeglProperties *op,
     }
   else
     {
-      fill_rgb_image (op, p->picture, p->frame_count, c->width, c->height);
+      fill_rgb_image (o, p->picture, p->frame_count, c->width, c->height);
     }
+
   picture_ptr = p->picture;
+  picture_ptr->pts = p->frame_count;
 
   if (oc->oformat->flags & AVFMT_RAWPICTURE)
     {
@@ -689,6 +717,8 @@ write_video_frame (GeglProperties *op,
       pkt.stream_index = st->index;
       pkt.data = (uint8_t *) picture_ptr;
       pkt.size = sizeof (AVPicture);
+      pkt.pts = picture_ptr->pts;
+      av_packet_rescale_ts (&pkt, c->time_base, st->time_base);
 
       ret = av_write_frame (oc, &pkt);
     }
@@ -705,14 +735,13 @@ write_video_frame (GeglProperties *op,
         {
           AVPacket  pkt;
           av_init_packet (&pkt);
-
-          pkt.pts = c->coded_frame->pts;
           if (c->coded_frame->key_frame)
             pkt.flags |= AV_PKT_FLAG_KEY;
           pkt.stream_index = st->index;
           pkt.data = p->video_outbuf;
           pkt.size = out_size;
-
+          pkt.pts = picture_ptr->pts;
+          av_packet_rescale_ts (&pkt, c->time_base, st->time_base);
           /* write the compressed frame in the media file */
           ret = av_write_frame (oc, &pkt);
         }
@@ -730,11 +759,11 @@ write_video_frame (GeglProperties *op,
 }
 
 static int
-tfile (GeglProperties *self)
+tfile (GeglProperties *o)
 {
-  Priv *p = (Priv*)self->user_data;
+  Priv *p = (Priv*)o->user_data;
 
-  p->fmt = av_guess_format (NULL, self->path, NULL);
+  p->fmt = av_guess_format (NULL, o->path, NULL);
   if (!p->fmt)
     {
       fprintf (stderr,
@@ -751,14 +780,14 @@ tfile (GeglProperties *self)
 
   p->oc->oformat = p->fmt;
 
-  snprintf (p->oc->filename, sizeof (p->oc->filename), "%s", self->path);
+  snprintf (p->oc->filename, sizeof (p->oc->filename), "%s", o->path);
 
   p->video_st = NULL;
   p->audio_st = NULL;
 
   if (p->fmt->video_codec != CODEC_ID_NONE)
     {
-      p->video_st = add_video_stream (self, p->oc, p->fmt->video_codec);
+      p->video_st = add_video_stream (o, p->oc, p->fmt->video_codec);
     }
   if (p->oxide_audio_query && p->fmt->audio_codec != CODEC_ID_NONE)
     {
@@ -773,16 +802,16 @@ tfile (GeglProperties *self)
     }
 #endif
 
-  av_dump_format (p->oc, 0, self->path, 1);
+  av_dump_format (p->oc, 0, o->path, 1);
 
   if (p->video_st)
     open_video (p, p->oc, p->video_st);
   if (p->audio_st)
     open_audio (p, p->oc, p->audio_st);
 
-  if (avio_open (&p->oc->pb, self->path, AVIO_FLAG_WRITE) < 0)
+  if (avio_open (&p->oc->pb, o->path, AVIO_FLAG_WRITE) < 0)
     {
-      fprintf (stderr, "couldn't open '%s'\n", self->path);
+      fprintf (stderr, "couldn't open '%s'\n", o->path);
       return -1;
     }
 
