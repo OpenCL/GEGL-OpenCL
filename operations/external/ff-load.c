@@ -196,7 +196,7 @@ decode_audio (GeglOperation *operation,
 
   /* figure out which frame we should start decoding at */
   //fprintf (stderr, "%f %f\n", p->prevapts, pts2);
-  {
+  if(0){
   //int64_t seek_target = av_rescale_q ((pts1) * AV_TIME_BASE, AV_TIME_BASE_Q, p->audio_stream->time_base);
   int64_t seek_target = pts1 * AV_TIME_BASE;
 
