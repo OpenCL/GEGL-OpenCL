@@ -333,6 +333,8 @@ decode_frame (GeglOperation *operation,
     int64_t seek_target = av_rescale_q ((frame - 16) / o->frame_rate * AV_TIME_BASE, AV_TIME_BASE_Q, p->video_stream->time_base);
     if (av_seek_frame (p->video_fcontext, p->video_index, seek_target, (AVSEEK_FLAG_BACKWARD )) < 0)
       fprintf (stderr, "video seek error!\n");
+   else
+      avcodec_flush_buffers (p->video_stream->codec);
   }
 
   do
@@ -410,6 +412,7 @@ prepare (GeglOperation *operation)
         {
           print_error (o->path, err);
         }
+      fprintf (stderr, "[%lu]\n", p->video_fcontext->start_time_realtime);
       err = avformat_find_stream_info (p->video_fcontext, NULL);
       if (err < 0)
         {
