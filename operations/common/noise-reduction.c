@@ -25,8 +25,8 @@
 
 property_int  (iterations, _("Strength"), 4)
   description (_("Controls the number of iterations; lower values give less plastic results"))
-  value_range (1, 32)
-  ui_range    (1, 8)
+  value_range (0, 32)
+  ui_range    (0, 8)
 
 #else
 
