@@ -29,6 +29,7 @@ operations/common/contrast-curve.c
 operations/common/convolution-matrix.c
 operations/common/copy-buffer.c
 operations/common/cubism.c
+operations/common/dcraw-load.c
 operations/common/deinterlace.c
 operations/common/difference-of-gaussians.c
 operations/common/diffraction-patterns.c
@@ -85,8 +86,8 @@ operations/common/noise-hurl.c
 operations/common/noise-perlin.c
 operations/common/noise-pick.c
 operations/common/noise-reduction.c
-operations/common/noise-simplex.c
 operations/common/noise-rgb.c
+operations/common/noise-simplex.c
 operations/common/noise-slur.c
 operations/common/noise-solid.c
 operations/common/noise-spread.c
@@ -101,7 +102,6 @@ operations/common/plasma.c
 operations/common/polar-coordinates.c
 operations/common/posterize.c
 operations/common/radial-gradient.c
-operations/common/dcraw-load.c
 operations/common/rectangle.c
 operations/common/red-eye-removal.c
 operations/common/reinhard05.c
@@ -138,8 +138,8 @@ operations/common/whirl-pinch.c
 operations/common/wind.c
 operations/common/write-buffer.c
 operations/core/cache.c
-operations/core/clone.c
 operations/core/cast-format.c
+operations/core/clone.c
 operations/core/convert-format.c
 operations/core/crop.c
 operations/core/nop.c
@@ -151,13 +151,13 @@ operations/external/lcms-from-profile.c
 operations/external/matting-levin.c
 operations/external/npd.c
 operations/external/npy-save.c
-operations/external/raw-load.c
 operations/external/path.c
 operations/external/pixbuf.c
 operations/external/png-load.c
 operations/external/png-save.c
 operations/external/ppm-load.c
 operations/external/ppm-save.c
+operations/external/raw-load.c
 operations/external/rgbe-load.c
 operations/external/rgbe-save.c
 operations/external/save-pixbuf.c
@@ -210,8 +210,8 @@ operations/transform/transform.c
 operations/transform/transform-core.c
 operations/transform/translate.c
 operations/workshop/buffer-cache.c
-operations/workshop/component-extract.c
 operations/workshop/color-warp.c
+operations/workshop/component-extract.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/ditto.c
@@ -233,3 +233,4 @@ operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c
 operations/workshop/median-blur.c
 operations/workshop/rawbayer-load.c
+operations/workshop/rgb-clip.c
