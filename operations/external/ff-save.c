@@ -26,10 +26,23 @@
 
 property_string (path, _("File"), "/tmp/fnord.ogv")
     description (_("Target path and filename, use '-' for stdout."))
-property_double (video_bitrate, _("video bitrate"), 810000.0)
+property_string (video_codec,   _("Audio codec"),   "auto")
+property_double (video_bit_rate, _("video bitrate"), 810000.0)
     value_range (0.0, 500000000.0)
-property_double (fps, _("Frames/second"), 25.0)
+#if 0
+property_double (video_bit_rate_tolerance, _("video bitrate"), 1000.0)
+property_int    (video_global_quality, _("global quality"), 255)
+property_int    (compression_level,    _("compression level"), 255)
+property_int    (noise_reduction,      _("noise reduction strength"), 0)
+property_int    (gop_size,             _("the number of frames in a group of pictures, 0 for keyframe only"), 16)
+property_int    (key_int_min,          _("the minimum number of frames in a group of pictures, 0 for keyframe only"), 1)
+property_int    (max_b_frames,         _("maximum number of consequetive b frames"), 3)
+#endif
+property_double (frame_rate, _("Frames/second"), 25.0)
     value_range (0.0, 100.0)
+
+property_string (audio_codec, _("Audio codec"), "auto")
+property_double (audio_bit_rate, _("video bitrate"), 810000.0)
 
 property_audio (audio, _("audio"), 0)
 
@@ -101,18 +114,18 @@ typedef struct
   int       buffer_size;
   int       buffer_read_pos;
   int       buffer_write_pos;
-  uint8_t  *buffer;   /* optimal buffer size should be calculated,. preferably
-                         run time,. no magic numbers needed for the filewrite
-                         case, perhaps a tiny margin for ntsc since it has a
-                         strange framerate */
-
+  uint8_t  *buffer; 
+                   
   int       audio_outbuf_size;
   int       audio_input_frame_size;
   int16_t  *samples;
   uint8_t  *audio_outbuf;
 } Priv;
 
-#define DISABLE_AUDIO
+//#define DISABLE_AUDIO
+
+static void
+buffer_open (GeglProperties *o, int size);
 
 static void
 init (GeglProperties *o)
@@ -134,10 +147,10 @@ init (GeglProperties *o)
     }
 
 #ifndef DISABLE_AUDIO
-  p->oxide_audio_instance = gggl_op_sym (op, "oxide_audio_instance");
-  p->oxide_audio_query = gggl_op_sym (op, "oxide_audio_query()");
-  p->oxide_audio_get_fragment =
-    gggl_op_sym (op, "oxide_audio_get_fragment()");
+  //p->oxide_audio_instance = gggl_op_sym (op, "oxide_audio_instance");
+  //p->oxide_audio_query = gggl_op_sym (op, "oxide_audio_query()");
+  //p->oxide_audio_get_fragment =
+    //gggl_op_sym (op, "oxide_audio_get_fragment()");
 
   if (p->oxide_audio_instance && p->oxide_audio_query)
     {
@@ -155,12 +168,12 @@ init (GeglProperties *o)
       if (!p->buffer)
         {
           int size =
-            (p->sample_rate / p->fps) * p->channels * (p->bits / 8) * 2;
-          buffer_open (op, size);
+            (p->sample_rate / o->frame_rate) * p->channels * (p->bits / 8) * 2;
+          buffer_open (o, size);
         }
 
       if (!p->fragment)
-        p->fragment = gggl_op_calloc (op, 1, p->fragment_size);
+        p->fragment = calloc (1, p->fragment_size);
     }
 #endif
 }
@@ -223,9 +236,9 @@ buffer_flush (Priv * p)
 }
 
 static void
-buffer_open (GeglOpOperation *op, int size)
+buffer_open (GeglProperties *o, int size)
 {
-  Priv     *p = (Priv*)o->priv;
+  Priv     *p = (Priv*)o->user_data;
 
   if (p->buffer)
     {
@@ -238,9 +251,9 @@ buffer_open (GeglOpOperation *op, int size)
 }
 
 static void
-buffer_close (GeglOpOperation *o)
+buffer_close (GeglProperties *o)
 {
-  Priv     *p = (Priv*)o->priv;
+  Priv     *p = (Priv*)o->user_data;
 
   if (!p->buffer)
     return;
@@ -356,14 +369,14 @@ buffer_write (Priv * p, uint8_t * source, int count)
 #ifndef DISABLE_AUDIO
 /* add an audio output stream */
 static AVStream *
-add_audio_stream (GeglOpOperation *o, AVFormatContext * oc, int codec_id)
+add_audio_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
 {
-  Priv     *p = (Priv*)o->priv;
+  //Priv     *p = (Priv*)o->user_data;
   AVCodecContext *c;
   AVStream *st;
 
-  p = NULL;
-  st = av_new_stream (oc, 1);
+  //p = NULL;
+  st = avformat_new_stream (oc, NULL);
   if (!st)
     {
       fprintf (stderr, "Could not alloc stream\n");
@@ -372,7 +385,7 @@ add_audio_stream (GeglOpOperation *o, AVFormatContext * oc, int codec_id)
 
   c = st->codec;
   c->codec_id = codec_id;
-  c->codec_type = CODEC_TYPE_AUDIO;
+  c->codec_type = AVMEDIA_TYPE_AUDIO;
 
   c->bit_rate = 64000;
   c->sample_rate = 44100;
@@ -386,6 +399,7 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 {
   AVCodecContext *c;
   AVCodec  *codec;
+  int i;
 
   c = st->codec;
 
@@ -396,6 +410,23 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
       fprintf (stderr, "codec not found\n");
       exit (1);
     }
+  c->bit_rate = 64000;
+  c->sample_fmt = codec->sample_fmts ? codec->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
+
+  c->sample_rate = 44100;
+  c->channel_layout = AV_CH_LAYOUT_STEREO;
+  c->channels = 2;
+
+  if (codec->supported_samplerates)
+  {
+    c->sample_rate = codec->supported_samplerates[0];
+    for (i = 0; codec->supported_samplerates[i]; i++)
+      if (codec->supported_samplerates[i] == 44100)
+         c->sample_rate = 44100;
+  }
+  st->time_base = (AVRational){1, c->sample_rate};
+
+  c->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL; // ffmpeg AAC is not quite stable yet
 
   /* open it */
   if (avcodec_open2 (c, codec, NULL) < 0)
@@ -406,6 +437,8 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 
   p->audio_outbuf_size = 10000;
   p->audio_outbuf = malloc (p->audio_outbuf_size);
+
+#if 0
 
   /* ugly hack for PCM codecs (will be removed ASAP with new PCM
      support to compute the input frame size in samples */
@@ -430,6 +463,7 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
       p->audio_input_frame_size = c->frame_size;
     }
   /*audio_input_frame_size = 44100/25;*/
+#endif
   p->samples = malloc (p->audio_input_frame_size * 2 * c->channels);
 }
 
@@ -444,12 +478,13 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
 
   c = st->codec;
 
-  /*fprintf (stderr, "going to grab %i\n", p->fragment_size);*/
+#if 0
   if (p->oxide_audio_get_fragment (p->oxide_audio_instance,
                                    p->fragment) == (signed) p->fragment_size)
     {
       buffer_write (p, p->fragment, p->fragment_size);
     }
+#endif
 
   while (buffer_used (p) >= p->audio_input_frame_size * 2 * c->channels)
     {
@@ -504,12 +539,12 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c->codec_type = AVMEDIA_TYPE_VIDEO;
 
   /* put sample propeters */
-  c->bit_rate = o->video_bitrate;
+  c->bit_rate = o->video_bit_rate;
   /* resolution must be a multiple of two */
   c->width = p->width;
   c->height = p->height;
   /* frames per second */
-  st->time_base =(AVRational){1, o->fps};
+  st->time_base =(AVRational){1, o->frame_rate};
   c->time_base = st->time_base;
   c->pix_fmt = AV_PIX_FMT_YUV420P;
 
@@ -520,23 +555,25 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
     }
   if (c->codec_id == AV_CODEC_ID_H264)
    {
+#if 1
+     c->qcompress = 0.6;  // qcomp=0.6
+     c->me_range = 16;    // me_range=16
+     c->gop_size = 250;   // g=250
+
+     c->max_b_frames = 3; // bf=3
+#if 0
      c->coder_type = 1;  // coder = 1
      c->flags|=CODEC_FLAG_LOOP_FILTER;   // flags=+loop
      c->me_cmp|= 1;  // cmp=+chroma, where CHROMA = 1
      //c->partitions|=X264_PART_I8X8+X264_PART_I4X4+X264_PART_P8X8+X264_PART_B8X8; // partitions=+parti8x8+parti4x4+partp8x8+partb8x8
-     c->me_method=ME_HEX;    // me_method=hex
      c->me_subpel_quality = 7;   // subq=7
-     c->me_range = 16;   // me_range=16
-     c->gop_size = 250;  // g=250
      c->keyint_min = 25; // keyint_min=25
      c->scenechange_threshold = 40;  // sc_threshold=40
      c->i_quant_factor = 0.71; // i_qfactor=0.71
      c->b_frame_strategy = 1;  // b_strategy=1
-     c->qcompress = 0.6; // qcomp=0.6
      c->qmin = 10;   // qmin=10
      c->qmax = 51;   // qmax=51
      c->max_qdiff = 4;   // qdiff=4
-     c->max_b_frames = 3;    // bf=3
      c->refs = 3;    // refs=3
      //c->directpred = 1;  // directpred=1
      c->flags |= CODEC_FLAG_GLOBAL_HEADER;
@@ -546,7 +583,12 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
 
 // libx264-main.ffpreset preset
      //c->flags2|=CODEC_FLAG2_8X8DCT;c->flags2^=CODEC_FLAG2_8X8DCT;
+#endif
+#endif
    }
+
+   if (oc->oformat->flags & AVFMT_GLOBALHEADER)
+     c->flags |= CODEC_FLAG_GLOBAL_HEADER;
 
 
 /*    if (!strcmp (oc->oformat->name, "mp4") ||
@@ -593,6 +635,7 @@ open_video (Priv * p, AVFormatContext * oc, AVStream * st)
       fprintf (stderr, "codec not found\n");
       exit (1);
     }
+
 
   /* open the codec */
   if (avcodec_open2 (c, codec, NULL) < 0)
@@ -789,9 +832,9 @@ tfile (GeglProperties *o)
     {
       p->video_st = add_video_stream (o, p->oc, p->fmt->video_codec);
     }
-  if (p->oxide_audio_query && p->fmt->audio_codec != CODEC_ID_NONE)
+  if (p->fmt->audio_codec != CODEC_ID_NONE)
     {
-     /*XXX: FOO p->audio_st = add_audio_stream (op, p->oc, p->fmt->audio_codec);*/
+     p->audio_st = add_audio_stream (o, p->oc, p->fmt->audio_codec);
     }
 
   av_dump_format (p->oc, 0, o->path, 1);
@@ -807,9 +850,7 @@ tfile (GeglProperties *o)
       return -1;
     }
 
-  //av_write_header (p->oc);
   avformat_write_header (p->oc, NULL);
-
   return 0;
 }
 
@@ -863,9 +904,10 @@ finalize (GObject *object)
     {
       Priv *p = (Priv*)o->user_data;
 
+    buffer_close (o);
+
     if (p->oc)
       {
-        gint i;
         if (p->video_st)
           close_video (p, p->oc, p->video_st);
         if (p->audio_st)
@@ -873,10 +915,13 @@ finalize (GObject *object)
 
         av_write_trailer (p->oc);
 #if 0
+{
+        //gint i;
         for (i = 0; i < p->oc->nb_streams; i++)
           {
             av_freep (&p->oc->streams[i]);
           }
+}
 #endif
 
         avio_closep (&p->oc->pb);
