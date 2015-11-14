@@ -122,8 +122,6 @@ typedef struct
   uint32_t  fragment_samples;
   uint32_t  fragment_size;
 
-  uint8_t  *fragment;
-
   int       buffer_size;
   int       buffer_read_pos;
   int       buffer_write_pos;
@@ -191,15 +189,10 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
         return;
       }
   }
-  //fprintf (stderr, "didn't find audio sample\n");
+  fprintf (stderr, "ff-save didn't find audio sample\n");
   *left  = 0;
   *right = 0;
 }
-
-#if 0
-static void
-buffer_open (GeglProperties *o, int size);
-#endif
 
 static void
 init (GeglProperties *o)
@@ -223,37 +216,6 @@ init (GeglProperties *o)
   clear_audio_track (o);
   p->audio_pos = 0;
   p->audio_read_pos = 0;
-
-#ifndef DISABLE_AUDIO
-  //p->oxide_audio_instance = gggl_op_sym (op, "oxide_audio_instance");
-  //p->oxide_audio_query = gggl_op_sym (op, "oxide_audio_query()");
-  //p->oxide_audio_get_fragment =
-    //gggl_op_sym (op, "oxide_audio_get_fragment()");
-
-  if (p->oxide_audio_instance && p->oxide_audio_query)
-    {
-      p->oxide_audio_query (p->oxide_audio_instance,
-                            &p->sample_rate,
-                            &p->bits,
-                            &p->channels,
-                            &p->fragment_samples, &p->fragment_size);
-
-      /* FIXME: for now, the buffer is set to a size double that of a oxide
-       * provided fragment,. should be enough no matter how things are handled,
-       * but it should also be more than needed,. find out exact amount needed later
-       */
-#if 0
-      if (!p->buffer)
-        {
-          int size =
-            (p->sample_rate / o->frame_rate) * p->channels * (p->bits / 8) * 2;
-          buffer_open (o, size);
-        }
-#endif
-      if (!p->fragment)
-        p->fragment = calloc (1, p->fragment_size);
-    }
-#endif
 }
 
 static void close_video       (Priv            *p,
@@ -277,11 +239,9 @@ static void write_audio_frame (GeglProperties      *o,
 static AVStream *
 add_audio_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
 {
-  //Priv     *p = (Priv*)o->user_data;
   AVCodecContext *c;
   AVStream *st;
 
-  //p = NULL;
   st = avformat_new_stream (oc, NULL);
   if (!st)
     {
@@ -363,8 +323,6 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
   p->samples = malloc (p->audio_input_frame_size * 2 * c->channels);
 }
 
-
-/* XXX: rewrite  */
 static AVFrame *alloc_audio_frame(enum AVSampleFormat sample_fmt,
                                   uint64_t channel_layout,
                                   int sample_rate, int nb_samples)
@@ -420,8 +378,6 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   /* then we encode as much as we can in a loop using the codec frame size */
   c = st->codec;
   
-  fprintf (stderr, "%li %i %i\n",
-           p->audio_pos, p->audio_read_pos, c->frame_size);
   while (p->audio_pos - p->audio_read_pos > c->frame_size)
   {
     long i;
@@ -432,69 +388,15 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
     {
       float left = 0, right = 0;
       get_sample_data (p, i + p->audio_read_pos, &left, &right);
-//    fprintf (stderr, "[%f %f]\n", left, right);
     }
 
     av_frame_free (&frame);
     p->audio_read_pos += c->frame_size;
   }
 
-#if 0
-  if(1)switch (c->sample_fmt)
-  {
-    case AV_SAMPLE_FMT_FLT:
-      fprintf (stderr, "f\n");
-      break;
-    case AV_SAMPLE_FMT_FLTP:
-      fprintf (stderr, "fp\n");
-      break;
-    case AV_SAMPLE_FMT_S16:
-      fprintf (stderr, "s16\n");
-      break;
-    case AV_SAMPLE_FMT_S16P:
-      fprintf (stderr, "s16p\n");
-      break;
-    case AV_SAMPLE_FMT_S32:
-    case AV_SAMPLE_FMT_S32P:
-      fprintf (stderr, "s32\n");
-      break;
-  }
-#endif
-  //fprintf (stderr, "asdfasdfadf\n");
-
   fprintf (stderr, "audio codec wants: %i samples\n", c->frame_size);
 
   p->audio_input_frame_size = c->frame_size;
-  //fprintf (stderr, "going to grab %i %i\n", p->fragment_size, o->audio->samples);
-#if 0
-  if (p->oxide_audio_get_fragment (p->oxide_audio_instance,
-                                   p->fragment) == (signed) p->fragment_size)
-    {
-      buffer_write (p, p->fragment, p->fragment_size);
-    }
-#endif
-
-#if 0
-  while (buffer_used (p) >= p->audio_input_frame_size * 2 * c->channels)
-    {
-      buffer_read (p, (uint8_t *) p->samples,
-                   p->audio_input_frame_size * 2 * c->channels);
-
-      pkt.size = avcodec_encode_audio (c, p->audio_outbuf,
-                                       p->audio_outbuf_size, p->samples);
-
-      pkt.pts = c->coded_frame->pts;
-      pkt.flags |= AV_PKT_FLAG_KEY;
-      pkt.stream_index = st->index;
-      pkt.data = p->audio_outbuf;
-
-      if (av_write_frame (oc, &pkt) != 0)
-        {
-          fprintf (stderr, "Error while writing audio frame\n");
-          exit (1);
-        }
-    }
-#endif
 }
 
 /*p->audio_get_frame (samples, audio_input_frame_size, c->channels);*/
@@ -580,11 +482,6 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
    if (oc->oformat->flags & AVFMT_GLOBALHEADER)
      c->flags |= CODEC_FLAG_GLOBAL_HEADER;
 
-
-/*    if (!strcmp (oc->oformat->name, "mp4") ||
-          !strcmp (oc->oformat->name, "3gp"))
-    c->flags |= CODEC_FLAG_GLOBAL_HEADER;
-    */
   return st;
 }
 
@@ -625,7 +522,6 @@ open_video (Priv * p, AVFormatContext * oc, AVStream * st)
       fprintf (stderr, "codec not found\n");
       exit (1);
     }
-
 
   /* open the codec */
   if (avcodec_open2 (c, codec, NULL) < 0)
