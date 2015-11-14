@@ -27,7 +27,7 @@
 property_string (path, _("File"), "/tmp/fnord.ogv")
     description (_("Target path and filename, use '-' for stdout."))
 property_string (video_codec,   _("Audio codec"),   "auto")
-property_double (video_bit_rate, _("video bitrate"), 810000.0)
+property_int (video_bit_rate, _("video bitrate"), 810000)
     value_range (0.0, 500000000.0)
 #if 0
 property_double (video_bit_rate_tolerance, _("video bitrate"), 1000.0)
@@ -42,7 +42,8 @@ property_double (frame_rate, _("Frames/second"), 25.0)
     value_range (0.0, 100.0)
 
 property_string (audio_codec, _("Audio codec"), "auto")
-property_double (audio_bit_rate, _("video bitrate"), 810000.0)
+property_int (audio_sample_rate, _("Audio sample rate"), 48000)
+property_int (audio_bit_rate, _("Audio bitrate"), 810000)
 
 property_audio (audio, _("audio"), 0)
 
@@ -62,6 +63,18 @@ property_audio (audio, _("audio"), 0)
 #include <libavutil/avutil.h>
 #include <libavutil/opt.h>
 #include <libswscale/swscale.h>
+
+#define MAX_AUDIO_CHANNELS  6
+#define MAX_AUDIO_SAMPLES   2048
+
+typedef struct AudioFrame {
+  //int64_t          pts;
+  float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
+  int              channels;
+  int              sample_rate;
+  int              len;
+  long             pos;
+} AudioFrame;
 
 typedef struct
 {
@@ -120,12 +133,73 @@ typedef struct
   int       audio_input_frame_size;
   int16_t  *samples;
   uint8_t  *audio_outbuf;
+
+  GList *audio_track;
+  long   audio_pos;
+  long   audio_read_pos;
 } Priv;
 
-//#define DISABLE_AUDIO
+static void
+clear_audio_track (GeglProperties *o)
+{
+  Priv *p = (Priv*)o->user_data;
+  while (p->audio_track)
+    {
+      g_free (p->audio_track->data);
+      p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
+    }
+}
 
+static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
+{
+  int to_remove = 0;
+  GList *l;
+  l = p->audio_track;
+  if (sample_no < 0)
+    return;
+  for (; l; l = l->next)
+  {
+    AudioFrame *af = l->data;
+    if (sample_no > af->pos + af->len)
+    {
+      to_remove ++;
+    }
+
+    if (af->pos <= sample_no &&
+        sample_no < af->pos + af->len)
+      {
+        int i = sample_no - af->pos;
+        *left  = af->data[0][i];
+        if (af->channels == 1)
+          *right = af->data[0][i];
+        else
+          *right = af->data[1][i];
+
+	if (to_remove)  /* consuming audiotrack */
+        {
+          again:
+          for (l = p->audio_track; l; l = l->next)
+          {
+            AudioFrame *af = l->data;
+            if (sample_no > af->pos + af->len)
+            {
+              p->audio_track = g_list_remove (p->audio_track, af);
+              goto again;
+            }
+          }
+        }
+        return;
+      }
+  }
+  //fprintf (stderr, "didn't find audio sample\n");
+  *left  = 0;
+  *right = 0;
+}
+
+#if 0
 static void
 buffer_open (GeglProperties *o, int size);
+#endif
 
 static void
 init (GeglProperties *o)
@@ -146,6 +220,10 @@ init (GeglProperties *o)
       inited = 1;
     }
 
+  clear_audio_track (o);
+  p->audio_pos = 0;
+  p->audio_read_pos = 0;
+
 #ifndef DISABLE_AUDIO
   //p->oxide_audio_instance = gggl_op_sym (op, "oxide_audio_instance");
   //p->oxide_audio_query = gggl_op_sym (op, "oxide_audio_query()");
@@ -164,14 +242,14 @@ init (GeglProperties *o)
        * provided fragment,. should be enough no matter how things are handled,
        * but it should also be more than needed,. find out exact amount needed later
        */
-
+#if 0
       if (!p->buffer)
         {
           int size =
             (p->sample_rate / o->frame_rate) * p->channels * (p->bits / 8) * 2;
           buffer_open (o, size);
         }
-
+#endif
       if (!p->fragment)
         p->fragment = calloc (1, p->fragment_size);
     }
@@ -192,179 +270,7 @@ static void write_audio_frame (GeglProperties      *o,
                                AVFormatContext *oc,
                                AVStream        *st);
 
-
-
-
 #define STREAM_FRAME_RATE 25    /* 25 images/s */
-
-static int
-buffer_used (Priv * p)
-{
-  int       ret;
-  if (!p || !p->buffer_size || !p->buffer)
-    return -1;
-
-  if (p->buffer_write_pos == p->buffer_read_pos)
-    return 0;
-  if (p->buffer_write_pos > p->buffer_read_pos)
-    {
-      ret = p->buffer_write_pos - p->buffer_read_pos;
-    }
-  else
-    {
-      ret = p->buffer_size - (p->buffer_read_pos - p->buffer_write_pos);
-    }
-  return ret;
-}
-
-static int
-buffer_unused (Priv * p)
-{
-  int       ret;
-  ret = p->buffer_size - buffer_used (p) - 1;   /* 1 byte for indicating full */
-  return ret;
-}
-
-#ifndef DISABLE_AUDIO
-static void
-buffer_flush (Priv * p)
-{
-  if (!p->buffer)
-    return;
-  p->buffer_write_pos = 0;
-  p->buffer_read_pos = 0;
-}
-
-static void
-buffer_open (GeglProperties *o, int size)
-{
-  Priv     *p = (Priv*)o->user_data;
-
-  if (p->buffer)
-    {
-      fprintf (stderr, "double init of buffer, eek!\n");
-    }
-
-  p->buffer_size = size;
-  p->buffer = g_malloc (size);
-  buffer_flush (p);
-}
-
-static void
-buffer_close (GeglProperties *o)
-{
-  Priv     *p = (Priv*)o->user_data;
-
-  if (!p->buffer)
-    return;
-  g_free (p->buffer);
-  p->buffer = NULL;
-}
-
-#endif
-
-static int
-buffer_write (Priv * p, uint8_t * source, int count)
-{
-  int       first_segment_size = 0;
-  int       second_segment_size = 0;
-
-  /* check if we have room for the data in the buffer */
-  if (!p->buffer || buffer_unused (p) < count + 1)
-    {
-      fprintf (stderr, "ff_save audio buffer full!! shouldn't happen\n");
-      return -1;
-    }
-
-  /* calculate size of segments to write */
-  first_segment_size = p->buffer_size - p->buffer_write_pos;
-
-  if (p->buffer_read_pos > p->buffer_write_pos)
-    first_segment_size = p->buffer_read_pos - p->buffer_write_pos;
-
-  if (first_segment_size >= count)
-    {
-      first_segment_size = count;
-    }
-  else
-    {
-      second_segment_size = count - first_segment_size;
-    }
-
-  memcpy (p->buffer + p->buffer_write_pos, source, first_segment_size);
-  p->buffer_write_pos += first_segment_size;
-
-  if (p->buffer_write_pos == p->buffer_size)
-    p->buffer_write_pos = 0;
-
-  if (second_segment_size)
-    {
-      memcpy (p->buffer + p->buffer_write_pos, source + first_segment_size,
-              second_segment_size);
-      p->buffer_write_pos = second_segment_size;
-    }
-
-  return first_segment_size + second_segment_size;
-}
-
-#if 0
-. = unused byte
-# = used byte
-  all sizes are specified in contiguous bytes of memory
-  __write_pos / __read_pos
-  //
-  |................................... | empty buffer
-  \ _________________________________ /
-  size_ / __read_pos __write_pos / /|........
-#################..........|
-  \ ______________ / used ()_ / __write_pos __read_pos / /|
-############..................#####|
-  \______________ / unused ()_ / ___write_pos / __read_pos / /|
-#################.#################|    full buffer
-#endif
-     static int
-     buffer_read (Priv * p, uint8_t * dest, int count)
-{
-  int       first_segment_size = 0;
-  int       second_segment_size = 0;
-
-  /* check if we have enough data to fulfil request */
-  if (!p->buffer || buffer_used (p) < count)
-    {
-      fprintf (stderr, "ff_save audio buffer doesn't have enough data\n");
-      return -1;
-    }
-
-  /* calculate size of segments to write */
-  first_segment_size = p->buffer_size - p->buffer_read_pos;
-
-  if (p->buffer_write_pos > p->buffer_read_pos)
-    first_segment_size = p->buffer_write_pos - p->buffer_read_pos;
-
-  if (first_segment_size >= count)
-    {
-      first_segment_size = count;
-    }
-  else
-    {
-      second_segment_size = count - first_segment_size;
-    }
-
-  memcpy (dest, p->buffer + p->buffer_read_pos, first_segment_size);
-  p->buffer_read_pos += first_segment_size;
-
-  if (p->buffer_read_pos == p->buffer_size)
-    p->buffer_read_pos = 0;
-
-  if (second_segment_size)
-    {
-      memcpy (dest + first_segment_size, p->buffer + p->buffer_read_pos,
-              second_segment_size);
-      p->buffer_read_pos = second_segment_size;
-    }
-
-  return first_segment_size + second_segment_size;
-}
 
 #ifndef DISABLE_AUDIO
 /* add an audio output stream */
@@ -413,9 +319,25 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
   c->bit_rate = 64000;
   c->sample_fmt = codec->sample_fmts ? codec->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
 
+  if(1)if (codec->sample_fmts) {
+    int i;
+    for (i = 0; codec->sample_fmts[i]; i++)
+    {
+      if (codec->sample_fmts[i] == AV_SAMPLE_FMT_FLT)
+        fprintf (stderr, "supports interleaved float!\n");
+      if (codec->sample_fmts[i] == AV_SAMPLE_FMT_S16)
+        fprintf (stderr, "supports interleaved s16!\n");
+      if (codec->sample_fmts[i] == AV_SAMPLE_FMT_S16P)
+        fprintf (stderr, "supports planar s16!\n");
+      if (codec->sample_fmts[i] == AV_SAMPLE_FMT_FLTP)
+        fprintf (stderr, "supports planar float!\n");
+    }
+  }
+
   c->sample_rate = 44100;
   c->channel_layout = AV_CH_LAYOUT_STEREO;
   c->channels = 2;
+
 
   if (codec->supported_samplerates)
   {
@@ -438,33 +360,36 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
   p->audio_outbuf_size = 10000;
   p->audio_outbuf = malloc (p->audio_outbuf_size);
 
-#if 0
-
-  /* ugly hack for PCM codecs (will be removed ASAP with new PCM
-     support to compute the input frame size in samples */
-  if (c->frame_size <= 1)
-    {
-      fprintf (stderr, "eeko\n");
-      p->audio_input_frame_size = p->audio_outbuf_size / c->channels;
-      switch (st->codec->codec_id)
-        {
-        case CODEC_ID_PCM_S16LE:
-        case CODEC_ID_PCM_S16BE:
-        case CODEC_ID_PCM_U16LE:
-        case CODEC_ID_PCM_U16BE:
-          p->audio_input_frame_size >>= 1;
-          break;
-        default:
-          break;
-        }
-    }
-  else
-    {
-      p->audio_input_frame_size = c->frame_size;
-    }
-  /*audio_input_frame_size = 44100/25;*/
-#endif
   p->samples = malloc (p->audio_input_frame_size * 2 * c->channels);
+}
+
+
+/* XXX: rewrite  */
+static AVFrame *alloc_audio_frame(enum AVSampleFormat sample_fmt,
+                                  uint64_t channel_layout,
+                                  int sample_rate, int nb_samples)
+{
+  AVFrame *frame = av_frame_alloc();
+  int ret;
+
+  if (!frame) {
+      fprintf(stderr, "Error allocating an audio frame\n");
+      exit(1);
+  }
+
+  frame->format         = sample_fmt;
+  frame->channel_layout = channel_layout;
+  frame->sample_rate    = sample_rate;
+  frame->nb_samples     = nb_samples;
+
+  if (nb_samples) {
+      ret = av_frame_get_buffer(frame, 0);
+      if (ret < 0) {
+          fprintf(stderr, "Error allocating an audio buffer\n");
+          exit(1);
+      }
+  }
+  return frame;
 }
 
 void
@@ -476,8 +401,71 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   AVPacket  pkt;
   av_init_packet (&pkt);
 
-  c = st->codec;
+  /* first we add incoming frames audio samples */
+  {
+    int i;
+    AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
+    af->channels = 2; //o->audio->channels;
+    af->len = o->audio->samples;
+    for (i = 0; i < af->len; i++)
+      {
+        af->data[0][i] = o->audio->left[i];
+        af->data[1][i] = o->audio->right[i];
+      }
+    af->pos = p->audio_pos;
+    p->audio_pos += af->len;
+    p->audio_track = g_list_append (p->audio_track, af);
+  }
 
+  /* then we encode as much as we can in a loop using the codec frame size */
+  c = st->codec;
+  
+  fprintf (stderr, "%li %i %i\n",
+           p->audio_pos, p->audio_read_pos, c->frame_size);
+  while (p->audio_pos - p->audio_read_pos > c->frame_size)
+  {
+    long i;
+    AVFrame *frame = alloc_audio_frame (c->sample_fmt, c->channel_layout,
+                                        c->sample_rate, c->frame_size);
+
+    for (i = 0; i < c->frame_size; i++)
+    {
+      float left = 0, right = 0;
+      get_sample_data (p, i + p->audio_read_pos, &left, &right);
+//    fprintf (stderr, "[%f %f]\n", left, right);
+    }
+
+    av_frame_free (&frame);
+    p->audio_read_pos += c->frame_size;
+  }
+
+#if 0
+  if(1)switch (c->sample_fmt)
+  {
+    case AV_SAMPLE_FMT_FLT:
+      fprintf (stderr, "f\n");
+      break;
+    case AV_SAMPLE_FMT_FLTP:
+      fprintf (stderr, "fp\n");
+      break;
+    case AV_SAMPLE_FMT_S16:
+      fprintf (stderr, "s16\n");
+      break;
+    case AV_SAMPLE_FMT_S16P:
+      fprintf (stderr, "s16p\n");
+      break;
+    case AV_SAMPLE_FMT_S32:
+    case AV_SAMPLE_FMT_S32P:
+      fprintf (stderr, "s32\n");
+      break;
+  }
+#endif
+  //fprintf (stderr, "asdfasdfadf\n");
+
+  fprintf (stderr, "audio codec wants: %i samples\n", c->frame_size);
+
+  p->audio_input_frame_size = c->frame_size;
+  //fprintf (stderr, "going to grab %i %i\n", p->fragment_size, o->audio->samples);
 #if 0
   if (p->oxide_audio_get_fragment (p->oxide_audio_instance,
                                    p->fragment) == (signed) p->fragment_size)
@@ -486,6 +474,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
     }
 #endif
 
+#if 0
   while (buffer_used (p) >= p->audio_input_frame_size * 2 * c->channels)
     {
       buffer_read (p, (uint8_t *) p->samples,
@@ -505,6 +494,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
           exit (1);
         }
     }
+#endif
 }
 
 /*p->audio_get_frame (samples, audio_input_frame_size, c->channels);*/
@@ -903,8 +893,9 @@ finalize (GObject *object)
   if (o->user_data)
     {
       Priv *p = (Priv*)o->user_data;
-
+#if 0
     buffer_close (o);
+#endif
 
     if (p->oc)
       {
