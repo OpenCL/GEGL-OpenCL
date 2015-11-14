@@ -120,6 +120,16 @@ print_error (const char *filename, int err)
     }
 }
 
+static void
+clear_audio_track (GeglProperties *o)
+{
+  Priv *p = (Priv*)o->user_data;
+  while (p->audio_track)
+    {
+      g_free (p->audio_track->data);
+      p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
+    }
+}
 
 static void
 ff_cleanup (GeglProperties *o)
@@ -127,11 +137,7 @@ ff_cleanup (GeglProperties *o)
   Priv *p = (Priv*)o->user_data;
   if (p)
     {
-       while (p->audio_track)
-        {
-          g_free (p->audio_track->data);
-          p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
-	}
+      clear_audio_track (o);
       if (p->loadedfilename)
         g_free (p->loadedfilename);
       if (p->video_stream && p->video_stream->codec)
@@ -172,11 +178,7 @@ init (GeglProperties *o)
   p->width = 320;
   p->height = 200;
 
-  while (p->audio_track)
-  {
-    g_free (p->audio_track->data);
-    p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
-  }
+  clear_audio_track (o);
   p->loadedfilename = g_strdup ("");
 
   ff_cleanup (o);
@@ -201,11 +203,7 @@ decode_audio (GeglOperation *operation,
   int64_t seek_target = pts1 * AV_TIME_BASE;
 
 #if 0
-  while (p->audio_track)
-  {
-    g_free (p->audio_track->data);
-    p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
-  }
+  clear_audio_track (o);
 #endif
   p->prevapts = 0.0;
 
@@ -351,8 +349,6 @@ decode_frame (GeglOperation *operation,
             if (av_read_frame (p->video_fcontext, &pkt) < 0)
             {
               av_free_packet (&pkt);
-              fprintf (stderr, "av_read_frame failed for %s\n",
-                               o->path);
               return -1;
             }
           }
@@ -602,7 +598,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
         else
           *right = af->data[1][i];
 
-	if (to_remove)
+	if (to_remove)  /* consuming audiotrack */
         {
           again:
           for (l = p->audio_track; l; l = l->next)
@@ -618,7 +614,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
         return;
       }
   }
-  fprintf (stderr, "didn't find audio sample\n");
+  //fprintf (stderr, "didn't find audio sample\n");
   *left  = 0;
   *right = 0;
 }
