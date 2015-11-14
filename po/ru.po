@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-10-10 12:55+0300\n"
-"PO-Revision-Date: 2015-10-10 12:56+0300\n"
+"POT-Creation-Date: 2015-11-13 23:20+0300\n"
+"PO-Revision-Date: 2015-11-14 02:47+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: Russian\n"
@@ -21,17 +21,17 @@ msgstr ""
 "|| n%100>=20) ? 1 : 2);\n"
 "X-Generator: Gtranslator 2.91.7\n"
 
-#: ../bin/gegl.c:148
+#: ../bin/gegl.c:150
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Невозможно прочитать файл: %s"
 
-#: ../bin/gegl.c:179
+#: ../bin/gegl.c:189
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr ""
 
-#: ../bin/gegl.c:277 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:287 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr ""
@@ -117,7 +117,7 @@ msgstr ""
 msgid ""
 "\n"
 "\n"
-"unknown parameter '%s' giving you help instead\n"
+"unknown argument '%s' giving you help instead\n"
 "\n"
 "\n"
 msgstr ""
@@ -323,8 +323,8 @@ msgid "Keep image unchanged, where not affected by the lens."
 msgstr ""
 
 #: ../operations/common/apply-lens.c:42 ../operations/common/cubism.c:39
-#: ../operations/common/lens-distortion.c:57
-#: ../operations/common/pixelize.c:62 ../operations/common/tile-paper.c:78
+#: ../operations/common/lens-distortion.c:57 ../operations/common/pixelize.c:62
+#: ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Цвет фона"
 
@@ -391,8 +391,7 @@ msgstr ""
 #: ../operations/common/supernova.c:45 ../operations/common/vignette.c:37
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
-#: ../operations/workshop/kuwahara.c:25
-#: ../operations/workshop/median-blur.c:26
+#: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
 msgid "Radius"
 msgstr "Радиус"
 
@@ -441,8 +440,7 @@ msgid ""
 "constant offset to apply after contrast scaling."
 msgstr ""
 
-#: ../operations/common/buffer-sink.c:25
-#: ../operations/common/write-buffer.c:25
+#: ../operations/common/buffer-sink.c:25 ../operations/common/write-buffer.c:25
 msgid "Buffer location"
 msgstr "Расположение буфера"
 
@@ -630,8 +628,7 @@ msgid ""
 "darkening areas that are already distinctly darker than their neighborhood"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:31
-#: ../operations/common/mono-mixer.c:26
+#: ../operations/common/channel-mixer.c:31 ../operations/common/mono-mixer.c:26
 msgid "Preserve luminosity"
 msgstr "Сохранять светлоту"
 
@@ -816,9 +813,8 @@ msgstr ""
 #: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
 #: ../operations/common/rectangle.c:48 ../operations/common/supernova.c:60
 #: ../operations/common/tile-paper.c:33
-#: ../operations/common/value-propagate.c:55
-#: ../operations/common/vignette.c:34 ../operations/external/text.c:36
-#: ../operations/external/vector-fill.c:26
+#: ../operations/common/value-propagate.c:55 ../operations/common/vignette.c:34
+#: ../operations/external/text.c:36 ../operations/external/vector-fill.c:26
 #: ../operations/external/vector-stroke.c:27
 msgid "Color"
 msgstr "Цвет"
@@ -960,11 +956,10 @@ msgstr "Способ подмешивания шума"
 #. XXX: what?
 #: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
 #: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
-#: ../operations/common/noise-cell.c:55
-#: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
-#: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
-#: ../operations/common/noise-pick.c:38
-#: ../operations/common/noise-simplex.c:39 ../operations/common/noise-rgb.c:44
+#: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
+#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
+#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
+#: ../operations/common/noise-rgb.c:44 ../operations/common/noise-simplex.c:39
 #: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
 #: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
 #: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
@@ -1324,6 +1319,36 @@ msgid ""
 "cubist painting style"
 msgstr ""
 
+#: ../operations/common/dcraw-load.c:26
+#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:25
+#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
+#: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
+#: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
+#: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
+#: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
+#: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
+#: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
+#: ../operations/external/svg-load.c:25 ../operations/external/webp-load.c:25
+#: ../operations/external/webp-save.c:24
+#: ../operations/workshop/external/ff-save.c:30
+#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/rawbayer-load.c:25
+msgid "File"
+msgstr "Файл"
+
+#: ../operations/common/dcraw-load.c:27 ../operations/common/load.c:26
+#: ../operations/common/magick-load.c:27 ../operations/external/png-load.c:28
+#: ../operations/external/ppm-load.c:26 ../operations/external/raw-load.c:28
+#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
+#: ../operations/workshop/rawbayer-load.c:26
+msgid "Path of file to load."
+msgstr ""
+
+#: ../operations/common/dcraw-load.c:183
+msgid "Raw image loader, wrapping dcraw with pipes."
+msgstr ""
+
 #: ../operations/common/deinterlace.c:31
 msgid "Keep even fields"
 msgstr "Чётные поля"
@@ -1635,8 +1660,7 @@ msgid "Calculate a distance transform"
 msgstr ""
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
-#: ../operations/common/plasma.c:40
-#: ../operations/common/polar-coordinates.c:51
+#: ../operations/common/plasma.c:40 ../operations/common/polar-coordinates.c:51
 #: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
@@ -1646,8 +1670,7 @@ msgid "Horizontal shadow offset"
 msgstr "Смещение тени по горизонтали"
 
 #: ../operations/common/dropshadow.c:31 ../operations/common/layer.c:41
-#: ../operations/common/plasma.c:47
-#: ../operations/common/polar-coordinates.c:57
+#: ../operations/common/plasma.c:47 ../operations/common/polar-coordinates.c:57
 #: ../operations/common/rectangle.c:31 ../operations/core/crop.c:30
 msgid "Y"
 msgstr "Y"
@@ -2246,24 +2269,6 @@ msgstr "Размер"
 msgid "The orientation of the blur - hor/ver"
 msgstr ""
 
-#: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24
-#: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
-#: ../operations/common/open-buffer.c:25 ../operations/common/dcraw-load.c:26
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
-#: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
-#: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
-#: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
-#: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
-#: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
-#: ../operations/external/svg-load.c:25 ../operations/external/webp-load.c:25
-#: ../operations/external/webp-save.c:24
-#: ../operations/workshop/external/ff-save.c:30
-#: ../operations/workshop/external/gluas.c:45
-#: ../operations/workshop/rawbayer-load.c:25
-msgid "File"
-msgstr "Файл"
-
 #: ../operations/common/gegl-buffer-load-op.c:25
 msgid "Path of GeglBuffer file to load."
 msgstr ""
@@ -2607,14 +2612,6 @@ msgstr "Линейный градиент"
 msgid "Linear gradient renderer"
 msgstr ""
 
-#: ../operations/common/load.c:26 ../operations/common/magick-load.c:27
-#: ../operations/common/dcraw-load.c:27 ../operations/external/raw-load.c:28
-#: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
-#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
-#: ../operations/workshop/rawbayer-load.c:26
-msgid "Path of file to load."
-msgstr ""
-
 #: ../operations/common/load.c:27 ../operations/external/jpg-load.c:26
 #: ../operations/external/png-load.c:29
 msgid "URI"
@@ -2863,23 +2860,20 @@ msgid "Create a kaleidoscope like effect."
 msgstr ""
 
 #: ../operations/common/mono-mixer.c:28
-#, fuzzy
 msgid "Red Channel Multiplier"
-msgstr "Микшер каналов"
+msgstr "Множитель красного канала"
 
 #: ../operations/common/mono-mixer.c:32
-#, fuzzy
 msgid "Green Channel Multiplier"
-msgstr "Микшер каналов"
+msgstr "Множитель зелёного канала"
 
 #: ../operations/common/mono-mixer.c:36
-#, fuzzy
 msgid "Blue Channel Multiplier"
-msgstr "Микшер каналов"
+msgstr "Множитель синего канала"
 
 #: ../operations/common/mono-mixer.c:113
 msgid "Mono Mixer"
-msgstr ""
+msgstr "Монохромный микшер каналов"
 
 #: ../operations/common/mono-mixer.c:115
 msgid "Monochrome channel mixer"
@@ -3052,8 +3046,7 @@ msgstr "Линейное размывание движением"
 msgid "Zoom motion blur"
 msgstr "Линейное размывание движением"
 
-#: ../operations/common/noise-cell.c:37
-#: ../operations/common/noise-simplex.c:32
+#: ../operations/common/noise-cell.c:37 ../operations/common/noise-simplex.c:32
 #, fuzzy
 msgid "The scale of the noise function"
 msgstr "Ширина функции Ланцоша"
@@ -3074,8 +3067,7 @@ msgstr ""
 msgid "Select the n-th closest point"
 msgstr ""
 
-#: ../operations/common/noise-cell.c:49
-#: ../operations/common/noise-simplex.c:36
+#: ../operations/common/noise-cell.c:49 ../operations/common/noise-simplex.c:36
 msgid "The number of noise octaves."
 msgstr ""
 
@@ -3087,8 +3079,7 @@ msgstr ""
 msgid "Fill each cell with a random color"
 msgstr ""
 
-#: ../operations/common/noise-cell.c:56
-#: ../operations/common/noise-simplex.c:40
+#: ../operations/common/noise-cell.c:56 ../operations/common/noise-simplex.c:40
 #, fuzzy
 msgid "The random seed for the noise function"
 msgstr "Ширина функции Ланцоша"
@@ -3193,15 +3184,6 @@ msgstr "Подавление шума"
 msgid "Anisotropic smoothing operation"
 msgstr "Применить анизотропное сглаживание"
 
-#: ../operations/common/noise-simplex.c:331
-#, fuzzy
-msgid "Simplex Noise"
-msgstr "Сэмплов"
-
-#: ../operations/common/noise-simplex.c:334
-msgid "Generates a solid noise texture."
-msgstr ""
-
 #: ../operations/common/noise-rgb.c:28
 msgid "Correlated noise"
 msgstr "Коррелированный шум"
@@ -3228,6 +3210,15 @@ msgstr ""
 
 #: ../operations/common/noise-rgb.c:178
 msgid "Distort colors by random amounts"
+msgstr ""
+
+#: ../operations/common/noise-simplex.c:331
+#, fuzzy
+msgid "Simplex Noise"
+msgstr "Сэмплов"
+
+#: ../operations/common/noise-simplex.c:334
+msgid "Generates a solid noise texture."
 msgstr ""
 
 #: ../operations/common/noise-slur.c:153
@@ -3363,16 +3354,14 @@ msgstr ""
 
 #: ../operations/common/over.c:25 ../operations/generated/clear.c:38
 #: ../operations/generated/color-burn.c:38
-#: ../operations/generated/color-dodge.c:38
-#: ../operations/generated/darken.c:38 ../operations/generated/difference.c:38
+#: ../operations/generated/color-dodge.c:38 ../operations/generated/darken.c:38
+#: ../operations/generated/difference.c:38
 #: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
 #: ../operations/generated/dst-in.c:38 ../operations/generated/dst-out.c:38
-#: ../operations/generated/dst-over.c:38
-#: ../operations/generated/exclusion.c:38
-#: ../operations/generated/hard-light.c:38
-#: ../operations/generated/lighten.c:38 ../operations/generated/overlay.c:38
-#: ../operations/generated/plus.c:38 ../operations/generated/screen.c:38
-#: ../operations/generated/soft-light.c:38
+#: ../operations/generated/dst-over.c:38 ../operations/generated/exclusion.c:38
+#: ../operations/generated/hard-light.c:38 ../operations/generated/lighten.c:38
+#: ../operations/generated/overlay.c:38 ../operations/generated/plus.c:38
+#: ../operations/generated/screen.c:38 ../operations/generated/soft-light.c:38
 #: ../operations/generated/src-atop.c:38 ../operations/generated/src.c:38
 #: ../operations/generated/src-in.c:38 ../operations/generated/src-out.c:38
 #: ../operations/generated/svg-multiply.c:38 ../operations/generated/xor.c:38
@@ -3382,16 +3371,14 @@ msgstr "sRGB"
 
 #: ../operations/common/over.c:26 ../operations/generated/clear.c:39
 #: ../operations/generated/color-burn.c:39
-#: ../operations/generated/color-dodge.c:39
-#: ../operations/generated/darken.c:39 ../operations/generated/difference.c:39
+#: ../operations/generated/color-dodge.c:39 ../operations/generated/darken.c:39
+#: ../operations/generated/difference.c:39
 #: ../operations/generated/dst-atop.c:39 ../operations/generated/dst.c:39
 #: ../operations/generated/dst-in.c:39 ../operations/generated/dst-out.c:39
-#: ../operations/generated/dst-over.c:39
-#: ../operations/generated/exclusion.c:39
-#: ../operations/generated/hard-light.c:39
-#: ../operations/generated/lighten.c:39 ../operations/generated/overlay.c:39
-#: ../operations/generated/plus.c:39 ../operations/generated/screen.c:39
-#: ../operations/generated/soft-light.c:39
+#: ../operations/generated/dst-over.c:39 ../operations/generated/exclusion.c:39
+#: ../operations/generated/hard-light.c:39 ../operations/generated/lighten.c:39
+#: ../operations/generated/overlay.c:39 ../operations/generated/plus.c:39
+#: ../operations/generated/screen.c:39 ../operations/generated/soft-light.c:39
 #: ../operations/generated/src-atop.c:39 ../operations/generated/src.c:39
 #: ../operations/generated/src-in.c:39 ../operations/generated/src-out.c:39
 #: ../operations/generated/svg-multiply.c:39 ../operations/generated/xor.c:39
@@ -3648,10 +3635,6 @@ msgstr "Радиальный градиент"
 
 #: ../operations/common/radial-gradient.c:127
 msgid "Radial gradient renderer"
-msgstr ""
-
-#: ../operations/common/dcraw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
 msgstr ""
 
 #: ../operations/common/rectangle.c:27
@@ -3991,13 +3974,13 @@ msgid ""
 "from the center of the star."
 msgstr ""
 
-#: ../operations/common/svg-huerotate.c:27
-#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:25
+#: ../operations/common/svg-huerotate.c:27 ../operations/common/svg-matrix.c:27
+#: ../operations/common/svg-saturate.c:25
 msgid "Values"
 msgstr "Значения"
 
-#: ../operations/common/svg-huerotate.c:28
-#: ../operations/common/svg-matrix.c:28 ../operations/common/svg-saturate.c:26
+#: ../operations/common/svg-huerotate.c:28 ../operations/common/svg-matrix.c:28
+#: ../operations/common/svg-saturate.c:26
 msgid "list of <number>s"
 msgstr ""
 
@@ -4019,24 +4002,23 @@ msgstr ""
 
 #: ../operations/common/texturize-canvas.c:29
 msgid "Top-right"
-msgstr ""
+msgstr "Вверх и направо"
 
 #: ../operations/common/texturize-canvas.c:31
 msgid "Top-left"
-msgstr ""
+msgstr "Вверх и налево"
 
 #: ../operations/common/texturize-canvas.c:33
 msgid "Bottom-left"
-msgstr ""
+msgstr "Вниз и налево"
 
 #: ../operations/common/texturize-canvas.c:35
-#, fuzzy
 msgid "Bottom-right"
-msgstr "Яркость:"
+msgstr "Вниз и направо"
 
 #: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
 msgid "Direction"
-msgstr ""
+msgstr "Направление"
 
 #: ../operations/common/texturize-canvas.c:41
 msgid ""
@@ -4281,7 +4263,7 @@ msgstr ""
 
 #: ../operations/common/value-propagate.c:59
 msgid "To top"
-msgstr ""
+msgstr "Вверх"
 
 #: ../operations/common/value-propagate.c:60
 msgid "Propagate to top"
@@ -4289,16 +4271,15 @@ msgstr ""
 
 #: ../operations/common/value-propagate.c:62
 msgid "To left"
-msgstr ""
+msgstr "Налево"
 
 #: ../operations/common/value-propagate.c:63
 msgid "Propagate to left"
 msgstr ""
 
 #: ../operations/common/value-propagate.c:65
-#, fuzzy
 msgid "To right"
-msgstr "Высота плиток"
+msgstr "Направо"
 
 #: ../operations/common/value-propagate.c:66
 #, fuzzy
@@ -4693,22 +4674,6 @@ msgstr ""
 msgid "An explicit caching node"
 msgstr ""
 
-#: ../operations/core/clone.c:25
-msgid "Reference"
-msgstr ""
-
-#: ../operations/core/clone.c:26
-msgid "The reference ID used as input (for use in XML)."
-msgstr ""
-
-#: ../operations/core/clone.c:109
-msgid "Clone"
-msgstr ""
-
-#: ../operations/core/clone.c:110
-msgid "Clone a buffer"
-msgstr "Склонировать буфер"
-
 #: ../operations/core/cast-format.c:25
 msgid "Input format"
 msgstr "Формат ввода"
@@ -4731,6 +4696,22 @@ msgid ""
 "the same bpp"
 msgstr ""
 
+#: ../operations/core/clone.c:25
+msgid "Reference"
+msgstr ""
+
+#: ../operations/core/clone.c:26
+msgid "The reference ID used as input (for use in XML)."
+msgstr ""
+
+#: ../operations/core/clone.c:109
+msgid "Clone"
+msgstr ""
+
+#: ../operations/core/clone.c:110
+msgid "Clone a buffer"
+msgstr "Склонировать буфер"
+
 #: ../operations/core/convert-format.c:87
 #, fuzzy
 msgid "Convert Format"
@@ -4740,11 +4721,15 @@ msgstr "Формат вывода"
 msgid "Convert the data to the specified format"
 msgstr ""
 
-#: ../operations/core/crop.c:207
+#: ../operations/core/crop.c:45
+msgid "Reset origin"
+msgstr ""
+
+#: ../operations/core/crop.c:209
 msgid "Crop"
 msgstr ""
 
-#: ../operations/core/crop.c:208
+#: ../operations/core/crop.c:210
 msgid "Crop a buffer"
 msgstr ""
 
@@ -5065,8 +5050,7 @@ msgstr "Сохранять светлоту"
 msgid "When TRUE the model will not be freed"
 msgstr ""
 
-#: ../operations/external/npd.c:53
-#: ../operations/transform/transform-core.c:190
+#: ../operations/external/npd.c:53 ../operations/transform/transform-core.c:190
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Используемый тип интерполяции"
@@ -5088,11 +5072,6 @@ msgstr ""
 #: ../operations/external/npy-save.c:145
 msgid "NPY image saver (Numerical python file saver.)"
 msgstr ""
-
-#: ../operations/external/raw-load.c:238
-#, fuzzy
-msgid "libraw File Loader"
-msgstr "Загрузчик изображений WebP"
 
 #: ../operations/external/path.c:26
 msgid "Fill Color"
@@ -5246,6 +5225,11 @@ msgstr ""
 #: ../operations/external/ppm-save.c:192
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr ""
+
+#: ../operations/external/raw-load.c:238
+#, fuzzy
+msgid "libraw File Loader"
+msgstr "Загрузчик изображений WebP"
 
 #: ../operations/external/rgbe-load.c:135
 msgid "RGBE File Loader"
@@ -5822,117 +5806,6 @@ msgid ""
 "Cache the input buffer internally, further process take this buffer as input."
 msgstr ""
 
-#: ../operations/workshop/component-extract.c:25
-msgid "RGB Red"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:26
-#, fuzzy
-msgid "RGB Green"
-msgstr "Зелёный"
-
-#: ../operations/workshop/component-extract.c:27
-#, fuzzy
-msgid "RGB Blue"
-msgstr "Синий"
-
-#: ../operations/workshop/component-extract.c:29
-#, fuzzy
-msgid "HSV Saturation"
-msgstr "Насыщенность"
-
-#: ../operations/workshop/component-extract.c:30
-#, fuzzy
-msgid "HSV Value"
-msgstr "Значение"
-
-#: ../operations/workshop/component-extract.c:31
-#, fuzzy
-msgid "HSL Saturation"
-msgstr "Насыщенность"
-
-#: ../operations/workshop/component-extract.c:32
-#, fuzzy
-msgid "HSL Lightness"
-msgstr "Светлота"
-
-#: ../operations/workshop/component-extract.c:33
-msgid "CMYK Cyan"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:34
-msgid "CMYK Magenta"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:35
-msgid "CMYK Yellow"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:36
-msgid "CMYK Key"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:37
-msgid "Y'CbCr Y'"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:38
-msgid "Y'CbCr Cb"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:39
-msgid "Y'CbCr Cr"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:40
-msgid "LAB L"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:41
-msgid "LAB A"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:42
-msgid "LAB B"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:46
-#, fuzzy
-msgid "Component"
-msgstr "Компенсация"
-
-#: ../operations/workshop/component-extract.c:49
-#, fuzzy
-msgid "Component to extract"
-msgstr "Частота компонента 1"
-
-#: ../operations/workshop/component-extract.c:51
-#, fuzzy
-msgid "Invert component"
-msgstr "Сохранить компонент 1"
-
-#: ../operations/workshop/component-extract.c:52
-msgid "Invert the extracted component"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:54
-#, fuzzy
-msgid "Linear output"
-msgstr "Линейное размывание движением"
-
-#: ../operations/workshop/component-extract.c:55
-msgid "Use linear output instead of gamma corrected"
-msgstr ""
-
-#: ../operations/workshop/component-extract.c:264
-#, fuzzy
-msgid "Extract Component"
-msgstr "Экспонента"
-
-#: ../operations/workshop/component-extract.c:266
-msgid "Extract a color model component"
-msgstr ""
-
 #: ../operations/workshop/color-warp.c:24
 msgid "From 0"
 msgstr ""
@@ -6053,6 +5926,117 @@ msgstr "Цвет 1"
 #: ../operations/workshop/color-warp.c:300
 msgid ""
 "Warps the colors of an image between colors with weighted distortion factors."
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:25
+msgid "RGB Red"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:26
+#, fuzzy
+msgid "RGB Green"
+msgstr "Зелёный"
+
+#: ../operations/workshop/component-extract.c:27
+#, fuzzy
+msgid "RGB Blue"
+msgstr "Синий"
+
+#: ../operations/workshop/component-extract.c:29
+#, fuzzy
+msgid "HSV Saturation"
+msgstr "Насыщенность"
+
+#: ../operations/workshop/component-extract.c:30
+#, fuzzy
+msgid "HSV Value"
+msgstr "Значение"
+
+#: ../operations/workshop/component-extract.c:31
+#, fuzzy
+msgid "HSL Saturation"
+msgstr "Насыщенность"
+
+#: ../operations/workshop/component-extract.c:32
+#, fuzzy
+msgid "HSL Lightness"
+msgstr "Светлота"
+
+#: ../operations/workshop/component-extract.c:33
+msgid "CMYK Cyan"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:34
+msgid "CMYK Magenta"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:35
+msgid "CMYK Yellow"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:36
+msgid "CMYK Key"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:37
+msgid "Y'CbCr Y'"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:38
+msgid "Y'CbCr Cb"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:39
+msgid "Y'CbCr Cr"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:40
+msgid "LAB L"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:41
+msgid "LAB A"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:42
+msgid "LAB B"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:46
+#, fuzzy
+msgid "Component"
+msgstr "Компенсация"
+
+#: ../operations/workshop/component-extract.c:49
+#, fuzzy
+msgid "Component to extract"
+msgstr "Частота компонента 1"
+
+#: ../operations/workshop/component-extract.c:51
+#, fuzzy
+msgid "Invert component"
+msgstr "Сохранить компонент 1"
+
+#: ../operations/workshop/component-extract.c:52
+msgid "Invert the extracted component"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:54
+#, fuzzy
+msgid "Linear output"
+msgstr "Линейное размывание движением"
+
+#: ../operations/workshop/component-extract.c:55
+msgid "Use linear output instead of gamma corrected"
+msgstr ""
+
+#: ../operations/workshop/component-extract.c:264
+#, fuzzy
+msgid "Extract Component"
+msgstr "Экспонента"
+
+#: ../operations/workshop/component-extract.c:266
+msgid "Extract a color model component"
 msgstr ""
 
 #: ../operations/workshop/demosaic-bimedian.c:26
@@ -6474,8 +6458,7 @@ msgstr ""
 msgid "spectral ink simulator, for softproofing/simulating press inks"
 msgstr ""
 
-#: ../operations/workshop/kuwahara.c:27
-#: ../operations/workshop/median-blur.c:28
+#: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
 
@@ -6519,6 +6502,38 @@ msgid ""
 "grayscale, if the fileformat is .rawbayer it will use this loader instead of "
 "the normal dcraw loader, if the fileformat is .rawbayerS it will swap the "
 "returned 16bit numbers (the pnm loader is apparently buggy)"
+msgstr ""
+
+#: ../operations/workshop/rgb-clip.c:25 ../operations/workshop/rgb-clip.c:26
+msgid "Clip low pixel values"
+msgstr ""
+
+#: ../operations/workshop/rgb-clip.c:28
+msgid "Low limit"
+msgstr ""
+
+#: ../operations/workshop/rgb-clip.c:31
+msgid "Pixels values lower than this limit will be set to it"
+msgstr ""
+
+#: ../operations/workshop/rgb-clip.c:33 ../operations/workshop/rgb-clip.c:34
+msgid "Clip high pixel values"
+msgstr ""
+
+#: ../operations/workshop/rgb-clip.c:36
+msgid "High limit"
+msgstr ""
+
+#: ../operations/workshop/rgb-clip.c:39
+msgid "Pixels values higher than this limit will be set to it"
+msgstr ""
+
+#: ../operations/workshop/rgb-clip.c:184
+msgid "Clip RGB"
+msgstr ""
+
+#: ../operations/workshop/rgb-clip.c:186
+msgid "Keep RGB pixels values inside a specific range"
 msgstr ""
 
 #~ msgid "Amount of red"
