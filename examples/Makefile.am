@@ -36,14 +36,18 @@ bin_PROGRAMS = \
 	2geglbuffer \
 	gegl-convert \
 	gegl-slicer \
+	video-invert \
         gegl-video \
 	geglbuffer-add-image \
 	geglbuffer-clock \
+	frame-counter \
 	hello-world
 
+frame_counter_SOURCES = frame-counter.c
 2geglbuffer_SOURCES = 2geglbuffer.c
 gegl_convert_SOURCES = gegl-convert.c
 gegl_slicer_SOURCES = gegl-slicer.c
+video_invert_SOURCES = video-invert.c
 geglbuffer_add_image_SOURCES = geglbuffer-add-image.c
 geglbuffer_clock_SOURCES = geglbuffer-clock.c
 hello_world_SOURCES = hello-world.c
