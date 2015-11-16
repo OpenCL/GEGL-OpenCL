@@ -280,8 +280,6 @@ main (gint    argc,
         gegl_node_get (load, "audio", &audio,
                              "frame-rate", &fps, NULL);
 
-
-
         if (audio->samples > 0)
         {
           int i;
