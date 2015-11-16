@@ -134,31 +134,14 @@ process (GeglOperation       *operation,
 }
 
 static void
-dispose (GObject *object)
-{
-  GeglProperties *o = GEGL_PROPERTIES (object);
-
-  if (o->buffer)
-    {
-      g_object_unref (o->buffer);
-      o->buffer = NULL;
-    }
-
-  G_OBJECT_CLASS (gegl_op_parent_class)->dispose (object);
-}
-
-static void
 gegl_op_class_init (GeglOpClass *klass)
 {
-  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
 
-  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  object_class->dispose     = dispose;
   operation_class->prepare  = prepare;
   operation_class->no_cache = TRUE;
   filter_class->process     = process;
