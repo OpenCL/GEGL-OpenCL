@@ -17,12 +17,14 @@
  */
 
 #include "config.h"
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <glib/gi18n-lib.h>
 
 
 #ifdef GEGL_PROPERTIES
 
-property_pointer (pixbuf, _("Pixbuf"), _("GdkPixbuf to use"))
+property_object (pixbuf, _("Pixbuf"), GDK_TYPE_PIXBUF)
+    description(_("GdkPixbuf to use"))
 
 #else
 
@@ -30,7 +32,6 @@ property_pointer (pixbuf, _("Pixbuf"), _("GdkPixbuf to use"))
 #define GEGL_OP_C_SOURCE pixbuf.c
 
 #include "gegl-op.h"
-#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gdk-pixbuf/gdk-pixdata.h>
 
 static GeglRectangle
@@ -46,8 +47,8 @@ get_bounding_box (GeglOperation *operation)
 
   result.x = 0;
   result.y = 0;
-  result.width  = gdk_pixbuf_get_width (o->pixbuf);
-  result.height = gdk_pixbuf_get_height (o->pixbuf);
+  result.width  = gdk_pixbuf_get_width (GDK_PIXBUF (o->pixbuf));
+  result.height = gdk_pixbuf_get_height (GDK_PIXBUF (o->pixbuf));
   return result;
 }
 
@@ -55,7 +56,7 @@ static void prepare (GeglOperation *operation)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
   gegl_operation_set_format (operation, "output",
-      babl_format(gdk_pixbuf_get_has_alpha(o->pixbuf)?"R'G'B'A u8":"R'G'B' u8"));
+      babl_format(gdk_pixbuf_get_has_alpha(GDK_PIXBUF(o->pixbuf))?"R'G'B'A u8":"R'G'B' u8"));
 }
 
 static gboolean
@@ -72,15 +73,14 @@ process (GeglOperation       *operation,
 
       extent.x = 0;
       extent.y = 0;
-      extent.width = gdk_pixbuf_get_width (o->pixbuf);
-      extent.height = gdk_pixbuf_get_height (o->pixbuf);
+      extent.width = gdk_pixbuf_get_width (GDK_PIXBUF (o->pixbuf));
+      extent.height = gdk_pixbuf_get_height (GDK_PIXBUF (o->pixbuf));
 
-      gegl_buffer_set (output, &extent, 0, NULL, gdk_pixbuf_get_pixels (o->pixbuf),
+      gegl_buffer_set (output, &extent, 0, NULL, gdk_pixbuf_get_pixels (GDK_PIXBUF (o->pixbuf)),
                        GEGL_AUTO_ROWSTRIDE);
     }
   return TRUE;
 }
-
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
