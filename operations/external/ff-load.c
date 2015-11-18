@@ -607,6 +607,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
             if (sample_no > af->pos + af->len)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
+              g_free (af);
               goto again;
             }
           }
