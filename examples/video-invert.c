@@ -65,7 +65,7 @@ main (gint argc,
         if (frame_no == 0)
         {
           gegl_node_get (decode, "frame-rate", &fps, 
-            //                   "frames", &frame_count, 
+                                 "frames", &frame_count, 
                                  "audio-sample-rate", &audio_sample_rate, 
                                  "audio-channels", &audio_channels,
                                  NULL);
