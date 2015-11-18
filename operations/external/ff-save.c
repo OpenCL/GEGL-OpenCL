@@ -468,7 +468,6 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c = st->codec;
   c->codec_id = codec_id;
   c->codec_type = AVMEDIA_TYPE_VIDEO;
-
   /* put sample propeters */
   c->bit_rate = o->video_bit_rate;
   /* resolution must be a multiple of two */
@@ -478,8 +477,8 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   st->time_base =(AVRational){1, o->frame_rate};
   c->time_base = st->time_base;
   c->pix_fmt = AV_PIX_FMT_YUV420P;
-
   c->gop_size = 12;             /* emit one intra frame every twelve frames at most */
+
   if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
     {
       c->max_b_frames = 2;
@@ -630,10 +629,10 @@ static void
 write_video_frame (GeglProperties *o,
                    AVFormatContext *oc, AVStream *st)
 {
-  Priv     *p = (Priv*)o->user_data;
-  int       out_size, ret;
+  Priv           *p = (Priv*)o->user_data;
+  int             out_size, ret;
   AVCodecContext *c;
-  AVFrame  *picture_ptr;
+  AVFrame        *picture_ptr;
 
   c = st->codec;
 
@@ -670,7 +669,7 @@ write_video_frame (GeglProperties *o,
       fill_rgb_image (o, p->picture, p->frame_count, c->width, c->height);
     }
 
-  picture_ptr = p->picture;
+  picture_ptr      = p->picture;
   picture_ptr->pts = p->frame_count;
 
   if (oc->oformat->flags & AVFMT_RAWPICTURE)
@@ -764,6 +763,7 @@ tfile (GeglProperties *o)
 
   if (p->video_st)
     open_video (p, p->oc, p->video_st);
+
   if (p->audio_st)
     open_audio (o, p->oc, p->audio_st);
 
@@ -785,9 +785,9 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  static gint inited = 0;
   GeglProperties *o = GEGL_PROPERTIES (operation);
-  Priv       *p = (Priv*)o->user_data;
+  Priv           *p = (Priv*)o->user_data;
+  static gint     inited = 0;
 
   g_assert (input);
 
