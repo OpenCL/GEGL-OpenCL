@@ -33,13 +33,17 @@ G_BEGIN_DECLS
 typedef struct _GeglAudioClass   GeglAudioClass;
 typedef struct _GeglAudioPrivate GeglAudioPrivate;
 
+#define GEGL_MAX_AUDIO_CHANNELS 6
+#define GEGL_MAX_AUDIO_SAMPLES  4800
+
 struct _GeglAudio
 {
-  GObject           parent_instance;
-  float left[4000];
-  float right[4000];
-  int samples;
-  int samplerate;
+  GObject parent_instance;
+  int   sample_rate;
+  int   samples;
+  int   channels;
+  int   channel_layout;/* unused - assumed channels = 1 is mono 2 stereo */
+  float data[GEGL_MAX_AUDIO_CHANNELS][GEGL_MAX_AUDIO_SAMPLES]; 
   GeglAudioPrivate *priv;
 };
 

@@ -168,6 +168,8 @@ gegl_param_audio_finalize (GParamSpec *self)
       param_audio->default_audio = NULL;
     }
 
+  g_warning ("...\n");
+
   parent_class->finalize (self);
 }
 

@@ -83,8 +83,6 @@ typedef struct
   glong            prevframe;      /* previously decoded frame number */
   gdouble          prevpts;        /* timestamp in seconds of last decoded frame */
 
-
-
 } Priv;
 
 #define MAX_AUDIO_CHANNELS  6
@@ -638,17 +636,17 @@ process (GeglOperation       *operation,
 
 	if (p->audio_stream && p->audio_stream->codec) // XXX: remove second clause
         {
-          o->audio->samplerate = p->audio_stream->codec->sample_rate;
+          o->audio->sample_rate = p->audio_stream->codec->sample_rate;
           o->audio->samples = samples_per_frame (o->frame,
-               o->frame_rate, o->audio->samplerate,
+               o->frame_rate, o->audio->sample_rate,
                &sample_start);
 	  decode_audio (operation, p->prevpts, p->prevpts + 5.0);
           {
             int i;
             for (i = 0; i < o->audio->samples; i++)
             {
-              get_sample_data (p, sample_start + i, &o->audio->left[i],
-                                  &o->audio->right[i]);
+              get_sample_data (p, sample_start + i, &o->audio->data[0][i],
+                                  &o->audio->data[1][i]);
             }
           }
         }

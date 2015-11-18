@@ -265,11 +265,11 @@ open_audio (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   {
     if (o->audio)
     {
-      if (o->audio->samplerate == 0)
+      if (o->audio->sample_rate == 0)
       {
-        o->audio->samplerate = 48000; // XXX: should skip adding audiostream instead
+        o->audio->sample_rate = 48000; // XXX: should skip adding audiostream instead
       }
-      p->audio_sample_rate = o->audio->samplerate;
+      p->audio_sample_rate = o->audio->sample_rate;
     }
   }
   c->sample_rate = p->audio_sample_rate;
@@ -343,8 +343,8 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
     af->len = o->audio->samples;
     for (i = 0; i < af->len; i++)
       {
-        af->data[0][i] = o->audio->left[i];
-        af->data[1][i] = o->audio->right[i];
+        af->data[0][i] = o->audio->data[0][i];
+        af->data[1][i] = o->audio->data[1][i];
       }
     af->pos = p->audio_pos;
     p->audio_pos += af->len;
