@@ -1037,13 +1037,13 @@ static void gegl_ui (Mrg *mrg, void *data)
          int i;
          if (!audio_started)
          {
-  	   open_audio (audio->samplerate);
+  	   open_audio (audio->sample_rate);
            SDL_PauseAudio(0);
            audio_started = 1;
          }
          for (i = 0; i < audio->samples; i++)
          {
-           sdl_add_audio_sample (0, audio->left[i], audio->right[i]);
+           sdl_add_audio_sample (0, audio->data[0][i], audio->data[1][i]);
          }
 
          while (audio_len > audio_pos + 5000)
