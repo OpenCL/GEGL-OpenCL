@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2003,2004,2007 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2003,2004,2007, 2015 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
@@ -253,9 +253,9 @@ add_audio_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c->codec_id = codec_id;
   c->codec_type = AVMEDIA_TYPE_AUDIO;
 
-  c->bit_rate = 64000;
-  c->sample_rate = 44100;
-  c->channels = 2;
+  if (oc->oformat->flags & AVFMT_GLOBALHEADER)
+    c->flags |= CODEC_FLAG_GLOBAL_HEADER;
+
   return st;
 }
 #endif
@@ -278,21 +278,6 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
     }
   c->bit_rate = 64000;
   c->sample_fmt = codec->sample_fmts ? codec->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
-
-  if(1)if (codec->sample_fmts) {
-    int i;
-    for (i = 0; codec->sample_fmts[i]; i++)
-    {
-      if (codec->sample_fmts[i] == AV_SAMPLE_FMT_FLT)
-        fprintf (stderr, "supports interleaved float!\n");
-      if (codec->sample_fmts[i] == AV_SAMPLE_FMT_S16)
-        fprintf (stderr, "supports interleaved s16!\n");
-      if (codec->sample_fmts[i] == AV_SAMPLE_FMT_S16P)
-        fprintf (stderr, "supports planar s16!\n");
-      if (codec->sample_fmts[i] == AV_SAMPLE_FMT_FLTP)
-        fprintf (stderr, "supports planar float!\n");
-    }
-  }
 
   c->sample_rate = 44100;
   c->channel_layout = AV_CH_LAYOUT_STEREO;
@@ -356,7 +341,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   Priv *p = (Priv*)o->user_data;
 
   AVCodecContext *c;
-  AVPacket  pkt;
+  AVPacket  pkt = { 0 };
   av_init_packet (&pkt);
 
   /* first we add incoming frames audio samples */
@@ -381,20 +366,70 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   while (p->audio_pos - p->audio_read_pos > c->frame_size)
   {
     long i;
+    int ret;
+    int got_packet = 0;
     AVFrame *frame = alloc_audio_frame (c->sample_fmt, c->channel_layout,
                                         c->sample_rate, c->frame_size);
 
-    for (i = 0; i < c->frame_size; i++)
+    switch (c->sample_fmt) {
+      case AV_SAMPLE_FMT_FLT:
+        for (i = 0; i < c->frame_size; i++)
+        {
+          float left = 0, right = 0;
+          get_sample_data (p, i + p->audio_read_pos, &left, &right);
+          ((float*)frame->data[0])[c->channels*i+0] = left;
+          ((float*)frame->data[0])[c->channels*i+1] = right;
+        }
+        break;
+      case AV_SAMPLE_FMT_FLTP:
+        for (i = 0; i < c->frame_size; i++)
+        {
+          float left = 0, right = 0;
+          get_sample_data (p, i + p->audio_read_pos, &left, &right);
+          ((float*)frame->data[0])[i] = left;
+          ((float*)frame->data[1])[i] = right;
+        }
+        break;
+      case AV_SAMPLE_FMT_S32:
+        for (i = 0; i < c->frame_size; i++)
+        {
+          float left = 0, right = 0;
+          get_sample_data (p, i + p->audio_read_pos, &left, &right);
+          ((int32_t*)frame->data[0])[c->channels*i+0] = left * (1<<31);
+          ((int32_t*)frame->data[0])[c->channels*i+1] = right * (1<<31);
+        }
+        break;
+      case AV_SAMPLE_FMT_S32P:
+        for (i = 0; i < c->frame_size; i++)
+        {
+          float left = 0, right = 0;
+          get_sample_data (p, i + p->audio_read_pos, &left, &right);
+          ((int32_t*)frame->data[0])[i] = left * (1<<31);
+          ((int32_t*)frame->data[1])[i] = right * (1<<31);
+        }
+        break;
+      default:
+        fprintf (stderr, "eeeek unhandled audio format\n");
+        break;
+    }
+
+    av_frame_make_writable (frame);
+    ret = avcodec_encode_audio2 (c, &pkt, frame, &got_packet);
+    if (ret < 0) {
+      fprintf (stderr, "Error encoding audio frame: %s\n", av_err2str (ret));
+    }
+
+    if (got_packet)
     {
-      float left = 0, right = 0;
-      get_sample_data (p, i + p->audio_read_pos, &left, &right);
+      pkt.stream_index = st->index;
+      av_interleaved_write_frame (oc, &pkt);
     }
 
     av_frame_free (&frame);
     p->audio_read_pos += c->frame_size;
   }
 
-  fprintf (stderr, "audio codec wants: %i samples\n", c->frame_size);
+  //fprintf (stderr, "audio codec wants: %i samples\n", c->frame_size);
 
   p->audio_input_frame_size = c->frame_size;
 }
@@ -468,7 +503,6 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
      c->max_qdiff = 4;   // qdiff=4
      c->refs = 3;    // refs=3
      //c->directpred = 1;  // directpred=1
-     c->flags |= CODEC_FLAG_GLOBAL_HEADER;
      c->trellis = 1; // trellis=1
      //c->flags2|=AV_CODEC_FLAG2_BPYRAMID|AV_CODEC_FLAG2_MIXED_REFS|AV_CODEC_FLAG2_WPRED+CODEC_FLAG2_8X8DCT+CODEC_FLAG2_FASTPSKIP;  // flags2=+bpyramid+mixed_refs+wpred+dct8x8+fastpskip
      //c->weighted_p_pred = 2; // wpredp=2
@@ -723,12 +757,13 @@ tfile (GeglProperties *o)
      p->audio_st = add_audio_stream (o, p->oc, p->fmt->audio_codec);
     }
 
-  av_dump_format (p->oc, 0, o->path, 1);
 
   if (p->video_st)
     open_video (p, p->oc, p->video_st);
   if (p->audio_st)
     open_audio (p, p->oc, p->audio_st);
+
+  av_dump_format (p->oc, 0, o->path, 1);
 
   if (avio_open (&p->oc->pb, o->path, AVIO_FLAG_WRITE) < 0)
     {
