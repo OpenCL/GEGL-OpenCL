@@ -266,7 +266,10 @@ open_audio (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   {
     if (o->audio)
     {
-      fprintf (stderr, "getting sample rate %i\n", o->audio->samplerate);
+      if (o->audio->samplerate == 0)
+      {
+        o->audio->samplerate = 48000; // XXX: should skip adding audiostream instead
+      }
       p->audio_sample_rate = o->audio->samplerate;
     }
   }
