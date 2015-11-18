@@ -85,17 +85,6 @@ typedef struct
 
 } Priv;
 
-#define MAX_AUDIO_CHANNELS  6
-#define MAX_AUDIO_SAMPLES   2048
-
-typedef struct AudioFrame {
-  float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
-  int              channels;
-  int              sample_rate;
-  int              len;
-  long             pos;
-} AudioFrame;
-
 static void
 print_error (const char *filename, int err)
 {
@@ -238,11 +227,11 @@ decode_audio (GeglOperation *operation,
 
             while (samples_left)
             {
-               int sample_count = MIN (samples_left, MAX_AUDIO_SAMPLES);
+               int sample_count = MIN (samples_left, GEGL_MAX_AUDIO_SAMPLES);
 
-               AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
+               GeglAudio *af = g_malloc0 (sizeof (GeglAudio));
           
-               af->channels = MIN(p->audio_stream->codec->channels, MAX_AUDIO_CHANNELS);
+               af->channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
 
                switch (p->audio_stream->codec->sample_fmt)
                {
@@ -281,9 +270,9 @@ decode_audio (GeglOperation *operation,
                 default:
                   g_warning ("undealt with sample format\n");
                 }
-                af->len = sample_count;
+                af->samples = sample_count;
                 af->pos = p->audio_pos;
-                p->audio_pos += af->len;
+                p->audio_pos += af->samples;
                 p->audio_track = g_list_append (p->audio_track, af);
 
                 samples_left -= sample_count;
@@ -455,7 +444,7 @@ prepare (GeglOperation *operation)
             else
               {
                  o->audio_sample_rate = p->audio_stream->codec->sample_rate;
-                 o->audio_channels = MIN(p->audio_stream->codec->channels, MAX_AUDIO_CHANNELS);
+                 o->audio_channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
               }
         }
 
@@ -578,14 +567,14 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
     return;
   for (; l; l = l->next)
   {
-    AudioFrame *af = l->data;
-    if (sample_no > af->pos + af->len)
+    GeglAudio *af = l->data;
+    if (sample_no > af->pos + af->samples)
     {
       to_remove ++;
     }
 
     if (af->pos <= sample_no &&
-        sample_no < af->pos + af->len)
+        sample_no < af->pos + af->samples)
       {
         int i = sample_no - af->pos;
         *left  = af->data[0][i];
@@ -599,8 +588,8 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
           again:
           for (l = p->audio_track; l; l = l->next)
           {
-            AudioFrame *af = l->data;
-            if (sample_no > af->pos + af->len)
+            GeglAudio *af = l->data;
+            if (sample_no > af->pos + af->samples)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
               g_free (af);
