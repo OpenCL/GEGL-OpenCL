@@ -27,8 +27,11 @@
 property_string (path, _("File"), "/tmp/fnord.ogv")
     description (_("Target path and filename, use '-' for stdout."))
 property_string (video_codec,   _("Audio codec"),   "auto")
+
 property_int (video_bit_rate, _("video bitrate"), 810000)
     value_range (0.0, 500000000.0)
+property_double (frame_rate, _("Frames/second"), 25.0)
+    value_range (0.0, 100.0)
 #if 0
 property_double (video_bit_rate_tolerance, _("video bitrate"), 1000.0)
 property_int    (video_global_quality, _("global quality"), 255)
@@ -38,8 +41,6 @@ property_int    (gop_size,             _("the number of frames in a group of pic
 property_int    (key_int_min,          _("the minimum number of frames in a group of pictures, 0 for keyframe only"), 1)
 property_int    (max_b_frames,         _("maximum number of consequetive b frames"), 3)
 #endif
-property_double (frame_rate, _("Frames/second"), 25.0)
-    value_range (0.0, 100.0)
 
 property_string (audio_codec, _("Audio codec"), "auto")
 property_int (audio_bit_rate, _("Audio bitrate"), 810000)
@@ -95,23 +96,6 @@ typedef struct
      */
   AVStream *audio_st;
 
-  void     *oxide_audio_instance;
-  /*< non NULL audio_query,. means audio present */
-
-  int32_t (*oxide_audio_query) (void *audio_instance,
-                                uint32_t * sample_rate,
-                                uint32_t * bits,
-                                uint32_t * channels,
-                                uint32_t * fragment_samples,
-                                uint32_t * fragment_size);
-
-  /* get audio samples for the current video frame, this should provide all
-   * audiosamples associated with the frame, frame centering on audio stream is
-   * undefined (FIXME:<<)
-   */
-
-  int32_t (*oxide_audio_get_fragment) (void *audio_instance, uint8_t * buf);
-
   uint32_t  sample_rate;
   uint32_t  bits;
   uint32_t  channels;
@@ -126,11 +110,10 @@ typedef struct
   int       audio_outbuf_size;
   int       audio_input_frame_size;
   int16_t  *samples;
-  uint8_t  *audio_outbuf;
 
-  GList *audio_track;
-  long   audio_pos;
-  long   audio_read_pos;
+  GList    *audio_track;
+  long      audio_pos;
+  long      audio_read_pos;
 } Priv;
 
 static void
@@ -311,11 +294,6 @@ open_audio (GeglProperties *o, AVFormatContext * oc, AVStream * st)
       fprintf (stderr, "could not open codec\n");
       exit (1);
     }
-
-  p->audio_outbuf_size = 10000;
-  p->audio_outbuf = malloc (p->audio_outbuf_size);
-
-  p->samples = malloc (p->audio_input_frame_size * 2 * c->channels);
 }
 
 static AVFrame *alloc_audio_frame(enum AVSampleFormat sample_fmt,
@@ -439,20 +417,14 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
     p->audio_read_pos += c->frame_size;
   }
 
-  //fprintf (stderr, "audio codec wants: %i samples\n", c->frame_size);
-
   p->audio_input_frame_size = c->frame_size;
 }
-
-/*p->audio_get_frame (samples, audio_input_frame_size, c->channels);*/
 
 void
 close_audio (Priv * p, AVFormatContext * oc, AVStream * st)
 {
   avcodec_close (st->codec);
 
-  av_free (p->samples);
-  av_free (p->audio_outbuf);
 }
 
 /* add a video output stream */
@@ -785,15 +757,6 @@ tfile (GeglProperties *o)
   return 0;
 }
 
-#if 0
-static int
-filechanged (GeglOpOperation *op, const char *att)
-{
-  init (op);
-  return 0;
-}
-#endif
-
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -834,9 +797,6 @@ finalize (GObject *object)
   if (o->user_data)
     {
       Priv *p = (Priv*)o->user_data;
-#if 0
-    buffer_close (o);
-#endif
 
     if (p->oc)
       {
@@ -846,16 +806,6 @@ finalize (GObject *object)
           close_audio (p, p->oc, p->audio_st);
 
         av_write_trailer (p->oc);
-#if 0
-{
-        //gint i;
-        for (i = 0; i < p->oc->nb_streams; i++)
-          {
-            av_freep (&p->oc->streams[i]);
-          }
-}
-#endif
-
         avio_closep (&p->oc->pb);
         avformat_free_context (p->oc);
       }
