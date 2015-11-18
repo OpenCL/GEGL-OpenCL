@@ -382,6 +382,15 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
           ((float*)frame->data[1])[i] = right;
         }
         break;
+      case AV_SAMPLE_FMT_S16:
+        for (i = 0; i < c->frame_size; i++)
+        {
+          float left = 0, right = 0;
+          get_sample_data (p, i + p->audio_read_pos, &left, &right);
+          ((int16_t*)frame->data[0])[c->channels*i+0] = left * (1<<15);
+          ((int16_t*)frame->data[0])[c->channels*i+1] = right * (1<<15);
+        }
+        break;
       case AV_SAMPLE_FMT_S32:
         for (i = 0; i < c->frame_size; i++)
         {
@@ -398,6 +407,15 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
           get_sample_data (p, i + p->audio_read_pos, &left, &right);
           ((int32_t*)frame->data[0])[i] = left * (1<<31);
           ((int32_t*)frame->data[1])[i] = right * (1<<31);
+        }
+        break;
+      case AV_SAMPLE_FMT_S16P:
+        for (i = 0; i < c->frame_size; i++)
+        {
+          float left = 0, right = 0;
+          get_sample_data (p, i + p->audio_read_pos, &left, &right);
+          ((int16_t*)frame->data[0])[i] = left * (1<<15);
+          ((int16_t*)frame->data[1])[i] = right * (1<<15);
         }
         break;
       default:
