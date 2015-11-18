@@ -91,7 +91,6 @@ typedef struct
 #define MAX_AUDIO_SAMPLES   2048
 
 typedef struct AudioFrame {
-  int64_t          pts;
   float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
   int              channels;
   int              sample_rate;
@@ -245,7 +244,6 @@ decode_audio (GeglOperation *operation,
 
                AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
           
-               af->pts = pkt.pts; // XXX : only right for first of set
                af->channels = MIN(p->audio_stream->codec->channels, MAX_AUDIO_CHANNELS);
 
                switch (p->audio_stream->codec->sample_fmt)
