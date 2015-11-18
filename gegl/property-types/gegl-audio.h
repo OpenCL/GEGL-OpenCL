@@ -34,13 +34,14 @@ typedef struct _GeglAudioClass   GeglAudioClass;
 typedef struct _GeglAudioPrivate GeglAudioPrivate;
 
 #define GEGL_MAX_AUDIO_CHANNELS 6
-#define GEGL_MAX_AUDIO_SAMPLES  4800
+#define GEGL_MAX_AUDIO_SAMPLES  2400   // this limits us to 20fps and higher for regular sample rates
 
 struct _GeglAudio
 {
   GObject parent_instance;
   int   sample_rate;
   int   samples;
+  int   pos;
   int   channels;
   int   channel_layout;/* unused - assumed channels = 1 is mono 2 stereo */
   float data[GEGL_MAX_AUDIO_CHANNELS][GEGL_MAX_AUDIO_SAMPLES]; 
