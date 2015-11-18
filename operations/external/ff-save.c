@@ -64,7 +64,6 @@ property_audio (audio, _("audio"), 0)
 #define MAX_AUDIO_SAMPLES   2048
 
 typedef struct AudioFrame {
-  //int64_t        pts;
   float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
   int              channels;
   int              sample_rate;
