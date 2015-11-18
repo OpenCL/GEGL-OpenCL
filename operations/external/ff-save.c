@@ -52,10 +52,6 @@ property_audio (audio, _("audio"), 0)
 #define GEGL_OP_SINK
 #define GEGL_OP_C_SOURCE ff-save.c
 
-/* bitrot cruft */
-#define FF_API_OLD_ENCODE_AUDIO 1
-#define FF_API_DUMP_FORMAT  1
-
 #include "gegl-op.h"
 
 #include <libavformat/avformat.h>
