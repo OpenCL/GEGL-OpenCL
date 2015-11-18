@@ -64,7 +64,7 @@ property_audio (audio, _("audio"), 0)
 #define MAX_AUDIO_SAMPLES   2048
 
 typedef struct AudioFrame {
-  //int64_t          pts;
+  //int64_t        pts;
   float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
   int              channels;
   int              sample_rate;
@@ -161,6 +161,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
             if (sample_no > af->pos + af->len)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
+              g_free (af);
               goto again;
             }
           }
