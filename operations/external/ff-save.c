@@ -42,7 +42,6 @@ property_double (frame_rate, _("Frames/second"), 25.0)
     value_range (0.0, 100.0)
 
 property_string (audio_codec, _("Audio codec"), "auto")
-property_int (audio_sample_rate, _("Audio sample rate"), 48000)
 property_int (audio_bit_rate, _("Audio bitrate"), 810000)
 
 property_audio (audio, _("audio"), 0)
@@ -87,6 +86,7 @@ typedef struct
   AVFrame  *picture, *tmp_picture;
   uint8_t  *video_outbuf;
   int       frame_count, video_outbuf_size;
+  int       audio_sample_rate;
 
     /** the rest is for audio handling within oxide, note that the interface
      * used passes all used functions in the oxide api through the reg_sym api
@@ -212,6 +212,8 @@ init (GeglProperties *o)
   clear_audio_track (o);
   p->audio_pos = 0;
   p->audio_read_pos = 0;
+
+  p->audio_sample_rate = -1; /* only do this if it hasn't been manually set? */
 }
 
 static void close_video       (Priv            *p,
@@ -257,8 +259,9 @@ add_audio_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
 #endif
 
 static void
-open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
+open_audio (GeglProperties *o, AVFormatContext * oc, AVStream * st)
 {
+  Priv *p = (Priv*)o->user_data;
   AVCodecContext *c;
   AVCodec  *codec;
   int i;
@@ -275,7 +278,15 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
   c->bit_rate = 64000;
   c->sample_fmt = codec->sample_fmts ? codec->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
 
-  c->sample_rate = 44100;
+  if (p->audio_sample_rate == -1)
+  {
+    if (o->audio)
+    {
+      fprintf (stderr, "getting sample rate %i\n", o->audio->samplerate);
+      p->audio_sample_rate = o->audio->samplerate;
+    }
+  }
+  c->sample_rate = p->audio_sample_rate;
   c->channel_layout = AV_CH_LAYOUT_STEREO;
   c->channels = 2;
 
@@ -284,10 +295,13 @@ open_audio (Priv * p, AVFormatContext * oc, AVStream * st)
   {
     c->sample_rate = codec->supported_samplerates[0];
     for (i = 0; codec->supported_samplerates[i]; i++)
-      if (codec->supported_samplerates[i] == 44100)
-         c->sample_rate = 44100;
+    {
+      if (codec->supported_samplerates[i] == p->audio_sample_rate)
+         c->sample_rate = p->audio_sample_rate;
+    }
   }
-  st->time_base = (AVRational){1, c->sample_rate};
+  //st->time_base = (AVRational){1, c->sample_rate};
+  st->time_base = (AVRational){1, p->audio_sample_rate};
 
   c->strict_std_compliance = FF_COMPLIANCE_EXPERIMENTAL; // ffmpeg AAC is not quite stable yet
 
@@ -757,7 +771,7 @@ tfile (GeglProperties *o)
   if (p->video_st)
     open_video (p, p->oc, p->video_st);
   if (p->audio_st)
-    open_audio (p, p->oc, p->audio_st);
+    open_audio (o, p->oc, p->audio_st);
 
   av_dump_format (p->oc, 0, o->path, 1);
 
