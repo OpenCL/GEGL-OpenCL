@@ -60,17 +60,6 @@ property_audio (audio, _("audio"), 0)
 #include <libavutil/opt.h>
 #include <libswscale/swscale.h>
 
-#define MAX_AUDIO_CHANNELS  6
-#define MAX_AUDIO_SAMPLES   2048
-
-typedef struct AudioFrame {
-  float            data[MAX_AUDIO_CHANNELS][MAX_AUDIO_SAMPLES];
-  int              channels;
-  int              sample_rate;
-  int              len;
-  long             pos;
-} AudioFrame;
-
 typedef struct
 {
   gdouble    frame;
@@ -135,14 +124,14 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
     return;
   for (; l; l = l->next)
   {
-    AudioFrame *af = l->data;
-    if (sample_no > af->pos + af->len)
+    GeglAudio *af = l->data;
+    if (sample_no > af->pos + af->samples)
     {
       to_remove ++;
     }
 
     if (af->pos <= sample_no &&
-        sample_no < af->pos + af->len)
+        sample_no < af->pos + af->samples)
       {
         int i = sample_no - af->pos;
         *left  = af->data[0][i];
@@ -156,8 +145,8 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
           again:
           for (l = p->audio_track; l; l = l->next)
           {
-            AudioFrame *af = l->data;
-            if (sample_no > af->pos + af->len)
+            GeglAudio *af = l->data;
+            if (sample_no > af->pos + af->samples)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
               g_free (af);
@@ -338,16 +327,16 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   /* first we add incoming frames audio samples */
   {
     int i;
-    AudioFrame *af = g_malloc0 (sizeof (AudioFrame));
+    GeglAudio *af = g_malloc0 (sizeof (GeglAudio));
     af->channels = 2; //o->audio->channels;
-    af->len = o->audio->samples;
-    for (i = 0; i < af->len; i++)
+    af->samples = o->audio->samples;
+    for (i = 0; i < af->samples; i++)
       {
         af->data[0][i] = o->audio->data[0][i];
         af->data[1][i] = o->audio->data[1][i];
       }
     af->pos = p->audio_pos;
-    p->audio_pos += af->len;
+    p->audio_pos += af->samples;
     p->audio_track = g_list_append (p->audio_track, af);
   }
 
