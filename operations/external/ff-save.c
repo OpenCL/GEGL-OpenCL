@@ -45,7 +45,7 @@ property_int    (max_b_frames,         _("maximum number of consequetive b frame
 property_string (audio_codec, _("Audio codec"), "auto")
 property_int (audio_bit_rate, _("Audio bitrate"), 810000)
 
-property_audio (audio, _("audio"), 0)
+property_audio_fragment (audio, _("audio"), 0)
 
 #else
 
@@ -124,7 +124,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
     return;
   for (; l; l = l->next)
   {
-    GeglAudio *af = l->data;
+    GeglAudioFragment *af = l->data;
     if (sample_no > af->pos + af->samples)
     {
       to_remove ++;
@@ -145,7 +145,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
           again:
           for (l = p->audio_track; l; l = l->next)
           {
-            GeglAudio *af = l->data;
+            GeglAudioFragment *af = l->data;
             if (sample_no > af->pos + af->samples)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
@@ -327,7 +327,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   /* first we add incoming frames audio samples */
   {
     int i;
-    GeglAudio *af = g_malloc0 (sizeof (GeglAudio));
+    GeglAudioFragment *af = g_malloc0 (sizeof (GeglAudioFragment));
     af->channels = 2; //o->audio->channels;
     af->samples = o->audio->samples;
     for (i = 0; i < af->samples; i++)

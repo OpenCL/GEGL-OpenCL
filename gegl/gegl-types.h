@@ -46,11 +46,11 @@ GType gegl_config_get_type (void) G_GNUC_CONST;
 #define GEGL_CONFIG(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_CONFIG, GeglConfig))
 #define GEGL_IS_CONFIG(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GEGL_TYPE_CONFIG))
 
-typedef struct _GeglSampler GeglSampler;
-typedef struct _GeglCurve   GeglCurve;
-typedef struct _GeglPath    GeglPath;
-typedef struct _GeglColor   GeglColor;
-typedef struct _GeglAudio   GeglAudio;
+typedef struct _GeglSampler       GeglSampler;
+typedef struct _GeglCurve         GeglCurve;
+typedef struct _GeglPath          GeglPath;
+typedef struct _GeglColor         GeglColor;
+typedef struct _GeglAudioFragment GeglAudioFragment;
 
 typedef struct _GeglRectangle GeglRectangle;
 

@@ -30,7 +30,7 @@
 #include <gegl.h>
 #include <gegl-types.h>
 #include <gegl-paramspecs.h>
-#include <gegl-audio.h>
+#include <gegl-audio-fragment.h>
 
 G_BEGIN_DECLS
 

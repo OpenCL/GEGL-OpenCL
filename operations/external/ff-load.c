@@ -44,7 +44,7 @@ property_double (frame_rate, _("frame-rate"), 0)
 property_string (video_codec, _("video-codec"), "")
 property_string (audio_codec, _("audio-codec"), "")
 
-property_audio (audio, _("audio"), 0)
+property_audio_fragment (audio, _("audio"), 0)
 
 #else
 
@@ -229,7 +229,7 @@ decode_audio (GeglOperation *operation,
             {
                int sample_count = MIN (samples_left, GEGL_MAX_AUDIO_SAMPLES);
 
-               GeglAudio *af = g_malloc0 (sizeof (GeglAudio));
+               GeglAudioFragment *af = g_malloc0 (sizeof (GeglAudioFragment));
           
                af->channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
 
@@ -567,7 +567,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
     return;
   for (; l; l = l->next)
   {
-    GeglAudio *af = l->data;
+    GeglAudioFragment *af = l->data;
     if (sample_no > af->pos + af->samples)
     {
       to_remove ++;
@@ -588,7 +588,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
           again:
           for (l = p->audio_track; l; l = l->next)
           {
-            GeglAudio *af = l->data;
+            GeglAudioFragment *af = l->data;
             if (sample_no > af->pos + af->samples)
             {
               p->audio_track = g_list_remove (p->audio_track, af);

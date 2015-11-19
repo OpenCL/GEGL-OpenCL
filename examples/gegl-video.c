@@ -20,7 +20,7 @@
  */
 
 #include <gegl.h>
-#include <gegl-audio.h>
+#include <gegl-audio-fragment.h>
 #include <glib/gprintf.h>
 #include <gexiv2/gexiv2.h>
 #include <stdint.h>
@@ -47,11 +47,11 @@ int run_mode = NEGL_NO_UI;
 int show_progress = 0;
 
 void
-gegl_meta_set_audio (const char *path,
-                     GeglAudio  *audio);
+gegl_meta_set_audio (const char         *path,
+                     GeglAudioFragment  *audio);
 void
-gegl_meta_get_audio (const char *path,
-                     GeglAudio  *audio);
+gegl_meta_get_audio (const char         *path,
+                     GeglAudioFragment  *audio);
 
 void usage(void);
 void usage(void)
@@ -275,7 +275,7 @@ main (gint    argc,
 
 	decode_frame_no (frame);
         {
-        GeglAudio *audio;
+        GeglAudioFragment *audio;
         gdouble fps;
         gegl_node_get (load, "audio", &audio,
                              "frame-rate", &fps, NULL);
@@ -345,8 +345,8 @@ main (gint    argc,
 }
 
 void
-gegl_meta_set_audio (const char *path,
-                     GeglAudio  *audio)
+gegl_meta_set_audio (const char        *path,
+                     GeglAudioFragment *audio)
 {
   GError *error = NULL; 
   GExiv2Metadata *e2m = gexiv2_metadata_new ();
@@ -381,8 +381,8 @@ gegl_meta_set_audio (const char *path,
 }
 
 void
-gegl_meta_get_audio (const char *path,
-                     GeglAudio  *audio)
+gegl_meta_get_audio (const char        *path,
+                     GeglAudioFragment *audio)
 {
   //gchar  *ret   = NULL;
   GError *error = NULL;

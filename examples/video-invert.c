@@ -52,7 +52,7 @@ main (gint argc,
 
     for (frame_no = 0; frame_no < frame_count; frame_no++)
     {
-      GeglAudio *audio;
+      GeglAudioFragment *audio;
       fprintf (stderr, "\r%i/%i", frame_no, frame_count);
       gegl_node_set (decode, "frame", frame_no, NULL);
       if (buffer){

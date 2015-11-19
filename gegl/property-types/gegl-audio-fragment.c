@@ -20,7 +20,7 @@
 
 #include "gegl.h"
 #include "gegl-types-internal.h"
-#include "gegl-audio.h"
+#include "gegl-audio-fragment.h"
 
 enum
 {
@@ -28,7 +28,7 @@ enum
   PROP_STRING
 };
 
-struct _GeglAudioPrivate
+struct _GeglAudioFragmentPrivate
 {
   int foo;
 };
@@ -42,16 +42,16 @@ static void      get_property (GObject    *gobject,
                                GValue     *value,
                                GParamSpec *pspec);
 
-G_DEFINE_TYPE (GeglAudio, gegl_audio, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GeglAudioFragment, gegl_audio_fragment, G_TYPE_OBJECT)
 
 static void
-gegl_audio_init (GeglAudio *self)
+gegl_audio_fragment_init (GeglAudioFragment *self)
 {
-  self->priv = G_TYPE_INSTANCE_GET_PRIVATE ((self), GEGL_TYPE_AUDIO, GeglAudioPrivate);
+  self->priv = G_TYPE_INSTANCE_GET_PRIVATE ((self), GEGL_TYPE_AUDIO_FRAGMENT, GeglAudioFragmentPrivate);
 }
 
 static void
-gegl_audio_class_init (GeglAudioClass *klass)
+gegl_audio_fragment_class_init (GeglAudioFragmentClass *klass)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
 
@@ -61,11 +61,11 @@ gegl_audio_class_init (GeglAudioClass *klass)
   g_object_class_install_property (gobject_class, PROP_STRING,
                                    g_param_spec_string ("string",
                                                         "String",
-                                                        "A String representation of the GeglAudio",
+                                                        "A String representation of the GeglAudioFragment",
                                                         "",
                                                         G_PARAM_READWRITE));
 
-  g_type_class_add_private (klass, sizeof (GeglAudioPrivate));
+  g_type_class_add_private (klass, sizeof (GeglAudioFragmentPrivate));
 }
 
 static void
@@ -74,7 +74,7 @@ set_property (GObject      *gobject,
               const GValue *value,
               GParamSpec   *pspec)
 {
-  //GeglAudio *audio = GEGL_AUDIO (gobject);
+  //GeglAudioFragment *audio = GEGL_AUDIO_FRAGMENT (gobject);
 
   switch (property_id)
     {
@@ -90,7 +90,7 @@ get_property (GObject    *gobject,
               GValue     *value,
               GParamSpec *pspec)
 {
-  //GeglAudio *audio = GEGL_AUDIO (gobject);
+  //GeglAudioFragment *audio = GEGL_AUDIO_FRAGMENT (gobject);
 
   switch (property_id)
     {
@@ -100,88 +100,88 @@ get_property (GObject    *gobject,
     }
 }
 
-GeglAudio *
-gegl_audio_new (void)
+GeglAudioFragment *
+gegl_audio_fragment_new (void)
 {
   void *string = NULL;
   if (string)
-    return g_object_new (GEGL_TYPE_AUDIO, "string", string, NULL);
+    return g_object_new (GEGL_TYPE_AUDIO_FRAGMENT, "string", string, NULL);
 
-  return g_object_new (GEGL_TYPE_AUDIO, NULL);
+  return g_object_new (GEGL_TYPE_AUDIO_FRAGMENT, NULL);
 }
 
 /* --------------------------------------------------------------------------
- * A GParamSpec class to describe behavior of GeglAudio as an object property
+ * A GParamSpec class to describe behavior of GeglAudioFragment as an object property
  * follows.
  * --------------------------------------------------------------------------
  */
 
-#define GEGL_PARAM_AUDIO(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_AUDIO, GeglParamAudio))
-#define GEGL_IS_PARAM_AUDIO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_PARAM_AUDIO))
+#define GEGL_PARAM_AUDIO_FRAGMENT (obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), GEGL_TYPE_PARAM_AUDIO_FRAGMENT, GeglParamAudioFragment))
+#define GEGL_IS_PARAM_AUDIO_FRAGMENT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GEGL_TYPE_PARAM_AUDIO_FRAGMENT))
 
-typedef struct _GeglParamAudio GeglParamAudio;
+typedef struct _GeglParamAudioFragment GeglParamAudioFragment;
 
-struct _GeglParamAudio
+struct _GeglParamAudioFragment
 {
   GParamSpec parent_instance;
 };
 
 static void
-gegl_param_audio_init (GParamSpec *self)
+gegl_param_audio_fragment_init (GParamSpec *self)
 {
 }
 
 static void
-gegl_param_audio_finalize (GParamSpec *self)
+gegl_param_audio_fragment_finalize (GParamSpec *self)
 {
-  //GeglParamAudio  *param_audio  = GEGL_PARAM_AUDIO (self);
-  GParamSpecClass *parent_class = g_type_class_peek (g_type_parent (GEGL_TYPE_PARAM_AUDIO));
+  //GeglParamAudioFragment  *param_audio  = GEGL_PARAM_AUDIO (self);
+  GParamSpecClass *parent_class = g_type_class_peek (g_type_parent (GEGL_TYPE_PARAM_AUDIO_FRAGMENT));
 
   parent_class->finalize (self);
 }
 
 static void
-gegl_param_audio_set_default (GParamSpec *param_spec,
+gegl_param_audio_fragment_set_default (GParamSpec *param_spec,
                               GValue     *value)
 {
-  //GeglParamAudio *gegl_audio = GEGL_PARAM_AUDIO (param_spec);
+  //GeglParamAudioFragment *gegl_audio_fragment = GEGL_PARAM_AUDIO (param_spec);
 }
 
 GType
-gegl_param_audio_get_type (void)
+gegl_param_audio_fragment_get_type (void)
 {
-  static GType param_audio_type = 0;
+  static GType param_audio_fragment_type = 0;
 
-  if (G_UNLIKELY (param_audio_type == 0))
+  if (G_UNLIKELY (param_audio_fragment_type == 0))
     {
-      static GParamSpecTypeInfo param_audio_type_info = {
-        sizeof (GeglParamAudio),
+      static GParamSpecTypeInfo param_audio_fragment_type_info = {
+        sizeof (GeglParamAudioFragment),
         0,
-        gegl_param_audio_init,
+        gegl_param_audio_fragment_init,
         0,
-        gegl_param_audio_finalize,
-        gegl_param_audio_set_default,
+        gegl_param_audio_fragment_finalize,
+        gegl_param_audio_fragment_set_default,
         NULL,
         NULL
       };
-      param_audio_type_info.value_type = GEGL_TYPE_AUDIO;
+      param_audio_fragment_type_info.value_type = GEGL_TYPE_AUDIO_FRAGMENT;
 
-      param_audio_type = g_param_type_register_static ("GeglParamAudio",
-                                                       &param_audio_type_info);
+      param_audio_fragment_type = g_param_type_register_static ("GeglParamAudioFragment",
+                                                       &param_audio_fragment_type_info);
     }
 
-  return param_audio_type;
+  return param_audio_fragment_type;
 }
 
 GParamSpec *
-gegl_param_spec_audio (const gchar *name,
-                       const gchar *nick,
-                       const gchar *blurb,
-                       GParamFlags  flags)
+gegl_param_spec_audio_fragment (const gchar *name,
+                                const gchar *nick,
+                                const gchar *blurb,
+                                GParamFlags  flags)
 {
-  GeglParamAudio *param_audio;
+  GeglParamAudioFragment *param_audio;
 
-  param_audio = g_param_spec_internal (GEGL_TYPE_PARAM_AUDIO,
+  param_audio = g_param_spec_internal (GEGL_TYPE_PARAM_AUDIO_FRAGMENT,
                                        name, nick, blurb, flags);
 
   return G_PARAM_SPEC (param_audio);

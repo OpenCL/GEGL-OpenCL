@@ -268,7 +268,7 @@ gegl_module_register (GTypeModule *module)
 #define property_curve(name, label, def_val)      ITEM2(name,label,def_val,object)
 #define property_path(name, label, def_val)       ITEM2(name,label,def_val,object)
 #define property_color(name, label, def_val)      ITEM2(name,label,def_val,object)
-#define property_audio(name, label, def_val)      ITEM2(name,label,NULL,object)
+#define property_audio_fragment(name, label, def_val)      ITEM2(name,label,NULL,object)
 
 #define enum_start(enum_name)   typedef enum {
 #define enum_value(value, nick, name)    value ,
@@ -332,7 +332,7 @@ static GType enum_name ## _get_type (void)               \
 #undef property_seed
 #undef property_curve
 #undef property_color
-#undef property_audio
+#undef property_audio_fragment
 #undef property_path
 #undef enum_start
 #undef enum_value
@@ -355,7 +355,7 @@ struct _GeglProperties
 #define property_object(name, label, def_val)          GObject    *name;
 #define property_curve(name, label, def_val)           GeglCurve  *name;
 #define property_color(name, label, def_val)           GeglColor  *name;
-#define property_audio(name, label, def_val)           GeglAudio  *name;
+#define property_audio_fragment(name, label, def_val)  GeglAudioFragment  *name;
 #define property_path(name, label, def_val)            GeglPath   *name; gulong path_changed_handler;
 #define property_pointer(name, label, def_val)         gpointer    name;
 #define property_format(name, label, def_val)          gpointer    name;
@@ -378,7 +378,7 @@ struct _GeglProperties
 #undef property_seed
 #undef property_curve
 #undef property_color
-#undef property_audio
+#undef property_audio_fragment
 #undef property_path
 };
 
@@ -401,7 +401,7 @@ enum
 #define property_object(name, label, def_val)     ITEM2(name,label,def_val,object)
 #define property_curve(name, label, def_val)      ITEM2(name,label,def_val,object)
 #define property_color(name, label, def_val)      ITEM2(name,label,def_val,object)
-#define property_audio(name, label, def_val)      ITEM2(name,label,def_val,object)
+#define property_audio_fragment(name, label, def_val) ITEM2(name,label,def_val,object)
 #define property_path(name, label, def_val)       ITEM2(name,label,def_val,object)
 #define property_pointer(name, label, def_val)    ITEM(name,label,def_val,pointer)
 #define property_format(name, label, def_val)     ITEM(name,label,def_val,pointer)
@@ -448,7 +448,7 @@ get_property (GObject      *gobject,
 #undef property_seed
 #undef property_curve
 #undef property_color
-#undef property_audio
+#undef property_audio_fragment
 #undef property_path
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (gobject, property_id, pspec);
@@ -517,7 +517,7 @@ set_property (GObject      *gobject,
          g_object_unref (properties->name);                           \
       properties->name = g_value_dup_object (value);                  \
       break;
-#define property_audio(name, label, def_val)                          \
+#define property_audio_fragment(name, label, def_val)                 \
     case PROP_##name:                                                 \
       if (properties->name != NULL)                                   \
          g_object_unref (properties->name);                           \
@@ -574,7 +574,7 @@ set_property (GObject      *gobject,
 #undef property_pointer
 #undef property_curve
 #undef property_color
-#undef property_audio
+#undef property_audio_fragment
 #undef property_path
 #undef property_format
 #undef property_enum
@@ -631,13 +631,13 @@ static void gegl_op_destroy_notify (gpointer data)
       g_object_unref (properties->name);            \
       properties->name = NULL;                      \
     }
-#define property_audio(name, label, def_val)       \
+#define property_audio_fragment(name, label, def_val) \
   if (properties->name)                             \
     {                                               \
       g_object_unref (properties->name);            \
       properties->name = NULL;                      \
     }
-#define property_path(name, label, def_val)       \
+#define property_path(name, label, def_val)         \
   if (properties->name)                             \
     {                                               \
       g_object_unref (properties->name);            \
@@ -663,7 +663,7 @@ static void gegl_op_destroy_notify (gpointer data)
 #undef property_seed
 #undef property_curve
 #undef property_color
-#undef property_audio
+#undef property_audio_fragment
 #undef property_path
 
   g_slice_free (GeglProperties, properties);
@@ -693,9 +693,9 @@ gegl_op_constructor (GType                  type,
 #define property_pointer(name, label, def_val)
 #define property_format(name, label, def_val)
 #define property_curve(name, label, def_val)
-#define property_audio(name, label, def_val)\
+#define property_audio_fragment(name, label, def_val)\
     if (properties->name == NULL)                   \
-    {properties->name = gegl_audio_new();}
+    {properties->name = gegl_audio_fragment_new();}
 #define property_color(name, label, def_val)\
     if (properties->name == NULL)                   \
     {properties->name = gegl_color_new(def_val?def_val:"black");}
@@ -720,7 +720,7 @@ gegl_op_constructor (GType                  type,
 #undef property_seed
 #undef property_curve
 #undef property_color
-#undef property_audio
+#undef property_audio_fragment
 #undef property_path
 
   g_object_set_data_full (obj, "chant-data", obj, gegl_op_destroy_notify);
@@ -964,10 +964,10 @@ gegl_op_class_intern_init (gpointer klass)
        gegl_param_spec_color_from_string (#name, label, NULL, def_val, flags);\
      current_prop = PROP_##name ;
 
-#define property_audio(name, label, def_val) \
+#define property_audio_fragment(name, label, def_val) \
     REGISTER_IF_ANY  \
   }{ GParamSpec *pspec = \
-       gegl_param_spec_audio (#name, label, NULL, flags);\
+       gegl_param_spec_audio_fragment (#name, label, NULL, flags);\
      current_prop = PROP_##name ;
 
 #define property_path(name, label, def_val) \
@@ -1019,7 +1019,7 @@ gegl_op_class_intern_init (gpointer klass)
 #undef property_path
 #undef property_curve
 #undef property_color
-#undef property_audio
+#undef property_audio_fragment
 #undef property_object
 #undef property_format
 

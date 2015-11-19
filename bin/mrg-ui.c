@@ -40,7 +40,7 @@
 #include <gexiv2/gexiv2.h>
 #include <gegl-paramspecs.h>
 #include <SDL.h>
-#include <gegl-audio.h>
+#include <gegl-audio-fragment.h>
 
 /* comment this out, and things render more correctly but much slower
  * for images larger than your screen/window resolution
@@ -1027,7 +1027,7 @@ static void gegl_ui (Mrg *mrg, void *data)
 
   if (o->is_video)
   {
-    GeglAudio *audio = NULL;
+    GeglAudioFragment *audio = NULL;
     gdouble fps;
     gegl_node_get (o->load, "audio", &audio, "frame-rate", &fps, NULL);
     if (audio)

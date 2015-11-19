@@ -66,7 +66,7 @@ GEGL_introspectable_headers =	\
 	process/gegl-processor.h		\
 	property-types/gegl-paramspecs.h	\
 	property-types/gegl-color.h		\
-	property-types/gegl-audio.h		\
+	property-types/gegl-audio-fragment.h	\
 	property-types/gegl-path.h		\
 	property-types/gegl-curve.h
 
