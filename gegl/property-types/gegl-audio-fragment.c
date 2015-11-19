@@ -110,6 +110,85 @@ gegl_audio_fragment_new (void)
   return g_object_new (GEGL_TYPE_AUDIO_FRAGMENT, NULL);
 }
 
+void
+gegl_audio_fragment_set_max_samples (GeglAudioFragment *audio,
+                                     int                max_samples)
+{
+  // still a define
+}
+
+void
+gegl_audio_fragment_set_sample_rate (GeglAudioFragment *audio,
+                                     int                sample_rate)
+{
+  audio->sample_rate = sample_rate;
+}
+
+void
+gegl_audio_fragment_set_channels (GeglAudioFragment *audio,
+                                  int                channels)
+{
+  audio->channels = channels;
+}
+
+void
+gegl_audio_fragment_set_channel_layput (GeglAudioFragment *audio,
+                                        int                channel_layout)
+{
+  audio->channel_layout = channel_layout;
+}
+
+void
+gegl_audio_fragment_set_samples (GeglAudioFragment *audio,
+                                 int                samples)
+{
+  audio->samples = samples;
+}
+
+void
+gegl_audio_fragment_set_pos (GeglAudioFragment *audio,
+                             int                pos)
+{
+  audio->pos = pos;
+}
+
+int
+gegl_audio_fragment_get_max_samples (GeglAudioFragment *audio)
+{
+  return GEGL_MAX_AUDIO_SAMPLES;
+}
+
+
+int
+gegl_audio_fragment_get_sample_rate (GeglAudioFragment *audio)
+{
+  return audio->sample_rate;
+}
+
+int
+gegl_audio_fragment_get_channels (GeglAudioFragment *audio)
+{
+  return audio->channels;
+}
+
+int
+gegl_audio_fragment_get_samples (GeglAudioFragment *audio)
+{
+  return audio->samples;
+}
+
+int
+gegl_audio_fragment_get_pos     (GeglAudioFragment *audio)
+{
+  return audio->pos;
+}
+
+int
+gegl_audio_fragment_get_channel_layput (GeglAudioFragment *audio)
+{
+  return audio->channel_layout;
+}
+
 /* --------------------------------------------------------------------------
  * A GParamSpec class to describe behavior of GeglAudioFragment as an object property
  * follows.
@@ -186,3 +265,5 @@ gegl_param_spec_audio_fragment (const gchar *name,
 
   return G_PARAM_SPEC (param_audio);
 }
+
+

@@ -58,6 +58,23 @@ GType gegl_audio_fragment_get_type (void) G_GNUC_CONST;
 
 GeglAudioFragment *  gegl_audio_fragment_new                    (void);
 
+void gegl_audio_fragment_set_max_samples (GeglAudioFragment *audio, int max_samples);
+void gegl_audio_fragment_set_sample_rate (GeglAudioFragment *audio, int sample_rate);
+void gegl_audio_fragment_set_channels (GeglAudioFragment *audio,    int channels);
+void gegl_audio_fragment_set_channel_layput (GeglAudioFragment *audio, int channel_layout);
+void gegl_audio_fragment_set_samples (GeglAudioFragment *audio,     int samples);
+void gegl_audio_fragment_set_pos     (GeglAudioFragment *audio,     int pos);
+
+int gegl_audio_fragment_get_max_samples (GeglAudioFragment *audio);
+int gegl_audio_fragment_get_sample_rate (GeglAudioFragment *audio);
+int gegl_audio_fragment_get_channels (GeglAudioFragment *audio);
+int gegl_audio_fragment_get_samples (GeglAudioFragment *audio);
+int gegl_audio_fragment_get_pos     (GeglAudioFragment *audio);
+int gegl_audio_fragment_get_channel_layput (GeglAudioFragment *audio);
+
+
+
+
 #define GEGL_TYPE_PARAM_AUDIO_FRAGMENT  (gegl_param_audio_fragment_get_type ())
 #define GEGL_IS_PARAM_SPEC_AUDIO_FRAGMENT(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), GEGL_TYPE_PARAM_AUDIO_FRAGMENT))
 
