@@ -626,6 +626,8 @@ process (GeglOperation       *operation,
 	if (p->audio_stream && p->audio_stream->codec) // XXX: remove second clause
         {
           o->audio->sample_rate = p->audio_stream->codec->sample_rate;
+          o->audio->channels = 2;
+          o->audio->channel_layout = AV_CH_LAYOUT_STEREO;
           o->audio->samples = samples_per_frame (o->frame,
                o->frame_rate, o->audio->sample_rate,
                &sample_start);
