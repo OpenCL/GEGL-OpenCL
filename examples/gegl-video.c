@@ -254,7 +254,7 @@ main (gint    argc,
       readbuf = gegl_node_new_child (gegl_display,
                                      "operation", "gegl:buffer-source",
                                      NULL);
-      display = gegl_node_create_child (gegl_display, "gegl:sdl-display");
+      display = gegl_node_create_child (gegl_display, "gegl:display");
       gegl_node_link_many (readbuf, display, NULL);
       break;
   }
@@ -357,20 +357,19 @@ gegl_meta_set_audio (const char *path,
   }
   else
   { 
-    int i;
+    int i, c;
     GString *str = g_string_new ("");
     if (gexiv2_metadata_has_tag (e2m, "Xmp.xmp.GEGL"))
       gexiv2_metadata_clear_tag (e2m, "Xmp.xmp.GEGL");
 
-    g_string_append_printf (str, "%i", audio->sample_rate);
-    g_string_append_printf (str, " %i", audio->samples);
-    for (i = 0; i < audio->samples; i++)
-      {
-        g_string_append_printf (str, " %0.5f", audio->data[0][i]);
-        g_string_append_printf (str, " %0.5f", audio->data[1][i]);
-      }
+    g_string_append_printf (str, "%i %i %i %i", audio->sample_rate, audio->channels,
+                            audio->channel_layout, audio->samples);
 
-    gexiv2_metadata_set_tag_string (e2m, "Xmp.xmp.GEGL", str->str);
+    for (i = 0; i < audio->samples; i++)
+      for (c = 0; c < audio->channels; c++)
+        g_string_append_printf (str, " %0.5f", audio->data[c][i]);
+
+    gexiv2_metadata_set_tag_string (e2m, "Xmp.xmp.GeglAudio", str->str);
     gexiv2_metadata_save_file (e2m, path, &error);
     if (error)
       g_warning ("%s", error->message);
@@ -391,7 +390,7 @@ gegl_meta_get_audio (const char *path,
   gexiv2_metadata_open_path (e2m, path, &error);
   if (!error)
   {
-    gchar *ret = gexiv2_metadata_get_tag_string (e2m, "Xmp.xmp.GEGL");
+    gchar *ret = gexiv2_metadata_get_tag_string (e2m, "Xmp.xmp.GeglAudio");
     fprintf (stderr, "should parse audio\n");
     g_free (ret);
   }
