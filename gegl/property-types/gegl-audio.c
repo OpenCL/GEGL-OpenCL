@@ -110,20 +110,6 @@ gegl_audio_new (void)
   return g_object_new (GEGL_TYPE_AUDIO, NULL);
 }
 
-GeglAudio *
-gegl_audio_duplicate (GeglAudio *audio)
-{
-  GeglAudio *new;
-
-  g_return_val_if_fail (GEGL_IS_AUDIO (audio), NULL);
-
-  new = g_object_new (GEGL_TYPE_AUDIO, NULL);
-
-  memcpy (new->priv, audio->priv, sizeof (GeglAudioPrivate));
-
-  return new;
-}
-
 /* --------------------------------------------------------------------------
  * A GParamSpec class to describe behavior of GeglAudio as an object property
  * follows.
@@ -138,37 +124,18 @@ typedef struct _GeglParamAudio GeglParamAudio;
 struct _GeglParamAudio
 {
   GParamSpec parent_instance;
-
-  GeglAudio *default_audio;
 };
 
 static void
 gegl_param_audio_init (GParamSpec *self)
 {
-  GEGL_PARAM_AUDIO (self)->default_audio = NULL;
 }
-
-#if 0
-GeglAudio *
-gegl_param_spec_audio_get_default (GParamSpec *self)
-{
-  return GEGL_PARAM_AUDIO (self)->default_audio;
-}
-#endif
 
 static void
 gegl_param_audio_finalize (GParamSpec *self)
 {
-  GeglParamAudio  *param_audio  = GEGL_PARAM_AUDIO (self);
+  //GeglParamAudio  *param_audio  = GEGL_PARAM_AUDIO (self);
   GParamSpecClass *parent_class = g_type_class_peek (g_type_parent (GEGL_TYPE_PARAM_AUDIO));
-
-  if (param_audio->default_audio)
-    {
-      g_object_unref (param_audio->default_audio);
-      param_audio->default_audio = NULL;
-    }
-
-  g_warning ("...\n");
 
   parent_class->finalize (self);
 }
@@ -177,10 +144,7 @@ static void
 gegl_param_audio_set_default (GParamSpec *param_spec,
                               GValue     *value)
 {
-  GeglParamAudio *gegl_audio = GEGL_PARAM_AUDIO (param_spec);
-
-  if (gegl_audio->default_audio)
-    g_value_take_object (value, gegl_audio_duplicate (gegl_audio->default_audio));
+  //GeglParamAudio *gegl_audio = GEGL_PARAM_AUDIO (param_spec);
 }
 
 GType
@@ -213,17 +177,12 @@ GParamSpec *
 gegl_param_spec_audio (const gchar *name,
                        const gchar *nick,
                        const gchar *blurb,
-           //            GeglAudio   *default_audio,
                        GParamFlags  flags)
 {
   GeglParamAudio *param_audio;
 
   param_audio = g_param_spec_internal (GEGL_TYPE_PARAM_AUDIO,
                                        name, nick, blurb, flags);
-
-  //param_audio->default_audio = default_audio;
-  //if (default_audio)
-  //  g_object_ref (default_audio);
 
   return G_PARAM_SPEC (param_audio);
 }
