@@ -229,7 +229,7 @@ decode_audio (GeglOperation *operation,
             {
                int sample_count = MIN (samples_left, GEGL_MAX_AUDIO_SAMPLES);
 
-               GeglAudioFragment *af = g_malloc0 (sizeof (GeglAudioFragment));
+               GeglAudioFragment *af = gegl_audio_fragment_new ();
           
                af->channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
 
@@ -592,7 +592,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
             if (sample_no > af->pos + af->samples)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
-              g_free (af);
+              g_object_unref (af);
               goto again;
             }
           }

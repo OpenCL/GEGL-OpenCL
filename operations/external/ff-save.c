@@ -149,7 +149,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
             if (sample_no > af->pos + af->samples)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
-              g_free (af);
+              g_object_unref (af);
               goto again;
             }
           }
@@ -319,7 +319,6 @@ void
 write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
 {
   Priv *p = (Priv*)o->user_data;
-
   AVCodecContext *c;
   AVPacket  pkt = { 0 };
   av_init_packet (&pkt);
@@ -327,7 +326,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   /* first we add incoming frames audio samples */
   {
     int i;
-    GeglAudioFragment *af = g_malloc0 (sizeof (GeglAudioFragment));
+    GeglAudioFragment *af = gegl_audio_fragment_new ();
     af->channels = 2; //o->audio->channels;
     af->samples = o->audio->samples;
     for (i = 0; i < af->samples; i++)
