@@ -1008,11 +1008,12 @@ static void gegl_ui (Mrg *mrg, void *data)
   if (o->is_video)
    {
      o->frame_no++;
-#if 1
-     if ((o->frame_no / 200) % 2 == 1)
-       o->frame_no+=600;
+     if (g_getenv ("GEGL_UI_DEBUG_SEEK"))
+     {
+       if ((o->frame_no / 200) % 2 == 1)
+         o->frame_no+=600;
+     }
      fprintf (stderr, "\r%i", o->frame_no);
-#endif
      gegl_node_set (o->load, "frame", o->frame_no, NULL);
      mrg_queue_draw (o->mrg, NULL);
    }
