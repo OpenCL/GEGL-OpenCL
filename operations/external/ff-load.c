@@ -227,10 +227,10 @@ decode_audio (GeglOperation *operation,
 
             while (samples_left)
             {
-               int sample_count = MIN (samples_left, GEGL_MAX_AUDIO_SAMPLES);
+               int sample_count = samples_left;
                int channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
                GeglAudioFragment *af = gegl_audio_fragment_new (o->audio_sample_rate, channels,
-                          AV_CH_LAYOUT_STEREO, GEGL_MAX_AUDIO_SAMPLES); // XXX : use samples_left directly?
+                          AV_CH_LAYOUT_STEREO, samples_left);
 //);
                //af->channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
 

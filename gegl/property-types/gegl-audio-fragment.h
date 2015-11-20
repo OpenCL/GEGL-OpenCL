@@ -34,8 +34,7 @@ G_BEGIN_DECLS
 typedef struct _GeglAudioFragmentClass   GeglAudioFragmentClass;
 typedef struct _GeglAudioFragmentPrivate GeglAudioFragmentPrivate;
 
-#define GEGL_MAX_AUDIO_CHANNELS 6
-#define GEGL_MAX_AUDIO_SAMPLES  2400   // this limits us to 20fps and higher for regular sample rates
+#define GEGL_MAX_AUDIO_CHANNELS 8
 
 
 /* the values for channel_layout are designed to match and be compatible with

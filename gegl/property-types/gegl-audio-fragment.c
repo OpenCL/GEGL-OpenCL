@@ -75,6 +75,7 @@ static void allocate_data (GeglAudioFragment *audio)
   }
 }
 
+#define GEGL_MAX_AUDIO_SAMPLES  2400 
 
 static void
 gegl_audio_fragment_init (GeglAudioFragment *self)
