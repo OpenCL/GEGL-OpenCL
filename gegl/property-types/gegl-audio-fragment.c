@@ -44,11 +44,46 @@ static void      get_property (GObject    *gobject,
 
 G_DEFINE_TYPE (GeglAudioFragment, gegl_audio_fragment, G_TYPE_OBJECT)
 
+
+static void deallocate_data (GeglAudioFragment *audio)
+{
+  int i;
+  for (i = 0; i < GEGL_MAX_AUDIO_CHANNELS; i++)
+  {
+    if (audio->data[i])
+    {
+      g_free (audio->data[i]);
+      audio->data[i] = NULL;
+    }
+  }
+}
+
+static void allocate_data (GeglAudioFragment *audio)
+{
+  int i;
+  deallocate_data (audio);
+  if (audio->xchannels * audio->max_samples == 0)
+    return;
+  for (i = 0; i < audio->xchannels; i++)
+  {
+    audio->data[i] = g_malloc (sizeof (float) * audio->max_samples);
+  }
+}
+
+
 static void
 gegl_audio_fragment_init (GeglAudioFragment *self)
 {
   self->priv = G_TYPE_INSTANCE_GET_PRIVATE ((self), GEGL_TYPE_AUDIO_FRAGMENT, GeglAudioFragmentPrivate);
   self->max_samples = GEGL_MAX_AUDIO_SAMPLES;
+  allocate_data (self);
+}
+
+static void
+gegl_audio_fragment_finalize (GObject *self)
+{
+  GeglAudioFragment *audio = (void*)self;
+  deallocate_data (audio);
 }
 
 static void
@@ -58,6 +93,7 @@ gegl_audio_fragment_class_init (GeglAudioFragmentClass *klass)
 
   gobject_class->set_property = set_property;
   gobject_class->get_property = get_property;
+  gobject_class->finalize = gegl_audio_fragment_finalize;
 
   g_object_class_install_property (gobject_class, PROP_STRING,
                                    g_param_spec_string ("string",
@@ -101,14 +137,15 @@ get_property (GObject    *gobject,
     }
 }
 
+
 GeglAudioFragment *
 gegl_audio_fragment_new (int sample_rate, int channels, int channel_layout, int max_samples)
 {
   GeglAudioFragment *ret = g_object_new (GEGL_TYPE_AUDIO_FRAGMENT, NULL);
-  gegl_audio_fragment_set_max_samples (ret, max_samples);
   gegl_audio_fragment_set_sample_rate (ret, sample_rate);
-  gegl_audio_fragment_set_channels (ret, channels);
   gegl_audio_fragment_set_channel_layout (ret, channel_layout);
+  gegl_audio_fragment_set_max_samples (ret, max_samples);
+  gegl_audio_fragment_set_channels (ret, channels);
   return ret;
 }
 
@@ -117,6 +154,7 @@ gegl_audio_fragment_set_max_samples (GeglAudioFragment *audio,
                                      int                max_samples)
 {
   audio->max_samples = max_samples;
+  allocate_data (audio);
 }
 
 void
@@ -131,6 +169,7 @@ gegl_audio_fragment_set_channels (GeglAudioFragment *audio,
                                   int                channels)
 {
   audio->xchannels = channels;
+  allocate_data (audio);
 }
 
 void
