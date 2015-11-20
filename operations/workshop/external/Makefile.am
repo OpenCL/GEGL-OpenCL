@@ -11,13 +11,6 @@ line_profile_la_CFLAGS = $(CAIRO_CFLAGS) $(PANGO_CFLAGS) $(BABL_CFLAGS) $(GLIB_C
 ops += line-profile.la
 endif
 
-if HAVE_AVFORMAT
-ops += ff-save.la
-ff_save_la_SOURCES = ff-save.c
-ff_save_la_LIBADD = $(op_libs) $(AVFORMAT_LIBS) -lswscale
-ff_save_la_CFLAGS = $(AM_CFLAGS) $(AVFORMAT_CFLAGS) $(GLIB_CFLAGS)
-endif
-
 if HAVE_LUA
 ops += gluas.la
 gluas_la_SOURCES = gluas.c
