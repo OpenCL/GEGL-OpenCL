@@ -100,12 +100,6 @@ typedef struct _GeglAudioFragmentPrivate GeglAudioFragmentPrivate;
 struct _GeglAudioFragment
 {
   GObject parent_instance;
-  int     max_samples;
-  int     xsample_count;
-  int     xchannels;
-  int     xchannel_layout;
-  int     sample_rate;
-  int     pos;
   float  *data[GEGL_MAX_AUDIO_CHANNELS];
   GeglAudioFragmentPrivate *priv;
 };

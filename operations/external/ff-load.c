@@ -272,8 +272,9 @@ decode_audio (GeglOperation *operation,
                   g_warning ("undealt with sample format\n");
                 }
                 gegl_audio_fragment_set_sample_count (af, sample_count);
-                af->pos = p->audio_pos;
-                p->audio_pos += af->xsample_count;
+                gegl_audio_fragment_set_pos (af, p->audio_pos);
+
+                p->audio_pos += sample_count;
                 p->audio_track = g_list_append (p->audio_track, af);
 
                 samples_left -= sample_count;
@@ -569,17 +570,20 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
   for (; l; l = l->next)
   {
     GeglAudioFragment *af = l->data;
-    if (sample_no > af->pos + af->xsample_count)
+    int channels = gegl_audio_fragment_get_channels (af);
+    int pos = gegl_audio_fragment_get_pos (af);
+    int sample_count = gegl_audio_fragment_get_sample_count (af);
+    if (sample_no > pos + sample_count)
     {
       to_remove ++;
     }
 
-    if (af->pos <= sample_no &&
-        sample_no < af->pos + af->xsample_count)
+    if (pos <= sample_no &&
+        sample_no < pos + sample_count)
       {
-        int i = sample_no - af->pos;
+        int i = sample_no - pos;
         *left  = af->data[0][i];
-        if (af->xchannels == 1)
+        if (channels == 1)
           *right = af->data[0][i];
         else
           *right = af->data[1][i];
@@ -590,7 +594,9 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
           for (l = p->audio_track; l; l = l->next)
           {
             GeglAudioFragment *af = l->data;
-            if (sample_no > af->pos + af->xsample_count)
+            int pos = gegl_audio_fragment_get_pos (af);
+            int sample_count = gegl_audio_fragment_get_sample_count (af);
+            if (sample_no > pos + sample_count)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
               g_object_unref (af);
@@ -626,20 +632,20 @@ process (GeglOperation       *operation,
 
 	if (p->audio_stream && p->audio_stream->codec) // XXX: remove second clause
         {
-          o->audio->sample_rate = p->audio_stream->codec->sample_rate;
-          o->audio->xchannels = 2;
-          o->audio->xchannel_layout = AV_CH_LAYOUT_STEREO;
+          int sample_count;
+          gegl_audio_fragment_set_sample_rate (o->audio, p->audio_stream->codec->sample_rate);
+          gegl_audio_fragment_set_channels    (o->audio, 2);
+          gegl_audio_fragment_set_channel_layout    (o->audio, GEGL_CH_LAYOUT_STEREO);
 
-          gegl_audio_fragment_set_sample_count (o->audio, 
-               samples_per_frame (o->frame,
-               o->frame_rate, o->audio->sample_rate,
-               &sample_start));
-
+          sample_count = samples_per_frame (o->frame,
+               o->frame_rate, p->audio_stream->codec->sample_rate,
+               &sample_start);
+          gegl_audio_fragment_set_sample_count (o->audio, sample_count);
 
 	  decode_audio (operation, p->prevpts, p->prevpts + 5.0);
           {
             int i;
-            for (i = 0; i < o->audio->xsample_count; i++)
+            for (i = 0; i < sample_count; i++)
             {
               get_sample_data (p, sample_start + i, &o->audio->data[0][i],
                                   &o->audio->data[1][i]);

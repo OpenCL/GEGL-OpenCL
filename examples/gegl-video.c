@@ -277,10 +277,14 @@ main (gint    argc,
         {
         GeglAudioFragment *audio;
         gdouble fps;
+        int sample_count;
+        int sample_rate;
         gegl_node_get (load, "audio", &audio,
                              "frame-rate", &fps, NULL);
+        sample_count = gegl_audio_fragment_get_sample_count (audio);
+        sample_rate = gegl_audio_fragment_get_sample_rate (audio);
 
-        if (audio->xsample_count > 0)
+        if (sample_count > 0)
         {
           int i;
           if (!audio_started)
@@ -288,7 +292,7 @@ main (gint    argc,
              SDL_PauseAudio(0);
              audio_started = 1;
            }
-          for (i = 0; i < audio->xsample_count; i++)
+          for (i = 0; i < sample_count; i++)
           {
             audio_data[audio_len/2 + 0] = audio->data[0][i] * 32767.0;
             audio_data[audio_len/2 + 1] = audio->data[1][i] * 32767.0;
@@ -304,7 +308,7 @@ main (gint    argc,
 
 	    gegl_node_set (readbuf, "buffer", video_frame, NULL);
 	    gegl_node_process (display);
-	    while ( (audio_pos / 4.0) / audio->sample_rate < (frame / fps) - 0.05 )
+	    while ( (audio_pos / 4.0) / sample_rate < (frame / fps) - 0.05 )
             {
               g_usleep (500); /* sync audio */
             }
@@ -359,14 +363,19 @@ gegl_meta_set_audio (const char        *path,
   { 
     int i, c;
     GString *str = g_string_new ("");
+    int sample_count = gegl_audio_fragment_get_sample_count (audio);
+    int channels = gegl_audio_fragment_get_channels (audio);
     if (gexiv2_metadata_has_tag (e2m, "Xmp.xmp.GEGL"))
       gexiv2_metadata_clear_tag (e2m, "Xmp.xmp.GEGL");
 
-    g_string_append_printf (str, "%i %i %i %i", audio->sample_rate, audio->xchannels,
-                            audio->xchannel_layout, audio->xsample_count);
+    g_string_append_printf (str, "%i %i %i %i", 
+                              gegl_audio_fragment_get_sample_rate (audio),
+                              gegl_audio_fragment_get_channels (audio),
+                              gegl_audio_fragment_get_channel_layout (audio),
+                              gegl_audio_fragment_get_sample_count (audio));
 
-    for (i = 0; i < audio->xsample_count; i++)
-      for (c = 0; c < audio->xchannels; c++)
+    for (i = 0; i < sample_count; i++)
+      for (c = 0; c < channels; c++)
         g_string_append_printf (str, " %0.5f", audio->data[c][i]);
 
     gexiv2_metadata_set_tag_string (e2m, "Xmp.xmp.GeglAudio", str->str);

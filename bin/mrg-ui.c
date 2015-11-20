@@ -1032,16 +1032,17 @@ static void gegl_ui (Mrg *mrg, void *data)
     gegl_node_get (o->load, "audio", &audio, "frame-rate", &fps, NULL);
     if (audio)
     {
-       if (audio->xsample_count > 0)
+       int sample_count = gegl_audio_fragment_get_sample_count (audio);
+       if (sample_count > 0)
        {
          int i;
          if (!audio_started)
          {
-  	   open_audio (audio->sample_rate);
+  	   open_audio (gegl_audio_fragment_get_sample_rate (audio));
            SDL_PauseAudio(0);
            audio_started = 1;
          }
-         for (i = 0; i < audio->xsample_count; i++)
+         for (i = 0; i < sample_count; i++)
          {
            sdl_add_audio_sample (0, audio->data[0][i], audio->data[1][i]);
          }
