@@ -110,7 +110,7 @@ clear_audio_track (GeglProperties *o)
   Priv *p = (Priv*)o->user_data;
   while (p->audio_track)
     {
-      g_free (p->audio_track->data);
+      g_object_unref (p->audio_track->data);
       p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
     }
 }

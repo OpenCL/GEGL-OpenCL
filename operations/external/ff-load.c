@@ -112,7 +112,7 @@ clear_audio_track (GeglProperties *o)
   Priv *p = (Priv*)o->user_data;
   while (p->audio_track)
     {
-      g_free (p->audio_track->data);
+      g_object_unref (p->audio_track->data);
       p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
     }
 }
@@ -271,7 +271,7 @@ decode_audio (GeglOperation *operation,
                 default:
                   g_warning ("undealt with sample format\n");
                 }
-                af->xsample_count = sample_count;
+                gegl_audio_fragment_set_sample_count (af, sample_count);
                 af->pos = p->audio_pos;
                 p->audio_pos += af->xsample_count;
                 p->audio_track = g_list_append (p->audio_track, af);
@@ -630,10 +630,10 @@ process (GeglOperation       *operation,
           o->audio->xchannels = 2;
           o->audio->xchannel_layout = AV_CH_LAYOUT_STEREO;
 
-          /* XXX: should compare against max and fix if going over */
-          o->audio->xsample_count = samples_per_frame (o->frame,
+          gegl_audio_fragment_set_sample_count (o->audio, 
+               samples_per_frame (o->frame,
                o->frame_rate, o->audio->sample_rate,
-               &sample_start);
+               &sample_start));
 
 
 	  decode_audio (operation, p->prevpts, p->prevpts + 5.0);
