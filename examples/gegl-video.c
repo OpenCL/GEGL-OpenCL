@@ -280,7 +280,7 @@ main (gint    argc,
         gegl_node_get (load, "audio", &audio,
                              "frame-rate", &fps, NULL);
 
-        if (audio->samples > 0)
+        if (audio->xsample_count > 0)
         {
           int i;
           if (!audio_started)
@@ -288,7 +288,7 @@ main (gint    argc,
              SDL_PauseAudio(0);
              audio_started = 1;
            }
-          for (i = 0; i < audio->samples; i++)
+          for (i = 0; i < audio->xsample_count; i++)
           {
             audio_data[audio_len/2 + 0] = audio->data[0][i] * 32767.0;
             audio_data[audio_len/2 + 1] = audio->data[1][i] * 32767.0;
@@ -362,11 +362,11 @@ gegl_meta_set_audio (const char        *path,
     if (gexiv2_metadata_has_tag (e2m, "Xmp.xmp.GEGL"))
       gexiv2_metadata_clear_tag (e2m, "Xmp.xmp.GEGL");
 
-    g_string_append_printf (str, "%i %i %i %i", audio->sample_rate, audio->channels,
-                            audio->channel_layout, audio->samples);
+    g_string_append_printf (str, "%i %i %i %i", audio->sample_rate, audio->xchannels,
+                            audio->xchannel_layout, audio->xsample_count);
 
-    for (i = 0; i < audio->samples; i++)
-      for (c = 0; c < audio->channels; c++)
+    for (i = 0; i < audio->xsample_count; i++)
+      for (c = 0; c < audio->xchannels; c++)
         g_string_append_printf (str, " %0.5f", audio->data[c][i]);
 
     gexiv2_metadata_set_tag_string (e2m, "Xmp.xmp.GeglAudio", str->str);

@@ -40,11 +40,12 @@ typedef struct _GeglAudioFragmentPrivate GeglAudioFragmentPrivate;
 struct _GeglAudioFragment
 {
   GObject parent_instance;
+  int   max_samples;
+  int   xsample_count;
+  int   xchannels;
+  int   xchannel_layout;/* unused - assumed channels = 1 is mono 2 stereo */
   int   sample_rate;
-  int   samples;
   int   pos;
-  int   channels;
-  int   channel_layout;/* unused - assumed channels = 1 is mono 2 stereo */
   float data[GEGL_MAX_AUDIO_CHANNELS][GEGL_MAX_AUDIO_SAMPLES]; 
   GeglAudioFragmentPrivate *priv;
 };
@@ -56,21 +57,21 @@ struct _GeglAudioFragmentClass
 
 GType gegl_audio_fragment_get_type (void) G_GNUC_CONST;
 
-GeglAudioFragment *  gegl_audio_fragment_new                    (void);
+GeglAudioFragment *  gegl_audio_fragment_new                    (int sample_rate, int channels, int channel_layout, int max_samples);
 
 void gegl_audio_fragment_set_max_samples (GeglAudioFragment *audio, int max_samples);
 void gegl_audio_fragment_set_sample_rate (GeglAudioFragment *audio, int sample_rate);
 void gegl_audio_fragment_set_channels (GeglAudioFragment *audio,    int channels);
-void gegl_audio_fragment_set_channel_layput (GeglAudioFragment *audio, int channel_layout);
-void gegl_audio_fragment_set_samples (GeglAudioFragment *audio,     int samples);
+void gegl_audio_fragment_set_channel_layout (GeglAudioFragment *audio, int channel_layout);
+void gegl_audio_fragment_set_sample_count (GeglAudioFragment *audio,     int sample_count);
 void gegl_audio_fragment_set_pos     (GeglAudioFragment *audio,     int pos);
 
 int gegl_audio_fragment_get_max_samples (GeglAudioFragment *audio);
 int gegl_audio_fragment_get_sample_rate (GeglAudioFragment *audio);
 int gegl_audio_fragment_get_channels (GeglAudioFragment *audio);
-int gegl_audio_fragment_get_samples (GeglAudioFragment *audio);
+int gegl_audio_fragment_get_sample_count (GeglAudioFragment *audio);
 int gegl_audio_fragment_get_pos     (GeglAudioFragment *audio);
-int gegl_audio_fragment_get_channel_layput (GeglAudioFragment *audio);
+int gegl_audio_fragment_get_channel_layout (GeglAudioFragment *audio);
 
 
 

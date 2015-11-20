@@ -228,51 +228,52 @@ decode_audio (GeglOperation *operation,
             while (samples_left)
             {
                int sample_count = MIN (samples_left, GEGL_MAX_AUDIO_SAMPLES);
-
-               GeglAudioFragment *af = gegl_audio_fragment_new ();
-          
-               af->channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
+               int channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
+               GeglAudioFragment *af = gegl_audio_fragment_new (o->audio_sample_rate, channels,
+                          AV_CH_LAYOUT_STEREO, GEGL_MAX_AUDIO_SAMPLES); // XXX : use samples_left directly?
+//);
+               //af->channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
 
                switch (p->audio_stream->codec->sample_fmt)
                {
                  case AV_SAMPLE_FMT_FLT:
                    for (gint i = 0; i < sample_count; i++)
-                     for (gint c = 0; c < af->channels; c++)
-                       af->data[c][i] = ((int16_t *)frame.data[0])[(i + si) * af->channels + c];
+                     for (gint c = 0; c < channels; c++)
+                       af->data[c][i] = ((int16_t *)frame.data[0])[(i + si) * channels + c];
                    break;
                  case AV_SAMPLE_FMT_FLTP:
                    for (gint i = 0; i < sample_count; i++)
-                     for (gint c = 0; c < af->channels; c++)
+                     for (gint c = 0; c < channels; c++)
                        {
                          af->data[c][i] = ((float *)frame.data[c])[i + si];
                        }
                    break;
                  case AV_SAMPLE_FMT_S16:
                    for (gint i = 0; i < sample_count; i++)
-                     for (gint c = 0; c < af->channels; c++)
-                       af->data[c][i] = ((int16_t *)frame.data[0])[(i + si) * af->channels + c] / 32768.0;
+                     for (gint c = 0; c < channels; c++)
+                       af->data[c][i] = ((int16_t *)frame.data[0])[(i + si) * channels + c] / 32768.0;
                    break;
                  case AV_SAMPLE_FMT_S16P:
                    for (gint i = 0; i < sample_count; i++)
-                     for (gint c = 0; c < af->channels; c++)
+                     for (gint c = 0; c < channels; c++)
                        af->data[c][i] = ((int16_t *)frame.data[c])[i + si] / 32768.0;
                    break;
                  case AV_SAMPLE_FMT_S32:
                    for (gint i = 0; i < sample_count; i++)
-                     for (gint c = 0; c < af->channels; c++)
-                       af->data[c][i] = ((int32_t *)frame.data[0])[(i + si) * af->channels + c] / 2147483648.0;
+                     for (gint c = 0; c < channels; c++)
+                       af->data[c][i] = ((int32_t *)frame.data[0])[(i + si) * channels + c] / 2147483648.0;
                   break;
                 case AV_SAMPLE_FMT_S32P:
                    for (gint i = 0; i < sample_count; i++)
-                    for (gint c = 0; c < af->channels; c++)
+                    for (gint c = 0; c < channels; c++)
                       af->data[c][i] = ((int32_t *)frame.data[c])[i + si] / 2147483648.0;
                   break;
                 default:
                   g_warning ("undealt with sample format\n");
                 }
-                af->samples = sample_count;
+                af->xsample_count = sample_count;
                 af->pos = p->audio_pos;
-                p->audio_pos += af->samples;
+                p->audio_pos += af->xsample_count;
                 p->audio_track = g_list_append (p->audio_track, af);
 
                 samples_left -= sample_count;
@@ -568,17 +569,17 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
   for (; l; l = l->next)
   {
     GeglAudioFragment *af = l->data;
-    if (sample_no > af->pos + af->samples)
+    if (sample_no > af->pos + af->xsample_count)
     {
       to_remove ++;
     }
 
     if (af->pos <= sample_no &&
-        sample_no < af->pos + af->samples)
+        sample_no < af->pos + af->xsample_count)
       {
         int i = sample_no - af->pos;
         *left  = af->data[0][i];
-        if (af->channels == 1)
+        if (af->xchannels == 1)
           *right = af->data[0][i];
         else
           *right = af->data[1][i];
@@ -589,7 +590,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
           for (l = p->audio_track; l; l = l->next)
           {
             GeglAudioFragment *af = l->data;
-            if (sample_no > af->pos + af->samples)
+            if (sample_no > af->pos + af->xsample_count)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
               g_object_unref (af);
@@ -626,15 +627,19 @@ process (GeglOperation       *operation,
 	if (p->audio_stream && p->audio_stream->codec) // XXX: remove second clause
         {
           o->audio->sample_rate = p->audio_stream->codec->sample_rate;
-          o->audio->channels = 2;
-          o->audio->channel_layout = AV_CH_LAYOUT_STEREO;
-          o->audio->samples = samples_per_frame (o->frame,
+          o->audio->xchannels = 2;
+          o->audio->xchannel_layout = AV_CH_LAYOUT_STEREO;
+
+          /* XXX: should compare against max and fix if going over */
+          o->audio->xsample_count = samples_per_frame (o->frame,
                o->frame_rate, o->audio->sample_rate,
                &sample_start);
+
+
 	  decode_audio (operation, p->prevpts, p->prevpts + 5.0);
           {
             int i;
-            for (i = 0; i < o->audio->samples; i++)
+            for (i = 0; i < o->audio->xsample_count; i++)
             {
               get_sample_data (p, sample_start + i, &o->audio->data[0][i],
                                   &o->audio->data[1][i]);

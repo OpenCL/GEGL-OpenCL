@@ -48,6 +48,7 @@ static void
 gegl_audio_fragment_init (GeglAudioFragment *self)
 {
   self->priv = G_TYPE_INSTANCE_GET_PRIVATE ((self), GEGL_TYPE_AUDIO_FRAGMENT, GeglAudioFragmentPrivate);
+  self->max_samples = GEGL_MAX_AUDIO_SAMPLES;
 }
 
 static void
@@ -101,20 +102,21 @@ get_property (GObject    *gobject,
 }
 
 GeglAudioFragment *
-gegl_audio_fragment_new (void)
+gegl_audio_fragment_new (int sample_rate, int channels, int channel_layout, int max_samples)
 {
-  void *string = NULL;
-  if (string)
-    return g_object_new (GEGL_TYPE_AUDIO_FRAGMENT, "string", string, NULL);
-
-  return g_object_new (GEGL_TYPE_AUDIO_FRAGMENT, NULL);
+  GeglAudioFragment *ret = g_object_new (GEGL_TYPE_AUDIO_FRAGMENT, NULL);
+  gegl_audio_fragment_set_max_samples (ret, max_samples);
+  gegl_audio_fragment_set_sample_rate (ret, sample_rate);
+  gegl_audio_fragment_set_channels (ret, channels);
+  gegl_audio_fragment_set_channel_layout (ret, channel_layout);
+  return ret;
 }
 
 void
 gegl_audio_fragment_set_max_samples (GeglAudioFragment *audio,
                                      int                max_samples)
 {
-  // still a define
+  audio->max_samples = max_samples;
 }
 
 void
@@ -128,21 +130,21 @@ void
 gegl_audio_fragment_set_channels (GeglAudioFragment *audio,
                                   int                channels)
 {
-  audio->channels = channels;
+  audio->xchannels = channels;
 }
 
 void
-gegl_audio_fragment_set_channel_layput (GeglAudioFragment *audio,
+gegl_audio_fragment_set_channel_layout (GeglAudioFragment *audio,
                                         int                channel_layout)
 {
-  audio->channel_layout = channel_layout;
+  audio->xchannel_layout = channel_layout;
 }
 
 void
-gegl_audio_fragment_set_samples (GeglAudioFragment *audio,
-                                 int                samples)
+gegl_audio_fragment_set_sample_count (GeglAudioFragment *audio,
+                                      int                samples)
 {
-  audio->samples = samples;
+  audio->xsample_count = samples;
 }
 
 void
@@ -155,7 +157,7 @@ gegl_audio_fragment_set_pos (GeglAudioFragment *audio,
 int
 gegl_audio_fragment_get_max_samples (GeglAudioFragment *audio)
 {
-  return GEGL_MAX_AUDIO_SAMPLES;
+  return audio->max_samples;
 }
 
 
@@ -168,13 +170,13 @@ gegl_audio_fragment_get_sample_rate (GeglAudioFragment *audio)
 int
 gegl_audio_fragment_get_channels (GeglAudioFragment *audio)
 {
-  return audio->channels;
+  return audio->xchannels;
 }
 
 int
-gegl_audio_fragment_get_samples (GeglAudioFragment *audio)
+gegl_audio_fragment_get_sample_count (GeglAudioFragment *audio)
 {
-  return audio->samples;
+  return audio->xsample_count;
 }
 
 int
@@ -184,9 +186,9 @@ gegl_audio_fragment_get_pos     (GeglAudioFragment *audio)
 }
 
 int
-gegl_audio_fragment_get_channel_layput (GeglAudioFragment *audio)
+gegl_audio_fragment_get_channel_layout (GeglAudioFragment *audio)
 {
-  return audio->channel_layout;
+  return audio->xchannel_layout;
 }
 
 /* --------------------------------------------------------------------------

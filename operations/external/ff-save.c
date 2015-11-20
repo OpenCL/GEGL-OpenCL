@@ -125,17 +125,17 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
   for (; l; l = l->next)
   {
     GeglAudioFragment *af = l->data;
-    if (sample_no > af->pos + af->samples)
+    if (sample_no > af->pos + af->xsample_count)
     {
       to_remove ++;
     }
 
     if (af->pos <= sample_no &&
-        sample_no < af->pos + af->samples)
+        sample_no < af->pos + af->xsample_count)
       {
         int i = sample_no - af->pos;
         *left  = af->data[0][i];
-        if (af->channels == 1)
+        if (af->xchannels == 1)
           *right = af->data[0][i];
         else
           *right = af->data[1][i];
@@ -146,7 +146,7 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
           for (l = p->audio_track; l; l = l->next)
           {
             GeglAudioFragment *af = l->data;
-            if (sample_no > af->pos + af->samples)
+            if (sample_no > af->pos + af->xsample_count)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
               g_object_unref (af);
@@ -326,16 +326,14 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   /* first we add incoming frames audio samples */
   {
     int i;
-    GeglAudioFragment *af = gegl_audio_fragment_new ();
-    af->channels = 2; //o->audio->channels;
-    af->samples = o->audio->samples;
-    for (i = 0; i < af->samples; i++)
+    GeglAudioFragment *af = gegl_audio_fragment_new (o->audio->sample_rate, o->audio->xchannels, o->audio->xchannel_layout, o->audio->xsample_count);
+    for (i = 0; i < af->xsample_count; i++)
       {
         af->data[0][i] = o->audio->data[0][i];
         af->data[1][i] = o->audio->data[1][i];
       }
     af->pos = p->audio_pos;
-    p->audio_pos += af->samples;
+    p->audio_pos += af->xsample_count;
     p->audio_track = g_list_append (p->audio_track, af);
   }
 

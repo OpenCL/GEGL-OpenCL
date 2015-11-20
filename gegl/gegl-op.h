@@ -695,7 +695,7 @@ gegl_op_constructor (GType                  type,
 #define property_curve(name, label, def_val)
 #define property_audio_fragment(name, label, def_val)\
     if (properties->name == NULL)                   \
-    {properties->name = gegl_audio_fragment_new();}
+    {properties->name = gegl_audio_fragment_new(48000, 2, 0, 8192);}
 #define property_color(name, label, def_val)\
     if (properties->name == NULL)                   \
     {properties->name = gegl_color_new(def_val?def_val:"black");}
