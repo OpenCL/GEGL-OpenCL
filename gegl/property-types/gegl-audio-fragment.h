@@ -13,8 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006 Martin Nordholts <enselic@hotmail.com>
- *           2015 OEyvind Kolaas   <pippin@gimp.org>
+ * Copyright   2015 OEyvind Kolaas   <pippin@gimp.org>
  */
 
 #ifndef __GEGL_AUDIO_FRAGMENT_H__
@@ -110,7 +109,7 @@ struct _GeglAudioFragmentClass
 
 GType gegl_audio_fragment_get_type (void) G_GNUC_CONST;
 
-GeglAudioFragment *  gegl_audio_fragment_new                    (int sample_rate, int channels, int channel_layout, int max_samples);
+GeglAudioFragment *  gegl_audio_fragment_new (int sample_rate, int channels, int channel_layout, int max_samples);
 
 void gegl_audio_fragment_set_max_samples (GeglAudioFragment *audio, int max_samples);
 void gegl_audio_fragment_set_sample_rate (GeglAudioFragment *audio, int sample_rate);

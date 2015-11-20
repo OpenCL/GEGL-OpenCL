@@ -26,13 +26,15 @@
 
 property_string (path, _("File"), "/tmp/fnord.ogv")
     description (_("Target path and filename, use '-' for stdout."))
-property_string (video_codec,   _("Audio codec"),   "auto")
 
-property_int (video_bit_rate, _("video bitrate"), 810000)
-    value_range (0.0, 500000000.0)
 property_double (frame_rate, _("Frames/second"), 25.0)
     value_range (0.0, 100.0)
 #if 0
+property_string (audio_codec, _("Audio codec"), "auto")
+property_int (audio_bit_rate, _("Audio bitrate"), 810000)
+property_string (video_codec,   _("Video codec"),   "auto")
+property_int (video_bit_rate, _("video bitrate"), 810000)
+    value_range (0.0, 500000000.0)
 property_double (video_bit_rate_tolerance, _("video bitrate"), 1000.0)
 property_int    (video_global_quality, _("global quality"), 255)
 property_int    (compression_level,    _("compression level"), 255)
@@ -42,8 +44,6 @@ property_int    (key_int_min,          _("the minimum number of frames in a grou
 property_int    (max_b_frames,         _("maximum number of consequetive b frames"), 3)
 #endif
 
-property_string (audio_codec, _("Audio codec"), "auto")
-property_int (audio_bit_rate, _("Audio bitrate"), 810000)
 
 property_audio_fragment (audio, _("audio"), 0)
 
@@ -463,7 +463,7 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c->codec_id = codec_id;
   c->codec_type = AVMEDIA_TYPE_VIDEO;
   /* put sample propeters */
-  c->bit_rate = o->video_bit_rate;
+  c->bit_rate = 810000;
   /* resolution must be a multiple of two */
   c->width = p->width;
   c->height = p->height;
