@@ -2,7 +2,31 @@
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
-Changes in GEGL 0.4.0
+Changes in GEGL 0.3.2
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • Operations:
+   • new operations: libraw based raw loading op, tiff-save and tif-load, maze, sepia
+   • ff-load and ff-save revived, with support from thegrid.io
+   • apply-lens uses less memory, higher precision computation.
+   • disable automatic threading on many ops where it fails
+   • force more operations to prefer operating on linear RGB data for more
+     accurate/physical processing.
+ • Buffer:
+   • implement abyss paremeter on gegl_buffer_copy and gegl_buffer_blit
+ • Added start of a microraptor gui based image viewer/non destructive editor.
+ • Optimizations to scaled blitting (speeds up most GEGL UIs a bit)
+
+Contributions from:
+
+ Alexandre Prokoudine, André Tupinambá, Claude Paroz, Daniel Mustieles,
+ Debarshi Ray  Dimitris Spingos, Elle Stone, Jehan, Jordi Mas, Marco Ciampa,
+ Martin Blanchard, Martin Srebotnjak, Massimo Valentini, Michael Henning,
+ Michael Natterer, Necdet Yücel, Pedro Albuquerque, Piotr Drąg, Roman Lebedev,
+ Thomas Manni, Vilson Vieira, akash akya and Øyvind Kolås.
+
+
+
+Changes in GEGL 0.3.0
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Improvements to thread safety and parallelism.
  • Lower overhead graph travesal due from rewrite of visitors
