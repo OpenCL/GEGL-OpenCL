@@ -809,6 +809,10 @@ AM_CONDITIONAL(HAVE_JPEG, test "$jpeg_ok" = "yes")
 
 AC_SUBST(LIBJPEG)
 
+if test "$jpeg_ok" != "yes"; then
+   AC_MSG_ERROR([Could not find a usable JPEG library with header files])
+fi
+
 
 ##################
 # Check for libpng
@@ -828,6 +832,9 @@ AM_CONDITIONAL(HAVE_PNG, test "$have_libpng" = "yes")
 AC_SUBST(PNG_CFLAGS) 
 AC_SUBST(PNG_LIBS) 
 
+if test "$have_libpng" != "yes"; then
+   AC_MSG_ERROR([Could not find a usable PNG library with header files])
+fi
 
 ###################
 # Check for librsvg
