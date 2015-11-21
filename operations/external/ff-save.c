@@ -745,11 +745,11 @@ tfile (GeglProperties *o)
   p->video_st = NULL;
   p->audio_st = NULL;
 
-  if (p->fmt->video_codec != CODEC_ID_NONE)
+  if (p->fmt->video_codec != AV_CODEC_ID_NONE)
     {
       p->video_st = add_video_stream (o, p->oc, p->fmt->video_codec);
     }
-  if (p->fmt->audio_codec != CODEC_ID_NONE)
+  if (p->fmt->audio_codec != AV_CODEC_ID_NONE)
     {
      p->audio_st = add_audio_stream (o, p->oc, p->fmt->audio_codec);
     }
