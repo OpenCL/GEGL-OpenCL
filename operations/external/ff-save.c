@@ -524,7 +524,7 @@ alloc_picture (int pix_fmt, int width, int height)
   uint8_t  *picture_buf;
   int       size;
 
-  picture = avcodec_alloc_frame ();
+  picture = av_frame_alloc ();
   if (!picture)
     return NULL;
   size = avpicture_get_size (pix_fmt, width, height + 1);
