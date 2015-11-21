@@ -1,21 +1,22 @@
 # Gegl Master
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Pedro Albuquerque <palbuquerque73o@gmail.com>, 2015.
+# Pedro Albuquerque <palbuquerque73@gmail.com>, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Gegl-master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-11-14 07:03+0000\n"
-"PO-Revision-Date: 2015-11-14 08:17+0000\n"
-"Last-Translator: <>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=gegl&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2015-11-21 07:03+0000\n"
+"PO-Revision-Date: 2015-11-21 09:32+0000\n"
+"Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
 "Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\\n\n"
 "X-Generator: Gtranslator 2.91.6\n"
 "X-Project-Style: gnome\n"
 "X-Language: pt_PT\n"
@@ -363,8 +364,8 @@ msgid "Keep image unchanged, where not affected by the lens."
 msgstr "Manter a imagem inalterada onde não for afetada pela lente."
 
 #: ../operations/common/apply-lens.c:42 ../operations/common/cubism.c:39
-#: ../operations/common/lens-distortion.c:57 ../operations/common/pixelize.c:62
-#: ../operations/common/tile-paper.c:78
+#: ../operations/common/lens-distortion.c:57
+#: ../operations/common/pixelize.c:62 ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Cor de fundo"
 
@@ -433,7 +434,8 @@ msgstr ""
 #: ../operations/common/supernova.c:45 ../operations/common/vignette.c:37
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
-#: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
+#: ../operations/workshop/kuwahara.c:25
+#: ../operations/workshop/median-blur.c:26
 msgid "Radius"
 msgstr "Raio"
 
@@ -486,7 +488,8 @@ msgstr ""
 "é um fator de escala à volta de 50%% cinzento e \"brilho\" um desvio "
 "constante a aplicar após escalar o contraste."
 
-#: ../operations/common/buffer-sink.c:25 ../operations/common/write-buffer.c:25
+#: ../operations/common/buffer-sink.c:25
+#: ../operations/common/write-buffer.c:25
 msgid "Buffer location"
 msgstr "Localização do buffer"
 
@@ -689,7 +692,8 @@ msgstr ""
 "posteriormente sombreada a cor. É obtido melhorando as margens e escurecendo "
 "áreas já claramente mais escuras que os seus vizinhos"
 
-#: ../operations/common/channel-mixer.c:31 ../operations/common/mono-mixer.c:26
+#: ../operations/common/channel-mixer.c:31
+#: ../operations/common/mono-mixer.c:26
 msgid "Preserve luminosity"
 msgstr "Preservar luminosidade"
 
@@ -864,8 +868,9 @@ msgstr "Criar um padrão axadrezado"
 #: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
 #: ../operations/common/rectangle.c:48 ../operations/common/supernova.c:60
 #: ../operations/common/tile-paper.c:33
-#: ../operations/common/value-propagate.c:55 ../operations/common/vignette.c:34
-#: ../operations/external/text.c:36 ../operations/external/vector-fill.c:26
+#: ../operations/common/value-propagate.c:55
+#: ../operations/common/vignette.c:34 ../operations/external/text.c:36
+#: ../operations/external/vector-fill.c:26
 #: ../operations/external/vector-stroke.c:27
 msgid "Color"
 msgstr "Cor"
@@ -875,8 +880,8 @@ msgid ""
 "Generates a buffer entirely filled with the specified color, use gegl:crop "
 "to get smaller dimensions."
 msgstr ""
-"Gera um buffer inteiramente preenchido com a cor especificada, usando "
-"gegl:crop para obter dimensões menores."
+"Gera um buffer inteiramente preenchido com a cor especificada, usando gegl:"
+"crop para obter dimensões menores."
 
 #: ../operations/common/color-enhance.c:235
 msgid "Color Enhance"
@@ -1005,10 +1010,11 @@ msgstr "A estratégia de pontilhado a usar"
 #. XXX: what?
 #: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
 #: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
-#: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
-#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
-#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
-#: ../operations/common/noise-rgb.c:44 ../operations/common/noise-simplex.c:39
+#: ../operations/common/noise-cell.c:55
+#: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
+#: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
+#: ../operations/common/noise-pick.c:38 ../operations/common/noise-rgb.c:44
+#: ../operations/common/noise-simplex.c:39
 #: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
 #: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
 #: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
@@ -1038,15 +1044,18 @@ msgstr "Tratar como isto"
 msgid "Change to this"
 msgstr "Alterar para isto"
 
-#: ../operations/common/color-rotate.c:40 ../operations/common/color-rotate.c:53
+#: ../operations/common/color-rotate.c:40
+#: ../operations/common/color-rotate.c:53
 msgid "Clockwise"
 msgstr "À direita"
 
-#: ../operations/common/color-rotate.c:41 ../operations/common/color-rotate.c:54
+#: ../operations/common/color-rotate.c:41
+#: ../operations/common/color-rotate.c:54
 msgid "Switch to clockwise"
 msgstr "Mudar para a direita"
 
-#: ../operations/common/color-rotate.c:43 ../operations/common/color-rotate.c:56
+#: ../operations/common/color-rotate.c:43
+#: ../operations/common/color-rotate.c:56
 msgid "From"
 msgstr "De"
 
@@ -1054,7 +1063,8 @@ msgstr "De"
 msgid "Start angle of the source color range"
 msgstr "Ângulo inicial do intervalo de cor origem"
 
-#: ../operations/common/color-rotate.c:48 ../operations/common/color-rotate.c:61
+#: ../operations/common/color-rotate.c:48
+#: ../operations/common/color-rotate.c:61
 msgid "To"
 msgstr "Até"
 
@@ -1340,11 +1350,11 @@ msgid ""
 msgstr ""
 "Um GeglBuffer já existente para escrever dados do buffer de entrada ou NULL."
 
-#: ../operations/common/copy-buffer.c:168
+#: ../operations/common/copy-buffer.c:151
 msgid "Copy Buffer"
 msgstr "Copiar buffer"
 
-#: ../operations/common/copy-buffer.c:170
+#: ../operations/common/copy-buffer.c:153
 msgid "Writes image data to an already existing buffer"
 msgstr "Escreve dados da imagem num buffer já existente"
 
@@ -1378,17 +1388,18 @@ msgstr ""
 
 #: ../operations/common/dcraw-load.c:26
 #: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:25
-#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
+#: ../operations/common/gegl-buffer-save-op.c:24
+#: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
+#: ../operations/common/open-buffer.c:25 ../operations/common/save.c:25
+#: ../operations/external/ff-load.c:24 ../operations/external/ff-save.c:27
 #: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
 #: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
 #: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
 #: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
 #: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
-#: ../operations/external/svg-load.c:25 ../operations/external/webp-load.c:25
+#: ../operations/external/svg-load.c:25 ../operations/external/tiff-load.c:25
+#: ../operations/external/tiff-save.c:25 ../operations/external/webp-load.c:25
 #: ../operations/external/webp-save.c:24
-#: ../operations/workshop/external/ff-save.c:30
 #: ../operations/workshop/external/gluas.c:45
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "File"
@@ -1698,7 +1709,8 @@ msgid "Calculate a distance transform"
 msgstr "Calcular uma transformação de distância"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
-#: ../operations/common/plasma.c:40 ../operations/common/polar-coordinates.c:51
+#: ../operations/common/plasma.c:40
+#: ../operations/common/polar-coordinates.c:51
 #: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
@@ -1708,7 +1720,8 @@ msgid "Horizontal shadow offset"
 msgstr "Desvio horizontal da sombra"
 
 #: ../operations/common/dropshadow.c:31 ../operations/common/layer.c:41
-#: ../operations/common/plasma.c:47 ../operations/common/polar-coordinates.c:57
+#: ../operations/common/plasma.c:47
+#: ../operations/common/polar-coordinates.c:57
 #: ../operations/common/rectangle.c:31 ../operations/core/crop.c:30
 msgid "Y"
 msgstr "Y"
@@ -2290,7 +2303,7 @@ msgstr "Cortar ao tamanho da entrada"
 msgid "Should the output extent be clipped to the input extent"
 msgstr "Se o tamanho da saída deve ser cortado ao tamanho da entrada"
 
-#: ../operations/common/gaussian-blur-iir.c:117
+#: ../operations/common/gaussian-blur-iir.c:118
 #: ../operations/common/gblur-1d.c:891
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
@@ -2487,7 +2500,7 @@ msgstr "Posição vertical, em pixels"
 
 #: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
 #: ../operations/common/noise-perlin.c:27
-#: ../operations/common/noise-simplex.c:31
+#: ../operations/common/noise-simplex.c:31 ../operations/common/sepia.c:24
 #: ../operations/common/unsharp-mask.c:31
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
@@ -2648,7 +2661,7 @@ msgid "Linear gradient renderer"
 msgstr "Desenhador de gradiente linear"
 
 #: ../operations/common/load.c:27 ../operations/external/jpg-load.c:26
-#: ../operations/external/png-load.c:29
+#: ../operations/external/png-load.c:29 ../operations/external/tiff-load.c:27
 msgid "URI"
 msgstr "URI"
 
@@ -3041,7 +3054,8 @@ msgstr ""
 
 #. FIXME: With a large angle, we lose AreaFilter's flavours
 #: ../operations/common/motion-blur-circular.c:52
-#: ../operations/common/motion-blur-linear.c:33 ../operations/common/ripple.c:43
+#: ../operations/common/motion-blur-linear.c:33
+#: ../operations/common/ripple.c:43
 msgid "Angle"
 msgstr "Ângulo"
 
@@ -3095,7 +3109,8 @@ msgstr "Movimento de ampliação desfocado"
 msgid "Zoom motion blur"
 msgstr "Movimento de ampliação desfocado"
 
-#: ../operations/common/noise-cell.c:37 ../operations/common/noise-simplex.c:32
+#: ../operations/common/noise-cell.c:37
+#: ../operations/common/noise-simplex.c:32
 msgid "The scale of the noise function"
 msgstr "A escala da função de ruído"
 
@@ -3115,7 +3130,8 @@ msgstr "Posto"
 msgid "Select the n-th closest point"
 msgstr "Selecionar o n-ésimo ponto mais próximo"
 
-#: ../operations/common/noise-cell.c:49 ../operations/common/noise-simplex.c:36
+#: ../operations/common/noise-cell.c:49
+#: ../operations/common/noise-simplex.c:36
 msgid "The number of noise octaves."
 msgstr "O número de oitavas de ruído."
 
@@ -3127,7 +3143,8 @@ msgstr "Paletizar"
 msgid "Fill each cell with a random color"
 msgstr "Preencher cada célula com uma cor aleatória"
 
-#: ../operations/common/noise-cell.c:56 ../operations/common/noise-simplex.c:40
+#: ../operations/common/noise-cell.c:56
+#: ../operations/common/noise-simplex.c:40
 msgid "The random seed for the noise function"
 msgstr "A semente aletória para a função de ruído"
 
@@ -3394,16 +3411,18 @@ msgstr "Abrir buffer GEGL"
 msgid "Use an on-disk GeglBuffer as data source."
 msgstr "Usar um GeglBuffer em disco como origem de dados."
 
-#: ../operations/common/over.c:25 ../operations/generated/clear.c:38
-#: ../operations/generated/color-burn.c:38
-#: ../operations/generated/color-dodge.c:38 ../operations/generated/darken.c:38
-#: ../operations/generated/difference.c:38
+#: ../operations/common/over.c:25 ../operations/common/sepia.c:28
+#: ../operations/generated/clear.c:38 ../operations/generated/color-burn.c:38
+#: ../operations/generated/color-dodge.c:38
+#: ../operations/generated/darken.c:38 ../operations/generated/difference.c:38
 #: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
 #: ../operations/generated/dst-in.c:38 ../operations/generated/dst-out.c:38
-#: ../operations/generated/dst-over.c:38 ../operations/generated/exclusion.c:38
-#: ../operations/generated/hard-light.c:38 ../operations/generated/lighten.c:38
-#: ../operations/generated/overlay.c:38 ../operations/generated/plus.c:38
-#: ../operations/generated/screen.c:38 ../operations/generated/soft-light.c:38
+#: ../operations/generated/dst-over.c:38
+#: ../operations/generated/exclusion.c:38
+#: ../operations/generated/hard-light.c:38
+#: ../operations/generated/lighten.c:38 ../operations/generated/overlay.c:38
+#: ../operations/generated/plus.c:38 ../operations/generated/screen.c:38
+#: ../operations/generated/soft-light.c:38
 #: ../operations/generated/src-atop.c:38 ../operations/generated/src.c:38
 #: ../operations/generated/src-in.c:38 ../operations/generated/src-out.c:38
 #: ../operations/generated/svg-multiply.c:38 ../operations/generated/xor.c:38
@@ -3411,16 +3430,18 @@ msgstr "Usar um GeglBuffer em disco como origem de dados."
 msgid "sRGB"
 msgstr "sRGB"
 
-#: ../operations/common/over.c:26 ../operations/generated/clear.c:39
-#: ../operations/generated/color-burn.c:39
-#: ../operations/generated/color-dodge.c:39 ../operations/generated/darken.c:39
-#: ../operations/generated/difference.c:39
+#: ../operations/common/over.c:26 ../operations/common/sepia.c:29
+#: ../operations/generated/clear.c:39 ../operations/generated/color-burn.c:39
+#: ../operations/generated/color-dodge.c:39
+#: ../operations/generated/darken.c:39 ../operations/generated/difference.c:39
 #: ../operations/generated/dst-atop.c:39 ../operations/generated/dst.c:39
 #: ../operations/generated/dst-in.c:39 ../operations/generated/dst-out.c:39
-#: ../operations/generated/dst-over.c:39 ../operations/generated/exclusion.c:39
-#: ../operations/generated/hard-light.c:39 ../operations/generated/lighten.c:39
-#: ../operations/generated/overlay.c:39 ../operations/generated/plus.c:39
-#: ../operations/generated/screen.c:39 ../operations/generated/soft-light.c:39
+#: ../operations/generated/dst-over.c:39
+#: ../operations/generated/exclusion.c:39
+#: ../operations/generated/hard-light.c:39
+#: ../operations/generated/lighten.c:39 ../operations/generated/overlay.c:39
+#: ../operations/generated/plus.c:39 ../operations/generated/screen.c:39
+#: ../operations/generated/soft-light.c:39
 #: ../operations/generated/src-atop.c:39 ../operations/generated/src.c:39
 #: ../operations/generated/src-in.c:39 ../operations/generated/src-out.c:39
 #: ../operations/generated/svg-multiply.c:39 ../operations/generated/xor.c:39
@@ -3817,6 +3838,19 @@ msgstr ""
 "dependendo da extensão, use as opções específicas de formatos para passar "
 "parâmetros adicionais."
 
+#: ../operations/common/sepia.c:25 ../operations/common/unsharp-mask.c:32
+msgid "Scale, strength of effect"
+msgstr "Escala, força do efeito"
+
+#: ../operations/common/sepia.c:110
+msgid "Sepia"
+msgstr "Sépia"
+
+#: ../operations/common/sepia.c:112
+#| msgid "Infinitely repeats the input image."
+msgid "Converts the input image to sepia"
+msgstr "Converte a imagem de entrada para sépia"
+
 #: ../operations/common/shift.c:26 ../operations/common/shift.c:143
 msgid "Shift"
 msgstr "Deslocar"
@@ -4029,13 +4063,13 @@ msgstr ""
 "efeito de luz é aproximadamente em proporção a 1/r, onde r é a distância do "
 "centro da estrela."
 
-#: ../operations/common/svg-huerotate.c:27 ../operations/common/svg-matrix.c:27
-#: ../operations/common/svg-saturate.c:25
+#: ../operations/common/svg-huerotate.c:27
+#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:25
 msgid "Values"
 msgstr "Valores"
 
-#: ../operations/common/svg-huerotate.c:28 ../operations/common/svg-matrix.c:28
-#: ../operations/common/svg-saturate.c:26
+#: ../operations/common/svg-huerotate.c:28
+#: ../operations/common/svg-matrix.c:28 ../operations/common/svg-saturate.c:26
 msgid "list of <number>s"
 msgstr "Lista de <número>s"
 
@@ -4225,8 +4259,8 @@ msgstr "Tornar em mosiacos perfeitos"
 
 #: ../operations/common/tile-seamless.c:167
 msgid ""
-"Make the input buffer seamlessly tileable. The algorithm is not "
-"content-aware, so the result may need post-processing."
+"Make the input buffer seamlessly tileable. The algorithm is not content-"
+"aware, so the result may need post-processing."
 msgstr ""
 "Tornar o buffer de entrada em mosaicos perfeitos. O algoritmo não tem "
 "consciência do conteúdo, pelo que o resultado pode precisar de processamento "
@@ -4235,10 +4269,6 @@ msgstr ""
 #: ../operations/common/unsharp-mask.c:24
 msgid "Standard Deviation"
 msgstr "Desvio padrão"
-
-#: ../operations/common/unsharp-mask.c:32
-msgid "Scale, strength of effect"
-msgstr "Escala, força do efeito"
 
 #: ../operations/common/unsharp-mask.c:83
 msgid "Unsharp Mask"
@@ -4582,11 +4612,11 @@ msgstr "Prender deformação"
 msgid "Limit deformation in the image area."
 msgstr "Limitar deformação na área da imagem."
 
-#: ../operations/common/waves.c:180
+#: ../operations/common/waves.c:183
 msgid "Waves"
 msgstr "Ondas"
 
-#: ../operations/common/waves.c:184
+#: ../operations/common/waves.c:187
 msgid "Distort the image with waves"
 msgstr "Distorcer a imagem com ondas"
 
@@ -4820,15 +4850,106 @@ msgstr ""
 "Número de molduras no vídeo, atualiza, no mínimo, quand a 1ª moldura é "
 "descodificada."
 
-#: ../operations/external/ff-load.c:487
+#: ../operations/external/ff-load.c:36
+msgid "audio_sample_rate"
+msgstr "taxa_amostragem_áudio"
+
+#: ../operations/external/ff-load.c:37
+#| msgid "Red channel"
+msgid "audio_channels"
+msgstr "canais_áudio"
+
+#: ../operations/external/ff-load.c:39
+#| msgid "frames"
+msgid "frame-rate"
+msgstr "taxa de molduras"
+
+#: ../operations/external/ff-load.c:40
+msgid "Frames per second, permits computing time vs frame"
+msgstr "Molduras por segundo, permite calcular tempo vs. moldura"
+
+#: ../operations/external/ff-load.c:44
+msgid "video-codec"
+msgstr "codec vídeo"
+
+#: ../operations/external/ff-load.c:45
+msgid "audio-codec"
+msgstr "codec áudio"
+
+#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:48
+msgid "audio"
+msgstr "áudio"
+
+#: ../operations/external/ff-load.c:740
 msgid "FFmpeg Frame Loader"
 msgstr "Carregador de molduras ffmpeg"
 
-#: ../operations/external/ff-load.c:489
+#: ../operations/external/ff-load.c:742
 msgid "FFmpeg video frame importer."
 msgstr "Impostador de molduras vídeo ffmpeg"
 
+#: ../operations/external/ff-save.c:28 ../operations/external/npy-save.c:32
+#: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
+#: ../operations/external/rgbe-save.c:27
+msgid "Target path and filename, use '-' for stdout."
+msgstr "Caminho e nome de ficheiro destino, use \"-\" para stdout"
+
+#: ../operations/external/ff-save.c:30
+msgid "Frames/second"
+msgstr "Molduras/segundo"
+
+#: ../operations/external/ff-save.c:33
+msgid "Audio codec"
+msgstr "Codec áudio"
+
+#: ../operations/external/ff-save.c:34
+msgid "Audio bitrate"
+msgstr "Taxa de bits áudio"
+
+#: ../operations/external/ff-save.c:35
+msgid "Video codec"
+msgstr "Codec vídeo"
+
+#: ../operations/external/ff-save.c:36 ../operations/external/ff-save.c:38
+#| msgid "Target bitrate"
+msgid "video bitrate"
+msgstr "Taxa de bits vídeo"
+
+#: ../operations/external/ff-save.c:39
+msgid "global quality"
+msgstr "qualidade global"
+
+#: ../operations/external/ff-save.c:40
+#| msgid "Compression"
+msgid "compression level"
+msgstr "nível de compressão"
+
+#: ../operations/external/ff-save.c:41
+#| msgid "Noise Reduction"
+msgid "noise reduction strength"
+msgstr "força da redução de ruído"
+
+#: ../operations/external/ff-save.c:42
+msgid "the number of frames in a group of pictures, 0 for keyframe only"
+msgstr "o número de molduras num grupo de imagens, 0 para moldura chave só"
+
+#: ../operations/external/ff-save.c:43
+msgid ""
+"the minimum number of frames in a group of pictures, 0 for keyframe only"
+msgstr ""
+"o número mínimo de molduras num grupo de imagens, 0 para moldura chave só"
+
+#: ../operations/external/ff-save.c:44
+#| msgid "Maximum number of iterations"
+msgid "maximum number of consequetive b frames"
+msgstr "número máximo de molduras b consecutivas"
+
+#: ../operations/external/ff-save.c:854
+msgid "FFmpeg video output sink"
+msgstr "Depósito de saída vídeo ffmpeg"
+
 #: ../operations/external/jp2-load.c:26 ../operations/external/jpg-load.c:25
+#: ../operations/external/tiff-load.c:26
 msgid "Path of file to load"
 msgstr "Caminho do ficheiro a carregar"
 
@@ -4903,7 +5024,7 @@ msgstr "Carregador de ficheiros JPEG"
 msgid "JPEG image loader using libjpeg"
 msgstr "Carregador de imagens JPEG usando libjpeg"
 
-#: ../operations/external/jpg-save.c:26
+#: ../operations/external/jpg-save.c:26 ../operations/external/tiff-save.c:26
 msgid "Target path and filename, use '-' for stdout"
 msgstr "Caminho e nome de ficheiro destino, use \"-\" para stdout"
 
@@ -5108,7 +5229,8 @@ msgstr "Preservar modelo"
 msgid "When TRUE the model will not be freed"
 msgstr "Quando VERDADEIRO, o modelo não será libertado"
 
-#: ../operations/external/npd.c:53 ../operations/transform/transform-core.c:190
+#: ../operations/external/npd.c:53
+#: ../operations/transform/transform-core.c:190
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Amostragem usada internamente"
@@ -5116,12 +5238,6 @@ msgstr "Amostragem usada internamente"
 #: ../operations/external/npd.c:258
 msgid "Performs n-point image deformation"
 msgstr "Realiza uma deformação de imagem ponto-n"
-
-#: ../operations/external/npy-save.c:32 ../operations/external/png-save.c:27
-#: ../operations/external/ppm-save.c:26 ../operations/external/rgbe-save.c:27
-#: ../operations/workshop/external/ff-save.c:31
-msgid "Target path and filename, use '-' for stdout."
-msgstr "Caminho e nome de ficheiro destino, use \"-\" para stdout"
 
 #: ../operations/external/npy-save.c:142
 msgid "NPY File Saver"
@@ -5215,11 +5331,11 @@ msgstr "Caminho de desenho"
 msgid "Renders a brush stroke"
 msgstr "Desenha um traço de pincel"
 
-#: ../operations/external/pixbuf.c:25
+#: ../operations/external/pixbuf.c:26
 msgid "Pixbuf"
 msgstr "Pixbuf"
 
-#: ../operations/external/pixbuf.c:25
+#: ../operations/external/pixbuf.c:27
 msgid "GdkPixbuf to use"
 msgstr "GdkPixbuf a usar"
 
@@ -5339,8 +5455,8 @@ msgstr "Janela SDL"
 
 #: ../operations/external/sdl-display.c:174
 msgid ""
-"Displays the input buffer in an SDL window (restricted to one display "
-"op/process, due to SDL implementation issues)."
+"Displays the input buffer in an SDL window (restricted to one display op/"
+"process, due to SDL implementation issues)."
 msgstr ""
 "Mostra o buffer de entrada numa janela SDL (restrito a um processo/operação, "
 "devido a problemas de implementação SDL)."
@@ -5428,6 +5544,40 @@ msgstr "Desenhar texto"
 #: ../operations/external/text.c:325
 msgid "Display a string of text using pango and cairo."
 msgstr "Mostrar uma cadeia de texto usando Pango e Cairo."
+
+#: ../operations/external/tiff-load.c:28
+#| msgid "URI for file to load."
+msgid "URI for file to load"
+msgstr "URI do ficheiro a carregar"
+
+#: ../operations/external/tiff-load.c:30
+#| msgid "Direction"
+msgid "Directory"
+msgstr "Pasta"
+
+#: ../operations/external/tiff-load.c:31
+msgid "Image file directory (subfile)"
+msgstr "Pasta do ficheiro de imagem (subficheiro)"
+
+#: ../operations/external/tiff-load.c:837
+#| msgid "PNG File Loader"
+msgid "TIFF File Loader"
+msgstr "Carregador de ficheiros TIFF"
+
+#: ../operations/external/tiff-load.c:839
+#| msgid "JPEG image loader using libjpeg"
+msgid "TIFF image loader using libtiff"
+msgstr "Carregador de imagens TIFF usando libtiff"
+
+#: ../operations/external/tiff-save.c:591
+#| msgid "NPY File Saver"
+msgid "TIFF File Saver"
+msgstr "Gravador de ficheiro TIFF"
+
+#: ../operations/external/tiff-save.c:593
+#| msgid "JPEG image saver, using libjpeg"
+msgid "TIFF image saver using libtiff"
+msgstr "Gravador de imagens TIFF, usando libtiff"
 
 #: ../operations/external/v4l.c:26 ../operations/workshop/external/v4l2.c:24
 msgid "Path"
@@ -5579,8 +5729,8 @@ msgid ""
 "aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 msgstr ""
 "Operação de mistura SVG Desvia-cor (<code>if cA * aB + cB * aA >= aA * aB: d "
-"= aA * aB + cA * (1 - aB) + cB * (1 - aA) senão: d = (cA == aA ? 1 : cB * aA "
-"/ (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
+"= aA * aB + cA * (1 - aB) + cB * (1 - aA) senão: d = (cA == aA ? 1 : cB * "
+"aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
 #: ../operations/generated/darken.c:169
 msgid ""
@@ -6177,18 +6327,6 @@ msgstr ""
 "Testar opção para fazer um mapa 1:1 da entrada para a saída durante a "
 "amostragem"
 
-#: ../operations/workshop/external/ff-save.c:33
-msgid "Target bitrate"
-msgstr "Taxa de bits destino"
-
-#: ../operations/workshop/external/ff-save.c:36
-msgid "Frames/second"
-msgstr "Molduras/segundo"
-
-#: ../operations/workshop/external/ff-save.c:894
-msgid "FFmpeg video output sink"
-msgstr "Depósito de saída vídeo ffmpeg"
-
 #: ../operations/workshop/external/gluas.c:41
 msgid "Script"
 msgstr "Script"
@@ -6419,8 +6557,8 @@ msgstr "Operação de mistura de imagem Média (<tt>c = (cA + aB)/2</tt>)"
 
 #: ../operations/workshop/generated/blend-reflect.c:109
 msgid ""
-"Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / "
-"(1.0-cB)</tt>)"
+"Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-"
+"cB)</tt>)"
 msgstr ""
 "Operação de mistura de imagem Misturar-refletir (<tt>c = cB>=1.0?1.0:cA*cA / "
 "(1.0-cB)</tt>)"
@@ -6578,7 +6716,8 @@ msgid "spectral ink simulator, for softproofing/simulating press inks"
 msgstr ""
 "Simulador espectral de tinta para tintas de imprensa de prova suave/simulação"
 
-#: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
+#: ../operations/workshop/kuwahara.c:27
+#: ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr "Raio de região de pixels quadrada (largura e altura serão raio*2+1)"
 
@@ -6634,7 +6773,6 @@ msgid "Clip low pixel values"
 msgstr "Cortar valores de pixel baixos"
 
 #: ../operations/workshop/rgb-clip.c:28
-#| msgid "Ink limit"
 msgid "Low limit"
 msgstr "Limite inferior"
 
@@ -6648,7 +6786,6 @@ msgid "Clip high pixel values"
 msgstr "Cortar valores de pixel altos"
 
 #: ../operations/workshop/rgb-clip.c:36
-#| msgid "High input"
 msgid "High limit"
 msgstr "Limite superior"
 
