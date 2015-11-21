@@ -144,6 +144,7 @@ operations/core/convert-format.c
 operations/core/crop.c
 operations/core/nop.c
 operations/external/ff-load.c
+operations/external/ff-save.c
 operations/external/jp2-load.c
 operations/external/jpg-load.c
 operations/external/jpg-save.c
@@ -215,7 +216,6 @@ operations/workshop/component-extract.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/ditto.c
-operations/workshop/external/ff-save.c
 operations/workshop/external/gluas.c
 operations/workshop/external/lens-correct.c
 operations/workshop/external/line-profile.c
