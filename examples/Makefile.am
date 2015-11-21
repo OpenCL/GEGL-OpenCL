@@ -37,7 +37,6 @@ bin_PROGRAMS = \
 	gegl-convert \
 	gegl-slicer \
 	video-invert \
-        gegl-video \
 	geglbuffer-add-image \
 	geglbuffer-clock \
 	frame-counter \
@@ -53,7 +52,7 @@ geglbuffer_clock_SOURCES = geglbuffer-clock.c
 hello_world_SOURCES = hello-world.c
 
 if HAVE_SDL
-bin_PROGRAMS += sdl-draw
+bin_PROGRAMS += sdl-draw  gegl-video
 sdl_draw_SOURCES = sdl-draw.c
 sdl_draw_LDADD = $(SDL_LIBS)
 sdl_draw_CFLAGS = $(AM_CFLAGS) $(SDL_CFLAGS)
