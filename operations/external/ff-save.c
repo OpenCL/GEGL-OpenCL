@@ -582,9 +582,9 @@ open_video (Priv * p, AVFormatContext * oc, AVStream * st)
      picture is needed too. It is then converted to the required
      output format */
   p->tmp_picture = NULL;
-  if (c->pix_fmt != PIX_FMT_RGB24)
+  if (c->pix_fmt != AV_PIX_FMT_RGB24)
     {
-      p->tmp_picture = alloc_picture (PIX_FMT_RGB24, c->width, c->height);
+      p->tmp_picture = alloc_picture (AV_PIX_FMT_RGB24, c->width, c->height);
       if (!p->tmp_picture)
         {
           fprintf (stderr, "Could not allocate temporary picture\n");
@@ -630,13 +630,13 @@ write_video_frame (GeglProperties *o,
 
   c = st->codec;
 
-  if (c->pix_fmt != PIX_FMT_RGB24)
+  if (c->pix_fmt != AV_PIX_FMT_RGB24)
     {
       struct SwsContext *img_convert_ctx;
       fill_rgb_image (o, p->tmp_picture, p->frame_count, c->width,
                       c->height);
 
-      img_convert_ctx = sws_getContext(c->width, c->height, PIX_FMT_RGB24,
+      img_convert_ctx = sws_getContext(c->width, c->height, AV_PIX_FMT_RGB24,
                                        c->width, c->height, c->pix_fmt,
                                        SWS_BICUBIC, NULL, NULL, NULL);
 
