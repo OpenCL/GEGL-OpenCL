@@ -22,11 +22,10 @@ AM_CPPFLAGS = \
 	-I$(top_builddir)/gegl/property-types \
 	-I$(top_srcdir)/gegl/property-types
 
-AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS) $(GEXIV2_CFLAGS) $(SDL_CFLAGS)
+AM_CFLAGS = $(DEP_CFLAGS) $(BABL_CFLAGS) $(SDL_CFLAGS)
 
 AM_LDFLAGS =  \
 	$(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la \
-	$(GEXIV2_LIBS) \
 	$(BABL_LIBS) \
 	$(DEP_LIBS) \
 	$(SDL_LIBS) \
@@ -52,9 +51,16 @@ geglbuffer_clock_SOURCES = geglbuffer-clock.c
 hello_world_SOURCES = hello-world.c
 
 if HAVE_SDL
-bin_PROGRAMS += sdl-draw  gegl-video
+bin_PROGRAMS += sdl-draw
 sdl_draw_SOURCES = sdl-draw.c
 sdl_draw_LDADD = $(SDL_LIBS)
 sdl_draw_CFLAGS = $(AM_CFLAGS) $(SDL_CFLAGS)
+
+if HAVE_GEXIV2
+bin_PROGRAMS += gegl-video
+gegl_video_SOURCES = gegl-video.c
+gegl_video_LDADD = $(GEXIV2_LIBS) $(SDL_LIBS)
+gegl_video_CFLAGS = $(AM_CFLAGS) $(GEXIV2_CFLAGS) $(SDL_CFLAGS)
+endif
 endif
 
