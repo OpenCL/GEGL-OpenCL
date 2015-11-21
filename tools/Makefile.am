@@ -5,6 +5,7 @@ EXTRA_DIST = \
 	gobj2dot.rb
 
 AM_CPPFLAGS = \
+	-DTOP_SRCDIR=\"$(top_srcdir)\" \
 	-I$(top_srcdir) \
 	-I$(top_builddir)/gegl \
 	-I$(top_srcdir)/gegl \
