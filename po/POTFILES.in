@@ -167,6 +167,7 @@ operations/external/sdl-display.c
 operations/external/svg-load.c
 operations/external/text.c
 operations/external/tiff-load.c
+operations/external/tiff-save.c
 operations/external/v4l.c
 operations/external/vector-fill.c
 operations/external/vector-stroke.c
