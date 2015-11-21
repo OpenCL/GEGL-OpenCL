@@ -43,9 +43,13 @@ gegl_tester_SOURCES = \
 	gegl-tester.c
 
 if HAVE_MRG
+if HAVE_GEXIV2
+if HAVE_SDL
 gegl_SOURCES += mrg-ui.c
 AM_CFLAGS += $(SDL_CFLAGS)
 AM_LDFLAGS += $(SDL_LIBS)
+endif
+endif
 endif
 
 if HAVE_SPIRO
