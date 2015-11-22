@@ -460,12 +460,14 @@ prepare (GeglOperation *operation)
 
 #endif
 
+#if 0
       p->video_stream->codec->idct_algo = FF_IDCT_SIMPLEAUTO;
 
       p->video_stream->codec->thread_count = 0;
       p->video_stream->codec->thread_type = FF_THREAD_SLICE;
       /* XXX: permits slice parallell decode, at expense of h264 compliance of output */
       p->video_stream->codec->flags2 = AV_CODEC_FLAG2_FAST;
+#endif
 
       if (p->video_codec == NULL)
           g_warning ("video codec not found");
