@@ -119,10 +119,9 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
 {
   int to_remove = 0;
   GList *l;
-  l = p->audio_track;
   if (sample_no < 0)
     return;
-  for (; l; l = l->next)
+  for (l = p->audio_track; l; l = l->next)
   {
     GeglAudioFragment *af = l->data;
     gint pos = gegl_audio_fragment_get_pos (af);
@@ -342,6 +341,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         af->data[1][i] = o->audio->data[1][i];
       }
     gegl_audio_fragment_set_pos (af, p->audio_pos);
+    gegl_audio_fragment_set_sample_count (af, sample_count);
     p->audio_pos += sample_count;
     p->audio_track = g_list_append (p->audio_track, af);
   }
