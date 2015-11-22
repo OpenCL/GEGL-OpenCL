@@ -428,7 +428,7 @@ main (gint argc, gchar **argv)
 
       {
         gchar *commandline = g_strdup_printf (
-            "sh -c \"(cd " TOP_SRCDIR ";grep -r '\\\"%s\\\"' operations) | grep operations | grep '\\\"name\\\"' | cut -f 1 -d ':'\"",
+            "sh -c \"(cd " TOP_SRCDIR ";grep -r '\\\"%s\\\"' operations) | grep operations | grep -v '~:' | grep '\\\"name\\\"' | cut -f 1 -d ':'\"",
              name);
         gchar *output = NULL;
         
