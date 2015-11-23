@@ -424,11 +424,13 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         fprintf (stderr, "eeeek unhandled audio format\n");
         break;
     }
-    frame->pts = av_rescale_q (p->next_apts, (AVRational){1, c->sample_rate}, st->time_base);
+    frame->pts = p->next_apts;
     p->next_apts += sample_count;
 
     av_frame_make_writable (frame);
     ret = avcodec_encode_audio2 (c, &pkt, frame, &got_packet);
+
+    av_packet_rescale_ts (&pkt, st->codec->time_base, st->time_base);
     if (ret < 0) {
       fprintf (stderr, "Error encoding audio frame: %s\n", av_err2str (ret));
     }
@@ -815,6 +817,53 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
+static void flush_audio (GeglProperties *o)
+{
+  Priv *p = (Priv*)o->user_data;
+
+  int got_packet;
+  do
+  {
+    AVPacket  pkt = { 0 };
+    int ret;
+    got_packet = 0;
+    av_init_packet (&pkt);
+    ret = avcodec_encode_audio2 (p->audio_st->codec, &pkt, NULL, &got_packet);
+    if (ret < 0)
+      break;
+    if (got_packet)
+      {
+        pkt.stream_index = p->audio_st->index;
+        av_packet_rescale_ts (&pkt, p->audio_st->codec->time_base, p->audio_st->time_base);
+        av_interleaved_write_frame (p->oc, &pkt);
+        av_free_packet (&pkt);
+      }
+  } while (got_packet);
+}
+
+static void flush_video (GeglProperties *o)
+{
+  Priv *p = (Priv*)o->user_data;
+  int got_packet = 0;
+  do {
+    AVPacket  pkt = { 0 };
+    int ret;
+    got_packet = 0;
+    av_init_packet (&pkt);
+    ret = avcodec_encode_video2 (p->video_st->codec, &pkt, NULL, &got_packet);
+    if (ret < 0)
+      return;
+      
+     if (got_packet)
+     {
+       pkt.stream_index = p->video_st->index;
+       av_packet_rescale_ts (&pkt, p->video_st->codec->time_base, p->video_st->time_base);
+       av_interleaved_write_frame (p->oc, &pkt);
+       av_free_packet (&pkt);
+     }
+  } while (got_packet);
+}
+
 static void
 finalize (GObject *object)
 {
@@ -822,19 +871,18 @@ finalize (GObject *object)
   if (o->user_data)
     {
       Priv *p = (Priv*)o->user_data;
+      flush_audio (o);
+      flush_video (o);
 
-    if (p->oc)
-      {
-        av_write_trailer (p->oc);
+      av_write_trailer (p->oc);
 
-        if (p->video_st)
-          close_video (p, p->oc, p->video_st);
-        if (p->audio_st)
-          close_audio (p, p->oc, p->audio_st);
+      if (p->video_st)
+        close_video (p, p->oc, p->video_st);
+      if (p->audio_st)
+        close_audio (p, p->oc, p->audio_st);
 
-        avio_closep (&p->oc->pb);
-        avformat_free_context (p->oc);
-      }
+      avio_closep (&p->oc->pb);
+      avformat_free_context (p->oc);
 
       g_free (o->user_data);
       o->user_data = NULL;
