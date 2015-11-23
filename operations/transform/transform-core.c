@@ -380,8 +380,7 @@ gegl_transform_is_intermediate_node (OpTransform *transform)
         }
     }
 
-  if (consumers)
-    g_free (consumers);
+  g_free (consumers);
 
   return is_intermediate;
 }
