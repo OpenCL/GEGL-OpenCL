@@ -825,12 +825,13 @@ finalize (GObject *object)
 
     if (p->oc)
       {
+        av_write_trailer (p->oc);
+
         if (p->video_st)
           close_video (p, p->oc, p->video_st);
         if (p->audio_st)
           close_audio (p, p->oc, p->audio_st);
 
-        av_write_trailer (p->oc);
         avio_closep (&p->oc->pb);
         avformat_free_context (p->oc);
       }
