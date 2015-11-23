@@ -395,7 +395,6 @@ prepare (GeglOperation *operation)
         {
           print_error (o->path, err);
         }
-      fprintf (stderr, "[%lu]\n", p->video_fcontext->start_time_realtime);
       err = avformat_find_stream_info (p->video_fcontext, NULL);
       if (err < 0)
         {
