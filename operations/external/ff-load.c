@@ -566,10 +566,9 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
 {
   int to_remove = 0;
   GList *l;
-  l = p->audio_track;
   if (sample_no < 0)
     return;
-  for (; l; l = l->next)
+  for (l = p->audio_track; l; l = l->next)
   {
     GeglAudioFragment *af = l->data;
     int channels = gegl_audio_fragment_get_channels (af);

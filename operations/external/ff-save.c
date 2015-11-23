@@ -96,12 +96,13 @@ typedef struct
   uint8_t  *buffer; 
                    
   int       audio_outbuf_size;
-  int       audio_input_frame_size;
   int16_t  *samples;
 
   GList    *audio_track;
   long      audio_pos;
   long      audio_read_pos;
+  
+  int       next_apts;
 } Priv;
 
 static void
@@ -124,9 +125,9 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
   for (l = p->audio_track; l; l = l->next)
   {
     GeglAudioFragment *af = l->data;
-    gint pos = gegl_audio_fragment_get_pos (af);
-    gint channels = gegl_audio_fragment_get_channels (af);
-    gint sample_count = gegl_audio_fragment_get_sample_count (af);
+    int channels = gegl_audio_fragment_get_channels (af);
+    int pos = gegl_audio_fragment_get_pos (af);
+    int sample_count = gegl_audio_fragment_get_sample_count (af);
     if (sample_no > pos + sample_count)
     {
       to_remove ++;
@@ -148,8 +149,8 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
           for (l = p->audio_track; l; l = l->next)
           {
             GeglAudioFragment *af = l->data;
-            gint pos = gegl_audio_fragment_get_pos (af);
-            gint sample_count = gegl_audio_fragment_get_sample_count (af);
+            int pos = gegl_audio_fragment_get_pos (af);
+            int sample_count = gegl_audio_fragment_get_sample_count (af);
             if (sample_no > pos + sample_count)
             {
               p->audio_track = g_list_remove (p->audio_track, af);
@@ -161,7 +162,6 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
         return;
       }
   }
-  fprintf (stderr, "ff-save didn't find audio sample\n");
   *left  = 0;
   *right = 0;
 }
@@ -323,9 +323,14 @@ void
 write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
 {
   Priv *p = (Priv*)o->user_data;
-  AVCodecContext *c;
-  AVPacket  pkt = { 0 };
-  av_init_packet (&pkt);
+  AVCodecContext *c = st->codec;
+  int sample_count = 100000;
+  static AVPacket  pkt = { 0 };
+
+  if (pkt.size == 0)
+  {
+    av_init_packet (&pkt);
+  }
 
   /* first we add incoming frames audio samples */
   {
@@ -335,31 +340,34 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
                                                      gegl_audio_fragment_get_channels (o->audio),
                                                      gegl_audio_fragment_get_channel_layout (o->audio),
                                                      sample_count);
+    gegl_audio_fragment_set_sample_count (af, sample_count);
     for (i = 0; i < sample_count; i++)
       {
         af->data[0][i] = o->audio->data[0][i];
         af->data[1][i] = o->audio->data[1][i];
       }
     gegl_audio_fragment_set_pos (af, p->audio_pos);
-    gegl_audio_fragment_set_sample_count (af, sample_count);
     p->audio_pos += sample_count;
     p->audio_track = g_list_append (p->audio_track, af);
   }
 
+  if (!(c->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE))
+    sample_count = c->frame_size;
+
   /* then we encode as much as we can in a loop using the codec frame size */
-  c = st->codec;
+
   
-  while (p->audio_pos - p->audio_read_pos > c->frame_size)
+  while (p->audio_pos - p->audio_read_pos > sample_count)
   {
     long i;
     int ret;
     int got_packet = 0;
     AVFrame *frame = alloc_audio_frame (c->sample_fmt, c->channel_layout,
-                                        c->sample_rate, c->frame_size);
+                                        c->sample_rate, sample_count);
 
     switch (c->sample_fmt) {
       case AV_SAMPLE_FMT_FLT:
-        for (i = 0; i < c->frame_size; i++)
+        for (i = 0; i < sample_count; i++)
         {
           float left = 0, right = 0;
           get_sample_data (p, i + p->audio_read_pos, &left, &right);
@@ -368,7 +376,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         }
         break;
       case AV_SAMPLE_FMT_FLTP:
-        for (i = 0; i < c->frame_size; i++)
+        for (i = 0; i < sample_count; i++)
         {
           float left = 0, right = 0;
           get_sample_data (p, i + p->audio_read_pos, &left, &right);
@@ -377,7 +385,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         }
         break;
       case AV_SAMPLE_FMT_S16:
-        for (i = 0; i < c->frame_size; i++)
+        for (i = 0; i < sample_count; i++)
         {
           float left = 0, right = 0;
           get_sample_data (p, i + p->audio_read_pos, &left, &right);
@@ -386,7 +394,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         }
         break;
       case AV_SAMPLE_FMT_S32:
-        for (i = 0; i < c->frame_size; i++)
+        for (i = 0; i < sample_count; i++)
         {
           float left = 0, right = 0;
           get_sample_data (p, i + p->audio_read_pos, &left, &right);
@@ -395,7 +403,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         }
         break;
       case AV_SAMPLE_FMT_S32P:
-        for (i = 0; i < c->frame_size; i++)
+        for (i = 0; i < sample_count; i++)
         {
           float left = 0, right = 0;
           get_sample_data (p, i + p->audio_read_pos, &left, &right);
@@ -404,7 +412,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         }
         break;
       case AV_SAMPLE_FMT_S16P:
-        for (i = 0; i < c->frame_size; i++)
+        for (i = 0; i < sample_count; i++)
         {
           float left = 0, right = 0;
           get_sample_data (p, i + p->audio_read_pos, &left, &right);
@@ -416,6 +424,8 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         fprintf (stderr, "eeeek unhandled audio format\n");
         break;
     }
+    frame->pts = av_rescale_q (p->next_apts, (AVRational){1, c->sample_rate}, c->time_base);
+    p->next_apts += sample_count;
 
     av_frame_make_writable (frame);
     ret = avcodec_encode_audio2 (c, &pkt, frame, &got_packet);
@@ -427,13 +437,12 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
     {
       pkt.stream_index = st->index;
       av_interleaved_write_frame (oc, &pkt);
+      av_free_packet (&pkt);
     }
 
     av_frame_free (&frame);
-    p->audio_read_pos += c->frame_size;
+    p->audio_read_pos += sample_count;
   }
-
-  p->audio_input_frame_size = c->frame_size;
 }
 
 void
