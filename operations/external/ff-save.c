@@ -424,7 +424,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
         fprintf (stderr, "eeeek unhandled audio format\n");
         break;
     }
-    frame->pts = av_rescale_q (p->next_apts, (AVRational){1, c->sample_rate}, c->time_base);
+    frame->pts = av_rescale_q (p->next_apts, (AVRational){1, c->sample_rate}, st->time_base);
     p->next_apts += sample_count;
 
     av_frame_make_writable (frame);
