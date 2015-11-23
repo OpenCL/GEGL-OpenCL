@@ -132,7 +132,11 @@ gegl_transform_prepare (GeglOperation *operation)
 
   gegl_transform_create_composite_matrix (transform, &matrix);
 
-  if (gegl_transform_matrix3_allow_fast_translate (&matrix))
+  /* The identity matrix is also a fast translate matrix. */
+  if (gegl_transform_is_intermediate_node (transform) ||
+      gegl_transform_matrix3_allow_fast_translate (&matrix) ||
+      (gegl_matrix3_is_translate (&matrix) &&
+       transform->sampler == GEGL_SAMPLER_NEAREST))
     {
       const Babl *fmt = gegl_operation_get_source_format (operation, "input");
 
