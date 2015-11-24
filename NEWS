@@ -2,6 +2,17 @@
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
+Changes in GEGL 0.3.4
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • build: do not install examples in path
+ • ff-save fully store all in-flight codec contexts before closing files
+ • ff-load improvements to seeking accuracy
+ • transform: make fast paths skip pixel format conversions
+
+Contributions from:
+
+ Øyvind Kolås, Debarshi Ray and Nils Philippsen
+
 Changes in GEGL 0.3.2
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • Operations:
