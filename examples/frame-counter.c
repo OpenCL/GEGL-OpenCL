@@ -16,8 +16,7 @@ main (gint    argc,
     GeglNode *store = gegl_node_new_child (gegl,
                               "operation", "gegl:ff-save",
                               "path", output_path,
-                              "video-bitrate", 1024 * 1024,
-                              "frame-rate", 24.0,
+                              "frame-rate", 30.0,
                               NULL);
     GeglNode *crop    = gegl_node_new_child (gegl,
                               "operation", "gegl:crop",
@@ -42,7 +41,7 @@ main (gint    argc,
 
     {
       gint frame;
-      gint frames = 64;
+      gint frames = 400;
 
       for (frame=0; frame < frames; frame++)
         {
