@@ -315,10 +315,13 @@ decode_frame (GeglOperation *operation,
   decodeframe = frame;
   if (frame > prevframe + 20 || frame < prevframe )
   {
-    int64_t seek_target = av_rescale_q ((frame - 16) / o->frame_rate * AV_TIME_BASE, AV_TIME_BASE_Q, p->video_stream->time_base);
+ 
+    int64_t seek_target = av_rescale_q ((frame * AV_TIME_BASE * 1.0) / o->frame_rate
+, AV_TIME_BASE_Q, p->video_stream->time_base) / p->video_stream->codec->ticks_per_frame;
+
     if (av_seek_frame (p->video_fcontext, p->video_index, seek_target, (AVSEEK_FLAG_BACKWARD )) < 0)
       fprintf (stderr, "video seek error!\n");
-   else
+    else
       avcodec_flush_buffers (p->video_stream->codec);
   }
 
@@ -352,8 +355,17 @@ decode_frame (GeglOperation *operation,
 
           if(got_picture)
           {
-             p->prevpts = av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_stream->time_base);
-             decodeframe = roundf (av_frame_get_best_effort_timestamp (p->lavc_frame) * av_q2d (p->video_stream->time_base) * o->frame_rate) - 1;
+             if ((pkt.dts != pkt.pts) || (p->lavc_frame->key_frame==0) )
+             {
+               p->prevpts += 1.0 / o->frame_rate;
+               decodeframe = floorf( p->prevpts * o->frame_rate) - 2;
+             }
+             else
+             {
+               p->lavc_frame->pts = pkt.dts;    //av_frame_get_best_effort_timestamp (p->lavc_frame);
+               p->prevpts = p->lavc_frame->pts * av_q2d (p->video_stream->time_base) * p->video_stream->codec->ticks_per_frame;
+               decodeframe = floorf( p->prevpts * o->frame_rate);
+             }
           }
 
           if (decoded_bytes != pkt.size)
