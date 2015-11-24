@@ -58,6 +58,12 @@ m4_define([sdl_required_version], [0.0.0])
 m4_define([libtiff_required_version], [4.0.0])
 m4_define([webp_required_version], [0.0.0])
 m4_define([poly2tri-c_required_version], [0.0.0])
+m4_define([pygobject2_required_version], [2.26])
+m4_define([pygobject3_required_version], [3.2])
+m4_define([vapigen_required_version], [0.20.0])
+m4_define([libavformat_required_version], [56.0.0])
+m4_define([libavcodec_required_version], [56.0.0])
+m4_define([libswscale_required_version], [3.1.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
 
@@ -465,8 +471,8 @@ GOBJECT_INTROSPECTION_CHECK(introspection_required_version)
 # Check PyGObject
 ########################
 have_pygobject="no"
-PKG_CHECK_EXISTS(pygobject-2.0 >= 2.26, have_pygobject="yes")
-PKG_CHECK_EXISTS(pygobject-3.0 >= 3.2, have_pygobject="yes")
+PKG_CHECK_EXISTS(pygobject-2.0 >= pygobject2_required_version, have_pygobject="yes")
+PKG_CHECK_EXISTS(pygobject-3.0 >= pygobject3_required_version, have_pygobject="yes")
 AM_CONDITIONAL(HAVE_PYGOBJECT, test "$have_pygobject" = "yes")
 
 ########################
@@ -477,7 +483,7 @@ AC_ARG_WITH(vala, [  --without-vala          build without Vala support])
 
 have_vapigen="no"
 if test "x$with_vala" != "xno"; then
-  PKG_CHECK_EXISTS(vapigen >= 0.20.0,
+  PKG_CHECK_EXISTS(vapigen >= vapigen_required_version,
     have_vapigen="yes",
     have_vapigen="no  (vapigen not found)")
 fi
@@ -1001,9 +1007,9 @@ AC_ARG_WITH(lua, [  --without-lua           build without Lua support])
 
 have_lua="no"
 if test "x$with_lua" != "xno"; then
-PKG_CHECK_MODULES(LUA, lua >= $LUA_REQUIRED_VERSION,
+PKG_CHECK_MODULES(LUA, lua >= lua_required_version,
   have_lua="yes",
-  [PKG_CHECK_MODULES(LUA, lua5.1 >= $LUA_REQUIRED_VERSION,
+  [PKG_CHECK_MODULES(LUA, lua5.1 >= lua_required_version,
      have_lua="yes",
      have_lua="no  (usable lua not found)")])
 fi
@@ -1021,7 +1027,7 @@ AC_SUBST(LUA_LIBS)
 AC_ARG_WITH(libavformat,  [  --without-libavformat   build without libavformat support])
 
 if test "x$with_libavformat" != xno; then
-  PKG_CHECK_MODULES(AVFORMAT, libavformat >= 56.0.0 libavcodec >= 56.0.0 libswscale >= 3.1.0,
+  PKG_CHECK_MODULES(AVFORMAT, libavformat >= libavformat_required_version libavcodec >= libavcodec_required_version libswscale >= libswscale_required_version,
     have_libavformat="yes",
     have_libavformat="no  (libavformat not found)")
   # verify the presence of the avformat.h header
