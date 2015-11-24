@@ -61,6 +61,7 @@ typedef struct
   gint             width;
   gint             height;
   gdouble          fps;
+  gint             codec_delay;
 
   gchar           *loadedfilename; /* to remember which file is "cached"     */
 
@@ -313,16 +314,18 @@ decode_frame (GeglOperation *operation,
     }
 
   decodeframe = frame;
-  if (frame > prevframe + 20 || frame < prevframe )
+  if (frame < 2 || frame > prevframe + 64 || frame < prevframe )
   {
  
-    int64_t seek_target = av_rescale_q ((frame * AV_TIME_BASE * 1.0) / o->frame_rate
+    int64_t seek_target = av_rescale_q (((frame) * AV_TIME_BASE * 1.0) / o->frame_rate
 , AV_TIME_BASE_Q, p->video_stream->time_base) / p->video_stream->codec->ticks_per_frame;
 
     if (av_seek_frame (p->video_fcontext, p->video_index, seek_target, (AVSEEK_FLAG_BACKWARD )) < 0)
       fprintf (stderr, "video seek error!\n");
     else
       avcodec_flush_buffers (p->video_stream->codec);
+    
+    prevframe = -1;
   }
 
   do
@@ -344,8 +347,9 @@ decode_frame (GeglOperation *operation,
           }
           while (pkt.stream_index != p->video_index);
 
-          decoded_bytes = avcodec_decode_video2 (p->video_stream->codec, p->lavc_frame,
-                                                 &got_picture, &pkt);
+          decoded_bytes = avcodec_decode_video2 (
+                 p->video_stream->codec, p->lavc_frame,
+                 &got_picture, &pkt);
           if (decoded_bytes < 0)
             {
               fprintf (stderr, "avcodec_decode_video failed for %s\n",
@@ -355,16 +359,19 @@ decode_frame (GeglOperation *operation,
 
           if(got_picture)
           {
-             if ((pkt.dts != pkt.pts) || (p->lavc_frame->key_frame==0) )
+             if ((pkt.dts == pkt.pts) || (p->lavc_frame->key_frame!=0))
              {
-               p->prevpts += 1.0 / o->frame_rate;
-               decodeframe = floorf( p->prevpts * o->frame_rate) - 2;
+               p->lavc_frame->pts = 
+(p->video_stream->cur_dts - p->video_stream->first_dts);
+               p->prevpts =
+     av_rescale_q ( p->lavc_frame->pts, p->video_stream->time_base,
+AV_TIME_BASE_Q) * 1.0 / AV_TIME_BASE ;
+               decodeframe = roundf( p->prevpts * o->frame_rate);
              }
              else
              {
-               p->lavc_frame->pts = pkt.dts;    //av_frame_get_best_effort_timestamp (p->lavc_frame);
-               p->prevpts = p->lavc_frame->pts * av_q2d (p->video_stream->time_base) * p->video_stream->codec->ticks_per_frame;
-               decodeframe = floorf( p->prevpts * o->frame_rate);
+               p->prevpts += 1.0 / o->frame_rate;
+               decodeframe = roundf ( p->prevpts * o->frame_rate);
              }
           }
 
@@ -374,7 +381,7 @@ decode_frame (GeglOperation *operation,
         }
       while (!got_picture);
     }
-    while (decodeframe < frame);
+    while (decodeframe <= frame + p->codec_delay);
 
   p->prevframe = frame;
   return 0;
@@ -411,7 +418,6 @@ prepare (GeglOperation *operation)
       if (err < 0)
         {
           g_warning ("ff-load: error finding stream info for %s", o->path);
-
           return;
         }
       err = avformat_open_input(&p->audio_fcontext, o->path, NULL, 0);
@@ -423,7 +429,6 @@ prepare (GeglOperation *operation)
       if (err < 0)
         {
           g_warning ("ff-load: error finding stream info for %s", o->path);
-
           return;
         }
 
@@ -534,6 +539,24 @@ prepare (GeglOperation *operation)
         fprintf (stdout, "duration: %02i:%02i:%02i\n", h, m, s);
       }
 #endif
+    }
+
+  /* is there a way to compute this from internals
+   */
+  if (!strcmp (o->video_codec, "mpeg1video"))
+    p->codec_delay = 1;
+  else if (!strcmp (o->video_codec, "mpeg4"))
+    p->codec_delay = 2;
+  else if (!strcmp (o->video_codec, "vp9"))
+    p->codec_delay = 2;
+  else if (!strcmp (o->video_codec, "theora"))
+    p->codec_delay = 2;
+  else if (!strcmp (o->video_codec, "h264"))
+    p->codec_delay = 0;
+  else
+    {
+      p->codec_delay = 0;
+      fprintf (stderr, "[assuming no codec_delay for: %s]", o->video_codec);
     }
 }
 
