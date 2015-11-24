@@ -31,7 +31,7 @@ AM_LDFLAGS =  \
 	$(SDL_LIBS) \
 	$(MATH_LIB)
 
-bin_PROGRAMS = \
+noinst_PROGRAMS = \
 	2geglbuffer \
 	gegl-convert \
 	gegl-slicer \
@@ -51,13 +51,13 @@ geglbuffer_clock_SOURCES = geglbuffer-clock.c
 hello_world_SOURCES = hello-world.c
 
 if HAVE_SDL
-bin_PROGRAMS += sdl-draw
+noinst_PROGRAMS += sdl-draw
 sdl_draw_SOURCES = sdl-draw.c
 sdl_draw_LDADD = $(SDL_LIBS)
 sdl_draw_CFLAGS = $(AM_CFLAGS) $(SDL_CFLAGS)
 
 if HAVE_GEXIV2
-bin_PROGRAMS += gegl-video
+noinst_PROGRAMS += gegl-video
 gegl_video_SOURCES = gegl-video.c
 gegl_video_LDADD = $(GEXIV2_LIBS) $(SDL_LIBS)
 gegl_video_CFLAGS = $(AM_CFLAGS) $(GEXIV2_CFLAGS) $(SDL_CFLAGS)
