@@ -539,25 +539,20 @@ prepare (GeglOperation *operation)
         fprintf (stdout, "duration: %02i:%02i:%02i\n", h, m, s);
       }
 #endif
-    }
 
-  /* is there a way to compute this from internals
-   */
-  if (!strcmp (o->video_codec, "mpeg1video"))
-    p->codec_delay = 1;
-  else if (!strcmp (o->video_codec, "mpeg4"))
-    p->codec_delay = 2;
-  else if (!strcmp (o->video_codec, "vp9"))
-    p->codec_delay = 2;
-  else if (!strcmp (o->video_codec, "theora"))
-    p->codec_delay = 2;
-  else if (!strcmp (o->video_codec, "h264"))
-    p->codec_delay = 0;
-  else
+    p->codec_delay = p->video_stream->codec->delay;
+  
+    if (!strcmp (o->video_codec, "mpeg1video"))
+      p->codec_delay = 1;
+    else if (!strcmp (o->video_codec, "h264"))
     {
-      p->codec_delay = 0;
-      fprintf (stderr, "[assuming no codec_delay for: %s]", o->video_codec);
+      if (strstr (p->video_fcontext->filename, ".mp4") ||
+          strstr (p->video_fcontext->filename, ".MP4"))    /* XXX: too hacky, isn't there an avformat thing to use? */
+        p->codec_delay = 3;
+      else
+        p->codec_delay = 0;
     }
+  }
 }
 
 static GeglRectangle
