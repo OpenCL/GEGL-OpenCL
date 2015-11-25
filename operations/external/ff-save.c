@@ -27,25 +27,40 @@
 property_string (path, _("File"), "/tmp/fnord.ogv")
     description (_("Target path and filename, use '-' for stdout."))
 
+property_audio_fragment (audio, _("audio"), 0)
+property_string (audio_codec, _("Audio codec"), "auto")
+property_int (audio_bit_rate, _("audio bitrate in kb/s"), 64)
+    description (_("Target encoded video bitrate in kb/s"))
+
 property_double (frame_rate, _("Frames/second"), 25.0)
     value_range (0.0, 100.0)
+
 property_string (video_codec, _("Video codec"), "auto")
-property_string (audio_codec, _("Audio codec"), "auto")
-#if 0
-property_int (audio_bit_rate, _("Audio bitrate"), 810000)
-property_int (video_bit_rate, _("video bitrate"), 810000)
-    value_range (0.0, 500000000.0)
-property_double (video_bit_rate_tolerance, _("video bitrate"), 1000.0)
-property_int    (video_global_quality, _("global quality"), 255)
-property_int    (compression_level,    _("compression level"), 255)
-property_int    (noise_reduction,      _("noise reduction strength"), 0)
-property_int    (gop_size,             _("the number of frames in a group of pictures, 0 for keyframe only"), 16)
-property_int    (key_int_min,          _("the minimum number of frames in a group of pictures, 0 for keyframe only"), 1)
-property_int    (max_b_frames,         _("maximum number of consequetive b frames"), 3)
-#endif
+property_int (video_bit_rate, _("video bitrate in kb/s"), 128)
+    description (_("Target encoded video bitrate in kb/s"))
+
+property_int (global_quality, _("global quality"), 0)
+property_int (noise_reduction, _("noise reduction"), 0)
+property_int (scenechange_threshold, _("scenechange threshold"), 0)
+property_int (video_bit_rate_min, _("video bitrate min"), 0)
+property_int (video_bit_rate_max, _("video bitrate max"), 0)
+property_int (video_bit_rate_tolerance, _("video bitrate tolerance"), 0)
+
+property_int (keyint_min, _("keyint-min"), 0)
+property_int (trellis, _("trellis"), 0)
+property_int (qmin, _("qmin"), 0)
+property_int (qmax, _("qmax"), 0)
+property_int (max_qdiff, _("max_qdiff"), 0)
+property_int (me_range, _("me_range"), 0)
+property_int (max_b_frames, _("max_b_frames"), 0)
+property_int (gop_size, _("gop-size"), 0)
+property_double (qcompress, _("qcompress"), 0.0)
+property_double (qblur, _("qblur"), 0.0)
+property_double (i_quant_factor, _("i-quant-factor"), 0.0)
+property_double (i_quant_offset, _("i-quant-offset"), 0.0)
+property_int (me_subpel_quality, _("me-subpel-quality"), 0)
 
 
-property_audio_fragment (audio, _("audio"), 0)
 
 #else
 
@@ -251,7 +266,7 @@ open_audio (GeglProperties *o, AVFormatContext * oc, AVStream * st)
       fprintf (stderr, "codec not found\n");
       exit (1);
     }
-  c->bit_rate = 64000;
+  c->bit_rate = o->audio_bit_rate * 1000;
   c->sample_fmt = codec->sample_fmts ? codec->sample_fmts[0] : AV_SAMPLE_FMT_FLTP;
 
   if (p->audio_sample_rate == -1)
@@ -474,7 +489,11 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c->codec_id = codec_id;
   c->codec_type = AVMEDIA_TYPE_VIDEO;
   /* put sample propeters */
-  c->bit_rate = 810000;
+  fprintf (stderr, "{{ %i %i %i\n", c->bit_rate, c->rc_min_rate, c->rc_max_rate);
+  c->bit_rate = o->video_bit_rate * 1000;
+  c->rc_min_rate = o->video_bit_rate_min * 1000;
+  c->rc_max_rate = o->video_bit_rate_max * 1000;
+  c->bit_rate_tolerance = o->video_bit_rate_tolerance * 1000;
   /* resolution must be a multiple of two */
   c->width = p->width;
   c->height = p->height;
@@ -482,44 +501,52 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   st->time_base =(AVRational){1, o->frame_rate};
   c->time_base = st->time_base;
   c->pix_fmt = AV_PIX_FMT_YUV420P;
-  c->gop_size = 12;             /* emit one intra frame every twelve frames at most */
 
   if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
     {
       c->max_b_frames = 2;
     }
+
   if (c->codec_id == AV_CODEC_ID_H264)
    {
-#if 1
      c->qcompress = 0.6;  // qcomp=0.6
      c->me_range = 16;    // me_range=16
      c->gop_size = 250;   // g=250
-
      c->max_b_frames = 3; // bf=3
-#if 0
-     c->coder_type = 1;  // coder = 1
-     c->flags|=CODEC_FLAG_LOOP_FILTER;   // flags=+loop
-     c->me_cmp|= 1;  // cmp=+chroma, where CHROMA = 1
-     //c->partitions|=X264_PART_I8X8+X264_PART_I4X4+X264_PART_P8X8+X264_PART_B8X8; // partitions=+parti8x8+parti4x4+partp8x8+partb8x8
-     c->me_subpel_quality = 7;   // subq=7
-     c->keyint_min = 25; // keyint_min=25
-     c->scenechange_threshold = 40;  // sc_threshold=40
-     c->i_quant_factor = 0.71; // i_qfactor=0.71
-     c->b_frame_strategy = 1;  // b_strategy=1
-     c->qmin = 10;   // qmin=10
-     c->qmax = 51;   // qmax=51
-     c->max_qdiff = 4;   // qdiff=4
-     c->refs = 3;    // refs=3
-     //c->directpred = 1;  // directpred=1
-     c->trellis = 1; // trellis=1
-     //c->flags2|=AV_CODEC_FLAG2_BPYRAMID|AV_CODEC_FLAG2_MIXED_REFS|AV_CODEC_FLAG2_WPRED+CODEC_FLAG2_8X8DCT+CODEC_FLAG2_FASTPSKIP;  // flags2=+bpyramid+mixed_refs+wpred+dct8x8+fastpskip
-     //c->weighted_p_pred = 2; // wpredp=2
-
-// libx264-main.ffpreset preset
-     //c->flags2|=CODEC_FLAG2_8X8DCT;c->flags2^=CODEC_FLAG2_8X8DCT;
-#endif
-#endif
    }
+
+  if (o->global_quality)
+     c->global_quality = o->global_quality;
+  if (o->qcompress != 0.0)
+     c->qcompress = o->qcompress;
+  if (o->qblur != 0.0)
+     c->qblur = o->qblur;
+  if (o->max_qdiff != 0)
+     c->max_qdiff = o->max_qdiff;
+  if (o->me_subpel_quality != 0)
+     c->me_subpel_quality = o->me_subpel_quality;
+  if (o->i_quant_factor != 0.0)
+     c->i_quant_factor = o->i_quant_factor;
+  if (o->i_quant_offset != 0.0)
+     c->i_quant_offset = o->i_quant_offset;
+  if (o->max_b_frames)
+    c->max_b_frames = o->max_b_frames;
+  if (o->me_range)
+    c->me_range = o->me_range;
+  if (o->noise_reduction)
+    c->noise_reduction = o->noise_reduction;
+  if (o->scenechange_threshold)
+    c->scenechange_threshold = o->scenechange_threshold;
+  if (o->trellis)
+    c->trellis = o->trellis;
+  if (o->qmin)
+    c->qmin = o->qmin;
+  if (o->qmax)
+    c->qmax = o->qmax;
+  if (o->gop_size)
+    c->gop_size = o->gop_size;
+  if (o->keyint_min)
+    c->keyint_min = o->keyint_min;
 
    if (oc->oformat->flags & AVFMT_GLOBALHEADER)
      c->flags |= CODEC_FLAG_GLOBAL_HEADER;
