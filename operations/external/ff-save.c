@@ -29,10 +29,10 @@ property_string (path, _("File"), "/tmp/fnord.ogv")
 
 property_double (frame_rate, _("Frames/second"), 25.0)
     value_range (0.0, 100.0)
-#if 0
+property_string (video_codec, _("Video codec"), "auto")
 property_string (audio_codec, _("Audio codec"), "auto")
+#if 0
 property_int (audio_bit_rate, _("Audio bitrate"), 810000)
-property_string (video_codec,   _("Video codec"),   "auto")
 property_int (video_bit_rate, _("video bitrate"), 810000)
     value_range (0.0, 500000000.0)
 property_double (video_bit_rate_tolerance, _("video bitrate"), 1000.0)
@@ -755,6 +755,39 @@ tfile (GeglProperties *o)
 
   p->video_st = NULL;
   p->audio_st = NULL;
+  
+  if (strcmp (o->video_codec, "auto"))
+  {
+    AVCodec *codec = avcodec_find_encoder_by_name (o->video_codec);
+    p->fmt->video_codec = AV_CODEC_ID_NONE;
+    if (codec)
+      p->fmt->video_codec = codec->id;
+    else
+      {
+        fprintf (stderr, "didn't find video encoder \"%s\"\navailable codecs: ", o->video_codec);
+        while ((codec = av_codec_next (codec)))
+          if (av_codec_is_encoder (codec) &&
+              avcodec_get_type (codec->id) == AVMEDIA_TYPE_VIDEO)
+          fprintf (stderr, "%s ", codec->name);
+        fprintf (stderr, "\n");
+      }
+  }
+  if (strcmp (o->audio_codec, "auto"))
+  {
+    AVCodec *codec = avcodec_find_encoder_by_name (o->audio_codec);
+    p->fmt->audio_codec = AV_CODEC_ID_NONE;
+    if (codec)
+      p->fmt->audio_codec = codec->id;
+    else
+      {
+        fprintf (stderr, "didn't find audio encoder \"%s\"\navailable codecs: ", o->audio_codec);
+        while ((codec = av_codec_next (codec)))
+          if (av_codec_is_encoder (codec) &&
+              avcodec_get_type (codec->id) == AVMEDIA_TYPE_AUDIO)
+                fprintf (stderr, "%s ", codec->name);
+        fprintf (stderr, "\n");
+      }
+  }
 
   if (p->fmt->video_codec != AV_CODEC_ID_NONE)
     {
