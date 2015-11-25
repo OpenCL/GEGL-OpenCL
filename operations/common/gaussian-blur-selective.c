@@ -156,7 +156,7 @@ gblur_selective (GeglBuffer          *input,
         gfloat  accumulated[3] = {0.0, };
         gfloat  count[3] = {0.0, };
 
-        src_offset = (x + iradius + (y + iradius) * src_width)) * 4;
+        src_offset = (x + iradius + (y + iradius) * src_width) * 4;
         center_src   = src_buf + src_offset;
         center_delta = delta_buf + src_offset;
 
