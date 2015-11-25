@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
 "eywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-10-25 07:03+0000\n"
-"PO-Revision-Date: 2015-10-25 12:42+0300\n"
+"POT-Creation-Date: 2015-11-25 07:03+0000\n"
+"PO-Revision-Date: 2015-11-25 11:42+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@lists.gnome.gr\n"
 "Language: el\n"
@@ -155,12 +155,6 @@ msgstr ""
 
 #: ../bin/gegl-options.c:333
 #, c-format
-#| msgid ""
-#| "\n"
-#| "\n"
-#| "unknown parameter '%s' giving you help instead\n"
-#| "\n"
-#| "\n"
 msgid ""
 "\n"
 "\n"
@@ -1033,7 +1027,7 @@ msgstr "Η στρατηγική πρόσμειξης για χρήση"
 #: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
 #: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
 #: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
-#: ../operations/common/noise-simplex.c:39 ../operations/common/noise-rgb.c:44
+#: ../operations/common/noise-rgb.c:44 ../operations/common/noise-simplex.c:39
 #: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
 #: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
 #: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
@@ -1370,11 +1364,11 @@ msgstr ""
 "Μια ήδη υφιστάμενη GeglBuffer για εγγραφή εισερχόμενων δεδομένων ενδιάμεσης "
 "μνήμης ή NULL."
 
-#: ../operations/common/copy-buffer.c:168
+#: ../operations/common/copy-buffer.c:151
 msgid "Copy Buffer"
 msgstr "Αντιγραφή ενδιάμεσης μνήμης"
 
-#: ../operations/common/copy-buffer.c:170
+#: ../operations/common/copy-buffer.c:153
 msgid "Writes image data to an already existing buffer"
 msgstr "Γράφει δεδομένα εικόνας σε μια ήδη υφιστάμενη ενδιάμεση μνήμη"
 
@@ -1405,6 +1399,36 @@ msgid ""
 msgstr ""
 "Μετατροπή της εικόνας σε τυχαία περιεστραμμένες τετράγωνες σταγόνες, που "
 "μοιάζουν κάπως με κυβική τεχνοτροπία βαφής"
+
+#: ../operations/common/dcraw-load.c:26
+#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:25
+#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
+#: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
+#: ../operations/external/ff-save.c:27 ../operations/external/jp2-load.c:25
+#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
+#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
+#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
+#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
+#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
+#: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
+#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
+#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/rawbayer-load.c:25
+msgid "File"
+msgstr "Αρχείο"
+
+#: ../operations/common/dcraw-load.c:27 ../operations/common/load.c:26
+#: ../operations/common/magick-load.c:27 ../operations/external/png-load.c:28
+#: ../operations/external/ppm-load.c:26 ../operations/external/raw-load.c:28
+#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
+#: ../operations/workshop/rawbayer-load.c:26
+msgid "Path of file to load."
+msgstr "Διαδρομή αρχείου για φόρτωση."
+
+#: ../operations/common/dcraw-load.c:183
+msgid "Raw image loader, wrapping dcraw with pipes."
+msgstr "Φόρτωση ακατέργαστης εικόνας, αναδιπλώνοντας dcraw με σωλήνες."
 
 #: ../operations/common/deinterlace.c:31
 msgid "Keep even fields"
@@ -1592,7 +1616,7 @@ msgid "Mode of displacement"
 msgstr "Κατάσταση μετατόπισης"
 
 #: ../operations/common/displace.c:37 ../operations/external/npd.c:50
-#: ../operations/transform/transform-core.c:189
+#: ../operations/transform/transform-core.c:193
 #: ../operations/workshop/ditto.c:27
 msgid "Sampler"
 msgstr "Δειγματοληψία"
@@ -2296,7 +2320,7 @@ msgstr "περικοπή στην έκταση εισόδου"
 msgid "Should the output extent be clipped to the input extent"
 msgstr "Αν θα πρέπει η έκταση εξόδου να περικοπεί στην έκταση εισόδου"
 
-#: ../operations/common/gaussian-blur-iir.c:117
+#: ../operations/common/gaussian-blur-iir.c:118
 #: ../operations/common/gblur-1d.c:891
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
@@ -2313,23 +2337,6 @@ msgstr "Μέγεθος"
 #: ../operations/common/gblur-1d.c:52
 msgid "The orientation of the blur - hor/ver"
 msgstr "Ο προσανατολισμός της θόλωσης - ορ/καθ"
-
-#: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:25
-#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
-#: ../operations/common/dcraw-load.c:26 ../operations/common/save.c:25
-#: ../operations/external/ff-load.c:24 ../operations/external/jp2-load.c:25
-#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
-#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
-#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
-#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
-#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
-#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
-#: ../operations/workshop/external/ff-save.c:30
-#: ../operations/workshop/external/gluas.c:45
-#: ../operations/workshop/rawbayer-load.c:25
-msgid "File"
-msgstr "Αρχείο"
 
 #: ../operations/common/gegl-buffer-load-op.c:25
 msgid "Path of GeglBuffer file to load."
@@ -2510,7 +2517,7 @@ msgstr "Κάθετη θέση σε εικονοστοιχεία"
 
 #: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
 #: ../operations/common/noise-perlin.c:27
-#: ../operations/common/noise-simplex.c:31
+#: ../operations/common/noise-simplex.c:31 ../operations/common/sepia.c:24
 #: ../operations/common/unsharp-mask.c:31
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
@@ -2669,16 +2676,8 @@ msgstr "Γραμμική διαβάθμιση"
 msgid "Linear gradient renderer"
 msgstr "Απόδοση γραμμικής διαβάθμισης"
 
-#: ../operations/common/load.c:26 ../operations/common/magick-load.c:27
-#: ../operations/common/dcraw-load.c:27 ../operations/external/raw-load.c:28
-#: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
-#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
-#: ../operations/workshop/rawbayer-load.c:26
-msgid "Path of file to load."
-msgstr "Διαδρομή αρχείου για φόρτωση."
-
 #: ../operations/common/load.c:27 ../operations/external/jpg-load.c:26
-#: ../operations/external/png-load.c:29
+#: ../operations/external/png-load.c:29 ../operations/external/tiff-load.c:27
 msgid "URI"
 msgstr "URI"
 
@@ -2785,7 +2784,6 @@ msgid "Depth first"
 msgstr "Πρώτα βάθος"
 
 #: ../operations/common/maze.c:39
-#| msgid "Prim's algotithm"
 msgid "Prim's algorithm"
 msgstr "Αλγόριθμος του Prim"
 
@@ -3265,14 +3263,6 @@ msgstr "Μείωση θορύβου"
 msgid "Anisotropic smoothing operation"
 msgstr "Λειτουργία ανισοτροπικής εξομάλυνσης"
 
-#: ../operations/common/noise-simplex.c:331
-msgid "Simplex Noise"
-msgstr "Μονόδρομος Θόρυβος"
-
-#: ../operations/common/noise-simplex.c:334
-msgid "Generates a solid noise texture."
-msgstr "Δημιουργεί μια συμπαγή υφή θορύβου."
-
 #: ../operations/common/noise-rgb.c:28
 msgid "Correlated noise"
 msgstr "Συσχετισμένος θόρυβος"
@@ -3300,6 +3290,14 @@ msgstr "Προσθήκη θορύβου RGB"
 #: ../operations/common/noise-rgb.c:178
 msgid "Distort colors by random amounts"
 msgstr "Παραμόρφωση χρωμάτων με τυχαίες ποσότητες."
+
+#: ../operations/common/noise-simplex.c:331
+msgid "Simplex Noise"
+msgstr "Μονόδρομος Θόρυβος"
+
+#: ../operations/common/noise-simplex.c:334
+msgid "Generates a solid noise texture."
+msgstr "Δημιουργεί μια συμπαγή υφή θορύβου."
 
 #: ../operations/common/noise-slur.c:153
 msgid "Noise Slur"
@@ -3431,8 +3429,8 @@ msgstr "Άνοιγμα ενδιάμεσης μνήμης GEGL"
 msgid "Use an on-disk GeglBuffer as data source."
 msgstr "Χρήση μιας GeglBuffer στον δίσκο ως πηγής δεδομένων."
 
-#: ../operations/common/over.c:25 ../operations/generated/clear.c:38
-#: ../operations/generated/color-burn.c:38
+#: ../operations/common/over.c:25 ../operations/common/sepia.c:28
+#: ../operations/generated/clear.c:38 ../operations/generated/color-burn.c:38
 #: ../operations/generated/color-dodge.c:38 ../operations/generated/darken.c:38
 #: ../operations/generated/difference.c:38
 #: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
@@ -3448,8 +3446,8 @@ msgstr "Χρήση μιας GeglBuffer στον δίσκο ως πηγής δε�
 msgid "sRGB"
 msgstr "sRGB"
 
-#: ../operations/common/over.c:26 ../operations/generated/clear.c:39
-#: ../operations/generated/color-burn.c:39
+#: ../operations/common/over.c:26 ../operations/common/sepia.c:29
+#: ../operations/generated/clear.c:39 ../operations/generated/color-burn.c:39
 #: ../operations/generated/color-dodge.c:39 ../operations/generated/darken.c:39
 #: ../operations/generated/difference.c:39
 #: ../operations/generated/dst-atop.c:39 ../operations/generated/dst.c:39
@@ -3717,10 +3715,6 @@ msgstr "Ακτινική διαβάθμιση"
 msgid "Radial gradient renderer"
 msgstr "Απόδοση ακτινικής διαβάθμισης"
 
-#: ../operations/common/dcraw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr "Φόρτωση ακατέργαστης εικόνας, αναδιπλώνοντας dcraw με σωλήνες."
-
 #: ../operations/common/rectangle.c:27
 msgid "Horizontal position"
 msgstr "Οριζόντια θέση"
@@ -3862,6 +3856,19 @@ msgstr ""
 "Αποθήκευση αρχείου πολλαπλών σκοπών, που χρησιμοποιεί άλλους εγγενείς "
 "χειριστές αποθήκευσης ανάλογα με την επέκταση και χρήση της ειδικής μορφής "
 "λειτουργιών αποθήκευσης για τον ορισμό πρόσθετων παραμέτρων."
+
+#: ../operations/common/sepia.c:25 ../operations/common/unsharp-mask.c:32
+msgid "Scale, strength of effect"
+msgstr "Κλίμακα, ισχύς του φαινομένου"
+
+#: ../operations/common/sepia.c:110
+msgid "Sepia"
+msgstr "Σέπια (σουπιά)"
+
+#: ../operations/common/sepia.c:112
+#| msgid "Infinitely repeats the input image."
+msgid "Converts the input image to sepia"
+msgstr "Μετατρέπει την εικόνα εισαγωγής σε σέπια (σουπιά)"
 
 #: ../operations/common/shift.c:26 ../operations/common/shift.c:143
 msgid "Shift"
@@ -4281,10 +4288,6 @@ msgstr ""
 msgid "Standard Deviation"
 msgstr "Τυπική απόκλιση"
 
-#: ../operations/common/unsharp-mask.c:32
-msgid "Scale, strength of effect"
-msgstr "Κλίμακα, ισχύς του φαινομένου"
-
 #: ../operations/common/unsharp-mask.c:83
 msgid "Unsharp Mask"
 msgstr "Απόξυνση μάσκας"
@@ -4628,11 +4631,11 @@ msgstr "Παραμόρφωση σφηγκτήρα"
 msgid "Limit deformation in the image area."
 msgstr "Όριο παραμόρφωσης στην περιοχή εικόνας."
 
-#: ../operations/common/waves.c:180
+#: ../operations/common/waves.c:183
 msgid "Waves"
 msgstr "Κύματα"
 
-#: ../operations/common/waves.c:184
+#: ../operations/common/waves.c:187
 msgid "Distort the image with waves"
 msgstr "Παραμόρφωση της εικόνας με κύματα"
 
@@ -4782,23 +4785,6 @@ msgstr "Ρητή απόκρυψη των αποτελεσμάτων σε αυτ�
 msgid "An explicit caching node"
 msgstr "Ένας ρητός κόμβος επαναποθήκευσης"
 
-#: ../operations/core/clone.c:25
-msgid "Reference"
-msgstr "Αναφορά"
-
-#: ../operations/core/clone.c:26
-msgid "The reference ID used as input (for use in XML)."
-msgstr ""
-"Το αναγνωριστικό αναφοράς που χρησιμοποιείται ως είσοδος (για χρήση σε XML)."
-
-#: ../operations/core/clone.c:109
-msgid "Clone"
-msgstr "Κλωνοποίηση"
-
-#: ../operations/core/clone.c:110
-msgid "Clone a buffer"
-msgstr "Κλωνοποίηση μνήμης"
-
 #: ../operations/core/cast-format.c:25
 msgid "Input format"
 msgstr "Μορφή εισόδου"
@@ -4822,6 +4808,23 @@ msgid ""
 msgstr ""
 "Αλλαγή τύπου δεδομένων μεταξύ μορφής_εισόδου και μορφής_εξόδου, και οι δυο "
 "μορφές πρέπει ένα έχουν το ίδιο bpp"
+
+#: ../operations/core/clone.c:25
+msgid "Reference"
+msgstr "Αναφορά"
+
+#: ../operations/core/clone.c:26
+msgid "The reference ID used as input (for use in XML)."
+msgstr ""
+"Το αναγνωριστικό αναφοράς που χρησιμοποιείται ως είσοδος (για χρήση σε XML)."
+
+#: ../operations/core/clone.c:109
+msgid "Clone"
+msgstr "Κλωνοποίηση"
+
+#: ../operations/core/clone.c:110
+msgid "Clone a buffer"
+msgstr "Κλωνοποίηση μνήμης"
 
 #: ../operations/core/convert-format.c:87
 msgid "Convert Format"
@@ -4860,7 +4863,6 @@ msgid "Frame number"
 msgstr "Αριθμός πλαισίου"
 
 #: ../operations/external/ff-load.c:31
-#| msgid "Frame"
 msgid "frames"
 msgstr "πλαίσια"
 
@@ -4872,15 +4874,109 @@ msgstr ""
 "Ο αριθμός των πλαισίων στο βίντεο, ενημερώνεται τουλάχιστον όταν το πρώτο "
 "πλαίσιο έχει αποκωδικοποιηθεί."
 
-#: ../operations/external/ff-load.c:487
+#: ../operations/external/ff-load.c:36
+msgid "audio_sample_rate"
+msgstr "ρυθμός_δειγματοληψίας_ήχου"
+
+#: ../operations/external/ff-load.c:37
+#| msgid "Red channel"
+msgid "audio_channels"
+msgstr "κανάλια_ήχου"
+
+#: ../operations/external/ff-load.c:39
+#| msgid "frames"
+msgid "frame-rate"
+msgstr "ρυθμός-λήψεων"
+
+#: ../operations/external/ff-load.c:40
+msgid "Frames per second, permits computing time vs frame"
+msgstr ""
+"Οι λήψεις ανά δευτερόλεπτο, επιτρέπουν τον υπολογισμό του χρόνου ως προς "
+"λήψεις"
+
+#: ../operations/external/ff-load.c:44
+msgid "video-codec"
+msgstr "κωδικοποιητής-βίντεο"
+
+#: ../operations/external/ff-load.c:45
+msgid "audio-codec"
+msgstr "κωδικοποιητής-ήχου"
+
+#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:48
+msgid "audio"
+msgstr "ήχος"
+
+#: ../operations/external/ff-load.c:775
 msgid "FFmpeg Frame Loader"
 msgstr "Φόρτωση πλαισίου FFmpeg"
 
-#: ../operations/external/ff-load.c:489
+#: ../operations/external/ff-load.c:777
 msgid "FFmpeg video frame importer."
 msgstr "Εισαγωγή πλαισίου βίντεο FFmpeg."
 
+#: ../operations/external/ff-save.c:28 ../operations/external/npy-save.c:32
+#: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
+#: ../operations/external/rgbe-save.c:27
+msgid "Target path and filename, use '-' for stdout."
+msgstr "Στόχος διαδρομής και ονόματος αρχείου, χρήση '-' για τυπική έξοδο."
+
+#: ../operations/external/ff-save.c:30
+msgid "Frames/second"
+msgstr "Πλαίσια/δευτερόλεπτο"
+
+#: ../operations/external/ff-save.c:33
+msgid "Audio codec"
+msgstr "Κωδικοποιητής ήχου"
+
+#: ../operations/external/ff-save.c:34
+#| msgid "Bitrate"
+msgid "Audio bitrate"
+msgstr "Ρυθμός διαμεταγωγής ήχου"
+
+#: ../operations/external/ff-save.c:35
+msgid "Video codec"
+msgstr "Κωδικοποιητής βίντεο"
+
+#: ../operations/external/ff-save.c:36 ../operations/external/ff-save.c:38
+#| msgid "Target bitrate"
+msgid "video bitrate"
+msgstr "ρυθμός διαμεταγωγής ήχου"
+
+#: ../operations/external/ff-save.c:39
+msgid "global quality"
+msgstr "γενική ποιότητα"
+
+#: ../operations/external/ff-save.c:40
+#| msgid "Compression"
+msgid "compression level"
+msgstr "επίπεδο συμπίεσης"
+
+#: ../operations/external/ff-save.c:41
+#| msgid "Noise Reduction"
+msgid "noise reduction strength"
+msgstr "ισχύς μείωσης θορύβου"
+
+#: ../operations/external/ff-save.c:42
+msgid "the number of frames in a group of pictures, 0 for keyframe only"
+msgstr "ο αριθμός των λήψεων σε μια ομάδα εικόνων, 0 μόνο για βασική λήψη"
+
+#: ../operations/external/ff-save.c:43
+msgid ""
+"the minimum number of frames in a group of pictures, 0 for keyframe only"
+msgstr ""
+"ο ελάχιστος αριθμός των λήψεων σε μια ομάδα εικόνων, 0 μόνο για βασική λήψη"
+
+#: ../operations/external/ff-save.c:44
+#| msgid "Maximum number of iterations"
+msgid "maximum number of consequetive b frames"
+msgstr "μέγιστος αριθμός διαδοχικών λήψεων b"
+
+#: ../operations/external/ff-save.c:912
+msgid "FFmpeg video output sink"
+msgstr "Δέκτης εξόδου βίντεο FFmpeg"
+
 #: ../operations/external/jp2-load.c:26 ../operations/external/jpg-load.c:25
+#: ../operations/external/tiff-load.c:26
 msgid "Path of file to load"
 msgstr "Διαδρομή αρχείου για φόρτωση"
 
@@ -4955,7 +5051,7 @@ msgstr "Φόρτωση εικόνας JPEG"
 msgid "JPEG image loader using libjpeg"
 msgstr "Φόρτωση εικόνας JPEG χρησιμοποιώντας libjpeg"
 
-#: ../operations/external/jpg-save.c:26
+#: ../operations/external/jpg-save.c:26 ../operations/external/tiff-save.c:26
 msgid "Target path and filename, use '-' for stdout"
 msgstr "Στόχος διαδρομής και ονόματος αρχείου, χρήση '-' για τυπική έξοδο"
 
@@ -5161,7 +5257,7 @@ msgstr "Διατήρηση μοντέλου"
 msgid "When TRUE the model will not be freed"
 msgstr "Όταν είναι αληθές, το μοντέλο θα ελευθερωθεί"
 
-#: ../operations/external/npd.c:53 ../operations/transform/transform-core.c:190
+#: ../operations/external/npd.c:53 ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Εσωτερικά χρησιμοποιούμενη δειγματοληψία"
@@ -5170,12 +5266,6 @@ msgstr "Εσωτερικά χρησιμοποιούμενη δειγματολη
 msgid "Performs n-point image deformation"
 msgstr "Εκτελεί παραμόρφωση εικόνας n σημείου"
 
-#: ../operations/external/npy-save.c:32 ../operations/external/png-save.c:27
-#: ../operations/external/ppm-save.c:26 ../operations/external/rgbe-save.c:27
-#: ../operations/workshop/external/ff-save.c:31
-msgid "Target path and filename, use '-' for stdout."
-msgstr "Στόχος διαδρομής και ονόματος αρχείου, χρήση '-' για τυπική έξοδο."
-
 #: ../operations/external/npy-save.c:142
 msgid "NPY File Saver"
 msgstr "Αποθηκευτής αρχείου NPY"
@@ -5183,10 +5273,6 @@ msgstr "Αποθηκευτής αρχείου NPY"
 #: ../operations/external/npy-save.c:145
 msgid "NPY image saver (Numerical python file saver.)"
 msgstr "Αποθήκευση εικόνας NPY (αποθήκευση αρχείου αριθμητικού python.)"
-
-#: ../operations/external/raw-load.c:238
-msgid "libraw File Loader"
-msgstr "Φορτωτής αρχείου libraw"
 
 #: ../operations/external/path.c:26
 msgid "Fill Color"
@@ -5272,11 +5358,11 @@ msgstr "Απόδοση μονοπατιού"
 msgid "Renders a brush stroke"
 msgstr "Αποδίδει μια πινελιά"
 
-#: ../operations/external/pixbuf.c:25
+#: ../operations/external/pixbuf.c:26
 msgid "Pixbuf"
 msgstr "Pixbuf"
 
-#: ../operations/external/pixbuf.c:25
+#: ../operations/external/pixbuf.c:27
 msgid "GdkPixbuf to use"
 msgstr "GdkPixbuf για χρήση"
 
@@ -5346,6 +5432,10 @@ msgstr "Φορτωτής αρχείου PPM"
 #: ../operations/external/ppm-save.c:192
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Αποθήκευση εικόνας PPM (αποθήκευση φορητής pixmap.)"
+
+#: ../operations/external/raw-load.c:238
+msgid "libraw File Loader"
+msgstr "Φορτωτής αρχείου libraw"
 
 #: ../operations/external/rgbe-load.c:135
 msgid "RGBE File Loader"
@@ -5481,6 +5571,40 @@ msgstr "Απόδοση κειμένου"
 #: ../operations/external/text.c:325
 msgid "Display a string of text using pango and cairo."
 msgstr "Εμφάνιση συμβολοσειράς κειμένου χρησιμοποιώντας pango και cairo."
+
+#: ../operations/external/tiff-load.c:28
+#| msgid "URI for file to load."
+msgid "URI for file to load"
+msgstr "URI του αρχείου για φόρτωση"
+
+#: ../operations/external/tiff-load.c:30
+#| msgid "Direction"
+msgid "Directory"
+msgstr "Κατάλογος"
+
+#: ../operations/external/tiff-load.c:31
+msgid "Image file directory (subfile)"
+msgstr "Κατάλογος αρχείου εικόνας (υποαρχείο)"
+
+#: ../operations/external/tiff-load.c:837
+#| msgid "PNG File Loader"
+msgid "TIFF File Loader"
+msgstr "Φόρτωση αρχείου TIFF"
+
+#: ../operations/external/tiff-load.c:839
+#| msgid "JPEG image loader using libjpeg"
+msgid "TIFF image loader using libtiff"
+msgstr "Φόρτωση εικόνας JPEG χρησιμοποιώντας libjpeg"
+
+#: ../operations/external/tiff-save.c:591
+#| msgid "NPY File Saver"
+msgid "TIFF File Saver"
+msgstr "Αποθηκευτής αρχείου TIFF"
+
+#: ../operations/external/tiff-save.c:593
+#| msgid "JPEG image saver, using libjpeg"
+msgid "TIFF image saver using libtiff"
+msgstr "Αποθήκευση εικόνας TIFF χρησιμοποιώντας libjpeg"
 
 #: ../operations/external/v4l.c:26 ../operations/workshop/external/v4l2.c:24
 msgid "Path"
@@ -5887,7 +6011,6 @@ msgstr ""
 "Παραβλέπεται. Χρησιμοποιείται πάντα το κέντρο της ενδιάμεσης μνήμης εισόδου"
 
 #: ../operations/transform/rotate-on-center.c:40
-#| msgid "Rotate the buffer around the specified origin."
 msgid "Rotate the buffer around its center, taking care of possible offsets."
 msgstr ""
 "Περιστροφή της ενδιάμεσης μνήμης γύρω από το κέντρο της, λαμβάνοντας υπόψη "
@@ -5945,19 +6068,19 @@ msgstr "Μετασχηματισμός συμβολοσειράς"
 msgid "Transforms the group (used by svg)."
 msgstr "Μετασχηματίζει την ομάδα (χρησιμοποιείται από svg)."
 
-#: ../operations/transform/transform-core.c:173
+#: ../operations/transform/transform-core.c:177
 msgid "Origin-x"
 msgstr "Αρχικό-x"
 
-#: ../operations/transform/transform-core.c:174
+#: ../operations/transform/transform-core.c:178
 msgid "X coordinate of origin"
 msgstr "Συντεταγμένη X αρχικού"
 
-#: ../operations/transform/transform-core.c:181
+#: ../operations/transform/transform-core.c:185
 msgid "Origin-y"
 msgstr "Αρχικό-y"
 
-#: ../operations/transform/transform-core.c:182
+#: ../operations/transform/transform-core.c:186
 msgid "Y coordinate of origin"
 msgstr "Συντεταγμένη Y του αρχικού"
 
@@ -5992,106 +6115,6 @@ msgid ""
 msgstr ""
 "Αποθήκευση της μνήμης εισόδου εσωτερικά, παραπέρα επεξεργασία παίρνει αυτή "
 "τη μνήμη ως είσοδο."
-
-#: ../operations/workshop/component-extract.c:25
-msgid "RGB Red"
-msgstr "Κόκκινο RGB"
-
-#: ../operations/workshop/component-extract.c:26
-msgid "RGB Green"
-msgstr "Πράσινο RGB"
-
-#: ../operations/workshop/component-extract.c:27
-msgid "RGB Blue"
-msgstr "Γαλάζιο RGB"
-
-#: ../operations/workshop/component-extract.c:29
-msgid "HSV Saturation"
-msgstr "Κορεσμός HSV"
-
-#: ../operations/workshop/component-extract.c:30
-msgid "HSV Value"
-msgstr "Τιμή HSV"
-
-#: ../operations/workshop/component-extract.c:31
-msgid "HSL Saturation"
-msgstr "Κορεσμός HSL"
-
-#: ../operations/workshop/component-extract.c:32
-msgid "HSL Lightness"
-msgstr "Φωτεινότητα HSL"
-
-#: ../operations/workshop/component-extract.c:33
-msgid "CMYK Cyan"
-msgstr "Γαλάζιο CMYK"
-
-#: ../operations/workshop/component-extract.c:34
-msgid "CMYK Magenta"
-msgstr "Μαντζέντα CMYK"
-
-#: ../operations/workshop/component-extract.c:35
-msgid "CMYK Yellow"
-msgstr "Κίτρινο CMYK"
-
-#: ../operations/workshop/component-extract.c:36
-msgid "CMYK Key"
-msgstr "Κλειδί CMYK"
-
-#: ../operations/workshop/component-extract.c:37
-msgid "Y'CbCr Y'"
-msgstr "Y'CbCr Y'"
-
-#: ../operations/workshop/component-extract.c:38
-msgid "Y'CbCr Cb"
-msgstr "Y'CbCr Cb"
-
-#: ../operations/workshop/component-extract.c:39
-msgid "Y'CbCr Cr"
-msgstr "Y'CbCr Cr"
-
-#: ../operations/workshop/component-extract.c:40
-msgid "LAB L"
-msgstr "LAB L"
-
-#: ../operations/workshop/component-extract.c:41
-msgid "LAB A"
-msgstr "LAB A"
-
-#: ../operations/workshop/component-extract.c:42
-msgid "LAB B"
-msgstr "LAB B"
-
-#: ../operations/workshop/component-extract.c:46
-msgid "Component"
-msgstr "Στοιχείο"
-
-#: ../operations/workshop/component-extract.c:49
-msgid "Component to extract"
-msgstr "Συστατικό για εξαγωγή"
-
-#: ../operations/workshop/component-extract.c:51
-msgid "Invert component"
-msgstr "Αντιστροφή στοιχείου"
-
-#: ../operations/workshop/component-extract.c:52
-msgid "Invert the extracted component"
-msgstr "Αντιστροφή των εξαχθέντος συστατικού"
-
-#: ../operations/workshop/component-extract.c:54
-msgid "Linear output"
-msgstr "Γραμμική έξοδος"
-
-#: ../operations/workshop/component-extract.c:55
-msgid "Use linear output instead of gamma corrected"
-msgstr "Χρήση της γραμμικής εξόδου αντί για τη διορθωμένη γάμα"
-
-#: ../operations/workshop/component-extract.c:264
-msgid "Extract Component"
-msgstr "Εξαγωγή συστατικού"
-
-#: ../operations/workshop/component-extract.c:266
-msgid "Extract a color model component"
-msgstr "Εξαγωγή ενός συστατικού χρωματικού προτύπου"
 
 #: ../operations/workshop/color-warp.c:24
 msgid "From 0"
@@ -6208,6 +6231,106 @@ msgstr ""
 "Στρεβλώνει τα χρώματα μιας εικόνας μεταξύ των χρωμάτων με σταθμισμένους "
 "συντελεστές παραμόρφωσης."
 
+#: ../operations/workshop/component-extract.c:25
+msgid "RGB Red"
+msgstr "Κόκκινο RGB"
+
+#: ../operations/workshop/component-extract.c:26
+msgid "RGB Green"
+msgstr "Πράσινο RGB"
+
+#: ../operations/workshop/component-extract.c:27
+msgid "RGB Blue"
+msgstr "Γαλάζιο RGB"
+
+#: ../operations/workshop/component-extract.c:29
+msgid "HSV Saturation"
+msgstr "Κορεσμός HSV"
+
+#: ../operations/workshop/component-extract.c:30
+msgid "HSV Value"
+msgstr "Τιμή HSV"
+
+#: ../operations/workshop/component-extract.c:31
+msgid "HSL Saturation"
+msgstr "Κορεσμός HSL"
+
+#: ../operations/workshop/component-extract.c:32
+msgid "HSL Lightness"
+msgstr "Φωτεινότητα HSL"
+
+#: ../operations/workshop/component-extract.c:33
+msgid "CMYK Cyan"
+msgstr "Γαλάζιο CMYK"
+
+#: ../operations/workshop/component-extract.c:34
+msgid "CMYK Magenta"
+msgstr "Μαντζέντα CMYK"
+
+#: ../operations/workshop/component-extract.c:35
+msgid "CMYK Yellow"
+msgstr "Κίτρινο CMYK"
+
+#: ../operations/workshop/component-extract.c:36
+msgid "CMYK Key"
+msgstr "Κλειδί CMYK"
+
+#: ../operations/workshop/component-extract.c:37
+msgid "Y'CbCr Y'"
+msgstr "Y'CbCr Y'"
+
+#: ../operations/workshop/component-extract.c:38
+msgid "Y'CbCr Cb"
+msgstr "Y'CbCr Cb"
+
+#: ../operations/workshop/component-extract.c:39
+msgid "Y'CbCr Cr"
+msgstr "Y'CbCr Cr"
+
+#: ../operations/workshop/component-extract.c:40
+msgid "LAB L"
+msgstr "LAB L"
+
+#: ../operations/workshop/component-extract.c:41
+msgid "LAB A"
+msgstr "LAB A"
+
+#: ../operations/workshop/component-extract.c:42
+msgid "LAB B"
+msgstr "LAB B"
+
+#: ../operations/workshop/component-extract.c:46
+msgid "Component"
+msgstr "Στοιχείο"
+
+#: ../operations/workshop/component-extract.c:49
+msgid "Component to extract"
+msgstr "Συστατικό για εξαγωγή"
+
+#: ../operations/workshop/component-extract.c:51
+msgid "Invert component"
+msgstr "Αντιστροφή στοιχείου"
+
+#: ../operations/workshop/component-extract.c:52
+msgid "Invert the extracted component"
+msgstr "Αντιστροφή των εξαχθέντος συστατικού"
+
+#: ../operations/workshop/component-extract.c:54
+msgid "Linear output"
+msgstr "Γραμμική έξοδος"
+
+#: ../operations/workshop/component-extract.c:55
+msgid "Use linear output instead of gamma corrected"
+msgstr "Χρήση της γραμμικής εξόδου αντί για τη διορθωμένη γάμα"
+
+#: ../operations/workshop/component-extract.c:264
+msgid "Extract Component"
+msgstr "Εξαγωγή συστατικού"
+
+#: ../operations/workshop/component-extract.c:266
+msgid "Extract a color model component"
+msgstr "Εξαγωγή ενός συστατικού χρωματικού προτύπου"
+
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
 msgid "Bayer pattern"
@@ -6242,18 +6365,6 @@ msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr ""
 "Επιλογή ελέγχου για να γίνει μια απεικόνιση εισόδου 1:1 έξοδος, κατά τη "
 "δειγμετοληψία"
-
-#: ../operations/workshop/external/ff-save.c:33
-msgid "Target bitrate"
-msgstr "Ρυθμός δυαδικών προορισμού"
-
-#: ../operations/workshop/external/ff-save.c:36
-msgid "Frames/second"
-msgstr "Πλαίσια/δευτερόλεπτο"
-
-#: ../operations/workshop/external/ff-save.c:894
-msgid "FFmpeg video output sink"
-msgstr "Δέκτης εξόδου βίντεο FFmpeg"
 
 #: ../operations/workshop/external/gluas.c:41
 msgid "Script"
@@ -6699,6 +6810,42 @@ msgstr ""
 "rawbayer θα χρησιμοποιήσει αυτή τη φόρτωση αντί για την κανονική φόρτωση "
 "dcraw, εάν η μορφή αρχείου είναι .rawbayerS θα εναλλάξει τους "
 "επιστρεφόμενους 16 δυαδικών αριθμούς (η φόρτωση pnm είναι προφανώς εσφαλμένη)"
+
+#: ../operations/workshop/rgb-clip.c:25 ../operations/workshop/rgb-clip.c:26
+msgid "Clip low pixel values"
+msgstr "Περικοπή χαμηλών τιμών εικονοστοιχείων"
+
+#: ../operations/workshop/rgb-clip.c:28
+msgid "Low limit"
+msgstr "Κάτω όριο"
+
+#: ../operations/workshop/rgb-clip.c:31
+msgid "Pixels values lower than this limit will be set to it"
+msgstr ""
+"Οι τιμές εικονοστοιχείων που είναι χαμηλότερες από αυτό το όριο θα οριστούν "
+"σε αυτό"
+
+#: ../operations/workshop/rgb-clip.c:33 ../operations/workshop/rgb-clip.c:34
+msgid "Clip high pixel values"
+msgstr "Περικοπή υψηλών τιμών εικονοστοιχείων"
+
+#: ../operations/workshop/rgb-clip.c:36
+msgid "High limit"
+msgstr "Πάνω όριο"
+
+#: ../operations/workshop/rgb-clip.c:39
+msgid "Pixels values higher than this limit will be set to it"
+msgstr ""
+"Οι τιμές εικονοστοιχείων που είναι υψηλότερες από αυτό το όριο θα οριστούν "
+"σε αυτό"
+
+#: ../operations/workshop/rgb-clip.c:184
+msgid "Clip RGB"
+msgstr "Περικοπή RGB"
+
+#: ../operations/workshop/rgb-clip.c:186
+msgid "Keep RGB pixels values inside a specific range"
+msgstr "Διατήρηση των τιμών εικονοστοιχείων RGB μέσα σε ορισμένο εύρος"
 
 #~ msgid "OpenRAW File Loader"
 #~ msgstr "Φορτωτής αρχείου OpenRAW"
@@ -7164,9 +7311,6 @@ msgstr ""
 
 #~ msgid "Alpha weighting"
 #~ msgstr "Στάθμιση άλφα"
-
-#~ msgid "Bitrate"
-#~ msgstr "Ρυθμός δυαδικών"
 
 #~ msgid "Lens center y"
 #~ msgstr "Κέντρο φακού y"
