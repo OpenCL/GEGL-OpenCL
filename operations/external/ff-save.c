@@ -48,6 +48,7 @@ property_int (video_bit_rate_tolerance, _("video bitrate tolerance"), 0)
 
 property_int (keyint_min, _("keyint-min"), 0)
 property_int (trellis, _("trellis"), 0)
+property_int (bufsize, _("bufsize"), 0)
 property_int (qmin, _("qmin"), 0)
 property_int (qmax, _("qmax"), 0)
 property_int (max_qdiff, _("max_qdiff"), 0)
@@ -105,7 +106,7 @@ typedef struct
   uint32_t  fragment_samples;
   uint32_t  fragment_size;
 
-  int       buffer_size;
+  int       bufsize;
   int       buffer_read_pos;
   int       buffer_write_pos;
   uint8_t  *buffer; 
@@ -489,7 +490,6 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c->codec_id = codec_id;
   c->codec_type = AVMEDIA_TYPE_VIDEO;
   /* put sample propeters */
-  fprintf (stderr, "{{ %i %i %i\n", c->bit_rate, c->rc_min_rate, c->rc_max_rate);
   c->bit_rate = o->video_bit_rate * 1000;
   c->rc_min_rate = o->video_bit_rate_min * 1000;
   c->rc_max_rate = o->video_bit_rate_max * 1000;
@@ -515,6 +515,8 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
      c->max_b_frames = 3; // bf=3
    }
 
+  if (o->bufsize)
+    c->rc_buffer_size = o->bufsize * 1000;
   if (o->global_quality)
      c->global_quality = o->global_quality;
   if (o->qcompress != 0.0)
