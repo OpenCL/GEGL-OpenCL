@@ -56,11 +56,12 @@ sdl_draw_SOURCES = sdl-draw.c
 sdl_draw_LDADD = $(SDL_LIBS)
 sdl_draw_CFLAGS = $(AM_CFLAGS) $(SDL_CFLAGS)
 
+endif
+
 if HAVE_GEXIV2
 noinst_PROGRAMS += gegl-video
 gegl_video_SOURCES = gegl-video.c
-gegl_video_LDADD = $(GEXIV2_LIBS) $(SDL_LIBS)
-gegl_video_CFLAGS = $(AM_CFLAGS) $(GEXIV2_CFLAGS) $(SDL_CFLAGS)
-endif
+gegl_video_LDADD = $(GEXIV2_LIBS)
+gegl_video_CFLAGS = $(AM_CFLAGS) $(GEXIV2_CFLAGS)
 endif
 

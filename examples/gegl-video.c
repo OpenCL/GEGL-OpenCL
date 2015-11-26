@@ -27,14 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <SDL.h>
-
-typedef enum NeglRunMode {
-  NEGL_NO_UI = 0,
-  NEGL_VIDEO,
-  NEGL_TERRAIN,
-  NEGL_UI,
-} NeglRunmode;
 
 int frame_start = 0;
 int frame_end   = 0;
@@ -43,7 +35,6 @@ char *frame_extension = ".png";
 char *frame_path = NULL;
 char *video_path = NULL;
 int output_frame_no = -1;
-int run_mode = NEGL_NO_UI;
 int show_progress = 0;
 
 void
@@ -56,16 +47,15 @@ gegl_meta_get_audio (const char         *path,
 void usage(void);
 void usage(void)
 {
-      printf ("usage: negl [options] <video> [thumb]\n"
+      printf ("usage: negl [options] <video> [thumb]\n\n"
 " -p, --progress   - display info about current frame/progress in terminal\n"
-"\n"
-"\n"
-"debug level control over run-mode options:\n"
-" --video   - show video frames as they are decoded (for debug)\n"
 " -s <frame>, --start-frame <frame>\n"
 "           - first frame to extract analysis from (default 0)\n"
 " -e <frame>, --end-frame <frame>\n"
 "           - last frame to extract analysis from (default is 0 which means auto end)\n"
+" -of <output_path_prefix>, --output-path <path_prefix>\n"
+" -fe <.ext> --frame-extension <.ext>\n"
+"           - .png or .jpg are supported file formats, .jpg default\n"
 "\n"
 "Options can also follow then video (and thumb) arguments.\n"
 "\n");
@@ -119,14 +109,6 @@ static void parse_args (int argc, char **argv)
       frame_end = g_strtod (argv[i+1], NULL);
       i++;
     } 
-    else if (g_str_equal (argv[i], "--ui"))
-    {
-      run_mode = NEGL_VIDEO;
-    }
-    else if (g_str_equal (argv[i], "--no-ui"))
-    {
-      run_mode = NEGL_NO_UI;
-    }
     else if (g_str_equal (argv[i], "-h") ||
              g_str_equal (argv[i], "--help"))
     {
@@ -141,7 +123,6 @@ static void parse_args (int argc, char **argv)
 }
 
 GeglNode   *gegl_decode  = NULL;
-GeglNode   *gegl_display = NULL;
 GeglNode   *display      = NULL;
 
 GeglBuffer *previous_video_frame  = NULL;
@@ -162,53 +143,10 @@ static void decode_frame_no (int frame)
 
 GeglNode *translate = NULL;
 
-static int audio_len = 0;
-static int audio_pos = 0;
-
-int16_t audio_data[8192000];
-
-
-static void fill_audio(void *udata, Uint8 *stream, int len)
-{
-  int audio_remaining = audio_len - audio_pos;
-  if (audio_remaining < 0)
-    return;
-
-  if (audio_remaining < len) len = audio_remaining;
-
-  //SDL_MixAudio(stream, (uint8_t*)&audio_data[audio_pos/2], len, SDL_MIX_MAXVOLUME);
-  memcpy (stream, (uint8_t*)&audio_data[audio_pos/2], len);
-  audio_pos += len;
-}
-
-static int audio_started = 0;
-
 gint
 main (gint    argc,
       gchar **argv)
 {
-  SDL_AudioSpec AudioSettings = {0};
-
-  GeglNode *display = NULL;
-  GeglNode *readbuf = NULL;
-
-  SDL_Init(SDL_INIT_AUDIO);
-  AudioSettings.freq = 48000;
-  AudioSettings.format = AUDIO_S16SYS;
-  AudioSettings.channels = 2;
-  AudioSettings.samples = 1024;
-  AudioSettings.callback = fill_audio;
-  SDL_OpenAudio(&AudioSettings, 0);
-
-  if (AudioSettings.format != AUDIO_S16SYS)
-   {
-      fprintf (stderr, "not getting format we wanted\n");
-   }
-  if (AudioSettings.freq != 48000)
-   {
-      fprintf (stderr, "not getting rate we wanted\n");
-   }
-
   if (argc < 2)
     usage();
 
@@ -216,7 +154,6 @@ main (gint    argc,
   parse_args (argc, argv);
 
   gegl_decode = gegl_node_new ();
-  gegl_display = gegl_node_new ();
 
   store = gegl_node_new_child (gegl_decode,
                                "operation", "gegl:buffer-sink",
@@ -246,19 +183,6 @@ main (gint    argc,
   printf ("frames: %i - %i\n", frame_start, frame_end);
   printf ("video: %s\n", video_path);
 
-  switch(run_mode)
-  {
-    case NEGL_NO_UI:
-      break;
-    case NEGL_VIDEO:
-      readbuf = gegl_node_new_child (gegl_display,
-                                     "operation", "gegl:buffer-source",
-                                     NULL);
-      display = gegl_node_create_child (gegl_display, "gegl:display");
-      gegl_node_link_many (readbuf, display, NULL);
-      break;
-  }
-
   {
     gint frame;
     for (frame = frame_start; frame <= frame_end; frame++)
@@ -277,43 +201,8 @@ main (gint    argc,
         {
         GeglAudioFragment *audio;
         gdouble fps;
-        int sample_count;
-        int sample_rate;
         gegl_node_get (load, "audio", &audio,
                              "frame-rate", &fps, NULL);
-        sample_count = gegl_audio_fragment_get_sample_count (audio);
-        sample_rate = gegl_audio_fragment_get_sample_rate (audio);
-
-        if (sample_count > 0)
-        {
-          int i;
-          if (!audio_started)
-           {
-             SDL_PauseAudio(0);
-             audio_started = 1;
-           }
-          for (i = 0; i < sample_count; i++)
-          {
-            audio_data[audio_len/2 + 0] = audio->data[0][i] * 32767.0;
-            audio_data[audio_len/2 + 1] = audio->data[1][i] * 32767.0;
-            audio_len += 4;
-          }
-        }
-
-        switch(run_mode)
-        {
-          case NEGL_NO_UI:
-            break;
-          case NEGL_VIDEO:
-
-	    gegl_node_set (readbuf, "buffer", video_frame, NULL);
-	    gegl_node_process (display);
-	    while ( (audio_pos / 4.0) / sample_rate < (frame / fps) - 0.05 )
-            {
-              g_usleep (500); /* sync audio */
-            }
-            break;
-        }
 
 	if (frame_path)
 	{
@@ -342,7 +231,6 @@ main (gint    argc,
     g_object_unref (video_frame);
   video_frame = NULL;
   g_object_unref (gegl_decode);
-  g_object_unref (gegl_display);
 
   gegl_exit ();
   return 0;
@@ -385,8 +273,6 @@ gegl_meta_set_audio (const char        *path,
     g_string_free (str, TRUE);
   }
   gexiv2_metadata_free (e2m);
-
-  SDL_CloseAudio();
 }
 
 void
