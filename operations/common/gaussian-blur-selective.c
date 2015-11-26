@@ -35,8 +35,6 @@ property_double (max_delta, _("Max. delta"), 0.2)
   description   (_("Maximum delta"))
   value_range   (0.0, 1.0)
 
-property_boolean (use_aux_delta, _("Read delta values from auxiliary buffer"), FALSE)
-
 #else
 
 #define GEGL_OP_COMPOSER
@@ -230,15 +228,11 @@ process (GeglOperation       *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   gboolean        success;
   GeglRectangle   compute;
-  GeglBuffer     *delta = NULL;
 
   compute = get_required_for_output (operation, "input", result);
 
-  if (o->use_aux_delta)
-    delta = aux;
-
   success = gblur_selective (input, &compute,
-                             delta,
+                             aux,
                              output, result,
                              o->blur_radius, o->max_delta);
   return success;
