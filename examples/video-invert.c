@@ -36,10 +36,7 @@ main (gint argc,
   
   gegl_enc = gegl_node_new ();
   load_buf = gegl_node_new_child (gegl_enc, "operation", "gegl:buffer-source", NULL);
-  //invert = gegl_node_new_child (gegl_enc,   "operation", "gegl:snn-mean", NULL);
-  invert = gegl_node_new_child (gegl_enc,   "operation", "gegl:mblur", NULL);
-  invert2 = gegl_node_new_child (gegl_enc,  "operation", "gegl:snn-mean", NULL);
-  invert3 = gegl_node_new_child (gegl_enc,  "operation", "gegl:snn-mean", NULL);
+  invert = gegl_node_new_child (gegl_enc,   "operation", "gegl:gray", NULL);
   encode = gegl_node_new_child (gegl_dec,   "operation", "gegl:ff-save", "path", output_path, NULL);
 
   gegl_node_link_many (load_buf, invert, /*invert2, invert3,*/ encode, NULL);
