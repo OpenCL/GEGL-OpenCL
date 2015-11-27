@@ -501,7 +501,9 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   /* frames per second */
   st->time_base =(AVRational){1, o->frame_rate};
   c->time_base = st->time_base;
+
   c->pix_fmt = AV_PIX_FMT_YUV420P;
+  
 
   if (c->codec_id == AV_CODEC_ID_MPEG2VIDEO)
     {
@@ -594,6 +596,17 @@ open_video (Priv * p, AVFormatContext * oc, AVStream * st)
       fprintf (stderr, "codec not found\n");
       exit (1);
     }
+
+  if (codec->pix_fmts){
+    int i = 0;
+    c->pix_fmt = codec->pix_fmts[0];
+    while (codec->pix_fmts[i] !=-1)
+    {
+      if (codec->pix_fmts[i] ==  AV_PIX_FMT_RGB24)
+         c->pix_fmt = AV_PIX_FMT_RGB24;
+      i++;
+    }
+  }
 
   /* open the codec */
   if (avcodec_open2 (c, codec, NULL) < 0)
