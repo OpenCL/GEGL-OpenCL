@@ -55,6 +55,8 @@ property_audio_fragment (audio, _("audio"), 0)
 #include <errno.h>
 
 #include <libavformat/avformat.h>
+#include <libswscale/swscale.h>
+
 
 typedef struct
 {
@@ -81,6 +83,7 @@ typedef struct
   AVStream        *audio_stream;
   AVCodec         *video_codec;
   AVFrame         *lavc_frame;
+  AVFrame         *rgb_frame;
   glong            prevframe;      /* previously decoded frame number */
   gdouble          prevpts;        /* timestamp in seconds of last decoded frame */
 
@@ -135,12 +138,15 @@ ff_cleanup (GeglProperties *o)
         avformat_close_input(&p->video_fcontext);
       if (p->audio_fcontext)
         avformat_close_input(&p->audio_fcontext);
+      if (p->rgb_frame)
+        av_free (p->rgb_frame);
       if (p->lavc_frame)
         av_free (p->lavc_frame);
 
       p->video_fcontext = NULL;
       p->audio_fcontext = NULL;
       p->lavc_frame = NULL;
+      p->rgb_frame = NULL;
       p->loadedfilename = NULL;
     }
 }
@@ -374,9 +380,10 @@ AV_TIME_BASE_Q) * 1.0 / AV_TIME_BASE ;
                decodeframe = roundf ( p->prevpts * o->frame_rate);
              }
           }
-
+#if 0
           if (decoded_bytes != pkt.size)
             fprintf (stderr, "bytes left!\n");
+#endif
           av_free_packet (&pkt);
         }
       while (!got_picture);
@@ -399,8 +406,7 @@ prepare (GeglOperation *operation)
 
   g_assert (o->user_data != NULL);
 
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
-
+  gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
 
   if (!p->loadedfilename ||
       strcmp (p->loadedfilename, o->path))
@@ -642,6 +648,27 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
   *right = 0;
 }
 
+static AVFrame *
+alloc_picture (int pix_fmt, int width, int height)
+{
+  AVFrame  *picture;
+  uint8_t  *picture_buf;
+  int       size;
+
+  picture = av_frame_alloc ();
+  if (!picture)
+    return NULL;
+  size = avpicture_get_size (pix_fmt, width + 1, height + 1);
+  picture_buf = malloc (size);
+  if (!picture_buf)
+    {
+      av_free (picture);
+      return NULL;
+    }
+  avpicture_fill ((AVPicture *) picture, picture_buf, pix_fmt, width, height);
+  return picture;
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
@@ -654,10 +681,6 @@ process (GeglOperation       *operation,
   {
     if (p->video_fcontext && !decode_frame (operation, o->frame))
       {
-        guchar *buf;
-        gint    pxsize = 4;
-        gint    x,y;
-
         long sample_start = 0;
 
 	if (p->audio_stream && p->audio_stream->codec) // XXX: remove second clause
@@ -683,42 +706,25 @@ process (GeglOperation       *operation,
           }
         }
 	
-        buf = g_new (guchar, p->width * p->height * pxsize);
-
-        for (y=0; y < p->height; y++)
-          {
-            guchar       *dst  = buf                    + y     * p->width * 4;
-            const guchar *ysrc = p->lavc_frame->data[0] + y     * p->lavc_frame->linesize[0];
-            const guchar *usrc = p->lavc_frame->data[1] + y / 2 * p->lavc_frame->linesize[1];
-            const guchar *vsrc = p->lavc_frame->data[2] + y / 2 * p->lavc_frame->linesize[2];
-
-            for (x=0;x < p->width; x++)
-              {
-                gint R,G,B;
-#ifndef byteclamp
-#define byteclamp(j) j=j<0?0:j>255?255:j
-#endif
-#define YUV82RGB8(Y,U,V,R,G,B)do{\
-                R= ((Y<<15)                 + 37355*(V-128))>>15;\
-                G= ((Y<<15) -12911* (U-128) - 19038*(V-128))>>15;\
-                B= ((Y<<15) +66454* (U-128)                )>>15;\
-                byteclamp(R);\
-                byteclamp(G);\
-                byteclamp(B);\
-              } while(0)
-              YUV82RGB8 (*ysrc, *usrc, *vsrc, R, G, B);
-              *(unsigned int *) dst = R + G * 256 + B * 256 * 256 + 0xff000000;
-              dst  += 4;
-              usrc += x%2;
-              vsrc += x%2;
-              ysrc ++;
-              }
-          }
+        if (p->video_stream->codec->pix_fmt == AV_PIX_FMT_RGB24)
         {
           GeglRectangle extent = {0,0,p->width,p->height};
-          gegl_buffer_set (output, &extent, 0, NULL, buf, GEGL_AUTO_ROWSTRIDE);
+          gegl_buffer_set (output, &extent, 0, babl_format("R'G'B' u8"), p->lavc_frame->data[0], GEGL_AUTO_ROWSTRIDE);
         }
-        g_free (buf);
+        else
+        {
+          struct SwsContext *img_convert_ctx;
+          GeglRectangle extent = {0,0,p->width,p->height};
+
+          img_convert_ctx = sws_getContext(p->width, p->height, p->video_stream->codec->pix_fmt,
+                                           p->width, p->height, AV_PIX_FMT_RGB24,
+                                           SWS_BICUBIC, NULL, NULL, NULL);
+          p->rgb_frame = alloc_picture (AV_PIX_FMT_RGB24, p->width, p->height);
+          sws_scale (img_convert_ctx, (void*)p->lavc_frame->data,
+                     p->lavc_frame->linesize, 0, p->height, p->rgb_frame->data, p->rgb_frame->linesize);
+          gegl_buffer_set (output, &extent, 0, babl_format("R'G'B' u8"), p->rgb_frame->data[0], GEGL_AUTO_ROWSTRIDE);
+          sws_freeContext (img_convert_ctx);
+        }
       }
   }
   return  TRUE;
