@@ -898,6 +898,8 @@ static void flush_audio (GeglProperties *o)
   Priv *p = (Priv*)o->user_data;
 
   int got_packet;
+  if (!p->audio_st)
+    return;
   do
   {
     AVPacket  pkt = { 0 };
