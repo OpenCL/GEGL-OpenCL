@@ -570,7 +570,7 @@ alloc_picture (int pix_fmt, int width, int height)
   picture = av_frame_alloc ();
   if (!picture)
     return NULL;
-  size = avpicture_get_size (pix_fmt, width, height + 1);
+  size = avpicture_get_size (pix_fmt, width + 1, height + 1);
   picture_buf = malloc (size);
   if (!picture_buf)
     {
