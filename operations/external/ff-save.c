@@ -44,7 +44,7 @@ property_int (noise_reduction, _("noise reduction"), 0)
 property_int (scenechange_threshold, _("scenechange threshold"), 0)
 property_int (video_bit_rate_min, _("video bitrate min"), 0)
 property_int (video_bit_rate_max, _("video bitrate max"), 0)
-property_int (video_bit_rate_tolerance, _("video bitrate tolerance"), 0)
+property_int (video_bit_rate_tolerance, _("video bitrate tolerance"), -1)
 
 property_int (keyint_min, _("keyint-min"), 0)
 property_int (trellis, _("trellis"), 0)
@@ -493,7 +493,8 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c->bit_rate = o->video_bit_rate * 1000;
   c->rc_min_rate = o->video_bit_rate_min * 1000;
   c->rc_max_rate = o->video_bit_rate_max * 1000;
-  c->bit_rate_tolerance = o->video_bit_rate_tolerance * 1000;
+  if (o->video_bit_rate_tolerance >= 0)
+    c->bit_rate_tolerance = o->video_bit_rate_tolerance * 1000;
   /* resolution must be a multiple of two */
   c->width = p->width;
   c->height = p->height;
