@@ -5,6 +5,7 @@ SUBDIRS = \
 	compositions \
 	simple \
 	xml \
-	python
+	ff-load-save \
+	python 
 
 #opencl

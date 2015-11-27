@@ -1323,6 +1323,7 @@ tests/buffer/reference/Makefile
 tests/buffer/tests/Makefile
 tests/compositions/Makefile
 tests/compositions/data/Makefile
+tests/ff-load-save/Makefile
 tests/python/Makefile
 tests/simple/Makefile
 tests/xml/Makefile
