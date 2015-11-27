@@ -273,6 +273,8 @@ static int str_has_video_suffix (char *path)
          g_str_has_suffix (path, ".webm") ||
          g_str_has_suffix (path, ".MP4") ||
          g_str_has_suffix (path, ".mkv") ||
+         g_str_has_suffix (path, ".gif") ||
+         g_str_has_suffix (path, ".GIF") ||
          g_str_has_suffix (path, ".MKV") ||
          g_str_has_suffix (path, ".mov") ||
          g_str_has_suffix (path, ".ogg");
