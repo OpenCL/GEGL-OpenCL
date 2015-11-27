@@ -710,6 +710,7 @@ write_video_frame (GeglProperties *o,
          p->picture->format = c->pix_fmt;
          p->picture->width = c->width;
          p->picture->height = c->height;
+         sws_freeContext (img_convert_ctx);
         }
     }
   else
