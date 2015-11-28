@@ -2,21 +2,22 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # Pedro Albuquerque <palbuquerque73@gmail.com>, 2015.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: Gegl-master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
-"eywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-11-21 07:03+0000\n"
-"PO-Revision-Date: 2015-11-28 09:44+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=gegl&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2015-11-28 09:45+0000\n"
+"PO-Revision-Date: 2015-11-28 09:51+0000\n"
 "Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
-"Language-Team: Pedro Albuquerque\n"
+"Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Virtaal 0.7.1\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\\n\n"
+"X-Generator: Gtranslator 2.91.6\n"
 "X-Project-Style: gnome\n"
 "X-Language: pt_PT\n"
 "X-Source-Language: C\n"
@@ -382,11 +383,13 @@ msgstr ""
 #: ../operations/common/bilateral-filter.c:26
 #: ../operations/common/bilateral-filter-fast.c:37
 #: ../operations/common/dropshadow.c:37
+#: ../operations/common/gaussian-blur-selective.c:29
 msgid "Blur radius"
 msgstr "Raio onde desfocar"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/bilateral-filter-fast.c:38
+#: ../operations/common/gaussian-blur-selective.c:30
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Raio de uma região de pixels quadrada (largura e altura serão raio*2+1)."
@@ -1602,7 +1605,7 @@ msgid "Mode of displacement"
 msgstr "Modo de deslocamento"
 
 #: ../operations/common/displace.c:37 ../operations/external/npd.c:50
-#: ../operations/transform/transform-core.c:189
+#: ../operations/transform/transform-core.c:193
 #: ../operations/workshop/ditto.c:27
 msgid "Sampler"
 msgstr "Amostragem"
@@ -2310,6 +2313,24 @@ msgid ""
 msgstr ""
 "Realiza uma média dos pixels vizinhos com a distribuição normal como "
 "ponderação"
+
+#: ../operations/common/gaussian-blur-selective.c:34
+msgid "Max. delta"
+msgstr "Delta máx."
+
+#: ../operations/common/gaussian-blur-selective.c:35
+#| msgid "Maximum difference"
+msgid "Maximum delta"
+msgstr "Delta máximo"
+
+#: ../operations/common/gaussian-blur-selective.c:259
+#| msgid "Gaussian Blur"
+msgid "Selective Gaussian Blur"
+msgstr "Desfoque gaussiano seletivo"
+
+#: ../operations/common/gaussian-blur-selective.c:262
+msgid "Blur neighboring pixels, but only in low-contrast areas."
+msgstr "Desfocar pixels vizinhos, mas só em áreas com pouco contraste."
 
 #: ../operations/common/gblur-1d.c:43 ../operations/common/warp.c:38
 #: ../operations/external/text.c:32
@@ -3846,7 +3867,6 @@ msgid "Sepia"
 msgstr "Sépia"
 
 #: ../operations/common/sepia.c:112
-#| msgid "Infinitely repeats the input image."
 msgid "Converts the input image to sepia"
 msgstr "Converte a imagem de entrada para sépia"
 
@@ -4854,12 +4874,10 @@ msgid "audio_sample_rate"
 msgstr "taxa_amostragem_áudio"
 
 #: ../operations/external/ff-load.c:37
-#| msgid "Red channel"
 msgid "audio_channels"
 msgstr "canais_áudio"
 
 #: ../operations/external/ff-load.c:39
-#| msgid "frames"
 msgid "frame-rate"
 msgstr "taxa de molduras"
 
@@ -4875,15 +4893,15 @@ msgstr "codec vídeo"
 msgid "audio-codec"
 msgstr "codec áudio"
 
-#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:48
+#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:30
 msgid "audio"
 msgstr "áudio"
 
-#: ../operations/external/ff-load.c:740
+#: ../operations/external/ff-load.c:776
 msgid "FFmpeg Frame Loader"
 msgstr "Carregador de molduras ffmpeg"
 
-#: ../operations/external/ff-load.c:742
+#: ../operations/external/ff-load.c:778
 msgid "FFmpeg video frame importer."
 msgstr "Impostador de molduras vídeo ffmpeg"
 
@@ -4893,59 +4911,122 @@ msgstr "Impostador de molduras vídeo ffmpeg"
 msgid "Target path and filename, use '-' for stdout."
 msgstr "Caminho e nome de ficheiro destino, use \"-\" para stdout"
 
-#: ../operations/external/ff-save.c:30
-msgid "Frames/second"
-msgstr "Molduras/segundo"
-
-#: ../operations/external/ff-save.c:33
+#: ../operations/external/ff-save.c:31
 msgid "Audio codec"
 msgstr "Codec áudio"
 
-#: ../operations/external/ff-save.c:34
-msgid "Audio bitrate"
-msgstr "Taxa de bits áudio"
+#: ../operations/external/ff-save.c:32
+#| msgid "Audio bitrate"
+msgid "audio bitrate in kb/s"
+msgstr "taxa de bits áudio em kb/s"
+
+#: ../operations/external/ff-save.c:33 ../operations/external/ff-save.c:40
+msgid "Target encoded video bitrate in kb/s"
+msgstr "Taxa de bits do vídeo codificado alvo em kb/s"
 
 #: ../operations/external/ff-save.c:35
+msgid "Frames/second"
+msgstr "Molduras/segundo"
+
+#: ../operations/external/ff-save.c:38
 msgid "Video codec"
 msgstr "Codec vídeo"
 
-#: ../operations/external/ff-save.c:36 ../operations/external/ff-save.c:38
-#| msgid "Target bitrate"
-msgid "video bitrate"
-msgstr "Taxa de bits vídeo"
-
 #: ../operations/external/ff-save.c:39
+#| msgid "video bitrate"
+msgid "video bitrate in kb/s"
+msgstr "taxa de bits vídeo em kb/s"
+
+#: ../operations/external/ff-save.c:42
 msgid "global quality"
 msgstr "qualidade global"
 
-#: ../operations/external/ff-save.c:40
-#| msgid "Compression"
-msgid "compression level"
-msgstr "nível de compressão"
-
-#: ../operations/external/ff-save.c:41
-#| msgid "Noise Reduction"
-msgid "noise reduction strength"
-msgstr "força da redução de ruído"
-
-#: ../operations/external/ff-save.c:42
-msgid "the number of frames in a group of pictures, 0 for keyframe only"
-msgstr "o número de molduras num grupo de imagens, 0 para moldura chave só"
-
 #: ../operations/external/ff-save.c:43
-msgid ""
-"the minimum number of frames in a group of pictures, 0 for keyframe only"
-msgstr ""
-"o número mínimo de molduras num grupo de imagens, 0 para moldura chave só"
+#| msgid "Noise Reduction"
+msgid "noise reduction"
+msgstr "redução de ruído"
 
 #: ../operations/external/ff-save.c:44
-#| msgid "Maximum number of iterations"
-msgid "maximum number of consequetive b frames"
-msgstr "número máximo de molduras b consecutivas"
+#| msgid "Red eye threshold"
+msgid "scenechange threshold"
+msgstr "Tolerância de alteração de cena"
 
-#: ../operations/external/ff-save.c:854
+#: ../operations/external/ff-save.c:45
+#| msgid "video bitrate"
+msgid "video bitrate min"
+msgstr "taxa de bits vídeo mín."
+
+#: ../operations/external/ff-save.c:46
+#| msgid "video bitrate"
+msgid "video bitrate max"
+msgstr "taxa de bits vídeo máx."
+
+#: ../operations/external/ff-save.c:47
+#| msgid "video bitrate"
+msgid "video bitrate tolerance"
+msgstr "tolerância de taxa de bits vídeo"
+
+#: ../operations/external/ff-save.c:49
+msgid "keyint-min"
+msgstr "keyint-min"
+
+#: ../operations/external/ff-save.c:50
+msgid "trellis"
+msgstr "trellis"
+
+#: ../operations/external/ff-save.c:51
+msgid "bufsize"
+msgstr "bufsize"
+
+#: ../operations/external/ff-save.c:52
+msgid "qmin"
+msgstr "qmin"
+
+#: ../operations/external/ff-save.c:53
+msgid "qmax"
+msgstr "qmax"
+
+#: ../operations/external/ff-save.c:54
+msgid "max_qdiff"
+msgstr "max_qdiff"
+
+#: ../operations/external/ff-save.c:55
+msgid "me_range"
+msgstr "me_range"
+
+#: ../operations/external/ff-save.c:56
+#| msgid "frames"
+msgid "max_b_frames"
+msgstr "max_b_frames"
+
+#: ../operations/external/ff-save.c:57
+msgid "gop-size"
+msgstr "gop-size"
+
+#: ../operations/external/ff-save.c:58
+#| msgid "Compression"
+msgid "qcompress"
+msgstr "qcompress"
+
+#: ../operations/external/ff-save.c:59
+msgid "qblur"
+msgstr "qblur"
+
+#: ../operations/external/ff-save.c:60
+msgid "i-quant-factor"
+msgstr "i-quant-factor"
+
+#: ../operations/external/ff-save.c:61
+msgid "i-quant-offset"
+msgstr "i-quant-offset"
+
+#: ../operations/external/ff-save.c:62
+msgid "me-subpel-quality"
+msgstr "me-subpel-quality"
+
+#: ../operations/external/ff-save.c:991
 msgid "FFmpeg video output sink"
-msgstr "Depósito de saída vídeo ffmpeg"
+msgstr "Depósito de saída vídeo FFmpeg"
 
 #: ../operations/external/jp2-load.c:26 ../operations/external/jpg-load.c:25
 #: ../operations/external/tiff-load.c:26
@@ -5229,7 +5310,7 @@ msgid "When TRUE the model will not be freed"
 msgstr "Quando VERDADEIRO, o modelo não será libertado"
 
 #: ../operations/external/npd.c:53
-#: ../operations/transform/transform-core.c:190
+#: ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Amostragem usada internamente"
@@ -5545,12 +5626,10 @@ msgid "Display a string of text using pango and cairo."
 msgstr "Mostrar uma cadeia de texto usando Pango e Cairo."
 
 #: ../operations/external/tiff-load.c:28
-#| msgid "URI for file to load."
 msgid "URI for file to load"
 msgstr "URI do ficheiro a carregar"
 
 #: ../operations/external/tiff-load.c:30
-#| msgid "Direction"
 msgid "Directory"
 msgstr "Pasta"
 
@@ -5559,22 +5638,18 @@ msgid "Image file directory (subfile)"
 msgstr "Pasta do ficheiro de imagem (subficheiro)"
 
 #: ../operations/external/tiff-load.c:837
-#| msgid "PNG File Loader"
 msgid "TIFF File Loader"
 msgstr "Carregador de ficheiros TIFF"
 
 #: ../operations/external/tiff-load.c:839
-#| msgid "JPEG image loader using libjpeg"
 msgid "TIFF image loader using libtiff"
 msgstr "Carregador de imagens TIFF usando libtiff"
 
 #: ../operations/external/tiff-save.c:591
-#| msgid "NPY File Saver"
 msgid "TIFF File Saver"
 msgstr "Gravador de ficheiro TIFF"
 
 #: ../operations/external/tiff-save.c:593
-#| msgid "JPEG image saver, using libjpeg"
 msgid "TIFF image saver using libtiff"
 msgstr "Gravador de imagens TIFF, usando libtiff"
 
@@ -6029,19 +6104,19 @@ msgstr "Cadeia de transformação"
 msgid "Transforms the group (used by svg)."
 msgstr "Transforma o grupo (usado por svg)."
 
-#: ../operations/transform/transform-core.c:173
+#: ../operations/transform/transform-core.c:177
 msgid "Origin-x"
 msgstr "Origem X"
 
-#: ../operations/transform/transform-core.c:174
+#: ../operations/transform/transform-core.c:178
 msgid "X coordinate of origin"
 msgstr "Coordenada X da origem"
 
-#: ../operations/transform/transform-core.c:181
+#: ../operations/transform/transform-core.c:185
 msgid "Origin-y"
 msgstr "Origem Y"
 
-#: ../operations/transform/transform-core.c:182
+#: ../operations/transform/transform-core.c:186
 msgid "Y coordinate of origin"
 msgstr "Coordenada Y da origem"
 
@@ -6800,6 +6875,26 @@ msgstr "Cortar RGB"
 #: ../operations/workshop/rgb-clip.c:186
 msgid "Keep RGB pixels values inside a specific range"
 msgstr "Manter valores de pixel RGB dentro de um intervalo específico"
+
+#~| msgid "Compression"
+#~ msgid "compression level"
+#~ msgstr "nível de compressão"
+
+#~| msgid "Noise Reduction"
+#~ msgid "noise reduction strength"
+#~ msgstr "força da redução de ruído"
+
+#~ msgid "the number of frames in a group of pictures, 0 for keyframe only"
+#~ msgstr "o número de molduras num grupo de imagens, 0 para moldura chave só"
+
+#~ msgid ""
+#~ "the minimum number of frames in a group of pictures, 0 for keyframe only"
+#~ msgstr ""
+#~ "o número mínimo de molduras num grupo de imagens, 0 para moldura chave só"
+
+#~| msgid "Maximum number of iterations"
+#~ msgid "maximum number of consequetive b frames"
+#~ msgstr "número máximo de molduras b consecutivas"
 
 #~ msgid ""
 #~ "Type of border to choose. Choices are extend, wrap, crop. Default is "
