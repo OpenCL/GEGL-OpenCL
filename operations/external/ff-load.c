@@ -516,7 +516,7 @@ prepare (GeglOperation *operation)
 	o->frames = p->video_fcontext->duration * o->frame_rate / AV_TIME_BASE;
         /* make second guess for things like luxo */
 	if (o->frames < 1)
-          o->frames = 1000;
+          o->frames = 23;
       }
 #if 0
       {
