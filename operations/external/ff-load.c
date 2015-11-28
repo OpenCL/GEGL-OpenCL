@@ -199,6 +199,7 @@ decode_audio (GeglOperation *operation,
       fprintf (stderr, "audio seek error!\n");
      else
       avcodec_flush_buffers (p->audio_stream->codec);
+
   }
 
   while (p->prevapts <= pts2)
