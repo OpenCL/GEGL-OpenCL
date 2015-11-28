@@ -499,7 +499,7 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c->width = p->width;
   c->height = p->height;
   /* frames per second */
-  st->time_base =(AVRational){1, o->frame_rate};
+  st->time_base =(AVRational){1000, o->frame_rate * 1000};
   c->time_base = st->time_base;
 
   c->pix_fmt = AV_PIX_FMT_YUV420P;
