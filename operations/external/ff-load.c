@@ -119,6 +119,7 @@ clear_audio_track (GeglProperties *o)
       g_object_unref (p->audio_track->data);
       p->audio_track = g_list_remove (p->audio_track, p->audio_track->data);
     }
+  p->prevapts = 0.0;
 }
 
 static void
@@ -186,22 +187,18 @@ decode_audio (GeglOperation *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   Priv       *p = (Priv*)o->user_data;
 
-  pts1 -= 15.0;
+  pts1 -= 2.0;
   if (pts1 < 0.0)pts1 = 0.0;
 
-  /* figure out which frame we should start decoding at */
-  //fprintf (stderr, "%f %f\n", p->prevapts, pts2);
-  if(0){
-  //int64_t seek_target = av_rescale_q ((pts1) * AV_TIME_BASE, AV_TIME_BASE_Q, p->audio_stream->time_base);
-  int64_t seek_target = pts1 * AV_TIME_BASE;
+  if(pts1 - 15.0 > p->prevapts){
+  int64_t seek_target = av_rescale_q (pts1 * AV_TIME_BASE, AV_TIME_BASE_Q, p->audio_stream->time_base);
+     clear_audio_track (o);
+     p->prevapts = 0.0;
 
-#if 0
-  clear_audio_track (o);
-#endif
-  p->prevapts = 0.0;
-
-    if (av_seek_frame (p->audio_fcontext, -1, seek_target, (AVSEEK_FLAG_BACKWARD)) < 0)
+     if (av_seek_frame (p->audio_fcontext, p->audio_stream->index, seek_target, (AVSEEK_FLAG_BACKWARD)) < 0)
       fprintf (stderr, "audio seek error!\n");
+     else
+      avcodec_flush_buffers (p->audio_stream->codec);
   }
 
   while (p->prevapts <= pts2)
@@ -239,8 +236,6 @@ decode_audio (GeglOperation *operation,
                GeglAudioFragment *af = gegl_audio_fragment_new (o->audio_sample_rate, channels,
                           AV_CH_LAYOUT_STEREO, samples_left);
 //);
-               //af->channels = MIN(p->audio_stream->codec->channels, GEGL_MAX_AUDIO_CHANNELS);
-
                switch (p->audio_stream->codec->sample_fmt)
                {
                  case AV_SAMPLE_FMT_FLT:
@@ -279,7 +274,8 @@ decode_audio (GeglOperation *operation,
                   g_warning ("undealt with sample format\n");
                 }
                 gegl_audio_fragment_set_sample_count (af, sample_count);
-                gegl_audio_fragment_set_pos (af, p->audio_pos);
+                gegl_audio_fragment_set_pos (af, 
+  (long int)av_rescale_q ((pkt.pts), p->audio_stream->time_base, AV_TIME_BASE_Q) * o->audio_sample_rate /AV_TIME_BASE);
 
                 p->audio_pos += sample_count;
                 p->audio_track = g_list_append (p->audio_track, af);
@@ -295,7 +291,6 @@ decode_audio (GeglOperation *operation,
     }
   return 0;
 }
-
 
 static int
 decode_frame (GeglOperation *operation,
@@ -330,7 +325,7 @@ decode_frame (GeglOperation *operation,
       fprintf (stderr, "video seek error!\n");
     else
       avcodec_flush_buffers (p->video_stream->codec);
-    
+
     prevframe = -1;
   }
 
@@ -409,7 +404,9 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u8"));
 
   if (!p->loadedfilename ||
-      strcmp (p->loadedfilename, o->path))
+      strcmp (p->loadedfilename, o->path) ||
+       p->prevframe > o->frame  /* a bit heavy handed, but improves consistency */
+      )
     {
       gint i;
       gint err;
@@ -472,24 +469,10 @@ prepare (GeglOperation *operation)
               }
         }
 
-      p->video_stream->codec->err_recognition = AV_EF_IGNORE_ERR | AV_EF_BITSTREAM | AV_EF_BUFFER;
+      p->video_stream->codec->err_recognition = AV_EF_IGNORE_ERR |
+                                                AV_EF_BITSTREAM |
+                                                AV_EF_BUFFER;
       p->video_stream->codec->workaround_bugs = FF_BUG_AUTODETECT;
-
-#if 1
- //     p->video_stream->codec->error_concealment = 0;
-#else
-      p->video_stream->codec->error_concealment = FF_EC_DEBLOCK | FF_EC_GUESS_MVS | FF_EC_FAVOR_INTER;
-
-#endif
-
-#if 0
-      p->video_stream->codec->idct_algo = FF_IDCT_SIMPLEAUTO;
-
-      p->video_stream->codec->thread_count = 0;
-      p->video_stream->codec->thread_type = FF_THREAD_SLICE;
-      /* XXX: permits slice parallell decode, at expense of h264 compliance of output */
-      p->video_stream->codec->flags2 = AV_CODEC_FLAG2_FAST;
-#endif
 
       if (p->video_codec == NULL)
           g_warning ("video codec not found");
@@ -553,11 +536,15 @@ prepare (GeglOperation *operation)
     else if (!strcmp (o->video_codec, "h264"))
     {
       if (strstr (p->video_fcontext->filename, ".mp4") ||
-          strstr (p->video_fcontext->filename, ".MP4"))    /* XXX: too hacky, isn't there an avformat thing to use? */
+          strstr (p->video_fcontext->filename, ".MP4"))  /* XXX: too hacky, isn't there an avformat thing to use?,
+ or perhaps we can measure this when decoding the first frame.
+ */
         p->codec_delay = 3;
       else
         p->codec_delay = 0;
     }
+
+    clear_audio_track (o);
   }
 }
 
@@ -643,7 +630,6 @@ static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
         return;
       }
   }
-  //fprintf (stderr, "didn't find audio sample\n");
   *left  = 0;
   *right = 0;
 }
@@ -683,7 +669,7 @@ process (GeglOperation       *operation,
       {
         long sample_start = 0;
 
-	if (p->audio_stream && p->audio_stream->codec) // XXX: remove second clause
+	if (p->audio_stream) 
         {
           int sample_count;
           gegl_audio_fragment_set_sample_rate (o->audio, p->audio_stream->codec->sample_rate);
