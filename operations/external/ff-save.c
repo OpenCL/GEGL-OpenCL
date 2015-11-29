@@ -134,6 +134,34 @@ clear_audio_track (GeglProperties *o)
     }
 }
 
+static int
+samples_per_frame (int    frame,
+                   double frame_rate,
+                   int    sample_rate,
+                   long  *start)
+{
+  double osamples;
+  double samples = 0;
+  int f = 0;
+
+  if (fabs(fmod (sample_rate, frame_rate)) < 0.0001)
+  {
+    if (start)
+      *start = (sample_rate / frame_rate) * frame;
+    return sample_rate / frame_rate;
+  }
+
+  for (f = 0; f < frame; f++) 
+  {
+    samples += sample_rate / frame_rate;
+  }
+  osamples = samples;
+  samples += sample_rate / frame_rate;
+  if (start)
+     (*start) = ceil(osamples);
+  return ceil(samples)-ceil(osamples);
+}
+
 static void get_sample_data (Priv *p, long sample_no, float *left, float *right)
 {
   int to_remove = 0;
@@ -350,10 +378,12 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   }
 
   /* first we add incoming frames audio samples */
+  if (o->audio)
   {
     int i;
-    int sample_count = gegl_audio_fragment_get_sample_count (o->audio);
-    GeglAudioFragment *af = gegl_audio_fragment_new (gegl_audio_fragment_get_sample_rate (o->audio),
+    GeglAudioFragment *af;
+    sample_count = gegl_audio_fragment_get_sample_count (o->audio);
+    af = gegl_audio_fragment_new (gegl_audio_fragment_get_sample_rate (o->audio),
                                                      gegl_audio_fragment_get_channels (o->audio),
                                                      gegl_audio_fragment_get_channel_layout (o->audio),
                                                      sample_count);
@@ -367,12 +397,29 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
     p->audio_pos += sample_count;
     p->audio_track = g_list_append (p->audio_track, af);
   }
-
+  else
+  {
+    int i;
+    GeglAudioFragment *af;
+    sample_count = samples_per_frame (p->frame_count, o->frame_rate, o->audio_sample_rate, NULL);
+    af = gegl_audio_fragment_new (sample_count,
+                                                     2,
+                                                     0,
+                                                     sample_count);
+    gegl_audio_fragment_set_sample_count (af, sample_count);
+    gegl_audio_fragment_set_pos (af, p->audio_pos);
+    for (i = 0; i < sample_count; i++)
+      {
+        af->data[0][i] = 0.0;
+        af->data[1][i] = 0.0;
+      }
+    p->audio_pos += sample_count;
+    p->audio_track = g_list_append (p->audio_track, af);
+  }
   if (!(c->codec->capabilities & AV_CODEC_CAP_VARIABLE_FRAME_SIZE))
     sample_count = c->frame_size;
 
   /* then we encode as much as we can in a loop using the codec frame size */
-
   
   while (p->audio_pos - p->audio_read_pos > sample_count)
   {
@@ -583,10 +630,12 @@ alloc_picture (int pix_fmt, int width, int height)
 }
 
 static void
-open_video (Priv * p, AVFormatContext * oc, AVStream * st)
+open_video (GeglProperties *o, AVFormatContext * oc, AVStream * st)
 {
+  Priv           *p = (Priv*)o->user_data;
   AVCodec  *codec;
   AVCodecContext *c;
+  AVDictionary *codec_options = {0};
 
   c = st->codec;
 
@@ -608,9 +657,13 @@ open_video (Priv * p, AVFormatContext * oc, AVStream * st)
       i++;
     }
   }
+#if 0
+  if (o->video_preset[0])
+    av_dict_set (&codec_options, "preset", o->video_preset, 0);
+#endif
 
   /* open the codec */
-  if (avcodec_open2 (c, codec, NULL) < 0)
+  if (avcodec_open2 (c, codec, &codec_options) < 0)
     {
       fprintf (stderr, "could not open codec\n");
       exit (1);
@@ -845,7 +898,7 @@ tfile (GeglProperties *o)
 
 
   if (p->video_st)
-    open_video (p, p->oc, p->video_st);
+    open_video (o, p->oc, p->video_st);
 
   if (p->audio_st)
     open_audio (o, p->oc, p->audio_st);
@@ -869,7 +922,7 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
-  Priv           *p = (Priv*)o->user_data;
+  Priv *p = (Priv*)o->user_data;
   static gint     inited = 0;
 
   g_assert (input);
