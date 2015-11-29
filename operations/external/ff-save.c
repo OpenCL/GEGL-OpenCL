@@ -787,6 +787,7 @@ write_video_frame (GeglProperties *o,
       pkt.data = (uint8_t *) picture_ptr;
       pkt.size = sizeof (AVPicture);
       pkt.pts = picture_ptr->pts;
+      pkt.dts = picture_ptr->pts;
       av_packet_rescale_ts (&pkt, c->time_base, st->time_base);
 
       ret = av_write_frame (oc, &pkt);
@@ -810,6 +811,7 @@ write_video_frame (GeglProperties *o,
           pkt.data = p->video_outbuf;
           pkt.size = out_size;
           pkt.pts = picture_ptr->pts;
+          pkt.dts = picture_ptr->pts;
           av_packet_rescale_ts (&pkt, c->time_base, st->time_base);
           /* write the compressed frame in the media file */
           ret = av_write_frame (oc, &pkt);
@@ -978,6 +980,7 @@ static void flush_video (GeglProperties *o)
 {
   Priv *p = (Priv*)o->user_data;
   int got_packet = 0;
+  long ts = p->frame_count;
   do {
     AVPacket  pkt = { 0 };
     int ret;
@@ -990,6 +993,8 @@ static void flush_video (GeglProperties *o)
      if (got_packet)
      {
        pkt.stream_index = p->video_st->index;
+       pkt.pts = ts;
+       pkt.dts = ts++;
        av_packet_rescale_ts (&pkt, p->video_st->codec->time_base, p->video_st->time_base);
        av_interleaved_write_frame (p->oc, &pkt);
        av_free_packet (&pkt);
