@@ -259,7 +259,7 @@ gegl_op_class_init (GeglOpClass *klass)
    "title",       _("Selective Gaussian Blur"),
    "categories",  "enhance:noise-reduction",
    "license",     "GPL3+",
-   "description", _("Blur neighboring pixels, but only in low-contrast areas."),
+   "description", _("Blur neighboring pixels, but only in low-contrast areas"),
    NULL);
 }
 
