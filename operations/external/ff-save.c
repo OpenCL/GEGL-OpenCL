@@ -22,6 +22,8 @@
 
 #include <glib/gi18n-lib.h>
 
+//#define USE_FINE_GRAINDED_FFMPEG 1
+
 #ifdef GEGL_PROPERTIES
 
 property_string (path, _("File"), "/tmp/fnord.ogv")
@@ -41,7 +43,9 @@ property_double (frame_rate, _("Frames/second"), 25.0)
 property_string (video_codec, _("Video codec"), "auto")
 property_int (video_bit_rate, _("video bitrate in kb/s"), 128)
     description (_("Target encoded video bitrate in kb/s"))
+property_int (video_bufsize, _("Video bufsize"), 0)
 
+#ifdef USE_FINE_GRAINED_FFMPEG
 property_int (global_quality, _("global quality"), 0)
 property_int (noise_reduction, _("noise reduction"), 0)
 property_int (scenechange_threshold, _("scenechange threshold"), 0)
@@ -51,7 +55,6 @@ property_int (video_bit_rate_tolerance, _("video bitrate tolerance"), -1)
 
 property_int (keyint_min, _("keyint-min"), 0)
 property_int (trellis, _("trellis"), 0)
-property_int (bufsize, _("bufsize"), 0)
 property_int (qmin, _("qmin"), 0)
 property_int (qmax, _("qmax"), 0)
 property_int (max_qdiff, _("max_qdiff"), 0)
@@ -63,7 +66,7 @@ property_double (qblur, _("qblur"), 0.0)
 property_double (i_quant_factor, _("i-quant-factor"), 0.0)
 property_double (i_quant_offset, _("i-quant-offset"), 0.0)
 property_int (me_subpel_quality, _("me-subpel-quality"), 0)
-
+#endif
 
 
 #else
@@ -539,10 +542,12 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
   c->codec_type = AVMEDIA_TYPE_VIDEO;
   /* put sample propeters */
   c->bit_rate = o->video_bit_rate * 1000;
+#ifdef USE_FINE_GRAINED_FFMPEG
   c->rc_min_rate = o->video_bit_rate_min * 1000;
   c->rc_max_rate = o->video_bit_rate_max * 1000;
   if (o->video_bit_rate_tolerance >= 0)
     c->bit_rate_tolerance = o->video_bit_rate_tolerance * 1000;
+#endif
   /* resolution must be a multiple of two */
   c->width = p->width;
   c->height = p->height;
@@ -566,8 +571,9 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
      c->max_b_frames = 3; // bf=3
    }
 
-  if (o->bufsize)
-    c->rc_buffer_size = o->bufsize * 1000;
+  if (o->video_bufsize)
+    c->rc_buffer_size = o->video_bufsize * 1000;
+#if USE_FINE_GRAINED_FFMPEG
   if (o->global_quality)
      c->global_quality = o->global_quality;
   if (o->qcompress != 0.0)
@@ -600,6 +606,7 @@ add_video_stream (GeglProperties *o, AVFormatContext * oc, int codec_id)
     c->gop_size = o->gop_size;
   if (o->keyint_min)
     c->keyint_min = o->keyint_min;
+#endif
 
    if (oc->oformat->flags & AVFMT_GLOBALHEADER)
      c->flags |= CODEC_FLAG_GLOBAL_HEADER;
