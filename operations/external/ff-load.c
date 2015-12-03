@@ -706,7 +706,8 @@ process (GeglOperation       *operation,
           img_convert_ctx = sws_getContext(p->width, p->height, p->video_stream->codec->pix_fmt,
                                            p->width, p->height, AV_PIX_FMT_RGB24,
                                            SWS_BICUBIC, NULL, NULL, NULL);
-          p->rgb_frame = alloc_picture (AV_PIX_FMT_RGB24, p->width, p->height);
+          if (!p->rgb_frame)
+            p->rgb_frame = alloc_picture (AV_PIX_FMT_RGB24, p->width, p->height);
           sws_scale (img_convert_ctx, (void*)p->lavc_frame->data,
                      p->lavc_frame->linesize, 0, p->height, p->rgb_frame->data, p->rgb_frame->linesize);
           gegl_buffer_set (output, &extent, 0, babl_format("R'G'B' u8"), p->rgb_frame->data[0], GEGL_AUTO_ROWSTRIDE);
