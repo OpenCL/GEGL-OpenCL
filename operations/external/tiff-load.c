@@ -505,7 +505,7 @@ load_RGBA(GeglOperation *operation,
       GeglRectangle line = { 0, p->height - row - 1, p->width, 1 };
 #if G_BYTE_ORDER != G_LITTLE_ENDIAN
       guint row_start = row * p->width;
-      guint row end = row * p->width + p->width;
+      guint row_end = row * p->width + p->width;
       guint i;
 
       for (i = row_start; i < row_end; i++)
