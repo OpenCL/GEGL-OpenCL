@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Gegl-master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-11-28 09:45+0000\n"
-"PO-Revision-Date: 2015-11-28 09:51+0000\n"
+"POT-Creation-Date: 2015-12-04 19:04+0000\n"
+"PO-Revision-Date: 2015-12-05 06:56+0000\n"
 "Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
 "Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
@@ -1393,7 +1393,7 @@ msgstr ""
 #: ../operations/common/gegl-buffer-save-op.c:24
 #: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
 #: ../operations/common/open-buffer.c:25 ../operations/common/save.c:25
-#: ../operations/external/ff-load.c:24 ../operations/external/ff-save.c:27
+#: ../operations/external/ff-load.c:24 ../operations/external/ff-save.c:29
 #: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
 #: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
 #: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
@@ -2319,18 +2319,17 @@ msgid "Max. delta"
 msgstr "Delta máx."
 
 #: ../operations/common/gaussian-blur-selective.c:35
-#| msgid "Maximum difference"
 msgid "Maximum delta"
 msgstr "Delta máximo"
 
 #: ../operations/common/gaussian-blur-selective.c:259
-#| msgid "Gaussian Blur"
 msgid "Selective Gaussian Blur"
 msgstr "Desfoque gaussiano seletivo"
 
 #: ../operations/common/gaussian-blur-selective.c:262
-msgid "Blur neighboring pixels, but only in low-contrast areas."
-msgstr "Desfocar pixels vizinhos, mas só em áreas com pouco contraste."
+#| msgid "Blur neighboring pixels, but only in low-contrast areas."
+msgid "Blur neighboring pixels, but only in low-contrast areas"
+msgstr "Desfocar pixels vizinhos, mas só em áreas com pouco contraste"
 
 #: ../operations/common/gblur-1d.c:43 ../operations/common/warp.c:38
 #: ../operations/external/text.c:32
@@ -4893,138 +4892,139 @@ msgstr "codec vídeo"
 msgid "audio-codec"
 msgstr "codec áudio"
 
-#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:30
+#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:32
 msgid "audio"
 msgstr "áudio"
 
-#: ../operations/external/ff-load.c:776
+#: ../operations/external/ff-load.c:764
 msgid "FFmpeg Frame Loader"
 msgstr "Carregador de molduras ffmpeg"
 
-#: ../operations/external/ff-load.c:778
+#: ../operations/external/ff-load.c:766
 msgid "FFmpeg video frame importer."
 msgstr "Impostador de molduras vídeo ffmpeg"
 
-#: ../operations/external/ff-save.c:28 ../operations/external/npy-save.c:32
+#: ../operations/external/ff-save.c:30 ../operations/external/npy-save.c:32
 #: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
 #: ../operations/external/rgbe-save.c:27
 msgid "Target path and filename, use '-' for stdout."
 msgstr "Caminho e nome de ficheiro destino, use \"-\" para stdout"
 
-#: ../operations/external/ff-save.c:31
+#: ../operations/external/ff-save.c:33
 msgid "Audio codec"
 msgstr "Codec áudio"
 
-#: ../operations/external/ff-save.c:32
-#| msgid "Audio bitrate"
+#: ../operations/external/ff-save.c:34
+#| msgid "audio_sample_rate"
+msgid "audio sample rate"
+msgstr "taxa de amostragem áudio"
+
+#: ../operations/external/ff-save.c:35
+msgid "-1 means autodetect on first audio fragment"
+msgstr "-1 significa deteção automática no primeiro fragmento de áudio"
+
+#: ../operations/external/ff-save.c:37
 msgid "audio bitrate in kb/s"
 msgstr "taxa de bits áudio em kb/s"
 
-#: ../operations/external/ff-save.c:33 ../operations/external/ff-save.c:40
+#: ../operations/external/ff-save.c:38 ../operations/external/ff-save.c:45
 msgid "Target encoded video bitrate in kb/s"
 msgstr "Taxa de bits do vídeo codificado alvo em kb/s"
 
-#: ../operations/external/ff-save.c:35
+#: ../operations/external/ff-save.c:40
 msgid "Frames/second"
 msgstr "Molduras/segundo"
 
-#: ../operations/external/ff-save.c:38
+#: ../operations/external/ff-save.c:43
 msgid "Video codec"
 msgstr "Codec vídeo"
 
-#: ../operations/external/ff-save.c:39
-#| msgid "video bitrate"
+#: ../operations/external/ff-save.c:44
 msgid "video bitrate in kb/s"
 msgstr "taxa de bits vídeo em kb/s"
 
-#: ../operations/external/ff-save.c:42
+#: ../operations/external/ff-save.c:46
+#| msgid "bufsize"
+msgid "Video bufsize"
+msgstr "tamanho de buffer vídeo"
+
+#: ../operations/external/ff-save.c:49
 msgid "global quality"
 msgstr "qualidade global"
 
-#: ../operations/external/ff-save.c:43
-#| msgid "Noise Reduction"
+#: ../operations/external/ff-save.c:50
 msgid "noise reduction"
 msgstr "redução de ruído"
 
-#: ../operations/external/ff-save.c:44
-#| msgid "Red eye threshold"
+#: ../operations/external/ff-save.c:51
 msgid "scenechange threshold"
 msgstr "Tolerância de alteração de cena"
 
-#: ../operations/external/ff-save.c:45
-#| msgid "video bitrate"
+#: ../operations/external/ff-save.c:52
 msgid "video bitrate min"
 msgstr "taxa de bits vídeo mín."
 
-#: ../operations/external/ff-save.c:46
-#| msgid "video bitrate"
+#: ../operations/external/ff-save.c:53
 msgid "video bitrate max"
 msgstr "taxa de bits vídeo máx."
 
-#: ../operations/external/ff-save.c:47
-#| msgid "video bitrate"
+#: ../operations/external/ff-save.c:54
 msgid "video bitrate tolerance"
 msgstr "tolerância de taxa de bits vídeo"
 
-#: ../operations/external/ff-save.c:49
+#: ../operations/external/ff-save.c:56
 msgid "keyint-min"
 msgstr "keyint-min"
 
-#: ../operations/external/ff-save.c:50
+#: ../operations/external/ff-save.c:57
 msgid "trellis"
 msgstr "trellis"
 
-#: ../operations/external/ff-save.c:51
-msgid "bufsize"
-msgstr "bufsize"
-
-#: ../operations/external/ff-save.c:52
+#: ../operations/external/ff-save.c:58
 msgid "qmin"
 msgstr "qmin"
 
-#: ../operations/external/ff-save.c:53
+#: ../operations/external/ff-save.c:59
 msgid "qmax"
 msgstr "qmax"
 
-#: ../operations/external/ff-save.c:54
+#: ../operations/external/ff-save.c:60
 msgid "max_qdiff"
 msgstr "max_qdiff"
 
-#: ../operations/external/ff-save.c:55
+#: ../operations/external/ff-save.c:61
 msgid "me_range"
 msgstr "me_range"
 
-#: ../operations/external/ff-save.c:56
-#| msgid "frames"
+#: ../operations/external/ff-save.c:62
 msgid "max_b_frames"
 msgstr "max_b_frames"
 
-#: ../operations/external/ff-save.c:57
+#: ../operations/external/ff-save.c:63
 msgid "gop-size"
 msgstr "gop-size"
 
-#: ../operations/external/ff-save.c:58
-#| msgid "Compression"
+#: ../operations/external/ff-save.c:64
 msgid "qcompress"
 msgstr "qcompress"
 
-#: ../operations/external/ff-save.c:59
+#: ../operations/external/ff-save.c:65
 msgid "qblur"
 msgstr "qblur"
 
-#: ../operations/external/ff-save.c:60
+#: ../operations/external/ff-save.c:66
 msgid "i-quant-factor"
 msgstr "i-quant-factor"
 
-#: ../operations/external/ff-save.c:61
+#: ../operations/external/ff-save.c:67
 msgid "i-quant-offset"
 msgstr "i-quant-offset"
 
-#: ../operations/external/ff-save.c:62
+#: ../operations/external/ff-save.c:68
 msgid "me-subpel-quality"
 msgstr "me-subpel-quality"
 
-#: ../operations/external/ff-save.c:991
+#: ../operations/external/ff-save.c:1057
 msgid "FFmpeg video output sink"
 msgstr "Depósito de saída vídeo FFmpeg"
 
