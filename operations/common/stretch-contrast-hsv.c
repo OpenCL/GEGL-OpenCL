@@ -225,7 +225,7 @@ gegl_op_class_init (GeglOpClass *klass)
           "This improves images that make poor use of the available contrast "
           "(little contrast, very dark, or very bright images). "
           "This version differs from Contrast Autostretch in that it works "
-          "in HSV scpace, and preserves hue."),
+          "in HSV space, and preserves hue."),
         NULL);
 }
 
