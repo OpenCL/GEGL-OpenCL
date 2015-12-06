@@ -110,7 +110,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",      _("Cast Format"),
     "categories", "core:color",
     "description", _("Cast the data between input_format and output_format, "
-                     "both bormats must have the same bpp"),
+                     "both formats must have the same bpp"),
     NULL);
 }
 
