@@ -1237,7 +1237,7 @@ static void mrg_gegl_blit (Mrg *mrg,
 foo++;
     if (!fmt) fmt = babl_format ("cairo-RGB24");
     gegl_node_blit (node, scale / fake_factor, &roi, fmt, buf, width * 4, 
-         GEGL_BLIT_DEFAULT|(1<<20));
+         GEGL_BLIT_DEFAULT);
   surface = cairo_image_surface_create_for_data (buf, CAIRO_FORMAT_RGB24, width, height, width * 4);
   }
 
