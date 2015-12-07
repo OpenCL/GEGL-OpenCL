@@ -288,6 +288,9 @@ gegl_processor_set_node (GeglProcessor *processor,
 
   g_return_if_fail (processor->input != NULL);
 
+  /* Prepare the graph */
+  gegl_node_get_bounding_box (processor->input);
+
   g_object_ref (processor->input);
 
   g_object_notify (G_OBJECT (processor), "node");
