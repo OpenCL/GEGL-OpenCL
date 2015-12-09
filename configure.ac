@@ -62,7 +62,7 @@ m4_define([pygobject2_required_version], [2.26])
 m4_define([pygobject3_required_version], [3.2])
 m4_define([vapigen_required_version], [0.20.0])
 m4_define([libavformat_required_version], [56.0.0])
-m4_define([libavcodec_required_version], [56.0.0])
+m4_define([libavcodec_required_version], [56.34.1])
 m4_define([libswscale_required_version], [3.1.0])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
@@ -1029,7 +1029,7 @@ AC_ARG_WITH(libavformat,  [  --without-libavformat   build without libavformat s
 if test "x$with_libavformat" != xno; then
   PKG_CHECK_MODULES(AVFORMAT, libavformat >= libavformat_required_version libavcodec >= libavcodec_required_version libswscale >= libswscale_required_version,
     have_libavformat="yes",
-    have_libavformat="no  (libavformat not found)")
+    have_libavformat="no  (sufficiently new libavformat / libavcodec or libswcale not found)")
   # verify the presence of the avformat.h header
   if test "x$have_libavformat" = "xyes"; then
     gegl_save_CPPFLAGS=$CPPFLAGS
