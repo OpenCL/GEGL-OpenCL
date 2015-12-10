@@ -781,8 +781,6 @@ AC_SUBST(LENSFUN_LIBS)
 # Check for libjpeg
 ###################
 
-AC_ARG_WITH(libjpeg, [  --without-libjpeg       build without JPEG support])
-
 jpeg_ok="no"
 if test "x$with_libjpeg" != "xno" && test -z "$LIBJPEG"; then
   AC_CHECK_LIB(jpeg, jpeg_destroy_decompress,
@@ -823,8 +821,6 @@ fi
 ##################
 # Check for libpng
 ##################
-
-AC_ARG_WITH(libpng, [  --without-libpng        build without PNG support])
 
 have_libpng="no"
 if test "x$with_libpng" != "xno"; then
