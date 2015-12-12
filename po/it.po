@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-01 08:23+0100\n"
-"PO-Revision-Date: 2015-12-01 17:32+0100\n"
+"POT-Creation-Date: 2015-12-12 01:54+0100\n"
+"PO-Revision-Date: 2015-12-12 01:56+0100\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: italian <tp@lists.linux.it>\n"
 "Language: italian\n"
@@ -388,7 +388,8 @@ msgstr "Applica lenti"
 msgid ""
 "Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
-msgstr "Simula l'effetto di distorsione ottica di una lente ellittica sull'immagine"
+msgstr ""
+"Simula l'effetto di distorsione ottica di una lente ellittica sull'immagine"
 
 #: ../operations/common/bilateral-filter.c:26
 #: ../operations/common/bilateral-filter-fast.c:37
@@ -4055,13 +4056,8 @@ msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
 "contrast, very dark, or very bright images). This version differs from "
-"Contrast Autostretch in that it works in HSV scpace, and preserves hue."
-msgstr ""
-"Scala i componenti del buffer affinché rimangano nel campo 0.0-1.0. Ciò "
-"migliora le immagini che fanno cattivo uso del contrasto disponibile (poco "
-"contrasto, immagine molto scura o molto chiara). Questa versione differisce "
-"da \"Ampiamento contrasto\" dal fatto che lavora in spazio HSV e preserva la "
-"tonalità."
+"Contrast Autostretch in that it works in HSV space, and preserves hue."
+msgstr "Scala i componenti del buffer affinché rimangano nel campo 0.0-1.0. Ciò migliora le immagini che fanno cattivo uso del contrasto disponibile (poco contrasto, immagini molto scure o molto chiare). Questa versione differisce da \"Autoampiamento contrasto\" dal fatto che lavora in spazio HSV e preserva la tonalità."
 
 #: ../operations/common/supernova.c:34
 msgid "X coordinates of the center of supernova"
@@ -4824,11 +4820,9 @@ msgstr "Cast del formato"
 
 #: ../operations/core/cast-format.c:112
 msgid ""
-"Cast the data between input_format and output_format, both bormats must have "
+"Cast the data between input_format and output_format, both formats must have "
 "the same bpp"
-msgstr ""
-"Fa un cast dei dati tra input_format e output_format, entrambi i formati "
-"devono avere gli stessi bpp"
+msgstr "Fa un cast dei dati tra input_format e output_format, entrambi i formati devono avere la stessa bpp"
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -4890,7 +4884,9 @@ msgstr "frames"
 msgid ""
 "Number of frames in video, updates at least when first frame has been "
 "decoded."
-msgstr "Numero di quadri nel video, si aggiorna non prima che il primo quadro sia stato decodificato."
+msgstr ""
+"Numero di quadri nel video, si aggiorna non prima che il primo quadro sia "
+"stato decodificato."
 
 #: ../operations/external/ff-load.c:36
 msgid "audio_sample_rate"
@@ -4920,11 +4916,11 @@ msgstr "audio-codec"
 msgid "audio"
 msgstr "audio"
 
-#: ../operations/external/ff-load.c:763
+#: ../operations/external/ff-load.c:764
 msgid "FFmpeg Frame Loader"
 msgstr "Caricatore quadro FFmpeg"
 
-#: ../operations/external/ff-load.c:765
+#: ../operations/external/ff-load.c:766
 msgid "FFmpeg video frame importer."
 msgstr "Importatore quadri video FFmpeg."
 
@@ -6001,7 +5997,8 @@ msgstr "Scala affinamento"
 #: ../operations/seamless-clone/seamless-clone.c:23
 msgid ""
 "Maximal scale of refinement points to be used for the interpolation mesh"
-msgstr "Massima scala punti di affinamento da usare per la mesh di interpolazione"
+msgstr ""
+"Massima scala punti di affinamento da usare per la mesh di interpolazione"
 
 #: ../operations/seamless-clone/seamless-clone.c:27
 #: ../operations/seamless-clone/seamless-clone.c:33
@@ -6074,7 +6071,9 @@ msgstr "Ignorato. Usa sempre il centro del buffer d'ingresso"
 
 #: ../operations/transform/rotate-on-center.c:40
 msgid "Rotate the buffer around its center, taking care of possible offsets."
-msgstr "Ruota il buffer attorno al suo centro, tenendo conto di possibili spostamenti."
+msgstr ""
+"Ruota il buffer attorno al suo centro, tenendo conto di possibili "
+"spostamenti."
 
 #: ../operations/transform/scale-ratio.c:26
 msgid "Horizontal scale factor"
