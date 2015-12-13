@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Gegl-master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-12-04 19:04+0000\n"
-"PO-Revision-Date: 2015-12-05 06:56+0000\n"
+"POT-Creation-Date: 2015-12-13 07:04+0000\n"
+"PO-Revision-Date: 2015-12-13 07:32+0000\n"
 "Last-Translator: Pedro Albuquerque <palbuquerque73@gmail.com>\n"
 "Language-Team: Português <palbuquerque73@gmail.com>\n"
 "Language: pt\n"
@@ -2327,7 +2327,6 @@ msgid "Selective Gaussian Blur"
 msgstr "Desfoque gaussiano seletivo"
 
 #: ../operations/common/gaussian-blur-selective.c:262
-#| msgid "Blur neighboring pixels, but only in low-contrast areas."
 msgid "Blur neighboring pixels, but only in low-contrast areas"
 msgstr "Desfocar pixels vizinhos, mas só em áreas com pouco contraste"
 
@@ -4027,17 +4026,21 @@ msgid "Stretch Contrast HSV"
 msgstr "Esticar contraste HSV"
 
 #: ../operations/common/stretch-contrast-hsv.c:224
+#| msgid ""
+#| "Scales the components of the buffer to be in the 0.0-1.0 range. This "
+#| "improves images that make poor use of the available contrast (little "
+#| "contrast, very dark, or very bright images). This version differs from "
+#| "Contrast Autostretch in that it works in HSV scpace, and preserves hue."
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
 "contrast, very dark, or very bright images). This version differs from "
-"Contrast Autostretch in that it works in HSV scpace, and preserves hue."
+"Contrast Autostretch in that it works in HSV space, and preserves hue."
 msgstr ""
 "Escala os componentes do buffer para estarem no intervalo 0,0-1,0. Isto "
 "melhora imagens que fazem pouco uso dos contrastes disponíveis (imagens com "
 "pouco contraste, muito escuras ou muito claras). Esta versão difere do "
-"contraste esticado automaticamente por trabalhar no espaço HSV, preservando "
-"o matiz."
+"Contrast AutoStretch por trabalhar no espaço HSV, preservando o matiz."
 
 #: ../operations/common/supernova.c:34
 msgid "X coordinates of the center of supernova"
@@ -4797,8 +4800,11 @@ msgid "Cast Format"
 msgstr "Formato de moldagem"
 
 #: ../operations/core/cast-format.c:112
+#| msgid ""
+#| "Cast the data between input_format and output_format, both bormats must "
+#| "have the same bpp"
 msgid ""
-"Cast the data between input_format and output_format, both bormats must have "
+"Cast the data between input_format and output_format, both formats must have "
 "the same bpp"
 msgstr ""
 "Moldar dados entre input_format e output_format, ambos têm de ter os mesmos "
@@ -4915,7 +4921,6 @@ msgid "Audio codec"
 msgstr "Codec áudio"
 
 #: ../operations/external/ff-save.c:34
-#| msgid "audio_sample_rate"
 msgid "audio sample rate"
 msgstr "taxa de amostragem áudio"
 
@@ -4944,7 +4949,6 @@ msgid "video bitrate in kb/s"
 msgstr "taxa de bits vídeo em kb/s"
 
 #: ../operations/external/ff-save.c:46
-#| msgid "bufsize"
 msgid "Video bufsize"
 msgstr "tamanho de buffer vídeo"
 
