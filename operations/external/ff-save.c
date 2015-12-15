@@ -31,6 +31,7 @@ property_string (path, _("File"), "/tmp/fnord.ogv")
 
 property_audio_fragment (audio, _("audio"), 0)
 property_string (audio_codec, _("Audio codec"), "auto")
+   description (_("Audio codec to use, or auto to use a good default based on container format."))
 property_int (audio_sample_rate, _("audio sample rate"), -1)
     description (_("-1 means autodetect on first audio fragment"))
 
@@ -41,11 +42,13 @@ property_double (frame_rate, _("Frames/second"), 25.0)
     value_range (0.0, 100.0)
 
 property_string (video_codec, _("Video codec"), "auto")
+   description (_("Video codec to use, or auto to use a good default based on container format."))
 property_int (video_bit_rate, _("video bitrate in kb/s"), 128)
     description (_("Target encoded video bitrate in kb/s"))
 property_int (video_bufsize, _("Video bufsize"), 0)
 
 property_string (container_format, _("Container format"), "auto")
+   description (_("Container format to use, or auto to autodetect based on file extension."))
 
 #ifdef USE_FINE_GRAINED_FFMPEG
 property_int (global_quality, _("global quality"), 0)
