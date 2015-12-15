@@ -45,6 +45,8 @@ property_int (video_bit_rate, _("video bitrate in kb/s"), 128)
     description (_("Target encoded video bitrate in kb/s"))
 property_int (video_bufsize, _("Video bufsize"), 0)
 
+property_string (container_format, _("Container format"), "auto")
+
 #ifdef USE_FINE_GRAINED_FFMPEG
 property_int (global_quality, _("global quality"), 0)
 property_int (noise_reduction, _("noise reduction"), 0)
@@ -843,7 +845,11 @@ tfile (GeglProperties *o)
 {
   Priv *p = (Priv*)o->user_data;
 
-  p->fmt = av_guess_format (NULL, o->path, NULL);
+  if (strcmp (o->container_format, "auto"))
+    p->fmt = av_guess_format (o->container_format, o->path, NULL);
+  else
+    p->fmt = av_guess_format (NULL, o->path, NULL);
+
   if (!p->fmt)
     {
       fprintf (stderr,
