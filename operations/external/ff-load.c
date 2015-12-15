@@ -176,6 +176,7 @@ init (GeglProperties *o)
   p->loadedfilename = g_strdup ("");
 
   ff_cleanup (o);
+  av_log_set_level (AV_LOG_WARNING);
 }
 
 /* maintain list of audio samples */

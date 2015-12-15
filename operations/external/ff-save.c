@@ -239,6 +239,8 @@ init (GeglProperties *o)
   p->audio_read_pos = 0;
 
   o->audio_sample_rate = -1; /* only do this if it hasn't been manually set? */
+
+  av_log_set_level (AV_LOG_WARNING);
 }
 
 static void close_video       (Priv            *p,
