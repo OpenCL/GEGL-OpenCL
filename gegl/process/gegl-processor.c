@@ -71,7 +71,7 @@ static gint      gegl_processor_get_band_size(gint                   size) G_GNU
 struct _GeglProcessor
 {
   GObject          parent;
-  GeglNode        *node;
+  GeglNode        *real_node;
   GeglRectangle    rectangle;
   GeglNode        *input;
   gint             level;
@@ -133,7 +133,7 @@ static void
 gegl_processor_init (GeglProcessor *processor)
 {
   processor->level            = 0;
-  processor->node             = NULL;
+  processor->real_node        = NULL;
   processor->input            = NULL;
   processor->context          = NULL;
   processor->queued_region    = NULL;
@@ -161,9 +161,9 @@ gegl_processor_finalize (GObject *self_object)
       gegl_operation_context_destroy (processor->context);
     }
 
-  if (processor->node)
+  if (processor->real_node)
     {
-      g_object_unref (processor->node);
+      g_object_unref (processor->real_node);
     }
 
   if (processor->input)
@@ -223,7 +223,7 @@ gegl_processor_get_property (GObject    *gobject,
   switch (property_id)
     {
       case PROP_NODE:
-        g_value_set_object (value, self->node);
+        g_value_set_object (value, self->real_node);
         break;
 
       case PROP_RECTANGLE:
@@ -250,17 +250,17 @@ gegl_processor_set_node (GeglProcessor *processor,
   g_return_if_fail (GEGL_IS_NODE (node));
   g_return_if_fail (GEGL_IS_OPERATION (node->operation));
 
-  if (processor->node)
-    g_object_unref (processor->node);
-  processor->node = g_object_ref (node);
+  if (processor->real_node)
+    g_object_unref (processor->real_node);
+  processor->real_node = g_object_ref (node);
 
   /* if the processor's node is a sink operation then get the producer node
    * and set up the region (unless all is going to be needed) */
-  if (processor->node->operation &&
-      g_type_is_a (G_OBJECT_TYPE (processor->node->operation),
+  if (processor->real_node->operation &&
+      g_type_is_a (G_OBJECT_TYPE (processor->real_node->operation),
                    GEGL_TYPE_OPERATION_SINK))
     {
-      processor->input = gegl_node_get_producer (processor->node, "input", NULL);
+      processor->input = gegl_node_get_producer (processor->real_node, "input", NULL);
 
       if (processor->input == NULL)
         {
@@ -269,7 +269,7 @@ gegl_processor_set_node (GeglProcessor *processor,
           return;
         }
 
-      if (!gegl_operation_sink_needs_full (processor->node->operation))
+      if (!gegl_operation_sink_needs_full (processor->real_node->operation))
         {
           processor->valid_region = gegl_region_new ();
         }
@@ -282,7 +282,7 @@ gegl_processor_set_node (GeglProcessor *processor,
    * an input, and set the region to NULL */
   else
     {
-      processor->input = processor->node;
+      processor->input = processor->real_node;
       processor->valid_region = NULL;
     }
 
@@ -320,7 +320,7 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
     }
 
   GEGL_NOTE (GEGL_DEBUG_PROCESS, "gegl_processor_set_rectangle() node = %s rectangle = %d, %d %d×%d",
-             gegl_node_get_debug_name (processor->node),
+             gegl_node_get_debug_name (processor->real_node),
              rectangle->x, rectangle->y, rectangle->width, rectangle->height);
 
   /* if the processor's rectangle isn't already set to the node's bounding box,
@@ -352,9 +352,9 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
   /* if the node's operation is a sink and it needs the full content then
    * a context will be set up together with a cache and
    * needed and result rectangles */
-  if (processor->node &&
-      GEGL_IS_OPERATION_SINK (processor->node->operation) &&
-      gegl_operation_sink_needs_full (processor->node->operation))
+  if (processor->real_node &&
+      GEGL_IS_OPERATION_SINK (processor->real_node->operation) &&
+      gegl_operation_sink_needs_full (processor->real_node->operation))
     {
       GeglCache *cache;
 
@@ -362,7 +362,7 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 
       if (!processor->context)
         {
-          processor->context = gegl_operation_context_new (processor->node->operation);
+          processor->context = gegl_operation_context_new (processor->real_node->operation);
         }
 
       gegl_operation_context_set_object (processor->context, "input", G_OBJECT (cache));
@@ -429,8 +429,8 @@ render_rectangle (GeglProcessor *processor)
 
   /* Retreive the cache if the processor's node is not buffered if it's
    * operation is a sink and it doesn't use the full area  */
-  buffered = !(GEGL_IS_OPERATION_SINK(processor->node->operation) &&
-               !gegl_operation_sink_needs_full (processor->node->operation));
+  buffered = !(GEGL_IS_OPERATION_SINK(processor->real_node->operation) &&
+               !gegl_operation_sink_needs_full (processor->real_node->operation));
   if (buffered)
     {
       cache = gegl_node_get_cache (processor->input);
@@ -527,7 +527,7 @@ render_rectangle (GeglProcessor *processor)
         }
       else
         {
-           gegl_node_blit (processor->node, 1.0/(1<<processor->level),
+           gegl_node_blit (processor->real_node, 1.0/(1<<processor->level),
                            dr, NULL, NULL,
                            GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
            gegl_region_union_with_rect (processor->valid_region, dr);
@@ -767,7 +767,7 @@ gegl_processor_work (GeglProcessor *processor,
           GeglListVisitor *visitor = g_object_new (GEGL_TYPE_LIST_VISITOR, NULL);
           GList *iterator = NULL;
           GList *visits_list = NULL;
-          visits_list = gegl_list_visitor_get_dfs_path (visitor, GEGL_VISITABLE (processor->node));
+          visits_list = gegl_list_visitor_get_dfs_path (visitor, GEGL_VISITABLE (processor->real_node));
 
           for (iterator = visits_list; iterator; iterator = iterator->next)
             {
@@ -799,7 +799,7 @@ gegl_processor_work (GeglProcessor *processor,
   if (processor->context)
     {
       /* the actual writing to the destination */
-      gegl_operation_process (processor->node->operation,
+      gegl_operation_process (processor->real_node->operation,
                               processor->context,
                               "output"  /* ignored output_pad */,
                               &processor->context->result_rect, processor->context->level);
