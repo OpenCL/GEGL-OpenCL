@@ -71,6 +71,7 @@ static gint      gegl_processor_get_band_size(gint                   size) G_GNU
 struct _GeglProcessor
 {
   GObject          parent;
+  GeglNode        *node;
   GeglNode        *real_node;
   GeglRectangle    rectangle;
   GeglNode        *input;
@@ -133,6 +134,7 @@ static void
 gegl_processor_init (GeglProcessor *processor)
 {
   processor->level            = 0;
+  processor->node             = NULL;
   processor->real_node        = NULL;
   processor->input            = NULL;
   processor->context          = NULL;
@@ -159,6 +161,11 @@ gegl_processor_finalize (GObject *self_object)
   if (processor->context)
     {
       gegl_operation_context_destroy (processor->context);
+    }
+
+  if (processor->node)
+    {
+      g_object_unref (processor->node);
     }
 
   if (processor->real_node)
@@ -223,7 +230,7 @@ gegl_processor_get_property (GObject    *gobject,
   switch (property_id)
     {
       case PROP_NODE:
-        g_value_set_object (value, self->real_node);
+        g_value_set_object (value, self->node);
         break;
 
       case PROP_RECTANGLE:
@@ -248,11 +255,24 @@ gegl_processor_set_node (GeglProcessor *processor,
                          GeglNode      *node)
 {
   g_return_if_fail (GEGL_IS_NODE (node));
-  g_return_if_fail (GEGL_IS_OPERATION (node->operation));
+  g_return_if_fail (node->is_graph || GEGL_IS_OPERATION (node->operation));
 
+  if (processor->node)
+    g_object_unref (processor->node);
   if (processor->real_node)
     g_object_unref (processor->real_node);
-  processor->real_node = g_object_ref (node);
+
+  processor->node = g_object_ref (node);
+
+  /* nodes with meta operations are also graphs and can be sinks, so
+   * we don't use their output proxy */
+  if (GEGL_IS_OPERATION (node->operation))
+    processor->real_node = node;
+  else /* ie. node->is_graph */
+    processor->real_node = gegl_node_get_output_proxy (node, "output");
+
+  g_return_if_fail (processor->real_node != NULL);
+  g_object_ref (processor->real_node);
 
   /* if the processor's node is a sink operation then get the producer node
    * and set up the region (unless all is going to be needed) */
@@ -320,7 +340,7 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
     }
 
   GEGL_NOTE (GEGL_DEBUG_PROCESS, "gegl_processor_set_rectangle() node = %s rectangle = %d, %d %d×%d",
-             gegl_node_get_debug_name (processor->real_node),
+             gegl_node_get_debug_name (processor->node),
              rectangle->x, rectangle->y, rectangle->width, rectangle->height);
 
   /* if the processor's rectangle isn't already set to the node's bounding box,
