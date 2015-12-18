@@ -7,7 +7,8 @@ noinst_PROGRAMS = \
 	test-bcontrast-4x \
 	test-gegl-buffer-access \
 	test-samplers \
-	test-rotate
+	test-rotate \
+	test-translate
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/ \
@@ -34,6 +35,7 @@ check:
 	for a in $(noinst_PROGRAMS);do GEGL_PATH=../operations ./$$a;done;true
 
 test_rotate_SOURCES = test-rotate.c
+test_translate_SOURCES = test-translate.c
 test_blur_SOURCES = test-blur.c
 test_bcontrast_SOURCES = test-bcontrast.c
 test_bcontrast_minichunk_SOURCES = test-bcontrast-minichunk.c
