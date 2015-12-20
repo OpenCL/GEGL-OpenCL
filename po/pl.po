@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-06 20:32+0100\n"
-"PO-Revision-Date: 2015-12-06 20:33+0100\n"
+"POT-Creation-Date: 2015-12-20 17:30+0100\n"
+"PO-Revision-Date: 2015-12-20 17:32+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -4889,11 +4889,11 @@ msgstr "kodek-dźwięku"
 msgid "audio"
 msgstr "dźwięk"
 
-#: ../operations/external/ff-load.c:764
+#: ../operations/external/ff-load.c:765
 msgid "FFmpeg Frame Loader"
 msgstr "Wczytywanie klatek biblioteki FFmpeg"
 
-#: ../operations/external/ff-load.c:766
+#: ../operations/external/ff-load.c:767
 msgid "FFmpeg video frame importer."
 msgstr "Importer klatek wideo biblioteki FFmpeg."
 
@@ -4908,114 +4908,138 @@ msgid "Audio codec"
 msgstr "Kodek dźwięku"
 
 #: ../operations/external/ff-save.c:34
+msgid ""
+"Audio codec to use, or auto to use a good default based on container format."
+msgstr ""
+"Używany kodek dźwięku, lub „auto”, aby użyć dobrego kodeka domyślnego w "
+"oparciu o format kontenera."
+
+#: ../operations/external/ff-save.c:35
 msgid "audio sample rate"
 msgstr "częstotliwość próbkowania dźwięku"
 
-#: ../operations/external/ff-save.c:35
+#: ../operations/external/ff-save.c:36
 msgid "-1 means autodetect on first audio fragment"
 msgstr "„-1” oznacza automatyczne wykrywanie na pierwszym fragmencie dźwięku"
 
-#: ../operations/external/ff-save.c:37
+#: ../operations/external/ff-save.c:38
 msgid "audio bitrate in kb/s"
 msgstr "gęstość bitowa w kb/s"
 
-#: ../operations/external/ff-save.c:38 ../operations/external/ff-save.c:45
+#: ../operations/external/ff-save.c:39 ../operations/external/ff-save.c:47
 msgid "Target encoded video bitrate in kb/s"
 msgstr "Docelowa gęstość bitowa zakodowanego nagrania wideo w kb/s"
 
-#: ../operations/external/ff-save.c:40
+#: ../operations/external/ff-save.c:41
 msgid "Frames/second"
 msgstr "Klatki na sekundę"
 
-#: ../operations/external/ff-save.c:43
+#: ../operations/external/ff-save.c:44
 msgid "Video codec"
 msgstr "Kodek wideo"
 
-#: ../operations/external/ff-save.c:44
+#: ../operations/external/ff-save.c:45
+msgid ""
+"Video codec to use, or auto to use a good default based on container format."
+msgstr ""
+"Używany kodek wideo, lub „auto”, aby użyć dobrego kodeka domyślnego w "
+"oparciu o format kontenera."
+
+#: ../operations/external/ff-save.c:46
 msgid "video bitrate in kb/s"
 msgstr "gęstość bitowa w kb/s"
 
-#: ../operations/external/ff-save.c:46
+#: ../operations/external/ff-save.c:48
 msgid "Video bufsize"
 msgstr "Rozmiar bufora nagrania wideo"
 
-#: ../operations/external/ff-save.c:49
+#: ../operations/external/ff-save.c:50
+msgid "Container format"
+msgstr "Format kontenera"
+
+#: ../operations/external/ff-save.c:51
+msgid "Container format to use, or auto to autodetect based on file extension."
+msgstr ""
+"Używany format kontenera, lub „auto”, aby wykryć automatycznie na podstawie "
+"rozszerzenia pliku."
+
+#: ../operations/external/ff-save.c:54
 msgid "global quality"
 msgstr "globalna jakość"
 
-#: ../operations/external/ff-save.c:50
+#: ../operations/external/ff-save.c:55
 msgid "noise reduction"
 msgstr "kierunek szumu"
 
-#: ../operations/external/ff-save.c:51
+#: ../operations/external/ff-save.c:56
 msgid "scenechange threshold"
 msgstr "próg zmiany sceny"
 
-#: ../operations/external/ff-save.c:52
+#: ../operations/external/ff-save.c:57
 msgid "video bitrate min"
 msgstr "minimalna gęstość bitowa nagrania wideo"
 
-#: ../operations/external/ff-save.c:53
+#: ../operations/external/ff-save.c:58
 msgid "video bitrate max"
 msgstr "maksymalna gęstość bitowa nagrania wideo"
 
-#: ../operations/external/ff-save.c:54
+#: ../operations/external/ff-save.c:59
 msgid "video bitrate tolerance"
 msgstr "tolerancja gęstości bitowej nagrania wideo"
 
-#: ../operations/external/ff-save.c:56
+#: ../operations/external/ff-save.c:61
 msgid "keyint-min"
 msgstr "keyint-min"
 
-#: ../operations/external/ff-save.c:57
+#: ../operations/external/ff-save.c:62
 msgid "trellis"
 msgstr "trellis"
 
-#: ../operations/external/ff-save.c:58
+#: ../operations/external/ff-save.c:63
 msgid "qmin"
 msgstr "qmin"
 
-#: ../operations/external/ff-save.c:59
+#: ../operations/external/ff-save.c:64
 msgid "qmax"
 msgstr "qmax"
 
-#: ../operations/external/ff-save.c:60
+#: ../operations/external/ff-save.c:65
 msgid "max_qdiff"
 msgstr "max_qdiff"
 
-#: ../operations/external/ff-save.c:61
+#: ../operations/external/ff-save.c:66
 msgid "me_range"
 msgstr "me_range"
 
-#: ../operations/external/ff-save.c:62
+#: ../operations/external/ff-save.c:67
 msgid "max_b_frames"
 msgstr "max_b_frames"
 
-#: ../operations/external/ff-save.c:63
+#: ../operations/external/ff-save.c:68
 msgid "gop-size"
 msgstr "gop-size"
 
-#: ../operations/external/ff-save.c:64
+#: ../operations/external/ff-save.c:69
 msgid "qcompress"
 msgstr "qcompress"
 
-#: ../operations/external/ff-save.c:65
+#: ../operations/external/ff-save.c:70
 msgid "qblur"
 msgstr "qblur"
 
-#: ../operations/external/ff-save.c:66
+#: ../operations/external/ff-save.c:71
 msgid "i-quant-factor"
 msgstr "i-quant-factor"
 
-#: ../operations/external/ff-save.c:67
+#: ../operations/external/ff-save.c:72
 msgid "i-quant-offset"
 msgstr "i-quant-offset"
 
-#: ../operations/external/ff-save.c:68
+#: ../operations/external/ff-save.c:73
 msgid "me-subpel-quality"
 msgstr "me-subpel-quality"
 
-#: ../operations/external/ff-save.c:1057
+#: ../operations/external/ff-save.c:1068
 msgid "FFmpeg video output sink"
 msgstr "Odpływ wyjścia wideo biblioteki FFmpeg"
 
