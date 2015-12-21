@@ -110,6 +110,32 @@ lseek_to_seek_type(int whence)
     }
 }
 
+static void
+error_handler(const char *module,
+              const char *format,
+              va_list arguments)
+{
+  gchar *message;
+
+  g_vasprintf(&message, format, arguments);
+  g_warning(message);
+
+  g_free(message);
+}
+
+static void
+warning_handler(const char *module,
+                const char *format,
+                va_list arguments)
+{
+  gchar *message;
+
+  g_vasprintf(&message, format, arguments);
+  g_message(message);
+
+  g_free(message);
+}
+
 static tsize_t
 read_from_stream(thandle_t handle,
                  tdata_t buffer,
@@ -707,16 +733,19 @@ prepare(GeglOperation *operation)
           return;
         }
 
+      TIFFSetErrorHandler(error_handler);
+      TIFFSetWarningHandler(warning_handler);
+
       p->tiff = TIFFClientOpen("GEGL-tiff-load", "r", (thandle_t) p,
                                read_from_stream, write_to_stream,
                                seek_in_stream, close_stream,
                                get_file_size, NULL, NULL);
       if (p->tiff == NULL)
         {
-          g_warning("failed to open TIFF from %s", o->path);
-          g_input_stream_close(p->stream, NULL, NULL);
-          if (p->file != NULL)
-            g_object_unref(p->file);
+          if (o->uri != NULL && strlen(o->uri) > 0)
+            g_warning("failed to open TIFF from %s", o->uri);
+          else
+            g_warning("failed to open TIFF from %s", o->path);
           cleanup(operation);
           return;
         }
