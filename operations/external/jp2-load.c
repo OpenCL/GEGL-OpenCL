@@ -24,106 +24,178 @@
 
 property_file_path (path, _("File"), "")
   description (_("Path of file to load"))
+property_uri (uri, _("URI"), "")
+  description (_("URI for file to load"))
 
 #else
 
 #define GEGL_OP_SOURCE
 #define GEGL_OP_C_SOURCE jp2-load.c
 
-#include "gegl-op.h"
-#include <stdio.h>
+#include <gegl-op.h>
+#include <gegl-gio-private.h>
 #include <jasper/jasper.h>
 
-static gboolean
-query_jp2 (const gchar   *path,
-           gint          *width,
-           gint          *height,
-           gint          *depth,
-           jas_image_t  **jas_image)
+typedef struct
 {
+  GFile *file;
+
+  jas_image_t *image;
+
+  const Babl *format;
+
+  gint width;
+  gint height;
+} Priv;
+
+static void
+cleanup(GeglOperation *operation)
+{
+  GeglProperties *o = GEGL_PROPERTIES(operation);
+  Priv *p = (Priv*) o->user_data;
+
+  if (p != NULL)
+    {
+      if (p->image != NULL)
+        jas_image_destroy(p->image);
+      p->image = NULL;
+
+      if (p->file != NULL)
+        g_clear_object(&p->file);
+
+      p->width = p->height = 0;
+      p->format = NULL;
+    }
+}
+
+static gssize
+read_from_stream(GInputStream *stream,
+                 jas_stream_t *jasper)
+{
+  GError *error = NULL;
+  gchar *buffer;
+  const gsize size = 4096;
+  gssize read = -1;
+
+  buffer = g_try_new(gchar, size);
+
+  g_assert(buffer != NULL);
+
+  do
+    {
+      read = g_input_stream_read(G_INPUT_STREAM(stream),
+                                 (void *) buffer, size,
+                                 NULL, &error);
+      if (read < 0)
+        {
+          g_warning(error->message);
+          g_error_free(error);
+          break;
+        }
+      else if (read > 0)
+        jas_stream_write(jasper, buffer, read);
+      else
+        jas_stream_rewind(jasper);
+    }
+  while (read != 0);
+
+  return read;
+}
+
+static gboolean
+query_jp2(GeglOperation *operation,
+          jas_stream_t *jasper)
+{
+  GeglProperties *o = GEGL_PROPERTIES(operation);
+  Priv *p = (Priv*) o->user_data;
   gboolean ret;
-  jas_stream_t *in;
   int image_fmt;
   jas_image_t *image;
   jas_cmprof_t *output_profile;
-  jas_image_t *cimage;
+  gint depth;
   int numcmpts;
   int i;
   gboolean b;
 
-  in = NULL;
-  cimage = image = NULL;
+  g_return_val_if_fail(jasper != NULL, FALSE);
+
+  image = NULL;
   output_profile = NULL;
   ret = FALSE;
 
   do
     {
-      in = jas_stream_fopen (path, "rb");
-      if (!in)
-        {
-          g_warning ("Unable to open image file '%s'", path);
-          break;
-        }
-
-      image_fmt = jas_image_getfmt (in);
+      image_fmt = jas_image_getfmt (jasper);
       if (image_fmt < 0)
         {
-          g_warning (_("Unknown JPEG 2000 image format in '%s'"), path);
+          g_warning (_("Unknown JPEG 2000 image format"));
           break;
         }
 
-      image = jas_image_decode (in, image_fmt, NULL);
+      image = jas_image_decode (jasper, image_fmt, NULL);
       if (!image)
         {
-          g_warning (_("Unable to open JPEG 2000 image in '%s'"), path);
+          g_warning (_("Unable to open JPEG 2000 image"));
           break;
         }
 
       output_profile = jas_cmprof_createfromclrspc (JAS_CLRSPC_SRGB);
       if (!output_profile)
         {
-          g_warning (_("Unable to create output color profile for '%s'"), path);
+          g_warning (_("Unable to create output color profile"));
           break;
         }
 
-      cimage = jas_image_chclrspc (image, output_profile,
-                                   JAS_CMXFORM_INTENT_PER);
-      if (!cimage)
+      p->image = jas_image_chclrspc (image, output_profile,
+                                     JAS_CMXFORM_INTENT_PER);
+      if (!p->image)
         {
-          g_warning (_("Unable to convert image to sRGB color space "
-                       "when processing '%s'"), path);
+          g_warning (_("Unable to convert image to sRGB color space"));
           break;
         }
 
-      numcmpts = jas_image_numcmpts (cimage);
+      numcmpts = jas_image_numcmpts (p->image);
       if (numcmpts != 3)
         {
           g_warning (_("Unsupported non-RGB JPEG 2000 file with "
-                       "%d components in '%s'"), numcmpts, path);
+                       "%d components"), numcmpts);
           break;
         }
 
-      *width = jas_image_cmptwidth (cimage, 0);
-      *height = jas_image_cmptheight (cimage, 0);
-      *depth = jas_image_cmptprec (cimage, 0);
+      p->width = jas_image_cmptwidth (p->image, 0);
+      p->height = jas_image_cmptheight (p->image, 0);
 
-      if ((*depth != 8) && (*depth != 16))
+      depth = jas_image_cmptprec (p->image, 0);
+
+      if ((depth != 8) && (depth != 16))
         {
-          g_warning (_("Unsupported JPEG 2000 file with depth %d in '%s'"),
-                     *depth, path);
+          g_warning (_("Unsupported JPEG 2000 file with depth %d"), depth);
           break;
+        }
+
+      switch (depth)
+        {
+        case 16:
+          p->format = babl_format("R'G'B' u16");
+          break;
+
+        case 8:
+          p->format = babl_format("R'G'B' u8");
+          break;
+
+        default:
+          g_warning ("%s: Programmer stupidity error", G_STRLOC);
         }
 
       b = FALSE;
 
       for (i = 1; i < 3; i++)
         {
-          if ((jas_image_cmptprec (cimage, i) != *depth) ||
-              (jas_image_cmptwidth (cimage, i) != *width) ||
-              (jas_image_cmptheight (cimage, i) != *height))
+          if ((jas_image_cmptprec (p->image, i) != depth) ||
+              (jas_image_cmptwidth (p->image, i) != p->width) ||
+              (jas_image_cmptheight (p->image, i) != p->height))
             {
-              g_warning (_("Components of input image '%s' don't match"),
-                         path);
+              g_warning (_("Components of JPEG 2000 input don't match"));
               b = TRUE;
               break;
             }
@@ -136,19 +208,11 @@ query_jp2 (const gchar   *path,
     }
   while (FALSE); /* structured goto */
 
-  if (jas_image)
-    *jas_image = cimage;
-  else if (cimage)
-    jas_image_destroy (cimage);
-
   if (image)
     jas_image_destroy (image);
 
   if (output_profile)
     jas_cmprof_destroy (output_profile);
-
-  if (in)
-    jas_stream_close (in);
 
   return ret;
 }
@@ -156,13 +220,85 @@ query_jp2 (const gchar   *path,
 static void
 prepare (GeglOperation *operation)
 {
+  GeglProperties *o = GEGL_PROPERTIES(operation);
+  Priv *p = (o->user_data) ? o->user_data : g_new0(Priv, 1);
   static gboolean initialized = FALSE;
+  jas_stream_t *jasper;
+  GInputStream *stream;
+  GError *error = NULL;
+  GFile *file = NULL;
+
+  g_assert(p != NULL);
 
   if (!initialized)
     {
       jas_init ();
       initialized = TRUE;
     }
+
+  if (p->file != NULL && (o->uri || o->path))
+    {
+      if (o->uri && strlen(o->uri) > 0)
+        file = g_file_new_for_uri(o->uri);
+      else if (o->path && strlen(o->path) > 0)
+        file = g_file_new_for_path(o->path);
+      if (file != NULL)
+        {
+          if (!g_file_equal(p->file, file))
+            cleanup(operation);
+          g_object_unref(file);
+        }
+    }
+
+  o->user_data = (void*) p;
+
+  if (p->image == NULL)
+    {
+      jasper = jas_stream_memopen(NULL, -1);
+      if (jasper == NULL)
+        {
+          g_warning(_("could not create a new Jasper stream"));
+          cleanup(operation);
+          return;
+        }
+
+      stream = gegl_gio_open_input_stream(o->uri, o->path, &p->file, &error);
+      if (stream == NULL)
+        {
+          g_warning(error->message);
+          g_error_free(error);
+          cleanup(operation);
+          return;
+        }
+
+      if (read_from_stream(stream, jasper) < 0)
+        {
+          if (o->uri != NULL && strlen(o->uri) > 0)
+            g_warning(_("failed to open JPEG 2000 from %s"), o->uri);
+          else
+            g_warning(_("failed to open JPEG 2000 from %s"), o->path);
+          g_input_stream_close(G_INPUT_STREAM(stream), NULL, NULL);
+          jas_stream_close(jasper);
+
+          g_object_unref(stream);
+          cleanup(operation);
+          return;
+        }
+
+      g_input_stream_close(G_INPUT_STREAM(stream), NULL, NULL);
+      g_object_unref(stream);
+
+      if (!query_jp2(operation, jasper))
+        {
+          g_warning(_("could not query JPEG 2000 file"));
+          cleanup(operation);
+          return;
+        }
+
+      jas_stream_close(jasper);
+    }
+
+  gegl_operation_set_format(operation, "output", p->format);
 }
 
 static gboolean
@@ -171,10 +307,11 @@ process (GeglOperation       *operation,
          const GeglRectangle *result,
          gint                 level)
 {
-  GeglProperties   *o = GEGL_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES(operation);
+  Priv *p = (Priv*) o->user_data;
   GeglRectangle rect = {0,0,0,0};
-  jas_image_t *image;
-  gint width, height, depth;
+  const Babl *type;
+  gint depth;
   guchar *data_b;
   gushort *data_s;
   gboolean ret;
@@ -184,14 +321,16 @@ process (GeglOperation       *operation,
   gint row;
   gboolean b;
 
-  image = NULL;
   data_b = NULL;
   data_s = NULL;
 
-  width = height = depth = 0;
+  depth = 0;
 
-  if (!query_jp2 (o->path, &width, &height, &depth, &image))
-    return FALSE;
+  type = babl_format_get_type(p->format, 0);
+  if (type == babl_type("u8"))
+    depth = 8;
+  else if (type == babl_type("u16"))
+    depth = 16;
 
   ret = FALSE;
   b = FALSE;
@@ -199,39 +338,37 @@ process (GeglOperation       *operation,
   do
     {
       components[0] = jas_image_getcmptbytype
-        (image, JAS_IMAGE_CT_COLOR(JAS_IMAGE_CT_RGB_R));
+        (p->image, JAS_IMAGE_CT_COLOR(JAS_IMAGE_CT_RGB_R));
       components[1] = jas_image_getcmptbytype
-        (image, JAS_IMAGE_CT_COLOR(JAS_IMAGE_CT_RGB_G));
+        (p->image, JAS_IMAGE_CT_COLOR(JAS_IMAGE_CT_RGB_G));
       components[2] = jas_image_getcmptbytype
-        (image, JAS_IMAGE_CT_COLOR(JAS_IMAGE_CT_RGB_B));
+        (p->image, JAS_IMAGE_CT_COLOR(JAS_IMAGE_CT_RGB_B));
 
       if ((components[0] < 0) || (components[1] < 0) || (components[2] < 0))
         {
-          g_warning (_("One or more of R, G, B components are missing "
-                       "from '%s'"), o->path);
+          g_warning (_("One or more of R, G, B components are missing"));
           break;
         }
 
-      if (jas_image_cmptsgnd (image, components[0]) ||
-          jas_image_cmptsgnd (image, components[1]) ||
-          jas_image_cmptsgnd (image, components[2]))
+      if (jas_image_cmptsgnd (p->image, components[0]) ||
+          jas_image_cmptsgnd (p->image, components[1]) ||
+          jas_image_cmptsgnd (p->image, components[2]))
         {
-          g_warning (_("One or more of R, G, B components have signed "
-                       "data in '%s'"), o->path);
+          g_warning (_("One or more of R, G, B components have signed data"));
           break;
         }
 
       for (i = 0; i < 3; i++)
-        matrices[i] = jas_matrix_create(1, width);
+        matrices[i] = jas_matrix_create(1, p->width);
 
       switch (depth)
         {
         case 16:
-          data_s = (gushort *) g_malloc (width * 3 * sizeof (gushort));
+          data_s = (gushort *) g_malloc (p->width * 3 * sizeof (gushort));
           break;
 
         case 8:
-          data_b = (guchar *) g_malloc (width * 3 * sizeof (guchar));
+          data_b = (guchar *) g_malloc (p->width * 3 * sizeof (guchar));
           break;
 
         default:
@@ -239,19 +376,18 @@ process (GeglOperation       *operation,
           return FALSE;
         }
 
-      for (row = 0; row < height; row++)
+      for (row = 0; row < p->height; row++)
         {
           gint plane, col;
           jas_seqent_t *jrow[3] = {NULL, NULL, NULL};
 
           for (plane = 0; plane < 3; plane++)
             {
-              int r = jas_image_readcmpt (image, components[plane], 0, row,
-                                          width, 1, matrices[plane]);
+              int r = jas_image_readcmpt (p->image, components[plane], 0, row,
+                                          p->width, 1, matrices[plane]);
               if (r)
                 {
-                  g_warning (_("Error reading row %d component %d from '%s'"),
-                             row, plane, o->path);
+                  g_warning (_("Error reading row %d component %d"), row, plane);
                   b = TRUE;
                   break;
                 }
@@ -266,7 +402,7 @@ process (GeglOperation       *operation,
           switch (depth)
             {
             case 16:
-              for (col = 0; col < width; col++)
+              for (col = 0; col < p->width; col++)
                 {
                   data_s[col * 3]     = (gushort) jrow[0][col];
                   data_s[col * 3 + 1] = (gushort) jrow[1][col];
@@ -275,7 +411,7 @@ process (GeglOperation       *operation,
               break;
 
             case 8:
-              for (col = 0; col < width; col++)
+              for (col = 0; col < p->width; col++)
                 {
                   data_b[col * 3]     = (guchar) jrow[0][col];
                   data_b[col * 3 + 1] = (guchar) jrow[1][col];
@@ -293,7 +429,7 @@ process (GeglOperation       *operation,
 
           rect.x = 0;
           rect.y = row;
-          rect.width = width;
+          rect.width = p->width;
           rect.height = 1;
 
           switch (depth)
@@ -331,41 +467,20 @@ process (GeglOperation       *operation,
   if (data_s)
     g_free (data_s);
 
-  if (image)
-    jas_image_destroy (image);
-
   return ret;
 }
 
 static GeglRectangle
 get_bounding_box (GeglOperation * operation)
 {
-  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES(operation);
   GeglRectangle result = { 0, 0, 0, 0 };
-  gint width, height, depth;
+  Priv *p = (Priv*) o->user_data;
 
-  width = height = depth = 0;
-
-  if (!query_jp2 (o->path, &width, &height, &depth, NULL))
-    return result;
-
-  result.width = width;
-  result.height = height;
-
-  switch (depth)
+  if (p->image != NULL)
     {
-    case 16:
-      gegl_operation_set_format (operation, "output",
-                                 babl_format ("R'G'B' u16"));
-      break;
-
-    case 8:
-      gegl_operation_set_format (operation, "output",
-                                 babl_format ("R'G'B' u8"));
-      break;
-
-    default:
-      g_warning ("%s: Programmer stupidity error", G_STRLOC);
+      result.width = p->width;
+      result.height = p->height;
     }
 
   return result;
@@ -379,10 +494,28 @@ get_cached_region (GeglOperation       *operation,
 }
 
 static void
+finalize(GObject *object)
+{
+  GeglProperties *o = GEGL_PROPERTIES(object);
+
+  if (o->user_data != NULL)
+    {
+      cleanup(GEGL_OPERATION(object));
+      if (o->user_data != NULL)
+        g_free(o->user_data);
+      o->user_data = NULL;
+    }
+
+  G_OBJECT_CLASS(gegl_op_parent_class)->finalize(object);
+}
+
+static void
 gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
+
+  G_OBJECT_CLASS (klass)->finalize = finalize;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
