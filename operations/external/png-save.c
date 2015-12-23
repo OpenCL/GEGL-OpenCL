@@ -228,7 +228,7 @@ gegl_op_class_init (GeglOpClass *klass)
   "title",       _("PNG File Saver"),
   "categories" , "output",
   "description",
-        _("PNG image saver (passes the buffer through, saves as a side-effect.)"),
+        _("PNG image saver, using libpng"),
         NULL);
 
   gegl_extension_handler_register_saver (".png", "gegl:png-save");
