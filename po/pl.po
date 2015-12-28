@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-20 17:30+0100\n"
-"PO-Revision-Date: 2015-12-20 17:32+0100\n"
+"POT-Creation-Date: 2015-12-28 01:08+0100\n"
+"PO-Revision-Date: 2015-12-28 01:09+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -5474,9 +5474,8 @@ msgid "PNG File Saver"
 msgstr "Zapisywanie plików PNG"
 
 #: ../operations/external/png-save.c:231
-msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
-msgstr ""
-"Zapisywanie obrazów PNG (przekazuje bufor, zapisuje jako efekt uboczny)."
+msgid "PNG image saver, using libpng"
+msgstr "Zapisywanie obrazów PNG za pomocą biblioteki libpng"
 
 #: ../operations/external/ppm-load.c:381
 msgid "PPM File Loader"
