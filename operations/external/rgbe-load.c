@@ -137,8 +137,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "description" , _("RGBE image loader (Radiance HDR format)."),
     NULL);
 
-  gegl_extension_handler_register (".hdr", "gegl:rgbe-load");
-  gegl_extension_handler_register (".pic", "gegl:rgbe-load");
+  gegl_extension_handler_register_loader (".hdr", "gegl:rgbe-load");
+  gegl_extension_handler_register_loader (".pic", "gegl:rgbe-load");
 }
 
 #endif

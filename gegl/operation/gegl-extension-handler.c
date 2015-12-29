@@ -42,6 +42,13 @@ void
 gegl_extension_handler_register (const gchar *extension,
                                  const gchar *handler)
 {
+  gegl_extension_handler_register_loader (extension, handler);
+}
+
+void
+gegl_extension_handler_register_loader (const gchar *extension,
+                                        const gchar *handler)
+{
   gegl_extension_handler_register_util (&load_handlers, extension, handler);
 }
 
@@ -80,6 +87,12 @@ gegl_extension_handler_get_util (GHashTable *handlers,
 
 const gchar *
 gegl_extension_handler_get (const gchar *extension)
+{
+  return gegl_extension_handler_get_loader (extension);
+}
+
+const gchar *
+gegl_extension_handler_get_loader (const gchar *extension)
 {
   return gegl_extension_handler_get_util (load_handlers,
                                           extension,

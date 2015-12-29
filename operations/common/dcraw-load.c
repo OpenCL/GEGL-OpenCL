@@ -183,9 +183,9 @@ gegl_op_class_init (GeglOpClass *klass)
           _("Raw image loader, wrapping dcraw with pipes."),
     NULL);
 
-  gegl_extension_handler_register (".raw", "gegl:dcraw-load");
-  gegl_extension_handler_register (".raf", "gegl:dcraw-load");
-  gegl_extension_handler_register (".nef", "gegl:dcraw-load");
+  gegl_extension_handler_register_loader (".raw", "gegl:dcraw-load");
+  gegl_extension_handler_register_loader (".raf", "gegl:dcraw-load");
+  gegl_extension_handler_register_loader (".nef", "gegl:dcraw-load");
 }
 
 #endif

@@ -144,7 +144,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "description" , _("WebP image loader."),
     NULL);
 
-  gegl_extension_handler_register (".webp", "gegl:webp-load");
+  gegl_extension_handler_register_loader (".webp", "gegl:webp-load");
 }
 
 #endif

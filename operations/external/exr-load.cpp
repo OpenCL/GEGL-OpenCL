@@ -684,7 +684,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories"  , "hidden",
     "description" , "EXR image loader.", NULL);
 
-  gegl_extension_handler_register (".exr", "gegl:exr-load");
+  gegl_extension_handler_register_loader (".exr", "gegl:exr-load");
 }
 
 #endif

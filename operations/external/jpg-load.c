@@ -370,8 +370,8 @@ gegl_op_class_init (GeglOpClass *klass)
 /*  static gboolean done=FALSE;
     if (done)
       return; */
-  gegl_extension_handler_register (".jpg", "gegl:jpg-load");
-  gegl_extension_handler_register (".jpeg", "gegl:jpg-load");
+  gegl_extension_handler_register_loader (".jpg", "gegl:jpg-load");
+  gegl_extension_handler_register_loader (".jpeg", "gegl:jpg-load");
 /*  done = TRUE; */
 }
 #endif

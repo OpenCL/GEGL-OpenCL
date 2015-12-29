@@ -19,11 +19,25 @@
 #ifndef __GEGL_EXTENSION_HANDLER_H__
 #define __GEGL_EXTENSION_HANDLER_H__
 
-void          gegl_extension_handler_register       (const gchar *extension,
-                                                     const gchar *handler);
-void          gegl_extension_handler_register_saver (const gchar *extension,
-                                                     const gchar *handler);
-const gchar * gegl_extension_handler_get            (const gchar *extension);
-const gchar * gegl_extension_handler_get_saver      (const gchar *extension);
+/* similar to gegl_extension_handler_register_loader(), kept for
+ * compatibility reasons, do NOT use in newly written code.
+ * TODO: remove this function in future versions!
+ */
+void          gegl_extension_handler_register        (const gchar *extension,
+                                                      const gchar *handler);
+
+void          gegl_extension_handler_register_loader (const gchar *extension,
+                                                      const gchar *handler);
+void          gegl_extension_handler_register_saver  (const gchar *extension,
+                                                      const gchar *handler);
+
+/* similar to gegl_extension_handler_get_loader(), kept for
+ * compatibility reasons, do NOT use in newly written code.
+ * TODO: remove this function in future versions!
+ */
+const gchar * gegl_extension_handler_get             (const gchar *extension);
+
+const gchar * gegl_extension_handler_get_loader      (const gchar *extension);
+const gchar * gegl_extension_handler_get_saver       (const gchar *extension);
 
 #endif

@@ -89,7 +89,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "description", _("GeglBuffer file loader."),
     NULL);
 
-  gegl_extension_handler_register (".gegl", "gegl:gegl-buffer-load");
+  gegl_extension_handler_register_loader (".gegl", "gegl:gegl-buffer-load");
 }
 
 #endif

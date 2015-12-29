@@ -383,9 +383,9 @@ gegl_op_class_init (GeglOpClass *klass)
     "description",  _("PPM image loader."),
     NULL);
 
-  gegl_extension_handler_register (".ppm", "gegl:ppm-load");
-  gegl_extension_handler_register (".pgm", "gegl:ppm-load");
-  gegl_extension_handler_register (".pnm", "gegl:ppm-load");
+  gegl_extension_handler_register_loader (".ppm", "gegl:ppm-load");
+  gegl_extension_handler_register_loader (".pgm", "gegl:ppm-load");
+  gegl_extension_handler_register_loader (".pnm", "gegl:ppm-load");
 }
 
 #endif

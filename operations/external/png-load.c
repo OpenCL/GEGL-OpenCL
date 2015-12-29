@@ -502,7 +502,7 @@ gegl_op_class_init (GeglOpClass *klass)
 /*  static gboolean done=FALSE;
     if (done)
       return; */
-  gegl_extension_handler_register (".png", "gegl:png-load");
+  gegl_extension_handler_register_loader (".png", "gegl:png-load");
 /*  done = TRUE; */
 }
 

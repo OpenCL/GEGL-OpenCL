@@ -159,8 +159,8 @@ gegl_op_class_init (GeglOpClass *klass)
           " is apparently buggy)"),
         NULL);
 
-  gegl_extension_handler_register (".rawbayer", "gegl:rawbayer-load");
-  gegl_extension_handler_register (".rawbayerS", "gegl:rawbayer-load");
+  gegl_extension_handler_register_loader (".rawbayer", "gegl:rawbayer-load");
+  gegl_extension_handler_register_loader (".rawbayerS", "gegl:rawbayer-load");
 }
 
 #endif

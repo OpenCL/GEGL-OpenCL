@@ -182,8 +182,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "description" , _("Load an SVG file using librsvg"),
     NULL);
 
-  gegl_extension_handler_register (".svg", "gegl:svg-load");
-  gegl_extension_handler_register (".svgz", "gegl:svg-load");
+  gegl_extension_handler_register_loader (".svg", "gegl:svg-load");
+  gegl_extension_handler_register_loader (".svgz", "gegl:svg-load");
 }
 
 #endif

@@ -32,10 +32,10 @@ test_misc_case_insensitive_extension_handler (void)
   const gchar *uppercase = "FOOEXT";
   const gchar *received_handler = NULL;
 
-  gegl_extension_handler_register (lowercase, handler);
+  gegl_extension_handler_register_loader (lowercase, handler);
 
   /* Make sure comparisions are case insensitive */
-  received_handler = gegl_extension_handler_get (uppercase);
+  received_handler = gegl_extension_handler_get_loader (uppercase);
   if (! strcmp (received_handler, handler) == 0)
     result = FAILURE;
 
