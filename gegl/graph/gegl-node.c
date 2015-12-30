@@ -2109,10 +2109,12 @@ gegl_node_get_pad_proxy (GeglNode    *node,
 
       if (!is_graph_input)
         {
-          g_signal_connect_swapped (G_OBJECT (nop), "computed",
-                                    G_CALLBACK (gegl_node_emit_computed), node);
-          g_signal_connect (G_OBJECT (nop), "invalidated",
-                            G_CALLBACK (graph_source_invalidated), node);
+          g_signal_connect_object (G_OBJECT (nop), "computed",
+                                   G_CALLBACK (gegl_node_emit_computed), node,
+                                   G_CONNECT_SWAPPED);
+          g_signal_connect_object (G_OBJECT (nop), "invalidated",
+                                   G_CALLBACK (graph_source_invalidated), node,
+                                   0);
         }
       return nop;
     }
