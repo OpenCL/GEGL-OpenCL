@@ -33,4 +33,4 @@ AM_LDFLAGS = -avoid-version -export-dynamic -module $(no_undefined)
 ext_dir = $(libdir)/gegl-@GEGL_API_VERSION@
 
 %.c.h: %.c $(top_srcdir)/tools/csourcetostring.py
-	$(PYTHON) $(top_srcdir)/tools/csourcetostring.py $<
+	$(AM_V_GEN) $(PYTHON) $(top_srcdir)/tools/csourcetostring.py $<
