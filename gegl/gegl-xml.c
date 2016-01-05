@@ -27,6 +27,7 @@
 #include "gegl.h"
 #include "property-types/gegl-paramspecs.h"
 #include "gegl-instrument.h"
+#include "gegl-node-private.h"
 #include "gegl-xml.h"
 
 #ifdef G_OS_WIN32
@@ -1148,6 +1149,7 @@ gchar *
 gegl_node_to_xml (GeglNode    *gegl,
                   const gchar *path_root)
 {
+  GeglOperation *operation;
   SerializeState  ss;
 
   ss.buf         = g_string_new ("");
@@ -1156,8 +1158,9 @@ gegl_node_to_xml (GeglNode    *gegl,
   ss.clones      = g_hash_table_new (NULL, NULL);
   ss.terse       = FALSE;
 
+  operation = gegl_node_get_gegl_operation (gegl);
   /* this case is probably only for empty graphs */
-  if (!gegl_node_get_operation (gegl))
+  if (gegl->is_graph && !operation)
     gegl = gegl_node_get_output_proxy (gegl, "output");
 
   g_string_append (ss.buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
