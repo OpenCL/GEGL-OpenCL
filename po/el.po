@@ -1,16 +1,16 @@
 # Greek translation for gegl.
 # Copyright (C) 2012 gegl's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gegl package.
-# Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2011-2015.
+# Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2011-2015, 2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
 "eywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2015-11-25 07:03+0000\n"
-"PO-Revision-Date: 2015-11-25 11:42+0300\n"
+"POT-Creation-Date: 2015-12-30 19:05+0000\n"
+"PO-Revision-Date: 2016-01-03 09:26+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
-"Language-Team: team@lists.gnome.gr\n"
+"Language-Team: www.gnome.gr\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -362,25 +362,25 @@ msgstr "Εξομάλυνση χρησιμοποιώντας το Scale3X αλγ�
 msgid "Lens refraction index"
 msgstr "Δείκτης διάθλασης φακού"
 
-#: ../operations/common/apply-lens.c:39
+#: ../operations/common/apply-lens.c:41
 msgid "Keep original surroundings"
 msgstr "Διατήρηση του αρχικού περιβάλλοντος"
 
-#: ../operations/common/apply-lens.c:40
+#: ../operations/common/apply-lens.c:42
 msgid "Keep image unchanged, where not affected by the lens."
 msgstr "Διατήρηση αμετάβλητης εικόνας, όταν δεν επηρεάζεται από τους φακούς."
 
-#: ../operations/common/apply-lens.c:42 ../operations/common/cubism.c:39
+#: ../operations/common/apply-lens.c:44 ../operations/common/cubism.c:39
 #: ../operations/common/lens-distortion.c:57 ../operations/common/pixelize.c:62
 #: ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Χρώμα παρασκηνίου"
 
-#: ../operations/common/apply-lens.c:270
+#: ../operations/common/apply-lens.c:272
 msgid "Apply Lens"
 msgstr "Εφαρμογή φακού"
 
-#: ../operations/common/apply-lens.c:273
+#: ../operations/common/apply-lens.c:275
 msgid ""
 "Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
@@ -391,11 +391,13 @@ msgstr ""
 #: ../operations/common/bilateral-filter.c:26
 #: ../operations/common/bilateral-filter-fast.c:37
 #: ../operations/common/dropshadow.c:37
+#: ../operations/common/gaussian-blur-selective.c:29
 msgid "Blur radius"
 msgstr "Ακτίνα θόλωσης"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/bilateral-filter-fast.c:38
+#: ../operations/common/gaussian-blur-selective.c:30
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Ακτίνα της τετράγωνης περιοχής εικονοστοιχείου, (πλάτος και ύψος θα είναι "
@@ -1405,7 +1407,7 @@ msgstr ""
 #: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:25
 #: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
 #: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
-#: ../operations/external/ff-save.c:27 ../operations/external/jp2-load.c:25
+#: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
 #: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
 #: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
 #: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
@@ -2328,6 +2330,25 @@ msgid ""
 msgstr ""
 "Βρίσκει το μέσο όρο των γειτονικών εικονοστοιχείων με την κανονική κατανομή "
 "ως αντιστάθμιση"
+
+#: ../operations/common/gaussian-blur-selective.c:34
+msgid "Max. delta"
+msgstr "Μέγιστη διαφορά"
+
+#: ../operations/common/gaussian-blur-selective.c:35
+#| msgid "Maximum difference"
+msgid "Maximum delta"
+msgstr "Μέγιστη διαφορά"
+
+#: ../operations/common/gaussian-blur-selective.c:259
+#| msgid "Gaussian Blur"
+msgid "Selective Gaussian Blur"
+msgstr "Επιλεκτική θόλωση Gauss"
+
+#: ../operations/common/gaussian-blur-selective.c:262
+msgid "Blur neighboring pixels, but only in low-contrast areas"
+msgstr ""
+"Θόλωση γειτονικών εικονοστοιχείων, αλλά μόνο σε περιοχές χαμηλής αντίθεσης"
 
 #: ../operations/common/gblur-1d.c:43 ../operations/common/warp.c:38
 #: ../operations/external/text.c:32
@@ -3866,7 +3887,6 @@ msgid "Sepia"
 msgstr "Σέπια (σουπιά)"
 
 #: ../operations/common/sepia.c:112
-#| msgid "Infinitely repeats the input image."
 msgid "Converts the input image to sepia"
 msgstr "Μετατρέπει την εικόνα εισαγωγής σε σέπια (σουπιά)"
 
@@ -4027,11 +4047,16 @@ msgid "Stretch Contrast HSV"
 msgstr "Επέκταση αντίθεσης HSV"
 
 #: ../operations/common/stretch-contrast-hsv.c:224
+#| msgid ""
+#| "Scales the components of the buffer to be in the 0.0-1.0 range. This "
+#| "improves images that make poor use of the available contrast (little "
+#| "contrast, very dark, or very bright images). This version differs from "
+#| "Contrast Autostretch in that it works in HSV scpace, and preserves hue."
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
 "contrast, very dark, or very bright images). This version differs from "
-"Contrast Autostretch in that it works in HSV scpace, and preserves hue."
+"Contrast Autostretch in that it works in HSV space, and preserves hue."
 msgstr ""
 "Κλιμακώνει τα συστατικά της ενδιάμεσης μνήμης για να είναι στην περιοχή "
 "0,0-1,0. Αυτό βελτιώνει τις εικόνες που κάνουν φτωχή χρήση της διαθέσιμης "
@@ -4802,12 +4827,15 @@ msgid "Cast Format"
 msgstr "Μορφή αλλαγής τύπου"
 
 #: ../operations/core/cast-format.c:112
+#| msgid ""
+#| "Cast the data between input_format and output_format, both bormats must "
+#| "have the same bpp"
 msgid ""
-"Cast the data between input_format and output_format, both bormats must have "
+"Cast the data between input_format and output_format, both formats must have "
 "the same bpp"
 msgstr ""
 "Αλλαγή τύπου δεδομένων μεταξύ μορφής_εισόδου και μορφής_εξόδου, και οι δυο "
-"μορφές πρέπει ένα έχουν το ίδιο bpp"
+"μορφές πρέπει ένα έχουν το ίδιο bpp."
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -4879,12 +4907,10 @@ msgid "audio_sample_rate"
 msgstr "ρυθμός_δειγματοληψίας_ήχου"
 
 #: ../operations/external/ff-load.c:37
-#| msgid "Red channel"
 msgid "audio_channels"
 msgstr "κανάλια_ήχου"
 
 #: ../operations/external/ff-load.c:39
-#| msgid "frames"
 msgid "frame-rate"
 msgstr "ρυθμός-λήψεων"
 
@@ -4902,76 +4928,176 @@ msgstr "κωδικοποιητής-βίντεο"
 msgid "audio-codec"
 msgstr "κωδικοποιητής-ήχου"
 
-#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:48
+#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:32
 msgid "audio"
 msgstr "ήχος"
 
-#: ../operations/external/ff-load.c:775
+#: ../operations/external/ff-load.c:765
 msgid "FFmpeg Frame Loader"
 msgstr "Φόρτωση πλαισίου FFmpeg"
 
-#: ../operations/external/ff-load.c:777
+#: ../operations/external/ff-load.c:767
 msgid "FFmpeg video frame importer."
 msgstr "Εισαγωγή πλαισίου βίντεο FFmpeg."
 
-#: ../operations/external/ff-save.c:28 ../operations/external/npy-save.c:32
+#: ../operations/external/ff-save.c:30 ../operations/external/npy-save.c:32
 #: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
 #: ../operations/external/rgbe-save.c:27
 msgid "Target path and filename, use '-' for stdout."
 msgstr "Στόχος διαδρομής και ονόματος αρχείου, χρήση '-' για τυπική έξοδο."
-
-#: ../operations/external/ff-save.c:30
-msgid "Frames/second"
-msgstr "Πλαίσια/δευτερόλεπτο"
 
 #: ../operations/external/ff-save.c:33
 msgid "Audio codec"
 msgstr "Κωδικοποιητής ήχου"
 
 #: ../operations/external/ff-save.c:34
-#| msgid "Bitrate"
-msgid "Audio bitrate"
-msgstr "Ρυθμός διαμεταγωγής ήχου"
+msgid ""
+"Audio codec to use, or auto to use a good default based on container format."
+msgstr ""
+"Κωδικοποιητής ήχου για χρήση, ή αυτόματα για χρήση μιας καλής προεπιλογής με "
+"βάση τη μορφή περιέκτη."
 
 #: ../operations/external/ff-save.c:35
+#| msgid "audio_sample_rate"
+msgid "audio sample rate"
+msgstr "ρυθμός δειγματοληψίας ήχου"
+
+#: ../operations/external/ff-save.c:36
+msgid "-1 means autodetect on first audio fragment"
+msgstr "-1 σημαίνει αυτόματη αναγνώριση στο πρώτο τμήμα ήχου"
+
+#: ../operations/external/ff-save.c:38
+#| msgid "Audio bitrate"
+msgid "audio bitrate in kb/s"
+msgstr "Ρυθμός διαμεταγωγής ήχου σε kb/s"
+
+#: ../operations/external/ff-save.c:39 ../operations/external/ff-save.c:47
+msgid "Target encoded video bitrate in kb/s"
+msgstr "Ρυθμός διαμεταγωγής κωδικοποιημένου βίντεο προορισμού σε kb/s"
+
+#: ../operations/external/ff-save.c:41
+msgid "Frames/second"
+msgstr "Πλαίσια/δευτερόλεπτο"
+
+#: ../operations/external/ff-save.c:44
 msgid "Video codec"
 msgstr "Κωδικοποιητής βίντεο"
 
-#: ../operations/external/ff-save.c:36 ../operations/external/ff-save.c:38
-#| msgid "Target bitrate"
-msgid "video bitrate"
-msgstr "ρυθμός διαμεταγωγής ήχου"
+#: ../operations/external/ff-save.c:45
+msgid ""
+"Video codec to use, or auto to use a good default based on container format."
+msgstr ""
+"Κωδικοποιητής βίντεο για χρήση, ή αυτόματα για χρήση μιας καλής προεπιλογής "
+"με βάση τη μορφή περιέκτη."
 
-#: ../operations/external/ff-save.c:39
+#: ../operations/external/ff-save.c:46
+#| msgid "video bitrate"
+msgid "video bitrate in kb/s"
+msgstr "Ρυθμός διαμεταγωγής βίντεο σε kb/s"
+
+#: ../operations/external/ff-save.c:48
+#, fuzzy
+#| msgid "Tile size"
+msgid "Video bufsize"
+msgstr "Μέγεθος πλακιδίου"
+
+#: ../operations/external/ff-save.c:50
+#| msgid "Convert Format"
+msgid "Container format"
+msgstr "Μορφή περιέκτη"
+
+#: ../operations/external/ff-save.c:51
+msgid "Container format to use, or auto to autodetect based on file extension."
+msgstr ""
+"Η μορφή περιέκτη προς χρήση, ή αυτόματα για αυτόματη αναγνώριση με βάση την "
+"επέκταση αρχείου."
+
+#: ../operations/external/ff-save.c:54
 msgid "global quality"
 msgstr "γενική ποιότητα"
 
-#: ../operations/external/ff-save.c:40
-#| msgid "Compression"
-msgid "compression level"
-msgstr "επίπεδο συμπίεσης"
-
-#: ../operations/external/ff-save.c:41
+#: ../operations/external/ff-save.c:55
 #| msgid "Noise Reduction"
-msgid "noise reduction strength"
-msgstr "ισχύς μείωσης θορύβου"
+msgid "noise reduction"
+msgstr "μείωση θορύβου"
 
-#: ../operations/external/ff-save.c:42
-msgid "the number of frames in a group of pictures, 0 for keyframe only"
-msgstr "ο αριθμός των λήψεων σε μια ομάδα εικόνων, 0 μόνο για βασική λήψη"
+#: ../operations/external/ff-save.c:56
+#| msgid "Red eye threshold"
+msgid "scenechange threshold"
+msgstr "κατώφλι αλλαγής σκηνής"
 
-#: ../operations/external/ff-save.c:43
-msgid ""
-"the minimum number of frames in a group of pictures, 0 for keyframe only"
+#: ../operations/external/ff-save.c:57
+#| msgid "video bitrate"
+msgid "video bitrate min"
+msgstr "ελάχιστος ρυθμός διαμεταγωγής βίντεο"
+
+#: ../operations/external/ff-save.c:58
+#| msgid "video bitrate"
+msgid "video bitrate max"
+msgstr "μέγιστος ρυθμός διαμεταγωγής βίντεο"
+
+#: ../operations/external/ff-save.c:59
+#| msgid "video bitrate"
+msgid "video bitrate tolerance"
+msgstr "ανοχή ρυθμού διαμεταγωγής βίντεο"
+
+#: ../operations/external/ff-save.c:61
+msgid "keyint-min"
 msgstr ""
-"ο ελάχιστος αριθμός των λήψεων σε μια ομάδα εικόνων, 0 μόνο για βασική λήψη"
 
-#: ../operations/external/ff-save.c:44
-#| msgid "Maximum number of iterations"
-msgid "maximum number of consequetive b frames"
-msgstr "μέγιστος αριθμός διαδοχικών λήψεων b"
+#: ../operations/external/ff-save.c:62
+msgid "trellis"
+msgstr ""
 
-#: ../operations/external/ff-save.c:912
+#: ../operations/external/ff-save.c:63
+msgid "qmin"
+msgstr ""
+
+#: ../operations/external/ff-save.c:64
+msgid "qmax"
+msgstr ""
+
+#: ../operations/external/ff-save.c:65
+msgid "max_qdiff"
+msgstr ""
+
+#: ../operations/external/ff-save.c:66
+msgid "me_range"
+msgstr ""
+
+#: ../operations/external/ff-save.c:67
+#, fuzzy
+#| msgid "frames"
+msgid "max_b_frames"
+msgstr "πλαίσια"
+
+#: ../operations/external/ff-save.c:68
+msgid "gop-size"
+msgstr ""
+
+#: ../operations/external/ff-save.c:69
+#, fuzzy
+#| msgid "Compression"
+msgid "qcompress"
+msgstr "Συμπίεση"
+
+#: ../operations/external/ff-save.c:70
+msgid "qblur"
+msgstr ""
+
+#: ../operations/external/ff-save.c:71
+msgid "i-quant-factor"
+msgstr ""
+
+#: ../operations/external/ff-save.c:72
+msgid "i-quant-offset"
+msgstr ""
+
+#: ../operations/external/ff-save.c:73
+msgid "me-subpel-quality"
+msgstr ""
+
+#: ../operations/external/ff-save.c:1068
 msgid "FFmpeg video output sink"
 msgstr "Δέκτης εξόδου βίντεο FFmpeg"
 
@@ -5409,9 +5535,9 @@ msgid "PNG File Saver"
 msgstr "Φορτωτής αρχείου PNG"
 
 #: ../operations/external/png-save.c:231
-msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
-msgstr ""
-"Αποθήκευση εικόνας PNG (περνά μέσα από τη μνήμη, αποθήκευση ως παρενέργεια.)"
+#| msgid "JPEG image saver, using libjpeg"
+msgid "PNG image saver, using libpng"
+msgstr "Αποθήκευση εικόνας PNG, χρησιμοποιώντας libpng"
 
 #: ../operations/external/ppm-load.c:381
 msgid "PPM File Loader"
@@ -5573,12 +5699,10 @@ msgid "Display a string of text using pango and cairo."
 msgstr "Εμφάνιση συμβολοσειράς κειμένου χρησιμοποιώντας pango και cairo."
 
 #: ../operations/external/tiff-load.c:28
-#| msgid "URI for file to load."
 msgid "URI for file to load"
 msgstr "URI του αρχείου για φόρτωση"
 
 #: ../operations/external/tiff-load.c:30
-#| msgid "Direction"
 msgid "Directory"
 msgstr "Κατάλογος"
 
@@ -5587,22 +5711,18 @@ msgid "Image file directory (subfile)"
 msgstr "Κατάλογος αρχείου εικόνας (υποαρχείο)"
 
 #: ../operations/external/tiff-load.c:837
-#| msgid "PNG File Loader"
 msgid "TIFF File Loader"
 msgstr "Φόρτωση αρχείου TIFF"
 
 #: ../operations/external/tiff-load.c:839
-#| msgid "JPEG image loader using libjpeg"
 msgid "TIFF image loader using libtiff"
 msgstr "Φόρτωση εικόνας JPEG χρησιμοποιώντας libjpeg"
 
 #: ../operations/external/tiff-save.c:591
-#| msgid "NPY File Saver"
 msgid "TIFF File Saver"
 msgstr "Αποθηκευτής αρχείου TIFF"
 
 #: ../operations/external/tiff-save.c:593
-#| msgid "JPEG image saver, using libjpeg"
 msgid "TIFF image saver using libtiff"
 msgstr "Αποθήκευση εικόνας TIFF χρησιμοποιώντας libjpeg"
 
@@ -6846,6 +6966,32 @@ msgstr "Περικοπή RGB"
 #: ../operations/workshop/rgb-clip.c:186
 msgid "Keep RGB pixels values inside a specific range"
 msgstr "Διατήρηση των τιμών εικονοστοιχείων RGB μέσα σε ορισμένο εύρος"
+
+#~| msgid "Compression"
+#~ msgid "compression level"
+#~ msgstr "επίπεδο συμπίεσης"
+
+#~| msgid "Noise Reduction"
+#~ msgid "noise reduction strength"
+#~ msgstr "ισχύς μείωσης θορύβου"
+
+#~ msgid "the number of frames in a group of pictures, 0 for keyframe only"
+#~ msgstr "ο αριθμός των λήψεων σε μια ομάδα εικόνων, 0 μόνο για βασική λήψη"
+
+#~ msgid ""
+#~ "the minimum number of frames in a group of pictures, 0 for keyframe only"
+#~ msgstr ""
+#~ "ο ελάχιστος αριθμός των λήψεων σε μια ομάδα εικόνων, 0 μόνο για βασική "
+#~ "λήψη"
+
+#~| msgid "Maximum number of iterations"
+#~ msgid "maximum number of consequetive b frames"
+#~ msgstr "μέγιστος αριθμός διαδοχικών λήψεων b"
+
+#~ msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
+#~ msgstr ""
+#~ "Αποθήκευση εικόνας PNG (περνά μέσα από τη μνήμη, αποθήκευση ως "
+#~ "παρενέργεια.)"
 
 #~ msgid "OpenRAW File Loader"
 #~ msgstr "Φορτωτής αρχείου OpenRAW"
