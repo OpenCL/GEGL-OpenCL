@@ -108,6 +108,7 @@ operations/common/red-eye-removal.c
 operations/common/reinhard05.c
 operations/common/remap.c
 operations/common/ripple.c
+operations/common/saturation.c
 operations/common/save.c
 operations/common/sepia.c
 operations/common/shift.c

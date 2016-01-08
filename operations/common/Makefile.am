@@ -116,6 +116,7 @@ op_LTLIBRARIES = \
 	reinhard05.la \
 	remap.la \
 	ripple.la \
+	saturation.la \
 	save.la \
 	sepia.la \
 	shift.la \
