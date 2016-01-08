@@ -8,6 +8,7 @@ noinst_PROGRAMS = \
 	test-gegl-buffer-access \
 	test-samplers \
 	test-rotate \
+	test-saturation \
 	test-scale \
 	test-translate
 
@@ -36,6 +37,7 @@ check:
 	for a in $(noinst_PROGRAMS);do GEGL_PATH=../operations ./$$a;done;true
 
 test_rotate_SOURCES = test-rotate.c
+test_saturation_SOURCES = test-saturation.c
 test_scale_SOURCES = test-scale.c
 test_translate_SOURCES = test-translate.c
 test_blur_SOURCES = test-blur.c
