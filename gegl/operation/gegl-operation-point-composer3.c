@@ -257,6 +257,12 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
 
         if (input)
         {
+          if (! babl_format_has_alpha (in_buf_format))
+            {
+              in_buf_format = in_format;
+              in_buf_bpp = in_bpp;
+            }
+
           read = gegl_buffer_iterator_add (i, input, result, level, in_buf_format, GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
           for (gint j = 0; j < threads; j ++)
           {
@@ -276,6 +282,12 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
             thread_data[j].input_fish = NULL;
         if (aux)
         {
+          if (! babl_format_has_alpha (aux_buf_format))
+            {
+              aux_buf_format = aux_format;
+              aux_buf_bpp = aux_bpp;
+            }
+
           foo = gegl_buffer_iterator_add (i, aux, result, level, aux_buf_format,
                                           GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
           for (gint j = 0; j < threads; j ++)
@@ -298,6 +310,12 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
         }
         if (aux2)
         {
+          if (! babl_format_has_alpha (aux2_buf_format))
+            {
+              aux2_buf_format = aux2_format;
+              aux2_buf_bpp = aux2_bpp;
+            }
+
           bar = gegl_buffer_iterator_add (i, aux2, result, level, aux2_buf_format,
                                           GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
           for (gint j = 0; j < threads; j ++)
