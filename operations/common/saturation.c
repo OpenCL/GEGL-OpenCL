@@ -23,7 +23,8 @@
 
 property_double (scale, _("Scale"), 1.0)
     description(_("Scale, strength of effect"))
-    value_range (0.0, 2.0)
+    value_range (0.0, 10.0)
+    ui_range (0.0, 2.0)
 
 #else
 
