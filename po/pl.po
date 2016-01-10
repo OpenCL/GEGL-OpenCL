@@ -8,14 +8,14 @@
 # Bartosz Kosiorek <gang65@poczta.onet.pl>, 2005-2011.
 # Piotr Zaryk <pzaryk@aviary.pl>, 2008.
 # Robert Gomulka <carramba@epf.pl>, 2008.
-# Piotr Drąg <piotrdrag@gmail.com>, 2011-2015.
-# Aviary.pl <gnomepl@aviary.pl>, 2011-2015.
+# Piotr Drąg <piotrdrag@gmail.com>, 2011-2016.
+# Aviary.pl <gnomepl@aviary.pl>, 2011-2016.
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-28 01:08+0100\n"
-"PO-Revision-Date: 2015-12-28 01:09+0100\n"
+"POT-Creation-Date: 2016-01-10 13:40+0100\n"
+"PO-Revision-Date: 2016-01-10 13:41+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -367,25 +367,25 @@ msgstr "Wygładzanie używając algorytmu ekstrapolacji krawędziowej Scale3X"
 msgid "Lens refraction index"
 msgstr "Współczynnik załamania soczewki"
 
-#: ../operations/common/apply-lens.c:39
+#: ../operations/common/apply-lens.c:41
 msgid "Keep original surroundings"
 msgstr "Pozostawienie pierwotnego otoczenia"
 
-#: ../operations/common/apply-lens.c:40
+#: ../operations/common/apply-lens.c:42
 msgid "Keep image unchanged, where not affected by the lens."
 msgstr "Bez zmienienia obrazu w miejscach bez soczewki."
 
-#: ../operations/common/apply-lens.c:42 ../operations/common/cubism.c:39
+#: ../operations/common/apply-lens.c:44 ../operations/common/cubism.c:39
 #: ../operations/common/lens-distortion.c:57 ../operations/common/pixelize.c:62
 #: ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Kolor tła"
 
-#: ../operations/common/apply-lens.c:270
+#: ../operations/common/apply-lens.c:272
 msgid "Apply Lens"
 msgstr "Zastosuj soczewki"
 
-#: ../operations/common/apply-lens.c:273
+#: ../operations/common/apply-lens.c:275
 msgid ""
 "Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
@@ -436,6 +436,10 @@ msgstr "Gładkość"
 #: ../operations/common/bilateral-filter-fast.c:34
 msgid "Level of smoothness"
 msgstr "Poziom gładkości"
+
+#: ../operations/common/bilateral-filter-fast.c:495
+msgid "Bilateral Box Filter"
+msgstr "Dwustronny filtr prostopadłościenny"
 
 #: ../operations/common/bilateral-filter-fast.c:498
 msgid ""
@@ -493,6 +497,10 @@ msgstr "Jasność"
 #: ../operations/common/brightness-contrast.c:37
 msgid "Amount to increase brightness"
 msgstr "O ile zwiększyć jasność"
+
+#: ../operations/common/brightness-contrast.c:150
+msgid "Brightness Contrast"
+msgstr "Jasność i kontrast"
 
 #: ../operations/common/brightness-contrast.c:152
 #, c-format
@@ -1131,6 +1139,7 @@ msgstr "Wartość barwy dla powyższych ustawień szarości"
 
 #: ../operations/common/color-rotate.c:84 ../operations/common/fattal02.c:41
 #: ../operations/common/mantiuk06.c:35 ../operations/common/noise-hsv.c:33
+#: ../operations/common/saturation.c:217
 #: ../operations/external/lcms-from-profile.c:35
 msgid "Saturation"
 msgstr "Nasycenie"
@@ -1981,6 +1990,10 @@ msgstr "Szum"
 msgid "Gradient threshold for lowering detail enhancement"
 msgstr "Próg gradientu do zmniejszania uwydatniania szczegółów"
 
+#: ../operations/common/fattal02.c:1327
+msgid "Fattal et al. 2002 Tone Mapping"
+msgstr "Mapowanie odcieni Fattala i innych 2002"
+
 #: ../operations/common/fattal02.c:1330
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
@@ -2527,8 +2540,8 @@ msgstr "Pionowe położenie w pikselach"
 
 #: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
 #: ../operations/common/noise-perlin.c:27
-#: ../operations/common/noise-simplex.c:31 ../operations/common/sepia.c:24
-#: ../operations/common/unsharp-mask.c:31
+#: ../operations/common/noise-simplex.c:31 ../operations/common/saturation.c:24
+#: ../operations/common/sepia.c:24 ../operations/common/unsharp-mask.c:31
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
 msgstr "Skalowanie"
@@ -2720,7 +2733,7 @@ msgid "Level of emphasis on image gradient details"
 msgstr "Poziom podkreślenia szczegółów gradientu obrazu"
 
 #: ../operations/common/mantiuk06.c:1638
-msgid "Mantiuk 2006 Tonemapping"
+msgid "Mantiuk 2006 Tone Mapping"
 msgstr "Mapowanie odcieni Mantiuka 2006"
 
 #: ../operations/common/mantiuk06.c:1641
@@ -2805,7 +2818,8 @@ msgid "Maze algorithm type"
 msgstr "Typ algorytmu labiryntu"
 
 #: ../operations/common/maze.c:63 ../operations/common/noise-solid.c:56
-msgid "Tilable"
+#: ../operations/common/ripple.c:53
+msgid "Tileable"
 msgstr "Kafelkowalność"
 
 #: ../operations/common/maze.c:67
@@ -3333,7 +3347,7 @@ msgid "Detail level"
 msgstr "Poziom szczegółów"
 
 #: ../operations/common/noise-solid.c:57
-msgid "Create a tilable output"
+msgid "Create a tileable output"
 msgstr "Utwórz kafelkowane wyjście"
 
 #: ../operations/common/noise-solid.c:59
@@ -3782,7 +3796,7 @@ msgid "Adaptation to light variation across the image"
 msgstr "Adaptacja do zmiany światła na całym obrazie"
 
 #: ../operations/common/reinhard05.c:273
-msgid "Reinhard 2005 Tonemapper"
+msgid "Reinhard 2005 Tone Mapping"
 msgstr "Mapowanie odcieni Reinharda 2005"
 
 #: ../operations/common/reinhard05.c:276
@@ -3822,10 +3836,6 @@ msgstr "Przesunięcie fazy"
 msgid "Wave type"
 msgstr "Typ fali"
 
-#: ../operations/common/ripple.c:53
-msgid "Tileable"
-msgstr "Kafelkowalność"
-
 #: ../operations/common/ripple.c:54
 msgid "Retain tilebility"
 msgstr "Zachowaj kafelkowalność"
@@ -3837,6 +3847,15 @@ msgstr "Falowanie"
 #: ../operations/common/ripple.c:174
 msgid "Displace pixels in a ripple pattern"
 msgstr "Rozmieść piksele na wzór zmarszczki"
+
+#: ../operations/common/saturation.c:25 ../operations/common/sepia.c:25
+#: ../operations/common/unsharp-mask.c:32
+msgid "Scale, strength of effect"
+msgstr "Skaluj, siła efektu"
+
+#: ../operations/common/saturation.c:219
+msgid "Changes the saturation"
+msgstr "Zmienia nasycenie"
 
 #: ../operations/common/save.c:26
 msgid "Path of file to save."
@@ -3854,10 +3873,6 @@ msgstr ""
 "Wielozadaniowe zapisywanie plików używające natywnych modułów obsługi "
 "zapisywania plików w zależności od rozszerzenia. Użycie działania zapisu "
 "konkretnego formatu umożliwia podawanie dodatkowych parametrów."
-
-#: ../operations/common/sepia.c:25 ../operations/common/unsharp-mask.c:32
-msgid "Scale, strength of effect"
-msgstr "Skaluj, siła efektu"
 
 #: ../operations/common/sepia.c:110
 msgid "Sepia"
@@ -5039,7 +5054,7 @@ msgstr "i-quant-offset"
 msgid "me-subpel-quality"
 msgstr "me-subpel-quality"
 
-#: ../operations/external/ff-save.c:1068
+#: ../operations/external/ff-save.c:1072
 msgid "FFmpeg video output sink"
 msgstr "Odpływ wyjścia wideo biblioteki FFmpeg"
 
@@ -5649,19 +5664,19 @@ msgstr "Katalog"
 msgid "Image file directory (subfile)"
 msgstr "Katalog pliku obrazu (podplik)"
 
-#: ../operations/external/tiff-load.c:837
+#: ../operations/external/tiff-load.c:866
 msgid "TIFF File Loader"
 msgstr "Wczytywanie plików TIFF"
 
-#: ../operations/external/tiff-load.c:839
+#: ../operations/external/tiff-load.c:868
 msgid "TIFF image loader using libtiff"
 msgstr "Wczytywanie obrazów TIFF za pomocą biblioteki libtiff"
 
-#: ../operations/external/tiff-save.c:591
+#: ../operations/external/tiff-save.c:620
 msgid "TIFF File Saver"
 msgstr "Zapisywanie plików TIFF"
 
-#: ../operations/external/tiff-save.c:593
+#: ../operations/external/tiff-save.c:622
 msgid "TIFF image saver using libtiff"
 msgstr "Zapisywanie obrazów TIFF za pomocą biblioteki libtiff"
 
@@ -6393,7 +6408,11 @@ msgstr ""
 "Używany deseń Bayera, 0 działa z niektórymi plikami Nikkon, a 2 z niektórymi "
 "plikami Fuji."
 
-#: ../operations/workshop/demosaic-bimedian.c:221
+#: ../operations/workshop/demosaic-bimedian.c:219
+msgid "Demosaic With Bimedian Interpolation"
+msgstr "Usuwanie mozaiki za pomocą interpolacji bimediany"
+
+#: ../operations/workshop/demosaic-bimedian.c:222
 msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
@@ -6401,7 +6420,11 @@ msgstr ""
 "Wykonuje usuwanie mozaiki „grayscale2color” z obrazu za pomocą interpolacji "
 "bimediany."
 
-#: ../operations/workshop/demosaic-simple.c:153
+#: ../operations/workshop/demosaic-simple.c:151
+msgid "Demosaic Without Interpolation"
+msgstr "Usuwanie mozaiki bez interpolacji"
+
+#: ../operations/workshop/demosaic-simple.c:154
 msgid ""
 "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr ""
@@ -6709,7 +6732,11 @@ msgstr "Kolor 5"
 msgid "Stop 5"
 msgstr "Zatrzymanie 5"
 
-#: ../operations/workshop/gradient-map.c:243
+#: ../operations/workshop/gradient-map.c:242
+msgid "Gradient Map"
+msgstr "Mapa gradientu"
+
+#: ../operations/workshop/gradient-map.c:244
 msgid "Applies a color gradient."
 msgstr "Zastosowuje gradient koloru."
 
@@ -6798,10 +6825,17 @@ msgstr "Szerokość debugowania"
 msgid "how wide peel off bands for ink order vis"
 msgstr "szerokość pasków oderwania dla kolejności tuszu"
 
-#: ../operations/workshop/ink-simulator.c:1422
-msgid "spectral ink simulator, for softproofing/simulating press inks"
+#: ../operations/workshop/ink-simulator.c:1420
+msgid "Ink Simulator"
+msgstr "Symulator tuszu"
+
+#: ../operations/workshop/ink-simulator.c:1423
+msgid ""
+"Spectral ink and paint simulator, for softproofing/simulating physical color "
+"mixing and interactions."
 msgstr ""
-"spektralny symulator tuszu dla softproofingu/symulowania tuszów drukarskich"
+"Spektralny symulator tuszu i farby dla softproofingu/symulowania fizycznego "
+"mieszania i oddziaływania kolorów."
 
 #: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
