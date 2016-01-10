@@ -1417,10 +1417,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:ink-simulator",
-  "title"       , _("Press Ink Simulator"),
+  "title"       , _("Ink Simulator"),
   "categories"  , "misc",
   "description" ,
-        _("Spectral ink simulator, for softproofing/simulating press inks"
+        _("Spectral ink and paint simulator, for softproofing/simulating physical color mixing and interactions."
           ""),
         NULL);
 }
