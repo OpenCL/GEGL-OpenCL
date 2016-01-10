@@ -60,7 +60,7 @@ property_enum (algorithm_type, _("Algorithm type"),
                GEGL_MAZE_ALGORITHM_DEPTH_FIRST)
   description (_("Maze algorithm type"))
 
-property_boolean (tilable, _("Tilable"), FALSE)
+property_boolean (tileable, _("Tileable"), FALSE)
 
 property_seed (seed, _("Random seed"), rand)
 
@@ -617,7 +617,7 @@ process (GeglOperation       *operation,
 
       gr = g_rand_new ();
 
-      if (o->tilable)
+      if (o->tileable)
 	{
 	  /* Tileable mazes must be even. */
 	  mw -= (mw & 1);
@@ -636,7 +636,7 @@ process (GeglOperation       *operation,
       switch (o->algorithm_type)
 	{
 	case GEGL_MAZE_ALGORITHM_DEPTH_FIRST:
-	  if (o->tilable)
+	  if (o->tileable)
 	    {
 	      depth_first_tileable (0, maz, mw, mh, o->seed);
 	    }
@@ -647,7 +647,7 @@ process (GeglOperation       *operation,
 	  break;
 
 	case GEGL_MAZE_ALGORITHM_PRIM:
-	  if (o->tilable)
+	  if (o->tileable)
 	    {
 	      prim_tileable (maz, mw, mh, o->seed);
 	    }
@@ -696,7 +696,7 @@ process (GeglOperation       *operation,
 	    }
 	}
 
-      if (! o->tilable)
+      if (! o->tileable)
 	{
           /* last row */
 	  for (tile.y = in_extent->height-tile.height, tile.x = offset_x;

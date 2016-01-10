@@ -53,8 +53,8 @@ property_int    (detail, _("Detail"), 1)
     ui_range    (0, 15)
     value_range (0, 15)
 
-property_boolean (tilable, _("Tilable"), FALSE)
-    description  (_("Create a tilable output"))
+property_boolean (tileable, _("Tileable"), FALSE)
+    description  (_("Create a tileable output"))
 
 property_boolean (turbulent, _("Turbulent"), FALSE)
     description  (_("Make a turbulent noise"))
@@ -120,7 +120,7 @@ solid_noise_init (GeglProperties *o)
   gr = g_rand_new_with_seed (o->seed);
 
   /*  Set scaling factors  */
-  if (o->tilable)
+  if (o->tileable)
     {
       params->xsize = ceil (o->x_size);
       params->ysize = ceil (o->y_size);
@@ -201,7 +201,7 @@ plain_noise (gdouble         x,
     {
       for (j = 0; j < 2; j++)
         {
-          if (o->tilable)
+          if (o->tileable)
             n = p->perm_tab[(((a + i) % (p->xclip * s)) + p->perm_tab[((b + j) % (p->yclip * s)) % TABLE_SIZE]) % TABLE_SIZE];
           else
             n = p->perm_tab[(a + i + p->perm_tab[(b + j) % TABLE_SIZE]) % TABLE_SIZE];
