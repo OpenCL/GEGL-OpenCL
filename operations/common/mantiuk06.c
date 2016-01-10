@@ -1635,7 +1635,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
       "name",        "gegl:mantiuk06",
-      "title",       _("Mantiuk 2006 Tonemapping"),
+      "title",       _("Mantiuk 2006 Tone Mapping"),
       "categories" , "tonemapping",
       "description",
         _("Adapt an image, which may have a high dynamic range, for "

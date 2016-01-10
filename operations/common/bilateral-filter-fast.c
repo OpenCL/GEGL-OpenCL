@@ -492,7 +492,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"       , "gegl:bilateral-filter-fast",
-  "title"      , "Bilateral Box Filter",
+  "title"      , _("Bilateral Box Filter"),
   "categories" , "enhance:noise-reduction",
   "description",
            _("A fast approximation of bilateral filter, using a box-filter instead of a gaussian blur."),

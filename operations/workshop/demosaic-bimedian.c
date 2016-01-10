@@ -216,6 +216,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:demosaic-bimedian",
+    "title"       , _("Demosaic With Bimedian Interpolation"),
     "categories"  , "blur",
     "description" ,
           _("Performs a grayscale2color demosaicing of an image, using bimedian interpolation."),

@@ -148,6 +148,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:demosaic-simple",
+  "title"       , _("Demosaic Without Interpolation"),
   "categories"  , "blur",
   "description" ,
         _("Performs a naive grayscale2color demosaicing of an image, no interpolation."),

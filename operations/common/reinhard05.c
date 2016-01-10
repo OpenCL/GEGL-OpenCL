@@ -270,7 +270,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name",      "gegl:reinhard05",
-  "title",      _("Reinhard 2005 Tonemapper"),
+  "title",      _("Reinhard 2005 Tone Mapping"),
   "categories" , "tonemapping",
   "description",
         _("Adapt an image, which may have a high dynamic range, for "

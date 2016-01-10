@@ -1324,7 +1324,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"       , "gegl:fattal02",
-  "title",       "Tonemapping Algorithm devised by Fattal & co",
+  "title",       _("Fattal et al. 2002 Tone Mapping"),
   "categories" , "tonemapping:enhance",
   "description",
         _("Adapt an image, which may have a high dynamic range, for "

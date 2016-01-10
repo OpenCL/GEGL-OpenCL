@@ -239,6 +239,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
       "name",       "gegl:gradient-map",
+      "title"      , _("Gradient Map"),
       "categories", "color",
       "description", _("Applies a color gradient."),
       "reference-composition", composition,
