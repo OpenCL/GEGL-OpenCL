@@ -19,6 +19,7 @@
 #include <glib.h>
 #include <gegl.h>
 #include <gegl-plugin.h>
+#include <locale.h>
 #include <string.h>
 #include <glib/gprintf.h>
 
@@ -332,6 +333,8 @@ main (gint    argc,
   gboolean        result;
   GError         *error = NULL;
   GOptionContext *context;
+
+  setlocale (LC_ALL, "");
 
   context = g_option_context_new (NULL);
   g_option_context_add_main_entries (context, options, NULL);
