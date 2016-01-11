@@ -79,6 +79,7 @@ GType gegl_module_register_type (GTypeModule     *module,
 #include <operation/gegl-operation-sink.h>
 #include <operation/gegl-operation-meta.h>
 #include <operation/gegl-extension-handler.h>
+#include <operation/gegl-operation-handlers.h>
 #include <operation/gegl-operation-property-keys.h>
 
 G_END_DECLS
