@@ -13,7 +13,7 @@
         <param name='x-size'>5.00</param>
         <param name='y-size'>5.00</param>
         <param name='detail'>10</param>
-        <param name='tilable'>true</param>
+        <param name='tileable'>true</param>
         <param name='turbulent'>true</param>
         <param name='seed'>0</param>
         <param name="width">100</param>
