@@ -106,8 +106,8 @@ lseek_to_seek_type(int whence)
     case SEEK_CUR:
       return G_SEEK_CUR;
 
-    case G_SEEK_END:
-      return SEEK_END;
+    case SEEK_END:
+      return G_SEEK_END;
     }
 }
 
