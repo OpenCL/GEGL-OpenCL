@@ -200,20 +200,6 @@ my_set_property (GObject      *gobject,
 }
 
 static void
-prepare (GeglOperation *operation)
-{
-  GeglOp  *self = GEGL_OP (operation);
-  GeglOperation *op;
-
-  /* forward the set BablFormat of the image loader on the meta-op itself,
-   * making potential cache buffers be created with the proper format, there
-   * might be cleaner ways of achieving this.
-   */
-  g_object_get (self->load, "gegl-operation", &op, NULL);
-  gegl_operation_set_format (operation, "output", gegl_operation_get_format (op, "output"));
-}
-
-static void
 gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
@@ -223,7 +209,6 @@ gegl_op_class_init (GeglOpClass *klass)
 
   operation_class->attach = attach;
   operation_class->detect = detect;
-  operation_class->prepare = prepare;
   operation_class->no_cache = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
