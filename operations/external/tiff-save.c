@@ -32,6 +32,7 @@ property_file_path (path, _("File"), "")
 
 #include <gegl-op.h>
 #include <gegl-gio-private.h>
+#include <glib/gprintf.h>
 #include <tiffio.h>
 
 typedef struct

@@ -39,6 +39,7 @@ property_int(directory, _("Directory"), 1)
 
 #include <gegl-op.h>
 #include <gegl-gio-private.h>
+#include <glib/gprintf.h>
 #include <tiffio.h>
 
 typedef enum {
