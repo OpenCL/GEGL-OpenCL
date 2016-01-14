@@ -167,6 +167,7 @@ gegl_graph_prepare (GeglGraphTraversal *path)
   for (list_iter = path->dfs_path; list_iter; list_iter = list_iter->next)
   {
     GeglNode *node = GEGL_NODE (list_iter->data);
+    GeglNode *parent;
     GeglOperation *operation = node->operation;
 
     g_mutex_lock (&node->mutex);
@@ -182,6 +183,13 @@ gegl_graph_prepare (GeglGraphTraversal *path)
       }
 
     g_mutex_unlock (&node->mutex);
+
+    parent = gegl_node_get_parent (node);
+    while (parent != NULL && parent->operation != NULL)
+      {
+        gegl_operation_prepare (parent->operation);
+        parent = gegl_node_get_parent (parent);
+      }
 
     if (!g_hash_table_contains (path->contexts, node))
       {
