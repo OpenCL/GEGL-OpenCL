@@ -156,19 +156,19 @@ gegl_graph_get_bounding_box (GeglGraphTraversal *path)
 /**
  * gegl_graph_prepare:
  * @path: The traversal path
- * 
+ *
  * Prepare all nodes, initializing their output formats and have rects.
  */
 void
 gegl_graph_prepare (GeglGraphTraversal *path)
 {
   GList *list_iter = NULL;
-  
+
   for (list_iter = path->dfs_path; list_iter; list_iter = list_iter->next)
   {
     GeglNode *node = GEGL_NODE (list_iter->data);
     GeglOperation *operation = node->operation;
-    
+
     g_mutex_lock (&node->mutex);
 
     gegl_operation_prepare (operation);
@@ -182,11 +182,11 @@ gegl_graph_prepare (GeglGraphTraversal *path)
       }
 
     g_mutex_unlock (&node->mutex);
-    
+
     if (!g_hash_table_contains (path->contexts, node))
       {
         GeglOperationContext *context = gegl_operation_context_new (node->operation);
-        
+
         g_hash_table_insert (path->contexts,
                              node,
                              context);
@@ -198,7 +198,7 @@ gegl_graph_prepare (GeglGraphTraversal *path)
  * gegl_graph_prepare_request:
  * @path: The traversal path
  * @request_roi: The request rect
- * 
+ *
  * Prepare the graph to render request_roi, this will calculate
  * the area that needs to be rendered from each node in the
  * graph to fulfill this request.
