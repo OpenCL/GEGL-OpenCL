@@ -197,7 +197,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "description", _("WebP image saver"),
      NULL);
 
-  gegl_extension_handler_register_saver (".webp", "gegl:webp-save");
+  gegl_operation_handlers_register_saver (
+    ".webp", "gegl:webp-save");
 }
 
 #endif

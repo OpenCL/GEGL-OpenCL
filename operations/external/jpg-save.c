@@ -198,7 +198,10 @@ gegl_op_class_init (GeglOpClass *klass)
     _("JPEG image saver, using libjpeg"),
     NULL);
 
-  gegl_extension_handler_register_saver (".jpg", "gegl:jpg-save");
+  gegl_operation_handlers_register_saver (
+    ".jpeg", "gegl:jpg-save");
+  gegl_operation_handlers_register_saver (
+    ".jpg", "gegl:jpg-save");
 }
 
 #endif

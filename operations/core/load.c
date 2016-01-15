@@ -88,7 +88,7 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
             extension = g_strdup(strrchr (new_uri, '.'));
 
         if (extension)
-            handler = gegl_extension_handler_get_loader (extension);
+            handler = gegl_operation_handlers_get_loader (extension);
         gegl_node_set (self->load, "operation", handler, NULL);
         gegl_node_set (self->load, "uri", new_uri, NULL);
 
@@ -121,7 +121,7 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
         else
         {
           if (extension)
-            handler = gegl_extension_handler_get_loader (extension);
+            handler = gegl_operation_handlers_get_loader (extension);
           gegl_node_set (self->load,
                          "operation", handler,
                          NULL);

@@ -254,7 +254,8 @@ static void gegl_op_class_init (GeglOpClass *klass)
     "description" , "OpenEXR image saver",
     NULL);
 
-  gegl_extension_handler_register_saver (".exr", "gegl:exr-save");
+  gegl_operation_handlers_register_saver (
+    ".exr", "gegl:exr-save");
 }
 
 #endif

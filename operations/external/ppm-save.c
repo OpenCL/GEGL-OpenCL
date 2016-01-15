@@ -192,7 +192,8 @@ gegl_op_class_init (GeglOpClass *klass)
         _("PPM image saver (Portable pixmap saver.)"),
         NULL);
 
-  gegl_extension_handler_register_saver (".ppm", "gegl:ppm-save");
+  gegl_operation_handlers_register_saver (
+    ".ppm", "gegl:ppm-save");
 }
 
 #endif

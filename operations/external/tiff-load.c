@@ -869,8 +869,14 @@ gegl_op_class_init(GeglOpClass *klass)
     "description", _("TIFF image loader using libtiff"),
     NULL);
 
-  gegl_extension_handler_register_loader(".tiff", "gegl:tiff-load");
-  gegl_extension_handler_register_loader(".tif", "gegl:tiff-load");
+  gegl_operation_handlers_register_loader(
+    "image/tiff", "gegl:tiff-load");
+  gegl_operation_handlers_register_loader(
+    "image/x-tiff-multipage", "gegl:tiff-load");
+  gegl_operation_handlers_register_loader(
+    ".tiff", "gegl:tiff-load");
+  gegl_operation_handlers_register_loader(
+    ".tif", "gegl:tiff-load");
 }
 
 #endif

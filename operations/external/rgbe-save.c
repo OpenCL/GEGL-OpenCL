@@ -87,8 +87,10 @@ gegl_op_class_init (GeglOpClass *klass)
         _("RGBE image saver (Radiance HDR format)"),
     NULL);
 
-  gegl_extension_handler_register_saver (".hdr", "gegl:rgbe-save");
-  gegl_extension_handler_register_saver (".pic", "gegl:rgbe-save");
+  gegl_operation_handlers_register_saver (
+    ".hdr", "gegl:rgbe-save");
+  gegl_operation_handlers_register_saver (
+    ".pic", "gegl:rgbe-save");
 }
 
 #endif

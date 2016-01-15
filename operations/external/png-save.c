@@ -231,7 +231,8 @@ gegl_op_class_init (GeglOpClass *klass)
         _("PNG image saver, using libpng"),
         NULL);
 
-  gegl_extension_handler_register_saver (".png", "gegl:png-save");
+  gegl_operation_handlers_register_saver (
+    ".png", "gegl:png-save");
 }
 
 #endif

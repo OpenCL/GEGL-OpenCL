@@ -532,8 +532,14 @@ gegl_op_class_init (GeglOpClass *klass)
     "description", _("JPEG 2000 image loader using jasper."),
     NULL);
 
-  gegl_extension_handler_register_loader (".jp2", "gegl:jp2-load");
-  gegl_extension_handler_register_loader (".jpx", "gegl:jp2-load");
+  gegl_operation_handlers_register_loader (
+    "image/jp2", "gegl:jp2-load");
+  gegl_operation_handlers_register_loader (
+    ".jp2", "gegl:jp2-load");
+  gegl_operation_handlers_register_loader (
+    ".jpf", "gegl:jp2-load");
+  gegl_operation_handlers_register_loader (
+    ".jpx", "gegl:jp2-load");
 }
 
 #endif

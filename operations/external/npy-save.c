@@ -145,7 +145,8 @@ gegl_op_class_init (GeglOpClass *klass)
         _("NPY image saver (Numerical python file saver.)"),
         NULL);
 
-  gegl_extension_handler_register_saver (".npy", "gegl:npy-save");
+  gegl_operation_handlers_register_saver (
+    ".npy", "gegl:npy-save");
 }
 
 #endif

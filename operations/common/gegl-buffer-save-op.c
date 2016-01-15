@@ -63,7 +63,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "description", _("GeglBuffer file writer."),
     NULL);
 
-  gegl_extension_handler_register_saver (".gegl", "gegl:gegl-buffer-save");
+  gegl_operation_handlers_register_saver (
+    ".gegl", "gegl:gegl-buffer-save");
 }
 
 #endif
