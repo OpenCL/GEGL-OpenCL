@@ -108,7 +108,6 @@ test_save_multiple_nodes (void)
 }
 
 
-#if 0
 /* Test that saving a subgraph works */
 static void
 test_save_toplevel_graph (void)
@@ -124,20 +123,24 @@ test_save_toplevel_graph (void)
         <param name='y'>0</param>\n\
         <param name='width'>0</param>\n\
         <param name='height'>0</param>\n\
+        <param name='reset-origin'>false</param>\n\
       </params>\n\
   </node>\n\
 </gegl>\n";
 
     GeglNode *graph, *op1, *op2;
+    GeglNode *input, *output;
     gchar *xml;
 
     graph = gegl_node_new();
+    input = gegl_node_get_input_proxy(graph, "input");
+    output = gegl_node_get_output_proxy(graph, "output");
     op1 = gegl_node_new_child(graph, "operation", "gegl:crop",
                               "x", 0.0, "y", 0.0,
                               "width", 0.0, "height", 0.0,
                               NULL);
     op2 = gegl_node_new_child(graph, "operation", "gegl:invert-linear", NULL);
-    gegl_node_link_many(op1, op2, NULL);
+    gegl_node_link_many(input, op1, op2, output, NULL);
 
     xml = gegl_node_to_xml(graph, "");
 
@@ -146,7 +149,6 @@ test_save_toplevel_graph (void)
     g_object_unref(graph);
     g_free(xml);
 }
-#endif
 
 int
 main (int argc, char *argv[])
@@ -160,10 +162,7 @@ main (int argc, char *argv[])
     g_test_add_func("/xml/save/empty_graph", test_save_empty_graph);
     g_test_add_func("/xml/save/only_nop_nodes", test_save_nop_nodes);
     g_test_add_func("/xml/save/multiple_nodes", test_save_multiple_nodes);
-
-    /* Expected failure
     g_test_add_func("/xml/save/toplevel_graph", test_save_toplevel_graph);
-    */
 
     result = g_test_run();
     gegl_exit();
