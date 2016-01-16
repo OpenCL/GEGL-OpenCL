@@ -44,6 +44,30 @@ test_save_empty_graph (void)
     g_free(xml);
 }
 
+/* Saving an empty graph creates an output proxy. This has the
+ * side-effect of changing the value of is_graph to TRUE. It is worth
+ * checking that this doesn't affect the outcome of the subsequent
+ * serialization operations. */
+static void
+test_save_empty_graph_twice (void)
+{
+    const gchar * const expected_result = "<?xml version='1.0' encoding='UTF-8'?>\n<gegl>\n</gegl>\n";
+    GeglNode *graph;
+    gchar *xml;
+
+    graph = gegl_node_new();
+
+    xml = gegl_node_to_xml(graph, "");
+    g_free(xml);
+
+    xml = gegl_node_to_xml(graph, "");
+
+    assert_equivalent_xml(xml, expected_result);
+
+    g_free(xml);
+    g_object_unref(graph);
+}
+
 /* gegl:nop nodes should be discarded when saving the graph */
 static void
 test_save_nop_nodes (void)
@@ -160,6 +184,7 @@ main (int argc, char *argv[])
     g_test_init(&argc, &argv, NULL);
 
     g_test_add_func("/xml/save/empty_graph", test_save_empty_graph);
+    g_test_add_func("/xml/save/empty_graph_twice", test_save_empty_graph_twice);
     g_test_add_func("/xml/save/only_nop_nodes", test_save_nop_nodes);
     g_test_add_func("/xml/save/multiple_nodes", test_save_multiple_nodes);
     g_test_add_func("/xml/save/toplevel_graph", test_save_toplevel_graph);
