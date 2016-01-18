@@ -1129,6 +1129,9 @@ add_stack (SerializeState *ss,
               {
                 GeglNode *graph       = g_object_get_data (G_OBJECT (source_node),
                                                            "graph");
+                /* if source_node is a proxy then make it point to the
+                 * actual node
+                 */
                 if (graph)
                   source_node = graph;
                 iter = source_node;
