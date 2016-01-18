@@ -670,6 +670,22 @@ GeglNode    * gegl_node_new_from_file    (const gchar   *path);
 gchar       * gegl_node_to_xml           (GeglNode      *node,
                                           const gchar   *path_root);
 
+/**
+ * gegl_node_to_xml_full:
+ * @head: a #GeglNode
+ * @tail: (allow-none): a #GeglNode
+ * @path_root: filesystem path to construct relative paths from.
+ *
+ * Returns a freshly allocated \0 terminated string containing a XML
+ * serialization of a segment of a graph from @head to @tail nodes.
+ * If @tail is %NULL then this behaves just like #gegl_node_to_xml.
+ *
+ * Return value: (transfer full): XML serialization of a graph segment.
+ */
+gchar       * gegl_node_to_xml_full      (GeglNode    *head,
+                                          GeglNode    *tail,
+                                          const gchar *path_root);
+
 gboolean       gegl_node_get_passthrough (GeglNode      *node);
 
 void           gegl_node_set_passthrough (GeglNode      *node,

@@ -1004,7 +1004,8 @@ serialize_layer (SerializeState *ss,
 static void
 add_stack (SerializeState *ss,
            gint            indent,
-           GeglNode       *head)
+           GeglNode       *head,
+           GeglNode       *tail)
 {
   /*ind; g_string_append (ss->buf, "<stack>\n");
      indent+=2;*/
@@ -1012,6 +1013,7 @@ add_stack (SerializeState *ss,
   if (GEGL_IS_NODE (head))
     {
       GeglNode *iter = head;
+      gboolean last = FALSE;
 
       while (iter)
         {
@@ -1083,7 +1085,7 @@ add_stack (SerializeState *ss,
 
                       g_string_append (ss->buf, ">\n");
                       serialize_properties (ss, indent + 4, iter);
-                      add_stack (ss, indent + 4, source_node);
+                      add_stack (ss, indent + 4, source_node, NULL);
 
                       ind; g_string_append (ss->buf, "</node>\n");
                     }
@@ -1123,22 +1125,34 @@ add_stack (SerializeState *ss,
                 }
             }
           id = NULL;
-          {
-            GeglNode *source_node = gegl_node_get_producer (iter, "input", NULL);
-            if (source_node)
-              {
-                GeglNode *graph       = g_object_get_data (G_OBJECT (source_node),
-                                                           "graph");
-                /* if source_node is a proxy then make it point to the
-                 * actual node
-                 */
-                if (graph)
-                  source_node = graph;
-                iter = source_node;
-              }
-            else
-              iter = NULL;
-          }
+
+          if (last)
+            iter = NULL;
+          else
+            {
+              GeglNode *source_node = gegl_node_get_producer (iter, "input", NULL);
+              if (source_node)
+                {
+                  GeglNode *graph       = g_object_get_data (G_OBJECT (source_node),
+                                                             "graph");
+
+                  if (source_node == tail)
+                    last = TRUE;
+
+                  /* if source_node is a proxy then make it point to
+                   * the actual node
+                   */
+                  if (graph)
+                    source_node = graph;
+
+                  if (source_node == tail)
+                    last = TRUE;
+
+                  iter = source_node;
+                }
+              else
+                iter = NULL;
+            }
 
           g_free (class);
         }
@@ -1148,8 +1162,9 @@ add_stack (SerializeState *ss,
 }
 
 gchar *
-gegl_node_to_xml (GeglNode    *gegl,
-                  const gchar *path_root)
+gegl_node_to_xml_full (GeglNode    *head,
+                       GeglNode    *tail,
+                       const gchar *path_root)
 {
   GeglOperation *operation;
   SerializeState  ss;
@@ -1160,17 +1175,27 @@ gegl_node_to_xml (GeglNode    *gegl,
   ss.clones      = g_hash_table_new (NULL, NULL);
   ss.terse       = FALSE;
 
-  operation = gegl_node_get_gegl_operation (gegl);
+  operation = gegl_node_get_gegl_operation (head);
   /* this case is for empty graphs, and graphs with nodes that are
    * not meta-ops
    */
   if (!operation)
-    gegl = gegl_node_get_output_proxy (gegl, "output");
+    head = gegl_node_get_output_proxy (head, "output");
+
+  if (tail)
+    {
+      operation = gegl_node_get_gegl_operation (tail);
+      /* this case is for empty graphs, and graphs with nodes that are
+       * not meta-ops
+       */
+      if (!operation)
+        tail = gegl_node_get_input_proxy (tail, "input");
+    }
 
   g_string_append (ss.buf, "<?xml version='1.0' encoding='UTF-8'?>\n");
   g_string_append (ss.buf, "<gegl>\n");
 
-  add_stack (&ss, 2, gegl);
+  add_stack (&ss, 2, head, tail);
 
   g_string_append (ss.buf, "</gegl>\n");
 
@@ -1178,4 +1203,14 @@ gegl_node_to_xml (GeglNode    *gegl,
   g_hash_table_destroy (ss.clones);
 
   return g_string_free (ss.buf, FALSE);
+}
+
+gchar *
+gegl_node_to_xml (GeglNode    *gegl,
+                  const gchar *path_root)
+{
+  gchar *xml;
+
+  xml = gegl_node_to_xml_full (gegl, NULL, path_root);
+  return xml;
 }
