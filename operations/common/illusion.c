@@ -50,6 +50,7 @@ property_enum (illusion_type, _("Illusion type"),
 static void prepare (GeglOperation *operation)
 {
   const Babl *format = gegl_operation_get_source_format (operation, "input");
+  const GeglRectangle *bb = gegl_operation_source_get_bounding_box (operation, "input");
 
   if (! format || ! babl_format_has_alpha (format))
     format = babl_format ("R'G'B' float");
@@ -58,6 +59,28 @@ static void prepare (GeglOperation *operation)
 
   gegl_operation_set_format (operation, "input",  format);
   gegl_operation_set_format (operation, "output", format);
+
+  if (bb && ! gegl_rectangle_is_infinite_plane (bb))
+    {
+      GeglProperties *o  = GEGL_PROPERTIES (operation);
+      gdouble        *dx = g_new (gdouble, (4 * o->division + 1) * 2);
+      gdouble        *dy = &dx[4 * o->division + 1];
+      gdouble         offset = (gint) (sqrt (bb->width * bb->width + bb->height * bb->height) / 4);
+      gint            i;
+
+      g_object_set_data_full (G_OBJECT (operation), "free-me",
+                              o->user_data = dx, g_free);
+
+      for (i = -2 * o->division; i <= 2 * o->division; ++i)
+        {
+          gdouble a = G_PI / o->division * (i * 0.5 + 1.0);
+          gdouble c = cos (a);
+          gdouble s = sin (a);
+
+          dx[i + 2 * o->division] = GEGL_FLOAT_IS_ZERO (c) ? 0.0 : c * offset;
+          dy[i + 2 * o->division] = GEGL_FLOAT_IS_ZERO (s) ? 0.0 : s * offset;
+        }
+    }
 }
 
 static GeglRectangle
@@ -98,16 +121,17 @@ process (GeglOperation       *operation,
   GeglSampler        *sampler;
 
   gint         x, y, xx, yy, b;
-  gint         width, height, components;
-  gdouble      radius, cx, cy, angle;
+  gint         width, height, components, angle;
+  gdouble      radius, cx, cy;
   gdouble      center_x;
   gdouble      center_y;
   gdouble      scale;
-  gdouble      offset;
   gboolean     has_alpha;
   gfloat       alpha, alpha1, alpha2;
   gfloat      *in_pixel1;
   gfloat      *in_pixel2;
+  const gdouble *dx = o->user_data;
+  const gdouble *dy = &dx[4 * o->division + 1];
 
   const Babl *format = gegl_operation_get_format (operation, "output");
   has_alpha  = babl_format_has_alpha (format);
@@ -132,7 +156,6 @@ process (GeglOperation       *operation,
   center_x = width / 2.0;
   center_y = height / 2.0;
   scale = sqrt (width * width + height * height) / 2;
-  offset = (gint) (scale / 2);
 
   while (gegl_buffer_iterator_next (iter))
     {
@@ -144,19 +167,19 @@ process (GeglOperation       *operation,
               cy = ((gdouble) y - center_y) / scale;
               cx = ((gdouble) x - center_x) / scale;
 
-              angle = floor (atan2 (cy, cx) * o->division / G_PI_2) *
-                             G_PI_2 / o->division + (G_PI / o->division);
+              angle = floor (atan2 (cy, cx) * o->division / G_PI_2 +
+                             GEGL_FLOAT_EPSILON);
               radius = sqrt ((gdouble) (cx * cx + cy * cy));
 
               if (o->illusion_type == GEGL_ILLUSION_TYPE_1)
                 {
-                   xx = x - offset * cos (angle);
-                   yy = y - offset * sin (angle);
+                   xx = x - dx [2 * o->division + angle];
+                   yy = y - dy [2 * o->division + angle];
                 }
               else                          /* GEGL_ILLUSION_TYPE_2 */
                 {
-                   xx = x - offset * sin (angle);
-                   yy = y - offset * cos (angle);
+                   xx = x - dy [2 * o->division + angle];
+                   yy = y - dx [2 * o->division + angle];
                 }
 
                 gegl_sampler_get (sampler, x, y, NULL,
