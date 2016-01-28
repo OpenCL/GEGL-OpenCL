@@ -44,9 +44,9 @@ Likewise, we have a slack channel for discussions pertaining to development and 
 </br>
 #### Contributing
 
-Please create a pull request and name the branch based on what operation you're currently working on, eg. box-blur_kernel
+It is recommended that you fork this repository and create your branches there. After every discussion, if your kernel has the fastest speed for the vendor, you can create a pull request to have your changes merged. Please include the test results (correctness and timing), and name the pull request according to the operation you're working on and the vendor you're optimizing for, eg. box-blur_kernel_nv
 
-Please ensure that *make clean* is executed before requesting a merge request
+Please ensure that *make clean* is executed before requesting a pull request
 
 </br>
 ##### How to Port an Operation
