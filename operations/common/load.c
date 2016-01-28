@@ -93,10 +93,13 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
     {
       const gchar *extension = strrchr (new_path, '.');
       const gchar *handler   = NULL;
+      char   resolved_path[PATH_MAX];
 
-      if (!g_file_test (new_path, G_FILE_TEST_EXISTS))
+      realpath (new_path, resolved_path);
+
+      if (!g_file_test (resolved_path, G_FILE_TEST_EXISTS))
         {
-          gchar *name = g_filename_display_name (new_path);
+          gchar *name = g_filename_display_name (resolved_path);
           gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
           g_free (name);
 
@@ -116,7 +119,7 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
                          "operation", handler,
                          NULL);
           gegl_node_set (self->load,
-                         "path", new_path,
+                         "path", resolved_path,
                          NULL);
         }
     }
