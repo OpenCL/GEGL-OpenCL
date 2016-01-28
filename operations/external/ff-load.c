@@ -53,6 +53,8 @@ property_audio_fragment (audio, _("audio"), 0)
 
 #include "gegl-op.h"
 #include <errno.h>
+#include <limits.h>
+#include <stdlib.h>
 
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
@@ -411,10 +413,13 @@ prepare (GeglOperation *operation)
       )
     {
       gint i;
+      gchar dereferenced_path[PATH_MAX];
       gint err;
 
       ff_cleanup (o);
-      err = avformat_open_input(&p->video_fcontext, o->path, NULL, 0);
+      realpath (o->path, dereferenced_path);
+      fprintf (stderr, "%s %s\n", o->path, dereferenced_path);
+      err = avformat_open_input(&p->video_fcontext, dereferenced_path, NULL, 0);
       if (err < 0)
         {
           print_error (o->path, err);
