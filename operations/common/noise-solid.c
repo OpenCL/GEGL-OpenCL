@@ -257,6 +257,21 @@ prepare (GeglOperation *operation)
   gegl_operation_set_format (operation, "output", format);
 }
 
+static void
+finalize (GObject *object)
+{
+  GeglOperation *op = (void*) object;
+  GeglProperties *o = GEGL_PROPERTIES (op);
+
+  if (o->user_data)
+    {
+      g_slice_free (NsParamsType, o->user_data);
+      o->user_data = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
+}
+
 static gboolean
 c_process (GeglOperation       *operation,
            void                *out_buf,
@@ -310,11 +325,15 @@ get_bounding_box (GeglOperation *operation)
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
+  GObjectClass             *object_class;
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
 
+  object_class    = G_OBJECT_CLASS (klass);
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class = GEGL_OPERATION_SOURCE_CLASS (klass);
+
+  object_class->finalize = finalize;
 
   source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
