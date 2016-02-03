@@ -2,6 +2,7 @@
 
 EXTRA_DIST = \
 	xml_insert.sh \
+    csourcetostring.py \
 	gobj2dot.rb
 
 AM_CPPFLAGS = \
