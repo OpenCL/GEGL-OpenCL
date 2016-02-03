@@ -756,7 +756,7 @@ gegl_node_connect_from (GeglNode    *sink,
       g_signal_connect (G_OBJECT (real_source), "invalidated",
                         G_CALLBACK (gegl_node_source_invalidated), sink_pad);
 
-      gegl_node_property_changed (G_OBJECT (real_source->operation), NULL, real_source);
+      gegl_node_source_invalidated (real_source, &real_source->have_rect, sink_pad);
 
       return TRUE;
     }
