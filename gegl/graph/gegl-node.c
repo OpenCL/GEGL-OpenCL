@@ -1337,6 +1337,9 @@ gegl_node_set_valist (GeglNode    *self,
 
   g_object_freeze_notify (G_OBJECT (self));
 
+  if (self->operation)
+    g_object_freeze_notify (G_OBJECT (self->operation));
+
   property_name = first_property_name;
   while (property_name)
     {
@@ -1348,9 +1351,16 @@ gegl_node_set_valist (GeglNode    *self,
           op_class          = va_arg (var_args, gchar *);
           op_first_property = va_arg (var_args, gchar *);
 
+          if (self->operation)
+            g_object_thaw_notify (G_OBJECT (self->operation));
+
           /* pass the following properties as construction properties
            * to the operation */
           gegl_node_set_op_class (self, op_class, op_first_property, var_args);
+
+          if (self->operation)
+            g_object_freeze_notify (G_OBJECT (self->operation));
+
           break;
         }
       else
@@ -1399,6 +1409,9 @@ gegl_node_set_valist (GeglNode    *self,
 
       property_name = va_arg (var_args, gchar *);
     }
+
+  if (self->operation)
+    g_object_thaw_notify (G_OBJECT (self->operation));
 
   g_object_thaw_notify (G_OBJECT (self));
 }
