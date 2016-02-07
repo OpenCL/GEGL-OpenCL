@@ -418,7 +418,6 @@ prepare (GeglOperation *operation)
 
       ff_cleanup (o);
       realpath (o->path, dereferenced_path);
-      fprintf (stderr, "%s %s\n", o->path, dereferenced_path);
       err = avformat_open_input(&p->video_fcontext, dereferenced_path, NULL, 0);
       if (err < 0)
         {
