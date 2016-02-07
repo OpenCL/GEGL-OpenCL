@@ -215,7 +215,6 @@ operations/transform/shear.c
 operations/transform/transform.c
 operations/transform/transform-core.c
 operations/transform/translate.c
-operations/workshop/buffer-cache.c
 operations/workshop/color-warp.c
 operations/workshop/component-extract.c
 operations/workshop/demosaic-bimedian.c

@@ -12,7 +12,6 @@ LIBS = $(op_libs)
 
 opdir = $(ext_dir)
 op_LTLIBRARIES =    \
-	buffer-cache.la \
 	component-extract.la \
 	color-warp.la \
 	demosaic-bimedian.la \
