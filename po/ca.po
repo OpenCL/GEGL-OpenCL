@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-03-20 20:22-0400\n"
-"PO-Revision-Date: 2014-11-22 22:42+0100\n"
+"POT-Creation-Date: 2016-02-07 22:55+0100\n"
+"PO-Revision-Date: 2015-12-04 00:01+0100\n"
 "Last-Translator: Albert F. <lakonfrariadelavila@gmail.com>\n"
 "Language-Team: Catalan <tradgnome@softcatala.org>\n"
 "Language: ca\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Poedit 1.5.4\n"
+"X-Generator: Poedit 1.8.6\n"
 
-#: ../bin/gegl.c:148
+#: ../bin/gegl.c:150
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "No s'ha pogut llegir el fitxer: %s"
 
-#: ../bin/gegl.c:179
+#: ../bin/gegl.c:189
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "El gràfic no és vàlid. S'ha interromput.\n"
 
-#: ../bin/gegl.c:277 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:287 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Es desconeix el mode GeglOption: %d"
@@ -158,25 +158,25 @@ msgstr ""
 msgid ""
 "\n"
 "\n"
-"unknown parameter '%s' giving you help instead\n"
+"unknown argument '%s' giving you help instead\n"
 "\n"
 "\n"
 msgstr ""
 "\n"
 "\n"
-"es desconeix el paràmetre «%s», se us mostra l'ajuda\n"
+"es desconeix el paràmetre «%s», s’us mostra l'ajuda\n"
 "\n"
 "\n"
 
 #: ../gegl/gegl-enums.c:33 ../operations/common/color-reduction.c:27
 #: ../operations/common/fractal-explorer.c:93
-#: ../operations/workshop/gaussian-blur-iir.c:31
-#: ../operations/workshop/gblur-1d.c:31
+#: ../operations/common/gaussian-blur-iir.c:31
+#: ../operations/common/gblur-1d.c:31
 msgid "None"
 msgstr "Cap"
 
-#: ../gegl/gegl-enums.c:34 ../operations/workshop/gaussian-blur-iir.c:32
-#: ../operations/workshop/gblur-1d.c:32
+#: ../gegl/gegl-enums.c:34 ../operations/common/gaussian-blur-iir.c:32
+#: ../operations/common/gblur-1d.c:32
 msgid "Clamp"
 msgstr "Pinça"
 
@@ -184,13 +184,13 @@ msgstr "Pinça"
 msgid "Loop"
 msgstr "Bucle"
 
-#: ../gegl/gegl-enums.c:36 ../operations/workshop/gaussian-blur-iir.c:33
-#: ../operations/workshop/gblur-1d.c:33
+#: ../gegl/gegl-enums.c:36 ../operations/common/gaussian-blur-iir.c:33
+#: ../operations/common/gblur-1d.c:33
 msgid "Black"
 msgstr "Negre"
 
-#: ../gegl/gegl-enums.c:37 ../operations/workshop/gaussian-blur-iir.c:34
-#: ../operations/workshop/gblur-1d.c:34
+#: ../gegl/gegl-enums.c:37 ../operations/common/gaussian-blur-iir.c:34
+#: ../operations/common/gblur-1d.c:34
 msgid "White"
 msgstr "Blanc"
 
@@ -220,7 +220,7 @@ msgstr "Vertical"
 msgid "Nearest"
 msgstr "Més proper"
 
-#: ../gegl/gegl-enums.c:113 ../operations/common/bump-map.c:40
+#: ../gegl/gegl-enums.c:113 ../operations/common/bump-map.c:33
 #: ../operations/common/sinus.c:64
 msgid "Linear"
 msgstr "Lineal"
@@ -249,7 +249,7 @@ msgstr ""
 
 #: ../gegl/gegl-init.c:275
 msgid "Default size of tiles in GeglBuffers"
-msgstr "La mida, per defecte, del mosaic en els GeglBuffers"
+msgstr "La mida, per defecte, d les tessel·la en els GeglBuffers"
 
 #: ../gegl/gegl-init.c:280
 msgid "The count of pixels to compute simultaneously"
@@ -362,44 +362,46 @@ msgstr "Suavitzat Scale3X"
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
 msgstr "Suavitzat que utilitza l'algorisme d'extrapolació de vores Scale3X"
 
-#: ../operations/common/apply-lens.c:31
+#: ../operations/common/apply-lens.c:36
 msgid "Lens refraction index"
 msgstr "Índex de refracció de les lents"
 
-#: ../operations/common/apply-lens.c:34
+#: ../operations/common/apply-lens.c:41
 msgid "Keep original surroundings"
-msgstr ""
+msgstr "Mantingueu l'entorn original"
 
-#: ../operations/common/apply-lens.c:35
+#: ../operations/common/apply-lens.c:42
 msgid "Keep image unchanged, where not affected by the lens."
 msgstr "Mantén la imatge sense canvis on no afecten les lents."
 
-#: ../operations/common/apply-lens.c:37 ../operations/common/cubism.c:39
+#: ../operations/common/apply-lens.c:44 ../operations/common/cubism.c:39
 #: ../operations/common/lens-distortion.c:57
-#: ../operations/common/pixelize.c:62
+#: ../operations/common/pixelize.c:62 ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Color de fons"
 
-#: ../operations/common/apply-lens.c:301
+#: ../operations/common/apply-lens.c:272
 msgid "Apply Lens"
 msgstr "Aplica lents"
 
-#: ../operations/common/apply-lens.c:304
+#: ../operations/common/apply-lens.c:275
 msgid ""
-"Simulates the optical distoration caused by having an elliptical lens over "
+"Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
 msgstr ""
-"Simula la distorsió òptica resultant si es posen unes lents el·líptiques "
-"sobre la imatge"
+"Simula la distorsió òptica causada per tenir una lent el·líptica sobre la "
+"imatge"
 
 #: ../operations/common/bilateral-filter.c:26
 #: ../operations/common/bilateral-filter-fast.c:37
 #: ../operations/common/dropshadow.c:37
+#: ../operations/common/gaussian-blur-selective.c:29
 msgid "Blur radius"
 msgstr "Radi del difuminat"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/bilateral-filter-fast.c:38
+#: ../operations/common/gaussian-blur-selective.c:30
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Radi de la regió quadrada de píxels (l'amplada i l'alçada seran el radi*2+1)."
@@ -412,20 +414,19 @@ msgstr "Preservació de la vora"
 msgid "Amount of edge preservation"
 msgstr "Quantitat de preservació de la vora"
 
-#: ../operations/common/bilateral-filter.c:288
+#: ../operations/common/bilateral-filter.c:289
 msgid "Bilateral Filter"
 msgstr "Filtre bilateral"
 
-#: ../operations/common/bilateral-filter.c:291
-#, fuzzy
+#: ../operations/common/bilateral-filter.c:292
 msgid ""
 "Like a gaussian blur; but where the contribution for each neighbourhood "
 "pixel is also weighted by the color difference with the original center "
 "pixel. "
 msgstr ""
-"Un filtre de desenfocament que preserva la vora i que es pot utilitzar per a "
-"la reducció del soroll. És un desenfocament gaussià on la contribució dels "
-"píxels veïns són valorats per la diferència de color del píxel del centre."
+"Com en un difuminat gaussià; però la contribució de cada píxel del voltant "
+"també s'equilibra per la diferència de color amb el píxel original del "
+"centre."
 
 #: ../operations/common/bilateral-filter-fast.c:33
 msgid "Smoothness"
@@ -434,6 +435,11 @@ msgstr "Suavitat"
 #: ../operations/common/bilateral-filter-fast.c:34
 msgid "Level of smoothness"
 msgstr "Nivell de suavitat"
+
+#: ../operations/common/bilateral-filter-fast.c:495
+#, fuzzy
+msgid "Bilateral Box Filter"
+msgstr "Filtre bilateral"
 
 #: ../operations/common/bilateral-filter-fast.c:498
 msgid ""
@@ -448,11 +454,8 @@ msgstr ""
 #: ../operations/common/supernova.c:45 ../operations/common/vignette.c:37
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
-#: ../operations/workshop/box-max.c:25 ../operations/workshop/box-min.c:25
-#: ../operations/workshop/box-percentile.c:27
-#: ../operations/workshop/disc-percentile.c:26
 #: ../operations/workshop/kuwahara.c:25
-#: ../operations/workshop/snn-percentile.c:27
+#: ../operations/workshop/median-blur.c:26
 msgid "Radius"
 msgstr "Radi"
 
@@ -494,13 +497,22 @@ msgstr "Brillantor"
 msgid "Amount to increase brightness"
 msgstr "Quantitat d'augment de la brillantor"
 
+#: ../operations/common/brightness-contrast.c:150
+#, fuzzy
+msgid "Brightness Contrast"
+msgstr "Brillantor"
+
 #: ../operations/common/brightness-contrast.c:152
 #, c-format
 msgid ""
 "Changes the light level and contrast. This operation operates in linear "
-"light, 'contrast' is a scale factor around 50% gray, and 'brightness' a "
+"light, 'contrast' is a scale factor around 50%% gray, and 'brightness' a "
 "constant offset to apply after contrast scaling."
 msgstr ""
+"Canvia el nivell de llum i contrast. Aquesta operació funciona amb llum "
+"lineal, «contrast» és un factor d'escala al voltant del 50 %% de color gris, "
+"i «brillantor» és una constant de desplaçament que s'aplica després "
+"d'escalar el contrast."
 
 #: ../operations/common/buffer-sink.c:25
 #: ../operations/common/write-buffer.c:25
@@ -527,9 +539,9 @@ msgid "Buffer Sink"
 msgstr "Conducte de la memòria intermèdia"
 
 #: ../operations/common/buffer-sink.c:84
-msgid "Write the resulting rendering to an already existing GEGL buffer."
+msgid "Create a new GEGL buffer to write the resulting rendering."
 msgstr ""
-"Escriu la renderització resultant en una memòria intermèdia Gegl existent."
+"Crea una nova memòria intermèdia GEGL per escriure la composició resultant."
 
 #: ../operations/common/buffer-source.c:25
 msgid "Input buffer"
@@ -548,106 +560,110 @@ msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr ""
 "Utilitza una memòria intermèdia Gegl en memòria com a origen de les dades."
 
-#: ../operations/common/bump-map.c:41
+#: ../operations/common/bump-map.c:34
 msgid "Spherical"
 msgstr "Esfèric"
 
-#: ../operations/common/bump-map.c:42 ../operations/common/sinus.c:66
+#: ../operations/common/bump-map.c:35 ../operations/common/sinus.c:66
 msgid "Sinusoidal"
 msgstr "Sinusoïdal"
 
-#: ../operations/common/bump-map.c:45
+#: ../operations/common/bump-map.c:38
 msgid "Type"
 msgstr "Tipus"
 
-#: ../operations/common/bump-map.c:47
+#: ../operations/common/bump-map.c:40
 msgid "Type of map"
 msgstr "Tipus de mapa"
 
-#: ../operations/common/bump-map.c:49
+#: ../operations/common/bump-map.c:42
 msgid "Compensate"
 msgstr "Compensa"
 
-#: ../operations/common/bump-map.c:50
+#: ../operations/common/bump-map.c:43
 msgid "Compensate for darkening"
 msgstr "Compensa la foscor"
 
-#: ../operations/common/bump-map.c:52 ../operations/common/invert-linear.c:73
+#: ../operations/common/bump-map.c:45 ../operations/common/invert-linear.c:73
 msgid "Invert"
 msgstr "Inverteix"
 
-#: ../operations/common/bump-map.c:53
+#: ../operations/common/bump-map.c:46
 msgid "Invert bumpmap"
 msgstr "Inverteix el mapa de relleu"
 
-#: ../operations/common/bump-map.c:55
+#: ../operations/common/bump-map.c:48
 msgid "Tiled"
-msgstr "En mosaic"
+msgstr "Enrajolat"
 
-#: ../operations/common/bump-map.c:56
+#: ../operations/common/bump-map.c:49
 msgid "Tiled bumpmap"
-msgstr "Mapa de relleu en mosaic"
+msgstr "Mapa de relleu enrajolat"
 
-#: ../operations/common/bump-map.c:58 ../operations/common/emboss.c:34
+#: ../operations/common/bump-map.c:51 ../operations/common/emboss.c:34
 msgid "Azimuth"
 msgstr "Azimut"
 
-#: ../operations/common/bump-map.c:62 ../operations/common/emboss.c:39
+#: ../operations/common/bump-map.c:55 ../operations/common/emboss.c:39
 msgid "Elevation"
 msgstr "Elevació"
 
-#: ../operations/common/bump-map.c:65 ../operations/common/emboss.c:44
+#: ../operations/common/bump-map.c:58 ../operations/common/emboss.c:44
 #: ../operations/common/fractal-trace.c:58
 #: ../operations/common/texturize-canvas.c:44
 msgid "Depth"
 msgstr "Profunditat"
 
-#: ../operations/common/bump-map.c:68 ../operations/common/checkerboard.c:41
+#: ../operations/common/bump-map.c:61 ../operations/common/checkerboard.c:41
 #: ../operations/common/grid.c:38 ../operations/common/mirrors.c:44
 #: ../operations/seamless-clone/seamless-clone.c:26
 #: ../operations/seamless-clone/seamless-clone-compose.c:25
 msgid "Offset X"
 msgstr "Desplaçament de X"
 
-#: ../operations/common/bump-map.c:74 ../operations/common/checkerboard.c:47
+#: ../operations/common/bump-map.c:67 ../operations/common/checkerboard.c:47
 #: ../operations/common/grid.c:44 ../operations/common/mirrors.c:50
 #: ../operations/seamless-clone/seamless-clone.c:32
 #: ../operations/seamless-clone/seamless-clone-compose.c:31
 msgid "Offset Y"
 msgstr "Desplaçament de Y"
 
-#: ../operations/common/bump-map.c:80
+#: ../operations/common/bump-map.c:73
 msgid "Waterlevel"
 msgstr "Nivell de l'aigua"
 
-#: ../operations/common/bump-map.c:81
+#: ../operations/common/bump-map.c:74
 msgid "Level that full transparency should represent"
 msgstr "Nivell que hauria de representar la transparència completa"
 
-#: ../operations/common/bump-map.c:84
+#: ../operations/common/bump-map.c:77
 msgid "Ambient lighting factor"
 msgstr "Factor d'il·luminació d'ambient"
 
-#: ../operations/common/bump-map.c:474
+#: ../operations/common/bump-map.c:454
 msgid "Bump Map"
 msgstr "Mapa de relleu"
 
-#: ../operations/common/bump-map.c:476
+#: ../operations/common/bump-map.c:456
 msgid ""
 "This plug-in uses the algorithm described by John Schlag, \"Fast Embossing "
 "Effects on Raster Image Data\" in Graphics GEMS IV (ISBN 0-12-336155-9). It "
-"takes a drawable to be applied as a bump map to another image and produces a "
+"takes a buffer to be applied as a bump map to another buffer and produces a "
 "nice embossing effect."
 msgstr ""
+"Aquest connector utilitza l'algorisme descrit per John Schlag, «Efectes "
+"ràpids de relleu a Raster Image Data» als Graphics GEMS IV (ISBN "
+"0-12-336155-9). Agafa una memòria intermèdia per ser aplicat com un mapa de "
+"relleu a una altra memòria intermèdia i produeix un efecte de relleu "
+"agradable."
 
 #: ../operations/common/c2g.c:28
-#, fuzzy
 msgid ""
 "Neighborhood taken into account, this is the radius in pixels taken into "
 "account when deciding which colors map to which gray values"
 msgstr ""
 "Tenint en compte el veïnatge, aquest és el radi, en píxels, que es té en "
-"compte quan es decideix quins colors es mapen a quins valors de grisos"
+"compte quan es decideix quins colors es mapen a valors de grisos"
 
 #: ../operations/common/c2g.c:36 ../operations/common/stress.c:34
 msgid "Samples"
@@ -681,10 +697,9 @@ msgid ""
 "Color to grayscale conversion, uses envelopes formed with the STRESS "
 "approach to perform local color-difference preserving grayscale generation."
 msgstr ""
-"Conversió de color a escala de grisos. Utilitza embolcalls que es formen a "
-"partir de les diferències espacials de color, per dur a terme la millora del "
-"contrast espacial de l'escala de grisos per preservar les característiques "
-"del color"
+"Conversió de color a escala de grisos. Utilitza embolcalls formats amb "
+"STRESS per realitzar diferències de color local preservant la generació "
+"d’escala de grisos."
 
 #: ../operations/common/cartoon.c:25
 msgid "Mask radius"
@@ -704,6 +719,9 @@ msgid ""
 "subsequently shaded with color. This is achieved by enhancing edges and "
 "darkening areas that are already distinctly darker than their neighborhood"
 msgstr ""
+"Simula una caricatura, el seu resultat és similar al d'un feltre negre fet a "
+"ploma i enfosquit amb color. Això s'aconsegueix potenciant les vores i "
+"enfosquint les àrees més fosques del voltant"
 
 #: ../operations/common/channel-mixer.c:31
 #: ../operations/common/mono-mixer.c:26
@@ -712,96 +730,78 @@ msgstr "Preserva la lluminositat"
 
 #. Red channel
 #: ../operations/common/channel-mixer.c:34
-#, fuzzy
 msgid "Red in Red channel"
-msgstr "Canal vermell"
+msgstr "Canal vermell en el vermell"
 
 #: ../operations/common/channel-mixer.c:35
-#, fuzzy
 msgid "Set the red amount for the red channel"
-msgstr "Estableix el guany de vermell per al canal vermell"
+msgstr "Estableix la quantitat de vermell per al canal vermell"
 
 #: ../operations/common/channel-mixer.c:38
-#, fuzzy
 msgid "Green in Red channel"
-msgstr "Canal verd"
+msgstr "Canal verd i vermell"
 
 #: ../operations/common/channel-mixer.c:39
-#, fuzzy
 msgid "Set the green amount for the red channel"
-msgstr "Estableix el guany de verd per al canal vermell"
+msgstr "Estableix la quantitat de verd per al canal vermell"
 
 #: ../operations/common/channel-mixer.c:42
-#, fuzzy
 msgid "Blue in Red channel"
-msgstr "Canal blau"
+msgstr "Canal blau i vermell"
 
 #: ../operations/common/channel-mixer.c:43
-#, fuzzy
 msgid "Set the blue amount for the red channel"
-msgstr "Estableix el guany de blau per al canal vermell"
+msgstr "Estableix la quantitat de blau per al canal vermell"
 
 #. Green channel
 #: ../operations/common/channel-mixer.c:47
-#, fuzzy
 msgid "Red in Green channel"
-msgstr "Canal verd"
+msgstr "Canal vermell i verd"
 
 #: ../operations/common/channel-mixer.c:48
-#, fuzzy
 msgid "Set the red amount for the green channel"
-msgstr "Estableix el guany de vermell per al canal verd"
+msgstr "Estableix la quantitat de vermell per al canal verd"
 
 #: ../operations/common/channel-mixer.c:51
-#, fuzzy
 msgid "Green for Green channel"
-msgstr "Canal verd"
+msgstr "Canal verd pel verd"
 
 #: ../operations/common/channel-mixer.c:52
-#, fuzzy
 msgid "Set the green amount for the green channel"
-msgstr "Estableix el guany de verd per al canal verd"
+msgstr "Estableix la quantitat de verd per al canal verd"
 
 #: ../operations/common/channel-mixer.c:55
-#, fuzzy
 msgid "Blue in Green channel"
-msgstr "Canal verd"
+msgstr "Canal blau en verd"
 
 #: ../operations/common/channel-mixer.c:56
-#, fuzzy
 msgid "Set the blue amount for the green channel"
-msgstr "Estableix el guany de blau per al canal verd"
+msgstr "Estableix la quantitat de blau per al canal verd"
 
 #. Blue channel
 #: ../operations/common/channel-mixer.c:60
-#, fuzzy
 msgid "Red in Blue channel"
-msgstr "Canal blau"
+msgstr "Canal vermell en blau"
 
 #: ../operations/common/channel-mixer.c:61
-#, fuzzy
 msgid "Set the red amount for the blue channel"
-msgstr "Estableix el guany de vermell per al canal vermell"
+msgstr "Estableix la quantitat de vermell per al canal blau"
 
 #: ../operations/common/channel-mixer.c:64
-#, fuzzy
 msgid "Green in Blue channel"
-msgstr "Canal verd"
+msgstr "Canal verd i blau"
 
 #: ../operations/common/channel-mixer.c:65
-#, fuzzy
 msgid "Set the green amount for the blue channel"
-msgstr "Estableix el guany de verd per al canal vermell"
+msgstr "Estableix la quantitat de verd per al canal blau"
 
 #: ../operations/common/channel-mixer.c:68
-#, fuzzy
 msgid "Blue in Blue channel"
-msgstr "Canal blau"
+msgstr "Canal blau en el blau"
 
 #: ../operations/common/channel-mixer.c:69
-#, fuzzy
 msgid "Set the blue amount for the blue channel"
-msgstr "Estableix el guany de blau per al canal vermell"
+msgstr "Estableix la quantitat de blau per al canal blau"
 
 #: ../operations/common/channel-mixer.c:266
 msgid "Channel Mixer"
@@ -811,10 +811,13 @@ msgstr "Mesclador de canals"
 msgid ""
 "Remix colors; by defining relative contributions from source components."
 msgstr ""
+"Barreja de colors; definint les contribucions relatives dels components "
+"d'origen."
 
 #: ../operations/common/checkerboard.c:25
 #: ../operations/common/diffraction-patterns.c:78
-#: ../operations/common/grid.c:24 ../operations/common/noise-solid.c:64
+#: ../operations/common/grid.c:24 ../operations/common/maze.c:42
+#: ../operations/common/noise-solid.c:64
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
@@ -826,13 +829,14 @@ msgid "Width"
 msgstr "Amplada"
 
 #: ../operations/common/checkerboard.c:26 ../operations/common/grid.c:25
+#: ../operations/common/maze.c:43
 msgid "Horizontal width of cells pixels"
 msgstr "Amplada horitzontal de les caselles en píxels"
 
 #: ../operations/common/checkerboard.c:33
 #: ../operations/common/diffraction-patterns.c:86
 #: ../operations/common/engrave.c:31 ../operations/common/grid.c:31
-#: ../operations/common/noise-solid.c:72
+#: ../operations/common/maze.c:50 ../operations/common/noise-solid.c:72
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
@@ -844,6 +848,7 @@ msgid "Height"
 msgstr "Alçada"
 
 #: ../operations/common/checkerboard.c:34 ../operations/common/grid.c:32
+#: ../operations/common/maze.c:51
 msgid "Vertical width of cells pixels"
 msgstr "Amplada vertical de les caselles en píxels"
 
@@ -882,11 +887,11 @@ msgstr "Format babl"
 msgid "The babl format of the output"
 msgstr "Format babl per a la sortida"
 
-#: ../operations/common/checkerboard.c:410
+#: ../operations/common/checkerboard.c:345
 msgid "Checkerboard"
 msgstr "Tauler d'escacs"
 
-#: ../operations/common/checkerboard.c:412
+#: ../operations/common/checkerboard.c:347
 msgid "Create a checkerboard pattern"
 msgstr "Crea un patró del tipus tauler d'escacs"
 
@@ -894,6 +899,7 @@ msgstr "Crea un patró del tipus tauler d'escacs"
 #: ../operations/common/color-to-alpha.c:28
 #: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
 #: ../operations/common/rectangle.c:48 ../operations/common/supernova.c:60
+#: ../operations/common/tile-paper.c:33
 #: ../operations/common/value-propagate.c:55
 #: ../operations/common/vignette.c:34 ../operations/external/text.c:36
 #: ../operations/external/vector-fill.c:26
@@ -909,73 +915,69 @@ msgstr ""
 "Genera una memòria intermèdia emplenada només amb el color especificat. "
 "Utilitzeu Gegl:escapça per reduir-ne les dimensions."
 
-#: ../operations/common/color-enhance.c:234
-#, fuzzy
+#: ../operations/common/color-enhance.c:235
 msgid "Color Enhance"
-msgstr "Color 1"
+msgstr "Ressalta el color"
 
-#: ../operations/common/color-enhance.c:237
+#: ../operations/common/color-enhance.c:238
 msgid ""
 "Stretch color chroma to cover maximum possible range, keeping hue and "
 "lightness untouched."
 msgstr ""
+"Estirament del croma de color per cobrir-ne la franja el màxim possible, "
+"mantenint el to i la lluminositat sense tocar."
 
 #: ../operations/common/color-exchange.c:32
-#, fuzzy
 msgid "From Color"
-msgstr "Color del traç"
+msgstr "Del color"
 
 #: ../operations/common/color-exchange.c:33
-#, fuzzy
 msgid "The color to change."
-msgstr "Colr per fer transparent."
+msgstr "El color per canviar."
 
 #: ../operations/common/color-exchange.c:35
-#, fuzzy
 msgid "To Color"
-msgstr "Color"
+msgstr "Al color"
 
 #: ../operations/common/color-exchange.c:36
 msgid "Replacement color."
-msgstr ""
+msgstr "Color de reemplaçament."
 
 #: ../operations/common/color-exchange.c:38
-#, fuzzy
 msgid "Red Threshold"
-msgstr "Llindar"
+msgstr "Llindar vermell"
 
 #: ../operations/common/color-exchange.c:39
 msgid "Red threshold of the input color"
-msgstr ""
+msgstr "Llindar vermell del color d'entrada"
 
 #: ../operations/common/color-exchange.c:42
-#, fuzzy
 msgid "Green Threshold"
-msgstr "Llindar de gris"
+msgstr "Llindar verd"
 
 #: ../operations/common/color-exchange.c:43
 msgid "Green threshold of the input color"
-msgstr ""
+msgstr "Llindar verd del color d'entrada"
 
 #: ../operations/common/color-exchange.c:46
-#, fuzzy
 msgid "Blue Threshold"
-msgstr "Llindar"
+msgstr "Llindar blau"
 
 #: ../operations/common/color-exchange.c:47
 msgid "Blue threshold of the input color"
-msgstr ""
+msgstr "Llindar blau del color d'entrada"
 
-#: ../operations/common/color-exchange.c:192
-#, fuzzy
+#: ../operations/common/color-exchange.c:243
 msgid "Exchange color"
-msgstr "Color de la tinta"
+msgstr "Canvi de color"
 
-#: ../operations/common/color-exchange.c:195
+#: ../operations/common/color-exchange.c:246
 msgid ""
 "Exchange one color with another, optionally setting a threshold to convert "
 "from one shade to another."
 msgstr ""
+"Intercanvia un color amb un altre, hi ha l'opció d'establir un llindar de "
+"conversió d'una ombra a una altra."
 
 #: ../operations/common/color-reduction.c:28
 msgid "Random"
@@ -983,7 +985,7 @@ msgstr "Aleatori"
 
 #: ../operations/common/color-reduction.c:29
 msgid "Resilient"
-msgstr ""
+msgstr "Resistent"
 
 #: ../operations/common/color-reduction.c:30
 msgid "Random Covariant"
@@ -1039,15 +1041,16 @@ msgstr "L'estratègia de tramat que s'utilitzarà"
 
 #. XXX: what?
 #: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
-#: ../operations/common/mosaic.c:88 ../operations/common/noise-cell.c:55
+#: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
+#: ../operations/common/noise-cell.c:55
 #: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
 #: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
-#: ../operations/common/noise-pick.c:38
-#: ../operations/common/noise-simplex.c:39 ../operations/common/noise-rgb.c:44
+#: ../operations/common/noise-pick.c:38 ../operations/common/noise-rgb.c:44
+#: ../operations/common/noise-simplex.c:39
 #: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
 #: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
 #: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
-#: ../operations/common/supernova.c:63 ../operations/common/wind.c:34
+#: ../operations/common/supernova.c:63
 msgid "Random seed"
 msgstr "Llavor aleatòria"
 
@@ -1056,14 +1059,14 @@ msgid "Color Reduction"
 msgstr "Reducció de color"
 
 #: ../operations/common/color-reduction.c:511
-#, fuzzy
 msgid ""
 "Reduce the number of colors in the image, by reducing the bits per channel "
-"(colors and alpha), different dithering methodscan be specified to "
+"(colors and alpha). Different dithering methods can be specified to "
 "counteract quantization induced banding."
 msgstr ""
-"Redueix el nombre de colors de la imatge amb la reducció del nombre de bits "
-"per canal (de color i alfa), amb tramat opcional"
+"Redueix el nombre de colors de la imatge, amb la reducció del nombre de bits "
+"per canal (colors i alfa). Diferents mètodes de tramat es poden especificar "
+"per contrarestar la quantificació de bandes induïdes."
 
 #: ../operations/common/color-rotate.c:35
 msgid "Treat as this"
@@ -1102,8 +1105,8 @@ msgid "End angle of the source color range"
 msgstr "Angle final del rang de color d'origen"
 
 #: ../operations/common/color-rotate.c:57
-msgid "Start angle of the desination color range"
-msgstr "Angle d'inici del rang de color de destinació"
+msgid "Start angle of the destination color range"
+msgstr "Angle d'inici de la gamma de color de destinació"
 
 #: ../operations/common/color-rotate.c:62
 msgid "End angle of the destination color range"
@@ -1128,25 +1131,28 @@ msgid ""
 "they had this hue and saturation\n"
 "Change to this: Change gray colors to this hue and saturation"
 msgstr ""
+"Tractament: els colors grisos de la part alta de la gamma d'origen serà "
+"tractada com si tinguessin aquest to i saturació\n"
+"Canvia a: canvia els colors grisos a aquest to i saturació"
 
 #: ../operations/common/color-rotate.c:79
 #: ../operations/common/noise-cie-lch.c:34 ../operations/common/noise-hsv.c:30
+#: ../operations/workshop/component-extract.c:28
 msgid "Hue"
 msgstr "To"
 
 #: ../operations/common/color-rotate.c:80
-#, fuzzy
 msgid "Hue value for above gray settings"
 msgstr "Valor del to per sobre de la configuració del gris"
 
 #: ../operations/common/color-rotate.c:84 ../operations/common/fattal02.c:41
 #: ../operations/common/mantiuk06.c:35 ../operations/common/noise-hsv.c:33
+#: ../operations/common/saturation.c:217
 #: ../operations/external/lcms-from-profile.c:35
 msgid "Saturation"
 msgstr "Saturació"
 
 #: ../operations/common/color-rotate.c:85
-#, fuzzy
 msgid "Saturation value for above gray settings"
 msgstr "Valor de la saturació per sobre de la configuració del gris"
 
@@ -1380,18 +1386,20 @@ msgstr "Memòria intermèdia"
 msgid ""
 "An already existing GeglBuffer to write incoming buffer data to, or NULL."
 msgstr ""
+"Una ja existent memòria intermèdia Gegl per escriure dades de memòria "
+"intermèdia entrants, o NULL."
 
-#: ../operations/common/copy-buffer.c:165
+#: ../operations/common/copy-buffer.c:151
 msgid "Copy Buffer"
 msgstr "Copia la memòria intermèdia"
 
-#: ../operations/common/copy-buffer.c:167
+#: ../operations/common/copy-buffer.c:153
 msgid "Writes image data to an already existing buffer"
 msgstr "Escriu les dades de la imatge en una memòria intermèdia existent"
 
 #: ../operations/common/cubism.c:30 ../operations/common/mosaic.c:42
 msgid "Tile size"
-msgstr "Mida del mosaic"
+msgstr "Mida de la tessel·la"
 
 #: ../operations/common/cubism.c:31 ../operations/common/mosaic.c:43
 msgid "Average diameter of each tile (in pixels)"
@@ -1399,11 +1407,11 @@ msgstr "Mitjana del diàmetre de cada rajola (en píxels)"
 
 #: ../operations/common/cubism.c:35
 msgid "Tile saturation"
-msgstr "Saturació del mosaic"
+msgstr "Saturació de les tessel·les"
 
 #: ../operations/common/cubism.c:36
 msgid "Expand tiles by this amount"
-msgstr "Expandeix el mosaic en aquesta quantitat"
+msgstr "Expandeix les tessel·les en aquesta quantitat"
 
 #: ../operations/common/cubism.c:612
 msgid "Cubism"
@@ -1414,8 +1422,39 @@ msgid ""
 "Convert the image into randomly rotated square blobs, somehow resembling a "
 "cubist painting style"
 msgstr ""
-"Converteix la imatge en un conjunt de taques quadrades que es roten "
+"Converteix la imatge en un conjunt de taques quadrades que giren "
 "aleatòriament, quelcom semblant a una pintura d'estil cubista"
+
+#: ../operations/common/dcraw-load.c:26
+#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:24
+#: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
+#: ../operations/common/open-buffer.c:25 ../operations/common/save.c:25
+#: ../operations/external/ff-load.c:24 ../operations/external/ff-save.c:29
+#: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
+#: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
+#: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
+#: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
+#: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
+#: ../operations/external/svg-load.c:25 ../operations/external/tiff-load.c:25
+#: ../operations/external/tiff-save.c:25 ../operations/external/webp-load.c:25
+#: ../operations/external/webp-save.c:24
+#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/rawbayer-load.c:25
+msgid "File"
+msgstr "Fitxer"
+
+#: ../operations/common/dcraw-load.c:27 ../operations/common/load.c:26
+#: ../operations/common/magick-load.c:27 ../operations/external/png-load.c:28
+#: ../operations/external/ppm-load.c:26 ../operations/external/raw-load.c:28
+#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
+#: ../operations/workshop/rawbayer-load.c:26
+msgid "Path of file to load."
+msgstr "Camí del fitxer que es vol carregar."
+
+#: ../operations/common/dcraw-load.c:183
+msgid "Raw image loader, wrapping dcraw with pipes."
+msgstr "Carregador d'imatges RAW (en cru), embolcallat «dcraw» amb conductes."
 
 #: ../operations/common/deinterlace.c:31
 msgid "Keep even fields"
@@ -1433,7 +1472,7 @@ msgstr "Mantén"
 msgid "Keep even or odd fields"
 msgstr "Mantén els camps parells/senars"
 
-#: ../operations/common/deinterlace.c:40 ../operations/workshop/gblur-1d.c:49
+#: ../operations/common/deinterlace.c:40 ../operations/common/gblur-1d.c:49
 msgid "Orientation"
 msgstr "Orientació"
 
@@ -1478,109 +1517,93 @@ msgstr ""
 "diferència de dos desenfocaments gaussians"
 
 #: ../operations/common/diffraction-patterns.c:30
-#, fuzzy
 msgid "Red frequency"
-msgstr "Freqüència del component 1"
+msgstr "Freqüència de vermell"
 
 #: ../operations/common/diffraction-patterns.c:31
 msgid "Light frequency (red)"
-msgstr ""
+msgstr "Freqüència de llum (vermell)"
 
 #: ../operations/common/diffraction-patterns.c:34
-#, fuzzy
 msgid "Green frequency"
-msgstr "Freqüència del component 1"
+msgstr "Freqüència de verd"
 
 #: ../operations/common/diffraction-patterns.c:35
-#, fuzzy
 msgid "Light frequency (green)"
-msgstr "L'angle de la llum (graus)"
+msgstr "Freqüència de llum (verd)"
 
 #: ../operations/common/diffraction-patterns.c:38
-#, fuzzy
 msgid "Blue frequency"
-msgstr "Freqüència del component 1"
+msgstr "Freqüència del blau"
 
 #: ../operations/common/diffraction-patterns.c:39
 msgid "Light frequency (blue)"
-msgstr ""
+msgstr "Freqüència de llum (blau)"
 
 #: ../operations/common/diffraction-patterns.c:42
-#, fuzzy
 msgid "Red contours"
-msgstr "Bits vermells"
+msgstr "Contorns vermells"
 
 #: ../operations/common/diffraction-patterns.c:43
-#, fuzzy
 msgid "Number of contours (red)"
-msgstr "Nombre de colors"
+msgstr "Nombre de colors (vermell)"
 
 #: ../operations/common/diffraction-patterns.c:46
-#, fuzzy
 msgid "Green contours"
-msgstr "Bits verds"
+msgstr "Contorns verds"
 
 #: ../operations/common/diffraction-patterns.c:47
-#, fuzzy
 msgid "Number of contours (green)"
-msgstr "Nombre de colors"
+msgstr "Nombre de contorns (verd)"
 
 #: ../operations/common/diffraction-patterns.c:50
-#, fuzzy
 msgid "Blue contours"
-msgstr "Bits blaus"
+msgstr "Contorns blaus"
 
 #: ../operations/common/diffraction-patterns.c:51
-#, fuzzy
 msgid "Number of contours (blue)"
-msgstr "Nombre de colors"
+msgstr "Nombre de contorns (blau)"
 
 #: ../operations/common/diffraction-patterns.c:54
-#, fuzzy
 msgid "Red sharp edges"
-msgstr "Vores dures"
+msgstr "Vores nítides vermelles"
 
 #: ../operations/common/diffraction-patterns.c:55
-#, fuzzy
 msgid "Number of sharp edges (red)"
-msgstr "Nombre de nivells de submostratge que s'utilitzen"
+msgstr "Nombre de vores nítides (vermell)"
 
 #: ../operations/common/diffraction-patterns.c:58
-#, fuzzy
 msgid "Green sharp edges"
-msgstr "Extensió del verd"
+msgstr "Vores nítides verdes"
 
 #: ../operations/common/diffraction-patterns.c:59
 msgid "Number of sharp edges (green)"
-msgstr ""
+msgstr "Nombre de vores (verd)"
 
 #: ../operations/common/diffraction-patterns.c:62
-#, fuzzy
 msgid "Blue sharp edges"
-msgstr "Vores dures"
+msgstr "Vores nítides blaves"
 
 #: ../operations/common/diffraction-patterns.c:63
-#, fuzzy
 msgid "Number of sharp edges (blue)"
-msgstr "Nombre de nivells de submostratge que s'utilitzen"
+msgstr "Nombre de vores nítides (blau)"
 
 #: ../operations/common/diffraction-patterns.c:67
 msgid "Brightness and shifting/fattening of contours"
-msgstr ""
+msgstr "Brillantor i canvi/ampliació de contorns"
 
 #: ../operations/common/diffraction-patterns.c:70
 msgid "Scattering"
-msgstr ""
+msgstr "Dispersió"
 
 #: ../operations/common/diffraction-patterns.c:71
 msgid "Scattering (speed vs. quality)"
-msgstr ""
+msgstr "Dispersió (velocitat vers qualitat)"
 
 #: ../operations/common/diffraction-patterns.c:74
 #: ../operations/common/diffraction-patterns.c:75
-#, fuzzy
 msgid "Polarization"
-msgstr "Saturació"
+msgstr "Polarització"
 
 #: ../operations/common/diffraction-patterns.c:79
 #: ../operations/common/noise-solid.c:65 ../operations/common/plasma.c:55
@@ -1596,11 +1619,74 @@ msgstr "Alçada de la memòria intermèdia generada"
 
 #: ../operations/common/diffraction-patterns.c:251
 msgid "Diffraction Patterns"
-msgstr ""
+msgstr "Patrons de difracció"
 
 #: ../operations/common/diffraction-patterns.c:255
 msgid "Generate diffraction patterns"
-msgstr ""
+msgstr "Genera patrons de difracció"
+
+#: ../operations/common/displace.c:28
+msgid "Cartesian"
+msgstr "Cartesià"
+
+#: ../operations/common/displace.c:29
+msgid "Polar"
+msgstr "Polar"
+
+#: ../operations/common/displace.c:32
+msgid "Displacement mode"
+msgstr "Mode desplaçament"
+
+#: ../operations/common/displace.c:35
+msgid "Mode of displacement"
+msgstr "Mode desplaçament"
+
+#: ../operations/common/displace.c:37 ../operations/external/npd.c:50
+#: ../operations/transform/transform-core.c:193
+#: ../operations/workshop/ditto.c:27
+msgid "Sampler"
+msgstr "Mostrejador"
+
+#: ../operations/common/displace.c:40
+msgid "Type of GeglSampler used to fetch input pixels"
+msgstr "e mostres Gegl utilitzades per ce"
+
+#: ../operations/common/displace.c:42 ../operations/common/fractal-trace.c:64
+#: ../operations/common/gaussian-blur-iir.c:58
+#: ../operations/common/gblur-1d.c:59
+#, fuzzy
+msgid "Abyss policy"
+msgstr "Política Abyss"
+
+#: ../operations/common/displace.c:45
+#: ../operations/common/gaussian-blur-iir.c:60
+#: ../operations/common/gblur-1d.c:61
+msgid "How image edges are handled"
+msgstr "Com es gestionen les vores de la imatge"
+
+#: ../operations/common/displace.c:47
+msgid "X displacement"
+msgstr "Desplaçament X"
+
+#: ../operations/common/displace.c:48
+msgid "Displace multiplier for X or radial direction"
+msgstr "Desplaça el multiplicador per una X o una direcció radial"
+
+#: ../operations/common/displace.c:54
+msgid "Y displacement"
+msgstr "Desplaçament Y"
+
+#: ../operations/common/displace.c:55
+msgid "Displace multiplier for Y or tangent (degrees) direction"
+msgstr "Desplaça el multiplicador per una Y o una direcció tangent (graus)"
+
+#: ../operations/common/displace.c:374
+msgid "Displace"
+msgstr "Desplaçament"
+
+#: ../operations/common/displace.c:377
+msgid "Displace pixels as indicated by displacement maps"
+msgstr "Desplaçar els píxels segons els mapes de desplaçament"
 
 #: ../operations/common/display.c:23 ../operations/external/sdl-display.c:25
 msgid "Window title"
@@ -1643,9 +1729,8 @@ msgid "Threshold high"
 msgstr "Llindar alt"
 
 #: ../operations/common/distance-transform.c:46
-#, fuzzy
 msgid "Grayscale Averaging"
-msgstr "Escala de grisos"
+msgstr "Mitjana en escala de grisos"
 
 #: ../operations/common/distance-transform.c:47
 msgid "Number of computations for grayscale averaging"
@@ -1660,9 +1745,8 @@ msgid "Distance Transform"
 msgstr "Transformació de la distància"
 
 #: ../operations/common/distance-transform.c:416
-#, fuzzy
 msgid "Calculate a distance transform"
-msgstr "calcula la transformació de la distància"
+msgstr "Calcula la transformació de la distància"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
 #: ../operations/common/plasma.c:40
@@ -1700,9 +1784,65 @@ msgstr "El color de l'ombra (per defecte és «negre»)"
 msgid "Opacity"
 msgstr "Opacitat"
 
-#: ../operations/common/dropshadow.c:108
+#: ../operations/common/dropshadow.c:110
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Crea un efecte d'ombra caiguda en la memòria intermèdia d'entrada"
+
+#: ../operations/common/edge.c:29
+msgid "Sobel"
+msgstr "Sobel"
+
+#: ../operations/common/edge.c:30
+msgid "Prewitt compass"
+msgstr ""
+
+#: ../operations/common/edge.c:31
+msgid "Gradient"
+msgstr "Degradat "
+
+#: ../operations/common/edge.c:32
+msgid "Roberts"
+msgstr "Roberts"
+
+#: ../operations/common/edge.c:33
+msgid "Differential"
+msgstr "Diferencial"
+
+#: ../operations/common/edge.c:34
+msgid "Laplace"
+msgstr "Laplace"
+
+#: ../operations/common/edge.c:37
+msgid "Algorithm"
+msgstr "Algoritme"
+
+#: ../operations/common/edge.c:40
+msgid "Edge detection algorithm"
+msgstr "Algorisme de detecció vores"
+
+#: ../operations/common/edge.c:42
+msgid "Amount"
+msgstr "Quantitat"
+
+#: ../operations/common/edge.c:43
+msgid "Edge detection amount"
+msgstr "Quantitat de detecció vores"
+
+#: ../operations/common/edge.c:47
+msgid "Border behavior"
+msgstr "Comportament del marge"
+
+#: ../operations/common/edge.c:50
+msgid "Edge detection behavior"
+msgstr "Comportament de detecció de vores "
+
+#: ../operations/common/edge.c:350
+msgid "Edge Detection"
+msgstr "Detecció de vores"
+
+#: ../operations/common/edge.c:353
+msgid "Several simple methods for detecting edges"
+msgstr "Diversos mètodes simples per a la detecció de vores"
 
 #: ../operations/common/edge-laplace.c:406
 msgid "Laplacian Edge Detection"
@@ -1721,6 +1861,8 @@ msgid ""
 "Keep negative values in result; when off, the absolute value of the result "
 "is used instead."
 msgstr ""
+"Manté els valors negatius en el resultat; Quan està desactivat, el valor "
+"absolut del resultat s'utilitza en el seu lloc."
 
 #: ../operations/common/edge-sobel.c:398
 msgid "Sobel Edge Detection"
@@ -1731,9 +1873,8 @@ msgid "Specialized direction-dependent edge detection"
 msgstr "Sistema especialitzat de detecció de vores basat en la direcció"
 
 #: ../operations/common/emboss.c:26 ../operations/common/emboss.c:266
-#, fuzzy
 msgid "Emboss"
-msgstr "Tipus de relleu"
+msgstr "Repujat"
 
 #: ../operations/common/emboss.c:27
 msgid "Bumpmap (preserve original colors)"
@@ -1741,7 +1882,7 @@ msgstr "Mapa de relleu (preserva els colors originals)"
 
 #: ../operations/common/emboss.c:30
 msgid "Emboss Type"
-msgstr "Tipus de relleu"
+msgstr "Tipus de repujat"
 
 #: ../operations/common/emboss.c:32
 msgid "Rendering type"
@@ -1764,23 +1905,20 @@ msgid "Simulates an image created by embossing"
 msgstr "Simula una imatge creada amb relleu"
 
 #: ../operations/common/engrave.c:32
-#, fuzzy
 msgid "Resolution in pixels"
-msgstr "Posició vertical en píxels"
+msgstr "Resolució en píxels"
 
 #: ../operations/common/engrave.c:36 ../operations/common/engrave.c:37
-#, fuzzy
 msgid "Limit line width"
-msgstr "Amplada de la línia"
+msgstr "Amplada de la línia límit"
 
 #: ../operations/common/engrave.c:199
 msgid "Engrave"
-msgstr ""
+msgstr "Gravar"
 
 #: ../operations/common/engrave.c:202
-#, fuzzy
 msgid "Simulate an antique engraving"
-msgstr "Simula una pintura a l'oli"
+msgstr "Simula un gravat antic"
 
 #: ../operations/common/exp-combine.c:25
 msgid "Exposure values"
@@ -1837,9 +1975,12 @@ msgid ""
 "Changes Exposure of an image, allows stepping HDR and photographs up/down in "
 "stops. "
 msgstr ""
+"Canvia l’exposició d’una imatge, permet fer pas a pas HDR i fotografies de "
+"dalt/a baix a les pauses."
 
 #: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
 #: ../operations/common/noise-rgb.c:41
+#: ../operations/workshop/component-extract.c:43
 msgid "Alpha"
 msgstr "Alfa"
 
@@ -1867,8 +2008,12 @@ msgstr "Soroll"
 msgid "Gradient threshold for lowering detail enhancement"
 msgstr "Llindar del degradat per la reducció de la millora del detall"
 
-#: ../operations/common/fattal02.c:1330
+#: ../operations/common/fattal02.c:1327
 #, fuzzy
+msgid "Fattal et al. 2002 Tone Mapping"
+msgstr "Mapeig tonal Mantiuk 2006"
+
+#: ../operations/common/fattal02.c:1330
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator attenuates the magnitudes of local image "
@@ -1876,10 +2021,12 @@ msgid ""
 "approach was originally presented by Raanan Fattal, in the 2002 SIGGRAPH "
 "paper: Gradient Domain High Dynamic Range Compression."
 msgstr ""
-"Adapta una imatge que té un interval dinàmic alt, per a la presentació "
-"s'utilitza un interval dinàmic baix. Aquest operador atenua les magnituds "
-"dels degradats de la imatge local, produint lluminositat dins de l'interval "
-"0.0-1.0"
+"Adapta una imatge que té una franja dinàmica alta, per a la presentació "
+"s'utilitza una franja dinàmica baixa. Aquest operador atenua les magnituds "
+"dels degradats de la imatge local, produint lluminositat dins de la franja "
+"0.0-1.0. Aquesta aproximació al mapatge de tons va ser presentat "
+"originalment per Raanan Fattal, en el document del 2002 SIGGRAPH: Gradient "
+"Domain High Dynamic Range Compression."
 
 #: ../operations/common/fractal-explorer.c:32
 #: ../operations/common/fractal-trace.c:26
@@ -1904,13 +2051,12 @@ msgid "Barnsley 3"
 msgstr "Barnsley 3"
 
 #: ../operations/common/fractal-explorer.c:42
-#, fuzzy
 msgid "Spider"
 msgstr "Aranya"
 
 #: ../operations/common/fractal-explorer.c:44
 msgid "Man O War"
-msgstr ""
+msgstr "Man O War"
 
 #: ../operations/common/fractal-explorer.c:46
 #: ../operations/external/matting-levin.c:37
@@ -2105,12 +2251,6 @@ msgstr "Valor Y de la llavor Julia, posició"
 msgid "Bailout length"
 msgstr "Longitud de rescat"
 
-#: ../operations/common/fractal-trace.c:64
-#: ../operations/workshop/gaussian-blur-iir.c:59
-#: ../operations/workshop/gblur-1d.c:59
-msgid "Abyss policy"
-msgstr ""
-
 #: ../operations/common/fractal-trace.c:66
 msgid "How to deal with pixels outside of the input buffer"
 msgstr "Tractament dels píxels fora de la memòria intermèdia d'entrada"
@@ -2128,32 +2268,35 @@ msgid "Transform the image with the fractals"
 msgstr "Transforma la imatge amb les fractals"
 
 #: ../operations/common/gaussian-blur.c:31
-#: ../operations/workshop/gaussian-blur-iir.c:25
-#: ../operations/workshop/gblur-1d.c:38
+#: ../operations/common/gaussian-blur-iir.c:25
+#: ../operations/common/gblur-1d.c:38
 msgid "Auto"
 msgstr "Automàtic"
 
 #: ../operations/common/gaussian-blur.c:32
-#: ../operations/workshop/gaussian-blur-iir.c:26
-#: ../operations/workshop/gblur-1d.c:39
+#: ../operations/common/gaussian-blur-iir.c:26
+#: ../operations/common/gblur-1d.c:39
 msgid "FIR"
 msgstr "FIR"
 
 #: ../operations/common/gaussian-blur.c:33
-#: ../operations/workshop/gaussian-blur-iir.c:27
-#: ../operations/workshop/gblur-1d.c:40
+#: ../operations/common/gaussian-blur-iir.c:27
+#: ../operations/common/gblur-1d.c:40
 msgid "IIR"
 msgstr "IIR"
 
 #: ../operations/common/gaussian-blur.c:36
+#: ../operations/common/gaussian-blur-iir.c:37
 msgid "Size X"
 msgstr "Mida X"
 
 #: ../operations/common/gaussian-blur.c:37
+#: ../operations/common/gaussian-blur-iir.c:38
 msgid "Standard deviation for the horizontal axis"
 msgstr "Desviació estàndard per a l'eix horitzontal"
 
 #: ../operations/common/gaussian-blur.c:44
+#: ../operations/common/gaussian-blur-iir.c:45
 msgid "Size Y"
 msgstr "Mida Y"
 
@@ -2162,8 +2305,8 @@ msgid "Standard deviation for the vertical axis"
 msgstr "Desviació estàndard per a l'eix vertical"
 
 #: ../operations/common/gaussian-blur.c:52
-#: ../operations/workshop/gaussian-blur-iir.c:54
-#: ../operations/workshop/gblur-1d.c:54
+#: ../operations/common/gaussian-blur-iir.c:53
+#: ../operations/common/gblur-1d.c:54
 msgid "Filter"
 msgstr "Filtre"
 
@@ -2178,31 +2321,69 @@ msgid "Gaussian Blur"
 msgstr "Difuminat gaussià"
 
 #: ../operations/common/gaussian-blur.c:705
-#, fuzzy
 msgid ""
 "Each result pixel is the average of the neighbouring pixels weighted by a "
 "normal distribution with specified standard deviation."
 msgstr ""
+"Cada píxel resultat és la mitjana dels píxels veïns equilibrats per una "
+"distribució normal, amb una desviació estàndard específica."
+
+#: ../operations/common/gaussian-blur-iir.c:46
+#: ../operations/common/gblur-1d.c:44 ../operations/common/high-pass.c:25
+#: ../operations/common/unsharp-mask.c:25
+msgid "Standard deviation (spatial scale factor)"
+msgstr "Desviació estàndard (factor d'escalat espaial)"
+
+#: ../operations/common/gaussian-blur-iir.c:56
+#: ../operations/common/gblur-1d.c:57
+msgid "How the gaussian kernel is discretized"
+msgstr "Com es discretitza el nucli gaussià"
+
+#: ../operations/common/gaussian-blur-iir.c:62
+#: ../operations/common/gblur-1d.c:63
+msgid "Clip to the input extent"
+msgstr "Retalla a la mida d'entrada"
+
+#: ../operations/common/gaussian-blur-iir.c:63
+#: ../operations/common/gblur-1d.c:64
+msgid "Should the output extent be clipped to the input extent"
+msgstr "El resultat s'hauria de retallar a la mida d'entrada"
+
+#: ../operations/common/gaussian-blur-iir.c:118
+#: ../operations/common/gblur-1d.c:891
+msgid ""
+"Performs an averaging of neighboring pixels with the normal distribution as "
+"weighting"
+msgstr ""
 "Realitza una mitjana dels píxels veïns, amb la distribució normal com a "
 "ponderació"
 
-#: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24
-#: ../operations/common/load.c:25 ../operations/common/magick-load.c:26
-#: ../operations/common/open-buffer.c:25 ../operations/common/raw-load.c:26
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:25
-#: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
-#: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
-#: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
-#: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
-#: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
-#: ../operations/external/svg-load.c:25 ../operations/external/webp-load.c:25
-#: ../operations/external/webp-save.c:24
-#: ../operations/workshop/external/ff-save.c:30
-#: ../operations/workshop/external/gluas.c:45
-#: ../operations/workshop/rawbayer-load.c:25
-msgid "File"
-msgstr "Fitxer"
+#: ../operations/common/gaussian-blur-selective.c:34
+msgid "Max. delta"
+msgstr "Increment màxim"
+
+#: ../operations/common/gaussian-blur-selective.c:35
+msgid "Maximum delta"
+msgstr "Increment màxim"
+
+#: ../operations/common/gaussian-blur-selective.c:259
+msgid "Selective Gaussian Blur"
+msgstr "Difuminat gaussià selectiu"
+
+#: ../operations/common/gaussian-blur-selective.c:262
+#, fuzzy
+msgid "Blur neighboring pixels, but only in low-contrast areas"
+msgstr ""
+"Difumina els píxels del costat, però només en les àrees de baix contrast."
+
+#: ../operations/common/gblur-1d.c:43 ../operations/common/warp.c:38
+#: ../operations/external/text.c:32
+msgid "Size"
+msgstr "Mida"
+
+#: ../operations/common/gblur-1d.c:52
+msgid "The orientation of the blur - hor/ver"
+msgstr "Orientació del difuminat - hor/ver"
 
 #: ../operations/common/gegl-buffer-load-op.c:25
 msgid "Path of GeglBuffer file to load."
@@ -2221,11 +2402,11 @@ msgstr ""
 msgid "GeglBuffer file writer."
 msgstr "Escriptor de fitxers de la memòria intermèdia Gegl."
 
-#: ../operations/common/grey.c:106
+#: ../operations/common/grey.c:100
 msgid "Make Grey"
 msgstr "Fes gris"
 
-#: ../operations/common/grey.c:108
+#: ../operations/common/grey.c:102
 msgid "Turns the image grayscale"
 msgstr "Converteix la imatge a escala de grisos"
 
@@ -2261,62 +2442,51 @@ msgstr "Renderitzador de la graella"
 msgid "Std. Dev."
 msgstr "Des. est."
 
-#: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:25
-#: ../operations/workshop/gaussian-blur-iir.c:39
-#: ../operations/workshop/gaussian-blur-iir.c:47
-#: ../operations/workshop/gblur-1d.c:44
-msgid "Standard deviation (spatial scale factor)"
-msgstr "Desviació estàndard (factor d'escalat espaial)"
-
 #: ../operations/common/high-pass.c:31
 #, fuzzy
 msgid "Contrast of high-pass"
-msgstr "Contrast de la passada alta"
+msgstr "Contrast de pas alt"
 
 #: ../operations/common/high-pass.c:80
 #, fuzzy
 msgid "High Pass Filter"
-msgstr "Filtre de passada alta"
+msgstr "Filtre de pas alt"
 
 #: ../operations/common/high-pass.c:83
 msgid "Enhances fine details."
 msgstr "Realça els detalls fins."
 
 #: ../operations/common/illusion.c:28
-#, fuzzy
 msgid "Type 1"
-msgstr "Tipus"
+msgstr "Tipus 1"
 
 #: ../operations/common/illusion.c:29
-#, fuzzy
 msgid "Type 2"
-msgstr "Tipus"
+msgstr "Tipus 2"
 
 #: ../operations/common/illusion.c:32
-#, fuzzy
 msgid "Division"
-msgstr "Divisor"
+msgstr "Divisió"
 
 #: ../operations/common/illusion.c:33
-#, fuzzy
 msgid "The number of divisions"
-msgstr "Nombre d'octaves de soroll."
+msgstr "Nombre de divisions"
 
 #: ../operations/common/illusion.c:37
 msgid "Illusion type"
-msgstr ""
+msgstr "Tipus d'Il·lusió"
 
 #: ../operations/common/illusion.c:40
 msgid "Type of illusion"
-msgstr ""
+msgstr "Tipus d’il·lusió"
 
-#: ../operations/common/illusion.c:243
+#: ../operations/common/illusion.c:267
 msgid "Illusion"
-msgstr ""
+msgstr "Il·lusió"
 
-#: ../operations/common/illusion.c:246
+#: ../operations/common/illusion.c:270
 msgid "Superimpose many altered copies of the image."
-msgstr ""
+msgstr "Superposa moltes còpies alterades de la imatge."
 
 #: ../operations/common/image-compare.c:27
 msgid "Wrong pixels"
@@ -2398,6 +2568,7 @@ msgstr "Posició vertical en píxels"
 #: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
 #: ../operations/common/noise-perlin.c:27
 #: ../operations/common/noise-simplex.c:31
+#: ../operations/common/saturation.c:24 ../operations/common/sepia.c:24
 #: ../operations/common/unsharp-mask.c:31
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
@@ -2465,24 +2636,20 @@ msgid "Corrects barrel or pincushion lens distortion."
 msgstr "Corregeix la distorsió, de barril o de coixinet, de les lents."
 
 #: ../operations/common/lens-flare.c:28
-#, fuzzy
 msgid "X position"
-msgstr "X1 valor, posició"
+msgstr "X posició"
 
 #: ../operations/common/lens-flare.c:29
-#, fuzzy
 msgid "X coordinates of the flare center"
-msgstr "Coordenades del centre de la lent"
+msgstr "X coordenades del centre de la flama"
 
 #: ../operations/common/lens-flare.c:34
-#, fuzzy
 msgid "Y position"
-msgstr "Y1 valor, posició"
+msgstr "Posició Y"
 
 #: ../operations/common/lens-flare.c:35
-#, fuzzy
 msgid "Y coordinates of the flare center"
-msgstr "Coordenades del centre de la lent"
+msgstr "Y coordenades del centre de la flama"
 
 #: ../operations/common/lens-flare.c:509
 msgid "Lens Flare"
@@ -2562,25 +2729,16 @@ msgstr "Degradat lineal"
 msgid "Linear gradient renderer"
 msgstr "Renderització lineal del degradat"
 
-#: ../operations/common/load.c:26 ../operations/common/magick-load.c:27
-#: ../operations/common/raw-load.c:27 ../operations/external/openraw.c:26
-#: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
-#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
-#: ../operations/workshop/rawbayer-load.c:26
-msgid "Path of file to load."
-msgstr "Camí del fitxer que es vol carregar."
-
 #: ../operations/common/load.c:27 ../operations/external/jpg-load.c:26
-#: ../operations/external/png-load.c:29
+#: ../operations/external/png-load.c:29 ../operations/external/tiff-load.c:27
 msgid "URI"
-msgstr ""
+msgstr "URI"
 
 #: ../operations/common/load.c:28
-#, fuzzy
 msgid "URI of file to load."
-msgstr "Camí del fitxer que es vol carregar."
+msgstr "URI del fitxer que s'ha de carregar"
 
-#: ../operations/common/load.c:231
+#: ../operations/common/load.c:222
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -2605,7 +2763,8 @@ msgid "Level of emphasis on image gradient details"
 msgstr "Nivell d'èmfasi en els detalls del degradat de la imatge"
 
 #: ../operations/common/mantiuk06.c:1638
-msgid "Mantiuk 2006 Tonemapping"
+#, fuzzy
+msgid "Mantiuk 2006 Tone Mapping"
 msgstr "Mapeig tonal Mantiuk 2006"
 
 #: ../operations/common/mantiuk06.c:1641
@@ -2627,11 +2786,11 @@ msgstr ""
 msgid "Resampling method"
 msgstr "Mètode de remostreig"
 
-#: ../operations/common/map-absolute.c:152
+#: ../operations/common/map-absolute.c:153
 msgid "Map Absolute"
 msgstr "Mapa absolut"
 
-#: ../operations/common/map-absolute.c:155
+#: ../operations/common/map-absolute.c:156
 msgid ""
 "sample input with an auxiliary buffer that contain absolute source "
 "coordinates"
@@ -2651,11 +2810,11 @@ msgstr ""
 "El factor d'escalat del desplaçament indica com un desplaçament espacial "
 "gran es correspon a un valor de mapat relatiu de 1.0."
 
-#: ../operations/common/map-relative.c:176
+#: ../operations/common/map-relative.c:177
 msgid "Map Relative"
 msgstr "Mapa relatiu"
 
-#: ../operations/common/map-relative.c:178
+#: ../operations/common/map-relative.c:179
 msgid ""
 "sample input with an auxiliary buffer that contain relative source "
 "coordinates"
@@ -2672,6 +2831,51 @@ msgstr ""
 "Amb un tri-mapa dispers i una imatge d'entrada, crea un primer pla alfa mat. "
 "Estableix el blanc com a primer pla i el negre com a fons pel tri-mapa. La "
 "resta serà tractada com a desconeguda i es reomplirà."
+
+#: ../operations/common/maze.c:38
+msgid "Depth first"
+msgstr "Profunditat primera"
+
+#: ../operations/common/maze.c:39
+msgid "Prim's algorithm"
+msgstr ""
+
+#: ../operations/common/maze.c:58
+msgid "Algorithm type"
+msgstr "Tipus d’algoritme"
+
+#: ../operations/common/maze.c:61
+msgid "Maze algorithm type"
+msgstr "Tipus d'algorisme de malla"
+
+#: ../operations/common/maze.c:63 ../operations/common/noise-solid.c:56
+#: ../operations/common/ripple.c:53
+msgid "Tileable"
+msgstr "Enrajolable"
+
+#: ../operations/common/maze.c:67
+msgid "Foreground Color"
+msgstr "Color de primer pla"
+
+#: ../operations/common/maze.c:68
+msgid "The foreground color"
+msgstr "El color de primer pla"
+
+#: ../operations/common/maze.c:71
+msgid "Background Color"
+msgstr "Color del fons"
+
+#: ../operations/common/maze.c:72
+msgid "The background color"
+msgstr "El color del fons"
+
+#: ../operations/common/maze.c:732
+msgid "Maze"
+msgstr "Malla"
+
+#: ../operations/common/maze.c:736
+msgid "Draw a labyrinth"
+msgstr "Dibuixa un laberint"
 
 #: ../operations/common/mblur.c:25
 msgid "Dampness"
@@ -2790,16 +2994,16 @@ msgid "Create a kaleidoscope like effect."
 msgstr "Crea un efecte similar al d'un calidoscopi."
 
 #: ../operations/common/mono-mixer.c:28
-msgid "Amount of red"
-msgstr "Quantitat de vermell"
+msgid "Red Channel Multiplier"
+msgstr "Multiplicador del canal vermell"
 
 #: ../operations/common/mono-mixer.c:32
-msgid "Amount of green"
-msgstr "Quantitat de verd"
+msgid "Green Channel Multiplier"
+msgstr "Multiplicador del canal verd"
 
 #: ../operations/common/mono-mixer.c:36
-msgid "Amount of blue"
-msgstr "Quantitat de blau"
+msgid "Blue Channel Multiplier"
+msgstr "Multiplicador del canal blau"
 
 #: ../operations/common/mono-mixer.c:113
 msgid "Mono Mixer"
@@ -2827,31 +3031,31 @@ msgstr "Triangles"
 
 #: ../operations/common/mosaic.c:38
 msgid "Tile geometry"
-msgstr "Geometria del mosaic"
+msgstr "Geometria de la tessel·la"
 
 #: ../operations/common/mosaic.c:40
 msgid "What shape to use for tiles"
-msgstr "Forma per utilitzar en el mosaic"
+msgstr "Manera d'utilització de les tessel·les"
 
 #: ../operations/common/mosaic.c:48
 msgid "Tile height"
-msgstr "Alçada del mosaic"
+msgstr "Alçada de la tessel·la"
 
 #: ../operations/common/mosaic.c:49
 msgid "Apparent height of each tile (in pixels)"
-msgstr "Alçada aparent de cada mosaic (en píxels)"
+msgstr "Alçada aparent de cada tessel·la (en píxels)"
 
 #: ../operations/common/mosaic.c:53
 msgid "Tile neatness"
-msgstr "Netedat del mosaic"
+msgstr "Netedat de la tessel·la"
 
 #: ../operations/common/mosaic.c:54
 msgid "Deviation from perfectly formed tiles"
-msgstr "Desviació des dels mosaics formats perfectes"
+msgstr "Desviació de les tessel·les perfectament formades"
 
 #: ../operations/common/mosaic.c:57
 msgid "Tile color variation"
-msgstr "Variació de color del mosaic"
+msgstr "Variació de color de la  tessel·la"
 
 #: ../operations/common/mosaic.c:61
 msgid "Color averaging"
@@ -2859,11 +3063,11 @@ msgstr "Mitjana de color"
 
 #: ../operations/common/mosaic.c:62
 msgid "Tile color based on average of subsumed pixels"
-msgstr "El color del mosaic es basa en la mitjana dels píxels subsumats"
+msgstr "El color de la  tessel·la es basa en la mitjana dels píxels subsumats"
 
 #: ../operations/common/mosaic.c:64
 msgid "Rough tile surface"
-msgstr "Superfície del mosaic rugosa"
+msgstr "Superfície de la  tessel·la rugosa"
 
 #: ../operations/common/mosaic.c:65
 msgid "Surface characteristics"
@@ -2871,24 +3075,23 @@ msgstr "Característiques de la superfície"
 
 #: ../operations/common/mosaic.c:67
 msgid "Allow splitting tiles"
-msgstr "Permet la divisió dels mosaics"
+msgstr "Permet la divisió de les tessel·les"
 
 #: ../operations/common/mosaic.c:68
 msgid "Allows splitting tiles at hard edges"
-msgstr "Permet la divisió dels mosaics i les vores dures"
+msgstr "Permet la divisió de les tessel·les i les vores dures"
 
 #: ../operations/common/mosaic.c:70
 msgid "Tile spacing"
-msgstr "Espaiat del mosaic"
+msgstr "Espaiat de les tessel·les"
 
 #: ../operations/common/mosaic.c:71
 msgid "Inter-tile spacing (in pixels)"
-msgstr "Espaiat entre mosaics (en píxels)"
+msgstr "Espaiat entre tessel·les (en píxels)"
 
 #: ../operations/common/mosaic.c:76
-#, fuzzy
 msgid "Joints color"
-msgstr "L'altre color"
+msgstr "Ajunta el color"
 
 #: ../operations/common/mosaic.c:78
 msgid "Light color"
@@ -2904,18 +3107,21 @@ msgstr "Suavitzat"
 
 #: ../operations/common/mosaic.c:86
 msgid "Enables smoother tile output"
-msgstr "Habilita la creació més suau del mosaic"
+msgstr "Habilita la creació més suau de la tessel·la"
 
-#: ../operations/common/mosaic.c:2468
+#: ../operations/common/mosaic.c:2465
 msgid "Mosaic"
 msgstr "Mosaic"
 
-#: ../operations/common/mosaic.c:2471
+#: ../operations/common/mosaic.c:2468
 msgid ""
 "Mosaic is a filter which transforms an image into what appears to be a "
 "mosaic, composed of small primitives, each of constant color and of an "
 "approximate size."
 msgstr ""
+"Mosaic és un filtre que transforma una imatge perquè sembli un mosaic, "
+"compost de petites tessel·les, cada una d'un color constant i d'una "
+"grandària aproximada."
 
 #. FIXME: With a large angle, we lose AreaFilter's flavours
 #: ../operations/common/motion-blur-circular.c:52
@@ -2993,7 +3199,7 @@ msgstr "Rang"
 
 #: ../operations/common/noise-cell.c:45
 msgid "Select the n-th closest point"
-msgstr ""
+msgstr "Seleccioneu el n-th punt més proper"
 
 #: ../operations/common/noise-cell.c:49
 #: ../operations/common/noise-simplex.c:36
@@ -3002,7 +3208,7 @@ msgstr "Nombre d'octaves de soroll."
 
 #: ../operations/common/noise-cell.c:52
 msgid "Palettize"
-msgstr ""
+msgstr "Paletitzar"
 
 #: ../operations/common/noise-cell.c:53
 msgid "Fill each cell with a random color"
@@ -3095,7 +3301,7 @@ msgid "Randomly interchange some pixels with neighbors"
 msgstr "Intercanvia alguns píxels amb els seus veïns aleatòriament"
 
 #: ../operations/common/noise-reduction.c:26 ../operations/common/warp.c:35
-#: ../operations/common/wind.c:30
+#: ../operations/common/wind.c:64
 msgid "Strength"
 msgstr "Força"
 
@@ -3113,14 +3319,6 @@ msgstr "Reducció del soroll"
 #: ../operations/common/noise-reduction.c:428
 msgid "Anisotropic smoothing operation"
 msgstr "Operació de suavitzat anisotròpic"
-
-#: ../operations/common/noise-simplex.c:331
-msgid "Simplex Noise"
-msgstr "Soroll símplex"
-
-#: ../operations/common/noise-simplex.c:334
-msgid "Generates a solid noise texture."
-msgstr "Genera una textura de soroll sòlid."
 
 #: ../operations/common/noise-rgb.c:28
 msgid "Correlated noise"
@@ -3150,8 +3348,15 @@ msgstr "Afegeix soroll RGB"
 msgid "Distort colors by random amounts"
 msgstr "Distorsiona els colors en una quantitat aleatòria"
 
+#: ../operations/common/noise-simplex.c:331
+msgid "Simplex Noise"
+msgstr "Soroll símplex"
+
+#: ../operations/common/noise-simplex.c:334
+msgid "Generates a solid noise texture."
+msgstr "Genera una textura de soroll sòlid."
+
 #: ../operations/common/noise-slur.c:153
-#, fuzzy
 msgid "Noise Slur"
 msgstr "Soroll"
 
@@ -3160,57 +3365,45 @@ msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr "Desplaça alguns píxels cap avall aleatòriament (com si es fonguessin)"
 
 #: ../operations/common/noise-solid.c:37
-#, fuzzy
 msgid "X Size"
-msgstr "Mida"
+msgstr "Mida X"
 
 #: ../operations/common/noise-solid.c:38
-#, fuzzy
 msgid "Horizontal texture size"
-msgstr "Mida horitzontal"
+msgstr "Mida de la textura horitzontal"
 
 #: ../operations/common/noise-solid.c:44
-#, fuzzy
 msgid "Y Size"
-msgstr "Mida"
+msgstr "Mida Y"
 
 #: ../operations/common/noise-solid.c:45
-#, fuzzy
 msgid "Vertical texture size"
-msgstr "Mida vertical"
+msgstr "Mida de la textura vertical"
 
 #: ../operations/common/noise-solid.c:52
-#, fuzzy
 msgid "Detail level"
-msgstr "Detall"
-
-#: ../operations/common/noise-solid.c:56
-#, fuzzy
-msgid "Tilable"
-msgstr "En mosaic"
+msgstr "Nivell de detall"
 
 #: ../operations/common/noise-solid.c:57
-msgid "Create a tilable output"
-msgstr ""
+#, fuzzy
+msgid "Create a tileable output"
+msgstr "Crea una entrada enrajolable"
 
 #: ../operations/common/noise-solid.c:59
-#, fuzzy
 msgid "Turbulent"
 msgstr "Turbulència"
 
 #: ../operations/common/noise-solid.c:60
 msgid "Make a turbulent noise"
-msgstr ""
+msgstr "Fes un soroll turbulent"
 
-#: ../operations/common/noise-solid.c:326
-#, fuzzy
+#: ../operations/common/noise-solid.c:345
 msgid "Solid Noise"
-msgstr "Soroll Perlin"
+msgstr "Soroll sòlid"
 
-#: ../operations/common/noise-solid.c:330
-#, fuzzy
+#: ../operations/common/noise-solid.c:349
 msgid "Create a random cloud-like texture"
-msgstr "Crea un efecte similar al un calidoscopi."
+msgstr "Crea una textura de núvols aleatòria"
 
 #: ../operations/common/noise-spread.c:30
 msgid "Horizontal spread amount"
@@ -3293,8 +3486,8 @@ msgid "Use an on-disk GeglBuffer as data source."
 msgstr ""
 "Utilitza una memòria intermèdia Gegl d'un disc com a origen de les dades."
 
-#: ../operations/common/over.c:25 ../operations/generated/clear.c:38
-#: ../operations/generated/color-burn.c:38
+#: ../operations/common/over.c:25 ../operations/common/sepia.c:28
+#: ../operations/generated/clear.c:38 ../operations/generated/color-burn.c:38
 #: ../operations/generated/color-dodge.c:38
 #: ../operations/generated/darken.c:38 ../operations/generated/difference.c:38
 #: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
@@ -3312,8 +3505,8 @@ msgstr ""
 msgid "sRGB"
 msgstr "sRGB"
 
-#: ../operations/common/over.c:26 ../operations/generated/clear.c:39
-#: ../operations/generated/color-burn.c:39
+#: ../operations/common/over.c:26 ../operations/common/sepia.c:29
+#: ../operations/generated/clear.c:39 ../operations/generated/color-burn.c:39
 #: ../operations/generated/color-dodge.c:39
 #: ../operations/generated/darken.c:39 ../operations/generated/difference.c:39
 #: ../operations/generated/dst-atop.c:39 ../operations/generated/dst.c:39
@@ -3344,7 +3537,7 @@ msgstr ""
 
 #: ../operations/common/panorama-projection.c:23
 msgid "Pan"
-msgstr ""
+msgstr "Pan"
 
 #: ../operations/common/panorama-projection.c:24
 msgid "Horizontal camera panning"
@@ -3387,6 +3580,8 @@ msgid ""
 "Render a stereographic mapping, a tilt value of 90, which means looking at "
 "nadir provides a good default value."
 msgstr ""
+"Renderitza un mapa estereogràfic, un valor d'inclinació de 90, això vol dir "
+"que mira el nadir que proporciona un bon valor per defecte."
 
 #: ../operations/common/panorama-projection.c:59
 msgid "Image resampling method to use"
@@ -3566,7 +3761,7 @@ msgstr "Nombre de nivells per component"
 
 #: ../operations/common/posterize.c:132
 msgid "Posterize"
-msgstr ""
+msgstr "Posteritza"
 
 #: ../operations/common/posterize.c:135
 msgid "Reduces the number of levels in each color component of the image."
@@ -3579,10 +3774,6 @@ msgstr "Degradat radial"
 #: ../operations/common/radial-gradient.c:127
 msgid "Radial gradient renderer"
 msgstr "Renderització radial del degradat"
-
-#: ../operations/common/raw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr "Carregador d'imatges RAW (en cru), embolcallat «dcraw» amb conductes."
 
 #: ../operations/common/rectangle.c:27
 msgid "Horizontal position"
@@ -3614,7 +3805,7 @@ msgstr "Una font rectangular, de mida fixa i d'un color sòlid"
 
 #: ../operations/common/red-eye-removal.c:31
 #: ../operations/common/threshold.c:25 ../operations/common/threshold.c:125
-#: ../operations/common/wind.c:26 ../operations/external/matting-levin.c:33
+#: ../operations/common/wind.c:60 ../operations/external/matting-levin.c:33
 msgid "Threshold"
 msgstr "Llindar"
 
@@ -3651,7 +3842,8 @@ msgid "Adaptation to light variation across the image"
 msgstr "Adaptació a la variació de la llum a través de la imatge"
 
 #: ../operations/common/reinhard05.c:273
-msgid "Reinhard 2005 Tonemapper"
+#, fuzzy
+msgid "Reinhard 2005 Tone Mapping"
 msgstr "Mapador tonal Reinhard 2005"
 
 #: ../operations/common/reinhard05.c:276
@@ -3692,13 +3884,9 @@ msgstr "Desplaçament de la fase"
 msgid "Wave type"
 msgstr "Tipus d'ona"
 
-#: ../operations/common/ripple.c:53
-msgid "Tileable"
-msgstr "En mosaic"
-
 #: ../operations/common/ripple.c:54
 msgid "Retain tilebility"
-msgstr "Retén el mosaic"
+msgstr "Retén l’enrajolat"
 
 #: ../operations/common/ripple.c:170
 msgid "Ripple"
@@ -3707,6 +3895,16 @@ msgstr "Onades del mar"
 #: ../operations/common/ripple.c:174
 msgid "Displace pixels in a ripple pattern"
 msgstr "Desplaça els píxels en un patró d'arrissada"
+
+#: ../operations/common/saturation.c:25 ../operations/common/sepia.c:25
+#: ../operations/common/unsharp-mask.c:32
+msgid "Scale, strength of effect"
+msgstr "Escala de potència de l'efecte"
+
+#: ../operations/common/saturation.c:219
+#, fuzzy
+msgid "Changes the saturation"
+msgstr "Saturació de les tessel·les"
 
 #: ../operations/common/save.c:26
 msgid "Path of file to save."
@@ -3717,15 +3915,23 @@ msgid "Save"
 msgstr "Desa"
 
 #: ../operations/common/save.c:203
-#, fuzzy
 msgid ""
 "Multipurpose file saver, that uses other native save handlers depending on "
 "extension, use the format specific save ops to specify additional parameters."
 msgstr ""
-"Carregador de fitxers multi-usos, que utilitza altres gestors nadius, i "
-"utilitza com a últim recurs la conversió  amb l'Image Magick."
+"Desador de fitxers multi-usos, que utilitza altres gestors nadius depenent "
+"de l'extensió, utilitza el format específic ops per especificar paràmetres "
+"addicionals."
 
-#: ../operations/common/shift.c:26 ../operations/common/shift.c:144
+#: ../operations/common/sepia.c:110
+msgid "Sepia"
+msgstr "Sèpia"
+
+#: ../operations/common/sepia.c:112
+msgid "Converts the input image to sepia"
+msgstr "Converteix la imatge d'entrada a sèpia"
+
+#: ../operations/common/shift.c:26 ../operations/common/shift.c:143
 msgid "Shift"
 msgstr "Desplaçament"
 
@@ -3737,79 +3943,71 @@ msgstr "Quantitat màxima per desplaçar"
 msgid "Shift direction"
 msgstr "Direcció del desplaçament"
 
-#: ../operations/common/shift.c:147
+#: ../operations/common/shift.c:146
 msgid "Shift each row or column of pixels by a random amount"
 msgstr "Desplaça, en una quantitat aleatòria, cada fila o columna de píxels"
 
 #: ../operations/common/sinus.c:33
-#, fuzzy
 msgid "X Scale"
-msgstr "Escala"
+msgstr "Escala X"
 
 #: ../operations/common/sinus.c:34
 msgid "Scale value for x axis"
-msgstr ""
+msgstr "Valor d'escala per a l'eix x"
 
 #: ../operations/common/sinus.c:40
-#, fuzzy
 msgid "Y Scale"
-msgstr "Escala"
+msgstr "Escala Y"
 
 #: ../operations/common/sinus.c:41
 msgid "Scale value for y axis"
-msgstr ""
+msgstr "Valor d'escala per a l'eix y"
 
 #: ../operations/common/sinus.c:47
-#, fuzzy
 msgid "Complexity"
-msgstr "Compensa"
+msgstr "Complexitat"
 
 #: ../operations/common/sinus.c:48
 msgid "Complexity factor"
-msgstr ""
+msgstr "Factor de complexitat"
 
 #: ../operations/common/sinus.c:53
 msgid "Force tiling"
-msgstr ""
+msgstr "força l’enrajolat"
 
 #: ../operations/common/sinus.c:54
 msgid "If set, the pattern generated will tile"
-msgstr ""
+msgstr "Si s'estableix, el patró enrajolarà"
 
 #: ../operations/common/sinus.c:56
 msgid "Distorted"
-msgstr ""
+msgstr "Distorsionat"
 
 #: ../operations/common/sinus.c:57
 msgid "If set, the pattern will be a little more distorted"
-msgstr ""
+msgstr "Si es defineix, el patró serà una mica més distorsionat"
 
 #: ../operations/common/sinus.c:65
-#, fuzzy
 msgid "Bilinear"
-msgstr "Lineal"
+msgstr "Bilineal"
 
 #: ../operations/common/sinus.c:69
 msgid "Blend Mode"
-msgstr ""
+msgstr "Mode degradat"
 
 #: ../operations/common/sinus.c:74
-#, fuzzy
 msgid "Power used to strech the blend"
-msgstr "Color per emplenar el fons"
+msgstr "Força per estirar el degradat"
 
 #: ../operations/common/sinus.c:313
-#, fuzzy
 msgid "Sinus"
-msgstr "Sinusoïdal"
+msgstr "Sinus"
 
 #: ../operations/common/sinus.c:317
-#, fuzzy
 msgid "Generate complex sinusoidal textures"
-msgstr "Genera una textura de soroll sòlid."
+msgstr "Genera textures sinusoïdals complexes"
 
 #: ../operations/common/snn-mean.c:33
-#: ../operations/workshop/snn-percentile.c:31
 msgid "Pairs"
 msgstr "Parelles"
 
@@ -3822,7 +4020,6 @@ msgid "Symmetric Nearest Neighbour"
 msgstr "Veí més proper simètric"
 
 #: ../operations/common/snn-mean.c:336
-#, fuzzy
 msgid ""
 "Noise reducing edge preserving blur filter based  on Symmetric Nearest "
 "Neighbours"
@@ -3834,11 +4031,11 @@ msgstr ""
 msgid "Glow radius"
 msgstr "Radi de la lluentor"
 
-#: ../operations/common/softglow.c:231
+#: ../operations/common/softglow.c:232
 msgid "Softglow"
 msgstr "Lluentor suau"
 
-#: ../operations/common/softglow.c:234
+#: ../operations/common/softglow.c:235
 msgid "Simulate glow by making highlights intense and fuzzy"
 msgstr ""
 "Simula una lluentor amb la creació de taques de llum intenses i difuses"
@@ -3896,49 +4093,45 @@ msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
 "contrast, very dark, or very bright images). This version differs from "
-"Contrast Autostretch in that it works in HSV scpace, and preserves hue."
+"Contrast Autostretch in that it works in HSV space, and preserves hue."
 msgstr ""
 "Escala els components de la memòria intermèdia perquè estiguin dins de "
 "l'interval 0.0-1.0. Això millora les imatges que fan poc ús del contrast "
-"disponible (imatges amb poc contrast, molt fosques o molt brillants)."
+"disponible (imatges amb poc contrast, molt fosques o molt brillants). "
+"Aquesta versió difereix de Contrast Autostretch, que funciona amb HSV "
+"scpace, i preserva el to."
 
 #: ../operations/common/supernova.c:34
-#, fuzzy
 msgid "X coordinates of the center of supernova"
-msgstr "Coordenada X del centre de les ones"
+msgstr "X coordenades del centre de la supernova"
 
 #: ../operations/common/supernova.c:40
-#, fuzzy
 msgid "Y coordinates of the center of supernova"
-msgstr "Coordenada Y del centre de les ones"
+msgstr "Y coordenades del centre de la supernova"
 
 #: ../operations/common/supernova.c:46
 msgid "Radius of supernova"
-msgstr ""
+msgstr "Radi de supernova"
 
 #: ../operations/common/supernova.c:50 ../operations/common/supernova.c:51
-#, fuzzy
 msgid "Number of spokes"
-msgstr "Nombre de colors"
+msgstr "Nombre de rajos"
 
 #: ../operations/common/supernova.c:55 ../operations/common/supernova.c:56
-#, fuzzy
 msgid "Random hue"
-msgstr "Llavor aleatòria"
+msgstr "To aleatori"
 
 #: ../operations/common/supernova.c:61
-#, fuzzy
 msgid "The color of supernova."
-msgstr "Colr per fer transparent."
+msgstr "El color de la supernova."
 
 #: ../operations/common/supernova.c:64
-#, fuzzy
 msgid "The random seed for spokes and random hue"
-msgstr "Llavor aleatòria per a la funció de soroll"
+msgstr "La llavor aleatòria per rajos i tonalitat a l'atzar"
 
 #: ../operations/common/supernova.c:340
 msgid "Supernova"
-msgstr ""
+msgstr "Supernova"
 
 #: ../operations/common/supernova.c:343
 msgid ""
@@ -3946,6 +4139,9 @@ msgid ""
 "light effect is approximately in proportion to 1/r, where r is the distance "
 "from the center of the star."
 msgstr ""
+"Aquest connector produeix un efecte d'explosió de supernova. La quantitat de "
+"l'efecte de la llum és aproximadament proporcional a 1/r, on r és la "
+"distància des del centre de l'estrella."
 
 #: ../operations/common/svg-huerotate.c:27
 #: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:25
@@ -3989,7 +4185,7 @@ msgstr "Inferior esquerra"
 msgid "Bottom-right"
 msgstr "Inferior dreta"
 
-#: ../operations/common/texturize-canvas.c:38
+#: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
 msgid "Direction"
 msgstr "Direcció"
 
@@ -4018,12 +4214,11 @@ msgid "Textures the image as if it were an artist's canvas."
 msgstr "Afegeix una textura a la imatge com si fos el llenç d'un artista."
 
 #: ../operations/common/threshold.c:28
-#, fuzzy
 msgid ""
 "Scalar threshold level (overriden if an auxiliary input buffer is provided.)."
 msgstr ""
-"Nivell de llindar global (s'utilitza quan no hi ha memòria intermèdia "
-"auxiliar d'entrada)."
+"Nivell de llindar escalar (s'anul·la si es proporciona una memòria "
+"intermèdia d'entrada auxiliar)"
 
 #: ../operations/common/threshold.c:128
 msgid ""
@@ -4044,45 +4239,117 @@ msgstr "Desplaçament vertical"
 
 #: ../operations/common/tile.c:133
 msgid "Tile"
-msgstr "En mosaic"
+msgstr "Tessel·la"
 
 #: ../operations/common/tile.c:138
 msgid "Infinitely repeats the input image."
 msgstr "Repeteix infinitament la imatge d'entrada."
 
-#: ../operations/common/tile-glass.c:28
+#: ../operations/common/tile-glass.c:28 ../operations/common/tile-paper.c:42
 msgid "Tile Width"
-msgstr "Amplada del mosaic"
+msgstr "Amplada de la tessel·la"
 
-#: ../operations/common/tile-glass.c:34
+#: ../operations/common/tile-glass.c:34 ../operations/common/tile-paper.c:49
 msgid "Tile Height"
-msgstr "Alçada del mosaic"
+msgstr "Alçada de la tessel·la"
 
 #: ../operations/common/tile-glass.c:233
 msgid "Tile Glass"
-msgstr "Mosaic de vidre"
+msgstr "Tessel·la de vidre"
 
 #: ../operations/common/tile-glass.c:237
 msgid "Simulate distortion caused by rectangular glass tiles"
-msgstr "Simula la distorsió que produeix un mosaic de vidres rectangulars"
+msgstr "Simula la distorsió que produeixen tessel·les de vidres rectangulars"
+
+#: ../operations/common/tile-paper.c:30
+msgid "Transparent"
+msgstr "Transparent"
+
+#: ../operations/common/tile-paper.c:31
+msgid "Inverted image"
+msgstr "Inverteix la imatge"
+
+#: ../operations/common/tile-paper.c:32
+msgid "Image"
+msgstr "Imatge"
+
+#: ../operations/common/tile-paper.c:37
+msgid "Background"
+msgstr "Fons"
+
+#: ../operations/common/tile-paper.c:38
+msgid "Ignore"
+msgstr "Ignora"
+
+#: ../operations/common/tile-paper.c:39
+msgid "Force"
+msgstr "Força"
+
+#: ../operations/common/tile-paper.c:43
+msgid "Width of the tile"
+msgstr "Amplada de la tessel·la"
+
+#: ../operations/common/tile-paper.c:50
+msgid "Height of the tile"
+msgstr "Alçada de la tessel·la"
+
+#: ../operations/common/tile-paper.c:56 ../operations/common/tile-paper.c:57
+msgid "Move rate"
+msgstr "Velocitat de moviment"
+
+#: ../operations/common/tile-paper.c:62
+msgid "Wrap around"
+msgstr "Embolica el voltant"
+
+#: ../operations/common/tile-paper.c:63
+msgid "Wrap the fractional tiles"
+msgstr "Emboliqueu les rajoles fraccionades"
+
+#: ../operations/common/tile-paper.c:65
+msgid "Fractional type"
+msgstr "Tipus de fracció"
+
+#: ../operations/common/tile-paper.c:68
+msgid "Fractional Type"
+msgstr "Tipus de fracció"
+
+#: ../operations/common/tile-paper.c:70
+msgid "Centering"
+msgstr "Centra"
+
+#: ../operations/common/tile-paper.c:71
+msgid "Centering of the tiles"
+msgstr "Centrat de les rajoles"
+
+#: ../operations/common/tile-paper.c:73 ../operations/common/tile-paper.c:76
+msgid "Background type"
+msgstr "Tipus de fons"
+
+#: ../operations/common/tile-paper.c:475
+msgid "Paper Tile"
+msgstr "Rajola de paper"
+
+#: ../operations/common/tile-paper.c:479
+msgid "Cut image into paper tiles, and slide them"
+msgstr "Talleu la imatge en rajoles de paper, i les feu lliscar"
 
 #: ../operations/common/tile-seamless.c:164
 msgid "Make Seamlessly tileable"
-msgstr ""
+msgstr "Fa un enrajolable perfecte"
 
 #: ../operations/common/tile-seamless.c:167
+#, fuzzy
 msgid ""
 "Make the input buffer seamlessly tileable. The algorithm is not content-"
 "aware, so the result may need post-processing."
 msgstr ""
+"Fa que la memòria intermèdia d’entrada faci un enrajolat perfecte. "
+"L’algorisme no és            , i potser al resultat li caldrà post-"
+"processament."
 
 #: ../operations/common/unsharp-mask.c:24
 msgid "Standard Deviation"
 msgstr "Desviació estàndard"
-
-#: ../operations/common/unsharp-mask.c:32
-msgid "Scale, strength of effect"
-msgstr "Escala de potència de l'efecte"
 
 #: ../operations/common/unsharp-mask.c:83
 msgid "Unsharp Mask"
@@ -4093,6 +4360,8 @@ msgid ""
 "Sharpen image, by adding difference to blurred image, a technique for "
 "sharpening originally used in darkrooms."
 msgstr ""
+"Perfila la imatge, afegint diferència a la imatge difuminada, una tècnica "
+"per fer-la nítida,  originalment s'utilitza en cambres fosques."
 
 #: ../operations/common/value-invert.c:147
 msgid "Value Invert"
@@ -4100,7 +4369,7 @@ msgstr "Inversió del valor"
 
 #: ../operations/common/value-invert.c:150
 msgid ""
-"Inverts just the value component, the result is the corresponding `inverted' "
+"Inverts just the value component, the result is the corresponding 'inverted' "
 "image."
 msgstr ""
 "Inverteix només el component de valor, el resultat correspon a la imatge "
@@ -4108,34 +4377,31 @@ msgstr ""
 
 #: ../operations/common/value-propagate.c:29
 msgid "More white (larger value)"
-msgstr ""
+msgstr "Més blanc (valor més gran)"
 
 #: ../operations/common/value-propagate.c:30
 msgid "More black (smaller value)"
-msgstr ""
+msgstr "Més negre (valor més petit)"
 
 #: ../operations/common/value-propagate.c:31
 msgid "Middle value to peaks"
-msgstr ""
+msgstr "Valor mitjà dels pics"
 
 #: ../operations/common/value-propagate.c:32
-#, fuzzy
 msgid "Color to peaks"
-msgstr "Color a alfa"
+msgstr "Color als pics"
 
 #: ../operations/common/value-propagate.c:33
-#, fuzzy
 msgid "Only color"
-msgstr "Color de la tinta"
+msgstr "Només color"
 
 #: ../operations/common/value-propagate.c:34
 msgid "More opaque"
-msgstr ""
+msgstr "Més opac"
 
 #: ../operations/common/value-propagate.c:35
-#, fuzzy
 msgid "More transparent"
-msgstr "Colr per fer transparent."
+msgstr "Més transparent"
 
 #: ../operations/common/value-propagate.c:38
 #: ../operations/workshop/ink-simulator.c:44
@@ -4143,160 +4409,149 @@ msgid "Mode"
 msgstr "Mode"
 
 #: ../operations/common/value-propagate.c:41
-#, fuzzy
 msgid "Mode of value propagation"
-msgstr "El valor de la saturació"
+msgstr "Mode de propagació del valor"
 
 #: ../operations/common/value-propagate.c:43
 #: ../operations/common/value-propagate.c:44
-#, fuzzy
 msgid "Lower threshold"
-msgstr "Llindar de gris"
+msgstr "Llindar inferior"
 
 #: ../operations/common/value-propagate.c:47
 #: ../operations/common/value-propagate.c:48
 #: ../operations/common/value-propagate.c:52
-#, fuzzy
 msgid "Upper threshold"
-msgstr "Llindar de gris"
+msgstr "Llindar superior"
 
 #: ../operations/common/value-propagate.c:51
 msgid "Propagating rate"
-msgstr ""
+msgstr "Velocitat de propagació"
 
 #: ../operations/common/value-propagate.c:56
 msgid "Color to use for the \"Only color\" and \"Color to peaks\" modes"
-msgstr ""
+msgstr "El color que s’utilitza als modes «Només color» i «Color per pics»"
 
 #: ../operations/common/value-propagate.c:59
 msgid "To top"
-msgstr ""
+msgstr "A dalt"
 
 #: ../operations/common/value-propagate.c:60
 msgid "Propagate to top"
-msgstr ""
+msgstr "Propaga a dalt"
 
 #: ../operations/common/value-propagate.c:62
-#, fuzzy
 msgid "To left"
-msgstr "Superior esquerra"
+msgstr "A l’esquerra"
 
 #: ../operations/common/value-propagate.c:63
 msgid "Propagate to left"
-msgstr ""
+msgstr "Propaga a esquerra"
 
 #: ../operations/common/value-propagate.c:65
-#, fuzzy
 msgid "To right"
-msgstr "Superior dreta"
+msgstr "A la dreta"
 
 #: ../operations/common/value-propagate.c:66
-#, fuzzy
 msgid "Propagate to right"
-msgstr "Inferior dreta"
+msgstr "Propagar a la dreta"
 
 #: ../operations/common/value-propagate.c:68
 msgid "To bottom"
-msgstr ""
+msgstr "A la part inferior"
 
 #: ../operations/common/value-propagate.c:69
-#, fuzzy
 msgid "Propagate to bottom"
-msgstr "Valor a la part inferior"
+msgstr "Propagar a baix"
 
 #: ../operations/common/value-propagate.c:71
 #: ../operations/common/value-propagate.c:72
 msgid "Propagating value channel"
-msgstr ""
+msgstr "Propagació del canal del valor"
 
 #: ../operations/common/value-propagate.c:74
 #: ../operations/common/value-propagate.c:75
-#, fuzzy
 msgid "Propagating alpha channel"
-msgstr "Canal alfa"
+msgstr "Propagar el canal alfa"
 
-#: ../operations/common/value-propagate.c:636
+#: ../operations/common/value-propagate.c:637
 msgid "Value Propagate"
-msgstr ""
+msgstr "Valor de propagació"
 
-#: ../operations/common/value-propagate.c:639
+#: ../operations/common/value-propagate.c:640
 msgid "Propagate certain colors to neighboring pixels."
-msgstr ""
+msgstr "Propaga certs colors dels píxels veïns."
 
 #: ../operations/common/video-degradation.c:34
 msgid "Staggered"
-msgstr ""
+msgstr "Escalonat"
 
 #: ../operations/common/video-degradation.c:36
 msgid "Large staggered"
-msgstr ""
+msgstr "Escalonat gran"
 
 #: ../operations/common/video-degradation.c:38
 msgid "Striped"
-msgstr ""
+msgstr "De ratlles"
 
 #: ../operations/common/video-degradation.c:40
 msgid "Wide striped"
-msgstr ""
+msgstr "De ratlles amples"
 
 #: ../operations/common/video-degradation.c:42
 msgid "Long staggered"
-msgstr ""
+msgstr "Escalonat llarg"
 
 #: ../operations/common/video-degradation.c:44
 msgid "3x3"
-msgstr ""
+msgstr "3x3"
 
 #: ../operations/common/video-degradation.c:46
 msgid "Large 3x3"
-msgstr ""
+msgstr "Gran 3x3"
 
 #: ../operations/common/video-degradation.c:48
-#, fuzzy
 msgid "Hex"
-msgstr "To"
+msgstr "Hexadecimal"
 
 #: ../operations/common/video-degradation.c:50
 msgid "Dots"
-msgstr ""
+msgstr "Punts"
 
 #: ../operations/common/video-degradation.c:53
-#, fuzzy
 msgid "Pattern"
-msgstr "Patró Bayer"
+msgstr "Patró "
 
 #: ../operations/common/video-degradation.c:56
-#, fuzzy
 msgid "Type of RGB pattern to use"
-msgstr "L'opacitat de l'emplenament que s'utilitzarà"
+msgstr "Tipus de patró RGB per utilitzar"
 
 #: ../operations/common/video-degradation.c:58
 msgid "Additive"
-msgstr ""
+msgstr "Additiu"
 
 #: ../operations/common/video-degradation.c:59
 msgid "Whether the function adds the result to the original image."
-msgstr ""
+msgstr "Ja sigui que la funció afegeixi el resultat a la imatge original."
 
 #: ../operations/common/video-degradation.c:61
-#, fuzzy
 msgid "Rotated"
 msgstr "Rotació"
 
 #: ../operations/common/video-degradation.c:62
 msgid "Whether to rotate the RGB pattern by ninety degrees."
-msgstr ""
+msgstr "Ja sigui per girar el patró RGB noranta graus."
 
 #: ../operations/common/video-degradation.c:269
-#, fuzzy
 msgid "Video Degradation"
-msgstr "Cap operació"
+msgstr "Degradació vídeo"
 
 #: ../operations/common/video-degradation.c:272
 msgid ""
 "This function simulates the degradation of being on an old low-dotpitch RGB "
 "video monitor."
 msgstr ""
+"Aquesta funció simula la degradació d'estar en un vell monitor de vídeo RGB "
+"amb pocs punts."
 
 #: ../operations/common/vignette.c:25
 msgid "Circle"
@@ -4356,7 +4611,7 @@ msgstr "Vinyeta"
 msgid ""
 "Applies a vignette to an image. Simulates the luminance fall off at the edge "
 "of exposed film, and some other fuzzier border effects that can naturally "
-"occur with analog photograpy"
+"occur with analog photography"
 msgstr ""
 "Aplica una vinyeta a una imatge. Simula la caiguda de la lluminositat al "
 "voltant del film exposat, i alguns altres efectes de vores difuses, com els "
@@ -4390,11 +4645,6 @@ msgstr "Esborra la deformació"
 msgid "Smooth warping"
 msgstr "Suavitza la deformació"
 
-#: ../operations/common/warp.c:38 ../operations/external/text.c:32
-#: ../operations/workshop/gblur-1d.c:43
-msgid "Size"
-msgstr "Mida"
-
 #: ../operations/common/warp.c:41 ../operations/external/path.c:40
 msgid "Hardness"
 msgstr "Duresa"
@@ -4411,11 +4661,11 @@ msgstr "Comportament"
 msgid "Behavior of the op"
 msgstr "Comportament de l'operació"
 
-#: ../operations/common/warp.c:411
+#: ../operations/common/warp.c:413
 msgid "Warp"
 msgstr "Deforma"
 
-#: ../operations/common/warp.c:413
+#: ../operations/common/warp.c:415
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Calcula el mapatge de desplaçament relatiu des d'un traç"
 
@@ -4443,17 +4693,17 @@ msgstr "Deformació per cenyiment"
 msgid "Limit deformation in the image area."
 msgstr "Deformació limitada a l'àrea de la imatge."
 
-#: ../operations/common/waves.c:180
+#: ../operations/common/waves.c:183
 msgid "Waves"
 msgstr "Ones"
 
-#: ../operations/common/waves.c:184
+#: ../operations/common/waves.c:187
 msgid "Distort the image with waves"
 msgstr "Distorsiona la imatge amb onades"
 
 #: ../operations/common/weighted-blend.c:185
 msgid "Weighted Blend"
-msgstr ""
+msgstr "Degradat ponderat"
 
 #: ../operations/common/weighted-blend.c:188
 msgid "blend two images using alpha values as weights"
@@ -4490,32 +4740,86 @@ msgstr "Gira i contrau"
 msgid "Distort an image by whirling and pinching"
 msgstr "Distorsiona una imatge amb girs i contraccions"
 
-#: ../operations/common/wind.c:27
-msgid "Higher values restrict the effect to fewer areas of the image"
-msgstr "Els valors més alts restringeixen l'efecte a menys àrees de la imatge"
-
-#: ../operations/common/wind.c:31
-msgid "Higher values increase the magnitude of the effect"
-msgstr "Els valors més alts incrementen la magnitud de l'efecte"
-
-#: ../operations/common/wind.c:366
+#: ../operations/common/wind.c:28 ../operations/common/wind.c:659
 msgid "Wind"
 msgstr "Vent"
 
-#: ../operations/common/wind.c:368
+#: ../operations/common/wind.c:29
+msgid "Blast"
+msgstr "Esclat"
+
+#: ../operations/common/wind.c:33
+msgid "Left"
+msgstr "Esquerra"
+
+#: ../operations/common/wind.c:34
+msgid "Right"
+msgstr "Dreta"
+
+#: ../operations/common/wind.c:35
+msgid "Top"
+msgstr "Capdamunt"
+
+#: ../operations/common/wind.c:36
+msgid "Bottom"
+msgstr "Capdevall"
+
+#: ../operations/common/wind.c:40
+msgid "Both"
+msgstr "Ambdós"
+
+#: ../operations/common/wind.c:41
+msgid "Leading"
+msgstr "Principal"
+
+#: ../operations/common/wind.c:42
+msgid "Trailing"
+msgstr "Arrossegament"
+
+#: ../operations/common/wind.c:45
+msgid "Style"
+msgstr "Estil"
+
+#: ../operations/common/wind.c:48
+msgid "Style of effect"
+msgstr "Estil de l'efecte"
+
+#: ../operations/common/wind.c:53
+msgid "Direction of the effect"
+msgstr "Direcció de l’efecte"
+
+#: ../operations/common/wind.c:55
+msgid "Edge Affected"
+msgstr "Vora afectada"
+
+#: ../operations/common/wind.c:58
+msgid "Edge behavior"
+msgstr "Comportament de la vora"
+
+#: ../operations/common/wind.c:61
+msgid "Higher values restrict the effect to fewer areas of the image"
+msgstr "Els valors més alts restringeixen l'efecte a menys àrees de la imatge"
+
+#: ../operations/common/wind.c:65
+msgid "Higher values increase the magnitude of the effect"
+msgstr "Els valors més alts incrementen la magnitud de l'efecte"
+
+#: ../operations/common/wind.c:662
 msgid "Wind-like bleed effect"
 msgstr "Efecte d'escampada similar a la que provoca el vent"
 
 #: ../operations/common/write-buffer.c:26
 msgid "A pre-existing GeglBuffer to write incoming buffer data to."
 msgstr ""
+"Memòria intermèdia Gegl pre-existent per escriure les dades de memòria "
+"intermèdia entrants."
 
-#: ../operations/common/write-buffer.c:147
+#: ../operations/common/write-buffer.c:149
 msgid "Write Buffer"
 msgstr "Escriu la memòria intermèdia"
 
-#: ../operations/common/write-buffer.c:149
-msgid "A GEGL buffer destination surface."
+#: ../operations/common/write-buffer.c:151
+msgid "Write input data into an existing GEGL buffer destination surface."
 msgstr "Una superfície de destinació de la memòria intermèdia GEGL."
 
 #: ../operations/core/cache.c:25
@@ -4523,11 +4827,16 @@ msgid "Cache"
 msgstr "Memòria cau"
 
 #: ../operations/core/cache.c:26
+#, fuzzy
 msgid ""
 "NULL or a GeglBuffer containing cached rendering results, this is a special "
 "buffer where gegl_buffer_list_valid_rectangles returns the part of the cache "
 "that is valid."
 msgstr ""
+"NULL o una memòria intermèdia Gegl que conté els resultats de renderització "
+"en memòria cau, es tracta d’una memòria intermèdia especial on "
+"gegl_buffer_list_valid_rectangles                retorna la part de la "
+"memòria cau que és vàlida."
 
 #: ../operations/core/cache.c:90
 msgid "Explicit cache of results at this point of graph."
@@ -4536,6 +4845,31 @@ msgstr "Memòria cau explícita dels resultats d'aquest punt en el gràfic."
 #: ../operations/core/cache.c:92
 msgid "An explicit caching node"
 msgstr "Node de la memòria cau explícita"
+
+#: ../operations/core/cast-format.c:25
+msgid "Input format"
+msgstr "Format d'entrada"
+
+#: ../operations/core/cast-format.c:26
+msgid "The babl format of the input"
+msgstr "Format babl de la sortida"
+
+#: ../operations/core/cast-format.c:27 ../operations/core/convert-format.c:27
+msgid "Output format"
+msgstr "Format de sortida"
+
+#: ../operations/core/cast-format.c:110
+msgid "Cast Format"
+msgstr "Format de repartiment"
+
+#: ../operations/core/cast-format.c:112
+#, fuzzy
+msgid ""
+"Cast the data between input_format and output_format, both formats must have "
+"the same bpp"
+msgstr ""
+"Repartiment de les dades entre input_format         i output_format,         "
+"tots dos formats han de tenir el mateix bpp"
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -4554,42 +4888,23 @@ msgstr "Clona"
 msgid "Clone a buffer"
 msgstr "Clona una memòria intermèdia"
 
-#: ../operations/core/cast-format.c:25
-msgid "Input format"
-msgstr "Format d'entrada"
-
-#: ../operations/core/cast-format.c:26
-msgid "The babl format of the input"
-msgstr "Format babl de la sortida"
-
-#: ../operations/core/cast-format.c:27 ../operations/core/convert-format.c:27
-msgid "Output format"
-msgstr "Format de sortida"
-
-#: ../operations/core/cast-format.c:110
-#, fuzzy
-msgid "Cast Format"
-msgstr "Format RAW (en cru)"
-
-#: ../operations/core/cast-format.c:112
-msgid ""
-"Cast the data between input_format and output_format, both bormats must have "
-"the same bpp"
-msgstr ""
-
-#: ../operations/core/convert-format.c:86
+#: ../operations/core/convert-format.c:87
 msgid "Convert Format"
 msgstr "Converteix el format"
 
-#: ../operations/core/convert-format.c:88
+#: ../operations/core/convert-format.c:89
 msgid "Convert the data to the specified format"
 msgstr "Converteix les dades al format especificat"
 
-#: ../operations/core/crop.c:207
+#: ../operations/core/crop.c:45
+msgid "Reset origin"
+msgstr "Restablir l'origen"
+
+#: ../operations/core/crop.c:209
 msgid "Crop"
 msgstr "Escapça"
 
-#: ../operations/core/crop.c:208
+#: ../operations/core/crop.c:210
 msgid "Crop a buffer"
 msgstr "Retalla una memòria intermèdia"
 
@@ -4601,23 +4916,210 @@ msgstr "Cap operació"
 msgid "No operation (can be used as a routing point)"
 msgstr "Cap operació (es pot utilitzar com un punt de ruta)"
 
-#: ../operations/external/ff-load.c:26
+#: ../operations/external/ff-load.c:25
 msgid "Path of video file to load"
 msgstr "Camí del fitxer de vídeo que es vol carregar"
 
-#: ../operations/external/ff-load.c:28
+#: ../operations/external/ff-load.c:27
 msgid "Frame number"
 msgstr "Número de fotograma"
 
-#: ../operations/external/ff-load.c:474
+#: ../operations/external/ff-load.c:31
+msgid "frames"
+msgstr "Fotogrames"
+
+#: ../operations/external/ff-load.c:32
+msgid ""
+"Number of frames in video, updates at least when first frame has been "
+"decoded."
+msgstr ""
+"Nombre de fotogrames de vídeo, s'actualitza almenys quan el primer fotograma "
+"ha estat descodificat."
+
+#: ../operations/external/ff-load.c:36
+msgid "audio_sample_rate"
+msgstr "audio_mostra_velocitat"
+
+#: ../operations/external/ff-load.c:37
+msgid "audio_channels"
+msgstr "Canals d’àudio"
+
+#: ../operations/external/ff-load.c:39
+msgid "frame-rate"
+msgstr "fotograma-velocitat"
+
+#: ../operations/external/ff-load.c:40
+msgid "Frames per second, permits computing time vs frame"
+msgstr "Fotogrames per segon, permet computar temps per fotograma"
+
+#: ../operations/external/ff-load.c:44
+msgid "video-codec"
+msgstr "Còdec de vídeo"
+
+#: ../operations/external/ff-load.c:45
+msgid "audio-codec"
+msgstr "Còdec d’àudio"
+
+#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:32
+msgid "audio"
+msgstr "Àudio"
+
+#: ../operations/external/ff-load.c:769
 msgid "FFmpeg Frame Loader"
 msgstr "Carregador de fotogrames FFmpeg"
 
-#: ../operations/external/ff-load.c:476
+#: ../operations/external/ff-load.c:771
 msgid "FFmpeg video frame importer."
 msgstr "Importador de fotogrames de vídeo FFmpeg."
 
+#: ../operations/external/ff-save.c:30 ../operations/external/npy-save.c:32
+#: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
+#: ../operations/external/rgbe-save.c:27
+msgid "Target path and filename, use '-' for stdout."
+msgstr ""
+"Camí de destinació i nom del fitxer, utilitzeu «-» per la sortida estàndard."
+
+#: ../operations/external/ff-save.c:33
+msgid "Audio codec"
+msgstr "Còdec d’àudio"
+
+#: ../operations/external/ff-save.c:34
+msgid ""
+"Audio codec to use, or auto to use a good default based on container format."
+msgstr ""
+
+#: ../operations/external/ff-save.c:35
+#, fuzzy
+msgid "audio sample rate"
+msgstr "audio_mostra_velocitat"
+
+#: ../operations/external/ff-save.c:36
+msgid "-1 means autodetect on first audio fragment"
+msgstr ""
+
+#: ../operations/external/ff-save.c:38
+msgid "audio bitrate in kb/s"
+msgstr "Taxa de bits de l’àudio en kb/s"
+
+#: ../operations/external/ff-save.c:39 ../operations/external/ff-save.c:47
+msgid "Target encoded video bitrate in kb/s"
+msgstr "Objectiu codificat de la taxa de bits de vídeo en kb/s"
+
+#: ../operations/external/ff-save.c:41
+msgid "Frames/second"
+msgstr "Fotogrames per segon"
+
+#: ../operations/external/ff-save.c:44
+msgid "Video codec"
+msgstr "Còdec de vídeo"
+
+#: ../operations/external/ff-save.c:45
+msgid ""
+"Video codec to use, or auto to use a good default based on container format."
+msgstr ""
+
+#: ../operations/external/ff-save.c:46
+msgid "video bitrate in kb/s"
+msgstr "taxa de bits del vídeo en kb/s"
+
+#: ../operations/external/ff-save.c:48
+#, fuzzy
+msgid "Video bufsize"
+msgstr "bufsize"
+
+#: ../operations/external/ff-save.c:50
+#, fuzzy
+msgid "Container format"
+msgstr "Converteix el format"
+
+#: ../operations/external/ff-save.c:51
+msgid "Container format to use, or auto to autodetect based on file extension."
+msgstr ""
+
+#: ../operations/external/ff-save.c:54
+msgid "global quality"
+msgstr "Qualitat global"
+
+#: ../operations/external/ff-save.c:55
+msgid "noise reduction"
+msgstr "Reducció del soroll"
+
+#: ../operations/external/ff-save.c:56
+msgid "scenechange threshold"
+msgstr "Llindar del canvi d'escena"
+
+#: ../operations/external/ff-save.c:57
+msgid "video bitrate min"
+msgstr "taxa de bits mínima"
+
+#: ../operations/external/ff-save.c:58
+msgid "video bitrate max"
+msgstr "taxa de bits màxima"
+
+#: ../operations/external/ff-save.c:59
+msgid "video bitrate tolerance"
+msgstr "Tolerància de la taxa de bits del vídeo"
+
+#: ../operations/external/ff-save.c:61
+msgid "keyint-min"
+msgstr "keyint-min"
+
+#: ../operations/external/ff-save.c:62
+msgid "trellis"
+msgstr "enreixat"
+
+#: ../operations/external/ff-save.c:63
+msgid "qmin"
+msgstr "qmin"
+
+#: ../operations/external/ff-save.c:64
+msgid "qmax"
+msgstr "qmax"
+
+#: ../operations/external/ff-save.c:65
+msgid "max_qdiff"
+msgstr "max_qdiff"
+
+#: ../operations/external/ff-save.c:66
+#, fuzzy
+msgid "me_range"
+msgstr "me_range"
+
+#: ../operations/external/ff-save.c:67
+msgid "max_b_frames"
+msgstr ""
+
+#: ../operations/external/ff-save.c:68
+msgid "gop-size"
+msgstr "gop-size"
+
+#: ../operations/external/ff-save.c:69
+#, fuzzy
+msgid "qcompress"
+msgstr "Compressió"
+
+#: ../operations/external/ff-save.c:70
+msgid "qblur"
+msgstr "qblur"
+
+#: ../operations/external/ff-save.c:71
+msgid "i-quant-factor"
+msgstr ""
+
+#: ../operations/external/ff-save.c:72
+msgid "i-quant-offset"
+msgstr ""
+
+#: ../operations/external/ff-save.c:73
+msgid "me-subpel-quality"
+msgstr ""
+
+#: ../operations/external/ff-save.c:1072
+msgid "FFmpeg video output sink"
+msgstr "Conducte de sortida de vídeo FFmpeg"
+
 #: ../operations/external/jp2-load.c:26 ../operations/external/jpg-load.c:25
+#: ../operations/external/tiff-load.c:26
 msgid "Path of file to load"
 msgstr "Camí del fitxer que es vol carregar"
 
@@ -4684,9 +5186,8 @@ msgid "JPEG 2000 image loader using jasper."
 msgstr "Carregador d'imatges JPEG 2000 utilitzant jasper."
 
 #: ../operations/external/jpg-load.c:27
-#, fuzzy
 msgid "URI of file to load"
-msgstr "Camí del fitxer que es vol carregar"
+msgstr "URI del fitxer que s'ha de carregar"
 
 #: ../operations/external/jpg-load.c:365
 msgid "JPEG File Loader"
@@ -4696,7 +5197,7 @@ msgstr "Carregador d'imatges JPG"
 msgid "JPEG image loader using libjpeg"
 msgstr "Carregador d'imatges JPG utilitzant libjpeg"
 
-#: ../operations/external/jpg-save.c:26
+#: ../operations/external/jpg-save.c:26 ../operations/external/tiff-save.c:26
 msgid "Target path and filename, use '-' for stdout"
 msgstr ""
 "Camí de destinació i nom del fitxer, utilitzeu «-» per la sortida estàndard"
@@ -4836,21 +5337,81 @@ msgid "Matting Levin"
 msgstr "Matting Levin"
 
 #: ../operations/external/matting-levin.c:1456
-#, fuzzy
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha mat. Set white as selected, black as unselected, for the tri-map."
 msgstr ""
-"Donat un tri-mapa dispers i una imatge d'entrada, crea un primer pla alfa "
+"Donat un tri-mapa dispers i una imatge d’entrada, crea un primer pla alfa "
 "mat. Estableix el blanc com a seleccionat i el negre com a no seleccionat "
 "pel tri-mapa."
 
-#: ../operations/external/npy-save.c:32 ../operations/external/png-save.c:27
-#: ../operations/external/ppm-save.c:26 ../operations/external/rgbe-save.c:27
-#: ../operations/workshop/external/ff-save.c:31
-msgid "Target path and filename, use '-' for stdout."
+#: ../operations/external/npd.c:23
+msgid "Model"
+msgstr "Model"
+
+#: ../operations/external/npd.c:24
+msgid "Model - basic element we operate on"
+msgstr "Model - element bàsic que fem funcionar"
+
+#: ../operations/external/npd.c:26
+msgid "Square Size"
+msgstr "Mida del quadrat"
+
+#: ../operations/external/npd.c:28
+msgid "Size of an edge of square the mesh consists of"
+msgstr "La mida d'una vora del quadrat de la malla consisteix en"
+
+#: ../operations/external/npd.c:30
+msgid "Rigidity"
+msgstr "rigidesa"
+
+#: ../operations/external/npd.c:32
+msgid "The number of deformation iterations"
+msgstr "El nombre d'iteracions de deformació"
+
+#: ../operations/external/npd.c:34
+msgid "ASAP Deformation"
+msgstr "Deformació ASAP"
+
+#: ../operations/external/npd.c:36
+msgid "ASAP deformation is performed when TRUE, ARAP deformation otherwise"
 msgstr ""
-"Camí de destinació i nom del fitxer, utilitzeu «-» per la sortida estàndard."
+"La deformació ASAP es realitza quan és TRUE, i la deformació ARAP és el "
+"contrari"
+
+#: ../operations/external/npd.c:38
+msgid "MLS Weights"
+msgstr "Ponderació MLS"
+
+#: ../operations/external/npd.c:40
+msgid "Use MLS weights"
+msgstr "Utilitza la ponderació MLS"
+
+#: ../operations/external/npd.c:42
+msgid "MLS Weights Alpha"
+msgstr "Alfa ponderació MLS"
+
+#: ../operations/external/npd.c:44
+msgid "Alpha parameter of MLS weights"
+msgstr "Alfa paràmetre de ponderació MLS"
+
+#: ../operations/external/npd.c:46
+msgid "Preserve Model"
+msgstr "Preserva el Model"
+
+#: ../operations/external/npd.c:48
+msgid "When TRUE the model will not be freed"
+msgstr "Quan és TRUE no s’alliberarà el model"
+
+#: ../operations/external/npd.c:53
+#: ../operations/transform/transform-core.c:194
+#: ../operations/workshop/ditto.c:29
+msgid "Sampler used internally"
+msgstr "Mostrejador d'ús intern"
+
+#: ../operations/external/npd.c:258
+msgid "Performs n-point image deformation"
+msgstr "Realitza n-punts de la imatge de deformació"
 
 #: ../operations/external/npy-save.c:142
 msgid "NPY File Saver"
@@ -4859,10 +5420,6 @@ msgstr "Desador de fitxers NPY"
 #: ../operations/external/npy-save.c:145
 msgid "NPY image saver (Numerical python file saver.)"
 msgstr "Desador d'imatge NPY (desador de fitxer python numèric)"
-
-#: ../operations/external/openraw.c:243
-msgid "OpenRAW File Loader"
-msgstr "Carregador de fitxers OpenRAW"
 
 #: ../operations/external/path.c:26
 msgid "Fill Color"
@@ -4944,19 +5501,19 @@ msgstr "Vector"
 msgid "A GeglVector representing the path of the stroke"
 msgstr "Un vector Gegl que representa el camí del traç"
 
-#: ../operations/external/path.c:531
+#: ../operations/external/path.c:532
 msgid "Render Path"
 msgstr "Dibuixa el camí"
 
-#: ../operations/external/path.c:534
+#: ../operations/external/path.c:535
 msgid "Renders a brush stroke"
 msgstr "Renderitza un traç de pinzell"
 
-#: ../operations/external/pixbuf.c:25
+#: ../operations/external/pixbuf.c:26
 msgid "Pixbuf"
 msgstr "Pixbuf"
 
-#: ../operations/external/pixbuf.c:25
+#: ../operations/external/pixbuf.c:27
 msgid "GdkPixbuf to use"
 msgstr "La GdkPixBuf que s'utilitzarà"
 
@@ -4971,9 +5528,8 @@ msgstr ""
 "<em>pixbuf</em>."
 
 #: ../operations/external/png-load.c:30
-#, fuzzy
 msgid "URI for file to load."
-msgstr "Camí del fitxer que es vol carregar."
+msgstr "URI pel fitxer que s'ha de carregar"
 
 #: ../operations/external/png-load.c:497
 msgid "PNG File Loader"
@@ -5004,10 +5560,9 @@ msgid "PNG File Saver"
 msgstr "Carregador d'imatges PNG"
 
 #: ../operations/external/png-save.c:231
-msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
-msgstr ""
-"Desador d'imatge PNG (travessa la memòria intermèdia i desa com a conseqüència "
-"indirecta.)"
+#, fuzzy
+msgid "PNG image saver, using libpng"
+msgstr "Desador de fitxers JPEG, utilitzant libjpeg"
 
 #: ../operations/external/ppm-load.c:381
 msgid "PPM File Loader"
@@ -5028,6 +5583,10 @@ msgstr "Carregador d'imatges PPM"
 #: ../operations/external/ppm-save.c:192
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Desador d'imatge PPM (desador de mapes de píxels portables.)"
+
+#: ../operations/external/raw-load.c:238
+msgid "libraw File Loader"
+msgstr "Carregador de fitxers del libraw"
 
 #: ../operations/external/rgbe-load.c:135
 msgid "RGBE File Loader"
@@ -5165,6 +5724,34 @@ msgstr "Dibuixa el text"
 msgid "Display a string of text using pango and cairo."
 msgstr "Mostra una cadena de text amb Pango i Cairo."
 
+#: ../operations/external/tiff-load.c:28
+msgid "URI for file to load"
+msgstr "URI del fitxer que s'ha de carregar"
+
+#: ../operations/external/tiff-load.c:30
+msgid "Directory"
+msgstr "Directori"
+
+#: ../operations/external/tiff-load.c:31
+msgid "Image file directory (subfile)"
+msgstr "Directori d’arxius d’imatge (subfitxer)"
+
+#: ../operations/external/tiff-load.c:867
+msgid "TIFF File Loader"
+msgstr "Carregador de fitxers TIFF"
+
+#: ../operations/external/tiff-load.c:869
+msgid "TIFF image loader using libtiff"
+msgstr "Carregador d'imatges TIFF utilitzant libtiff"
+
+#: ../operations/external/tiff-save.c:621
+msgid "TIFF File Saver"
+msgstr "Desador de fitxers TIFF"
+
+#: ../operations/external/tiff-save.c:623
+msgid "TIFF image saver using libtiff"
+msgstr "Imatge TIFF desador, utilitzant libtiff"
+
 #: ../operations/external/v4l.c:26 ../operations/workshop/external/v4l2.c:24
 msgid "Path"
 msgstr "Camí"
@@ -5226,7 +5813,6 @@ msgid "svg style description of transform."
 msgstr "Descripció de l'estil SVG de la transformació."
 
 #: ../operations/external/vector-fill.c:275
-#, fuzzy
 msgid "Fill Path"
 msgstr "Emplena el camí"
 
@@ -5250,11 +5836,11 @@ msgstr ""
 "L'opacitat del traç, tingueu en compte que no es comporta com un SVG, ja que "
 "el traç es realitza amb un aerògraf."
 
-#: ../operations/external/vector-stroke.c:299
+#: ../operations/external/vector-stroke.c:300
 msgid "Vector Stroke"
 msgstr "Traç vectorial"
 
-#: ../operations/external/vector-stroke.c:302
+#: ../operations/external/vector-stroke.c:303
 msgid "Renders a vector stroke"
 msgstr "Renderitza un traç vectorial"
 
@@ -5294,6 +5880,9 @@ msgid ""
 "constant provided in 'value' or the corresponding pixel from the buffer on "
 "aux as operands. (formula: result = input + value)"
 msgstr ""
+"Operació matemàtica d'afegir, realitza l'operació per píxel, utilitzant la "
+"constant proporcionada en «valor» o el píxel corresponent de la memòria "
+"intermèdia auxiliar com a operands. (fórmula: resultat = entrada + valor)"
 
 #: ../operations/generated/clear.c:126
 msgid "Porter Duff operation clear (d = 0.0f)"
@@ -5475,17 +6064,15 @@ msgstr ""
 "Operació de Porter i Buff «xor» (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
 #: ../operations/seamless-clone/seamless-clone.c:22
-#: ../operations/seamless-clone/seamless-clone-compose.c:21
-msgid "Refinement steps"
-msgstr "Passos de refinament"
+msgid "Refinement scale"
+msgstr "Escala de refinament"
 
 #: ../operations/seamless-clone/seamless-clone.c:23
-#: ../operations/seamless-clone/seamless-clone-compose.c:22
 msgid ""
-"Maximal amount of refinement points to be used for the interpolation mesh"
+"Maximal scale of refinement points to be used for the interpolation mesh"
 msgstr ""
-"Quantitat màxima de punts de refinament que s'utilitzarà per a la malla "
-"d'interpolació"
+"Quantitat màxima de punts de refinament que s’utilitzarà per a la malla "
+"d’interpolació"
 
 #: ../operations/seamless-clone/seamless-clone.c:27
 #: ../operations/seamless-clone/seamless-clone.c:33
@@ -5505,21 +6092,32 @@ msgstr "Missatge d'error"
 msgid "An error message in case of a failure"
 msgstr "Un missatge d'error en cas de fallada"
 
-#: ../operations/seamless-clone/seamless-clone.c:171
+#: ../operations/seamless-clone/seamless-clone.c:182
 msgid "The foreground does not contain opaque parts"
 msgstr "El primer pla no conté parts opaques"
 
-#: ../operations/seamless-clone/seamless-clone.c:174
+#: ../operations/seamless-clone/seamless-clone.c:185
 msgid "The foreground is too small to use"
 msgstr "El primer pla és massa petit per poder utilitzar-lo"
 
-#: ../operations/seamless-clone/seamless-clone.c:177
+#: ../operations/seamless-clone/seamless-clone.c:188
 msgid "The foreground contains holes and/or several unconnected parts"
 msgstr "El primer pla conté forats i/o diverses parts no connectades"
 
-#: ../operations/seamless-clone/seamless-clone.c:188
+#: ../operations/seamless-clone/seamless-clone.c:199
 msgid "The opaque parts of the foreground are not above the background!"
 msgstr "Les parts opaques del primer pla no estan al damunt del fons."
+
+#: ../operations/seamless-clone/seamless-clone-compose.c:21
+msgid "Refinement steps"
+msgstr "Passos de refinament"
+
+#: ../operations/seamless-clone/seamless-clone-compose.c:22
+msgid ""
+"Maximal amount of refinement points to be used for the interpolation mesh"
+msgstr ""
+"Quantitat màxima de punts de refinament que s'utilitzarà per a la malla "
+"d'interpolació"
 
 #: ../operations/seamless-clone/seamless-clone-compose.c:32
 msgid "How much vertical offset should applied to the paste"
@@ -5535,12 +6133,24 @@ msgid "Direction vector's Y component"
 msgstr "Direcció del component Y del vector"
 
 #: ../operations/transform/rotate.c:26
+#: ../operations/transform/rotate-on-center.c:26
 msgid "Angle to rotate (clockwise)"
 msgstr "Angle de rotació (sentit horari)"
 
 #: ../operations/transform/rotate.c:31
 msgid "Rotate the buffer around the specified origin."
 msgstr "Gira la memòria intermèdia al voltant de l'origen especificat."
+
+#: ../operations/transform/rotate-on-center.c:32
+#: ../operations/transform/rotate-on-center.c:34
+msgid "Ignored. Always uses center of input buffer"
+msgstr "Ignora. Utilitza sempre el centre de memòria intermèdia d'entrada"
+
+#: ../operations/transform/rotate-on-center.c:40
+msgid "Rotate the buffer around its center, taking care of possible offsets."
+msgstr ""
+"Gira la memòria intermèdia al voltant del seu centre, tenint en compte "
+"possibles desplaçaments"
 
 #: ../operations/transform/scale-ratio.c:26
 msgid "Horizontal scale factor"
@@ -5569,9 +6179,9 @@ msgid "Scales the buffer according to a size."
 msgstr "Escala la memòria intermèdia segons una mida."
 
 #: ../operations/transform/scale-size-keepaspect.c:33
-#, fuzzy
 msgid "Scales the buffer to a size, preserving aspect ratio"
-msgstr "Escala la memòria intermèdia segons una proporció."
+msgstr ""
+"Escala la memòria intermèdia a una mida, conservant la relació d'aspecte"
 
 #: ../operations/transform/shear.c:26
 msgid "Horizontal shear amount"
@@ -5593,31 +6203,21 @@ msgstr "Transformació de la cadena"
 msgid "Transforms the group (used by svg)."
 msgstr "Transforma el grup (s'utilitza per SVG)."
 
-#: ../operations/transform/transform-core.c:173
+#: ../operations/transform/transform-core.c:177
 msgid "Origin-x"
 msgstr "Origen X"
 
-#: ../operations/transform/transform-core.c:174
+#: ../operations/transform/transform-core.c:178
 msgid "X coordinate of origin"
 msgstr "Coordenada X de l'origen"
 
-#: ../operations/transform/transform-core.c:181
+#: ../operations/transform/transform-core.c:185
 msgid "Origin-y"
 msgstr "Origen Y"
 
-#: ../operations/transform/transform-core.c:182
+#: ../operations/transform/transform-core.c:186
 msgid "Y coordinate of origin"
 msgstr "Coordenada Y de l'origen"
-
-#: ../operations/transform/transform-core.c:189
-#: ../operations/workshop/ditto.c:27
-msgid "Sampler"
-msgstr "Mostrejador"
-
-#: ../operations/transform/transform-core.c:190
-#: ../operations/workshop/ditto.c:29
-msgid "Sampler used internally"
-msgstr "Mostrejador d'ús intern"
 
 #: ../operations/transform/translate.c:26
 msgid "Horizontal translation"
@@ -5636,195 +6236,221 @@ msgstr ""
 "s'utilitza un càlcul ràpid sense remostreig si s'utilitzen coordenades "
 "enteres"
 
-#: ../operations/workshop/box-max.c:27 ../operations/workshop/box-min.c:27
-#: ../operations/workshop/box-percentile.c:28
-#: ../operations/workshop/disc-percentile.c:28
-#: ../operations/workshop/kuwahara.c:27
-#: ../operations/workshop/snn-percentile.c:28
-msgid "Radius of square pixel region (width and height will be radius*2+1)"
-msgstr ""
-"Radi de la regió quadrada de píxels (l'amplada i l'alçada seran radi*2+1)"
-
-#: ../operations/workshop/box-max.c:337
-msgid ""
-"Sets the target pixel to the value of the maximum value in a box surrounding "
-"the pixel"
-msgstr ""
-"Estableix el valor del píxel objectiu al valor màxim que hi ha dins la caixa "
-"que l'envolta"
-
-#: ../operations/workshop/box-min.c:336
-msgid ""
-"Sets the target pixel to the value of the minimum value in a box surrounding "
-"the pixel"
-msgstr ""
-"Estableix el valor del píxel objectiu al valor mínim que hi ha dins la caixa "
-"que l'envolta"
-
-#: ../operations/workshop/box-percentile.c:31
-#: ../operations/workshop/disc-percentile.c:29
-#: ../operations/workshop/snn-percentile.c:35
-msgid "Percentile"
-msgstr "Percentil"
-
-#: ../operations/workshop/box-percentile.c:32
-msgid "The percentile to compute, defaults to 50, which is a median filter"
-msgstr ""
-"El percentil que es calcula, per defecte és el 50, que és un filtre mitjà"
-
-#: ../operations/workshop/box-percentile.c:233
-msgid ""
-"Sets the target pixel to the color corresponding to a given percentile when "
-"colors are sorted by luminance"
-msgstr ""
-"Estableix el píxel objectiu al color, que correspon a un percentil donat per "
-"l'ordenació dels colors segons la lluminositat"
-
-#: ../operations/workshop/buffer-cache.c:25
-msgid "Cache buffer"
-msgstr "Memòria intermèdia de la memòria cau"
-
-#: ../operations/workshop/buffer-cache.c:26
-msgid "The GeglBuffer where the caching is done"
-msgstr "La memòria intermèdia Gegl on es fa la memòria cau"
-
-#: ../operations/workshop/buffer-cache.c:96
-msgid ""
-"Cache the input buffer internally, further process take this buffer as input."
-msgstr ""
-"Desa internament la memòria intermèdia d'entrada, els processos posteriors "
-"prenen aquesta memòria intermèdia com a entrada."
-
 #: ../operations/workshop/color-warp.c:24
-#, fuzzy
 msgid "From 0"
-msgstr "De"
+msgstr "De 0"
 
 #: ../operations/workshop/color-warp.c:25
 msgid "To 0"
-msgstr ""
+msgstr "A 0"
 
 #: ../operations/workshop/color-warp.c:26
-#, fuzzy
 msgid "weight 0"
-msgstr "Alçada"
+msgstr "ponderació 0"
 
 #: ../operations/workshop/color-warp.c:28
-#, fuzzy
 msgid "From 1"
-msgstr "De"
+msgstr "De 1"
 
 #: ../operations/workshop/color-warp.c:29
 msgid "To 1"
-msgstr ""
+msgstr "A 1"
 
 #: ../operations/workshop/color-warp.c:30
-#, fuzzy
 msgid "weight 1"
-msgstr "Alçada"
+msgstr "ponderació 1"
 
 #: ../operations/workshop/color-warp.c:32
-#, fuzzy
 msgid "From 2"
-msgstr "De"
+msgstr "De 2"
 
 #: ../operations/workshop/color-warp.c:33
 msgid "To 2"
-msgstr ""
+msgstr "A 2"
 
 #: ../operations/workshop/color-warp.c:34
-#, fuzzy
 msgid "weight 2"
-msgstr "Alçada"
+msgstr "ponderació 2"
 
 #: ../operations/workshop/color-warp.c:36
-#, fuzzy
 msgid "From 3"
-msgstr "De"
+msgstr "De 3"
 
 #: ../operations/workshop/color-warp.c:37
 msgid "To 3"
-msgstr ""
+msgstr "A 3"
 
 #: ../operations/workshop/color-warp.c:38
-#, fuzzy
 msgid "weight 3"
-msgstr "Alçada"
+msgstr "ponderació 3"
 
 #: ../operations/workshop/color-warp.c:40
-#, fuzzy
 msgid "From 4"
-msgstr "De"
+msgstr "De 4"
 
 #: ../operations/workshop/color-warp.c:41
 msgid "To 4"
-msgstr ""
+msgstr "A 4"
 
 #: ../operations/workshop/color-warp.c:42
-#, fuzzy
 msgid "weight 4"
-msgstr "Alçada"
+msgstr "ponderació 4"
 
 #: ../operations/workshop/color-warp.c:44
-#, fuzzy
 msgid "From 5"
-msgstr "De"
+msgstr "De 5"
 
 #: ../operations/workshop/color-warp.c:45
 msgid "To 5"
-msgstr ""
+msgstr "A 5"
 
 #: ../operations/workshop/color-warp.c:46
-#, fuzzy
 msgid "weight 5"
-msgstr "Alçada"
+msgstr "ponderació 5"
 
 #: ../operations/workshop/color-warp.c:48
-#, fuzzy
 msgid "From 6"
-msgstr "De"
+msgstr "De 6"
 
 #: ../operations/workshop/color-warp.c:49
 msgid "To 6"
-msgstr ""
+msgstr "A 6"
 
 #: ../operations/workshop/color-warp.c:50
-#, fuzzy
 msgid "weight 6"
-msgstr "Alçada"
+msgstr "ponderació 6"
 
 #: ../operations/workshop/color-warp.c:52
-#, fuzzy
 msgid "From 7"
-msgstr "De"
+msgstr "De 7"
 
 #: ../operations/workshop/color-warp.c:53
 msgid "To 7"
-msgstr ""
+msgstr "A 7"
 
 #: ../operations/workshop/color-warp.c:54
-#, fuzzy
 msgid "weight 7"
-msgstr "Alçada"
+msgstr "ponderació 7"
 
 #: ../operations/workshop/color-warp.c:56
 msgid "global weight scale"
-msgstr ""
+msgstr "Escala de ponderació global"
 
 #: ../operations/workshop/color-warp.c:58
-#, fuzzy
 msgid "amount"
-msgstr "Intensitat de la pessigada"
+msgstr "quantitat"
 
 #: ../operations/workshop/color-warp.c:298
-#, fuzzy
 msgid "Color warp"
-msgstr "Color 1"
+msgstr "Ordit de color "
 
 #: ../operations/workshop/color-warp.c:300
 msgid ""
 "Warps the colors of an image between colors with weighted distortion factors."
 msgstr ""
+"Deforma els colors d'una imatge entre els colors amb factors de distorsió de "
+"la ponderació."
+
+#: ../operations/workshop/component-extract.c:25
+msgid "RGB Red"
+msgstr "Vermell RGB"
+
+#: ../operations/workshop/component-extract.c:26
+msgid "RGB Green"
+msgstr "Verd RGB"
+
+#: ../operations/workshop/component-extract.c:27
+msgid "RGB Blue"
+msgstr "Blau RGB"
+
+#: ../operations/workshop/component-extract.c:29
+msgid "HSV Saturation"
+msgstr "Saturació HSV"
+
+#: ../operations/workshop/component-extract.c:30
+msgid "HSV Value"
+msgstr "Valor HSV"
+
+#: ../operations/workshop/component-extract.c:31
+msgid "HSL Saturation"
+msgstr "Saturació HSV"
+
+#: ../operations/workshop/component-extract.c:32
+msgid "HSL Lightness"
+msgstr "Lluminositat HSV"
+
+#: ../operations/workshop/component-extract.c:33
+msgid "CMYK Cyan"
+msgstr "Cian CMYK"
+
+#: ../operations/workshop/component-extract.c:34
+msgid "CMYK Magenta"
+msgstr "Magenta CMYK"
+
+#: ../operations/workshop/component-extract.c:35
+msgid "CMYK Yellow"
+msgstr "Groc CMYK"
+
+#: ../operations/workshop/component-extract.c:36
+#, fuzzy
+msgid "CMYK Key"
+msgstr "Tecla  o botó ????? CMYK "
+
+#: ../operations/workshop/component-extract.c:37
+msgid "Y'CbCr Y'"
+msgstr "Y'CbCr Y'"
+
+#: ../operations/workshop/component-extract.c:38
+msgid "Y'CbCr Cb"
+msgstr "Y'CbCr Cb"
+
+#: ../operations/workshop/component-extract.c:39
+msgid "Y'CbCr Cr"
+msgstr "Y'CbCr Cr"
+
+#: ../operations/workshop/component-extract.c:40
+msgid "LAB L"
+msgstr "LAB L"
+
+#: ../operations/workshop/component-extract.c:41
+msgid "LAB A"
+msgstr "LAB A"
+
+#: ../operations/workshop/component-extract.c:42
+msgid "LAB B"
+msgstr "LAB B"
+
+#: ../operations/workshop/component-extract.c:46
+msgid "Component"
+msgstr "Component"
+
+#: ../operations/workshop/component-extract.c:49
+msgid "Component to extract"
+msgstr "Component per extreure"
+
+#: ../operations/workshop/component-extract.c:51
+msgid "Invert component"
+msgstr "Inverteix el component"
+
+#: ../operations/workshop/component-extract.c:52
+msgid "Invert the extracted component"
+msgstr "Inverteix el component extret"
+
+#: ../operations/workshop/component-extract.c:54
+msgid "Linear output"
+msgstr "Sortida lineal"
+
+#: ../operations/workshop/component-extract.c:55
+msgid "Use linear output instead of gamma corrected"
+msgstr "Utilitzeu la sortida lineal en lloc de la gamma corregida"
+
+#: ../operations/workshop/component-extract.c:264
+msgid "Extract Component"
+msgstr "Component de l'extracte"
+
+#: ../operations/workshop/component-extract.c:266
+msgid "Extract a color model component"
+msgstr "Extracte un component de model de color"
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
@@ -5840,51 +6466,34 @@ msgstr ""
 "El patró de Bayer que s'utilitza, el 0 sembla que funciona per a alguns "
 "fitxers de Nikon, i el 2 per a alguns fitxers de Fuji."
 
-#: ../operations/workshop/demosaic-bimedian.c:221
+#: ../operations/workshop/demosaic-bimedian.c:219
+msgid "Demosaic With Bimedian Interpolation"
+msgstr ""
+
+#: ../operations/workshop/demosaic-bimedian.c:222
 msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
 msgstr ""
-"Realitza una descomposició senzilla del mosaic de la imatge, d'escala de "
-"grisos a color, mitjançant una interpolació bimediana."
+"Realitza una senzilla descomposició del mosaic de la imatge, d'escala de "
+"grisos a color amb una interpolació bimediana."
 
-#: ../operations/workshop/demosaic-simple.c:153
+#: ../operations/workshop/demosaic-simple.c:151
+msgid "Demosaic Without Interpolation"
+msgstr ""
+
+#: ../operations/workshop/demosaic-simple.c:154
 msgid ""
 "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr ""
-"Realitza una descomposició senzilla del mosaic de la imatge, d'escala de "
-"grisos a color, sense interpolació."
-
-#: ../operations/workshop/disc-percentile.c:30
-msgid "The percentile to compute, defaults to 50, which is a median filter."
-msgstr ""
-"El percentil que es calcula, per defecte és el 50, que és un filtre mitjà."
-
-#: ../operations/workshop/disc-percentile.c:236
-msgid ""
-"Sets the target pixel to the color corresponding to a given percentile when "
-"colors are sorted by luminance."
-msgstr ""
-"Estableix el píxel objectiu al color, que correspon a un percentil donat per "
-"l'ordenació dels colors segons la lluminositat."
+"Realitza una senzilla descomposició del mosaic de la imatge, d'escala de "
+"grisos a color sense interpolació."
 
 #: ../operations/workshop/ditto.c:113
 msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr ""
 "Operació de prova per fer un mapa 1:1, des de l'entrada a la sortida, mentre "
 "es mostreja"
-
-#: ../operations/workshop/external/ff-save.c:33
-msgid "Target bitrate"
-msgstr "Velocitat de transmissió que es té com a objectiu"
-
-#: ../operations/workshop/external/ff-save.c:36
-msgid "Frames/second"
-msgstr "Fotogrames per segon"
-
-#: ../operations/workshop/external/ff-save.c:894
-msgid "FFmpeg video output sink"
-msgstr "Conducte de sortida de vídeo FFmpeg"
 
 #: ../operations/workshop/external/gluas.c:41
 msgid "Script"
@@ -6100,60 +6709,17 @@ msgstr ""
 
 #: ../operations/workshop/external/v4l2.c:25
 msgid "video device path"
-msgstr ""
+msgstr "Camí del dispositiu de vídeo"
 
 #: ../operations/workshop/external/v4l2.c:774
-#, fuzzy
 msgid "Video4Linux2 Frame Source"
-msgstr "Font del fotograma Video4Linux"
+msgstr "Font del fotograma Video4Linux2"
 
 #: ../operations/workshop/external/v4l2.c:776
-#, fuzzy
 msgid "Video4Linux2 input, webcams framegrabbers and similar devices."
 msgstr ""
-"Entrada de Video4Linux, càmeres web, capturadores de fotogrames i "
+"Entrada de Video4Linux2, càmeres web, capturadores de fotogrames i "
 "dispositius semblants."
-
-#: ../operations/workshop/gaussian-blur-iir.c:38
-msgid "Standard deviation X"
-msgstr "Desviació estàndard de X"
-
-#: ../operations/workshop/gaussian-blur-iir.c:46
-msgid "Standard deviation Y"
-msgstr "Desviació estàndard de Y"
-
-#: ../operations/workshop/gaussian-blur-iir.c:57
-#: ../operations/workshop/gblur-1d.c:57
-msgid "How the gaussian kernel is discretized"
-msgstr "Com es discretitza el nucli gaussià"
-
-#: ../operations/workshop/gaussian-blur-iir.c:61
-#: ../operations/workshop/gblur-1d.c:61
-msgid "How image edges are handled"
-msgstr "Com es gestionen les vores de la imatge"
-
-#: ../operations/workshop/gaussian-blur-iir.c:63
-#: ../operations/workshop/gblur-1d.c:63
-msgid "Clip to the input extent"
-msgstr "Retalla a la mida d'entrada"
-
-#: ../operations/workshop/gaussian-blur-iir.c:64
-#: ../operations/workshop/gblur-1d.c:64
-msgid "Should the output extent be clipped to the input extent"
-msgstr "El resultat s'hauria de retallar a la mida d'entrada"
-
-#: ../operations/workshop/gaussian-blur-iir.c:118
-#: ../operations/workshop/gblur-1d.c:888
-msgid ""
-"Performs an averaging of neighboring pixels with the normal distribution as "
-"weighting"
-msgstr ""
-"Realitza una mitjana dels píxels veïns, amb la distribució normal com a "
-"ponderació"
-
-#: ../operations/workshop/gblur-1d.c:52
-msgid "The orientation of the blur - hor/ver"
-msgstr "Orientació del difuminat - hor/ver"
 
 #: ../operations/workshop/generated/average.c:109
 msgid "Image blending operation 'average' (<tt>c = (cA + aB)/2</tt>)"
@@ -6228,7 +6794,12 @@ msgstr "Color 5"
 msgid "Stop 5"
 msgstr "Aturada 5"
 
-#: ../operations/workshop/gradient-map.c:243
+#: ../operations/workshop/gradient-map.c:242
+#, fuzzy
+msgid "Gradient Map"
+msgstr "Degradat "
+
+#: ../operations/workshop/gradient-map.c:244
 msgid "Applies a color gradient."
 msgstr "Aplica un degradat de color."
 
@@ -6307,9 +6878,9 @@ msgid "Ink limit"
 msgstr "Límit de tinta"
 
 #: ../operations/workshop/ink-simulator.c:58
-#, fuzzy, c-format
-msgid "maximum amount of ink for one pixel, 2.5 = 250% coverage"
-msgstr "quantitat màxima de tinta per cada píxel, 2.5=250% de cobertura"
+#, c-format
+msgid "maximum amount of ink for one pixel, 2.5 = 250%% coverage"
+msgstr "quantitat màxima de tinta per un píxel, cobertura 2.5 = 250%%"
 
 #: ../operations/workshop/ink-simulator.c:62
 msgid "Debug width"
@@ -6319,9 +6890,22 @@ msgstr "Amplada de la depuració"
 msgid "how wide peel off bands for ink order vis"
 msgstr ""
 
-#: ../operations/workshop/ink-simulator.c:1421
-msgid "spectral ink simulator, for softproofing/simulating press inks"
+#: ../operations/workshop/ink-simulator.c:1420
+#, fuzzy
+msgid "Ink Simulator"
+msgstr "Límit de tinta"
+
+#: ../operations/workshop/ink-simulator.c:1423
+msgid ""
+"Spectral ink and paint simulator, for softproofing/simulating physical color "
+"mixing and interactions."
 msgstr ""
+
+#: ../operations/workshop/kuwahara.c:27
+#: ../operations/workshop/median-blur.c:28
+msgid "Radius of square pixel region (width and height will be radius*2+1)"
+msgstr ""
+"Radi de la regió quadrada de píxels (l'amplada i l'alçada seran radi*2+1)"
 
 #: ../operations/workshop/kuwahara.c:244
 msgid "Edge preserving blur"
@@ -6347,6 +6931,15 @@ msgstr "Nombre màxim d'iteracions"
 msgid "Mandelbrot set renderer"
 msgstr "Processador del conjunt Mandelbrot"
 
+#: ../operations/workshop/median-blur.c:408
+msgid "Median Blur"
+msgstr "Mitjana de difuminat"
+
+#: ../operations/workshop/median-blur.c:410
+msgid ""
+"Blur resulting from computing the median color of in a square neighbourhood."
+msgstr "Difuminat generat amb la mitjana dels colors propers a un quadrat."
+
 #: ../operations/workshop/rawbayer-load.c:155
 msgid ""
 "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as "
@@ -6360,88 +6953,138 @@ msgstr ""
 "carregador normal de la  dcraw. Si el format del fitxer és .rawbayerS girarà "
 "els números de 16 bits retornats (sembla que el carregador PNM és defectuós)"
 
-#: ../operations/workshop/snn-percentile.c:32
-msgid "Number of pairs, higher number preserves more acute features"
-msgstr "Nombre de parells, un valor més gran preserva més detalls precisos"
+#: ../operations/workshop/rgb-clip.c:25 ../operations/workshop/rgb-clip.c:26
+msgid "Clip low pixel values"
+msgstr "Retalla els valors baixos dels píxels"
 
-#: ../operations/workshop/snn-percentile.c:36
-msgid "The percentile to return, the default value 50 is equal to the median"
+#: ../operations/workshop/rgb-clip.c:28
+msgid "Low limit"
+msgstr "Límit baix"
+
+#: ../operations/workshop/rgb-clip.c:31
+msgid "Pixels values lower than this limit will be set to it"
+msgstr "Els valors dels píxels inferiors d'aquest límit s'hi ajustaran"
+
+#: ../operations/workshop/rgb-clip.c:33 ../operations/workshop/rgb-clip.c:34
+msgid "Clip high pixel values"
+msgstr "Retalla els valors alts dels píxels"
+
+#: ../operations/workshop/rgb-clip.c:36
+msgid "High limit"
+msgstr "Límit alt"
+
+#: ../operations/workshop/rgb-clip.c:39
+msgid "Pixels values higher than this limit will be set to it"
+msgstr "Els valors dels píxels superiors d'aquest límit s'hi ajustaran"
+
+#: ../operations/workshop/rgb-clip.c:184
+msgid "Clip RGB"
 msgstr ""
-"El percentil que es retorna, per defecte pren el valor 50 que és igual a la "
-"mediana"
 
-#: ../operations/workshop/snn-percentile.c:278
-msgid ""
-"Noise reducing edge enhancing percentile filter based on Symmetric Nearest "
-"Neighbours"
-msgstr ""
-"Reducció del soroll de la vora, millora el filtre percentil basat en el "
-"veïnatge simètric més proper"
+#: ../operations/workshop/rgb-clip.c:186
+msgid "Keep RGB pixels values inside a specific range"
+msgstr "Manté els valors dels píxels dins d'una franja específica"
 
-#, fuzzy
-#~| msgid "Linear Gradient"
-#~ msgid "Gradient"
-#~ msgstr "Degradat lineal"
+#~ msgid "Tilable"
+#~ msgstr "Enrajolat"
 
-#, fuzzy
-#~| msgid "Percentile"
-#~ msgid "Differential"
-#~ msgstr "Percentil"
+#~ msgid "PNG image saver (passes the buffer through, saves as a side-effect.)"
+#~ msgstr ""
+#~ "Desador d'imatge PNG (travessa la memòria intermèdia i desa com a "
+#~ "conseqüència indirecta.)"
 
-#, fuzzy
-#~| msgid "Amount of red"
-#~ msgid "Amount"
+#~ msgid "Cache buffer"
+#~ msgstr "Memòria intermèdia de la memòria cau"
+
+#~ msgid "The GeglBuffer where the caching is done"
+#~ msgstr "La memòria intermèdia Gegl on es fa la memòria cau"
+
+#~ msgid ""
+#~ "Cache the input buffer internally, further process take this buffer as "
+#~ "input."
+#~ msgstr ""
+#~ "Desa internament la memòria intermèdia d'entrada, els processos "
+#~ "posteriors prenen aquesta memòria intermèdia com a entrada."
+
+#~ msgid "Write the resulting rendering to an already existing GEGL buffer."
+#~ msgstr ""
+#~ "Escriu la renderització resultant en una memòria intermèdia Gegl existent."
+
+#~ msgid "Amount of red"
 #~ msgstr "Quantitat de vermell"
 
-#, fuzzy
-#~| msgid "Sobel Edge Detection"
-#~ msgid "Edge detection amount"
-#~ msgstr "Detecció de vores Sobel"
+#~ msgid "Amount of green"
+#~ msgstr "Quantitat de verd"
 
-#, fuzzy
-#~| msgid "Behavior"
-#~ msgid "Border behavior"
-#~ msgstr "Comportament"
+#~ msgid "Amount of blue"
+#~ msgstr "Quantitat de blau"
 
-#, fuzzy
-#~| msgid "Sobel Edge Detection"
-#~ msgid "Edge detection behavior"
-#~ msgstr "Detecció de vores Sobel"
+#~ msgid "OpenRAW File Loader"
+#~ msgstr "Carregador de fitxers OpenRAW"
 
-#, fuzzy
-#~| msgid "Sobel Edge Detection"
-#~ msgid "Edge Detection"
-#~ msgstr "Detecció de vores Sobel"
+#~ msgid ""
+#~ "Sets the target pixel to the value of the maximum value in a box "
+#~ "surrounding the pixel"
+#~ msgstr ""
+#~ "Estableix el valor del píxel objectiu al valor màxim que hi ha dins la "
+#~ "caixa que l'envolta"
 
-#, fuzzy
-#~| msgid "Mode"
-#~ msgid "Model"
-#~ msgstr "Mode"
+#~ msgid ""
+#~ "Sets the target pixel to the value of the minimum value in a box "
+#~ "surrounding the pixel"
+#~ msgstr ""
+#~ "Estableix el valor del píxel objectiu al valor mínim que hi ha dins la "
+#~ "caixa que l'envolta"
 
-#, fuzzy
-#~| msgid "Square"
-#~ msgid "Square Size"
-#~ msgstr "Quadrat"
+#~ msgid "Percentile"
+#~ msgstr "Percentil"
 
-#, fuzzy
-#~| msgid "Number of iterations"
-#~ msgid "The number of deformation iterations"
-#~ msgstr "Nombre d'iteracions"
+#~ msgid "The percentile to compute, defaults to 50, which is a median filter"
+#~ msgstr ""
+#~ "El percentil que es calcula, per defecte és el 50, que és un filtre mitjà"
 
-#, fuzzy
-#~| msgid "Clamp deformation"
-#~ msgid "ASAP Deformation"
-#~ msgstr "Deformació per cenyiment"
+#~ msgid ""
+#~ "Sets the target pixel to the color corresponding to a given percentile "
+#~ "when colors are sorted by luminance"
+#~ msgstr ""
+#~ "Estableix el píxel objectiu al color, que correspon a un percentil donat "
+#~ "per l'ordenació dels colors segons la lluminositat"
 
-#, fuzzy
-#~| msgid "Line height"
-#~ msgid "MLS Weights"
-#~ msgstr "Alçada de la línia"
+#~ msgid "The percentile to compute, defaults to 50, which is a median filter."
+#~ msgstr ""
+#~ "El percentil que es calcula, per defecte és el 50, que és un filtre mitjà."
 
-#, fuzzy
-#~| msgid "Preserve luminosity"
-#~ msgid "Preserve Model"
-#~ msgstr "Preserva la lluminositat"
+#~ msgid ""
+#~ "Sets the target pixel to the color corresponding to a given percentile "
+#~ "when colors are sorted by luminance."
+#~ msgstr ""
+#~ "Estableix el píxel objectiu al color, que correspon a un percentil donat "
+#~ "per l'ordenació dels colors segons la lluminositat."
+
+#~ msgid "Target bitrate"
+#~ msgstr "Velocitat de transmissió que es té com a objectiu"
+
+#~ msgid "Standard deviation X"
+#~ msgstr "Desviació estàndard de X"
+
+#~ msgid "Standard deviation Y"
+#~ msgstr "Desviació estàndard de Y"
+
+#~ msgid "Number of pairs, higher number preserves more acute features"
+#~ msgstr "Nombre de parells, un valor més gran preserva més detalls precisos"
+
+#~ msgid ""
+#~ "The percentile to return, the default value 50 is equal to the median"
+#~ msgstr ""
+#~ "El percentil que es retorna, per defecte pren el valor 50 que és igual a "
+#~ "la mediana"
+
+#~ msgid ""
+#~ "Noise reducing edge enhancing percentile filter based on Symmetric "
+#~ "Nearest Neighbours"
+#~ msgstr ""
+#~ "Reducció del soroll de la vora, millora el filtre percentil basat en el "
+#~ "veïnatge simètric més proper"
 
 #~ msgid "Monochrome"
 #~ msgstr "Monocrom"
@@ -6541,12 +7184,6 @@ msgstr ""
 #~ "Canvia l'exposició i el contrast, sobretot és útil amb imatges d'alt rang "
 #~ "dinàmic"
 
-#~ msgid "Left"
-#~ msgstr "Esquerra"
-
-#~ msgid "Right"
-#~ msgstr "Dreta"
-
 #~ msgid "CX (only Julia)"
 #~ msgstr "CX (només Julia)"
 
@@ -6630,9 +7267,6 @@ msgstr ""
 
 #~ msgid "Offset angle."
 #~ msgstr "Angle de desplaçament."
-
-#~ msgid "Period of the ripple"
-#~ msgstr "Període de l'arrissada"
 
 #~ msgid "Angle in degree"
 #~ msgstr "Angle en graus"
