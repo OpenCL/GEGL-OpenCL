@@ -19,6 +19,11 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 #include <gegl-gio-private.h>
+#include <stdlib.h>
+
+#ifdef G_OS_WIN32
+#define realpath(a,b) _fullpath(b,a,_MAX_PATH)
+#endif
 
 #ifdef GEGL_PROPERTIES
 
