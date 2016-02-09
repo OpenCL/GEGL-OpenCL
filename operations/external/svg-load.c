@@ -23,72 +23,103 @@
 #ifdef GEGL_PROPERTIES
 
 property_file_path (path, _("File"), "")
-    description    (_("Path to SVG file to load"))
+  description (_("Path of file to load"))
+property_uri (uri, _("URI"), "")
+  description (_("URI for file to load"))
 
-property_int (width,  _("Width"),  -1)
-    description (_("Width for rendered image"))
-
+property_int (width, _("Width"), -1)
+  description (_("Width for rendered image"))
 property_int (height, _("Height"), -1)
-    description (_("Height for rendered image"))
+  description (_("Height for rendered image"))
 
 #else
 
 #define GEGL_OP_SOURCE
 #define GEGL_OP_C_SOURCE svg-load.c
 
-#include "gegl-op.h"
+#include <gegl-op.h>
 #include <cairo.h>
+#include <gegl-gio-private.h>
 #include <librsvg/rsvg.h>
 
-static void prepare (GeglOperation *operation)
+typedef struct
 {
-  gegl_operation_set_format (operation, "output", babl_format ("R'G'B'A u8"));
+  GFile *file;
+
+  RsvgHandle *handle;
+
+  const Babl *format;
+
+  gint width;
+  gint height;
+} Priv;
+
+static void
+cleanup (GeglOperation *operation)
+{
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv *p = (Priv*) o->user_data;
+
+  if (p != NULL)
+    {
+      if (p->handle != NULL)
+        g_clear_object (&p->handle);
+
+      if (p->file != NULL)
+        g_clear_object(&p->file);
+
+      p->width = p->height = 0;
+      p->format = NULL;
+    }
+}
+
+static gboolean
+query_svg (GeglOperation *operation)
+{
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv *p = (Priv*) o->user_data;
+  RsvgDimensionData dimentions;
+
+  g_return_val_if_fail (p->handle != NULL, FALSE);
+
+  rsvg_handle_get_dimensions (p->handle, &dimentions);
+
+  p->format = babl_format ("R'G'B'A u8");
+
+  p->height = dimentions.height;
+  p->width = dimentions.width;
+
+  return TRUE;
 }
 
 static gint
-gegl_buffer_import_svg (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
-                        gint         width,
-                        gint         height)
+load_svg (GeglOperation *operation,
+          GeglBuffer    *output,
+          gint           width,
+          gint           height)
 {
+    GeglProperties    *o = GEGL_PROPERTIES (operation);
+    Priv              *p = (Priv*) o->user_data;
     cairo_surface_t   *surface;
     cairo_t           *cr;
-    GError            *error = NULL;
-    RsvgDimensionData  svg_dimentions;
-    RsvgHandle        *handle;
 
-    handle = rsvg_handle_new_from_file (path, &error);
-
-    if (!handle)
-      return 1;
-
-    rsvg_handle_get_dimensions (handle, &svg_dimentions);
-
-    if (svg_dimentions.width == 0 || svg_dimentions.height == 0)
-      return 0;
-
-    if (width < 1)
-      width = svg_dimentions.width;
-
-    if (height < 1)
-      height = svg_dimentions.height;
+    g_return_val_if_fail (p->handle != NULL, -1);
 
     surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, width, height);
     cr = cairo_create (surface);
 
-    if (width  != svg_dimentions.width ||
-        height != svg_dimentions.height)
+    if (width != p->width || height != p->height)
       {
         cairo_scale (cr,
-                     (double)width / (double)svg_dimentions.width,
-                     (double)height / (double)svg_dimentions.height);
+                     (double)width / (double)p->width,
+                     (double)height / (double)p->height);
       }
 
-    rsvg_handle_render_cairo (handle, cr);
+    rsvg_handle_render_cairo (p->handle, cr);
 
     cairo_surface_flush (surface);
 
-    gegl_buffer_set (gegl_buffer,
+    gegl_buffer_set (output,
                      GEGL_RECTANGLE (0, 0, width, height),
                      0,
                      babl_format ("cairo-ARGB32"),
@@ -97,70 +128,148 @@ gegl_buffer_import_svg (GeglBuffer  *gegl_buffer,
 
     cairo_destroy (cr);
     cairo_surface_destroy (surface);
-    g_object_unref (handle);
 
     return 0;
+}
+
+static void
+prepare (GeglOperation *operation)
+{
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  Priv *p = (o->user_data) ? o->user_data : g_new0 (Priv, 1);
+  GError *error = NULL;
+  GInputStream *stream;
+  GFile *file = NULL;
+
+  g_assert (p != NULL);
+
+  if (p->file != NULL && (o->uri || o->path))
+    {
+      if (o->uri && strlen (o->uri) > 0)
+        file = g_file_new_for_uri (o->uri);
+      else if (o->path && strlen (o->path) > 0)
+        file = g_file_new_for_path (o->path);
+      if (file != NULL)
+        {
+          if (!g_file_equal (p->file, file))
+            cleanup (operation);
+          g_object_unref (file);
+        }
+    }
+
+  o->user_data = (void*) p;
+
+  if (p->handle == NULL)
+    {
+      stream = gegl_gio_open_input_stream (o->uri, o->path, &p->file, &error);
+      if (stream == NULL)
+        {
+          g_warning (error->message);
+          g_error_free (error);
+          cleanup (operation);
+          return;
+        }
+
+      p->handle = rsvg_handle_new_from_stream_sync (stream, p->file,
+                                                    RSVG_HANDLE_FLAGS_NONE,
+                                                    NULL, &error);
+      if (p->handle == NULL)
+        {
+          g_warning (error->message);
+          g_error_free (error);
+          cleanup (operation);
+          return;
+        }
+
+      if (!query_svg (operation))
+        {
+          g_warning ("could not query SVG image file");
+          cleanup (operation);
+          return;
+        }
+    }
+
+  gegl_operation_set_format (operation, "output", p->format);
 }
 
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglProperties   *o      = GEGL_PROPERTIES (operation);
-  gint          width  = o->width;
-  gint          height = o->height;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglRectangle result = { 0, 0, 0, 0 };
+  Priv *p = (Priv*) o->user_data;
+  gint width = o->width;
+  gint height = o->height;
 
-  if (!o->path || !strlen(o->path))
-    return *GEGL_RECTANGLE(0, 0, 0, 0);
-
-  if (width < 1 || height < 1)
+  if (p->handle != NULL)
     {
-      RsvgDimensionData  svg_dimentions;
-      RsvgHandle        *handle;
-      GError            *error = NULL;
-
-      handle = rsvg_handle_new_from_file (o->path, &error);
-
-      if (!handle)
-        return *GEGL_RECTANGLE(0, 0, 0, 0);
-
-      rsvg_handle_get_dimensions (handle, &svg_dimentions);
-
       if (width < 1)
-        width = svg_dimentions.width;
-
+        width = p->width;
       if (height < 1)
-        height = svg_dimentions.height;
+        height = p->height;
 
-      rsvg_handle_get_dimensions (handle, &svg_dimentions);
+      result.width = width;
+      result.height = height;
     }
 
-  return *GEGL_RECTANGLE(0, 0, width, height);
+  return result;
 }
 
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *output,
-         const GeglRectangle *result_foo,
+         const GeglRectangle *result,
          gint                 level)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
-  gint        result;
-  gint        width, height;
+  Priv *p = (Priv*) o->user_data;
+  gint width = o->width;
+  gint height = o->height;
 
-  width  = o->width;
-  height = o->height;
+  if (p->handle != NULL)
+  {
+    if (width < 1)
+      width = p->width;
+    if (height < 1)
+      height = p->height;
 
-  result = gegl_buffer_import_svg (output, o->path, width, height);
-  if (result)
-    {
-      g_warning ("%s failed to open file %s for reading.",
-        G_OBJECT_TYPE_NAME (operation), o->path);
-      return  FALSE;
-    }
+    if (load_svg (operation, output, width, height))
+      {
+        if (o->uri != NULL && strlen(o->uri) > 0)
+          g_warning ("failed to render SVG from %s", o->uri);
+        else
+          g_warning ("failed to render SVG from %s", o->path);
+        return FALSE;
+      }
 
-  return  TRUE;
+    return TRUE;
+  }
+
+  return FALSE;
 }
 
+static GeglRectangle
+get_cached_region (GeglOperation       *operation,
+                   const GeglRectangle *roi)
+{
+  return get_bounding_box (operation);
+}
+
+static void
+finalize (GObject *object)
+{
+  GeglProperties *o = GEGL_PROPERTIES (object);
+
+  if (o->user_data != NULL)
+    {
+      cleanup (GEGL_OPERATION (object));
+      if (o->user_data != NULL)
+        g_free (o->user_data);
+      o->user_data = NULL;
+    }
+
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
+}
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
@@ -168,12 +277,15 @@ gegl_op_class_init (GeglOpClass *klass)
   GeglOperationClass       *operation_class;
   GeglOperationSourceClass *source_class;
 
+  G_OBJECT_CLASS(klass)->finalize = finalize;
+
   operation_class = GEGL_OPERATION_CLASS (klass);
   source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
   source_class->process = process;
   operation_class->prepare = prepare;
   operation_class->get_bounding_box = get_bounding_box;
+  operation_class->get_cached_region = get_cached_region;
 
   gegl_operation_class_set_keys (operation_class,
     "name",         "gegl:svg-load",
