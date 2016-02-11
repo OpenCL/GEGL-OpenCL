@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-10 13:40+0100\n"
-"PO-Revision-Date: 2016-01-10 13:41+0100\n"
+"POT-Creation-Date: 2016-02-11 16:14+0100\n"
+"PO-Revision-Date: 2016-02-11 16:15+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -1414,9 +1414,9 @@ msgstr ""
 
 #: ../operations/common/dcraw-load.c:26
 #: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:25
+#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:30
 #: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
+#: ../operations/common/save.c:25 ../operations/external/ff-load.c:29
 #: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
 #: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
 #: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
@@ -1430,7 +1430,7 @@ msgstr ""
 msgid "File"
 msgstr "Plik"
 
-#: ../operations/common/dcraw-load.c:27 ../operations/common/load.c:26
+#: ../operations/common/dcraw-load.c:27 ../operations/common/load.c:31
 #: ../operations/common/magick-load.c:27 ../operations/external/png-load.c:28
 #: ../operations/external/ppm-load.c:26 ../operations/external/raw-load.c:28
 #: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
@@ -2454,11 +2454,11 @@ msgstr "Typ iluzji"
 msgid "Type of illusion"
 msgstr "Typ iluzji"
 
-#: ../operations/common/illusion.c:244
+#: ../operations/common/illusion.c:267
 msgid "Illusion"
 msgstr "Iluzja"
 
-#: ../operations/common/illusion.c:247
+#: ../operations/common/illusion.c:270
 msgid "Superimpose many altered copies of the image."
 msgstr "Nałóż zmienione kopie obrazu na siebie."
 
@@ -2699,16 +2699,16 @@ msgstr "Liniowy gradient"
 msgid "Linear gradient renderer"
 msgstr "Liniowe renderowanie gradientów"
 
-#: ../operations/common/load.c:27 ../operations/external/jpg-load.c:26
+#: ../operations/common/load.c:32 ../operations/external/jpg-load.c:26
 #: ../operations/external/png-load.c:29 ../operations/external/tiff-load.c:27
 msgid "URI"
 msgstr "Adres URI"
 
-#: ../operations/common/load.c:28
+#: ../operations/common/load.c:33
 msgid "URI of file to load."
 msgstr "Adres URI pliku do wczytania."
 
-#: ../operations/common/load.c:234
+#: ../operations/common/load.c:227
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -3358,11 +3358,11 @@ msgstr "Turbulencje"
 msgid "Make a turbulent noise"
 msgstr "Utwórz szum turbulencji"
 
-#: ../operations/common/noise-solid.c:326
+#: ../operations/common/noise-solid.c:345
 msgid "Solid Noise"
 msgstr "Jednolity szum"
 
-#: ../operations/common/noise-solid.c:330
+#: ../operations/common/noise-solid.c:349
 msgid "Create a random cloud-like texture"
 msgstr "Utwórz losową teksturę podobną do chmury"
 
@@ -4856,19 +4856,19 @@ msgstr "Brak działania"
 msgid "No operation (can be used as a routing point)"
 msgstr "Brak działania (może być używane jako punkt trasy)"
 
-#: ../operations/external/ff-load.c:25
+#: ../operations/external/ff-load.c:30
 msgid "Path of video file to load"
 msgstr "Ścieżka do wczytywanego pliku wideo"
 
-#: ../operations/external/ff-load.c:27
+#: ../operations/external/ff-load.c:32
 msgid "Frame number"
 msgstr "Liczba klatek"
 
-#: ../operations/external/ff-load.c:31
+#: ../operations/external/ff-load.c:36
 msgid "frames"
 msgstr "klatki"
 
-#: ../operations/external/ff-load.c:32
+#: ../operations/external/ff-load.c:37
 msgid ""
 "Number of frames in video, updates at least when first frame has been "
 "decoded."
@@ -4876,39 +4876,39 @@ msgstr ""
 "Liczba klatek w nagraniu wideo, aktualizowana co najmniej kiedy pierwsza "
 "klatka została dekodowana."
 
-#: ../operations/external/ff-load.c:36
+#: ../operations/external/ff-load.c:41
 msgid "audio_sample_rate"
 msgstr "częstotliwość_próbkowania_dźwięku"
 
-#: ../operations/external/ff-load.c:37
+#: ../operations/external/ff-load.c:42
 msgid "audio_channels"
 msgstr "kanały_dźwięku"
 
-#: ../operations/external/ff-load.c:39
+#: ../operations/external/ff-load.c:44
 msgid "frame-rate"
 msgstr "liczba-klatek"
 
-#: ../operations/external/ff-load.c:40
+#: ../operations/external/ff-load.c:45
 msgid "Frames per second, permits computing time vs frame"
 msgstr "Klatki na sekundę, dopuszcza obliczanie czasu na klatkę"
 
-#: ../operations/external/ff-load.c:44
+#: ../operations/external/ff-load.c:49
 msgid "video-codec"
 msgstr "kodek-wideo"
 
-#: ../operations/external/ff-load.c:45
+#: ../operations/external/ff-load.c:50
 msgid "audio-codec"
 msgstr "kodek-dźwięku"
 
-#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:32
+#: ../operations/external/ff-load.c:52 ../operations/external/ff-save.c:32
 msgid "audio"
 msgstr "dźwięk"
 
-#: ../operations/external/ff-load.c:765
+#: ../operations/external/ff-load.c:774
 msgid "FFmpeg Frame Loader"
 msgstr "Wczytywanie klatek biblioteki FFmpeg"
 
-#: ../operations/external/ff-load.c:767
+#: ../operations/external/ff-load.c:776
 msgid "FFmpeg video frame importer."
 msgstr "Importer klatek wideo biblioteki FFmpeg."
 
@@ -5664,19 +5664,19 @@ msgstr "Katalog"
 msgid "Image file directory (subfile)"
 msgstr "Katalog pliku obrazu (podplik)"
 
-#: ../operations/external/tiff-load.c:866
+#: ../operations/external/tiff-load.c:867
 msgid "TIFF File Loader"
 msgstr "Wczytywanie plików TIFF"
 
-#: ../operations/external/tiff-load.c:868
+#: ../operations/external/tiff-load.c:869
 msgid "TIFF image loader using libtiff"
 msgstr "Wczytywanie obrazów TIFF za pomocą biblioteki libtiff"
 
-#: ../operations/external/tiff-save.c:620
+#: ../operations/external/tiff-save.c:621
 msgid "TIFF File Saver"
 msgstr "Zapisywanie plików TIFF"
 
-#: ../operations/external/tiff-save.c:622
+#: ../operations/external/tiff-save.c:623
 msgid "TIFF image saver using libtiff"
 msgstr "Zapisywanie obrazów TIFF za pomocą biblioteki libtiff"
 
@@ -6162,22 +6162,6 @@ msgid ""
 msgstr ""
 "Zmienia położenie bufora (o precyzji podpikselowej), jeśli podano "
 "współrzędne całkowite, to używana jest szybka ścieżka bez resamplingu"
-
-#: ../operations/workshop/buffer-cache.c:25
-msgid "Cache buffer"
-msgstr "Bufor pamięci podręcznej"
-
-#: ../operations/workshop/buffer-cache.c:26
-msgid "The GeglBuffer where the caching is done"
-msgstr ""
-"GeglBuffer, w którym wykonywane jest przechowywanie w pamięci podręcznej"
-
-#: ../operations/workshop/buffer-cache.c:96
-msgid ""
-"Cache the input buffer internally, further process take this buffer as input."
-msgstr ""
-"Umieszcza bufor wejściowy w pamięci podręcznej wewnętrznie, dalszy proces "
-"przyjmuje ten bufor jako wejście."
 
 #: ../operations/workshop/color-warp.c:24
 msgid "From 0"
@@ -6836,6 +6820,35 @@ msgid ""
 msgstr ""
 "Spektralny symulator tuszu i farby dla softproofingu/symulowania fizycznego "
 "mieszania i oddziaływania kolorów."
+
+#: ../operations/workshop/insta-curve.c:31
+#: ../operations/workshop/insta-filter.c:31
+msgid "Preset"
+msgstr "Ustawienie"
+
+#: ../operations/workshop/insta-curve.c:34
+msgid "Which curve to apply"
+msgstr "Krzywa do zastosowania"
+
+#: ../operations/workshop/insta-curve.c:729
+msgid "Insta curve"
+msgstr "Krzywa Insta"
+
+#: ../operations/workshop/insta-curve.c:731
+msgid "Apply a preset curve to an image"
+msgstr "Zastosuj ustawioną krzywą na obrazie"
+
+#: ../operations/workshop/insta-filter.c:34
+msgid "Which filter to apply"
+msgstr "Filtr do zastosowania"
+
+#: ../operations/workshop/insta-filter.c:201
+msgid "Insta Filter"
+msgstr "Filtr Insta"
+
+#: ../operations/workshop/insta-filter.c:203
+msgid "Apply a preset filter to an image"
+msgstr "Zastosuj ustawiony filtr na obrazie"
 
 #: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
