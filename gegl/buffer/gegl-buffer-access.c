@@ -1809,7 +1809,7 @@ gegl_buffer_clear (GeglBuffer          *dst,
       dst_rect = gegl_buffer_get_extent (dst);
     }
 
-#if 0
+#if 1
   /* cow for clearing is currently broken */
   if (!g_object_get_data (G_OBJECT (dst), "is-linear"))
     {
@@ -1858,7 +1858,7 @@ gegl_buffer_clear (GeglBuffer          *dst,
                 dtx = gegl_tile_indice (dst_x, tile_width);
                 dty = gegl_tile_indice (dst_y, tile_height);
 
-                if(gegl_tile_source_void ((GeglTileSource*)dst, dtx, dty, 0));
+                gegl_tile_source_void ((GeglTileSource*)dst, dtx, dty, 0);
               }
           }
 
