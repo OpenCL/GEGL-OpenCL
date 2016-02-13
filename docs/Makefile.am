@@ -64,6 +64,7 @@ EXTRA_DIST = \
 	images/gaussian-blur-graph.png	\
 	images/gegl.ico			\
 	images/standard-input.png \
+	images/standard-panorama.png \
 	images/standard-aux.png \
 	index.txt.in
 
@@ -76,6 +77,7 @@ EXAMPLE_FILES = $(wildcard $(srcdir)/images/examples/*.png)
 dist_gtkdochtml_DATA = $(GTKDOC_FILES)
 dist_gtkdocimg_DATA = \
 	images/standard-input.png \
+	images/standard-panorama.png \
 	images/standard-aux.png
 #dist_gtkdocexample_DATA = $(EXAMPLE_FILES)
 
