@@ -522,7 +522,7 @@ gegl_operation_invalidate (GeglOperation       *operation,
   g_return_if_fail (GEGL_IS_OPERATION (operation));
   node = operation->node;
 
-  gegl_node_invalidated (node, roi, TRUE);
+  gegl_node_invalidated (node, roi, clear_cache);
 }
 
 gboolean
