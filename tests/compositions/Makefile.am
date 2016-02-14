@@ -25,6 +25,8 @@ TESTS = \
   color-enhance.xml               \
   color-exchange.xml              \
   color-to-alpha.xml              \
+  convolve1.xml                   \
+  convolve2.xml                   \
   composite-transform.xml         \
   contrast-curve.xml              \
   diffraction-patterns.xml        \

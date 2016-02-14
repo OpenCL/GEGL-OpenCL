@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:convolution-matrix'>
+    <params>
+      <param name='a1'>0.3</param><param name='a2'>-0.3</param><param name='a5'>-2</param>
+      <param name='b2'>1.2</param><param name='b3'>0</param><param name='b4'>-1</param>
+      <param name='c2'>0.3</param><param name='c3'>-1</param><param name='c4'>0</param>
+      <param name='d2'>1</param><param name='d3'>3</param><param name='d4'>0</param>
+      <param name='e1'>0.3</param><param name='e2'>2</param><param name='e5'>3</param>
+      <param name='alpha-weight'>TRUE</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/gegl.png</param>
+    </params>
+  </node>
+</gegl>
