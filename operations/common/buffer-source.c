@@ -22,8 +22,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_object(buffer, _("Input buffer"), GEGL_TYPE_BUFFER)
-	  description (_("The GeglBuffer to load into the pipeline"))
+property_object (buffer, _("Input buffer"), GEGL_TYPE_BUFFER)
+    description (_("The GeglBuffer to load into the pipeline"))
 
 #else
 
@@ -40,29 +40,30 @@ typedef struct
 static Priv *
 get_priv (GeglProperties *o)
 {
-  Priv *priv = (Priv*)o->user_data;
-  if (priv == NULL) {
-    priv = g_new0 (Priv, 1);
-    o->user_data = (void*) priv;
+  Priv *priv = o->user_data;
 
-    priv->buffer_changed_handler = 0;
-  }
+  if (! priv)
+    {
+      priv = g_new0 (Priv, 1);
+      o->user_data = priv;
+    }
+
   return priv;
 }
 
-static void buffer_changed (GeglBuffer          *buffer,
-                            const GeglRectangle *rect,
-                            gpointer             userdata)
+static void
+buffer_changed (GeglBuffer          *buffer,
+                const GeglRectangle *rect,
+                gpointer             data)
 {
-  gegl_operation_invalidate (GEGL_OPERATION (userdata), rect, FALSE);
+  gegl_operation_invalidate (data, rect, FALSE);
 }
-
 
 static void
 gegl_buffer_source_prepare (GeglOperation *operation)
 {
-  const Babl *format = NULL;
-  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
+  const Babl     *format = NULL;
 
   if (o->buffer)
     format = gegl_buffer_get_format (GEGL_BUFFER (o->buffer));
@@ -73,49 +74,56 @@ gegl_buffer_source_prepare (GeglOperation *operation)
 static GeglRectangle
 get_bounding_box (GeglOperation *operation)
 {
-  GeglRectangle result = {0,0,0,0};
-  GeglProperties   *o = GEGL_PROPERTIES (operation);
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
+  GeglRectangle   result = { 0, 0, 0, 0 };
 
-  if (!o->buffer)
-    {
-      return result;
-    }
-  result = *gegl_buffer_get_extent (GEGL_BUFFER (o->buffer));
+  if (o->buffer)
+    result = *gegl_buffer_get_extent (GEGL_BUFFER (o->buffer));
+
   return result;
 }
 
 static void
-my_set_property (GObject  *gobject,
-                          guint         property_id,
-                          const GValue *value,
-                          GParamSpec   *pspec)
+my_set_property (GObject      *object,
+                 guint         property_id,
+                 const GValue *value,
+                 GParamSpec   *pspec)
 {
-  GeglOperation *operation = GEGL_OPERATION (gobject);
-  GeglProperties *o = GEGL_PROPERTIES (operation);
-  Priv *p = get_priv(o);
-  GObject *buffer = NULL;
+  GeglOperation  *operation = GEGL_OPERATION (object);
+  GeglProperties *o         = GEGL_PROPERTIES (operation);
+  Priv           *p         = get_priv (o);
+  GeglBuffer     *buffer    = NULL;
 
   switch (property_id)
-  {
+    {
     case PROP_buffer:
-      if (o->buffer) {
-        // Invariant: valid buffer should always have valid signal handler
-        g_assert(p->buffer_changed_handler > 0);
-        g_signal_handler_disconnect (o->buffer, p->buffer_changed_handler);
-        /* XXX: should decrement signal connected count */
-      }
-      buffer = G_OBJECT (g_value_get_object (value));
-      if (buffer) {
-        p->buffer_changed_handler = gegl_buffer_signal_connect (GEGL_BUFFER(buffer), "changed", G_CALLBACK(buffer_changed), operation);
-      }
+      if (o->buffer)
+        {
+          /* Invariant: valid buffer should always have valid signal handler */
+          g_assert (p->buffer_changed_handler > 0);
+          g_signal_handler_disconnect (o->buffer, p->buffer_changed_handler);
+          /* XXX: should decrement signal connected count */
+        }
+
+      buffer = g_value_get_object (value);
+
+      if (buffer)
+        {
+          p->buffer_changed_handler =
+            gegl_buffer_signal_connect (buffer, "changed",
+                                        G_CALLBACK (buffer_changed),
+                                        operation);
+        }
       break;
+
     default:
       break;
   }
 
-  /* The set_property provided by the chant system does the
-   * storing and reffing/unreffing of the input properties */
-  set_property(gobject, property_id, value, pspec);
+  /* The set_property provided by the chant system does the storing
+   * and reffing/unreffing of the input properties
+   */
+  set_property (object, property_id, value, pspec);
 }
 
 static gboolean
@@ -129,19 +137,21 @@ process (GeglOperation        *operation,
 
   if (o->buffer)
     {
-      g_object_ref (o->buffer); /* Add an extra reference, since
-				     * gegl_operation_set_data is
-				     * stealing one.
-				     */
-
-      /* override core behaviour, by resetting the buffer in the operation_context */
+      /* Override core behaviour, by resetting the buffer in the
+       * operation_context.
+       *
+       * Also add an extra reference, since take_object() is consuming
+       * one.
+       */
       gegl_operation_context_take_object (context, "output",
-                                          G_OBJECT (o->buffer));
-      /* mark that this buffer should not be used for in-place
-       * processing.
+                                          g_object_ref (o->buffer));
+
+      /* Mark that this buffer should not be used for in-place
+       * processing
        */
       gegl_object_set_has_forked (G_OBJECT (o->buffer));
     }
+
   return TRUE;
 }
 
@@ -149,45 +159,45 @@ static void
 dispose (GObject *object)
 {
   GeglProperties *o = GEGL_PROPERTIES (object);
-  Priv *p = get_priv(o);
+  Priv           *p = get_priv (o);
 
   if (o->buffer)
     {
-      // Invariant: valid buffer should always have valid signal handler
-      g_assert(p->buffer_changed_handler > 0);
+      /* Invariant: valid buffer should always have valid signal handler */
+      g_assert (p->buffer_changed_handler > 0);
       g_signal_handler_disconnect (o->buffer, p->buffer_changed_handler);
-        /* XXX: should decrement signal connected count */
+      /* XXX: should decrement signal connected count */
+
       g_object_unref (o->buffer);
       o->buffer = NULL;
     }
 
-  if (p) {
-    g_free(p);
-    o->user_data = NULL;
-  }
+  if (p)
+    {
+      g_free (p);
+      o->user_data = NULL;
+    }
 
   G_OBJECT_CLASS (gegl_op_parent_class)->dispose (object);
 }
 
-
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
-  GeglOperationClass       *operation_class;
+  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
+  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
-  operation_class = GEGL_OPERATION_CLASS (klass);
+  object_class->set_property = my_set_property;
+  object_class->dispose      = dispose;
 
-  operation_class->prepare = gegl_buffer_source_prepare;
-  operation_class->process = process;
+  operation_class->prepare          = gegl_buffer_source_prepare;
+  operation_class->process          = process;
   operation_class->get_bounding_box = get_bounding_box;
 
-  G_OBJECT_CLASS (klass)->set_property = my_set_property;
-  G_OBJECT_CLASS (klass)->dispose = dispose;
-
   gegl_operation_class_set_keys (operation_class,
-      "name",       "gegl:buffer-source",
-      "title",      _("Buffer Source"),
-      "categories", "programming:input",
+      "name",        "gegl:buffer-source",
+      "title",       _("Buffer Source"),
+      "categories",  "programming:input",
       "description", _("Use an existing in-memory GeglBuffer as image source."),
       NULL);
 
@@ -195,4 +205,3 @@ gegl_op_class_init (GeglOpClass *klass)
 }
 
 #endif
-
