@@ -27,7 +27,6 @@
 property_file_path (path, "File", "")
   description (_("Path of file to load."))
 property_int (image_num, "Image number", 0)
-property_int (bps, "bits per sample", 16)
 property_int (quality, "quality", 10)
 
 #else
@@ -93,7 +92,7 @@ prepare (GeglOperation *operation)
               p->LibRaw->params.gamm[1] = 1.0;
               p->LibRaw->params.no_auto_bright = 1;
 
-              p->LibRaw->params.output_bps = o->bps > 8 ? 16 : 8;
+              p->LibRaw->params.output_bps = 16;
               p->LibRaw->params.user_qual = o->quality;
 
               if ((ret = libraw_open_file(p->LibRaw, o->path)) != LIBRAW_SUCCESS)
@@ -170,20 +169,10 @@ process (GeglOperation       *operation,
       rect.width  = p->image->width;
       rect.height = p->image->height;
 
-      if (p->image->bits == 8)
-        {
-          if (p->image->colors == 1)
-            format = babl_format ("Y u8");
-          else // 3 color channels
-            format = babl_format ("RGB u8");
-        }
-      else // 16-bit
-        {
-          if (p->image->colors == 1)
-            format = babl_format ("Y u16");
-          else // 3 color channels
-            format = babl_format ("RGB u16");
-        }
+      if (p->image->colors == 1)
+        format = babl_format ("Y u16");
+      else // 3 color channels
+        format = babl_format ("RGB u16");
 
       gegl_buffer_set (output, &rect, 0, format, p->image->data, GEGL_AUTO_ROWSTRIDE);
       return TRUE;
