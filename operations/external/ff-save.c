@@ -935,7 +935,11 @@ tfile (GeglProperties *o)
       return -1;
     }
 
-  avformat_write_header (p->oc, NULL);
+  if (avformat_write_header (p->oc, NULL) < 0)
+  {
+    fprintf (stderr, "'%s' error writing header\n", o->path);
+    return -1;
+  }
   return 0;
 }
 
