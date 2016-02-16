@@ -517,7 +517,7 @@ write_audio_frame (GeglProperties *o, AVFormatContext * oc, AVStream * st)
     {
       pkt.stream_index = st->index;
       av_interleaved_write_frame (oc, &pkt);
-      av_free_packet (&pkt);
+      av_packet_unref (&pkt);
     }
 
     av_frame_free (&frame);
@@ -997,7 +997,7 @@ static void flush_audio (GeglProperties *o)
         pkt.stream_index = p->audio_st->index;
         av_packet_rescale_ts (&pkt, p->audio_st->codec->time_base, p->audio_st->time_base);
         av_interleaved_write_frame (p->oc, &pkt);
-        av_free_packet (&pkt);
+        av_packet_unref (&pkt);
       }
   } while (got_packet);
 }
@@ -1023,7 +1023,7 @@ static void flush_video (GeglProperties *o)
        pkt.dts = ts++;
        av_packet_rescale_ts (&pkt, p->video_st->codec->time_base, p->video_st->time_base);
        av_interleaved_write_frame (p->oc, &pkt);
-       av_free_packet (&pkt);
+       av_packet_unref (&pkt);
      }
   } while (got_packet);
 }

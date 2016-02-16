@@ -217,7 +217,7 @@ decode_audio (GeglOperation *operation,
 
       if (av_read_frame (p->audio_fcontext, &pkt) < 0)
          {
-           av_free_packet (&pkt);
+           av_packet_unref (&pkt);
            return -1;
          }
       if (pkt.stream_index==p->audio_index && p->audio_stream)
@@ -296,7 +296,7 @@ decode_audio (GeglOperation *operation,
             p->prevapts = pkt.pts * av_q2d (p->audio_stream->time_base);
           }
         }
-      av_free_packet (&pkt);
+      av_packet_unref (&pkt);
     }
   return 0;
 }
@@ -348,10 +348,10 @@ decode_frame (GeglOperation *operation,
 
           do
           {
-            av_free_packet (&pkt);
+            av_packet_unref (&pkt);
             if (av_read_frame (p->video_fcontext, &pkt) < 0)
             {
-              av_free_packet (&pkt);
+              av_packet_unref (&pkt);
               return -1;
             }
           }
@@ -388,7 +388,7 @@ AV_TIME_BASE_Q) * 1.0 / AV_TIME_BASE ;
           if (decoded_bytes != pkt.size)
             fprintf (stderr, "bytes left!\n");
 #endif
-          av_free_packet (&pkt);
+          av_packet_unref (&pkt);
         }
       while (!got_picture);
     }
