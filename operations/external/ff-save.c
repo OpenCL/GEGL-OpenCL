@@ -87,10 +87,6 @@ property_int (me_subpel_quality, _("me-subpel-quality"), 0)
 #include <libavutil/opt.h>
 #include <libswscale/swscale.h>
 
-#ifndef AV_CODEC_CAP_VARIABLE_FRAME_SIZE
-#define AV_CODEC_CAP_VARIABLE_FRAME_SIZE  CODEC_CAP_VARIABLE_FRAME_SIZE
-#endif
-
 typedef struct
 {
   gdouble    frame;
