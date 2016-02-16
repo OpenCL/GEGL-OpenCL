@@ -61,9 +61,9 @@ m4_define([poly2tri-c_required_version], [0.0.0])
 m4_define([pygobject2_required_version], [2.26])
 m4_define([pygobject3_required_version], [3.2])
 m4_define([vapigen_required_version], [0.20.0])
-m4_define([libavformat_required_version], [56.0.0])
-m4_define([libavcodec_required_version], [56.34.1])
-m4_define([libswscale_required_version], [3.1.0])
+m4_define([libavformat_required_version], [55.48.100])
+m4_define([libavcodec_required_version], [55.69.100])
+m4_define([libswscale_required_version], [2.6.100])
 
 AC_INIT(gegl, gegl_major_version.gegl_minor_version.gegl_micro_version)
 
