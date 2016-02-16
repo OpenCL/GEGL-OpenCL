@@ -61,6 +61,8 @@ property_audio_fragment (audio, _("audio"), 0)
 #include <limits.h>
 #include <stdlib.h>
 
+#include <libavutil/avutil.h>
+#include <libavutil/imgutils.h>
 #include <libavformat/avformat.h>
 #include <libswscale/swscale.h>
 
@@ -655,14 +657,14 @@ alloc_picture (int pix_fmt, int width, int height)
   picture = av_frame_alloc ();
   if (!picture)
     return NULL;
-  size = avpicture_get_size (pix_fmt, width + 1, height + 1);
+  size = av_image_get_buffer_size (pix_fmt, width + 1, height + 1, 16);
   picture_buf = malloc (size);
   if (!picture_buf)
     {
       av_free (picture);
       return NULL;
     }
-  avpicture_fill ((AVPicture *) picture, picture_buf, pix_fmt, width, height);
+  av_image_fill_arrays (picture->data, picture->linesize, picture_buf, pix_fmt, width, height, 1);
   return picture;
 }
 
