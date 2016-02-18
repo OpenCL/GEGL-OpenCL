@@ -29,7 +29,6 @@ operations/common/contrast-curve.c
 operations/common/convolution-matrix.c
 operations/common/copy-buffer.c
 operations/common/cubism.c
-operations/common/dcraw-load.c
 operations/common/deinterlace.c
 operations/common/difference-of-gaussians.c
 operations/common/diffraction-patterns.c
@@ -217,6 +216,7 @@ operations/transform/transform-core.c
 operations/transform/translate.c
 operations/workshop/color-warp.c
 operations/workshop/component-extract.c
+operations/workshop/dcraw-load.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/ditto.c
