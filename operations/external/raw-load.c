@@ -36,8 +36,6 @@ struct _GeglOp
 {
   GeglOperationSource parent_instance;
   gpointer            properties;
-
-  gchar *cached_path;  /* Path we have cached. Detects need for recache. */
 };
 
 typedef struct
@@ -59,9 +57,24 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE)
 typedef struct {
   libraw_data_t            *LibRaw;
   libraw_processed_image_t *image;
+  gchar                    *cached_path;
 } Private;
 
-unsigned char first_pass = 1;
+static void
+raw_close (GeglProperties *o)
+{
+  Private *p = (Private*)o->user_data;
+  if (p->LibRaw != NULL)
+    {
+      if (p->image != NULL)
+      {
+        libraw_dcraw_clear_mem (p->image);
+        p->image = NULL;
+      }
+      libraw_close (p->LibRaw);
+      p->LibRaw = NULL;
+    }
+}
 
 static void
 prepare (GeglOperation *operation)
@@ -70,34 +83,45 @@ prepare (GeglOperation *operation)
   Private    *p = (Private*)o->user_data;
   int         ret;
 
-  if (p == NULL && first_pass)
+  if (p == NULL)
     {
-      first_pass = 0;
-      
       if ((p = g_new0(Private, 1)) == NULL)
         g_warning ("raw-load: Error creating private structure");
+    }
+
+  if (p->cached_path && !strcmp (p->cached_path, o->path))
+  {
+     raw_close (o);
+  }
+
+  if (p->LibRaw == NULL)
+    {
+      o->user_data = (gpointer)p;
+      p->LibRaw = NULL;
+      p->image = NULL;
+
+      if ((p->LibRaw = libraw_init(0)) == NULL)
+        g_warning ("raw-load: Error Initializing raw library");
       else
         {
-          o->user_data = (gpointer)p;
-          p->LibRaw = NULL;
-          p->image = NULL;
+          p->LibRaw->params.shot_select = o->image_num;
+    
+          p->LibRaw->params.gamm[0] = 1.0;
+          p->LibRaw->params.gamm[1] = 1.0;
+          p->LibRaw->params.no_auto_bright = 1;
 
-          if ((p->LibRaw = libraw_init(0)) == NULL)
-            g_warning ("raw-load: Error Initializing raw library");
+          p->LibRaw->params.output_bps = 16;
+          p->LibRaw->params.user_qual = o->quality;
+
+          if ((ret = libraw_open_file(p->LibRaw, o->path)) != LIBRAW_SUCCESS)
+          {
+
+            g_warning ("raw-load: Unable to open %s: %s", o->path, libraw_strerror (ret));
+          }
           else
-            {
-              p->LibRaw->params.shot_select = o->image_num;
-        
-              p->LibRaw->params.gamm[0] = 1.0;
-              p->LibRaw->params.gamm[1] = 1.0;
-              p->LibRaw->params.no_auto_bright = 1;
-
-              p->LibRaw->params.output_bps = 16;
-              p->LibRaw->params.user_qual = o->quality;
-
-              if ((ret = libraw_open_file(p->LibRaw, o->path)) != LIBRAW_SUCCESS)
-                g_warning ("raw-load: Unable to open %s: %s", o->path, libraw_strerror (ret));
-            }
+          {
+            p->cached_path = strdup (o->path);
+          }
         }
     }
 }
@@ -139,11 +163,7 @@ process (GeglOperation       *operation,
   const Babl *format = NULL;
   int ret;
 
-  if (p == NULL)
-    {
-      prepare(operation);
-      p = (Private*)o->user_data;
-    }
+  g_assert (p);
 
   if (p != NULL &&
       p->LibRaw != NULL)
@@ -188,15 +208,7 @@ finalize (GObject *object)
 
   if (o->user_data)
     {
-      Private *p = (Private*)o->user_data;
-      if (p->LibRaw != NULL)
-        {
-          if (p->image != NULL)
-            libraw_dcraw_clear_mem (p->image);
-          
-          libraw_close (p->LibRaw);
-        }
-
+      raw_close (o);
       g_free (o->user_data);
       o->user_data = NULL;
     }
