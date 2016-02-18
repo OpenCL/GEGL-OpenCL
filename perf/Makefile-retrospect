@@ -31,7 +31,7 @@ reset:
 	# create clone
 	git clone -s $(PROJECT_PATH) checkout
 	mkdir reports > /dev/null 2>&1 || true
-	killall tail
+	killall tail || true
 	make -f $(SELF) jobs
 	make -f $(SELF) prepare
 
