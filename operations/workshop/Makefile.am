@@ -14,6 +14,7 @@ opdir = $(ext_dir)
 op_LTLIBRARIES =    \
 	component-extract.la \
 	color-warp.la \
+	dcraw-load.la \
 	demosaic-bimedian.la \
 	demosaic-simple.la \
 	ditto.la \

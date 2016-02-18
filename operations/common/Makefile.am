@@ -109,7 +109,6 @@ op_LTLIBRARIES = \
 	plasma.la \
 	polar-coordinates.la \
 	posterize.la \
-	dcraw-load.la \
 	radial-gradient.la \
 	rectangle.la \
 	red-eye-removal.la \
