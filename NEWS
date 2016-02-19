@@ -2,6 +2,28 @@
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
+Changes in GEGL 0.3.5
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • buffer: better COW (Copy on Write).
+ • operations:
+    • removed: dcraw-load
+    • added: saturation, instagram clones
+    • ff-load/ ff-save: updated to work with ffmpeg-3.0,configuration of
+codec/format.
+
+      misc code cleanup, and meta data improvements, gio (url loading) support in more loaders.
+    • convolve-generic: optimized paths for common parameters and 3x3 size.
+ • XML: permit serializing a segment/chain of the graph
+ • processing
+     improvements to meta-ops
+
+Contributions from:
+
+ Øyvind Kolås, Thomas Manni Michael Natterer, Nils Philippsen, Debarshi Ray,
+Martin Blanchard, Justin Lecher, Massimo Valentini, Mukund Sivaraman, Alexandre
+Prokoudine,
+
+
 Changes in GEGL 0.3.4
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • build: do not install examples in path
