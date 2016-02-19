@@ -22,6 +22,7 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_insta_filter_preset)
+  enum_value (GEGL_INSTA_FILTER_PRESET_NONE, "none", "None")
   enum_value (GEGL_INSTA_FILTER_PRESET_1977, "1977", "1977")
   enum_value (GEGL_INSTA_FILTER_PRESET_BRANNAN, "brannan", "Brannan")
   enum_value (GEGL_INSTA_FILTER_PRESET_GOTHAM, "gotham", "Gotham")
@@ -30,7 +31,7 @@ enum_end (GeglInstaFilterPreset)
 
 property_enum (preset, _("Preset"),
                GeglInstaFilterPreset, gegl_insta_filter_preset,
-               GEGL_INSTA_FILTER_PRESET_1977)
+               GEGL_INSTA_FILTER_PRESET_NONE)
   description (_("Which filter to apply"))
 
 #else
@@ -70,6 +71,13 @@ do_setup (GeglOperation *operation)
 
   switch (o->preset)
     {
+    case GEGL_INSTA_FILTER_PRESET_NONE:
+      node = gegl_node_new_child (operation->node,
+                                  "operation", "gegl:nop",
+                                  NULL);
+      self->nodes = g_list_prepend (self->nodes, node);
+      break;
+
     case GEGL_INSTA_FILTER_PRESET_1977:
       node = gegl_node_new_child (operation->node,
                                   "operation", "gegl:insta-curve",

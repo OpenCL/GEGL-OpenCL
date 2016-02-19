@@ -22,6 +22,7 @@
 #ifdef GEGL_PROPERTIES
 
 enum_start (gegl_insta_curve_preset)
+  enum_value (GEGL_INSTA_CURVE_PRESET_NONE, "none", "None")
   enum_value (GEGL_INSTA_CURVE_PRESET_1977, "1977", "1977")
   enum_value (GEGL_INSTA_CURVE_PRESET_BRANNAN, "brannan", "Brannan")
   enum_value (GEGL_INSTA_CURVE_PRESET_GOTHAM, "gotham", "Gotham")
@@ -30,7 +31,7 @@ enum_end (GeglInstaCurvePreset)
 
 property_enum (preset, _("Preset"),
                GeglInstaCurvePreset, gegl_insta_curve_preset,
-               GEGL_INSTA_CURVE_PRESET_1977)
+               GEGL_INSTA_CURVE_PRESET_NONE)
   description (_("Which curve to apply"))
 
 #else
@@ -689,6 +690,7 @@ prepare (GeglOperation *operation)
         }
       break;
 
+    case GEGL_INSTA_CURVE_PRESET_NONE:
     default:
       g_assert_not_reached ();
     }
