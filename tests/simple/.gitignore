@@ -26,6 +26,7 @@
 /test-buffer-extract
 /test-buffer-changes
 /test-format-sensing
+/test-gegl-color
 /test-scaled-blit
 /test-svg-abyss
 /test-buffer-tile-voiding

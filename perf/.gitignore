@@ -13,4 +13,8 @@
 /test-gegl-buffer-access
 /test-passthrough
 /test-rotate
+/test-samplers
+/test-saturation
+/test-scale
+/test-translate
 /test-unsharpmask

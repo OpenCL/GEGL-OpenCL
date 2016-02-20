@@ -7,9 +7,11 @@
 /Makefile.in
 /*.exe
 /2geglbuffer
+/frame-counter
 /gegl-convert
 /gegl-slicer
 /geglbuffer-add-image
 /geglbuffer-clock
 /hello-world
 /sdl-draw
+/video-invert
