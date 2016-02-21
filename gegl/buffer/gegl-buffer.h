@@ -478,6 +478,9 @@ typedef void (*GeglSamplerGetFun)  (GeglSampler     *self,
 
 /**
  * gegl_sampler_get_fun: (skip)
+ *
+ * Get the raw sampler function, the raw sampler function does not do
+ * additional NaN / inifinity checks on passed in coordinates.
  */
 GeglSamplerGetFun gegl_sampler_get_fun (GeglSampler *sampler);
 

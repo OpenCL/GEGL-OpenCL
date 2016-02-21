@@ -157,6 +157,11 @@ gegl_sampler_get (GeglSampler     *self,
                   void            *output,
                   GeglAbyssPolicy  repeat_mode)
 {
+  if (G_UNLIKELY(!isfinite (x)))
+    x = 0.0;
+  if (G_UNLIKELY(!isfinite (y)))
+    y = 0.0;
+
   if (self->lvel)
   {
     double factor = 1.0 / (1 << self->lvel);
