@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-10 05:27+0300\n"
-"PO-Revision-Date: 2016-01-10 05:55+0300\n"
+"POT-Creation-Date: 2016-02-23 13:00+0300\n"
+"PO-Revision-Date: 2016-02-23 14:12+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: Russian\n"
@@ -488,12 +488,12 @@ msgstr "Буфер ввода"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr ""
 
-#: ../operations/common/buffer-source.c:189
+#: ../operations/common/buffer-source.c:199
 #, fuzzy
 msgid "Buffer Source"
 msgstr "Расположение буфера"
 
-#: ../operations/common/buffer-source.c:191
+#: ../operations/common/buffer-source.c:201
 msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr ""
 
@@ -738,7 +738,7 @@ msgstr ""
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
-#: ../operations/external/svg-load.c:28 ../operations/external/text.c:47
+#: ../operations/external/svg-load.c:30 ../operations/external/text.c:47
 #: ../operations/external/v4l.c:28 ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
 #: ../operations/workshop/external/v4l2.c:26
@@ -757,7 +757,7 @@ msgstr "Ширина ячеек в пикселах"
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
-#: ../operations/external/svg-load.c:31 ../operations/external/text.c:49
+#: ../operations/external/svg-load.c:32 ../operations/external/text.c:49
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/line-profile.c:41
 #: ../operations/workshop/external/v4l2.c:28
@@ -982,16 +982,16 @@ msgstr ""
 
 #: ../operations/common/color-rotate.c:35
 msgid "Treat as this"
-msgstr ""
+msgstr "Считать имеющими параметры ниже"
 
 #: ../operations/common/color-rotate.c:37
 msgid "Change to this"
-msgstr ""
+msgstr "Изменить согласно параметрам ниже"
 
 #: ../operations/common/color-rotate.c:40
 #: ../operations/common/color-rotate.c:53
 msgid "Clockwise"
-msgstr "По часовой стрелке"
+msgstr "По часовой стрелке "
 
 #: ../operations/common/color-rotate.c:41
 #: ../operations/common/color-rotate.c:54
@@ -1001,7 +1001,7 @@ msgstr ""
 #: ../operations/common/color-rotate.c:43
 #: ../operations/common/color-rotate.c:56
 msgid "From"
-msgstr ""
+msgstr "От"
 
 #: ../operations/common/color-rotate.c:44
 msgid "Start angle of the source color range"
@@ -1010,7 +1010,7 @@ msgstr ""
 #: ../operations/common/color-rotate.c:48
 #: ../operations/common/color-rotate.c:61
 msgid "To"
-msgstr ""
+msgstr "До"
 
 #: ../operations/common/color-rotate.c:49
 msgid "End angle of the source color range"
@@ -1025,18 +1025,17 @@ msgid "End angle of the destination color range"
 msgstr ""
 
 #: ../operations/common/color-rotate.c:66
-#, fuzzy
 msgid "Gray threshold"
-msgstr "Порог"
+msgstr "Порог серого"
 
 #: ../operations/common/color-rotate.c:67
 msgid "Colors with a saturation less than this will treated as gray"
 msgstr ""
+"Цвета с насыщенностью меньше этого значения будут считаться оттенками серого"
 
 #: ../operations/common/color-rotate.c:71
-#, fuzzy
 msgid "Gray mode"
-msgstr "Порог"
+msgstr "Способ обработки"
 
 #: ../operations/common/color-rotate.c:74
 msgid ""
@@ -1273,7 +1272,7 @@ msgstr ""
 msgid "Border"
 msgstr ""
 
-#: ../operations/common/convolution-matrix.c:341
+#: ../operations/common/convolution-matrix.c:607
 msgid "Apply a generic 5x5 convolution matrix"
 msgstr "Применить матрицу свёртки размером 5×5"
 
@@ -1287,9 +1286,8 @@ msgid ""
 msgstr ""
 
 #: ../operations/common/copy-buffer.c:151
-#, fuzzy
 msgid "Copy Buffer"
-msgstr "Склонировать буфер"
+msgstr "Скопировать буфер"
 
 #: ../operations/common/copy-buffer.c:153
 msgid "Writes image data to an already existing buffer"
@@ -1320,36 +1318,6 @@ msgstr "Кубизм"
 msgid ""
 "Convert the image into randomly rotated square blobs, somehow resembling a "
 "cubist painting style"
-msgstr ""
-
-#: ../operations/common/dcraw-load.c:26
-#: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:25
-#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
-#: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
-#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
-#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
-#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
-#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
-#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
-#: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
-#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
-#: ../operations/workshop/external/gluas.c:45
-#: ../operations/workshop/rawbayer-load.c:25
-msgid "File"
-msgstr "Файл"
-
-#: ../operations/common/dcraw-load.c:27 ../operations/common/load.c:26
-#: ../operations/common/magick-load.c:27 ../operations/external/png-load.c:28
-#: ../operations/external/ppm-load.c:26 ../operations/external/raw-load.c:28
-#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
-#: ../operations/workshop/rawbayer-load.c:26
-msgid "Path of file to load."
-msgstr ""
-
-#: ../operations/common/dcraw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
 msgstr ""
 
 #: ../operations/common/deinterlace.c:31
@@ -1525,7 +1493,7 @@ msgstr ""
 
 #: ../operations/common/diffraction-patterns.c:251
 msgid "Diffraction Patterns"
-msgstr ""
+msgstr "Дифракционные узоры"
 
 #: ../operations/common/diffraction-patterns.c:255
 msgid "Generate diffraction patterns"
@@ -1616,7 +1584,6 @@ msgid "Manhattan"
 msgstr "Манхэттен"
 
 #: ../operations/common/distance-transform.c:33
-#, fuzzy
 msgid "Chessboard"
 msgstr "Шахматная доска"
 
@@ -1706,9 +1673,8 @@ msgid "Prewitt compass"
 msgstr ""
 
 #: ../operations/common/edge.c:31
-#, fuzzy
 msgid "Gradient"
-msgstr "Линейный градиент"
+msgstr "Градиент"
 
 #: ../operations/common/edge.c:32
 msgid "Roberts"
@@ -1728,7 +1694,7 @@ msgstr "Алгоритм"
 
 #: ../operations/common/edge.c:40
 msgid "Edge detection algorithm"
-msgstr ""
+msgstr "Алгоритм определения краёв"
 
 #: ../operations/common/edge.c:42
 msgid "Amount"
@@ -1748,9 +1714,8 @@ msgid "Edge detection behavior"
 msgstr ""
 
 #: ../operations/common/edge.c:350
-#, fuzzy
 msgid "Edge Detection"
-msgstr "Сохранение краёв"
+msgstr "Определение краёв"
 
 #: ../operations/common/edge.c:353
 msgid "Several simple methods for detecting edges"
@@ -2289,6 +2254,24 @@ msgstr "Размер"
 msgid "The orientation of the blur - hor/ver"
 msgstr ""
 
+#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:30
+#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
+#: ../operations/common/save.c:25 ../operations/external/ff-load.c:29
+#: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
+#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
+#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
+#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
+#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
+#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
+#: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
+#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
+#: ../operations/workshop/dcraw-load.c:26
+#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/rawbayer-load.c:25
+msgid "File"
+msgstr "Файл"
+
 #: ../operations/common/gegl-buffer-load-op.c:25
 msgid "Path of GeglBuffer file to load."
 msgstr ""
@@ -2382,11 +2365,11 @@ msgstr "Вид иллюзии"
 msgid "Type of illusion"
 msgstr ""
 
-#: ../operations/common/illusion.c:244
+#: ../operations/common/illusion.c:267
 msgid "Illusion"
 msgstr "Иллюзия"
 
-#: ../operations/common/illusion.c:247
+#: ../operations/common/illusion.c:270
 msgid "Superimpose many altered copies of the image."
 msgstr ""
 
@@ -2629,16 +2612,26 @@ msgstr "Линейный градиент"
 msgid "Linear gradient renderer"
 msgstr "Визуализация линейного градиента"
 
-#: ../operations/common/load.c:27 ../operations/external/jpg-load.c:26
-#: ../operations/external/png-load.c:29 ../operations/external/tiff-load.c:27
+#: ../operations/common/load.c:31 ../operations/common/magick-load.c:27
+#: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
+#: ../operations/external/raw-load.c:28 ../operations/external/rgbe-load.c:27
+#: ../operations/workshop/dcraw-load.c:27
+#: ../operations/workshop/rawbayer-load.c:26
+msgid "Path of file to load."
+msgstr ""
+
+#: ../operations/common/load.c:32 ../operations/external/jp2-load.c:27
+#: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
+#: ../operations/external/svg-load.c:27 ../operations/external/tiff-load.c:27
+#: ../operations/external/webp-load.c:27
 msgid "URI"
 msgstr ""
 
-#: ../operations/common/load.c:28
+#: ../operations/common/load.c:33
 msgid "URI of file to load."
 msgstr ""
 
-#: ../operations/common/load.c:234
+#: ../operations/common/load.c:227
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -3282,11 +3275,11 @@ msgstr "Турбулентность"
 msgid "Make a turbulent noise"
 msgstr ""
 
-#: ../operations/common/noise-solid.c:326
+#: ../operations/common/noise-solid.c:345
 msgid "Solid Noise"
 msgstr ""
 
-#: ../operations/common/noise-solid.c:330
+#: ../operations/common/noise-solid.c:349
 msgid "Create a random cloud-like texture"
 msgstr ""
 
@@ -4757,60 +4750,60 @@ msgstr "Операция"
 msgid "No operation (can be used as a routing point)"
 msgstr ""
 
-#: ../operations/external/ff-load.c:25
+#: ../operations/external/ff-load.c:30
 msgid "Path of video file to load"
 msgstr ""
 
-#: ../operations/external/ff-load.c:27
+#: ../operations/external/ff-load.c:32
 msgid "Frame number"
 msgstr "Номер кадра"
 
-#: ../operations/external/ff-load.c:31
+#: ../operations/external/ff-load.c:36
 #, fuzzy
 msgid "frames"
 msgstr "Кадр"
 
-#: ../operations/external/ff-load.c:32
+#: ../operations/external/ff-load.c:37
 msgid ""
 "Number of frames in video, updates at least when first frame has been "
 "decoded."
 msgstr ""
 
-#: ../operations/external/ff-load.c:36
+#: ../operations/external/ff-load.c:41
 msgid "audio_sample_rate"
 msgstr ""
 
-#: ../operations/external/ff-load.c:37
+#: ../operations/external/ff-load.c:42
 #, fuzzy
 msgid "audio_channels"
 msgstr "Красный канал"
 
-#: ../operations/external/ff-load.c:39
+#: ../operations/external/ff-load.c:44
 #, fuzzy
 msgid "frame-rate"
 msgstr "Кадр"
 
-#: ../operations/external/ff-load.c:40
+#: ../operations/external/ff-load.c:45
 msgid "Frames per second, permits computing time vs frame"
 msgstr ""
 
-#: ../operations/external/ff-load.c:44
+#: ../operations/external/ff-load.c:49
 msgid "video-codec"
 msgstr ""
 
-#: ../operations/external/ff-load.c:45
+#: ../operations/external/ff-load.c:50
 msgid "audio-codec"
 msgstr ""
 
-#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:32
+#: ../operations/external/ff-load.c:52 ../operations/external/ff-save.c:32
 msgid "audio"
 msgstr ""
 
-#: ../operations/external/ff-load.c:765
+#: ../operations/external/ff-load.c:776
 msgid "FFmpeg Frame Loader"
 msgstr "Загрузчик кадров на основе FFmpeg"
 
-#: ../operations/external/ff-load.c:767
+#: ../operations/external/ff-load.c:778
 msgid "FFmpeg video frame importer."
 msgstr ""
 
@@ -4868,9 +4861,8 @@ msgid "Video bufsize"
 msgstr "Размер плиток"
 
 #: ../operations/external/ff-save.c:50
-#, fuzzy
 msgid "Container format"
-msgstr "Формат вывода"
+msgstr "Формат контейнера"
 
 #: ../operations/external/ff-save.c:51
 msgid "Container format to use, or auto to autodetect based on file extension."
@@ -4956,70 +4948,83 @@ msgstr ""
 msgid "me-subpel-quality"
 msgstr ""
 
-#: ../operations/external/ff-save.c:1072
+#: ../operations/external/ff-save.c:1095
 msgid "FFmpeg video output sink"
 msgstr ""
 
 #: ../operations/external/jp2-load.c:26 ../operations/external/jpg-load.c:25
-#: ../operations/external/tiff-load.c:26
+#: ../operations/external/svg-load.c:26 ../operations/external/tiff-load.c:26
+#: ../operations/external/webp-load.c:26
 msgid "Path of file to load"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:71
-#, c-format
-msgid "Unknown JPEG 2000 image format in '%s'"
+#: ../operations/external/jp2-load.c:28 ../operations/external/svg-load.c:28
+#: ../operations/external/tiff-load.c:28 ../operations/external/webp-load.c:28
+msgid "URI for file to load"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:78
-#, c-format
-msgid "Unable to open JPEG 2000 image in '%s'"
+#: ../operations/external/jp2-load.c:131
+msgid "Unknown JPEG 2000 image format"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:85
-#, c-format
-msgid "Unable to create output color profile for '%s'"
+#: ../operations/external/jp2-load.c:138
+msgid "Unable to open JPEG 2000 image"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:93
-#, c-format
-msgid "Unable to convert image to sRGB color space when processing '%s'"
+#: ../operations/external/jp2-load.c:145
+#, fuzzy
+msgid "Unable to create output color profile"
+msgstr "Невозможно прочитать файл: %s"
+
+#: ../operations/external/jp2-load.c:153
+msgid "Unable to convert image to sRGB color space"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:101
+#: ../operations/external/jp2-load.c:160
 #, c-format
-msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
+msgid "Unsupported non-RGB JPEG 2000 file with %d components"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:112
+#: ../operations/external/jp2-load.c:172
 #, c-format
-msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
+msgid "Unsupported JPEG 2000 file with depth %d"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:125
-#, c-format
-msgid "Components of input image '%s' don't match"
+#: ../operations/external/jp2-load.c:198
+msgid "Components of JPEG 2000 input don't match"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:210
-#, c-format
-msgid "One or more of R, G, B components are missing from '%s'"
+#: ../operations/external/jp2-load.c:260
+msgid "could not create a new Jasper stream"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:219
+#: ../operations/external/jp2-load.c:277 ../operations/external/jp2-load.c:279
 #, c-format
-msgid "One or more of R, G, B components have signed data in '%s'"
+msgid "failed to open JPEG 2000 from %s"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:253
-#, c-format
-msgid "Error reading row %d component %d from '%s'"
+#: ../operations/external/jp2-load.c:293
+msgid "could not query JPEG 2000 file"
 msgstr ""
 
-#: ../operations/external/jp2-load.c:397
+#: ../operations/external/jp2-load.c:349
+msgid "One or more of R, G, B components are missing"
+msgstr ""
+
+#: ../operations/external/jp2-load.c:357
+msgid "One or more of R, G, B components have signed data"
+msgstr ""
+
+#: ../operations/external/jp2-load.c:390
+#, c-format
+msgid "Error reading row %d component %d"
+msgstr ""
+
+#: ../operations/external/jp2-load.c:530
 msgid "JPEG 2000 File Loader"
 msgstr "Загрузка изображений JPEG 2000"
 
-#: ../operations/external/jp2-load.c:399
+#: ../operations/external/jp2-load.c:532
 msgid "JPEG 2000 image loader using jasper."
 msgstr "Загрузка изображений JPEG 2000 посредством jasper"
 
@@ -5073,11 +5078,11 @@ msgstr ""
 
 #: ../operations/external/jpg-save.c:40
 msgid "Grayscale"
-msgstr ""
+msgstr "Градации серого"
 
 #: ../operations/external/jpg-save.c:41
 msgid "Create a grayscale (monochrome) image"
-msgstr ""
+msgstr "Создать изображение в градациях серого"
 
 #: ../operations/external/jpg-save.c:195
 msgid "JPEG File Saver"
@@ -5409,7 +5414,7 @@ msgstr ""
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr ""
 
-#: ../operations/external/raw-load.c:238
+#: ../operations/external/raw-load.c:239
 msgid "libraw File Loader"
 msgstr "Загрузчик изображений посредством libraw"
 
@@ -5463,26 +5468,22 @@ msgid ""
 "process, due to SDL implementation issues)."
 msgstr ""
 
-#: ../operations/external/svg-load.c:26
-msgid "Path to SVG file to load"
-msgstr ""
-
-#: ../operations/external/svg-load.c:29 ../operations/external/v4l.c:29
+#: ../operations/external/svg-load.c:31 ../operations/external/v4l.c:29
 #: ../operations/workshop/external/v4l2.c:27
 msgid "Width for rendered image"
 msgstr ""
 
-#: ../operations/external/svg-load.c:32 ../operations/external/v4l.c:32
+#: ../operations/external/svg-load.c:33 ../operations/external/v4l.c:32
 #: ../operations/workshop/external/v4l2.c:29
 msgid "Height for rendered image"
 msgstr ""
 
-#: ../operations/external/svg-load.c:180
+#: ../operations/external/svg-load.c:292
 msgid "SVG File Loader"
 msgstr "Загрузчик рисунков SVG"
 
 #. not hidden because it has extra API
-#: ../operations/external/svg-load.c:182
+#: ../operations/external/svg-load.c:294
 msgid "Load an SVG file using librsvg"
 msgstr "Загрузить файл SVG с помощью"
 
@@ -5545,32 +5546,27 @@ msgstr ""
 msgid "Display a string of text using pango and cairo."
 msgstr ""
 
-#: ../operations/external/tiff-load.c:28
-msgid "URI for file to load"
-msgstr ""
-
 #: ../operations/external/tiff-load.c:30
-#, fuzzy
 msgid "Directory"
-msgstr "Направление"
+msgstr "Каталог"
 
 #: ../operations/external/tiff-load.c:31
 msgid "Image file directory (subfile)"
 msgstr ""
 
-#: ../operations/external/tiff-load.c:866
+#: ../operations/external/tiff-load.c:867
 msgid "TIFF File Loader"
 msgstr "Загрузка изображений TIFF"
 
-#: ../operations/external/tiff-load.c:868
+#: ../operations/external/tiff-load.c:869
 msgid "TIFF image loader using libtiff"
 msgstr "Загрузка изображений TIFF посредством libtiff"
 
-#: ../operations/external/tiff-save.c:620
+#: ../operations/external/tiff-save.c:621
 msgid "TIFF File Saver"
 msgstr "Сохранение изображений TIFF"
 
-#: ../operations/external/tiff-save.c:622
+#: ../operations/external/tiff-save.c:623
 msgid "TIFF image saver using libtiff"
 msgstr "Сохранение изображений TIFF посредством libtiff"
 
@@ -5658,11 +5654,11 @@ msgstr ""
 msgid "Renders a vector stroke"
 msgstr ""
 
-#: ../operations/external/webp-load.c:142
+#: ../operations/external/webp-load.c:346
 msgid "WebP File Loader"
 msgstr "Загрузчик изображений WebP"
 
-#: ../operations/external/webp-load.c:144
+#: ../operations/external/webp-load.c:348
 msgid "WebP image loader."
 msgstr "Загрузчик изображений WebP"
 
@@ -6004,19 +6000,6 @@ msgid ""
 "passed a fast-path without resampling is used"
 msgstr ""
 
-#: ../operations/workshop/buffer-cache.c:25
-msgid "Cache buffer"
-msgstr "Буфер кэша"
-
-#: ../operations/workshop/buffer-cache.c:26
-msgid "The GeglBuffer where the caching is done"
-msgstr ""
-
-#: ../operations/workshop/buffer-cache.c:96
-msgid ""
-"Cache the input buffer internally, further process take this buffer as input."
-msgstr ""
-
 #: ../operations/workshop/color-warp.c:24
 msgid "From 0"
 msgstr ""
@@ -6212,9 +6195,8 @@ msgid "Component"
 msgstr "Компонент"
 
 #: ../operations/workshop/component-extract.c:49
-#, fuzzy
 msgid "Component to extract"
-msgstr "Частота компонента 1"
+msgstr "Извлекаемый компонент"
 
 #: ../operations/workshop/component-extract.c:51
 msgid "Invert component"
@@ -6239,6 +6221,10 @@ msgstr "Извлечение компонента"
 #: ../operations/workshop/component-extract.c:266
 msgid "Extract a color model component"
 msgstr "Извлечь компонент цветовой модели"
+
+#: ../operations/workshop/dcraw-load.c:183
+msgid "Raw image loader, wrapping dcraw with pipes."
+msgstr ""
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
@@ -6349,7 +6335,7 @@ msgstr "Центр объектива по X"
 #: ../operations/workshop/external/lens-correct.c:45
 #: ../operations/workshop/external/lens-correct.c:48
 msgid "Coordinates of lens center"
-msgstr ""
+msgstr "Координаты центра объектива"
 
 #: ../operations/workshop/external/lens-correct.c:47
 msgid "Lens center Y"
@@ -6652,13 +6638,48 @@ msgid "how wide peel off bands for ink order vis"
 msgstr ""
 
 #: ../operations/workshop/ink-simulator.c:1420
-msgid "Press Ink Simulator"
+#, fuzzy
+msgid "Ink Simulator"
 msgstr "Имитация печатных красок"
 
 #: ../operations/workshop/ink-simulator.c:1423
-msgid "Spectral ink simulator, for softproofing/simulating press inks"
+#, fuzzy
+msgid ""
+"Spectral ink and paint simulator, for softproofing/simulating physical color "
+"mixing and interactions."
 msgstr ""
 "Спектральная имитация красок для программной цветопробы и имитации печати"
+
+#: ../operations/workshop/insta-curve.c:32
+#: ../operations/workshop/insta-filter.c:32
+msgid "Preset"
+msgstr ""
+
+#: ../operations/workshop/insta-curve.c:35
+msgid "Which curve to apply"
+msgstr ""
+
+#: ../operations/workshop/insta-curve.c:731
+#, fuzzy
+msgid "Insta curve"
+msgstr "Кривая контрастности"
+
+#: ../operations/workshop/insta-curve.c:733
+msgid "Apply a preset curve to an image"
+msgstr ""
+
+#: ../operations/workshop/insta-filter.c:35
+msgid "Which filter to apply"
+msgstr ""
+
+#: ../operations/workshop/insta-filter.c:209
+#, fuzzy
+msgid "Insta Filter"
+msgstr "Фильтр"
+
+#: ../operations/workshop/insta-filter.c:211
+msgid "Apply a preset filter to an image"
+msgstr ""
 
 #: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
@@ -6738,6 +6759,9 @@ msgstr ""
 #: ../operations/workshop/rgb-clip.c:186
 msgid "Keep RGB pixels values inside a specific range"
 msgstr ""
+
+#~ msgid "Cache buffer"
+#~ msgstr "Буфер кэша"
 
 #~ msgid "Amount of red"
 #~ msgstr "Количество красного"
