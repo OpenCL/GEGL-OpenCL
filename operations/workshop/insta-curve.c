@@ -638,6 +638,10 @@ prepare (GeglOperation *operation)
 
   switch (o->preset)
     {
+    case GEGL_INSTA_CURVE_PRESET_NONE:
+      format = input_format;
+      break;
+
     case GEGL_INSTA_CURVE_PRESET_1977:
       if (type == type_u8)
         {
@@ -690,7 +694,6 @@ prepare (GeglOperation *operation)
         }
       break;
 
-    case GEGL_INSTA_CURVE_PRESET_NONE:
     default:
       g_assert_not_reached ();
     }
@@ -714,6 +717,36 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
+static gboolean
+operation_process (GeglOperation        *operation,
+                   GeglOperationContext *context,
+                   const gchar          *output_prop,
+                   const GeglRectangle  *result,
+                   gint                  level)
+{
+  GeglOperationClass  *operation_class;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
+
+  if (o->preset == GEGL_INSTA_CURVE_PRESET_NONE)
+    {
+      gpointer input;
+
+      input = gegl_operation_context_get_object (context, "input");
+      if (input == NULL)
+        {
+          g_warning ("insta-curve received NULL input");
+          return FALSE;
+        }
+
+      gegl_operation_context_take_object (context, "output", g_object_ref (input));
+      return TRUE;
+    }
+
+  return operation_class->process (operation, context, output_prop, result, level);
+}
+
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
@@ -722,6 +755,7 @@ gegl_op_class_init (GeglOpClass *klass)
     GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   operation_class->prepare = prepare;
+  operation_class->process = operation_process;
   operation_class->opencl_support = FALSE;
 
   point_filter_class->process = process;
