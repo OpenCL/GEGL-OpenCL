@@ -194,25 +194,81 @@ main (gint    argc,
     {
       GeglNode *proxy;
       GeglNode *iter;
+      GeglNode *new = NULL;
 
       gchar **operation = o->rest;
+      char *curop = *operation;
       proxy = gegl_node_get_output_proxy (gegl, "output");
       iter = gegl_node_get_producer (proxy, "input", NULL);
 
       while (*operation)
         {
-          GeglNode *new;
+          if (strchr (*operation, '='))
+          {
+            GType target_type = G_TYPE_INT;
+            GValue gvalue={0,};
+            char *key = g_strdup (*operation);
+            char *value = strchr (key, '=') + 1;
+            unsigned int n_props;
+            GParamSpec **pspecs = gegl_operation_list_properties (curop, &n_props);
+            int i;
 
-          new = gegl_node_new_child (gegl, "operation", *operation, NULL);
-          if (iter)
+            value[-1] = '\0';
+            for (i = 0; i < n_props; i++)
             {
-              gegl_node_link_many (iter, new, proxy, NULL);
+              if (!strcmp (pspecs[i]->name, key))
+                target_type = pspecs[i]->value_type;
             }
-          else
+            if (target_type == G_TYPE_DOUBLE || target_type == G_TYPE_FLOAT)
+              {
+                double val = g_strtod (value, NULL);
+                gegl_node_set (iter, key, val, NULL);
+              }
+            else if (target_type == G_TYPE_BOOLEAN) {
+            if (!strcmp (value, "true") || !strcmp (value, "TRUE") ||
+                !strcmp (value, "YES") || !strcmp (value, "yes") ||
+                !strcmp (value, "y") || !strcmp (value, "Y") ||
+                !strcmp (value, "1") || !strcmp (value, "on"))
+              {
+                gegl_node_set (iter, key, TRUE, NULL);
+              }
+            else
+              {
+                gegl_node_set (iter, key, FALSE, NULL);
+              }
+            }
+            else if (target_type == G_TYPE_INT)
             {
-              gegl_node_link_many (new, proxy, NULL);
+              int val = g_strtod (value, NULL);
+              gegl_node_set (iter, key, val, NULL);
             }
-          iter = new;
+            else
+            {
+              GValue gvalue_transformed={0,};
+              g_value_init (&gvalue, G_TYPE_STRING);
+              g_value_set_string (&gvalue, value);
+              g_value_init (&gvalue_transformed, target_type);
+              g_value_transform (&gvalue, &gvalue_transformed);
+              gegl_node_set_property (iter, key, &gvalue_transformed);
+              g_value_unset (&gvalue);
+              g_value_unset (&gvalue_transformed);
+            }
+            g_free (key);
+          }
+          else if (strchr (*operation, ':'))
+          {
+            curop = *operation;
+            new = gegl_node_new_child (gegl, "operation", curop, NULL);
+            if (iter)
+              {
+                gegl_node_link_many (iter, new, proxy, NULL);
+              }
+            else
+              {
+                gegl_node_link_many (new, proxy, NULL);
+              }
+            iter = new;
+          }
           operation++;
         }
     }
