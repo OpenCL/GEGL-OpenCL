@@ -20,12 +20,12 @@ op_LTLIBRARIES =    \
 	ditto.la \
 	hstack.la \
 	ink-simulator.la \
-	insta-curve.la \
-	insta-filter.la \
 	kuwahara.la \
 	mandelbrot.la \
 	median-blur.la \
 	rawbayer-load.la \
+	retro-curve.la \
+	retro-filter.la \
 	rgb-clip.la \
 	unpremul.la \
 	gradient-map.la

@@ -21,22 +21,22 @@
 
 #ifdef GEGL_PROPERTIES
 
-enum_start (gegl_insta_filter_preset)
-  enum_value (GEGL_INSTA_FILTER_PRESET_NONE, "none", "None")
-  enum_value (GEGL_INSTA_FILTER_PRESET_1977, "1977", "1977")
-  enum_value (GEGL_INSTA_FILTER_PRESET_BRANNAN, "brannan", "Brannan")
-  enum_value (GEGL_INSTA_FILTER_PRESET_GOTHAM, "gotham", "Gotham")
-  enum_value (GEGL_INSTA_FILTER_PRESET_NASHVILLE, "nashville", "Nashville")
-enum_end (GeglInstaFilterPreset)
+enum_start (gegl_retro_filter_preset)
+  enum_value (GEGL_RETRO_FILTER_PRESET_NONE, "none", "None")
+  enum_value (GEGL_RETRO_FILTER_PRESET_1977, "1977", "1977")
+  enum_value (GEGL_RETRO_FILTER_PRESET_BRANNAN, "brannan", "Brannan")
+  enum_value (GEGL_RETRO_FILTER_PRESET_GOTHAM, "gotham", "Gotham")
+  enum_value (GEGL_RETRO_FILTER_PRESET_NASHVILLE, "nashville", "Nashville")
+enum_end (GeglRetroFilterPreset)
 
 property_enum (preset, _("Preset"),
-               GeglInstaFilterPreset, gegl_insta_filter_preset,
-               GEGL_INSTA_FILTER_PRESET_NONE)
+               GeglRetroFilterPreset, gegl_retro_filter_preset,
+               GEGL_RETRO_FILTER_PRESET_NONE)
   description (_("Which filter to apply"))
 
 #else
 
-#define GEGL_OP_C_SOURCE insta-filter.c
+#define GEGL_OP_C_SOURCE retro-filter.c
 
 #include "gegl-plugin.h"
 
@@ -71,32 +71,32 @@ do_setup (GeglOperation *operation)
 
   switch (o->preset)
     {
-    case GEGL_INSTA_FILTER_PRESET_NONE:
+    case GEGL_RETRO_FILTER_PRESET_NONE:
       node = gegl_node_new_child (operation->node,
                                   "operation", "gegl:nop",
                                   NULL);
       self->nodes = g_list_prepend (self->nodes, node);
       break;
 
-    case GEGL_INSTA_FILTER_PRESET_1977:
+    case GEGL_RETRO_FILTER_PRESET_1977:
       node = gegl_node_new_child (operation->node,
-                                  "operation", "gegl:insta-curve",
+                                  "operation", "gegl:retro-curve",
                                   "preset", o->preset,
                                   NULL);
       self->nodes = g_list_prepend (self->nodes, node);
       break;
 
-    case GEGL_INSTA_FILTER_PRESET_BRANNAN:
+    case GEGL_RETRO_FILTER_PRESET_BRANNAN:
       node = gegl_node_new_child (operation->node,
-                                  "operation", "gegl:insta-curve",
+                                  "operation", "gegl:retro-curve",
                                   "preset", o->preset,
                                   NULL);
       self->nodes = g_list_prepend (self->nodes, node);
       break;
 
-    case GEGL_INSTA_FILTER_PRESET_GOTHAM:
+    case GEGL_RETRO_FILTER_PRESET_GOTHAM:
       node = gegl_node_new_child (operation->node,
-                                  "operation", "gegl:insta-curve",
+                                  "operation", "gegl:retro-curve",
                                   "preset", o->preset,
                                   NULL);
       self->nodes = g_list_prepend (self->nodes, node);
@@ -107,9 +107,9 @@ do_setup (GeglOperation *operation)
       self->nodes = g_list_prepend (self->nodes, node);
       break;
 
-    case GEGL_INSTA_FILTER_PRESET_NASHVILLE:
+    case GEGL_RETRO_FILTER_PRESET_NASHVILLE:
       node = gegl_node_new_child (operation->node,
-                                  "operation", "gegl:insta-curve",
+                                  "operation", "gegl:retro-curve",
                                   "preset", o->preset,
                                   NULL);
       self->nodes = g_list_prepend (self->nodes, node);
@@ -184,7 +184,7 @@ my_set_property (GObject      *object,
   GeglOperation  *operation = GEGL_OPERATION (object);
   GeglOp *self = GEGL_OP (operation);
   GeglProperties *o = GEGL_PROPERTIES (operation);
-  GeglInstaFilterPreset old_preset = o->preset;
+  GeglRetroFilterPreset old_preset = o->preset;
 
   set_property (object, property_id, value, pspec);
 
@@ -205,8 +205,8 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->detect = detect;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:insta-filter",
-    "title",       _("Insta Filter"),
+    "name",        "gegl:retro-filter",
+    "title",       _("Retro Filter"),
     "categories",  "meta:color",
     "description", _("Apply a preset filter to an image"),
     NULL);

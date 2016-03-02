@@ -21,23 +21,23 @@
 
 #ifdef GEGL_PROPERTIES
 
-enum_start (gegl_insta_curve_preset)
-  enum_value (GEGL_INSTA_CURVE_PRESET_NONE, "none", "None")
-  enum_value (GEGL_INSTA_CURVE_PRESET_1977, "1977", "1977")
-  enum_value (GEGL_INSTA_CURVE_PRESET_BRANNAN, "brannan", "Brannan")
-  enum_value (GEGL_INSTA_CURVE_PRESET_GOTHAM, "gotham", "Gotham")
-  enum_value (GEGL_INSTA_CURVE_PRESET_NASHVILLE, "nashville", "Nashville")
-enum_end (GeglInstaCurvePreset)
+enum_start (gegl_retro_curve_preset)
+  enum_value (GEGL_RETRO_CURVE_PRESET_NONE, "none", "None")
+  enum_value (GEGL_RETRO_CURVE_PRESET_1977, "1977", "1977")
+  enum_value (GEGL_RETRO_CURVE_PRESET_BRANNAN, "brannan", "Brannan")
+  enum_value (GEGL_RETRO_CURVE_PRESET_GOTHAM, "gotham", "Gotham")
+  enum_value (GEGL_RETRO_CURVE_PRESET_NASHVILLE, "nashville", "Nashville")
+enum_end (GeglRetroCurvePreset)
 
 property_enum (preset, _("Preset"),
-               GeglInstaCurvePreset, gegl_insta_curve_preset,
-               GEGL_INSTA_CURVE_PRESET_NONE)
+               GeglRetroCurvePreset, gegl_retro_curve_preset,
+               GEGL_RETRO_CURVE_PRESET_NONE)
   description (_("Which curve to apply"))
 
 #else
 
 #define GEGL_OP_POINT_FILTER
-#define GEGL_OP_C_FILE "insta-curve.c"
+#define GEGL_OP_C_FILE "retro-curve.c"
 
 #include "gegl-op.h"
 #include <math.h>
@@ -638,11 +638,11 @@ prepare (GeglOperation *operation)
 
   switch (o->preset)
     {
-    case GEGL_INSTA_CURVE_PRESET_NONE:
+    case GEGL_RETRO_CURVE_PRESET_NONE:
       format = input_format;
       break;
 
-    case GEGL_INSTA_CURVE_PRESET_1977:
+    case GEGL_RETRO_CURVE_PRESET_1977:
       if (type == type_u8)
         {
           format = format_u8;
@@ -655,7 +655,7 @@ prepare (GeglOperation *operation)
         }
       break;
 
-    case GEGL_INSTA_CURVE_PRESET_BRANNAN:
+    case GEGL_RETRO_CURVE_PRESET_BRANNAN:
       if (type == type_u8)
         {
           format = format_u8;
@@ -668,7 +668,7 @@ prepare (GeglOperation *operation)
         }
       break;
 
-    case GEGL_INSTA_CURVE_PRESET_GOTHAM:
+    case GEGL_RETRO_CURVE_PRESET_GOTHAM:
       if (type == type_u8)
         {
           format = format_u8;
@@ -681,7 +681,7 @@ prepare (GeglOperation *operation)
         }
       break;
 
-    case GEGL_INSTA_CURVE_PRESET_NASHVILLE:
+    case GEGL_RETRO_CURVE_PRESET_NASHVILLE:
       if (type == type_u8)
         {
           format = format_u8;
@@ -729,14 +729,14 @@ operation_process (GeglOperation        *operation,
 
   operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
 
-  if (o->preset == GEGL_INSTA_CURVE_PRESET_NONE)
+  if (o->preset == GEGL_RETRO_CURVE_PRESET_NONE)
     {
       gpointer input;
 
       input = gegl_operation_context_get_object (context, "input");
       if (input == NULL)
         {
-          g_warning ("insta-curve received NULL input");
+          g_warning ("retro-curve received NULL input");
           return FALSE;
         }
 
@@ -761,8 +761,8 @@ gegl_op_class_init (GeglOpClass *klass)
   point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:insta-curve",
-    "title",       _("Insta curve"),
+    "name",        "gegl:retro-curve",
+    "title",       _("Retro curve"),
     "categories",  "hidden",
     "description", _("Apply a preset curve to an image"),
     NULL);
