@@ -114,8 +114,6 @@ op_LTLIBRARIES = \
 	red-eye-removal.la \
 	reinhard05.la \
 	remap.la \
-	retro-curve.la \
-	retro-filter.la \
 	ripple.la \
 	saturation.la \
 	save.la \
