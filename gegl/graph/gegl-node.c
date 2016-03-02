@@ -722,31 +722,15 @@ gegl_node_connect_from (GeglNode    *sink,
       real_source_pad_name = "output";
     }
 
-  {
-    GeglPad *pad;
-    GeglPad *other_pad = NULL;
-
-    pad = gegl_node_get_pad (real_sink, real_sink_pad_name);
-    if (pad)
-      other_pad = gegl_pad_get_connected_to (pad);
-    else
-      {
-        g_warning ("%s: Didn't find pad '%s' of '%s'",
-                   G_STRFUNC, real_sink_pad_name, gegl_node_get_debug_name (real_sink));
-      }
-
-    if (other_pad)
-      {
-        gegl_node_disconnect (real_sink, real_sink_pad_name);
-      }
-  }
   if (gegl_node_pads_exist (real_sink, real_sink_pad_name, real_source, real_source_pad_name))
     {
       GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, real_sink_pad_name);
       GeglPad        *source_pad = gegl_node_get_pad (real_source, real_source_pad_name);
-      GeglConnection *connection = gegl_pad_connect (sink_pad,
-                                                     source_pad);
+      GeglConnection *connection;
 
+      gegl_node_disconnect (real_sink, real_sink_pad_name);
+
+      connection = gegl_pad_connect (sink_pad, source_pad);
       gegl_connection_set_sink_node (connection, real_sink);
       gegl_connection_set_source_node (connection, real_source);
 
