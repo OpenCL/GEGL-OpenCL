@@ -724,9 +724,14 @@ gegl_node_connect_from (GeglNode    *sink,
 
   if (gegl_node_pads_exist (real_sink, real_sink_pad_name, real_source, real_source_pad_name))
     {
+      GeglPad        *other_pad;
       GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, real_sink_pad_name);
       GeglPad        *source_pad = gegl_node_get_pad (real_source, real_source_pad_name);
       GeglConnection *connection;
+
+      other_pad = gegl_pad_get_connected_to (sink_pad);
+      if (source_pad == other_pad)
+        return TRUE;
 
       gegl_node_disconnect (real_sink, real_sink_pad_name);
 
