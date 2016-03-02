@@ -233,8 +233,6 @@ operations/workshop/generated/subtractive.c
 operations/workshop/gradient-map.c
 operations/workshop/hstack.c
 operations/workshop/ink-simulator.c
-operations/workshop/insta-curve.c
-operations/workshop/insta-filter.c
 operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c
 operations/workshop/median-blur.c
