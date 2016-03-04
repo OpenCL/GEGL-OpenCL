@@ -51,6 +51,36 @@ test_node_already_connected (void)
   return result;
 }
 
+static void
+dont_invalidate_source_invalidated (gpointer user_data)
+{
+  gboolean *result = (gboolean *) user_data;
+  *result = FALSE;
+}
+
+static gboolean
+test_node_dont_invalidate_source (void)
+{
+  gboolean result = TRUE;
+  GeglNode *ptn, *sink, *src;
+
+  ptn  = gegl_node_new ();
+  src  = gegl_node_new_child (ptn,
+                              "operation", "gegl:color",
+                              NULL);
+  sink = gegl_node_new_child (ptn,
+                              "operation", "gegl:nop",
+                              NULL);
+
+  g_signal_connect_swapped (src, "invalidated", G_CALLBACK (dont_invalidate_source_invalidated), &result);
+
+  gegl_node_link (src, sink);
+  gegl_node_disconnect (sink, "input");
+
+  g_object_unref (ptn);
+  return result;
+}
+
 static gboolean
 test_node_reconnect_many (void)
 {
@@ -131,6 +161,7 @@ int main(int argc, char **argv)
                NULL);
 
   RUN_TEST (test_node_already_connected)
+  RUN_TEST (test_node_dont_invalidate_source)
   RUN_TEST (test_node_reconnect_many)
 
   gegl_exit ();
