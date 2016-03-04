@@ -13,6 +13,7 @@
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright (C) 2013 Daniel Sabo
+ * Copyright (C) 2016 Red Hat, Inc.
  */
 
 #include "config.h"
@@ -20,6 +21,35 @@
 #include <stdio.h>
 
 #include "gegl.h"
+
+static void
+already_connected_invalidated (gpointer user_data)
+{
+  gboolean *result = (gboolean *) user_data;
+  *result = FALSE;
+}
+
+static gboolean
+test_node_already_connected (void)
+{
+  gboolean result = TRUE;
+  GeglNode *ptn, *sink, *src;
+
+  ptn  = gegl_node_new ();
+  src  = gegl_node_new_child (ptn,
+                              "operation", "gegl:color",
+                              NULL);
+  sink = gegl_node_new_child (ptn,
+                              "operation", "gegl:nop",
+                              NULL);
+  gegl_node_link (src, sink);
+
+  g_signal_connect_swapped (sink, "invalidated", G_CALLBACK (already_connected_invalidated), &result);
+  gegl_node_link (src, sink);
+
+  g_object_unref (ptn);
+  return result;
+}
 
 static gboolean
 test_node_reconnect_many (void)
@@ -100,6 +130,7 @@ int main(int argc, char **argv)
                "use-opencl", FALSE,
                NULL);
 
+  RUN_TEST (test_node_already_connected)
   RUN_TEST (test_node_reconnect_many)
 
   gegl_exit ();
