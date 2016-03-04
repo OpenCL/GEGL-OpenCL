@@ -325,7 +325,7 @@ parse_args (int    argc,
         }
 
         else if (match ("--")) {
-            o->rest = curr;
+            o->rest = curr + 1;
             break;
         }
 

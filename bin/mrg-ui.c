@@ -387,20 +387,7 @@ int mrg_ui_main (int argc, char **argv, char **ops)
 /* we want to see the speed gotten if the fastest babl conversions we have were more accurate */
   g_setenv ("BABL_TOLERANCE", "0.1", TRUE);
   
-  if(ops)
-    o.ops = ops;
-  else
-  {
-    int i;
-    for (i = 0; argv[i]; i++)
-    {
-      if (!strcmp (argv[i], "--"))
-      {
-        o.ops = &argv[i];
-        break;
-      }
-    }
-  }
+  o.ops = ops;
 
   gegl_init (&argc, &argv);
   o.gegl            = gegl_node_new (); // so that we have an object to unref
