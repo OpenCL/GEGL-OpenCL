@@ -93,6 +93,7 @@ static void sdl_add_audio_sample (int sample_pos, float left, float right)
 
 static int audio_started = 0;
 
+void gegl_create_chain (char **ops, GeglNode *iter, GeglNode *proxy);
 
 /*  this structure contains the full application state, and is what
  *  re-renderings of the UI is directly based on.
@@ -1366,17 +1367,9 @@ static void load_path (State *o)
 
   if (o->ops)
   {
-    int i;
-    for (i = 0; o->ops[i]; i++)
-    {
-      o->active = gegl_node_new_child (o->gegl,
-	"operation", o->ops[i], NULL);
-
-      gegl_node_link_many (gegl_node_get_producer (o->sink, "input", NULL),
-				  o->active,
-				  o->sink,
-				  NULL);
-    }
+    gegl_create_chain(o->ops,
+                      gegl_node_get_producer (o->sink, "input", NULL),
+                      o->sink);
   }
 
   mrg_queue_draw (o->mrg, NULL);
