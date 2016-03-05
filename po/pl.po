@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-14 17:04+0100\n"
-"PO-Revision-Date: 2016-02-14 17:05+0100\n"
+"POT-Creation-Date: 2016-03-05 14:54+0100\n"
+"PO-Revision-Date: 2016-03-05 14:55+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -27,17 +27,17 @@ msgstr ""
 "X-Poedit-Language: Polish\n"
 "X-Poedit-Country: Poland\n"
 
-#: ../bin/gegl.c:150
+#: ../bin/gegl.c:152
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Nie można odczytać pliku: %s"
 
-#: ../bin/gegl.c:189
+#: ../bin/gegl.c:191
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Nieprawidłowy wykres, przerywanie.\n"
 
-#: ../bin/gegl.c:287 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:269 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Nieznany tryb GeglOption: %d"
@@ -77,8 +77,8 @@ msgid ""
 "\n"
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
-"easy testing of filters. Be aware that the default value will be used\n"
-"for all properties.\n"
+"easy testing of filters. After chaining a new op in properties can be set\n"
+"with property=value pairs as subsequent arguments.\n"
 msgstr ""
 "użycie: %s [opcje] <plik | -- [działanie [działanie] ..]>\n"
 "\n"
@@ -109,10 +109,10 @@ msgstr ""
 "\n"
 "     -v, --verbose   wyświetla informacje diagnostyczne podczas działania\n"
 "\n"
-"Wszystkie parametry podane po -- są uznawane za instrukcje łączone w małe\n"
+"Wszystkie parametry podane po -- są uznawane za działania łączone w małe\n"
 "kombinacje zamiast używania pliku XML, co umożliwia łatwe testowanie\n"
-"filtrów. Proszę pamiętać, że używana będzie domyślna wartość dla wszystkich\n"
-"właściwości.\n"
+"filtrów. Po połączeniu można ustawić nowe działanie we właściwościach\n"
+"za pomocą pary właściwość=wartość jako kolejne parametry.\n"
 
 #: ../bin/gegl-options.c:87
 #, c-format
@@ -548,11 +548,11 @@ msgstr "Bufor wejściowy"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "GeglBuffer do wczytania do potoku"
 
-#: ../operations/common/buffer-source.c:189
+#: ../operations/common/buffer-source.c:199
 msgid "Buffer Source"
 msgstr "Źródło buforu"
 
-#: ../operations/common/buffer-source.c:191
+#: ../operations/common/buffer-source.c:201
 msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr "Użyj istniejącego GeglBuffer w pamięci jako źródło obrazu."
 
@@ -1361,7 +1361,7 @@ msgstr "Ważenie alfa"
 msgid "Border"
 msgstr "Krawędź"
 
-#: ../operations/common/convolution-matrix.c:341
+#: ../operations/common/convolution-matrix.c:607
 msgid "Apply a generic 5x5 convolution matrix"
 msgstr "Zastosowuje ogólne zniekształcenie macierzowe 5×5"
 
@@ -1411,36 +1411,6 @@ msgid ""
 msgstr ""
 "Konwertuj obraz na losowo obrócone kwadraty, trochę przypominające styl "
 "malowania kubistów"
-
-#: ../operations/common/dcraw-load.c:26
-#: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:30
-#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:29
-#: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
-#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
-#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
-#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
-#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
-#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
-#: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
-#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
-#: ../operations/workshop/external/gluas.c:45
-#: ../operations/workshop/rawbayer-load.c:25
-msgid "File"
-msgstr "Plik"
-
-#: ../operations/common/dcraw-load.c:27 ../operations/common/load.c:31
-#: ../operations/common/magick-load.c:27 ../operations/external/png-load.c:28
-#: ../operations/external/ppm-load.c:26 ../operations/external/raw-load.c:28
-#: ../operations/external/rgbe-load.c:27
-#: ../operations/workshop/rawbayer-load.c:26
-msgid "Path of file to load."
-msgstr "Ścieżka pliku do wczytania."
-
-#: ../operations/common/dcraw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr "Wczytywanie obrazów raw, owijanie dcraw potokami."
 
 #: ../operations/common/deinterlace.c:31
 msgid "Keep even fields"
@@ -2362,6 +2332,24 @@ msgstr "Rozmiar"
 msgid "The orientation of the blur - hor/ver"
 msgstr "Orientacja rozmycia — pionowa/pozioma"
 
+#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:30
+#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
+#: ../operations/common/save.c:25 ../operations/external/ff-load.c:29
+#: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
+#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
+#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
+#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
+#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
+#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
+#: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
+#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
+#: ../operations/workshop/dcraw-load.c:26
+#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/rawbayer-load.c:25
+msgid "File"
+msgstr "Plik"
+
 #: ../operations/common/gegl-buffer-load-op.c:25
 msgid "Path of GeglBuffer file to load."
 msgstr "Ścieżka pliku GeglBuffer do wczytania."
@@ -2698,6 +2686,14 @@ msgstr "Liniowy gradient"
 #: ../operations/common/linear-gradient.c:141
 msgid "Linear gradient renderer"
 msgstr "Liniowe renderowanie gradientów"
+
+#: ../operations/common/load.c:31 ../operations/common/magick-load.c:27
+#: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
+#: ../operations/external/raw-load.c:28 ../operations/external/rgbe-load.c:27
+#: ../operations/workshop/dcraw-load.c:27
+#: ../operations/workshop/rawbayer-load.c:26
+msgid "Path of file to load."
+msgstr "Ścieżka pliku do wczytania."
 
 #: ../operations/common/load.c:32 ../operations/external/jp2-load.c:27
 #: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
@@ -4486,11 +4482,11 @@ msgstr "Obrócono"
 msgid "Whether to rotate the RGB pattern by ninety degrees."
 msgstr "Czy obrócić deseń RGB o 90 stopni."
 
-#: ../operations/common/video-degradation.c:269
+#: ../operations/common/video-degradation.c:318
 msgid "Video Degradation"
 msgstr "Zniekształcenie wideo"
 
-#: ../operations/common/video-degradation.c:272
+#: ../operations/common/video-degradation.c:321
 msgid ""
 "This function simulates the degradation of being on an old low-dotpitch RGB "
 "video monitor."
@@ -4602,7 +4598,7 @@ msgstr "Zachowanie"
 
 #: ../operations/common/warp.c:49
 msgid "Behavior of the op"
-msgstr "Zachowanie instrukcji"
+msgstr "Zachowanie działania"
 
 #: ../operations/common/warp.c:413
 msgid "Warp"
@@ -4906,11 +4902,11 @@ msgstr "kodek-dźwięku"
 msgid "audio"
 msgstr "dźwięk"
 
-#: ../operations/external/ff-load.c:774
+#: ../operations/external/ff-load.c:776
 msgid "FFmpeg Frame Loader"
 msgstr "Wczytywanie klatek biblioteki FFmpeg"
 
-#: ../operations/external/ff-load.c:776
+#: ../operations/external/ff-load.c:778
 msgid "FFmpeg video frame importer."
 msgstr "Importer klatek wideo biblioteki FFmpeg."
 
@@ -5056,7 +5052,7 @@ msgstr "i-quant-offset"
 msgid "me-subpel-quality"
 msgstr "me-subpel-quality"
 
-#: ../operations/external/ff-save.c:1072
+#: ../operations/external/ff-save.c:1095
 msgid "FFmpeg video output sink"
 msgstr "Odpływ wyjścia wideo biblioteki FFmpeg"
 
@@ -5524,7 +5520,7 @@ msgstr "Zapisywanie plików PPM"
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Zapisywanie obrazów PPM."
 
-#: ../operations/external/raw-load.c:238
+#: ../operations/external/raw-load.c:239
 msgid "libraw File Loader"
 msgstr "Wczytywanie plików biblioteki libraw"
 
@@ -6382,6 +6378,10 @@ msgstr "Wydobądź składową"
 msgid "Extract a color model component"
 msgstr "Wydobądź składową modelu kolorów"
 
+#: ../operations/workshop/dcraw-load.c:183
+msgid "Raw image loader, wrapping dcraw with pipes."
+msgstr "Wczytywanie obrazów raw, owijanie dcraw potokami."
+
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
 msgid "Bayer pattern"
@@ -6824,35 +6824,6 @@ msgid ""
 msgstr ""
 "Spektralny symulator tuszu i farby dla softproofingu/symulowania fizycznego "
 "mieszania i oddziaływania kolorów."
-
-#: ../operations/workshop/insta-curve.c:31
-#: ../operations/workshop/insta-filter.c:31
-msgid "Preset"
-msgstr "Ustawienie"
-
-#: ../operations/workshop/insta-curve.c:34
-msgid "Which curve to apply"
-msgstr "Krzywa do zastosowania"
-
-#: ../operations/workshop/insta-curve.c:729
-msgid "Insta curve"
-msgstr "Krzywa Insta"
-
-#: ../operations/workshop/insta-curve.c:731
-msgid "Apply a preset curve to an image"
-msgstr "Zastosuj ustawioną krzywą na obrazie"
-
-#: ../operations/workshop/insta-filter.c:34
-msgid "Which filter to apply"
-msgstr "Filtr do zastosowania"
-
-#: ../operations/workshop/insta-filter.c:201
-msgid "Insta Filter"
-msgstr "Filtr Insta"
-
-#: ../operations/workshop/insta-filter.c:203
-msgid "Apply a preset filter to an image"
-msgstr "Zastosuj ustawiony filtr na obrazie"
 
 #: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
