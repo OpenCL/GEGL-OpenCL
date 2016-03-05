@@ -282,14 +282,18 @@ main (gint    argc,
 
 void gegl_create_chain (char **ops, GeglNode *start, GeglNode *proxy)
 {
-  GeglNode *iter[10] = {start, NULL};
-  GeglNode *new = NULL;
-  gchar   **arg = ops;
-  int       level = 0;
-  char     *level_op[10];
-  char     *level_pad[10];
+  GeglNode   *iter[10] = {start, NULL};
+  GeglNode   *new = NULL;
+  gchar     **arg = ops;
+  int         level = 0;
+  char       *level_op[10];
+  char       *level_pad[10];
+  GHashTable *ht = NULL;
+
   level_op[level] = *arg;
  
+  ht = g_hash_table_new (g_str_hash, g_str_equal);
+
   while (*arg)
     {
       if (strchr (*arg, ']'))
@@ -321,49 +325,65 @@ void gegl_create_chain (char **ops, GeglNode *start, GeglNode *proxy)
           GValue gvalue={0,};
           char *key = g_strdup (*arg);
           char *value = strchr (key, '=') + 1;
-          unsigned int n_props;
-          GParamSpec **pspecs = gegl_operation_list_properties (level_op[level], &n_props);
-          int i;
-
           value[-1] = '\0';
-          for (i = 0; i < n_props; i++)
+
+          if (!strcmp (key, "id"))
           {
-            if (!strcmp (pspecs[i]->name, key))
-              target_type = pspecs[i]->value_type;
+            g_hash_table_insert (ht, (void*)g_intern_string (value), iter[level]);
           }
-          if (target_type == G_TYPE_DOUBLE || target_type == G_TYPE_FLOAT)
+          else if (!strcmp (key, "ref"))
+          {
+            if (g_hash_table_lookup (ht, g_intern_string (value)))
+              iter[level] = g_hash_table_lookup (ht, g_intern_string (value));
+            else
+              g_warning ("unknown id '%s'", value);
+          }
+          else
+          {
+            unsigned int n_props = 0;
+            GParamSpec **pspecs;
+            int i;
+
+            pspecs = gegl_operation_list_properties (level_op[level], &n_props);
+            for (i = 0; i < n_props; i++)
             {
-              double val = g_strtod (value, NULL);
+              if (!strcmp (pspecs[i]->name, key))
+                target_type = pspecs[i]->value_type;
+            }
+            if (target_type == G_TYPE_DOUBLE || target_type == G_TYPE_FLOAT)
+              {
+                double val = g_strtod (value, NULL);
+                gegl_node_set (iter[level], key, val, NULL);
+              }
+            else if (target_type == G_TYPE_BOOLEAN) {
+            if (!strcmp (value, "true") || !strcmp (value, "TRUE") ||
+                !strcmp (value, "YES") || !strcmp (value, "yes") ||
+                !strcmp (value, "y") || !strcmp (value, "Y") ||
+                !strcmp (value, "1") || !strcmp (value, "on"))
+              {
+                gegl_node_set (iter[level], key, TRUE, NULL);
+              }
+            else
+              {
+                gegl_node_set (iter[level], key, FALSE, NULL);
+              }
+            }
+            else if (target_type == G_TYPE_INT)
+            {
+              int val = g_strtod (value, NULL);
               gegl_node_set (iter[level], key, val, NULL);
             }
-          else if (target_type == G_TYPE_BOOLEAN) {
-          if (!strcmp (value, "true") || !strcmp (value, "TRUE") ||
-              !strcmp (value, "YES") || !strcmp (value, "yes") ||
-              !strcmp (value, "y") || !strcmp (value, "Y") ||
-              !strcmp (value, "1") || !strcmp (value, "on"))
+            else
             {
-              gegl_node_set (iter[level], key, TRUE, NULL);
+              GValue gvalue_transformed={0,};
+              g_value_init (&gvalue, G_TYPE_STRING);
+              g_value_set_string (&gvalue, value);
+              g_value_init (&gvalue_transformed, target_type);
+              g_value_transform (&gvalue, &gvalue_transformed);
+              gegl_node_set_property (iter[level], key, &gvalue_transformed);
+              g_value_unset (&gvalue);
+              g_value_unset (&gvalue_transformed);
             }
-          else
-            {
-              gegl_node_set (iter[level], key, FALSE, NULL);
-            }
-          }
-          else if (target_type == G_TYPE_INT)
-          {
-            int val = g_strtod (value, NULL);
-            gegl_node_set (iter[level], key, val, NULL);
-          }
-          else
-          {
-            GValue gvalue_transformed={0,};
-            g_value_init (&gvalue, G_TYPE_STRING);
-            g_value_set_string (&gvalue, value);
-            g_value_init (&gvalue_transformed, target_type);
-            g_value_transform (&gvalue, &gvalue_transformed);
-            gegl_node_set_property (iter[level], key, &gvalue_transformed);
-            g_value_unset (&gvalue);
-            g_value_unset (&gvalue_transformed);
           }
           g_free (key);
         }
@@ -392,5 +412,7 @@ void gegl_create_chain (char **ops, GeglNode *start, GeglNode *proxy)
       }
       arg++;
     }
+
+  g_hash_table_unref (ht);
   gegl_node_link_many (iter[level], proxy, NULL);
 }
