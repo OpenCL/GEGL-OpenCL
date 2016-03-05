@@ -76,6 +76,7 @@ static gboolean file_is_gegl_xml (const gchar *path)
   return FALSE;
 }
 
+void gegl_create_chain (char **ops, GeglNode *iter, GeglNode *proxy);
 
 int mrg_ui_main (int argc, char **argv, char **ops);
 
@@ -279,20 +280,21 @@ main (gint    argc,
   return 0;
 }
 
-void gegl_create_chain (char **ops, GeglNode *iter, GeglNode *proxy);
 void gegl_create_chain (char **ops, GeglNode *iter, GeglNode *proxy)
 {
   GeglNode *new = NULL;
-  gchar **operation = ops;
-  char *curop = *operation;
+  gchar **arg = ops;
+  const char *curop;
+ 
+  curop = *arg;
 
-  while (*operation)
+  while (*arg)
     {
-      if (strchr (*operation, '='))
+      if (strchr (*arg, '=')) /* contains = sign, must be a property assignment */
       {
         GType target_type = G_TYPE_INT;
         GValue gvalue={0,};
-        char *key = g_strdup (*operation);
+        char *key = g_strdup (*arg);
         char *value = strchr (key, '=') + 1;
         unsigned int n_props;
         GParamSpec **pspecs = gegl_operation_list_properties (curop, &n_props);
@@ -340,9 +342,9 @@ void gegl_create_chain (char **ops, GeglNode *iter, GeglNode *proxy)
         }
         g_free (key);
       }
-      else if (strchr (*operation, ':'))
+      else if (strchr (*arg, ':')) /* contains : is a non-prefixed operation */
       {
-        curop = *operation;
+        curop = *arg;
         new = gegl_node_new_child (gegl_node_get_parent (proxy), "operation", curop, NULL);
         if (iter)
           {
@@ -354,6 +356,23 @@ void gegl_create_chain (char **ops, GeglNode *iter, GeglNode *proxy)
           }
         iter = new;
       }
-      operation++;
+      else  /* no : or = , assume it is a gegl: op without its prefix */
+      {
+        char temp[1024];
+
+        snprintf (temp, 1023, "gegl:%s", curop);
+        curop = g_intern_string (temp);
+        new = gegl_node_new_child (gegl_node_get_parent (proxy), "operation", curop, NULL);
+        if (iter)
+          {
+            gegl_node_link_many (iter, new, proxy, NULL);
+          }
+        else
+          {
+            gegl_node_link_many (new, proxy, NULL);
+          }
+        iter = new;
+      }
+      arg++;
     }
 }
