@@ -75,7 +75,7 @@ _("usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
-"easy testing of filters. After chaining a new op in properties can be set\n")
+"easy testing of filters. After chaining a new op in properties can be set\n"
 "with property=value pairs as subsequent arguments.\n")
 , application_name);
     exit (0);
