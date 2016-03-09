@@ -1093,8 +1093,7 @@ static void gegl_ui (Mrg *mrg, void *data)
   mrg_add_binding (mrg, "f", NULL, NULL,         toggle_fullscreen_cb, o);
   mrg_add_binding (mrg, "F11", NULL, NULL,       toggle_fullscreen_cb, o);
   mrg_add_binding (mrg, "tab", NULL, NULL,       toggle_show_controls_cb, o);
-  mrg_add_binding (mrg, "s", NULL, NULL,       toggle_slideshow_cb, o);
-
+  mrg_add_binding (mrg, "s", NULL, NULL,         toggle_slideshow_cb, o);
   mrg_add_binding (mrg, ",", NULL, NULL,         preview_less_cb, o);
   mrg_add_binding (mrg, ".", NULL, NULL,         preview_more_cb, o);
 }
@@ -1739,10 +1738,17 @@ static void zoom_out_cb (MrgEvent *event, void *data1, void *data2)
 
 static void scroll_cb (MrgEvent *event, void *data1, void *data2)
 {
-  if (event->scroll_direction)
-    zoom_at (data1, event->device_x, event->device_y, 1.0/1.05);
-  else 
-    zoom_at (data1, event->device_x, event->device_y, 1.05);
+  switch (event->scroll_direction)
+  {
+     case MRG_SCROLL_DIRECTION_DOWN:
+       zoom_at (data1, event->device_x, event->device_y, 1.0/1.05);
+       break;
+     case MRG_SCROLL_DIRECTION_UP:
+       zoom_at (data1, event->device_x, event->device_y, 1.05);
+       break;
+     default:
+       break;
+  }
 }
 
 static void toggle_actions_cb (MrgEvent *event, void *data1, void *data2)
