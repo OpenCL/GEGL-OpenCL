@@ -893,6 +893,15 @@ static int slide_cb (Mrg *mrg, void *data)
   return 0;
 }
 
+static void scroll_cb (MrgEvent *event, void *data1, void *data2)
+{
+  /* XXX: should zoom in/out around cursor (event->x , event->y) */
+  if (event->scroll_direction)
+    zoom_out_cb (event, data1, data2);
+  else 
+    zoom_in_cb (event, data1, data2);
+}
+
 static void ui_viewer (State *o)
 {
   Mrg *mrg = o->mrg;
@@ -900,6 +909,9 @@ static void ui_viewer (State *o)
   cairo_rectangle (cr, 0,0, mrg_width(mrg), mrg_height(mrg));
   mrg_listen (mrg, MRG_DRAG, on_pan_drag, o, NULL);
   mrg_listen (mrg, MRG_MOTION, on_viewer_motion, o, NULL);
+
+  mrg_listen (mrg, MRG_SCROLL, scroll_cb, o, NULL);
+
   cairo_scale (cr, mrg_width(mrg), mrg_height(mrg));
   cairo_new_path (cr);
   cairo_rectangle (cr, 0.05, 0.05, 0.05, 0.05);
