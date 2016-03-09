@@ -893,14 +893,7 @@ static int slide_cb (Mrg *mrg, void *data)
   return 0;
 }
 
-static void scroll_cb (MrgEvent *event, void *data1, void *data2)
-{
-  /* XXX: should zoom in/out around cursor (event->x , event->y) */
-  if (event->scroll_direction)
-    zoom_out_cb (event, data1, data2);
-  else 
-    zoom_in_cb (event, data1, data2);
-}
+static void scroll_cb (MrgEvent *event, void *data1, void *data2);
 
 static void ui_viewer (State *o)
 {
@@ -1722,26 +1715,34 @@ static void zoom_1_cb (MrgEvent *event, void *data1, void *data2)
   mrg_queue_draw (o->mrg, NULL);
 }
 
+static void zoom_at (State *o, float screen_cx, float screen_cy, float factor)
+{
+  float x, y;
+  get_coords (o, screen_cx, screen_cy, &x, &y);
+  o->scale *= factor;
+  o->u = x * o->scale - screen_cx;
+  o->v = y * o->scale - screen_cy;
+  mrg_queue_draw (o->mrg, NULL);
+}
+
 static void zoom_in_cb (MrgEvent *event, void *data1, void *data2)
 {
   State *o = data1; 
-  float x, y;
-  get_coords (o, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, &x, &y);
-  o->scale = o->scale * 1.1;  
-  o->u = x * o->scale - mrg_width(o->mrg)/2;
-  o->v = y * o->scale - mrg_height(o->mrg)/2;
-  mrg_queue_draw (o->mrg, NULL);
+  zoom_at (data1, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, 1.1);
 }
 
 static void zoom_out_cb (MrgEvent *event, void *data1, void *data2)
 {
-  State *o = data1;
-  float x, y;
-  get_coords (o, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, &x, &y);
-  o->scale = o->scale / 1.1;  
-  o->u = x * o->scale - mrg_width(o->mrg)/2;
-  o->v = y * o->scale - mrg_height(o->mrg)/2;
-  mrg_queue_draw (o->mrg, NULL);
+  State *o = data1; 
+  zoom_at (data1, mrg_width(o->mrg)/2, mrg_height(o->mrg)/2, 1.0/1.1);
+}
+
+static void scroll_cb (MrgEvent *event, void *data1, void *data2)
+{
+  if (event->scroll_direction)
+    zoom_at (data1, event->device_x, event->device_y, 1.0/1.05);
+  else 
+    zoom_at (data1, event->device_x, event->device_y, 1.05);
 }
 
 static void toggle_actions_cb (MrgEvent *event, void *data1, void *data2)
