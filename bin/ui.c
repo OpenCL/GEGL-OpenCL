@@ -160,6 +160,7 @@ ActionData actions[]={
   {"exposure",          60,  "gegl:exposure"},
   //{"levels",            60,  "gegl:levels"},
   //{"threshold",         70,  "gegl:threshold"},
+  {"unsharp-mask",         70,  "gegl:unsharp-mask"},
   {NULL, 0, NULL}, /* sentinel */
 };
 
