@@ -373,6 +373,44 @@ void gegl_create_chain (char **ops, GeglNode *start, GeglNode *proxy)
               int val = g_strtod (value, NULL);
               gegl_node_set (iter[level], key, val, NULL);
             }
+            else if (target_type == GEGL_TYPE_COLOR)
+            {
+              GeglColor *color = g_object_new (GEGL_TYPE_COLOR,
+                                               "string", value, NULL);
+              gegl_node_set (iter[level], key, color, NULL);
+            }
+            else if (g_type_is_a (target_type, G_TYPE_ENUM))
+            {
+              GEnumClass *eclass = g_type_class_peek (target_type);
+              GEnumValue *evalue = g_enum_get_value_by_nick (eclass, value);
+              if (evalue)
+                {
+                  gegl_node_set (new, key, evalue->value, NULL);
+                }
+              else
+                {
+              /* warn, but try to get a valid nick out of the old-style
+               * value name
+               */
+                gchar *nick;
+                gchar *c;
+                g_printerr ("gedl (param_set %s): enum %s has no value '%s'\n",
+                            key,
+                            g_type_name (target_type),
+                            value);
+                nick = g_strdup (value);
+                for (c = nick; *c; c++)
+                  {
+                    *c = g_ascii_tolower (*c);
+                    if (*c == ' ')
+                      *c = '-';
+                  }
+                evalue = g_enum_get_value_by_nick (eclass, nick);
+                if (evalue)
+                  gegl_node_set (iter[level], key, evalue->value, NULL);
+                g_free (nick);
+              }
+            }
             else
             {
               GValue gvalue_transformed={0,};
