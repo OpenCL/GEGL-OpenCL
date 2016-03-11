@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-02-04 19:06+0000\n"
-"PO-Revision-Date: 2016-02-06 23:38+0100\n"
+"POT-Creation-Date: 2016-03-08 19:06+0000\n"
+"PO-Revision-Date: 2016-03-08 23:21+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: sl.libreoffice.org <users@sl.libreoffice.org>\n"
 "Language: sl\n"
@@ -23,23 +23,23 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Generator: Poedit 1.8.7\n"
 
-#: ../bin/gegl.c:150
+#: ../bin/gegl.c:152
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Datoteke ni mogoče prebrati: %s"
 
-#: ../bin/gegl.c:189
+#: ../bin/gegl.c:191
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Neveljaven graf, sledi prekinitev.\n"
 
-#: ../bin/gegl.c:287 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:269 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Neznan način GeglOption: %d"
 
 #: ../bin/gegl-options.c:47
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
@@ -73,8 +73,8 @@ msgid ""
 "\n"
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
-"easy testing of filters. Be aware that the default value will be used\n"
-"for all properties.\n"
+"easy testing of filters. After chaining a new op in properties can be set\n"
+"with property=value pairs as subsequent arguments.\n"
 msgstr ""
 "raba: %s [možnosti] <datoteka | -- [op [op] ..]>\n"
 "\n"
@@ -85,7 +85,7 @@ msgstr ""
 "\n"
 "     --exists        vrni 0, če operacija(e) obstaja(jo)\n"
 "\n"
-"     --properties    izpiši lastnosti (ime, vrsta, opis) of operacije\n"
+"     --properties    izpiši lastnosti (ime, vrsta, opis) operacije\n"
 "\n"
 "     -i, --file      preberi xml iz navedene datoteke\n"
 "\n"
@@ -103,9 +103,9 @@ msgstr ""
 "\n"
 "     -X              izpiše XML, ki je bil prebran\n"
 "\n"
-"     -v, --verbose   natisni diagnostiko med delovanjem\n"
+"     -v, —verbose   natisni diagnostiko med delovanjem\n"
 "\n"
-"Vsi argumenti, ki sledijo --, so obravnavani kot operacije, ki se verižijo\n"
+"Vsi argumenti, ki sledijo —, so obravnavani kot operacije, ki se verižijo\n"
 "v manjši sestav namesto uporabe datoteke xml, kar omogoča\n"
 "enostavno preizkušanje filtrov. Upoštevajte, da bo za vse lastnosti\n"
 "uporabljena privzeta vrednost.\n"
@@ -540,11 +540,11 @@ msgstr "Vhodni medpomnilnika"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "GeglBuffer, ki naj se naloži v cevovod"
 
-#: ../operations/common/buffer-source.c:189
+#: ../operations/common/buffer-source.c:199
 msgid "Buffer Source"
 msgstr "Vir medpomnilnika"
 
-#: ../operations/common/buffer-source.c:191
+#: ../operations/common/buffer-source.c:201
 msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr ""
 
@@ -798,7 +798,7 @@ msgstr ""
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
-#: ../operations/external/svg-load.c:28 ../operations/external/text.c:47
+#: ../operations/external/svg-load.c:30 ../operations/external/text.c:47
 #: ../operations/external/v4l.c:28 ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
 #: ../operations/workshop/external/v4l2.c:26
@@ -817,7 +817,7 @@ msgstr "Vodoravni širina celic v slikovnih točkah."
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
-#: ../operations/external/svg-load.c:31 ../operations/external/text.c:49
+#: ../operations/external/svg-load.c:32 ../operations/external/text.c:49
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/line-profile.c:41
 #: ../operations/workshop/external/v4l2.c:28
@@ -826,7 +826,6 @@ msgstr "Višina"
 
 #: ../operations/common/checkerboard.c:34 ../operations/common/grid.c:32
 #: ../operations/common/maze.c:51
-#, fuzzy
 msgid "Vertical width of cells pixels"
 msgstr "Navpična širina celic v slikovnih točkah."
 
@@ -897,7 +896,6 @@ msgid "Color Enhance"
 msgstr "Barvno izboljšaj"
 
 #: ../operations/common/color-enhance.c:238
-#, fuzzy
 msgid ""
 "Stretch color chroma to cover maximum possible range, keeping hue and "
 "lightness untouched."
@@ -950,7 +948,6 @@ msgid "Exchange color"
 msgstr "Izmenjava barv"
 
 #: ../operations/common/color-exchange.c:246
-#, fuzzy
 msgid ""
 "Exchange one color with another, optionally setting a threshold to convert "
 "from one shade to another."
@@ -1093,7 +1090,6 @@ msgid "Gray threshold"
 msgstr "Prag sive"
 
 #: ../operations/common/color-rotate.c:67
-#, fuzzy
 msgid "Colors with a saturation less than this will treated as gray"
 msgstr "Barve z nasičenostjo, manjšo od te, se obravnavajo kot siva."
 
@@ -1169,9 +1165,8 @@ msgid "Color to Alpha"
 msgstr "Barva v alfo"
 
 #: ../operations/common/color-to-alpha.c:256
-#, fuzzy
 msgid "Convert a specified color to transparency, works best with white."
-msgstr "Pretvori navedeno barvo v prosojnost"
+msgstr "Pretvori navedeno barvo v prosojnost, najbolje deluje z belo."
 
 #: ../operations/common/contrast-curve.c:25
 msgid "Sample points"
@@ -1194,11 +1189,12 @@ msgid "Contrast Curve"
 msgstr "Krivulja kontrasta"
 
 #: ../operations/common/contrast-curve.c:259
-#, fuzzy
 msgid ""
 "Adjusts the contrast of a grayscale image with a curve specifying contrast "
 "for intensity."
-msgstr "Prilagodi kontrast slike glede na krivuljo."
+msgstr ""
+"Prilagodi kontrast sivinske slike glede na krivuljo, ki določa kontrast "
+"intenzivnosti."
 
 #: ../operations/common/convolution-matrix.c:25
 msgid "(1,1)"
@@ -1338,7 +1334,7 @@ msgstr "Alfa-uteži"
 msgid "Border"
 msgstr "Rob"
 
-#: ../operations/common/convolution-matrix.c:341
+#: ../operations/common/convolution-matrix.c:607
 msgid "Apply a generic 5x5 convolution matrix"
 msgstr "Uporabi splošno konvolucijsko matriko 5x5"
 
@@ -1358,7 +1354,7 @@ msgstr "Kopiraj medpomnilnik"
 #: ../operations/common/copy-buffer.c:153
 #, fuzzy
 msgid "Writes image data to an already existing buffer"
-msgstr "Zapiši v obstoječi GeglBuffer"
+msgstr "Zapiše podatke slike v obstoječi"
 
 #: ../operations/common/cubism.c:30 ../operations/common/mosaic.c:42
 msgid "Tile size"
@@ -1387,36 +1383,6 @@ msgid ""
 msgstr ""
 "Pretvori sliko v naključno zasukane kvadratne tlakovce, ki nekako spominjajo "
 "na kubistični slog slikanja"
-
-#: ../operations/common/dcraw-load.c:26
-#: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:25
-#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:24
-#: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
-#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
-#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
-#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
-#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
-#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
-#: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
-#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
-#: ../operations/workshop/external/gluas.c:45
-#: ../operations/workshop/rawbayer-load.c:25
-msgid "File"
-msgstr "Datoteka"
-
-#: ../operations/common/dcraw-load.c:27 ../operations/common/load.c:26
-#: ../operations/common/magick-load.c:27 ../operations/external/png-load.c:28
-#: ../operations/external/ppm-load.c:26 ../operations/external/raw-load.c:28
-#: ../operations/external/rgbe-load.c:27 ../operations/external/webp-load.c:26
-#: ../operations/workshop/rawbayer-load.c:26
-msgid "Path of file to load."
-msgstr "Pot datoteke, ki jo želite naložiti."
-
-#: ../operations/common/dcraw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi."
 
 #: ../operations/common/deinterlace.c:31
 msgid "Keep even fields"
@@ -1968,7 +1934,6 @@ msgid "Fattal et al. 2002 Tone Mapping"
 msgstr ""
 
 #: ../operations/common/fattal02.c:1330
-#, fuzzy
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator attenuates the magnitudes of local image "
@@ -2271,13 +2236,12 @@ msgid "Gaussian Blur"
 msgstr "Gaussova zabrisanost"
 
 #: ../operations/common/gaussian-blur.c:705
-#, fuzzy
 msgid ""
 "Each result pixel is the average of the neighbouring pixels weighted by a "
 "normal distribution with specified standard deviation."
 msgstr ""
 "Izvede poprečenje soležnih slikovnih točk z normalno porazdelitvijo za "
-"uteževanje"
+"uteževanje z navedeno standardno deviacijo."
 
 #: ../operations/common/gaussian-blur-iir.c:46
 #: ../operations/common/gblur-1d.c:44 ../operations/common/high-pass.c:25
@@ -2334,6 +2298,24 @@ msgstr "Velikost"
 #: ../operations/common/gblur-1d.c:52
 msgid "The orientation of the blur - hor/ver"
 msgstr "Usmeritev zabrisanosti - vod/navp"
+
+#: ../operations/common/gegl-buffer-load-op.c:24
+#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:30
+#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
+#: ../operations/common/save.c:25 ../operations/external/ff-load.c:29
+#: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
+#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
+#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
+#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
+#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
+#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
+#: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
+#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
+#: ../operations/workshop/dcraw-load.c:26
+#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/rawbayer-load.c:25
+msgid "File"
+msgstr "Datoteka"
 
 #: ../operations/common/gegl-buffer-load-op.c:25
 msgid "Path of GeglBuffer file to load."
@@ -2673,16 +2655,26 @@ msgstr "Linearni preliv"
 msgid "Linear gradient renderer"
 msgstr "Upodobljevalnik linearnih prelivov"
 
-#: ../operations/common/load.c:27 ../operations/external/jpg-load.c:26
-#: ../operations/external/png-load.c:29 ../operations/external/tiff-load.c:27
+#: ../operations/common/load.c:31 ../operations/common/magick-load.c:27
+#: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
+#: ../operations/external/raw-load.c:28 ../operations/external/rgbe-load.c:27
+#: ../operations/workshop/dcraw-load.c:27
+#: ../operations/workshop/rawbayer-load.c:26
+msgid "Path of file to load."
+msgstr "Pot datoteke, ki jo želite naložiti."
+
+#: ../operations/common/load.c:32 ../operations/external/jp2-load.c:27
+#: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
+#: ../operations/external/svg-load.c:27 ../operations/external/tiff-load.c:27
+#: ../operations/external/webp-load.c:27
 msgid "URI"
 msgstr "URI"
 
-#: ../operations/common/load.c:28
+#: ../operations/common/load.c:33
 msgid "URI of file to load."
 msgstr "URI datoteke, ki jo želite naložiti."
 
-#: ../operations/common/load.c:219
+#: ../operations/common/load.c:227
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -3139,11 +3131,11 @@ msgstr "Izberi n-to najbližjo točko"
 
 #: ../operations/common/noise-cell.c:49 ../operations/common/noise-simplex.c:36
 msgid "The number of noise octaves."
-msgstr ""
+msgstr "Število oktav šuma."
 
 #: ../operations/common/noise-cell.c:52
 msgid "Palettize"
-msgstr ""
+msgstr "Paletiziraj"
 
 #: ../operations/common/noise-cell.c:53
 msgid "Fill each cell with a random color"
@@ -3207,7 +3199,7 @@ msgstr "Ponovi"
 
 #: ../operations/common/noise-hurl.c:211
 msgid "Randomly Shuffle Pixels"
-msgstr ""
+msgstr "Naključno izmenjaj slikovne točke"
 
 #: ../operations/common/noise-hurl.c:213
 msgid "Completely randomize a fraction of pixels"
@@ -3250,7 +3242,7 @@ msgstr "Odstranjevanje šuma"
 
 #: ../operations/common/noise-reduction.c:428
 msgid "Anisotropic smoothing operation"
-msgstr ""
+msgstr "Anizotropična operacija glajenja"
 
 #: ../operations/common/noise-rgb.c:28
 msgid "Correlated noise"
@@ -3499,7 +3491,6 @@ msgid "Little planet"
 msgstr "Majhen planet"
 
 #: ../operations/common/panorama-projection.c:55
-#, fuzzy
 msgid ""
 "Render a stereographic mapping, a tilt value of 90, which means looking at "
 "nadir provides a good default value."
@@ -3841,8 +3832,8 @@ msgid ""
 "Multipurpose file saver, that uses other native save handlers depending on "
 "extension, use the format specific save ops to specify additional parameters."
 msgstr ""
-"Večnamenski nalagalnik datotek, ki uporablja druge domorodne ročice in "
-"povratno pretvorbo s funkcijo pretvarjanja programa Magick."
+"Večnamenski nalagalnik datotek, ki uporablja druge domorodne ročice glede na "
+"končnico in povratno pretvorbo s funkcijo pretvarjanja programa Magick."
 
 #: ../operations/common/sepia.c:110
 msgid "Sepia"
@@ -4010,12 +4001,6 @@ msgid "Stretch Contrast HSV"
 msgstr "Raztegni kontrast HSV"
 
 #: ../operations/common/stretch-contrast-hsv.c:224
-#, fuzzy
-#| msgid ""
-#| "Scales the components of the buffer to be in the 0.0-1.0 range. This "
-#| "improves images that make poor use of the available contrast (little "
-#| "contrast, very dark, or very bright images). This version differs from "
-#| "Contrast Autostretch in that it works in HSV scpace, and preserves hue."
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
@@ -4458,11 +4443,11 @@ msgstr "Zasukano"
 msgid "Whether to rotate the RGB pattern by ninety degrees."
 msgstr ""
 
-#: ../operations/common/video-degradation.c:269
+#: ../operations/common/video-degradation.c:318
 msgid "Video Degradation"
 msgstr "Poslabšanje videa"
 
-#: ../operations/common/video-degradation.c:272
+#: ../operations/common/video-degradation.c:321
 msgid ""
 "This function simulates the degradation of being on an old low-dotpitch RGB "
 "video monitor."
@@ -4526,6 +4511,9 @@ msgid ""
 "of exposed film, and some other fuzzier border effects that can naturally "
 "occur with analog photography"
 msgstr ""
+"Na sliki uveljavi vinjetiranje. Simulira upad svetilnosti na robu "
+"osvetljenega filma in nekatere druge učinke nejasnega roba, ki se lahko "
+"naravno pojavijo pri analogni fotografiji."
 
 #: ../operations/common/warp.c:26
 msgid "Move pixels"
@@ -4593,7 +4581,7 @@ msgstr "Razmerje stranic"
 
 #: ../operations/common/waves.c:52
 msgid "Mathematical method for reconstructing pixel values"
-msgstr ""
+msgstr "Matematična metoda za rekonstrukcijo vrednosti slikovnih točk"
 
 #: ../operations/common/waves.c:54
 msgid "Clamp deformation"
@@ -4799,7 +4787,7 @@ msgstr "Pretvori podatke v navedeno obliko"
 
 #: ../operations/core/crop.c:45
 msgid "Reset origin"
-msgstr ""
+msgstr "Ponastavi izvor"
 
 #: ../operations/core/crop.c:209
 msgid "Crop"
@@ -4817,57 +4805,57 @@ msgstr "Brez operacije"
 msgid "No operation (can be used as a routing point)"
 msgstr "Brez operacije (lahko jo uporabite kot točko preusmeritve)"
 
-#: ../operations/external/ff-load.c:25
+#: ../operations/external/ff-load.c:30
 msgid "Path of video file to load"
 msgstr "Pot videodatoteke, ki jo želite naložiti"
 
-#: ../operations/external/ff-load.c:27
+#: ../operations/external/ff-load.c:32
 msgid "Frame number"
 msgstr "Številka sličice"
 
-#: ../operations/external/ff-load.c:31
+#: ../operations/external/ff-load.c:36
 msgid "frames"
 msgstr "sličic"
 
-#: ../operations/external/ff-load.c:32
+#: ../operations/external/ff-load.c:37
 msgid ""
 "Number of frames in video, updates at least when first frame has been "
 "decoded."
 msgstr ""
 
-#: ../operations/external/ff-load.c:36
+#: ../operations/external/ff-load.c:41
 msgid "audio_sample_rate"
 msgstr "Mera vzorčenja zvoka"
 
-#: ../operations/external/ff-load.c:37
+#: ../operations/external/ff-load.c:42
 msgid "audio_channels"
 msgstr "zvočnih kanalov"
 
-#: ../operations/external/ff-load.c:39
+#: ../operations/external/ff-load.c:44
 msgid "frame-rate"
 msgstr "Hitrost sličic"
 
-#: ../operations/external/ff-load.c:40
+#: ../operations/external/ff-load.c:45
 msgid "Frames per second, permits computing time vs frame"
 msgstr "Sličic na sekundo, omogoča računanje časa proti sličicam"
 
-#: ../operations/external/ff-load.c:44
+#: ../operations/external/ff-load.c:49
 msgid "video-codec"
 msgstr "Slikovni kodek"
 
-#: ../operations/external/ff-load.c:45
+#: ../operations/external/ff-load.c:50
 msgid "audio-codec"
 msgstr "Zvočni kodek"
 
-#: ../operations/external/ff-load.c:47 ../operations/external/ff-save.c:32
+#: ../operations/external/ff-load.c:52 ../operations/external/ff-save.c:32
 msgid "audio"
 msgstr "Zvok"
 
-#: ../operations/external/ff-load.c:770
+#: ../operations/external/ff-load.c:776
 msgid "FFmpeg Frame Loader"
 msgstr "Nalagalnik video-sličic FFmpeg"
 
-#: ../operations/external/ff-load.c:772
+#: ../operations/external/ff-load.c:778
 msgid "FFmpeg video frame importer."
 msgstr "Uvoznik video-sličic FFmpeg."
 
@@ -5015,70 +5003,82 @@ msgstr ""
 msgid "me-subpel-quality"
 msgstr ""
 
-#: ../operations/external/ff-save.c:1072
+#: ../operations/external/ff-save.c:1095
 msgid "FFmpeg video output sink"
 msgstr "Ponor izhodneg videa FFmpeg"
 
 #: ../operations/external/jp2-load.c:26 ../operations/external/jpg-load.c:25
-#: ../operations/external/tiff-load.c:26
+#: ../operations/external/svg-load.c:26 ../operations/external/tiff-load.c:26
+#: ../operations/external/webp-load.c:26
 msgid "Path of file to load"
 msgstr "Pot datoteke, ki jo želite naložiti"
 
-#: ../operations/external/jp2-load.c:71
-#, c-format
-msgid "Unknown JPEG 2000 image format in '%s'"
-msgstr "Neznan zapis slike JPEG 2000 v '%s'"
+#: ../operations/external/jp2-load.c:28 ../operations/external/svg-load.c:28
+#: ../operations/external/tiff-load.c:28 ../operations/external/webp-load.c:28
+msgid "URI for file to load"
+msgstr "URI datoteke, ki jo želite naložiti."
 
-#: ../operations/external/jp2-load.c:78
-#, c-format
-msgid "Unable to open JPEG 2000 image in '%s'"
-msgstr "Slike JPEG 2000 v '%s' ni mogoče odpreti"
+#: ../operations/external/jp2-load.c:131
+msgid "Unknown JPEG 2000 image format"
+msgstr "Neznan zapis slike JPEG 2000"
 
-#: ../operations/external/jp2-load.c:85
-#, c-format
-msgid "Unable to create output color profile for '%s'"
-msgstr "Izhodnega barvnega profila za '%s' ni mogoče ustvariti"
+#: ../operations/external/jp2-load.c:138
+msgid "Unable to open JPEG 2000 image"
+msgstr "Slike JPEG 2000 ni mogoče odpreti"
 
-#: ../operations/external/jp2-load.c:93
-#, c-format
-msgid "Unable to convert image to sRGB color space when processing '%s'"
-msgstr "Slike ni mogoče pretvoriti v barvni prostor sRGB pri obdelovanju '%s'"
+#: ../operations/external/jp2-load.c:145
+msgid "Unable to create output color profile"
+msgstr "Izhodnega barvnega profila ni mogoče ustvariti"
 
-#: ../operations/external/jp2-load.c:101
-#, c-format
-msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
-msgstr "Nepodprta ne-RGB datoteka JPEG 2000 s %d komponentami v '%s'"
+#: ../operations/external/jp2-load.c:153
+msgid "Unable to convert image to sRGB color space"
+msgstr "Slike ni mogoče pretvoriti v barvni prostor sRGB"
 
-#: ../operations/external/jp2-load.c:112
+#: ../operations/external/jp2-load.c:160
 #, c-format
-msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
-msgstr "Nepodprta slika JPEG 2000 z bitno globino %d v '%s'"
+msgid "Unsupported non-RGB JPEG 2000 file with %d components"
+msgstr "Nepodprta ne-RGB datoteka JPEG 2000 s %d komponentami"
 
-#: ../operations/external/jp2-load.c:125
+#: ../operations/external/jp2-load.c:172
 #, c-format
-msgid "Components of input image '%s' don't match"
-msgstr "Komponente vhodne slike '%s' se ne ujemajo"
+msgid "Unsupported JPEG 2000 file with depth %d"
+msgstr "Nepodprta slika JPEG 2000 z bitno globino %d"
 
-#: ../operations/external/jp2-load.c:210
+#: ../operations/external/jp2-load.c:198
+msgid "Components of JPEG 2000 input don't match"
+msgstr "Komponente vhodne slike JPEG 2000 se ne ujemajo"
+
+#: ../operations/external/jp2-load.c:260
+msgid "could not create a new Jasper stream"
+msgstr ""
+
+#: ../operations/external/jp2-load.c:277 ../operations/external/jp2-load.c:279
 #, c-format
-msgid "One or more of R, G, B components are missing from '%s'"
-msgstr "Ena ali več komponent R, G, B manjka v '%s'"
+msgid "failed to open JPEG 2000 from %s"
+msgstr "Slike JPEG 2000 iz %s ni mogoče odpreti"
 
-#: ../operations/external/jp2-load.c:219
+#: ../operations/external/jp2-load.c:293
+msgid "could not query JPEG 2000 file"
+msgstr ""
+
+#: ../operations/external/jp2-load.c:349
+msgid "One or more of R, G, B components are missing"
+msgstr "Ena ali več komponent R, G, B manjka"
+
+#: ../operations/external/jp2-load.c:357
+msgid "One or more of R, G, B components have signed data"
+msgstr "Ena ali več komponent R, G, B ima predznačene podatke"
+
+#: ../operations/external/jp2-load.c:390
 #, c-format
-msgid "One or more of R, G, B components have signed data in '%s'"
-msgstr "Ena ali več komponent R, G, B ima predznačene podatke v '%s'"
+msgid "Error reading row %d component %d"
+msgstr "Napaka pri branju vrstice %d komponente %d"
 
-#: ../operations/external/jp2-load.c:253
-#, c-format
-msgid "Error reading row %d component %d from '%s'"
-msgstr "Napaka pri branju vrstice %d komponente %d iz '%s'"
-
-#: ../operations/external/jp2-load.c:397
+#: ../operations/external/jp2-load.c:530
 msgid "JPEG 2000 File Loader"
 msgstr "Nalagalnik slik JPEG 2000"
 
-#: ../operations/external/jp2-load.c:399
+#: ../operations/external/jp2-load.c:532
 msgid "JPEG 2000 image loader using jasper."
 msgstr "Nalagalnik slik JPEG 2000 z uporabo jasper."
 
@@ -5187,14 +5187,14 @@ msgid "LCMS From Profile"
 msgstr "LCMS iz profila"
 
 #: ../operations/external/lcms-from-profile.c:245
-#, fuzzy
 msgid ""
 "Converts the input from an ICC color profile to a well defined babl format. "
 "The buffer's data will then be correctly managed by GEGL for further "
 "processing."
 msgstr ""
-"Pretvori vhod iz barvnega profila ICC v dobro določen zapis babl. Vhodni "
-"medpomnilnik mora biti vrste babl_format_n."
+"Pretvori vhod iz barvnega profila ICC v dobro določen zapis babl. Podatkii "
+"medpomnilnika bodo nato pravilno upravljane s strani GEGL za nadaljnjo "
+"obdelavo."
 
 #: ../operations/external/matting-levin.c:25
 msgid "Epsilon"
@@ -5472,7 +5472,7 @@ msgstr "Shranjevalnik slik PPM"
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Shranjevalnik slik PPM (slik Portable Pixmap)."
 
-#: ../operations/external/raw-load.c:238
+#: ../operations/external/raw-load.c:239
 msgid "libraw File Loader"
 msgstr "Nalagalnik datotek libraw"
 
@@ -5528,26 +5528,22 @@ msgstr ""
 "Prikaže vhodni medpomnilnik v oknu SDL (omejeno na en prikaz op/postopka "
 "zaradi težav z izvedbo SDL)"
 
-#: ../operations/external/svg-load.c:26
-msgid "Path to SVG file to load"
-msgstr "Pot datoteke SVG, ki jo želite naložiti"
-
-#: ../operations/external/svg-load.c:29 ../operations/external/v4l.c:29
+#: ../operations/external/svg-load.c:31 ../operations/external/v4l.c:29
 #: ../operations/workshop/external/v4l2.c:27
 msgid "Width for rendered image"
 msgstr "Širina upodobljene slike"
 
-#: ../operations/external/svg-load.c:32 ../operations/external/v4l.c:32
+#: ../operations/external/svg-load.c:33 ../operations/external/v4l.c:32
 #: ../operations/workshop/external/v4l2.c:29
 msgid "Height for rendered image"
 msgstr "Višina upodobljene slike"
 
-#: ../operations/external/svg-load.c:180
+#: ../operations/external/svg-load.c:292
 msgid "SVG File Loader"
 msgstr "Nalagalnik slik JPG"
 
 #. not hidden because it has extra API
-#: ../operations/external/svg-load.c:182
+#: ../operations/external/svg-load.c:294
 msgid "Load an SVG file using librsvg"
 msgstr "Datoteko SVG naloži z librsvg"
 
@@ -5610,10 +5606,6 @@ msgstr "Upodobi besedilo"
 #: ../operations/external/text.c:325
 msgid "Display a string of text using pango and cairo."
 msgstr "Prikaži niz besedila s pomočjo panga in caira."
-
-#: ../operations/external/tiff-load.c:28
-msgid "URI for file to load"
-msgstr "URI datoteke, ki jo želite naložiti."
 
 #: ../operations/external/tiff-load.c:30
 msgid "Directory"
@@ -5696,7 +5688,6 @@ msgid "svg style description of transform."
 msgstr "Opis transformacije v slogu svg."
 
 #: ../operations/external/vector-fill.c:275
-#, fuzzy
 msgid "Fill Path"
 msgstr "Pot polnila"
 
@@ -5728,11 +5719,11 @@ msgstr "Vektorska poteza"
 msgid "Renders a vector stroke"
 msgstr "Upodobi vektorsko potezo"
 
-#: ../operations/external/webp-load.c:142
+#: ../operations/external/webp-load.c:346
 msgid "WebP File Loader"
 msgstr "Nalagalnik slik WebP"
 
-#: ../operations/external/webp-load.c:144
+#: ../operations/external/webp-load.c:348
 msgid "WebP image loader."
 msgstr "Nalagalnik slik WebP"
 
@@ -5915,9 +5906,8 @@ msgid "Porter Duff operation src (d = cA)"
 msgstr "Operacija Porter Duff src (d = cA)"
 
 #: ../operations/generated/src-in.c:134
-#, fuzzy
 msgid "Porter Duff compositing operation src-in (formula:   cA * aB)"
-msgstr "Operacija Porter Duff src-in (d = cA * aB)"
+msgstr "Operacija skladanja Porter Duff src-in (formula:  cA * aB)"
 
 #: ../operations/generated/src-out.c:126
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
@@ -6023,10 +6013,8 @@ msgid "Ignored. Always uses center of input buffer"
 msgstr ""
 
 #: ../operations/transform/rotate-on-center.c:40
-#, fuzzy
-#| msgid "Rotate the buffer around the specified origin."
 msgid "Rotate the buffer around its center, taking care of possible offsets."
-msgstr "Zasukaj medpomnilnik okoli navedenega izvora."
+msgstr "Zasukaj medpomnilnik okoli njenega središča, upoštevaj možne odmike."
 
 #: ../operations/transform/scale-ratio.c:26
 msgid "Horizontal scale factor"
@@ -6111,21 +6099,6 @@ msgid ""
 msgstr ""
 "Premesti medpomnilnik (z natančnostjo pod-slikovne točke), če so podane "
 "celoštevilske koordinate hitri poti brez uporabe ponovnega vzorčenja."
-
-#: ../operations/workshop/buffer-cache.c:25
-msgid "Cache buffer"
-msgstr "Predpomnilniški medpomnilnik"
-
-#: ../operations/workshop/buffer-cache.c:26
-msgid "The GeglBuffer where the caching is done"
-msgstr "GeglBuffer, v katerem se izvaja predpomnjenje"
-
-#: ../operations/workshop/buffer-cache.c:96
-msgid ""
-"Cache the input buffer internally, further process take this buffer as input."
-msgstr ""
-"Notranje predpomni vhodni medpomnilnik, nadaljnji postopki vzamejo ta "
-"medpomnilnik kot vhod."
 
 #: ../operations/workshop/color-warp.c:24
 msgid "From 0"
@@ -6340,6 +6313,10 @@ msgstr "Izvleči komponento"
 #: ../operations/workshop/component-extract.c:266
 msgid "Extract a color model component"
 msgstr "Izvleci komponento barvnega modela"
+
+#: ../operations/workshop/dcraw-load.c:183
+msgid "Raw image loader, wrapping dcraw with pipes."
+msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi."
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
