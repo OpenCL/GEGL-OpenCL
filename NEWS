@@ -2,26 +2,31 @@
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
-Changes in GEGL 0.3.5
+Changes in GEGL 0.3.6
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
- • buffer: better COW (Copy on Write).
+ • buffer: COW (Copy on Write) handling for gegl_buffer_clear.
  • operations:
-    • removed: dcraw-load
-    • added: saturation, instagram clones
+    • added: saturation, gaussian-blur-selective
     • ff-load/ ff-save: updated to work with ffmpeg-3.0,configuration of
-codec/format.
-
-      misc code cleanup, and meta data improvements, gio (url loading) support in more loaders.
+      codec/format.  misc code cleanup, and meta data improvements, gio
+      (url loading) support in more loaders.
     • convolve-generic: optimized paths for common parameters and 3x3 size.
+    • removed: dcraw-load
+    • jp2, webp, svg::
+        make use of GIO for URI handling
  • XML: permit serializing a segment/chain of the graph
+ • gegl-binary
+    • permit setting properties of commandline passed ops, as well as
+      connecting buffers to aux and other input pads.
+    • zoom in/out at cursor position on scroll wheel events.
  • processing
      improvements to meta-ops
 
 Contributions from:
 
- Øyvind Kolås, Thomas Manni Michael Natterer, Nils Philippsen, Debarshi Ray,
-Martin Blanchard, Justin Lecher, Massimo Valentini, Mukund Sivaraman, Alexandre
-Prokoudine, Piotr Drąg 
+Øyvind Kolås, Thomas Manni, Michael Natterer, Nils Philippsen, Debarshi Ray,
+Martin Blanchard, Justin Lecher, Massimo Valentini, Jonathan Tait, Mukund
+Sivaraman, Alexandre Prokoudine, Piotr Drąg, Nanley Chery, Colin Waters
 
 
 Changes in GEGL 0.3.4
