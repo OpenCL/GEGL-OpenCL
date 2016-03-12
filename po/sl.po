@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-03-08 19:06+0000\n"
-"PO-Revision-Date: 2016-03-08 23:21+0100\n"
+"POT-Creation-Date: 2016-03-11 20:57+0000\n"
+"PO-Revision-Date: 2016-03-12 00:29+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: sl.libreoffice.org <users@sl.libreoffice.org>\n"
 "Language: sl\n"
@@ -39,7 +39,7 @@ msgid "Unknown GeglOption mode: %d"
 msgstr "Neznan način GeglOption: %d"
 
 #: ../bin/gegl-options.c:47
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
@@ -105,7 +105,7 @@ msgstr ""
 "\n"
 "     -v, —verbose   natisni diagnostiko med delovanjem\n"
 "\n"
-"Vsi argumenti, ki sledijo —, so obravnavani kot operacije, ki se verižijo\n"
+"Vsi argumenti, ki sledijo --, so obravnavani kot operacije, ki se verižijo\n"
 "v manjši sestav namesto uporabe datoteke xml, kar omogoča\n"
 "enostavno preizkušanje filtrov. Upoštevajte, da bo za vse lastnosti\n"
 "uporabljena privzeta vrednost.\n"
@@ -789,7 +789,7 @@ msgstr "Mešalec kanalov"
 #: ../operations/common/channel-mixer.c:268
 msgid ""
 "Remix colors; by defining relative contributions from source components."
-msgstr ""
+msgstr "Premešaj barve; z določanjem relativnih prispevkov iz komponent vira."
 
 #: ../operations/common/checkerboard.c:25
 #: ../operations/common/diffraction-patterns.c:78
@@ -964,9 +964,8 @@ msgid "Resilient"
 msgstr ""
 
 #: ../operations/common/color-reduction.c:30
-#, fuzzy
 msgid "Random Covariant"
-msgstr "Naključnost"
+msgstr "Naključna kovarianca"
 
 #: ../operations/common/color-reduction.c:31
 msgid "Bayer"
@@ -1352,9 +1351,8 @@ msgid "Copy Buffer"
 msgstr "Kopiraj medpomnilnik"
 
 #: ../operations/common/copy-buffer.c:153
-#, fuzzy
 msgid "Writes image data to an already existing buffer"
-msgstr "Zapiše podatke slike v obstoječi"
+msgstr "Zapiše podatke slike v obstoječi medpomnilnik"
 
 #: ../operations/common/cubism.c:30 ../operations/common/mosaic.c:42
 msgid "Tile size"
@@ -1517,8 +1515,9 @@ msgid "Number of sharp edges (blue)"
 msgstr "Število ostrih robov (modra)"
 
 #: ../operations/common/diffraction-patterns.c:67
+#, fuzzy
 msgid "Brightness and shifting/fattening of contours"
-msgstr ""
+msgstr "Svetlost in zamikanje/debeljenje obrisov"
 
 #: ../operations/common/diffraction-patterns.c:70
 msgid "Scattering"
@@ -1670,11 +1669,12 @@ msgstr "Normaliziraj izhod v obsegu 0,0 do 1,0."
 #: ../operations/common/distance-transform.c:414
 #, fuzzy
 msgid "Distance Transform"
-msgstr "Preoblikuj"
+msgstr "Preoblikuj z oddaljenostjo"
 
 #: ../operations/common/distance-transform.c:416
+#, fuzzy
 msgid "Calculate a distance transform"
-msgstr ""
+msgstr "Izračunaj preoblikovanje z oddaljevanjem"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
 #: ../operations/common/plasma.c:40 ../operations/common/polar-coordinates.c:51
@@ -1787,6 +1787,8 @@ msgid ""
 "Keep negative values in result; when off, the absolute value of the result "
 "is used instead."
 msgstr ""
+"Ohrani negativne vrednosti v rezultatu; ko je izklopljeno, se namesto tega "
+"uporabi absolutna vrednost rezultata."
 
 #: ../operations/common/edge-sobel.c:398
 msgid "Sobel Edge Detection"
@@ -2558,9 +2560,8 @@ msgid "Lens Distortion"
 msgstr "Popačenje leč"
 
 #: ../operations/common/lens-distortion.c:505
-#, fuzzy
 msgid "Corrects barrel or pincushion lens distortion."
-msgstr "Popravi popačenje objektiva"
+msgstr "Popravi sodčkasto in blazinasto popačenje objektiva."
 
 #: ../operations/common/lens-flare.c:28
 msgid "X position"
@@ -2722,7 +2723,7 @@ msgstr "Metoda prevzorčenja"
 
 #: ../operations/common/map-absolute.c:153
 msgid "Map Absolute"
-msgstr ""
+msgstr "Preslikaj absolutno"
 
 #: ../operations/common/map-absolute.c:156
 msgid ""
@@ -2746,7 +2747,7 @@ msgstr ""
 
 #: ../operations/common/map-relative.c:177
 msgid "Map Relative"
-msgstr ""
+msgstr "Preslikaj relativno"
 
 #: ../operations/common/map-relative.c:179
 msgid ""
@@ -3314,7 +3315,6 @@ msgid "Create a tileable output"
 msgstr "Ustvari tlakovalen izhod"
 
 #: ../operations/common/noise-solid.c:59
-#, fuzzy
 msgid "Turbulent"
 msgstr "Turbulenca"
 
@@ -3448,11 +3448,12 @@ msgid "Normal compositing"
 msgstr "Navadno skladanje"
 
 #: ../operations/common/over.c:185
-#, fuzzy
 msgid ""
 "Porter Duff operation over (also known as normal mode, and src-over) (d = cA "
 "+ cB * (1 - aA))"
-msgstr "Operacija Porter Duff over (d = cA + cB * (1 - aA))"
+msgstr ""
+"Operacija Porter Duff over (znana tudi kot navadni način in src-over; d = cA "
+"+ cB * (1 - aA))"
 
 #: ../operations/common/panorama-projection.c:23
 msgid "Pan"
@@ -3565,18 +3566,16 @@ msgid "Height of blocks in pixels"
 msgstr "Višina blokov v slikovnih točkah"
 
 #: ../operations/common/pixelize.c:52
-#, fuzzy
 msgid "Size ratio X"
-msgstr "Razmerje stranice X"
+msgstr "Razmerje velikosti X"
 
 #: ../operations/common/pixelize.c:53
 msgid "Horizontal size ratio of a pixel inside each block"
 msgstr "Razmerje vodoravne velikosti pike oz. točke v vsakem bloku"
 
 #: ../operations/common/pixelize.c:57
-#, fuzzy
 msgid "Size ratio Y"
-msgstr "Razmerje stranice X"
+msgstr "Razmerje velikosti Y"
 
 #: ../operations/common/pixelize.c:58
 msgid "Vertical size ratio of a pixel inside each block"
@@ -3827,13 +3826,13 @@ msgid "Save"
 msgstr "Shrani"
 
 #: ../operations/common/save.c:203
-#, fuzzy
 msgid ""
 "Multipurpose file saver, that uses other native save handlers depending on "
 "extension, use the format specific save ops to specify additional parameters."
 msgstr ""
-"Večnamenski nalagalnik datotek, ki uporablja druge domorodne ročice glede na "
-"končnico in povratno pretvorbo s funkcijo pretvarjanja programa Magick."
+"Večnamenski shranjevalnik datotek, ki uporablja druge domorodne ročice "
+"shranjevanja glede na končnico, uporabite za zapis specifične možnosti "
+"shranjevanja, da določite dodatne parametre."
 
 #: ../operations/common/sepia.c:110
 msgid "Sepia"
@@ -4116,7 +4115,7 @@ msgstr ""
 
 #: ../operations/common/texturize-canvas.c:4379
 msgid "Texturize Canvas"
-msgstr ""
+msgstr "Teksturiraj platno"
 
 #: ../operations/common/texturize-canvas.c:4383
 msgid "Textures the image as if it were an artist's canvas."
@@ -4669,7 +4668,7 @@ msgstr "Oboje"
 
 #: ../operations/common/wind.c:41
 msgid "Leading"
-msgstr ""
+msgstr "Vodilno"
 
 #: ../operations/common/wind.c:42
 msgid "Trailing"
@@ -4908,16 +4907,12 @@ msgid "video bitrate in kb/s"
 msgstr "Bitna hitrost videa v kb/s"
 
 #: ../operations/external/ff-save.c:48
-#, fuzzy
-#| msgid "Tile size"
 msgid "Video bufsize"
-msgstr "Velikost tlakovcev"
+msgstr "Velikost medpomnilnika videa"
 
 #: ../operations/external/ff-save.c:50
-#, fuzzy
-#| msgid "Convert Format"
 msgid "Container format"
-msgstr "Pretvori zapis"
+msgstr "Zapis vsebnika"
 
 #: ../operations/external/ff-save.c:51
 msgid "Container format to use, or auto to autodetect based on file extension."
@@ -4932,10 +4927,8 @@ msgid "noise reduction"
 msgstr "Odstranjevanje šuma"
 
 #: ../operations/external/ff-save.c:56
-#, fuzzy
-#| msgid "Red eye threshold"
 msgid "scenechange threshold"
-msgstr "Prag rdečih oči"
+msgstr "Prag spremembe prizora"
 
 #: ../operations/external/ff-save.c:57
 msgid "video bitrate min"
@@ -5255,7 +5248,7 @@ msgstr "Velikost kvadrata"
 
 #: ../operations/external/npd.c:28
 msgid "Size of an edge of square the mesh consists of"
-msgstr ""
+msgstr "Velikost roba kvadrata, iz katerih je sestavljena mreževina"
 
 #: ../operations/external/npd.c:30
 msgid "Rigidity"
@@ -6205,9 +6198,8 @@ msgid "amount"
 msgstr "Količina"
 
 #: ../operations/workshop/color-warp.c:298
-#, fuzzy
 msgid "Color warp"
-msgstr "Barva"
+msgstr "Barvno ukrivljanje"
 
 #: ../operations/workshop/color-warp.c:300
 msgid ""
