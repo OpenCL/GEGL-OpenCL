@@ -76,8 +76,6 @@ static gboolean file_is_gegl_xml (const gchar *path)
   return FALSE;
 }
 
-void gegl_create_chain (char **ops, GeglNode *iter, GeglNode *proxy);
-
 int mrg_ui_main (int argc, char **argv, char **ops);
 
 gint
@@ -192,12 +190,19 @@ main (gint    argc,
       return 1;
     }
 
+  {
+  GeglNode *proxy = gegl_node_get_output_proxy (gegl, "output");
+  GeglNode *iter = gegl_node_get_producer (proxy, "input", NULL);
   if (o->rest)
     {
-      GeglNode *proxy = gegl_node_get_output_proxy (gegl, "output");
-      GeglNode *iter = gegl_node_get_producer (proxy, "input", NULL);
-      gegl_create_chain (o->rest, iter, proxy);
+      gegl_create_chain_argv (o->rest, iter, proxy);
+      if (o->serialize)
+      {
+        fprintf (stderr, "%s\n", gegl_serialize (iter, 
+            gegl_node_get_producer (proxy, "input", NULL)));
+      }
     }
+  }
 
   switch (o->mode)
     {
@@ -280,177 +285,3 @@ main (gint    argc,
   return 0;
 }
 
-void gegl_create_chain (char **ops, GeglNode *start, GeglNode *proxy)
-{
-  GeglNode   *iter[10] = {start, NULL};
-  GeglNode   *new = NULL;
-  gchar     **arg = ops;
-  int         level = 0;
-  char       *level_op[10];
-  char       *level_pad[10];
-  GHashTable *ht = NULL;
-
-  level_op[level] = *arg;
- 
-  ht = g_hash_table_new (g_str_hash, g_str_equal);
-
-  while (*arg)
-    {
-      if (strchr (*arg, ']'))
-      {
-        level--;
-        gegl_node_connect_to (iter[level+1], "output", iter[level], level_pad[level]);
-      }
-      else
-      {
-      if (strchr (*arg, '=')) /* contains = sign, must be a property assignment */
-      {
-        char *match= strchr (*arg, '=');
-        if (match[1] == '[')
-        {
-          char *pad = g_strdup (*arg);
-          char *value = strchr (pad, '=') + 1;
-          value[-1] = '\0';
-          level_pad[level]=(void*)g_intern_string(pad);
-          g_free (pad);
-          level++;
-
-          iter[level]=NULL;
-          level_op[level]=NULL;
-          level_pad[level]=NULL;
-        }
-        else
-        {
-          GType target_type = G_TYPE_INT;
-          GValue gvalue={0,};
-          char *key = g_strdup (*arg);
-          char *value = strchr (key, '=') + 1;
-          value[-1] = '\0';
-
-          if (!strcmp (key, "id"))
-          {
-            g_hash_table_insert (ht, (void*)g_intern_string (value), iter[level]);
-          }
-          else if (!strcmp (key, "ref"))
-          {
-            if (g_hash_table_lookup (ht, g_intern_string (value)))
-              iter[level] = g_hash_table_lookup (ht, g_intern_string (value));
-            else
-              g_warning ("unknown id '%s'", value);
-          }
-          else
-          {
-            unsigned int n_props = 0;
-            GParamSpec **pspecs;
-            int i;
-
-            pspecs = gegl_operation_list_properties (level_op[level], &n_props);
-            for (i = 0; i < n_props; i++)
-            {
-              if (!strcmp (pspecs[i]->name, key))
-                target_type = pspecs[i]->value_type;
-            }
-            if (target_type == G_TYPE_DOUBLE || target_type == G_TYPE_FLOAT)
-              {
-                double val = g_strtod (value, NULL);
-                gegl_node_set (iter[level], key, val, NULL);
-              }
-            else if (target_type == G_TYPE_BOOLEAN) {
-            if (!strcmp (value, "true") || !strcmp (value, "TRUE") ||
-                !strcmp (value, "YES") || !strcmp (value, "yes") ||
-                !strcmp (value, "y") || !strcmp (value, "Y") ||
-                !strcmp (value, "1") || !strcmp (value, "on"))
-              {
-                gegl_node_set (iter[level], key, TRUE, NULL);
-              }
-            else
-              {
-                gegl_node_set (iter[level], key, FALSE, NULL);
-              }
-            }
-            else if (target_type == G_TYPE_INT)
-            {
-              int val = g_strtod (value, NULL);
-              gegl_node_set (iter[level], key, val, NULL);
-            }
-            else if (target_type == GEGL_TYPE_COLOR)
-            {
-              GeglColor *color = g_object_new (GEGL_TYPE_COLOR,
-                                               "string", value, NULL);
-              gegl_node_set (iter[level], key, color, NULL);
-            }
-            else if (g_type_is_a (target_type, G_TYPE_ENUM))
-            {
-              GEnumClass *eclass = g_type_class_peek (target_type);
-              GEnumValue *evalue = g_enum_get_value_by_nick (eclass, value);
-              if (evalue)
-                {
-                  gegl_node_set (new, key, evalue->value, NULL);
-                }
-              else
-                {
-              /* warn, but try to get a valid nick out of the old-style
-               * value name
-               */
-                gchar *nick;
-                gchar *c;
-                g_printerr ("gedl (param_set %s): enum %s has no value '%s'\n",
-                            key,
-                            g_type_name (target_type),
-                            value);
-                nick = g_strdup (value);
-                for (c = nick; *c; c++)
-                  {
-                    *c = g_ascii_tolower (*c);
-                    if (*c == ' ')
-                      *c = '-';
-                  }
-                evalue = g_enum_get_value_by_nick (eclass, nick);
-                if (evalue)
-                  gegl_node_set (iter[level], key, evalue->value, NULL);
-                g_free (nick);
-              }
-            }
-            else
-            {
-              GValue gvalue_transformed={0,};
-              g_value_init (&gvalue, G_TYPE_STRING);
-              g_value_set_string (&gvalue, value);
-              g_value_init (&gvalue_transformed, target_type);
-              g_value_transform (&gvalue, &gvalue_transformed);
-              gegl_node_set_property (iter[level], key, &gvalue_transformed);
-              g_value_unset (&gvalue);
-              g_value_unset (&gvalue_transformed);
-            }
-          }
-          g_free (key);
-        }
-      }
-      else
-      {
-        if (strchr (*arg, ':')) /* contains : is a non-prefixed operation */
-          {
-            level_op[level] = *arg;
-          }
-          else /* default to gegl: as prefix if no : specified */
-          {
-            char temp[1024];
-            snprintf (temp, 1023, "gegl:%s", *arg);
-            level_op[level] = (void*)g_intern_string (temp);
-          }
-        new = gegl_node_new_child (gegl_node_get_parent (proxy), "operation",
-                        level_op[level], NULL);
-
-        if (iter[level])
-          gegl_node_link_many (iter[level], new, proxy, NULL);
-        else
-          gegl_node_link_many (new, proxy, NULL);
-        iter[level] = new;
-      }
-      }
-      arg++;
-    }
-
-  g_hash_table_unref (ht);
-  gegl_node_link_many (iter[level], proxy, NULL);
-}

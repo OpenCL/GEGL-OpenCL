@@ -293,6 +293,14 @@ parse_args (int    argc,
             o->fatal_warnings=1;
         }
 
+        else if (match ("--serialize")){
+            o->serialize=TRUE;
+        }
+
+        else if (match ("-S")){
+            o->serialize=TRUE;
+        }
+
         else if (match ("-p")){
             o->play=TRUE;
         }

@@ -97,6 +97,7 @@ GEGL_sources = \
 	gegl-xml.c			\
 	gegl-gio.c			\
 	gegl-random.c			\
+	gegl-serialize.c		\
 	gegl-matrix.c			\
 	\
 	gegl-algorithms.h \
