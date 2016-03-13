@@ -30,7 +30,7 @@ AM_LDFLAGS =  \
 	$(DEP_LIBS) $(BABL_LIBS) $(PNG_LIBS) $(LIBSPIRO) $(MATH_LIB) \
         $(MRG_LIBS) $(GEXIV2_LIBS)
 
-bin_PROGRAMS = gegl gegl-tester
+bin_PROGRAMS = gegl
 
 gegl_SOURCES =			\
 	gegl.c			\

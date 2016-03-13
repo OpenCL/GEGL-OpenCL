@@ -90,12 +90,12 @@ exclusion_pattern = "load|buffer-source|pixbuf|nop|clone|convert-format|introspe
 
 all-local: $(HTML_FILES)
 
-examples:  $(top_builddir)/bin/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*.c
+examples:  $(top_builddir)/tools/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*.c
 	@if test -d images/examples; then :; else \
 		echo "Generating example images" ; \
 		mkdir -p images/examples ; \
 		GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
-		$(top_builddir)/bin/gegl-tester$(EXEEXT) --all -o images/examples \
+		$(top_builddir)/tools/gegl-tester$(EXEEXT) --all -o images/examples \
 		-d $(srcdir)/images -e $(exclusion_pattern) ; \
 	fi
 

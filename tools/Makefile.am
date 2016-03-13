@@ -32,7 +32,7 @@ AM_LDFLAGS = \
 	$(DEP_LIBS) $(BABL_LIBS) $(MATH_LIB)
 
 bin_PROGRAMS = gegl-imgcmp
-noinst_PROGRAMS = introspect operation_reference detect_opencl
+noinst_PROGRAMS = introspect operation_reference detect_opencl gegl-tester
 
 if HAVE_EXIV2
 noinst_PROGRAMS     += exp_combine 
