@@ -24,13 +24,13 @@ GEGL Feature List
        to use them through the GeglBuffer API).
   - Operations
       * PNG, JPEG, SVG, EXR, RAW, ffmpeg, v4l and other image sources.
-      * link:operations.html#cat_render[Pattern renderers]
-      * link:operations.html#cat_math[Arithmetic operations]
-      * link:operations.html#cat_porter-duff[porter duff compositing]
+      * link:operations.html#category%20render[Pattern renderers]
+      * link:operations.html#category%20math[Arithmetic operations]
+      * link:operations.html#category%20porter-duff[porter duff compositing]
       * SVG filter modes and full set of compositing ops from SVG-1.2 draft.
       * Gaussian blur, bilateral-filter, symmetric nearest neighbour, linear
       * blur, unsharp mask, pixelize and more.
-      * link:operations.html#cat_color[Color correction].
+      * link:operations.html#category%20color[Color correction].
       * Text rendering using cairo and http://pango.org/[pango].
       * HDR exposure merging and tone mapping operations.
       * Most operations operate in
