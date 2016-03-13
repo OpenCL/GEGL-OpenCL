@@ -60,6 +60,7 @@ op_LTLIBRARIES = \
 	gblur-1d.la \
 	gegl-buffer-load-op.la \
 	gegl-buffer-save-op.la \
+	gegl.la \
 	grey.la \
 	grid.la \
 	high-pass.la \
@@ -97,7 +98,7 @@ op_LTLIBRARIES = \
 	noise-simplex.la \
 	noise-slur.la \
 	noise-solid.la \
-        noise-spread.la \
+	noise-spread.la \
 	noise-cell.la \
 	oilify.la \
 	opacity.la \
@@ -139,7 +140,7 @@ op_LTLIBRARIES = \
 	unsharp-mask.la \
 	value-invert.la \
 	value-propagate.la \
-        video-degradation.la \
+	video-degradation.la \
 	vignette.la \
 	warp.la \
 	waves.la \
