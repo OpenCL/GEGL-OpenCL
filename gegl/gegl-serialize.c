@@ -240,66 +240,96 @@ gchar *gegl_serialize (GeglNode *start, GeglNode *end)
         {
           const gchar *property_name = g_param_spec_get_name (properties[i]);
           GType        property_type = G_PARAM_SPEC_VALUE_TYPE (properties[i]);
+          const GValue*default_value = g_param_spec_get_default_value (properties[i]);
 
           if (property_type == G_TYPE_FLOAT)
             {
+              gfloat defval = g_value_get_float (default_value);
               gfloat value;
               gchar  str[G_ASCII_DTOSTR_BUF_SIZE];
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              g_ascii_dtostr (str, sizeof(str), value);
-              g_string_append_printf (s2, " %s=%s", property_name, str);
+              if (value != defval)
+              {
+                g_ascii_dtostr (str, sizeof(str), value);
+                g_string_append_printf (s2, " %s=%s", property_name, str);
+              }
             }
           else if (property_type == G_TYPE_DOUBLE)
             {
+              gdouble  defval = g_value_get_double (default_value);
               gdouble value;
               gchar   str[G_ASCII_DTOSTR_BUF_SIZE];
               gegl_node_get (iter, property_name, &value, NULL);
-              g_ascii_dtostr (str, sizeof(str), value);
-              g_string_append_printf (s2, " %s=%s", property_name, str);
+              if (value != defval)
+              {
+                g_ascii_dtostr (str, sizeof(str), value);
+                g_string_append_printf (s2, " %s=%s", property_name, str);
+              }
             }
           else if (property_type == G_TYPE_INT)
             {
+              gint  defval = g_value_get_int (default_value);
               gint  value;
               gchar str[64];
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              g_snprintf (str, sizeof (str), "%i", value);
-              g_string_append_printf (s2, " %s=%s", property_name, str);
+              if (value != defval)
+              {
+                g_snprintf (str, sizeof (str), "%i", value);
+                g_string_append_printf (s2, " %s=%s", property_name, str);
+              }
             }
           else if (property_type == G_TYPE_BOOLEAN)
             {
               gboolean value;
+              gboolean defval = g_value_get_boolean (default_value);
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              if (value)
-                g_string_append_printf (s2, " %s=true", property_name);
-              else
-                g_string_append_printf (s2, " %s=false", property_name);
+              if (value != defval)
+              {
+                if (value)
+                  g_string_append_printf (s2, " %s=true", property_name);
+                else
+                  g_string_append_printf (s2, " %s=false", property_name);
+              }
             }
          else if (property_type == G_TYPE_STRING)
             {
               gchar *value;
+              const gchar *defval = g_value_get_string (default_value);
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              g_string_append_printf (s2, " %s='%s'", property_name, value);
+              if (!g_str_equal (defval, value))
+              {
+                g_string_append_printf (s2, " %s='%s'", property_name, value);
+              }
               g_free (value);
             }
           else if (g_type_is_a (property_type, G_TYPE_ENUM))
             {
               GEnumClass *eclass = g_type_class_peek (property_type);
-              GEnumValue *evalue;
+              gint defval = g_value_get_enum (default_value);
               gint value;
 
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              evalue = g_enum_get_value (eclass, value);
-
-              g_string_append_printf (s2, " %s=%s", property_name, evalue->value_nick);
+              if (value != defval)
+              {
+                GEnumValue *evalue = g_enum_get_value (eclass, value);
+                g_string_append_printf (s2, " %s=%s", property_name, evalue->value_nick);
+              }
             }
           else if (property_type == GEGL_TYPE_COLOR)
             {
               GeglColor *color;
+              GeglColor *defcolor = g_value_get_object (default_value);
               gchar     *value;
+              gchar     *defvalue = NULL;
               gegl_node_get (iter, properties[i]->name, &color, NULL);
               g_object_get (color, "string", &value, NULL);
+              if (defcolor)
+              {
+                g_object_get (defcolor, "string", &defvalue, NULL);
+              }
               g_object_unref (color);
-              g_string_append_printf (s2, " %s='%s'", property_name, value);
+              if (defvalue && !g_str_equal (defvalue, value))
+                g_string_append_printf (s2, " %s='%s'", property_name, value);
               g_free (value);
             }
           else
@@ -314,7 +344,7 @@ gchar *gegl_serialize (GeglNode *start, GeglNode *end)
             if (aux)
             {
               char *str = gegl_serialize (NULL, aux);
-              g_string_append_printf (s2, " aux=[ %s ]", str);
+              g_string_append_printf (s2, " aux=[%s ]", str);
               g_free (str);
             }
           }
