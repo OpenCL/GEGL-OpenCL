@@ -164,7 +164,7 @@ prepare (GeglOperation *operation)
       stream = gegl_gio_open_input_stream (o->uri, o->path, &p->file, &error);
       if (stream == NULL)
         {
-          g_warning (error->message);
+          g_warning ("%s", error->message);
           g_error_free (error);
           cleanup (operation);
           return;
@@ -175,7 +175,7 @@ prepare (GeglOperation *operation)
                                                     NULL, &error);
       if (p->handle == NULL)
         {
-          g_warning (error->message);
+          g_warning ("%s", error->message);
           g_error_free (error);
           cleanup (operation);
           return;
