@@ -204,7 +204,12 @@ main (gint    argc,
   GeglNode *iter = gegl_node_get_producer (proxy, "input", NULL);
   if (o->rest)
     {
-      gegl_create_chain_argv (o->rest, iter, proxy);
+      GError *error = NULL;
+      gegl_create_chain_argv (o->rest, iter, proxy, 0, &error);
+      if (error)
+      {
+        fprintf (stderr, "Error: %s\n", error->message);
+      }
       if (o->serialize)
       {
         fprintf (stderr, "%s\n", gegl_serialize (iter, 

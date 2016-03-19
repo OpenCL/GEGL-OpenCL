@@ -262,8 +262,8 @@ gint        _gegl_float_epsilon_equal (float     v1,
 
 /**
   */
-void   gegl_create_chain      (const char *str, GeglNode *op_start, GeglNode *op_end);
-void   gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy);
+void   gegl_create_chain      (const char *str, GeglNode *op_start, GeglNode *op_end, double time, GError **error);
+void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, double time, GError **error);
 gchar *gegl_serialize         (GeglNode *start, GeglNode *end);
 
 G_END_DECLS

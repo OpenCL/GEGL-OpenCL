@@ -1342,12 +1342,17 @@ static void load_path (State *o)
         zoom_to_fit (o);
     }
   }
-
   if (o->ops)
   {
+    GError *error = NULL;
     gegl_create_chain_argv (o->ops,
-                      gegl_node_get_producer (o->sink, "input", NULL),
-                      o->sink);
+                    gegl_node_get_producer (o->sink, "input", NULL),
+                    o->sink, 0,
+                    &error);
+    if (error)
+    {
+      fprintf (stderr, "Error: %s\n", error->message);
+    }
   }
 
   mrg_queue_draw (o->mrg, NULL);

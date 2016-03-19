@@ -25,6 +25,9 @@ property_string (string, _("pipeline"), "invert")
     description(_("[op [property=value] [property=value]] [[op] [property=value]"))
     ui_meta ("multiline", "true")
 
+property_string (error, _("error"), "")
+ui_meta ("error", "true")
+
 #else
 
 #define GEGL_OP_META
@@ -61,6 +64,7 @@ prepare (GeglOperation *operation)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglNode *gegl, *input, *output;
+  GError *error = NULL;
 
   gegl = operation->node;
 
@@ -74,7 +78,16 @@ prepare (GeglOperation *operation)
   output   = gegl_node_get_output_proxy (gegl, "output");
 
 //  gegl_node_link_many (input, output, NULL);
-  gegl_create_chain (o->string, input, output);
+  gegl_create_chain (o->string, input, output, 0.0, &error);
+
+  if (error)
+  {
+    //gegl_node_set (gegl, "error", error->message, NULL);
+    g_object_set (operation, "error", error->message, NULL);
+    g_object_notify (operation, "error");
+    g_error_free (error);
+    error = NULL;
+  }
   /*
   gegl_operation_meta_redirect (operation, "scale", multiply, "value");
   gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-x");
