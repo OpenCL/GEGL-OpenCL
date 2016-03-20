@@ -119,7 +119,7 @@ error_handler(const char *module,
   gchar *message;
 
   g_vasprintf(&message, format, arguments);
-  g_warning(message);
+  g_warning("%s", message);
 
   g_free(message);
 }
@@ -132,7 +132,7 @@ warning_handler(const char *module,
   gchar *message;
 
   g_vasprintf(&message, format, arguments);
-  g_message(message);
+  g_message("%s", message);
 
   g_free(message);
 }
@@ -158,7 +158,7 @@ read_from_stream(thandle_t handle,
                                  NULL, &error);
       if (read < 0)
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
         }
     }
@@ -189,7 +189,7 @@ read_from_stream(thandle_t handle,
                                          NULL, &error);
               if (read < 0)
                 {
-                  g_warning(error->message);
+                  g_warning("%s", error->message);
                   g_error_free(error);
                   break;
                 }
@@ -242,7 +242,7 @@ seek_in_stream(thandle_t handle,
         position = g_seekable_tell(G_SEEKABLE(p->stream));
       else
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
         }
     }
@@ -284,7 +284,7 @@ close_stream(thandle_t handle)
                                 NULL, &error);
   if (!closed)
     {
-      g_warning(error->message);
+      g_warning("%s", error->message);
       g_error_free(error);
     }
 
@@ -322,7 +322,7 @@ get_file_size(thandle_t handle)
                                NULL, &error);
       if (info == NULL)
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
         }
       else
@@ -728,7 +728,7 @@ prepare(GeglOperation *operation)
         p->can_seek = g_seekable_can_seek(G_SEEKABLE(p->stream));
       if (p->stream == NULL)
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
           cleanup(operation);
           return;
