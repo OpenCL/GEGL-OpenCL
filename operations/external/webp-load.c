@@ -100,7 +100,7 @@ read_from_stream (GInputStream *stream,
                                      NULL, &error);
   if (!success || error != NULL)
     {
-      g_warning (error->message);
+      g_warning ("%s", error->message);
       g_error_free (error);
       return -1;
     }
@@ -130,7 +130,7 @@ decode_from_stream (GInputStream *stream,
                                          NULL, &error);
       if (!success || error != NULL)
         {
-          g_warning (error->message);
+          g_warning ("%s", error->message);
           g_error_free (error);
           return -1;
         }
@@ -208,7 +208,7 @@ prepare (GeglOperation *operation)
       p->stream = gegl_gio_open_input_stream (o->uri, o->path, &p->file, &error);
       if (p->stream == NULL)
         {
-          g_warning (error->message);
+          g_warning ("%s", error->message);
           g_error_free (error);
           cleanup (operation);
           return;
