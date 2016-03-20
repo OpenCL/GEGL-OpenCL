@@ -5,7 +5,7 @@
 # Christian Kirbach <Christian.Kirbach@gmail.com>, 2012, 2013.
 # Daniel Winzen <d@winzen4.de>, 2012.
 # hanes <h.feiner@gmx.at>, 2016.
-# Hartmut Kuhse <hk_priv@gmx.de>, 2016.
+# Hartmut Kuhse <hatti@gimp.org>, 2016.
 #
 msgid ""
 msgstr ""
@@ -13,8 +13,8 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
 "POT-Creation-Date: 2016-02-04 19:48+0000\n"
-"PO-Revision-Date: 2016-03-19 15:29+0100\n"
-"Last-Translator: Hartmut Kuhse <hk_priv@gmx.de>\n"
+"PO-Revision-Date: 2016-03-20 09:59+0100\n"
+"Last-Translator: Hartmut Kuhse <hatti@gimp.org>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
@@ -1641,7 +1641,7 @@ msgstr "Polar"
 
 #: ../operations/common/displace.c:32
 msgid "Displacement mode"
-msgstr "Verscheibemodus"
+msgstr "Verschiebemodus"
 
 #: ../operations/common/displace.c:35
 msgid "Mode of displacement"
@@ -1793,7 +1793,7 @@ msgstr "Deckkraft"
 
 #: ../operations/common/dropshadow.c:110
 msgid "Creates a dropshadow effect on the input buffer"
-msgstr "Erzeugt einen Schlagschatteneffekt im Eingabepuffer"
+msgstr "Erzeugt einen Schlagschatteneffekt"
 
 #: ../operations/common/edge.c:29
 msgid "Sobel"
@@ -2015,7 +2015,7 @@ msgstr "Farbverlauf-Schwellwert zum Verringern der Detailverbesserung"
 
 #: ../operations/common/fattal02.c:1327
 msgid "Fattal et al. 2002 Tone Mapping"
-msgstr ""
+msgstr "Fattal et al. 2002 Tone Mapping"
 
 #: ../operations/common/fattal02.c:1330
 msgid ""
@@ -2189,7 +2189,7 @@ msgstr "Fraktal-Explorer"
 msgid ""
 "Rendering of multiple different fractal systems, with configurable coloring "
 "options."
-msgstr ""
+msgstr "Rendering verschiedener Fraktale mit einstellbaren Farboptionen"
 
 #: ../operations/common/fractal-trace.c:34
 #: ../operations/common/linear-gradient.c:25
@@ -2825,6 +2825,9 @@ msgid ""
 "alpha matte. Set white as foreground, black as background for the tri-map. "
 "Everything else will be treated as unknown and filled in."
 msgstr ""
+"Erzeugt eine Freistellung anhand eines Tri-Maps. Weiss: Vordergrund, "
+"Schwarz: Hintergrund. Alles andere wird als unbekannt betrachtet und mit der "
+"Freistellung berechnet."
 
 #: ../operations/common/maze.c:38
 #| msgid "Depth"
@@ -3041,11 +3044,11 @@ msgstr "Sichtbare Höhe jeder Kachel (in Pixeln)"
 
 #: ../operations/common/mosaic.c:53
 msgid "Tile neatness"
-msgstr ""
+msgstr "Kachelvariation"
 
 #: ../operations/common/mosaic.c:54
 msgid "Deviation from perfectly formed tiles"
-msgstr ""
+msgstr "Abweichung von gleichförmigen Kacheln"
 
 #: ../operations/common/mosaic.c:57
 msgid "Tile color variation"
@@ -3350,7 +3353,7 @@ msgstr "Rauschen"
 
 #: ../operations/common/noise-simplex.c:334
 msgid "Generates a solid noise texture."
-msgstr ""
+msgstr "Erzeugt eine volle Rauschtextur"
 
 #: ../operations/common/noise-slur.c:153
 #| msgid "Noise"
@@ -3392,7 +3395,7 @@ msgstr "Turbulenz"
 
 #: ../operations/common/noise-solid.c:60
 msgid "Make a turbulent noise"
-msgstr ""
+msgstr "Erzeugt turbulentes Rauschen"
 
 #: ../operations/common/noise-solid.c:345
 #| msgid "Noise"
@@ -3468,6 +3471,8 @@ msgid ""
 "Weights the opacity of the input both the value of the aux input and the "
 "global value property."
 msgstr ""
+"Gewichtet die Deckkraft des Einganges anhand des Hilfskanals (aux) und dem "
+"globalen Wert"
 
 #: ../operations/common/open-buffer.c:26
 msgid "a GeglBuffer on disk to open"
@@ -3965,11 +3970,11 @@ msgstr "Faktor der Komplexität"
 
 #: ../operations/common/sinus.c:53
 msgid "Force tiling"
-msgstr "Kachelung erzwingen"
+msgstr "Kachelbarkeit erzwingen"
 
 #: ../operations/common/sinus.c:54
 msgid "If set, the pattern generated will tile"
-msgstr ""
+msgstr "Wenn gesetzt, wird das Muster kachelbar sein"
 
 #: ../operations/common/sinus.c:56
 msgid "Distorted"
@@ -3977,7 +3982,7 @@ msgstr "Verzerrt"
 
 #: ../operations/common/sinus.c:57
 msgid "If set, the pattern will be a little more distorted"
-msgstr ""
+msgstr "Wenn gesetzt, wird das Muster mehr ungleichförmig sein"
 
 #: ../operations/common/sinus.c:65
 msgid "Bilinear"
@@ -3989,7 +3994,7 @@ msgstr "Überblendungsmodus"
 
 #: ../operations/common/sinus.c:74
 msgid "Power used to strech the blend"
-msgstr ""
+msgstr "Streckung der Sinuswelle"
 
 #: ../operations/common/sinus.c:313
 msgid "Sinus"
@@ -4059,7 +4064,7 @@ msgstr "Farben erhalten"
 
 #: ../operations/common/stretch-contrast.c:26
 msgid "Impact each channel with the same amount"
-msgstr ""
+msgstr "Ändert jeden Farbkanal um den gleichen Betrag"
 
 #: ../operations/common/stretch-contrast.c:566
 #| msgid "Contrast"
@@ -4072,6 +4077,9 @@ msgid ""
 "improves images that make poor use of the available contrast (little "
 "contrast, very dark, or very bright images)."
 msgstr ""
+"Streckt alle Werte in den Bereich von 0.0 bis 1.0. Dies verbessert Bilder, "
+"die nur wenig Kontrast aufweisen. (kontratarme, sehr dunkel oder sehr helle "
+"Bilder)."
 
 #: ../operations/common/stretch-contrast-hsv.c:221
 msgid "Stretch Contrast HSV"
@@ -4084,6 +4092,9 @@ msgid ""
 "contrast, very dark, or very bright images). This version differs from "
 "Contrast Autostretch in that it works in HSV space, and preserves hue."
 msgstr ""
+"Streckt alle Werte in den Bereich von 0.0 bis 1.0. Dies verbessert Bilder, "
+"die nur wenig Kontrast aufweisen. (kontratarme, sehr dunkel oder sehr helle "
+"Bilder). Dieser Filter arbeitet im HSV Farbraum und erhält den Farbton"
 
 #: ../operations/common/supernova.c:34
 msgid "X coordinates of the center of supernova"
@@ -4172,27 +4183,27 @@ msgstr "Unten-Rechts"
 
 #: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
 msgid "Direction"
-msgstr "Ausrichtung"
+msgstr "Richtung"
 
 #: ../operations/common/texturize-canvas.c:41
 msgid ""
 "Position of the light source which lightens the canvas: Top-right, Top-left, "
 "Bottom-left or Bottom-right"
-msgstr ""
+msgstr "Position der Lichtquelle"
 
 #: ../operations/common/texturize-canvas.c:45
 msgid ""
 "Apparent depth of the rendered canvas effect; from 1 (very flat) to 50 (very "
 "deep)"
-msgstr ""
+msgstr "Tiefe der Leinwand. 1: sehr flach, 50: sehr tief"
 
 #: ../operations/common/texturize-canvas.c:4379
 msgid "Texturize Canvas"
-msgstr ""
+msgstr "Leinwand Textur"
 
 #: ../operations/common/texturize-canvas.c:4383
 msgid "Textures the image as if it were an artist's canvas."
-msgstr ""
+msgstr "Texturiert das Bild als wäre es auf Leinwand gemalt."
 
 #: ../operations/common/threshold.c:28
 msgid ""
@@ -4277,11 +4288,11 @@ msgstr "Höhe der Kachel"
 
 #: ../operations/common/tile-paper.c:56 ../operations/common/tile-paper.c:57
 msgid "Move rate"
-msgstr ""
+msgstr "Verteilrate"
 
 #: ../operations/common/tile-paper.c:62
 msgid "Wrap around"
-msgstr ""
+msgstr "Hinten nach vorne umbrechen"
 
 #: ../operations/common/tile-paper.c:63
 #| msgid "Map the image to a circle"
@@ -4373,7 +4384,7 @@ msgstr "Schwärzer (kleinerer Wert)"
 
 #: ../operations/common/value-propagate.c:31
 msgid "Middle value to peaks"
-msgstr ""
+msgstr "Mittelwert zu Extremwerten"
 
 #: ../operations/common/value-propagate.c:32
 #| msgid "Color to render"
@@ -4415,11 +4426,11 @@ msgstr "Oberer Schwellenwert"
 
 #: ../operations/common/value-propagate.c:51
 msgid "Propagating rate"
-msgstr ""
+msgstr "Verteilrate"
 
 #: ../operations/common/value-propagate.c:56
 msgid "Color to use for the \"Only color\" and \"Color to peaks\" modes"
-msgstr ""
+msgstr "Farbe für Modus 'nur Farbe' und 'Mittelwert zu Extremwerten'"
 
 #: ../operations/common/value-propagate.c:59
 msgid "To top"
@@ -4427,7 +4438,7 @@ msgstr "Nach oben"
 
 #: ../operations/common/value-propagate.c:60
 msgid "Propagate to top"
-msgstr ""
+msgstr "Nach oben verteilen"
 
 #: ../operations/common/value-propagate.c:62
 msgid "To left"
@@ -4435,7 +4446,7 @@ msgstr "Nach links"
 
 #: ../operations/common/value-propagate.c:63
 msgid "Propagate to left"
-msgstr ""
+msgstr "Nach links verteilen"
 
 #: ../operations/common/value-propagate.c:65
 msgid "To right"
@@ -4443,7 +4454,7 @@ msgstr "Nach rechts"
 
 #: ../operations/common/value-propagate.c:66
 msgid "Propagate to right"
-msgstr ""
+msgstr "Nach rechts verteilen"
 
 #: ../operations/common/value-propagate.c:68
 msgid "To bottom"
@@ -4452,30 +4463,30 @@ msgstr "Nach unten"
 #: ../operations/common/value-propagate.c:69
 #| msgid "Value at bottom"
 msgid "Propagate to bottom"
-msgstr "Wert unten"
+msgstr "Nach unten verteilen"
 
 #: ../operations/common/value-propagate.c:71
 #: ../operations/common/value-propagate.c:72
 msgid "Propagating value channel"
-msgstr ""
+msgstr "Farbwerte verteilen"
 
 #: ../operations/common/value-propagate.c:74
 #: ../operations/common/value-propagate.c:75
 #| msgid "Alpha channel"
 msgid "Propagating alpha channel"
-msgstr "Alphakanal"
+msgstr "Alphakanal verteilen"
 
 #: ../operations/common/value-propagate.c:637
 msgid "Value Propagate"
-msgstr ""
+msgstr "Wert verteilen"
 
 #: ../operations/common/value-propagate.c:640
 msgid "Propagate certain colors to neighboring pixels."
-msgstr ""
+msgstr "Verteile bestimmte Farben auf benachbarte Pixel"
 
 #: ../operations/common/video-degradation.c:34
 msgid "Staggered"
-msgstr ""
+msgstr "gestaffelt"
 
 #: ../operations/common/video-degradation.c:36
 msgid "Large staggered"
@@ -4550,7 +4561,7 @@ msgstr "Kreis"
 
 #: ../operations/common/vignette.c:30
 msgid "Vignette shape"
-msgstr ""
+msgstr "Vignettenform"
 
 #: ../operations/common/vignette.c:35
 msgid ""
@@ -4619,11 +4630,11 @@ msgstr "Bewege Pixel"
 
 #: ../operations/common/warp.c:27
 msgid "Grow area"
-msgstr ""
+msgstr "Bereich vergrößern"
 
 #: ../operations/common/warp.c:28
 msgid "Shrink area"
-msgstr ""
+msgstr "Bereich schrumpfen"
 
 #: ../operations/common/warp.c:29
 #| msgid "Switch to clockwise"
@@ -4637,7 +4648,7 @@ msgstr "Auf im Gegenuhrzeigersinn wechseln"
 
 #: ../operations/common/warp.c:31
 msgid "Erase warping"
-msgstr ""
+msgstr "Effekt rückgängig"
 
 #: ../operations/common/warp.c:32
 #| msgid "Smoothing"
@@ -4662,11 +4673,11 @@ msgstr "Verhalten der Operation"
 
 #: ../operations/common/warp.c:413
 msgid "Warp"
-msgstr ""
+msgstr "Warp"
 
 #: ../operations/common/warp.c:415
 msgid "Compute a relative displacement mapping from a stroke"
-msgstr ""
+msgstr "Verschiedene Verzerrungen mit dem Pinsel"
 
 #: ../operations/common/waves.c:37
 msgid "Amplitude of the ripple"
@@ -4702,7 +4713,7 @@ msgstr "Bild mit Wellen verzerren"
 
 #: ../operations/common/weighted-blend.c:185
 msgid "Weighted Blend"
-msgstr ""
+msgstr "Überblenden"
 
 #: ../operations/common/weighted-blend.c:188
 msgid "blend two images using alpha values as weights"
@@ -4747,7 +4758,7 @@ msgstr "Wind"
 
 #: ../operations/common/wind.c:29
 msgid "Blast"
-msgstr ""
+msgstr "Windstärke"
 
 #: ../operations/common/wind.c:33
 msgid "Left"
@@ -4771,12 +4782,12 @@ msgstr "Beide"
 
 #: ../operations/common/wind.c:41
 msgid "Leading"
-msgstr ""
+msgstr "Vordere"
 
 #: ../operations/common/wind.c:42
 #| msgid "Scaling"
 msgid "Trailing"
-msgstr "Hinten"
+msgstr "Hintere"
 
 #: ../operations/common/wind.c:45
 msgid "Style"
@@ -4792,7 +4803,7 @@ msgstr "Richtung des Effekts"
 
 #: ../operations/common/wind.c:55
 msgid "Edge Affected"
-msgstr ""
+msgstr "Einfluß auf Kanten"
 
 #: ../operations/common/wind.c:58
 msgid "Edge behavior"
@@ -4812,7 +4823,7 @@ msgstr "Wischeffekt, wie vom Wind verweht"
 
 #: ../operations/common/write-buffer.c:26
 msgid "A pre-existing GeglBuffer to write incoming buffer data to."
-msgstr ""
+msgstr "Ein existierender GeglBuffer, in den Daten hineingeschrieben werden"
 
 #: ../operations/common/write-buffer.c:149
 #| msgid "Shears the buffer"
@@ -4834,14 +4845,18 @@ msgid ""
 "buffer where gegl_buffer_list_valid_rectangles returns the part of the cache "
 "that is valid."
 msgstr ""
+"NULL oder ein GeglBuffer, der Renderergebnisse zwischenspeichert. Dies ist "
+"ein spezieller Geglbuffer, der bei 'gegl_buffer_list_valid_rectangles' den "
+"Teil des Caches zurückgibt, der gültig ist."
 
 #: ../operations/core/cache.c:90
 msgid "Explicit cache of results at this point of graph."
 msgstr ""
+"Explizites Zwischenspeichern von Ergebnissen an dieser Stelle des Graphen."
 
 #: ../operations/core/cache.c:92
 msgid "An explicit caching node"
-msgstr ""
+msgstr "Ein Node zum Zwischenspeichern (Cache)"
 
 #: ../operations/core/cast-format.c:25
 msgid "Input format"
@@ -4864,6 +4879,8 @@ msgid ""
 "Cast the data between input_format and output_format, both formats must have "
 "the same bpp"
 msgstr ""
+"Wandelt Daten von 'input_format' nach 'output_format'. Beide Formate müssen "
+"die gleiche Farbtiefe (bpp) haben."
 
 #: ../operations/core/clone.c:25
 msgid "Reference"
@@ -4892,7 +4909,7 @@ msgstr "Daten in ein das angegebene Format umwandeln"
 
 #: ../operations/core/crop.c:45
 msgid "Reset origin"
-msgstr ""
+msgstr "Zurücksetzen"
 
 #: ../operations/core/crop.c:209
 msgid "Crop"
@@ -4909,6 +4926,7 @@ msgstr "Keine Operation"
 #: ../operations/core/nop.c:81
 msgid "No operation (can be used as a routing point)"
 msgstr ""
+"Keine Operation (NoOp) (Kann als Routenpunkt im Graphen genutzt werden)"
 
 #: ../operations/external/ff-load.c:25
 msgid "Path of video file to load"
@@ -4927,6 +4945,8 @@ msgid ""
 "Number of frames in video, updates at least when first frame has been "
 "decoded."
 msgstr ""
+"Anzahl Frames im Video, aktualisiert spätestens, wennd er erste Frame "
+"decodiert wurde"
 
 #: ../operations/external/ff-load.c:36
 msgid "audio_sample_rate"
@@ -4942,7 +4962,7 @@ msgstr "Einzelbildrate"
 
 #: ../operations/external/ff-load.c:40
 msgid "Frames per second, permits computing time vs frame"
-msgstr ""
+msgstr "Frames pro Sekunde, erlaubt die Berechnung nach Zeit oder nach Frames"
 
 #: ../operations/external/ff-load.c:44
 msgid "video-codec"
@@ -4978,14 +4998,15 @@ msgstr "Audio-Codec"
 msgid ""
 "Audio codec to use, or auto to use a good default based on container format."
 msgstr ""
+"Audio Codec oder 'auto' für eine automatische Wahl nach Containerformat."
 
 #: ../operations/external/ff-save.c:35
 msgid "audio sample rate"
-msgstr ""
+msgstr "Audio Sample Rate"
 
 #: ../operations/external/ff-save.c:36
 msgid "-1 means autodetect on first audio fragment"
-msgstr ""
+msgstr "-1 bedeutet Autoerkennung nach dem ersten Audio Fragment"
 
 #: ../operations/external/ff-save.c:38
 msgid "audio bitrate in kb/s"
@@ -5007,7 +5028,7 @@ msgstr "Video-Codec"
 msgid ""
 "Video codec to use, or auto to use a good default based on container format."
 msgstr ""
-"Video Codec oder auto, um einen Codec nach dem Containerformat auszuwählen."
+"Video Codec oder 'auto' für eine automatische Wahl nach Containerformat."
 
 #: ../operations/external/ff-save.c:46
 msgid "video bitrate in kb/s"
@@ -5263,11 +5284,11 @@ msgstr "Absolut colorimetrisch"
 
 #: ../operations/external/lcms-from-profile.c:41
 msgid "Rendering intent"
-msgstr ""
+msgstr "Wiedergabepriorität"
 
 #: ../operations/external/lcms-from-profile.c:44
 msgid "The rendering intent to use in the conversion."
-msgstr ""
+msgstr "Die Wiedergabepriorität der Umrechnung."
 
 # http://www.drucker-kalibrieren.com/tiefenkompensation-black-point-compensation.html
 #: ../operations/external/lcms-from-profile.c:46
@@ -5276,7 +5297,7 @@ msgstr "Tiefenkompensation"
 
 #: ../operations/external/lcms-from-profile.c:48
 msgid "Convert using black point compensation."
-msgstr ""
+msgstr "Umrechnung mit Tiefenkompensation"
 
 #: ../operations/external/lcms-from-profile.c:242
 msgid "LCMS From Profile"
@@ -6367,19 +6388,19 @@ msgstr "Helligkeit"
 
 #: ../operations/workshop/component-extract.c:33
 msgid "CMYK Cyan"
-msgstr ""
+msgstr "CMYK Cyan"
 
 #: ../operations/workshop/component-extract.c:34
 msgid "CMYK Magenta"
-msgstr ""
+msgstr "CMYK Magenta"
 
 #: ../operations/workshop/component-extract.c:35
 msgid "CMYK Yellow"
-msgstr ""
+msgstr "CMYK Yellow (gelb)"
 
 #: ../operations/workshop/component-extract.c:36
 msgid "CMYK Key"
-msgstr ""
+msgstr "CMYK Key (black)"
 
 #: ../operations/workshop/component-extract.c:37
 msgid "Y'CbCr Y'"
@@ -6460,6 +6481,7 @@ msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
 msgstr ""
+"Demosaicing mit der 'grayscale2color' Methode und bimedianter Interpolation"
 
 #: ../operations/workshop/demosaic-simple.c:151
 msgid "Demosaic Without Interpolation"
@@ -6469,6 +6491,7 @@ msgstr "Demosaicing ohne Interpolation"
 msgid ""
 "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr ""
+"Demosaicing mit der nativen  'grayscale2color' Methode ohne Interpolation"
 
 #: ../operations/workshop/ditto.c:113
 msgid "Test op to do a 1:1 map of input to output, while sampling"
@@ -6695,7 +6718,7 @@ msgstr "Pfad zum Videogerät"
 
 #: ../operations/workshop/external/v4l2.c:774
 msgid "Video4Linux2 Frame Source"
-msgstr ""
+msgstr "Video4Linux2 Frame Source"
 
 #: ../operations/workshop/external/v4l2.c:776
 #| msgid "Video4Linux input, webcams framegrabbers and similar devices."
@@ -6784,6 +6807,8 @@ msgid ""
 "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of "
 "\"input\")"
 msgstr ""
+"Horizontal gestapelte Eingänge (\"Output\" und \"Aux\" stehen rechts von "
+"\"Input\")"
 
 #: ../operations/workshop/ink-simulator.c:36
 msgid "Proof"
