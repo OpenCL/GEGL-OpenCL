@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-05 14:54+0100\n"
-"PO-Revision-Date: 2016-03-05 14:55+0100\n"
+"POT-Creation-Date: 2016-03-21 19:54+0100\n"
+"PO-Revision-Date: 2016-03-21 19:55+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -1919,8 +1919,8 @@ msgid "Offset value added"
 msgstr "Dodano wartość przesunięcia"
 
 #: ../operations/common/exposure.c:33
-msgid "Gamma correction"
-msgstr "Korekcja gammy"
+msgid "Gamma adjustment"
+msgstr "Dostosowanie gammy"
 
 #: ../operations/common/exposure.c:188
 msgid ""
@@ -2343,7 +2343,7 @@ msgstr "Orientacja rozmycia — pionowa/pozioma"
 #: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
 #: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
 #: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
-#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
+#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:25
 #: ../operations/workshop/dcraw-load.c:26
 #: ../operations/workshop/external/gluas.c:45
 #: ../operations/workshop/rawbayer-load.c:25
@@ -5144,10 +5144,11 @@ msgid "JPEG image loader using libjpeg"
 msgstr "Wczytywanie obrazów JPEG za pomocą biblioteki libjpeg"
 
 #: ../operations/external/jpg-save.c:26 ../operations/external/tiff-save.c:26
+#: ../operations/external/webp-save.c:26
 msgid "Target path and filename, use '-' for stdout"
 msgstr "Docelowa ścieżka i nazwa pliku, „-” oznacza standardowe wyjście"
 
-#: ../operations/external/jpg-save.c:28 ../operations/external/webp-save.c:27
+#: ../operations/external/jpg-save.c:28 ../operations/external/webp-save.c:28
 msgid "Quality"
 msgstr "Jakość"
 
@@ -5776,21 +5777,17 @@ msgstr "Wczytywanie plików WebP"
 msgid "WebP image loader."
 msgstr "Wczytywanie obrazów WebP."
 
-#: ../operations/external/webp-save.c:25
-msgid "Target file path."
-msgstr "Ścieżka do pliku docelowego."
-
-#: ../operations/external/webp-save.c:28
+#: ../operations/external/webp-save.c:29
 msgid "WebP compression quality"
 msgstr "Jakość kompresji WebP"
 
-#: ../operations/external/webp-save.c:114
+#: ../operations/external/webp-save.c:195
 msgid "WebP File Saver"
 msgstr "Zapisywanie plików WebP"
 
-#: ../operations/external/webp-save.c:116
-msgid "WebP image saver."
-msgstr "Zapisywanie obrazów WebP."
+#: ../operations/external/webp-save.c:197
+msgid "WebP image saver"
+msgstr "Zapisywanie obrazów WebP"
 
 #: ../operations/generated/add.c:30 ../operations/generated/divide.c:30
 #: ../operations/generated/gamma.c:30 ../operations/generated/multiply.c:30
