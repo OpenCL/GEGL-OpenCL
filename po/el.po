@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-02-21 19:06+0000\n"
-"PO-Revision-Date: 2016-02-22 17:38+0200\n"
+"POT-Creation-Date: 2016-03-22 07:17+0000\n"
+"PO-Revision-Date: 2016-03-22 12:28+0200\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: www.gnome.gr\n"
 "Language: el\n"
@@ -19,23 +19,58 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 "X-Project-Style: gnome\n"
 
-#: ../bin/gegl.c:150
+#: ../bin/gegl.c:152
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Αδύνατη η ανάγνωση του αρχείου: %s"
 
-#: ../bin/gegl.c:189
+#: ../bin/gegl.c:191
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Άκυρο γράφημα, απόρριψη.\n"
 
-#: ../bin/gegl.c:287 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:269 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Άγνωστη κατάσταση GeglOption: %d"
 
 #: ../bin/gegl-options.c:47
 #, c-format
+#| msgid ""
+#| "usage: %s [options] <file | -- [op [op] ..]>\n"
+#| "\n"
+#| "  Options:\n"
+#| "     -h, --help      this help information\n"
+#| "\n"
+#| "     --list-all      list all known operations\n"
+#| "\n"
+#| "     --exists        return 0 if the operation(s) exist\n"
+#| "\n"
+#| "     --properties    output the properties (name, type, description) of "
+#| "the operation\n"
+#| "\n"
+#| "     -i, --file      read xml from named file\n"
+#| "\n"
+#| "     -x, --xml       use xml provided in next argument\n"
+#| "\n"
+#| "     --dot           output a graphviz graph description\n"
+#| "\n"
+#| "     -o, --output    output generated image to named file, type based\n"
+#| "                     on extension.\n"
+#| "\n"
+#| "     -p              increment frame counters of various elements when\n"
+#| "                     processing is done.\n"
+#| "\n"
+#| "     -s scale, --scale scale  scale output dimensions by this factor.\n"
+#| "\n"
+#| "     -X              output the XML that was read in\n"
+#| "\n"
+#| "     -v, --verbose   print diagnostics while running\n"
+#| "\n"
+#| "All parameters following -- are considered ops to be chained together\n"
+#| "into a small composition instead of using an xml file, this allows for\n"
+#| "easy testing of filters. Be aware that the default value will be used\n"
+#| "for all properties.\n"
 msgid ""
 "usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
@@ -69,8 +104,8 @@ msgid ""
 "\n"
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
-"easy testing of filters. Be aware that the default value will be used\n"
-"for all properties.\n"
+"easy testing of filters. After chaining a new op in properties can be set\n"
+"with property=value pairs as subsequent arguments.\n"
 msgstr ""
 "χρήση: %s [επιλογές] <file | -- [op [op] ..]>\n"
 "\n"
@@ -106,8 +141,9 @@ msgstr ""
 "\n"
 "Όλες οι ακόλουθες παράμετροι -- θεωρούνται λειτουργίες που θα δεθούν\n"
 "μαζί σε μια μικρή σύνθεση αντί για τη χρήση ενός αρχείου xml, αυτό\n"
-"επιτρέπει τον εύκολο έλεγχο των φίλτρων. Να γνωρίζετε ότι η\n"
-"προεπιλεγμένη τιμή θα χρησιμοποιηθεί για όλες τις ιδιότητες.\n"
+"επιτρέπει τον εύκολο έλεγχο των φίλτρων. Μετά τη σύνδεση, μια νέα λειτουργία "
+"στις ιδιότητες\n"
+"μπορεί να οριστεί με property=ζεύγη τιμών ως επόμενα ορίσματα.\n"
 
 #: ../bin/gegl-options.c:87
 #, c-format
@@ -434,7 +470,6 @@ msgid "Level of smoothness"
 msgstr "Επίπεδο ομαλότητας"
 
 #: ../operations/common/bilateral-filter-fast.c:495
-#| msgid "Bilateral Filter"
 msgid "Bilateral Box Filter"
 msgstr "Αμφίπλευρο φίλτρο πλαισίου"
 
@@ -498,7 +533,6 @@ msgid "Amount to increase brightness"
 msgstr "Ποσότητα για αύξηση φωτεινότητας"
 
 #: ../operations/common/brightness-contrast.c:150
-#| msgid "Brightness"
 msgid "Brightness Contrast"
 msgstr "Αντίθεση φωτεινότητας"
 
@@ -1932,8 +1966,8 @@ msgid "Offset value added"
 msgstr "Πρόσθετη τιμή μετατόπισης"
 
 #: ../operations/common/exposure.c:33
-msgid "Gamma correction"
-msgstr "Διόρθωση γάμμα"
+msgid "Gamma adjustment"
+msgstr "Ρύθμιση γάμμα"
 
 #: ../operations/common/exposure.c:188
 msgid ""
@@ -1974,7 +2008,6 @@ msgid "Gradient threshold for lowering detail enhancement"
 msgstr "Όριο διαβάθμισης για μείωση βελτίωσης λεπτομέρειας"
 
 #: ../operations/common/fattal02.c:1327
-#| msgid "Mantiuk 2006 Tonemapping"
 msgid "Fattal et al. 2002 Tone Mapping"
 msgstr "Απεικόνιση τόνου Φάταλ κ.α. 2002"
 
@@ -2362,7 +2395,7 @@ msgstr "Ο προσανατολισμός της θόλωσης - ορ/καθ"
 #: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
 #: ../operations/external/svg-load.c:25 ../operations/external/tiff-load.c:25
 #: ../operations/external/tiff-save.c:25 ../operations/external/webp-load.c:25
-#: ../operations/external/webp-save.c:24
+#: ../operations/external/webp-save.c:25
 #: ../operations/workshop/dcraw-load.c:26
 #: ../operations/workshop/external/gluas.c:45
 #: ../operations/workshop/rawbayer-load.c:25
@@ -2752,7 +2785,6 @@ msgid "Level of emphasis on image gradient details"
 msgstr "Στάθμη έμφασης στις λεπτομέρειες διαβάθμισης εικόνας"
 
 #: ../operations/common/mantiuk06.c:1638
-#| msgid "Mantiuk 2006 Tonemapping"
 msgid "Mantiuk 2006 Tone Mapping"
 msgstr "Απεικόνιση τόνου Μάντιουκ 2006"
 
@@ -3377,7 +3409,6 @@ msgid "Detail level"
 msgstr "Επίπεδο λεπτομέρειας"
 
 #: ../operations/common/noise-solid.c:57
-#| msgid "Create a tilable output"
 msgid "Create a tileable output"
 msgstr "Δημιουργία μιας εξόδου σε παράθεση"
 
@@ -3835,7 +3866,6 @@ msgid "Adaptation to light variation across the image"
 msgstr "Προσαρμογή στη μεταβολή φωτός κατά μήκος της εικόνας"
 
 #: ../operations/common/reinhard05.c:273
-#| msgid "Reinhard 2005 Tonemapper"
 msgid "Reinhard 2005 Tone Mapping"
 msgstr "Απεικόνιση τόνου Ράινχαρτ 2005"
 
@@ -3895,7 +3925,6 @@ msgid "Scale, strength of effect"
 msgstr "Κλίμακα, ισχύς του φαινομένου"
 
 #: ../operations/common/saturation.c:219
-#| msgid "Tile saturation"
 msgid "Changes the saturation"
 msgstr "Αλλάζει τον κορεσμό"
 
@@ -4534,11 +4563,11 @@ msgstr "Περιεστραμμένο"
 msgid "Whether to rotate the RGB pattern by ninety degrees."
 msgstr "Αν θα περιστραφεί το μοτίβο RGB κατά ενενήντα μοίρες. "
 
-#: ../operations/common/video-degradation.c:269
+#: ../operations/common/video-degradation.c:318
 msgid "Video Degradation"
 msgstr "Υποβάθμιση βίντεο"
 
-#: ../operations/common/video-degradation.c:272
+#: ../operations/common/video-degradation.c:321
 msgid ""
 "This function simulates the degradation of being on an old low-dotpitch RGB "
 "video monitor."
@@ -5019,7 +5048,6 @@ msgid "video bitrate in kb/s"
 msgstr "Ρυθμός διαμεταγωγής βίντεο σε kb/s"
 
 #: ../operations/external/ff-save.c:48
-#| msgid "Tile size"
 msgid "Video bufsize"
 msgstr "Μέγεθος ενδιάμεσης μνήμης βίντεο"
 
@@ -5082,7 +5110,6 @@ msgid "me_range"
 msgstr "Εύρος εκτίμησης κίνησης (me_range)"
 
 #: ../operations/external/ff-save.c:67
-#| msgid "frames"
 msgid "max_b_frames"
 msgstr "Μέγιστα πλαίσια b (max_b_frames)"
 
@@ -5091,7 +5118,6 @@ msgid "gop-size"
 msgstr "μέγεθος ομάδας εικόνων (gop-size)"
 
 #: ../operations/external/ff-save.c:69
-#| msgid "Compression"
 msgid "qcompress"
 msgstr "Συμπίεση κβαντιστή (qcompress)"
 
@@ -5127,39 +5153,32 @@ msgid "URI for file to load"
 msgstr "URI του αρχείου για φόρτωση"
 
 #: ../operations/external/jp2-load.c:131
-#| msgid "Unknown JPEG 2000 image format in '%s'"
 msgid "Unknown JPEG 2000 image format"
 msgstr "Άγνωστη μορφή εικόνας JPEG 2000"
 
 #: ../operations/external/jp2-load.c:138
-#| msgid "Unable to open JPEG 2000 image in '%s'"
 msgid "Unable to open JPEG 2000 image"
 msgstr "Αδυναμία ανοίγματος εικόνας JPEG 2000"
 
 #: ../operations/external/jp2-load.c:145
-#| msgid "Unable to create output color profile for '%s'"
 msgid "Unable to create output color profile"
 msgstr "Αδυναμία δημιουργίας κατατομής χρώματος εξόδου"
 
 #: ../operations/external/jp2-load.c:153
-#| msgid "Unable to convert image to sRGB color space when processing '%s'"
 msgid "Unable to convert image to sRGB color space"
 msgstr "Αδυναμία μετατροπής εικόνας σε χρωματικό χώρο sRGB"
 
 #: ../operations/external/jp2-load.c:160
 #, c-format
-#| msgid "Unsupported non-RGB JPEG 2000 file with %d components in '%s'"
 msgid "Unsupported non-RGB JPEG 2000 file with %d components"
 msgstr "Αρχείο χωρίς υποστήριξη μη RGB JPEG 2000 με %d συστατικά"
 
 #: ../operations/external/jp2-load.c:172
 #, c-format
-#| msgid "Unsupported JPEG 2000 file with depth %d in '%s'"
 msgid "Unsupported JPEG 2000 file with depth %d"
 msgstr "Αρχείο χωρίς υποστήριξη JPEG 2000 με βάθος %d"
 
 #: ../operations/external/jp2-load.c:198
-#| msgid "Components of input image '%s' don't match"
 msgid "Components of JPEG 2000 input don't match"
 msgstr "Τα συστατικά της εισόδου JPEG 2000 δεν ταιριάζουν"
 
@@ -5169,7 +5188,6 @@ msgstr "αδυναμία δημιουργίας μιας νέας ροής Τζ�
 
 #: ../operations/external/jp2-load.c:277 ../operations/external/jp2-load.c:279
 #, c-format
-#| msgid "Unable to open JPEG 2000 image in '%s'"
 msgid "failed to open JPEG 2000 from %s"
 msgstr "αποτυχία ανοίγματος JPEG 2000 από το '%s'"
 
@@ -5178,18 +5196,15 @@ msgid "could not query JPEG 2000 file"
 msgstr "αδυναμία ερωτήματος αρχείου JPEG 2000"
 
 #: ../operations/external/jp2-load.c:349
-#| msgid "One or more of R, G, B components are missing from '%s'"
 msgid "One or more of R, G, B components are missing"
 msgstr "Ένα ή περισσότερα συστατικά R, G, B λείπουν"
 
 #: ../operations/external/jp2-load.c:357
-#| msgid "One or more of R, G, B components have signed data in '%s'"
 msgid "One or more of R, G, B components have signed data"
 msgstr "Ένα ή περισσότερα συστατικά R, G, B υπέγραψαν δεδομένα"
 
 #: ../operations/external/jp2-load.c:390
 #, c-format
-#| msgid "Error reading row %d component %d from '%s'"
 msgid "Error reading row %d component %d"
 msgstr "Σφάλμα ανάγνωσης γραμμής %d συστατικού %d"
 
@@ -5214,10 +5229,11 @@ msgid "JPEG image loader using libjpeg"
 msgstr "Φόρτωση εικόνας JPEG χρησιμοποιώντας libjpeg"
 
 #: ../operations/external/jpg-save.c:26 ../operations/external/tiff-save.c:26
+#: ../operations/external/webp-save.c:26
 msgid "Target path and filename, use '-' for stdout"
 msgstr "Στόχος διαδρομής και ονόματος αρχείου, χρήση '-' για τυπική έξοδο"
 
-#: ../operations/external/jpg-save.c:28 ../operations/external/webp-save.c:27
+#: ../operations/external/jpg-save.c:28 ../operations/external/webp-save.c:28
 msgid "Quality"
 msgstr "Ποιότητα"
 
@@ -5851,20 +5867,17 @@ msgstr "Φορτωτής αρχείου WebP"
 msgid "WebP image loader."
 msgstr "Φόρτωση εικόνας WebP."
 
-#: ../operations/external/webp-save.c:25
-msgid "Target file path."
-msgstr "Διαδρομή αρχείου στόχου."
-
-#: ../operations/external/webp-save.c:28
+#: ../operations/external/webp-save.c:29
 msgid "WebP compression quality"
 msgstr "Ποιότητα συμπίεσης WebP"
 
-#: ../operations/external/webp-save.c:114
+#: ../operations/external/webp-save.c:195
 msgid "WebP File Saver"
 msgstr "Αποθηκευτής αρχείου WebP"
 
-#: ../operations/external/webp-save.c:116
-msgid "WebP image saver."
+#: ../operations/external/webp-save.c:197
+#| msgid "WebP image saver."
+msgid "WebP image saver"
 msgstr "Αποθήκευση εικόνας WebP."
 
 #: ../operations/generated/add.c:30 ../operations/generated/divide.c:30
@@ -6806,7 +6819,6 @@ msgid "Stop 5"
 msgstr "Διακοπή 5"
 
 #: ../operations/workshop/gradient-map.c:242
-#| msgid "Gradient"
 msgid "Gradient Map"
 msgstr "Απεικόνιση διαβάθμισης"
 
@@ -6902,49 +6914,16 @@ msgid "how wide peel off bands for ink order vis"
 msgstr "πόσο πλατιά απομακρύνονται οι ζώνες για την διάταξη μελανιού"
 
 #: ../operations/workshop/ink-simulator.c:1420
-#| msgid "Ink limit"
 msgid "Ink Simulator"
 msgstr "Προσομοιωτής μελανιού"
 
 #: ../operations/workshop/ink-simulator.c:1423
-#| msgid "spectral ink simulator, for softproofing/simulating press inks"
 msgid ""
 "Spectral ink and paint simulator, for softproofing/simulating physical color "
 "mixing and interactions."
 msgstr ""
 "Φασματικός προσομοιωτής μελανιού και βαφής, για εκτύπωση/προσομοίωση "
 "ανάμειξης και αλληλεπιδράσεων φυσικού χρώματος."
-
-#: ../operations/workshop/insta-curve.c:32
-#: ../operations/workshop/insta-filter.c:32
-msgid "Preset"
-msgstr "Προεπιλογή"
-
-#: ../operations/workshop/insta-curve.c:35
-msgid "Which curve to apply"
-msgstr "Ποια καμπύλη θα εφαρμοστεί"
-
-#: ../operations/workshop/insta-curve.c:731
-#| msgid "Contrast Curve"
-msgid "Insta curve"
-msgstr "Καμπύλη Insta"
-
-#: ../operations/workshop/insta-curve.c:733
-msgid "Apply a preset curve to an image"
-msgstr "Εφαρμογή μιας προεπιλεγμένης καμπύλης σε μια εικόνα"
-
-#: ../operations/workshop/insta-filter.c:35
-msgid "Which filter to apply"
-msgstr "Ποιο φίλτρο θα εφαρμοστεί"
-
-#: ../operations/workshop/insta-filter.c:209
-#| msgid "Filter"
-msgid "Insta Filter"
-msgstr "Φίλτρο Insta"
-
-#: ../operations/workshop/insta-filter.c:211
-msgid "Apply a preset filter to an image"
-msgstr "Εφαρμογή προεπιλεγμένου φίλτρου σε μια εικόνα"
 
 #: ../operations/workshop/kuwahara.c:27
 #: ../operations/workshop/median-blur.c:28
@@ -7036,6 +7015,35 @@ msgstr "Περικοπή RGB"
 #: ../operations/workshop/rgb-clip.c:186
 msgid "Keep RGB pixels values inside a specific range"
 msgstr "Διατήρηση των τιμών εικονοστοιχείων RGB μέσα σε ορισμένο εύρος"
+
+#~ msgid "Gamma correction"
+#~ msgstr "Διόρθωση γάμμα"
+
+#~ msgid "Target file path."
+#~ msgstr "Διαδρομή αρχείου στόχου."
+
+#~ msgid "Preset"
+#~ msgstr "Προεπιλογή"
+
+#~ msgid "Which curve to apply"
+#~ msgstr "Ποια καμπύλη θα εφαρμοστεί"
+
+#~| msgid "Contrast Curve"
+#~ msgid "Insta curve"
+#~ msgstr "Καμπύλη Insta"
+
+#~ msgid "Apply a preset curve to an image"
+#~ msgstr "Εφαρμογή μιας προεπιλεγμένης καμπύλης σε μια εικόνα"
+
+#~ msgid "Which filter to apply"
+#~ msgstr "Ποιο φίλτρο θα εφαρμοστεί"
+
+#~| msgid "Filter"
+#~ msgid "Insta Filter"
+#~ msgstr "Φίλτρο Insta"
+
+#~ msgid "Apply a preset filter to an image"
+#~ msgstr "Εφαρμογή προεπιλεγμένου φίλτρου σε μια εικόνα"
 
 #~ msgid "Tilable"
 #~ msgstr "Σε παράθεση"
