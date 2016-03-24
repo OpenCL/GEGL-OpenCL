@@ -250,40 +250,12 @@ char *      gegl_meta_get (const char *path);
 
 static void on_viewer_motion (MrgEvent *e, void *data1, void *data2);
 
-static int str_has_image_suffix (char *path)
-{
-  return g_str_has_suffix (path, ".jpg") ||
-         g_str_has_suffix (path, ".png") ||
-         g_str_has_suffix (path, ".JPG") ||
-         g_str_has_suffix (path, ".PNG") ||
-         g_str_has_suffix (path, ".jpeg") ||
-         g_str_has_suffix (path, ".JPEG") ||
-         g_str_has_suffix (path, ".CR2") ||
-         g_str_has_suffix (path, ".exr");
-}
-
-static int str_has_video_suffix (char *path)
-{
-  return g_str_has_suffix (path, ".avi") ||
-         g_str_has_suffix (path, ".AVI") ||
-         g_str_has_suffix (path, ".mp4") ||
-         g_str_has_suffix (path, ".mp3") ||
-         g_str_has_suffix (path, ".mpg") ||
-         g_str_has_suffix (path, ".ogv") ||
-         g_str_has_suffix (path, ".MPG") ||
-         g_str_has_suffix (path, ".webm") ||
-         g_str_has_suffix (path, ".MP4") ||
-         g_str_has_suffix (path, ".mkv") ||
-         g_str_has_suffix (path, ".gif") ||
-         g_str_has_suffix (path, ".GIF") ||
-         g_str_has_suffix (path, ".MKV") ||
-         g_str_has_suffix (path, ".mov") ||
-         g_str_has_suffix (path, ".ogg");
-}
+int gegl_str_has_image_suffix (char *path);
+int gegl_str_has_video_suffix (char *path);
 
 static int str_has_visual_suffix (char *path)
 {
-  return str_has_image_suffix (path) || str_has_video_suffix (path);
+  return gegl_str_has_image_suffix (path) || gegl_str_has_video_suffix (path);
 }
 
 static void populate_path_list (State *o)
@@ -1287,7 +1259,7 @@ static void load_path (State *o)
   o->frame_no = 0;
   o->prev_frame_played = 0;
 
-  if (str_has_video_suffix (path))
+  if (gegl_str_has_video_suffix (path))
   {
     o->is_video = 1;
     o->gegl = gegl_node_new ();
