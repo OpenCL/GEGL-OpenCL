@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-21 19:54+0100\n"
-"PO-Revision-Date: 2016-03-21 19:55+0100\n"
+"POT-Creation-Date: 2016-03-25 16:40+0100\n"
+"PO-Revision-Date: 2016-03-25 16:42+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -27,17 +27,17 @@ msgstr ""
 "X-Poedit-Language: Polish\n"
 "X-Poedit-Country: Poland\n"
 
-#: ../bin/gegl.c:152
+#: ../bin/gegl.c:153
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Nie można odczytać pliku: %s"
 
-#: ../bin/gegl.c:191
+#: ../bin/gegl.c:198
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Nieprawidłowy wykres, przerywanie.\n"
 
-#: ../bin/gegl.c:269 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:348 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Nieznany tryb GeglOption: %d"
@@ -158,7 +158,7 @@ msgstr ""
 "\tpozostałe: %s\n"
 "\t\n"
 
-#: ../bin/gegl-options.c:333
+#: ../bin/gegl-options.c:341
 #, c-format
 msgid ""
 "\n"
@@ -2344,7 +2344,6 @@ msgstr "Orientacja rozmycia — pionowa/pozioma"
 #: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
 #: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
 #: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:25
-#: ../operations/workshop/dcraw-load.c:26
 #: ../operations/workshop/external/gluas.c:45
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "File"
@@ -2365,6 +2364,26 @@ msgstr "Ścieżka pliku docelowego do zapisania GeglBuffer."
 #: ../operations/common/gegl-buffer-save-op.c:63
 msgid "GeglBuffer file writer."
 msgstr "Zapisywanie plików GeglBuffer."
+
+#: ../operations/common/gegl.c:24
+msgid "pipeline"
+msgstr "potok"
+
+#: ../operations/common/gegl.c:25
+msgid "[op [property=value] [property=value]] [[op] [property=value]"
+msgstr ""
+"[działanie [właściwość=wartość] [właściwość=wartość]] [[działanie] "
+"[właściwość=wartość]"
+
+#: ../operations/common/gegl.c:100
+msgid "GEGL graph"
+msgstr "Wykres GEGL"
+
+#: ../operations/common/gegl.c:102
+msgid "Program a GEGL operation, in the same manner as the GEGL commandline."
+msgstr ""
+"Programuje działanie GEGL w ten sam sposób, co wiersz poleceń biblioteki "
+"GEGL."
 
 #: ../operations/common/grey.c:100
 msgid "Make Grey"
@@ -2690,7 +2709,6 @@ msgstr "Liniowe renderowanie gradientów"
 #: ../operations/common/load.c:31 ../operations/common/magick-load.c:27
 #: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
 #: ../operations/external/raw-load.c:28 ../operations/external/rgbe-load.c:27
-#: ../operations/workshop/dcraw-load.c:27
 #: ../operations/workshop/rawbayer-load.c:26
 msgid "Path of file to load."
 msgstr "Ścieżka pliku do wczytania."
@@ -2844,11 +2862,11 @@ msgstr "Labirynt"
 msgid "Draw a labyrinth"
 msgstr "Narysuj labirynt"
 
-#: ../operations/common/mblur.c:25
+#: ../operations/common/mblur.c:25 ../operations/workshop/vhsfix.c:24
 msgid "Dampness"
 msgstr "Wilgoć"
 
-#: ../operations/common/mblur.c:26
+#: ../operations/common/mblur.c:26 ../operations/workshop/vhsfix.c:25
 msgid "The value represents the contribution of the past to the new frame."
 msgstr "Wartość reprezentują udział przeszłych klatek w nowej klatce."
 
@@ -4345,7 +4363,7 @@ msgid "More transparent"
 msgstr "Bardzie przezroczyste"
 
 #: ../operations/common/value-propagate.c:38
-#: ../operations/workshop/ink-simulator.c:44
+#: ../operations/workshop/ink-simulator.c:45
 msgid "Mode"
 msgstr "Tryb"
 
@@ -6375,10 +6393,6 @@ msgstr "Wydobądź składową"
 msgid "Extract a color model component"
 msgstr "Wydobądź składową modelu kolorów"
 
-#: ../operations/workshop/dcraw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr "Wczytywanie obrazów raw, owijanie dcraw potokami."
-
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
 msgid "Bayer pattern"
@@ -6717,11 +6731,11 @@ msgstr "Kolor 5"
 msgid "Stop 5"
 msgstr "Zatrzymanie 5"
 
-#: ../operations/workshop/gradient-map.c:242
+#: ../operations/workshop/gradient-map.c:244
 msgid "Gradient Map"
 msgstr "Mapa gradientu"
 
-#: ../operations/workshop/gradient-map.c:244
+#: ../operations/workshop/gradient-map.c:246
 msgid "Applies a color gradient."
 msgstr "Zastosowuje gradient koloru."
 
@@ -6753,68 +6767,68 @@ msgstr "Konfiguracja tuszu"
 msgid "Textual desciption of inks used for simulated print-job"
 msgstr "Tekstowy opis tuszów używanych do symulowania drukowania"
 
-#: ../operations/workshop/ink-simulator.c:46
+#: ../operations/workshop/ink-simulator.c:47
 msgid "how the ink simulator is used"
 msgstr "sposób użycia symulatora tuszu"
 
-#: ../operations/workshop/ink-simulator.c:50
+#: ../operations/workshop/ink-simulator.c:51
 msgid "Substrate color"
 msgstr "Kolor podłoża"
 
-#: ../operations/workshop/ink-simulator.c:50
+#: ../operations/workshop/ink-simulator.c:51
 msgid "paper/fabric/material color"
 msgstr "kolor papieru/tkaniny/materiału"
 
-#: ../operations/workshop/ink-simulator.c:51
+#: ../operations/workshop/ink-simulator.c:52
 msgid "Ink1 color"
 msgstr "Kolor 1. tuszu"
 
-#: ../operations/workshop/ink-simulator.c:51
 #: ../operations/workshop/ink-simulator.c:52
 #: ../operations/workshop/ink-simulator.c:53
 #: ../operations/workshop/ink-simulator.c:54
 #: ../operations/workshop/ink-simulator.c:55
+#: ../operations/workshop/ink-simulator.c:56
 msgid "ink color"
 msgstr "kolor tuszu"
 
-#: ../operations/workshop/ink-simulator.c:52
+#: ../operations/workshop/ink-simulator.c:53
 msgid "Ink2 color"
 msgstr "Kolor 2. tuszu"
 
-#: ../operations/workshop/ink-simulator.c:53
+#: ../operations/workshop/ink-simulator.c:54
 msgid "Ink3 color"
 msgstr "Kolor 3. tuszu"
 
-#: ../operations/workshop/ink-simulator.c:54
+#: ../operations/workshop/ink-simulator.c:55
 msgid "Ink4 color"
 msgstr "Kolor 4. tuszu"
 
-#: ../operations/workshop/ink-simulator.c:55
+#: ../operations/workshop/ink-simulator.c:56
 msgid "Ink5 color"
 msgstr "Kolor 5. tuszu"
 
-#: ../operations/workshop/ink-simulator.c:57
+#: ../operations/workshop/ink-simulator.c:58
 msgid "Ink limit"
 msgstr "Ograniczenie tuszu"
 
-#: ../operations/workshop/ink-simulator.c:58
+#: ../operations/workshop/ink-simulator.c:59
 #, c-format
 msgid "maximum amount of ink for one pixel, 2.5 = 250%% coverage"
 msgstr "maksymalna ilość tuszu na jeden piksel, 2,5 = 250%% pokrycia"
 
-#: ../operations/workshop/ink-simulator.c:62
+#: ../operations/workshop/ink-simulator.c:63
 msgid "Debug width"
 msgstr "Szerokość debugowania"
 
-#: ../operations/workshop/ink-simulator.c:64
+#: ../operations/workshop/ink-simulator.c:65
 msgid "how wide peel off bands for ink order vis"
 msgstr "szerokość pasków oderwania dla kolejności tuszu"
 
-#: ../operations/workshop/ink-simulator.c:1420
+#: ../operations/workshop/ink-simulator.c:1421
 msgid "Ink Simulator"
 msgstr "Symulator tuszu"
 
-#: ../operations/workshop/ink-simulator.c:1423
+#: ../operations/workshop/ink-simulator.c:1424
 msgid ""
 "Spectral ink and paint simulator, for softproofing/simulating physical color "
 "mixing and interactions."
@@ -6906,3 +6920,11 @@ msgstr "Obcinanie RGB"
 #: ../operations/workshop/rgb-clip.c:186
 msgid "Keep RGB pixels values inside a specific range"
 msgstr "Utrzymywanie wartości pikseli RGB w podanym zakresie"
+
+#: ../operations/workshop/vhsfix.c:257
+msgid "vhs glitch fixer"
+msgstr "naprawianie zakłóceń kaset VHS"
+
+#: ../operations/workshop/vhsfix.c:259
+msgid "fixes vhs digitization glitches"
+msgstr "naprawia zakłócenia powstałe podczas cyfryzacji kaset VHS"
