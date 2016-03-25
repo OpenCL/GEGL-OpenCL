@@ -52,6 +52,7 @@ operations/common/gaussian-blur-selective.c
 operations/common/gblur-1d.c
 operations/common/gegl-buffer-load-op.c
 operations/common/gegl-buffer-save-op.c
+operations/common/gegl.c
 operations/common/grey.c
 operations/common/grid.c
 operations/common/high-pass.c
@@ -237,3 +238,4 @@ operations/workshop/mandelbrot.c
 operations/workshop/median-blur.c
 operations/workshop/rawbayer-load.c
 operations/workshop/rgb-clip.c
+operations/workshop/vhsfix.c
