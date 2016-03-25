@@ -26,4 +26,5 @@ op_LTLIBRARIES =    \
 	rawbayer-load.la \
 	rgb-clip.la \
 	unpremul.la \
+    vhsfix.la \
 	gradient-map.la
