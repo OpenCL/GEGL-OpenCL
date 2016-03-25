@@ -245,6 +245,7 @@ main (gint    argc,
             GeglBuffer *tempb;
             GeglNode *n0;
             GeglNode *iter;
+            GeglAudioFragment *audio = NULL;
             int frame_no = 0;
             guchar *temp;
             
@@ -270,17 +271,23 @@ main (gint    argc,
 
               while (frame_no < duration)
               {
+                gegl_node_blit (gegl, o->scale, &bounds,
+                                babl_format("R'G'B'A u8"), temp,
+                                GEGL_AUTO_ROWSTRIDE,
+                                GEGL_BLIT_DEFAULT);
 
-            gegl_node_blit (gegl, o->scale, &bounds, babl_format("R'G'B'A u8"), temp, GEGL_AUTO_ROWSTRIDE,
-                            GEGL_BLIT_DEFAULT);
+                gegl_buffer_set (tempb, &bounds, 0.0, babl_format ("R'G'B'A u8"),
+                                 temp, GEGL_AUTO_ROWSTRIDE);
 
-            gegl_buffer_set (tempb, &bounds, 0.0, babl_format ("R'G'B'A u8"),
-                             temp, GEGL_AUTO_ROWSTRIDE);
+                gegl_node_get (iter, "audio", &audio, NULL);
+                if (audio)
+                  gegl_node_set (output, "audio", audio, NULL);
+                fprintf (stderr, "\r%i/%i %p", frame_no, duration-1, audio);
 
-                gegl_node_set (iter, "frame", frame_no, NULL);
-                fprintf (stderr, "\r%i/%i", frame_no, duration-1);
                 gegl_node_process (output);
+
                 frame_no ++;
+                gegl_node_set (iter, "frame", frame_no, NULL);
               }
               fprintf (stderr, "\n");
             }
