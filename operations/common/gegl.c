@@ -23,6 +23,7 @@
 
 property_string (string, _("pipeline"), "invert")
     description(_("[op [property=value] [property=value]] [[op] [property=value]"))
+    ui_meta ("multiline", "true")
 
 #else
 

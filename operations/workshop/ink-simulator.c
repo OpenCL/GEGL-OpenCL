@@ -40,6 +40,7 @@ enum_end (GeglInkSimMode)
 
 property_string (config, _("Ink configuration"), DEFAULT_CONFIG)
   description (_("Textual desciption of inks used for simulated print-job"))
+  ui_meta ("multiline", "true")
 
 property_enum (mode, _("Mode"), GeglInkSimMode, ink_sim_mode,
                  GEGL_SSIM_SEPARATE_PROOF)
