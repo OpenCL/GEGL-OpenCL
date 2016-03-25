@@ -256,7 +256,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:vhsfix",
     "title",       _("vhs glitch fixer"),
     "categories" , "video",
-    "description", _("fixes vhs digitization glithces"),
+    "description", _("fixes vhs digitization glitches"),
     NULL);
 }
 
