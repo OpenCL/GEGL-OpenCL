@@ -216,7 +216,6 @@ operations/transform/transform-core.c
 operations/transform/translate.c
 operations/workshop/color-warp.c
 operations/workshop/component-extract.c
-operations/workshop/dcraw-load.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/ditto.c
