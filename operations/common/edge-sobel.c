@@ -78,7 +78,7 @@ static void prepare (GeglOperation *operation)
 /*
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/edge-sobel.cl.h"
 

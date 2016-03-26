@@ -215,7 +215,7 @@ snn_mean (GeglBuffer          *src,
 
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/snn-mean.cl.h"
 

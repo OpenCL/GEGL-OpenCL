@@ -120,7 +120,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 #include "opencl/stretch-contrast.cl.h"
 
 static GeglClRunData *cl_data = NULL;

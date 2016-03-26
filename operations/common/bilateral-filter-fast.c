@@ -271,7 +271,7 @@ bilateral_filter (GeglBuffer          *src,
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 #include "opencl/bilateral-filter-fast.cl.h"
 
 static GeglClRunData *cl_data = NULL;
