@@ -146,6 +146,7 @@ operations/core/convert-format.c
 operations/core/crop.c
 operations/core/load.c
 operations/core/nop.c
+operations/external/exr-save.cc
 operations/external/ff-load.c
 operations/external/ff-save.c
 operations/external/jp2-load.c
