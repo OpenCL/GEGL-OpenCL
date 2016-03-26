@@ -73,8 +73,8 @@ GEGL_introspectable_headers =	\
 GEGL_public_HEADERS = \
 	$(GEGL_introspectable_headers)	\
 	gegl-c.h			\
-	gegl-chant.h			\
 	gegl-cpuaccel.h			\
+	gegl-debug.h			\
 	gegl-op.h			\
 	gegl-plugin.h			\
 	buffer/gegl-tile.h \
@@ -101,11 +101,9 @@ GEGL_sources = \
 	gegl-matrix.c			\
 	\
 	gegl-algorithms.h \
-	gegl-chant.h			\
 	gegl-config.h			\
 	gegl-cpuaccel.h			\
 	gegl-cpuaccel-private.h		\
-	gegl-debug.h			\
 	gegl-dot.h			\
 	gegl-dot-visitor.h		\
 	gegl-init-private.h		\
