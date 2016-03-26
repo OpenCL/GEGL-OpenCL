@@ -16,21 +16,27 @@
  * Copyright 2011 Rasmus Hahn <rassahah@googlemail.com>
  */
 
-#ifdef GEGL_CHANT_PROPERTIES
+#include "config.h"
+#include <glib/gi18n-lib.h>
 
-gegl_chant_file_path  (path, "File", "", "path of file to write to.")
-gegl_chant_int  (tile, "Tile", 0, 2048, 0, "tile size to use.")
+#ifdef GEGL_PROPERTIES
+
+property_file_path(path, _("File"), "")
+   description(_("path of file to write to."))
+property_int  (tile, "Tile", 0)
+   description (_("tile size to use."))
+   value_range (0, 2048)
 
 #else
 
-#define GEGL_CHANT_TYPE_SINK
-#define GEGL_CHANT_C_FILE "exr-save.cc"
+#define GEGL_OP_SINK
+#define GEGL_OP_C_SOURCE   exr-save.cc
+#define GEGL_OP_NO_SOURCE
 
 extern "C" {
-#include "gegl-chant.h"
+#include "gegl-op.h"
 } /* extern "C" */
 
-#include "config.h"
 #include <exception>
 #include <ImfTiledOutputFile.h>
 #include <ImfOutputFile.h>
@@ -177,7 +183,7 @@ gegl_exr_save_process (GeglOperation       *operation,
                        const GeglRectangle *rect,
                        gint                 level)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   std::string filename (o->path);
   std::string output_format;
   int tile_size (o->tile);
@@ -231,7 +237,7 @@ gegl_exr_save_process (GeglOperation       *operation,
   return status;
 }
 
-static void gegl_chant_class_init (GeglChantClass *klass)
+static void gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass *operation_class;
   GeglOperationSinkClass *sink_class;
