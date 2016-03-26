@@ -47,7 +47,7 @@ property_enum (component, _("Component"),
                GeglComponentExtract, gegl_component_extract,
                GEGL_COMPONENT_EXTRACT_RGB_RED)
   description (_("Component to extract"))
-  
+
 property_boolean (invert, _("Invert component"), FALSE)
      description (_("Invert the extracted component"))
 
@@ -64,74 +64,57 @@ property_boolean (linear, _("Linear output"), FALSE)
 static void
 prepare (GeglOperation *operation)
 {
-  GeglProperties *o = GEGL_PROPERTIES (operation);
-  const Babl *output_format = (o->linear) ? babl_format ("Y float") : babl_format ("Y' float");
+  GeglProperties *o             = GEGL_PROPERTIES (operation);
+  const Babl     *input_format  = NULL;
+  const Babl     *output_format = (o->linear ?
+                                   babl_format ("Y float") :
+                                   babl_format ("Y' float"));
 
   switch (o->component)
     {
-      case GEGL_COMPONENT_EXTRACT_ALPHA:
-        {
-          gegl_operation_set_format (operation, "input",
-                                     babl_format ("YA float"));
-        }
+    case GEGL_COMPONENT_EXTRACT_ALPHA:
+      input_format = babl_format ("YA float");
       break;
 
-      case GEGL_COMPONENT_EXTRACT_RGB_RED:
-      case GEGL_COMPONENT_EXTRACT_RGB_GREEN:
-      case GEGL_COMPONENT_EXTRACT_RGB_BLUE:
-        {
-          gegl_operation_set_format (operation, "input",
-                                     babl_format ("R'G'B' float"));
-        }
+    case GEGL_COMPONENT_EXTRACT_RGB_RED:
+    case GEGL_COMPONENT_EXTRACT_RGB_GREEN:
+    case GEGL_COMPONENT_EXTRACT_RGB_BLUE:
+      input_format = babl_format ("R'G'B' float");
       break;
 
-      case GEGL_COMPONENT_EXTRACT_HUE:
-      case GEGL_COMPONENT_EXTRACT_HSV_SATURATION:
-      case GEGL_COMPONENT_EXTRACT_HSV_VALUE:
-        {
-          gegl_operation_set_format (operation, "input",
-                                     babl_format ("HSV float"));
-        }
+    case GEGL_COMPONENT_EXTRACT_HUE:
+    case GEGL_COMPONENT_EXTRACT_HSV_SATURATION:
+    case GEGL_COMPONENT_EXTRACT_HSV_VALUE:
+      input_format = babl_format ("HSV float");
       break;
 
-      case GEGL_COMPONENT_EXTRACT_HSL_LIGHTNESS:
-      case GEGL_COMPONENT_EXTRACT_HSL_SATURATION:
-        {
-          gegl_operation_set_format (operation, "input",
-                                     babl_format ("HSL float"));
-        }
+    case GEGL_COMPONENT_EXTRACT_HSL_LIGHTNESS:
+    case GEGL_COMPONENT_EXTRACT_HSL_SATURATION:
+      input_format = babl_format ("HSL float");
       break;
 
-      case GEGL_COMPONENT_EXTRACT_CMYK_CYAN:
-      case GEGL_COMPONENT_EXTRACT_CMYK_MAGENTA:
-      case GEGL_COMPONENT_EXTRACT_CMYK_YELLOW:
-      case GEGL_COMPONENT_EXTRACT_CMYK_KEY:
-        {
-          gegl_operation_set_format (operation, "input",
-                                     babl_format ("CMYK float"));
-        }
+    case GEGL_COMPONENT_EXTRACT_CMYK_CYAN:
+    case GEGL_COMPONENT_EXTRACT_CMYK_MAGENTA:
+    case GEGL_COMPONENT_EXTRACT_CMYK_YELLOW:
+    case GEGL_COMPONENT_EXTRACT_CMYK_KEY:
+      input_format = babl_format ("CMYK float");
       break;
 
-      case GEGL_COMPONENT_EXTRACT_YCBCR_Y:
-      case GEGL_COMPONENT_EXTRACT_YCBCR_CB:
-      case GEGL_COMPONENT_EXTRACT_YCBCR_CR:
-        {
-          gegl_operation_set_format (operation, "input",
-                                     babl_format ("Y'CbCr float"));
-        }
+    case GEGL_COMPONENT_EXTRACT_YCBCR_Y:
+    case GEGL_COMPONENT_EXTRACT_YCBCR_CB:
+    case GEGL_COMPONENT_EXTRACT_YCBCR_CR:
+      input_format = babl_format ("Y'CbCr float");
       break;
 
-      case GEGL_COMPONENT_EXTRACT_LAB_L:
-      case GEGL_COMPONENT_EXTRACT_LAB_A:
-      case GEGL_COMPONENT_EXTRACT_LAB_B:
-        {
-          gegl_operation_set_format (operation, "input",
-                                     babl_format ("CIE Lab float"));
-        }
+    case GEGL_COMPONENT_EXTRACT_LAB_L:
+    case GEGL_COMPONENT_EXTRACT_LAB_A:
+    case GEGL_COMPONENT_EXTRACT_LAB_B:
+      input_format = babl_format ("CIE Lab float");
       break;
     }
 
-    gegl_operation_set_format (operation, "output", output_format);
+  gegl_operation_set_format (operation, "input", input_format);
+  gegl_operation_set_format (operation, "output", output_format);
 }
 
 static gboolean
@@ -142,14 +125,14 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglProperties *o = GEGL_PROPERTIES (operation);
-  const Babl *format = gegl_operation_get_format (operation, "input");
-  gfloat     *in  = in_buf;
-  gfloat     *out = out_buf;
-  gint        component_index;
-  gint        n_components;
-  gdouble     min = 0.0;
-  gdouble     max = 1.0;
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
+  const Babl     *format = gegl_operation_get_format (operation, "input");
+  gfloat         *in     = in_buf;
+  gfloat         *out    = out_buf;
+  gint            component_index = 0;
+  gint            n_components;
+  gdouble         min = 0.0;
+  gdouble         max = 1.0;
 
   n_components = babl_format_get_n_components (format);
 
@@ -160,14 +143,12 @@ process (GeglOperation       *operation,
       case GEGL_COMPONENT_EXTRACT_CMYK_CYAN:
       case GEGL_COMPONENT_EXTRACT_YCBCR_Y:
       case GEGL_COMPONENT_EXTRACT_LAB_L:
-        {
-          component_index = 0;
+        component_index = 0;
 
-          if (o->component == GEGL_COMPONENT_EXTRACT_LAB_L)
-            {
-              max = 100.0;
-            }
-        }
+        if (o->component == GEGL_COMPONENT_EXTRACT_LAB_L)
+          {
+            max = 100.0;
+          }
       break;
 
       case GEGL_COMPONENT_EXTRACT_RGB_GREEN:
@@ -177,66 +158,61 @@ process (GeglOperation       *operation,
       case GEGL_COMPONENT_EXTRACT_YCBCR_CB:
       case GEGL_COMPONENT_EXTRACT_LAB_A:
       case GEGL_COMPONENT_EXTRACT_ALPHA:
-        {
-          component_index = 1;
+        component_index = 1;
 
-          if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CB)
-            {
-              min = -0.5;
-              max =  0.5;
-            }
-          else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_A)
-            {
-              min = -128.0;
-              max =  127;
-            }
-        }
+        if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CB)
+          {
+            min = -0.5;
+            max =  0.5;
+          }
+        else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_A)
+          {
+            min = -128.0;
+            max =  127;
+          }
       break;
-  
+
       case GEGL_COMPONENT_EXTRACT_RGB_BLUE:
       case GEGL_COMPONENT_EXTRACT_HSV_VALUE:
       case GEGL_COMPONENT_EXTRACT_HSL_LIGHTNESS:
       case GEGL_COMPONENT_EXTRACT_CMYK_YELLOW:
       case GEGL_COMPONENT_EXTRACT_YCBCR_CR:
       case GEGL_COMPONENT_EXTRACT_LAB_B:
-        {
-          component_index = 2;
+        component_index = 2;
 
-          if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CR)
-            {
-              min = -0.5;
-              max =  0.5;
-            }
-          else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_B)
-            {
-              min = -128.0;
-              max =  127;
-            }
-        }
+        if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CR)
+          {
+            min = -0.5;
+            max =  0.5;
+          }
+        else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_B)
+          {
+            min = -128.0;
+            max =  127;
+          }
       break;
-  
+
       case GEGL_COMPONENT_EXTRACT_CMYK_KEY:
-        {
-          component_index = 3;
-        }
+        component_index = 3;
       break;
     }
 
     while (samples--)
       {
         gdouble value = in[component_index];
-        
+
         if (min != 0.0 || max != 1.0)
           {
             gdouble scale  = 1.0 / (max - min);
-            gdouble offset = -min; 
+            gdouble offset = -min;
+
             value = CLAMP ((value + offset) * scale, 0.0, 1.0);
           }
-        
+
         if (o->invert)
           out[0] = 1.0 - value;
         else
-          out[0] = value;  
+          out[0] = value;
 
         in  += n_components;
         out += 1;
