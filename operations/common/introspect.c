@@ -31,10 +31,8 @@ property_object(node, _("Node"), GEGL_TYPE_NODE)
 #define GEGL_OP_C_SOURCE introspect.c
 
 #include "gegl-op.h"
-#include "gegl-types-internal.h"
-#include "gegl-dot.h" /* XXX: internal header file */
+gchar *gegl_to_dot                       (GeglNode       *node);
 #include <stdio.h>
-
 
 static void
 gegl_introspect_load_cache (GeglProperties *op_introspect)

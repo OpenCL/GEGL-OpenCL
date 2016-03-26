@@ -378,7 +378,7 @@ fir_ver_blur (GeglBuffer          *src,
 
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/gblur-1d.cl.h"
 
