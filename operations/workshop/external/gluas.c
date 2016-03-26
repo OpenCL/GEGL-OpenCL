@@ -23,20 +23,9 @@
 #ifdef GEGL_PROPERTIES
 
 #define THRESHOLD_SCRIPT \
-"level = user_value/2\n"\
-"for y=bound_y0, bound_y1 do\n"\
-"  for x=bound_x0, bound_x1 do\n"\
-"    v = get_value (x,y)\n"\
-"    v = v + get_value (1, x,y)\n"\
-"    if v>level then\n"\
-"      v=1.0\n"\
-"    else\n"\
-"      v=0.0\n"\
-"    end\n"\
-"    set_value (x,y,v)\n"\
-"  end\n"\
-"  progress (y/height)\n"\
-"end"
+"r,g,b = get_rgb (x,y)\n"\
+"r2,g2,b2 = get_value (0, x+2,y)\n"\
+"set_rgb (x,y,r+g2,g+r2,b+b2)\n"\
 
 property_string (script, _("Script"), THRESHOLD_SCRIPT)
     description(_("The lua script containing the implementation of this operation."))
@@ -177,7 +166,7 @@ drawable_lua_process (GeglOperation       *op,
     lua_pushlightuserdata (L, &p);
     lua_settable (L, LUA_REGISTRYINDEX);
 
-    p.in_drawable = drawable;
+    p.in_drawable  = drawable;
     p.aux_drawable = aux;
     p.out_drawable = result;
 
@@ -195,10 +184,23 @@ drawable_lua_process (GeglOperation       *op,
 
       luaL_loadstring (L, "os.setlocale ('C', 'numeric')");
 
+
+      /* insert default loop start/end filling the selection */
       if (file && file[0]!='\0')
         status = luaL_loadfile (L, file);
       else if (buffer)
-        status = luaL_loadbuffer (L, buffer, strlen (buffer), "buffer");
+      {
+        GString *str = g_string_new (buffer);
+
+        if (!strstr (buffer, "for x"))
+        {
+          g_string_prepend (str, "for y=bound_y0, bound_y1 do\n for x=bound_x0, bound_x1 do\n");
+          g_string_append (str, " end \n progress (y/height)\n end\n");
+        }
+        status = luaL_loadbuffer (L, str->str, str->len, "buffer");
+
+        g_string_free (str, TRUE);
+      }
 
       if (status == 0)
         status = lua_pcall (L, 0, LUA_MULTRET, 0);
@@ -919,8 +921,8 @@ static int l_get_hsv (lua_State * lua)
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "aux", babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "aux",    babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
