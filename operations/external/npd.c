@@ -19,44 +19,41 @@
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
-gegl_chant_pointer (model,       _("Model"),
-                    _("Model - basic element we operate on"))
+#ifdef GEGL_PROPERTIES
+property_pointer (model, _("Model"), NULL)
+description (_("Model - basic element we operate on"))
 
-gegl_chant_int     (square_size, _("Square Size"),
-                    5,  1000,  20,
-                    _("Size of an edge of square the mesh consists of"))
+property_int  (square_size, _("Square Size"), 20)
+value_range (5, 1000)
+description(_("Size of an edge of square the mesh consists of"))
 
-gegl_chant_int     (rigidity,    _("Rigidity"),
-                    0, 10000, 100,
-                    _("The number of deformation iterations"))
+property_int (rigidity,    _("Rigidity"), 100)
+value_range (0, 10000)
+description(_("The number of deformation iterations"))
 
-gegl_chant_boolean (asap_deformation, _("ASAP Deformation"),
-                    FALSE,
-                    _("ASAP deformation is performed when TRUE, ARAP deformation otherwise"))
+property_boolean (asap_deformation, _("ASAP Deformation"), FALSE)
+description(_("ASAP deformation is performed when TRUE, ARAP deformation otherwise"))
 
-gegl_chant_boolean (mls_weights, _("MLS Weights"),
-                    FALSE,
-                    _("Use MLS weights"))
+property_boolean (mls_weights, _("MLS Weights"), FALSE)
+description(_("Use MLS weights"))
 
-gegl_chant_double  (mls_weights_alpha, _("MLS Weights Alpha"),
-                    0.1, 2.0, 1.0,
-                    _("Alpha parameter of MLS weights"))
+property_double  (mls_weights_alpha, _("MLS Weights Alpha"), 1.0)
+value_range (0.1, 2.0)
+description(_("Alpha parameter of MLS weights"))
 
-gegl_chant_boolean (preserve_model, _("Preserve Model"),
-                    FALSE,
-                    _("When TRUE the model will not be freed"))
+property_boolean (preserve_model, _("Preserve Model"), FALSE)
+description(_("When TRUE the model will not be freed"))
 
-gegl_chant_enum    (sampler_type, _("Sampler"),
+property_enum (sampler_type, _("Sampler"),
                     GeglSamplerType, gegl_sampler_type,
-                    GEGL_SAMPLER_CUBIC,
-                    _("Sampler used internally"))
+                    GEGL_SAMPLER_CUBIC)
+description(_("Sampler used internally"))
 #else
 
-#define GEGL_CHANT_TYPE_FILTER
-#define GEGL_CHANT_C_FILE       "npd.c"
+#define GEGL_OP_FILTER
+#define GEGL_OP_C_SOURCE npd.c
 
-#include "gegl-chant.h"
+#include "gegl-op.h"
 #include <stdio.h>
 #include <math.h>
 #include <npd/npd.h>
@@ -76,14 +73,14 @@ typedef struct
 static void
 prepare (GeglOperation *operation)
 {
-  GeglChantO    *o = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   NPDProperties *props;
-  if (o->chant_data == NULL)
+  if (o->user_data == NULL)
     {
       props = g_new (NPDProperties, 1);
       props->first_run      = TRUE;
       props->model          = o->model;
-      o->chant_data         = props;
+      o->user_data         = props;
     }
 
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
@@ -147,9 +144,9 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglChantO    *o          = GEGL_CHANT_PROPERTIES (operation);
+  GeglProperties*o          = GEGL_PROPERTIES (operation);
   const Babl    *format_f   = babl_format ("RGBA float");
-  NPDProperties *props      = o->chant_data;
+  NPDProperties *props      = o->user_data;
   NPDModel      *model      = props->model;
   gboolean       have_model = model != NULL;
   NPDDisplay    *display    = NULL;
@@ -217,11 +214,11 @@ process (GeglOperation       *operation,
 static void
 finalize (GObject *object)
 {
-  GeglChantO *o = GEGL_CHANT_PROPERTIES (object);
+  GeglProperties *o = GEGL_PROPERTIES (object);
 
-  if (o->chant_data)
+  if (o->user_data)
     {
-      NPDProperties *props   = o->chant_data;
+      NPDProperties *props   = o->user_data;
       NPDModel      *model   = props->model;
       NPDDisplay    *display = model->display;
 
@@ -233,14 +230,14 @@ finalize (GObject *object)
           g_free (model);
         }
 
-      o->chant_data = NULL;
+      o->user_data = NULL;
     }
 
-  G_OBJECT_CLASS (gegl_chant_parent_class)->finalize (object);
+  G_OBJECT_CLASS (gegl_op_parent_class)->finalize (object);
 }
 
 static void
-gegl_chant_class_init (GeglChantClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass       *operation_class;
   GeglOperationFilterClass *filter_class;
