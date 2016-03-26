@@ -34,6 +34,9 @@ AM_LDFLAGS = \
 bin_PROGRAMS = gegl-imgcmp
 noinst_PROGRAMS = introspect operation_reference detect_opencl gegl-tester
 
+gegl_tester_SOURCES = \
+	gegl-tester.c
+
 if HAVE_EXIV2
 noinst_PROGRAMS     += exp_combine 
 exp_combine_SOURCES  = exp_combine.cpp

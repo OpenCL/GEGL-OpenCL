@@ -39,8 +39,6 @@ gegl_SOURCES =			\
 	gegl-path-smooth.c	\
 	gegl-path-smooth.h
 
-gegl_tester_SOURCES = \
-	gegl-tester.c
 
 if HAVE_MRG
 if HAVE_GEXIV2
