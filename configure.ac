@@ -1008,7 +1008,8 @@ PKG_CHECK_MODULES(LUA, lua >= lua_required_version,
   [PKG_CHECK_MODULES(LUA, lua5.1 >= lua_required_version,
      have_lua="yes",
      [PKG_CHECK_MODULES(LUA, luajit >= 2.0.4,
-     have_lua="no  (usable lua not found)")])])
+      have_lua="yes (luajit)",
+      have_lua="no  (usable lua not found)")])])
 fi
 
 AM_CONDITIONAL(HAVE_LUA, test "$have_lua" = "yes")
