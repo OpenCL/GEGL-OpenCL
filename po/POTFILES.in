@@ -66,7 +66,6 @@ operations/common/lens-distortion.c
 operations/common/lens-flare.c
 operations/common/levels.c
 operations/common/linear-gradient.c
-operations/common/load.c
 operations/common/magick-load.c
 operations/common/mantiuk06.c
 operations/common/map-absolute.c
@@ -145,6 +144,7 @@ operations/core/cast-format.c
 operations/core/clone.c
 operations/core/convert-format.c
 operations/core/crop.c
+operations/core/load.c
 operations/core/nop.c
 operations/external/ff-load.c
 operations/external/ff-save.c

@@ -68,7 +68,7 @@ property_format (format, _("Babl Format"), NULL)
 
 #include "gegl-op.h"
 #include <gegl-buffer-cl-iterator.h>
-#include <gegl-debug.h>
+#include <../../gegl/gegl-debug.h>
 
 static void
 prepare (GeglOperation *operation)

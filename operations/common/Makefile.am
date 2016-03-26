@@ -74,7 +74,6 @@ op_LTLIBRARIES = \
 	lens-flare.la \
 	levels.la \
 	linear-gradient.la \
-	load.la \
 	magick-load.la \
 	mantiuk06.la \
 	map-absolute.la \
