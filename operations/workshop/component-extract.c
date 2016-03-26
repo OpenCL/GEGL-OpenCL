@@ -138,62 +138,62 @@ process (GeglOperation       *operation,
 
   switch (o->component)
     {
-      case GEGL_COMPONENT_EXTRACT_RGB_RED:
-      case GEGL_COMPONENT_EXTRACT_HUE:
-      case GEGL_COMPONENT_EXTRACT_CMYK_CYAN:
-      case GEGL_COMPONENT_EXTRACT_YCBCR_Y:
-      case GEGL_COMPONENT_EXTRACT_LAB_L:
-        component_index = 0;
+    case GEGL_COMPONENT_EXTRACT_RGB_RED:
+    case GEGL_COMPONENT_EXTRACT_HUE:
+    case GEGL_COMPONENT_EXTRACT_CMYK_CYAN:
+    case GEGL_COMPONENT_EXTRACT_YCBCR_Y:
+    case GEGL_COMPONENT_EXTRACT_LAB_L:
+      component_index = 0;
 
-        if (o->component == GEGL_COMPONENT_EXTRACT_LAB_L)
-          {
-            max = 100.0;
-          }
+      if (o->component == GEGL_COMPONENT_EXTRACT_LAB_L)
+        {
+          max = 100.0;
+        }
       break;
 
-      case GEGL_COMPONENT_EXTRACT_RGB_GREEN:
-      case GEGL_COMPONENT_EXTRACT_HSV_SATURATION:
-      case GEGL_COMPONENT_EXTRACT_HSL_SATURATION:
-      case GEGL_COMPONENT_EXTRACT_CMYK_MAGENTA:
-      case GEGL_COMPONENT_EXTRACT_YCBCR_CB:
-      case GEGL_COMPONENT_EXTRACT_LAB_A:
-      case GEGL_COMPONENT_EXTRACT_ALPHA:
-        component_index = 1;
+    case GEGL_COMPONENT_EXTRACT_RGB_GREEN:
+    case GEGL_COMPONENT_EXTRACT_HSV_SATURATION:
+    case GEGL_COMPONENT_EXTRACT_HSL_SATURATION:
+    case GEGL_COMPONENT_EXTRACT_CMYK_MAGENTA:
+    case GEGL_COMPONENT_EXTRACT_YCBCR_CB:
+    case GEGL_COMPONENT_EXTRACT_LAB_A:
+    case GEGL_COMPONENT_EXTRACT_ALPHA:
+      component_index = 1;
 
-        if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CB)
-          {
-            min = -0.5;
-            max =  0.5;
-          }
-        else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_A)
-          {
-            min = -128.0;
-            max =  127;
-          }
+      if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CB)
+        {
+          min = -0.5;
+          max =  0.5;
+        }
+      else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_A)
+        {
+          min = -128.0;
+          max =  127;
+        }
       break;
 
-      case GEGL_COMPONENT_EXTRACT_RGB_BLUE:
-      case GEGL_COMPONENT_EXTRACT_HSV_VALUE:
-      case GEGL_COMPONENT_EXTRACT_HSL_LIGHTNESS:
-      case GEGL_COMPONENT_EXTRACT_CMYK_YELLOW:
-      case GEGL_COMPONENT_EXTRACT_YCBCR_CR:
-      case GEGL_COMPONENT_EXTRACT_LAB_B:
-        component_index = 2;
+    case GEGL_COMPONENT_EXTRACT_RGB_BLUE:
+    case GEGL_COMPONENT_EXTRACT_HSV_VALUE:
+    case GEGL_COMPONENT_EXTRACT_HSL_LIGHTNESS:
+    case GEGL_COMPONENT_EXTRACT_CMYK_YELLOW:
+    case GEGL_COMPONENT_EXTRACT_YCBCR_CR:
+    case GEGL_COMPONENT_EXTRACT_LAB_B:
+      component_index = 2;
 
-        if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CR)
-          {
-            min = -0.5;
-            max =  0.5;
-          }
-        else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_B)
-          {
-            min = -128.0;
-            max =  127;
-          }
+      if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CR)
+        {
+          min = -0.5;
+          max =  0.5;
+        }
+      else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_B)
+        {
+          min = -128.0;
+          max =  127;
+        }
       break;
 
-      case GEGL_COMPONENT_EXTRACT_CMYK_KEY:
-        component_index = 3;
+    case GEGL_COMPONENT_EXTRACT_CMYK_KEY:
+      component_index = 3;
       break;
     }
 
