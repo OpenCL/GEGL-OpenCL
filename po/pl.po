@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-25 16:40+0100\n"
-"PO-Revision-Date: 2016-03-25 16:42+0100\n"
+"POT-Creation-Date: 2016-03-27 16:05+0200\n"
+"PO-Revision-Date: 2016-03-27 16:07+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -1597,7 +1597,7 @@ msgstr "Tryb przesunięcia"
 msgid "Mode of displacement"
 msgstr "Tryb przesunięcia"
 
-#: ../operations/common/displace.c:37 ../operations/external/npd.c:50
+#: ../operations/common/displace.c:37 ../operations/external/npd.c:47
 #: ../operations/transform/transform-core.c:193
 #: ../operations/workshop/ditto.c:27
 msgid "Sampler"
@@ -2333,9 +2333,10 @@ msgid "The orientation of the blur - hor/ver"
 msgstr "Orientacja rozmycia — pionowa/pozioma"
 
 #: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:30
+#: ../operations/common/gegl-buffer-save-op.c:24
 #: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:29
+#: ../operations/common/save.c:25 ../operations/core/load.c:30
+#: ../operations/external/exr-save.cc:24 ../operations/external/ff-load.c:29
 #: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
 #: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
 #: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
@@ -2344,7 +2345,7 @@ msgstr "Orientacja rozmycia — pionowa/pozioma"
 #: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
 #: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
 #: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:25
-#: ../operations/workshop/external/gluas.c:45
+#: ../operations/workshop/external/gluas.c:34
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "File"
 msgstr "Plik"
@@ -2513,7 +2514,7 @@ msgstr ""
 msgid "Node"
 msgstr "Węzeł"
 
-#: ../operations/common/introspect.c:161
+#: ../operations/common/introspect.c:159
 msgid "GEGL graph visualizer."
 msgstr "Wizualizacja wykresów GEGL."
 
@@ -2706,31 +2707,12 @@ msgstr "Liniowy gradient"
 msgid "Linear gradient renderer"
 msgstr "Liniowe renderowanie gradientów"
 
-#: ../operations/common/load.c:31 ../operations/common/magick-load.c:27
+#: ../operations/common/magick-load.c:27 ../operations/core/load.c:31
 #: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
 #: ../operations/external/raw-load.c:28 ../operations/external/rgbe-load.c:27
 #: ../operations/workshop/rawbayer-load.c:26
 msgid "Path of file to load."
 msgstr "Ścieżka pliku do wczytania."
-
-#: ../operations/common/load.c:32 ../operations/external/jp2-load.c:27
-#: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
-#: ../operations/external/svg-load.c:27 ../operations/external/tiff-load.c:27
-#: ../operations/external/webp-load.c:27
-msgid "URI"
-msgstr "Adres URI"
-
-#: ../operations/common/load.c:33
-msgid "URI of file to load."
-msgstr "Adres URI pliku do wczytania."
-
-#: ../operations/common/load.c:227
-msgid ""
-"Multipurpose file loader, that uses other native handlers, and fallback "
-"conversion using Image Magick's convert."
-msgstr ""
-"Wielozadaniowe wczytywanie plików używające natywnych modułów obsługi "
-"plików, i zapasowo używające konwersji używając programu Image Magick."
 
 #: ../operations/common/magick-load.c:137
 msgid "Image Magick wrapper using the png op."
@@ -4864,6 +4846,25 @@ msgstr "Kadruj"
 msgid "Crop a buffer"
 msgstr "Kadruj bufor"
 
+#: ../operations/core/load.c:32 ../operations/external/jp2-load.c:27
+#: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
+#: ../operations/external/svg-load.c:27 ../operations/external/tiff-load.c:27
+#: ../operations/external/webp-load.c:27
+msgid "URI"
+msgstr "Adres URI"
+
+#: ../operations/core/load.c:33
+msgid "URI of file to load."
+msgstr "Adres URI pliku do wczytania."
+
+#: ../operations/core/load.c:227
+msgid ""
+"Multipurpose file loader, that uses other native handlers, and fallback "
+"conversion using Image Magick's convert."
+msgstr ""
+"Wielozadaniowe wczytywanie plików używające natywnych modułów obsługi "
+"plików, i zapasowo używające konwersji używając programu Image Magick."
+
 #: ../operations/core/nop.c:79
 msgid "No Operation"
 msgstr "Brak działania"
@@ -4871,6 +4872,14 @@ msgstr "Brak działania"
 #: ../operations/core/nop.c:81
 msgid "No operation (can be used as a routing point)"
 msgstr "Brak działania (może być używane jako punkt trasy)"
+
+#: ../operations/external/exr-save.cc:25
+msgid "path of file to write to."
+msgstr "ścieżka pliku do zapisania."
+
+#: ../operations/external/exr-save.cc:27
+msgid "tile size to use."
+msgstr "używany rozmiar kafla."
 
 #: ../operations/external/ff-load.c:30
 msgid "Path of video file to load"
@@ -5337,42 +5346,42 @@ msgstr "Liczba iteracji deformacji"
 msgid "ASAP Deformation"
 msgstr "Deformacja ASAP"
 
-#: ../operations/external/npd.c:36
+#: ../operations/external/npd.c:35
 msgid "ASAP deformation is performed when TRUE, ARAP deformation otherwise"
 msgstr ""
 "Deformacja ASAP jest wykonywana, kiedy wynosi „true”, w przeciwnym wypadku "
 "wykonana zostanie deformacja ARAP"
 
-#: ../operations/external/npd.c:38
+#: ../operations/external/npd.c:37
 msgid "MLS Weights"
 msgstr "Wagi MLS"
 
-#: ../operations/external/npd.c:40
+#: ../operations/external/npd.c:38
 msgid "Use MLS weights"
 msgstr "Wagi MLS"
 
-#: ../operations/external/npd.c:42
+#: ../operations/external/npd.c:40
 msgid "MLS Weights Alpha"
 msgstr "Alfa wag MLS"
 
-#: ../operations/external/npd.c:44
+#: ../operations/external/npd.c:42
 msgid "Alpha parameter of MLS weights"
 msgstr "Parametr alfy wag MLS"
 
-#: ../operations/external/npd.c:46
+#: ../operations/external/npd.c:44
 msgid "Preserve Model"
 msgstr "Model zachowywania"
 
-#: ../operations/external/npd.c:48
+#: ../operations/external/npd.c:45
 msgid "When TRUE the model will not be freed"
 msgstr "Kiedy wynosi „true”, to model nie będzie zwalniany"
 
-#: ../operations/external/npd.c:53 ../operations/transform/transform-core.c:194
+#: ../operations/external/npd.c:50 ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Wewnętrznie używana próbka"
 
-#: ../operations/external/npd.c:258
+#: ../operations/external/npd.c:255
 msgid "Performs n-point image deformation"
 msgstr "Wykonuje zniekształcenie obrazu za pomocą wielu punktów"
 
@@ -6385,11 +6394,11 @@ msgstr "Wyjście liniowe"
 msgid "Use linear output instead of gamma corrected"
 msgstr "Użycie liniowego wyjścia zamiast poprawionej gammy"
 
-#: ../operations/workshop/component-extract.c:264
+#: ../operations/workshop/component-extract.c:240
 msgid "Extract Component"
 msgstr "Wydobądź składową"
 
-#: ../operations/workshop/component-extract.c:266
+#: ../operations/workshop/component-extract.c:242
 msgid "Extract a color model component"
 msgstr "Wydobądź składową modelu kolorów"
 
@@ -6436,29 +6445,29 @@ msgstr ""
 "Testuj działanie, aby wykonać odwzorowanie 1:1 wejścia do wyjścia podczas "
 "samplowania"
 
-#: ../operations/workshop/external/gluas.c:41
+#: ../operations/workshop/external/gluas.c:30
 msgid "Script"
 msgstr "Skrypt"
 
-#: ../operations/workshop/external/gluas.c:42
+#: ../operations/workshop/external/gluas.c:31
 msgid "The lua script containing the implementation of this operation."
 msgstr "Skrypt języka Lua zawierający implementację tego działania."
 
-#: ../operations/workshop/external/gluas.c:46
+#: ../operations/workshop/external/gluas.c:35
 msgid "a stored lua script on disk implementing an operation."
 msgstr ""
 "przechowywany na dysku skrypt języka Lua zawierający implementację tego "
 "działania."
 
-#: ../operations/workshop/external/gluas.c:48
+#: ../operations/workshop/external/gluas.c:37
 msgid "User value"
 msgstr "Wartość użytkownika"
 
-#: ../operations/workshop/external/gluas.c:49
+#: ../operations/workshop/external/gluas.c:38
 msgid "(appears in the global variable 'user_value' in lua."
 msgstr "(pojawia się w globalnej zmiennej „user_value” w języku Lua."
 
-#: ../operations/workshop/external/gluas.c:989
+#: ../operations/workshop/external/gluas.c:991
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
