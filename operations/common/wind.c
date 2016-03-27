@@ -71,7 +71,6 @@ property_int (strength, _("Strength"), 10)
 #define GEGL_OP_C_SOURCE wind.c
 
 #include "gegl-op.h"
-#include "gegl-config.h"
 #include <math.h>
 
 #define COMPARE_WIDTH    3
@@ -97,6 +96,8 @@ thread_process (gpointer thread_data, gpointer unused)
     data->success = FALSE;
   g_atomic_int_add (data->pending, -1);
 }
+
+int gegl_config_threads (void);
 
 static GThreadPool *
 thread_pool (void)
@@ -441,6 +442,7 @@ get_required_for_output (GeglOperation       *operation,
   return result;
 }
 
+
 static gboolean
 operation_process (GeglOperation        *operation,
                    GeglOperationContext *context,
@@ -471,7 +473,7 @@ operation_process (GeglOperation        *operation,
   {
     gint threads = gegl_config_threads ();
     GThreadPool *pool = thread_pool ();
-    ThreadData thread_data[GEGL_MAX_THREADS];
+    ThreadData thread_data[32];
     gint pending = threads;
 
     if (o->direction == GEGL_WIND_DIRECTION_LEFT ||

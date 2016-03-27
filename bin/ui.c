@@ -209,49 +209,44 @@ static void load_path (State *o);
 
 static void go_next (State *o);
 static void go_prev (State *o);
-static void go_parent (State *o);
-
-static void get_coords (State *o, float screen_x, float screen_y, float *gegl_x, float *gegl_y);
-static void leave_editor (State *o);
-static void drag_preview (MrgEvent *e);
-static void load_into_buffer (State *o, const char *path);
-static GeglNode *locate_node (State *o, const char *op_name);
-static void zoom_to_fit (State *o);
-static void center (State *o);
-static void zoom_to_fit_buffer (State *o);
-
-static void go_next_cb   (MrgEvent *event, void *data1, void *data2);
-static void go_prev_cb   (MrgEvent *event, void *data1, void *data2);
-static void go_parent_cb (MrgEvent *event, void *data1, void *data2);
-static void zoom_fit_cb  (MrgEvent *e, void *data1, void *data2);
-static void pan_left_cb  (MrgEvent *event, void *data1, void *data2);
-static void pan_right_cb (MrgEvent *event, void *data1, void *data2);
-static void pan_down_cb  (MrgEvent *event, void *data1, void *data2);
-static void pan_up_cb    (MrgEvent *event, void *data1, void *data2);
-static void preview_more_cb (MrgEvent *event, void *data1, void *data2);
-static void preview_less_cb (MrgEvent *event, void *data1, void *data2);
-static void zoom_1_cb               (MrgEvent *event, void *data1, void *data2);
-static void zoom_in_cb              (MrgEvent *event, void *data1, void *data2);
-static void zoom_out_cb             (MrgEvent *event, void *data1, void *data2);
-static void toggle_actions_cb       (MrgEvent *event, void *data1, void *data2);
-static void toggle_fullscreen_cb    (MrgEvent *event, void *data1, void *data2);
-static void activate_op_cb          (MrgEvent *event, void *data1, void *data2);
-static void disable_filter_cb       (MrgEvent *event, void *data1, void *data2);
-static void apply_filter_cb         (MrgEvent *event, void *data1, void *data2);
-static void discard_cb              (MrgEvent *event, void *data1, void *data2);
-static void save_cb                 (MrgEvent *event, void *data1, void *data2);
-static void toggle_show_controls_cb (MrgEvent *event, void *data1, void *data2);
-
-static void gegl_ui       (Mrg *mrg, void *data);
-int         mrg_ui_main   (int argc, char **argv, char **ops);
-void        gegl_meta_set (const char *path, const char *meta_data);
-char *      gegl_meta_get (const char *path); 
-
-
-static void on_viewer_motion (MrgEvent *e, void *data1, void *data2);
-
-int gegl_str_has_image_suffix (char *path);
-int gegl_str_has_video_suffix (char *path);
+static void go_parent                 (State *o);
+static void get_coords                (State *o, float  screen_x, float screen_y,
+                                                 float *gegl_x,   float *gegl_y);
+static void leave_editor              (State *o);
+static void drag_preview              (MrgEvent *e);
+static void load_into_buffer          (State *o, const char *path);
+static GeglNode *locate_node          (State *o, const char *op_name);
+static void zoom_to_fit               (State *o);
+static void center                    (State *o);
+static void zoom_to_fit_buffer        (State *o);
+static void go_next_cb                (MrgEvent *event, void *data1, void *data2);
+static void go_prev_cb                (MrgEvent *event, void *data1, void *data2);
+static void go_parent_cb              (MrgEvent *event, void *data1, void *data2);
+static void zoom_fit_cb               (MrgEvent *e, void *data1, void *data2);
+static void pan_left_cb               (MrgEvent *event, void *data1, void *data2);
+static void pan_right_cb              (MrgEvent *event, void *data1, void *data2);
+static void pan_down_cb               (MrgEvent *event, void *data1, void *data2);
+static void pan_up_cb                 (MrgEvent *event, void *data1, void *data2);
+static void preview_more_cb           (MrgEvent *event, void *data1, void *data2);
+static void preview_less_cb           (MrgEvent *event, void *data1, void *data2);
+static void zoom_1_cb                 (MrgEvent *event, void *data1, void *data2);
+static void zoom_in_cb                (MrgEvent *event, void *data1, void *data2);
+static void zoom_out_cb               (MrgEvent *event, void *data1, void *data2);
+static void toggle_actions_cb         (MrgEvent *event, void *data1, void *data2);
+static void toggle_fullscreen_cb      (MrgEvent *event, void *data1, void *data2);
+static void activate_op_cb            (MrgEvent *event, void *data1, void *data2);
+static void disable_filter_cb         (MrgEvent *event, void *data1, void *data2);
+static void apply_filter_cb           (MrgEvent *event, void *data1, void *data2);
+static void discard_cb                (MrgEvent *event, void *data1, void *data2);
+static void save_cb                   (MrgEvent *event, void *data1, void *data2);
+static void toggle_show_controls_cb   (MrgEvent *event, void *data1, void *data2);
+static void gegl_ui                   (Mrg *mrg, void *data);
+int         mrg_ui_main               (int argc, char **argv, char **ops);
+void        gegl_meta_set             (const char *path, const char *meta_data);
+char *      gegl_meta_get             (const char *path); 
+static void on_viewer_motion          (MrgEvent *e, void *data1, void *data2);
+int         gegl_str_has_image_suffix (char *path);
+int         gegl_str_has_video_suffix (char *path);
 
 static int str_has_visual_suffix (char *path)
 {
@@ -378,7 +373,6 @@ int mrg_ui_main (int argc, char **argv, char **ops)
       return -1;
     }
 
-
   load_path (&o);
   mrg_set_ui (mrg, gegl_ui, &o);
   hack_state = &o;  
@@ -433,6 +427,7 @@ static void on_pan_drag (MrgEvent *e, void *data1, void *data2)
     o->v -= (e->delta_y );
     mrg_queue_draw (e->mrg, NULL);
   }
+  mrg_event_stop_propagate (e);
   drag_preview (e);
 }
 
@@ -449,6 +444,7 @@ static void prop_double_drag_cb (MrgEvent *e, void *data1, void *data2)
   gegl_node_set (node, pspec->name, value, NULL);
    
   drag_preview (e);
+  mrg_event_stop_propagate (e);
 
   mrg_queue_draw (e->mrg, NULL);
 }
@@ -871,10 +867,11 @@ static void ui_viewer (State *o)
   Mrg *mrg = o->mrg;
   cairo_t *cr = mrg_cr (mrg);
   cairo_rectangle (cr, 0,0, mrg_width(mrg), mrg_height(mrg));
+#if 0
   mrg_listen (mrg, MRG_DRAG, on_pan_drag, o, NULL);
   mrg_listen (mrg, MRG_MOTION, on_viewer_motion, o, NULL);
-
   mrg_listen (mrg, MRG_SCROLL, scroll_cb, o, NULL);
+#endif
 
   cairo_scale (cr, mrg_width(mrg), mrg_height(mrg));
   cairo_new_path (cr);
@@ -1029,6 +1026,12 @@ static void gegl_ui (Mrg *mrg, void *data)
     ui_debug_op_chain (o);
 #endif
   }
+
+  cairo_rectangle (mrg_cr (mrg), 0,0, mrg_width(mrg), mrg_height(mrg));
+  mrg_listen (mrg, MRG_DRAG, on_pan_drag, o, NULL);
+  mrg_listen (mrg, MRG_MOTION, on_viewer_motion, o, NULL);
+  mrg_listen (mrg, MRG_SCROLL, scroll_cb, o, NULL);
+  cairo_new_path (mrg_cr (mrg));
 
   if (o->show_actions)
   {
