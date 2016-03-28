@@ -24,8 +24,7 @@
 
 #define THRESHOLD_SCRIPT \
 "r,g,b = get_rgb (x,y)\n"\
-"r2,g2,b2 = get_value (0, x+2,y)\n"\
-"set_rgb (x,y,r+g2,g+r2,b+b2)\n"\
+"set_rgb (x,y,g,g,g)\n"\
 
 property_string (script, _("Script"), THRESHOLD_SCRIPT)
     description(_("The lua script containing the implementation of this operation."))
