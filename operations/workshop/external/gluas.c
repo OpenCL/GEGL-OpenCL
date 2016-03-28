@@ -31,6 +31,10 @@ property_string (script, _("Script"), THRESHOLD_SCRIPT)
     description(_("The lua script containing the implementation of this operation."))
     ui_meta    ("multiline", "true")
 
+property_string (error, _("Lua error"), "")
+    description(_("parse/compile error, if any"))
+    ui_meta    ("error", "true")
+
 property_file_path (file, _("File"), "")
     description(_("a stored lua script on disk implementing an operation."))
 
@@ -206,7 +210,7 @@ drawable_lua_process (GeglOperation       *op,
         status = lua_pcall (L, 0, LUA_MULTRET, 0);
 
       if (status != 0)
-        g_warning ("lua error: %s", lua_tostring (L, -1));
+        gegl_node_set (op->node, "error", lua_tostring (L, -1), NULL);
     }
 }
 

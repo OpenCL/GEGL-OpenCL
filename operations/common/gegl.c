@@ -26,7 +26,7 @@ property_string (string, _("pipeline"), "invert")
     ui_meta ("multiline", "true")
 
 property_string (error, _("error"), "")
-ui_meta ("error", "true")
+    ui_meta ("error", "true")
 
 #else
 
