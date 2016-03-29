@@ -16,6 +16,8 @@
  * Copyright 2006 Øyvind Kolås <pippin@gimp.org>
  */
 
+#include "config.h"
+
 #ifdef GEGL_PROPERTIES
 
    /* no properties */
