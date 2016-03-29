@@ -310,10 +310,10 @@ gegl_color_get_rgba (GeglColor *self,
 {
   g_return_if_fail (GEGL_IS_COLOR (self));
 
-  *r = self->priv->rgba_color[0];
-  *g = self->priv->rgba_color[1];
-  *b = self->priv->rgba_color[2];
-  *a = self->priv->rgba_color[3];
+  if (r) *r = self->priv->rgba_color[0];
+  if (g) *g = self->priv->rgba_color[1];
+  if (b) *b = self->priv->rgba_color[2];
+  if (a) *a = self->priv->rgba_color[3];
 }
 
 static void
