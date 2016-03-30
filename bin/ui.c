@@ -116,6 +116,7 @@ struct _State {
   GeglNode   *active;
 
   GeglNode   *rotate;
+
   int         rev;
   float       u, v;
   float       scale;
@@ -378,7 +379,8 @@ int mrg_ui_main (int argc, char **argv, char **ops)
   hack_state = &o;  
   on_viewer_motion (NULL, &o, NULL);
 
-  o.active = gegl_node_get_producer (o.sink, "input", NULL);
+  if (o.ops)
+    o.active = gegl_node_get_producer (o.sink, "input", NULL);
 
   mrg_main (mrg);
 
@@ -475,7 +477,7 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
   mrg_set_edge_left (mrg, mrg_width (mrg) * 0.1);
   mrg_set_edge_top  (mrg, mrg_height (mrg) * 0.1);
   mrg_set_font_size (mrg, mrg_height (mrg) * 0.07);
-  mrg_set_style (mrg, "color:white; background-color: transparent");
+  mrg_set_style (mrg, "color:white; background-color: rgba(0,0,0,0.5)");
 
   cairo_save (cr);
   mrg_printf (mrg, "%s\n", op_name);
@@ -492,14 +494,16 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
       {
         if (g_type_is_a (pspecs[i]->value_type, G_TYPE_DOUBLE) ||
             g_type_is_a (pspecs[i]->value_type, G_TYPE_INT) ||
-            g_type_is_a (pspecs[i]->value_type, G_TYPE_STRING) ||
             g_type_is_a (pspecs[i]->value_type, G_TYPE_BOOLEAN))
           tot_pos ++;
+        else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_STRING))
+          tot_pos +=3;
       }
 
       for (gint i = 0; i < n_props; i++)
       {
-        mrg_set_xy (mrg, mrg_em(mrg), mrg_height (mrg) - mrg_em (mrg) * ((tot_pos-pos_no)));
+        mrg_set_xy (mrg, mrg_em(mrg),
+                    mrg_height (mrg) - mrg_em (mrg) * ((tot_pos-pos_no)));
 
         if (g_type_is_a (pspecs[i]->value_type, G_TYPE_DOUBLE))
         {
@@ -528,12 +532,6 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
         }
         else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_INT))
         {
-#if 0
-          gint value;
-          gegl_node_get (node, pspecs[i]->name, &value, NULL);
-          mrg_printf (mrg, "%s:%i\n", pspecs[i]->name, value);
-          pos_no ++;
-#else
           float xpos;
           GeglParamSpecInt *geglspec = (void*)pspecs[i];
           gint value;
@@ -556,15 +554,15 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
 
           mrg_printf (mrg, "%s:%i\n", pspecs[i]->name, value);
           pos_no ++;
-#endif
         }
         else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_STRING))
         {
           char *value = NULL;
           gegl_node_get (node, pspecs[i]->name, &value, NULL);
-          pos_no ++;
+          pos_no +=3;
           mrg_printf (mrg, "%s:%s\n", pspecs[i]->name, value);
-          if (value) g_free (value);
+          if (value)
+            g_free (value);
         }
         else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_BOOLEAN))
         {
