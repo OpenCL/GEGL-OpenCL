@@ -93,7 +93,6 @@ static void sdl_add_audio_sample (int sample_pos, float left, float right)
 
 static int audio_started = 0;
 
-
 /*  this structure contains the full application state, and is what
  *  re-renderings of the UI is directly based on.
  */
@@ -101,12 +100,9 @@ typedef struct _State State;
 struct _State {
   void      (*ui) (Mrg *mrg, void *state);
   Mrg        *mrg;
-
   char       *path;
   char       *save_path;
-
   GList      *paths;
-
   GeglBuffer *buffer;
   GeglNode   *gegl;
   GeglNode   *sink;
@@ -114,36 +110,26 @@ struct _State {
   GeglNode   *load;
   GeglNode   *save;
   GeglNode   *active;
-
   GeglNode   *rotate;
-
   int         rev;
   float       u, v;
   float       scale;
   int         show_actions;
   int         show_controls;
-
   float       render_quality;
   float       preview_quality;
-
   int         controls_timeout;
-
   char      **ops; // the operations part of the commandline, if any
-
   float       slide_pause;
   int         slide_enabled;
   int         slide_timeout;
-
   GeglNode   *gegl_decode;
   GeglNode   *decode_load;
   GeglNode   *decode_store;
-
   int         is_video;
   int         frame_no;
-
   int         prev_frame_played;
 };
-
 
 typedef struct ActionData {
   const char *label;

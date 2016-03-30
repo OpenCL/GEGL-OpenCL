@@ -28,6 +28,7 @@
 #include "property-types/gegl-paramspecs.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
+#include "gegl-audio-fragment.h"
 
 #ifdef G_OS_WIN32
 #define realpath(a, b)    _fullpath (b, a, _MAX_PATH)
@@ -930,6 +931,12 @@ serialize_properties (SerializeState *ss,
               else
                 value = "";
               xml_param (ss, indent + 2, properties[i]->name, value);
+            }
+          else if (properties[i]->value_type == GEGL_TYPE_AUDIO_FRAGMENT)
+            {
+            }
+          else if (properties[i]->value_type == GEGL_TYPE_BUFFER)
+            {
             }
           else
             {

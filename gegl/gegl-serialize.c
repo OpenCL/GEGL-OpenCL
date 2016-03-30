@@ -49,8 +49,16 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
         {
           value = eq + 1;
           value[-1] = '\0';
-          gegl_curve_add_point (curve, g_strtod (key, NULL),
-                                       g_strtod (value, NULL));
+          if (strstr (value, "rel"))
+          {
+            gegl_curve_add_point (curve, g_strtod (key, NULL),
+              g_strtod (value, NULL) * gegl_node_get_bounding_box (iter[0]).height);
+          }
+          else
+          {
+            gegl_curve_add_point (curve, g_strtod (key, NULL),
+                                         g_strtod (value, NULL));
+          }
         }
         else
         {
@@ -74,7 +82,7 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
 
           gegl_node_set (new, prop, gegl_curve_calc_value (
               g_object_get_qdata (G_OBJECT (new),
-                  g_quark_from_static_string(prop)), time), NULL);
+                  g_quark_from_string(prop)), time), NULL);
           /* set interpolated values to initially passed in time */
 
           in_keyframes = 0;
@@ -101,7 +109,7 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
             g_free (prop);
           prop = g_strdup (key);
 
-          g_object_set_qdata_full (G_OBJECT (new), g_quark_from_static_string(key), curve, g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (new), g_quark_from_string(key), curve, g_object_unref);
 
           g_free (key);
         }
@@ -171,12 +179,27 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
                 g_type_is_a (target_type, G_TYPE_FLOAT) ||
                 g_type_is_a (target_type, G_TYPE_INT))
               {
-                if (g_type_is_a (target_type, G_TYPE_INT))
-                  gegl_node_set (iter[level], key, 
-                     (int)g_strtod (value, NULL), NULL);
+                if (strstr (value, "rel"))
+                {
+                   g_object_set_qdata_full (G_OBJECT (new), g_quark_from_string(key), g_strdup (value), g_free);
+
+                  if (g_type_is_a (target_type, G_TYPE_INT))
+                    gegl_node_set (iter[level], key, 
+                       (int)(g_strtod (value, NULL) * gegl_node_get_bounding_box (iter[0]).height), NULL);
+                  else
+                    gegl_node_set (iter[level], key, 
+                       g_strtod (value, NULL) * gegl_node_get_bounding_box (iter[0]).height, NULL);
+
+                }
                 else
-                  gegl_node_set (iter[level], key, 
-                     g_strtod (value, NULL), NULL);
+                {
+                  if (g_type_is_a (target_type, G_TYPE_INT))
+                    gegl_node_set (iter[level], key, 
+                       (int)g_strtod (value, NULL), NULL);
+                  else
+                    gegl_node_set (iter[level], key, 
+                       g_strtod (value, NULL), NULL);
+                }
               }
             else if (g_type_is_a (target_type, G_TYPE_BOOLEAN))
             {
@@ -208,8 +231,8 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
                 }
               else
                 {
-              /* warn, but try to get a valid nick out of the old-style
-               * value name
+              /* warn, but try to get a valid nick out of the old-style value
+               * name
                */
                 gchar *nick;
                 gchar *c;
@@ -327,7 +350,6 @@ gchar *gegl_serialize (GeglNode *start, GeglNode *end)
     {
       GString *s2 = g_string_new ("");
       g_string_append_printf (s2, " %s", gegl_node_get_operation (iter));
-
       {
         gint i;
         guint n_properties;
