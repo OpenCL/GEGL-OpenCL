@@ -168,16 +168,22 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
             }
             else
             if (g_type_is_a (target_type, G_TYPE_DOUBLE) ||
-                g_type_is_a (target_type, G_TYPE_FLOAT))
+                g_type_is_a (target_type, G_TYPE_FLOAT) ||
+                g_type_is_a (target_type, G_TYPE_INT))
               {
-                double val = g_strtod (value, NULL);
-                gegl_node_set (iter[level], key, val, NULL);
+                if (g_type_is_a (target_type, G_TYPE_INT))
+                  gegl_node_set (iter[level], key, 
+                     (int)g_strtod (value, NULL), NULL);
+                else
+                  gegl_node_set (iter[level], key, 
+                     g_strtod (value, NULL), NULL);
               }
-            else if (g_type_is_a (target_type, G_TYPE_BOOLEAN)) {
-            if (!strcmp (value, "true") || !strcmp (value, "TRUE") ||
-                !strcmp (value, "YES") || !strcmp (value, "yes") ||
-                !strcmp (value, "y") || !strcmp (value, "Y") ||
-                !strcmp (value, "1") || !strcmp (value, "on"))
+            else if (g_type_is_a (target_type, G_TYPE_BOOLEAN))
+            {
+              if (!strcmp (value, "true") || !strcmp (value, "TRUE") ||
+                  !strcmp (value, "YES") || !strcmp (value, "yes") ||
+                  !strcmp (value, "y") || !strcmp (value, "Y") ||
+                  !strcmp (value, "1") || !strcmp (value, "on"))
               {
                 gegl_node_set (iter[level], key, TRUE, NULL);
               }
@@ -185,11 +191,6 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
               {
                 gegl_node_set (iter[level], key, FALSE, NULL);
               }
-            }
-            else if (g_type_is_a (target_type, G_TYPE_INT))
-            {
-              int val = g_strtod (value, NULL);
-              gegl_node_set (iter[level], key, val, NULL);
             }
             else if (target_type == GEGL_TYPE_COLOR)
             {
