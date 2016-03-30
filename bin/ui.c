@@ -153,13 +153,13 @@ typedef struct ActionData {
 /* white-list of operations useful for improving/altering photos
  */
 ActionData actions[]={
-  {"rotate",            10,  "gegl:rotate"},
-  {"crop",              20,  "gegl:crop"},
-  {"color temperature", 50,  "gegl:color-temperature"},
-  {"exposure",          60,  "gegl:exposure"},
-  //{"levels",            60,  "gegl:levels"},
-  //{"threshold",         70,  "gegl:threshold"},
-  {"unsharp-mask",         70,  "gegl:unsharp-mask"},
+  {"rotate",            10, "gegl:rotate"},
+  {"crop",              20, "gegl:crop"},
+  {"color temperature", 50, "gegl:color-temperature"},
+  {"exposure",          60, "gegl:exposure"},
+  //{"levels",          60, "gegl:levels"},
+  //{"threshold",       70, "gegl:threshold"},
+  {"unsharp-mask",      70, "gegl:unsharp-mask"},
   {NULL, 0, NULL}, /* sentinel */
 };
 
@@ -377,6 +377,9 @@ int mrg_ui_main (int argc, char **argv, char **ops)
   mrg_set_ui (mrg, gegl_ui, &o);
   hack_state = &o;  
   on_viewer_motion (NULL, &o, NULL);
+
+  o.active = gegl_node_get_producer (o.sink, "input", NULL);
+
   mrg_main (mrg);
 
   g_object_unref (o.gegl);
@@ -449,6 +452,23 @@ static void prop_double_drag_cb (MrgEvent *e, void *data1, void *data2)
   mrg_queue_draw (e->mrg, NULL);
 }
 
+static void prop_int_drag_cb (MrgEvent *e, void *data1, void *data2)
+{
+  GeglNode *node = data1;
+  GParamSpec *pspec = data2;
+  GeglParamSpecInt *gspec = data2;
+  gint value = 0.0;
+  float range = gspec->ui_maximum - gspec->ui_minimum;
+
+  value = e->x / mrg_width (e->mrg) * range + gspec->ui_minimum;
+  gegl_node_set (node, pspec->name, value, NULL);
+   
+  drag_preview (e);
+  mrg_event_stop_propagate (e);
+
+  mrg_queue_draw (e->mrg, NULL);
+}
+
 static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *node)
 {
   const gchar* op_name = gegl_node_get_operation (node);
@@ -508,10 +528,35 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
         }
         else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_INT))
         {
+#if 0
           gint value;
           gegl_node_get (node, pspecs[i]->name, &value, NULL);
           mrg_printf (mrg, "%s:%i\n", pspecs[i]->name, value);
           pos_no ++;
+#else
+          float xpos;
+          GeglParamSpecInt *geglspec = (void*)pspecs[i];
+          gint value;
+          gegl_node_get (node, pspecs[i]->name, &value, NULL);
+
+          cairo_rectangle (cr, 0,
+             mrg_height (mrg) - mrg_em (mrg) * ((tot_pos-pos_no+1)),
+             mrg_width (mrg), mrg_em(mrg));
+          cairo_set_source_rgba (cr, 0,0,0, 0.5);
+
+          mrg_listen (mrg, MRG_DRAG, prop_int_drag_cb, node,(void*)pspecs[i]);
+
+          cairo_fill (cr);
+          xpos = (value - geglspec->ui_minimum) / (1.0 + geglspec->ui_maximum - geglspec->ui_minimum);
+          cairo_rectangle (cr, xpos * mrg_width(mrg) - mrg_em(mrg)/4,
+              mrg_height (mrg) - mrg_em (mrg) * ((tot_pos-pos_no+1)),
+              mrg_em(mrg)/2, mrg_em(mrg));
+          cairo_set_source_rgba (cr, 1,1,1, 0.5);
+          cairo_fill (cr);
+
+          mrg_printf (mrg, "%s:%i\n", pspecs[i]->name, value);
+          pos_no ++;
+#endif
         }
         else if (g_type_is_a (pspecs[i]->value_type, G_TYPE_STRING))
         {
@@ -971,11 +1016,6 @@ static void gegl_ui (Mrg *mrg, void *data)
   if (o->is_video)
    {
      o->frame_no++;
-     if (g_getenv ("GEGL_UI_DEBUG_SEEK"))
-     {
-       if ((o->frame_no / 200) % 2 == 1)
-         o->frame_no+=600;
-     }
      fprintf (stderr, "\r%i", o->frame_no);
      gegl_node_set (o->load, "frame", o->frame_no, NULL);
      mrg_queue_draw (o->mrg, NULL);
@@ -983,11 +1023,11 @@ static void gegl_ui (Mrg *mrg, void *data)
 
   mrg_gegl_blit (mrg,
 		 0, 0,
-                 mrg_width (mrg), mrg_height (mrg),
+         mrg_width (mrg), mrg_height (mrg),
 		 o->sink,
 		 o->u, o->v,
 		 o->scale,
-                 o->render_quality);
+         o->render_quality);
 
   if (o->is_video)
   {
