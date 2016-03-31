@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-27 16:05+0200\n"
-"PO-Revision-Date: 2016-03-27 16:07+0200\n"
+"POT-Creation-Date: 2016-03-31 19:04+0200\n"
+"PO-Revision-Date: 2016-03-31 19:05+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -37,7 +37,7 @@ msgstr "Nie można odczytać pliku: %s"
 msgid "Invalid graph, abort.\n"
 msgstr "Nieprawidłowy wykres, przerywanie.\n"
 
-#: ../bin/gegl.c:348 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:353 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Nieznany tryb GeglOption: %d"
@@ -1897,11 +1897,11 @@ msgstr "Sigma wagi"
 msgid "Weight distribution sigma controlling response contributions"
 msgstr "Sigma dystrybucji wagi kontrolująca udział odpowiedzi"
 
-#: ../operations/common/exp-combine.c:1270
+#: ../operations/common/exp-combine.c:1269
 msgid "Combine Exposures"
 msgstr "Połącz ekspozycje"
 
-#: ../operations/common/exp-combine.c:1273
+#: ../operations/common/exp-combine.c:1272
 msgid "Combine multiple scene exposures into one high dynamic range image."
 msgstr ""
 "Połącz wiele ekspozycji scen w jeden obraz o wysokim zakresie dynamicznym."
@@ -2345,7 +2345,7 @@ msgstr "Orientacja rozmycia — pionowa/pozioma"
 #: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
 #: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
 #: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:25
-#: ../operations/workshop/external/gluas.c:34
+#: ../operations/workshop/external/gluas.c:37
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "File"
 msgstr "Plik"
@@ -2376,11 +2376,15 @@ msgstr ""
 "[działanie [właściwość=wartość] [właściwość=wartość]] [[działanie] "
 "[właściwość=wartość]"
 
-#: ../operations/common/gegl.c:100
+#: ../operations/common/gegl.c:28
+msgid "error"
+msgstr "błąd"
+
+#: ../operations/common/gegl.c:113
 msgid "GEGL graph"
 msgstr "Wykres GEGL"
 
-#: ../operations/common/gegl.c:102
+#: ../operations/common/gegl.c:115
 msgid "Program a GEGL operation, in the same manner as the GEGL commandline."
 msgstr ""
 "Programuje działanie GEGL w ten sam sposób, co wiersz poleceń biblioteki "
@@ -4680,7 +4684,7 @@ msgstr "Skręć i zaciśnij"
 msgid "Distort an image by whirling and pinching"
 msgstr "Zniekształć obraz przez skręcanie i ściskanie"
 
-#: ../operations/common/wind.c:28 ../operations/common/wind.c:659
+#: ../operations/common/wind.c:28 ../operations/common/wind.c:661
 msgid "Wind"
 msgstr "Wiatr"
 
@@ -4744,7 +4748,7 @@ msgstr "Wyższe wartości ograniczają efekt do mniejszych obszarów obrazu"
 msgid "Higher values increase the magnitude of the effect"
 msgstr "Wyższe wartości zwiększają wielkość efektu"
 
-#: ../operations/common/wind.c:662
+#: ../operations/common/wind.c:664
 msgid "Wind-like bleed effect"
 msgstr "Efekt farbowania podobny do wiatru"
 
@@ -6445,29 +6449,37 @@ msgstr ""
 "Testuj działanie, aby wykonać odwzorowanie 1:1 wejścia do wyjścia podczas "
 "samplowania"
 
-#: ../operations/workshop/external/gluas.c:30
+#: ../operations/workshop/external/gluas.c:29
 msgid "Script"
 msgstr "Skrypt"
 
-#: ../operations/workshop/external/gluas.c:31
+#: ../operations/workshop/external/gluas.c:30
 msgid "The lua script containing the implementation of this operation."
 msgstr "Skrypt języka Lua zawierający implementację tego działania."
 
-#: ../operations/workshop/external/gluas.c:35
+#: ../operations/workshop/external/gluas.c:33
+msgid "Lua error"
+msgstr "Błąd Lua"
+
+#: ../operations/workshop/external/gluas.c:34
+msgid "parse/compile error, if any"
+msgstr "błąd przetwarzania/kompilowania, jeśli jakiś wystąpił"
+
+#: ../operations/workshop/external/gluas.c:38
 msgid "a stored lua script on disk implementing an operation."
 msgstr ""
 "przechowywany na dysku skrypt języka Lua zawierający implementację tego "
 "działania."
 
-#: ../operations/workshop/external/gluas.c:37
+#: ../operations/workshop/external/gluas.c:40
 msgid "User value"
 msgstr "Wartość użytkownika"
 
-#: ../operations/workshop/external/gluas.c:38
+#: ../operations/workshop/external/gluas.c:41
 msgid "(appears in the global variable 'user_value' in lua."
 msgstr "(pojawia się w globalnej zmiennej „user_value” w języku Lua."
 
-#: ../operations/workshop/external/gluas.c:991
+#: ../operations/workshop/external/gluas.c:994
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
