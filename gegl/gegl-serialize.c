@@ -20,7 +20,10 @@
 #include <string.h>
 #include <stdio.h>
 
-void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, double time, GError **error)
+//#define make_rel(strv) (g_strtod (strv, NULL) * gegl_node_get_bounding_box (iter[0]).height)
+#define make_rel(strv) (g_strtod (strv, NULL) * rel_dim)
+
+void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, double time, int rel_dim, GError **error)
 {
   GeglNode   *iter[10] = {start, NULL};
   GeglNode   *new = NULL;
@@ -51,8 +54,7 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           value[-1] = '\0';
           if (strstr (value, "rel"))
           {
-            gegl_curve_add_point (curve, g_strtod (key, NULL),
-              g_strtod (value, NULL) * gegl_node_get_bounding_box (iter[0]).height);
+            gegl_curve_add_point (curve, g_strtod (key, NULL), make_rel (value));
           }
           else
           {
@@ -184,11 +186,9 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
                    g_object_set_qdata_full (G_OBJECT (new), g_quark_from_string(key), g_strdup (value), g_free);
 
                   if (g_type_is_a (target_type, G_TYPE_INT))
-                    gegl_node_set (iter[level], key, 
-                       (int)(g_strtod (value, NULL) * gegl_node_get_bounding_box (iter[0]).height), NULL);
+                    gegl_node_set (iter[level], key, (int)make_rel (value), NULL);
                   else
-                    gegl_node_set (iter[level], key, 
-                       g_strtod (value, NULL) * gegl_node_get_bounding_box (iter[0]).height, NULL);
+                    gegl_node_set (iter[level], key,  make_rel (value), NULL);
 
                 }
                 else
@@ -315,14 +315,14 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
   gegl_node_link_many (iter[level], proxy, NULL);
 }
 
-void gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end, double time, GError **error)
+void gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end, double time, int rel_dim, GError **error)
 {
   gchar **argv = NULL;
   gint    argc = 0;
   g_shell_parse_argv (str, &argc, &argv, NULL);
   if (argv)
   {
-    gegl_create_chain_argv (argv, op_start, op_end, time, error);
+    gegl_create_chain_argv (argv, op_start, op_end, time, rel_dim, error);
     g_strfreev (argv);
   }
 }

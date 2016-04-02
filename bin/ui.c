@@ -1371,7 +1371,7 @@ static void load_path (State *o)
     GError *error = NULL;
     gegl_create_chain_argv (o->ops,
                     gegl_node_get_producer (o->sink, "input", NULL),
-                    o->sink, 0,
+                    o->sink, 0, gegl_node_get_bounding_box (o->sink).height,
                     &error);
     if (error)
     {

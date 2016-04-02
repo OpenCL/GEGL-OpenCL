@@ -78,13 +78,15 @@ prepare (GeglOperation *operation)
   output   = gegl_node_get_output_proxy (gegl, "output");
 
 //  gegl_node_link_many (input, output, NULL);
-  gegl_create_chain (o->string, input, output, 0.0, &error);
+  gegl_create_chain (o->string, input, output, 0.0,
+                     gegl_node_get_bounding_box (input).height,
+                     &error);
 
   if (error)
   {
-    //gegl_node_set (gegl, "error", error->message, NULL);
+    gegl_node_set (gegl, "error", error->message, NULL);
     g_object_set (operation, "error", error->message, NULL);
-    g_object_notify (operation, "error");
+    //g_object_notify (operation, "error");
     g_error_free (error);
     error = NULL;
   }

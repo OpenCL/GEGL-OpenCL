@@ -26,7 +26,6 @@
 #include "gegl-utils.h"
 #include "gegl-types-internal.h"
 
-
 gint
 _gegl_float_epsilon_zero (float value)
 {
