@@ -432,7 +432,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "render",
     "position-dependent", "true",
 
-    "description",        _("Generates a cellular texture.  "),
+    "description",        _("Generates a cellular texture."),
 
     "reference",  "Steven Worley. 1996. A cellular texture basis function. In Proceedings of the 23rd annual conference on Computer graphics and interactive techniques (SIGGRAPH '96).",
 
