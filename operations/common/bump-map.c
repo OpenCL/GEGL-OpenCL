@@ -459,6 +459,7 @@ gegl_op_class_init (GeglOpClass *klass)
                      "It takes a buffer to be applied as a bump "
                      "map to another buffer and produces a nice embossing "
                      "effect."),
+    "reference", "'Fast Embossing Effects on Raster Image Data' in Graphics Gems IV (ISBN 0-12-336155-9).",
     NULL);
 }
 
