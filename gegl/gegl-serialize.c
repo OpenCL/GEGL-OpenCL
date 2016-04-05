@@ -55,7 +55,7 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
   int         in_keyframes = 0;
   char       *prop = NULL;
   GHashTable *ht = NULL;
-  GeglCurve  *curve = NULL;
+  GeglPath   *path = NULL;
 
   remove_in_betweens (start, proxy);
 
@@ -77,12 +77,11 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           value[-1] = '\0';
           if (strstr (value, "rel"))
           {
-            gegl_curve_add_point (curve, g_strtod (key, NULL), make_rel (value));
+            gegl_path_append (path, 'L', g_strtod (key, NULL), make_rel (value));
           }
           else
           {
-            gegl_curve_add_point (curve, g_strtod (key, NULL),
-                                         g_strtod (value, NULL));
+            gegl_path_append (path, 'L', g_strtod (key, NULL), g_strtod (value, NULL));
           }
         }
         else
@@ -104,11 +103,10 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
         g_free (key);
 
         if (strchr (*arg, '}')) {
-
-          gegl_node_set (new, prop, gegl_curve_calc_value (
-              g_object_get_qdata (G_OBJECT (new),
-                  g_quark_from_string(prop)), time), NULL);
-          /* set interpolated values to initially passed in time */
+          gdouble y= 0;
+          gegl_path_calc_y_for_x (g_object_get_qdata (G_OBJECT (new),
+                  g_quark_from_string(prop)), time, &y);
+          gegl_node_set (new, prop, y, NULL);
 
           in_keyframes = 0;
         };
@@ -128,13 +126,13 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           char *key = g_strdup (*arg);
           char *value = strchr (key, '=') + 1;
           value[-1] = '\0';
-          curve = gegl_curve_new (0.0, 1.0);
+          path = gegl_path_new ();
           in_keyframes = 1;
           if (prop)
             g_free (prop);
           prop = g_strdup (key);
 
-          g_object_set_qdata_full (G_OBJECT (new), g_quark_from_string(key), curve, g_object_unref);
+          g_object_set_qdata_full (G_OBJECT (new), g_quark_from_string(key), path, g_object_unref);
 
           g_free (key);
         }
