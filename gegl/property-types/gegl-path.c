@@ -896,7 +896,7 @@ gegl_path_append (GeglPath *self,
 
       x0 = iter->d.point[0].x;
       y0 = iter->d.point[0].y;
-      for (iter2=priv->path;iter2 && iter2->next != iter;iter2=iter2->next);
+      for (iter2=priv->path;iter2 && iter2->next != iter && iter2->next;iter2=iter2->next);
       x1 = iter2->d.point[0].x;
       y1 = iter2->d.point[0].y;
 
