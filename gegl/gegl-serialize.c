@@ -23,6 +23,27 @@
 //#define make_rel(strv) (g_strtod (strv, NULL) * gegl_node_get_bounding_box (iter[0]).height)
 #define make_rel(strv) (g_strtod (strv, NULL) * rel_dim)
 
+static void remove_in_betweens (GeglNode *nop_raw,
+                                GeglNode *nop_transformed)
+{
+  GeglNode *iter =  nop_raw;
+  GList *collect = NULL;
+  while (iter && iter != nop_transformed)
+    {
+      GeglNode **nodes = NULL;
+      int count = gegl_node_get_consumers (iter, "output", &nodes, NULL);
+      if (count) iter = nodes[0];
+      g_free (nodes);
+      if (iter && iter != nop_transformed)
+        collect = g_list_append (collect, iter);
+    }
+  while (collect)
+    {
+      g_object_unref (collect->data);
+      collect = g_list_remove (collect, collect->data);
+    }
+}
+
 void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, double time, int rel_dim, GError **error)
 {
   GeglNode   *iter[10] = {start, NULL};
@@ -35,6 +56,8 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
   char       *prop = NULL;
   GHashTable *ht = NULL;
   GeglCurve  *curve = NULL;
+
+  remove_in_betweens (start, proxy);
 
   level_op[level] = *arg;
  
@@ -105,7 +128,7 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           char *key = g_strdup (*arg);
           char *value = strchr (key, '=') + 1;
           value[-1] = '\0';
-          curve = gegl_curve_new (-1000.0, 1000.0);
+          curve = gegl_curve_new (0.0, 1.0);
           in_keyframes = 1;
           if (prop)
             g_free (prop);
