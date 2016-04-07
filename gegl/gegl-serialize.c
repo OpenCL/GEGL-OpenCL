@@ -121,35 +121,6 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
       if (strchr (*arg, '=')) /* contains = sign, must be a property assignment */
       {
         char *match= strchr (*arg, '=');
-        if (match[1] == '{')
-        {
-          char *key = g_strdup (*arg);
-          char *value = strchr (key, '=') + 1;
-          value[-1] = '\0';
-          path = gegl_path_new ();
-          in_keyframes = 1;
-          if (prop)
-            g_free (prop);
-          prop = g_strdup (key);
-
-          g_object_set_qdata_full (G_OBJECT (new), g_quark_from_string(key), path, g_object_unref);
-
-          g_free (key);
-        }
-        else if (match[1] == '[')
-        {
-          char *pad = g_strdup (*arg);
-          char *value = strchr (pad, '=') + 1;
-          value[-1] = '\0';
-          level_pad[level]=(void*)g_intern_string(pad);
-          g_free (pad);
-          level++;
-
-          iter[level]=NULL;
-          level_op[level]=NULL;
-          level_pad[level]=NULL;
-        }
-        else
         {
           GType target_type = 0;
           GValue gvalue={0,};
@@ -181,7 +152,36 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
                 target_type = pspecs[i]->value_type;
             }
 
-            if (target_type == 0)
+        if (match[1] == '{')
+        {
+          char *key = g_strdup (*arg);
+          char *value = strchr (key, '=') + 1;
+          value[-1] = '\0';
+          path = gegl_path_new ();
+          in_keyframes = 1;
+          if (prop)
+            g_free (prop);
+          prop = g_strdup (key);
+
+          g_object_set_qdata_full (G_OBJECT (new), g_quark_from_string(key), path, g_object_unref);
+
+          g_free (key);
+        }
+        else if (match[1] == '[')
+        {
+          char *pad = g_strdup (*arg);
+          char *value = strchr (pad, '=') + 1;
+          value[-1] = '\0';
+          level_pad[level]=(void*)g_intern_string(pad);
+          g_free (pad);
+          level++;
+
+          iter[level]=NULL;
+          level_op[level]=NULL;
+          level_pad[level]=NULL;
+        }
+        else
+        if (target_type == 0)
             {
               if (error && gegl_has_operation (level_op[level]))
               {
