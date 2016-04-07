@@ -53,9 +53,11 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
   char       *level_op[10];
   char       *level_pad[10];
   int         in_keyframes = 0;
+  int         in_strkeyframes = 0;
   char       *prop = NULL;
   GHashTable *ht = NULL;
   GeglPath   *path = NULL;
+  GString    *string = NULL;
 
   remove_in_betweens (start, proxy);
 
@@ -111,6 +113,27 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           in_keyframes = 0;
         };
       }
+      else if (in_strkeyframes)
+      {
+        char *key = g_strdup (*arg);
+        char *eq = strchr (key, '=');
+        char *value = NULL;
+        
+        if (eq)
+        {
+          value = eq + 1;
+          value[-1] = '\0';
+          if (g_strtod (key, NULL) <= time)
+            g_string_assign (string, value);
+        }
+
+        g_free (key);
+
+        if (strchr (*arg, '}')) {
+          gegl_node_set (new, prop, string->str, NULL);
+          in_strkeyframes = 0;
+        };
+      }
       else if (strchr (*arg, ']'))
       {
         level--;
@@ -157,6 +180,17 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           char *key = g_strdup (*arg);
           char *value = strchr (key, '=') + 1;
           value[-1] = '\0';
+
+          if (g_type_is_a (target_type, G_TYPE_STRING))
+          {
+            string = g_string_new ("");
+            in_strkeyframes = 1;
+            if (prop)
+              g_free (prop);
+            prop = g_strdup (key);
+          }
+          else
+          {
           path = gegl_path_new ();
           in_keyframes = 1;
           if (prop)
@@ -164,6 +198,7 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           prop = g_strdup (key);
 
           g_object_set_qdata_full (G_OBJECT (new), g_quark_from_string(key), path, g_object_unref);
+          }
 
           g_free (key);
         }
@@ -241,6 +276,10 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
               GeglColor *color = g_object_new (GEGL_TYPE_COLOR,
                                                "string", value, NULL);
               gegl_node_set (iter[level], key, color, NULL);
+            }
+            else if (g_type_is_a (target_type, G_TYPE_STRING))
+            {
+              gegl_node_set (iter[level], key, value, NULL);
             }
             else if (g_type_is_a (target_type, G_TYPE_ENUM))
             {
