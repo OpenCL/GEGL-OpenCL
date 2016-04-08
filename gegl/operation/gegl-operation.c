@@ -310,7 +310,13 @@ gegl_operation_prepare (GeglOperation *self)
   g_return_if_fail (GEGL_IS_OPERATION (self));
 
   if (self->node->passthrough)
-    return;
+    {
+      const Babl *format;
+
+      format = gegl_operation_get_source_format (self, "input");
+      gegl_operation_set_format (self, "output", format);
+      return;
+    }
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
