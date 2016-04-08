@@ -2164,6 +2164,9 @@ gegl_node_set_passthrough (GeglNode *node,
 {
   g_return_if_fail (GEGL_IS_NODE (node));
 
+  if (node->passthrough == passthrough)
+    return;
+
   gegl_node_invalidated (node, NULL, TRUE);
   node->passthrough = passthrough;
 }
