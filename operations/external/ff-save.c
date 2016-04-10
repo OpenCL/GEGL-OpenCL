@@ -686,9 +686,8 @@ open_video (GeglProperties *o, AVFormatContext * oc, AVStream * st)
   p->video_outbuf = NULL;
   if (!(oc->oformat->flags & AVFMT_RAWPICTURE))
     {
-      /* allocate output buffer */
-      /* XXX: API change will be done */
-      p->video_outbuf_size = 200000;
+      /* allocate output buffer, 1 mb / frame, might fail for some codecs on UHD - but works for now */
+      p->video_outbuf_size = 1024 * 1024;
       p->video_outbuf = malloc (p->video_outbuf_size);
     }
 
@@ -726,7 +725,7 @@ close_video (Priv * p, AVFormatContext * oc, AVStream * st)
       av_free (p->tmp_picture->data[0]);
       av_free (p->tmp_picture);
     }
-  av_free (p->video_outbuf);
+  free (p->video_outbuf);
 }
 
 #include "string.h"
