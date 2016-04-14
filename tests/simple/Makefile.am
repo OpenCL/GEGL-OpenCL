@@ -20,6 +20,7 @@ noinst_PROGRAMS =			\
 	test-node-properties		\
 	test-object-forked		\
 	test-opencl-colors		\
+	test-serialize \
 	test-path			\
 	test-proxynop-processing	\
 	test-scaled-blit		\
