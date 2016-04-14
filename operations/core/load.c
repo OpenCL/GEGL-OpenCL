@@ -98,9 +98,9 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
     {
       const gchar *extension = strrchr (new_path, '.');
       const gchar *handler   = NULL;
-      char   resolved_path[PATH_MAX];
+      gchar *resolved_path;
 
-      realpath (new_path, resolved_path);
+      resolved_path = realpath (new_path, NULL);
 
       if (!g_file_test (resolved_path, G_FILE_TEST_EXISTS))
         {
@@ -127,6 +127,7 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
                          "path", resolved_path,
                          NULL);
         }
+      free (resolved_path);
     }
   else
     {

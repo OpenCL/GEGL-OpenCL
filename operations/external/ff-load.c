@@ -420,12 +420,13 @@ prepare (GeglOperation *operation)
       )
     {
       gint i;
-      gchar dereferenced_path[PATH_MAX];
+      gchar *dereferenced_path;
       gint err;
 
       ff_cleanup (o);
-      realpath (o->path, dereferenced_path);
+      dereferenced_path = realpath (o->path, NULL);
       err = avformat_open_input(&p->video_fcontext, dereferenced_path, NULL, 0);
+      free (dereferenced_path);
       if (err < 0)
         {
           print_error (o->path, err);
