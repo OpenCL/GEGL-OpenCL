@@ -165,14 +165,19 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           else
           {
             unsigned int n_props = 0;
-            GParamSpec **pspecs;
             int i;
-
-            pspecs = gegl_operation_list_properties (level_op[level], &n_props);
-            for (i = 0; i < n_props; i++)
+            if (level_op[level])
             {
-              if (!strcmp (pspecs[i]->name, key))
-                target_type = pspecs[i]->value_type;
+            GParamSpec **pspecs;
+              pspecs = gegl_operation_list_properties (level_op[level], &n_props);
+              for (i = 0; i < n_props; i++)
+              {
+                if (!strcmp (pspecs[i]->name, key))
+                {
+                  target_type = pspecs[i]->value_type;
+                  break;
+                }
+              }
             }
 
         if (match[1] == '{')
@@ -218,11 +223,17 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
         else
         if (target_type == 0)
             {
-              if (error && gegl_has_operation (level_op[level]))
+              if (error && level_op[level] && gegl_has_operation (level_op[level]))
               {
+            unsigned int n_props = 0;
+            int i;
+            GParamSpec **pspecs;
+
                 GString *str = g_string_new ("");
                 g_string_append_printf (str, "%s has no %s property, but has ",
                   level_op[level], key);
+                pspecs = gegl_operation_list_properties (level_op[level], &n_props);
+
                 for (i = 0; i < n_props; i++)
                 {
                   g_string_append_printf (str, "'%s', ", pspecs[i]->name);
@@ -366,6 +377,13 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
       }
       arg++;
     }
+
+
+  while (level > 0)
+  {
+    level--;
+    gegl_node_connect_to (iter[level+1], "output", iter[level], level_pad[level]);
+  }
 
   if (prop)
   {
