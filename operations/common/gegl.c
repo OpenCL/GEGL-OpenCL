@@ -77,7 +77,7 @@ prepare (GeglOperation *operation)
   input    = gegl_node_get_input_proxy (gegl, "input");
   output   = gegl_node_get_output_proxy (gegl, "output");
 
-//  gegl_node_link_many (input, output, NULL);
+  gegl_node_link_many (input, output, NULL);
   gegl_create_chain (o->string, input, output, 0.0,
                      gegl_node_get_bounding_box (input).height,
                      &error);
