@@ -84,12 +84,12 @@ prepare (GeglOperation *operation)
 
   if (error)
   {
-    gegl_node_set (gegl, "error", error->message, NULL);
     g_object_set (operation, "error", error->message, NULL);
-    //g_object_notify (operation, "error");
     g_error_free (error);
     error = NULL;
   }
+  else
+    g_object_set (operation, "error", "", NULL);
   /*
   gegl_operation_meta_redirect (operation, "scale", multiply, "value");
   gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-x");
