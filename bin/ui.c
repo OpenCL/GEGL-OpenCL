@@ -164,11 +164,11 @@ static int is_gegl_path (const char *path);
 static void contrasty_stroke (cairo_t *cr);
 
 static void mrg_gegl_blit (Mrg *mrg,
-			   float x0, float y0,
-			   float width, float height,
-			   GeglNode *node,
-			   float u, float v,
-			   float scale,
+                           float x0, float y0,
+                           float width, float height,
+                           GeglNode *node,
+                           float u, float v,
+                           float scale,
                            float preview_multiplier);
 
 gchar *get_thumb_path (const char *path);
@@ -457,6 +457,34 @@ static void prop_int_drag_cb (MrgEvent *e, void *data1, void *data2)
   mrg_queue_draw (e->mrg, NULL);
 }
 
+
+static gchar *edited_prop = NULL;
+
+static void update_prop (const char *new_string, GeglNode *node)
+{
+  gegl_node_set (node, edited_prop, new_string, NULL);
+}
+
+static void set_edited_prop (MrgEvent *e, void *data1, void *data2)
+{
+  if (edited_prop)
+    g_free (edited_prop);
+  edited_prop = g_strdup (data2);
+  mrg_event_stop_propagate (e);
+
+  mrg_queue_draw (e->mrg, NULL);
+}
+
+static void unset_edited_prop (MrgEvent *e, void *data1, void *data2)
+{
+  if (edited_prop)
+    g_free (edited_prop);
+  edited_prop = NULL;
+  mrg_event_stop_propagate (e);
+
+  mrg_queue_draw (e->mrg, NULL);
+}
+
 static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *node)
 {
   const gchar* op_name = gegl_node_get_operation (node);
@@ -546,7 +574,23 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
           char *value = NULL;
           gegl_node_get (node, pspecs[i]->name, &value, NULL);
           pos_no +=3;
-          mrg_printf (mrg, "%s:%s\n", pspecs[i]->name, value);
+
+          if (edited_prop && !strcmp (edited_prop, pspecs[i]->name))
+          {
+            mrg_printf (mrg, "%s:", pspecs[i]->name);
+            mrg_text_listen (mrg, MRG_CLICK, unset_edited_prop, node, pspecs[i]->name);
+            mrg_edit_start (mrg, update_prop, node);
+            mrg_printf (mrg, "%s\n", value);
+            mrg_edit_end (mrg);
+            mrg_text_listen_done (mrg);
+          }
+          else
+          {
+            mrg_text_listen (mrg, MRG_CLICK, set_edited_prop, node, pspecs[i]->name);
+            mrg_printf (mrg, "%s:%s\n", pspecs[i]->name, value);
+            mrg_text_listen_done (mrg);
+          }
+
           if (value)
             g_free (value);
         }
@@ -956,18 +1000,22 @@ static void ui_viewer (State *o)
   mrg_add_binding (mrg, "right", NULL, NULL, pan_right_cb, o);
   mrg_add_binding (mrg, "up", NULL, NULL,    pan_up_cb, o);
   mrg_add_binding (mrg, "down", NULL, NULL,  pan_down_cb, o);
-  mrg_add_binding (mrg, "+", NULL, NULL,     zoom_in_cb, o);
-  mrg_add_binding (mrg, "=", NULL, NULL,     zoom_in_cb, o);
-  mrg_add_binding (mrg, "-", NULL, NULL,     zoom_out_cb, o);
-  mrg_add_binding (mrg, "1", NULL, NULL,     zoom_1_cb, o);
-  mrg_add_binding (mrg, "m", NULL, NULL,     zoom_fit_cb, o);
-  mrg_add_binding (mrg, "m", NULL, NULL,     zoom_fit_cb, o);
-  mrg_add_binding (mrg, "x", NULL, NULL,     discard_cb, o);
 
-  mrg_add_binding (mrg, "space", NULL, NULL,     go_next_cb , o);
-  mrg_add_binding (mrg, "n", NULL, NULL,         go_next_cb, o);
-  mrg_add_binding (mrg, "p", NULL, NULL,         go_prev_cb, o);
-  mrg_add_binding (mrg, "backspace", NULL, NULL, go_prev_cb, o);
+  if (!edited_prop)
+  {
+    mrg_add_binding (mrg, "+", NULL, NULL,     zoom_in_cb, o);
+    mrg_add_binding (mrg, "=", NULL, NULL,     zoom_in_cb, o);
+    mrg_add_binding (mrg, "-", NULL, NULL,     zoom_out_cb, o);
+    mrg_add_binding (mrg, "1", NULL, NULL,     zoom_1_cb, o);
+    mrg_add_binding (mrg, "m", NULL, NULL,     zoom_fit_cb, o);
+    mrg_add_binding (mrg, "m", NULL, NULL,     zoom_fit_cb, o);
+    mrg_add_binding (mrg, "x", NULL, NULL,     discard_cb, o);
+
+    mrg_add_binding (mrg, "space", NULL, NULL,     go_next_cb , o);
+    mrg_add_binding (mrg, "n", NULL, NULL,         go_next_cb, o);
+    mrg_add_binding (mrg, "p", NULL, NULL,         go_prev_cb, o);
+    mrg_add_binding (mrg, "backspace", NULL, NULL, go_prev_cb, o);
+  }
 
   if (o->slide_enabled && o->slide_timeout == 0)
   {
@@ -1071,6 +1119,11 @@ static void gegl_ui (Mrg *mrg, void *data)
   else
   {
     struct stat stat_buf;
+
+  if (edited_prop)
+    g_free (edited_prop);
+  edited_prop = NULL;
+
     lstat (o->path, &stat_buf);
     if (S_ISREG (stat_buf.st_mode))
     {
@@ -1087,13 +1140,17 @@ static void gegl_ui (Mrg *mrg, void *data)
   }
 
   mrg_add_binding (mrg, "control-q", NULL, NULL, mrg_quit_cb, o);
-  mrg_add_binding (mrg, "q", NULL, NULL,         mrg_quit_cb, o);
-  mrg_add_binding (mrg, "f", NULL, NULL,         toggle_fullscreen_cb, o);
   mrg_add_binding (mrg, "F11", NULL, NULL,       toggle_fullscreen_cb, o);
-  mrg_add_binding (mrg, "tab", NULL, NULL,       toggle_show_controls_cb, o);
-  mrg_add_binding (mrg, "s", NULL, NULL,         toggle_slideshow_cb, o);
-  mrg_add_binding (mrg, ",", NULL, NULL,         preview_less_cb, o);
-  mrg_add_binding (mrg, ".", NULL, NULL,         preview_more_cb, o);
+
+  if (!edited_prop)
+  {
+    mrg_add_binding (mrg, "tab", NULL, NULL,       toggle_show_controls_cb, o);
+    mrg_add_binding (mrg, "q", NULL, NULL,         mrg_quit_cb, o);
+    mrg_add_binding (mrg, "f", NULL, NULL,         toggle_fullscreen_cb, o);
+    mrg_add_binding (mrg, "s", NULL, NULL,         toggle_slideshow_cb, o);
+    mrg_add_binding (mrg, ",", NULL, NULL,         preview_less_cb, o);
+    mrg_add_binding (mrg, ".", NULL, NULL,         preview_more_cb, o);
+  }
 }
 
 /***********************************************/
