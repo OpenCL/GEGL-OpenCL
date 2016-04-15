@@ -88,18 +88,7 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
         }
         else
         {
-          if (!strcmp (*arg, "l"))
-          {
-            fprintf (stderr, "linear\n");
-          }
-          else if (!strcmp (*arg, "s"))
-          {
-            fprintf (stderr, "step\n");
-          }
-          else if (!strcmp (*arg, "c"))
-          {
-            fprintf (stderr, "cubic\n");
-          }
+          fprintf (stderr, "unhandled path data\n");
         }
 
         g_free (key);
@@ -134,7 +123,7 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           in_strkeyframes = 0;
         };
       }
-      else if (strchr (*arg, ']'))
+      else if (!strchr(*arg, '=') && strchr (*arg, ']'))
       {
         level--;
         gegl_node_connect_to (iter[level+1], "output", iter[level], level_pad[level]);
@@ -149,7 +138,14 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           GValue gvalue={0,};
           char *key = g_strdup (*arg);
           char *value = strchr (key, '=') + 1;
+          int end_block = 0;
           value[-1] = '\0';
+          if (strchr (value, ']') && 
+              strrchr (value, ']')[1] == '\0')
+          {
+            end_block = 1;
+            * strchr (value, ']') = 0;
+          }
 
           if (!strcmp (key, "id"))
           {
@@ -215,10 +211,47 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           level_pad[level]=(void*)g_intern_string(pad);
           g_free (pad);
           level++;
-
           iter[level]=NULL;
           level_op[level]=NULL;
           level_pad[level]=NULL;
+
+          if (strlen (&match[2]))
+          {
+        if (strchr (&match[2], ':')) /* contains : is a non-prefixed operation */
+          {
+            level_op[level] = (void*)g_intern_string(&match[2]);
+          }
+          else /* default to gegl: as prefix if no : specified */
+          {
+            char temp[1024];
+            g_snprintf (temp, 1023, "gegl:%s", &match[2]);
+            level_op[level] = (void*)g_intern_string (temp);
+          }
+
+          if (gegl_has_operation (level_op[level]))
+          {
+             new = gegl_node_new_child (gegl_node_get_parent (proxy), "operation",
+                                        level_op[level], NULL);
+
+             if (iter[level])
+               gegl_node_link_many (iter[level], new, proxy, NULL);
+             else
+               gegl_node_link_many (new, proxy, NULL);
+             iter[level] = new;
+          }
+          else if (error)
+          {
+            GString *str = g_string_new ("");
+            g_string_append_printf (str, "No such op '%s'", level_op[level]);
+            *error = g_error_new_literal (g_quark_from_static_string ("gegl"),
+                                          0, str->str);
+             g_string_free (str, TRUE);
+          }
+
+
+          }
+          /* XXX: ... */
+
         }
         else
         if (target_type == 0)
@@ -337,6 +370,11 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
             }
           }
           g_free (key);
+          if (end_block)
+          {
+            level--;
+            gegl_node_connect_to (iter[level+1], "output", iter[level], level_pad[level]);
+          }
         }
       }
       else

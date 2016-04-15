@@ -25,28 +25,24 @@
 #define FAILURE -1
 
 typedef struct TestCase {
-    gchar *argv_chain;
-    gchar *expected_serialization;
-    gchar *expected_error;
+    gchar *argv_chain; gchar *expected_serialization; gchar *expected_error;
 } TestCase;
 
 TestCase tests[] = {
-    {"invert", " gegl:invert-linear", ""},
-    {"invert a=b", " gegl:invert-linear", "gegl:invert has no a property, but has "},
-    {"invert a=c", " gegl:invert-linear", "gegl:invert has no a property, but has "},
-    {"gaussian-blur", " gegl:gaussian-blur", ""},
-    {"over aux=[ text string='foo bar' ]",  " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
-
+    {"invert",        " gegl:invert-linear",  ""},
+    {"invert a=b",    " gegl:invert-linear",  "gegl:invert has no a property, but has "},
+    {"invert a=c",    " gegl:invert-linear",  "gegl:invert has no a property, but has "},
+    {"gaussian-blur", " gegl:gaussian-blur",  ""},
+    {"over aux=[ text string='foo bar' ]",    " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
+    {"over aux=[text string='foo bar' ]",     " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
+    {"over aux=[ text string={ 0='foo bar' } ]",  " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
     {"over aux= [ ",  " svg:src-over", "No such op 'gegl:['"}, 
-
     /* the following cause undesired warnings on console */
-    {"over aux=[ string='foo bar' ]",  " svg:src-over", ""},
-
+    {"over aux=[ string='foo bar' ]",         " svg:src-over", ""},
     /* the following should have error message */
-    {"over aux=[ ",  " svg:src-over", ""},
-    {"over aux=[ ]",  " svg:src-over", ""},
-
-    {"exposure foo=2",  " gegl:exposure", "gegl:exposure has no foo property, but has 'exposure', 'offset', 'gamma', "},
+    {"over aux=[ ",   " svg:src-over",        ""},
+    {"over aux=[ ]",  " svg:src-over",        ""},
+    {"exposure foo=2"," gegl:exposure",       "gegl:exposure has no foo property, but has 'exposure', 'offset', 'gamma', "},
 
 #if 0
     {"id=foo over aux=[ ref=foo invert ]",  " id=001 svg:src-over aux=[ ref=001 gegl:invert-linear ]", ""},
@@ -54,6 +50,7 @@ TestCase tests[] = {
     {"id=foo over aux=[ ref=foo invert ]",  " svg:src-over aux=[ gegl:nop gegl:invert-linear ]", ""},
 #endif
 
+    {"over aux=[text string='foo bar']",      " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
     /* the following causes crashes */
 #if 0
     {"over aux=[]",  " svg:src-over", "No such op 'gegl:['"},  /* should report error message */
@@ -65,7 +62,6 @@ static int
 test_serialize (void)
 {
   gint result = SUCCESS;
-  gint res = SUCCESS;
   GeglNode *node = gegl_node_new ();
   GeglNode *start = gegl_node_new_child (node, "operation", "gegl:nop", NULL);
   GeglNode *end = gegl_node_new_child (node, "operation", "gegl:nop", NULL);
@@ -76,6 +72,7 @@ test_serialize (void)
   for (i = 0; tests[i].argv_chain; i++)
   {
     GError *error = NULL;
+    gint res = SUCCESS;
     gchar *serialization = NULL;
     gegl_create_chain (tests[i].argv_chain, start, end,
                     0.0, 500, &error);
@@ -111,7 +108,7 @@ test_serialize (void)
     if (res == FAILURE)
     {
       result = FAILURE;
-      printf ("failed: %s\n", tests[i].argv_chain);
+      printf ("FAILED: %s\n", tests[i].argv_chain);
     }
     else
     {
