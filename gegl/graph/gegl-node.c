@@ -1215,6 +1215,9 @@ gegl_node_property_changed (GObject    *gobject,
           gegl_node_invalidated (self, &dirty_rect, FALSE);
         }
     }
+
+  if (arg1)
+    g_object_notify_by_pspec (G_OBJECT (self), arg1);
 }
 
 static void
@@ -1283,7 +1286,7 @@ gegl_node_set_operation_object (GeglNode      *self,
 
   gegl_node_update_debug_name (self);
 
-  gegl_node_property_changed (G_OBJECT (operation), (GParamSpec *) self, self);
+  gegl_node_property_changed (G_OBJECT (operation), (GParamSpec *) NULL, self);
 }
 
 void
