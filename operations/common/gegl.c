@@ -35,6 +35,8 @@ property_string (error, _("error"), "")
 
 #include "gegl-op.h"
 
+/* XXX: leaking o->user_data */
+
 static void
 attach (GeglOperation *operation)
 {
@@ -61,11 +63,11 @@ prepare (GeglOperation *operation)
 
   gegl = operation->node;
 
-  if (!cached || !g_str_equal (cached, o->string))
+  if (!o->user_data || !g_str_equal (cached, o->user_data))
   {
-    if (cached)
-      g_free (cached);
-    cached = g_strdup (o->string);
+    if (o->user_data)
+      g_free (o->user_data);
+    o->user_data = g_strdup (o->string);
 
   input    = gegl_node_get_input_proxy (gegl, "input");
   output   = gegl_node_get_output_proxy (gegl, "output");
