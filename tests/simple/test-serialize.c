@@ -30,8 +30,8 @@ typedef struct TestCase {
 
 TestCase tests[] = {
     {"invert",        " gegl:invert-linear",  ""},
-    {"invert a=b",    " gegl:invert-linear",  "gegl:invert has no a property, but has "},
-    {"invert a=c",    " gegl:invert-linear",  "gegl:invert has no a property, but has "},
+    {"invert a=b",    " gegl:invert-linear",  "gegl:invert has no a property."},
+    {"invert a=c",    " gegl:invert-linear",  "gegl:invert has no a property."},
     {"gaussian-blur", " gegl:gaussian-blur",  ""},
     {"over aux=[ text string='foo bar' ]",    " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
     {"over aux=[text string='foo bar' ]",     " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
@@ -42,7 +42,7 @@ TestCase tests[] = {
     /* the following should have error message */
     {"over aux=[ ",   " svg:src-over",        ""},
     {"over aux=[ ]",  " svg:src-over",        ""},
-    {"exposure foo=2"," gegl:exposure",       "gegl:exposure has no foo property, but has 'exposure', 'offset', 'gamma', "},
+    {"exposure foo=2"," gegl:exposure",       "gegl:exposure has no foo property, properties: 'exposure', 'offset', 'gamma', "},
 
 #if 0
     {"id=foo over aux=[ ref=foo invert ]",  " id=001 svg:src-over aux=[ ref=001 gegl:invert-linear ]", ""},
