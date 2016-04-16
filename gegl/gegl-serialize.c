@@ -242,7 +242,8 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           else if (error)
           {
             GString *str = g_string_new ("");
-            g_string_append_printf (str, "No such op '%s'", level_op[level]);
+            g_string_append_printf (str, "op '%s' not found, partial matches: ", level_op[level]);
+
             *error = g_error_new_literal (g_quark_from_static_string ("gegl"),
                                           0, str->str);
              g_string_free (str, TRUE);
@@ -415,10 +416,46 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           else if (error)
           {
             GString *str = g_string_new ("");
+            guint    n_operations;
+            gchar  **operations = gegl_list_operations (&n_operations);
+            gint     i;
+            gint     started = 0;
+            gint     max = 12;
+
             g_string_append_printf (str, "No such op '%s'", level_op[level]);
+
+            for (i = 0; i < n_operations; i++)
+            {
+              if (g_str_has_prefix (operations[i], level_op[level]))
+              {
+                if (!started)
+                {
+                  started = 1;
+                  g_string_append_printf (str," suggestions:");
+                }
+                if (max -- > 0)
+                  g_string_append_printf (str, " %s", operations[i]);
+              }
+            }
+            if (!started)
+            for (i = 0; i < n_operations; i++)
+            {
+              if (strstr (operations[i], *arg))
+              {
+                if (!started)
+                {
+                  started = 1;
+                  g_string_append_printf (str," suggestions:");
+                }
+                if (max -- > 0)
+                  g_string_append_printf (str, " %s", operations[i]);
+              }
+            }
+
+            g_free (operations);
             *error = g_error_new_literal (g_quark_from_static_string ("gegl"),
                                           0, str->str);
-             g_string_free (str, TRUE);
+            g_string_free (str, TRUE);
           }
 
       }
