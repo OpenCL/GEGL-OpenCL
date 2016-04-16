@@ -46,13 +46,6 @@ attach (GeglOperation *operation)
   output   = gegl_node_get_output_proxy (gegl, "output");
 
   gegl_node_link_many (input, output, NULL);
-  /*
-  gegl_operation_meta_redirect (operation, "scale", multiply, "value");
-  gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-x");
-  gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-y");
-
-  gegl_operation_meta_watch_nodes (operation, add, multiply, subtract, blur, NULL);
-  */
 }
 
 #include <stdio.h>
@@ -84,19 +77,12 @@ prepare (GeglOperation *operation)
 
   if (error)
   {
-    g_object_set (operation, "error", error->message, NULL);
+    gegl_node_set (gegl, "error", error->message, NULL);
     g_error_free (error);
     error = NULL;
   }
   else
     g_object_set (operation, "error", "", NULL);
-  /*
-  gegl_operation_meta_redirect (operation, "scale", multiply, "value");
-  gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-x");
-  gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-y");
-
-  gegl_operation_meta_watch_nodes (operation, add, multiply, subtract, blur, NULL);
-  */
   }
 }
 
