@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006, 2010 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2016 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
@@ -21,11 +21,11 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_string (string, _("pipeline"), "invert")
+property_string (string, _("pipeline"), "gaussian-blur std-dev-x=0.3rel std-dev-y=0.3rel")
     description(_("[op [property=value] [property=value]] [[op] [property=value]"))
     ui_meta ("multiline", "true")
 
-property_string (error, _("error"), "")
+property_string (error, _("Eeeeeek"), "There is a problem in the syntax or in the application of parsed property values. Things might mostly work nevertheless.")
     ui_meta ("error", "true")
 
 #else
@@ -69,8 +69,8 @@ prepare (GeglOperation *operation)
       g_free (o->user_data);
     o->user_data = g_strdup (o->string);
 
-  input    = gegl_node_get_input_proxy (gegl, "input");
-  output   = gegl_node_get_output_proxy (gegl, "output");
+  input  = gegl_node_get_input_proxy (gegl,  "input");
+  output = gegl_node_get_output_proxy (gegl, "output");
 
   gegl_node_link_many (input, output, NULL);
   gegl_create_chain (o->string, input, output, 0.0,
@@ -101,8 +101,8 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:gegl",
     "title",       _("GEGL graph"),
-    "categories",  "enhance",
-    "description", _("Program a GEGL operation, in the same manner as the GEGL commandline."),
+    "categories",  "generic",
+    "description", _("Do a chain of operations, with key=value pairs after each operation name to set properties. And aux=[ source filter ] for specifying a chain with a source as something connected to an aux pad."),
     NULL);
 }
 
