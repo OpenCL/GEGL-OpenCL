@@ -263,14 +263,24 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
             GParamSpec **pspecs;
 
                 GString *str = g_string_new ("");
-                g_string_append_printf (str, "%s has no %s property, but has ",
-                  level_op[level], key);
                 pspecs = gegl_operation_list_properties (level_op[level], &n_props);
 
-                for (i = 0; i < n_props; i++)
+                if (n_props <= 0)
                 {
-                  g_string_append_printf (str, "'%s', ", pspecs[i]->name);
+                  g_string_append_printf (str, "%s has no %s property.",
+                  level_op[level], key);
                 }
+                else
+                {
+                  g_string_append_printf (str, "%s has no %s property, properties: ",
+                  level_op[level], key);
+
+                  for (i = 0; i < n_props; i++)
+                  {
+                    g_string_append_printf (str, "'%s', ", pspecs[i]->name);
+                  }
+                }
+
                 *error = g_error_new_literal (g_quark_from_static_string ("gegl"),
                                               0, str->str);
                 g_string_free (str, TRUE);
