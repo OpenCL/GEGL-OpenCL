@@ -102,7 +102,9 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
 
       resolved_path = realpath (new_path, NULL);
 
-      if (!g_file_test (resolved_path, G_FILE_TEST_EXISTS))
+      if (resolved_path)
+      {
+        if (!g_file_test (resolved_path, G_FILE_TEST_EXISTS))
         {
           gchar *name = g_filename_display_name (resolved_path);
           gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
@@ -116,7 +118,7 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
                          NULL);
           g_free (tmp);
         }
-      else
+        else
         {
           if (extension)
             handler = gegl_extension_handler_get_loader (extension);
@@ -127,7 +129,15 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
                          "path", resolved_path,
                          NULL);
         }
-      free (resolved_path);
+        free (resolved_path);
+      }
+      else
+      {
+        gegl_node_set (self->load,
+                       "operation", "gegl:text",
+                       "string",    "load failed",
+                       NULL);
+      }
     }
   else
     {

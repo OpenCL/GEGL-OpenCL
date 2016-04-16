@@ -55,7 +55,10 @@ TestCase tests[] = {
 #if 0
     {"over aux=[]",  " svg:src-over", "No such op 'gegl:['"},  /* should report error message */
 #endif
+    {"over aux=[ load path=/ ]",  " svg:src-over aux=[ gegl:load path='/' ]", ""},
     {"inver",           "", "No such op 'gegl:inver' suggestions: gegl:invert-gamma gegl:invert-linear"},
+
+    {"over aux=[ load path=/abc ]", " svg:src-over aux=[ gegl:load path='/abc' ]", ""},
     {NULL, NULL}
 };
 
