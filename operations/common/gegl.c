@@ -52,8 +52,6 @@ attach (GeglOperation *operation)
 
 #include <stdio.h>
 
-static char *cached = NULL;
-
 static void
 prepare (GeglOperation *operation)
 {
@@ -63,7 +61,7 @@ prepare (GeglOperation *operation)
 
   gegl = operation->node;
 
-  if (!o->user_data || !g_str_equal (cached, o->user_data))
+  if (!o->user_data || !g_str_equal (o->user_data, o->string))
   {
     if (o->user_data)
       g_free (o->user_data);
