@@ -25,7 +25,8 @@ property_string (string, _("pipeline"), "gaussian-blur std-dev-x=0.3rel std-dev-
     description(_("[op [property=value] [property=value]] [[op] [property=value]"))
     ui_meta ("multiline", "true")
 
-property_string (error, _("Eeeeeek"), "There is a problem in the syntax or in the application of parsed property values. Things might mostly work nevertheless.")
+property_string (error, _("Eeeeeek"), "")
+    description (_("There is a problem in the syntax or in the application of parsed property values. Things might mostly work nevertheless."))
     ui_meta ("error", "true")
 
 #else
