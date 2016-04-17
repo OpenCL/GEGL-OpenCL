@@ -14,8 +14,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-31 19:04+0200\n"
-"PO-Revision-Date: 2016-03-31 19:05+0200\n"
+"POT-Creation-Date: 2016-04-17 15:35+0200\n"
+"PO-Revision-Date: 2016-04-17 15:37+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "Language: pl\n"
@@ -441,7 +441,7 @@ msgstr "Poziom gładkości"
 msgid "Bilateral Box Filter"
 msgstr "Dwustronny filtr prostopadłościenny"
 
-#: ../operations/common/bilateral-filter-fast.c:498
+#: ../operations/common/bilateral-filter-fast.c:497
 msgid ""
 "A fast approximation of bilateral filter, using a box-filter instead of a "
 "gaussian blur."
@@ -2377,18 +2377,30 @@ msgstr ""
 "[właściwość=wartość]"
 
 #: ../operations/common/gegl.c:28
-msgid "error"
-msgstr "błąd"
+msgid "Eeeeeek"
+msgstr "Ojej"
 
-#: ../operations/common/gegl.c:113
+#: ../operations/common/gegl.c:29
+msgid ""
+"There is a problem in the syntax or in the application of parsed property "
+"values. Things might mostly work nevertheless."
+msgstr ""
+"Wystąpił problem składni lub programu przetwarzanych wartości właściwości. "
+"Mimo to większość powinna działać."
+
+#: ../operations/common/gegl.c:102
 msgid "GEGL graph"
 msgstr "Wykres GEGL"
 
-#: ../operations/common/gegl.c:115
-msgid "Program a GEGL operation, in the same manner as the GEGL commandline."
+#: ../operations/common/gegl.c:104
+msgid ""
+"Do a chain of operations, with key=value pairs after each operation name to "
+"set properties. And aux=[ source filter ] for specifying a chain with a "
+"source as something connected to an aux pad."
 msgstr ""
-"Programuje działanie GEGL w ten sam sposób, co wiersz poleceń biblioteki "
-"GEGL."
+"Wykonaj ciąg działań, z parami klucz=wartość po każdej nazwie działania, aby "
+"ustawić właściwości. Oraz „aux=[ filtr źródłowy ]” do podania ciągu ze "
+"źródłem jako coś podłączonego do dodatkowego bloku."
 
 #: ../operations/common/grey.c:100
 msgid "Make Grey"
@@ -3189,7 +3201,7 @@ msgstr "Ziarno losowości dla funkcji szumu"
 msgid "Cell Noise"
 msgstr "Szum komórkowy"
 
-#: ../operations/common/noise-cell.c:434
+#: ../operations/common/noise-cell.c:435
 msgid "Generates a cellular texture."
 msgstr "Tworzy teksturę komórkową."
 
@@ -4861,7 +4873,7 @@ msgstr "Adres URI"
 msgid "URI of file to load."
 msgstr "Adres URI pliku do wczytania."
 
-#: ../operations/core/load.c:227
+#: ../operations/core/load.c:238
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -4933,11 +4945,11 @@ msgstr "kodek-dźwięku"
 msgid "audio"
 msgstr "dźwięk"
 
-#: ../operations/external/ff-load.c:776
+#: ../operations/external/ff-load.c:777
 msgid "FFmpeg Frame Loader"
 msgstr "Wczytywanie klatek biblioteki FFmpeg"
 
-#: ../operations/external/ff-load.c:778
+#: ../operations/external/ff-load.c:779
 msgid "FFmpeg video frame importer."
 msgstr "Importer klatek wideo biblioteki FFmpeg."
 
@@ -5083,7 +5095,7 @@ msgstr "i-quant-offset"
 msgid "me-subpel-quality"
 msgstr "me-subpel-quality"
 
-#: ../operations/external/ff-save.c:1095
+#: ../operations/external/ff-save.c:1094
 msgid "FFmpeg video output sink"
 msgstr "Odpływ wyjścia wideo biblioteki FFmpeg"
 
