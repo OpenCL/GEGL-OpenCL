@@ -97,9 +97,8 @@ component2geglop(const gchar *name) {
     if (!name) {
       return NULL;
     }
-    dup = g_strdup(name);
+    dup = g_ascii_strdown(name, -1);
     replace_char_inline(dup, '/', ':');
-    g_ascii_strdown(dup, -1);
     return dup;
 }
 
@@ -109,9 +108,8 @@ component2gtypename(const gchar *name) {
     if (!name) {
       return NULL;
     }
-    dup = g_strdup(name);
+    dup = g_ascii_strdown(name, -1);
     replace_char_inline(dup, '/', '_');
-    g_ascii_strdown(dup, -1);
     return dup;
 }
 
@@ -503,6 +501,7 @@ json_op_class_init (gpointer klass, gpointer class_data)
     "description",  (description) ? description : "",
     NULL);
 
+  g_free(name);
 }
 
 static void
