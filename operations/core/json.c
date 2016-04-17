@@ -218,8 +218,9 @@ install_properties(JsonOpClass *json_op_class)
     if (json_object_has_member(root, "inports")) {
         JsonObject *inports = json_object_get_object_member(root, "inports");
         GList *inport_names = json_object_get_members(inports);
-        for (int i=0; i<g_list_length(inport_names); i++) {
-            const gchar *name = g_list_nth_data(inport_names, i);
+        GList *l;
+        for (l = inport_names; l != NULL; l = l->next) {
+            const gchar *name = l->data;
             JsonObject *conn = json_object_get_object_member(inports, name);
             const gchar *proc = json_object_get_string_member(conn, "process");
             const gchar *port = json_object_get_string_member(conn, "port");
@@ -246,6 +247,8 @@ install_properties(JsonOpClass *json_op_class)
               g_free(opname);
             }
         }
+
+        g_list_free(inport_names);
     }
 
 /*
@@ -337,14 +340,15 @@ attach (GeglOperation *operation)
   JsonOp *self = (JsonOp *)operation;
   GeglNode  *gegl = operation->node;
   JsonArray *connections;
+  GList *l;
 
   // Processes
   JsonObject *root = self->json_root;
   JsonObject *processes = json_object_get_object_member(root, "processes");
 
   GList *process_names = json_object_get_members(processes);
-  for (int i=0; i<g_list_length(process_names); i++) {
-      const gchar *name = g_list_nth_data(process_names, i);
+  for (l = process_names; l != NULL; l = l->next) {
+      const gchar *name = l->data;
       JsonObject *proc = json_object_get_object_member(processes, name);
       const gchar *component = json_object_get_string_member(proc, "component");
       gchar *opname = component2geglop(component);
@@ -401,8 +405,8 @@ attach (GeglOperation *operation)
   if (json_object_has_member(root, "inports")) {
       JsonObject *inports = json_object_get_object_member(root, "inports");
       GList *inport_names = json_object_get_members(inports);
-      for (int i=0; i<g_list_length(inport_names); i++) {
-          const gchar *name = g_list_nth_data(inport_names, i);
+      for (l = inport_names; l != NULL; l = l->next) {
+          const gchar *name = l->data;
           JsonObject *conn = json_object_get_object_member(inports, name);
           const gchar *proc = json_object_get_string_member(conn, "process");
           const gchar *port = json_object_get_string_member(conn, "port");
@@ -417,13 +421,15 @@ attach (GeglOperation *operation)
             gegl_operation_meta_redirect (operation, name, node, port);
           }
       }
+
+      g_list_free(inport_names);
   }
 
   if (json_object_has_member(root, "outports")) {
       JsonObject *outports = json_object_get_object_member(root, "outports");
       GList *outport_names = json_object_get_members(outports);
-      for (int i=0; i<g_list_length(outport_names); i++) {
-          const gchar *name = g_list_nth_data(outport_names, i);
+      for (l = outport_names; l != NULL; l = l->next) {
+          const gchar *name = l->data;
           JsonObject *conn = json_object_get_object_member(outports, name);
           const gchar *proc = json_object_get_string_member(conn, "process");
           const gchar *port = json_object_get_string_member(conn, "port");
@@ -437,6 +443,8 @@ attach (GeglOperation *operation)
             g_warning("Unsupported output '%s' exported in .json file", name);
           }
       }
+
+      g_list_free(outport_names);
   }
 
 }
