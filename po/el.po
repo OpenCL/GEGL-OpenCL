@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-03-22 07:17+0000\n"
-"PO-Revision-Date: 2016-03-22 12:28+0200\n"
+"POT-Creation-Date: 2016-04-17 20:17+0000\n"
+"PO-Revision-Date: 2016-04-18 11:50+0200\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: www.gnome.gr\n"
 "Language: el\n"
@@ -19,58 +19,23 @@ msgstr ""
 "X-Generator: Poedit 1.5.4\n"
 "X-Project-Style: gnome\n"
 
-#: ../bin/gegl.c:152
+#: ../bin/gegl.c:153
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Αδύνατη η ανάγνωση του αρχείου: %s"
 
-#: ../bin/gegl.c:191
+#: ../bin/gegl.c:198
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Άκυρο γράφημα, απόρριψη.\n"
 
-#: ../bin/gegl.c:269 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:353 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Άγνωστη κατάσταση GeglOption: %d"
 
 #: ../bin/gegl-options.c:47
 #, c-format
-#| msgid ""
-#| "usage: %s [options] <file | -- [op [op] ..]>\n"
-#| "\n"
-#| "  Options:\n"
-#| "     -h, --help      this help information\n"
-#| "\n"
-#| "     --list-all      list all known operations\n"
-#| "\n"
-#| "     --exists        return 0 if the operation(s) exist\n"
-#| "\n"
-#| "     --properties    output the properties (name, type, description) of "
-#| "the operation\n"
-#| "\n"
-#| "     -i, --file      read xml from named file\n"
-#| "\n"
-#| "     -x, --xml       use xml provided in next argument\n"
-#| "\n"
-#| "     --dot           output a graphviz graph description\n"
-#| "\n"
-#| "     -o, --output    output generated image to named file, type based\n"
-#| "                     on extension.\n"
-#| "\n"
-#| "     -p              increment frame counters of various elements when\n"
-#| "                     processing is done.\n"
-#| "\n"
-#| "     -s scale, --scale scale  scale output dimensions by this factor.\n"
-#| "\n"
-#| "     -X              output the XML that was read in\n"
-#| "\n"
-#| "     -v, --verbose   print diagnostics while running\n"
-#| "\n"
-#| "All parameters following -- are considered ops to be chained together\n"
-#| "into a small composition instead of using an xml file, this allows for\n"
-#| "easy testing of filters. Be aware that the default value will be used\n"
-#| "for all properties.\n"
 msgid ""
 "usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
@@ -189,7 +154,7 @@ msgstr ""
 "\tυπόλοιπο:    %s\n"
 "\t\n"
 
-#: ../bin/gegl-options.c:333
+#: ../bin/gegl-options.c:341
 #, c-format
 msgid ""
 "\n"
@@ -473,7 +438,7 @@ msgstr "Επίπεδο ομαλότητας"
 msgid "Bilateral Box Filter"
 msgstr "Αμφίπλευρο φίλτρο πλαισίου"
 
-#: ../operations/common/bilateral-filter-fast.c:498
+#: ../operations/common/bilateral-filter-fast.c:497
 msgid ""
 "A fast approximation of bilateral filter, using a box-filter instead of a "
 "gaussian blur."
@@ -1637,7 +1602,7 @@ msgstr "Κατάσταση μετατόπισης"
 msgid "Mode of displacement"
 msgstr "Κατάσταση μετατόπισης"
 
-#: ../operations/common/displace.c:37 ../operations/external/npd.c:50
+#: ../operations/common/displace.c:37 ../operations/external/npd.c:47
 #: ../operations/transform/transform-core.c:193
 #: ../operations/workshop/ditto.c:27
 msgid "Sampler"
@@ -1944,11 +1909,11 @@ msgstr "Σίγμα βάρος"
 msgid "Weight distribution sigma controlling response contributions"
 msgstr "Σίγμα κατανομή βάρους που ελέγχει τις συνεισφορές απάντησης"
 
-#: ../operations/common/exp-combine.c:1270
+#: ../operations/common/exp-combine.c:1269
 msgid "Combine Exposures"
 msgstr "Συνδυασμός εκθέσεων"
 
-#: ../operations/common/exp-combine.c:1273
+#: ../operations/common/exp-combine.c:1272
 msgid "Combine multiple scene exposures into one high dynamic range image."
 msgstr ""
 "Συνδυασμός πολλών εκθέσεων σκηνών σε μια εικόνα υψηλής δυναμικής περιοχής."
@@ -2385,19 +2350,18 @@ msgstr "Ο προσανατολισμός της θόλωσης - ορ/καθ"
 
 #: ../operations/common/gegl-buffer-load-op.c:24
 #: ../operations/common/gegl-buffer-save-op.c:24
-#: ../operations/common/load.c:30 ../operations/common/magick-load.c:26
-#: ../operations/common/open-buffer.c:25 ../operations/common/save.c:25
-#: ../operations/external/ff-load.c:29 ../operations/external/ff-save.c:29
-#: ../operations/external/jp2-load.c:25 ../operations/external/jpg-load.c:24
-#: ../operations/external/jpg-save.c:25 ../operations/external/npy-save.c:31
-#: ../operations/external/png-load.c:27 ../operations/external/png-save.c:26
-#: ../operations/external/ppm-load.c:25 ../operations/external/ppm-save.c:25
-#: ../operations/external/rgbe-load.c:26 ../operations/external/rgbe-save.c:26
-#: ../operations/external/svg-load.c:25 ../operations/external/tiff-load.c:25
-#: ../operations/external/tiff-save.c:25 ../operations/external/webp-load.c:25
-#: ../operations/external/webp-save.c:25
-#: ../operations/workshop/dcraw-load.c:26
-#: ../operations/workshop/external/gluas.c:45
+#: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
+#: ../operations/common/save.c:25 ../operations/core/load.c:30
+#: ../operations/external/exr-save.cc:24 ../operations/external/ff-load.c:29
+#: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
+#: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
+#: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
+#: ../operations/external/png-save.c:26 ../operations/external/ppm-load.c:25
+#: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
+#: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
+#: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
+#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:25
+#: ../operations/workshop/external/gluas.c:37
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "File"
 msgstr "Αρχείο"
@@ -2417,6 +2381,41 @@ msgstr "Διαδρομή στόχου αρχείου για εγγραφή σε 
 #: ../operations/common/gegl-buffer-save-op.c:63
 msgid "GeglBuffer file writer."
 msgstr "Εγγραφή αρχείου GeglBuffer."
+
+#: ../operations/common/gegl.c:24
+msgid "pipeline"
+msgstr "διοχέτευση"
+
+#: ../operations/common/gegl.c:25
+msgid "[op [property=value] [property=value]] [[op] [property=value]"
+msgstr "[op [property=value] [property=value]] [[op] [property=value]"
+
+#: ../operations/common/gegl.c:28
+msgid "Eeeeeek"
+msgstr "Όπα"
+
+#: ../operations/common/gegl.c:29
+msgid ""
+"There is a problem in the syntax or in the application of parsed property "
+"values. Things might mostly work nevertheless."
+msgstr ""
+"Υπάρχει πρόβλημα στη σύνταξη ή στην εφαρμογή των αναλυμένων τιμών ιδιότητας. "
+"Παρόλα αυτά θα μπορούσε, κυρίως, να δουλέψει."
+
+#: ../operations/common/gegl.c:102
+msgid "GEGL graph"
+msgstr "γράφημα GEGL."
+
+#: ../operations/common/gegl.c:104
+msgid ""
+"Do a chain of operations, with key=value pairs after each operation name to "
+"set properties. And aux=[ source filter ] for specifying a chain with a "
+"source as something connected to an aux pad."
+msgstr ""
+"Κάντε μια αλυσίδα λειτουργιών, με ζεύγη key=value μετά από κάθε όνομα "
+"λειτουργίας για να ορίσετε τις ιδιότητες. Και aux=[ source filter ] για να "
+"ορίσετε μια αλυσίδα με μια προέλευση ως κάτι συνδεμένο σε ένα βοηθητικό "
+"χειριστήριο."
 
 #: ../operations/common/grey.c:100
 msgid "Make Grey"
@@ -2546,7 +2545,7 @@ msgstr ""
 msgid "Node"
 msgstr "Κόμβος"
 
-#: ../operations/common/introspect.c:161
+#: ../operations/common/introspect.c:159
 msgid "GEGL graph visualizer."
 msgstr "Οπτικοποιητής γραφικού GEGL."
 
@@ -2741,32 +2740,12 @@ msgstr "Γραμμική διαβάθμιση"
 msgid "Linear gradient renderer"
 msgstr "Απόδοση γραμμικής διαβάθμισης"
 
-#: ../operations/common/load.c:31 ../operations/common/magick-load.c:27
+#: ../operations/common/magick-load.c:27 ../operations/core/load.c:31
 #: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
 #: ../operations/external/raw-load.c:28 ../operations/external/rgbe-load.c:27
-#: ../operations/workshop/dcraw-load.c:27
 #: ../operations/workshop/rawbayer-load.c:26
 msgid "Path of file to load."
 msgstr "Διαδρομή αρχείου για φόρτωση."
-
-#: ../operations/common/load.c:32 ../operations/external/jp2-load.c:27
-#: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
-#: ../operations/external/svg-load.c:27 ../operations/external/tiff-load.c:27
-#: ../operations/external/webp-load.c:27
-msgid "URI"
-msgstr "URI"
-
-#: ../operations/common/load.c:33
-msgid "URI of file to load."
-msgstr "URI του αρχείου για φόρτωση."
-
-#: ../operations/common/load.c:227
-msgid ""
-"Multipurpose file loader, that uses other native handlers, and fallback "
-"conversion using Image Magick's convert."
-msgstr ""
-"Φόρτωση αρχείου πολλαπλών σκοπών, που χρησιμοποιεί άλλους εγγενείς χειριστές "
-"και μετατροπή ανάγκης χρησιμοποιώντας τη μετατροπή εικόνας του Magick."
 
 #: ../operations/common/magick-load.c:137
 msgid "Image Magick wrapper using the png op."
@@ -2899,11 +2878,11 @@ msgstr "Δαίδαλος"
 msgid "Draw a labyrinth"
 msgstr "Σχεδίαση ενός λαβύρινθου"
 
-#: ../operations/common/mblur.c:25
+#: ../operations/common/mblur.c:25 ../operations/workshop/vhsfix.c:24
 msgid "Dampness"
 msgstr "Απόσβεση"
 
-#: ../operations/common/mblur.c:26
+#: ../operations/common/mblur.c:26 ../operations/workshop/vhsfix.c:25
 msgid "The value represents the contribution of the past to the new frame."
 msgstr "Η τιμή αντιπροσωπεύει τη συμμετοχή του παλιού στο νέο πλαίσιο."
 
@@ -3246,7 +3225,7 @@ msgstr "Ο τυχαίος αριθμός για τη λειτουργία θορ
 msgid "Cell Noise"
 msgstr "Θόρυβος κελιού"
 
-#: ../operations/common/noise-cell.c:434
+#: ../operations/common/noise-cell.c:435
 msgid "Generates a cellular texture."
 msgstr "Δημιουργεί μια κυψελώδη υφή."
 
@@ -4424,7 +4403,7 @@ msgid "More transparent"
 msgstr "Περισσότερο διαφανής"
 
 #: ../operations/common/value-propagate.c:38
-#: ../operations/workshop/ink-simulator.c:44
+#: ../operations/workshop/ink-simulator.c:45
 msgid "Mode"
 msgstr "Κατάσταση"
 
@@ -4762,7 +4741,7 @@ msgstr "Στροβιλισμός και πίεση"
 msgid "Distort an image by whirling and pinching"
 msgstr "Παραμόρφωση εικόνας με στροβιλισμό και πίεση"
 
-#: ../operations/common/wind.c:28 ../operations/common/wind.c:659
+#: ../operations/common/wind.c:28 ../operations/common/wind.c:661
 msgid "Wind"
 msgstr "Άνεμος"
 
@@ -4826,7 +4805,7 @@ msgstr "Υψηλότερες τιμές περιορίζουν το εφέ σε 
 msgid "Higher values increase the magnitude of the effect"
 msgstr "Υψηλότερες τιμές αυξάνουν το μέγεθος του εφέ"
 
-#: ../operations/common/wind.c:662
+#: ../operations/common/wind.c:664
 msgid "Wind-like bleed effect"
 msgstr "Εφέ ανεμώδους διαρροής"
 
@@ -4929,6 +4908,25 @@ msgstr "Περικοπή"
 msgid "Crop a buffer"
 msgstr "Περικοπή μνήμης"
 
+#: ../operations/core/load.c:32 ../operations/external/jp2-load.c:27
+#: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
+#: ../operations/external/svg-load.c:27 ../operations/external/tiff-load.c:27
+#: ../operations/external/webp-load.c:27
+msgid "URI"
+msgstr "URI"
+
+#: ../operations/core/load.c:33
+msgid "URI of file to load."
+msgstr "URI του αρχείου για φόρτωση."
+
+#: ../operations/core/load.c:238
+msgid ""
+"Multipurpose file loader, that uses other native handlers, and fallback "
+"conversion using Image Magick's convert."
+msgstr ""
+"Φόρτωση αρχείου πολλαπλών σκοπών, που χρησιμοποιεί άλλους εγγενείς χειριστές "
+"και μετατροπή ανάγκης χρησιμοποιώντας τη μετατροπή εικόνας του Magick."
+
 #: ../operations/core/nop.c:79
 msgid "No Operation"
 msgstr "Χωρίς λειτουργία"
@@ -4936,6 +4934,14 @@ msgstr "Χωρίς λειτουργία"
 #: ../operations/core/nop.c:81
 msgid "No operation (can be used as a routing point)"
 msgstr "Χωρίς λειτουργία (μπορεί να χρησιμοποιηθεί ως σημείο δρομολόγησης)"
+
+#: ../operations/external/exr-save.cc:25
+msgid "path of file to write to."
+msgstr "διαδρομή αρχείου για εγγραφή."
+
+#: ../operations/external/exr-save.cc:27
+msgid "tile size to use."
+msgstr "μέγεθος πλακιδίου προς χρήση."
 
 #: ../operations/external/ff-load.c:30
 msgid "Path of video file to load"
@@ -4987,11 +4993,11 @@ msgstr "κωδικοποιητής-ήχου"
 msgid "audio"
 msgstr "ήχος"
 
-#: ../operations/external/ff-load.c:776
+#: ../operations/external/ff-load.c:777
 msgid "FFmpeg Frame Loader"
 msgstr "Φόρτωση πλαισίου FFmpeg"
 
-#: ../operations/external/ff-load.c:778
+#: ../operations/external/ff-load.c:779
 msgid "FFmpeg video frame importer."
 msgstr "Εισαγωγή πλαισίου βίντεο FFmpeg."
 
@@ -5137,7 +5143,7 @@ msgstr "Μετατόπιση κβαντισμού i (i-quant-offset)"
 msgid "me-subpel-quality"
 msgstr "Ποιότητα εικονοστοιχείων εκτίμησης κίνησης (me-subpel-quality)"
 
-#: ../operations/external/ff-save.c:1095
+#: ../operations/external/ff-save.c:1094
 msgid "FFmpeg video output sink"
 msgstr "Δέκτης εξόδου βίντεο FFmpeg"
 
@@ -5405,43 +5411,43 @@ msgstr "Ο αριθμός των επαναλήψεων παραμόρφωσης
 msgid "ASAP Deformation"
 msgstr "Παραμόρφωση ASAP"
 
-#: ../operations/external/npd.c:36
+#: ../operations/external/npd.c:35
 msgid "ASAP deformation is performed when TRUE, ARAP deformation otherwise"
 msgstr ""
 "Η παραμόρφωση ASAP εκτελείται όταν είναι αληθής, αλλιώς εκτελείται η "
 "παραμόρφωση ARAP"
 
-#: ../operations/external/npd.c:38
+#: ../operations/external/npd.c:37
 msgid "MLS Weights"
 msgstr "Βάρη MLS (MLS Weights)"
 
-#: ../operations/external/npd.c:40
+#: ../operations/external/npd.c:38
 msgid "Use MLS weights"
 msgstr "Χρήση βαρών MLS"
 
-#: ../operations/external/npd.c:42
+#: ../operations/external/npd.c:40
 msgid "MLS Weights Alpha"
 msgstr "Άλφα βάρη MLS"
 
-#: ../operations/external/npd.c:44
+#: ../operations/external/npd.c:42
 msgid "Alpha parameter of MLS weights"
 msgstr "Παράμετρος άλφα των βαρών MLS"
 
-#: ../operations/external/npd.c:46
+#: ../operations/external/npd.c:44
 msgid "Preserve Model"
 msgstr "Διατήρηση μοντέλου"
 
-#: ../operations/external/npd.c:48
+#: ../operations/external/npd.c:45
 msgid "When TRUE the model will not be freed"
 msgstr "Όταν είναι αληθές, το μοντέλο θα ελευθερωθεί"
 
-#: ../operations/external/npd.c:53
+#: ../operations/external/npd.c:50
 #: ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Εσωτερικά χρησιμοποιούμενη δειγματοληψία"
 
-#: ../operations/external/npd.c:258
+#: ../operations/external/npd.c:255
 msgid "Performs n-point image deformation"
 msgstr "Εκτελεί παραμόρφωση εικόνας n σημείου"
 
@@ -5876,7 +5882,6 @@ msgid "WebP File Saver"
 msgstr "Αποθηκευτής αρχείου WebP"
 
 #: ../operations/external/webp-save.c:197
-#| msgid "WebP image saver."
 msgid "WebP image saver"
 msgstr "Αποθήκευση εικόνας WebP."
 
@@ -6469,17 +6474,13 @@ msgstr "Γραμμική έξοδος"
 msgid "Use linear output instead of gamma corrected"
 msgstr "Χρήση της γραμμικής εξόδου αντί για τη διορθωμένη γάμα"
 
-#: ../operations/workshop/component-extract.c:264
+#: ../operations/workshop/component-extract.c:240
 msgid "Extract Component"
 msgstr "Εξαγωγή συστατικού"
 
-#: ../operations/workshop/component-extract.c:266
+#: ../operations/workshop/component-extract.c:242
 msgid "Extract a color model component"
 msgstr "Εξαγωγή ενός συστατικού χρωματικού προτύπου"
-
-#: ../operations/workshop/dcraw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr "Φόρτωση ακατέργαστης εικόνας, αναδιπλώνοντας dcraw με σωλήνες."
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
@@ -6524,27 +6525,35 @@ msgstr ""
 "Επιλογή ελέγχου για να γίνει μια απεικόνιση εισόδου 1:1 έξοδος, κατά τη "
 "δειγμετοληψία"
 
-#: ../operations/workshop/external/gluas.c:41
+#: ../operations/workshop/external/gluas.c:29
 msgid "Script"
 msgstr "Σενάριο"
 
-#: ../operations/workshop/external/gluas.c:42
+#: ../operations/workshop/external/gluas.c:30
 msgid "The lua script containing the implementation of this operation."
 msgstr "Το σενάριο lua που περιέχει την υλοποίηση αυτής της λειτουργίας."
 
-#: ../operations/workshop/external/gluas.c:46
+#: ../operations/workshop/external/gluas.c:33
+msgid "Lua error"
+msgstr "σφάλμα Lua"
+
+#: ../operations/workshop/external/gluas.c:34
+msgid "parse/compile error, if any"
+msgstr "σφάλμα ανάλυσης/μεταγλώττισης, αν υπάρχει"
+
+#: ../operations/workshop/external/gluas.c:38
 msgid "a stored lua script on disk implementing an operation."
 msgstr "ένα αποθηκευμένο σενάριο lua στο δίσκο υλοποιεί μια λειτουργία."
 
-#: ../operations/workshop/external/gluas.c:48
+#: ../operations/workshop/external/gluas.c:40
 msgid "User value"
 msgstr "Τιμή χρήστη"
 
-#: ../operations/workshop/external/gluas.c:49
+#: ../operations/workshop/external/gluas.c:41
 msgid "(appears in the global variable 'user_value' in lua."
 msgstr "(εμφανίζεται στην καθολική μεταβλητή 'user_value' στο lua."
 
-#: ../operations/workshop/external/gluas.c:989
+#: ../operations/workshop/external/gluas.c:994
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
@@ -6818,11 +6827,11 @@ msgstr "Χρώμα 5"
 msgid "Stop 5"
 msgstr "Διακοπή 5"
 
-#: ../operations/workshop/gradient-map.c:242
+#: ../operations/workshop/gradient-map.c:244
 msgid "Gradient Map"
 msgstr "Απεικόνιση διαβάθμισης"
 
-#: ../operations/workshop/gradient-map.c:244
+#: ../operations/workshop/gradient-map.c:246
 msgid "Applies a color gradient."
 msgstr "Εφαρμόζει μια διαβάθμιση χρώματος."
 
@@ -6856,68 +6865,68 @@ msgstr ""
 "Κειμενική περιγραφή των χρησιμοποιούμενων μελανιών για προσομοιωμένη εργασία "
 "εκτύπωσης"
 
-#: ../operations/workshop/ink-simulator.c:46
+#: ../operations/workshop/ink-simulator.c:47
 msgid "how the ink simulator is used"
 msgstr "πώς χρησιμοποιείται ο προσομοιωτής μελανιού"
 
-#: ../operations/workshop/ink-simulator.c:50
+#: ../operations/workshop/ink-simulator.c:51
 msgid "Substrate color"
 msgstr "Χρώμα υποστρώματος"
 
-#: ../operations/workshop/ink-simulator.c:50
+#: ../operations/workshop/ink-simulator.c:51
 msgid "paper/fabric/material color"
 msgstr "χρώμα χαρτιού/υφάσματος/υλικού"
 
-#: ../operations/workshop/ink-simulator.c:51
+#: ../operations/workshop/ink-simulator.c:52
 msgid "Ink1 color"
 msgstr "Χρώμα μελανιού1"
 
-#: ../operations/workshop/ink-simulator.c:51
 #: ../operations/workshop/ink-simulator.c:52
 #: ../operations/workshop/ink-simulator.c:53
 #: ../operations/workshop/ink-simulator.c:54
 #: ../operations/workshop/ink-simulator.c:55
+#: ../operations/workshop/ink-simulator.c:56
 msgid "ink color"
 msgstr "χρώμα μελανιού"
 
-#: ../operations/workshop/ink-simulator.c:52
+#: ../operations/workshop/ink-simulator.c:53
 msgid "Ink2 color"
 msgstr "Χρώμα μελανιού2"
 
-#: ../operations/workshop/ink-simulator.c:53
+#: ../operations/workshop/ink-simulator.c:54
 msgid "Ink3 color"
 msgstr "Χρώμα μελανιού3"
 
-#: ../operations/workshop/ink-simulator.c:54
+#: ../operations/workshop/ink-simulator.c:55
 msgid "Ink4 color"
 msgstr "Χρώμα μελανιού4"
 
-#: ../operations/workshop/ink-simulator.c:55
+#: ../operations/workshop/ink-simulator.c:56
 msgid "Ink5 color"
 msgstr "Χρώμα μελανιού5"
 
-#: ../operations/workshop/ink-simulator.c:57
+#: ../operations/workshop/ink-simulator.c:58
 msgid "Ink limit"
 msgstr "Όριο μελανιού"
 
-#: ../operations/workshop/ink-simulator.c:58
+#: ../operations/workshop/ink-simulator.c:59
 #, c-format
 msgid "maximum amount of ink for one pixel, 2.5 = 250%% coverage"
 msgstr "μέγιστη ποσότητα μελανιού για ένα εικονοστοιχείο, 2.5 = 250%% κάλυψη"
 
-#: ../operations/workshop/ink-simulator.c:62
+#: ../operations/workshop/ink-simulator.c:63
 msgid "Debug width"
 msgstr "Πλάτος αποσφαλμάτωσης"
 
-#: ../operations/workshop/ink-simulator.c:64
+#: ../operations/workshop/ink-simulator.c:65
 msgid "how wide peel off bands for ink order vis"
 msgstr "πόσο πλατιά απομακρύνονται οι ζώνες για την διάταξη μελανιού"
 
-#: ../operations/workshop/ink-simulator.c:1420
+#: ../operations/workshop/ink-simulator.c:1421
 msgid "Ink Simulator"
 msgstr "Προσομοιωτής μελανιού"
 
-#: ../operations/workshop/ink-simulator.c:1423
+#: ../operations/workshop/ink-simulator.c:1424
 msgid ""
 "Spectral ink and paint simulator, for softproofing/simulating physical color "
 "mixing and interactions."
@@ -7015,6 +7024,27 @@ msgstr "Περικοπή RGB"
 #: ../operations/workshop/rgb-clip.c:186
 msgid "Keep RGB pixels values inside a specific range"
 msgstr "Διατήρηση των τιμών εικονοστοιχείων RGB μέσα σε ορισμένο εύρος"
+
+#: ../operations/workshop/vhsfix.c:257
+msgid "vhs glitch fixer"
+msgstr "επιδιόρθωση προβλήματος βίντεο"
+
+#: ../operations/workshop/vhsfix.c:259
+msgid "fixes vhs digitization glitches"
+msgstr "διορθώνει προβλήματα ψηφιοποίησης βίντεο"
+
+#~| msgid "Mirrors"
+#~ msgid "error"
+#~ msgstr "σφάλμα"
+
+#~ msgid ""
+#~ "Program a GEGL operation, in the same manner as the GEGL commandline."
+#~ msgstr ""
+#~ "Προγραμματίζει μια λειτουργία GEGL, κατά τον ίδιο τρόπο όπως η γραμμή "
+#~ "εντολών GEGL."
+
+#~ msgid "Raw image loader, wrapping dcraw with pipes."
+#~ msgstr "Φόρτωση ακατέργαστης εικόνας, αναδιπλώνοντας dcraw με σωλήνες."
 
 #~ msgid "Gamma correction"
 #~ msgstr "Διόρθωση γάμμα"
