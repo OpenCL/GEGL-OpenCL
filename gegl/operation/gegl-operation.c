@@ -834,3 +834,11 @@ void gegl_temp_buffer_free (void)
       gegl_temp_size[no] = 0;
     }
 }
+
+void gegl_operation_progress (GeglOperation *operation,
+                              gdouble        progress,
+                              gchar         *message)
+{
+  if (operation->node)
+    gegl_node_progress (operation->node, progress, message);
+}

@@ -58,6 +58,7 @@ enum
 {
   INVALIDATED,
   COMPUTED,
+  PROGRESS,
   LAST_SIGNAL
 };
 
@@ -200,6 +201,15 @@ gegl_node_class_init (GeglNodeClass *klass)
                   g_cclosure_marshal_VOID__BOXED,
                   G_TYPE_NONE, 1,
                   GEGL_TYPE_RECTANGLE);
+
+  gegl_node_signals[PROGRESS] =
+    g_signal_new ("progress",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                  0,
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__DOUBLE,
+                  G_TYPE_NONE, 1, G_TYPE_DOUBLE);
 }
 
 static void
@@ -1677,7 +1687,7 @@ gegl_node_get_bounding_box (GeglNode *self)
 }
 
 void
-gegl_node_process (GeglNode *self)
+gegl_node_process (GeglNode *self) /* XXX: add level argument?  */
 {
   GeglProcessor *processor;
 
@@ -1728,7 +1738,7 @@ gegl_node_insert_before (GeglNode *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (GEGL_IS_NODE (to_be_inserted));
 
-  other     = gegl_node_get_producer (self, "input", NULL);/*XXX: handle pad name */
+  other     = gegl_node_get_producer (self, "input", NULL); /*XXX: handle pad name */
   rectangle = gegl_node_get_bounding_box (to_be_inserted);
 
   g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, gegl_node_source_invalidated, NULL);
@@ -2169,4 +2179,38 @@ gegl_node_set_passthrough (GeglNode *node,
 
   gegl_node_invalidated (node, NULL, TRUE);
   node->passthrough = passthrough;
+}
+
+typedef struct Closure {
+  GeglNode  *node;
+  gdouble    progress;
+} Closure;
+
+static gboolean delayed_emission (void *data)
+{
+  Closure *closure = data;
+  g_signal_emit (closure->node,
+                 gegl_node_signals[PROGRESS], 0,
+                 closure->progress, NULL, NULL);
+  g_free (closure);
+  return FALSE;
+}
+
+/* this causes dispatch of the signal on the main thread - if we
+ * are in the main thread the callback will be directly executed now
+ * instead of queued
+ */
+void gegl_node_progress (GeglNode *node,
+                         gdouble   progress,
+                         gchar    *message)
+{
+  if (gegl_is_main_thread ())
+    g_signal_emit (node, gegl_node_signals[PROGRESS], 0, progress, message, NULL);
+  else
+  {
+    Closure *closure = g_new0 (Closure, 1);
+    closure->node = node;
+    closure->progress = progress;
+    g_idle_add (delayed_emission, closure);
+  }
 }
