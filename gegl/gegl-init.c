@@ -222,6 +222,13 @@ gegl_init_i18n (void)
     }
 }
 
+static GThread *main_thread = NULL;
+
+gboolean gegl_is_main_thread (void)
+{
+  return g_thread_self () == main_thread;
+}
+
 void
 gegl_init (gint    *argc,
            gchar ***argv)
@@ -232,6 +239,7 @@ gegl_init (gint    *argc,
 
   if (initialized)
     return;
+
 
   initialized = TRUE;
 
@@ -701,6 +709,8 @@ gegl_post_parse_hook (GOptionContext *context,
                    G_CALLBACK (gegl_config_application_license_notify),
                    NULL);
   gegl_operations_set_licenses_from_string (config->application_license);
+
+  main_thread = g_thread_self ();
 
   return TRUE;
 }

@@ -94,6 +94,8 @@ void          gegl_load_module_directory (const gchar *path);
  */
 GeglConfig   *gegl_config                (void);
 
+gboolean gegl_is_main_thread (void);
+
 G_END_DECLS
 
 #endif /* __GEGL_INIT_H__ */
