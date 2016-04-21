@@ -224,6 +224,8 @@ process (GeglOperation       *operation,
   gdouble             ramp;
   gint                x;
   gint                y;
+  gfloat              tot_pixels = result->width * result->height;
+  gfloat              pixels = 0;
 
   grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);
 
@@ -251,6 +253,7 @@ process (GeglOperation       *operation,
       gfloat *in_pixel  = iter->data[1];
 
       for (y = iter->roi[0].y; y < iter->roi[0].y + iter->roi[0].height; ++y)
+      {
         for (x = iter->roi[0].x; x < iter->roi[0].x + iter->roi[0].width; ++x)
           {
             gfloat  pixel1;
@@ -287,7 +290,11 @@ process (GeglOperation       *operation,
 
             out_pixel += 4;
             in_pixel  += 4;
+
           }
+        pixels += iter->roi[0].width;
+        gegl_operation_progress (operation, pixels / tot_pixels, "a");
+      }
     }
 
   g_object_unref (sampler1);
