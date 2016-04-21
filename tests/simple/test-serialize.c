@@ -29,34 +29,81 @@ typedef struct TestCase {
 } TestCase;
 
 TestCase tests[] = {
-    {"invert",        "gegl:invert-linear",  ""},
-    {"invert a=b",    "gegl:invert-linear",  "gegl:invert has no a property."},
-    {"invert a=c",    "gegl:invert-linear",  "gegl:invert has no a property."},
-    {"gaussian-blur", "gegl:gaussian-blur",  ""},
-    {"over aux=[ text string='foo bar' ]",    "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
-    {"over aux=[text string='foo bar' ]",     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
-    {"over aux= [ ",  "svg:src-over", "No such op 'gegl:['"}, 
+    {"invert",
+     "gegl:invert-linear",
+     ""},
+
+    {"invert a=b",
+     "gegl:invert-linear",
+     "gegl:invert has no a property."},
+
+    {"invert a=c",
+     "gegl:invert-linear",
+     "gegl:invert has no a property."},
+
+    {"gaussian-blur",
+     "gegl:gaussian-blur",
+     ""},
+
+    {"over aux=[ text string='foo bar' ]",
+     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]",
+     ""},
+
+    {"over aux=[text string='foo bar' ]",
+     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]",
+     ""},
+
+    {"over aux= [ ",
+     "svg:src-over",
+     "No such op 'gegl:['"}, 
+
     /* the following cause undesired warnings on console */
-    {"over aux=[ string='foo bar' ]",  "svg:src-over", ""},
+    {"over aux=[ string='foo bar' ]",
+     "svg:src-over",
+     ""},
+
     /* the following should have error message */
-    {"over aux=[ ",   "svg:src-over", ""},
-    {"over aux=[ ]",  "svg:src-over", ""},
-    {"exposure foo=2","gegl:exposure","gegl:exposure has no foo property, properties: 'exposure', 'offset', 'gamma', "},
+    {"over aux=[ ",
+     "svg:src-over",
+     ""},
 
+    {"over aux=[ ]",
+     "svg:src-over",
+     ""},
 
-    {"over aux=[text string='foo bar']",      "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
-    {"over aux=[ load path=/ ]",    "svg:src-over aux=[ gegl:load path='/' ]", ""},
-    {"inver",           "", "No such op 'gegl:inver' suggestions: gegl:invert-gamma gegl:invert-linear"},
+    {"exposure foo=2",
+     "gegl:exposure",
+     "gegl:exposure has no foo property, properties: 'exposure', 'offset', 'gamma', "},
 
-    {"over aux=[ load path=/abc ]", "svg:src-over aux=[ gegl:load path='/abc' ]", ""},
+    {"over aux=[text string='foo bar']",
+     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]",
+     ""},
 
+    {"over aux=[ load path=/ ]",
+     "svg:src-over aux=[ gegl:load path='/' ]",
+     ""},
 
-    {"id=foo over aux=[ ref=foo invert ]",  "id=foo svg:src-over aux=[ ref=foo gegl:invert-linear ]", ""},
-    {"id=bar id=foo over aux=[ ref=foo invert ]",  "id=foo svg:src-over aux=[ ref=foo gegl:invert-linear ]", ""},
+    {"inver",
+     "",
+     "No such op 'gegl:inver' suggestions: gegl:invert-gamma gegl:invert-linear"},
 
-    {"over aux=[ text string={ 0='foo bar' } ]", "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
+    {"over aux=[ load path=/abc ]",
+     "svg:src-over aux=[ gegl:load path='/abc' ]",
+     ""},
 
-    {NULL, NULL}
+    {"id=foo over aux=[ ref=foo invert ]",
+     "id=foo svg:src-over aux=[ ref=foo gegl:invert-linear ]",
+     ""},
+
+    {"id=bar id=foo over aux=[ ref=foo invert ]",
+     "id=foo svg:src-over aux=[ ref=foo gegl:invert-linear ]",
+     ""},
+
+    {"over aux=[ text string={ 0='foo bar' } ]",
+     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]",
+     ""},
+
+    {NULL, NULL, NULL}
 };
 
 static int
