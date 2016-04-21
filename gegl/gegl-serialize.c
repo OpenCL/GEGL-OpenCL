@@ -693,10 +693,17 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
 gchar *gegl_serialize (GeglNode *start, GeglNode *end, const char *basepath)
 {
   gchar *ret;
+  gchar *ret2;
+
   GHashTable *ht = g_hash_table_new (g_direct_hash, g_direct_equal);
   ret = gegl_serialize2 (start, end, basepath, ht);
   g_hash_table_destroy (ht);
-  return ret;
+  ret2 = ret;
+  while (ret2[0] == ' ')
+    ret2++;
+  ret2 = g_strdup (ret2);
+  g_free (ret);
+  return ret2;
 }
 
 GeglNode *gegl_node_new_from_serialized (const gchar *xmldata,
