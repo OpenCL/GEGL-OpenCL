@@ -338,7 +338,7 @@ gegl_expcombine_apply_debevec  (gfloat              *hdr,
       gfloat  ti_max  = G_MINFLOAT,
               ti_min  = G_MAXFLOAT;
       gfloat  average;
-      guint   white_step[3], black_step[3];
+      guint   white_step[3] = {0,0,0}, black_step[3] = {0,0,0};
 
       /* all exposures for each pixel */
       for (i = 0; i < num_imgs; ++i)
