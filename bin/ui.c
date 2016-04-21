@@ -1363,7 +1363,7 @@ static void load_path (State *o)
     {
       GSList *nodes, *n;
       char *containing_path = get_path_parent (o->path);
-      o->gegl = gegl_node_new_from_xml (meta, containing_path);
+      o->gegl = gegl_node_new_from_serialized (meta, containing_path);
       free (containing_path);
       o->sink = gegl_node_new_child (o->gegl,
                        "operation", "gegl:nop", NULL);

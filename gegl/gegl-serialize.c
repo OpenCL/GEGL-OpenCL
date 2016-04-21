@@ -150,6 +150,8 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           if (!strcmp (key, "id"))
           {
             g_hash_table_insert (ht, (void*)g_intern_string (value), iter[level]);
+            g_object_set_data (G_OBJECT(iter[level]),
+                               "refname", (void*)g_intern_string (value));
           }
           else if (!strcmp (key, "ref"))
           {
@@ -490,10 +492,11 @@ void gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end, d
   }
 }
 
-gchar *gegl_serialize (GeglNode *start, GeglNode *end)
+static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, GHashTable *ht)
 {
   char *ret = NULL;
   GeglNode *iter;
+
   GString *str = g_string_new ("");
   if (start == NULL && 0)
   {
@@ -502,10 +505,51 @@ gchar *gegl_serialize (GeglNode *start, GeglNode *end)
       start = gegl_node_get_producer (start, "input", NULL);
   }
 
+
   iter = end;
   while (iter)
   {
-    if (iter == start)
+    GeglNode **nodes = NULL;
+    int count = gegl_node_get_consumers (iter, "output", &nodes, NULL);
+    if (count>1)
+    {
+      int val;
+      int last = 0;
+      int cnt = 0;
+
+      if ((val = GPOINTER_TO_INT (g_hash_table_lookup (ht, iter))))
+      {
+        cnt = val - 1;
+        g_hash_table_insert (ht, iter, GINT_TO_POINTER (cnt));
+        if (cnt == 1)
+          last=1;
+      }
+      else
+      {
+        g_hash_table_insert (ht, iter, GINT_TO_POINTER (count));
+        cnt = count;
+      }
+
+      {
+      gchar *str3;
+      
+      gchar *refname = g_object_get_data (G_OBJECT (iter), "refname");
+     
+      if (refname)
+        str3  = g_strdup_printf (" %s=%s", last?"id":"ref", refname);
+      else
+        str3  = g_strdup_printf (" %s=%p", last?"id":"ref", iter);
+      g_string_prepend (str, str3);
+      g_free (str3);
+      }
+      /* if this is not the last reference to it,. keep recursing
+       */
+      if (!last)
+        iter = NULL;
+    }
+    g_free (nodes);
+
+    if (iter == start || !iter)
     {
       iter = NULL;
     }
@@ -626,7 +670,7 @@ gchar *gegl_serialize (GeglNode *start, GeglNode *end)
             GeglNode *aux = gegl_node_get_producer (iter, "aux", NULL);
             if (aux)
             {
-              char *str = gegl_serialize (NULL, aux);
+              char *str = gegl_serialize2 (NULL, aux, ht);
               g_string_append_printf (s2, " aux=[%s ]", str);
               g_free (str);
             }
@@ -642,5 +686,15 @@ gchar *gegl_serialize (GeglNode *start, GeglNode *end)
   ret = str->str;
   g_string_free (str, FALSE);
 
+
+  return ret;
+}
+
+gchar *gegl_serialize (GeglNode *start, GeglNode *end)
+{
+  gchar *ret;
+  GHashTable *ht = g_hash_table_new (g_direct_hash, g_direct_equal);
+  ret = gegl_serialize2 (start, end, ht);
+  g_hash_table_destroy (ht);
   return ret;
 }

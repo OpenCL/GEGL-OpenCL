@@ -35,30 +35,27 @@ TestCase tests[] = {
     {"gaussian-blur", " gegl:gaussian-blur",  ""},
     {"over aux=[ text string='foo bar' ]",    " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
     {"over aux=[text string='foo bar' ]",     " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
-    {"over aux=[ text string={ 0='foo bar' } ]",  " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
     {"over aux= [ ",  " svg:src-over", "No such op 'gegl:['"}, 
     /* the following cause undesired warnings on console */
-    {"over aux=[ string='foo bar' ]",         " svg:src-over", ""},
+    {"over aux=[ string='foo bar' ]",  " svg:src-over", ""},
     /* the following should have error message */
-    {"over aux=[ ",   " svg:src-over",        ""},
-    {"over aux=[ ]",  " svg:src-over",        ""},
-    {"exposure foo=2"," gegl:exposure",       "gegl:exposure has no foo property, properties: 'exposure', 'offset', 'gamma', "},
+    {"over aux=[ ",   " svg:src-over", ""},
+    {"over aux=[ ]",  " svg:src-over", ""},
+    {"exposure foo=2"," gegl:exposure","gegl:exposure has no foo property, properties: 'exposure', 'offset', 'gamma', "},
 
-#if 0
-    {"id=foo over aux=[ ref=foo invert ]",  " id=001 svg:src-over aux=[ ref=001 gegl:invert-linear ]", ""},
-#else
-    {"id=foo over aux=[ ref=foo invert ]",  " svg:src-over aux=[ gegl:nop gegl:invert-linear ]", ""},
-#endif
 
     {"over aux=[text string='foo bar']",      " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
-    /* the following causes crashes */
-#if 0
-    {"over aux=[]",  " svg:src-over", "No such op 'gegl:['"},  /* should report error message */
-#endif
-    {"over aux=[ load path=/ ]",  " svg:src-over aux=[ gegl:load path='/' ]", ""},
+    {"over aux=[ load path=/ ]",    " svg:src-over aux=[ gegl:load path='/' ]", ""},
     {"inver",           "", "No such op 'gegl:inver' suggestions: gegl:invert-gamma gegl:invert-linear"},
 
     {"over aux=[ load path=/abc ]", " svg:src-over aux=[ gegl:load path='/abc' ]", ""},
+
+
+    {"id=foo over aux=[ ref=foo invert ]",  " id=foo svg:src-over aux=[ ref=foo gegl:invert-linear ]", ""},
+    {"id=bar id=foo over aux=[ ref=foo invert ]",  " id=foo svg:src-over aux=[ ref=foo gegl:invert-linear ]", ""},
+
+    {"over aux=[ text string={ 0='foo bar' } ]", " svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]", ""},
+
     {NULL, NULL}
 };
 
@@ -80,13 +77,13 @@ test_serialize (void)
     gchar *serialization = NULL;
     gegl_create_chain (tests[i].argv_chain, start, end,
                     0.0, 500, &error);
-    serialization = gegl_serialize (start, gegl_node_get_producer (end, "input", NULL));
+    serialization = gegl_serialize (start, gegl_node_get_producer (end, "input", NULL), "/");
     if (strcmp (serialization, tests[i].expected_serialization))
     {
       printf ("%s\nexpected:\n%s\nbut got:\n%s\n", 
-                      tests[i].argv_chain,
-                      tests[i].expected_serialization,
-                      serialization);
+              tests[i].argv_chain,
+              tests[i].expected_serialization,
+              serialization);
       res = FAILURE;
     }
     g_free (serialization);

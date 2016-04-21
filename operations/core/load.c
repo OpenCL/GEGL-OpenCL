@@ -146,7 +146,6 @@ do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
                      "string",    "No path specified",
                      NULL);
     }
-
 }
 
 static void attach (GeglOperation *operation)

@@ -6,7 +6,7 @@ EXTRA_DIST = $(wildcard $(srcdir)/*.h)
 
 BUILT_SOURCES = $(subst .c,.c.h,$(wildcard $(srcdir)/*.c))
 
-AM_CPPFLAGS += -I$(srcdir)
+AM_CPPFLAGS += -I$(srcdir) 
 
 LIBS = $(op_libs)
 
