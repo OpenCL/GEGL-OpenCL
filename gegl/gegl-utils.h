@@ -264,7 +264,9 @@ gint        _gegl_float_epsilon_equal (float     v1,
   */
 void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, double time, int rel_dim, GError **error);
 void gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end, double time, int rel_dim, GError **error);
-gchar *gegl_serialize         (GeglNode *start, GeglNode *end);
+gchar *gegl_serialize         (GeglNode *start, GeglNode *end, const char *basepath);
+GeglNode *gegl_node_new_from_serialized (const gchar *xmldata,
+                                         const gchar *path_root);
 
 G_END_DECLS
 

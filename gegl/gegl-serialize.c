@@ -492,7 +492,7 @@ void gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end, d
   }
 }
 
-static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, GHashTable *ht)
+static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basepath, GHashTable *ht)
 {
   char *ret = NULL;
   GeglNode *iter;
@@ -670,7 +670,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, GHashTable *ht)
             GeglNode *aux = gegl_node_get_producer (iter, "aux", NULL);
             if (aux)
             {
-              char *str = gegl_serialize2 (NULL, aux, ht);
+              char *str = gegl_serialize2 (NULL, aux, basepath, ht);
               g_string_append_printf (s2, " aux=[%s ]", str);
               g_free (str);
             }
@@ -690,11 +690,27 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, GHashTable *ht)
   return ret;
 }
 
-gchar *gegl_serialize (GeglNode *start, GeglNode *end)
+gchar *gegl_serialize (GeglNode *start, GeglNode *end, const char *basepath)
 {
   gchar *ret;
   GHashTable *ht = g_hash_table_new (g_direct_hash, g_direct_equal);
-  ret = gegl_serialize2 (start, end, ht);
+  ret = gegl_serialize2 (start, end, basepath, ht);
   g_hash_table_destroy (ht);
+  return ret;
+}
+
+GeglNode *gegl_node_new_from_serialized (const gchar *xmldata,
+                                         const gchar *path_root)
+{
+  GeglNode *ret;
+  GeglNode *foo;
+  ret = gegl_node_new ();
+  gegl_node_set (ret, "operation", "gegl:nop", NULL);
+  foo = gegl_node_new ();
+  gegl_node_set (foo, "operation", "gegl:nop", NULL);
+
+  gegl_node_link_many (foo, ret, NULL);
+  gegl_create_chain (xmldata, foo, ret, 0, 1024, NULL);
+
   return ret;
 }
