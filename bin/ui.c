@@ -1955,7 +1955,7 @@ static void save_cb (MrgEvent *event, void *data1, void *data2)
   GeglNode *load;
   State *o = data1;
   gchar *path;
-  char *xml;
+  char *serialized;
 
   gegl_node_link_many (o->sink, o->save, NULL);
   gegl_node_process (o->save);
@@ -1968,13 +1968,13 @@ static void save_cb (MrgEvent *event, void *data1, void *data2)
   gegl_node_link_many (load, o->source, NULL);
   {
     char *containing_path = get_path_parent (o->path);
-    xml = gegl_node_to_xml (o->sink, containing_path);
+    serialized = gegl_serialize (NULL, o->sink, containing_path);
     free (containing_path);
   }
   gegl_node_remove_child (o->gegl, load);
   gegl_node_link_many (o->load, o->source, NULL);
-  gegl_meta_set (path, xml);
-  g_free (xml);
+  gegl_meta_set (path, serialized);
+  g_free (serialized);
   o->rev = 0;
 }
 
