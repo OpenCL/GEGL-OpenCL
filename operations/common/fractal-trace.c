@@ -204,7 +204,7 @@ process (GeglOperation       *operation,
 
   format = babl_format ("RGBA float");
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
-  sampler = gegl_buffer_sampler_new_at_level (input, format, GEGL_SAMPLER_NOHALO, level);
+  sampler = gegl_buffer_sampler_new_at_level (input, format, GEGL_SAMPLER_CUBIC, level);
 
   for (y = result->y; y < result->y + result->height; y++)
     fractaltrace (input, sampler, &boundary, dst_buf, result, o, y, o->fractal, format, level);
