@@ -520,15 +520,10 @@ gegl_operation_invalidate (GeglOperation       *operation,
                            const GeglRectangle *roi,
                            gboolean             clear_cache)
 {
-  GeglNode *node = NULL;
-
-  if (!operation)
-    return;
-
   g_return_if_fail (GEGL_IS_OPERATION (operation));
-  node = operation->node;
 
-  gegl_node_invalidated (node, roi, clear_cache);
+  if (operation->node)
+    gegl_node_invalidated (operation->node, roi, clear_cache);
 }
 
 gboolean
