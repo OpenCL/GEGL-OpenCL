@@ -18,8 +18,6 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include <gegl-gio-private.h>
-#include <stdlib.h>
 
 #ifdef G_OS_WIN32
 #define realpath(a,b) _fullpath(b,a,_MAX_PATH)
@@ -36,7 +34,8 @@ property_uri (uri, _("URI"), "")
 
 #define GEGL_OP_C_SOURCE load.c
 
-#include "gegl-plugin.h"
+#include <gegl-plugin.h>
+#include <gegl-gio-private.h>
 
 struct _GeglOp
 {
@@ -52,103 +51,177 @@ typedef struct
   GeglOperationMetaClass parent_class;
 } GeglOpClass;
 
-#include "gegl-op.h"
+#include <gegl-op.h>
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 
 #include <stdio.h>
+#define SNIFFING_LENGTH 4096
 
-static gchar * const
-extension_from_mimetype(const gchar *mime)
+static gboolean
+read_from_stream (GInputStream *stream,
+                  guchar      **buffer,
+                  gsize        *read,
+                  GError      **error)
 {
-    // XXX: maybe file loader opts should register mimetypes also?
-    static const gchar * const mime_prefix = "image/";
-    if (g_str_has_prefix(mime, mime_prefix)) {
-       return g_strdup_printf(".%s", mime+strlen(mime_prefix));
-    }
-    return NULL;
+  const gsize size = SNIFFING_LENGTH;
+
+  *read = 0;
+  *buffer = g_try_new (guchar, size);
+
+  g_assert (buffer != NULL);
+
+  return g_input_stream_read_all (stream, *buffer, size, read, NULL, error);
 }
 
 static void
-do_setup (GeglOperation *operation, const gchar *new_path, const gchar *new_uri)
+do_setup (GeglOperation *operation, const gchar *path, const gchar *uri)
 {
   GeglOp  *self = GEGL_OP (operation);
+  const gchar *handler = NULL;
+  gchar *content_type = NULL, *filename = NULL, *message;
+  gboolean load_from_uri, uncertain;
+  GInputStream *stream = NULL;
+  GError *error = NULL;
+  GFile *file = NULL;
+  guchar *buffer = NULL;
+  gsize size;
 
-  if (new_uri && strlen (new_uri) > 0)
-      {
-        gchar *extension = NULL;
-        const gchar *handler   = NULL;
-
-        if (gegl_gio_uri_is_datauri(new_uri))
-          {
-            gchar *mime = gegl_gio_datauri_get_content_type(new_uri);
-            extension = extension_from_mimetype(mime);
-            g_free(mime);
-          }
-        else
-            extension = g_strdup(strrchr (new_uri, '.'));
-
-        if (extension)
-            handler = gegl_operation_handlers_get_loader (extension);
-        gegl_node_set (self->load, "operation", handler, NULL);
-        gegl_node_set (self->load, "uri", new_uri, NULL);
-
-        g_free(extension);
-      }
-  else if (new_path && strlen (new_path) > 0)
+  if (uri != NULL && strlen (uri) > 0)
     {
-      const gchar *extension = strrchr (new_path, '.');
-      const gchar *handler   = NULL;
-      gchar *resolved_path;
-
-      resolved_path = realpath (new_path, NULL);
-
-      if (resolved_path)
-      {
-        if (!g_file_test (resolved_path, G_FILE_TEST_EXISTS))
+      if (!gegl_gio_uri_is_datauri (uri))
+        filename = g_filename_display_name (uri);
+      stream = gegl_gio_open_input_stream (uri, NULL, &file, &error);
+      if (stream == NULL || (file == NULL && !gegl_gio_uri_is_datauri (uri)))
         {
-          gchar *name = g_filename_display_name (resolved_path);
-          gchar *tmp  = g_strdup_printf ("File '%s' does not exist", name);
-          g_free (name);
+          if (!gegl_gio_uri_is_datauri (uri))
+            {
+              if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+                {
+                  message = g_strdup_printf ("%s does not exist", filename);
+                  gegl_node_set (self->load,
+                                 "operation", "gegl:text",
+                                 "string", message,
+                                 "size", 12.0,
+                                 NULL);
+                  g_free (message);
+                }
 
-          g_warning ("load: %s", tmp);
+              g_warning ("%s does not exist or could not be opened", filename);
+            }
+          else
+            g_warning ("datauri could not be parsed");
+
+          g_clear_error (&error);
+          goto cleanup;
+        }
+      load_from_uri = TRUE;
+    }
+  else if (path != NULL && strlen (path) > 0)
+    {
+      gchar *resolved_path = realpath (path, NULL);
+      if (resolved_path)
+        {
+          filename = g_filename_display_name (resolved_path);
+
+          stream = gegl_gio_open_input_stream (NULL, resolved_path, &file, &error);
+          if (stream == NULL || file == NULL)
+            {
+              if (g_error_matches (error, G_IO_ERROR, G_IO_ERROR_NOT_FOUND))
+                {
+                  message = g_strdup_printf ("%s does not exist", filename);
+                  gegl_node_set (self->load,
+                                 "operation", "gegl:text",
+                                 "string", message,
+                                 "size", 12.0,
+                                 NULL);
+                  g_free (message);
+                }
+              g_warning ("%s does not exist or could not be opened", filename);
+              g_clear_error (&error);
+              free (resolved_path);
+              goto cleanup;
+            }
+          load_from_uri = FALSE;
+          free (resolved_path);
+        }
+      else
+        {
           gegl_node_set (self->load,
                          "operation", "gegl:text",
+                         "string", "load failed",
                          "size", 12.0,
-                         "string", tmp,
                          NULL);
-          g_free (tmp);
+          goto cleanup;
         }
-        else
-        {
-          if (extension)
-            handler = gegl_operation_handlers_get_loader (extension);
-          gegl_node_set (self->load,
-                         "operation", handler,
-                         NULL);
-          gegl_node_set (self->load,
-                         "path", resolved_path,
-                         NULL);
-        }
-        free (resolved_path);
-      }
-      else
-      {
-        gegl_node_set (self->load,
-                       "operation", "gegl:text",
-                       "string",    "load failed",
-                       NULL);
-      }
     }
   else
     {
       gegl_node_set (self->load,
                      "operation", "gegl:text",
-                     "string",    "No path specified",
+                     "string", "No path or URI specified",
+                     "size", 12.0,
                      NULL);
+      return;
     }
+
+  g_assert (stream != NULL);
+
+  if (!read_from_stream (stream, &buffer, &size, &error))
+    {
+      g_warning (error->message);
+      g_clear_error (&error);
+      goto cleanup;
+    }
+
+  content_type = g_content_type_guess (NULL, buffer, size, &uncertain);
+  if ((!g_str_has_prefix (content_type, "image/") &&
+       !g_str_has_prefix (content_type, ".")) || uncertain)
+    {
+      g_free (content_type);
+      if (load_from_uri && gegl_gio_uri_is_datauri (uri))
+        content_type = gegl_gio_datauri_get_content_type (uri);
+      else
+      {
+        content_type = g_content_type_guess (filename, buffer, size, NULL);
+        if (!g_str_has_prefix (content_type, "image/") &&
+            !g_str_has_prefix (content_type, "."))
+          {
+            g_free (content_type);
+            if (g_strrstr (filename, ".") != NULL)
+              content_type = g_strdup (g_strrstr (filename, "."));
+            else
+              content_type = NULL;
+          }
+      }
+    }
+
+  handler = gegl_operation_handlers_get_loader (content_type);
+
+  gegl_node_set (self->load, "operation", handler, NULL);
+  if (load_from_uri == TRUE)
+    gegl_node_set (self->load, "uri", uri, NULL);
+  else
+    gegl_node_set (self->load, "path", path, NULL);
+
+cleanup:
+
+  if (stream != NULL)
+    {
+      g_input_stream_close (stream, NULL, NULL);
+      g_object_unref (stream);
+    }
+
+  if (file != NULL)
+    g_object_unref (file);
+
+  g_free (buffer);
+
+  g_free (content_type);
+  g_free (filename);
 }
 
-static void attach (GeglOperation *operation)
+static void
+attach (GeglOperation *operation)
 {
   GeglOp         *self = GEGL_OP (operation);
   GeglProperties *o    = GEGL_PROPERTIES (operation);
