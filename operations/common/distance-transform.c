@@ -146,12 +146,13 @@ cdt_sep (gint i, gint u, gfloat g_i, gfloat g_u)
 
 
 static void
-binary_dt_2nd_pass (gint          width,
-                    gint          height,
-                    gfloat        thres_lo,
-                    GeglDTMetric  metric,
-                    gfloat       *src,
-                    gfloat       *dest)
+binary_dt_2nd_pass (GeglOperation *operation,
+                    gint           width,
+                    gint           height,
+                    gfloat         thres_lo,
+                    GeglDTMetric   metric,
+                    gfloat        *src,
+                    gfloat        *dest)
 {
   gint u, y;
   gint q, w, *t, *s;
@@ -235,6 +236,9 @@ binary_dt_2nd_pass (gint          width,
               q--;
             }
         }
+
+      gegl_operation_progress (operation,
+                               (gdouble) y / (gdouble) height / 2.0 + 0.5, "");
     }
 
   gegl_free (t);
@@ -244,11 +248,12 @@ binary_dt_2nd_pass (gint          width,
 
 
 static void
-binary_dt_1st_pass (gint    width,
-                    gint    height,
-                    gfloat  thres_lo,
-                    gfloat *src,
-                    gfloat *dest)
+binary_dt_1st_pass (GeglOperation *operation,
+                    gint           width,
+                    gint           height,
+                    gfloat         thres_lo,
+                    gfloat        *src,
+                    gfloat        *dest)
 {
   int x, y;
 
@@ -272,6 +277,9 @@ binary_dt_1st_pass (gint    width,
           if (dest[x + (y + 1) * width] + 1.0 < dest[x + y * width])
             dest [x + y * width] = dest[x + (y + 1) * width] + 1.0;
         }
+
+      gegl_operation_progress (operation,
+                               (gdouble) x / (gdouble) width / 2.0, "");
     }
 }
 
@@ -313,14 +321,16 @@ process (GeglOperation       *operation,
   src_buf = gegl_malloc (width * height * bytes_per_pixel);
   dst_buf = gegl_calloc (width * height, bytes_per_pixel);
 
+  gegl_operation_progress (operation, 0.0, "");
+
   gegl_buffer_get (input, result, 1.0, input_format, src_buf,
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   if (!averaging)
     {
-      binary_dt_1st_pass (width, height, threshold_lo,
+      binary_dt_1st_pass (operation, width, height, threshold_lo,
                           src_buf, dst_buf);
-      binary_dt_2nd_pass (width, height, threshold_lo, metric,
+      binary_dt_2nd_pass (operation, width, height, threshold_lo, metric,
                           src_buf, dst_buf);
     }
   else
@@ -337,9 +347,9 @@ process (GeglOperation       *operation,
           thres = (i+1) * (threshold_hi - threshold_lo) / (averaging + 1);
           thres += threshold_lo;
 
-          binary_dt_1st_pass (width, height, thres,
+          binary_dt_1st_pass (operation, width, height, thres,
                               src_buf, tmp_buf);
-          binary_dt_2nd_pass (width, height, thres, metric,
+          binary_dt_2nd_pass (operation, width, height, thres, metric,
                               src_buf, tmp_buf);
 
           for (j = 0; j < width * height; j++)
@@ -369,6 +379,8 @@ process (GeglOperation       *operation,
 
   gegl_buffer_set (output, result, 0, input_format, dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
+
+  gegl_operation_progress (operation, 1.0, "");
 
   gegl_free (dst_buf);
   gegl_free (src_buf);
