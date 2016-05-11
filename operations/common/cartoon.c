@@ -230,22 +230,26 @@ process (GeglOperation       *operation,
   grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);
 
   sampler1 = gegl_buffer_sampler_new_at_level (dest1,
-                                      babl_format ("Y' float"),
-                                      GEGL_SAMPLER_LINEAR,
-                                      level);
+                                               babl_format ("Y' float"),
+                                               GEGL_SAMPLER_LINEAR,
+                                               level);
 
   sampler2 = gegl_buffer_sampler_new_at_level (dest2,
-                                      babl_format ("Y' float"),
-                                      GEGL_SAMPLER_LINEAR,
-                                      level);
+                                               babl_format ("Y' float"),
+                                               GEGL_SAMPLER_LINEAR,
+                                               level);
 
   ramp = compute_ramp (sampler1, sampler2, result, o->pct_black);
 
-  iter = gegl_buffer_iterator_new (output, result, 0, babl_format ("Y'CbCrA float"),
+  iter = gegl_buffer_iterator_new (output, result, 0,
+                                   babl_format ("Y'CbCrA float"),
                                    GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
-  gegl_buffer_iterator_add (iter, input, result, 0, babl_format ("Y'CbCrA float"),
+  gegl_buffer_iterator_add (iter, input, result, 0,
+                            babl_format ("Y'CbCrA float"),
                             GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
+
+  gegl_operation_progress (operation, 0.0, "");
 
   while (gegl_buffer_iterator_next (iter))
     {
@@ -293,9 +297,11 @@ process (GeglOperation       *operation,
 
           }
         pixels += iter->roi[0].width;
-        gegl_operation_progress (operation, pixels / tot_pixels, "a");
+        gegl_operation_progress (operation, pixels / tot_pixels, "");
       }
     }
+
+  gegl_operation_progress (operation, 1.0, "");
 
   g_object_unref (sampler1);
   g_object_unref (sampler2);
