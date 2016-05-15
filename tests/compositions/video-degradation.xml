@@ -2,7 +2,7 @@
 <gegl>
   <node operation='gegl:video-degradation'>
     <params>
-      <param name='pattern'>Striped</param>
+      <param name='pattern'>striped</param>
       <param name='additive'>true</param>
       <param name='rotated'>false</param>
     </params>
