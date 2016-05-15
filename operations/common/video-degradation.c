@@ -201,13 +201,16 @@ cl_process (GeglOperation       *operation,
   const size_t gbl_size[2] = {roi->width, roi->height};
   const size_t gbl_off[2]  = {roi->x, roi->y};
   cl_int cl_err = 0;
+  cl_mem filter_pat = NULL;
 
-  cl_mem filter_pat = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                           CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                           pattern_width[o->pattern] *
-                                           pattern_height[o->pattern] * sizeof(cl_int),
-                                           (void*)pattern[o->pattern],
-                                           &cl_err);
+  if (!cl_data)
+    goto error;
+  filter_pat = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                    CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                    pattern_width[o->pattern] *
+                                    pattern_height[o->pattern] * sizeof(cl_int),
+                                    (void*)pattern[o->pattern],
+                                    &cl_err);
   CL_CHECK;
   cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
                                     sizeof(cl_mem), &in_buf,
