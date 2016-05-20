@@ -229,7 +229,11 @@ finalize (GObject *object)
     {
       Priv *p = (Priv*)o->user_data;
 
-      g_object_unref (p->acc);
+      for (int i=0;i< TEMP_BUFS;i++)
+        {
+          g_object_unref (p->acc[i]);
+          p->acc[i] = NULL;
+        }
 
       g_free (o->user_data);
       o->user_data = NULL;
