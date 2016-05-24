@@ -553,6 +553,10 @@ gegl_transform_get_required_for_output (GeglOperation       *op,
 
   requested_rect = *region;
 
+  if (gegl_rectangle_is_empty (&requested_rect) ||
+      gegl_rectangle_is_infinite_plane (&requested_rect))
+    return requested_rect;
+
   gegl_transform_create_composite_matrix (transform, &inverse);
   gegl_matrix3_invert (&inverse);
 
@@ -617,6 +621,10 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
   gdouble        affected_points [8];
   gint           i;
   GeglRectangle  region = *input_region;
+
+  if (gegl_rectangle_is_empty (&region) ||
+      gegl_rectangle_is_infinite_plane (&region))
+    return region;
 
   /*
    * Why does transform_get_bounding_box NOT propagate the region
