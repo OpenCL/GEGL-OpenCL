@@ -27,7 +27,7 @@
 #define FAILURE    -1
 
 /* Test case for the issue fixed by commit
- * 5acc9f958577edab5fde02e0541fba5ff99685d9
+ * cd98e944f5c30a8549f9cc22d5eb7f50a9dca334
  */
 static gint
 test_set_clear_get (void)
