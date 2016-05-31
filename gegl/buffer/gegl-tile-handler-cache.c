@@ -372,6 +372,27 @@ gegl_tile_handler_cache_has_tile (GeglTileHandlerCache *cache,
   return FALSE;
 }
 
+static void
+drop_hot_tile (GeglTile *tile)
+{
+  GeglTileStorage *storage = tile->tile_storage;
+
+  if (storage)
+    {
+      if (gegl_config_threads()>1)
+        g_rec_mutex_lock (&storage->mutex);
+
+      if (storage->hot_tile == tile)
+        {
+          gegl_tile_unref (storage->hot_tile);
+          storage->hot_tile = NULL;
+        }
+
+      if (gegl_config_threads()>1)
+        g_rec_mutex_unlock (&storage->mutex);
+    }
+}
+
 static gboolean
 gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
 {
@@ -383,18 +404,11 @@ gegl_tile_handler_cache_trim (GeglTileHandlerCache *cache)
     {
       CacheItem *last_writable = LINK_GET_ITEM (link);
       GeglTile *tile = last_writable->tile;
-      GeglTileStorage *storage = tile->tile_storage;
 
       last_writable->handler->items = g_slist_remove (last_writable->handler->items, last_writable);
       g_hash_table_remove (cache_ht, last_writable);
       cache_total -= tile->size;
-
-      if (storage && storage->hot_tile == tile)
-        {
-          storage->hot_tile = NULL;
-          gegl_tile_unref (tile);
-        }
-
+      drop_hot_tile (tile);
       gegl_tile_unref (tile);
       g_slice_free (CacheItem, last_writable);
       return TRUE;
@@ -416,6 +430,7 @@ gegl_tile_handler_cache_invalidate (GeglTileHandlerCache *cache,
   if (item)
     {
       cache_total -= item->tile->size;
+      drop_hot_tile (item->tile);
       item->tile->tile_storage = NULL;
       gegl_tile_mark_as_stored (item->tile); /* to cheat it out of being stored */
       gegl_tile_unref (item->tile);
@@ -452,6 +467,7 @@ gegl_tile_handler_cache_void (GeglTileHandlerCache *cache,
 
   if (item)
     {
+      drop_hot_tile (item->tile);
       gegl_tile_void (item->tile);
       gegl_tile_unref (item->tile);
     }
