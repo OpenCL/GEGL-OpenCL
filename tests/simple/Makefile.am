@@ -4,6 +4,7 @@ noinst_PROGRAMS =			\
 	test-buffer-cast		\
 	test-buffer-changes		\
 	test-buffer-extract		\
+	test-buffer-hot-tile	\
 	test-buffer-tile-voiding	\
 	test-change-processor-rect	\
 	test-convert-format		\
