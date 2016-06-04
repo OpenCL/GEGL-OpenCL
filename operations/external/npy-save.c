@@ -29,7 +29,7 @@
 #ifdef GEGL_PROPERTIES
 
 property_file_path (path, _("File"), "")
-    description (_("Target path and filename, use '-' for stdout."))
+  description (_("Target path and filename, use '-' for stdout"))
 
 #else
 
@@ -37,93 +37,169 @@ property_file_path (path, _("File"), "")
 #define GEGL_OP_NAME npy_save
 #define GEGL_OP_C_SOURCE npy-save.c
 
-#include "gegl-op.h"
-#include <stdio.h>
+#include <gegl-op.h>
+#include <gegl-gio-private.h>
+#include <string.h>
 
-static int npywrite_header(FILE *fp, int width, int height, int num_channels)
+static gsize
+write_to_stream (GOutputStream     *stream,
+                 const gchar*       data,
+                 gsize              size)
 {
-  const gchar* format;
-  gsize header_len;
-  gchar *header;
+  GError *error = NULL;
+  gboolean success;
+  gsize written;
 
-  // Write header and version number to file
-  fwrite("\223NUMPY"
-         "\001\000"
-         , 1, 8, fp);
-  
-  
-  if (num_channels == 3)
-    format = "{'descr': '<f4', 'fortran_order': False, 'shape': (%d, %d, 3), } \n";
+  g_assert (stream);
+
+  success = g_output_stream_write_all (G_OUTPUT_STREAM (stream),
+                                       (const void *) data, size, &written,
+                                       NULL, &error);
+  if (!success || error != NULL)
+    {
+      g_warning ("%s", error->message);
+      g_error_free (error);
+      return 0;
+    }
+
+  return written;
+}
+
+static gint
+write_header (GOutputStream *stream,
+              gint           width,
+              gint           height,
+              gint           nb_components,
+              gint           bytes_per_pixel)
+{
+  gchar *header;
+  gsize length;
+
+  // Write header and version number (1.0)
+  write_to_stream (stream, "\x93NUMPY\x01\x00", 8);
+
+  if (nb_components == 3)
+    {
+      header = g_strdup_printf ("{'descr': '<f4', 'fortran_order': False,"
+                                " 'shape': (%d, %d, 3), } \n", height, width);
+    }
   else
-    format = "{'descr': '<f4', 'fortran_order': False, 'shape': (%d, %d), } \n";
-  
-  header = g_strdup_printf(format, height, width);
-  header_len = strlen(header);
-  fwrite(&header_len, 2, 1, fp);
-  fwrite(header, header_len, 1, fp);
-  g_free(header);
-  
+    {
+      header = g_strdup_printf ("{'descr': '<f4', 'fortran_order': False,"
+                                " 'shape': (%d, %d), } \n", height, width);
+    }
+
+  length = strlen (header);
+
+  write_to_stream (stream, (const char *) &length, 2);
+  write_to_stream (stream, header, length);
+
+  g_free (header);
   return 0;
+}
+
+static gint
+save_array (GOutputStream       *stream,
+            GeglBuffer          *input,
+            const GeglRectangle *result,
+            const Babl          *format)
+{
+  gint bytes_per_pixel, bytes_per_row;
+  gint x = result->x, y = result->y;
+  gint width = result->width - result->x;
+  gint height = result->height - result->y;
+  gint column_stride = 32;
+  gchar *buffer;
+  gint nb_components ,row;
+
+  nb_components = babl_format_get_n_components (format);
+  bytes_per_pixel = babl_format_get_bytes_per_pixel (format);
+
+  write_header (stream, width, height, nb_components, bytes_per_pixel);
+
+  bytes_per_row = bytes_per_pixel * width;
+
+  buffer = g_try_new (gchar, bytes_per_row * column_stride);
+
+  g_assert (buffer != NULL);
+
+  for (row = 0; row < height; row += column_stride)
+    {
+      GeglRectangle tile = { x, 0, width, 0 };
+
+      tile.y = y + row;
+      tile.height = MIN (column_stride, height - row);
+
+      gegl_buffer_get (input, &tile, 1.0, format, buffer,
+                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+
+      write_to_stream (stream, buffer, bytes_per_row * tile.height);
+    }
+
+  g_free (buffer);
+  return 0;
+}
+
+static gboolean
+export_numpy (GeglOperation       *operation,
+              GeglBuffer          *input,
+              const GeglRectangle *result,
+              GOutputStream       *stream)
+{
+  const Babl *input_format, *output_format;
+  gint nb_components;
+
+  input_format = gegl_buffer_get_format (input);
+  nb_components = babl_format_get_n_components (input_format);
+  if (nb_components >= 3)
+    {
+      output_format = babl_format ("RGB float");
+      nb_components = 3;
+    }
+  else
+    {
+      output_format = babl_format ("Y float");
+      nb_components = 1;
+    }
+
+  return !save_array (stream, input, result, output_format);
 }
 
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
-         const GeglRectangle *rect,
+         const GeglRectangle *result,
          gint                 level)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
+  GOutputStream *stream;
+  GFile *file = NULL;
+  GError *error = NULL;
+  gboolean status = TRUE;
 
-  FILE     *fp;
-  guchar   *data;
-  gsize     bpc;
-  gsize     numbytes_scanline;
-  gsize     numchannels;
-  gboolean  ret = FALSE;
-  gint      row;
-  gint      slice_thickness = 32;
-  const Babl *output_format;
-  const Babl *input_format = gegl_buffer_get_format(input); 
-
-  // Get the current format and use it to decide whether to save
-  // the output in color or gray level formats.
-  bpc = sizeof(gfloat);
-  if (babl_format_get_n_components(input_format) >= 3)
+  stream = gegl_gio_open_output_stream (NULL, o->path, &file, &error);
+  if (stream == NULL)
     {
-      numchannels = 3;
-      output_format = babl_format("RGB float");
-    }
-  else
-    {
-      numchannels = 1;
-      output_format = babl_format ("Y float");
+      status = FALSE;
+      g_warning ("%s", error->message);
+      goto cleanup;
     }
 
-  numbytes_scanline = rect->width * numchannels * bpc;
-
-  fp = (!strcmp (o->path, "-") ? stdout : fopen(o->path, "wb") );
-
-  npywrite_header(fp, rect->width, rect->height, numchannels);
-
-  data = g_malloc (numbytes_scanline * slice_thickness);
-  
-  for (row=0; row < rect->height; row+= slice_thickness)
+  if (!export_numpy (operation, input, result, stream))
     {
-      GeglRectangle rect_slice;
-      rect_slice.x = rect->x;
-      rect_slice.width = rect->width;
-      rect_slice.y = rect->y+row;
-      rect_slice.height = MIN(slice_thickness, rect->height-row);
-      
-      gegl_buffer_get (input, &rect_slice, 1.0, output_format, data,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-      fwrite(data, numbytes_scanline, rect_slice.height, fp);
+      status = FALSE;
+      g_warning ("could not export NumPy file");
+      goto cleanup;
     }
 
-  g_free (data);
+cleanup:
+  if (stream != NULL)
+    g_object_unref (stream);
 
-  return ret;
+  if (file != NULL)
+    g_object_unref (file);
+
+  return status;
 }
 
 static void
@@ -135,16 +211,15 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
 
-  sink_class->process = process;
+  sink_class->process    = process;
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",       "gegl:npy-save",
-    "title",      _("NPY File Saver"),
-    "categories", "output",
-    "description",
-        _("NPY image saver (Numerical python file saver.)"),
-        NULL);
+    "name",          "gegl:npy-save",
+    "title",       _("NumPy File Saver"),
+    "categories",    "output",
+    "description", _("NumPy (Numerical Python) image saver"),
+    NULL);
 
   gegl_operation_handlers_register_saver (
     ".npy", "gegl:npy-save");
