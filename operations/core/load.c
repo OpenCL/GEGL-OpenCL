@@ -168,7 +168,7 @@ do_setup (GeglOperation *operation, const gchar *path, const gchar *uri)
 
   if (!read_from_stream (stream, &buffer, &size, &error))
     {
-      g_warning (error->message);
+      g_warning ("%s", error->message);
       g_clear_error (&error);
       goto cleanup;
     }
