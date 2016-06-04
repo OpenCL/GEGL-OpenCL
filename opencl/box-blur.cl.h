@@ -60,7 +60,7 @@ static const char* box_blur_cl_source =
 "  const int in_height = twice_radius + height;                                \n"
 "  const int start = fmax( -radius, -local_id0 );                              \n"
 "  const int stop = fmin( radius, get_local_size(0) - local_id0 );             \n"
-"  const float4 area = (float4) ( ((stop - start) + 1) * (twice_radius + 1) );\n"
+"  const float4 area = (float4) ( ((stop - start) + 1) * (twice_radius + 1) ); \n"
 "  int column_index_start,column_index_end;                                    \n"
 "  int y = get_global_id(1) * size;                                            \n"
 "  const int out_x = get_group_id(0)                                           \n"
