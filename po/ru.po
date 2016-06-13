@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: GEGL 0.3.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-13 03:28+0300\n"
-"PO-Revision-Date: 2016-06-13 03:48+0300\n"
+"PO-Revision-Date: 2016-06-13 04:00+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: русский <>\n"
 "Language: Russian\n"
@@ -1753,11 +1753,11 @@ msgstr "Барельеф"
 
 #: ../operations/common/emboss.c:27
 msgid "Bumpmap (preserve original colors)"
-msgstr ""
+msgstr "Карта рельефа (сохраняет цвета)"
 
 #: ../operations/common/emboss.c:30
 msgid "Emboss Type"
-msgstr ""
+msgstr "Тип рельефа"
 
 #: ../operations/common/emboss.c:32
 msgid "Rendering type"
@@ -1781,7 +1781,7 @@ msgstr ""
 
 #: ../operations/common/engrave.c:32
 msgid "Resolution in pixels"
-msgstr "Разрешения в пикселях"
+msgstr "Разрешение в пикселях"
 
 #: ../operations/common/engrave.c:36 ../operations/common/engrave.c:37
 msgid "Limit line width"
@@ -2021,15 +2021,15 @@ msgstr ""
 
 #: ../operations/common/fractal-explorer.c:108
 msgid "Red inversion"
-msgstr ""
+msgstr "Инверсия красного"
 
 #: ../operations/common/fractal-explorer.c:109
 msgid "Green inversion"
-msgstr ""
+msgstr "Инверсия зелёного"
 
 #: ../operations/common/fractal-explorer.c:110
 msgid "Blue inversion"
-msgstr ""
+msgstr "Инверсия синего"
 
 #: ../operations/common/fractal-explorer.c:112
 msgid "Number of colors"
@@ -2295,7 +2295,7 @@ msgstr ""
 
 #: ../operations/common/gegl.c:28
 msgid "Eeeeeek"
-msgstr ""
+msgstr "Ой-ой-ой"
 
 #: ../operations/common/gegl.c:29
 msgid ""
@@ -2972,9 +2972,8 @@ msgid "Inter-tile spacing (in pixels)"
 msgstr ""
 
 #: ../operations/common/mosaic.c:76
-#, fuzzy
 msgid "Joints color"
-msgstr "Другой цвет"
+msgstr "Цвет соединений"
 
 #: ../operations/common/mosaic.c:78
 msgid "Light color"
@@ -2994,7 +2993,7 @@ msgstr ""
 
 #: ../operations/common/mosaic.c:2465
 msgid "Mosaic"
-msgstr ""
+msgstr "Мозаика"
 
 #: ../operations/common/mosaic.c:2468
 msgid ""
@@ -3118,7 +3117,7 @@ msgstr "Цветность"
 
 #: ../operations/common/noise-cie-lch.c:192
 msgid "Add CIE Lch Noise"
-msgstr ""
+msgstr "Добавить шум в CIE LCH"
 
 #: ../operations/common/noise-cie-lch.c:194
 msgid "Randomize lightness, chroma and hue independently"
@@ -3132,7 +3131,7 @@ msgstr "Значение"
 
 #: ../operations/common/noise-hsv.c:194
 msgid "Add HSV Noise"
-msgstr ""
+msgstr "Добавить шум в HSV"
 
 #: ../operations/common/noise-hsv.c:196
 msgid "Randomize hue, saturation and value independently"
@@ -3217,7 +3216,7 @@ msgstr "Синий"
 
 #: ../operations/common/noise-rgb.c:176
 msgid "Add RGB Noise"
-msgstr ""
+msgstr "Добавить шум в RGB"
 
 #: ../operations/common/noise-rgb.c:178
 msgid "Distort colors by random amounts"
@@ -3301,7 +3300,7 @@ msgstr ""
 
 #: ../operations/common/noise-spread.c:156
 msgid "Move pixels around randomly"
-msgstr ""
+msgstr "Случайное перемещение пикселей вокруг"
 
 #: ../operations/common/oilify.c:27 ../operations/common/photocopy.c:25
 msgid "Mask Radius"
@@ -3329,7 +3328,7 @@ msgstr "Сохранять интенсивность"
 
 #: ../operations/common/oilify.c:41
 msgid "Use pixel luminance values"
-msgstr ""
+msgstr "Использования значения светимости пикселей"
 
 #: ../operations/common/oilify.c:478
 msgid "Oilify"
@@ -3920,9 +3919,8 @@ msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
 msgstr ""
 
 #: ../operations/common/stretch-contrast.c:25
-#, fuzzy
 msgid "Keep colors"
-msgstr "Другой цвет"
+msgstr "Сохранить цвета"
 
 #: ../operations/common/stretch-contrast.c:26
 msgid "Impact each channel with the same amount"
