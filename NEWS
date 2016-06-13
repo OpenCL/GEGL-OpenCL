@@ -1,6 +1,56 @@
                  ⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+Changes in GEGL 0.3.8
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • buffer:
+    • add box filtering downsampling paths to linear and cubic resamplers
+    to improve default results
+    • clear hot tile when removing a tile from the cache
+ • operations:
+    • added: vhsfix (workshop), gegl-gegl (commandline syntax)
+    • exr-save: port from deprecated chanting system
+    • ff-save: increase max output packet size from 200kb to 1mb
+    • gegl-path: add ability to compute y coordinate for a given x
+    • transform: treat infinite and empty rectangles correctly
+    • webp: port webp-save to GIO for URI handling
+ • ops progress:
+    • add gegl_operation_progress function to report processing progress
+    • use the new function in cartoon and distance-transform ops
+ • ops metadata:
+    • remove custom multiline paramspec
+    • set multiline ui_meta on more ops
+    • add reference meta and use it in various ops
+ • gegl-binary
+    • add simple video filtering
+    • encode audio with video
+    • permit dragging and zooming in more ui states
+    • deal correctly with integers in ui
+    • show prop editor for operation if op chain passed at commmandline
+ • gegl-chain:
+    • implement keyframing of strings
+    • suggest possible ops in warninge/errors
+ • gegl-node: relay property change notifies from operation to node
+ • gegl-serialize:
+    • improve error handling for parsing of properties
+    • start handling relative coordinates
+    • use path instead of curve
+ • json: misc improvements and fixes
+ • opencl: fix RGB luminance constants
+ • docs: fixes, update some info in directory overview
+ • handlers:
+    • allow registration of operations by MIME type
+    • register MIME types for loaders
+    • guess file types by sniffing content
+ • build: fix luajit detection
+
+Contributions from:
+
+Timm Bäder, Martin Blanchard, Mario Blättermann, Ell, Piotr Drąg, 
+Michael Henning, Øyvind Kolås, Hartmut Kuhse, Michael Natterer, 
+Nils Philippsen, Debarshi Ray, Kristian Rietveld, Dimitris Spingos, 
+Martin Srebotnjak, Pino Toscano, Cédric Valmary, Jan Vesely
+
 
 Changes in GEGL 0.3.6
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
