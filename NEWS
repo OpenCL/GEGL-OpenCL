@@ -46,10 +46,10 @@ Changes in GEGL 0.3.8
 
 Contributions from:
 
-Timm Bäder, Martin Blanchard, Mario Blättermann, Ell, Piotr Drąg, 
-Michael Henning, Øyvind Kolås, Hartmut Kuhse, Michael Natterer, 
-Nils Philippsen, Alexandre Prokoudine, Debarshi Ray, Kristian Rietveld, 
-Dimitris Spingos, Martin Srebotnjak, Pino Toscano, Cédric Valmary, 
+Timm Bäder, Martin Blanchard, Mario Blättermann, Ell, Piotr Drąg,
+Michael Henning, Øyvind Kolås, Hartmut Kuhse, Michael Natterer,
+Nils Philippsen, Alexandre Prokoudine, Debarshi Ray, Kristian Rietveld,
+Dimitris Spingos, Martin Srebotnjak, Pino Toscano, Cédric Valmary,
 Jan Vesely
 
 
@@ -125,7 +125,7 @@ Changes in GEGL 0.3.0
  • Experimental mipmap rendering, which permits transparent rendering of
    previews on smaller sized versions, enable by setting
    GEGL_MIPMAP_RENDERING=true in the environment.
- • Operations: 
+ • Operations:
    • new operations: alien-map, antialias, apply-lens, bilateral-filter,
      bump.map, cartoon, channel-mixer, color-enhance, color-exchange,
      color-reduction, color-rotate, convolution-matrix, copy-buffer, cubism,
@@ -145,7 +145,7 @@ Changes in GEGL 0.3.0
  • Buffer:
    • New default tile backend, doing disk writes in a separate thread.
 
-Contributions from: 
+Contributions from:
 
   Albert F, Alexandre Prokoudine, Alexia Death, Akash Akya, Anders Jonsson,
   Andika Triwidada, Andreas Fischer, Angh, Awaw Fumin, Barak Itkin, Bruce
