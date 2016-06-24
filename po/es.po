@@ -1,18 +1,19 @@
 # translation of gegl.master.po to Español
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the GEGL package.
-# 
+#
 # Francisco Vila <francisco.vila@hispalinux.es>, 2012.
-# 
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2012, 2013, 2014, 2015., 2016.
+#
+# Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>, 2016.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2012, 2013, 2014, 2015, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-05-31 20:12+0000\n"
-"PO-Revision-Date: 2016-06-23 16:07+0200\n"
+"POT-Creation-Date: 2016-06-23 14:17+0000\n"
+"PO-Revision-Date: 2016-06-24 09:06+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -174,16 +175,16 @@ msgstr ""
 #: ../operations/common/gaussian-blur-iir.c:31
 #: ../operations/common/gblur-1d.c:31
 msgid "None"
-msgstr ""
+msgstr "Ninguno"
 
 #: ../gegl/gegl-enums.c:34 ../operations/common/gaussian-blur-iir.c:32
 #: ../operations/common/gblur-1d.c:32
 msgid "Clamp"
-msgstr ""
+msgstr "Abrazadera"
 
 #: ../gegl/gegl-enums.c:35
 msgid "Loop"
-msgstr ""
+msgstr "Bucle"
 
 #: ../gegl/gegl-enums.c:36 ../operations/common/gaussian-blur-iir.c:33
 #: ../operations/common/gblur-1d.c:33
@@ -219,7 +220,7 @@ msgstr "Vertical"
 
 #: ../gegl/gegl-enums.c:112
 msgid "Nearest"
-msgstr ""
+msgstr "Más cercano"
 
 #: ../gegl/gegl-enums.c:113 ../operations/common/bump-map.c:33
 #: ../operations/common/sinus.c:64
@@ -318,15 +319,15 @@ msgstr "Frecuencia del componente 2"
 
 #: ../operations/common/alien-map.c:47
 msgid "Component 1 phase shift"
-msgstr ""
+msgstr "Cambio de fase del componente 1"
 
 #: ../operations/common/alien-map.c:50
 msgid "Component 2 phase shift"
-msgstr ""
+msgstr "Cambio de fase del componente 2"
 
 #: ../operations/common/alien-map.c:53
 msgid "Component 3 phase shift"
-msgstr ""
+msgstr "Cambio de fase del componente 3"
 
 #: ../operations/common/alien-map.c:57
 msgid "Keep component 1"
@@ -349,27 +350,28 @@ msgid ""
 "Heavily distort images colors by applying trigonometric functions to map "
 "color values."
 msgstr ""
+"Los colores de las imágenes se distorsionan fuertemente mediante la "
+"aplicación de funciones trigonométricas para mapear los valores de color."
 
 #: ../operations/common/antialias.c:277
-#| msgid "Antialiasing"
 msgid "Scale3X Antialiasing"
 msgstr "Alisado Scale3X"
 
 #: ../operations/common/antialias.c:280
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
-msgstr ""
+msgstr "Alisado usando el algoritmo de extrapolación de borde Scale3X"
 
 #: ../operations/common/apply-lens.c:36
 msgid "Lens refraction index"
-msgstr ""
+msgstr "Índice de refracción de la lente"
 
 #: ../operations/common/apply-lens.c:41
 msgid "Keep original surroundings"
-msgstr ""
+msgstr "Mantener entorno original"
 
 #: ../operations/common/apply-lens.c:42
 msgid "Keep image unchanged, where not affected by the lens."
-msgstr ""
+msgstr "Mantener la imagen sin cambios, donde no se ve afectada por la lente."
 
 #: ../operations/common/apply-lens.c:44 ../operations/common/cubism.c:39
 #: ../operations/common/lens-distortion.c:57
@@ -379,7 +381,7 @@ msgstr "Color de fondo"
 
 #: ../operations/common/apply-lens.c:272
 msgid "Apply Lens"
-msgstr ""
+msgstr "Aplicar lente"
 
 #: ../operations/common/apply-lens.c:275
 #, fuzzy
@@ -413,7 +415,7 @@ msgstr "Cantidad de preservación de los bordes"
 
 #: ../operations/common/bilateral-filter.c:289
 msgid "Bilateral Filter"
-msgstr ""
+msgstr "Filtro bilateral"
 
 #: ../operations/common/bilateral-filter.c:292
 #, fuzzy
@@ -441,13 +443,15 @@ msgstr "Nivel de suavidad"
 
 #: ../operations/common/bilateral-filter-fast.c:495
 msgid "Bilateral Box Filter"
-msgstr ""
+msgstr "Filtro de caja bilateral"
 
 #: ../operations/common/bilateral-filter-fast.c:497
 msgid ""
 "A fast approximation of bilateral filter, using a box-filter instead of a "
 "gaussian blur."
 msgstr ""
+"Una aproximación rápida del filtro bilateral, usando un filtro de caja en "
+"lugar de un desenfoque gaussiano."
 
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
 #: ../operations/common/snn-mean.c:26 ../operations/common/stress.c:27
@@ -467,11 +471,12 @@ msgstr ""
 
 #: ../operations/common/box-blur.c:393
 msgid "Box Blur"
-msgstr ""
+msgstr "Desenfoque de caja"
 
 #: ../operations/common/box-blur.c:395
 msgid "Blur resulting from averaging the colors of a square neighbourhood."
 msgstr ""
+"Desenfoque resultante de la media de los colores de un entorno cuadrado."
 
 #. Here in the top of the file the properties of the operation is declared,
 #. *  this causes the declaration of a structure for containing the data.
@@ -486,7 +491,7 @@ msgstr "Contraste"
 
 #: ../operations/common/brightness-contrast.c:32
 msgid "Magnitude of contrast scaling >1.0 brighten < 1.0 darken"
-msgstr ""
+msgstr "Magnitud de la escala de contraste >1.0 iluminar < 1.0 oscurecer"
 
 #: ../operations/common/brightness-contrast.c:36
 #: ../operations/common/diffraction-patterns.c:66
@@ -511,6 +516,9 @@ msgid ""
 "light, 'contrast' is a scale factor around 50%% gray, and 'brightness' a "
 "constant offset to apply after contrast scaling."
 msgstr ""
+"Cambia el nivel de luz y contraste. Esta operación funciona en luz lineal, "
+"«contraste» es un factor de escala alrededor del 50%% gris, y «brillo» un "
+"desplazamiento constante para aplicar después del escalado de contraste."
 
 #: ../operations/common/buffer-sink.c:25
 #: ../operations/common/write-buffer.c:25
@@ -540,7 +548,7 @@ msgstr "Ubicación del búfer"
 
 #: ../operations/common/buffer-sink.c:84
 msgid "Create a new GEGL buffer to write the resulting rendering."
-msgstr ""
+msgstr "Crear un búfer nuevo GEGL para escribir el renderizado resultante."
 
 #: ../operations/common/buffer-source.c:25
 msgid "Input buffer"
@@ -849,6 +857,8 @@ msgstr "Mezclador de canales"
 msgid ""
 "Remix colors; by defining relative contributions from source components."
 msgstr ""
+"Mezclar colores; mediante la definición de las contribuciones relativas de "
+"los componentes fuente."
 
 #: ../operations/common/checkerboard.c:25
 #: ../operations/common/diffraction-patterns.c:78
@@ -904,7 +914,7 @@ msgstr "Color 1"
 
 #: ../operations/common/checkerboard.c:54
 msgid "The first cell color"
-msgstr ""
+msgstr "El primer color de celda"
 
 #: ../operations/common/checkerboard.c:57 ../operations/common/sinus.c:61
 #: ../operations/workshop/gradient-map.c:28
@@ -928,7 +938,7 @@ msgstr "El formato de babl de la salida"
 
 #: ../operations/common/checkerboard.c:345
 msgid "Checkerboard"
-msgstr ""
+msgstr "Tablero de ajedrez"
 
 #: ../operations/common/checkerboard.c:347
 msgid "Create a checkerboard pattern"
@@ -989,10 +999,9 @@ msgstr "Color"
 
 #: ../operations/common/color-exchange.c:36
 msgid "Replacement color."
-msgstr ""
+msgstr "Color de sustitución."
 
 #: ../operations/common/color-exchange.c:38
-#| msgid "Threshold"
 msgid "Red Threshold"
 msgstr "Umbral de rojo"
 
@@ -1009,7 +1018,6 @@ msgid "Green threshold of the input color"
 msgstr ""
 
 #: ../operations/common/color-exchange.c:46
-#| msgid "Threshold"
 msgid "Blue Threshold"
 msgstr "Umbral de azul"
 
@@ -1018,7 +1026,6 @@ msgid "Blue threshold of the input color"
 msgstr ""
 
 #: ../operations/common/color-exchange.c:243
-#| msgid "Other color"
 msgid "Exchange color"
 msgstr "Intercambiar color"
 
@@ -1190,7 +1197,6 @@ msgid "Colors with a saturation less than this will treated as gray"
 msgstr ""
 
 #: ../operations/common/color-rotate.c:71
-#| msgid "Green mode"
 msgid "Gray mode"
 msgstr "Modo del gris"
 
@@ -1285,7 +1291,6 @@ msgid "The contrast curve."
 msgstr "La curva de contraste."
 
 #: ../operations/common/contrast-curve.c:256
-#| msgid "The contrast curve."
 msgid "Contrast Curve"
 msgstr "Curva de contraste"
 
@@ -1449,7 +1454,6 @@ msgid ""
 msgstr ""
 
 #: ../operations/common/copy-buffer.c:151
-#| msgid "Crop a buffer"
 msgid "Copy Buffer"
 msgstr "Copiar búfer"
 
@@ -1562,7 +1566,6 @@ msgid "Light frequency (red)"
 msgstr ""
 
 #: ../operations/common/diffraction-patterns.c:34
-#| msgid "Component 1 frequency"
 msgid "Green frequency"
 msgstr "Frecuencia del verde"
 
@@ -1572,7 +1575,6 @@ msgid "Light frequency (green)"
 msgstr "El ángulo de la luz (grados)"
 
 #: ../operations/common/diffraction-patterns.c:38
-#| msgid "Component 1 frequency"
 msgid "Blue frequency"
 msgstr "Frecuencia del azul"
 
@@ -1664,7 +1666,6 @@ msgstr ""
 
 #: ../operations/common/diffraction-patterns.c:74
 #: ../operations/common/diffraction-patterns.c:75
-#| msgid "Randomization"
 msgid "Polarization"
 msgstr "Polarización"
 
@@ -1876,7 +1877,6 @@ msgid "Roberts"
 msgstr "Roberts"
 
 #: ../operations/common/edge.c:33
-#| msgid "Percentile"
 msgid "Differential"
 msgstr "Diferencial"
 
@@ -1901,7 +1901,6 @@ msgid "Edge detection amount"
 msgstr ""
 
 #: ../operations/common/edge.c:47
-#| msgid "Behavior"
 msgid "Border behavior"
 msgstr "Comportamiento en el borde"
 
@@ -1910,7 +1909,6 @@ msgid "Edge detection behavior"
 msgstr ""
 
 #: ../operations/common/edge.c:350
-#| msgid "Edge preservation"
 msgid "Edge Detection"
 msgstr "Detección de bordes"
 
@@ -1949,7 +1947,6 @@ msgid "Specialized direction-dependent edge detection"
 msgstr "Detección de bordes especializada dependiente de la dirección"
 
 #: ../operations/common/emboss.c:26 ../operations/common/emboss.c:266
-#| msgid "Emboss Type"
 msgid "Emboss"
 msgstr "Repujado"
 
@@ -2116,7 +2113,6 @@ msgstr ""
 
 #: ../operations/common/fractal-explorer.c:32
 #: ../operations/common/fractal-trace.c:26
-#| msgid "Mandelbrot set renderer"
 msgid "Mandelbrot"
 msgstr "Mandelbrot"
 
@@ -2538,7 +2534,6 @@ msgid ""
 msgstr ""
 
 #: ../operations/common/gegl.c:102
-#| msgid "GEGL graph visualizer."
 msgid "GEGL graph"
 msgstr "Gráfico GEGL"
 
@@ -2997,12 +2992,10 @@ msgid "Depth first"
 msgstr "Profundidad"
 
 #: ../operations/common/maze.c:39
-#| msgid "Algorithm"
 msgid "Prim's algorithm"
 msgstr "Algoritmo de Prim"
 
 #: ../operations/common/maze.c:58
-#| msgid "Algorithm"
 msgid "Algorithm type"
 msgstr "Tipo de algoritmo"
 
@@ -3016,12 +3009,10 @@ msgid "Tileable"
 msgstr "Convertible en mosaico"
 
 #: ../operations/common/maze.c:67
-#| msgid "Background Color"
 msgid "Foreground Color"
 msgstr "Color de primer plano"
 
 #: ../operations/common/maze.c:68
-#| msgid "The tiles' background color"
 msgid "The foreground color"
 msgstr "El color de primer plano"
 
@@ -3030,7 +3021,6 @@ msgid "Background Color"
 msgstr "Color de fondo"
 
 #: ../operations/common/maze.c:72
-#| msgid "Background color"
 msgid "The background color"
 msgstr "El color de fondo"
 
@@ -3469,7 +3459,6 @@ msgid "Z offset"
 msgstr "Desplazamiento Z"
 
 #: ../operations/common/noise-perlin.c:114
-#| msgid "Perlin noise generator"
 msgid "Perlin Noise"
 msgstr "Ruido de Perlin"
 
@@ -4002,7 +3991,6 @@ msgid "Color to render"
 msgstr "Color que renderizar"
 
 #: ../operations/common/rectangle.c:88
-#| msgid "Offset angle"
 msgid "Rectangle"
 msgstr "Rectángulo"
 
@@ -4112,7 +4100,6 @@ msgid "Scale, strength of effect"
 msgstr "Escala, fuerza del efecto"
 
 #: ../operations/common/saturation.c:219
-#| msgid "Tile saturation"
 msgid "Changes the saturation"
 msgstr "Cambia la saturación"
 
@@ -4179,7 +4166,6 @@ msgid "Scale value for y axis"
 msgstr ""
 
 #: ../operations/common/sinus.c:47
-#| msgid "Compensate"
 msgid "Complexity"
 msgstr "Complejidad"
 
@@ -5069,7 +5055,6 @@ msgid "Edge Affected"
 msgstr ""
 
 #: ../operations/common/wind.c:58
-#| msgid "Behavior"
 msgid "Edge behavior"
 msgstr "Comportamiento en el borde"
 
@@ -5135,7 +5120,6 @@ msgid "Output format"
 msgstr "Formato de salida"
 
 #: ../operations/core/cast-format.c:110
-#| msgid "Babl Format"
 msgid "Cast Format"
 msgstr ""
 
@@ -5234,7 +5218,6 @@ msgid "Frame number"
 msgstr "Número de fotograma"
 
 #: ../operations/external/ff-load.c:36
-#| msgid "Frame"
 msgid "frames"
 msgstr "fotogramas"
 
@@ -5353,7 +5336,6 @@ msgid "global quality"
 msgstr ""
 
 #: ../operations/external/ff-save.c:55
-#| msgid "Color to render"
 msgid "noise reduction"
 msgstr "reducción de ruido"
 
@@ -5441,7 +5423,6 @@ msgstr "Archivo de perfil para cargar"
 
 #: ../operations/external/jp2-load.c:28 ../operations/external/svg-load.c:28
 #: ../operations/external/tiff-load.c:28 ../operations/external/webp-load.c:28
-#| msgid "Path of file to load."
 msgid "URI for file to load"
 msgstr "URI del archivo que cargar"
 
