@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-06-23 14:17+0000\n"
-"PO-Revision-Date: 2016-06-24 09:06+0200\n"
+"POT-Creation-Date: 2016-06-24 07:10+0000\n"
+"PO-Revision-Date: 2016-06-29 09:42+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -1007,7 +1007,7 @@ msgstr "Umbral de rojo"
 
 #: ../operations/common/color-exchange.c:39
 msgid "Red threshold of the input color"
-msgstr ""
+msgstr "Umbral rojo del color de entrada"
 
 #: ../operations/common/color-exchange.c:42
 msgid "Green Threshold"
@@ -1015,7 +1015,7 @@ msgstr "Umbral de verde"
 
 #: ../operations/common/color-exchange.c:43
 msgid "Green threshold of the input color"
-msgstr ""
+msgstr "Umbral verde del color de entrada"
 
 #: ../operations/common/color-exchange.c:46
 msgid "Blue Threshold"
@@ -1023,7 +1023,7 @@ msgstr "Umbral de azul"
 
 #: ../operations/common/color-exchange.c:47
 msgid "Blue threshold of the input color"
-msgstr ""
+msgstr "Umbral azul del color de entrada"
 
 #: ../operations/common/color-exchange.c:243
 msgid "Exchange color"
@@ -1034,6 +1034,8 @@ msgid ""
 "Exchange one color with another, optionally setting a threshold to convert "
 "from one shade to another."
 msgstr ""
+"Intercambiar un color con otro, estableciendo opcionalmente un umbral para "
+"convertir de un tono a otro."
 
 #: ../operations/common/color-reduction.c:28
 #, fuzzy
@@ -1043,7 +1045,7 @@ msgstr "Semilla aleatoria"
 
 #: ../operations/common/color-reduction.c:29
 msgid "Resilient"
-msgstr ""
+msgstr "Elástico"
 
 #: ../operations/common/color-reduction.c:30
 #, fuzzy
@@ -1194,7 +1196,7 @@ msgstr "Umbral de gris"
 
 #: ../operations/common/color-rotate.c:67
 msgid "Colors with a saturation less than this will treated as gray"
-msgstr ""
+msgstr "Los colores con una saturación menor que esta se tratarán como gris"
 
 #: ../operations/common/color-rotate.c:71
 msgid "Gray mode"
@@ -1215,7 +1217,7 @@ msgstr "Tono"
 
 #: ../operations/common/color-rotate.c:80
 msgid "Hue value for above gray settings"
-msgstr ""
+msgstr "Valor del tono para la configuración de gris por encima"
 
 #: ../operations/common/color-rotate.c:84 ../operations/common/fattal02.c:41
 #: ../operations/common/mantiuk06.c:35 ../operations/common/noise-hsv.c:33
@@ -1226,11 +1228,11 @@ msgstr "Saturación"
 
 #: ../operations/common/color-rotate.c:85
 msgid "Saturation value for above gray settings"
-msgstr ""
+msgstr "Valor de saturación para la configuración de gris por encima"
 
 #: ../operations/common/color-rotate.c:407
 msgid "Replace a range of colors with another"
-msgstr ""
+msgstr "Reemplazar un rango de colores con otro"
 
 #: ../operations/common/color-temperature.c:27
 msgid "Original temperature"
@@ -1442,7 +1444,7 @@ msgstr "Borde"
 
 #: ../operations/common/convolution-matrix.c:607
 msgid "Apply a generic 5x5 convolution matrix"
-msgstr ""
+msgstr "Aplicar una matriz de convolución de 5x5 genérica"
 
 #: ../operations/common/copy-buffer.c:25
 msgid "Buffer"
@@ -1545,7 +1547,7 @@ msgstr "Radio 2"
 
 #: ../operations/common/difference-of-gaussians.c:85
 msgid "Difference of Gaussians"
-msgstr ""
+msgstr "Diferencia de gaussianas"
 
 #: ../operations/common/difference-of-gaussians.c:87
 msgid ""
@@ -1563,7 +1565,7 @@ msgstr "Frecuencia del componente 1"
 
 #: ../operations/common/diffraction-patterns.c:31
 msgid "Light frequency (red)"
-msgstr ""
+msgstr "Frecuencia de luz (rojo)"
 
 #: ../operations/common/diffraction-patterns.c:34
 msgid "Green frequency"
@@ -1580,7 +1582,7 @@ msgstr "Frecuencia del azul"
 
 #: ../operations/common/diffraction-patterns.c:39
 msgid "Light frequency (blue)"
-msgstr ""
+msgstr "Frecuencia de luz (azul)"
 
 #: ../operations/common/diffraction-patterns.c:42
 #, fuzzy
@@ -1638,7 +1640,7 @@ msgstr "Ensanchamiento del verde"
 
 #: ../operations/common/diffraction-patterns.c:59
 msgid "Number of sharp edges (green)"
-msgstr ""
+msgstr "Número de bordes afilados (verde)"
 
 #: ../operations/common/diffraction-patterns.c:62
 #, fuzzy
@@ -1658,11 +1660,11 @@ msgstr ""
 
 #: ../operations/common/diffraction-patterns.c:70
 msgid "Scattering"
-msgstr ""
+msgstr "Dispersión"
 
 #: ../operations/common/diffraction-patterns.c:71
 msgid "Scattering (speed vs. quality)"
-msgstr ""
+msgstr "Dispersión (velocidad frente a calidad)"
 
 #: ../operations/common/diffraction-patterns.c:74
 #: ../operations/common/diffraction-patterns.c:75
@@ -1699,11 +1701,11 @@ msgstr "Polar"
 
 #: ../operations/common/displace.c:32
 msgid "Displacement mode"
-msgstr ""
+msgstr "Modo de desplazamiento"
 
 #: ../operations/common/displace.c:35
 msgid "Mode of displacement"
-msgstr ""
+msgstr "Modo de desplazamiento"
 
 #: ../operations/common/displace.c:37 ../operations/external/npd.c:47
 #: ../operations/transform/transform-core.c:193
@@ -1729,7 +1731,7 @@ msgstr "Cómo se manejan los bordes de la imagen"
 
 #: ../operations/common/displace.c:47
 msgid "X displacement"
-msgstr ""
+msgstr "Desplazamiento X"
 
 #: ../operations/common/displace.c:48
 msgid "Displace multiplier for X or radial direction"
@@ -1737,7 +1739,7 @@ msgstr ""
 
 #: ../operations/common/displace.c:54
 msgid "Y displacement"
-msgstr ""
+msgstr "Desplazamiento Y"
 
 #: ../operations/common/displace.c:55
 msgid "Displace multiplier for Y or tangent (degrees) direction"
