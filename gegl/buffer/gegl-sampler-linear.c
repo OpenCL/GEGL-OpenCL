@@ -90,8 +90,8 @@ gegl_sampler_box_get (GeglSampler*    restrict  self,
   const gint yy = ceilf (iabsolute_y + scale->coeff[1][1]/2);
   int u, v;
   int count = 0;
-  int hskip = scale->coeff[0][0] / 3;
-  int vskip = scale->coeff[1][1] / 3;
+  int hskip = scale->coeff[0][0] / 4;
+  int vskip = scale->coeff[1][1] / 4;
 
   if (hskip <= 0)
     hskip = 1;
@@ -128,7 +128,7 @@ gegl_sampler_linear_get (     GeglSampler     *self,
 {
   if (scale && (scale->coeff[0][0] * scale->coeff[0][0] +
       scale->coeff[1][1] * scale->coeff[1][1])
-    > 2.5)
+    > 8.0)
   {
     gegl_sampler_box_get (self, absolute_x, absolute_y, scale, output, repeat_mode);
   }

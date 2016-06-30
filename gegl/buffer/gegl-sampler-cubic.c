@@ -208,7 +208,7 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
   if (scale && 
       (scale->coeff[0][0] * scale->coeff[0][0] +
       scale->coeff[1][1] * scale->coeff[1][1])
-    > 2.5)
+    > 8.0)
   {
     gegl_sampler_box_get (self, absolute_x, absolute_y, scale, output, repeat_mode);
   }
