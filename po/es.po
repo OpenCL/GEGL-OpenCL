@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-06-24 07:10+0000\n"
-"PO-Revision-Date: 2016-06-29 09:42+0200\n"
+"POT-Creation-Date: 2016-06-30 16:25+0000\n"
+"PO-Revision-Date: 2016-07-06 09:31+0200\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -1735,7 +1735,7 @@ msgstr "Desplazamiento X"
 
 #: ../operations/common/displace.c:48
 msgid "Displace multiplier for X or radial direction"
-msgstr ""
+msgstr "Desplazar multiplicador para X o dirección radial"
 
 #: ../operations/common/displace.c:54
 msgid "Y displacement"
@@ -1743,7 +1743,7 @@ msgstr "Desplazamiento Y"
 
 #: ../operations/common/displace.c:55
 msgid "Displace multiplier for Y or tangent (degrees) direction"
-msgstr ""
+msgstr "Desplazar multiplicador para Y o dirección tangente (grados)"
 
 #: ../operations/common/displace.c:374
 #, fuzzy
@@ -1771,7 +1771,7 @@ msgstr "Mostrar el búfer de salida en una ventana."
 
 #: ../operations/common/distance-transform.c:31
 msgid "Euclidean"
-msgstr ""
+msgstr "Euclidiano"
 
 #: ../operations/common/distance-transform.c:32
 msgid "Manhattan"
@@ -1779,11 +1779,11 @@ msgstr "Manhattan"
 
 #: ../operations/common/distance-transform.c:33
 msgid "Chessboard"
-msgstr ""
+msgstr "Tablero de ajedrez"
 
 #: ../operations/common/distance-transform.c:36
 msgid "Metric"
-msgstr ""
+msgstr "Métrico"
 
 #: ../operations/common/distance-transform.c:38
 #, fuzzy
@@ -1806,11 +1806,11 @@ msgstr "Escala de grises"
 
 #: ../operations/common/distance-transform.c:47
 msgid "Number of computations for grayscale averaging"
-msgstr ""
+msgstr "Número de cálculos para un promedio de escala de grises"
 
 #: ../operations/common/distance-transform.c:53
 msgid "Normalize output to range 0.0 to 1.0."
-msgstr ""
+msgstr "Normalizar la salida a un rango de 0,0 a 1,0."
 
 #: ../operations/common/distance-transform.c:426
 #, fuzzy
@@ -1820,7 +1820,7 @@ msgstr "Transformar"
 
 #: ../operations/common/distance-transform.c:428
 msgid "Calculate a distance transform"
-msgstr ""
+msgstr "Calcular una transformada de distancia"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
 #: ../operations/common/plasma.c:40
@@ -1868,7 +1868,7 @@ msgstr "Sobel"
 
 #: ../operations/common/edge.c:30
 msgid "Prewitt compass"
-msgstr ""
+msgstr "Brújula Prewitt"
 
 #: ../operations/common/edge.c:31
 msgid "Gradient"
@@ -1892,7 +1892,7 @@ msgstr "Algoritmo"
 
 #: ../operations/common/edge.c:40
 msgid "Edge detection algorithm"
-msgstr ""
+msgstr "Algoritmo de detección de bordes"
 
 #: ../operations/common/edge.c:42
 msgid "Amount"
@@ -1900,7 +1900,7 @@ msgstr "Cantidad"
 
 #: ../operations/common/edge.c:43
 msgid "Edge detection amount"
-msgstr ""
+msgstr "Cantidad de detección de bordes"
 
 #: ../operations/common/edge.c:47
 msgid "Border behavior"
@@ -1908,7 +1908,7 @@ msgstr "Comportamiento en el borde"
 
 #: ../operations/common/edge.c:50
 msgid "Edge detection behavior"
-msgstr ""
+msgstr "Comportamiento de la detección de bordes"
 
 #: ../operations/common/edge.c:350
 msgid "Edge Detection"
@@ -1916,11 +1916,11 @@ msgstr "Detección de bordes"
 
 #: ../operations/common/edge.c:353
 msgid "Several simple methods for detecting edges"
-msgstr ""
+msgstr "Varios métodos simples para la detección de bordes"
 
 #: ../operations/common/edge-laplace.c:406
 msgid "Laplacian Edge Detection"
-msgstr ""
+msgstr "Detección de bordes Laplaciano"
 
 #: ../operations/common/edge-laplace.c:409
 msgid "High-resolution edge detection"
@@ -1937,6 +1937,8 @@ msgid ""
 "Keep negative values in result; when off, the absolute value of the result "
 "is used instead."
 msgstr ""
+"Mantiene los valores negativos en el resultado; cuando está desactivado, el "
+"valor absoluto del resultado se utiliza en su lugar."
 
 #: ../operations/common/edge-sobel.c:398
 #, fuzzy
@@ -1954,7 +1956,7 @@ msgstr "Repujado"
 
 #: ../operations/common/emboss.c:27
 msgid "Bumpmap (preserve original colors)"
-msgstr ""
+msgstr "Mapa de relieve (conserva los colores originales)"
 
 #: ../operations/common/emboss.c:30
 msgid "Emboss Type"
@@ -1991,7 +1993,7 @@ msgstr "Anchura de la línea"
 
 #: ../operations/common/engrave.c:199
 msgid "Engrave"
-msgstr ""
+msgstr "Grabar"
 
 #: ../operations/common/engrave.c:202
 #, fuzzy
@@ -2053,7 +2055,7 @@ msgstr "Valor de desplazamiento añadido"
 
 #: ../operations/common/exposure.c:33
 msgid "Gamma adjustment"
-msgstr ""
+msgstr "Ajuste de gamma"
 
 #: ../operations/common/exposure.c:188
 msgid ""
@@ -2137,11 +2139,11 @@ msgstr "Barnsley 3"
 
 #: ../operations/common/fractal-explorer.c:42
 msgid "Spider"
-msgstr ""
+msgstr "Araña"
 
 #: ../operations/common/fractal-explorer.c:44
 msgid "Man O War"
-msgstr ""
+msgstr "Hombre O de guerra"
 
 #: ../operations/common/fractal-explorer.c:46
 #: ../operations/external/matting-levin.c:37
@@ -2271,6 +2273,8 @@ msgid ""
 "Rendering of multiple different fractal systems, with configurable coloring "
 "options."
 msgstr ""
+"Renderizado de múltiples sistemas fractales diferentes, con opciones de "
+"coloreado configurables."
 
 #: ../operations/common/fractal-trace.c:34
 #: ../operations/common/linear-gradient.c:25
@@ -2434,7 +2438,7 @@ msgstr "Desviación estándar (factor de escala espacial)"
 #: ../operations/common/gaussian-blur-iir.c:56
 #: ../operations/common/gblur-1d.c:57
 msgid "How the gaussian kernel is discretized"
-msgstr ""
+msgstr "¿Cómo se hace discreto el núcleo gaussiano?"
 
 #: ../operations/common/gaussian-blur-iir.c:62
 #: ../operations/common/gblur-1d.c:63
@@ -2468,7 +2472,7 @@ msgstr "Máxima diferencia"
 
 #: ../operations/common/gaussian-blur-selective.c:259
 msgid "Selective Gaussian Blur"
-msgstr ""
+msgstr "Desenfoque gaussiano selectivo"
 
 #: ../operations/common/gaussian-blur-selective.c:262
 msgid "Blur neighboring pixels, but only in low-contrast areas"
@@ -2519,7 +2523,7 @@ msgstr "Escritor del archivo GeglBuffer."
 
 #: ../operations/common/gegl.c:24
 msgid "pipeline"
-msgstr ""
+msgstr "Tubería"
 
 #: ../operations/common/gegl.c:25
 msgid "[op [property=value] [property=value]] [[op] [property=value]"
@@ -2534,6 +2538,8 @@ msgid ""
 "There is a problem in the syntax or in the application of parsed property "
 "values. Things might mostly work nevertheless."
 msgstr ""
+"Hay un problema en la sintaxis o en la aplicación de los valores de "
+"propiedad parseados. Sin embargo, las cosas podrían funcionar en su mayoría."
 
 #: ../operations/common/gegl.c:102
 msgid "GEGL graph"
