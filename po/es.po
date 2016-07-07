@@ -4,24 +4,24 @@
 #
 # Francisco Vila <francisco.vila@hispalinux.es>, 2012.
 #
-# Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>, 2016.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2012, 2013, 2014, 2015, 2016.
+# Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-06-30 16:25+0000\n"
-"PO-Revision-Date: 2016-07-06 09:31+0200\n"
-"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
+"POT-Creation-Date: 2016-07-06 07:35+0000\n"
+"PO-Revision-Date: 2016-07-06 21:06-0500\n"
+"Last-Translator: Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #: ../bin/gegl.c:153
 #, c-format
@@ -374,8 +374,8 @@ msgid "Keep image unchanged, where not affected by the lens."
 msgstr "Mantener la imagen sin cambios, donde no se ve afectada por la lente."
 
 #: ../operations/common/apply-lens.c:44 ../operations/common/cubism.c:39
-#: ../operations/common/lens-distortion.c:57
-#: ../operations/common/pixelize.c:62 ../operations/common/tile-paper.c:78
+#: ../operations/common/lens-distortion.c:57 ../operations/common/pixelize.c:62
+#: ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Color de fondo"
 
@@ -458,8 +458,7 @@ msgstr ""
 #: ../operations/common/supernova.c:45 ../operations/common/vignette.c:37
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
-#: ../operations/workshop/kuwahara.c:25
-#: ../operations/workshop/median-blur.c:26
+#: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
 msgid "Radius"
 msgstr "Radio"
 
@@ -520,8 +519,7 @@ msgstr ""
 "«contraste» es un factor de escala alrededor del 50%% gris, y «brillo» un "
 "desplazamiento constante para aplicar después del escalado de contraste."
 
-#: ../operations/common/buffer-sink.c:25
-#: ../operations/common/write-buffer.c:25
+#: ../operations/common/buffer-sink.c:25 ../operations/common/write-buffer.c:25
 msgid "Buffer location"
 msgstr "Ubicación del búfer"
 
@@ -739,8 +737,7 @@ msgid ""
 "darkening areas that are already distinctly darker than their neighborhood"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:31
-#: ../operations/common/mono-mixer.c:26
+#: ../operations/common/channel-mixer.c:31 ../operations/common/mono-mixer.c:26
 msgid "Preserve luminosity"
 msgstr "Conservar la luminosidad"
 
@@ -949,9 +946,8 @@ msgstr "Crear un patrón de tablero de ajedrez"
 #: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
 #: ../operations/common/rectangle.c:48 ../operations/common/supernova.c:60
 #: ../operations/common/tile-paper.c:33
-#: ../operations/common/value-propagate.c:55
-#: ../operations/common/vignette.c:34 ../operations/external/text.c:36
-#: ../operations/external/vector-fill.c:26
+#: ../operations/common/value-propagate.c:55 ../operations/common/vignette.c:34
+#: ../operations/external/text.c:36 ../operations/external/vector-fill.c:26
 #: ../operations/external/vector-stroke.c:27
 msgid "Color"
 msgstr "Color"
@@ -1105,11 +1101,10 @@ msgstr "Qué estrategia de tramado usar"
 #. XXX: what?
 #: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
 #: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
-#: ../operations/common/noise-cell.c:55
-#: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
-#: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
-#: ../operations/common/noise-pick.c:38 ../operations/common/noise-rgb.c:44
-#: ../operations/common/noise-simplex.c:39
+#: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
+#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
+#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
+#: ../operations/common/noise-rgb.c:44 ../operations/common/noise-simplex.c:39
 #: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
 #: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
 #: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
@@ -1823,8 +1818,7 @@ msgid "Calculate a distance transform"
 msgstr "Calcular una transformada de distancia"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
-#: ../operations/common/plasma.c:40
-#: ../operations/common/polar-coordinates.c:51
+#: ../operations/common/plasma.c:40 ../operations/common/polar-coordinates.c:51
 #: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
@@ -1834,8 +1828,7 @@ msgid "Horizontal shadow offset"
 msgstr "Desplazamiento horizontal de la sombra"
 
 #: ../operations/common/dropshadow.c:31 ../operations/common/layer.c:41
-#: ../operations/common/plasma.c:47
-#: ../operations/common/polar-coordinates.c:57
+#: ../operations/common/plasma.c:47 ../operations/common/polar-coordinates.c:57
 #: ../operations/common/rectangle.c:31 ../operations/core/crop.c:30
 msgid "Y"
 msgstr "Y"
@@ -2462,7 +2455,7 @@ msgstr ""
 
 #: ../operations/common/gaussian-blur-selective.c:34
 msgid "Max. delta"
-msgstr ""
+msgstr "Delta máxima"
 
 #: ../operations/common/gaussian-blur-selective.c:35
 #, fuzzy
@@ -2476,7 +2469,7 @@ msgstr "Desenfoque gaussiano selectivo"
 
 #: ../operations/common/gaussian-blur-selective.c:262
 msgid "Blur neighboring pixels, but only in low-contrast areas"
-msgstr ""
+msgstr "Desenfocar los píxeles vecinos, pero sólo en áreas de bajo contraste"
 
 #: ../operations/common/gblur-1d.c:43 ../operations/common/warp.c:38
 #: ../operations/external/text.c:32
@@ -2485,7 +2478,7 @@ msgstr "Tamaño"
 
 #: ../operations/common/gblur-1d.c:52
 msgid "The orientation of the blur - hor/ver"
-msgstr ""
+msgstr "La orientación del desenfoque - hor/ver"
 
 #: ../operations/common/gegl-buffer-load-op.c:24
 #: ../operations/common/gegl-buffer-save-op.c:24
@@ -2601,7 +2594,7 @@ msgstr "Contraste de la pasada alta"
 
 #: ../operations/common/high-pass.c:80
 msgid "High Pass Filter"
-msgstr ""
+msgstr "Filtro de paso alto"
 
 #: ../operations/common/high-pass.c:83
 msgid "Enhances fine details."
@@ -2627,7 +2620,7 @@ msgstr "El valor del divisor"
 
 #: ../operations/common/illusion.c:37
 msgid "Illusion type"
-msgstr ""
+msgstr "Tipo de ilusión"
 
 #: ../operations/common/illusion.c:40
 msgid "Type of illusion"
@@ -2726,9 +2719,8 @@ msgstr "Posición vertical"
 
 #: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
 #: ../operations/common/noise-perlin.c:27
-#: ../operations/common/noise-simplex.c:31
-#: ../operations/common/saturation.c:24 ../operations/common/sepia.c:24
-#: ../operations/common/unsharp-mask.c:31
+#: ../operations/common/noise-simplex.c:31 ../operations/common/saturation.c:24
+#: ../operations/common/sepia.c:24 ../operations/common/unsharp-mask.c:31
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
 msgstr "Escala"
@@ -2770,15 +2762,15 @@ msgstr "Cantidad de preservación de los bordes"
 
 #: ../operations/common/lens-distortion.c:42
 msgid "Rescale overall image size"
-msgstr ""
+msgstr "Cambiar la escala del tamaño de la imagen completa"
 
 #: ../operations/common/lens-distortion.c:46
 msgid "Effect centre offset in X"
-msgstr ""
+msgstr "Efecto de desplazamiento del centro en X"
 
 #: ../operations/common/lens-distortion.c:50
 msgid "Effect centre offset in Y"
-msgstr ""
+msgstr "Efecto de desplazamiento del centro en Y"
 
 #: ../operations/common/lens-distortion.c:53
 msgid "Brighten"
@@ -2821,11 +2813,11 @@ msgstr "Coordenadas del centro del objetivo"
 
 #: ../operations/common/lens-flare.c:509
 msgid "Lens Flare"
-msgstr ""
+msgstr "Reflejo en la lente"
 
 #: ../operations/common/lens-flare.c:512
 msgid "Adds a lens flare effect."
-msgstr ""
+msgstr "Añade un efecto de reflejo en la lente."
 
 #: ../operations/common/levels.c:26
 msgid "Low input"
@@ -2944,11 +2936,11 @@ msgstr ""
 #: ../operations/common/panorama-projection.c:57
 #: ../operations/common/ripple.c:47 ../operations/common/waves.c:50
 msgid "Resampling method"
-msgstr ""
+msgstr "Método de remuestreo"
 
 #: ../operations/common/map-absolute.c:153
 msgid "Map Absolute"
-msgstr ""
+msgstr "Mapa absoluto"
 
 #: ../operations/common/map-absolute.c:156
 msgid ""
@@ -2972,7 +2964,7 @@ msgstr ""
 
 #: ../operations/common/map-relative.c:177
 msgid "Map Relative"
-msgstr ""
+msgstr "Mapa relativo"
 
 #: ../operations/common/map-relative.c:179
 msgid ""
@@ -3009,7 +3001,7 @@ msgstr "Tipo de algoritmo"
 
 #: ../operations/common/maze.c:61
 msgid "Maze algorithm type"
-msgstr ""
+msgstr "Tipo de algoritmo de laberinto"
 
 #: ../operations/common/maze.c:63 ../operations/common/noise-solid.c:56
 #: ../operations/common/ripple.c:53
@@ -3034,7 +3026,7 @@ msgstr "El color de fondo"
 
 #: ../operations/common/maze.c:732
 msgid "Maze"
-msgstr ""
+msgstr "Laberinto"
 
 #: ../operations/common/maze.c:736
 msgid "Draw a labyrinth"
@@ -3050,7 +3042,7 @@ msgstr "El valor representa la contribución del fotograma anterior al nuevo."
 
 #: ../operations/common/mblur.c:143
 msgid "Temporal blur"
-msgstr ""
+msgstr "Desenfoque temporal"
 
 #: ../operations/common/mblur.c:145
 msgid ""
@@ -3084,7 +3076,7 @@ msgstr "Número de espejos que usar"
 
 #: ../operations/common/mirrors.c:45 ../operations/common/mirrors.c:51
 msgid "position of symmetry center in output"
-msgstr ""
+msgstr "Posición del centro de simetría en la salida"
 
 #: ../operations/common/mirrors.c:56
 #: ../operations/common/motion-blur-circular.c:41
@@ -3154,7 +3146,7 @@ msgstr ""
 
 #: ../operations/common/mirrors.c:433
 msgid "Create a kaleidoscope like effect."
-msgstr ""
+msgstr "Crear un efecto caleidoscopio."
 
 #: ../operations/common/mono-mixer.c:28
 #, fuzzy
@@ -3176,7 +3168,7 @@ msgstr "Canal azul"
 
 #: ../operations/common/mono-mixer.c:113
 msgid "Mono Mixer"
-msgstr ""
+msgstr "Mezclador mono"
 
 #: ../operations/common/mono-mixer.c:115
 msgid "Monochrome channel mixer"
@@ -3184,7 +3176,7 @@ msgstr "Mezclador de canales monocromático."
 
 #: ../operations/common/mosaic.c:32
 msgid "Squares"
-msgstr ""
+msgstr "Cuadrados"
 
 #: ../operations/common/mosaic.c:33
 msgid "Hexagons"
@@ -3200,11 +3192,11 @@ msgstr "Triángulos"
 
 #: ../operations/common/mosaic.c:38
 msgid "Tile geometry"
-msgstr ""
+msgstr "Geometría del mosaico"
 
 #: ../operations/common/mosaic.c:40
 msgid "What shape to use for tiles"
-msgstr ""
+msgstr "Qué forma utilizar para los mosaicos"
 
 #: ../operations/common/mosaic.c:48
 #, fuzzy
@@ -3218,7 +3210,7 @@ msgstr "Diámetro medio de cada baldosa (en píxeles)"
 
 #: ../operations/common/mosaic.c:53
 msgid "Tile neatness"
-msgstr ""
+msgstr "Limpieza del mosaico"
 
 #: ../operations/common/mosaic.c:54
 msgid "Deviation from perfectly formed tiles"
@@ -3231,7 +3223,7 @@ msgstr "Saturación del mosaico"
 
 #: ../operations/common/mosaic.c:61
 msgid "Color averaging"
-msgstr ""
+msgstr "Promediado del color"
 
 #: ../operations/common/mosaic.c:62
 msgid "Tile color based on average of subsumed pixels"
@@ -3243,7 +3235,7 @@ msgstr ""
 
 #: ../operations/common/mosaic.c:65
 msgid "Surface characteristics"
-msgstr ""
+msgstr "Características de la superficie"
 
 #: ../operations/common/mosaic.c:67
 msgid "Allow splitting tiles"
@@ -3359,8 +3351,7 @@ msgstr "Desenfoque de movimiento de ampliación"
 msgid "Zoom motion blur"
 msgstr "Desenfoque de movimiento de ampliación"
 
-#: ../operations/common/noise-cell.c:37
-#: ../operations/common/noise-simplex.c:32
+#: ../operations/common/noise-cell.c:37 ../operations/common/noise-simplex.c:32
 #, fuzzy
 msgid "The scale of the noise function"
 msgstr "El valor del desplazamiento"
@@ -3381,8 +3372,7 @@ msgstr ""
 msgid "Select the n-th closest point"
 msgstr ""
 
-#: ../operations/common/noise-cell.c:49
-#: ../operations/common/noise-simplex.c:36
+#: ../operations/common/noise-cell.c:49 ../operations/common/noise-simplex.c:36
 msgid "The number of noise octaves."
 msgstr ""
 
@@ -3394,8 +3384,7 @@ msgstr ""
 msgid "Fill each cell with a random color"
 msgstr ""
 
-#: ../operations/common/noise-cell.c:56
-#: ../operations/common/noise-simplex.c:40
+#: ../operations/common/noise-cell.c:56 ../operations/common/noise-simplex.c:40
 #, fuzzy
 msgid "The random seed for the noise function"
 msgstr "Anchura de la función de Lanczos"
@@ -3683,16 +3672,14 @@ msgstr "Una fuente que usa un GeglBuffer que está en el disco."
 
 #: ../operations/common/over.c:25 ../operations/common/sepia.c:28
 #: ../operations/generated/clear.c:38 ../operations/generated/color-burn.c:38
-#: ../operations/generated/color-dodge.c:38
-#: ../operations/generated/darken.c:38 ../operations/generated/difference.c:38
+#: ../operations/generated/color-dodge.c:38 ../operations/generated/darken.c:38
+#: ../operations/generated/difference.c:38
 #: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
 #: ../operations/generated/dst-in.c:38 ../operations/generated/dst-out.c:38
-#: ../operations/generated/dst-over.c:38
-#: ../operations/generated/exclusion.c:38
-#: ../operations/generated/hard-light.c:38
-#: ../operations/generated/lighten.c:38 ../operations/generated/overlay.c:38
-#: ../operations/generated/plus.c:38 ../operations/generated/screen.c:38
-#: ../operations/generated/soft-light.c:38
+#: ../operations/generated/dst-over.c:38 ../operations/generated/exclusion.c:38
+#: ../operations/generated/hard-light.c:38 ../operations/generated/lighten.c:38
+#: ../operations/generated/overlay.c:38 ../operations/generated/plus.c:38
+#: ../operations/generated/screen.c:38 ../operations/generated/soft-light.c:38
 #: ../operations/generated/src-atop.c:38 ../operations/generated/src.c:38
 #: ../operations/generated/src-in.c:38 ../operations/generated/src-out.c:38
 #: ../operations/generated/svg-multiply.c:38 ../operations/generated/xor.c:38
@@ -3702,16 +3689,14 @@ msgstr "sRGB"
 
 #: ../operations/common/over.c:26 ../operations/common/sepia.c:29
 #: ../operations/generated/clear.c:39 ../operations/generated/color-burn.c:39
-#: ../operations/generated/color-dodge.c:39
-#: ../operations/generated/darken.c:39 ../operations/generated/difference.c:39
+#: ../operations/generated/color-dodge.c:39 ../operations/generated/darken.c:39
+#: ../operations/generated/difference.c:39
 #: ../operations/generated/dst-atop.c:39 ../operations/generated/dst.c:39
 #: ../operations/generated/dst-in.c:39 ../operations/generated/dst-out.c:39
-#: ../operations/generated/dst-over.c:39
-#: ../operations/generated/exclusion.c:39
-#: ../operations/generated/hard-light.c:39
-#: ../operations/generated/lighten.c:39 ../operations/generated/overlay.c:39
-#: ../operations/generated/plus.c:39 ../operations/generated/screen.c:39
-#: ../operations/generated/soft-light.c:39
+#: ../operations/generated/dst-over.c:39 ../operations/generated/exclusion.c:39
+#: ../operations/generated/hard-light.c:39 ../operations/generated/lighten.c:39
+#: ../operations/generated/overlay.c:39 ../operations/generated/plus.c:39
+#: ../operations/generated/screen.c:39 ../operations/generated/soft-light.c:39
 #: ../operations/generated/src-atop.c:39 ../operations/generated/src.c:39
 #: ../operations/generated/src-in.c:39 ../operations/generated/src-out.c:39
 #: ../operations/generated/svg-multiply.c:39 ../operations/generated/xor.c:39
@@ -4364,13 +4349,13 @@ msgid ""
 "from the center of the star."
 msgstr ""
 
-#: ../operations/common/svg-huerotate.c:27
-#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:25
+#: ../operations/common/svg-huerotate.c:27 ../operations/common/svg-matrix.c:27
+#: ../operations/common/svg-saturate.c:25
 msgid "Values"
 msgstr "Valores"
 
-#: ../operations/common/svg-huerotate.c:28
-#: ../operations/common/svg-matrix.c:28 ../operations/common/svg-saturate.c:26
+#: ../operations/common/svg-huerotate.c:28 ../operations/common/svg-matrix.c:28
+#: ../operations/common/svg-saturate.c:26
 msgid "list of <number>s"
 msgstr "lista de <number>s"
 
@@ -5748,8 +5733,7 @@ msgstr "Conservar luminosidad"
 msgid "When TRUE the model will not be freed"
 msgstr ""
 
-#: ../operations/external/npd.c:50
-#: ../operations/transform/transform-core.c:194
+#: ../operations/external/npd.c:50 ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Muestreador usado internamente"
@@ -7283,8 +7267,7 @@ msgid ""
 "mixing and interactions."
 msgstr ""
 
-#: ../operations/workshop/kuwahara.c:27
-#: ../operations/workshop/median-blur.c:28
+#: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
 "Radio de la región cuadrada de píxeles (la anchura y la altura serán "
