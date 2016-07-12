@@ -521,9 +521,9 @@ GeglSampler *    gegl_buffer_sampler_new      (GeglBuffer       *buffer,
  * the sampler will become invalid.
  */
 GeglSampler *    gegl_buffer_sampler_new_at_level (GeglBuffer       *buffer,
-                                               const Babl       *format,
-                                               GeglSamplerType   sampler_type,
-                                               gint              level);
+                                                   const Babl       *format,
+                                                   GeglSamplerType   sampler_type,
+                                                   gint              level);
 
 
 /**
