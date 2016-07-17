@@ -4,24 +4,24 @@
 #
 # Francisco Vila <francisco.vila@hispalinux.es>, 2012.
 #
-# Daniel Mustieles <daniel.mustieles@gmail.com>, 2012, 2013, 2014, 2015, 2016.
 # Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>, 2016.
+# Daniel Mustieles <daniel.mustieles@gmail.com>, 2012, 2013, 2014, 2015, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-07-07 07:30+0000\n"
-"PO-Revision-Date: 2016-07-11 14:30-0500\n"
-"Last-Translator: Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>\n"
+"POT-Creation-Date: 2016-07-13 16:49+0000\n"
+"PO-Revision-Date: 2016-07-17 12:27+0200\n"
+"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
-"Language: es\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #: ../bin/gegl.c:153
 #, c-format
@@ -3592,7 +3592,7 @@ msgstr "Ruido sólido"
 
 #: ../operations/common/noise-solid.c:349
 msgid "Create a random cloud-like texture"
-msgstr ""
+msgstr "Crear una textura aleatoria parecida a una nube"
 
 #: ../operations/common/noise-spread.c:30
 msgid "Horizontal spread amount"
@@ -3709,7 +3709,7 @@ msgstr "sRGB"
 #: ../operations/generated/src-in.c:39 ../operations/generated/src-out.c:39
 #: ../operations/generated/svg-multiply.c:39 ../operations/generated/xor.c:39
 msgid "Use sRGB gamma instead of linear"
-msgstr ""
+msgstr "Usar gamma sRGB en lugar de lineal"
 
 #: ../operations/common/over.c:181
 #, fuzzy
@@ -3736,7 +3736,7 @@ msgstr "Posición horizontal central"
 
 #: ../operations/common/panorama-projection.c:28
 msgid "Tilt"
-msgstr ""
+msgstr "Inclinar"
 
 #: ../operations/common/panorama-projection.c:29
 #, fuzzy
@@ -3745,33 +3745,35 @@ msgstr "Posición vertical central"
 
 #: ../operations/common/panorama-projection.c:34
 msgid "Spin"
-msgstr ""
+msgstr "Girar"
 
 #: ../operations/common/panorama-projection.c:35
 msgid "Spin angle around camera axis"
-msgstr ""
+msgstr "Ángulo de giro alrededor del eje de la cámara"
 
 #: ../operations/common/panorama-projection.c:43
 msgid "output/rendering width in pixels, -1 for input width"
-msgstr ""
+msgstr "Salida/anchura del renderizado en píxeles, -1 para el ancho de entrada"
 
 #: ../operations/common/panorama-projection.c:49
 msgid "output/rendering height in pixels, -1 for input height"
-msgstr ""
+msgstr "Salida/altura del renderizado en píxeles, -1 para la altura de entrada"
 
 #: ../operations/common/panorama-projection.c:54
 msgid "Little planet"
-msgstr ""
+msgstr "Planeta pequeño"
 
 #: ../operations/common/panorama-projection.c:55
 msgid ""
 "Render a stereographic mapping, a tilt value of 90, which means looking at "
 "nadir provides a good default value."
 msgstr ""
+"Renderizar un mapeo estereográfico, un valor de inclinación de 90, lo que "
+"significa que mirar en el nadir proporciona un buen valor predeterminado."
 
 #: ../operations/common/panorama-projection.c:59
 msgid "Image resampling method to use"
-msgstr ""
+msgstr "Método de remuestreo de la imagen que usar"
 
 #: ../operations/common/panorama-projection.c:536
 #, fuzzy
@@ -3811,11 +3813,11 @@ msgstr "Diamante"
 
 #: ../operations/common/pixelize.c:28
 msgid "Round"
-msgstr ""
+msgstr "Redondo"
 
 #: ../operations/common/pixelize.c:29 ../operations/common/vignette.c:26
 msgid "Square"
-msgstr ""
+msgstr "Cuadrado"
 
 #: ../operations/common/pixelize.c:34
 #, fuzzy
@@ -3860,7 +3862,7 @@ msgstr "Proporción del tamaño de un punto dentro de cada bloque"
 
 #: ../operations/common/pixelize.c:63
 msgid "Color used to fill the background"
-msgstr ""
+msgstr "Color usado para rellenar el fondo"
 
 #: ../operations/common/pixelize.c:655
 #, fuzzy
@@ -3878,15 +3880,15 @@ msgstr "Turbulencia"
 
 #: ../operations/common/plasma.c:37
 msgid "High values give more variation in details"
-msgstr ""
+msgstr "Valores altos dan más variación en los detalles"
 
 #: ../operations/common/plasma.c:41
 msgid "X start of the generated buffer"
-msgstr ""
+msgstr "X inicia del búfer generado"
 
 #: ../operations/common/plasma.c:48
 msgid "Y start of the generated buffer"
-msgstr ""
+msgstr "Y inicia del búfer generado"
 
 #: ../operations/common/plasma.c:421
 msgid "Plasma"
@@ -3894,7 +3896,7 @@ msgstr "Plasma"
 
 #: ../operations/common/plasma.c:425
 msgid "Creates an image filled with a plasma effect."
-msgstr ""
+msgstr "Crea una imagen llena con un efecto de plasma."
 
 #: ../operations/common/polar-coordinates.c:34
 msgid "Circle depth in percent"
@@ -4089,7 +4091,7 @@ msgstr "Conservar enlosabilidad"
 
 #: ../operations/common/ripple.c:170
 msgid "Ripple"
-msgstr ""
+msgstr "Onda"
 
 #: ../operations/common/ripple.c:174
 msgid "Displace pixels in a ripple pattern"
@@ -4156,7 +4158,7 @@ msgstr "Escalado X"
 
 #: ../operations/common/sinus.c:34
 msgid "Scale value for x axis"
-msgstr ""
+msgstr "Valor de escala para el eje x"
 
 #: ../operations/common/sinus.c:40
 msgid "Y Scale"
@@ -4164,7 +4166,7 @@ msgstr "Escalado Y"
 
 #: ../operations/common/sinus.c:41
 msgid "Scale value for y axis"
-msgstr ""
+msgstr "Valor de escala para el eje y"
 
 #: ../operations/common/sinus.c:47
 msgid "Complexity"
@@ -4172,11 +4174,11 @@ msgstr "Complejidad"
 
 #: ../operations/common/sinus.c:48
 msgid "Complexity factor"
-msgstr ""
+msgstr "Factor de complejidad"
 
 #: ../operations/common/sinus.c:53
 msgid "Force tiling"
-msgstr ""
+msgstr "Forzar embaldosado"
 
 #: ../operations/common/sinus.c:54
 msgid "If set, the pattern generated will tile"
@@ -4184,7 +4186,7 @@ msgstr ""
 
 #: ../operations/common/sinus.c:56
 msgid "Distorted"
-msgstr ""
+msgstr "Distorsionado"
 
 #: ../operations/common/sinus.c:57
 msgid "If set, the pattern will be a little more distorted"
@@ -4192,11 +4194,11 @@ msgstr ""
 
 #: ../operations/common/sinus.c:65
 msgid "Bilinear"
-msgstr ""
+msgstr "Bilineal"
 
 #: ../operations/common/sinus.c:69
 msgid "Blend Mode"
-msgstr ""
+msgstr "Modo de mezcla"
 
 #: ../operations/common/sinus.c:74
 msgid "Power used to strech the blend"
