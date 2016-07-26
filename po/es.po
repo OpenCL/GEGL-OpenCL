@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-07-17 10:33+0000\n"
-"PO-Revision-Date: 2016-07-20 12:39-0500\n"
+"POT-Creation-Date: 2016-07-21 06:51+0000\n"
+"PO-Revision-Date: 2016-07-22 17:53-0500\n"
 "Last-Translator: Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -4624,7 +4624,7 @@ msgstr "Más negro (valor más pequeño)"
 
 #: ../operations/common/value-propagate.c:31
 msgid "Middle value to peaks"
-msgstr ""
+msgstr "Valor medio de los picos"
 
 #: ../operations/common/value-propagate.c:32
 #, fuzzy
@@ -4673,7 +4673,7 @@ msgstr "Tasa de propagación"
 
 #: ../operations/common/value-propagate.c:56
 msgid "Color to use for the \"Only color\" and \"Color to peaks\" modes"
-msgstr ""
+msgstr "Color que se usa para los modos «Sólo color» y «Color a picos»"
 
 #: ../operations/common/value-propagate.c:59
 msgid "To top"
@@ -4728,27 +4728,27 @@ msgstr "Valor propagado"
 
 #: ../operations/common/value-propagate.c:640
 msgid "Propagate certain colors to neighboring pixels."
-msgstr ""
+msgstr "Propagar determinados colores de los píxeles vecinos."
 
 #: ../operations/common/video-degradation.c:34
 msgid "Staggered"
-msgstr ""
+msgstr "Escalonado"
 
 #: ../operations/common/video-degradation.c:36
 msgid "Large staggered"
-msgstr ""
+msgstr "Escalonado grande"
 
 #: ../operations/common/video-degradation.c:38
 msgid "Striped"
-msgstr ""
+msgstr "Rayado"
 
 #: ../operations/common/video-degradation.c:40
 msgid "Wide striped"
-msgstr ""
+msgstr "Rayado amplio"
 
 #: ../operations/common/video-degradation.c:42
 msgid "Long staggered"
-msgstr ""
+msgstr "Escalonado largo"
 
 #: ../operations/common/video-degradation.c:44
 msgid "3x3"
@@ -4756,7 +4756,7 @@ msgstr "3x3"
 
 #: ../operations/common/video-degradation.c:46
 msgid "Large 3x3"
-msgstr ""
+msgstr "Alto 3x3"
 
 #: ../operations/common/video-degradation.c:48
 msgid "Hex"
@@ -4776,11 +4776,11 @@ msgstr "Tipo de patrón RGB que usar"
 
 #: ../operations/common/video-degradation.c:58
 msgid "Additive"
-msgstr ""
+msgstr "Aditivo"
 
 #: ../operations/common/video-degradation.c:59
 msgid "Whether the function adds the result to the original image."
-msgstr ""
+msgstr "Si la función suma el resultado a la imagen original."
 
 #: ../operations/common/video-degradation.c:61
 #, fuzzy
@@ -4790,11 +4790,11 @@ msgstr "Rotación"
 
 #: ../operations/common/video-degradation.c:62
 msgid "Whether to rotate the RGB pattern by ninety degrees."
-msgstr ""
+msgstr "Si desea girar el patrón RGB noventa grados."
 
 #: ../operations/common/video-degradation.c:321
 msgid "Video Degradation"
-msgstr ""
+msgstr "Degradación del vídeo"
 
 #: ../operations/common/video-degradation.c:324
 msgid ""
@@ -4804,11 +4804,11 @@ msgstr ""
 
 #: ../operations/common/vignette.c:25
 msgid "Circle"
-msgstr ""
+msgstr "Círculo"
 
 #: ../operations/common/vignette.c:30
 msgid "Vignette shape"
-msgstr ""
+msgstr "Forma de viñeta"
 
 #: ../operations/common/vignette.c:35
 msgid ""
@@ -4852,7 +4852,7 @@ msgstr "Rotación"
 
 #: ../operations/common/vignette.c:380
 msgid "Vignette"
-msgstr ""
+msgstr "Viñeta"
 
 #: ../operations/common/vignette.c:383
 #, fuzzy
@@ -4875,11 +4875,11 @@ msgstr "Mover píxeles"
 
 #: ../operations/common/warp.c:27
 msgid "Grow area"
-msgstr ""
+msgstr "Aumentar área"
 
 #: ../operations/common/warp.c:28
 msgid "Shrink area"
-msgstr ""
+msgstr "Encoger área"
 
 #: ../operations/common/warp.c:29
 #, fuzzy
@@ -4895,7 +4895,7 @@ msgstr "Cambiar al sentido de las agujas del reloj"
 
 #: ../operations/common/warp.c:31
 msgid "Erase warping"
-msgstr ""
+msgstr "Borrar deformación"
 
 #: ../operations/common/warp.c:32
 #, fuzzy
@@ -4921,7 +4921,7 @@ msgstr "Comportamiento del operador"
 
 #: ../operations/common/warp.c:413
 msgid "Warp"
-msgstr ""
+msgstr "Deformación"
 
 #: ../operations/common/warp.c:415
 msgid "Compute a relative displacement mapping from a stroke"
@@ -4941,7 +4941,7 @@ msgstr "Relación de aspecto"
 
 #: ../operations/common/waves.c:52
 msgid "Mathematical method for reconstructing pixel values"
-msgstr ""
+msgstr "Método matemático para reconstruir los valores de los píxeles"
 
 #: ../operations/common/waves.c:54
 msgid "Clamp deformation"
@@ -4953,7 +4953,7 @@ msgstr "Limitar la deformación al área de la imagen."
 
 #: ../operations/common/waves.c:183
 msgid "Waves"
-msgstr ""
+msgstr "Ondas"
 
 #: ../operations/common/waves.c:187
 msgid "Distort the image with waves"
@@ -4961,7 +4961,7 @@ msgstr "Distorsionar la imagen con ondas"
 
 #: ../operations/common/weighted-blend.c:185
 msgid "Weighted Blend"
-msgstr ""
+msgstr "Mezcla ponderada"
 
 #: ../operations/common/weighted-blend.c:188
 msgid "blend two images using alpha values as weights"
@@ -5003,11 +5003,11 @@ msgstr "Distorsionar la imagen con remolinos y aspiraciones"
 
 #: ../operations/common/wind.c:28 ../operations/common/wind.c:661
 msgid "Wind"
-msgstr ""
+msgstr "Viento"
 
 #: ../operations/common/wind.c:29
 msgid "Blast"
-msgstr ""
+msgstr "Explosión"
 
 #: ../operations/common/wind.c:33
 msgid "Left"
@@ -5027,11 +5027,11 @@ msgstr "Abajo"
 
 #: ../operations/common/wind.c:40
 msgid "Both"
-msgstr ""
+msgstr "Ambos"
 
 #: ../operations/common/wind.c:41
 msgid "Leading"
-msgstr ""
+msgstr "Importante"
 
 #: ../operations/common/wind.c:42
 #, fuzzy
@@ -5055,7 +5055,7 @@ msgstr "Dirección del efecto"
 
 #: ../operations/common/wind.c:55
 msgid "Edge Affected"
-msgstr ""
+msgstr "Borde afectado"
 
 #: ../operations/common/wind.c:58
 msgid "Edge behavior"
@@ -5106,7 +5106,7 @@ msgstr ""
 
 #: ../operations/core/cache.c:92
 msgid "An explicit caching node"
-msgstr ""
+msgstr "Un nodo de caché explícito"
 
 #: ../operations/core/cast-format.c:25
 #, fuzzy
@@ -5159,7 +5159,7 @@ msgstr "Convertir los datos al formato especificado"
 
 #: ../operations/core/crop.c:45
 msgid "Reset origin"
-msgstr ""
+msgstr "Reiniciar origen"
 
 #: ../operations/core/crop.c:209
 msgid "Crop"
