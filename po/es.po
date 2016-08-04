@@ -4,24 +4,24 @@
 #
 # Francisco Vila <francisco.vila@hispalinux.es>, 2012.
 #
-# Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>, 2016.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2012, 2013, 2014, 2015, 2016.
+# Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>, 2016.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-07-26 07:39+0000\n"
-"PO-Revision-Date: 2016-08-03 08:53+0200\n"
-"Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
+"POT-Creation-Date: 2016-08-03 06:55+0000\n"
+"PO-Revision-Date: 2016-08-03 13:54-0500\n"
+"Last-Translator: Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"X-Generator: Gtranslator 2.91.7\n"
 
 #: ../bin/gegl.c:153
 #, c-format
@@ -374,8 +374,8 @@ msgid "Keep image unchanged, where not affected by the lens."
 msgstr "Mantener la imagen sin cambios, donde no se ve afectada por la lente."
 
 #: ../operations/common/apply-lens.c:44 ../operations/common/cubism.c:39
-#: ../operations/common/lens-distortion.c:57
-#: ../operations/common/pixelize.c:62 ../operations/common/tile-paper.c:78
+#: ../operations/common/lens-distortion.c:57 ../operations/common/pixelize.c:62
+#: ../operations/common/tile-paper.c:78
 msgid "Background color"
 msgstr "Color de fondo"
 
@@ -458,8 +458,7 @@ msgstr ""
 #: ../operations/common/supernova.c:45 ../operations/common/vignette.c:37
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
-#: ../operations/workshop/kuwahara.c:25
-#: ../operations/workshop/median-blur.c:26
+#: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
 msgid "Radius"
 msgstr "Radio"
 
@@ -520,8 +519,7 @@ msgstr ""
 "«contraste» es un factor de escala alrededor del 50%% gris, y «brillo» un "
 "desplazamiento constante para aplicar después del escalado de contraste."
 
-#: ../operations/common/buffer-sink.c:25
-#: ../operations/common/write-buffer.c:25
+#: ../operations/common/buffer-sink.c:25 ../operations/common/write-buffer.c:25
 msgid "Buffer location"
 msgstr "Ubicación del búfer"
 
@@ -739,8 +737,7 @@ msgid ""
 "darkening areas that are already distinctly darker than their neighborhood"
 msgstr ""
 
-#: ../operations/common/channel-mixer.c:31
-#: ../operations/common/mono-mixer.c:26
+#: ../operations/common/channel-mixer.c:31 ../operations/common/mono-mixer.c:26
 msgid "Preserve luminosity"
 msgstr "Conservar la luminosidad"
 
@@ -949,9 +946,8 @@ msgstr "Crear un patrón de tablero de ajedrez"
 #: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
 #: ../operations/common/rectangle.c:48 ../operations/common/supernova.c:60
 #: ../operations/common/tile-paper.c:33
-#: ../operations/common/value-propagate.c:55
-#: ../operations/common/vignette.c:34 ../operations/external/text.c:36
-#: ../operations/external/vector-fill.c:26
+#: ../operations/common/value-propagate.c:55 ../operations/common/vignette.c:34
+#: ../operations/external/text.c:36 ../operations/external/vector-fill.c:26
 #: ../operations/external/vector-stroke.c:27
 msgid "Color"
 msgstr "Color"
@@ -1107,11 +1103,10 @@ msgstr "Qué estrategia de tramado usar"
 #. XXX: what?
 #: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
 #: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
-#: ../operations/common/noise-cell.c:55
-#: ../operations/common/noise-cie-lch.c:37 ../operations/common/noise-hsv.c:39
-#: ../operations/common/noise-hurl.c:37 ../operations/common/noise-perlin.c:37
-#: ../operations/common/noise-pick.c:38 ../operations/common/noise-rgb.c:44
-#: ../operations/common/noise-simplex.c:39
+#: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
+#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
+#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
+#: ../operations/common/noise-rgb.c:44 ../operations/common/noise-simplex.c:39
 #: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
 #: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
 #: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
@@ -1827,8 +1822,7 @@ msgid "Calculate a distance transform"
 msgstr "Calcular una transformada de distancia"
 
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
-#: ../operations/common/plasma.c:40
-#: ../operations/common/polar-coordinates.c:51
+#: ../operations/common/plasma.c:40 ../operations/common/polar-coordinates.c:51
 #: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
 msgid "X"
 msgstr "X"
@@ -1838,8 +1832,7 @@ msgid "Horizontal shadow offset"
 msgstr "Desplazamiento horizontal de la sombra"
 
 #: ../operations/common/dropshadow.c:31 ../operations/common/layer.c:41
-#: ../operations/common/plasma.c:47
-#: ../operations/common/polar-coordinates.c:57
+#: ../operations/common/plasma.c:47 ../operations/common/polar-coordinates.c:57
 #: ../operations/common/rectangle.c:31 ../operations/core/crop.c:30
 msgid "Y"
 msgstr "Y"
@@ -2730,9 +2723,8 @@ msgstr "Posición vertical"
 
 #: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
 #: ../operations/common/noise-perlin.c:27
-#: ../operations/common/noise-simplex.c:31
-#: ../operations/common/saturation.c:24 ../operations/common/sepia.c:24
-#: ../operations/common/unsharp-mask.c:31
+#: ../operations/common/noise-simplex.c:31 ../operations/common/saturation.c:24
+#: ../operations/common/sepia.c:24 ../operations/common/unsharp-mask.c:31
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
 msgstr "Escala"
@@ -3365,8 +3357,7 @@ msgstr "Desenfoque de movimiento de ampliación"
 msgid "Zoom motion blur"
 msgstr "Desenfoque de movimiento de ampliación"
 
-#: ../operations/common/noise-cell.c:37
-#: ../operations/common/noise-simplex.c:32
+#: ../operations/common/noise-cell.c:37 ../operations/common/noise-simplex.c:32
 #, fuzzy
 msgid "The scale of the noise function"
 msgstr "El valor del desplazamiento"
@@ -3387,8 +3378,7 @@ msgstr "Rango"
 msgid "Select the n-th closest point"
 msgstr "Seleccionar el enésimo punto más cercano"
 
-#: ../operations/common/noise-cell.c:49
-#: ../operations/common/noise-simplex.c:36
+#: ../operations/common/noise-cell.c:49 ../operations/common/noise-simplex.c:36
 msgid "The number of noise octaves."
 msgstr "El número de octavas de ruido."
 
@@ -3400,8 +3390,7 @@ msgstr "Paletizar"
 msgid "Fill each cell with a random color"
 msgstr "Rellenar cada celda con un color aleatorio"
 
-#: ../operations/common/noise-cell.c:56
-#: ../operations/common/noise-simplex.c:40
+#: ../operations/common/noise-cell.c:56 ../operations/common/noise-simplex.c:40
 #, fuzzy
 msgid "The random seed for the noise function"
 msgstr "Anchura de la función de Lanczos"
@@ -3691,16 +3680,14 @@ msgstr "Una fuente que usa un GeglBuffer que está en el disco."
 
 #: ../operations/common/over.c:25 ../operations/common/sepia.c:28
 #: ../operations/generated/clear.c:38 ../operations/generated/color-burn.c:38
-#: ../operations/generated/color-dodge.c:38
-#: ../operations/generated/darken.c:38 ../operations/generated/difference.c:38
+#: ../operations/generated/color-dodge.c:38 ../operations/generated/darken.c:38
+#: ../operations/generated/difference.c:38
 #: ../operations/generated/dst-atop.c:38 ../operations/generated/dst.c:38
 #: ../operations/generated/dst-in.c:38 ../operations/generated/dst-out.c:38
-#: ../operations/generated/dst-over.c:38
-#: ../operations/generated/exclusion.c:38
-#: ../operations/generated/hard-light.c:38
-#: ../operations/generated/lighten.c:38 ../operations/generated/overlay.c:38
-#: ../operations/generated/plus.c:38 ../operations/generated/screen.c:38
-#: ../operations/generated/soft-light.c:38
+#: ../operations/generated/dst-over.c:38 ../operations/generated/exclusion.c:38
+#: ../operations/generated/hard-light.c:38 ../operations/generated/lighten.c:38
+#: ../operations/generated/overlay.c:38 ../operations/generated/plus.c:38
+#: ../operations/generated/screen.c:38 ../operations/generated/soft-light.c:38
 #: ../operations/generated/src-atop.c:38 ../operations/generated/src.c:38
 #: ../operations/generated/src-in.c:38 ../operations/generated/src-out.c:38
 #: ../operations/generated/svg-multiply.c:38 ../operations/generated/xor.c:38
@@ -3710,16 +3697,14 @@ msgstr "sRGB"
 
 #: ../operations/common/over.c:26 ../operations/common/sepia.c:29
 #: ../operations/generated/clear.c:39 ../operations/generated/color-burn.c:39
-#: ../operations/generated/color-dodge.c:39
-#: ../operations/generated/darken.c:39 ../operations/generated/difference.c:39
+#: ../operations/generated/color-dodge.c:39 ../operations/generated/darken.c:39
+#: ../operations/generated/difference.c:39
 #: ../operations/generated/dst-atop.c:39 ../operations/generated/dst.c:39
 #: ../operations/generated/dst-in.c:39 ../operations/generated/dst-out.c:39
-#: ../operations/generated/dst-over.c:39
-#: ../operations/generated/exclusion.c:39
-#: ../operations/generated/hard-light.c:39
-#: ../operations/generated/lighten.c:39 ../operations/generated/overlay.c:39
-#: ../operations/generated/plus.c:39 ../operations/generated/screen.c:39
-#: ../operations/generated/soft-light.c:39
+#: ../operations/generated/dst-over.c:39 ../operations/generated/exclusion.c:39
+#: ../operations/generated/hard-light.c:39 ../operations/generated/lighten.c:39
+#: ../operations/generated/overlay.c:39 ../operations/generated/plus.c:39
+#: ../operations/generated/screen.c:39 ../operations/generated/soft-light.c:39
 #: ../operations/generated/src-atop.c:39 ../operations/generated/src.c:39
 #: ../operations/generated/src-in.c:39 ../operations/generated/src-out.c:39
 #: ../operations/generated/svg-multiply.c:39 ../operations/generated/xor.c:39
@@ -4374,13 +4359,13 @@ msgid ""
 "from the center of the star."
 msgstr ""
 
-#: ../operations/common/svg-huerotate.c:27
-#: ../operations/common/svg-matrix.c:27 ../operations/common/svg-saturate.c:25
+#: ../operations/common/svg-huerotate.c:27 ../operations/common/svg-matrix.c:27
+#: ../operations/common/svg-saturate.c:25
 msgid "Values"
 msgstr "Valores"
 
-#: ../operations/common/svg-huerotate.c:28
-#: ../operations/common/svg-matrix.c:28 ../operations/common/svg-saturate.c:26
+#: ../operations/common/svg-huerotate.c:28 ../operations/common/svg-matrix.c:28
+#: ../operations/common/svg-saturate.c:26
 msgid "list of <number>s"
 msgstr "lista de <number>s"
 
@@ -5751,11 +5736,11 @@ msgstr "Usar pesos MLS"
 
 #: ../operations/external/npd.c:40
 msgid "MLS Weights Alpha"
-msgstr ""
+msgstr "Pesos MLS alfa"
 
 #: ../operations/external/npd.c:42
 msgid "Alpha parameter of MLS weights"
-msgstr ""
+msgstr "Parámetro alfa de los pesos MLS"
 
 #: ../operations/external/npd.c:44
 #, fuzzy
@@ -5764,17 +5749,16 @@ msgstr "Conservar luminosidad"
 
 #: ../operations/external/npd.c:45
 msgid "When TRUE the model will not be freed"
-msgstr ""
+msgstr "Cuando es verdadero el modelo no se libera"
 
-#: ../operations/external/npd.c:50
-#: ../operations/transform/transform-core.c:194
+#: ../operations/external/npd.c:50 ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Muestreador usado internamente"
 
 #: ../operations/external/npd.c:255
 msgid "Performs n-point image deformation"
-msgstr ""
+msgstr "Realiza deformación de la imagen n-punto"
 
 #: ../operations/external/npy-save.c:142
 msgid "NPY File Saver"
@@ -6004,7 +5988,7 @@ msgstr "Guardar la salida en un GdkPixbuf."
 
 #: ../operations/external/sdl-display.c:27
 msgid "Icon title"
-msgstr ""
+msgstr "Título del icono"
 
 #: ../operations/external/sdl-display.c:28
 msgid "Icon to be used for output window"
@@ -6012,7 +5996,7 @@ msgstr "Icono que usar para la ventana de salida"
 
 #: ../operations/external/sdl-display.c:171
 msgid "SDL Display"
-msgstr ""
+msgstr "Pantalla SDL"
 
 #: ../operations/external/sdl-display.c:174
 msgid ""
@@ -6099,7 +6083,7 @@ msgstr "Altura del renderizado en píxeles (solo lectura)."
 
 #: ../operations/external/text.c:322
 msgid "Render Text"
-msgstr ""
+msgstr "Generar texto"
 
 #: ../operations/external/text.c:325
 msgid "Display a string of text using pango and cairo."
@@ -6113,7 +6097,7 @@ msgstr "Dirección"
 
 #: ../operations/external/tiff-load.c:31
 msgid "Image file directory (subfile)"
-msgstr ""
+msgstr "Carpeta de archivo de imagen (subarchivo)"
 
 #: ../operations/external/tiff-load.c:867
 #, fuzzy
@@ -6532,7 +6516,7 @@ msgstr "Girar el búfer alrededor del origen especificado."
 #: ../operations/transform/rotate-on-center.c:32
 #: ../operations/transform/rotate-on-center.c:34
 msgid "Ignored. Always uses center of input buffer"
-msgstr ""
+msgstr "Ignorado. Siempre usa el centro del búfer de entrada"
 
 #: ../operations/transform/rotate-on-center.c:40
 #, fuzzy
@@ -6722,7 +6706,7 @@ msgstr "peso 7"
 
 #: ../operations/workshop/color-warp.c:56
 msgid "global weight scale"
-msgstr ""
+msgstr "Escala de peso global"
 
 #: ../operations/workshop/color-warp.c:58
 msgid "amount"
@@ -6737,6 +6721,8 @@ msgstr "Color"
 msgid ""
 "Warps the colors of an image between colors with weighted distortion factors."
 msgstr ""
+"Deforma los colores de una imagen entre los colores con factores de "
+"distorsión ponderados."
 
 #: ../operations/workshop/component-extract.c:25
 msgid "RGB Red"
@@ -6828,7 +6814,7 @@ msgstr "Salida lineal"
 
 #: ../operations/workshop/component-extract.c:55
 msgid "Use linear output instead of gamma corrected"
-msgstr ""
+msgstr "Usar salida lineal en lugar de gamma corregida"
 
 #: ../operations/workshop/component-extract.c:240
 msgid "Extract Component"
@@ -6836,7 +6822,7 @@ msgstr "Extraer componente"
 
 #: ../operations/workshop/component-extract.c:242
 msgid "Extract a color model component"
-msgstr ""
+msgstr "Extraer un componente de modelo de color"
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
@@ -6897,7 +6883,7 @@ msgstr "Error del módulo"
 
 #: ../operations/workshop/external/gluas.c:34
 msgid "parse/compile error, if any"
-msgstr ""
+msgstr "Analizar/compilar error, si existe"
 
 #: ../operations/workshop/external/gluas.c:38
 msgid "a stored lua script on disk implementing an operation."
@@ -7107,7 +7093,7 @@ msgstr ""
 
 #: ../operations/workshop/external/v4l2.c:25
 msgid "video device path"
-msgstr ""
+msgstr "Ruta del dispositivo de vídeo"
 
 #: ../operations/workshop/external/v4l2.c:774
 msgid "Video4Linux2 Frame Source"
@@ -7160,11 +7146,11 @@ msgstr "Operación de mezcla de imágenes «sustractivo» (<tt>c = cA+cB-1.0</tt
 
 #: ../operations/workshop/gradient-map.c:27
 msgid "Stop 1"
-msgstr ""
+msgstr "Parada 1"
 
 #: ../operations/workshop/gradient-map.c:29
 msgid "Stop 2"
-msgstr ""
+msgstr "Parada 2"
 
 #: ../operations/workshop/gradient-map.c:30
 msgid "Color 3"
@@ -7172,7 +7158,7 @@ msgstr "Color 3"
 
 #: ../operations/workshop/gradient-map.c:31
 msgid "Stop 3"
-msgstr ""
+msgstr "Parada 3"
 
 #: ../operations/workshop/gradient-map.c:32
 msgid "Color 4"
@@ -7180,7 +7166,7 @@ msgstr "Color 4"
 
 #: ../operations/workshop/gradient-map.c:33
 msgid "Stop 4"
-msgstr ""
+msgstr "Parada 4"
 
 #: ../operations/workshop/gradient-map.c:34
 msgid "Color 5"
@@ -7188,15 +7174,15 @@ msgstr "Color 5"
 
 #: ../operations/workshop/gradient-map.c:35
 msgid "Stop 5"
-msgstr ""
+msgstr "Parada 5"
 
 #: ../operations/workshop/gradient-map.c:244
 msgid "Gradient Map"
-msgstr ""
+msgstr "Mapa de gradiente"
 
 #: ../operations/workshop/gradient-map.c:246
 msgid "Applies a color gradient."
-msgstr ""
+msgstr "Aplica un gradiente de color."
 
 #: ../operations/workshop/hstack.c:178
 msgid ""
@@ -7208,27 +7194,29 @@ msgstr ""
 
 #: ../operations/workshop/ink-simulator.c:36
 msgid "Proof"
-msgstr ""
+msgstr "Prueba"
 
 #: ../operations/workshop/ink-simulator.c:37
 msgid "Separate"
-msgstr ""
+msgstr "Separar"
 
 #: ../operations/workshop/ink-simulator.c:38
 msgid "Separate and proof"
-msgstr ""
+msgstr "Separar y probar"
 
 #: ../operations/workshop/ink-simulator.c:41
 msgid "Ink configuration"
-msgstr ""
+msgstr "Configuración de tinta"
 
 #: ../operations/workshop/ink-simulator.c:42
 msgid "Textual desciption of inks used for simulated print-job"
 msgstr ""
+"Descripción textual de las tintas usadas para la simulación de trabajos de "
+"impresión"
 
 #: ../operations/workshop/ink-simulator.c:47
 msgid "how the ink simulator is used"
-msgstr ""
+msgstr "Cómo se usa el simulador de tinta"
 
 #: ../operations/workshop/ink-simulator.c:51
 #, fuzzy
@@ -7237,7 +7225,7 @@ msgstr "Color inicial"
 
 #: ../operations/workshop/ink-simulator.c:51
 msgid "paper/fabric/material color"
-msgstr ""
+msgstr "Papel/tela/color del material"
 
 #: ../operations/workshop/ink-simulator.c:52
 #, fuzzy
@@ -7275,7 +7263,7 @@ msgstr "Otro color"
 
 #: ../operations/workshop/ink-simulator.c:58
 msgid "Ink limit"
-msgstr ""
+msgstr "Límite de tinta"
 
 #: ../operations/workshop/ink-simulator.c:59
 #, c-format
@@ -7293,7 +7281,7 @@ msgstr ""
 
 #: ../operations/workshop/ink-simulator.c:1421
 msgid "Ink Simulator"
-msgstr ""
+msgstr "Simulador de tinta"
 
 #: ../operations/workshop/ink-simulator.c:1424
 msgid ""
@@ -7301,8 +7289,7 @@ msgid ""
 "mixing and interactions."
 msgstr ""
 
-#: ../operations/workshop/kuwahara.c:27
-#: ../operations/workshop/median-blur.c:28
+#: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
 "Radio de la región cuadrada de píxeles (la anchura y la altura serán "
@@ -7334,12 +7321,13 @@ msgstr "Renderizador del conjunto de Mandelbrot"
 
 #: ../operations/workshop/median-blur.c:408
 msgid "Median Blur"
-msgstr ""
+msgstr "Desenfoque mediano"
 
 #: ../operations/workshop/median-blur.c:410
 msgid ""
 "Blur resulting from computing the median color of in a square neighbourhood."
 msgstr ""
+"Desenfoque resultante de computar el color medio de un vecindario cuadrado."
 
 #: ../operations/workshop/rawbayer-load.c:155
 msgid ""
@@ -7356,7 +7344,7 @@ msgstr ""
 
 #: ../operations/workshop/rgb-clip.c:25 ../operations/workshop/rgb-clip.c:26
 msgid "Clip low pixel values"
-msgstr ""
+msgstr "Cortar valores bajos de los píxeles"
 
 #: ../operations/workshop/rgb-clip.c:28
 #, fuzzy
@@ -7367,10 +7355,11 @@ msgstr "Entrada baja"
 #: ../operations/workshop/rgb-clip.c:31
 msgid "Pixels values lower than this limit will be set to it"
 msgstr ""
+"Los valores de los píxeles inferiores a este límite se establecerán a este"
 
 #: ../operations/workshop/rgb-clip.c:33 ../operations/workshop/rgb-clip.c:34
 msgid "Clip high pixel values"
-msgstr ""
+msgstr "Cortar valores altos de los píxeles"
 
 #: ../operations/workshop/rgb-clip.c:36
 #, fuzzy
@@ -7381,14 +7370,15 @@ msgstr "Entrada alta"
 #: ../operations/workshop/rgb-clip.c:39
 msgid "Pixels values higher than this limit will be set to it"
 msgstr ""
+"Los valores de los píxeles superiores a este límite se establecerán a este"
 
 #: ../operations/workshop/rgb-clip.c:184
 msgid "Clip RGB"
-msgstr ""
+msgstr "Cortar RGB"
 
 #: ../operations/workshop/rgb-clip.c:186
 msgid "Keep RGB pixels values inside a specific range"
-msgstr ""
+msgstr "Mantener los valores de los píxeles RGB dentro de un rango específico"
 
 #: ../operations/workshop/vhsfix.c:261
 msgid "vhs glitch fixer"
@@ -7396,7 +7386,7 @@ msgstr ""
 
 #: ../operations/workshop/vhsfix.c:263
 msgid "fixes vhs digitization glitches"
-msgstr ""
+msgstr "Soluciona problemas técnicos de digitalización vhs"
 
 #~ msgid "Gamma correction"
 #~ msgstr "Corrección gamma"
