@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-08-03 06:55+0000\n"
-"PO-Revision-Date: 2016-08-03 13:54-0500\n"
+"POT-Creation-Date: 2016-08-04 07:18+0000\n"
+"PO-Revision-Date: 2016-08-04 16:39-0500\n"
 "Last-Translator: Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -39,7 +39,7 @@ msgid "Unknown GeglOption mode: %d"
 msgstr "Modo de GeglOption desconocido: %d"
 
 #: ../bin/gegl-options.c:47
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
@@ -78,8 +78,15 @@ msgid ""
 msgstr ""
 "Uso: %s [opciones] <archivo | -- [op [op] ..]>\n"
 "\n"
-"  Options:\n"
+"  Opciones:\n"
 "     -h, --help      muestra esta ayuda\n"
+"\n"
+"     --list-all      enumerar todas las operaciones conocidas\n"
+"\n"
+"     --exists        devolver 0 si existe(n) la(s) operación(es)\n"
+"\n"
+"     --properties    mostrar las propiedades (nombre, tipo, descripción) de "
+"la operación\n"
 "\n"
 "     -i, --file      leer XML del archivo indicado\n"
 "\n"
@@ -95,15 +102,19 @@ msgstr ""
 "cuando\n"
 "                     termine el procesado.\n"
 "\n"
+"     -s scale, --scale scale  escalar dimensiones de la salida por este "
+"factor.\n"
+"\n"
 "     -X              mostrar el XML leído\n"
 "\n"
 "     -v, --verbose   mostrar diagnósticos durante la ejecución\n"
 "\n"
 "Todos los parámetros seguidos de -- se consideran opciones que se deben\n"
 "poner juntas, en una pequeña composición, en lugar de usar un archivo XML;\n"
-"esto permite probar sencillos filtros. Tenga en cuenta que se usará el "
-"valor\n"
-"predeterminado para todas las propiedades.\n"
+"esto permite probar sencillos filtros. Después de encadenar una nueva "
+"operación\n"
+"en propiedades se pueden configurar con pares propiedad=valor como "
+"argumentos posteriores.\n"
 
 #: ../bin/gegl-options.c:87
 #, c-format
@@ -150,7 +161,7 @@ msgstr ""
 "\t\n"
 
 #: ../bin/gegl-options.c:341
-#, fuzzy, c-format
+#, c-format
 #| msgid ""
 #| "\n"
 #| "\n"
@@ -166,7 +177,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"parámetro «%s» desconocido. Mostrando la ayuda en su lugar\n"
+"argumento «%s» desconocido. Mostrando la ayuda en su lugar\n"
 "\n"
 "\n"
 
@@ -384,11 +395,12 @@ msgid "Apply Lens"
 msgstr "Aplicar lente"
 
 #: ../operations/common/apply-lens.c:275
-#, fuzzy
 msgid ""
 "Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
-msgstr "Simular la distorsión de color producida por una fotocopiadora"
+msgstr ""
+"Simula la distorsión óptica causada por tener una lente elíptica sobre la "
+"imagen"
 
 #: ../operations/common/bilateral-filter.c:26
 #: ../operations/common/bilateral-filter-fast.c:37
@@ -503,10 +515,9 @@ msgid "Amount to increase brightness"
 msgstr "Grado de aumento del brillo"
 
 #: ../operations/common/brightness-contrast.c:150
-#, fuzzy
 #| msgid "Brightness"
 msgid "Brightness Contrast"
-msgstr "Brillo"
+msgstr "Contraste de brillo"
 
 #: ../operations/common/brightness-contrast.c:152
 #, c-format
@@ -539,10 +550,9 @@ msgstr ""
 "búfer de entrada"
 
 #: ../operations/common/buffer-sink.c:82
-#, fuzzy
 #| msgid "Buffer location"
 msgid "Buffer Sink"
-msgstr "Ubicación del búfer"
+msgstr "Disipador de búfer"
 
 #: ../operations/common/buffer-sink.c:84
 msgid "Create a new GEGL buffer to write the resulting rendering."
@@ -557,20 +567,18 @@ msgid "The GeglBuffer to load into the pipeline"
 msgstr "El GeglBuffer que cargar dentro de la tubería"
 
 #: ../operations/common/buffer-source.c:206
-#, fuzzy
 #| msgid "Buffer location"
 msgid "Buffer Source"
-msgstr "Ubicación del búfer"
+msgstr "Origen del búfer"
 
 #: ../operations/common/buffer-source.c:208
 msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr ""
 
 #: ../operations/common/bump-map.c:34
-#, fuzzy
 #| msgid "Vertical"
 msgid "Spherical"
-msgstr "Vertical"
+msgstr "Esférico"
 
 #: ../operations/common/bump-map.c:35 ../operations/common/sinus.c:66
 msgid "Sinusoidal"
@@ -743,108 +751,90 @@ msgstr "Conservar la luminosidad"
 
 #. Red channel
 #: ../operations/common/channel-mixer.c:34
-#, fuzzy
 #| msgid "Red channel"
 msgid "Red in Red channel"
-msgstr "Canal rojo"
+msgstr "Rojo en el canal rojo"
 
 #: ../operations/common/channel-mixer.c:35
-#, fuzzy
 msgid "Set the red amount for the red channel"
-msgstr "Número de bits para el canal rojo"
+msgstr "Establecer la cantidad de rojo para el canal rojo"
 
 #: ../operations/common/channel-mixer.c:38
-#, fuzzy
 #| msgid "Green channel"
 msgid "Green in Red channel"
-msgstr "Canal verde"
+msgstr "Verde en el canal rojo"
 
 #: ../operations/common/channel-mixer.c:39
-#, fuzzy
 msgid "Set the green amount for the red channel"
-msgstr "Número de bits para el canal verde"
+msgstr "Establecer la cantidad de verde para el canal rojo"
 
 #: ../operations/common/channel-mixer.c:42
-#, fuzzy
 #| msgid "Blue channel"
 msgid "Blue in Red channel"
-msgstr "Canal azul"
+msgstr "Azul en el canal rojo"
 
 #: ../operations/common/channel-mixer.c:43
-#, fuzzy
 msgid "Set the blue amount for the red channel"
-msgstr "Número de bits para el canal rojo"
+msgstr "Establecer la cantidad de azul para el canal rojo"
 
 #. Green channel
 #: ../operations/common/channel-mixer.c:47
-#, fuzzy
 #| msgid "Green channel"
 msgid "Red in Green channel"
-msgstr "Canal verde"
+msgstr "Rojo en el canal verde"
 
 #: ../operations/common/channel-mixer.c:48
-#, fuzzy
 msgid "Set the red amount for the green channel"
-msgstr "Número de bits para el canal verde"
+msgstr "Establecer la cantidad de rojo para el canal verde"
 
 #: ../operations/common/channel-mixer.c:51
-#, fuzzy
 #| msgid "Green channel"
 msgid "Green for Green channel"
-msgstr "Canal verde"
+msgstr "Verde para el canal verde"
 
 #: ../operations/common/channel-mixer.c:52
-#, fuzzy
 msgid "Set the green amount for the green channel"
-msgstr "Número de bits para el canal verde"
+msgstr "Establecer la cantidad de verde para el canal verde"
 
 #: ../operations/common/channel-mixer.c:55
-#, fuzzy
 #| msgid "Green channel"
 msgid "Blue in Green channel"
-msgstr "Canal verde"
+msgstr "Azul en el canal verde"
 
 #: ../operations/common/channel-mixer.c:56
-#, fuzzy
 msgid "Set the blue amount for the green channel"
-msgstr "Número de bits para el canal verde"
+msgstr "Establecer la cantidad de azul para el canal verde"
 
 #. Blue channel
 #: ../operations/common/channel-mixer.c:60
-#, fuzzy
 #| msgid "Blue channel"
 msgid "Red in Blue channel"
-msgstr "Canal azul"
+msgstr "Rojo en el canal azul"
 
 #: ../operations/common/channel-mixer.c:61
-#, fuzzy
 #| msgid "Number of bits for blue channel"
 msgid "Set the red amount for the blue channel"
-msgstr "Número de bits para el canal azul"
+msgstr "Establecer la cantidad de rojo para el canal azul"
 
 #: ../operations/common/channel-mixer.c:64
-#, fuzzy
 #| msgid "Green channel"
 msgid "Green in Blue channel"
-msgstr "Canal verde"
+msgstr "Verde en el canal azul"
 
 #: ../operations/common/channel-mixer.c:65
-#, fuzzy
 #| msgid "Number of bits for blue channel"
 msgid "Set the green amount for the blue channel"
-msgstr "Número de bits para el canal azul"
+msgstr "Establecer la cantidad de verde para el canal azul"
 
 #: ../operations/common/channel-mixer.c:68
-#, fuzzy
 #| msgid "Blue channel"
 msgid "Blue in Blue channel"
-msgstr "Canal azul"
+msgstr "Azul en el canal azul"
 
 #: ../operations/common/channel-mixer.c:69
-#, fuzzy
 #| msgid "Number of bits for blue channel"
 msgid "Set the blue amount for the blue channel"
-msgstr "Número de bits para el canal azul"
+msgstr "Establecer la cantidad de azul para el canal azul"
 
 #: ../operations/common/channel-mixer.c:266
 msgid "Channel Mixer"
@@ -965,9 +955,8 @@ msgstr ""
 "para obtener dimensiones más pequeñas."
 
 #: ../operations/common/color-enhance.c:235
-#, fuzzy
 msgid "Color Enhance"
-msgstr "Color"
+msgstr "Mejorar color"
 
 #: ../operations/common/color-enhance.c:238
 msgid ""
@@ -978,22 +967,19 @@ msgstr ""
 "el tono y luminosidad sin tocar."
 
 #: ../operations/common/color-exchange.c:32
-#, fuzzy
 #| msgid "Stroke Color"
 msgid "From Color"
-msgstr "Color del trazo"
+msgstr "De color"
 
 #: ../operations/common/color-exchange.c:33
-#, fuzzy
 #| msgid "The contrast curve."
 msgid "The color to change."
-msgstr "La curva de contraste."
+msgstr "El color para cambiar."
 
 #: ../operations/common/color-exchange.c:35
-#, fuzzy
 #| msgid "Color"
 msgid "To Color"
-msgstr "Color"
+msgstr "A color"
 
 #: ../operations/common/color-exchange.c:36
 msgid "Replacement color."
@@ -1115,10 +1101,9 @@ msgid "Random seed"
 msgstr "Semilla aleatoria"
 
 #: ../operations/common/color-reduction.c:509
-#, fuzzy
 #| msgid "Color to render"
 msgid "Color Reduction"
-msgstr "Color que renderizar"
+msgstr "Reducción de color"
 
 #: ../operations/common/color-reduction.c:511
 #, fuzzy
