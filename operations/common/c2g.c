@@ -35,7 +35,7 @@ property_int (radius, _("Radius"), 300)
 
 property_int  (samples, _("Samples"), 4)
   description (_("Number of samples to do per iteration looking for the range of colors"))
-  value_range (1, 1000) 
+  value_range (1, 1000)
   ui_range    (3, 17)
 
 property_int (iterations, _("Iterations"), 10)
@@ -75,7 +75,7 @@ static void c2g (GeglOperation       *op,
 
   if (dst_rect->width > 0 && dst_rect->height > 0)
   {
-    /* XXX: compute total pixels and progress by consumption 
+    /* XXX: compute total pixels and progress by consumption
      */
     GeglBufferIterator *i = gegl_buffer_iterator_new (dst, dst_rect, 0, babl_format("YA float"),
                                                       GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
@@ -138,7 +138,7 @@ static void c2g (GeglOperation       *op,
                 dst_offset+=2;
               }
             }
-      
+
             pix_done += i->roi[0].width;
           }
 #if 0

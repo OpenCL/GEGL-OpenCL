@@ -389,84 +389,86 @@ process (GeglOperation       *operation,
       sampler_type == GEGL_SAMPLER_LOHALO)
     scale = &scale_matrix;
 
-    {
-      float   ud = ((1.0/transform.width)*factor);
-      float   vd = ((1.0/transform.height)*factor);
-      it = gegl_buffer_iterator_new (output, result, level, format_io,
-                                     GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
+  {
+    float   ud = ((1.0/transform.width)*factor);
+    float   vd = ((1.0/transform.height)*factor);
 
-      while (gegl_buffer_iterator_next (it))
-        {
-          gint i;
-          gint n_pixels = it->length;
-          gint x = it->roi->x; /* initial x                   */
-          gint y = it->roi->y; /*           and y coordinates */
+    it = gegl_buffer_iterator_new (output, result, level, format_io,
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
-          float   u0 = (((x*factor)/transform.width) - transform.xoffset);
-          float   u, v;
+    while (gegl_buffer_iterator_next (it))
+      {
+        gint i;
+        gint n_pixels = it->length;
+        gint x = it->roi->x; /* initial x                   */
+        gint y = it->roi->y; /*           and y coordinates */
 
-          float *out = it->data[0];
+        float   u0 = (((x*factor)/transform.width) - transform.xoffset);
+        float   u, v;
 
-          u = u0;
-          v = ((y*factor/transform.height) - 0.5);
+        float *out = it->data[0];
 
-          if (scale)
-            {
-              for (i=0; i<n_pixels; i++)
-                {
-                  float cx, cy;
-#define gegl_unmap(xx,yy,ud,vd) { \
-                  float rx, ry;\
-                  transform.xy2ll (&transform, xx, yy, &rx, &ry);\
+        u = u0;
+        v = ((y*factor/transform.height) - 0.5);
+
+        if (scale)
+          {
+            for (i=0; i<n_pixels; i++)
+              {
+                float cx, cy;
+#define gegl_unmap(xx,yy,ud,vd) {                                       \
+                  float rx, ry;                                         \
+                  transform.xy2ll (&transform, xx, yy, &rx, &ry);       \
                   ud = rx;vd = ry;}
-                  gegl_sampler_compute_scale (scale_matrix, u, v);
-                  gegl_unmap(u,v, cx, cy);
+                gegl_sampler_compute_scale (scale_matrix, u, v);
+                gegl_unmap(u,v, cx, cy);
 #undef gegl_unmap
 
-                  gegl_sampler_get (sampler,
-                                    cx * in_rect.width, cy * in_rect.height,
-                                    scale, out, GEGL_ABYSS_LOOP);
-                  out += 4;
+                gegl_sampler_get (sampler,
+                                  cx * in_rect.width, cy * in_rect.height,
+                                  scale, out, GEGL_ABYSS_LOOP);
+                out += 4;
 
-                  /* update x, y and u,v coordinates */
-                  x++;
-                  u+=ud;
-                  if (x >= (it->roi->x + it->roi->width))
-                    {
-                      x = it->roi->x;
-                      y++;
-                      u = u0;
-                      v += vd;
-                    }
-                }
-              }
-            else
-              {
-                for (i=0; i<n_pixels; i++)
+                /* update x, y and u,v coordinates */
+                x++;
+                u+=ud;
+                if (x >= (it->roi->x + it->roi->width))
                   {
-                    float cx, cy;
-
-                    transform.xy2ll (&transform, u, v, &cx, &cy);
-
-                    gegl_sampler_get (sampler,
-                                      cx * in_rect.width, cy * in_rect.height,
-                                      scale, out, GEGL_ABYSS_LOOP);
-                    out += 4;
-
-                    /* update x, y and u,v coordinates */
-                    x++;
-                    u+=ud;
-                    if (x >= (it->roi->x + it->roi->width))
-                      {
-                        x = it->roi->x;
-                        u = u0;
-                        y++;
-                        v += vd;
-                      }
+                    x = it->roi->x;
+                    y++;
+                    u = u0;
+                    v += vd;
                   }
               }
-        }
-    }
+          }
+        else
+          {
+            for (i=0; i<n_pixels; i++)
+              {
+                float cx, cy;
+
+                transform.xy2ll (&transform, u, v, &cx, &cy);
+
+                gegl_sampler_get (sampler,
+                                  cx * in_rect.width, cy * in_rect.height,
+                                  scale, out, GEGL_ABYSS_LOOP);
+                out += 4;
+
+                /* update x, y and u,v coordinates */
+                x++;
+                u+=ud;
+                if (x >= (it->roi->x + it->roi->width))
+                  {
+                    x = it->roi->x;
+                    u = u0;
+                    y++;
+                    v += vd;
+                  }
+              }
+          }
+      }
+  }
+
   g_object_unref (sampler);
 
 #if 0
