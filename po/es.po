@@ -12,8 +12,8 @@ msgstr ""
 "Project-Id-Version: gegl.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-08-04 07:18+0000\n"
-"PO-Revision-Date: 2016-08-04 16:39-0500\n"
+"POT-Creation-Date: 2016-08-05 07:07+0000\n"
+"PO-Revision-Date: 2016-08-10 14:45-0500\n"
 "Last-Translator: Yolanda Alvarez Perez <yolandaa.alvarez.perez@gmail.com>\n"
 "Language-Team: Español; Castellano <gnome-es-list@gnome.org>\n"
 "Language: \n"
@@ -162,12 +162,6 @@ msgstr ""
 
 #: ../bin/gegl-options.c:341
 #, c-format
-#| msgid ""
-#| "\n"
-#| "\n"
-#| "unknown parameter '%s' giving you help instead\n"
-#| "\n"
-#| "\n"
 msgid ""
 "\n"
 "\n"
@@ -515,7 +509,6 @@ msgid "Amount to increase brightness"
 msgstr "Grado de aumento del brillo"
 
 #: ../operations/common/brightness-contrast.c:150
-#| msgid "Brightness"
 msgid "Brightness Contrast"
 msgstr "Contraste de brillo"
 
@@ -550,7 +543,6 @@ msgstr ""
 "búfer de entrada"
 
 #: ../operations/common/buffer-sink.c:82
-#| msgid "Buffer location"
 msgid "Buffer Sink"
 msgstr "Disipador de búfer"
 
@@ -567,7 +559,6 @@ msgid "The GeglBuffer to load into the pipeline"
 msgstr "El GeglBuffer que cargar dentro de la tubería"
 
 #: ../operations/common/buffer-source.c:206
-#| msgid "Buffer location"
 msgid "Buffer Source"
 msgstr "Origen del búfer"
 
@@ -576,7 +567,6 @@ msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr ""
 
 #: ../operations/common/bump-map.c:34
-#| msgid "Vertical"
 msgid "Spherical"
 msgstr "Esférico"
 
@@ -751,7 +741,6 @@ msgstr "Conservar la luminosidad"
 
 #. Red channel
 #: ../operations/common/channel-mixer.c:34
-#| msgid "Red channel"
 msgid "Red in Red channel"
 msgstr "Rojo en el canal rojo"
 
@@ -760,7 +749,6 @@ msgid "Set the red amount for the red channel"
 msgstr "Establecer la cantidad de rojo para el canal rojo"
 
 #: ../operations/common/channel-mixer.c:38
-#| msgid "Green channel"
 msgid "Green in Red channel"
 msgstr "Verde en el canal rojo"
 
@@ -769,7 +757,6 @@ msgid "Set the green amount for the red channel"
 msgstr "Establecer la cantidad de verde para el canal rojo"
 
 #: ../operations/common/channel-mixer.c:42
-#| msgid "Blue channel"
 msgid "Blue in Red channel"
 msgstr "Azul en el canal rojo"
 
@@ -779,7 +766,6 @@ msgstr "Establecer la cantidad de azul para el canal rojo"
 
 #. Green channel
 #: ../operations/common/channel-mixer.c:47
-#| msgid "Green channel"
 msgid "Red in Green channel"
 msgstr "Rojo en el canal verde"
 
@@ -788,7 +774,6 @@ msgid "Set the red amount for the green channel"
 msgstr "Establecer la cantidad de rojo para el canal verde"
 
 #: ../operations/common/channel-mixer.c:51
-#| msgid "Green channel"
 msgid "Green for Green channel"
 msgstr "Verde para el canal verde"
 
@@ -797,7 +782,6 @@ msgid "Set the green amount for the green channel"
 msgstr "Establecer la cantidad de verde para el canal verde"
 
 #: ../operations/common/channel-mixer.c:55
-#| msgid "Green channel"
 msgid "Blue in Green channel"
 msgstr "Azul en el canal verde"
 
@@ -807,32 +791,26 @@ msgstr "Establecer la cantidad de azul para el canal verde"
 
 #. Blue channel
 #: ../operations/common/channel-mixer.c:60
-#| msgid "Blue channel"
 msgid "Red in Blue channel"
 msgstr "Rojo en el canal azul"
 
 #: ../operations/common/channel-mixer.c:61
-#| msgid "Number of bits for blue channel"
 msgid "Set the red amount for the blue channel"
 msgstr "Establecer la cantidad de rojo para el canal azul"
 
 #: ../operations/common/channel-mixer.c:64
-#| msgid "Green channel"
 msgid "Green in Blue channel"
 msgstr "Verde en el canal azul"
 
 #: ../operations/common/channel-mixer.c:65
-#| msgid "Number of bits for blue channel"
 msgid "Set the green amount for the blue channel"
 msgstr "Establecer la cantidad de verde para el canal azul"
 
 #: ../operations/common/channel-mixer.c:68
-#| msgid "Blue channel"
 msgid "Blue in Blue channel"
 msgstr "Azul en el canal azul"
 
 #: ../operations/common/channel-mixer.c:69
-#| msgid "Number of bits for blue channel"
 msgid "Set the blue amount for the blue channel"
 msgstr "Establecer la cantidad de azul para el canal azul"
 
@@ -882,9 +860,8 @@ msgstr "Altura"
 
 #: ../operations/common/checkerboard.c:34 ../operations/common/grid.c:32
 #: ../operations/common/maze.c:51
-#, fuzzy
 msgid "Vertical width of cells pixels"
-msgstr "Anchura vertical de las celdillas en píxeles"
+msgstr "Anchura vertical de los píxeles de las celdillas"
 
 #: ../operations/common/checkerboard.c:42 ../operations/common/grid.c:39
 msgid "Horizontal offset (from origin) for start of grid"
@@ -909,10 +886,9 @@ msgid "Color 2"
 msgstr "Color 2"
 
 #: ../operations/common/checkerboard.c:58
-#, fuzzy
 #| msgid "The tiles' background color"
 msgid "The second cell color"
-msgstr "El color de fondo de las baldosas"
+msgstr "El segundo color de la celda"
 
 #: ../operations/common/checkerboard.c:61 ../operations/common/color.c:28
 msgid "Babl Format"
@@ -967,17 +943,14 @@ msgstr ""
 "el tono y luminosidad sin tocar."
 
 #: ../operations/common/color-exchange.c:32
-#| msgid "Stroke Color"
 msgid "From Color"
 msgstr "De color"
 
 #: ../operations/common/color-exchange.c:33
-#| msgid "The contrast curve."
 msgid "The color to change."
 msgstr "El color para cambiar."
 
 #: ../operations/common/color-exchange.c:35
-#| msgid "Color"
 msgid "To Color"
 msgstr "A color"
 
@@ -1022,20 +995,18 @@ msgstr ""
 "convertir de un tono a otro."
 
 #: ../operations/common/color-reduction.c:28
-#, fuzzy
 #| msgid "Random seed"
 msgid "Random"
-msgstr "Semilla aleatoria"
+msgstr "Aleatorio"
 
 #: ../operations/common/color-reduction.c:29
 msgid "Resilient"
 msgstr "Elástico"
 
 #: ../operations/common/color-reduction.c:30
-#, fuzzy
 #| msgid "Randomization"
 msgid "Random Covariant"
-msgstr "Aleatorización"
+msgstr "Covarianza aleatoria"
 
 #: ../operations/common/color-reduction.c:31
 msgid "Bayer"
@@ -1101,7 +1072,6 @@ msgid "Random seed"
 msgstr "Semilla aleatoria"
 
 #: ../operations/common/color-reduction.c:509
-#| msgid "Color to render"
 msgid "Color Reduction"
 msgstr "Reducción de color"
 
@@ -1119,9 +1089,8 @@ msgstr ""
 "(colores y alfa), con tramado opcional"
 
 #: ../operations/common/color-rotate.c:35
-#, fuzzy
 msgid "Treat as this"
-msgstr "Cambiar o pasar a manejar a éste"
+msgstr "Tratar como este"
 
 #: ../operations/common/color-rotate.c:37
 msgid "Change to this"
@@ -1143,34 +1112,29 @@ msgid "From"
 msgstr "Desde"
 
 #: ../operations/common/color-rotate.c:44
-#, fuzzy
 #| msgid "Starting angle for the color rotation"
 msgid "Start angle of the source color range"
-msgstr "Ángulo inicial para la rotación de colores"
+msgstr "Ángulo inicial del rango de color de origen"
 
 #: ../operations/common/color-rotate.c:48
 #: ../operations/common/color-rotate.c:61
-#, fuzzy
 msgid "To"
-msgstr "Hasta:"
+msgstr "Hasta"
 
 #: ../operations/common/color-rotate.c:49
-#, fuzzy
 #| msgid "End angle for the color rotation"
 msgid "End angle of the source color range"
-msgstr "Ángulo final para la rotación de colores"
+msgstr "Ángulo final del rango de color de origen"
 
 #: ../operations/common/color-rotate.c:57
-#, fuzzy
 #| msgid "Starting angle for the color rotation"
 msgid "Start angle of the destination color range"
-msgstr "Ángulo inicial para la rotación de colores"
+msgstr "Ángulo inicial del rango de color destino"
 
 #: ../operations/common/color-rotate.c:62
-#, fuzzy
 #| msgid "End angle for the color rotation"
 msgid "End angle of the destination color range"
-msgstr "Ángulo final para la rotación de colores"
+msgstr "Ángulo final del rango de color destino"
 
 #: ../operations/common/color-rotate.c:66
 msgid "Gray threshold"
@@ -1444,10 +1408,9 @@ msgid "Copy Buffer"
 msgstr "Copiar búfer"
 
 #: ../operations/common/copy-buffer.c:153
-#, fuzzy
 #| msgid "Write to an existing GeglBuffer"
 msgid "Writes image data to an already existing buffer"
-msgstr "Escribir en un GeglBuffer existente"
+msgstr "Escribe datos de la imagen a un búfer ya existente"
 
 #: ../operations/common/cubism.c:30 ../operations/common/mosaic.c:42
 msgid "Tile size"
@@ -1478,16 +1441,14 @@ msgstr ""
 "de pintura cubista"
 
 #: ../operations/common/deinterlace.c:31
-#, fuzzy
 #| msgid "Keep even or odd fields"
 msgid "Keep even fields"
-msgstr "Mantener los campos pares o impares"
+msgstr "Mantener los campos pares"
 
 #: ../operations/common/deinterlace.c:32
-#, fuzzy
 #| msgid "Keep even or odd fields"
 msgid "Keep odd fields"
-msgstr "Mantener los campos pares o impares"
+msgstr "Mantener los campos impares"
 
 #: ../operations/common/deinterlace.c:35
 msgid "Keep"
@@ -1542,10 +1503,9 @@ msgstr ""
 "diferencia de dos desenfoques gaussianos."
 
 #: ../operations/common/diffraction-patterns.c:30
-#, fuzzy
 #| msgid "Component 1 frequency"
 msgid "Red frequency"
-msgstr "Frecuencia del componente 1"
+msgstr "Frecuencia roja"
 
 #: ../operations/common/diffraction-patterns.c:31
 msgid "Light frequency (red)"
@@ -1556,9 +1516,8 @@ msgid "Green frequency"
 msgstr "Frecuencia del verde"
 
 #: ../operations/common/diffraction-patterns.c:35
-#, fuzzy
 msgid "Light frequency (green)"
-msgstr "El ángulo de la luz (grados)"
+msgstr "Frecuencia de luz (verde)"
 
 #: ../operations/common/diffraction-patterns.c:38
 msgid "Blue frequency"
@@ -1569,74 +1528,63 @@ msgid "Light frequency (blue)"
 msgstr "Frecuencia de luz (azul)"
 
 #: ../operations/common/diffraction-patterns.c:42
-#, fuzzy
 #| msgid "Red bits"
 msgid "Red contours"
-msgstr "Bits rojos"
+msgstr "Contornos rojos"
 
 #: ../operations/common/diffraction-patterns.c:43
-#, fuzzy
 #| msgid "Number of colors"
 msgid "Number of contours (red)"
-msgstr "Número de colores"
+msgstr "Número de contornos (rojo)"
 
 #: ../operations/common/diffraction-patterns.c:46
-#, fuzzy
 #| msgid "Green bits"
 msgid "Green contours"
-msgstr "Bits verdes"
+msgstr "Contornos verdes"
 
 #: ../operations/common/diffraction-patterns.c:47
-#, fuzzy
 #| msgid "Number of colors"
 msgid "Number of contours (green)"
-msgstr "Número de colores"
+msgstr "Número de contornos (verde)"
 
 #: ../operations/common/diffraction-patterns.c:50
-#, fuzzy
 #| msgid "Blue bits"
 msgid "Blue contours"
-msgstr "Bits azules"
+msgstr "Contornos azules"
 
 #: ../operations/common/diffraction-patterns.c:51
-#, fuzzy
 #| msgid "Number of colors"
 msgid "Number of contours (blue)"
-msgstr "Número de colores"
+msgstr "Número de contornos (azul)"
 
 #: ../operations/common/diffraction-patterns.c:54
-#, fuzzy
 #| msgid "Hard edges"
 msgid "Red sharp edges"
-msgstr "Bordes duros"
+msgstr "Bordes afilados rojos"
 
 #: ../operations/common/diffraction-patterns.c:55
-#, fuzzy
 #| msgid "Number of downsampled levels to use"
 msgid "Number of sharp edges (red)"
-msgstr "Número de niveles submuestreados que usar"
+msgstr "Número de bordes afilados (rojo)"
 
 #: ../operations/common/diffraction-patterns.c:58
-#, fuzzy
 #| msgid "Green stretch"
 msgid "Green sharp edges"
-msgstr "Ensanchamiento del verde"
+msgstr "Bordes afilados verdes"
 
 #: ../operations/common/diffraction-patterns.c:59
 msgid "Number of sharp edges (green)"
 msgstr "Número de bordes afilados (verde)"
 
 #: ../operations/common/diffraction-patterns.c:62
-#, fuzzy
 #| msgid "Hard edges"
 msgid "Blue sharp edges"
-msgstr "Bordes duros"
+msgstr "Bordes afilados azules"
 
 #: ../operations/common/diffraction-patterns.c:63
-#, fuzzy
 #| msgid "Number of downsampled levels to use"
 msgid "Number of sharp edges (blue)"
-msgstr "Número de niveles submuestreados que usar"
+msgstr "Número de bordes afilados (azul)"
 
 #: ../operations/common/diffraction-patterns.c:67
 msgid "Brightness and shifting/fattening of contours"
@@ -1730,16 +1678,14 @@ msgid "Displace multiplier for Y or tangent (degrees) direction"
 msgstr "Desplazar multiplicador para Y o dirección tangente (grados)"
 
 #: ../operations/common/displace.c:374
-#, fuzzy
 #| msgid "Display on screen"
 msgid "Displace"
-msgstr "Mostrar en la pantalla"
+msgstr "Desplazar"
 
 #: ../operations/common/displace.c:377
-#, fuzzy
 #| msgid "Displace pixels in a ripple pattern"
 msgid "Displace pixels as indicated by displacement maps"
-msgstr "Desplazar los píxeles en un patrón de remolino"
+msgstr "Desplazar los píxeles como se indica por los mapas de desplazamiento"
 
 #: ../operations/common/display.c:23 ../operations/external/sdl-display.c:25
 msgid "Window title"
@@ -1770,9 +1716,8 @@ msgid "Metric"
 msgstr "Métrico"
 
 #: ../operations/common/distance-transform.c:38
-#, fuzzy
 msgid "Metric to use for the distance calculation"
-msgstr "Anchura de la función de Lanczos"
+msgstr "Métrica que usar para el cálculo de la distancia"
 
 #: ../operations/common/distance-transform.c:40
 msgid "Threshold low"
@@ -1783,10 +1728,9 @@ msgid "Threshold high"
 msgstr "Umbral alto"
 
 #: ../operations/common/distance-transform.c:46
-#, fuzzy
 #| msgid "Grayscale"
 msgid "Grayscale Averaging"
-msgstr "Escala de grises"
+msgstr "Promedio en escala de grises"
 
 #: ../operations/common/distance-transform.c:47
 msgid "Number of computations for grayscale averaging"
@@ -1797,10 +1741,9 @@ msgid "Normalize output to range 0.0 to 1.0."
 msgstr "Normalizar la salida a un rango de 0,0 a 1,0."
 
 #: ../operations/common/distance-transform.c:426
-#, fuzzy
 #| msgid "Transform"
 msgid "Distance Transform"
-msgstr "Transformar"
+msgstr "Transformación de la distancia"
 
 #: ../operations/common/distance-transform.c:428
 msgid "Calculate a distance transform"
@@ -1909,10 +1852,9 @@ msgid "High-resolution edge detection"
 msgstr "Detección de bordes de alta resolución"
 
 #: ../operations/common/edge-sobel.c:31
-#, fuzzy
 #| msgid "Keep Signal"
 msgid "Keep Sign"
-msgstr "Mantener la señal"
+msgstr "Mantener sesión"
 
 #: ../operations/common/edge-sobel.c:32
 msgid ""
@@ -1969,22 +1911,19 @@ msgid "Resolution in pixels"
 msgstr "Resolución en píxeles"
 
 #: ../operations/common/engrave.c:36 ../operations/common/engrave.c:37
-#, fuzzy
 msgid "Limit line width"
-msgstr "Anchura de la línea"
+msgstr "Anchura de la línea límite"
 
 #: ../operations/common/engrave.c:199
 msgid "Engrave"
 msgstr "Grabar"
 
 #: ../operations/common/engrave.c:202
-#, fuzzy
 #| msgid "Emulate an oil painting"
 msgid "Simulate an antique engraving"
-msgstr "Emular una pintura al óleo"
+msgstr "Simular un grabado antiguo"
 
 #: ../operations/common/exp-combine.c:25
-#, fuzzy
 msgid "Exposure values"
 msgstr "Valores de exposición"
 
@@ -1993,7 +1932,6 @@ msgid "Relative brightness of each exposure in EV"
 msgstr "Brillo relativo de cada exposición en EV"
 
 #: ../operations/common/exp-combine.c:28
-#, fuzzy
 msgid "Discretization bits"
 msgstr "Bits de discretización"
 
@@ -2012,16 +1950,15 @@ msgstr ""
 "respuesta"
 
 #: ../operations/common/exp-combine.c:1269
-#, fuzzy
 #| msgid "Exposure"
 msgid "Combine Exposures"
-msgstr "Exposición"
+msgstr "Combinar las exposiciones"
 
 #: ../operations/common/exp-combine.c:1272
-#, fuzzy
 #| msgid "Combine multiple scene exposures into one high range buffer"
 msgid "Combine multiple scene exposures into one high dynamic range image."
-msgstr "Combinar varias exposiciones de escena en un búfer de alto rango"
+msgstr ""
+"Combinar varias exposiciones en escena en una imagen de alto rango dinámico."
 
 #: ../operations/common/exposure.c:25 ../operations/common/exposure.c:186
 msgid "Exposure"
@@ -2242,9 +2179,9 @@ msgid "Loglog smoothing"
 msgstr "Suavizado logarítmico-logarítmico"
 
 #: ../operations/common/fractal-explorer.c:371
-#, fuzzy, c-format
+#, c-format
 msgid "Unsupported fractal type: %d"
-msgstr "Tipo de fractal no soportado"
+msgstr "Tipo de fractal no soportado: %d"
 
 #: ../operations/common/fractal-explorer.c:428
 msgid "Fractal Explorer"
@@ -2331,10 +2268,9 @@ msgid "Unsupported fractal type"
 msgstr "Tipo de fractal no soportado"
 
 #: ../operations/common/fractal-trace.c:260
-#, fuzzy
 #| msgid "Fractal type"
 msgid "Fractal Trace"
-msgstr "Tipo de fractal"
+msgstr "Seguimiento fractal"
 
 #: ../operations/common/fractal-trace.c:264
 msgid "Transform the image with the fractals"
