@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-03-11 20:57+0000\n"
-"PO-Revision-Date: 2016-03-12 00:29+0100\n"
+"POT-Creation-Date: 2016-05-31 20:12+0000\n"
+"PO-Revision-Date: 2016-08-25 19:33+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: sl.libreoffice.org <users@sl.libreoffice.org>\n"
 "Language: sl\n"
@@ -21,19 +21,19 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.8\n"
 
-#: ../bin/gegl.c:152
+#: ../bin/gegl.c:153
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Datoteke ni mogoče prebrati: %s"
 
-#: ../bin/gegl.c:191
+#: ../bin/gegl.c:198
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Neveljaven graf, sledi prekinitev.\n"
 
-#: ../bin/gegl.c:269 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:353 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Neznan način GeglOption: %d"
@@ -154,7 +154,7 @@ msgstr ""
 "\tostanek:   %s\n"
 "\t\n"
 
-#: ../bin/gegl-options.c:333
+#: ../bin/gegl-options.c:341
 #, c-format
 msgid ""
 "\n"
@@ -238,32 +238,32 @@ msgstr "brezodsevna"
 msgid "LoHalo"
 msgstr "nizkoodsevna"
 
-#: ../gegl/gegl-init.c:265
+#: ../gegl/gegl-init.c:273
 msgid "Where GEGL stores its swap"
 msgstr "Kje GEGL hrani svojo vmesno datoteko"
 
-#: ../gegl/gegl-init.c:270
+#: ../gegl/gegl-init.c:278
 msgid "How much memory to (approximately) use for caching imagery"
 msgstr "Koliko pomnilnika (približno) uporabiti za predpomnenje podob"
 
-#: ../gegl/gegl-init.c:275
+#: ../gegl/gegl-init.c:283
 msgid "Default size of tiles in GeglBuffers"
 msgstr "Privzeta velikost tlakovcev za GeglBuffer"
 
-#: ../gegl/gegl-init.c:280
+#: ../gegl/gegl-init.c:288
 msgid "The count of pixels to compute simultaneously"
 msgstr "Število slikovnih točk, ki naj se izračunajo hkrati"
 
-#: ../gegl/gegl-init.c:285
+#: ../gegl/gegl-init.c:293
 msgid "The quality of rendering a value between 0.0(fast) and 1.0(reference)"
 msgstr ""
 "Kakovost izrisovanja, vrednost med 0,0 (hitro) in 1,0 (referenčna kakovost)"
 
-#: ../gegl/gegl-init.c:290
+#: ../gegl/gegl-init.c:298
 msgid "The number of concurrent processing threads to use"
 msgstr "Število uporabljenih vzporednih procesnih niti."
 
-#: ../gegl/gegl-init.c:295
+#: ../gegl/gegl-init.c:303
 msgid "Disable OpenCL"
 msgstr "Onemogoči OpenCL"
 
@@ -439,7 +439,7 @@ msgstr "Raven uglajenosti"
 msgid "Bilateral Box Filter"
 msgstr "Dvostranski filter"
 
-#: ../operations/common/bilateral-filter-fast.c:498
+#: ../operations/common/bilateral-filter-fast.c:497
 msgid ""
 "A fast approximation of bilateral filter, using a box-filter instead of a "
 "gaussian blur."
@@ -540,11 +540,11 @@ msgstr "Vhodni medpomnilnika"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "GeglBuffer, ki naj se naloži v cevovod"
 
-#: ../operations/common/buffer-source.c:199
+#: ../operations/common/buffer-source.c:206
 msgid "Buffer Source"
 msgstr "Vir medpomnilnika"
 
-#: ../operations/common/buffer-source.c:201
+#: ../operations/common/buffer-source.c:208
 msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr ""
 
@@ -676,7 +676,7 @@ msgstr ""
 "Število ponavljanj, višje število ponavljanj ponuja manj šuma v rezultatih "
 "ob višjem strošku izračuna"
 
-#: ../operations/common/c2g.c:383
+#: ../operations/common/c2g.c:394
 msgid ""
 "Color to grayscale conversion, uses envelopes formed with the STRESS "
 "approach to perform local color-difference preserving grayscale generation."
@@ -692,11 +692,11 @@ msgstr "Polmer maske"
 msgid "Percent black"
 msgstr "Odstotek črnine"
 
-#: ../operations/common/cartoon.c:322
+#: ../operations/common/cartoon.c:335
 msgid "Cartoon"
 msgstr "Strip"
 
-#: ../operations/common/cartoon.c:324
+#: ../operations/common/cartoon.c:337
 msgid ""
 "Simulates a cartoon, its result is similar to a black felt pen drawing "
 "subsequently shaded with color. This is achieved by enhancing edges and "
@@ -1345,6 +1345,7 @@ msgstr "Medpomnilnik"
 msgid ""
 "An already existing GeglBuffer to write incoming buffer data to, or NULL."
 msgstr ""
+"Obstoječi GeglBuffer za pisanje dohodnih podatkov medpomnilnika ali NULL."
 
 #: ../operations/common/copy-buffer.c:151
 msgid "Copy Buffer"
@@ -1568,7 +1569,7 @@ msgstr "Način razmestitve"
 msgid "Mode of displacement"
 msgstr "Način razmestitve"
 
-#: ../operations/common/displace.c:37 ../operations/external/npd.c:50
+#: ../operations/common/displace.c:37 ../operations/external/npd.c:47
 #: ../operations/transform/transform-core.c:193
 #: ../operations/workshop/ditto.c:27
 msgid "Sampler"
@@ -1576,7 +1577,7 @@ msgstr "Vzorčevalnik"
 
 #: ../operations/common/displace.c:40
 msgid "Type of GeglSampler used to fetch input pixels"
-msgstr ""
+msgstr "Vrsta GeglSampler, uporabljena za pridobivanje vhodnih slikovnih točk"
 
 #: ../operations/common/displace.c:42 ../operations/common/fractal-trace.c:64
 #: ../operations/common/gaussian-blur-iir.c:58
@@ -1666,12 +1667,12 @@ msgstr "Število izračunov za sivinsko povprečenje"
 msgid "Normalize output to range 0.0 to 1.0."
 msgstr "Normaliziraj izhod v obsegu 0,0 do 1,0."
 
-#: ../operations/common/distance-transform.c:414
+#: ../operations/common/distance-transform.c:426
 #, fuzzy
 msgid "Distance Transform"
 msgstr "Preoblikuj z oddaljenostjo"
 
-#: ../operations/common/distance-transform.c:416
+#: ../operations/common/distance-transform.c:428
 #, fuzzy
 msgid "Calculate a distance transform"
 msgstr "Izračunaj preoblikovanje z oddaljevanjem"
@@ -1870,11 +1871,11 @@ msgstr "Sigma teže"
 msgid "Weight distribution sigma controlling response contributions"
 msgstr "Sigma porazdelitve uteži, ki nadzira prispevke odziva"
 
-#: ../operations/common/exp-combine.c:1270
+#: ../operations/common/exp-combine.c:1269
 msgid "Combine Exposures"
 msgstr "Združi ekspozicije"
 
-#: ../operations/common/exp-combine.c:1273
+#: ../operations/common/exp-combine.c:1272
 msgid "Combine multiple scene exposures into one high dynamic range image."
 msgstr ""
 "Združi več ekspozicij prizorov v posamičen dinamično visokoobsežno sliko."
@@ -1892,8 +1893,8 @@ msgid "Offset value added"
 msgstr "Dodana vrednost zamika"
 
 #: ../operations/common/exposure.c:33
-msgid "Gamma correction"
-msgstr "Popravek game"
+msgid "Gamma adjustment"
+msgstr "Prilagoditev game"
 
 #: ../operations/common/exposure.c:188
 msgid ""
@@ -2302,9 +2303,10 @@ msgid "The orientation of the blur - hor/ver"
 msgstr "Usmeritev zabrisanosti - vod/navp"
 
 #: ../operations/common/gegl-buffer-load-op.c:24
-#: ../operations/common/gegl-buffer-save-op.c:24 ../operations/common/load.c:30
+#: ../operations/common/gegl-buffer-save-op.c:24
 #: ../operations/common/magick-load.c:26 ../operations/common/open-buffer.c:25
-#: ../operations/common/save.c:25 ../operations/external/ff-load.c:29
+#: ../operations/common/save.c:25 ../operations/core/load.c:28
+#: ../operations/external/exr-save.cc:24 ../operations/external/ff-load.c:29
 #: ../operations/external/ff-save.c:29 ../operations/external/jp2-load.c:25
 #: ../operations/external/jpg-load.c:24 ../operations/external/jpg-save.c:25
 #: ../operations/external/npy-save.c:31 ../operations/external/png-load.c:27
@@ -2312,9 +2314,8 @@ msgstr "Usmeritev zabrisanosti - vod/navp"
 #: ../operations/external/ppm-save.c:25 ../operations/external/rgbe-load.c:26
 #: ../operations/external/rgbe-save.c:26 ../operations/external/svg-load.c:25
 #: ../operations/external/tiff-load.c:25 ../operations/external/tiff-save.c:25
-#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:24
-#: ../operations/workshop/dcraw-load.c:26
-#: ../operations/workshop/external/gluas.c:45
+#: ../operations/external/webp-load.c:25 ../operations/external/webp-save.c:25
+#: ../operations/workshop/external/gluas.c:37
 #: ../operations/workshop/rawbayer-load.c:25
 msgid "File"
 msgstr "Datoteka"
@@ -2334,6 +2335,39 @@ msgstr "Pot ciljne datoteke za zapis GeglBuffer."
 #: ../operations/common/gegl-buffer-save-op.c:63
 msgid "GeglBuffer file writer."
 msgstr "Zapisovalnik datotek GeglBuffer."
+
+#: ../operations/common/gegl.c:24
+#, fuzzy
+#| msgid "Bilinear"
+msgid "pipeline"
+msgstr "Bilinearno"
+
+#: ../operations/common/gegl.c:25
+msgid "[op [property=value] [property=value]] [[op] [property=value]"
+msgstr ""
+
+#: ../operations/common/gegl.c:28
+msgid "Eeeeeek"
+msgstr ""
+
+#: ../operations/common/gegl.c:29
+msgid ""
+"There is a problem in the syntax or in the application of parsed property "
+"values. Things might mostly work nevertheless."
+msgstr ""
+
+#: ../operations/common/gegl.c:102
+#, fuzzy
+#| msgid "GEGL graph visualizer."
+msgid "GEGL graph"
+msgstr "Vizualizator grafikonov GEGL."
+
+#: ../operations/common/gegl.c:104
+msgid ""
+"Do a chain of operations, with key=value pairs after each operation name to "
+"set properties. And aux=[ source filter ] for specifying a chain with a "
+"source as something connected to an aux pad."
+msgstr ""
 
 #: ../operations/common/grey.c:100
 msgid "Make Grey"
@@ -2463,7 +2497,7 @@ msgstr ""
 msgid "Node"
 msgstr "Vozlišče"
 
-#: ../operations/common/introspect.c:161
+#: ../operations/common/introspect.c:159
 msgid "GEGL graph visualizer."
 msgstr "Vizualizator grafikonov GEGL."
 
@@ -2656,32 +2690,12 @@ msgstr "Linearni preliv"
 msgid "Linear gradient renderer"
 msgstr "Upodobljevalnik linearnih prelivov"
 
-#: ../operations/common/load.c:31 ../operations/common/magick-load.c:27
+#: ../operations/common/magick-load.c:27 ../operations/core/load.c:29
 #: ../operations/external/png-load.c:28 ../operations/external/ppm-load.c:26
 #: ../operations/external/raw-load.c:28 ../operations/external/rgbe-load.c:27
-#: ../operations/workshop/dcraw-load.c:27
 #: ../operations/workshop/rawbayer-load.c:26
 msgid "Path of file to load."
 msgstr "Pot datoteke, ki jo želite naložiti."
-
-#: ../operations/common/load.c:32 ../operations/external/jp2-load.c:27
-#: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
-#: ../operations/external/svg-load.c:27 ../operations/external/tiff-load.c:27
-#: ../operations/external/webp-load.c:27
-msgid "URI"
-msgstr "URI"
-
-#: ../operations/common/load.c:33
-msgid "URI of file to load."
-msgstr "URI datoteke, ki jo želite naložiti."
-
-#: ../operations/common/load.c:227
-msgid ""
-"Multipurpose file loader, that uses other native handlers, and fallback "
-"conversion using Image Magick's convert."
-msgstr ""
-"Večnamenski nalagalnik datotek, ki uporablja druge domorodne ročice in "
-"povratno pretvorbo s funkcijo pretvarjanja programa Magick."
 
 #: ../operations/common/magick-load.c:137
 msgid "Image Magick wrapper using the png op."
@@ -2813,11 +2827,11 @@ msgstr "Labirint"
 msgid "Draw a labyrinth"
 msgstr "Nariši labirint"
 
-#: ../operations/common/mblur.c:25
+#: ../operations/common/mblur.c:25 ../operations/workshop/vhsfix.c:24
 msgid "Dampness"
 msgstr "Dušenje"
 
-#: ../operations/common/mblur.c:26
+#: ../operations/common/mblur.c:26 ../operations/workshop/vhsfix.c:25
 msgid "The value represents the contribution of the past to the new frame."
 msgstr "Vrednost predstavlja prispevek preteklosti novi sličici."
 
@@ -3150,7 +3164,7 @@ msgstr "Zrno naključja za funkcijo šuma"
 msgid "Cell Noise"
 msgstr "Celični šum"
 
-#: ../operations/common/noise-cell.c:434
+#: ../operations/common/noise-cell.c:435
 msgid "Generates a cellular texture."
 msgstr "Tvori celično teksturo."
 
@@ -4305,7 +4319,7 @@ msgid "More transparent"
 msgstr "Bolj prosojno"
 
 #: ../operations/common/value-propagate.c:38
-#: ../operations/workshop/ink-simulator.c:44
+#: ../operations/workshop/ink-simulator.c:45
 msgid "Mode"
 msgstr "Način"
 
@@ -4442,11 +4456,11 @@ msgstr "Zasukano"
 msgid "Whether to rotate the RGB pattern by ninety degrees."
 msgstr ""
 
-#: ../operations/common/video-degradation.c:318
+#: ../operations/common/video-degradation.c:321
 msgid "Video Degradation"
 msgstr "Poslabšanje videa"
 
-#: ../operations/common/video-degradation.c:321
+#: ../operations/common/video-degradation.c:324
 msgid ""
 "This function simulates the degradation of being on an old low-dotpitch RGB "
 "video monitor."
@@ -4638,7 +4652,7 @@ msgstr "Vrtinči in odščipni"
 msgid "Distort an image by whirling and pinching"
 msgstr "Popači sliko z vrtinčenjem in priščipnjenjem"
 
-#: ../operations/common/wind.c:28 ../operations/common/wind.c:659
+#: ../operations/common/wind.c:28 ../operations/common/wind.c:661
 msgid "Wind"
 msgstr "Veter"
 
@@ -4702,7 +4716,7 @@ msgstr "Višje vrednosti omejujejo učinek na manj območij slike"
 msgid "Higher values increase the magnitude of the effect"
 msgstr "Višje vrednosti povečajo jakost učinka"
 
-#: ../operations/common/wind.c:662
+#: ../operations/common/wind.c:664
 msgid "Wind-like bleed effect"
 msgstr "Učinek prelivanja, podoben vetru"
 
@@ -4796,6 +4810,25 @@ msgstr "Obreži"
 msgid "Crop a buffer"
 msgstr "Obreži medpomnilnik"
 
+#: ../operations/core/load.c:30 ../operations/external/jp2-load.c:27
+#: ../operations/external/jpg-load.c:26 ../operations/external/png-load.c:29
+#: ../operations/external/svg-load.c:27 ../operations/external/tiff-load.c:27
+#: ../operations/external/webp-load.c:27
+msgid "URI"
+msgstr "URI"
+
+#: ../operations/core/load.c:31
+msgid "URI of file to load."
+msgstr "URI datoteke, ki jo želite naložiti."
+
+#: ../operations/core/load.c:310
+msgid ""
+"Multipurpose file loader, that uses other native handlers, and fallback "
+"conversion using Image Magick's convert."
+msgstr ""
+"Večnamenski nalagalnik datotek, ki uporablja druge domorodne ročice in "
+"povratno pretvorbo s funkcijo pretvarjanja programa Magick."
+
 #: ../operations/core/nop.c:79
 msgid "No Operation"
 msgstr "Brez operacije"
@@ -4803,6 +4836,18 @@ msgstr "Brez operacije"
 #: ../operations/core/nop.c:81
 msgid "No operation (can be used as a routing point)"
 msgstr "Brez operacije (lahko jo uporabite kot točko preusmeritve)"
+
+#: ../operations/external/exr-save.cc:25
+#, fuzzy
+#| msgid "Path of file to load."
+msgid "path of file to write to."
+msgstr "Pot datoteke, ki jo želite naložiti."
+
+#: ../operations/external/exr-save.cc:27
+#, fuzzy
+#| msgid "Tile size"
+msgid "tile size to use."
+msgstr "Velikost tlakovcev"
 
 #: ../operations/external/ff-load.c:30
 msgid "Path of video file to load"
@@ -4850,11 +4895,11 @@ msgstr "Zvočni kodek"
 msgid "audio"
 msgstr "Zvok"
 
-#: ../operations/external/ff-load.c:776
+#: ../operations/external/ff-load.c:777
 msgid "FFmpeg Frame Loader"
 msgstr "Nalagalnik video-sličic FFmpeg"
 
-#: ../operations/external/ff-load.c:778
+#: ../operations/external/ff-load.c:779
 msgid "FFmpeg video frame importer."
 msgstr "Uvoznik video-sličic FFmpeg."
 
@@ -4996,7 +5041,7 @@ msgstr ""
 msgid "me-subpel-quality"
 msgstr ""
 
-#: ../operations/external/ff-save.c:1095
+#: ../operations/external/ff-save.c:1094
 msgid "FFmpeg video output sink"
 msgstr "Ponor izhodneg videa FFmpeg"
 
@@ -5088,10 +5133,11 @@ msgid "JPEG image loader using libjpeg"
 msgstr "Nalagalnik slik JPRG z uporabo libjpeg"
 
 #: ../operations/external/jpg-save.c:26 ../operations/external/tiff-save.c:26
+#: ../operations/external/webp-save.c:26
 msgid "Target path and filename, use '-' for stdout"
 msgstr "Pot in ime ciljne datoteke, uporabite '-' za običajni izhod"
 
-#: ../operations/external/jpg-save.c:28 ../operations/external/webp-save.c:27
+#: ../operations/external/jpg-save.c:28 ../operations/external/webp-save.c:28
 msgid "Quality"
 msgstr "Kakovost"
 
@@ -5262,40 +5308,40 @@ msgstr "Število iteracij deformacije"
 msgid "ASAP Deformation"
 msgstr "Deformacija ASAP"
 
-#: ../operations/external/npd.c:36
+#: ../operations/external/npd.c:35
 msgid "ASAP deformation is performed when TRUE, ARAP deformation otherwise"
 msgstr ""
 
-#: ../operations/external/npd.c:38
+#: ../operations/external/npd.c:37
 msgid "MLS Weights"
 msgstr "Uteži MLS"
 
-#: ../operations/external/npd.c:40
+#: ../operations/external/npd.c:38
 msgid "Use MLS weights"
 msgstr "Uporabi uteži MLS"
 
-#: ../operations/external/npd.c:42
+#: ../operations/external/npd.c:40
 msgid "MLS Weights Alpha"
 msgstr "Alfa uteži MLS"
 
-#: ../operations/external/npd.c:44
+#: ../operations/external/npd.c:42
 msgid "Alpha parameter of MLS weights"
 msgstr "Parameter alfa uteži MLS"
 
-#: ../operations/external/npd.c:46
+#: ../operations/external/npd.c:44
 msgid "Preserve Model"
 msgstr "Ohrani model"
 
-#: ../operations/external/npd.c:48
+#: ../operations/external/npd.c:45
 msgid "When TRUE the model will not be freed"
 msgstr "Če je RESNIČNO, model ne bo sproščen."
 
-#: ../operations/external/npd.c:53 ../operations/transform/transform-core.c:194
+#: ../operations/external/npd.c:50 ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Notranje uporabljeni vzorčevalnik"
 
-#: ../operations/external/npd.c:258
+#: ../operations/external/npd.c:255
 msgid "Performs n-point image deformation"
 msgstr "Izvede n-točkovno deformacijo slike"
 
@@ -5720,20 +5766,18 @@ msgstr "Nalagalnik slik WebP"
 msgid "WebP image loader."
 msgstr "Nalagalnik slik WebP"
 
-#: ../operations/external/webp-save.c:25
-msgid "Target file path."
-msgstr "Pot ciljne datoteke."
-
-#: ../operations/external/webp-save.c:28
+#: ../operations/external/webp-save.c:29
 msgid "WebP compression quality"
 msgstr "Kakovost stiskanja WebP"
 
-#: ../operations/external/webp-save.c:114
+#: ../operations/external/webp-save.c:195
 msgid "WebP File Saver"
 msgstr "Shranjevalnik slik WebP"
 
-#: ../operations/external/webp-save.c:116
-msgid "WebP image saver."
+#: ../operations/external/webp-save.c:197
+#, fuzzy
+#| msgid "WebP image saver."
+msgid "WebP image saver"
 msgstr "Shranjevalnik slik WebP."
 
 #: ../operations/generated/add.c:30 ../operations/generated/divide.c:30
@@ -6298,17 +6342,13 @@ msgstr "Linearni izhod"
 msgid "Use linear output instead of gamma corrected"
 msgstr "Uporabi linearni izhod z gamo namesto popravljene game"
 
-#: ../operations/workshop/component-extract.c:264
+#: ../operations/workshop/component-extract.c:240
 msgid "Extract Component"
 msgstr "Izvleči komponento"
 
-#: ../operations/workshop/component-extract.c:266
+#: ../operations/workshop/component-extract.c:242
 msgid "Extract a color model component"
 msgstr "Izvleci komponento barvnega modela"
-
-#: ../operations/workshop/dcraw-load.c:183
-msgid "Raw image loader, wrapping dcraw with pipes."
-msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi."
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
@@ -6351,27 +6391,37 @@ msgstr ""
 "Poskusna operacija za preslikavo 1:1 z vhoda na izhod, medtem poteka "
 "vzorčenje."
 
-#: ../operations/workshop/external/gluas.c:41
+#: ../operations/workshop/external/gluas.c:29
 msgid "Script"
 msgstr "Skripta"
 
-#: ../operations/workshop/external/gluas.c:42
+#: ../operations/workshop/external/gluas.c:30
 msgid "The lua script containing the implementation of this operation."
 msgstr "Skript lua, ki udejanja to operacijo."
 
-#: ../operations/workshop/external/gluas.c:46
+#: ../operations/workshop/external/gluas.c:33
+#, fuzzy
+#| msgid "Module error"
+msgid "Lua error"
+msgstr "Napaka gradnika"
+
+#: ../operations/workshop/external/gluas.c:34
+msgid "parse/compile error, if any"
+msgstr ""
+
+#: ../operations/workshop/external/gluas.c:38
 msgid "a stored lua script on disk implementing an operation."
 msgstr "Na disku shranjeni skript lua, ki udejanja operacijo."
 
-#: ../operations/workshop/external/gluas.c:48
+#: ../operations/workshop/external/gluas.c:40
 msgid "User value"
 msgstr "Uporabniška vrednost"
 
-#: ../operations/workshop/external/gluas.c:49
+#: ../operations/workshop/external/gluas.c:41
 msgid "(appears in the global variable 'user_value' in lua."
 msgstr "(pojavi se v splošni spremenljivki 'user_value' v lua)."
 
-#: ../operations/workshop/external/gluas.c:989
+#: ../operations/workshop/external/gluas.c:994
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
@@ -6644,11 +6694,11 @@ msgstr "Barva 5"
 msgid "Stop 5"
 msgstr ""
 
-#: ../operations/workshop/gradient-map.c:242
+#: ../operations/workshop/gradient-map.c:244
 msgid "Gradient Map"
 msgstr "Zemljevid preliva"
 
-#: ../operations/workshop/gradient-map.c:244
+#: ../operations/workshop/gradient-map.c:246
 msgid "Applies a color gradient."
 msgstr "Uveljavi barvni preliv."
 
@@ -6681,70 +6731,70 @@ msgid "Textual desciption of inks used for simulated print-job"
 msgstr ""
 "Besedilni opis črnil, uporabljenih za simulacijo tiskalniškega opravila"
 
-#: ../operations/workshop/ink-simulator.c:46
+#: ../operations/workshop/ink-simulator.c:47
 msgid "how the ink simulator is used"
 msgstr "Kako naj bo uporabljen simulator črnil"
 
-#: ../operations/workshop/ink-simulator.c:50
+#: ../operations/workshop/ink-simulator.c:51
 #, fuzzy
 msgid "Substrate color"
 msgstr "Začetna barva"
 
-#: ../operations/workshop/ink-simulator.c:50
+#: ../operations/workshop/ink-simulator.c:51
 msgid "paper/fabric/material color"
 msgstr "barva papirja/tkanine/materiala"
 
-#: ../operations/workshop/ink-simulator.c:51
+#: ../operations/workshop/ink-simulator.c:52
 msgid "Ink1 color"
 msgstr "Barva črnila1"
 
-#: ../operations/workshop/ink-simulator.c:51
 #: ../operations/workshop/ink-simulator.c:52
 #: ../operations/workshop/ink-simulator.c:53
 #: ../operations/workshop/ink-simulator.c:54
 #: ../operations/workshop/ink-simulator.c:55
+#: ../operations/workshop/ink-simulator.c:56
 msgid "ink color"
 msgstr "Barva črnila"
 
-#: ../operations/workshop/ink-simulator.c:52
+#: ../operations/workshop/ink-simulator.c:53
 msgid "Ink2 color"
 msgstr "Barva črnila2"
 
-#: ../operations/workshop/ink-simulator.c:53
+#: ../operations/workshop/ink-simulator.c:54
 msgid "Ink3 color"
 msgstr "Barva črnila3"
 
-#: ../operations/workshop/ink-simulator.c:54
+#: ../operations/workshop/ink-simulator.c:55
 msgid "Ink4 color"
 msgstr "Barva črnila4"
 
-#: ../operations/workshop/ink-simulator.c:55
+#: ../operations/workshop/ink-simulator.c:56
 msgid "Ink5 color"
 msgstr "Barva črnila5"
 
-#: ../operations/workshop/ink-simulator.c:57
+#: ../operations/workshop/ink-simulator.c:58
 msgid "Ink limit"
 msgstr "Omejitev črnila"
 
-#: ../operations/workshop/ink-simulator.c:58
+#: ../operations/workshop/ink-simulator.c:59
 #, c-format
 msgid "maximum amount of ink for one pixel, 2.5 = 250%% coverage"
 msgstr ""
 "Največja količina črnila za eno slikovno točko, 2,5 = 250 %% prekrivnost"
 
-#: ../operations/workshop/ink-simulator.c:62
+#: ../operations/workshop/ink-simulator.c:63
 msgid "Debug width"
 msgstr "Širina razhroščevanja"
 
-#: ../operations/workshop/ink-simulator.c:64
+#: ../operations/workshop/ink-simulator.c:65
 msgid "how wide peel off bands for ink order vis"
 msgstr ""
 
-#: ../operations/workshop/ink-simulator.c:1420
+#: ../operations/workshop/ink-simulator.c:1421
 msgid "Ink Simulator"
 msgstr "Simulator črnil"
 
-#: ../operations/workshop/ink-simulator.c:1423
+#: ../operations/workshop/ink-simulator.c:1424
 msgid ""
 "Spectral ink and paint simulator, for softproofing/simulating physical color "
 "mixing and interactions."
@@ -6834,3 +6884,20 @@ msgstr "Poreži RGB"
 #: ../operations/workshop/rgb-clip.c:186
 msgid "Keep RGB pixels values inside a specific range"
 msgstr "Ohrani slikovne točke RGB v okviru določenega obsega"
+
+#: ../operations/workshop/vhsfix.c:261
+msgid "vhs glitch fixer"
+msgstr ""
+
+#: ../operations/workshop/vhsfix.c:263
+msgid "fixes vhs digitization glitches"
+msgstr ""
+
+#~ msgid "Gamma correction"
+#~ msgstr "Popravek game"
+
+#~ msgid "Target file path."
+#~ msgstr "Pot ciljne datoteke."
+
+#~ msgid "Raw image loader, wrapping dcraw with pipes."
+#~ msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi."
