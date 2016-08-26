@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-05-31 20:12+0000\n"
-"PO-Revision-Date: 2016-08-25 19:33+0200\n"
+"POT-Creation-Date: 2016-08-25 19:11+0000\n"
+"PO-Revision-Date: 2016-08-26 16:57+0200\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: sl.libreoffice.org <users@sl.libreoffice.org>\n"
 "Language: sl\n"
@@ -1516,7 +1516,6 @@ msgid "Number of sharp edges (blue)"
 msgstr "Število ostrih robov (modra)"
 
 #: ../operations/common/diffraction-patterns.c:67
-#, fuzzy
 msgid "Brightness and shifting/fattening of contours"
 msgstr "Svetlost in zamikanje/debeljenje obrisov"
 
@@ -1668,12 +1667,10 @@ msgid "Normalize output to range 0.0 to 1.0."
 msgstr "Normaliziraj izhod v obsegu 0,0 do 1,0."
 
 #: ../operations/common/distance-transform.c:426
-#, fuzzy
 msgid "Distance Transform"
 msgstr "Preoblikuj z oddaljenostjo"
 
 #: ../operations/common/distance-transform.c:428
-#, fuzzy
 msgid "Calculate a distance transform"
 msgstr "Izračunaj preoblikovanje z oddaljevanjem"
 
@@ -2338,9 +2335,8 @@ msgstr "Zapisovalnik datotek GeglBuffer."
 
 #: ../operations/common/gegl.c:24
 #, fuzzy
-#| msgid "Bilinear"
 msgid "pipeline"
-msgstr "Bilinearno"
+msgstr "Cevovod"
 
 #: ../operations/common/gegl.c:25
 msgid "[op [property=value] [property=value]] [[op] [property=value]"
@@ -2357,10 +2353,8 @@ msgid ""
 msgstr ""
 
 #: ../operations/common/gegl.c:102
-#, fuzzy
-#| msgid "GEGL graph visualizer."
 msgid "GEGL graph"
-msgstr "Vizualizator grafikonov GEGL."
+msgstr "Grafikon GEGL"
 
 #: ../operations/common/gegl.c:104
 msgid ""
@@ -3138,7 +3132,7 @@ msgstr "Interpolacija med manhattansko in evklidsko razdaljo."
 
 #: ../operations/common/noise-cell.c:44
 msgid "Rank"
-msgstr ""
+msgstr "Rang"
 
 #: ../operations/common/noise-cell.c:45
 msgid "Select the n-th closest point"
@@ -3487,11 +3481,11 @@ msgstr "Navpični zasuk kamere"
 
 #: ../operations/common/panorama-projection.c:34
 msgid "Spin"
-msgstr ""
+msgstr "Zavrti"
 
 #: ../operations/common/panorama-projection.c:35
 msgid "Spin angle around camera axis"
-msgstr ""
+msgstr "Kot vrstenja okoli osi kamere"
 
 #: ../operations/common/panorama-projection.c:43
 msgid "output/rendering width in pixels, -1 for input width"
@@ -3517,11 +3511,11 @@ msgstr ""
 msgid "Image resampling method to use"
 msgstr "Metoda prevzorčenja, ki jo želite uporabiti"
 
-#: ../operations/common/panorama-projection.c:536
+#: ../operations/common/panorama-projection.c:538
 msgid "Panorama Projection"
 msgstr "Panoramska projekcija"
 
-#: ../operations/common/panorama-projection.c:540
+#: ../operations/common/panorama-projection.c:542
 msgid ""
 "Perform a equlinear/gnomonic or little planet/stereographic projection of a "
 "equirectangular input image."
@@ -4446,7 +4440,7 @@ msgstr "Prirastno"
 
 #: ../operations/common/video-degradation.c:59
 msgid "Whether the function adds the result to the original image."
-msgstr ""
+msgstr "Ali naj funkcija doda rezultat izvirni sliki."
 
 #: ../operations/common/video-degradation.c:61
 msgid "Rotated"
@@ -4454,7 +4448,7 @@ msgstr "Zasukano"
 
 #: ../operations/common/video-degradation.c:62
 msgid "Whether to rotate the RGB pattern by ninety degrees."
-msgstr ""
+msgstr "Ali želite zasukati vzorec RGB za devetdeset stopinj."
 
 #: ../operations/common/video-degradation.c:321
 msgid "Video Degradation"
@@ -4734,7 +4728,7 @@ msgstr "Zapiše vhodne podatke v obstoječo ciljno površino medpomnilnika GEGL.
 
 #: ../operations/core/cache.c:25
 msgid "Cache"
-msgstr ""
+msgstr "Predpomnilnik"
 
 #: ../operations/core/cache.c:26
 msgid ""
@@ -4838,16 +4832,12 @@ msgid "No operation (can be used as a routing point)"
 msgstr "Brez operacije (lahko jo uporabite kot točko preusmeritve)"
 
 #: ../operations/external/exr-save.cc:25
-#, fuzzy
-#| msgid "Path of file to load."
 msgid "path of file to write to."
-msgstr "Pot datoteke, ki jo želite naložiti."
+msgstr "Pot datoteke, kamor želite pisati."
 
 #: ../operations/external/exr-save.cc:27
-#, fuzzy
-#| msgid "Tile size"
 msgid "tile size to use."
-msgstr "Velikost tlakovcev"
+msgstr "Uporabljena velikost tlakovcev."
 
 #: ../operations/external/ff-load.c:30
 msgid "Path of video file to load"
@@ -5020,10 +5010,8 @@ msgid "gop-size"
 msgstr ""
 
 #: ../operations/external/ff-save.c:69
-#, fuzzy
-#| msgid "Compression"
 msgid "qcompress"
-msgstr "Stiskanje"
+msgstr "qcompress"
 
 #: ../operations/external/ff-save.c:70
 msgid "qblur"
@@ -5775,10 +5763,8 @@ msgid "WebP File Saver"
 msgstr "Shranjevalnik slik WebP"
 
 #: ../operations/external/webp-save.c:197
-#, fuzzy
-#| msgid "WebP image saver."
 msgid "WebP image saver"
-msgstr "Shranjevalnik slik WebP."
+msgstr "Shranjevalnik slik WebP"
 
 #: ../operations/generated/add.c:30 ../operations/generated/divide.c:30
 #: ../operations/generated/gamma.c:30 ../operations/generated/multiply.c:30
@@ -6400,10 +6386,8 @@ msgid "The lua script containing the implementation of this operation."
 msgstr "Skript lua, ki udejanja to operacijo."
 
 #: ../operations/workshop/external/gluas.c:33
-#, fuzzy
-#| msgid "Module error"
 msgid "Lua error"
-msgstr "Napaka gradnika"
+msgstr "Napaka Lua"
 
 #: ../operations/workshop/external/gluas.c:34
 msgid "parse/compile error, if any"
@@ -6887,17 +6871,8 @@ msgstr "Ohrani slikovne točke RGB v okviru določenega obsega"
 
 #: ../operations/workshop/vhsfix.c:261
 msgid "vhs glitch fixer"
-msgstr ""
+msgstr "Popravljalnik napak VHS"
 
 #: ../operations/workshop/vhsfix.c:263
 msgid "fixes vhs digitization glitches"
-msgstr ""
-
-#~ msgid "Gamma correction"
-#~ msgstr "Popravek game"
-
-#~ msgid "Target file path."
-#~ msgstr "Pot ciljne datoteke."
-
-#~ msgid "Raw image loader, wrapping dcraw with pipes."
-#~ msgstr "Nalagalnik surovih slik, zaobjemanje dcraw s cevovodi."
+msgstr "Popravi napake pri digitizaciji VHS."
