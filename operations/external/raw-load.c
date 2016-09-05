@@ -147,8 +147,18 @@ get_bounding_box (GeglOperation *operation)
   if (p->LibRaw != NULL &&
       (p->LibRaw->progress_flags & LIBRAW_PROGRESS_IDENTIFY)) 
     {
-      result.width  = p->LibRaw->sizes.width;
-      result.height = p->LibRaw->sizes.height;
+      switch (p->LibRaw->sizes.flip)
+      {
+        case 5:
+        case 6:
+          result.width  = p->LibRaw->sizes.height;
+          result.height = p->LibRaw->sizes.width;
+          break;
+        default:
+          result.width  = p->LibRaw->sizes.width;
+          result.height = p->LibRaw->sizes.height;
+          break;
+      }
       gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u16"));
     }
 
