@@ -55,6 +55,7 @@ typedef struct
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_META)
 
 #include <stdio.h>
+#include <stdlib.h>
 #define SNIFFING_LENGTH 4096
 
 static gboolean
