@@ -34,14 +34,18 @@
 #endif
 #endif
 
+#ifndef GEGL_OP_NAME
+#define GEGL_OP_NAME op
+#error "define GEGL_OP_NAME"
+
+#endif
+
 #ifndef GEGL_OP_C_FILE
 #ifdef GEGL_CHANT_C_FILE
 #error   GEGL_OP_C_FILE not defined, %s/GEGL_CHANT_C_FILE/GEGL_OP_C_FILE/
 #endif
 #error "GEGL_OP_C_FILE not defined"
 #endif
-
-#define gegl_chant_class_init   gegl_chant_class_init_SHOULD_BE_gegl_op_class_init
 
 /* XXX: */
 #ifdef GEGL_CHANT_TYPE_POINT_RENDER
@@ -56,32 +60,39 @@
 
 G_BEGIN_DECLS
 
-static GType gegl_op_get_type (void) G_GNUC_UNUSED;
 typedef struct _GeglProperties  GeglProperties;
 typedef struct _GeglOp   GeglOp;
 
-static void gegl_op_register_type       (GTypeModule *module);
+
 static void gegl_op_init_properties     (GeglOp   *self);
 static void gegl_op_class_intern_init   (gpointer     klass);
 static gpointer gegl_op_parent_class = NULL;
 
+#define define_register_type_(a) \
+void gegl_op_##a##_register_type     (GTypeModule *module);\
+GType gegl_op_##a##_get_type (void);
+#define define_register_type(a) define_register_type_(a)
+define_register_type(GEGL_OP_NAME)
+#undef define_register_type
+#undef define_register_type_
+
 #define GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, TypeName, type_name, TYPE_PARENT, flags, CODE) \
 static void     type_name##_init              (TypeName        *self);  \
-static void     type_name##_class_init        (TypeName##Class *klass); \
+static void     gegl_op_class_init            (TypeName##Class *klass); \
 static void     type_name##_class_finalize    (TypeName##Class *klass); \
 static GType    type_name##_type_id = 0;                                \
 static void     type_name##_class_chant_intern_init (gpointer klass)    \
   {                                                                     \
     gegl_op_parent_class = g_type_class_peek_parent (klass);            \
     gegl_op_class_intern_init (klass);                                  \
-    type_name##_class_init ((TypeName##Class*) klass);                  \
+    gegl_op_class_init ((TypeName##Class*) klass);                      \
   }                                                                     \
-static GType                                                            \
+GType                                                            \
 type_name##_get_type (void)                                             \
   {                                                                     \
     return type_name##_type_id;                                         \
   }                                                                     \
-static void                                                             \
+void                                                             \
 type_name##_register_type (GTypeModule *type_module)                    \
   {                                                                     \
     gchar  tempname[256];                                               \
@@ -112,8 +123,9 @@ type_name##_register_type (GTypeModule *type_module)                    \
     { CODE ; }                                                          \
   }
 
-#define GEGL_DEFINE_DYNAMIC_OPERATION_(T_P, C_FILE) GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, GeglOp, gegl_op, T_P, 0, {})
-#define GEGL_DEFINE_DYNAMIC_OPERATION(T_P) GEGL_DEFINE_DYNAMIC_OPERATION_(T_P, GEGL_OP_C_FILE)
+#define GEGL_DEFINE_DYNAMIC_OPERATION_(T_P, C_FILE, opname) GEGL_DEFINE_DYNAMIC_OPERATION_EXTENDED(C_FILE, GeglOp, gegl_op_##opname, T_P, 0, {})
+#define GEGL_DEFINE_DYNAMIC_OPERATION__(a,b,c) GEGL_DEFINE_DYNAMIC_OPERATION_(a,b,c)
+#define GEGL_DEFINE_DYNAMIC_OPERATION(T_P) GEGL_DEFINE_DYNAMIC_OPERATION__(T_P, GEGL_OP_C_FILE, GEGL_OP_NAME)
 
 
 #define GEGL_PROPERTIES(op) ((GeglProperties *) (((GeglOp*)(op))->properties))
@@ -182,6 +194,7 @@ type_name##_register_type (GTypeModule *type_module)                    \
 #define GEGL_OP_PARENT GEGL_TYPE_OPERATION_META
 #endif
 
+
 #ifdef GEGL_OP_Parent
 struct _GeglOp
 {
@@ -207,16 +220,14 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_OP_PARENT)
  * code or your own implementation of it
  */
 #ifndef GEGL_OP_CUSTOM
-static void
-gegl_op_init (GeglOp *self)
-{
-  gegl_op_init_properties (self);
-}
 
-static void
-gegl_op_class_finalize (GeglOpClass *self)
-{
-}
+#define define_init_(a) \
+  static void gegl_op_##a##_init (GeglOp *self) { gegl_op_init_properties (self); }\
+  static void gegl_op_##a##_class_finalize (GeglOpClass *self) { }
+#define define_init(a) define_init_(a)
+define_init(GEGL_OP_NAME)
+#undef define_init
+#undef define_init_
 
 static const GeglModuleInfo modinfo =
 {
@@ -227,6 +238,7 @@ static const GeglModuleInfo modinfo =
 gboolean                gegl_module_register (GTypeModule *module);
 const GeglModuleInfo  * gegl_module_query    (GTypeModule *module);
 
+#ifndef GEGL_OP_BUNDLE
 G_MODULE_EXPORT const GeglModuleInfo *
 gegl_module_query (GTypeModule *module)
 {
@@ -236,10 +248,13 @@ gegl_module_query (GTypeModule *module)
 G_MODULE_EXPORT gboolean
 gegl_module_register (GTypeModule *module)
 {
-  gegl_op_register_type (module);
-
+#define do_reg_(a) gegl_op_##a##_register_type (module)
+#define do_reg(b) do_reg_(b)
+  do_reg(GEGL_OP_NAME);
+#undef do_reg
   return TRUE;
 }
+#endif
 #endif
 
 

@@ -32,6 +32,7 @@ property_uri (uri, _("URI"), "")
 
 #else
 
+#define GEGL_OP_NAME     load
 #define GEGL_OP_C_SOURCE load.c
 
 #include <gegl-plugin.h>
@@ -292,7 +293,7 @@ my_set_property (GObject      *gobject,
 }
 
 static void
-gegl_op_class_init (GeglOpClass *klass)
+gegl_load_class_init (GeglOpClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
