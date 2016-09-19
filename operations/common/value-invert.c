@@ -47,6 +47,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     value_invert
 #define GEGL_OP_C_SOURCE value-invert.c
 
 #include "gegl-op.h"

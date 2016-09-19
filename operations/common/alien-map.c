@@ -61,6 +61,7 @@ property_boolean (cpn_3_keep, _("Keep component 3"), FALSE)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     alien_map
 #define GEGL_OP_C_SOURCE alien-map.c
 
 #include "gegl-op.h"

@@ -30,6 +30,7 @@ property_uri (uri, _("URI"), "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME webp_load
 #define GEGL_OP_C_SOURCE webp-load.c
 
 #include <gegl-op.h>

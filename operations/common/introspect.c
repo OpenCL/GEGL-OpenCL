@@ -28,6 +28,7 @@ property_object(node, _("Node"), GEGL_TYPE_NODE)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     introspect
 #define GEGL_OP_C_SOURCE introspect.c
 
 #include "gegl-op.h"

@@ -33,6 +33,7 @@ property_double (value, _("Value"), 1.0)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         divide
 #define GEGL_OP_C_FILE       "divide.c"
 
 #include "gegl-op.h"

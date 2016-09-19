@@ -39,6 +39,7 @@ property_double (avg_diff_total, _("Average difference (total)"), 0.0)
 #else
 
 #define GEGL_OP_COMPOSER
+#define GEGL_OP_NAME     image_compare
 #define GEGL_OP_C_SOURCE image-compare.c
 
 #include "gegl-op.h"

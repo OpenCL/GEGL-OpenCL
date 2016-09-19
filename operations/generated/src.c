@@ -41,6 +41,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         src
 #define GEGL_OP_C_FILE        "src.c"
 
 #include "gegl-op.h"

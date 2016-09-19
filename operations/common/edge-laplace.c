@@ -29,6 +29,7 @@
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     edge_laplace
 #define GEGL_OP_C_SOURCE edge-laplace.c
 
 #include "gegl-op.h"

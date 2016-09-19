@@ -158,6 +158,7 @@ a.each do
     file.write file_head1
     file.write "
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         #{item[0]}
 #define GEGL_OP_C_FILE        \"#{filename}\"
 
 #include \"gegl-op.h\"
@@ -264,6 +265,7 @@ b.each do
     file.write file_head1
     file.write "
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         #{item[0]}
 #define GEGL_OP_C_FILE        \"#{filename}\"
 
 #include \"gegl-op.h\"

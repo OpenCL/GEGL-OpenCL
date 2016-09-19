@@ -28,6 +28,7 @@ property_boolean (keep_colors, _("Keep colors"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     stretch_contrast
 #define GEGL_OP_C_SOURCE stretch-contrast.c
 
 #include "gegl-op.h"

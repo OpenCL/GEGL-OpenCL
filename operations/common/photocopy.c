@@ -37,6 +37,7 @@ property_double (white, _("Percent White"), 0.2)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     photocopy
 #define GEGL_OP_C_SOURCE photocopy.c
 
 #include "gegl-op.h"

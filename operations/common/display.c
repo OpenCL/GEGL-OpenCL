@@ -24,6 +24,7 @@ property_string  (window_title, _("Window title"), "window_title")
     description(_("Title to be given to output window"))
 #else
 
+#define GEGL_OP_NAME     display
 #define GEGL_OP_C_SOURCE display.c
 
 #include "gegl-plugin.h"

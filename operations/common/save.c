@@ -27,6 +27,7 @@ property_file_path (path, _("File"), "")
 
 #else
 
+#define GEGL_OP_NAME     save
 #define GEGL_OP_C_SOURCE save.c
 
 #include "gegl-plugin.h"

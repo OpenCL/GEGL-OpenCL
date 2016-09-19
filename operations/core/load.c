@@ -293,7 +293,7 @@ my_set_property (GObject      *gobject,
 }
 
 static void
-gegl_load_class_init (GeglOpClass *klass)
+gegl_op_class_init (GeglOpClass *klass)
 {
   GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
   GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);

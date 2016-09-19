@@ -41,6 +41,7 @@ property_string (error_msg, _("Error message"), "")
 #else
 
 #define GEGL_OP_COMPOSER
+#define GEGL_OP_NAME         seamless_clone
 #define GEGL_OP_C_FILE       "seamless-clone.c"
 
 #include "config.h"

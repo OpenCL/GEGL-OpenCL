@@ -31,6 +31,7 @@ property_format (format, _("Babl Format"), 666)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     color
 #define GEGL_OP_C_SOURCE color.c
 
 #include "gegl-op.h"

@@ -26,6 +26,7 @@ property_file_path (path, "File", "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OPNAME exr_load
 #define GEGL_OP_C_FILE       "exr-load.cpp"
 
 extern "C" {

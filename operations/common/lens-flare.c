@@ -40,6 +40,7 @@ property_double (pos_y, _("Y position"), 0.5)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     lens_flare
 #define GEGL_OP_C_SOURCE lens-flare.c
 
 #include "gegl-op.h"

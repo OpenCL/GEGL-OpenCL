@@ -31,6 +31,7 @@ property_boolean (srgb, _("sRGB"), TRUE)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     sepia
 #define GEGL_OP_C_SOURCE sepia.c
 
 #include "gegl-op.h"

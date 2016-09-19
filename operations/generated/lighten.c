@@ -41,7 +41,8 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE        "lighten.c"
+#define GEGL_OP_NAME         lighten
+#define GEGL_OP_C_FILE       "lighten.c"
 
 #include "gegl-op.h"
 

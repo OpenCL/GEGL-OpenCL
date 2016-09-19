@@ -72,6 +72,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     plasma
 #define GEGL_OP_C_SOURCE plasma.c
 
 #include "gegl-op.h"

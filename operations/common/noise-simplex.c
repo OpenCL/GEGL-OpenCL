@@ -42,6 +42,7 @@ property_seed   (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     noise_simplex
 #define GEGL_OP_C_SOURCE noise-simplex.c
 
 #include "gegl-op.h"

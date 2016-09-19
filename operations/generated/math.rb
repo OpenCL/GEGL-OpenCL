@@ -63,6 +63,7 @@ property_double (value, _(\"Value\"), #{item[2]})
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         #{name}
 #define GEGL_OP_C_FILE       \"#{filename}\"
 
 #include \"gegl-op.h\"

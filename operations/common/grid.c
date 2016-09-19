@@ -68,6 +68,7 @@ property_color (line_color, _("Color"), "black")
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     grid
 #define GEGL_OP_C_SOURCE grid.c
 
 #include "gegl-op.h"

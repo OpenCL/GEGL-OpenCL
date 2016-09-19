@@ -35,6 +35,7 @@ property_int(directory, _("Directory"), 1)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     tiff_load
 #define GEGL_OP_C_SOURCE tiff-load.c
 
 #include <gegl-op.h>

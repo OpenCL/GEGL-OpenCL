@@ -75,6 +75,7 @@ property_color  (bg_color, _("Background Color"), "white")
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     maze
 #define GEGL_OP_C_SOURCE maze.c
 
 #include "gegl-op.h"

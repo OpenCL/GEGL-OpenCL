@@ -37,6 +37,7 @@ property_double (scale, _("Scale"), 4.0)
 #else
 
 #define GEGL_OP_META
+#define GEGL_OP_NAME     unsharp_mask
 #define GEGL_OP_C_SOURCE unsharp-mask.c
 
 #include "gegl-op.h"

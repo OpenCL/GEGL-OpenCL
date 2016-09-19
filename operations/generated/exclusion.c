@@ -41,7 +41,8 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE        "exclusion.c"
+#define GEGL_OP_NAME         exclusion
+#define GEGL_OP_C_FILE       "exclusion.c"
 
 #include "gegl-op.h"
 

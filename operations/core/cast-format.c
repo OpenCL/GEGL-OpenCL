@@ -30,6 +30,7 @@ property_format (output_format, _("Output format"), NULL)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     cast_format
 #define GEGL_OP_C_SOURCE cast-format.c
 
 #include "gegl-op.h"

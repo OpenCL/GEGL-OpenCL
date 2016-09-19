@@ -26,6 +26,7 @@
 
 #define GEGL_OP_POINT_COMPOSER
 #define GEGL_OP_C_SOURCE weighted-blend.c
+#define GEGL_OP_NAME     weighted_blend
 
 #include "gegl-op.h"
 

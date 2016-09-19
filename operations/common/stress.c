@@ -53,6 +53,7 @@ property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     stress
 #define GEGL_OP_C_SOURCE stress.c
 
 #include "gegl-op.h"

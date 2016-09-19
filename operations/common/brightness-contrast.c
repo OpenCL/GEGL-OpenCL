@@ -48,6 +48,10 @@ property_double (brightness, _("Brightness"), 0.0)
 
 #define GEGL_OP_POINT_FILTER
 
+/* The C prefix used for some generated functions
+ */
+#define GEGL_OP_NAME     brightness_contrast
+
 /* We specify the file we're in, this is needed to make the code
  * generation for the properties work.
  */

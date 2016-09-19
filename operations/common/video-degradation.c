@@ -64,6 +64,7 @@ property_boolean (rotated, _("Rotated"), FALSE)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     video_degradation
 #define GEGL_OP_C_SOURCE video-degradation.c
 
 #include "gegl-op.h"

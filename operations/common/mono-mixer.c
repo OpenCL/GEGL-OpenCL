@@ -40,6 +40,7 @@ property_double (blue, _("Blue Channel Multiplier"), 0.333)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     mono_mixer
 #define GEGL_OP_C_SOURCE mono-mixer.c
 
 #include "gegl-op.h"

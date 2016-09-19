@@ -30,6 +30,7 @@ property_string (values, _("Values"), "")
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     svg_matrix
 #define GEGL_OP_C_SOURCE svg-matrix.c
 
 #include "gegl-op.h"

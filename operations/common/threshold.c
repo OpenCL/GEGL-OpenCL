@@ -30,6 +30,7 @@ property_double (value, _("Threshold"), 0.5)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME     threshold
 #define GEGL_OP_C_SOURCE threshold.c
 
 #include "gegl-op.h"

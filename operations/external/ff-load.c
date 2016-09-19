@@ -54,6 +54,7 @@ property_audio_fragment (audio, _("audio"), 0)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME ff_load
 #define GEGL_OP_C_SOURCE ff-load.c
 
 #include "gegl-op.h"

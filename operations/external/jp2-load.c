@@ -30,6 +30,7 @@ property_uri (uri, _("URI"), "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME jp2_load
 #define GEGL_OP_C_SOURCE jp2-load.c
 
 #include <gegl-op.h>

@@ -57,6 +57,7 @@ property_path (d, _("Vector"), NULL)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     path
 #define GEGL_OP_C_SOURCE path.c
 
 #include "gegl-plugin.h"

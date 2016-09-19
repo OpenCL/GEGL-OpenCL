@@ -27,6 +27,7 @@ property_file_path (path, _("File"), "/tmp/gegl-buffer.gegl")
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME     gegl_buffer_save_op
 #define GEGL_OP_C_SOURCE gegl-buffer-save-op.c
 
 #include "gegl-op.h"

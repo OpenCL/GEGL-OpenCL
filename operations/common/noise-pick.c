@@ -40,6 +40,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     noise_pick
 #define GEGL_OP_C_SOURCE noise-pick.c
 
 #include "gegl-op.h"

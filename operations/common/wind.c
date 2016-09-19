@@ -69,6 +69,7 @@ property_int (strength, _("Strength"), 10)
 
 #define GEGL_OP_FILTER
 #define GEGL_OP_C_SOURCE wind.c
+#define GEGL_OP_NAME     wind
 
 #include "gegl-op.h"
 #include <math.h>

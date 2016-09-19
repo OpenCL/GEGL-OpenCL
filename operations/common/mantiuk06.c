@@ -43,6 +43,7 @@ property_double (detail, _("Detail"), 1.0)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     mantiuk06
 #define GEGL_OP_C_SOURCE mantiuk06.c
 
 #include "gegl-op.h"

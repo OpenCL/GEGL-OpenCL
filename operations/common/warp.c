@@ -52,6 +52,7 @@ property_enum   (behavior, _("Behavior"),
 
 #define GEGL_OP_FILTER
 #define GEGL_OP_C_SOURCE warp.c
+#define GEGL_OP_NAME     warp
 
 #include "gegl-plugin.h"
 #include "gegl-path.h"

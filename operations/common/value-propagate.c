@@ -77,7 +77,8 @@ property_boolean (alpha, _("Propagating alpha channel"), TRUE)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_SOURCE       value-propagate.c
+#define GEGL_OP_NAME     value_propagate
+#define GEGL_OP_C_SOURCE value-propagate.c
 
 #include "gegl-op.h"
 

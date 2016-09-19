@@ -47,6 +47,7 @@ property_boolean (reset_origin, _("Reset origin"), FALSE)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     crop
 #define GEGL_OP_C_SOURCE crop.c
 
 #include "gegl-op.h"

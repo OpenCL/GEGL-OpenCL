@@ -51,6 +51,7 @@ description(_("Sampler used internally"))
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     npd
 #define GEGL_OP_C_SOURCE npd.c
 
 #include "gegl-op.h"

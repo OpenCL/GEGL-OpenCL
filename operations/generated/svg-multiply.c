@@ -41,7 +41,8 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE        "svg-multiply.c"
+#define GEGL_OP_NAME         svg_multiply
+#define GEGL_OP_C_FILE       "svg-multiply.c"
 
 #include "gegl-op.h"
 

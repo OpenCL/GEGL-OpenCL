@@ -36,6 +36,7 @@ property_double (sharpness, _("Sharpness"), 0.85)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     softglow
 #define GEGL_OP_C_SOURCE softglow.c
 
 #include "gegl-op.h"

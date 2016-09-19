@@ -80,6 +80,7 @@ property_double  (ambient, _("Ambient lighting factor"), 0.0)
 #else
 
 #define GEGL_OP_COMPOSER
+#define GEGL_OP_NAME     bump_map
 #define GEGL_OP_C_SOURCE bump-map.c
 
 #include "gegl-op.h"

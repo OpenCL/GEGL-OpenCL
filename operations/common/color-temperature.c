@@ -39,6 +39,7 @@ property_double (intended_temperature, _("Intended temperature"), 6500)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     color_temperature
 #define GEGL_OP_C_SOURCE color-temperature.c
 
 #include "gegl-op.h"

@@ -77,6 +77,7 @@ property_int (me_subpel_quality, _("me-subpel-quality"), 0)
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME ff_save
 #define GEGL_OP_C_SOURCE ff-save.c
 
 #include "gegl-op.h"

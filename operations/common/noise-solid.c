@@ -80,6 +80,7 @@ property_int (height, _("Height"), 768)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     noise_solid
 #define GEGL_OP_C_SOURCE noise-solid.c
 
 #include "gegl-op.h"

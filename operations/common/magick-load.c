@@ -29,6 +29,7 @@ property_file_path (path, _("File"), "/tmp/gegl-logo.svg")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     magick_load
 #define GEGL_OP_C_SOURCE magick-load.c
 
 #include "gegl-op.h"

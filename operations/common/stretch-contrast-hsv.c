@@ -28,6 +28,7 @@
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     stretch_contrast_hsv
 #define GEGL_OP_C_SOURCE stretch-contrast-hsv.c
 
 #include "gegl-op.h"

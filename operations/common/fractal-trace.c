@@ -68,6 +68,7 @@ property_enum   (abyss_policy, _("Abyss policy"),
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     fractal_trace
 #define GEGL_OP_C_SOURCE fractal-trace.c
 
 #include "gegl-op.h"

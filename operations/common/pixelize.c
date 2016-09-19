@@ -66,6 +66,7 @@ property_color  (background, _("Background color"), "white")
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     pixelize
 #define GEGL_OP_C_SOURCE pixelize.c
 
 #include "gegl-op.h"

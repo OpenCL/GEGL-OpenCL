@@ -94,6 +94,7 @@ property_int    (height, _("Height"), 200)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     diffraction_patterns
 #define GEGL_OP_C_SOURCE diffraction-patterns.c
 
 #include "gegl-op.h"

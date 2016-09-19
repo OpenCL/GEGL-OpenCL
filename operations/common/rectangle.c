@@ -51,6 +51,7 @@ property_color  (color, _("Color"), "green")
 #else
 
 #define GEGL_OP_META
+#define GEGL_OP_NAME     rectangle
 #define GEGL_OP_C_SOURCE rectangle.c
 #include "gegl-op.h"
 

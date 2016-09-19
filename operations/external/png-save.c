@@ -35,6 +35,7 @@ property_int    (bitdepth, _("Bitdepth"), 16)
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME png_save
 #define GEGL_OP_C_SOURCE png-save.c
 
 #include "gegl-op.h"

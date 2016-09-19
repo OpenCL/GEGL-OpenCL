@@ -27,6 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     invert_gamma
 #define GEGL_OP_C_SOURCE invert-gamma.c
 
 #include "gegl-op.h"

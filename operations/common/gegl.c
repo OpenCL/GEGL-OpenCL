@@ -32,6 +32,7 @@ property_string (error, _("Eeeeeek"), "")
 #else
 
 #define GEGL_OP_META
+#define GEGL_OP_NAME     gegl
 #define GEGL_OP_C_SOURCE gegl.c
 
 #include "gegl-op.h"

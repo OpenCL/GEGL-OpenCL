@@ -80,6 +80,7 @@ typedef struct
   GeglOperationSourceClass parent_class;
 } GeglOpClass;
 
+#define GEGL_OP_NAME     text
 #define GEGL_OP_C_SOURCE text.c
 #include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION (GEGL_TYPE_OPERATION_SOURCE)

@@ -61,6 +61,7 @@ property_enum   (sampler_type, _("Resampling method"),
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     panorama_projection
 #define GEGL_OP_C_SOURCE panorama-projection.c
 
 #include "config.h"

@@ -41,6 +41,7 @@ property_int (s_sigma, _("Blur radius"), 8)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     bilateral_filter_fast
 #define GEGL_OP_C_SOURCE bilateral-filter-fast.c
 
 #include "gegl-op.h"

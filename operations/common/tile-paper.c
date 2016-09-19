@@ -82,6 +82,7 @@ property_color (bg_color, _("Background color"), "rgba(0.0, 0.0, 0.0, 1.0)")
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     tile_paper
 #define GEGL_OP_C_SOURCE tile-paper.c
 
 #include "gegl-op.h"

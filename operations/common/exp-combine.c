@@ -52,6 +52,7 @@ typedef struct
 
 
 #define GEGL_OP_C_SOURCE exp-combine.c
+#define GEGL_OP_NAME     exp_combine
 #include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_FILTER)
 

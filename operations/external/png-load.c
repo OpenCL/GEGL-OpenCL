@@ -32,6 +32,7 @@ property_uri (uri, _("URI"), "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME png_load
 #define GEGL_OP_C_SOURCE png-load.c
 
 #include "gegl-op.h"

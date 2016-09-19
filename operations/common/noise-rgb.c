@@ -46,6 +46,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     noise_rgb
 #define GEGL_OP_C_SOURCE noise-rgb.c
 
 #include "gegl-op.h"

@@ -57,6 +57,7 @@ property_enum  (filter, _("Filter"),
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     gaussian_blur
 #define GEGL_OP_C_SOURCE gaussian-blur.c
 
 #include "gegl-op.h"

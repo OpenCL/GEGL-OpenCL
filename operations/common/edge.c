@@ -52,6 +52,7 @@ property_enum (border_behavior, _("Border behavior"),
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME        edge
 #define GEGL_OP_C_SOURCE    edge.c
 
 #include <math.h>

@@ -31,6 +31,7 @@ property_double (pct_black, _("Percent black"), 0.2)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     cartoon
 #define GEGL_OP_C_SOURCE cartoon.c
 
 #include "gegl-op.h"

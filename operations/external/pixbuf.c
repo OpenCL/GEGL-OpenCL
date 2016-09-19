@@ -29,6 +29,7 @@ property_object (pixbuf, _("Pixbuf"), GDK_TYPE_PIXBUF)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     pixbuf
 #define GEGL_OP_C_SOURCE pixbuf.c
 
 #include "gegl-op.h"

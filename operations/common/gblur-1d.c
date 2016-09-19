@@ -66,6 +66,7 @@ property_boolean (clip_extent, _("Clip to the input extent"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     gblur_1d
 #define GEGL_OP_C_SOURCE gblur-1d.c
 
 #include "gegl-op.h"

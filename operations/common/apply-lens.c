@@ -47,6 +47,7 @@ property_color (background_color, _("Background color"), "none")
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     apply_lens
 #define GEGL_OP_C_SOURCE apply-lens.c
 
 #include "gegl-op.h"

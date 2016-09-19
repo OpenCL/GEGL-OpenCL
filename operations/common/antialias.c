@@ -40,6 +40,7 @@
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     antialias
 #define GEGL_OP_C_SOURCE antialias.c
 
 #include "gegl-op.h"

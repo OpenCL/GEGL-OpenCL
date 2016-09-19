@@ -40,6 +40,7 @@ property_int (tile_height, _("Tile Height"), 25)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     tile_glass
 #define GEGL_OP_C_SOURCE tile-glass.c
 
 #include "gegl-op.h"

@@ -34,6 +34,7 @@ property_double (radius2, _("Radius 2"), 2.0)
 #else
 
 #define GEGL_OP_META
+#define GEGL_OP_NAME     difference_of_gaussians
 #define GEGL_OP_C_SOURCE difference-of-gaussians.c
 
 #include "gegl-op.h"

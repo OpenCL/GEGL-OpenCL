@@ -57,6 +57,7 @@ property_double (angle, _("Angle"), 5.0)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     motion_blur_circular
 #define GEGL_OP_C_SOURCE motion-blur-circular.c
 
 #include "gegl-op.h"

@@ -34,6 +34,7 @@ property_boolean (keep_sign,  _("Keep Sign"), TRUE)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     edge_sobel
 #define GEGL_OP_C_SOURCE edge-sobel.c
 
 #include "gegl-op.h"
