@@ -95,8 +95,8 @@ main (gint    argc,
                 "application-license", "GPL3",
                 NULL);
 
-  gegl_init (NULL, NULL);
   o = gegl_options_parse (argc, argv);
+  gegl_init (NULL, NULL);
 #ifdef HAVE_SPIRO
   gegl_path_spiro_init ();
 #endif
