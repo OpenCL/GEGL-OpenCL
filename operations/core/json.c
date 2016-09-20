@@ -35,6 +35,8 @@ Installed to, and loaded at runtime from
 dropshadow a good initial testcase?
 */
 
+//#define GEGL_OP_NAME json
+
 #include <json-glib/json-glib.h>
 #include <gegl-plugin.h>
 
@@ -605,6 +607,14 @@ static const GeglModuleInfo modinfo =
 gboolean                gegl_module_register (GTypeModule *module);
 const GeglModuleInfo  * gegl_module_query    (GTypeModule *module);
 
+
+#ifdef GEGL_OP_BUNDLE
+
+G_MODULE_EXPORT void
+gegl_op_json_register_type (GTypeModule *module)
+{
+#else
+
 G_MODULE_EXPORT const GeglModuleInfo *
 gegl_module_query (GTypeModule *module)
 {
@@ -614,12 +624,15 @@ gegl_module_query (GTypeModule *module)
 G_MODULE_EXPORT gboolean
 gegl_module_register (GTypeModule *module)
 {
+#endif
   /* Ensure the module, or shared libs it pulls in is not unloaded
    * This because when GTypes are registered (like for json-glib),
    *  all referenced data must stay in memory until process exit */
   g_module_make_resident (GEGL_MODULE (module)->module);
 
   json_register_operations (module);
-
+#ifndef GEGL_OP_BUNDLE
   return TRUE;
+#endif
 }
+
