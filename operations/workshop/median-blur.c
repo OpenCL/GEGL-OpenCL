@@ -30,6 +30,7 @@ property_int  (radius, _("Radius"), 3)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME         median_blur
 #define GEGL_OP_C_SOURCE     median-blur.c
 
 #include "gegl-op.h"

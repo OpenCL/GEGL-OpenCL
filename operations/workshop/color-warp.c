@@ -61,6 +61,7 @@ property_double (amount, _("amount"), 1.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME color_warp
 #define GEGL_OP_C_SOURCE color-warp.c
 
 #include "gegl-op.h"

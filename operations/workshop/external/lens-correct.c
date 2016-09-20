@@ -94,6 +94,7 @@ property_double (alpha_d, _("Model alpha d"), 1.0)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     lens_correct
 #define GEGL_OP_C_SOURCE lens-correct.c
 
 #include "gegl-op.h"

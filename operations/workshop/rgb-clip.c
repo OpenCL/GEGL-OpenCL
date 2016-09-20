@@ -41,6 +41,7 @@ property_double (high_limit, _("High limit"), 1.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     rgb_clip
 #define GEGL_OP_C_SOURCE rgb-clip.c
 
 #include "gegl-op.h"

@@ -44,6 +44,7 @@ property_double (user_value, _("User value"), 1.0)
 #else
 
 #define GEGL_OP_COMPOSER
+#define GEGL_OP_NAME     gluas
 #define GEGL_OP_C_SOURCE gluas.c
 
 #include "gegl-op.h"

@@ -29,6 +29,7 @@ property_double (dampness, _("Dampness"), 0.95)
 
 #define GEGL_OP_FILTER
 #define GEGL_OP_NO_SOURCE
+#define GEGL_OP_NAME     vhsfix
 #define GEGL_OP_C_SOURCE vhsfix.c
 
 #include "gegl-op.h"

@@ -25,6 +25,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     unpremul
 #define GEGL_OP_C_SOURCE unpremul.c
 #define GEGLV4
 

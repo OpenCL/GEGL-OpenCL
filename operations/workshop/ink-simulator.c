@@ -67,6 +67,7 @@ property_int (debug_width, _("Debug width"), 0)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME ink_simulator
 #define GEGL_OP_C_SOURCE ink-simulator.c
 
 #include "gegl-op.h"

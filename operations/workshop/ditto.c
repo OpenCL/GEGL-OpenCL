@@ -31,6 +31,7 @@ property_enum (sampler_type, _("Sampler"), GeglSamplerType, gegl_sampler_type,
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME ditto
 #define GEGL_OP_C_SOURCE ditto.c
 
 #include "gegl-op.h"

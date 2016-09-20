@@ -28,6 +28,7 @@ property_string (path, _("File"), "/tmp/test.raw")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     rawbayer_load
 #define GEGL_OP_C_SOURCE rawbayer-load.c
 
 #include "gegl-op.h"
