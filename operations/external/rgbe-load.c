@@ -139,9 +139,11 @@ gegl_op_class_init (GeglOpClass *klass)
     NULL);
 
   gegl_operation_handlers_register_loader (
+    ".hdr", "gegl:rgbe-load");
+  gegl_operation_handlers_register_loader (
     "image/vnd.radiance", "gegl:rgbe-load");
   gegl_operation_handlers_register_loader (
-    ".hdr", "gegl:rgbe-load");
+    "image/x-hdr", "gegl:rgbe-load");
   gegl_operation_handlers_register_loader (
     ".pic", "gegl:rgbe-load");
 }
