@@ -1580,26 +1580,26 @@ gegl_buffer_copy2 (GeglBuffer          *src,
   if (src_rect->width == 0 || src_rect->height == 0)
     return;
 
-    {
-      GeglRectangle dest_rect_r = *dst_rect;
-      GeglBufferIterator *i;
-      gint offset_x = src_rect->x - dst_rect->x;
-      gint offset_y = src_rect->y - dst_rect->y;
+  {
+    GeglRectangle dest_rect_r = *dst_rect;
+    GeglBufferIterator *i;
+    gint offset_x = src_rect->x - dst_rect->x;
+    gint offset_y = src_rect->y - dst_rect->y;
 
-      dest_rect_r.width = src_rect->width;
-      dest_rect_r.height = src_rect->height;
+    dest_rect_r.width = src_rect->width;
+    dest_rect_r.height = src_rect->height;
 
-      i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format,
-                                    GEGL_ACCESS_WRITE, repeat_mode);
-      while (gegl_buffer_iterator_next (i))
-        {
-          GeglRectangle src_rect = i->roi[0];
-          src_rect.x += offset_x;
-          src_rect.y += offset_y;
-          gegl_buffer_iterate_read_dispatch (src, &src_rect, i->data[0], 0,
-                                             dst->soft_format, 0, repeat_mode);
-        }
-    }
+    i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format,
+                                  GEGL_ACCESS_WRITE, repeat_mode);
+    while (gegl_buffer_iterator_next (i))
+      {
+        GeglRectangle src_rect = i->roi[0];
+        src_rect.x += offset_x;
+        src_rect.y += offset_y;
+        gegl_buffer_iterate_read_dispatch (src, &src_rect, i->data[0], 0,
+                                           dst->soft_format, 0, repeat_mode);
+      }
+  }
 }
 
 void
