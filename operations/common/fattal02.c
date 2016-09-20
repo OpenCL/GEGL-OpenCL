@@ -1031,9 +1031,11 @@ fattal02_float_cmp (const void *_a,
   const gfloat a = *(gfloat *)_a,
                b = *(gfloat *)_b;
 
-  if (a < b) return -1;
-  if (a > b) return  1;
-             return  0;
+  if (a < b)
+    return -1;
+  if (a > b)
+    return  1;
+  return  0;
 }
 
 
