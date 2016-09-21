@@ -821,7 +821,10 @@ gegl_gblur_1d_process (GeglOperation       *operation,
           format == babl_format ("RaGaBaA float"))
         if (fir_cl_process(input, output, result, format,
                            cmatrix, clen, o->orientation, abyss_policy))
+        {
+          gegl_free (cmatrix);
           return TRUE;
+        }
 
       if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
         fir_hor_blur (input, result, output, cmatrix, clen, abyss_policy, format);
