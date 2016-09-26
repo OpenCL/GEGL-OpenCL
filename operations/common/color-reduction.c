@@ -23,15 +23,6 @@
 
 #ifdef GEGL_PROPERTIES
 
-enum_start (gegl_dither_strategy)
-  enum_value (GEGL_DITHER_NONE,             "none",             N_("None"))
-  enum_value (GEGL_DITHER_RANDOM,           "random",           N_("Random"))
-  enum_value (GEGL_DITHER_RESILIENT,        "resilient",        N_("Resilient"))
-  enum_value (GEGL_DITHER_RANDOM_COVARIANT, "random-covariant", N_("Random Covariant"))
-  enum_value (GEGL_DITHER_BAYER,            "bayer",            N_("Bayer"))
-  enum_value (GEGL_DITHER_FLOYD_STEINBERG,  "floyd-steinberg",  N_("Floyd-Steinberg"))
-enum_end (GeglDitherStrategy)
-
 property_int  (red_bits, _("Red bits"), 8)
     description(_("Number of bits for red channel"))
     value_range (1, 16)
@@ -48,9 +39,9 @@ property_int  (alpha_bits, _("Alpha bits"), 8)
     description(_("Number of bits for alpha channel"))
     value_range (1, 16)
 
-property_enum (dither_strategy, _("Dithering strategy"),
-               GeglDitherStrategy, gegl_dither_strategy, GEGL_DITHER_RESILIENT)
-    description (_("The dithering strategy to use"))
+property_enum (dither_method, _("Dithering method"),
+               GeglDitherMethod, gegl_dither_method, GEGL_DITHER_RESILIENT)
+    description (_("The dithering method to use"))
 
 property_seed (seed, _("Random seed"), rand)
 
@@ -380,7 +371,7 @@ process_standard (GeglBuffer          *input,
                   const GeglRectangle *result,
                   guint               *channel_bits,
                   GeglRandom          *rand,
-                  GeglDitherStrategy   dither_strategy)
+                  GeglDitherMethod     dither_method)
 {
   GeglBufferIterator *gi;
   guint               channel_mask [4];
@@ -398,7 +389,7 @@ process_standard (GeglBuffer          *input,
       guint    y;
       for (y = 0; y < gi->roi->height; y++)
         {
-          switch (dither_strategy)
+          switch (dither_method)
             {
             case GEGL_DITHER_NONE:
               process_row_no_dither (gi, channel_mask, channel_bits, y);
@@ -432,7 +423,7 @@ get_required_for_output (GeglOperation       *self,
 {
   GeglProperties *o = GEGL_PROPERTIES (self);
 
-  if (o->dither_strategy == GEGL_DITHER_FLOYD_STEINBERG)
+  if (o->dither_method == GEGL_DITHER_FLOYD_STEINBERG)
     return *gegl_operation_source_get_bounding_box (self, "input");
   else
     return *roi;
@@ -444,7 +435,7 @@ get_cached_region (GeglOperation       *self,
 {
   GeglProperties *o = GEGL_PROPERTIES (self);
 
-  if (o->dither_strategy == GEGL_DITHER_FLOYD_STEINBERG)
+  if (o->dither_method == GEGL_DITHER_FLOYD_STEINBERG)
     return *gegl_operation_source_get_bounding_box (self, "input");
   else
     return *roi;
@@ -465,9 +456,9 @@ process (GeglOperation       *operation,
   channel_bits [2] = o->blue_bits;
   channel_bits [3] = o->alpha_bits;
 
-  if (o->dither_strategy != GEGL_DITHER_FLOYD_STEINBERG)
+  if (o->dither_method != GEGL_DITHER_FLOYD_STEINBERG)
     process_standard (input, output, result, channel_bits,
-                      o->rand, o->dither_strategy);
+                      o->rand, o->dither_method);
   else
     process_floyd_steinberg (input, output, result, channel_bits);
 
@@ -487,7 +478,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "    <param name='green-bits'>2</param>"
     "    <param name='blue-bits'>2</param>"
     "    <param name='alpha-bits'>2</param>"
-    "    <param name='dither-strategy'>floyd-steinberg</param>"
+    "    <param name='dither-method'>floyd-steinberg</param>"
     "  </params>"
     "</node>"
     "<node operation='gegl:load'>"

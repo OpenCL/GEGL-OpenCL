@@ -77,6 +77,35 @@ gegl_access_mode_get_type (void)
 }
 
 GType
+gegl_dither_method_get_type (void)
+{
+  static GType etype = 0;
+
+  if (etype == 0)
+    {
+      static GEnumValue values[] = {
+        { GEGL_DITHER_NONE,             N_("None"),             "none"             },
+        { GEGL_DITHER_RANDOM,           N_("Random"),           "random"           },
+        { GEGL_DITHER_RESILIENT,        N_("Resilient"),        "resilient"        },
+        { GEGL_DITHER_RANDOM_COVARIANT, N_("Random Covariant"), "random-covariant" },
+        { GEGL_DITHER_BAYER,            N_("Bayer"),            "bayer"            },
+        { GEGL_DITHER_FLOYD_STEINBERG,  N_("Floyd-Steinberg"),  "floyd-steinberg"  },
+        { 0, NULL, NULL }
+      };
+      gint i;
+
+      for (i = 0; i < G_N_ELEMENTS (values); i++)
+        if (values[i].value_name)
+          values[i].value_name =
+            dgettext (GETTEXT_PACKAGE, values[i].value_name);
+
+      etype = g_enum_register_static ("GeglDitherMethod", values);
+    }
+
+  return etype;
+}
+
+GType
 gegl_orientation_get_type (void)
 {
   static GType etype = 0;
