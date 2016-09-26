@@ -23,6 +23,6 @@ gegl_core_la_SOURCES =\
 	json.c \
 	nop.c
 
-module.c: $(gegl_common_la_SOURCES)
-	$(top_srcdir)/tools/gen-loader.sh > module.c
+module.c: $(gegl_core_la_SOURCES)
+	$(top_srcdir)/tools/gen-loader.sh $^ > module.c
 

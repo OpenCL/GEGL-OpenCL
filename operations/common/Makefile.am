@@ -155,4 +155,4 @@ gegl_common_la_SOURCES =\
 	write-buffer.c
 
 module.c: $(gegl_common_la_SOURCES)
-	$(top_srcdir)/tools/gen-loader.sh > module.c
+	$(top_srcdir)/tools/gen-loader.sh $^ > module.c
