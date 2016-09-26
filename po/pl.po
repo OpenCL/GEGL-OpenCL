@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-08 04:44+0200\n"
-"PO-Revision-Date: 2016-09-08 04:45+0200\n"
+"POT-Creation-Date: 2016-09-27 01:14+0200\n"
+"PO-Revision-Date: 2016-09-27 01:15+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -154,7 +154,7 @@ msgstr ""
 "\tpozostałe: %s\n"
 "\t\n"
 
-#: ../bin/gegl-options.c:341
+#: ../bin/gegl-options.c:354
 #, c-format
 msgid ""
 "\n"
@@ -169,7 +169,7 @@ msgstr ""
 "\n"
 "\n"
 
-#: ../gegl/gegl-enums.c:33 ../operations/common/color-reduction.c:27
+#: ../gegl/gegl-enums.c:33 ../gegl/gegl-enums.c:87
 #: ../operations/common/fractal-explorer.c:93
 #: ../operations/common/gaussian-blur-iir.c:31
 #: ../operations/common/gblur-1d.c:31
@@ -207,34 +207,54 @@ msgstr "Zapis"
 msgid "Read/Write"
 msgstr "Odczyt/zapis"
 
-#: ../gegl/gegl-enums.c:87 ../operations/common/edge-sobel.c:27
+#: ../gegl/gegl-enums.c:88
+msgid "Random"
+msgstr "Losowo"
+
+#: ../gegl/gegl-enums.c:89
+msgid "Resilient"
+msgstr "Wytrzymałość"
+
+#: ../gegl/gegl-enums.c:90
+msgid "Random Covariant"
+msgstr "Losowy współzmienny"
+
+#: ../gegl/gegl-enums.c:91
+msgid "Bayer"
+msgstr "Bayera"
+
+#: ../gegl/gegl-enums.c:92
+msgid "Floyd-Steinberg"
+msgstr "Floyda-Steinberga"
+
+#: ../gegl/gegl-enums.c:116 ../operations/common/edge-sobel.c:27
 #: ../operations/common/noise-spread.c:29
 msgid "Horizontal"
 msgstr "Poziomy"
 
-#: ../gegl/gegl-enums.c:88 ../operations/common/edge-sobel.c:29
+#: ../gegl/gegl-enums.c:117 ../operations/common/edge-sobel.c:29
 #: ../operations/common/noise-spread.c:35
 msgid "Vertical"
 msgstr "Pionowy"
 
-#: ../gegl/gegl-enums.c:112
+#: ../gegl/gegl-enums.c:141
 msgid "Nearest"
 msgstr "Najbliższy"
 
-#: ../gegl/gegl-enums.c:113 ../operations/common/bump-map.c:33
+#: ../gegl/gegl-enums.c:142 ../operations/common/bump-map.c:33
 #: ../operations/common/sinus.c:64
 msgid "Linear"
 msgstr "Liniowy"
 
-#: ../gegl/gegl-enums.c:114
+#: ../gegl/gegl-enums.c:143
 msgid "Cubic"
 msgstr "Sześcienny"
 
-#: ../gegl/gegl-enums.c:115
+#: ../gegl/gegl-enums.c:144
 msgid "NoHalo"
 msgstr "NoHalo"
 
-#: ../gegl/gegl-enums.c:116
+#: ../gegl/gegl-enums.c:145
 msgid "LoHalo"
 msgstr "LoHalo"
 
@@ -339,11 +359,11 @@ msgstr "Zachowanie 2. składowej"
 msgid "Keep component 3"
 msgstr "Zachowanie 3. składowej"
 
-#: ../operations/common/alien-map.c:213
+#: ../operations/common/alien-map.c:214
 msgid "Alien Map"
 msgstr "Alien Map"
 
-#: ../operations/common/alien-map.c:215
+#: ../operations/common/alien-map.c:216
 msgid ""
 "Heavily distort images colors by applying trigonometric functions to map "
 "color values."
@@ -351,11 +371,11 @@ msgstr ""
 "Mocno zniekształca kolory obrazu przez zastosowanie funkcji "
 "trygonometrycznych na wartości mapy kolorów."
 
-#: ../operations/common/antialias.c:277
+#: ../operations/common/antialias.c:278
 msgid "Scale3X Antialiasing"
 msgstr "Wygładzanie Scale3X"
 
-#: ../operations/common/antialias.c:280
+#: ../operations/common/antialias.c:281
 msgid "Antialias using the Scale3X edge-extrapolation algorithm"
 msgstr "Wygładzanie za pomocą algorytmu ekstrapolacji krawędziowej Scale3X"
 
@@ -377,11 +397,11 @@ msgstr "Bez zmienienia obrazu w miejscach bez soczewki."
 msgid "Background color"
 msgstr "Kolor tła"
 
-#: ../operations/common/apply-lens.c:272
+#: ../operations/common/apply-lens.c:273
 msgid "Apply Lens"
 msgstr "Zastosuj soczewki"
 
-#: ../operations/common/apply-lens.c:275
+#: ../operations/common/apply-lens.c:276
 msgid ""
 "Simulates the optical distortion caused by having an elliptical lens over "
 "the image"
@@ -412,11 +432,11 @@ msgstr "Zachowywanie krawędzi"
 msgid "Amount of edge preservation"
 msgstr "Ilość zachowywania krawędzi"
 
-#: ../operations/common/bilateral-filter.c:289
+#: ../operations/common/bilateral-filter.c:290
 msgid "Bilateral Filter"
 msgstr "Filtr dwustronny"
 
-#: ../operations/common/bilateral-filter.c:292
+#: ../operations/common/bilateral-filter.c:293
 msgid ""
 "Like a gaussian blur; but where the contribution for each neighbourhood "
 "pixel is also weighted by the color difference with the original center "
@@ -433,11 +453,11 @@ msgstr "Gładkość"
 msgid "Level of smoothness"
 msgstr "Poziom gładkości"
 
-#: ../operations/common/bilateral-filter-fast.c:495
+#: ../operations/common/bilateral-filter-fast.c:496
 msgid "Bilateral Box Filter"
 msgstr "Dwustronny filtr prostopadłościenny"
 
-#: ../operations/common/bilateral-filter-fast.c:497
+#: ../operations/common/bilateral-filter-fast.c:498
 msgid ""
 "A fast approximation of bilateral filter, using a box-filter instead of a "
 "gaussian blur."
@@ -460,11 +480,11 @@ msgstr ""
 "Promień kwadratowego obszaru pikseli (szerokość i wysokość będą wynosiły "
 "promień*2+1)"
 
-#: ../operations/common/box-blur.c:393
+#: ../operations/common/box-blur.c:394
 msgid "Box Blur"
 msgstr "Rozmycie prostopadłościenne"
 
-#: ../operations/common/box-blur.c:395
+#: ../operations/common/box-blur.c:396
 msgid "Blur resulting from averaging the colors of a square neighbourhood."
 msgstr ""
 "Rozmycie wynikające z uśredniania kolorów sąsiedniego prostopadłościanu."
@@ -494,11 +514,11 @@ msgstr "Jasność"
 msgid "Amount to increase brightness"
 msgstr "O ile zwiększyć jasność"
 
-#: ../operations/common/brightness-contrast.c:150
+#: ../operations/common/brightness-contrast.c:154
 msgid "Brightness Contrast"
 msgstr "Jasność i kontrast"
 
-#: ../operations/common/brightness-contrast.c:152
+#: ../operations/common/brightness-contrast.c:156
 #, c-format
 msgid ""
 "Changes the light level and contrast. This operation operates in linear "
@@ -528,11 +548,11 @@ msgstr ""
 "Format biblioteki babl wyjściowego GeglBuffer, NULL spowoduje użycie "
 "wejściowego formatu bufora"
 
-#: ../operations/common/buffer-sink.c:82
+#: ../operations/common/buffer-sink.c:83
 msgid "Buffer Sink"
 msgstr "Wyjście buforu"
 
-#: ../operations/common/buffer-sink.c:84
+#: ../operations/common/buffer-sink.c:85
 msgid "Create a new GEGL buffer to write the resulting rendering."
 msgstr "Utwórz nowy bufor GEGL do zapisania wyniku renderowania."
 
@@ -544,11 +564,11 @@ msgstr "Bufor wejściowy"
 msgid "The GeglBuffer to load into the pipeline"
 msgstr "GeglBuffer do wczytania do potoku"
 
-#: ../operations/common/buffer-source.c:206
+#: ../operations/common/buffer-source.c:207
 msgid "Buffer Source"
 msgstr "Źródło buforu"
 
-#: ../operations/common/buffer-source.c:208
+#: ../operations/common/buffer-source.c:209
 msgid "Use an existing in-memory GeglBuffer as image source."
 msgstr "Użyj istniejącego GeglBuffer w pamięci jako źródło obrazu."
 
@@ -576,7 +596,7 @@ msgstr "Wzmocnienie"
 msgid "Compensate for darkening"
 msgstr "Wzmocnienie ciemnych kolorów"
 
-#: ../operations/common/bump-map.c:45 ../operations/common/invert-linear.c:73
+#: ../operations/common/bump-map.c:45 ../operations/common/invert-linear.c:74
 msgid "Invert"
 msgstr "Odwracanie"
 
@@ -632,11 +652,11 @@ msgstr "Poziom, który powinien reprezentować pełną przezroczystość"
 msgid "Ambient lighting factor"
 msgstr "Współczynnik otaczającego oświetlenia"
 
-#: ../operations/common/bump-map.c:454
+#: ../operations/common/bump-map.c:455
 msgid "Bump Map"
 msgstr "Mapa wypukłości"
 
-#: ../operations/common/bump-map.c:456
+#: ../operations/common/bump-map.c:457
 msgid ""
 "This plug-in uses the algorithm described by John Schlag, \"Fast Embossing "
 "Effects on Raster Image Data\" in Graphics GEMS IV (ISBN 0-12-336155-9). It "
@@ -682,7 +702,7 @@ msgstr ""
 "Liczba iteracji, wyższa liczba iteracji dostarcza wyniki z mniejszym szumem "
 "kosztem większej siły obliczeniowej"
 
-#: ../operations/common/c2g.c:394
+#: ../operations/common/c2g.c:395
 msgid ""
 "Color to grayscale conversion, uses envelopes formed with the STRESS "
 "approach to perform local color-difference preserving grayscale generation."
@@ -699,11 +719,11 @@ msgstr "Promień maski"
 msgid "Percent black"
 msgstr "Procent czerni"
 
-#: ../operations/common/cartoon.c:335
+#: ../operations/common/cartoon.c:336
 msgid "Cartoon"
 msgstr "Film rysunkowy"
 
-#: ../operations/common/cartoon.c:337
+#: ../operations/common/cartoon.c:338
 msgid ""
 "Simulates a cartoon, its result is similar to a black felt pen drawing "
 "subsequently shaded with color. This is achieved by enhancing edges and "
@@ -792,11 +812,11 @@ msgstr "Niebieski w kanale niebieskiego"
 msgid "Set the blue amount for the blue channel"
 msgstr "Ilość niebieskiego w kanale niebieskiego"
 
-#: ../operations/common/channel-mixer.c:266
+#: ../operations/common/channel-mixer.c:267
 msgid "Channel Mixer"
 msgstr "Mikser kanałów"
 
-#: ../operations/common/channel-mixer.c:268
+#: ../operations/common/channel-mixer.c:269
 msgid ""
 "Remix colors; by defining relative contributions from source components."
 msgstr ""
@@ -878,15 +898,15 @@ msgstr "Format biblioteki babl"
 msgid "The babl format of the output"
 msgstr "Format biblioteki babl wyjścia"
 
-#: ../operations/common/checkerboard.c:345
+#: ../operations/common/checkerboard.c:346
 msgid "Checkerboard"
 msgstr "Szachownica"
 
-#: ../operations/common/checkerboard.c:347
+#: ../operations/common/checkerboard.c:348
 msgid "Create a checkerboard pattern"
 msgstr "Utwórz wzór szachownicy"
 
-#: ../operations/common/color.c:24 ../operations/common/color.c:90
+#: ../operations/common/color.c:24 ../operations/common/color.c:91
 #: ../operations/common/color-to-alpha.c:28
 #: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
 #: ../operations/common/rectangle.c:48 ../operations/common/supernova.c:60
@@ -897,7 +917,7 @@ msgstr "Utwórz wzór szachownicy"
 msgid "Color"
 msgstr "Kolor"
 
-#: ../operations/common/color.c:93
+#: ../operations/common/color.c:94
 msgid ""
 "Generates a buffer entirely filled with the specified color, use gegl:crop "
 "to get smaller dimensions."
@@ -905,11 +925,11 @@ msgstr ""
 "Tworzy bufor całkowicie wypełniony podanym kolorem, należy użyć działania "
 "„gegl:crop”, aby osiągnąć mniejsze wymiary."
 
-#: ../operations/common/color-enhance.c:235
+#: ../operations/common/color-enhance.c:236
 msgid "Color Enhance"
 msgstr "Uwydatnianie koloru"
 
-#: ../operations/common/color-enhance.c:238
+#: ../operations/common/color-enhance.c:239
 msgid ""
 "Stretch color chroma to cover maximum possible range, keeping hue and "
 "lightness untouched."
@@ -957,11 +977,11 @@ msgstr "Próg niebieskiego"
 msgid "Blue threshold of the input color"
 msgstr "Próg niebieskiego koloru wejściowego"
 
-#: ../operations/common/color-exchange.c:243
+#: ../operations/common/color-exchange.c:244
 msgid "Exchange color"
 msgstr "Wymień kolor"
 
-#: ../operations/common/color-exchange.c:246
+#: ../operations/common/color-exchange.c:247
 msgid ""
 "Exchange one color with another, optionally setting a threshold to convert "
 "from one shade to another."
@@ -969,68 +989,48 @@ msgstr ""
 "Wymień kolor z innym, opcjonalnie ustawiając próg do konwersji z jednego "
 "odcienia do innego."
 
-#: ../operations/common/color-reduction.c:28
-msgid "Random"
-msgstr "Losowo"
-
-#: ../operations/common/color-reduction.c:29
-msgid "Resilient"
-msgstr "Wytrzymałość"
-
-#: ../operations/common/color-reduction.c:30
-msgid "Random Covariant"
-msgstr "Losowy współzmienny"
-
-#: ../operations/common/color-reduction.c:31
-msgid "Bayer"
-msgstr "Bayera"
-
-#: ../operations/common/color-reduction.c:32
-msgid "Floyd-Steinberg"
-msgstr "Floyda-Steinberga"
-
-#: ../operations/common/color-reduction.c:35
+#: ../operations/common/color-reduction.c:26
 msgid "Red bits"
 msgstr "Czerwone bity"
 
-#: ../operations/common/color-reduction.c:36
+#: ../operations/common/color-reduction.c:27
 msgid "Number of bits for red channel"
 msgstr "Liczba bitów dla kanału czerwieni"
 
-#: ../operations/common/color-reduction.c:39
+#: ../operations/common/color-reduction.c:30
 msgid "Green bits"
 msgstr "Zielone bity"
 
-#: ../operations/common/color-reduction.c:40
+#: ../operations/common/color-reduction.c:31
 msgid "Number of bits for green channel"
 msgstr "Liczba bitów dla kanału zieleni"
 
-#: ../operations/common/color-reduction.c:43
+#: ../operations/common/color-reduction.c:34
 msgid "Blue bits"
 msgstr "Niebieskie bity"
 
-#: ../operations/common/color-reduction.c:44
+#: ../operations/common/color-reduction.c:35
 msgid "Number of bits for blue channel"
 msgstr "Liczba bitów dla kanału niebieskiego"
 
-#: ../operations/common/color-reduction.c:47
+#: ../operations/common/color-reduction.c:38
 msgid "Alpha bits"
 msgstr "Bity alfy"
 
-#: ../operations/common/color-reduction.c:48
+#: ../operations/common/color-reduction.c:39
 msgid "Number of bits for alpha channel"
 msgstr "Liczba bitów dla kanału alfy"
 
-#: ../operations/common/color-reduction.c:51
-msgid "Dithering strategy"
-msgstr "Strategia rozsiewania"
+#: ../operations/common/color-reduction.c:42
+msgid "Dithering method"
+msgstr "Metoda rozsiewania"
 
-#: ../operations/common/color-reduction.c:53
-msgid "The dithering strategy to use"
-msgstr "Używana strategia rozsiewania"
+#: ../operations/common/color-reduction.c:44
+msgid "The dithering method to use"
+msgstr "Używana metoda rozsiewania"
 
 #. XXX: what?
-#: ../operations/common/color-reduction.c:55 ../operations/common/cubism.c:42
+#: ../operations/common/color-reduction.c:46 ../operations/common/cubism.c:42
 #: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
 #: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
 #: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
@@ -1043,11 +1043,11 @@ msgstr "Używana strategia rozsiewania"
 msgid "Random seed"
 msgstr "Ziarno losowości"
 
-#: ../operations/common/color-reduction.c:509
+#: ../operations/common/color-reduction.c:501
 msgid "Color Reduction"
 msgstr "Redukcja kolorów"
 
-#: ../operations/common/color-reduction.c:511
+#: ../operations/common/color-reduction.c:503
 msgid ""
 "Reduce the number of colors in the image, by reducing the bits per channel "
 "(colors and alpha). Different dithering methods can be specified to "
@@ -1135,7 +1135,7 @@ msgstr "Wartość barwy dla powyższych ustawień szarości"
 
 #: ../operations/common/color-rotate.c:84 ../operations/common/fattal02.c:41
 #: ../operations/common/mantiuk06.c:35 ../operations/common/noise-hsv.c:33
-#: ../operations/common/saturation.c:217
+#: ../operations/common/saturation.c:218
 #: ../operations/external/lcms-from-profile.c:35
 msgid "Saturation"
 msgstr "Nasycenie"
@@ -1144,7 +1144,7 @@ msgstr "Nasycenie"
 msgid "Saturation value for above gray settings"
 msgstr "Wartość nasycenia dla powyższych ustawień szarości"
 
-#: ../operations/common/color-rotate.c:407
+#: ../operations/common/color-rotate.c:408
 msgid "Replace a range of colors with another"
 msgstr "Zastąp zakres kolorów innym"
 
@@ -1167,11 +1167,11 @@ msgstr "Docelowa temperatura"
 msgid "Corrected estimation of the temperature of the light source in Kelvin."
 msgstr "Poprawiony szacunek temperatury źródła światła w Kelvinach."
 
-#: ../operations/common/color-temperature.c:280
+#: ../operations/common/color-temperature.c:281
 msgid "Color Temperature"
 msgstr "Temperatura kolorów"
 
-#: ../operations/common/color-temperature.c:282
+#: ../operations/common/color-temperature.c:283
 msgid ""
 "Change the color temperature of the image, from an assumed original color "
 "temperature to an intended one."
@@ -1183,11 +1183,11 @@ msgstr ""
 msgid "The color to make transparent."
 msgstr "Kolor, który ma być przezroczysty."
 
-#: ../operations/common/color-to-alpha.c:253
+#: ../operations/common/color-to-alpha.c:254
 msgid "Color to Alpha"
 msgstr "Kolor na alfę"
 
-#: ../operations/common/color-to-alpha.c:256
+#: ../operations/common/color-to-alpha.c:257
 msgid "Convert a specified color to transparency, works best with white."
 msgstr "Konwertuj podany kolor do przezroczystości. Najlepiej działa z bielą."
 
@@ -1207,11 +1207,11 @@ msgstr "Krzywa"
 msgid "The contrast curve."
 msgstr "Krzywa kontrastu."
 
-#: ../operations/common/contrast-curve.c:256
+#: ../operations/common/contrast-curve.c:257
 msgid "Contrast Curve"
 msgstr "Krzywa kontrastu"
 
-#: ../operations/common/contrast-curve.c:259
+#: ../operations/common/contrast-curve.c:260
 msgid ""
 "Adjusts the contrast of a grayscale image with a curve specifying contrast "
 "for intensity."
@@ -1357,7 +1357,7 @@ msgstr "Ważenie alfa"
 msgid "Border"
 msgstr "Krawędź"
 
-#: ../operations/common/convolution-matrix.c:607
+#: ../operations/common/convolution-matrix.c:608
 msgid "Apply a generic 5x5 convolution matrix"
 msgstr "Zastosowuje ogólne zniekształcenie macierzowe 5×5"
 
@@ -1372,11 +1372,11 @@ msgstr ""
 "Już istniejący GeglBuffer do zapisania przychodzących danych bufora, lub "
 "NULL."
 
-#: ../operations/common/copy-buffer.c:151
+#: ../operations/common/copy-buffer.c:152
 msgid "Copy Buffer"
 msgstr "Skopiuj bufor"
 
-#: ../operations/common/copy-buffer.c:153
+#: ../operations/common/copy-buffer.c:154
 msgid "Writes image data to an already existing buffer"
 msgstr "Zapisuje dane obrazu do już istniejącego bufora"
 
@@ -1396,11 +1396,11 @@ msgstr "Nasycenie kafla"
 msgid "Expand tiles by this amount"
 msgstr "Rozszerz kafle o tę ilość"
 
-#: ../operations/common/cubism.c:612
+#: ../operations/common/cubism.c:613
 msgid "Cubism"
 msgstr "Kubizm"
 
-#: ../operations/common/cubism.c:616
+#: ../operations/common/cubism.c:617
 msgid ""
 "Convert the image into randomly rotated square blobs, somehow resembling a "
 "cubist painting style"
@@ -1440,11 +1440,11 @@ msgstr "Rozmiar bloku"
 msgid "Block size of deinterlacing rows/columns"
 msgstr "Rozmiar bloku rzędów/kolumn usuwanego przeplotu"
 
-#: ../operations/common/deinterlace.c:331
+#: ../operations/common/deinterlace.c:332
 msgid "Deinterlace"
 msgstr "Usuń przeplot"
 
-#: ../operations/common/deinterlace.c:335
+#: ../operations/common/deinterlace.c:336
 msgid "Fix images where every other row or column is missing"
 msgstr "Napraw obrazy, w których brakuje co drugiego rzędu lub kolumny"
 
@@ -1456,11 +1456,11 @@ msgstr "Promień 1"
 msgid "Radius 2"
 msgstr "Promień 2"
 
-#: ../operations/common/difference-of-gaussians.c:85
+#: ../operations/common/difference-of-gaussians.c:86
 msgid "Difference of Gaussians"
 msgstr "Różnicowe rozmycie Gaussa"
 
-#: ../operations/common/difference-of-gaussians.c:87
+#: ../operations/common/difference-of-gaussians.c:88
 msgid ""
 "Edge detection with control of edge thickness, based on the difference of "
 "two gaussian blurs"
@@ -1569,11 +1569,11 @@ msgstr "Szerokość tworzonego bufora"
 msgid "Height of the generated buffer"
 msgstr "Wysokość tworzonego bufora"
 
-#: ../operations/common/diffraction-patterns.c:251
+#: ../operations/common/diffraction-patterns.c:252
 msgid "Diffraction Patterns"
 msgstr "Desenie dyfrakcyjne"
 
-#: ../operations/common/diffraction-patterns.c:255
+#: ../operations/common/diffraction-patterns.c:256
 msgid "Generate diffraction patterns"
 msgstr "Utwórz desenie dyfrakcyjne"
 
@@ -1631,11 +1631,11 @@ msgstr "Przesunięcie na osi Y"
 msgid "Displace multiplier for Y or tangent (degrees) direction"
 msgstr "Mnożnik przesunięcia dla osi Y lub kierunku stycznej (w stopniach)"
 
-#: ../operations/common/displace.c:374
+#: ../operations/common/displace.c:375
 msgid "Displace"
 msgstr "Przesuń"
 
-#: ../operations/common/displace.c:377
+#: ../operations/common/displace.c:378
 msgid "Displace pixels as indicated by displacement maps"
 msgstr "Przesuń piksele według wskazań map przesuwania"
 
@@ -1647,7 +1647,7 @@ msgstr "Tytuł okna"
 msgid "Title to be given to output window"
 msgstr "Tytuł nadany oknu wyjściowemu"
 
-#: ../operations/common/display.c:141
+#: ../operations/common/display.c:142
 msgid "Display the input buffer in a window."
 msgstr "Wyświetl bufor wejściowy w oknie."
 
@@ -1691,11 +1691,11 @@ msgstr "Liczba obliczeń dla uśredniania odcieni szarości"
 msgid "Normalize output to range 0.0 to 1.0."
 msgstr "Normalizacja wyjścia do zakresu 0,0 do 1,0."
 
-#: ../operations/common/distance-transform.c:426
+#: ../operations/common/distance-transform.c:427
 msgid "Distance Transform"
 msgstr "Przekształcenie odległości"
 
-#: ../operations/common/distance-transform.c:428
+#: ../operations/common/distance-transform.c:429
 msgid "Calculate a distance transform"
 msgstr "Oblicz przekształcenie odległości"
 
@@ -1727,13 +1727,13 @@ msgstr "Kolor cienia (domyślnie „black” — czarny)"
 #. * for example)
 #.
 #: ../operations/common/dropshadow.c:49 ../operations/common/layer.c:33
-#: ../operations/common/opacity.c:25 ../operations/common/opacity.c:306
+#: ../operations/common/opacity.c:25 ../operations/common/opacity.c:307
 #: ../operations/external/vector-fill.c:29
 #: ../operations/external/vector-stroke.c:34
 msgid "Opacity"
 msgstr "Krycie"
 
-#: ../operations/common/dropshadow.c:110
+#: ../operations/common/dropshadow.c:111
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Tworzy efekt cienia na buforze wejściowym"
 
@@ -1785,19 +1785,19 @@ msgstr "Zachowanie krawędzi"
 msgid "Edge detection behavior"
 msgstr "Zachowanie wykrywania krawędzi"
 
-#: ../operations/common/edge.c:350
+#: ../operations/common/edge.c:351
 msgid "Edge Detection"
 msgstr "Wykrywanie krawędzi"
 
-#: ../operations/common/edge.c:353
+#: ../operations/common/edge.c:354
 msgid "Several simple methods for detecting edges"
 msgstr "Kilka prostych metod wykrywania krawędzi"
 
-#: ../operations/common/edge-laplace.c:406
+#: ../operations/common/edge-laplace.c:407
 msgid "Laplacian Edge Detection"
 msgstr "Wykrywanie krawędzi laplace"
 
-#: ../operations/common/edge-laplace.c:409
+#: ../operations/common/edge-laplace.c:410
 msgid "High-resolution edge detection"
 msgstr "Wykrywanie krawędzi wysokiej rozdzielczości"
 
@@ -1813,15 +1813,15 @@ msgstr ""
 "Zachowywanie ujemnych wartości w wyniku. Kiedy jest wyłączone, to zamiast "
 "tego zostanie użyta bezwzględna wartość wyniku."
 
-#: ../operations/common/edge-sobel.c:398
+#: ../operations/common/edge-sobel.c:399
 msgid "Sobel Edge Detection"
 msgstr "Wykrywanie krawędzi Sobel"
 
-#: ../operations/common/edge-sobel.c:400
+#: ../operations/common/edge-sobel.c:401
 msgid "Specialized direction-dependent edge detection"
 msgstr "Wyspecjalizowane wykrywanie krawędzi zależne od kierunku"
 
-#: ../operations/common/emboss.c:26 ../operations/common/emboss.c:266
+#: ../operations/common/emboss.c:26 ../operations/common/emboss.c:267
 msgid "Emboss"
 msgstr "Wytłocz"
 
@@ -1849,7 +1849,7 @@ msgstr "Kąt wysokości (w stopniach)"
 msgid "Filter width"
 msgstr "Szerokość filtru"
 
-#: ../operations/common/emboss.c:269
+#: ../operations/common/emboss.c:270
 msgid "Simulates an image created by embossing"
 msgstr "Symuluje obraz utworzony przez wytłaczanie"
 
@@ -1861,11 +1861,11 @@ msgstr "Rozdzielczość w pikselach"
 msgid "Limit line width"
 msgstr "Ograniczenie szerokości linii"
 
-#: ../operations/common/engrave.c:199
+#: ../operations/common/engrave.c:200
 msgid "Engrave"
 msgstr "Graweruj"
 
-#: ../operations/common/engrave.c:202
+#: ../operations/common/engrave.c:203
 msgid "Simulate an antique engraving"
 msgstr "Symuluje antyczne grawerowanie"
 
@@ -1893,16 +1893,16 @@ msgstr "Sigma wagi"
 msgid "Weight distribution sigma controlling response contributions"
 msgstr "Sigma dystrybucji wagi kontrolująca udział odpowiedzi"
 
-#: ../operations/common/exp-combine.c:1269
+#: ../operations/common/exp-combine.c:1270
 msgid "Combine Exposures"
 msgstr "Połącz ekspozycje"
 
-#: ../operations/common/exp-combine.c:1272
+#: ../operations/common/exp-combine.c:1273
 msgid "Combine multiple scene exposures into one high dynamic range image."
 msgstr ""
 "Połącz wiele ekspozycji scen w jeden obraz o wysokim zakresie dynamicznym."
 
-#: ../operations/common/exposure.c:25 ../operations/common/exposure.c:186
+#: ../operations/common/exposure.c:25 ../operations/common/exposure.c:187
 msgid "Exposure"
 msgstr "Ekspozycja"
 
@@ -1918,7 +1918,7 @@ msgstr "Dodano wartość przesunięcia"
 msgid "Gamma adjustment"
 msgstr "Dostosowanie gammy"
 
-#: ../operations/common/exposure.c:188
+#: ../operations/common/exposure.c:189
 msgid ""
 "Changes Exposure of an image, allows stepping HDR and photographs up/down in "
 "stops. "
@@ -1956,11 +1956,11 @@ msgstr "Szum"
 msgid "Gradient threshold for lowering detail enhancement"
 msgstr "Próg gradientu do zmniejszania uwydatniania szczegółów"
 
-#: ../operations/common/fattal02.c:1327
+#: ../operations/common/fattal02.c:1330
 msgid "Fattal et al. 2002 Tone Mapping"
 msgstr "Mapowanie odcieni Fattala i innych 2002"
 
-#: ../operations/common/fattal02.c:1330
+#: ../operations/common/fattal02.c:1333
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator attenuates the magnitudes of local image "
@@ -2119,16 +2119,16 @@ msgstr "Liczba kolorów"
 msgid "Loglog smoothing"
 msgstr "Wygładzanie loglog"
 
-#: ../operations/common/fractal-explorer.c:371
+#: ../operations/common/fractal-explorer.c:372
 #, c-format
 msgid "Unsupported fractal type: %d"
 msgstr "Nieobsługiwany typ fraktala: %d"
 
-#: ../operations/common/fractal-explorer.c:428
+#: ../operations/common/fractal-explorer.c:429
 msgid "Fractal Explorer"
 msgstr "Przeglądarka fraktali"
 
-#: ../operations/common/fractal-explorer.c:432
+#: ../operations/common/fractal-explorer.c:433
 msgid ""
 "Rendering of multiple different fractal systems, with configurable coloring "
 "options."
@@ -2201,15 +2201,15 @@ msgstr "Długość przeskoku"
 msgid "How to deal with pixels outside of the input buffer"
 msgstr "Jak radzić sobie z pikselami spoza bufora wejściowego"
 
-#: ../operations/common/fractal-trace.c:179
+#: ../operations/common/fractal-trace.c:180
 msgid "Unsupported fractal type"
 msgstr "Nieobsługiwany typ fraktala"
 
-#: ../operations/common/fractal-trace.c:260
+#: ../operations/common/fractal-trace.c:261
 msgid "Fractal Trace"
 msgstr "Śledzenie fraktala"
 
-#: ../operations/common/fractal-trace.c:264
+#: ../operations/common/fractal-trace.c:265
 msgid "Transform the image with the fractals"
 msgstr "Zniekształć obraz za pomocą fraktali"
 
@@ -2261,11 +2261,11 @@ msgid "Optional parameter to override the automatic selection of blur filter"
 msgstr ""
 "Opcjonalny parametr do zastąpienia automatycznego wyboru filtru rozmycia"
 
-#: ../operations/common/gaussian-blur.c:703
+#: ../operations/common/gaussian-blur.c:704
 msgid "Gaussian Blur"
 msgstr "Rozmycie Gaussa"
 
-#: ../operations/common/gaussian-blur.c:705
+#: ../operations/common/gaussian-blur.c:706
 msgid ""
 "Each result pixel is the average of the neighbouring pixels weighted by a "
 "normal distribution with specified standard deviation."
@@ -2294,8 +2294,8 @@ msgstr "Kadrowanie do obszaru wejściowego"
 msgid "Should the output extent be clipped to the input extent"
 msgstr "Czy kadrować obszar wyjściowy do obszaru wejściowego"
 
-#: ../operations/common/gaussian-blur-iir.c:118
-#: ../operations/common/gblur-1d.c:891
+#: ../operations/common/gaussian-blur-iir.c:119
+#: ../operations/common/gblur-1d.c:895
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
@@ -2311,11 +2311,11 @@ msgstr "Maksymalna delta"
 msgid "Maximum delta"
 msgstr "Maksymalna delta"
 
-#: ../operations/common/gaussian-blur-selective.c:259
+#: ../operations/common/gaussian-blur-selective.c:260
 msgid "Selective Gaussian Blur"
 msgstr "Wybiórcze rozmycie Gaussa"
 
-#: ../operations/common/gaussian-blur-selective.c:262
+#: ../operations/common/gaussian-blur-selective.c:263
 msgid "Blur neighboring pixels, but only in low-contrast areas"
 msgstr "Rozmyj sąsiedni piksele, ale tylko w obszarach o niskim kontraście"
 
@@ -2350,7 +2350,7 @@ msgstr "Plik"
 msgid "Path of GeglBuffer file to load."
 msgstr "Ścieżka pliku GeglBuffer do wczytania."
 
-#: ../operations/common/gegl-buffer-load-op.c:89
+#: ../operations/common/gegl-buffer-load-op.c:90
 msgid "GeglBuffer file loader."
 msgstr "Wczytywanie plików GeglBuffer."
 
@@ -2358,7 +2358,7 @@ msgstr "Wczytywanie plików GeglBuffer."
 msgid "Target file path to write GeglBuffer to."
 msgstr "Ścieżka pliku docelowego do zapisania GeglBuffer."
 
-#: ../operations/common/gegl-buffer-save-op.c:63
+#: ../operations/common/gegl-buffer-save-op.c:64
 msgid "GeglBuffer file writer."
 msgstr "Zapisywanie plików GeglBuffer."
 
@@ -2384,11 +2384,11 @@ msgstr ""
 "Wystąpił problem składni lub programu przetwarzanych wartości właściwości. "
 "Mimo to większość powinna działać."
 
-#: ../operations/common/gegl.c:102
+#: ../operations/common/gegl.c:103
 msgid "GEGL graph"
 msgstr "Wykres GEGL"
 
-#: ../operations/common/gegl.c:104
+#: ../operations/common/gegl.c:105
 msgid ""
 "Do a chain of operations, with key=value pairs after each operation name to "
 "set properties. And aux=[ source filter ] for specifying a chain with a "
@@ -2398,11 +2398,11 @@ msgstr ""
 "ustawić właściwości. Oraz „aux=[ filtr źródłowy ]” do podania ciągu ze "
 "źródłem jako coś podłączonego do dodatkowego bloku."
 
-#: ../operations/common/grey.c:100
+#: ../operations/common/grey.c:101
 msgid "Make Grey"
 msgstr "Zmień na odcienie szarości"
 
-#: ../operations/common/grey.c:102
+#: ../operations/common/grey.c:103
 msgid "Turns the image grayscale"
 msgstr "Konwertuje obraz do odcieni szarości"
 
@@ -2426,11 +2426,11 @@ msgstr "Wysokość linii siatki w pikselach"
 msgid "Color of the grid lines"
 msgstr "Kolor linii siatki"
 
-#: ../operations/common/grid.c:156
+#: ../operations/common/grid.c:157
 msgid "Grid"
 msgstr "Siatka"
 
-#: ../operations/common/grid.c:159
+#: ../operations/common/grid.c:160
 msgid "Grid renderer"
 msgstr "Rysowanie siatki"
 
@@ -2442,11 +2442,11 @@ msgstr "Odchylenie standardowe"
 msgid "Contrast of high-pass"
 msgstr "Kontrast wysokiego przejścia"
 
-#: ../operations/common/high-pass.c:80
+#: ../operations/common/high-pass.c:81
 msgid "High Pass Filter"
 msgstr "Filtr wysokiego przejścia"
 
-#: ../operations/common/high-pass.c:83
+#: ../operations/common/high-pass.c:84
 msgid "Enhances fine details."
 msgstr "Uwydatnia drobne szczegóły."
 
@@ -2474,11 +2474,11 @@ msgstr "Typ iluzji"
 msgid "Type of illusion"
 msgstr "Typ iluzji"
 
-#: ../operations/common/illusion.c:267
+#: ../operations/common/illusion.c:268
 msgid "Illusion"
 msgstr "Iluzja"
 
-#: ../operations/common/illusion.c:270
+#: ../operations/common/illusion.c:271
 msgid "Superimpose many altered copies of the image."
 msgstr "Nałóż zmienione kopie obrazu na siebie."
 
@@ -2514,7 +2514,7 @@ msgstr "Średnia różnica (całkowita)"
 msgid "Average difference between all pixels."
 msgstr "Średnia różnica między wszystkimi pikselami."
 
-#: ../operations/common/image-compare.c:205
+#: ../operations/common/image-compare.c:206
 msgid ""
 "Compares if input and aux buffers are different. Results are saved in the "
 "properties."
@@ -2526,16 +2526,16 @@ msgstr ""
 msgid "Node"
 msgstr "Węzeł"
 
-#: ../operations/common/introspect.c:159
+#: ../operations/common/introspect.c:160
 msgid "GEGL graph visualizer."
 msgstr "Wizualizacja wykresów GEGL."
 
-#: ../operations/common/invert-gamma.c:79
+#: ../operations/common/invert-gamma.c:80
 msgid "Invert in Perceptual space"
 msgstr "Odwróć w przestrzeni percepcyjnej"
 
-#: ../operations/common/invert-gamma.c:82
-#: ../operations/common/invert-linear.c:77
+#: ../operations/common/invert-gamma.c:83
+#: ../operations/common/invert-linear.c:78
 msgid ""
 "Inverts the components (except alpha), the result is the corresponding "
 "\"negative\" image."
@@ -2578,7 +2578,7 @@ msgstr "Źródło"
 msgid "Source image file path (png, jpg, raw, svg, bmp, tif, ...)"
 msgstr "Ścieżka do źródłowego pliku obrazu (png, jpg, raw, svg, bmp, tif…)"
 
-#: ../operations/common/layer.c:270
+#: ../operations/common/layer.c:271
 msgid "A layer in the traditional sense"
 msgstr "Warstwa w tradycyjnym rozumieniu"
 
@@ -2618,11 +2618,11 @@ msgstr "Rozjaśnij"
 msgid "Adjust brightness in corners"
 msgstr "Dostosuj jasność w rogach obrazu"
 
-#: ../operations/common/lens-distortion.c:500
+#: ../operations/common/lens-distortion.c:501
 msgid "Lens Distortion"
 msgstr "Zniekształcenie soczewki"
 
-#: ../operations/common/lens-distortion.c:505
+#: ../operations/common/lens-distortion.c:506
 msgid "Corrects barrel or pincushion lens distortion."
 msgstr "Poprawia zniekształcenie soczewki."
 
@@ -2642,11 +2642,11 @@ msgstr "Położenie na osi Y"
 msgid "Y coordinates of the flare center"
 msgstr "Współrzędne na osi Y środka błysku"
 
-#: ../operations/common/lens-flare.c:509
+#: ../operations/common/lens-flare.c:510
 msgid "Lens Flare"
 msgstr "Błysk soczewki"
 
-#: ../operations/common/lens-flare.c:512
+#: ../operations/common/lens-flare.c:513
 msgid "Adds a lens flare effect."
 msgstr "Dodaje efekt błysku soczewki."
 
@@ -2682,12 +2682,12 @@ msgstr "Wysokie wyjście"
 msgid "Highest luminance level in output"
 msgstr "Najwyższy poziom luminancji w wyjściu"
 
-#: ../operations/common/levels.c:202 ../operations/common/posterize.c:24
+#: ../operations/common/levels.c:203 ../operations/common/posterize.c:24
 #: ../operations/external/matting-levin.c:41
 msgid "Levels"
 msgstr "Poziomy"
 
-#: ../operations/common/levels.c:204
+#: ../operations/common/levels.c:205
 msgid "Remaps the intensity range of the image"
 msgstr "Zmienia zakres intensywności obrazu"
 
@@ -2711,11 +2711,11 @@ msgstr "Kolor końcowy"
 msgid "The color at (x2, y2)"
 msgstr "Kolor w (X2, Y2)"
 
-#: ../operations/common/linear-gradient.c:138
+#: ../operations/common/linear-gradient.c:139
 msgid "Linear Gradient"
 msgstr "Liniowy gradient"
 
-#: ../operations/common/linear-gradient.c:141
+#: ../operations/common/linear-gradient.c:142
 msgid "Linear gradient renderer"
 msgstr "Liniowe renderowanie gradientów"
 
@@ -2726,7 +2726,7 @@ msgstr "Liniowe renderowanie gradientów"
 msgid "Path of file to load."
 msgstr "Ścieżka pliku do wczytania."
 
-#: ../operations/common/magick-load.c:137
+#: ../operations/common/magick-load.c:138
 msgid "Image Magick wrapper using the png op."
 msgstr "Wrapper programu Image Magick używający działania png."
 
@@ -2742,11 +2742,11 @@ msgstr "Szczegół"
 msgid "Level of emphasis on image gradient details"
 msgstr "Poziom podkreślenia szczegółów gradientu obrazu"
 
-#: ../operations/common/mantiuk06.c:1638
+#: ../operations/common/mantiuk06.c:1639
 msgid "Mantiuk 2006 Tone Mapping"
 msgstr "Mapowanie odcieni Mantiuka 2006"
 
-#: ../operations/common/mantiuk06.c:1641
+#: ../operations/common/mantiuk06.c:1642
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This operator constrains contrasts across multiple "
@@ -2765,11 +2765,11 @@ msgstr ""
 msgid "Resampling method"
 msgstr "Metoda resamplingu"
 
-#: ../operations/common/map-absolute.c:153
+#: ../operations/common/map-absolute.c:154
 msgid "Map Absolute"
 msgstr "Mapowanie bezwzględne"
 
-#: ../operations/common/map-absolute.c:156
+#: ../operations/common/map-absolute.c:157
 msgid ""
 "sample input with an auxiliary buffer that contain absolute source "
 "coordinates"
@@ -2789,11 +2789,11 @@ msgstr ""
 "współczynnik skalowania przemieszczenia, wskazuje wielkość przemieszczenia "
 "przestrzennego, do którego odnosi się względna wartość mapowania 1,0."
 
-#: ../operations/common/map-relative.c:177
+#: ../operations/common/map-relative.c:178
 msgid "Map Relative"
 msgstr "Mapowanie względne"
 
-#: ../operations/common/map-relative.c:179
+#: ../operations/common/map-relative.c:180
 msgid ""
 "sample input with an auxiliary buffer that contain relative source "
 "coordinates"
@@ -2801,7 +2801,7 @@ msgstr ""
 "wejściowa próbka z pomocniczym buforem zawierającym względne współrzędne "
 "źródła"
 
-#: ../operations/common/matting-global.c:490
+#: ../operations/common/matting-global.c:491
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha matte. Set white as foreground, black as background for the tri-map. "
@@ -2848,11 +2848,11 @@ msgstr "Kolor tła"
 msgid "The background color"
 msgstr "Kolor tła"
 
-#: ../operations/common/maze.c:732
+#: ../operations/common/maze.c:733
 msgid "Maze"
 msgstr "Labirynt"
 
-#: ../operations/common/maze.c:736
+#: ../operations/common/maze.c:737
 msgid "Draw a labyrinth"
 msgstr "Narysuj labirynt"
 
@@ -2864,11 +2864,11 @@ msgstr "Wilgoć"
 msgid "The value represents the contribution of the past to the new frame."
 msgstr "Wartość reprezentują udział przeszłych klatek w nowej klatce."
 
-#: ../operations/common/mblur.c:143
+#: ../operations/common/mblur.c:144
 msgid "Temporal blur"
 msgstr "Rozmycie tymczasowe"
 
-#: ../operations/common/mblur.c:145
+#: ../operations/common/mblur.c:146
 msgid ""
 "Accumulating motion blur using a kalman filter, for use with video sequences "
 "of frames."
@@ -2964,11 +2964,11 @@ msgstr "Zawijaj wejście"
 msgid "Fill full output area"
 msgstr "Wypełnij pełny obszar wyjściowy"
 
-#: ../operations/common/mirrors.c:430
+#: ../operations/common/mirrors.c:431
 msgid "Kaleidoscopic Mirroring"
 msgstr "Odzwierciedlanie kalejdoskopowe"
 
-#: ../operations/common/mirrors.c:433
+#: ../operations/common/mirrors.c:434
 msgid "Create a kaleidoscope like effect."
 msgstr "Utwórz efekt podobny do kalejdoskopu."
 
@@ -2984,11 +2984,11 @@ msgstr "Mnożnik kanału zieleni"
 msgid "Blue Channel Multiplier"
 msgstr "Mnożnik kanału niebieskiego"
 
-#: ../operations/common/mono-mixer.c:113
+#: ../operations/common/mono-mixer.c:114
 msgid "Mono Mixer"
 msgstr "Mikser monochromatyczny"
 
-#: ../operations/common/mono-mixer.c:115
+#: ../operations/common/mono-mixer.c:116
 msgid "Monochrome channel mixer"
 msgstr "Monochromatyczny mikser kanałów"
 
@@ -3088,11 +3088,11 @@ msgstr "Wygładzanie"
 msgid "Enables smoother tile output"
 msgstr "Włącza gładsze wyjście kafli"
 
-#: ../operations/common/mosaic.c:2465
+#: ../operations/common/mosaic.c:2466
 msgid "Mosaic"
 msgstr "Mozaika"
 
-#: ../operations/common/mosaic.c:2468
+#: ../operations/common/mosaic.c:2469
 msgid ""
 "Mosaic is a filter which transforms an image into what appears to be a "
 "mosaic, composed of small primitives, each of constant color and of an "
@@ -3113,11 +3113,11 @@ msgstr "Kąt"
 msgid "Rotation blur angle. A large angle may take some time to render"
 msgstr "Kąt rozmycia obrotu. Duży kąt może zająć więcej czasu do wyświetlania"
 
-#: ../operations/common/motion-blur-circular.c:296
+#: ../operations/common/motion-blur-circular.c:297
 msgid "Circular Motion Blur"
 msgstr "Odśrodkowe rozmycie ruchu"
 
-#: ../operations/common/motion-blur-circular.c:300
+#: ../operations/common/motion-blur-circular.c:301
 msgid "Circular motion blur"
 msgstr "Odśrodkowe rozmycie ruchu"
 
@@ -3133,11 +3133,11 @@ msgstr "Długość rozmycia w pikselach"
 msgid "Angle of blur in degrees"
 msgstr "Kąt rozmycia w stopniach"
 
-#: ../operations/common/motion-blur-linear.c:328
+#: ../operations/common/motion-blur-linear.c:329
 msgid "Linear Motion Blur"
 msgstr "Liniowe rozmycie ruchu"
 
-#: ../operations/common/motion-blur-linear.c:331
+#: ../operations/common/motion-blur-linear.c:332
 msgid ""
 "Blur pixels in a direction, simulates blurring caused by moving camera in a "
 "straight line during exposure."
@@ -3149,11 +3149,11 @@ msgstr ""
 msgid "Blurring factor"
 msgstr "Współczynnik rozmycia"
 
-#: ../operations/common/motion-blur-zoom.c:241
+#: ../operations/common/motion-blur-zoom.c:242
 msgid "Zooming Motion Blur"
 msgstr "Rozmycie ruchu przybliżania"
 
-#: ../operations/common/motion-blur-zoom.c:245
+#: ../operations/common/motion-blur-zoom.c:246
 msgid "Zoom motion blur"
 msgstr "Rozmycie ruchu przybliżania"
 
@@ -3193,11 +3193,11 @@ msgstr "Wypełnij każdą komórkę losowym kolorem"
 msgid "The random seed for the noise function"
 msgstr "Ziarno losowości dla funkcji szumu"
 
-#: ../operations/common/noise-cell.c:431
+#: ../operations/common/noise-cell.c:432
 msgid "Cell Noise"
 msgstr "Szum komórkowy"
 
-#: ../operations/common/noise-cell.c:435
+#: ../operations/common/noise-cell.c:436
 msgid "Generates a cellular texture."
 msgstr "Tworzy teksturę komórkową."
 
@@ -3213,11 +3213,11 @@ msgstr "Jasność"
 msgid "Chroma"
 msgstr "Chroma"
 
-#: ../operations/common/noise-cie-lch.c:192
+#: ../operations/common/noise-cie-lch.c:193
 msgid "Add CIE Lch Noise"
 msgstr "Dodaj szum Lch CIE"
 
-#: ../operations/common/noise-cie-lch.c:194
+#: ../operations/common/noise-cie-lch.c:195
 msgid "Randomize lightness, chroma and hue independently"
 msgstr "Niezależne losowanie jasności, chromy i barwy"
 
@@ -3227,11 +3227,11 @@ msgstr "Niezależne losowanie jasności, chromy i barwy"
 msgid "Value"
 msgstr "Wartość"
 
-#: ../operations/common/noise-hsv.c:194
+#: ../operations/common/noise-hsv.c:195
 msgid "Add HSV Noise"
 msgstr "Dodaj szum HSV"
 
-#: ../operations/common/noise-hsv.c:196
+#: ../operations/common/noise-hsv.c:197
 msgid "Randomize hue, saturation and value independently"
 msgstr "Niezależne losowanie barwy, nasycenia i wartości"
 
@@ -3245,11 +3245,11 @@ msgstr "Losowość (%)"
 msgid "Repeat"
 msgstr "Powtarzanie"
 
-#: ../operations/common/noise-hurl.c:211
+#: ../operations/common/noise-hurl.c:212
 msgid "Randomly Shuffle Pixels"
 msgstr "Losowe mieszanie pikseli"
 
-#: ../operations/common/noise-hurl.c:213
+#: ../operations/common/noise-hurl.c:214
 msgid "Completely randomize a fraction of pixels"
 msgstr "Całkowicie losuj ułamek pikseli"
 
@@ -3257,19 +3257,19 @@ msgstr "Całkowicie losuj ułamek pikseli"
 msgid "Z offset"
 msgstr "Przesunięcie Z"
 
-#: ../operations/common/noise-perlin.c:114
+#: ../operations/common/noise-perlin.c:115
 msgid "Perlin Noise"
 msgstr "Szum Perlina"
 
-#: ../operations/common/noise-perlin.c:117
+#: ../operations/common/noise-perlin.c:118
 msgid "Perlin noise generator"
 msgstr "Generator szumu Perlina"
 
-#: ../operations/common/noise-pick.c:141
+#: ../operations/common/noise-pick.c:142
 msgid "Noise Pick"
 msgstr "Wyciosanie szumu"
 
-#: ../operations/common/noise-pick.c:143
+#: ../operations/common/noise-pick.c:144
 msgid "Randomly interchange some pixels with neighbors"
 msgstr "Losowo wymieniaj niektóre piksele z sąsiednimi"
 
@@ -3284,11 +3284,11 @@ msgid ""
 msgstr ""
 "Kontroluje liczbę iteracji. Niższe wartości spowodują mniej plastikowe wyniki"
 
-#: ../operations/common/noise-reduction.c:425
+#: ../operations/common/noise-reduction.c:426
 msgid "Noise Reduction"
 msgstr "Redukcja szumu"
 
-#: ../operations/common/noise-reduction.c:428
+#: ../operations/common/noise-reduction.c:429
 msgid "Anisotropic smoothing operation"
 msgstr "Działanie wygładzania anizotropowego"
 
@@ -3312,27 +3312,27 @@ msgstr "Zielony"
 msgid "Blue"
 msgstr "Niebieski"
 
-#: ../operations/common/noise-rgb.c:176
+#: ../operations/common/noise-rgb.c:177
 msgid "Add RGB Noise"
 msgstr "Dodaj szum RGB"
 
-#: ../operations/common/noise-rgb.c:178
+#: ../operations/common/noise-rgb.c:179
 msgid "Distort colors by random amounts"
 msgstr "Zniekształć kolory o losowe ilości"
 
-#: ../operations/common/noise-simplex.c:331
+#: ../operations/common/noise-simplex.c:332
 msgid "Simplex Noise"
 msgstr "Szum Simplex"
 
-#: ../operations/common/noise-simplex.c:334
+#: ../operations/common/noise-simplex.c:335
 msgid "Generates a solid noise texture."
 msgstr "Tworzy jednolitą teksturę szumu."
 
-#: ../operations/common/noise-slur.c:153
+#: ../operations/common/noise-slur.c:154
 msgid "Noise Slur"
 msgstr "Zlewanie szumu"
 
-#: ../operations/common/noise-slur.c:156
+#: ../operations/common/noise-slur.c:157
 msgid "Randomly slide some pixels downward (similar to melting)"
 msgstr "Losowo przesuń niektóre piksele w dół (podobnie do topnienia się)"
 
@@ -3368,11 +3368,11 @@ msgstr "Turbulencje"
 msgid "Make a turbulent noise"
 msgstr "Utwórz szum turbulencji"
 
-#: ../operations/common/noise-solid.c:345
+#: ../operations/common/noise-solid.c:346
 msgid "Solid Noise"
 msgstr "Jednolity szum"
 
-#: ../operations/common/noise-solid.c:349
+#: ../operations/common/noise-solid.c:350
 msgid "Create a random cloud-like texture"
 msgstr "Utwórz losową teksturę podobną do chmury"
 
@@ -3384,11 +3384,11 @@ msgstr "Ilość poziomego rozciągnięcia"
 msgid "Vertical spread amount"
 msgstr "Ilość pionowego rozciągnięcia"
 
-#: ../operations/common/noise-spread.c:154
+#: ../operations/common/noise-spread.c:155
 msgid "Noise Spread"
 msgstr "Rozciągnięcie szumu"
 
-#: ../operations/common/noise-spread.c:156
+#: ../operations/common/noise-spread.c:157
 msgid "Move pixels around randomly"
 msgstr "Losowo poprzesuwaj piksele"
 
@@ -3420,11 +3420,11 @@ msgstr "Tryb intensywności"
 msgid "Use pixel luminance values"
 msgstr "Użyj wartości luminancji pikseli"
 
-#: ../operations/common/oilify.c:478
+#: ../operations/common/oilify.c:479
 msgid "Oilify"
 msgstr "Farba olejna"
 
-#: ../operations/common/oilify.c:480
+#: ../operations/common/oilify.c:481
 msgid "Emulate an oil painting"
 msgstr "Emuluj obraz olejny"
 
@@ -3436,7 +3436,7 @@ msgstr ""
 "Globalna wartość nieprzezroczystości używana zawsze na podstawie "
 "opcjonalnego pomocniczego bufora wejściowego."
 
-#: ../operations/common/opacity.c:308
+#: ../operations/common/opacity.c:309
 msgid ""
 "Weights the opacity of the input both the value of the aux input and the "
 "global value property."
@@ -3448,11 +3448,11 @@ msgstr ""
 msgid "a GeglBuffer on disk to open"
 msgstr "GeglBuffer na dysku do otwarcia"
 
-#: ../operations/common/open-buffer.c:130
+#: ../operations/common/open-buffer.c:131
 msgid "Open GEGL Buffer"
 msgstr "Otwórz bufor biblioteki GEGL"
 
-#: ../operations/common/open-buffer.c:132
+#: ../operations/common/open-buffer.c:133
 msgid "Use an on-disk GeglBuffer as data source."
 msgstr "Użyj GeglBuffer na dysku jako źródło danych."
 
@@ -3489,11 +3489,11 @@ msgstr "sRGB"
 msgid "Use sRGB gamma instead of linear"
 msgstr "Użycie gammy sRGB zamiast liniowej"
 
-#: ../operations/common/over.c:181
+#: ../operations/common/over.c:182
 msgid "Normal compositing"
 msgstr "Zwykłe składanie"
 
-#: ../operations/common/over.c:185
+#: ../operations/common/over.c:186
 msgid ""
 "Porter Duff operation over (also known as normal mode, and src-over) (d = cA "
 "+ cB * (1 - aA))"
@@ -3550,11 +3550,11 @@ msgstr ""
 msgid "Image resampling method to use"
 msgstr "Używana metoda resamplingu obrazów"
 
-#: ../operations/common/panorama-projection.c:538
+#: ../operations/common/panorama-projection.c:539
 msgid "Panorama Projection"
 msgstr "Rzut panoramy"
 
-#: ../operations/common/panorama-projection.c:542
+#: ../operations/common/panorama-projection.c:543
 msgid ""
 "Perform a equlinear/gnomonic or little planet/stereographic projection of a "
 "equirectangular input image."
@@ -3574,11 +3574,11 @@ msgstr "Procent czerni"
 msgid "Percent White"
 msgstr "Procent bieli"
 
-#: ../operations/common/photocopy.c:327
+#: ../operations/common/photocopy.c:328
 msgid "Photocopy"
 msgstr "Kserokopia"
 
-#: ../operations/common/photocopy.c:328
+#: ../operations/common/photocopy.c:329
 msgid "Simulate color distortion produced by a copy machine"
 msgstr "Symuluj zniekształcenie koloru powodowane przez kserokopiarkę"
 
@@ -3634,11 +3634,11 @@ msgstr "Pionowe proporcje rozmiaru piksela wewnątrz każdego bloku"
 msgid "Color used to fill the background"
 msgstr "Kolor używany do wypełnienia tła"
 
-#: ../operations/common/pixelize.c:655
+#: ../operations/common/pixelize.c:656
 msgid "Pixelize"
 msgstr "Pikselizuj"
 
-#: ../operations/common/pixelize.c:656
+#: ../operations/common/pixelize.c:657
 msgid "Simplify image into an array of solid-colored rectangles"
 msgstr "Uprość obraz na macierz jednokolorowych prostokątów"
 
@@ -3658,11 +3658,11 @@ msgstr "Początek na osi X tworzonego bufora"
 msgid "Y start of the generated buffer"
 msgstr "Początek na osi Y tworzonego bufora"
 
-#: ../operations/common/plasma.c:421
+#: ../operations/common/plasma.c:422
 msgid "Plasma"
 msgstr "Plazma"
 
-#: ../operations/common/plasma.c:425
+#: ../operations/common/plasma.c:426
 msgid "Creates an image filled with a plasma effect."
 msgstr "Tworzy obraz wypełniony efektem plazmy."
 
@@ -3711,11 +3711,11 @@ msgstr "Wybierz środek"
 msgid "Let origin point to be the middle one"
 msgstr "Początek układu współrzędnych ma być środkowy"
 
-#: ../operations/common/polar-coordinates.c:425
+#: ../operations/common/polar-coordinates.c:426
 msgid "Polar Coordinates"
 msgstr "Współrzędne polarne"
 
-#: ../operations/common/polar-coordinates.c:429
+#: ../operations/common/polar-coordinates.c:430
 msgid "Convert image to or from polar coordinates"
 msgstr "Konwertuj obraz do lub ze współrzędnych bieguna"
 
@@ -3723,19 +3723,19 @@ msgstr "Konwertuj obraz do lub ze współrzędnych bieguna"
 msgid "number of levels per component"
 msgstr "liczba poziomów na składową"
 
-#: ../operations/common/posterize.c:132
+#: ../operations/common/posterize.c:133
 msgid "Posterize"
 msgstr "Zredukuj kolory"
 
-#: ../operations/common/posterize.c:135
+#: ../operations/common/posterize.c:136
 msgid "Reduces the number of levels in each color component of the image."
 msgstr "Zmniejsza liczbę poziomów w każdej składowej koloru obrazu."
 
-#: ../operations/common/radial-gradient.c:125
+#: ../operations/common/radial-gradient.c:126
 msgid "Radial Gradient"
 msgstr "Promienisty gradient"
 
-#: ../operations/common/radial-gradient.c:127
+#: ../operations/common/radial-gradient.c:128
 msgid "Radial gradient renderer"
 msgstr "Rysowanie gradientów promienistych"
 
@@ -3759,16 +3759,16 @@ msgstr "Skala pionowa"
 msgid "Color to render"
 msgstr "Rysowany kolor"
 
-#: ../operations/common/rectangle.c:88
+#: ../operations/common/rectangle.c:89
 msgid "Rectangle"
 msgstr "Prostokąt"
 
-#: ../operations/common/rectangle.c:92
+#: ../operations/common/rectangle.c:93
 msgid "A rectangular source of a fixed size with a solid color"
 msgstr "Jednokolorowe, prostokątne źródło o stałym rozmiarze"
 
 #: ../operations/common/red-eye-removal.c:31
-#: ../operations/common/threshold.c:25 ../operations/common/threshold.c:125
+#: ../operations/common/threshold.c:25 ../operations/common/threshold.c:126
 #: ../operations/common/wind.c:60 ../operations/external/matting-levin.c:33
 msgid "Threshold"
 msgstr "Progowanie"
@@ -3777,11 +3777,11 @@ msgstr "Progowanie"
 msgid "Red eye threshold"
 msgstr "Próg czerwonego oka"
 
-#: ../operations/common/red-eye-removal.c:169
+#: ../operations/common/red-eye-removal.c:170
 msgid "Red Eye Removal"
 msgstr "Usuwanie efektu czerwonego oka"
 
-#: ../operations/common/red-eye-removal.c:172
+#: ../operations/common/red-eye-removal.c:173
 msgid "Remove the red eye effect caused by camera flashes"
 msgstr "Usuń efekt czerwonego oka powodowany przez migawkę aparatu"
 
@@ -3805,11 +3805,11 @@ msgstr "Adaptacja światła"
 msgid "Adaptation to light variation across the image"
 msgstr "Adaptacja do zmiany światła na całym obrazie"
 
-#: ../operations/common/reinhard05.c:273
+#: ../operations/common/reinhard05.c:274
 msgid "Reinhard 2005 Tone Mapping"
 msgstr "Mapowanie odcieni Reinharda 2005"
 
-#: ../operations/common/reinhard05.c:276
+#: ../operations/common/reinhard05.c:277
 msgid ""
 "Adapt an image, which may have a high dynamic range, for presentation using "
 "a low dynamic range. This is an efficient global operator derived from "
@@ -3821,7 +3821,7 @@ msgstr ""
 "wyciągnięty z prostych obserwacji psychologicznych, produkujący luminancję "
 "w zakresie 0,0-1,0"
 
-#: ../operations/common/remap.c:98
+#: ../operations/common/remap.c:99
 msgid "stretch components of pixels individually based on luminance envelopes"
 msgstr ""
 "rozciągnij oddzielnie składowe pikseli na podstawie obwiedni luminancji"
@@ -3850,11 +3850,11 @@ msgstr "Typ fali"
 msgid "Retain tilebility"
 msgstr "Zachowaj kafelkowalność"
 
-#: ../operations/common/ripple.c:170
+#: ../operations/common/ripple.c:171
 msgid "Ripple"
 msgstr "Falowanie"
 
-#: ../operations/common/ripple.c:174
+#: ../operations/common/ripple.c:175
 msgid "Displace pixels in a ripple pattern"
 msgstr "Rozmieść piksele na wzór zmarszczki"
 
@@ -3863,7 +3863,7 @@ msgstr "Rozmieść piksele na wzór zmarszczki"
 msgid "Scale, strength of effect"
 msgstr "Skaluj, siła efektu"
 
-#: ../operations/common/saturation.c:219
+#: ../operations/common/saturation.c:220
 msgid "Changes the saturation"
 msgstr "Zmienia nasycenie"
 
@@ -3871,11 +3871,11 @@ msgstr "Zmienia nasycenie"
 msgid "Path of file to save."
 msgstr "Ścieżka pliku do zapisania."
 
-#: ../operations/common/save.c:200
+#: ../operations/common/save.c:201
 msgid "Save"
 msgstr "Zapisz"
 
-#: ../operations/common/save.c:203
+#: ../operations/common/save.c:204
 msgid ""
 "Multipurpose file saver, that uses other native save handlers depending on "
 "extension, use the format specific save ops to specify additional parameters."
@@ -3884,15 +3884,15 @@ msgstr ""
 "zapisywania plików w zależności od rozszerzenia. Użycie działania zapisu "
 "konkretnego formatu umożliwia podawanie dodatkowych parametrów."
 
-#: ../operations/common/sepia.c:110
+#: ../operations/common/sepia.c:111
 msgid "Sepia"
 msgstr "Sepia"
 
-#: ../operations/common/sepia.c:112
+#: ../operations/common/sepia.c:113
 msgid "Converts the input image to sepia"
 msgstr "Konwertuje obraz wejściowy na sepię"
 
-#: ../operations/common/shift.c:26 ../operations/common/shift.c:143
+#: ../operations/common/shift.c:26 ../operations/common/shift.c:144
 msgid "Shift"
 msgstr "Przesunięcie"
 
@@ -3904,7 +3904,7 @@ msgstr "Maksymalna ilość do przesunięcia"
 msgid "Shift direction"
 msgstr "Kierunek przesunięcia"
 
-#: ../operations/common/shift.c:146
+#: ../operations/common/shift.c:147
 msgid "Shift each row or column of pixels by a random amount"
 msgstr "Przesuń każdy rząd lub kolumnę pikseli o losową ilość"
 
@@ -3960,11 +3960,11 @@ msgstr "Tryb łączenia"
 msgid "Power used to strech the blend"
 msgstr "Siła używana do rozciągnięcia łączenia"
 
-#: ../operations/common/sinus.c:313
+#: ../operations/common/sinus.c:314
 msgid "Sinus"
 msgstr "Sinus"
 
-#: ../operations/common/sinus.c:317
+#: ../operations/common/sinus.c:318
 msgid "Generate complex sinusoidal textures"
 msgstr "Utwórz złożone tekstury sinusoidalne"
 
@@ -3976,27 +3976,27 @@ msgstr "Pary"
 msgid "Number of pairs; higher number preserves more acute features"
 msgstr "Liczna par; wyższy numer zachowuje ostrzejsze cechy"
 
-#: ../operations/common/snn-mean.c:334
+#: ../operations/common/snn-mean.c:335
 msgid "Symmetric Nearest Neighbour"
 msgstr "Symetryczni najbliżsi sąsiedzi"
 
-#: ../operations/common/snn-mean.c:336
+#: ../operations/common/snn-mean.c:337
 msgid ""
 "Noise reducing edge preserving blur filter based  on Symmetric Nearest "
 "Neighbours"
 msgstr ""
-"Filtr rozmycia zmniejszający szum i zachowujący krawędzie oparty na "
-"symetrycznych najbliższych sąsiadach"
+"Filtr rozmycia zmniejszający szum i zachowujący krawędzie na podstawie "
+"symetrycznych najbliższych sąsiadów"
 
 #: ../operations/common/softglow.c:26
 msgid "Glow radius"
 msgstr "Promień poświaty"
 
-#: ../operations/common/softglow.c:232
+#: ../operations/common/softglow.c:233
 msgid "Softglow"
 msgstr "Lekki żar"
 
-#: ../operations/common/softglow.c:235
+#: ../operations/common/softglow.c:236
 msgid "Simulate glow by making highlights intense and fuzzy"
 msgstr "Symuluj poświatę przez zintensyfikowanie i rozmycie podświetleń"
 
@@ -4016,7 +4016,7 @@ msgstr ""
 "Liczba iteracji, wyższy numer iteracji dostarcza obraz o mniejszym szumie, "
 "kosztem mocy obliczeniowych"
 
-#: ../operations/common/stress.c:215 ../operations/common/stress.c:219
+#: ../operations/common/stress.c:216 ../operations/common/stress.c:220
 msgid "Spatio Temporal Retinex-like Envelope with Stochastic Sampling"
 msgstr "STRESS"
 
@@ -4028,11 +4028,11 @@ msgstr "Utrzymanie kolorów"
 msgid "Impact each channel with the same amount"
 msgstr "Zmiana każdego kanału o tę samą ilość"
 
-#: ../operations/common/stretch-contrast.c:566
+#: ../operations/common/stretch-contrast.c:567
 msgid "Stretch Contrast"
 msgstr "Rozciągnij kontrast"
 
-#: ../operations/common/stretch-contrast.c:569
+#: ../operations/common/stretch-contrast.c:570
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
@@ -4042,11 +4042,11 @@ msgstr ""
 "korzystające z dostępnego kontrastu (niski kontrast, bardzo ciemne lub "
 "bardzo jasne obrazy)."
 
-#: ../operations/common/stretch-contrast-hsv.c:221
+#: ../operations/common/stretch-contrast-hsv.c:222
 msgid "Stretch Contrast HSV"
 msgstr "Rozciągnij kontrast HSV"
 
-#: ../operations/common/stretch-contrast-hsv.c:224
+#: ../operations/common/stretch-contrast-hsv.c:225
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
@@ -4086,11 +4086,11 @@ msgstr "Kolor supernowej."
 msgid "The random seed for spokes and random hue"
 msgstr "Ziarno losowości dla promieni i losowej barwy"
 
-#: ../operations/common/supernova.c:340
+#: ../operations/common/supernova.c:341
 msgid "Supernova"
 msgstr "Supernowa"
 
-#: ../operations/common/supernova.c:343
+#: ../operations/common/supernova.c:344
 msgid ""
 "This plug-in produces an effect like a supernova burst. The amount of the "
 "light effect is approximately in proportion to 1/r, where r is the distance "
@@ -4110,19 +4110,19 @@ msgstr "Wartości"
 msgid "list of <number>s"
 msgstr "lista <numerów>"
 
-#: ../operations/common/svg-huerotate.c:117
+#: ../operations/common/svg-huerotate.c:118
 msgid "SVG color matrix operation svg_huerotate"
 msgstr "Działanie svg_huerotate macierzy kolorów SVG"
 
-#: ../operations/common/svg-luminancetoalpha.c:93
+#: ../operations/common/svg-luminancetoalpha.c:94
 msgid "SVG color matrix operation svg_luminancetoalpha"
 msgstr "Działanie svg_luminancetoalpha macierzy kolorów SVG"
 
-#: ../operations/common/svg-matrix.c:133
+#: ../operations/common/svg-matrix.c:134
 msgid "SVG color matrix operation svg_matrix"
 msgstr "Działanie svg_matrix macierzy kolorów SVG"
 
-#: ../operations/common/svg-saturate.c:127
+#: ../operations/common/svg-saturate.c:128
 msgid "SVG color matrix operation svg_saturate"
 msgstr "Działanie svg_saturate macierzy kolorów SVG"
 
@@ -4162,11 +4162,11 @@ msgstr ""
 "Widoczna głębia renderowanego efektu płótna. Od 1 (bardzo płaskie) do 50 "
 "(bardzo głębokie)"
 
-#: ../operations/common/texturize-canvas.c:4379
+#: ../operations/common/texturize-canvas.c:4380
 msgid "Texturize Canvas"
 msgstr "Nałóż teksturę na płótno"
 
-#: ../operations/common/texturize-canvas.c:4383
+#: ../operations/common/texturize-canvas.c:4384
 msgid "Textures the image as if it were an artist's canvas."
 msgstr "Nakłada teksturę na obraz, jakby to było płótno artysty."
 
@@ -4177,7 +4177,7 @@ msgstr ""
 "Skalarny poziom progowania (zastępowany, kiedy podany jest pomocniczy bufor "
 "wejściowy)."
 
-#: ../operations/common/threshold.c:128
+#: ../operations/common/threshold.c:129
 msgid ""
 "Thresholds the image to white/black based on either the global value set in "
 "the value property, or per pixel from the aux input."
@@ -4193,11 +4193,11 @@ msgstr "Poziome przesunięcie"
 msgid "Vertical offset"
 msgstr "Pionowe przesunięcie"
 
-#: ../operations/common/tile.c:133
+#: ../operations/common/tile.c:134
 msgid "Tile"
 msgstr "Kafel"
 
-#: ../operations/common/tile.c:138
+#: ../operations/common/tile.c:139
 msgid "Infinitely repeats the input image."
 msgstr "Powtarza obraz wejściowy w nieskończoność."
 
@@ -4209,11 +4209,11 @@ msgstr "Szerokość kafla"
 msgid "Tile Height"
 msgstr "Wysokość kafla"
 
-#: ../operations/common/tile-glass.c:233
+#: ../operations/common/tile-glass.c:234
 msgid "Tile Glass"
 msgstr "Szkło kafla"
 
-#: ../operations/common/tile-glass.c:237
+#: ../operations/common/tile-glass.c:238
 msgid "Simulate distortion caused by rectangular glass tiles"
 msgstr "Symuluj zniekształcenie powodowane przez prostokątne, szklane kafle"
 
@@ -4281,19 +4281,19 @@ msgstr "Wyśrodkowanie kafli"
 msgid "Background type"
 msgstr "Typ tła"
 
-#: ../operations/common/tile-paper.c:475
+#: ../operations/common/tile-paper.c:476
 msgid "Paper Tile"
 msgstr "Kawałki papieru"
 
-#: ../operations/common/tile-paper.c:479
+#: ../operations/common/tile-paper.c:480
 msgid "Cut image into paper tiles, and slide them"
 msgstr "Wycina obraz na kawałki papieru i przesuwa je"
 
-#: ../operations/common/tile-seamless.c:164
+#: ../operations/common/tile-seamless.c:165
 msgid "Make Seamlessly tileable"
 msgstr "Kafelkowanie bezszwowe"
 
-#: ../operations/common/tile-seamless.c:167
+#: ../operations/common/tile-seamless.c:168
 msgid ""
 "Make the input buffer seamlessly tileable. The algorithm is not content-"
 "aware, so the result may need post-processing."
@@ -4305,11 +4305,11 @@ msgstr ""
 msgid "Standard Deviation"
 msgstr "Odchylenie standardowe"
 
-#: ../operations/common/unsharp-mask.c:83
+#: ../operations/common/unsharp-mask.c:84
 msgid "Unsharp Mask"
 msgstr "Maska wyostrzająca"
 
-#: ../operations/common/unsharp-mask.c:85
+#: ../operations/common/unsharp-mask.c:86
 msgid ""
 "Sharpen image, by adding difference to blurred image, a technique for "
 "sharpening originally used in darkrooms."
@@ -4317,11 +4317,11 @@ msgstr ""
 "Wyostrza obraz dodając różnicę do rozmytego obrazu. Technika wyostrzana "
 "pierwotnie używana w ciemniach fotograficznych."
 
-#: ../operations/common/value-invert.c:147
+#: ../operations/common/value-invert.c:148
 msgid "Value Invert"
 msgstr "Odwrócenie wartości"
 
-#: ../operations/common/value-invert.c:150
+#: ../operations/common/value-invert.c:151
 msgid ""
 "Inverts just the value component, the result is the corresponding 'inverted' "
 "image."
@@ -4426,11 +4426,11 @@ msgstr "Rozprowadzanie kanału wartości"
 msgid "Propagating alpha channel"
 msgstr "Rozprowadzanie kanału alfa"
 
-#: ../operations/common/value-propagate.c:637
+#: ../operations/common/value-propagate.c:638
 msgid "Value Propagate"
 msgstr "Rozprowadzanie wartości"
 
-#: ../operations/common/value-propagate.c:640
+#: ../operations/common/value-propagate.c:641
 msgid "Propagate certain colors to neighboring pixels."
 msgstr "Rozprowadź konkretne kolory do sąsiednich pikseli."
 
@@ -4494,11 +4494,11 @@ msgstr "Obrócono"
 msgid "Whether to rotate the RGB pattern by ninety degrees."
 msgstr "Czy obrócić deseń RGB o 90 stopni."
 
-#: ../operations/common/video-degradation.c:321
+#: ../operations/common/video-degradation.c:322
 msgid "Video Degradation"
 msgstr "Zniekształcenie wideo"
 
-#: ../operations/common/video-degradation.c:324
+#: ../operations/common/video-degradation.c:325
 msgid ""
 "This function simulates the degradation of being on an old low-dotpitch RGB "
 "video monitor."
@@ -4554,11 +4554,11 @@ msgstr "Ściśnij"
 msgid "Rotation"
 msgstr "Obrót"
 
-#: ../operations/common/vignette.c:380
+#: ../operations/common/vignette.c:381
 msgid "Vignette"
 msgstr "Winieta"
 
-#: ../operations/common/vignette.c:383
+#: ../operations/common/vignette.c:384
 msgid ""
 "Applies a vignette to an image. Simulates the luminance fall off at the edge "
 "of exposed film, and some other fuzzier border effects that can naturally "
@@ -4612,11 +4612,11 @@ msgstr "Zachowanie"
 msgid "Behavior of the op"
 msgstr "Zachowanie działania"
 
-#: ../operations/common/warp.c:413
+#: ../operations/common/warp.c:469
 msgid "Warp"
 msgstr "Deformuj"
 
-#: ../operations/common/warp.c:415
+#: ../operations/common/warp.c:471
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Oblicz względne rozmieszczenie odwzorowania z pociągnięcia"
 
@@ -4644,19 +4644,19 @@ msgstr "Deformacja zacisku"
 msgid "Limit deformation in the image area."
 msgstr "Ogranicz deformację w obszarze obrazu."
 
-#: ../operations/common/waves.c:183
+#: ../operations/common/waves.c:184
 msgid "Waves"
 msgstr "Fale"
 
-#: ../operations/common/waves.c:187
+#: ../operations/common/waves.c:188
 msgid "Distort the image with waves"
 msgstr "Zniekształć obraz za pomocą fal"
 
-#: ../operations/common/weighted-blend.c:185
+#: ../operations/common/weighted-blend.c:186
 msgid "Weighted Blend"
 msgstr "Łączenie ważone"
 
-#: ../operations/common/weighted-blend.c:188
+#: ../operations/common/weighted-blend.c:189
 msgid "blend two images using alpha values as weights"
 msgstr "połącz dwa obrazy za pomocą wartości alfa jako wagi"
 
@@ -4684,15 +4684,15 @@ msgstr ""
 "Promień (1,0 oznacza największy okrąg pasujący do obrazu, a 2,0 oznacza "
 "promień do samych rogów obrazu)"
 
-#: ../operations/common/whirl-pinch.c:274
+#: ../operations/common/whirl-pinch.c:275
 msgid "Whirl Pinch"
 msgstr "Skręć i zaciśnij"
 
-#: ../operations/common/whirl-pinch.c:278
+#: ../operations/common/whirl-pinch.c:279
 msgid "Distort an image by whirling and pinching"
 msgstr "Zniekształć obraz przez skręcanie i ściskanie"
 
-#: ../operations/common/wind.c:28 ../operations/common/wind.c:661
+#: ../operations/common/wind.c:28 ../operations/common/wind.c:662
 msgid "Wind"
 msgstr "Wiatr"
 
@@ -4756,7 +4756,7 @@ msgstr "Wyższe wartości ograniczają efekt do mniejszych obszarów obrazu"
 msgid "Higher values increase the magnitude of the effect"
 msgstr "Wyższe wartości zwiększają wielkość efektu"
 
-#: ../operations/common/wind.c:664
+#: ../operations/common/wind.c:665
 msgid "Wind-like bleed effect"
 msgstr "Efekt farbowania podobny do wiatru"
 
@@ -4765,11 +4765,11 @@ msgid "A pre-existing GeglBuffer to write incoming buffer data to."
 msgstr ""
 "Już istniejący GeglBuffer, co którego zapisać przychodzące dane bufora."
 
-#: ../operations/common/write-buffer.c:149
+#: ../operations/common/write-buffer.c:150
 msgid "Write Buffer"
 msgstr "Zapisz bufor"
 
-#: ../operations/common/write-buffer.c:151
+#: ../operations/common/write-buffer.c:152
 msgid "Write input data into an existing GEGL buffer destination surface."
 msgstr ""
 "Zapisz dane wejściowe do istniejącej powierzchni docelowej buforu biblioteki "
@@ -4789,11 +4789,11 @@ msgstr ""
 "specjalny bufor, gdzie „gegl_buffer_list_valid_rectangles” zwraca prawidłową "
 "część pamięci podręcznej."
 
-#: ../operations/core/cache.c:90
+#: ../operations/core/cache.c:91
 msgid "Explicit cache of results at this point of graph."
 msgstr "Jawna pamięć podręczna wyników w tym punkcie wykresu."
 
-#: ../operations/core/cache.c:92
+#: ../operations/core/cache.c:93
 msgid "An explicit caching node"
 msgstr "Jawny tryb pamięci podręcznej"
 
@@ -4809,11 +4809,11 @@ msgstr "Format biblioteki babl wejścia"
 msgid "Output format"
 msgstr "Format wyjściowy"
 
-#: ../operations/core/cast-format.c:110
+#: ../operations/core/cast-format.c:111
 msgid "Cast Format"
 msgstr "Format rzutu"
 
-#: ../operations/core/cast-format.c:112
+#: ../operations/core/cast-format.c:113
 msgid ""
 "Cast the data between input_format and output_format, both formats must have "
 "the same bpp"
@@ -4830,19 +4830,19 @@ msgid "The reference ID used as input (for use in XML)."
 msgstr ""
 "Identyfikator odniesienia używanego jako wejście (do użycia w kodzie XML)."
 
-#: ../operations/core/clone.c:109
+#: ../operations/core/clone.c:110
 msgid "Clone"
 msgstr "Sklonuj"
 
-#: ../operations/core/clone.c:110
+#: ../operations/core/clone.c:111
 msgid "Clone a buffer"
 msgstr "Sklonuj bufor"
 
-#: ../operations/core/convert-format.c:87
+#: ../operations/core/convert-format.c:88
 msgid "Convert Format"
 msgstr "Konwertuj format"
 
-#: ../operations/core/convert-format.c:89
+#: ../operations/core/convert-format.c:90
 msgid "Convert the data to the specified format"
 msgstr "Konwertuj dane do podanego formatu"
 
@@ -4850,11 +4850,11 @@ msgstr "Konwertuj dane do podanego formatu"
 msgid "Reset origin"
 msgstr "Przywrócenie pochodzenia"
 
-#: ../operations/core/crop.c:209
+#: ../operations/core/crop.c:210
 msgid "Crop"
 msgstr "Kadruj"
 
-#: ../operations/core/crop.c:210
+#: ../operations/core/crop.c:211
 msgid "Crop a buffer"
 msgstr "Kadruj bufor"
 
@@ -4869,7 +4869,7 @@ msgstr "Adres URI"
 msgid "URI of file to load."
 msgstr "Adres URI pliku do wczytania."
 
-#: ../operations/core/load.c:311
+#: ../operations/core/load.c:312
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -4877,11 +4877,11 @@ msgstr ""
 "Wielozadaniowe wczytywanie plików używające natywnych modułów obsługi "
 "plików, i zapasowo używające konwersji za pomocą programu Image Magick."
 
-#: ../operations/core/nop.c:79
+#: ../operations/core/nop.c:80
 msgid "No Operation"
 msgstr "Brak działania"
 
-#: ../operations/core/nop.c:81
+#: ../operations/core/nop.c:82
 msgid "No operation (can be used as a routing point)"
 msgstr "Brak działania (może być używane jako punkt trasy)"
 
@@ -4941,11 +4941,11 @@ msgstr "kodek-dźwięku"
 msgid "audio"
 msgstr "dźwięk"
 
-#: ../operations/external/ff-load.c:777
+#: ../operations/external/ff-load.c:778
 msgid "FFmpeg Frame Loader"
 msgstr "Wczytywanie klatek biblioteki FFmpeg"
 
-#: ../operations/external/ff-load.c:779
+#: ../operations/external/ff-load.c:780
 msgid "FFmpeg video frame importer."
 msgstr "Importer klatek wideo biblioteki FFmpeg."
 
@@ -5091,7 +5091,7 @@ msgstr "i-quant-offset"
 msgid "me-subpel-quality"
 msgstr "me-subpel-quality"
 
-#: ../operations/external/ff-save.c:1094
+#: ../operations/external/ff-save.c:1095
 msgid "FFmpeg video output sink"
 msgstr "Odpływ wyjścia wideo biblioteki FFmpeg"
 
@@ -5106,67 +5106,67 @@ msgstr "Ścieżka do wczytywanego pliku"
 msgid "URI for file to load"
 msgstr "Adres URI wczytywanego pliku"
 
-#: ../operations/external/jp2-load.c:131
+#: ../operations/external/jp2-load.c:132
 msgid "Unknown JPEG 2000 image format"
 msgstr "Nieznany format obrazu JPEG 2000"
 
-#: ../operations/external/jp2-load.c:138
+#: ../operations/external/jp2-load.c:139
 msgid "Unable to open JPEG 2000 image"
 msgstr "Nie można otworzyć pliku JPEG 2000"
 
-#: ../operations/external/jp2-load.c:145
+#: ../operations/external/jp2-load.c:146
 msgid "Unable to create output color profile"
 msgstr "Nie można utworzyć wyjściowego profilu kolorów"
 
-#: ../operations/external/jp2-load.c:153
+#: ../operations/external/jp2-load.c:154
 msgid "Unable to convert image to sRGB color space"
 msgstr "Nie można konwertować obrazu do przestrzeni kolorów sRGB"
 
-#: ../operations/external/jp2-load.c:160
+#: ../operations/external/jp2-load.c:161
 #, c-format
 msgid "Unsupported non-RGB JPEG 2000 file with %d components"
 msgstr "Nieobsługiwany plik JPEG 2000 niebędący RGB z %d składowymi"
 
-#: ../operations/external/jp2-load.c:172
+#: ../operations/external/jp2-load.c:173
 #, c-format
 msgid "Unsupported JPEG 2000 file with depth %d"
 msgstr "Nieobsługiwany plik JPEG 2000 z głębią kolorów %d"
 
-#: ../operations/external/jp2-load.c:198
+#: ../operations/external/jp2-load.c:199
 msgid "Components of JPEG 2000 input don't match"
 msgstr "Składowe wejścia JPEG 2000 nie pasują"
 
-#: ../operations/external/jp2-load.c:260
+#: ../operations/external/jp2-load.c:261
 msgid "could not create a new Jasper stream"
 msgstr "nie można utworzyć nowego potoku Jasper"
 
-#: ../operations/external/jp2-load.c:277 ../operations/external/jp2-load.c:279
+#: ../operations/external/jp2-load.c:278 ../operations/external/jp2-load.c:280
 #, c-format
 msgid "failed to open JPEG 2000 from %s"
 msgstr "otwarcie pliku JPEG 2000 z %s się nie powiodło"
 
-#: ../operations/external/jp2-load.c:293
+#: ../operations/external/jp2-load.c:294
 msgid "could not query JPEG 2000 file"
 msgstr "nie można odpytać pliku JPEG 2000"
 
-#: ../operations/external/jp2-load.c:349
+#: ../operations/external/jp2-load.c:350
 msgid "One or more of R, G, B components are missing"
 msgstr "Brak jednej lub więcej składowych R, G, B"
 
-#: ../operations/external/jp2-load.c:357
+#: ../operations/external/jp2-load.c:358
 msgid "One or more of R, G, B components have signed data"
 msgstr "Jedna lub więcej ze składowych R, G, B ma podpisane dane"
 
-#: ../operations/external/jp2-load.c:390
+#: ../operations/external/jp2-load.c:391
 #, c-format
 msgid "Error reading row %d component %d"
 msgstr "Błąd podczas odczytywania rzędu %d składowej %d"
 
-#: ../operations/external/jp2-load.c:530
+#: ../operations/external/jp2-load.c:531
 msgid "JPEG 2000 File Loader"
 msgstr "Wczytywanie plików JPEG 2000"
 
-#: ../operations/external/jp2-load.c:532
+#: ../operations/external/jp2-load.c:533
 msgid "JPEG 2000 image loader using jasper."
 msgstr "Wczytywanie obrazów JPEG 2000 za pomocą biblioteki jasper."
 
@@ -5174,11 +5174,11 @@ msgstr "Wczytywanie obrazów JPEG 2000 za pomocą biblioteki jasper."
 msgid "URI of file to load"
 msgstr "Adres URI wczytywanego pliku"
 
-#: ../operations/external/jpg-load.c:365
+#: ../operations/external/jpg-load.c:366
 msgid "JPEG File Loader"
 msgstr "Wczytywanie plików JPEG"
 
-#: ../operations/external/jpg-load.c:367
+#: ../operations/external/jpg-load.c:368
 msgid "JPEG image loader using libjpeg"
 msgstr "Wczytywanie obrazów JPEG za pomocą biblioteki libjpeg"
 
@@ -5227,11 +5227,11 @@ msgstr "Odcienie szarości"
 msgid "Create a grayscale (monochrome) image"
 msgstr "Obraz w odcieniach szarości (monochromatyczny)"
 
-#: ../operations/external/jpg-save.c:195
+#: ../operations/external/jpg-save.c:196
 msgid "JPEG File Saver"
 msgstr "Zapisywanie plików JPEG"
 
-#: ../operations/external/jpg-save.c:198
+#: ../operations/external/jpg-save.c:199
 msgid "JPEG image saver, using libjpeg"
 msgstr "Zapisywanie obrazów JPEG za pomocą biblioteki libjpeg"
 
@@ -5271,11 +5271,11 @@ msgstr "Kompensacja czarnego punktu"
 msgid "Convert using black point compensation."
 msgstr "Konwertuj za pomocą kompensacji czarnego punktu."
 
-#: ../operations/external/lcms-from-profile.c:242
+#: ../operations/external/lcms-from-profile.c:243
 msgid "LCMS From Profile"
 msgstr "LCMS z profilu"
 
-#: ../operations/external/lcms-from-profile.c:245
+#: ../operations/external/lcms-from-profile.c:246
 msgid ""
 "Converts the input from an ICC color profile to a well defined babl format. "
 "The buffer's data will then be correctly managed by GEGL for further "
@@ -5317,11 +5317,11 @@ msgstr "Aktywne poziomy"
 msgid "Number of levels to perform solving"
 msgstr "Liczba poziomów do wykonywania rozwiązywania"
 
-#: ../operations/external/matting-levin.c:1453
+#: ../operations/external/matting-levin.c:1454
 msgid "Matting Levin"
 msgstr "Mierzwienie Levina"
 
-#: ../operations/external/matting-levin.c:1456
+#: ../operations/external/matting-levin.c:1457
 msgid ""
 "Given a sparse user supplied tri-map and an input image, create a foreground "
 "alpha mat. Set white as selected, black as unselected, for the tri-map."
@@ -5393,15 +5393,15 @@ msgstr "Kiedy wynosi „true”, to model nie będzie zwalniany"
 msgid "Sampler used internally"
 msgstr "Wewnętrznie używana próbka"
 
-#: ../operations/external/npd.c:255
+#: ../operations/external/npd.c:256
 msgid "Performs n-point image deformation"
 msgstr "Wykonuje zniekształcenie obrazu za pomocą wielu punktów"
 
-#: ../operations/external/npy-save.c:142
+#: ../operations/external/npy-save.c:143
 msgid "NPY File Saver"
 msgstr "Zapisywanie plików NPY"
 
-#: ../operations/external/npy-save.c:145
+#: ../operations/external/npy-save.c:146
 msgid "NPY image saver (Numerical python file saver.)"
 msgstr "Zapisywanie obrazów NPY (Numerical Python)."
 
@@ -5480,11 +5480,11 @@ msgstr "Wektor"
 msgid "A GeglVector representing the path of the stroke"
 msgstr "GeglVector reprezentujący ścieżkę pociągnięcia"
 
-#: ../operations/external/path.c:532
+#: ../operations/external/path.c:533
 msgid "Render Path"
 msgstr "Narysuj ścieżkę"
 
-#: ../operations/external/path.c:535
+#: ../operations/external/path.c:536
 msgid "Renders a brush stroke"
 msgstr "Rysuje pociągnięcie pędzla"
 
@@ -5496,11 +5496,11 @@ msgstr "Bufor pikseli"
 msgid "GdkPixbuf to use"
 msgstr "Używany GdkPixbuf"
 
-#: ../operations/external/pixbuf.c:101
+#: ../operations/external/pixbuf.c:102
 msgid "GdkPixbuf Source"
 msgstr "Źródłowy GdkPixbuf"
 
-#: ../operations/external/pixbuf.c:104
+#: ../operations/external/pixbuf.c:105
 msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
 msgstr "Używa GdkPixbuf położonego w pamięci w <em>pixbuf</em>."
 
@@ -5508,11 +5508,11 @@ msgstr "Używa GdkPixbuf położonego w pamięci w <em>pixbuf</em>."
 msgid "URI for file to load."
 msgstr "Adres URI pliku do wczytania."
 
-#: ../operations/external/png-load.c:497
+#: ../operations/external/png-load.c:498
 msgid "PNG File Loader"
 msgstr "Wczytywanie plików PNG"
 
-#: ../operations/external/png-load.c:499
+#: ../operations/external/png-load.c:500
 msgid "PNG image loader."
 msgstr "Wczytywanie obrazów PNG."
 
@@ -5532,19 +5532,19 @@ msgstr "Głębia bitowa"
 msgid "8 and 16 are the currently accepted values."
 msgstr "Obecnie przyjmowane są wartości 8 i 16."
 
-#: ../operations/external/png-save.c:228
+#: ../operations/external/png-save.c:229
 msgid "PNG File Saver"
 msgstr "Zapisywanie plików PNG"
 
-#: ../operations/external/png-save.c:231
+#: ../operations/external/png-save.c:232
 msgid "PNG image saver, using libpng"
 msgstr "Zapisywanie obrazów PNG za pomocą biblioteki libpng"
 
-#: ../operations/external/ppm-load.c:381
+#: ../operations/external/ppm-load.c:382
 msgid "PPM File Loader"
 msgstr "Wczytywanie plików PPM"
 
-#: ../operations/external/ppm-load.c:383
+#: ../operations/external/ppm-load.c:384
 msgid "PPM image loader."
 msgstr "Wczytywanie obrazów PPM."
 
@@ -5552,31 +5552,31 @@ msgstr "Wczytywanie obrazów PPM."
 msgid "Raw format"
 msgstr "Format Raw"
 
-#: ../operations/external/ppm-save.c:189
+#: ../operations/external/ppm-save.c:190
 msgid "PPM File Saver"
 msgstr "Zapisywanie plików PPM"
 
-#: ../operations/external/ppm-save.c:192
+#: ../operations/external/ppm-save.c:193
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Zapisywanie obrazów PPM."
 
-#: ../operations/external/raw-load.c:239
+#: ../operations/external/raw-load.c:240
 msgid "libraw File Loader"
 msgstr "Wczytywanie plików biblioteki libraw"
 
-#: ../operations/external/rgbe-load.c:135
+#: ../operations/external/rgbe-load.c:136
 msgid "RGBE File Loader"
 msgstr "Wczytywanie plików RGBE"
 
-#: ../operations/external/rgbe-load.c:137
+#: ../operations/external/rgbe-load.c:138
 msgid "RGBE image loader (Radiance HDR format)."
 msgstr "Wczytywanie obrazów RGBE (format Radiance HDR)."
 
-#: ../operations/external/rgbe-save.c:84
+#: ../operations/external/rgbe-save.c:85
 msgid "RGBE File Saver"
 msgstr "Zapisywanie plików RGBE"
 
-#: ../operations/external/rgbe-save.c:87
+#: ../operations/external/rgbe-save.c:88
 msgid "RGBE image saver (Radiance HDR format)"
 msgstr "Zapisywanie obrazów RGBE (format Radiance HDR)"
 
@@ -5588,11 +5588,11 @@ msgstr "Położenie bufora pikseli"
 msgid "The location where to store the output GdkPixbuf."
 msgstr "Położenie, w którym przechowywać wyjściowe GdkPixbuf."
 
-#: ../operations/external/save-pixbuf.c:105
+#: ../operations/external/save-pixbuf.c:106
 msgid "Store in GdkPixbuf"
 msgstr "Zapisz w GdkPixbuf"
 
-#: ../operations/external/save-pixbuf.c:107
+#: ../operations/external/save-pixbuf.c:108
 msgid "Store image in a GdkPixbuf."
 msgstr "Zapisz obraz w GdkPixbuf."
 
@@ -5604,11 +5604,11 @@ msgstr "Tytuł ikony"
 msgid "Icon to be used for output window"
 msgstr "Ikona używana dla okna wyjściowego"
 
-#: ../operations/external/sdl-display.c:171
+#: ../operations/external/sdl-display.c:172
 msgid "SDL Display"
 msgstr "Ekran SDL"
 
-#: ../operations/external/sdl-display.c:174
+#: ../operations/external/sdl-display.c:175
 msgid ""
 "Displays the input buffer in an SDL window (restricted to one display op/"
 "process, due to SDL implementation issues)."
@@ -5626,12 +5626,12 @@ msgstr "Szerokość renderowanego obrazu"
 msgid "Height for rendered image"
 msgstr "Wysokość renderowanego obrazu"
 
-#: ../operations/external/svg-load.c:292
+#: ../operations/external/svg-load.c:293
 msgid "SVG File Loader"
 msgstr "Wczytywanie plików SVG"
 
 #. not hidden because it has extra API
-#: ../operations/external/svg-load.c:294
+#: ../operations/external/svg-load.c:295
 msgid "Load an SVG file using librsvg"
 msgstr "Wczytaj plik SVG za pomocą biblioteki librsvg"
 
@@ -5688,11 +5688,11 @@ msgstr "Renderowana szerokość w pikselach (tylko do odczytu)."
 msgid "Rendered height in pixels. (read only)"
 msgstr "Renderowana wysokość w pikselach (tylko do odczytu)."
 
-#: ../operations/external/text.c:322
+#: ../operations/external/text.c:323
 msgid "Render Text"
 msgstr "Renderuj tekst"
 
-#: ../operations/external/text.c:325
+#: ../operations/external/text.c:326
 msgid "Display a string of text using pango and cairo."
 msgstr "Wyświetl ciąg tekstowy za pomocą bibliotek Pango i cairo."
 
@@ -5704,19 +5704,19 @@ msgstr "Katalog"
 msgid "Image file directory (subfile)"
 msgstr "Katalog pliku obrazu (podplik)"
 
-#: ../operations/external/tiff-load.c:867
+#: ../operations/external/tiff-load.c:868
 msgid "TIFF File Loader"
 msgstr "Wczytywanie plików TIFF"
 
-#: ../operations/external/tiff-load.c:869
+#: ../operations/external/tiff-load.c:870
 msgid "TIFF image loader using libtiff"
 msgstr "Wczytywanie obrazów TIFF za pomocą biblioteki libtiff"
 
-#: ../operations/external/tiff-save.c:621
+#: ../operations/external/tiff-save.c:622
 msgid "TIFF File Saver"
 msgstr "Zapisywanie plików TIFF"
 
-#: ../operations/external/tiff-save.c:623
+#: ../operations/external/tiff-save.c:624
 msgid "TIFF image saver using libtiff"
 msgstr "Zapisywanie obrazów TIFF za pomocą biblioteki libtiff"
 
@@ -5746,11 +5746,11 @@ msgstr "FPS"
 msgid "autotrigger reload this many times a second."
 msgstr "automatyczne wywoływanie tyle razy na sekundę."
 
-#: ../operations/external/v4l.c:328
+#: ../operations/external/v4l.c:329
 msgid "Video4Linux Frame Source"
 msgstr "Źródło klatek Video4Linux"
 
-#: ../operations/external/v4l.c:330
+#: ../operations/external/v4l.c:331
 msgid "Video4Linux input, webcams framegrabbers and similar devices."
 msgstr "Wyjście Video4Linux, kamerki wideo i podobne urządzenia."
 
@@ -5776,11 +5776,11 @@ msgstr "jak ustalać, co wypełniać (nonzero|evenodd)"
 msgid "svg style description of transform."
 msgstr "opis przekształcenia w stylu pliku SVG."
 
-#: ../operations/external/vector-fill.c:275
+#: ../operations/external/vector-fill.c:276
 msgid "Fill Path"
 msgstr "Ścieżka wypełnienia"
 
-#: ../operations/external/vector-fill.c:277
+#: ../operations/external/vector-fill.c:278
 msgid "Renders a filled region"
 msgstr "Rysuje wypełniony obszar"
 
@@ -5800,19 +5800,19 @@ msgstr ""
 "Nieprzezroczystość pociągnięcia, uwaga, nie zachowuje się jak pliki SVG, "
 "ponieważ pociągnięcie jest obecnie wykonywane za pomocą aerografu."
 
-#: ../operations/external/vector-stroke.c:300
+#: ../operations/external/vector-stroke.c:301
 msgid "Vector Stroke"
 msgstr "Pociągnięcie wektorowe"
 
-#: ../operations/external/vector-stroke.c:303
+#: ../operations/external/vector-stroke.c:304
 msgid "Renders a vector stroke"
 msgstr "Rysuje pociągnięcie wektorowe"
 
-#: ../operations/external/webp-load.c:346
+#: ../operations/external/webp-load.c:347
 msgid "WebP File Loader"
 msgstr "Wczytywanie plików WebP"
 
-#: ../operations/external/webp-load.c:348
+#: ../operations/external/webp-load.c:349
 msgid "WebP image loader."
 msgstr "Wczytywanie obrazów WebP."
 
@@ -5820,11 +5820,11 @@ msgstr "Wczytywanie obrazów WebP."
 msgid "WebP compression quality"
 msgstr "Jakość kompresji WebP"
 
-#: ../operations/external/webp-save.c:195
+#: ../operations/external/webp-save.c:196
 msgid "WebP File Saver"
 msgstr "Zapisywanie plików WebP"
 
-#: ../operations/external/webp-save.c:197
+#: ../operations/external/webp-save.c:198
 msgid "WebP image saver"
 msgstr "Zapisywanie obrazów WebP"
 
@@ -5834,7 +5834,7 @@ msgstr "Zapisywanie obrazów WebP"
 msgid "global value used if aux doesn't contain data"
 msgstr "globalna wartość używana, jeśli bufor pomocniczy nie zawiera danych"
 
-#: ../operations/generated/add.c:128
+#: ../operations/generated/add.c:129
 msgid ""
 "Math operation add, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -5844,11 +5844,11 @@ msgstr ""
 "pomocą stałej podanej jako „wartość” lub odpowiedniego piksela z bufora na "
 "dodatkowym wejściu jako argumenty (równanie: wynik = wejście + wartość)."
 
-#: ../operations/generated/clear.c:126
+#: ../operations/generated/clear.c:127
 msgid "Porter Duff operation clear (d = 0.0f)"
 msgstr "Czyszczenie działania Portera-Duffa (d = 0.0f)"
 
-#: ../operations/generated/color-burn.c:173
+#: ../operations/generated/color-burn.c:174
 msgid ""
 "SVG blend operation color-burn (<code>if cA * aB + cB * aA <= aA * aB: d = "
 "cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == 0 ? 1 : (aA * (cA * aB + "
@@ -5859,7 +5859,7 @@ msgstr ""
 "1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - "
 "aA))</code>)"
 
-#: ../operations/generated/color-dodge.c:173
+#: ../operations/generated/color-dodge.c:174
 msgid ""
 "SVG blend operation color-dodge (<code>if cA * aB + cB * aA >= aA * aB: d = "
 "aA * aB + cA * (1 - aB) + cB * (1 - aA) otherwise: d = (cA == aA ? 1 : cB * "
@@ -5870,7 +5870,7 @@ msgstr ""
 "(cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB "
 "* (1 - aA)</code>)"
 
-#: ../operations/generated/darken.c:169
+#: ../operations/generated/darken.c:170
 msgid ""
 "SVG blend operation darken (<code>d = MIN (cA * aB, cB * aA) + cA * (1 - aB) "
 "+ cB * (1 - aA)</code>)"
@@ -5878,7 +5878,7 @@ msgstr ""
 "Działanie mieszania „darken” SVG (<code>d = MIN (cA * aB, cB * aA) + cA * (1 "
 "- aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/difference.c:169
+#: ../operations/generated/difference.c:170
 msgid ""
 "SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * "
 "aA))</code>)"
@@ -5886,7 +5886,7 @@ msgstr ""
 "Działanie mieszania „difference” SVG (<code>d = cA + cB - 2 * (MIN (cA * aB, "
 "cB * aA))</code>)"
 
-#: ../operations/generated/divide.c:128
+#: ../operations/generated/divide.c:129
 msgid ""
 "Math operation divide, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -5897,27 +5897,27 @@ msgstr ""
 "dodatkowym wejściu jako argumenty (równanie: wynik = wartość==0.0f?0.0f:"
 "wejście/wartość)."
 
-#: ../operations/generated/dst-atop.c:126
+#: ../operations/generated/dst-atop.c:127
 msgid "Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"
 msgstr "Działanie Portera-Duffa „dst-atop” (d = cB * aA + cA * (1.0f - aB))"
 
-#: ../operations/generated/dst.c:148
+#: ../operations/generated/dst.c:149
 msgid "Porter Duff operation dst (d = cB)"
 msgstr "Działanie Portera-Duffa „dst” (d = cB)"
 
-#: ../operations/generated/dst-in.c:126
+#: ../operations/generated/dst-in.c:127
 msgid "Porter Duff operation dst-in (d = cB * aA)"
 msgstr "Działanie Portera-Duffa „dst-in” (d = cB * aA)"
 
-#: ../operations/generated/dst-out.c:148
+#: ../operations/generated/dst-out.c:149
 msgid "Porter Duff operation dst-out (d = cB * (1.0f - aA))"
 msgstr "Działanie Portera-Duffa „dst-out” (d = cB * (1.0f - aA))"
 
-#: ../operations/generated/dst-over.c:148
+#: ../operations/generated/dst-over.c:149
 msgid "Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"
 msgstr "Działanie Portera-Duffa „dst-over” (d = cB + cA * (1.0f - aB))"
 
-#: ../operations/generated/exclusion.c:169
+#: ../operations/generated/exclusion.c:170
 msgid ""
 "SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + "
 "cA * (1 - aB) + cB * (1 - aA)</code>)"
@@ -5925,7 +5925,7 @@ msgstr ""
 "Działanie mieszania „exclusion” SVG (<code>d = (cA * aB + cB * aA - 2 * cA * "
 "cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/gamma.c:128
+#: ../operations/generated/gamma.c:129
 msgid ""
 "Math operation gamma, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -5936,7 +5936,7 @@ msgstr ""
 "dodatkowym wejściu jako argumenty (równanie: wynik = powf (wejście, "
 "wartość))."
 
-#: ../operations/generated/hard-light.c:173
+#: ../operations/generated/hard-light.c:174
 msgid ""
 "SVG blend operation hard-light (<code>if 2 * cA < aA: d = 2 * cA * cB + cA * "
 "(1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) "
@@ -5946,7 +5946,7 @@ msgstr ""
 "+ cA * (1 - aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA "
 "- cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/lighten.c:169
+#: ../operations/generated/lighten.c:170
 msgid ""
 "SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - "
 "aB) + cB * (1 - aA)</code>)"
@@ -5954,7 +5954,7 @@ msgstr ""
 "Działanie mieszania „lighten” SVG (<code>d = MAX (cA * aB, cB * aA) + cA * "
 "(1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/multiply.c:128
+#: ../operations/generated/multiply.c:129
 msgid ""
 "Math operation multiply, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -5964,7 +5964,7 @@ msgstr ""
 "pomocą stałej podanej jako „wartość” lub odpowiedniego piksela z bufora na "
 "dodatkowym wejściu jako argumenty (równanie: wynik = wejście * wartość)."
 
-#: ../operations/generated/overlay.c:173
+#: ../operations/generated/overlay.c:174
 msgid ""
 "SVG blend operation overlay (<code>if 2 * cB > aB: d = 2 * cA * cB + cA * (1 "
 "- aB) + cB * (1 - aA) otherwise: d = aA * aB - 2 * (aB - cB) * (aA - cA) + "
@@ -5974,15 +5974,15 @@ msgstr ""
 "cA * (1 - aB) + cB * (1 - aA), w przeciwnym przypadku: d = aA * aB - 2 * (aB "
 "- cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/plus.c:171
+#: ../operations/generated/plus.c:172
 msgid "SVG blend operation plus (<code>d = cA + cB</code>)"
 msgstr "Działanie mieszania „plus” SVG (<code>d = cA + cB</code>)"
 
-#: ../operations/generated/screen.c:169
+#: ../operations/generated/screen.c:170
 msgid "SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"
 msgstr "Działanie mieszania „screen” SVG (<code>d = cA + cB - cA * cB</code>)"
 
-#: ../operations/generated/soft-light.c:175
+#: ../operations/generated/soft-light.c:176
 msgid ""
 "SVG blend operation soft-light (<code>if 2 * cA < aA: d = cB * (aA - (aB == "
 "0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA); if 8 "
@@ -5998,23 +5998,23 @@ msgstr ""
 "w przeciwnym przypadku: d = (aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - "
 "cB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA)</code>)"
 
-#: ../operations/generated/src-atop.c:148
+#: ../operations/generated/src-atop.c:149
 msgid "Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"
 msgstr "Działanie Portera-Duffa „src-atop” (d = cA * aB + cB * (1.0f - aA))"
 
-#: ../operations/generated/src.c:126
+#: ../operations/generated/src.c:127
 msgid "Porter Duff operation src (d = cA)"
 msgstr "Działanie Portera-Duffa „src” (d = cA)"
 
-#: ../operations/generated/src-in.c:134
+#: ../operations/generated/src-in.c:135
 msgid "Porter Duff compositing operation src-in (formula:   cA * aB)"
 msgstr "Działanie składania Portera-Duffa „src-in” (wzór:   cA * aB)"
 
-#: ../operations/generated/src-out.c:126
+#: ../operations/generated/src-out.c:127
 msgid "Porter Duff operation src-out (d = cA * (1.0f - aB))"
 msgstr "Działanie Portera-Duffa „src-out” (d = cA * (1.0f - aB))"
 
-#: ../operations/generated/subtract.c:128
+#: ../operations/generated/subtract.c:129
 msgid ""
 "Math operation subtract, performs the operation per pixel, using either the "
 "constant provided in 'value' or the corresponding pixel from the buffer on "
@@ -6024,7 +6024,7 @@ msgstr ""
 "pomocą stałej podanej jako „wartość” lub odpowiedniego piksela z bufora na "
 "dodatkowym wejściu jako argumenty (równanie: wynik = wejście - wartość)."
 
-#: ../operations/generated/svg-multiply.c:169
+#: ../operations/generated/svg-multiply.c:170
 msgid ""
 "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - "
 "aA)</code>)"
@@ -6032,7 +6032,7 @@ msgstr ""
 "Działanie mieszania „multiply” SVG (<code>d = cA * cB +  cA * (1 - aB) + cB "
 "* (1 - aA)</code>)"
 
-#: ../operations/generated/xor.c:148
+#: ../operations/generated/xor.c:149
 msgid "Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 msgstr "Działanie Portera-Duffa „xor” (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"
 
@@ -6061,19 +6061,19 @@ msgstr "Komunikat o błędzie"
 msgid "An error message in case of a failure"
 msgstr "Komunikat o błędzie w przypadku niepowodzenia"
 
-#: ../operations/seamless-clone/seamless-clone.c:182
+#: ../operations/seamless-clone/seamless-clone.c:183
 msgid "The foreground does not contain opaque parts"
 msgstr "Pierwszy plan nie zawiera części nieprzezroczystych"
 
-#: ../operations/seamless-clone/seamless-clone.c:185
+#: ../operations/seamless-clone/seamless-clone.c:186
 msgid "The foreground is too small to use"
 msgstr "Pierwszy plan jest za mały, aby go użyć"
 
-#: ../operations/seamless-clone/seamless-clone.c:188
+#: ../operations/seamless-clone/seamless-clone.c:189
 msgid "The foreground contains holes and/or several unconnected parts"
 msgstr "Pierwszy plan zawiera dziury lub kilka niepołączonych części"
 
-#: ../operations/seamless-clone/seamless-clone.c:199
+#: ../operations/seamless-clone/seamless-clone.c:200
 msgid "The opaque parts of the foreground are not above the background!"
 msgstr "Nieprzezroczyste części pierwszego planu nie znajdują się nad tłem."
 
@@ -6303,11 +6303,11 @@ msgstr "globalna skala wagi"
 msgid "amount"
 msgstr "ilość"
 
-#: ../operations/workshop/color-warp.c:298
+#: ../operations/workshop/color-warp.c:299
 msgid "Color warp"
 msgstr "Deformacja kolorów"
 
-#: ../operations/workshop/color-warp.c:300
+#: ../operations/workshop/color-warp.c:301
 msgid ""
 "Warps the colors of an image between colors with weighted distortion factors."
 msgstr ""
@@ -6406,11 +6406,11 @@ msgstr "Wyjście liniowe"
 msgid "Use linear output instead of gamma corrected"
 msgstr "Użycie liniowego wyjścia zamiast poprawionej gammy"
 
-#: ../operations/workshop/component-extract.c:240
+#: ../operations/workshop/component-extract.c:241
 msgid "Extract Component"
 msgstr "Wydobądź składową"
 
-#: ../operations/workshop/component-extract.c:242
+#: ../operations/workshop/component-extract.c:243
 msgid "Extract a color model component"
 msgstr "Wydobądź składową modelu kolorów"
 
@@ -6428,11 +6428,11 @@ msgstr ""
 "Używany deseń Bayera, 0 działa z niektórymi plikami Nikkon, a 2 z niektórymi "
 "plikami Fuji."
 
-#: ../operations/workshop/demosaic-bimedian.c:219
+#: ../operations/workshop/demosaic-bimedian.c:220
 msgid "Demosaic With Bimedian Interpolation"
 msgstr "Usuwanie mozaiki za pomocą interpolacji bimediany"
 
-#: ../operations/workshop/demosaic-bimedian.c:222
+#: ../operations/workshop/demosaic-bimedian.c:223
 msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
@@ -6440,18 +6440,18 @@ msgstr ""
 "Wykonuje usuwanie mozaiki „grayscale2color” z obrazu za pomocą interpolacji "
 "bimediany."
 
-#: ../operations/workshop/demosaic-simple.c:151
+#: ../operations/workshop/demosaic-simple.c:152
 msgid "Demosaic Without Interpolation"
 msgstr "Usuwanie mozaiki bez interpolacji"
 
-#: ../operations/workshop/demosaic-simple.c:154
+#: ../operations/workshop/demosaic-simple.c:155
 msgid ""
 "Performs a naive grayscale2color demosaicing of an image, no interpolation."
 msgstr ""
 "Wykonuje naiwne usuwanie mozaiki „grayscale2color” z obrazu, bez "
 "interpolacji."
 
-#: ../operations/workshop/ditto.c:113
+#: ../operations/workshop/ditto.c:114
 msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr ""
 "Testuj działanie, aby wykonać odwzorowanie 1∶1 wejścia do wyjścia podczas "
@@ -6487,7 +6487,7 @@ msgstr "Wartość użytkownika"
 msgid "(appears in the global variable 'user_value' in lua."
 msgstr "(pojawia się w globalnej zmiennej „user_value” w języku Lua."
 
-#: ../operations/workshop/external/gluas.c:994
+#: ../operations/workshop/external/gluas.c:995
 msgid ""
 "A general purpose filter/composer implementation proxy for the lua "
 "programming language."
@@ -6624,7 +6624,7 @@ msgstr "Wartość alfy C modelu"
 msgid "Model alpha d"
 msgstr "Wartość alfy D modelu"
 
-#: ../operations/workshop/external/lens-correct.c:486
+#: ../operations/workshop/external/lens-correct.c:487
 msgid "Copies image performing lens distortion correction."
 msgstr "Kopiuje obraz wykonując poprawę zniekształcenia obiektywu."
 
@@ -6668,7 +6668,7 @@ msgstr "Maksimum"
 msgid "Value at top"
 msgstr "Wartość na górze"
 
-#: ../operations/workshop/external/line-profile.c:196
+#: ../operations/workshop/external/line-profile.c:197
 msgid ""
 "Renders luminance profiles for red green and blue components along the "
 "specified line in the input buffer, plotted in a buffer of the specified "
@@ -6682,19 +6682,19 @@ msgstr ""
 msgid "video device path"
 msgstr "ścieżka do urządzenia wideo"
 
-#: ../operations/workshop/external/v4l2.c:774
+#: ../operations/workshop/external/v4l2.c:775
 msgid "Video4Linux2 Frame Source"
 msgstr "Źródło klatek Video4Linux2"
 
-#: ../operations/workshop/external/v4l2.c:776
+#: ../operations/workshop/external/v4l2.c:777
 msgid "Video4Linux2 input, webcams framegrabbers and similar devices."
 msgstr "Wyjście Video4Linux2, kamerki wideo i podobne urządzenia."
 
-#: ../operations/workshop/generated/average.c:109
+#: ../operations/workshop/generated/average.c:110
 msgid "Image blending operation 'average' (<tt>c = (cA + aB)/2</tt>)"
 msgstr "Działanie mieszania obrazu „average” (<tt>c = (cA + aB)/2</tt>)"
 
-#: ../operations/workshop/generated/blend-reflect.c:109
+#: ../operations/workshop/generated/blend-reflect.c:110
 msgid ""
 "Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-"
 "cB)</tt>)"
@@ -6702,13 +6702,13 @@ msgstr ""
 "Działanie mieszania obrazu „blend-reflect” (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-"
 "cB)</tt>)"
 
-#: ../operations/workshop/generated/negation.c:109
+#: ../operations/workshop/generated/negation.c:110
 msgid ""
 "Image blending operation 'negation' (<tt>c = 1.0 - fabs(1.0-cA-cB)</tt>)"
 msgstr ""
 "Działanie mieszania obrazu „negation” (<tt>c = 1.0 - fabs(1.0-cA-cB)</tt>)"
 
-#: ../operations/workshop/generated/soft-burn.c:109
+#: ../operations/workshop/generated/soft-burn.c:110
 msgid ""
 "Image blending operation 'soft-burn' (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - "
 "cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
@@ -6716,7 +6716,7 @@ msgstr ""
 "Działanie mieszania obrazu „soft-burn” (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - "
 "cA):1.0-0.5*(1.0 - cA) / cB</tt>)"
 
-#: ../operations/workshop/generated/soft-dodge.c:109
+#: ../operations/workshop/generated/soft-dodge.c:110
 msgid ""
 "Image blending operation 'soft-dodge' (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - "
 "cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
@@ -6724,7 +6724,7 @@ msgstr ""
 "Działanie mieszania obrazu „soft-dodge” (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - "
 "cB):1.0-0.5*(1.0 - cB)/cA</tt>)"
 
-#: ../operations/workshop/generated/subtractive.c:109
+#: ../operations/workshop/generated/subtractive.c:110
 msgid "Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"
 msgstr "Działanie mieszania obrazu „subtractive” (<tt>c = cA+cB-1.0</tt>)"
 
@@ -6760,15 +6760,15 @@ msgstr "Kolor 5"
 msgid "Stop 5"
 msgstr "Zatrzymanie 5"
 
-#: ../operations/workshop/gradient-map.c:244
+#: ../operations/workshop/gradient-map.c:245
 msgid "Gradient Map"
 msgstr "Mapa gradientu"
 
-#: ../operations/workshop/gradient-map.c:246
+#: ../operations/workshop/gradient-map.c:247
 msgid "Applies a color gradient."
 msgstr "Zastosowuje gradient koloru."
 
-#: ../operations/workshop/hstack.c:178
+#: ../operations/workshop/hstack.c:179
 msgid ""
 "Horizontally stack inputs, (in \"output\" \"aux\" is placed to the right of "
 "\"input\")"
@@ -6853,11 +6853,11 @@ msgstr "Szerokość debugowania"
 msgid "how wide peel off bands for ink order vis"
 msgstr "szerokość pasków oderwania dla kolejności tuszu"
 
-#: ../operations/workshop/ink-simulator.c:1421
+#: ../operations/workshop/ink-simulator.c:1422
 msgid "Ink Simulator"
 msgstr "Symulator tuszu"
 
-#: ../operations/workshop/ink-simulator.c:1424
+#: ../operations/workshop/ink-simulator.c:1425
 msgid ""
 "Spectral ink and paint simulator, for softproofing/simulating physical color "
 "mixing and interactions."
@@ -6871,7 +6871,7 @@ msgstr ""
 "Promień kwadratowego obszaru pikseli (szerokość i wysokość będą wynosiły "
 "promień*2+1)"
 
-#: ../operations/workshop/kuwahara.c:244
+#: ../operations/workshop/kuwahara.c:245
 msgid "Edge preserving blur"
 msgstr "Rozmycie zachowujące krawędź"
 
@@ -6891,21 +6891,21 @@ msgstr "Poziom przezroczystości"
 msgid "Maximum number of iterations"
 msgstr "Maksymalna liczba iteracji"
 
-#: ../operations/workshop/mandelbrot.c:145
+#: ../operations/workshop/mandelbrot.c:146
 msgid "Mandelbrot set renderer"
 msgstr "Rysowanie zbiorów Mandelbrota"
 
-#: ../operations/workshop/median-blur.c:408
+#: ../operations/workshop/median-blur.c:409
 msgid "Median Blur"
 msgstr "Rozmycie środkowe"
 
-#: ../operations/workshop/median-blur.c:410
+#: ../operations/workshop/median-blur.c:411
 msgid ""
 "Blur resulting from computing the median color of in a square neighbourhood."
 msgstr ""
 "Rozmycie wynikające z obliczania średniej kolorów w kwadratowym sąsiedztwie."
 
-#: ../operations/workshop/rawbayer-load.c:155
+#: ../operations/workshop/rawbayer-load.c:156
 msgid ""
 "Raw image loader, wrapping dcraw with pipes, provides the raw bayer grid as "
 "grayscale, if the fileformat is .rawbayer it will use this loader instead of "
@@ -6942,18 +6942,18 @@ msgstr "Wysokie ograniczenie"
 msgid "Pixels values higher than this limit will be set to it"
 msgstr "Wartości pikseli wyższe niż ta wartość będą na nią ustawiane"
 
-#: ../operations/workshop/rgb-clip.c:184
+#: ../operations/workshop/rgb-clip.c:185
 msgid "Clip RGB"
 msgstr "Obcinanie RGB"
 
-#: ../operations/workshop/rgb-clip.c:186
+#: ../operations/workshop/rgb-clip.c:187
 msgid "Keep RGB pixels values inside a specific range"
 msgstr "Utrzymywanie wartości pikseli RGB w podanym zakresie"
 
-#: ../operations/workshop/vhsfix.c:261
+#: ../operations/workshop/vhsfix.c:262
 msgid "vhs glitch fixer"
 msgstr "naprawianie zakłóceń kaset VHS"
 
-#: ../operations/workshop/vhsfix.c:263
+#: ../operations/workshop/vhsfix.c:264
 msgid "fixes vhs digitization glitches"
 msgstr "naprawia zakłócenia powstałe podczas cyfryzacji kaset VHS"
