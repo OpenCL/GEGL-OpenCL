@@ -209,7 +209,7 @@ static const gdouble bayer_matrix_8x8 [] =
   43, 27, 39, 23, 42, 26, 38, 22
 };
 
-static void
+static void inline
 process_row_bayer (GeglBufferIterator *gi,
                    guint               channel_mask [4],
                    guint               channel_bits [4],
@@ -243,7 +243,7 @@ process_row_bayer (GeglBufferIterator *gi,
     }
 }
 
-static void
+static void inline
 process_row_arithmetic_add (GeglBufferIterator *gi,
                             guint               channel_mask [4],
                             guint               channel_bits [4],
@@ -278,7 +278,7 @@ process_row_arithmetic_add (GeglBufferIterator *gi,
     }
 }
 
-static void
+static void inline
 process_row_arithmetic_xor (GeglBufferIterator *gi,
                             guint               channel_mask [4],
                             guint               channel_bits [4],
@@ -313,7 +313,7 @@ process_row_arithmetic_xor (GeglBufferIterator *gi,
     }
 }
 
-static void
+static void inline
 process_row_arithmetic_add_covariant (GeglBufferIterator *gi,
                                       guint               channel_mask [4],
                                       guint               channel_bits [4],
@@ -348,7 +348,7 @@ process_row_arithmetic_add_covariant (GeglBufferIterator *gi,
     }
 }
 
-static void
+static void inline
 process_row_arithmetic_xor_covariant (GeglBufferIterator *gi,
                                       guint               channel_mask [4],
                                       guint               channel_bits [4],
@@ -382,7 +382,7 @@ process_row_arithmetic_xor_covariant (GeglBufferIterator *gi,
         }
     }
 }
-static void
+static void inline
 process_row_random_covariant (GeglBufferIterator *gi,
                               guint               channel_mask [4],
                               guint               channel_bits [4],
@@ -415,7 +415,7 @@ process_row_random_covariant (GeglBufferIterator *gi,
     }
 }
 
-static void
+static void inline
 process_row_random (GeglBufferIterator *gi,
                     guint               channel_mask [4],
                     guint               channel_bits [4],
@@ -448,7 +448,7 @@ process_row_random (GeglBufferIterator *gi,
     }
 }
 
-static void
+static void inline
 process_row_resilient (GeglBufferIterator *gi,
                        guint               channel_mask [4],
                        guint               channel_bits [4],
@@ -482,7 +482,7 @@ process_row_resilient (GeglBufferIterator *gi,
     }
 }
 
-static void
+static void inline
 process_row_no_dither (GeglBufferIterator *gi,
                        guint               channel_mask [4],
                        guint               channel_bits [4],
@@ -526,43 +526,50 @@ process_standard (GeglBuffer          *input,
   while (gegl_buffer_iterator_next (gi))
     {
       guint    y;
-      for (y = 0; y < gi->roi->height; y++)
+      switch (dither_method)
         {
-          switch (dither_method)
-            {
-            case GEGL_DITHER_NONE:
+          case GEGL_DITHER_NONE:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_no_dither (gi, channel_mask, channel_bits, y);
-              break;
-            case GEGL_DITHER_RANDOM:
+            break;
+          case GEGL_DITHER_RANDOM:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_random (gi, channel_mask, channel_bits, y, rand);
-              break;
-            case GEGL_DITHER_RESILIENT:
+            break;
+          case GEGL_DITHER_RESILIENT:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_resilient (gi, channel_mask, channel_bits, y, rand);
-              break;
-            case GEGL_DITHER_RANDOM_COVARIANT:
+            break;
+          case GEGL_DITHER_RANDOM_COVARIANT:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_random_covariant (gi, channel_mask, channel_bits, y, rand);
-              break;
-            case GEGL_DITHER_BAYER:
+             break;
+          case GEGL_DITHER_BAYER:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_bayer (gi, channel_mask, channel_bits, y);
-              break;
-            case GEGL_DITHER_FLOYD_STEINBERG:
-              /* Done separately */
-              break;
-            case GEGL_DITHER_ARITHMETIC_ADD:
+            break;
+          case GEGL_DITHER_FLOYD_STEINBERG:
+            /* Done separately */
+            break;
+          case GEGL_DITHER_ARITHMETIC_ADD:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_arithmetic_add (gi, channel_mask, channel_bits, y);
-              break;
-            case GEGL_DITHER_ARITHMETIC_XOR:
+            break;
+          case GEGL_DITHER_ARITHMETIC_XOR:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_arithmetic_xor (gi, channel_mask, channel_bits, y);
-              break;
-            case GEGL_DITHER_ARITHMETIC_ADD_COVARIANT:
+            break;
+          case GEGL_DITHER_ARITHMETIC_ADD_COVARIANT:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_arithmetic_add_covariant (gi, channel_mask, channel_bits, y);
-              break;
-            case GEGL_DITHER_ARITHMETIC_XOR_COVARIANT:
+            break;
+          case GEGL_DITHER_ARITHMETIC_XOR_COVARIANT:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_arithmetic_xor_covariant (gi, channel_mask, channel_bits, y);
-              break;
-            default:
+            break;
+          default:
+            for (y = 0; y < gi->roi->height; y++)
               process_row_no_dither (gi, channel_mask, channel_bits, y);
-            }
         }
     }
 }
