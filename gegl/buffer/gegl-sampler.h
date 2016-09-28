@@ -132,9 +132,9 @@ gegl_sampler_get_ptr (GeglSampler    *sampler,
   GeglSamplerLevel *level = &sampler->level[0];
   if ((x + level->context_rect.x < level->sampler_rectangle.x)      ||
       (y + level->context_rect.y < level->sampler_rectangle.y)      ||
-      (x + level->context_rect.x + level->context_rect.width >=
+      (x + level->context_rect.x + level->context_rect.width >
        level->sampler_rectangle.x + level->sampler_rectangle.width) ||
-      (y + level->context_rect.y + level->context_rect.height >=
+      (y + level->context_rect.y + level->context_rect.height >
        level->sampler_rectangle.y + level->sampler_rectangle.height))
     {
       level->sampler_rectangle = _gegl_sampler_compute_rectangle (sampler, x, y, 0);
