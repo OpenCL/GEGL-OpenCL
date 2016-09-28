@@ -215,7 +215,7 @@ stamp (GeglProperties          *o,
   WarpPrivate         *priv = (WarpPrivate*) o->user_data;
   GeglBufferIterator  *it;
   const Babl          *format;
-  gdouble              influence;
+  gdouble              stamp_force, influence;
   gdouble              x_mean = 0.0;
   gdouble              y_mean = 0.0;
   gint                 x_iter, y_iter;
@@ -223,6 +223,7 @@ stamp (GeglProperties          *o,
   const GeglRectangle *src_extent;
   gfloat              *srcbuf, *stampbuf;
   gint                 buf_rowstride = 0;
+  gfloat               s = 0, c = 0;
 
   area.x = floor (x - o->size / 2.0);
   area.y = floor (y - o->size / 2.0);
@@ -270,6 +271,19 @@ stamp (GeglProperties          *o,
       x_mean /= pixel_count;
       y_mean /= pixel_count;
     }
+  else if (o->behavior == GEGL_WARP_BEHAVIOR_SWIRL_CW ||
+           o->behavior == GEGL_WARP_BEHAVIOR_SWIRL_CCW)
+    {
+      /* swirl by 5 degrees per stamp (for strength 100).
+       * not exactly sin/cos factors,
+       * since we calculate an off-center offset-vector */
+
+      /* note that this is fudged for stamp_force < 1.0 and
+       * results in a slight upscaling there. It is a compromise
+       * between exactness and calculation speed. */
+      s = sin (0.01 * o->strength * 5.0 / 180 * G_PI);
+      c = cos (0.01 * o->strength * 5.0 / 180 * G_PI) - 1.0;
+    }
 
   srcbuf = gegl_buffer_linear_open (priv->buffer, NULL, &buf_rowstride, NULL);
   buf_rowstride /= sizeof (gfloat);
@@ -293,29 +307,30 @@ stamp (GeglProperties          *o,
           yi = area.y + y_iter;
           yi += -y + 0.5;
 
-          influence = 0.01 * o->strength * get_stamp_force (o, xi, yi);
+          stamp_force = get_stamp_force (o, xi, yi);
+          influence = 0.01 * o->strength * stamp_force;
 
           switch (o->behavior)
             {
               case GEGL_WARP_BEHAVIOR_MOVE:
-                nvx =  influence * (priv->last_x - x);
-                nvy =  influence * (priv->last_y - y);
+                nvx = influence * (priv->last_x - x);
+                nvy = influence * (priv->last_y - y);
                 break;
               case GEGL_WARP_BEHAVIOR_GROW:
-                nvx = -influence * 0.1 * xi;
-                nvy = -influence * 0.1 * yi;
+                nvx = influence * -0.1 * xi;
+                nvy = influence * -0.1 * yi;
                 break;
               case GEGL_WARP_BEHAVIOR_SHRINK:
-                nvx =  influence * 0.1 * xi;
-                nvy =  influence * 0.1 * yi;
+                nvx = influence * 0.1 * xi;
+                nvy = influence * 0.1 * yi;
                 break;
               case GEGL_WARP_BEHAVIOR_SWIRL_CW:
-                nvx =  influence * 0.1 * yi;
-                nvy = -influence * 0.1 * xi;
+                nvx = stamp_force * ( c * xi + s * yi);
+                nvy = stamp_force * (-s * xi + c * yi);
                 break;
               case GEGL_WARP_BEHAVIOR_SWIRL_CCW:
-                nvx = -influence * 0.1 * yi;
-                nvy =  influence * 0.1 * xi;
+                nvx = stamp_force * ( c * xi - s * yi);
+                nvy = stamp_force * ( s * xi + c * yi);
                 break;
               case GEGL_WARP_BEHAVIOR_ERASE:
               case GEGL_WARP_BEHAVIOR_SMOOTH:
