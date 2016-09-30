@@ -353,8 +353,8 @@ stamp (GeglProperties          *o,
               continue;
             }
 
-          srcptr = srcbuf + (area.y + y_iter + dy) * buf_rowstride +
-                            (area.x + x_iter + dx) * 2;
+          srcptr = srcbuf + (area.y - src_extent->y + y_iter + dy) * buf_rowstride +
+                            (area.x - src_extent->x + x_iter + dx) * 2;
 
           if (o->behavior == GEGL_WARP_BEHAVIOR_ERASE)
             {
