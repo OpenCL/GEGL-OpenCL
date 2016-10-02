@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-09-27 01:14+0200\n"
-"PO-Revision-Date: 2016-09-27 01:15+0200\n"
+"POT-Creation-Date: 2016-10-02 13:17+0200\n"
+"PO-Revision-Date: 2016-10-02 13:18+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -227,34 +227,50 @@ msgstr "Bayera"
 msgid "Floyd-Steinberg"
 msgstr "Floyda-Steinberga"
 
-#: ../gegl/gegl-enums.c:116 ../operations/common/edge-sobel.c:27
+#: ../gegl/gegl-enums.c:93
+msgid "Arithmetic-add"
+msgstr "Arytmetyczne — dodawanie"
+
+#: ../gegl/gegl-enums.c:94
+msgid "Arithmetic-add-covariant"
+msgstr "Arytmetyczne — dodawanie — współzmienne"
+
+#: ../gegl/gegl-enums.c:95
+msgid "Arithmetic-xor"
+msgstr "Arytmetyczne — „xor”"
+
+#: ../gegl/gegl-enums.c:96
+msgid "Arithmetic-xor-covariant"
+msgstr "Arytmetyczne — „xor” — współzmienne"
+
+#: ../gegl/gegl-enums.c:121 ../operations/common/edge-sobel.c:27
 #: ../operations/common/noise-spread.c:29
 msgid "Horizontal"
 msgstr "Poziomy"
 
-#: ../gegl/gegl-enums.c:117 ../operations/common/edge-sobel.c:29
+#: ../gegl/gegl-enums.c:122 ../operations/common/edge-sobel.c:29
 #: ../operations/common/noise-spread.c:35
 msgid "Vertical"
 msgstr "Pionowy"
 
-#: ../gegl/gegl-enums.c:141
+#: ../gegl/gegl-enums.c:146
 msgid "Nearest"
 msgstr "Najbliższy"
 
-#: ../gegl/gegl-enums.c:142 ../operations/common/bump-map.c:33
+#: ../gegl/gegl-enums.c:147 ../operations/common/bump-map.c:33
 #: ../operations/common/sinus.c:64
 msgid "Linear"
 msgstr "Liniowy"
 
-#: ../gegl/gegl-enums.c:143
+#: ../gegl/gegl-enums.c:148
 msgid "Cubic"
 msgstr "Sześcienny"
 
-#: ../gegl/gegl-enums.c:144
+#: ../gegl/gegl-enums.c:149
 msgid "NoHalo"
 msgstr "NoHalo"
 
-#: ../gegl/gegl-enums.c:145
+#: ../gegl/gegl-enums.c:150
 msgid "LoHalo"
 msgstr "LoHalo"
 
@@ -1043,11 +1059,11 @@ msgstr "Używana metoda rozsiewania"
 msgid "Random seed"
 msgstr "Ziarno losowości"
 
-#: ../operations/common/color-reduction.c:501
+#: ../operations/common/color-reduction.c:659
 msgid "Color Reduction"
 msgstr "Redukcja kolorów"
 
-#: ../operations/common/color-reduction.c:503
+#: ../operations/common/color-reduction.c:661
 msgid ""
 "Reduce the number of colors in the image, by reducing the bits per channel "
 "(colors and alpha). Different dithering methods can be specified to "
@@ -4612,11 +4628,11 @@ msgstr "Zachowanie"
 msgid "Behavior of the op"
 msgstr "Zachowanie działania"
 
-#: ../operations/common/warp.c:469
+#: ../operations/common/warp.c:484
 msgid "Warp"
 msgstr "Deformuj"
 
-#: ../operations/common/warp.c:471
+#: ../operations/common/warp.c:486
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Oblicz względne rozmieszczenie odwzorowania z pociągnięcia"
 
