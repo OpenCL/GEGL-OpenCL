@@ -120,6 +120,7 @@ gegl_common_la_SOURCES =\
 	red-eye-removal.c \
 	reinhard05.c \
 	remap.c \
+    rgb-clip.c \
 	ripple.c \
 	saturation.c \
 	save.c \

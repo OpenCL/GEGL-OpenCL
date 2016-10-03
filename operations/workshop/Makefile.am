@@ -18,12 +18,10 @@ op_LTLIBRARIES =    \
 	demosaic-simple.la \
 	ditto.la \
 	hstack.la \
-	ink-simulator.la \
 	kuwahara.la \
 	mandelbrot.la \
 	median-blur.la \
 	rawbayer-load.la \
-	rgb-clip.la \
 	unpremul.la \
     vhsfix.la \
 	gradient-map.la

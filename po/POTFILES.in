@@ -106,6 +106,7 @@ operations/common/rectangle.c
 operations/common/red-eye-removal.c
 operations/common/reinhard05.c
 operations/common/remap.c
+operations/common/rgb-clip.c
 operations/common/ripple.c
 operations/common/saturation.c
 operations/common/save.c
@@ -233,10 +234,8 @@ operations/workshop/generated/soft-dodge.c
 operations/workshop/generated/subtractive.c
 operations/workshop/gradient-map.c
 operations/workshop/hstack.c
-operations/workshop/ink-simulator.c
 operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c
 operations/workshop/median-blur.c
 operations/workshop/rawbayer-load.c
-operations/workshop/rgb-clip.c
 operations/workshop/vhsfix.c
