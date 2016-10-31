@@ -1,6 +1,35 @@
                  ⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽⎽
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+
+Changes in GEGL 0.3.10
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • buffer:
+    • stop caching tiles in a singly-linked list; use a hash table only
+    • adjust box filtering threshold of linear/cubic samplers
+    • add const qualifier to input rect parameter of
+      gegl_tile_backend_set_extent()
+    • don't acquire tile storage lock in NN sampler when not using
+      multithreading
+ • operations:
+    • rgbe-load: add image/x-hdr mimetype
+    • map-relative: sample from the pixel centers for integer vectors
+    • warp: fix and rework the operation, now matches more closely the
+      iWarp behaviour
+    • color-reduction: add arithmetic dithers; inline for loop for each
+      different method
+ • bin: speed up some commands by not intializing opencl
+ • json: make bundleable
+ • translations: Greek, Italian, Occiatan, Polish, Portuguese, Serbian,
+   Slovenian, Spanish updated
+
+Contributions from:
+
+Simon Budig, Marco Ciampa, Piotr Drąg, Ell, Øyvind Kolås, Roman Lebedev,
+Daniel Mustieles, Michael Natterer, Jehan Pagès, Martin Pelikán, 
+Yolanda Álvarez Pérez, Tiago Santos, Dimitris Spingos, Martin Srebotnjak, 
+Cédric Valmary, Милош Поповић.
+
 Changes in GEGL 0.3.8
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • buffer:
