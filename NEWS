@@ -20,15 +20,15 @@ Changes in GEGL 0.3.10
       different method
  • bin: speed up some commands by not intializing opencl
  • json: make bundleable
- • translations: Greek, Italian, Occiatan, Polish, Portuguese, Serbian,
-   Slovenian, Spanish updated
+ • translations: German, Greek, Italian, Occiatan, Polish, Portuguese,
+   Russian, Serbian, Slovenian, Spanish updated
 
 Contributions from:
 
 Simon Budig, Marco Ciampa, Piotr Drąg, Ell, Øyvind Kolås, Roman Lebedev,
-Daniel Mustieles, Michael Natterer, Jehan Pagès, Martin Pelikán, 
-Yolanda Álvarez Pérez, Tiago Santos, Dimitris Spingos, Martin Srebotnjak, 
-Cédric Valmary, Милош Поповић.
+Daniel Mustieles, Michael Natterer, Jehan Pagès, Martin Pelikán,
+Yolanda Álvarez Pérez, Alexandre Prokoudine, Tiago Santos, Dimitris Spingos,
+Martin Srebotnjak, Cédric Valmary, Милош Поповић.
 
 Changes in GEGL 0.3.8
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
