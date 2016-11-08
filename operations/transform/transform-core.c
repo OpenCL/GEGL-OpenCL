@@ -42,7 +42,8 @@ enum
 {
   PROP_ORIGIN_X = 1,
   PROP_ORIGIN_Y,
-  PROP_SAMPLER
+  PROP_SAMPLER,
+  PROP_CLIP_TO_INPUT
 };
 
 static void          gegl_transform_get_property                 (GObject              *object,
@@ -195,6 +196,13 @@ op_transform_class_init (OpTransformClass *klass)
                                      gegl_sampler_type_get_type (),
                                      GEGL_SAMPLER_LINEAR,
                                      G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
+  g_object_class_install_property (gobject_class, PROP_CLIP_TO_INPUT,
+                                   g_param_spec_boolean (
+                                     "clip-to-input",
+                                     _("Clip to input"),
+                                     _("Force output bounding box to be input bounding box."),
+                                     FALSE,
+                                     G_PARAM_CONSTRUCT | G_PARAM_READWRITE));
 }
 
 static void
@@ -221,6 +229,9 @@ gegl_transform_get_property (GObject    *object,
     case PROP_SAMPLER:
       g_value_set_enum (value, self->sampler);
       break;
+    case PROP_CLIP_TO_INPUT:
+      g_value_set_boolean (value, self->clip_to_input);
+      break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -245,6 +256,9 @@ gegl_transform_set_property (GObject      *object,
       break;
     case PROP_SAMPLER:
       self->sampler = g_value_get_enum (value);
+      break;
+    case PROP_CLIP_TO_INPUT:
+      self->clip_to_input = g_value_get_boolean (value);
       break;
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -451,7 +465,8 @@ gegl_transform_get_bounding_box (GeglOperation *op)
   gegl_transform_create_composite_matrix (transform, &matrix);
 
   if (gegl_transform_is_intermediate_node (transform) ||
-      gegl_matrix3_is_identity (&matrix))
+      gegl_matrix3_is_identity (&matrix) ||
+      transform->clip_to_input)
     return in_rect;
 
   /*
