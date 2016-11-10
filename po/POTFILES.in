@@ -232,6 +232,7 @@ operations/workshop/generated/negation.c
 operations/workshop/generated/soft-burn.c
 operations/workshop/generated/soft-dodge.c
 operations/workshop/generated/subtractive.c
+operations/workshop/generated/wavelet-blur.c
 operations/workshop/gradient-map.c
 operations/workshop/hstack.c
 operations/workshop/kuwahara.c
