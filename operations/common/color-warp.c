@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * 2002, 2014 (c) Øyvind Kolås pippin@gimp.org
+ * 2002, 2014, 2016 (c) Øyvind Kolås pippin@gimp.org
  */
 
 #include "config.h"
@@ -67,7 +67,7 @@ property_double (amount, _("amount"), 1.0)
 #include "gegl-op.h"
 #include <math.h>
 
-#define MAX_PAIRS 1024
+#define MAX_PAIRS 64
 
 typedef struct CoordPair {
   float a[3];
@@ -298,7 +298,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:color-warp",
     "title",       _("Color warp"),
     "categories",  "color",
-    "description", _("Warps the colors of an image between colors with weighted distortion factors."),
+    "description", _("Warps the colors of an image between colors with weighted distortion factors, color pairs which are black to black get ignored when constructing the mapping."),
     NULL);
 }
 

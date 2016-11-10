@@ -25,6 +25,7 @@ operations/common/color-reduction.c
 operations/common/color-rotate.c
 operations/common/color-temperature.c
 operations/common/color-to-alpha.c
+operations/common/color-warp.c
 operations/common/contrast-curve.c
 operations/common/convolution-matrix.c
 operations/common/copy-buffer.c
@@ -217,7 +218,6 @@ operations/transform/shear.c
 operations/transform/transform.c
 operations/transform/transform-core.c
 operations/transform/translate.c
-operations/workshop/color-warp.c
 operations/workshop/component-extract.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c

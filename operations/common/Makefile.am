@@ -38,6 +38,7 @@ gegl_common_la_SOURCES =\
 	color-rotate.c \
 	color-temperature.c \
 	color-to-alpha.c \
+    color-warp.c \
 	color.c \
 	contrast-curve.c \
 	convolution-matrix.c \
