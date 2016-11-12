@@ -85,7 +85,8 @@ static const ColorNameEntity color_names[] =
   { "blue",    { 0.f,      0.f,      1.f,      1.f } },
   { "teal",    { 0.f,      0.50196f, 0.50196f, 1.f } },
   { "aqua",    { 0.f,      1.f,      1.f,      1.f } },
-  { "none",    { 0.f,      0.f,      0.f,      0.f } }
+  { "none",    { 0.f,      0.f,      0.f,      0.f } },
+  { "transparent",  { 0.f, 0.f,      0.f,      0.f } }
 };
 
 /* Copied into GeglColor:s instances when parsing a color from a string fails. */
