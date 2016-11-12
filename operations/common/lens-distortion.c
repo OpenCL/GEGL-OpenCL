@@ -54,7 +54,7 @@ property_double (brighten, _("Brighten"), 0.0)
     description (_("Adjust brightness in corners"))
     value_range (-100.0, 100.0)
 
-property_color  (background, _("Background color"), "white")
+property_color  (background, _("Background color"), "transparent")
 
 #else
 
