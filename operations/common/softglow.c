@@ -58,31 +58,31 @@ grey_blur_buffer (GeglBuffer          *input,
 
   gegl = gegl_node_new ();
   image = gegl_node_new_child (gegl,
-                "operation", "gegl:buffer-source",
-                "buffer", input,
-                NULL);
+                               "operation", "gegl:buffer-source",
+                               "buffer",    input,
+                               NULL);
 
   radius   = fabs (glow_radius) + 1.0;
   std_dev = sqrt (-(radius * radius) / (2 * log (1.0 / 255.0)));
 
   blur =  gegl_node_new_child (gegl,
-                "operation", "gegl:gaussian-blur",
-                "std_dev_x", std_dev,
-                "std_dev_y", std_dev,
-                "abyss-policy", "none",
-                NULL);
+                               "operation",    "gegl:gaussian-blur",
+                               "std_dev_x",    std_dev,
+                               "std_dev_y",    std_dev,
+                               "abyss-policy", 0,
+                               NULL);
 
   crop =  gegl_node_new_child (gegl,
-                "operation", "gegl:crop",
-                "x",     (gdouble) result->x,
-                "y",     (gdouble) result->y,
-                "width", (gdouble) result->width,
-                "height",(gdouble) result->height,
-                NULL);
+                               "operation", "gegl:crop",
+                               "x",         (gdouble) result->x,
+                               "y",         (gdouble) result->y,
+                               "width",     (gdouble) result->width,
+                               "height",    (gdouble) result->height,
+                               NULL);
 
   write = gegl_node_new_child (gegl,
-                "operation", "gegl:buffer-sink",
-                "buffer", &dest, NULL);
+                               "operation", "gegl:buffer-sink",
+                               "buffer", &dest, NULL);
 
   gegl_node_link_many (image, blur, crop, write, NULL);
   gegl_node_process (write);
@@ -128,7 +128,7 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglProperties              *o    = GEGL_PROPERTIES (operation);
+  GeglProperties          *o    = GEGL_PROPERTIES (operation);
 
   GeglBuffer *dest, *dest_tmp;
 
