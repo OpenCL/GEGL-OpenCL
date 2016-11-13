@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: GEGL_0_2_0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-10-26 13:40+0200\n"
-"PO-Revision-Date: 2016-10-28 09:04+0200\n"
+"POT-Creation-Date: 2016-11-13 17:11+0100\n"
+"PO-Revision-Date: 2016-11-13 17:19+0100\n"
 "Last-Translator: Marco Ciampa <ciampix@libero.it>\n"
 "Language-Team: italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -84,7 +84,8 @@ msgstr ""
 "\n"
 "     --exists        restituisce 0 se la/le operazioni esistono\n"
 "\n"
-"     --properties    emette le proprietà (nome, tipo, descrizione) dell'operazione\n"
+"     --properties    emette le proprietà (nome, tipo, descrizione) "
+"dell'operazione\n"
 "\n"
 "     -i, --file      legge l'xml dal file col nome specificato\n"
 "\n"
@@ -92,21 +93,26 @@ msgstr ""
 "\n"
 "     --dot           emette una descrizione a grafo graphviz\n"
 "\n"
-"     -o, --output    emette l'immagine generata sul file col nome specificato,\n"
+"     -o, --output    emette l'immagine generata sul file col nome "
+"specificato,\n"
 "                     del tipo determinato dalla sua estensione.\n"
 "\n"
-"     -p              incrementa i contatori di quadro di vari elementi quando\n"
+"     -p              incrementa i contatori di quadro di vari elementi "
+"quando\n"
 "                     termina l'elaborazione.\n"
 "\n"
-"     -s scala, --scale scala  scala le dimensioni del risultato di questo fattore.\n"
+"     -s scala, --scale scala  scala le dimensioni del risultato di questo "
+"fattore.\n"
 "\n"
 "     -X              emette l'XML che ha letto\n"
 "\n"
 "     -v, --verbose   stampa della diagnostica durante l'esecuzione\n"
 "\n"
 "Tutti i parametri che seguono i caratteri -- sono considerati operazioni da\n"
-"concatenare in piccole composizioni, in alternativa all'uso di un file xml; ciò\n"
-"consente una facile verifica dei filtri. Dopo la concatenazione una nuova op\n"
+"concatenare in piccole composizioni, in alternativa all'uso di un file xml; "
+"ciò\n"
+"consente una facile verifica dei filtri. Dopo la concatenazione una nuova "
+"op\n"
 "può essere impostata con coppie proprietà=valore come argomenti successivi.\n"
 
 #: ../bin/gegl-options.c:87
@@ -1210,6 +1216,121 @@ msgid "Convert a specified color to transparency, works best with white."
 msgstr ""
 "Converte uno specifico colore in trasparenza, lavora meglio con il bianco."
 
+#: ../operations/common/color-warp.c:24
+msgid "From 0"
+msgstr "Da 0"
+
+#: ../operations/common/color-warp.c:25
+msgid "To 0"
+msgstr "A 0"
+
+#: ../operations/common/color-warp.c:26
+msgid "weight 0"
+msgstr "peso 0"
+
+#: ../operations/common/color-warp.c:28
+msgid "From 1"
+msgstr "Da 1"
+
+#: ../operations/common/color-warp.c:29
+msgid "To 1"
+msgstr "A 1"
+
+#: ../operations/common/color-warp.c:30
+msgid "weight 1"
+msgstr "peso 1"
+
+#: ../operations/common/color-warp.c:32
+msgid "From 2"
+msgstr "Da 2"
+
+#: ../operations/common/color-warp.c:33
+msgid "To 2"
+msgstr "A 2"
+
+#: ../operations/common/color-warp.c:34
+msgid "weight 2"
+msgstr "peso 2"
+
+#: ../operations/common/color-warp.c:36
+msgid "From 3"
+msgstr "Da 3"
+
+#: ../operations/common/color-warp.c:37
+msgid "To 3"
+msgstr "A 3"
+
+#: ../operations/common/color-warp.c:38
+msgid "weight 3"
+msgstr "peso 3"
+
+#: ../operations/common/color-warp.c:40
+msgid "From 4"
+msgstr "Da 4"
+
+#: ../operations/common/color-warp.c:41
+msgid "To 4"
+msgstr "A 4"
+
+#: ../operations/common/color-warp.c:42
+msgid "weight 4"
+msgstr "peso 4"
+
+#: ../operations/common/color-warp.c:44
+msgid "From 5"
+msgstr "Da 5"
+
+#: ../operations/common/color-warp.c:45
+msgid "To 5"
+msgstr "A 5"
+
+#: ../operations/common/color-warp.c:46
+msgid "weight 5"
+msgstr "peso 5"
+
+#: ../operations/common/color-warp.c:48
+msgid "From 6"
+msgstr "Da 6"
+
+#: ../operations/common/color-warp.c:49
+msgid "To 6"
+msgstr "A 6"
+
+#: ../operations/common/color-warp.c:50
+msgid "weight 6"
+msgstr "peso 6"
+
+#: ../operations/common/color-warp.c:52
+msgid "From 7"
+msgstr "Da 7"
+
+#: ../operations/common/color-warp.c:53
+msgid "To 7"
+msgstr "A 7"
+
+#: ../operations/common/color-warp.c:54
+msgid "weight 7"
+msgstr "peso 7"
+
+#: ../operations/common/color-warp.c:56
+msgid "global weight scale"
+msgstr "scala di peso globale"
+
+#: ../operations/common/color-warp.c:58
+msgid "amount"
+msgstr "quantità"
+
+#: ../operations/common/color-warp.c:299
+msgid "Color warp"
+msgstr "Deformazione colore"
+
+#: ../operations/common/color-warp.c:301
+msgid ""
+"Warps the colors of an image between colors with weighted distortion "
+"factors, color pairs which are black to black get ignored when constructing "
+"the mapping."
+msgstr "Deforma i colori di un'immagine tra colori con fattori di distorsione pesati, le coppie di colori che sono nero a nero vengono ignorate durante la mappatura."
+
 #: ../operations/common/contrast-curve.c:25
 msgid "Sample points"
 msgstr "Punti di campionamento"
@@ -1613,7 +1734,7 @@ msgid "Mode of displacement"
 msgstr "Modalità di spostamento"
 
 #: ../operations/common/displace.c:37 ../operations/external/npd.c:47
-#: ../operations/transform/transform-core.c:193
+#: ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:27
 msgid "Sampler"
 msgstr "Campionatore"
@@ -2414,7 +2535,11 @@ msgid ""
 "Do a chain of operations, with key=value pairs after each operation name to "
 "set properties. And aux=[ source filter ] for specifying a chain with a "
 "source as something connected to an aux pad."
-msgstr "Esegue una catena di operazioni, con le coppie chiave=valore dopo ogni nome operazione per impostare le proprietà. E aux=[ filtro sorgente ] per specificare una catena con una sorgente vista come qualcosa connessa a degli appunti ausiliari."
+msgstr ""
+"Esegue una catena di operazioni, con le coppie chiave=valore dopo ogni nome "
+"operazione per impostare le proprietà. E aux=[ filtro sorgente ] per "
+"specificare una catena con una sorgente vista come qualcosa connessa a degli "
+"appunti ausiliari."
 
 #: ../operations/common/grey.c:101
 msgid "Make Grey"
@@ -5022,7 +5147,9 @@ msgstr "Codec audio"
 #: ../operations/external/ff-save.c:34
 msgid ""
 "Audio codec to use, or auto to use a good default based on container format."
-msgstr "Codifica audio da usare, o auto per usare un buon valore predefinito basato sul formato del contenitore."
+msgstr ""
+"Codifica audio da usare, o auto per usare un buon valore predefinito basato "
+"sul formato del contenitore."
 
 #: ../operations/external/ff-save.c:35
 msgid "audio sample rate"
@@ -5051,7 +5178,9 @@ msgstr "Codec video"
 #: ../operations/external/ff-save.c:45
 msgid ""
 "Video codec to use, or auto to use a good default based on container format."
-msgstr "Codifica video da usare, o auto per usare un buon valore predefinito basato sul formato del contenitore."
+msgstr ""
+"Codifica video da usare, o auto per usare un buon valore predefinito basato "
+"sul formato del contenitore."
 
 #: ../operations/external/ff-save.c:46
 msgid "video bitrate in kb/s"
@@ -5444,7 +5573,7 @@ msgstr "Preserva modello"
 msgid "When TRUE the model will not be freed"
 msgstr "Se questo valore è vero il modello non sarà liberato"
 
-#: ../operations/external/npd.c:50 ../operations/transform/transform-core.c:194
+#: ../operations/external/npd.c:50 ../operations/transform/transform-core.c:195
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Campionatore usato internamente"
@@ -6227,21 +6356,29 @@ msgstr "Stringa di trasformazione"
 msgid "Transforms the group (used by svg)."
 msgstr "Trasforma il gruppo (usato da svg)."
 
-#: ../operations/transform/transform-core.c:177
+#: ../operations/transform/transform-core.c:178
 msgid "Origin-x"
 msgstr "X origine"
 
-#: ../operations/transform/transform-core.c:178
+#: ../operations/transform/transform-core.c:179
 msgid "X coordinate of origin"
 msgstr "Coordinata X dell'origine"
 
-#: ../operations/transform/transform-core.c:185
+#: ../operations/transform/transform-core.c:186
 msgid "Origin-y"
 msgstr "Y origine"
 
-#: ../operations/transform/transform-core.c:186
+#: ../operations/transform/transform-core.c:187
 msgid "Y coordinate of origin"
 msgstr "Coordinata Y dell'origine"
+
+#: ../operations/transform/transform-core.c:202
+msgid "Clip to input"
+msgstr "Ritaglia all'ingresso"
+
+#: ../operations/transform/transform-core.c:203
+msgid "Force output bounding box to be input bounding box."
+msgstr "Forza il risultato in un riquadro delle dimensioni dell'ingresso."
 
 #: ../operations/transform/translate.c:26
 msgid "Horizontal translation"
@@ -6258,120 +6395,6 @@ msgid ""
 msgstr ""
 "Riposiziona il buffer (con precisione subpixel), se le coordinate intere "
 "sono passate da una scorciatoia senza usare il ricampionamento"
-
-#: ../operations/workshop/color-warp.c:24
-msgid "From 0"
-msgstr "Da 0"
-
-#: ../operations/workshop/color-warp.c:25
-msgid "To 0"
-msgstr "A 0"
-
-#: ../operations/workshop/color-warp.c:26
-msgid "weight 0"
-msgstr "peso 0"
-
-#: ../operations/workshop/color-warp.c:28
-msgid "From 1"
-msgstr "Da 1"
-
-#: ../operations/workshop/color-warp.c:29
-msgid "To 1"
-msgstr "A 1"
-
-#: ../operations/workshop/color-warp.c:30
-msgid "weight 1"
-msgstr "peso 1"
-
-#: ../operations/workshop/color-warp.c:32
-msgid "From 2"
-msgstr "Da 2"
-
-#: ../operations/workshop/color-warp.c:33
-msgid "To 2"
-msgstr "A 2"
-
-#: ../operations/workshop/color-warp.c:34
-msgid "weight 2"
-msgstr "peso 2"
-
-#: ../operations/workshop/color-warp.c:36
-msgid "From 3"
-msgstr "Da 3"
-
-#: ../operations/workshop/color-warp.c:37
-msgid "To 3"
-msgstr "A 3"
-
-#: ../operations/workshop/color-warp.c:38
-msgid "weight 3"
-msgstr "peso 3"
-
-#: ../operations/workshop/color-warp.c:40
-msgid "From 4"
-msgstr "Da 4"
-
-#: ../operations/workshop/color-warp.c:41
-msgid "To 4"
-msgstr "A 4"
-
-#: ../operations/workshop/color-warp.c:42
-msgid "weight 4"
-msgstr "peso 4"
-
-#: ../operations/workshop/color-warp.c:44
-msgid "From 5"
-msgstr "Da 5"
-
-#: ../operations/workshop/color-warp.c:45
-msgid "To 5"
-msgstr "A 5"
-
-#: ../operations/workshop/color-warp.c:46
-msgid "weight 5"
-msgstr "peso 5"
-
-#: ../operations/workshop/color-warp.c:48
-msgid "From 6"
-msgstr "Da 6"
-
-#: ../operations/workshop/color-warp.c:49
-msgid "To 6"
-msgstr "A 6"
-
-#: ../operations/workshop/color-warp.c:50
-msgid "weight 6"
-msgstr "peso 6"
-
-#: ../operations/workshop/color-warp.c:52
-msgid "From 7"
-msgstr "Da 7"
-
-#: ../operations/workshop/color-warp.c:53
-msgid "To 7"
-msgstr "A 7"
-
-#: ../operations/workshop/color-warp.c:54
-msgid "weight 7"
-msgstr "peso 7"
-
-#: ../operations/workshop/color-warp.c:56
-msgid "global weight scale"
-msgstr "scala di peso globale"
-
-#: ../operations/workshop/color-warp.c:58
-msgid "amount"
-msgstr "quantità"
-
-#: ../operations/workshop/color-warp.c:299
-msgid "Color warp"
-msgstr "Deformazione colore"
-
-#: ../operations/workshop/color-warp.c:301
-msgid ""
-"Warps the colors of an image between colors with weighted distortion factors."
-msgstr ""
-"Deforma i colori di un'immagine tra colori con fattori di distorsione pesati."
 
 #: ../operations/workshop/component-extract.c:25
 msgid "RGB Red"
@@ -6495,7 +6518,9 @@ msgstr "Demosaico con l'interpolazione bimediana"
 msgid ""
 "Performs a grayscale2color demosaicing of an image, using bimedian "
 "interpolation."
-msgstr "Esegue una demosaicizzazione da scala di grigi a colore, usando l'interpolazione bimediana."
+msgstr ""
+"Esegue una demosaicizzazione da scala di grigi a colore, usando "
+"l'interpolazione bimediana."
 
 #: ../operations/workshop/demosaic-simple.c:152
 msgid "Demosaic Without Interpolation"
