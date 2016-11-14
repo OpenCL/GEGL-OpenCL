@@ -85,7 +85,7 @@ main (gint    argc,
 
       end = NULL;
       errno = 0;
-      t = strtod(argv[3], &end);
+      t = g_ascii_strtod (argv[3], &end);
       if ((errno != ERANGE) && (end != argv[3]) && (end != NULL) && (*end == 0))
         error_diff = t;
     }
