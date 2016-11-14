@@ -238,12 +238,12 @@ gegl_matrix3_parse_string (GeglMatrix3  *matrix,
       gfloat b;
       if (!p) return;
       p++;
-      a = strtod(p, &p);
+      a = g_ascii_strtod(p, &p);
       if (!p) return;
       p = strchr (string, ',');
       if (!p) return;
       p++;
-      b = strtod (p, &p);
+      b = g_ascii_strtod (p, &p);
       if (!p) return;
 
       matrix->coeff [0][2] = a;
@@ -261,7 +261,7 @@ gegl_matrix3_parse_string (GeglMatrix3  *matrix,
       for (i=0;i<3;i++)
         for (j=0;j<3;j++)
           {
-            a = strtod(p, &p);
+            a = g_ascii_strtod(p, &p);
             matrix->coeff [j][i] = a;
             if (!p) return;
             p = strchr (p, ',');
