@@ -339,7 +339,7 @@ int mrg_ui_main (int argc, char **argv, char **ops)
 #endif
 
 /* we want to see the speed gotten if the fastest babl conversions we have were more accurate */
-  g_setenv ("BABL_TOLERANCE", "0.1", TRUE);
+  //g_setenv ("BABL_TOLERANCE", "0.1", TRUE);
   
   o.ops = ops;
 
