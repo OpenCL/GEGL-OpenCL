@@ -83,7 +83,7 @@ typedef struct CoordWarp {
 static CoordWarp *cw_new (void)
 {
   CoordWarp *cw;
-  cw = g_new0 (sizeof (CoordWarp), 1);
+  cw = g_new0 (CoordWarp, 1);
   return cw;
 }
 
