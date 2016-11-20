@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-13 14:17+0100\n"
-"PO-Revision-Date: 2016-11-13 14:18+0100\n"
+"POT-Creation-Date: 2016-11-20 20:37+0100\n"
+"PO-Revision-Date: 2016-11-20 20:38+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -487,6 +487,7 @@ msgstr ""
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
+#: ../operations/workshop/wavelet-blur.c:28
 msgid "Radius"
 msgstr "Promień"
 
@@ -718,7 +719,7 @@ msgstr ""
 "Liczba iteracji, wyższa liczba iteracji dostarcza wyniki z mniejszym szumem "
 "kosztem większej siły obliczeniowej"
 
-#: ../operations/common/c2g.c:395
+#: ../operations/common/c2g.c:396
 msgid ""
 "Color to grayscale conversion, uses envelopes formed with the STRESS "
 "approach to perform local color-difference preserving grayscale generation."
@@ -6895,3 +6896,19 @@ msgstr "naprawianie zakłóceń kaset VHS"
 #: ../operations/workshop/vhsfix.c:264
 msgid "fixes vhs digitization glitches"
 msgstr "naprawia zakłócenia powstałe podczas cyfryzacji kaset VHS"
+
+#: ../operations/workshop/wavelet-blur.c:29
+msgid "Radius of the wavelet blur"
+msgstr "Promień rozmycia falki"
+
+#: ../operations/workshop/wavelet-blur.c:283
+msgid "Wavelet Blur"
+msgstr "Rozmycie falki"
+
+#: ../operations/workshop/wavelet-blur.c:286
+msgid ""
+"This blur is used for the wavelet decomposition filter, each pixel is "
+"computed from another by the HAT transform"
+msgstr ""
+"To rozmycie jest używane dla filtru rozkładu falki. Każdy piksel jest "
+"obliczany z innego przez przekształcenie HAT"
