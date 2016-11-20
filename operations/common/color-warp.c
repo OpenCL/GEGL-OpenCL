@@ -83,7 +83,7 @@ typedef struct CoordWarp {
 static CoordWarp *cw_new (void)
 {
   CoordWarp *cw;
-  cw = calloc (sizeof (CoordWarp), 1);
+  cw = g_new0 (sizeof (CoordWarp), 1);
   return cw;
 }
 
@@ -94,7 +94,7 @@ static void cw_clear_pairs (CoordWarp   *cw)
 
 static void cw_destroy (CoordWarp   *cw)
 {
-  free (cw);
+  g_free (cw);
 }
 
 static void cw_add_pair (CoordWarp   *cw,
