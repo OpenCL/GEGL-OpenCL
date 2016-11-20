@@ -614,7 +614,7 @@ process (GeglOperation       *operation,
     {
       /* allocate memory for maze and set to zero */
 
-      maz = (guchar *) g_new0 (sizeof(guchar), mw * mh);
+      maz = (guchar *) g_new0 (guchar, mw * mh);
 
       gr = g_rand_new ();
 
