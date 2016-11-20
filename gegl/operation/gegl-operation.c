@@ -326,7 +326,7 @@ gegl_operation_prepare (GeglOperation *self)
     const gchar *cl_source = gegl_operation_class_get_key (klass, "cl-source");
     if (cl_source)
       {
-        char *name = strdup (klass->name);
+        char *name = g_strdup (klass->name);
         const char *kernel_name[] = {name, NULL};
         char *k;
         for (k=name; *k; k++)
@@ -337,7 +337,7 @@ gegl_operation_prepare (GeglOperation *self)
                 break;
             }
         klass->cl_data = gegl_cl_compile_and_build (cl_source, kernel_name);
-        free (name);
+        g_free (name);
       }
   }
 
