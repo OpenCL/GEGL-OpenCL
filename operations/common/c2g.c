@@ -81,8 +81,9 @@ static void c2g (GeglOperation       *op,
     GeglBufferIterator *i = gegl_buffer_iterator_new (dst, dst_rect, 0, babl_format("YA float"),
                                                       GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
     GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src, format, GEGL_SAMPLER_NEAREST, level);
-
+#if 0
     float total_pix = dst_rect->width * dst_rect->height;
+#endif
     int pix_done = 0.0;
 
     while (gegl_buffer_iterator_next (i))
