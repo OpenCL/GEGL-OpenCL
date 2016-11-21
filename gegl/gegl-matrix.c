@@ -274,6 +274,7 @@ gegl_matrix3_parse_string (GeglMatrix3  *matrix,
 gchar *gegl_matrix3_to_string (GeglMatrix3 *matrix)
 {
   gchar *res;
+  gchar  dstring[G_ASCII_DTOSTR_BUF_SIZE];
   GString *str = g_string_new ("matrix(");
   gint i, j;
   gint a=0;
@@ -284,7 +285,12 @@ gchar *gegl_matrix3_to_string (GeglMatrix3 *matrix)
         if (a!=0)
           g_string_append (str, ",");
         a=1;
-        g_string_append_printf (str, "%f", matrix->coeff[j][i]);
+        /* Do not use g_string_append_printf () or any other printf
+         * function because they are locale dependent.
+         */
+        g_ascii_dtostr (dstring, sizeof (dstring),
+                        matrix->coeff[j][i]);
+        g_string_append (str, dstring);
       }
   g_string_append (str, ")");
   res = str->str;
