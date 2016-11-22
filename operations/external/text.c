@@ -42,7 +42,8 @@ property_int  (wrap, _("Wrap width"), -1)
     value_range (-1, 1000000)
 property_int  (vertical_wrap, _("Wrap height"), 0)
     description (_("Sets the height in pixels according to which the text is "
-                   "vertically justified. Use -1 for infinite height."))
+                   "vertically justified. "
+                   "Use -1 for no vertical justification."))
     value_range (-1, 1000000)
 
 property_int    (alignment, _("Justification"), 0)
