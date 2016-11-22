@@ -159,16 +159,6 @@ static void text_layout_text (GeglOp *self,
     }
   else
     {
-      /* FIXME: This feels like a hack but it stops the rendered text  */
-      /* from shifting position depending on the value of 'alignment'. */
-      if (o->alignment == 1)
-         cairo_move_to (cr, o->width / 2, 0);
-      else
-        {
-          if (o->alignment == 2)
-             cairo_move_to (cr, o->width, 0);
-        }
-
       pango_cairo_show_layout (cr, layout);
     }
 
