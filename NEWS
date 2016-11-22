@@ -2,6 +2,23 @@
                  GEGL - an image processing framework
                  ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
 
+Changes in GEGL 0.3.12
+⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
+ • operations:
+    • transform: add a clip-to-input property, needed for some GIMP corner-cases
+      involving degenerate matrices.
+    • lens-distortion: default to transparent backgroudn - fix transparency
+      fringing glitch.
+    • wavelet-blur: added to workshop.
+    • color-warp: moved from workshop to common.
+    • text: remove now unneeded work-around
+ • make some serializations/parameters less locale dependent.
+
+Contributions from:
+
+Piotr Drąg, Marco Ciampa, Ell, Øyvind Kolås, Michael Natterer, Jehan Pagès,
+Miroslav Talasek
+
 Changes in GEGL 0.3.10
 ⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺⎺
  • buffer:
