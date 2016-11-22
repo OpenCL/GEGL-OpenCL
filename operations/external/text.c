@@ -34,7 +34,8 @@ property_double (size, _("Size"), 10.0)
     value_range (1.0, 2048.0)
 
 property_color  (color, _("Color"), "black")
-    description(_("Color for the text (defaults to 'white')"))
+    description(_("Color for the text (defaults to 'black')"))
+
 property_int  (wrap, _("Wrap width"), -1)
     description (_("Sets the width in pixels at which long lines will wrap. "
                      "Use -1 for no wrapping."))
@@ -186,7 +187,6 @@ process (GeglOperation       *operation,
                                                  result->height,
                                                  result->width * 4);
   cr = cairo_create (surface);
-  cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
   cairo_translate (cr, -result->x, -result->y);
   text_layout_text (self, cr, 0, NULL, NULL);
 
