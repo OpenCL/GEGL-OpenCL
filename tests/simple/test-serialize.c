@@ -46,11 +46,11 @@ TestCase tests[] = {
      ""},
 
     {"over aux=[ text string='foo bar' ]",
-     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]",
+     "svg:src-over aux=[ gegl:text string='foo bar' width=36 height=7 ]",
      ""},
 
     {"over aux=[text string='foo bar' ]",
-     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]",
+     "svg:src-over aux=[ gegl:text string='foo bar' width=36 height=7 ]",
      ""},
 
     {"over aux= [ ",
@@ -76,7 +76,7 @@ TestCase tests[] = {
      "gegl:exposure has no foo property, properties: 'exposure', 'offset', 'gamma', "},
 
     {"over aux=[text string='foo bar']",
-     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]",
+     "svg:src-over aux=[ gegl:text string='foo bar' width=36 height=7 ]",
      ""},
 
     {"over aux=[ load path=/ ]",
@@ -100,7 +100,7 @@ TestCase tests[] = {
      ""},
 
     {"over aux=[ text string={ 0='foo bar' } ]",
-     "svg:src-over aux=[ gegl:text string='foo bar' width=35 height=11 ]",
+     "svg:src-over aux=[ gegl:text string='foo bar' width=36 height=7 ]",
      ""},
 
     {NULL, NULL, NULL}
