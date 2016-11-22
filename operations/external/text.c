@@ -151,11 +151,12 @@ static void text_layout_text (GeglOp *self,
 
   if (width && height)
     {
-      int w, h;
+      PangoRectangle extents;
 
-      pango_layout_get_pixel_size (layout, &w, &h);
-      *width = (gdouble)w;
-      *height = (gdouble)h;
+      pango_layout_get_pixel_extents (layout, &extents, NULL);
+
+      *width  = (gdouble) (extents.x + extents.width);
+      *height = (gdouble) (extents.y + extents.height);
     }
   else
     {
