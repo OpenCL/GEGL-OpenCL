@@ -31,7 +31,7 @@ property_string (font, _("Font family"), "Sans")
 
 property_double (size, _("Size"), 10.0)
     description (_("Font size in pixels."))
-    value_range (1.0, 2048.0)
+    value_range (0.0, 2048.0)
 
 property_color  (color, _("Color"), "black")
     description(_("Color for the text (defaults to 'black')"))
