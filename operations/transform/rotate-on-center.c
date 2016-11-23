@@ -23,7 +23,7 @@
 #ifdef GEGL_CHANT_PROPERTIES
 
 gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-  _("Angle to rotate (clockwise)"))
+  _("Angle to rotate (counter-clockwise)"))
 /*
  * Override the original properties' descriptions, informing they are ignored
  * and always set to buffer's center coordinates.
