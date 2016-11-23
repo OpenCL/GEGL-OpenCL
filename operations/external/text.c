@@ -106,16 +106,16 @@ static void text_layout_text (GeglOp        *self,
                               gdouble        rowstride,
                               GeglRectangle *bounds)
 {
-  GeglProperties           *o = GEGL_PROPERTIES (self);
+  GeglProperties       *o = GEGL_PROPERTIES (self);
   PangoFontDescription *desc;
-  PangoLayout    *layout;
-  PangoAttrList  *attrs;
-  PangoAttribute *attr  = NULL;
-  gchar          *string;
-  gint            alignment = 0;
-  PangoRectangle  ink_rect;
-  PangoRectangle  logical_rect;
-  gint            vertical_offset = 0;
+  PangoLayout          *layout;
+  PangoAttrList        *attrs;
+  guint16               color[4];
+  gchar                *string;
+  gint                  alignment = 0;
+  PangoRectangle        ink_rect;
+  PangoRectangle        logical_rect;
+  gint                  vertical_offset = 0;
 
   /* Create a PangoLayout, set the font and text */
   layout = pango_cairo_create_layout (cr);
@@ -144,21 +144,16 @@ static void text_layout_text (GeglOp        *self,
   pango_layout_set_width (layout, o->wrap * PANGO_SCALE);
 
   attrs = pango_attr_list_new ();
-  if (attrs)
-  {
-    guint16 color[3];
 
-    gegl_color_get_pixel (o->color, babl_format ("R'G'B' u16"), color);
-    attr = pango_attr_foreground_new (color[0], color[1], color[2]);
+  gegl_color_get_pixel (o->color, babl_format ("R'G'B'A u16"), color);
+  pango_attr_list_insert (
+    attrs,
+    pango_attr_foreground_new (color[0], color[1], color[2]));
+  pango_attr_list_insert (
+    attrs,
+    pango_attr_foreground_alpha_new (color[3]));
 
-    if (attr)
-      {
-        attr->start_index = 0;
-        attr->end_index   = -1;
-        pango_attr_list_insert (attrs, attr);
-        pango_layout_set_attributes (layout, attrs);
-      }
-  }
+  pango_layout_set_attributes (layout, attrs);
 
   /* Inform Pango to re-layout the text with the new transformation */
   pango_cairo_update_layout (cr, layout);
