@@ -1270,7 +1270,7 @@ done
 # We should support this at some point if possible
 #LDFLAGS="-Wl,-z,defs"
 
-CFLAGS="$CFLAGS -DG_LOG_DOMAIN=\\\"GEGL-\\\"__FILE__"
+CFLAGS="$CFLAGS -DG_LOG_DOMAIN=\\\"GEGL\\\""
 
 dnl bin/node-editors/Makefile
 AC_CONFIG_FILES([
