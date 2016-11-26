@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&ke"
 "ywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-10-03 18:28+0000\n"
-"PO-Revision-Date: 2016-10-12 09:11+0300\n"
+"POT-Creation-Date: 2016-11-23 23:10+0000\n"
+"PO-Revision-Date: 2016-11-26 10:17+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@lists.gnome.gr\n"
 "Language: el\n"
@@ -488,6 +488,7 @@ msgstr ""
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
+#: ../operations/workshop/wavelet-blur.c:28
 msgid "Radius"
 msgstr "Ακτίνα"
 
@@ -723,7 +724,7 @@ msgstr ""
 "Αριθμός επαναλήψεων, ένας υψηλότερος αριθμός επαναλήψεων παρέχει λιγότερα "
 "θορυβώδη αποτελέσματα ανά υπολογιστικό κόστος"
 
-#: ../operations/common/c2g.c:395
+#: ../operations/common/c2g.c:396
 msgid ""
 "Color to grayscale conversion, uses envelopes formed with the STRESS "
 "approach to perform local color-difference preserving grayscale generation."
@@ -851,7 +852,7 @@ msgstr ""
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
-#: ../operations/external/svg-load.c:30 ../operations/external/text.c:47
+#: ../operations/external/svg-load.c:30 ../operations/external/text.c:57
 #: ../operations/external/v4l.c:28 ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
 #: ../operations/workshop/external/v4l2.c:26
@@ -870,7 +871,7 @@ msgstr "Οριζόντιο πλάτος κελιών σε εικονοστοιχ
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
-#: ../operations/external/svg-load.c:32 ../operations/external/text.c:49
+#: ../operations/external/svg-load.c:32 ../operations/external/text.c:59
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/line-profile.c:41
 #: ../operations/workshop/external/v4l2.c:28
@@ -1041,12 +1042,10 @@ msgid "Number of bits for alpha channel"
 msgstr "Αριθμός δυαδικών για το κανάλι άλφα"
 
 #: ../operations/common/color-reduction.c:42
-#| msgid "Resampling method"
 msgid "Dithering method"
 msgstr "Μέθοδος πρόσμειξης"
 
 #: ../operations/common/color-reduction.c:44
-#| msgid "The dithering strategy to use"
 msgid "The dithering method to use"
 msgstr "Η μέθοδος πρόσμειξης για χρήση"
 
@@ -1212,6 +1211,127 @@ msgid "Convert a specified color to transparency, works best with white."
 msgstr ""
 "Μετατροπή ενός καθορισμένου χρώματος σε διαφάνεια, δουλεύει άριστα με το "
 "άσπρο."
+
+#: ../operations/common/color-warp.c:24
+msgid "From 0"
+msgstr "Από 0"
+
+#: ../operations/common/color-warp.c:25
+msgid "To 0"
+msgstr "Σε 0"
+
+#: ../operations/common/color-warp.c:26
+msgid "weight 0"
+msgstr "βάρος 0"
+
+#: ../operations/common/color-warp.c:28
+msgid "From 1"
+msgstr "Από 1"
+
+#: ../operations/common/color-warp.c:29
+msgid "To 1"
+msgstr "Σε 1"
+
+#: ../operations/common/color-warp.c:30
+msgid "weight 1"
+msgstr "βάρος 1"
+
+#: ../operations/common/color-warp.c:32
+msgid "From 2"
+msgstr "Από 2"
+
+#: ../operations/common/color-warp.c:33
+msgid "To 2"
+msgstr "Σε 2"
+
+#: ../operations/common/color-warp.c:34
+msgid "weight 2"
+msgstr "βάρος 2"
+
+#: ../operations/common/color-warp.c:36
+msgid "From 3"
+msgstr "Από 3"
+
+#: ../operations/common/color-warp.c:37
+msgid "To 3"
+msgstr "Σε 3"
+
+#: ../operations/common/color-warp.c:38
+msgid "weight 3"
+msgstr "βάρος 3"
+
+#: ../operations/common/color-warp.c:40
+msgid "From 4"
+msgstr "Από 4"
+
+#: ../operations/common/color-warp.c:41
+msgid "To 4"
+msgstr "Σε 4"
+
+#: ../operations/common/color-warp.c:42
+msgid "weight 4"
+msgstr "βάρος 4"
+
+#: ../operations/common/color-warp.c:44
+msgid "From 5"
+msgstr "Από 5"
+
+#: ../operations/common/color-warp.c:45
+msgid "To 5"
+msgstr "Σε 5"
+
+#: ../operations/common/color-warp.c:46
+msgid "weight 5"
+msgstr "βάρος 5"
+
+#: ../operations/common/color-warp.c:48
+msgid "From 6"
+msgstr "Από 6"
+
+#: ../operations/common/color-warp.c:49
+msgid "To 6"
+msgstr "Σε 6"
+
+#: ../operations/common/color-warp.c:50
+msgid "weight 6"
+msgstr "βάρος 6"
+
+#: ../operations/common/color-warp.c:52
+msgid "From 7"
+msgstr "Από 7"
+
+#: ../operations/common/color-warp.c:53
+msgid "To 7"
+msgstr "Σε 7"
+
+#: ../operations/common/color-warp.c:54
+msgid "weight 7"
+msgstr "βάρος 7"
+
+#: ../operations/common/color-warp.c:56
+msgid "global weight scale"
+msgstr "γενική κλίμακα βάρους"
+
+#: ../operations/common/color-warp.c:58
+msgid "amount"
+msgstr "ποσότητα"
+
+#: ../operations/common/color-warp.c:299
+msgid "Color warp"
+msgstr "Στρέβλωση χρώματος"
+
+#: ../operations/common/color-warp.c:301
+#| msgid ""
+#| "Warps the colors of an image between colors with weighted distortion "
+#| "factors."
+msgid ""
+"Warps the colors of an image between colors with weighted distortion "
+"factors, color pairs which are black to black get ignored when constructing "
+"the mapping."
+msgstr ""
+"Παραμορφώνει τα χρώματα μιας εικόνας μεταξύ των χρωμάτων με σταθμισμένους "
+"συντελεστές παραμόρφωσης, ζεύγη χρωμάτων που είναι μαύρο με μαύρο "
+"παραβλέπονται κατά την κατασκευή της χαρτογράφησης."
 
 #: ../operations/common/contrast-curve.c:25
 msgid "Sample points"
@@ -1616,7 +1736,7 @@ msgid "Mode of displacement"
 msgstr "Κατάσταση μετατόπισης"
 
 #: ../operations/common/displace.c:37 ../operations/external/npd.c:47
-#: ../operations/transform/transform-core.c:193
+#: ../operations/transform/transform-core.c:194
 #: ../operations/workshop/ditto.c:27
 msgid "Sampler"
 msgstr "Δειγματοληψία"
@@ -5479,7 +5599,7 @@ msgstr "Διατήρηση μοντέλου"
 msgid "When TRUE the model will not be freed"
 msgstr "Όταν είναι αληθές, το μοντέλο θα ελευθερωθεί"
 
-#: ../operations/external/npd.c:50 ../operations/transform/transform-core.c:194
+#: ../operations/external/npd.c:50 ../operations/transform/transform-core.c:195
 #: ../operations/workshop/ditto.c:29
 msgid "Sampler used internally"
 msgstr "Εσωτερικά χρησιμοποιούμενη δειγματοληψία"
@@ -5750,14 +5870,15 @@ msgid "Font size in pixels."
 msgstr "Μέγεθος γραμματοσειράς σε εικονοστοιχεία."
 
 #: ../operations/external/text.c:37
-msgid "Color for the text (defaults to 'white')"
-msgstr "Χρώμα για το κείμενο (προεπιλογή σε 'λευκό')"
+#| msgid "Color for the text (defaults to 'white')"
+msgid "Color for the text (defaults to 'black')"
+msgstr "Χρώμα για το κείμενο (προεπιλογή το 'μαύρο')"
 
-#: ../operations/external/text.c:38
+#: ../operations/external/text.c:39
 msgid "Wrap width"
 msgstr "Πλάτος αναδίπλωσης"
 
-#: ../operations/external/text.c:39
+#: ../operations/external/text.c:40
 msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
@@ -5766,26 +5887,51 @@ msgstr ""
 "αναδιπλωθούν. Χρήση του -1 για μη αναδίπλωση."
 
 #: ../operations/external/text.c:43
+#| msgid "Wrap input"
+msgid "Wrap height"
+msgstr "Αναδίπλωση ύψους"
+
+#: ../operations/external/text.c:44
+#| msgid ""
+#| "Sets the width in pixels at which long lines will wrap. Use -1 for no "
+#| "wrapping."
+msgid ""
+"Sets the height in pixels according to which the text is vertically "
+"justified. Use -1 for no vertical justification."
+msgstr ""
+"Ορίζει το ύψος σε εικονοστοιχεία σύμφωνα με το οποίο το κείμενο στοιχίζεται "
+"κάθετα. Χρησιμοποιήστε -1 για μη κάθετη στοίχιση."
+
+#: ../operations/external/text.c:49
 msgid "Justification"
 msgstr "Στοίχιση"
 
-#: ../operations/external/text.c:45
+#: ../operations/external/text.c:51
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
 msgstr "Στοίχιση για κείμενο πολλαπλής γραμμής (0=αριστερά, 1=κέντρο, 2=δεξιά)"
 
-#: ../operations/external/text.c:48
+#: ../operations/external/text.c:53
+#| msgid "Vertical position"
+msgid "Vertical justification"
+msgstr "Κάθετη στοίχιση"
+
+#: ../operations/external/text.c:55
+msgid "Vertical text alignment (0=Top, 1=Middle, 2=Bottom)"
+msgstr "Κάθετη στοίχιση κειμένου (0= Πάνω, 1= Μέση, 2= Κάτω)"
+
+#: ../operations/external/text.c:58
 msgid "Rendered width in pixels. (read only)"
 msgstr "Αποδιδόμενο πλάτος σε εικονοστοιχεία. (μόνο ανάγνωση)"
 
-#: ../operations/external/text.c:50
+#: ../operations/external/text.c:60
 msgid "Rendered height in pixels. (read only)"
 msgstr "Αποδιδόμενο ύψος σε εικονοστοιχεία. (μόνο ανάγνωση)"
 
-#: ../operations/external/text.c:323
+#: ../operations/external/text.c:334
 msgid "Render Text"
 msgstr "Απόδοση κειμένου"
 
-#: ../operations/external/text.c:326
+#: ../operations/external/text.c:337
 msgid "Display a string of text using pango and cairo."
 msgstr "Εμφάνιση συμβολοσειράς κειμένου χρησιμοποιώντας pango και cairo."
 
@@ -6200,8 +6346,9 @@ msgstr "Συστατικό Υ του διανύσματος κατεύθυνση
 
 #: ../operations/transform/rotate.c:26
 #: ../operations/transform/rotate-on-center.c:26
-msgid "Angle to rotate (clockwise)"
-msgstr "Γωνία για περιστροφή (δεξιόστροφα)"
+#| msgid "Angle to rotate (clockwise)"
+msgid "Angle to rotate (counter-clockwise)"
+msgstr "Γωνία για περιστροφή (αριστερόστροφα)"
 
 #: ../operations/transform/rotate.c:31
 msgid "Rotate the buffer around the specified origin."
@@ -6271,21 +6418,32 @@ msgstr "Μετασχηματισμός συμβολοσειράς"
 msgid "Transforms the group (used by svg)."
 msgstr "Μετασχηματίζει την ομάδα (χρησιμοποιείται από svg)."
 
-#: ../operations/transform/transform-core.c:177
+#: ../operations/transform/transform-core.c:178
 msgid "Origin-x"
 msgstr "Αρχικό-x"
 
-#: ../operations/transform/transform-core.c:178
+#: ../operations/transform/transform-core.c:179
 msgid "X coordinate of origin"
 msgstr "Συντεταγμένη X αρχικού"
 
-#: ../operations/transform/transform-core.c:185
+#: ../operations/transform/transform-core.c:186
 msgid "Origin-y"
 msgstr "Αρχικό-y"
 
-#: ../operations/transform/transform-core.c:186
+#: ../operations/transform/transform-core.c:187
 msgid "Y coordinate of origin"
 msgstr "Συντεταγμένη Y του αρχικού"
+
+#: ../operations/transform/transform-core.c:202
+#| msgid "Clip to the input extent"
+msgid "Clip to input"
+msgstr "Περικοπή στην είσοδο"
+
+#: ../operations/transform/transform-core.c:203
+msgid "Force output bounding box to be input bounding box."
+msgstr ""
+"Εξαναγκασμός πλαισίου οριοθέτησης εξόδου να είναι το πλαίσιο οριοθέτησης "
+"εισόδου."
 
 #: ../operations/transform/translate.c:26
 msgid "Horizontal translation"
@@ -6303,121 +6461,6 @@ msgstr ""
 "Επανατοποθετήσεις της μνήμης (με ακρίβεια υποεικονοστοιχείου), εάν οι "
 "συντεταγμένες ακέραιου πέρασαν ένα γρήγορο μονοπάτι χωρίς τη χρήση νέας "
 "δειγματοληψίας"
-
-#: ../operations/workshop/color-warp.c:24
-msgid "From 0"
-msgstr "Από 0"
-
-#: ../operations/workshop/color-warp.c:25
-msgid "To 0"
-msgstr "Σε 0"
-
-#: ../operations/workshop/color-warp.c:26
-msgid "weight 0"
-msgstr "βάρος 0"
-
-#: ../operations/workshop/color-warp.c:28
-msgid "From 1"
-msgstr "Από 1"
-
-#: ../operations/workshop/color-warp.c:29
-msgid "To 1"
-msgstr "Σε 1"
-
-#: ../operations/workshop/color-warp.c:30
-msgid "weight 1"
-msgstr "βάρος 1"
-
-#: ../operations/workshop/color-warp.c:32
-msgid "From 2"
-msgstr "Από 2"
-
-#: ../operations/workshop/color-warp.c:33
-msgid "To 2"
-msgstr "Σε 2"
-
-#: ../operations/workshop/color-warp.c:34
-msgid "weight 2"
-msgstr "βάρος 2"
-
-#: ../operations/workshop/color-warp.c:36
-msgid "From 3"
-msgstr "Από 3"
-
-#: ../operations/workshop/color-warp.c:37
-msgid "To 3"
-msgstr "Σε 3"
-
-#: ../operations/workshop/color-warp.c:38
-msgid "weight 3"
-msgstr "βάρος 3"
-
-#: ../operations/workshop/color-warp.c:40
-msgid "From 4"
-msgstr "Από 4"
-
-#: ../operations/workshop/color-warp.c:41
-msgid "To 4"
-msgstr "Σε 4"
-
-#: ../operations/workshop/color-warp.c:42
-msgid "weight 4"
-msgstr "βάρος 4"
-
-#: ../operations/workshop/color-warp.c:44
-msgid "From 5"
-msgstr "Από 5"
-
-#: ../operations/workshop/color-warp.c:45
-msgid "To 5"
-msgstr "Σε 5"
-
-#: ../operations/workshop/color-warp.c:46
-msgid "weight 5"
-msgstr "βάρος 5"
-
-#: ../operations/workshop/color-warp.c:48
-msgid "From 6"
-msgstr "Από 6"
-
-#: ../operations/workshop/color-warp.c:49
-msgid "To 6"
-msgstr "Σε 6"
-
-#: ../operations/workshop/color-warp.c:50
-msgid "weight 6"
-msgstr "βάρος 6"
-
-#: ../operations/workshop/color-warp.c:52
-msgid "From 7"
-msgstr "Από 7"
-
-#: ../operations/workshop/color-warp.c:53
-msgid "To 7"
-msgstr "Σε 7"
-
-#: ../operations/workshop/color-warp.c:54
-msgid "weight 7"
-msgstr "βάρος 7"
-
-#: ../operations/workshop/color-warp.c:56
-msgid "global weight scale"
-msgstr "γενική κλίμακα βάρους"
-
-#: ../operations/workshop/color-warp.c:58
-msgid "amount"
-msgstr "ποσότητα"
-
-#: ../operations/workshop/color-warp.c:299
-msgid "Color warp"
-msgstr "Στρέβλωση χρώματος"
-
-#: ../operations/workshop/color-warp.c:301
-msgid ""
-"Warps the colors of an image between colors with weighted distortion factors."
-msgstr ""
-"Στρεβλώνει τα χρώματα μιας εικόνας μεταξύ των χρωμάτων με σταθμισμένους "
-"συντελεστές παραμόρφωσης."
 
 #: ../operations/workshop/component-extract.c:25
 msgid "RGB Red"
@@ -6941,6 +6984,22 @@ msgstr "επιδιόρθωση προβλήματος βίντεο"
 #: ../operations/workshop/vhsfix.c:264
 msgid "fixes vhs digitization glitches"
 msgstr "διορθώνει προβλήματα ψηφιοποίησης βίντεο"
+
+#: ../operations/workshop/wavelet-blur.c:29
+msgid "Radius of the wavelet blur"
+msgstr "Ακτίνα θόλωσης της κυματομορφής"
+
+#: ../operations/workshop/wavelet-blur.c:283
+msgid "Wavelet Blur"
+msgstr "Θόλωση της κυματομορφής"
+
+#: ../operations/workshop/wavelet-blur.c:286
+msgid ""
+"This blur is used for the wavelet decomposition filter, each pixel is "
+"computed from another by the HAT transform"
+msgstr ""
+"Αυτή η θόλωση χρησιμοποιείται για το φίλτρο αποσύνθεσης κυματομορφής, κάθε "
+"εικονοστοιχείο υπολογίζεται από ένα άλλο με τον μετασχηματισμό HAT"
 
 #~ msgid "Dithering strategy"
 #~ msgstr "Στρατηγική πρόσμειξης"
