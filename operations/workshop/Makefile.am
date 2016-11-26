@@ -18,6 +18,7 @@ op_LTLIBRARIES =    \
 	ditto.la \
 	gradient-map.la \
 	hstack.la \
+	image-gradient.la \
 	kuwahara.la \
 	mandelbrot.la \
 	median-blur.la \
