@@ -25,5 +25,6 @@ op_LTLIBRARIES =    \
 	rawbayer-load.la \
 	unpremul.la \
     vhsfix.la \
+    watershed-transform.la \
     wavelet-blur.la
 
