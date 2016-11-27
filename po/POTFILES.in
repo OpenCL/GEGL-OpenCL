@@ -1,3 +1,5 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
 [encoding: UTF-8]
 bin/gegl.c
 bin/gegl-options.c
@@ -234,10 +236,12 @@ operations/workshop/generated/soft-dodge.c
 operations/workshop/generated/subtractive.c
 operations/workshop/gradient-map.c
 operations/workshop/hstack.c
+operations/workshop/image-gradient.c
 operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c
 operations/workshop/median-blur.c
 operations/workshop/rawbayer-load.c
 operations/workshop/vhsfix.c
+operations/workshop/waterpixels.c
+operations/workshop/watershed-transform.c
 operations/workshop/wavelet-blur.c
-
