@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-20 20:37+0100\n"
-"PO-Revision-Date: 2016-11-20 20:38+0100\n"
+"POT-Creation-Date: 2016-11-27 18:17+0100\n"
+"PO-Revision-Date: 2016-11-27 18:18+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -207,7 +207,7 @@ msgstr "Zapis"
 msgid "Read/Write"
 msgstr "Odczyt/zapis"
 
-#: ../gegl/gegl-enums.c:88
+#: ../gegl/gegl-enums.c:88 ../operations/workshop/waterpixels.c:35
 msgid "Random"
 msgstr "Losowo"
 
@@ -847,7 +847,7 @@ msgstr ""
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
-#: ../operations/external/svg-load.c:30 ../operations/external/text.c:47
+#: ../operations/external/svg-load.c:30 ../operations/external/text.c:57
 #: ../operations/external/v4l.c:28 ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
 #: ../operations/workshop/external/v4l2.c:26
@@ -866,7 +866,7 @@ msgstr "Pozioma szerokość pikseli komórek"
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
-#: ../operations/external/svg-load.c:32 ../operations/external/text.c:49
+#: ../operations/external/svg-load.c:32 ../operations/external/text.c:59
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/line-profile.c:41
 #: ../operations/workshop/external/v4l2.c:28
@@ -4310,6 +4310,7 @@ msgid "Bottom-right"
 msgstr "Dolny-prawy"
 
 #: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
+#: ../operations/workshop/image-gradient.c:28
 msgid "Direction"
 msgstr "Kierunek"
 
@@ -4882,7 +4883,7 @@ msgstr "Góra"
 msgid "Bottom"
 msgstr "Dół"
 
-#: ../operations/common/wind.c:40
+#: ../operations/common/wind.c:40 ../operations/workshop/image-gradient.c:29
 msgid "Both"
 msgstr "Oba"
 
@@ -5822,14 +5823,14 @@ msgid "Font size in pixels."
 msgstr "Rozmiar czcionki w pikselach."
 
 #: ../operations/external/text.c:37
-msgid "Color for the text (defaults to 'white')"
-msgstr "Kolor tekstu (domyślnie „white” — biały)"
+msgid "Color for the text (defaults to 'black')"
+msgstr "Kolor tekstu (domyślnie „black” — czarny)"
 
-#: ../operations/external/text.c:38
+#: ../operations/external/text.c:39
 msgid "Wrap width"
 msgstr "Szerokość zawijania"
 
-#: ../operations/external/text.c:39
+#: ../operations/external/text.c:40
 msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
@@ -5838,27 +5839,47 @@ msgstr ""
 "Wartość -1 oznacza brak zawijania."
 
 #: ../operations/external/text.c:43
+msgid "Wrap height"
+msgstr "Zawijaj wysokość"
+
+#: ../operations/external/text.c:44
+msgid ""
+"Sets the height in pixels according to which the text is vertically "
+"justified. Use -1 for no vertical justification."
+msgstr ""
+"Ustawia wysokość w pikselach, po jakiej tekst będzie wyjustowany w pionie. "
+"Wartość -1 oznacza brak wyjustowania w pionie."
+
+#: ../operations/external/text.c:49
 msgid "Justification"
 msgstr "Wyjustowanie"
 
-#: ../operations/external/text.c:45
+#: ../operations/external/text.c:51
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
 msgstr ""
 "Wyrównanie tekstu wielowierszowego (0=do lewej, 1=wyśrodkowanie, 2=do prawej)"
 
-#: ../operations/external/text.c:48
+#: ../operations/external/text.c:53
+msgid "Vertical justification"
+msgstr "Wyjustowanie w pionie"
+
+#: ../operations/external/text.c:55
+msgid "Vertical text alignment (0=Top, 1=Middle, 2=Bottom)"
+msgstr "Wyrównanie tekstu w pionie (0=do góry, 1=do środka, 2=do dołu)"
+
+#: ../operations/external/text.c:58
 msgid "Rendered width in pixels. (read only)"
 msgstr "Renderowana szerokość w pikselach (tylko do odczytu)."
 
-#: ../operations/external/text.c:50
+#: ../operations/external/text.c:60
 msgid "Rendered height in pixels. (read only)"
 msgstr "Renderowana wysokość w pikselach (tylko do odczytu)."
 
-#: ../operations/external/text.c:323
+#: ../operations/external/text.c:334
 msgid "Render Text"
 msgstr "Renderuj tekst"
 
-#: ../operations/external/text.c:326
+#: ../operations/external/text.c:337
 msgid "Display a string of text using pango and cairo."
 msgstr "Wyświetl ciąg tekstowy za pomocą bibliotek Pango i cairo."
 
@@ -6267,8 +6288,8 @@ msgstr "Składowa na osi Y wektora kierunku"
 
 #: ../operations/transform/rotate.c:26
 #: ../operations/transform/rotate-on-center.c:26
-msgid "Angle to rotate (clockwise)"
-msgstr "Kąt obrotu (zgodnie z ruchem wskazówek zegara)"
+msgid "Angle to rotate (counter-clockwise)"
+msgstr "Kąt obrotu (przeciwnie do ruchu wskazówek zegara)"
 
 #: ../operations/transform/rotate.c:31
 msgid "Rotate the buffer around the specified origin."
@@ -6836,6 +6857,26 @@ msgstr ""
 "Poziomo składa wejścia na stos (w „output” „aux” jest umieszczane po prawej "
 "od „input”)"
 
+#: ../operations/workshop/image-gradient.c:27
+msgid "Magnitude"
+msgstr "Wielkość"
+
+#: ../operations/workshop/image-gradient.c:32
+msgid "Output mode"
+msgstr "Tryb wyjścia"
+
+#: ../operations/workshop/image-gradient.c:35
+msgid "Output Mode"
+msgstr "Tryb wyjścia"
+
+#: ../operations/workshop/image-gradient.c:224
+msgid "Image Gradient"
+msgstr "Gradient obrazu"
+
+#: ../operations/workshop/image-gradient.c:226
+msgid "Compute gradient magnitude and/or direction by central differencies"
+msgstr "Oblicz wielkość gradientu lub kierunek według różnic środkowych"
+
 #: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
@@ -6896,6 +6937,52 @@ msgstr "naprawianie zakłóceń kaset VHS"
 #: ../operations/workshop/vhsfix.c:264
 msgid "fixes vhs digitization glitches"
 msgstr "naprawia zakłócenia powstałe podczas cyfryzacji kaset VHS"
+
+#: ../operations/workshop/waterpixels.c:34
+msgid "Average"
+msgstr "Średnia"
+
+#: ../operations/workshop/waterpixels.c:38
+msgid "Superpixels size"
+msgstr "Rozmiar nadpikseli"
+
+#: ../operations/workshop/waterpixels.c:42
+msgid "Gradient smoothness"
+msgstr "Gładkość gradientu"
+
+#: ../operations/workshop/waterpixels.c:47
+msgid "Spatial regularization"
+msgstr "Uregulowanie przestrzenne"
+
+#: ../operations/workshop/waterpixels.c:49
+msgid ""
+"trade-off between superpixel regularity and adherence to object boundaries"
+msgstr ""
+"kompromis między regularnością nadpikseli a przyleganiem do granic obiektu"
+
+#: ../operations/workshop/waterpixels.c:52
+msgid "Superpixels color"
+msgstr "Kolor nadpikseli"
+
+#: ../operations/workshop/waterpixels.c:55
+msgid "How to fill superpixels"
+msgstr "Jak wypełniać nadpiksele"
+
+#: ../operations/workshop/waterpixels.c:510
+msgid "Waterpixels"
+msgstr "Piksele wody"
+
+#: ../operations/workshop/waterpixels.c:512
+msgid "Superpixels based on the watershed transformation"
+msgstr "Nadpiksele na podstawie przekształcenia działu wodnego"
+
+#: ../operations/workshop/watershed-transform.c:384
+msgid "Watershed Transform"
+msgstr "Przekształcenie działu wodnego"
+
+#: ../operations/workshop/watershed-transform.c:386
+msgid "Labels propagation by watershed transformation"
+msgstr "Rozprowadzanie etykiet według przekształcenia działu wodnego"
 
 #: ../operations/workshop/wavelet-blur.c:29
 msgid "Radius of the wavelet blur"
