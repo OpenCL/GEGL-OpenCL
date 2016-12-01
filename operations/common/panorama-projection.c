@@ -540,7 +540,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "reference-composition", composition,
     "position-dependent",    "true",
     "categories" ,           "map",
-    "description", _("Perform a equlinear/gnomonic or little planet/stereographic projection of a equirectangular input image."),
+    "description", _("Perform an equilinear/gnomonic or little planet/stereographic projection of an equirectangular input image."),
     NULL);
 }
 #endif

@@ -25,7 +25,7 @@
 property_double (value, _("Threshold"), 0.5)
     value_range (-200, 200)
     ui_range    (-1, 2)
-    description(_("Scalar threshold level (overriden if an auxiliary input buffer is provided.)."))
+    description(_("Scalar threshold level (overridden if an auxiliary input buffer is provided.)."))
 
 #else
 

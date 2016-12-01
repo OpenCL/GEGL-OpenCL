@@ -146,7 +146,7 @@ snn_mean (GeglBuffer          *src,
           gfloat  accumulated[4]={0.0f, 0.0f, 0.0f, 0.0f};
           gint    count=0;
 
-          /* iterate through the upper left quater of pixels */
+          /* iterate through the upper left quarter of pixels */
           for (v=-radius;v<=0;v++)
             for (u=-radius;u<= (pairs==1?radius:0);u++)
               {
@@ -335,7 +335,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Symmetric Nearest Neighbour"),
     "description",
         _("Noise reducing edge preserving blur filter based "
-          " on Symmetric Nearest Neighbours"),
+          "on Symmetric Nearest Neighbours"),
         NULL);
 }
 

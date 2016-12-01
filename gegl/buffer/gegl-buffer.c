@@ -241,7 +241,7 @@ gegl_buffer_set_property (GObject      *gobject,
         break;
 
       case PROP_FORMAT:
-        /* Do not set to NULL even if asked to do so by a non-overriden
+        /* Do not set to NULL even if asked to do so by a non-overridden
          * value, this is needed since a default value can not be specified
          * for a gpointer paramspec
          */
