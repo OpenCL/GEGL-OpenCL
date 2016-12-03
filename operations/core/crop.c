@@ -96,6 +96,8 @@ gegl_crop_get_bounding_box (GeglOperation *operation)
   result.width  = o->width;
   result.height = o->height;
 
+  gegl_rectangle_intersect (&result, &result, in_rect);
+
   return result;
 }
 
@@ -104,13 +106,7 @@ gegl_crop_get_invalidated_by_change (GeglOperation       *operation,
                                      const gchar         *input_pad,
                                      const GeglRectangle *input_region)
 {
-  GeglProperties   *o = GEGL_PROPERTIES (operation);
-  GeglRectangle result;
-
-  result.x = o->x;
-  result.y = o->y;
-  result.width = o->width;
-  result.height = o->height;
+  GeglRectangle result = gegl_crop_get_bounding_box (operation);
 
   gegl_rectangle_intersect (&result, &result, input_region);
 
@@ -122,13 +118,7 @@ gegl_crop_get_required_for_output (GeglOperation       *operation,
                                    const gchar         *input_pad,
                                    const GeglRectangle *roi)
 {
-  GeglProperties   *o = GEGL_PROPERTIES (operation);
-  GeglRectangle result;
-
-  result.x      = o->x;
-  result.y      = o->y;
-  result.width  = o->width;
-  result.height = o->height;
+  GeglRectangle result = gegl_crop_get_bounding_box (operation);
 
   gegl_rectangle_intersect (&result, &result, roi);
   return result;
@@ -141,15 +131,9 @@ gegl_crop_process (GeglOperation        *operation,
                    const GeglRectangle  *result,
                    gint                  level)
 {
-  GeglProperties *o = GEGL_PROPERTIES (operation);
-  GeglBuffer     *input;
-  gboolean        success = FALSE;
-  GeglRectangle   extent;
-
-  extent.x      = o->x;
-  extent.y      = o->y;
-  extent.width  = o->width;
-  extent.height = o->height;
+  GeglBuffer    *input;
+  gboolean       success = FALSE;
+  GeglRectangle  extent = gegl_crop_get_bounding_box (operation);
 
   input = gegl_operation_context_get_source (context, "input");
 
