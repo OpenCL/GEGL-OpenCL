@@ -98,7 +98,6 @@ gegl_operation_filter_process (GeglOperation        *operation,
                                  gint                  level)
 {
   GeglOperationFilterClass *klass    = GEGL_OPERATION_FILTER_GET_CLASS (operation);
-  GeglOperationClass         *op_class = GEGL_OPERATION_CLASS (klass);
   GeglBuffer                 *input;
   GeglBuffer                 *output;
   gboolean                    success = FALSE;
@@ -115,18 +114,11 @@ gegl_operation_filter_process (GeglOperation        *operation,
     return TRUE;
   }
 
-  input = gegl_operation_context_get_source (context, "input");
-
-  if (op_class->want_in_place && 
-      gegl_can_do_inplace_processing (operation, input, result))
-    {
-      output = g_object_ref (input);
-      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
-    }
-  else
-    {
-      output = gegl_operation_context_get_target (context, "output");
-    }
+  input  = gegl_operation_context_get_source (context, "input");
+  output = gegl_operation_context_get_output_maybe_in_place (operation,
+                                                             context,
+                                                             input,
+                                                             result);
 
   if (input != NULL)
     {
