@@ -41,7 +41,7 @@ typedef struct {
 } AutostretchData;
 
 static void
-buffer_get_auto_strech_data (GeglBuffer      *buffer,
+buffer_get_auto_stretch_data (GeglBuffer      *buffer,
                              AutostretchData *data)
 {
   gfloat smin =  G_MAXFLOAT;
@@ -141,7 +141,7 @@ process (GeglOperation       *operation,
   AutostretchData     data;
   GeglBufferIterator *gi;
 
-  buffer_get_auto_strech_data (input, &data);
+  buffer_get_auto_stretch_data (input, &data);
   clean_autostretch_data (&data);
 
   gi = gegl_buffer_iterator_new (input, result, 0, babl_format ("HSVA float"),

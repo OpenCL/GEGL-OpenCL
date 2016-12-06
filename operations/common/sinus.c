@@ -71,7 +71,7 @@ property_enum (blend_mode, _("Blend Mode"),
     GEGL_SINUS_BLEND_SINUSOIDAL)
 
 property_double (blend_power, _("Exponent"), 0.0)
-    description (_("Power used to strech the blend"))
+    description (_("Power used to stretch the blend"))
     value_range (-7.5, 7.5)
 
 property_int    (width, _("Width"), 1024)
