@@ -106,7 +106,13 @@ gegl_crop_get_invalidated_by_change (GeglOperation       *operation,
                                      const gchar         *input_pad,
                                      const GeglRectangle *input_region)
 {
-  GeglRectangle result = gegl_crop_get_bounding_box (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglRectangle   result;
+
+  result.x      = o->x;
+  result.y      = o->y;
+  result.width  = o->width;
+  result.height = o->height;
 
   gegl_rectangle_intersect (&result, &result, input_region);
 
@@ -118,7 +124,13 @@ gegl_crop_get_required_for_output (GeglOperation       *operation,
                                    const gchar         *input_pad,
                                    const GeglRectangle *roi)
 {
-  GeglRectangle result = gegl_crop_get_bounding_box (operation);
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglRectangle   result;
+
+  result.x      = o->x;
+  result.y      = o->y;
+  result.width  = o->width;
+  result.height = o->height;
 
   gegl_rectangle_intersect (&result, &result, roi);
   return result;
