@@ -269,7 +269,11 @@ get_bounding_box (GeglOperation *operation)
       o->width  = extent->defined.width  - extent->defined.x;
       o->height = extent->defined.height - extent->defined.y;
 
-      gegl_operation_invalidate (operation, NULL, TRUE);
+      /* XXX: this invalidation is *probably* unnecessary.  having
+       * get_bounding_box() cause an invalidation can be surprising,
+       * so disabling it for now.
+       */
+      /* gegl_operation_invalidate (operation, NULL, TRUE); */
     }
 
   if (status)
