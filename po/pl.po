@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-11-27 18:17+0100\n"
-"PO-Revision-Date: 2016-11-27 18:18+0100\n"
+"POT-Creation-Date: 2016-12-11 15:24+0100\n"
+"PO-Revision-Date: 2016-12-11 15:25+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -3691,8 +3691,8 @@ msgstr "Rzut panoramy"
 
 #: ../operations/common/panorama-projection.c:543
 msgid ""
-"Perform a equlinear/gnomonic or little planet/stereographic projection of a "
-"equirectangular input image."
+"Perform an equilinear/gnomonic or little planet/stereographic projection of "
+"an equirectangular input image."
 msgstr ""
 "Wykonaj gnomiczny lub małej planety/stereograficzny rzut prostokątnego "
 "obrazu wejściowego."
@@ -4124,7 +4124,7 @@ msgid "Blend Mode"
 msgstr "Tryb łączenia"
 
 #: ../operations/common/sinus.c:74
-msgid "Power used to strech the blend"
+msgid "Power used to stretch the blend"
 msgstr "Siła używana do rozciągnięcia łączenia"
 
 #: ../operations/common/sinus.c:314
@@ -4149,7 +4149,7 @@ msgstr "Symetryczni najbliżsi sąsiedzi"
 
 #: ../operations/common/snn-mean.c:337
 msgid ""
-"Noise reducing edge preserving blur filter based  on Symmetric Nearest "
+"Noise reducing edge preserving blur filter based on Symmetric Nearest "
 "Neighbours"
 msgstr ""
 "Filtr rozmycia zmniejszający szum i zachowujący krawędzie na podstawie "
@@ -4340,7 +4340,8 @@ msgstr "Nakłada teksturę na obraz, jakby to było płótno artysty."
 
 #: ../operations/common/threshold.c:28
 msgid ""
-"Scalar threshold level (overriden if an auxiliary input buffer is provided.)."
+"Scalar threshold level (overridden if an auxiliary input buffer is "
+"provided.)."
 msgstr ""
 "Skalarny poziom progowania (zastępowany, kiedy podany jest pomocniczy bufor "
 "wejściowy)."
@@ -5017,11 +5018,11 @@ msgstr "Konwertuj dane do podanego formatu"
 msgid "Reset origin"
 msgstr "Przywrócenie pochodzenia"
 
-#: ../operations/core/crop.c:210
+#: ../operations/core/crop.c:206
 msgid "Crop"
 msgstr "Kadruj"
 
-#: ../operations/core/crop.c:211
+#: ../operations/core/crop.c:207
 msgid "Crop a buffer"
 msgstr "Kadruj bufor"
 
@@ -5875,11 +5876,11 @@ msgstr "Renderowana szerokość w pikselach (tylko do odczytu)."
 msgid "Rendered height in pixels. (read only)"
 msgstr "Renderowana wysokość w pikselach (tylko do odczytu)."
 
-#: ../operations/external/text.c:334
+#: ../operations/external/text.c:338
 msgid "Render Text"
 msgstr "Renderuj tekst"
 
-#: ../operations/external/text.c:337
+#: ../operations/external/text.c:341
 msgid "Display a string of text using pango and cairo."
 msgstr "Wyświetl ciąg tekstowy za pomocą bibliotek Pango i cairo."
 
