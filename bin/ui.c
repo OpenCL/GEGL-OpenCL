@@ -2036,7 +2036,7 @@ gegl_meta_set (const char *path,
     if (error)
       g_warning ("%s", error->message);
   }
-  gexiv2_metadata_free (e2m);
+  g_object_unref (e2m);
 }
 
 char *
@@ -2050,7 +2050,7 @@ gegl_meta_get (const char *path)
     ret = gexiv2_metadata_get_tag_string (e2m, "Xmp.xmp.GEGL");
   /*else
     g_warning ("%s", error->message);*/
-  gexiv2_metadata_free (e2m);
+  g_object_unref (e2m);
   return ret;
 }
 
@@ -2064,7 +2064,7 @@ GExiv2Orientation path_get_orientation (const char *path)
     ret = gexiv2_metadata_get_orientation (e2m);
   /*else
     g_warning ("%s", error->message);*/
-  gexiv2_metadata_free (e2m);
+  g_object_unref (e2m);
   return ret;
 }
 
