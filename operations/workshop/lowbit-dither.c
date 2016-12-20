@@ -58,22 +58,29 @@ process (GeglOperation       *operation,
     {
       int ch;
       for (ch = 0; ch < 4; ch++)
-      {
-       if (in_pixel [ch] > 0.0000001f && in_pixel [ch] < 1.0000000f)
-         out_pixel [ch] = in_pixel [ch] + ((((((x+ch * 67) + y * 236) * 119) & 255)/255.0f)-0.5f )/255.0f;
-         /* this computes an 8bit http://pippin.gimp.org/a_dither/ mask */
-       else
-         out_pixel [ch] = in_pixel [ch];
-      }
-      out_pixel += 4;
-      in_pixel  += 4;
-
-      /* update x and y coordinates */
-      if (++x>=roi->x + roi->width)
         {
-          x=roi->x;
-          y++;
+          if (in_pixel [ch] > 0.0000001f && in_pixel [ch] < 1.0000000f)
+            {
+              /* this computes an 8bit http://pippin.gimp.org/a_dither/ mask */
+              float a_dither = 
+                ((((((x+ch * 67) + y * 236) * 119) & 255)/255.0f)-0.5f) *
+                   (1.0f/256.0f);
+              out_pixel [ch] = in_pixel [ch] + a_dither;
+            }
+          else
+            {
+              out_pixel [ch] = in_pixel [ch];
+            }
         }
+        out_pixel += 4;
+        in_pixel  += 4;
+
+        /* update x and y coordinates */
+        if (++x>=roi->x + roi->width)
+          {
+            x=roi->x;
+            y++;
+          }
     }
 
   return  TRUE;
