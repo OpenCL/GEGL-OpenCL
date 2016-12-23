@@ -26,6 +26,7 @@
 #include "gegl-operation-point-filter.h"
 #include "gegl-operation-context.h"
 #include "gegl-config.h"
+#include "gegl-types-internal.h"
 #include <sys/types.h>
 #include <unistd.h>
 #include <string.h>
@@ -147,7 +148,7 @@ G_DEFINE_TYPE (GeglOperationPointFilter, gegl_operation_point_filter, GEGL_TYPE_
 
 static void prepare (GeglOperation *operation)
 {
-  const Babl *format = babl_format ("RGBA float");
+  const Babl *format = gegl_babl_rgba_linear_float ();
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
 }

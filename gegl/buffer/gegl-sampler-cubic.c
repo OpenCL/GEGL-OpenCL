@@ -117,7 +117,7 @@ gegl_sampler_cubic_init (GeglSamplerCubic *self)
   GEGL_SAMPLER (self)->level[0].context_rect.y = -2;
   GEGL_SAMPLER (self)->level[0].context_rect.width = 5;
   GEGL_SAMPLER (self)->level[0].context_rect.height = 5;
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+  GEGL_SAMPLER (self)->interpolate_format = gegl_babl_rgbA_linear_float ();
 
   self->b=1.0;
   self->c=0.0;

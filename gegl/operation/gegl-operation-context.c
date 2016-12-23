@@ -311,7 +311,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
     {
       g_warning ("no format for %s presuming RGBA float\n",
                  gegl_node_get_debug_name (node));
-      format = babl_format ("RGBA float");
+      format = gegl_babl_rgba_linear_float ();
     }
   g_assert (format != NULL);
   g_assert (!strcmp (padname, "output"));

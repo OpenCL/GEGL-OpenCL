@@ -609,7 +609,7 @@ gegl_buffer_sampler_new_at_level (GeglBuffer      *buffer,
   GType        desired_type;
 
   if (format == NULL)
-    format = babl_format ("RaGaBaA float");
+    format = gegl_babl_rgbA_linear_float ();
 
   desired_type = gegl_sampler_gtype_from_enum (sampler_type);
 

@@ -70,7 +70,7 @@ gegl_sampler_linear_init (GeglSamplerLinear *self)
   GEGL_SAMPLER (self)->level[0].context_rect.y      = -1 -   LINEAR_EXTRA_ELBOW_ROOM;
   GEGL_SAMPLER (self)->level[0].context_rect.width  =  3 + 2*LINEAR_EXTRA_ELBOW_ROOM;
   GEGL_SAMPLER (self)->level[0].context_rect.height =  3 + 2*LINEAR_EXTRA_ELBOW_ROOM;
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+  GEGL_SAMPLER (self)->interpolate_format = gegl_babl_rgbA_linear_float ();
 }
 
 static inline void

@@ -69,7 +69,7 @@ gegl_sampler_nearest_init (GeglSamplerNearest *self)
   GEGL_SAMPLER (self)->level[0].context_rect.y = 0;
   GEGL_SAMPLER (self)->level[0].context_rect.width = 1;
   GEGL_SAMPLER (self)->level[0].context_rect.height = 1;
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+  GEGL_SAMPLER (self)->interpolate_format = gegl_babl_rgbA_linear_float ();
 }
 
 static void inline
@@ -105,7 +105,7 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
         case GEGL_ABYSS_BLACK:
           {
             gfloat color[4] = {0.0, 0.0, 0.0, 1.0};
-            babl_process (babl_fish (babl_format ("RGBA float"), sampler->format),
+            babl_process (babl_fish (gegl_babl_rgba_linear_float (), sampler->format),
                           color,
                           buf,
                           1);
@@ -115,7 +115,7 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
         case GEGL_ABYSS_WHITE:
           {
             gfloat color[4] = {1.0, 1.0, 1.0, 1.0};
-            babl_process (babl_fish (babl_format ("RGBA float"),
+            babl_process (babl_fish (gegl_babl_rgba_linear_float (),
                                      sampler->format),
                           color,
                           buf,

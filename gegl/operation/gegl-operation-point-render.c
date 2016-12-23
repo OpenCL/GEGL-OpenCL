@@ -24,6 +24,7 @@
 #include "gegl.h"
 #include "gegl-operation-point-render.h"
 #include "gegl-operation-context.h"
+#include "gegl-types-internal.h"
 
 static gboolean gegl_operation_point_render_process
                               (GeglOperation       *operation,
@@ -35,7 +36,8 @@ G_DEFINE_TYPE (GeglOperationPointRender, gegl_operation_point_render, GEGL_TYPE_
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  const Babl *format = gegl_babl_rgba_linear_float ();
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static GeglNode *

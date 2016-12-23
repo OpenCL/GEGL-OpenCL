@@ -24,6 +24,7 @@
 #include "gegl.h"
 #include "gegl-operation-point-composer3.h"
 #include "gegl-operation-context.h"
+#include "gegl-types-internal.h"
 #include "gegl-config.h"
 #include <sys/types.h>
 #include <unistd.h>
@@ -177,7 +178,7 @@ G_DEFINE_TYPE (GeglOperationPointComposer3, gegl_operation_point_composer3, GEGL
 
 static void prepare (GeglOperation *operation)
 {
-  const Babl *format = babl_format ("RGBA float");
+  const Babl *format = gegl_babl_rgba_linear_float ();
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format);
   gegl_operation_set_format (operation, "aux2", format);

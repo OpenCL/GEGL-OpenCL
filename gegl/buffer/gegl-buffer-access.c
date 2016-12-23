@@ -91,7 +91,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
         case GEGL_ABYSS_BLACK:
           {
             gfloat color[4] = {0.0, 0.0, 0.0, 1.0};
-            babl_process (babl_fish (babl_format ("RGBA float"), format),
+            babl_process (babl_fish (gegl_babl_rgba_linear_float (), format),
                           color,
                           buf,
                           1);
@@ -101,7 +101,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
         case GEGL_ABYSS_WHITE:
           {
             gfloat color[4] = {1.0, 1.0, 1.0, 1.0};
-            babl_process (babl_fish (babl_format ("RGBA float"),
+            babl_process (babl_fish (gegl_babl_rgba_linear_float (),
                                      format),
                           color,
                           buf,
@@ -1247,7 +1247,7 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
       guchar color[128];
       gfloat in_color[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-      babl_process (babl_fish (babl_format ("RGBA float"), format),
+      babl_process (babl_fish (gegl_babl_rgba_linear_float (), format),
                     in_color, color, 1);
 
       gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
@@ -1259,7 +1259,7 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
       guchar color[128];
       gfloat  in_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
 
-      babl_process (babl_fish (babl_format ("RGBA float"), format),
+      babl_process (babl_fish (gegl_babl_rgba_linear_float (), format),
                     in_color, color, 1);
 
       gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
