@@ -47,26 +47,14 @@ struct _GeglDimension
   gint height;
 };
 
-
 static inline int gegl_level_from_scale (gfloat scale)
 {
   gint level = 0;
-  //gint factor = 1;
 
   while (scale <= 0.500001)
   {
     scale *= 2;
-   // factor *= 2;
     level++;
-#if 0
-    if (rect)
-    {
-      rect->x = 0 < rect->x ? rect->x/2 : (rect->x - 1) / 2;
-      rect->y = 0 < rect->y ? rect->y/2 : (rect->y - 1) / 2;
-      rect->width = 0 < rect->width ? rect->width/2 : (rect->width  - 1) / 2;
-      rect->height = 0 < rect->height ? rect->height/2 : (rect->height  - 1) / 2;
-    }
-#endif
   }
 
   return level;
