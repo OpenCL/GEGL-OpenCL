@@ -26,15 +26,10 @@
 #include <babl/babl.h>
 
 #include "gegl-types.h"
+#include "gegl-types-internal.h"
 #include "gegl-algorithms.h"
 
 #include <math.h>
-
-static const Babl *babl_type_float (void) { static const Babl *type = NULL; if (!type) type = babl_type ("float"); return type; }
-static const Babl *babl_type_u8 (void) { static const Babl *type = NULL; if (!type) type = babl_type ("u8"); return type; }
-static const Babl *babl_type_u16 (void) { static const Babl *type = NULL; if (!type) type = babl_type ("u16"); return type; }
-static const Babl *babl_type_u32 (void) { static const Babl *type = NULL; if (!type) type = babl_type ("u32"); return type; }
-static const Babl *babl_type_double (void) { static const Babl *type = NULL; if (!type) type = babl_type ("double"); return type; }
 
 void gegl_downscale_2x2 (const Babl *format,
                          gint    src_width,
@@ -47,15 +42,15 @@ void gegl_downscale_2x2 (const Babl *format,
   const gint  bpp = babl_format_get_bytes_per_pixel (format);
   const Babl *comp_type = babl_format_get_type (format, 0);
 
-  if (comp_type == babl_type_float())
+  if (comp_type == gegl_babl_float())
     gegl_downscale_2x2_float (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
-  else if (comp_type == babl_type_u8())
+  else if (comp_type == gegl_babl_u8())
     gegl_downscale_2x2_u8 (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
-  else if (comp_type == babl_type_u16())
+  else if (comp_type == gegl_babl_u16())
     gegl_downscale_2x2_u16 (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
-  else if (comp_type == babl_type_u32())
+  else if (comp_type == gegl_babl_u32())
     gegl_downscale_2x2_u32 (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
-  else if (comp_type == babl_type_double())
+  else if (comp_type == gegl_babl_double())
     gegl_downscale_2x2_double (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
   else
     gegl_downscale_2x2_nearest (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
@@ -102,19 +97,19 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
   const Babl *comp_type  = babl_format_get_type (format, 0);
   const gint bpp = babl_format_get_bytes_per_pixel (format);
 
-  if (comp_type == babl_type_float())
+  if (comp_type == gegl_babl_float())
     gegl_resample_boxfilter_float (dest_buf, source_buf, dst_rect, src_rect,
                                    s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_u8())
+  else if (comp_type == gegl_babl_u8())
     gegl_resample_boxfilter_u8 (dest_buf, source_buf, dst_rect, src_rect,
                                 s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_u16())
+  else if (comp_type == gegl_babl_u16())
     gegl_resample_boxfilter_u16 (dest_buf, source_buf, dst_rect, src_rect,
                                  s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_u32())
+  else if (comp_type == gegl_babl_u32())
     gegl_resample_boxfilter_u32 (dest_buf, source_buf, dst_rect, src_rect,
                                  s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_double())
+  else if (comp_type == gegl_babl_double())
     gegl_resample_boxfilter_double (dest_buf, source_buf, dst_rect, src_rect,
                                     s_rowstride, scale, bpp, d_rowstride);
   else
@@ -134,19 +129,19 @@ void gegl_resample_bilinear (guchar              *dest_buf,
   const Babl *comp_type  = babl_format_get_type (format, 0);
   const gint bpp = babl_format_get_bytes_per_pixel (format);
 
-  if (comp_type == babl_type_float ())
+  if (comp_type == gegl_babl_float ())
     gegl_resample_bilinear_float (dest_buf, source_buf, dst_rect, src_rect,
                                   s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_u8 ())
+  else if (comp_type == gegl_babl_u8 ())
     gegl_resample_bilinear_u8 (dest_buf, source_buf, dst_rect, src_rect,
                                s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_u16 ())
+  else if (comp_type == gegl_babl_u16 ())
     gegl_resample_bilinear_u16 (dest_buf, source_buf, dst_rect, src_rect,
                                 s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_u32 ())
+  else if (comp_type == gegl_babl_u32 ())
     gegl_resample_bilinear_u32 (dest_buf, source_buf, dst_rect, src_rect,
                                 s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_double ())
+  else if (comp_type == gegl_babl_double ())
     gegl_resample_bilinear_double (dest_buf, source_buf, dst_rect, src_rect,
                                    s_rowstride, scale, bpp, d_rowstride);
   else
