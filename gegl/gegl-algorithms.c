@@ -102,7 +102,10 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
   const Babl *comp_type  = babl_format_get_type (format, 0);
   const gint bpp = babl_format_get_bytes_per_pixel (format);
 
-  if (comp_type == babl_type_u8())
+  if (comp_type == babl_type_float())
+    gegl_resample_boxfilter_float (dest_buf, source_buf, dst_rect, src_rect,
+                                   s_rowstride, scale, bpp, d_rowstride);
+  else if (comp_type == babl_type_u8())
     gegl_resample_boxfilter_u8 (dest_buf, source_buf, dst_rect, src_rect,
                                 s_rowstride, scale, bpp, d_rowstride);
   else if (comp_type == babl_type_u16())
@@ -111,9 +114,6 @@ void gegl_resample_boxfilter (guchar              *dest_buf,
   else if (comp_type == babl_type_u32())
     gegl_resample_boxfilter_u32 (dest_buf, source_buf, dst_rect, src_rect,
                                  s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_float())
-    gegl_resample_boxfilter_float (dest_buf, source_buf, dst_rect, src_rect,
-                                   s_rowstride, scale, bpp, d_rowstride);
   else if (comp_type == babl_type_double())
     gegl_resample_boxfilter_double (dest_buf, source_buf, dst_rect, src_rect,
                                     s_rowstride, scale, bpp, d_rowstride);
@@ -134,7 +134,10 @@ void gegl_resample_bilinear (guchar              *dest_buf,
   const Babl *comp_type  = babl_format_get_type (format, 0);
   const gint bpp = babl_format_get_bytes_per_pixel (format);
 
-  if (comp_type == babl_type_u8 ())
+  if (comp_type == babl_type_float ())
+    gegl_resample_bilinear_float (dest_buf, source_buf, dst_rect, src_rect,
+                                  s_rowstride, scale, bpp, d_rowstride);
+  else if (comp_type == babl_type_u8 ())
     gegl_resample_bilinear_u8 (dest_buf, source_buf, dst_rect, src_rect,
                                s_rowstride, scale, bpp, d_rowstride);
   else if (comp_type == babl_type_u16 ())
@@ -143,9 +146,6 @@ void gegl_resample_bilinear (guchar              *dest_buf,
   else if (comp_type == babl_type_u32 ())
     gegl_resample_bilinear_u32 (dest_buf, source_buf, dst_rect, src_rect,
                                 s_rowstride, scale, bpp, d_rowstride);
-  else if (comp_type == babl_type_float ())
-    gegl_resample_bilinear_float (dest_buf, source_buf, dst_rect, src_rect,
-                                  s_rowstride, scale, bpp, d_rowstride);
   else if (comp_type == babl_type_double ())
     gegl_resample_bilinear_double (dest_buf, source_buf, dst_rect, src_rect,
                                    s_rowstride, scale, bpp, d_rowstride);
