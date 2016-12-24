@@ -6599,7 +6599,7 @@ msgstr ""
 
 #: ../operations/workshop/demosaic-bimedian.c:220
 msgid "Demosaic With Bimedian Interpolation"
-msgstr "Demosaic amb interpolació bimediana"
+msgstr "Desmosaic amb interpolació bimediana"
 
 #: ../operations/workshop/demosaic-bimedian.c:223
 msgid ""
@@ -6611,7 +6611,7 @@ msgstr ""
 
 #: ../operations/workshop/demosaic-simple.c:152
 msgid "Demosaic Without Interpolation"
-msgstr "Demosaic sense interpolació"
+msgstr "Desmosaic sense interpolació"
 
 #: ../operations/workshop/demosaic-simple.c:155
 msgid ""
