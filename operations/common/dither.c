@@ -24,24 +24,28 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_int  (red_levels, _("Red levels"), 256)
+property_int  (red_levels, _("Red levels"), 6)
     description(_("Number of levels for red channel"))
     value_range (2, 65536)
+    ui_gamma (4.0)
 
-property_int  (green_levels, _("Green levels"), 256)
+property_int  (green_levels, _("Green levels"), 7)
     description(_("Number of levels for green channel"))
     value_range (2, 65536)
+    ui_gamma (4.0)
 
-property_int  (blue_levels, _("Blue levels"), 256)
+property_int  (blue_levels, _("Blue levels"), 6)
     description(_("Number of levels for blue channel"))
     value_range (2, 65536)
+    ui_gamma (4.0)
 
 property_int  (alpha_levels, _("Alpha levels"), 256)
     description(_("Number of levels for alpha channel"))
     value_range (2, 65536)
+    ui_gamma (5.0)
 
 property_enum (dither_method, _("Dithering method"),
-               GeglDitherMethod, gegl_dither_method, GEGL_DITHER_RESILIENT)
+               GeglDitherMethod, gegl_dither_method, GEGL_DITHER_FLOYD_STEINBERG)
     description (_("The dithering method to use"))
 
 property_seed (seed, _("Random seed"), rand)
