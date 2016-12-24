@@ -48,8 +48,8 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_FILTER
-#define GEGL_OP_NAME     color_reduction
-#define GEGL_OP_C_SOURCE color-reduction.c
+#define GEGL_OP_NAME     dither
+#define GEGL_OP_C_SOURCE dither.c
 
 #include "gegl-op.h"
 
@@ -655,8 +655,9 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:color-reduction",
-    "title",       _("Color Reduction"),
+    "name",        "gegl:dither",
+    "compat-name", "gegl:color-reduction",
+    "title",       _("Dither"),
     "categories",  "dither",
     "description", _("Reduce the number of colors in the image, by reducing "
                      "the bits per channel (colors and alpha). Different dithering methods "

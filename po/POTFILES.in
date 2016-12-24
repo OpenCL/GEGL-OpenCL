@@ -23,7 +23,6 @@ operations/common/checkerboard.c
 operations/common/color.c
 operations/common/color-enhance.c
 operations/common/color-exchange.c
-operations/common/color-reduction.c
 operations/common/color-rotate.c
 operations/common/color-temperature.c
 operations/common/color-to-alpha.c
@@ -38,6 +37,7 @@ operations/common/diffraction-patterns.c
 operations/common/displace.c
 operations/common/display.c
 operations/common/distance-transform.c
+operations/common/dither.c
 operations/common/dropshadow.c
 operations/common/edge.c
 operations/common/edge-laplace.c

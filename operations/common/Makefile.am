@@ -34,7 +34,7 @@ gegl_common_la_SOURCES =\
 	checkerboard.c \
 	color-enhance.c \
 	color-exchange.c \
-	color-reduction.c \
+	dither.c \
 	color-rotate.c \
 	color-temperature.c \
 	color-to-alpha.c \
