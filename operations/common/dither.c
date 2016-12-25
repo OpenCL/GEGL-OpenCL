@@ -27,22 +27,22 @@
 property_int  (red_levels, _("Red levels"), 6)
     description(_("Number of levels for red channel"))
     value_range (2, 65536)
-    ui_gamma (4.0)
+    ui_gamma (3.0)
 
 property_int  (green_levels, _("Green levels"), 7)
     description(_("Number of levels for green channel"))
     value_range (2, 65536)
-    ui_gamma (4.0)
+    ui_gamma (3.0)
 
 property_int  (blue_levels, _("Blue levels"), 6)
     description(_("Number of levels for blue channel"))
     value_range (2, 65536)
-    ui_gamma (4.0)
+    ui_gamma (3.0)
 
 property_int  (alpha_levels, _("Alpha levels"), 256)
     description(_("Number of levels for alpha channel"))
     value_range (2, 65536)
-    ui_gamma (5.0)
+    ui_gamma (3.0)
 
 property_enum (dither_method, _("Dithering method"),
                GeglDitherMethod, gegl_dither_method, GEGL_DITHER_FLOYD_STEINBERG)
@@ -421,38 +421,6 @@ process_row_random (GeglBufferIterator *gi,
 }
 
 static void inline
-process_row_resilient (GeglBufferIterator *gi,
-                       guint               channel_levels [4],
-                       gint                y,
-                       GeglRandom         *rand)
-{
-  guint16 *data_in  = (guint16*) gi->data [0];
-  guint16 *data_out = (guint16*) gi->data [1];
-  guint    x;
-  for (x = 0; x < gi->roi->width; x++)
-    {
-      guint pixel = 4 * (gi->roi->width * y + x);
-      guint ch;
-      for (ch = 0; ch < 4; ch++)
-        {
-          gdouble value;
-          gdouble value_clamped;
-          gdouble quantized;
-          gint    r = REDUCE_16B (gegl_random_int (rand, gi->roi->x + x,
-                                                   gi->roi->y + y, 0, ch));
-
-          value         = data_in [pixel + ch] + ((r-65535.0/2) * 1.2 / channel_levels [ch]);
-
-          value_clamped = CLAMP (value, 0.0, 65535.0);
-          quantized     = quantize_value ((guint) (value_clamped + 0.5),
-                                          channel_levels [ch]);
-
-          data_out [pixel + ch] = (guint16) quantized;
-        }
-    }
-}
-
-static void inline
 process_row_no_dither (GeglBufferIterator *gi,
                        guint               channel_levels [4],
                        guint               y)
@@ -500,10 +468,6 @@ process_standard (GeglBuffer          *input,
           case GEGL_DITHER_RANDOM:
             for (y = 0; y < gi->roi->height; y++)
               process_row_random (gi, channel_levels, y, rand);
-            break;
-          case GEGL_DITHER_RESILIENT:
-            for (y = 0; y < gi->roi->height; y++)
-              process_row_resilient (gi, channel_levels, y, rand);
             break;
           case GEGL_DITHER_RANDOM_COVARIANT:
             for (y = 0; y < gi->roi->height; y++)
