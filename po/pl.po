@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-11 15:24+0100\n"
-"PO-Revision-Date: 2016-12-11 15:25+0100\n"
+"POT-Creation-Date: 2016-12-25 21:52+0100\n"
+"PO-Revision-Date: 2016-12-25 21:53+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -207,70 +207,66 @@ msgstr "Zapis"
 msgid "Read/Write"
 msgstr "Odczyt/zapis"
 
-#: ../gegl/gegl-enums.c:88 ../operations/workshop/waterpixels.c:35
-msgid "Random"
-msgstr "Losowo"
-
-#: ../gegl/gegl-enums.c:89
-msgid "Resilient"
-msgstr "Wytrzymałość"
-
-#: ../gegl/gegl-enums.c:90
-msgid "Random Covariant"
-msgstr "Losowy współzmienny"
-
-#: ../gegl/gegl-enums.c:91
-msgid "Bayer"
-msgstr "Bayera"
-
-#: ../gegl/gegl-enums.c:92
+#: ../gegl/gegl-enums.c:88
 msgid "Floyd-Steinberg"
 msgstr "Floyda-Steinberga"
 
+#: ../gegl/gegl-enums.c:89
+msgid "Bayer"
+msgstr "Bayera"
+
+#: ../gegl/gegl-enums.c:90 ../operations/workshop/waterpixels.c:35
+msgid "Random"
+msgstr "Losowo"
+
+#: ../gegl/gegl-enums.c:91
+msgid "Random Covariant"
+msgstr "Losowy współzmienny"
+
+#: ../gegl/gegl-enums.c:92
+msgid "Arithmetic add"
+msgstr "Dodawanie arytmetyczne"
+
 #: ../gegl/gegl-enums.c:93
-msgid "Arithmetic-add"
-msgstr "Arytmetyczne — dodawanie"
+msgid "Arithmetic add covariant"
+msgstr "Arytmetyczne dodawanie współzmiennej"
 
 #: ../gegl/gegl-enums.c:94
-msgid "Arithmetic-add-covariant"
-msgstr "Arytmetyczne — dodawanie — współzmienne"
+msgid "Arithmetic xor"
+msgstr "Arytmetyczne „xor”"
 
 #: ../gegl/gegl-enums.c:95
-msgid "Arithmetic-xor"
-msgstr "Arytmetyczne — „xor”"
+msgid "Arithmetic xor covariant"
+msgstr "Arytmetyczne „xor” współzmiennej"
 
-#: ../gegl/gegl-enums.c:96
-msgid "Arithmetic-xor-covariant"
-msgstr "Arytmetyczne — „xor” — współzmienne"
-
-#: ../gegl/gegl-enums.c:121 ../operations/common/edge-sobel.c:27
+#: ../gegl/gegl-enums.c:120 ../operations/common/edge-sobel.c:27
 #: ../operations/common/noise-spread.c:29
 msgid "Horizontal"
 msgstr "Poziomy"
 
-#: ../gegl/gegl-enums.c:122 ../operations/common/edge-sobel.c:29
+#: ../gegl/gegl-enums.c:121 ../operations/common/edge-sobel.c:29
 #: ../operations/common/noise-spread.c:35
 msgid "Vertical"
 msgstr "Pionowy"
 
-#: ../gegl/gegl-enums.c:146
+#: ../gegl/gegl-enums.c:145
 msgid "Nearest"
 msgstr "Najbliższy"
 
-#: ../gegl/gegl-enums.c:147 ../operations/common/bump-map.c:33
+#: ../gegl/gegl-enums.c:146 ../operations/common/bump-map.c:33
 #: ../operations/common/sinus.c:64
 msgid "Linear"
 msgstr "Liniowy"
 
-#: ../gegl/gegl-enums.c:148
+#: ../gegl/gegl-enums.c:147
 msgid "Cubic"
 msgstr "Sześcienny"
 
-#: ../gegl/gegl-enums.c:149
+#: ../gegl/gegl-enums.c:148
 msgid "NoHalo"
 msgstr "NoHalo"
 
-#: ../gegl/gegl-enums.c:150
+#: ../gegl/gegl-enums.c:149
 msgid "LoHalo"
 msgstr "LoHalo"
 
@@ -1006,74 +1002,6 @@ msgstr ""
 "Wymień kolor z innym, opcjonalnie ustawiając próg do konwersji z jednego "
 "odcienia do innego."
 
-#: ../operations/common/color-reduction.c:26
-msgid "Red bits"
-msgstr "Czerwone bity"
-
-#: ../operations/common/color-reduction.c:27
-msgid "Number of bits for red channel"
-msgstr "Liczba bitów dla kanału czerwieni"
-
-#: ../operations/common/color-reduction.c:30
-msgid "Green bits"
-msgstr "Zielone bity"
-
-#: ../operations/common/color-reduction.c:31
-msgid "Number of bits for green channel"
-msgstr "Liczba bitów dla kanału zieleni"
-
-#: ../operations/common/color-reduction.c:34
-msgid "Blue bits"
-msgstr "Niebieskie bity"
-
-#: ../operations/common/color-reduction.c:35
-msgid "Number of bits for blue channel"
-msgstr "Liczba bitów dla kanału niebieskiego"
-
-#: ../operations/common/color-reduction.c:38
-msgid "Alpha bits"
-msgstr "Bity alfy"
-
-#: ../operations/common/color-reduction.c:39
-msgid "Number of bits for alpha channel"
-msgstr "Liczba bitów dla kanału alfy"
-
-#: ../operations/common/color-reduction.c:42
-msgid "Dithering method"
-msgstr "Metoda rozsiewania"
-
-#: ../operations/common/color-reduction.c:44
-msgid "The dithering method to use"
-msgstr "Używana metoda rozsiewania"
-
-#. XXX: what?
-#: ../operations/common/color-reduction.c:46 ../operations/common/cubism.c:42
-#: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
-#: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
-#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
-#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
-#: ../operations/common/noise-rgb.c:44 ../operations/common/noise-simplex.c:39
-#: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
-#: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
-#: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
-#: ../operations/common/supernova.c:63
-msgid "Random seed"
-msgstr "Ziarno losowości"
-
-#: ../operations/common/color-reduction.c:659
-msgid "Color Reduction"
-msgstr "Redukcja kolorów"
-
-#: ../operations/common/color-reduction.c:661
-msgid ""
-"Reduce the number of colors in the image, by reducing the bits per channel "
-"(colors and alpha). Different dithering methods can be specified to "
-"counteract quantization induced banding."
-msgstr ""
-"Zmniejsz liczbę kolorów w obrazie przez zmniejszenie bitów na kanał (kolorów "
-"i alfy). Można podać różne metody rozsiewania, aby przeciwdziałać pasmowaniu "
-"spowodowanemu przez kwantyzację."
-
 #: ../operations/common/color-rotate.c:35
 msgid "Treat as this"
 msgstr "Traktowanie jako to"
@@ -1531,6 +1459,20 @@ msgstr "Nasycenie kafla"
 msgid "Expand tiles by this amount"
 msgstr "Rozszerz kafle o tę ilość"
 
+#. XXX: what?
+#: ../operations/common/cubism.c:42 ../operations/common/dither.c:51
+#: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
+#: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
+#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
+#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
+#: ../operations/common/noise-rgb.c:51 ../operations/common/noise-simplex.c:39
+#: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
+#: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
+#: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
+#: ../operations/common/supernova.c:63
+msgid "Random seed"
+msgstr "Ziarno losowości"
+
 #: ../operations/common/cubism.c:613
 msgid "Cubism"
 msgstr "Kubizm"
@@ -1834,6 +1776,60 @@ msgstr "Przekształcenie odległości"
 msgid "Calculate a distance transform"
 msgstr "Oblicz przekształcenie odległości"
 
+#: ../operations/common/dither.c:27
+msgid "Red levels"
+msgstr "Poziomy czerwieni"
+
+#: ../operations/common/dither.c:28
+msgid "Number of levels for red channel"
+msgstr "Liczba poziomów dla kanału czerwieni"
+
+#: ../operations/common/dither.c:32
+msgid "Green levels"
+msgstr "Poziomy zieleni"
+
+#: ../operations/common/dither.c:33
+msgid "Number of levels for green channel"
+msgstr "Liczba poziomów dla kanału zieleni"
+
+#: ../operations/common/dither.c:37
+msgid "Blue levels"
+msgstr "Poziomy niebieskiego"
+
+#: ../operations/common/dither.c:38
+msgid "Number of levels for blue channel"
+msgstr "Liczba poziomów dla kanału niebieskiego"
+
+#: ../operations/common/dither.c:42
+msgid "Alpha levels"
+msgstr "Poziomy alfy"
+
+#: ../operations/common/dither.c:43
+msgid "Number of levels for alpha channel"
+msgstr "Liczba poziomów dla kanału alfy"
+
+#: ../operations/common/dither.c:47
+msgid "Dithering method"
+msgstr "Metoda mieszania"
+
+#: ../operations/common/dither.c:49
+msgid "The dithering method to use"
+msgstr "Używana metoda mieszania"
+
+#: ../operations/common/dither.c:589
+msgid "Dither"
+msgstr "Mieszaj kolory"
+
+#: ../operations/common/dither.c:591
+msgid ""
+"Reduce the number of colors in the image, by reducing the levels per channel "
+"(colors and alpha). Different dithering methods can be specified to "
+"counteract quantization induced banding."
+msgstr ""
+"Zmniejsz liczbę kolorów w obrazie przez zmniejszenie poziomów na kanał "
+"(kolorów i alfy). Można podać różne metody mieszania, aby przeciwdziałać "
+"pasmowaniu spowodowanemu przez kwantyzację."
+
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
 #: ../operations/common/plasma.c:40 ../operations/common/polar-coordinates.c:51
 #: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
@@ -2062,7 +2058,7 @@ msgstr ""
 "i w dół. "
 
 #: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
-#: ../operations/common/noise-rgb.c:41
+#: ../operations/common/noise-rgb.c:48
 #: ../operations/workshop/component-extract.c:43
 msgid "Alpha"
 msgstr "Alfa"
@@ -3435,23 +3431,47 @@ msgstr "Powiązany szum"
 msgid "Independent RGB"
 msgstr "Niezależne RGB"
 
-#: ../operations/common/noise-rgb.c:32
+#: ../operations/common/noise-rgb.c:31
+msgid "Control amount of noise for each RGB channel separately"
+msgstr "Kontroluj ilość szumu w każdym kanale RGB oddzielnie"
+
+#: ../operations/common/noise-rgb.c:33
+msgid "Linear RGB"
+msgstr "Liniowy RGB"
+
+#: ../operations/common/noise-rgb.c:34
+msgid "Operate on linearized RGB color data"
+msgstr "Działaj na liniowych danych kolorów RGB"
+
+#: ../operations/common/noise-rgb.c:36
+msgid "Gaussian distribution"
+msgstr "Dystrybucja Gaussa"
+
+#: ../operations/common/noise-rgb.c:37
+msgid ""
+"Use a gaussian noise distribution, when unticked a linear noise distribution "
+"is used instead"
+msgstr ""
+"Użyj dystrybucji szumu Gaussa, niezaznaczone powoduje użycie liniowej "
+"dystrybucji szumu"
+
+#: ../operations/common/noise-rgb.c:39
 msgid "Red"
 msgstr "Czerwony"
 
-#: ../operations/common/noise-rgb.c:35
+#: ../operations/common/noise-rgb.c:42
 msgid "Green"
 msgstr "Zielony"
 
-#: ../operations/common/noise-rgb.c:38
+#: ../operations/common/noise-rgb.c:45
 msgid "Blue"
 msgstr "Niebieski"
 
-#: ../operations/common/noise-rgb.c:177
+#: ../operations/common/noise-rgb.c:203
 msgid "Add RGB Noise"
 msgstr "Dodaj szum RGB"
 
-#: ../operations/common/noise-rgb.c:179
+#: ../operations/common/noise-rgb.c:205
 msgid "Distort colors by random amounts"
 msgstr "Zniekształć kolory o losowe ilości"
 
@@ -5018,11 +5038,11 @@ msgstr "Konwertuj dane do podanego formatu"
 msgid "Reset origin"
 msgstr "Przywrócenie pochodzenia"
 
-#: ../operations/core/crop.c:206
+#: ../operations/core/crop.c:219
 msgid "Crop"
 msgstr "Kadruj"
 
-#: ../operations/core/crop.c:207
+#: ../operations/core/crop.c:220
 msgid "Crop a buffer"
 msgstr "Kadruj bufor"
 
@@ -5876,11 +5896,11 @@ msgstr "Renderowana szerokość w pikselach (tylko do odczytu)."
 msgid "Rendered height in pixels. (read only)"
 msgstr "Renderowana wysokość w pikselach (tylko do odczytu)."
 
-#: ../operations/external/text.c:338
+#: ../operations/external/text.c:342
 msgid "Render Text"
 msgstr "Renderuj tekst"
 
-#: ../operations/external/text.c:341
+#: ../operations/external/text.c:345
 msgid "Display a string of text using pango and cairo."
 msgstr "Wyświetl ciąg tekstowy za pomocą bibliotek Pango i cairo."
 
