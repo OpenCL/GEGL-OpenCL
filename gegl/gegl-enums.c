@@ -85,15 +85,14 @@ gegl_dither_method_get_type (void)
     {
       static GEnumValue values[] = {
         { GEGL_DITHER_NONE,             N_("None"),             "none"             },
-        { GEGL_DITHER_RANDOM,           N_("Random"),           "random"           },
-        { GEGL_DITHER_RESILIENT,        N_("Resilient"),        "resilient"        },
-        { GEGL_DITHER_RANDOM_COVARIANT, N_("Random Covariant"), "random-covariant" },
-        { GEGL_DITHER_BAYER,            N_("Bayer"),            "bayer"            },
         { GEGL_DITHER_FLOYD_STEINBERG,  N_("Floyd-Steinberg"),  "floyd-steinberg"  },
-        { GEGL_DITHER_ARITHMETIC_ADD,   N_("Arithmetic-add"),   "add"  },
-        { GEGL_DITHER_ARITHMETIC_ADD_COVARIANT,   N_("Arithmetic-add-covariant"),  "add-covariant"  },
-        { GEGL_DITHER_ARITHMETIC_XOR,   N_("Arithmetic-xor"),   "xor"  },
-        { GEGL_DITHER_ARITHMETIC_XOR_COVARIANT,   N_("Arithmetic-xor-covariant"),  "xor-covariant"  },
+        { GEGL_DITHER_BAYER,            N_("Bayer"),            "bayer"            },
+        { GEGL_DITHER_RANDOM,           N_("Random"),           "random"           },
+        { GEGL_DITHER_RANDOM_COVARIANT, N_("Random Covariant"), "random-covariant" },
+        { GEGL_DITHER_ARITHMETIC_ADD,   N_("Arithmetic add"),   "add"  },
+        { GEGL_DITHER_ARITHMETIC_ADD_COVARIANT,   N_("Arithmetic add covariant"),  "add-covariant"  },
+        { GEGL_DITHER_ARITHMETIC_XOR,   N_("Arithmetic xor"),   "xor"  },
+        { GEGL_DITHER_ARITHMETIC_XOR_COVARIANT,   N_("Arithmetic xor covariant"),  "xor-covariant"  },
 
         { 0, NULL, NULL }
       };
