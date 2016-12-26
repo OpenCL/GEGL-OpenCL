@@ -139,7 +139,7 @@ process_floyd_steinberg (GeglBuffer          *input,
 
               value         = pixel [ch] + error_buf [0] [x * 4 + ch];
               value_clamped = CLAMP (value, 0.0, 65535.0);
-              quantized     = quantize_value ((guint) (value_clamped + 0.5), channel_levels [ch]);
+              quantized     = quantize_value ((guint) (value_clamped + 0.5 * 65536 / channel_levels[ch] ), channel_levels [ch]);
               qerror        = value - quantized;
 
               pixel [ch] = (guint16) quantized;
@@ -218,7 +218,7 @@ process_row_bayer (GeglBufferIterator *gi,
           bayer         = ((bayer - 32) * 65536.0 / 65.0) / channel_levels [ch];
           value         = data_in [pixel + ch] + bayer;
           value_clamped = CLAMP (value, 0.0, 65535.0);
-          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+          quantized     = quantize_value ((guint) (value_clamped + 65536 * 0.5 / channel_levels[ch] ),
                                           channel_levels [ch]);
 
           data_out [pixel + ch] = (guint16) quantized;
@@ -251,7 +251,7 @@ process_row_arithmetic_add (GeglBufferIterator *gi,
           mask         = ((mask - 128) * 65536.0 / 256.0) / channel_levels [ch];
           value         = data_in [pixel + ch] + mask;
           value_clamped = CLAMP (value, 0.0, 65535.0);
-          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+          quantized     = quantize_value ((guint) (value_clamped + 65536 * 0.5 / channel_levels[ch] ),
                                           channel_levels [ch]);
 
           data_out [pixel + ch] = (guint16) quantized;
@@ -284,7 +284,7 @@ process_row_arithmetic_xor (GeglBufferIterator *gi,
           mask         = ((mask - 257) * 65536.0 / 512.0) / channel_levels [ch];
           value         = data_in [pixel + ch] + mask;
           value_clamped = CLAMP (value, 0.0, 65535.0);
-          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+          quantized     = quantize_value ((guint) (value_clamped + 65536 * 0.5 / channel_levels[ch] ),
                                           channel_levels [ch]);
 
           data_out [pixel + ch] = (guint16) quantized;
@@ -317,7 +317,7 @@ process_row_arithmetic_add_covariant (GeglBufferIterator *gi,
           mask         = ((mask - 128) * 65536.0 / 256.0) / channel_levels [ch];
           value         = data_in [pixel + ch] + mask;
           value_clamped = CLAMP (value, 0.0, 65535.0);
-          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+          quantized     = quantize_value ((guint) (value_clamped + 65536 * 0.5 / channel_levels[ch] ),
                                           channel_levels [ch]);
 
           data_out [pixel + ch] = (guint16) quantized;
@@ -350,7 +350,7 @@ process_row_arithmetic_xor_covariant (GeglBufferIterator *gi,
           mask         = ((mask - 257) * 65536.0 / 512.0) / channel_levels [ch];
           value         = data_in [pixel + ch] + mask;
           value_clamped = CLAMP (value, 0.0, 65535.0);
-          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+          quantized     = quantize_value ((guint) (value_clamped + 65536 * 0.5 / channel_levels[ch] ),
                                           channel_levels [ch]);
 
           data_out [pixel + ch] = (guint16) quantized;
@@ -372,16 +372,16 @@ process_row_random_covariant (GeglBufferIterator *gi,
       guint pixel = 4 * (gi->roi->width * y + x);
       guint ch;
       gint  r = REDUCE_16B (gegl_random_int (rand, gi->roi->x + x,
-                                             gi->roi->y + y, 0, 0));
+                                             gi->roi->y + y, 0, 0)) - (1<<15);
       for (ch = 0; ch < 4; ch++)
         {
           gfloat value;
           gfloat value_clamped;
           gfloat quantized;
 
-          value         = data_in [pixel + ch] + ((r-65535.0/2) / channel_levels [ch]);
+          value         = data_in [pixel + ch] + (r * 1.0) / channel_levels [ch];
           value_clamped = CLAMP (value, 0.0, 65535.0);
-          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+          quantized     = quantize_value ((guint) (value_clamped + 65536 * 0.5 / channel_levels[ch] ),
                                           channel_levels [ch]);
 
           data_out [pixel + ch] = (guint16) quantized;
@@ -408,11 +408,11 @@ process_row_random (GeglBufferIterator *gi,
           gdouble value_clamped;
           gdouble quantized;
           gint    r = REDUCE_16B (gegl_random_int (rand, gi->roi->x + x,
-                                                   gi->roi->y + y, 0, ch));
+                                                   gi->roi->y + y, 0, ch)) - (1<<15);
 
-          value         = data_in [pixel + ch] + ((r-65535.0/2) / channel_levels [ch]);
+          value         = data_in [pixel + ch] + (r * 1.0) / channel_levels [ch];
           value_clamped = CLAMP (value, 0.0, 65535.0);
-          quantized     = quantize_value ((guint) (value_clamped + 0.5),
+          quantized     = quantize_value ((guint) (value_clamped + 65536 * 0.5 / channel_levels[ch] ),
                                           channel_levels [ch]);
 
           data_out [pixel + ch] = (guint16) quantized;
@@ -434,8 +434,9 @@ process_row_no_dither (GeglBufferIterator *gi,
       guint ch;
       for (ch = 0; ch < 4; ch++)
         {
-          data_out [pixel + ch] = (guint16) quantize_value (data_in [pixel + ch],
-                                                            channel_levels [ch]);
+          data_out [pixel + ch] = (guint16) 
+             quantize_value ((guint) (data_in[pixel + ch] + 65536 * 0.5 / channel_levels[ch] ),
+                             channel_levels [ch]);
         }
     }
 }
