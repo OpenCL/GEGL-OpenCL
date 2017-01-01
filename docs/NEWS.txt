@@ -457,8 +457,8 @@ Henrik Åkesson, Fryderyk Dziarmagowski, Ozan Caglayan and
 Tobias Mueller.
 
 
-GEGL-0.0.22
------------
+GEGL-0.0.22 2008-12-31
+----------------------
 
 GeglOperation
 ~~~~~~~~~~~~~
@@ -491,8 +491,8 @@ Hubert Figuiere, Sven Neumann, Øyvind Kolås, Michael Natterer,
 Kevin Cozens, Sam Hocevar, Martin Nordholts, Manish Singh,
 Étienne Bersac and Michael Schumacher.
 
-GEGL-0.0.20
------------
+GEGL-0.0.20 2008-10-05
+----------------------
 
  - Build and code clean ups and fixes.
  - RAW loader using libopenraw.
@@ -522,8 +522,8 @@ Contributors
 Martin Nordholts, Øyvind Kolås, Sam Hocevar, Manish Singh, Hubert
 Figuiere, Sven Neumann and yahvuu at gmail.com.
 
-GEGL-0.0.18
------------
+GEGL-0.0.18 2008-06-14
+----------------------
 
  - Configuration both from commandline arguments and at runtime.
 
@@ -593,9 +593,9 @@ GEGL-0.0.14 2007-12-20
 Contributors
 ~~~~~~~~~~~~
 
-  Étienne Bersac, Kevin Cozens, Manish Singh, Mark Probst, Martin Nordholts,
-  Michael Schumacher, Mukund Sivaraman, Shlomi Fish, Tor Lillqvist and
-  Øyvind Kolås
+Étienne Bersac, Kevin Cozens, Manish Singh, Mark Probst, Martin Nordholts,
+Michael Schumacher, Mukund Sivaraman, Shlomi Fish, Tor Lillqvist and
+Øyvind Kolås
 
 
 GEGL-0.0.12 2007-02-18
@@ -628,7 +628,8 @@ GEGL-0.0.6 2007-01-07
  - temporarily disabled custom cairo in test application.
  - png and EXR improvements.
 
-Contributors:
+Contributors
+~~~~~~~~~~~~
 
 Dominik Ernst, Kevin Cozens, Øyvind Kolås and Michael Schumacher.
 
