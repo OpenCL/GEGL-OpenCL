@@ -40,6 +40,8 @@ DISTCLEANFILES = \
 
 if HAVE_W3M
 dist-check-w3m:
+NEWS: docs/NEWS.html
+	$(W3M) -cols 72 -dump docs/NEWS.html > $@
 
 README: all docs/index.html
 	$(W3M) -cols 72 -dump docs/index.html > $@

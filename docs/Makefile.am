@@ -14,7 +14,7 @@ sync-txt:
 	txts=ASC_DOC="index.html "`for a in *.txt;do echo -n ' '$$a|sed s/txt/html/;done;echo ''`;\
 	  txts=$$txts" #ASC_DOC_HOTPATCH";\
 		cat Makefile.am | sed "s/ASC\_DOC.*ASC_DOC_HOTPATCH/$$txts/" > /tmp/mktmp; cp /tmp/mktmp Makefile.am;
-ASC_DOC=index.html  abyss_policy.html bugzilla.html build.html commandline.html contribute.html copyright.html development.html editor.html environment.html features.html glossary.html hello-world.html journal.html operation-api.html source-overview.html #ASC_DOC_HOTPATCH
+ASC_DOC=index.html  abyss_policy.html bugzilla.html build.html commandline.html contribute.html copyright.html NEWS.html development.html editor.html environment.html features.html glossary.html hello-world.html journal.html operation-api.html source-overview.html #ASC_DOC_HOTPATCH
 
 
 HTML_FILES = \
@@ -57,6 +57,7 @@ endif
 EXTRA_DIST = \
 	ChangeLog			\
 	development.txt			\
+    NEWS.txt \
 	devhelp.css			\
 	gegl.css  			\
 	images/GEGL.png			\
@@ -197,7 +198,6 @@ endif
 %.html: %.txt		$<\
 	$(top_srcdir)/AUTHORS		\
 	gegl.css			\
-	$(top_srcdir)/NEWS		\
 	$(top_srcdir)/examples/hello-world.c \
 	$(top_builddir)/bin/gegl$(EXEEXT)	\
 	Makefile.am
