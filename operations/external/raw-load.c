@@ -285,7 +285,12 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_handlers_register_loader (
     ".cr2", "gegl:raw-load");
 
-  done = TRUE;
+  gegl_operation_handlers_register_loader (
+    "image/x-sony-arw", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".arw", "gegl:raw-load");
+
+ done = TRUE;
 }
 
 #endif
