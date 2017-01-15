@@ -25,10 +25,10 @@ core
 Contributors
 ~~~~~~~~~~~~
 
-Piotr Drąg, Marco Ciampa, Ell, Øyvind Kolås, Anders Jonsson, Thomas
-Manni, Jordi Mas, Michael Natterer, Jehan Pagès, Sebastian Rasmussen,
-Dimitris Spingos (Δημήτρης Σπίγγος), Martin Srebotnjak, Miroslav
-Talasek
+Piotr Drąg, Marco Ciampa, Sergey "Shnatsel" Davidoff, Ell, Øyvind Kolås, Anders
+Jonsson, Thomas Manni, Jordi Mas, Michael Natterer, Jehan Pagès, Sebastian
+Rasmussen, Dimitris Spingos (Δημήτρης Σπίγγος), Martin Srebotnjak, Miroslav
+Talasek.
 
 
 GEGL-0.3.10 2016-11-06
