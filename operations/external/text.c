@@ -34,6 +34,7 @@ property_double (size, _("Size"), 10.0)
     value_range (0.0, 2048.0)
 
 property_color  (color, _("Color"), "black")
+    /* TRANSLATORS: the string 'black' should not be translated */
     description(_("Color for the text (defaults to 'black')"))
 
 property_int  (wrap, _("Wrap width"), -1)

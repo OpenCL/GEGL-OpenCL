@@ -22,6 +22,7 @@
 #ifdef GEGL_PROPERTIES
 
 property_color (value, _("Color"), "black")
+    /* TRANSLATORS: the string 'black' should not be translated */
     description (("The color to render (defaults to 'black')"))
     ui_meta     ("role", "color-primary")
 

@@ -32,6 +32,7 @@ property_enum (shape, _("Vignette shape"),
     GEGL_VIGNETTE_SHAPE_CIRCLE)
 
 property_color (color, _("Color"), "black")
+    /* TRANSLATORS: the string 'black' should not be translated */
     description (_("Defaults to 'black', you can use transparency here to erase portions of an image"))
 
 property_double (radius, _("Radius"), 1.2)

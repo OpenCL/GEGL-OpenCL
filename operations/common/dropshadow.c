@@ -41,6 +41,7 @@ property_double (radius, _("Blur radius"), 10.0)
   ui_meta       ("unit", "pixel-distance")
 
 property_color  (color, _("Color"), "black")
+    /* TRANSLATORS: the string 'black' should not be translated */
   description   (_("The shadow's color (defaults to 'black')"))
 
 /* It does make sense to sometimes have opacities > 1 (see GEGL logo
