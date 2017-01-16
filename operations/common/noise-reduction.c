@@ -407,6 +407,32 @@ get_bounding_box (GeglOperation *operation)
   return *in_rect;
 }
 
+/* Pass-through when iterations parameter is set to zero */
+
+static gboolean
+operation_process (GeglOperation        *operation,
+                   GeglOperationContext *context,
+                   const gchar          *output_prop,
+                   const GeglRectangle  *result,
+                   gint                  level)
+{
+  GeglOperationClass  *operation_class;
+  GeglProperties      *o = GEGL_PROPERTIES (operation);
+
+  operation_class = GEGL_OPERATION_CLASS (gegl_op_parent_class);
+
+  if (! o->iterations)
+    {
+      gpointer in = gegl_operation_context_get_object (context, "input");
+      gegl_operation_context_take_object (context, "output",
+                                          g_object_ref (G_OBJECT (in)));
+      return TRUE;
+    }
+
+  return operation_class->process (operation, context, output_prop, result,
+                                   gegl_operation_context_get_level (context));
+}
+
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
@@ -416,8 +442,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class  = GEGL_OPERATION_CLASS (klass);
   filter_class     = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  filter_class->process   = process;
-  operation_class->prepare = prepare;
+  filter_class->process           = process;
+  operation_class->process        = operation_process;
+  operation_class->prepare        = prepare;
   operation_class->opencl_support = TRUE;
 
   operation_class->get_bounding_box = get_bounding_box;
