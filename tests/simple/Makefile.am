@@ -18,6 +18,7 @@ noinst_PROGRAMS =			\
 	test-license-check		\
 	test-misc			\
 	test-node-connections		\
+	test-node-passthrough		\
 	test-node-properties		\
 	test-object-forked		\
 	test-opencl-colors		\
