@@ -2177,8 +2177,8 @@ gegl_node_set_passthrough (GeglNode *node,
   if (node->passthrough == passthrough)
     return;
 
-  gegl_node_invalidated (node, NULL, TRUE);
   node->passthrough = passthrough;
+  gegl_node_invalidated (node, NULL, TRUE);
 }
 
 typedef struct Closure {
