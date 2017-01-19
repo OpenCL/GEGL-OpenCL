@@ -281,7 +281,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:wavelet-blur",
     "title",       _("Wavelet Blur"),
-    "license",     "LGPL3+",
+//    "license",     "LGPL3+",
     "categories",  "blur",
     "description", _("This blur is used for the wavelet decomposition filter, each pixel is computed from another by the HAT transform"),
     NULL);
