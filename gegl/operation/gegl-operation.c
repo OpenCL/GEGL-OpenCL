@@ -439,6 +439,25 @@ gegl_operation_list_properties (const gchar *operation_type,
   return pspecs;
 }
 
+GParamSpec *
+gegl_operation_find_property (const gchar *operation_type,
+                              const gchar *property_name)
+{
+  GParamSpec *ret = NULL;
+  GType         type;
+  GObjectClass *klass;
+
+  type = gegl_operation_gtype_from_name (operation_type);
+  if (!type)
+    return NULL;
+
+  klass  = g_type_class_ref (type);
+  ret = g_object_class_find_property (klass, property_name);
+  g_type_class_unref (klass);
+
+  return ret;
+}
+
 GeglNode *
 gegl_operation_detect (GeglOperation *operation,
                        gint           x,
