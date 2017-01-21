@@ -244,6 +244,7 @@ operations/workshop/mandelbrot.c
 operations/workshop/median-blur.c
 operations/workshop/rawbayer-load.c
 operations/workshop/segment-kmeans.c
+operations/workshop/slic.c
 operations/workshop/vhsfix.c
 operations/workshop/waterpixels.c
 operations/workshop/watershed-transform.c
