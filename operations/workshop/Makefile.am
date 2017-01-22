@@ -25,5 +25,7 @@ op_LTLIBRARIES =    \
 	median-blur.la \
 	rawbayer-load.la \
 	segment-kmeans.la \
+	shadows-highlights.la \
+	shadows-highlights-correction.la \
 	unpremul.la \
     vhsfix.la
