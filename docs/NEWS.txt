@@ -15,6 +15,7 @@ operations
 - noise-rgb: add gamma and distribution properties
 - dither: renamed from color-reduction, now with levels instead of bits property controls.
 - workshop: new watershed and waterpixels experimental ops.
+- edge-neon: new op, ported from an existing GIMP filter
 
 core
 ~~~~
@@ -26,9 +27,9 @@ Contributors
 ~~~~~~~~~~~~
 
 Piotr Drąg, Marco Ciampa, Sergey "Shnatsel" Davidoff, Ell, Øyvind Kolås, Anders
-Jonsson, Thomas Manni, Jordi Mas, Michael Natterer, Jehan Pagès, Sebastian
-Rasmussen, Dimitris Spingos (Δημήτρης Σπίγγος), Martin Srebotnjak, Miroslav
-Talasek.
+Jonsson, Thomas Manni, Jordi Mas, Michael Natterer, Peter O'Regan, Jehan Pagès,
+Sebastian Rasmussen, Dimitris Spingos (Δημήτρης Σπίγγος), Martin Srebotnjak,
+Miroslav Talasek.
 
 
 GEGL-0.3.10 2016-11-06
