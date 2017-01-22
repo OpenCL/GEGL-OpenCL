@@ -79,14 +79,14 @@ static void      find_constants      (gdouble           n_p[],
                                       gdouble           bd_m[],
                                       gdouble           std_dev);
 
-static void      transfer_pixels     (gdouble          *src1,
-                                      gdouble          *src2,
-                                      gdouble           *dest,
+static void      transfer_pixels     (gfloat           *src1,
+                                      gfloat           *src2,
+                                      gfloat           *dest,
                                       gint              bytes,
                                       gint              width);
 
-static void      combine_to_gradient (gdouble           *dest,
-                                      gdouble           *src2,
+static void      combine_to_gradient (gfloat           *dest,
+                                      gfloat           *src2,
                                       gint              bytes,
                                       gint              width,
                                       gdouble           amount);
@@ -96,8 +96,8 @@ static void      combine_to_gradient (gdouble           *dest,
 static void neon_prepare (GeglOperation *operation)
 {
   //const Babl *src_format = gegl_operation_get_source_format (operation, "input");
-  gegl_operation_set_format (operation, "input", babl_format ("R'G'B'A double"));
-  gegl_operation_set_format (operation, "output", babl_format("R'G'B'A double"));
+  gegl_operation_set_format (operation, "input", babl_format ("R'G'B'A float"));
+  gegl_operation_set_format (operation, "output", babl_format("R'G'B'A float"));
 }
 
 
@@ -115,21 +115,21 @@ neon_process (GeglOperation     *op,
     gint          chpp, bpp, aidx;     //Number of channels & bytes per pixel
 
     //Pointers to buffer locations & iterators
-    gdouble      *val_p, *val_m, *vp, *vm;
+    gfloat       *val_p, *val_m, *vp, *vm;
     gint          i, j, b;
     gint          row, col, bufsz;
     gint          terms; // # active terms during filter (active along edges)
     gdouble       vanish_pt;
 
     /* Retrieve a pointer to GeglProperties via Chant */
-    const Babl *rgba64 = babl_format("R'G'B'A double");
+    const Babl *rgba32 = babl_format("R'G'B'A float");
     GeglProperties *o = GEGL_PROPERTIES (op);
     gdouble      radius, amount;
     gdouble      std_dev;
 
     //Linear buffers
-    gdouble      *dest;
-    gdouble      *src, *vert, *sp_p, *sp_m;
+    gfloat       *dest;
+    gfloat       *src, *vert, *sp_p, *sp_m;
 
     //Coefficient holders
     gdouble       n_p[5], n_m[5];
@@ -148,7 +148,7 @@ neon_process (GeglOperation     *op,
     y0 = roi->y;
     chpp = 4; //RGBA
     aidx = 3; //Alpha index
-    bpp = babl_format_get_bytes_per_pixel(rgba64);
+    bpp = babl_format_get_bytes_per_pixel(rgba32);
 
     radius = radius + 1.0;
     vanish_pt = 1.0/255.0; //8-bit holdover, for now. (TODO)
@@ -159,12 +159,12 @@ neon_process (GeglOperation     *op,
     bufsz = bpp* MAX (width,height); //RGBA
 
     //Buffers for causal and anti-causal parts
-    val_p = g_new (gdouble, bufsz);
-    val_m = g_new (gdouble, bufsz);
+    val_p = g_new (gfloat, bufsz);
+    val_m = g_new (gfloat, bufsz);
 
-    src  = g_new (gdouble, bufsz);
-    vert = g_new (gdouble, bufsz);
-    dest = g_new (gdouble, bufsz);
+    src  = g_new (gfloat, bufsz);
+    vert = g_new (gfloat, bufsz);
+    dest = g_new (gfloat, bufsz);
 
     //Vertical pass of the 1D IIR
     for (col=0; col<width; col++)
@@ -174,7 +174,7 @@ neon_process (GeglOperation     *op,
 
       //Acquire an entire column
       gegl_rectangle_set (&cur_roi,x0+col,y0,1,height);
-      gegl_buffer_get (in_buf, &cur_roi, GEGL_SCALE_NONE,rgba64,src,GEGL_AUTO_ROWSTRIDE,GEGL_ABYSS_NONE);
+      gegl_buffer_get (in_buf, &cur_roi, GEGL_SCALE_NONE,rgba32,src,GEGL_AUTO_ROWSTRIDE,GEGL_ABYSS_NONE);
 
       sp_p = src;
       sp_m = src + (height - 1) * chpp;
@@ -189,7 +189,7 @@ neon_process (GeglOperation     *op,
       }
       for (row = 0; row < height; row++)
       {
-        gdouble *vpptr, *vmptr;
+        gfloat *vpptr, *vmptr;
         terms = (row < 4) ? row : 4; //Magic constant 4 due to 4th order filter
         for (b = 0; b < 3; b++)      //RGB channels. Skip Alpha.
         {
@@ -220,7 +220,7 @@ neon_process (GeglOperation     *op,
         }
 
       transfer_pixels (val_p, val_m, dest, chpp, height);
-      gegl_buffer_set (out_buf, &cur_roi, 0,rgba64,dest,GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (out_buf, &cur_roi, 0,rgba32,dest,GEGL_AUTO_ROWSTRIDE);
 
     }
 
@@ -230,8 +230,8 @@ neon_process (GeglOperation     *op,
         memset (val_m, 0.0, width * bpp);
         //Acquire an entire row
         gegl_rectangle_set (&cur_roi, x0, y0+row, width, 1);
-        gegl_buffer_get (in_buf, &cur_roi, GEGL_SCALE_NONE, rgba64, src, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-        gegl_buffer_get (out_buf, &cur_roi, GEGL_SCALE_NONE, rgba64, vert, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+        gegl_buffer_get (in_buf, &cur_roi, GEGL_SCALE_NONE, rgba32, src, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+        gegl_buffer_get (out_buf, &cur_roi, GEGL_SCALE_NONE, rgba32, vert, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
         sp_p = src;
         sp_m = src + (width - 1) * chpp;
@@ -247,7 +247,7 @@ neon_process (GeglOperation     *op,
 
         for (col = 0; col < width; col++)
         {
-          gdouble *vpptr, *vmptr;
+          gfloat *vpptr, *vmptr;
 
           terms = (col < 4) ? col : 4;
 
@@ -280,7 +280,7 @@ neon_process (GeglOperation     *op,
 
         transfer_pixels (val_p, val_m, dest, chpp, width);
         combine_to_gradient (dest, vert, chpp, width, amount);
-        gegl_buffer_set (out_buf, &cur_roi, 0, rgba64, dest, GEGL_AUTO_ROWSTRIDE);
+        gegl_buffer_set (out_buf, &cur_roi, 0, rgba32, dest, GEGL_AUTO_ROWSTRIDE);
     }
 
   /*  free up buffers  */
@@ -300,11 +300,11 @@ neon_process (GeglOperation     *op,
     I am unsure if this is intended operation, and it should likely be fixed in the speed update.
     */
 static void
-transfer_pixels (gdouble *src1,
-                 gdouble *src2,
-                 gdouble *dest,
-                 gint     chpp,
-                 gint     width)
+transfer_pixels (gfloat *src1,
+                 gfloat *src2,
+                 gfloat *dest,
+                 gint    chpp,
+                 gint    width)
 {
   gint    b;
   gint    bend = chpp * width;
@@ -325,8 +325,8 @@ transfer_pixels (gdouble *src1,
 
 
 static void
-combine_to_gradient (gdouble *dest,
-                     gdouble *src2,
+combine_to_gradient (gfloat *dest,
+                     gfloat *src2,
                      gint    bytes,
                      gint    width,
                      gdouble amount)
