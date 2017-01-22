@@ -8,7 +8,6 @@ BUILT_SOURCES = $(subst .c,.c.h,$(wildcard $(srcdir)/*.c))
 
 AM_CPPFLAGS += -I$(srcdir)
 AM_CFLAGS +=  -DGEGL_OP_BUNDLE
-
 LIBS = $(op_libs)
 
 
@@ -38,7 +37,7 @@ gegl_common_la_SOURCES =\
 	color-rotate.c \
 	color-temperature.c \
 	color-to-alpha.c \
-    color-warp.c \
+        color-warp.c \
 	color.c \
 	contrast-curve.c \
 	convolution-matrix.c \
@@ -53,6 +52,7 @@ gegl_common_la_SOURCES =\
 	dropshadow.c \
 	edge.c \
 	edge-laplace.c \
+	edge-neon.c \
 	edge-sobel.c \
 	emboss.c \
 	engrave.c \
@@ -121,7 +121,7 @@ gegl_common_la_SOURCES =\
 	red-eye-removal.c \
 	reinhard05.c \
 	remap.c \
-    rgb-clip.c \
+        rgb-clip.c \
 	ripple.c \
 	saturation.c \
 	save.c \
