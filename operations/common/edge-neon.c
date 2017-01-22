@@ -548,9 +548,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",       "gegl:edge-neon",
-    "categories", "Edge Detection",
+    "title",      _("Neon Edge Detection"),
+    "categories", "edge-detect",
     "description",
-        _("Performs edge detection using a Gaussian derivative method."),
+        _("Performs edge detection using a Gaussian derivative method"),
         NULL);
 
 
