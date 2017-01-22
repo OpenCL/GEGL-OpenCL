@@ -691,21 +691,10 @@ gegl_operation_class_set_key (GeglOperationClass *klass,
 
   if (!strcmp (key_name, "name"))
     {
-      if (klass->name && strcmp (klass->name, key_value))
-        {
-          g_warning ("Cannot change name of operation class 0x%lX from \"%s\" "
-                     "to \"%s\"", (gulong) klass, klass->name, key_value);
-          g_free (key_value_dup);
-          return;
-        }
-      else
-        {
-          klass->name = key_value_dup;
-          gegl_operation_class_register_name (klass, key_value, FALSE);
-        }
+      klass->name = key_value_dup;
+      gegl_operation_class_register_name (klass, key_value, FALSE);
     }
-
-  if (!strcmp (key_name, "compat-name"))
+  else if (!strcmp (key_name, "compat-name"))
     {
       klass->compat_name = key_value_dup;
       gegl_operation_class_register_name (klass, key_value, TRUE);
