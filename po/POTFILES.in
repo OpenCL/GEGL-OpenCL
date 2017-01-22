@@ -41,6 +41,7 @@ operations/common/dither.c
 operations/common/dropshadow.c
 operations/common/edge.c
 operations/common/edge-laplace.c
+operations/common/edge-neon.c
 operations/common/edge-sobel.c
 operations/common/emboss.c
 operations/common/engrave.c
