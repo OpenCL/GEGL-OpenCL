@@ -60,6 +60,7 @@ property_double (amount, _("Intensity"), 0.0)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME edge_neon
 #define GEGL_OP_C_SOURCE edge-neon.c
 
 #include "gegl-op.h"
@@ -94,9 +95,9 @@ static void      combine_to_gradient (gdouble           *dest,
 
 static void neon_prepare (GeglOperation *operation)
 {
-  const Babl *src_format = gegl_operation_get_source_format (operation, "input");
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA double"));
-  gegl_operation_set_format (operation, "output", babl_format("RGBA double"));
+  //const Babl *src_format = gegl_operation_get_source_format (operation, "input");
+  gegl_operation_set_format (operation, "input", babl_format ("R'G'B'A double"));
+  gegl_operation_set_format (operation, "output", babl_format("R'G'B'A double"));
 }
 
 
@@ -121,7 +122,7 @@ neon_process (GeglOperation     *op,
     gdouble       vanish_pt;
 
     /* Retrieve a pointer to GeglProperties via Chant */
-    const Babl *rgba64 = babl_format("RGBA double");
+    const Babl *rgba64 = babl_format("R'G'B'A double");
     GeglProperties *o = GEGL_PROPERTIES (op);
     gdouble      radius, amount;
     gdouble      std_dev;
@@ -473,11 +474,10 @@ neon_get_required_for_output (GeglOperation        *operation,
     return *roi;
 
   return result;
-
 }
 
 
-GeglRectangle
+static GeglRectangle
 neon_get_cached_region (GeglOperation        *operation,
                                   const GeglRectangle *roi)
 {
@@ -487,9 +487,6 @@ neon_get_cached_region (GeglOperation        *operation,
     return *roi;
 
   return result;
-
-
-
 }
 
 
