@@ -1,19 +1,19 @@
 # Polish translation for gegl.
-# Copyright © 1999-2016 the gegl authors.
+# Copyright © 1999-2017 the gegl authors.
 # This file is distributed under the same license as the gegl package.
 # Paweł Dziekoński, 1999-2000.
 # Bartosz Kosiorek <gang65@poczta.onet.pl>, 2005-2011.
 # Piotr Zaryk <pzaryk@aviary.pl>, 2008.
 # Robert Gomulka <carramba@epf.pl>, 2008.
-# Piotr Drąg <piotrdrag@gmail.com>, 2011-2016.
-# Aviary.pl <community-poland@mozilla.org>, 2011-2016.
+# Piotr Drąg <piotrdrag@gmail.com>, 2011-2017.
+# Aviary.pl <community-poland@mozilla.org>, 2011-2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-12-25 21:52+0100\n"
-"PO-Revision-Date: 2016-12-25 21:53+0100\n"
+"POT-Creation-Date: 2017-01-22 21:12+0100\n"
+"PO-Revision-Date: 2017-01-22 21:13+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -478,9 +478,9 @@ msgstr ""
 "prostopadłościennego zamiast rozmycia Gaussa."
 
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
-#: ../operations/common/snn-mean.c:26 ../operations/common/stress.c:27
-#: ../operations/common/supernova.c:45 ../operations/common/vignette.c:37
-#: ../operations/common/whirl-pinch.c:45
+#: ../operations/common/edge-neon.c:47 ../operations/common/snn-mean.c:26
+#: ../operations/common/stress.c:27 ../operations/common/supernova.c:45
+#: ../operations/common/vignette.c:38 ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
 #: ../operations/workshop/wavelet-blur.c:28
@@ -843,7 +843,7 @@ msgstr ""
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
-#: ../operations/external/svg-load.c:30 ../operations/external/text.c:57
+#: ../operations/external/svg-load.c:30 ../operations/external/text.c:58
 #: ../operations/external/v4l.c:28 ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
 #: ../operations/workshop/external/v4l2.c:26
@@ -862,7 +862,7 @@ msgstr "Pozioma szerokość pikseli komórek"
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
-#: ../operations/external/svg-load.c:32 ../operations/external/text.c:59
+#: ../operations/external/svg-load.c:32 ../operations/external/text.c:60
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/line-profile.c:41
 #: ../operations/workshop/external/v4l2.c:28
@@ -902,11 +902,11 @@ msgstr "Kolor 2"
 msgid "The second cell color"
 msgstr "Kolor drugiej komórki"
 
-#: ../operations/common/checkerboard.c:61 ../operations/common/color.c:28
+#: ../operations/common/checkerboard.c:61 ../operations/common/color.c:29
 msgid "Babl Format"
 msgstr "Format biblioteki babl"
 
-#: ../operations/common/checkerboard.c:62 ../operations/common/color.c:29
+#: ../operations/common/checkerboard.c:62 ../operations/common/color.c:30
 #: ../operations/core/cast-format.c:28 ../operations/core/convert-format.c:28
 msgid "The babl format of the output"
 msgstr "Format biblioteki babl wyjścia"
@@ -919,7 +919,7 @@ msgstr "Szachownica"
 msgid "Create a checkerboard pattern"
 msgstr "Utwórz wzór szachownicy"
 
-#: ../operations/common/color.c:24 ../operations/common/color.c:91
+#: ../operations/common/color.c:24 ../operations/common/color.c:92
 #: ../operations/common/color-to-alpha.c:28
 #: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
 #: ../operations/common/rectangle.c:48 ../operations/common/supernova.c:60
@@ -930,7 +930,7 @@ msgstr "Utwórz wzór szachownicy"
 msgid "Color"
 msgstr "Kolor"
 
-#: ../operations/common/color.c:94
+#: ../operations/common/color.c:95
 msgid ""
 "Generates a buffer entirely filled with the specified color, use gegl:crop "
 "to get smaller dimensions."
@@ -1816,11 +1816,11 @@ msgstr "Metoda mieszania"
 msgid "The dithering method to use"
 msgstr "Używana metoda mieszania"
 
-#: ../operations/common/dither.c:589
+#: ../operations/common/dither.c:590
 msgid "Dither"
 msgstr "Mieszaj kolory"
 
-#: ../operations/common/dither.c:591
+#: ../operations/common/dither.c:592
 msgid ""
 "Reduce the number of colors in the image, by reducing the levels per channel "
 "(colors and alpha). Different dithering methods can be specified to "
@@ -1850,21 +1850,22 @@ msgstr "Y"
 msgid "Vertical shadow offset"
 msgstr "Pionowe przesunięcie cienia"
 
-#: ../operations/common/dropshadow.c:44
+#. TRANSLATORS: the string 'black' should not be translated
+#: ../operations/common/dropshadow.c:45
 msgid "The shadow's color (defaults to 'black')"
 msgstr "Kolor cienia (domyślnie „black” — czarny)"
 
 #. It does make sense to sometimes have opacities > 1 (see GEGL logo
 #. * for example)
 #.
-#: ../operations/common/dropshadow.c:49 ../operations/common/layer.c:33
+#: ../operations/common/dropshadow.c:50 ../operations/common/layer.c:33
 #: ../operations/common/opacity.c:25 ../operations/common/opacity.c:307
 #: ../operations/external/vector-fill.c:29
 #: ../operations/external/vector-stroke.c:34
 msgid "Opacity"
 msgstr "Krycie"
 
-#: ../operations/common/dropshadow.c:111
+#: ../operations/common/dropshadow.c:112
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Tworzy efekt cienia na buforze wejściowym"
 
@@ -1931,6 +1932,26 @@ msgstr "Wykrywanie krawędzi laplace"
 #: ../operations/common/edge-laplace.c:410
 msgid "High-resolution edge detection"
 msgstr "Wykrywanie krawędzi wysokiej rozdzielczości"
+
+#: ../operations/common/edge-neon.c:48
+msgid "Radius of effect (in pixels)"
+msgstr "Promień efektu (w pikselach)"
+
+#: ../operations/common/edge-neon.c:55
+msgid "Intensity"
+msgstr "Intensywność"
+
+#: ../operations/common/edge-neon.c:56
+msgid "Strength of Effect"
+msgstr "Siła efektu"
+
+#: ../operations/common/edge-neon.c:551
+msgid "Neon Edge Detection"
+msgstr "Neonowe wykrywanie krawędzi"
+
+#: ../operations/common/edge-neon.c:554
+msgid "Performs edge detection using a Gaussian derivative method"
+msgstr "Wykonuje wykrywanie krawędzi za pomocą metody pochodnej Gaussa"
 
 #: ../operations/common/edge-sobel.c:31
 msgid "Keep Sign"
@@ -2573,11 +2594,11 @@ msgstr "Odchylenie standardowe"
 msgid "Contrast of high-pass"
 msgstr "Kontrast wysokiego przejścia"
 
-#: ../operations/common/high-pass.c:81
+#: ../operations/common/high-pass.c:84
 msgid "High Pass Filter"
 msgstr "Filtr wysokiego przejścia"
 
-#: ../operations/common/high-pass.c:84
+#: ../operations/common/high-pass.c:87
 msgid "Enhances fine details."
 msgstr "Uwydatnia drobne szczegóły."
 
@@ -3038,7 +3059,7 @@ msgstr "położenie środka symetrii w wyjściu"
 #: ../operations/common/mirrors.c:56
 #: ../operations/common/motion-blur-circular.c:41
 #: ../operations/common/motion-blur-zoom.c:40
-#: ../operations/common/supernova.c:33 ../operations/common/vignette.c:60
+#: ../operations/common/supernova.c:33 ../operations/common/vignette.c:61
 #: ../operations/common/waves.c:26
 msgid "Center X"
 msgstr "Środek na osi X"
@@ -3050,7 +3071,7 @@ msgstr "Współrzędna osi X środka lustra"
 #: ../operations/common/mirrors.c:61
 #: ../operations/common/motion-blur-circular.c:46
 #: ../operations/common/motion-blur-zoom.c:45
-#: ../operations/common/supernova.c:39 ../operations/common/vignette.c:65
+#: ../operations/common/supernova.c:39 ../operations/common/vignette.c:66
 #: ../operations/common/waves.c:31
 msgid "Center Y"
 msgstr "Środek na osi Y"
@@ -3415,11 +3436,11 @@ msgid ""
 msgstr ""
 "Kontroluje liczbę iteracji. Niższe wartości spowodują mniej plastikowe wyniki"
 
-#: ../operations/common/noise-reduction.c:426
+#: ../operations/common/noise-reduction.c:453
 msgid "Noise Reduction"
 msgstr "Redukcja szumu"
 
-#: ../operations/common/noise-reduction.c:429
+#: ../operations/common/noise-reduction.c:456
 msgid "Anisotropic smoothing operation"
 msgstr "Działanie wygładzania anizotropowego"
 
@@ -4702,7 +4723,8 @@ msgstr "Okrąg"
 msgid "Vignette shape"
 msgstr "Kształt winiety"
 
-#: ../operations/common/vignette.c:35
+#. TRANSLATORS: the string 'black' should not be translated
+#: ../operations/common/vignette.c:36
 msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
@@ -4710,43 +4732,43 @@ msgstr ""
 "Domyślnie „black” (czarny), można użyć przezroczystości, aby usunąć część "
 "obrazu"
 
-#: ../operations/common/vignette.c:38
+#: ../operations/common/vignette.c:39
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr "Jak długie jest winietowanie jako część połowy przekątnej obrazu"
 
-#: ../operations/common/vignette.c:42
+#: ../operations/common/vignette.c:43
 msgid "Softness"
 msgstr "Miękkość"
 
-#: ../operations/common/vignette.c:45
+#: ../operations/common/vignette.c:46
 msgid "Gamma"
 msgstr "Gamma"
 
-#: ../operations/common/vignette.c:46
+#: ../operations/common/vignette.c:47
 msgid "Falloff linearity"
 msgstr "Liniowość spadku"
 
-#: ../operations/common/vignette.c:49
+#: ../operations/common/vignette.c:50
 msgid "Proportion"
 msgstr "Proporcje"
 
-#: ../operations/common/vignette.c:50
+#: ../operations/common/vignette.c:51
 msgid "How close we are to image proportions"
 msgstr "Jak blisko proporcji obrazu"
 
-#: ../operations/common/vignette.c:53
+#: ../operations/common/vignette.c:54
 msgid "Squeeze"
 msgstr "Ściśnij"
 
-#: ../operations/common/vignette.c:70
+#: ../operations/common/vignette.c:71
 msgid "Rotation"
 msgstr "Obrót"
 
-#: ../operations/common/vignette.c:381
+#: ../operations/common/vignette.c:382
 msgid "Vignette"
 msgstr "Winieta"
 
-#: ../operations/common/vignette.c:384
+#: ../operations/common/vignette.c:385
 msgid ""
 "Applies a vignette to an image. Simulates the luminance fall off at the edge "
 "of exposed film, and some other fuzzier border effects that can naturally "
@@ -5843,15 +5865,16 @@ msgstr "Rodzina czcionki (UTF-8)"
 msgid "Font size in pixels."
 msgstr "Rozmiar czcionki w pikselach."
 
-#: ../operations/external/text.c:37
+#. TRANSLATORS: the string 'black' should not be translated
+#: ../operations/external/text.c:38
 msgid "Color for the text (defaults to 'black')"
 msgstr "Kolor tekstu (domyślnie „black” — czarny)"
 
-#: ../operations/external/text.c:39
+#: ../operations/external/text.c:40
 msgid "Wrap width"
 msgstr "Szerokość zawijania"
 
-#: ../operations/external/text.c:40
+#: ../operations/external/text.c:41
 msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
@@ -5859,11 +5882,11 @@ msgstr ""
 "Ustawia szerokość w pikselach, po jakiej długie wiersze będą zawijane. "
 "Wartość -1 oznacza brak zawijania."
 
-#: ../operations/external/text.c:43
+#: ../operations/external/text.c:44
 msgid "Wrap height"
 msgstr "Zawijaj wysokość"
 
-#: ../operations/external/text.c:44
+#: ../operations/external/text.c:45
 msgid ""
 "Sets the height in pixels according to which the text is vertically "
 "justified. Use -1 for no vertical justification."
@@ -5871,36 +5894,36 @@ msgstr ""
 "Ustawia wysokość w pikselach, po jakiej tekst będzie wyjustowany w pionie. "
 "Wartość -1 oznacza brak wyjustowania w pionie."
 
-#: ../operations/external/text.c:49
+#: ../operations/external/text.c:50
 msgid "Justification"
 msgstr "Wyjustowanie"
 
-#: ../operations/external/text.c:51
+#: ../operations/external/text.c:52
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
 msgstr ""
 "Wyrównanie tekstu wielowierszowego (0=do lewej, 1=wyśrodkowanie, 2=do prawej)"
 
-#: ../operations/external/text.c:53
+#: ../operations/external/text.c:54
 msgid "Vertical justification"
 msgstr "Wyjustowanie w pionie"
 
-#: ../operations/external/text.c:55
+#: ../operations/external/text.c:56
 msgid "Vertical text alignment (0=Top, 1=Middle, 2=Bottom)"
 msgstr "Wyrównanie tekstu w pionie (0=do góry, 1=do środka, 2=do dołu)"
 
-#: ../operations/external/text.c:58
+#: ../operations/external/text.c:59
 msgid "Rendered width in pixels. (read only)"
 msgstr "Renderowana szerokość w pikselach (tylko do odczytu)."
 
-#: ../operations/external/text.c:60
+#: ../operations/external/text.c:61
 msgid "Rendered height in pixels. (read only)"
 msgstr "Renderowana wysokość w pikselach (tylko do odczytu)."
 
-#: ../operations/external/text.c:342
+#: ../operations/external/text.c:343
 msgid "Render Text"
 msgstr "Renderuj tekst"
 
-#: ../operations/external/text.c:345
+#: ../operations/external/text.c:346
 msgid "Display a string of text using pango and cairo."
 msgstr "Wyświetl ciąg tekstowy za pomocą bibliotek Pango i cairo."
 
@@ -6413,7 +6436,7 @@ msgid ""
 "Repositions the buffer (with subpixel precision), if integer coordinates are "
 "passed a fast-path without resampling is used"
 msgstr ""
-"Zmienia położenie bufora (o precyzji podpikselowej), jeśli podano "
+"Zmienia położenie bufora (o precyzji podpikselowej), jeśli podano "
 "współrzędne całkowite, to używana jest szybka ścieżka bez resamplingu"
 
 #: ../operations/workshop/component-extract.c:25
