@@ -24,7 +24,7 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gegl-$(GEGL_API_VERSION).pc
 
-built_dist_files = README
+built_dist_files = README NEWS
 
 EXTRA_DIST = 			\
 	$(built_dist_files)     \
