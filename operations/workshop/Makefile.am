@@ -24,8 +24,7 @@ op_LTLIBRARIES =    \
 	median-blur.la \
 	rawbayer-load.la \
 	unpremul.la \
-    vhsfix.la \
-    waterpixels.la \
-    watershed-transform.la \
-    wavelet-blur.la
+        vhsfix.la \
+        waterpixels.la \
+        watershed-transform.la \
 

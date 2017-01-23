@@ -139,6 +139,7 @@ operations/common/value-propagate.c
 operations/common/video-degradation.c
 operations/common/vignette.c
 operations/common/warp.c
+operations/common/wavelet-blur.c
 operations/common/waves.c
 operations/common/weighted-blend.c
 operations/common/whirl-pinch.c
@@ -245,4 +246,3 @@ operations/workshop/rawbayer-load.c
 operations/workshop/vhsfix.c
 operations/workshop/waterpixels.c
 operations/workshop/watershed-transform.c
-operations/workshop/wavelet-blur.c

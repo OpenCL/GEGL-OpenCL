@@ -151,6 +151,7 @@ gegl_common_la_SOURCES =\
 	vignette.c \
 	warp.c \
 	waves.c \
+        wavelet-blur.c \
 	weighted-blend.c \
 	whirl-pinch.c \
 	wind.c \
