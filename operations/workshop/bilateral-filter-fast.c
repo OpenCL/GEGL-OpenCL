@@ -1,3 +1,7 @@
+/* XXX: moved to workshop due to bug #777699, excessive memory allocations
+ */
+
+
 /* This file is an image processing operation for GEGL
  *
  * GEGL is free software; you can redistribute it and/or

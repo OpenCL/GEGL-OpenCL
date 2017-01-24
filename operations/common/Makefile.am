@@ -20,7 +20,6 @@ gegl_common_la_SOURCES =\
     module.c \
 	antialias.c \
 	apply-lens.c \
-	bilateral-filter-fast.c \
 	bilateral-filter.c \
 	box-blur.c \
 	brightness-contrast.c \
