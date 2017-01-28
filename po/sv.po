@@ -1,17 +1,18 @@
 # Swedish translation for gegl.
-# Copyright © 2012, 2016 Free Software Foundation, Inc.
+# Copyright © 2012, 2016, 2017 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gegl package.
 # Daniel Nylander <po@danielnylander.se>, 2012.
-# Sebastian Rasmussen <sebras@mgmail.com>, 2016.
+# Sebastian Rasmussen <sebras@gmail.com>, 2016, 2017.
+# Anders Jonsson <anders.jonsson@norsjovallen.se>, 2017.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=gegl&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-11-10 09:46+0000\n"
-"PO-Revision-Date: 2016-11-22 23:10+0100\n"
-"Last-Translator: Anders Jonsson <anders.jonsson@norsjovallen.se>\n"
+"POT-Creation-Date: 2017-01-24 15:52+0000\n"
+"PO-Revision-Date: 2017-01-28 22:17+0100\n"
+"Last-Translator: Sebastian Rasmussen <sebras@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
 "MIME-Version: 1.0\n"
@@ -208,69 +209,65 @@ msgid "Read/Write"
 msgstr "Läs/skriv"
 
 #: ../gegl/gegl-enums.c:88
-msgid "Random"
-msgstr "Slumpmässig"
-
-#: ../gegl/gegl-enums.c:89
-msgid "Resilient"
-msgstr "Motståndskraftig"
-
-#: ../gegl/gegl-enums.c:90
-msgid "Random Covariant"
-msgstr "Slumpmässigt kovariant"
-
-#: ../gegl/gegl-enums.c:91
-msgid "Bayer"
-msgstr "Bayer"
-
-#: ../gegl/gegl-enums.c:92
 msgid "Floyd-Steinberg"
 msgstr "Floyd-Steinberg"
 
-#: ../gegl/gegl-enums.c:93
-msgid "Arithmetic-add"
+#: ../gegl/gegl-enums.c:89
+msgid "Bayer"
+msgstr "Bayer"
+
+#: ../gegl/gegl-enums.c:90 ../operations/workshop/waterpixels.c:35
+msgid "Random"
+msgstr "Slumpmässig"
+
+#: ../gegl/gegl-enums.c:91
+msgid "Random Covariant"
+msgstr "Slumpmässigt kovariant"
+
+#: ../gegl/gegl-enums.c:92
+msgid "Arithmetic add"
 msgstr "Aritmetisk addition"
 
-#: ../gegl/gegl-enums.c:94
-msgid "Arithmetic-add-covariant"
-msgstr "Kovariant aritmetisk add"
+#: ../gegl/gegl-enums.c:93
+msgid "Arithmetic add covariant"
+msgstr "Kovariant aritmetisk addition"
 
-#: ../gegl/gegl-enums.c:95
-msgid "Arithmetic-xor"
+#: ../gegl/gegl-enums.c:94
+msgid "Arithmetic xor"
 msgstr "Aritmetisk xor"
 
-#: ../gegl/gegl-enums.c:96
-msgid "Arithmetic-xor-covariant"
+#: ../gegl/gegl-enums.c:95
+msgid "Arithmetic xor covariant"
 msgstr "Kovariant aritmetisk xor"
 
-#: ../gegl/gegl-enums.c:121 ../operations/common/edge-sobel.c:27
+#: ../gegl/gegl-enums.c:120 ../operations/common/edge-sobel.c:27
 #: ../operations/common/noise-spread.c:29
 msgid "Horizontal"
 msgstr "Horisontell"
 
-#: ../gegl/gegl-enums.c:122 ../operations/common/edge-sobel.c:29
+#: ../gegl/gegl-enums.c:121 ../operations/common/edge-sobel.c:29
 #: ../operations/common/noise-spread.c:35
 msgid "Vertical"
 msgstr "Vertikal"
 
-#: ../gegl/gegl-enums.c:146
+#: ../gegl/gegl-enums.c:145
 msgid "Nearest"
 msgstr "Närmaste"
 
-#: ../gegl/gegl-enums.c:147 ../operations/common/bump-map.c:33
+#: ../gegl/gegl-enums.c:146 ../operations/common/bump-map.c:33
 #: ../operations/common/sinus.c:64
 msgid "Linear"
 msgstr "Linjär"
 
-#: ../gegl/gegl-enums.c:148
+#: ../gegl/gegl-enums.c:147
 msgid "Cubic"
 msgstr "Kubisk"
 
-#: ../gegl/gegl-enums.c:149
+#: ../gegl/gegl-enums.c:148
 msgid "NoHalo"
 msgstr "Ingen halo"
 
-#: ../gegl/gegl-enums.c:150
+#: ../gegl/gegl-enums.c:149
 msgid "LoHalo"
 msgstr "Låg halo"
 
@@ -427,15 +424,15 @@ msgstr ""
 "över bilden"
 
 #: ../operations/common/bilateral-filter.c:26
-#: ../operations/common/bilateral-filter-fast.c:37
 #: ../operations/common/dropshadow.c:37
 #: ../operations/common/gaussian-blur-selective.c:29
+#: ../operations/workshop/bilateral-filter-fast.c:41
 msgid "Blur radius"
 msgstr "Oskärperadie"
 
 #: ../operations/common/bilateral-filter.c:27
-#: ../operations/common/bilateral-filter-fast.c:38
 #: ../operations/common/gaussian-blur-selective.c:30
+#: ../operations/workshop/bilateral-filter-fast.c:42
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Radie för fyrkantigt bildpunktsområde (bredd och höjd kommer att vara "
@@ -463,29 +460,10 @@ msgstr ""
 "bildpunkt också viktas med avseende på färgskillnaden mot originalets "
 "centrumbildpunkt. "
 
-#: ../operations/common/bilateral-filter-fast.c:33
-msgid "Smoothness"
-msgstr "Utjämning"
-
-#: ../operations/common/bilateral-filter-fast.c:34
-msgid "Level of smoothness"
-msgstr "Nivåer av utmjukning"
-
-#: ../operations/common/bilateral-filter-fast.c:496
-msgid "Bilateral Box Filter"
-msgstr "Bilateralt boxfilter"
-
-#: ../operations/common/bilateral-filter-fast.c:498
-msgid ""
-"A fast approximation of bilateral filter, using a box-filter instead of a "
-"gaussian blur."
-msgstr ""
-"En snabb approximation av ett bilateralt filter med hjälp av ett boxfilter "
-"istället för en gaussisk oskärpa."
-
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
-#: ../operations/common/snn-mean.c:26 ../operations/common/stress.c:27
-#: ../operations/common/supernova.c:45 ../operations/common/vignette.c:37
+#: ../operations/common/edge-neon.c:47 ../operations/common/snn-mean.c:26
+#: ../operations/common/stress.c:27 ../operations/common/supernova.c:45
+#: ../operations/common/vignette.c:38 ../operations/common/wavelet-blur.c:28
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
@@ -719,7 +697,7 @@ msgstr ""
 "Antal iterationer, ett högre antal iterationer ger ett mindre brusigt "
 "resultat mot en ökad beräkningskostnad"
 
-#: ../operations/common/c2g.c:395
+#: ../operations/common/c2g.c:396
 msgid ""
 "Color to grayscale conversion, uses envelopes formed with the STRESS "
 "approach to perform local color-difference preserving grayscale generation."
@@ -846,7 +824,7 @@ msgstr ""
 #: ../operations/common/panorama-projection.c:42
 #: ../operations/common/plasma.c:54 ../operations/common/rectangle.c:36
 #: ../operations/common/sinus.c:77 ../operations/core/crop.c:35
-#: ../operations/external/svg-load.c:30 ../operations/external/text.c:47
+#: ../operations/external/svg-load.c:30 ../operations/external/text.c:58
 #: ../operations/external/v4l.c:28 ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
 #: ../operations/workshop/external/v4l2.c:26
@@ -865,7 +843,7 @@ msgstr "Horisontell bredd på cellers bildpunkter"
 #: ../operations/common/panorama-projection.c:48
 #: ../operations/common/plasma.c:62 ../operations/common/rectangle.c:42
 #: ../operations/common/sinus.c:85 ../operations/core/crop.c:40
-#: ../operations/external/svg-load.c:32 ../operations/external/text.c:49
+#: ../operations/external/svg-load.c:32 ../operations/external/text.c:60
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/line-profile.c:41
 #: ../operations/workshop/external/v4l2.c:28
@@ -903,11 +881,11 @@ msgstr "Färg 2"
 msgid "The second cell color"
 msgstr "Andra cellfärgen"
 
-#: ../operations/common/checkerboard.c:61 ../operations/common/color.c:28
+#: ../operations/common/checkerboard.c:61 ../operations/common/color.c:29
 msgid "Babl Format"
 msgstr "Babl-format"
 
-#: ../operations/common/checkerboard.c:62 ../operations/common/color.c:29
+#: ../operations/common/checkerboard.c:62 ../operations/common/color.c:30
 #: ../operations/core/cast-format.c:28 ../operations/core/convert-format.c:28
 msgid "The babl format of the output"
 msgstr "Babl-formatet för utdata"
@@ -920,7 +898,7 @@ msgstr "Schackbräde"
 msgid "Create a checkerboard pattern"
 msgstr "Skapa ett schackbrädesmönster"
 
-#: ../operations/common/color.c:24 ../operations/common/color.c:91
+#: ../operations/common/color.c:24 ../operations/common/color.c:92
 #: ../operations/common/color-to-alpha.c:28
 #: ../operations/common/dropshadow.c:43 ../operations/common/grid.c:64
 #: ../operations/common/rectangle.c:48 ../operations/common/supernova.c:60
@@ -931,7 +909,7 @@ msgstr "Skapa ett schackbrädesmönster"
 msgid "Color"
 msgstr "Färg"
 
-#: ../operations/common/color.c:94
+#: ../operations/common/color.c:95
 msgid ""
 "Generates a buffer entirely filled with the specified color, use gegl:crop "
 "to get smaller dimensions."
@@ -1002,74 +980,6 @@ msgid ""
 msgstr ""
 "Ersätt en färg med en annan, ställ valfritt in ett tröskelvärde för att "
 "konvertera från en nyans till en annan."
-
-#: ../operations/common/color-reduction.c:26
-msgid "Red bits"
-msgstr "Röda bitar"
-
-#: ../operations/common/color-reduction.c:27
-msgid "Number of bits for red channel"
-msgstr "Antal bitar för den röda kanalen"
-
-#: ../operations/common/color-reduction.c:30
-msgid "Green bits"
-msgstr "Gröna bitar"
-
-#: ../operations/common/color-reduction.c:31
-msgid "Number of bits for green channel"
-msgstr "Antal bitar för den gröna kanalen"
-
-#: ../operations/common/color-reduction.c:34
-msgid "Blue bits"
-msgstr "Blå bitar"
-
-#: ../operations/common/color-reduction.c:35
-msgid "Number of bits for blue channel"
-msgstr "Antal bitar för den blå kanalen"
-
-#: ../operations/common/color-reduction.c:38
-msgid "Alpha bits"
-msgstr "Alfabitar"
-
-#: ../operations/common/color-reduction.c:39
-msgid "Number of bits for alpha channel"
-msgstr "Antal bitar för alfakanalen"
-
-#: ../operations/common/color-reduction.c:42
-msgid "Dithering method"
-msgstr "Färgutjämningsmetod"
-
-#: ../operations/common/color-reduction.c:44
-msgid "The dithering method to use"
-msgstr "Vilken färgutjämningsmetod som ska användas"
-
-#. XXX: what?
-#: ../operations/common/color-reduction.c:46 ../operations/common/cubism.c:42
-#: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
-#: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
-#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
-#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
-#: ../operations/common/noise-rgb.c:44 ../operations/common/noise-simplex.c:39
-#: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
-#: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
-#: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
-#: ../operations/common/supernova.c:63
-msgid "Random seed"
-msgstr "Slumpfrö"
-
-#: ../operations/common/color-reduction.c:659
-msgid "Color Reduction"
-msgstr "Färgreduktion"
-
-#: ../operations/common/color-reduction.c:661
-msgid ""
-"Reduce the number of colors in the image, by reducing the bits per channel "
-"(colors and alpha). Different dithering methods can be specified to "
-"counteract quantization induced banding."
-msgstr ""
-"Reducera antalet färger i bilden genom att reducera antalet bitar per kanal "
-"(färg och alfa). Olika färgutjämningsmetoder kan anges för att motverka "
-"bandning introducerad av kvantisering."
 
 #: ../operations/common/color-rotate.c:35
 msgid "Treat as this"
@@ -1527,6 +1437,20 @@ msgstr "Plattmättnad"
 msgid "Expand tiles by this amount"
 msgstr "Expandera plattor med detta belopp"
 
+#. XXX: what?
+#: ../operations/common/cubism.c:42 ../operations/common/dither.c:51
+#: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
+#: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
+#: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
+#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
+#: ../operations/common/noise-rgb.c:51 ../operations/common/noise-simplex.c:39
+#: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
+#: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
+#: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
+#: ../operations/common/supernova.c:63
+msgid "Random seed"
+msgstr "Slumpfrö"
+
 #: ../operations/common/cubism.c:613
 msgid "Cubism"
 msgstr "Kubism"
@@ -1830,6 +1754,60 @@ msgstr "Avståndstransform"
 msgid "Calculate a distance transform"
 msgstr "Beräkna en avståndstransform"
 
+#: ../operations/common/dither.c:27
+msgid "Red levels"
+msgstr "Rödnivåer"
+
+#: ../operations/common/dither.c:28
+msgid "Number of levels for red channel"
+msgstr "Antal nivåer för röd kanal"
+
+#: ../operations/common/dither.c:32
+msgid "Green levels"
+msgstr "Grönnivåer"
+
+#: ../operations/common/dither.c:33
+msgid "Number of levels for green channel"
+msgstr "Antal nivåer för grön kanal"
+
+#: ../operations/common/dither.c:37
+msgid "Blue levels"
+msgstr "Blånivåer"
+
+#: ../operations/common/dither.c:38
+msgid "Number of levels for blue channel"
+msgstr "Antal nivåer för blå kanal"
+
+#: ../operations/common/dither.c:42
+msgid "Alpha levels"
+msgstr "Alfanivåer"
+
+#: ../operations/common/dither.c:43
+msgid "Number of levels for alpha channel"
+msgstr "Antal nivåer för alfakanal"
+
+#: ../operations/common/dither.c:47
+msgid "Dithering method"
+msgstr "Färgutjämningsmetod"
+
+#: ../operations/common/dither.c:49
+msgid "The dithering method to use"
+msgstr "Vilken färgutjämningsmetod som ska användas"
+
+#: ../operations/common/dither.c:590
+msgid "Dither"
+msgstr "Färgutjämning"
+
+#: ../operations/common/dither.c:592
+msgid ""
+"Reduce the number of colors in the image, by reducing the levels per channel "
+"(colors and alpha). Different dithering methods can be specified to "
+"counteract quantization induced banding."
+msgstr ""
+"Reducera antalet färger i bilden genom att reducera antalet nivåer per kanal "
+"(färg och alfa). Olika färgutjämningsmetoder kan anges för att motverka "
+"bandning introducerad av kvantisering."
+
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
 #: ../operations/common/plasma.c:40 ../operations/common/polar-coordinates.c:51
 #: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
@@ -1850,21 +1828,22 @@ msgstr "Y"
 msgid "Vertical shadow offset"
 msgstr "Vertikal skuggposition"
 
-#: ../operations/common/dropshadow.c:44
+#. TRANSLATORS: the string 'black' should not be translated
+#: ../operations/common/dropshadow.c:45
 msgid "The shadow's color (defaults to 'black')"
-msgstr "Skuggans färg (standardvärdet är ”svart”)"
+msgstr "Skuggans färg (standardvärdet är ”black”)"
 
 #. It does make sense to sometimes have opacities > 1 (see GEGL logo
 #. * for example)
 #.
-#: ../operations/common/dropshadow.c:49 ../operations/common/layer.c:33
+#: ../operations/common/dropshadow.c:50 ../operations/common/layer.c:33
 #: ../operations/common/opacity.c:25 ../operations/common/opacity.c:307
 #: ../operations/external/vector-fill.c:29
 #: ../operations/external/vector-stroke.c:34
 msgid "Opacity"
 msgstr "Opacitet"
 
-#: ../operations/common/dropshadow.c:111
+#: ../operations/common/dropshadow.c:112
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Skapar en skuggeffekt för indatabufferten"
 
@@ -1931,6 +1910,26 @@ msgstr "Laplace-kantdetektering"
 #: ../operations/common/edge-laplace.c:410
 msgid "High-resolution edge detection"
 msgstr "Högupplöst kantdetektering"
+
+#: ../operations/common/edge-neon.c:48
+msgid "Radius of effect (in pixels)"
+msgstr "Effektradie (i bildpunkter)"
+
+#: ../operations/common/edge-neon.c:55
+msgid "Intensity"
+msgstr "Intensitet"
+
+#: ../operations/common/edge-neon.c:56
+msgid "Strength of Effect"
+msgstr "Effektstyrka"
+
+#: ../operations/common/edge-neon.c:551
+msgid "Neon Edge Detection"
+msgstr "Neonkantdetektering"
+
+#: ../operations/common/edge-neon.c:554
+msgid "Performs edge detection using a Gaussian derivative method"
+msgstr "Utför kantdetektering med en gaussisk derivatametod"
 
 #: ../operations/common/edge-sobel.c:31
 msgid "Keep Sign"
@@ -2058,7 +2057,7 @@ msgstr ""
 "och ner i steg. "
 
 #: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
-#: ../operations/common/noise-rgb.c:41
+#: ../operations/common/noise-rgb.c:48
 #: ../operations/workshop/component-extract.c:43
 msgid "Alpha"
 msgstr "Alfa"
@@ -2571,11 +2570,11 @@ msgstr "Std. avv."
 msgid "Contrast of high-pass"
 msgstr "Kontrast för högpass"
 
-#: ../operations/common/high-pass.c:81
+#: ../operations/common/high-pass.c:84
 msgid "High Pass Filter"
 msgstr "Högpassfilter"
 
-#: ../operations/common/high-pass.c:84
+#: ../operations/common/high-pass.c:87
 msgid "Enhances fine details."
 msgstr "Förbättrar små detaljer."
 
@@ -3034,7 +3033,7 @@ msgstr "position för symmetricenter i utdata"
 #: ../operations/common/mirrors.c:56
 #: ../operations/common/motion-blur-circular.c:41
 #: ../operations/common/motion-blur-zoom.c:40
-#: ../operations/common/supernova.c:33 ../operations/common/vignette.c:60
+#: ../operations/common/supernova.c:33 ../operations/common/vignette.c:61
 #: ../operations/common/waves.c:26
 msgid "Center X"
 msgstr "Centrum X"
@@ -3046,7 +3045,7 @@ msgstr "X-axelförhållande för spegelcentrum"
 #: ../operations/common/mirrors.c:61
 #: ../operations/common/motion-blur-circular.c:46
 #: ../operations/common/motion-blur-zoom.c:45
-#: ../operations/common/supernova.c:39 ../operations/common/vignette.c:65
+#: ../operations/common/supernova.c:39 ../operations/common/vignette.c:66
 #: ../operations/common/waves.c:31
 msgid "Center Y"
 msgstr "Centrum Y"
@@ -3411,11 +3410,11 @@ msgid ""
 msgstr ""
 "Kontrollerar antalet iterationer; lägre värden ge mindre plastiga resultat"
 
-#: ../operations/common/noise-reduction.c:426
+#: ../operations/common/noise-reduction.c:453
 msgid "Noise Reduction"
 msgstr "Brusreduktion"
 
-#: ../operations/common/noise-reduction.c:429
+#: ../operations/common/noise-reduction.c:456
 msgid "Anisotropic smoothing operation"
 msgstr "Anisotropisk utjämningsåtgärd"
 
@@ -3427,23 +3426,47 @@ msgstr "Korrelerat brus"
 msgid "Independent RGB"
 msgstr "Oberoende RGB"
 
-#: ../operations/common/noise-rgb.c:32
+#: ../operations/common/noise-rgb.c:31
+msgid "Control amount of noise for each RGB channel separately"
+msgstr "Styr mängden brus för varje RGB-kanal separat"
+
+#: ../operations/common/noise-rgb.c:33
+msgid "Linear RGB"
+msgstr "Linjär RGB"
+
+#: ../operations/common/noise-rgb.c:34
+msgid "Operate on linearized RGB color data"
+msgstr "Arbeta på linjäriserad RGB-färgdata"
+
+#: ../operations/common/noise-rgb.c:36
+msgid "Gaussian distribution"
+msgstr "Normalfördelning"
+
+#: ../operations/common/noise-rgb.c:37
+msgid ""
+"Use a gaussian noise distribution, when unticked a linear noise distribution "
+"is used instead"
+msgstr ""
+"Använd normalfördelat brus, när den inte är ikryssad används en linjär "
+"brusfördelning istället"
+
+#: ../operations/common/noise-rgb.c:39
 msgid "Red"
 msgstr "Röd"
 
-#: ../operations/common/noise-rgb.c:35
+#: ../operations/common/noise-rgb.c:42
 msgid "Green"
 msgstr "Grön"
 
-#: ../operations/common/noise-rgb.c:38
+#: ../operations/common/noise-rgb.c:45
 msgid "Blue"
 msgstr "Blå"
 
-#: ../operations/common/noise-rgb.c:177
+#: ../operations/common/noise-rgb.c:203
 msgid "Add RGB Noise"
 msgstr "Lägg till RGB-brus"
 
-#: ../operations/common/noise-rgb.c:179
+#: ../operations/common/noise-rgb.c:205
 msgid "Distort colors by random amounts"
 msgstr "Förvränger färger slumpmässigt mycket"
 
@@ -3682,8 +3705,8 @@ msgstr "Panoramaprojektion"
 
 #: ../operations/common/panorama-projection.c:543
 msgid ""
-"Perform a equlinear/gnomonic or little planet/stereographic projection of a "
-"equirectangular input image."
+"Perform an equilinear/gnomonic or little planet/stereographic projection of "
+"an equirectangular input image."
 msgstr ""
 "Utför en ekvilinjär/gnomonisk eller liten planet/stereografisk projektion av "
 "en likkvadratisk indatabild."
@@ -4117,7 +4140,7 @@ msgid "Blend Mode"
 msgstr "Sammansättningsläge"
 
 #: ../operations/common/sinus.c:74
-msgid "Power used to strech the blend"
+msgid "Power used to stretch the blend"
 msgstr "Styrka som används för att sträcka ut sammansättningen"
 
 #: ../operations/common/sinus.c:314
@@ -4142,7 +4165,7 @@ msgstr "Symmetriskt närmaste grannar"
 
 #: ../operations/common/snn-mean.c:337
 msgid ""
-"Noise reducing edge preserving blur filter based  on Symmetric Nearest "
+"Noise reducing edge preserving blur filter based on Symmetric Nearest "
 "Neighbours"
 msgstr ""
 "Brusreducerande kantbibehållande oskärpefilter baserat på Symmetriskt "
@@ -4305,6 +4328,7 @@ msgid "Bottom-right"
 msgstr "Nere till höger"
 
 #: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
+#: ../operations/workshop/image-gradient.c:28
 msgid "Direction"
 msgstr "Riktning"
 
@@ -4334,7 +4358,8 @@ msgstr "Strukturerar bilden som om den fanns på en konstnärs duk."
 
 #: ../operations/common/threshold.c:28
 msgid ""
-"Scalar threshold level (overriden if an auxiliary input buffer is provided.)."
+"Scalar threshold level (overridden if an auxiliary input buffer is "
+"provided.)."
 msgstr ""
 "Skalär tröskelnivå (åsidosätts om en tillsatsindatabuffert tillhandahålls.)."
 
@@ -4675,52 +4700,53 @@ msgstr "Cirkel"
 msgid "Vignette shape"
 msgstr "Vinjettform"
 
-#: ../operations/common/vignette.c:35
+#. TRANSLATORS: the string 'black' should not be translated
+#: ../operations/common/vignette.c:36
 msgid ""
 "Defaults to 'black', you can use transparency here to erase portions of an "
 "image"
 msgstr ""
-"Standard värdet är ”svart”, du kan använda transparens här för att ta bort "
+"Standardvärdet är ”black”, du kan använda transparens här för att ta bort "
 "delar av en bild"
 
-#: ../operations/common/vignette.c:38
+#: ../operations/common/vignette.c:39
 msgid "How far out vignetting goes as portion of half image diagonal"
 msgstr ""
 "Hur lång ut vinjetteringen går i förhållande till halva bilddiagonalen."
 
-#: ../operations/common/vignette.c:42
+#: ../operations/common/vignette.c:43
 msgid "Softness"
 msgstr "Mjukhet"
 
-#: ../operations/common/vignette.c:45
+#: ../operations/common/vignette.c:46
 msgid "Gamma"
 msgstr "Gamma"
 
-#: ../operations/common/vignette.c:46
+#: ../operations/common/vignette.c:47
 msgid "Falloff linearity"
 msgstr "Linjärt avtagande"
 
-#: ../operations/common/vignette.c:49
+#: ../operations/common/vignette.c:50
 msgid "Proportion"
 msgstr "Proportion"
 
-#: ../operations/common/vignette.c:50
+#: ../operations/common/vignette.c:51
 msgid "How close we are to image proportions"
 msgstr "Hur nära vi är bildproportionerna"
 
-#: ../operations/common/vignette.c:53
+#: ../operations/common/vignette.c:54
 msgid "Squeeze"
 msgstr "Pressa"
 
-#: ../operations/common/vignette.c:70
+#: ../operations/common/vignette.c:71
 msgid "Rotation"
 msgstr "Rotation"
 
-#: ../operations/common/vignette.c:381
+#: ../operations/common/vignette.c:382
 msgid "Vignette"
 msgstr "Vinjett"
 
-#: ../operations/common/vignette.c:384
+#: ../operations/common/vignette.c:385
 msgid ""
 "Applies a vignette to an image. Simulates the luminance fall off at the edge "
 "of exposed film, and some other fuzzier border effects that can naturally "
@@ -4781,6 +4807,22 @@ msgstr "Vikning"
 #: ../operations/common/warp.c:486
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Beräkna en relativ förskjutningsmappning från en strykning"
+
+#: ../operations/common/wavelet-blur.c:29
+msgid "Radius of the wavelet blur"
+msgstr "Radie för wavelet-oskärpa"
+
+#: ../operations/common/wavelet-blur.c:283
+msgid "Wavelet Blur"
+msgstr "Wavelet-oskärpa"
+
+#: ../operations/common/wavelet-blur.c:286
+msgid ""
+"This blur is used for the wavelet decomposition filter, each pixel is "
+"computed from another by the HAT transform"
+msgstr ""
+"Denna oskärpa används för wavelet-nedbrytningsfiltret, varje bildpunkt "
+"beräknas från en annan via HAT-transformen"
 
 #: ../operations/common/waves.c:37
 msgid "Amplitude of the ripple"
@@ -4878,7 +4920,7 @@ msgstr "Topp"
 msgid "Bottom"
 msgstr "Botten"
 
-#: ../operations/common/wind.c:40
+#: ../operations/common/wind.c:40 ../operations/workshop/image-gradient.c:29
 msgid "Both"
 msgstr "Båda"
 
@@ -5009,11 +5051,11 @@ msgstr "Konvertera data till det angivna formatet"
 msgid "Reset origin"
 msgstr "Återställ origo"
 
-#: ../operations/core/crop.c:210
+#: ../operations/core/crop.c:219
 msgid "Crop"
 msgstr "Beskär"
 
-#: ../operations/core/crop.c:211
+#: ../operations/core/crop.c:220
 msgid "Crop a buffer"
 msgstr "Beskär en buffert"
 
@@ -5814,15 +5856,16 @@ msgstr "Typsnittsfamilj (utf8)"
 msgid "Font size in pixels."
 msgstr "Typsnittsstorlek i bildpunkter."
 
-#: ../operations/external/text.c:37
-msgid "Color for the text (defaults to 'white')"
-msgstr "Färg på texten (standardvalet är ”vitt”)"
-
+#. TRANSLATORS: the string 'black' should not be translated
 #: ../operations/external/text.c:38
+msgid "Color for the text (defaults to 'black')"
+msgstr "Färg på texten (standardvalet är ”black”)"
+
+#: ../operations/external/text.c:40
 msgid "Wrap width"
 msgstr "Radbrytningsbredd"
 
-#: ../operations/external/text.c:39
+#: ../operations/external/text.c:41
 msgid ""
 "Sets the width in pixels at which long lines will wrap. Use -1 for no "
 "wrapping."
@@ -5830,27 +5873,47 @@ msgstr ""
 "Ställer in bredden i bildpunkter vid vilken långa rader kommer att "
 "radbrytas. Använd -1 för att stänga av radbrytning."
 
-#: ../operations/external/text.c:43
+#: ../operations/external/text.c:44
+msgid "Wrap height"
+msgstr "Omvikningshöjd"
+
+#: ../operations/external/text.c:45
+msgid ""
+"Sets the height in pixels according to which the text is vertically "
+"justified. Use -1 for no vertical justification."
+msgstr ""
+"Ställer in höjden i bildpunkter vid vilken texten kommer att justeras "
+"vertikalt. Använd -1 för att stänga av vertikaljustering."
+
+#: ../operations/external/text.c:50
 msgid "Justification"
 msgstr "Justering"
 
-#: ../operations/external/text.c:45
+#: ../operations/external/text.c:52
 msgid "Alignment for multi-line text (0=Left, 1=Center, 2=Right)"
 msgstr "Justering för flera rader text (0=vänster, 1=centrerad, 2=höger)"
 
-#: ../operations/external/text.c:48
+#: ../operations/external/text.c:54
+msgid "Vertical justification"
+msgstr "Vertikal justering"
+
+#: ../operations/external/text.c:56
+msgid "Vertical text alignment (0=Top, 1=Middle, 2=Bottom)"
+msgstr "Vertikal textjustering (0=topp, 1=mitt, 2=botten)"
+
+#: ../operations/external/text.c:59
 msgid "Rendered width in pixels. (read only)"
 msgstr "Renderad bredd i bildpunkter. (skrivskyddad)"
 
-#: ../operations/external/text.c:50
+#: ../operations/external/text.c:61
 msgid "Rendered height in pixels. (read only)"
 msgstr "Renderad höjd i bildpunkter. (skrivskyddad)"
 
-#: ../operations/external/text.c:323
+#: ../operations/external/text.c:343
 msgid "Render Text"
 msgstr "Rendera text"
 
-#: ../operations/external/text.c:326
+#: ../operations/external/text.c:346
 msgid "Display a string of text using pango and cairo."
 msgstr "Visa en textsträng med pango och cairo."
 
@@ -6258,8 +6321,8 @@ msgstr "Riktningsvektorns Y-komponent"
 
 #: ../operations/transform/rotate.c:26
 #: ../operations/transform/rotate-on-center.c:26
-msgid "Angle to rotate (clockwise)"
-msgstr "Rotationsvinkel (medurs)"
+msgid "Angle to rotate (counter-clockwise)"
+msgstr "Rotationsvinkel (moturs)"
 
 #: ../operations/transform/rotate.c:31
 msgid "Rotate the buffer around the specified origin."
@@ -6365,6 +6428,26 @@ msgid ""
 msgstr ""
 "Ompositionerar bufferten (med delbildpunktsprecision), om heltalskoordinater "
 "anges kommer en snabbare metod utan omsampling att användas"
+
+#: ../operations/workshop/bilateral-filter-fast.c:37
+msgid "Smoothness"
+msgstr "Utjämning"
+
+#: ../operations/workshop/bilateral-filter-fast.c:38
+msgid "Level of smoothness"
+msgstr "Nivåer av utmjukning"
+
+#: ../operations/workshop/bilateral-filter-fast.c:500
+msgid "Bilateral Box Filter"
+msgstr "Bilateralt boxfilter"
+
+#: ../operations/workshop/bilateral-filter-fast.c:502
+msgid ""
+"A fast approximation of bilateral filter, using a box-filter instead of a "
+"gaussian blur."
+msgstr ""
+"En snabb approximation av ett bilateralt filter med hjälp av ett boxfilter "
+"istället för en gaussisk oskärpa."
 
 #: ../operations/workshop/component-extract.c:25
 msgid "RGB Red"
@@ -6828,6 +6911,26 @@ msgstr ""
 "Stapla ingångar horisontellt, (i ”utgång” kommer ”aux” att placeras till "
 "höger om ”ingång”)"
 
+#: ../operations/workshop/image-gradient.c:27
+msgid "Magnitude"
+msgstr "Magnitud"
+
+#: ../operations/workshop/image-gradient.c:32
+msgid "Output mode"
+msgstr "Utmatningsläge"
+
+#: ../operations/workshop/image-gradient.c:35
+msgid "Output Mode"
+msgstr "Utmatningsläge"
+
+#: ../operations/workshop/image-gradient.c:224
+msgid "Image Gradient"
+msgstr "Bildtoning"
+
+#: ../operations/workshop/image-gradient.c:226
+msgid "Compute gradient magnitude and/or direction by central differencies"
+msgstr "Beräkna gradientmagnitud och/eller riktning genom centrumskillnader"
+
 #: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
@@ -6890,6 +6993,71 @@ msgstr "fixare för vhs-fel"
 msgid "fixes vhs digitization glitches"
 msgstr "fixar digitaliseringsfel för vhs"
 
+#: ../operations/workshop/waterpixels.c:34
+msgid "Average"
+msgstr "Medelvärde"
+
+#: ../operations/workshop/waterpixels.c:38
+msgid "Superpixels size"
+msgstr "Superbildpunkters storlek"
+
+#: ../operations/workshop/waterpixels.c:42
+msgid "Gradient smoothness"
+msgstr "Toningsutmjukning"
+
+#: ../operations/workshop/waterpixels.c:47
+msgid "Spatial regularization"
+msgstr "Spatial regelbundenhet"
+
+#: ../operations/workshop/waterpixels.c:49
+msgid ""
+"trade-off between superpixel regularity and adherence to object boundaries"
+msgstr ""
+"avvägning mellan regelbundenhet för superbildpunkter och att följa "
+"objektgränser"
+
+#: ../operations/workshop/waterpixels.c:52
+msgid "Superpixels color"
+msgstr "Superbildpunkters färg"
+
+#: ../operations/workshop/waterpixels.c:55
+msgid "How to fill superpixels"
+msgstr "Hur superbildpunkter fylls i"
+
+#: ../operations/workshop/waterpixels.c:510
+msgid "Waterpixels"
+msgstr "Vattenbildpunkter"
+
+#: ../operations/workshop/waterpixels.c:512
+msgid "Superpixels based on the watershed transformation"
+msgstr "Superbildpunkter baserade på vattendelningstransformen"
+
+#: ../operations/workshop/watershed-transform.c:384
+msgid "Watershed Transform"
+msgstr "Vattendelningstransform"
+
+#: ../operations/workshop/watershed-transform.c:386
+msgid "Labels propagation by watershed transformation"
+msgstr "Etiketterar spridning efter vattendelningsformation"
+
+#~ msgid "Resilient"
+#~ msgstr "Motståndskraftig"
+
+#~ msgid "Red bits"
+#~ msgstr "Röda bitar"
+
+#~ msgid "Green bits"
+#~ msgstr "Gröna bitar"
+
+#~ msgid "Blue bits"
+#~ msgstr "Blå bitar"
+
+#~ msgid "Alpha bits"
+#~ msgstr "Alfabitar"
+
+#~ msgid "Color Reduction"
+#~ msgstr "Färgreduktion"
+
 #~ msgid "Proof"
 #~ msgstr "Korrektur"
 
@@ -6909,9 +7077,6 @@ msgstr "fixar digitaliseringsfel för vhs"
 
 #~ msgid "how the ink simulator is used"
 #~ msgstr "hur bläcksimulatorn används"
-
-#~ msgid "Substrate color"
-#~ msgstr "Substratfärg"
 
 #~ msgid "paper/fabric/material color"
 #~ msgstr "pappers-/tyg-/materialfärg"
