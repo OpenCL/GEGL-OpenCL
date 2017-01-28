@@ -5,6 +5,7 @@ noinst_PROGRAMS =			\
 	test-buffer-changes		\
 	test-buffer-extract		\
 	test-buffer-hot-tile	\
+	test-buffer-sharing  	\
 	test-buffer-tile-voiding	\
 	test-change-processor-rect	\
 	test-convert-format		\

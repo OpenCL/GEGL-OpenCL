@@ -33,3 +33,5 @@
 /test-buffer-hot-tile
 /test-node-passthrough
 /test-serialize
+/test-buffer-sharing.data.gegl
+/test-buffer-sharing
