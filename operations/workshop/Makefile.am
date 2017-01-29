@@ -24,6 +24,7 @@ op_LTLIBRARIES =    \
 	mandelbrot.la \
 	median-blur.la \
 	rawbayer-load.la \
+	segment-kmeans.la \
 	unpremul.la \
         vhsfix.la \
         waterpixels.la \
