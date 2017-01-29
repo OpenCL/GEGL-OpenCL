@@ -20,6 +20,7 @@ op_LTLIBRARIES =    \
 	gradient-map.la \
 	hstack.la \
 	image-gradient.la \
+	integral-image.la \
 	kuwahara.la \
 	mandelbrot.la \
 	median-blur.la \
