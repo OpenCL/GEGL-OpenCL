@@ -36,6 +36,8 @@ typedef struct _TestData {
     GeglBuffer *a;
     GeglBuffer *b;
     TestState state;
+    gchar *temp_dir;
+    gchar *file_path;
 } TestData;
 
 static void
@@ -164,14 +166,13 @@ on_timeout(gpointer user_data) {
 
 static void
 test_init(TestData *data) {
-    const gchar *file_path = "test-buffer-sharing.data.gegl";
 
-    // ensure we're starting from nothing
-    if (g_access(file_path, 0) == 0) {
-        g_remove(file_path);
-    }
     data->loop = g_main_loop_new(NULL, TRUE);
-    data->a = gegl_buffer_open(file_path);
+    data->temp_dir = g_strdup("test-buffer-sharing-XXXXXX");
+    data->temp_dir = g_mkdtemp(data->temp_dir);
+    data->file_path = g_strjoin(G_DIR_SEPARATOR_S, data->temp_dir, "buffer.gegl", NULL);
+
+    data->a = gegl_buffer_open(data->file_path);
     // FIXME: if not setting an extent and adding some data, the written on-disk file seems to be corrupt
     GeglRectangle rect = { 0, 0, 100, 100 };
     GeglColor *blank = gegl_color_new("transparent");
@@ -182,7 +183,7 @@ test_init(TestData *data) {
     sleep(1);
 
     // B observes the same on-disk buffer
-    data->b = gegl_buffer_open(file_path);
+    data->b = gegl_buffer_open(data->file_path);
     data->state = TestInitialized;
 
     gegl_buffer_signal_connect(data->b, "changed", on_buffer_changed, data);
@@ -191,6 +192,12 @@ test_init(TestData *data) {
 
 static void
 test_destroy(TestData *data) {
+
+    g_remove(data->file_path);
+    g_free(data->file_path);
+
+    g_rmdir(data->temp_dir);
+    g_free(data->temp_dir);
 
     g_object_unref(data->a);
     g_object_unref(data->b);
