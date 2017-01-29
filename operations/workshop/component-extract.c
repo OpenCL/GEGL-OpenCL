@@ -40,6 +40,8 @@ enum_start (gegl_component_extract)
   enum_value (GEGL_COMPONENT_EXTRACT_LAB_L, "LAB L", N_("LAB L"))
   enum_value (GEGL_COMPONENT_EXTRACT_LAB_A, "LAB A", N_("LAB A"))
   enum_value (GEGL_COMPONENT_EXTRACT_LAB_B, "LAB B", N_("LAB B"))
+  enum_value (GEGL_COMPONENT_EXTRACT_LCH_C, "LCH C(ab)", N_("LCH C(ab)"))
+  enum_value (GEGL_COMPONENT_EXTRACT_LCH_H, "LCH H(ab)", N_("LCH H(ab)"))
   enum_value (GEGL_COMPONENT_EXTRACT_ALPHA, "Alpha", N_("Alpha"))
 enum_end (GeglComponentExtract)
 
@@ -112,6 +114,11 @@ prepare (GeglOperation *operation)
     case GEGL_COMPONENT_EXTRACT_LAB_B:
       input_format = babl_format ("CIE Lab float");
       break;
+
+    case GEGL_COMPONENT_EXTRACT_LCH_C:
+    case GEGL_COMPONENT_EXTRACT_LCH_H:
+      input_format = babl_format ("CIE LCH(ab) float");
+      break;
     }
 
   gegl_operation_set_format (operation, "input", input_format);
@@ -158,6 +165,7 @@ process (GeglOperation       *operation,
     case GEGL_COMPONENT_EXTRACT_CMYK_MAGENTA:
     case GEGL_COMPONENT_EXTRACT_YCBCR_CB:
     case GEGL_COMPONENT_EXTRACT_LAB_A:
+    case GEGL_COMPONENT_EXTRACT_LCH_C:
     case GEGL_COMPONENT_EXTRACT_ALPHA:
       component_index = 1;
 
@@ -168,8 +176,12 @@ process (GeglOperation       *operation,
         }
       else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_A)
         {
-          min = -128.0;
-          max =  127;
+          min = -127.5;
+          max =  127.5;
+        }
+      else if (o->component == GEGL_COMPONENT_EXTRACT_LCH_C)
+        {
+          max = 200.0;
         }
       break;
 
@@ -179,6 +191,7 @@ process (GeglOperation       *operation,
     case GEGL_COMPONENT_EXTRACT_CMYK_YELLOW:
     case GEGL_COMPONENT_EXTRACT_YCBCR_CR:
     case GEGL_COMPONENT_EXTRACT_LAB_B:
+    case GEGL_COMPONENT_EXTRACT_LCH_H:
       component_index = 2;
 
       if (o->component == GEGL_COMPONENT_EXTRACT_YCBCR_CR)
@@ -188,8 +201,13 @@ process (GeglOperation       *operation,
         }
       else if (o->component == GEGL_COMPONENT_EXTRACT_LAB_B)
         {
-          min = -128.0;
-          max =  127;
+          min = -127.5;
+          max =  127.5;
+        }
+      else if (o->component == GEGL_COMPONENT_EXTRACT_LCH_H)
+        {
+          min = 0.0;
+          max = 360.0;
         }
       break;
 
