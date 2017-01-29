@@ -21,8 +21,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (scale, _("Scale"), 1.0)
-    description(_("Scale, strength of effect"))
+property_double (scale, _("Effect strength"), 1.0)
+    description(_("Strength of the sepia effect"))
     value_range (0.0, 1.0)
 
 property_boolean (srgb, _("sRGB"), TRUE)
@@ -110,7 +110,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "gegl:sepia",
     "title",       _("Sepia"),
     "categories" , "color",
-    "description", _("Converts the input image to sepia"),
+    "description", _("Apply a sepia tone to the input image"),
     NULL);
 }
 
