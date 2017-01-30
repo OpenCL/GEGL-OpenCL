@@ -8,7 +8,7 @@ if [ ! -f $abs_top_builddir/bin/gegl ]; then
   echo "Skipping invert due to lack of gegl executable"
   exit 77
 else
-  GEGL_USE_OPENCL=no GEGL_MIPMAP_RENDERING=1 $abs_top_builddir/bin/gegl                                       \
+  GEGL_PATH=$abs_top_builddir/operations GEGL_USE_OPENCL=no GEGL_MIPMAP_RENDERING=1 $abs_top_builddir/bin/gegl                                       \
           -s 0.33 $abs_top_srcdir/tests/compositions/data/car-stack.png -o      \
           $abs_top_builddir/tests/mipmap/invert-output.png           \
           -- invert \

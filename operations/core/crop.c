@@ -52,6 +52,7 @@ property_boolean (reset_origin, _("Reset origin"), FALSE)
 
 #include "gegl-op.h"
 #include <math.h>
+#include <stdio.h>
 
 static void
 gegl_crop_prepare (GeglOperation *operation)

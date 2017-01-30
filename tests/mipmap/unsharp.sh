@@ -5,19 +5,19 @@ abs_top_srcdir=$ABS_TOP_SRCDIR
 abs_top_builddir=$ABS_TOP_BUILDDIR
 
 if [ ! -f $abs_top_builddir/bin/gegl ]; then
-  echo "Skipping test-unsharp-crop due to lack of gegl executable"
+  echo "Skipping test-unsharp due to lack of gegl executable"
   exit 77
 else
   GEGL_PATH=$abs_top_builddir/operations GEGL_USE_OPENCL=no GEGL_MIPMAP_RENDERING=1 $abs_top_builddir/bin/gegl                                       \
           -s 0.33 $abs_top_srcdir/tests/compositions/data/car-stack.png -o      \
-          $abs_top_builddir/tests/mipmap/unsharp-crop-output.png           \
-          -- unsharp-mask scale=10.0 crop x=147 y=66 width=200 height=200 \
+          $abs_top_builddir/tests/mipmap/unsharp-output.png           \
+          -- unsharp-mask scale=10.0  \
   && $abs_top_builddir/tools/gegl-imgcmp                           \
-          $abs_top_srcdir/tests/mipmap/unsharp-crop-reference.png \
-          $abs_top_builddir/tests/mipmap/unsharp-crop-output.png 10.0
+          $abs_top_srcdir/tests/mipmap/unsharp-reference.png \
+          $abs_top_builddir/tests/mipmap/unsharp-output.png 10.0
   failure=$?
   #if [ $failure -eq 0 ]; then
-   # rm -f $abs_top_builddir/tests/mipmap/unsharp-crop-output.png
+   # rm -f $abs_top_builddir/tests/mipmap/unsharp-output.png
   #fi
 fi
 
