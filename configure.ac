@@ -1324,6 +1324,7 @@ tests/compositions/data/Makefile
 tests/ff-load-save/Makefile
 tests/python/Makefile
 tests/simple/Makefile
+tests/mipmap/Makefile
 tests/xml/Makefile
 tests/xml/data/Makefile
 perf/Makefile
