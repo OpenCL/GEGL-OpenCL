@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-22 21:12+0100\n"
-"PO-Revision-Date: 2017-01-22 21:13+0100\n"
+"POT-Creation-Date: 2017-01-30 01:51+0100\n"
+"PO-Revision-Date: 2017-01-30 01:52+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -422,15 +422,15 @@ msgstr ""
 "obrazem"
 
 #: ../operations/common/bilateral-filter.c:26
-#: ../operations/common/bilateral-filter-fast.c:37
 #: ../operations/common/dropshadow.c:37
 #: ../operations/common/gaussian-blur-selective.c:29
+#: ../operations/workshop/bilateral-filter-fast.c:41
 msgid "Blur radius"
 msgstr "Promień rozmycia"
 
 #: ../operations/common/bilateral-filter.c:27
-#: ../operations/common/bilateral-filter-fast.c:38
 #: ../operations/common/gaussian-blur-selective.c:30
+#: ../operations/workshop/bilateral-filter-fast.c:42
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Promień kwadratowego obszaru pikseli (szerokość i wysokość będą wynosiły "
@@ -457,33 +457,13 @@ msgstr ""
 "Podobny do rozmycia Gaussa, ale wpływ każdego sąsiedniego piksela jest "
 "ważony także przez różnicę kolorów z pierwotnego środkowego piksela. "
 
-#: ../operations/common/bilateral-filter-fast.c:33
-msgid "Smoothness"
-msgstr "Gładkość"
-
-#: ../operations/common/bilateral-filter-fast.c:34
-msgid "Level of smoothness"
-msgstr "Poziom gładkości"
-
-#: ../operations/common/bilateral-filter-fast.c:496
-msgid "Bilateral Box Filter"
-msgstr "Dwustronny filtr prostopadłościenny"
-
-#: ../operations/common/bilateral-filter-fast.c:498
-msgid ""
-"A fast approximation of bilateral filter, using a box-filter instead of a "
-"gaussian blur."
-msgstr ""
-"Szybkie przybliżenie filtru dwustronnego, używające filtrowania "
-"prostopadłościennego zamiast rozmycia Gaussa."
-
 #: ../operations/common/box-blur.c:25 ../operations/common/c2g.c:27
 #: ../operations/common/edge-neon.c:47 ../operations/common/snn-mean.c:26
 #: ../operations/common/stress.c:27 ../operations/common/supernova.c:45
-#: ../operations/common/vignette.c:38 ../operations/common/whirl-pinch.c:45
+#: ../operations/common/vignette.c:38 ../operations/common/wavelet-blur.c:28
+#: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
-#: ../operations/workshop/wavelet-blur.c:28
 msgid "Radius"
 msgstr "Promień"
 
@@ -2080,7 +2060,7 @@ msgstr ""
 
 #: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
 #: ../operations/common/noise-rgb.c:48
-#: ../operations/workshop/component-extract.c:43
+#: ../operations/workshop/component-extract.c:45
 msgid "Alpha"
 msgstr "Alfa"
 
@@ -2550,11 +2530,11 @@ msgstr ""
 "ustawić właściwości. Oraz „aux=[ filtr źródłowy ]” do podania ciągu ze "
 "źródłem jako coś podłączonego do dodatkowego bloku."
 
-#: ../operations/common/grey.c:101
+#: ../operations/common/grey.c:71
 msgid "Make Grey"
 msgstr "Zmień na odcienie szarości"
 
-#: ../operations/common/grey.c:103
+#: ../operations/common/grey.c:73
 msgid "Turns the image grayscale"
 msgstr "Konwertuje obraz do odcieni szarości"
 
@@ -2713,7 +2693,7 @@ msgstr "Pionowe położenie w pikselach"
 #: ../operations/common/layer.c:46 ../operations/common/noise-cell.c:36
 #: ../operations/common/noise-perlin.c:27
 #: ../operations/common/noise-simplex.c:31 ../operations/common/saturation.c:24
-#: ../operations/common/sepia.c:24 ../operations/common/unsharp-mask.c:31
+#: ../operations/common/unsharp-mask.c:31
 #: ../operations/workshop/external/lens-correct.c:50
 msgid "Scale"
 msgstr "Skalowanie"
@@ -4066,8 +4046,7 @@ msgstr "Falowanie"
 msgid "Displace pixels in a ripple pattern"
 msgstr "Rozmieść piksele na wzór zmarszczki"
 
-#: ../operations/common/saturation.c:25 ../operations/common/sepia.c:25
-#: ../operations/common/unsharp-mask.c:32
+#: ../operations/common/saturation.c:25 ../operations/common/unsharp-mask.c:32
 msgid "Scale, strength of effect"
 msgstr "Skaluj, siła efektu"
 
@@ -4092,13 +4071,21 @@ msgstr ""
 "zapisywania plików w zależności od rozszerzenia. Użycie działania zapisu "
 "konkretnego formatu umożliwia podawanie dodatkowych parametrów."
 
+#: ../operations/common/sepia.c:24
+msgid "Effect strength"
+msgstr "Siła efektu"
+
+#: ../operations/common/sepia.c:25
+msgid "Strength of the sepia effect"
+msgstr "Siła efektu sepii"
+
 #: ../operations/common/sepia.c:111
 msgid "Sepia"
 msgstr "Sepia"
 
 #: ../operations/common/sepia.c:113
-msgid "Converts the input image to sepia"
-msgstr "Konwertuje obraz wejściowy na sepię"
+msgid "Apply a sepia tone to the input image"
+msgstr "Nakłada odcienie sepii na obraz wejściowy"
 
 #: ../operations/common/shift.c:26 ../operations/common/shift.c:144
 msgid "Shift"
@@ -4829,6 +4816,22 @@ msgstr "Deformuj"
 #: ../operations/common/warp.c:486
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Oblicz względne rozmieszczenie odwzorowania z pociągnięcia"
+
+#: ../operations/common/wavelet-blur.c:29
+msgid "Radius of the wavelet blur"
+msgstr "Promień rozmycia falki"
+
+#: ../operations/common/wavelet-blur.c:283
+msgid "Wavelet Blur"
+msgstr "Rozmycie falki"
+
+#: ../operations/common/wavelet-blur.c:286
+msgid ""
+"This blur is used for the wavelet decomposition filter, each pixel is "
+"computed from another by the HAT transform"
+msgstr ""
+"To rozmycie jest używane dla filtru rozkładu falki. Każdy piksel jest "
+"obliczany z innego przez przekształcenie HAT"
 
 #: ../operations/common/waves.c:37
 msgid "Amplitude of the ripple"
@@ -6439,6 +6442,26 @@ msgstr ""
 "Zmienia położenie bufora (o precyzji podpikselowej), jeśli podano "
 "współrzędne całkowite, to używana jest szybka ścieżka bez resamplingu"
 
+#: ../operations/workshop/bilateral-filter-fast.c:37
+msgid "Smoothness"
+msgstr "Gładkość"
+
+#: ../operations/workshop/bilateral-filter-fast.c:38
+msgid "Level of smoothness"
+msgstr "Poziom gładkości"
+
+#: ../operations/workshop/bilateral-filter-fast.c:500
+msgid "Bilateral Box Filter"
+msgstr "Dwustronny filtr prostopadłościenny"
+
+#: ../operations/workshop/bilateral-filter-fast.c:502
+msgid ""
+"A fast approximation of bilateral filter, using a box-filter instead of a "
+"gaussian blur."
+msgstr ""
+"Szybkie przybliżenie filtru dwustronnego, używające filtrowania "
+"prostopadłościennego zamiast rozmycia Gaussa."
+
 #: ../operations/workshop/component-extract.c:25
 msgid "RGB Red"
 msgstr "Czerwony RGB"
@@ -6507,35 +6530,43 @@ msgstr "LAB A"
 msgid "LAB B"
 msgstr "LAB B"
 
-#: ../operations/workshop/component-extract.c:46
+#: ../operations/workshop/component-extract.c:43
+msgid "LCH C(ab)"
+msgstr "LCH C(ab)"
+
+#: ../operations/workshop/component-extract.c:44
+msgid "LCH H(ab)"
+msgstr "LCH H(ab)"
+
+#: ../operations/workshop/component-extract.c:48
 msgid "Component"
 msgstr "Składowa"
 
-#: ../operations/workshop/component-extract.c:49
+#: ../operations/workshop/component-extract.c:51
 msgid "Component to extract"
 msgstr "Składowa do wydobycia"
 
-#: ../operations/workshop/component-extract.c:51
+#: ../operations/workshop/component-extract.c:53
 msgid "Invert component"
 msgstr "Odwrócenie składowej"
 
-#: ../operations/workshop/component-extract.c:52
+#: ../operations/workshop/component-extract.c:54
 msgid "Invert the extracted component"
 msgstr "Odwrócenie wydobytej składowej"
 
-#: ../operations/workshop/component-extract.c:54
+#: ../operations/workshop/component-extract.c:56
 msgid "Linear output"
 msgstr "Wyjście liniowe"
 
-#: ../operations/workshop/component-extract.c:55
+#: ../operations/workshop/component-extract.c:57
 msgid "Use linear output instead of gamma corrected"
 msgstr "Użycie liniowego wyjścia zamiast poprawionej gammy"
 
-#: ../operations/workshop/component-extract.c:241
+#: ../operations/workshop/component-extract.c:259
 msgid "Extract Component"
 msgstr "Wydobądź składową"
 
-#: ../operations/workshop/component-extract.c:243
+#: ../operations/workshop/component-extract.c:261
 msgid "Extract a color model component"
 msgstr "Wydobądź składową modelu kolorów"
 
@@ -7027,19 +7058,3 @@ msgstr "Przekształcenie działu wodnego"
 #: ../operations/workshop/watershed-transform.c:386
 msgid "Labels propagation by watershed transformation"
 msgstr "Rozprowadzanie etykiet według przekształcenia działu wodnego"
-
-#: ../operations/workshop/wavelet-blur.c:29
-msgid "Radius of the wavelet blur"
-msgstr "Promień rozmycia falki"
-
-#: ../operations/workshop/wavelet-blur.c:283
-msgid "Wavelet Blur"
-msgstr "Rozmycie falki"
-
-#: ../operations/workshop/wavelet-blur.c:286
-msgid ""
-"This blur is used for the wavelet decomposition filter, each pixel is "
-"computed from another by the HAT transform"
-msgstr ""
-"To rozmycie jest używane dla filtru rozkładu falki. Każdy piksel jest "
-"obliczany z innego przez przekształcenie HAT"
