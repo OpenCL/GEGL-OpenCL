@@ -26,11 +26,12 @@
 
 #else
 
-#define GEGL_OP_FILTER
+#define GEGL_OP_POINT_FILTER
 #define GEGL_OP_NAME     grey
 #define GEGL_OP_C_SOURCE grey.c
 
 #include "gegl-op.h"
+#include <string.h>
 
 static void prepare (GeglOperation *operation)
 {
@@ -43,27 +44,56 @@ static void prepare (GeglOperation *operation)
 /* XXX: could be sped up by special casing op-filter behavior */
 
 static gboolean
-process (GeglOperation        *op,
-         GeglOperationContext *context,
-         const gchar          *output_prop,
-         const GeglRectangle  *result,
-         gint                  level)
+process (GeglOperation       *op,
+         void                *in_buf,
+         void                *out_buf,
+         glong                samples,
+         const GeglRectangle *roi,
+         gint                 level)
 {
-  GObject *input = gegl_operation_context_get_object (context, "input");
-
-  gegl_operation_context_take_object (context, "output", g_object_ref (input));
+  memcpy (out_buf, in_buf, sizeof (gfloat) * 2 * samples);
   return TRUE;
 }
+
+#include "opencl/gegl-cl.h"
+
+static gboolean
+cl_process (GeglOperation       *op,
+            cl_mem               in_tex,
+            cl_mem               out_tex,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            gint                 level)
+{
+  cl_int cl_err = 0;
+
+  cl_err = gegl_clEnqueueCopyBuffer(gegl_cl_get_command_queue(),
+                                    in_tex , out_tex , 0 , 0 ,
+                                    global_worksize * sizeof (cl_float2),
+                                    0, NULL, NULL);
+  CL_CHECK;
+
+  return FALSE;
+
+error:
+  return TRUE;
+}
+
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
   GeglOperationClass            *operation_class;
+  GeglOperationPointFilterClass *point_filter_class;
 
   operation_class = GEGL_OPERATION_CLASS (klass);
+  point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
+  point_filter_class->process = process;
+  point_filter_class->cl_process = cl_process;
   operation_class->prepare = prepare;
-  operation_class->process = process;
+
+  operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
       "name",        "gegl:gray",
