@@ -51,7 +51,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  memcpy (out_buf, in_buf, sizeof (gfloat) * 2 * samples);
+  memmove (out_buf, in_buf, sizeof (gfloat) * 2 * samples);
   return TRUE;
 }
 
