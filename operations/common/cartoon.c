@@ -30,7 +30,7 @@ property_double (pct_black, _("Percent black"), 0.2)
 
 #else
 
-#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_FILTER
 #define GEGL_OP_NAME     cartoon
 #define GEGL_OP_C_SOURCE cartoon.c
 
@@ -101,51 +101,48 @@ grey_blur_buffer (GeglBuffer  *input,
 }
 
 static gdouble
-compute_ramp (GeglSampler         *sampler1,
-              GeglSampler         *sampler2,
-              const GeglRectangle *roi,
-              gdouble              pct_black)
+compute_ramp (GeglBuffer  *dest1,
+              GeglBuffer  *dest2,
+              gdouble      pct_black)
 {
+  GeglBufferIterator *iter;
   gint    hist[100];
-  gdouble diff;
   gint    count;
-  gfloat pixel1, pixel2;
-  gint x;
-  gint y;
   gint i;
   gint sum;
 
   memset (hist, 0, sizeof (int) * 100);
   count = 0;
 
-  for (y = roi->y; y < roi->y + roi->height; ++y)
-    for (x = roi->x; x < roi->x + roi->width; ++x)
-      {
-        gegl_sampler_get (sampler1,
-                          x,
-                          y,
-                          NULL,
-                          &pixel1,
-                          GEGL_ABYSS_NONE);
+  iter = gegl_buffer_iterator_new (dest1, NULL, 0, babl_format ("Y' float"),
+                                   GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
-        gegl_sampler_get (sampler2,
-                          x,
-                          y,
-                          NULL,
-                          &pixel2,
-                          GEGL_ABYSS_NONE);
+  gegl_buffer_iterator_add (iter, dest2, NULL, 0, babl_format ("Y' float"),
+                            GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
-        if (pixel2 != 0)
-          {
-            diff = (gdouble) pixel1 / (gdouble) pixel2;
+  while (gegl_buffer_iterator_next (iter))
+    {
+      gfloat *pixel1   = iter->data[0];
+      gfloat *pixel2   = iter->data[1];
+      glong   n_pixels = iter->length;
 
-            if (diff < 1.0 && diff >= 0.0)
-              {
-                hist[(int) (diff * 100)] += 1;
-                count += 1;
-              }
-          }
+      while (n_pixels--)
+        {
+          if (*pixel2 != 0)
+            {
+              gdouble diff = (gdouble) *pixel1 / (gdouble) *pixel2;
+
+              if (diff < 1.0 && diff >= 0.0)
+                {
+                  hist[(int) (diff * 100)] += 1;
+                  count += 1;
+                }
+            }
+
+          pixel1++;
+          pixel2++;
       }
+  }
 
   if (pct_black == 0.0 || count == 0)
     return 1.0;
@@ -159,16 +156,13 @@ compute_ramp (GeglSampler         *sampler1,
     }
 
   return 0.0;
-
 }
 
 static void
 prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input",
-                             babl_format ("Y'CbCrA float"));
-  gegl_operation_set_format (operation, "output",
-                             babl_format ("Y'CbCrA float"));
+  gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
+  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
 
 static GeglRectangle
@@ -220,33 +214,26 @@ process (GeglOperation       *operation,
   GeglBufferIterator *iter;
   GeglBuffer         *dest1;
   GeglBuffer         *dest2;
-  GeglSampler        *sampler1;
-  GeglSampler        *sampler2;
   gdouble             ramp;
-  gint                x;
-  gint                y;
-  gfloat              tot_pixels = result->width * result->height;
-  gfloat              pixels = 0;
+  gdouble             progress = 0.0;
+  gdouble             pixels_count = result->width * result->height;
 
   grey_blur_buffer (input, o->mask_radius, &dest1, &dest2);
 
-  sampler1 = gegl_buffer_sampler_new_at_level (dest1,
-                                               babl_format ("Y' float"),
-                                               GEGL_SAMPLER_LINEAR,
-                                               level);
-
-  sampler2 = gegl_buffer_sampler_new_at_level (dest2,
-                                               babl_format ("Y' float"),
-                                               GEGL_SAMPLER_LINEAR,
-                                               level);
-
-  ramp = compute_ramp (sampler1, sampler2, result, o->pct_black);
+  ramp = compute_ramp (dest1, dest2, o->pct_black);
 
   iter = gegl_buffer_iterator_new (output, result, 0,
                                    babl_format ("Y'CbCrA float"),
                                    GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
+
   gegl_buffer_iterator_add (iter, input, result, 0,
                             babl_format ("Y'CbCrA float"),
+                            GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
+
+  gegl_buffer_iterator_add (iter, dest1, NULL, 0, babl_format ("Y' float"),
+                            GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
+
+  gegl_buffer_iterator_add (iter, dest2, NULL, 0, babl_format ("Y' float"),
                             GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
 
@@ -256,56 +243,46 @@ process (GeglOperation       *operation,
     {
       gfloat *out_pixel = iter->data[0];
       gfloat *in_pixel  = iter->data[1];
+      gfloat *grey1     = iter->data[2];
+      gfloat *grey2     = iter->data[3];
+      glong   n_pixels  = iter->length;
 
-      for (y = iter->roi[0].y; y < iter->roi[0].y + iter->roi[0].height; ++y)
-      {
-        for (x = iter->roi[0].x; x < iter->roi[0].x + iter->roi[0].width; ++x)
-          {
-            gfloat  pixel1;
-            gfloat  pixel2;
-            gdouble mult = 0.0;
-            gdouble diff;
+      progress += n_pixels / pixels_count;
 
-            gegl_sampler_get (sampler1, x, y,
-                              NULL, &pixel1,
-                              GEGL_ABYSS_NONE);
+      while (n_pixels--)
+        {
+          gdouble mult = 0.0;
 
-            gegl_sampler_get (sampler2, x, y,
-                              NULL, &pixel2,
-                              GEGL_ABYSS_NONE);
+          if (*grey2 != 0)
+            {
+              gdouble diff = (gdouble) *grey1 / (gdouble) *grey2;
 
-            if (pixel2 != 0)
-              {
-                diff = (gdouble) pixel1 / (gdouble) pixel2;
-                if (diff < THRESHOLD)
-                  {
-                    if (GEGL_FLOAT_EQUAL (ramp, 0.0))
-                      mult = 0.0;
-                    else
-                      mult = (ramp - MIN (ramp, (THRESHOLD - diff))) / ramp;
-                  }
-                else
-                  mult = 1.0;
-              }
+              if (diff < THRESHOLD)
+                {
+                  if (GEGL_FLOAT_EQUAL (ramp, 0.0))
+                    mult = 0.0;
+                  else
+                    mult = (ramp - MIN (ramp, (THRESHOLD - diff))) / ramp;
+                }
+              else
+                mult = 1.0;
+            }
 
-            out_pixel[0] = CLAMP (pixel1 * mult, 0.0, 1.0);
-            out_pixel[1] = in_pixel[1];
-            out_pixel[2] = in_pixel[2];
-            out_pixel[3] = in_pixel[3];
+          out_pixel[0] = CLAMP (*grey1 * mult, 0.0, 1.0);
+          out_pixel[1] = in_pixel[1];
+          out_pixel[2] = in_pixel[2];
+          out_pixel[3] = in_pixel[3];
 
-            out_pixel += 4;
-            in_pixel  += 4;
+          out_pixel += 4;
+          in_pixel  += 4;
+          grey1++;
+          grey2++;
+        }
 
-          }
-        pixels += iter->roi[0].width;
-        gegl_operation_progress (operation, pixels / tot_pixels, "");
-      }
+        gegl_operation_progress (operation, progress, "");
     }
 
   gegl_operation_progress (operation, 1.0, "");
-
-  g_object_unref (sampler1);
-  g_object_unref (sampler2);
 
   g_object_unref (dest1);
   g_object_unref (dest2);
@@ -335,7 +312,10 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:cartoon",
     "title",       _("Cartoon"),
     "license",     "GPL3+",
-    "description", _("Simulates a cartoon, its result is similar to a black felt pen drawing subsequently shaded with color. This is achieved by enhancing edges and darkening areas that are already distinctly darker than their neighborhood"),
+    "description", _("Simulates a cartoon, its result is similar to a black"
+                     " felt pen drawing subsequently shaded with color. This"
+                     " is achieved by enhancing edges and darkening areas that"
+                     " are already distinctly darker than their neighborhood"),
     NULL);
 }
 
