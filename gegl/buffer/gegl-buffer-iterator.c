@@ -305,7 +305,7 @@ increment_rects (GeglBufferIterator *iter)
 
 static void
 get_tile (GeglBufferIterator *iter,
-          int        index)
+          int                 index)
 {
   GeglBufferIteratorPriv *priv = iter->priv;
   SubIterState           *sub  = &priv->sub_iter[index];
@@ -349,6 +349,12 @@ get_tile (GeglBufferIterator *iter,
   iter->data[index] = gegl_tile_get_data (sub->current_tile);
 }
 
+static inline double
+level_to_scale (int level)
+{
+  return level?1.0/(1<<level):1.0;
+}
+
 static void
 get_indirect (GeglBufferIterator *iter,
               int        index)
@@ -360,7 +366,7 @@ get_indirect (GeglBufferIterator *iter,
 
   if (sub->access_mode & GEGL_ACCESS_READ)
     {
-      gegl_buffer_get_unlocked (sub->buffer, sub->level?1.0/(1<<sub->level):1.0, &sub->real_roi, sub->format, sub->real_data,
+      gegl_buffer_get_unlocked (sub->buffer, level_to_scale (sub->level), &sub->real_roi, sub->format, sub->real_data,
                                 GEGL_AUTO_ROWSTRIDE, sub->abyss_policy);
     }
 
