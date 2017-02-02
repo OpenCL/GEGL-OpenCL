@@ -13,7 +13,6 @@ LIBS = $(op_libs)
 opdir = $(ext_dir)
 op_LTLIBRARIES =    \
 	bilateral-filter-fast.la \
-	component-extract.la \
 	demosaic-bimedian.la \
 	demosaic-simple.la \
 	ditto.la \

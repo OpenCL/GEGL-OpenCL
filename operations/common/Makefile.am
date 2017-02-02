@@ -38,6 +38,7 @@ gegl_common_la_SOURCES =\
 	color-to-alpha.c \
         color-warp.c \
 	color.c \
+	component-extract.c \
 	contrast-curve.c \
 	convolution-matrix.c \
 	copy-buffer.c \
