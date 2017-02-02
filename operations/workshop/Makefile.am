@@ -25,6 +25,4 @@ op_LTLIBRARIES =    \
 	rawbayer-load.la \
 	segment-kmeans.la \
 	unpremul.la \
-    vhsfix.la \
-    waterpixels.la \
-
+    vhsfix.la

@@ -152,6 +152,7 @@ gegl_common_la_SOURCES =\
 	video-degradation.c \
 	vignette.c \
 	warp.c \
+	waterpixels.c \
 	watershed-transform.c \
 	waves.c \
 	wavelet-blur.c \
