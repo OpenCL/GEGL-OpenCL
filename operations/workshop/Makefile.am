@@ -16,6 +16,7 @@ op_LTLIBRARIES =    \
 	demosaic-bimedian.la \
 	demosaic-simple.la \
 	ditto.la \
+	dt-exposure.la \
 	gradient-map.la \
 	hstack.la \
 	integral-image.la \
