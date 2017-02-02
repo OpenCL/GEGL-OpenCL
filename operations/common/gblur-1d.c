@@ -203,7 +203,8 @@ iir_young_hor_blur (GeglBuffer          *src,
                     const gdouble       *b,
                     gdouble            (*m)[3],
                     GeglAbyssPolicy      policy,
-                    const Babl          *format)
+                    const Babl          *format,
+                    gint                 level)
 {
   GeglRectangle  cur_row = *rect;
   const gint     nc = babl_format_get_n_components (format);
@@ -217,12 +218,12 @@ iir_young_hor_blur (GeglBuffer          *src,
     {
       cur_row.y = rect->y + v;
 
-      gegl_buffer_get (src, &cur_row, 1.0, format, &row[3 * nc],
+      gegl_buffer_get (src, &cur_row, 1.0/(1<<level), format, &row[3 * nc],
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       iir_young_blur_1D (row, tmp, b, m, rect->width, nc, policy);
 
-      gegl_buffer_set (dst, &cur_row, 0, format, &row[3 * nc],
+      gegl_buffer_set (dst, &cur_row, level, format, &row[3 * nc],
                        GEGL_AUTO_ROWSTRIDE);
     }
 
@@ -237,7 +238,8 @@ iir_young_ver_blur (GeglBuffer          *src,
                     const gdouble       *b,
                     gdouble            (*m)[3],
                     GeglAbyssPolicy      policy,
-                    const Babl          *format)
+                    const Babl          *format,
+                    gint                 level)
 {
   GeglRectangle  cur_col = *rect;
   const gint     nc = babl_format_get_n_components (format);
@@ -251,7 +253,7 @@ iir_young_ver_blur (GeglBuffer          *src,
     {
       cur_col.x = rect->x + i;
 
-      gegl_buffer_get (src, &cur_col, 1.0, format, &col[3 * nc],
+      gegl_buffer_get (src, &cur_col, 1.0/(1<<level), format, &col[3 * nc],
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       iir_young_blur_1D (col, tmp, b, m, rect->height, nc, policy);
@@ -304,7 +306,8 @@ fir_hor_blur (GeglBuffer          *src,
               gfloat              *cmatrix,
               gint                 clen,
               GeglAbyssPolicy      policy,
-              const Babl          *format)
+              const Babl          *format,
+              gint                 level)
 {
   GeglRectangle  cur_row = *rect;
   GeglRectangle  in_row;
@@ -326,11 +329,11 @@ fir_hor_blur (GeglBuffer          *src,
     {
       cur_row.y = in_row.y = rect->y + v;
 
-      gegl_buffer_get (src, &in_row, 1.0, format, row, GEGL_AUTO_ROWSTRIDE, policy);
+      gegl_buffer_get (src, &in_row, 1.0/(1<<level), format, row, GEGL_AUTO_ROWSTRIDE, policy);
 
       fir_blur_1D (row, out, cmatrix, clen, rect->width, nc);
 
-      gegl_buffer_set (dst, &cur_row, 0, format, out, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (dst, &cur_row, level, format, out, GEGL_AUTO_ROWSTRIDE);
     }
 
   gegl_free (out);

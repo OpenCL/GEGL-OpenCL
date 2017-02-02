@@ -62,7 +62,6 @@ gegl_common_la_SOURCES =\
 	fractal-explorer.c \
 	fractal-trace.c \
 	gaussian-blur.c \
-	gaussian-blur-iir.c \
 	gaussian-blur-selective.c \
 	gblur-1d.c \
 	gegl-buffer-load-op.c \

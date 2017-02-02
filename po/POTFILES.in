@@ -51,7 +51,6 @@ operations/common/fattal02.c
 operations/common/fractal-explorer.c
 operations/common/fractal-trace.c
 operations/common/gaussian-blur.c
-operations/common/gaussian-blur-iir.c
 operations/common/gaussian-blur-selective.c
 operations/common/gblur-1d.c
 operations/common/gegl-buffer-load-op.c
