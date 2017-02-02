@@ -26,7 +26,6 @@ op_LTLIBRARIES =    \
 	median-blur.la \
 	rawbayer-load.la \
 	segment-kmeans.la \
-	slic.la \
 	unpremul.la \
     vhsfix.la \
     waterpixels.la \

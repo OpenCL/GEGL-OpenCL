@@ -127,6 +127,7 @@ gegl_common_la_SOURCES =\
 	sepia.c \
 	shift.c \
 	sinus.c \
+	slic.c \
 	snn-mean.c \
 	softglow.c \
 	stress.c \
