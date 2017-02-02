@@ -62,6 +62,7 @@ operations/common/grid.c
 operations/common/high-pass.c
 operations/common/illusion.c
 operations/common/image-compare.c
+operations/common/image-gradient.c
 operations/common/introspect.c
 operations/common/invert-gamma.c
 operations/common/invert-linear.c
@@ -239,7 +240,6 @@ operations/workshop/generated/soft-dodge.c
 operations/workshop/generated/subtractive.c
 operations/workshop/gradient-map.c
 operations/workshop/hstack.c
-operations/workshop/image-gradient.c
 operations/workshop/integral-image.c
 operations/workshop/kuwahara.c
 operations/workshop/mandelbrot.c

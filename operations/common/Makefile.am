@@ -73,6 +73,7 @@ gegl_common_la_SOURCES =\
 	high-pass.c \
 	illusion.c \
 	image-compare.c \
+	image-gradient.c \
 	introspect.c \
 	invert-gamma.c \
 	invert-linear.c \
