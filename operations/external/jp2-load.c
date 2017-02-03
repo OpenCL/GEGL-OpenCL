@@ -57,12 +57,8 @@ cleanup(GeglOperation *operation)
 
   if (p != NULL)
     {
-      if (p->image != NULL)
-        jas_image_destroy(p->image);
-      p->image = NULL;
-
-      if (p->file != NULL)
-        g_clear_object(&p->file);
+      g_clear_pointer (&p->image, (GDestroyNotify) jas_image_destroy);
+      g_clear_object (&p->file);
 
       p->width = p->height = 0;
       p->format = NULL;

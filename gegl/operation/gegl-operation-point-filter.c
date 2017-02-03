@@ -124,9 +124,7 @@ gegl_operation_filter_process (GeglOperation        *operation,
   if (input != NULL)
     {
       success = klass->process (operation, input, output, result, level);
-
-      if (input)
-        g_object_unref (input);
+      g_clear_object (&input);
     }
   else
     {

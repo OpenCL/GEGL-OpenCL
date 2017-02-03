@@ -61,12 +61,11 @@ cleanup(GeglOperation *operation)
         TIFFClose(p->tiff);
       else if (p->stream != NULL)
         g_output_stream_close(G_OUTPUT_STREAM(p->stream), NULL, NULL);
-      if (p->stream != NULL)
-        g_clear_object(&p->stream);
+
+      g_clear_object (&p->stream);
       p->tiff = NULL;
 
-      if (p->file != NULL)
-        g_clear_object(&p->file);
+      g_clear_object (&p->file);
     }
 }
 

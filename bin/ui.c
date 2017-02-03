@@ -371,11 +371,7 @@ int mrg_ui_main (int argc, char **argv, char **ops)
   mrg_main (mrg);
 
   g_object_unref (o.gegl);
-  if (o.buffer)
-  {
-    g_object_unref (o.buffer);
-    o.buffer = NULL;
-  }
+  g_clear_object (&o.buffer);
   gegl_exit ();
 
   end_audio ();

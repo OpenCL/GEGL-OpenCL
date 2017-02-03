@@ -63,11 +63,8 @@ cleanup (GeglOperation *operation)
 
   if (p != NULL)
     {
-      if (p->handle != NULL)
-        g_clear_object (&p->handle);
-
-      if (p->file != NULL)
-        g_clear_object(&p->file);
+      g_clear_object (&p->handle);
+      g_clear_object (&p->file);
 
       p->width = p->height = 0;
       p->format = NULL;
