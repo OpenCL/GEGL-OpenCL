@@ -94,7 +94,7 @@ prepare (GeglOperation *operation)
       p->LibRaw = NULL;
       p->image = NULL;
 
-      if ((p->LibRaw = libraw_init(0)) == NULL)
+      if ((p->LibRaw = libraw_init(LIBRAW_OPTIONS_NONE)) == NULL)
         g_warning ("raw-load: Error Initializing raw library");
       else
         {
