@@ -168,33 +168,70 @@ do_setup (GeglOperation *operation, const gchar *path, const gchar *uri)
 
   g_assert (stream != NULL);
 
-  if (!read_from_stream (stream, &buffer, &size, &error))
+  if (load_from_uri)
     {
-      g_warning ("%s", error->message);
-      g_clear_error (&error);
-      goto cleanup;
+      if (!read_from_stream (stream, &buffer, &size, &error))
+        {
+          g_warning ("%s", error->message);
+          g_clear_error (&error);
+          goto cleanup;
+        }
+
+      content_type = g_content_type_guess (NULL, buffer, size, &uncertain);
+      if ((!g_str_has_prefix (content_type, "image/") &&
+           !g_str_has_prefix (content_type, ".")) || uncertain)
+        {
+          g_free (content_type);
+
+          if (gegl_gio_uri_is_datauri (uri))
+            {
+              content_type = gegl_gio_datauri_get_content_type (uri);
+            }
+          else
+            {
+              content_type = g_content_type_guess (filename,
+                                                   buffer,
+                                                   size,
+                                                   NULL);
+            }
+        }
+    }
+  else
+    {
+      /* This should match the logic in glib/gio/glocalfileinfo.c for local
+       * files. Otherwise, our interpretation of the content won't match
+       * with those of other components. Contrary to what we might expect,
+       * GLib first looks at the filename, and sniffs the content only
+       * if it is inconclusive.
+       */
+
+      content_type = g_content_type_guess (filename, NULL, 0, &uncertain);
+      if ((!g_str_has_prefix (content_type, "image/") &&
+           !g_str_has_prefix (content_type, ".")) || uncertain)
+        {
+          g_free (content_type);
+
+          if (!read_from_stream (stream, &buffer, &size, &error))
+            {
+              g_warning ("%s", error->message);
+              g_clear_error (&error);
+              goto cleanup;
+            }
+
+          content_type = g_content_type_guess (filename, buffer, size, NULL);
+        }
     }
 
-  content_type = g_content_type_guess (NULL, buffer, size, &uncertain);
-  if ((!g_str_has_prefix (content_type, "image/") &&
-       !g_str_has_prefix (content_type, ".")) || uncertain)
+  if (!gegl_gio_uri_is_datauri (uri) &&
+      !g_str_has_prefix (content_type, "image/") &&
+      !g_str_has_prefix (content_type, "."))
     {
       g_free (content_type);
-      if (load_from_uri && gegl_gio_uri_is_datauri (uri))
-        content_type = gegl_gio_datauri_get_content_type (uri);
+
+      if (g_strrstr (filename, ".") != NULL)
+        content_type = g_strdup (g_strrstr (filename, "."));
       else
-      {
-        content_type = g_content_type_guess (filename, buffer, size, NULL);
-        if (!g_str_has_prefix (content_type, "image/") &&
-            !g_str_has_prefix (content_type, "."))
-          {
-            g_free (content_type);
-            if (g_strrstr (filename, ".") != NULL)
-              content_type = g_strdup (g_strrstr (filename, "."));
-            else
-              content_type = NULL;
-          }
-      }
+        content_type = NULL;
     }
 
   handler = gegl_operation_handlers_get_loader (content_type);
