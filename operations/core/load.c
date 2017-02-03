@@ -234,7 +234,26 @@ do_setup (GeglOperation *operation, const gchar *path, const gchar *uri)
         content_type = NULL;
     }
 
+  if (content_type == NULL)
+    {
+      gegl_node_set (self->load,
+                     "operation", "gegl:text",
+                     "string", "Failed to detect content type",
+                     "size", 12.0,
+                     NULL);
+      goto cleanup;
+    }
+
   handler = gegl_operation_handlers_get_loader (content_type);
+  if (handler == NULL)
+    {
+      gegl_node_set (self->load,
+                     "operation", "gegl:text",
+                     "string", "Failed to find a loader",
+                     "size", 12.0,
+                     NULL);
+      goto cleanup;
+    }
 
   gegl_node_set (self->load, "operation", handler, NULL);
   if (load_from_uri == TRUE)
