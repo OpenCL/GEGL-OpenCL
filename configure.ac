@@ -51,8 +51,7 @@ m4_define([libv4l2_required_version], [1.0.1])
 m4_define([lua_required_version], [5.1.0])
 m4_define([openexr_required_version], [0.0.0])
 m4_define([libraw_required_version], [0.15.4])
-m4_define([pango_required_version], [0.0.0])
-m4_define([pangocairo_required_version], [0.0.0])
+m4_define([pango_required_version], [1.38.0])
 m4_define([png_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
 m4_define([libtiff_required_version], [4.0.0])
@@ -721,16 +720,16 @@ AC_ARG_WITH(pangocairo, [  --without-pangocairo    build without pangocairo supp
 
 have_pango="no"
 if test "x$with_pango" != "xno"; then
-  PKG_CHECK_MODULES(PANGO, pango,
+  PKG_CHECK_MODULES(PANGO, pango >= pango_required_version,
     have_pango="yes",
-    have_pango="no  (Pango not found)")
+    have_pango="no  (usable pango not found)")
 fi
 
 have_pangocairo="no"
 if test "x$with_pangocairo" != "xno"; then
-  PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
+  PKG_CHECK_MODULES(PANGOCAIRO, pangocairo >= pango_required_version,
     have_pangocairo="yes",
-    have_pangocairo="no  (pangocairo not found)")
+    have_pangocairo="no  (usable pangocairo not found)")
 fi
 
 AM_CONDITIONAL(HAVE_PANGO, test "x$have_pango" = "xyes")
