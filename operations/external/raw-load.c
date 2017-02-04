@@ -78,10 +78,7 @@ prepare (GeglOperation *operation)
   int         ret;
 
   if (p == NULL)
-    {
-      if ((p = g_new0(Private, 1)) == NULL)
-        g_warning ("raw-load: Error creating private structure");
-    }
+    p = g_new0(Private, 1);
 
   if (p->cached_path && !strcmp (p->cached_path, o->path))
   {
@@ -133,8 +130,7 @@ get_bounding_box (GeglOperation *operation)
       p = (Private*)o->user_data;
     }
 
-  if (p != NULL &&
-      p->LibRaw != NULL &&
+  if (p->LibRaw != NULL &&
       (p->LibRaw->progress_flags & LIBRAW_PROGRESS_IDENTIFY)) 
     {
       result.width  = p->LibRaw->sizes.width;
