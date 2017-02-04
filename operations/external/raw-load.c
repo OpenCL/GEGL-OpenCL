@@ -88,7 +88,6 @@ prepare (GeglOperation *operation)
   if (p->LibRaw == NULL)
     {
       o->user_data = (gpointer)p;
-      p->LibRaw = NULL;
       p->image = NULL;
 
       if ((p->LibRaw = libraw_init(LIBRAW_OPTIONS_NONE)) == NULL)
@@ -155,8 +154,7 @@ process (GeglOperation       *operation,
 
   g_assert (p);
 
-  if (p != NULL &&
-      p->LibRaw != NULL)
+  if (p->LibRaw != NULL)
     {
       if (!(p->LibRaw->progress_flags & LIBRAW_PROGRESS_LOAD_RAW))
         {
