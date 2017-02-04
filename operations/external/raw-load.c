@@ -99,9 +99,20 @@ prepare (GeglOperation *operation)
         {
           p->LibRaw->params.shot_select = o->image_num;
     
+          p->LibRaw->params.aber[0] = 1.0;
+          p->LibRaw->params.aber[2] = 1.0;
           p->LibRaw->params.gamm[0] = 1.0;
           p->LibRaw->params.gamm[1] = 1.0;
+          p->LibRaw->params.bright = 1.0f;
+          p->LibRaw->params.half_size = FALSE;
+          p->LibRaw->params.highlight = 0;
+          p->LibRaw->params.use_auto_wb = TRUE;
+          p->LibRaw->params.use_camera_wb = TRUE;
+          p->LibRaw->params.use_camera_matrix = 1;
+          p->LibRaw->params.user_flip = 0;
           p->LibRaw->params.no_auto_bright = 1;
+          p->LibRaw->params.auto_bright_thr = 0.01f;
+          p->LibRaw->params.use_fuji_rotate = -1;
 
           p->LibRaw->params.output_bps = 16;
           p->LibRaw->params.user_qual = o->quality;
