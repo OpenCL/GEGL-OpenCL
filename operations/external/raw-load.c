@@ -83,7 +83,7 @@ prepare (GeglOperation *operation)
       o->user_data = (gpointer)p;
     }
 
-  if (p->cached_path && !strcmp (p->cached_path, o->path))
+  if (p->cached_path && strcmp (p->cached_path, o->path))
   {
      raw_close (o);
   }
