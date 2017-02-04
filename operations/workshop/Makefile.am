@@ -21,6 +21,7 @@ op_LTLIBRARIES =    \
 	hstack.la \
 	integral-image.la \
 	kuwahara.la \
+	linear-sinusoid.la \
 	mandelbrot.la \
 	median-blur.la \
 	rawbayer-load.la \
