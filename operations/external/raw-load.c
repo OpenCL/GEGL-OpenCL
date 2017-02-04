@@ -78,7 +78,10 @@ prepare (GeglOperation *operation)
   int         ret;
 
   if (p == NULL)
-    p = g_new0(Private, 1);
+    {
+      p = g_new0(Private, 1);
+      o->user_data = (gpointer)p;
+    }
 
   if (p->cached_path && !strcmp (p->cached_path, o->path))
   {
@@ -87,7 +90,6 @@ prepare (GeglOperation *operation)
 
   if (p->LibRaw == NULL)
     {
-      o->user_data = (gpointer)p;
       p->image = NULL;
 
       if ((p->LibRaw = libraw_init(LIBRAW_OPTIONS_NONE)) == NULL)
