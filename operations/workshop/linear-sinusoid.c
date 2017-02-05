@@ -162,10 +162,10 @@ process (GeglOperation       *operation,
   j_dx = sin (x_angle) * x_scale;
   j_dy = sin (y_angle) * y_scale;
 
-  x0 = o->x_phase * scale            +
+  x0 = o->x_phase * x_scale          +
        (roi->x - o->x_offset) * i_dx +
        (roi->y - o->y_offset) * j_dx;
-  y0 = o->y_phase * scale            +
+  y0 = o->y_phase * y_scale          +
        (roi->x - o->x_offset) * i_dy +
        (roi->y - o->y_offset) * j_dy;
 
