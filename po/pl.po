@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-01-30 01:51+0100\n"
-"PO-Revision-Date: 2017-01-30 01:52+0100\n"
+"POT-Creation-Date: 2017-02-05 18:04+0100\n"
+"PO-Revision-Date: 2017-02-05 18:05+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -186,7 +186,7 @@ msgid "Loop"
 msgstr "Pętla"
 
 #: ../gegl/gegl-enums.c:36 ../operations/common/gaussian-blur-iir.c:33
-#: ../operations/common/gblur-1d.c:33
+#: ../operations/common/gblur-1d.c:33 ../operations/workshop/dt-exposure.c:24
 msgid "Black"
 msgstr "Czarny"
 
@@ -215,7 +215,7 @@ msgstr "Floyda-Steinberga"
 msgid "Bayer"
 msgstr "Bayera"
 
-#: ../gegl/gegl-enums.c:90 ../operations/workshop/waterpixels.c:35
+#: ../gegl/gegl-enums.c:90 ../operations/common/waterpixels.c:35
 msgid "Random"
 msgstr "Losowo"
 
@@ -349,15 +349,15 @@ msgstr "Częstotliwość 3. składowej"
 
 #: ../operations/common/alien-map.c:47
 msgid "Component 1 phase shift"
-msgstr "Przesunięcie fazy 1. składowej"
+msgstr "Przesunięcie rzutu 1. składowego"
 
 #: ../operations/common/alien-map.c:50
 msgid "Component 2 phase shift"
-msgstr "Przesunięcie fazy 2. składowej"
+msgstr "Przesunięcie rzutu 2. składowego"
 
 #: ../operations/common/alien-map.c:53
 msgid "Component 3 phase shift"
-msgstr "Przesunięcie fazy 3. składowej"
+msgstr "Przesunięcie rzutu 3. składowego"
 
 #: ../operations/common/alien-map.c:57
 msgid "Keep component 1"
@@ -682,8 +682,8 @@ msgstr ""
 #: ../operations/common/c2g.c:41 ../operations/common/fractal-explorer.c:56
 #: ../operations/common/matting-global.c:25
 #: ../operations/common/noise-cell.c:48 ../operations/common/noise-perlin.c:33
-#: ../operations/common/noise-simplex.c:35 ../operations/common/stress.c:39
-#: ../operations/workshop/mandelbrot.c:31
+#: ../operations/common/noise-simplex.c:35 ../operations/common/slic.c:38
+#: ../operations/common/stress.c:39 ../operations/workshop/mandelbrot.c:31
 msgid "Iterations"
 msgstr "Iteracje"
 
@@ -712,11 +712,11 @@ msgstr "Promień maski"
 msgid "Percent black"
 msgstr "Procent czerni"
 
-#: ../operations/common/cartoon.c:336
+#: ../operations/common/cartoon.c:313
 msgid "Cartoon"
 msgstr "Film rysunkowy"
 
-#: ../operations/common/cartoon.c:338
+#: ../operations/common/cartoon.c:315
 msgid ""
 "Simulates a cartoon, its result is similar to a black felt pen drawing "
 "subsequently shaded with color. This is achieved by enhancing edges and "
@@ -1049,8 +1049,8 @@ msgstr ""
 "Zmiana na to: zmienia kolory szarości na tę barwę i nasycenie"
 
 #: ../operations/common/color-rotate.c:79
+#: ../operations/common/component-extract.c:28
 #: ../operations/common/noise-cie-lch.c:34 ../operations/common/noise-hsv.c:30
-#: ../operations/workshop/component-extract.c:28
 msgid "Hue"
 msgstr "Barwa"
 
@@ -1234,6 +1234,120 @@ msgstr ""
 "zniekształcania. Pary kolorów czarny do czarnego są ignorowane podczas "
 "konstruowania mapowania."
 
+#: ../operations/common/component-extract.c:25
+msgid "RGB Red"
+msgstr "Czerwony RGB"
+
+#: ../operations/common/component-extract.c:26
+msgid "RGB Green"
+msgstr "Zielony RGB"
+
+#: ../operations/common/component-extract.c:27
+msgid "RGB Blue"
+msgstr "Niebieski RGB"
+
+#: ../operations/common/component-extract.c:29
+msgid "HSV Saturation"
+msgstr "Nasycenie HSV"
+
+#: ../operations/common/component-extract.c:30
+msgid "HSV Value"
+msgstr "Wartość HSV"
+
+#: ../operations/common/component-extract.c:31
+msgid "HSL Saturation"
+msgstr "Nasycenie HSL"
+
+#: ../operations/common/component-extract.c:32
+msgid "HSL Lightness"
+msgstr "Jasność HSL"
+
+#: ../operations/common/component-extract.c:33
+msgid "CMYK Cyan"
+msgstr "Niebieskozielony CMYK"
+
+#: ../operations/common/component-extract.c:34
+msgid "CMYK Magenta"
+msgstr "Purpurowy CMYK"
+
+#: ../operations/common/component-extract.c:35
+msgid "CMYK Yellow"
+msgstr "Żółty CMYK"
+
+#: ../operations/common/component-extract.c:36
+msgid "CMYK Key"
+msgstr "Klucz CMYK"
+
+#: ../operations/common/component-extract.c:37
+msgid "Y'CbCr Y'"
+msgstr "Y'CbCr Y'"
+
+#: ../operations/common/component-extract.c:38
+msgid "Y'CbCr Cb"
+msgstr "Y'CbCr Cb"
+
+#: ../operations/common/component-extract.c:39
+msgid "Y'CbCr Cr"
+msgstr "Y'CbCr Cr"
+
+#: ../operations/common/component-extract.c:40
+msgid "LAB L"
+msgstr "LAB L"
+
+#: ../operations/common/component-extract.c:41
+msgid "LAB A"
+msgstr "LAB A"
+
+#: ../operations/common/component-extract.c:42
+msgid "LAB B"
+msgstr "LAB B"
+
+#: ../operations/common/component-extract.c:43
+msgid "LCH C(ab)"
+msgstr "LCH C(ab)"
+
+#: ../operations/common/component-extract.c:44
+msgid "LCH H(ab)"
+msgstr "LCH H(ab)"
+
+#: ../operations/common/component-extract.c:45
+#: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
+#: ../operations/common/noise-rgb.c:48
+msgid "Alpha"
+msgstr "Alfa"
+
+#: ../operations/common/component-extract.c:48
+msgid "Component"
+msgstr "Składowa"
+
+#: ../operations/common/component-extract.c:51
+msgid "Component to extract"
+msgstr "Składowa do wydobycia"
+
+#: ../operations/common/component-extract.c:53
+msgid "Invert component"
+msgstr "Odwrócenie składowej"
+
+#: ../operations/common/component-extract.c:54
+msgid "Invert the extracted component"
+msgstr "Odwrócenie wydobytej składowej"
+
+#: ../operations/common/component-extract.c:56
+msgid "Linear output"
+msgstr "Wyjście liniowe"
+
+#: ../operations/common/component-extract.c:57
+msgid "Use linear output instead of gamma corrected"
+msgstr "Użycie liniowego wyjścia zamiast poprawionej gammy"
+
+#: ../operations/common/component-extract.c:259
+msgid "Extract Component"
+msgstr "Wydobądź składową"
+
+#: ../operations/common/component-extract.c:261
+msgid "Extract a color model component"
+msgstr "Wydobądź składową modelu kolorów"
+
 #: ../operations/common/contrast-curve.c:25
 msgid "Sample points"
 msgstr "Punkty próbek"
@@ -1367,7 +1481,8 @@ msgid "Divisor"
 msgstr "Podzielnik"
 
 #: ../operations/common/convolution-matrix.c:54
-#: ../operations/common/exposure.c:29
+#: ../operations/common/exposure.c:29 ../operations/workshop/bayer-matrix.c:50
+#: ../operations/workshop/linear-sinusoid.c:71
 msgid "Offset"
 msgstr "Przesunięcie"
 
@@ -1450,6 +1565,7 @@ msgstr "Rozszerz kafle o tę ilość"
 #: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
 #: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
 #: ../operations/common/supernova.c:63
+#: ../operations/workshop/segment-kmeans.c:37
 msgid "Random seed"
 msgstr "Ziarno losowości"
 
@@ -2035,6 +2151,8 @@ msgstr ""
 "Połącz wiele ekspozycji scen w jeden obraz o wysokim zakresie dynamicznym."
 
 #: ../operations/common/exposure.c:25 ../operations/common/exposure.c:187
+#: ../operations/workshop/dt-exposure.c:28
+#: ../operations/workshop/dt-exposure.c:102
 msgid "Exposure"
 msgstr "Ekspozycja"
 
@@ -2057,12 +2175,6 @@ msgid ""
 msgstr ""
 "Zmienia ekspozycję obrazu, umożliwiając stopniowanie HDR i fotografii w górę "
 "i w dół. "
-
-#: ../operations/common/fattal02.c:33 ../operations/common/noise-perlin.c:25
-#: ../operations/common/noise-rgb.c:48
-#: ../operations/workshop/component-extract.c:45
-msgid "Alpha"
-msgstr "Alfa"
 
 #: ../operations/common/fattal02.c:34
 msgid "Gradient threshold for detail enhancement"
@@ -2530,11 +2642,11 @@ msgstr ""
 "ustawić właściwości. Oraz „aux=[ filtr źródłowy ]” do podania ciągu ze "
 "źródłem jako coś podłączonego do dodatkowego bloku."
 
-#: ../operations/common/grey.c:71
+#: ../operations/common/grey.c:101
 msgid "Make Grey"
 msgstr "Zmień na odcienie szarości"
 
-#: ../operations/common/grey.c:73
+#: ../operations/common/grey.c:103
 msgid "Turns the image grayscale"
 msgstr "Konwertuje obraz do odcieni szarości"
 
@@ -2653,6 +2765,35 @@ msgid ""
 msgstr ""
 "Porównuje, czy bufory wejściowe i aux są różne. Wyniki są zapisywane we "
 "właściwościach."
+
+#: ../operations/common/image-gradient.c:27
+msgid "Magnitude"
+msgstr "Wielkość"
+
+#: ../operations/common/image-gradient.c:28
+#: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
+msgid "Direction"
+msgstr "Kierunek"
+
+#: ../operations/common/image-gradient.c:29 ../operations/common/wind.c:40
+msgid "Both"
+msgstr "Oba"
+
+#: ../operations/common/image-gradient.c:32
+msgid "Output mode"
+msgstr "Tryb wyjścia"
+
+#: ../operations/common/image-gradient.c:35
+msgid "Output Mode"
+msgstr "Tryb wyjścia"
+
+#: ../operations/common/image-gradient.c:224
+msgid "Image Gradient"
+msgstr "Gradient obrazu"
+
+#: ../operations/common/image-gradient.c:226
+msgid "Compute gradient magnitude and/or direction by central differencies"
+msgstr "Oblicz wielkość gradientu lub kierunek według różnic środkowych"
 
 #: ../operations/common/introspect.c:26
 msgid "Node"
@@ -3237,7 +3378,7 @@ msgstr ""
 #. FIXME: With a large angle, we lose AreaFilter's flavours
 #: ../operations/common/motion-blur-circular.c:52
 #: ../operations/common/motion-blur-linear.c:33
-#: ../operations/common/ripple.c:43
+#: ../operations/common/ripple.c:43 ../operations/workshop/linear-sinusoid.c:66
 msgid "Angle"
 msgstr "Kąt"
 
@@ -3557,6 +3698,8 @@ msgid "Radius of circle around pixel"
 msgstr "Promień okręgu wokół piksela"
 
 #: ../operations/common/oilify.c:33 ../operations/common/sinus.c:73
+#: ../operations/workshop/bayer-matrix.c:55
+#: ../operations/workshop/linear-sinusoid.c:76
 msgid "Exponent"
 msgstr "Wykładnik potęgi"
 
@@ -4019,6 +4162,7 @@ msgid "Sawtooth"
 msgstr "Ząbkowatość"
 
 #: ../operations/common/ripple.c:32 ../operations/common/waves.c:36
+#: ../operations/workshop/bayer-matrix.c:45
 msgid "Amplitude"
 msgstr "Amplituda"
 
@@ -4028,7 +4172,7 @@ msgstr "Okres"
 
 #: ../operations/common/ripple.c:40 ../operations/common/waves.c:44
 msgid "Phase shift"
-msgstr "Przesunięcie fazy"
+msgstr "Przesunięcie rzutu"
 
 #: ../operations/common/ripple.c:50
 msgid "Wave type"
@@ -4162,6 +4306,34 @@ msgstr "Sinus"
 #: ../operations/common/sinus.c:318
 msgid "Generate complex sinusoidal textures"
 msgstr "Utwórz złożone tekstury sinusoidalne"
+
+#: ../operations/common/slic.c:28
+msgid "Regions size"
+msgstr "Rozmiar regionów"
+
+#: ../operations/common/slic.c:29
+msgid "Size of a region side"
+msgstr "Rozmiar strony obszaru"
+
+#: ../operations/common/slic.c:33
+msgid "Compactness"
+msgstr "Zwartość"
+
+#: ../operations/common/slic.c:34
+msgid "Cluster size"
+msgstr "Rozmiar klastra"
+
+#: ../operations/common/slic.c:39
+msgid "Number of iterations"
+msgstr "Liczba iteracji"
+
+#: ../operations/common/slic.c:453
+msgid "Simple Linear Iterative Clustering"
+msgstr "SLIC"
+
+#: ../operations/common/slic.c:455
+msgid "Superpixels based on k-means clustering"
+msgstr "Nadpiksele na podstawie klastrów k-średnich"
 
 #: ../operations/common/snn-mean.c:33
 msgid "Pairs"
@@ -4336,11 +4508,6 @@ msgstr "Dolny-lewy"
 #: ../operations/common/texturize-canvas.c:35
 msgid "Bottom-right"
 msgstr "Dolny-prawy"
-
-#: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
-#: ../operations/workshop/image-gradient.c:28
-msgid "Direction"
-msgstr "Kierunek"
 
 #: ../operations/common/texturize-canvas.c:41
 msgid ""
@@ -4747,7 +4914,8 @@ msgstr "Jak blisko proporcji obrazu"
 msgid "Squeeze"
 msgstr "Ściśnij"
 
-#: ../operations/common/vignette.c:71
+#: ../operations/common/vignette.c:71 ../operations/workshop/bayer-matrix.c:37
+#: ../operations/workshop/linear-sinusoid.c:95
 msgid "Rotation"
 msgstr "Obrót"
 
@@ -4816,6 +4984,52 @@ msgstr "Deformuj"
 #: ../operations/common/warp.c:486
 msgid "Compute a relative displacement mapping from a stroke"
 msgstr "Oblicz względne rozmieszczenie odwzorowania z pociągnięcia"
+
+#: ../operations/common/waterpixels.c:34
+msgid "Average"
+msgstr "Średnia"
+
+#: ../operations/common/waterpixels.c:38
+msgid "Superpixels size"
+msgstr "Rozmiar nadpikseli"
+
+#: ../operations/common/waterpixels.c:42
+msgid "Gradient smoothness"
+msgstr "Gładkość gradientu"
+
+#: ../operations/common/waterpixels.c:47
+msgid "Spatial regularization"
+msgstr "Uregulowanie przestrzenne"
+
+#: ../operations/common/waterpixels.c:49
+msgid ""
+"trade-off between superpixel regularity and adherence to object boundaries"
+msgstr ""
+"kompromis między regularnością nadpikseli a przyleganiem do granic obiektu"
+
+#: ../operations/common/waterpixels.c:52
+msgid "Superpixels color"
+msgstr "Kolor nadpikseli"
+
+#: ../operations/common/waterpixels.c:55
+msgid "How to fill superpixels"
+msgstr "Jak wypełniać nadpiksele"
+
+#: ../operations/common/waterpixels.c:510
+msgid "Waterpixels"
+msgstr "Piksele wody"
+
+#: ../operations/common/waterpixels.c:512
+msgid "Superpixels based on the watershed transformation"
+msgstr "Nadpiksele na podstawie przekształcenia działu wodnego"
+
+#: ../operations/common/watershed-transform.c:384
+msgid "Watershed Transform"
+msgstr "Przekształcenie działu wodnego"
+
+#: ../operations/common/watershed-transform.c:386
+msgid "Labels propagation by watershed transformation"
+msgstr "Rozprowadzanie etykiet według przekształcenia działu wodnego"
 
 #: ../operations/common/wavelet-blur.c:29
 msgid "Radius of the wavelet blur"
@@ -4928,10 +5142,6 @@ msgstr "Góra"
 #: ../operations/common/wind.c:36
 msgid "Bottom"
 msgstr "Dół"
-
-#: ../operations/common/wind.c:40 ../operations/workshop/image-gradient.c:29
-msgid "Both"
-msgstr "Oba"
 
 #: ../operations/common/wind.c:41
 msgid "Leading"
@@ -5082,7 +5292,7 @@ msgstr "Adres URI"
 msgid "URI of file to load."
 msgstr "Adres URI pliku do wczytania."
 
-#: ../operations/core/load.c:312
+#: ../operations/core/load.c:368
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -5319,67 +5529,67 @@ msgstr "Ścieżka do wczytywanego pliku"
 msgid "URI for file to load"
 msgstr "Adres URI wczytywanego pliku"
 
-#: ../operations/external/jp2-load.c:132
+#: ../operations/external/jp2-load.c:128
 msgid "Unknown JPEG 2000 image format"
 msgstr "Nieznany format obrazu JPEG 2000"
 
-#: ../operations/external/jp2-load.c:139
+#: ../operations/external/jp2-load.c:135
 msgid "Unable to open JPEG 2000 image"
 msgstr "Nie można otworzyć pliku JPEG 2000"
 
-#: ../operations/external/jp2-load.c:146
+#: ../operations/external/jp2-load.c:142
 msgid "Unable to create output color profile"
 msgstr "Nie można utworzyć wyjściowego profilu kolorów"
 
-#: ../operations/external/jp2-load.c:154
+#: ../operations/external/jp2-load.c:150
 msgid "Unable to convert image to sRGB color space"
 msgstr "Nie można konwertować obrazu do przestrzeni kolorów sRGB"
 
-#: ../operations/external/jp2-load.c:161
+#: ../operations/external/jp2-load.c:157
 #, c-format
 msgid "Unsupported non-RGB JPEG 2000 file with %d components"
 msgstr "Nieobsługiwany plik JPEG 2000 niebędący RGB z %d składowymi"
 
-#: ../operations/external/jp2-load.c:173
+#: ../operations/external/jp2-load.c:169
 #, c-format
 msgid "Unsupported JPEG 2000 file with depth %d"
 msgstr "Nieobsługiwany plik JPEG 2000 z głębią kolorów %d"
 
-#: ../operations/external/jp2-load.c:199
+#: ../operations/external/jp2-load.c:195
 msgid "Components of JPEG 2000 input don't match"
 msgstr "Składowe wejścia JPEG 2000 nie pasują"
 
-#: ../operations/external/jp2-load.c:261
+#: ../operations/external/jp2-load.c:257
 msgid "could not create a new Jasper stream"
 msgstr "nie można utworzyć nowego potoku Jasper"
 
-#: ../operations/external/jp2-load.c:278 ../operations/external/jp2-load.c:280
+#: ../operations/external/jp2-load.c:274 ../operations/external/jp2-load.c:276
 #, c-format
 msgid "failed to open JPEG 2000 from %s"
 msgstr "otwarcie pliku JPEG 2000 z %s się nie powiodło"
 
-#: ../operations/external/jp2-load.c:294
+#: ../operations/external/jp2-load.c:290
 msgid "could not query JPEG 2000 file"
 msgstr "nie można odpytać pliku JPEG 2000"
 
-#: ../operations/external/jp2-load.c:350
+#: ../operations/external/jp2-load.c:346
 msgid "One or more of R, G, B components are missing"
 msgstr "Brak jednej lub więcej składowych R, G, B"
 
-#: ../operations/external/jp2-load.c:358
+#: ../operations/external/jp2-load.c:354
 msgid "One or more of R, G, B components have signed data"
 msgstr "Jedna lub więcej ze składowych R, G, B ma podpisane dane"
 
-#: ../operations/external/jp2-load.c:391
+#: ../operations/external/jp2-load.c:387
 #, c-format
 msgid "Error reading row %d component %d"
 msgstr "Błąd podczas odczytywania rzędu %d składowej %d"
 
-#: ../operations/external/jp2-load.c:531
+#: ../operations/external/jp2-load.c:527
 msgid "JPEG 2000 File Loader"
 msgstr "Wczytywanie plików JPEG 2000"
 
-#: ../operations/external/jp2-load.c:533
+#: ../operations/external/jp2-load.c:529
 msgid "JPEG 2000 image loader using jasper."
 msgstr "Wczytywanie obrazów JPEG 2000 za pomocą biblioteki jasper."
 
@@ -5773,7 +5983,7 @@ msgstr "Zapisywanie plików PPM"
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Zapisywanie obrazów PPM."
 
-#: ../operations/external/raw-load.c:240
+#: ../operations/external/raw-load.c:229
 msgid "libraw File Loader"
 msgstr "Wczytywanie plików biblioteki libraw"
 
@@ -5839,12 +6049,12 @@ msgstr "Szerokość renderowanego obrazu"
 msgid "Height for rendered image"
 msgstr "Wysokość renderowanego obrazu"
 
-#: ../operations/external/svg-load.c:293
+#: ../operations/external/svg-load.c:290
 msgid "SVG File Loader"
 msgstr "Wczytywanie plików SVG"
 
 #. not hidden because it has extra API
-#: ../operations/external/svg-load.c:295
+#: ../operations/external/svg-load.c:292
 msgid "Load an SVG file using librsvg"
 msgstr "Wczytaj plik SVG za pomocą biblioteki librsvg"
 
@@ -5938,19 +6148,19 @@ msgstr "Katalog"
 msgid "Image file directory (subfile)"
 msgstr "Katalog pliku obrazu (podplik)"
 
-#: ../operations/external/tiff-load.c:868
+#: ../operations/external/tiff-load.c:867
 msgid "TIFF File Loader"
 msgstr "Wczytywanie plików TIFF"
 
-#: ../operations/external/tiff-load.c:870
+#: ../operations/external/tiff-load.c:869
 msgid "TIFF image loader using libtiff"
 msgstr "Wczytywanie obrazów TIFF za pomocą biblioteki libtiff"
 
-#: ../operations/external/tiff-save.c:622
+#: ../operations/external/tiff-save.c:621
 msgid "TIFF File Saver"
 msgstr "Zapisywanie plików TIFF"
 
-#: ../operations/external/tiff-save.c:624
+#: ../operations/external/tiff-save.c:623
 msgid "TIFF image saver using libtiff"
 msgstr "Zapisywanie obrazów TIFF za pomocą biblioteki libtiff"
 
@@ -6042,11 +6252,11 @@ msgstr "Pociągnięcie wektorowe"
 msgid "Renders a vector stroke"
 msgstr "Rysuje pociągnięcie wektorowe"
 
-#: ../operations/external/webp-load.c:347
+#: ../operations/external/webp-load.c:343
 msgid "WebP File Loader"
 msgstr "Wczytywanie plików WebP"
 
-#: ../operations/external/webp-load.c:349
+#: ../operations/external/webp-load.c:345
 msgid "WebP image loader."
 msgstr "Wczytywanie obrazów WebP."
 
@@ -6442,6 +6652,85 @@ msgstr ""
 "Zmienia położenie bufora (o precyzji podpikselowej), jeśli podano "
 "współrzędne całkowite, to używana jest szybka ścieżka bez resamplingu"
 
+#: ../operations/workshop/bayer-matrix.c:26
+msgid "Subdivisions"
+msgstr "Podpodział"
+
+#: ../operations/workshop/bayer-matrix.c:27
+msgid "Number of subdivisions"
+msgstr "Liczba podpodziałów"
+
+#: ../operations/workshop/bayer-matrix.c:31
+msgid "0°"
+msgstr "0°"
+
+#: ../operations/workshop/bayer-matrix.c:32
+msgid "90°"
+msgstr "90°"
+
+#: ../operations/workshop/bayer-matrix.c:33
+msgid "180°"
+msgstr "180°"
+
+#: ../operations/workshop/bayer-matrix.c:34
+msgid "270°"
+msgstr "270°"
+
+#: ../operations/workshop/bayer-matrix.c:40
+#: ../operations/workshop/linear-sinusoid.c:96
+msgid "Pattern rotation angle"
+msgstr "Kąt obrotu desenia"
+
+#: ../operations/workshop/bayer-matrix.c:42
+msgid "Reflect"
+msgstr "Odbij"
+
+#: ../operations/workshop/bayer-matrix.c:43
+msgid "Reflect the pattern horizontally"
+msgstr "Odbij deseń w poziomie"
+
+#: ../operations/workshop/bayer-matrix.c:46
+msgid "Pattern amplitude"
+msgstr "Amplituda desenia"
+
+#: ../operations/workshop/bayer-matrix.c:51
+#: ../operations/workshop/linear-sinusoid.c:72
+msgid "Value offset"
+msgstr "Przesunięcie wartości"
+
+#: ../operations/workshop/bayer-matrix.c:56
+#: ../operations/workshop/linear-sinusoid.c:77
+msgid "Value exponent"
+msgstr "Odwrócenie wykładnika"
+
+#: ../operations/workshop/bayer-matrix.c:60
+#: ../operations/workshop/linear-sinusoid.c:81
+msgid "X Offset"
+msgstr "Przesunięcie na osi X"
+
+#: ../operations/workshop/bayer-matrix.c:61
+#: ../operations/workshop/linear-sinusoid.c:82
+msgid "Offset for X axis"
+msgstr "Przesunięcie na osi X"
+
+#: ../operations/workshop/bayer-matrix.c:67
+#: ../operations/workshop/linear-sinusoid.c:88
+msgid "Y Offset"
+msgstr "Przesunięcie na osi Y"
+
+#: ../operations/workshop/bayer-matrix.c:68
+#: ../operations/workshop/linear-sinusoid.c:89
+msgid "Offset for Y axis"
+msgstr "Przesunięcie na osi Y"
+
+#: ../operations/workshop/bayer-matrix.c:254
+msgid "Bayer Matrix"
+msgstr "Macierz Bayera"
+
+#: ../operations/workshop/bayer-matrix.c:258
+msgid "Generate a Bayer matrix pattern"
+msgstr "Utwórz deseń macierzy Bayera"
+
 #: ../operations/workshop/bilateral-filter-fast.c:37
 msgid "Smoothness"
 msgstr "Gładkość"
@@ -6461,114 +6750,6 @@ msgid ""
 msgstr ""
 "Szybkie przybliżenie filtru dwustronnego, używające filtrowania "
 "prostopadłościennego zamiast rozmycia Gaussa."
-
-#: ../operations/workshop/component-extract.c:25
-msgid "RGB Red"
-msgstr "Czerwony RGB"
-
-#: ../operations/workshop/component-extract.c:26
-msgid "RGB Green"
-msgstr "Zielony RGB"
-
-#: ../operations/workshop/component-extract.c:27
-msgid "RGB Blue"
-msgstr "Niebieski RGB"
-
-#: ../operations/workshop/component-extract.c:29
-msgid "HSV Saturation"
-msgstr "Nasycenie HSV"
-
-#: ../operations/workshop/component-extract.c:30
-msgid "HSV Value"
-msgstr "Wartość HSV"
-
-#: ../operations/workshop/component-extract.c:31
-msgid "HSL Saturation"
-msgstr "Nasycenie HSL"
-
-#: ../operations/workshop/component-extract.c:32
-msgid "HSL Lightness"
-msgstr "Jasność HSL"
-
-#: ../operations/workshop/component-extract.c:33
-msgid "CMYK Cyan"
-msgstr "Niebieskozielony CMYK"
-
-#: ../operations/workshop/component-extract.c:34
-msgid "CMYK Magenta"
-msgstr "Purpurowy CMYK"
-
-#: ../operations/workshop/component-extract.c:35
-msgid "CMYK Yellow"
-msgstr "Żółty CMYK"
-
-#: ../operations/workshop/component-extract.c:36
-msgid "CMYK Key"
-msgstr "Klucz CMYK"
-
-#: ../operations/workshop/component-extract.c:37
-msgid "Y'CbCr Y'"
-msgstr "Y'CbCr Y'"
-
-#: ../operations/workshop/component-extract.c:38
-msgid "Y'CbCr Cb"
-msgstr "Y'CbCr Cb"
-
-#: ../operations/workshop/component-extract.c:39
-msgid "Y'CbCr Cr"
-msgstr "Y'CbCr Cr"
-
-#: ../operations/workshop/component-extract.c:40
-msgid "LAB L"
-msgstr "LAB L"
-
-#: ../operations/workshop/component-extract.c:41
-msgid "LAB A"
-msgstr "LAB A"
-
-#: ../operations/workshop/component-extract.c:42
-msgid "LAB B"
-msgstr "LAB B"
-
-#: ../operations/workshop/component-extract.c:43
-msgid "LCH C(ab)"
-msgstr "LCH C(ab)"
-
-#: ../operations/workshop/component-extract.c:44
-msgid "LCH H(ab)"
-msgstr "LCH H(ab)"
-
-#: ../operations/workshop/component-extract.c:48
-msgid "Component"
-msgstr "Składowa"
-
-#: ../operations/workshop/component-extract.c:51
-msgid "Component to extract"
-msgstr "Składowa do wydobycia"
-
-#: ../operations/workshop/component-extract.c:53
-msgid "Invert component"
-msgstr "Odwrócenie składowej"
-
-#: ../operations/workshop/component-extract.c:54
-msgid "Invert the extracted component"
-msgstr "Odwrócenie wydobytej składowej"
-
-#: ../operations/workshop/component-extract.c:56
-msgid "Linear output"
-msgstr "Wyjście liniowe"
-
-#: ../operations/workshop/component-extract.c:57
-msgid "Use linear output instead of gamma corrected"
-msgstr "Użycie liniowego wyjścia zamiast poprawionej gammy"
-
-#: ../operations/workshop/component-extract.c:259
-msgid "Extract Component"
-msgstr "Wydobądź składową"
-
-#: ../operations/workshop/component-extract.c:261
-msgid "Extract a color model component"
-msgstr "Wydobądź składową modelu kolorów"
 
 #: ../operations/workshop/demosaic-bimedian.c:26
 #: ../operations/workshop/demosaic-simple.c:25
@@ -6611,7 +6792,19 @@ msgstr ""
 msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr ""
 "Testuj działanie, aby wykonać odwzorowanie 1∶1 wejścia do wyjścia podczas "
-"samplowania"
+"próbkowania"
+
+#: ../operations/workshop/dt-exposure.c:25
+msgid "Adjust the black level"
+msgstr "Dostosuj poziom czerni"
+
+#: ../operations/workshop/dt-exposure.c:29
+msgid "Adjust the exposure correction"
+msgstr "Dostosuj korekcję ekspozycji"
+
+#: ../operations/workshop/dt-exposure.c:104
+msgid "An implementation of Darktable's exposure filter."
+msgstr "Implementacja filtru ekspozycji programu Darktable."
 
 #: ../operations/workshop/external/gluas.c:29
 msgid "Script"
@@ -6932,25 +7125,21 @@ msgstr ""
 "Poziomo składa wejścia na stos (w „output” „aux” jest umieszczane po prawej "
 "od „input”)"
 
-#: ../operations/workshop/image-gradient.c:27
-msgid "Magnitude"
-msgstr "Wielkość"
+#: ../operations/workshop/integral-image.c:25
+msgid "squared integral"
+msgstr "liczba całkowita do drugiej potęgi"
 
-#: ../operations/workshop/image-gradient.c:32
-msgid "Output mode"
-msgstr "Tryb wyjścia"
+#: ../operations/workshop/integral-image.c:26
+msgid "Add squared values sum to the output"
+msgstr "Dodaj sumę wartości do drugiej potęgi do wyjścia"
 
-#: ../operations/workshop/image-gradient.c:35
-msgid "Output Mode"
-msgstr "Tryb wyjścia"
+#: ../operations/workshop/integral-image.c:252
+msgid "Integral Image"
+msgstr "Obraz liczby całkowitej"
 
-#: ../operations/workshop/image-gradient.c:224
-msgid "Image Gradient"
-msgstr "Gradient obrazu"
-
-#: ../operations/workshop/image-gradient.c:226
-msgid "Compute gradient magnitude and/or direction by central differencies"
-msgstr "Oblicz wielkość gradientu lub kierunek według różnic środkowych"
+#: ../operations/workshop/integral-image.c:254
+msgid "Compute integral and squared integral image"
+msgstr "Oblicz obraz całkowity i całkowity do drugiej potęgi"
 
 #: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
@@ -6961,6 +7150,74 @@ msgstr ""
 #: ../operations/workshop/kuwahara.c:245
 msgid "Edge preserving blur"
 msgstr "Rozmycie zachowujące krawędź"
+
+#: ../operations/workshop/linear-sinusoid.c:26
+msgid "X Period"
+msgstr "Okres na osi X"
+
+#: ../operations/workshop/linear-sinusoid.c:27
+msgid "Period for X axis"
+msgstr "Okres na osi X"
+
+#: ../operations/workshop/linear-sinusoid.c:33
+msgid "Y Period"
+msgstr "Okres na osi Y"
+
+#: ../operations/workshop/linear-sinusoid.c:34
+msgid "Period for Y axis"
+msgstr "Okres na osi Y"
+
+#: ../operations/workshop/linear-sinusoid.c:40
+msgid "X Amplitude"
+msgstr "Amplituda na osi X"
+
+#: ../operations/workshop/linear-sinusoid.c:41
+msgid "Amplitude for X axis"
+msgstr "Amplituda na osi X"
+
+#: ../operations/workshop/linear-sinusoid.c:46
+msgid "Y Amplitude"
+msgstr "Amplituda na osi Y"
+
+#: ../operations/workshop/linear-sinusoid.c:47
+msgid "Amplitude for Y axis"
+msgstr "Amplituda na osi Y"
+
+#: ../operations/workshop/linear-sinusoid.c:52
+msgid "X Phase"
+msgstr "Rzut na osi X"
+
+#: ../operations/workshop/linear-sinusoid.c:53
+msgid "Phase for X axis"
+msgstr "Rzut na osi X"
+
+#: ../operations/workshop/linear-sinusoid.c:59
+msgid "Y Phase"
+msgstr "Rzut na osi Y"
+
+#: ../operations/workshop/linear-sinusoid.c:60
+msgid "Phase for Y axis"
+msgstr "Rzut na osi Y"
+
+#: ../operations/workshop/linear-sinusoid.c:67
+msgid "Axis separation angle"
+msgstr "Kąt oddzielenia osi"
+
+#: ../operations/workshop/linear-sinusoid.c:100
+msgid "Supersampling"
+msgstr "Nadpróbkowanie"
+
+#: ../operations/workshop/linear-sinusoid.c:101
+msgid "Supersampling factor"
+msgstr "Współczynnik nadpróbkowania"
+
+#: ../operations/workshop/linear-sinusoid.c:271
+msgid "Linear Sinusoid"
+msgstr "Sinusoid liniowy"
+
+#: ../operations/workshop/linear-sinusoid.c:275
+msgid "Generate a linear sinusoid pattern"
+msgstr "Utwórz liniowy deseń sinusoidy"
 
 #: ../operations/workshop/mandelbrot.c:25
 msgid "Real coordinate"
@@ -6975,6 +7232,7 @@ msgid "Water level"
 msgstr "Poziom przezroczystości"
 
 #: ../operations/workshop/mandelbrot.c:32
+#: ../operations/workshop/segment-kmeans.c:33
 msgid "Maximum number of iterations"
 msgstr "Maksymalna liczba iteracji"
 
@@ -7005,6 +7263,63 @@ msgstr ""
 "format pliku to .rawbayerS, to zwrócone liczby 16-bitowe zostaną wymienione "
 "(wczytywanie plików PNM zawiera błędy)"
 
+#: ../operations/workshop/segment-kmeans.c:27
+#: ../operations/workshop/segment-kmeans.c:28
+msgid "Number of clusters"
+msgstr "Liczba klastrów"
+
+#: ../operations/workshop/segment-kmeans.c:32
+msgid "Max. Iterations"
+msgstr "Maksymalna liczba iteracji"
+
+#: ../operations/workshop/segment-kmeans.c:392
+msgid "K-means Segmentation"
+msgstr "Segmentacja k-średnich"
+
+#: ../operations/workshop/segment-kmeans.c:394
+msgid "Segment colors using K-means clustering"
+msgstr "Segmentuj kolory za pomocą klastrów k-średnich"
+
+#: ../operations/workshop/shadows-highlights.c:22
+#: ../operations/workshop/shadows-highlights-correction.c:23
+msgid "shadows amount"
+msgstr "ilość cienia"
+
+#: ../operations/workshop/shadows-highlights.c:25
+#: ../operations/workshop/shadows-highlights-correction.c:26
+msgid "shadows tonal width"
+msgstr "szerokość tonalna cienia"
+
+#: ../operations/workshop/shadows-highlights.c:28
+msgid "shadows radius"
+msgstr "promień cienia"
+
+#: ../operations/workshop/shadows-highlights.c:31
+#: ../operations/workshop/shadows-highlights-correction.c:29
+msgid "highlights amount"
+msgstr "ilość podświetlenia"
+
+#: ../operations/workshop/shadows-highlights.c:34
+#: ../operations/workshop/shadows-highlights-correction.c:32
+msgid "highlights tonal width"
+msgstr "szerokość tonalna podświetlenia"
+
+#: ../operations/workshop/shadows-highlights.c:37
+msgid "highlights radius"
+msgstr "promień podświetlenia"
+
+#: ../operations/workshop/shadows-highlights.c:106
+msgid "Shadows Highlights"
+msgstr "Cień i podświetlenie"
+
+#: ../operations/workshop/shadows-highlights.c:108
+msgid "Performs shadows and highlights correction"
+msgstr "Wykonuje korekcję cieni i podświetleń"
+
+#: ../operations/workshop/shadows-highlights-correction.c:246
+msgid "Lighten shadows and darken highlights"
+msgstr "Rozjaśnij cienie i przyciemnij podświetlenia"
+
 #: ../operations/workshop/vhsfix.c:262
 msgid "vhs glitch fixer"
 msgstr "naprawianie zakłóceń kaset VHS"
@@ -7012,49 +7327,3 @@ msgstr "naprawianie zakłóceń kaset VHS"
 #: ../operations/workshop/vhsfix.c:264
 msgid "fixes vhs digitization glitches"
 msgstr "naprawia zakłócenia powstałe podczas cyfryzacji kaset VHS"
-
-#: ../operations/workshop/waterpixels.c:34
-msgid "Average"
-msgstr "Średnia"
-
-#: ../operations/workshop/waterpixels.c:38
-msgid "Superpixels size"
-msgstr "Rozmiar nadpikseli"
-
-#: ../operations/workshop/waterpixels.c:42
-msgid "Gradient smoothness"
-msgstr "Gładkość gradientu"
-
-#: ../operations/workshop/waterpixels.c:47
-msgid "Spatial regularization"
-msgstr "Uregulowanie przestrzenne"
-
-#: ../operations/workshop/waterpixels.c:49
-msgid ""
-"trade-off between superpixel regularity and adherence to object boundaries"
-msgstr ""
-"kompromis między regularnością nadpikseli a przyleganiem do granic obiektu"
-
-#: ../operations/workshop/waterpixels.c:52
-msgid "Superpixels color"
-msgstr "Kolor nadpikseli"
-
-#: ../operations/workshop/waterpixels.c:55
-msgid "How to fill superpixels"
-msgstr "Jak wypełniać nadpiksele"
-
-#: ../operations/workshop/waterpixels.c:510
-msgid "Waterpixels"
-msgstr "Piksele wody"
-
-#: ../operations/workshop/waterpixels.c:512
-msgid "Superpixels based on the watershed transformation"
-msgstr "Nadpiksele na podstawie przekształcenia działu wodnego"
-
-#: ../operations/workshop/watershed-transform.c:384
-msgid "Watershed Transform"
-msgstr "Przekształcenie działu wodnego"
-
-#: ../operations/workshop/watershed-transform.c:386
-msgid "Labels propagation by watershed transformation"
-msgstr "Rozprowadzanie etykiet według przekształcenia działu wodnego"
