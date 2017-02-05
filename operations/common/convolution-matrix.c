@@ -172,9 +172,10 @@ make_matrix (GeglProperties  *o,
 }
 
 static gboolean
-normalize_o (GeglProperties  *o,
-             gfloat           matrix[MAX_MATRIX_SIZE][MAX_MATRIX_SIZE],
-             gint             matrix_size)
+normalize_div_off (gfloat  matrix[MAX_MATRIX_SIZE][MAX_MATRIX_SIZE],
+                   gint    matrix_size,
+                   gfloat *divisor,
+                   gfloat *offset)
 {
   gint      x, y;
   gboolean  valid = FALSE;
@@ -190,18 +191,18 @@ normalize_o (GeglProperties  *o,
 
   if (sum > 0)
     {
-      o->offset  = 0.0;
-      o->divisor = sum;
+      *offset  = 0.0;
+      *divisor = sum;
     }
   else if (sum < 0)
     {
-      o->offset  = 1.0;
-      o->divisor = -sum;
+      *offset  = 1.0;
+      *divisor = -sum;
     }
   else
     {
-      o->offset  = 0.5;
-      o->divisor = 1;
+      *offset  = 0.5;
+      *divisor = 1;
     }
 
   return valid;
@@ -220,7 +221,8 @@ convolve_pixel_componentwise (GeglProperties       *o,
                 gint                  xx,
                 gint                  yy,
                 gfloat                matrixsum,
-                gfloat                inv_divisor)
+                gfloat                inv_divisor,
+                gfloat                offset)
 {
   gint   i;
   gint   s_stride = (extended->width - matrix_size) * 4;
@@ -245,7 +247,7 @@ convolve_pixel_componentwise (GeglProperties       *o,
             s_offset += s_stride;
           }
           sum = sum * inv_divisor;
-          sum += o->offset;
+          sum += offset;
           dst_buf[d_offset + i] = sum;
         }
       else
@@ -268,7 +270,8 @@ convolve_pixel (GeglProperties       *o,
                 gint                  xx,
                 gint                  yy,
                 gfloat                matrixsum,
-                gfloat                inv_divisor)
+                gfloat                inv_divisor,
+                gfloat                offset)
 {
   gint   i;
   gint   s_stride = (extended->width - matrix_size) * 4;
@@ -287,7 +290,7 @@ convolve_pixel (GeglProperties       *o,
         s_offset += s_stride;
       }
       sum = sum * inv_divisor;
-      sum += o->offset;
+      sum += offset;
       dst_buf[d_offset + i] = sum;
     }
 }
@@ -305,7 +308,8 @@ convolve_pixel_alpha_weight (GeglProperties       *o,
                              gint                  xx,
                              gint                  yy,
                              gfloat                matrixsum,
-                             gfloat                inv_divisor)
+                             gfloat                inv_divisor,
+                             gfloat                offset)
 {
   gint   i;
   gint   s_stride = (extended->width - matrix_size) * 4;
@@ -324,7 +328,7 @@ convolve_pixel_alpha_weight (GeglProperties       *o,
           }
         s_offset += s_stride;
       }
-      sum = sum * inv_divisor + o->offset;
+      sum = sum * inv_divisor + offset;
       dst_buf[d_offset + i] = sum;
     }
     {
@@ -348,10 +352,10 @@ convolve_pixel_alpha_weight (GeglProperties       *o,
       if (alphasum > 0.0)
       {
         sum = sum * inv_divisor;
-        sum = sum * matrixsum / alphasum + o->offset;
+        sum = sum * matrixsum / alphasum + offset;
       }
       else
-        sum = o->offset;
+        sum = offset;
       dst_buf[d_offset + i] = sum;
     }
 }
@@ -369,7 +373,8 @@ convolve_pixel_alpha_weight_componentwise (GeglProperties       *o,
                              gint                  xx,
                              gint                  yy,
                              gfloat                matrixsum,
-                             gfloat                inv_divisor)
+                             gfloat                inv_divisor,
+                             gfloat                offset)
 {
   gint   i;
   gint   s_stride = (extended->width - matrix_size) * 4;
@@ -393,7 +398,7 @@ convolve_pixel_alpha_weight_componentwise (GeglProperties       *o,
               }
             s_offset += s_stride;
           }
-          sum = sum * inv_divisor + o->offset;
+          sum = sum * inv_divisor + offset;
         }
       else
         {
@@ -426,10 +431,10 @@ convolve_pixel_alpha_weight_componentwise (GeglProperties       *o,
           if (alphasum != 0)
           {
             sum = sum * inv_divisor;
-            sum = sum * matrixsum / alphasum + o->offset;
+            sum = sum * matrixsum / alphasum + offset;
           }
           else
-            sum = o->offset;
+            sum = offset;
         }
       else
         {
@@ -454,6 +459,8 @@ process (GeglOperation       *operation,
   gfloat                  *dst_buf;
   gfloat                   matrix[MAX_MATRIX_SIZE][MAX_MATRIX_SIZE]={{0,}};
   gfloat                   matrixsum = 0.0;
+  gfloat                   divisor = o->divisor;
+  gfloat                   offset = o->offset;
   gfloat                   inv_divisor;
   gint                     x, y;
   gint                     matrix_size = MAX_MATRIX_SIZE;
@@ -464,8 +471,8 @@ process (GeglOperation       *operation,
   make_matrix (o, matrix, matrix_size);
 
   if (o->normalize)
-    normalize_o (o, matrix, matrix_size);
-  inv_divisor = 1.0 / o->divisor;
+    normalize_div_off (matrix, matrix_size, &divisor, &offset);
+  inv_divisor = 1.0 / divisor;
 
   for (x = 0; x < matrix_size; x++)
     for (y = 0; y < matrix_size; y++)
@@ -497,7 +504,7 @@ process (GeglOperation       *operation,
               for (x = result->x; x < result->width + result->x; x++)
               {
                 convolve_pixel_alpha_weight_componentwise (o, src_buf, dst_buf, result, &rect,
-                                           matrix, matrix_size, d_offset, ss_offset, x, y, matrixsum, inv_divisor);
+                                           matrix, matrix_size, d_offset, ss_offset, x, y, matrixsum, inv_divisor, offset);
                 d_offset += 4;
                 ss_offset += 4;
               }
@@ -512,7 +519,7 @@ process (GeglOperation       *operation,
               for (x = result->x; x < result->width + result->x; x++)
               {
                 convolve_pixel_alpha_weight (o, src_buf, dst_buf, result, &rect,
-                                           matrix, matrix_size, d_offset, ss_offset, x, y, matrixsum, inv_divisor);
+                                           matrix, matrix_size, d_offset, ss_offset, x, y, matrixsum, inv_divisor, offset);
                 d_offset += 4;
                 ss_offset += 4;
               }
@@ -530,7 +537,7 @@ process (GeglOperation       *operation,
               for (x = result->x; x < result->width + result->x; x++)
               {
                 convolve_pixel_componentwise (o, src_buf, dst_buf, result, &rect,
-                                matrix, matrix_size, d_offset, ss_offset, x, y, matrixsum, inv_divisor);
+                                matrix, matrix_size, d_offset, ss_offset, x, y, matrixsum, inv_divisor, offset);
                 d_offset += 4;
                 ss_offset += 4;
               }
@@ -545,7 +552,7 @@ process (GeglOperation       *operation,
               for (x = result->x; x < result->width + result->x; x++)
               {
                 convolve_pixel (o, src_buf, dst_buf, result, &rect,
-                                matrix, matrix_size, d_offset, ss_offset, x, y, matrixsum, inv_divisor);
+                                matrix, matrix_size, d_offset, ss_offset, x, y, matrixsum, inv_divisor, offset);
                 d_offset += 4;
                 ss_offset += 4;
               }
