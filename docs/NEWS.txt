@@ -1,35 +1,43 @@
-GEGL-0.3.12 2017-01-0x
+GEGL-0.3.12 2017-02-0x
 ----------------------
 
-operations
+Operations
 ~~~~~~~~~~
 
-- transform: add a clip-to-input property, needed for some GIMP
-  corner-cases involving degenerate matrices
-- lens-distortion: default to transparent background - fix transparency
-  fringing glitch.
-- wavelet-blur: added to workshop.
-- color-warp: moved from workshop to common.
+- new workshop ops: watershed, waterpixels, bayer-matrix, linear-sinusoid, shadows-highlights, integral-image, segment-kmeans, 
+- new common ops: edge-neon, image-gradient, slic, wavelet-blur
+- moved from workshop to common: color-warp, component-extract
+- moved from common to workshop: bilateral-filter-fast
 - text: remove now unneeded work-around, ability to control vertical positioning, permit <1.0 font-sizes, handle text-color alpha, other improvements.
+- lens-distortion: default to transparent background - fix transparency fringing glitch.
 - crop: bounding box computation simplifications
 - noise-rgb: add gamma and distribution properties
 - dither: renamed from color-reduction, now with levels instead of bits property controls.
-- workshop: new watershed and waterpixels experimental ops.
-- edge-neon: new op, ported from an existing GIMP filter
+- high-pass: do inversion, over and contrast in a non-linear space
+- noise-rgb: add linear and gaussian properties
+- transform: add a clip-to-input property, needed for some GIMP corner-cases involving degenerate matrices
+- raw-load: improvements and fixes, handle Sony's ARW files
 
-core
+Core
 ~~~~
 
-- make some serializations/parameters less locale dependent.
+- make some serializations/parameters less locale dependent
 - cache some babl_format and babl_type return values
+- clean up the way we drop references and free memory
+- detect local ARW and CR2 files as raw, not TIFF
+
+Translations
+~~~~~~~~~~~~
+
+Catalan, German, Greek, Italian, Polish, Portuguese, Slovenian, Swedish translations updated
 
 Contributors
 ~~~~~~~~~~~~
 
 Piotr Drąg, Marco Ciampa, Sergey "Shnatsel" Davidoff, Ell, Øyvind Kolås, Anders
 Jonsson, Thomas Manni, Jordi Mas, Michael Natterer, Peter O'Regan, Jehan Pagès,
-Sebastian Rasmussen, Dimitris Spingos (Δημήτρης Σπίγγος), Martin Srebotnjak,
-Miroslav Talasek.
+Sebastian Rasmussen, Debarshi Ray, Dimitris Spingos (Δημήτρης Σπίγγος), 
+Martin Srebotnjak,Miroslav Talasek.
 
 
 GEGL-0.3.10 2016-11-06
