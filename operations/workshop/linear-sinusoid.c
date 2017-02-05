@@ -97,9 +97,9 @@ property_double (rotation, _("Rotation"), 0.0)
   value_range (0.0, 360.0)
   ui_meta     ("unit", "degree")
 
-property_int (supersampling, _("Supersampling"), 0)
-  description(_("Supersampling factor"))
-  value_range (0, 4)
+property_int (supersampling, _("Supersampling"), 1)
+  description(_("Number of samples along each axis per pixel"))
+  value_range (1, 8)
 
 #else
 
@@ -138,7 +138,6 @@ process (GeglOperation       *operation,
   gdouble         x, y;
   gdouble         i_dx, i_dy;
   gdouble         j_dx, j_dy;
-  gint            supersampling_size;
   gdouble         supersampling_scale;
   gdouble         supersampling_scale2;
   gint            m, n;
@@ -169,12 +168,11 @@ process (GeglOperation       *operation,
        (roi->x - o->x_offset) * i_dy +
        (roi->y - o->y_offset) * j_dy;
 
-  if (o->supersampling)
+  if (o->supersampling != 1)
     {
       gdouble offset;
 
-      supersampling_size   = 1 << o->supersampling;
-      supersampling_scale  = 1.0 / supersampling_size;
+      supersampling_scale  = 1.0 / o->supersampling;
       supersampling_scale2 = supersampling_scale * supersampling_scale;
 
       m_du = supersampling_scale * i_dx;
@@ -183,7 +181,7 @@ process (GeglOperation       *operation,
       n_du = supersampling_scale * j_dx;
       n_dv = supersampling_scale * j_dy;
 
-      offset  = (gdouble) (supersampling_size - 1) / supersampling_size;
+      offset  = (1.0 - supersampling_scale) / 2.0;
       x0     -= offset * (i_dx + j_dx);
       y0     -= offset * (i_dy + j_dy);
     }
@@ -197,7 +195,7 @@ process (GeglOperation       *operation,
         {
           gdouble z;
 
-          if (! o->supersampling)
+          if (o->supersampling == 1)
             {
               z = o->offset                -
                   o->x_amplitude * cos (x) -
@@ -211,12 +209,12 @@ process (GeglOperation       *operation,
               u0 = x;
               v0 = y;
 
-              for (n = 0; n < supersampling_size; n++)
+              for (n = 0; n < o->supersampling; n++)
                 {
                   u = u0;
                   v = v0;
 
-                  for (m = 0; m < supersampling_size; m++)
+                  for (m = 0; m < o->supersampling; m++)
                     {
                       gdouble w;
 
