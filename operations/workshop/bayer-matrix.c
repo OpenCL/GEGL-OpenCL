@@ -28,10 +28,10 @@ property_int (subdivisions, _("Subdivisions"), 1)
   value_range (0, 15)
 
 enum_start (gegl_bayer_matrix_rotation)
-   enum_value (GEGL_BAYER_MATRIX_ROTATION_0,   "0",   N_("0°"))
-   enum_value (GEGL_BAYER_MATRIX_ROTATION_90,  "90",  N_("90°"))
-   enum_value (GEGL_BAYER_MATRIX_ROTATION_180, "180", N_("180°"))
-   enum_value (GEGL_BAYER_MATRIX_ROTATION_270, "270", N_("270°"))
+  enum_value (GEGL_BAYER_MATRIX_ROTATION_0,   "0",   N_("0°"))
+  enum_value (GEGL_BAYER_MATRIX_ROTATION_90,  "90",  N_("90°"))
+  enum_value (GEGL_BAYER_MATRIX_ROTATION_180, "180", N_("180°"))
+  enum_value (GEGL_BAYER_MATRIX_ROTATION_270, "270", N_("270°"))
 enum_end (GeglBayerMatrixRotation)
 
 property_enum (rotation, _("Rotation"),
@@ -104,7 +104,10 @@ value_at (GeglProperties *o,
 {
   guint value = 0;
 
-  static const gint subdivision_value_luts[2][4][2][2] =
+  static const gint subdivision_value_luts[2 /* reflection */]
+                                          [4 /* rotation   */]
+                                          [2 /* row        */]
+                                          [2 /* column     */] =
     {
       {
         {{0, 2},
@@ -252,7 +255,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "render",
     "position-dependent", "true",
     "license",            "GPL3+",
-    "description",        _("Generate a bayer matrix pattern"),
+    "description",        _("Generate a Bayer matrix pattern"),
     NULL);
 }
 
