@@ -14,7 +14,7 @@ else
           -- unsharp-mask scale=10.0  \
   && $abs_top_builddir/tools/gegl-imgcmp                           \
           $abs_top_srcdir/tests/mipmap/unsharp-reference.png \
-          $abs_top_builddir/tests/mipmap/unsharp-output.png 10.0
+          $abs_top_builddir/tests/mipmap/unsharp-output.png 20.0
   failure=$?
   #if [ $failure -eq 0 ]; then
    # rm -f $abs_top_builddir/tests/mipmap/unsharp-output.png

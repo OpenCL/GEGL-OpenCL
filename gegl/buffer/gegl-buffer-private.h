@@ -213,10 +213,9 @@ gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
 /* helper function to compute tile indices and offsets for coordinates
  * based on a tile stride (tile_width or tile_height)
  */
-#define gegl_tile_indice(coordinate,stride) \
+#define gegl_tile_indice(coordinate,stride,level) \
   (((coordinate) >= 0)?\
-      (coordinate) / (stride):\
-      ((((coordinate) + 1) /(stride)) - 1))
-
+      ((coordinate)>>level) / (stride):\
+      (((((coordinate)>>level) + 1) /(stride)) - 1))
 
 #endif

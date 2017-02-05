@@ -125,9 +125,9 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
   GeglBufferIteratorPriv *priv = iter->priv;
   int                     index;
   SubIterState           *sub;
+  level = 0;
 
   g_return_val_if_fail (priv->num_buffers < GEGL_BUFFER_MAX_ITERATORS, 0);
-
 
   index = priv->num_buffers++;
   sub = &priv->sub_iter[index];
@@ -140,14 +140,6 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
 
   sub->buffer       = buf;
   sub->full_rect    = *roi;
-
-  if (level)
-  {
-    sub->full_rect.x >>= level;
-    sub->full_rect.y >>= level;
-    sub->full_rect.width >>= level;
-    sub->full_rect.height >>= level;
-  }
 
   sub->access_mode  = access_mode;
   sub->abyss_policy = abyss_policy;
@@ -163,9 +155,6 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
       priv->sub_iter[index].full_rect.width  = priv->sub_iter[0].full_rect.width;
       priv->sub_iter[index].full_rect.height = priv->sub_iter[0].full_rect.height;
     }
-
-  //if (level != 0)
-  //  g_warning ("iterator level != 0");
 
   return index;
 }
@@ -235,8 +224,8 @@ retile_subs (GeglBufferIterator *iter,
   int shift_x = priv->origin_tile.x;
   int shift_y = priv->origin_tile.y;
 
-  int tile_x = gegl_tile_indice (x + shift_x, priv->origin_tile.width);
-  int tile_y = gegl_tile_indice (y + shift_y, priv->origin_tile.height);
+  int tile_x = gegl_tile_indice (x + shift_x, priv->origin_tile.width, 0);
+  int tile_y = gegl_tile_indice (y + shift_y, priv->origin_tile.height, 0);
 
   /* Reset tile size */
   real_roi.x = (tile_x * priv->origin_tile.width)  - shift_x;
@@ -322,14 +311,14 @@ get_tile (GeglBufferIterator *iter,
     }
   else
     {
-      int shift_x = buf->shift_x; // XXX: affect by level?
+      int shift_x = buf->shift_x;
       int shift_y = buf->shift_y;
 
       int tile_width  = buf->tile_width;
       int tile_height = buf->tile_height;
 
-      int tile_x = gegl_tile_indice (iter->roi[index].x + shift_x, tile_width);
-      int tile_y = gegl_tile_indice (iter->roi[index].y + shift_y, tile_height);
+      int tile_x = gegl_tile_indice (iter->roi[index].x + shift_x, tile_width, sub->level);
+      int tile_y = gegl_tile_indice (iter->roi[index].y + shift_y, tile_height, sub->level);
 
       sub->current_tile = gegl_buffer_get_tile (buf, tile_x, tile_y, sub->level);
 

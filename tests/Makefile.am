@@ -4,12 +4,9 @@ SUBDIRS = \
 	buffer \
 	compositions \
 	simple \
+        mipmap \
 	xml \
 	ff-load-save \
 	python 
-
-if ENABLE_WORKSHOP  # we do not want these tests to run by default, as long as they fail
-SUBDIRS += mipmap 
-endif
 
 #opencl

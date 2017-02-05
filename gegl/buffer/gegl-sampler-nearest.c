@@ -139,8 +139,8 @@ gegl_sampler_get_pixel (GeglSampler    *sampler,
     gint tile_height = buffer->tile_height;
     gint tiledy      = y + buffer->shift_y;
     gint tiledx      = x + buffer->shift_x;
-    gint indice_x    = gegl_tile_indice (tiledx, tile_width);
-    gint indice_y    = gegl_tile_indice (tiledy, tile_height);
+    gint indice_x    = gegl_tile_indice (tiledx, tile_width, 0);
+    gint indice_y    = gegl_tile_indice (tiledy, tile_height, 0);
 
     GeglTile *tile = buffer->tile_storage->hot_tile;
 

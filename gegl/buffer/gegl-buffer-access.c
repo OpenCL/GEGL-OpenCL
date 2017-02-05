@@ -123,8 +123,8 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
     gint tile_height = buffer->tile_height;
     gint tiledy      = y + buffer->shift_y;
     gint tiledx      = x + buffer->shift_x;
-    gint indice_x    = gegl_tile_indice (tiledx, tile_width);
-    gint indice_y    = gegl_tile_indice (tiledy, tile_height);
+    gint indice_x    = gegl_tile_indice (tiledx, tile_width, 0);
+    gint indice_y    = gegl_tile_indice (tiledy, tile_height, 0);
 
     GeglTile *tile = buffer->tile_storage->hot_tile;
     const Babl *fish = NULL;
@@ -190,8 +190,8 @@ __gegl_buffer_set_pixel (GeglBuffer     *buffer,
     gint tile_height = buffer->tile_height;
     gint tiledy      = y + buffer->shift_y;
     gint tiledx      = x + buffer->shift_x;
-    gint indice_x    = gegl_tile_indice (tiledx, tile_width);
-    gint indice_y    = gegl_tile_indice (tiledy, tile_height);
+    gint indice_x    = gegl_tile_indice (tiledx, tile_width, 0);
+    gint indice_y    = gegl_tile_indice (tiledy, tile_height, 0);
 
     GeglTile *tile = buffer->tile_storage->hot_tile;
     const Babl *fish = NULL;
@@ -386,8 +386,8 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           gint      tiledx  = buffer_x + bufx;
           gint      offsetx = gegl_tile_offset (tiledx, tile_width);
           gint      y       = bufy;
-          gint index_x;
-          gint index_y;
+          gint      index_x;
+          gint      index_y;
           gint      lskip, rskip, pixels, row;
           guchar   *bp, *tile_base, *tp;
           GeglTile *tile;
@@ -399,8 +399,8 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           else
             pixels = tile_width - offsetx;
 
-          index_x = gegl_tile_indice (tiledx, tile_width);
-          index_y = gegl_tile_indice (tiledy, tile_height);
+          index_x = gegl_tile_indice (tiledx, tile_width, level);
+          index_y = gegl_tile_indice (tiledy, tile_height, level);
 
           tile = gegl_buffer_get_tile (buffer, index_x, index_y, level);
 
@@ -598,8 +598,8 @@ gegl_buffer_iterate_read_simple (GeglBuffer          *buffer,
             pixels = tile_width - offsetx;
 
           tile = gegl_tile_source_get_tile ((GeglTileSource *) (buffer),
-                                            gegl_tile_indice (tiledx, tile_width),
-                                            gegl_tile_indice (tiledy, tile_height),
+                                            gegl_tile_indice (tiledx, tile_width, 0),
+                                            gegl_tile_indice (tiledy, tile_height, 0),
                                             level);
 
           if (!tile)
@@ -828,7 +828,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
   read_input_rect.y = read_output_rect.y - y_read_offset;
   read_input_rect.width = read_output_rect.width;
   read_input_rect.height = read_output_rect.height;
-
+#if 1
   if (level)
     gegl_buffer_iterate_read_fringed (buffer,
                                       &read_input_rect,
@@ -839,6 +839,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
                                       level,
                                       GEGL_ABYSS_CLAMP);
   else
+#endif
     gegl_buffer_iterate_read_simple (buffer,
                                      &read_input_rect,
                                      read_buf,
@@ -967,10 +968,10 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
   gint          origin_x;
 
   /* Loop abyss works like iterating over a grid of tiles the size of the abyss */
-  gint loop_chunk_ix = gegl_tile_indice (roi->x - abyss->x, abyss->width);
-  gint loop_chunk_iy = gegl_tile_indice (roi->y - abyss->y, abyss->height);
+  gint loop_chunk_ix = gegl_tile_indice (roi->x - abyss->x, abyss->width, level);
+  gint loop_chunk_iy = gegl_tile_indice (roi->y - abyss->y, abyss->height, level);
 
-  current_roi.x = loop_chunk_ix * abyss->width + abyss->x;
+  current_roi.x = loop_chunk_ix * abyss->width  + abyss->x;
   current_roi.y = loop_chunk_iy * abyss->height + abyss->y;
 
   current_roi.width  = abyss->width;
@@ -1685,10 +1686,10 @@ gegl_buffer_copy (GeglBuffer          *src,
                 src_x = dst_x - (dst_rect->x - src_rect->x) + src->shift_x;
                 src_y = dst_y - (dst_rect->y - src_rect->y) + src->shift_y;
 
-                stx = gegl_tile_indice (src_x, tile_width);
-                sty = gegl_tile_indice (src_y, tile_height);
-                dtx = gegl_tile_indice (dst_x, tile_width);
-                dty = gegl_tile_indice (dst_y, tile_height);
+                stx = gegl_tile_indice (src_x, tile_width, 0);
+                sty = gegl_tile_indice (src_y, tile_height, 0);
+                dtx = gegl_tile_indice (dst_x, tile_width, 0);
+                dty = gegl_tile_indice (dst_y, tile_height, 0);
 
                 src_tile = gegl_buffer_get_tile (src, stx, sty, 0);
 
@@ -1856,8 +1857,8 @@ gegl_buffer_clear (GeglBuffer          *dst,
               {
                 gint dtx, dty;
 
-                dtx = gegl_tile_indice (dst_x, tile_width);
-                dty = gegl_tile_indice (dst_y, tile_height);
+                dtx = gegl_tile_indice (dst_x, tile_width, 0);
+                dty = gegl_tile_indice (dst_y, tile_height, 0);
 
                 gegl_tile_source_void ((GeglTileSource*)dst, dtx, dty, 0);
               }
