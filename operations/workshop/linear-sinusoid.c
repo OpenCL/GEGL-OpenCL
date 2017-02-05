@@ -110,6 +110,16 @@ property_int (supersampling, _("Supersampling"), 1)
 #include "gegl-op.h"
 #include <math.h>
 
+static inline gdouble
+odd_pow (gdouble base,
+         gdouble exponent)
+{
+  if (base >= 0.0)
+    return  pow ( base, exponent);
+  else
+    return -pow (-base, exponent);
+}
+
 static void
 prepare (GeglOperation *operation)
 {
@@ -200,7 +210,7 @@ process (GeglOperation       *operation,
               z = o->offset                -
                   o->x_amplitude * cos (x) -
                   o->y_amplitude * cos (y);
-              z = pow (z, o->exponent);
+              z = odd_pow (z, o->exponent);
             }
           else
             {
@@ -221,7 +231,7 @@ process (GeglOperation       *operation,
                       w = o->offset                -
                           o->x_amplitude * cos (u) -
                           o->y_amplitude * cos (v);
-                      w = pow (w, o->exponent);
+                      w = odd_pow (w, o->exponent);
 
                       z += w;
 

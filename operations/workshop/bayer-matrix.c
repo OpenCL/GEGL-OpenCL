@@ -52,7 +52,7 @@ property_double (offset, _("Offset"), 0.5)
   value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
   ui_range    (0.0, 1.0)
 
-property_double  (exponent, _("Exponent"), 1.0)
+property_double (exponent, _("Exponent"), 1.0)
   description(_("Value exponent"))
   value_range (0.0, G_MAXDOUBLE)
   ui_range    (0.0, 10.0)
@@ -82,6 +82,16 @@ property_int (y_offset, _("Y Offset"), 0)
 
 #define GEGL_BAYER_MATRIX_MAX_LUT_SUBDIVISIONS 8
 
+static inline gfloat
+odd_powf (gfloat base,
+          gfloat exponent)
+{
+  if (base >= 0.0f)
+    return  powf ( base, exponent);
+  else
+    return -powf (-base, exponent);
+}
+
 static void
 finalize (GObject *object)
 {
@@ -102,6 +112,7 @@ value_at (GeglProperties *o,
           gint            x,
           gint            y)
 {
+  gint  i;
   guint value = 0;
 
   static const gint subdivision_value_luts[2 /* reflection */]
@@ -141,7 +152,7 @@ value_at (GeglProperties *o,
 
   subdivision_values = subdivision_value_luts[o->reflect][o->rotation];
 
-  for (gint i = 0; i < o->subdivisions; i++)
+  for (i = 0; i < o->subdivisions; i++)
     {
       value <<= 2;
       value  |= subdivision_values[y & 1][x & 1];
@@ -149,9 +160,9 @@ value_at (GeglProperties *o,
       y     >>= 1;
     }
 
-  return powf (o->offset - .5f +
-               2.f * o->amplitude * (value + .5f) / (1u << (2 * o->subdivisions)),
-               o->exponent);
+  return odd_powf (o->offset - .5f +
+                   2.f * o->amplitude * (value + .5f) / (1u << (2 * o->subdivisions)),
+                   o->exponent);
 }
 
 static void
