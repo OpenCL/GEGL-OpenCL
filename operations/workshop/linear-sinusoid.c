@@ -37,29 +37,29 @@ property_double (y_period, _("Y Period"), 256.0)
   ui_meta     ("unit", "pixel-distance")
   ui_meta     ("axis", "y")
 
-property_double (x_amplitude, _("X Amplitude"), 0.25)
-  description (_("Amplitude for X axis"))
-  value_range (0.0, G_MAXDOUBLE)
-  ui_range    (0.0, 1.0)
+property_double (x_amplitude, _("X Amplitude"), 0.0)
+  description (_("Amplitude for X axis (logarithmic scale)"))
+  value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
+  ui_range    (-2.0, 2.0)
   ui_meta     ("axis", "x")
 
-property_double (y_amplitude, _("Y Amplitude"), 0.25)
-  description (_("Amplitude for Y axis"))
-  value_range (0.0, G_MAXDOUBLE)
-  ui_range    (0.0, 1.0)
+property_double (y_amplitude, _("Y Amplitude"), 0.0)
+  description (_("Amplitude for Y axis (logarithmic scale)"))
+  value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
+  ui_range    (-2.0, 2.0)
   ui_meta     ("axis", "y")
 
 property_double (x_phase, _("X Phase"), 0.0)
   description (_("Phase for X axis"))
   value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
-  ui_range    (-10000.0, 10000.0)
+  ui_range    (-512.0, 512.0)
   ui_meta     ("unit", "pixel-distance")
   ui_meta     ("axis", "x")
 
 property_double (y_phase, _("Y Phase"), 0.0)
   description (_("Phase for Y axis"))
   value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
-  ui_range    (-10000.0, 10000.0)
+  ui_range    (-512.0, 512.0)
   ui_meta     ("unit", "pixel-distance")
   ui_meta     ("axis", "y")
 
@@ -68,27 +68,27 @@ property_double (angle, _("Angle"), 90.0)
   value_range (0.0, 360.0)
   ui_meta     ("unit", "degree")
 
-property_double (offset, _("Offset"), 0.5)
+property_double (offset, _("Offset"), 0.0)
   description(_("Value offset"))
   value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
-  ui_range    (0.0, 1.0)
+  ui_range    (-1.0, 1.0)
 
-property_double (exponent, _("Exponent"), 1.0)
-  description(_("Value exponent"))
-  value_range (0.0, G_MAXDOUBLE)
-  ui_range    (0.0, 10.0)
+property_double (exponent, _("Exponent"), 0.0)
+  description(_("Value exponent (logarithmic scale)"))
+  value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
+  ui_range    (-2.0, 2.0)
 
 property_double (x_offset, _("X Offset"), 0.0)
   description (_("Offset for X axis"))
   value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
-  ui_range    (-10000.0, 10000.0)
+  ui_range    (-512.0, 512.0)
   ui_meta     ("unit", "pixel-coordinate")
   ui_meta     ("axis", "x")
 
 property_double (y_offset, _("Y Offset"), 0.0)
   description (_("Offset for Y axis"))
   value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
-  ui_range    (-10000.0, 10000.0)
+  ui_range    (-512.0, 512.0)
   ui_meta     ("unit", "pixel-coordinate")
   ui_meta     ("axis", "y")
 
@@ -142,7 +142,10 @@ process (GeglOperation       *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   gdouble         scale;
   gdouble         x_scale, y_scale;
+  gdouble         x_amplitude, y_amplitude;
   gdouble         x_angle, y_angle;
+  gdouble         offset;
+  gdouble         exponent;
   gint            i, j;
   gdouble         x0, y0;
   gdouble         x, y;
@@ -161,7 +164,14 @@ process (GeglOperation       *operation,
 
   x_scale = 2 * G_PI * scale / o->x_period;
   y_scale = 2 * G_PI * scale / o->y_period;
-  
+
+  x_amplitude = exp2 (o->x_amplitude) / 4.0;
+  y_amplitude = exp2 (o->y_amplitude) / 4.0;
+
+  offset = o->offset + .5;
+
+  exponent = exp2 (o->exponent);
+
   x_angle = -G_PI *  o->rotation             / 180.0;
   y_angle = -G_PI * (o->rotation + o->angle) / 180.0;
 
@@ -207,10 +217,10 @@ process (GeglOperation       *operation,
 
           if (o->supersampling == 1)
             {
-              z = o->offset                -
-                  o->x_amplitude * cos (x) -
-                  o->y_amplitude * cos (y);
-              z = odd_pow (z, o->exponent);
+              z = offset                -
+                  x_amplitude * cos (x) -
+                  y_amplitude * cos (y);
+              z = odd_pow (z, exponent);
             }
           else
             {
@@ -228,10 +238,10 @@ process (GeglOperation       *operation,
                     {
                       gdouble w;
 
-                      w = o->offset                -
-                          o->x_amplitude * cos (u) -
-                          o->y_amplitude * cos (v);
-                      w = odd_pow (w, o->exponent);
+                      w = offset                -
+                          x_amplitude * cos (u) -
+                          y_amplitude * cos (v);
+                      w = odd_pow (w, exponent);
 
                       z += w;
 

@@ -42,32 +42,32 @@ property_enum (rotation, _("Rotation"),
 property_boolean (reflect, _("Reflect"), FALSE)
   description(_("Reflect the pattern horizontally"))
 
-property_double (amplitude, _("Amplitude"), 0.5)
-  description(_("Pattern amplitude"))
+property_double (amplitude, _("Amplitude"), 0.0)
+  description(_("Pattern amplitude (logarithmic scale)"))
   value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
-  ui_range    (0.0, 1.0)
+  ui_range    (-2.0, 2.0)
 
-property_double (offset, _("Offset"), 0.5)
+property_double (offset, _("Offset"), 0.0)
   description(_("Value offset"))
   value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
-  ui_range    (0.0, 1.0)
+  ui_range    (-1.0, 1.0)
 
-property_double (exponent, _("Exponent"), 1.0)
-  description(_("Value exponent"))
-  value_range (0.0, G_MAXDOUBLE)
-  ui_range    (0.0, 10.0)
+property_double (exponent, _("Exponent"), 0.0)
+  description(_("Value exponent (logarithmic scale)"))
+  value_range (-G_MAXDOUBLE, G_MAXDOUBLE)
+  ui_range    (-2.0, 2.0)
 
 property_int (x_offset, _("X Offset"), 0)
   description (_("Offset for X axis"))
   value_range (G_MININT, G_MAXINT)
-  ui_range    (10000, 10000)
+  ui_range    (-512, 512)
   ui_meta     ("unit", "pixel-coordinate")
   ui_meta     ("axis", "x")
 
 property_int (y_offset, _("Y Offset"), 0)
   description (_("Offset for Y axis"))
   value_range (G_MININT, G_MAXINT)
-  ui_range    (10000, 10000)
+  ui_range    (-512, 512)
   ui_meta     ("unit", "pixel-coordinate")
   ui_meta     ("axis", "y")
 
@@ -160,9 +160,10 @@ value_at (GeglProperties *o,
       y     >>= 1;
     }
 
-  return odd_powf (o->offset - .5f +
-                   2.f * o->amplitude * (value + .5f) / (1u << (2 * o->subdivisions)),
-                   o->exponent);
+  return odd_powf (o->offset            +
+                   exp2f (o->amplitude) *
+                   (value + .5f) / (1u << (2 * o->subdivisions)),
+                   exp2f (o->exponent));
 }
 
 static void
