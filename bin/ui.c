@@ -336,6 +336,7 @@ int mrg_ui_main (int argc, char **argv, char **ops)
    * already works well.
    */
   g_setenv ("GEGL_MIPMAP_RENDERING", "1", TRUE);
+  g_setenv ("GEGL_USE_OPENCL", "no", TRUE);
 #endif
 
 /* we want to see the speed gotten if the fastest babl conversions we have were more accurate */
