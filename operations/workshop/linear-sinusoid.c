@@ -23,17 +23,17 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (x_period, _("X Period"), 256.0)
+property_double (x_period, _("X Period"), 128.0)
   description (_("Period for X axis"))
-  value_range (0.0001, G_MAXDOUBLE)
-  ui_range    (0.0001, 1000.0)
+  value_range (0.0, G_MAXDOUBLE)
+  ui_range    (0.0, 256.0)
   ui_meta     ("unit", "pixel-distance")
   ui_meta     ("axis", "x")
 
-property_double (y_period, _("Y Period"), 256.0)
+property_double (y_period, _("Y Period"), 128.0)
   description (_("Period for Y axis"))
-  value_range (0.0001, G_MAXDOUBLE)
-  ui_range    (0.0001, 1000.0)
+  value_range (0.0, G_MAXDOUBLE)
+  ui_range    (0.0, 256.0)
   ui_meta     ("unit", "pixel-distance")
   ui_meta     ("axis", "y")
 
@@ -140,12 +140,12 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
+  gdouble         offset;
+  gdouble         exponent;
   gdouble         scale;
   gdouble         x_scale, y_scale;
   gdouble         x_amplitude, y_amplitude;
   gdouble         x_angle, y_angle;
-  gdouble         offset;
-  gdouble         exponent;
   gint            i, j;
   gdouble         x0, y0;
   gdouble         x, y;
@@ -160,6 +160,18 @@ process (GeglOperation       *operation,
   gdouble         n_du, n_dv;
   gfloat         *result = out_buf;
 
+  offset   = o->offset + .5;
+  exponent = exp2 (o->exponent);
+
+  if (o->x_period == 0.0 || o->y_period == 0.0)
+    {
+      gfloat value = odd_pow (offset, exponent);
+
+      gegl_memset_pattern (result, &value, sizeof (value), n_pixels);
+
+      return TRUE;
+    }
+
   scale = 1.0 / (1 << level);
 
   x_scale = 2 * G_PI * scale / o->x_period;
@@ -167,10 +179,6 @@ process (GeglOperation       *operation,
 
   x_amplitude = exp2 (o->x_amplitude) / 4.0;
   y_amplitude = exp2 (o->y_amplitude) / 4.0;
-
-  offset = o->offset + .5;
-
-  exponent = exp2 (o->exponent);
 
   x_angle = -G_PI *  o->rotation             / 180.0;
   y_angle = -G_PI * (o->rotation + o->angle) / 180.0;
