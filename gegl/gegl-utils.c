@@ -276,64 +276,51 @@ gegl_free (gpointer buf)
   g_free (*((gpointer*)buf -1));
 }
 
-#define MAKE_COPY_CASE(typesize)\
-case typesize: \
-  while (count--) \
-    { \
-      memcpy (dst, src, typesize); \
-      dst += typesize; \
-    } \
-  return;
-
 void
 gegl_memset_pattern (void * restrict       dst_ptr,
                      const void * restrict src_ptr,
                      gint                  pattern_size,
                      gint                  count)
 {
-  guchar *dst = dst_ptr;
+  guchar       *dst = dst_ptr;
   const guchar *src = src_ptr;
 
-  switch (pattern_size)
-  {
-    case 1: /* Y u8 */
+  /* g_assert (pattern_size > 0 && count >= 0); */
+
+  if (pattern_size == 1 || count == 0)
+    {
       memset (dst, *src, count);
-      return;
-MAKE_COPY_CASE(2) /* YA u8 */
-MAKE_COPY_CASE(3) /* RGB u8 */
-#ifdef ARCH_X86_64
-    case 4: /* RGBA u8 */
-      if (count >= 2)
+    }
+  else
+    {
+      gsize block_size;
+      gsize remaining_size;
+
+      block_size = pattern_size,
+
+      memcpy (dst, src, block_size);
+      src  = dst;
+      dst += block_size;
+
+      remaining_size = (count - 1) * block_size;
+
+      while (block_size < remaining_size)
         {
-          guint64 pat2 = *(guint32 *)src_ptr;
-          pat2 = pat2 | pat2 << 32;
-          do {
-            memcpy (dst, &pat2, 8);
-            dst += 8;
-            count -= 2;
-          } while (count >= 2);
+          memcpy (dst, src, block_size);
+          dst += block_size;
+
+          remaining_size -= block_size;
+
+          /* limit the block size, so that we don't saturate the cache.
+           * 
+           * FIXME: optimal limit could use more benchmarking.
+           */
+          if (block_size <= 2048)
+            block_size *= 2;
         }
-      if (count)
-        {
-          memcpy (dst, src, 4);
-          dst += 4;
-        }
-      return;
-#else
-MAKE_COPY_CASE(4) /* RGBA u8 */
-#endif /* ARCH_X86_64 */
-MAKE_COPY_CASE(6) /* RGB u16 */
-MAKE_COPY_CASE(8) /* RGBA u16 */
-MAKE_COPY_CASE(12) /* RGB float */
-MAKE_COPY_CASE(16) /* RGBA float */
-    default:
-      while (count--)
-        {
-          memcpy (dst, src, pattern_size);
-          dst += pattern_size;
-        }
-      return;
-  }
+
+      memcpy (dst, src, remaining_size);
+    }
 }
 
 #undef MAKE_COPY_CASE
