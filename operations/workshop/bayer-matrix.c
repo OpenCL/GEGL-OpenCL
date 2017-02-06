@@ -27,6 +27,20 @@ property_int (subdivisions, _("Subdivisions"), 1)
   description(_("Number of subdivisions"))
   value_range (0, 15)
 
+property_int (x_scale, _("X Scale"), 1)
+  description(_("Horizontal pattern scale"))
+  value_range (1, G_MAXINT)
+  ui_range    (1, 128)
+  ui_meta     ("unit", "pixel-distance")
+  ui_meta     ("axis", "x")
+
+property_int (y_scale, _("Y Scale"), 1)
+  description(_("Vertical pattern scale"))
+  value_range (1, G_MAXINT)
+  ui_range    (1, 128)
+  ui_meta     ("unit", "pixel-distance")
+  ui_meta     ("axis", "y")
+
 enum_start (gegl_bayer_matrix_rotation)
   enum_value (GEGL_BAYER_MATRIX_ROTATION_0,   "0",   N_("0°"))
   enum_value (GEGL_BAYER_MATRIX_ROTATION_90,  "90",  N_("90°"))
@@ -90,6 +104,39 @@ odd_powf (gfloat base,
     return  powf ( base, exponent);
   else
     return -powf (-base, exponent);
+}
+
+static inline gboolean
+is_power_of_two (guint x)
+{
+  return (x & (x - 1)) == 0;
+}
+
+static inline gint
+log2i (guint x)
+{
+  gint result = 0;
+  gint shift  = 8 * sizeof (guint);
+
+  while (shift >>= 1)
+    {
+      if (x >> shift)
+        {
+          result  += shift;
+          x      >>= shift;
+        }
+    }
+
+  return result;
+}
+
+static inline gint
+div_floor (gint a,
+           gint b)
+{
+  /* we assume b is positive */
+  if (a < 0) a -= b - 1;
+  return a / b;
 }
 
 static void
@@ -206,12 +253,17 @@ process (GeglOperation       *operation,
          const GeglRectangle *roi,
          gint                 level)
 {
-  GeglProperties *o      = GEGL_PROPERTIES (operation);
+  GeglProperties *o            = GEGL_PROPERTIES (operation);
   gint            i, j;
-  gfloat         *result = out_buf;
-  const gfloat   *lut    = NULL;
+  gint            last_i, last_j;
+  gint            x, y;
+  gfloat         *result       = out_buf;
+  const gfloat   *lut          = NULL;
+  const gfloat   *lut_row      = NULL;
   gint            size;
   gint            coord_mask;
+  gint            log2_x_scale = -1;
+  gboolean        log2_y_scale = -1;
 
   if (o->subdivisions <= GEGL_BAYER_MATRIX_MAX_LUT_SUBDIVISIONS)
     lut = o->user_data;
@@ -219,17 +271,27 @@ process (GeglOperation       *operation,
   size       = 1 << o->subdivisions;
   coord_mask = size - 1;
 
-  for (j = 0; j < roi->height; j++)
+  if (is_power_of_two (o->x_scale))
+    log2_x_scale = log2i (o->x_scale);
+  if (is_power_of_two (o->y_scale))
+    log2_y_scale = log2i (o->y_scale);
+
+  for (j = roi->y - o->y_offset, last_j = j + roi->height; j != last_j; j++)
     {
-      gint y                = (j + roi->y - o->y_offset) & coord_mask;
-      const gfloat *lut_row = lut;
+      if (log2_y_scale >= 0) y = j >> log2_y_scale;
+      else                   y = div_floor (j, o->y_scale);
 
-      if (lut_row)
-        lut_row += size * y;
+      y &= coord_mask;
 
-      for (i = 0; i < roi->width; i++)
+      if (lut)
+        lut_row = lut + size * y;
+
+      for (i = roi->x - o->x_offset, last_i = i + roi->width; i != last_i; i++)
         {
-          gint x = (i + roi->x - o->x_offset) & coord_mask;
+          if (log2_x_scale >= 0) x = i >> log2_x_scale;
+          else                   x = div_floor (i, o->x_scale);
+
+          x &= coord_mask;
 
           if (lut_row)
             *result = lut_row[x];
