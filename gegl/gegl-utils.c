@@ -322,6 +322,3 @@ gegl_memset_pattern (void * restrict       dst_ptr,
       memcpy (dst, src, remaining_size);
     }
 }
-
-#undef MAKE_COPY_CASE
-
