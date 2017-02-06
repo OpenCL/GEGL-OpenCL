@@ -399,8 +399,8 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           else
             pixels = tile_width - offsetx;
 
-          index_x = gegl_tile_indice (tiledx, tile_width, level);
-          index_y = gegl_tile_indice (tiledy, tile_height, level);
+          index_x = gegl_tile_indice (tiledx, tile_width, 0);
+          index_y = gegl_tile_indice (tiledy, tile_height, 0);
 
           tile = gegl_buffer_get_tile (buffer, index_x, index_y, level);
 
@@ -968,8 +968,8 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
   gint          origin_x;
 
   /* Loop abyss works like iterating over a grid of tiles the size of the abyss */
-  gint loop_chunk_ix = gegl_tile_indice (roi->x - abyss->x, abyss->width, level);
-  gint loop_chunk_iy = gegl_tile_indice (roi->y - abyss->y, abyss->height, level);
+  gint loop_chunk_ix = gegl_tile_indice (roi->x - abyss->x, abyss->width, 0);
+  gint loop_chunk_iy = gegl_tile_indice (roi->y - abyss->y, abyss->height, 0);
 
   current_roi.x = loop_chunk_ix * abyss->width  + abyss->x;
   current_roi.y = loop_chunk_iy * abyss->height + abyss->y;
