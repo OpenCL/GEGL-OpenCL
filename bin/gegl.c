@@ -91,6 +91,14 @@ main (gint    argc,
   GError      *err       = NULL;
   gchar       *path_root = NULL;
 
+#if HAVE_MRG
+  /* we need to override opencl before gegl_main() for it to take effect
+     thus cannot do it from within mrg_main 
+   */
+  g_setenv ("GEGL_USE_OPENCL", "no", TRUE);
+  g_setenv ("GEGL_MIPMAP_RENDERING", "1", TRUE);
+#endif
+
   g_object_set (gegl_config (),
                 "application-license", "GPL3",
                 NULL);
