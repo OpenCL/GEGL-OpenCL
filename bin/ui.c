@@ -42,11 +42,6 @@
 #include <SDL.h>
 #include <gegl-audio-fragment.h>
 
-/* comment this out, and things render more correctly but much slower
- * for images larger than your screen/window resolution
- */
-#define USE_MIPMAPS    1
-
 /* set this to 1 to print the active gegl chain
  */
 #define DEBUG_OP_LIST  0
@@ -330,14 +325,6 @@ int mrg_ui_main (int argc, char **argv, char **ops)
   Mrg *mrg = mrg_new (1024, 768, NULL);
   State o = {NULL,};
 
-#ifdef USE_MIPMAPS
-  /* to use this UI comfortably, mipmap rendering needs to be enabled, there are
-   * still a few glitches, but for basic full frame un-panned, un-cropped use it
-   * already works well.
-   */
-  g_setenv ("GEGL_MIPMAP_RENDERING", "1", TRUE);
-  g_setenv ("GEGL_USE_OPENCL", "no", TRUE);
-#endif
 
 /* we want to see the speed gotten if the fastest babl conversions we have were more accurate */
   //g_setenv ("BABL_TOLERANCE", "0.1", TRUE);
@@ -457,8 +444,9 @@ static void prop_int_drag_cb (MrgEvent *e, void *data1, void *data2)
 
 static gchar *edited_prop = NULL;
 
-static void update_prop (const char *new_string, GeglNode *node)
+static void update_prop (const char *new_string, void *node_p)
 {
+  GeglNode *node = node_p;
   gegl_node_set (node, edited_prop, new_string, NULL);
 }
 
@@ -575,7 +563,7 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
           if (edited_prop && !strcmp (edited_prop, pspecs[i]->name))
           {
             mrg_printf (mrg, "%s:", pspecs[i]->name);
-            mrg_text_listen (mrg, MRG_CLICK, unset_edited_prop, node, pspecs[i]->name);
+            mrg_text_listen (mrg, MRG_CLICK, unset_edited_prop, node, (void*)pspecs[i]->name);
             mrg_edit_start (mrg, update_prop, node);
             mrg_printf (mrg, "%s\n", value);
             mrg_edit_end (mrg);
@@ -583,7 +571,7 @@ static void draw_gegl_generic (State *state, Mrg *mrg, cairo_t *cr, GeglNode *no
           }
           else
           {
-            mrg_text_listen (mrg, MRG_CLICK, set_edited_prop, node, pspecs[i]->name);
+            mrg_text_listen (mrg, MRG_CLICK, set_edited_prop, node, (void*)pspecs[i]->name);
             mrg_printf (mrg, "%s:%s\n", pspecs[i]->name, value);
             mrg_text_listen_done (mrg);
           }
