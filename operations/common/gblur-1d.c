@@ -347,7 +347,8 @@ fir_ver_blur (GeglBuffer          *src,
               gfloat              *cmatrix,
               gint                 clen,
               GeglAbyssPolicy      policy,
-              const Babl          *format)
+              const Babl          *format,
+              gint                 level)
 {
   GeglRectangle  cur_col = *rect;
   GeglRectangle  in_col;
@@ -808,9 +809,9 @@ gegl_gblur_1d_process (GeglOperation       *operation,
       iir_young_find_constants (o->std_dev, b, m);
 
       if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
-        iir_young_hor_blur (input, result, output, b, m, abyss_policy, format);
+        iir_young_hor_blur (input, result, output, b, m, abyss_policy, format, level);
       else
-        iir_young_ver_blur (input, result, output, b, m, abyss_policy, format);
+        iir_young_ver_blur (input, result, output, b, m, abyss_policy, format, level);
     }
   else
     {
@@ -830,9 +831,9 @@ gegl_gblur_1d_process (GeglOperation       *operation,
         }
 
       if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
-        fir_hor_blur (input, result, output, cmatrix, clen, abyss_policy, format);
+        fir_hor_blur (input, result, output, cmatrix, clen, abyss_policy, format, level);
       else
-        fir_ver_blur (input, result, output, cmatrix, clen, abyss_policy, format);
+        fir_ver_blur (input, result, output, cmatrix, clen, abyss_policy, format, level);
 
       gegl_free (cmatrix);
     }
