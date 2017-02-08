@@ -29,6 +29,9 @@ property_double (exposure, _("Exposure"), 0.0)
     description (_("Adjust the exposure correction"))
     value_range (-3.0, 3.0)
 
+property_boolean (srgb, _("sRGB"), FALSE)
+    description (_("Use sRGB gamma instead of linear"))
+
 #else
 
 #define GEGL_OP_POINT_FILTER
@@ -42,9 +45,14 @@ property_double (exposure, _("Exposure"), 0.0)
 static void
 prepare (GeglOperation *operation)
 {
+  GeglProperties *o = GEGL_PROPERTIES (operation);
   const Babl *format;
 
-  format = babl_format ("R'G'B'A float");
+  if (o->srgb)
+    format = babl_format ("R'G'B'A float");
+  else
+    format = babl_format ("RGBA float");
+
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
 }
