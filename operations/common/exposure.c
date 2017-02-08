@@ -44,7 +44,7 @@ property_double (gamma, _("Gamma adjustment"), 1.0)
 
 #include <math.h>
 #ifdef _MSC_VER
-#define powf(a,b) ((gfloat)pow(a,b))
+#define exp2f (b) ((gfloat) pow (2.0, b))
 #endif
 
 static void
@@ -69,7 +69,7 @@ process (GeglOperation       *op,
   gfloat     *in_pixel;
   gfloat     *out_pixel;
 
-  gfloat      gain = powf(2.0, o->exposure);
+  gfloat      gain = exp2f (o->exposure);
   gfloat      offset = o->offset;
   gfloat      gamma = 1.0 / o->gamma;
   
@@ -138,7 +138,7 @@ cl_process (GeglOperation       *op,
 
   GeglProperties *o = GEGL_PROPERTIES (op);
 
-  gfloat      gain = powf(2.0, o->exposure);
+  gfloat      gain = exp2f (o->exposure);
   gfloat      offset = o->offset;
   gfloat      gamma = 1.0 / o->gamma;
   
