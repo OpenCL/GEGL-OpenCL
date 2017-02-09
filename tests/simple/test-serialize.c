@@ -73,7 +73,7 @@ TestCase tests[] = {
 
     {"exposure foo=2",
      "gegl:exposure",
-     "gegl:exposure has no foo property, properties: 'exposure', 'offset', 'gamma', "},
+     "gegl:exposure has no foo property, properties: 'black', 'exposure', 'offset', 'gamma', "},
 
     {"over aux=[text string='foo bar']",
      "svg:src-over aux=[ gegl:text string='foo bar' width=33 height=7 ]",
