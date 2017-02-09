@@ -230,7 +230,6 @@ operations/workshop/bilateral-filter-fast.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/ditto.c
-operations/workshop/dt-exposure.c
 operations/workshop/external/gluas.c
 operations/workshop/external/lens-correct.c
 operations/workshop/external/line-profile.c
