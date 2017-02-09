@@ -127,18 +127,6 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
   int                     index;
   SubIterState           *sub;
 
-  //level = 0; // XXX - this disables mipmapping for iteration while it
-             //       is known to be broken
-
-  if (level)
-  {
-    roi2.x = roi->x >> level;
-    roi2.y = roi->y >> level;
-    roi2.width = roi->width >> level;
-    roi2.height  = roi->height >> level;
-    roi = &roi2;
-  }
-
   g_return_val_if_fail (priv->num_buffers < GEGL_BUFFER_MAX_ITERATORS, 0);
 
   index = priv->num_buffers++;

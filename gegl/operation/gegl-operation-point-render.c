@@ -80,6 +80,16 @@ gegl_operation_point_render_process (GeglOperation       *operation,
   const Babl *out_format;
   GeglOperationPointRenderClass *point_render_class;
 
+  GeglRectangle scaled_result = *result;
+  if (level)
+  {
+    scaled_result.x >>= level;
+    scaled_result.y >>= level;
+    scaled_result.width >>= level;
+    scaled_result.height >>= level;
+    result = &scaled_result;
+  }
+
   point_render_class = GEGL_OPERATION_POINT_RENDER_GET_CLASS (operation);
 
   out_format = gegl_operation_get_format (operation, "output");

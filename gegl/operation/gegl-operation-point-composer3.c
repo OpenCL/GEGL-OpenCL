@@ -220,6 +220,15 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
   const Babl *aux2_format = gegl_operation_get_format (operation, "aux2");
   const Babl *out_format  = gegl_operation_get_format (operation, "output");
 
+  GeglRectangle scaled_result = *result;
+  if (level)
+  {
+    scaled_result.x >>= level;
+    scaled_result.y >>= level;
+    scaled_result.width >>= level;
+    scaled_result.height >>= level;
+    result = &scaled_result;
+  }
 
   if ((result->width > 0) && (result->height > 0))
     {
