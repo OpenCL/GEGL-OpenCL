@@ -258,7 +258,7 @@ iir_young_ver_blur (GeglBuffer          *src,
 
       iir_young_blur_1D (col, tmp, b, m, rect->height, nc, policy);
 
-      gegl_buffer_set (dst, &cur_col, 0, format, &col[3 * nc],
+      gegl_buffer_set (dst, &cur_col, level, format, &col[3 * nc],
                        GEGL_AUTO_ROWSTRIDE);
     }
 
@@ -370,11 +370,11 @@ fir_ver_blur (GeglBuffer          *src,
     {
       cur_col.x = in_col.x = rect->x + v;
 
-      gegl_buffer_get (src, &in_col, 1.0, format, col, GEGL_AUTO_ROWSTRIDE, policy);
+      gegl_buffer_get (src, &in_col, 1.0/(1<<level), format, col, GEGL_AUTO_ROWSTRIDE, policy);
 
       fir_blur_1D (col, out, cmatrix, clen, rect->height, nc);
 
-      gegl_buffer_set (dst, &cur_col, 0, format, out, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (dst, &cur_col, level, format, out, GEGL_AUTO_ROWSTRIDE);
     }
 
   gegl_free (out);
@@ -588,6 +588,7 @@ static GeglGblur1dFilter
 filter_disambiguation (GeglGblur1dFilter filter,
                        gfloat            std_dev)
 {
+  return GEGL_GBLUR_1D_IIR;
   if (filter == GEGL_GBLUR_1D_AUTO)
     {
       /* Threshold 1.0 is arbitrary */
@@ -794,19 +795,33 @@ gegl_gblur_1d_process (GeglOperation       *operation,
                        const GeglRectangle *result,
                        gint                 level)
 {
-  GeglProperties *o      = GEGL_PROPERTIES (operation);
-  const Babl *format = gegl_operation_get_format (operation, "output");
+  GeglProperties *o       = GEGL_PROPERTIES (operation);
+  const Babl     *format  = gegl_operation_get_format (operation, "output");
+  gfloat          std_dev = o->std_dev;
 
   GeglGblur1dFilter filter;
   GeglAbyssPolicy   abyss_policy = to_gegl_policy (o->abyss_policy);
 
-  filter = filter_disambiguation (o->filter, o->std_dev);
+  GeglRectangle rect2;
+  //level = 0; // mipmap rendering doesn't work yet, unsure if it is
+             // the code in the op or in GeglBuffer
+  if (level)
+  {
+    rect2 = *result;
+    rect2.x      = result->x >> level;
+    rect2.y      = result->y >> level;
+    rect2.width  = result->width >> level;
+    rect2.height = result->height >> level;
+   // result = &rect2;
+    std_dev = std_dev * (1.0/(1<<level));
+  }
+  filter = filter_disambiguation (o->filter, std_dev);
 
   if (filter == GEGL_GBLUR_1D_IIR)
     {
       gdouble b[4], m[3][3];
 
-      iir_young_find_constants (o->std_dev, b, m);
+      iir_young_find_constants (std_dev, b, m);
 
       if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
         iir_young_hor_blur (input, result, output, b, m, abyss_policy, format, level);
@@ -818,7 +833,7 @@ gegl_gblur_1d_process (GeglOperation       *operation,
       gfloat *cmatrix;
       gint    clen;
 
-      clen = fir_gen_convolve_matrix (o->std_dev, &cmatrix);
+      clen = fir_gen_convolve_matrix (std_dev, &cmatrix);
 
       /* FIXME: implement others format cases */
       if (gegl_operation_use_opencl (operation) &&
