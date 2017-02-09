@@ -237,7 +237,6 @@ retile_subs (GeglBufferIterator *iter,
   GeglBufferIteratorPriv *priv = iter->priv;
   GeglRectangle real_roi;
   int index;
-  int level = priv->sub_iter[0].level;
 
   int shift_x = priv->origin_tile.x;
   int shift_y = priv->origin_tile.y;
