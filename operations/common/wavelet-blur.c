@@ -66,8 +66,6 @@ wav_gen_convolve_matrix (gdouble   radius,
 
   matrix_length = wav_calc_convolve_matrix_length (radius);
   cmatrix = g_new (gdouble, matrix_length);
-  if (!cmatrix)
-    return 0;
 
   if (matrix_length == 1)
     {
