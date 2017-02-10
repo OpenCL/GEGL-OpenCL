@@ -31,10 +31,6 @@ property_double (exposure, _("Exposure"), 0.0)
     description (_("Relative brightness change in stops"))
     ui_range    (-10.0, 10.0)
 
-property_double (offset, _("Offset"), 0.0)
-    description (_("Offset value added"))
-    value_range (-0.5, 0.5)
-
 property_double (gamma, _("Gamma adjustment"), 1.0)
     value_range (0.01, 10)
     ui_range    (0.01, 3.0)
@@ -77,7 +73,6 @@ process (GeglOperation       *op,
   gfloat      diff;
   gfloat      exposure_negated = (gfloat) -o->exposure;
   gfloat      gain;
-  gfloat      offset = o->offset;
   gfloat      white;
   gfloat      gamma = 1.0 / o->gamma;
   
@@ -93,9 +88,9 @@ process (GeglOperation       *op,
   if (gamma == 1.0)
     for (i=0; i<n_pixels; i++)
       {
-        out_pixel[0] = (in_pixel[0] - black) * gain + offset;
-        out_pixel[1] = (in_pixel[1] - black) * gain + offset;
-        out_pixel[2] = (in_pixel[2] - black) * gain + offset;
+        out_pixel[0] = (in_pixel[0] - black) * gain;
+        out_pixel[1] = (in_pixel[1] - black) * gain;
+        out_pixel[2] = (in_pixel[2] - black) * gain;
         out_pixel[3] = in_pixel[3];
         
         out_pixel += 4;
@@ -104,9 +99,9 @@ process (GeglOperation       *op,
   else
     for (i=0; i<n_pixels; i++)
       {
-        out_pixel[0] = powf ((in_pixel[0] - black) * gain + offset, gamma);
-        out_pixel[1] = powf ((in_pixel[1] - black) * gain + offset, gamma);
-        out_pixel[2] = powf ((in_pixel[2] - black) * gain + offset, gamma);
+        out_pixel[0] = powf ((in_pixel[0] - black) * gain, gamma);
+        out_pixel[1] = powf ((in_pixel[1] - black) * gain, gamma);
+        out_pixel[2] = powf ((in_pixel[2] - black) * gain, gamma);
         out_pixel[3] = in_pixel[3];
         
         out_pixel += 4;
@@ -123,13 +118,12 @@ static const char* kernel_source =
 "                              __global       float4 *out,    \n"
 "                              float                  black,  \n"
 "                              float                  gain,   \n"
-"                              float                  offset, \n"
 "                              float                  gamma)  \n"
 "{                                                            \n"
 "  int gid = get_global_id(0);                                \n"
 "  float4 in_v  = in[gid];                                    \n"
 "  float4 out_v;                                              \n"
-"  out_v.xyz = pow(((in_v.xyz - black) * gain) + offset, 1.0/gamma);    \n"
+"  out_v.xyz = pow(((in_v.xyz - black) * gain), 1.0/gamma);   \n"
 "  out_v.w   =  in_v.w;                                       \n"
 "  out[gid]  =  out_v;                                        \n"
 "}                                                            \n";
@@ -155,7 +149,6 @@ cl_process (GeglOperation       *op,
   gfloat      diff;
   gfloat      exposure_negated = (gfloat) -o->exposure;
   gfloat      gain;
-  gfloat      offset = o->offset;
   gfloat      white;
   gfloat      gamma = 1.0 / o->gamma;
   
@@ -176,8 +169,7 @@ cl_process (GeglOperation       *op,
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&black);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&gain);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float), (void*)&offset);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 5, sizeof(cl_float), (void*)&gamma);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float), (void*)&gamma);
   if (cl_err != CL_SUCCESS) return cl_err;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
