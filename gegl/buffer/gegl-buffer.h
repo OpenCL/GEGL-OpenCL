@@ -246,6 +246,7 @@ gboolean          gegl_buffer_set_abyss      (GeglBuffer          *buffer,
  * data is converted to the desired BablFormat, if the BablFormat stored and
  * fetched is the same this amounts to a series of memcpy's aligned to demux
  * the tile structure into a linear buffer.
+ *
  */
 void            gegl_buffer_get               (GeglBuffer          *buffer,
                                                const GeglRectangle *rect,
@@ -259,9 +260,9 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
  * gegl_buffer_set: (skip)
  * @buffer: the buffer to modify.
  * @rect: the coordinates we want to change the data of and the width/height of
- * the linear buffer being set, scale specifies the scaling factor applied to
+ * the linear buffer being set.
  * the data when setting.
- * @scale_level: the scale level being set, 0 = 1:1 = default = base mipmap level,
+ * @mipmap_level: the scale level being set, 0 = 1:1 = default = base mipmap level,
  * 1 = 1:2, 2=1:4, 3=1:8 ..
  * @format: the babl_format the linear buffer @src.
  * @src: linear buffer of image data to be stored in @buffer.
@@ -272,7 +273,7 @@ void            gegl_buffer_get               (GeglBuffer          *buffer,
  */
 void            gegl_buffer_set               (GeglBuffer          *buffer,
                                                const GeglRectangle *rect,
-                                               gint                 scale_level,
+                                               gint                 mipmap_level,
                                                const Babl          *format,
                                                const void          *src,
                                                gint                 rowstride);

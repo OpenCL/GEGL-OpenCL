@@ -122,7 +122,6 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
                           GeglAccessMode       access_mode,
                           GeglAbyssPolicy      abyss_policy)
 {
-  GeglRectangle roi2;
   GeglBufferIteratorPriv *priv = iter->priv;
   int                     index;
   SubIterState           *sub;
@@ -229,8 +228,8 @@ retile_subs (GeglBufferIterator *iter,
   int shift_x = priv->origin_tile.x;
   int shift_y = priv->origin_tile.y;
 
-  int tile_x = gegl_tile_indice (x + shift_x, priv->origin_tile.width, 0);
-  int tile_y = gegl_tile_indice (y + shift_y, priv->origin_tile.height, 0);
+  int tile_x = gegl_tile_indice (x + shift_x, priv->origin_tile.width);
+  int tile_y = gegl_tile_indice (y + shift_y, priv->origin_tile.height);
 
   /* Reset tile size */
   real_roi.x = (tile_x * priv->origin_tile.width)  - shift_x;
@@ -322,8 +321,8 @@ get_tile (GeglBufferIterator *iter,
       int tile_width  = buf->tile_width;
       int tile_height = buf->tile_height;
 
-      int tile_x = gegl_tile_indice (iter->roi[index].x + shift_x, tile_width, 0);
-      int tile_y = gegl_tile_indice (iter->roi[index].y + shift_y, tile_height, 0);
+      int tile_x = gegl_tile_indice (iter->roi[index].x + shift_x, tile_width);
+      int tile_y = gegl_tile_indice (iter->roi[index].y + shift_y, tile_height);
 
       sub->current_tile = gegl_buffer_get_tile (buf, tile_x, tile_y, sub->level);
 
@@ -438,7 +437,7 @@ prepare_iteration (GeglBufferIterator *iter)
       /* Format converison needed */
       if (gegl_buffer_get_format (sub->buffer) != sub->format)
         sub->access_mode |= GEGL_ITERATOR_INCOMPATIBLE;
-      /* Incompatable tiles */
+      /* Incompatiable tiles */
       else if ((priv->origin_tile.width  != buf->tile_width) ||
                (priv->origin_tile.height != buf->tile_height) ||
                (abs(origin_offset_x - current_offset_x) % priv->origin_tile.width != 0) ||
