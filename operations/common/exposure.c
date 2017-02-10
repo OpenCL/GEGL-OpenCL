@@ -23,7 +23,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (black, _("Black"), 0.0)
+property_double (black_level, _("Black level"), 0.0)
     description (_("Adjust the black level"))
     value_range (-0.1, 0.1)
 
@@ -69,7 +69,7 @@ process (GeglOperation       *op,
   GeglProperties *o = GEGL_PROPERTIES (op);
   gfloat     *in_pixel;
   gfloat     *out_pixel;
-  gfloat      black = (gfloat) o->black;
+  gfloat      black_level = (gfloat) o->black_level;
   gfloat      diff;
   gfloat      exposure_negated = (gfloat) -o->exposure;
   gfloat      gain;
@@ -82,15 +82,15 @@ process (GeglOperation       *op,
   out_pixel = out_buf;
   
   white = exp2f (exposure_negated);
-  diff = MAX (white - black, 0.01);
+  diff = MAX (white - black_level, 0.01);
   gain = 1.0f / diff;
 
   if (gamma == 1.0)
     for (i=0; i<n_pixels; i++)
       {
-        out_pixel[0] = (in_pixel[0] - black) * gain;
-        out_pixel[1] = (in_pixel[1] - black) * gain;
-        out_pixel[2] = (in_pixel[2] - black) * gain;
+        out_pixel[0] = (in_pixel[0] - black_level) * gain;
+        out_pixel[1] = (in_pixel[1] - black_level) * gain;
+        out_pixel[2] = (in_pixel[2] - black_level) * gain;
         out_pixel[3] = in_pixel[3];
         
         out_pixel += 4;
@@ -99,9 +99,9 @@ process (GeglOperation       *op,
   else
     for (i=0; i<n_pixels; i++)
       {
-        out_pixel[0] = powf ((in_pixel[0] - black) * gain, gamma);
-        out_pixel[1] = powf ((in_pixel[1] - black) * gain, gamma);
-        out_pixel[2] = powf ((in_pixel[2] - black) * gain, gamma);
+        out_pixel[0] = powf ((in_pixel[0] - black_level) * gain, gamma);
+        out_pixel[1] = powf ((in_pixel[1] - black_level) * gain, gamma);
+        out_pixel[2] = powf ((in_pixel[2] - black_level) * gain, gamma);
         out_pixel[3] = in_pixel[3];
         
         out_pixel += 4;
@@ -114,19 +114,19 @@ process (GeglOperation       *op,
 #include "opencl/gegl-cl.h"
 
 static const char* kernel_source =
-"__kernel void kernel_exposure(__global const float4 *in,     \n"
-"                              __global       float4 *out,    \n"
-"                              float                  black,  \n"
-"                              float                  gain,   \n"
-"                              float                  gamma)  \n"
-"{                                                            \n"
-"  int gid = get_global_id(0);                                \n"
-"  float4 in_v  = in[gid];                                    \n"
-"  float4 out_v;                                              \n"
-"  out_v.xyz = pow(((in_v.xyz - black) * gain), 1.0/gamma);   \n"
-"  out_v.w   =  in_v.w;                                       \n"
-"  out[gid]  =  out_v;                                        \n"
-"}                                                            \n";
+"__kernel void kernel_exposure(__global const float4 *in,          \n"
+"                              __global       float4 *out,         \n"
+"                              float                  black_level, \n"
+"                              float                  gain,        \n"
+"                              float                  gamma)       \n"
+"{                                                                 \n"
+"  int gid = get_global_id(0);                                     \n"
+"  float4 in_v  = in[gid];                                         \n"
+"  float4 out_v;                                                   \n"
+"  out_v.xyz = pow(((in_v.xyz - black_level) * gain), 1.0/gamma);  \n"
+"  out_v.w   =  in_v.w;                                            \n"
+"  out[gid]  =  out_v;                                             \n"
+"}                                                                 \n";
 
 static GeglClRunData *cl_data = NULL;
 
@@ -145,7 +145,7 @@ cl_process (GeglOperation       *op,
 
   GeglProperties *o = GEGL_PROPERTIES (op);
 
-  gfloat      black = (gfloat) o->black;
+  gfloat      black_level = (gfloat) o->black_level;
   gfloat      diff;
   gfloat      exposure_negated = (gfloat) -o->exposure;
   gfloat      gain;
@@ -162,12 +162,12 @@ cl_process (GeglOperation       *op,
   if (!cl_data) return 1;
 
   white = exp2f (exposure_negated);
-  diff = MAX (white - black, 0.01);
+  diff = MAX (white - black_level, 0.01);
   gain = 1.0f / diff;
 
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 0, sizeof(cl_mem),   (void*)&in_tex);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&black);
+  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&black_level);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&gain);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float), (void*)&gamma);
   if (cl_err != CL_SUCCESS) return cl_err;
