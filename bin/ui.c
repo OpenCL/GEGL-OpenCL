@@ -44,7 +44,7 @@
 
 /* set this to 1 to print the active gegl chain
  */
-#define DEBUG_OP_LIST  0
+//#define DEBUG_OP_LIST  1
 
 
 static int audio_len   = 0;
@@ -1156,47 +1156,32 @@ static char *get_path_parent (const char *path)
 
 static char *suffix_path (const char *path)
 {
-  char *ret, *last_dot;
-
+  char *ret;
   if (!path)
     return NULL;
   ret  = malloc (strlen (path) + strlen (suffix) + 3);
   strcpy (ret, path);
-  last_dot = strrchr (ret, '.');
-  if (last_dot)
-  {
-    char *extension = strdup (last_dot + 1);
-    sprintf (last_dot, "%s.%s", suffix, extension);
-   free (extension);
-  }
-  else
-  {
-    sprintf (ret, "%s%s", path, suffix);
-  }
+  sprintf (ret, "%s%s", path, ".gegl");
   return ret;
 }
 
 static char *unsuffix_path (const char *path)
 {
-  char *ret = NULL, *last_dot, *extension;
-  char *suf;
+  char *ret = NULL, *last_dot;
 
   if (!path)
     return NULL;
   ret = malloc (strlen (path) + 4);
   strcpy (ret, path);
   last_dot = strrchr (ret, '.');
-  extension = strdup (last_dot + 1);
-
-  suf = strstr(ret, suffix);
-  sprintf (suf, ".%s", extension);
-  free (extension);
+  *last_dot = '\0';
   return ret;
 }
 
 static int is_gegl_path (const char *path)
 {
-  if (strstr (path, suffix)) return 1;
+  if (g_str_has_suffix (path, ".gegl"))
+    return 1;
   return 0;
 }
 
@@ -1343,7 +1328,10 @@ static void load_path (State *o)
   }
   else
   {
-    meta = gegl_meta_get (path);
+    meta = NULL;
+    if (is_gegl_path (path))
+      g_file_get_contents (path, &meta, NULL, NULL);
+    //meta = gegl_meta_get (path);
     if (meta)
     {
       GSList *nodes, *n;
@@ -1958,7 +1946,8 @@ static void save_cb (MrgEvent *event, void *data1, void *data2)
   }
   gegl_node_remove_child (o->gegl, load);
   gegl_node_link_many (o->load, o->source, NULL);
-  gegl_meta_set (path, serialized);
+
+  g_file_set_contents (path, serialized, -1, NULL);
   g_free (serialized);
   o->rev = 0;
 }
