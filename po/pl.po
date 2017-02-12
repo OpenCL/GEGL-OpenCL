@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-05 18:04+0100\n"
-"PO-Revision-Date: 2017-02-05 18:05+0100\n"
+"POT-Creation-Date: 2017-02-12 14:54+0100\n"
+"PO-Revision-Date: 2017-02-12 14:55+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -23,17 +23,17 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: ../bin/gegl.c:153
+#: ../bin/gegl.c:161
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Nie można odczytać pliku: %s"
 
-#: ../bin/gegl.c:198
+#: ../bin/gegl.c:206
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Nieprawidłowy wykres, przerywanie.\n"
 
-#: ../bin/gegl.c:353 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:361 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Nieznany tryb GeglOption: %d"
@@ -171,12 +171,11 @@ msgstr ""
 
 #: ../gegl/gegl-enums.c:33 ../gegl/gegl-enums.c:87
 #: ../operations/common/fractal-explorer.c:93
-#: ../operations/common/gaussian-blur-iir.c:31
-#: ../operations/common/gblur-1d.c:31
+#: ../operations/common/gaussian-blur.c:31 ../operations/common/gblur-1d.c:31
 msgid "None"
 msgstr "Brak"
 
-#: ../gegl/gegl-enums.c:34 ../operations/common/gaussian-blur-iir.c:32
+#: ../gegl/gegl-enums.c:34 ../operations/common/gaussian-blur.c:32
 #: ../operations/common/gblur-1d.c:32
 msgid "Clamp"
 msgstr "Zacisk"
@@ -185,12 +184,12 @@ msgstr "Zacisk"
 msgid "Loop"
 msgstr "Pętla"
 
-#: ../gegl/gegl-enums.c:36 ../operations/common/gaussian-blur-iir.c:33
-#: ../operations/common/gblur-1d.c:33 ../operations/workshop/dt-exposure.c:24
+#: ../gegl/gegl-enums.c:36 ../operations/common/gaussian-blur.c:33
+#: ../operations/common/gblur-1d.c:33
 msgid "Black"
 msgstr "Czarny"
 
-#: ../gegl/gegl-enums.c:37 ../operations/common/gaussian-blur-iir.c:34
+#: ../gegl/gegl-enums.c:37 ../operations/common/gaussian-blur.c:34
 #: ../operations/common/gblur-1d.c:34
 msgid "White"
 msgstr "Biały"
@@ -1481,7 +1480,7 @@ msgid "Divisor"
 msgstr "Podzielnik"
 
 #: ../operations/common/convolution-matrix.c:54
-#: ../operations/common/exposure.c:29 ../operations/workshop/bayer-matrix.c:50
+#: ../operations/workshop/bayer-matrix.c:64
 #: ../operations/workshop/linear-sinusoid.c:71
 msgid "Offset"
 msgstr "Przesunięcie"
@@ -1515,7 +1514,7 @@ msgstr "Ważenie alfa"
 msgid "Border"
 msgstr "Krawędź"
 
-#: ../operations/common/convolution-matrix.c:608
+#: ../operations/common/convolution-matrix.c:615
 msgid "Apply a generic 5x5 convolution matrix"
 msgstr "Zastosowuje ogólne zniekształcenie macierzowe 5×5"
 
@@ -1777,13 +1776,11 @@ msgid "Type of GeglSampler used to fetch input pixels"
 msgstr "Typ GeglSampler używanego do pobierania pikseli wejściowych"
 
 #: ../operations/common/displace.c:42 ../operations/common/fractal-trace.c:64
-#: ../operations/common/gaussian-blur-iir.c:58
-#: ../operations/common/gblur-1d.c:59
+#: ../operations/common/gaussian-blur.c:58 ../operations/common/gblur-1d.c:59
 msgid "Abyss policy"
 msgstr "Polityka otchłani"
 
-#: ../operations/common/displace.c:45
-#: ../operations/common/gaussian-blur-iir.c:60
+#: ../operations/common/displace.c:45 ../operations/common/gaussian-blur.c:60
 #: ../operations/common/gblur-1d.c:61
 msgid "How image edges are handled"
 msgstr "Sposób obsługi krawędzi obrazu"
@@ -2150,25 +2147,27 @@ msgid "Combine multiple scene exposures into one high dynamic range image."
 msgstr ""
 "Połącz wiele ekspozycji scen w jeden obraz o wysokim zakresie dynamicznym."
 
-#: ../operations/common/exposure.c:25 ../operations/common/exposure.c:187
-#: ../operations/workshop/dt-exposure.c:28
-#: ../operations/workshop/dt-exposure.c:102
+#: ../operations/common/exposure.c:26
+msgid "Black level"
+msgstr "Poziom czerni"
+
+#: ../operations/common/exposure.c:27
+msgid "Adjust the black level"
+msgstr "Dostosuj poziom czerni"
+
+#: ../operations/common/exposure.c:30 ../operations/common/exposure.c:201
 msgid "Exposure"
 msgstr "Ekspozycja"
 
-#: ../operations/common/exposure.c:26
+#: ../operations/common/exposure.c:31
 msgid "Relative brightness change in stops"
 msgstr "Względna zmiana jasności w krokach"
 
-#: ../operations/common/exposure.c:30
-msgid "Offset value added"
-msgstr "Dodano wartość przesunięcia"
-
-#: ../operations/common/exposure.c:33
+#: ../operations/common/exposure.c:34
 msgid "Gamma adjustment"
 msgstr "Dostosowanie gammy"
 
-#: ../operations/common/exposure.c:189
+#: ../operations/common/exposure.c:203
 msgid ""
 "Changes Exposure of an image, allows stepping HDR and photographs up/down in "
 "stops. "
@@ -2457,89 +2456,52 @@ msgstr "Śledzenie fraktala"
 msgid "Transform the image with the fractals"
 msgstr "Zniekształć obraz za pomocą fraktali"
 
-#: ../operations/common/gaussian-blur.c:31
-#: ../operations/common/gaussian-blur-iir.c:25
-#: ../operations/common/gblur-1d.c:38
+#: ../operations/common/gaussian-blur.c:25 ../operations/common/gblur-1d.c:38
 msgid "Auto"
 msgstr "Autom."
 
-#: ../operations/common/gaussian-blur.c:32
-#: ../operations/common/gaussian-blur-iir.c:26
-#: ../operations/common/gblur-1d.c:39
+#: ../operations/common/gaussian-blur.c:26 ../operations/common/gblur-1d.c:39
 msgid "FIR"
 msgstr "FIR"
 
-#: ../operations/common/gaussian-blur.c:33
-#: ../operations/common/gaussian-blur-iir.c:27
-#: ../operations/common/gblur-1d.c:40
+#: ../operations/common/gaussian-blur.c:27 ../operations/common/gblur-1d.c:40
 msgid "IIR"
 msgstr "IIR"
 
-#: ../operations/common/gaussian-blur.c:36
-#: ../operations/common/gaussian-blur-iir.c:37
+#: ../operations/common/gaussian-blur.c:37
 msgid "Size X"
 msgstr "Rozmiar na osi X"
 
-#: ../operations/common/gaussian-blur.c:37
-#: ../operations/common/gaussian-blur-iir.c:38
+#: ../operations/common/gaussian-blur.c:38
 msgid "Standard deviation for the horizontal axis"
 msgstr "Standardowe odchylenie od osi poziomej"
 
-#: ../operations/common/gaussian-blur.c:44
-#: ../operations/common/gaussian-blur-iir.c:45
+#: ../operations/common/gaussian-blur.c:45
 msgid "Size Y"
 msgstr "Rozmiar na osi Y"
 
-#: ../operations/common/gaussian-blur.c:45
-msgid "Standard deviation for the vertical axis"
-msgstr "Standardowe odchylenie od osi pionowej"
-
-#: ../operations/common/gaussian-blur.c:52
-#: ../operations/common/gaussian-blur-iir.c:53
-#: ../operations/common/gblur-1d.c:54
-msgid "Filter"
-msgstr "Filtr"
-
-#: ../operations/common/gaussian-blur.c:55
-msgid "Optional parameter to override the automatic selection of blur filter"
-msgstr ""
-"Opcjonalny parametr do zastąpienia automatycznego wyboru filtru rozmycia"
-
-#: ../operations/common/gaussian-blur.c:704
-msgid "Gaussian Blur"
-msgstr "Rozmycie Gaussa"
-
-#: ../operations/common/gaussian-blur.c:706
-msgid ""
-"Each result pixel is the average of the neighbouring pixels weighted by a "
-"normal distribution with specified standard deviation."
-msgstr ""
-"Każdy wynikowy piksel jest średnią sąsiednich pikseli ważoną przez zwykłą "
-"dystrybucję z podanym odchyleniem standardowym."
-
-#: ../operations/common/gaussian-blur-iir.c:46
-#: ../operations/common/gblur-1d.c:44 ../operations/common/high-pass.c:25
-#: ../operations/common/unsharp-mask.c:25
+#: ../operations/common/gaussian-blur.c:46 ../operations/common/gblur-1d.c:44
+#: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:25
 msgid "Standard deviation (spatial scale factor)"
 msgstr "Odchylenie standardowe (współczynnik skalowania przestrzennego)"
 
-#: ../operations/common/gaussian-blur-iir.c:56
-#: ../operations/common/gblur-1d.c:57
+#: ../operations/common/gaussian-blur.c:53 ../operations/common/gblur-1d.c:54
+msgid "Filter"
+msgstr "Filtr"
+
+#: ../operations/common/gaussian-blur.c:56 ../operations/common/gblur-1d.c:57
 msgid "How the gaussian kernel is discretized"
 msgstr "Sposób dyskretyzacji jądra Gaussa"
 
-#: ../operations/common/gaussian-blur-iir.c:62
-#: ../operations/common/gblur-1d.c:63
+#: ../operations/common/gaussian-blur.c:62 ../operations/common/gblur-1d.c:63
 msgid "Clip to the input extent"
 msgstr "Kadrowanie do obszaru wejściowego"
 
-#: ../operations/common/gaussian-blur-iir.c:63
-#: ../operations/common/gblur-1d.c:64
+#: ../operations/common/gaussian-blur.c:63 ../operations/common/gblur-1d.c:64
 msgid "Should the output extent be clipped to the input extent"
 msgstr "Czy kadrować obszar wyjściowy do obszaru wejściowego"
 
-#: ../operations/common/gaussian-blur-iir.c:119
-#: ../operations/common/gblur-1d.c:895
+#: ../operations/common/gaussian-blur.c:119 ../operations/common/gblur-1d.c:914
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
@@ -3698,7 +3660,7 @@ msgid "Radius of circle around pixel"
 msgstr "Promień okręgu wokół piksela"
 
 #: ../operations/common/oilify.c:33 ../operations/common/sinus.c:73
-#: ../operations/workshop/bayer-matrix.c:55
+#: ../operations/workshop/bayer-matrix.c:69
 #: ../operations/workshop/linear-sinusoid.c:76
 msgid "Exponent"
 msgstr "Wykładnik potęgi"
@@ -4162,7 +4124,7 @@ msgid "Sawtooth"
 msgstr "Ząbkowatość"
 
 #: ../operations/common/ripple.c:32 ../operations/common/waves.c:36
-#: ../operations/workshop/bayer-matrix.c:45
+#: ../operations/workshop/bayer-matrix.c:59
 msgid "Amplitude"
 msgstr "Amplituda"
 
@@ -4247,7 +4209,7 @@ msgstr "Kierunek przesunięcia"
 msgid "Shift each row or column of pixels by a random amount"
 msgstr "Przesuń każdy rząd lub kolumnę pikseli o losową ilość"
 
-#: ../operations/common/sinus.c:33
+#: ../operations/common/sinus.c:33 ../operations/workshop/bayer-matrix.c:30
 msgid "X Scale"
 msgstr "Skala na osi X"
 
@@ -4255,7 +4217,7 @@ msgstr "Skala na osi X"
 msgid "Scale value for x axis"
 msgstr "Wartość skalowania dla osi X"
 
-#: ../operations/common/sinus.c:40
+#: ../operations/common/sinus.c:40 ../operations/workshop/bayer-matrix.c:37
 msgid "Y Scale"
 msgstr "Skala na osi Y"
 
@@ -4914,7 +4876,7 @@ msgstr "Jak blisko proporcji obrazu"
 msgid "Squeeze"
 msgstr "Ściśnij"
 
-#: ../operations/common/vignette.c:71 ../operations/workshop/bayer-matrix.c:37
+#: ../operations/common/vignette.c:71 ../operations/workshop/bayer-matrix.c:51
 #: ../operations/workshop/linear-sinusoid.c:95
 msgid "Rotation"
 msgstr "Obrót"
@@ -5035,11 +4997,11 @@ msgstr "Rozprowadzanie etykiet według przekształcenia działu wodnego"
 msgid "Radius of the wavelet blur"
 msgstr "Promień rozmycia falki"
 
-#: ../operations/common/wavelet-blur.c:283
+#: ../operations/common/wavelet-blur.c:281
 msgid "Wavelet Blur"
 msgstr "Rozmycie falki"
 
-#: ../operations/common/wavelet-blur.c:286
+#: ../operations/common/wavelet-blur.c:284
 msgid ""
 "This blur is used for the wavelet decomposition filter, each pixel is "
 "computed from another by the HAT transform"
@@ -5983,7 +5945,7 @@ msgstr "Zapisywanie plików PPM"
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Zapisywanie obrazów PPM."
 
-#: ../operations/external/raw-load.c:229
+#: ../operations/external/raw-load.c:242
 msgid "libraw File Loader"
 msgstr "Wczytywanie plików biblioteki libraw"
 
@@ -6661,73 +6623,81 @@ msgid "Number of subdivisions"
 msgstr "Liczba podpodziałów"
 
 #: ../operations/workshop/bayer-matrix.c:31
+msgid "Horizontal pattern scale"
+msgstr "Pozioma skala desenia"
+
+#: ../operations/workshop/bayer-matrix.c:38
+msgid "Vertical pattern scale"
+msgstr "Pionowa skala desenia"
+
+#: ../operations/workshop/bayer-matrix.c:45
 msgid "0°"
 msgstr "0°"
 
-#: ../operations/workshop/bayer-matrix.c:32
+#: ../operations/workshop/bayer-matrix.c:46
 msgid "90°"
 msgstr "90°"
 
-#: ../operations/workshop/bayer-matrix.c:33
+#: ../operations/workshop/bayer-matrix.c:47
 msgid "180°"
 msgstr "180°"
 
-#: ../operations/workshop/bayer-matrix.c:34
+#: ../operations/workshop/bayer-matrix.c:48
 msgid "270°"
 msgstr "270°"
 
-#: ../operations/workshop/bayer-matrix.c:40
+#: ../operations/workshop/bayer-matrix.c:54
 #: ../operations/workshop/linear-sinusoid.c:96
 msgid "Pattern rotation angle"
 msgstr "Kąt obrotu desenia"
 
-#: ../operations/workshop/bayer-matrix.c:42
+#: ../operations/workshop/bayer-matrix.c:56
 msgid "Reflect"
 msgstr "Odbij"
 
-#: ../operations/workshop/bayer-matrix.c:43
+#: ../operations/workshop/bayer-matrix.c:57
 msgid "Reflect the pattern horizontally"
 msgstr "Odbij deseń w poziomie"
 
-#: ../operations/workshop/bayer-matrix.c:46
-msgid "Pattern amplitude"
-msgstr "Amplituda desenia"
+#: ../operations/workshop/bayer-matrix.c:60
+msgid "Pattern amplitude (logarithmic scale)"
+msgstr "Amplituda desenia (skala logarytmiczna)"
 
-#: ../operations/workshop/bayer-matrix.c:51
+#: ../operations/workshop/bayer-matrix.c:65
 #: ../operations/workshop/linear-sinusoid.c:72
 msgid "Value offset"
 msgstr "Przesunięcie wartości"
 
-#: ../operations/workshop/bayer-matrix.c:56
+#: ../operations/workshop/bayer-matrix.c:70
 #: ../operations/workshop/linear-sinusoid.c:77
-msgid "Value exponent"
-msgstr "Odwrócenie wykładnika"
+msgid "Value exponent (logarithmic scale)"
+msgstr "Odwrócenie wykładnika (skala logarytmiczna)"
 
-#: ../operations/workshop/bayer-matrix.c:60
+#: ../operations/workshop/bayer-matrix.c:74
 #: ../operations/workshop/linear-sinusoid.c:81
 msgid "X Offset"
 msgstr "Przesunięcie na osi X"
 
-#: ../operations/workshop/bayer-matrix.c:61
+#: ../operations/workshop/bayer-matrix.c:75
 #: ../operations/workshop/linear-sinusoid.c:82
 msgid "Offset for X axis"
 msgstr "Przesunięcie na osi X"
 
-#: ../operations/workshop/bayer-matrix.c:67
+#: ../operations/workshop/bayer-matrix.c:81
 #: ../operations/workshop/linear-sinusoid.c:88
 msgid "Y Offset"
 msgstr "Przesunięcie na osi Y"
 
-#: ../operations/workshop/bayer-matrix.c:68
+#: ../operations/workshop/bayer-matrix.c:82
 #: ../operations/workshop/linear-sinusoid.c:89
 msgid "Offset for Y axis"
 msgstr "Przesunięcie na osi Y"
 
-#: ../operations/workshop/bayer-matrix.c:254
+#: ../operations/workshop/bayer-matrix.c:328
 msgid "Bayer Matrix"
 msgstr "Macierz Bayera"
 
-#: ../operations/workshop/bayer-matrix.c:258
+#: ../operations/workshop/bayer-matrix.c:332
 msgid "Generate a Bayer matrix pattern"
 msgstr "Utwórz deseń macierzy Bayera"
 
@@ -6793,18 +6763,6 @@ msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr ""
 "Testuj działanie, aby wykonać odwzorowanie 1∶1 wejścia do wyjścia podczas "
 "próbkowania"
-
-#: ../operations/workshop/dt-exposure.c:25
-msgid "Adjust the black level"
-msgstr "Dostosuj poziom czerni"
-
-#: ../operations/workshop/dt-exposure.c:29
-msgid "Adjust the exposure correction"
-msgstr "Dostosuj korekcję ekspozycji"
-
-#: ../operations/workshop/dt-exposure.c:104
-msgid "An implementation of Darktable's exposure filter."
-msgstr "Implementacja filtru ekspozycji programu Darktable."
 
 #: ../operations/workshop/external/gluas.c:29
 msgid "Script"
@@ -7172,16 +7130,16 @@ msgid "X Amplitude"
 msgstr "Amplituda na osi X"
 
 #: ../operations/workshop/linear-sinusoid.c:41
-msgid "Amplitude for X axis"
-msgstr "Amplituda na osi X"
+msgid "Amplitude for X axis (logarithmic scale)"
+msgstr "Amplituda na osi X (skala logarytmiczna)"
 
 #: ../operations/workshop/linear-sinusoid.c:46
 msgid "Y Amplitude"
 msgstr "Amplituda na osi Y"
 
 #: ../operations/workshop/linear-sinusoid.c:47
-msgid "Amplitude for Y axis"
-msgstr "Amplituda na osi Y"
+msgid "Amplitude for Y axis (logarithmic scale)"
+msgstr "Amplituda na osi Y (skala logarytmiczna)"
 
 #: ../operations/workshop/linear-sinusoid.c:52
 msgid "X Phase"
@@ -7208,14 +7166,14 @@ msgid "Supersampling"
 msgstr "Nadpróbkowanie"
 
 #: ../operations/workshop/linear-sinusoid.c:101
-msgid "Supersampling factor"
-msgstr "Współczynnik nadpróbkowania"
+msgid "Number of samples along each axis per pixel"
+msgstr "Liczba próbek wzdłuż każdej osi na piksel"
 
-#: ../operations/workshop/linear-sinusoid.c:271
+#: ../operations/workshop/linear-sinusoid.c:297
 msgid "Linear Sinusoid"
 msgstr "Sinusoid liniowy"
 
-#: ../operations/workshop/linear-sinusoid.c:275
+#: ../operations/workshop/linear-sinusoid.c:301
 msgid "Generate a linear sinusoid pattern"
 msgstr "Utwórz liniowy deseń sinusoidy"
 
