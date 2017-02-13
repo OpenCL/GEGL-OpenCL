@@ -52,7 +52,7 @@ are some pointers to follow:
 http://git.gnome.org/browse/gegl/[GEGL source] and http://git.gnome.org/browse/babl/[babl source]::
   http://git.gnome.org/cgit/gegl/log/[commit log]::
   For day to day fixes, contributions and changes.
-http://git.gnome.org/cgit/gegl/tree/NEWS[NEWS]::
+http://gegl.org/NEWS.html[NEWS]::
   The NEWS file for a list across history of GEGL.
 http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugzilla]::
  for known and tracked issues with GEGL and perhaps see the
