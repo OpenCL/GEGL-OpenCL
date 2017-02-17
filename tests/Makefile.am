@@ -2,9 +2,9 @@ EXTRA_DIST=run-tests.py
 
 SUBDIRS = \
 	buffer \
+        mipmap \
 	compositions \
 	simple \
-        mipmap \
 	xml \
 	ff-load-save \
 	python 
