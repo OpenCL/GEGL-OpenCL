@@ -14,6 +14,7 @@
  *
  * Copyright 2006 Dominik Ernst <dernst@gmx.de>
  * Copyright 2013 Massimo Valentini <mvalentini@src.gnome.org>
+ *           2017 Øyvind Kolås <pippin@gimp.org>
  *
  * Recursive Gauss IIR Filter as described by Young / van Vliet
  * in "Signal Processing 44 (1995) 139 - 151"
@@ -210,20 +211,26 @@ iir_young_hor_blur (GeglBuffer          *src,
   const gint     nc = babl_format_get_n_components (format);
   gfloat        *row = g_new (gfloat, (3 + rect->width + 3) * nc);
   gdouble       *tmp = g_new (gdouble, (3 + rect->width + 3));
+  GeglRectangle  cur_row_scaled;
   gint           v;
 
   cur_row.height = 1;
+  cur_row_scaled.x = cur_row.x << level;
+  cur_row_scaled.y = cur_row.y << level;
+  cur_row_scaled.width = cur_row.width << level;
+  cur_row_scaled.height = cur_row.height << level;
 
   for (v = 0; v < rect->height; v++)
     {
       cur_row.y = rect->y + v;
+      cur_row_scaled.y = cur_row.y << level;
 
       gegl_buffer_get (src, &cur_row, 1.0/(1<<level), format, &row[3 * nc],
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       iir_young_blur_1D (row, tmp, b, m, rect->width, nc, policy);
 
-      gegl_buffer_set (dst, &cur_row, level, format, &row[3 * nc],
+      gegl_buffer_set (dst, &cur_row_scaled, level, format, &row[3 * nc],
                        GEGL_AUTO_ROWSTRIDE);
     }
 
@@ -245,20 +252,26 @@ iir_young_ver_blur (GeglBuffer          *src,
   const gint     nc = babl_format_get_n_components (format);
   gfloat        *col = g_new (gfloat, (3 + rect->height + 3) * nc);
   gdouble       *tmp = g_new (gdouble, (3 + rect->height + 3));
+  GeglRectangle cur_col_scaled;
   gint           i;
 
   cur_col.width = 1;
+  cur_col_scaled.x = cur_col.x << level;
+  cur_col_scaled.y = cur_col.y << level;
+  cur_col_scaled.width = cur_col.width << level;
+  cur_col_scaled.height = cur_col.height << level;
 
   for (i = 0; i < rect->width; i++)
     {
       cur_col.x = rect->x + i;
+      cur_col_scaled.x = cur_col.x << level;
 
       gegl_buffer_get (src, &cur_col, 1.0/(1<<level), format, &col[3 * nc],
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       iir_young_blur_1D (col, tmp, b, m, rect->height, nc, policy);
 
-      gegl_buffer_set (dst, &cur_col, level, format, &col[3 * nc],
+      gegl_buffer_set (dst, &cur_col_scaled, level, format, &col[3 * nc],
                        GEGL_AUTO_ROWSTRIDE);
     }
 
@@ -310,6 +323,7 @@ fir_hor_blur (GeglBuffer          *src,
               gint                 level)
 {
   GeglRectangle  cur_row = *rect;
+  GeglRectangle  cur_row_scaled;
   GeglRectangle  in_row;
   const gint     nc = babl_format_get_n_components (format);
   gfloat        *row;
@@ -317,6 +331,10 @@ fir_hor_blur (GeglBuffer          *src,
   gint           v;
 
   cur_row.height = 1;
+  cur_row_scaled.x = cur_row.x << level;
+  cur_row_scaled.y = cur_row.y << level;
+  cur_row_scaled.width = cur_row.width << level;
+  cur_row_scaled.height = cur_row.height << level;
 
   in_row         = cur_row;
   in_row.width  += clen - 1;
@@ -328,12 +346,13 @@ fir_hor_blur (GeglBuffer          *src,
   for (v = 0; v < rect->height; v++)
     {
       cur_row.y = in_row.y = rect->y + v;
+      cur_row_scaled.y = cur_row.y << level;
 
       gegl_buffer_get (src, &in_row, 1.0/(1<<level), format, row, GEGL_AUTO_ROWSTRIDE, policy);
 
       fir_blur_1D (row, out, cmatrix, clen, rect->width, nc);
 
-      gegl_buffer_set (dst, &cur_row, level, format, out, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (dst, &cur_row_scaled, level, format, out, GEGL_AUTO_ROWSTRIDE);
     }
 
   gegl_free (out);
@@ -352,6 +371,7 @@ fir_ver_blur (GeglBuffer          *src,
 {
   GeglRectangle  cur_col = *rect;
   GeglRectangle  in_col;
+  GeglRectangle  cur_col_scaled;
   const gint     nc = babl_format_get_n_components (format);
   gfloat        *col;
   gfloat        *out;
@@ -363,18 +383,24 @@ fir_ver_blur (GeglBuffer          *src,
   in_col.height += clen - 1;
   in_col.y      -= clen / 2;
 
+  cur_col_scaled.x = cur_col.x << level;
+  cur_col_scaled.y = cur_col.y << level;
+  cur_col_scaled.width = cur_col.width << level;
+  cur_col_scaled.height = cur_col.height << level;
+
   col = gegl_malloc (sizeof (gfloat) * in_col.height  * nc);
   out = gegl_malloc (sizeof (gfloat) * cur_col.height * nc);
 
   for (v = 0; v < rect->width; v++)
     {
       cur_col.x = in_col.x = rect->x + v;
+      cur_col_scaled.x = cur_col.x << level;
 
       gegl_buffer_get (src, &in_col, 1.0/(1<<level), format, col, GEGL_AUTO_ROWSTRIDE, policy);
 
       fir_blur_1D (col, out, cmatrix, clen, rect->height, nc);
 
-      gegl_buffer_set (dst, &cur_col, level, format, out, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (dst, &cur_col_scaled, level, format, out, GEGL_AUTO_ROWSTRIDE);
     }
 
   gegl_free (out);
@@ -588,7 +614,6 @@ static GeglGblur1dFilter
 filter_disambiguation (GeglGblur1dFilter filter,
                        gfloat            std_dev)
 {
-  return GEGL_GBLUR_1D_IIR;
   if (filter == GEGL_GBLUR_1D_AUTO)
     {
       /* Threshold 1.0 is arbitrary */
@@ -661,7 +686,7 @@ gegl_gblur_1d_get_required_for_output (GeglOperation       *operation,
                                        const GeglRectangle *output_roi)
 {
   GeglRectangle        required_for_output = { 0, };
-  GeglProperties          *o       = GEGL_PROPERTIES (operation);
+  GeglProperties      *o       = GEGL_PROPERTIES (operation);
   GeglGblur1dFilter    filter  = filter_disambiguation (o->filter, o->std_dev);
 
   if (filter == GEGL_GBLUR_1D_IIR)
@@ -732,7 +757,7 @@ gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
                                  const GeglRectangle *output_roi)
 {
   GeglRectangle      cached_region;
-  GeglProperties        *o       = GEGL_PROPERTIES (operation);
+  GeglProperties    *o       = GEGL_PROPERTIES (operation);
   GeglGblur1dFilter  filter  = filter_disambiguation (o->filter, o->std_dev);
 
   cached_region = *output_roi;
@@ -803,8 +828,6 @@ gegl_gblur_1d_process (GeglOperation       *operation,
   GeglAbyssPolicy   abyss_policy = to_gegl_policy (o->abyss_policy);
 
   GeglRectangle rect2;
-  //level = 0; // mipmap rendering doesn't work yet, unsure if it is
-             // the code in the op or in GeglBuffer
   if (level)
   {
     rect2 = *result;
@@ -812,7 +835,7 @@ gegl_gblur_1d_process (GeglOperation       *operation,
     rect2.y      = result->y >> level;
     rect2.width  = result->width >> level;
     rect2.height = result->height >> level;
-   // result = &rect2;
+    result = &rect2;
     std_dev = std_dev * (1.0/(1<<level));
   }
   filter = filter_disambiguation (o->filter, std_dev);
