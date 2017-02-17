@@ -248,11 +248,15 @@ process (GeglOperation       *operation,
   for (j = roi->y; j < roi->y + roi->height; j++)
     {
       y = ((gdouble) j) / o->height;
+      if (level)
+        y *= (1<<level);
       for (i = roi->x; i < roi->x + roi->width; i++)
         {
           gdouble c;
 
           x = ((gdouble) i) / o->width;
+          if (level)
+            x *= (1<<level);
 
           c = 0.5 * sin(p->c31 * x + p->c32 * y + p->c33);
 
