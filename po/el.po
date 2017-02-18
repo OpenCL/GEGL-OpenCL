@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gegl&ke"
 "ywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-02-02 20:47+0000\n"
-"PO-Revision-Date: 2017-02-03 09:21+0300\n"
+"POT-Creation-Date: 2017-02-12 18:36+0000\n"
+"PO-Revision-Date: 2017-02-18 09:06+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@lists.gnome.gr\n"
 "Language: el\n"
@@ -19,17 +19,17 @@ msgstr ""
 "X-Generator: Virtaal 0.7.1\n"
 "X-Project-Style: gnome\n"
 
-#: ../bin/gegl.c:153
+#: ../bin/gegl.c:161
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Αδύνατη η ανάγνωση του αρχείου: %s"
 
-#: ../bin/gegl.c:198
+#: ../bin/gegl.c:206
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Άκυρο γράφημα, απόρριψη.\n"
 
-#: ../bin/gegl.c:353 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:361 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Άγνωστη κατάσταση GeglOption: %d"
@@ -171,12 +171,11 @@ msgstr ""
 
 #: ../gegl/gegl-enums.c:33 ../gegl/gegl-enums.c:87
 #: ../operations/common/fractal-explorer.c:93
-#: ../operations/common/gaussian-blur-iir.c:31
-#: ../operations/common/gblur-1d.c:31
+#: ../operations/common/gaussian-blur.c:31 ../operations/common/gblur-1d.c:31
 msgid "None"
 msgstr "Καμία"
 
-#: ../gegl/gegl-enums.c:34 ../operations/common/gaussian-blur-iir.c:32
+#: ../gegl/gegl-enums.c:34 ../operations/common/gaussian-blur.c:32
 #: ../operations/common/gblur-1d.c:32
 msgid "Clamp"
 msgstr "Σφικτήρας"
@@ -185,12 +184,12 @@ msgstr "Σφικτήρας"
 msgid "Loop"
 msgstr "Βρόχος"
 
-#: ../gegl/gegl-enums.c:36 ../operations/common/gaussian-blur-iir.c:33
-#: ../operations/common/gblur-1d.c:33 ../operations/workshop/dt-exposure.c:24
+#: ../gegl/gegl-enums.c:36 ../operations/common/gaussian-blur.c:33
+#: ../operations/common/gblur-1d.c:33
 msgid "Black"
 msgstr "Μαύρο"
 
-#: ../gegl/gegl-enums.c:37 ../operations/common/gaussian-blur-iir.c:34
+#: ../gegl/gegl-enums.c:37 ../operations/common/gaussian-blur.c:34
 #: ../operations/common/gblur-1d.c:34
 msgid "White"
 msgstr "Άσπρο"
@@ -464,7 +463,7 @@ msgstr ""
 #: ../operations/common/vignette.c:38 ../operations/common/wavelet-blur.c:28
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
-#: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:26
+#: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:38
 msgid "Radius"
 msgstr "Ακτίνα"
 
@@ -1485,7 +1484,8 @@ msgid "Divisor"
 msgstr "Διαιρέτης"
 
 #: ../operations/common/convolution-matrix.c:54
-#: ../operations/common/exposure.c:29
+#: ../operations/workshop/bayer-matrix.c:64
+#: ../operations/workshop/linear-sinusoid.c:71
 msgid "Offset"
 msgstr "Μετατόπιση"
 
@@ -1518,7 +1518,7 @@ msgstr "Στάθμιση άλφα"
 msgid "Border"
 msgstr "Περίγραμμα"
 
-#: ../operations/common/convolution-matrix.c:608
+#: ../operations/common/convolution-matrix.c:615
 msgid "Apply a generic 5x5 convolution matrix"
 msgstr "Εφαρμογή γενικού πίνακα συνέλιξης 5x5"
 
@@ -1782,13 +1782,11 @@ msgstr ""
 "εισόδου"
 
 #: ../operations/common/displace.c:42 ../operations/common/fractal-trace.c:64
-#: ../operations/common/gaussian-blur-iir.c:58
-#: ../operations/common/gblur-1d.c:59
+#: ../operations/common/gaussian-blur.c:58 ../operations/common/gblur-1d.c:59
 msgid "Abyss policy"
 msgstr "Πολιτική αβύσσου"
 
-#: ../operations/common/displace.c:45
-#: ../operations/common/gaussian-blur-iir.c:60
+#: ../operations/common/displace.c:45 ../operations/common/gaussian-blur.c:60
 #: ../operations/common/gblur-1d.c:61
 msgid "How image edges are handled"
 msgstr "Πώς διαχειρίζονται τα άκρα εικόνας"
@@ -2158,25 +2156,28 @@ msgid "Combine multiple scene exposures into one high dynamic range image."
 msgstr ""
 "Συνδυασμός πολλών εκθέσεων σκηνών σε μια εικόνα υψηλής δυναμικής περιοχής."
 
-#: ../operations/common/exposure.c:25 ../operations/common/exposure.c:187
-#: ../operations/workshop/dt-exposure.c:28
-#: ../operations/workshop/dt-exposure.c:102
+#: ../operations/common/exposure.c:26
+#| msgid "Blue levels"
+msgid "Black level"
+msgstr "Μαύρο επίπεδο"
+
+#: ../operations/common/exposure.c:27
+msgid "Adjust the black level"
+msgstr "Ρύθμιση μαύρου επιπέδου"
+
+#: ../operations/common/exposure.c:30 ../operations/common/exposure.c:201
 msgid "Exposure"
 msgstr "Έκθεση"
 
-#: ../operations/common/exposure.c:26
+#: ../operations/common/exposure.c:31
 msgid "Relative brightness change in stops"
 msgstr "Σχετική αλλαγή λαμπρότητας σε στάσεις"
 
-#: ../operations/common/exposure.c:30
-msgid "Offset value added"
-msgstr "Πρόσθετη τιμή μετατόπισης"
-
-#: ../operations/common/exposure.c:33
+#: ../operations/common/exposure.c:34
 msgid "Gamma adjustment"
 msgstr "Ρύθμιση γάμμα"
 
-#: ../operations/common/exposure.c:189
+#: ../operations/common/exposure.c:203
 msgid ""
 "Changes Exposure of an image, allows stepping HDR and photographs up/down in "
 "stops. "
@@ -2467,90 +2468,52 @@ msgstr "Ίχνος κλαστικού"
 msgid "Transform the image with the fractals"
 msgstr "Μετασχηματισμός της εικόνας με τα κλαστικά"
 
-#: ../operations/common/gaussian-blur.c:31
-#: ../operations/common/gaussian-blur-iir.c:25
-#: ../operations/common/gblur-1d.c:38
+#: ../operations/common/gaussian-blur.c:25 ../operations/common/gblur-1d.c:38
 msgid "Auto"
 msgstr "Αυτόματα"
 
-#: ../operations/common/gaussian-blur.c:32
-#: ../operations/common/gaussian-blur-iir.c:26
-#: ../operations/common/gblur-1d.c:39
+#: ../operations/common/gaussian-blur.c:26 ../operations/common/gblur-1d.c:39
 msgid "FIR"
 msgstr "FIR"
 
-#: ../operations/common/gaussian-blur.c:33
-#: ../operations/common/gaussian-blur-iir.c:27
-#: ../operations/common/gblur-1d.c:40
+#: ../operations/common/gaussian-blur.c:27 ../operations/common/gblur-1d.c:40
 msgid "IIR"
 msgstr "IIR"
 
-#: ../operations/common/gaussian-blur.c:36
-#: ../operations/common/gaussian-blur-iir.c:37
+#: ../operations/common/gaussian-blur.c:37
 msgid "Size X"
 msgstr "Μέγεθος Χ"
 
-#: ../operations/common/gaussian-blur.c:37
-#: ../operations/common/gaussian-blur-iir.c:38
+#: ../operations/common/gaussian-blur.c:38
 msgid "Standard deviation for the horizontal axis"
 msgstr "Τυπική απόκλιση για τον οριζόντιο άξονα"
 
-#: ../operations/common/gaussian-blur.c:44
-#: ../operations/common/gaussian-blur-iir.c:45
+#: ../operations/common/gaussian-blur.c:45
 msgid "Size Y"
 msgstr "Μέγεθος Υ"
 
-#: ../operations/common/gaussian-blur.c:45
-msgid "Standard deviation for the vertical axis"
-msgstr "Τυπική απόκλιση για τον κάθετο άξονα."
-
-#: ../operations/common/gaussian-blur.c:52
-#: ../operations/common/gaussian-blur-iir.c:53
-#: ../operations/common/gblur-1d.c:54
-msgid "Filter"
-msgstr "Φίλτρο"
-
-#: ../operations/common/gaussian-blur.c:55
-msgid "Optional parameter to override the automatic selection of blur filter"
-msgstr ""
-"Προαιρετική παράμετρος για αντικατάσταση της αυτόματης επιλογής του φίλτρου "
-"θόλωσης"
-
-#: ../operations/common/gaussian-blur.c:704
-msgid "Gaussian Blur"
-msgstr "Θόλωση Γκάους"
-
-#: ../operations/common/gaussian-blur.c:706
-msgid ""
-"Each result pixel is the average of the neighbouring pixels weighted by a "
-"normal distribution with specified standard deviation."
-msgstr ""
-"Κάθε τελικό εικονοστοιχείο είναι ο μέσος όρος των γειτονικών εικονοστοιχείων "
-"σταθμισμένων με την κανονική κατανομή με συγκεκριμένη τυπική απόκλιση."
-
-#: ../operations/common/gaussian-blur-iir.c:46
-#: ../operations/common/gblur-1d.c:44 ../operations/common/high-pass.c:25
-#: ../operations/common/unsharp-mask.c:25
+#: ../operations/common/gaussian-blur.c:46 ../operations/common/gblur-1d.c:44
+#: ../operations/common/high-pass.c:25 ../operations/common/unsharp-mask.c:25
 msgid "Standard deviation (spatial scale factor)"
 msgstr "Τυπική απόκλιση (συντελεστής χωρικής κλίμακας)"
 
-#: ../operations/common/gaussian-blur-iir.c:56
-#: ../operations/common/gblur-1d.c:57
+#: ../operations/common/gaussian-blur.c:53 ../operations/common/gblur-1d.c:54
+msgid "Filter"
+msgstr "Φίλτρο"
+
+#: ../operations/common/gaussian-blur.c:56 ../operations/common/gblur-1d.c:57
 msgid "How the gaussian kernel is discretized"
 msgstr "Πώς ο πυρήνας Γκάους διακρίνεται"
 
-#: ../operations/common/gaussian-blur-iir.c:62
-#: ../operations/common/gblur-1d.c:63
+#: ../operations/common/gaussian-blur.c:62 ../operations/common/gblur-1d.c:63
 msgid "Clip to the input extent"
 msgstr "περικοπή στην έκταση εισόδου"
 
-#: ../operations/common/gaussian-blur-iir.c:63
-#: ../operations/common/gblur-1d.c:64
+#: ../operations/common/gaussian-blur.c:63 ../operations/common/gblur-1d.c:64
 msgid "Should the output extent be clipped to the input extent"
 msgstr "Αν θα πρέπει η έκταση εξόδου να περικοπεί στην έκταση εισόδου"
 
-#: ../operations/common/gaussian-blur-iir.c:119
-#: ../operations/common/gblur-1d.c:895
+#: ../operations/common/gaussian-blur.c:119 ../operations/common/gblur-1d.c:914
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
@@ -3393,7 +3356,7 @@ msgstr ""
 #. FIXME: With a large angle, we lose AreaFilter's flavours
 #: ../operations/common/motion-blur-circular.c:52
 #: ../operations/common/motion-blur-linear.c:33
-#: ../operations/common/ripple.c:43
+#: ../operations/common/ripple.c:43 ../operations/workshop/linear-sinusoid.c:66
 msgid "Angle"
 msgstr "Γωνία"
 
@@ -3718,6 +3681,8 @@ msgid "Radius of circle around pixel"
 msgstr "Ακτίνα ή κύκλος γύρω από το εικονοστοιχείο"
 
 #: ../operations/common/oilify.c:33 ../operations/common/sinus.c:73
+#: ../operations/workshop/bayer-matrix.c:69
+#: ../operations/workshop/linear-sinusoid.c:76
 msgid "Exponent"
 msgstr "Εκθέτης"
 
@@ -3900,6 +3865,7 @@ msgstr ""
 "Προσομοίωση χρωματικής παραμόρφωσης που παράγεται από συσκευή φωτοτυπιών"
 
 #: ../operations/common/pixelize.c:27 ../operations/common/vignette.c:27
+#: ../operations/workshop/median-blur.c:30
 msgid "Diamond"
 msgstr "Ρόμβος"
 
@@ -3908,6 +3874,7 @@ msgid "Round"
 msgstr "Κύκλος"
 
 #: ../operations/common/pixelize.c:29 ../operations/common/vignette.c:26
+#: ../operations/workshop/median-blur.c:28
 msgid "Square"
 msgstr "Τετράγωνο"
 
@@ -4189,6 +4156,7 @@ msgid "Sawtooth"
 msgstr "Πριονωτό"
 
 #: ../operations/common/ripple.c:32 ../operations/common/waves.c:36
+#: ../operations/workshop/bayer-matrix.c:59
 msgid "Amplitude"
 msgstr "Μέγεθος"
 
@@ -4273,7 +4241,7 @@ msgstr "Κατεύθυνση μετατόπισης"
 msgid "Shift each row or column of pixels by a random amount"
 msgstr "Μετατόπιση κάθε γραμμής ή στήλης εικονοστοιχείων κατά τυχαία ποσότητα"
 
-#: ../operations/common/sinus.c:33
+#: ../operations/common/sinus.c:33 ../operations/workshop/bayer-matrix.c:30
 msgid "X Scale"
 msgstr "Κλίμακα Χ"
 
@@ -4281,7 +4249,7 @@ msgstr "Κλίμακα Χ"
 msgid "Scale value for x axis"
 msgstr "Τιμή κλίμακας για τον άξονα x"
 
-#: ../operations/common/sinus.c:40
+#: ../operations/common/sinus.c:40 ../operations/workshop/bayer-matrix.c:37
 msgid "Y Scale"
 msgstr "Κλίμακα Υ"
 
@@ -4358,7 +4326,6 @@ msgid "Simple Linear Iterative Clustering"
 msgstr "Απλή γραμμική επαναληπτική ομαδοποίηση"
 
 #: ../operations/common/slic.c:455
-#| msgid "Segment colors using K-means clustering"
 msgid "Superpixels based on k-means clustering"
 msgstr "Υπερεικονοστοιχεία με βάση την ομαδοποίηση Κ-μέσων"
 
@@ -4904,7 +4871,7 @@ msgstr ""
 "Αυτή η λειτουργία προσομοιάζει την υποβάθμιση να είναι κάποιος σε μια παλιά "
 "οθόνη βίντεο RGB με χαμηλό βήμα κουκκίδας."
 
-#: ../operations/common/vignette.c:25
+#: ../operations/common/vignette.c:25 ../operations/workshop/median-blur.c:29
 msgid "Circle"
 msgstr "Κύκλος"
 
@@ -4950,7 +4917,8 @@ msgstr "Πόσο κοντά ήμαστε στις αναλογίες εικόν�
 msgid "Squeeze"
 msgstr "Συμπίεση"
 
-#: ../operations/common/vignette.c:71
+#: ../operations/common/vignette.c:71 ../operations/workshop/bayer-matrix.c:51
+#: ../operations/workshop/linear-sinusoid.c:95
 msgid "Rotation"
 msgstr "Περιστροφή"
 
@@ -5071,11 +5039,11 @@ msgstr "Διάδοση ετικετών με τον μετασχηματισμό
 msgid "Radius of the wavelet blur"
 msgstr "Ακτίνα θόλωσης της κυματομορφής"
 
-#: ../operations/common/wavelet-blur.c:283
+#: ../operations/common/wavelet-blur.c:281
 msgid "Wavelet Blur"
 msgstr "Θόλωση της κυματομορφής"
 
-#: ../operations/common/wavelet-blur.c:286
+#: ../operations/common/wavelet-blur.c:284
 msgid ""
 "This blur is used for the wavelet decomposition filter, each pixel is "
 "computed from another by the HAT transform"
@@ -5329,7 +5297,7 @@ msgstr "URI"
 msgid "URI of file to load."
 msgstr "URI του αρχείου για φόρτωση."
 
-#: ../operations/core/load.c:312
+#: ../operations/core/load.c:368
 msgid ""
 "Multipurpose file loader, that uses other native handlers, and fallback "
 "conversion using Image Magick's convert."
@@ -5568,67 +5536,67 @@ msgstr "Διαδρομή αρχείου για φόρτωση"
 msgid "URI for file to load"
 msgstr "URI του αρχείου για φόρτωση"
 
-#: ../operations/external/jp2-load.c:132
+#: ../operations/external/jp2-load.c:128
 msgid "Unknown JPEG 2000 image format"
 msgstr "Άγνωστη μορφή εικόνας JPEG 2000"
 
-#: ../operations/external/jp2-load.c:139
+#: ../operations/external/jp2-load.c:135
 msgid "Unable to open JPEG 2000 image"
 msgstr "Αδυναμία ανοίγματος εικόνας JPEG 2000"
 
-#: ../operations/external/jp2-load.c:146
+#: ../operations/external/jp2-load.c:142
 msgid "Unable to create output color profile"
 msgstr "Αδυναμία δημιουργίας κατατομής χρώματος εξόδου"
 
-#: ../operations/external/jp2-load.c:154
+#: ../operations/external/jp2-load.c:150
 msgid "Unable to convert image to sRGB color space"
 msgstr "Αδυναμία μετατροπής εικόνας σε χρωματικό χώρο sRGB"
 
-#: ../operations/external/jp2-load.c:161
+#: ../operations/external/jp2-load.c:157
 #, c-format
 msgid "Unsupported non-RGB JPEG 2000 file with %d components"
 msgstr "Αρχείο χωρίς υποστήριξη μη RGB JPEG 2000 με %d συστατικά"
 
-#: ../operations/external/jp2-load.c:173
+#: ../operations/external/jp2-load.c:169
 #, c-format
 msgid "Unsupported JPEG 2000 file with depth %d"
 msgstr "Αρχείο χωρίς υποστήριξη JPEG 2000 με βάθος %d"
 
-#: ../operations/external/jp2-load.c:199
+#: ../operations/external/jp2-load.c:195
 msgid "Components of JPEG 2000 input don't match"
 msgstr "Τα συστατικά της εισόδου JPEG 2000 δεν ταιριάζουν"
 
-#: ../operations/external/jp2-load.c:261
+#: ../operations/external/jp2-load.c:257
 msgid "could not create a new Jasper stream"
 msgstr "αδυναμία δημιουργίας μιας νέας ροής Τζάσπερ"
 
-#: ../operations/external/jp2-load.c:278 ../operations/external/jp2-load.c:280
+#: ../operations/external/jp2-load.c:274 ../operations/external/jp2-load.c:276
 #, c-format
 msgid "failed to open JPEG 2000 from %s"
 msgstr "αποτυχία ανοίγματος JPEG 2000 από το '%s'"
 
-#: ../operations/external/jp2-load.c:294
+#: ../operations/external/jp2-load.c:290
 msgid "could not query JPEG 2000 file"
 msgstr "αδυναμία ερωτήματος αρχείου JPEG 2000"
 
-#: ../operations/external/jp2-load.c:350
+#: ../operations/external/jp2-load.c:346
 msgid "One or more of R, G, B components are missing"
 msgstr "Ένα ή περισσότερα συστατικά R, G, B λείπουν"
 
-#: ../operations/external/jp2-load.c:358
+#: ../operations/external/jp2-load.c:354
 msgid "One or more of R, G, B components have signed data"
 msgstr "Ένα ή περισσότερα συστατικά R, G, B υπέγραψαν δεδομένα"
 
-#: ../operations/external/jp2-load.c:391
+#: ../operations/external/jp2-load.c:387
 #, c-format
 msgid "Error reading row %d component %d"
 msgstr "Σφάλμα ανάγνωσης γραμμής %d συστατικού %d"
 
-#: ../operations/external/jp2-load.c:531
+#: ../operations/external/jp2-load.c:527
 msgid "JPEG 2000 File Loader"
 msgstr "Φόρτωση εικόνας JPEG 2000"
 
-#: ../operations/external/jp2-load.c:533
+#: ../operations/external/jp2-load.c:529
 msgid "JPEG 2000 image loader using jasper."
 msgstr "Φόρτωση εικόνας JPEG 2000 χρησιμοποιώντας jasper."
 
@@ -6026,7 +5994,7 @@ msgstr "Φορτωτής αρχείου PPM"
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Αποθήκευση εικόνας PPM (αποθήκευση φορητής pixmap.)"
 
-#: ../operations/external/raw-load.c:240
+#: ../operations/external/raw-load.c:242
 msgid "libraw File Loader"
 msgstr "Φορτωτής αρχείου libraw"
 
@@ -6092,12 +6060,12 @@ msgstr "Πλάτος για αποδιδόμενη εικόνα"
 msgid "Height for rendered image"
 msgstr "Ύψος για αποδιδόμενη εικόνα"
 
-#: ../operations/external/svg-load.c:293
+#: ../operations/external/svg-load.c:290
 msgid "SVG File Loader"
 msgstr "Φορτωτής αρχείου SVG"
 
 #. not hidden because it has extra API
-#: ../operations/external/svg-load.c:295
+#: ../operations/external/svg-load.c:292
 msgid "Load an SVG file using librsvg"
 msgstr "Φόρτωση αρχείου SVG χρησιμοποιώντας librsvg"
 
@@ -6190,19 +6158,19 @@ msgstr "Κατάλογος"
 msgid "Image file directory (subfile)"
 msgstr "Κατάλογος αρχείου εικόνας (υποαρχείο)"
 
-#: ../operations/external/tiff-load.c:868
+#: ../operations/external/tiff-load.c:867
 msgid "TIFF File Loader"
 msgstr "Φόρτωση αρχείου TIFF"
 
-#: ../operations/external/tiff-load.c:870
+#: ../operations/external/tiff-load.c:869
 msgid "TIFF image loader using libtiff"
 msgstr "Φόρτωση εικόνας JPEG χρησιμοποιώντας libjpeg"
 
-#: ../operations/external/tiff-save.c:622
+#: ../operations/external/tiff-save.c:621
 msgid "TIFF File Saver"
 msgstr "Αποθηκευτής αρχείου TIFF"
 
-#: ../operations/external/tiff-save.c:624
+#: ../operations/external/tiff-save.c:623
 msgid "TIFF image saver using libtiff"
 msgstr "Αποθήκευση εικόνας TIFF χρησιμοποιώντας libjpeg"
 
@@ -6295,11 +6263,11 @@ msgstr "Πινελιά διανύσματος"
 msgid "Renders a vector stroke"
 msgstr "Αποδίδει μια πινελιά διανύσματος"
 
-#: ../operations/external/webp-load.c:347
+#: ../operations/external/webp-load.c:343
 msgid "WebP File Loader"
 msgstr "Φορτωτής αρχείου WebP"
 
-#: ../operations/external/webp-load.c:349
+#: ../operations/external/webp-load.c:345
 msgid "WebP image loader."
 msgstr "Φόρτωση εικόνας WebP."
 
@@ -6707,6 +6675,103 @@ msgstr ""
 "συντεταγμένες ακέραιου πέρασαν ένα γρήγορο μονοπάτι χωρίς τη χρήση νέας "
 "δειγματοληψίας"
 
+#: ../operations/workshop/bayer-matrix.c:26
+#| msgid "Division"
+msgid "Subdivisions"
+msgstr "Υποδιαιρέσεις"
+
+#: ../operations/workshop/bayer-matrix.c:27
+#| msgid "The number of divisions"
+msgid "Number of subdivisions"
+msgstr "Αριθμός των υποδιαιρέσεων"
+
+#: ../operations/workshop/bayer-matrix.c:31
+#| msgid "Horizontal texture size"
+msgid "Horizontal pattern scale"
+msgstr "Οριζόντια κλίμακα μοτίβου"
+
+#: ../operations/workshop/bayer-matrix.c:38
+#| msgid "Vertical texture size"
+msgid "Vertical pattern scale"
+msgstr "Κάθετη κλίμακα μοτίβου"
+
+#: ../operations/workshop/bayer-matrix.c:45
+msgid "0°"
+msgstr "0°"
+
+#: ../operations/workshop/bayer-matrix.c:46
+msgid "90°"
+msgstr "90°"
+
+#: ../operations/workshop/bayer-matrix.c:47
+msgid "180°"
+msgstr "180°"
+
+#: ../operations/workshop/bayer-matrix.c:48
+msgid "270°"
+msgstr "270°"
+
+#: ../operations/workshop/bayer-matrix.c:54
+#: ../operations/workshop/linear-sinusoid.c:96
+#| msgid "Rotation angle"
+msgid "Pattern rotation angle"
+msgstr "Γωνία περιστροφής μοτίβου"
+
+#: ../operations/workshop/bayer-matrix.c:56
+msgid "Reflect"
+msgstr "Αντικατοπτρισμός"
+
+#: ../operations/workshop/bayer-matrix.c:57
+msgid "Reflect the pattern horizontally"
+msgstr "Οριζόντιος αντικατοπτρισμός μοτίβου"
+
+#: ../operations/workshop/bayer-matrix.c:60
+msgid "Pattern amplitude (logarithmic scale)"
+msgstr "Πλάτος μοτίβου (λογαριθμική κλίμακα)"
+
+#: ../operations/workshop/bayer-matrix.c:65
+#: ../operations/workshop/linear-sinusoid.c:72
+#| msgid "Vertical offset"
+msgid "Value offset"
+msgstr "Μετατόπιση τιμής"
+
+#: ../operations/workshop/bayer-matrix.c:70
+#: ../operations/workshop/linear-sinusoid.c:77
+msgid "Value exponent (logarithmic scale)"
+msgstr "Εκθέτης τιμής (λογαριθμική κλίμακα)"
+
+#: ../operations/workshop/bayer-matrix.c:74
+#: ../operations/workshop/linear-sinusoid.c:81
+msgid "X Offset"
+msgstr "Μετατόπιση X"
+
+#: ../operations/workshop/bayer-matrix.c:75
+#: ../operations/workshop/linear-sinusoid.c:82
+#| msgid "Offset X"
+msgid "Offset for X axis"
+msgstr "Μετατόπιση για τον άξονα Χ"
+
+#: ../operations/workshop/bayer-matrix.c:81
+#: ../operations/workshop/linear-sinusoid.c:88
+msgid "Y Offset"
+msgstr "Μετατόπιση Υ"
+
+#: ../operations/workshop/bayer-matrix.c:82
+#: ../operations/workshop/linear-sinusoid.c:89
+#| msgid "Offset Y"
+msgid "Offset for Y axis"
+msgstr "Μετατόπιση για τον άξονα Υ"
+
+#: ../operations/workshop/bayer-matrix.c:328
+#| msgid "Bayer pattern"
+msgid "Bayer Matrix"
+msgstr "Πίνακας Bayer"
+
+#: ../operations/workshop/bayer-matrix.c:332
+#| msgid "Generate diffraction patterns"
+msgid "Generate a Bayer matrix pattern"
+msgstr "Δημιουργία μοτίβου πίνακα Bayer"
+
 #: ../operations/workshop/bilateral-filter-fast.c:37
 msgid "Smoothness"
 msgstr "Ομαλότητα"
@@ -6769,19 +6834,6 @@ msgid "Test op to do a 1:1 map of input to output, while sampling"
 msgstr ""
 "Επιλογή ελέγχου για να γίνει μια απεικόνιση εισόδου 1:1 έξοδος, κατά τη "
 "δειγμετοληψία"
-
-#: ../operations/workshop/dt-exposure.c:25
-msgid "Adjust the black level"
-msgstr "Ρύθμιση μαύρου επιπέδου"
-
-#: ../operations/workshop/dt-exposure.c:29
-msgid "Adjust the exposure correction"
-msgstr "Ρύθμιση της διόρθωσης έκθεσης"
-
-#: ../operations/workshop/dt-exposure.c:104
-#| msgid "A fast approximate implementation of the bilateral filter"
-msgid "An implementation of Darktable's exposure filter."
-msgstr "Υλοποίηση του φίλτρου έκθεσης του Darktable."
 
 #: ../operations/workshop/external/gluas.c:29
 msgid "Script"
@@ -7117,7 +7169,7 @@ msgstr "Ολοκληρωμένη εικόνα"
 msgid "Compute integral and squared integral image"
 msgstr "Υπολογισμός ολοκληρωμένης και τετραγωνικά ολοκληρωμένης εικόνας"
 
-#: ../operations/workshop/kuwahara.c:27 ../operations/workshop/median-blur.c:28
+#: ../operations/workshop/kuwahara.c:27
 msgid "Radius of square pixel region (width and height will be radius*2+1)"
 msgstr ""
 "Ακτίνα της τετράγωνης περιοχής εικονοστοιχείου (πλάτος και ύψος θα είναι "
@@ -7126,6 +7178,84 @@ msgstr ""
 #: ../operations/workshop/kuwahara.c:245
 msgid "Edge preserving blur"
 msgstr "Θόλωση διατήρησης άκρης"
+
+#: ../operations/workshop/linear-sinusoid.c:26
+#| msgid "Period"
+msgid "X Period"
+msgstr "Περίοδος Χ"
+
+#: ../operations/workshop/linear-sinusoid.c:27
+msgid "Period for X axis"
+msgstr "Περίοδος για τον άξονα Χ"
+
+#: ../operations/workshop/linear-sinusoid.c:33
+#| msgid "Period"
+msgid "Y Period"
+msgstr "Περίοδος Υ"
+
+#: ../operations/workshop/linear-sinusoid.c:34
+msgid "Period for Y axis"
+msgstr "Περίοδος για τον άξονα Υ"
+
+#: ../operations/workshop/linear-sinusoid.c:40
+#| msgid "Amplitude"
+msgid "X Amplitude"
+msgstr "Πλάτος Χ"
+
+#: ../operations/workshop/linear-sinusoid.c:41
+msgid "Amplitude for X axis (logarithmic scale)"
+msgstr "Πλάτος για τον άξονα Χ (λογαριθμική κλίμακα)"
+
+#: ../operations/workshop/linear-sinusoid.c:46
+#| msgid "Amplitude"
+msgid "Y Amplitude"
+msgstr "Πλάτος Υ"
+
+#: ../operations/workshop/linear-sinusoid.c:47
+msgid "Amplitude for Y axis (logarithmic scale)"
+msgstr "Πλάτος για τον άξονα Υ (λογαριθμική κλίμακα)"
+
+#: ../operations/workshop/linear-sinusoid.c:52
+msgid "X Phase"
+msgstr "Φάση Χ"
+
+#: ../operations/workshop/linear-sinusoid.c:53
+#| msgid "Scale value for x axis"
+msgid "Phase for X axis"
+msgstr "Φάση για τον άξονα Χ"
+
+#: ../operations/workshop/linear-sinusoid.c:59
+msgid "Y Phase"
+msgstr "Φάση Υ"
+
+#: ../operations/workshop/linear-sinusoid.c:60
+#| msgid "Scale value for x axis"
+msgid "Phase for Y axis"
+msgstr "Φάση για τον άξονα Υ"
+
+#: ../operations/workshop/linear-sinusoid.c:67
+#| msgid "Rotation angle"
+msgid "Axis separation angle"
+msgstr "Γωνία περιστροφής άξονα"
+
+#: ../operations/workshop/linear-sinusoid.c:100
+#| msgid "Resampling method"
+msgid "Supersampling"
+msgstr "Υπερδειγματοληψία"
+
+#: ../operations/workshop/linear-sinusoid.c:101
+msgid "Number of samples along each axis per pixel"
+msgstr "Αριθμός δειγμάτων κατά μήκος κάθε άξονα ανά εικονοστοιχείο"
+
+#: ../operations/workshop/linear-sinusoid.c:297
+#| msgid "Sinusoidal"
+msgid "Linear Sinusoid"
+msgstr "Γραμμική ημιτονοειδής"
+
+#: ../operations/workshop/linear-sinusoid.c:301
+#| msgid "Generate complex sinusoidal textures"
+msgid "Generate a linear sinusoid pattern"
+msgstr "Δημιουργία γραμμικού ημιτονοειδούς μοτίβου"
 
 #: ../operations/workshop/mandelbrot.c:25
 msgid "Real coordinate"
@@ -7148,16 +7278,50 @@ msgstr "Μέγιστος αριθμός επαναλήψεων"
 msgid "Mandelbrot set renderer"
 msgstr "Απόδοση συνόλου Mandelbrot"
 
-#: ../operations/workshop/median-blur.c:409
+#: ../operations/workshop/median-blur.c:33
+msgid "Neighborhood"
+msgstr "Γειτνίαση"
+
+#: ../operations/workshop/median-blur.c:36
+msgid "Neighborhood type"
+msgstr "Τύπος γειτνίασης"
+
+#: ../operations/workshop/median-blur.c:41
+#| msgid "highlights radius"
+msgid "Neighborhood radius"
+msgstr "Ακτίνα γειτνίασης"
+
+#: ../operations/workshop/median-blur.c:43
+msgid "Percentile"
+msgstr "Ποσοστό"
+
+#: ../operations/workshop/median-blur.c:45
+msgid "Neighborhood color percentile"
+msgstr "Ποσοστό χρώματος γειτνίασης"
+
+#: ../operations/workshop/median-blur.c:47
+#| msgid "Percentile"
+msgid "Alpha percentile"
+msgstr "Ποσοστό άλφα"
+
+#: ../operations/workshop/median-blur.c:49
+msgid "Neighborhood alpha percentile"
+msgstr "Ποσοστό άλφα γειτνίασης"
+
+#: ../operations/workshop/median-blur.c:634
 msgid "Median Blur"
 msgstr "Μέση θόλωση"
 
-#: ../operations/workshop/median-blur.c:411
+#: ../operations/workshop/median-blur.c:636
+#| msgid ""
+#| "Blur resulting from computing the median color of in a square "
+#| "neighbourhood."
 msgid ""
-"Blur resulting from computing the median color of in a square neighbourhood."
+"Blur resulting from computing the median color in the neighborhood of each "
+"pixel."
 msgstr ""
-"Θόλωση ως αποτέλεσμα του υπολογισμού του μέσου χρώματος σε ένα γειτονικό "
-"τετράγωνο."
+"Θόλωση ως αποτέλεσμα του υπολογισμού του μέσου χρώματος στη γειτνίαση κάθε "
+"εικονοστοιχείου."
 
 #: ../operations/workshop/rawbayer-load.c:156
 msgid ""
@@ -7191,7 +7355,6 @@ msgstr "Χρώματα συμπλέγματος χρησιμοποιώντας �
 
 #: ../operations/workshop/shadows-highlights.c:22
 #: ../operations/workshop/shadows-highlights-correction.c:23
-#| msgid "Pinch amount"
 msgid "shadows amount"
 msgstr "ποσότητα σκιών"
 
@@ -7201,13 +7364,11 @@ msgid "shadows tonal width"
 msgstr "πλάτος τονικών σκιών"
 
 #: ../operations/workshop/shadows-highlights.c:28
-#| msgid "Mask radius"
 msgid "shadows radius"
 msgstr "ακτίνα σκιών"
 
 #: ../operations/workshop/shadows-highlights.c:31
 #: ../operations/workshop/shadows-highlights-correction.c:29
-#| msgid "Pinch amount"
 msgid "highlights amount"
 msgstr "ποσότητα τονισμών"
 
@@ -7239,6 +7400,36 @@ msgstr "επιδιόρθωση προβλήματος βίντεο"
 #: ../operations/workshop/vhsfix.c:264
 msgid "fixes vhs digitization glitches"
 msgstr "διορθώνει προβλήματα ψηφιοποίησης βίντεο"
+
+#~ msgid "Offset value added"
+#~ msgstr "Πρόσθετη τιμή μετατόπισης"
+
+#~ msgid "Standard deviation for the vertical axis"
+#~ msgstr "Τυπική απόκλιση για τον κάθετο άξονα."
+
+#~ msgid ""
+#~ "Optional parameter to override the automatic selection of blur filter"
+#~ msgstr ""
+#~ "Προαιρετική παράμετρος για αντικατάσταση της αυτόματης επιλογής του "
+#~ "φίλτρου θόλωσης"
+
+#~ msgid "Gaussian Blur"
+#~ msgstr "Θόλωση Γκάους"
+
+#~ msgid ""
+#~ "Each result pixel is the average of the neighbouring pixels weighted by a "
+#~ "normal distribution with specified standard deviation."
+#~ msgstr ""
+#~ "Κάθε τελικό εικονοστοιχείο είναι ο μέσος όρος των γειτονικών "
+#~ "εικονοστοιχείων σταθμισμένων με την κανονική κατανομή με συγκεκριμένη "
+#~ "τυπική απόκλιση."
+
+#~ msgid "Adjust the exposure correction"
+#~ msgstr "Ρύθμιση της διόρθωσης έκθεσης"
+
+#~| msgid "A fast approximate implementation of the bilateral filter"
+#~ msgid "An implementation of Darktable's exposure filter."
+#~ msgstr "Υλοποίηση του φίλτρου έκθεσης του Darktable."
 
 #~ msgid "Converts the input image to sepia"
 #~ msgstr "Μετατρέπει την εικόνα εισαγωγής σε σέπια (σουπιά)"
@@ -7441,9 +7632,6 @@ msgstr "διορθώνει προβλήματα ψηφιοποίησης βίν�
 #~ msgstr ""
 #~ "Ορίζει το εικονοστοιχείο στόχου στην τιμή της ελάχιστης τιμής σε ένα "
 #~ "πλαίσιο που περιβάλλει το εικονοστοιχείο"
-
-#~ msgid "Percentile"
-#~ msgstr "Ποσοστό"
 
 #~ msgid "The percentile to compute, defaults to 50, which is a median filter"
 #~ msgstr ""
@@ -7670,14 +7858,8 @@ msgstr "διορθώνει προβλήματα ψηφιοποίησης βίν�
 #~ msgid "Range scale factor"
 #~ msgstr "Συντελεστής κλίμακας περιοχής"
 
-#~ msgid "X Offset"
-#~ msgstr "Μετατόπιση X"
-
 #~ msgid "X offset"
 #~ msgstr "Μετατόπιση X"
-
-#~ msgid "Y Offset"
-#~ msgstr "Μετατόπιση Υ"
 
 #~ msgid "Y offset"
 #~ msgstr "Μετατόπιση Υ"
@@ -7768,9 +7950,6 @@ msgstr "διορθώνει προβλήματα ψηφιοποίησης βίν�
 #~ "Λόγος θέασης για χρήση, -0,5 = 1:2, 0,0 = 1:1, 0,5 = 2:1, -1,0 =1:inf 1,0 "
 #~ "= inf:1, αυτό εφαρμόζεται μετά τη λήψη της αναλογίας, για άμεση χρήση "
 #~ "συντελεστή συμπίεσης ως αναλογιών, ορίστε την αναλογία σε 0,0."
-
-#~ msgid "Rotation angle"
-#~ msgstr "Γωνία περιστροφής"
 
 #~ msgid "Effect Size"
 #~ msgstr "Μέγεθος εφέ"
