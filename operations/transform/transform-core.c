@@ -726,11 +726,12 @@ gegl_transform_get_invalidated_by_change (GeglOperation       *op,
 
 typedef struct ThreadData
 {
-  void (*func) (GeglOperation *operation,
-                GeglBuffer  *dest,
-                GeglBuffer  *src,
-                GeglMatrix3 *matrix,
-                gint         level);
+  void (*func) (GeglOperation       *operation,
+                GeglBuffer          *dest,
+                GeglBuffer          *src,
+                GeglMatrix3         *matrix,
+                const GeglRectangle *roi,
+                gint                 level);
 
 
   GeglOperation            *operation;
@@ -747,7 +748,11 @@ static void thread_process (gpointer thread_data, gpointer unused)
 {
   ThreadData *data = thread_data;
   data->func (data->operation,
-                   data->output, data->input, data->matrix, data->level);
+              data->output,
+              data->input,
+              data->matrix,
+              &data->roi,
+              data->level);
     data->success = FALSE;
   g_atomic_int_add (data->pending, -1);
 }
@@ -765,18 +770,18 @@ static GThreadPool *thread_pool (void)
 
 
 static void
-transform_affine (GeglOperation *operation,
-                  GeglBuffer  *dest,
-                  GeglBuffer  *src,
-                  GeglMatrix3 *matrix,
-                  gint         level)
+transform_affine (GeglOperation       *operation,
+                  GeglBuffer          *dest,
+                  GeglBuffer          *src,
+                  GeglMatrix3         *matrix,
+                  const GeglRectangle *roi,
+                  gint                 level)
 {
   gint         factor = 1 << level;
   OpTransform *transform = (OpTransform *) operation;
   const Babl  *format = babl_format ("RaGaBaA float");
   GeglMatrix3  inverse;
   GeglMatrix2  inverse_jacobian;
-  gint         dest_pixels;
   GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src,
                                          babl_format("RaGaBaA float"),
                                          level?GEGL_SAMPLER_NEAREST:transform->sampler,
@@ -811,10 +816,8 @@ transform_affine (GeglOperation *operation,
 
   gegl_matrix3_invert (&inverse);
 
-  g_object_get (dest, "pixels", &dest_pixels, NULL);
-
   {
-    const GeglRectangle *dest_extent = gegl_buffer_get_extent (dest);
+    const GeglRectangle *dest_extent = roi;
     GeglBufferIterator *i = gegl_buffer_iterator_new (dest,
                                                       dest_extent,
                                                       level,
@@ -988,11 +991,12 @@ transform_affine (GeglOperation *operation,
 }
 
 static void
-transform_generic (GeglOperation *operation,
-                   GeglBuffer  *dest,
-                   GeglBuffer  *src,
-                   GeglMatrix3 *matrix,
-                   gint         level)
+transform_generic (GeglOperation       *operation,
+                   GeglBuffer          *dest,
+                   GeglBuffer          *src,
+                   GeglMatrix3         *matrix,
+                   const GeglRectangle *roi,
+                   gint                 level)
 {
   OpTransform *transform = (OpTransform *) operation;
   const Babl          *format = babl_format ("RaGaBaA float");
@@ -1000,7 +1004,6 @@ transform_generic (GeglOperation *operation,
   GeglBufferIterator  *i;
   const GeglRectangle *dest_extent;
   GeglMatrix3          inverse;
-  gint                 dest_pixels;
   GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src,
                                          babl_format("RaGaBaA float"),
                                          level?GEGL_SAMPLER_NEAREST:
@@ -1008,8 +1011,7 @@ transform_generic (GeglOperation *operation,
                                          level);
   GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
 
-  g_object_get (dest, "pixels", &dest_pixels, NULL);
-  dest_extent = gegl_buffer_get_extent (dest);
+  dest_extent = roi;
 
   /*
    * Construct an output tile iterator.
@@ -1277,11 +1279,12 @@ gegl_transform_process (GeglOperation        *operation,
     }
   else
     {
-      void (*func) (GeglOperation *operation,
-                    GeglBuffer  *dest,
-                    GeglBuffer  *src,
-                    GeglMatrix3 *matrix,
-                    gint         level) = transform_generic;
+      void (*func) (GeglOperation       *operation,
+                    GeglBuffer          *dest,
+                    GeglBuffer          *src,
+                    GeglMatrix3         *matrix,
+                    const GeglRectangle *roi,
+                    gint                 level) = transform_generic;
 
       if (gegl_matrix3_is_affine (&matrix))
         func = transform_affine;
@@ -1344,7 +1347,7 @@ gegl_transform_process (GeglOperation        *operation,
       }
       else
       {
-        func (operation, output, input, &matrix, level);
+        func (operation, output, input, &matrix, result, level);
       }
 
       if (input != NULL)
