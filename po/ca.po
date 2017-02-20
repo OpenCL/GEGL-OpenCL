@@ -949,7 +949,7 @@ msgstr ""
 
 #: ../operations/common/color-enhance.c:236
 msgid "Color Enhance"
-msgstr "Ressalta el color"
+msgstr "Millora de color"
 
 #: ../operations/common/color-enhance.c:239
 msgid ""
