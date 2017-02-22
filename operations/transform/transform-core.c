@@ -804,7 +804,7 @@ transform_affine (GeglOperation       *operation,
 
   gegl_matrix3_copy_into (&inverse, matrix);
 
-  if (factor)
+  if (factor && 0)
   {
     inverse.coeff[0][0] /= factor;
     inverse.coeff[0][1] /= factor;
@@ -1002,7 +1002,7 @@ transform_generic (GeglOperation       *operation,
   const Babl          *format = babl_format ("RaGaBaA float");
   gint                 factor = 1 << level;
   GeglBufferIterator  *i;
-  const GeglRectangle *dest_extent;
+  GeglRectangle  dest_extent;
   GeglMatrix3          inverse;
   GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src,
                                          babl_format("RaGaBaA float"),
@@ -1011,13 +1011,17 @@ transform_generic (GeglOperation       *operation,
                                          level);
   GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
 
-  dest_extent = roi;
+  dest_extent = *roi;
+  dest_extent.x >>= level;
+  dest_extent.y >>= level;
+  dest_extent.width >>= level;
+  dest_extent.height >>= level;
 
   /*
    * Construct an output tile iterator.
    */
   i = gegl_buffer_iterator_new (dest,
-                                dest_extent,
+                                &dest_extent,
                                 level,
                                 format,
                                 GEGL_ACCESS_WRITE,
@@ -1286,8 +1290,8 @@ gegl_transform_process (GeglOperation        *operation,
                     const GeglRectangle *roi,
                     gint                 level) = transform_generic;
 
-      if (gegl_matrix3_is_affine (&matrix))
-        func = transform_affine;
+      //if (gegl_matrix3_is_affine (&matrix))
+      //  func = transform_affine;
 
       /*
        * For all other cases, do a proper resampling
