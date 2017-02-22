@@ -1,6 +1,6 @@
 # The tests
 
-EXTRA_DIST = invert.sh invert-crop.sh unsharp-crop.sh unsharp.sh
+EXTRA_DIST = invert.sh invert-crop.sh unsharp-crop.sh unsharp.sh rotate.sh rotate-crop.sh
 
 TESTS = $(EXTRA_DIST)
 
