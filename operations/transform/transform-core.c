@@ -786,6 +786,13 @@ transform_affine (GeglOperation       *operation,
                                          babl_format("RaGaBaA float"),
                                          level?GEGL_SAMPLER_NEAREST:transform->sampler,
                                          level);
+
+  GeglRectangle  dest_extent = *roi;
+  dest_extent.x >>= level;
+  dest_extent.y >>= level;
+  dest_extent.width >>= level;
+  dest_extent.height >>= level;
+
   GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
 
 
@@ -804,7 +811,7 @@ transform_affine (GeglOperation       *operation,
 
   gegl_matrix3_copy_into (&inverse, matrix);
 
-  if (factor && 0)
+  if (factor)
   {
     inverse.coeff[0][0] /= factor;
     inverse.coeff[0][1] /= factor;
@@ -817,9 +824,8 @@ transform_affine (GeglOperation       *operation,
   gegl_matrix3_invert (&inverse);
 
   {
-    const GeglRectangle *dest_extent = roi;
     GeglBufferIterator *i = gegl_buffer_iterator_new (dest,
-                                                      dest_extent,
+                                                      &dest_extent,
                                                       level,
                                                       format,
                                                       GEGL_ACCESS_WRITE,
@@ -1002,7 +1008,6 @@ transform_generic (GeglOperation       *operation,
   const Babl          *format = babl_format ("RaGaBaA float");
   gint                 factor = 1 << level;
   GeglBufferIterator  *i;
-  GeglRectangle  dest_extent;
   GeglMatrix3          inverse;
   GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src,
                                          babl_format("RaGaBaA float"),
@@ -1011,7 +1016,7 @@ transform_generic (GeglOperation       *operation,
                                          level);
   GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
 
-  dest_extent = *roi;
+  GeglRectangle  dest_extent = *roi;
   dest_extent.x >>= level;
   dest_extent.y >>= level;
   dest_extent.width >>= level;
@@ -1290,8 +1295,8 @@ gegl_transform_process (GeglOperation        *operation,
                     const GeglRectangle *roi,
                     gint                 level) = transform_generic;
 
-      //if (gegl_matrix3_is_affine (&matrix))
-      //  func = transform_affine;
+      if (gegl_matrix3_is_affine (&matrix))
+        func = transform_affine;
 
       /*
        * For all other cases, do a proper resampling
