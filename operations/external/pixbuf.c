@@ -75,6 +75,9 @@ process (GeglOperation       *operation,
   if (o->pixbuf)
     {
       GeglRectangle extent;
+      gint stride;
+
+      stride = gdk_pixbuf_get_rowstride (GDK_PIXBUF (o->pixbuf));
 
       extent.x = 0;
       extent.y = 0;
@@ -82,7 +85,7 @@ process (GeglOperation       *operation,
       extent.height = gdk_pixbuf_get_height (GDK_PIXBUF (o->pixbuf));
 
       gegl_buffer_set (output, &extent, 0, NULL, gdk_pixbuf_read_pixels (GDK_PIXBUF (o->pixbuf)),
-                       GEGL_AUTO_ROWSTRIDE);
+                       stride);
     }
   return TRUE;
 }
