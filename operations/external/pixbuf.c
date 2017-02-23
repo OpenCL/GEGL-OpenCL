@@ -81,7 +81,7 @@ process (GeglOperation       *operation,
       extent.width = gdk_pixbuf_get_width (GDK_PIXBUF (o->pixbuf));
       extent.height = gdk_pixbuf_get_height (GDK_PIXBUF (o->pixbuf));
 
-      gegl_buffer_set (output, &extent, 0, NULL, gdk_pixbuf_get_pixels (GDK_PIXBUF (o->pixbuf)),
+      gegl_buffer_set (output, &extent, 0, NULL, gdk_pixbuf_read_pixels (GDK_PIXBUF (o->pixbuf)),
                        GEGL_AUTO_ROWSTRIDE);
     }
   return TRUE;
