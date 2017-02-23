@@ -56,6 +56,7 @@ process (GeglOperation       *operation,
       gboolean has_alpha;
       gint bpp;
       gint bps;
+      gint stride;
 
       g_object_get (input, "format", &format, NULL);
 
@@ -69,8 +70,10 @@ process (GeglOperation       *operation,
       babl = babl_format (name);
 
       bpp = babl_format_get_bytes_per_pixel (babl);
-      temp = g_malloc (rect->width * rect->height * bpp);
-      gegl_buffer_get (input, rect, 1.0, babl, temp, GEGL_AUTO_ROWSTRIDE,
+      stride = bpp * rect->width;
+
+      temp = g_malloc0 (stride * rect->height);
+      gegl_buffer_get (input, rect, 1.0, babl, temp, stride,
                        GEGL_ABYSS_NONE);
       if (temp) {
     *pixbuf = gdk_pixbuf_new_from_data (temp,
@@ -78,7 +81,7 @@ process (GeglOperation       *operation,
                         has_alpha,
                         bps,
                         rect->width, rect->height,
-                        rect->width * (has_alpha ? 4 : 3) * bps/8,
+                        stride,
                         (GdkPixbufDestroyNotify) g_free, NULL);
       }
       else {
