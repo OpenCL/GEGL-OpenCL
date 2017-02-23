@@ -55,9 +55,13 @@ get_bounding_box (GeglOperation *operation)
 
 static void prepare (GeglOperation *operation)
 {
+  const Babl *format;
   GeglProperties *o = GEGL_PROPERTIES (operation);
-  gegl_operation_set_format (operation, "output",
-      babl_format(gdk_pixbuf_get_has_alpha(GDK_PIXBUF(o->pixbuf))?"R'G'B'A u8":"R'G'B' u8"));
+  gboolean has_alpha;
+
+  has_alpha = gdk_pixbuf_get_has_alpha (GDK_PIXBUF (o->pixbuf));
+  format = has_alpha ? babl_format ("R'G'B'A u8") : babl_format ("R'G'B' u8");
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static gboolean
