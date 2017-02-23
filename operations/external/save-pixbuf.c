@@ -54,6 +54,7 @@ process (GeglOperation       *operation,
       GeglRectangle *rect = gegl_operation_source_get_bounding_box (operation, "input");
       gchar *name;
       gboolean has_alpha;
+      gint bpp;
       gint bps;
 
       g_object_get (input, "format", &format, NULL);
@@ -67,7 +68,8 @@ process (GeglOperation       *operation,
                   bps);
       babl = babl_format (name);
 
-      temp = g_malloc (rect->width * rect->height * bps);
+      bpp = babl_format_get_bytes_per_pixel (babl);
+      temp = g_malloc (rect->width * rect->height * bpp);
       gegl_buffer_get (input, rect, 1.0, babl, temp, GEGL_AUTO_ROWSTRIDE,
                        GEGL_ABYSS_NONE);
       if (temp) {
