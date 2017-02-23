@@ -72,7 +72,7 @@ process (GeglOperation       *operation,
       bpp = babl_format_get_bytes_per_pixel (babl);
       stride = bpp * rect->width;
 
-      temp = g_malloc0 (stride * rect->height);
+      temp = g_malloc0_n (stride, rect->height);
       gegl_buffer_get (input, rect, 1.0, babl, temp, stride,
                        GEGL_ABYSS_NONE);
       if (temp) {
