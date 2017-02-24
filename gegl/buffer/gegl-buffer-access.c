@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006-2008 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006-2012,2014-2017  Øyvind Kolås <pippin@gimp.org>
  *           2013 Daniel Sabo
  */
 
@@ -344,6 +344,16 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
   gint abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint factor         = 1<<level;
   const Babl *fish;
+  GeglRectangle scaled_rect;
+  if (level && roi)
+  {
+    scaled_rect = *roi;
+    scaled_rect.x <<= level;
+    scaled_rect.y <<= level;
+    scaled_rect.width <<= level;
+    scaled_rect.height <<= level;
+    roi = &scaled_rect;
+  }
 
   /* roi specified, override buffers extent */
   if (roi)
@@ -354,6 +364,8 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
       buffer_y = roi->y + buffer_shift_y;
     }
 
+  buffer_shift_x /= factor;
+  buffer_shift_y /= factor;
   buffer_abyss_x /= factor;
   buffer_abyss_y /= factor;
   abyss_x_total  /= factor;
@@ -362,6 +374,7 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
   buffer_y       /= factor;
   width          /= factor;
   height         /= factor;
+
 
   buf_stride = width * bpx_size;
   if (rowstride != GEGL_AUTO_ROWSTRIDE)

@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2007 Øyvind Kolås
+ * Copyright 2007-2012,2014,2015,2017 Øyvind Kolås
  */
 
 #include "config.h"
@@ -535,7 +535,11 @@ render_rectangle (GeglProcessor *processor)
                               GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
 
               /* copy the buffer data into the cache */
-              gegl_buffer_set (GEGL_BUFFER (cache), dr, processor->level, format, buf, GEGL_AUTO_ROWSTRIDE);
+              {
+                gint level = processor->level;
+                GeglRectangle sr = {dr->x >> level, dr->y >> level, dr->width >> level, dr->height >> level };
+                gegl_buffer_set (GEGL_BUFFER (cache), &sr, level, format, buf, GEGL_AUTO_ROWSTRIDE);
+              }
 
               /* tells the cache that the rectangle (dr) has been computed */
               gegl_cache_computed (cache, dr, processor->level);
