@@ -31,10 +31,6 @@ property_double (exposure, _("Exposure"), 0.0)
     description (_("Relative brightness change in stops"))
     ui_range    (-10.0, 10.0)
 
-property_double (gamma, _("Gamma adjustment"), 1.0)
-    value_range (0.01, 10)
-    ui_range    (0.01, 3.0)
-
 #else
 
 #define GEGL_OP_POINT_FILTER
@@ -74,7 +70,6 @@ process (GeglOperation       *op,
   gfloat      exposure_negated = (gfloat) -o->exposure;
   gfloat      gain;
   gfloat      white;
-  gfloat      gamma = 1.0 / o->gamma;
   
   glong       i;
 
@@ -85,28 +80,16 @@ process (GeglOperation       *op,
   diff = MAX (white - black_level, 0.01);
   gain = 1.0f / diff;
 
-  if (gamma == 1.0)
-    for (i=0; i<n_pixels; i++)
-      {
-        out_pixel[0] = (in_pixel[0] - black_level) * gain;
-        out_pixel[1] = (in_pixel[1] - black_level) * gain;
-        out_pixel[2] = (in_pixel[2] - black_level) * gain;
-        out_pixel[3] = in_pixel[3];
-        
-        out_pixel += 4;
-        in_pixel  += 4;
-      }
-  else
-    for (i=0; i<n_pixels; i++)
-      {
-        out_pixel[0] = powf ((in_pixel[0] - black_level) * gain, gamma);
-        out_pixel[1] = powf ((in_pixel[1] - black_level) * gain, gamma);
-        out_pixel[2] = powf ((in_pixel[2] - black_level) * gain, gamma);
-        out_pixel[3] = in_pixel[3];
-        
-        out_pixel += 4;
-        in_pixel += 4;
-      }
+  for (i=0; i<n_pixels; i++)
+    {
+      out_pixel[0] = (in_pixel[0] - black_level) * gain;
+      out_pixel[1] = (in_pixel[1] - black_level) * gain;
+      out_pixel[2] = (in_pixel[2] - black_level) * gain;
+      out_pixel[3] = in_pixel[3];
+      
+      out_pixel += 4;
+      in_pixel  += 4;
+    }
     
   return TRUE;
 }
@@ -117,13 +100,12 @@ static const char* kernel_source =
 "__kernel void kernel_exposure(__global const float4 *in,          \n"
 "                              __global       float4 *out,         \n"
 "                              float                  black_level, \n"
-"                              float                  gain,        \n"
-"                              float                  gamma)       \n"
+"                              float                  gain)        \n"
 "{                                                                 \n"
 "  int gid = get_global_id(0);                                     \n"
 "  float4 in_v  = in[gid];                                         \n"
 "  float4 out_v;                                                   \n"
-"  out_v.xyz = pow(((in_v.xyz - black_level) * gain), 1.0/gamma);  \n"
+"  out_v.xyz =  ((in_v.xyz - black_level) * gain)                  \n"
 "  out_v.w   =  in_v.w;                                            \n"
 "  out[gid]  =  out_v;                                             \n"
 "}                                                                 \n";
@@ -150,7 +132,6 @@ cl_process (GeglOperation       *op,
   gfloat      exposure_negated = (gfloat) -o->exposure;
   gfloat      gain;
   gfloat      white;
-  gfloat      gamma = 1.0 / o->gamma;
   
   cl_int cl_err = 0;
 
@@ -169,7 +150,6 @@ cl_process (GeglOperation       *op,
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 1, sizeof(cl_mem),   (void*)&out_tex);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_float), (void*)&black_level);
   cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&gain);
-  cl_err |= gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float), (void*)&gamma);
   if (cl_err != CL_SUCCESS) return cl_err;
 
   cl_err = gegl_clEnqueueNDRangeKernel(gegl_cl_get_command_queue (),
@@ -201,6 +181,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Exposure"),
     "categories",  "color",
     "description", _("Changes Exposure of an image, allows stepping HDR and photographs up/down in stops. "),
+    "op-version",  "1:0",
     NULL);
 }
 
