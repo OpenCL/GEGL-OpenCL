@@ -33,10 +33,6 @@ property_double (zoff,  _("Z offset"), -1)
 property_int (n, _("Iterations"), 3)
   value_range     (0, 20)
 
-  /* XXX: what? */
-property_double (seed, _("Random seed"), 0.0)
-  ui_range (0.0, 100.0)
-
 #else
 
 #define GEGL_OP_POINT_RENDER
