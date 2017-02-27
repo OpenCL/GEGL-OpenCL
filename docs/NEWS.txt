@@ -1,3 +1,33 @@
+GEGL-0.3.14 2017-02-27
+----------------------
+
+Buffer
+~~~~~~
+
+- changed gegl_buffer_set to accept mipmap level scaled rectangles, similar to
+  gegl_buffer_get and gegl_buffer_iterator_new/_add
+
+Operations
+~~~~~~~~~~
+
+- made mipmap preview rendering capable: gblur-1d/gaussian blur, sinus,
+  transform (rotate, scale, perspective etc), snn-mean
+- noise-perlin: remove unused random seed property
+- exposure: remove gamma property
+- save-pixbuf: allocate less temporary memory
+- load-pixbuf: fix rowstride related crasher
+
+Translations
+~~~~~~~~~~~~
+
+Slovenian, Russian, Greek, Polish and Catalan translations updated.
+
+Contributors
+~~~~~~~~~~~~
+Alexandre Prokoudine, Debarshi Ray, Dimitris Spingos (Δημήτρης Σπίγγος), Jordi
+Mas, Martin Srebotnjak, Øyvind Kolås
+
+
 GEGL-0.3.12 2017-02-13
 ----------------------
 

@@ -359,13 +359,13 @@ process (GeglOperation       *operation,
   Transform           transform;
   const Babl         *format_io;
   GeglSampler        *sampler;
+  level = 0;
   gint                factor = 1 << level;
   GeglBufferIterator *it;
   GeglRectangle in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
   GeglMatrix2  scale_matrix;
   GeglMatrix2 *scale = NULL;
   gint sampler_type = o->sampler_type;
-
   prepare_transform2 (&transform, operation, level);
 
   if (level)
