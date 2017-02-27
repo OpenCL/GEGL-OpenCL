@@ -37,6 +37,6 @@ GEGL Feature List
       * Most operations operate in
         http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (using 32bit
         floating point/HDR linear light RGBA), operations use babl formats to
-        specify whether they work on linearized data or.
+        specify whether data should be linearized for processing.
   - Bounding box based hit detection.
   - XML serialization format (not-finalized)
