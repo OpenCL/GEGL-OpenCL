@@ -12,8 +12,9 @@ GEGL Feature List
      * Processes subregions and dependencies.
      * Subgraph caches to aid performance of non-destructive editing.
      * Multi-threaded processing.
-     * Experimental OpenCL acceleration, with possibility of hybrid cpu/gpu
-       processing.
+     * OpenCL acceleration, capable of hybrid cpu/gpu processing.
+     * Experimental mipmap preview rendering, do zoomed out preview 
+       rendering touching only 25% 6.25% of the pixels.
   - link:api.html#GeglBuffer[GeglBuffer]
      * Storage of all babl supported formats.
      * Sparse swapped buffers (larger than RAM images).
@@ -35,6 +36,7 @@ GEGL Feature List
       * HDR exposure merging and tone mapping operations.
       * Most operations operate in
         http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (using 32bit
-        floating point/HDR linear light RGBA)
+        floating point/HDR linear light RGBA), operations use babl formats to
+        specify whether they work on linearized data or.
   - Bounding box based hit detection.
   - XML serialization format (not-finalized)
