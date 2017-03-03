@@ -14,35 +14,67 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2006 Philip Lafleur
+ *           2017 Øyvind Kolås
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
+#ifdef GEGL_PROPERTIES
 
-#ifdef GEGL_CHANT_PROPERTIES
+property_double (x, _("X"), 0.0)
+    description (_("Horizontal scale factor"))
+    ui_range (0.0, 20.0)
+    value_range (-9000.0, 9000.0)
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
-                   _("Horizontal scale factor"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 1.0,
-                   _("Vertical scale factor"))
+property_double (y, _("Y"), 0.0)
+    description (_("Vertical scale factor"))
+    ui_range (0.0, 20.0)
+    value_range (-9000.0, 9000.0)
 
 #else
 
-#define GEGL_CHANT_NAME scale_ratio
-#define GEGL_CHANT_OPERATION_NAME "gegl:scale-ratio"
-#define GEGL_CHANT_DESCRIPTION _("Scales the buffer according to a ratio.")
-#define GEGL_CHANT_SELF "scale-ratio.c"
-#include "chant.h"
+#include "gegl-operation-filter.h"
+#include "transform-core.h"
+#define GEGL_OP_NO_SOURCE
+#define GEGL_OP_Parent  OpTransform
+#define GEGL_OP_PARENT  TYPE_OP_TRANSFORM
+#define GEGL_OP_NAME    scale_ratio
+#define GEGL_OP_BUNDLE
+#define GEGL_OP_C_FILE  "scale-ratio.c"
+
+#include "gegl-op.h"
+
+#include <math.h>
 
 static void
 create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
-  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
 
-  matrix->coeff [0][0] = chant->x;
-  matrix->coeff [1][1] = chant->y;
+  matrix->coeff [0][0] = o->x;
+  matrix->coeff [1][1] = o->y;
+}
+
+#include <stdio.h>
+
+static void
+gegl_op_class_init (GeglOpClass *klass)
+{
+  GeglOperationClass *operation_class;
+  OpTransformClass   *transform_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  transform_class = OP_TRANSFORM_CLASS (klass);
+  transform_class->create_matrix = create_matrix;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name", "gegl:scale-ratio",
+    "title", _("Scale ratio"),
+    "categories", "transform",
+    "description", _("Scales the buffer according to a ratio."),
+    NULL);
 }
 
 #endif
