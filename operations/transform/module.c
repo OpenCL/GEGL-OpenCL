@@ -41,12 +41,12 @@ gegl_module_query (GTypeModule *module)
 
 GType gegl_op_rotate_register_type (GTypeModule *module);
 GType gegl_op_rotate_on_center_register_type (GTypeModule *module);
+GType gegl_op_reflect_register_type (GTypeModule *module);
 GType scale_ratio_get_type  (void);
 GType scale_size_get_type   (void);
 GType scale_size_keepaspect_get_type   (void);
 GType shear_get_type       (void);
 GType translate_get_type   (void);
-GType reflect_get_type     (void);
 GType transform_get_type   (void);
 
 #include <stdio.h>
@@ -63,9 +63,9 @@ gegl_module_register (GTypeModule *module)
   dummy = scale_size_keepaspect_get_type ();
   dummy = shear_get_type ();
   dummy = translate_get_type ();
-  dummy = reflect_get_type ();
   dummy = transform_get_type ();
   dummy = gegl_op_rotate_register_type (module);
+  dummy = gegl_op_reflect_register_type (module);
   dummy = gegl_op_rotate_on_center_register_type (module);
 
   dummy ++; /* silence gcc, having it is required to avoid optimizing
