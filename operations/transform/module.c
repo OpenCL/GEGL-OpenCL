@@ -43,7 +43,7 @@ GType gegl_op_rotate_register_type (GTypeModule *module);
 GType gegl_op_rotate_on_center_register_type (GTypeModule *module);
 GType gegl_op_reflect_register_type (GTypeModule *module);
 GType gegl_op_scale_ratio_register_type  (GTypeModule *module);
-GType scale_size_get_type   (void);
+GType gegl_op_scale_size_register_type  (GTypeModule *module);
 GType scale_size_keepaspect_get_type   (void);
 GType shear_get_type       (void);
 GType translate_get_type   (void);
@@ -58,12 +58,12 @@ gegl_module_register (GTypeModule *module)
   transform_module = module;
 
   dummy = op_transform_get_type ();
-  dummy = scale_size_get_type ();
   dummy = scale_size_keepaspect_get_type ();
   dummy = shear_get_type ();
   dummy = translate_get_type ();
   dummy = transform_get_type ();
   dummy = gegl_op_scale_ratio_register_type (module);
+  dummy = gegl_op_scale_size_register_type (module);
   dummy = gegl_op_rotate_register_type (module);
   dummy = gegl_op_reflect_register_type (module);
   dummy = gegl_op_rotate_on_center_register_type (module);
