@@ -39,7 +39,7 @@ gegl_module_query (GTypeModule *module)
   return &modinfo;
 }
 
-GType rotate_get_type      (void);
+GType gegl_op_rotate_register_type (GTypeModule *module);
 GType rotate_on_center_get_type (void);
 GType scale_ratio_get_type  (void);
 GType scale_size_get_type   (void);
@@ -49,6 +49,8 @@ GType translate_get_type   (void);
 GType reflect_get_type     (void);
 GType transform_get_type   (void);
 
+#include <stdio.h>
+
 G_MODULE_EXPORT gboolean
 gegl_module_register (GTypeModule *module)
 {
@@ -56,7 +58,6 @@ gegl_module_register (GTypeModule *module)
   transform_module = module;
 
   dummy = op_transform_get_type ();
-  dummy = rotate_get_type ();
   dummy = rotate_on_center_get_type ();
   dummy = scale_ratio_get_type ();
   dummy = scale_size_get_type ();
@@ -65,6 +66,7 @@ gegl_module_register (GTypeModule *module)
   dummy = translate_get_type ();
   dummy = reflect_get_type ();
   dummy = transform_get_type ();
+  dummy = gegl_op_rotate_register_type (module);
 
   dummy ++; /* silence gcc, having it is required to avoid optimizing
                away the _get_type calls themselves */
