@@ -14,25 +14,36 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2014 Jon Nordby, The Grid <jononor@gmail.com>
+ *           2017 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, -1.0,
-                   _("Horizontal size"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, -1.0,
-                   _("Vertical size"))
+property_double (x, _("X"), -1.0)
+    description (_("Horizontal size"))
+    ui_range (0.0, 20.0)
+    value_range (-9000.0, 9000.0)
+
+property_double (y, _("Y"), -1.0)
+    description (_("Vertical size"))
+    ui_range (0.0, 20.0)
+    value_range (-9000.0, 9000.0)
 
 #else
 
-#define GEGL_CHANT_NAME scale_size_keepaspect
-#define GEGL_CHANT_OPERATION_NAME "gegl:scale-size-keepaspect"
-#define GEGL_CHANT_DESCRIPTION _("Scales the buffer to a size, preserving aspect ratio")
-#define GEGL_CHANT_SELF "scale-size-keepaspect.c"
-#include "chant.h"
+#include "gegl-operation-filter.h"
+#include "transform-core.h"
+#define GEGL_OP_NO_SOURCE
+#define GEGL_OP_Parent  OpTransform
+#define GEGL_OP_PARENT  TYPE_OP_TRANSFORM
+#define GEGL_OP_NAME    scale_size_keepaspect
+#define GEGL_OP_BUNDLE
+#define GEGL_OP_C_FILE  "scale-size-keepaspect.c"
+
+#include "gegl-op.h"
 
 #include <math.h>
 
@@ -40,7 +51,7 @@ static void
 create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
-  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
   GeglOperation *operation  = GEGL_OPERATION (op);
   GeglRectangle  in_rect = {0,0,0,0};
   gdouble height_over_width = 1.0;
@@ -55,25 +66,45 @@ create_matrix (OpTransform *op,
     in_rect.height = 1;
 
   height_over_width = in_rect.height/(gdouble)in_rect.width;
-  if (chant->x <= 0.0 && chant->y <= 0.0) {
+  if (o->x <= 0.0 && o->y <= 0.0) {
     // No dimensions specified, pass through
     matrix->coeff [0][0] = 1.0;
     matrix->coeff [1][1] = 1.0;
-  } else if (chant->x <= 0.0 && chant->y > 0.0) {
+  } else if (o->x <= 0.0 && o->y > 0.0) {
     // X free, Y specified
-    const gdouble target_x = chant->y / height_over_width;
+    const gdouble target_x = o->y / height_over_width;
     matrix->coeff [0][0] = target_x / (gdouble) in_rect.width;
-    matrix->coeff [1][1] = chant->y / (gdouble) in_rect.height;
-  } else if (chant->y <= 0.0 && chant->x > 0.0) {
+    matrix->coeff [1][1] = o->y / (gdouble) in_rect.height;
+  } else if (o->y <= 0.0 && o->x > 0.0) {
     // Y free, X specified
-    const gdouble target_y = chant->x * height_over_width;
-    matrix->coeff [0][0] = chant->x / (gdouble) in_rect.width;
+    const gdouble target_y = o->x * height_over_width;
+    matrix->coeff [0][0] = o->x / (gdouble) in_rect.width;
     matrix->coeff [1][1] = target_y / (gdouble) in_rect.height;
   } else {
     // Fully specified
-    matrix->coeff [0][0] = chant->x / (gdouble) in_rect.width;
-    matrix->coeff [1][1] = chant->y / (gdouble) in_rect.height;
+    matrix->coeff [0][0] = o->x / (gdouble) in_rect.width;
+    matrix->coeff [1][1] = o->y / (gdouble) in_rect.height;
   }
+}
+
+#include <stdio.h>
+
+static void
+gegl_op_class_init (GeglOpClass *klass)
+{
+  GeglOperationClass *operation_class;
+  OpTransformClass   *transform_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  transform_class = OP_TRANSFORM_CLASS (klass);
+  transform_class->create_matrix = create_matrix;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name", "gegl:scale-size-keepaspect",
+    "title", _("Scale size keep aspect"),
+    "categories", "transform",
+    "description", _("Scales the buffer to a size, preserving aspect ratio"),
+    NULL);
 }
 
 #endif
