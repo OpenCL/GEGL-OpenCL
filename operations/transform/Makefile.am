@@ -19,5 +19,4 @@ transformops_la_SOURCES = \
 	scale-size-keepaspect.c \
 	shear.c		\
 	transform.c	\
-	translate.c	\
-	chant.h
+	translate.c
