@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-20 00:57+0100\n"
-"PO-Revision-Date: 2017-02-20 00:58+0100\n"
+"POT-Creation-Date: 2017-03-05 09:24+0100\n"
+"PO-Revision-Date: 2017-03-05 09:25+0100\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -1553,17 +1553,15 @@ msgstr "Nasycenie kafla"
 msgid "Expand tiles by this amount"
 msgstr "Rozszerz kafle o tę ilość"
 
-#. XXX: what?
 #: ../operations/common/cubism.c:42 ../operations/common/dither.c:51
 #: ../operations/common/maze.c:65 ../operations/common/mosaic.c:88
 #: ../operations/common/noise-cell.c:55 ../operations/common/noise-cie-lch.c:37
 #: ../operations/common/noise-hsv.c:39 ../operations/common/noise-hurl.c:37
-#: ../operations/common/noise-perlin.c:37 ../operations/common/noise-pick.c:38
-#: ../operations/common/noise-rgb.c:51 ../operations/common/noise-simplex.c:39
-#: ../operations/common/noise-slur.c:40 ../operations/common/noise-solid.c:62
-#: ../operations/common/noise-spread.c:41 ../operations/common/plasma.c:70
-#: ../operations/common/shift.c:35 ../operations/common/sinus.c:51
-#: ../operations/common/supernova.c:63
+#: ../operations/common/noise-pick.c:38 ../operations/common/noise-rgb.c:51
+#: ../operations/common/noise-simplex.c:39 ../operations/common/noise-slur.c:40
+#: ../operations/common/noise-solid.c:62 ../operations/common/noise-spread.c:41
+#: ../operations/common/plasma.c:70 ../operations/common/shift.c:35
+#: ../operations/common/sinus.c:51 ../operations/common/supernova.c:63
 #: ../operations/workshop/segment-kmeans.c:37
 msgid "Random seed"
 msgstr "Ziarno losowości"
@@ -1926,6 +1924,11 @@ msgstr ""
 #: ../operations/common/dropshadow.c:25 ../operations/common/layer.c:36
 #: ../operations/common/plasma.c:40 ../operations/common/polar-coordinates.c:51
 #: ../operations/common/rectangle.c:26 ../operations/core/crop.c:25
+#: ../operations/transform/reflect.c:26
+#: ../operations/transform/scale-ratio.c:25
+#: ../operations/transform/scale-size.c:25
+#: ../operations/transform/scale-size-keepaspect.c:25
+#: ../operations/transform/shear.c:25 ../operations/transform/translate.c:25
 msgid "X"
 msgstr "X"
 
@@ -1936,6 +1939,12 @@ msgstr "Poziome przesunięcie cienia"
 #: ../operations/common/dropshadow.c:31 ../operations/common/layer.c:41
 #: ../operations/common/plasma.c:47 ../operations/common/polar-coordinates.c:57
 #: ../operations/common/rectangle.c:31 ../operations/core/crop.c:30
+#: ../operations/transform/reflect.c:30
+#: ../operations/transform/scale-ratio.c:30
+#: ../operations/transform/scale-size.c:30
+#: ../operations/transform/scale-size-keepaspect.c:30
+#: ../operations/transform/shear.c:29 ../operations/transform/transform.c:24
+#: ../operations/transform/translate.c:29
 msgid "Y"
 msgstr "Y"
 
@@ -2155,7 +2164,7 @@ msgstr "Poziom czerni"
 msgid "Adjust the black level"
 msgstr "Dostosuj poziom czerni"
 
-#: ../operations/common/exposure.c:30 ../operations/common/exposure.c:201
+#: ../operations/common/exposure.c:30 ../operations/common/exposure.c:181
 msgid "Exposure"
 msgstr "Ekspozycja"
 
@@ -2163,11 +2172,7 @@ msgstr "Ekspozycja"
 msgid "Relative brightness change in stops"
 msgstr "Względna zmiana jasności w krokach"
 
-#: ../operations/common/exposure.c:34
-msgid "Gamma adjustment"
-msgstr "Dostosowanie gammy"
-
-#: ../operations/common/exposure.c:203
+#: ../operations/common/exposure.c:183
 msgid ""
 "Changes Exposure of an image, allows stepping HDR and photographs up/down in "
 "stops. "
@@ -2501,7 +2506,7 @@ msgstr "Kadrowanie do obszaru wejściowego"
 msgid "Should the output extent be clipped to the input extent"
 msgstr "Czy kadrować obszar wyjściowy do obszaru wejściowego"
 
-#: ../operations/common/gaussian-blur.c:119 ../operations/common/gblur-1d.c:937
+#: ../operations/common/gaussian-blur.c:119 ../operations/common/gblur-1d.c:912
 msgid ""
 "Performs an averaging of neighboring pixels with the normal distribution as "
 "weighting"
@@ -3492,11 +3497,11 @@ msgstr "Całkowicie losuj ułamek pikseli"
 msgid "Z offset"
 msgstr "Przesunięcie Z"
 
-#: ../operations/common/noise-perlin.c:115
+#: ../operations/common/noise-perlin.c:111
 msgid "Perlin Noise"
 msgstr "Szum Perlina"
 
-#: ../operations/common/noise-perlin.c:118
+#: ../operations/common/noise-perlin.c:114
 msgid "Perlin noise generator"
 msgstr "Generator szumu Perlina"
 
@@ -4307,11 +4312,11 @@ msgstr "Pary"
 msgid "Number of pairs; higher number preserves more acute features"
 msgstr "Liczna par; wyższy numer zachowuje ostrzejsze cechy"
 
-#: ../operations/common/snn-mean.c:335
+#: ../operations/common/snn-mean.c:352
 msgid "Symmetric Nearest Neighbour"
 msgstr "Symetryczni najbliżsi sąsiedzi"
 
-#: ../operations/common/snn-mean.c:337
+#: ../operations/common/snn-mean.c:354
 msgid ""
 "Noise reducing edge preserving blur filter based on Symmetric Nearest "
 "Neighbours"
@@ -5237,11 +5242,11 @@ msgstr "Konwertuj dane do podanego formatu"
 msgid "Reset origin"
 msgstr "Przywrócenie pochodzenia"
 
-#: ../operations/core/crop.c:219
+#: ../operations/core/crop.c:223
 msgid "Crop"
 msgstr "Kadruj"
 
-#: ../operations/core/crop.c:220
+#: ../operations/core/crop.c:224
 msgid "Crop a buffer"
 msgstr "Kadruj bufor"
 
@@ -5842,6 +5847,7 @@ msgstr "Jak ustalać, co należy wypełnić (nonzero|evenodd)"
 
 #: ../operations/external/path.c:47 ../operations/external/vector-fill.c:37
 #: ../operations/external/vector-stroke.c:38
+#: ../operations/transform/transform.c:64
 msgid "Transform"
 msgstr "Przekształć"
 
@@ -5883,11 +5889,11 @@ msgstr "Bufor pikseli"
 msgid "GdkPixbuf to use"
 msgstr "Używany GdkPixbuf"
 
-#: ../operations/external/pixbuf.c:102
+#: ../operations/external/pixbuf.c:109
 msgid "GdkPixbuf Source"
 msgstr "Źródłowy GdkPixbuf"
 
-#: ../operations/external/pixbuf.c:105
+#: ../operations/external/pixbuf.c:112
 msgid "Uses the GdkPixbuf located at the memory location in <em>pixbuf</em>."
 msgstr "Używa GdkPixbuf położonego w pamięci w <em>pixbuf</em>."
 
@@ -5975,11 +5981,11 @@ msgstr "Położenie bufora pikseli"
 msgid "The location where to store the output GdkPixbuf."
 msgstr "Położenie, w którym przechowywać wyjściowe GdkPixbuf."
 
-#: ../operations/external/save-pixbuf.c:106
+#: ../operations/external/save-pixbuf.c:111
 msgid "Store in GdkPixbuf"
 msgstr "Zapisz w GdkPixbuf"
 
-#: ../operations/external/save-pixbuf.c:108
+#: ../operations/external/save-pixbuf.c:113
 msgid "Store image in a GdkPixbuf."
 msgstr "Zapisz obraz w GdkPixbuf."
 
@@ -6499,29 +6505,63 @@ msgstr ""
 msgid "How much vertical offset should applied to the paste"
 msgstr "Ile przesunięcia pionowego zastosować do wklejania"
 
-#: ../operations/transform/reflect.c:30
+#: ../operations/transform/reflect.c:27
 msgid "Direction vector's X component"
 msgstr "Składowa na osi X wektora kierunku"
 
-#: ../operations/transform/reflect.c:32
+#: ../operations/transform/reflect.c:31
 msgid "Direction vector's Y component"
 msgstr "Składowa na osi Y wektora kierunku"
 
+#: ../operations/transform/reflect.c:84
+#: ../operations/workshop/bayer-matrix.c:56
+msgid "Reflect"
+msgstr "Odbij"
+
+#: ../operations/transform/reflect.c:86
+msgid ""
+"Reflect an image about a line, whose direction is specified by the vector "
+"that is defined by the x and y properties. "
+msgstr ""
+"Odbij obraz o linię, której kierunek jest podany przez wektor określony "
+"właściwościami X i Y."
+
+#: ../operations/transform/rotate.c:25
+#: ../operations/transform/rotate-on-center.c:27
+msgid "Degrees"
+msgstr "Stopnie"
+
 #: ../operations/transform/rotate.c:26
-#: ../operations/transform/rotate-on-center.c:26
+#: ../operations/transform/rotate-on-center.c:28
 msgid "Angle to rotate (counter-clockwise)"
 msgstr "Kąt obrotu (przeciwnie do ruchu wskazówek zegara)"
 
-#: ../operations/transform/rotate.c:31
+#: ../operations/transform/rotate.c:71
+msgid "Rotate"
+msgstr "Obróć"
+
+#: ../operations/transform/rotate.c:73
 msgid "Rotate the buffer around the specified origin."
 msgstr "Obróć bufor wokół podanego początku układu współrzędnych."
+
+#: ../operations/transform/rotate-on-center.c:31
+msgid "origin-x"
+msgstr "Początek układu współrzędnych na osi X"
 
 #: ../operations/transform/rotate-on-center.c:32
 #: ../operations/transform/rotate-on-center.c:34
 msgid "Ignored. Always uses center of input buffer"
 msgstr "Ignorowane. Zawsze używa środka bufora wejściowego"
 
-#: ../operations/transform/rotate-on-center.c:40
+#: ../operations/transform/rotate-on-center.c:33
+msgid "origin-y"
+msgstr "Początek układu współrzędnych na osi Y"
+
+#: ../operations/transform/rotate-on-center.c:148
+msgid "Rotate on center"
+msgstr "Obróć wokół środka"
+
+#: ../operations/transform/rotate-on-center.c:150
 msgid "Rotate the buffer around its center, taking care of possible offsets."
 msgstr "Obróć bufor wokół jego środka, uwzględniając możliwe przesunięcia."
 
@@ -6529,51 +6569,67 @@ msgstr "Obróć bufor wokół jego środka, uwzględniając możliwe przesunięc
 msgid "Horizontal scale factor"
 msgstr "Poziomy współczynnik skalowania"
 
-#: ../operations/transform/scale-ratio.c:28
+#: ../operations/transform/scale-ratio.c:31
 msgid "Vertical scale factor"
 msgstr "Pionowy współczynnik skalowania"
 
-#: ../operations/transform/scale-ratio.c:34
+#: ../operations/transform/scale-ratio.c:74
+msgid "Scale ratio"
+msgstr "Skaluj według proporcji"
+
+#: ../operations/transform/scale-ratio.c:76
 msgid "Scales the buffer according to a ratio."
 msgstr "Skaluje bufor zgodnie z proporcjami."
 
 #: ../operations/transform/scale-size.c:26
-#: ../operations/transform/scale-size-keepaspect.c:25
+#: ../operations/transform/scale-size-keepaspect.c:26
 msgid "Horizontal size"
 msgstr "Poziomy rozmiar"
 
-#: ../operations/transform/scale-size.c:28
-#: ../operations/transform/scale-size-keepaspect.c:27
+#: ../operations/transform/scale-size.c:31
+#: ../operations/transform/scale-size-keepaspect.c:31
 msgid "Vertical size"
 msgstr "Pionowy rozmiar"
 
-#: ../operations/transform/scale-size.c:34
+#: ../operations/transform/scale-size.c:84
+msgid "Scale size"
+msgstr "Skaluj według rozmiaru"
+
+#: ../operations/transform/scale-size.c:86
 msgid "Scales the buffer according to a size."
 msgstr "Skaluje bufor zgodnie z rozmiarem."
 
-#: ../operations/transform/scale-size-keepaspect.c:33
+#: ../operations/transform/scale-size-keepaspect.c:104
+msgid "Scale size keep aspect"
+msgstr "Skaluj według rozmiaru, zachowując proporcje"
+
+#: ../operations/transform/scale-size-keepaspect.c:106
 msgid "Scales the buffer to a size, preserving aspect ratio"
 msgstr "Skaluje bufor do rozmiaru, zachowując proporcje"
 
 #: ../operations/transform/shear.c:26
 msgid "Horizontal shear amount"
-msgstr "Pozioma ilość strzyżenia"
+msgstr "Pozioma ilość nachylenia"
 
-#: ../operations/transform/shear.c:28
+#: ../operations/transform/shear.c:30
 msgid "Vertical shear amount"
-msgstr "Pionowa ilość strzyżenia"
+msgstr "Pionowa ilość nachylenia"
 
-#: ../operations/transform/shear.c:33
-msgid "Shears the buffer"
-msgstr "Strzyże bufor"
+#: ../operations/transform/shear.c:72
+msgid "Shear"
+msgstr "Nachyl"
+
+#: ../operations/transform/shear.c:74
+msgid "Shears the buffer. "
+msgstr "Nachyla bufor. "
 
 #: ../operations/transform/transform.c:25
-msgid "Transformation string"
-msgstr "Ciąg przekształcenia"
+msgid "Transformation SVG syntax transformation string"
+msgstr "Ciąg przekształcenia składni przekształceń SVG"
 
-#: ../operations/transform/transform.c:30
-msgid "Transforms the group (used by svg)."
-msgstr "Przekształca grupę (używane przez pliki SVG)."
+#: ../operations/transform/transform.c:66
+msgid "Do a transformation using SVG syntax transformation."
+msgstr "Wykonaj przekształcenie za pomocą składni przekształceń SVG."
 
 #: ../operations/transform/transform-core.c:178
 msgid "Origin-x"
@@ -6604,11 +6660,15 @@ msgstr ""
 msgid "Horizontal translation"
 msgstr "Tłumaczenie poziome"
 
-#: ../operations/transform/translate.c:28
+#: ../operations/transform/translate.c:30
 msgid "Vertical translation"
 msgstr "Tłumaczenie pionowe"
 
-#: ../operations/transform/translate.c:33
+#: ../operations/transform/translate.c:72
+msgid "Translate"
+msgstr "Przetłumacz"
+
+#: ../operations/transform/translate.c:74
 msgid ""
 "Repositions the buffer (with subpixel precision), if integer coordinates are "
 "passed a fast-path without resampling is used"
@@ -6652,10 +6712,6 @@ msgstr "270°"
 #: ../operations/workshop/linear-sinusoid.c:96
 msgid "Pattern rotation angle"
 msgstr "Kąt obrotu desenia"
-
-#: ../operations/workshop/bayer-matrix.c:56
-msgid "Reflect"
-msgstr "Odbij"
 
 #: ../operations/workshop/bayer-matrix.c:57
 msgid "Reflect the pattern horizontally"
