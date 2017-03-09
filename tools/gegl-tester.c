@@ -14,6 +14,7 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2012 Ville Sokk <ville.sokk@gmail.com>
+ *           2017 Øyvind Kolås <pippin@gimp.org>
  */
 
 #include <glib.h>
