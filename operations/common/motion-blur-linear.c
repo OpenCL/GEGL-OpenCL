@@ -329,6 +329,7 @@ gegl_op_class_init (GeglOpClass *klass)
                                  "title",       _("Linear Motion Blur"),
                                  "compat-name", "gegl:motion-blur",
                                  "categories",  "blur",
+                                 "reference-hash", "c15e12f9a5b01c7a8e621774a0ae6ad7",
                                  "description", _("Blur pixels in a direction, simulates blurring caused by moving camera in a straight line during exposure."),
     NULL);
 }

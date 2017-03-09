@@ -199,9 +199,10 @@ gegl_op_class_init (GeglOpClass *klass)
   point_filter_class->process = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:noise-rgb",
-    "title",       _("Add RGB Noise"),
-    "categories",  "noise",
+    "name",           "gegl:noise-rgb",
+    "title",          _("Add RGB Noise"),
+    "categories",     "noise",
+    "reference-hash", "56672ab3d13034f09992e38ea6c887b2",
     "description", _("Distort colors by random amounts"),
     NULL);
 }

@@ -88,6 +88,7 @@ gegl_op_class_init (GeglOpClass *klass)
   "name",               "gegl:rectangle",
   "title",              _("Rectangle"),
   "categories",         "render",
+  "reference-hash", "9014b57418e4de6d9a4081edff968de0",
   "position-dependent", "true",
   "description",
         _("A rectangular source of a fixed size with a solid color"),

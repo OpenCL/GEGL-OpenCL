@@ -318,10 +318,11 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->cl_process = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:video-degradation",
-    "title",       _("Video Degradation"),
-    "categories",  "distort",
-    "license",     "GPL3+",
+    "name",           "gegl:video-degradation",
+    "title",          _("Video Degradation"),
+    "categories",     "distort",
+    "license",        "GPL3+",
+    "reference-hash", "08bd4e3c08cb35890f384c914f0358c8",
     "description", _("This function simulates the degradation of "
                      "being on an old low-dotpitch RGB video monitor."),
     "cl-source"  , video_degradation_cl_source,

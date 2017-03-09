@@ -509,6 +509,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:waterpixels",
     "title",       _("Waterpixels"),
     "categories",  "segmentation",
+    "reference-hash", "9aac02fb4816ea0b1142d86a55495072",
     "description", _("Superpixels based on the watershed transformation"),
     NULL);
 }

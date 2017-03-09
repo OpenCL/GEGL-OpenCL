@@ -91,6 +91,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:color",
     "title",      _("Color"),
     "categories" , "render",
+    "reference-hash", "fd519ccc1b0badb3ff41501112ca3463",
     "description",
       _("Generates a buffer entirely filled with the specified color, "
         "use gegl:crop to get smaller dimensions."),

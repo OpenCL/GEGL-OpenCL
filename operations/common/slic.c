@@ -452,6 +452,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "name",        "gegl:slic",
       "title",       _("Simple Linear Iterative Clustering"),
       "categories",  "color:segmentation",
+      "reference-hash", "9fa3122f5fcc436bbd0750150290f9d7",
       "description", _("Superpixels based on k-means clustering"),
       NULL);
 }

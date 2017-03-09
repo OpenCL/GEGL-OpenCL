@@ -281,6 +281,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Wavelet Blur"),
 //    "license",     "LGPL3+",
     "categories",  "blur",
+    "reference-hash", "06a5ecd4efcb41ca2b4a3dae80bacd1c",
     "description", _("This blur is used for the wavelet decomposition filter, each pixel is computed from another by the HAT transform"),
     NULL);
 }

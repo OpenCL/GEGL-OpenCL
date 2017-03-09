@@ -502,6 +502,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",            "blur",
     "position-dependent",    "true",
     "license",               "GPL3+",
+    "reference-hash",        "5cd4f68120fd5103341d70508fe26bc2",
     "reference-composition", composition,
     "description", _("Corrects barrel or pincushion lens distortion."),
     NULL);

@@ -200,6 +200,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Engrave"),
     "categories",  "distort",
     "license",     "GPL3+",
+    "reference-hash", "2fce9ed1adb05a50b7042fb9b5879529",
     "description", _("Simulate an antique engraving"),
     NULL);
 }

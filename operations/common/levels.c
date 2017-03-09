@@ -203,6 +203,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Levels"),
     "categories" , "color",
     "description", _("Remaps the intensity range of the image"),
+    "reference-hash", "52e9dca541181f09f6cfac68afe987a2",
     "reference-composition", composition,
     NULL);
 }

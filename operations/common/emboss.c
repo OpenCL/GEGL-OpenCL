@@ -267,6 +267,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Emboss"),
     "categories",  "light",
     "license",     "GPL3+",
+    "reference-hash", "cc8bd77116e290c5e35b20b46c66986d",
     "description", _("Simulates an image created by embossing"),
     NULL);
 }

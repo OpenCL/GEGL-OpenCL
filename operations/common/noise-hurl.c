@@ -211,6 +211,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",       "gegl:noise-hurl",
     "title",      _("Randomly Shuffle Pixels"),
     "categories", "noise",
+    "reference-hash", "a2d82715e5ae2d365d9b1b2b41b562db",
     "description", _("Completely randomize a fraction of pixels"),
     NULL);
 }

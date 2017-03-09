@@ -654,6 +654,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "blur:scramble",
     "position-dependent", "true",
     "title",              _("Pixelize"),
+    "reference-hash",     "0bad844f03b9950e5d64b66317e97bd9",
     "description", _("Simplify image into an array of solid-colored rectangles"),
     NULL);
 }

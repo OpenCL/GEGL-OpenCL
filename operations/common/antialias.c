@@ -278,6 +278,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Scale3X Antialiasing"),
     "categories",  "enhance",
     "license",     "GPL3+",
+    "reference-hash", "ad2e4a275fce1c12155366f71c1313c8",
     "description", _("Antialias using the Scale3X edge-extrapolation algorithm"),
     NULL);
 }

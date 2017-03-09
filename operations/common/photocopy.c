@@ -322,10 +322,11 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process                    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:photocopy",
-    "categories",  "artistic",
-    "license",     "GPL3+",
-    "title",       _("Photocopy"),
+    "name",          "gegl:photocopy",
+    "categories",    "artistic",
+    "license",       "GPL3+",
+    "title",         _("Photocopy"),
+    "reference-hash", "58637457f4319d848b9de0673e7c7b65",
     "description", _("Simulate color distortion produced by a copy machine"),
     NULL);
 }

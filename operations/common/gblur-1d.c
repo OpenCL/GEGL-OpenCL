@@ -906,8 +906,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region       = gegl_gblur_1d_get_cached_region;
   operation_class->opencl_support          = TRUE;
   gegl_operation_class_set_keys (operation_class,
-    "name",       "gegl:gblur-1d",
-    "categories", "hidden:blur",
+    "name",           "gegl:gblur-1d",
+    "categories",     "hidden:blur",
+    "reference-hash", "36db3c04769d68fca18145ca98eb6bd6",
     "description",
         _("Performs an averaging of neighboring pixels with the "
           "normal distribution as weighting"),

@@ -157,6 +157,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Grid"),
     "position-dependent", "true",
     "categories" ,        "render",
+    "reference-hash",     "cc9c401d7c8bcea7147499ecbeda9986",
     "description",        _("Grid renderer"),
     "position-dependent", "true",
     NULL);

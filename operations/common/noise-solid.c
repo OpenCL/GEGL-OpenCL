@@ -346,6 +346,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Solid Noise"),
     "categories",         "render",
     "position-dependent", "true",
+    "reference-hash",     "9818f90c5c37be2304ea0bf0b3570ec8",
     "license",            "GPL3+",
     "description", _("Create a random cloud-like texture"),
     NULL);

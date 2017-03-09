@@ -272,6 +272,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:apply-lens",
     "title",       _("Apply Lens"),
     "categories",  "map",
+    "reference-hash", "7d3d1f497ed76ad4b92157a719a091ba",
     "license",     "GPL3+",
     "description", _("Simulates the optical distortion caused by having "
                      "an elliptical lens over the image"),

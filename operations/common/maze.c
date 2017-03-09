@@ -734,6 +734,7 @@ gegl_op_class_init (GeglOpClass *klass)
 				 "categories",         "render",
                                  "license",            "GPL3+",
 				 "position-dependent", "true",
+                                 "reference-hash", "55b885c5f05548b63d7d21b498715f14",
 				 "description",        _("Draw a labyrinth"),
 				 NULL);
 }

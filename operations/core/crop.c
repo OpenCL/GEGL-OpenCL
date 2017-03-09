@@ -222,6 +222,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "categories",  "core",
       "title",       _("Crop"),
       "description", _("Crop a buffer"),
+      "reference-hash", "6f9f160434a4e9484d334c29122e5682",
       "reference-composition", composition,
       NULL);
 
