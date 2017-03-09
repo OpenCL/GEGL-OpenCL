@@ -153,6 +153,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "name",       "gegl:brightness-contrast",
       "title",      _("Brightness Contrast"),
       "categories", "color",
+      "reference-hash", "a60848d705029cad1cb89e44feb7f56e",
       "description", _("Changes the light level and contrast. This operation operates in linear light, 'contrast' is a scale factor around 50%% gray, and 'brightness' a constant offset to apply after contrast scaling."),
       "cl-source"  , brightness_contrast_cl_source,
       "reference-composition", composition,

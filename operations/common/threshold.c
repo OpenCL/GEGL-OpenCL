@@ -125,6 +125,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name" ,       "gegl:threshold",
     "title",       _("Threshold"),
     "categories" , "color",
+    "reference-hash", "d20432270a1364932ee88a326a3e26c8",
     "description",
           _("Thresholds the image to white/black based on either the global value "
             "set in the value property, or per pixel from the aux input."),
