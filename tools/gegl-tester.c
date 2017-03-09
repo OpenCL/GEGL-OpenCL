@@ -259,7 +259,7 @@ process_operations (GType type)
       {
         gchar *output_path = operation_to_path (name, FALSE);
         gchar *gothash = compute_hash_for_path (output_path);
-        g_printf (" hash = %s [%s]\n", gothash, name);
+        g_printf (" hash = %s\n", gothash);
         g_free (gothash);
         g_free (output_path);
       }
