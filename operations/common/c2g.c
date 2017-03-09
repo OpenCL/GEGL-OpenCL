@@ -392,7 +392,6 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",  "grayscale:color",
     "title",       "Color to Grayscale",
     "reference-composition", composition,
-    "reference-hash", "53ed68bbe4922488e335b360336b5a31",
     "description",
     _("Color to grayscale conversion, uses envelopes formed with the STRESS approach "
       "to perform local color-difference preserving grayscale generation."),
