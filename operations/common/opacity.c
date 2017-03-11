@@ -305,6 +305,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "gegl:opacity",
     "categories" , "transparency",
     "title",       _("Opacity"),
+    "reference-hash", "b20e8c1d7bb20af95f724191feb10103",
     "description",
           _("Weights the opacity of the input both the value of the aux"
             " input and the global value property."),
