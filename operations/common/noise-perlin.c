@@ -110,6 +110,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",               "gegl:perlin-noise",
     "title",              _("Perlin Noise"),
     "categories",         "render",
+    "reference-hash",     "78a43934ae5b69e48ed523a61bdea6c4",
     "position-dependent", "true",
     "description", _("Perlin noise generator"),
     NULL);
