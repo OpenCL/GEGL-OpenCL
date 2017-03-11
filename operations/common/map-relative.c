@@ -177,6 +177,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:map-relative",
     "title",       _("Map Relative"),
     "categories" , "map",
+    "reference-hash", "5d41ac166c82cf5f6acf7141e7f85bbf",
     "description", _("sample input with an auxiliary buffer that contain relative source coordinates"),
     "reference-composition", composition,
     NULL);
