@@ -282,6 +282,7 @@ main (gint    argc,
 
   setlocale (LC_ALL, "");
 
+
   context = g_option_context_new (NULL);
   g_option_context_add_main_entries (context, options, NULL);
   g_option_context_add_group (context, gegl_get_option_group ());
@@ -309,6 +310,9 @@ main (gint    argc,
     }
   else
     {
+      g_printf ("running gegl-tester with%s opencl acceleration\n",
+        gegl_cl_is_accelerated()?"":"out");
+
       regex = g_regex_new (pattern, 0, 0, NULL);
       exc_regex = g_regex_new (exclusion_pattern, 0, 0, NULL);
 
@@ -322,7 +326,7 @@ main (gint    argc,
 
   if (failed != 0)
   {
-    g_warning ("%i operations not producing the expected result: %s\n", failed, failed_ops->str);
+    g_print ("%i operations not producing the expected result: %s\n", failed, failed_ops->str);
     return -1;
   }
   g_string_free (failed_ops, TRUE);
