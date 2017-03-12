@@ -728,8 +728,11 @@ prepare(GeglOperation *operation)
         p->can_seek = g_seekable_can_seek(G_SEEKABLE(p->stream));
       if (p->stream == NULL)
         {
-          g_warning("%s", error->message);
-          g_error_free(error);
+          if (error)
+          {
+            g_warning("%s", error->message);
+            g_error_free(error);
+          }
           cleanup(operation);
           return;
         }
