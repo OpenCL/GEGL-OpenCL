@@ -76,7 +76,7 @@ operation_to_path (const gchar *op_name,
 }
 
 static void
-standard_output (const gchar *op_name, const gchar *ref_hash)
+standard_output (const gchar *op_name)
 {
   GeglNode *composition, *input, *aux, *operation, *crop, *output, *translate;
   GeglNode *background,  *over;
@@ -184,11 +184,13 @@ process_operations (GType type)
   for (i = 0; i < count; i++)
     {
       GeglOperationClass *operation_class;
-      const gchar        *xml, *name, *hash;
+      const gchar        *xml, *name, *hash, *hashB, *hashC;
       gboolean            matches;
 
       operation_class = g_type_class_ref (operations[i]);
       hash            = gegl_operation_class_get_key (operation_class, "reference-hash");
+      hashB           = gegl_operation_class_get_key (operation_class, "reference-hashB");
+      hashC           = gegl_operation_class_get_key (operation_class, "reference-hashC");
       xml             = gegl_operation_class_get_key (operation_class, "reference-composition");
       name            = gegl_operation_class_get_key (operation_class, "name");
 
@@ -236,7 +238,7 @@ process_operations (GType type)
                  g_type_is_a (operations[i], GEGL_TYPE_OPERATION_TEMPORAL)))
         {
           g_printf ("%s ", name);
-          standard_output (name, hash);
+          standard_output (name);
         }
 
       if (matches && hash)
@@ -245,6 +247,10 @@ process_operations (GType type)
         gchar *gothash = compute_hash_for_path (output_path);
         if (g_str_equal (hash, gothash))
           g_printf (" OK\n");
+        else if (hashB && g_str_equal (hashB, gothash))
+          g_printf (" OK (hash b)\n");
+        else if (hashC && g_str_equal (hashC, gothash))
+          g_printf (" OK (hash c)\n");
         else
         {
           g_printf (" FAIL %s != %s\n", hash, gothash);

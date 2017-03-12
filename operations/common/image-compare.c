@@ -113,7 +113,8 @@ process (GeglOperation       *operation,
         {
           gdouble diff = sqrt (SQR (data_in1[0] - data_in2[0]) +
                                SQR (data_in1[1] - data_in2[1]) +
-                               SQR (data_in1[2] - data_in2[2]));
+                               SQR (data_in1[2] - data_in2[2]) +
+                               SQR (data_in1[3] - data_in2[3]));
 
           gdouble alpha_diff = fabs (data_in1[3] - data_in2[3]) * 100.0;
 
