@@ -87,7 +87,7 @@ CLEANFILES = README $(HTML_FILES) index.txt
 DISTCLEANFILES = index.txt
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
-exclusion_pattern = "load|buffer-source|pixbuf|nop|clone|convert-format|introspect|layer|image-compare|load|open-buffer|svg-load|exr-load|jpg-load|png-load|magick-load|box-blur|stretch-contrast|remap|matting-global|exp-combine|dropshadow|kuwahara|box-percentile|disc-percentile|snn-percentile|line-profile|buffer-cache|warp|mandelbrot|hstack|v4l2"
+exclusion_pattern = "load|buffer-source|pixbuf|nop|clone|convert-format|introspect|layer|image-compare|load|open-buffer|svg-load|exr-load|jpg-load|png-load|magick-load|box-blur|stretch-contrast|remap|matting-global|exp-combine|dropshadow|kuwahara|box-percentile|disc-percentile|snn-percentile|line-profile|buffer-cache|warp|mandelbrot|hstack|v4l2|integral-image"
 
 all-local: $(HTML_FILES)
 
