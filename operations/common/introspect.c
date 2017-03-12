@@ -46,7 +46,7 @@ gegl_introspect_load_cache (GeglProperties *op_introspect)
   gchar      *dot_filename = NULL;
   gchar      *dot_cmd      = NULL;
 
-  if (op_introspect->user_data)
+  if (op_introspect->user_data || op_introspect->node == NULL)
     return;
 
   /* Construct temp filenames */
@@ -129,6 +129,9 @@ gegl_introspect_process (GeglOperation        *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
 
   gegl_introspect_load_cache (o);
+
+  if (!o->user_data)
+    return FALSE;
 
   /* gegl_operation_context_take_object() takes the reference we have,
    * so we must increase it since we want to keep the object
