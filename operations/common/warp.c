@@ -418,8 +418,9 @@ process (GeglOperation       *operation,
   gulong               i;
   GeglPathList        *event;
 
+  if (!o->stroke)
+    return FALSE;
   priv->buffer = gegl_buffer_dup (input);
-
   event = gegl_path_get_path (o->stroke);
 
   prev = *(event->d.point);
