@@ -29,4 +29,3 @@ op_LTLIBRARIES =    \
 	shadows-highlights.la \
 	shadows-highlights-correction.la \
 	unpremul.la \
-    vhsfix.la
