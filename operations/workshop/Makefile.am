@@ -28,4 +28,4 @@ op_LTLIBRARIES =    \
 	segment-kmeans.la \
 	shadows-highlights.la \
 	shadows-highlights-correction.la \
-	unpremul.la \
+	unpremul.la 
