@@ -156,7 +156,7 @@ read_from_stream(thandle_t handle,
       read = g_input_stream_read(G_INPUT_STREAM(p->stream),
                                  (void *) buffer, (gsize) size,
                                  NULL, &error);
-      if (read < 0)
+      if (read < 0 && error)
         {
           g_warning("%s", error->message);
           g_error_free(error);
@@ -189,8 +189,11 @@ read_from_stream(thandle_t handle,
                                          NULL, &error);
               if (read < 0)
                 {
-                  g_warning("%s", error->message);
-                  g_error_free(error);
+                  if (error)
+                  {
+                    g_warning("%s", error->message);
+                    g_error_free(error);
+                  }
                   break;
                 }
 
@@ -240,7 +243,7 @@ seek_in_stream(thandle_t handle,
                                NULL, &error);
       if (sought)
         position = g_seekable_tell(G_SEEKABLE(p->stream));
-      else
+      else if (error)
         {
           g_warning("%s", error->message);
           g_error_free(error);
@@ -282,7 +285,7 @@ close_stream(thandle_t handle)
 
   closed = g_input_stream_close(G_INPUT_STREAM(p->stream),
                                 NULL, &error);
-  if (!closed)
+  if (!closed && error)
     {
       g_warning("%s", error->message);
       g_error_free(error);
@@ -322,8 +325,11 @@ get_file_size(thandle_t handle)
                                NULL, &error);
       if (info == NULL)
         {
-          g_warning("%s", error->message);
-          g_error_free(error);
+          if (error)
+          {
+            g_warning("%s", error->message);
+            g_error_free(error);
+          }
         }
       else
         {
