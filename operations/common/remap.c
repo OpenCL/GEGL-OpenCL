@@ -57,6 +57,8 @@ process (GeglOperation       *op,
   gfloat *min = min_buf;
   gfloat *max = max_buf;
   gfloat *out = out_buf;
+  if (!min || !max || !out || !in)
+    return FALSE;
 
   for (i = 0; i < n_pixels; i++)
     {
