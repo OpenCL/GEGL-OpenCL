@@ -19,36 +19,27 @@ typedef enum {
     ERROR_PIXELS_DIFFERENT,
 } ExitCode;
 
-const gchar *compute_image_checksum (const char *path);
-const gchar *compute_image_checksum (const char *path)
+static gchar *compute_image_checksum (const char *path);
+static gchar *
+compute_image_checksum (const gchar *path)
 {
-  GeglNode *gegl, *img;
-  GeglRectangle  bounds;
-  GChecksum *checksum = g_checksum_new (G_CHECKSUM_MD5);
+  gchar *ret = NULL;
+  GeglNode *gegl = gegl_node_new ();
+  GeglRectangle comp_bounds;
   guchar *buf;
-  const gchar *ret;
-
-  gegl = gegl_node_new ();
-  img = gegl_node_new_child (gegl,
-                             "operation", "gegl:load",
-                             "path", path,
-                             NULL);
-  bounds = gegl_node_get_bounding_box (img);
-  fprintf (stderr, "%ix%i\n", bounds.width, bounds.height);
-
-  buf = g_malloc (bounds.width * bounds.height * 4);
-  gegl_node_blit (img, 1.0, &bounds, babl_format("R'G'B'A u8"), buf,
-    GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
-  
-  g_checksum_update (checksum, buf, bounds.width * bounds.height * 4);
-  ret = g_checksum_get_string (checksum);
-  ret = g_strdup (ret);
-
+  GeglNode *img = gegl_node_new_child (gegl,
+                                 "operation", "gegl:load",
+                                 "path", path,
+                                 NULL);
+  comp_bounds = gegl_node_get_bounding_box (img);
+  buf = g_malloc0 (comp_bounds.width * comp_bounds.height * 4);
+  gegl_node_blit (img, 1.0, &comp_bounds, babl_format("R'G'B'A u8"), buf, GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
+  ret = g_compute_checksum_for_data (G_CHECKSUM_MD5, buf, comp_bounds.width * comp_bounds.height * 4);
   g_free (buf);
   g_object_unref (gegl);
-
   return ret;
 }
+
 
 const gchar *get_image_checksum (const char *path);
 const gchar *get_image_checksum (const char *path)
@@ -62,6 +53,7 @@ main (gint    argc,
 {
   GeglNode      *gegl, *imgA, *imgB, *comparison;
   GeglRectangle  boundsA, boundsB;
+  gchar         *md5A, *md5B;
   gdouble        max_diff, avg_diff_wrong, avg_diff_total;
   gdouble        error_diff;
   gint           wrong_pixels, total_pixels;
@@ -95,6 +87,14 @@ main (gint    argc,
     return SUCCESS;
   }
 
+  md5A = compute_image_checksum (argv[1]);
+  md5B = compute_image_checksum (argv[2]);
+
+  if (md5A && md5B && strcmp (md5A, md5B))
+  {
+    g_print ("raster md5s differ: %s vs %s\n", md5A, md5B);
+  }
+
   gegl = gegl_node_new ();
   imgA = gegl_node_new_child (gegl,
                               "operation", "gegl:load",
@@ -111,8 +111,8 @@ main (gint    argc,
 
   if (boundsA.width != boundsB.width || boundsA.height != boundsB.height)
     {
-      g_printerr ("%s and %s differ in size\n", argv[1], argv[2]);
-      g_printerr ("  %ix%i vs %ix%i\n",
+      g_print ("%s and %s differ in size\n", argv[1], argv[2]);
+      g_print ("  %ix%i vs %ix%i\n",
                   boundsA.width, boundsA.height, boundsB.width, boundsB.height);
       return ERROR_WRONG_SIZE;
     }
@@ -130,7 +130,7 @@ main (gint    argc,
 
   if (max_diff >= 0.1)
     {
-      g_printerr ("%s and %s differ\n"
+      g_print ("%s and %s differ\n"
                   "  wrong pixels   : %i/%i (%2.2f%%)\n"
                   "  max Δe         : %2.3f\n"
                   "  avg Δe (wrong) : %2.3f(wrong) %2.3f(total)\n",
