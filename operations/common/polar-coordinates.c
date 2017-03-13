@@ -426,7 +426,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Polar Coordinates"),
     "categories",         "transform:map",
     "position-dependent", "true",
-    "reference-hash",     "88178136ea77391e8e74ceadb35f79f2",
+    "reference-hash",     "0134a2706e736d2594f4d6da8d4fd3cb",
     "license",            "GPL3+",
     "description", _("Convert image to or from polar coordinates"),
     NULL);

@@ -342,7 +342,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "reference-composition", composition,
     "title",        _("Render Text"),
     "name",         "gegl:text",
-    "reference-hash", "55c741519149f1a38d47d5f90e44cac6",
+    "reference-hash", "9a18672b0e75e01507dd0ec35bb46298",
     "categories",   "render",
     "description",  _("Display a string of text using pango and cairo."),
     NULL);

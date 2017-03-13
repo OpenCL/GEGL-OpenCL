@@ -637,7 +637,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:value-propagate",
     "title",       _("Value Propagate"),
     "categories",  "distort",
-    "reference-hash", "adc23af277b891a5dc2db021303b2f96",
+    "reference-hash", "0bce414c416e2d705d0b9ecd8333d93b",
     "license",     "GPL3+",
     "description", _("Propagate certain colors to neighboring pixels."),
     NULL);

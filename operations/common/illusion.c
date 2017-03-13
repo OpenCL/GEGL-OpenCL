@@ -268,7 +268,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "title",          _("Illusion"),
       "categories",     "map",
       "license",        "GPL3+",
-      "reference-hash", "ff2b3cd92540868ce6f4ed7eb3e3721c",
+      "reference-hash", "bdf2184faa2dfe9472c5d3bb0e625f7f",
       "description", _("Superimpose many altered copies of the image."),
       NULL);
 }

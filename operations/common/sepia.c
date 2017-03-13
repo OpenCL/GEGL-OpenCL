@@ -109,7 +109,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:sepia",
     "title",       _("Sepia"),
-    "reference-hash", "4f034cf1170702416f2510f11c6278ea",
+    "reference-hash", "00425bea2740e987ae6e22b830489310",
     "categories" , "color",
     "description", _("Apply a sepia tone to the input image"),
     NULL);
