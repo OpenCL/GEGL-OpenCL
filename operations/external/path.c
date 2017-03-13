@@ -529,9 +529,10 @@ gegl_op_class_init (GeglOpClass *klass)
   /*operation_class->no_cache = TRUE;*/
 
   gegl_operation_class_set_keys (operation_class,
-    "name",         "gegl:path",
-    "title",        _("Render Path"),
-    "categories",   "render",
+    "name",           "gegl:path",
+    "title",          _("Render Path"),
+    "categories",     "render",
+    "reference-hash", "eba13d16fba3284ceee264073ebfa356",
     "reference-composition", composition,
     "description" , _("Renders a brush stroke"),
     NULL);
