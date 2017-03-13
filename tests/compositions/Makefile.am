@@ -30,7 +30,6 @@ TESTS = \
   composite-transform.xml         \
   contrast-curve.xml              \
   edge.xml                        \
-  edge-laplace.xml                \
   engrave.xml                     \
   fattal02.xml                    \
   gegl.xml                        \
