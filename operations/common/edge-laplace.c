@@ -403,11 +403,12 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:edge-laplace",
-    "title",       _("Laplacian Edge Detection"),
-    "categories",  "edge-detect",
-    "license",     "GPL3+",
-    "description", _("High-resolution edge detection"),
+    "name",           "gegl:edge-laplace",
+    "title",          _("Laplacian Edge Detection"),
+    "categories",     "edge-detect",
+    "license",        "GPL3+",
+    "reference-hash", "b965f78e9ebd7afb421464b211c70f31",
+    "description",    _("High-resolution edge detection"),
     NULL);
 }
 
