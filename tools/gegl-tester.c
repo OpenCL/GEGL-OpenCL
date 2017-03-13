@@ -253,7 +253,7 @@ process_operations (GType type)
           g_printf (" OK (hash c)\n");
         else
         {
-          g_printf (" FAIL %s != %s\n", hash, gothash);
+          g_printf (" FAIL %s != %s\n", gothash, hash);
           failed ++;
           g_string_append_printf (failed_ops, " %s", name);
         }
