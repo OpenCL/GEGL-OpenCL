@@ -83,7 +83,7 @@ gegl_op_class_init (GeglOpClass *klass)
                                  "name",        "gegl:high-pass",
                                  "title",       _("High Pass Filter"),
                                  "categories",  "frequency",
-                                 "reference-hash", "5d10ee663c5ff908c3c081e516154873",
+                                 "reference-hash", "561c015b73d691b889b2fa3cddf24251",
                                  "description",
                                  _("Enhances fine details."),
                                  NULL);
