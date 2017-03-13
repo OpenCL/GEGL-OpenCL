@@ -53,7 +53,6 @@ TESTS = \
   simple-scale.xml                \
   scale-size-keepaspect.xml       \
   sinus.xml                       \
-  softglow.xml                    \
   stretch-contrast.xml            \
   supernova.xml                   \
   transform.xml                   \
