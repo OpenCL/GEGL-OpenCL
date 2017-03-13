@@ -95,6 +95,7 @@ examples:  $(top_builddir)/tools/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*
 	@if test -d images/examples; then :; else \
 		echo "Generating example images" ; \
 		mkdir -p images/examples ; \
+		BABL_TOLERANCE=0.0 \
 		GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
 		$(top_builddir)/tools/gegl-tester$(EXEEXT) --all -o images/examples \
 		-d $(srcdir)/images -e $(exclusion_pattern) ; \
