@@ -45,7 +45,6 @@ TESTS = \
   noise-solid.xml                 \
   pixelize.xml                    \
   posterize.xml                   \
-  polar-coordinates.xml           \
   red-eye-removal.xml             \
   reflect.xml                     \
   reflect2.xml                    \
