@@ -79,6 +79,8 @@ property_color (bg_color, _("Background color"), "rgba(0.0, 0.0, 0.0, 1.0)")
   description (("The tiles' background color"))
   ui_meta     ("role", "color-primary")
 
+property_seed (seed, _("Random seed"), rand)
+
 #else
 
 #define GEGL_OP_AREA_FILTER
@@ -110,13 +112,17 @@ tile_compare (const void *x,
 }
 
 static inline void
-random_move (gint  *x,
-             gint  *y,
-             gint   max,
-             GRand *gr)
+random_move (gint             tile_x,
+             gint             tile_y,
+             gint            *x,
+             gint            *y,
+             gint             max,
+             GeglProperties  *o)
 {
-  gdouble angle  = g_rand_double_range (gr, 0.0, 1.0) * G_PI;
-  gdouble radius = g_rand_double_range (gr, 0.0, 1.0) * (gdouble) max;
+  gdouble angle  = gegl_random_float_range (o->rand, tile_x, tile_y, 0, 1,
+                                            0.0, 1.0) * G_PI;
+  gdouble radius = gegl_random_float_range (o->rand, tile_x, tile_y, 0, 2,
+                                            0.0, 1.0) * (gdouble) max;
 
   *x = (gint) (radius * cos (angle));
   *y = (gint) (radius * sin (angle));
@@ -151,9 +157,6 @@ randomize_tiles (GeglProperties      *o,
   gint   move_max_pixels = o->move_rate * o->tile_width / 100;
   gint   x;
   gint   y;
-  GRand *gr;
-
-  gr = g_rand_new ();
 
   for (y = 0; y < division_y; y++)
     {
@@ -195,8 +198,8 @@ randomize_tiles (GeglProperties      *o,
               t->height = rect->height - srcy;
             }
 
-          t->z = g_rand_int (gr);
-          random_move (&t->move_x, &t->move_y, move_max_pixels, gr);
+          t->z = gegl_random_int (o->rand, x, y, 0, 0);
+          random_move (x, y, &t->move_x, &t->move_y, move_max_pixels, o);
         }
     }
 
