@@ -666,11 +666,12 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->opencl_support          = FALSE;
 
   gegl_operation_class_set_keys (operation_class,
-     "name",       "gegl:wind",
-     "title",      _("Wind"),
-     "categories", "distort",
-     "license",    "GPL3+",
-     "description", _("Wind-like bleed effect"),
+     "name",           "gegl:wind",
+     "title",          _("Wind"),
+     "categories",     "distort",
+     "license",        "GPL3+",
+     "reference-hash", "c6085eb4de89cc8e25e2e9cfcd37730f",
+     "description",    _("Wind-like bleed effect"),
      NULL);
 }
 
