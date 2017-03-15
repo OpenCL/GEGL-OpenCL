@@ -51,6 +51,8 @@ struct _GeglOperationMetaJsonClass
 
 GType gegl_operation_meta_json_get_type         (void) G_GNUC_CONST;
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (GeglOperationMetaJson, g_object_unref)
+
 G_END_DECLS
 
 #endif

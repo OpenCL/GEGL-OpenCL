@@ -62,6 +62,8 @@ GType    gegl_operation_sink_get_type   (void) G_GNUC_CONST;
 
 gboolean gegl_operation_sink_needs_full (GeglOperation *operation);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (GeglOperationSink, g_object_unref)
+
 G_END_DECLS
 
 #endif
