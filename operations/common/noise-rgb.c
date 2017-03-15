@@ -70,16 +70,16 @@ property_seed (seed, _("Random seed"), rand)
  * K+M, ACM Trans Math Software 3 (1977) 257-260.
 */
 static gfloat
-noise_gauss (GeglRandom *rand, int *i, int xx, int yy)
+noise_gauss (GeglRandom *rand, gint xx, gint yy, gint *n)
 {
   gfloat u, v, x;
 
   do
   {
-    v = gegl_random_float (rand, xx, yy, 0, (*i)++);
+    v = gegl_random_float (rand, xx, yy, 0, (*n)++);
 
     do
-      u = gegl_random_float (rand, xx, yy, 0, (*i)++);
+      u = gegl_random_float (rand, xx, yy, 0, (*n)++);
     while (u == 0);
 
     /* Const 1.715... = sqrt(8/e) */
@@ -91,9 +91,9 @@ noise_gauss (GeglRandom *rand, int *i, int xx, int yy)
 }
 
 static gfloat
-noise_linear (GeglRandom *rand, int *i, int xx, int yy)
+noise_linear (GeglRandom *rand, gint xx, gint yy, gint *n)
 {
-  return gegl_random_float (rand, xx, yy, 0, (*i)++) * 2 - 1.0;
+  return gegl_random_float (rand, xx, yy, 0, (*n)++) * 2 - 1.0;
 }
 
 static void
@@ -123,14 +123,13 @@ process (GeglOperation       *operation,
   GeglProperties *o  = GEGL_PROPERTIES (operation);
 
   gdouble  noise_coeff = 0.0;
-  int      rint = 0;
   gint     b, i;
   gint     x, y;
   gdouble  noise[4];
   gfloat   tmp;
   gfloat   * GEGL_ALIGNED in_pixel;
   gfloat   * GEGL_ALIGNED out_pixel;
-  gfloat   (*noise_fun) (GeglRandom *rand, int *i, int xx, int yy) = noise_gauss;
+  gfloat   (*noise_fun) (GeglRandom *rand, gint xx, gint yy, gint *n) = noise_gauss;
 
   in_pixel   = in_buf;
   out_pixel  = out_buf;
@@ -148,10 +147,12 @@ process (GeglOperation       *operation,
 
   for (i=0; i<n_pixels; i++)
   {
+    gint n = 0;
+
     for (b = 0; b < 4; b++)
     {
       if (b == 0 || o->independent || b == 3 )
-         noise_coeff = noise[b] * noise_fun (o->rand, &rint, x, y) * 0.5;
+         noise_coeff = noise[b] * noise_fun (o->rand, x, y, &n) * 0.5;
 
       if (noise[b] > 0.0)
       {
@@ -202,7 +203,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",           "gegl:noise-rgb",
     "title",          _("Add RGB Noise"),
     "categories",     "noise",
-    "reference-hash", "73de6bcb7675782a58c689e4a9d32a30",
+    "reference-hash", "2783edddbc10bb2e9cbf8372a2d913ef",
     "description", _("Distort colors by random amounts"),
     NULL);
 }
