@@ -125,6 +125,7 @@ gegl_op_class_init (GeglOpClass *klass)
   "name"        , "gegl:divide",
   "title"       , "Divide",
   "categories"  , "compositors:math",
+  "reference-hash"  , "c3bd84f8a6b2c03a239f3f832597592c",
   "description" ,
        _("Math operation divide, performs the operation per pixel, using either the constant provided in 'value' or the corresponding pixel from the buffer on aux as operands. (formula: result = value==0.0f?0.0f:input/value)"),
        NULL);

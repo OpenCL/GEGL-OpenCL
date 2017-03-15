@@ -41,7 +41,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_NAME         svg_multiply
+#define GEGL_OP_NAME         multiply
 #define GEGL_OP_C_FILE       "svg-multiply.c"
 
 #include "gegl-op.h"
@@ -166,6 +166,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:multiply",
   "compat-name" , "gegl:svg-multiply",
+  "reference-hash" , "5910165f5e64ac11b4f57520e82c99e8",
   "description" ,
         _("SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * (1 - aA)</code>)"),
         NULL);

@@ -34,28 +34,32 @@ copyright = '
  */'
 
 a = [
-      ['multiply',      'cA * cB +  cA * (1 - aB) + cB * (1 - aA)'],
-      ['screen',        'cA + cB - cA * cB'],
-      ['darken',        'MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)'],
-      ['lighten',       'MAX (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)'],
-      ['difference',    'cA + cB - 2 * (MIN (cA * aB, cB * aA))'],
-      ['exclusion',     '(cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)']
+ #     ['multiply',      'cA * cB +  cA * (1 - aB) + cB * (1 - aA)', '5910165f5e64ac11b4f57520e82c99e8'],
+      ['screen',        'cA + cB - cA * cB', '9642c59dd077663c4c27e4ebe556a382'],
+      ['darken',        'MIN (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)', '85aa17ac4e0fc35470625880d42e17ff'],
+      ['lighten',       'MAX (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)', '16ecf46ab388720e4976f0691c05f62f'],
+      ['difference',    'cA + cB - 2 * (MIN (cA * aB, cB * aA))', '3737dde4e8302b7cd8c25efcde917676'],
+      ['exclusion',     '(cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)', 'f93816fd8955e9d7deb2807b66fbbc55']
     ]
 
 b = [
       ['overlay',       '2 * cB > aB',
                         '2 * cA * cB + cA * (1 - aB) + cB * (1 - aA)',
-                        'aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)'],
+                        'aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)',
+                        '0148854c1b7d80cca8f015e216ce8fa3'],
       ['color_dodge',   'cA * aB + cB * aA >= aA * aB',
                         'aA * aB + cA * (1 - aB) + cB * (1 - aA)',
-                        '(cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)'],
+                        '(cA == aA ? 1 : cB * aA / (aA == 0 ? 1 : 1 - cA / aA)) + cA * (1 - aB) + cB * (1 - aA)',
+                        'ea40c71bc14de7f431480addf43e8b13'],
 
       ['color_burn',    'cA * aB + cB * aA <= aA * aB',
                         'cA * (1 - aB) + cB * (1 - aA)',
-                        '(cA == 0 ? 1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))'],
+                        '(cA == 0 ? 1 : (aA * (cA * aB + cB * aA - aA * aB) / cA) + cA * (1 - aB) + cB * (1 - aA))',
+                        'f59eedae9e7ff4e7772341badec3f724'],
       ['hard_light',    '2 * cA < aA',
                         '2 * cA * cB + cA * (1 - aB) + cB * (1 - aA)',
-                        'aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)']
+                        'aA * aB - 2 * (aB - cB) * (aA - cA) + cA * (1 - aB) + cB * (1 - aA)',
+                        '7c64c9793501c9ad28dc96c9dd5f3c1e']
     ]
 
 c = [
@@ -63,12 +67,14 @@ c = [
                         'cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA)',
                         '8 * cB <= aB',
                         'cB * (aA - (aB == 0 ? 1 : 1 - cB / aB) * (2 * cA - aA) * (aB == 0 ? 3 : 3 - 8 * cB / aB)) + cA * (1 - aB) + cB * (1 - aA)',
-                        '(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA)']
+                        '(aA * cB + (aB == 0 ? 0 : sqrt (cB / aB) * aB - cB) * (2 * cA - aA)) + cA * (1 - aB) + cB * (1 - aA)',
+                        '84242bdbb83f6bfd01711106423b20ab']
     ]
 
 d = [
       ['plus',          'cA + cB',
-                        'MIN (aA + aB, 1)']
+                        'MIN (aA + aB, 1)',
+                        '860a6a3c10939c3327ca16103703537e']
     ]
 
 file_head1 = '
@@ -243,6 +249,7 @@ a.each do
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"svg:#{name}\",
   \"compat-name\" , \"gegl:#{compat_name}\",
+  \"reference-hash\" , \"#{item[2]}\",
   \"description\" ,
         _(\"SVG blend operation #{name} (<code>d = #{formula1}</code>)\"),
         NULL);
@@ -310,6 +317,7 @@ b.each do
   \"name\"        , \"svg:#{name}\",
   \"compat-name\" , \"gegl:#{name}\",
   \"title\"       , \"#{name.capitalize}\",
+  \"reference-hash\" , \"#{item[4]}\",
   \"description\" ,
         _(\"SVG blend operation #{name} (<code>if #{cond1}: d = #{formula1} otherwise: d = #{formula2}</code>)\"),
         NULL);
@@ -381,6 +389,7 @@ c.each do
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"gegl:#{name}\",
   \"title\"       , \"#{name.capitalize}\",
+  \"reference-hash\" , \"#{item[6]}\",
   \"description\" ,
         _(\"SVG blend operation #{name} (<code>if #{cond1}: d = #{formula1}; if #{cond2}: d = #{formula2}; otherwise: d = #{formula3}</code>)\"),
         NULL);
@@ -445,6 +454,7 @@ d.each do
     \"name\"        , \"svg:#{name}\",
     \"title\"       , \"#{name.capitalize}\",
     \"compat-name\" , \"gegl:#{name}\",
+    \"reference-hash\" , \"#{item[3]}\",
     \"description\" ,
     _(\"SVG blend operation #{name} (<code>d = #{formula1}</code>)\"),
     NULL);

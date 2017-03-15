@@ -168,6 +168,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"        , "svg:plus",
     "title"       , "Plus",
     "compat-name" , "gegl:plus",
+    "reference-hash" , "860a6a3c10939c3327ca16103703537e",
     "description" ,
     _("SVG blend operation plus (<code>d = cA + cB</code>)"),
     NULL);

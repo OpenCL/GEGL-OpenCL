@@ -36,42 +36,43 @@ copyright = '
 a = [
       ['clear',         '0.0f',
                         '0.0f',
-       false],
+       false, 'f1b3ab0f1e84ec5882f23aee0a0c68f6'],
       ['src',           'cA',
                         'aA',
-       false],
+       false, 'f6a66e7e92224fb5df43d15d8faf4262'],
       ['dst',           'cB',
                         'aB',
-       true],
+       true, '9bbe341d798da4f7b181c903e6f442fd'],
 #      ['src_over',      'cA + cB * (1.0f - aA)',
 #                        'aA + aB - aA * aB',
 #       false],
       ['dst_over',      'cB + cA * (1.0f - aB)',
                         'aA + aB - aA * aB',
-       true],
+       true, '9bed66932992ce558e517de0bf815f17'],
       ['dst_in',        'cB * aA', # <- XXX: typo?
                         'aA * aB',
-       false],
+       false, 'a94543affd078e575419cced22a3dcfb'],
       ['src_out',       'cA * (1.0f - aB)',
                         'aA * (1.0f - aB)',
-       false],
+       false, 'e335ad3a0cea2455e6776244a3f83b1d'],
       ['dst_out',       'cB * (1.0f - aA)',
                         'aB * (1.0f - aA)',
-       true],
+       true, '7a51822400f0a06d339cc3f1925e0699'],
       ['src_atop',      'cA * aB + cB * (1.0f - aA)',
                         'aB',
-       true],
+       true, '7e48d1097702179c39b513b2be9d6102'],
 
       ['dst_atop',      'cB * aA + cA * (1.0f - aB)',
                         'aA',
-       false],
+        false, 'daeb2e2e1ae75898af7db31934e240fb'],
       ['xor',           'cA * (1.0f - aB)+ cB * (1.0f - aA)',
                         'aA + aB - 2.0f * aA * aB',
-       true],
+       true, 'e80ef5797385bf06ac3b7e7747bc5be0'],
     ]
 
 b = [ ['src_in',        'cA * aB',  # the bounding box of this mode is the
-                        'aA * aB']]  # bounding box of the input only.
+                        'aA * aB',
+       'cd8b5c32799849fd2ca773a2759ab98e']]  # bounding box of the input only.
 
 file_head1 = '
 #include "config.h"
@@ -233,6 +234,7 @@ a.each do
     \"name\"       , \"svg:#{name}\",
     \"compat-name\", \"gegl:#{name}\",
     \"title\"      , \"#{name.capitalize}\",
+    \"reference-hash\" , \"#{item[4]}\",
     \"categories\" , \"compositors:porter-duff\",
     \"description\",
         _(\"Porter Duff operation #{name} (d = #{c_formula})\"),
@@ -316,6 +318,7 @@ static GeglRectangle get_bounding_box (GeglOperation *self)
   \"name\"      , \"svg:#{name}\",
   \"compat-name\", \"gegl:#{name}\",
   \"title\"     , \"#{name.capitalize}\",
+    \"reference-hash\" , \"#{item[3]}\",
   \"categories\", \"compositors:porter-duff\",
   \"description\" ,
         _(\"Porter Duff compositing operation #{name} (formula:   #{c_formula})\"),

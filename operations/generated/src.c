@@ -122,6 +122,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "svg:src",
     "compat-name", "gegl:src",
     "title"      , "Src",
+    "reference-hash" , "f6a66e7e92224fb5df43d15d8faf4262",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation src (d = cA)"),

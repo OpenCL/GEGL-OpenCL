@@ -122,6 +122,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "svg:dst-in",
     "compat-name", "gegl:dst-in",
     "title"      , "Dst-in",
+    "reference-hash" , "a94543affd078e575419cced22a3dcfb",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation dst-in (d = cB * aA)"),

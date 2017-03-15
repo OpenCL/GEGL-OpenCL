@@ -166,6 +166,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:difference",
   "compat-name" , "gegl:difference",
+  "reference-hash" , "3737dde4e8302b7cd8c25efcde917676",
   "description" ,
         _("SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * aA))</code>)"),
         NULL);

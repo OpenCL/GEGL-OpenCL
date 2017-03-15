@@ -144,6 +144,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "svg:xor",
     "compat-name", "gegl:xor",
     "title"      , "Xor",
+    "reference-hash" , "e80ef5797385bf06ac3b7e7747bc5be0",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation xor (d = cA * (1.0f - aB)+ cB * (1.0f - aA))"),
