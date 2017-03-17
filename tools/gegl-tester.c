@@ -255,7 +255,7 @@ process_operations (GType type)
         {
           g_printf (" FAIL %s != %s\n", gothash, hash);
           failed ++;
-          g_string_append_printf (failed_ops, " %s", name);
+          g_string_append_printf (failed_ops, "%s %s != %s\n", name, gothash, hash);
         }
         g_free (gothash);
         g_free (output_path);
@@ -316,8 +316,6 @@ main (gint    argc,
     }
   else
     {
-      g_printf ("running gegl-tester with%s opencl acceleration\n",
-        gegl_cl_is_accelerated()?"":"out");
 
       regex = g_regex_new (pattern, 0, 0, NULL);
       exc_regex = g_regex_new (exclusion_pattern, 0, 0, NULL);
@@ -330,9 +328,11 @@ main (gint    argc,
 
   gegl_exit ();
 
+  g_printf ("\n\nwith%s opencl acceleration\n", gegl_cl_is_accelerated()?"":"out");
   if (failed != 0)
   {
-    g_print ("%i operations not producing the expected result: %s\n", failed, failed_ops->str);
+
+    g_print ("Maybe see bug https://bugzilla.gnome.org/show_bug.cgi?id=780226\n%i operations producing unexpected hashes:\n%s\n", failed, failed_ops->str);
     return -1;
   }
   g_string_free (failed_ops, TRUE);
