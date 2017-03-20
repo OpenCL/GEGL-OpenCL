@@ -597,11 +597,13 @@ json_register_operations(GTypeModule *module)
 }
 
 
+#ifndef GEGL_OP_BUNDLE
 /*** Module registration ***/
 static const GeglModuleInfo modinfo =
 {
   GEGL_MODULE_ABI_VERSION
 };
+#endif
 
 /* prototypes added to silence warnings from gcc for -Wmissing-prototypes*/
 gboolean                gegl_module_register (GTypeModule *module);
