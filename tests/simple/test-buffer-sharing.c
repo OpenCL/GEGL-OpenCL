@@ -16,6 +16,7 @@
  */
 
 #include <gegl.h>
+#include <glib/gstdio.h>
 
 // in order of progression
 typedef enum _TestState {
