@@ -78,7 +78,6 @@ buffer_get_color(GeglBuffer *buffer) {
     const int pixels = 1;
     guint8 pixel[4];
     GeglRectangle r = { 0, 0, 1, pixels };
-    unsigned char contents[pixels*4];
     const Babl *format = babl_format("R'G'B'A u8");
     gegl_buffer_get(buffer, &r, 1.0, format, (gpointer)(pixel), GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
     GeglColor *color = gegl_color_new(NULL);
