@@ -247,6 +247,83 @@ process (GeglOperation       *operation,
            x++; if (x>=roi->x + roi->width) { x=roi->x; y++; }
          }
        break;
+    case 4:
+       while (n_pixels--)
+         {
+           float pinch = fabs(in_pixel[0]-in_pixel[1]);
+           float angle = fabs(in_pixel[2]-in_pixel[1]);
+           float c = 1.0 - in_pixel[0];
+           float m = 1.0 - in_pixel[1];
+           float iy = 1.0 - in_pixel[2];
+           float k = 1.0;
+           if (c < k) k = c;
+           if (m < k) k = m;
+           if (y < k) k = y;
+
+           k = k * 0.40;
+
+           if (k < 1.0)
+           {
+             c = (c - k) / (1.0 - k);
+             m = (m - k) / (1.0 - k);
+             iy = (iy - k) / (1.0 - k);
+           }
+           else /* wont happen with 0.40 pullout */
+           {
+             c = m = iy = 1.0;
+           }
+
+           c = spachrotyze(x, y,
+                           c, pinch, angle,
+                           o->pattern,
+                           o->wavelength / (1.0*(1<<level)),
+                           o->turbulence,
+                           blocksize,
+                           o->angleboost,
+                           o->twist2);
+           m = spachrotyze(x, y,
+                           m, pinch, angle,
+                           o->pattern,
+                           o->wavelength / (1.0*(1<<level)),
+                           o->turbulence,
+                           blocksize,
+                           o->angleboost,
+                           o->twist3);
+           iy = spachrotyze(x, y,
+                            iy, pinch, angle,
+                            o->pattern,
+                            o->wavelength / (1.0*(1<<level)),
+                            o->turbulence,
+                            blocksize,
+                            o->angleboost,
+                            o->twist4);
+           k = spachrotyze(x, y,
+                           k, pinch, angle,
+                           o->pattern,
+                           o->wavelength / (1.0*(1<<level)),
+                           o->turbulence,
+                           blocksize,
+                           o->angleboost,
+                           o->twist4);
+
+           if (k < 1.0) {
+             c = c * (1.0 - k) + k;
+             m = m * (1.0 - k) + k;
+             iy= iy* (1.0 - k) + k;
+           } else {
+             c = 1.0; iy = 1.0; m = 1.0;
+           }
+           out_pixel[0] = 1.0 - c;
+           out_pixel[1] = 1.0 - m;
+           out_pixel[2] = 1.0 - iy;
+           out_pixel[3] = in_pixel[3];
+           out_pixel += 4;
+           in_pixel  += 4;
+
+           /* update x and y coordinates */
+           x++; if (x>=roi->x + roi->width) { x=roi->x; y++; }
+         }
+       break;
   }
 
 
