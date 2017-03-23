@@ -338,7 +338,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("newsprint"),
     "position-dependent", "true",
     "categories" ,        "render",
-    "reference-hash",     "cc9c401d7c8bcea7147499ecbeda9986",
+    "reference-hash",     "2fa1789ad87e62590198631120802e22",
     "description",        _("Simulation of digital/analog AM halftoning with optional modulations. "),
     "position-dependent", "true",
     NULL);
