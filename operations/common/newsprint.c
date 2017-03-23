@@ -27,7 +27,7 @@ property_int (inks, _("inks"), 1)
 
 property_int (pattern, _("pattern"), 0)
               value_range (0, 16)
-              description (_("halftoning pattern"))
+              description (_("halftoning pattern to use"))
 
 property_double (period, _("period"), 12.0)
                  value_range (0.0, 200.0)
@@ -118,7 +118,6 @@ float spachrotyze (
   for (float xi = 0.0; xi < aa; xi += 1.0)
   {
     float u = fmodf (x + xi/aa + 0.5 * width, blocksize * width);
-
     for (float yi = 0.0; yi < aa; yi += 1.0)
     {
       float v = fmodf (y + yi/aa + 0.5 * width, blocksize * width);
@@ -131,20 +130,24 @@ float spachrotyze (
       float qperiod = fmodf (q, width);
       float qphase  = (qperiod / width) * 2.0 - 1.0;
 
-      if (pattern == 0) {      /* line */
+      if (pattern == 0)       /* line */
+      {
         if (fabsf (wphase) < part_white)
           acc += 1.0 / aa_sq;
       }
-      else if (pattern == 1) { /* dot */
+      else if (pattern == 1) /* dot */
+      {
         if (qphase * qphase + wphase * wphase <
           part_white * part_white * 2.0)
           acc += 1.0 / aa_sq;
       }
-      else if (pattern == 2) { /* diamond */
+      else if (pattern == 2) /* diamond */
+      {
         if (fabsf(wphase) + fabsf(qphase) < (part_white * 2) )
           acc += 1.0 / aa_sq;
       }
-      else if (pattern == 3) { /* dot-to-diamond-to-dot */
+      else if (pattern == 3) /* dot-to-diamond-to-dot */
+      {
           float ax = fabsf (wphase ) ;
           float ay = fabsf (qphase ) ;
           float v = 0.0;
@@ -160,7 +163,9 @@ float spachrotyze (
           v/=2.0;
           if (v < part_white)
             acc = acc + 1.0 / aa_sq;
-      } else if (pattern == 4)
+
+      }
+      else if (pattern == 4) /* cross */
       {
         if (fabsf (wphase) < part_white)
           acc += 1.0 / aa_sq;
@@ -206,18 +211,20 @@ process (GeglOperation       *operation,
            float luminance  = in_pixel[1];
            float chroma     = fabs(in_pixel[0]-in_pixel[1]);
            float angle      = fabs(in_pixel[2]-in_pixel[1]);
-           float acc = spachrotyze(x, y,
-                                   luminance, chroma, angle,
-                                   o->pattern,
-                                   o->period / (1.0*(1<<level)),
-                                   o->turbulence,
-                                   blocksize,
-                                   o->angleboost,
-                                   degrees_to_radians (o->twist));
-           for (int c = 0; c < 3; c++)
-             out_pixel[c] = acc;
 
+           float gray = spachrotyze (x, y,
+                                    luminance, chroma, angle,
+                                    o->pattern,
+                                    o->period / (1.0*(1<<level)),
+                                    o->turbulence,
+                                    blocksize,
+                                    o->angleboost,
+                                    degrees_to_radians (o->twist));
+
+           for (int c = 0; c < 3; c++)
+             out_pixel[c] = gray;
            out_pixel[3] = 1.0;
+
            out_pixel += 4;
            in_pixel  += 4;
 
@@ -231,23 +238,25 @@ process (GeglOperation       *operation,
            float pinch = fabs(in_pixel[0]-in_pixel[1]);
            float angle = fabs(in_pixel[2]-in_pixel[1]);
 
-           out_pixel[0] = spachrotyze(x, y,
-                                   in_pixel[0], pinch, angle,
-                                   o->pattern,
-                                   o->period / (1.0*(1<<level)),
-                                   o->turbulence,
-                                   blocksize,
-                                   o->angleboost,
-                                   degrees_to_radians (o->twist2));
-           out_pixel[1] = spachrotyze(x, y,
-                                   in_pixel[1], pinch, angle,
-                                   o->pattern,
-                                   o->period / (1.0*(1<<level)),
-                                   o->turbulence,
-                                   blocksize,
-                                   o->angleboost,
-                                   degrees_to_radians (o->twist));
-           out_pixel[2] = spachrotyze(x, y,
+           out_pixel[0] = spachrotyze (x, y,
+                                       in_pixel[0], pinch, angle,
+                                       o->pattern,
+                                       o->period / (1.0*(1<<level)),
+                                       o->turbulence,
+                                       blocksize,
+                                       o->angleboost,
+                                       degrees_to_radians (o->twist2));
+
+           out_pixel[1] = spachrotyze (x, y,
+                                       in_pixel[1], pinch, angle,
+                                       o->pattern,
+                                       o->period / (1.0*(1<<level)),
+                                       o->turbulence,
+                                       blocksize,
+                                       o->angleboost,
+                                       degrees_to_radians (o->twist));
+
+           out_pixel[2] = spachrotyze (x, y,
                                    in_pixel[2], pinch, angle,
                                    o->pattern,
                                    o->period / (1.0*(1<<level)),
@@ -256,6 +265,7 @@ process (GeglOperation       *operation,
                                    o->angleboost,
                                    degrees_to_radians (o->twist3));
            out_pixel[3] = 1.0;
+
            out_pixel += 4;
            in_pixel  += 4;
 
@@ -268,10 +278,11 @@ process (GeglOperation       *operation,
          {
            float pinch = fabs(in_pixel[0]-in_pixel[1]);
            float angle = fabs(in_pixel[2]-in_pixel[1]);
-           float c = 1.0 - in_pixel[0];
-           float m = 1.0 - in_pixel[1];
+           float c = 1.0  - in_pixel[0];
+           float m = 1.0  - in_pixel[1];
            float iy = 1.0 - in_pixel[2];
            float k = 1.0;
+
            if (c < k) k = c;
            if (m < k) k = m;
            if (y < k) k = y;
@@ -289,38 +300,39 @@ process (GeglOperation       *operation,
              c = m = iy = 1.0;
            }
 
-           c = spachrotyze(x, y,
-                           c, pinch, angle,
-                           o->pattern,
-                           o->period / (1.0*(1<<level)),
-                           o->turbulence,
-                           blocksize,
-                           o->angleboost,
-                           degrees_to_radians (o->twist2));
-           m = spachrotyze(x, y,
-                           m, pinch, angle,
-                           o->pattern,
-                           o->period / (1.0*(1<<level)),
-                           o->turbulence,
-                           blocksize,
-                           o->angleboost,
-                           degrees_to_radians (o->twist3));
-           iy = spachrotyze(x, y,
-                            iy, pinch, angle,
+           c = spachrotyze (x, y,
+                            c, pinch, angle,
                             o->pattern,
                             o->period / (1.0*(1<<level)),
                             o->turbulence,
                             blocksize,
                             o->angleboost,
-                            degrees_to_radians (o->twist4));
-           k = spachrotyze(x, y,
-                           k, pinch, angle,
-                           o->pattern,
-                           o->period / (1.0*(1<<level)),
-                           o->turbulence,
-                           blocksize,
-                           o->angleboost,
-                           degrees_to_radians (o->twist));
+                            degrees_to_radians (o->twist2));
+
+           m = spachrotyze (x, y,
+                            m, pinch, angle,
+                            o->pattern,
+                            o->period / (1.0*(1<<level)),
+                            o->turbulence,
+                            blocksize,
+                            o->angleboost,
+                            degrees_to_radians (o->twist3));
+           iy = spachrotyze (x, y,
+                             iy, pinch, angle,
+                             o->pattern,
+                             o->period / (1.0*(1<<level)),
+                             o->turbulence,
+                             blocksize,
+                             o->angleboost,
+                             degrees_to_radians (o->twist4));
+           k = spachrotyze (x, y,
+                            k, pinch, angle,
+                            o->pattern,
+                            o->period / (1.0*(1<<level)),
+                            o->turbulence,
+                            blocksize,
+                            o->angleboost,
+                            degrees_to_radians (o->twist));
 
            if (k < 1.0) {
              c = c * (1.0 - k) + k;
@@ -341,7 +353,6 @@ process (GeglOperation       *operation,
          }
        break;
   }
-
 
   return  TRUE;
 }
