@@ -41,6 +41,5 @@ gegl_generated_la_SOURCES = \
   xor.c \
   module.c
 
-  #svg-multiply.c 
 module.c: $(gegl_generated_la_SOURCES)
 	$(top_srcdir)/tools/gen-loader.sh $^ > module.c
