@@ -21,13 +21,22 @@
 
 #ifdef GEGL_PROPERTIES
 
+enum_start (gegl_newsprint_pattern)
+  enum_value (GEGL_NEWSPRINT_PATTERN_LINE,     "line",     N_("Line"))
+  enum_value (GEGL_NEWSPRINT_PATTERN_CIRCLE,   "circle",   N_("Circle"))
+  enum_value (GEGL_NEWSPRINT_PATTERN_DIAMOND,  "diamond",  N_("Diamond"))
+  enum_value (GEGL_NEWSPRINT_PATTERN_PSCIRCLE, "psquare",  N_("Square (or Euclidian) dot"))
+  enum_value (GEGL_NEWSPRINT_PATTERN_CROSS,    "cross",    N_("Orthogonal Lines"))
+
+enum_end (GeglNewsprintPattern)
+
 property_int (inks, _("inks"), 1)
               value_range (1, 4)
               description (_("How many inks to use just black, rg, rgb(additive) or cmyk"))
 
-property_int (pattern, _("pattern"), 0)
-              value_range (0, 16)
-              description (_("halftoning pattern to use"))
+property_enum (pattern, _("pattern"),
+              GeglNewsprintPattern, gegl_newsprint_pattern, GEGL_NEWSPRINT_PATTERN_LINE)
+              description (_("halftoning/dot pattern to use"))
 
 property_double (period, _("period"), 12.0)
                  value_range (0.0, 200.0)
@@ -152,18 +161,17 @@ float spachrotyze (
           float ay = fabsf (qphase ) ;
           float v = 0.0;
 
-          if  (ax + ay > 1.0)
+          if  (ax + ay > 0.666)
           {
-            v = 2.0-(((ay - 1.0) * (ay - 1.0) + (ax - 1.0) * (ax - 1.0)));
+            v = 2.0 - sqrtf((1.0-ay) * (1.0-ay) + (1.0-ax) * (1.0-ax));
           }
           else
           {
-            v = (ay * ay + ax * ax);
+            v = sqrtf (ay * ay + ax * ax);
           }
           v/=2.0;
           if (v < part_white)
             acc = acc + 1.0 / aa_sq;
-
       }
       else if (pattern == 4) /* cross */
       {
