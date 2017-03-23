@@ -94,6 +94,7 @@ gegl_common_la_SOURCES =\
 	motion-blur-circular.c \
 	motion-blur-linear.c \
 	motion-blur-zoom.c \
+	newsprint.c \
 	noise-cie-lch.c \
 	noise-hsv.c \
 	noise-hurl.c \
