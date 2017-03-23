@@ -24,34 +24,42 @@
 property_int (inks, _("inks"), 1)
               value_range (1, 4)
               description (_("How many inks to use just black, rg, rgb(additive) or cmyk"))
+
 property_int (pattern, _("pattern"), 0)
               value_range (0, 16)
               description (_("halftoning pattern"))
 
-property_double (wavelength, _("wavelength"), 12.0)
-                 value_range (0.0, 200.0)  // rename to period?
+property_double (period, _("period"), 12.0)
+                 value_range (0.0, 200.0)
 
 property_double (turbulence, _("turbulence"), 0.0)
                  value_range (0.0, 1.0)  // rename to wave-pinch or period-pinch?
+                 description (_(""))
 
 property_double (blocksize, _("blocksize"), -1.0)
                  value_range (-1.0, 64.0)
-                 description (_("number of wavelengths per local period"))
+                 description (_("number of periods per tile, this tiling avoids high frequency anomaly that angleboost causes"))
 
 property_double (angleboost, _("angleboost"), 0.0)
                  value_range (0.0, 4.0)
-              description (_("angle offset for patterns"))
+                 description (_("multiplication factor for desired rotation of the local space for texture, the way this is computed makes it weak for desaturated colors and possibly stronger where there is color."))
 
-property_double (twist, _("black and green angle"), 0.5)
-                 value_range (-2.0, 2.0)
-              description (_("angle offset for patterns"))
+property_double (twist, _("black and green angle"), 75.0)
+                 value_range (-180.0, 180.0)
+                 ui_meta ("unit", "degree")
+                 description (_("angle offset for patterns"))
 
-property_double (twist2, _("red and cyan angle"), 0.166766661)
-                 value_range (-2.0, 2.0)
-property_double (twist3, _("blue and magenta angle"), 0.84351)
-                 value_range (-2.0, 2.0)
+property_double (twist2, _("red and cyan angle"), 15.0)
+                 value_range (-180.0, 180.0)
+                 ui_meta ("unit", "degree")
+
+property_double (twist3, _("blue and magenta angle"), 45.0)
+                 value_range (-180.0, 180.0)
+                 ui_meta ("unit", "degree")
+
 property_double (twist4, _("yellow angle"), 0.0)
-                 value_range (-2.0, 2.0)
+                 value_range (-180.0, 180.0)
+                 ui_meta ("unit", "degree")
 
 
 #else
@@ -89,7 +97,7 @@ float spachrotyze (
     float offset,
     float hue,
     int   pattern,
-    float wavelength,
+    float period,
     float turbulence,
     float blocksize,
     float angleboost,
@@ -98,18 +106,19 @@ float spachrotyze (
   float aa  = 2.0;
   float acc = 0.0;
 
-  float angle  = (1.0-(hue * angleboost) + twist);
+  float angle  = 3.1415 / 2- ((hue * angleboost) + twist);
 
-  float width  = (wavelength * (1.0 - turbulence) +
-                 (wavelength * offset) * turbulence);
+  float width  = (period * (1.0 - turbulence) +
+                 (period * offset) * turbulence);
 
-  float vec0 = cosf (-angle * 3.14151 / 2.0);
-  float vec1 = sinf (-angle * 3.14151 / 2.0);
+  float vec0 = cosf (angle);
+  float vec1 = sinf (angle);
   float aa_sq = aa * aa;
 
   for (float xi = 0.0; xi < aa; xi += 1.0)
   {
     float u = fmodf (x + xi/aa + 0.5 * width, blocksize * width);
+
     for (float yi = 0.0; yi < aa; yi += 1.0)
     {
       float v = fmodf (y + yi/aa + 0.5 * width, blocksize * width);
@@ -162,6 +171,13 @@ float spachrotyze (
   }
   return acc;
 }
+
+static inline double degrees_to_radians (double degrees)
+{
+  return degrees * (2 * G_PI / 360.0);
+}
+
+
 static gboolean
 process (GeglOperation       *operation,
          void                *in_buf,
@@ -183,8 +199,8 @@ process (GeglOperation       *operation,
   switch (o->inks)
   {
     case 0:
-    case 1:
     case 2:
+    case 1: /* monochrome */
        while (n_pixels--)
          {
            float luminance  = in_pixel[1];
@@ -193,11 +209,11 @@ process (GeglOperation       *operation,
            float acc = spachrotyze(x, y,
                                    luminance, chroma, angle,
                                    o->pattern,
-                                   o->wavelength / (1.0*(1<<level)),
+                                   o->period / (1.0*(1<<level)),
                                    o->turbulence,
                                    blocksize,
                                    o->angleboost,
-                                   o->twist);
+                                   degrees_to_radians (o->twist));
            for (int c = 0; c < 3; c++)
              out_pixel[c] = acc;
 
@@ -209,7 +225,7 @@ process (GeglOperation       *operation,
            x++; if (x>=roi->x + roi->width) { x=roi->x; y++; }
          }
        break;
-    case 3:
+    case 3: /* RGB */
        while (n_pixels--)
          {
            float pinch = fabs(in_pixel[0]-in_pixel[1]);
@@ -218,27 +234,27 @@ process (GeglOperation       *operation,
            out_pixel[0] = spachrotyze(x, y,
                                    in_pixel[0], pinch, angle,
                                    o->pattern,
-                                   o->wavelength / (1.0*(1<<level)),
+                                   o->period / (1.0*(1<<level)),
                                    o->turbulence,
                                    blocksize,
                                    o->angleboost,
-                                   o->twist2);
+                                   degrees_to_radians (o->twist2));
            out_pixel[1] = spachrotyze(x, y,
                                    in_pixel[1], pinch, angle,
                                    o->pattern,
-                                   o->wavelength / (1.0*(1<<level)),
+                                   o->period / (1.0*(1<<level)),
                                    o->turbulence,
                                    blocksize,
                                    o->angleboost,
-                                   o->twist);
+                                   degrees_to_radians (o->twist));
            out_pixel[2] = spachrotyze(x, y,
                                    in_pixel[2], pinch, angle,
                                    o->pattern,
-                                   o->wavelength / (1.0*(1<<level)),
+                                   o->period / (1.0*(1<<level)),
                                    o->turbulence,
                                    blocksize,
                                    o->angleboost,
-                                   o->twist3);
+                                   degrees_to_radians (o->twist3));
            out_pixel[3] = 1.0;
            out_pixel += 4;
            in_pixel  += 4;
@@ -247,7 +263,7 @@ process (GeglOperation       *operation,
            x++; if (x>=roi->x + roi->width) { x=roi->x; y++; }
          }
        break;
-    case 4:
+    case 4: /* CMYK */
        while (n_pixels--)
          {
            float pinch = fabs(in_pixel[0]-in_pixel[1]);
@@ -260,7 +276,7 @@ process (GeglOperation       *operation,
            if (m < k) k = m;
            if (y < k) k = y;
 
-           k = k * 0.40;
+           k = k * 0.40; /* black pull out */
 
            if (k < 1.0)
            {
@@ -276,35 +292,35 @@ process (GeglOperation       *operation,
            c = spachrotyze(x, y,
                            c, pinch, angle,
                            o->pattern,
-                           o->wavelength / (1.0*(1<<level)),
+                           o->period / (1.0*(1<<level)),
                            o->turbulence,
                            blocksize,
                            o->angleboost,
-                           o->twist2);
+                           degrees_to_radians (o->twist2));
            m = spachrotyze(x, y,
                            m, pinch, angle,
                            o->pattern,
-                           o->wavelength / (1.0*(1<<level)),
+                           o->period / (1.0*(1<<level)),
                            o->turbulence,
                            blocksize,
                            o->angleboost,
-                           o->twist3);
+                           degrees_to_radians (o->twist3));
            iy = spachrotyze(x, y,
                             iy, pinch, angle,
                             o->pattern,
-                            o->wavelength / (1.0*(1<<level)),
+                            o->period / (1.0*(1<<level)),
                             o->turbulence,
                             blocksize,
                             o->angleboost,
-                            o->twist4);
+                            degrees_to_radians (o->twist4));
            k = spachrotyze(x, y,
                            k, pinch, angle,
                            o->pattern,
-                           o->wavelength / (1.0*(1<<level)),
+                           o->period / (1.0*(1<<level)),
                            o->turbulence,
                            blocksize,
                            o->angleboost,
-                           o->twist4);
+                           degrees_to_radians (o->twist));
 
            if (k < 1.0) {
              c = c * (1.0 - k) + k;
@@ -370,7 +386,7 @@ cl_process (GeglOperation       *op,
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 2, sizeof(cl_int),   (void*)&o->pattern);
   CL_CHECK;
-  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&o->wavelength);
+  cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 3, sizeof(cl_float), (void*)&o->period);
   CL_CHECK;
   cl_err = gegl_clSetKernelArg(cl_data->kernel[0], 4, sizeof(cl_float), (void*)&o->turbulence);
   CL_CHECK;
@@ -415,8 +431,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("newsprint"),
     "position-dependent", "true",
     "categories" ,        "render",
-    "reference-hash",     "2fa1789ad87e62590198631120802e22",
-    "description",        _("Simulation of digital/analog AM halftoning with optional modulations. "),
+    "reference-hash",     "51014e30fa5b1e32b32ec9aa42355e3b",
+    "description",        _("Digital halftoning with optional modulations. "),
     "position-dependent", "true",
     NULL);
 }
