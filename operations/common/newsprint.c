@@ -75,7 +75,6 @@ property_double (twist4, _("Yellow angle"), 0.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
 
-
 #else
 
 #define GEGL_OP_POINT_FILTER
@@ -117,7 +116,7 @@ float spachrotyze (
     float angleboost,
     float twist)
 {
-  float aa  = 2.0;
+  int max_aa_samples = 16;
   float acc = 0.0;
 
   float angle  = 3.1415 / 2- ((hue * angleboost) + twist);
@@ -127,14 +126,25 @@ float spachrotyze (
 
   float vec0 = cosf (angle);
   float vec1 = sinf (angle);
-  float aa_sq = aa * aa;
 
-  for (float xi = 0.0; xi < aa; xi += 1.0)
+  float xi = 0.5;
+  float yi = 0.2;
+  int count = 0;
+
+  int in = 0;
+  int out = 0;
+  float old_acc = 0.0;
+
+  for (int i = 0; i < max_aa_samples ; i++)
   {
-    float u = fmodf (x + xi/aa + 0.5 * width, blocksize * width);
-    for (float yi = 0.0; yi < aa; yi += 1.0)
+    xi = fmodf (xi + 0.618033988749854, 1.0);
+    yi = fmodf (yi + (0.618033988749854/1.61235), 1.0);
+
+    old_acc = acc;
     {
-      float v = fmodf (y + yi/aa + 0.5 * width, blocksize * width);
+      float u = fmodf (x + xi - 0.5 * width, blocksize * width);
+      float v = fmodf (y + yi - 0.5 * width, blocksize * width);
+
       float w = vec0 * u + vec1 * v;
       float q = vec1 * u - vec0 * v;
 
@@ -147,18 +157,18 @@ float spachrotyze (
       if (pattern == 0)       /* line */
       {
         if (fabsf (wphase) < part_white)
-          acc += 1.0 / aa_sq;
+          in ++;
       }
       else if (pattern == 1) /* dot */
       {
         if (qphase * qphase + wphase * wphase <
           part_white * part_white * 2.0)
-          acc += 1.0 / aa_sq;
+          in ++;
       }
       else if (pattern == 2) /* diamond */
       {
         if ((fabsf(wphase) + fabsf(qphase))/2.0 < part_white )
-          acc += 1.0 / aa_sq;
+          in++;
       }
       else if (pattern == 3) /* dot-to-diamond-to-dot */
       {
@@ -176,17 +186,24 @@ float spachrotyze (
           }
           v/=2.0;
           if (v < part_white)
-            acc = acc + 1.0 / aa_sq;
+            in++;
       }
       else if (pattern == 4) /* cross */
       {
-        part_white = powf (part_white, 2.0);
-        if (fabsf (wphase) < part_white)
-          acc += 1.0 / aa_sq;
-        else if (fabsf (qphase) < part_white)
-          acc += 1.0 / aa_sq;
+        float part_white2 = powf (part_white, 2.0);
+        if (fabsf (wphase) < part_white2 ||
+            fabsf (qphase) < part_white2)
+          in++;
       }
+      count ++;
+
+      acc = in * 1.0/ count;
+      if (i > 3 &&
+          fabs (acc - old_acc) < 0.23)
+        break;
+      old_acc = acc;
     }
+
   }
   return acc;
 }
@@ -329,6 +346,7 @@ process (GeglOperation       *operation,
                             blocksize,
                             o->angleboost,
                             degrees_to_radians (o->twist3));
+
            iy = spachrotyze (x, y,
                              iy, pinch, angle,
                              o->pattern,
@@ -337,6 +355,7 @@ process (GeglOperation       *operation,
                              blocksize,
                              o->angleboost,
                              degrees_to_radians (o->twist4));
+
            k = spachrotyze (x, y,
                             k, pinch, angle,
                             o->pattern,
