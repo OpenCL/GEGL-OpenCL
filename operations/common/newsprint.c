@@ -30,13 +30,14 @@ enum_start (gegl_newsprint_pattern)
 enum_end (GeglNewsprintPattern)
 
 enum_start (gegl_newsprint_color_model)
-  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_GRAY,     "gray",     N_("Gray"))
-  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_RGB,      "rgb",      N_("RGB"))
-  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_CMYK,     "cmyk",     N_("CMYK"))
+  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_WHITE_ON_BLACK, "white-on-black", N_("White on Black"))
+  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_BLACK_ON_WHITE, "black-on-white", N_("Black on White"))
+  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_RGB,  "rgb",      N_("RGB"))
+  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_CMYK, "cmyk",     N_("CMYK"))
 enum_end (GeglNewsprintColorModel)
 
 property_enum (color_model, _("Color Model"),
-              GeglNewsprintColorModel, gegl_newsprint_color_model, GEGL_NEWSPRINT_COLOR_MODEL_GRAY)
+              GeglNewsprintColorModel, gegl_newsprint_color_model, GEGL_NEWSPRINT_COLOR_MODEL_BLACK_ON_WHITE)
               description (_("How many inks to use just black, rg, rgb(additive) or cmyk"))
 
 property_enum (pattern, _("Pattern"),
@@ -130,9 +131,7 @@ float spachrotyze (
   float xi = 0.5;
   float yi = 0.2;
   int count = 0;
-
   int in = 0;
-  int out = 0;
   float old_acc = 0.0;
 
   for (int i = 0; i < max_aa_samples ; i++)
@@ -234,7 +233,7 @@ process (GeglOperation       *operation,
 
   switch (o->color_model)
   {
-    case GEGL_NEWSPRINT_COLOR_MODEL_GRAY:
+    case GEGL_NEWSPRINT_COLOR_MODEL_WHITE_ON_BLACK:
        while (n_pixels--)
          {
            float luminance  = in_pixel[1];
@@ -243,6 +242,33 @@ process (GeglOperation       *operation,
 
            float gray = spachrotyze (x, y,
                                     luminance, chroma, angle,
+                                    o->pattern,
+                                    o->period / (1.0*(1<<level)),
+                                    o->turbulence,
+                                    blocksize,
+                                    o->angleboost,
+                                    degrees_to_radians (o->twist));
+
+           for (int c = 0; c < 3; c++)
+             out_pixel[c] = gray;
+           out_pixel[3] = 1.0;
+
+           out_pixel += 4;
+           in_pixel  += 4;
+
+           /* update x and y coordinates */
+           x++; if (x>=roi->x + roi->width) { x=roi->x; y++; }
+         }
+       break;
+    case GEGL_NEWSPRINT_COLOR_MODEL_BLACK_ON_WHITE:
+       while (n_pixels--)
+         {
+           float luminance  = in_pixel[1];
+           float chroma     = fabs(in_pixel[0]-in_pixel[1]);
+           float angle      = fabs(in_pixel[2]-in_pixel[1]);
+
+           float gray = 1.0-spachrotyze (x, y,
+                                    1.0-luminance, chroma, angle,
                                     o->pattern,
                                     o->period / (1.0*(1<<level)),
                                     o->turbulence,
