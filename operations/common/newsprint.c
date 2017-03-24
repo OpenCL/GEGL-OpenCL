@@ -157,7 +157,7 @@ float spachrotyze (
       }
       else if (pattern == 2) /* diamond */
       {
-        if (fabsf(wphase) + fabsf(qphase) < (part_white * 2) )
+        if ((fabsf(wphase) + fabsf(qphase))/2.0 < part_white )
           acc += 1.0 / aa_sq;
       }
       else if (pattern == 3) /* dot-to-diamond-to-dot */
@@ -180,6 +180,7 @@ float spachrotyze (
       }
       else if (pattern == 4) /* cross */
       {
+        part_white = powf (part_white, 2.0);
         if (fabsf (wphase) < part_white)
           acc += 1.0 / aa_sq;
         else if (fabsf (qphase) < part_white)
