@@ -27,46 +27,51 @@ enum_start (gegl_newsprint_pattern)
   enum_value (GEGL_NEWSPRINT_PATTERN_DIAMOND,  "diamond",  N_("Diamond"))
   enum_value (GEGL_NEWSPRINT_PATTERN_PSCIRCLE, "psquare",  N_("Square (or Euclidian) dot"))
   enum_value (GEGL_NEWSPRINT_PATTERN_CROSS,    "cross",    N_("Orthogonal Lines"))
-
 enum_end (GeglNewsprintPattern)
 
-property_int (inks, _("inks"), 1)
-              value_range (1, 4)
+enum_start (gegl_newsprint_color_model)
+  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_GRAY,     "gray",     N_("Gray"))
+  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_RGB,      "rgb",      N_("RGB"))
+  enum_value (GEGL_NEWSPRINT_COLOR_MODEL_CMYK,     "cmyk",     N_("CMYK"))
+enum_end (GeglNewsprintColorModel)
+
+property_enum (color_model, _("Color Model"),
+              GeglNewsprintColorModel, gegl_newsprint_color_model, GEGL_NEWSPRINT_COLOR_MODEL_GRAY)
               description (_("How many inks to use just black, rg, rgb(additive) or cmyk"))
 
-property_enum (pattern, _("pattern"),
+property_enum (pattern, _("Pattern"),
               GeglNewsprintPattern, gegl_newsprint_pattern, GEGL_NEWSPRINT_PATTERN_LINE)
               description (_("halftoning/dot pattern to use"))
 
-property_double (period, _("period"), 12.0)
+property_double (period, _("Period"), 12.0)
                  value_range (0.0, 200.0)
 
-property_double (turbulence, _("turbulence"), 0.0)
+property_double (turbulence, _("Turbulence"), 0.0)
                  value_range (0.0, 1.0)  // rename to wave-pinch or period-pinch?
                  description (_(""))
 
-property_double (blocksize, _("blocksize"), -1.0)
+property_double (blocksize, _("Blocksize"), -1.0)
                  value_range (-1.0, 64.0)
                  description (_("number of periods per tile, this tiling avoids high frequency anomaly that angleboost causes"))
 
-property_double (angleboost, _("angleboost"), 0.0)
+property_double (angleboost, _("Angleboost"), 0.0)
                  value_range (0.0, 4.0)
                  description (_("multiplication factor for desired rotation of the local space for texture, the way this is computed makes it weak for desaturated colors and possibly stronger where there is color."))
 
-property_double (twist, _("black and green angle"), 75.0)
+property_double (twist, _("Black and green angle"), 75.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
                  description (_("angle offset for patterns"))
 
-property_double (twist2, _("red and cyan angle"), 15.0)
+property_double (twist2, _("Red and cyan angle"), 15.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
 
-property_double (twist3, _("blue and magenta angle"), 45.0)
+property_double (twist3, _("Blue and magenta angle"), 45.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
 
-property_double (twist4, _("yellow angle"), 0.0)
+property_double (twist4, _("Yellow angle"), 0.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
 
@@ -209,11 +214,9 @@ process (GeglOperation       *operation,
   if (blocksize < 0.0)
     blocksize = 819200.0;
 
-  switch (o->inks)
+  switch (o->color_model)
   {
-    case 0:
-    case 2:
-    case 1: /* monochrome */
+    case GEGL_NEWSPRINT_COLOR_MODEL_GRAY:
        while (n_pixels--)
          {
            float luminance  = in_pixel[1];
@@ -240,7 +243,7 @@ process (GeglOperation       *operation,
            x++; if (x>=roi->x + roi->width) { x=roi->x; y++; }
          }
        break;
-    case 3: /* RGB */
+    case GEGL_NEWSPRINT_COLOR_MODEL_RGB:
        while (n_pixels--)
          {
            float pinch = fabs(in_pixel[0]-in_pixel[1]);
@@ -281,7 +284,7 @@ process (GeglOperation       *operation,
            x++; if (x>=roi->x + roi->width) { x=roi->x; y++; }
          }
        break;
-    case 4: /* CMYK */
+    case GEGL_NEWSPRINT_COLOR_MODEL_CMYK:
        while (n_pixels--)
          {
            float pinch = fabs(in_pixel[0]-in_pixel[1]);
