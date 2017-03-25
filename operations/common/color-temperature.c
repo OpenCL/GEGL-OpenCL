@@ -199,8 +199,8 @@ cl_process (GeglOperation       *op,
    * chanted properties
    */
 
-  GeglProperties   *o         = GEGL_PROPERTIES (op);
-  const gfloat *coeffs    = o->user_data;
+  GeglProperties   *o  = GEGL_PROPERTIES (op);
+  const gfloat *coeffs = o->user_data;
 
   cl_int cl_err = 0;
 
