@@ -496,10 +496,10 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:newsprint",
-    "title",              _("newsprint"),
+    "title",              _("Newsprint"),
     "position-dependent", "true",
     "categories" ,        "render",
-    "reference-hash",     "51014e30fa5b1e32b32ec9aa42355e3b",
+    "reference-hash",     "f045b69c7f218e0470d8e74d8306b397",
     "description",        _("Digital halftoning with optional modulations. "),
     "position-dependent", "true",
     NULL);
