@@ -71,9 +71,9 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglProperties              *o       = GEGL_PROPERTIES (operation);
-  GeglRectangle           *whole_region;
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   gdouble                  angle   = o->angle * G_PI / 180.0;
+  GeglRectangle           *whole_region;
 
   while (angle < 0.0)
     angle += 2 * G_PI;
