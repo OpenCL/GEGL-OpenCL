@@ -92,15 +92,14 @@ main (gint    argc,
   gchar       *path_root = NULL;
 
 #if HAVE_MRG
-  /* we need to override opencl before gegl_main() for it to take effect
-     thus cannot do it from within mrg_main 
-   */
-  g_setenv ("GEGL_USE_OPENCL", "no", TRUE);
   g_setenv ("GEGL_MIPMAP_RENDERING", "1", TRUE);
 #endif
 
   g_object_set (gegl_config (),
                 "application-license", "GPL3",
+#if HAVE_MRG
+                "use-opencl", FALSE,
+#endif
                 NULL);
 
   o = gegl_options_parse (argc, argv);
@@ -190,7 +189,7 @@ main (gint    argc,
           script = g_strdup (DEFAULT_COMPOSITION);
         }
     }
-  
+
   if (o->mode == GEGL_RUN_MODE_DISPLAY)
     {
 #if HAVE_MRG
@@ -220,7 +219,7 @@ main (gint    argc,
       }
       if (o->serialize)
       {
-        fprintf (stderr, "%s\n", gegl_serialize (iter, 
+        fprintf (stderr, "%s\n", gegl_serialize (iter,
             gegl_node_get_producer (proxy, "input", NULL), "/"));
       }
     }
@@ -261,7 +260,7 @@ main (gint    argc,
             GeglAudioFragment *audio = NULL;
             int frame_no = 0;
             guchar *temp;
-            
+
             bounds.x *= o->scale;
             bounds.y *= o->scale;
             bounds.width *= o->scale;
@@ -273,7 +272,7 @@ main (gint    argc,
                                             "buffer", tempb,
                                             NULL);
             gegl_node_connect_from (output, "input", n0, "output");
-  
+
             iter = gegl_node_get_output_proxy (gegl, "output");
 
             while (gegl_node_get_producer (iter, "input", NULL))
@@ -323,7 +322,7 @@ main (gint    argc,
             GeglNode *n0;
 
             guchar *temp;
-            
+
             bounds.x *= o->scale;
             bounds.y *= o->scale;
             bounds.width *= o->scale;
@@ -349,7 +348,7 @@ main (gint    argc,
             gegl_node_connect_from (output, "input", gegl, "output");
             gegl_node_process (output);
           }
-          
+
           g_object_unref (output);
         }
         break;
