@@ -160,6 +160,12 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
             else
               g_warning ("unknown id '%s'", value);
           }
+          else if (!strcmp (key, "opi"))
+          {
+            /* should do check, and at least warn if incompatible,
+               for now just ignore  */
+            g_print ("ignoring opi='%s'", value);
+          }
           else
           {
             unsigned int n_props = 0;
@@ -558,6 +564,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
     {
       GString *s2 = g_string_new ("");
       g_string_append_printf (s2, " %s", gegl_node_get_operation (iter));
+      g_string_append_printf (s2, " opi=%s", gegl_node_get_op_version (iter));
       {
         gint i;
         guint n_properties;
