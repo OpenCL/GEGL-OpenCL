@@ -220,7 +220,8 @@ main (gint    argc,
       if (o->serialize)
       {
         fprintf (stderr, "%s\n", gegl_serialize (iter,
-            gegl_node_get_producer (proxy, "input", NULL), "/"));
+            gegl_node_get_producer (proxy, "input", NULL), "/",
+            GEGL_SERIALIZE_TRIM_DEFAULTS));
       }
     }
   }

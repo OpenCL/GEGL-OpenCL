@@ -260,11 +260,16 @@ gint        _gegl_float_epsilon_zero  (float     value);
 gint        _gegl_float_epsilon_equal (float     v1,
                                        float     v2);
 
+typedef enum GeglSerializeFlag {
+  GEGL_SERIALIZE_TRIM_DEFAULTS = (1<<0),
+  GEGL_SERIALIZE_VERSION       = (1<<1)
+} GeglSerializeFlag;
+
 /**
   */
 void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, double time, int rel_dim, GError **error);
 void gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end, double time, int rel_dim, GError **error);
-gchar *gegl_serialize         (GeglNode *start, GeglNode *end, const char *basepath);
+gchar *gegl_serialize         (GeglNode *start, GeglNode *end, const char *basepath, GeglSerializeFlag serialize_flags);
 GeglNode *gegl_node_new_from_serialized (const gchar *xmldata,
                                          const gchar *path_root);
 

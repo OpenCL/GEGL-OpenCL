@@ -44,7 +44,7 @@
 
 /* set this to 1 to print the active gegl chain
  */
-//#define DEBUG_OP_LIST  1
+// #define DEBUG_OP_LIST  1
 
 
 static int audio_len    = 0;
@@ -1938,7 +1938,7 @@ static void save_cb (MrgEvent *event, void *data1, void *data2)
   gegl_node_link_many (load, o->source, NULL);
   {
     char *containing_path = get_path_parent (o->path);
-    serialized = gegl_serialize (NULL, o->sink, containing_path);
+    serialized = gegl_serialize (NULL, o->sink, containing_path, GEGL_SERIALIZE_TRIM_DEFAULTS);
     free (containing_path);
   }
   gegl_node_remove_child (o->gegl, load);

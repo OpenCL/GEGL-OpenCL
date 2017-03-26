@@ -57,7 +57,7 @@ assert_color_equal(GeglColor *expect, GeglColor *actual) {
     unsigned char a[4];
     gegl_color_get_pixel(expect, format, (gpointer)e);
     gegl_color_get_pixel(actual, format, (gpointer)a);
-
+    {
     const gboolean equal =
         a[0] == e[0] &&
         a[1] == e[1] &&
@@ -71,6 +71,7 @@ assert_color_equal(GeglColor *expect, GeglColor *actual) {
         g_print("\n");
         return FALSE;
     }
+    }
     return TRUE;
 }
 
@@ -80,8 +81,8 @@ buffer_get_color(GeglBuffer *buffer) {
     guint8 pixel[4];
     GeglRectangle r = { 0, 0, 1, pixels };
     const Babl *format = babl_format("R'G'B'A u8");
-    gegl_buffer_get(buffer, &r, 1.0, format, (gpointer)(pixel), GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
     GeglColor *color = gegl_color_new(NULL);
+    gegl_buffer_get(buffer, &r, 1.0, format, (gpointer)(pixel), GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
     gegl_color_set_pixel(color, format, (gpointer)pixel);
     return color;
 }
@@ -164,8 +165,12 @@ on_timeout(gpointer user_data) {
     return FALSE;
 }
 
+#include <unistd.h>
+
 static void
 test_init(TestData *data) {
+    GeglRectangle rect = { 0, 0, 100, 100 };
+    GeglColor *blank = gegl_color_new("transparent");
 
     data->loop = g_main_loop_new(NULL, TRUE);
     data->temp_dir = g_strdup("test-buffer-sharing-XXXXXX");
@@ -174,8 +179,6 @@ test_init(TestData *data) {
 
     data->a = gegl_buffer_open(data->file_path);
     // FIXME: if not setting an extent and adding some data, the written on-disk file seems to be corrupt
-    GeglRectangle rect = { 0, 0, 100, 100 };
-    GeglColor *blank = gegl_color_new("transparent");
     gegl_buffer_set_extent(data->a, &rect);
     gegl_buffer_set_color(data->a, &rect, blank);
     gegl_buffer_flush(data->a); // ensure file exists on disk
@@ -186,7 +189,7 @@ test_init(TestData *data) {
     data->b = gegl_buffer_open(data->file_path);
     data->state = TestInitialized;
 
-    gegl_buffer_signal_connect(data->b, "changed", on_buffer_changed, data);
+    gegl_buffer_signal_connect(data->b, "changed", (void*)on_buffer_changed, data);
     g_timeout_add_seconds(10, on_timeout, data);
 }
 
@@ -207,16 +210,17 @@ int
 main (int    argc,
       char  *argv[])
 {
+    int exitcode;
     TestData test;
-    gegl_init (&argc, &argv);
     TestData *data = &test;
+    gegl_init (&argc, &argv);
 
     test_init(data);
 
     test_change_state(data, TestSetBlue);
 
     g_main_loop_run(data->loop);
-    const int exitcode = (data->state == TestSucceed) ? 0 : 1;
+    exitcode = (data->state == TestSucceed) ? 0 : 1;
     g_print("%s\n", (data->state == TestSucceed) ? "PASS" : "FAIL");
     test_destroy(data);
     return exitcode;

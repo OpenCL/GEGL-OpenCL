@@ -492,9 +492,10 @@ void gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end, d
   }
 }
 
-static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basepath, GHashTable *ht)
+static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basepath, GHashTable *ht, GeglSerializeFlag flags)
 {
   char *ret = NULL;
+  gboolean trim_defaults = flags & GEGL_SERIALIZE_TRIM_DEFAULTS;
   GeglNode *iter;
 
   GString *str = g_string_new ("");
@@ -575,7 +576,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gfloat value;
               gchar  str[G_ASCII_DTOSTR_BUF_SIZE];
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              if (value != defval)
+              if (value != defval || (!trim_defaults))
               {
                 g_ascii_dtostr (str, sizeof(str), value);
                 g_string_append_printf (s2, " %s=%s", property_name, str);
@@ -587,7 +588,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gdouble value;
               gchar   str[G_ASCII_DTOSTR_BUF_SIZE];
               gegl_node_get (iter, property_name, &value, NULL);
-              if (value != defval)
+              if (value != defval || (!trim_defaults))
               {
                 g_ascii_dtostr (str, sizeof(str), value);
                 g_string_append_printf (s2, " %s=%s", property_name, str);
@@ -599,7 +600,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gint  value;
               gchar str[64];
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              if (value != defval)
+              if (value != defval || (!trim_defaults))
               {
                 g_snprintf (str, sizeof (str), "%i", value);
                 g_string_append_printf (s2, " %s=%s", property_name, str);
@@ -610,7 +611,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gboolean value;
               gboolean defval = g_value_get_boolean (default_value);
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              if (value != defval)
+              if (value != defval || (!trim_defaults))
               {
                 if (value)
                   g_string_append_printf (s2, " %s=true", property_name);
@@ -623,7 +624,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gchar *value;
               const gchar *defval = g_value_get_string (default_value);
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              if (!g_str_equal (defval, value))
+              if (!g_str_equal (defval, value) || (!trim_defaults))
               {
                 g_string_append_printf (s2, " %s='%s'", property_name, value);
               }
@@ -636,7 +637,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gint value;
 
               gegl_node_get (iter, properties[i]->name, &value, NULL);
-              if (value != defval)
+              if (value != defval || (!trim_defaults))
               {
                 GEnumValue *evalue = g_enum_get_value (eclass, value);
                 g_string_append_printf (s2, " %s=%s", property_name, evalue->value_nick);
@@ -655,7 +656,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
                 g_object_get (defcolor, "string", &defvalue, NULL);
               }
               g_object_unref (color);
-              if (defvalue && !g_str_equal (defvalue, value))
+              if ((defvalue && !g_str_equal (defvalue, value)) || (!trim_defaults))
                 g_string_append_printf (s2, " %s='%s'", property_name, value);
               g_free (value);
             }
@@ -670,7 +671,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
             GeglNode *aux = gegl_node_get_producer (iter, "aux", NULL);
             if (aux)
             {
-              char *str = gegl_serialize2 (NULL, aux, basepath, ht);
+              char *str = gegl_serialize2 (NULL, aux, basepath, ht, flags);
               g_string_append_printf (s2, " aux=[%s ]", str);
               g_free (str);
             }
@@ -690,13 +691,14 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
   return ret;
 }
 
-gchar *gegl_serialize (GeglNode *start, GeglNode *end, const char *basepath)
+gchar *gegl_serialize (GeglNode *start, GeglNode *end, const char *basepath,
+                       GeglSerializeFlag flags)
 {
   gchar *ret;
   gchar *ret2;
 
   GHashTable *ht = g_hash_table_new (g_direct_hash, g_direct_equal);
-  ret = gegl_serialize2 (start, end, basepath, ht);
+  ret = gegl_serialize2 (start, end, basepath, ht, flags);
   g_hash_table_destroy (ht);
   ret2 = ret;
   while (ret2[0] == ' ')
