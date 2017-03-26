@@ -90,6 +90,11 @@ static void param_set (ParseData   *pd,
     {
       g_object_set (new, param_name, param_value, NULL);
     }
+  else if (!strcmp (param_name, "opi"))
+    {
+      /* should check if it is compatible with runtime version of op..
+       */
+    }
   else if (!strcmp (param_name, "id"))
     {
       g_hash_table_insert (pd->ids, g_strdup (param_value), new);
