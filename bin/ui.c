@@ -782,7 +782,7 @@ static void ui_actions (State *o)
   cairo_new_path (cr);
   cairo_arc (cr, 0.9, 0.1, 0.1, 0.0, G_PI * 2);
   contrasty_stroke (cr);
-  cairo_rectangle (cr, 0.8, 0.0, 0.2, 0.2); 
+  cairo_rectangle (cr, 0.8, 0.0, 0.2, 0.2);
   mrg_listen (mrg, MRG_PRESS, toggle_actions_cb, o, NULL);
   cairo_new_path (cr);
 }
@@ -790,7 +790,7 @@ static void ui_actions (State *o)
 static void dir_pgdn_cb (MrgEvent *event, void *data1, void *data2)
 {
   State *o = data1;
-  o->u -= mrg_width (o->mrg) * 0.6; 
+  o->u -= mrg_width (o->mrg) * 0.6;
   mrg_queue_draw (o->mrg, NULL);
   mrg_event_stop_propagate (event);
 }
@@ -1042,7 +1042,7 @@ static void gegl_ui (Mrg *mrg, void *data)
                  o->sink,
                  o->u, o->v,
                  o->scale,
-         o->render_quality);
+                 o->render_quality);
 
   if (o->is_video)
   {
@@ -1404,6 +1404,8 @@ static void load_path (State *o)
     {
       fprintf (stderr, "Error: %s\n", error->message);
     }
+
+    zoom_to_fit (o);
   }
 
   mrg_queue_draw (o->mrg, NULL);
@@ -1617,6 +1619,14 @@ static void zoom_to_fit (State *o)
   Mrg *mrg = o->mrg;
   GeglRectangle rect = gegl_node_get_bounding_box (o->sink);
   float scale, scale2;
+
+  if (rect.width == 0 || rect.height == 0)
+  {
+    o->scale = 1.0;
+    o->u = 0.0;
+    o->v = 0.0;
+    return;
+  }
 
   scale = 1.0 * mrg_width (mrg) / rect.width;
   scale2 = 1.0 * mrg_height (mrg) / rect.height;
