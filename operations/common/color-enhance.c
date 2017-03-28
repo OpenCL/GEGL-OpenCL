@@ -35,13 +35,19 @@
 #include "gegl-op.h"
 
 static void
-buffer_get_min_max (GeglBuffer *buffer,
-                    gdouble    *min,
-                    gdouble    *max)
+buffer_get_min_max (GeglOperation       *operation,
+                    GeglBuffer          *buffer,
+                    const GeglRectangle *result,
+                    gdouble             *min,
+                    gdouble             *max)
 {
   GeglBufferIterator *gi;
+  gint                done_pixels = 0;
 
-  gi = gegl_buffer_iterator_new (buffer, NULL, 0, babl_format ("CIE LCH(ab) float"),
+  gegl_operation_progress (operation, 0.0, "");
+
+  gi = gegl_buffer_iterator_new (buffer, result, 0,
+                                 babl_format ("CIE LCH(ab) float"),
                                  GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
 
   *min = G_MAXDOUBLE;
@@ -58,7 +64,16 @@ buffer_get_min_max (GeglBuffer *buffer,
           *max = MAX (buf[1], *max);
           buf += 3;
         }
+
+      done_pixels += gi->length;
+
+      gegl_operation_progress (operation,
+                               (gdouble) 0.5 * done_pixels /
+                               (gdouble) (result->width * result->height),
+                               "");
     }
+
+  gegl_operation_progress (operation, 0.5, "");
 }
 
 static void prepare (GeglOperation *operation)
@@ -119,11 +134,14 @@ process (GeglOperation       *operation,
   const Babl *format = gegl_operation_get_format (operation, "output");
   gboolean has_alpha = babl_format_has_alpha (format);
   GeglBufferIterator *gi;
+  gint                done_pixels = 0;
   gdouble  min;
   gdouble  max;
   gdouble  delta;
 
-  buffer_get_min_max (input, &min, &max);
+  buffer_get_min_max (operation, input, result, &min, &max);
+
+  gegl_operation_progress (operation, 0.5, "");
 
   gi = gegl_buffer_iterator_new (input, result, 0, format,
                                  GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
@@ -158,7 +176,15 @@ process (GeglOperation       *operation,
               in  += 4;
               out += 4;
             }
-        }
+
+          done_pixels += gi->length;
+
+          gegl_operation_progress (operation,
+                                   0.5 +
+                                   (gdouble) 0.5 * done_pixels /
+                                   (gdouble) (result->width * result->height),
+                                   "");
+       }
     }
   else
     {
@@ -177,8 +203,18 @@ process (GeglOperation       *operation,
               in  += 3;
               out += 3;
             }
+
+          done_pixels += gi->length;
+
+          gegl_operation_progress (operation,
+                                   0.5 +
+                                   (gdouble) 0.5 * done_pixels /
+                                   (gdouble) (result->width * result->height),
+                                   "");
         }
     }
+
+  gegl_operation_progress (operation, 1.0, "");
 
   return TRUE;
 }
