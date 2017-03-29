@@ -9,9 +9,9 @@ SUBDIRS=\
 	gegl \
 	libs/npd \
 	seamless-clone \
-	operations \
 	bin \
 	tools \
+	operations \
 	examples \
 	tests \
 	perf \
