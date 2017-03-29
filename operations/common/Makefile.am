@@ -147,6 +147,7 @@ gegl_common_la_SOURCES =\
 	tile-paper.c \
 	tile-seamless.c \
 	unsharp-mask.c \
+	unpremultiply.c \
 	value-invert.c \
 	value-propagate.c \
 	video-degradation.c \
