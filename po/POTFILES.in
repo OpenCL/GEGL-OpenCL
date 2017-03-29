@@ -136,6 +136,7 @@ operations/common/tile-glass.c
 operations/common/tile-paper.c
 operations/common/tile-seamless.c
 operations/common/unsharp-mask.c
+operations/common/unpremultiply.c
 operations/common/value-invert.c
 operations/common/value-propagate.c
 operations/common/video-degradation.c
