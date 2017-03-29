@@ -27,7 +27,6 @@
 #define GEGL_OP_POINT_FILTER
 #define GEGL_OP_NAME     unpremultiply
 #define GEGL_OP_C_SOURCE unpremultiply.c
-#define GEGLV4
 
 #include "gegl-op.h"
 
