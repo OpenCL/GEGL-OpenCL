@@ -563,8 +563,13 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
     else
     {
       GString *s2 = g_string_new ("");
-      g_string_append_printf (s2, " %s", gegl_node_get_operation (iter));
-      g_string_append_printf (s2, " opi=%s", gegl_node_get_op_version (iter));
+      if (!(flags & GEGL_SERIALIZE_INDENT))
+        g_string_append_printf (s2, " ");
+      g_string_append_printf (s2, "%s", gegl_node_get_operation (iter));
+      if (flags & GEGL_SERIALIZE_VERSION)
+        g_string_append_printf (s2, " opi=%s", gegl_node_get_op_version (iter));
+      if (flags & GEGL_SERIALIZE_INDENT)
+        g_string_append_printf (s2, "\n");
       {
         gint i;
         guint n_properties;
@@ -576,6 +581,8 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
           const gchar *property_name = g_param_spec_get_name (properties[i]);
           GType        property_type = G_PARAM_SPEC_VALUE_TYPE (properties[i]);
           const GValue*default_value = g_param_spec_get_default_value (properties[i]);
+          gboolean printed = FALSE;
+
 
           if (property_type == G_TYPE_FLOAT)
             {
@@ -586,7 +593,10 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               if (value != defval || (!trim_defaults))
               {
                 g_ascii_dtostr (str, sizeof(str), value);
+                if (flags & GEGL_SERIALIZE_INDENT)
+                   g_string_append_printf (s2, "  ");
                 g_string_append_printf (s2, " %s=%s", property_name, str);
+                printed = TRUE;
               }
             }
           else if (property_type == G_TYPE_DOUBLE)
@@ -597,8 +607,11 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gegl_node_get (iter, property_name, &value, NULL);
               if (value != defval || (!trim_defaults))
               {
+                if (flags & GEGL_SERIALIZE_INDENT)
+                   g_string_append_printf (s2, "  ");
                 g_ascii_dtostr (str, sizeof(str), value);
                 g_string_append_printf (s2, " %s=%s", property_name, str);
+                printed = TRUE;
               }
             }
           else if (property_type == G_TYPE_INT)
@@ -609,8 +622,11 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gegl_node_get (iter, properties[i]->name, &value, NULL);
               if (value != defval || (!trim_defaults))
               {
+                if (flags & GEGL_SERIALIZE_INDENT)
+                   g_string_append_printf (s2, "  ");
                 g_snprintf (str, sizeof (str), "%i", value);
                 g_string_append_printf (s2, " %s=%s", property_name, str);
+                printed = TRUE;
               }
             }
           else if (property_type == G_TYPE_BOOLEAN)
@@ -620,10 +636,13 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gegl_node_get (iter, properties[i]->name, &value, NULL);
               if (value != defval || (!trim_defaults))
               {
+                if (flags & GEGL_SERIALIZE_INDENT)
+                   g_string_append_printf (s2, "  ");
                 if (value)
                   g_string_append_printf (s2, " %s=true", property_name);
                 else
                   g_string_append_printf (s2, " %s=false", property_name);
+                printed = TRUE;
               }
             }
          else if (property_type == G_TYPE_STRING)
@@ -633,7 +652,10 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               gegl_node_get (iter, properties[i]->name, &value, NULL);
               if (!g_str_equal (defval, value) || (!trim_defaults))
               {
+                if (flags & GEGL_SERIALIZE_INDENT)
+                   g_string_append_printf (s2, "  ");
                 g_string_append_printf (s2, " %s='%s'", property_name, value);
+                printed = TRUE;
               }
               g_free (value);
             }
@@ -647,7 +669,10 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               if (value != defval || (!trim_defaults))
               {
                 GEnumValue *evalue = g_enum_get_value (eclass, value);
+                if (flags & GEGL_SERIALIZE_INDENT)
+                   g_string_append_printf (s2, "  ");
                 g_string_append_printf (s2, " %s=%s", property_name, evalue->value_nick);
+                printed = TRUE;
               }
             }
           else if (property_type == GEGL_TYPE_COLOR)
@@ -664,15 +689,22 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               }
               g_object_unref (color);
               if ((defvalue && !g_str_equal (defvalue, value)) || (!trim_defaults))
+              {
+                if (flags & GEGL_SERIALIZE_INDENT)
+                   g_string_append_printf (s2, "  ");
                 g_string_append_printf (s2, " %s='%s'", property_name, value);
+                printed = TRUE;
+              }
               g_free (value);
             }
           else
             {
               g_warning ("%s: serialization of %s properties not implemented",
                          property_name, g_type_name (property_type));
-
             }
+
+          if (printed && (flags & GEGL_SERIALIZE_INDENT))
+            g_string_append_printf (s2, "\n");
 
           {
             GeglNode *aux = gegl_node_get_producer (iter, "aux", NULL);
@@ -683,6 +715,7 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
               g_free (str);
             }
           }
+
         }
       }
 

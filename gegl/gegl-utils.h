@@ -262,7 +262,8 @@ gint        _gegl_float_epsilon_equal (float     v1,
 
 typedef enum GeglSerializeFlag {
   GEGL_SERIALIZE_TRIM_DEFAULTS = (1<<0),
-  GEGL_SERIALIZE_VERSION       = (1<<1)
+  GEGL_SERIALIZE_VERSION       = (1<<1),
+  GEGL_SERIALIZE_INDENT        = (1<<2)
 } GeglSerializeFlag;
 
 /**

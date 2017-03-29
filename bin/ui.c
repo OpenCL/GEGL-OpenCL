@@ -1948,7 +1948,7 @@ static void save_cb (MrgEvent *event, void *data1, void *data2)
   gegl_node_link_many (load, o->source, NULL);
   {
     char *containing_path = get_path_parent (o->path);
-    serialized = gegl_serialize (NULL, o->sink, containing_path, GEGL_SERIALIZE_TRIM_DEFAULTS|GEGL_SERIALIZE_VERSION);
+    serialized = gegl_serialize (NULL, o->sink, containing_path, GEGL_SERIALIZE_TRIM_DEFAULTS|GEGL_SERIALIZE_VERSION|GEGL_SERIALIZE_INDENT);
     free (containing_path);
   }
   gegl_node_remove_child (o->gegl, load);
