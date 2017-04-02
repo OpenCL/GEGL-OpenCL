@@ -8,12 +8,14 @@
 # Piotr Drąg <piotrdrag@gmail.com>, 2011-2017.
 # Aviary.pl <community-poland@mozilla.org>, 2011-2017.
 #
+#. rename to wave-pinch or period-pinch?
+#: ../operations/common/newsprint.c:52
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-26 18:27+0200\n"
-"PO-Revision-Date: 2017-03-26 18:28+0200\n"
+"POT-Creation-Date: 2017-04-02 10:03+0200\n"
+"PO-Revision-Date: 2017-04-02 10:04+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -23,12 +25,12 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: ../bin/gegl.c:161
+#: ../bin/gegl.c:160
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Nie można odczytać pliku: %s"
 
-#: ../bin/gegl.c:206
+#: ../bin/gegl.c:205
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Nieprawidłowy wykres, przerywanie.\n"
@@ -917,11 +919,11 @@ msgstr ""
 "Tworzy bufor całkowicie wypełniony podanym kolorem, należy użyć działania "
 "„gegl:crop”, aby osiągnąć mniejsze wymiary."
 
-#: ../operations/common/color-enhance.c:236
+#: ../operations/common/color-enhance.c:272
 msgid "Color Enhance"
 msgstr "Uwydatnianie koloru"
 
-#: ../operations/common/color-enhance.c:240
+#: ../operations/common/color-enhance.c:276
 msgid ""
 "Stretch color chroma to cover maximum possible range, keeping hue and "
 "lightness untouched."
@@ -3414,7 +3416,7 @@ msgid "Diamond"
 msgstr "Romb"
 
 #: ../operations/common/newsprint.c:28
-msgid "Square (or Euclidian) dot"
+msgid "PSSquare (or Euclidian) dot"
 msgstr "Punkt kwadratowy (lub euklidesowy)"
 
 #: ../operations/common/newsprint.c:29
@@ -4097,11 +4099,11 @@ msgstr "Konwertuj obraz do lub ze współrzędnych bieguna"
 msgid "number of levels per component"
 msgstr "liczba poziomów na składową"
 
-#: ../operations/common/posterize.c:133
+#: ../operations/common/posterize.c:132
 msgid "Posterize"
 msgstr "Zredukuj kolory"
 
-#: ../operations/common/posterize.c:137
+#: ../operations/common/posterize.c:136
 msgid "Reduces the number of levels in each color component of the image."
 msgstr "Zmniejsza liczbę poziomów w każdej składowej koloru obrazu."
 
@@ -4480,11 +4482,11 @@ msgstr ""
 "korzystające z dostępnego kontrastu (niski kontrast, bardzo ciemne lub "
 "bardzo jasne obrazy)."
 
-#: ../operations/common/stretch-contrast-hsv.c:222
+#: ../operations/common/stretch-contrast-hsv.c:249
 msgid "Stretch Contrast HSV"
 msgstr "Rozciągnij kontrast HSV"
 
-#: ../operations/common/stretch-contrast-hsv.c:225
+#: ../operations/common/stretch-contrast-hsv.c:252
 msgid ""
 "Scales the components of the buffer to be in the 0.0-1.0 range. This "
 "improves images that make poor use of the available contrast (little "
@@ -4751,6 +4753,18 @@ msgid ""
 msgstr ""
 "Wyostrza obraz dodając różnicę do rozmytego obrazu. Technika wyostrzana "
 "pierwotnie używana w ciemniach fotograficznych."
+
+#: ../operations/common/unpremultiply.c:78
+msgid "Unpremultiply alpha"
+msgstr "Odwróć mnożenie alfy przez macierz „z przodu”"
+
+#: ../operations/common/unpremultiply.c:79
+msgid ""
+"Unpremultiplies a buffer that contains pre-multiplied colors (but according "
+"to the babl format is not.)"
+msgstr ""
+"Odwraca mnożenie przez macierz „z przodu” buforu, który zawiera kolory "
+"pomnożone przez macierz „z przodu” (ale według formatu babl nie zawiera)."
 
 #: ../operations/common/value-invert.c:148
 msgid "Value Invert"
