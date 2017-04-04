@@ -81,7 +81,15 @@ static gboolean file_is_gegl_xml (const gchar *path)
 
 static gboolean is_xml_fragment (const char *data)
 {
-  return strchr (data, '>') && strchr (data, '<'); //XXX: this should be better
+  int i;
+  for (i = 0; data && data[i]; i++)
+    switch (data[i])
+    {
+      case ' ':case '\t':case '\n':case '\r': break;
+      case '<': return TRUE;
+      default: return FALSE;
+    }
+  return FALSE;
 }
 
 int mrg_ui_main (int argc, char **argv, char **ops);
