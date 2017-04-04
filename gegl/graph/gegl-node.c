@@ -2215,13 +2215,11 @@ void gegl_node_progress (GeglNode *node,
   }
 }
 
-const char *gegl_node_get_op_version (GeglNode *node)
+const char *gegl_operation_get_op_version (const char *op_name)
 {
-  const gchar *ret = NULL;
-  g_return_val_if_fail (GEGL_IS_NODE (node), "error");
-
-  ret = gegl_operation_get_key (gegl_node_get_operation(node), "op-version");
+  const gchar *ret = gegl_operation_get_key (op_name, "op-version");
   if (!ret)
     ret = "0:0";
   return ret;
 }
+

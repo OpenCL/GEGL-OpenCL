@@ -162,9 +162,14 @@ void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, doubl
           }
           else if (!strcmp (key, "opi"))
           {
-            /* should do check, and at least warn if incompatible,
-               for now just ignore  */
-            g_print ("ignoring opi='%s'", value);
+            /* should check for incompatibility rather than difference */
+            if (!g_str_equal (value, gegl_operation_get_op_version (level_op[level])))
+             {
+                /* for now - just reporting it */
+                g_print ("operation property interface version mismatch for %s\n"
+                         "parsed %s but GEGL library has %s\n",
+                         level_op[level], value, gegl_operation_get_op_version (level_op[level]));
+             }
           }
           else
           {
@@ -563,11 +568,12 @@ static gchar *gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basep
     else
     {
       GString *s2 = g_string_new ("");
+      const char *op_name = gegl_node_get_operation (iter);
       if (!(flags & GEGL_SERIALIZE_INDENT))
         g_string_append_printf (s2, " ");
-      g_string_append_printf (s2, "%s", gegl_node_get_operation (iter));
+      g_string_append_printf (s2, "%s", op_name);
       if (flags & GEGL_SERIALIZE_VERSION)
-        g_string_append_printf (s2, " opi=%s", gegl_node_get_op_version (iter));
+        g_string_append_printf (s2, " opi=%s", gegl_operation_get_op_version (op_name));
       if (flags & GEGL_SERIALIZE_INDENT)
         g_string_append_printf (s2, "\n");
       {

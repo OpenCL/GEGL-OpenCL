@@ -694,7 +694,7 @@ void           gegl_node_set_passthrough (GeglNode      *node,
 
 void       gegl_node_progress (GeglNode *node, gdouble progress, gchar *message);
 
-const char *gegl_node_get_op_version (GeglNode *node);
+const char *gegl_operation_get_op_version (const gchar *op_name);
 
 G_END_DECLS
 
