@@ -79,6 +79,11 @@ static gboolean file_is_gegl_xml (const gchar *path)
   return FALSE;
 }
 
+static gboolean is_xml_fragment (const char *data)
+{
+  return strchr (data, '>') && strchr (data, '<'); //XXX: this should be better
+}
+
 int mrg_ui_main (int argc, char **argv, char **ops);
 
 gint
@@ -198,7 +203,10 @@ main (gint    argc,
 #endif
     }
 
-  gegl = gegl_node_new_from_xml (script, path_root);
+  if (is_xml_fragment (script))
+    gegl = gegl_node_new_from_xml (script, path_root);
+  else
+    gegl = gegl_node_new_from_serialized (script, path_root);
 
   if (!gegl)
     {
