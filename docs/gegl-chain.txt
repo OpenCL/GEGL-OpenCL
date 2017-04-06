@@ -1,0 +1,34 @@
+gegl-chain
+----------
+
+A serialization format for GEGL graphs that grew out of the desire to
+write one-liner image processing tasks on the commandline.
+
+Everything after -- in a GEGL commandline that contains an input image
+is considered the chain of operations.
+
+ $ gegl input.jpg -o output.png -- noise-reduction unsharp-mask
+
+If GEGL is built linking to micro raptor gui, the gegl binary can also act as
+an image viewer as well as visualizer for the result of chains of operations.
+
+ $ gegl input.jpg -- noise-reduction unsharp-mask
+
+If an argument on the commandline part of the chain contains a = it is a
+property assignment for the preceding operation. For example:
+
+ $ gegl in.jpg -- noise-reduction iterations=4 unsharp-mask
+
+If you try to assign a property that doesn't exist, the error message will
+contain a list of valid properties for the operation.
+
+The format treats input and output pads as explicitly linked when they follow each other, to create a sub-chain hooked up to an aux input assign the aux pad with the sub chain contained in square brackets, like this:
+
+ $ gegl in.jpg -- noise-reduction iterations=2 over aux=[ text string='hello there' color=white size=32 translate x=100 y=100 dropshadow radius=2 x=1.5 y=1.5 ]
+
+And finally, it is possible to create links in the chain, reusing permitting
+creating masks for color adjustments based on image content, as well as other
+forms of buffer reuse.
+
+ $ gegl in.jpg -- noise-reduction iterations=2 over aux=[ text string='hello there' color=white size=32 dropshadow id=foo translate x=100 y=100 radius=2 x=1.5 y=1.5 ] over aux=[ ref=foo translate y=300 ]
+
