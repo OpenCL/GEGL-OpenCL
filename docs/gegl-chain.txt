@@ -27,8 +27,9 @@ The format treats input and output pads as explicitly linked when they follow ea
  $ gegl in.jpg -- noise-reduction iterations=2 over aux=[ text string='hello there' color=white size=32 translate x=100 y=100 dropshadow radius=2 x=1.5 y=1.5 ]
 
 And finally, it is possible to create links in the chain, reusing permitting
-creating masks for color adjustments based on image content, as well as other
-forms of buffer reuse.
+creating masks for color adjustments based on image content, for instance the
+following example, which uses a blurred version of an image as a threshold mask
+- which thus becomes a local content dependent thresholding filter.
 
- $ gegl in.jpg -- noise-reduction iterations=2 over aux=[ text string='hello there' color=white size=32 dropshadow id=foo translate x=100 y=100 radius=2 x=1.5 y=1.5 ] over aux=[ ref=foo translate y=300 ]
+ $ gegl in.jpg -- id=a threshold aux=[ ref=a gaussian-blur std-dev-x=0.1rel std-dev-y=0.1rel ]
 
