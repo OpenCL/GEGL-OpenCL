@@ -9,8 +9,7 @@ With [GEGL](http://gegl.org/) you chain together image processing operations rep
 
 For a brief explanation on how GEGL works, read this [document](https://onedrive.live.com/redir?resid=B05FBF0EF1DAF9A4!7923&authkey=!ALQ1C8VwMFWrtwc&ithint=file%2cdocx)
 
-</br>
-####Index
+#### Index
 1. [Installing](#installing)
 2. [Development](#development)
 3. [Contributing](#contributing)
@@ -19,19 +18,17 @@ For a brief explanation on how GEGL works, read this [document](https://onedrive
 6. [How to Benchmark Performance](#how-to-benchmark-performance)
 
 
-</br>
+
 #### Installing
 
 Read the document above for more information, or refer to the links below for the respective platforms
 
 [On Windows](http://wiki.gimp.org/wiki/Hacking:Building/Windows)
-
 [On Linux Platforms](http://wiki.gimp.org/wiki/Hacking:Building/Linux)
 
 Ensure that [BABL](http://www.gegl.org/babl) is installed first before [GEGL](http://gegl.org).
 
 
-</br>
 #### Development
 
 There already exists OpenCL integration into GEGL and some operations have already been ported to run on OpenCL. However, there is still a lot of operations that need porting as listed in the Google Sheet below.
@@ -41,14 +38,12 @@ There already exists OpenCL integration into GEGL and some operations have alrea
 Likewise, we have a slack channel for discussions pertaining to development and issues here, [GEGL-OpenCL Slack](https://gegl-opencl.slack.com/)
 
 
-</br>
 #### Contributing
 
 It is recommended that you fork this repository and create your branches there. After every discussion, if your kernel has the fastest speed for the vendor, you can create a pull request to have your changes merged. Please include the test results (correctness and timing), and name the pull request according to the operation you're working on and the vendor you're optimizing for, eg. box-blur_kernel_nv
 
 Please ensure that *make clean* is executed before requesting a pull request
 
-</br>
 ##### How to Port an Operation
 
 + Find an operation you'd like to work on under /operations/, eg. box-blur which can be found under /operations/common/
@@ -99,7 +94,6 @@ if (gegl_operation_use_opencl (operation))
 #include "opencl/box-blur.cl.h"
 ```
 
-</br>
 ##### How to Test Output
 + create an xml file (eg. box-blur.xml) containing the following code
 ```xml
@@ -136,7 +130,6 @@ $ python run-compositions.py alien-map.xml
 $ python run-compositions.py alien-map.xml --without-opencl
 ```
 
-</br>
 ##### How to Benchmark Performance
 + create an xml file similar to the above in /tests/opencl
 + before running the shell script ensure that the perl module below is installed
