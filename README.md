@@ -24,6 +24,7 @@ For a brief explanation on how GEGL works, read this [document](https://onedrive
 Read the document above for more information, or refer to the links below for the respective platforms
 
 [On Windows](http://wiki.gimp.org/wiki/Hacking:Building/Windows)
+
 [On Linux Platforms](http://wiki.gimp.org/wiki/Hacking:Building/Linux)
 
 Ensure that [BABL](http://www.gegl.org/babl) is installed first before [GEGL](http://gegl.org).
@@ -31,9 +32,14 @@ Ensure that [BABL](http://www.gegl.org/babl) is installed first before [GEGL](ht
 
 #### Development
 
+The code for GEGL-OpenCL can be found at **[GEGL-OpenCL Github](https://github.com/OpenCL/GEGL-OpenCL)**.
+
 There already exists OpenCL integration into GEGL and some operations have already been ported to run on OpenCL. However, there is still a lot of operations that need porting as listed in the Google Sheet below.
 
-[To-do List for GEGL-OpenCL](https://docs.google.com/spreadsheets/d/1gzgFiw-GVcLcENLLpPP0-LTQd_B4Zc1x4JCi95Girf8/edit?usp=drivesdk)
+[Task List for GEGL-OpenCL (Excel)](https://docs.google.com/spreadsheets/d/1gzgFiw-GVcLcENLLpPP0-LTQd_B4Zc1x4JCi95Girf8/edit?usp=drivesdk)
+
+[Task List for GEGL-OpenCL (Github)](https://github.com/OpenCL/GEGL-OpenCL/issues)
+
 
 Likewise, we have a slack channel for discussions pertaining to development and issues here, [GEGL-OpenCL Slack](https://gegl-opencl.slack.com/)
 
