@@ -788,12 +788,13 @@ transform_affine (GeglOperation       *operation,
                                          level);
 
   GeglRectangle  dest_extent = *roi;
+  GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
+
   dest_extent.x >>= level;
   dest_extent.y >>= level;
   dest_extent.width >>= level;
   dest_extent.height >>= level;
 
-  GeglSamplerGetFun sampler_get_fun = gegl_sampler_get_fun (sampler);
 
 
 
