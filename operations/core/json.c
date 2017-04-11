@@ -613,6 +613,9 @@ const GeglModuleInfo  * gegl_module_query    (GTypeModule *module);
 #ifdef GEGL_OP_BUNDLE
 
 G_MODULE_EXPORT void
+gegl_op_json_register_type (GTypeModule *module);
+
+G_MODULE_EXPORT void
 gegl_op_json_register_type (GTypeModule *module)
 {
 #else
