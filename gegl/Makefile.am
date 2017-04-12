@@ -74,7 +74,6 @@ GEGL_introspectable_headers =	\
 
 GEGL_public_HEADERS = \
 	$(GEGL_introspectable_headers)	\
-	gegl-c.h			\
 	gegl-cpuaccel.h			\
 	gegl-debug.h			\
 	gegl-op.h			\
@@ -83,7 +82,6 @@ GEGL_public_HEADERS = \
 	buffer/gegl-buffer-cl-iterator.h
 
 GEGL_sources = \
-	gegl-c.c			\
 	gegl-algorithms.c \
 	gegl-apply.c			\
 	gegl-config.c			\
