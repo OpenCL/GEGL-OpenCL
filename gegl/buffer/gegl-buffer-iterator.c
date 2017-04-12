@@ -137,22 +137,28 @@ gegl_buffer_iterator_add (GeglBufferIterator  *iter,
   if (!roi)
     roi = &buf->extent;
 
-  sub->buffer       = buf;
-  sub->full_rect    = *roi;
+  if (index == 0 && (roi->width <= 0 || roi->height <= 0))
+    priv->state = GeglIteratorState_Invalid;
 
-  sub->access_mode  = access_mode;
-  sub->abyss_policy = abyss_policy;
-  sub->current_tile = NULL;
-  sub->real_data    = NULL;
-  sub->linear_tile  = NULL;
-  sub->format       = format;
-  sub->format_bpp   = babl_format_get_bytes_per_pixel (format);
-  sub->level        = level;
-
-  if (index > 0)
+  if (priv->state != GeglIteratorState_Invalid)
     {
-      priv->sub_iter[index].full_rect.width  = priv->sub_iter[0].full_rect.width;
-      priv->sub_iter[index].full_rect.height = priv->sub_iter[0].full_rect.height;
+      sub->buffer       = buf;
+      sub->full_rect    = *roi;
+
+      sub->access_mode  = access_mode;
+      sub->abyss_policy = abyss_policy;
+      sub->current_tile = NULL;
+      sub->real_data    = NULL;
+      sub->linear_tile  = NULL;
+      sub->format       = format;
+      sub->format_bpp   = babl_format_get_bytes_per_pixel (format);
+      sub->level        = level;
+
+      if (index > 0)
+        {
+          priv->sub_iter[index].full_rect.width  = priv->sub_iter[0].full_rect.width;
+          priv->sub_iter[index].full_rect.height = priv->sub_iter[0].full_rect.height;
+        }
     }
 
   return index;
@@ -505,26 +511,30 @@ gegl_buffer_iterator_stop (GeglBufferIterator *iter)
 {
   int index;
   GeglBufferIteratorPriv *priv = iter->priv;
-  priv->state = GeglIteratorState_Invalid;
 
-  for (index = 0; index < priv->num_buffers; index++)
+  if (priv->state != GeglIteratorState_Invalid)
     {
-      SubIterState *sub = &priv->sub_iter[index];
+      priv->state = GeglIteratorState_Invalid;
 
-      if (sub->current_tile_mode != GeglIteratorTileMode_Empty)
-        release_tile (iter, index);
-
-      if (sub->linear_tile)
+      for (index = 0; index < priv->num_buffers; index++)
         {
+          SubIterState *sub = &priv->sub_iter[index];
+
+          if (sub->current_tile_mode != GeglIteratorTileMode_Empty)
+            release_tile (iter, index);
+
+          if (sub->linear_tile)
+            {
+              if (sub->access_mode & GEGL_ACCESS_WRITE)
+                gegl_tile_unlock (sub->linear_tile);
+              gegl_tile_unref (sub->linear_tile);
+            }
+
+          gegl_buffer_unlock (sub->buffer);
+
           if (sub->access_mode & GEGL_ACCESS_WRITE)
-            gegl_tile_unlock (sub->linear_tile);
-          gegl_tile_unref (sub->linear_tile);
+            gegl_buffer_emit_changed_signal (sub->buffer, &sub->full_rect);
         }
-
-      gegl_buffer_unlock (sub->buffer);
-
-      if (sub->access_mode & GEGL_ACCESS_WRITE)
-        gegl_buffer_emit_changed_signal (sub->buffer, &sub->full_rect);
     }
 
   g_slice_free (GeglBufferIteratorPriv, iter->priv);
