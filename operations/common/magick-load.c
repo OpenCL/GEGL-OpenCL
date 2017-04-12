@@ -42,7 +42,7 @@ load_cache (GeglProperties *op_magick_load)
     {
       gchar    *filename;
       gchar    *cmd;
-      GeglNode *graph, *sink;
+      GeglNode *graph, *sink, *loader;
       GeglBuffer *newbuf = NULL;
 
       /* ImageMagick backed fallback FIXME: make this robust.
@@ -55,8 +55,15 @@ load_cache (GeglProperties *op_magick_load)
       if (system (cmd) == -1)
         g_warning ("Error executing ImageMagick convert program");
 
-      graph = gegl_graph (sink=gegl_node ("gegl:buffer-sink", "buffer", &newbuf, NULL,
-                                          gegl_node ("gegl:png-load", "path", filename, NULL)));
+
+      graph = gegl_node_new ();
+      sink = gegl_node_new_child (graph,
+                                 "operation", "gegl:buffer-sink",
+                                 "buffer", &newbuf, NULL);
+      loader = gegl_node_new_child (graph,
+                                    "operation", "gegl:png-load",
+                                    "path", filename, NULL);
+      gegl_node_link_many (loader, sink, NULL);
       gegl_node_process (sink);
       op_magick_load->user_data = (gpointer) newbuf;
       g_object_unref (graph);
