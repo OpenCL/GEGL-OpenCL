@@ -26,10 +26,19 @@ The format treats input and output pads as explicitly linked when they follow ea
 
  $ gegl in.jpg -- noise-reduction iterations=2 over aux=[ text string='hello there' color=white size=32 translate x=100 y=100 dropshadow radius=2 x=1.5 y=1.5 ]
 
-And finally, it is possible to create links in the chain, reusing permitting
+And it is also possible to create reference in the chain, reusing permitting
 creating masks for color adjustments based on image content, for instance the
 following example, which uses a blurred version of an image as a threshold mask
 - which thus becomes a local content dependent thresholding filter.
 
  $ gegl in.jpg -- id=a threshold aux=[ ref=a gaussian-blur std-dev-x=0.1rel std-dev-y=0.1rel ]
+
+If gegl have working gegl:ff-load and gegl:ff-save ops, The gegl binary also
+permits simple forms of video processing, like the following:
+
+ $ gegl input.mp4 -o output.ogv -- scale-size x=160 y=120 newsprint period=4
+
+If you want to create a GIF as the final output, it is recommended to create a
+temporary video file, and use for instance ffmpeg to create a high quality GIF
+with a two pass approach.
 

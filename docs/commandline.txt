@@ -8,8 +8,7 @@ during development of GEGL operations.
 Some examples:
 
 Render a composition to a PNG file, the composition can be in GEGLs XML format
-or the terser link:gegl-chain.html[gegl-chain] gegl-chain one-liner friendly
-format.
+or the one-liner friendly terser link:gegl-chain.html[gegl-chain] format.
 
  $ gegl composition -o composition.png
 
