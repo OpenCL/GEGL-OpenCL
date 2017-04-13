@@ -788,6 +788,18 @@ gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basepath,
                       }
                     g_free (value);
                   }
+                else if (property_type == GEGL_TYPE_PATH)
+                  {
+                    gchar *svg_path;
+                    GeglPath *path;
+                    gegl_node_get (iter, properties[i]->name, &path, NULL);
+                    svg_path = gegl_path_to_string (path);
+                    g_object_unref (path);
+                    g_string_append_printf (s2, " %s='%s'", property_name,
+                                            svg_path);
+                    printed = TRUE;
+                    g_free (svg_path);
+                  }
                 else
                   {
                     g_warning (
