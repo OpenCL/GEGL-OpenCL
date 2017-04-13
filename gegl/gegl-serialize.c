@@ -155,6 +155,7 @@ gegl_create_chain_argv (char    **ops,
               char *match = strchr (*arg, '=');
               {
                 GType target_type = 0;
+                GParamSpec *pspec = NULL;
                 GValue gvalue = {0,};
                 char *key = g_strdup (*arg);
                 char *value = strchr (key, '=') + 1;
@@ -212,6 +213,7 @@ gegl_create_chain_argv (char    **ops,
                             if (!strcmp (pspecs[i]->name, key))
                               {
                                 target_type = pspecs[i]->value_type;
+                                pspec = pspecs[i];
                                 break;
                               }
                           }
@@ -405,6 +407,16 @@ gegl_create_chain_argv (char    **ops,
                         GeglPath *path = gegl_path_new ();
                         gegl_path_parse_string (path, value);
                         gegl_node_set (iter[level], key, path, NULL);
+                      }
+                    else if (target_type == G_TYPE_POINTER &&
+                             GEGL_IS_PARAM_SPEC_FORMAT (pspec))
+                      {
+                        const Babl *format = NULL;
+
+                        if (value[0])
+                          format = babl_format (value);
+
+                        gegl_node_set (iter[level], key, format, NULL);
                       }
                     else if (g_type_is_a (target_type, G_TYPE_STRING))
                       {
