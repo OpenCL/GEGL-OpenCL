@@ -46,11 +46,11 @@ TestCase tests[] = {
      ""},
 
     {"over aux=[ text string='foo bar' ]",
-     "svg:src-over aux=[ gegl:text string='foo bar' width=33 height=7 ]",
+     "svg:src-over aux=[  gegl:text string='foo bar' width=33 height=7 ]\n",
      ""},
 
     {"over aux=[text string='foo bar' ]",
-     "svg:src-over aux=[ gegl:text string='foo bar' width=33 height=7 ]",
+     "svg:src-over aux=[  gegl:text string='foo bar' width=33 height=7 ]\n",
      ""},
 
     {"over aux= [ ",
@@ -76,11 +76,11 @@ TestCase tests[] = {
      "gegl:exposure has no foo property, properties: 'black-level', 'exposure', "},
 
     {"over aux=[text string='foo bar']",
-     "svg:src-over aux=[ gegl:text string='foo bar' width=33 height=7 ]",
+     "svg:src-over aux=[  gegl:text string='foo bar' width=33 height=7 ]\n",
      ""},
 
     {"over aux=[ load path=/ ]",
-     "svg:src-over aux=[ gegl:load path='/' ]",
+     "svg:src-over aux=[  gegl:load path='/' ]\n",
      ""},
 
     {"inver",
@@ -88,19 +88,19 @@ TestCase tests[] = {
      "No such op 'gegl:inver' suggestions: gegl:invert-gamma gegl:invert-linear"},
 
     {"over aux=[ load path=/abc ]",
-     "svg:src-over aux=[ gegl:load path='/abc' ]",
+     "svg:src-over aux=[  gegl:load path='/abc' ]\n",
      ""},
 
     {"id=foo over aux=[ ref=foo invert ]",
-     "id=foo svg:src-over aux=[ ref=foo gegl:invert-linear ]",
+     "id=foo svg:src-over aux=[  ref=foo gegl:invert-linear ]\n",
      ""},
 
     {"id=bar id=foo over aux=[ ref=foo invert ]",
-     "id=foo svg:src-over aux=[ ref=foo gegl:invert-linear ]",
+     "id=foo svg:src-over aux=[  ref=foo gegl:invert-linear ]\n",
      ""},
 
     {"over aux=[ text string={ 0='foo bar' } ]",
-     "svg:src-over aux=[ gegl:text string='foo bar' width=33 height=7 ]",
+     "svg:src-over aux=[  gegl:text string='foo bar' width=33 height=7 ]\n",
      ""},
 
     {NULL, NULL, NULL}
