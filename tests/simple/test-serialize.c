@@ -92,11 +92,11 @@ TestCase tests[] = {
      ""},
 
     {"id=foo over aux=[ ref=foo invert ]",
-     "id=foo svg:src-over aux=[  ref=foo gegl:invert-linear ]\n",
+     "id=foo\n svg:src-over aux=[  ref=foo\n gegl:invert-linear ]\n",
      ""},
 
     {"id=bar id=foo over aux=[ ref=foo invert ]",
-     "id=foo svg:src-over aux=[  ref=foo gegl:invert-linear ]\n",
+     "id=foo\n svg:src-over aux=[  ref=foo\n gegl:invert-linear ]\n",
      ""},
 
     {"over aux=[ text string={ 0='foo bar' } ]",

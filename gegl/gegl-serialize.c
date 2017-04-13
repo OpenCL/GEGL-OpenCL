@@ -638,9 +638,9 @@ gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basepath,
             gchar *refname = g_object_get_data (G_OBJECT (iter), "refname");
 
             if (refname)
-              str3  = g_strdup_printf (" %s=%s", last ? "id" : "ref", refname);
+              str3  = g_strdup_printf (" %s=%s\n", last ? "id" : "ref", refname);
             else
-              str3  = g_strdup_printf (" %s=%p", last ? "id" : "ref", iter);
+              str3  = g_strdup_printf (" %s=%p\n", last ? "id" : "ref", iter);
             g_string_prepend (str, str3);
             g_free (str3);
           }
