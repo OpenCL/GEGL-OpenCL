@@ -19,6 +19,7 @@
 #include "gegl.h"
 #include <string.h>
 #include <stdio.h>
+#include "property-types/gegl-paramspecs.h"
 
 //#define make_rel(strv) (g_strtod (strv, NULL) * gegl_node_get_bounding_box
 // (iter[0]).height)
@@ -801,10 +802,29 @@ gegl_serialize2 (GeglNode *start, GeglNode *end, const char *basepath,
                     gegl_node_get (iter, properties[i]->name, &path, NULL);
                     svg_path = gegl_path_to_string (path);
                     g_object_unref (path);
+                    if (flags & GEGL_SERIALIZE_INDENT)
+                      g_string_append_printf (s2, "  ");
                     g_string_append_printf (s2, " %s='%s'", property_name,
                                             svg_path);
                     printed = TRUE;
                     g_free (svg_path);
+                  }
+                else if (property_type == G_TYPE_POINTER &&
+                         GEGL_IS_PARAM_SPEC_FORMAT (properties[i]))
+                  {
+                    const Babl *format;
+                    const gchar *value = "";
+                    gegl_node_get (iter, properties[i]->name, &format, NULL);
+                    if (format)
+                      value = babl_get_name (format);
+                    if (value[0] || (!trim_defaults))
+                      {
+                        if (flags & GEGL_SERIALIZE_INDENT)
+                          g_string_append_printf (s2, "  ");
+                        g_string_append_printf (s2, " %s='%s'", property_name,
+                                            value);
+                        printed = TRUE;
+                      }
                   }
                 else
                   {
