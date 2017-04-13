@@ -399,6 +399,12 @@ gegl_create_chain_argv (char    **ops,
                                                          "string", value, NULL);
                         gegl_node_set (iter[level], key, color, NULL);
                       }
+                    else if (target_type == GEGL_TYPE_PATH)
+                      {
+                        GeglPath *path = gegl_path_new ();
+                        gegl_path_parse_string (path, value);
+                        gegl_node_set (iter[level], key, path, NULL);
+                      }
                     else if (g_type_is_a (target_type, G_TYPE_STRING))
                       {
                         gegl_node_set (iter[level], key, value, NULL);
@@ -421,7 +427,7 @@ gegl_create_chain_argv (char    **ops,
                             gchar *nick;
                             gchar *c;
                             g_printerr (
-                              "gedl (param_set %s): enum %s has no value '%s'\n",
+                              "gegl (param_set %s): enum %s has no value '%s'\n",
                               key,
                               g_type_name (target_type),
                               value);
