@@ -41,6 +41,7 @@ typedef enum {
   GeglIteratorState_InTile,
   GeglIteratorState_InRows,
   GeglIteratorState_Linear,
+  GeglIteratorState_Stop,
   GeglIteratorState_Invalid,
 } GeglIteratorState;
 
@@ -590,7 +591,7 @@ static void linear_shortcut (GeglBufferIterator *iter)
     }
   }
 
-  priv->state = GeglIteratorState_Invalid; /* quit on next iterator_next */
+  priv->state = GeglIteratorState_Stop; /* quit on next iterator_next */
 }
 
 gboolean
