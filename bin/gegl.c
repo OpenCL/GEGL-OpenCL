@@ -61,7 +61,7 @@ gegl_enable_fatal_warnings (void)
 int gegl_str_has_image_suffix (char *path);
 int gegl_str_has_video_suffix (char *path);
 
-static gboolean file_is_gegl_xml (const gchar *path)
+static gboolean file_is_gegl_composition (const gchar *path)
 {
   gchar *extension;
 
@@ -72,6 +72,7 @@ static gboolean file_is_gegl_xml (const gchar *path)
   if (extension[0]=='\0')
     return FALSE;
   if (!strcmp (extension, "xml")||
+      !strcmp (extension, "gegl")||
       !strcmp (extension, "XML")||
       !strcmp (extension, "svg")
       )
@@ -165,7 +166,7 @@ main (gint    argc,
             }
           script = g_string_free (acc, FALSE);
         }
-      else if (file_is_gegl_xml (o->file))
+      else if (file_is_gegl_composition (o->file))
         {
           g_file_get_contents (o->file, &script, NULL, &err);
           if (err != NULL)
