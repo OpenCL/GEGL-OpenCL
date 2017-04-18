@@ -19,7 +19,6 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include <math.h>
 
 #ifdef GEGL_PROPERTIES
 
@@ -83,16 +82,6 @@ property_int    (height, _("Height"), 768)
 
 #include "gegl-op.h"
 #include <math.h>
-
-static inline gdouble
-odd_pow (gdouble base,
-         gdouble exponent)
-{
-  if (base >= 0.0)
-    return  pow ( base, exponent);
-  else
-    return -pow (-base, exponent);
-}
 
 static void
 prepare (GeglOperation *operation)
