@@ -72,7 +72,9 @@ attach (GeglOperation *operation)
   translate = gegl_node_new_child (gegl, "operation", "gegl:translate", NULL);
   opacity   = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
   blur      = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", 
-                                         "clip-extent", FALSE, NULL);
+                                         "clip-extent", FALSE, 
+                                         "abyss-policy", 0,
+                                         NULL);
   darken    = gegl_node_new_child (gegl, "operation", "gegl:src-in", NULL);
   color     = gegl_node_new_child (gegl, "operation", "gegl:color",
                                    "value", black_color,
