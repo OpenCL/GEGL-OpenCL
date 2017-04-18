@@ -27,4 +27,5 @@ op_LTLIBRARIES =    \
 	rawbayer-load.la \
 	segment-kmeans.la \
 	shadows-highlights.la \
-	shadows-highlights-correction.la
+	shadows-highlights-correction.la \
+	spiral.la

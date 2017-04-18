@@ -252,3 +252,4 @@ operations/workshop/rawbayer-load.c
 operations/workshop/segment-kmeans.c
 operations/workshop/shadows-highlights.c
 operations/workshop/shadows-highlights-correction.c
+operations/workshop/spiral.c
