@@ -101,7 +101,8 @@ gegl_create_chain_argv (char    **ops,
             }
           else
             {
-              fprintf (stderr, "unhandled path data\n");
+              if (!(g_str_equal (key, "}")))
+                fprintf (stderr, "unhandled path data %s:%s\n", key, value);
             }
 
           g_free (key);
