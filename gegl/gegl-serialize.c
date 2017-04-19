@@ -896,7 +896,7 @@ gegl_serialize (GeglNode         *start,
 }
 
 GeglNode *
-gegl_node_new_from_serialized (const gchar *xmldata,
+gegl_node_new_from_serialized (const gchar *chaindata,
                                const gchar *path_root)
 {
   GeglNode *ret;
@@ -908,7 +908,7 @@ gegl_node_new_from_serialized (const gchar *xmldata,
   gegl_node_set (foo, "operation", "gegl:nop", NULL);
 
   gegl_node_link_many (foo, ret, NULL);
-  gegl_create_chain (xmldata, foo, ret, 0, 1024, NULL);
+  gegl_create_chain (chaindata, foo, ret, 0, 1024, NULL);
 
   return ret;
 }

@@ -254,7 +254,7 @@ void gegl_memset_pattern              (void *       dst_ptr,
 #define GEGL_FLOAT_IS_ZERO(value)     (_gegl_float_epsilon_zero ((value)))
 #define GEGL_FLOAT_EQUAL(v1, v2)      (_gegl_float_epsilon_equal ((v1), (v2)))
 
-/***
+/**
  */
 gint        _gegl_float_epsilon_zero  (float     value);
 gint        _gegl_float_epsilon_equal (float     v1,
@@ -267,11 +267,62 @@ typedef enum GeglSerializeFlag {
 } GeglSerializeFlag;
 
 /**
-  */
-void gegl_create_chain_argv (char **ops, GeglNode *start, GeglNode *proxy, double time, int rel_dim, GError **error);
-void gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end, double time, int rel_dim, GError **error);
-gchar *gegl_serialize         (GeglNode *start, GeglNode *end, const char *basepath, GeglSerializeFlag serialize_flags);
-GeglNode *gegl_node_new_from_serialized (const gchar *xmldata,
+ * gegl_create_chain_argv:
+ * @ops: an argv style, NULL terminated array of arguments
+ * @op_start: node to pass in as input of chain
+ * @op_end: node to get processed data
+ * @time: the time to use for interpolatino of keyframed values
+ * @rel_dim: relative dimension to scale rel suffixed values by
+ * @error: error for signalling parsing errors
+ *
+ * Create a node chain from argv style list of op data.
+ */
+void gegl_create_chain_argv (char    **ops,
+                             GeglNode *op_start,
+                             GeglNode *op_end,
+                             double    time,
+                             int       rel_dim,
+                             GError  **error);
+/**
+ * gegl_create_chain:
+ * @ops: an argv style, NULL terminated array of arguments
+ * @op_start: node to pass in as input of chain
+ * @op_end: node to get processed data
+ * @time: the time to use for interpolatino of keyframed values
+ * @rel_dim: relative dimension to scale rel suffixed values by
+ * @error: error for signalling parsing errors
+ *
+ * Create a node chain from an unparsed commandline string.
+ */
+void gegl_create_chain (const char *str,
+                        GeglNode   *op_start,
+                        GeglNode   *op_end,
+                        double      time,
+                        int         rel_dim,
+                        GError    **error);
+
+/**
+ * gegl_serialize:
+ * @start: first node in chain to serialize
+ * @end: last node in chain to serialize
+ * @basepath: top-level absolute path to turn into relative root
+ * @serialize_flags: anded together combination of:
+ * GEGL_SERIALIZE_TRIM_DEFAULTS, GEGL_SERIALIZE_VERSION, GEGL_SERIALIZE_INDENT.
+ */
+
+gchar *gegl_serialize  (GeglNode         *start,
+                        GeglNode         *end,
+                        const char       *basepath,
+                        GeglSerializeFlag serialize_flags);
+
+/* gegl_node_new_from_serialized:
+ * @chaindata: string of chain serialized to parse.
+ * @path_root: absolute file system root to use as root for relative paths.
+ *
+ * create a composition from chain serialization, creating end-points for
+ * chain as/if needed.
+ */
+GeglNode *gegl_node_new_from_serialized (const gchar *chaindata,
                                          const gchar *path_root);
 
 G_END_DECLS
