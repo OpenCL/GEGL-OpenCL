@@ -26,8 +26,8 @@ link:features.html[GEGL Feature list]::
   The "feature list", a technical specification of what GEGL can do.
 link:glossary.html[GEGL glossary]::
   A cheat sheet of terms used in GEGL.
-link:hello-world.html[hello world]::
-  A small C example program source showing how the native C GEGL API can be used.
+link:commandline.html[Commandline reference]::
+  Documentation for using GEGL from the commandline with the gegl binary.
 
 link:api.html[public API reference]::
   The public graph construction and manipulation API for doing image
