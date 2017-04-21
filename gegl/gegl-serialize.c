@@ -110,6 +110,8 @@ gegl_create_chain_argv (char    **ops,
           if (strchr (*arg, '}'))
             {
               gdouble y = 0;
+              if (time == 0.0) /* avoiding ugly start interpolation artifact */
+                time = 0.4;
               gegl_path_calc_y_for_x (g_object_get_qdata (G_OBJECT (new),
                                                           g_quark_from_string(
                                                             prop)), time, &y);
