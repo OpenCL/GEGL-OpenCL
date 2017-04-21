@@ -126,7 +126,7 @@ if HAVE_LCMS
 ops += lcms-from-profile.la
 lcms_from_profile_la_SOURCES = lcms-from-profile.c
 lcms_from_profile_la_LIBADD  = $(op_libs) $(LCMS_LIBS)
-lcms_from_profile_la_CFLAGS  = $(AM_CFLAGS)
+lcms_from_profile_la_CFLAGS  = $(AM_CFLAGS) $(LCMS_CFLAGS)
 endif
  
 if HAVE_TIFF

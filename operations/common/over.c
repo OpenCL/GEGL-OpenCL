@@ -28,6 +28,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME     over
 #define GEGL_OP_C_SOURCE over.c
 
 #include "gegl-op.h"
@@ -181,6 +182,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Normal compositing"),
     "compat-name", "gegl:over",
     "categories" , "compositors:porter-duff",
+    "reference-hash", "4927f3cc0372acb702695c7dc4b90785",
     "description",
           _("Porter Duff operation over (also known as normal mode, and src-over) (d = cA + cB * (1 - aA))"),
     "cl-source"  , svg_src_over_cl_source,

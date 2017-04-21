@@ -117,7 +117,7 @@ gegl_sampler_cubic_init (GeglSamplerCubic *self)
   GEGL_SAMPLER (self)->level[0].context_rect.y = -2;
   GEGL_SAMPLER (self)->level[0].context_rect.width = 5;
   GEGL_SAMPLER (self)->level[0].context_rect.height = 5;
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+  GEGL_SAMPLER (self)->interpolate_format = gegl_babl_rgbA_linear_float ();
 
   self->b=1.0;
   self->c=0.0;
@@ -152,6 +152,51 @@ gegl_sampler_cubic_init (GeglSamplerCubic *self)
     }
 }
 
+static void inline
+gegl_sampler_box_get (GeglSampler*    restrict  self,
+                      const gdouble             absolute_x,
+                      const gdouble             absolute_y,
+                      GeglMatrix2              *scale,
+                      void*           restrict  output,
+                      GeglAbyssPolicy           repeat_mode)
+{
+  gfloat result[4] = {0,0,0,0};
+  const float iabsolute_x = (float) absolute_x - 0.5;
+  const float iabsolute_y = (float) absolute_y - 0.5;
+  const gint ix = floorf (iabsolute_x - scale->coeff[0][0]/2);
+  const gint iy = floorf (iabsolute_y - scale->coeff[1][1]/2);
+  const gint xx = ceilf (iabsolute_x + scale->coeff[0][0]/2);
+  const gint yy = ceilf (iabsolute_y + scale->coeff[1][1]/2);
+  int u, v;
+  int count = 0;
+  int hskip = scale->coeff[0][0] / 5;
+  int vskip = scale->coeff[1][1] / 5;
+
+  if (hskip <= 0)
+    hskip = 1;
+  if (vskip <= 0)
+    vskip = 1;
+
+  for (v = iy; v < yy; v += vskip)
+  {
+    for (u = ix; u < xx; u += hskip)
+    {
+      int c;
+      gfloat input[4];
+      GeglRectangle rect = {u, v, 1, 1};
+      gegl_buffer_get (self->buffer, &rect, 1.0, self->interpolate_format, input, GEGL_AUTO_ROWSTRIDE, repeat_mode);
+      for (c = 0; c < 4; c++)
+        result[c] += input[c];
+      count ++;
+    }
+  }
+  result[0] /= count;
+  result[1] /= count;
+  result[2] /= count;
+  result[3] /= count;
+  babl_process (self->fish, result, output, 1);
+}
+
 void
 gegl_sampler_cubic_get (      GeglSampler     *self,
                         const gdouble          absolute_x,
@@ -160,62 +205,72 @@ gegl_sampler_cubic_get (      GeglSampler     *self,
                               void            *output,
                               GeglAbyssPolicy  repeat_mode)
 {
-  GeglSamplerCubic *cubic       = (GeglSamplerCubic*)(self);
-  const gint        offsets[16] = {
-                                    -4-GEGL_SAMPLER_MAXIMUM_WIDTH   *4, 4, 4, 4,
-                                      (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4,
-                                      (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4,
-                                      (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4
-                                  };
-  gfloat           *sampler_bptr;
-  gfloat            factor;
-  gfloat            newval[4]   = {0, 0, 0, 0};
-  gint              i,
-                    j,
-                    k           = 0;
+  if (scale && 
+      (scale->coeff[0][0] * scale->coeff[0][0] +
+      scale->coeff[1][1] * scale->coeff[1][1])
+    > 8.0)
+  {
+    gegl_sampler_box_get (self, absolute_x, absolute_y, scale, output, repeat_mode);
+  }
+  else
+  {
+    GeglSamplerCubic *cubic       = (GeglSamplerCubic*)(self);
+    const gint        offsets[16] = {
+                                      -4-GEGL_SAMPLER_MAXIMUM_WIDTH   *4, 4, 4, 4,
+                                        (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4,
+                                        (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4,
+                                        (GEGL_SAMPLER_MAXIMUM_WIDTH-3)*4, 4, 4, 4
+                                    };
+    gfloat           *sampler_bptr;
+    gfloat            factor;
+    gfloat            newval[4]   = {0, 0, 0, 0};
+    gint              i,
+                      j,
+                      k           = 0;
 
-  /*
-   * The "-1/2"s are there because we want the index of the pixel
-   * center to the left and top of the location, and with GIMP's
-   * convention the top left of the top left pixel is located at
-   * (0,0), and its center is at (1/2,1/2), so that anything less than
-   * 1/2 needs to go negative. Another way to look at this is that we
-   * are converting from a coordinate system in which the origin is at
-   * the top left corner of the pixel with index (0,0), to a
-   * coordinate system in which the origin is at the center of the
-   * same pixel.
-   */
-  const double iabsolute_x = (double) absolute_x - 0.5;
-  const double iabsolute_y = (double) absolute_y - 0.5;
+    /*
+     * The "-1/2"s are there because we want the index of the pixel
+     * center to the left and top of the location, and with GIMP's
+     * convention the top left of the top left pixel is located at
+     * (0,0), and its center is at (1/2,1/2), so that anything less than
+     * 1/2 needs to go negative. Another way to look at this is that we
+     * are converting from a coordinate system in which the origin is at
+     * the top left corner of the pixel with index (0,0), to a
+     * coordinate system in which the origin is at the center of the
+     * same pixel.
+     */
+    const double iabsolute_x = (double) absolute_x - 0.5;
+    const double iabsolute_y = (double) absolute_y - 0.5;
 
-  const gint ix = floorf (iabsolute_x);
-  const gint iy = floorf (iabsolute_y);
+    const gint ix = floorf (iabsolute_x);
+    const gint iy = floorf (iabsolute_y);
 
-  /*
-   * x is the x-coordinate of the sampling point relative to the
-   * position of the center of the top left pixel. Similarly for
-   * y. Range of values: [0,1].
-   */
-  const gfloat x = iabsolute_x - ix;
-  const gfloat y = iabsolute_y - iy;
+    /*
+     * x is the x-coordinate of the sampling point relative to the
+     * position of the center of the top left pixel. Similarly for
+     * y. Range of values: [0,1].
+     */
+    const gfloat x = iabsolute_x - ix;
+    const gfloat y = iabsolute_y - iy;
 
-  sampler_bptr = gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
+    sampler_bptr = gegl_sampler_get_ptr (self, ix, iy, repeat_mode);
 
-  for (j=-1; j<3; j++)
-    for (i=-1; i<3; i++)
-      {
-        sampler_bptr += offsets[k++];
+    for (j=-1; j<3; j++)
+      for (i=-1; i<3; i++)
+        {
+          sampler_bptr += offsets[k++];
 
-        factor = cubicKernel (y - j, cubic->b, cubic->c) *
-                 cubicKernel (x - i, cubic->b, cubic->c);
+          factor = cubicKernel (y - j, cubic->b, cubic->c) *
+                   cubicKernel (x - i, cubic->b, cubic->c);
 
-        newval[0] += factor * sampler_bptr[0];
-        newval[1] += factor * sampler_bptr[1];
-        newval[2] += factor * sampler_bptr[2];
-        newval[3] += factor * sampler_bptr[3];
-      }
+          newval[0] += factor * sampler_bptr[0];
+          newval[1] += factor * sampler_bptr[1];
+          newval[2] += factor * sampler_bptr[2];
+          newval[3] += factor * sampler_bptr[3];
+        }
 
-  babl_process (self->fish, newval, output, 1);
+    babl_process (self->fish, newval, output, 1);
+  }
 }
 
 static void

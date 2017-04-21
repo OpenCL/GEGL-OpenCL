@@ -27,6 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     invert_gamma
 #define GEGL_OP_C_SOURCE invert-gamma.c
 
 #include "gegl-op.h"
@@ -78,6 +79,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "gegl:invert-gamma",
     "title",      _("Invert in Perceptual space"),
     "categories" , "color",
+    "reference-hash", "db07b9d85f2786db29560bd50ae0e7a1",
     "description",
        _("Inverts the components (except alpha), the result is the "
          "corresponding \"negative\" image."),

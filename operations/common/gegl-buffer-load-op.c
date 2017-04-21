@@ -27,6 +27,7 @@ property_file_path (path, _("File"), "/tmp/gegl-buffer.gegl")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     gegl_buffer_load_op
 #define GEGL_OP_C_SOURCE gegl-buffer-load-op.c
 
 #include "gegl-op.h"
@@ -89,7 +90,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "description", _("GeglBuffer file loader."),
     NULL);
 
-  gegl_extension_handler_register_loader (".gegl", "gegl:gegl-buffer-load");
+  gegl_operation_handlers_register_loader (
+    ".gegl", "gegl:gegl-buffer-load");
 }
 
 #endif

@@ -29,6 +29,7 @@ property_int (pattern, _("Bayer pattern"), 0)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME demosaic_simple
 #define GEGL_OP_C_SOURCE demosaic-simple.c
 
 #include "gegl-op.h"

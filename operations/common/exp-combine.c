@@ -52,6 +52,7 @@ typedef struct
 
 
 #define GEGL_OP_C_SOURCE exp-combine.c
+#define GEGL_OP_NAME     exp_combine
 #include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_FILTER)
 
@@ -62,7 +63,6 @@ GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_FILTER)
 #include "gegl-debug.h"
 #include "graph/gegl-node-private.h"
 #include "graph/gegl-pad.h"
-
 
 static const gchar *PAD_FORMAT = "R'G'B' float";
 static const gchar *EXP_PREFIX = "exposure-";
@@ -339,7 +339,7 @@ gegl_expcombine_apply_debevec  (gfloat              *hdr,
       gfloat  ti_max  = G_MINFLOAT,
               ti_min  = G_MAXFLOAT;
       gfloat  average;
-      guint   white_step[3], black_step[3];
+      guint   white_step[3] = {0,0,0}, black_step[3] = {0,0,0};
 
       /* all exposures for each pixel */
       for (i = 0; i < num_imgs; ++i)

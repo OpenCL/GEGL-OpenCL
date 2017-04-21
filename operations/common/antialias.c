@@ -40,6 +40,7 @@
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     antialias
 #define GEGL_OP_C_SOURCE antialias.c
 
 #include "gegl-op.h"
@@ -277,6 +278,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Scale3X Antialiasing"),
     "categories",  "enhance",
     "license",     "GPL3+",
+    "reference-hash", "51a4e204e61decfe6803cac37222c0ea",
     "description", _("Antialias using the Scale3X edge-extrapolation algorithm"),
     NULL);
 }

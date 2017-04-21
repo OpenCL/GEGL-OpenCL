@@ -41,6 +41,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         dst_atop
 #define GEGL_OP_C_FILE        "dst-atop.c"
 
 #include "gegl-op.h"
@@ -121,6 +122,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "svg:dst-atop",
     "compat-name", "gegl:dst-atop",
     "title"      , "Dst-atop",
+    "reference-hash" , "daeb2e2e1ae75898af7db31934e240fb",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation dst-atop (d = cB * aA + cA * (1.0f - aB))"),

@@ -52,6 +52,7 @@ property_enum   (behavior, _("Behavior"),
 
 #define GEGL_OP_FILTER
 #define GEGL_OP_C_SOURCE warp.c
+#define GEGL_OP_NAME     warp
 
 #include "gegl-plugin.h"
 #include "gegl-path.h"
@@ -184,7 +185,7 @@ get_stamp_force (GeglProperties *o,
       calc_lut (o);
     }
 
-  radius = sqrt(x*x+y*y);
+  radius = hypot (x, y);
 
   if (radius < 0.5 * o->size + 1)
     {
@@ -214,14 +215,22 @@ stamp (GeglProperties          *o,
   WarpPrivate         *priv = (WarpPrivate*) o->user_data;
   GeglBufferIterator  *it;
   const Babl          *format;
-  gdouble              influence;
+  gdouble              stamp_force, influence;
   gdouble              x_mean = 0.0;
   gdouble              y_mean = 0.0;
   gint                 x_iter, y_iter;
-  GeglRectangle        area = {x - o->size / 2.0,
-                               y - o->size / 2.0,
-                               o->size,
-                               o->size};
+  GeglRectangle        area;
+  const GeglRectangle *src_extent;
+  gfloat              *srcbuf, *stampbuf;
+  gint                 buf_rowstride = 0;
+  gfloat               s = 0, c = 0;
+
+  area.x = floor (x - o->size / 2.0);
+  area.y = floor (y - o->size / 2.0);
+  area.width   = ceil (x + o->size / 2.0);
+  area.height  = ceil (y + o->size / 2.0);
+  area.width  -= area.x;
+  area.height -= area.y;
 
   /* first point of the stroke */
   if (!priv->last_point_set)
@@ -262,68 +271,130 @@ stamp (GeglProperties          *o,
       x_mean /= pixel_count;
       y_mean /= pixel_count;
     }
-
-  it = gegl_buffer_iterator_new (priv->buffer, &area, 0, format,
-                                 GEGL_ACCESS_READWRITE, GEGL_ABYSS_NONE);
-
-  while (gegl_buffer_iterator_next (it))
+  else if (o->behavior == GEGL_WARP_BEHAVIOR_SWIRL_CW ||
+           o->behavior == GEGL_WARP_BEHAVIOR_SWIRL_CCW)
     {
-      /* iterate inside the stamp roi */
-      gint    n_pixels = it->length;
-      gfloat *coords   = it->data[0];
+      /* swirl by 5 degrees per stamp (for strength 100).
+       * not exactly sin/cos factors,
+       * since we calculate an off-center offset-vector */
 
-      x_iter = it->roi->x; /* initial x         */
-      y_iter = it->roi->y; /* and y coordinates */
+      /* note that this is fudged for stamp_force < 1.0 and
+       * results in a slight upscaling there. It is a compromise
+       * between exactness and calculation speed. */
+      s = sin (0.01 * o->strength * 5.0 / 180 * G_PI);
+      c = cos (0.01 * o->strength * 5.0 / 180 * G_PI) - 1.0;
+    }
 
-      while (n_pixels--)
+  srcbuf = gegl_buffer_linear_open (priv->buffer, NULL, &buf_rowstride, NULL);
+  buf_rowstride /= sizeof (gfloat);
+  src_extent = gegl_buffer_get_extent (priv->buffer);
+
+  stampbuf = g_new0 (gfloat, 2 * area.height * area.width);
+
+  for (y_iter = 0; y_iter < area.height; y_iter++)
+    {
+      for (x_iter = 0; x_iter < area.width; x_iter++)
         {
-          influence = 0.01 * o->strength * get_stamp_force (o,
-                                                            x_iter - x,
-                                                            y_iter - y);
+          gfloat nvx, nvy;
+          gfloat xi, yi;
+          gfloat *vals;
+          gint dx, dy;
+          gfloat weight_x, weight_y;
+          gfloat *srcptr;
+
+          xi = area.x + x_iter;
+          xi += -x + 0.5;
+          yi = area.y + y_iter;
+          yi += -y + 0.5;
+
+          stamp_force = get_stamp_force (o, xi, yi);
+          influence = 0.01 * o->strength * stamp_force;
 
           switch (o->behavior)
             {
               case GEGL_WARP_BEHAVIOR_MOVE:
-                coords[0] += influence * (priv->last_x - x);
-                coords[1] += influence * (priv->last_y - y);
+                nvx = influence * (priv->last_x - x);
+                nvy = influence * (priv->last_y - y);
                 break;
               case GEGL_WARP_BEHAVIOR_GROW:
-                coords[0] -= influence * 0.1 * (x_iter - x);
-                coords[1] -= influence * 0.1 * (y_iter - y);
+                nvx = influence * -0.1 * xi;
+                nvy = influence * -0.1 * yi;
                 break;
               case GEGL_WARP_BEHAVIOR_SHRINK:
-                coords[0] += influence * 0.1 * (x_iter - x);
-                coords[1] += influence * 0.1 * (y_iter - y);
+                nvx = influence * 0.1 * xi;
+                nvy = influence * 0.1 * yi;
                 break;
               case GEGL_WARP_BEHAVIOR_SWIRL_CW:
-                coords[0] += 3.0 * influence * 0.1 * (y_iter - y);
-                coords[1] -= 5.0 * influence * 0.1 * (x_iter - x);
+                nvx = stamp_force * ( c * xi + s * yi);
+                nvy = stamp_force * (-s * xi + c * yi);
                 break;
               case GEGL_WARP_BEHAVIOR_SWIRL_CCW:
-                coords[0] -= 3.0 * influence * 0.1 * (y_iter - y);
-                coords[1] += 5.0 * influence * 0.1 * (x_iter - x);
+                nvx = stamp_force * ( c * xi - s * yi);
+                nvy = stamp_force * ( s * xi + c * yi);
                 break;
               case GEGL_WARP_BEHAVIOR_ERASE:
-                coords[0] *= 1.0 - MIN (influence, 1.0);
-                coords[1] *= 1.0 - MIN (influence, 1.0);
-                break;
               case GEGL_WARP_BEHAVIOR_SMOOTH:
-                coords[0] -= influence * (coords[0] - x_mean);
-                coords[1] -= influence * (coords[1] - y_mean);
+              default:
+                nvx = 0.0;
+                nvy = 0.0;
                 break;
             }
 
-          coords += 2;
+          vals = stampbuf + (y_iter * area.width + x_iter) * 2;
 
-          /* update x and y coordinates */
-          x_iter++;
-          if (x_iter >= (it->roi->x + it->roi->width))
+          dx = floorf (nvx);
+          dy = floorf (nvy);
+
+          if (area.x + x_iter + dx     <  src_extent->x                     ||
+              area.x + x_iter + dx + 1 >= src_extent->x + src_extent->width ||
+              area.y + y_iter + dy     <  src_extent->y                     ||
+              area.y + y_iter + dy + 1 >= src_extent->y + src_extent->height)
             {
-              x_iter = it->roi->x;
-              y_iter++;
+              continue;
+            }
+
+          srcptr = srcbuf + (area.y - src_extent->y + y_iter + dy) * buf_rowstride +
+                            (area.x - src_extent->x + x_iter + dx) * 2;
+
+          if (o->behavior == GEGL_WARP_BEHAVIOR_ERASE)
+            {
+              vals[0] = srcptr[0] * (1.0 - MIN (influence, 1.0));
+              vals[1] = srcptr[1] * (1.0 - MIN (influence, 1.0));
+            }
+          else if (o->behavior == GEGL_WARP_BEHAVIOR_SMOOTH)
+            {
+              vals[0] = (1.0 - influence) * srcptr[0] + influence * x_mean;
+              vals[1] = (1.0 - influence) * srcptr[1] + influence * y_mean;
+            }
+          else
+            {
+              weight_x = nvx - dx;
+              weight_y = nvy - dy;
+
+              /* bilinear interpolation of the vectors */
+
+              vals[0]  = srcptr[0] * (1.0 - weight_x) * (1.0 - weight_y);
+              vals[1]  = srcptr[1] * (1.0 - weight_x) * (1.0 - weight_y);
+
+              vals[0] += srcptr[2] * weight_x * (1.0 - weight_y);
+              vals[1] += srcptr[3] * weight_x * (1.0 - weight_y);
+
+              vals[0] += srcptr[buf_rowstride + 0] * (1.0 - weight_x) * weight_y;
+              vals[1] += srcptr[buf_rowstride + 1] * (1.0 - weight_x) * weight_y;
+
+              vals[0] += srcptr[buf_rowstride + 2] * weight_x * weight_y;
+              vals[1] += srcptr[buf_rowstride + 3] * weight_x * weight_y;
+
+              vals[0] += nvx;
+              vals[1] += nvy;
             }
         }
     }
+
+  gegl_buffer_linear_close (priv->buffer, srcbuf);
+  gegl_buffer_set (priv->buffer, &area, 0, format,
+                   stampbuf, GEGL_AUTO_ROWSTRIDE);
+  g_free (stampbuf);
 
   /* Memorize the stamp location for movement dependant behavior like move */
   priv->last_x = x;
@@ -347,8 +418,9 @@ process (GeglOperation       *operation,
   gulong               i;
   GeglPathList        *event;
 
+  if (!o->stroke)
+    return FALSE;
   priv->buffer = gegl_buffer_dup (input);
-
   event = gegl_path_get_path (o->stroke);
 
   prev = *(event->d.point);

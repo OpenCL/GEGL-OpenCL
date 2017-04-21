@@ -41,6 +41,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         src_in
 #define GEGL_OP_C_FILE        "src-in.c"
 
 #include "gegl-op.h"
@@ -129,6 +130,7 @@ gegl_op_class_init (GeglOpClass *klass)
   "name"      , "svg:src-in",
   "compat-name", "gegl:src-in",
   "title"     , "Src-in",
+    "reference-hash" , "cd8b5c32799849fd2ca773a2759ab98e",
   "categories", "compositors:porter-duff",
   "description" ,
         _("Porter Duff compositing operation src-in (formula:   cA * aB)"),

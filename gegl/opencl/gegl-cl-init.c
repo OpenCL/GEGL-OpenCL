@@ -843,6 +843,7 @@ gegl_cl_compile_and_build (const char *program_source, const char *kernel_name[]
           GEGL_NOTE (GEGL_DEBUG_OPENCL, "Build Error: %s\n%s",
                                         gegl_cl_errstring (build_errcode),
                                         msg);
+          g_warning ("%s\n%s\n", gegl_cl_errstring (build_errcode), msg);
           g_free (msg);
           return NULL;
         }

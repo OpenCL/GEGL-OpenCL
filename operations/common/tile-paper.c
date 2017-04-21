@@ -21,7 +21,6 @@
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
-#include <stdlib.h>
 
 
 #ifdef GEGL_PROPERTIES
@@ -79,14 +78,16 @@ property_color (bg_color, _("Background color"), "rgba(0.0, 0.0, 0.0, 1.0)")
   description (("The tiles' background color"))
   ui_meta     ("role", "color-primary")
 
+property_seed (seed, _("Random seed"), rand)
+
 #else
 
-#define GEGL_OP_AREA_FILTER
+#define GEGL_OP_FILTER
+#define GEGL_OP_NAME     tile_paper
 #define GEGL_OP_C_SOURCE tile-paper.c
 
 #include "gegl-op.h"
 #include <math.h>
-#include <stdio.h>
 
 
 typedef struct _Tile
@@ -109,13 +110,17 @@ tile_compare (const void *x,
 }
 
 static inline void
-random_move (gint  *x,
-             gint  *y,
-             gint   max,
-             GRand *gr)
+random_move (gint             tile_x,
+             gint             tile_y,
+             gint            *x,
+             gint            *y,
+             gint             max,
+             GeglProperties  *o)
 {
-  gdouble angle  = g_rand_double_range (gr, 0.0, 1.0) * G_PI;
-  gdouble radius = g_rand_double_range (gr, 0.0, 1.0) * (gdouble) max;
+  gdouble angle  = gegl_random_float_range (o->rand, tile_x, tile_y, 0, 1,
+                                            0.0, 1.0) * G_PI;
+  gdouble radius = gegl_random_float_range (o->rand, tile_x, tile_y, 0, 2,
+                                            0.0, 1.0) * (gdouble) max;
 
   *x = (gint) (radius * cos (angle));
   *y = (gint) (radius * sin (angle));
@@ -124,14 +129,6 @@ random_move (gint  *x,
 static void
 prepare (GeglOperation *operation)
 {
-  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglProperties          *o       = GEGL_PROPERTIES (operation);
-
-  op_area->left   = o->tile_width;
-  op_area->right  = o->tile_width;
-  op_area->top    = o->tile_height;
-  op_area->bottom = o->tile_height;
-
   gegl_operation_set_format (operation, "input",  babl_format ("RGBA float"));
   gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
 }
@@ -150,9 +147,6 @@ randomize_tiles (GeglProperties      *o,
   gint   move_max_pixels = o->move_rate * o->tile_width / 100;
   gint   x;
   gint   y;
-  GRand *gr;
-
-  gr = g_rand_new ();
 
   for (y = 0; y < division_y; y++)
     {
@@ -194,8 +188,8 @@ randomize_tiles (GeglProperties      *o,
               t->height = rect->height - srcy;
             }
 
-          t->z = g_rand_int (gr);
-          random_move (&t->move_x, &t->move_y, move_max_pixels, gr);
+          t->z = gegl_random_int (o->rand, x, y, 0, 0);
+          random_move (x, y, &t->move_x, &t->move_y, move_max_pixels, o);
         }
     }
 
@@ -289,71 +283,57 @@ set_background (GeglProperties      *o,
                 gint                 offset_x,
                 gint                 offset_y)
 {
-  const Babl *format;
-  gfloat     *dest_buf;
-  gfloat     *buf;
-  gint        x;
-  gint        y;
-  gint        index;
-  gint        clear_x0;
-  gint        clear_y0;
-  gint        clear_x1;
-  gint        clear_y1;
+  const Babl *format = babl_format ("RGBA float");
 
-  format = babl_format ("RGBA float");
-  dest_buf = g_new0 (gfloat, 4 * rect->width * rect->height);
-
-  if (o->fractional_type == GEGL_FRACTIONAL_TYPE_IGNORE)
+  if (o->background_type == GEGL_BACKGROUND_TYPE_TRANSPARENT)
     {
-      clear_x0     = offset_x;
-      clear_y0     = offset_y;
-      clear_x1     = clear_x0 + o->tile_width * (rect->width / o->tile_width);
-      clear_y1     = clear_y0 + o->tile_height * (rect->height / o->tile_height);
+      GeglColor *color = gegl_color_new ("rgba(0.0,0.0,0.0,0.0)");
+      gegl_buffer_set_color (output, rect, color);
+      g_object_unref (color);
+    }
+  else if (o->background_type == GEGL_BACKGROUND_TYPE_COLOR)
+    {
+      gegl_buffer_set_color (output, rect, o->bg_color);
+    }
+  else if (o->background_type == GEGL_BACKGROUND_TYPE_IMAGE)
+    {
+      gegl_buffer_copy (input, NULL, GEGL_ABYSS_NONE, output, NULL);
     }
   else
     {
-      clear_x0     = 0;
-      clear_y0     = 0;
-      clear_x1     = clear_x0 + rect->width;
-      clear_y1     = clear_y0 + rect->height;
-    }
+      /* GEGL_BACKGROUND_TYPE_INVERT */
 
-  switch (o->background_type)
-    {
-    case GEGL_BACKGROUND_TYPE_TRANSPARENT:
-      gegl_buffer_set_color (output, rect,
-                             gegl_color_new ("rgba(0.0,0.0,0.0,0.0)"));
-      break;
+      GeglBufferIterator  *iter;
+      GeglRectangle        clear = *rect;
 
-    case GEGL_BACKGROUND_TYPE_COLOR:
-      gegl_buffer_set_color (output, rect, o->bg_color);
-      break;
-
-    case GEGL_BACKGROUND_TYPE_INVERT:
-      gegl_buffer_get (input, rect, 1.0, format, dest_buf,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-      buf = dest_buf;
-      for (y = clear_y0; y < clear_y1; y++)
+      if (o->fractional_type == GEGL_FRACTIONAL_TYPE_IGNORE)
         {
-          for (x = clear_x0; x < clear_x1; x++)
+          clear.x      = offset_x;
+          clear.y      = offset_y;
+          clear.width  = o->tile_width * (rect->width / o->tile_width);
+          clear.height = o->tile_height * (rect->height / o->tile_height);
+        }
+
+      iter = gegl_buffer_iterator_new (input, &clear, 0, format,
+                                       GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
+      gegl_buffer_iterator_add (iter, output, &clear, 0, format,
+                                GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
+
+      while (gegl_buffer_iterator_next (iter))
+        {
+          gfloat  *src      = iter->data[0];
+          gfloat  *dst      = iter->data[1];
+          glong    n_pixels = iter->length;
+
+          while (n_pixels--)
             {
-              index         = 4 * (y * rect->width + x);
-              buf[index]    = 1 - buf[index];
-              buf[index+1]  = 1 - buf[index+1];
-              buf[index+2]  = 1 - buf[index+2];
+              *dst++ = 1.f - *src++;
+              *dst++ = 1.f - *src++;
+              *dst++ = 1.f - *src++;
+              *dst++ = *src++;
             }
         }
-      gegl_buffer_set (output, rect, 0, format, dest_buf, GEGL_AUTO_ROWSTRIDE);
-      break;
-
-    case GEGL_BACKGROUND_TYPE_IMAGE:
-      gegl_buffer_get (input, rect, 1.0, format, dest_buf,
-                       GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-      gegl_buffer_set (output, rect, 0, format, dest_buf, GEGL_AUTO_ROWSTRIDE);
-      break;
     }
-
-  g_free (dest_buf);
 }
 
 static gboolean
@@ -379,9 +359,6 @@ process (GeglOperation       *operation,
 
   if (o->fractional_type == GEGL_FRACTIONAL_TYPE_FORCE)
     {
-      if (0 < result->width  % o->tile_width) division_x++;
-      if (0 < result->height % o->tile_height) division_y++;
-
       if (o->centering)
         {
           if (1 < result->width % o->tile_width)
@@ -407,14 +384,17 @@ process (GeglOperation       *operation,
     }
 
   n_tiles = division_x * division_y;
-  tiles = g_new(Tile, n_tiles);
+  tiles   = g_new (Tile, n_tiles);
 
   randomize_tiles (o, result,  division_x, division_y,
                    offset_x, offset_y, n_tiles, tiles);
+
   set_background  (o, result, input, output, division_x, division_y,
                    offset_x, offset_y);
 
   draw_tiles (o, result, input, output, n_tiles, tiles);
+
+  g_free (tiles);
 
   return  TRUE;
 }
@@ -429,9 +409,7 @@ get_bounding_box (GeglOperation *operation)
   if (! in_rect)
     return result;
 
-  gegl_rectangle_copy (&result, in_rect);
-
-  return result;
+  return *in_rect;
 }
 
 /* Compute the input rectangle required to compute the specified
@@ -442,15 +420,14 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle  result = get_bounding_box (operation);
-  return result;
+  return get_bounding_box (operation);
 }
 
 static GeglRectangle
 get_cached_region (GeglOperation       *operation,
                    const GeglRectangle *roi)
 {
-  return *gegl_operation_source_get_bounding_box (operation, "input");
+  return get_bounding_box (operation);
 }
 
 static void
@@ -476,6 +453,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "artistic:map",
     "license",            "GPL3+",
     "position-dependent", "true",
+    "reference-hash",     "5d7cea11b78bbed807b87d78a3cf9f75",
     "description",        _("Cut image into paper tiles, and slide them"),
     NULL);
 }

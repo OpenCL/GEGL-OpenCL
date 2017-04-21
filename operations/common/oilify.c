@@ -43,6 +43,7 @@ property_boolean (use_inten, _("Intensity Mode"), TRUE)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     oilify
 #define GEGL_OP_C_SOURCE oilify.c
 
 #include "gegl-op.h"
@@ -280,7 +281,7 @@ prepare (GeglOperation *operation)
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/oilify.cl.h"
 
@@ -477,6 +478,7 @@ gegl_op_class_init (GeglOpClass *klass)
                                  "name"       , "gegl:oilify",
                                  "title",      _("Oilify"),
                                  "license",     "GPL3+",
+                                 "reference-hash", "96545d17b7e3bfe05cb47015c51de738",
                                  "description",_("Emulate an oil painting"),
                                  NULL);
 }

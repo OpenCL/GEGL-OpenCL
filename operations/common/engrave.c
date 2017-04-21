@@ -39,6 +39,7 @@ property_boolean (limit, _("Limit line width"), FALSE)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     engrave
 #define GEGL_OP_C_SOURCE engrave.c
 
 #include "gegl-op.h"
@@ -199,6 +200,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Engrave"),
     "categories",  "distort",
     "license",     "GPL3+",
+    "reference-hash", "2fce9ed1adb05a50b7042fb9b5879529",
     "description", _("Simulate an antique engraving"),
     NULL);
 }

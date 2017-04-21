@@ -13,23 +13,29 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006 Philip Lafleur
+ * Copyright 2008, 2017 Øyvind Kolås
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
+#ifdef GEGL_PROPERTIES
 
-#ifdef GEGL_CHANT_PROPERTIES
-
-gegl_chant_string (transform, "", _("Transformation string"))
+property_string (transform, _("Y"), "")
+    description (_("Transformation SVG syntax transformation string"))
 
 #else
 
-#define GEGL_CHANT_NAME transform
-#define GEGL_CHANT_DESCRIPTION  _("Transforms the group (used by svg).")
-#define GEGL_CHANT_SELF "transform.c"
-#include "chant.h"
+#include "gegl-operation-filter.h"
+#include "transform-core.h"
+#define GEGL_OP_NO_SOURCE
+#define GEGL_OP_Parent  OpTransform
+#define GEGL_OP_PARENT  TYPE_OP_TRANSFORM
+#define GEGL_OP_NAME    transform
+#define GEGL_OP_BUNDLE
+#define GEGL_OP_C_FILE  "transform.c"
+
+#include "gegl-op.h"
 
 #include <math.h>
 
@@ -37,9 +43,28 @@ static void
 create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
-  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
+  gegl_matrix3_parse_string (matrix, o->transform);
+}
 
-  gegl_matrix3_parse_string (matrix, chant->transform);
+#include <stdio.h>
+
+static void
+gegl_op_class_init (GeglOpClass *klass)
+{
+  GeglOperationClass *operation_class;
+  OpTransformClass   *transform_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  transform_class = OP_TRANSFORM_CLASS (klass);
+  transform_class->create_matrix = create_matrix;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name", "gegl:transform",
+    "title", _("Transform"),
+    "categories", "transform",
+    "description", _("Do a transformation using SVG syntax transformation."),
+    NULL);
 }
 
 #endif

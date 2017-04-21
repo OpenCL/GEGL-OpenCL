@@ -40,7 +40,6 @@
 #include <gegl-node.h>
 #include <gegl-processor.h>
 #include <gegl-apply.h>
-#include <gegl-c.h>
 
 #undef __GEGL_H_INSIDE__
 

@@ -34,6 +34,7 @@ property_double (radius2, _("Radius 2"), 2.0)
 #else
 
 #define GEGL_OP_META
+#define GEGL_OP_NAME     difference_of_gaussians
 #define GEGL_OP_C_SOURCE difference-of-gaussians.c
 
 #include "gegl-op.h"
@@ -84,6 +85,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:difference-of-gaussians",
     "title",       _("Difference of Gaussians"),
     "categories",  "edge-detect",
+    "reference-hash", "cbb8f17cb0eda77182b676b8ab76714c",
     "description", _("Edge detection with control of edge thickness, based "
                      "on the difference of two gaussian blurs"),
     NULL);

@@ -35,6 +35,7 @@ property_double (contrast, _("Contrast"), 1.0)
 #else
 
 #define GEGL_OP_META
+#define GEGL_OP_NAME     high_pass
 #define GEGL_OP_C_SOURCE high-pass.c
 
 #include "gegl-op.h"
@@ -42,28 +43,31 @@ property_double (contrast, _("Contrast"), 1.0)
 static void
 attach (GeglOperation *operation)
 {
-  GeglNode *gegl, *input, *output, *invert, *blur, *opacity, *over, *contrast;
+  GeglNode *gegl, *input, *output, *invert, *blur, *opacity, *over, *sub, *mul, *add, *gam0, *gam1;
 
   gegl = operation->node;
   input = gegl_node_get_input_proxy (gegl, "input");
   output = gegl_node_get_output_proxy (gegl, "output");
-  invert = gegl_node_new_child (gegl, "operation", "gegl:invert-linear", NULL);
+  invert = gegl_node_new_child (gegl, "operation", "gegl:invert-gamma", NULL);
   blur = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", NULL);
   opacity = gegl_node_new_child (gegl, "operation", "gegl:opacity",
                                  "value", 0.5, NULL);
-  over = gegl_node_new_child (gegl, "operation", "gegl:over", NULL);
-  contrast = gegl_node_new_child (gegl, "operation",
-                                  "gegl:brightness-contrast", NULL);
+  over = gegl_node_new_child (gegl, "operation", "gegl:over", "srgb", TRUE, NULL);
+  gam0 = gegl_node_new_child (gegl, "operation", "gegl:gamma", "value", 0.4545, NULL);
+  sub = gegl_node_new_child (gegl, "operation", "gegl:add", "value", -0.5, NULL);
+  mul = gegl_node_new_child (gegl, "operation", "gegl:multiply", "value", 1.0, NULL);
+  add = gegl_node_new_child (gegl, "operation", "gegl:add", "value", 0.5, NULL);
+  gam1 = gegl_node_new_child (gegl, "operation", "gegl:gamma", "value", 2.2, NULL);
 
-  gegl_node_link_many (input, invert, blur, opacity, NULL);
+  gegl_node_link_many (input, blur, invert, opacity, NULL);
   gegl_node_connect_to (opacity, "output", over, "aux");
-  gegl_node_link_many (input, over, contrast, output, NULL);
+  gegl_node_link_many (input, over, gam0, sub, mul, add, gam1, output, NULL);
 
   gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-x");
   gegl_operation_meta_redirect (operation, "std-dev", blur, "std-dev-y");
-  gegl_operation_meta_redirect (operation, "contrast", contrast, "contrast");
+  gegl_operation_meta_redirect (operation, "contrast", mul, "value");
 
-  gegl_operation_meta_watch_nodes (operation, invert, blur, opacity, over, contrast, NULL);
+  gegl_operation_meta_watch_nodes (operation, blur, mul, NULL);
 }
 
 static void
@@ -79,6 +83,7 @@ gegl_op_class_init (GeglOpClass *klass)
                                  "name",        "gegl:high-pass",
                                  "title",       _("High Pass Filter"),
                                  "categories",  "frequency",
+                                 "reference-hash", "561c015b73d691b889b2fa3cddf24251",
                                  "description",
                                  _("Enhances fine details."),
                                  NULL);

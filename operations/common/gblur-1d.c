@@ -14,6 +14,7 @@
  *
  * Copyright 2006 Dominik Ernst <dernst@gmx.de>
  * Copyright 2013 Massimo Valentini <mvalentini@src.gnome.org>
+ *           2017 Øyvind Kolås <pippin@gimp.org>
  *
  * Recursive Gauss IIR Filter as described by Young / van Vliet
  * in "Signal Processing 44 (1995) 139 - 151"
@@ -66,6 +67,7 @@ property_boolean (clip_extent, _("Clip to the input extent"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     gblur_1d
 #define GEGL_OP_C_SOURCE gblur-1d.c
 
 #include "gegl-op.h"
@@ -202,7 +204,8 @@ iir_young_hor_blur (GeglBuffer          *src,
                     const gdouble       *b,
                     gdouble            (*m)[3],
                     GeglAbyssPolicy      policy,
-                    const Babl          *format)
+                    const Babl          *format,
+                    gint                 level)
 {
   GeglRectangle  cur_row = *rect;
   const gint     nc = babl_format_get_n_components (format);
@@ -216,12 +219,12 @@ iir_young_hor_blur (GeglBuffer          *src,
     {
       cur_row.y = rect->y + v;
 
-      gegl_buffer_get (src, &cur_row, 1.0, format, &row[3 * nc],
+      gegl_buffer_get (src, &cur_row, 1.0/(1<<level), format, &row[3 * nc],
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       iir_young_blur_1D (row, tmp, b, m, rect->width, nc, policy);
 
-      gegl_buffer_set (dst, &cur_row, 0, format, &row[3 * nc],
+      gegl_buffer_set (dst, &cur_row, level, format, &row[3 * nc],
                        GEGL_AUTO_ROWSTRIDE);
     }
 
@@ -236,7 +239,8 @@ iir_young_ver_blur (GeglBuffer          *src,
                     const gdouble       *b,
                     gdouble            (*m)[3],
                     GeglAbyssPolicy      policy,
-                    const Babl          *format)
+                    const Babl          *format,
+                    gint                 level)
 {
   GeglRectangle  cur_col = *rect;
   const gint     nc = babl_format_get_n_components (format);
@@ -250,12 +254,12 @@ iir_young_ver_blur (GeglBuffer          *src,
     {
       cur_col.x = rect->x + i;
 
-      gegl_buffer_get (src, &cur_col, 1.0, format, &col[3 * nc],
+      gegl_buffer_get (src, &cur_col, 1.0/(1<<level), format, &col[3 * nc],
                        GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       iir_young_blur_1D (col, tmp, b, m, rect->height, nc, policy);
 
-      gegl_buffer_set (dst, &cur_col, 0, format, &col[3 * nc],
+      gegl_buffer_set (dst, &cur_col, level, format, &col[3 * nc],
                        GEGL_AUTO_ROWSTRIDE);
     }
 
@@ -303,7 +307,8 @@ fir_hor_blur (GeglBuffer          *src,
               gfloat              *cmatrix,
               gint                 clen,
               GeglAbyssPolicy      policy,
-              const Babl          *format)
+              const Babl          *format,
+              gint                 level)
 {
   GeglRectangle  cur_row = *rect;
   GeglRectangle  in_row;
@@ -325,11 +330,11 @@ fir_hor_blur (GeglBuffer          *src,
     {
       cur_row.y = in_row.y = rect->y + v;
 
-      gegl_buffer_get (src, &in_row, 1.0, format, row, GEGL_AUTO_ROWSTRIDE, policy);
+      gegl_buffer_get (src, &in_row, 1.0/(1<<level), format, row, GEGL_AUTO_ROWSTRIDE, policy);
 
       fir_blur_1D (row, out, cmatrix, clen, rect->width, nc);
 
-      gegl_buffer_set (dst, &cur_row, 0, format, out, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (dst, &cur_row, level, format, out, GEGL_AUTO_ROWSTRIDE);
     }
 
   gegl_free (out);
@@ -343,7 +348,8 @@ fir_ver_blur (GeglBuffer          *src,
               gfloat              *cmatrix,
               gint                 clen,
               GeglAbyssPolicy      policy,
-              const Babl          *format)
+              const Babl          *format,
+              gint                 level)
 {
   GeglRectangle  cur_col = *rect;
   GeglRectangle  in_col;
@@ -365,11 +371,11 @@ fir_ver_blur (GeglBuffer          *src,
     {
       cur_col.x = in_col.x = rect->x + v;
 
-      gegl_buffer_get (src, &in_col, 1.0, format, col, GEGL_AUTO_ROWSTRIDE, policy);
+      gegl_buffer_get (src, &in_col, 1.0/(1<<level), format, col, GEGL_AUTO_ROWSTRIDE, policy);
 
       fir_blur_1D (col, out, cmatrix, clen, rect->height, nc);
 
-      gegl_buffer_set (dst, &cur_col, 0, format, out, GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (dst, &cur_col, level, format, out, GEGL_AUTO_ROWSTRIDE);
     }
 
   gegl_free (out);
@@ -378,7 +384,7 @@ fir_ver_blur (GeglBuffer          *src,
 
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/gblur-1d.cl.h"
 
@@ -655,7 +661,7 @@ gegl_gblur_1d_get_required_for_output (GeglOperation       *operation,
                                        const GeglRectangle *output_roi)
 {
   GeglRectangle        required_for_output = { 0, };
-  GeglProperties          *o       = GEGL_PROPERTIES (operation);
+  GeglProperties      *o       = GEGL_PROPERTIES (operation);
   GeglGblur1dFilter    filter  = filter_disambiguation (o->filter, o->std_dev);
 
   if (filter == GEGL_GBLUR_1D_IIR)
@@ -726,7 +732,7 @@ gegl_gblur_1d_get_cached_region (GeglOperation       *operation,
                                  const GeglRectangle *output_roi)
 {
   GeglRectangle      cached_region;
-  GeglProperties        *o       = GEGL_PROPERTIES (operation);
+  GeglProperties    *o       = GEGL_PROPERTIES (operation);
   GeglGblur1dFilter  filter  = filter_disambiguation (o->filter, o->std_dev);
 
   cached_region = *output_roi;
@@ -789,43 +795,58 @@ gegl_gblur_1d_process (GeglOperation       *operation,
                        const GeglRectangle *result,
                        gint                 level)
 {
-  GeglProperties *o      = GEGL_PROPERTIES (operation);
-  const Babl *format = gegl_operation_get_format (operation, "output");
+  GeglProperties *o       = GEGL_PROPERTIES (operation);
+  const Babl     *format  = gegl_operation_get_format (operation, "output");
+  gfloat          std_dev = o->std_dev;
 
   GeglGblur1dFilter filter;
   GeglAbyssPolicy   abyss_policy = to_gegl_policy (o->abyss_policy);
 
-  filter = filter_disambiguation (o->filter, o->std_dev);
+  GeglRectangle rect2;
+  if (level)
+  {
+    rect2 = *result;
+    rect2.x      = result->x >> level;
+    rect2.y      = result->y >> level;
+    rect2.width  = result->width >> level;
+    rect2.height = result->height >> level;
+    result = &rect2;
+    std_dev = std_dev * (1.0/(1<<level));
+  }
+  filter = filter_disambiguation (o->filter, std_dev);
 
   if (filter == GEGL_GBLUR_1D_IIR)
     {
       gdouble b[4], m[3][3];
 
-      iir_young_find_constants (o->std_dev, b, m);
+      iir_young_find_constants (std_dev, b, m);
 
       if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
-        iir_young_hor_blur (input, result, output, b, m, abyss_policy, format);
+        iir_young_hor_blur (input, result, output, b, m, abyss_policy, format, level);
       else
-        iir_young_ver_blur (input, result, output, b, m, abyss_policy, format);
+        iir_young_ver_blur (input, result, output, b, m, abyss_policy, format, level);
     }
   else
     {
       gfloat *cmatrix;
       gint    clen;
 
-      clen = fir_gen_convolve_matrix (o->std_dev, &cmatrix);
+      clen = fir_gen_convolve_matrix (std_dev, &cmatrix);
 
       /* FIXME: implement others format cases */
       if (gegl_operation_use_opencl (operation) &&
           format == babl_format ("RaGaBaA float"))
         if (fir_cl_process(input, output, result, format,
                            cmatrix, clen, o->orientation, abyss_policy))
+        {
+          gegl_free (cmatrix);
           return TRUE;
+        }
 
       if (o->orientation == GEGL_ORIENTATION_HORIZONTAL)
-        fir_hor_blur (input, result, output, cmatrix, clen, abyss_policy, format);
+        fir_hor_blur (input, result, output, cmatrix, clen, abyss_policy, format, level);
       else
-        fir_ver_blur (input, result, output, cmatrix, clen, abyss_policy, format);
+        fir_ver_blur (input, result, output, cmatrix, clen, abyss_policy, format, level);
 
       gegl_free (cmatrix);
     }
@@ -885,8 +906,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->get_cached_region       = gegl_gblur_1d_get_cached_region;
   operation_class->opencl_support          = TRUE;
   gegl_operation_class_set_keys (operation_class,
-    "name",       "gegl:gblur-1d",
-    "categories", "hidden:blur",
+    "name",           "gegl:gblur-1d",
+    "categories",     "hidden:blur",
+    "reference-hash", "33713bd5bab893c8e585c72cb8607e80",
     "description",
         _("Performs an averaging of neighboring pixels with the "
           "normal distribution as weighting"),

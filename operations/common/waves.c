@@ -58,6 +58,7 @@ property_boolean (clamp, _("Clamp deformation"), FALSE)
 
 #define GEGL_OP_AREA_FILTER
 #define GEGL_OP_C_SOURCE waves.c
+#define GEGL_OP_NAME     waves
 
 #include "gegl-op.h"
 #include <stdio.h>
@@ -183,6 +184,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Waves"),
     "categories",         "distort",
     "position-dependent", "true",
+    "reference-hash",     "8db35f18f7991b9f6c56f6ca25188fd6",
     "license",            "GPL3+",
     "description", _("Distort the image with waves"),
     NULL);

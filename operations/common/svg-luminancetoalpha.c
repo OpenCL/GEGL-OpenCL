@@ -27,6 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     svg_luminancetoalpha
 #define GEGL_OP_C_SOURCE svg-luminancetoalpha.c
 
 #include "gegl-op.h"
@@ -89,6 +90,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:svg-luminancetoalpha",
     "categories" , "compositors:svgfilter",
+    "reference-hash", "6763517c5421d736b855ffa2ebd845c9",
     "description",
        _("SVG color matrix operation svg_luminancetoalpha"),
         NULL);

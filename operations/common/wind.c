@@ -65,13 +65,15 @@ property_int (strength, _("Strength"), 10)
  description (_("Higher values increase the magnitude of the effect"))
  value_range (1, 100)
 
+property_seed (seed, _("Random seed"), rand)
+
 #else
 
 #define GEGL_OP_FILTER
 #define GEGL_OP_C_SOURCE wind.c
+#define GEGL_OP_NAME     wind
 
 #include "gegl-op.h"
-#include "gegl-config.h"
 #include <math.h>
 
 #define COMPARE_WIDTH    3
@@ -97,6 +99,8 @@ thread_process (gpointer thread_data, gpointer unused)
     data->success = FALSE;
   g_atomic_int_add (data->pending, -1);
 }
+
+int gegl_config_threads (void);
 
 static GThreadPool *
 thread_pool (void)
@@ -186,7 +190,8 @@ render_wind_row (gfloat         *buffer,
                  gint            n_components,
                  gint            lpi,
                  GeglProperties *o,
-                 GRand          *gr)
+                 gint            x,
+                 gint            y)
 {
   gfloat *blend_color;
   gfloat *target_color;
@@ -225,7 +230,7 @@ render_wind_row (gfloat         *buffer,
               target_color[b] = buffer[sbi + b];
             }
 
-          if (g_rand_int_range (gr, 0, 3))
+          if (gegl_random_int_range (o->rand, x, y, 0, 0, 0, 3))
             {
               bleed_length_max = o->strength;
             }
@@ -234,7 +239,8 @@ render_wind_row (gfloat         *buffer,
               bleed_length_max = 4 * o->strength;
             }
 
-          bleed_length = 1 + (gint) (bleed_length_max * g_rand_double (gr));
+          bleed_length = 1 + (gint) (bleed_length_max *
+                                     gegl_random_float (o->rand, x, y, 0, 1));
 
           lbi = sbi + bleed_length * n_components;
           if (lbi > lpi)
@@ -255,7 +261,7 @@ render_wind_row (gfloat         *buffer,
                                        has_alpha,
                                        o->edge,
                                        o->threshold)
-                  && g_rand_boolean (gr))
+                  && gegl_random_int_range (o->rand, x, y, 0, 2, 0, 1))
                 {
                   break;
                 }
@@ -284,6 +290,8 @@ render_wind_row (gfloat         *buffer,
               n--;
             }
         }
+
+      x++;
     }
 
   g_free (target_color);
@@ -296,7 +304,8 @@ render_blast_row (gfloat         *buffer,
                   gint            n_components,
                   gint            lpi,
                   GeglProperties *o,
-                  GRand          *gr)
+                  gint            x,
+                  gint            y)
 {
   gint sbi, lbi;
   gint bleed_length;
@@ -315,7 +324,7 @@ render_blast_row (gfloat         *buffer,
                               o->threshold))
         {
           sbi = j;
-          weight = g_rand_int_range (gr, 0, 10);
+          weight = gegl_random_int_range (o->rand, x, y, 0, 0, 0, 10);
 
           if (weight > 5)
             {
@@ -332,7 +341,7 @@ render_blast_row (gfloat         *buffer,
 
           bleed_length = 0;
 
-          switch (g_rand_int_range (gr, 0, random_factor))
+          switch (gegl_random_int_range (o->rand, x, y, 0, 1, 0, random_factor))
             {
             case 3:
               bleed_length += o->strength;
@@ -356,11 +365,13 @@ render_blast_row (gfloat         *buffer,
 
           j = lbi - n_components;
 
-          if (g_rand_int_range (gr, 0, 10) > 7)
+          if (gegl_random_int_range (o->rand, x, y, 0, 2, 0, 10) > 7)
             {
               skip = TRUE;
             }
         }
+
+      x++;
     }
   return skip;
 }
@@ -441,6 +452,7 @@ get_required_for_output (GeglOperation       *operation,
   return result;
 }
 
+
 static gboolean
 operation_process (GeglOperation        *operation,
                    GeglOperationContext *context,
@@ -471,7 +483,7 @@ operation_process (GeglOperation        *operation,
   {
     gint threads = gegl_config_threads ();
     GThreadPool *pool = thread_pool ();
-    ThreadData thread_data[GEGL_MAX_THREADS];
+    ThreadData thread_data[32];
     gint pending = threads;
 
     if (o->direction == GEGL_WIND_DIRECTION_LEFT ||
@@ -544,13 +556,10 @@ process (GeglOperation       *operation,
   gint           row_start, row_end;
   GeglRectangle  row_rect;
   gfloat        *row_buf;
-  GRand         *gr;
   gboolean       skip_rows;
   gboolean       need_reverse;
   gboolean       horizontal_effect;
   gint           last_pix;
-
-  gr = g_rand_new ();
 
   horizontal_effect = (o->direction == GEGL_WIND_DIRECTION_LEFT ||
                        o->direction == GEGL_WIND_DIRECTION_RIGHT);
@@ -596,12 +605,13 @@ process (GeglOperation       *operation,
         {
           last_pix  = row_size - (n_components * COMPARE_WIDTH);
           skip_rows = FALSE;
-          render_wind_row (row_buf, n_components, last_pix, o, gr);
+          render_wind_row (row_buf, n_components, last_pix, o, row_rect.x, y);
         }
       else
         {
           last_pix = row_size - n_components;
-          skip_rows = render_blast_row (row_buf, n_components, last_pix, o, gr);
+          skip_rows = render_blast_row (row_buf, n_components, last_pix, o,
+                                        row_rect.x, y);
         }
 
       if (need_reverse)
@@ -613,7 +623,9 @@ process (GeglOperation       *operation,
       if (skip_rows)
         {
           GeglRectangle rect   = row_rect;
-          gint          n_rows = g_rand_int_range (gr, 1, 3);
+          gint          n_rows = gegl_random_int_range (o->rand,
+                                                        row_rect.x, y, 0, 4,
+                                                        1, 3);
 
           if (horizontal_effect)
             {
@@ -631,7 +643,6 @@ process (GeglOperation       *operation,
         }
     }
 
-  g_rand_free (gr);
   g_free (row_buf);
 
   return TRUE;
@@ -655,11 +666,12 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->opencl_support          = FALSE;
 
   gegl_operation_class_set_keys (operation_class,
-     "name",       "gegl:wind",
-     "title",      _("Wind"),
-     "categories", "distort",
-     "license",    "GPL3+",
-     "description", _("Wind-like bleed effect"),
+     "name",           "gegl:wind",
+     "title",          _("Wind"),
+     "categories",     "distort",
+     "license",        "GPL3+",
+     "reference-hash", "c6085eb4de89cc8e25e2e9cfcd37730f",
+     "description",    _("Wind-like bleed effect"),
      NULL);
 }
 

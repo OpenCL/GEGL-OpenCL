@@ -15,35 +15,45 @@
  *
  * Copyright 2006 Dominik Ernst
  *           2012 Nicolas Robidoux
- *
- * Reflect an image about a line, whose direction is specified by the
- * vector that is defined by the x and y properties.
+ *           2017 Øyvind Kolås
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
+#ifdef GEGL_PROPERTIES
 
-#ifdef GEGL_CHANT_PROPERTIES
+property_double (x, _("X"), 0.0)
+    description (_("Direction vector's X component"))
+    ui_range (-100.0, 100.0)
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                   _("Direction vector's X component"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                   _("Direction vector's Y component"))
+property_double (y, _("Y"), 0.0)
+    description (_("Direction vector's Y component"))
+    ui_range (-100.0, 100.0)
+
 
 #else
 
-#define GEGL_CHANT_NAME reflect
-#define GEGL_CHANT_SELF "reflect.c"
-#include "chant.h"
+#include "gegl-operation-filter.h"
+#include "transform-core.h"
+#define GEGL_OP_NO_SOURCE
+#define GEGL_OP_Parent  OpTransform
+#define GEGL_OP_PARENT  TYPE_OP_TRANSFORM
+#define GEGL_OP_NAME    reflect
+#define GEGL_OP_BUNDLE
+#define GEGL_OP_C_FILE  "reflect.c"
+
+#include "gegl-op.h"
+
+#include <math.h>
 
 static void
 create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
-  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
-  const gdouble ux = chant->x;
-  const gdouble uy = chant->y;
+  GeglProperties *o = GEGL_PROPERTIES (op);
+  const gdouble ux = o->x;
+  const gdouble uy = o->y;
 
   /*
    * There probably should be an assertion or check+fix that
@@ -55,6 +65,28 @@ create_matrix (OpTransform *op,
   matrix->coeff [0][0] = ux*ux * two_over_length_squared - (gdouble) 1;
   matrix->coeff [1][1] = uy*uy * two_over_length_squared - (gdouble) 1;
   matrix->coeff [0][1] = matrix->coeff [1][0] = ux*uy * two_over_length_squared;
+}
+
+#include <stdio.h>
+
+static void
+gegl_op_class_init (GeglOpClass *klass)
+{
+  GeglOperationClass *operation_class;
+  OpTransformClass   *transform_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  transform_class = OP_TRANSFORM_CLASS (klass);
+  transform_class->create_matrix = create_matrix;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name", "gegl:reflect",
+    "title", _("Reflect"),
+    "categories", "transform",
+    "description", _("Reflect an image about a line, whose direction is "
+                     "specified by the vector that is defined by the "
+                     "x and y properties. "),
+    NULL);
 }
 
 #endif

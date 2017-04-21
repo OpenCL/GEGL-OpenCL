@@ -28,6 +28,7 @@ property_file_path (path, _("File"), "")
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME     tiff_save
 #define GEGL_OP_C_SOURCE tiff-save.c
 
 #include <gegl-op.h>
@@ -60,12 +61,11 @@ cleanup(GeglOperation *operation)
         TIFFClose(p->tiff);
       else if (p->stream != NULL)
         g_output_stream_close(G_OUTPUT_STREAM(p->stream), NULL, NULL);
-      if (p->stream != NULL)
-        g_clear_object(&p->stream);
+
+      g_clear_object (&p->stream);
       p->tiff = NULL;
 
-      if (p->file != NULL)
-        g_clear_object(&p->file);
+      g_clear_object (&p->file);
     }
 }
 
@@ -94,7 +94,7 @@ error_handler(const char *module,
   gchar *message;
 
   g_vasprintf(&message, format, arguments);
-  g_warning(message);
+  g_warning("%s", message);
 
   g_free(message);
 }
@@ -107,7 +107,7 @@ warning_handler(const char *module,
   gchar *message;
 
   g_vasprintf(&message, format, arguments);
-  g_message(message);
+  g_message("%s", message);
 
   g_free(message);
 }
@@ -144,7 +144,7 @@ write_to_stream(thandle_t handle,
                                       NULL, &error);
       if (written < 0)
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
         }
     }
@@ -192,7 +192,7 @@ seek_in_stream(thandle_t handle,
         position = g_seekable_tell(G_SEEKABLE(p->stream));
       else
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
         }
     }
@@ -243,7 +243,7 @@ close_stream(thandle_t handle)
                                           NULL, &error);
           if (written < 0)
             {
-                  g_warning(error->message);
+                  g_warning("%s", error->message);
                   g_error_free(error);
                   break;
             }
@@ -256,7 +256,7 @@ close_stream(thandle_t handle)
                                  NULL, &error);
   if (!closed)
     {
-      g_warning(error->message);
+      g_warning("%s", error->message);
       g_error_free(error);
     }
 
@@ -293,7 +293,7 @@ get_file_size(thandle_t handle)
                                NULL, &error);
       if (info == NULL)
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
         }
       else
@@ -567,7 +567,7 @@ process(GeglOperation *operation,
   if (p->stream == NULL)
     {
       status = FALSE;
-      g_warning(error->message);
+      g_warning("%s", error->message);
       goto cleanup;
     }
 
@@ -623,8 +623,10 @@ gegl_op_class_init(GeglOpClass *klass)
     "description", _("TIFF image saver using libtiff"),
     NULL);
 
-  gegl_extension_handler_register_saver(".tiff", "gegl:tiff-save");
-  gegl_extension_handler_register_saver(".tif", "gegl:tiff-save");
+  gegl_operation_handlers_register_saver(
+    ".tiff", "gegl:tiff-save");
+  gegl_operation_handlers_register_saver(
+    ".tif", "gegl:tiff-save");
 }
 
 #endif

@@ -27,6 +27,7 @@ property_file_path (path, _("File"), "")
 
 #else
 
+#define GEGL_OP_NAME     save
 #define GEGL_OP_C_SOURCE save.c
 
 #include "gegl-plugin.h"
@@ -73,7 +74,7 @@ gegl_save_set_saver (GeglOperation *operation)
    */
   g_assert (o->path);
   extension = strrchr (o->path, '.');
-  handler   = extension ? gegl_extension_handler_get_saver (extension) : NULL;
+  handler   = extension ? gegl_operation_handlers_get_saver (extension) : NULL;
 
   if (handler)
     {

@@ -12,6 +12,8 @@ if len(sys.argv) != 2:
 def escape_string(s):
   return s.replace('\\', r'\\').replace('"', r'\"')
 
+if "module.c" in sys.argv[1]:
+   exit()
 
 infile  = open(sys.argv[1], "r")
 outfile = open(sys.argv[1] + ".h", "w")

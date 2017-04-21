@@ -34,6 +34,7 @@ property_file_path (path, _("File"), "")
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME npy_save
 #define GEGL_OP_C_SOURCE npy-save.c
 
 #include "gegl-op.h"
@@ -145,7 +146,8 @@ gegl_op_class_init (GeglOpClass *klass)
         _("NPY image saver (Numerical python file saver.)"),
         NULL);
 
-  gegl_extension_handler_register_saver (".npy", "gegl:npy-save");
+  gegl_operation_handlers_register_saver (
+    ".npy", "gegl:npy-save");
 }
 
 #endif

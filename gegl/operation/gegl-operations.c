@@ -312,9 +312,10 @@ gegl_operation_gtype_cleanup (void)
   g_mutex_unlock (&operations_cache_mutex);
 }
 
-gboolean gegl_can_do_inplace_processing (GeglOperation       *operation,
-                                         GeglBuffer          *input,
-                                         const GeglRectangle *result)
+gboolean
+gegl_can_do_inplace_processing (GeglOperation       *operation,
+                                GeglBuffer          *input,
+                                const GeglRectangle *result)
 {
   if (!input)
     return FALSE;

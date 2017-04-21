@@ -61,6 +61,7 @@ property_boolean (cpn_3_keep, _("Keep component 3"), FALSE)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     alien_map
 #define GEGL_OP_C_SOURCE alien-map.c
 
 #include "gegl-op.h"
@@ -212,6 +213,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:alien-map",
     "title",       _("Alien Map"),
     "categories",  "artistic",
+    "reference-hash", "48146706af798ef888ba571ce89c1589",
     "description", _("Heavily distort images colors by applying trigonometric functions to map color values."),
     NULL);
 }

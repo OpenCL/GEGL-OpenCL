@@ -20,6 +20,8 @@
 #ifndef __GEGL_TYPES_INTERNAL_H__
 #define __GEGL_TYPES_INTERNAL_H__
 
+#include <babl/babl.h>
+
 G_BEGIN_DECLS
 
 typedef struct _GeglPad              GeglPad;
@@ -45,30 +47,43 @@ struct _GeglDimension
   gint height;
 };
 
-
 static inline int gegl_level_from_scale (gfloat scale)
 {
   gint level = 0;
-  //gint factor = 1;
 
   while (scale <= 0.500001)
   {
     scale *= 2;
-   // factor *= 2;
     level++;
-#if 0
-    if (rect)
-    {
-      rect->x = 0 < rect->x ? rect->x/2 : (rect->x - 1) / 2;
-      rect->y = 0 < rect->y ? rect->y/2 : (rect->y - 1) / 2;
-      rect->width = 0 < rect->width ? rect->width/2 : (rect->width  - 1) / 2;
-      rect->height = 0 < rect->height ? rect->height/2 : (rect->height  - 1) / 2;
-    }
-#endif
   }
 
   return level;
 }
+
+/* the code in babl for looking up models, formats and types is quick -
+   but when formats end up being used as consts for comparisons in the core of
+   GEGL, it is good to have even better caching, hence this way of generating
+   and accessing per compilation unit caches of formats.
+ */
+
+#define GEGL_CACHED_BABL(klass, typ, name)  \
+static inline const Babl *gegl_babl_##typ (void) { static const Babl *type = NULL; if (!type) type = babl_##klass (name); return type; }
+
+GEGL_CACHED_BABL(type, half, "half")
+GEGL_CACHED_BABL(type, float, "float")
+GEGL_CACHED_BABL(type, u8, "u8")
+GEGL_CACHED_BABL(type, u16, "u16")
+GEGL_CACHED_BABL(type, u32, "u32")
+GEGL_CACHED_BABL(type, double, "double")
+
+GEGL_CACHED_BABL(format, rgba_float, "R'G'B'A float")
+GEGL_CACHED_BABL(format, rgbA_float, "R'aG'aB'aA float")
+GEGL_CACHED_BABL(format, rgba_linear_float, "RGBA float")
+GEGL_CACHED_BABL(format, rgbA_linear_float, "RaGaBaA float")
+GEGL_CACHED_BABL(format, ya_float, "Y'A float")
+GEGL_CACHED_BABL(format, yA_float, "Y'aA float")
+GEGL_CACHED_BABL(format, ya_linear_float, "Y float")
+GEGL_CACHED_BABL(format, yA_linear_float, "YaA float")
 
 G_END_DECLS
 

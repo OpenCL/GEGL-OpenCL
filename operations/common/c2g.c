@@ -35,7 +35,7 @@ property_int (radius, _("Radius"), 300)
 
 property_int  (samples, _("Samples"), 4)
   description (_("Number of samples to do per iteration looking for the range of colors"))
-  value_range (1, 1000) 
+  value_range (1, 1000)
   ui_range    (3, 17)
 
 property_int (iterations, _("Iterations"), 10)
@@ -51,6 +51,7 @@ property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     c2g
 #define GEGL_OP_C_SOURCE c2g.c
 
 #include "gegl-op.h"
@@ -60,7 +61,8 @@ property_double (rgamma, _("Radial Gamma"), 0.0, 8.0, 2.0,
 
 #define RGAMMA 2.0
 
-static void c2g (GeglBuffer          *src,
+static void c2g (GeglOperation       *op,
+                 GeglBuffer          *src,
                  const GeglRectangle *src_rect,
                  GeglBuffer          *dst,
                  const GeglRectangle *dst_rect,
@@ -74,9 +76,15 @@ static void c2g (GeglBuffer          *src,
 
   if (dst_rect->width > 0 && dst_rect->height > 0)
   {
+    /* XXX: compute total pixels and progress by consumption
+     */
     GeglBufferIterator *i = gegl_buffer_iterator_new (dst, dst_rect, 0, babl_format("YA float"),
                                                       GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
     GeglSampler *sampler = gegl_buffer_sampler_new_at_level (src, format, GEGL_SAMPLER_NEAREST, level);
+#if 0
+    float total_pix = dst_rect->width * dst_rect->height;
+#endif
+    int pix_done = 0.0;
 
     while (gegl_buffer_iterator_next (i))
     {
@@ -132,7 +140,12 @@ static void c2g (GeglBuffer          *src,
                 dst_offset+=2;
               }
             }
+
+            pix_done += i->roi[0].width;
           }
+#if 0
+        gegl_operation_progress (op, pix_done / total_pix, "");
+#endif
     }
     g_object_unref (sampler);
   }
@@ -160,7 +173,7 @@ get_bounding_box (GeglOperation *operation)
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/c2g.cl.h"
 
@@ -327,7 +340,7 @@ process (GeglOperation       *operation,
     if(cl_process(operation, input, output, result))
       return TRUE;
 
-  c2g (input, &compute, output, result,
+  c2g (operation, input, &compute, output, result,
        o->radius,
        o->samples,
        o->iterations,

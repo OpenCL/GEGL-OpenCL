@@ -32,6 +32,7 @@ property_uri (uri, _("URI"), "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME png_load
 #define GEGL_OP_C_SOURCE png-load.c
 
 #include "gegl-op.h"
@@ -502,7 +503,10 @@ gegl_op_class_init (GeglOpClass *klass)
 /*  static gboolean done=FALSE;
     if (done)
       return; */
-  gegl_extension_handler_register_loader (".png", "gegl:png-load");
+  gegl_operation_handlers_register_loader (
+    "image/png", "gegl:png-load");
+  gegl_operation_handlers_register_loader (
+    ".png", "gegl:png-load");
 /*  done = TRUE; */
 }
 

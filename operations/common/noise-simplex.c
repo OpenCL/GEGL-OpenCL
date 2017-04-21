@@ -42,6 +42,7 @@ property_seed   (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     noise_simplex
 #define GEGL_OP_C_SOURCE noise-simplex.c
 
 #include "gegl-op.h"
@@ -330,6 +331,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",               "gegl:simplex-noise",
     "title",              _("Simplex Noise"),
     "categories",         "render",
+    "reference-hash",     "d6c535d254ebf7cb3213fdb26527f16b",
     "position-dependent", "true",
     "description", _("Generates a solid noise texture."),
     NULL);

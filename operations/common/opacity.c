@@ -30,6 +30,7 @@ property_double (value, _("Opacity"), 1.0)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME     opacity
 #define GEGL_OP_C_SOURCE opacity.c
 
 #include "gegl-op.h"
@@ -304,6 +305,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "gegl:opacity",
     "categories" , "transparency",
     "title",       _("Opacity"),
+    "reference-hash", "b20e8c1d7bb20af95f724191feb10103",
     "description",
           _("Weights the opacity of the input both the value of the aux"
             " input and the global value property."),

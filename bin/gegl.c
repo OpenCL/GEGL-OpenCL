@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright (C) 2003, 2004, 2006, 2007, 2008 Øyvind Kolås
+ * Copyright (C) 2003, 2004, 2006, 2007, 2008, 2016 Øyvind Kolås
  */
 
 #include "config.h"
@@ -58,7 +58,10 @@ gegl_enable_fatal_warnings (void)
   g_log_set_always_fatal (fatal_mask);
 }
 
-static gboolean file_is_gegl_xml (const gchar *path)
+int gegl_str_has_image_suffix (char *path);
+int gegl_str_has_video_suffix (char *path);
+
+static gboolean file_is_gegl_composition (const gchar *path)
 {
   gchar *extension;
 
@@ -69,10 +72,24 @@ static gboolean file_is_gegl_xml (const gchar *path)
   if (extension[0]=='\0')
     return FALSE;
   if (!strcmp (extension, "xml")||
+      !strcmp (extension, "gegl")||
       !strcmp (extension, "XML")||
       !strcmp (extension, "svg")
       )
     return TRUE;
+  return FALSE;
+}
+
+static gboolean is_xml_fragment (const char *data)
+{
+  int i;
+  for (i = 0; data && data[i]; i++)
+    switch (data[i])
+    {
+      case ' ':case '\t':case '\n':case '\r': break;
+      case '<': return TRUE;
+      default: return FALSE;
+    }
   return FALSE;
 }
 
@@ -88,12 +105,19 @@ main (gint    argc,
   GError      *err       = NULL;
   gchar       *path_root = NULL;
 
+#if HAVE_MRG
+  g_setenv ("GEGL_MIPMAP_RENDERING", "1", TRUE);
+#endif
+
   g_object_set (gegl_config (),
                 "application-license", "GPL3",
+#if HAVE_MRG
+                "use-opencl", FALSE,
+#endif
                 NULL);
 
-  gegl_init (&argc, &argv);
   o = gegl_options_parse (argc, argv);
+  gegl_init (NULL, NULL);
 #ifdef HAVE_SPIRO
   gegl_path_spiro_init ();
 #endif
@@ -142,7 +166,7 @@ main (gint    argc,
             }
           script = g_string_free (acc, FALSE);
         }
-      else if (file_is_gegl_xml (o->file))
+      else if (file_is_gegl_composition (o->file))
         {
           g_file_get_contents (o->file, &script, NULL, &err);
           if (err != NULL)
@@ -154,6 +178,12 @@ main (gint    argc,
         {
           gchar *file_basename = g_path_get_basename (o->file);
 
+          if (gegl_str_has_video_suffix (file_basename))
+            script = g_strconcat ("<gegl><gegl:ff-load path='",
+                                  file_basename,
+                                  "'/></gegl>",
+                                  NULL);
+          else
           script = g_strconcat ("<gegl><gegl:load path='",
                                 file_basename,
                                 "'/></gegl>",
@@ -173,7 +203,7 @@ main (gint    argc,
           script = g_strdup (DEFAULT_COMPOSITION);
         }
     }
-  
+
   if (o->mode == GEGL_RUN_MODE_DISPLAY)
     {
 #if HAVE_MRG
@@ -182,7 +212,10 @@ main (gint    argc,
 #endif
     }
 
-  gegl = gegl_node_new_from_xml (script, path_root);
+  if (is_xml_fragment (script))
+    gegl = gegl_node_new_from_xml (script, path_root);
+  else
+    gegl = gegl_node_new_from_serialized (script, path_root);
 
   if (!gegl)
     {
@@ -190,32 +223,25 @@ main (gint    argc,
       return 1;
     }
 
+  {
+  GeglNode *proxy = gegl_node_get_output_proxy (gegl, "output");
+  GeglNode *iter = gegl_node_get_producer (proxy, "input", NULL);
   if (o->rest)
     {
-      GeglNode *proxy;
-      GeglNode *iter;
-
-      gchar **operation = o->rest;
-      proxy = gegl_node_get_output_proxy (gegl, "output");
-      iter = gegl_node_get_producer (proxy, "input", NULL);
-
-      while (*operation)
-        {
-          GeglNode *new;
-
-          new = gegl_node_new_child (gegl, "operation", *operation, NULL);
-          if (iter)
-            {
-              gegl_node_link_many (iter, new, proxy, NULL);
-            }
-          else
-            {
-              gegl_node_link_many (new, proxy, NULL);
-            }
-          iter = new;
-          operation++;
-        }
+      GError *error = NULL;
+      gegl_create_chain_argv (o->rest, iter, proxy, 0, gegl_node_get_bounding_box (gegl).height, &error);
+      if (error)
+      {
+        fprintf (stderr, "Error: %s\n", error->message);
+      }
+      if (o->serialize)
+      {
+        fprintf (stderr, "%s\n", gegl_serialize (iter,
+            gegl_node_get_producer (proxy, "input", NULL), "/",
+            GEGL_SERIALIZE_VERSION|GEGL_SERIALIZE_INDENT));
+      }
     }
+  }
 
   switch (o->mode)
     {
@@ -237,6 +263,71 @@ main (gint    argc,
         break;
 
       case GEGL_RUN_MODE_OUTPUT:
+      if (gegl_str_has_video_suffix ((void*)o->output))
+        {
+          GeglNode *output = gegl_node_new_child (gegl,
+                                                  "operation", "gegl:ff-save",
+                                                  "path", o->output,
+                                                  "video-bit-rate", 4000,
+                                                  NULL);
+          {
+            GeglRectangle bounds = gegl_node_get_bounding_box (gegl);
+            GeglBuffer *tempb;
+            GeglNode *n0;
+            GeglNode *iter;
+            GeglAudioFragment *audio = NULL;
+            int frame_no = 0;
+            guchar *temp;
+
+            bounds.x *= o->scale;
+            bounds.y *= o->scale;
+            bounds.width *= o->scale;
+            bounds.height *= o->scale;
+            temp = gegl_malloc (bounds.width * bounds.height * 4);
+            tempb = gegl_buffer_new (&bounds, babl_format("R'G'B'A u8"));
+
+            n0 = gegl_node_new_child (gegl, "operation", "gegl:buffer-source",
+                                            "buffer", tempb,
+                                            NULL);
+            gegl_node_connect_from (output, "input", n0, "output");
+
+            iter = gegl_node_get_output_proxy (gegl, "output");
+
+            while (gegl_node_get_producer (iter, "input", NULL))
+              iter = (gegl_node_get_producer (iter, "input", NULL));
+            {
+              int duration = 0;
+              gegl_node_get (iter, "frames", &duration, NULL);
+
+              while (frame_no < duration)
+              {
+                gegl_node_blit (gegl, o->scale, &bounds,
+                                babl_format("R'G'B'A u8"), temp,
+                                GEGL_AUTO_ROWSTRIDE,
+                                GEGL_BLIT_DEFAULT);
+
+                gegl_buffer_set (tempb, &bounds, 0.0, babl_format ("R'G'B'A u8"),
+                                 temp, GEGL_AUTO_ROWSTRIDE);
+
+                gegl_node_get (iter, "audio", &audio, NULL);
+                if (audio)
+                  gegl_node_set (output, "audio", audio, NULL);
+                fprintf (stderr, "\r%i/%i %p", frame_no, duration-1, audio);
+
+                gegl_node_process (output);
+
+                frame_no ++;
+                gegl_node_set (iter, "frame", frame_no, NULL);
+              }
+              fprintf (stderr, "\n");
+            }
+            gegl_free (temp);
+            g_object_unref (tempb);
+            g_object_unref (output);
+          }
+
+        }
+      else
         {
           GeglNode *output = gegl_node_new_child (gegl,
                                                   "operation", "gegl:save",
@@ -249,7 +340,7 @@ main (gint    argc,
             GeglNode *n0;
 
             guchar *temp;
-            
+
             bounds.x *= o->scale;
             bounds.y *= o->scale;
             bounds.width *= o->scale;
@@ -275,7 +366,7 @@ main (gint    argc,
             gegl_node_connect_from (output, "input", gegl, "output");
             gegl_node_process (output);
           }
-          
+
           g_object_unref (output);
         }
         break;
@@ -297,3 +388,43 @@ main (gint    argc,
   gegl_exit ();
   return 0;
 }
+
+int gegl_str_has_image_suffix (char *path)
+{
+  return g_str_has_suffix (path, ".jpg") ||
+         g_str_has_suffix (path, ".png") ||
+         g_str_has_suffix (path, ".JPG") ||
+         g_str_has_suffix (path, ".PNG") ||
+         g_str_has_suffix (path, ".tif") ||
+         g_str_has_suffix (path, ".tiff") ||
+         g_str_has_suffix (path, ".TIF") ||
+         g_str_has_suffix (path, ".TIFF") ||
+         g_str_has_suffix (path, ".jpeg") ||
+         g_str_has_suffix (path, ".JPEG") ||
+         g_str_has_suffix (path, ".CR2") ||
+         g_str_has_suffix (path, ".cr2") ||
+         g_str_has_suffix (path, ".exr");
+}
+
+int gegl_str_has_video_suffix (char *path)
+{
+  return g_str_has_suffix (path, ".avi") ||
+         g_str_has_suffix (path, ".AVI") ||
+         g_str_has_suffix (path, ".mp4") ||
+         g_str_has_suffix (path, ".dv") ||
+         g_str_has_suffix (path, ".DV") ||
+         g_str_has_suffix (path, ".mp3") ||
+         g_str_has_suffix (path, ".MP3") ||
+         g_str_has_suffix (path, ".mpg") ||
+         g_str_has_suffix (path, ".ogv") ||
+         g_str_has_suffix (path, ".MPG") ||
+         g_str_has_suffix (path, ".webm") ||
+         g_str_has_suffix (path, ".MP4") ||
+         g_str_has_suffix (path, ".mkv") ||
+         g_str_has_suffix (path, ".gif") ||
+         g_str_has_suffix (path, ".GIF") ||
+         g_str_has_suffix (path, ".MKV") ||
+         g_str_has_suffix (path, ".mov") ||
+         g_str_has_suffix (path, ".ogg");
+}
+

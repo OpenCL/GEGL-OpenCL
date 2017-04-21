@@ -24,20 +24,34 @@
  * TODO: remove this function in future versions!
  */
 void          gegl_extension_handler_register        (const gchar *extension,
-                                                      const gchar *handler);
+                                                      const gchar *handler) G_GNUC_DEPRECATED;
 
+/* deprecated: use gegl_operation_handlers_register_loader() instead.
+ * TODO: remove this function in future versions!
+ */
 void          gegl_extension_handler_register_loader (const gchar *extension,
-                                                      const gchar *handler);
+                                                      const gchar *handler) G_GNUC_DEPRECATED;
+
+/* deprecated: use gegl_operation_handlers_register_saver() instead.
+ * TODO: remove this function in future versions!
+ */
 void          gegl_extension_handler_register_saver  (const gchar *extension,
-                                                      const gchar *handler);
+                                                      const gchar *handler) G_GNUC_DEPRECATED;
 
 /* similar to gegl_extension_handler_get_loader(), kept for
  * compatibility reasons, do NOT use in newly written code.
  * TODO: remove this function in future versions!
  */
-const gchar * gegl_extension_handler_get             (const gchar *extension);
+const gchar * gegl_extension_handler_get             (const gchar *extension) G_GNUC_DEPRECATED;
 
-const gchar * gegl_extension_handler_get_loader      (const gchar *extension);
-const gchar * gegl_extension_handler_get_saver       (const gchar *extension);
+/* deprecated: use gegl_operation_handlers_get_loader() instead.
+ * TODO: remove this function in future versions!
+ */
+const gchar * gegl_extension_handler_get_loader      (const gchar *extension) G_GNUC_DEPRECATED;
+
+/* deprecated: use gegl_operation_handlers_get_saver() instead.
+ * TODO: remove this function in future versions!
+ */
+const gchar * gegl_extension_handler_get_saver       (const gchar *extension) G_GNUC_DEPRECATED;
 
 #endif

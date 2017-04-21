@@ -37,6 +37,7 @@ property_double (white, _("Percent White"), 0.2)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     photocopy
 #define GEGL_OP_C_SOURCE photocopy.c
 
 #include "gegl-op.h"
@@ -321,10 +322,11 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process                    = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:photocopy",
-    "categories",  "artistic",
-    "license",     "GPL3+",
-    "title",       _("Photocopy"),
+    "name",          "gegl:photocopy",
+    "categories",    "artistic",
+    "license",       "GPL3+",
+    "title",         _("Photocopy"),
+    "reference-hash", "cc015c712b0a9d9137fcea18065d65e7",
     "description", _("Simulate color distortion produced by a copy machine"),
     NULL);
 }

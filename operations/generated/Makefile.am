@@ -3,36 +3,43 @@ include $(top_srcdir)/operations/Makefile-common.am
 EXTRA_DIST = $(wildcard $(srcdir)/*.rb) $(wildcard $(srcdir)/*.h)
 
 AM_CPPFLAGS += -I$(srcdir)
+AM_CFLAGS += -DGEGL_OP_BUNDLE
 
 LIBS = $(op_libs)
 
 opdir = $(ext_dir)
 op_LTLIBRARIES = \
-  add.la \
-  clear.la \
-  color-burn.la \
-  color-dodge.la \
-  darken.la \
-  difference.la \
-  divide.la \
-  dst-atop.la \
-  dst-in.la \
-  dst-out.la \
-  dst-over.la \
-  dst.la \
-  exclusion.la \
-  gamma.la \
-  hard-light.la \
-  lighten.la \
-  multiply.la \
-  overlay.la \
-  plus.la \
-  screen.la \
-  soft-light.la \
-  src-atop.la \
-  src-in.la \
-  src-out.la \
-  src.la \
-  subtract.la \
-  svg-multiply.la \
-  xor.la
+  gegl-generated.la
+
+gegl_generated_la_SOURCES = \
+  add.c \
+  clear.c \
+  color-burn.c \
+  color-dodge.c \
+  darken.c \
+  difference.c \
+  divide.c \
+  dst-atop.c \
+  dst-in.c \
+  dst-out.c \
+  dst-over.c \
+  dst.c \
+  exclusion.c \
+  gamma.c \
+  hard-light.c \
+  lighten.c \
+  multiply.c \
+  overlay.c \
+  plus.c \
+  screen.c \
+  soft-light.c \
+  src-atop.c \
+  src-in.c \
+  src-out.c \
+  src.c \
+  subtract.c \
+  xor.c \
+  module.c
+
+module.c: $(gegl_generated_la_SOURCES)
+	$(top_srcdir)/tools/gen-loader.sh $^ > module.c

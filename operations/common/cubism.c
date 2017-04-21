@@ -44,6 +44,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     cubism
 #define GEGL_OP_C_SOURCE cubism.c
 
 #include "gegl-op.h"
@@ -612,6 +613,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Cubism"),
     "name",        "gegl:cubism",
     "categories",  "artistic:scramble",
+    "reference-hash", "3bb294504ef11161e6147903dad9df23",
     "license",     "GPL3+",
     "description", _("Convert the image into randomly rotated square blobs, somehow resembling a cubist painting style"),
     NULL);

@@ -366,14 +366,14 @@ gegl_sampler_get_from_mipmap (GeglSampler    *sampler,
   gint    dy;
   gint    sof;
 
-  const gdouble scale = 1. / ( (gdouble) (1<<level_no) );
+  const gdouble scale = 1. / ((gdouble) (1 << level_no));
 
   const gint maximum_width  = GEGL_SAMPLER_MAXIMUM_WIDTH;
   const gint maximum_height = GEGL_SAMPLER_MAXIMUM_HEIGHT;
 
   if (gegl_cl_is_accelerated ())
     {
-      GeglRectangle rect={x,y,1,1};
+      GeglRectangle rect = {x, y, 1, 1};
       gegl_buffer_cl_cache_flush (sampler->buffer, &rect);
     }
 
@@ -381,25 +381,23 @@ gegl_sampler_get_from_mipmap (GeglSampler    *sampler,
   g_assert (level->context_rect.width  <= maximum_width);
   g_assert (level->context_rect.height <= maximum_height);
 
-
-  if ((level->sampler_buffer == NULL)
-   || (x + level->context_rect.x < level->sampler_rectangle.x)
-   || (y + level->context_rect.y < level->sampler_rectangle.y)
-   || (x + level->context_rect.x + level->context_rect.width
-     > level->sampler_rectangle.x + level->sampler_rectangle.width)
-   || (y + level->context_rect.y + level->context_rect.height
-     > level->sampler_rectangle.y + level->sampler_rectangle.height))
+  if ((level->sampler_buffer == NULL)                               ||
+      (x + level->context_rect.x < level->sampler_rectangle.x)      ||
+      (y + level->context_rect.y < level->sampler_rectangle.y)      ||
+      (x + level->context_rect.x + level->context_rect.width >
+       level->sampler_rectangle.x + level->sampler_rectangle.width) ||
+      (y + level->context_rect.y + level->context_rect.height >
+       level->sampler_rectangle.y + level->sampler_rectangle.height))
     {
       /*
        * fetch_rectangle will become the value of
        * sampler->sampler_rectangle[level]:
        */
-      level->sampler_rectangle = _gegl_sampler_compute_rectangle (sampler, x, y, 
+      level->sampler_rectangle = _gegl_sampler_compute_rectangle (sampler, x, y,
                                                                   level_no);
       if (!level->sampler_buffer)
         level->sampler_buffer =
           g_malloc0 (GEGL_SAMPLER_ROWSTRIDE * GEGL_SAMPLER_MAXIMUM_HEIGHT);
-
 
       gegl_buffer_get (sampler->buffer,
                        &level->sampler_rectangle,
@@ -412,10 +410,10 @@ gegl_sampler_get_from_mipmap (GeglSampler    *sampler,
 
   dx         = x - level->sampler_rectangle.x;
   dy         = y - level->sampler_rectangle.y;
-  buffer_ptr = (guchar *)level->sampler_buffer;
-  sof        = ( dx + dy * GEGL_SAMPLER_MAXIMUM_WIDTH) * GEGL_SAMPLER_BPP;
+  buffer_ptr = (guchar *) level->sampler_buffer;
+  sof        = (dx + dy * GEGL_SAMPLER_MAXIMUM_WIDTH) * GEGL_SAMPLER_BPP;
 
-  return (gfloat*)(buffer_ptr+sof);
+  return (gfloat*) (buffer_ptr + sof);
 }
 
 static void
@@ -611,7 +609,7 @@ gegl_buffer_sampler_new_at_level (GeglBuffer      *buffer,
   GType        desired_type;
 
   if (format == NULL)
-    format = babl_format ("RaGaBaA float");
+    format = gegl_babl_rgbA_linear_float ();
 
   desired_type = gegl_sampler_gtype_from_enum (sampler_type);
 

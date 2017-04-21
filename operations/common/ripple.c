@@ -56,6 +56,7 @@ property_boolean (tileable, _("Tileable"), FALSE)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     ripple
 #define GEGL_OP_C_SOURCE ripple.c
 
 #include "gegl-op.h"
@@ -171,6 +172,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "distort",
     "position-dependent", "true",
     "license",            "GPL3+",
+    "reference-hash",     "304d75c60d2dab1c4fa404ff2060db83",
     "description", _("Displace pixels in a ripple pattern"),
     NULL);
 }

@@ -68,6 +68,7 @@ property_color (line_color, _("Color"), "black")
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     grid
 #define GEGL_OP_C_SOURCE grid.c
 
 #include "gegl-op.h"
@@ -103,13 +104,13 @@ process (GeglOperation       *operation,
     {
       gint nx,ny;
 
-      nx = (x - o->x_offset) % o->x;
-      ny = (y - o->y_offset) % o->y;
+      nx = (x - o->x_offset) % (o->x>>level);
+      ny = (y - o->y_offset) % (o->y>>level);
       /* handle case where % returns a negative number */
       nx += nx < 0 ? o->x : 0;
       ny += ny < 0 ? o->y : 0;
 
-      if (nx < o->line_width || ny < o->line_height)
+      if (nx < (o->line_width>>level) || ny < (o->line_height>>level))
         {
           out_pixel[0]=line_color[0];
           out_pixel[1]=line_color[1];
@@ -156,6 +157,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Grid"),
     "position-dependent", "true",
     "categories" ,        "render",
+    "reference-hash",     "cc9c401d7c8bcea7147499ecbeda9986",
     "description",        _("Grid renderer"),
     "position-dependent", "true",
     NULL);

@@ -28,6 +28,7 @@ property_object (buffer, _("Buffer"), GEGL_TYPE_BUFFER)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     copy_buffer
 #define GEGL_OP_C_SOURCE copy-buffer.c
 
 #include "gegl-op.h"

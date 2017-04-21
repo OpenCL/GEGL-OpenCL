@@ -113,8 +113,9 @@ static gboolean gegl_operation_temporal_process (GeglOperation       *self,
 
 static void gegl_operation_temporal_prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "output", babl_format ("RGB u8"));
-  gegl_operation_set_format (operation, "input", babl_format ("RGB u8"));
+  const Babl *format = babl_format ("RGB u8");
+  gegl_operation_set_format (operation, "output", format);
+  gegl_operation_set_format (operation, "input", format);
 }
 
 static void

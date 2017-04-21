@@ -29,6 +29,7 @@ property_object (pixbuf, _("Pixbuf"), GDK_TYPE_PIXBUF)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     pixbuf
 #define GEGL_OP_C_SOURCE pixbuf.c
 
 #include "gegl-op.h"
@@ -54,9 +55,13 @@ get_bounding_box (GeglOperation *operation)
 
 static void prepare (GeglOperation *operation)
 {
+  const Babl *format;
   GeglProperties *o = GEGL_PROPERTIES (operation);
-  gegl_operation_set_format (operation, "output",
-      babl_format(gdk_pixbuf_get_has_alpha(GDK_PIXBUF(o->pixbuf))?"R'G'B'A u8":"R'G'B' u8"));
+  gboolean has_alpha;
+
+  has_alpha = gdk_pixbuf_get_has_alpha (GDK_PIXBUF (o->pixbuf));
+  format = has_alpha ? babl_format ("R'G'B'A u8") : babl_format ("R'G'B' u8");
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static gboolean
@@ -70,14 +75,17 @@ process (GeglOperation       *operation,
   if (o->pixbuf)
     {
       GeglRectangle extent;
+      gint stride;
+
+      stride = gdk_pixbuf_get_rowstride (GDK_PIXBUF (o->pixbuf));
 
       extent.x = 0;
       extent.y = 0;
       extent.width = gdk_pixbuf_get_width (GDK_PIXBUF (o->pixbuf));
       extent.height = gdk_pixbuf_get_height (GDK_PIXBUF (o->pixbuf));
 
-      gegl_buffer_set (output, &extent, 0, NULL, gdk_pixbuf_get_pixels (GDK_PIXBUF (o->pixbuf)),
-                       GEGL_AUTO_ROWSTRIDE);
+      gegl_buffer_set (output, &extent, 0, NULL, gdk_pixbuf_read_pixels (GDK_PIXBUF (o->pixbuf)),
+                       stride);
     }
   return TRUE;
 }

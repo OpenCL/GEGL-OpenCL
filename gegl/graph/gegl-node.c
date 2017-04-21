@@ -58,6 +58,7 @@ enum
 {
   INVALIDATED,
   COMPUTED,
+  PROGRESS,
   LAST_SIGNAL
 };
 
@@ -200,6 +201,15 @@ gegl_node_class_init (GeglNodeClass *klass)
                   g_cclosure_marshal_VOID__BOXED,
                   G_TYPE_NONE, 1,
                   GEGL_TYPE_RECTANGLE);
+
+  gegl_node_signals[PROGRESS] =
+    g_signal_new ("progress",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                  0,
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__DOUBLE,
+                  G_TYPE_NONE, 1, G_TYPE_DOUBLE);
 }
 
 static void
@@ -722,31 +732,20 @@ gegl_node_connect_from (GeglNode    *sink,
       real_source_pad_name = "output";
     }
 
-  {
-    GeglPad *pad;
-    GeglPad *other_pad = NULL;
-
-    pad = gegl_node_get_pad (real_sink, real_sink_pad_name);
-    if (pad)
-      other_pad = gegl_pad_get_connected_to (pad);
-    else
-      {
-        g_warning ("%s: Didn't find pad '%s' of '%s'",
-                   G_STRFUNC, real_sink_pad_name, gegl_node_get_debug_name (real_sink));
-      }
-
-    if (other_pad)
-      {
-        gegl_node_disconnect (real_sink, real_sink_pad_name);
-      }
-  }
   if (gegl_node_pads_exist (real_sink, real_sink_pad_name, real_source, real_source_pad_name))
     {
+      GeglPad        *other_pad;
       GeglPad        *sink_pad   = gegl_node_get_pad (real_sink, real_sink_pad_name);
       GeglPad        *source_pad = gegl_node_get_pad (real_source, real_source_pad_name);
-      GeglConnection *connection = gegl_pad_connect (sink_pad,
-                                                     source_pad);
+      GeglConnection *connection;
 
+      other_pad = gegl_pad_get_connected_to (sink_pad);
+      if (source_pad == other_pad)
+        return TRUE;
+
+      gegl_node_disconnect (real_sink, real_sink_pad_name);
+
+      connection = gegl_pad_connect (sink_pad, source_pad);
       gegl_connection_set_sink_node (connection, real_sink);
       gegl_connection_set_source_node (connection, real_source);
 
@@ -1226,6 +1225,9 @@ gegl_node_property_changed (GObject    *gobject,
           gegl_node_invalidated (self, &dirty_rect, FALSE);
         }
     }
+
+  if (arg1)
+    g_object_notify_by_pspec (G_OBJECT (self), arg1);
 }
 
 static void
@@ -1294,7 +1296,7 @@ gegl_node_set_operation_object (GeglNode      *self,
 
   gegl_node_update_debug_name (self);
 
-  gegl_node_property_changed (G_OBJECT (operation), (GParamSpec *) self, self);
+  gegl_node_property_changed (G_OBJECT (operation), (GParamSpec *) NULL, self);
 }
 
 void
@@ -1685,7 +1687,7 @@ gegl_node_get_bounding_box (GeglNode *self)
 }
 
 void
-gegl_node_process (GeglNode *self)
+gegl_node_process (GeglNode *self) /* XXX: add level argument?  */
 {
   GeglProcessor *processor;
 
@@ -1736,7 +1738,7 @@ gegl_node_insert_before (GeglNode *self,
   g_return_if_fail (GEGL_IS_NODE (self));
   g_return_if_fail (GEGL_IS_NODE (to_be_inserted));
 
-  other     = gegl_node_get_producer (self, "input", NULL);/*XXX: handle pad name */
+  other     = gegl_node_get_producer (self, "input", NULL); /*XXX: handle pad name */
   rectangle = gegl_node_get_bounding_box (to_be_inserted);
 
   g_signal_handlers_block_matched (other, G_SIGNAL_MATCH_FUNC, 0, 0, 0, gegl_node_source_invalidated, NULL);
@@ -2172,6 +2174,52 @@ gegl_node_set_passthrough (GeglNode *node,
 {
   g_return_if_fail (GEGL_IS_NODE (node));
 
-  gegl_node_invalidated (node, NULL, TRUE);
+  if (node->passthrough == passthrough)
+    return;
+
   node->passthrough = passthrough;
+  gegl_node_invalidated (node, NULL, TRUE);
 }
+
+typedef struct Closure {
+  GeglNode  *node;
+  gdouble    progress;
+} Closure;
+
+static gboolean delayed_emission (void *data)
+{
+  Closure *closure = data;
+  g_signal_emit (closure->node,
+                 gegl_node_signals[PROGRESS], 0,
+                 closure->progress, NULL, NULL);
+  g_free (closure);
+  return FALSE;
+}
+
+/* this causes dispatch of the signal on the main thread - if we
+ * are in the main thread the callback will be directly executed now
+ * instead of queued
+ */
+void gegl_node_progress (GeglNode *node,
+                         gdouble   progress,
+                         gchar    *message)
+{
+  if (gegl_is_main_thread ())
+    g_signal_emit (node, gegl_node_signals[PROGRESS], 0, progress, message, NULL);
+  else
+  {
+    Closure *closure = g_new0 (Closure, 1);
+    closure->node = node;
+    closure->progress = progress;
+    g_idle_add (delayed_emission, closure);
+  }
+}
+
+const char *gegl_operation_get_op_version (const char *op_name)
+{
+  const gchar *ret = gegl_operation_get_key (op_name, "op-version");
+  if (!ret)
+    ret = "0:0";
+  return ret;
+}
+

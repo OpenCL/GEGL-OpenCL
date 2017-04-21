@@ -61,6 +61,7 @@ property_double (amount_y, _("Y displacement"), 0.0)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     displace
 #define GEGL_OP_C_SOURCE displace.c
 
 #include "gegl-op.h"

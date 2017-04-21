@@ -41,6 +41,7 @@ property_seed   (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     noise_hsv
 #define GEGL_OP_C_SOURCE noise-hsv.c
 
 #include "gegl-op.h"
@@ -193,6 +194,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",       "gegl:noise-hsv",
     "title",      _("Add HSV Noise"),
     "categories", "noise",
+    "reference-hash", "5754cd0bcadabd01bbc253b5c41cbd74",
     "description", _("Randomize hue, saturation and value independently"),
       NULL);
 }

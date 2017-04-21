@@ -94,6 +94,7 @@ property_int    (height, _("Height"), 200)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     diffraction_patterns
 #define GEGL_OP_C_SOURCE diffraction-patterns.c
 
 #include "gegl-op.h"
@@ -251,6 +252,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Diffraction Patterns"),
     "categories",         "render",
     "position-dependent", "true",
+    "reference-hash",     "f709e421fe77197f8bd3e23212108823",
     "license",            "GPL3+",
     "description",        _("Generate diffraction patterns"),
     NULL);

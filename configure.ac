@@ -14,7 +14,7 @@ dnl    set GEGL_BINARY_AGE _and_ GEGL_INTERFACE_AGE to 0.
 
 m4_define([gegl_major_version], [0])
 m4_define([gegl_minor_version], [3])
-m4_define([gegl_micro_version], [5])
+m4_define([gegl_micro_version], [15])
 m4_define([gegl_real_version],
           [gegl_major_version.gegl_minor_version.gegl_micro_version])
 m4_define([gegl_version], [gegl_real_version])
@@ -37,9 +37,9 @@ m4_define([gegl_stable],
 m4_define([gimp_full_name], [Generic Graphical Library])
 
 # required versions of external libraries
-m4_define([babl_required_version], [0.1.12])
+m4_define([babl_required_version], [0.1.24])
 m4_define([cairo_required_version], [0.0.0])
-m4_define([gdk_pixbuf_required_version], [2.18.0])
+m4_define([gdk_pixbuf_required_version], [2.32.0])
 m4_define([introspection_required_version], [1.32.0])
 m4_define([glib_required_version], [2.36.0])
 m4_define([graphviz_required_version], [0.0.0])
@@ -51,8 +51,7 @@ m4_define([libv4l2_required_version], [1.0.1])
 m4_define([lua_required_version], [5.1.0])
 m4_define([openexr_required_version], [0.0.0])
 m4_define([libraw_required_version], [0.15.4])
-m4_define([pango_required_version], [0.0.0])
-m4_define([pangocairo_required_version], [0.0.0])
+m4_define([pango_required_version], [1.38.0])
 m4_define([png_required_version], [0.0.0])
 m4_define([sdl_required_version], [0.0.0])
 m4_define([libtiff_required_version], [4.0.0])
@@ -721,16 +720,16 @@ AC_ARG_WITH(pangocairo, [  --without-pangocairo    build without pangocairo supp
 
 have_pango="no"
 if test "x$with_pango" != "xno"; then
-  PKG_CHECK_MODULES(PANGO, pango,
+  PKG_CHECK_MODULES(PANGO, pango >= pango_required_version,
     have_pango="yes",
-    have_pango="no  (Pango not found)")
+    have_pango="no  (usable pango not found)")
 fi
 
 have_pangocairo="no"
 if test "x$with_pangocairo" != "xno"; then
-  PKG_CHECK_MODULES(PANGOCAIRO, pangocairo,
+  PKG_CHECK_MODULES(PANGOCAIRO, pangocairo >= pango_required_version,
     have_pangocairo="yes",
-    have_pangocairo="no  (pangocairo not found)")
+    have_pangocairo="no  (usable pangocairo not found)")
 fi
 
 AM_CONDITIONAL(HAVE_PANGO, test "x$have_pango" = "xyes")
@@ -1007,7 +1006,9 @@ PKG_CHECK_MODULES(LUA, lua >= lua_required_version,
   have_lua="yes",
   [PKG_CHECK_MODULES(LUA, lua5.1 >= lua_required_version,
      have_lua="yes",
-     have_lua="no  (usable lua not found)")])
+     [PKG_CHECK_MODULES(LUA, luajit >= 2.0.4,
+      have_lua="yes",
+      have_lua="no  (usable lua not found)")])])
 fi
 
 AM_CONDITIONAL(HAVE_LUA, test "$have_lua" = "yes")
@@ -1268,8 +1269,6 @@ done
 # We should support this at some point if possible
 #LDFLAGS="-Wl,-z,defs"
 
-CFLAGS="$CFLAGS -DG_LOG_DOMAIN=\\\"GEGL-\\\"__FILE__"
-
 dnl bin/node-editors/Makefile
 AC_CONFIG_FILES([
 Makefile
@@ -1322,6 +1321,7 @@ tests/compositions/data/Makefile
 tests/ff-load-save/Makefile
 tests/python/Makefile
 tests/simple/Makefile
+tests/mipmap/Makefile
 tests/xml/Makefile
 tests/xml/data/Makefile
 perf/Makefile

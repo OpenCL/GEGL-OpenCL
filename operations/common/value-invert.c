@@ -47,6 +47,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     value_invert
 #define GEGL_OP_C_SOURCE value-invert.c
 
 #include "gegl-op.h"
@@ -146,6 +147,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:value-invert",
     "title",       _("Value Invert"),
     "categories" , "color",
+    "reference-hash", "489d46de415cb7308b59014449ff76af",
     "description",
         _("Inverts just the value component, the result is the corresponding "
           "'inverted' image."),

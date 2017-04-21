@@ -40,6 +40,7 @@ property_double (pos_y, _("Y position"), 0.5)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     lens_flare
 #define GEGL_OP_C_SOURCE lens-flare.c
 
 #include "gegl-op.h"
@@ -508,6 +509,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:lens-flare",
     "title",       _("Lens Flare"),
     "categories",  "light",
+    "reference-hash", "aaa25d98fa6ab089a74e026ef5cdf45b",
     "license",     "GPL3+",
     "description", _("Adds a lens flare effect."),
     NULL);

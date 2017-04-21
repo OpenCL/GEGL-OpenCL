@@ -43,6 +43,7 @@ typedef struct
   GeglOperationSourceClass parent_class;
 } GeglOpClass;
 
+#define GEGL_OP_NAME raw_load
 #define GEGL_OP_C_SOURCE raw-load.c
 #include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION(GEGL_TYPE_OPERATION_SOURCE)
@@ -64,16 +65,10 @@ static void
 raw_close (GeglProperties *o)
 {
   Private *p = (Private*)o->user_data;
-  if (p->LibRaw != NULL)
-    {
-      if (p->image != NULL)
-      {
-        libraw_dcraw_clear_mem (p->image);
-        p->image = NULL;
-      }
-      libraw_close (p->LibRaw);
-      p->LibRaw = NULL;
-    }
+
+  g_clear_pointer (&p->cached_path, g_free);
+  g_clear_pointer (&p->image, (GDestroyNotify) libraw_dcraw_clear_mem);
+  g_clear_pointer (&p->LibRaw, (GDestroyNotify) libraw_close);
 }
 
 static void
@@ -85,30 +80,40 @@ prepare (GeglOperation *operation)
 
   if (p == NULL)
     {
-      if ((p = g_new0(Private, 1)) == NULL)
-        g_warning ("raw-load: Error creating private structure");
+      p = g_new0(Private, 1);
+      o->user_data = (gpointer)p;
     }
 
-  if (p->cached_path && !strcmp (p->cached_path, o->path))
+  if (p->cached_path && strcmp (p->cached_path, o->path))
   {
      raw_close (o);
   }
 
   if (p->LibRaw == NULL)
     {
-      o->user_data = (gpointer)p;
-      p->LibRaw = NULL;
-      p->image = NULL;
+      g_return_if_fail (p->image == NULL);
 
-      if ((p->LibRaw = libraw_init(0)) == NULL)
+      if ((p->LibRaw = libraw_init(LIBRAW_OPTIONS_NONE)) == NULL)
         g_warning ("raw-load: Error Initializing raw library");
       else
         {
           p->LibRaw->params.shot_select = o->image_num;
     
-          p->LibRaw->params.gamm[0] = 1.0;
-          p->LibRaw->params.gamm[1] = 1.0;
+          p->LibRaw->params.aber[0] = 1.0;
+          p->LibRaw->params.aber[2] = 1.0;
+          p->LibRaw->params.gamm[0] = 1.0 / 2.4;
+          p->LibRaw->params.gamm[1] = 12.92;
+          p->LibRaw->params.bright = 1.0f;
+          p->LibRaw->params.half_size = FALSE;
+          p->LibRaw->params.highlight = 0;
+          p->LibRaw->params.use_auto_wb = TRUE;
+          p->LibRaw->params.use_camera_wb = TRUE;
+          p->LibRaw->params.use_camera_matrix = 1;
+          p->LibRaw->params.output_color = 1;
+          p->LibRaw->params.user_flip = 0;
           p->LibRaw->params.no_auto_bright = 1;
+          p->LibRaw->params.auto_bright_thr = 0.01f;
+          p->LibRaw->params.use_fuji_rotate = -1;
 
           p->LibRaw->params.output_bps = 16;
           p->LibRaw->params.user_qual = o->quality;
@@ -139,13 +144,12 @@ get_bounding_box (GeglOperation *operation)
       p = (Private*)o->user_data;
     }
 
-  if (p != NULL &&
-      p->LibRaw != NULL &&
+  if (p->LibRaw != NULL &&
       (p->LibRaw->progress_flags & LIBRAW_PROGRESS_IDENTIFY)) 
     {
       result.width  = p->LibRaw->sizes.width;
       result.height = p->LibRaw->sizes.height;
-      gegl_operation_set_format (operation, "output", babl_format ("RGB u16"));
+      gegl_operation_set_format (operation, "output", babl_format ("R'G'B' u16"));
     }
 
   return result;
@@ -165,8 +169,7 @@ process (GeglOperation       *operation,
 
   g_assert (p);
 
-  if (p != NULL &&
-      p->LibRaw != NULL)
+  if (p->LibRaw != NULL)
     {
       if (!(p->LibRaw->progress_flags & LIBRAW_PROGRESS_LOAD_RAW))
         {
@@ -190,9 +193,9 @@ process (GeglOperation       *operation,
       rect.height = p->image->height;
 
       if (p->image->colors == 1)
-        format = babl_format ("Y u16");
+        format = babl_format ("Y' u16");
       else // 3 color channels
-        format = babl_format ("RGB u16");
+        format = babl_format ("R'G'B' u16");
 
       gegl_buffer_set (output, &rect, 0, format, p->image->data, GEGL_AUTO_ROWSTRIDE);
       return TRUE;
@@ -244,17 +247,52 @@ gegl_op_class_init (GeglOpClass *klass)
   if (done)
     return;
 
-  /* query libopenraw instead. need a new API */
-  gegl_extension_handler_register_loader (".pef", "gegl:raw-load");
-  gegl_extension_handler_register_loader (".nef", "gegl:raw-load");
-  gegl_extension_handler_register_loader (".raf", "gegl:raw-load");
-  gegl_extension_handler_register_loader (".orf", "gegl:raw-load");
-  gegl_extension_handler_register_loader (".erf", "gegl:raw-load");
-  gegl_extension_handler_register_loader (".mrw", "gegl:raw-load");
-  gegl_extension_handler_register_loader (".crw", "gegl:raw-load");
-  gegl_extension_handler_register_loader (".cr2", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    "image/x-pentax-pef", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".pef", "gegl:raw-load");
 
-  done = TRUE;
+  gegl_operation_handlers_register_loader (
+    "image/x-nikon-nef", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".nef", "gegl:raw-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-fuji-raf", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".raf", "gegl:raw-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-olympus-orf", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".orf", "gegl:raw-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-epson-erf", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".erf", "gegl:raw-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-minolta-mrw", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".mrw", "gegl:raw-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-canon-crw", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".crw", "gegl:raw-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-canon-cr2", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".cr2", "gegl:raw-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-sony-arw", "gegl:raw-load");
+  gegl_operation_handlers_register_loader (
+    ".arw", "gegl:raw-load");
+
+ done = TRUE;
 }
 
 #endif

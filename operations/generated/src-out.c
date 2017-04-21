@@ -41,6 +41,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         src_out
 #define GEGL_OP_C_FILE        "src-out.c"
 
 #include "gegl-op.h"
@@ -121,6 +122,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "svg:src-out",
     "compat-name", "gegl:src-out",
     "title"      , "Src-out",
+    "reference-hash" , "e335ad3a0cea2455e6776244a3f83b1d",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation src-out (d = cA * (1.0f - aB))"),

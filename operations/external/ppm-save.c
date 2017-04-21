@@ -33,6 +33,7 @@ property_int     (bitdepth, _("Bitdepth"), 16)
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME ppm_save
 #define GEGL_OP_C_SOURCE ppm-save.c
 
 #define CHANNEL_COUNT           3
@@ -192,7 +193,8 @@ gegl_op_class_init (GeglOpClass *klass)
         _("PPM image saver (Portable pixmap saver.)"),
         NULL);
 
-  gegl_extension_handler_register_saver (".ppm", "gegl:ppm-save");
+  gegl_operation_handlers_register_saver (
+    ".ppm", "gegl:ppm-save");
 }
 
 #endif

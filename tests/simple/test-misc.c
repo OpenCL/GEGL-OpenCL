@@ -24,18 +24,35 @@
 #define FAILURE -1
 
 static int
+test_misc_case_sensitive_mime_handler (void)
+{
+  gint result = SUCCESS;
+  const gchar *handler = "gegl:foo-handler";
+  const gchar *mime = "image/fooext";
+  const gchar *received_handler = NULL;
+
+  gegl_operation_handlers_register_loader (mime, handler);
+
+  received_handler = gegl_operation_handlers_get_loader (mime);
+  if (! strcmp (received_handler, handler) == 0)
+    result = FAILURE;
+
+  return result;
+}
+
+static int
 test_misc_case_insensitive_extension_handler (void)
 {
   gint result = SUCCESS;
   const gchar *handler = "gegl:foo-handler";
-  const gchar *lowercase = "fooext";
-  const gchar *uppercase = "FOOEXT";
+  const gchar *lowercase = ".fooext";
+  const gchar *uppercase = ".FOOEXT";
   const gchar *received_handler = NULL;
 
-  gegl_extension_handler_register_loader (lowercase, handler);
+  gegl_operation_handlers_register_loader (lowercase, handler);
 
   /* Make sure comparisions are case insensitive */
-  received_handler = gegl_extension_handler_get_loader (uppercase);
+  received_handler = gegl_operation_handlers_get_loader (uppercase);
   if (! strcmp (received_handler, handler) == 0)
     result = FAILURE;
 
@@ -47,14 +64,15 @@ test_misc_save_handler (void)
 {
   gint result = SUCCESS;
   const gchar *handler = "gegl:bar-handler";
-  const gchar *ext = "barext";
+  const gchar *ext = ".barext";
   const gchar *received_handler = NULL;
 
-  gegl_extension_handler_register_saver (ext, handler);
-  received_handler = gegl_extension_handler_get_saver (ext);
+  gegl_operation_handlers_register_saver (ext, handler);
+
+  received_handler = gegl_operation_handlers_get_saver (ext);
   if (! strcmp (received_handler, handler) == 0)
     result = FAILURE;
-  
+
   return result;
 }
 
@@ -62,6 +80,9 @@ test_misc_save_handler (void)
 int main(int argc, char *argv[])
 {
   gint result = SUCCESS;
+
+  if (result == SUCCESS)
+    result = test_misc_case_sensitive_mime_handler ();
 
   if (result == SUCCESS)
     result = test_misc_case_insensitive_extension_handler ();

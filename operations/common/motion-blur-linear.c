@@ -38,6 +38,7 @@ property_double (angle, _("Angle"), 0.0)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     motion_blur_linear
 #define GEGL_OP_C_SOURCE motion-blur-linear.c
 
 #include "gegl-op.h"
@@ -67,7 +68,7 @@ prepare (GeglOperation *operation)
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/motion-blur-linear.cl.h"
 
@@ -328,6 +329,7 @@ gegl_op_class_init (GeglOpClass *klass)
                                  "title",       _("Linear Motion Blur"),
                                  "compat-name", "gegl:motion-blur",
                                  "categories",  "blur",
+                                 "reference-hash", "c15e12f9a5b01c7a8e621774a0ae6ad7",
                                  "description", _("Blur pixels in a direction, simulates blurring caused by moving camera in a straight line during exposure."),
     NULL);
 }

@@ -28,6 +28,7 @@ property_file_path (path, _("File"), "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME ppm_load
 #define GEGL_OP_C_SOURCE ppm-load.c
 
 #define MAX_CHARS_IN_ROW        500
@@ -383,9 +384,20 @@ gegl_op_class_init (GeglOpClass *klass)
     "description",  _("PPM image loader."),
     NULL);
 
-  gegl_extension_handler_register_loader (".ppm", "gegl:ppm-load");
-  gegl_extension_handler_register_loader (".pgm", "gegl:ppm-load");
-  gegl_extension_handler_register_loader (".pnm", "gegl:ppm-load");
+  gegl_operation_handlers_register_loader (
+    "image/x-portable-pixmap", "gegl:ppm-load");
+  gegl_operation_handlers_register_loader (
+    ".ppm", "gegl:ppm-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-portable-graymap:", "gegl:ppm-load");
+  gegl_operation_handlers_register_loader (
+    ".pgm", "gegl:ppm-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/x-portable-anymap", "gegl:ppm-load");
+  gegl_operation_handlers_register_loader (
+    ".pnm", "gegl:ppm-load");
 }
 
 #endif

@@ -29,6 +29,7 @@
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     edge_laplace
 #define GEGL_OP_C_SOURCE edge-laplace.c
 
 #include "gegl-op.h"
@@ -270,7 +271,7 @@ edge_laplace (GeglBuffer          *src,
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/edge-laplace.cl.h"
 
@@ -402,11 +403,12 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:edge-laplace",
-    "title",       _("Laplacian Edge Detection"),
-    "categories",  "edge-detect",
-    "license",     "GPL3+",
-    "description", _("High-resolution edge detection"),
+    "name",           "gegl:edge-laplace",
+    "title",          _("Laplacian Edge Detection"),
+    "categories",     "edge-detect",
+    "license",        "GPL3+",
+    "reference-hash", "b965f78e9ebd7afb421464b211c70f31",
+    "description",    _("High-resolution edge detection"),
     NULL);
 }
 

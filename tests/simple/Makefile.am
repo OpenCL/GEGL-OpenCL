@@ -4,6 +4,8 @@ noinst_PROGRAMS =			\
 	test-buffer-cast		\
 	test-buffer-changes		\
 	test-buffer-extract		\
+	test-buffer-hot-tile	\
+	test-buffer-sharing  	\
 	test-buffer-tile-voiding	\
 	test-change-processor-rect	\
 	test-convert-format		\
@@ -17,9 +19,11 @@ noinst_PROGRAMS =			\
 	test-license-check		\
 	test-misc			\
 	test-node-connections		\
+	test-node-passthrough		\
 	test-node-properties		\
 	test-object-forked		\
 	test-opencl-colors		\
+	test-serialize \
 	test-path			\
 	test-proxynop-processing	\
 	test-scaled-blit		\

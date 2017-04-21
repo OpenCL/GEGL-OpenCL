@@ -2,26 +2,35 @@ TEST ()
 {
   GeglBuffer    *buffer2, *buffer;
   GeglRectangle  bound = {0, 0, 20, 20};
-  //GeglRectangle  source = {2, 2, 5, 5};
-  GeglRectangle  dest = {4, 4, 5, 5};
+  GeglRectangle  dest = {2, 2, 8, 8};
   float *blank = g_malloc0 (100000);
   gchar *temp = g_malloc0 (100000);
   test_start ();
+
 
   buffer2 = gegl_buffer_new (&bound, babl_format ("Y float"));
   buffer = gegl_buffer_new (&bound, babl_format ("Y float"));
 
   vgrad (buffer2);
-  blank[0] = 0.5;
-  blank[1] = 0.25;
-  blank[2] = 1.0;
+#if 1
+  blank[0] = 0.1;
+  blank[1] = 0.3;
+  blank[2] = 0.7;
   blank[3] = 1.0;
-  blank[4] = 1.0;
-  blank[5] = 0.2;
+  blank[4] = 0.1;
+  blank[5] = 0.3;
+  blank[6] = 0.8;
+  blank[7] = 1.0;
+  blank[8] = 0.1;
+  blank[9] = 0.3;
+  blank[10] = 0.7;
+  blank[11] = 1.0;
+  blank[12] = 0.1;
+  blank[13] = 0.3;
+  blank[14] = 0.7;
+  blank[15] = 1.0;
+#endif
 
-  /* we need to expand the width/height to compensate for the level */
-  dest.width  *= 2;
-  dest.height *= 2;
   gegl_buffer_set (buffer2, &dest, 1, babl_format ("Y float"), blank, GEGL_AUTO_ROWSTRIDE);
   print_buffer (buffer2);
 

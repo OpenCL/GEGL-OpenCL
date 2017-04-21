@@ -29,6 +29,7 @@ property_object (buffer, _("Buffer location"), GEGL_TYPE_BUFFER)
 
 #define GEGL_OP_SINK
 #define GEGL_OP_C_SOURCE write-buffer.c
+#define GEGL_OP_NAME     write_buffer
 
 #include "gegl-op.h"
 

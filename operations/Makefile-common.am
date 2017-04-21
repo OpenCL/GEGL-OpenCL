@@ -4,7 +4,7 @@ endif
 
 libgegl = $(top_builddir)/gegl/libgegl-$(GEGL_API_VERSION).la
 
-op_libs = $(DEP_LIBS) $(BABL_LIBS) $(libgegl)
+op_libs = $(DEP_LIBS) $(MATH_LIB) $(BABL_LIBS) $(libgegl)
 
 AM_CPPFLAGS = \
 	-I$(top_builddir) \

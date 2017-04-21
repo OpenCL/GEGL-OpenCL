@@ -49,6 +49,7 @@ property_int  (size, _("Block size"), 1)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     deinterlace
 #define GEGL_OP_C_SOURCE deinterlace.c
 
 #include "gegl-op.h"
@@ -332,6 +333,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "enhance",
     "license",            "GPL3+",
     "position-dependent", "true",
+    "reference-hash",     "663e775f191a41aaf1039b883615d786",
     "description", _("Fix images where every other row or column is missing"),
     NULL);
 }

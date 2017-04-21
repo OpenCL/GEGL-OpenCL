@@ -13,7 +13,8 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2007 Øyvind Kolås
+ * Copyright 2007-2012,2014,2015,2017 Øyvind Kolås
+ *           2015                     Debarshi Ray 
  */
 
 #include "config.h"
@@ -74,6 +75,7 @@ struct _GeglProcessor
   GeglNode        *node;
   GeglNode        *real_node;
   GeglRectangle    rectangle;
+  GeglRectangle    rectangle_unscaled;
   GeglNode        *input;
   gint             level;
   GeglOperationContext *context;
@@ -316,7 +318,14 @@ gegl_processor_set_node (GeglProcessor *processor,
   g_object_notify (G_OBJECT (processor), "node");
 }
 
-
+static void
+set_scaled_rectangle (GeglProcessor *processor)
+{
+  processor->rectangle.x = processor->rectangle_unscaled.x >> processor->level;
+  processor->rectangle.y = processor->rectangle_unscaled.y >> processor->level;
+  processor->rectangle.width = processor->rectangle_unscaled.width >> processor->level;
+  processor->rectangle.height = processor->rectangle_unscaled.height >> processor->level;
+}
 
 
 /* Sets the processor->rectangle to the given rectangle (or the node
@@ -345,7 +354,7 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
 
   /* if the processor's rectangle isn't already set to the node's bounding box,
    * then set it and remove processor->dirty_rectangles (set to NULL)  */
-  if (! gegl_rectangle_equal (&processor->rectangle, rectangle))
+  if (! gegl_rectangle_equal (&processor->rectangle_unscaled, rectangle))
     {
 #if 0
     /* XXX: this is a large penalty hit, so we assume the rectangle
@@ -353,9 +362,10 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       GeglRectangle  bounds;
       bounds               = processor->bounds;/*gegl_node_get_bounding_box (processor->input);*/
 #endif
-      processor->rectangle = *rectangle;
+      processor->rectangle_unscaled = *rectangle;
+      set_scaled_rectangle (processor);
 #if 0
-      gegl_rectangle_intersect (&processor->rectangle, &processor->rectangle, &bounds);
+      gegl_rectangle_intersect (&processor->rectangle_unscaled, &processor->rectangle_unscaled, &bounds);
 #endif
     }
     {
@@ -388,9 +398,9 @@ gegl_processor_set_rectangle (GeglProcessor       *processor,
       gegl_operation_context_set_object (processor->context, "input", G_OBJECT (cache));
 
       gegl_operation_context_set_result_rect (processor->context,
-                                              &processor->rectangle);
+                                              &processor->rectangle_unscaled);
       gegl_operation_context_set_need_rect   (processor->context,
-                                              &processor->rectangle);
+                                              &processor->rectangle_unscaled);
     }
 
   if (processor->valid_region)
@@ -535,7 +545,11 @@ render_rectangle (GeglProcessor *processor)
                               GEGL_AUTO_ROWSTRIDE, GEGL_BLIT_DEFAULT);
 
               /* copy the buffer data into the cache */
-              gegl_buffer_set (GEGL_BUFFER (cache), dr, processor->level, format, buf, GEGL_AUTO_ROWSTRIDE);
+              {
+                gint level = processor->level;
+                GeglRectangle sr = {dr->x >> level, dr->y >> level, dr->width >> level, dr->height >> level };
+                gegl_buffer_set (GEGL_BUFFER (cache), &sr, level, format, buf, GEGL_AUTO_ROWSTRIDE);
+              }
 
               /* tells the cache that the rectangle (dr) has been computed */
               gegl_cache_computed (cache, dr, processor->level);
@@ -848,9 +862,11 @@ void gegl_processor_set_level (GeglProcessor *processor,
                                gint           level)
 {
   processor->level = level;
+  set_scaled_rectangle (processor);
 }
 void gegl_processor_set_scale (GeglProcessor *processor,
                                gdouble        scale)
 {
   processor->level = gegl_level_from_scale (scale);
+  set_scaled_rectangle (processor);
 }

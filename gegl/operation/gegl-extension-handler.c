@@ -19,108 +19,43 @@
 #include "config.h"
 #include <glib.h>
 #include "gegl-extension-handler.h"
-#include "gegl-extension-handler-private.h"
-
-static GHashTable *load_handlers = NULL;
-static GHashTable *save_handlers = NULL;
-
-static void
-gegl_extension_handler_register_util (GHashTable  **handlers,
-                                      const gchar  *extension,
-                                      const gchar  *handler)
-{
-  /* Case fold so we get case insensitive extension comparisions */
-  gchar *ext = g_utf8_casefold (extension, -1);
-
-  if (!*handlers)
-    *handlers = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-
-  g_hash_table_insert (*handlers, ext, g_strdup (handler));
-}
+#include "gegl-operation-handlers.h"
 
 void
 gegl_extension_handler_register (const gchar *extension,
                                  const gchar *handler)
 {
-  gegl_extension_handler_register_loader (extension, handler);
+  gegl_operation_handlers_register_loader (extension, handler);
 }
 
 void
 gegl_extension_handler_register_loader (const gchar *extension,
                                         const gchar *handler)
 {
-  gegl_extension_handler_register_util (&load_handlers, extension, handler);
+  gegl_operation_handlers_register_loader (extension, handler);
 }
 
 void
 gegl_extension_handler_register_saver (const gchar *extension,
                                        const gchar *handler)
 {
-  gegl_extension_handler_register_util (&save_handlers, extension, handler);
-}
-
-static const gchar *
-gegl_extension_handler_get_util (GHashTable *handlers,
-                                 const gchar *extension,
-                                 const gchar *handler_name,
-                                 const gchar *def)
-{
-  const gchar *handler = NULL;
-  gchar *ext = NULL;
-
-  if (!handlers)
-    return NULL;
-
-  /* Case fold so we get case insensitive extension comparisions */
-  ext = g_utf8_casefold (extension, -1);
-  handler = g_hash_table_lookup (handlers, ext);
-  g_free (ext);
-
-  if (handler)
-    return handler;
-
-  g_warning ("No %s for extension \"%s\", falling back to \"%s\"",
-             handler_name, extension, def);
-
-  return def;
+  gegl_operation_handlers_register_saver (extension, handler);
 }
 
 const gchar *
 gegl_extension_handler_get (const gchar *extension)
 {
-  return gegl_extension_handler_get_loader (extension);
+  return gegl_operation_handlers_get_loader (extension);
 }
 
 const gchar *
 gegl_extension_handler_get_loader (const gchar *extension)
 {
-  return gegl_extension_handler_get_util (load_handlers,
-                                          extension,
-                                          "loader",
-                                          "gegl:magick-load");
+  return gegl_operation_handlers_get_loader (extension);
 }
 
 const gchar *
 gegl_extension_handler_get_saver (const gchar *extension)
 {
-  return gegl_extension_handler_get_util (save_handlers,
-                                          extension,
-                                          "saver",
-                                          "gegl:png-save");
-}
-
-void
-gegl_extension_handler_cleanup (void)
-{
-  if (load_handlers)
-    {
-      g_hash_table_destroy (load_handlers);
-      load_handlers = NULL;
-    }
-
-  if (save_handlers)
-    {
-      g_hash_table_destroy (save_handlers);
-      save_handlers = NULL;
-    }
+  return gegl_operation_handlers_get_saver (extension);
 }

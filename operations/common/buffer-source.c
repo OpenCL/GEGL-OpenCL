@@ -28,6 +28,7 @@ property_object (buffer, _("Input buffer"), GEGL_TYPE_BUFFER)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     buffer_source
 #define GEGL_OP_C_SOURCE buffer-source.c
 
 #include "gegl-op.h"
@@ -103,6 +104,10 @@ my_set_property (GObject      *object,
           g_assert (p->buffer_changed_handler > 0);
           g_signal_handler_disconnect (o->buffer, p->buffer_changed_handler);
           /* XXX: should decrement signal connected count */
+
+          buffer_changed (GEGL_BUFFER (o->buffer),
+                          gegl_buffer_get_extent (GEGL_BUFFER (o->buffer)),
+                          operation);
         }
 
       buffer = g_value_get_object (value);
@@ -113,6 +118,9 @@ my_set_property (GObject      *object,
             gegl_buffer_signal_connect (buffer, "changed",
                                         G_CALLBACK (buffer_changed),
                                         operation);
+
+          buffer_changed (buffer, gegl_buffer_get_extent (buffer),
+                          operation);
         }
       break;
 

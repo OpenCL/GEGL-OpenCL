@@ -301,7 +301,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
 #endif
 
   if (linear_buffers == -1)
-    linear_buffers = getenv ("GEGL_LINEAR_BUFFERS")?1:0;
+    linear_buffers = g_getenv ("GEGL_LINEAR_BUFFERS")?1:0;
 
   operation = context->operation;
   node = operation->node; /* <ick */
@@ -311,7 +311,7 @@ gegl_operation_context_get_target (GeglOperationContext *context,
     {
       g_warning ("no format for %s presuming RGBA float\n",
                  gegl_node_get_debug_name (node));
-      format = babl_format ("RGBA float");
+      format = gegl_babl_rgba_linear_float ();
     }
   g_assert (format != NULL);
   g_assert (!strcmp (padname, "output"));

@@ -5,3 +5,4 @@
 /*.lo
 /.deps
 /.libs
+/module.c

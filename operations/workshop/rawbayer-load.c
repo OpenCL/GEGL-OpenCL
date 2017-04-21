@@ -28,6 +28,7 @@ property_string (path, _("File"), "/tmp/test.raw")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     rawbayer_load
 #define GEGL_OP_C_SOURCE rawbayer-load.c
 
 #include "gegl-op.h"
@@ -159,8 +160,10 @@ gegl_op_class_init (GeglOpClass *klass)
           " is apparently buggy)"),
         NULL);
 
-  gegl_extension_handler_register_loader (".rawbayer", "gegl:rawbayer-load");
-  gegl_extension_handler_register_loader (".rawbayerS", "gegl:rawbayer-load");
+  gegl_operation_handlers_register_loader (
+    ".rawbayer", "gegl:rawbayer-load");
+  gegl_operation_handlers_register_loader (
+    ".rawbayerS", "gegl:rawbayer-load");
 }
 
 #endif

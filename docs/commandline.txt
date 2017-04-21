@@ -1,45 +1,23 @@
-//XML data model
-//~~~~~~~~~~~~~~
-//The tree allows clones, making it possible to express any acyclic graph where
-//the nodes are all of the types: source, filter and composer.
-//
-//GEGL can write and reads its data model to and from XML. The XML is chains of
-//image processing commands, where some chains allow a child chain (the 'over'
-//operator to implement layers for instance).
-//
-//The type of operation associated with a node can be specified either with a
-//class attribute or by using the operation name as the tag name for the node.
+gegl commandline
+----------------
 
-gegl
-~~~~
-GEGL provides a commandline tool called gegl, for working with the XML data
-model from file, stdin or the commandline. It can display the result of
-processing the layer tree or save it to file.
+In addition to installing a library, GEGL also installs gegl - a binary/program
+that permits doing image processing from the commandline as well as an aid
+during development of GEGL operations.
 
 Some examples:
 
-Render a composition to a PNG file:
+Render a composition to a PNG file, the composition can be in GEGLs XML format
+or the one-liner friendly terser link:gegl-chain.html[gegl-chain] format.
 
- $ gegl composition.xml -o composition.png
-
-Using gegl with png's passing through stdin/stdout piping.
-
- $ cat input.png | gegl -o - -x "<gegl>
-    <tree>
-      <node class='invert'/>
-      <node class='scale' x='0.5' y='0.5'/>
-      <node class='png-load' path='-'/></tree></gegl>" > output.png
-
-The latest development version is available in the gegl repository in GNOME
-git.
+ $ gegl composition -o composition.png
 
 gegl usage
-^^^^^^^^^^
+~~~~~~~~~~
+
 The following is the usage information of the gegl binary, this documentation
 might not be complete.
 
 -------
 sys::[bash -c '../bin/gegl -h 2>&1']
 -------
-
-

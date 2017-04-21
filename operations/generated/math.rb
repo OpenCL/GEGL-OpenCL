@@ -25,11 +25,11 @@ copyright = '
  */'
 
 a = [
-      ['add',       'result = input + value', 0.0],
-      ['subtract',  'result = input - value', 0.0],
-      ['multiply',  'result = input * value', 1.0],
-      ['divide',    'result = value==0.0f?0.0f:input/value', 1.0],
-      ['gamma',     'result = powf (input, value)', 1.0],
+      ['add',       'result = input + value', 0.0, '7a68e829c08d859a9a5cce3ffc2c91f4'],
+      ['subtract',  'result = input - value', 0.0, '8e8b7b3712ca34b0b358da70c391882f'],
+      ['multiply',  'result = input * value', 1.0, 'c80bb8504f405bb0a5ce2be4fad6af69'],
+      ['divide',    'result = value==0.0f?0.0f:input/value', 1.0, 'c3bd84f8a6b2c03a239f3f832597592c'],
+      ['gamma',     'result = powf (input, value)', 1.0, 'ec7236147d64775ad190fe823ff03f43'],
 #     ['threshold', 'result = c>=value?1.0f:0.0f', 0.5],
 #     ['invert',    'result = 1.0-c']
     ]
@@ -63,6 +63,7 @@ property_double (value, _(\"Value\"), #{item[2]})
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         #{name}
 #define GEGL_OP_C_FILE       \"#{filename}\"
 
 #include \"gegl-op.h\"
@@ -154,6 +155,7 @@ gegl_op_class_init (GeglOpClass *klass)
   \"name\"        , \"gegl:#{name}\",
   \"title\"       , \"#{name.capitalize}\",
   \"categories\"  , \"compositors:math\",
+  \"reference-hash\"  , \"#{item[3]}\",
   \"description\" ,
        _(\"Math operation #{name}, performs the operation per pixel, using either the constant provided in 'value' or the corresponding pixel from the buffer on aux as operands. (formula: #{formula})\"),
        NULL);

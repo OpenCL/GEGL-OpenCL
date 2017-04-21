@@ -418,9 +418,9 @@ __kernel void yf_to_ragabaf (__global const float * in,
 /* -- YA float -- */
 
 /* babl reference file: babl/base/rgb-constants.h */
-#define RGB_LUMINANCE_RED    (0.222491f)
-#define RGB_LUMINANCE_GREEN  (0.716888f)
-#define RGB_LUMINANCE_BLUE   (0.060621f)
+#define RGB_LUMINANCE_RED    (0.22248840f)
+#define RGB_LUMINANCE_GREEN  (0.71690369f)
+#define RGB_LUMINANCE_BLUE   (0.06060791f)
 
 /* RGBA float -> YA float */
 __kernel void rgbaf_to_yaf (__global const float4 * in,

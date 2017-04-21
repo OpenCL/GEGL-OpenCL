@@ -27,6 +27,7 @@
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME            nop
 #define GEGL_OP_C_SOURCE        nop.c
 
 #include "gegl-op.h"

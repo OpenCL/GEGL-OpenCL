@@ -277,9 +277,9 @@ __constant float u8_gamma_to_linear_lut[] = {
 };
 
 /* babl reference file: babl/base/rgb-constants.h */
-#define RGB_LUMINANCE_RED    (0.222491f)
-#define RGB_LUMINANCE_GREEN  (0.716888f)
-#define RGB_LUMINANCE_BLUE   (0.060621f)
+#define RGB_LUMINANCE_RED    (0.22248840f)
+#define RGB_LUMINANCE_GREEN  (0.71690369f)
+#define RGB_LUMINANCE_BLUE   (0.06060791f)
 
 /* R'G'B' u8 -> RGBA float */
 __kernel void rgb_gamma_u8_to_rgbaf (__global const uchar  * in,

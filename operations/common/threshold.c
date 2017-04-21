@@ -25,11 +25,12 @@
 property_double (value, _("Threshold"), 0.5)
     value_range (-200, 200)
     ui_range    (-1, 2)
-    description(_("Scalar threshold level (overriden if an auxiliary input buffer is provided.)."))
+    description(_("Scalar threshold level (overridden if an auxiliary input buffer is provided.)."))
 
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME     threshold
 #define GEGL_OP_C_SOURCE threshold.c
 
 #include "gegl-op.h"
@@ -124,6 +125,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name" ,       "gegl:threshold",
     "title",       _("Threshold"),
     "categories" , "color",
+    "reference-hash", "d20432270a1364932ee88a326a3e26c8",
     "description",
           _("Thresholds the image to white/black based on either the global value "
             "set in the value property, or per pixel from the aux input."),

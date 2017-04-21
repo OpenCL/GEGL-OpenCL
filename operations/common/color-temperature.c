@@ -39,6 +39,7 @@ property_double (intended_temperature, _("Intended temperature"), 6500)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     color_temperature
 #define GEGL_OP_C_SOURCE color-temperature.c
 
 #include "gegl-op.h"
@@ -198,8 +199,8 @@ cl_process (GeglOperation       *op,
    * chanted properties
    */
 
-  GeglProperties   *o         = GEGL_PROPERTIES (op);
-  const gfloat *coeffs    = o->user_data;
+  GeglProperties   *o  = GEGL_PROPERTIES (op);
+  const gfloat *coeffs = o->user_data;
 
   cl_int cl_err = 0;
 
@@ -279,6 +280,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:color-temperature",
     "title",       _("Color Temperature"),
     "categories",  "color",
+    "reference-hash", "36b68887253870c0a48479e9b706b5b4",
     "description", _("Change the color temperature of the image, from an assumed original color temperature to an intended one."),
     "reference-composition", composition,
     NULL);

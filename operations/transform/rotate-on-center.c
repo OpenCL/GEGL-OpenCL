@@ -14,32 +14,37 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2014 Jon Nordby, The Grid <jononor@gmail.com>
- * Copyright 2015 Vilson Vieira, The Grid <vilson@void.cc>
+ *           2015 Vilson Vieira, The Grid <vilson@void.cc>
+ *           2017 Øyvind Kolås
+ *
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
-#ifdef GEGL_CHANT_PROPERTIES
+#ifdef GEGL_PROPERTIES
 
-gegl_chant_double (degrees, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-  _("Angle to rotate (clockwise)"))
-/*
- * Override the original properties' descriptions, informing they are ignored
- * and always set to buffer's center coordinates.
- */
-gegl_chant_double (origin_x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-  _("Ignored. Always uses center of input buffer"))
-gegl_chant_double (origin_y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-  _("Ignored. Always uses center of input buffer"))
+property_double (degrees, _("Degrees"), 0.0)
+    description(_("Angle to rotate (counter-clockwise)"))
+    ui_range (-180.0, 180.0)
+
+property_double (origin_x, _("origin-x") , 0.0)
+    description(_("Ignored. Always uses center of input buffer"))
+property_double (origin_y, _("origin-y") , 0.0)
+    description(_("Ignored. Always uses center of input buffer"))
 
 #else
 
-#define GEGL_CHANT_NAME rotate_on_center
-#define GEGL_CHANT_OPERATION_NAME "gegl:rotate-on-center"
-#define GEGL_CHANT_DESCRIPTION  _("Rotate the buffer around its center, taking care of possible offsets.")
-#define GEGL_CHANT_SELF "rotate-on-center.c"
-#include "chant.h"
+#include "gegl-operation-filter.h"
+#include "transform-core.h"
+#define GEGL_OP_NO_SOURCE
+#define GEGL_OP_Parent  OpTransform
+#define GEGL_OP_PARENT  TYPE_OP_TRANSFORM
+#define GEGL_OP_NAME    rotate_on_center
+#define GEGL_OP_BUNDLE
+#define GEGL_OP_C_FILE  "rotate-on-center.c"
+
+#include "gegl-op.h"
 
 #include <math.h>
 
@@ -100,13 +105,14 @@ generate_matrix (GeglMatrix3 *matrix,
   matrix->coeff [2][2] = 1;
 }
 
+
 static void
 create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
-  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
-  GeglOperation *operation  = GEGL_OPERATION (op);
-  GeglRectangle  in_rect = {0.0,0.0,0.0,0.0};
+  GeglProperties *o = GEGL_PROPERTIES (op);
+  GeglOperation  *operation  = GEGL_OPERATION (op);
+  GeglRectangle   in_rect = {0.0,0.0,0.0,0.0};
 
   if (gegl_operation_source_get_bounding_box (operation, "input"))
     in_rect = *gegl_operation_source_get_bounding_box (operation, "input");
@@ -118,11 +124,31 @@ create_matrix (OpTransform *op,
     in_rect.height = 1;
 
   generate_matrix (matrix,
-                   chant->degrees,
+                   o->degrees,
                    in_rect.width,
                    in_rect.height,
                    in_rect.width,
                    in_rect.height);
+}
+
+#include <stdio.h>
+
+static void
+gegl_op_class_init (GeglOpClass *klass)
+{
+  GeglOperationClass *operation_class;
+  OpTransformClass   *transform_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  transform_class = OP_TRANSFORM_CLASS (klass);
+  transform_class->create_matrix = create_matrix;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name",       "gegl:rotate-on-center",
+    "title",      _("Rotate on center"),
+    "categories", "transform",
+    "description", _("Rotate the buffer around its center, taking care of possible offsets."),
+    NULL);
 }
 
 #endif

@@ -49,6 +49,8 @@ struct _GeglOptions
   gboolean     play;
 
   gdouble      scale;
+
+  gboolean     serialize;
 };
 
 GeglOptions *gegl_options_parse (gint    argc,

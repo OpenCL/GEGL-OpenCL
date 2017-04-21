@@ -34,6 +34,7 @@
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME  soft_dodge
 #define GEGL_OP_C_FILE          "soft-dodge.c"
 
 #include "gegl-op.h"

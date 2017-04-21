@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <glib.h>
 #include "gegl.h"
+#include "gegl/opencl/gegl-cl-init.h"
 
 static long ticks_start;
 
@@ -75,8 +76,13 @@ void do_bench (const gchar *id,
                "use-opencl", opencl,
                NULL);
 
-  if (opencl)
+  if (opencl) {
+    if ( ! gegl_cl_is_accelerated()) {
+      g_print("OpenCL is disabled. Skipping OpenCL test\n");
+      return;
+    }
     suffix = " (OpenCL)";
+  }
 
   // warm up
   test_func(buffer);

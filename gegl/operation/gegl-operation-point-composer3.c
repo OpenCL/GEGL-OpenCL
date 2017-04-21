@@ -24,6 +24,7 @@
 #include "gegl.h"
 #include "gegl-operation-point-composer3.h"
 #include "gegl-operation-context.h"
+#include "gegl-types-internal.h"
 #include "gegl-config.h"
 #include <sys/types.h>
 #include <unistd.h>
@@ -111,8 +112,7 @@ gegl_operation_composer3_process (GeglOperation        *operation,
                                   const GeglRectangle  *result,
                                   gint                  level)
 {
-  GeglOperationComposer3Class *klass    = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
-  GeglOperationClass          *op_class = GEGL_OPERATION_CLASS (klass);
+  GeglOperationComposer3Class *klass   = GEGL_OPERATION_COMPOSER3_GET_CLASS (operation);
   GeglBuffer                  *input;
   GeglBuffer                  *aux;
   GeglBuffer                  *aux2;
@@ -131,18 +131,11 @@ gegl_operation_composer3_process (GeglOperation        *operation,
     return TRUE;
   }
 
-  input = gegl_operation_context_get_source (context, "input");
-
-  if (op_class->want_in_place && 
-      gegl_can_do_inplace_processing (operation, input, result))
-    {
-      output = g_object_ref (input);
-      gegl_operation_context_take_object (context, "output", G_OBJECT (output));
-    }
-  else
-    {
-      output = gegl_operation_context_get_target (context, "output");
-    }
+  input  = gegl_operation_context_get_source (context, "input");
+  output = gegl_operation_context_get_output_maybe_in_place (operation,
+                                                             context,
+                                                             input,
+                                                             result);
 
   aux   = gegl_operation_context_get_source (context, "aux");
   aux2  = gegl_operation_context_get_source (context, "aux2");
@@ -185,7 +178,7 @@ G_DEFINE_TYPE (GeglOperationPointComposer3, gegl_operation_point_composer3, GEGL
 
 static void prepare (GeglOperation *operation)
 {
-  const Babl *format = babl_format ("RGBA float");
+  const Babl *format = gegl_babl_rgba_linear_float ();
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "aux", format);
   gegl_operation_set_format (operation, "aux2", format);
@@ -227,6 +220,15 @@ gegl_operation_point_composer3_process (GeglOperation       *operation,
   const Babl *aux2_format = gegl_operation_get_format (operation, "aux2");
   const Babl *out_format  = gegl_operation_get_format (operation, "output");
 
+  GeglRectangle scaled_result = *result;
+  if (level)
+  {
+    scaled_result.x >>= level;
+    scaled_result.y >>= level;
+    scaled_result.width >>= level;
+    scaled_result.height >>= level;
+    result = &scaled_result;
+  }
 
   if ((result->width > 0) && (result->height > 0))
     {

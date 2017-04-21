@@ -366,7 +366,7 @@ gegl_graph_get_shared_empty (GeglGraphTraversal *path)
   if (!path->shared_empty)
     {
       path->shared_empty = gegl_buffer_new_ram (GEGL_RECTANGLE (0, 0, 0, 0),
-                                                babl_format ("RGBA float"));
+                                                gegl_babl_rgba_linear_float ());
       gegl_object_set_has_forked (G_OBJECT (path->shared_empty));
     }
   return path->shared_empty;

@@ -218,5 +218,4 @@ gboolean gegl_buffer_scan_compatible (GeglBuffer *bufferA,
       (coordinate) / (stride):\
       ((((coordinate) + 1) /(stride)) - 1))
 
-
 #endif

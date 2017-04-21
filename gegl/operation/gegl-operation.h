@@ -154,8 +154,6 @@ struct _GeglOperationClass
   gpointer      pad[9];
 };
 
-
-
 GeglRectangle   gegl_operation_get_invalidated_by_change
                                              (GeglOperation *operation,
                                               const gchar   *input_pad,
@@ -297,6 +295,8 @@ gboolean  gegl_object_get_has_forked      (GObject *object);
  * dispatch.
  */
 guchar    *gegl_temp_buffer (int no, int min_size);
+
+void       gegl_operation_progress (GeglOperation *operation, gdouble progress, gchar *message);
 
 G_END_DECLS
 

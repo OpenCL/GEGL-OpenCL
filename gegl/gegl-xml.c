@@ -28,6 +28,7 @@
 #include "property-types/gegl-paramspecs.h"
 #include "gegl-instrument.h"
 #include "gegl-xml.h"
+#include "gegl-audio-fragment.h"
 
 #ifdef G_OS_WIN32
 #define realpath(a, b)    _fullpath (b, a, _MAX_PATH)
@@ -89,6 +90,11 @@ static void param_set (ParseData   *pd,
     {
       g_object_set (new, param_name, param_value, NULL);
     }
+  else if (!strcmp (param_name, "opi"))
+    {
+      /* should check if it is compatible with runtime version of op..
+       */
+    }
   else if (!strcmp (param_name, "id"))
     {
       g_hash_table_insert (pd->ids, g_strdup (param_value), new);
@@ -123,7 +129,6 @@ set_clone_prop_as_well:
           else
             {
               gchar * absolute_path;
-              gchar   temp_path[PATH_MAX];
               if (pd->path_root)
                 {
                   buf = g_strdup_printf ("%s/%s", pd->path_root, param_value);
@@ -133,11 +138,12 @@ set_clone_prop_as_well:
                   buf = g_strdup_printf ("./%s", param_value);
                 }
 
-              absolute_path = realpath (buf, temp_path);
+              absolute_path = realpath (buf, NULL);
               g_free (buf);
               if (absolute_path)
                 {
                   gegl_node_set (new, param_name, absolute_path, NULL);
+                  free (absolute_path);
                 }
               else
                 {
@@ -930,6 +936,12 @@ serialize_properties (SerializeState *ss,
               else
                 value = "";
               xml_param (ss, indent + 2, properties[i]->name, value);
+            }
+          else if (properties[i]->value_type == GEGL_TYPE_AUDIO_FRAGMENT)
+            {
+            }
+          else if (properties[i]->value_type == GEGL_TYPE_BUFFER)
+            {
             }
           else
             {

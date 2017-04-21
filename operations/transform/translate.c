@@ -14,34 +14,65 @@
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
  * Copyright 2006 Philip Lafleur
+ *           2017 Øyvind Kolås
  */
 
 #include "config.h"
 #include <glib/gi18n-lib.h>
 
+#ifdef GEGL_PROPERTIES
 
-#ifdef GEGL_CHANT_PROPERTIES
+property_double (x, _("X"), 0.0)
+    description (_("Horizontal translation"))
+    ui_range (-1000.0, 1000.0)
 
-gegl_chant_double (x, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                   _("Horizontal translation"))
-gegl_chant_double (y, -G_MAXDOUBLE, G_MAXDOUBLE, 0.0,
-                   _("Vertical translation"))
+property_double (y, _("Y"), 0.0)
+    description (_("Vertical translation"))
+    ui_range (-1000.0, 1000.0)
 
 #else
 
-#define GEGL_CHANT_NAME translate
-#define GEGL_CHANT_DESCRIPTION  _("Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used")
-#define GEGL_CHANT_SELF "translate.c"
-#include "chant.h"
+#include "gegl-operation-filter.h"
+#include "transform-core.h"
+#define GEGL_OP_NO_SOURCE
+#define GEGL_OP_Parent  OpTransform
+#define GEGL_OP_PARENT  TYPE_OP_TRANSFORM
+#define GEGL_OP_NAME    translate
+#define GEGL_OP_BUNDLE
+#define GEGL_OP_C_FILE  "translate.c"
+
+#include "gegl-op.h"
+
+#include <math.h>
 
 static void
 create_matrix (OpTransform *op,
                GeglMatrix3 *matrix)
 {
-  GeglChantOperation *chant = GEGL_CHANT_OPERATION (op);
+  GeglProperties *o = GEGL_PROPERTIES (op);
 
-  matrix->coeff [0][2] = chant->x;
-  matrix->coeff [1][2] = chant->y;
+  matrix->coeff [0][2] = o->x;
+  matrix->coeff [1][2] = o->y;
+}
+
+#include <stdio.h>
+
+static void
+gegl_op_class_init (GeglOpClass *klass)
+{
+  GeglOperationClass *operation_class;
+  OpTransformClass   *transform_class;
+
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  transform_class = OP_TRANSFORM_CLASS (klass);
+  transform_class->create_matrix = create_matrix;
+
+  gegl_operation_class_set_keys (operation_class,
+    "name", "gegl:translate",
+    "title", _("Translate"),
+    "categories", "transform",
+    "description", _("Repositions the buffer (with subpixel precision), if integer coordinates are passed a fast-path without resampling is used"),
+    NULL);
 }
 
 #endif

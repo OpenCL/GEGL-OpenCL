@@ -267,3 +267,10 @@ static void
 gegl_config_init (GeglConfig *self)
 {
 }
+
+#undef  gegl_config_threads
+int gegl_config_threads(void);
+int gegl_config_threads(void)
+{
+  return _gegl_threads;
+}
