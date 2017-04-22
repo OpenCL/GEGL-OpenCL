@@ -134,6 +134,9 @@ float spachrotyze (
   int in = 0;
   float old_acc = 0.0;
 
+  x += period * 2;
+  y += period * 2;
+
   for (int i = 0; i < max_aa_samples ; i++)
   {
     xi = fmodf (xi + 0.618033988749854, 1.0);
