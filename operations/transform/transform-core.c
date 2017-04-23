@@ -413,7 +413,8 @@ gegl_transform_is_composite_node (OpTransform *transform)
 
   source = gegl_node_get_gegl_operation (source_node);
 
-  return (IS_OP_TRANSFORM (source) && transform->sampler == OP_TRANSFORM (source)->sampler);
+  return (IS_OP_TRANSFORM (source) &&
+          gegl_transform_is_intermediate_node (OP_TRANSFORM (source)));
 }
 
 static void
