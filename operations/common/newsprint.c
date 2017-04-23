@@ -46,7 +46,7 @@ property_enum (pattern, _("Pattern"),
 
 property_double (period, _("Period"), 12.0)
                  value_range (0.0, 200.0)
-                 description (_("The nubmer of pixels across one repetition of abase pattern at base resolution."))
+                 description (_("The number of pixels across one repetition of a base pattern at base resolution."))
 
 property_double (turbulence, _("Turbulence"), 0.0)
                  value_range (0.0, 1.0)  // rename to wave-pinch or period-pinch?
