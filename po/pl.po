@@ -8,14 +8,12 @@
 # Piotr Drąg <piotrdrag@gmail.com>, 2011-2017.
 # Aviary.pl <community-poland@mozilla.org>, 2011-2017.
 #
-#. rename to wave-pinch or period-pinch?
-#: ../operations/common/newsprint.c:52
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-02 10:03+0200\n"
-"PO-Revision-Date: 2017-04-02 10:04+0200\n"
+"POT-Creation-Date: 2017-04-23 20:47+0200\n"
+"PO-Revision-Date: 2017-04-23 20:48+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -25,17 +23,17 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
-#: ../bin/gegl.c:160
+#: ../bin/gegl.c:174
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Nie można odczytać pliku: %s"
 
-#: ../bin/gegl.c:205
+#: ../bin/gegl.c:222
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Nieprawidłowy wykres, przerywanie.\n"
 
-#: ../bin/gegl.c:361 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:378 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Nieznany tryb GeglOption: %d"
@@ -465,6 +463,7 @@ msgstr ""
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:38
+#: ../operations/workshop/spiral.c:37
 msgid "Radius"
 msgstr "Promień"
 
@@ -827,7 +826,7 @@ msgstr ""
 #: ../operations/external/svg-load.c:30 ../operations/external/text.c:58
 #: ../operations/external/v4l.c:28 ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
-#: ../operations/workshop/external/v4l2.c:26
+#: ../operations/workshop/external/v4l2.c:26 ../operations/workshop/spiral.c:68
 msgid "Width"
 msgstr "Szerokość"
 
@@ -846,7 +845,7 @@ msgstr "Pozioma szerokość pikseli komórek"
 #: ../operations/external/svg-load.c:32 ../operations/external/text.c:60
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/line-profile.c:41
-#: ../operations/workshop/external/v4l2.c:28
+#: ../operations/workshop/external/v4l2.c:28 ../operations/workshop/spiral.c:76
 msgid "Height"
 msgstr "Wysokość"
 
@@ -866,18 +865,18 @@ msgstr ""
 "Pionowe przesunięcie (od początku układu współrzędnych) dla początku siatki"
 
 #: ../operations/common/checkerboard.c:53 ../operations/common/sinus.c:59
-#: ../operations/workshop/gradient-map.c:26
+#: ../operations/workshop/gradient-map.c:26 ../operations/workshop/spiral.c:62
 msgid "Color 1"
-msgstr "Kolor 1"
+msgstr "1. kolor"
 
 #: ../operations/common/checkerboard.c:54
 msgid "The first cell color"
 msgstr "Kolor pierwszej komórki"
 
 #: ../operations/common/checkerboard.c:57 ../operations/common/sinus.c:61
-#: ../operations/workshop/gradient-map.c:28
+#: ../operations/workshop/gradient-map.c:28 ../operations/workshop/spiral.c:65
 msgid "Color 2"
-msgstr "Kolor 2"
+msgstr "2. kolor"
 
 #: ../operations/common/checkerboard.c:58
 msgid "The second cell color"
@@ -992,7 +991,7 @@ msgid "Change to this"
 msgstr "Zmiana na to"
 
 #: ../operations/common/color-rotate.c:40
-#: ../operations/common/color-rotate.c:53
+#: ../operations/common/color-rotate.c:53 ../operations/workshop/spiral.c:53
 msgid "Clockwise"
 msgstr "Zgodnie z ruchem wskazówek zegara"
 
@@ -1623,11 +1622,11 @@ msgstr "Napraw obrazy, w których brakuje co drugiego rzędu lub kolumny"
 
 #: ../operations/common/difference-of-gaussians.c:24
 msgid "Radius 1"
-msgstr "Promień 1"
+msgstr "1. promień"
 
 #: ../operations/common/difference-of-gaussians.c:29
 msgid "Radius 2"
-msgstr "Promień 2"
+msgstr "2. promień"
 
 #: ../operations/common/difference-of-gaussians.c:86
 msgid "Difference of Gaussians"
@@ -1732,13 +1731,13 @@ msgstr "Polaryzacja"
 
 #: ../operations/common/diffraction-patterns.c:79
 #: ../operations/common/noise-solid.c:65 ../operations/common/plasma.c:55
-#: ../operations/common/sinus.c:78
+#: ../operations/common/sinus.c:78 ../operations/workshop/spiral.c:69
 msgid "Width of the generated buffer"
 msgstr "Szerokość tworzonego bufora"
 
 #: ../operations/common/diffraction-patterns.c:87
 #: ../operations/common/noise-solid.c:73 ../operations/common/plasma.c:63
-#: ../operations/common/sinus.c:86
+#: ../operations/common/sinus.c:86 ../operations/workshop/spiral.c:77
 msgid "Height of the generated buffer"
 msgstr "Wysokość tworzonego bufora"
 
@@ -1932,6 +1931,7 @@ msgstr ""
 #: ../operations/transform/scale-size.c:25
 #: ../operations/transform/scale-size-keepaspect.c:25
 #: ../operations/transform/shear.c:25 ../operations/transform/translate.c:25
+#: ../operations/workshop/spiral.c:25
 msgid "X"
 msgstr "X"
 
@@ -1947,7 +1947,7 @@ msgstr "Poziome przesunięcie cienia"
 #: ../operations/transform/scale-size.c:30
 #: ../operations/transform/scale-size-keepaspect.c:30
 #: ../operations/transform/shear.c:29 ../operations/transform/transform.c:24
-#: ../operations/transform/translate.c:29
+#: ../operations/transform/translate.c:29 ../operations/workshop/spiral.c:31
 msgid "Y"
 msgstr "Y"
 
@@ -1970,7 +1970,7 @@ msgstr "Kolor cienia (domyślnie „black” — czarny)"
 msgid "Opacity"
 msgstr "Krycie"
 
-#: ../operations/common/dropshadow.c:112
+#: ../operations/common/dropshadow.c:114
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Tworzy efekt cienia na buforze wejściowym"
 
@@ -2254,7 +2254,7 @@ msgstr "Spider"
 
 #: ../operations/common/fractal-explorer.c:44
 msgid "Man O War"
-msgstr "Man'o'war"
+msgstr "Man O’ War"
 
 #: ../operations/common/fractal-explorer.c:46
 #: ../operations/external/matting-levin.c:37
@@ -2666,11 +2666,11 @@ msgstr "Uwydatnia drobne szczegóły."
 
 #: ../operations/common/illusion.c:28
 msgid "Type 1"
-msgstr "Typ 1"
+msgstr "1. typ"
 
 #: ../operations/common/illusion.c:29
 msgid "Type 2"
-msgstr "Typ 2"
+msgstr "2. typ"
 
 #: ../operations/common/illusion.c:32
 msgid "Division"
@@ -2742,6 +2742,7 @@ msgstr "Wielkość"
 
 #: ../operations/common/image-gradient.c:28
 #: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
+#: ../operations/workshop/spiral.c:57
 msgid "Direction"
 msgstr "Kierunek"
 
@@ -2969,7 +2970,7 @@ msgstr "Liniowe renderowanie gradientów"
 msgid "Path of file to load."
 msgstr "Ścieżka pliku do wczytania."
 
-#: ../operations/common/magick-load.c:138
+#: ../operations/common/magick-load.c:145
 msgid "Image Magick wrapper using the png op."
 msgstr "Wrapper programu Image Magick używający działania png."
 
@@ -3350,6 +3351,7 @@ msgstr ""
 #: ../operations/common/motion-blur-circular.c:52
 #: ../operations/common/motion-blur-linear.c:33
 #: ../operations/common/ripple.c:43 ../operations/workshop/linear-sinusoid.c:66
+#: ../operations/workshop/spiral.c:47
 msgid "Angle"
 msgstr "Kąt"
 
@@ -3457,15 +3459,28 @@ msgstr "używany deseń rastra/punktu"
 msgid "Period"
 msgstr "Okres"
 
-#: ../operations/common/newsprint.c:50 ../operations/common/plasma.c:36
+#: ../operations/common/newsprint.c:49
+msgid ""
+"The number of pixels across one repetition of a base pattern at base "
+"resolution."
+msgstr ""
+"Liczba pikseli wzdłuż jednego powtórzenia podstawowego desenia w podstawowej "
+"rozdzielczości."
+
+#: ../operations/common/newsprint.c:51 ../operations/common/plasma.c:36
 msgid "Turbulence"
 msgstr "Turbulencje"
 
-#: ../operations/common/newsprint.c:54
+#. rename to wave-pinch or period-pinch?
+#: ../operations/common/newsprint.c:53
+msgid "Color saturation dependent compression of period"
+msgstr "Kompresja okresu zależna od nasycenia koloru"
+
+#: ../operations/common/newsprint.c:55
 msgid "Blocksize"
 msgstr "Rozmiar bloku"
 
-#: ../operations/common/newsprint.c:56
+#: ../operations/common/newsprint.c:57
 msgid ""
 "number of periods per tile, this tiling avoids high frequency anomaly that "
 "angleboost causes"
@@ -3473,11 +3488,11 @@ msgstr ""
 "liczba okresów na kafel, to kafelkowanie unika anomalii "
 "wysokoczęstotliwościowych powodowanych przez wzmocnienie kąta"
 
-#: ../operations/common/newsprint.c:58
+#: ../operations/common/newsprint.c:59
 msgid "Angleboost"
 msgstr "Wzmocnienie kąta"
 
-#: ../operations/common/newsprint.c:60
+#: ../operations/common/newsprint.c:61
 msgid ""
 "multiplication factor for desired rotation of the local space for texture, "
 "the way this is computed makes it weak for desaturated colors and possibly "
@@ -3487,31 +3502,31 @@ msgstr ""
 "sposób obliczania sprawia, że odbarwione kolory są słabe, a miejsca "
 "z kolorami mogą być mocniejsze."
 
-#: ../operations/common/newsprint.c:62
+#: ../operations/common/newsprint.c:63
 msgid "Black and green angle"
 msgstr "Kąt czarny i zielony"
 
-#: ../operations/common/newsprint.c:65
+#: ../operations/common/newsprint.c:66
 msgid "angle offset for patterns"
 msgstr "przesunięcie kąta dla deseni"
 
-#: ../operations/common/newsprint.c:67
+#: ../operations/common/newsprint.c:68
 msgid "Red and cyan angle"
 msgstr "Kąt czerwony i niebieskozielony"
 
-#: ../operations/common/newsprint.c:71
+#: ../operations/common/newsprint.c:72
 msgid "Blue and magenta angle"
 msgstr "Kąt niebieski i purpurowy"
 
-#: ../operations/common/newsprint.c:75
+#: ../operations/common/newsprint.c:76
 msgid "Yellow angle"
 msgstr "Kąt żółty"
 
-#: ../operations/common/newsprint.c:499
+#: ../operations/common/newsprint.c:536
 msgid "Newsprint"
 msgstr "Papier gazetowy"
 
-#: ../operations/common/newsprint.c:503
+#: ../operations/common/newsprint.c:540
 msgid "Digital halftoning with optional modulations. "
 msgstr "Cyfrowy raster z opcjonalnymi modulacjami. "
 
@@ -3933,11 +3948,11 @@ msgstr ""
 msgid "Image resampling method to use"
 msgstr "Używana metoda resamplingu obrazów"
 
-#: ../operations/common/panorama-projection.c:539
+#: ../operations/common/panorama-projection.c:540
 msgid "Panorama Projection"
 msgstr "Rzut panoramy"
 
-#: ../operations/common/panorama-projection.c:544
+#: ../operations/common/panorama-projection.c:545
 msgid ""
 "Perform an equilinear/gnomonic or little planet/stereographic projection of "
 "an equirectangular input image."
@@ -7195,35 +7210,35 @@ msgstr "Działanie mieszania obrazu „subtractive” (<tt>c = cA+cB-1.0</tt>)"
 
 #: ../operations/workshop/gradient-map.c:27
 msgid "Stop 1"
-msgstr "Zatrzymanie 1"
+msgstr "1. zatrzymanie"
 
 #: ../operations/workshop/gradient-map.c:29
 msgid "Stop 2"
-msgstr "Zatrzymanie 2"
+msgstr "2. zatrzymanie"
 
 #: ../operations/workshop/gradient-map.c:30
 msgid "Color 3"
-msgstr "Kolor 3"
+msgstr "3. kolor"
 
 #: ../operations/workshop/gradient-map.c:31
 msgid "Stop 3"
-msgstr "Zatrzymanie 3"
+msgstr "3. zatrzymanie"
 
 #: ../operations/workshop/gradient-map.c:32
 msgid "Color 4"
-msgstr "Kolor 4"
+msgstr "4. kolor"
 
 #: ../operations/workshop/gradient-map.c:33
 msgid "Stop 4"
-msgstr "Zatrzymanie 4"
+msgstr "4. zatrzymanie"
 
 #: ../operations/workshop/gradient-map.c:34
 msgid "Color 5"
-msgstr "Kolor 5"
+msgstr "5. kolor"
 
 #: ../operations/workshop/gradient-map.c:35
 msgid "Stop 5"
-msgstr "Zatrzymanie 5"
+msgstr "5. zatrzymanie"
 
 #: ../operations/workshop/gradient-map.c:245
 msgid "Gradient Map"
@@ -7465,3 +7480,43 @@ msgstr "Wykonuje korekcję cieni i podświetleń"
 #: ../operations/workshop/shadows-highlights-correction.c:246
 msgid "Lighten shadows and darken highlights"
 msgstr "Rozjaśnij cienie i przyciemnij podświetlenia"
+
+#: ../operations/workshop/spiral.c:26
+msgid "Spiral origin X coordinate"
+msgstr "Początkowa współrzędna spirali na osi X"
+
+#: ../operations/workshop/spiral.c:32
+msgid "Spiral origin Y coordinate"
+msgstr "Początkowa współrzędna spirali na osi Y"
+
+#: ../operations/workshop/spiral.c:38
+msgid "Spiral radius"
+msgstr "Promień spirali"
+
+#: ../operations/workshop/spiral.c:43
+msgid "Thickness"
+msgstr "Grubość"
+
+#: ../operations/workshop/spiral.c:44
+msgid "Spiral thickness, as a fraction of the radius"
+msgstr "Grubość spirali jako ułamek promienia"
+
+#: ../operations/workshop/spiral.c:48
+msgid "Spiral start angle"
+msgstr "Kąt początkowy spirali"
+
+#: ../operations/workshop/spiral.c:54
+msgid "Counter-clockwise"
+msgstr "Przeciwnie do ruchu wskazówek zegara"
+
+#: ../operations/workshop/spiral.c:60
+msgid "Spiral swirl direction"
+msgstr "Kierunek wiru spirali"
+
+#: ../operations/workshop/spiral.c:278
+msgid "Spiral"
+msgstr "Spirala"
+
+#: ../operations/workshop/spiral.c:282
+msgid "Spiral renderer"
+msgstr "Rysowanie spirali"
