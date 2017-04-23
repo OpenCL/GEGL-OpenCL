@@ -179,9 +179,11 @@ float spachrotyze (
           float ay = fabsf (qphase ) ;
           float v = 0.0;
 
-          if  (ax + ay > 0.666)
+          if  (ax + ay > 1.0)
           {
-            v = 2.0 - sqrtf((1.0-ay) * (1.0-ay) + (1.0-ax) * (1.0-ax));
+            ay = 1.0 - ay;
+            ax = 1.0 - ax;
+            v = 2.0 - sqrtf (ay * ay + ax * ax);
           }
           else
           {
@@ -215,6 +217,37 @@ static inline double degrees_to_radians (double degrees)
 {
   return degrees * (2 * G_PI / 360.0);
 }
+
+#if 0
+-- threshold filter
+
+level = 0.5
+
+for y=0, height-1 do
+	for x=0, width-1 do
+		ax = (x / width) * 2 - 1
+		ay = (y / height) * 2 - 1
+		if ax < 0 then ax = -ax end
+		if ay < 0 then ay = -ay end
+		v = ax * ay
+
+		if false then
+		if ax + ay > 1.0 then
+		  ax = 1.0 - ax
+		  ay = 1.0 - ay
+	  --  v = (2.0 - math.sqrt((1.0-ay) * (1.0-ay) + (1.0-ax) * (1.0-ax)))/2
+          v = (math.sqrt(ax * ax + ay * ay)/2)
+
+		else
+          v = 1.0-math.sqrt(ax * ax + ay * ay)/2
+		end
+		end
+		set_value (x,y,v)
+	end
+	progress (y/height)
+end
+
+#endif
 
 
 static gboolean
