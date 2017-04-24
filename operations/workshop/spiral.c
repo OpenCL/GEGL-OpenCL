@@ -40,12 +40,12 @@ property_double (radius, _("Radius"), 100.0)
   ui_range    (1.0, 400.0)
   ui_meta     ("unit", "pixel-distance")
 
-property_double (thickness, _("Thickness"), 0.5)
-  description (_("Spiral thickness, as a fraction of the radius"))
-  value_range (0.0, 1.0)
+property_double (balance, _("Balance"), 0.0)
+  description (_("Area balance between the two colors"))
+  value_range (-1.0, 1.0)
 
-property_double (angle, _("Angle"), 0.0)
-  description (_("Spiral start angle"))
+property_double (rotation, _("Rotation"), 0.0)
+  description (_("Spiral rotation"))
   value_range (0.0, 360.0)
   ui_meta     ("unit", "degree")
 
@@ -90,6 +90,8 @@ property_int    (height, _("Height"), 768)
 #include "gegl-op.h"
 #include <math.h>
 
+#define RAD_TO_REV ((gfloat) (1.0 / (2.0 * G_PI)))
+
 static void
 prepare (GeglOperation *operation)
 {
@@ -108,11 +110,11 @@ blend (const gfloat *color1,
        gfloat        a,
        gfloat       *result)
 {
-  if (a == 0.0)
+  if (a == 0.0f)
     {
       memcpy (result, color1, 4 * sizeof (gfloat));
     }
-  else if (a == 1.0)
+  else if (a == 1.0f)
     {
       memcpy (result, color2, 4 * sizeof (gfloat));
     }
@@ -147,18 +149,19 @@ process (GeglOperation       *operation,
   GeglProperties      *o         = GEGL_PROPERTIES (operation);
   const Babl          *format    = babl_format ("R'G'B'A float");
   gfloat              *dest      = out_buf;
-  gdouble              radius    = o->radius;
-  gdouble              thickness = o->thickness;
-  gdouble              angle     = o->angle / 360.0;
-  gboolean             clockwise = o->direction == GEGL_SPIRAL_DIRECTION_CLOCKWISE;
-  gdouble              lim;
-  gfloat               color1[4];
-  gfloat               color2[4];
-  gdouble              x0;
-  gdouble              x;
-  gdouble              y;
-  gint                 i;
-  gint                 j;
+  gfloat              scale     = 1.0 / (1 << level);
+  gfloat              radius    = scale * o->radius;
+  gfloat              thickness = (1.0 - o->balance) / 2.0;
+  gfloat              angle     = o->rotation / 360.0;
+  gboolean            clockwise = o->direction == GEGL_SPIRAL_DIRECTION_CLOCKWISE;
+  gfloat              lim;
+  gfloat              color1[4];
+  gfloat              color2[4];
+  gfloat              x0;
+  gfloat              x;
+  gfloat              y;
+  gint                i;
+  gint                j;
 
   if (thickness <= 0.5)
     {
@@ -192,61 +195,61 @@ process (GeglOperation       *operation,
 
   angle += thickness / 2.0;
 
-  x0 = roi->x - gegl_coordinate_relative_to_pixel (o->x, o->width);
-  y  = roi->y - gegl_coordinate_relative_to_pixel (o->y, o->height);
+  angle = fmodf (angle + 0.5, 1.0) - 0.5;
+
+  x0 = roi->x - scale * gegl_coordinate_relative_to_pixel (o->x, o->width);
+  y  = roi->y - scale * gegl_coordinate_relative_to_pixel (o->y, o->height);
 
   for (j = roi->height; j; j--, y++)
     {
-      gdouble y2 = y * y;
-
       x = x0;
 
       for (i = roi->width; i; i--, x++)
         {
-          gdouble x2 = x * x;
-          gdouble r;
-          gdouble t;
-          gdouble s;
-          gdouble a;
+          gfloat r;
+          gfloat t;
+          gfloat s;
+          gfloat a;
 
-          r = sqrt (x2 + y2);
-          t = atan2 (clockwise ? y : -y, x) / (2.0 * G_PI) - angle;
+          r = sqrtf (x * x + y * y);
+          t = RAD_TO_REV * atan2f (clockwise ? y : -y, x) - angle;
 
-          t = fmod (t + 2.0, 1.0);
+          t += t < 0.0f;
+
           s = t * radius;
 
           if (r >= s)
             {
-              r = fmod (r - s, radius);
+              r = fmodf (r - s, radius);
 
-              if (r < 0.5)
-                a = MIN (lim, r + 0.5);
-              else if (r > radius - 0.5)
-                a = MAX (lim - (r - 0.5), 0.0) + MIN (lim, (r + 0.5) - radius);
+              if (r < 0.5f)
+                a = MIN (lim, r + 0.5f);
+              else if (r > radius - 0.5f)
+                a = MAX (lim - (r - 0.5f), 0.0f) + MIN (lim, (r + 0.5f) - radius);
               else
-                a = CLAMP (lim - (r - 0.5), 0.0, 1.0);
+                a = CLAMP (lim - (r - 0.5f), 0.0f, 1.0f);
             }
           else
             {
-              gdouble l = lim - (radius - s);
+              gfloat l = lim - (radius - s);
 
-              if (t <= 0.5)
+              if (t <= 0.5f)
                 {
-                  if (r < 0.5)
-                    a = CLAMP (l + radius / 2.0, 0.0, 0.5 - r);
+                  if (r < 0.5f)
+                    a = CLAMP (l + radius / 2.0f, 0.0f, 0.5f - r);
                   else
-                    a = 0.0;
+                    a = 0.0f;
                 }
               else
                 {
-                  if (r < 0.5)
-                    a = CLAMP (l, 0.0, r + 0.5);
+                  if (r < 0.5f)
+                    a = CLAMP (l, 0.0f, r + 0.5f);
                   else
-                    a = CLAMP (l - (r - 0.5), 0.0, 1.0);
+                    a = CLAMP (l - (r - 0.5f), 0.0f, 1.0f);
                 }
 
-              if (r > s - 0.5)
-                a += MIN (lim, (r + 0.5) - s);
+              if (r > s - 0.5f)
+                a += MIN (lim, (r + 0.5f) - s);
             }
 
           blend (color2, color1, a, dest);
