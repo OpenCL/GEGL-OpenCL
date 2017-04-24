@@ -149,19 +149,19 @@ process (GeglOperation       *operation,
   GeglProperties      *o         = GEGL_PROPERTIES (operation);
   const Babl          *format    = babl_format ("R'G'B'A float");
   gfloat              *dest      = out_buf;
-  gfloat              scale     = 1.0 / (1 << level);
-  gfloat              radius    = scale * o->radius;
-  gfloat              thickness = (1.0 - o->balance) / 2.0;
-  gfloat              angle     = o->rotation / 360.0;
-  gboolean            clockwise = o->direction == GEGL_SPIRAL_DIRECTION_CLOCKWISE;
-  gfloat              lim;
-  gfloat              color1[4];
-  gfloat              color2[4];
-  gfloat              x0;
-  gfloat              x;
-  gfloat              y;
-  gint                i;
-  gint                j;
+  gfloat               scale     = 1.0 / (1 << level);
+  gfloat               radius    = scale * o->radius;
+  gfloat               thickness = (1.0 - o->balance) / 2.0;
+  gfloat               angle     = o->rotation / 360.0;
+  gboolean             clockwise = o->direction == GEGL_SPIRAL_DIRECTION_CLOCKWISE;
+  gfloat               lim;
+  gfloat               color1[4];
+  gfloat               color2[4];
+  gfloat               x0;
+  gfloat               x;
+  gfloat               y;
+  gint                 i;
+  gint                 j;
 
   if (thickness <= 0.5)
     {
