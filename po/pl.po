@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gegl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-23 20:47+0200\n"
-"PO-Revision-Date: 2017-04-23 20:48+0200\n"
+"POT-Creation-Date: 2017-04-28 20:00+0200\n"
+"PO-Revision-Date: 2017-04-28 20:01+0200\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish <community-poland@mozilla.org>\n"
 "Language: pl\n"
@@ -3351,7 +3351,6 @@ msgstr ""
 #: ../operations/common/motion-blur-circular.c:52
 #: ../operations/common/motion-blur-linear.c:33
 #: ../operations/common/ripple.c:43 ../operations/workshop/linear-sinusoid.c:66
-#: ../operations/workshop/spiral.c:47
 msgid "Angle"
 msgstr "Kąt"
 
@@ -5008,6 +5007,7 @@ msgstr "Ściśnij"
 
 #: ../operations/common/vignette.c:71 ../operations/workshop/bayer-matrix.c:51
 #: ../operations/workshop/linear-sinusoid.c:95
+#: ../operations/workshop/spiral.c:47
 msgid "Rotation"
 msgstr "Obrót"
 
@@ -6076,7 +6076,7 @@ msgstr "Zapisywanie plików PPM"
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Zapisywanie obrazów PPM."
 
-#: ../operations/external/raw-load.c:242
+#: ../operations/external/raw-load.c:252
 msgid "libraw File Loader"
 msgstr "Wczytywanie plików biblioteki libraw"
 
@@ -7494,16 +7494,16 @@ msgid "Spiral radius"
 msgstr "Promień spirali"
 
 #: ../operations/workshop/spiral.c:43
-msgid "Thickness"
-msgstr "Grubość"
+msgid "Balance"
+msgstr "Równowaga"
 
 #: ../operations/workshop/spiral.c:44
-msgid "Spiral thickness, as a fraction of the radius"
-msgstr "Grubość spirali jako ułamek promienia"
+msgid "Area balance between the two colors"
+msgstr "Równowaga obszarów między dwoma kolorami"
 
 #: ../operations/workshop/spiral.c:48
-msgid "Spiral start angle"
-msgstr "Kąt początkowy spirali"
+msgid "Spiral rotation"
+msgstr "Obrót spirali"
 
 #: ../operations/workshop/spiral.c:54
 msgid "Counter-clockwise"
@@ -7513,10 +7513,10 @@ msgstr "Przeciwnie do ruchu wskazówek zegara"
 msgid "Spiral swirl direction"
 msgstr "Kierunek wiru spirali"
 
-#: ../operations/workshop/spiral.c:278
+#: ../operations/workshop/spiral.c:281
 msgid "Spiral"
 msgstr "Spirala"
 
-#: ../operations/workshop/spiral.c:282
+#: ../operations/workshop/spiral.c:285
 msgid "Spiral renderer"
 msgstr "Rysowanie spirali"
