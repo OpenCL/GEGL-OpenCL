@@ -290,7 +290,6 @@ process_logarithmic (gfloat       *out,
   gfloat log_base;
   gfloat log_base_inv;
   gfloat lim;
-  gfloat ratio;
   gfloat x;
   gfloat y;
   gint   i;
@@ -298,11 +297,11 @@ process_logarithmic (gfloat       *out,
 
   if (thickness == 0.0 || thickness == 1.0 || base == 1.0)
     {
-      const gfloat *color;
+      gfloat color[4];
 
-      color = thickness > 0.5f ? color1 : color2;
+      blend (color2, color1, thickness, color);
 
-      gegl_memset_pattern (out, color, 4 * sizeof (gfloat), width * height);
+      gegl_memset_pattern (out, color, sizeof (color), width * height);
 
       return;
     }
@@ -312,7 +311,6 @@ process_logarithmic (gfloat       *out,
   log_base     = log (base);
   log_base_inv = 1.0 / log_base;
   lim          = exp (log_base * thickness);
-  ratio        = (lim - 1.0) / (base - 1.0);
 
   y = y0;
 
@@ -359,7 +357,7 @@ process_logarithmic (gfloat       *out,
                 }
               else
                 {
-                  a = ratio;
+                  a = thickness;
                 }
             }
 
