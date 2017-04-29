@@ -1,4 +1,6 @@
-/* XXX: moved to workshop due to bug #777699, excessive memory allocations
+/* XXX: moved to workshop due to bug #777699, excessive memory allocations -
+ *      the op is not a crucial image processing tool - and can possibly even
+ *      be fully removed.
  */
 
 
