@@ -2,15 +2,13 @@
 # Copyright (C) 2012 gegl's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gegl package.
 # Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>, 2011-2015, 2016, 2017.
-#. rename to wave-pinch or period-pinch?
-#: ../operations/common/newsprint.c:52
 msgid ""
 msgstr ""
 "Project-Id-Version: gegl master\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?product=gegl&k"
 "eywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-03-30 00:10+0000\n"
-"PO-Revision-Date: 2017-04-09 21:06+0300\n"
+"POT-Creation-Date: 2017-04-30 21:13+0000\n"
+"PO-Revision-Date: 2017-05-01 17:29+0300\n"
 "Last-Translator: Dimitris Spingos (Δημήτρης Σπίγγος) <dmtrs32@gmail.com>\n"
 "Language-Team: team@lists.gnome.gr\n"
 "Language: el\n"
@@ -21,17 +19,17 @@ msgstr ""
 "X-Generator: Virtaal 0.7.1\n"
 "X-Project-Style: gnome\n"
 
-#: ../bin/gegl.c:160
+#: ../bin/gegl.c:174
 #, c-format
 msgid "Unable to read file: %s"
 msgstr "Αδύνατη η ανάγνωση του αρχείου: %s"
 
-#: ../bin/gegl.c:205
+#: ../bin/gegl.c:222
 #, c-format
 msgid "Invalid graph, abort.\n"
 msgstr "Άκυρο γράφημα, απόρριψη.\n"
 
-#: ../bin/gegl.c:361 ../bin/gegl-options.c:134
+#: ../bin/gegl.c:378 ../bin/gegl-options.c:134
 #, c-format
 msgid "Unknown GeglOption mode: %d"
 msgstr "Άγνωστη κατάσταση GeglOption: %d"
@@ -255,7 +253,7 @@ msgid "Nearest"
 msgstr "Πλησιέστερη"
 
 #: ../gegl/gegl-enums.c:146 ../operations/common/bump-map.c:33
-#: ../operations/common/sinus.c:64
+#: ../operations/common/sinus.c:64 ../operations/workshop/spiral.c:26
 msgid "Linear"
 msgstr "Γραμμική"
 
@@ -425,13 +423,13 @@ msgstr ""
 #: ../operations/common/bilateral-filter.c:26
 #: ../operations/common/dropshadow.c:37
 #: ../operations/common/gaussian-blur-selective.c:29
-#: ../operations/workshop/bilateral-filter-fast.c:41
+#: ../operations/workshop/bilateral-filter-fast.c:43
 msgid "Blur radius"
 msgstr "Ακτίνα θόλωσης"
 
 #: ../operations/common/bilateral-filter.c:27
 #: ../operations/common/gaussian-blur-selective.c:30
-#: ../operations/workshop/bilateral-filter-fast.c:42
+#: ../operations/workshop/bilateral-filter-fast.c:44
 msgid "Radius of square pixel region, (width and height will be radius*2+1)."
 msgstr ""
 "Ακτίνα της τετράγωνης περιοχής εικονοστοιχείου, (πλάτος και ύψος θα είναι "
@@ -466,6 +464,7 @@ msgstr ""
 #: ../operations/common/whirl-pinch.c:45
 #: ../operations/external/matting-levin.c:29
 #: ../operations/workshop/kuwahara.c:25 ../operations/workshop/median-blur.c:38
+#: ../operations/workshop/spiral.c:47
 msgid "Radius"
 msgstr "Ακτίνα"
 
@@ -577,7 +576,7 @@ msgstr "Σφαιρικό"
 msgid "Sinusoidal"
 msgstr "Ημιτονοειδές"
 
-#: ../operations/common/bump-map.c:38
+#: ../operations/common/bump-map.c:38 ../operations/workshop/spiral.c:30
 msgid "Type"
 msgstr "Τύπος"
 
@@ -832,7 +831,7 @@ msgstr ""
 #: ../operations/external/svg-load.c:30 ../operations/external/text.c:58
 #: ../operations/external/v4l.c:28 ../operations/external/vector-stroke.c:30
 #: ../operations/workshop/external/line-profile.c:39
-#: ../operations/workshop/external/v4l2.c:26
+#: ../operations/workshop/external/v4l2.c:26 ../operations/workshop/spiral.c:84
 msgid "Width"
 msgstr "Πλάτος"
 
@@ -851,7 +850,7 @@ msgstr "Οριζόντιο πλάτος κελιών σε εικονοστοιχ
 #: ../operations/external/svg-load.c:32 ../operations/external/text.c:60
 #: ../operations/external/v4l.c:31
 #: ../operations/workshop/external/line-profile.c:41
-#: ../operations/workshop/external/v4l2.c:28
+#: ../operations/workshop/external/v4l2.c:28 ../operations/workshop/spiral.c:92
 msgid "Height"
 msgstr "Ύψος"
 
@@ -869,7 +868,7 @@ msgid "Vertical offset (from origin) for start of grid"
 msgstr "Κάθετη μετατόπιση (από το αρχικό) για αρχή του πλέγματος"
 
 #: ../operations/common/checkerboard.c:53 ../operations/common/sinus.c:59
-#: ../operations/workshop/gradient-map.c:26
+#: ../operations/workshop/gradient-map.c:26 ../operations/workshop/spiral.c:78
 msgid "Color 1"
 msgstr "Χρώμα 1"
 
@@ -878,7 +877,7 @@ msgid "The first cell color"
 msgstr "Το πρώτο χρώμα κελιού"
 
 #: ../operations/common/checkerboard.c:57 ../operations/common/sinus.c:61
-#: ../operations/workshop/gradient-map.c:28
+#: ../operations/workshop/gradient-map.c:28 ../operations/workshop/spiral.c:81
 msgid "Color 2"
 msgstr "Χρώμα 2"
 
@@ -995,7 +994,7 @@ msgid "Change to this"
 msgstr "Αλλαγή σε αυτό"
 
 #: ../operations/common/color-rotate.c:40
-#: ../operations/common/color-rotate.c:53
+#: ../operations/common/color-rotate.c:53 ../operations/workshop/spiral.c:69
 msgid "Clockwise"
 msgstr "Δεξιόστροφα"
 
@@ -1539,7 +1538,7 @@ msgstr ""
 msgid "Copy Buffer"
 msgstr "Αντιγραφή ενδιάμεσης μνήμης"
 
-#: ../operations/common/copy-buffer.c:154
+#: ../operations/common/copy-buffer.c:155
 msgid "Writes image data to an already existing buffer"
 msgstr "Γράφει δεδομένα εικόνας σε μια ήδη υφιστάμενη ενδιάμεση μνήμη"
 
@@ -1736,13 +1735,13 @@ msgstr "Πόλωση"
 
 #: ../operations/common/diffraction-patterns.c:79
 #: ../operations/common/noise-solid.c:65 ../operations/common/plasma.c:55
-#: ../operations/common/sinus.c:78
+#: ../operations/common/sinus.c:78 ../operations/workshop/spiral.c:85
 msgid "Width of the generated buffer"
 msgstr "Πλάτος για τη δημιουργούμενη ενδιάμεση μνήμη"
 
 #: ../operations/common/diffraction-patterns.c:87
 #: ../operations/common/noise-solid.c:73 ../operations/common/plasma.c:63
-#: ../operations/common/sinus.c:86
+#: ../operations/common/sinus.c:86 ../operations/workshop/spiral.c:93
 msgid "Height of the generated buffer"
 msgstr "Ύψος για τη δημιουργούμενη ενδιάμεση μνήμη"
 
@@ -1941,6 +1940,7 @@ msgstr ""
 #: ../operations/transform/scale-size.c:25
 #: ../operations/transform/scale-size-keepaspect.c:25
 #: ../operations/transform/shear.c:25 ../operations/transform/translate.c:25
+#: ../operations/workshop/spiral.c:35
 msgid "X"
 msgstr "Χ"
 
@@ -1956,7 +1956,7 @@ msgstr "Οριζόντια μετατόπιση σκιάς"
 #: ../operations/transform/scale-size.c:30
 #: ../operations/transform/scale-size-keepaspect.c:30
 #: ../operations/transform/shear.c:29 ../operations/transform/transform.c:24
-#: ../operations/transform/translate.c:29
+#: ../operations/transform/translate.c:29 ../operations/workshop/spiral.c:41
 msgid "Y"
 msgstr "Υ"
 
@@ -1979,7 +1979,7 @@ msgstr "Χρώμα της σκιάς (προεπιλογή σε 'μαύρο')"
 msgid "Opacity"
 msgstr "Αδιαφάνεια"
 
-#: ../operations/common/dropshadow.c:112
+#: ../operations/common/dropshadow.c:114
 msgid "Creates a dropshadow effect on the input buffer"
 msgstr "Δημιουργεί εφέ πίπτουσας σκιάς στη μνήμη εισόδου"
 
@@ -2753,6 +2753,7 @@ msgstr "Βαθμός"
 
 #: ../operations/common/image-gradient.c:28
 #: ../operations/common/texturize-canvas.c:38 ../operations/common/wind.c:50
+#: ../operations/workshop/spiral.c:73
 msgid "Direction"
 msgstr "Κατεύθυνση"
 
@@ -2982,7 +2983,7 @@ msgstr "Απόδοση γραμμικής διαβάθμισης"
 msgid "Path of file to load."
 msgstr "Διαδρομή αρχείου για φόρτωση."
 
-#: ../operations/common/magick-load.c:138
+#: ../operations/common/magick-load.c:145
 msgid "Image Magick wrapper using the png op."
 msgstr "Κέλυφος εικόνας Magick χρησιμοποιώντας την επιλογή png."
 
@@ -3419,7 +3420,6 @@ msgid "Zoom motion blur"
 msgstr "Θόλωση κίνησης εστίασης"
 
 #: ../operations/common/newsprint.c:25
-#| msgid "Linear"
 msgid "Line"
 msgstr "Γραμμή"
 
@@ -3450,18 +3450,17 @@ msgid "Black on White"
 msgstr "Μαύρο σε λευκό"
 
 #: ../operations/common/newsprint.c:36
-#| msgid "CMYK Key"
 msgid "CMYK"
 msgstr "CMYK"
 
 #: ../operations/common/newsprint.c:39
-#| msgid "Color model"
 msgid "Color Model"
 msgstr "Χρωματικό πρότυπο"
 
 #: ../operations/common/newsprint.c:41
 msgid "How many inks to use just black, rg, rgb(additive) or cmyk"
-msgstr "Πόσα μελάνια θα χρησιμοποιούσουν μόνο μαύρο, rg, rgb(προσθετικό) ή cmyk"
+msgstr ""
+"Πόσα μελάνια θα χρησιμοποιούσουν μόνο μαύρο, rg, rgb(προσθετικό) ή cmyk"
 
 #: ../operations/common/newsprint.c:43
 #: ../operations/common/video-degradation.c:53
@@ -3477,16 +3476,28 @@ msgstr "μοτίβο ενδιάμεσων τόνων/τελείας προς χ�
 msgid "Period"
 msgstr "Περίοδος"
 
-#: ../operations/common/newsprint.c:50 ../operations/common/plasma.c:36
+#: ../operations/common/newsprint.c:49
+msgid ""
+"The number of pixels across one repetition of a base pattern at base "
+"resolution."
+msgstr ""
+"Ο αριθμός των εικοστοιχείων σε μια επανάληψη ενός μοτίβου βάσης στην ανάλυση "
+"βάσης."
+
+#: ../operations/common/newsprint.c:51 ../operations/common/plasma.c:36
 msgid "Turbulence"
 msgstr "Ανατάραξη"
 
-#: ../operations/common/newsprint.c:54
-#| msgid "Block size"
+#. rename to wave-pinch or period-pinch?
+#: ../operations/common/newsprint.c:53
+msgid "Color saturation dependent compression of period"
+msgstr "Κορεσμός χρώματος εξαρτημένος από τη συμπίεση περιόδου"
+
+#: ../operations/common/newsprint.c:55
 msgid "Blocksize"
 msgstr "Μέγεθος ομάδας"
 
-#: ../operations/common/newsprint.c:56
+#: ../operations/common/newsprint.c:57
 msgid ""
 "number of periods per tile, this tiling avoids high frequency anomaly that "
 "angleboost causes"
@@ -3494,12 +3505,11 @@ msgstr ""
 "αριθμός περιόδων ανά παράθεση, αυτή η παράθεση αποφεύγει την ανωμαλία υψηλής "
 "συχνότητας που προκαλεί η ανύψωση γωνίας"
 
-#: ../operations/common/newsprint.c:58
-#| msgid "Angle"
+#: ../operations/common/newsprint.c:59
 msgid "Angleboost"
 msgstr "Ανύψωση γωνίας"
 
-#: ../operations/common/newsprint.c:60
+#: ../operations/common/newsprint.c:61
 msgid ""
 "multiplication factor for desired rotation of the local space for texture, "
 "the way this is computed makes it weak for desaturated colors and possibly "
@@ -3509,34 +3519,31 @@ msgstr ""
 "για υφή, ο τρόπος που αυτός υπολογίζεται τον κάνει ασθενή για αποκορεσμένα "
 "χρώματα και πιθανόν πιο έντονο όταν υπάρχει χρώμα."
 
-#: ../operations/common/newsprint.c:62
-#| msgid "Blue in Green channel"
+#: ../operations/common/newsprint.c:63
 msgid "Black and green angle"
 msgstr "Μαύρη και πράσινη γωνία"
 
-#: ../operations/common/newsprint.c:65
+#: ../operations/common/newsprint.c:66
 msgid "angle offset for patterns"
 msgstr "μετατόπιση γωνίας για μοτίβα"
 
-#: ../operations/common/newsprint.c:67
-#| msgid "Red in Red channel"
+#: ../operations/common/newsprint.c:68
 msgid "Red and cyan angle"
 msgstr "Κόκκινη και κυανή γωνία"
 
-#: ../operations/common/newsprint.c:71
-#| msgid "Blue in Green channel"
+#: ../operations/common/newsprint.c:72
 msgid "Blue and magenta angle"
 msgstr "Γαλάζια και ματζέντα γωνία"
 
-#: ../operations/common/newsprint.c:75
+#: ../operations/common/newsprint.c:76
 msgid "Yellow angle"
 msgstr "Κίτρινη γωνία"
 
-#: ../operations/common/newsprint.c:499
+#: ../operations/common/newsprint.c:536
 msgid "Newsprint"
 msgstr "Δημοσιογραφική εκτύπωση"
 
-#: ../operations/common/newsprint.c:503
+#: ../operations/common/newsprint.c:540
 msgid "Digital halftoning with optional modulations. "
 msgstr "Ψηφιακοί ενδιάμεσοι τόνοι με προαιρετικές διαμορφώσεις. "
 
@@ -3960,11 +3967,11 @@ msgstr ""
 msgid "Image resampling method to use"
 msgstr "Μέθοδος επαναδειγματοληψίας εικόνας προς χρήση"
 
-#: ../operations/common/panorama-projection.c:539
+#: ../operations/common/panorama-projection.c:540
 msgid "Panorama Projection"
 msgstr "Προβολή πανοράματος"
 
-#: ../operations/common/panorama-projection.c:544
+#: ../operations/common/panorama-projection.c:545
 msgid ""
 "Perform an equilinear/gnomonic or little planet/stereographic projection of "
 "an equirectangular input image."
@@ -4796,11 +4803,11 @@ msgstr ""
 "Όξυνση εικόνας, προσθέτοντας διαφορά σε θολωμένη εικόνα, μια τεχνική για "
 "όξυνση που χρησιμοποιήθηκε αρχικά σε σκοτεινούς θαλάμους."
 
-#: ../operations/common/unpremultiply.c:77
+#: ../operations/common/unpremultiply.c:78
 msgid "Unpremultiply alpha"
 msgstr "Κατάργηση προπολλαπλασιασμού άλφα"
 
-#: ../operations/common/unpremultiply.c:78
+#: ../operations/common/unpremultiply.c:79
 msgid ""
 "Unpremultiplies a buffer that contains pre-multiplied colors (but according "
 "to the babl format is not.)"
@@ -5039,6 +5046,7 @@ msgstr "Συμπίεση"
 
 #: ../operations/common/vignette.c:71 ../operations/workshop/bayer-matrix.c:51
 #: ../operations/workshop/linear-sinusoid.c:95
+#: ../operations/workshop/spiral.c:63
 msgid "Rotation"
 msgstr "Περιστροφή"
 
@@ -5499,9 +5507,8 @@ msgstr "Φόρτωση πλαισίου FFmpeg"
 msgid "FFmpeg video frame importer."
 msgstr "Εισαγωγή πλαισίου βίντεο FFmpeg."
 
-#: ../operations/external/ff-save.c:30 ../operations/external/npy-save.c:32
-#: ../operations/external/png-save.c:27 ../operations/external/ppm-save.c:26
-#: ../operations/external/rgbe-save.c:27
+#: ../operations/external/ff-save.c:30 ../operations/external/png-save.c:27
+#: ../operations/external/ppm-save.c:26 ../operations/external/rgbe-save.c:27
 msgid "Target path and filename, use '-' for stdout."
 msgstr "Στόχος διαδρομής και ονόματος αρχείου, χρήση '-' για τυπική έξοδο."
 
@@ -5732,8 +5739,8 @@ msgstr "Φόρτωση εικόνας JPEG"
 msgid "JPEG image loader using libjpeg"
 msgstr "Φόρτωση εικόνας JPEG χρησιμοποιώντας libjpeg"
 
-#: ../operations/external/jpg-save.c:26 ../operations/external/tiff-save.c:26
-#: ../operations/external/webp-save.c:26
+#: ../operations/external/jpg-save.c:26 ../operations/external/npy-save.c:32
+#: ../operations/external/tiff-save.c:26 ../operations/external/webp-save.c:26
 msgid "Target path and filename, use '-' for stdout"
 msgstr "Στόχος διαδρομής και ονόματος αρχείου, χρήση '-' για τυπική έξοδο"
 
@@ -5778,11 +5785,11 @@ msgstr "Κλίμακα του γκρίζου"
 msgid "Create a grayscale (monochrome) image"
 msgstr "Δημιουργία εικόνας κλίμακας του γκρι (μονόχρωμη)"
 
-#: ../operations/external/jpg-save.c:196
+#: ../operations/external/jpg-save.c:303
 msgid "JPEG File Saver"
 msgstr "Αποθηκευτής αρχείου JPEG"
 
-#: ../operations/external/jpg-save.c:199
+#: ../operations/external/jpg-save.c:305
 msgid "JPEG image saver, using libjpeg"
 msgstr "Αποθήκευση εικόνας JPEG, χρησιμοποιώντας libjpeg"
 
@@ -5948,13 +5955,15 @@ msgstr "Εσωτερικά χρησιμοποιούμενη δειγματολη
 msgid "Performs n-point image deformation"
 msgstr "Εκτελεί παραμόρφωση εικόνας n σημείου"
 
-#: ../operations/external/npy-save.c:143
-msgid "NPY File Saver"
-msgstr "Αποθηκευτής αρχείου NPY"
+#: ../operations/external/npy-save.c:219
+#| msgid "NPY File Saver"
+msgid "NumPy File Saver"
+msgstr "Αποθηκευτής αρχείου NumPy"
 
-#: ../operations/external/npy-save.c:146
-msgid "NPY image saver (Numerical python file saver.)"
-msgstr "Αποθήκευση εικόνας NPY (αποθήκευση αρχείου αριθμητικού python.)"
+#: ../operations/external/npy-save.c:221
+#| msgid "NPY image saver (Numerical python file saver.)"
+msgid "NumPy (Numerical Python) image saver"
+msgstr "Αποθηκευτής εικόνας NumPy (αριθμητικού Python)"
 
 #: ../operations/external/path.c:26
 msgid "Fill Color"
@@ -6115,7 +6124,7 @@ msgstr "Φορτωτής αρχείου PPM"
 msgid "PPM image saver (Portable pixmap saver.)"
 msgstr "Αποθήκευση εικόνας PPM (αποθήκευση φορητής pixmap.)"
 
-#: ../operations/external/raw-load.c:242
+#: ../operations/external/raw-load.c:252
 msgid "libraw File Loader"
 msgstr "Φορτωτής αρχείου libraw"
 
@@ -6321,11 +6330,11 @@ msgstr "FPS"
 msgid "autotrigger reload this many times a second."
 msgstr "αυτόματο έναυσμα επαναφόρτωσης αυτού πολλές φορές το δευτερόλεπτο."
 
-#: ../operations/external/v4l.c:329
+#: ../operations/external/v4l.c:331
 msgid "Video4Linux Frame Source"
 msgstr "Προέλευση πλαισίου Video4Linux"
 
-#: ../operations/external/v4l.c:331
+#: ../operations/external/v4l.c:333
 msgid "Video4Linux input, webcams framegrabbers and similar devices."
 msgstr ""
 "Είσοδος Video4Linux, κάμερες ιστού, άρπαγες πλαισίου και παρόμοιων συσκευών."
@@ -6925,19 +6934,19 @@ msgstr "Πίνακας Bayer"
 msgid "Generate a Bayer matrix pattern"
 msgstr "Δημιουργία μοτίβου πίνακα Bayer"
 
-#: ../operations/workshop/bilateral-filter-fast.c:37
+#: ../operations/workshop/bilateral-filter-fast.c:39
 msgid "Smoothness"
 msgstr "Ομαλότητα"
 
-#: ../operations/workshop/bilateral-filter-fast.c:38
+#: ../operations/workshop/bilateral-filter-fast.c:40
 msgid "Level of smoothness"
 msgstr "Επίπεδο ομαλότητας"
 
-#: ../operations/workshop/bilateral-filter-fast.c:500
+#: ../operations/workshop/bilateral-filter-fast.c:502
 msgid "Bilateral Box Filter"
 msgstr "Αμφίπλευρο φίλτρο πλαισίου"
 
-#: ../operations/workshop/bilateral-filter-fast.c:502
+#: ../operations/workshop/bilateral-filter-fast.c:504
 msgid ""
 "A fast approximation of bilateral filter, using a box-filter instead of a "
 "gaussian blur."
@@ -7530,6 +7539,64 @@ msgstr "Εκτελεί διόρθωση σκιών και τονισμών"
 #: ../operations/workshop/shadows-highlights-correction.c:246
 msgid "Lighten shadows and darken highlights"
 msgstr "Ανοίγει τις σκιές και σκουραίνει τους τονισμούς"
+
+#: ../operations/workshop/spiral.c:27
+#| msgid "Algorithm"
+msgid "Logarithmic"
+msgstr "Λογαριθμικός"
+
+#: ../operations/workshop/spiral.c:33
+#| msgid "Spiral"
+msgid "Spiral type"
+msgstr "Τύπος σπείρας"
+
+#: ../operations/workshop/spiral.c:36
+msgid "Spiral origin X coordinate"
+msgstr "Αρχική συντεταγμένη Χ σπείρας"
+
+#: ../operations/workshop/spiral.c:42
+msgid "Spiral origin Y coordinate"
+msgstr "Αρχική συντεταγμένη Υ σπείρας"
+
+#: ../operations/workshop/spiral.c:48
+msgid "Spiral radius"
+msgstr "Ακτίνα σπείρας"
+
+#: ../operations/workshop/spiral.c:53
+msgid "Base"
+msgstr "Βάση"
+
+#: ../operations/workshop/spiral.c:54
+msgid "Logarithmic spiral base"
+msgstr "Βάση λογαριθμητικής σπείρας"
+
+#: ../operations/workshop/spiral.c:59
+msgid "Balance"
+msgstr "Ισορροπία"
+
+#: ../operations/workshop/spiral.c:60
+msgid "Area balance between the two colors"
+msgstr "Ισορροπία περιοχής μεταξύ των δύο χρωμάτων"
+
+#: ../operations/workshop/spiral.c:64
+msgid "Spiral rotation"
+msgstr "Περιστροφή σπείρας"
+
+#: ../operations/workshop/spiral.c:70
+msgid "Counter-clockwise"
+msgstr "Αριστερόστροφα"
+
+#: ../operations/workshop/spiral.c:76
+msgid "Spiral swirl direction"
+msgstr "Κατεύθυνση στροβιλισμού σπείρας"
+
+#: ../operations/workshop/spiral.c:441
+msgid "Spiral"
+msgstr "Σπείρα"
+
+#: ../operations/workshop/spiral.c:445
+msgid "Spiral renderer"
+msgstr "Απόδοση σπείρας"
 
 #~ msgid ""
 #~ "SVG blend operation multiply (<code>d = cA * cB +  cA * (1 - aB) + cB * "
