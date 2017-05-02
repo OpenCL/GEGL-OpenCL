@@ -536,9 +536,9 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Newsprint"),
     "position-dependent", "true",
     "categories" ,        "render",
-    "reference-hash",     "258468fa2e551453db67ba80c5db326f",
+    "reference-hash",     "f680e099d412e28dfa26f9b19e34109f",
     "description",        _("Digital halftoning with optional modulations. "),
-    "reference-chain",    "load path=standard-input.png newsprint period=4.0",
+    "reference-chain",    "load path=images/standard-input.png newsprint period=6.0 pattern=pssquare color-model=cmyk",
     "position-dependent", "true",
     NULL);
 }
