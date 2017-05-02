@@ -473,7 +473,7 @@ main (gint argc, gchar **argv)
         g_string_append_printf (s, "<br/>\n");
       }
 
-      if(0){ // XXX: re-enable before push.. it takes a lot of time
+      if(1){ // XXX: re-enable before push.. it takes a lot of time
         gchar *commandline = g_strdup_printf (
             "sh -c \"(cd " TOP_SRCDIR ";cd ..;grep -r '\\\"%s\\\"' operations) | grep operations | grep -v '~:' | grep '\\\"name\\\"' | cut -f 1 -d ':'\"",
              name);
@@ -485,7 +485,7 @@ main (gint argc, gchar **argv)
             {
               output[strlen(output)-1] = 0;
               g_string_append_printf (s, 
-      "<dt>source</dt><dd><a href='https://git.gnome.org/browse/gegl/tree/%s'>%s</a></dd>\n", output, output);
+      "<b>source</b>&nbsp;<a href='https://git.gnome.org/browse/gegl/tree/%s'>%s</a><br/>\n", output, output);
             }
           g_free (output);
         }
