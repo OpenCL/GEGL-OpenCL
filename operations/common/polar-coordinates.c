@@ -91,6 +91,8 @@ prepare (GeglOperation *operation)
 static gboolean
 calc_undistorted_coords (gdouble        wx,
                          gdouble        wy,
+                         gdouble        cen_x,
+                         gdouble        cen_y,
                          gdouble       *x,
                          gdouble       *y,
                          GeglProperties    *o,
@@ -104,7 +106,7 @@ calc_undistorted_coords (gdouble        wx,
   gdouble  m;
   gdouble  xmax, ymax, rmax;
   gdouble  x_calc, y_calc;
-  gdouble  xi, yi, cen_x, cen_y;
+  gdouble  xi, yi;
   gdouble  circle, angl, t, angle;
   gint     x1, x2, y1, y2;
 
@@ -124,9 +126,6 @@ calc_undistorted_coords (gdouble        wx,
   circle = o->depth;
   angle  = o->angle;
   angl   = (gdouble) angle / 180.0 * G_PI;
-  cen_x  = o->pole_x;
-  cen_y  = o->pole_y;
-
 
   if (o->polar)
     {
@@ -334,6 +333,7 @@ process (GeglOperation       *operation,
   gint      i, offset = 0;
   gboolean  inside;
   gdouble   px, py;
+  gdouble   cen_x, cen_y;
 
   GeglMatrix2  scale;        /* a matrix indicating scaling factors around the
                                 current center pixel.
@@ -346,8 +346,13 @@ process (GeglOperation       *operation,
 
   if (o->middle)
     {
-      o->pole_x = boundary.width / 2;
-      o->pole_y = boundary.height / 2;
+      cen_x = boundary.width / 2;
+      cen_y = boundary.height / 2;
+    }
+  else
+    {
+      cen_x = o->pole_x;
+      cen_y = o->pole_y;
     }
 
   for (y = result->y; y < result->y + result->height; y++)
@@ -356,7 +361,8 @@ process (GeglOperation       *operation,
 #define gegl_unmap(u,v,ud,vd) {                                         \
           gdouble rx = 0.0, ry = 0.0;                                   \
           inside = calc_undistorted_coords ((gdouble)x, (gdouble)y,     \
-                                            &rx, &ry, o, boundary);     \
+                                            cen_x, cen_y, &rx, &ry,     \
+                                            o, boundary);               \
           ud = rx;                                                      \
           vd = ry;                                                      \
         }
