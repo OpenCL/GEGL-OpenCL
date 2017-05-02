@@ -132,8 +132,7 @@ json_list_pads (GType type, GString *s, const gchar *opname)
   input_pads = gegl_node_list_input_pads (node);
   output_pads = gegl_node_list_output_pads (node);
 
-  g_string_append_printf (s, "<dl>");
-  g_string_append_printf (s, "<dt>pads</dt><dd>\n");
+  g_string_append_printf (s, "<b>pads:</b>\n");
   if (input_pads && input_pads[0])
   {
     for (i = 0; input_pads[i]; i++)
@@ -151,8 +150,7 @@ json_list_pads (GType type, GString *s, const gchar *opname)
     }
     g_free (output_pads);
   }
-    g_string_append_printf (s, "</dd>");
-  g_string_append_printf (s, "</dl>");
+    g_string_append_printf (s, "<br/>");
 
   g_object_unref (gegl);
 }
@@ -193,13 +191,21 @@ json_list_properties (GType type, GString *s, const gchar *opname)
       if (!found)
         {
           const gchar *type_name;
-          g_string_append_printf (s, "<div class='property'>\n");
+          g_string_append_printf (s, "<div style='margin-top:0.5em;'><div style='padding-left:0.1em;border-left:0.3em solid black;margin-left:-0.35em;'>\n");
 
-          g_string_append_printf (s, "<b>");
             json_escape_string (s, g_param_spec_get_nick (self[prop_no]));
-          g_string_append_printf (s, "</b>");
+          g_string_append_printf (s, "</div>\n");
 
-          g_string_append_printf (s, "(");
+
+          if (g_param_spec_get_blurb (self[prop_no]) &&
+              g_param_spec_get_blurb (self[prop_no])[0]!='\0')
+          {
+            g_string_append_printf (s, "<div>");
+            json_escape_string (s, g_param_spec_get_blurb (self[prop_no]));
+            g_string_append_printf (s, "</div>\n");
+          }
+
+          g_string_append_printf (s, "<div style='font-size:70%%;'><b>name:&nbsp;</b>%s\n<b>type:&nbsp;</b>", g_param_spec_get_name (self[prop_no]));
 
           type_name = g_type_name (G_OBJECT_TYPE (self[prop_no]));
           if(strstr (type_name, "Param"))
@@ -211,14 +217,10 @@ json_list_properties (GType type, GString *s, const gchar *opname)
             for (const char *p = type_name; *p; p++)
               g_string_append_printf (s, "%c", g_ascii_tolower (*p));
           }
-          g_string_append_printf (s, " %s)<br/>", g_param_spec_get_name (self[prop_no]));
 
           g_string_append_printf (s, "\n");
 
-
-          g_string_append_printf (s, "<dl>");
-
-#if 0
+#if 1
           if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_DOUBLE))
             {
               gdouble default_value = G_PARAM_SPEC_DOUBLE (self[prop_no])->default_value;
@@ -226,40 +228,40 @@ json_list_properties (GType type, GString *s, const gchar *opname)
               gdouble max = G_PARAM_SPEC_DOUBLE (self[prop_no])->maximum;
 
               if (default_value<-10000000)
-                g_string_append_printf (s, "<dt>default</dt><dd>-inf</dd>\n");
+                g_string_append_printf (s, "<b>default:</b>&nbsp;-inf \n");
               else if (default_value>10000000)
-                g_string_append_printf (s, "<dt>default</dt><dd>+inf</dd>\n");
+                g_string_append_printf (s, "<b>default:</b>&nbsp;+inf \n");
               else
-                g_string_append_printf (s, "<dt>default</dt><dd>%2.2f</dd>\n", default_value);
+                g_string_append_printf (s, "<b>default:</b>&nbsp;%2.2f \n", default_value);
 
               if (min<-10000000)
-                g_string_append_printf (s, "<dt>minimum</dt><dd>-inf</dd>\n");
+                g_string_append_printf (s, "<b>minimum:</b>&nbsp;-inf \n");
               else
-                g_string_append_printf (s, "<dt>minimum</dt><dd>%2.2f</dd>\n", min);
+                g_string_append_printf (s, "<b>minimum:</b>&nbsp;%2.2f \n", min);
 
               if (max>10000000)
-                g_string_append_printf (s, "<dt>maximum</dt><dd>+inf</dd>\n");
+                g_string_append_printf (s, "<b>maximum:</b>&nbsp;+inf \n");
               else
-                g_string_append_printf (s, "<dt>maximum</dt><dd>%2.2f</dd>\n", max);
+                g_string_append_printf (s, "<b>maximum:</b>&nbsp;%2.2f \n", max);
               if (GEGL_IS_PARAM_SPEC_DOUBLE (self[prop_no]))
               {
                 GeglParamSpecDouble *pspec =
                               GEGL_PARAM_SPEC_DOUBLE (self[prop_no]);
 
                 if (pspec->ui_minimum < -10000000)
-                  g_string_append_printf (s, "<dt>ui-minimum</dt><dd>-inf</dd>\n");
+                  g_string_append_printf (s, "<b>ui-minimum:</b>&nbsp;-inf \n");
                 else
-                  g_string_append_printf (s, "<dt>ui-minimum</dt><dd>%2.2f</dd>\n", pspec->ui_minimum);
+                  g_string_append_printf (s, "<b>ui-minimum:</b>&nbsp;%2.2f \n", pspec->ui_minimum);
 
                 if (pspec->ui_maximum > 10000000)
-                  g_string_append_printf (s, "<dt>ui-maximum</dt><dd>+inf</dd>\n");
+                  g_string_append_printf (s, "<b>ui-maximum:</b>&nbsp;+inf \n");
                 else
-                  g_string_append_printf (s, "<dt>ui-maximum</dt><dd>%2.2f</dd>\n", pspec->ui_maximum);
+                  g_string_append_printf (s, "<b>ui-maximum:</b>&nbsp;%2.2f \n", pspec->ui_maximum);
 
-                g_string_append_printf (s, "<dt>ui-gamma</dt><dd>%2.2f</dd>\n", pspec->ui_gamma);
-                g_string_append_printf (s, "<dt>ui-step-small</dt><dd>%2.2f</dd>\n", pspec->ui_step_small);
-                g_string_append_printf (s, "<dt>ui-step-big</dt><dd>%2.2f</dd>\n", pspec->ui_step_big);
-                g_string_append_printf (s, "<dt>ui-digits</dt><dd>%i</dd>\n", pspec->ui_digits);
+                g_string_append_printf (s, "<b>ui-gamma:</b>&nbsp;%2.2f \n", pspec->ui_gamma);
+                g_string_append_printf (s, "<b>ui-step-small:</b>&nbsp;%2.2f \n", pspec->ui_step_small);
+                g_string_append_printf (s, "<b>ui-step-big:</b>&nbsp;%2.2f \n", pspec->ui_step_big);
+                g_string_append_printf (s, "<b>ui-digits:</b>&nbsp;%i \n", pspec->ui_digits);
               }
 
             }
@@ -270,21 +272,21 @@ json_list_properties (GType type, GString *s, const gchar *opname)
               gint max = G_PARAM_SPEC_INT (self[prop_no])->maximum;
 
               if (default_value<-10000000)
-                g_string_append_printf (s, "<dt>default</dt><dd>-inf</dd>\n");
+                g_string_append_printf (s, "<b>default:</b>&nbsp;-inf \n");
               else if (default_value>10000000)
-                g_string_append_printf (s, "<dt>default</dt><dd>+inf</dd>\n");
+                g_string_append_printf (s, "<b>default:</b>&nbsp;+inf \n");
               else
-                g_string_append_printf (s, "<dt>default</dt><dd>%i</dd>\n", default_value);
+                g_string_append_printf (s, "<b>default:</b>&nbsp;%i \n", default_value);
 
               if (min<-10000000)
-                g_string_append_printf (s, "<dt>minimum</dt><dd>-inf</dd>\n");
+                g_string_append_printf (s, "<b>minimum:</b>&nbsp;-inf \n");
               else
-                g_string_append_printf (s, "<dt>minimum</dt><dd>%i</dd>\n", min);
+                g_string_append_printf (s, "<b>minimum:</b>&nbsp;%i \n", min);
 
               if (max>10000000)
-                g_string_append_printf (s, "<dt>maximum</dt><dd>+inf</dd>\n");
+                g_string_append_printf (s, "<b>maximum:</b>&nbsp;+inf \n");
               else
-                g_string_append_printf (s, "<dt>maximum</dt><dd>%i</dd>\n", max);
+                g_string_append_printf (s, "<b>maximum:</b>&nbsp;%i \n", max);
 
               if (GEGL_IS_PARAM_SPEC_INT (self[prop_no]))
               {
@@ -292,32 +294,32 @@ json_list_properties (GType type, GString *s, const gchar *opname)
                               GEGL_PARAM_SPEC_INT (self[prop_no]);
 
                 if (pspec->ui_minimum < -10000000)
-                  g_string_append_printf (s, "<dt>ui-minimum</dt><dd>-inf</dd>\n");
+                  g_string_append_printf (s, "<b>ui-minimum:</b>&nbsp;-inf \n");
                 else
-                  g_string_append_printf (s, "<dt>ui-minimum</dt><dd>%i</dd>\n", pspec->ui_minimum);
+                  g_string_append_printf (s, "<b>ui-minimum:</b>&nbsp;%i \n", pspec->ui_minimum);
 
                 if (pspec->ui_maximum > 10000000)
-                  g_string_append_printf (s, "<dt>ui-maximum</dt><dd>+inf</dd>\n");
+                  g_string_append_printf (s, "<b>ui-maximum:</b>&nbsp;+inf \n");
                 else
-                  g_string_append_printf (s, "<dt>ui-maximum</dt><dd>%i</dd>\n", pspec->ui_maximum);
+                  g_string_append_printf (s, "<b>ui-maximum:</b>&nbsp;%i \n", pspec->ui_maximum);
 
-                g_string_append_printf (s, "<dt>ui-gamma</dt><dd>%2.2f</dd>\n", pspec->ui_gamma);
-                g_string_append_printf (s, "<dt>ui-step-small</dt><dd>%i</dd>\n", pspec->ui_step_small);
-                g_string_append_printf (s, "<dt>ui-step-big</dt><dd>%i</dd>\n", pspec->ui_step_big);
+                g_string_append_printf (s, "<b>ui-gamma:</b>&nbsp;%2.2f \n", pspec->ui_gamma);
+                g_string_append_printf (s, "<b>ui-step-small:</b>&nbsp;%i \n", pspec->ui_step_small);
+                g_string_append_printf (s, "<b>ui-step-big:</b>&nbsp;%i \n", pspec->ui_step_big);
               }
 
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_BOOLEAN))
             {
-              g_string_append_printf (s, "  ,'default</dt><dd>%s</dd>\n", G_PARAM_SPEC_BOOLEAN (self[prop_no])->default_value?"True":"False");
+              g_string_append_printf (s, "  ,'default:</b>&nbsp;%s \n", G_PARAM_SPEC_BOOLEAN (self[prop_no])->default_value?"True":"False");
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_STRING))
             {
               const gchar *string = G_PARAM_SPEC_STRING (self[prop_no])->default_value;
 
-              g_string_append_printf (s, "  <dt>default</dt><dd>");
+              g_string_append_printf (s, "  <b>default:</b>&nbsp;");
               json_escape_string (s, string);
-              g_string_append_printf (s, "</dd>\n");
+              g_string_append_printf (s, " \n");
 
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), GEGL_TYPE_COLOR))
@@ -328,9 +330,9 @@ json_list_properties (GType type, GString *s, const gchar *opname)
                   gchar *string;
 
                   g_object_get (color, "string", &string, NULL);
-                  g_string_append_printf (s, "<dt>default</dt><dd>");
+                  g_string_append_printf (s, "<b>default:</b>&nbsp;");
                   json_escape_string (s, string);
-                  g_string_append_printf (s, "</dd>\n");
+                  g_string_append_printf (s, " \n");
                   g_free (string);
                 }
             }
@@ -339,13 +341,6 @@ json_list_properties (GType type, GString *s, const gchar *opname)
             }
 #endif
 
-          if (g_param_spec_get_blurb (self[prop_no]) &&
-              g_param_spec_get_blurb (self[prop_no])[0]!='\0')
-          {
-            g_string_append_printf (s, "<p>");
-            json_escape_string (s, g_param_spec_get_blurb (self[prop_no]));
-            g_string_append_printf (s, "</p>\n");
-          }
 
       {
         guint count;
@@ -363,7 +358,7 @@ json_list_properties (GType type, GString *s, const gchar *opname)
             /* XXX: list is in reverse order */
             for (i = 0; property_keys[i]; i++)
             {
-              g_string_append_printf (s, "<dt>%s</dt><dd>%s</dd>\n",
+              g_string_append_printf (s, "<b>%s</b>:%s\n",
                     property_keys[i],
                     gegl_operation_get_property_key (opname,
                                       g_param_spec_get_name (self[prop_no]),
@@ -373,10 +368,10 @@ json_list_properties (GType type, GString *s, const gchar *opname)
           g_free (property_keys);
         }
 
-            g_string_append_printf (s, "</dl>");
       }
 
-          g_string_append_printf (s, "<div>");
+          g_string_append_printf (s, "</div>");
+          g_string_append_printf (s, "</div>");
         }
     }
   if (self)
@@ -457,7 +452,7 @@ main (gint argc, gchar **argv)
       if (categoris)
       {
         const gchar *ptr = categoris;
-        g_string_append_printf (s, "<dt>categories</dt><dd>");
+        g_string_append_printf (s, "<b>categories:</b> ");
 
         while (ptr && *ptr)
           {
@@ -475,7 +470,7 @@ main (gint argc, gchar **argv)
               g_hash_table_insert (seen_categories, g_strdup (category), (void*)0xff);
             }
           }
-        g_string_append_printf (s, "</dt>\n");
+        g_string_append_printf (s, "<br/>\n");
       }
 
       if(0){ // XXX: re-enable before push.. it takes a lot of time
@@ -518,10 +513,9 @@ main (gint argc, gchar **argv)
                     g_str_equal (keys[i], "description"))
                   continue;
 
-                g_string_append_printf (s, "<dt>%s</dt>", keys[i]);
-                g_string_append_printf (s, "<dd>");
+                g_string_append_printf (s, "<b>%s:</b>&nbsp;", keys[i]);
                 json_escape_string (s, value);
-                g_string_append_printf (s, "</dd>\n");
+                g_string_append_printf (s, "<br/>\n");
               }
             g_free (keys);
           }
