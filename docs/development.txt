@@ -144,15 +144,27 @@ dependencies.
 There are regression tests in the subfolder `tests`. These are run
 with `make check`
 
-=== Composition tests
+=== Operation reference renders
 
-The tests under `tests/compositions` are easy-to-write high-level
-system tests for GEGL and its operations. Together with our
-http://gimptest.flamingtext.com:8080/job/gegl-distcheck/[Jenkins
-server] that runs all our tests each night, the composition tests make
-a powerful framework for detecting regressions.
+For the operation documentation available at http://gegl.org/operations/[The
+GEGL website] GEGL generates a 200x200 PNG image, based on a set of available
+input images and default parameters - or optionally with a custom
+representative GEGL graph stored in meta-data in the operations.
 
-==== Adding a composition test
+GEGL tries to tune its settings to be as deterministic as possible when
+rendering these with the CPU, making the md5sums of the raster content (not the
+PNG files) possible to use for regression testing. To force a re-run of these
+tests remove the operations sub-folder in docs/ and run make from docs/ again.
+
+=== XML Composition tests
+
+The tests under `tests/compositions` are high-level system tests for GEGL and
+its operations. Together with our
+http://gimptest.flamingtext.com:8080/job/gegl-distcheck/[Jenkins server] that
+runs all our tests each night, the composition tests make a powerful framework
+for detecting regressions.
+
+==== Adding an XML composition test
 
 To add a composition test for a operation called `gegl:new-operation`,
 do the following:
