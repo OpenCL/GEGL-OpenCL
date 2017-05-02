@@ -10,7 +10,7 @@ image::images/GEGL.png[GEGL]
 
 *GEGL* (Generic Graphics Library) is a graph based image processing framework.
 
-With GEGL you chain together link:operations.html[image processing operations]
+With GEGL you chain together link:operations/index.html[image processing operations]
 represented by nodes into a graph. GEGL provides operations for image loading
 and storing, color adjustments, and other different forms of image
 transformation, filtering and compositing. Some software using GEGL is
@@ -19,7 +19,7 @@ link:http://www.imgflo.org/[imgflo],
 link:https://wiki.gnome.org/Apps/Photos[GNOME Photos] and
 link:https://github.com/the-grid/iconographer[iconographer].
 
-link:operations.html[Operations reference gallery]::
+link:operations/index.html[Operations reference gallery]::
   Documentation and visual test reference for most GEGL image processing
   operations.
 link:features.html[GEGL Feature list]::
