@@ -18,11 +18,9 @@ ASC_DOC=index.html  abyss_policy.html bugzilla.html build.html commandline.html 
 
 
 HTML_FILES = \
-	operations.json		\
 	class-hierarchy.html
 
 GTKDOC_FILES = \
-	operations.json \
 	gegl.css
 
 if HAVE_RUBY
@@ -69,7 +67,7 @@ EXTRA_DIST = \
 	images/standard-aux.png \
 	index.txt.in
 
-BUILT_EXTRA_DIST = class-hierarchy.html operations.json $(ASC_DOC)
+BUILT_EXTRA_DIST = class-hierarchy.html $(ASC_DOC)
 EXTRA_DIST += $(BUILT_EXTRA_DIST)
 
 EXAMPLE_FILES = $(wildcard $(srcdir)/images/examples/*.png)
@@ -101,10 +99,6 @@ examples:  $(top_builddir)/tools/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*
 		-d $(srcdir)/images -e $(exclusion_pattern) ; \
 		(cd operations; $(top_builddir)/../tools/operations_html ) \
 	fi
-
-operations.json: $(top_builddir)/tools/operation_reference$(EXEEXT) $(top_srcdir)/operations/*/*.c | examples
-	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
-	$(top_builddir)/tools/operation_reference$(EXEEXT) --json-db > $@
 
 class-hierarchy.html: $(top_builddir)/tools/introspect$(EXEEXT) $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
 	GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \

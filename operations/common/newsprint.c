@@ -538,6 +538,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories" ,        "render",
     "reference-hash",     "258468fa2e551453db67ba80c5db326f",
     "description",        _("Digital halftoning with optional modulations. "),
+    "reference-chain",    "load path=standard-input.png newsprint period=4.0",
     "position-dependent", "true",
     NULL);
 }
