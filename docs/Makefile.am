@@ -70,7 +70,7 @@ EXTRA_DIST = \
 BUILT_EXTRA_DIST = class-hierarchy.html $(ASC_DOC)
 EXTRA_DIST += $(BUILT_EXTRA_DIST)
 
-EXAMPLE_FILES = $(wildcard $(srcdir)/images/examples/*.png)
+EXAMPLE_FILES = $(wildcard $(srcdir)/operations/images/*.png)
 # EXTRA_DIST += $(EXAMPLE_FILES)
 
 dist_gtkdochtml_DATA = $(GTKDOC_FILES)
@@ -87,7 +87,7 @@ MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
 exclusion_pattern = "load|buffer-source|pixbuf|nop|clone|convert-format|introspect|layer|image-compare|load|open-buffer|svg-load|exr-load|jpg-load|png-load|magick-load|box-blur|stretch-contrast|remap|matting-global|exp-combine|dropshadow|kuwahara|box-percentile|disc-percentile|snn-percentile|line-profile|buffer-cache|warp|mandelbrot|hstack|v4l2|integral-image"
 
-all-local: $(HTML_FILES)
+all-local: $(HTML_FILES) examples
 
 examples:  $(top_builddir)/tools/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*.c
 	@if test -d operations/images; then :; else \
@@ -96,7 +96,7 @@ examples:  $(top_builddir)/tools/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*
 		BABL_TOLERANCE=0.0 \
 		GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
 		$(top_builddir)/tools/gegl-tester$(EXEEXT) --all -o operations/images \
-		-d $(srcdir)/images -e $(exclusion_pattern) ; \
+		-d $(srcdir)/images/ -e $(exclusion_pattern) ; \
 		(cd operations; $(top_builddir)/../tools/operations_html ) \
 	fi
 
