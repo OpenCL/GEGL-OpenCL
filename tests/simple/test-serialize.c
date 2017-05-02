@@ -123,7 +123,7 @@ test_serialize (void)
     gint res = SUCCESS;
     gchar *serialization = NULL;
     gegl_create_chain (tests[i].argv_chain, start, end,
-                    0.0, 500, &error);
+                    0.0, 500, NULL, &error);
     serialization = gegl_serialize (start, gegl_node_get_producer (end, "input", NULL), "/", GEGL_SERIALIZE_TRIM_DEFAULTS);
     if (strcmp (serialization, tests[i].expected_serialization))
     {
