@@ -110,6 +110,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:dropshadow",
     "categories",  "effects:light",
+    "title",       _("Dropshadow"),
     "description",
     _("Creates a dropshadow effect on the input buffer"),
     NULL);

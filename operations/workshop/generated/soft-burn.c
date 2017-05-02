@@ -105,6 +105,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:soft-burn",
+  "title"       , "soft-burn",
   "categories"  , "compositors:blend",
   "description" ,
         _("Image blending operation 'soft-burn' (<tt>c = (cA+cB<1.0)?0.5*cB / (1.0 - cA):1.0-0.5*(1.0 - cA) / cB</tt>)"),

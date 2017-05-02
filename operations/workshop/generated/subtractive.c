@@ -105,6 +105,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:subtractive",
+  "title"       , "subtractive",
   "categories"  , "compositors:blend",
   "description" ,
         _("Image blending operation 'subtractive' (<tt>c = cA+cB-1.0</tt>)"),

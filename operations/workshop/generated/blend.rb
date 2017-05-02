@@ -143,6 +143,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   \"name\"        , \"gegl:#{name}\",
+  \"title\"       , \"#{name}\",
   \"categories\"  , \"compositors:blend\",
   \"description\" ,
         _(\"Image blending operation '#{name}' (<tt>c = #{formula}</tt>)\"),
