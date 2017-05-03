@@ -180,6 +180,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:exposure",
     "title",       _("Exposure"),
     "categories",  "color",
+    "reference-chain", "load path=images/standard-input.png exposure exposure=1.5",
     "description", _("Changes Exposure of an image, allows stepping HDR and photographs up/down in stops. "),
     "op-version",  "1:0",
     NULL);
