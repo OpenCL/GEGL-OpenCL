@@ -311,7 +311,7 @@ json_list_properties (GType type, GString *s, const gchar *opname)
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_BOOLEAN))
             {
-              g_string_append_printf (s, "  ,'default:</b>&nbsp;%s \n", G_PARAM_SPEC_BOOLEAN (self[prop_no])->default_value?"True":"False");
+              g_string_append_printf (s, " <b>default:</b>&nbsp;%s \n", G_PARAM_SPEC_BOOLEAN (self[prop_no])->default_value?"True":"False");
             }
           else if (g_type_is_a (G_PARAM_SPEC_VALUE_TYPE (self[prop_no]), G_TYPE_STRING))
             {
@@ -387,8 +387,9 @@ GHashTable *seen_categories = NULL;
 const gchar *css = "@import url(../gegl.css); .description{margin-bottom:1em;}";
 
 const gchar *html_pre = "<html><head><title>GEGL operation %s</title>\n"
-                          "<style>%s%s</style></head><body><a href='../index.html'><img src='../images/GEGL.png' alt='GEGL' style='float: right; height: 5.5em;'/></a>\n";
-const gchar *html_post = "</body></html>";
+                          "<style>%s%s</style></head><body>\n";
+const gchar *html_post =
+            "<div style='margin-top:3em;'><a href='../index.html'><img src='../images/GEGL.png' alt='GEGL' style='height: 4.0em;float:left; padding-right:0.5em;'/></a> This page is part of the online GEGL Documentation, GEGL is a data flow based image processing library/framework, made to fuel <a href='https://www.gimp.org/'>GIMPs</a> high-bit depth non-destructive editing future.</body></html></div>\n";
 
 gint
 main (gint argc, gchar **argv)
@@ -485,7 +486,7 @@ main (gint argc, gchar **argv)
             {
               output[strlen(output)-1] = 0;
               g_string_append_printf (s, 
-      "<b>source</b>&nbsp;<a href='https://git.gnome.org/browse/gegl/tree/%s'>%s</a><br/>\n", output, output);
+      "<b>source:</b>&nbsp;<a href='https://git.gnome.org/browse/gegl/tree/%s'>%s</a><br/>\n", output, output);
             }
           g_free (output);
         }
@@ -634,7 +635,10 @@ all:
    if(1){
       gchar *category = "all";
       GList *keys = g_hash_table_get_keys (seen_categories);
-      GList *k = keys;
+      GList *keys2 = g_list_copy (keys);
+      keys2 = g_list_sort (keys2, (void*)g_strcmp0);
+      keys = keys2;
+      k = keys;
 
       GString *cs = g_string_new ("<div class='categories'>");
 
@@ -650,8 +654,8 @@ all:
         g_string_assign (s, "");
         {
           g_string_append_printf (s, html_pre, category, css, "");
-          g_string_append_printf (s, "<h2 style='clear:both;'>%s</h2>\n", "All GEGL operations");
-          g_string_append_printf (s, "<p>categories:</p>%s\n", cs->str);
+          g_string_append_printf (s, "<div style='margin-top:3em;'><a href='../index.html'><img src='../images/GEGL.png' alt='GEGL' style='height: 6.0em;float:left; padding-right:0.5em;'/></a><h2> All GEGL operations</h2><p>This part of the GEGL documentation contains a snapshot of reference rendering images and meta-data, useful for programming with GEGL as well as used by GIMP for automatically constructing property panels user interfaces.</p>");
+          g_string_append_printf (s, "<p style='clear:both;'>categories:</p>%s\n", cs->str);
 
           g_string_append_printf (s, "<p>All operations:</p>\n");
           for (iter=operations;iter;iter = g_list_next (iter))
@@ -683,7 +687,7 @@ all:
       }
           }
         }
-        g_string_append_printf (s, html_post);
+        g_string_append_printf (s, "</div></body></html>");
 
       {
         gchar *html_name = "index.html";
