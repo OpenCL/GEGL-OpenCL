@@ -4,9 +4,13 @@ Development
 image::images/GEGL.png[GEGL]
 *#Development#*
 
-This document describes some handy things to know when developing the gegl internals.
-Parts of it is copy-paste of emails on the gegl developer list.
+This document describes some handy things to know when developing the gegl internals. The link:glossary.html[GEGL glossary] might help make sense of the terms used.
 
+link:build.html[Getting sources, and building]::
+  Links and information about various ways of getting a build environment for
+  GEGL.
+link:images/inheritance.png[GEGL inheritance tree]::
+  Generated class inheritance graph generated from runtime introspection.
 
 == Setting up
 

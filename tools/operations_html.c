@@ -387,9 +387,9 @@ GHashTable *seen_categories = NULL;
 const gchar *css = "@import url(../gegl.css); .categories{ clear:right;text-align: justify; line-height: 1.6em; float:right; padding-left: 1em; padding-bottom: 1em ;width: 14em; } .categories a, .category {color:black; background:#eef; padding: 0.1em; padding-left0.2em; padding-right: 0.2em; border: 1px solid gray;} .description{margin-bottom:1em;}";
 
 const gchar *html_pre = "<html><head><title>GEGL operation %s</title>\n"
-                          "<style>%s%s</style></head><body>\n";
+                          "<style>%s%s</style></head><body><div id='content'>\n";
 const gchar *html_post =
-            "<div style='margin-top:3em;'><a href='../index.html'><img src='../images/GEGL.png' alt='GEGL' style='height: 4.0em;float:left; padding-right:0.5em;'/></a> This page is part of the online GEGL Documentation, GEGL is a data flow based image processing library/framework, made to fuel <a href='https://www.gimp.org/'>GIMPs</a> high-bit depth non-destructive editing future.</body></html></div>\n";
+            "<div style='margin-top:3em;'><a href='../index.html'><img src='../images/GEGL.png' alt='GEGL' style='height: 4.0em;float:left; padding-right:0.5em;'/></a> This page is part of the online GEGL Documentation, GEGL is a data flow based image processing library/framework, made to fuel <a href='https://www.gimp.org/'>GIMPs</a> high-bit depth non-destructive editing future.</div></body></html>\n";
 
 gint
 main (gint argc, gchar **argv)

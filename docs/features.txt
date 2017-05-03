@@ -1,5 +1,5 @@
-GEGL Feature List
------------------
+GEGL image processing
+---------------------
 
   - Floating point handling and processing and output of larger 8bit, 16bit
     integer and 32bit floating point per component buffers larger than RAM.
@@ -23,20 +23,9 @@ GEGL Feature List
      * Thread-safe reading/writing.
      * External tile-backends (allow wrapping other tiled buffer systems
        to use them through the GeglBuffer API).
-  - Operations
-      * PNG, JPEG, SVG, EXR, RAW, ffmpeg, v4l and other image sources.
-      * link:operations.html#category%20render[Pattern renderers]
-      * link:operations.html#category%20math[Arithmetic operations]
-      * link:operations.html#category%20porter-duff[porter duff compositing]
-      * SVG filter modes and full set of compositing ops from SVG-1.2 draft.
-      * Gaussian blur, bilateral-filter, symmetric nearest neighbour, linear
-      * blur, unsharp mask, pixelize and more.
-      * link:operations.html#category%20color[Color correction].
-      * Text rendering using cairo and http://pango.org/[pango].
-      * HDR exposure merging and tone mapping operations.
-      * Most operations operate in
-        http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (using 32bit
-        floating point/HDR linear light RGBA), operations use babl formats to
-        specify whether data should be linearized for processing.
+     * Most operations operate in
+       http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (using 32bit
+       floating point/HDR linear light RGBA), operations use babl formats to
+       specify whether data should be linearized for processing.
   - Bounding box based hit detection.
   - XML serialization format (not-finalized)

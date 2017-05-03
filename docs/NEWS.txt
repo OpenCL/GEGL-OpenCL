@@ -1,5 +1,11 @@
-GEGL-0.3.16 (collected news up to 69e4a0960e2fe0067e4f6ef1330fdc4ed3e88c5f)
+GEGL-0.3.16
 -----------
+
+Documentation
+~~~~~~~~~~~~~
+
+Replaced dynamic client side js content with static operation gallery,
+incremental improvements to website content.
 
 Core
 ~~~~

@@ -7,73 +7,34 @@ GEGL
 
 image::images/GEGL.png[GEGL]
 
+*GEGL* (Generic Graphics Library) is a data flow based image processing
+framework, providing floating point processing and non-destructive image
+processing capabilities to link:http://www.gimp.org/[GNU Image Manipulation Program] and other projects (link:http://www.imgflo.org/[imgflo], link:https://wiki.gnome.org/Apps/Photos[GNOME Photos],
+link:https://github.com/the-grid/iconographer[iconographer], ...)
 
-*GEGL* (Generic Graphics Library) is a graph based image processing framework.
+With GEGL you chain together processing link:operations/index.html[operations]
+to represent the desired image processing pipeline. GEGL provides operations
+for link:operations/GeglOperationSource.html[image loading] and 
+link:operations/GeglOperationSink.html[storing], link:operations/color.html[color adjustments], link:operations/artistic.html[GIMPs artistic] filters and more 
+forms of link:features.html[image processing] GEGL can also be used from the
+link:commandline.html[commandline].
 
-With GEGL you chain together link:operations/index.html[image processing operations]
-represented by nodes into a graph. GEGL provides operations for image loading
-and storing, color adjustments, and other different forms of image
-transformation, filtering and compositing. Some software using GEGL is
-link:http://www.gimp.org/[GNU Image Manipulation Program],
-link:http://www.imgflo.org/[imgflo],
-link:https://wiki.gnome.org/Apps/Photos[GNOME Photos] and
-link:https://github.com/the-grid/iconographer[iconographer].
+GEGL is link:copyright.html[Free Software], and both new functionality in
+link:operation-api.html[new operations] as well as relevant 
+link:development.html[development], enhancement
+requests, patches and bug reports for GEGL and link:http://gegl.org/babl/[babl] in link:bugzilla.html[bugzilla].
 
-link:operations/index.html[Operations reference gallery]::
-  Documentation and visual test reference for most GEGL image processing
-  operations.
-link:features.html[GEGL Feature list]::
-  The "feature list", a technical specification of what GEGL can do.
-link:glossary.html[GEGL glossary]::
-  A cheat sheet of terms used in GEGL.
-link:commandline.html[Commandline reference]::
-  Documentation for using GEGL from the commandline with the gegl binary.
-
-link:api.html[public API reference]::
-  The public graph construction and manipulation API for doing image
-  processing.
-link:api.html#GeglBuffer[GeglBuffer API reference]::
-  GEGL contains a powerful raster buffer abstraction powered by
-  link:http://gegl.org/babl/[babl].
-
-link:operation-api.html[Extending GEGL with operations/plug-ins]::
-  The API to create new image processing atoms for combination in the graph.
-link:build.html[Getting sources, and building]::
-  Links and information about various ways of getting a build environment for
-  GEGL.
-link:images/inheritance.png[GEGL inheritance tree]::
-  Generated class inheritance graph generated from runtime introspection.
-link:bugzilla.html[bugzilla]::
-  GEGL uses bugzilla for tracking issues, both bugs and desired new features.
-link:copyright.html[Copyright]::
-  Who made GEGL and under what conditions you can use it.
-link:development.html[Further pointers for development]::
-  Miscellaneous notes about possible ways of building and developing with GEGL.
-
-
-If you read this on the gegl.org website you are reading the snapshot of the
-documentation generated for gegl at that point. For further information here
-are some pointers to follow:
-
-http://git.gnome.org/browse/gegl/[GEGL source] and http://git.gnome.org/browse/babl/[babl source]::
-  http://git.gnome.org/cgit/gegl/log/[commit log]::
-  For day to day fixes, contributions and changes.
-http://gegl.org/NEWS.html[NEWS]::
-  The NEWS file for a list across history of GEGL.
-http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugzilla]::
- for known and tracked issues with GEGL and perhaps see the
-http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes[mail]::
-  The mailinglist archives for some discussion and announcement.
-
-GEGL development is discussed on IRC in #gegl (and sometimes in #gimp) on
-GIMPnet (irc.gimp.org).
+Important links for following GEGL development:
+http://gegl.org/NEWS.html[GEGL NEWS file],
+http://git.gnome.org/browse/gegl/[GEGL source],
+http://git.gnome.org/browse/babl/[babl source],
+http://git.gnome.org/cgit/gegl/log/[GEGL commit log], 
+http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugzilla],
+http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes[mailing list archives] and IRC in #gegl (and #gimp) on GIMPnet (irc.gimp.org).
 
 You can subscribe to gegl-developer and view the archives
 http://mail.gnome.org/mailman/listinfo/gegl-developer-list[here]. The GEGL
-developer list is the appropriate place to ask development questions, and get
-more information about GEGL development in general. You can email this list at
-mailto:gegl-developer-list@gnome.org[].
+developer list or IRC as mentioned above is the appropriate place to ask
+development questions, and get more information about GEGL development in
+general. You can email this list at mailto:gegl-developer-list@gnome.org[].
 
-++++++++
-<div id='fnord'>fnord</div>
-++++++++
