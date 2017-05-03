@@ -14,27 +14,27 @@ link:https://github.com/the-grid/iconographer[iconographer], ...)
 
 With GEGL you chain together processing link:operations/index.html[operations]
 to represent the desired image processing pipeline. GEGL provides operations
-for link:operations/GeglOperationSource.html[image loading] and 
-link:operations/GeglOperationSink.html[storing], link:operations/color.html[color adjustments], link:operations/artistic.html[GIMPs artistic] filters and more 
+for link:operations/GeglOperationSource.html[image loading] and
+link:operations/GeglOperationSink.html[storing], link:operations/color.html[color adjustments], link:operations/artistic.html[GIMPs artistic] filters and more
 forms of link:features.html[image processing] GEGL can also be used from the
 link:commandline.html[commandline].
 
+The primary repository for the GEGL source code
+link:http://git.gnome.org/browse/gegl/[in GNOME git], and at GIMPs download
+site link:https://download.gimp.org/pub/gegl/0.3/[tarball releases].
+
 GEGL is link:copyright.html[Free Software], and both new functionality in
-link:operation-api.html[new operations] as well as relevant 
+link:operation-api.html[new operations] as well as relevant
 link:development.html[development], enhancement
 requests, patches and bug reports for GEGL and link:http://gegl.org/babl/[babl] in link:bugzilla.html[bugzilla].
 
-Important links for following GEGL development:
-http://gegl.org/NEWS.html[GEGL NEWS file],
-http://git.gnome.org/browse/gegl/[GEGL source],
-http://git.gnome.org/browse/babl/[babl source],
-http://git.gnome.org/cgit/gegl/log/[GEGL commit log], 
+Important links for tracking GEGL development: http://gegl.org/NEWS.html[GEGL
+NEWS file], http://git.gnome.org/cgit/gegl/log/[GEGL commit log],
 http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugzilla],
-http://blog.gmane.org/gmane.comp.video.gegl.devel?set_blog_all=yes[mailing list archives] and IRC in #gegl (and #gimp) on GIMPnet (irc.gimp.org).
-
-You can subscribe to gegl-developer and view the archives
-http://mail.gnome.org/mailman/listinfo/gegl-developer-list[here]. The GEGL
-developer list or IRC as mentioned above is the appropriate place to ask
-development questions, and get more information about GEGL development in
-general. You can email this list at mailto:gegl-developer-list@gnome.org[].
+and IRC in #gegl (and #gimp) on GIMPnet (irc.gimp.org).
+links:https://mail.gnome.org/mailman/listinfo/gegl-developer-list[mailing list]
+Finanical support for fun new filters and capabilities as well as
+gardening/janitor bits part of project maintainership is welcome through
+link:https://www.gimp.org/donating/[the patreon campaign at GIMPs donation
+page.]
 
