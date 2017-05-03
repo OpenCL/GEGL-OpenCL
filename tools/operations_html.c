@@ -636,11 +636,13 @@ all:
       gchar *category = "all";
       GList *keys = g_hash_table_get_keys (seen_categories);
       GList *keys2 = g_list_copy (keys);
+      GList *k;
+      GString *cs;
       keys2 = g_list_sort (keys2, (void*)g_strcmp0);
       keys = keys2;
       k = keys;
 
-      GString *cs = g_string_new ("<div class='categories'>");
+      cs = g_string_new ("<div class='categories'>");
 
       for (k = keys; k; k = k->next)
       {
