@@ -88,9 +88,9 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:cache",
-    "title",       _("Explicit cache of results at this point of graph."),
+    "title",       _("Cache"),
     "categories",  "programming",
-    "description", _("An explicit caching node"),
+    "description", _("An explicit caching node, caches results and should provide faster recomputation if what is cached by it is expensive but isn't changing."),
     NULL);
 }
 
