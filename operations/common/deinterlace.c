@@ -79,6 +79,19 @@ prepare (GeglOperation *operation)
                              babl_format ("RGBA float"));
 }
 
+static GeglRectangle
+get_bounding_box (GeglOperation *operation)
+{
+  GeglRectangle  result = { 0, 0, 0, 0 };
+  GeglRectangle *in_rect;
+
+  in_rect = gegl_operation_source_get_bounding_box (operation, "input");
+  if (!in_rect)
+    return result;
+
+  return *in_rect;
+}
+
 static void
 deinterlace_horizontal (gfloat              *src_buf,
                         gfloat              *dest,
@@ -217,18 +230,6 @@ deinterlace_vertical (gfloat              *src_buf,
     }
 }
 
-static GeglRectangle
-get_effective_area (GeglOperation *operation)
-{
-  GeglRectangle  result  = { 0, 0, 0, 0 };
-  GeglRectangle *in_rect = gegl_operation_source_get_bounding_box (operation,
-                                                                   "input");
-
-  gegl_rectangle_copy (&result, in_rect);
-
-  return result;
-}
-
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -240,7 +241,7 @@ process (GeglOperation       *operation,
   GeglOperationAreaFilter *op_area  = GEGL_OPERATION_AREA_FILTER (operation);
   const Babl              *format   = babl_format ("RGBA float");
   GeglRectangle            rect;
-  GeglRectangle            boundary = get_effective_area (operation);
+  GeglRectangle            boundary = get_bounding_box (operation);
   gint                     x, y;
   gfloat                  *dst_buf, *src_buf;
 
@@ -292,27 +293,6 @@ process (GeglOperation       *operation,
   return  TRUE;
 }
 
-static GeglRectangle
-get_bounding_box (GeglOperation *operation)
-{
-  GeglRectangle  result = { 0, 0, 0, 0 };
-  GeglRectangle *in_rect;
-
-  in_rect = gegl_operation_source_get_bounding_box (operation, "input");
-  if (!in_rect)
-    return result;
-
-  return *in_rect;
-}
-
-static GeglRectangle
-get_required_for_output (GeglOperation       *operation,
-                         const gchar         *input_pad,
-                         const GeglRectangle *roi)
-{
-  return get_bounding_box (operation);
-}
-
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
@@ -322,10 +302,9 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
-  operation_class->prepare                 = prepare;
-  operation_class->get_bounding_box        = get_bounding_box;
-  operation_class->get_required_for_output = get_required_for_output;
-  filter_class->process                    = process;
+  operation_class->prepare           = prepare;
+  operation_class->get_bounding_box  = get_bounding_box;
+  filter_class->process              = process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:deinterlace",
