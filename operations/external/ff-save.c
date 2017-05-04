@@ -1091,6 +1091,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:ff-save",
+    "title"       , _("FFmpeg Frame Saver"),
     "categories"  , "output:video",
     "description" , _("FFmpeg video output sink"),
     NULL);

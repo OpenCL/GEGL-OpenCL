@@ -205,8 +205,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "gegl:image-compare",
     "categories" , "programming",
     "description", _("Compares if input and aux buffers are "
-                     "different. Results are saved in the "
-                     "properties."),
+                     "different. Global statistics are saved in the "
+                     "properties and a visual difference image is produced as a visual result. "),
     NULL);
 }
 

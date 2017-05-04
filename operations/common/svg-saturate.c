@@ -125,6 +125,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:svg-saturate",
     "categories" , "compositors:svgfilter",
+    "title"      , _("SVG Saturate"),
     "description", _("SVG color matrix operation svg_saturate"),
     NULL);
 }
