@@ -386,7 +386,7 @@ GHashTable *seen_categories = NULL;
 
 const gchar *css = "@import url(../gegl.css); .categories{ clear:right;text-align: justify; line-height: 1.6em; float:right; padding-left: 1em; padding-bottom: 1em ;width: 14em; } .categories a, .category {color:black; background:#eef; padding: 0.1em; padding-left0.2em; padding-right: 0.2em; border: 1px solid gray;} .description{margin-bottom:1em;}";
 
-const gchar *html_pre = "<html><head><title>GEGL operation %s</title>\n"
+const gchar *html_pre = "<html><head><title>%s</title>\n"
                           "<style>%s%s</style></head><body><div id='content'>\n";
 const gchar *html_post =
             "<div style='margin-top:3em;'><a href='../index.html'><img src='../images/GEGL.png' alt='GEGL' style='height: 4.0em;float:left; padding-right:0.5em;'/></a> This page is part of the online GEGL Documentation, GEGL is a data flow based image processing library/framework, made to fuel <a href='https://www.gimp.org/'>GIMPs</a> high-bit depth non-destructive editing future.</div></body></html>\n";
@@ -416,7 +416,9 @@ main (gint argc, gchar **argv)
       const char *categoris = gegl_operation_class_get_key (klass, "categories");
       const char *description = gegl_operation_class_get_key (klass, "description");
 
+      gchar *title2 = g_strdup_printf ("%s", name);
       g_string_append_printf (s, html_pre, name, css, "");
+      g_free (title2);
       g_string_append_printf (s, "<div class='operation'><h2 style='clear:both;'>%s</h2>\n", title?title:name);
 
 
@@ -436,9 +438,9 @@ main (gint argc, gchar **argv)
       }
 
 
-      g_string_append_printf (s, "<div style='margin-bottom:1em;'>", name);
+      g_string_append_printf (s, "<div style='margin-bottom:1em;'>");
       json_list_properties (G_OBJECT_CLASS_TYPE (klass), s, name);
-      g_string_append_printf (s, "</div>", name);
+      g_string_append_printf (s, "</div>");
 
       g_string_append_printf (s, "<b>name:</b>&nbsp%s<br/>", name);
       json_list_pads (G_OBJECT_CLASS_TYPE (klass), s, name);
@@ -481,7 +483,7 @@ main (gint argc, gchar **argv)
       if (klass->compat_name)
         g_string_append_printf (s, "<b>compat-op:</b>&nbsp;%s<br/>\n", klass->compat_name);
 
-      if(0){ // XXX: re-enable before push.. it takes a lot of time
+      if(1){ // XXX: re-enable before push.. it takes a lot of time
         gchar *commandline = g_strdup_printf (
             "sh -c \"(cd " TOP_SRCDIR ";cd ..;grep -r '\\\"%s\\\"' operations) | grep operations | grep -v '~:' | grep '\\\"name\\\"' | cut -f 1 -d ':'\"",
              name);
@@ -570,7 +572,9 @@ all:
         g_string_assign (s, "");
         if (category)
         {
-          g_string_append_printf (s, html_pre, category, css, " body{max-width:98%;} ");
+          gchar *title = g_strdup_printf ("GEGL %s operations", category);
+          g_string_append_printf (s, html_pre, title, css, " body{max-width:98%;} ");
+          g_free (title);
           g_string_append_printf (s, "<h2 style='clear:both;'>GEGL %s operations</h2>\n", category);
           g_string_append_printf (s, "%s", cs->str);
 
@@ -665,7 +669,9 @@ all:
 
         g_string_assign (s, "");
         {
-          g_string_append_printf (s, html_pre, category, css, "");
+          gchar *title = g_strdup_printf ("GEGL operations");
+          g_string_append_printf (s, html_pre, title, css, "");
+          g_free (title);
           g_string_append_printf (s, "<div style='margin-top:3em;'><a href='../index.html'><img src='../images/GEGL.png' alt='GEGL' style='height: 6.0em;float:left; padding-right:0.5em;'/></a><h2> All GEGL operations</h2><p>This part of the GEGL documentation contains a snapshot of reference rendering images and meta-data, useful for programming with GEGL as well as used by GIMP for automatically constructing property panels user interfaces. The tags in on the right lead to galleries of ops belonging to each category.</p>");
           g_string_append_printf (s, "<p style='float:right;'>categories:</p>%s\n", cs->str);
 
