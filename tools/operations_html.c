@@ -534,7 +534,7 @@ main (gint argc, gchar **argv)
       g_string_append_printf (s, "</dl>");
 
       g_string_append_printf (s, "</div>");
-      g_string_append_printf (s, html_post);
+      g_string_append (s, html_post);
       {
         gchar *html_name = g_strdup_printf ("%s.html", name);
         gchar *colon = strchr (html_name, ':');
@@ -628,7 +628,7 @@ all:
       }
           }
         }
-        g_string_append_printf (s, html_post);
+        g_string_append (s, html_post);
 
       {
         gchar *html_name = g_strdup_printf ("%s.html", category);
