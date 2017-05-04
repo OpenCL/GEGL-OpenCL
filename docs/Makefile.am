@@ -97,7 +97,7 @@ examples:  $(top_builddir)/tools/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*
 		GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
 		$(top_builddir)/tools/gegl-tester$(EXEEXT) --all -o operations/images \
 		-d $(srcdir)/images/ -e $(exclusion_pattern) ; \
-		(cd operations; $(top_builddir)/../tools/operations_html ) \
+		(cd operations; GEGL_PATH=$(top_builddir)/../operations  $(top_builddir)/../tools/operations_html ) \
 	fi
 
 class-hierarchy.html: $(top_builddir)/tools/introspect$(EXEEXT) $(top_srcdir)/operations/*/*.c $(top_srcdir)/gegl/*.c
