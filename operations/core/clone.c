@@ -108,7 +108,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
        "name",          "gegl:clone",
        "title",         _("Clone"),
-       "description",   _("Clone a buffer"),
+       "description",   _("Clone a buffer, this is the same as gegl:nop but can get special treatment to get more human readable references in serializations/UI."),
        "categories",    "core",
        NULL);
 }
