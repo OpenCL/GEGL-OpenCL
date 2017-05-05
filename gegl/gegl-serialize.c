@@ -13,15 +13,21 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016 Øyvind Kolås
+ * Copyright 2016, 2017 Øyvind Kolås
  */
 
+#include "config.h"
 #include "gegl.h"
 #include <string.h>
 #include <limits.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "property-types/gegl-paramspecs.h"
+
+#ifdef G_OS_WIN32
+#include <direct.h>
+#define realpath(a,b) _fullpath(b,a,_MAX_PATH)
+#endif
 
 //#define make_rel(strv) (g_strtod (strv, NULL) * gegl_node_get_bounding_box
 // (iter[0]).height)
