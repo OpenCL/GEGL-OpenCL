@@ -1,14 +1,14 @@
-__kernel cl_texturize_canvas(__global const float * in,
-                             __global float * out,
-                             __global float * sdata,
-                             const int x,
-                             const int y,
-                             const int xm,
-                             const int ym,
-                             const int offs,
-                             const float mult,
-                             const int components,
-                             const int has_alpha)
+__kernel void cl_texturize_canvas(__global const float * in,
+                                  __global       float * out,
+                                  __global       float * sdata,
+                                           const int     x,
+                                           const int     y,
+                                           const int     xm,
+                                           const int     ym,
+                                           const int     offs,
+                                           const float   mult,
+                                           const int     components,
+                                           const int     has_alpha)
 {
     int col = get_global_id(0);
     int row = get_global_id(1);
@@ -21,7 +21,7 @@ __kernel cl_texturize_canvas(__global const float * in,
     float tmp = mult * sdata[canvas_index];
     for(i=0; i<components; ++i)
     {
-       color = tmp + src[index];
+       color = tmp + in[index];
        out[index++] = clamp(color,0.0f,1.0f);
     }
     if(has_alpha)
