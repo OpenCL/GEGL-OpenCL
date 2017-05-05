@@ -416,9 +416,7 @@ main (gint argc, gchar **argv)
       const char *categoris = gegl_operation_class_get_key (klass, "categories");
       const char *description = gegl_operation_class_get_key (klass, "description");
 
-      gchar *title2 = g_strdup_printf ("%s", name);
-      g_string_append_printf (s, html_pre, name, css, "");
-      g_free (title2);
+      g_string_append_printf (s, html_pre, name, css, ";body { margin: 1em 5% 1em 5%; }");
       g_string_append_printf (s, "<div class='operation'><h2 style='clear:both;'>%s</h2>\n", title?title:name);
 
 
