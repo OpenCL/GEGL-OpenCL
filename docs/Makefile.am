@@ -206,7 +206,7 @@ else
 endif
 
 clean-local:
-	rm -rf images/examples;
+	rm -rf operations
 
 distclean-local:
 	if test $(srcdir) = .; then :; else 	\
