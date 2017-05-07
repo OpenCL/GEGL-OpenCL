@@ -45,6 +45,9 @@ TestCase tests[] = {
      "gegl:gaussian-blur",
      ""},
 
+    /*
+       XXX: commented out until we have internal fonts for reproducible metrix,
+       see https://bugzilla.gnome.org/show_bug.cgi?id=772992
     {"over aux=[ text string='foo bar' ]",
      "svg:src-over aux=[  gegl:text string='foo bar' width=33 height=7 ]\n",
      ""},
@@ -52,6 +55,7 @@ TestCase tests[] = {
     {"over aux=[text string='foo bar' ]",
      "svg:src-over aux=[  gegl:text string='foo bar' width=33 height=7 ]\n",
      ""},
+     */
 
     {"over aux= [ ",
      "svg:src-over",
