@@ -993,7 +993,7 @@ gegl_op_class_init (GeglOpClass *klass)
   "categories"  , "script:misc",
   "title"       , _("gluas"),
   "description" ,
-        _("Pixel level filter/composer scripting protoyping with lua. See http://pippin.gimp.org/image-processing/ for further details."),
+        _("Pixel level filter/composer scripting prototyping with lua. See http://pippin.gimp.org/image-processing/ for further details."),
         NULL);
 }
 
