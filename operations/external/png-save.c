@@ -94,8 +94,8 @@ export_png (GeglOperation       *operation,
 
   src_x = result->x;
   src_y = result->y;
-  width = result->width - result->x;
-  height = result->height - result->y;
+  width = result->width;
+  height = result->height;
 
   {
     const Babl *babl = gegl_buffer_get_format (input);
