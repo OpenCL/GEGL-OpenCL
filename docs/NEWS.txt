@@ -25,8 +25,8 @@ New operations: newsprint/spachrotyzer.
 Moved out of workshop: unpremultiply
 New in workshop: spiral
 drop-shadow: improve edge mode of blur, to work on tiny radiuses.
-Ported affine transform ops to use new way for defining ops.
-file-loading ops: protect against crashes on invalid/lacking inputs.
+transform-ops: ported to state of the art
+file-loading ops: stop some crashes happening due to invalid/lacking properties.
 
 Tests
 ~~~~~
