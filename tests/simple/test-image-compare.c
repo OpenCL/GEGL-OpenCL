@@ -108,7 +108,7 @@ compare_values (GeglNode            *comparison,
   test_result = SUCCESS;
 
   if (fabs (actual_result.max_diff - expected_result->max_diff)
-      > GEGL_FLOAT_EPSILON)
+      > GEGL_FLOAT_EPSILON * 10)
     {
       g_printerr ("The max_diff property differs: %f instead of %f. ",
                   (gfloat) actual_result.max_diff,
@@ -116,7 +116,7 @@ compare_values (GeglNode            *comparison,
       test_result = FAILURE;
     }
   if (fabs (actual_result.avg_diff_wrong - expected_result->avg_diff_wrong)
-      > GEGL_FLOAT_EPSILON)
+      > GEGL_FLOAT_EPSILON * 10)
     {
       g_printerr ("The avg_diff_wrong property differs: %f instead of %f. ",
                   (gfloat) actual_result.avg_diff_wrong,
@@ -124,7 +124,7 @@ compare_values (GeglNode            *comparison,
       test_result = FAILURE;
     }
   if (fabs (actual_result.avg_diff_total - expected_result->avg_diff_total)
-      > GEGL_FLOAT_EPSILON)
+      > GEGL_FLOAT_EPSILON * 10)
     {
       g_printerr ("The avg_diff_total property differs: %f instead of %f. ",
                   (gfloat) actual_result.avg_diff_total,
