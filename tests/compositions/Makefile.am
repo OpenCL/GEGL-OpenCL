@@ -39,6 +39,7 @@ TESTS = \
   lens-flare.xml                  \
   mantiuk06.xml                   \
   noise-cell.xml                  \
+  noise-hsv.xml                   \
   noise-hurl.xml                  \
   noise-simplex.xml               \
   noise-solid.xml                 \

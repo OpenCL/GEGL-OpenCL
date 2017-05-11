@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gegl>
+  <node operation='gegl:noise-hsv'>
+    <params>
+      <param name='seed'>2147483647</param>
+      <param name='holdness'>4</param>
+      <param name='hue_distance'>10</param>
+      <param name='saturation_distance'>0.3</param>
+      <param name='value_distance'>0.2</param>
+    </params>
+  </node>
+  <node operation='gegl:load'>
+    <params>
+      <param name='path'>data/car-stack.png</param>
+    </params>
+  </node>
+</gegl>
