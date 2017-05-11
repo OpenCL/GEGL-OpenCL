@@ -79,8 +79,9 @@ gegl_downscale_2x2_generic (const Babl *format,
 {
   gint y;
   const Babl *tmp_format = gegl_babl_rgbA_linear_float ();
-  void *in_tmp = gegl_malloc (src_height * src_rowstride * 4 * 4);
-  void *out_tmp = gegl_malloc (src_height * src_rowstride * 4 * 4);
+  const Babl *to_fish    = babl_fish (tmp_format, format);
+  void *in_tmp           = gegl_malloc (src_height * src_rowstride * 4 * 4);
+  void *out_tmp          = gegl_malloc (src_height * src_rowstride * 4 * 4);
   guchar *src = out_tmp;
   guchar *dst = dst_data;
 
@@ -91,9 +92,7 @@ gegl_downscale_2x2_generic (const Babl *format,
                             out_tmp, src_width * 4 * 4);
   for (y = 0; y < src_height / 2; y++)
     {
-      babl_process (babl_fish (tmp_format, format),
-                    src, dst, src_width / 2);
-
+      babl_process (to_fish, src, dst, src_width / 2);
       dst += dst_rowstride;
       src += (src_width * 4 * 4);
     }
