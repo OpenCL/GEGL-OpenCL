@@ -218,6 +218,118 @@ gblur_selective (GeglBuffer          *input,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+#include "gegl-buffer-cl-iterator.h"
+
+#include "opencl/gaussian-blur-selective.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+static gboolean
+cl_gblur_selective (cl_mem                in,
+                    cl_mem                delta,
+                    cl_mem                out,
+                    size_t                global_worksize,
+                    const GeglRectangle  *roi,
+                    gfloat                radius,
+                    gfloat                max_delta)
+{
+  cl_int cl_err = 0;
+  size_t global_ws[2];
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = { "cl_gblur_selective", NULL };
+      cl_data = gegl_cl_compile_and_build (gaussian_blur_selective_cl_source,
+                                           kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
+
+  global_ws[0] = roi->width;
+  global_ws[1] = roi->height;
+
+  gegl_cl_set_kernel_args (cl_data->kernel[0],
+                           sizeof(cl_mem),     &in,
+                           sizeof(cl_mem),     &delta,
+                           sizeof(cl_mem),     &out,
+                           sizeof(cl_float),   &radius,
+                           sizeof(cl_float),   &max_delta,
+                           NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_ws, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  return FALSE;
+
+error:
+  return TRUE;
+}
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            GeglBuffer          *input,
+            GeglBuffer          *aux,
+            GeglBuffer          *output,
+            const GeglRectangle *result)
+{
+  const Babl *in_format  = gegl_operation_get_format (operation, "input");
+  const Babl *aux_format = gegl_operation_get_format (operation, "aux");
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+  gint err;
+
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+
+  GeglBufferClIterator *i = gegl_buffer_cl_iterator_new (output,
+                                                         result,
+                                                         out_format,
+                                                         GEGL_CL_BUFFER_WRITE);
+
+  gint radius  = o->blur_radius;
+
+  gint read = gegl_buffer_cl_iterator_add_2 (i,
+                                             input,
+                                             result,
+                                             in_format,
+                                             GEGL_CL_BUFFER_READ,
+                                             radius, radius, radius, radius,
+                                             GEGL_ABYSS_CLAMP);
+
+  gint delta = !aux ?
+               read :
+               gegl_buffer_cl_iterator_add_2 (i,
+                                              aux,
+                                              result,
+                                              aux_format,
+                                              GEGL_CL_BUFFER_READ,
+                                              radius, radius, radius, radius,
+                                              GEGL_ABYSS_CLAMP);
+
+  while (gegl_buffer_cl_iterator_next (i, &err))
+    {
+      if (err)
+        return FALSE;
+
+      err = cl_gblur_selective(i->tex[read],
+                               i->tex[delta],
+                               i->tex[0],
+                               i->size[0],
+                               &i->roi[0],
+                               o->blur_radius,
+                               o->max_delta);
+
+      if (err)
+        return FALSE;
+    }
+
+  return TRUE;
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -231,6 +343,10 @@ process (GeglOperation       *operation,
   GeglRectangle   compute;
 
   compute = get_required_for_output (operation, "input", result);
+
+  if (gegl_operation_use_opencl (operation))
+    if (cl_process (operation, input, aux, output, result))
+      return TRUE;
 
   success = gblur_selective (input, &compute,
                              aux,
@@ -251,7 +367,7 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class->prepare                   = prepare;
   operation_class->get_required_for_output   = get_required_for_output;
   operation_class->get_invalidated_by_change = get_invalidated_by_change;
-  operation_class->opencl_support            = FALSE;
+  operation_class->opencl_support            = TRUE;
 
   composer_class->process = process;
 
