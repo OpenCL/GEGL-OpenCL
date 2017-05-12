@@ -67,7 +67,8 @@ static void allocate_data (GeglAudioFragment *audio)
 {
   int i;
   deallocate_data (audio);
-  if (audio->priv->channels * audio->priv->max_samples == 0)
+  if (audio->priv->channels <= 0 ||
+      audio->priv->max_samples <= 0)
     return;
   for (i = 0; i < audio->priv->channels; i++)
   {
