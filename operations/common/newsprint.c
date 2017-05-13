@@ -64,18 +64,36 @@ property_double (twist, _("Black and green angle"), 75.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
                  description (_("angle offset for patterns"))
+                 ui_meta ("label", "[color-model {white-on-black,"
+                                   "              black-on-white} : bw-label,"
+                                   " color-model {rgb}            : rgb-label,"
+                                   " color-model {cmyk}           : cmyk-label]")
+                 ui_meta ("bw-label",   _("Angle"))
+                 ui_meta ("rgb-label",  _("Green angle"))
+                 ui_meta ("cmyk-label", _("Black angle"))
 
 property_double (twist2, _("Red and cyan angle"), 15.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
+                 ui_meta ("visible", "color-model {rgb, cmyk}")
+                 ui_meta ("label", "[color-model {rgb}  : rgb-label,"
+                                   " color-model {cmyk} : cmyk-label]")
+                 ui_meta ("rgb-label",  _("Red angle"))
+                 ui_meta ("cmyk-label", _("Cyan angle"))
 
 property_double (twist3, _("Blue and magenta angle"), 45.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
+                 ui_meta ("visible", "color-model {rgb, cmyk}")
+                 ui_meta ("label", "[color-model {rgb}  : rgb-label,"
+                                   " color-model {cmyk} : cmyk-label]")
+                 ui_meta ("rgb-label",  _("Blue angle"))
+                 ui_meta ("cmyk-label", _("Magenta angle"))
 
 property_double (twist4, _("Yellow angle"), 0.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
+                 ui_meta ("visible", "color-model {cmyk}")
 
 #else
 

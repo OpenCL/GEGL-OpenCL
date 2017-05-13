@@ -55,6 +55,8 @@ property_double (rate, _("Propagating rate"), 1.0)
 property_color   (color, _("Color"), "blue")
      description (_("Color to use for the \"Only color\" and \"Color to peaks\" modes"))
      ui_meta     ("role", "color-primary")
+     ui_meta     ("visible", "mode {color_peak, color}")
+     ui_meta     ("description", "''")
 
 property_boolean (top, _("To top"), TRUE)
      description (_("Propagate to top"))
@@ -73,6 +75,7 @@ property_boolean (value, _("Propagating value channel"), TRUE)
 
 property_boolean (alpha, _("Propagating alpha channel"), TRUE)
      description (_("Propagating alpha channel"))
+     ui_meta     ("sensitive", "! mode {color_peak}")
 
 #else
 

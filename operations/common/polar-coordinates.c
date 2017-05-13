@@ -53,15 +53,18 @@ property_int  (pole_x, _("X"), 0)
   value_range (0, G_MAXINT)
   ui_meta     ("unit", "pixel-coordinate")
   ui_meta     ("axis", "x")
+  ui_meta     ("sensitive", "$middle.sensitive & ! middle")
 
 property_int  (pole_y, _("Y"), 0)
   description (_("Origin point for the polar coordinates"))
   value_range (0, G_MAXINT)
   ui_meta     ("unit", "pixel-coordinate")
   ui_meta     ("axis", "y")
+  ui_meta     ("sensitive", "$pole-x.sensitive")
 
 property_boolean (middle, _("Choose middle"), TRUE)
-  description(_("Let origin point to be the middle one"))
+  description (_("Let origin point to be the middle one"))
+  ui_meta     ("sensitive", "polar")
 
 #else
 

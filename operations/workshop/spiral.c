@@ -55,6 +55,7 @@ property_double (base, _("Base"), 2.0)
   value_range (1.0, G_MAXDOUBLE)
   ui_range    (1.0, 20.0)
   ui_gamma    (2.0)
+  ui_meta     ("visible", "type {logarithmic}")
 
 property_double (balance, _("Balance"), 0.0)
   description (_("Area balance between the two colors"))

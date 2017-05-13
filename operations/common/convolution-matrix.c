@@ -50,9 +50,11 @@ property_double (e5, _("(5,5)"), 0.0)
 
 property_double (divisor, _("Divisor"), 1.0)
     ui_range    (-1000.0, 1000.0)
+    ui_meta     ("sensitive", "! normalize")
 
 property_double (offset, _("Offset"), 0.0)
     value_range (-1.0, 1.0)
+    ui_meta     ("sensitive", "! normalize")
 
 property_boolean (red,   _("Red channel"),   TRUE)
 property_boolean (green, _("Green channel"), TRUE)
