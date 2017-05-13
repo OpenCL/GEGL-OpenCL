@@ -1,12 +1,6 @@
 GEGL-0.3.16
 -----------
 
-Documentation
-~~~~~~~~~~~~~
-
-Replaced dynamic client side js content with static operation gallery,
-incremental improvements to website content.
-
 Core
 ~~~~
 
@@ -16,7 +10,8 @@ Remove remnants of deprecated gegl-graph syntactic sugar for C
 Buffer
 ~~~~~~
 
-Avoid choking on 0x0 rectangles.
+Avoid choking on 0x0 rectangles, handle implicit mipmap generation for 15bpc
+and half precision float pixelformate.
 
 Operations
 ~~~~~~~~~~
@@ -25,8 +20,14 @@ New operations: newsprint/spachrotyzer.
 Moved out of workshop: unpremultiply
 New in workshop: spiral
 drop-shadow: improve edge mode of blur, to work on tiny radiuses.
-transform-ops: ported to state of the art
+transform-ops: ported to the new chanting system
+ff-load: readjust frame accurate mp4 seeking for newer ffmpeg.
 file-loading ops: stop some crashes happening due to invalid/lacking properties.
+npy-save, jpg-save, png-save: port to GIO.
+raw-load: rotate bounding box based on image meta-data.
+
+The C source code of the operations is no longer kept as a meta-data key on the
+binary, with a shrink of ~10mb it might even impact startup time.
 
 Tests
 ~~~~~
@@ -36,12 +37,19 @@ regression testing, thus causing fewer manual steps to add an op with its
 tests. Some XML based tests removed as they were fully superceded by new
 automated tests.
 
-Contributos
-~~~~~~~~~~~
+Documentation
+~~~~~~~~~~~~~
+
+Replaced dynamic client side js content with static operation gallery,
+incremental improvements to website content. This includes updates to the
+meta-data in the .C files of operations.
+
+Contributors
+~~~~~~~~~~~~
 
 Daniel Mustieles, Debarshi Ray, Dimitris Spingos (Δημήτρης Σπίγγος), Ell, Jan
-Vesely, Jean-Baptiste Mayer, Marco Ciampa, Mario Blättermann, Michael Natterer,
-nick black, Øyvind Kolås, Piotr Drąg, Thomas Manni,
+Vesely, Jean-Baptiste Mayer, Marco Ciampa, Mario Blättermann, Martin Blanchard,
+Michael Natterer, nick black, Øyvind Kolås, Piotr Drąg, Thomas Manni,
 
 GEGL-0.3.14 2017-02-27
 ----------------------
