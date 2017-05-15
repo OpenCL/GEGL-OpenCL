@@ -382,7 +382,7 @@ process (GeglOperation       *operation,
   gfloat          x0;
   gfloat          y0;
   gfloat          radius    = scale * o->radius;
-  gfloat          thickness = (1.0 - o->balance) / 2.0;
+  gfloat          thickness = (1.0 + o->balance) / 2.0;
   gfloat          angle     = o->rotation / 360.0;
   gboolean        clockwise = o->direction == GEGL_SPIRAL_DIRECTION_CLOCKWISE;
   gfloat          color1[4];
