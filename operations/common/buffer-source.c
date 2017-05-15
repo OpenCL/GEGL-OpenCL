@@ -95,6 +95,11 @@ my_set_property (GObject      *object,
   Priv           *p         = get_priv (o);
   GeglBuffer     *buffer    = NULL;
 
+  /* we split buffer replacement into two parts -- before and after calling
+   * set_property() to update o->buffer -- so that code executed as a result
+   * of the invalidation performed by buffer_changed() sees the op with the
+   * right buffer.
+   */
   switch (property_id)
     {
     case PROP_buffer:
@@ -109,7 +114,20 @@ my_set_property (GObject      *object,
                           gegl_buffer_get_extent (GEGL_BUFFER (o->buffer)),
                           operation);
         }
+      break;
 
+    default:
+      break;
+  }
+
+  /* The set_property provided by the chant system does the storing
+   * and reffing/unreffing of the input properties
+   */
+  set_property (object, property_id, value, pspec);
+
+  switch (property_id)
+    {
+    case PROP_buffer:
       buffer = g_value_get_object (value);
 
       if (buffer)
@@ -127,11 +145,6 @@ my_set_property (GObject      *object,
     default:
       break;
   }
-
-  /* The set_property provided by the chant system does the storing
-   * and reffing/unreffing of the input properties
-   */
-  set_property (object, property_id, value, pspec);
 }
 
 static gboolean
