@@ -16,6 +16,10 @@ and half precision float pixelformate.
 Operations
 ~~~~~~~~~~
 
+Many operations have gotten an additiona meta-ui description layer sprinkled on
+top. And The C source code of the operations is no longer kept as a meta-data
+key on the binary, with a shrink of ~10mb it might even impact startup time.
+
 New operations: newsprint/spachrotyzer.
 Moved out of workshop: unpremultiply
 New in workshop: spiral
@@ -25,9 +29,6 @@ ff-load: readjust frame accurate mp4 seeking for newer ffmpeg.
 file-loading ops: stop some crashes happening due to invalid/lacking properties.
 npy-save, jpg-save, png-save: port to GIO.
 raw-load: rotate bounding box based on image meta-data.
-
-The C source code of the operations is no longer kept as a meta-data key on the
-binary, with a shrink of ~10mb it might even impact startup time.
 
 Tests
 ~~~~~
