@@ -378,9 +378,11 @@ gegl_operation_source_get_bounding_box (GeglOperation *operation,
   if (node)
     {
       GeglRectangle *ret;
-      g_mutex_lock (&node->mutex);
+      /* g_mutex_lock (&node->mutex); */
+      /* make sure node->have_rect is valid */
+      (void) gegl_node_get_bounding_box (node);
       ret = &node->have_rect;
-      g_mutex_unlock (&node->mutex);
+      /* g_mutex_unlock (&node->mutex); */
       return ret;
     }
 
