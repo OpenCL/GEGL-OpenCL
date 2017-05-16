@@ -98,6 +98,12 @@ property_int    (height, _("Height"), 200)
 #define GEGL_OP_C_SOURCE diffraction-patterns.c
 
 #include "gegl-op.h"
+#include <gegl-buffer-cl-iterator.h>
+#include <gegl-debug.h>
+
+#include "opencl/diffraction-patterns.cl.h"
+
+static GeglClRunData *cl_data = NULL;
 
 #define ITERATIONS      100
 #define WEIRD_FACTOR    0.04
@@ -193,11 +199,90 @@ get_bounding_box (GeglOperation *operation)
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         void                *out_buf,
-         glong                n_pixels,
-         const GeglRectangle *roi,
-         gint                 level)
+cl_process (GeglOperation       *operation,
+            cl_mem               out_tex,
+            const GeglRectangle *roi)
+{
+  GeglProperties   *o      = GEGL_PROPERTIES (operation);
+  const size_t  gbl_size[] = { roi->width, roi->height };
+  cl_int        cl_err     = 0;
+  cl_int offset_x;
+  cl_int offset_y;
+  cl_int width;
+  cl_int height;
+  cl_float3 sedges;
+  cl_float3 contours;
+  cl_float3 frequency;
+  cl_float brightness;
+  cl_float polarization;
+  cl_float scattering;
+  cl_int iterations;
+  cl_float weird_factor;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = { "cl_diffraction_patterns", NULL };
+      cl_data = gegl_cl_compile_and_build (diffraction_patterns_cl_source,
+                                           kernel_name);
+
+      if (!cl_data)
+        return TRUE;
+    }
+
+  offset_x = roi->x;
+  offset_y = roi->y;
+  width = o->width;
+  height = o->height;
+  sedges.s[0] = o->red_sedges;
+  sedges.s[1] = o->green_sedges;
+  sedges.s[2] = o->blue_sedges;
+  contours.s[0] = o->red_contours;
+  contours.s[1] = o->green_contours;
+  contours.s[2] = o->blue_contours;
+  frequency.s[0] = o->red_frequency;
+  frequency.s[1] = o->green_frequency;
+  frequency.s[2] = o->blue_frequency;
+  brightness = o->brightness;
+  polarization = o->polarization;
+  scattering = o->scattering;
+  iterations = ITERATIONS;
+  weird_factor = WEIRD_FACTOR;
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof(cl_mem),    &out_tex,
+                                    sizeof(cl_int),    &offset_x,
+                                    sizeof(cl_int),    &offset_y,
+                                    sizeof(cl_int),    &width,
+                                    sizeof(cl_int),    &height,
+                                    sizeof(cl_float3), &sedges,
+                                    sizeof(cl_float3), &contours,
+                                    sizeof(cl_float3), &frequency,
+                                    sizeof(cl_float),  &brightness,
+                                    sizeof(cl_float),  &polarization,
+                                    sizeof(cl_float),  &scattering,
+                                    sizeof(cl_int),    &iterations,
+                                    sizeof(cl_float),  &weird_factor,
+                                    NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, gbl_size, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
+  CL_CHECK;
+
+  return FALSE;
+
+error:
+  return TRUE;
+}
+
+static gboolean
+c_process (GeglOperation       *operation,
+           void                *out_buf,
+           const GeglRectangle *roi)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
   gfloat         *out;
@@ -230,22 +315,69 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
+static gboolean
+process (GeglOperation       *operation,
+         GeglBuffer          *out_buf,
+         const GeglRectangle *roi,
+         gint                 level)
+{
+  GeglBufferIterator *iter;
+  const Babl         *out_format = gegl_operation_get_format (operation,
+                                                              "output");
+
+  if (gegl_operation_use_opencl (operation))
+    {
+      GeglBufferClIterator *cl_iter;
+      gboolean              err;
+
+      GEGL_NOTE (GEGL_DEBUG_OPENCL, "GEGL_OPERATION_POINT_RENDER: %s",
+                 GEGL_OPERATION_GET_CLASS (operation)->name);
+
+      cl_iter = gegl_buffer_cl_iterator_new (out_buf, roi, out_format,
+                                             GEGL_CL_BUFFER_WRITE);
+
+      while (gegl_buffer_cl_iterator_next (cl_iter, &err) && !err)
+        {
+          err = cl_process (operation, cl_iter->tex[0], cl_iter->roi);
+
+          if (err)
+            {
+              gegl_buffer_cl_iterator_stop (cl_iter);
+              break;
+            }
+        }
+
+      if (err)
+        GEGL_NOTE (GEGL_DEBUG_OPENCL, "Error: %s",
+                   GEGL_OPERATION_GET_CLASS (operation)->name);
+      else
+        return TRUE;
+    }
+
+  iter = gegl_buffer_iterator_new (out_buf, roi, level, out_format,
+                                   GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
+
+  while (gegl_buffer_iterator_next (iter))
+    c_process (operation, iter->data[0], &iter->roi[0]);
+
+  return  TRUE;
+}
+
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
-  GeglOperationClass            *operation_class;
-  GeglOperationPointRenderClass *point_render_class;
+  GeglOperationClass       *operation_class;
+  GeglOperationSourceClass *source_class;
 
   init_luts();
 
-  operation_class    = GEGL_OPERATION_CLASS (klass);
-  point_render_class = GEGL_OPERATION_POINT_RENDER_CLASS (klass);
+  operation_class = GEGL_OPERATION_CLASS (klass);
+  source_class    = GEGL_OPERATION_SOURCE_CLASS (klass);
 
-  point_render_class->process = process;
-
+  source_class->process = process;
   operation_class->get_bounding_box = get_bounding_box;
   operation_class->prepare = prepare;
-  operation_class->opencl_support = FALSE;
+  operation_class->opencl_support = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
     "name",               "gegl:diffraction-patterns",
