@@ -41,6 +41,9 @@ property_double (size, _("Size"), 40.0)
 property_double (hardness, _("Hardness"), 0.5)
   value_range (0.0, 1.0)
 
+property_double (spacing, _("Spacing"), 0.01)
+  value_range (0.0, 100.0)
+
 property_path   (stroke, _("Stroke"), NULL)
 
 property_enum   (behavior, _("Behavior"),
@@ -57,55 +60,132 @@ property_enum   (behavior, _("Behavior"),
 #include "gegl-plugin.h"
 #include "gegl-path.h"
 
-static void path_changed (GeglPath            *path,
-                          const GeglRectangle *roi,
-                          gpointer             userdata);
+static void node_invalidated (GeglNode            *node,
+                              const GeglRectangle *roi,
+                              GeglOperation       *operation);
+
+static void path_changed     (GeglPath            *path,
+                              const GeglRectangle *roi,
+                              GeglOperation       *operation);
+
 #include "gegl-op.h"
 
-typedef struct {
-  gdouble     *lookup;
-  GeglBuffer  *buffer;
-  gdouble      last_x;
-  gdouble      last_y;
-  gboolean     last_point_set;
+typedef struct WarpPointList
+{
+  GeglPathPoint         point;
+  struct WarpPointList *next;
+} WarpPointList;
+
+typedef struct
+{
+  gdouble       *lookup;
+  GeglBuffer    *buffer;
+  WarpPointList *processed_stroke;
+  gboolean       processed_stroke_valid;
+  gdouble        last_x;
+  gdouble        last_y;
 } WarpPrivate;
+
+static void
+clear_cache (GeglProperties *o)
+{
+  WarpPrivate *priv = (WarpPrivate *) o->user_data;
+
+  if (! priv)
+    return;
+
+  if (priv->lookup)
+    {
+      g_free (priv->lookup);
+
+      priv->lookup = NULL;
+    }
+
+  if (priv->buffer)
+    {
+      g_object_unref (priv->buffer);
+
+      priv->buffer = NULL;
+    }
+
+  while (priv->processed_stroke)
+    {
+      WarpPointList *next = priv->processed_stroke->next;
+
+      g_slice_free (WarpPointList, priv->processed_stroke);
+
+      priv->processed_stroke = next;
+    }
+
+  priv->processed_stroke_valid = FALSE;
+}
+
+static void
+node_invalidated (GeglNode            *node,
+                  const GeglRectangle *rect,
+                  GeglOperation       *operation)
+{
+  /* if the node is invalidated, clear all cached data.  in particular, redraw
+   * the entire stroke upon the next call to process().
+   */
+  clear_cache (GEGL_PROPERTIES (operation));
+}
 
 static void
 path_changed (GeglPath            *path,
               const GeglRectangle *roi,
-              gpointer             userdata)
+              GeglOperation       *operation)
 {
-  GeglRectangle   rect = *roi;
-  GeglProperties *o    = GEGL_PROPERTIES (userdata);
+  GeglRectangle   rect;
+  GeglProperties *o    = GEGL_PROPERTIES (operation);
+  WarpPrivate    *priv = (WarpPrivate *) o->user_data;
+
+  /* mark the processed stroke as invalid, so that we recheck it against the
+   * new path upon the next call to process().
+   */
+  if (priv)
+    priv->processed_stroke_valid = FALSE;
+
   /* invalidate the incoming rectangle */
 
-  rect.x -= o->size/2;
-  rect.y -= o->size/2;
-  rect.width += o->size;
-  rect.height += o->size;
+  rect.x      = floor (roi->x - o->size/2);
+  rect.y      = floor (roi->y - o->size/2);
+  rect.width  = ceil (roi->x + roi->width  + o->size/2) - rect.x;
+  rect.height = ceil (roi->y + roi->height + o->size/2) - rect.y;
 
-  gegl_operation_invalidate (userdata, &rect, FALSE);
+  /* we don't want to clear the cached data right away; we potentially do this
+   * in process(), if the cached path is not an initial segment of the new
+   * path.  block our INVALIDATED handler so that the cache isn't cleared.
+   */
+  g_signal_handlers_block_by_func (operation->node,
+                                   node_invalidated, operation);
+
+  gegl_operation_invalidate (operation, &rect, FALSE);
+
+  g_signal_handlers_unblock_by_func (operation->node,
+                                     node_invalidated, operation);
+}
+
+static void
+attach (GeglOperation *operation)
+{
+  GEGL_OPERATION_CLASS (gegl_op_parent_class)->attach (operation);
+
+  g_signal_connect_object (operation->node, "invalidated",
+                           G_CALLBACK (node_invalidated), operation, 0);
 }
 
 static void
 prepare (GeglOperation *operation)
 {
-  GeglProperties *o     = GEGL_PROPERTIES (operation);
-  WarpPrivate    *priv;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
 
   const Babl *format = babl_format_n (babl_type ("float"), 2);
   gegl_operation_set_format (operation, "input", format);
   gegl_operation_set_format (operation, "output", format);
 
   if (!o->user_data)
-    {
-      o->user_data = g_slice_new (WarpPrivate);
-    }
-
-  priv = (WarpPrivate*) o->user_data;
-  priv->last_point_set = FALSE;
-  priv->lookup = NULL;
-  priv->buffer = NULL;
+    o->user_data = g_slice_new0 (WarpPrivate);
 }
 
 static void
@@ -115,6 +195,8 @@ finalize (GObject *object)
 
   if (o->user_data)
     {
+      clear_cache (o);
+
       g_slice_free (WarpPrivate, o->user_data);
       o->user_data = NULL;
     }
@@ -207,10 +289,9 @@ get_stamp_force (GeglProperties *o,
 }
 
 static void
-stamp (GeglProperties          *o,
-       const GeglRectangle     *result,
-       gdouble                  x,
-       gdouble                  y)
+stamp (GeglProperties *o,
+       gdouble         x,
+       gdouble         y)
 {
   WarpPrivate         *priv = (WarpPrivate*) o->user_data;
   GeglBufferIterator  *it;
@@ -231,19 +312,6 @@ stamp (GeglProperties          *o,
   area.height  = ceil (y + o->size / 2.0);
   area.width  -= area.x;
   area.height -= area.y;
-
-  /* first point of the stroke */
-  if (!priv->last_point_set)
-    {
-      priv->last_x = x;
-      priv->last_y = y;
-      priv->last_point_set = TRUE;
-      return;
-    }
-
-  /* don't stamp if outside the roi treated */
-  if (!gegl_rectangle_intersect (NULL, result, &area))
-    return;
 
   format = babl_format_n (babl_type ("float"), 2);
 
@@ -402,67 +470,155 @@ stamp (GeglProperties          *o,
 }
 
 static gboolean
-process (GeglOperation       *operation,
-         GeglBuffer          *input,
-         GeglBuffer          *output,
-         const GeglRectangle *result,
-         gint                 level)
+process (GeglOperation        *operation,
+         GeglOperationContext *context,
+         const gchar          *output_prop,
+         const GeglRectangle  *result,
+         gint                  level)
 {
-  GeglProperties      *o    = GEGL_PROPERTIES (operation);
-  WarpPrivate         *priv = (WarpPrivate*) o->user_data;
-  gdouble              dist;
-  gdouble              stamps;
-  gdouble              spacing = MAX (o->size * 0.01, 0.5); /*1% spacing for starters*/
+  GeglProperties  *o    = GEGL_PROPERTIES (operation);
+  WarpPrivate     *priv = (WarpPrivate*) o->user_data;
 
-  GeglPathPoint        prev, next, lerp;
-  gulong               i;
-  GeglPathList        *event;
+  GeglBuffer      *input;
 
-  if (!o->stroke)
+  gdouble          spacing = MAX (o->size * o->spacing, 0.5);
+  gdouble          dist;
+  gint             stamps;
+  gint             i;
+  gdouble          t;
+
+  GeglPathPoint    prev, next, lerp;
+  GeglPathList    *event;
+  WarpPointList   *processed_event;
+  WarpPointList  **processed_event_ptr;
+
+  if (!o->stroke || strcmp (output_prop, "output"))
     return FALSE;
-  priv->buffer = gegl_buffer_dup (input);
-  event = gegl_path_get_path (o->stroke);
 
-  prev = *(event->d.point);
-
-  while (event->next)
+  /* if the previously processed stroke is valid, the cached buffer can be
+   * passed as output right away.
+   */
+  if (priv->processed_stroke_valid)
     {
-      event = event->next;
-      next = *(event->d.point);
-      dist = gegl_path_point_dist (&next, &prev);
-      stamps = dist / spacing;
+      g_assert (priv->buffer != NULL);
 
-      if (stamps < 1)
+      gegl_operation_context_set_object (context,
+                                         "output", G_OBJECT (priv->buffer));
+
+      return TRUE;
+    }
+
+  /* ... otherwise, we need to check if the previously processed stroke is an
+   * initial segment of the current stroke ...
+   */
+
+  event               = gegl_path_get_path (o->stroke);
+  processed_event     = priv->processed_stroke;
+  processed_event_ptr = &priv->processed_stroke;
+
+  while (event && processed_event)
+    {
+      if (event->d.point[0].x != processed_event->point.x ||
+          event->d.point[0].y != processed_event->point.y)
         {
-          stamp (o, result, next.x, next.y);
-          prev = next;
+          break;
+        }
+
+      processed_event_ptr = &processed_event->next;
+
+      event           = event->next;
+      processed_event = processed_event->next;
+    }
+
+  /* if the loop stopped before we reached the last event of the processed
+   * stroke, it's not an initial segment, and we need to clear the cache, and
+   * process the entire stroke.
+   */
+  if (processed_event)
+    {
+      clear_cache (o);
+
+      event               = gegl_path_get_path (o->stroke);
+      processed_event_ptr = &priv->processed_stroke;
+    }
+  /* otherwise, we simply continue processing remaining stroke on top of the
+   * previously processed buffer.
+   */
+
+  /* intialize the cached buffer if we don't already have one. */
+  if (! priv->buffer)
+    {
+      input = GEGL_BUFFER (gegl_operation_context_get_object (context,
+                                                              "input"));
+
+      priv->buffer = gegl_buffer_dup (input);
+
+      /* we pass the buffer as output directly while keeping it cached, so mark
+       * it as forked.
+       */
+      gegl_object_set_has_forked (G_OBJECT (priv->buffer));
+    }
+
+  if (event)
+    {
+      /* is this the first event of the stroke? */
+      if (! priv->processed_stroke)
+        {
+          prev = *(event->d.point);
+
+          priv->last_x = prev.x;
+          priv->last_y = prev.y;
         }
       else
         {
-          for (i = 0; i < stamps; i++)
-            {
-              gegl_path_point_lerp (&lerp, &prev, &next, (i * spacing) / dist);
-              stamp (o, result, lerp.x, lerp.y);
-            }
-          prev = lerp;
+          prev.x = priv->last_x;
+          prev.y = priv->last_y;
         }
+
+      for (; event; event = event->next)
+        {
+          next = *(event->d.point);
+          dist = gegl_path_point_dist (&next, &prev);
+          stamps = floor (dist / spacing) + 1;
+
+          /* stroke the current segment, such that there's always a stamp at
+           * its final endpoint, and at positive integer multiples of
+           * `spacing` away from it.
+           */
+
+          if (stamps == 1)
+            {
+              stamp (o, next.x, next.y);
+            }
+          else
+            {
+              for (i = 0; i < stamps; i++)
+                {
+                  t = 1.0 - ((stamps - i - 1) * spacing) / dist;
+
+                  gegl_path_point_lerp (&lerp, &prev, &next, t);
+                  stamp (o, lerp.x, lerp.y);
+                }
+            }
+
+          prev = next;
+
+          /* append the current event to the processed path. */
+          processed_event        = g_slice_new (WarpPointList);
+          processed_event->point = next;
+
+          *processed_event_ptr = processed_event;
+          processed_event_ptr  = &processed_event->next;
+        }
+
+      *processed_event_ptr = NULL;
     }
 
-  /* Affect the output buffer */
-  gegl_buffer_copy (priv->buffer, result, GEGL_ABYSS_NONE,
-                    output, result);
-  gegl_buffer_set_extent (output, gegl_buffer_get_extent (input));
-  g_object_unref (priv->buffer);
+  priv->processed_stroke_valid = TRUE;
 
-  /* prepare for the recomputing of the op */
-  priv->last_point_set = FALSE;
-
-  /* free the LUT */
-  if (priv->lookup)
-    {
-      g_free (priv->lookup);
-      priv->lookup = NULL;
-    }
+  /* pass the processed buffer as output */
+  gegl_operation_context_set_object (context,
+                                     "output", G_OBJECT (priv->buffer));
 
   return TRUE;
 }
@@ -470,13 +626,16 @@ process (GeglOperation       *operation,
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
-  GObjectClass               *object_class    = G_OBJECT_CLASS (klass);
-  GeglOperationClass         *operation_class = GEGL_OPERATION_CLASS (klass);
-  GeglOperationFilterClass   *filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
+  GObjectClass       *object_class    = G_OBJECT_CLASS (klass);
+  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
 
   object_class->finalize   = finalize;
+  operation_class->attach  = attach;
   operation_class->prepare = prepare;
-  filter_class->process    = process;
+  operation_class->process = process;
+  operation_class->no_cache = TRUE; /* we're effectively doing the caching
+                                     * ourselves.
+                                     */
   operation_class->threaded = FALSE;
 
   gegl_operation_class_set_keys (operation_class,
