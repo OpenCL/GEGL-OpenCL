@@ -14,7 +14,7 @@ dnl    set GEGL_BINARY_AGE _and_ GEGL_INTERFACE_AGE to 0.
 
 m4_define([gegl_major_version], [0])
 m4_define([gegl_minor_version], [3])
-m4_define([gegl_micro_version], [15])
+m4_define([gegl_micro_version], [17])
 m4_define([gegl_real_version],
           [gegl_major_version.gegl_minor_version.gegl_micro_version])
 m4_define([gegl_version], [gegl_real_version])
@@ -37,11 +37,11 @@ m4_define([gegl_stable],
 m4_define([gimp_full_name], [Generic Graphical Library])
 
 # required versions of external libraries
-m4_define([babl_required_version], [0.1.24])
+m4_define([babl_required_version], [0.1.26])
 m4_define([cairo_required_version], [0.0.0])
 m4_define([gdk_pixbuf_required_version], [2.32.0])
 m4_define([introspection_required_version], [1.32.0])
-m4_define([glib_required_version], [2.36.0])
+m4_define([glib_required_version], [2.44.0])
 m4_define([graphviz_required_version], [0.0.0])
 m4_define([jasper_required_version], [1.900.1])
 m4_define([lcms_required_version], [2.2])
@@ -1055,7 +1055,17 @@ AC_ARG_WITH(libv4l, [  --without-libv4l        build without V4L support])
 
 have_v4l="no"
 if test "x$with_libv4l" != "xno"; then
-  AC_CHECK_HEADER(linux/videodev.h, have_v4l="yes")
+  AC_CHECK_HEADER(linux/videodev2.h,
+    [have_v4l="yes"],
+    [have_v4l="no (kernel header not found)"])
+  else
+    have_v4l="no  (disabled with --without-libv4l)"
+fi
+
+if test "x$have_v4l" = "xyes"; then
+  PKG_CHECK_MODULES(V4l, libv4l2,
+    [have_v4l="yes"],
+    [have_v4l="no   (v4l library not found)"])
 fi
 
 AM_CONDITIONAL(HAVE_V4L, test "$have_v4l" = "yes")

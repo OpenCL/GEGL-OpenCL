@@ -27,17 +27,27 @@
 
 #include "gegl-types.h"
 #include "gegl-types-internal.h"
+#include "gegl-utils.h"
 #include "gegl-algorithms.h"
 
 #include <math.h>
 
+static void
+gegl_downscale_2x2_generic (const Babl *format,
+                            gint        src_width,
+                            gint        src_height,
+                            guchar     *src_data,
+                            gint        src_rowstride,
+                            guchar     *dst_data,
+                            gint        dst_rowstride);
+
 void gegl_downscale_2x2 (const Babl *format,
-                         gint    src_width,
-                         gint    src_height,
-                         guchar *src_data,
-                         gint    src_rowstride,
-                         guchar *dst_data,
-                         gint    dst_rowstride)
+                         gint        src_width,
+                         gint        src_height,
+                         guchar     *src_data,
+                         gint        src_rowstride,
+                         guchar     *dst_data,
+                         gint        dst_rowstride)
 {
   const gint  bpp = babl_format_get_bytes_per_pixel (format);
   const Babl *comp_type = babl_format_get_type (format, 0);
@@ -53,7 +63,41 @@ void gegl_downscale_2x2 (const Babl *format,
   else if (comp_type == gegl_babl_double())
     gegl_downscale_2x2_double (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
   else
-    gegl_downscale_2x2_nearest (bpp, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
+  {
+    gegl_downscale_2x2_generic (format, src_width, src_height, src_data, src_rowstride, dst_data, dst_rowstride);
+  }
+}
+
+static void
+gegl_downscale_2x2_generic (const Babl *format,
+                            gint        src_width,
+                            gint        src_height,
+                            guchar     *src_data,
+                            gint        src_rowstride,
+                            guchar     *dst_data,
+                            gint        dst_rowstride)
+{
+  gint y;
+  const Babl *tmp_format = gegl_babl_rgbA_linear_float ();
+  const Babl *to_fish    = babl_fish (tmp_format, format);
+  void *in_tmp           = gegl_malloc (src_height * src_rowstride * 4 * 4);
+  void *out_tmp          = gegl_malloc (src_height * src_rowstride * 4 * 4);
+  guchar *src = out_tmp;
+  guchar *dst = dst_data;
+
+  babl_process (babl_fish (format, tmp_format),
+                src_data, in_tmp, src_width * src_height);
+  gegl_downscale_2x2_float (4 * 4, src_width, src_height,
+                            in_tmp, src_width * 4 * 4,
+                            out_tmp, src_width * 4 * 4);
+  for (y = 0; y < src_height / 2; y++)
+    {
+      babl_process (to_fish, src, dst, src_width / 2);
+      dst += dst_rowstride;
+      src += (src_width * 4 * 4);
+    }
+  gegl_free (in_tmp);
+  gegl_free (out_tmp);
 }
 
 void

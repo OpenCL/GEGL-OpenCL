@@ -29,9 +29,6 @@
 #define GEGL_HEADER(x) _GEGL_HEADER(x)
 
 #define GEGL_OP_C_FILE GEGL_HEADER(GEGL_OP_C_SOURCE)
-#ifndef GEGL_OP_NO_SOURCE
-#define GEGL_OP_C_FILE_SOURCE GEGL_HEADER(GEGL_OP_C_SOURCE.h)
-#endif
 #endif
 
 #ifndef GEGL_OP_NAME
@@ -296,10 +293,6 @@ gegl_module_register (GTypeModule *module)
 #undef enum_start
 #undef enum_value
 #undef enum_end
-
-#ifdef GEGL_OP_C_FILE_SOURCE
-#include GEGL_OP_C_FILE_SOURCE
-#endif
 
 #ifdef GETTEXT_PACKAGE
 static const gchar *gegl_op_gettext_package G_GNUC_UNUSED = GETTEXT_PACKAGE;
@@ -871,13 +864,6 @@ gegl_op_class_intern_init (gpointer klass)
   gboolean G_GNUC_UNUSED ui_steps_set = FALSE;
   gboolean G_GNUC_UNUSED ui_digits_set = FALSE;
   GParamFlags flags G_GNUC_UNUSED = (GParamFlags)(G_PARAM_READWRITE | G_PARAM_CONSTRUCT | GEGL_PARAM_PAD_INPUT);
-
-#ifdef GEGL_OP_C_FILE_SOURCE
-  GeglOperationClass *operation_class = GEGL_OPERATION_CLASS (klass);
-  gegl_operation_class_set_keys (operation_class,
-    "source", op_c_source,
-    NULL);
-#endif
 
   object_class->set_property = set_property;
   object_class->get_property = get_property;

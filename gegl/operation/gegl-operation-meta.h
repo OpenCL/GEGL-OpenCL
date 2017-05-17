@@ -70,6 +70,8 @@ void  gegl_operation_meta_property_changed (GeglOperationMeta *self,
                                             GParamSpec        *pspec,
                                             gpointer           user_data);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (GeglOperationMeta, g_object_unref)
+
 G_END_DECLS
 
 #endif

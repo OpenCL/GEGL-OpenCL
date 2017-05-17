@@ -22,7 +22,6 @@ op_LTLIBRARIES =    \
 	integral-image.la \
 	kuwahara.la \
 	linear-sinusoid.la \
-	mandelbrot.la \
 	median-blur.la \
 	rawbayer-load.la \
 	segment-kmeans.la \

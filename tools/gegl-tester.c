@@ -184,7 +184,7 @@ process_operations (GType type)
   for (i = 0; i < count; i++)
     {
       GeglOperationClass *operation_class;
-      const gchar        *xml, *name, *hash, *hashB, *hashC;
+      const gchar        *xml, *name, *hash, *hashB, *hashC, *chain;
       gboolean            matches;
 
       operation_class = g_type_class_ref (operations[i]);
@@ -192,6 +192,7 @@ process_operations (GType type)
       hashB           = gegl_operation_class_get_key (operation_class, "reference-hashB");
       hashC           = gegl_operation_class_get_key (operation_class, "reference-hashC");
       xml             = gegl_operation_class_get_key (operation_class, "reference-composition");
+      chain           = gegl_operation_class_get_key (operation_class, "reference-chain");
       name            = gegl_operation_class_get_key (operation_class, "name");
 
       if (name == NULL)
@@ -203,14 +204,18 @@ process_operations (GType type)
       matches = g_regex_match (regex, name, 0, NULL) &&
         !g_regex_match (exc_regex, name, 0, NULL);
 
-      if (xml && matches)
+      if ((chain||xml) && matches)
         {
           GeglNode *composition;
 
           g_printf ("%s: ", name); /* more information will follow
                                         if we're testing */
 
-          composition = gegl_node_new_from_xml (xml, data_dir);
+          if (xml)
+            composition = gegl_node_new_from_xml (xml, data_dir);
+          else
+            composition = gegl_node_new_from_serialized (chain, data_dir);
+
           if (!composition)
             {
               g_printf ("FAIL\n  Composition graph is flawed\n");

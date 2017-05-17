@@ -97,6 +97,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:remap",
+    "title"      , _("Remap"),
     "description",
           _("stretch components of pixels individually based on luminance envelopes"),
     "categories" , "compositors",

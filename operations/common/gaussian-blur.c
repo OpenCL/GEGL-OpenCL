@@ -115,6 +115,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name",           "gegl:gaussian-blur",
+    "title",          _("Gaussian Blur"),
     "categories",     "blur",
     "reference-hash", "5d10ee663c5ff908c3c081e516154873",
     "description", _("Performs an averaging of neighboring pixels with the "

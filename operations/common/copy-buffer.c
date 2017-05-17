@@ -148,10 +148,11 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->process     = process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:copy-buffer",
-    "title",       _("Copy Buffer"),
-    "categories" , "programming",
-    "description", _("Writes image data to an already existing buffer"),
+    "name",           "gegl:copy-buffer",
+    "title",          _("Copy Buffer"),
+    "categories" ,    "programming",
+    "reference-hash", "9bbe341d798da4f7b181c903e6f442fd",
+    "description",    _("Writes image data to an already existing buffer"),
     NULL);
 }
 

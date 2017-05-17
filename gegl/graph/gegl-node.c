@@ -1247,11 +1247,6 @@ gegl_node_set_operation_object (GeglNode      *self,
 
   g_return_if_fail (GEGL_IS_OPERATION (operation));
 
-  if (self->operation)
-    g_object_unref (self->operation);
-
-  self->operation = g_object_ref (operation);
-
   if (gegl_node_has_pad (self, "output"))
     gegl_node_get_consumers (self, "output", &consumer_nodes, &consumer_names);
 
@@ -1261,6 +1256,11 @@ gegl_node_set_operation_object (GeglNode      *self,
 
   gegl_node_disconnect_sources (self);
   gegl_node_disconnect_sinks (self);
+
+  if (self->operation)
+    g_object_unref (self->operation);
+
+  self->operation = g_object_ref (operation);
 
   /* Delete all the pads from the previous operation */
   while (self->pads)

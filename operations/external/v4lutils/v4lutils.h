@@ -1,6 +1,7 @@
 /*
  * v4lutils - utility library for Video4Linux
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2012 Nick Black <nick.black@sprezzatech.com>
  *
  * v4lutils.h: header file
  *
@@ -25,7 +26,8 @@
 #define __V4LUTILS_H__
 
 #include <sys/types.h>
-#include <linux/videodev.h>
+#include <linux/videodev2.h>
+#include <libv4l1-videodev.h>
 #include <pthread.h>
 
 /*
@@ -45,11 +47,10 @@ struct _v4ldevice
 	struct video_picture picture;
 	struct video_clip clip;
 	struct video_window window;
-	struct video_capture capture;
+	struct v4l2_rect capture;
 	struct video_buffer buffer;
 	struct video_mmap mmap;
 	struct video_mbuf mbuf;
-	struct video_unit unit;
 	unsigned char *map;
 	pthread_mutex_t mutex;
 	int frame;
@@ -63,8 +64,6 @@ extern int v4lopen(char *, v4ldevice *);
 extern int v4lclose(v4ldevice *);
 extern int v4lgetcapability(v4ldevice *);
 extern int v4lsetdefaultnorm(v4ldevice *, int);
-extern int v4lgetsubcapture(v4ldevice *);
-extern int v4lsetsubcapture(v4ldevice *, int, int, int, int, int, int);
 extern int v4lgetframebuffer(v4ldevice *);
 extern int v4lsetframebuffer(v4ldevice *, void *, int, int, int, int);
 extern int v4loverlaystart(v4ldevice *);
@@ -74,6 +73,8 @@ extern int v4lmaxchannel(v4ldevice *);
 extern int v4lsetfreq(v4ldevice *,int);
 extern int v4lsetchannelnorm(v4ldevice *vd, int, int);
 extern int v4lgetpicture(v4ldevice *);
+extern int v4lgetsubcapture(v4ldevice *);
+extern int v4lsetsubcapture(v4ldevice *, int, int, int, int);
 extern int v4lsetpicture(v4ldevice *, int, int, int, int, int);
 extern int v4lsetpalette(v4ldevice *, int);
 extern int v4lgetmbuf(v4ldevice *);

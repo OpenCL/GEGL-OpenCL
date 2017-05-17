@@ -557,7 +557,7 @@ prepare (GeglOperation *operation)
           strstr (p->video_fcontext->filename, ".MP4"))  /* XXX: too hacky, isn't there an avformat thing to use?,
  or perhaps we can measure this when decoding the first frame.
  */
-        p->codec_delay = 3;
+        p->codec_delay = 1;
       else
         p->codec_delay = 0;
     }

@@ -73,6 +73,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "name", "gegl:scale-ratio",
     "title", _("Scale ratio"),
     "categories", "transform",
+    "reference-hash", "526556d3dc92b42f54eaa250af002b0d",
+    "reference-chain", "load path=images/standard-input.png scale-ratio x=2.0 y=2.0 clip-to-input=true origin-x=100 origin-y=100",
     "description", _("Scales the buffer according to a ratio."),
     NULL);
 }

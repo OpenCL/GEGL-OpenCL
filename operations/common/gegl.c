@@ -36,6 +36,7 @@ property_string (error, _("Eeeeeek"), "")
 #define GEGL_OP_C_SOURCE gegl.c
 
 #include "gegl-op.h"
+#include <unistd.h>
 
 /* XXX: leaking o->user_data */
 
@@ -53,6 +54,7 @@ attach (GeglOperation *operation)
 }
 
 #include <stdio.h>
+#include <stdlib.h>
 
 static void
 prepare (GeglOperation *operation)
@@ -73,9 +75,13 @@ prepare (GeglOperation *operation)
   output = gegl_node_get_output_proxy (gegl, "output");
 
   gegl_node_link_many (input, output, NULL);
+  {
+     gchar cwd[81920]; // XXX: should do better
+     getcwd (cwd, sizeof(cwd));
   gegl_create_chain (o->string, input, output, 0.0,
-                     gegl_node_get_bounding_box (input).height,
+                     gegl_node_get_bounding_box (input).height, cwd,
                      &error);
+  }
 
   if (error)
   {

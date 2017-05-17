@@ -25,11 +25,11 @@
 
 property_file_path (path, _("File"), "")
   description (_("Target path and filename, use '-' for stdout."))
-property_int    (compression, _("Compression"), 3)
+property_int (compression, _("Compression"), 3)
   description (_("PNG compression level from 1 to 9"))
   value_range (1, 9)
-property_int    (bitdepth, _("Bitdepth"), 16)
-  description(_("8 and 16 are the currently accepted values."))
+property_int (bitdepth, _("Bitdepth"), 16)
+  description (_("8 and 16 are the currently accepted values."))
   value_range (8, 16)
 
 #else
@@ -38,63 +38,69 @@ property_int    (bitdepth, _("Bitdepth"), 16)
 #define GEGL_OP_NAME png_save
 #define GEGL_OP_C_SOURCE png-save.c
 
-#include "gegl-op.h"
+#include <gegl-op.h>
+#include <gegl-gio-private.h>
 #include <png.h>
-#include <stdio.h>
 
-/* this call is available when the png-save plug-in is loaded,
- * it might have to be dlsymed to be used?
- */
-gint
-gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
-                        gint         compression,
-                        gint         bd,
-                        gint         src_x,
-                        gint         src_y,
-                        gint         width,
-                        gint         height);
-
-gint
-gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
-                        gint         compression,
-                        gint         bd,
-                        gint         src_x,
-                        gint         src_y,
-                        gint         width,
-                        gint         height)
+static void
+write_fn(png_structp png_ptr, png_bytep buffer, png_size_t length)
 {
-  FILE          *fp;
-  gint           i;
-  png_struct    *png;
-  png_info      *info;
+  GError *err = NULL;
+  GOutputStream *stream = G_OUTPUT_STREAM(png_get_io_ptr(png_ptr));
+  gsize bytes_written = 0;
+  g_assert(stream);
+
+  g_output_stream_write_all(stream, buffer, length, &bytes_written, NULL, &err);
+  if (err) {
+    g_printerr("gegl:save-png %s: %s\n", __PRETTY_FUNCTION__, err->message);
+  }
+}
+
+static void
+flush_fn(png_structp png_ptr)
+{
+  GError *err = NULL;
+  GOutputStream *stream = G_OUTPUT_STREAM(png_get_io_ptr(png_ptr));
+  g_assert(stream);
+
+  g_output_stream_flush(stream, NULL, &err);
+  if (err) {
+    g_printerr("gegl:save-png %s: %s\n", __PRETTY_FUNCTION__, err->message);
+  }
+}
+
+static void
+error_fn(png_structp png_ptr, png_const_charp msg)
+{
+  g_printerr("LIBPNG ERROR: %s", msg);
+}
+
+static gint
+export_png (GeglOperation       *operation,
+            GeglBuffer          *input,
+            const GeglRectangle *result,
+            png_structp          png,
+            png_infop            info,
+            gint                 compression,
+            gint                 bit_depth)
+{
+  gint           i, src_x, src_y;
+  png_uint_32    width, height;
   guchar        *pixels;
   png_color_16   white;
   int            png_color_type;
   gchar          format_string[16];
   const Babl    *format;
-  gint           bit_depth = 8;
 
-  if (!strcmp (path, "-"))
-    {
-      fp = stdout;
-    }
-  else
-    {
-      fp = fopen (path, "wb");
-    }
-  if (!fp)
-    {
-      return -1;
-    }
+  src_x = result->x;
+  src_y = result->y;
+  width = result->width;
+  height = result->height;
 
   {
-    const Babl *babl = gegl_buffer_get_format (gegl_buffer);
+    const Babl *babl = gegl_buffer_get_format (input);
 
-    if (bd == 16)
-      bit_depth = 16;
-    else
+    if (bit_depth != 16)
       bit_depth = 8;
 
     if (babl_format_has_alpha (babl))
@@ -126,27 +132,10 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
   else
     strcat (format_string, "u8");
 
-  png = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (png == NULL)
-    {
-      if (stdout != fp)
-        fclose (fp);
-
-      return -1;
-    }
-
-  info = png_create_info_struct (png);
-
   if (setjmp (png_jmpbuf (png)))
-    {
-      if (stdout != fp)
-        fclose (fp);
-
-      return -1;
-    }
+    return -1;
 
   png_set_compression_level (png, compression);
-  png_init_io (png, fp);
 
   png_set_IHDR (png, info,
      width, height, bit_depth, png_color_type,
@@ -181,36 +170,73 @@ gegl_buffer_export_png (GeglBuffer  *gegl_buffer,
       rect.width = width;
       rect.height = 1;
 
-      gegl_buffer_get (gegl_buffer, &rect, 1.0, babl_format (format_string), pixels, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
+      gegl_buffer_get (input, &rect, 1.0, babl_format (format_string), pixels, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
       png_write_rows (png, &pixels, 1);
     }
 
   png_write_end (png, info);
 
-  png_destroy_write_struct (&png, &info);
   g_free (pixels);
-
-  if (stdout != fp)
-    fclose (fp);
 
   return 0;
 }
 
 static gboolean
-gegl_png_save_process (GeglOperation       *operation,
-                       GeglBuffer          *input,
-                       const GeglRectangle *result,
-                       gint                 level)
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         const GeglRectangle *result,
+         gint                 level)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
+  png_structp png = NULL;
+  png_infop info = NULL;
+  GOutputStream *stream = NULL;
+  GFile *file = NULL;
+  gboolean status = TRUE;
+  GError *error = NULL;
 
-  gegl_buffer_export_png (input, o->path, o->compression, o->bitdepth,
-                          result->x, result->y,
-                          result->width, result->height);
-  return  TRUE;
+  png = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, error_fn, NULL);
+  if (png != NULL)
+    info = png_create_info_struct (png);
+  if (png == NULL || info == NULL)
+    {
+      status = FALSE;
+      g_warning ("failed to initialize PNG writer");
+      goto cleanup;
+    }
+
+  stream = gegl_gio_open_output_stream (NULL, o->path, &file, &error);
+  if (stream == NULL)
+    {
+      status = FALSE;
+      g_warning ("%s", error->message);
+      goto cleanup;
+    }
+
+  png_set_write_fn (png, stream, write_fn, flush_fn);
+
+  if (export_png (operation, input, result, png, info, o->compression, o->bitdepth))
+    {
+      status = FALSE;
+      g_warning("could not export PNG file");
+      goto cleanup;
+    }
+
+cleanup:
+  if (info != NULL)
+    png_destroy_write_struct (&png, &info);
+  else if (png != NULL)
+    png_destroy_write_struct (&png, NULL);
+
+  if (stream != NULL)
+    g_clear_object(&stream);
+
+  if (file != NULL)
+    g_clear_object(&file);
+
+  return status;
 }
-
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
@@ -221,16 +247,15 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
 
-  sink_class->process    = gegl_png_save_process;
+  sink_class->process    = process;
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-  "name",        "gegl:png-save",
-  "title",       _("PNG File Saver"),
-  "categories" , "output",
-  "description",
-        _("PNG image saver, using libpng"),
-        NULL);
+    "name",          "gegl:png-save",
+    "title",       _("PNG File Saver"),
+    "categories" ,   "output",
+    "description", _("PNG image saver, using libpng"),
+    NULL);
 
   gegl_operation_handlers_register_saver (
     ".png", "gegl:png-save");

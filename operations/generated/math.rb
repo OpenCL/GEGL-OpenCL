@@ -157,7 +157,7 @@ gegl_op_class_init (GeglOpClass *klass)
   \"categories\"  , \"compositors:math\",
   \"reference-hash\"  , \"#{item[3]}\",
   \"description\" ,
-       _(\"Math operation #{name}, performs the operation per pixel, using either the constant provided in 'value' or the corresponding pixel from the buffer on aux as operands. (formula: #{formula})\"),
+       _(\"Math operation #{name}, performs the operation per pixel, using either the constant provided in 'value' or the corresponding pixel from the buffer on aux as operands. The result is the evaluation of the expression #{formula}\"),
        NULL);
 }
 #endif

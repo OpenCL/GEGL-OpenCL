@@ -268,6 +268,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:layer",
     "categories" , "meta",
+    "title"      , _("Layer"),
     "description", _("A layer in the traditional sense"),
     NULL);
 }

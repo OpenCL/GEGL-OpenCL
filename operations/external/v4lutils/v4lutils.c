@@ -1,6 +1,7 @@
 /*
  * v4lutils - utility library for Video4Linux
  * Copyright (C) 2001-2002 FUKUCHI Kentaro
+ * Copyright (C) 2012 Nick Black <nick.black@sprezzatech.com>
  *
  * v4lutils.c: utility functions
  *
@@ -29,7 +30,6 @@
 #include <sys/mman.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <linux/videodev.h>
 #include <pthread.h>
 #include <errno.h>
 #include "v4lutils.h"
@@ -145,8 +145,8 @@ int v4lsetdefaultnorm(v4ldevice *vd, int norm)
  */
 int v4lgetsubcapture(v4ldevice *vd)
 {
-	if(ioctl(vd->fd, VIDIOCGCAPTURE, &(vd->capture)) < 0) {
-		v4lperror("v4lgetsubcapture:VIDIOCGCAPTURE");
+	if(ioctl(vd->fd, VIDIOC_G_CROP, &(vd->capture)) < 0) {
+		v4lperror("v4lgetsubcapture:VIDIOC_G_CROP");
 		return -1;
 	}
 	return 0;
@@ -162,16 +162,14 @@ int v4lgetsubcapture(v4ldevice *vd)
  * decimation: decimation to apply
  * flags: flag setting for grabbing odd/even frames
  */
-int v4lsetsubcapture(v4ldevice *vd, int x, int y, int width, int height, int decimation, int flags)
+int v4lsetsubcapture(v4ldevice *vd, int x, int y, int width, int height)
 {
-	vd->capture.x = x;
-	vd->capture.y = y;
+	vd->capture.width = x;
+	vd->capture.height = y;
 	vd->capture.width = width;
 	vd->capture.height = height;
-	vd->capture.decimation = decimation;
-	vd->capture.flags = flags;
-	if(ioctl(vd->fd, VIDIOCGCAPTURE, &(vd->capture)) < 0) {
-		v4lperror("v4lsetsubcapture:VIDIOCSCAPTURE");
+	if(ioctl(vd->fd, VIDIOC_S_CROP, &(vd->capture)) < 0) {
+		v4lperror("v4lsetsubcapture:VIDIOC_S_CROP");
 		return -1;
 	}
 	return 0;

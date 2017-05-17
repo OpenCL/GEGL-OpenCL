@@ -218,7 +218,7 @@ process (GeglOperation       *operation,
   cairo_translate (cr, -result->x, -result->y);
   text_layout_text (self, cr, 0, NULL);
 
-  gegl_buffer_set (output, result, 0, babl_format ("B'aG'aR'aA u8"), data,
+  gegl_buffer_set (output, result, 0, babl_format ("cairo-ARGB32"), data,
                    GEGL_AUTO_ROWSTRIDE);
 
   cairo_destroy (cr);

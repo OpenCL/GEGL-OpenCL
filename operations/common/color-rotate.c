@@ -405,6 +405,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories",   "color",
     "name",         "gegl:color-rotate",
+    "title",        _("Color Rotate"),
     "description",  _("Replace a range of colors with another"),
     NULL);
 }

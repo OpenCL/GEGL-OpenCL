@@ -59,6 +59,7 @@ operations/common/gegl.c
 operations/common/grey.c
 operations/common/grid.c
 operations/common/high-pass.c
+operations/common/hue-chroma.c
 operations/common/illusion.c
 operations/common/image-compare.c
 operations/common/image-gradient.c
@@ -246,7 +247,6 @@ operations/workshop/hstack.c
 operations/workshop/integral-image.c
 operations/workshop/kuwahara.c
 operations/workshop/linear-sinusoid.c
-operations/workshop/mandelbrot.c
 operations/workshop/median-blur.c
 operations/workshop/rawbayer-load.c
 operations/workshop/segment-kmeans.c

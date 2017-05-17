@@ -376,7 +376,7 @@ gegl_graph_get_shared_empty (GeglGraphTraversal *path)
 /**
  * gegl_graph_process:
  * @path: The traversal path
- * 
+ *
  * Process the prepared request. This will return the
  * resulting buffer from the final node, or NULL if
  * that node is a sink.
@@ -430,7 +430,10 @@ gegl_graph_process (GeglGraphTraversal *path,
             }
           else
             {
-              /* Guarantee input pad */
+              /* provide something on input pad, always - this makes having
+                 behavior depending on it not being set.. not work, is
+                 sacrifising that worth it?
+               */
               if (gegl_node_has_pad (node, "input") &&
                   !gegl_operation_context_get_object (context, "input"))
                 {
@@ -438,6 +441,10 @@ gegl_graph_process (GeglGraphTraversal *path,
                 }
 
               context->level = level;
+
+              /* note: this hard-coding of "output" makes some more custom
+               * graph topologies harder than neccesary.
+               */
               gegl_operation_process (operation, context, "output", &context->need_rect, context->level);
               operation_result = GEGL_BUFFER (gegl_operation_context_get_object (context, "output"));
 
@@ -461,7 +468,7 @@ gegl_graph_process (GeglGraphTraversal *path,
                      gegl_node_get_debug_name (node),
                      "output",
                      g_list_length (targets));
-          
+
           if (g_list_length (targets) > 1)
             gegl_object_set_has_forked (G_OBJECT (operation_result));
 
@@ -470,15 +477,12 @@ gegl_graph_process (GeglGraphTraversal *path,
               ContextConnection *target_con = targets_iter->data;
               gegl_operation_context_set_object (target_con->context, target_con->name, G_OBJECT (operation_result));
             }
-          
           g_list_free_full (targets, free_context_connection);
         }
-      
       last_context = context;
 
       GEGL_INSTRUMENT_END ("process", gegl_node_get_operation (node));
     }
-  
   if (last_context)
     {
       if (operation_result)

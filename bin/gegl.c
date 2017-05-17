@@ -229,7 +229,7 @@ main (gint    argc,
   if (o->rest)
     {
       GError *error = NULL;
-      gegl_create_chain_argv (o->rest, iter, proxy, 0, gegl_node_get_bounding_box (gegl).height, &error);
+      gegl_create_chain_argv (o->rest, iter, proxy, 0, gegl_node_get_bounding_box (gegl).height, path_root, &error);
       if (error)
       {
         fprintf (stderr, "Error: %s\n", error->message);

@@ -487,6 +487,7 @@ static void gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:matting-global",
     "categories" , "matting",
+    "title"      , _("Matting Global"),
     "description",
    _("Given a sparse user supplied tri-map and an input image, create a "
      "foreground alpha matte. Set white as foreground, black as background "

@@ -193,6 +193,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:line-profile",
     "categories"  , "debug",
+    "title"       , _("Line Profile"),
     "description" ,
           _("Renders luminance profiles for red green and blue components along"
             " the specified line in the input buffer, plotted in a buffer of the"

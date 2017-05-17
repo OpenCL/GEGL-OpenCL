@@ -24,8 +24,8 @@ __kernel void cl_contrast_curve(__global const float2 *in,
   int gid     = get_global_id(0);
   float2 in_v = in[gid];
 
-  int idx = (int) fmin(num_sampling_points - 1,
-                       fmax(0f,
+  int idx = (int) fmin(num_sampling_points - 1.0f,
+                       fmax(0.0f,
                             in_v.x * num_sampling_points));
 
   out[gid] = (float2) (curve[idx], in_v.y);
