@@ -48,3 +48,4 @@ cscope.files
 cscope.out
 /*.project
 m4/intltool.m4
+tags
