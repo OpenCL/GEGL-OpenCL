@@ -991,9 +991,9 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:gluas",
   "categories"  , "script:misc",
+  "title"       , _("gluas"),
   "description" ,
-        _("A general purpose filter/composer implementation proxy for the"
-          " lua programming language."),
+        _("Pixel level filter/composer scripting prototyping with lua. See http://pippin.gimp.org/image-processing/ for further details."),
         NULL);
 }
 

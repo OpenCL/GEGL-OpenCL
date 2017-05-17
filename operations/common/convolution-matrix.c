@@ -50,9 +50,11 @@ property_double (e5, _("(5,5)"), 0.0)
 
 property_double (divisor, _("Divisor"), 1.0)
     ui_range    (-1000.0, 1000.0)
+    ui_meta     ("sensitive", "! normalize")
 
 property_double (offset, _("Offset"), 0.0)
     value_range (-1.0, 1.0)
+    ui_meta     ("sensitive", "! normalize")
 
 property_boolean (red,   _("Red channel"),   TRUE)
 property_boolean (green, _("Green channel"), TRUE)
@@ -612,6 +614,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "categories",  "generic",
     "name",        "gegl:convolution-matrix",
+    "title",       _("Convolution Matrix"),
     "description", _("Apply a generic 5x5 convolution matrix"),
     NULL);
 }

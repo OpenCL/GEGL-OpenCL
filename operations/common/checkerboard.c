@@ -346,7 +346,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Checkerboard"),
     "reference-hash",     "b2f5f85a0ec1de87639c1b0cfcd17fbc",
     "position-dependent", "true",
-    "description",        _("Create a checkerboard pattern"),
+    "description",        _("Render a checkerboard pattern"),
     NULL);
 }
 

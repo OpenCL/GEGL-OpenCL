@@ -46,10 +46,11 @@ property_enum (pattern, _("Pattern"),
 
 property_double (period, _("Period"), 12.0)
                  value_range (0.0, 200.0)
+                 description (_("The number of pixels across one repetition of a base pattern at base resolution."))
 
 property_double (turbulence, _("Turbulence"), 0.0)
                  value_range (0.0, 1.0)  // rename to wave-pinch or period-pinch?
-                 description (_(""))
+                 description (_("Color saturation dependent compression of period"))
 
 property_double (blocksize, _("Blocksize"), -1.0)
                  value_range (-1.0, 64.0)
@@ -63,18 +64,36 @@ property_double (twist, _("Black and green angle"), 75.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
                  description (_("angle offset for patterns"))
+                 ui_meta ("label", "[color-model {white-on-black,"
+                                   "              black-on-white} : bw-label,"
+                                   " color-model {rgb}            : rgb-label,"
+                                   " color-model {cmyk}           : cmyk-label]")
+                 ui_meta ("bw-label",   _("Angle"))
+                 ui_meta ("rgb-label",  _("Green angle"))
+                 ui_meta ("cmyk-label", _("Black angle"))
 
 property_double (twist2, _("Red and cyan angle"), 15.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
+                 ui_meta ("visible", "color-model {rgb, cmyk}")
+                 ui_meta ("label", "[color-model {rgb}  : rgb-label,"
+                                   " color-model {cmyk} : cmyk-label]")
+                 ui_meta ("rgb-label",  _("Red angle"))
+                 ui_meta ("cmyk-label", _("Cyan angle"))
 
 property_double (twist3, _("Blue and magenta angle"), 45.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
+                 ui_meta ("visible", "color-model {rgb, cmyk}")
+                 ui_meta ("label", "[color-model {rgb}  : rgb-label,"
+                                   " color-model {cmyk} : cmyk-label]")
+                 ui_meta ("rgb-label",  _("Blue angle"))
+                 ui_meta ("cmyk-label", _("Magenta angle"))
 
 property_double (twist4, _("Yellow angle"), 0.0)
                  value_range (-180.0, 180.0)
                  ui_meta ("unit", "degree")
+                 ui_meta ("visible", "color-model {cmyk}")
 
 #else
 
@@ -134,6 +153,9 @@ float spachrotyze (
   int in = 0;
   float old_acc = 0.0;
 
+  x += period * 2;
+  y += period * 2;
+
   for (int i = 0; i < max_aa_samples ; i++)
   {
     xi = fmodf (xi + 0.618033988749854, 1.0);
@@ -175,9 +197,11 @@ float spachrotyze (
           float ay = fabsf (qphase ) ;
           float v = 0.0;
 
-          if  (ax + ay > 0.666)
+          if  (ax + ay > 1.0)
           {
-            v = 2.0 - sqrtf((1.0-ay) * (1.0-ay) + (1.0-ax) * (1.0-ax));
+            ay = 1.0 - ay;
+            ax = 1.0 - ax;
+            v = 2.0 - sqrtf (ay * ay + ax * ax);
           }
           else
           {
@@ -211,6 +235,37 @@ static inline double degrees_to_radians (double degrees)
 {
   return degrees * (2 * G_PI / 360.0);
 }
+
+#if 0
+-- threshold filter
+
+level = 0.5
+
+for y=0, height-1 do
+	for x=0, width-1 do
+		ax = (x / width) * 2 - 1
+		ay = (y / height) * 2 - 1
+		if ax < 0 then ax = -ax end
+		if ay < 0 then ay = -ay end
+		v = ax * ay
+
+		if false then
+		if ax + ay > 1.0 then
+		  ax = 1.0 - ax
+		  ay = 1.0 - ay
+	  --  v = (2.0 - math.sqrt((1.0-ay) * (1.0-ay) + (1.0-ax) * (1.0-ax)))/2
+          v = (math.sqrt(ax * ax + ay * ay)/2)
+
+		else
+          v = 1.0-math.sqrt(ax * ax + ay * ay)/2
+		end
+		end
+		set_value (x,y,v)
+	end
+	progress (y/height)
+end
+
+#endif
 
 
 static gboolean
@@ -499,8 +554,9 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Newsprint"),
     "position-dependent", "true",
     "categories" ,        "render",
-    "reference-hash",     "f045b69c7f218e0470d8e74d8306b397",
+    "reference-hash",     "f680e099d412e28dfa26f9b19e34109f",
     "description",        _("Digital halftoning with optional modulations. "),
+    "reference-chain",    "load path=images/standard-input.png newsprint period=6.0 pattern=pssquare color-model=cmyk",
     "position-dependent", "true",
     NULL);
 }

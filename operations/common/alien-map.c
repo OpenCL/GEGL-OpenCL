@@ -37,26 +37,72 @@ property_enum (color_model, _("Color model"),
 
 property_double (cpn_1_frequency, _("Component 1 frequency"), 1)
   value_range (0, 20)
+  ui_meta     ("sensitive", "! cpn-1-keep")
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Red frequency"))
+  ui_meta     ("hsl-label", _("Hue frequency"))
 
 property_double  (cpn_2_frequency, _("Component 2 frequency"), 1)
   value_range (0, 20)
+  ui_meta     ("sensitive", "! cpn-2-keep")
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Green frequency"))
+  ui_meta     ("hsl-label", _("Saturation frequency"))
 
 property_double  (cpn_3_frequency, _("Component 3 frequency"), 1)
   value_range (0, 20)
+  ui_meta     ("sensitive", "! cpn-3-keep")
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Blue frequency"))
+  ui_meta     ("hsl-label", _("Lightness frequency"))
 
 property_double  (cpn_1_phaseshift, _("Component 1 phase shift"), 0)
   value_range (0, 360)
   ui_meta     ("unit", "degree")
+  ui_meta     ("sensitive", "! cpn-1-keep")
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Red phase shift"))
+  ui_meta     ("hsl-label", _("Hue phase shift"))
+
 property_double  (cpn_2_phaseshift, _("Component 2 phase shift"), 0)
   value_range (0, 360)
   ui_meta     ("unit", "degree")
+  ui_meta     ("sensitive", "! cpn-2-keep")
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Green phase shift"))
+  ui_meta     ("hsl-label", _("Saturation phase shift"))
+
 property_double  (cpn_3_phaseshift, _("Component 3 phase shift"), 0)
   value_range (0, 360)
   ui_meta     ("unit", "degree")
+  ui_meta     ("sensitive", "! cpn-3-keep")
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Blue phase shift"))
+  ui_meta     ("hsl-label", _("Lightness phase shift"))
 
 property_boolean (cpn_1_keep, _("Keep component 1"), FALSE)
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Keep red component"))
+  ui_meta     ("hsl-label", _("Keep hue component"))
+
 property_boolean (cpn_2_keep, _("Keep component 2"), FALSE)
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Keep green component"))
+  ui_meta     ("hsl-label", _("Keep saturation component"))
+
 property_boolean (cpn_3_keep, _("Keep component 3"), FALSE)
+  ui_meta     ("label", "[color-model {rgb} : rgb-label,"
+                        " color-model {hsl} : hsl-label]")
+  ui_meta     ("rgb-label", _("Keep blue component"))
+  ui_meta     ("hsl-label", _("Keep lightness component"))
 
 #else
 

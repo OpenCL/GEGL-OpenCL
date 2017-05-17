@@ -1396,10 +1396,14 @@ static void load_path (State *o)
   if (o->ops)
   {
     GError *error = NULL;
+
+    char *containing_path = get_path_parent (o->path);
     gegl_create_chain_argv (o->ops,
                     gegl_node_get_producer (o->sink, "input", NULL),
                     o->sink, 0, gegl_node_get_bounding_box (o->sink).height,
+                    containing_path,
                     &error);
+    free (containing_path);
     if (error)
     {
       fprintf (stderr, "Error: %s\n", error->message);

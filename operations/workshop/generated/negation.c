@@ -105,6 +105,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:negation",
+  "title"       , "negation",
   "categories"  , "compositors:blend",
   "description" ,
         _("Image blending operation 'negation' (<tt>c = 1.0 - fabs(1.0-cA-cB)</tt>)"),

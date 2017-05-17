@@ -273,16 +273,18 @@ typedef enum GeglSerializeFlag {
  * @op_end: node to get processed data
  * @time: the time to use for interpolatino of keyframed values
  * @rel_dim: relative dimension to scale rel suffixed values by
+ * @path_root: path in filesystem to use as relative root
  * @error: error for signalling parsing errors
  *
  * Create a node chain from argv style list of op data.
  */
-void gegl_create_chain_argv (char    **ops,
-                             GeglNode *op_start,
-                             GeglNode *op_end,
-                             double    time,
-                             int       rel_dim,
-                             GError  **error);
+void gegl_create_chain_argv (char      **ops,
+                             GeglNode   *op_start,
+                             GeglNode   *op_end,
+                             double      time,
+                             int         rel_dim,
+                             const char *path_root,
+                             GError    **error);
 /**
  * gegl_create_chain:
  * @ops: an argv style, NULL terminated array of arguments
@@ -290,6 +292,7 @@ void gegl_create_chain_argv (char    **ops,
  * @op_end: node to get processed data
  * @time: the time to use for interpolatino of keyframed values
  * @rel_dim: relative dimension to scale rel suffixed values by
+ * @path_root: path in filesystem to use as relative root
  * @error: error for signalling parsing errors
  *
  * Create a node chain from an unparsed commandline string.
@@ -299,6 +302,7 @@ void gegl_create_chain (const char *str,
                         GeglNode   *op_end,
                         double      time,
                         int         rel_dim,
+                        const char *path_root,
                         GError    **error);
 
 /**

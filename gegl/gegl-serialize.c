@@ -13,13 +13,21 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with GEGL; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2016 Øyvind Kolås
+ * Copyright 2016, 2017 Øyvind Kolås
  */
 
+#include "config.h"
 #include "gegl.h"
 #include <string.h>
+#include <limits.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "property-types/gegl-paramspecs.h"
+
+#ifdef G_OS_WIN32
+#include <direct.h>
+#define realpath(a,b) _fullpath(b,a,_MAX_PATH)
+#endif
 
 //#define make_rel(strv) (g_strtod (strv, NULL) * gegl_node_get_bounding_box
 // (iter[0]).height)
@@ -50,12 +58,13 @@ remove_in_betweens (GeglNode *nop_raw,
 }
 
 void
-gegl_create_chain_argv (char    **ops,
-                        GeglNode *start,
-                        GeglNode *proxy,
-                        double    time,
-                        int       rel_dim,
-                        GError  **error)
+gegl_create_chain_argv (char      **ops,
+                        GeglNode   *start,
+                        GeglNode   *proxy,
+                        double      time,
+                        int         rel_dim,
+                        const char *path_root,
+                        GError    **error)
 {
   GeglNode   *iter[10] = {start, NULL};
   GeglNode   *new = NULL;
@@ -110,6 +119,8 @@ gegl_create_chain_argv (char    **ops,
           if (strchr (*arg, '}'))
             {
               gdouble y = 0;
+              if (time == 0.0) /* avoiding ugly start interpolation artifact */
+                time = 0.4;
               gegl_path_calc_y_for_x (g_object_get_qdata (G_OBJECT (new),
                                                           g_quark_from_string(
                                                             prop)), time, &y);
@@ -419,6 +430,31 @@ gegl_create_chain_argv (char    **ops,
 
                         gegl_node_set (iter[level], key, format, NULL);
                       }
+                    else if (g_type_is_a (G_PARAM_SPEC_TYPE (pspec),
+                             GEGL_TYPE_PARAM_FILE_PATH))
+                      {
+                        gchar *buf;
+                        if (g_path_is_absolute (value))
+                          {
+                            gegl_node_set (iter[level], key, value, NULL);
+                          }
+                        else
+                          {
+                            gchar *absolute_path;
+                            if (path_root)
+                              buf = g_strdup_printf ("%s/%s", path_root, value);
+                            else
+                              buf = g_strdup_printf ("./%s", value);
+                            absolute_path = realpath (buf, NULL);
+                            g_free (buf);
+                            if (absolute_path)
+                              {
+                                gegl_node_set (iter[level], key, absolute_path, NULL);
+                                free (absolute_path);
+                              }
+                            gegl_node_set (iter[level], key, value, NULL);
+                          }
+                      }
                     else if (g_type_is_a (target_type, G_TYPE_STRING))
                       {
                         gegl_node_set (iter[level], key, value, NULL);
@@ -578,7 +614,8 @@ gegl_create_chain_argv (char    **ops,
 
 void
 gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end,
-                   double time, int rel_dim, GError **error)
+                   double time, int rel_dim, const char *path_root,
+                   GError **error)
 {
   gchar **argv = NULL;
   gint argc = 0;
@@ -586,7 +623,8 @@ gegl_create_chain (const char *str, GeglNode *op_start, GeglNode *op_end,
   g_shell_parse_argv (str, &argc, &argv, NULL);
   if (argv)
     {
-      gegl_create_chain_argv (argv, op_start, op_end, time, rel_dim, error);
+      gegl_create_chain_argv (argv, op_start, op_end, time, rel_dim, path_root,
+                              error);
       g_strfreev (argv);
     }
 }
@@ -908,7 +946,7 @@ gegl_node_new_from_serialized (const gchar *chaindata,
   gegl_node_set (foo, "operation", "gegl:nop", NULL);
 
   gegl_node_link_many (foo, ret, NULL);
-  gegl_create_chain (chaindata, foo, ret, 0, 1024, NULL);
+  gegl_create_chain (chaindata, foo, ret, 0, 1024, path_root, NULL);
 
   return ret;
 }

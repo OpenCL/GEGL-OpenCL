@@ -157,6 +157,8 @@ gfloat gegl_random_float (const GeglRandom *rand,
                           gint              z,
                           gint              n);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (GeglRandom, gegl_random_free)
+
 G_END_DECLS
 
 #endif /* __GEGL_RANDOM_H__ */

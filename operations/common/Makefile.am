@@ -14,7 +14,7 @@ LIBS = $(op_libs)
 opdir = $(ext_dir)
 op_LTLIBRARIES = \
 	gegl-common.la 
-    
+
 gegl_common_la_SOURCES =\
     alien-map.c \
     module.c \
@@ -70,6 +70,7 @@ gegl_common_la_SOURCES =\
 	grey.c \
 	grid.c \
 	high-pass.c \
+	hue-chroma.c \
 	illusion.c \
 	image-compare.c \
 	image-gradient.c \

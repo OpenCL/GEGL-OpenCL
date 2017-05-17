@@ -105,6 +105,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:blend-reflect",
+  "title"       , "blend-reflect",
   "categories"  , "compositors:blend",
   "description" ,
         _("Image blending operation 'blend-reflect' (<tt>c = cB>=1.0?1.0:cA*cA / (1.0-cB)</tt>)"),

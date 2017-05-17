@@ -2,10 +2,6 @@
   <node operation='gegl:crop'> <params> <param name='x'>0</param> <param name='y'>0</param> <param name='width'>395</param> <param name='height'>200</param> </params> </node> 
   
   <node operation='gegl:over'> 
-    <node operation='gegl:translate'> <params> <param name='x'>80</param> <param name='y'>162</param> </params> </node> 
-    <node operation='gegl:opacity'> <params> <param name='value'>0.5</param> </params> </node> 
-    <node name='text' operation='gegl:text'> <params> <param name='string'>2000-2014 © Various contributors</param> <param name='font'>Sans</param> <param name='size'>12</param> <param name='color'>rgb(0.0000, 0.0000, 0.0000)</param> <param name='wrap'>628</param> <param name='alignment'>0</param> <param name='width'>622</param> <param name='height'>40</param> </params> </node> </node> 
-  <node operation='gegl:over'> 
     <node operation='gegl:translate'> <params> <param name='x'>20</param> <param name='y'>50</param> </params> </node> 
     
     <node operation='gegl:over'> 

@@ -105,6 +105,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
   "name"        , "gegl:soft-dodge",
+  "title"       , "soft-dodge",
   "categories"  , "compositors:blend",
   "description" ,
         _("Image blending operation 'soft-dodge' (<tt>c = (cA+cB<1.0)?0.5*cA / (1.0 - cB):1.0-0.5*(1.0 - cB)/cA</tt>)"),

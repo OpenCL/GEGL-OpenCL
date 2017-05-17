@@ -67,6 +67,7 @@ guint gegl_operation_temporal_get_history_length (GeglOperation *op);
 GeglBuffer *gegl_operation_temporal_get_frame (GeglOperation *op,
                                                gint           frame);
 
+G_DEFINE_AUTOPTR_CLEANUP_FUNC (GeglOperationTemporal, g_object_unref)
 
 G_END_DECLS
 

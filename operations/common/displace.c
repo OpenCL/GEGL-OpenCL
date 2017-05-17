@@ -50,6 +50,14 @@ property_double (amount_x, _("X displacement"), 0.0)
     ui_range    (-500.0, 500.0)
     ui_meta     ("unit", "pixel-distance")
     ui_meta     ("axis", "x")
+    ui_meta     ("label", "[displace-mode {cartesian} : cartesian-label,"
+                          " displace-mode {polar}     : polar-label]")
+    ui_meta     ("cartesian-label", _("Horizontal displacement"))
+    ui_meta     ("polar-label", _("Pinch"))
+    ui_meta     ("description", "[displace-mode {cartesian} : cartesian-description,"
+                                " displace-mode {polar}     : polar-description]")
+    ui_meta     ("cartesian-description", _("Displacement multiplier for the horizontal direction"))
+    ui_meta     ("polar-description", _("Displacement multiplier for the radial direction"))
 
 property_double (amount_y, _("Y displacement"), 0.0)
     description (_("Displace multiplier for Y or tangent (degrees) direction"))
@@ -57,6 +65,31 @@ property_double (amount_y, _("Y displacement"), 0.0)
     ui_range    (-500.0, 500.0)
     ui_meta     ("unit", "pixel-distance")
     ui_meta     ("axis", "y")
+    ui_meta     ("label", "[displace-mode {cartesian} : cartesian-label,"
+                          " displace-mode {polar}     : polar-label]")
+    ui_meta     ("cartesian-label", _("Vertical displacement"))
+    ui_meta     ("polar-label", _("Whirl"))
+    ui_meta     ("description", "[displace-mode {cartesian} : cartesian-description,"
+                                " displace-mode {polar}     : polar-description]")
+    ui_meta     ("cartesian-description", _("Displacement multiplier for the vertical direction"))
+    ui_meta     ("polar-description", _("Displacement multiplier for the angular offset"))
+
+property_boolean (center, _("Center displacement"), FALSE)
+    description (_("Center the displacement around a specified point"))
+
+property_double (center_x, _("Center X"), 0.5)
+    description (_("X coordinate of the displacement center"))
+    ui_range    (0.0, 1.0)
+    ui_meta     ("unit", "relative-coordinate")
+    ui_meta     ("axis", "x")
+    ui_meta     ("sensitive", "center")
+
+property_double (center_y, _("Center Y"), 0.5)
+    description (_("Y coordinate of the displacement center"))
+    ui_range    (0.0, 1.0)
+    ui_meta     ("unit", "relative-coordinate")
+    ui_meta     ("axis", "y")
+    ui_meta     ("sensitive", "center")
 
 #else
 
@@ -71,7 +104,7 @@ static gdouble
 get_base_displacement (gdouble  amount,
                        gfloat  *map_pixel)
 {
-  return (2.0 * amount * (map_pixel[0] - 0.5) - 0.5) * map_pixel[1] + 0.5;
+  return 2.0 * amount * (map_pixel[0] - 0.5) * map_pixel[1];
 }
 
 static inline void
@@ -122,7 +155,7 @@ get_input_polar_coordinates (gint     x,
 
   if (ymap_pixel && y_amount)
     {
-      d_alpha += (y_amount / 180) * M_PI * (ymap_pixel[0] - 0.5) / 0.5;
+      d_alpha += get_base_displacement ((y_amount / 180) * G_PI, ymap_pixel);
     }
 
   *x_input = cx + radius * sin (d_alpha);
@@ -189,13 +222,34 @@ get_required_for_output (GeglOperation       *operation,
                          const gchar         *input_pad,
                          const GeglRectangle *roi)
 {
-  GeglRectangle *result = gegl_operation_source_get_bounding_box (operation, "input");
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
+  GeglRectangle  *result = gegl_operation_source_get_bounding_box (operation, "input");
 
   if (!strcmp (input_pad, "aux")  ||
       !strcmp (input_pad, "aux2") ||
       !result)
     {
-      return *roi;
+      GeglRectangle rect = *roi;
+
+      if (o->center && result)
+        {
+          GeglRectangle *bounds = gegl_operation_source_get_bounding_box (operation, input_pad);
+
+          if (bounds)
+            {
+              gdouble cx, cy;
+
+              cx = result->x + gegl_coordinate_relative_to_pixel (o->center_x,
+                                                                  result->width);
+              cy = result->y + gegl_coordinate_relative_to_pixel (o->center_y,
+                                                                  result->height);
+
+              rect.x += bounds->x + bounds->width  / 2 - floor (cx);
+              rect.y += bounds->y + bounds->height / 2 - floor (cy);
+            }
+        }
+
+      return rect;
     }
 
   return *result;
@@ -206,13 +260,34 @@ get_invalidated_by_change (GeglOperation       *operation,
                            const gchar         *input_pad,
                            const GeglRectangle *input_region)
 {
-  GeglRectangle *result = gegl_operation_source_get_bounding_box (operation, "input");
+  GeglProperties *o      = GEGL_PROPERTIES (operation);
+  GeglRectangle  *result = gegl_operation_source_get_bounding_box (operation, "input");
 
   if (!strcmp (input_pad, "aux")  ||
       !strcmp (input_pad, "aux2") ||
       !result)
     {
-      return *input_region;
+      GeglRectangle rect = *input_region;
+
+      if (o->center && result)
+        {
+          GeglRectangle *bounds = gegl_operation_source_get_bounding_box (operation, input_pad);
+
+          if (bounds)
+            {
+              gdouble cx, cy;
+
+              cx = result->x + gegl_coordinate_relative_to_pixel (o->center_x,
+                                                                  result->width);
+              cy = result->y + gegl_coordinate_relative_to_pixel (o->center_y,
+                                                                  result->height);
+
+              rect.x -= bounds->x + bounds->width  / 2 - floor (cx);
+              rect.y -= bounds->y + bounds->height / 2 - floor (cy);
+            }
+        }
+
+      return rect;
     }
 
   return *result;
@@ -232,13 +307,26 @@ process (GeglOperation       *operation,
   GeglSampler        *in_sampler;
 
   gint     x, y;
-  gdouble  cx = 0, cy = 0;
+  gdouble  cx = 0.5, cy = 0.5;
   gfloat  *in_pixel;
   gint     n_components;
   gint     aux_index, aux2_index;
 
   const Babl *inout_format = gegl_operation_get_format (operation, "input");
   const Babl *aux_format  = gegl_operation_get_format (operation, "aux");
+
+  if (o->center)
+    {
+      cx = o->center_x;
+      cy = o->center_y;
+    }
+
+  cx = gegl_buffer_get_x (input) +
+       gegl_coordinate_relative_to_pixel (cx, 
+                                          gegl_buffer_get_width (input));
+  cy = gegl_buffer_get_y (input) +
+       gegl_coordinate_relative_to_pixel (cy,
+                                          gegl_buffer_get_height (input));
 
   n_components = babl_format_get_n_components (inout_format);
 
@@ -251,17 +339,35 @@ process (GeglOperation       *operation,
                                    GEGL_ACCESS_WRITE, GEGL_ABYSS_NONE);
 
   if (aux)
-    aux_index = gegl_buffer_iterator_add (iter, aux, result, level, aux_format,
-                                          GEGL_ACCESS_READ, o->abyss_policy);
+    {
+      GeglRectangle rect = *result;
+
+      if (o->center)
+        {
+          GeglRectangle *bounds = gegl_operation_source_get_bounding_box (operation, "aux");
+
+          rect.x += bounds->x + bounds->width  / 2 - floor (cx);
+          rect.y += bounds->y + bounds->height / 2 - floor (cy);
+        }
+
+      aux_index = gegl_buffer_iterator_add (iter, aux, &rect, level, aux_format,
+                                            GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
+    }
 
   if (aux2)
-    aux2_index = gegl_buffer_iterator_add (iter, aux2, result, level, aux_format,
-                                           GEGL_ACCESS_READ, o->abyss_policy);
-
-  if (o->displace_mode == GEGL_DISPLACE_MODE_POLAR)
     {
-      cx = gegl_buffer_get_width (input) / 2.0;
-      cy = gegl_buffer_get_height (input) / 2.0;
+      GeglRectangle rect = *result;
+
+      if (o->center)
+        {
+          GeglRectangle *bounds = gegl_operation_source_get_bounding_box (operation, "aux2");
+
+          rect.x += bounds->x + bounds->width  / 2 - floor (cx);
+          rect.y += bounds->y + bounds->height / 2 - floor (cy);
+        }
+
+      aux2_index = gegl_buffer_iterator_add (iter, aux2, &rect, level, aux_format,
+                                             GEGL_ACCESS_READ, GEGL_ABYSS_NONE);
     }
 
   while (gegl_buffer_iterator_next (iter))
@@ -274,7 +380,7 @@ process (GeglOperation       *operation,
       for (y = iter->roi[0].y; y < iter->roi[0].y + iter->roi[0].height; y++)
         for (x = iter->roi[0].x; x < iter->roi[0].x + iter->roi[0].width; x++)
           {
-            gdouble  src_x, src_y;
+            gdouble src_x, src_y;
 
             if (o->displace_mode == GEGL_DISPLACE_MODE_POLAR)
               {

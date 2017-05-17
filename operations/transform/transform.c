@@ -21,7 +21,7 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_string (transform, _("Y"), "")
+property_string (transform, _("Transform"), "")
     description (_("Transformation SVG syntax transformation string"))
 
 #else

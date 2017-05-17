@@ -23,22 +23,22 @@
 #ifdef GEGL_PROPERTIES
 
 property_file_path (path, _("File"), "")
-    description (_("Target path and filename, use '-' for stdout"))
+  description (_("Target path and filename, use '-' for stdout"))
 
-property_int    (quality, _("Quality"), 90)
-    description (_("JPEG compression quality (between 1 and 100)"))
-    value_range (1, 100)
+property_int (quality, _("Quality"), 90)
+  description (_("JPEG compression quality (between 1 and 100)"))
+  value_range (1, 100)
 
-property_int    (smoothing, _("Smoothing"), 0)
-    description(_("Smoothing factor from 1 to 100; 0 disables smoothing"))
-    value_range (0, 100)
+property_int (smoothing, _("Smoothing"), 0)
+  description(_("Smoothing factor from 1 to 100; 0 disables smoothing"))
+  value_range (0, 100)
 
 property_boolean (optimize, _("Optimize"), TRUE)
-    description  (_("Use optimized huffman tables"))
+  description (_("Use optimized huffman tables"))
 property_boolean (progressive, _("Progressive"), TRUE)
-    description  (_("Create progressive JPEG images"))
+  description (_("Create progressive JPEG images"))
 property_boolean (grayscale, _("Grayscale"), FALSE)
-    description  (_("Create a grayscale (monochrome) image"))
+  description (_("Create a grayscale (monochrome) image"))
 
 #else
 
@@ -46,46 +46,119 @@ property_boolean (grayscale, _("Grayscale"), FALSE)
 #define GEGL_OP_NAME jpg_save
 #define GEGL_OP_C_SOURCE jpg-save.c
 
-#include "gegl-op.h"
-#include <stdio.h>
+#include <gegl-op.h>
+#include <gegl-gio-private.h>
+#include <stdio.h> /* jpeglib.h needs FILE... */
 #include <jpeglib.h>
 
-static gint
-gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
-                        const gchar *path,
-                        gint         quality,
-                        gint         smoothing,
-                        gboolean     optimize,
-                        gboolean     progressive,
-                        gboolean     grayscale,
-                        gint         src_x,
-                        gint         src_y,
-                        gint         width,
-                        gint         height)
+static const gsize buffer_size = 4096;
+
+static void
+init_buffer (j_compress_ptr cinfo)
 {
-  FILE *fp;
-  struct jpeg_compress_struct cinfo;
-  struct jpeg_error_mgr jerr;
+  struct jpeg_destination_mgr *dest = cinfo->dest;
+  guchar *buffer;
+
+  buffer = g_try_new (guchar, buffer_size);
+
+  g_assert (buffer != NULL);
+
+  dest->next_output_byte = buffer;
+  dest->free_in_buffer = buffer_size;
+}
+
+static boolean
+write_to_stream (j_compress_ptr cinfo)
+{
+  struct jpeg_destination_mgr *dest = cinfo->dest;
+  GOutputStream *stream = (GOutputStream *) cinfo->client_data;
+  GError *error = NULL;
+  guchar *buffer;
+  gsize size;
+  gboolean success;
+  gsize written;
+
+  g_assert (stream);
+
+  size = buffer_size - dest->free_in_buffer;
+  buffer = (guchar *) dest->next_output_byte - size;
+
+  success = g_output_stream_write_all (G_OUTPUT_STREAM (stream),
+                                       (const void *) buffer, buffer_size, &written,
+                                       NULL, &error);
+  if (!success || error != NULL)
+    {
+      g_warning ("%s", error->message);
+      g_error_free (error);
+      return FALSE;
+    }
+
+  dest->next_output_byte = buffer;
+  dest->free_in_buffer = buffer_size;
+
+  return TRUE;
+}
+
+static void
+close_stream (j_compress_ptr cinfo)
+{
+  struct jpeg_destination_mgr *dest = cinfo->dest;
+  GOutputStream *stream = (GOutputStream *) cinfo->client_data;
+  GError *error = NULL;
+  guchar *buffer;
+  gsize size;
+  gboolean success;
+  gsize written;
+  gboolean closed;
+
+  g_assert (stream);
+
+  size = buffer_size - dest->free_in_buffer;
+  buffer = (guchar *) dest->next_output_byte - size;
+
+  success = g_output_stream_write_all (G_OUTPUT_STREAM (stream),
+                                       (const void *) buffer, size, &written,
+                                       NULL, &error);
+  if (!success || error != NULL)
+    {
+      g_warning ("%s", error->message);
+      g_error_free (error);
+    }
+
+  closed = g_output_stream_close (G_OUTPUT_STREAM (stream),
+                                  NULL, &error);
+  if (!closed)
+    {
+      g_warning ("%s", error->message);
+      g_error_free (error);
+    }
+
+  g_free (buffer);
+
+  dest->next_output_byte = NULL;
+  dest->free_in_buffer = 0;
+}
+
+static gint
+export_jpg (GeglOperation               *operation,
+            GeglBuffer                  *input,
+            const GeglRectangle         *result,
+            struct jpeg_compress_struct  cinfo,
+            gint                         quality,
+            gint                         smoothing,
+            gboolean                     optimize,
+            gboolean                     progressive,
+            gboolean                     grayscale)
+{
+  gint     src_x, src_y;
+  gint     width, height;
   JSAMPROW row_pointer[1];
   const Babl *format;
 
-  if (!strcmp (path, "-"))
-    {
-      fp = stdout;
-    }
-  else
-    {
-      fp = fopen (path, "wb");
-    }
-  if (!fp)
-    {
-      return -1;
-    }
-
-  cinfo.err = jpeg_std_error (&jerr);
-  jpeg_create_compress (&cinfo);
-
-  jpeg_stdio_dest (&cinfo, fp);
+  src_x = result->x;
+  src_y = result->y;
+  width = result->width - result->x;
+  height = result->height - result->y;
 
   cinfo.image_width = width;
   cinfo.image_height = height;
@@ -145,7 +218,7 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
     rect.width = width;
     rect.height = 1;
 
-    gegl_buffer_get (gegl_buffer, &rect, 1.0, format,
+    gegl_buffer_get (input, &rect, 1.0, format,
                      row_pointer[0], GEGL_AUTO_ROWSTRIDE,
                      GEGL_ABYSS_NONE);
 
@@ -153,31 +226,65 @@ gegl_buffer_export_jpg (GeglBuffer  *gegl_buffer,
   }
 
   jpeg_finish_compress (&cinfo);
-  jpeg_destroy_compress (&cinfo);
 
   g_free (row_pointer[0]);
-
-  if (stdout != fp)
-    fclose (fp);
 
   return 0;
 }
 
 static gboolean
-gegl_jpg_save_process (GeglOperation       *operation,
-                       GeglBuffer          *input,
-                       const GeglRectangle *result,
-                       int                  level)
+process (GeglOperation       *operation,
+         GeglBuffer          *input,
+         const GeglRectangle *result,
+         int                  level)
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
+  struct jpeg_compress_struct cinfo;
+  struct jpeg_error_mgr jerr;
+  struct jpeg_destination_mgr dest;
+  GOutputStream *stream;
+  GFile *file = NULL;
+  gboolean status = TRUE;
+  GError *error = NULL;
 
-  gegl_buffer_export_jpg (input, o->path, o->quality, o->smoothing,
-                          o->optimize, o->progressive, o->grayscale,
-                          result->x, result->y,
-                          result->width, result->height);
-  return  TRUE;
+  cinfo.err = jpeg_std_error (&jerr);
+
+  jpeg_create_compress (&cinfo);
+
+  stream = gegl_gio_open_output_stream (NULL, o->path, &file, &error);
+  if (stream == NULL)
+    {
+      status = FALSE;
+      g_warning ("%s", error->message);
+      goto cleanup;
+    }
+
+  dest.init_destination = init_buffer;
+  dest.empty_output_buffer = write_to_stream;
+  dest.term_destination = close_stream;
+
+  cinfo.client_data = stream;
+  cinfo.dest = &dest;
+
+  if (export_jpg (operation, input, result, cinfo,
+                  o->quality, o->smoothing, o->optimize, o->progressive, o->grayscale))
+    {
+      status = FALSE;
+      g_warning("could not export JPEG file");
+      goto cleanup;
+    }
+
+cleanup:
+  jpeg_destroy_compress (&cinfo);
+
+  if (stream != NULL)
+    g_clear_object (&stream);
+
+  if (file != NULL)
+    g_clear_object (&file);
+
+  return  status;
 }
-
 
 static void
 gegl_op_class_init (GeglOpClass *klass)
@@ -188,15 +295,14 @@ gegl_op_class_init (GeglOpClass *klass)
   operation_class = GEGL_OPERATION_CLASS (klass);
   sink_class      = GEGL_OPERATION_SINK_CLASS (klass);
 
-  sink_class->process    = gegl_jpg_save_process;
+  sink_class->process    = process;
   sink_class->needs_full = TRUE;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",         "gegl:jpg-save",
-    "title",        _("JPEG File Saver"),
-    "categories", "output",
-    "description",
-    _("JPEG image saver, using libjpeg"),
+    "name",          "gegl:jpg-save",
+    "title",       _("JPEG File Saver"),
+    "categories",    "output",
+    "description", _("JPEG image saver, using libjpeg"),
     NULL);
 
   gegl_operation_handlers_register_saver (

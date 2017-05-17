@@ -111,6 +111,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "categories"  , "distort",
   "name"        , "gegl:ditto",
+  "title"       , _("Ditto"),
   "description" , _("Test op to do a 1:1 map of input to output, while sampling"),
   NULL);
 }

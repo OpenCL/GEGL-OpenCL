@@ -33,7 +33,7 @@ AM_LDFLAGS = \
 	$(DEP_LIBS) $(BABL_LIBS) $(MATH_LIB)
 
 bin_PROGRAMS = gegl-imgcmp
-noinst_PROGRAMS = introspect operation_reference detect_opencl gegl-tester
+noinst_PROGRAMS = introspect operation_reference detect_opencl gegl-tester operations_html
 
 gegl_tester_SOURCES = \
 	gegl-tester.c

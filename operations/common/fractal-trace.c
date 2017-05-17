@@ -50,10 +50,12 @@ property_double (Y2, _("Y2"), 1.0)
 property_double (JX, _("JX"), 0.5)
   description (_("Julia seed X value, position"))
   value_range   (-50.0, 50.0)
+  ui_meta       ("visible", "fractal {julia}")
 
 property_double (JY, _("JY"), 0.5)
   description (_("Julia seed Y value, position"))
   value_range   (-50.0, 50.0)
+  ui_meta       ("visible", "$JX.visible")
 
 property_int    (depth, _("Depth"), 3)
   value_range   (1, 65536)

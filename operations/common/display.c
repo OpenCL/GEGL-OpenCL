@@ -138,6 +138,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:display",
     "categories"  , "meta:display",
+    "title"       , _("Display"),
     "description" ,
     _("Display the input buffer in a window."),
     NULL);

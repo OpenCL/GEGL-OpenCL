@@ -130,6 +130,8 @@ typedef struct
   long      audio_read_pos;
   
   int       next_apts;
+
+  int       file_inited;
 } Priv;
 
 static void
@@ -970,7 +972,6 @@ process (GeglOperation       *operation,
 {
   GeglProperties *o = GEGL_PROPERTIES (operation);
   Priv *p = (Priv*)o->user_data;
-  static gint     inited = 0;
 
   g_assert (input);
 
@@ -982,10 +983,10 @@ process (GeglOperation       *operation,
   p->height = result->height;
   p->input = input;
 
-  if (!inited)
+  if (!p->file_inited)
     {
       tfile (o);
-      inited = 1;
+      p->file_inited = 1;
     }
 
   write_video_frame (o, p->oc, p->video_st);
@@ -1091,6 +1092,7 @@ gegl_op_class_init (GeglOpClass *klass)
 
   gegl_operation_class_set_keys (operation_class,
     "name"        , "gegl:ff-save",
+    "title"       , _("FFmpeg Frame Saver"),
     "categories"  , "output:video",
     "description" , _("FFmpeg video output sink"),
     NULL);

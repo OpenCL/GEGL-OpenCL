@@ -381,7 +381,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",               "gegl:vignette",
     "title",              _("Vignette"),
     "position-dependent", "true",
-    "categories",         "render:photo",
+    "categories",         "render:light",
     "reference-hash",     "2057d35e0e44881c3319f0474e847d97",
     "description", _("Applies a vignette to an image. Simulates the luminance "
                      "fall off at the edge of exposed film, and some other "
