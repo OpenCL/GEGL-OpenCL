@@ -10,12 +10,12 @@
         <param name='y'>96</param>
       </params>
     </node>
-    <node operation='gegl:color-reduction'>
+    <node operation='gegl:dither'>
       <params>
-	<param name='dither-strategy'>none</param>
-	<param name='red-bits'>3</param>
-	<param name='green-bits'>3</param>
-	<param name='blue-bits'>3</param>
+	<param name='dither-method'>none</param>
+	<param name='red-levels'>8</param>
+	<param name='green-levels'>8</param>
+	<param name='blue-levels'>8</param>
 	<param name='seed'>0</param>
       </params>
     </node>
@@ -43,12 +43,12 @@
         <param name='y'>160</param>
       </params>
     </node>
-    <node operation='gegl:color-reduction'>
+    <node operation='gegl:dither'>
       <params>
-	<param name='dither-strategy'>floyd-steinberg</param>
-	<param name='red-bits'>3</param>
-	<param name='green-bits'>3</param>
-	<param name='blue-bits'>3</param>
+	<param name='dither-method'>floyd-steinberg</param>
+	<param name='red-levels'>8</param>
+	<param name='green-levels'>8</param>
+	<param name='blue-levels'>8</param>
 	<param name='seed'>0</param>
       </params>
     </node>
@@ -72,12 +72,12 @@
         <param name='y'>0</param>
       </params>
     </node>
-    <node operation='gegl:color-reduction'>
+    <node operation='gegl:dither'>
       <params>
-	<param name='dither-strategy'>random</param>
-	<param name='red-bits'>3</param>
-	<param name='green-bits'>3</param>
-	<param name='blue-bits'>3</param>
+	<param name='dither-method'>random</param>
+	<param name='red-levels'>8</param>
+	<param name='green-levels'>8</param>
+	<param name='blue-levels'>8</param>
 	<param name='seed'>0</param>
       </params>
     </node>
@@ -101,12 +101,12 @@
         <param name='y'>192</param>
       </params>
     </node>
-    <node operation='gegl:color-reduction'>
+    <node operation='gegl:dither'>
       <params>
-	<param name='dither-strategy'>random-covariant</param>
-	<param name='red-bits'>3</param>
-	<param name='green-bits'>3</param>
-	<param name='blue-bits'>3</param>
+	<param name='dither-method'>random-covariant</param>
+	<param name='red-levels'>8</param>
+	<param name='green-levels'>8</param>
+	<param name='blue-levels'>8</param>
 	<param name='seed'>0</param>
       </params>
     </node>
@@ -130,12 +130,12 @@
         <param name='y'>0</param>
       </params>
     </node>
-    <node operation='gegl:color-reduction'>
+    <node operation='gegl:dither'>
       <params>
-	<param name='dither-strategy'>resilient</param>
-	<param name='red-bits'>3</param>
-	<param name='green-bits'>3</param>
-	<param name='blue-bits'>3</param>
+	<param name='dither-method'>resilient</param>
+	<param name='red-levels'>8</param>
+	<param name='green-levels'>8</param>
+	<param name='blue-levels'>8</param>
 	<param name='seed'>0</param>
       </params>
     </node>
@@ -159,12 +159,12 @@
         <param name='y'>192</param>
       </params>
     </node>
-    <node operation='gegl:color-reduction'>
+    <node operation='gegl:dither'>
       <params>
-	<param name='dither-strategy'>bayer</param>
-	<param name='red-bits'>3</param>
-	<param name='green-bits'>3</param>
-	<param name='blue-bits'>3</param>
+	<param name='dither-method'>bayer</param>
+	<param name='red-levels'>8</param>
+	<param name='green-levels'>8</param>
+	<param name='blue-levels'>8</param>
 	<param name='seed'>0</param>
       </params>
     </node>

@@ -79,6 +79,17 @@ GParamSpec** gegl_operation_list_properties (const gchar   *operation_type,
 
 
 /**
+ * gegl_operation_find_property::
+ * @operation_type: the name of the operation type we want to locate a property on.
+ * @property_name: the name of the property we seek.
+ *
+ * Return value: The paramspec of the matching property - or NULL if there as
+ * no match.
+ */
+GParamSpec * gegl_operation_find_property (const gchar *operation_type,
+                                           const gchar *property_name);
+
+/**
  * gegl_operation_get_property_key:
  * @operation_type: the name of the operation type we want to query to property keys for.
  * @property_name: the property to query a key for.

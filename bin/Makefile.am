@@ -30,7 +30,7 @@ AM_LDFLAGS =  \
 	$(DEP_LIBS) $(BABL_LIBS) $(PNG_LIBS) $(LIBSPIRO) $(MATH_LIB) \
         $(MRG_LIBS) $(GEXIV2_LIBS)
 
-bin_PROGRAMS = gegl gegl-tester
+bin_PROGRAMS = gegl
 
 gegl_SOURCES =			\
 	gegl.c			\
@@ -39,13 +39,11 @@ gegl_SOURCES =			\
 	gegl-path-smooth.c	\
 	gegl-path-smooth.h
 
-gegl_tester_SOURCES = \
-	gegl-tester.c
 
 if HAVE_MRG
 if HAVE_GEXIV2
 if HAVE_SDL
-gegl_SOURCES += mrg-ui.c
+gegl_SOURCES += ui.c
 AM_CFLAGS += $(SDL_CFLAGS)
 AM_LDFLAGS += $(SDL_LIBS)
 endif

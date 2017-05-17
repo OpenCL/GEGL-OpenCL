@@ -41,7 +41,8 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE        "screen.c"
+#define GEGL_OP_NAME         screen
+#define GEGL_OP_C_FILE       "screen.c"
 
 #include "gegl-op.h"
 
@@ -165,6 +166,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:screen",
   "compat-name" , "gegl:screen",
+  "reference-hash" , "9642c59dd077663c4c27e4ebe556a382",
   "description" ,
         _("SVG blend operation screen (<code>d = cA + cB - cA * cB</code>)"),
         NULL);

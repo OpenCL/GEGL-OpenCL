@@ -1,8 +1,8 @@
 Environment
 ~~~~~~~~~~~
-Some environment variables can be set to alter how GEGL runs, all of these
-options are also available as properties on a singleton GObject returned from
-gegl_config ().
+Some environment variables can be set to alter how GEGL runs, these options are
+also available as properties on a singleton GObject returned from gegl_config
+(). The defaults should be what one normally uses - overriding 
 
 GEGL_QUALITY::
     A value between 0.0 and 1.0 indicating a trade-off between quality and
@@ -23,10 +23,6 @@ GEGL_CACHE_SIZE::
 GEGL_DEBUG::
     set it to "all" to enable all debugging, more specific domains for
     debugging information are also available.
-BABL_STATS::
-    When set babl will write a html file (/tmp/babl-stats.html) containing a
-    matrix of used conversions, as well as all existing conversions and which
-    optimized paths are followed.
 GEGL_DEBUG_BUFS::
     Display tile/buffer leakage statistics.
 GEGL_DEBUG_RECTS::
@@ -35,3 +31,11 @@ GEGL_DEBUG_TIME::
     Print a performance instrumentation breakdown of GEGL and it's operations.
 GEGL_USE_OPENCL:
     Enable use of OpenCL processing.
+GEGL_PATH:
+    The directory where GEGL looks (recursively) for loadable operations,
+    setting it to GEGL_PATH=/home/user/where_you_keep_src/gegl/operations
+    permits running an application against the operations in the source dir
+    instead of having to install the operations.
+BABL_PATH:
+    The directory containing babl extensions, both new pixel formats/color
+    models as well as fast-paths for efficient pixel format conversions.

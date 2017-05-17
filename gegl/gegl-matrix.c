@@ -216,7 +216,7 @@ gegl_matrix3_transform_point (GeglMatrix3 *matrix,
                               gdouble     *y)
 {
   gdouble xp, yp, w;
-  
+
   w = (*x * matrix->coeff [2][0] + *y * matrix->coeff [2][1] + matrix->coeff [2][2]);
 
   xp = (*x * matrix->coeff [0][0] + *y * matrix->coeff [0][1] + matrix->coeff [0][2]) / w;
@@ -227,7 +227,7 @@ gegl_matrix3_transform_point (GeglMatrix3 *matrix,
 }
 
 void
-gegl_matrix3_parse_string (GeglMatrix3  *matrix,
+gegl_matrix3_parse_string (GeglMatrix3 *matrix,
                            const gchar *string)
 {
   gegl_matrix3_identity (matrix);
@@ -238,12 +238,12 @@ gegl_matrix3_parse_string (GeglMatrix3  *matrix,
       gfloat b;
       if (!p) return;
       p++;
-      a = strtod(p, &p);
+      a = g_ascii_strtod (p, &p);
       if (!p) return;
       p = strchr (string, ',');
       if (!p) return;
       p++;
-      b = strtod (p, &p);
+      b = g_ascii_strtod (p, &p);
       if (!p) return;
 
       matrix->coeff [0][2] = a;
@@ -261,7 +261,7 @@ gegl_matrix3_parse_string (GeglMatrix3  *matrix,
       for (i=0;i<3;i++)
         for (j=0;j<3;j++)
           {
-            a = strtod(p, &p);
+            a = g_ascii_strtod(p, &p);
             matrix->coeff [j][i] = a;
             if (!p) return;
             p = strchr (p, ',');
@@ -271,20 +271,27 @@ gegl_matrix3_parse_string (GeglMatrix3  *matrix,
     }
 }
 
-gchar *gegl_matrix3_to_string (GeglMatrix3 *matrix)
+gchar *
+gegl_matrix3_to_string (GeglMatrix3 *matrix)
 {
-  gchar *res;
+  gchar   *res;
+  gchar    dstring[G_ASCII_DTOSTR_BUF_SIZE];
   GString *str = g_string_new ("matrix(");
-  gint i, j;
-  gint a=0;
+  gint     i, j;
+  gint     a = 0;
 
-  for (i=0;i<3;i++)
-    for (j=0;j<3;j++)
+  for (i = 0; i < 3; i++)
+    for (j = 0; j < 3; j++)
       {
-        if (a!=0)
+        if (a != 0)
           g_string_append (str, ",");
-        a=1;
-        g_string_append_printf (str, "%f", matrix->coeff[j][i]);
+        a = 1;
+        /* Do not use g_string_append_printf () or any other printf
+         * function because they are locale dependent.
+         */
+        g_ascii_dtostr (dstring, sizeof (dstring),
+                        matrix->coeff[j][i]);
+        g_string_append (str, dstring);
       }
   g_string_append (str, ")");
   res = str->str;

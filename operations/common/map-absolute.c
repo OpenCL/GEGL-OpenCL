@@ -26,6 +26,7 @@ property_enum (sampler_type, _("Resampling method"),
 #else
 
 #define GEGL_OP_COMPOSER
+#define GEGL_OP_NAME     map_absolute
 #define GEGL_OP_C_SOURCE map-absolute.c
 
 #include "config.h"

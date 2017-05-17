@@ -41,6 +41,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         clear
 #define GEGL_OP_C_FILE        "clear.c"
 
 #include "gegl-op.h"
@@ -121,6 +122,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "svg:clear",
     "compat-name", "gegl:clear",
     "title"      , "Clear",
+    "reference-hash" , "f1b3ab0f1e84ec5882f23aee0a0c68f6",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation clear (d = 0.0f)"),

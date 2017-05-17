@@ -40,6 +40,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     noise_pick
 #define GEGL_OP_C_SOURCE noise-pick.c
 
 #include "gegl-op.h"
@@ -139,6 +140,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",       "gegl:noise-pick",
     "title",      _("Noise Pick"),
+    "reference-hash", "13aa5200ceff0b5607fb7ae867bf9d79",
     "categories", "noise",
     "description", _("Randomly interchange some pixels with neighbors"),
     NULL);

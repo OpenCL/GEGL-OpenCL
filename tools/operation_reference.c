@@ -464,10 +464,10 @@ main (gint argc, gchar **argv)
             if (*ptr==':')
               ptr++;
             {
-            if (first)
-              first = FALSE;
-            else
-              g_print (",");
+              if (first)
+                first = FALSE;
+              else
+                g_print (",");
               g_print ("'%s'", category);
             }
           }

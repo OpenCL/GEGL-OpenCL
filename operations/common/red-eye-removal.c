@@ -35,6 +35,7 @@ property_double (threshold, _("Threshold"), 0.4)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     red_eye_removal
 #define GEGL_OP_C_SOURCE red-eye-removal.c
 
 #include "gegl-op.h"

@@ -31,6 +31,7 @@ property_enum (sampler_type, _("Resampling method"),
 #else
 
 #define GEGL_OP_COMPOSER
+#define GEGL_OP_NAME     map_relative
 #define GEGL_OP_C_SOURCE map-relative.c
 
 #include "config.h"
@@ -112,8 +113,8 @@ process (GeglOperation       *operation,
                 }
               else
                 {
-                  gegl_sampler_get (sampler, x+coords[0] * scaling,
-                                             y+coords[1] * scaling,
+                  gegl_sampler_get (sampler, x + coords[0] * scaling + 0.5,
+                                             y + coords[1] * scaling + 0.5,
                                              NULL, out,
                                              GEGL_ABYSS_NONE);
                 }
@@ -176,6 +177,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:map-relative",
     "title",       _("Map Relative"),
     "categories" , "map",
+    "reference-hash", "5d41ac166c82cf5f6acf7141e7f85bbf",
     "description", _("sample input with an auxiliary buffer that contain relative source coordinates"),
     "reference-composition", composition,
     NULL);

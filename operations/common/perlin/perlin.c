@@ -166,6 +166,8 @@ perlin_init (void)
 {
   int       i, j, k;
 
+  g_random_set_seed (1234567890);
+
   for (i = 0; i < B; i++)
     {
       p[i] = i;

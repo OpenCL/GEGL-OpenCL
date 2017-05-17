@@ -310,7 +310,13 @@ gegl_operation_prepare (GeglOperation *self)
   g_return_if_fail (GEGL_IS_OPERATION (self));
 
   if (self->node->passthrough)
-    return;
+    {
+      const Babl *format;
+
+      format = gegl_operation_get_source_format (self, "input");
+      gegl_operation_set_format (self, "output", format);
+      return;
+    }
 
   klass = GEGL_OPERATION_GET_CLASS (self);
 
@@ -320,7 +326,7 @@ gegl_operation_prepare (GeglOperation *self)
     const gchar *cl_source = gegl_operation_class_get_key (klass, "cl-source");
     if (cl_source)
       {
-        char *name = strdup (klass->name);
+        char *name = g_strdup (klass->name);
         const char *kernel_name[] = {name, NULL};
         char *k;
         for (k=name; *k; k++)
@@ -331,7 +337,7 @@ gegl_operation_prepare (GeglOperation *self)
                 break;
             }
         klass->cl_data = gegl_cl_compile_and_build (cl_source, kernel_name);
-        free (name);
+        g_free (name);
       }
   }
 
@@ -433,6 +439,25 @@ gegl_operation_list_properties (const gchar *operation_type,
   return pspecs;
 }
 
+GParamSpec *
+gegl_operation_find_property (const gchar *operation_type,
+                              const gchar *property_name)
+{
+  GParamSpec *ret = NULL;
+  GType         type;
+  GObjectClass *klass;
+
+  type = gegl_operation_gtype_from_name (operation_type);
+  if (!type)
+    return NULL;
+
+  klass  = g_type_class_ref (type);
+  ret = g_object_class_find_property (klass, property_name);
+  g_type_class_unref (klass);
+
+  return ret;
+}
+
 GeglNode *
 gegl_operation_detect (GeglOperation *operation,
                        gint           x,
@@ -514,15 +539,10 @@ gegl_operation_invalidate (GeglOperation       *operation,
                            const GeglRectangle *roi,
                            gboolean             clear_cache)
 {
-  GeglNode *node = NULL;
-
-  if (!operation)
-    return;
-
   g_return_if_fail (GEGL_IS_OPERATION (operation));
-  node = operation->node;
 
-  gegl_node_invalidated (node, roi, clear_cache);
+  if (operation->node)
+    gegl_node_invalidated (operation->node, roi, clear_cache);
 }
 
 gboolean
@@ -671,21 +691,10 @@ gegl_operation_class_set_key (GeglOperationClass *klass,
 
   if (!strcmp (key_name, "name"))
     {
-      if (klass->name && strcmp (klass->name, key_value))
-        {
-          g_warning ("Cannot change name of operation class 0x%lX from \"%s\" "
-                     "to \"%s\"", (gulong) klass, klass->name, key_value);
-          g_free (key_value_dup);
-          return;
-        }
-      else
-        {
-          klass->name = key_value_dup;
-          gegl_operation_class_register_name (klass, key_value, FALSE);
-        }
+      klass->name = key_value_dup;
+      gegl_operation_class_register_name (klass, key_value, FALSE);
     }
-
-  if (!strcmp (key_name, "compat-name"))
+  else if (!strcmp (key_name, "compat-name"))
     {
       klass->compat_name = key_value_dup;
       gegl_operation_class_register_name (klass, key_value, TRUE);
@@ -827,4 +836,12 @@ void gegl_temp_buffer_free (void)
       gegl_temp_alloc[no] = NULL;
       gegl_temp_size[no] = 0;
     }
+}
+
+void gegl_operation_progress (GeglOperation *operation,
+                              gdouble        progress,
+                              gchar         *message)
+{
+  if (operation->node)
+    gegl_node_progress (operation->node, progress, message);
 }

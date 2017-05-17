@@ -73,6 +73,7 @@ property_double (bb_gain, _("Blue in Blue channel"), 1.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     channel_mixer
 #define GEGL_OP_C_SOURCE channel-mixer.c
 
 #include "gegl-op.h"

@@ -27,6 +27,7 @@ property_file_path (path, _("File"), "/tmp/gegl-buffer.gegl")
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME     gegl_buffer_save_op
 #define GEGL_OP_C_SOURCE gegl-buffer-save-op.c
 
 #include "gegl-op.h"
@@ -63,7 +64,8 @@ gegl_op_class_init (GeglOpClass *klass)
     "description", _("GeglBuffer file writer."),
     NULL);
 
-  gegl_extension_handler_register_saver (".gegl", "gegl:gegl-buffer-save");
+  gegl_operation_handlers_register_saver (
+    ".gegl", "gegl:gegl-buffer-save");
 }
 
 #endif

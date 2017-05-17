@@ -33,6 +33,7 @@ property_double (value, _("Value"), 1.0)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         multiply
 #define GEGL_OP_C_FILE       "multiply.c"
 
 #include "gegl-op.h"
@@ -124,6 +125,7 @@ gegl_op_class_init (GeglOpClass *klass)
   "name"        , "gegl:multiply",
   "title"       , "Multiply",
   "categories"  , "compositors:math",
+  "reference-hash"  , "c80bb8504f405bb0a5ce2be4fad6af69",
   "description" ,
        _("Math operation multiply, performs the operation per pixel, using either the constant provided in 'value' or the corresponding pixel from the buffer on aux as operands. (formula: result = input * value)"),
        NULL);

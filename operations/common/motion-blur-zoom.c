@@ -55,6 +55,7 @@ property_double (factor, _("Blurring factor"), 0.1)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     motion_blur_zoom
 #define GEGL_OP_C_SOURCE motion-blur-zoom.c
 
 #include "gegl-op.h"
@@ -242,6 +243,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "categories",         "blur",
       "position-dependent", "true",
       "license",            "GPL3+",
+      "reference-hash",     "9708f693b8f9628f4e54bc2ebeae9926",
       "description", _("Zoom motion blur"),
       NULL);
 }

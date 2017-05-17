@@ -117,6 +117,7 @@ property_boolean (useloglog, _("Loglog smoothing"), FALSE)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     fractal_explorer
 #define GEGL_OP_C_SOURCE fractal-explorer.c
 
 #include "gegl-op.h"
@@ -427,6 +428,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",               "gegl:fractal-explorer",
     "title",              _("Fractal Explorer"),
     "categories",         "render:fractal",
+    "reference-hash",     "fd6c1f91d1a44d67e229754958627e7e",
     "position-dependent", "true",
     "license",            "GPL3+",
     "description",        _("Rendering of multiple different fractal systems, with configurable coloring options."),

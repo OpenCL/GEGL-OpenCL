@@ -49,6 +49,7 @@ property_int (depth, _("Depth"), 4)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     texturize_canvas
 #define GEGL_OP_C_SOURCE texturize-canvas.c
 
 #include "gegl-op.h"
@@ -4380,6 +4381,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "artistic",
     "license",            "GPL3+",
     "position-dependent", "true",
+    "reference-hash",     "5e1dcaab9217e536cc278aad28d16e12",
     "description",_("Textures the image as if it were an artist's canvas."),
     NULL);
 }

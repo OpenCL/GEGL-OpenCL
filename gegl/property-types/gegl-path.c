@@ -896,7 +896,7 @@ gegl_path_append (GeglPath *self,
 
       x0 = iter->d.point[0].x;
       y0 = iter->d.point[0].y;
-      for (iter2=priv->path;iter2 && iter2->next != iter;iter2=iter2->next);
+      for (iter2=priv->path;iter2 && iter2->next != iter && iter2->next;iter2=iter2->next);
       x1 = iter2->d.point[0].x;
       y1 = iter2->d.point[0].y;
 
@@ -1618,6 +1618,51 @@ gegl_path_point_dist (GeglPathPoint *a,
 {
   return sqrt ((a->x-b->x)*(a->x-b->x) +
                (a->y-b->y)*(a->y-b->y));
+}
+
+#define Y_FOR_X_RES 1024
+
+gint gegl_path_calc_y_for_x (GeglPath *path,
+                             gdouble   x,
+                             gdouble  *y)
+{
+  gdouble xs[Y_FOR_X_RES];
+  gdouble ys[Y_FOR_X_RES];
+  gdouble best_xd = 4096.0;
+  gdouble second_best_xd = 4096.0;
+  double sum_xd;
+  gint best = 0;
+  gint second_best = 0;
+
+  int i;
+  if (!y)
+    return -1;
+  gegl_path_calc_values (path, Y_FOR_X_RES, xs, ys);
+  for (i = 0; i < Y_FOR_X_RES; i++)
+  {
+    if (fabs (xs[i] - x) < best_xd)
+    {
+      second_best_xd = best_xd;
+      best_xd = fabs (xs[i] - x);
+      second_best = best;
+      best = i;
+    }
+
+  }
+
+   sum_xd  = best_xd + second_best_xd;
+
+   if (best_xd < 0.0001)
+   {
+     *y = ys[best];
+   }
+   else
+   {
+      *y = ys[best] * (1.0 - (best_xd-sum_xd)/sum_xd) +
+           ys[second_best] * ((best_xd-sum_xd)/sum_xd);
+   }
+
+  return 0;
 }
 
 /* --------------------------------------------------------------------------

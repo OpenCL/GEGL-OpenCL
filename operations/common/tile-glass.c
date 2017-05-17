@@ -40,6 +40,7 @@ property_int (tile_height, _("Tile Height"), 25)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     tile_glass
 #define GEGL_OP_C_SOURCE tile-glass.c
 
 #include "gegl-op.h"
@@ -233,6 +234,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Tile Glass"),
     "license",            "GPL3+",
     "name",               "gegl:tile-glass",
+    "reference-hash",     "d949027ca089aed4d4bea2950a33c56f",
     "position-dependent", "true",
     "description", _("Simulate distortion caused by rectangular glass tiles"),
     NULL);

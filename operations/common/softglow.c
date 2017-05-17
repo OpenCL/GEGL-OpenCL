@@ -36,6 +36,7 @@ property_double (sharpness, _("Sharpness"), 0.85)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     softglow
 #define GEGL_OP_C_SOURCE softglow.c
 
 #include "gegl-op.h"
@@ -57,31 +58,31 @@ grey_blur_buffer (GeglBuffer          *input,
 
   gegl = gegl_node_new ();
   image = gegl_node_new_child (gegl,
-                "operation", "gegl:buffer-source",
-                "buffer", input,
-                NULL);
+                               "operation", "gegl:buffer-source",
+                               "buffer",    input,
+                               NULL);
 
   radius   = fabs (glow_radius) + 1.0;
   std_dev = sqrt (-(radius * radius) / (2 * log (1.0 / 255.0)));
 
   blur =  gegl_node_new_child (gegl,
-                "operation", "gegl:gaussian-blur",
-                "std_dev_x", std_dev,
-                "std_dev_y", std_dev,
-                "abyss-policy", "none",
-                NULL);
+                               "operation",    "gegl:gaussian-blur",
+                               "std_dev_x",    std_dev,
+                               "std_dev_y",    std_dev,
+                               "abyss-policy", 0,
+                               NULL);
 
   crop =  gegl_node_new_child (gegl,
-                "operation", "gegl:crop",
-                "x",     (gdouble) result->x,
-                "y",     (gdouble) result->y,
-                "width", (gdouble) result->width,
-                "height",(gdouble) result->height,
-                NULL);
+                               "operation", "gegl:crop",
+                               "x",         (gdouble) result->x,
+                               "y",         (gdouble) result->y,
+                               "width",     (gdouble) result->width,
+                               "height",    (gdouble) result->height,
+                               NULL);
 
   write = gegl_node_new_child (gegl,
-                "operation", "gegl:buffer-sink",
-                "buffer", &dest, NULL);
+                               "operation", "gegl:buffer-sink",
+                               "buffer", &dest, NULL);
 
   gegl_node_link_many (image, blur, crop, write, NULL);
   gegl_node_process (write);
@@ -127,7 +128,7 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglOperationAreaFilter *area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglProperties              *o    = GEGL_PROPERTIES (operation);
+  GeglProperties          *o    = GEGL_PROPERTIES (operation);
 
   GeglBuffer *dest, *dest_tmp;
 
@@ -232,6 +233,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Softglow"),
     "categories",  "artistic",
     "license",     "GPL3+",
+    "reference-hash", "9ee1639c709f7404762786d0835eb3a4",
     "description", _("Simulate glow by making highlights intense and fuzzy"),
     NULL);
 }

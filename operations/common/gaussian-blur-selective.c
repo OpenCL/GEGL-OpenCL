@@ -38,6 +38,7 @@ property_double (max_delta, _("Max. delta"), 0.2)
 #else
 
 #define GEGL_OP_COMPOSER
+#define GEGL_OP_NAME     gaussian_blur_selective
 #define GEGL_OP_C_SOURCE gaussian-blur-selective.c
 
 #include "gegl-op.h"
@@ -258,6 +259,7 @@ gegl_op_class_init (GeglOpClass *klass)
    "name",        "gegl:gaussian-blur-selective",
    "title",       _("Selective Gaussian Blur"),
    "categories",  "enhance:noise-reduction",
+   "reference-hash", "5af7851bcc4c6b9276c105fb6a6b6742",
    "license",     "GPL3+",
    "description", _("Blur neighboring pixels, but only in low-contrast areas"),
    NULL);

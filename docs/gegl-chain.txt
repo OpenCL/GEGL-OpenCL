@@ -1,0 +1,53 @@
+gegl-chain
+----------
+
+A serialization format for GEGL graphs that grew out of the desire to
+write one-liner image processing tasks on the commandline.
+
+Everything after -- in a GEGL commandline that contains an input image
+is considered the chain of operations.
+
+ $ gegl input.jpg -o output.png -- noise-reduction unsharp-mask
+
+If GEGL is built linking to micro raptor gui, the gegl binary can also act as
+an image viewer as well as visualizer for the result of chains of operations.
+
+ $ gegl input.jpg -- noise-reduction unsharp-mask
+
+If an argument on the commandline part of the chain contains a = it is a
+property assignment for the preceding operation. For example:
+
+ $ gegl in.jpg -- noise-reduction iterations=4 unsharp-mask
+
+If you try to assign a property that doesn't exist, the error message will
+contain a list of valid properties for the operation.
+
+The format treats input and output pads as explicitly linked when they follow
+each other, to create a sub-chain hooked up to an aux input assign the aux pad
+with the sub chain contained in square brackets, like this:
+
+ $ gegl in.jpg -- noise-reduction iterations=2 over aux=[ text string='hello there' color=white size=32 translate x=100 y=100 dropshadow radius=2 x=1.5 y=1.5 ]
+
+And it is also possible to create reference in the chain, reusing permitting
+creating masks for color adjustments based on image content, for instance the
+following example, which uses a blurred version of an image as a threshold mask
+- which thus becomes a local content dependent thresholding filter.
+
+ $ gegl in.jpg -- id=a threshold aux=[ ref=a gaussian-blur std-dev-x=120 std-dev-y=120 ]
+
+When it is more reasonable to specify dimensions relative to the height of an
+image - similar to CSS vh dimensions, GEGL can use a "rel" suffix similar to
+the CSS vh unit, on the commandline and in other tools, a scaling factor to
+scale "rel" units is passed with the parsing API.
+
+ $ gegl in.jpg -- id=a threshold aux=[ ref=a gaussian-blur std-dev-x=0.1rel std-dev-y=0.1rel ]
+
+If gegl have working gegl:ff-load and gegl:ff-save ops, The gegl binary also
+permits simple forms of video processing, like the following:
+
+ $ gegl input.mp4 -o output.ogv -- scale-size x=160 y=120 newsprint period=4
+
+If you want to create a GIF as the final output, it is recommended to create a
+temporary video file, and use for instance ffmpeg to create a high quality GIF
+with a two pass approach.
+

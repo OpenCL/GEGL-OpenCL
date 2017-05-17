@@ -41,6 +41,7 @@ property_double (radius, _("Blur radius"), 10.0)
   ui_meta       ("unit", "pixel-distance")
 
 property_color  (color, _("Color"), "black")
+    /* TRANSLATORS: the string 'black' should not be translated */
   description   (_("The shadow's color (defaults to 'black')"))
 
 /* It does make sense to sometimes have opacities > 1 (see GEGL logo
@@ -52,6 +53,7 @@ property_double (opacity, _("Opacity"), 0.5)
 #else
 
 #define GEGL_OP_META
+#define GEGL_OP_NAME     dropshadow
 #define GEGL_OP_C_SOURCE dropshadow.c
 
 #include "gegl-op.h"
@@ -70,7 +72,9 @@ attach (GeglOperation *operation)
   translate = gegl_node_new_child (gegl, "operation", "gegl:translate", NULL);
   opacity   = gegl_node_new_child (gegl, "operation", "gegl:opacity", NULL);
   blur      = gegl_node_new_child (gegl, "operation", "gegl:gaussian-blur", 
-                                         "clip-extent", FALSE, NULL);
+                                         "clip-extent", FALSE, 
+                                         "abyss-policy", 0,
+                                         NULL);
   darken    = gegl_node_new_child (gegl, "operation", "gegl:src-in", NULL);
   color     = gegl_node_new_child (gegl, "operation", "gegl:color",
                                    "value", black_color,

@@ -47,6 +47,7 @@ property_boolean (reset_origin, _("Reset origin"), FALSE)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     crop
 #define GEGL_OP_C_SOURCE crop.c
 
 #include "gegl-op.h"
@@ -95,6 +96,12 @@ gegl_crop_get_bounding_box (GeglOperation *operation)
   result.width  = o->width;
   result.height = o->height;
 
+  /* in_rect sometimes ends up as 0,0,0,0 and in those cases - other
+   * code ends up seg-faulting
+   */
+  if (in_rect->width != 0 && in_rect->height != 0)
+    gegl_rectangle_intersect (&result, &result, in_rect);
+
   return result;
 }
 
@@ -103,12 +110,12 @@ gegl_crop_get_invalidated_by_change (GeglOperation       *operation,
                                      const gchar         *input_pad,
                                      const GeglRectangle *input_region)
 {
-  GeglProperties   *o = GEGL_PROPERTIES (operation);
-  GeglRectangle result;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglRectangle   result;
 
-  result.x = o->x;
-  result.y = o->y;
-  result.width = o->width;
+  result.x      = o->x;
+  result.y      = o->y;
+  result.width  = o->width;
   result.height = o->height;
 
   gegl_rectangle_intersect (&result, &result, input_region);
@@ -121,8 +128,8 @@ gegl_crop_get_required_for_output (GeglOperation       *operation,
                                    const gchar         *input_pad,
                                    const GeglRectangle *roi)
 {
-  GeglProperties   *o = GEGL_PROPERTIES (operation);
-  GeglRectangle result;
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglRectangle   result;
 
   result.x      = o->x;
   result.y      = o->y;
@@ -143,18 +150,25 @@ gegl_crop_process (GeglOperation        *operation,
   GeglProperties *o = GEGL_PROPERTIES (operation);
   GeglBuffer     *input;
   gboolean        success = FALSE;
-  GeglRectangle   extent;
-
-  extent.x      = o->x;
-  extent.y      = o->y;
-  extent.width  = o->width;
-  extent.height = o->height;
 
   input = gegl_operation_context_get_source (context, "input");
 
   if (input)
     {
-      GeglBuffer *output = gegl_buffer_create_sub_buffer (input, &extent);
+      GeglRectangle  extent;
+      GeglBuffer    *output;
+
+      extent = *GEGL_RECTANGLE (o->x, o->y,  o->width, o->height);
+
+      /* The output buffer's extent must be a subset of the input buffer's
+       * extent; otherwise, if the output buffer is reused for in-place output,
+       * we might try to write to areas of the buffer that lie outside the
+       * input buffer, erroneously discarding the data.
+       */
+      gegl_rectangle_intersect (&extent,
+                                &extent, gegl_buffer_get_extent (input));
+
+      output = gegl_buffer_create_sub_buffer (input, &extent);
 
       if (gegl_object_get_has_forked (G_OBJECT (input)))
         gegl_object_set_has_forked (G_OBJECT (output));
@@ -208,6 +222,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "categories",  "core",
       "title",       _("Crop"),
       "description", _("Crop a buffer"),
+      "reference-hash", "6f9f160434a4e9484d334c29122e5682",
       "reference-composition", composition,
       NULL);
 

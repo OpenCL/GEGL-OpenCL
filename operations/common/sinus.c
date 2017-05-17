@@ -71,7 +71,7 @@ property_enum (blend_mode, _("Blend Mode"),
     GEGL_SINUS_BLEND_SINUSOIDAL)
 
 property_double (blend_power, _("Exponent"), 0.0)
-    description (_("Power used to strech the blend"))
+    description (_("Power used to stretch the blend"))
     value_range (-7.5, 7.5)
 
 property_int    (width, _("Width"), 1024)
@@ -93,6 +93,7 @@ property_int    (height, _("Height"), 768)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     sinus
 #define GEGL_OP_C_SOURCE sinus.c
 
 #include "gegl-op.h"
@@ -247,11 +248,15 @@ process (GeglOperation       *operation,
   for (j = roi->y; j < roi->y + roi->height; j++)
     {
       y = ((gdouble) j) / o->height;
+      if (level)
+        y *= (1<<level);
       for (i = roi->x; i < roi->x + roi->width; i++)
         {
           gdouble c;
 
           x = ((gdouble) i) / o->width;
+          if (level)
+            x *= (1<<level);
 
           c = 0.5 * sin(p->c31 * x + p->c32 * y + p->c33);
 
@@ -313,6 +318,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Sinus"),
     "categories",         "render",
     "position-dependent", "true",
+    "reference-hash",     "29cba0927c46bb245b42b2941708541d",
     "license",            "GPL3+",
     "description",        _("Generate complex sinusoidal textures"),
     NULL);

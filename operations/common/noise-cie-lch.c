@@ -39,6 +39,7 @@ property_seed   (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     noise_cie_lch
 #define GEGL_OP_C_SOURCE noise-cie-lch.c
 
 #include "gegl-op.h"
@@ -190,6 +191,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:noise-cie-lch",
     "title",       _("Add CIE Lch Noise"),
+    "reference-hash", "28c06f501e036835263755ec622cfce4",
     "categories",  "noise",
     "description", _("Randomize lightness, chroma and hue independently"),
     NULL);

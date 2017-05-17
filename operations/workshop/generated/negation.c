@@ -34,6 +34,7 @@
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME  negation
 #define GEGL_OP_C_FILE          "negation.c"
 
 #include "gegl-op.h"

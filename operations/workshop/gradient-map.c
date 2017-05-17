@@ -37,6 +37,7 @@ property_boolean(srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME gradient_map
 #define GEGL_OP_C_SOURCE gradient-map.c
 
 #include "gegl-op.h"
@@ -115,10 +116,12 @@ create_linear_gradient(GeglColor **colors, gdouble *stops, const gint no_stops,
             rgba_from_gegl_color(&from, colors[from_stop], format);
             rgba_from_gegl_color(&to, colors[to_stop], format);
         }
+        {
         const float from_pos = (from_stop < 0) ? 0.0 : stops[from_stop];
         const float weight = ((to_stop-from_stop) == 0) ? 1.0 : mapf(pos, from_pos, to_pos, 0.0, 1.0);
         const size_t offset = px*channels;
         pixel_interpolate_gradient(samples, offset, &from, &to, weight);
+        }
     }
     return samples;
 }

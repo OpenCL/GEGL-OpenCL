@@ -27,6 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_COMPOSER3
+#define GEGL_OP_NAME     remap
 #define GEGL_OP_C_SOURCE remap.c
 
 #include "gegl-op.h"
@@ -56,6 +57,8 @@ process (GeglOperation       *op,
   gfloat *min = min_buf;
   gfloat *max = max_buf;
   gfloat *out = out_buf;
+  if (!min || !max || !out || !in)
+    return FALSE;
 
   for (i = 0; i < n_pixels; i++)
     {

@@ -49,6 +49,7 @@ property_color  (end_color, _("End Color"), "white")
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     linear_gradient
 #define GEGL_OP_C_SOURCE linear-gradient.c
 
 #include "gegl-op.h"
@@ -137,6 +138,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",               "gegl:linear-gradient",
     "title",              _("Linear Gradient"),
     "categories",         "render:gradient",
+    "reference-hash",     "b195121498a9b03f2ad676c404e330eb",
     "position-dependent", "true",
     "description" , _("Linear gradient renderer"),
     NULL);

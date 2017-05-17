@@ -77,7 +77,8 @@ property_boolean (alpha, _("Propagating alpha channel"), TRUE)
 #else
 
 #define GEGL_OP_AREA_FILTER
-#define GEGL_OP_C_SOURCE       value-propagate.c
+#define GEGL_OP_NAME     value_propagate
+#define GEGL_OP_C_SOURCE value-propagate.c
 
 #include "gegl-op.h"
 
@@ -636,6 +637,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:value-propagate",
     "title",       _("Value Propagate"),
     "categories",  "distort",
+    "reference-hash", "0bce414c416e2d705d0b9ecd8333d93b",
     "license",     "GPL3+",
     "description", _("Propagate certain colors to neighboring pixels."),
     NULL);

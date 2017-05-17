@@ -43,6 +43,7 @@ property_boolean (grayscale, _("Grayscale"), FALSE)
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME jpg_save
 #define GEGL_OP_C_SOURCE jpg-save.c
 
 #include "gegl-op.h"
@@ -198,7 +199,10 @@ gegl_op_class_init (GeglOpClass *klass)
     _("JPEG image saver, using libjpeg"),
     NULL);
 
-  gegl_extension_handler_register_saver (".jpg", "gegl:jpg-save");
+  gegl_operation_handlers_register_saver (
+    ".jpeg", "gegl:jpg-save");
+  gegl_operation_handlers_register_saver (
+    ".jpg", "gegl:jpg-save");
 }
 
 #endif

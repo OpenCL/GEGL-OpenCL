@@ -64,6 +64,7 @@ property_boolean (rotated, _("Rotated"), FALSE)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     video_degradation
 #define GEGL_OP_C_SOURCE video-degradation.c
 
 #include "gegl-op.h"
@@ -201,13 +202,16 @@ cl_process (GeglOperation       *operation,
   const size_t gbl_size[2] = {roi->width, roi->height};
   const size_t gbl_off[2]  = {roi->x, roi->y};
   cl_int cl_err = 0;
+  cl_mem filter_pat = NULL;
 
-  cl_mem filter_pat = gegl_clCreateBuffer (gegl_cl_get_context (),
-                                           CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
-                                           pattern_width[o->pattern] *
-                                           pattern_height[o->pattern] * sizeof(cl_int),
-                                           (void*)pattern[o->pattern],
-                                           &cl_err);
+  if (!cl_data)
+    goto error;
+  filter_pat = gegl_clCreateBuffer (gegl_cl_get_context (),
+                                    CL_MEM_READ_ONLY | CL_MEM_COPY_HOST_PTR,
+                                    pattern_width[o->pattern] *
+                                    pattern_height[o->pattern] * sizeof(cl_int),
+                                    (void*)pattern[o->pattern],
+                                    &cl_err);
   CL_CHECK;
   cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
                                     sizeof(cl_mem), &in_buf,
@@ -314,10 +318,11 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class->cl_process = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
-    "name",        "gegl:video-degradation",
-    "title",       _("Video Degradation"),
-    "categories",  "distort",
-    "license",     "GPL3+",
+    "name",           "gegl:video-degradation",
+    "title",          _("Video Degradation"),
+    "categories",     "distort",
+    "license",        "GPL3+",
+    "reference-hash", "08bd4e3c08cb35890f384c914f0358c8",
     "description", _("This function simulates the degradation of "
                      "being on an old low-dotpitch RGB video monitor."),
     "cl-source"  , video_degradation_cl_source,

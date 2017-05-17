@@ -10,12 +10,18 @@ image::images/GEGL.png[GEGL]
 
 *GEGL* (Generic Graphics Library) is a graph based image processing framework.
 
-With GEGL you chain together link:operations.html[image processing operations] represented by nodes
-into a graph. GEGL provides such operations for loading and storing images,
-adjusting colors, filtering in different ways, transforming and compositing images.
+With GEGL you chain together link:operations.html[image processing operations]
+represented by nodes into a graph. GEGL provides operations for image loading
+and storing, color adjustments, and other different forms of image
+transformation, filtering and compositing. Some software using GEGL is
+link:http://www.gimp.org/[GNU Image Manipulation Program],
+link:http://www.imgflo.org/[imgflo],
+link:https://wiki.gnome.org/Apps/Photos[GNOME Photos] and
+link:https://github.com/the-grid/iconographer[iconographer].
 
 link:operations.html[Operations reference gallery]::
-  A page showcasing all the various gegl image processing operations.
+  Documentation and visual test reference for most GEGL image processing
+  operations.
 link:features.html[GEGL Feature list]::
   The "feature list", a technical specification of what GEGL can do.
 link:glossary.html[GEGL glossary]::
@@ -52,7 +58,7 @@ are some pointers to follow:
 http://git.gnome.org/browse/gegl/[GEGL source] and http://git.gnome.org/browse/babl/[babl source]::
   http://git.gnome.org/cgit/gegl/log/[commit log]::
   For day to day fixes, contributions and changes.
-http://git.gnome.org/cgit/gegl/tree/NEWS[NEWS]::
+http://gegl.org/NEWS.html[NEWS]::
   The NEWS file for a list across history of GEGL.
 http://bugzilla.gnome.org/buglist.cgi?product=GEGL&bug_status=NEW&bug_status=ASSIGNED&bug_status=REOPENED&bug_status=UNCONFIRMED&bug_status=NEEDINFO[bugzilla]::
  for known and tracked issues with GEGL and perhaps see the

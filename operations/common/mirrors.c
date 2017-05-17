@@ -88,6 +88,7 @@ property_boolean (warp, _("Wrap input"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     mirrors
 #define GEGL_OP_C_SOURCE mirrors.c
 
 #include "gegl-op.h"
@@ -429,6 +430,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",               "gegl:mirrors",
     "title",              _("Kaleidoscopic Mirroring"),
     "position-dependent", "true",
+    "reference-hash",     "34196267740ed972fd1e4d49f9560959",
     "categories",         "blur",
     "description",        _("Create a kaleidoscope like effect."),
     NULL);

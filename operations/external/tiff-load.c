@@ -35,6 +35,7 @@ property_int(directory, _("Directory"), 1)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     tiff_load
 #define GEGL_OP_C_SOURCE tiff-load.c
 
 #include <gegl-op.h>
@@ -82,12 +83,11 @@ cleanup(GeglOperation *operation)
         TIFFClose(p->tiff);
       else if (p->stream != NULL)
         g_input_stream_close(G_INPUT_STREAM(p->stream), NULL, NULL);
-      if (p->stream != NULL)
-        g_clear_object(&p->stream);
+
+      g_clear_object (&p->stream);
       p->tiff = NULL;
 
-      if (p->file != NULL)
-        g_clear_object(&p->file);
+      g_clear_object (&p->file);
 
       p->width = p->height = 0;
       p->directory = 0;
@@ -119,7 +119,7 @@ error_handler(const char *module,
   gchar *message;
 
   g_vasprintf(&message, format, arguments);
-  g_warning(message);
+  g_warning("%s", message);
 
   g_free(message);
 }
@@ -132,7 +132,7 @@ warning_handler(const char *module,
   gchar *message;
 
   g_vasprintf(&message, format, arguments);
-  g_message(message);
+  g_message("%s", message);
 
   g_free(message);
 }
@@ -156,9 +156,9 @@ read_from_stream(thandle_t handle,
       read = g_input_stream_read(G_INPUT_STREAM(p->stream),
                                  (void *) buffer, (gsize) size,
                                  NULL, &error);
-      if (read < 0)
+      if (read < 0 && error)
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
         }
     }
@@ -189,8 +189,11 @@ read_from_stream(thandle_t handle,
                                          NULL, &error);
               if (read < 0)
                 {
-                  g_warning(error->message);
-                  g_error_free(error);
+                  if (error)
+                  {
+                    g_warning("%s", error->message);
+                    g_error_free(error);
+                  }
                   break;
                 }
 
@@ -240,9 +243,9 @@ seek_in_stream(thandle_t handle,
                                NULL, &error);
       if (sought)
         position = g_seekable_tell(G_SEEKABLE(p->stream));
-      else
+      else if (error)
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
         }
     }
@@ -282,9 +285,9 @@ close_stream(thandle_t handle)
 
   closed = g_input_stream_close(G_INPUT_STREAM(p->stream),
                                 NULL, &error);
-  if (!closed)
+  if (!closed && error)
     {
-      g_warning(error->message);
+      g_warning("%s", error->message);
       g_error_free(error);
     }
 
@@ -322,8 +325,11 @@ get_file_size(thandle_t handle)
                                NULL, &error);
       if (info == NULL)
         {
-          g_warning(error->message);
-          g_error_free(error);
+          if (error)
+          {
+            g_warning("%s", error->message);
+            g_error_free(error);
+          }
         }
       else
         {
@@ -728,8 +734,11 @@ prepare(GeglOperation *operation)
         p->can_seek = g_seekable_can_seek(G_SEEKABLE(p->stream));
       if (p->stream == NULL)
         {
-          g_warning(error->message);
-          g_error_free(error);
+          if (error)
+          {
+            g_warning("%s", error->message);
+            g_error_free(error);
+          }
           cleanup(operation);
           return;
         }
@@ -869,8 +878,14 @@ gegl_op_class_init(GeglOpClass *klass)
     "description", _("TIFF image loader using libtiff"),
     NULL);
 
-  gegl_extension_handler_register_loader(".tiff", "gegl:tiff-load");
-  gegl_extension_handler_register_loader(".tif", "gegl:tiff-load");
+  gegl_operation_handlers_register_loader(
+    "image/tiff", "gegl:tiff-load");
+  gegl_operation_handlers_register_loader(
+    "image/x-tiff-multipage", "gegl:tiff-load");
+  gegl_operation_handlers_register_loader(
+    ".tiff", "gegl:tiff-load");
+  gegl_operation_handlers_register_loader(
+    ".tif", "gegl:tiff-load");
 }
 
 #endif

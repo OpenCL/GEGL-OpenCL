@@ -22,6 +22,7 @@
 #ifdef GEGL_PROPERTIES
 
 property_color (value, _("Color"), "black")
+    /* TRANSLATORS: the string 'black' should not be translated */
     description (("The color to render (defaults to 'black')"))
     ui_meta     ("role", "color-primary")
 
@@ -31,6 +32,7 @@ property_format (format, _("Babl Format"), 666)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     color
 #define GEGL_OP_C_SOURCE color.c
 
 #include "gegl-op.h"
@@ -89,6 +91,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:color",
     "title",      _("Color"),
     "categories" , "render",
+    "reference-hash", "fd519ccc1b0badb3ff41501112ca3463",
     "description",
       _("Generates a buffer entirely filled with the specified color, "
         "use gegl:crop to get smaller dimensions."),

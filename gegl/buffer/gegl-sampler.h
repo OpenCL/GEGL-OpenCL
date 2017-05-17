@@ -126,13 +126,16 @@ gegl_sampler_get_ptr (GeglSampler    *sampler,
                       gint            y,
                       GeglAbyssPolicy repeat_mode)
 {
+  gint dx, dy, sof;
+  guchar *buffer_ptr;
+
   GeglSamplerLevel *level = &sampler->level[0];
-  if ((x + level->context_rect.x < level->sampler_rectangle.x)
-   || (y + level->context_rect.y < level->sampler_rectangle.y)
-   || (x + level->context_rect.x + level->context_rect.width
-     > level->sampler_rectangle.x + level->sampler_rectangle.width)
-   || (y + level->context_rect.y + level->context_rect.height
-     > level->sampler_rectangle.y + level->sampler_rectangle.height))
+  if ((x + level->context_rect.x < level->sampler_rectangle.x)      ||
+      (y + level->context_rect.y < level->sampler_rectangle.y)      ||
+      (x + level->context_rect.x + level->context_rect.width >
+       level->sampler_rectangle.x + level->sampler_rectangle.width) ||
+      (y + level->context_rect.y + level->context_rect.height >
+       level->sampler_rectangle.y + level->sampler_rectangle.height))
     {
       level->sampler_rectangle = _gegl_sampler_compute_rectangle (sampler, x, y, 0);
 
@@ -145,14 +148,12 @@ gegl_sampler_get_ptr (GeglSampler    *sampler,
                        repeat_mode);
     }
 
-  {
-    gint    dx         = x - level->sampler_rectangle.x;
-    gint    dy         = y - level->sampler_rectangle.y;
-    gint    sof        = (dx + dy * GEGL_SAMPLER_MAXIMUM_WIDTH) * GEGL_SAMPLER_BPP;
-    guchar *buffer_ptr = (guchar *)level->sampler_buffer;
+  dx         = x - level->sampler_rectangle.x;
+  dy         = y - level->sampler_rectangle.y;
+  sof        = (dx + dy * GEGL_SAMPLER_MAXIMUM_WIDTH) * GEGL_SAMPLER_BPP;
+  buffer_ptr = (guchar *) level->sampler_buffer;
 
-    return (gfloat*)(buffer_ptr+sof);
-  }
+  return (gfloat *) (buffer_ptr + sof);
 }
 
 G_END_DECLS

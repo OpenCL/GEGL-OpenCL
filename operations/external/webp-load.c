@@ -30,6 +30,7 @@ property_uri (uri, _("URI"), "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME webp_load
 #define GEGL_OP_C_SOURCE webp-load.c
 
 #include <gegl-op.h>
@@ -60,22 +61,18 @@ cleanup(GeglOperation *operation)
 
   if (p != NULL)
     {
-      if (p->decoder != NULL)
-        WebPIDelete (p->decoder);
-      p->decoder = NULL;
+      g_clear_pointer (&p->decoder, (GDestroyNotify) WebPIDelete);
+
       if (p->config != NULL)
         WebPFreeDecBuffer (&p->config->output);
-      if (p->config != NULL)
-        g_free (p->config);
-      p->config = NULL;
+
+      g_clear_pointer (&p->config, g_free);
 
       if (p->stream != NULL)
         g_input_stream_close (G_INPUT_STREAM (p->stream), NULL, NULL);
-      if (p->stream != NULL)
-        g_clear_object (&p->stream);
 
-      if (p->file != NULL)
-        g_clear_object (&p->file);
+      g_clear_object (&p->stream);
+      g_clear_object (&p->file);
 
       p->width = p->height = 0;
       p->format = NULL;
@@ -100,7 +97,7 @@ read_from_stream (GInputStream *stream,
                                      NULL, &error);
   if (!success || error != NULL)
     {
-      g_warning (error->message);
+      g_warning ("%s", error->message);
       g_error_free (error);
       return -1;
     }
@@ -130,7 +127,7 @@ decode_from_stream (GInputStream *stream,
                                          NULL, &error);
       if (!success || error != NULL)
         {
-          g_warning (error->message);
+          g_warning ("%s", error->message);
           g_error_free (error);
           return -1;
         }
@@ -208,8 +205,11 @@ prepare (GeglOperation *operation)
       p->stream = gegl_gio_open_input_stream (o->uri, o->path, &p->file, &error);
       if (p->stream == NULL)
         {
-          g_warning (error->message);
-          g_error_free (error);
+          if (error)
+          {
+            g_warning ("%s", error->message);
+            g_error_free (error);
+          }
           cleanup (operation);
           return;
         }
@@ -348,7 +348,10 @@ gegl_op_class_init (GeglOpClass *klass)
     "description" , _("WebP image loader."),
     NULL);
 
-  gegl_extension_handler_register_loader (".webp", "gegl:webp-load");
+  gegl_operation_handlers_register_loader (
+    "image/webp", "gegl:webp-load");
+  gegl_operation_handlers_register_loader (
+    ".webp", "gegl:webp-load");
 }
 
 #endif

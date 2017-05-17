@@ -30,6 +30,7 @@ property_uri (uri, _("URI"), "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME jp2_load
 #define GEGL_OP_C_SOURCE jp2-load.c
 
 #include <gegl-op.h>
@@ -56,12 +57,8 @@ cleanup(GeglOperation *operation)
 
   if (p != NULL)
     {
-      if (p->image != NULL)
-        jas_image_destroy(p->image);
-      p->image = NULL;
-
-      if (p->file != NULL)
-        g_clear_object(&p->file);
+      g_clear_pointer (&p->image, (GDestroyNotify) jas_image_destroy);
+      g_clear_object (&p->file);
 
       p->width = p->height = 0;
       p->format = NULL;
@@ -88,7 +85,7 @@ read_from_stream(GInputStream *stream,
                                  NULL, &error);
       if (read < 0)
         {
-          g_warning(error->message);
+          g_warning("%s", error->message);
           g_error_free(error);
           break;
         }
@@ -128,21 +125,21 @@ query_jp2(GeglOperation *operation,
       image_fmt = jas_image_getfmt (jasper);
       if (image_fmt < 0)
         {
-          g_warning (_("Unknown JPEG 2000 image format"));
+          g_warning ("%s", _("Unknown JPEG 2000 image format"));
           break;
         }
 
       image = jas_image_decode (jasper, image_fmt, NULL);
       if (!image)
         {
-          g_warning (_("Unable to open JPEG 2000 image"));
+          g_warning ("%s", _("Unable to open JPEG 2000 image"));
           break;
         }
 
       output_profile = jas_cmprof_createfromclrspc (JAS_CLRSPC_SRGB);
       if (!output_profile)
         {
-          g_warning (_("Unable to create output color profile"));
+          g_warning ("%s", _("Unable to create output color profile"));
           break;
         }
 
@@ -150,7 +147,7 @@ query_jp2(GeglOperation *operation,
                                      JAS_CMXFORM_INTENT_PER);
       if (!p->image)
         {
-          g_warning (_("Unable to convert image to sRGB color space"));
+          g_warning ("%s", _("Unable to convert image to sRGB color space"));
           break;
         }
 
@@ -195,7 +192,7 @@ query_jp2(GeglOperation *operation,
               (jas_image_cmptwidth (p->image, i) != p->width) ||
               (jas_image_cmptheight (p->image, i) != p->height))
             {
-              g_warning (_("Components of JPEG 2000 input don't match"));
+              g_warning ("%s", _("Components of JPEG 2000 input don't match"));
               b = TRUE;
               break;
             }
@@ -257,7 +254,7 @@ prepare (GeglOperation *operation)
       jasper = jas_stream_memopen(NULL, -1);
       if (jasper == NULL)
         {
-          g_warning(_("could not create a new Jasper stream"));
+          g_warning("%s", _("could not create a new Jasper stream"));
           cleanup(operation);
           return;
         }
@@ -265,8 +262,11 @@ prepare (GeglOperation *operation)
       stream = gegl_gio_open_input_stream(o->uri, o->path, &p->file, &error);
       if (stream == NULL)
         {
-          g_warning(error->message);
-          g_error_free(error);
+          if (error)
+          {
+            g_warning("%s", error->message);
+            g_error_free(error);
+          }
           cleanup(operation);
           return;
         }
@@ -290,7 +290,7 @@ prepare (GeglOperation *operation)
 
       if (!query_jp2(operation, jasper))
         {
-          g_warning(_("could not query JPEG 2000 file"));
+          g_warning("%s", _("could not query JPEG 2000 file"));
           cleanup(operation);
           return;
         }
@@ -346,7 +346,7 @@ process (GeglOperation       *operation,
 
       if ((components[0] < 0) || (components[1] < 0) || (components[2] < 0))
         {
-          g_warning (_("One or more of R, G, B components are missing"));
+          g_warning ("%s",_("One or more of R, G, B components are missing"));
           break;
         }
 
@@ -354,7 +354,7 @@ process (GeglOperation       *operation,
           jas_image_cmptsgnd (p->image, components[1]) ||
           jas_image_cmptsgnd (p->image, components[2]))
         {
-          g_warning (_("One or more of R, G, B components have signed data"));
+          g_warning ("%s",_("One or more of R, G, B components have signed data"));
           break;
         }
 
@@ -532,8 +532,14 @@ gegl_op_class_init (GeglOpClass *klass)
     "description", _("JPEG 2000 image loader using jasper."),
     NULL);
 
-  gegl_extension_handler_register_loader (".jp2", "gegl:jp2-load");
-  gegl_extension_handler_register_loader (".jpx", "gegl:jp2-load");
+  gegl_operation_handlers_register_loader (
+    "image/jp2", "gegl:jp2-load");
+  gegl_operation_handlers_register_loader (
+    ".jp2", "gegl:jp2-load");
+  gegl_operation_handlers_register_loader (
+    ".jpf", "gegl:jp2-load");
+  gegl_operation_handlers_register_loader (
+    ".jpx", "gegl:jp2-load");
 }
 
 #endif

@@ -66,6 +66,7 @@ property_color  (background, _("Background color"), "white")
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     pixelize
 #define GEGL_OP_C_SOURCE pixelize.c
 
 #include "gegl-op.h"
@@ -385,7 +386,7 @@ pixelize (gfloat              *input,
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/pixelize.cl.h"
 
@@ -653,6 +654,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",         "blur:scramble",
     "position-dependent", "true",
     "title",              _("Pixelize"),
+    "reference-hash",     "0bad844f03b9950e5d64b66317e97bd9",
     "description", _("Simplify image into an array of solid-colored rectangles"),
     NULL);
 }

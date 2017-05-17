@@ -1,9 +1,6 @@
 Source overview
 ---------------
 
-Directories marked with ⊙ use GNU make extensions to include any .c file
-dropped into the directory in the build.
-
  gegl-dist-root
   │
   │
@@ -37,12 +34,12 @@ dropped into the directory in the build.
   │
   ├──operations        Runtime loaded plug-ins for image processing operations.
   │   │
-  │   ├──core ⊙        Basic operations tightly coupled with GEGL.
+  │   ├──core          Basic operations tightly coupled with GEGL.
   │   ├──transform     Transforming operations (rotate/scale/translate)
-  │   ├──generated ⊙   Operations generated from scripts (currently
+  │   ├──generated     Operations generated from scripts (currently
   │   ├──external      Operations with external dependencies.
-  │   ├──common ⊙      Other operations.
-  │   └──workshop ⊙    Works in progress, (you must pass --enable-workshop
+  │   ├──common        Other operations.
+  │   └──workshop      Works in progress, (you must pass --enable-workshop
   │       │            when configurig to build these by default, you can enter
   │       │            the directory manually and type make && sudo make install
   │       │            as well.

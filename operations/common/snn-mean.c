@@ -37,6 +37,7 @@ property_int (pairs, _("Pairs"), 2)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     snn_mean
 #define GEGL_OP_C_SOURCE snn-mean.c
 
 #include "gegl-op.h"
@@ -44,10 +45,12 @@ property_int (pairs, _("Pairs"), 2)
 
 static void
 snn_mean (GeglBuffer          *src,
+          const GeglRectangle *src_rect,
           GeglBuffer          *dst,
           const GeglRectangle *dst_rect,
           gdouble              radius,
-          gint                 pairs);
+          gint                 pairs,
+          gint                 level);
 
 
 static void prepare (GeglOperation *operation)
@@ -74,7 +77,6 @@ process (GeglOperation       *operation,
          gint                 level)
 {
   GeglProperties      *o = GEGL_PROPERTIES (operation);
-  GeglBuffer          *temp_in;
   GeglRectangle        compute;
 
   if (gegl_operation_use_opencl (operation))
@@ -89,10 +91,7 @@ process (GeglOperation       *operation,
     }
   else
     {
-      temp_in = gegl_buffer_create_sub_buffer (input, &compute);
-
-      snn_mean (temp_in, output, result, o->radius, o->pairs);
-      g_object_unref (temp_in);
+      snn_mean (input, &compute, output, result, o->radius, o->pairs, level);
     }
 
   return  TRUE;
@@ -111,23 +110,42 @@ static inline gfloat colordiff (gfloat *pixA,
 
 static void
 snn_mean (GeglBuffer          *src,
+          const GeglRectangle *src_rect,
           GeglBuffer          *dst,
           const GeglRectangle *dst_rect,
           gdouble              dradius,
-          gint                 pairs)
+          gint                 pairs,
+          gint                 level)
 {
   gint x,y;
   gint offset;
   gfloat *src_buf;
   gfloat *dst_buf;
   gint radius = dradius;
-  gint src_width = gegl_buffer_get_width (src);
-  gint src_height = gegl_buffer_get_height (src);
+  GeglRectangle src_rect_scaled, dst_rect_scaled;
+  if (level)
+  {
+    src_rect_scaled = *src_rect;
+    dst_rect_scaled = *dst_rect;
+    src_rect_scaled.x >>= level;
+    src_rect_scaled.y >>= level;
+    src_rect_scaled.width >>= level;
+    src_rect_scaled.height >>= level;
+    dst_rect_scaled.x >>= level;
+    dst_rect_scaled.y >>= level;
+    dst_rect_scaled.width >>= level;
+    dst_rect_scaled.height >>= level;
+    src_rect = &src_rect_scaled;
+    dst_rect = &dst_rect_scaled;
+    dradius /= (1<<level);
+  }
+  radius = dradius;
 
-  src_buf = g_new0 (gfloat, gegl_buffer_get_pixel_count (src) * 4);
+
+  src_buf = g_new0 (gfloat, src_rect->width * src_rect->height * 4);
   dst_buf = g_new0 (gfloat, dst_rect->width * dst_rect->height * 4);
 
-  gegl_buffer_get (src, NULL, 1.0, babl_format ("RGBA float"), src_buf, 
+  gegl_buffer_get (src, src_rect, 1.0/(1<<level), babl_format ("RGBA float"), src_buf, 
                    GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
 
   offset = 0;
@@ -136,7 +154,7 @@ snn_mean (GeglBuffer          *src,
     {
       gfloat *center_pix;
 
-      center_pix = src_buf + ((radius) + (y+radius)* src_width)*4;
+      center_pix = src_buf + ((radius) + (y+radius)* src_rect->width)*4;
 
       for (x=0; x<dst_rect->width; x++)
         {
@@ -145,7 +163,7 @@ snn_mean (GeglBuffer          *src,
           gfloat  accumulated[4]={0.0f, 0.0f, 0.0f, 0.0f};
           gint    count=0;
 
-          /* iterate through the upper left quater of pixels */
+          /* iterate through the upper left quarter of pixels */
           for (v=-radius;v<=0;v++)
             for (u=-radius;u<= (pairs==1?radius:0);u++)
               {
@@ -174,10 +192,10 @@ snn_mean (GeglBuffer          *src,
                     /* check which member of the symmetric quadruple to use */
                     for (i=0;i<pairs*2;i++)
                       {
-                        if (xs[i] >= 0 && xs[i] < src_width &&
-                            ys[i] >= 0 && ys[i] < src_height)
+                        if (xs[i] >= 0 && xs[i] < src_rect->width &&
+                            ys[i] >= 0 && ys[i] < src_rect->height)
                           {
-                            gfloat *tpix = src_buf + (xs[i]+ys[i]* src_width)*4;
+                            gfloat *tpix = src_buf + (xs[i]+ys[i]* src_rect->width)*4;
                             gfloat diff = colordiff (tpix, center_pix);
                             if (diff < best_diff)
                               {
@@ -207,7 +225,7 @@ snn_mean (GeglBuffer          *src,
           center_pix += 4;
         }
     }
-  gegl_buffer_set (dst, dst_rect, 0, babl_format ("RGBA float"), dst_buf,
+  gegl_buffer_set (dst, dst_rect, level, babl_format ("RGBA float"), dst_buf,
                    GEGL_AUTO_ROWSTRIDE);
   g_free (src_buf);
   g_free (dst_buf);
@@ -215,7 +233,7 @@ snn_mean (GeglBuffer          *src,
 
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/snn-mean.cl.h"
 
@@ -332,9 +350,10 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "gegl:snn-mean",
     "categories" , "enhance:noise-reduction",
     "title",       _("Symmetric Nearest Neighbour"),
+    "reference-hash", "116f36a0a62eed60441a35b5e8a10df9",
     "description",
         _("Noise reducing edge preserving blur filter based "
-          " on Symmetric Nearest Neighbours"),
+          "on Symmetric Nearest Neighbours"),
         NULL);
 }
 

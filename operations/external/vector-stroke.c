@@ -44,6 +44,7 @@ property_path   (d, _("Vector"), NULL)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME vector_stroke
 #define GEGL_OP_C_SOURCE vector-stroke.c
 
 #include "gegl-plugin.h"
@@ -300,6 +301,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",                 _("Vector Stroke"),
     "reference-composition", composition,
     "categories",            "render",
+    "reference-hash",        "7220be79a5455bed219cb16661275dd0",
     "description",           _("Renders a vector stroke"),
     NULL);
 }

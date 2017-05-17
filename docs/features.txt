@@ -12,8 +12,9 @@ GEGL Feature List
      * Processes subregions and dependencies.
      * Subgraph caches to aid performance of non-destructive editing.
      * Multi-threaded processing.
-     * Experimental OpenCL acceleration, with possibility of hybrid cpu/gpu
-       processing.
+     * OpenCL acceleration, capable of hybrid cpu/gpu processing.
+     * Experimental mipmap preview rendering, do zoomed out preview 
+       rendering touching only 25% 6.25% of the pixels.
   - link:api.html#GeglBuffer[GeglBuffer]
      * Storage of all babl supported formats.
      * Sparse swapped buffers (larger than RAM images).
@@ -24,17 +25,18 @@ GEGL Feature List
        to use them through the GeglBuffer API).
   - Operations
       * PNG, JPEG, SVG, EXR, RAW, ffmpeg, v4l and other image sources.
-      * link:operations.html#cat_render[Pattern renderers]
-      * link:operations.html#cat_math[Arithmetic operations]
-      * link:operations.html#cat_porter-duff[porter duff compositing]
+      * link:operations.html#category%20render[Pattern renderers]
+      * link:operations.html#category%20math[Arithmetic operations]
+      * link:operations.html#category%20porter-duff[porter duff compositing]
       * SVG filter modes and full set of compositing ops from SVG-1.2 draft.
       * Gaussian blur, bilateral-filter, symmetric nearest neighbour, linear
       * blur, unsharp mask, pixelize and more.
-      * link:operations.html#cat_color[Color correction].
+      * link:operations.html#category%20color[Color correction].
       * Text rendering using cairo and http://pango.org/[pango].
       * HDR exposure merging and tone mapping operations.
       * Most operations operate in
         http://en.wikipedia.org/wiki/ScRGB_color_space[scRGB] (using 32bit
-        floating point/HDR linear light RGBA)
+        floating point/HDR linear light RGBA), operations use babl formats to
+        specify whether data should be linearized for processing.
   - Bounding box based hit detection.
   - XML serialization format (not-finalized)

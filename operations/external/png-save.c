@@ -35,6 +35,7 @@ property_int    (bitdepth, _("Bitdepth"), 16)
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME png_save
 #define GEGL_OP_C_SOURCE png-save.c
 
 #include "gegl-op.h"
@@ -231,7 +232,8 @@ gegl_op_class_init (GeglOpClass *klass)
         _("PNG image saver, using libpng"),
         NULL);
 
-  gegl_extension_handler_register_saver (".png", "gegl:png-save");
+  gegl_operation_handlers_register_saver (
+    ".png", "gegl:png-save");
 }
 
 #endif

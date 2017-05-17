@@ -41,7 +41,8 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE        "difference.c"
+#define GEGL_OP_NAME         difference
+#define GEGL_OP_C_FILE       "difference.c"
 
 #include "gegl-op.h"
 
@@ -165,6 +166,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:difference",
   "compat-name" , "gegl:difference",
+  "reference-hash" , "3737dde4e8302b7cd8c25efcde917676",
   "description" ,
         _("SVG blend operation difference (<code>d = cA + cB - 2 * (MIN (cA * aB, cB * aA))</code>)"),
         NULL);

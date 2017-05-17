@@ -272,7 +272,7 @@ gegl_meta_set_audio (const char        *path,
       g_warning ("%s", error->message);
     g_string_free (str, TRUE);
   }
-  gexiv2_metadata_free (e2m);
+  g_object_unref (e2m);
 }
 
 void
@@ -291,5 +291,5 @@ gegl_meta_get_audio (const char        *path,
   }
   else
     g_warning ("%s", error->message);
-  gexiv2_metadata_free (e2m);
+  g_object_unref (e2m);
 }

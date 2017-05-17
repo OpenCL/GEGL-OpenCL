@@ -85,7 +85,8 @@ static const ColorNameEntity color_names[] =
   { "blue",    { 0.f,      0.f,      1.f,      1.f } },
   { "teal",    { 0.f,      0.50196f, 0.50196f, 1.f } },
   { "aqua",    { 0.f,      1.f,      1.f,      1.f } },
-  { "none",    { 0.f,      0.f,      0.f,      0.f } }
+  { "none",    { 0.f,      0.f,      0.f,      0.f } },
+  { "transparent",  { 0.f, 0.f,      0.f,      0.f } }
 };
 
 /* Copied into GeglColor:s instances when parsing a color from a string fails. */
@@ -269,7 +270,7 @@ gegl_color_set_pixel (GeglColor   *color,
   g_return_if_fail (format);
   g_return_if_fail (pixel);
 
-  babl_process (babl_fish (format, babl_format ("RGBA float")),
+  babl_process (babl_fish (format, gegl_babl_rgba_linear_float ()),
                 pixel, color->priv->rgba_color, 1);
 }
 
@@ -282,7 +283,7 @@ gegl_color_get_pixel (GeglColor   *color,
   g_return_if_fail (format);
   g_return_if_fail (pixel);
 
-  babl_process (babl_fish (babl_format ("RGBA float"), format),
+  babl_process (babl_fish (gegl_babl_rgba_linear_float (), format),
                 color->priv->rgba_color, pixel, 1);
 }
 
@@ -310,10 +311,10 @@ gegl_color_get_rgba (GeglColor *self,
 {
   g_return_if_fail (GEGL_IS_COLOR (self));
 
-  *r = self->priv->rgba_color[0];
-  *g = self->priv->rgba_color[1];
-  *b = self->priv->rgba_color[2];
-  *a = self->priv->rgba_color[3];
+  if (r) *r = self->priv->rgba_color[0];
+  if (g) *g = self->priv->rgba_color[1];
+  if (b) *b = self->priv->rgba_color[2];
+  if (a) *a = self->priv->rgba_color[3];
 }
 
 static void
@@ -325,7 +326,7 @@ gegl_color_set_from_string (GeglColor   *self,
   GTokenValue       token_value;
   gboolean          color_parsing_successfull;
   float rgba[4] = {0.0, 0.0, 0.0, 1.0};
-  const Babl *format = babl_format ("R'G'B'A float");
+  const Babl *format = gegl_babl_rgba_float ();
 
   scanner                               = g_scanner_new (NULL);
   scanner->config->cpair_comment_single = "";
@@ -338,14 +339,14 @@ gegl_color_set_from_string (GeglColor   *self,
       g_ascii_strcasecmp (token_value.v_identifier, "rgb") == 0)
     {
       color_parsing_successfull = parse_float_argument_list (rgba, scanner, 3);
-      format = babl_format ("RGBA float");
+      format = gegl_babl_rgba_linear_float ();
     }
   else if (token_type == G_TOKEN_IDENTIFIER &&
            g_ascii_strcasecmp (token_value.v_identifier, "rgba") == 0)
     {
       rgba[3] = 1.0;
       color_parsing_successfull = parse_float_argument_list (rgba, scanner, 4);
-      format = babl_format ("RGBA float");
+      format = gegl_babl_rgba_linear_float ();
     }
   else if (token_type == '#')
     {

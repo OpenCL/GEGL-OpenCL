@@ -27,6 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     invert_linear
 #define GEGL_OP_C_SOURCE invert-linear.c
 
 #include "gegl-op.h"
@@ -73,6 +74,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Invert"),
     "compat-name", "gegl:invert",
     "categories" , "color",
+    "reference-hash", "3fc7e35d7a5c45b9e55bc2d15890005a",
     "description",
        _("Inverts the components (except alpha), the result is the "
          "corresponding \"negative\" image."),

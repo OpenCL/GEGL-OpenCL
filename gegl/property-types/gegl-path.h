@@ -214,6 +214,21 @@ gdouble              gegl_path_closest_point  (GeglPath     *path,
                                                gdouble      *on_path_y,
                                                gint         *node_pos_before);
 
+
+/**
+ * gegl_path_calc_y_for_x:
+ * @path: a #GeglPath
+ * @x: x coordinate to compute for
+ * @y: (out): return location for y coordinate
+ *
+ * Compute a corresponding y coordinate for a given x input coordinate,
+ * returns 0 if computed correctly and -1 if the path doesn't exist for the
+ * specified x coordinate.
+ */
+gint gegl_path_calc_y_for_x (GeglPath *path,
+                             gdouble   x,
+                             gdouble  *y);
+
 /**
  * gegl_path_calc:
  * @path: a #GeglPath
@@ -434,7 +449,7 @@ typedef struct GeglPathList
  *
  * Appends to path list, if head is NULL a new list is created
  */ 
-GeglPathList *        gegl_path_list_append   (GeglPathList *head, ...);
+GeglPathList *     gegl_path_list_append   (GeglPathList *head, ...);
 
 /**
  * gegl_path_list_destroy: (skip)
@@ -442,7 +457,7 @@ GeglPathList *        gegl_path_list_append   (GeglPathList *head, ...);
  *
  * Frees up a path list
  */
-GeglPathList *        gegl_path_list_destroy  (GeglPathList *path);
+GeglPathList *     gegl_path_list_destroy  (GeglPathList *path);
 
 
 /***
@@ -461,7 +476,7 @@ typedef GeglPathList *(*GeglFlattenerFunc) (GeglPathList *original);
  * the incoming path (doesn't understand the instructions), the original
  * path should be returned.
  */
-void                  gegl_path_add_flattener (GeglFlattenerFunc func);
+void           gegl_path_add_flattener (GeglFlattenerFunc func);
 
 
 /**
@@ -470,7 +485,7 @@ void                  gegl_path_add_flattener (GeglFlattenerFunc func);
  *
  * Return the internal untouched #GeglPathList
  */
-GeglPathList *        gegl_path_get_path (GeglPath *path);
+GeglPathList * gegl_path_get_path (GeglPath *path);
 
 /**
  * gegl_path_get_flat_path: (skip)
@@ -478,7 +493,7 @@ GeglPathList *        gegl_path_get_path (GeglPath *path);
  *
  * Return a polyline version of @path
  */
-GeglPathList *        gegl_path_get_flat_path (GeglPath *path);
+GeglPathList * gegl_path_get_flat_path (GeglPath *path);
 
 /***
  * GeglPathPoint: (skip)
@@ -493,10 +508,10 @@ GeglPathList *        gegl_path_get_flat_path (GeglPath *path);
  *
  * linear interpolation between two #GeglPathPoint
  */
-void                  gegl_path_point_lerp    (GeglPathPoint    *dest,
-                                               GeglPathPoint    *a,
-                                               GeglPathPoint    *b,
-                                               gfloat            t);
+void           gegl_path_point_lerp    (GeglPathPoint *dest,
+                                        GeglPathPoint *a,
+                                        GeglPathPoint *b,
+                                        gfloat         t);
 
 /**
  * gegl_path_point_dist: (skip)
@@ -505,8 +520,8 @@ void                  gegl_path_point_lerp    (GeglPathPoint    *dest,
  *
  * Compute the distance between #GeglPathPoint @a and @b
  */
-gdouble               gegl_path_point_dist    (GeglPathPoint       *a,
-                                               GeglPathPoint       *b);
+gdouble        gegl_path_point_dist    (GeglPathPoint *a,
+                                        GeglPathPoint *b);
 
 G_END_DECLS
 

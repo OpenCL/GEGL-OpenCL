@@ -31,6 +31,7 @@ property_pointer (pixbuf, _("Pixbuf location"),
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME save_pixbuf
 #define GEGL_OP_C_SOURCE save-pixbuf.c
 
 #include "gegl-op.h"
@@ -53,7 +54,9 @@ process (GeglOperation       *operation,
       GeglRectangle *rect = gegl_operation_source_get_bounding_box (operation, "input");
       gchar *name;
       gboolean has_alpha;
+      gint bpp;
       gint bps;
+      gint stride;
 
       g_object_get (input, "format", &format, NULL);
 
@@ -66,8 +69,11 @@ process (GeglOperation       *operation,
                   bps);
       babl = babl_format (name);
 
-      temp = g_malloc (rect->width * rect->height * bps);
-      gegl_buffer_get (input, rect, 1.0, babl, temp, GEGL_AUTO_ROWSTRIDE,
+      bpp = babl_format_get_bytes_per_pixel (babl);
+      stride = bpp * rect->width;
+
+      temp = g_malloc0_n (stride, rect->height);
+      gegl_buffer_get (input, rect, 1.0, babl, temp, stride,
                        GEGL_ABYSS_NONE);
       if (temp) {
     *pixbuf = gdk_pixbuf_new_from_data (temp,
@@ -75,7 +81,7 @@ process (GeglOperation       *operation,
                         has_alpha,
                         bps,
                         rect->width, rect->height,
-                        rect->width * (has_alpha ? 4 : 3) * bps/8,
+                        stride,
                         (GdkPixbufDestroyNotify) g_free, NULL);
       }
       else {

@@ -66,6 +66,7 @@ property_boolean (middle, _("Choose middle"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     polar_coordinates
 #define GEGL_OP_C_SOURCE polar-coordinates.c
 
 #include "gegl-op.h"
@@ -425,6 +426,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Polar Coordinates"),
     "categories",         "transform:map",
     "position-dependent", "true",
+    "reference-hash",     "0134a2706e736d2594f4d6da8d4fd3cb",
     "license",            "GPL3+",
     "description", _("Convert image to or from polar coordinates"),
     NULL);

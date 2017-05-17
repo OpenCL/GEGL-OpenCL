@@ -9,7 +9,7 @@ EXTRA_DIST = $(TESTS)
 check: vids images
 
 images: 
-	for a in *.avi *.mp4 *.ogv *.webm;do \
+	for a in *.avi *.mp4 *.ogv ;do \
             GEGL_PATH=$(top_builddir)/operations $(top_builddir)/examples/gegl-video \
             $$a -s 74 -e 74 -of $$a- ;\
         done
@@ -29,8 +29,6 @@ vids: $(TESTS) $(top_builddir)/examples/frame-counter
            --video-codec mpeg4 --fps 100 --video-bit-rate 128 128kb-100fps.mp4
 	GEGL_PATH=$(top_builddir)/operations $(top_builddir)/examples/frame-counter \
            --fps 28 --video-bit-rate 512 512kb-28fps.ogv
-	GEGL_PATH=$(top_builddir)/operations $(top_builddir)/examples/frame-counter \
-           --fps 28 --video-bit-rate 512 512kb-28fps.webm
 
 clean-local:
 	rm -f *.png *.avi *.ogv *.mp4 *.webm

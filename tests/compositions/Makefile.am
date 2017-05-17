@@ -29,11 +29,7 @@ TESTS = \
   convolve2.xml                   \
   composite-transform.xml         \
   contrast-curve.xml              \
-  diffraction-patterns.xml        \
   edge.xml                        \
-  edge-laplace.xml                \
-  edge-sobel.xml                  \
-  engrave.xml                     \
   fattal02.xml                    \
   gegl.xml                        \
   gamma.xml                       \
@@ -46,9 +42,7 @@ TESTS = \
   noise-hurl.xml                  \
   noise-simplex.xml               \
   noise-solid.xml                 \
-  pixelize.xml                    \
   posterize.xml                   \
-  polar-coordinates.xml           \
   red-eye-removal.xml             \
   reflect.xml                     \
   reflect2.xml                    \
@@ -59,11 +53,9 @@ TESTS = \
   simple-scale.xml                \
   scale-size-keepaspect.xml       \
   sinus.xml                       \
-  softglow.xml                    \
   stretch-contrast.xml            \
   supernova.xml                   \
   transform.xml                   \
-  video-degradation.xml           \
   grey-json.xml                   \
   weighted-blend.xml              \
   rectangles.xml

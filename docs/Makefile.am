@@ -14,7 +14,7 @@ sync-txt:
 	txts=ASC_DOC="index.html "`for a in *.txt;do echo -n ' '$$a|sed s/txt/html/;done;echo ''`;\
 	  txts=$$txts" #ASC_DOC_HOTPATCH";\
 		cat Makefile.am | sed "s/ASC\_DOC.*ASC_DOC_HOTPATCH/$$txts/" > /tmp/mktmp; cp /tmp/mktmp Makefile.am;
-ASC_DOC=index.html  abyss_policy.html bugzilla.html build.html commandline.html contribute.html copyright.html development.html editor.html environment.html features.html glossary.html hello-world.html journal.html operation-api.html source-overview.html #ASC_DOC_HOTPATCH
+ASC_DOC=index.html  abyss_policy.html bugzilla.html build.html commandline.html contribute.html copyright.html NEWS.html development.html editor.html environment.html features.html glossary.html hello-world.html journal.html operation-api.html source-overview.html gegl-chain.html #ASC_DOC_HOTPATCH
 
 
 HTML_FILES = \
@@ -57,6 +57,7 @@ endif
 EXTRA_DIST = \
 	ChangeLog			\
 	development.txt			\
+    NEWS.txt \
 	devhelp.css			\
 	gegl.css  			\
 	images/GEGL.png			\
@@ -86,16 +87,17 @@ CLEANFILES = README $(HTML_FILES) index.txt
 DISTCLEANFILES = index.txt
 MAINTAINERCLEANFILES = $(BUILT_EXTRA_DIST)
 
-exclusion_pattern = "load|buffer-source|pixbuf|nop|clone|convert-format|introspect|layer|image-compare|load|open-buffer|svg-load|exr-load|jpg-load|png-load|magick-load|box-blur|stretch-contrast|remap|matting-global|exp-combine|dropshadow|kuwahara|box-percentile|disc-percentile|snn-percentile|line-profile|buffer-cache|warp|mandelbrot|hstack"
+exclusion_pattern = "load|buffer-source|pixbuf|nop|clone|convert-format|introspect|layer|image-compare|load|open-buffer|svg-load|exr-load|jpg-load|png-load|magick-load|box-blur|stretch-contrast|remap|matting-global|exp-combine|dropshadow|kuwahara|box-percentile|disc-percentile|snn-percentile|line-profile|buffer-cache|warp|mandelbrot|hstack|v4l2|integral-image"
 
 all-local: $(HTML_FILES)
 
-examples:  $(top_builddir)/bin/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*.c
+examples:  $(top_builddir)/tools/gegl-tester$(EXEEXT) $(top_srcdir)/operations/*/*.c
 	@if test -d images/examples; then :; else \
 		echo "Generating example images" ; \
 		mkdir -p images/examples ; \
+		BABL_TOLERANCE=0.0 \
 		GEGL_SWAP=RAM GEGL_PATH=$(top_builddir)/operations \
-		$(top_builddir)/bin/gegl-tester$(EXEEXT) --all -o images/examples \
+		$(top_builddir)/tools/gegl-tester$(EXEEXT) --all -o images/examples \
 		-d $(srcdir)/images -e $(exclusion_pattern) ; \
 	fi
 
@@ -197,7 +199,6 @@ endif
 %.html: %.txt		$<\
 	$(top_srcdir)/AUTHORS		\
 	gegl.css			\
-	$(top_srcdir)/NEWS		\
 	$(top_srcdir)/examples/hello-world.c \
 	$(top_builddir)/bin/gegl$(EXEEXT)	\
 	Makefile.am

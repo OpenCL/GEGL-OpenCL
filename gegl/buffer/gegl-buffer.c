@@ -241,7 +241,7 @@ gegl_buffer_set_property (GObject      *gobject,
         break;
 
       case PROP_FORMAT:
-        /* Do not set to NULL even if asked to do so by a non-overriden
+        /* Do not set to NULL even if asked to do so by a non-overridden
          * value, this is needed since a default value can not be specified
          * for a gpointer paramspec
          */
@@ -524,7 +524,7 @@ gegl_buffer_constructor (GType                  type,
           if (!buffer->format)
             {
               g_warning ("Buffer constructed without format, assuming RGBA float");
-              buffer->format = babl_format ("RGBA float");
+              buffer->format = gegl_babl_rgba_linear_float ();
             }
 
           /* make a new backend & storage */
@@ -956,7 +956,7 @@ gegl_buffer_new_ram (const GeglRectangle *extent,
     extent = &empty;
 
   if (format == NULL)
-    format = babl_format ("RGBA float");
+    format = gegl_babl_rgba_linear_float ();
 
   return g_object_new (GEGL_TYPE_BUFFER,
                        "x", extent->x,
@@ -978,7 +978,7 @@ gegl_buffer_new (const GeglRectangle *extent,
     extent = &empty;
 
   if (format == NULL)
-    format = babl_format ("RGBA float");
+    format = gegl_babl_rgba_linear_float ();
 
   return g_object_new (GEGL_TYPE_BUFFER,
                        "x", extent->x,

@@ -42,6 +42,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     noise_slur
 #define GEGL_OP_C_SOURCE noise-slur.c
 
 #include "gegl-op.h"
@@ -152,6 +153,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:noise-slur",
     "title",       _("Noise Slur"),
     "categories",  "noise",
+    "reference-hash", "513f96bea7ec5268e571e5587e212533",
     "license",     "GPL3+",
     "description", _("Randomly slide some pixels downward (similar to melting)"),
     NULL);

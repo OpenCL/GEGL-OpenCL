@@ -58,6 +58,7 @@ property_seed    (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_POINT_RENDER
+#define GEGL_OP_NAME     noise_cell
 #define GEGL_OP_C_SOURCE noise-cell.c
 
 #include "gegl-op.h"
@@ -431,7 +432,12 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Cell Noise"),
     "categories",         "render",
     "position-dependent", "true",
-    "description", _("Generates a cellular texture."),
+
+    "description",        _("Generates a cellular texture."),
+    "reference-hash",     "24a97f60de37791a65ef8931c3ca3342",
+
+    "reference",  "Steven Worley. 1996. A cellular texture basis function. In Proceedings of the 23rd annual conference on Computer graphics and interactive techniques (SIGGRAPH '96).",
+
     NULL);
 }
 

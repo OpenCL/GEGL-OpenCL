@@ -31,18 +31,29 @@ property_string (font, _("Font family"), "Sans")
 
 property_double (size, _("Size"), 10.0)
     description (_("Font size in pixels."))
-    value_range (1.0, 2048.0)
+    value_range (0.0, 2048.0)
 
 property_color  (color, _("Color"), "black")
-    description(_("Color for the text (defaults to 'white')"))
+    /* TRANSLATORS: the string 'black' should not be translated */
+    description(_("Color for the text (defaults to 'black')"))
+
 property_int  (wrap, _("Wrap width"), -1)
     description (_("Sets the width in pixels at which long lines will wrap. "
                      "Use -1 for no wrapping."))
+    value_range (-1, 1000000)
+property_int  (vertical_wrap, _("Wrap height"), 0)
+    description (_("Sets the height in pixels according to which the text is "
+                   "vertically justified. "
+                   "Use -1 for no vertical justification."))
     value_range (-1, 1000000)
 
 property_int    (alignment, _("Justification"), 0)
     value_range (0, 2)
     description (_("Alignment for multi-line text (0=Left, 1=Center, 2=Right)"))
+
+property_int    (vertical_alignment, _("Vertical justification"), 0)
+    value_range (0, 2)
+    description (_("Vertical text alignment (0=Top, 1=Middle, 2=Bottom)"))
 
 property_int (width, _("Width"), 0)
     description (_("Rendered width in pixels. (read only)"))
@@ -64,7 +75,9 @@ typedef struct {
   gchar         *font;
   gdouble        size;
   gint           wrap;
+  gint           vertical_wrap;
   gint           alignment;
+  gint           vertical_alignment;
   GeglRectangle  defined;
 } CachedExtent;
 
@@ -80,6 +93,7 @@ typedef struct
   GeglOperationSourceClass parent_class;
 } GeglOpClass;
 
+#define GEGL_OP_NAME     text
 #define GEGL_OP_C_SOURCE text.c
 #include "gegl-op.h"
 GEGL_DEFINE_DYNAMIC_OPERATION (GEGL_TYPE_OPERATION_SOURCE)
@@ -88,19 +102,21 @@ GEGL_DEFINE_DYNAMIC_OPERATION (GEGL_TYPE_OPERATION_SOURCE)
 
 
 
-static void text_layout_text (GeglOp *self,
-                              cairo_t   *cr,
-                              gdouble    rowstride,
-                              gdouble   *width,
-                              gdouble   *height)
+static void text_layout_text (GeglOp        *self,
+                              cairo_t       *cr,
+                              gdouble        rowstride,
+                              GeglRectangle *bounds)
 {
-  GeglProperties           *o = GEGL_PROPERTIES (self);
+  GeglProperties       *o = GEGL_PROPERTIES (self);
   PangoFontDescription *desc;
-  PangoLayout    *layout;
-  PangoAttrList  *attrs;
-  PangoAttribute *attr  = NULL;
-  gchar          *string;
-  gint            alignment = 0;
+  PangoLayout          *layout;
+  PangoAttrList        *attrs;
+  guint16               color[4];
+  gchar                *string;
+  gint                  alignment = 0;
+  PangoRectangle        ink_rect;
+  PangoRectangle        logical_rect;
+  gint                  vertical_offset = 0;
 
   /* Create a PangoLayout, set the font and text */
   layout = pango_cairo_create_layout (cr);
@@ -129,46 +145,51 @@ static void text_layout_text (GeglOp *self,
   pango_layout_set_width (layout, o->wrap * PANGO_SCALE);
 
   attrs = pango_attr_list_new ();
-  if (attrs)
-  {
-    guint16 color[3];
 
-    gegl_color_get_pixel (o->color, babl_format ("R'G'B' u16"), color);
-    attr = pango_attr_foreground_new (color[0], color[1], color[2]);
+  gegl_color_get_pixel (o->color, babl_format ("R'G'B'A u16"), color);
+  pango_attr_list_insert (
+    attrs,
+    pango_attr_foreground_new (color[0], color[1], color[2]));
+  pango_attr_list_insert (
+    attrs,
+    pango_attr_foreground_alpha_new (color[3]));
 
-    if (attr)
-      {
-        attr->start_index = 0;
-        attr->end_index   = -1;
-        pango_attr_list_insert (attrs, attr);
-        pango_layout_set_attributes (layout, attrs);
-      }
-  }
+  pango_layout_set_attributes (layout, attrs);
 
   /* Inform Pango to re-layout the text with the new transformation */
   pango_cairo_update_layout (cr, layout);
 
-  if (width && height)
+  pango_layout_get_pixel_extents (layout, &ink_rect, &logical_rect);
+  if (o->vertical_wrap >= 0)
     {
-      int w, h;
+      switch (o->vertical_alignment)
+      {
+      case 0: /* top */
+        vertical_offset = 0;
+        break;
+      case 1: /* middle */
+        vertical_offset = (o->vertical_wrap - logical_rect.height) / 2;
+        break;
+      case 2: /* bottom */
+        vertical_offset = o->vertical_wrap - logical_rect.height;
+        break;
+      }
+    }
 
-      pango_layout_get_pixel_size (layout, &w, &h);
-      *width = (gdouble)w;
-      *height = (gdouble)h;
+  if (bounds)
+    {
+      *bounds = *GEGL_RECTANGLE (ink_rect.x,     ink_rect.y + vertical_offset,
+                                 ink_rect.width, ink_rect.height);
     }
   else
     {
-      /* FIXME: This feels like a hack but it stops the rendered text  */
-      /* from shifting position depending on the value of 'alignment'. */
-      if (o->alignment == 1)
-         cairo_move_to (cr, o->width / 2, 0);
-      else
+      /* When alpha is 0, Pango goes full alpha (by design).  Go figure... */
+      if (color[3] > 0)
         {
-          if (o->alignment == 2)
-             cairo_move_to (cr, o->width, 0);
-        }
+          cairo_translate (cr, 0, vertical_offset);
 
-      pango_cairo_show_layout (cr, layout);
+          pango_cairo_show_layout (cr, layout);
+        }
     }
 
   pango_font_description_free (desc);
@@ -194,9 +215,8 @@ process (GeglOperation       *operation,
                                                  result->height,
                                                  result->width * 4);
   cr = cairo_create (surface);
-  cairo_set_source_rgba (cr, 1.0, 1.0, 1.0, 1.0);
   cairo_translate (cr, -result->x, -result->y);
-  text_layout_text (self, cr, 0, NULL, NULL);
+  text_layout_text (self, cr, 0, NULL);
 
   gegl_buffer_set (output, result, 0, babl_format ("B'aG'aR'aA u8"), data,
                    GEGL_AUTO_ROWSTRIDE);
@@ -232,17 +252,14 @@ get_bounding_box (GeglOperation *operation)
       extent->alignment != o->alignment)
     { /* get extents */
       cairo_t *cr;
-      gdouble width, height;
 
       cairo_surface_t *surface  = cairo_image_surface_create (CAIRO_FORMAT_ARGB32,
           1, 1);
       cr = cairo_create (surface);
-      text_layout_text (self, cr, 0, &width, &height);
+      text_layout_text (self, cr, 0, &extent->defined);
       cairo_destroy (cr);
       cairo_surface_destroy (surface);
 
-      extent->defined.width = width;
-      extent->defined.height = height;
       if (extent->string)
         g_free (extent->string);
       extent->string = g_strdup (o->string);
@@ -254,10 +271,14 @@ get_bounding_box (GeglOperation *operation)
       extent->alignment = o->alignment;
 
       /* store the measured size for later use */
-      o->width = width;
-      o->height = height;
+      o->width  = extent->defined.width  - extent->defined.x;
+      o->height = extent->defined.height - extent->defined.y;
 
-      gegl_operation_invalidate (operation, NULL, TRUE);
+      /* XXX: this invalidation is *probably* unnecessary.  having
+       * get_bounding_box() cause an invalidation can be surprising,
+       * so disabling it for now.
+       */
+      /* gegl_operation_invalidate (operation, NULL, TRUE); */
     }
 
   if (status)

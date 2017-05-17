@@ -30,6 +30,7 @@ property_pointer (format, _("babl format"),
 #else
 
 #define GEGL_OP_SINK
+#define GEGL_OP_NAME     buffer_sink
 #define GEGL_OP_C_SOURCE buffer-sink.c
 
 #include "gegl-op.h"

@@ -40,7 +40,7 @@ struct _GeglTileHandlerCache
 {
   GeglTileHandler  parent_instance;
   GeglTileStorage *tile_storage;
-  GSList          *items;
+  GHashTable      *items;
   int              count; /* number of items held by cache */
 };
 

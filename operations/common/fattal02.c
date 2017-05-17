@@ -50,6 +50,7 @@ property_double (noise, _("Noise"), 0.0)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     fattal02
 #define GEGL_OP_C_SOURCE fattal02.c
 
 #include "gegl-op.h"
@@ -1031,9 +1032,11 @@ fattal02_float_cmp (const void *_a,
   const gfloat a = *(gfloat *)_a,
                b = *(gfloat *)_b;
 
-  if (a < b) return -1;
-  if (a > b) return  1;
-             return  0;
+  if (a < b)
+    return -1;
+  if (a > b)
+    return  1;
+  return  0;
 }
 
 
@@ -1326,6 +1329,8 @@ gegl_op_class_init (GeglOpClass *klass)
   "name"       , "gegl:fattal02",
   "title",       _("Fattal et al. 2002 Tone Mapping"),
   "categories" , "tonemapping:enhance",
+  "reference-hash", "e2260e134cdaa92773f200986bb3c09b",
+  "reference-hashB", "a78d262e8a45e961d3b05bcead9e582e",
   "description",
         _("Adapt an image, which may have a high dynamic range, for "
 	  "presentation using a low dynamic range. This operator attenuates "

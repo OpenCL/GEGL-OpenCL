@@ -34,6 +34,7 @@
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME  average
 #define GEGL_OP_C_FILE          "average.c"
 
 #include "gegl-op.h"

@@ -33,6 +33,7 @@ property_double (value, _("Value"), 0.0)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         add
 #define GEGL_OP_C_FILE       "add.c"
 
 #include "gegl-op.h"
@@ -124,6 +125,7 @@ gegl_op_class_init (GeglOpClass *klass)
   "name"        , "gegl:add",
   "title"       , "Add",
   "categories"  , "compositors:math",
+  "reference-hash"  , "7a68e829c08d859a9a5cce3ffc2c91f4",
   "description" ,
        _("Math operation add, performs the operation per pixel, using either the constant provided in 'value' or the corresponding pixel from the buffer on aux as operands. (formula: result = input + value)"),
        NULL);

@@ -425,7 +425,7 @@ gegl_sampler_lohalo_init (GeglSamplerLohalo *self)
   level->context_rect.width  = LOHALO_SIZE_7;
   level->context_rect.height = LOHALO_SIZE_7;
 
-  GEGL_SAMPLER (self)->interpolate_format = babl_format ("RaGaBaA float");
+  GEGL_SAMPLER (self)->interpolate_format = gegl_babl_rgbA_linear_float ();
 }
 
 /*

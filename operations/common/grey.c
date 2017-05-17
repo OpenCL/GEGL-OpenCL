@@ -27,6 +27,7 @@
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     grey
 #define GEGL_OP_C_SOURCE grey.c
 
 #include "gegl-op.h"
@@ -50,7 +51,7 @@ process (GeglOperation       *op,
          const GeglRectangle *roi,
          gint                 level)
 {
-  memcpy (out_buf, in_buf, sizeof (gfloat) * 2 * samples);
+  memmove (out_buf, in_buf, sizeof (gfloat) * 2 * samples);
   return TRUE;
 }
 
@@ -99,6 +100,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "compat-name", "gegl:grey",
       "title",       _("Make Grey"),
       "categories" , "grayscale:color",
+      "reference-hash", "43ddd80572ab34095298ac7c36368b0c",
       "description", _("Turns the image grayscale"),
       NULL);
 }

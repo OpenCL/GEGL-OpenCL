@@ -41,6 +41,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         dst_over
 #define GEGL_OP_C_FILE        "dst-over.c"
 
 #include "gegl-op.h"
@@ -143,6 +144,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "svg:dst-over",
     "compat-name", "gegl:dst-over",
     "title"      , "Dst-over",
+    "reference-hash" , "9bed66932992ce558e517de0bf815f17",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation dst-over (d = cB + cA * (1.0f - aB))"),

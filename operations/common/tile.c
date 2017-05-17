@@ -34,6 +34,7 @@ property_int (offset_y, _("Vertical offset"), 0)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     tile
 #define GEGL_OP_C_SOURCE tile.c
 
 #include "gegl-op.h"
@@ -133,6 +134,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "title",                _("Tile"),
       "categories",           "tile",
       "position-dependent",   "true",
+      "reference-hash",       "166a4c955bb10d0a8472a2d8892baf39",
       "reference-composition", composition,
       "description",
       _("Infinitely repeats the input image."),

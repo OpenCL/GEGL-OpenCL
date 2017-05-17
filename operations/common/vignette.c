@@ -32,6 +32,7 @@ property_enum (shape, _("Vignette shape"),
     GEGL_VIGNETTE_SHAPE_CIRCLE)
 
 property_color (color, _("Color"), "black")
+    /* TRANSLATORS: the string 'black' should not be translated */
     description (_("Defaults to 'black', you can use transparency here to erase portions of an image"))
 
 property_double (radius, _("Radius"), 1.2)
@@ -75,6 +76,7 @@ property_double (rotation, _("Rotation"), 0.0)
 
 #define GEGL_OP_POINT_FILTER
 #define GEGL_OP_C_SOURCE vignette.c
+#define GEGL_OP_NAME     vignette
 
 #include "gegl-op.h"
 
@@ -380,6 +382,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Vignette"),
     "position-dependent", "true",
     "categories",         "render:photo",
+    "reference-hash",     "2057d35e0e44881c3319f0474e847d97",
     "description", _("Applies a vignette to an image. Simulates the luminance "
                      "fall off at the edge of exposed film, and some other "
                      "fuzzier border effects that can naturally occur with "

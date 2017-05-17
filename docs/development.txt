@@ -35,10 +35,10 @@ as shown below) running gegl's autogen.sh:
  $ ./autogen.sh BABL_LIBS=~/Dev/babl/babl/.libs/libbabl-0.0.so.0.23.0 CFLAGS="-O0"
 
 Then when running the program, the babl library automatically loads extensions
-that are either located in the BABL_HOME directory or in the default installation
+that are either located in the BABL_PATH directory or in the default installation
 directory, in mentioned order of preference.
 
- $ export BABL_HOME=~/Dev/babl/extensions
+ $ export BABL_PATH=~/Dev/babl/extensions
 
 === Netbeans 6.5
 

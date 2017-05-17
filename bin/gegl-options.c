@@ -75,8 +75,8 @@ _("usage: %s [options] <file | -- [op [op] ..]>\n"
 "\n"
 "All parameters following -- are considered ops to be chained together\n"
 "into a small composition instead of using an xml file, this allows for\n"
-"easy testing of filters. Be aware that the default value will be used\n"
-"for all properties.\n")
+"easy testing of filters. After chaining a new op in properties can be set\n"
+"with property=value pairs as subsequent arguments.\n")
 , application_name);
     exit (0);
 }
@@ -224,8 +224,14 @@ parse_args (int    argc,
 
         else if (match ("--list-all")) {
             guint   n_operations;
-            gchar **operations = gegl_list_operations (&n_operations);
             gint    i;
+            gchar **operations;
+
+            /* initializing opencl for no use in this meta-data only query */
+            g_object_set (gegl_config (), "use-opencl", FALSE, NULL);
+            gegl_init (NULL, NULL);
+
+            operations  = gegl_list_operations (&n_operations);
 
             for (i = 0; i < n_operations; i++)
               {
@@ -238,6 +244,9 @@ parse_args (int    argc,
 
         else if (match ("--exists")) {
             gchar   *op_name;
+            /* initializing opencl for no use in this meta-data only query */
+            g_object_set (gegl_config (), "use-opencl", FALSE, NULL);
+            gegl_init (NULL, NULL);
 
             /* The option requires at least one argument. */
             get_string (op_name);
@@ -254,6 +263,10 @@ parse_args (int    argc,
         else if (match ("--properties")) {
             gchar  *op_name;
             get_string (op_name);
+
+            /* initializing opencl for no use in this meta-data only query */
+            g_object_set (gegl_config (), "use-opencl", FALSE, NULL);
+            gegl_init (NULL, NULL);
 
             if (gegl_has_operation (op_name))
               {
@@ -293,6 +306,14 @@ parse_args (int    argc,
             o->fatal_warnings=1;
         }
 
+        else if (match ("--serialize")){
+            o->serialize=TRUE;
+        }
+
+        else if (match ("-S")){
+            o->serialize=TRUE;
+        }
+
         else if (match ("-p")){
             o->play=TRUE;
         }
@@ -325,7 +346,7 @@ parse_args (int    argc,
         }
 
         else if (match ("--")) {
-            o->rest = curr;
+            o->rest = curr + 1;
             break;
         }
 

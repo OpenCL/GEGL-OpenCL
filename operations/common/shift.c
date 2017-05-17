@@ -37,6 +37,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     shift
 #define GEGL_OP_C_SOURCE shift.c
 
 #include "gegl-op.h"
@@ -143,6 +144,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Shift"),
     "categories",  "distort",
     "license",     "GPL3+",
+    "reference-hash", "1d390659c74dda3d40b3f51fe92b1539",
     "description", _("Shift each row or column of pixels by a random amount"),
     NULL);
 }

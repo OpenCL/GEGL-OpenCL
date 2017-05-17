@@ -41,7 +41,8 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE        "lighten.c"
+#define GEGL_OP_NAME         lighten
+#define GEGL_OP_C_FILE       "lighten.c"
 
 #include "gegl-op.h"
 
@@ -165,6 +166,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:lighten",
   "compat-name" , "gegl:lighten",
+  "reference-hash" , "16ecf46ab388720e4976f0691c05f62f",
   "description" ,
         _("SVG blend operation lighten (<code>d = MAX (cA * aB, cB * aA) + cA * (1 - aB) + cB * (1 - aA)</code>)"),
         NULL);

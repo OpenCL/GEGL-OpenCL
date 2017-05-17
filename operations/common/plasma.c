@@ -72,6 +72,7 @@ property_seed (seed, _("Random seed"), rand)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     plasma
 #define GEGL_OP_C_SOURCE plasma.c
 
 #include "gegl-op.h"
@@ -421,6 +422,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",              _("Plasma"),
     "categories",         "render",
     "position-dependent", "true",
+    "reference-hash",     "37e9f230aeab22e16c3a6d82eb135380",
     "license",            "GPL3+",
     "description", _("Creates an image filled with a plasma effect."),
     NULL);

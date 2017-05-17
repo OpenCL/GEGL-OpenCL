@@ -26,6 +26,7 @@
 
 #define GEGL_OP_POINT_COMPOSER
 #define GEGL_OP_C_SOURCE weighted-blend.c
+#define GEGL_OP_NAME     weighted_blend
 
 #include "gegl-op.h"
 
@@ -184,6 +185,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name" ,       "gegl:weighted-blend",
     "title",       _("Weighted Blend"),
     "categories" , "compositors:blend",
+    "reference-hash", "577a40b1a4c8fbe3e48407bc0c51304d",
     "description",
       _("blend two images using alpha values as weights"),
     NULL);

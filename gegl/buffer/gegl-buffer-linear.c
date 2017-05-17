@@ -24,7 +24,7 @@ gegl_buffer_linear_new (const GeglRectangle *extent,
     }
 
   if (format==NULL)
-    format = babl_format ("RGBA float");
+    format = gegl_babl_rgba_linear_float ();
 
   /* creating a linear buffer for GeglBuffer is a matter of
    * requesting the correct parameters when creating the

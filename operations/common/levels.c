@@ -46,6 +46,7 @@ property_double (out_high, _("High output"), 1.0)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     levels
 #define GEGL_OP_C_SOURCE levels.c
 
 #include "gegl-op.h"
@@ -202,6 +203,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "title",       _("Levels"),
     "categories" , "color",
     "description", _("Remaps the intensity range of the image"),
+    "reference-hash", "52e9dca541181f09f6cfac68afe987a2",
     "reference-composition", composition,
     NULL);
 }

@@ -30,3 +30,7 @@
 /test-scaled-blit
 /test-svg-abyss
 /test-buffer-tile-voiding
+/test-buffer-hot-tile
+/test-node-passthrough
+/test-serialize
+/test-buffer-sharing

@@ -41,7 +41,8 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
-#define GEGL_OP_C_FILE        "exclusion.c"
+#define GEGL_OP_NAME         exclusion
+#define GEGL_OP_C_FILE       "exclusion.c"
 
 #include "gegl-op.h"
 
@@ -165,6 +166,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
   "name"        , "svg:exclusion",
   "compat-name" , "gegl:exclusion",
+  "reference-hash" , "f93816fd8955e9d7deb2807b66fbbc55",
   "description" ,
         _("SVG blend operation exclusion (<code>d = (cA * aB + cB * aA - 2 * cA * cB) + cA * (1 - aB) + cB * (1 - aA)</code>)"),
         NULL);

@@ -75,6 +75,7 @@ property_color  (bg_color, _("Background Color"), "white")
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     maze
 #define GEGL_OP_C_SOURCE maze.c
 
 #include "gegl-op.h"
@@ -613,7 +614,7 @@ process (GeglOperation       *operation,
     {
       /* allocate memory for maze and set to zero */
 
-      maz = (guchar *) calloc (sizeof(guchar), mw * mh);
+      maz = (guchar *) g_new0 (guchar, mw * mh);
 
       gr = g_rand_new ();
 
@@ -709,7 +710,7 @@ process (GeglOperation       *operation,
 
       g_rand_free (gr);
 
-      free (maz);
+      g_free (maz);
     }
 
   return TRUE;
@@ -733,6 +734,7 @@ gegl_op_class_init (GeglOpClass *klass)
 				 "categories",         "render",
                                  "license",            "GPL3+",
 				 "position-dependent", "true",
+                                 "reference-hash", "55b885c5f05548b63d7d21b498715f14",
 				 "description",        _("Draw a labyrinth"),
 				 NULL);
 }

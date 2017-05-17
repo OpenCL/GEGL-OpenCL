@@ -41,6 +41,7 @@ property_boolean (srgb, _("sRGB"), FALSE)
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME         src_atop
 #define GEGL_OP_C_FILE        "src-atop.c"
 
 #include "gegl-op.h"
@@ -143,6 +144,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name"       , "svg:src-atop",
     "compat-name", "gegl:src-atop",
     "title"      , "Src-atop",
+    "reference-hash" , "7e48d1097702179c39b513b2be9d6102",
     "categories" , "compositors:porter-duff",
     "description",
         _("Porter Duff operation src-atop (d = cA * aB + cB * (1.0f - aA))"),

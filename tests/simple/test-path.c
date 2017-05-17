@@ -8,7 +8,7 @@
 #define SUCCESS  0
 #define FAILURE -1
 
-#define EPSILON 0.00001
+#define EPSILON 0.0005 // XXX < ideally we'd use a 1.5 orders of magnitude smaller epsilon
 
 #define NSMP 3
 static gboolean 
@@ -94,6 +94,20 @@ test_path_calc (GeglPath *path, gdouble pos,
     }
   return TRUE;
 }
+
+static int
+test_path_calc_y_for_x (GeglPath *path, gdouble x, gdouble exp_y)
+{
+  gdouble y = -1.0;
+  gegl_path_calc_y_for_x (path, x, &y);
+  if (! equals (y, exp_y))
+  {
+    fprintf (stderr, "got %f expected %f\n", y, exp_y);
+    return FALSE;
+  }
+  return TRUE;
+}
+
 int main(int argc, char *argv[])
 {
   gdouble exp_x[NSMP],exp_y[NSMP];
@@ -175,6 +189,28 @@ int main(int argc, char *argv[])
    * 3sampl  :    ^        ^        ^
    * 4sampl  :    ^     ^     ^     ^
    */
+
+
+  path = gegl_path_new ();
+  gegl_path_append (path, 'M', 0.0, 0.0);
+  gegl_path_append (path, 'L', 0.5, 0.23);
+  gegl_path_append (path, 'L', 1.0, 0.42);
+  if (! test_path_calc_y_for_x (path, 0.5, 0.23))
+  {
+    g_printerr("The gegl_path_calc_y_for_x() 0.5 failed\n");
+    result += FAILURE;
+  }
+  if (! test_path_calc_y_for_x (path, 1.0, 0.42))
+  {
+    g_printerr("The gegl_path_calc_y_for_x() 1.0 failed\n");
+    result += FAILURE;
+  }
+  if (! test_path_calc_y_for_x (path, 0.25, 0.115))
+  {
+    g_printerr("The gegl_path_calc_y_for_x() 0.25 failed\n");
+    result += FAILURE;
+  }
+
 
   gegl_exit ();
 

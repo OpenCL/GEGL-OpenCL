@@ -54,11 +54,12 @@ property_double (brighten, _("Brighten"), 0.0)
     description (_("Adjust brightness in corners"))
     value_range (-100.0, 100.0)
 
-property_color  (background, _("Background color"), "white")
+property_color  (background, _("Background color"), "none")
 
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     lens_distortion
 #define GEGL_OP_C_SOURCE lens-distortion.c
 
 #include "gegl-op.h"
@@ -267,8 +268,8 @@ prepare (GeglOperation *operation)
 }
 
 /*
- * Catmull-Rom cubic interpolation
- *
+ * Catmull-Rom cubic interpolation XXX: FIXME: use gegl resampler instead of
+ *                                             reimplementing cubic sampler here
  * equally spaced points p0, p1, p2, p3
  * interpolate 0 <= u < 1 between p1 and p2
  *
@@ -421,7 +422,7 @@ process (GeglOperation       *operation,
   src_buf = g_new0 (gfloat, SQR (MAX_WH) * 4);
   dst_buf = g_new0 (gfloat, SQR (CHUNK_SIZE) * 4);
 
-  gegl_color_get_pixel (o->background, babl_format ("RGBA float"), background);
+  gegl_color_get_pixel (o->background, babl_format ("RaGaBaA float"), background);
 
   for (j = 0; (j-1) * CHUNK_SIZE < result->height; j++)
     for (i = 0; (i-1) * CHUNK_SIZE < result->width; i++)
@@ -443,7 +444,7 @@ process (GeglOperation       *operation,
 
         clamp_area (&area, lens.centre_x, lens.centre_y);
 
-        gegl_buffer_get (input, &area, 1.0, babl_format ("RGBA float"), src_buf,
+        gegl_buffer_get (input, &area, 1.0, babl_format ("RaGaBaA float"), src_buf,
                          GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_CLAMP);
 
         for (y = chunked_result.y; y < chunked_result.y + chunked_result.height; y++)
@@ -453,7 +454,7 @@ process (GeglOperation       *operation,
                                  &lens, x, y, input, background, level);
             }
 
-        gegl_buffer_set (output, &chunked_result, 0, babl_format ("RGBA float"),
+        gegl_buffer_set (output, &chunked_result, 0, babl_format ("RaGaBaA float"),
                          dst_buf, GEGL_AUTO_ROWSTRIDE);
       }
 
@@ -501,6 +502,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "categories",            "blur",
     "position-dependent",    "true",
     "license",               "GPL3+",
+    "reference-hash",        "991dbbc6def3811821265049f69c23b3",
     "reference-composition", composition,
     "description", _("Corrects barrel or pincushion lens distortion."),
     NULL);

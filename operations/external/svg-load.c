@@ -35,6 +35,7 @@ property_int (height, _("Height"), -1)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME svg_load
 #define GEGL_OP_C_SOURCE svg-load.c
 
 #include <gegl-op.h>
@@ -62,11 +63,8 @@ cleanup (GeglOperation *operation)
 
   if (p != NULL)
     {
-      if (p->handle != NULL)
-        g_clear_object (&p->handle);
-
-      if (p->file != NULL)
-        g_clear_object(&p->file);
+      g_clear_object (&p->handle);
+      g_clear_object (&p->file);
 
       p->width = p->height = 0;
       p->format = NULL;
@@ -164,8 +162,11 @@ prepare (GeglOperation *operation)
       stream = gegl_gio_open_input_stream (o->uri, o->path, &p->file, &error);
       if (stream == NULL)
         {
-          g_warning (error->message);
-          g_error_free (error);
+          if (error)
+            {
+              g_warning ("%s", error->message);
+              g_error_free (error);
+            }
           cleanup (operation);
           return;
         }
@@ -175,7 +176,7 @@ prepare (GeglOperation *operation)
                                                     NULL, &error);
       if (p->handle == NULL)
         {
-          g_warning (error->message);
+          g_warning ("%s", error->message);
           g_error_free (error);
           cleanup (operation);
           return;
@@ -294,8 +295,15 @@ gegl_op_class_init (GeglOpClass *klass)
     "description" , _("Load an SVG file using librsvg"),
     NULL);
 
-  gegl_extension_handler_register_loader (".svg", "gegl:svg-load");
-  gegl_extension_handler_register_loader (".svgz", "gegl:svg-load");
+  gegl_operation_handlers_register_loader (
+    "image/svg+xml", "gegl:svg-load");
+  gegl_operation_handlers_register_loader (
+    ".svg", "gegl:svg-load");
+
+  gegl_operation_handlers_register_loader (
+    "image/svg+xml-compressed", "gegl:svg-load");
+  gegl_operation_handlers_register_loader (
+    ".svgz", "gegl:svg-load");
 }
 
 #endif

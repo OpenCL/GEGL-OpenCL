@@ -21,8 +21,8 @@
 
 #ifdef GEGL_PROPERTIES
 
-property_double (scale, _("Scale"), 1.0)
-    description(_("Scale, strength of effect"))
+property_double (scale, _("Effect strength"), 1.0)
+    description(_("Strength of the sepia effect"))
     value_range (0.0, 1.0)
 
 property_boolean (srgb, _("sRGB"), TRUE)
@@ -31,6 +31,7 @@ property_boolean (srgb, _("sRGB"), TRUE)
 #else
 
 #define GEGL_OP_POINT_FILTER
+#define GEGL_OP_NAME     sepia
 #define GEGL_OP_C_SOURCE sepia.c
 
 #include "gegl-op.h"
@@ -108,8 +109,9 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name"       , "gegl:sepia",
     "title",       _("Sepia"),
+    "reference-hash", "00425bea2740e987ae6e22b830489310",
     "categories" , "color",
-    "description", _("Converts the input image to sepia"),
+    "description", _("Apply a sepia tone to the input image"),
     NULL);
 }
 

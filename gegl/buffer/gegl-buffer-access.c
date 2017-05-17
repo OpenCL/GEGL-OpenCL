@@ -13,12 +13,13 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, see <http://www.gnu.org/licenses/>.
  *
- * Copyright 2006-2008 Øyvind Kolås <pippin@gimp.org>
+ * Copyright 2006-2012,2014-2017  Øyvind Kolås <pippin@gimp.org>
  *           2013 Daniel Sabo
  */
 
 #include "config.h"
 #include <string.h>
+#include <stdlib.h>
 #include <math.h>
 
 #include <glib-object.h>
@@ -90,7 +91,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
         case GEGL_ABYSS_BLACK:
           {
             gfloat color[4] = {0.0, 0.0, 0.0, 1.0};
-            babl_process (babl_fish (babl_format ("RGBA float"), format),
+            babl_process (babl_fish (gegl_babl_rgba_linear_float (), format),
                           color,
                           buf,
                           1);
@@ -100,7 +101,7 @@ gegl_buffer_get_pixel (GeglBuffer     *buffer,
         case GEGL_ABYSS_WHITE:
           {
             gfloat color[4] = {1.0, 1.0, 1.0, 1.0};
-            babl_process (babl_fish (babl_format ("RGBA float"),
+            babl_process (babl_fish (gegl_babl_rgba_linear_float (),
                                      format),
                           color,
                           buf,
@@ -343,6 +344,16 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
   gint abyss_y_total  = buffer_abyss_y + buffer->abyss.height;
   gint factor         = 1<<level;
   const Babl *fish;
+  GeglRectangle scaled_rect;
+  if (level && roi)
+  {
+    scaled_rect = *roi;
+    scaled_rect.x <<= level;
+    scaled_rect.y <<= level;
+    scaled_rect.width <<= level;
+    scaled_rect.height <<= level;
+    roi = &scaled_rect;
+  }
 
   /* roi specified, override buffers extent */
   if (roi)
@@ -353,6 +364,8 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
       buffer_y = roi->y + buffer_shift_y;
     }
 
+  buffer_shift_x /= factor;
+  buffer_shift_y /= factor;
   buffer_abyss_x /= factor;
   buffer_abyss_y /= factor;
   abyss_x_total  /= factor;
@@ -361,6 +374,7 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
   buffer_y       /= factor;
   width          /= factor;
   height         /= factor;
+
 
   buf_stride = width * bpx_size;
   if (rowstride != GEGL_AUTO_ROWSTRIDE)
@@ -385,8 +399,8 @@ gegl_buffer_iterate_write (GeglBuffer          *buffer,
           gint      tiledx  = buffer_x + bufx;
           gint      offsetx = gegl_tile_offset (tiledx, tile_width);
           gint      y       = bufy;
-          gint index_x;
-          gint index_y;
+          gint      index_x;
+          gint      index_y;
           gint      lskip, rskip, pixels, row;
           guchar   *bp, *tile_base, *tp;
           GeglTile *tile;
@@ -827,7 +841,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
   read_input_rect.y = read_output_rect.y - y_read_offset;
   read_input_rect.width = read_output_rect.width;
   read_input_rect.height = read_output_rect.height;
-
+#if 1
   if (level)
     gegl_buffer_iterate_read_fringed (buffer,
                                       &read_input_rect,
@@ -838,6 +852,7 @@ gegl_buffer_iterate_read_abyss_clamp (GeglBuffer          *buffer,
                                       level,
                                       GEGL_ABYSS_CLAMP);
   else
+#endif
     gegl_buffer_iterate_read_simple (buffer,
                                      &read_input_rect,
                                      read_buf,
@@ -969,7 +984,7 @@ gegl_buffer_iterate_read_abyss_loop (GeglBuffer          *buffer,
   gint loop_chunk_ix = gegl_tile_indice (roi->x - abyss->x, abyss->width);
   gint loop_chunk_iy = gegl_tile_indice (roi->y - abyss->y, abyss->height);
 
-  current_roi.x = loop_chunk_ix * abyss->width + abyss->x;
+  current_roi.x = loop_chunk_ix * abyss->width  + abyss->x;
   current_roi.y = loop_chunk_iy * abyss->height + abyss->y;
 
   current_roi.width  = abyss->width;
@@ -1246,7 +1261,7 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
       guchar color[128];
       gfloat in_color[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-      babl_process (babl_fish (babl_format ("RGBA float"), format),
+      babl_process (babl_fish (gegl_babl_rgba_linear_float (), format),
                     in_color, color, 1);
 
       gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
@@ -1258,7 +1273,7 @@ gegl_buffer_iterate_read_dispatch (GeglBuffer          *buffer,
       guchar color[128];
       gfloat  in_color[] = {0.0f, 0.0f, 0.0f, 1.0f};
 
-      babl_process (babl_fish (babl_format ("RGBA float"), format),
+      babl_process (babl_fish (gegl_babl_rgba_linear_float (), format),
                     in_color, color, 1);
 
       gegl_buffer_iterate_read_abyss_color (buffer, &roi_factored, &abyss_factored,
@@ -1579,26 +1594,26 @@ gegl_buffer_copy2 (GeglBuffer          *src,
   if (src_rect->width == 0 || src_rect->height == 0)
     return;
 
-    {
-      GeglRectangle dest_rect_r = *dst_rect;
-      GeglBufferIterator *i;
-      gint offset_x = src_rect->x - dst_rect->x;
-      gint offset_y = src_rect->y - dst_rect->y;
+  {
+    GeglRectangle dest_rect_r = *dst_rect;
+    GeglBufferIterator *i;
+    gint offset_x = src_rect->x - dst_rect->x;
+    gint offset_y = src_rect->y - dst_rect->y;
 
-      dest_rect_r.width = src_rect->width;
-      dest_rect_r.height = src_rect->height;
+    dest_rect_r.width = src_rect->width;
+    dest_rect_r.height = src_rect->height;
 
-      i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format,
-                                    GEGL_ACCESS_WRITE, repeat_mode);
-      while (gegl_buffer_iterator_next (i))
-        {
-          GeglRectangle src_rect = i->roi[0];
-          src_rect.x += offset_x;
-          src_rect.y += offset_y;
-          gegl_buffer_iterate_read_dispatch (src, &src_rect, i->data[0], 0,
-                                             dst->soft_format, 0, repeat_mode);
-        }
-    }
+    i = gegl_buffer_iterator_new (dst, &dest_rect_r, 0, dst->soft_format,
+                                  GEGL_ACCESS_WRITE, repeat_mode);
+    while (gegl_buffer_iterator_next (i))
+      {
+        GeglRectangle src_rect = i->roi[0];
+        src_rect.x += offset_x;
+        src_rect.y += offset_y;
+        gegl_buffer_iterate_read_dispatch (src, &src_rect, i->data[0], 0,
+                                           dst->soft_format, 0, repeat_mode);
+      }
+  }
 }
 
 void

@@ -29,6 +29,7 @@ property_uri (uri, _("URI"), "")
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME jpg_load
 #define GEGL_OP_C_SOURCE jpg-load.c
 
 #include "gegl-op.h"
@@ -370,8 +371,12 @@ gegl_op_class_init (GeglOpClass *klass)
 /*  static gboolean done=FALSE;
     if (done)
       return; */
-  gegl_extension_handler_register_loader (".jpg", "gegl:jpg-load");
-  gegl_extension_handler_register_loader (".jpeg", "gegl:jpg-load");
+  gegl_operation_handlers_register_loader (
+    "image/jpeg", "gegl:jpg-load");
+  gegl_operation_handlers_register_loader (
+    ".jpeg", "gegl:jpg-load");
+  gegl_operation_handlers_register_loader (
+    ".jpg", "gegl:jpg-load");
 /*  done = TRUE; */
 }
 #endif

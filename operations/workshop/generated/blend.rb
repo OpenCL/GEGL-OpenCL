@@ -27,22 +27,22 @@ copyright = '
  */'
 
 a = [
-      ['average',       '(cA + aB)/2'],
+      ['average',       '(cA + aB)/2', 'average'],
       #['screen',        '1.0 - ((1.0-cA) * (1.0-cB))'],
       #['darken',        'cA < cB ? cA : cB'],
       #['lighten',       'cA > cB ? cA : cB'],
       #['difference',    'fabs(cA-cB)'],
-      ['negation',      '1.0 - fabs(1.0-cA-cB)'],
+      ['negation',      '1.0 - fabs(1.0-cA-cB)', 'negation'],
       #['exclusion',     'cA + cB - 2*cA*cB'],
       #['overlay',       'cA<0.5?2*(cA*cB):1.0-2*(1.0-cA)*(1.0-cB)'],
       #['hard-light',    'cB<0.5?2*(cA*cB):1.0-2*(1.0-cA)*(1.0-cB)'],
       #['soft-light',    '2*cA*cB+cA*cA-2*cA*cA*cB'],
       #['color_dodge',   'cA / (1.0 - cB)'],
-      ['soft-dodge',    '(cA+cB<1.0)?0.5*cA / (1.0 - cB):1.0-0.5*(1.0 - cB)/cA'],
+      ['soft-dodge',    '(cA+cB<1.0)?0.5*cA / (1.0 - cB):1.0-0.5*(1.0 - cB)/cA', 'soft_dodge'],
       #['color_burn',    'cB<=0.0?0.0:1.0-(1.0-cA)/cB'],
-      ['soft-burn',     '(cA+cB<1.0)?0.5*cB / (1.0 - cA):1.0-0.5*(1.0 - cA) / cB'],
-      ['blend-reflect', 'cB>=1.0?1.0:cA*cA / (1.0-cB)'],
-      ['subtractive',   'cA+cB-1.0']
+      ['soft-burn',     '(cA+cB<1.0)?0.5*cB / (1.0 - cA):1.0-0.5*(1.0 - cA) / cB', 'soft_burn'],
+      ['blend-reflect', 'cB>=1.0?1.0:cA*cA / (1.0-cB)', 'blend_reflect'],
+      ['subtractive',   'cA+cB-1.0', 'subtractive']
     ]
 
 a.each do
@@ -72,6 +72,7 @@ a.each do
 #else
 
 #define GEGL_OP_POINT_COMPOSER
+#define GEGL_OP_NAME  #{item[2]}
 #define GEGL_OP_C_FILE          \"#{filename}\"
 
 #include \"gegl-op.h\"

@@ -43,6 +43,7 @@ property_path (d, _("Vector"), NULL)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     vector_fill
 #define GEGL_OP_C_SOURCE vector-fill.c
 
 #include "gegl-plugin.h"
@@ -274,6 +275,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:fill-path",
     "title",       _("Fill Path"),
     "categories" , "render",
+    "reference-hash", "d0909281920b72afbf399d942e464823",
     "description", _("Renders a filled region"),
     "reference-composition", composition,
     NULL);

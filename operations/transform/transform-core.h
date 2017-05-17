@@ -20,6 +20,7 @@ struct _OpTransform
   gdouble             origin_x;
   gdouble             origin_y;
   GeglSamplerType     sampler;
+  gboolean            clip_to_input;
 };
 
 typedef struct _OpTransformClass OpTransformClass;

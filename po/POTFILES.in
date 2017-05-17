@@ -1,3 +1,5 @@
+# List of source files containing translatable strings.
+# Please keep this file sorted alphabetically.
 [encoding: UTF-8]
 bin/gegl.c
 bin/gegl-options.c
@@ -8,7 +10,6 @@ operations/common/alien-map.c
 operations/common/antialias.c
 operations/common/apply-lens.c
 operations/common/bilateral-filter.c
-operations/common/bilateral-filter-fast.c
 operations/common/box-blur.c
 operations/common/brightness-contrast.c
 operations/common/buffer-sink.c
@@ -21,10 +22,11 @@ operations/common/checkerboard.c
 operations/common/color.c
 operations/common/color-enhance.c
 operations/common/color-exchange.c
-operations/common/color-reduction.c
 operations/common/color-rotate.c
 operations/common/color-temperature.c
 operations/common/color-to-alpha.c
+operations/common/color-warp.c
+operations/common/component-extract.c
 operations/common/contrast-curve.c
 operations/common/convolution-matrix.c
 operations/common/copy-buffer.c
@@ -35,9 +37,11 @@ operations/common/diffraction-patterns.c
 operations/common/displace.c
 operations/common/display.c
 operations/common/distance-transform.c
+operations/common/dither.c
 operations/common/dropshadow.c
 operations/common/edge.c
 operations/common/edge-laplace.c
+operations/common/edge-neon.c
 operations/common/edge-sobel.c
 operations/common/emboss.c
 operations/common/engrave.c
@@ -47,16 +51,17 @@ operations/common/fattal02.c
 operations/common/fractal-explorer.c
 operations/common/fractal-trace.c
 operations/common/gaussian-blur.c
-operations/common/gaussian-blur-iir.c
 operations/common/gaussian-blur-selective.c
 operations/common/gblur-1d.c
 operations/common/gegl-buffer-load-op.c
 operations/common/gegl-buffer-save-op.c
+operations/common/gegl.c
 operations/common/grey.c
 operations/common/grid.c
 operations/common/high-pass.c
 operations/common/illusion.c
 operations/common/image-compare.c
+operations/common/image-gradient.c
 operations/common/introspect.c
 operations/common/invert-gamma.c
 operations/common/invert-linear.c
@@ -65,7 +70,6 @@ operations/common/lens-distortion.c
 operations/common/lens-flare.c
 operations/common/levels.c
 operations/common/linear-gradient.c
-operations/common/load.c
 operations/common/magick-load.c
 operations/common/mantiuk06.c
 operations/common/map-absolute.c
@@ -79,6 +83,7 @@ operations/common/mosaic.c
 operations/common/motion-blur-circular.c
 operations/common/motion-blur-linear.c
 operations/common/motion-blur-zoom.c
+operations/common/newsprint.c
 operations/common/noise-cell.c
 operations/common/noise-cie-lch.c
 operations/common/noise-hsv.c
@@ -106,12 +111,14 @@ operations/common/rectangle.c
 operations/common/red-eye-removal.c
 operations/common/reinhard05.c
 operations/common/remap.c
+operations/common/rgb-clip.c
 operations/common/ripple.c
 operations/common/saturation.c
 operations/common/save.c
 operations/common/sepia.c
 operations/common/shift.c
 operations/common/sinus.c
+operations/common/slic.c
 operations/common/snn-mean.c
 operations/common/softglow.c
 operations/common/stress.c
@@ -129,11 +136,15 @@ operations/common/tile-glass.c
 operations/common/tile-paper.c
 operations/common/tile-seamless.c
 operations/common/unsharp-mask.c
+operations/common/unpremultiply.c
 operations/common/value-invert.c
 operations/common/value-propagate.c
 operations/common/video-degradation.c
 operations/common/vignette.c
 operations/common/warp.c
+operations/common/waterpixels.c
+operations/common/watershed-transform.c
+operations/common/wavelet-blur.c
 operations/common/waves.c
 operations/common/weighted-blend.c
 operations/common/whirl-pinch.c
@@ -144,7 +155,9 @@ operations/core/cast-format.c
 operations/core/clone.c
 operations/core/convert-format.c
 operations/core/crop.c
+operations/core/load.c
 operations/core/nop.c
+operations/external/exr-save.cc
 operations/external/ff-load.c
 operations/external/ff-save.c
 operations/external/jp2-load.c
@@ -200,7 +213,6 @@ operations/generated/src.c
 operations/generated/src-in.c
 operations/generated/src-out.c
 operations/generated/subtract.c
-operations/generated/svg-multiply.c
 operations/generated/xor.c
 operations/seamless-clone/seamless-clone.c
 operations/seamless-clone/seamless-clone-compose.c
@@ -214,9 +226,8 @@ operations/transform/shear.c
 operations/transform/transform.c
 operations/transform/transform-core.c
 operations/transform/translate.c
-operations/workshop/color-warp.c
-operations/workshop/component-extract.c
-operations/workshop/dcraw-load.c
+operations/workshop/bayer-matrix.c
+operations/workshop/bilateral-filter-fast.c
 operations/workshop/demosaic-bimedian.c
 operations/workshop/demosaic-simple.c
 operations/workshop/ditto.c
@@ -232,11 +243,13 @@ operations/workshop/generated/soft-dodge.c
 operations/workshop/generated/subtractive.c
 operations/workshop/gradient-map.c
 operations/workshop/hstack.c
-operations/workshop/ink-simulator.c
-operations/workshop/insta-curve.c
-operations/workshop/insta-filter.c
+operations/workshop/integral-image.c
 operations/workshop/kuwahara.c
+operations/workshop/linear-sinusoid.c
 operations/workshop/mandelbrot.c
 operations/workshop/median-blur.c
 operations/workshop/rawbayer-load.c
-operations/workshop/rgb-clip.c
+operations/workshop/segment-kmeans.c
+operations/workshop/shadows-highlights.c
+operations/workshop/shadows-highlights-correction.c
+operations/workshop/spiral.c

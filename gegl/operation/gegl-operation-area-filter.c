@@ -24,6 +24,7 @@
 #include "gegl.h"
 #include "gegl-operation-area-filter.h"
 #include "gegl-operation-context.h"
+#include "gegl-types-internal.h"
 
 
 static void          prepare                  (GeglOperation       *operation);
@@ -60,8 +61,9 @@ gegl_operation_area_filter_init (GeglOperationAreaFilter *self)
 
 static void prepare (GeglOperation *operation)
 {
-  gegl_operation_set_format (operation, "input", babl_format ("RGBA float"));
-  gegl_operation_set_format (operation, "output", babl_format ("RGBA float"));
+  const Babl *format = gegl_babl_rgba_linear_float ();
+  gegl_operation_set_format (operation, "input", format);
+  gegl_operation_set_format (operation, "output", format);
 }
 
 static GeglRectangle

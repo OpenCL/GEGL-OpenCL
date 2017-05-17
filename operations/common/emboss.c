@@ -48,6 +48,7 @@ property_int (depth, _("Depth"), 20)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     emboss
 #define GEGL_OP_C_SOURCE emboss.c
 
 #include "gegl-op.h"
@@ -264,6 +265,7 @@ gegl_op_class_init (GeglOpClass *klass)
   gegl_operation_class_set_keys (operation_class,
     "name",        "gegl:emboss",
     "title",       _("Emboss"),
+    "reference-hash", "9dcee11a194ac61c64a7d1cafaa1f34f",
     "categories",  "light",
     "license",     "GPL3+",
     "description", _("Simulates an image created by embossing"),

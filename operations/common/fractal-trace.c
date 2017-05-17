@@ -68,6 +68,7 @@ property_enum   (abyss_policy, _("Abyss policy"),
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     fractal_trace
 #define GEGL_OP_C_SOURCE fractal-trace.c
 
 #include "gegl-op.h"
@@ -204,7 +205,7 @@ process (GeglOperation       *operation,
 
   format = babl_format ("RGBA float");
   dst_buf = g_new0 (gfloat, result->width * result->height * 4);
-  sampler = gegl_buffer_sampler_new_at_level (input, format, GEGL_SAMPLER_NOHALO, level);
+  sampler = gegl_buffer_sampler_new_at_level (input, format, GEGL_SAMPLER_CUBIC, level);
 
   for (y = result->y; y < result->y + result->height; y++)
     fractaltrace (input, sampler, &boundary, dst_buf, result, o, y, o->fractal, format, level);
@@ -261,6 +262,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "position-dependent", "true",
     "categories",         "map",
     "license",            "GPL3+",
+    "reference-hash",     "c4cf80fc9db401ebeedb30cabf7b4921",
     "description", _("Transform the image with the fractals"),
     NULL);
 }

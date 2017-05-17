@@ -31,6 +31,7 @@ property_int (radius, _("Radius"), 4)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     box_blur
 #define GEGL_OP_C_SOURCE box-blur.c
 
 #include "gegl-op.h"
@@ -180,7 +181,7 @@ static void prepare (GeglOperation *operation)
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/box-blur.cl.h"
 static GeglClRunData *cl_data = NULL;

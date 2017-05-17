@@ -37,6 +37,7 @@ property_double (scale, _("Scale"), 4.0)
 #else
 
 #define GEGL_OP_META
+#define GEGL_OP_NAME     unsharp_mask
 #define GEGL_OP_C_SOURCE unsharp-mask.c
 
 #include "gegl-op.h"
@@ -82,6 +83,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:unsharp-mask",
     "title",       _("Unsharp Mask"),
     "categories",  "enhance:sharpen",
+    "reference-hash", "9868efefcaf96dddb6ea7e9f8388a717",
     "description", _("Sharpen image, by adding difference to blurred image, a technique for sharpening originally used in darkrooms."),
     NULL);
 }

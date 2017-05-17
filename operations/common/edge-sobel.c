@@ -34,6 +34,7 @@ property_boolean (keep_sign,  _("Keep Sign"), TRUE)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     edge_sobel
 #define GEGL_OP_C_SOURCE edge-sobel.c
 
 #include "gegl-op.h"
@@ -78,7 +79,7 @@ static void prepare (GeglOperation *operation)
 /*
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 
 #include "opencl/edge-sobel.cl.h"
 
@@ -397,6 +398,7 @@ gegl_op_class_init (GeglOpClass *klass)
     "name",        "gegl:edge-sobel",
     "title",       _("Sobel Edge Detection"),
     "categories",  "edge-detect",
+    "reference-hash", "50c7c77a4a130343facd199362a0d4fb",
     "description", _("Specialized direction-dependent edge detection"),
           NULL);
 }

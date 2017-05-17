@@ -28,6 +28,7 @@ property_boolean (keep_colors, _("Keep colors"), TRUE)
 #else
 
 #define GEGL_OP_FILTER
+#define GEGL_OP_NAME     stretch_contrast
 #define GEGL_OP_C_SOURCE stretch-contrast.c
 
 #include "gegl-op.h"
@@ -120,7 +121,7 @@ get_cached_region (GeglOperation       *operation,
 }
 
 #include "opencl/gegl-cl.h"
-#include "buffer/gegl-buffer-cl-iterator.h"
+#include "gegl-buffer-cl-iterator.h"
 #include "opencl/stretch-contrast.cl.h"
 
 static GeglClRunData *cl_data = NULL;

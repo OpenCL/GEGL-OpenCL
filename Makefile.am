@@ -9,9 +9,9 @@ SUBDIRS=\
 	gegl \
 	libs/npd \
 	seamless-clone \
-	operations \
 	bin \
 	tools \
+	operations \
 	examples \
 	tests \
 	perf \
@@ -24,7 +24,7 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gegl-$(GEGL_API_VERSION).pc
 
-built_dist_files = README
+built_dist_files = README NEWS
 
 EXTRA_DIST = 			\
 	$(built_dist_files)     \
@@ -40,6 +40,8 @@ DISTCLEANFILES = \
 
 if HAVE_W3M
 dist-check-w3m:
+NEWS: docs/NEWS.html
+	$(W3M) -cols 72 -dump docs/NEWS.html > $@
 
 README: all docs/index.html
 	$(W3M) -cols 72 -dump docs/index.html > $@

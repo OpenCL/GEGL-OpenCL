@@ -57,6 +57,7 @@ property_double (angle, _("Angle"), 5.0)
 #else
 
 #define GEGL_OP_AREA_FILTER
+#define GEGL_OP_NAME     motion_blur_circular
 #define GEGL_OP_C_SOURCE motion-blur-circular.c
 
 #include "gegl-op.h"
@@ -70,9 +71,9 @@ static void
 prepare (GeglOperation *operation)
 {
   GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
-  GeglProperties              *o       = GEGL_PROPERTIES (operation);
-  GeglRectangle           *whole_region;
+  GeglProperties          *o       = GEGL_PROPERTIES (operation);
   gdouble                  angle   = o->angle * G_PI / 180.0;
+  GeglRectangle           *whole_region;
 
   while (angle < 0.0)
     angle += 2 * G_PI;
@@ -297,6 +298,7 @@ gegl_op_class_init (GeglOpClass *klass)
       "categories",         "blur",
       "position-dependent", "true",
       "license",            "GPL3+",
+      "reference-hash",     "9e97c8cfb2a2df4b875602116b0be03d",
       "description", _("Circular motion blur"),
       NULL);
 }

@@ -35,6 +35,7 @@ property_int  (fps, _("FPS"),  0)
 #else
 
 #define GEGL_OP_SOURCE
+#define GEGL_OP_NAME     v4l2
 #define GEGL_OP_C_SOURCE v4l2.c
 
 #include "gegl-op.h"
