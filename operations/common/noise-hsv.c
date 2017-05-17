@@ -178,6 +178,84 @@ process (GeglOperation       *operation,
   return TRUE;
 }
 
+#include "opencl/gegl-cl.h"
+#include "opencl/noise-hsv.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            cl_mem               in,
+            cl_mem               out,
+            size_t               global_worksize,
+            const GeglRectangle *roi,
+            gint                 level)
+{
+  GeglProperties *o = GEGL_PROPERTIES (operation);
+  GeglRectangle *wr = gegl_operation_source_get_bounding_box (operation,
+                                                              "input");
+  cl_int      cl_err           = 0;
+  cl_mem      cl_random_data   = NULL;
+  cl_int      x_offset         = roi->x;
+  cl_int      y_offset         = roi->y;
+  cl_int      roi_width        = roi->width;
+  cl_int      wr_width         = wr->width;
+  cl_ushort4  rand;
+  cl_int      holdness;
+  cl_float    hue_distance;
+  cl_float    saturation_distance;
+  cl_float    value_distance;
+
+  gegl_cl_random_get_ushort4 (o->rand, &rand);
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = { "cl_noise_hsv", NULL };
+      cl_data = gegl_cl_compile_and_build (noise_hsv_cl_source, kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
+
+  cl_random_data = gegl_cl_load_random_data (&cl_err);
+  CL_CHECK;
+
+  holdness = o->holdness;
+  hue_distance = o->hue_distance / 360.0;
+  saturation_distance = o->saturation_distance;
+  value_distance = o->value_distance;
+
+  gegl_cl_set_kernel_args (cl_data->kernel[0],
+                           sizeof(cl_mem),     &in,
+                           sizeof(cl_mem),     &out,
+                           sizeof(cl_mem),     &cl_random_data,
+                           sizeof(cl_ushort4), &rand,
+                           sizeof(cl_int),     &x_offset,
+                           sizeof(cl_int),     &y_offset,
+                           sizeof(cl_int),     &roi_width,
+                           sizeof(cl_int),     &wr_width,
+                           sizeof(cl_int),     &holdness,
+                           sizeof(cl_float),   &hue_distance,
+                           sizeof(cl_float),   &saturation_distance,
+                           sizeof(cl_float),   &value_distance,
+                           NULL);
+
+  CL_CHECK;
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 1,
+                                        NULL, &global_worksize, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  cl_err = gegl_clFinish (gegl_cl_get_command_queue ());
+  CL_CHECK;
+
+  return  FALSE;
+
+error:
+  return TRUE;
+}
+
 static void
 gegl_op_class_init (GeglOpClass *klass)
 {
@@ -188,7 +266,9 @@ gegl_op_class_init (GeglOpClass *klass)
   point_filter_class = GEGL_OPERATION_POINT_FILTER_CLASS (klass);
 
   operation_class->prepare = prepare;
+  operation_class->opencl_support = TRUE;
   point_filter_class->process = process;
+  point_filter_class->cl_process = cl_process;
 
   gegl_operation_class_set_keys (operation_class,
     "name",       "gegl:noise-hsv",

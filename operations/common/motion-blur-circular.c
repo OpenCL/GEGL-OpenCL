@@ -82,7 +82,7 @@ prepare (GeglOperation *operation)
 
   if (whole_region != NULL)
     {
-      gdouble center_x = gegl_coordinate_relative_to_pixel (o->center_x, 
+      gdouble center_x = gegl_coordinate_relative_to_pixel (o->center_x,
                                                             whole_region->width);
       gdouble center_y = gegl_coordinate_relative_to_pixel (o->center_y,
                                                             whole_region->height);
@@ -151,6 +151,128 @@ compute_phi (gdouble xr,
   return phi;
 }
 
+#include "opencl/gegl-cl.h"
+#include "gegl-buffer-cl-iterator.h"
+
+#include "opencl/motion-blur-circular.cl.h"
+
+static GeglClRunData *cl_data = NULL;
+
+static gboolean
+cl_motion_blur_circular (cl_mem               in,
+                         cl_mem               out,
+                         const GeglRectangle *src_rect,
+                         const GeglRectangle *dst_rect,
+                         const GeglRectangle *whole_region,
+                         gdouble              angle,
+                         gdouble              center_x,
+                         gdouble              center_y)
+{
+  cl_int cl_err = 0;
+  size_t global_ws[2];
+  cl_float a, cx, cy;
+
+  if (!cl_data)
+    {
+      const char *kernel_name[] = { "cl_motion_blur_circular", NULL };
+      cl_data = gegl_cl_compile_and_build (motion_blur_circular_cl_source,
+                                           kernel_name);
+    }
+
+  if (!cl_data)
+    return TRUE;
+
+  a  = (cl_float)angle;
+  cx = (cl_float)center_x;
+  cy = (cl_float)center_y;
+  cl_err = gegl_cl_set_kernel_args (cl_data->kernel[0],
+                                    sizeof(cl_mem),   &in,
+                                    sizeof(cl_mem),   &out,
+                                    sizeof(cl_int),   &src_rect->width,
+                                    sizeof(cl_int),   &src_rect->height,
+                                    sizeof(cl_int),   &src_rect->x,
+                                    sizeof(cl_int),   &src_rect->y,
+                                    sizeof(cl_int),   &dst_rect->x,
+                                    sizeof(cl_int),   &dst_rect->y,
+                                    sizeof(cl_int),   &whole_region->width,
+                                    sizeof(cl_int),   &whole_region->height,
+                                    sizeof(cl_int),   &whole_region->x,
+                                    sizeof(cl_int),   &whole_region->y,
+                                    sizeof(cl_float), &a,
+                                    sizeof(cl_float), &cx,
+                                    sizeof(cl_float), &cy,
+                                    NULL);
+  CL_CHECK;
+
+  global_ws[0] = dst_rect->width;
+  global_ws[1] = dst_rect->height;
+  cl_err = gegl_clEnqueueNDRangeKernel (gegl_cl_get_command_queue (),
+                                        cl_data->kernel[0], 2,
+                                        NULL, global_ws, NULL,
+                                        0, NULL, NULL);
+  CL_CHECK;
+
+  return FALSE;
+
+error:
+  return TRUE;
+}
+
+static gboolean
+cl_process (GeglOperation       *operation,
+            GeglBuffer          *input,
+            GeglBuffer          *output,
+            const GeglRectangle *result,
+            const GeglRectangle *whole_region,
+            gdouble              angle,
+            gdouble              center_x,
+            gdouble              center_y)
+{
+  GeglOperationAreaFilter *op_area = GEGL_OPERATION_AREA_FILTER (operation);
+
+  GeglBufferClIterator *i;
+  const Babl *in_format  = gegl_operation_get_format (operation, "input");
+  const Babl *out_format = gegl_operation_get_format (operation, "output");
+  gint        err;
+  gint        read;
+
+  i = gegl_buffer_cl_iterator_new (output,
+                                   result,
+                                   out_format,
+                                   GEGL_CL_BUFFER_WRITE);
+
+  read = gegl_buffer_cl_iterator_add_2 (i,
+                                        input,
+                                        result,
+                                        in_format,
+                                        GEGL_CL_BUFFER_READ,
+                                        op_area->left,
+                                        op_area->right,
+                                        op_area->top,
+                                        op_area->bottom,
+                                        GEGL_ABYSS_NONE);
+
+  while (gegl_buffer_cl_iterator_next (i, &err))
+    {
+      if (err)
+        return FALSE;
+
+      err = cl_motion_blur_circular (i->tex[read],
+                                     i->tex[0],
+                                     &i->roi[read],
+                                     &i->roi[0],
+                                     whole_region,
+                                     angle,
+                                     center_x,
+                                     center_y);
+
+      if (err)
+        return FALSE;
+    }
+
+  return TRUE;
+}
+
 static gboolean
 process (GeglOperation       *operation,
          GeglBuffer          *input,
@@ -174,6 +296,13 @@ process (GeglOperation       *operation,
   center_y = gegl_coordinate_relative_to_pixel (
                     o->center_y, whole_region->height);
 
+  angle = o->angle * G_PI / 180.0;
+  while (angle < 0.0)
+    angle += 2 * G_PI;
+
+  if (gegl_operation_use_opencl (operation))
+    if (cl_process (operation, input, output, roi, whole_region, angle, center_x, center_y))
+      return TRUE;
 
   src_rect = *roi;
   src_rect.x -= op_area->left;
@@ -187,11 +316,6 @@ process (GeglOperation       *operation,
 
   gegl_buffer_get (input, &src_rect, 1.0, babl_format ("RaGaBaA float"),
                    in_buf, GEGL_AUTO_ROWSTRIDE, GEGL_ABYSS_NONE);
-
-  angle = o->angle * G_PI / 180.0;
-
-  while (angle < 0.0)
-    angle += 2 * G_PI;
 
   for (y = roi->y; y < roi->height + roi->y; ++y)
     {
@@ -290,6 +414,8 @@ gegl_op_class_init (GeglOpClass *klass)
   filter_class    = GEGL_OPERATION_FILTER_CLASS (klass);
 
   operation_class->prepare = prepare;
+  operation_class->opencl_support = TRUE;
+
   filter_class->process    = process;
 
   gegl_operation_class_set_keys (operation_class,
