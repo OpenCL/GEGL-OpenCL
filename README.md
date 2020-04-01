@@ -1,3 +1,5 @@
+#### Note : this code has been merged into official repo
+
 # GEGL-OpenCL
 #### First official OPP (OpenCL Porting Project) of [OpenCL.org](http://opencl.org)
 
